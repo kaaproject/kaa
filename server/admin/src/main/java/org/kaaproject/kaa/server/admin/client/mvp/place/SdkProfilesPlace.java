@@ -22,11 +22,9 @@ import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
 
 /**
- *
  * @author Bohdan Khablenko
  *
  * @since v0.8.0
- *
  */
 public class SdkProfilesPlace extends TreePlace {
 

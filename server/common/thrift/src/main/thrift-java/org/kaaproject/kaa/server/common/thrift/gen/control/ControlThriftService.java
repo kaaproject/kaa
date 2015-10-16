@@ -264,6 +264,8 @@ public class ControlThriftService {
 
     public Sdk generateSdk(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct sdkProperties) throws ControlThriftException, org.apache.thrift.TException;
 
+    public boolean isSdkProfileUsed(String sdkToken) throws ControlThriftException, org.apache.thrift.TException;
+
     /**
      * Events
      * 
@@ -493,6 +495,8 @@ public class ControlThriftService {
     public void getSdkProfilesByApplicationId(String applicationId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
     public void generateSdk(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct sdkProperties, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+
+    public void isSdkProfileUsed(String sdkToken, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
     public void editEventClassFamily(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct eventClassFamily, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
@@ -2574,6 +2578,32 @@ public class ControlThriftService {
         throw result.ControlException;
       }
       throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "generateSdk failed: unknown result");
+    }
+
+    public boolean isSdkProfileUsed(String sdkToken) throws ControlThriftException, org.apache.thrift.TException
+    {
+      send_isSdkProfileUsed(sdkToken);
+      return recv_isSdkProfileUsed();
+    }
+
+    public void send_isSdkProfileUsed(String sdkToken) throws org.apache.thrift.TException
+    {
+      isSdkProfileUsed_args args = new isSdkProfileUsed_args();
+      args.setSdkToken(sdkToken);
+      sendBase("isSdkProfileUsed", args);
+    }
+
+    public boolean recv_isSdkProfileUsed() throws ControlThriftException, org.apache.thrift.TException
+    {
+      isSdkProfileUsed_result result = new isSdkProfileUsed_result();
+      receiveBase(result, "isSdkProfileUsed");
+      if (result.isSetSuccess()) {
+        return result.success;
+      }
+      if (result.ControlException != null) {
+        throw result.ControlException;
+      }
+      throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "isSdkProfileUsed failed: unknown result");
     }
 
     public org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct editEventClassFamily(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct eventClassFamily) throws ControlThriftException, org.apache.thrift.TException
@@ -5801,6 +5831,38 @@ public class ControlThriftService {
       }
     }
 
+    public void isSdkProfileUsed(String sdkToken, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+      checkReady();
+      isSdkProfileUsed_call method_call = new isSdkProfileUsed_call(sdkToken, resultHandler, this, ___protocolFactory, ___transport);
+      this.___currentMethod = method_call;
+      ___manager.call(method_call);
+    }
+
+    public static class isSdkProfileUsed_call extends org.apache.thrift.async.TAsyncMethodCall {
+      private String sdkToken;
+      public isSdkProfileUsed_call(String sdkToken, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+        super(client, protocolFactory, transport, resultHandler, false);
+        this.sdkToken = sdkToken;
+      }
+
+      public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
+        prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("isSdkProfileUsed", org.apache.thrift.protocol.TMessageType.CALL, 0));
+        isSdkProfileUsed_args args = new isSdkProfileUsed_args();
+        args.setSdkToken(sdkToken);
+        args.write(prot);
+        prot.writeMessageEnd();
+      }
+
+      public boolean getResult() throws ControlThriftException, org.apache.thrift.TException {
+        if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
+          throw new IllegalStateException("Method call not finished!");
+        }
+        org.apache.thrift.transport.TMemoryInputTransport memoryTransport = new org.apache.thrift.transport.TMemoryInputTransport(getFrameBuffer().array());
+        org.apache.thrift.protocol.TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
+        return (new Client(prot)).recv_isSdkProfileUsed();
+      }
+    }
+
     public void editEventClassFamily(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct eventClassFamily, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
       checkReady();
       editEventClassFamily_call method_call = new editEventClassFamily_call(eventClassFamily, resultHandler, this, ___protocolFactory, ___transport);
@@ -6748,6 +6810,7 @@ public class ControlThriftService {
       processMap.put("getSdkProfile", new getSdkProfile());
       processMap.put("getSdkProfilesByApplicationId", new getSdkProfilesByApplicationId());
       processMap.put("generateSdk", new generateSdk());
+      processMap.put("isSdkProfileUsed", new isSdkProfileUsed());
       processMap.put("editEventClassFamily", new editEventClassFamily());
       processMap.put("getEventClassFamiliesByTenantId", new getEventClassFamiliesByTenantId());
       processMap.put("getEventClassFamily", new getEventClassFamily());
@@ -8649,6 +8712,31 @@ public class ControlThriftService {
       }
     }
 
+    public static class isSdkProfileUsed<I extends Iface> extends org.apache.thrift.ProcessFunction<I, isSdkProfileUsed_args> {
+      public isSdkProfileUsed() {
+        super("isSdkProfileUsed");
+      }
+
+      public isSdkProfileUsed_args getEmptyArgsInstance() {
+        return new isSdkProfileUsed_args();
+      }
+
+      protected boolean isOneway() {
+        return false;
+      }
+
+      public isSdkProfileUsed_result getResult(I iface, isSdkProfileUsed_args args) throws org.apache.thrift.TException {
+        isSdkProfileUsed_result result = new isSdkProfileUsed_result();
+        try {
+          result.success = iface.isSdkProfileUsed(args.sdkToken);
+          result.setSuccessIsSet(true);
+        } catch (ControlThriftException ControlException) {
+          result.ControlException = ControlException;
+        }
+        return result;
+      }
+    }
+
     public static class editEventClassFamily<I extends Iface> extends org.apache.thrift.ProcessFunction<I, editEventClassFamily_args> {
       public editEventClassFamily() {
         super("editEventClassFamily");
@@ -9364,6 +9452,7 @@ public class ControlThriftService {
       processMap.put("getSdkProfile", new getSdkProfile());
       processMap.put("getSdkProfilesByApplicationId", new getSdkProfilesByApplicationId());
       processMap.put("generateSdk", new generateSdk());
+      processMap.put("isSdkProfileUsed", new isSdkProfileUsed());
       processMap.put("editEventClassFamily", new editEventClassFamily());
       processMap.put("getEventClassFamiliesByTenantId", new getEventClassFamiliesByTenantId());
       processMap.put("getEventClassFamily", new getEventClassFamily());
@@ -13825,6 +13914,64 @@ public class ControlThriftService {
 
       public void start(I iface, generateSdk_args args, org.apache.thrift.async.AsyncMethodCallback<Sdk> resultHandler) throws TException {
         iface.generateSdk(args.sdkProperties,resultHandler);
+      }
+    }
+
+    public static class isSdkProfileUsed<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, isSdkProfileUsed_args, Boolean> {
+      public isSdkProfileUsed() {
+        super("isSdkProfileUsed");
+      }
+
+      public isSdkProfileUsed_args getEmptyArgsInstance() {
+        return new isSdkProfileUsed_args();
+      }
+
+      public AsyncMethodCallback<Boolean> getResultHandler(final AsyncFrameBuffer fb, final int seqid) {
+        final org.apache.thrift.AsyncProcessFunction fcall = this;
+        return new AsyncMethodCallback<Boolean>() { 
+          public void onComplete(Boolean o) {
+            isSdkProfileUsed_result result = new isSdkProfileUsed_result();
+            result.success = o;
+            result.setSuccessIsSet(true);
+            try {
+              fcall.sendResponse(fb,result, org.apache.thrift.protocol.TMessageType.REPLY,seqid);
+              return;
+            } catch (Exception e) {
+              LOGGER.error("Exception writing to internal frame buffer", e);
+            }
+            fb.close();
+          }
+          public void onError(Exception e) {
+            byte msgType = org.apache.thrift.protocol.TMessageType.REPLY;
+            org.apache.thrift.TBase msg;
+            isSdkProfileUsed_result result = new isSdkProfileUsed_result();
+            if (e instanceof ControlThriftException) {
+                        result.ControlException = (ControlThriftException) e;
+                        result.setControlExceptionIsSet(true);
+                        msg = result;
+            }
+             else 
+            {
+              msgType = org.apache.thrift.protocol.TMessageType.EXCEPTION;
+              msg = (org.apache.thrift.TBase)new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.INTERNAL_ERROR, e.getMessage());
+            }
+            try {
+              fcall.sendResponse(fb,msg,msgType,seqid);
+              return;
+            } catch (Exception ex) {
+              LOGGER.error("Exception writing to internal frame buffer", ex);
+            }
+            fb.close();
+          }
+        };
+      }
+
+      protected boolean isOneway() {
+        return false;
+      }
+
+      public void start(I iface, isSdkProfileUsed_args args, org.apache.thrift.async.AsyncMethodCallback<Boolean> resultHandler) throws TException {
+        iface.isSdkProfileUsed(args.sdkToken,resultHandler);
       }
     }
 
@@ -81674,6 +81821,835 @@ public class ControlThriftService {
         if (incoming.get(0)) {
           struct.success = new Sdk();
           struct.success.read(iprot);
+          struct.setSuccessIsSet(true);
+        }
+        if (incoming.get(1)) {
+          struct.ControlException = new ControlThriftException();
+          struct.ControlException.read(iprot);
+          struct.setControlExceptionIsSet(true);
+        }
+      }
+    }
+
+  }
+
+  public static class isSdkProfileUsed_args implements org.apache.thrift.TBase<isSdkProfileUsed_args, isSdkProfileUsed_args._Fields>, java.io.Serializable, Cloneable, Comparable<isSdkProfileUsed_args>   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("isSdkProfileUsed_args");
+
+    private static final org.apache.thrift.protocol.TField SDK_TOKEN_FIELD_DESC = new org.apache.thrift.protocol.TField("sdkToken", org.apache.thrift.protocol.TType.STRING, (short)1);
+
+    private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+    static {
+      schemes.put(StandardScheme.class, new isSdkProfileUsed_argsStandardSchemeFactory());
+      schemes.put(TupleScheme.class, new isSdkProfileUsed_argsTupleSchemeFactory());
+    }
+
+    public String sdkToken; // required
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements org.apache.thrift.TFieldIdEnum {
+      SDK_TOKEN((short)1, "sdkToken");
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          case 1: // SDK_TOKEN
+            return SDK_TOKEN;
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+
+    // isset id assignments
+    public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+      tmpMap.put(_Fields.SDK_TOKEN, new org.apache.thrift.meta_data.FieldMetaData("sdkToken", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING          , "id")));
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(isSdkProfileUsed_args.class, metaDataMap);
+    }
+
+    public isSdkProfileUsed_args() {
+    }
+
+    public isSdkProfileUsed_args(
+      String sdkToken)
+    {
+      this();
+      this.sdkToken = sdkToken;
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public isSdkProfileUsed_args(isSdkProfileUsed_args other) {
+      if (other.isSetSdkToken()) {
+        this.sdkToken = other.sdkToken;
+      }
+    }
+
+    public isSdkProfileUsed_args deepCopy() {
+      return new isSdkProfileUsed_args(this);
+    }
+
+    @Override
+    public void clear() {
+      this.sdkToken = null;
+    }
+
+    public String getSdkToken() {
+      return this.sdkToken;
+    }
+
+    public isSdkProfileUsed_args setSdkToken(String sdkToken) {
+      this.sdkToken = sdkToken;
+      return this;
+    }
+
+    public void unsetSdkToken() {
+      this.sdkToken = null;
+    }
+
+    /** Returns true if field sdkToken is set (has been assigned a value) and false otherwise */
+    public boolean isSetSdkToken() {
+      return this.sdkToken != null;
+    }
+
+    public void setSdkTokenIsSet(boolean value) {
+      if (!value) {
+        this.sdkToken = null;
+      }
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      case SDK_TOKEN:
+        if (value == null) {
+          unsetSdkToken();
+        } else {
+          setSdkToken((String)value);
+        }
+        break;
+
+      }
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      case SDK_TOKEN:
+        return getSdkToken();
+
+      }
+      throw new IllegalStateException();
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      if (field == null) {
+        throw new IllegalArgumentException();
+      }
+
+      switch (field) {
+      case SDK_TOKEN:
+        return isSetSdkToken();
+      }
+      throw new IllegalStateException();
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof isSdkProfileUsed_args)
+        return this.equals((isSdkProfileUsed_args)that);
+      return false;
+    }
+
+    public boolean equals(isSdkProfileUsed_args that) {
+      if (that == null)
+        return false;
+
+      boolean this_present_sdkToken = true && this.isSetSdkToken();
+      boolean that_present_sdkToken = true && that.isSetSdkToken();
+      if (this_present_sdkToken || that_present_sdkToken) {
+        if (!(this_present_sdkToken && that_present_sdkToken))
+          return false;
+        if (!this.sdkToken.equals(that.sdkToken))
+          return false;
+      }
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      HashCodeBuilder builder = new HashCodeBuilder();
+
+      boolean present_sdkToken = true && (isSetSdkToken());
+      builder.append(present_sdkToken);
+      if (present_sdkToken)
+        builder.append(sdkToken);
+
+      return builder.toHashCode();
+    }
+
+    @Override
+    public int compareTo(isSdkProfileUsed_args other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+
+      lastComparison = Boolean.valueOf(isSetSdkToken()).compareTo(other.isSetSdkToken());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetSdkToken()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.sdkToken, other.sdkToken);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      return 0;
+    }
+
+    public _Fields fieldForId(int fieldId) {
+      return _Fields.findByThriftId(fieldId);
+    }
+
+    public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+      schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
+    }
+
+    public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+      schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
+    }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("isSdkProfileUsed_args(");
+      boolean first = true;
+
+      sb.append("sdkToken:");
+      if (this.sdkToken == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.sdkToken);
+      }
+      first = false;
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws org.apache.thrift.TException {
+      // check for required fields
+      // check for sub-struct validity
+    }
+
+    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+      try {
+        write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+      try {
+        read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private static class isSdkProfileUsed_argsStandardSchemeFactory implements SchemeFactory {
+      public isSdkProfileUsed_argsStandardScheme getScheme() {
+        return new isSdkProfileUsed_argsStandardScheme();
+      }
+    }
+
+    private static class isSdkProfileUsed_argsStandardScheme extends StandardScheme<isSdkProfileUsed_args> {
+
+      public void read(org.apache.thrift.protocol.TProtocol iprot, isSdkProfileUsed_args struct) throws org.apache.thrift.TException {
+        org.apache.thrift.protocol.TField schemeField;
+        iprot.readStructBegin();
+        while (true)
+        {
+          schemeField = iprot.readFieldBegin();
+          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
+            break;
+          }
+          switch (schemeField.id) {
+            case 1: // SDK_TOKEN
+              if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
+                struct.sdkToken = iprot.readString();
+                struct.setSdkTokenIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
+            default:
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+          }
+          iprot.readFieldEnd();
+        }
+        iprot.readStructEnd();
+
+        // check for required fields of primitive type, which can't be checked in the validate method
+        struct.validate();
+      }
+
+      public void write(org.apache.thrift.protocol.TProtocol oprot, isSdkProfileUsed_args struct) throws org.apache.thrift.TException {
+        struct.validate();
+
+        oprot.writeStructBegin(STRUCT_DESC);
+        if (struct.sdkToken != null) {
+          oprot.writeFieldBegin(SDK_TOKEN_FIELD_DESC);
+          oprot.writeString(struct.sdkToken);
+          oprot.writeFieldEnd();
+        }
+        oprot.writeFieldStop();
+        oprot.writeStructEnd();
+      }
+
+    }
+
+    private static class isSdkProfileUsed_argsTupleSchemeFactory implements SchemeFactory {
+      public isSdkProfileUsed_argsTupleScheme getScheme() {
+        return new isSdkProfileUsed_argsTupleScheme();
+      }
+    }
+
+    private static class isSdkProfileUsed_argsTupleScheme extends TupleScheme<isSdkProfileUsed_args> {
+
+      @Override
+      public void write(org.apache.thrift.protocol.TProtocol prot, isSdkProfileUsed_args struct) throws org.apache.thrift.TException {
+        TTupleProtocol oprot = (TTupleProtocol) prot;
+        BitSet optionals = new BitSet();
+        if (struct.isSetSdkToken()) {
+          optionals.set(0);
+        }
+        oprot.writeBitSet(optionals, 1);
+        if (struct.isSetSdkToken()) {
+          oprot.writeString(struct.sdkToken);
+        }
+      }
+
+      @Override
+      public void read(org.apache.thrift.protocol.TProtocol prot, isSdkProfileUsed_args struct) throws org.apache.thrift.TException {
+        TTupleProtocol iprot = (TTupleProtocol) prot;
+        BitSet incoming = iprot.readBitSet(1);
+        if (incoming.get(0)) {
+          struct.sdkToken = iprot.readString();
+          struct.setSdkTokenIsSet(true);
+        }
+      }
+    }
+
+  }
+
+  public static class isSdkProfileUsed_result implements org.apache.thrift.TBase<isSdkProfileUsed_result, isSdkProfileUsed_result._Fields>, java.io.Serializable, Cloneable, Comparable<isSdkProfileUsed_result>   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("isSdkProfileUsed_result");
+
+    private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.BOOL, (short)0);
+    private static final org.apache.thrift.protocol.TField CONTROL_EXCEPTION_FIELD_DESC = new org.apache.thrift.protocol.TField("ControlException", org.apache.thrift.protocol.TType.STRUCT, (short)1);
+
+    private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+    static {
+      schemes.put(StandardScheme.class, new isSdkProfileUsed_resultStandardSchemeFactory());
+      schemes.put(TupleScheme.class, new isSdkProfileUsed_resultTupleSchemeFactory());
+    }
+
+    public boolean success; // required
+    public ControlThriftException ControlException; // required
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements org.apache.thrift.TFieldIdEnum {
+      SUCCESS((short)0, "success"),
+      CONTROL_EXCEPTION((short)1, "ControlException");
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          case 0: // SUCCESS
+            return SUCCESS;
+          case 1: // CONTROL_EXCEPTION
+            return CONTROL_EXCEPTION;
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+
+    // isset id assignments
+    private static final int __SUCCESS_ISSET_ID = 0;
+    private byte __isset_bitfield = 0;
+    public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+      tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.BOOL          , "boolean")));
+      tmpMap.put(_Fields.CONTROL_EXCEPTION, new org.apache.thrift.meta_data.FieldMetaData("ControlException", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT)));
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(isSdkProfileUsed_result.class, metaDataMap);
+    }
+
+    public isSdkProfileUsed_result() {
+    }
+
+    public isSdkProfileUsed_result(
+      boolean success,
+      ControlThriftException ControlException)
+    {
+      this();
+      this.success = success;
+      setSuccessIsSet(true);
+      this.ControlException = ControlException;
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public isSdkProfileUsed_result(isSdkProfileUsed_result other) {
+      __isset_bitfield = other.__isset_bitfield;
+      this.success = other.success;
+      if (other.isSetControlException()) {
+        this.ControlException = new ControlThriftException(other.ControlException);
+      }
+    }
+
+    public isSdkProfileUsed_result deepCopy() {
+      return new isSdkProfileUsed_result(this);
+    }
+
+    @Override
+    public void clear() {
+      setSuccessIsSet(false);
+      this.success = false;
+      this.ControlException = null;
+    }
+
+    public boolean isSuccess() {
+      return this.success;
+    }
+
+    public isSdkProfileUsed_result setSuccess(boolean success) {
+      this.success = success;
+      setSuccessIsSet(true);
+      return this;
+    }
+
+    public void unsetSuccess() {
+      __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __SUCCESS_ISSET_ID);
+    }
+
+    /** Returns true if field success is set (has been assigned a value) and false otherwise */
+    public boolean isSetSuccess() {
+      return EncodingUtils.testBit(__isset_bitfield, __SUCCESS_ISSET_ID);
+    }
+
+    public void setSuccessIsSet(boolean value) {
+      __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __SUCCESS_ISSET_ID, value);
+    }
+
+    public ControlThriftException getControlException() {
+      return this.ControlException;
+    }
+
+    public isSdkProfileUsed_result setControlException(ControlThriftException ControlException) {
+      this.ControlException = ControlException;
+      return this;
+    }
+
+    public void unsetControlException() {
+      this.ControlException = null;
+    }
+
+    /** Returns true if field ControlException is set (has been assigned a value) and false otherwise */
+    public boolean isSetControlException() {
+      return this.ControlException != null;
+    }
+
+    public void setControlExceptionIsSet(boolean value) {
+      if (!value) {
+        this.ControlException = null;
+      }
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      case SUCCESS:
+        if (value == null) {
+          unsetSuccess();
+        } else {
+          setSuccess((Boolean)value);
+        }
+        break;
+
+      case CONTROL_EXCEPTION:
+        if (value == null) {
+          unsetControlException();
+        } else {
+          setControlException((ControlThriftException)value);
+        }
+        break;
+
+      }
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      case SUCCESS:
+        return Boolean.valueOf(isSuccess());
+
+      case CONTROL_EXCEPTION:
+        return getControlException();
+
+      }
+      throw new IllegalStateException();
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      if (field == null) {
+        throw new IllegalArgumentException();
+      }
+
+      switch (field) {
+      case SUCCESS:
+        return isSetSuccess();
+      case CONTROL_EXCEPTION:
+        return isSetControlException();
+      }
+      throw new IllegalStateException();
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof isSdkProfileUsed_result)
+        return this.equals((isSdkProfileUsed_result)that);
+      return false;
+    }
+
+    public boolean equals(isSdkProfileUsed_result that) {
+      if (that == null)
+        return false;
+
+      boolean this_present_success = true;
+      boolean that_present_success = true;
+      if (this_present_success || that_present_success) {
+        if (!(this_present_success && that_present_success))
+          return false;
+        if (this.success != that.success)
+          return false;
+      }
+
+      boolean this_present_ControlException = true && this.isSetControlException();
+      boolean that_present_ControlException = true && that.isSetControlException();
+      if (this_present_ControlException || that_present_ControlException) {
+        if (!(this_present_ControlException && that_present_ControlException))
+          return false;
+        if (!this.ControlException.equals(that.ControlException))
+          return false;
+      }
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      HashCodeBuilder builder = new HashCodeBuilder();
+
+      boolean present_success = true;
+      builder.append(present_success);
+      if (present_success)
+        builder.append(success);
+
+      boolean present_ControlException = true && (isSetControlException());
+      builder.append(present_ControlException);
+      if (present_ControlException)
+        builder.append(ControlException);
+
+      return builder.toHashCode();
+    }
+
+    @Override
+    public int compareTo(isSdkProfileUsed_result other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+
+      lastComparison = Boolean.valueOf(isSetSuccess()).compareTo(other.isSetSuccess());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetSuccess()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.success, other.success);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      lastComparison = Boolean.valueOf(isSetControlException()).compareTo(other.isSetControlException());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetControlException()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.ControlException, other.ControlException);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      return 0;
+    }
+
+    public _Fields fieldForId(int fieldId) {
+      return _Fields.findByThriftId(fieldId);
+    }
+
+    public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+      schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
+    }
+
+    public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+      schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
+      }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("isSdkProfileUsed_result(");
+      boolean first = true;
+
+      sb.append("success:");
+      sb.append(this.success);
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("ControlException:");
+      if (this.ControlException == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.ControlException);
+      }
+      first = false;
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws org.apache.thrift.TException {
+      // check for required fields
+      // check for sub-struct validity
+    }
+
+    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+      try {
+        write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+      try {
+        // it doesn't seem like you should have to do this, but java serialization is wacky, and doesn't call the default constructor.
+        __isset_bitfield = 0;
+        read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private static class isSdkProfileUsed_resultStandardSchemeFactory implements SchemeFactory {
+      public isSdkProfileUsed_resultStandardScheme getScheme() {
+        return new isSdkProfileUsed_resultStandardScheme();
+      }
+    }
+
+    private static class isSdkProfileUsed_resultStandardScheme extends StandardScheme<isSdkProfileUsed_result> {
+
+      public void read(org.apache.thrift.protocol.TProtocol iprot, isSdkProfileUsed_result struct) throws org.apache.thrift.TException {
+        org.apache.thrift.protocol.TField schemeField;
+        iprot.readStructBegin();
+        while (true)
+        {
+          schemeField = iprot.readFieldBegin();
+          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
+            break;
+          }
+          switch (schemeField.id) {
+            case 0: // SUCCESS
+              if (schemeField.type == org.apache.thrift.protocol.TType.BOOL) {
+                struct.success = iprot.readBool();
+                struct.setSuccessIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
+            case 1: // CONTROL_EXCEPTION
+              if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
+                struct.ControlException = new ControlThriftException();
+                struct.ControlException.read(iprot);
+                struct.setControlExceptionIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
+            default:
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+          }
+          iprot.readFieldEnd();
+        }
+        iprot.readStructEnd();
+
+        // check for required fields of primitive type, which can't be checked in the validate method
+        struct.validate();
+      }
+
+      public void write(org.apache.thrift.protocol.TProtocol oprot, isSdkProfileUsed_result struct) throws org.apache.thrift.TException {
+        struct.validate();
+
+        oprot.writeStructBegin(STRUCT_DESC);
+        if (struct.isSetSuccess()) {
+          oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
+          oprot.writeBool(struct.success);
+          oprot.writeFieldEnd();
+        }
+        if (struct.ControlException != null) {
+          oprot.writeFieldBegin(CONTROL_EXCEPTION_FIELD_DESC);
+          struct.ControlException.write(oprot);
+          oprot.writeFieldEnd();
+        }
+        oprot.writeFieldStop();
+        oprot.writeStructEnd();
+      }
+
+    }
+
+    private static class isSdkProfileUsed_resultTupleSchemeFactory implements SchemeFactory {
+      public isSdkProfileUsed_resultTupleScheme getScheme() {
+        return new isSdkProfileUsed_resultTupleScheme();
+      }
+    }
+
+    private static class isSdkProfileUsed_resultTupleScheme extends TupleScheme<isSdkProfileUsed_result> {
+
+      @Override
+      public void write(org.apache.thrift.protocol.TProtocol prot, isSdkProfileUsed_result struct) throws org.apache.thrift.TException {
+        TTupleProtocol oprot = (TTupleProtocol) prot;
+        BitSet optionals = new BitSet();
+        if (struct.isSetSuccess()) {
+          optionals.set(0);
+        }
+        if (struct.isSetControlException()) {
+          optionals.set(1);
+        }
+        oprot.writeBitSet(optionals, 2);
+        if (struct.isSetSuccess()) {
+          oprot.writeBool(struct.success);
+        }
+        if (struct.isSetControlException()) {
+          struct.ControlException.write(oprot);
+        }
+      }
+
+      @Override
+      public void read(org.apache.thrift.protocol.TProtocol prot, isSdkProfileUsed_result struct) throws org.apache.thrift.TException {
+        TTupleProtocol iprot = (TTupleProtocol) prot;
+        BitSet incoming = iprot.readBitSet(2);
+        if (incoming.get(0)) {
+          struct.success = iprot.readBool();
           struct.setSuccessIsSet(true);
         }
         if (incoming.get(1)) {

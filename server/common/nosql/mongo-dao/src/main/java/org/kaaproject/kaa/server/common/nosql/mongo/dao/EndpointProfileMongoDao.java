@@ -18,6 +18,7 @@ package org.kaaproject.kaa.server.common.nosql.mongo.dao;
 
 
 import com.mongodb.DBObject;
+
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoEndpointProfile;
@@ -32,6 +33,7 @@ import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelC
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_ACCESS_TOKEN;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_APPLICATION_ID;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_ENDPOINT_KEY_HASH;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SDK_TOKEN;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_USER_ID;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
@@ -111,5 +113,17 @@ public class EndpointProfileMongoDao extends AbstractMongoDao<MongoEndpointProfi
     @Override
     public MongoEndpointProfile save(EndpointProfileDto dto) {
         return save(new MongoEndpointProfile(dto));
+    }
+
+    @Override
+    public List<MongoEndpointProfile> findBySdkToken(String sdkToken) {
+        LOG.debug("Searching for endpoint profiles by SDK token {} ", sdkToken);
+        return find(query(where(EP_SDK_TOKEN).is(sdkToken)));
+    }
+
+    @Override
+    public boolean checkSdkToken(String sdkToken) {
+        LOG.debug("Checking for endpoint profiles with SDK token {}", sdkToken);
+        return findOne(query(where(EP_SDK_TOKEN).is(sdkToken))) != null;
     }
 }

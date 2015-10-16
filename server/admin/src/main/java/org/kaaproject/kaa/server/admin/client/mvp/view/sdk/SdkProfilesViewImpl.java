@@ -22,11 +22,9 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseListViewImpl;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 /**
- *
  * @author Bohdan Khablenko
  *
  * @since v0.8.0
- *
  */
 public class SdkProfilesViewImpl extends BaseListViewImpl<SdkPropertiesDto> {
 

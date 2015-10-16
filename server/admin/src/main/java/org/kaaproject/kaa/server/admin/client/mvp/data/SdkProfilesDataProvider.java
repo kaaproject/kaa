@@ -28,11 +28,9 @@ import org.kaaproject.kaa.server.admin.shared.util.Utils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
- *
  * @author Bohdan Khablenko
  *
- * @since 0.8.0
- *
+ * @since v0.8.0
  */
 public class SdkProfilesDataProvider extends AbstractDataProvider<SdkPropertiesDto> {
 

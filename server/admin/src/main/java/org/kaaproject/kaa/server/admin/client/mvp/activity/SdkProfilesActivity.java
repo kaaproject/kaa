@@ -37,11 +37,9 @@ import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
- *
  * @author Bohdan Khablenko
  *
  * @since v0.8.0
- *
  */
 public class SdkProfilesActivity extends AbstractListActivity<SdkPropertiesDto, SdkProfilesPlace> {
 
@@ -73,8 +71,44 @@ public class SdkProfilesActivity extends AbstractListActivity<SdkPropertiesDto, 
     }
 
     @Override
-    protected void deleteEntity(String id, AsyncCallback<Void> callback) {
-        KaaAdmin.getDataSource().deleteSdkProfile(id, callback);
+    protected void deleteEntity(final String id, final AsyncCallback<Void> callback) {
+        SdkProfilesActivity.this.getView().clearError();
+
+        BusyPopup.showPopup();
+        KaaAdmin.getDataSource().getSdkProfile(id, new AsyncCallback<SdkPropertiesDto>() {
+
+            @Override
+            public void onFailure(Throwable cause) {
+                BusyPopup.hidePopup();
+                Utils.handleException(cause, SdkProfilesActivity.this.getView());
+            }
+
+            @Override
+            public void onSuccess(final SdkPropertiesDto profile) {
+
+                KaaAdmin.getDataSource().checkSdkProfileUsage(profile.getToken(), new AsyncCallback<Boolean>() {
+
+                    @Override
+                    public void onFailure(Throwable cause) {
+                        BusyPopup.hidePopup();
+                        Utils.handleException(cause, SdkProfilesActivity.this.getView());
+                    }
+
+                    @Override
+                    public void onSuccess(Boolean used) {
+                        BusyPopup.hidePopup();
+                        if (!used) {
+                            KaaAdmin.getDataSource().deleteSdkProfile(id, callback);
+                        } else {
+                            String message = "Unable to delete \'%s\' (%s): SDK profile is in use.";
+//                            message = String.format(message, profile.getName(), profile.getToken());
+                            Exception cause = new IllegalArgumentException(message);
+                            Utils.handleException(cause, SdkProfilesActivity.this.getView());
+                        }
+                    }
+                });
+            }
+        });
     }
 
     @Override

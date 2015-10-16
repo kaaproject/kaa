@@ -71,7 +71,7 @@ public class DefaultProfileService implements ProfileService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.kaaproject.kaa.server.operations.service.profile.ProfileService#
      * getProfile (org.kaaproject.kaa.common.hash.EndpointObjectHash)
      */
@@ -88,7 +88,7 @@ public class DefaultProfileService implements ProfileService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.kaaproject.kaa.server.operations.service.profile.ProfileService#
      * registerProfile
      * (org.kaaproject.kaa.server.operations.pojo.RegisterProfileRequest)
@@ -111,6 +111,7 @@ public class DefaultProfileService implements ProfileService {
         EndpointProfileDto dto = endpointService.findEndpointProfileByKeyHash(keyHash.getData());
         if (dto == null) {
             dto = new EndpointProfileDto();
+            dto.setSdkToken(sdkProperties.getToken());
             dto.setApplicationId(appSeqNumber.getAppId());
             dto.setEndpointKey(request.getEndpointKey());
             dto.setEndpointKeyHash(keyHash.getData());
@@ -143,7 +144,7 @@ public class DefaultProfileService implements ProfileService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.kaaproject.kaa.server.operations.service.profile.ProfileService#
      * updateProfile
      * (org.kaaproject.kaa.server.operations.pojo.UpdateProfileRequest)

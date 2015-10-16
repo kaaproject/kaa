@@ -24,6 +24,7 @@ import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
@@ -1214,6 +1215,14 @@ public class DataSource {
         });
     }
 
+    public void checkSdkProfileUsage(String sdkToken, final AsyncCallback<Boolean> callback) {
+        rpcService.checkSdkProfileUsage(sdkToken, new DataCallback<Boolean>(callback) {
+            @Override
+            protected void onResult(Boolean result) {
+            }
+        });
+    }
+
     public void getSdkProfile(String sdkProfileId, final AsyncCallback<SdkPropertiesDto> callback) {
         rpcService.getSdkProfile(sdkProfileId, new DataCallback<SdkPropertiesDto>(callback) {
             @Override
@@ -1226,14 +1235,6 @@ public class DataSource {
         rpcService.getSdkProfilesByApplicationId(applicationId, new DataCallback<List<SdkPropertiesDto>>(callback) {
             @Override
             protected void onResult(List<SdkPropertiesDto> result) {
-            }
-        });
-    }
-
-    public void retrieveSdk(String sdkProfileId, final AsyncCallback<String> callback) {
-        rpcService.retrieveSdk(sdkProfileId, new DataCallback<String>(callback) {
-            @Override
-            protected void onResult(String result) {
             }
         });
     }

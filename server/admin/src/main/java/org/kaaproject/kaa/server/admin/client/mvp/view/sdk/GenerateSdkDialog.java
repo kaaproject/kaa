@@ -32,11 +32,9 @@ import com.google.gwt.user.client.ui.ValueListBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 /**
- *
  * @author Bohdan Khablenko
  *
  * @since v0.8.0
- *
  */
 public class GenerateSdkDialog extends AvroUiDialog {
 

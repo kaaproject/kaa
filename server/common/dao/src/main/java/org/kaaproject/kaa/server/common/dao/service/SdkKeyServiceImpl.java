@@ -23,7 +23,9 @@ import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
 import org.kaaproject.kaa.server.common.dao.SdkKeyService;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
 import org.kaaproject.kaa.server.common.dao.impl.DaoUtil;
+import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
 import org.kaaproject.kaa.server.common.dao.impl.SdkKeyDao;
+import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
 import org.kaaproject.kaa.server.common.dao.model.sql.SdkKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +41,9 @@ public class SdkKeyServiceImpl implements SdkKeyService {
 
     @Autowired
     private SdkKeyDao<SdkKey> sdkKeyDao;
+
+    @Autowired
+    private EndpointProfileDao<EndpointProfile> endpointProfileDao;
 
     @Override
     public SdkPropertiesDto saveSdkKey(SdkPropertiesDto sdkPropertiesDto) {
@@ -100,5 +105,10 @@ public class SdkKeyServiceImpl implements SdkKeyService {
         Validator.validateId(id, "Unable to remove SDK profile. Invalid SDK profile ID: " + id);
         sdkKeyDao.removeById(id);
         LOG.debug("Removed SDK profile [{}]", id);
+    }
+
+    @Override
+    public boolean isSdkProfileUsed(String token) {
+        return endpointProfileDao.checkSdkToken(token);
     }
 }

@@ -50,6 +50,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.kaaproject.kaa.common.dto.DtoByteMarshaller;
+import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 //import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
 
@@ -148,9 +149,14 @@ public final class SdkKey extends GenericModel<SdkPropertiesDto> implements Seri
                 dto.setCreatedTime(null);
                 dto.setEndpointCount(null);
 
+                SdkPlatform targetPlatform = dto.getTargetPlatform();
+                dto.setTargetPlatform(null);
+
                 MessageDigest messageDigest = MessageDigest.getInstance(HASH_ALGORITHM);
                 messageDigest.update(DtoByteMarshaller.toBytes(dto));
                 this.token = Base64.encodeBase64String(messageDigest.digest());
+
+                dto.setTargetPlatform(targetPlatform);
 
                 dto.setId(this.getStringId());
                 dto.setCreatedUsername(this.createdUsername);

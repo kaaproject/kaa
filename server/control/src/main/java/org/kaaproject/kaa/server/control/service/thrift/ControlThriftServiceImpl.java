@@ -1029,7 +1029,13 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
             sdkPropertiesDto.setApplicationToken(appToken);
 //            sdkPropertiesDto = sdkKeyService.saveSdkKey(sdkPropertiesDto);
-            String sdkToken = new SdkKey(sdkPropertiesDto).getToken();
+//            String sdkToken = new SdkKey(sdkPropertiesDto).getToken();
+            String sdkToken = null;
+            if (sdkPropertiesDto.getToken() != null) {
+                sdkToken = sdkPropertiesDto.getToken();
+            } else {
+                throw new TException("Undefined SDK token");
+            }
             LOG.debug("Sdk properties for sdk generation: {}", sdkPropertiesDto);
 
             SdkGenerator generator = SdkGeneratorFactory.createSdkGenerator(sdkPropertiesDto.getTargetPlatform());
@@ -1995,6 +2001,16 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
             return ThriftDtoConverter.toDataStructList(sdkKeyService.findSdkKeysByApplicationId(applicationId));
         } catch (Exception cause) {
             LOG.error("Unable to get SDK profiles", cause);
+            throw new TException(cause);
+        }
+    }
+
+    @Override
+    public boolean isSdkProfileUsed(String sdkToken) throws ControlThriftException, TException {
+        try {
+            return sdkKeyService.isSdkProfileUsed(sdkToken);
+        } catch (Exception cause) {
+            LOG.error("Unable to check SDK profile usage", cause);
             throw new TException(cause);
         }
     }

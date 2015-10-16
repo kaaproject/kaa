@@ -44,6 +44,7 @@ import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
@@ -547,6 +548,19 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
+    public boolean checkSdkProfileUsage(String sdkToken) throws KaaAdminServiceException {
+        this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            if (isEmpty(sdkToken)) {
+                throw new IllegalArgumentException("SDK token is empty!");
+            }
+            return clientProvider.getClient().isSdkProfileUsed(sdkToken);
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
+
+    @Override
     public SdkPropertiesDto getSdkProfile(String sdkProfileId) throws KaaAdminServiceException {
         this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
@@ -575,16 +589,6 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         try {
             doGenerateSdk(key);
             return Base64.encodeObject(key, Base64.URL_SAFE);
-        } catch (Exception e) {
-            throw Utils.handleException(e);
-        }
-    }
-
-    @Override
-    public String retrieveSdk(String sdkProfileId) throws KaaAdminServiceException {
-        try {
-            SdkPropertiesDto key = ThriftDtoConverter.toDto(clientProvider.getClient().getSdkProfile(sdkProfileId));
-            return this.generateSdk(key);
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
@@ -2444,5 +2448,6 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throw Utils.handleException(e);
         }
     }
+
 
 }

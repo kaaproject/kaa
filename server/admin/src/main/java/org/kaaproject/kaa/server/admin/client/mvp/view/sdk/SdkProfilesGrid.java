@@ -34,11 +34,9 @@ import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.user.cellview.client.SafeHtmlHeader;
 
 /**
- *
  * @author Bohdan Khablenko
  *
  * @since v0.8.0
- *
  */
 public class SdkProfilesGrid extends AbstractKaaGrid<SdkPropertiesDto, String> {
 
