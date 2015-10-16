@@ -22,6 +22,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import org.kaaproject.avro.ui.gwt.client.widget.BusyPopup;
 import org.kaaproject.avro.ui.shared.RecordField;
+import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileViewDto;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
@@ -32,6 +33,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EndpointProfilePlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointProfileView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class EndpointProfileActivity extends
@@ -77,41 +79,37 @@ public class EndpointProfileActivity extends
         EndpointUserDto userDto = entity.getEndpointUserDto();
         ProfileSchemaDto profileSchemaDto = entity.getProfileSchemaDto();
 
-        detailsView.getKeyHash()             .setValue(BaseEncoding.base64().encode(profileDto.getEndpointKeyHash()));
+        detailsView.getKeyHash().setValue(BaseEncoding.base64().encode(profileDto.getEndpointKeyHash()));
 
         if (userDto != null) {
-            detailsView.getUserID()              .setValue(userDto.getId());
-            detailsView.getUserName()            .setValue(userDto.getUsername());
-            detailsView.getUserExternalID()      .setValue(userDto.getExternalId());
+            detailsView.getUserID()        .setValue(userDto.getId());
+            detailsView.getUserName()      .setValue(userDto.getUsername());
+            detailsView.getUserExternalID().setValue(userDto.getExternalId());
         } else {
-            detailsView.getUserID()        .setValue("");
-            detailsView.getUserName()      .setValue("");
-            detailsView.getUserExternalID().setValue("");
+            detailsView.getUserInfoTable().setVisible(false);
         }
 
-        detailsView.getNotificationVersion() .setValue(profileDto.getNotificationVersion() + "");
-        detailsView.getSystemNfVersion()     .setValue(profileDto.getSystemNfVersion() + "");
-        detailsView.getUserNfVersion()       .setValue(profileDto.getUserNfVersion() + "");
-        detailsView.getLogSchemaVer()        .setValue(profileDto.getLogSchemaVersion() + "");
+        detailsView.getNotificationVersion().setValue(profileDto.getNotificationVersion() + "");
+        detailsView.getSystemNfVersion()    .setValue(profileDto.getSystemNfVersion() + "");
+        detailsView.getUserNfVersion()      .setValue(profileDto.getUserNfVersion() + "");
+        detailsView.getLogSchemaVer()       .setValue(profileDto.getLogSchemaVersion() + "");
 
-
-        detailsView.getGroupsGrid().getDataGrid().setRowData(entity.getGroupDtoList());
+        List<EndpointGroupDto> groupDtoList = entity.getGroupDtoList();
+        if (groupDtoList != null) {
+            detailsView.getGroupsGrid().getDataGrid().setRowData(groupDtoList);
+        }
 
         List<TopicDto> endpointNotificationTopics = entity.getEndpointNotificationTopics();
         if (endpointNotificationTopics != null) {
             detailsView.getTopicsGrid().getDataGrid().setRowData(endpointNotificationTopics);
-        }
+        } else detailsView.getTopicsGrid().getDataGrid().setRowData(new ArrayList<TopicDto>());
 
         detailsView.getSchemaName() .setValue(profileSchemaDto.getName());
         detailsView.getDescription().setValue(profileSchemaDto.getDescription());
-//        if (profileSchemaDto.getSchemaForm() != null) {
-////            detailsView.getSchemaForm().setValue(profileSchemaDto.getSchemaForm());
-//            detailsView.getSchemaForm().setValue(entity.getEndpointProfileRecord());
-//        }
+
         RecordField endpointProfileRecord = entity.getEndpointProfileRecord();
         if (endpointProfileRecord != null) {
             detailsView.getSchemaForm().setValue(endpointProfileRecord);
-//            detailsView.getSchemaForm().setValue(profileSchemaDto.getSchemaForm(), true);
         }
     }
 

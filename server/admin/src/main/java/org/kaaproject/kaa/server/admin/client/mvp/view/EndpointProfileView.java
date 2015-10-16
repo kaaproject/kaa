@@ -16,11 +16,12 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view;
 
-import org.kaaproject.avro.ui.gwt.client.widget.RecordFieldWidget;
+import com.google.gwt.user.client.ui.FlexTable;
 import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.topic.TopicGrid;
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.RecordPanel;
 
 public interface EndpointProfileView extends BaseDetailsView {
 
@@ -38,8 +39,9 @@ public interface EndpointProfileView extends BaseDetailsView {
     SizedTextBox getSchemaName();
     SizedTextBox getDescription();
 
+    FlexTable getUserInfoTable();
+
     TopicGrid getTopicsGrid();
     AbstractGrid<EndpointGroupDto, String> getGroupsGrid();
-    RecordFieldWidget getSchemaForm();
-//    RecordPanel getSchemaForm();
+    RecordPanel getSchemaForm();
 }

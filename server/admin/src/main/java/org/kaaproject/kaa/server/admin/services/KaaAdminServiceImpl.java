@@ -185,36 +185,42 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
-    public EndpointProfileViewDto getEndpointProfileViewDtoByEndpointProfileKeyHash(String endpointProfileKeyHash) throws KaaAdminServiceException {
+    public EndpointProfileViewDto getEndpointProfileViewDtoByEndpointProfileKeyHash(String endpointProfileKeyHash)
+            throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
             EndpointProfileViewDto viewDto = new EndpointProfileViewDto();
-            EndpointProfileDto endpointProfileDto = getEndpointProfileByKeyHash(endpointProfileKeyHash);
 
+            /*    Getting endpoint profile    */
+            EndpointProfileDto endpointProfileDto = getEndpointProfileByKeyHash(endpointProfileKeyHash);  //TODO: move to thrift server
             viewDto.setEndpointProfileDto(endpointProfileDto);
 
-            String applicationId = endpointProfileDto.getApplicationId();
-
+            /*    Getting endpoint user    */
+            String applicationId = endpointProfileDto.getApplicationId();  //TODO: move to thrift server
             ApplicationDto applicationDto = getApplication(applicationId);
-            /*
-                externalId == null if endpoint doesn't attached to any user
-             */
             String tenantId = applicationDto.getTenantId();
             String externalId = endpointProfileDto.getEndpointUserId();
             EndpointUserDto userDto = null;
             if (externalId != null) {
-                userDto = toGenericDto(clientProvider.getClient().findEndpointUserByExternalIdAndTenantId(externalId, tenantId));
+                userDto = toGenericDto(clientProvider  //TODO: move to thrift server
+                        .getClient().findEndpointUserByExternalIdAndTenantId(externalId, tenantId));
             }
             viewDto.setEndpointUserDto(userDto);
 
+            /*    Getting endpoint profile RecordForm    */
             int profileVersion = endpointProfileDto.getProfileVersion();
-
-            ProfileSchemaDto schemaDto = toGenericDto(clientProvider.getClient().findProfileSchemaByAppIdAndVersion(applicationId, profileVersion));
+            ProfileSchemaDto schemaDto = toGenericDto(clientProvider.getClient()
+                    .findProfileSchemaByAppIdAndVersion(applicationId, profileVersion));
+            if (schemaDto != null) {
+                convertToSchemaForm(schemaDto, simpleSchemaFormAvroConverter);  //TODO: move to thrift server
+                /* check for empty schemas*/
+                viewDto.setEndpointProfileRecord(
+                        generateFormDataFromJson(schemaDto.getSchema(), endpointProfileDto.getProfile()));
+            }
             viewDto.setProfileSchemaDto(schemaDto);
 
-            convertToSchemaForm(schemaDto, simpleSchemaFormAvroConverter);
-
-            //TODO: check everything
+            /*    Getting endpoint groups    */
+            //TODO: check - maybe checking Nf and Cf is redundant
             Set<EndpointGroupDto> endpointGroups = new HashSet<>();
             List<EndpointGroupStateDto> groupStateList = endpointProfileDto.getCfGroupStates();
             if (groupStateList != null && !groupStateList.isEmpty()) {
@@ -228,17 +234,21 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
                     endpointGroups.add(getEndpointGroup(dto.getEndpointGroupId()));
                 }
             }
-
             List<EndpointGroupDto> groupDtoList = new ArrayList<>();
             groupDtoList.addAll(endpointGroups);
             viewDto.setGroupDtoList(groupDtoList);
 
-            /*
-                TODO: null checks!!!
-             */
-            viewDto.setEndpointProfileRecord(generateFormDataFromJson(schemaDto.getSchema(), endpointProfileDto.getProfile()));
-            List<TopicDto> topicsByApplicationId = getTopicsByApplicationId(applicationId);
-            viewDto.setEndpointNotificationTopics(topicsByApplicationId);
+            /*    Getting notification topics    */
+            List<TopicDto> topicsByApplicationId = getTopicsByApplicationId(applicationId);  //TODO: move to thrift server
+            List<String> endpointTopicsIDs = endpointProfileDto.getSubscriptions();
+            List<TopicDto> endpointTopics = null;
+            if (topicsByApplicationId != null && endpointTopicsIDs != null) {
+                endpointTopics = new ArrayList<>();
+                for (TopicDto topicDto : topicsByApplicationId) {
+                    if (endpointTopicsIDs.contains(topicDto.getId())) endpointTopics.add(topicDto);
+                }
+                viewDto.setEndpointNotificationTopics(endpointTopics);
+            }
 
             return viewDto;
         } catch (Exception e) {
