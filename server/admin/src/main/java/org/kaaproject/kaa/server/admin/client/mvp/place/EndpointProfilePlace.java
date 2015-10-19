@@ -18,6 +18,7 @@ package org.kaaproject.kaa.server.admin.client.mvp.place;
 
 import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
+import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 public class EndpointProfilePlace extends EndpointProfilesPlace {
 
@@ -37,7 +38,7 @@ public class EndpointProfilePlace extends EndpointProfilesPlace {
 
     @Override
     public String getName() {
-        return "Endpoint profile";
+        return Utils.constants.endpointProfile();
     }
 
     public String getEndpointKeyHash() {

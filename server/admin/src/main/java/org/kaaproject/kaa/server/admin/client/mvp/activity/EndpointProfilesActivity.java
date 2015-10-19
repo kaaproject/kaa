@@ -50,17 +50,14 @@ import java.util.List;
 
 public class EndpointProfilesActivity extends AbstractActivity implements BaseListView.Presenter {
 
-    private String applicationId;
-
     protected final ClientFactory clientFactory;
-
-    private List<HandlerRegistration> registrations = new ArrayList<>();
-
     private EndpointProfilesView listView;
     private EndpointProfilesPlace place;
-
-    public AbstractEndpointProfileDataProvider dataProvider;
+    private String applicationId;
     private boolean gridLoaded;
+
+    private AbstractEndpointProfileDataProvider dataProvider;
+    private List<HandlerRegistration> registrations = new ArrayList<>();
 
     public EndpointProfilesActivity(EndpointProfilesPlace place, ClientFactory clientFactory) {
         this.place = place;
@@ -123,7 +120,7 @@ public class EndpointProfilesActivity extends AbstractActivity implements BaseLi
             public void onValueChange(ValueChangeEvent<EndpointGroupDto> valueChangeEvent) {
                 dataProvider.setNewGroup(valueChangeEvent.getValue().getId());
                 listView.getListWidget().getDataGrid().setVisibleRange(0,
-                        Integer.valueOf(EndpointProfileDataProvider.DEF_LIMIT));
+                        Integer.valueOf(EndpointProfileDataProvider.DEFAULT_LIMIT));
                 dataProvider.reload();
             }
         }));
@@ -194,10 +191,10 @@ public class EndpointProfilesActivity extends AbstractActivity implements BaseLi
 
     private class EndpointProfileDataProvider extends AbstractEndpointProfileDataProvider {
 
-        public static final String DEF_LIMIT = "11";
-        public static final String DEF_OFFSET = "0";
-        private String limit = DEF_LIMIT;
-        private String offset = DEF_OFFSET;
+        public static final String DEFAULT_LIMIT = "11";
+        public static final String DEFAULT_OFFSET = "0";
+        private String limit = DEFAULT_LIMIT;
+        private String offset = DEFAULT_OFFSET;
         private String groupID;
         private List<EndpointProfileDto> endpointProfilesList;
         private int previousStart = -1;
@@ -257,8 +254,8 @@ public class EndpointProfilesActivity extends AbstractActivity implements BaseLi
         private void reset() {
             endpointProfilesList.clear();
             previousStart = -1;
-            limit = DEF_LIMIT;
-            offset = DEF_OFFSET;
+            limit = DEFAULT_LIMIT;
+            offset = DEFAULT_OFFSET;
         }
     }
 }

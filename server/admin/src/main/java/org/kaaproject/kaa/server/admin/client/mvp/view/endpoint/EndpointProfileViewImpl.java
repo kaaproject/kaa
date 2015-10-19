@@ -16,7 +16,6 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.endpoint;
 
-import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.client.ui.CaptionPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
@@ -24,7 +23,6 @@ import org.kaaproject.avro.ui.gwt.client.widget.AvroWidgetsConfig;
 import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
-import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointProfileView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.topic.TopicGrid;
@@ -61,26 +59,26 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
 
     @Override
     protected String getCreateTitle() {
-        return "Endpoint Profile";
+        return Utils.constants.endpointProfile();
     }
 
     @Override
     protected String getViewTitle() {
-        return "Endpoint Profile";
+        return Utils.constants.endpointProfile();
     }
 
     @Override
     protected String getSubTitle() {
-        return "Endpoint Profile";
+        return Utils.constants.endpointProfile();
     }
 
     @Override
     protected void initDetailsTable() {
-        saveButton.setVisible(false);
-        cancelButton.setVisible(false);
+        saveButton.removeFromParent();
+        cancelButton.removeFromParent();
         requiredFieldsNoteLabel.setVisible(false);
 
-        Label keyHashLabel = new Label("Endpoint key hash");
+        Label keyHashLabel = new Label(Utils.constants.endpointKeyHash());
         endpointKeyHash = new KaaAdminSizedTextBox(-1, false);
         endpointKeyHash.setWidth("100%");
         detailsTable.setWidget(0, 0, keyHashLabel);
@@ -88,100 +86,93 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
 
         userInfoTable = new FlexTable();
 
-        Label userIDLabel = new Label("User id");
+        Label userIDLabel = new Label(Utils.constants.userId());
         userID = new KaaAdminSizedTextBox(-1, false);
         userID.setWidth("100%");
         userInfoTable.setWidget(0, 0, userIDLabel);
         userInfoTable.setWidget(0, 1, userID);
 
-        Label userNameLabel = new Label("User name");
+        Label userNameLabel = new Label(Utils.constants.userName());
         userName = new KaaAdminSizedTextBox(-1, false);
         userName.setWidth("100%");
         userInfoTable.setWidget(1, 0, userNameLabel);
         userInfoTable.setWidget(1, 1, userName);
 
-        Label userExternalIDLabel = new Label("User external ID");
+        Label userExternalIDLabel = new Label(Utils.constants.userExternalId());
         userExternalID = new KaaAdminSizedTextBox(-1, false);
         userExternalID.setWidth("100%");
         userInfoTable.setWidget(2, 0, userExternalIDLabel);
         userInfoTable.setWidget(2, 1, userExternalID);
         detailsTable.setWidget(1, 0, userInfoTable);
 
-        Label notificationVersionLabel = new Label("Notification version");
+        Label notificationVersionLabel = new Label(Utils.constants.notificationSchemaVersion());
         notificationVersion = new KaaAdminSizedTextBox(-1, false);
         notificationVersion.setWidth("100%");
-        detailsTable.setWidget(4, 0, notificationVersionLabel);
-        detailsTable.setWidget(4, 1, notificationVersion);
+        detailsTable.setWidget(2, 0, notificationVersionLabel);
+        detailsTable.setWidget(2, 1, notificationVersion);
 
-        Label systemNfVersionLabel = new Label("System notification version");
+        Label systemNfVersionLabel = new Label(Utils.constants.systemNotificationVersion());
         systemNfVersion = new KaaAdminSizedTextBox(-1, false);
         systemNfVersion.setWidth("100%");
-        detailsTable.setWidget(5, 0, systemNfVersionLabel);
-        detailsTable.setWidget(5, 1, systemNfVersion);
+        detailsTable.setWidget(3, 0, systemNfVersionLabel);
+        detailsTable.setWidget(3, 1, systemNfVersion);
 
-        Label userNfVersionLabel = new Label("User notification Version");
+        Label userNfVersionLabel = new Label(Utils.constants.userNotificationVersion());
         userNfVersion = new KaaAdminSizedTextBox(-1, false);
         userNfVersion.setWidth("100%");
-        detailsTable.setWidget(6, 0, userNfVersionLabel);
-        detailsTable.setWidget(6, 1, userNfVersion);
+        detailsTable.setWidget(4, 0, userNfVersionLabel);
+        detailsTable.setWidget(4, 1, userNfVersion);
 
-        Label logSchemaVersionLabel = new Label("LogSchema version");
+        Label logSchemaVersionLabel = new Label(Utils.constants.logSchemaVersion());
         logSchemaVersion = new KaaAdminSizedTextBox(-1, false);
         logSchemaVersion.setWidth("100%");
-        detailsTable.setWidget(7, 0, logSchemaVersionLabel);
-        detailsTable.setWidget(7, 1, logSchemaVersion);
+        detailsTable.setWidget(5, 0, logSchemaVersionLabel);
+        detailsTable.setWidget(5, 1, logSchemaVersion);
 
-        CaptionPanel formPanel = new CaptionPanel("Profile Record");
+        CaptionPanel formPanel = new CaptionPanel(Utils.constants.profileSchema());
         FlexTable recordTable = new FlexTable();
 
-        Label schemaNameLabel = new Label("Schema name");
+        Label schemaNameLabel = new Label(Utils.constants.schemaName());
         schemaName = new KaaAdminSizedTextBox(-1, false);
         schemaName.setWidth("100%");
-        recordTable.setWidget(1, 0, schemaNameLabel);
-        recordTable.setWidget(1, 1, schemaName);
+        recordTable.setWidget(0, 0, schemaNameLabel);
+        recordTable.setWidget(0, 1, schemaName);
 
-        Label descriptionLabel = new Label("Schema description");
+        Label descriptionLabel = new Label(Utils.constants.schemaDescription());
         description = new KaaAdminSizedTextBox(-1, false);
         description.setWidth("100%");
-        recordTable.setWidget(2, 0, descriptionLabel);
-        recordTable.setWidget(2, 1, description);
+        recordTable.setWidget(1, 0, descriptionLabel);
+        recordTable.setWidget(1, 1, description);
 
         schemaForm = new RecordPanel(new AvroWidgetsConfig.Builder().
                 recordPanelWidth(700).createConfig(),
                 Utils.constants.schema(), this, false, true);
-        recordTable.setWidget(3, 0, schemaForm);
-        recordTable.getFlexCellFormatter().setColSpan(3, 0, 3);
+        recordTable.setWidget(2, 0, schemaForm);
+        recordTable.getFlexCellFormatter().setColSpan(2, 0, 3);
 
         formPanel.add(recordTable);
-        detailsTable.setWidget(8, 0, formPanel);
+        detailsTable.setWidget(6, 0, formPanel);
+        detailsTable.getFlexCellFormatter().setColSpan(6, 0, 3);
+        formPanel.getElement().getParentElement().getStyle().setPropertyPx("paddingBottom", 10);
+
+        groupsGrid = new EndpointGroupGrid(true);
+        groupsGrid.setSize("700px", "200px");
+        Label groupsLabel = new Label(Utils.constants.endpointGroups());
+        detailsTable.setWidget(7, 0, groupsLabel);
+        groupsLabel.getElement().getParentElement().getStyle().setPropertyPx("paddingBottom", 10);
+        detailsTable.setWidget(8, 0, groupsGrid);
+        groupsGrid.getElement().getParentElement().getStyle().setPropertyPx("paddingBottom", 10);
         detailsTable.getFlexCellFormatter().setColSpan(8, 0, 3);
 
-        groupsGrid = new EndpointGroupGrid(true) {
-
-            @Override
-            protected float constructActions(DataGrid<EndpointGroupDto> table, float prefWidth) {
-                return 0F;
-            }
-        };
-        groupsGrid.setSize("700px", "200px");
-        Label groupsLabel = new Label("Endpoint groups");
-        detailsTable.setWidget(12, 0, groupsLabel);
-        detailsTable.setWidget(13, 0, groupsGrid);
-        detailsTable.getFlexCellFormatter().setColSpan(13, 0, 3);
-
-        topicsGrid = new TopicGrid(true) {
-            /*    overriding this method to avoid modification side effects    */
-            @Override
-            protected float constructActions(DataGrid<TopicDto> table, float prefWidth) {
-                return 0F;
-            }
-        };
+        topicsGrid = new TopicGrid(false, true);
         topicsGrid.setSize("700px", "200px");
         Label topicLabel = new Label(Utils.constants.notificationTopics());
         topicLabel.addStyleName(Utils.kaaAdminStyle.bAppContentTitleLabel());
-        detailsTable.setWidget(14, 0, topicLabel);
-        detailsTable.setWidget(15, 0, topicsGrid);
-        detailsTable.getFlexCellFormatter().setColSpan(15, 0, 3);
+        detailsTable.setWidget(9, 0, topicLabel);
+        topicLabel.getElement().getParentElement().getStyle().setPropertyPx("paddingBottom", 10);
+        detailsTable.setWidget(10, 0, topicsGrid);
+        detailsTable.getFlexCellFormatter().setColSpan(10, 0, 3);
+        topicsGrid.getElement().getParentElement().getStyle().setPropertyPx("paddingBottom", 10);
     }
 
     protected AbstractGrid<EndpointGroupDto, String> createGrid() {
@@ -190,22 +181,23 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
 
     @Override
     protected void resetImpl() {
-//        endpointKeyHash.setValue("");
-//        notificationVersion.setValue("");
-//        systemNfVersion.setValue("");
-//        userNfVersion.setValue("");
-//        logSchemaVersion.setValue("");
-//
-//        userID.setValue("");
-//        userName.setValue("");
-//        userExternalID.setValue("");
+        endpointKeyHash.setValue("");
+        notificationVersion.setValue("");
+        systemNfVersion.setValue("");
+        userNfVersion.setValue("");
+        logSchemaVersion.setValue("");
+        userID.setValue("");
+        userName.setValue("");
+        userExternalID.setValue("");
+        schemaName.setValue("");
+        description.setValue("");
+
+        schemaForm.getRecordWidget().clear();
     }
-
-
 
     @Override
     protected boolean validate() {
-        return true;
+        return false;
     }
 
     @Override

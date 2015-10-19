@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,14 +44,13 @@ public class EndpointProfilesViewImpl extends BaseListViewImpl<EndpointProfileDt
 
     private EndpointGroupsInfoListBox listBox;
     private TextBox endpointKeyHash;
-    protected static final int DEFAULT_TEXTBOX_SIZE = 255;
     private Button findEndpointButton;
 
     public EndpointProfilesViewImpl() {
         super(false);
 
         FlexTable flexTable = new FlexTable();
-        Label endpointGroupLabel = new Label("Endpoint group");
+        Label endpointGroupLabel = new Label(Utils.constants.endpointGroup());
         listBox = new EndpointGroupsInfoListBox();
         HorizontalPanel groupPanel = new HorizontalPanel();
         groupPanel.setSpacing(15);
@@ -62,10 +61,10 @@ public class EndpointProfilesViewImpl extends BaseListViewImpl<EndpointProfileDt
         HorizontalPanel keyHashPanel = new HorizontalPanel();
         keyHashPanel.setSpacing(15);
         keyHashPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-        Label endpointKeyHashLabel = new Label("Endpoint KeyHash");
+        Label endpointKeyHashLabel = new Label(Utils.constants.endpointKeyHash());
         endpointKeyHash = new TextBox();
         endpointKeyHash.setWidth("100%");
-        findEndpointButton = new Button("Find");
+        findEndpointButton = new Button(Utils.constants.find());
         findEndpointButton.addStyleName(Utils.avroUiStyle.buttonSmall());
         keyHashPanel.add(endpointKeyHashLabel);
         keyHashPanel.add(endpointKeyHash);

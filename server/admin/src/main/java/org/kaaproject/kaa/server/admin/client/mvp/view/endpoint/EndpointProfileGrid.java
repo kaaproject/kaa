@@ -47,7 +47,7 @@ public class EndpointProfileGrid extends AbstractGrid<EndpointProfileDto, String
                 }, 160);
 
         prefWidth += constructStringColumn(table,
-                "Endpoint ID",
+                Utils.constants.endpointID(),
                 new StringValueProvider<EndpointProfileDto>() {
                     @Override
                     public String getValue(EndpointProfileDto item) {
@@ -74,7 +74,7 @@ public class EndpointProfileGrid extends AbstractGrid<EndpointProfileDto, String
                 }, 80);
 
         prefWidth += constructStringColumn(table,
-                "Notification schema version",
+                Utils.constants.notificationSchemaVersion(),
                 new StringValueProvider<EndpointProfileDto>() {
                     @Override
                     public String getValue(EndpointProfileDto item) {
@@ -83,7 +83,7 @@ public class EndpointProfileGrid extends AbstractGrid<EndpointProfileDto, String
                 }, 80);
 
         prefWidth += constructStringColumn(table,
-                "Log schema version",
+                Utils.constants.logSchemaVersion(),
                 new StringValueProvider<EndpointProfileDto>() {
                     @Override
                     public String getValue(EndpointProfileDto item) {
@@ -93,11 +93,6 @@ public class EndpointProfileGrid extends AbstractGrid<EndpointProfileDto, String
 
         return prefWidth;
     }
-
-//    @Override
-//    protected boolean canDelete(EndpointProfileDto value) {
-//        return false;
-//    }
 
     @Override
     protected String getObjectId(EndpointProfileDto value) {

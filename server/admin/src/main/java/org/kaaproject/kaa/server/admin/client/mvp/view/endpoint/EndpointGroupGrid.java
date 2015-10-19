@@ -30,7 +30,7 @@ public class EndpointGroupGrid extends AbstractKaaGrid<EndpointGroupDto, String>
     }
 
     public EndpointGroupGrid(boolean embedded) {
-        super(Unit.PX, true, embedded);
+        super(Unit.PX, false, embedded);
     }
 
     @Override

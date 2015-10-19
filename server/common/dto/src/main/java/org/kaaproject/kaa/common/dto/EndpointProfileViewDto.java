@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -80,5 +80,48 @@ public class EndpointProfileViewDto implements Serializable {
 
     public void setEndpointNotificationTopics(List<TopicDto> endpointNotificationTopics) {
         this.endpointNotificationTopics = endpointNotificationTopics;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        EndpointProfileViewDto that = (EndpointProfileViewDto) o;
+
+        if (endpointProfileDto != null ? !endpointProfileDto.equals(that.endpointProfileDto) : that.endpointProfileDto != null)
+            return false;
+        if (endpointUserDto != null ? !endpointUserDto.equals(that.endpointUserDto) : that.endpointUserDto != null)
+            return false;
+        if (profileSchemaDto != null ? !profileSchemaDto.equals(that.profileSchemaDto) : that.profileSchemaDto != null)
+            return false;
+        if (groupDtoList != null ? !groupDtoList.equals(that.groupDtoList) : that.groupDtoList != null) return false;
+        if (endpointProfileRecord != null ? !endpointProfileRecord.equals(that.endpointProfileRecord) : that.endpointProfileRecord != null)
+            return false;
+        return !(endpointNotificationTopics != null ? !endpointNotificationTopics.equals(that.endpointNotificationTopics) : that.endpointNotificationTopics != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = endpointProfileDto != null ? endpointProfileDto.hashCode() : 0;
+        result = 31 * result + (endpointUserDto != null ? endpointUserDto.hashCode() : 0);
+        result = 31 * result + (profileSchemaDto != null ? profileSchemaDto.hashCode() : 0);
+        result = 31 * result + (groupDtoList != null ? groupDtoList.hashCode() : 0);
+        result = 31 * result + (endpointProfileRecord != null ? endpointProfileRecord.hashCode() : 0);
+        result = 31 * result + (endpointNotificationTopics != null ? endpointNotificationTopics.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "EndpointProfileViewDto{" +
+                "endpointProfileDto=" + endpointProfileDto +
+                ", endpointUserDto=" + endpointUserDto +
+                ", profileSchemaDto=" + profileSchemaDto +
+                ", groupDtoList=" + groupDtoList +
+                ", endpointProfileRecord=" + endpointProfileRecord +
+                ", endpointNotificationTopics=" + endpointNotificationTopics +
+                '}';
     }
 }
