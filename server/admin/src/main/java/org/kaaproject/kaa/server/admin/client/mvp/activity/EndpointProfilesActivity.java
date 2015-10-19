@@ -17,7 +17,6 @@
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
 import com.google.gwt.activity.shared.AbstractActivity;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -28,7 +27,6 @@ import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.gwt.view.client.HasData;
-import com.google.gwt.view.client.Range;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEvent;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEventHandler;
@@ -53,8 +51,6 @@ import java.util.List;
 public class EndpointProfilesActivity extends AbstractActivity implements BaseListView.Presenter {
 
     private String applicationId;
-    public static final String DEFAULT_LIMIT = "10";   // ten per page is optimal
-    public static final String DEFAULT_OFFSET = "0";
 
     protected final ClientFactory clientFactory;
 
@@ -64,46 +60,22 @@ public class EndpointProfilesActivity extends AbstractActivity implements BaseLi
     private EndpointProfilesPlace place;
 
     public AbstractEndpointProfileDataProvider dataProvider;
+    private boolean gridLoaded;
 
     public EndpointProfilesActivity(EndpointProfilesPlace place, ClientFactory clientFactory) {
         this.place = place;
         this.clientFactory = clientFactory;
         this.applicationId = place.getApplicationId();
+        this.gridLoaded = place.isGridLoaded();
     }
 
     @Override
     public void start(AcceptsOneWidget containerWidget, EventBus eventBus) {
         listView = clientFactory.getEndpointProfilesView();
         getGroupsList();
-          /*
-              Replace default pager with custom
-           */
         listView.setPresenter(this);
         bind();
         containerWidget.setWidget(listView.asWidget());
-    }
-
-    private void loadDataDirectly(String groupID, String limit, String offset) {
-        KaaAdmin.getDataSource().getEndpointProfileByGroupID(groupID, limit, offset,
-                new AsyncCallback<EndpointProfilesPageDto>() {
-                    @Override
-                    public void onFailure(Throwable caught) {
-                            /*
-                                dirty hack because of exception throwing on empty list in
-                                KaaAdminServiceImpl#getEndpointProfileByEndpointGroupId()
-                             */
-                        if (caught instanceof KaaAdminServiceException) {
-                            if (((KaaAdminServiceException) caught).getErrorCode() == ServiceErrorCode.ITEM_NOT_FOUND) {
-                                listView.getListWidget().getDataGrid().setRowData(new ArrayList<EndpointProfileDto>());
-                            }
-                        } else Utils.handleException(caught, listView);
-                    }
-
-                    @Override
-                    public void onSuccess(EndpointProfilesPageDto result) {
-                        listView.getListWidget().getDataGrid().setRowData(result.getEndpointProfiles());
-                    }
-                });
     }
 
     private void getGroupsList() {
@@ -114,7 +86,9 @@ public class EndpointProfilesActivity extends AbstractActivity implements BaseLi
             }
             @Override
             public void onSuccess(List<EndpointGroupDto> result) {
-                populateListBox(result);
+                if (!gridLoaded) {
+                    populateListBox(result);
+                }
             }
         });
     }
@@ -127,6 +101,7 @@ public class EndpointProfilesActivity extends AbstractActivity implements BaseLi
             }
         }
         listView.getEndpointGroupsInfo().setAcceptableValues(result);
+        gridLoaded = true;
     }
 
     private void bind() {
@@ -138,7 +113,7 @@ public class EndpointProfilesActivity extends AbstractActivity implements BaseLi
             public void onRowAction(RowActionEvent<String> event) {
                 String id = event.getClickedId();
                 if (event.getAction()==RowActionEvent.CLICK) {
-                    goTo(new EndpointProfilePlace(applicationId, id));
+                    goTo(new EndpointProfilePlace(applicationId, id, gridLoaded));
                 }
             }
         }));
@@ -146,8 +121,9 @@ public class EndpointProfilesActivity extends AbstractActivity implements BaseLi
         registrations.add(listView.getEndpointGroupsInfo().addValueChangeHandler(new ValueChangeHandler<EndpointGroupDto>() {
             @Override
             public void onValueChange(ValueChangeEvent<EndpointGroupDto> valueChangeEvent) {
-                dataProvider.setGroupID(valueChangeEvent.getValue().getId());
-                listView.getListWidget().getDataGrid().setVisibleRange(0, Integer.valueOf(DEFAULT_LIMIT));
+                dataProvider.setNewGroup(valueChangeEvent.getValue().getId());
+                listView.getListWidget().getDataGrid().setVisibleRange(0,
+                        Integer.valueOf(EndpointProfileDataProvider.DEF_LIMIT));
                 dataProvider.reload();
             }
         }));
@@ -213,97 +189,76 @@ public class EndpointProfilesActivity extends AbstractActivity implements BaseLi
             super(dataGrid, hasErrorMessage, addDisplay);
         }
 
-        protected abstract void setGroupID(String groupID);
+        protected abstract void setNewGroup(String groupID);
     }
 
     private class EndpointProfileDataProvider extends AbstractEndpointProfileDataProvider {
 
-        private String limit = "30";
-        private String offset = DEFAULT_OFFSET;
+        public static final String DEF_LIMIT = "11";
+        public static final String DEF_OFFSET = "0";
+        private String limit = DEF_LIMIT;
+        private String offset = DEF_OFFSET;
         private String groupID;
-        private boolean emptyData = false;
+        private List<EndpointProfileDto> endpointProfilesList;
+        private int previousStart = -1;
 
         public EndpointProfileDataProvider(AbstractGrid<EndpointProfileDto, ?> dataGrid,
                                            HasErrorMessage hasErrorMessage,
                                            String groupID) {
             super(dataGrid, hasErrorMessage, false);
             this.groupID = groupID;
+            endpointProfilesList = new ArrayList<>();
             addDataDisplay();
         }
 
         @Override
         protected void onRangeChanged(HasData<EndpointProfileDto> display) {
-            GWT.log("range!");
-            Range visibleRange = display.getVisibleRange();
-            if (visibleRange.getStart() > 10) {
-                limit = visibleRange.getStart() + "";
-            } else limit = "30";
-            GWT.log("limit: " + getLimit());
-            if (!emptyData) {
-                super.onRangeChanged(display);
-            } else
-                emptyData = false;
+            int start = display.getVisibleRange().getStart();
+            if (previousStart < start) {
+                previousStart = start;
+                setLoaded(false);
+            }
+            super.onRangeChanged(display);
         }
 
         @Override
         protected void loadData(final LoadCallback callback) {
-            KaaAdmin.getDataSource().getEndpointProfileByGroupID(getGroupID(),
-                    getLimit(),
-                    getOffset(),
+            KaaAdmin.getDataSource().getEndpointProfileByGroupID(groupID, limit, offset,
                     new AsyncCallback<EndpointProfilesPageDto>() {
                         @Override
                         public void onFailure(Throwable caught) {
-                            /*
-                                dirty hack because of exception throwing on empty list in
-                                KaaAdminServiceImpl#getEndpointProfileByEndpointGroupId()
-                             */
                             if (caught instanceof KaaAdminServiceException) {
-                                GWT.log("fail");
                                 if (((KaaAdminServiceException) caught).getErrorCode() == ServiceErrorCode.ITEM_NOT_FOUND) {
                                     listView.getListWidget().getDataGrid().setRowData(new ArrayList<EndpointProfileDto>());
-
                                 }
                             } else Utils.handleException(caught, listView);
                         }
 
                         @Override
                         public void onSuccess(EndpointProfilesPageDto result) {
-                            GWT.log("Success: " + result.getEndpointProfiles().size());
-                            callback.onSuccess(result.getEndpointProfiles());
+                            endpointProfilesList.addAll(result.getEndpointProfiles());
+                            offset = result.getPageLinkDto().getOffset();
+                            callback.onSuccess(endpointProfilesList);
                         }
                     });
         }
 
         @Override
         public void reload() {
-            limit = "30";
-
             super.reload();
         }
 
-        public String getGroupID() {
-            return groupID;
-        }
-
-        public String getLimit() {
-            return limit;
-        }
-
-        public String getOffset() {
-            return offset;
-        }
-
-        public void setLimit(String limit) {
-            this.limit = limit;
-        }
-
-        public void setOffset(String offset) {
-            this.offset = offset;
-        }
-
         @Override
-        public void setGroupID(String groupID) {
+        public void setNewGroup(String groupID) {
             this.groupID = groupID;
+            reset();
+        }
+
+        private void reset() {
+            endpointProfilesList.clear();
+            previousStart = -1;
+            limit = DEF_LIMIT;
+            offset = DEF_OFFSET;
         }
     }
 }

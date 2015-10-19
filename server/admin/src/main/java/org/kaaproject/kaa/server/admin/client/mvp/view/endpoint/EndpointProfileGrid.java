@@ -27,8 +27,10 @@ import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 public class EndpointProfileGrid extends AbstractGrid<EndpointProfileDto, String> {
 
+    private static final int DEFAULT_LIMIT = 10;   // ten rows in grid per page
+
     public EndpointProfileGrid() {
-        super(Style.Unit.PX, false, 10);
+        super(Style.Unit.PX, false, DEFAULT_LIMIT);
     }
 
     @Override

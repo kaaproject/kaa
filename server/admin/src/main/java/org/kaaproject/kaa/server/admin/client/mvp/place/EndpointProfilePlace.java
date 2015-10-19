@@ -22,10 +22,17 @@ import com.google.gwt.place.shared.Prefix;
 public class EndpointProfilePlace extends EndpointProfilesPlace {
 
     private String endpointKeyHash;
+    private boolean gridLoaded;
 
     public EndpointProfilePlace(String applicationId, String endpointKeyHash) {
         super(applicationId);
         this.endpointKeyHash = endpointKeyHash;
+    }
+
+    public EndpointProfilePlace(String applicationId, String endpointKeyHash, boolean gridLoaded) {
+        super(applicationId);
+        this.endpointKeyHash = endpointKeyHash;
+        this.gridLoaded = gridLoaded;
     }
 
     @Override
@@ -35,6 +42,11 @@ public class EndpointProfilePlace extends EndpointProfilesPlace {
 
     public String getEndpointKeyHash() {
         return endpointKeyHash;
+    }
+
+    @Override
+    public boolean isGridLoaded() {
+        return gridLoaded;
     }
 
     @Prefix(value = "endProfKeyHash")
@@ -80,7 +92,7 @@ public class EndpointProfilePlace extends EndpointProfilesPlace {
 
     @Override
     public TreePlace createDefaultPreviousPlace() {
-        return new EndpointProfilesPlace(applicationId);
+        return new EndpointProfilesPlace(applicationId, gridLoaded);
     }
 
 
