@@ -27,6 +27,7 @@ import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.gwt.view.client.HasData;
+import com.google.gwt.view.client.Range;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEvent;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEventHandler;
@@ -85,6 +86,8 @@ public class EndpointProfilesActivity extends AbstractActivity implements BaseLi
             public void onSuccess(List<EndpointGroupDto> result) {
                 if (!gridLoaded) {
                     populateListBox(result);
+                } else {
+                    dataProvider = new EndpointProfileDataProvider(listView.getListWidget(), listView, null);
                 }
             }
         });
@@ -119,9 +122,8 @@ public class EndpointProfilesActivity extends AbstractActivity implements BaseLi
             @Override
             public void onValueChange(ValueChangeEvent<EndpointGroupDto> valueChangeEvent) {
                 dataProvider.setNewGroup(valueChangeEvent.getValue().getId());
-                listView.getListWidget().getDataGrid().setVisibleRange(0,
-                        Integer.valueOf(EndpointProfileDataProvider.DEFAULT_LIMIT));
-                dataProvider.reload();
+                listView.getListWidget().getDataGrid().setVisibleRangeAndClearData(
+                        new Range(0, Integer.valueOf(EndpointProfileDataProvider.DEFAULT_LIMIT) -1),true);
             }
         }));
 
@@ -172,6 +174,8 @@ public class EndpointProfilesActivity extends AbstractActivity implements BaseLi
             registration.removeHandler();
         }
         registrations.clear();
+        dataProvider.removeDataDisplay(listView.getListWidget().getDataGrid());
+        dataProvider = null;
     }
 
     public AbstractEndpointProfileDataProvider getDataProvider(String groupID) {
@@ -210,12 +214,14 @@ public class EndpointProfilesActivity extends AbstractActivity implements BaseLi
 
         @Override
         protected void onRangeChanged(HasData<EndpointProfileDto> display) {
-            int start = display.getVisibleRange().getStart();
-            if (previousStart < start) {
-                previousStart = start;
-                setLoaded(false);
+            if (groupID != null) {
+                int start = display.getVisibleRange().getStart();
+                if (previousStart < start) {
+                    previousStart = start;
+                    setLoaded(false);
+                }
+                super.onRangeChanged(display);
             }
-            super.onRangeChanged(display);
         }
 
         @Override
@@ -226,7 +232,8 @@ public class EndpointProfilesActivity extends AbstractActivity implements BaseLi
                         public void onFailure(Throwable caught) {
                             if (caught instanceof KaaAdminServiceException) {
                                 if (((KaaAdminServiceException) caught).getErrorCode() == ServiceErrorCode.ITEM_NOT_FOUND) {
-                                    listView.getListWidget().getDataGrid().setRowData(new ArrayList<EndpointProfileDto>());
+                                    endpointProfilesList.clear();
+                                    callback.onSuccess(endpointProfilesList);
                                 }
                             } else Utils.handleException(caught, listView);
                         }
@@ -238,11 +245,6 @@ public class EndpointProfilesActivity extends AbstractActivity implements BaseLi
                             callback.onSuccess(endpointProfilesList);
                         }
                     });
-        }
-
-        @Override
-        public void reload() {
-            super.reload();
         }
 
         @Override
