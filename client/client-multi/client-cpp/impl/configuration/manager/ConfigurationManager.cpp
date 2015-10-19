@@ -30,6 +30,12 @@
 
 namespace kaa {
 
+ConfigurationManager::ConfigurationManager(IExecutorContext& executorContext)
+    : executorContext_(executorContext), root_(std::make_shared<KaaRootConfiguration>())
+{
+
+}
+
 void ConfigurationManager::subscribeForConfigurationChanges(IConfigurationReceiver &receiver)
 {
     if (!configurationReceivers_.addCallback(&receiver,
