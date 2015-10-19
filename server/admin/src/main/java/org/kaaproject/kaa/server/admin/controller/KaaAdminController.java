@@ -29,7 +29,9 @@ import org.kaaproject.kaa.common.dto.ConfigurationRecordDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
@@ -186,6 +188,37 @@ public class KaaAdminController {
         return endpointProfilesPageDto;
     }
 
+    /**
+     * Gets the endpoint profile body by endpoint group id.
+     */
+    @RequestMapping(value = "endpointProfileBodyByGroupId", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public EndpointProfilesBodyDto getEndpointProfileBodyByEndpointGroupId(
+            @RequestParam(value = "endpointGroupId") String endpointGroupId,
+            @RequestParam(value = "limit", defaultValue = DEFAULT_LIMIT) String limit,
+            @RequestParam(value = "offset", defaultValue = DEFAULT_OFFSET) String offset,
+            HttpServletRequest request) throws KaaAdminServiceException {
+        EndpointProfilesPageDto endpointProfilesPageDto = kaaAdminService.getEndpointProfileBodyByEndpointGroupId(endpointGroupId, limit, offset);
+        if (endpointProfilesPageDto.hasEndpointBodies()) {
+            PageLinkDto pageLinkDto = createNext(endpointProfilesPageDto.getPageLinkDto(), request);
+            endpointProfilesPageDto.setPageLinkDto(pageLinkDto);
+        }
+        return convertToEndpointProfilesBodyDto(endpointProfilesPageDto);
+    }
+
+    private EndpointProfilesBodyDto convertToEndpointProfilesBodyDto(EndpointProfilesPageDto endpointProfilesPageDto) {
+        EndpointProfilesBodyDto endpointProfilesBodyDto = new EndpointProfilesBodyDto();
+        List<EndpointProfileBodyDto> endpointProfileBodyDto = endpointProfilesPageDto.getEndpointProfilesBody();
+        if (endpointProfileBodyDto != null) {
+            endpointProfilesBodyDto.setEndpointProfilesBody(endpointProfileBodyDto);
+        }
+        String next = endpointProfilesPageDto.getPageLinkDto().getNext();
+        if (next != null) {
+            endpointProfilesBodyDto.setNext(next);
+        }
+        return endpointProfilesBodyDto;
+    }
+
     private PageLinkDto createNext(PageLinkDto pageLink, HttpServletRequest request) {
         if (pageLink != null && pageLink.getNext() == null) {
             StringBuilder nextUrl = new StringBuilder();
@@ -209,6 +242,16 @@ public class KaaAdminController {
     @ResponseBody
     public EndpointProfileDto getEndpointProfileByKeyHash(@PathVariable String endpointProfileKey) throws KaaAdminServiceException {
         return kaaAdminService.getEndpointProfileByKeyHash(endpointProfileKey);
+    }
+
+    /**
+     * Gets the endpoint profile body by endpoint key.
+     *
+     */
+    @RequestMapping(value="endpointProfileBody/{endpointProfileKey}", method=RequestMethod.GET)
+    @ResponseBody
+    public EndpointProfileBodyDto getEndpointProfileBodyByKeyHash(@PathVariable String endpointProfileKey) throws KaaAdminServiceException {
+        return kaaAdminService.getEndpointProfileBodyByKeyHash(endpointProfileKey);
     }
 
     /**

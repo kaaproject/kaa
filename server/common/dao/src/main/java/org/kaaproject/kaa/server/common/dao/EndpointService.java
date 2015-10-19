@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
@@ -39,6 +40,14 @@ public interface EndpointService {
      * @return the endpoint profiles page dto
      */
     EndpointProfilesPageDto findEndpointProfileByEndpointGroupId(PageLinkDto pageLink);
+
+    /**
+     * Find endpoint profile body by endpoint group id.
+     *
+     * @param pageLink the page link dto
+     * @return the endpoint profiles page dto
+     */
+    EndpointProfilesPageDto findEndpointProfileBodyByEndpointGroupId(PageLinkDto pageLink);
 
     /**
      * Find endpoint groups by application id.
@@ -121,6 +130,14 @@ public interface EndpointService {
      * @return the endpoint profile dto
      */
     EndpointProfileDto findEndpointProfileByKeyHash(byte[] endpointProfileKeyHash);
+
+    /**
+     * Find endpoint profile by key hash.
+     *
+     * @param endpointProfileKeyHash the endpoint profile key hash
+     * @return the endpoint profile body dto
+     */
+    EndpointProfileBodyDto findEndpointProfileBodyByKeyHash(byte[] endpointProfileKeyHash);
 
     /**
      * Remove endpoint profile by key hash.

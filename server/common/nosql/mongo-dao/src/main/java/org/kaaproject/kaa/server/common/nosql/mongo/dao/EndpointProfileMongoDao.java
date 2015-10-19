@@ -20,7 +20,7 @@ import com.mongodb.DBObject;
 
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
 
-import org.kaaproject.kaa.common.dto.EndpointGroupDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.PageLinkDto;
@@ -61,7 +61,7 @@ public class EndpointProfileMongoDao extends AbstractMongoDao<MongoEndpointProfi
 
     @Override
     public EndpointProfilesPageDto findByEndpointGroupId(PageLinkDto pageLink) {
-        LOG.debug("Find endpoint profile by endpoint group id [{}] ", pageLink.getEndpointGroupId());
+        LOG.debug("Find endpoint profiles by endpoint group id [{}] ", pageLink.getEndpointGroupId());
         EndpointProfilesPageDto endpointProfilesPageDto = new EndpointProfilesPageDto();
         String next = null;
         int lim = Integer.valueOf(pageLink.getLimit());
@@ -82,11 +82,21 @@ public class EndpointProfileMongoDao extends AbstractMongoDao<MongoEndpointProfi
     }
 
     @Override
+    public EndpointProfilesPageDto findBodyByEndpointGroupId(PageLinkDto pageLink) {
+        return null;
+    }
+
+    @Override
     public MongoEndpointProfile findByKeyHash(byte[] endpointKeyHash) {
         LOG.debug("Find endpoint profile by endpoint key hash [{}] ", endpointKeyHash);
         DBObject dbObject = query(where(EP_ENDPOINT_KEY_HASH).is(endpointKeyHash)).getQueryObject();
         DBObject result = mongoTemplate.getDb().getCollection(getCollectionName()).findOne(dbObject);
         return mongoTemplate.getConverter().read(getDocumentClass(), result);
+    }
+
+    @Override
+    public EndpointProfileBodyDto findBodyByKeyHash(byte[] endpointKeyHash) {
+        return null;
     }
 
     @Override

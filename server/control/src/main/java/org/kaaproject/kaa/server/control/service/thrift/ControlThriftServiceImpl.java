@@ -222,12 +222,36 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
      * (non-Javadoc)
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
+     * .Iface#getEndpointProfileBodyByEndpointGroupId()
+     */
+    /* CLI method */
+    @Override
+    public DataStruct getEndpointProfileBodyByEndpointGroupId(DataStruct pageLink) throws TException {
+        return toGenericDataStruct(endpointService.findEndpointProfileBodyByEndpointGroupId(ThriftDtoConverter.<PageLinkDto>toGenericDto(pageLink)));
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see
+     * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getEndpointProfileByKeyHash(java.lang.String)
      */
     /* CLI method */
     @Override
     public DataStruct getEndpointProfileByKeyHash(String endpointProfileKeyHash) throws TException {
         return toDataStruct(endpointService.findEndpointProfileByKeyHash(Base64.decodeBase64(endpointProfileKeyHash)));
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see
+     * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
+     * .Iface#getEndpointProfileBodyByKeyHash(java.lang.String)
+     */
+    /* CLI method */
+    @Override
+    public DataStruct getEndpointProfileBodyByKeyHash(String endpointProfileKeyHash) throws TException {
+        return toGenericDataStruct(endpointService.findEndpointProfileBodyByKeyHash(Base64.decodeBase64(endpointProfileKeyHash)));
     }
 
     /*

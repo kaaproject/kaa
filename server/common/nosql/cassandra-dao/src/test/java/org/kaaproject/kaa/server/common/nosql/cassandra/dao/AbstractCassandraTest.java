@@ -153,6 +153,7 @@ public class AbstractCassandraTest {
         profileDto.setSubscriptions(topicIds);
         profileDto.setEndpointKeyHash(keyHash);
         profileDto.setAccessToken(accessToken);
+        profileDto.setProfile("test Profile");
         List<EndpointGroupStateDto> cfGroupState = new ArrayList<>();
         EndpointGroupStateDto cf = new EndpointGroupStateDto(TEST_ENDPOINT_GROUP_ID, null, null);
         cfGroupState.add(cf);

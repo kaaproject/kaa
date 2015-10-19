@@ -36,6 +36,7 @@ import org.kaaproject.kaa.common.dto.ChangeDto;
 import org.kaaproject.kaa.common.dto.ChangeType;
 import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
@@ -214,6 +215,14 @@ public class EndpointServiceImpl implements EndpointService {
     }
 
     @Override
+    @Transactional
+    public EndpointProfilesPageDto findEndpointProfileBodyByEndpointGroupId(PageLinkDto pageLink) {
+        validateSqlId(pageLink.getLimit(), "Can't find endpoint group by id. Incorrect limit parameter " + pageLink.getLimit());
+        validateString(pageLink.getOffset(), "Can't find endpoint group by id. Incorrect offset parameter " + pageLink.getOffset());
+        return endpointProfileDao.findBodyByEndpointGroupId(pageLink);
+    }
+
+    @Override
     public EndpointConfigurationDto findEndpointConfigurationByHash(byte[] hash) {
         validateHash(hash, "Can't find endpoint configuration by hash. Invalid configuration hash " + hash);
         return getDto(endpointConfigurationDao.findByHash(hash));
@@ -229,6 +238,13 @@ public class EndpointServiceImpl implements EndpointService {
         validateHash(endpointProfileKeyHash, "Can't find endpoint profile by key hash. Invalid key hash "
                 + endpointProfileKeyHash);
         return getDto(endpointProfileDao.findByKeyHash(endpointProfileKeyHash));
+    }
+
+    @Override
+    public EndpointProfileBodyDto findEndpointProfileBodyByKeyHash(byte[] endpointProfileKeyHash) {
+        validateHash(endpointProfileKeyHash, "Can't find endpoint profile by key hash. Invalid key hash "
+                + endpointProfileKeyHash);
+        return endpointProfileDao.findBodyByKeyHash(endpointProfileKeyHash);
     }
 
     @Override

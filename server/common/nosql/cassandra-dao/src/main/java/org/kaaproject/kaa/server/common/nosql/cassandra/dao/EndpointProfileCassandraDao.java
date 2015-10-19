@@ -25,6 +25,7 @@ import com.google.common.collect.Sets;
 
 import org.apache.commons.codec.binary.Base64;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.PageLinkDto;
 import org.kaaproject.kaa.server.common.dao.DaoConstants;
@@ -70,6 +71,7 @@ import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.Cassand
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_BY_ENDPOINT_GROUP_ID_ENDPOINT_KEY_HASH_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_COLUMN_FAMILY_NAME;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_EP_KEY_HASH_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_PROFILE_PROPERTY;
 
 @Repository(value = "endpointProfileDao")
 public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraEndpointProfile, ByteBuffer> implements EndpointProfileDao<CassandraEndpointProfile> {
@@ -167,6 +169,20 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
     }
 
     @Override
+    public EndpointProfileBodyDto findBodyByKeyHash(byte[] endpointKeyHash) {
+        LOG.debug("Try to find endpoint profile body by key hash [{}]", endpointKeyHash);
+        String profile = null;
+        ResultSet resultSet = execute(select(EP_PROFILE_PROPERTY).from(getColumnFamilyName())
+                .where(eq(EP_EP_KEY_HASH_PROPERTY, getByteBuffer(endpointKeyHash))));
+        Row row = resultSet.one();
+        if (row != null) {
+            profile = row.getString(0);
+        }
+        LOG.debug("[{}] Found endpoint profile body {}", endpointKeyHash, profile);
+        return new EndpointProfileBodyDto(endpointKeyHash, profile);
+    }
+
+    @Override
     public long getCountByKeyHash(byte[] endpointKeyHash) {
         LOG.debug("Try to check if endpoint profile exists with key hash [{}]", endpointKeyHash);
         long count = 0;
@@ -258,6 +274,20 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
         return cassandraEndpointProfileList;
     }
 
+    private List<EndpointProfileBodyDto> findEndpointProfilesBodyList(ByteBuffer[] keyHashList, String endpointGroupId) {
+        List<EndpointProfileBodyDto> endpointProfilesBodyDto = new ArrayList<>();
+        LOG.debug("Found {} endpoint profiles body by group id {}", keyHashList != null ? keyHashList.length : 0, endpointGroupId);
+        for (ByteBuffer keyHash : keyHashList) {
+            EndpointProfileBodyDto endpointProfileBodyDto = findBodyByKeyHash(getBytes(keyHash));
+            if (endpointProfileBodyDto != null) {
+                endpointProfilesBodyDto.add(endpointProfileBodyDto);
+            } else {
+                LOG.debug("Can't find endpoint profile by id {}", keyHash);
+            }
+        }
+        return endpointProfilesBodyDto;
+    }
+
     private EndpointProfilesPageDto createNextPage(List<EndpointProfileDto> cassandraEndpointProfileList, String endpointGroupId, String limit) {
         EndpointProfilesPageDto endpointProfilesPageDto = new EndpointProfilesPageDto();
         PageLinkDto pageLinkDto = new PageLinkDto();
@@ -278,6 +308,26 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
         return endpointProfilesPageDto;
     }
 
+    private EndpointProfilesPageDto createNextBodyPage(List<EndpointProfileBodyDto> endpointProfilesBodyDto, String endpointGroupId, String limit) {
+        EndpointProfilesPageDto endpointProfilesPageDto = new EndpointProfilesPageDto();
+        PageLinkDto pageLinkDto = new PageLinkDto();
+        String next;
+        int lim = Integer.valueOf(limit);
+        if (endpointProfilesBodyDto.size() == (lim + 1)) {
+            pageLinkDto.setEndpointGroupId(endpointGroupId);
+            pageLinkDto.setLimit(limit);
+            pageLinkDto.setOffset(Base64.encodeBase64String(endpointProfilesBodyDto.get(lim).getEndpointKeyHash()));
+            endpointProfilesBodyDto.remove(lim);
+            next = null;
+        } else {
+            next = DaoConstants.LAST_PAGE_MESSAGE;
+        }
+        pageLinkDto.setNext(next);
+        endpointProfilesPageDto.setPageLinkDto(pageLinkDto);
+        endpointProfilesPageDto.setEndpointProfilesBody(endpointProfilesBodyDto);
+        return endpointProfilesPageDto;
+    }
+
     @Override
     public EndpointProfilesPageDto findByEndpointGroupId(PageLinkDto pageLink) {
         LOG.debug("Try to find endpoint profile by endpoint group id [{}]", pageLink.getEndpointGroupId());
@@ -291,6 +341,22 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
         }
         cassandraEndpointProfileList = findEndpointProfilesList(keyHashList, pageLink.getEndpointGroupId());
         endpointProfilesPageDto = createNextPage(cassandraEndpointProfileList, pageLink.getEndpointGroupId(), pageLink.getLimit());
+        return endpointProfilesPageDto;
+    }
+
+    @Override
+    public EndpointProfilesPageDto findBodyByEndpointGroupId(PageLinkDto pageLink) {
+        LOG.debug("Try to find endpoint profile body by endpoint group id [{}]", pageLink.getEndpointGroupId());
+        EndpointProfilesPageDto endpointProfilesPageDto;
+        List<EndpointProfileBodyDto> endpointProfilesBodyDto;
+        ByteBuffer[] keyHashList;
+        if (pageLink.getApplicationId() != null) {
+            keyHashList = cassandraEPByAppIdDao.findEPByAppId(pageLink, pageLink.getApplicationId());
+        } else {
+            keyHashList = cassandraEPByEndpointGroupIdDao.findEPByEndpointGroupId(pageLink);
+        }
+        endpointProfilesBodyDto = findEndpointProfilesBodyList(keyHashList, pageLink.getEndpointGroupId());
+        endpointProfilesPageDto = createNextBodyPage(endpointProfilesBodyDto, pageLink.getEndpointGroupId(), pageLink.getLimit());
         return endpointProfilesPageDto;
     }
 
