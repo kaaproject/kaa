@@ -130,7 +130,13 @@ public class EndpointProfilesActivity extends AbstractActivity implements BaseLi
         registrations.add(listView.getFindEndpointButton().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
-                findEndpointFromThisApplication(listView.getEndpointKeyHashTextBox().getValue());
+                listView.clearError();
+                String value = listView.getEndpointKeyHashTextBox().getValue();
+                if (value != null && !"".equals(value)) {
+                    findEndpointFromThisApplication(value);
+                } else {
+                    Utils.handleException(new IllegalArgumentException(Utils.messages.emptyEndpointKeyHash()), listView);
+                }
             }
         }));
 
@@ -149,7 +155,11 @@ public class EndpointProfilesActivity extends AbstractActivity implements BaseLi
         KaaAdmin.getDataSource().getEndpointProfileByKeyHash(endpointKeyHash, new AsyncCallback<EndpointProfileDto>() {
             @Override
             public void onFailure(Throwable caught) {
-                Utils.handleException(caught, listView);
+                if (caught instanceof KaaAdminServiceException) {
+                    if (((KaaAdminServiceException) caught).getErrorCode() == ServiceErrorCode.ITEM_NOT_FOUND) {
+                        listView.getListWidget().getDataGrid().setRowData(new ArrayList<EndpointProfileDto>());
+                    }
+                } else Utils.handleException(caught, listView);
             }
 
             @Override
@@ -159,6 +169,7 @@ public class EndpointProfilesActivity extends AbstractActivity implements BaseLi
                     result.add(endpointProfileDto);
                 }
                 listView.getListWidget().getDataGrid().setRowData(result);
+                listView.getEndpointKeyHashTextBox().setValue("");
             }
         });
     }
