@@ -142,29 +142,29 @@ void BootstrapManager::onServerListUpdated(const std::vector<ProtocolMetaData>& 
         KAA_LOG_WARN("Received empty operations server list");
         FailoverStrategyDecision decision = failoverStrategy_->onFailover(Failover::NO_OPERATION_SERVERS_RECEIVED);
         switch (decision.getAction()) {
-			case FailoverStrategyAction::NOOP:
-				KAA_LOG_WARN("No operation is performed according to failover strategy decision.");
-				break;
-			case FailoverStrategyAction::RETRY:
-			{
-				std::size_t period = decision.getRetryPeriod();
-				KAA_LOG_WARN(boost::format("Attempt to receive operations server list will be made in %1% secs "
-						"according to failover strategy decision.") % period);
-				retryTimer_.stop();
-				retryTimer_.start(period, [&] { receiveOperationsServerList(); });
-				break;
-			}
-            case FailoverStrategyAction::USE_NEXT_BOOTSTRAP:
-                KAA_LOG_WARN("Try next bootstrap server.");
-                channelManager_->onServerFailed(channelManager_->getChannelByTransportType(TransportType::BOOTSTRAP)->getServer());
-                break;
-			case FailoverStrategyAction::STOP_APP:
-				KAA_LOG_WARN("Stopping application according to failover strategy decision!");
-				exit(EXIT_FAILURE);
-				break;
-            default:
-                break;
-		}
+        case FailoverStrategyAction::NOOP:
+            KAA_LOG_WARN("No operation is performed according to failover strategy decision.");
+            break;
+        case FailoverStrategyAction::RETRY:
+        {
+            std::size_t period = decision.getRetryPeriod();
+            KAA_LOG_WARN(boost::format("Attempt to receive operations server list will be made in %1% secs "
+                                       "according to failover strategy decision.") % period);
+            retryTimer_.stop();
+            retryTimer_.start(period, [&] { receiveOperationsServerList(); });
+            break;
+        }
+        case FailoverStrategyAction::USE_NEXT_BOOTSTRAP:
+            KAA_LOG_WARN("Try next bootstrap server.");
+            channelManager_->onServerFailed(channelManager_->getChannelByTransportType(TransportType::BOOTSTRAP)->getServer());
+            break;
+        case FailoverStrategyAction::STOP_APP:
+            KAA_LOG_WARN("Stopping application according to failover strategy decision!");
+            exit(EXIT_FAILURE);
+            break;
+        default:
+            break;
+        }
         return;
     }
 
@@ -177,7 +177,7 @@ void BootstrapManager::onServerListUpdated(const std::vector<ProtocolMetaData>& 
 
     for (const auto& serverMetaData : operationsServers) {
         ITransportConnectionInfoPtr connectionInfo(
-                new GenericTransportInfo(ServerType::OPERATIONS, serverMetaData));
+                    new GenericTransportInfo(ServerType::OPERATIONS, serverMetaData));
 
         auto& servers = operationServers_[serverMetaData.protocolVersionInfo];
         servers.push_back(connectionInfo);
@@ -185,18 +185,18 @@ void BootstrapManager::onServerListUpdated(const std::vector<ProtocolMetaData>& 
 
     for (auto& transportSpecificServers : operationServers_) {
         std::shuffle (transportSpecificServers.second.begin()
-                    , transportSpecificServers.second.end()
-                    , std::default_random_engine(std::chrono::high_resolution_clock::now().time_since_epoch().count()));
+                      , transportSpecificServers.second.end()
+                      , std::default_random_engine(std::chrono::high_resolution_clock::now().time_since_epoch().count()));
 
         lastOperationsServers_[transportSpecificServers.first] =
-                                    transportSpecificServers.second.begin();
+                transportSpecificServers.second.begin();
     }
 
     if (serverToApply) {
         auto servers = getOPSByAccessPointId(*serverToApply);
         if (!servers.empty()) {
             KAA_LOG_DEBUG(boost::format("Found %1% servers by access point id %2%")
-                                            % servers.size() % *serverToApply);
+                          % servers.size() % *serverToApply);
             serverToApply.reset();
             notifyChannelManangerAboutServer(servers);
         }
