@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,17 +17,17 @@
 package org.kaaproject.kaa.server.admin.client.mvp.view.endpoint;
 
 import com.google.common.io.BaseEncoding;
-
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.cellview.client.DataGrid;
-
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.server.admin.client.mvp.activity.EndpointProfilesActivity;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 public class EndpointProfileGrid extends AbstractGrid<EndpointProfileDto, String> {
 
     private static final int DEFAULT_LIMIT = 10;   // ten rows in grid per page
+    private EndpointProfilesActivity.AbstractEndpointProfileDataProvider dataProvider;
 
     public EndpointProfileGrid() {
         super(Style.Unit.PX, false, DEFAULT_LIMIT);
@@ -97,5 +97,13 @@ public class EndpointProfileGrid extends AbstractGrid<EndpointProfileDto, String
     @Override
     protected String getObjectId(EndpointProfileDto value) {
         return BaseEncoding.base64().encode(value.getEndpointKeyHash());
+    }
+
+    public EndpointProfilesActivity.AbstractEndpointProfileDataProvider getDataProvider() {
+        return dataProvider;
+    }
+
+    public void setDataProvider(EndpointProfilesActivity.AbstractEndpointProfileDataProvider dataProvider) {
+        this.dataProvider = dataProvider;
     }
 }

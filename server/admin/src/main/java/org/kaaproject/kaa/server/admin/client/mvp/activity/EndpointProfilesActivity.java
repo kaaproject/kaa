@@ -41,6 +41,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.place.EndpointProfilePlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EndpointProfilesPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseListView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointProfilesView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.endpoint.EndpointProfileGrid;
 import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
@@ -85,9 +86,16 @@ public class EndpointProfilesActivity extends AbstractActivity implements BaseLi
             @Override
             public void onSuccess(List<EndpointGroupDto> result) {
                 if (!gridLoaded) {
+                    AbstractEndpointProfileDataProvider alreadyCreatedDataProvider =
+                            ((EndpointProfileGrid) listView.getListWidget()).getDataProvider();
+                    if (alreadyCreatedDataProvider != null) alreadyCreatedDataProvider.removeDataDisplay(listView.getListWidget().getDataGrid());
+                    if (listView.getListWidget().getDataGrid().getVisibleRange().getStart() != 0) {
+                        listView.getListWidget().getDataGrid().setVisibleRangeAndClearData(
+                                new Range(0, Integer.valueOf(EndpointProfileDataProvider.DEFAULT_LIMIT) -1), false);
+                    }
                     populateListBox(result);
                 } else {
-                    dataProvider = new EndpointProfileDataProvider(listView.getListWidget(), listView, null);
+                    dataProvider = ((EndpointProfileGrid) listView.getListWidget()).getDataProvider();
                 }
             }
         });
@@ -123,7 +131,7 @@ public class EndpointProfilesActivity extends AbstractActivity implements BaseLi
             public void onValueChange(ValueChangeEvent<EndpointGroupDto> valueChangeEvent) {
                 dataProvider.setNewGroup(valueChangeEvent.getValue().getId());
                 listView.getListWidget().getDataGrid().setVisibleRangeAndClearData(
-                        new Range(0, Integer.valueOf(EndpointProfileDataProvider.DEFAULT_LIMIT) -1),true);
+                        new Range(0, Integer.valueOf(EndpointProfileDataProvider.DEFAULT_LIMIT) -1), true);
             }
         }));
 
@@ -185,7 +193,6 @@ public class EndpointProfilesActivity extends AbstractActivity implements BaseLi
             registration.removeHandler();
         }
         registrations.clear();
-        dataProvider.removeDataDisplay(listView.getListWidget().getDataGrid());
         dataProvider = null;
     }
 
@@ -193,7 +200,7 @@ public class EndpointProfilesActivity extends AbstractActivity implements BaseLi
         return new EndpointProfileDataProvider(listView.getListWidget(), listView, groupID);
     }
 
-    private abstract class AbstractEndpointProfileDataProvider extends AbstractDataProvider<EndpointProfileDto> {
+    public abstract class AbstractEndpointProfileDataProvider extends AbstractDataProvider<EndpointProfileDto> {
 
         public AbstractEndpointProfileDataProvider(AbstractGrid<EndpointProfileDto, ?> dataGrid,
                                                    HasErrorMessage hasErrorMessage,
@@ -221,6 +228,7 @@ public class EndpointProfilesActivity extends AbstractActivity implements BaseLi
             this.groupID = groupID;
             endpointProfilesList = new ArrayList<>();
             addDataDisplay();
+            ((EndpointProfileGrid) dataGrid).setDataProvider(this);
         }
 
         @Override
