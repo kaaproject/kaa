@@ -26,6 +26,7 @@ public class EndpointProfileViewDto implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private EndpointProfileDto endpointProfileDto;
+    private ApplicationDto applicationDto;
     private EndpointUserDto endpointUserDto;
     private ProfileSchemaDto profileSchemaDto;
     private List<EndpointGroupDto> groupDtoList;
@@ -40,6 +41,14 @@ public class EndpointProfileViewDto implements Serializable {
 
     public void setEndpointProfileDto(EndpointProfileDto endpointProfileDto) {
         this.endpointProfileDto = endpointProfileDto;
+    }
+
+    public ApplicationDto getApplicationDto() {
+        return applicationDto;
+    }
+
+    public void setApplicationDto(ApplicationDto applicationDto) {
+        this.applicationDto = applicationDto;
     }
 
     public EndpointUserDto getEndpointUserDto() {
@@ -91,6 +100,8 @@ public class EndpointProfileViewDto implements Serializable {
 
         if (endpointProfileDto != null ? !endpointProfileDto.equals(that.endpointProfileDto) : that.endpointProfileDto != null)
             return false;
+        if (applicationDto != null ? !applicationDto.equals(that.applicationDto) : that.applicationDto != null)
+            return false;
         if (endpointUserDto != null ? !endpointUserDto.equals(that.endpointUserDto) : that.endpointUserDto != null)
             return false;
         if (profileSchemaDto != null ? !profileSchemaDto.equals(that.profileSchemaDto) : that.profileSchemaDto != null)
@@ -105,6 +116,7 @@ public class EndpointProfileViewDto implements Serializable {
     @Override
     public int hashCode() {
         int result = endpointProfileDto != null ? endpointProfileDto.hashCode() : 0;
+        result = 31 * result + (applicationDto != null ? applicationDto.hashCode() : 0);
         result = 31 * result + (endpointUserDto != null ? endpointUserDto.hashCode() : 0);
         result = 31 * result + (profileSchemaDto != null ? profileSchemaDto.hashCode() : 0);
         result = 31 * result + (groupDtoList != null ? groupDtoList.hashCode() : 0);
@@ -117,6 +129,7 @@ public class EndpointProfileViewDto implements Serializable {
     public String toString() {
         return "EndpointProfileViewDto{" +
                 "endpointProfileDto=" + endpointProfileDto +
+                ", applicationDto=" + applicationDto +
                 ", endpointUserDto=" + endpointUserDto +
                 ", profileSchemaDto=" + profileSchemaDto +
                 ", groupDtoList=" + groupDtoList +

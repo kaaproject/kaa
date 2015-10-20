@@ -74,6 +74,8 @@ public class EndpointProfileActivity extends
     @Override
     protected void onEntityRetrieved() {
 
+        detailsView.reset();
+
         EndpointProfileDto profileDto = entity.getEndpointProfileDto();
         EndpointUserDto userDto = entity.getEndpointUserDto();
         ProfileSchemaDto profileSchemaDto = entity.getProfileSchemaDto();
@@ -108,6 +110,7 @@ public class EndpointProfileActivity extends
 
         RecordField endpointProfileRecord = entity.getEndpointProfileRecord();
         if (endpointProfileRecord != null) {
+            detailsView.getSchemaForm().reset();
             detailsView.getSchemaForm().setValue(endpointProfileRecord);
         }
     }

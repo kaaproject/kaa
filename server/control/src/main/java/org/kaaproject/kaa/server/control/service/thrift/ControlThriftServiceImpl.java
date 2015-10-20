@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,10 @@ import org.kaaproject.kaa.common.dto.ChangeType;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
+import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileViewDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.HasId;
@@ -110,7 +113,9 @@ import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toDataStruct;
 import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toDataStructList;
@@ -206,22 +211,78 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     private Object zkLock = new Object();
 
+    /*
+         * (non-Javadoc)
+         * @see
+         * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
+         * .Iface#getEndpointProfileViewDtoByEndpointKeyHash()
+         */
+    /* CLI method */
     @Override
-    public DataStruct findProfileSchemaByAppIdAndVersion(String appId, int schemaVersion) throws ControlThriftException, TException {
-        return toGenericDataStruct(profileService.findProfileSchemaByAppIdAndVersion(appId, schemaVersion));
-    }
+    public DataStruct getEndpointProfileViewDtoByEndpointKeyHash(String endpointProfileKeyHash) throws ControlThriftException, TException {
+        EndpointProfileViewDto viewDto = new EndpointProfileViewDto();
 
-    @Override
-    public DataStruct findEndpointUserByExternalIdAndTenantId(String externalId, String tenantId) throws ControlThriftException, TException {
-        return toGenericDataStruct(endpointService.findEndpointUserByExternalIdAndTenantId(externalId, tenantId));
+        /*    Getting endpoint profile    */
+        EndpointProfileDto endpointProfileDto = endpointService.findEndpointProfileByKeyHash(Base64.decodeBase64(endpointProfileKeyHash));
+        viewDto.setEndpointProfileDto(endpointProfileDto);
+
+        /*    Getting endpoint user    */
+        String applicationId = endpointProfileDto.getApplicationId();
+        ApplicationDto applicationDto = applicationService.findAppById(applicationId);
+        viewDto.setApplicationDto(applicationDto);  // for validation at KaaAdminServiceImpl#getEndpProfView...ByKeyHash
+        String tenantId = applicationDto.getTenantId();
+        String externalId = endpointProfileDto.getEndpointUserId();
+        EndpointUserDto userDto = null;
+        if (externalId != null) {
+            userDto = endpointService.findEndpointUserByExternalIdAndTenantId(externalId, tenantId);
+        }
+        viewDto.setEndpointUserDto(userDto);
+
+        /*    Getting endpoint profile RecordForm    */
+        int profileVersion = endpointProfileDto.getProfileVersion();
+        ProfileSchemaDto schemaDto = profileService
+                .findProfileSchemaByAppIdAndVersion(applicationId, profileVersion);
+        viewDto.setProfileSchemaDto(schemaDto);
+
+        /*    Getting notification topics    */
+        List<TopicDto> topicsByApplicationId = topicService.findTopicsByAppId(applicationId);
+        List<String> endpointTopicsIDs = endpointProfileDto.getSubscriptions();
+        List<TopicDto> endpointTopics = null;
+        if (topicsByApplicationId != null && endpointTopicsIDs != null) {
+            endpointTopics = new ArrayList<>();
+            for (TopicDto topicDto : topicsByApplicationId) {
+                if (endpointTopicsIDs.contains(topicDto.getId())) endpointTopics.add(topicDto);
+            }
+            viewDto.setEndpointNotificationTopics(endpointTopics);
+        }
+
+        /*    Getting endpoint groups    */
+        Set<EndpointGroupDto> endpointGroups = new HashSet<>();
+        List<EndpointGroupStateDto> groupStateList = endpointProfileDto.getCfGroupStates();
+        if (groupStateList != null && !groupStateList.isEmpty()) {
+            for (EndpointGroupStateDto dto : groupStateList) {
+                endpointGroups.add(endpointService.findEndpointGroupById(dto.getEndpointGroupId()));
+            }
+        }
+        groupStateList = endpointProfileDto.getNfGroupStates();
+        if (groupStateList != null && !groupStateList.isEmpty()) {
+            for (EndpointGroupStateDto dto : groupStateList) {
+                endpointGroups.add(endpointService.findEndpointGroupById(dto.getEndpointGroupId()));
+            }
+        }
+        List<EndpointGroupDto> groupDtoList = new ArrayList<>();
+        groupDtoList.addAll(endpointGroups);
+        viewDto.setGroupDtoList(groupDtoList);
+
+        return toGenericDataStruct(viewDto);
     }
 
     /*
-     * (non-Javadoc)
-     * @see
-     * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
-     * .Iface#getEndpointProfileByEndpointGroupId()
-     */
+         * (non-Javadoc)
+         * @see
+         * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
+         * .Iface#getEndpointProfileByEndpointGroupId()
+         */
     /* CLI method */
     @Override
     public DataStruct getEndpointProfileByEndpointGroupId(DataStruct pageLink) throws TException {

@@ -64,8 +64,7 @@ service ControlThriftService extends cli.CliThriftService{
 *    EndpointProfileViewer
 */
 
-  data findProfileSchemaByAppIdAndVersion(1: string appId, 2: int schemaVersion) throws(1: ControlThriftException ControlException)
-  data findEndpointUserByExternalIdAndTenantId(1: string externalId, 2: string tenantId) throws(1: ControlThriftException ControlException)
+  data getEndpointProfileViewDtoByEndpointKeyHash(1: string endpointProfileKeyHash) throws(1: ControlThriftException ControlException)
 
 /**
 *   EndpointProfile

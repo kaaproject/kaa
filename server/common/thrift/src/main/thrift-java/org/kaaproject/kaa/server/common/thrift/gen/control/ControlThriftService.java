@@ -42,12 +42,9 @@ public class ControlThriftService {
     /**
      * EndpointProfileViewer
      * 
-     * @param appId
-     * @param schemaVersion
+     * @param endpointProfileKeyHash
      */
-    public org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct findProfileSchemaByAppIdAndVersion(String appId, int schemaVersion) throws ControlThriftException, org.apache.thrift.TException;
-
-    public org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct findEndpointUserByExternalIdAndTenantId(String externalId, String tenantId) throws ControlThriftException, org.apache.thrift.TException;
+    public org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct getEndpointProfileViewDtoByEndpointKeyHash(String endpointProfileKeyHash) throws ControlThriftException, org.apache.thrift.TException;
 
     /**
      * EndpointProfile
@@ -355,9 +352,7 @@ public class ControlThriftService {
 
   public interface AsyncIface extends org.kaaproject.kaa.server.common.thrift.gen.cli.CliThriftService .AsyncIface {
 
-    public void findProfileSchemaByAppIdAndVersion(String appId, int schemaVersion, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
-
-    public void findEndpointUserByExternalIdAndTenantId(String externalId, String tenantId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+    public void getEndpointProfileViewDtoByEndpointKeyHash(String endpointProfileKeyHash, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
     public void getEndpointProfileByKeyHash(String endpointProfileKeyHash, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
@@ -589,58 +584,30 @@ public class ControlThriftService {
       super(iprot, oprot);
     }
 
-    public org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct findProfileSchemaByAppIdAndVersion(String appId, int schemaVersion) throws ControlThriftException, org.apache.thrift.TException
+    public org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct getEndpointProfileViewDtoByEndpointKeyHash(String endpointProfileKeyHash) throws ControlThriftException, org.apache.thrift.TException
     {
-      send_findProfileSchemaByAppIdAndVersion(appId, schemaVersion);
-      return recv_findProfileSchemaByAppIdAndVersion();
+      send_getEndpointProfileViewDtoByEndpointKeyHash(endpointProfileKeyHash);
+      return recv_getEndpointProfileViewDtoByEndpointKeyHash();
     }
 
-    public void send_findProfileSchemaByAppIdAndVersion(String appId, int schemaVersion) throws org.apache.thrift.TException
+    public void send_getEndpointProfileViewDtoByEndpointKeyHash(String endpointProfileKeyHash) throws org.apache.thrift.TException
     {
-      findProfileSchemaByAppIdAndVersion_args args = new findProfileSchemaByAppIdAndVersion_args();
-      args.setAppId(appId);
-      args.setSchemaVersion(schemaVersion);
-      sendBase("findProfileSchemaByAppIdAndVersion", args);
+      getEndpointProfileViewDtoByEndpointKeyHash_args args = new getEndpointProfileViewDtoByEndpointKeyHash_args();
+      args.setEndpointProfileKeyHash(endpointProfileKeyHash);
+      sendBase("getEndpointProfileViewDtoByEndpointKeyHash", args);
     }
 
-    public org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct recv_findProfileSchemaByAppIdAndVersion() throws ControlThriftException, org.apache.thrift.TException
+    public org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct recv_getEndpointProfileViewDtoByEndpointKeyHash() throws ControlThriftException, org.apache.thrift.TException
     {
-      findProfileSchemaByAppIdAndVersion_result result = new findProfileSchemaByAppIdAndVersion_result();
-      receiveBase(result, "findProfileSchemaByAppIdAndVersion");
+      getEndpointProfileViewDtoByEndpointKeyHash_result result = new getEndpointProfileViewDtoByEndpointKeyHash_result();
+      receiveBase(result, "getEndpointProfileViewDtoByEndpointKeyHash");
       if (result.isSetSuccess()) {
         return result.success;
       }
       if (result.ControlException != null) {
         throw result.ControlException;
       }
-      throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "findProfileSchemaByAppIdAndVersion failed: unknown result");
-    }
-
-    public org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct findEndpointUserByExternalIdAndTenantId(String externalId, String tenantId) throws ControlThriftException, org.apache.thrift.TException
-    {
-      send_findEndpointUserByExternalIdAndTenantId(externalId, tenantId);
-      return recv_findEndpointUserByExternalIdAndTenantId();
-    }
-
-    public void send_findEndpointUserByExternalIdAndTenantId(String externalId, String tenantId) throws org.apache.thrift.TException
-    {
-      findEndpointUserByExternalIdAndTenantId_args args = new findEndpointUserByExternalIdAndTenantId_args();
-      args.setExternalId(externalId);
-      args.setTenantId(tenantId);
-      sendBase("findEndpointUserByExternalIdAndTenantId", args);
-    }
-
-    public org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct recv_findEndpointUserByExternalIdAndTenantId() throws ControlThriftException, org.apache.thrift.TException
-    {
-      findEndpointUserByExternalIdAndTenantId_result result = new findEndpointUserByExternalIdAndTenantId_result();
-      receiveBase(result, "findEndpointUserByExternalIdAndTenantId");
-      if (result.isSetSuccess()) {
-        return result.success;
-      }
-      if (result.ControlException != null) {
-        throw result.ControlException;
-      }
-      throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "findEndpointUserByExternalIdAndTenantId failed: unknown result");
+      throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "getEndpointProfileViewDtoByEndpointKeyHash failed: unknown result");
     }
 
     public org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct getEndpointProfileByKeyHash(String endpointProfileKeyHash) throws ControlThriftException, org.apache.thrift.TException
@@ -3347,27 +3314,24 @@ public class ControlThriftService {
       super(protocolFactory, clientManager, transport);
     }
 
-    public void findProfileSchemaByAppIdAndVersion(String appId, int schemaVersion, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+    public void getEndpointProfileViewDtoByEndpointKeyHash(String endpointProfileKeyHash, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
       checkReady();
-      findProfileSchemaByAppIdAndVersion_call method_call = new findProfileSchemaByAppIdAndVersion_call(appId, schemaVersion, resultHandler, this, ___protocolFactory, ___transport);
+      getEndpointProfileViewDtoByEndpointKeyHash_call method_call = new getEndpointProfileViewDtoByEndpointKeyHash_call(endpointProfileKeyHash, resultHandler, this, ___protocolFactory, ___transport);
       this.___currentMethod = method_call;
       ___manager.call(method_call);
     }
 
-    public static class findProfileSchemaByAppIdAndVersion_call extends org.apache.thrift.async.TAsyncMethodCall {
-      private String appId;
-      private int schemaVersion;
-      public findProfileSchemaByAppIdAndVersion_call(String appId, int schemaVersion, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+    public static class getEndpointProfileViewDtoByEndpointKeyHash_call extends org.apache.thrift.async.TAsyncMethodCall {
+      private String endpointProfileKeyHash;
+      public getEndpointProfileViewDtoByEndpointKeyHash_call(String endpointProfileKeyHash, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
         super(client, protocolFactory, transport, resultHandler, false);
-        this.appId = appId;
-        this.schemaVersion = schemaVersion;
+        this.endpointProfileKeyHash = endpointProfileKeyHash;
       }
 
       public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
-        prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("findProfileSchemaByAppIdAndVersion", org.apache.thrift.protocol.TMessageType.CALL, 0));
-        findProfileSchemaByAppIdAndVersion_args args = new findProfileSchemaByAppIdAndVersion_args();
-        args.setAppId(appId);
-        args.setSchemaVersion(schemaVersion);
+        prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("getEndpointProfileViewDtoByEndpointKeyHash", org.apache.thrift.protocol.TMessageType.CALL, 0));
+        getEndpointProfileViewDtoByEndpointKeyHash_args args = new getEndpointProfileViewDtoByEndpointKeyHash_args();
+        args.setEndpointProfileKeyHash(endpointProfileKeyHash);
         args.write(prot);
         prot.writeMessageEnd();
       }
@@ -3378,42 +3342,7 @@ public class ControlThriftService {
         }
         org.apache.thrift.transport.TMemoryInputTransport memoryTransport = new org.apache.thrift.transport.TMemoryInputTransport(getFrameBuffer().array());
         org.apache.thrift.protocol.TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
-        return (new Client(prot)).recv_findProfileSchemaByAppIdAndVersion();
-      }
-    }
-
-    public void findEndpointUserByExternalIdAndTenantId(String externalId, String tenantId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
-      checkReady();
-      findEndpointUserByExternalIdAndTenantId_call method_call = new findEndpointUserByExternalIdAndTenantId_call(externalId, tenantId, resultHandler, this, ___protocolFactory, ___transport);
-      this.___currentMethod = method_call;
-      ___manager.call(method_call);
-    }
-
-    public static class findEndpointUserByExternalIdAndTenantId_call extends org.apache.thrift.async.TAsyncMethodCall {
-      private String externalId;
-      private String tenantId;
-      public findEndpointUserByExternalIdAndTenantId_call(String externalId, String tenantId, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
-        super(client, protocolFactory, transport, resultHandler, false);
-        this.externalId = externalId;
-        this.tenantId = tenantId;
-      }
-
-      public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
-        prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("findEndpointUserByExternalIdAndTenantId", org.apache.thrift.protocol.TMessageType.CALL, 0));
-        findEndpointUserByExternalIdAndTenantId_args args = new findEndpointUserByExternalIdAndTenantId_args();
-        args.setExternalId(externalId);
-        args.setTenantId(tenantId);
-        args.write(prot);
-        prot.writeMessageEnd();
-      }
-
-      public org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct getResult() throws ControlThriftException, org.apache.thrift.TException {
-        if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
-          throw new IllegalStateException("Method call not finished!");
-        }
-        org.apache.thrift.transport.TMemoryInputTransport memoryTransport = new org.apache.thrift.transport.TMemoryInputTransport(getFrameBuffer().array());
-        org.apache.thrift.protocol.TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
-        return (new Client(prot)).recv_findEndpointUserByExternalIdAndTenantId();
+        return (new Client(prot)).recv_getEndpointProfileViewDtoByEndpointKeyHash();
       }
     }
 
@@ -6821,8 +6750,7 @@ public class ControlThriftService {
     }
 
     private static <I extends Iface> Map<String,  org.apache.thrift.ProcessFunction<I, ? extends  org.apache.thrift.TBase>> getProcessMap(Map<String,  org.apache.thrift.ProcessFunction<I, ? extends  org.apache.thrift.TBase>> processMap) {
-      processMap.put("findProfileSchemaByAppIdAndVersion", new findProfileSchemaByAppIdAndVersion());
-      processMap.put("findEndpointUserByExternalIdAndTenantId", new findEndpointUserByExternalIdAndTenantId());
+      processMap.put("getEndpointProfileViewDtoByEndpointKeyHash", new getEndpointProfileViewDtoByEndpointKeyHash());
       processMap.put("getEndpointProfileByKeyHash", new getEndpointProfileByKeyHash());
       processMap.put("getEndpointProfileByEndpointGroupId", new getEndpointProfileByEndpointGroupId());
       processMap.put("getEndpointProfileBodyByKeyHash", new getEndpointProfileBodyByKeyHash());
@@ -6930,47 +6858,23 @@ public class ControlThriftService {
       return processMap;
     }
 
-    public static class findProfileSchemaByAppIdAndVersion<I extends Iface> extends org.apache.thrift.ProcessFunction<I, findProfileSchemaByAppIdAndVersion_args> {
-      public findProfileSchemaByAppIdAndVersion() {
-        super("findProfileSchemaByAppIdAndVersion");
+    public static class getEndpointProfileViewDtoByEndpointKeyHash<I extends Iface> extends org.apache.thrift.ProcessFunction<I, getEndpointProfileViewDtoByEndpointKeyHash_args> {
+      public getEndpointProfileViewDtoByEndpointKeyHash() {
+        super("getEndpointProfileViewDtoByEndpointKeyHash");
       }
 
-      public findProfileSchemaByAppIdAndVersion_args getEmptyArgsInstance() {
-        return new findProfileSchemaByAppIdAndVersion_args();
-      }
-
-      protected boolean isOneway() {
-        return false;
-      }
-
-      public findProfileSchemaByAppIdAndVersion_result getResult(I iface, findProfileSchemaByAppIdAndVersion_args args) throws org.apache.thrift.TException {
-        findProfileSchemaByAppIdAndVersion_result result = new findProfileSchemaByAppIdAndVersion_result();
-        try {
-          result.success = iface.findProfileSchemaByAppIdAndVersion(args.appId, args.schemaVersion);
-        } catch (ControlThriftException ControlException) {
-          result.ControlException = ControlException;
-        }
-        return result;
-      }
-    }
-
-    public static class findEndpointUserByExternalIdAndTenantId<I extends Iface> extends org.apache.thrift.ProcessFunction<I, findEndpointUserByExternalIdAndTenantId_args> {
-      public findEndpointUserByExternalIdAndTenantId() {
-        super("findEndpointUserByExternalIdAndTenantId");
-      }
-
-      public findEndpointUserByExternalIdAndTenantId_args getEmptyArgsInstance() {
-        return new findEndpointUserByExternalIdAndTenantId_args();
+      public getEndpointProfileViewDtoByEndpointKeyHash_args getEmptyArgsInstance() {
+        return new getEndpointProfileViewDtoByEndpointKeyHash_args();
       }
 
       protected boolean isOneway() {
         return false;
       }
 
-      public findEndpointUserByExternalIdAndTenantId_result getResult(I iface, findEndpointUserByExternalIdAndTenantId_args args) throws org.apache.thrift.TException {
-        findEndpointUserByExternalIdAndTenantId_result result = new findEndpointUserByExternalIdAndTenantId_result();
+      public getEndpointProfileViewDtoByEndpointKeyHash_result getResult(I iface, getEndpointProfileViewDtoByEndpointKeyHash_args args) throws org.apache.thrift.TException {
+        getEndpointProfileViewDtoByEndpointKeyHash_result result = new getEndpointProfileViewDtoByEndpointKeyHash_result();
         try {
-          result.success = iface.findEndpointUserByExternalIdAndTenantId(args.externalId, args.tenantId);
+          result.success = iface.getEndpointProfileViewDtoByEndpointKeyHash(args.endpointProfileKeyHash);
         } catch (ControlThriftException ControlException) {
           result.ControlException = ControlException;
         }
@@ -9487,8 +9391,7 @@ public class ControlThriftService {
     }
 
     private static <I extends AsyncIface> Map<String,  org.apache.thrift.AsyncProcessFunction<I, ? extends  org.apache.thrift.TBase,?>> getProcessMap(Map<String,  org.apache.thrift.AsyncProcessFunction<I, ? extends  org.apache.thrift.TBase, ?>> processMap) {
-      processMap.put("findProfileSchemaByAppIdAndVersion", new findProfileSchemaByAppIdAndVersion());
-      processMap.put("findEndpointUserByExternalIdAndTenantId", new findEndpointUserByExternalIdAndTenantId());
+      processMap.put("getEndpointProfileViewDtoByEndpointKeyHash", new getEndpointProfileViewDtoByEndpointKeyHash());
       processMap.put("getEndpointProfileByKeyHash", new getEndpointProfileByKeyHash());
       processMap.put("getEndpointProfileByEndpointGroupId", new getEndpointProfileByEndpointGroupId());
       processMap.put("getEndpointProfileBodyByKeyHash", new getEndpointProfileBodyByKeyHash());
@@ -9596,20 +9499,20 @@ public class ControlThriftService {
       return processMap;
     }
 
-    public static class findProfileSchemaByAppIdAndVersion<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, findProfileSchemaByAppIdAndVersion_args, org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct> {
-      public findProfileSchemaByAppIdAndVersion() {
-        super("findProfileSchemaByAppIdAndVersion");
+    public static class getEndpointProfileViewDtoByEndpointKeyHash<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, getEndpointProfileViewDtoByEndpointKeyHash_args, org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct> {
+      public getEndpointProfileViewDtoByEndpointKeyHash() {
+        super("getEndpointProfileViewDtoByEndpointKeyHash");
       }
 
-      public findProfileSchemaByAppIdAndVersion_args getEmptyArgsInstance() {
-        return new findProfileSchemaByAppIdAndVersion_args();
+      public getEndpointProfileViewDtoByEndpointKeyHash_args getEmptyArgsInstance() {
+        return new getEndpointProfileViewDtoByEndpointKeyHash_args();
       }
 
       public AsyncMethodCallback<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct> getResultHandler(final AsyncFrameBuffer fb, final int seqid) {
         final org.apache.thrift.AsyncProcessFunction fcall = this;
         return new AsyncMethodCallback<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct>() { 
           public void onComplete(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct o) {
-            findProfileSchemaByAppIdAndVersion_result result = new findProfileSchemaByAppIdAndVersion_result();
+            getEndpointProfileViewDtoByEndpointKeyHash_result result = new getEndpointProfileViewDtoByEndpointKeyHash_result();
             result.success = o;
             try {
               fcall.sendResponse(fb,result, org.apache.thrift.protocol.TMessageType.REPLY,seqid);
@@ -9622,7 +9525,7 @@ public class ControlThriftService {
           public void onError(Exception e) {
             byte msgType = org.apache.thrift.protocol.TMessageType.REPLY;
             org.apache.thrift.TBase msg;
-            findProfileSchemaByAppIdAndVersion_result result = new findProfileSchemaByAppIdAndVersion_result();
+            getEndpointProfileViewDtoByEndpointKeyHash_result result = new getEndpointProfileViewDtoByEndpointKeyHash_result();
             if (e instanceof ControlThriftException) {
                         result.ControlException = (ControlThriftException) e;
                         result.setControlExceptionIsSet(true);
@@ -9648,65 +9551,8 @@ public class ControlThriftService {
         return false;
       }
 
-      public void start(I iface, findProfileSchemaByAppIdAndVersion_args args, org.apache.thrift.async.AsyncMethodCallback<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct> resultHandler) throws TException {
-        iface.findProfileSchemaByAppIdAndVersion(args.appId, args.schemaVersion,resultHandler);
-      }
-    }
-
-    public static class findEndpointUserByExternalIdAndTenantId<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, findEndpointUserByExternalIdAndTenantId_args, org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct> {
-      public findEndpointUserByExternalIdAndTenantId() {
-        super("findEndpointUserByExternalIdAndTenantId");
-      }
-
-      public findEndpointUserByExternalIdAndTenantId_args getEmptyArgsInstance() {
-        return new findEndpointUserByExternalIdAndTenantId_args();
-      }
-
-      public AsyncMethodCallback<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct> getResultHandler(final AsyncFrameBuffer fb, final int seqid) {
-        final org.apache.thrift.AsyncProcessFunction fcall = this;
-        return new AsyncMethodCallback<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct>() { 
-          public void onComplete(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct o) {
-            findEndpointUserByExternalIdAndTenantId_result result = new findEndpointUserByExternalIdAndTenantId_result();
-            result.success = o;
-            try {
-              fcall.sendResponse(fb,result, org.apache.thrift.protocol.TMessageType.REPLY,seqid);
-              return;
-            } catch (Exception e) {
-              LOGGER.error("Exception writing to internal frame buffer", e);
-            }
-            fb.close();
-          }
-          public void onError(Exception e) {
-            byte msgType = org.apache.thrift.protocol.TMessageType.REPLY;
-            org.apache.thrift.TBase msg;
-            findEndpointUserByExternalIdAndTenantId_result result = new findEndpointUserByExternalIdAndTenantId_result();
-            if (e instanceof ControlThriftException) {
-                        result.ControlException = (ControlThriftException) e;
-                        result.setControlExceptionIsSet(true);
-                        msg = result;
-            }
-             else 
-            {
-              msgType = org.apache.thrift.protocol.TMessageType.EXCEPTION;
-              msg = (org.apache.thrift.TBase)new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.INTERNAL_ERROR, e.getMessage());
-            }
-            try {
-              fcall.sendResponse(fb,msg,msgType,seqid);
-              return;
-            } catch (Exception ex) {
-              LOGGER.error("Exception writing to internal frame buffer", ex);
-            }
-            fb.close();
-          }
-        };
-      }
-
-      protected boolean isOneway() {
-        return false;
-      }
-
-      public void start(I iface, findEndpointUserByExternalIdAndTenantId_args args, org.apache.thrift.async.AsyncMethodCallback<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct> resultHandler) throws TException {
-        iface.findEndpointUserByExternalIdAndTenantId(args.externalId, args.tenantId,resultHandler);
+      public void start(I iface, getEndpointProfileViewDtoByEndpointKeyHash_args args, org.apache.thrift.async.AsyncMethodCallback<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct> resultHandler) throws TException {
+        iface.getEndpointProfileViewDtoByEndpointKeyHash(args.endpointProfileKeyHash,resultHandler);
       }
     }
 
@@ -15627,25 +15473,22 @@ public class ControlThriftService {
 
   }
 
-  public static class findProfileSchemaByAppIdAndVersion_args implements org.apache.thrift.TBase<findProfileSchemaByAppIdAndVersion_args, findProfileSchemaByAppIdAndVersion_args._Fields>, java.io.Serializable, Cloneable, Comparable<findProfileSchemaByAppIdAndVersion_args>   {
-    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("findProfileSchemaByAppIdAndVersion_args");
+  public static class getEndpointProfileViewDtoByEndpointKeyHash_args implements org.apache.thrift.TBase<getEndpointProfileViewDtoByEndpointKeyHash_args, getEndpointProfileViewDtoByEndpointKeyHash_args._Fields>, java.io.Serializable, Cloneable, Comparable<getEndpointProfileViewDtoByEndpointKeyHash_args>   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("getEndpointProfileViewDtoByEndpointKeyHash_args");
 
-    private static final org.apache.thrift.protocol.TField APP_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("appId", org.apache.thrift.protocol.TType.STRING, (short)1);
-    private static final org.apache.thrift.protocol.TField SCHEMA_VERSION_FIELD_DESC = new org.apache.thrift.protocol.TField("schemaVersion", org.apache.thrift.protocol.TType.I32, (short)2);
+    private static final org.apache.thrift.protocol.TField ENDPOINT_PROFILE_KEY_HASH_FIELD_DESC = new org.apache.thrift.protocol.TField("endpointProfileKeyHash", org.apache.thrift.protocol.TType.STRING, (short)1);
 
     private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
     static {
-      schemes.put(StandardScheme.class, new findProfileSchemaByAppIdAndVersion_argsStandardSchemeFactory());
-      schemes.put(TupleScheme.class, new findProfileSchemaByAppIdAndVersion_argsTupleSchemeFactory());
+      schemes.put(StandardScheme.class, new getEndpointProfileViewDtoByEndpointKeyHash_argsStandardSchemeFactory());
+      schemes.put(TupleScheme.class, new getEndpointProfileViewDtoByEndpointKeyHash_argsTupleSchemeFactory());
     }
 
-    public String appId; // required
-    public int schemaVersion; // required
+    public String endpointProfileKeyHash; // required
 
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-      APP_ID((short)1, "appId"),
-      SCHEMA_VERSION((short)2, "schemaVersion");
+      ENDPOINT_PROFILE_KEY_HASH((short)1, "endpointProfileKeyHash");
 
       private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -15660,10 +15503,8 @@ public class ControlThriftService {
        */
       public static _Fields findByThriftId(int fieldId) {
         switch(fieldId) {
-          case 1: // APP_ID
-            return APP_ID;
-          case 2: // SCHEMA_VERSION
-            return SCHEMA_VERSION;
+          case 1: // ENDPOINT_PROFILE_KEY_HASH
+            return ENDPOINT_PROFILE_KEY_HASH;
           default:
             return null;
         }
@@ -15704,116 +15545,74 @@ public class ControlThriftService {
     }
 
     // isset id assignments
-    private static final int __SCHEMAVERSION_ISSET_ID = 0;
-    private byte __isset_bitfield = 0;
     public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
     static {
       Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
-      tmpMap.put(_Fields.APP_ID, new org.apache.thrift.meta_data.FieldMetaData("appId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+      tmpMap.put(_Fields.ENDPOINT_PROFILE_KEY_HASH, new org.apache.thrift.meta_data.FieldMetaData("endpointProfileKeyHash", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
-      tmpMap.put(_Fields.SCHEMA_VERSION, new org.apache.thrift.meta_data.FieldMetaData("schemaVersion", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32          , "int")));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
-      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(findProfileSchemaByAppIdAndVersion_args.class, metaDataMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(getEndpointProfileViewDtoByEndpointKeyHash_args.class, metaDataMap);
     }
 
-    public findProfileSchemaByAppIdAndVersion_args() {
+    public getEndpointProfileViewDtoByEndpointKeyHash_args() {
     }
 
-    public findProfileSchemaByAppIdAndVersion_args(
-      String appId,
-      int schemaVersion)
+    public getEndpointProfileViewDtoByEndpointKeyHash_args(
+      String endpointProfileKeyHash)
     {
       this();
-      this.appId = appId;
-      this.schemaVersion = schemaVersion;
-      setSchemaVersionIsSet(true);
+      this.endpointProfileKeyHash = endpointProfileKeyHash;
     }
 
     /**
      * Performs a deep copy on <i>other</i>.
      */
-    public findProfileSchemaByAppIdAndVersion_args(findProfileSchemaByAppIdAndVersion_args other) {
-      __isset_bitfield = other.__isset_bitfield;
-      if (other.isSetAppId()) {
-        this.appId = other.appId;
+    public getEndpointProfileViewDtoByEndpointKeyHash_args(getEndpointProfileViewDtoByEndpointKeyHash_args other) {
+      if (other.isSetEndpointProfileKeyHash()) {
+        this.endpointProfileKeyHash = other.endpointProfileKeyHash;
       }
-      this.schemaVersion = other.schemaVersion;
     }
 
-    public findProfileSchemaByAppIdAndVersion_args deepCopy() {
-      return new findProfileSchemaByAppIdAndVersion_args(this);
+    public getEndpointProfileViewDtoByEndpointKeyHash_args deepCopy() {
+      return new getEndpointProfileViewDtoByEndpointKeyHash_args(this);
     }
 
     @Override
     public void clear() {
-      this.appId = null;
-      setSchemaVersionIsSet(false);
-      this.schemaVersion = 0;
+      this.endpointProfileKeyHash = null;
     }
 
-    public String getAppId() {
-      return this.appId;
+    public String getEndpointProfileKeyHash() {
+      return this.endpointProfileKeyHash;
     }
 
-    public findProfileSchemaByAppIdAndVersion_args setAppId(String appId) {
-      this.appId = appId;
+    public getEndpointProfileViewDtoByEndpointKeyHash_args setEndpointProfileKeyHash(String endpointProfileKeyHash) {
+      this.endpointProfileKeyHash = endpointProfileKeyHash;
       return this;
     }
 
-    public void unsetAppId() {
-      this.appId = null;
+    public void unsetEndpointProfileKeyHash() {
+      this.endpointProfileKeyHash = null;
     }
 
-    /** Returns true if field appId is set (has been assigned a value) and false otherwise */
-    public boolean isSetAppId() {
-      return this.appId != null;
+    /** Returns true if field endpointProfileKeyHash is set (has been assigned a value) and false otherwise */
+    public boolean isSetEndpointProfileKeyHash() {
+      return this.endpointProfileKeyHash != null;
     }
 
-    public void setAppIdIsSet(boolean value) {
+    public void setEndpointProfileKeyHashIsSet(boolean value) {
       if (!value) {
-        this.appId = null;
+        this.endpointProfileKeyHash = null;
       }
-    }
-
-    public int getSchemaVersion() {
-      return this.schemaVersion;
-    }
-
-    public findProfileSchemaByAppIdAndVersion_args setSchemaVersion(int schemaVersion) {
-      this.schemaVersion = schemaVersion;
-      setSchemaVersionIsSet(true);
-      return this;
-    }
-
-    public void unsetSchemaVersion() {
-      __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __SCHEMAVERSION_ISSET_ID);
-    }
-
-    /** Returns true if field schemaVersion is set (has been assigned a value) and false otherwise */
-    public boolean isSetSchemaVersion() {
-      return EncodingUtils.testBit(__isset_bitfield, __SCHEMAVERSION_ISSET_ID);
-    }
-
-    public void setSchemaVersionIsSet(boolean value) {
-      __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __SCHEMAVERSION_ISSET_ID, value);
     }
 
     public void setFieldValue(_Fields field, Object value) {
       switch (field) {
-      case APP_ID:
+      case ENDPOINT_PROFILE_KEY_HASH:
         if (value == null) {
-          unsetAppId();
+          unsetEndpointProfileKeyHash();
         } else {
-          setAppId((String)value);
-        }
-        break;
-
-      case SCHEMA_VERSION:
-        if (value == null) {
-          unsetSchemaVersion();
-        } else {
-          setSchemaVersion((Integer)value);
+          setEndpointProfileKeyHash((String)value);
         }
         break;
 
@@ -15822,11 +15621,8 @@ public class ControlThriftService {
 
     public Object getFieldValue(_Fields field) {
       switch (field) {
-      case APP_ID:
-        return getAppId();
-
-      case SCHEMA_VERSION:
-        return Integer.valueOf(getSchemaVersion());
+      case ENDPOINT_PROFILE_KEY_HASH:
+        return getEndpointProfileKeyHash();
 
       }
       throw new IllegalStateException();
@@ -15839,10 +15635,8 @@ public class ControlThriftService {
       }
 
       switch (field) {
-      case APP_ID:
-        return isSetAppId();
-      case SCHEMA_VERSION:
-        return isSetSchemaVersion();
+      case ENDPOINT_PROFILE_KEY_HASH:
+        return isSetEndpointProfileKeyHash();
       }
       throw new IllegalStateException();
     }
@@ -15851,30 +15645,21 @@ public class ControlThriftService {
     public boolean equals(Object that) {
       if (that == null)
         return false;
-      if (that instanceof findProfileSchemaByAppIdAndVersion_args)
-        return this.equals((findProfileSchemaByAppIdAndVersion_args)that);
+      if (that instanceof getEndpointProfileViewDtoByEndpointKeyHash_args)
+        return this.equals((getEndpointProfileViewDtoByEndpointKeyHash_args)that);
       return false;
     }
 
-    public boolean equals(findProfileSchemaByAppIdAndVersion_args that) {
+    public boolean equals(getEndpointProfileViewDtoByEndpointKeyHash_args that) {
       if (that == null)
         return false;
 
-      boolean this_present_appId = true && this.isSetAppId();
-      boolean that_present_appId = true && that.isSetAppId();
-      if (this_present_appId || that_present_appId) {
-        if (!(this_present_appId && that_present_appId))
+      boolean this_present_endpointProfileKeyHash = true && this.isSetEndpointProfileKeyHash();
+      boolean that_present_endpointProfileKeyHash = true && that.isSetEndpointProfileKeyHash();
+      if (this_present_endpointProfileKeyHash || that_present_endpointProfileKeyHash) {
+        if (!(this_present_endpointProfileKeyHash && that_present_endpointProfileKeyHash))
           return false;
-        if (!this.appId.equals(that.appId))
-          return false;
-      }
-
-      boolean this_present_schemaVersion = true;
-      boolean that_present_schemaVersion = true;
-      if (this_present_schemaVersion || that_present_schemaVersion) {
-        if (!(this_present_schemaVersion && that_present_schemaVersion))
-          return false;
-        if (this.schemaVersion != that.schemaVersion)
+        if (!this.endpointProfileKeyHash.equals(that.endpointProfileKeyHash))
           return false;
       }
 
@@ -15885,43 +15670,28 @@ public class ControlThriftService {
     public int hashCode() {
       List<Object> list = new ArrayList<Object>();
 
-      boolean present_appId = true && (isSetAppId());
-      list.add(present_appId);
-      if (present_appId)
-        list.add(appId);
-
-      boolean present_schemaVersion = true;
-      list.add(present_schemaVersion);
-      if (present_schemaVersion)
-        list.add(schemaVersion);
+      boolean present_endpointProfileKeyHash = true && (isSetEndpointProfileKeyHash());
+      list.add(present_endpointProfileKeyHash);
+      if (present_endpointProfileKeyHash)
+        list.add(endpointProfileKeyHash);
 
       return list.hashCode();
     }
 
     @Override
-    public int compareTo(findProfileSchemaByAppIdAndVersion_args other) {
+    public int compareTo(getEndpointProfileViewDtoByEndpointKeyHash_args other) {
       if (!getClass().equals(other.getClass())) {
         return getClass().getName().compareTo(other.getClass().getName());
       }
 
       int lastComparison = 0;
 
-      lastComparison = Boolean.valueOf(isSetAppId()).compareTo(other.isSetAppId());
+      lastComparison = Boolean.valueOf(isSetEndpointProfileKeyHash()).compareTo(other.isSetEndpointProfileKeyHash());
       if (lastComparison != 0) {
         return lastComparison;
       }
-      if (isSetAppId()) {
-        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.appId, other.appId);
-        if (lastComparison != 0) {
-          return lastComparison;
-        }
-      }
-      lastComparison = Boolean.valueOf(isSetSchemaVersion()).compareTo(other.isSetSchemaVersion());
-      if (lastComparison != 0) {
-        return lastComparison;
-      }
-      if (isSetSchemaVersion()) {
-        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.schemaVersion, other.schemaVersion);
+      if (isSetEndpointProfileKeyHash()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.endpointProfileKeyHash, other.endpointProfileKeyHash);
         if (lastComparison != 0) {
           return lastComparison;
         }
@@ -15943,19 +15713,15 @@ public class ControlThriftService {
 
     @Override
     public String toString() {
-      StringBuilder sb = new StringBuilder("findProfileSchemaByAppIdAndVersion_args(");
+      StringBuilder sb = new StringBuilder("getEndpointProfileViewDtoByEndpointKeyHash_args(");
       boolean first = true;
 
-      sb.append("appId:");
-      if (this.appId == null) {
+      sb.append("endpointProfileKeyHash:");
+      if (this.endpointProfileKeyHash == null) {
         sb.append("null");
       } else {
-        sb.append(this.appId);
+        sb.append(this.endpointProfileKeyHash);
       }
-      first = false;
-      if (!first) sb.append(", ");
-      sb.append("schemaVersion:");
-      sb.append(this.schemaVersion);
       first = false;
       sb.append(")");
       return sb.toString();
@@ -15976,23 +15742,21 @@ public class ControlThriftService {
 
     private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
       try {
-        // it doesn't seem like you should have to do this, but java serialization is wacky, and doesn't call the default constructor.
-        __isset_bitfield = 0;
         read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
       } catch (org.apache.thrift.TException te) {
         throw new java.io.IOException(te);
       }
     }
 
-    private static class findProfileSchemaByAppIdAndVersion_argsStandardSchemeFactory implements SchemeFactory {
-      public findProfileSchemaByAppIdAndVersion_argsStandardScheme getScheme() {
-        return new findProfileSchemaByAppIdAndVersion_argsStandardScheme();
+    private static class getEndpointProfileViewDtoByEndpointKeyHash_argsStandardSchemeFactory implements SchemeFactory {
+      public getEndpointProfileViewDtoByEndpointKeyHash_argsStandardScheme getScheme() {
+        return new getEndpointProfileViewDtoByEndpointKeyHash_argsStandardScheme();
       }
     }
 
-    private static class findProfileSchemaByAppIdAndVersion_argsStandardScheme extends StandardScheme<findProfileSchemaByAppIdAndVersion_args> {
+    private static class getEndpointProfileViewDtoByEndpointKeyHash_argsStandardScheme extends StandardScheme<getEndpointProfileViewDtoByEndpointKeyHash_args> {
 
-      public void read(org.apache.thrift.protocol.TProtocol iprot, findProfileSchemaByAppIdAndVersion_args struct) throws org.apache.thrift.TException {
+      public void read(org.apache.thrift.protocol.TProtocol iprot, getEndpointProfileViewDtoByEndpointKeyHash_args struct) throws org.apache.thrift.TException {
         org.apache.thrift.protocol.TField schemeField;
         iprot.readStructBegin();
         while (true)
@@ -16002,18 +15766,10 @@ public class ControlThriftService {
             break;
           }
           switch (schemeField.id) {
-            case 1: // APP_ID
+            case 1: // ENDPOINT_PROFILE_KEY_HASH
               if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
-                struct.appId = iprot.readString();
-                struct.setAppIdIsSet(true);
-              } else { 
-                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-              }
-              break;
-            case 2: // SCHEMA_VERSION
-              if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-                struct.schemaVersion = iprot.readI32();
-                struct.setSchemaVersionIsSet(true);
+                struct.endpointProfileKeyHash = iprot.readString();
+                struct.setEndpointProfileKeyHashIsSet(true);
               } else { 
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
               }
@@ -16029,78 +15785,65 @@ public class ControlThriftService {
         struct.validate();
       }
 
-      public void write(org.apache.thrift.protocol.TProtocol oprot, findProfileSchemaByAppIdAndVersion_args struct) throws org.apache.thrift.TException {
+      public void write(org.apache.thrift.protocol.TProtocol oprot, getEndpointProfileViewDtoByEndpointKeyHash_args struct) throws org.apache.thrift.TException {
         struct.validate();
 
         oprot.writeStructBegin(STRUCT_DESC);
-        if (struct.appId != null) {
-          oprot.writeFieldBegin(APP_ID_FIELD_DESC);
-          oprot.writeString(struct.appId);
+        if (struct.endpointProfileKeyHash != null) {
+          oprot.writeFieldBegin(ENDPOINT_PROFILE_KEY_HASH_FIELD_DESC);
+          oprot.writeString(struct.endpointProfileKeyHash);
           oprot.writeFieldEnd();
         }
-        oprot.writeFieldBegin(SCHEMA_VERSION_FIELD_DESC);
-        oprot.writeI32(struct.schemaVersion);
-        oprot.writeFieldEnd();
         oprot.writeFieldStop();
         oprot.writeStructEnd();
       }
 
     }
 
-    private static class findProfileSchemaByAppIdAndVersion_argsTupleSchemeFactory implements SchemeFactory {
-      public findProfileSchemaByAppIdAndVersion_argsTupleScheme getScheme() {
-        return new findProfileSchemaByAppIdAndVersion_argsTupleScheme();
+    private static class getEndpointProfileViewDtoByEndpointKeyHash_argsTupleSchemeFactory implements SchemeFactory {
+      public getEndpointProfileViewDtoByEndpointKeyHash_argsTupleScheme getScheme() {
+        return new getEndpointProfileViewDtoByEndpointKeyHash_argsTupleScheme();
       }
     }
 
-    private static class findProfileSchemaByAppIdAndVersion_argsTupleScheme extends TupleScheme<findProfileSchemaByAppIdAndVersion_args> {
+    private static class getEndpointProfileViewDtoByEndpointKeyHash_argsTupleScheme extends TupleScheme<getEndpointProfileViewDtoByEndpointKeyHash_args> {
 
       @Override
-      public void write(org.apache.thrift.protocol.TProtocol prot, findProfileSchemaByAppIdAndVersion_args struct) throws org.apache.thrift.TException {
+      public void write(org.apache.thrift.protocol.TProtocol prot, getEndpointProfileViewDtoByEndpointKeyHash_args struct) throws org.apache.thrift.TException {
         TTupleProtocol oprot = (TTupleProtocol) prot;
         BitSet optionals = new BitSet();
-        if (struct.isSetAppId()) {
+        if (struct.isSetEndpointProfileKeyHash()) {
           optionals.set(0);
         }
-        if (struct.isSetSchemaVersion()) {
-          optionals.set(1);
-        }
-        oprot.writeBitSet(optionals, 2);
-        if (struct.isSetAppId()) {
-          oprot.writeString(struct.appId);
-        }
-        if (struct.isSetSchemaVersion()) {
-          oprot.writeI32(struct.schemaVersion);
+        oprot.writeBitSet(optionals, 1);
+        if (struct.isSetEndpointProfileKeyHash()) {
+          oprot.writeString(struct.endpointProfileKeyHash);
         }
       }
 
       @Override
-      public void read(org.apache.thrift.protocol.TProtocol prot, findProfileSchemaByAppIdAndVersion_args struct) throws org.apache.thrift.TException {
+      public void read(org.apache.thrift.protocol.TProtocol prot, getEndpointProfileViewDtoByEndpointKeyHash_args struct) throws org.apache.thrift.TException {
         TTupleProtocol iprot = (TTupleProtocol) prot;
-        BitSet incoming = iprot.readBitSet(2);
+        BitSet incoming = iprot.readBitSet(1);
         if (incoming.get(0)) {
-          struct.appId = iprot.readString();
-          struct.setAppIdIsSet(true);
-        }
-        if (incoming.get(1)) {
-          struct.schemaVersion = iprot.readI32();
-          struct.setSchemaVersionIsSet(true);
+          struct.endpointProfileKeyHash = iprot.readString();
+          struct.setEndpointProfileKeyHashIsSet(true);
         }
       }
     }
 
   }
 
-  public static class findProfileSchemaByAppIdAndVersion_result implements org.apache.thrift.TBase<findProfileSchemaByAppIdAndVersion_result, findProfileSchemaByAppIdAndVersion_result._Fields>, java.io.Serializable, Cloneable, Comparable<findProfileSchemaByAppIdAndVersion_result>   {
-    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("findProfileSchemaByAppIdAndVersion_result");
+  public static class getEndpointProfileViewDtoByEndpointKeyHash_result implements org.apache.thrift.TBase<getEndpointProfileViewDtoByEndpointKeyHash_result, getEndpointProfileViewDtoByEndpointKeyHash_result._Fields>, java.io.Serializable, Cloneable, Comparable<getEndpointProfileViewDtoByEndpointKeyHash_result>   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("getEndpointProfileViewDtoByEndpointKeyHash_result");
 
     private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.STRUCT, (short)0);
     private static final org.apache.thrift.protocol.TField CONTROL_EXCEPTION_FIELD_DESC = new org.apache.thrift.protocol.TField("ControlException", org.apache.thrift.protocol.TType.STRUCT, (short)1);
 
     private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
     static {
-      schemes.put(StandardScheme.class, new findProfileSchemaByAppIdAndVersion_resultStandardSchemeFactory());
-      schemes.put(TupleScheme.class, new findProfileSchemaByAppIdAndVersion_resultTupleSchemeFactory());
+      schemes.put(StandardScheme.class, new getEndpointProfileViewDtoByEndpointKeyHash_resultStandardSchemeFactory());
+      schemes.put(TupleScheme.class, new getEndpointProfileViewDtoByEndpointKeyHash_resultTupleSchemeFactory());
     }
 
     public org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct success; // required
@@ -16176,13 +15919,13 @@ public class ControlThriftService {
       tmpMap.put(_Fields.CONTROL_EXCEPTION, new org.apache.thrift.meta_data.FieldMetaData("ControlException", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT)));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
-      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(findProfileSchemaByAppIdAndVersion_result.class, metaDataMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(getEndpointProfileViewDtoByEndpointKeyHash_result.class, metaDataMap);
     }
 
-    public findProfileSchemaByAppIdAndVersion_result() {
+    public getEndpointProfileViewDtoByEndpointKeyHash_result() {
     }
 
-    public findProfileSchemaByAppIdAndVersion_result(
+    public getEndpointProfileViewDtoByEndpointKeyHash_result(
       org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct success,
       ControlThriftException ControlException)
     {
@@ -16194,7 +15937,7 @@ public class ControlThriftService {
     /**
      * Performs a deep copy on <i>other</i>.
      */
-    public findProfileSchemaByAppIdAndVersion_result(findProfileSchemaByAppIdAndVersion_result other) {
+    public getEndpointProfileViewDtoByEndpointKeyHash_result(getEndpointProfileViewDtoByEndpointKeyHash_result other) {
       if (other.isSetSuccess()) {
         this.success = other.success;
       }
@@ -16203,8 +15946,8 @@ public class ControlThriftService {
       }
     }
 
-    public findProfileSchemaByAppIdAndVersion_result deepCopy() {
-      return new findProfileSchemaByAppIdAndVersion_result(this);
+    public getEndpointProfileViewDtoByEndpointKeyHash_result deepCopy() {
+      return new getEndpointProfileViewDtoByEndpointKeyHash_result(this);
     }
 
     @Override
@@ -16217,7 +15960,7 @@ public class ControlThriftService {
       return this.success;
     }
 
-    public findProfileSchemaByAppIdAndVersion_result setSuccess(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct success) {
+    public getEndpointProfileViewDtoByEndpointKeyHash_result setSuccess(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct success) {
       this.success = success;
       return this;
     }
@@ -16241,7 +15984,7 @@ public class ControlThriftService {
       return this.ControlException;
     }
 
-    public findProfileSchemaByAppIdAndVersion_result setControlException(ControlThriftException ControlException) {
+    public getEndpointProfileViewDtoByEndpointKeyHash_result setControlException(ControlThriftException ControlException) {
       this.ControlException = ControlException;
       return this;
     }
@@ -16313,12 +16056,12 @@ public class ControlThriftService {
     public boolean equals(Object that) {
       if (that == null)
         return false;
-      if (that instanceof findProfileSchemaByAppIdAndVersion_result)
-        return this.equals((findProfileSchemaByAppIdAndVersion_result)that);
+      if (that instanceof getEndpointProfileViewDtoByEndpointKeyHash_result)
+        return this.equals((getEndpointProfileViewDtoByEndpointKeyHash_result)that);
       return false;
     }
 
-    public boolean equals(findProfileSchemaByAppIdAndVersion_result that) {
+    public boolean equals(getEndpointProfileViewDtoByEndpointKeyHash_result that) {
       if (that == null)
         return false;
 
@@ -16361,7 +16104,7 @@ public class ControlThriftService {
     }
 
     @Override
-    public int compareTo(findProfileSchemaByAppIdAndVersion_result other) {
+    public int compareTo(getEndpointProfileViewDtoByEndpointKeyHash_result other) {
       if (!getClass().equals(other.getClass())) {
         return getClass().getName().compareTo(other.getClass().getName());
       }
@@ -16405,7 +16148,7 @@ public class ControlThriftService {
 
     @Override
     public String toString() {
-      StringBuilder sb = new StringBuilder("findProfileSchemaByAppIdAndVersion_result(");
+      StringBuilder sb = new StringBuilder("getEndpointProfileViewDtoByEndpointKeyHash_result(");
       boolean first = true;
 
       sb.append("success:");
@@ -16448,15 +16191,15 @@ public class ControlThriftService {
       }
     }
 
-    private static class findProfileSchemaByAppIdAndVersion_resultStandardSchemeFactory implements SchemeFactory {
-      public findProfileSchemaByAppIdAndVersion_resultStandardScheme getScheme() {
-        return new findProfileSchemaByAppIdAndVersion_resultStandardScheme();
+    private static class getEndpointProfileViewDtoByEndpointKeyHash_resultStandardSchemeFactory implements SchemeFactory {
+      public getEndpointProfileViewDtoByEndpointKeyHash_resultStandardScheme getScheme() {
+        return new getEndpointProfileViewDtoByEndpointKeyHash_resultStandardScheme();
       }
     }
 
-    private static class findProfileSchemaByAppIdAndVersion_resultStandardScheme extends StandardScheme<findProfileSchemaByAppIdAndVersion_result> {
+    private static class getEndpointProfileViewDtoByEndpointKeyHash_resultStandardScheme extends StandardScheme<getEndpointProfileViewDtoByEndpointKeyHash_result> {
 
-      public void read(org.apache.thrift.protocol.TProtocol iprot, findProfileSchemaByAppIdAndVersion_result struct) throws org.apache.thrift.TException {
+      public void read(org.apache.thrift.protocol.TProtocol iprot, getEndpointProfileViewDtoByEndpointKeyHash_result struct) throws org.apache.thrift.TException {
         org.apache.thrift.protocol.TField schemeField;
         iprot.readStructBegin();
         while (true)
@@ -16495,7 +16238,7 @@ public class ControlThriftService {
         struct.validate();
       }
 
-      public void write(org.apache.thrift.protocol.TProtocol oprot, findProfileSchemaByAppIdAndVersion_result struct) throws org.apache.thrift.TException {
+      public void write(org.apache.thrift.protocol.TProtocol oprot, getEndpointProfileViewDtoByEndpointKeyHash_result struct) throws org.apache.thrift.TException {
         struct.validate();
 
         oprot.writeStructBegin(STRUCT_DESC);
@@ -16515,16 +16258,16 @@ public class ControlThriftService {
 
     }
 
-    private static class findProfileSchemaByAppIdAndVersion_resultTupleSchemeFactory implements SchemeFactory {
-      public findProfileSchemaByAppIdAndVersion_resultTupleScheme getScheme() {
-        return new findProfileSchemaByAppIdAndVersion_resultTupleScheme();
+    private static class getEndpointProfileViewDtoByEndpointKeyHash_resultTupleSchemeFactory implements SchemeFactory {
+      public getEndpointProfileViewDtoByEndpointKeyHash_resultTupleScheme getScheme() {
+        return new getEndpointProfileViewDtoByEndpointKeyHash_resultTupleScheme();
       }
     }
 
-    private static class findProfileSchemaByAppIdAndVersion_resultTupleScheme extends TupleScheme<findProfileSchemaByAppIdAndVersion_result> {
+    private static class getEndpointProfileViewDtoByEndpointKeyHash_resultTupleScheme extends TupleScheme<getEndpointProfileViewDtoByEndpointKeyHash_result> {
 
       @Override
-      public void write(org.apache.thrift.protocol.TProtocol prot, findProfileSchemaByAppIdAndVersion_result struct) throws org.apache.thrift.TException {
+      public void write(org.apache.thrift.protocol.TProtocol prot, getEndpointProfileViewDtoByEndpointKeyHash_result struct) throws org.apache.thrift.TException {
         TTupleProtocol oprot = (TTupleProtocol) prot;
         BitSet optionals = new BitSet();
         if (struct.isSetSuccess()) {
@@ -16543,943 +16286,7 @@ public class ControlThriftService {
       }
 
       @Override
-      public void read(org.apache.thrift.protocol.TProtocol prot, findProfileSchemaByAppIdAndVersion_result struct) throws org.apache.thrift.TException {
-        TTupleProtocol iprot = (TTupleProtocol) prot;
-        BitSet incoming = iprot.readBitSet(2);
-        if (incoming.get(0)) {
-          struct.success = new org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct();
-          struct.success.read(iprot);
-          struct.setSuccessIsSet(true);
-        }
-        if (incoming.get(1)) {
-          struct.ControlException = new ControlThriftException();
-          struct.ControlException.read(iprot);
-          struct.setControlExceptionIsSet(true);
-        }
-      }
-    }
-
-  }
-
-  public static class findEndpointUserByExternalIdAndTenantId_args implements org.apache.thrift.TBase<findEndpointUserByExternalIdAndTenantId_args, findEndpointUserByExternalIdAndTenantId_args._Fields>, java.io.Serializable, Cloneable, Comparable<findEndpointUserByExternalIdAndTenantId_args>   {
-    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("findEndpointUserByExternalIdAndTenantId_args");
-
-    private static final org.apache.thrift.protocol.TField EXTERNAL_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("externalId", org.apache.thrift.protocol.TType.STRING, (short)1);
-    private static final org.apache.thrift.protocol.TField TENANT_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("tenantId", org.apache.thrift.protocol.TType.STRING, (short)2);
-
-    private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
-    static {
-      schemes.put(StandardScheme.class, new findEndpointUserByExternalIdAndTenantId_argsStandardSchemeFactory());
-      schemes.put(TupleScheme.class, new findEndpointUserByExternalIdAndTenantId_argsTupleSchemeFactory());
-    }
-
-    public String externalId; // required
-    public String tenantId; // required
-
-    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
-    public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-      EXTERNAL_ID((short)1, "externalId"),
-      TENANT_ID((short)2, "tenantId");
-
-      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
-
-      static {
-        for (_Fields field : EnumSet.allOf(_Fields.class)) {
-          byName.put(field.getFieldName(), field);
-        }
-      }
-
-      /**
-       * Find the _Fields constant that matches fieldId, or null if its not found.
-       */
-      public static _Fields findByThriftId(int fieldId) {
-        switch(fieldId) {
-          case 1: // EXTERNAL_ID
-            return EXTERNAL_ID;
-          case 2: // TENANT_ID
-            return TENANT_ID;
-          default:
-            return null;
-        }
-      }
-
-      /**
-       * Find the _Fields constant that matches fieldId, throwing an exception
-       * if it is not found.
-       */
-      public static _Fields findByThriftIdOrThrow(int fieldId) {
-        _Fields fields = findByThriftId(fieldId);
-        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
-        return fields;
-      }
-
-      /**
-       * Find the _Fields constant that matches name, or null if its not found.
-       */
-      public static _Fields findByName(String name) {
-        return byName.get(name);
-      }
-
-      private final short _thriftId;
-      private final String _fieldName;
-
-      _Fields(short thriftId, String fieldName) {
-        _thriftId = thriftId;
-        _fieldName = fieldName;
-      }
-
-      public short getThriftFieldId() {
-        return _thriftId;
-      }
-
-      public String getFieldName() {
-        return _fieldName;
-      }
-    }
-
-    // isset id assignments
-    public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
-    static {
-      Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
-      tmpMap.put(_Fields.EXTERNAL_ID, new org.apache.thrift.meta_data.FieldMetaData("externalId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
-      tmpMap.put(_Fields.TENANT_ID, new org.apache.thrift.meta_data.FieldMetaData("tenantId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
-      metaDataMap = Collections.unmodifiableMap(tmpMap);
-      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(findEndpointUserByExternalIdAndTenantId_args.class, metaDataMap);
-    }
-
-    public findEndpointUserByExternalIdAndTenantId_args() {
-    }
-
-    public findEndpointUserByExternalIdAndTenantId_args(
-      String externalId,
-      String tenantId)
-    {
-      this();
-      this.externalId = externalId;
-      this.tenantId = tenantId;
-    }
-
-    /**
-     * Performs a deep copy on <i>other</i>.
-     */
-    public findEndpointUserByExternalIdAndTenantId_args(findEndpointUserByExternalIdAndTenantId_args other) {
-      if (other.isSetExternalId()) {
-        this.externalId = other.externalId;
-      }
-      if (other.isSetTenantId()) {
-        this.tenantId = other.tenantId;
-      }
-    }
-
-    public findEndpointUserByExternalIdAndTenantId_args deepCopy() {
-      return new findEndpointUserByExternalIdAndTenantId_args(this);
-    }
-
-    @Override
-    public void clear() {
-      this.externalId = null;
-      this.tenantId = null;
-    }
-
-    public String getExternalId() {
-      return this.externalId;
-    }
-
-    public findEndpointUserByExternalIdAndTenantId_args setExternalId(String externalId) {
-      this.externalId = externalId;
-      return this;
-    }
-
-    public void unsetExternalId() {
-      this.externalId = null;
-    }
-
-    /** Returns true if field externalId is set (has been assigned a value) and false otherwise */
-    public boolean isSetExternalId() {
-      return this.externalId != null;
-    }
-
-    public void setExternalIdIsSet(boolean value) {
-      if (!value) {
-        this.externalId = null;
-      }
-    }
-
-    public String getTenantId() {
-      return this.tenantId;
-    }
-
-    public findEndpointUserByExternalIdAndTenantId_args setTenantId(String tenantId) {
-      this.tenantId = tenantId;
-      return this;
-    }
-
-    public void unsetTenantId() {
-      this.tenantId = null;
-    }
-
-    /** Returns true if field tenantId is set (has been assigned a value) and false otherwise */
-    public boolean isSetTenantId() {
-      return this.tenantId != null;
-    }
-
-    public void setTenantIdIsSet(boolean value) {
-      if (!value) {
-        this.tenantId = null;
-      }
-    }
-
-    public void setFieldValue(_Fields field, Object value) {
-      switch (field) {
-      case EXTERNAL_ID:
-        if (value == null) {
-          unsetExternalId();
-        } else {
-          setExternalId((String)value);
-        }
-        break;
-
-      case TENANT_ID:
-        if (value == null) {
-          unsetTenantId();
-        } else {
-          setTenantId((String)value);
-        }
-        break;
-
-      }
-    }
-
-    public Object getFieldValue(_Fields field) {
-      switch (field) {
-      case EXTERNAL_ID:
-        return getExternalId();
-
-      case TENANT_ID:
-        return getTenantId();
-
-      }
-      throw new IllegalStateException();
-    }
-
-    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
-    public boolean isSet(_Fields field) {
-      if (field == null) {
-        throw new IllegalArgumentException();
-      }
-
-      switch (field) {
-      case EXTERNAL_ID:
-        return isSetExternalId();
-      case TENANT_ID:
-        return isSetTenantId();
-      }
-      throw new IllegalStateException();
-    }
-
-    @Override
-    public boolean equals(Object that) {
-      if (that == null)
-        return false;
-      if (that instanceof findEndpointUserByExternalIdAndTenantId_args)
-        return this.equals((findEndpointUserByExternalIdAndTenantId_args)that);
-      return false;
-    }
-
-    public boolean equals(findEndpointUserByExternalIdAndTenantId_args that) {
-      if (that == null)
-        return false;
-
-      boolean this_present_externalId = true && this.isSetExternalId();
-      boolean that_present_externalId = true && that.isSetExternalId();
-      if (this_present_externalId || that_present_externalId) {
-        if (!(this_present_externalId && that_present_externalId))
-          return false;
-        if (!this.externalId.equals(that.externalId))
-          return false;
-      }
-
-      boolean this_present_tenantId = true && this.isSetTenantId();
-      boolean that_present_tenantId = true && that.isSetTenantId();
-      if (this_present_tenantId || that_present_tenantId) {
-        if (!(this_present_tenantId && that_present_tenantId))
-          return false;
-        if (!this.tenantId.equals(that.tenantId))
-          return false;
-      }
-
-      return true;
-    }
-
-    @Override
-    public int hashCode() {
-      List<Object> list = new ArrayList<Object>();
-
-      boolean present_externalId = true && (isSetExternalId());
-      list.add(present_externalId);
-      if (present_externalId)
-        list.add(externalId);
-
-      boolean present_tenantId = true && (isSetTenantId());
-      list.add(present_tenantId);
-      if (present_tenantId)
-        list.add(tenantId);
-
-      return list.hashCode();
-    }
-
-    @Override
-    public int compareTo(findEndpointUserByExternalIdAndTenantId_args other) {
-      if (!getClass().equals(other.getClass())) {
-        return getClass().getName().compareTo(other.getClass().getName());
-      }
-
-      int lastComparison = 0;
-
-      lastComparison = Boolean.valueOf(isSetExternalId()).compareTo(other.isSetExternalId());
-      if (lastComparison != 0) {
-        return lastComparison;
-      }
-      if (isSetExternalId()) {
-        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.externalId, other.externalId);
-        if (lastComparison != 0) {
-          return lastComparison;
-        }
-      }
-      lastComparison = Boolean.valueOf(isSetTenantId()).compareTo(other.isSetTenantId());
-      if (lastComparison != 0) {
-        return lastComparison;
-      }
-      if (isSetTenantId()) {
-        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.tenantId, other.tenantId);
-        if (lastComparison != 0) {
-          return lastComparison;
-        }
-      }
-      return 0;
-    }
-
-    public _Fields fieldForId(int fieldId) {
-      return _Fields.findByThriftId(fieldId);
-    }
-
-    public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
-      schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
-    }
-
-    public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
-      schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
-    }
-
-    @Override
-    public String toString() {
-      StringBuilder sb = new StringBuilder("findEndpointUserByExternalIdAndTenantId_args(");
-      boolean first = true;
-
-      sb.append("externalId:");
-      if (this.externalId == null) {
-        sb.append("null");
-      } else {
-        sb.append(this.externalId);
-      }
-      first = false;
-      if (!first) sb.append(", ");
-      sb.append("tenantId:");
-      if (this.tenantId == null) {
-        sb.append("null");
-      } else {
-        sb.append(this.tenantId);
-      }
-      first = false;
-      sb.append(")");
-      return sb.toString();
-    }
-
-    public void validate() throws org.apache.thrift.TException {
-      // check for required fields
-      // check for sub-struct validity
-    }
-
-    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
-      try {
-        write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
-      } catch (org.apache.thrift.TException te) {
-        throw new java.io.IOException(te);
-      }
-    }
-
-    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
-      try {
-        read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
-      } catch (org.apache.thrift.TException te) {
-        throw new java.io.IOException(te);
-      }
-    }
-
-    private static class findEndpointUserByExternalIdAndTenantId_argsStandardSchemeFactory implements SchemeFactory {
-      public findEndpointUserByExternalIdAndTenantId_argsStandardScheme getScheme() {
-        return new findEndpointUserByExternalIdAndTenantId_argsStandardScheme();
-      }
-    }
-
-    private static class findEndpointUserByExternalIdAndTenantId_argsStandardScheme extends StandardScheme<findEndpointUserByExternalIdAndTenantId_args> {
-
-      public void read(org.apache.thrift.protocol.TProtocol iprot, findEndpointUserByExternalIdAndTenantId_args struct) throws org.apache.thrift.TException {
-        org.apache.thrift.protocol.TField schemeField;
-        iprot.readStructBegin();
-        while (true)
-        {
-          schemeField = iprot.readFieldBegin();
-          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
-            break;
-          }
-          switch (schemeField.id) {
-            case 1: // EXTERNAL_ID
-              if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
-                struct.externalId = iprot.readString();
-                struct.setExternalIdIsSet(true);
-              } else { 
-                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-              }
-              break;
-            case 2: // TENANT_ID
-              if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
-                struct.tenantId = iprot.readString();
-                struct.setTenantIdIsSet(true);
-              } else { 
-                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-              }
-              break;
-            default:
-              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-          }
-          iprot.readFieldEnd();
-        }
-        iprot.readStructEnd();
-
-        // check for required fields of primitive type, which can't be checked in the validate method
-        struct.validate();
-      }
-
-      public void write(org.apache.thrift.protocol.TProtocol oprot, findEndpointUserByExternalIdAndTenantId_args struct) throws org.apache.thrift.TException {
-        struct.validate();
-
-        oprot.writeStructBegin(STRUCT_DESC);
-        if (struct.externalId != null) {
-          oprot.writeFieldBegin(EXTERNAL_ID_FIELD_DESC);
-          oprot.writeString(struct.externalId);
-          oprot.writeFieldEnd();
-        }
-        if (struct.tenantId != null) {
-          oprot.writeFieldBegin(TENANT_ID_FIELD_DESC);
-          oprot.writeString(struct.tenantId);
-          oprot.writeFieldEnd();
-        }
-        oprot.writeFieldStop();
-        oprot.writeStructEnd();
-      }
-
-    }
-
-    private static class findEndpointUserByExternalIdAndTenantId_argsTupleSchemeFactory implements SchemeFactory {
-      public findEndpointUserByExternalIdAndTenantId_argsTupleScheme getScheme() {
-        return new findEndpointUserByExternalIdAndTenantId_argsTupleScheme();
-      }
-    }
-
-    private static class findEndpointUserByExternalIdAndTenantId_argsTupleScheme extends TupleScheme<findEndpointUserByExternalIdAndTenantId_args> {
-
-      @Override
-      public void write(org.apache.thrift.protocol.TProtocol prot, findEndpointUserByExternalIdAndTenantId_args struct) throws org.apache.thrift.TException {
-        TTupleProtocol oprot = (TTupleProtocol) prot;
-        BitSet optionals = new BitSet();
-        if (struct.isSetExternalId()) {
-          optionals.set(0);
-        }
-        if (struct.isSetTenantId()) {
-          optionals.set(1);
-        }
-        oprot.writeBitSet(optionals, 2);
-        if (struct.isSetExternalId()) {
-          oprot.writeString(struct.externalId);
-        }
-        if (struct.isSetTenantId()) {
-          oprot.writeString(struct.tenantId);
-        }
-      }
-
-      @Override
-      public void read(org.apache.thrift.protocol.TProtocol prot, findEndpointUserByExternalIdAndTenantId_args struct) throws org.apache.thrift.TException {
-        TTupleProtocol iprot = (TTupleProtocol) prot;
-        BitSet incoming = iprot.readBitSet(2);
-        if (incoming.get(0)) {
-          struct.externalId = iprot.readString();
-          struct.setExternalIdIsSet(true);
-        }
-        if (incoming.get(1)) {
-          struct.tenantId = iprot.readString();
-          struct.setTenantIdIsSet(true);
-        }
-      }
-    }
-
-  }
-
-  public static class findEndpointUserByExternalIdAndTenantId_result implements org.apache.thrift.TBase<findEndpointUserByExternalIdAndTenantId_result, findEndpointUserByExternalIdAndTenantId_result._Fields>, java.io.Serializable, Cloneable, Comparable<findEndpointUserByExternalIdAndTenantId_result>   {
-    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("findEndpointUserByExternalIdAndTenantId_result");
-
-    private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.STRUCT, (short)0);
-    private static final org.apache.thrift.protocol.TField CONTROL_EXCEPTION_FIELD_DESC = new org.apache.thrift.protocol.TField("ControlException", org.apache.thrift.protocol.TType.STRUCT, (short)1);
-
-    private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
-    static {
-      schemes.put(StandardScheme.class, new findEndpointUserByExternalIdAndTenantId_resultStandardSchemeFactory());
-      schemes.put(TupleScheme.class, new findEndpointUserByExternalIdAndTenantId_resultTupleSchemeFactory());
-    }
-
-    public org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct success; // required
-    public ControlThriftException ControlException; // required
-
-    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
-    public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-      SUCCESS((short)0, "success"),
-      CONTROL_EXCEPTION((short)1, "ControlException");
-
-      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
-
-      static {
-        for (_Fields field : EnumSet.allOf(_Fields.class)) {
-          byName.put(field.getFieldName(), field);
-        }
-      }
-
-      /**
-       * Find the _Fields constant that matches fieldId, or null if its not found.
-       */
-      public static _Fields findByThriftId(int fieldId) {
-        switch(fieldId) {
-          case 0: // SUCCESS
-            return SUCCESS;
-          case 1: // CONTROL_EXCEPTION
-            return CONTROL_EXCEPTION;
-          default:
-            return null;
-        }
-      }
-
-      /**
-       * Find the _Fields constant that matches fieldId, throwing an exception
-       * if it is not found.
-       */
-      public static _Fields findByThriftIdOrThrow(int fieldId) {
-        _Fields fields = findByThriftId(fieldId);
-        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
-        return fields;
-      }
-
-      /**
-       * Find the _Fields constant that matches name, or null if its not found.
-       */
-      public static _Fields findByName(String name) {
-        return byName.get(name);
-      }
-
-      private final short _thriftId;
-      private final String _fieldName;
-
-      _Fields(short thriftId, String fieldName) {
-        _thriftId = thriftId;
-        _fieldName = fieldName;
-      }
-
-      public short getThriftFieldId() {
-        return _thriftId;
-      }
-
-      public String getFieldName() {
-        return _fieldName;
-      }
-    }
-
-    // isset id assignments
-    public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
-    static {
-      Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
-      tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT          , "data")));
-      tmpMap.put(_Fields.CONTROL_EXCEPTION, new org.apache.thrift.meta_data.FieldMetaData("ControlException", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT)));
-      metaDataMap = Collections.unmodifiableMap(tmpMap);
-      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(findEndpointUserByExternalIdAndTenantId_result.class, metaDataMap);
-    }
-
-    public findEndpointUserByExternalIdAndTenantId_result() {
-    }
-
-    public findEndpointUserByExternalIdAndTenantId_result(
-      org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct success,
-      ControlThriftException ControlException)
-    {
-      this();
-      this.success = success;
-      this.ControlException = ControlException;
-    }
-
-    /**
-     * Performs a deep copy on <i>other</i>.
-     */
-    public findEndpointUserByExternalIdAndTenantId_result(findEndpointUserByExternalIdAndTenantId_result other) {
-      if (other.isSetSuccess()) {
-        this.success = other.success;
-      }
-      if (other.isSetControlException()) {
-        this.ControlException = new ControlThriftException(other.ControlException);
-      }
-    }
-
-    public findEndpointUserByExternalIdAndTenantId_result deepCopy() {
-      return new findEndpointUserByExternalIdAndTenantId_result(this);
-    }
-
-    @Override
-    public void clear() {
-      this.success = null;
-      this.ControlException = null;
-    }
-
-    public org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct getSuccess() {
-      return this.success;
-    }
-
-    public findEndpointUserByExternalIdAndTenantId_result setSuccess(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct success) {
-      this.success = success;
-      return this;
-    }
-
-    public void unsetSuccess() {
-      this.success = null;
-    }
-
-    /** Returns true if field success is set (has been assigned a value) and false otherwise */
-    public boolean isSetSuccess() {
-      return this.success != null;
-    }
-
-    public void setSuccessIsSet(boolean value) {
-      if (!value) {
-        this.success = null;
-      }
-    }
-
-    public ControlThriftException getControlException() {
-      return this.ControlException;
-    }
-
-    public findEndpointUserByExternalIdAndTenantId_result setControlException(ControlThriftException ControlException) {
-      this.ControlException = ControlException;
-      return this;
-    }
-
-    public void unsetControlException() {
-      this.ControlException = null;
-    }
-
-    /** Returns true if field ControlException is set (has been assigned a value) and false otherwise */
-    public boolean isSetControlException() {
-      return this.ControlException != null;
-    }
-
-    public void setControlExceptionIsSet(boolean value) {
-      if (!value) {
-        this.ControlException = null;
-      }
-    }
-
-    public void setFieldValue(_Fields field, Object value) {
-      switch (field) {
-      case SUCCESS:
-        if (value == null) {
-          unsetSuccess();
-        } else {
-          setSuccess((org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct)value);
-        }
-        break;
-
-      case CONTROL_EXCEPTION:
-        if (value == null) {
-          unsetControlException();
-        } else {
-          setControlException((ControlThriftException)value);
-        }
-        break;
-
-      }
-    }
-
-    public Object getFieldValue(_Fields field) {
-      switch (field) {
-      case SUCCESS:
-        return getSuccess();
-
-      case CONTROL_EXCEPTION:
-        return getControlException();
-
-      }
-      throw new IllegalStateException();
-    }
-
-    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
-    public boolean isSet(_Fields field) {
-      if (field == null) {
-        throw new IllegalArgumentException();
-      }
-
-      switch (field) {
-      case SUCCESS:
-        return isSetSuccess();
-      case CONTROL_EXCEPTION:
-        return isSetControlException();
-      }
-      throw new IllegalStateException();
-    }
-
-    @Override
-    public boolean equals(Object that) {
-      if (that == null)
-        return false;
-      if (that instanceof findEndpointUserByExternalIdAndTenantId_result)
-        return this.equals((findEndpointUserByExternalIdAndTenantId_result)that);
-      return false;
-    }
-
-    public boolean equals(findEndpointUserByExternalIdAndTenantId_result that) {
-      if (that == null)
-        return false;
-
-      boolean this_present_success = true && this.isSetSuccess();
-      boolean that_present_success = true && that.isSetSuccess();
-      if (this_present_success || that_present_success) {
-        if (!(this_present_success && that_present_success))
-          return false;
-        if (!this.success.equals(that.success))
-          return false;
-      }
-
-      boolean this_present_ControlException = true && this.isSetControlException();
-      boolean that_present_ControlException = true && that.isSetControlException();
-      if (this_present_ControlException || that_present_ControlException) {
-        if (!(this_present_ControlException && that_present_ControlException))
-          return false;
-        if (!this.ControlException.equals(that.ControlException))
-          return false;
-      }
-
-      return true;
-    }
-
-    @Override
-    public int hashCode() {
-      List<Object> list = new ArrayList<Object>();
-
-      boolean present_success = true && (isSetSuccess());
-      list.add(present_success);
-      if (present_success)
-        list.add(success);
-
-      boolean present_ControlException = true && (isSetControlException());
-      list.add(present_ControlException);
-      if (present_ControlException)
-        list.add(ControlException);
-
-      return list.hashCode();
-    }
-
-    @Override
-    public int compareTo(findEndpointUserByExternalIdAndTenantId_result other) {
-      if (!getClass().equals(other.getClass())) {
-        return getClass().getName().compareTo(other.getClass().getName());
-      }
-
-      int lastComparison = 0;
-
-      lastComparison = Boolean.valueOf(isSetSuccess()).compareTo(other.isSetSuccess());
-      if (lastComparison != 0) {
-        return lastComparison;
-      }
-      if (isSetSuccess()) {
-        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.success, other.success);
-        if (lastComparison != 0) {
-          return lastComparison;
-        }
-      }
-      lastComparison = Boolean.valueOf(isSetControlException()).compareTo(other.isSetControlException());
-      if (lastComparison != 0) {
-        return lastComparison;
-      }
-      if (isSetControlException()) {
-        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.ControlException, other.ControlException);
-        if (lastComparison != 0) {
-          return lastComparison;
-        }
-      }
-      return 0;
-    }
-
-    public _Fields fieldForId(int fieldId) {
-      return _Fields.findByThriftId(fieldId);
-    }
-
-    public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
-      schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
-    }
-
-    public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
-      schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
-      }
-
-    @Override
-    public String toString() {
-      StringBuilder sb = new StringBuilder("findEndpointUserByExternalIdAndTenantId_result(");
-      boolean first = true;
-
-      sb.append("success:");
-      if (this.success == null) {
-        sb.append("null");
-      } else {
-        sb.append(this.success);
-      }
-      first = false;
-      if (!first) sb.append(", ");
-      sb.append("ControlException:");
-      if (this.ControlException == null) {
-        sb.append("null");
-      } else {
-        sb.append(this.ControlException);
-      }
-      first = false;
-      sb.append(")");
-      return sb.toString();
-    }
-
-    public void validate() throws org.apache.thrift.TException {
-      // check for required fields
-      // check for sub-struct validity
-    }
-
-    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
-      try {
-        write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
-      } catch (org.apache.thrift.TException te) {
-        throw new java.io.IOException(te);
-      }
-    }
-
-    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
-      try {
-        read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
-      } catch (org.apache.thrift.TException te) {
-        throw new java.io.IOException(te);
-      }
-    }
-
-    private static class findEndpointUserByExternalIdAndTenantId_resultStandardSchemeFactory implements SchemeFactory {
-      public findEndpointUserByExternalIdAndTenantId_resultStandardScheme getScheme() {
-        return new findEndpointUserByExternalIdAndTenantId_resultStandardScheme();
-      }
-    }
-
-    private static class findEndpointUserByExternalIdAndTenantId_resultStandardScheme extends StandardScheme<findEndpointUserByExternalIdAndTenantId_result> {
-
-      public void read(org.apache.thrift.protocol.TProtocol iprot, findEndpointUserByExternalIdAndTenantId_result struct) throws org.apache.thrift.TException {
-        org.apache.thrift.protocol.TField schemeField;
-        iprot.readStructBegin();
-        while (true)
-        {
-          schemeField = iprot.readFieldBegin();
-          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
-            break;
-          }
-          switch (schemeField.id) {
-            case 0: // SUCCESS
-              if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
-                struct.success = new org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct();
-                struct.success.read(iprot);
-                struct.setSuccessIsSet(true);
-              } else { 
-                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-              }
-              break;
-            case 1: // CONTROL_EXCEPTION
-              if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
-                struct.ControlException = new ControlThriftException();
-                struct.ControlException.read(iprot);
-                struct.setControlExceptionIsSet(true);
-              } else { 
-                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-              }
-              break;
-            default:
-              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-          }
-          iprot.readFieldEnd();
-        }
-        iprot.readStructEnd();
-
-        // check for required fields of primitive type, which can't be checked in the validate method
-        struct.validate();
-      }
-
-      public void write(org.apache.thrift.protocol.TProtocol oprot, findEndpointUserByExternalIdAndTenantId_result struct) throws org.apache.thrift.TException {
-        struct.validate();
-
-        oprot.writeStructBegin(STRUCT_DESC);
-        if (struct.success != null) {
-          oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
-          struct.success.write(oprot);
-          oprot.writeFieldEnd();
-        }
-        if (struct.ControlException != null) {
-          oprot.writeFieldBegin(CONTROL_EXCEPTION_FIELD_DESC);
-          struct.ControlException.write(oprot);
-          oprot.writeFieldEnd();
-        }
-        oprot.writeFieldStop();
-        oprot.writeStructEnd();
-      }
-
-    }
-
-    private static class findEndpointUserByExternalIdAndTenantId_resultTupleSchemeFactory implements SchemeFactory {
-      public findEndpointUserByExternalIdAndTenantId_resultTupleScheme getScheme() {
-        return new findEndpointUserByExternalIdAndTenantId_resultTupleScheme();
-      }
-    }
-
-    private static class findEndpointUserByExternalIdAndTenantId_resultTupleScheme extends TupleScheme<findEndpointUserByExternalIdAndTenantId_result> {
-
-      @Override
-      public void write(org.apache.thrift.protocol.TProtocol prot, findEndpointUserByExternalIdAndTenantId_result struct) throws org.apache.thrift.TException {
-        TTupleProtocol oprot = (TTupleProtocol) prot;
-        BitSet optionals = new BitSet();
-        if (struct.isSetSuccess()) {
-          optionals.set(0);
-        }
-        if (struct.isSetControlException()) {
-          optionals.set(1);
-        }
-        oprot.writeBitSet(optionals, 2);
-        if (struct.isSetSuccess()) {
-          struct.success.write(oprot);
-        }
-        if (struct.isSetControlException()) {
-          struct.ControlException.write(oprot);
-        }
-      }
-
-      @Override
-      public void read(org.apache.thrift.protocol.TProtocol prot, findEndpointUserByExternalIdAndTenantId_result struct) throws org.apache.thrift.TException {
+      public void read(org.apache.thrift.protocol.TProtocol prot, getEndpointProfileViewDtoByEndpointKeyHash_result struct) throws org.apache.thrift.TException {
         TTupleProtocol iprot = (TTupleProtocol) prot;
         BitSet incoming = iprot.readBitSet(2);
         if (incoming.get(0)) {
