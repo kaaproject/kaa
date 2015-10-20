@@ -52,7 +52,9 @@ import org.kaaproject.kaa.common.dto.ChangeProfileFilterNotification;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
+import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
@@ -617,5 +619,24 @@ public class AbstractTest {
         configurationDto.setBody(body);
         configurationDto.setAppToken(applicationDto.getApplicationToken());
         return userConfigurationService.saveUserConfiguration(configurationDto);
+    }
+
+    protected EndpointProfileDto generateEndpointProfile(String appId, List<String> topicIds) {
+        EndpointProfileDto profileDto = new EndpointProfileDto();
+        profileDto.setApplicationId(appId);
+        profileDto.setSubscriptions(topicIds);
+        profileDto.setEndpointKeyHash("TEST_KEY_HASH".getBytes());
+        return endpointService.saveEndpointProfile(profileDto);
+    }
+
+    protected EndpointProfileDto generateEndpointProfileWithGroupId(String endpointGroupId) {
+        EndpointProfileDto profileDto = new EndpointProfileDto();
+        profileDto.setEndpointKeyHash("TEST_KEY_HASH".getBytes());
+        String appId = generateApplication().getId();
+        profileDto.setApplicationId(appId);
+        List<EndpointGroupStateDto> cfGroupState = new ArrayList<>();
+        cfGroupState.add(new EndpointGroupStateDto(endpointGroupId, null, null));
+        profileDto.setCfGroupStates(cfGroupState);
+        return endpointService.saveEndpointProfile(profileDto);
     }
 }

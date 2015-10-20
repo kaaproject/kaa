@@ -29,7 +29,9 @@ import org.kaaproject.kaa.common.dto.ConfigurationRecordDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
@@ -86,6 +88,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MultipartFile;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
 /**
  * The Class KaaAdminController.
  */
@@ -104,6 +108,12 @@ public class KaaAdminController {
 
     /** The Constant DEFAULT_OFFSET. */
     private static final String DEFAULT_OFFSET = "0";
+
+    /** The Constant HTTPS_PORT. */
+    public static final int HTTPS_PORT = 443;
+
+    /** The Constant HTTP_PORT. */
+    public static final int HTTP_PORT = 80;
 
     /** The kaa admin service. */
     @Autowired
@@ -162,31 +172,64 @@ public class KaaAdminController {
 
     /**
      * Gets the endpoint profile by endpoint group id.
-     *
-    */
-    @RequestMapping(value="endpointProfileByGroupId", method=RequestMethod.GET, produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
+     */
+    @RequestMapping(value = "endpointProfileByGroupId", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     public EndpointProfilesPageDto getEndpointProfileByEndpointGroupId(
-        @RequestParam(value="endpointGroupId") String endpointGroupId,
-        @RequestParam(value="limit", defaultValue=DEFAULT_LIMIT) String limit,
-        @RequestParam(value="offset", defaultValue=DEFAULT_OFFSET) String offset,
-        HttpServletRequest request) throws KaaAdminServiceException {
-        EndpointProfilesPageDto endpointProfilesPageDto;
-        PageLinkDto pageLinkDto;
-        endpointProfilesPageDto = kaaAdminService.getEndpointProfileByEndpointGroupId(endpointGroupId, limit, offset);
-        pageLinkDto = endpointProfilesPageDto.getPageLinkDto();
-        pageLinkDto = createNext(pageLinkDto, request.getLocalAddr(), request.getLocalPort());
-        endpointProfilesPageDto.setPageLinkDto(pageLinkDto);
+            @RequestParam(value = "endpointGroupId") String endpointGroupId,
+            @RequestParam(value = "limit", defaultValue = DEFAULT_LIMIT) String limit,
+            @RequestParam(value = "offset", defaultValue = DEFAULT_OFFSET) String offset,
+            HttpServletRequest request) throws KaaAdminServiceException {
+        EndpointProfilesPageDto endpointProfilesPageDto = kaaAdminService.getEndpointProfileByEndpointGroupId(endpointGroupId, limit, offset);
+        if (endpointProfilesPageDto.hasEndpointProfiles()) {
+            PageLinkDto pageLinkDto = createNext(endpointProfilesPageDto.getPageLinkDto(), request);
+            endpointProfilesPageDto.setPageLinkDto(pageLinkDto);
+        }
         return endpointProfilesPageDto;
     }
 
-    private PageLinkDto createNext(PageLinkDto pageLink, String address, int port) {
-        String next = "";
-        if (pageLink.getNext() == null) {
-            next = "http://" + address +":" + port + "/kaaAdmin/rest/api/endpointProfileByGroupId?endpointGroupId="
-                    + pageLink.getEndpointGroupId() + "&limit=" + pageLink.getLimit() + "&offset=" +
-                            pageLink.getOffset();
+    /**
+     * Gets the endpoint profile body by endpoint group id.
+     */
+    @RequestMapping(value = "endpointProfileBodyByGroupId", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public EndpointProfilesBodyDto getEndpointProfileBodyByEndpointGroupId(
+            @RequestParam(value = "endpointGroupId") String endpointGroupId,
+            @RequestParam(value = "limit", defaultValue = DEFAULT_LIMIT) String limit,
+            @RequestParam(value = "offset", defaultValue = DEFAULT_OFFSET) String offset,
+            HttpServletRequest request) throws KaaAdminServiceException {
+        EndpointProfilesPageDto endpointProfilesPageDto = kaaAdminService.getEndpointProfileBodyByEndpointGroupId(endpointGroupId, limit, offset);
+        if (endpointProfilesPageDto.hasEndpointBodies()) {
+            PageLinkDto pageLinkDto = createNext(endpointProfilesPageDto.getPageLinkDto(), request);
+            endpointProfilesPageDto.setPageLinkDto(pageLinkDto);
+        }
+        return convertToEndpointProfilesBodyDto(endpointProfilesPageDto);
+    }
+
+    private EndpointProfilesBodyDto convertToEndpointProfilesBodyDto(EndpointProfilesPageDto endpointProfilesPageDto) {
+        EndpointProfilesBodyDto endpointProfilesBodyDto = new EndpointProfilesBodyDto();
+        List<EndpointProfileBodyDto> endpointProfileBodyDto = endpointProfilesPageDto.getEndpointProfilesBody();
+        if (endpointProfileBodyDto != null) {
+            endpointProfilesBodyDto.setEndpointProfilesBody(endpointProfileBodyDto);
+        }
+        String next = endpointProfilesPageDto.getPageLinkDto().getNext();
+        if (next != null) {
+            endpointProfilesBodyDto.setNext(next);
+        }
+        return endpointProfilesBodyDto;
+    }
+
+    private PageLinkDto createNext(PageLinkDto pageLink, HttpServletRequest request) {
+        if (pageLink != null && pageLink.getNext() == null) {
+            StringBuilder nextUrl = new StringBuilder();
+            nextUrl.append(request.getScheme()).append("://").append(request.getServerName());
+            int port = request.getServerPort();
+            if (HTTP_PORT != port && HTTPS_PORT != port) {
+                nextUrl.append(":").append(port);
+            }
+            String next = nextUrl.append("/kaaAdmin/rest/api/endpointProfileByGroupId?").append(pageLink.getNextUrlPart()).toString();
             pageLink.setNext(next);
+            logger.debug("Generated next url {}", next);
         }
         return pageLink;
     }
@@ -199,6 +242,16 @@ public class KaaAdminController {
     @ResponseBody
     public EndpointProfileDto getEndpointProfileByKeyHash(@PathVariable String endpointProfileKey) throws KaaAdminServiceException {
         return kaaAdminService.getEndpointProfileByKeyHash(endpointProfileKey);
+    }
+
+    /**
+     * Gets the endpoint profile body by endpoint key.
+     *
+     */
+    @RequestMapping(value="endpointProfileBody/{endpointProfileKey}", method=RequestMethod.GET)
+    @ResponseBody
+    public EndpointProfileBodyDto getEndpointProfileBodyByKeyHash(@PathVariable String endpointProfileKey) throws KaaAdminServiceException {
+        return kaaAdminService.getEndpointProfileBodyByKeyHash(endpointProfileKey);
     }
 
     /**

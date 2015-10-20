@@ -45,6 +45,7 @@ import java.util.UUID;
 public class AbstractCassandraTest {
 
     private static final Random RANDOM = new Random();
+    private static final String TEST_ENDPOINT_GROUP_ID = "124";
 
     @ClassRule
     public static CustomCassandraCQLUnit cassandraUnit = new CustomCassandraCQLUnit(new ClassPathCQLDataSet("cassandra.cql", "kaa"));
@@ -100,7 +101,7 @@ public class AbstractCassandraTest {
     }
 
     protected List<CassandraEndpointConfiguration> generateConfiguration(int count) {
-        List<CassandraEndpointConfiguration> configurations = new ArrayList();
+        List<CassandraEndpointConfiguration> configurations = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             CassandraEndpointConfiguration configuration = new CassandraEndpointConfiguration();
             configuration.setConfiguration(ByteBuffer.wrap(generateBytes()));
@@ -129,6 +130,16 @@ public class AbstractCassandraTest {
         return endpointProfileDao.save(new CassandraEndpointProfile(profileDto)).toDto();
     }
 
+    protected EndpointProfileDto generateEndpointProfileForTestUpdate(String id, List<EndpointGroupStateDto> cfGroupState) {
+        EndpointProfileDto profileDto = new EndpointProfileDto();
+        profileDto.setId(id);
+        profileDto.setApplicationId(generateStringId());
+        profileDto.setEndpointKeyHash("TEST_KEY_HASH".getBytes());
+        profileDto.setAccessToken(generateStringId());
+        profileDto.setCfGroupStates(cfGroupState);
+        return profileDto;
+    }
+
     protected EndpointProfileDto generateEndpointProfileWithEndpointGroupId(String appId, String accessToken, List<String> topicIds) {
         byte[] keyHash = generateBytes();
         if (appId == null) {
@@ -142,8 +153,9 @@ public class AbstractCassandraTest {
         profileDto.setSubscriptions(topicIds);
         profileDto.setEndpointKeyHash(keyHash);
         profileDto.setAccessToken(accessToken);
+        profileDto.setProfile("test Profile");
         List<EndpointGroupStateDto> cfGroupState = new ArrayList<>();
-        EndpointGroupStateDto cf = new EndpointGroupStateDto("124", "25", "35");
+        EndpointGroupStateDto cf = new EndpointGroupStateDto(TEST_ENDPOINT_GROUP_ID, null, null);
         cfGroupState.add(cf);
         profileDto.setCfGroupStates(cfGroupState);
         return endpointProfileDao.save(new CassandraEndpointProfile(profileDto)).toDto();

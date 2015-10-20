@@ -37,6 +37,7 @@ import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileViewDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
@@ -175,8 +176,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         this.passwordEncoder = passwordEncoder;
     }
 
-    private Map<PluginType, Map<String, PluginInfoDto>> pluginsInfo =
-            new HashMap<>();
+    private Map<PluginType, Map<String, PluginInfoDto>> pluginsInfo = new HashMap<>();
 
     {
         for (PluginType type : PluginType.values()) {
@@ -274,17 +274,54 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
             if (Integer.valueOf(limit) > MAX_LIMIT) {
-                throw new IllegalArgumentException("Incorrect limit parameter. You must enter value not more than 500.");
+                throw new IllegalArgumentException("Incorrect limit parameter. You must enter value not more than " + MAX_LIMIT);
             }
+            String applicationId = getApplicationIdByEndpointGroupId(endpointGroupId);
             PageLinkDto pageLinkDto = new PageLinkDto(endpointGroupId, limit, offset);
+            pageLinkDto.setApplicationId(applicationId);
             EndpointProfilesPageDto endpointProfilesPage = toGenericDto(clientProvider.getClient().getEndpointProfileByEndpointGroupId(toGenericDataStruct(pageLinkDto)));
-            if (endpointProfilesPage.getEndpointProfiles().isEmpty() || endpointProfilesPage.getEndpointProfiles() == null) {
+            if (endpointProfilesPage.getEndpointProfiles() == null || !endpointProfilesPage.hasEndpointProfiles()) {
                 throw new KaaAdminServiceException(
                         "Requested item was not found!",
                         ServiceErrorCode.ITEM_NOT_FOUND);
             }
-            for (EndpointProfileDto endpointProfile : endpointProfilesPage.getEndpointProfiles()) {
-                checkApplicationId(endpointProfile.getApplicationId());
+            return endpointProfilesPage;
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    private String getApplicationIdByEndpointGroupId(String endpointGroupId) throws KaaAdminServiceException {
+        EndpointGroupDto endpointGroupDto = getEndpointGroup(endpointGroupId);
+        if (endpointGroupDto == null) {
+            LOG.warn("Endpoint group with id {} is not present in db.", endpointGroupId);
+            throw new IllegalArgumentException("Endpoint group is not present in db.");
+        }
+        String applicationId = endpointGroupDto.getApplicationId();
+        checkApplicationId(applicationId);
+        ApplicationDto applicationDto = getApplication(applicationId);
+        checkTenantId(applicationDto.getTenantId());
+        if (!endpointGroupDto.isGroupAll()) {
+            applicationId = null;
+        }
+        return applicationId;
+    }
+
+    @Override
+    public EndpointProfilesPageDto getEndpointProfileBodyByEndpointGroupId(String endpointGroupId, String limit, String offset) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            if (Integer.valueOf(limit) > MAX_LIMIT) {
+                throw new IllegalArgumentException("Incorrect limit parameter. You must enter value not more than " + MAX_LIMIT);
+            }
+            String applicationId = getApplicationIdByEndpointGroupId(endpointGroupId);
+            PageLinkDto pageLinkDto = new PageLinkDto(endpointGroupId, limit, offset);
+            pageLinkDto.setApplicationId(applicationId);
+            EndpointProfilesPageDto endpointProfilesPage = toGenericDto(clientProvider.getClient().getEndpointProfileBodyByEndpointGroupId(toGenericDataStruct(pageLinkDto)));
+            if (!endpointProfilesPage.hasEndpointBodies()) {
+                throw new KaaAdminServiceException(
+                        "Requested item was not found!",
+                        ServiceErrorCode.ITEM_NOT_FOUND);
             }
             return endpointProfilesPage;
         } catch (Exception e) {
@@ -304,6 +341,22 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             }
             checkApplicationId(profileDto.getApplicationId());
             return profileDto;
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
+    public EndpointProfileBodyDto getEndpointProfileBodyByKeyHash(String endpointProfileKeyHash) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            EndpointProfileBodyDto profileBodyDto = toGenericDto(clientProvider.getClient().getEndpointProfileBodyByKeyHash(endpointProfileKeyHash));
+            if (profileBodyDto == null) {
+                throw new KaaAdminServiceException(
+                        "Requested item was not found!",
+                        ServiceErrorCode.ITEM_NOT_FOUND);
+            }
+            return profileBodyDto;
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
