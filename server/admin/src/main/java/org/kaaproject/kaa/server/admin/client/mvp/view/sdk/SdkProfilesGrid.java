@@ -110,10 +110,9 @@ public class SdkProfilesGrid extends AbstractKaaGrid<SdkPropertiesDto, String> {
                 new StringValueProvider<SdkPropertiesDto>() {
                     @Override
                     public String getValue(SdkPropertiesDto item) {
-                        // Limit to six characters and add ellipsis
-                        return item.getToken().substring(0, 6) + "\u2026";
+                        return item.getToken();
                     }
-                }, 40);
+                }, 80);
 
         prefWidth += this.constructStringColumn(table, Utils.constants.ecfs(),
                 new StringValueProvider<SdkPropertiesDto>() {
@@ -123,13 +122,13 @@ public class SdkProfilesGrid extends AbstractKaaGrid<SdkPropertiesDto, String> {
                     }
                 }, 40);
 
-        prefWidth += this.constructStringColumn(table, Utils.constants.numberOfEps(),
-                new StringValueProvider<SdkPropertiesDto>() {
-                    @Override
-                    public String getValue(SdkPropertiesDto item) {
-                        return item.getEndpointCount().toString();
-                    }
-                }, 40);
+//        prefWidth += this.constructStringColumn(table, Utils.constants.numberOfEps(),
+//                new StringValueProvider<SdkPropertiesDto>() {
+//                    @Override
+//                    public String getValue(SdkPropertiesDto item) {
+//                        return item.getEndpointCount().toString();
+//                    }
+//                }, 40);
 
         return prefWidth;
     }

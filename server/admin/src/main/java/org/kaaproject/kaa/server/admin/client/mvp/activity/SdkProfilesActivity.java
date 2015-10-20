@@ -100,9 +100,11 @@ public class SdkProfilesActivity extends AbstractListActivity<SdkPropertiesDto, 
                         if (!used) {
                             KaaAdmin.getDataSource().deleteSdkProfile(id, callback);
                         } else {
-                            String message = "Unable to delete \'%s\' (%s): SDK profile is in use.";
-//                            message = String.format(message, profile.getName(), profile.getToken());
-                            Exception cause = new IllegalArgumentException(message);
+                            StringBuilder message = new StringBuilder();
+                            message.append("Failed to delete SDK profile ");
+                            message.append("\"").append(profile.getToken()).append("\": ");
+                            message.append("an associated endpoint profile has been found.");
+                            Exception cause = new IllegalArgumentException(message.toString());
                             Utils.handleException(cause, SdkProfilesActivity.this.getView());
                         }
                     }
