@@ -78,7 +78,7 @@ void BootstrapManager::useNextOperationsServer(const TransportProtocolId& protoc
             KAA_LOG_WARN(boost::format("Failed to find server for channel %1%.")
                                             % LoggingUtils::TransportProtocolIdToString(protocolId));
 
-            FailoverStrategyDecision decision = failoverStrategy_->onFailover(Failover::ALL_OPERATION_SERVERS_NA);
+            FailoverStrategyDecision decision = failoverStrategy_->onFailover(Failover::OPERATION_SERVERS_NA);
             switch (decision.getAction()) {
                 case FailoverStrategyAction::NOOP:
                     KAA_LOG_WARN("No operation is performed according to failover strategy decision.");
@@ -95,6 +95,8 @@ void BootstrapManager::useNextOperationsServer(const TransportProtocolId& protoc
                 case FailoverStrategyAction::STOP_APP:
                     KAA_LOG_WARN("Stopping application according to failover strategy decision!");
                     exit(EXIT_FAILURE);
+                    break;
+                default:
                     break;
             }
         }
@@ -138,7 +140,7 @@ void BootstrapManager::onServerListUpdated(const std::vector<ProtocolMetaData>& 
 {
     if (operationsServers.empty()) {
         KAA_LOG_WARN("Received empty operations server list");
-        FailoverStrategyDecision decision = failoverStrategy_->onFailover(Failover::NO_OPERATION_SERVERS);
+        FailoverStrategyDecision decision = failoverStrategy_->onFailover(Failover::NO_OPERATION_SERVERS_RECEIVED);
         switch (decision.getAction()) {
 			case FailoverStrategyAction::NOOP:
 				KAA_LOG_WARN("No operation is performed according to failover strategy decision.");
@@ -152,10 +154,16 @@ void BootstrapManager::onServerListUpdated(const std::vector<ProtocolMetaData>& 
 				retryTimer_.start(period, [&] { receiveOperationsServerList(); });
 				break;
 			}
+            case FailoverStrategyAction::USE_NEXT_BOOTSTRAP:
+                KAA_LOG_WARN("Try next bootstrap server.");
+                channelManager_->onServerFailed(channelManager_->getChannelByTransportType(TransportType::BOOTSTRAP)->getServer());
+                break;
 			case FailoverStrategyAction::STOP_APP:
 				KAA_LOG_WARN("Stopping application according to failover strategy decision!");
 				exit(EXIT_FAILURE);
 				break;
+            default:
+                break;
 		}
         return;
     }

@@ -23,15 +23,18 @@
 namespace kaa {
 
 enum class Failover {
-    NO_BOOTSTRAP_SERVERS = 0, /*!< No accessible bootstrap servers. */
-    NO_OPERATION_SERVERS,    /*!< Initiate log upload. */
-	ALL_OPERATION_SERVERS_NA,
+    BOOTSTRAP_SERVERS_NA = 0, /*!< No accessible bootstrap servers. */
+    NO_OPERATION_SERVERS_RECEIVED,
+    OPERATION_SERVERS_NA,
+    CURRENT_BOOTSTRAP_SERVER_NA,
 	NO_CONNECTIVITY
 };
 
 enum class FailoverStrategyAction {
     NOOP = 0, /*!< Nothing to be done. */
     RETRY,    /*!< Initiate log upload. */
+    USE_NEXT_BOOTSTRAP,
+    USE_NEXT_OPERATIONS,
 	STOP_APP
 };
 
