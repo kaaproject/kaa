@@ -37,6 +37,8 @@ import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 public class EndpointProfilesViewImpl extends BaseListViewImpl<EndpointProfileDto> implements EndpointProfilesView {
 
+    private static final int DEFAULT_PAGE_SIZE = 10;
+
     interface EndpointProfilesUiBinder extends UiBinder<Widget, EndpointProfilesViewImpl> { }
     private static EndpointProfilesUiBinder uiBinder = GWT.create(EndpointProfilesUiBinder.class);
 
@@ -98,7 +100,7 @@ public class EndpointProfilesViewImpl extends BaseListViewImpl<EndpointProfileDt
 
     @Override
     protected AbstractGrid<EndpointProfileDto, String> createGrid() {
-        return new EndpointProfileGrid();
+        return new EndpointProfileGrid(DEFAULT_PAGE_SIZE);
     }
 
     @Override

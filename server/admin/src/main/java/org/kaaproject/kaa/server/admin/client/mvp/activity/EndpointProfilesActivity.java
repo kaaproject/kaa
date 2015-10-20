@@ -26,23 +26,20 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
-import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.Range;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEvent;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEventHandler;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
-import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
-import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
+import org.kaaproject.kaa.server.admin.client.mvp.data.EndpointProfileDataProvider;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EndpointProfilePlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EndpointProfilesPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseListView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointProfilesView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.endpoint.EndpointProfileGrid;
-import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.kaaproject.kaa.server.admin.shared.services.ServiceErrorCode;
@@ -58,7 +55,7 @@ public class EndpointProfilesActivity extends AbstractActivity implements BaseLi
     private String applicationId;
     private boolean gridLoaded;
 
-    private AbstractEndpointProfileDataProvider dataProvider;
+    private EndpointProfileDataProvider dataProvider;
     private List<HandlerRegistration> registrations = new ArrayList<>();
 
     public EndpointProfilesActivity(EndpointProfilesPlace place, ClientFactory clientFactory) {
@@ -85,17 +82,22 @@ public class EndpointProfilesActivity extends AbstractActivity implements BaseLi
             }
             @Override
             public void onSuccess(List<EndpointGroupDto> result) {
-                if (!gridLoaded) {
-                    AbstractEndpointProfileDataProvider alreadyCreatedDataProvider =
-                            ((EndpointProfileGrid) listView.getListWidget()).getDataProvider();
-                    if (alreadyCreatedDataProvider != null) alreadyCreatedDataProvider.removeDataDisplay(listView.getListWidget().getDataGrid());
-                    if (listView.getListWidget().getDataGrid().getVisibleRange().getStart() != 0) {
-                        listView.getListWidget().getDataGrid().setVisibleRangeAndClearData(
-                                new Range(0, Integer.valueOf(EndpointProfileDataProvider.DEFAULT_LIMIT) -1), false);
+                AbstractGrid<EndpointProfileDto, ?> listWidget = listView.getListWidget();
+                EndpointProfileGrid grid = null;
+                if (listWidget instanceof EndpointProfileGrid) {
+                    grid = (EndpointProfileGrid) listWidget;
+                    if (!gridLoaded) {
+                        EndpointProfileDataProvider alreadyCreatedDataProvider = grid.getDataProvider();
+                        if (alreadyCreatedDataProvider != null)
+                            alreadyCreatedDataProvider.removeDataDisplay(grid.getDataGrid());
+                        if (listView.getListWidget().getDataGrid().getVisibleRange().getStart() != 0) {
+                            listView.getListWidget().getDataGrid().setVisibleRangeAndClearData(
+                                    new Range(0, grid.getPageSize()), false);
+                        }
+                        populateListBox(result);
+                    } else {
+                        dataProvider = grid.getDataProvider();
                     }
-                    populateListBox(result);
-                } else {
-                    dataProvider = ((EndpointProfileGrid) listView.getListWidget()).getDataProvider();
                 }
             }
         });
@@ -196,87 +198,7 @@ public class EndpointProfilesActivity extends AbstractActivity implements BaseLi
         dataProvider = null;
     }
 
-    public AbstractEndpointProfileDataProvider getDataProvider(String groupID) {
+    public EndpointProfileDataProvider getDataProvider(String groupID) {
         return new EndpointProfileDataProvider(listView.getListWidget(), listView, groupID);
-    }
-
-    public abstract class AbstractEndpointProfileDataProvider extends AbstractDataProvider<EndpointProfileDto> {
-
-        public AbstractEndpointProfileDataProvider(AbstractGrid<EndpointProfileDto, ?> dataGrid,
-                                                   HasErrorMessage hasErrorMessage,
-                                                   boolean addDisplay) {
-            super(dataGrid, hasErrorMessage, addDisplay);
-        }
-
-        protected abstract void setNewGroup(String groupID);
-    }
-
-    private class EndpointProfileDataProvider extends AbstractEndpointProfileDataProvider {
-
-        public static final String DEFAULT_LIMIT = "11";
-        public static final String DEFAULT_OFFSET = "0";
-        private String limit = DEFAULT_LIMIT;
-        private String offset = DEFAULT_OFFSET;
-        private String groupID;
-        private List<EndpointProfileDto> endpointProfilesList;
-        private int previousStart = -1;
-
-        public EndpointProfileDataProvider(AbstractGrid<EndpointProfileDto, ?> dataGrid,
-                                           HasErrorMessage hasErrorMessage,
-                                           String groupID) {
-            super(dataGrid, hasErrorMessage, false);
-            this.groupID = groupID;
-            endpointProfilesList = new ArrayList<>();
-            addDataDisplay();
-            ((EndpointProfileGrid) dataGrid).setDataProvider(this);
-        }
-
-        @Override
-        protected void onRangeChanged(HasData<EndpointProfileDto> display) {
-            if (groupID != null) {
-                int start = display.getVisibleRange().getStart();
-                if (previousStart < start) {
-                    previousStart = start;
-                    setLoaded(false);
-                }
-                super.onRangeChanged(display);
-            }
-        }
-
-        @Override
-        protected void loadData(final LoadCallback callback) {
-            KaaAdmin.getDataSource().getEndpointProfileByGroupID(groupID, limit, offset,
-                    new AsyncCallback<EndpointProfilesPageDto>() {
-                        @Override
-                        public void onFailure(Throwable caught) {
-                            if (caught instanceof KaaAdminServiceException) {
-                                if (((KaaAdminServiceException) caught).getErrorCode() == ServiceErrorCode.ITEM_NOT_FOUND) {
-                                    endpointProfilesList.clear();
-                                    callback.onSuccess(endpointProfilesList);
-                                }
-                            } else Utils.handleException(caught, listView);
-                        }
-
-                        @Override
-                        public void onSuccess(EndpointProfilesPageDto result) {
-                            endpointProfilesList.addAll(result.getEndpointProfiles());
-                            offset = result.getPageLinkDto().getOffset();
-                            callback.onSuccess(endpointProfilesList);
-                        }
-                    });
-        }
-
-        @Override
-        public void setNewGroup(String groupID) {
-            this.groupID = groupID;
-            reset();
-        }
-
-        private void reset() {
-            endpointProfilesList.clear();
-            previousStart = -1;
-            limit = DEFAULT_LIMIT;
-            offset = DEFAULT_OFFSET;
-        }
     }
 }

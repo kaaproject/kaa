@@ -21,16 +21,23 @@ import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.cellview.client.DataGrid;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
-import org.kaaproject.kaa.server.admin.client.mvp.activity.EndpointProfilesActivity;
+import org.kaaproject.kaa.server.admin.client.mvp.data.EndpointProfileDataProvider;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 public class EndpointProfileGrid extends AbstractGrid<EndpointProfileDto, String> {
 
-    private static final int DEFAULT_LIMIT = 10;   // ten rows in grid per page
-    private EndpointProfilesActivity.AbstractEndpointProfileDataProvider dataProvider;
+    public static final int DEFAULT_PAGE_SIZE = 10;   // ten rows in grid per page
+    public int pageSize;
+    private EndpointProfileDataProvider dataProvider;
 
     public EndpointProfileGrid() {
-        super(Style.Unit.PX, false, DEFAULT_LIMIT);
+        super(Style.Unit.PX, false, DEFAULT_PAGE_SIZE);
+        this.pageSize = DEFAULT_PAGE_SIZE;
+    }
+
+    public EndpointProfileGrid(int pageSize) {
+        super(Style.Unit.PX, false, pageSize);
+        this.pageSize = pageSize;
     }
 
     @Override
@@ -99,11 +106,15 @@ public class EndpointProfileGrid extends AbstractGrid<EndpointProfileDto, String
         return BaseEncoding.base64().encode(value.getEndpointKeyHash());
     }
 
-    public EndpointProfilesActivity.AbstractEndpointProfileDataProvider getDataProvider() {
+    public int getPageSize() {
+        return pageSize;
+    }
+
+    public EndpointProfileDataProvider getDataProvider() {
         return dataProvider;
     }
 
-    public void setDataProvider(EndpointProfilesActivity.AbstractEndpointProfileDataProvider dataProvider) {
+    public void setDataProvider(EndpointProfileDataProvider dataProvider) {
         this.dataProvider = dataProvider;
     }
 }
