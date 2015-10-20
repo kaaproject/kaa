@@ -19,6 +19,7 @@ package org.kaaproject.kaa.server.common.dao;
 
 import java.util.List;
 
+import org.kaaproject.kaa.common.dto.ChangeNotificationDto;
 import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
@@ -77,7 +78,7 @@ public interface EndpointService {
      *
      * @param applicationId the application id
      */
-    void removeEndpointGroupById(String applicationId);
+    ChangeNotificationDto removeEndpointGroupById(String applicationId);
 
     /**
      * Save endpoint group. Can't save endpoint group with same weight or

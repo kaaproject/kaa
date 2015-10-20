@@ -662,7 +662,11 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
     /* CLI method */
     @Override
     public void deleteEndpointGroup(String endpointGroupId) throws TException {
-        endpointService.removeEndpointGroupById(endpointGroupId);
+        ChangeNotificationDto notification = endpointService.removeEndpointGroupById(endpointGroupId);
+        if (notification != null) {
+            notifyEndpoints(notification, null, null);
+        }
+
     }
 
     /**
@@ -1656,7 +1660,6 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
      *            the configuration
      */
     private void notifyEndpoints(ChangeNotificationDto notification, ProfileFilterDto profileFilter, ConfigurationDto configuration) {
-
         Notification thriftNotification = new Notification();
         thriftNotification.setAppId(notification.getAppId());
         thriftNotification.setAppSeqNumber(notification.getAppSeqNumber());
@@ -1671,7 +1674,6 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
             thriftNotification.setConfigurationSeqNumber(configuration.getSequenceNumber());
         }
         controlZKService.sendEndpointNotification(thriftNotification);
-
     }
 
     /**
