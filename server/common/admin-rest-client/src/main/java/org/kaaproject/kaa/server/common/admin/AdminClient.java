@@ -90,9 +90,25 @@ public class AdminClient {
         return entity.getBody();
     }
 
+    public EndpointProfilesBodyDto getEndpointProfileBodyByEndpointGroupId(PageLinkDto pageLink) throws Exception {
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<String, String>();
+        params.add("endpointGroupId", pageLink.getEndpointGroupId());
+        params.add("limit", pageLink.getLimit());
+        params.add("offset", pageLink.getOffset());
+        ParameterizedTypeReference<EndpointProfilesBodyDto> typeRef = new ParameterizedTypeReference<EndpointProfilesBodyDto>() {};
+        ResponseEntity<EndpointProfilesBodyDto> entity = restTemplate.exchange(url + "endpointProfileBodyByGroupId/" + params, HttpMethod.GET, null, typeRef);
+        return entity.getBody();
+    }
+
     public EndpointProfileDto getEndpointProfileByKeyHash(String endpointProfileKeyHash) throws Exception {
         ParameterizedTypeReference<EndpointProfileDto> typeRef = new ParameterizedTypeReference<EndpointProfileDto>() {};
         ResponseEntity<EndpointProfileDto> entity = restTemplate.exchange(url + "endpointProfile/" + endpointProfileKeyHash, HttpMethod.GET, null, typeRef);
+        return entity.getBody();
+    }
+
+    public EndpointProfileBodyDto getEndpointProfileBodyByKeyHash(String endpointProfileKeyHash) throws Exception {
+        ParameterizedTypeReference<EndpointProfileBodyDto> typeRef = new ParameterizedTypeReference<EndpointProfileBodyDto>() {};
+        ResponseEntity<EndpointProfileBodyDto> entity = restTemplate.exchange(url + "endpointProfileBody/" + endpointProfileKeyHash, HttpMethod.GET, null, typeRef);
         return entity.getBody();
     }
 
