@@ -35,6 +35,8 @@ public class KaaTcpMessageTest {
     @Test
     public void testSyncResponseMessage() {
         final byte kaaSync[] = new byte [] { (byte) 0xF0, 0x0D, 0x00, 0x06, 'K', 'a', 'a', 't', 'c', 'p', 0x01, 0x00, 0x05, 0x14, (byte) 0xFF };
+        SyncResponse syncResponse = new SyncResponse();
+        Assert.assertNotNull(syncResponse);
         SyncResponse message = new SyncResponse(new byte [] { (byte) 0xFF }, false, true);
         message.setMessageId(5);
         byte[] actual = message.getFrame().array();

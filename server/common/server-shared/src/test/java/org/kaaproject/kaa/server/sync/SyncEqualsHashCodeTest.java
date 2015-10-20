@@ -47,6 +47,9 @@ public class SyncEqualsHashCodeTest {
         Assert.assertNotEquals(null, clientSyncMetaData1);
         Assert.assertEquals(clientSyncMetaData1, clientSyncMetaData2);
         Assert.assertNotEquals(clientSyncMetaData1, new Object());
+        Assert.assertEquals(clientSyncMetaData1.hashCode(), clientSyncMetaData2.hashCode());
+        Assert.assertEquals(clientSyncMetaData1.hashCode(), clientSyncMetaData1.hashCode());
+        Assert.assertNotEquals(clientSyncMetaData1.hashCode(), clientSyncMetaData3.hashCode());
     }
 
     @Test
@@ -130,10 +133,14 @@ public class SyncEqualsHashCodeTest {
         ProfileClientSync profileClientSync2 = new ProfileClientSync(null, null, null, "token1");
         ProfileClientSync profileClientSync3 = new ProfileClientSync(null, null, null, "token3");
         Assert.assertEquals(profileClientSync1, profileClientSync1);
-        Assert.assertNotEquals(profileClientSync1, null);
         Assert.assertEquals(profileClientSync1, profileClientSync2);
+        Assert.assertNotEquals(profileClientSync1, null);
+        Assert.assertNotEquals(null, profileClientSync1);
         Assert.assertNotEquals(profileClientSync1, profileClientSync3);
         Assert.assertNotEquals(profileClientSync1, new Object());
+        Assert.assertEquals(profileClientSync1.hashCode(), profileClientSync2.hashCode());
+        Assert.assertEquals(profileClientSync1.hashCode(), profileClientSync1.hashCode());
+        Assert.assertNotEquals(profileClientSync1.hashCode(), profileClientSync3.hashCode());
     }
 
     @Test
