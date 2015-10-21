@@ -24,6 +24,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
@@ -68,11 +69,30 @@ public class EndpointServiceImplTest extends AbstractTest {
     }
 
     @Test
+    public void findEndpointProfileBodyByEndpointGroupIdTest() {
+        EndpointGroupDto group = generateEndpointGroup(null);
+        String endpointGroupId = group.getId();
+        PageLinkDto pageLinkDto = new PageLinkDto(endpointGroupId, DEFAULT_LIMIT, DEFAULT_OFFSET);
+        EndpointProfileDto savedEndpointProfileDto = generateEndpointProfileWithGroupId(endpointGroupId);
+        EndpointProfilesPageDto endpointProfilesPage = endpointService.findEndpointProfileBodyByEndpointGroupId(pageLinkDto);
+        EndpointProfileBodyDto endpointProfileBodyDto = endpointProfilesPage.getEndpointProfilesBody().get(0);
+        Assert.assertEquals(savedEndpointProfileDto.getProfile(), endpointProfileBodyDto.getProfile());
+    }
+
+    @Test
     public void findEndpointProfileByKeyHashTest() {
         String endpointGroupId = "124";
         EndpointProfileDto savedEndpointProfileDto = generateEndpointProfileWithGroupId(endpointGroupId);
         EndpointProfileDto endpointProfileDto = endpointService.findEndpointProfileByKeyHash(savedEndpointProfileDto.getEndpointKeyHash());
         Assert.assertEquals(savedEndpointProfileDto, endpointProfileDto);
+    }
+
+    @Test
+    public void findEndpointProfileBodyByKeyHashTest() {
+        String endpointGroupId = "124";
+        EndpointProfileDto savedEndpointProfileDto = generateEndpointProfileWithGroupId(endpointGroupId);
+        EndpointProfileBodyDto endpointProfileBodyDto = endpointService.findEndpointProfileBodyByKeyHash(savedEndpointProfileDto.getEndpointKeyHash());
+        Assert.assertEquals(savedEndpointProfileDto.getProfile(), endpointProfileBodyDto.getProfile());
     }
 
     @Test(expected = IncorrectParameterException.class)

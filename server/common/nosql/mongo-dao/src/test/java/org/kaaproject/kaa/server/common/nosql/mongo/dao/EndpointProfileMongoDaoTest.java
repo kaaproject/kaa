@@ -26,6 +26,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.PageLinkDto;
@@ -71,6 +72,29 @@ public class EndpointProfileMongoDaoTest extends AbstractMongoTest {
         MongoEndpointProfile found = endpointProfileDao.findByKeyHash(endpointProfile.getEndpointKeyHash());
         Assert.assertNotNull(found);
         Assert.assertEquals(endpointProfile, found.toDto());
+    }
+
+    @Test
+    public void findBodyByKeyHashTest() {
+        EndpointProfileDto endpointProfile = generateEndpointProfile(null, null);
+        Assert.assertNotNull(endpointProfile);
+        EndpointProfileBodyDto found = endpointProfileDao.findBodyByKeyHash(endpointProfile.getEndpointKeyHash());
+        Assert.assertNotNull(found);
+        Assert.assertEquals(endpointProfile.getProfile(), found.getProfile());
+    }
+
+    @Test
+    public void findBodyByEndpointGroupIdTest() {
+        String endpointGroupId = "111";
+        EndpointProfileDto endpointProfileDto = generateEndpointProfileWithGroupId(endpointGroupId);
+        EndpointProfilesPageDto found;
+        String limit = "1";
+        String offset = "0";
+        PageLinkDto pageLink = new PageLinkDto(endpointGroupId, limit, offset);
+        found = endpointProfileDao.findBodyByEndpointGroupId(pageLink);
+        Assert.assertFalse(found.getEndpointProfilesBody().isEmpty());
+        Assert.assertEquals(endpointProfileDto.getProfile(), found.getEndpointProfilesBody().get(0).getProfile());
+
     }
 
     @Test

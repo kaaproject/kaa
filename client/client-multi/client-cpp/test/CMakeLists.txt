@@ -115,6 +115,7 @@ set ( KAA_TEST_SOURCES
         TestRunner.cpp
         impl/common/EndpointObjectHashTest.cpp
         impl/common/AvroByteArrayConverterTest.cpp
+        impl/bootstrap/BootstrapFailoverTest.cpp
         impl/configuration/ConfigurationPersistenceTest.cpp
         impl/configuration/ConfigurationProcessorTest.cpp
         impl/configuration/ConfigurationManagerTest.cpp

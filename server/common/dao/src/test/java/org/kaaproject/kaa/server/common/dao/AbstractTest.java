@@ -626,6 +626,7 @@ public class AbstractTest {
         profileDto.setApplicationId(appId);
         profileDto.setSubscriptions(topicIds);
         profileDto.setEndpointKeyHash("TEST_KEY_HASH".getBytes());
+        profileDto.setProfile("{\"title\": \"TEST\"}");
         return endpointService.saveEndpointProfile(profileDto);
     }
 
@@ -637,6 +638,7 @@ public class AbstractTest {
         List<EndpointGroupStateDto> cfGroupState = new ArrayList<>();
         cfGroupState.add(new EndpointGroupStateDto(endpointGroupId, null, null));
         profileDto.setCfGroupStates(cfGroupState);
+        profileDto.setProfile("{\"title\": \"TEST\"}");
         return endpointService.saveEndpointProfile(profileDto);
     }
 }
