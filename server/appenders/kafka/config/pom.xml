@@ -21,7 +21,7 @@
     <parent>
         <groupId>org.kaaproject.kaa.server.appenders</groupId>
         <artifactId>kafka</artifactId>
-        <version>0.7.3-SNAPSHOT</version>
+        <version>0.8.0-SNAPSHOT</version>
     </parent>
     <groupId>org.kaaproject.kaa.server.appenders.kafka</groupId>
     <artifactId>config</artifactId>

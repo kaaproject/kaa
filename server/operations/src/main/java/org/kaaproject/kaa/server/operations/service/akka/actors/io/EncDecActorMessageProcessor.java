@@ -40,7 +40,7 @@ import org.kaaproject.kaa.server.sync.SyncStatus;
 import org.kaaproject.kaa.server.sync.platform.PlatformEncDec;
 import org.kaaproject.kaa.server.sync.platform.PlatformEncDecException;
 import org.kaaproject.kaa.server.sync.platform.PlatformLookup;
-import org.kaaproject.kaa.server.transport.InvalidApplicationTokenException;
+import org.kaaproject.kaa.server.transport.InvalidSDKTokenException;
 import org.kaaproject.kaa.server.transport.channel.ChannelContext;
 import org.kaaproject.kaa.server.transport.message.ErrorBuilder;
 import org.kaaproject.kaa.server.transport.message.Message;
@@ -124,12 +124,11 @@ public class EncDecActorMessageProcessor {
     }
 
     public void forward(ActorContext context, SessionAware message) {
-        if (isApplicationTokenValid(message.getSessionInfo().getApplicationToken())) {
+        if (isSDKTokenValid(message.getSessionInfo().getSdkToken())) {
             LOG.debug("Forwarding session aware message: {}", message);
             this.opsActor.tell(message, context.self());
         } else {
-            LOG.debug("Session aware message won't be forwarded. Reason: message {}" +
-                    " has invalid application token", message);
+            LOG.debug("Session aware message ignored. Reason: message {} has invalid sdk token", message);
         }
     }
 
@@ -178,31 +177,31 @@ public class EncDecActorMessageProcessor {
     }
 
     private void processSignedRequest(ActorContext context, SessionInitMessage message) throws GeneralSecurityException,
-            PlatformEncDecException, InvalidApplicationTokenException {
+            PlatformEncDecException, InvalidSDKTokenException {
         ClientSync request = decodeRequest(message);
         EndpointObjectHash key = getEndpointObjectHash(request);
         String sdkToken = getSdkToken(request);
-        String appToken = getAppToken(sdkToken);
-        SessionInfo session = new SessionInfo(message.getChannelUuid(), message.getPlatformId(), message.getChannelContext(),
-                message.getChannelType(), crypt.getSessionCipherPair(), key, appToken, sdkToken,
-                message.getKeepAlive(), message.isEncrypted());
-        message.onSessionCreated(session);
-        if (isApplicationTokenValid(session.getApplicationToken())) {
+        if (isSDKTokenValid(sdkToken)) {
+            String appToken = getAppToken(sdkToken);
+            SessionInfo session = new SessionInfo(message.getChannelUuid(), message.getPlatformId(), message.getChannelContext(),
+                    message.getChannelType(), crypt.getSessionCipherPair(), key, appToken, sdkToken,
+                    message.getKeepAlive(), message.isEncrypted());
+            message.onSessionCreated(session);
             forwardToOpsActor(context, session, request, message);
         } else {
-            LOG.info("Invalid application token received: {}", session.getApplicationToken());
-            throw new InvalidApplicationTokenException("Invalid application token received");
+            LOG.info("Invalid sdk token received: {}", sdkToken);
+            throw new InvalidSDKTokenException();
         }
     }
 
     private void processSessionRequest(ActorContext context, SessionAwareMessage message) throws GeneralSecurityException,
-            PlatformEncDecException, InvalidApplicationTokenException {
+            PlatformEncDecException, InvalidSDKTokenException {
         ClientSync request = decodeRequest(message);
-        if (isApplicationTokenValid(message.getSessionInfo().getApplicationToken())) {
+        if (isSDKTokenValid(message.getSessionInfo().getSdkToken())) {
             forwardToOpsActor(context, message.getSessionInfo(), request, message);
         } else {
-            LOG.info("Invalid application token received: {}", message.getSessionInfo().getApplicationToken());
-            throw new InvalidApplicationTokenException("Invalid application token received");
+            LOG.info("Invalid sdk token received: {}", message.getSessionInfo().getSdkToken());
+            throw new InvalidSDKTokenException();
         }
     }
 
@@ -370,8 +369,8 @@ public class EncDecActorMessageProcessor {
         return cacheService.getAppTokenBySdkToken(sdkToken);
     }
 
-    private boolean isApplicationTokenValid(String applicationToken) {
-        return cacheService.getTenantIdByAppToken(applicationToken) != null;
+    private boolean isSDKTokenValid(String sdkToken) {
+        return sdkToken != null && getAppToken(sdkToken) != null;
     }
 
     protected EndpointObjectHash getEndpointObjectHash(ClientSync request) {

@@ -26,6 +26,7 @@ import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
 import org.kaaproject.kaa.server.operations.service.akka.actors.core.OperationsServerActor;
 import org.kaaproject.kaa.server.operations.service.akka.actors.io.EncDecActor;
+import org.kaaproject.kaa.server.operations.service.akka.actors.supervision.SupervisionStrategyFactory;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.notification.ThriftNotificationMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.stats.StatusRequestMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.UserConfigurationUpdate;
@@ -96,9 +97,10 @@ public class DefaultAkkaService implements AkkaService {
         Set<String> platformProtocols = PlatformLookup.lookupPlatformProtocols(PlatformLookup.DEFAULT_PROTOCOL_LOOKUP_PACKAGE_NAME);
         LOG.info("Initializing Akka io router...");
         ioRouter = akka.actorOf(
-                new RoundRobinPool(context.getIOWorkerCount()).props(Props.create(
-                        new EncDecActor.ActorCreator(opsActor, context, platformProtocols)).withDispatcher(IO_DISPATCHER_NAME)),
-                IO_ROUTER_ACTOR_NAME);
+                new RoundRobinPool(context.getIOWorkerCount())
+                        .withSupervisorStrategy(SupervisionStrategyFactory.createIORouterStrategy(context))
+                        .props(Props.create(new EncDecActor.ActorCreator(opsActor, context, platformProtocols))
+                                .withDispatcher(IO_DISPATCHER_NAME)), IO_ROUTER_ACTOR_NAME);
         LOG.info("Initializing Akka event service listener...");
         listener = new AkkaEventServiceListener(opsActor);
         context.getEventService().addListener(listener);

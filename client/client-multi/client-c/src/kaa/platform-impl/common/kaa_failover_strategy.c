@@ -22,7 +22,7 @@
 #include "../../utilities/kaa_mem.h"
 #include "../../utilities/kaa_log.h"
 #include "../../kaa_bootstrap_manager.h"
-#include "posix_kaa_failover_strategy.h"
+#include "../../platform/ext_kaa_failover_strategy.h"
 
 
 struct kaa_failover_strategy_t {

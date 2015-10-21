@@ -11,13 +11,12 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.kaaproject.kaa.server</groupId>
-        <version>0.7.3-SNAPSHOT</version>
+        <version>0.8.0-SNAPSHOT</version>
         <artifactId>common</artifactId>
     </parent>
     <groupId>org.kaaproject.kaa.server.common</groupId>
     <artifactId>utils</artifactId>
     <packaging>jar</packaging>
-
     <name>Kaa Server Common Utils</name>
     <url>http://kaaproject.org</url>
 

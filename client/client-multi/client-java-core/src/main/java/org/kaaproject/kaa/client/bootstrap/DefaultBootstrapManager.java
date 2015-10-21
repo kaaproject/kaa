@@ -192,7 +192,7 @@ public class DefaultBootstrapManager implements BootstrapManager {
                 break;
             case RETRY:
                 long retryPeriod = decision.getRetryPeriod();
-                LOG.warn("Attempt to receive operations server list will be made in {} ms" +
+                LOG.warn("Attempt to receive operations server list will be made in {} ms, " +
                         "according to failover strategy decision", retryPeriod);
                 executorContext.getScheduledExecutor().schedule(new Runnable() {
                     @Override
