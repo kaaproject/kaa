@@ -27,6 +27,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.List;
 
@@ -65,8 +66,32 @@ public class EndpointProfileCassandraDaoTest extends AbstractCassandraTest {
     }
 
     @Test
-    public void testRemoveByAppId() throws Exception {
+    public void testRemoveById() throws Exception {
+        EndpointProfileDto expected = generateEndpointProfile(null, null, null);
+        endpointProfileDao.removeById(ByteBuffer.wrap(expected.getEndpointKeyHash()));
+        EndpointProfile found = endpointProfileDao.findByKeyHash(expected.getEndpointKeyHash());
+        Assert.assertNull(found);
+    }
 
+    @Test
+    public void testRemoveByIdNullKey() throws Exception {
+        EndpointProfileDto expected = generateEndpointProfile(null, null, null);
+        EndpointProfile found = endpointProfileDao.findByKeyHash(expected.getEndpointKeyHash());
+        Assert.assertNotNull(found);
+    }
+
+    @Test
+    public void testFindById() throws Exception {
+        EndpointProfileDto expected = generateEndpointProfile(null, null, null);
+        EndpointProfile found = endpointProfileDao.findById(ByteBuffer.wrap(expected.getEndpointKeyHash()));
+        Assert.assertEquals(expected, found.toDto());
+    }
+
+    @Test
+    public void testFindByIdNullKey() throws Exception {
+        EndpointProfileDto expected = generateEndpointProfile(null, null, null);
+        EndpointProfile found = endpointProfileDao.findById(null);
+        Assert.assertNull(found);
     }
 
     @Test
