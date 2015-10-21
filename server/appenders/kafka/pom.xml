@@ -31,7 +31,7 @@
     <parent>
         <groupId>org.kaaproject.kaa.server</groupId>
         <artifactId>appenders</artifactId>
-        <version>0.8.0-SNAPSHOT</version>
+        <version>0.7.3-SNAPSHOT</version>
     </parent>
     <modules>
         <module>appender</module>
