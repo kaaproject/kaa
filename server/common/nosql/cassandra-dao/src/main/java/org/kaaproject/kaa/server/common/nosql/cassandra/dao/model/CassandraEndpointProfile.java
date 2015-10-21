@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,22 +37,31 @@ import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoU
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.convertECFVersionDtoToModelList;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getByteBuffer;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getBytes;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.*;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_ACCESS_TOKEN_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_APP_ID_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_COLUMN_FAMILY_NAME;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_CONFIGURATION_SEQUENCE_NUMBER_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_CONFIGURATION_VERSION_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_CONFIG_GROUP_STATE_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_CONFIG_HASH_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_ECF_VERSION_STATE_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_ENDPOINT_ID_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_EP_KEY_HASH_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_EP_KEY_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_LOG_SCHEMA_VERSION_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_NOTIFICATION_GROUP_STATE_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_NOTIFICATION_HASH_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_NOTIFICATION_SEQUENCE_NUMBER_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_NOTIFICATION_VERSION_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_PROFILE_HASH_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_PROFILE_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_PROFILE_SCHEMA_ID_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_PROFILE_VERSION_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_SERVER_HASH_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_SUBSCRIPTIONS_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_SYSTEM_NOTIFICATION_VERSION_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_USER_CONFIG_HASH_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_USER_ID_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_USER_NOTIFICATION_VERSION_PROPERTY;
 
 @Table(name = EP_COLUMN_FAMILY_NAME)
 public final class CassandraEndpointProfile implements EndpointProfile, Serializable {
@@ -73,8 +82,6 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
     private String endpointUserId;
     @Column(name = EP_ACCESS_TOKEN_PROPERTY)
     private String accessToken;
-    @Column(name = EP_PROFILE_SCHEMA_ID_PROPERTY)
-    private String profileSchemaId;
     @Column(name = EP_CONFIG_GROUP_STATE_PROPERTY)
     @FrozenValue
     private List<CassandraEndpointGroupState> cfGroupState;
@@ -126,7 +133,6 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
         this.endpointKeyHash = getByteBuffer(dto.getEndpointKeyHash());
         this.endpointUserId = dto.getEndpointUserId();
         this.accessToken = dto.getAccessToken();
-        this.profileSchemaId = dto.getProfileSchemaId();
         this.cfGroupState = convertDtoToModelList(dto.getCfGroupStates());
         this.nfGroupState = convertDtoToModelList(dto.getNfGroupStates());
         this.cfSequenceNumber = dto.getCfSequenceNumber();
@@ -194,10 +200,6 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
 
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
-    }
-
-    public String getProfileSchemaId() {
-        return profileSchemaId;
     }
 
     public List<CassandraEndpointGroupState> getCfGroupState() {
@@ -349,10 +351,6 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
         this.applicationId = applicationId;
     }
 
-    public void setProfileSchemaId(String profileSchemaId) {
-        this.profileSchemaId = profileSchemaId;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -389,8 +387,6 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
         if (ntHash != null ? !ntHash.equals(that.ntHash) : that.ntHash != null) return false;
         if (profile != null ? !profile.equals(that.profile) : that.profile != null) return false;
         if (profileHash != null ? !profileHash.equals(that.profileHash) : that.profileHash != null) return false;
-        if (profileSchemaId != null ? !profileSchemaId.equals(that.profileSchemaId) : that.profileSchemaId != null)
-            return false;
         if (serverHash != null ? !serverHash.equals(that.serverHash) : that.serverHash != null) return false;
         if (subscriptions != null ? !subscriptions.equals(that.subscriptions) : that.subscriptions != null)
             return false;
@@ -406,7 +402,6 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
         result = 31 * result + (applicationId != null ? applicationId.hashCode() : 0);
         result = 31 * result + (endpointUserId != null ? endpointUserId.hashCode() : 0);
         result = 31 * result + (accessToken != null ? accessToken.hashCode() : 0);
-        result = 31 * result + (profileSchemaId != null ? profileSchemaId.hashCode() : 0);
         result = 31 * result + (cfGroupState != null ? cfGroupState.hashCode() : 0);
         result = 31 * result + (nfGroupState != null ? nfGroupState.hashCode() : 0);
         result = 31 * result + cfSequenceNumber;
@@ -437,7 +432,6 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
                 ", applicationId='" + applicationId + '\'' +
                 ", endpointUserId='" + endpointUserId + '\'' +
                 ", accessToken='" + accessToken + '\'' +
-                ", profileSchemaId='" + profileSchemaId + '\'' +
                 ", cfGroupState=" + cfGroupState +
                 ", nfGroupState=" + nfGroupState +
                 ", cfSequenceNumber=" + cfSequenceNumber +
@@ -478,7 +472,6 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
         dto.setProfile(profile);
         dto.setProfileHash(getBytes(profileHash));
         dto.setProfileVersion(profileVersion);
-        dto.setProfileSchemaId(profileSchemaId);
         dto.setNotificationVersion(notificationVersion);
         dto.setSubscriptions(subscriptions);
         dto.setNtHash(getBytes(ntHash));

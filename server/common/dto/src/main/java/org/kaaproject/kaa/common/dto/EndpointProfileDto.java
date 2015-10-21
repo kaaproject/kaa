@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,6 @@ public class EndpointProfileDto implements HasId, Serializable {
     private byte[] endpointKeyHash;
     private String endpointUserId;
     private String accessToken;
-    private String profileSchemaId;
     private List<EndpointGroupStateDto> cfGroupState;
     private List<EndpointGroupStateDto> nfGroupState;
     private int cfSequenceNumber;
@@ -101,14 +100,6 @@ public class EndpointProfileDto implements HasId, Serializable {
 
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
-    }
-
-    public String getProfileSchemaId() {
-        return profileSchemaId;
-    }
-
-    public void setProfileSchemaId(String profileSchemaId) {
-        this.profileSchemaId = profileSchemaId;
     }
 
     public List<EndpointGroupStateDto> getCfGroupStates() {
@@ -328,9 +319,6 @@ public class EndpointProfileDto implements HasId, Serializable {
         if (!Arrays.equals(profileHash, that.profileHash)) {
             return false;
         }
-        if (profileSchemaId != null ? !profileSchemaId.equals(that.profileSchemaId) : that.profileSchemaId != null) {
-            return false;
-        }
         if (subscriptions != null ? !subscriptions.equals(that.subscriptions) : that.subscriptions != null) {
             return false;
         }
@@ -343,7 +331,6 @@ public class EndpointProfileDto implements HasId, Serializable {
         int result = applicationId != null ? applicationId.hashCode() : 0;
         result = 31 * result + (endpointKey != null ? Arrays.hashCode(endpointKey) : 0);
         result = 31 * result + (endpointKeyHash != null ? Arrays.hashCode(endpointKeyHash) : 0);
-        result = 31 * result + (profileSchemaId != null ? profileSchemaId.hashCode() : 0);
         result = 31 * result + (cfGroupState != null ? cfGroupState.hashCode() : 0);
         result = 31 * result + (nfGroupState != null ? nfGroupState.hashCode() : 0);
         result = 31 * result + (subscriptions != null ? subscriptions.hashCode() : 0);
@@ -378,8 +365,6 @@ public class EndpointProfileDto implements HasId, Serializable {
         builder.append(endpointUserId);
         builder.append(", accessToken=");
         builder.append(accessToken);
-        builder.append(", profileSchemaId=");
-        builder.append(profileSchemaId);
         builder.append(", cfGroupState=");
         builder.append(cfGroupState);
         builder.append(", nfGroupState=");
