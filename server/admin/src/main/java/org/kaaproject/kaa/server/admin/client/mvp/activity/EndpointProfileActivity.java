@@ -20,6 +20,7 @@ import com.google.common.io.BaseEncoding;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
+import com.google.gwt.user.client.ui.Widget;
 import org.kaaproject.avro.ui.gwt.client.widget.BusyPopup;
 import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
@@ -86,8 +87,14 @@ public class EndpointProfileActivity extends
             detailsView.getUserID()        .setValue(userDto.getId());
             detailsView.getUserName()      .setValue(userDto.getUsername());
             detailsView.getUserExternalID().setValue(userDto.getExternalId());
+
+            for (Widget widget : detailsView.getUserInfoList()) {
+                widget.setVisible(true);
+            }
         } else {
-            detailsView.getUserInfoTable().setVisible(false);
+            for (Widget widget : detailsView.getUserInfoList()) {
+                widget.setVisible(false);
+            }
         }
 
         detailsView.getNotificationVersion().setValue(profileDto.getNotificationVersion() + "");

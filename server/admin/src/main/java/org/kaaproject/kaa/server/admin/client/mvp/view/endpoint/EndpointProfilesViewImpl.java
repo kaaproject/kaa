@@ -52,8 +52,10 @@ public class EndpointProfilesViewImpl extends BaseListViewImpl<EndpointProfileDt
         super(false);
 
         FlexTable flexTable = new FlexTable();
+        flexTable.setStyleName(Utils.avroUiStyle.fieldWidget());
         Label endpointGroupLabel = new Label(Utils.constants.endpointGroup());
         listBox = new EndpointGroupsInfoListBox();
+        listBox.getElement().getStyle().setPropertyPx("minWidth", 100);
         HorizontalPanel groupPanel = new HorizontalPanel();
         groupPanel.setSpacing(15);
         groupPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);

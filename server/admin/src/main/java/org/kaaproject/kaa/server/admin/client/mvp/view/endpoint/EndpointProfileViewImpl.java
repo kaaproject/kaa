@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.kaaproject.kaa.server.admin.client.mvp.view.endpoint;
 import com.google.gwt.user.client.ui.CaptionPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Widget;
 import org.kaaproject.avro.ui.gwt.client.widget.AvroWidgetsConfig;
 import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
@@ -29,6 +30,9 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.topic.TopicGrid;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.RecordPanel;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements EndpointProfileView {
 
@@ -46,7 +50,7 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
     private SizedTextBox schemaName;
     private SizedTextBox description;
 
-    private FlexTable userInfoTable;
+    private List<Widget> userInfoList;
 
     private TopicGrid topicsGrid;
     private AbstractGrid<EndpointGroupDto, String> groupsGrid;
@@ -78,56 +82,61 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
         cancelButton.removeFromParent();
         requiredFieldsNoteLabel.setVisible(false);
 
+        int row = 0;
         Label keyHashLabel = new Label(Utils.constants.endpointKeyHash());
         endpointKeyHash = new KaaAdminSizedTextBox(-1, false);
         endpointKeyHash.setWidth("100%");
-        detailsTable.setWidget(0, 0, keyHashLabel);
-        detailsTable.setWidget(0, 1, endpointKeyHash);
+        detailsTable.setWidget(row, 0, keyHashLabel);
+        detailsTable.setWidget(row, 1, endpointKeyHash);
 
-        userInfoTable = new FlexTable();
-
+        userInfoList = new ArrayList<>();
         Label userIDLabel = new Label(Utils.constants.userId());
         userID = new KaaAdminSizedTextBox(-1, false);
         userID.setWidth("100%");
-        userInfoTable.setWidget(0, 0, userIDLabel);
-        userInfoTable.setWidget(0, 1, userID);
+        detailsTable.setWidget(++row, 0, userIDLabel);
+        detailsTable.setWidget(row, 1, userID);
+        userInfoList.add(userIDLabel);
+        userInfoList.add(userID);
 
         Label userNameLabel = new Label(Utils.constants.userName());
         userName = new KaaAdminSizedTextBox(-1, false);
         userName.setWidth("100%");
-        userInfoTable.setWidget(1, 0, userNameLabel);
-        userInfoTable.setWidget(1, 1, userName);
+        detailsTable.setWidget(++row, 0, userNameLabel);
+        detailsTable.setWidget(row, 1, userName);
+        userInfoList.add(userNameLabel);
+        userInfoList.add(userName);
 
         Label userExternalIDLabel = new Label(Utils.constants.userExternalId());
         userExternalID = new KaaAdminSizedTextBox(-1, false);
         userExternalID.setWidth("100%");
-        userInfoTable.setWidget(2, 0, userExternalIDLabel);
-        userInfoTable.setWidget(2, 1, userExternalID);
-        detailsTable.setWidget(1, 0, userInfoTable);
+        detailsTable.setWidget(++row, 0, userExternalIDLabel);
+        detailsTable.setWidget(row, 1, userExternalID);
+        userInfoList.add(userExternalIDLabel);
+        userInfoList.add(userExternalID);
 
         Label notificationVersionLabel = new Label(Utils.constants.notificationSchemaVersion());
         notificationVersion = new KaaAdminSizedTextBox(-1, false);
         notificationVersion.setWidth("100%");
-        detailsTable.setWidget(2, 0, notificationVersionLabel);
-        detailsTable.setWidget(2, 1, notificationVersion);
+        detailsTable.setWidget(++row, 0, notificationVersionLabel);
+        detailsTable.setWidget(row, 1, notificationVersion);
 
         Label systemNfVersionLabel = new Label(Utils.constants.systemNotificationVersion());
         systemNfVersion = new KaaAdminSizedTextBox(-1, false);
         systemNfVersion.setWidth("100%");
-        detailsTable.setWidget(3, 0, systemNfVersionLabel);
-        detailsTable.setWidget(3, 1, systemNfVersion);
+        detailsTable.setWidget(++row, 0, systemNfVersionLabel);
+        detailsTable.setWidget(row, 1, systemNfVersion);
 
         Label userNfVersionLabel = new Label(Utils.constants.userNotificationVersion());
         userNfVersion = new KaaAdminSizedTextBox(-1, false);
         userNfVersion.setWidth("100%");
-        detailsTable.setWidget(4, 0, userNfVersionLabel);
-        detailsTable.setWidget(4, 1, userNfVersion);
+        detailsTable.setWidget(++row, 0, userNfVersionLabel);
+        detailsTable.setWidget(row, 1, userNfVersion);
 
         Label logSchemaVersionLabel = new Label(Utils.constants.logSchemaVersion());
         logSchemaVersion = new KaaAdminSizedTextBox(-1, false);
         logSchemaVersion.setWidth("100%");
-        detailsTable.setWidget(5, 0, logSchemaVersionLabel);
-        detailsTable.setWidget(5, 1, logSchemaVersion);
+        detailsTable.setWidget(++row, 0, logSchemaVersionLabel);
+        detailsTable.setWidget(row, 1, logSchemaVersion);
 
         CaptionPanel formPanel = new CaptionPanel(Utils.constants.profileSchema());
         FlexTable recordTable = new FlexTable();
@@ -151,27 +160,27 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
         recordTable.getFlexCellFormatter().setColSpan(2, 0, 3);
 
         formPanel.add(recordTable);
-        detailsTable.setWidget(6, 0, formPanel);
-        detailsTable.getFlexCellFormatter().setColSpan(6, 0, 3);
+        detailsTable.setWidget(++row, 0, formPanel);
+        detailsTable.getFlexCellFormatter().setColSpan(row, 0, 3);
         formPanel.getElement().getParentElement().getStyle().setPropertyPx("paddingBottom", 10);
 
         groupsGrid = new EndpointGroupGrid(true);
         groupsGrid.setSize("700px", "200px");
         Label groupsLabel = new Label(Utils.constants.endpointGroups());
-        detailsTable.setWidget(7, 0, groupsLabel);
+        detailsTable.setWidget(++row, 0, groupsLabel);
         groupsLabel.getElement().getParentElement().getStyle().setPropertyPx("paddingBottom", 10);
-        detailsTable.setWidget(8, 0, groupsGrid);
+        detailsTable.setWidget(++row, 0, groupsGrid);
         groupsGrid.getElement().getParentElement().getStyle().setPropertyPx("paddingBottom", 10);
-        detailsTable.getFlexCellFormatter().setColSpan(8, 0, 3);
+        detailsTable.getFlexCellFormatter().setColSpan(row, 0, 3);
 
         topicsGrid = new TopicGrid(false, true);
         topicsGrid.setSize("700px", "200px");
         Label topicLabel = new Label(Utils.constants.notificationTopics());
         topicLabel.addStyleName(Utils.kaaAdminStyle.bAppContentTitleLabel());
-        detailsTable.setWidget(9, 0, topicLabel);
+        detailsTable.setWidget(++row, 0, topicLabel);
         topicLabel.getElement().getParentElement().getStyle().setPropertyPx("paddingBottom", 10);
-        detailsTable.setWidget(10, 0, topicsGrid);
-        detailsTable.getFlexCellFormatter().setColSpan(10, 0, 3);
+        detailsTable.setWidget(++row, 0, topicsGrid);
+        detailsTable.getFlexCellFormatter().setColSpan(row, 0, 3);
         topicsGrid.getElement().getParentElement().getStyle().setPropertyPx("paddingBottom", 10);
     }
 
@@ -271,7 +280,7 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
     }
 
     @Override
-    public FlexTable getUserInfoTable() {
-        return userInfoTable;
+    public List<Widget> getUserInfoList() {
+        return userInfoList;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,14 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view;
 
-import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.Widget;
 import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.topic.TopicGrid;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.RecordPanel;
+
+import java.util.List;
 
 public interface EndpointProfileView extends BaseDetailsView {
 
@@ -39,7 +41,7 @@ public interface EndpointProfileView extends BaseDetailsView {
     SizedTextBox getSchemaName();
     SizedTextBox getDescription();
 
-    FlexTable getUserInfoTable();
+    List<Widget> getUserInfoList();
 
     TopicGrid getTopicsGrid();
     AbstractGrid<EndpointGroupDto, String> getGroupsGrid();

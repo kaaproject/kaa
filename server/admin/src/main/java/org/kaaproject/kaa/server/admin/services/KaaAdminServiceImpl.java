@@ -189,7 +189,6 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             EndpointProfileViewDto viewDto = toGenericDto(clientProvider
                     .getClient().getEndpointProfileViewDtoByEndpointKeyHash(endpointProfileKeyHash));
 
-            checkApplication(viewDto.getApplicationDto());
             ProfileSchemaDto schemaDto = viewDto.getProfileSchemaDto();
             if (schemaDto != null) {
                 convertToSchemaForm(schemaDto, simpleSchemaFormAvroConverter);

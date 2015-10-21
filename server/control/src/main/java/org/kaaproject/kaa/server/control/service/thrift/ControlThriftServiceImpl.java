@@ -227,18 +227,15 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
         viewDto.setEndpointProfileDto(endpointProfileDto);
 
         /*    Getting endpoint user    */
-        String applicationId = endpointProfileDto.getApplicationId();
-        ApplicationDto applicationDto = applicationService.findAppById(applicationId);
-        viewDto.setApplicationDto(applicationDto);  // for validation at KaaAdminServiceImpl#getEndpProfView...ByKeyHash
-        String tenantId = applicationDto.getTenantId();
         String externalId = endpointProfileDto.getEndpointUserId();
         EndpointUserDto userDto = null;
         if (externalId != null) {
-            userDto = endpointService.findEndpointUserByExternalIdAndTenantId(externalId, tenantId);
+            userDto = endpointService.findEndpointUserById(externalId);
         }
         viewDto.setEndpointUserDto(userDto);
 
         /*    Getting endpoint profile RecordForm    */
+        String applicationId = endpointProfileDto.getApplicationId();
         int profileVersion = endpointProfileDto.getProfileVersion();
         ProfileSchemaDto schemaDto = profileService
                 .findProfileSchemaByAppIdAndVersion(applicationId, profileVersion);
