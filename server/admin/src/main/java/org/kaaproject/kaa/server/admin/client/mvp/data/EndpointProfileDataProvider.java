@@ -50,8 +50,8 @@ public class EndpointProfileDataProvider extends AbstractDataProvider<EndpointPr
         addDataDisplay();
         if (dataGrid instanceof EndpointProfileGrid) {
             ((EndpointProfileGrid) dataGrid).setDataProvider(this);
-            limit = (((EndpointProfileGrid) dataGrid).getPageSize() + 1) + "";
         }
+        limit = (dataGrid.getPageSize() + 1) + "";
     }
 
     @Override

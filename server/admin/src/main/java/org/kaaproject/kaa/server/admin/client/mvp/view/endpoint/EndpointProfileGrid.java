@@ -19,6 +19,8 @@ package org.kaaproject.kaa.server.admin.client.mvp.view.endpoint;
 import com.google.common.io.BaseEncoding;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.cellview.client.DataGrid;
+import com.google.gwt.user.cellview.client.SimplePager;
+import com.google.gwt.view.client.Range;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.server.admin.client.mvp.data.EndpointProfileDataProvider;
@@ -26,12 +28,10 @@ import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 public class EndpointProfileGrid extends AbstractGrid<EndpointProfileDto, String> {
 
-    public int pageSize;
     private EndpointProfileDataProvider dataProvider;
 
     public EndpointProfileGrid(int pageSize) {
         super(Style.Unit.PX, false, pageSize);
-        this.pageSize = pageSize;
     }
 
     @Override
@@ -91,15 +91,36 @@ public class EndpointProfileGrid extends AbstractGrid<EndpointProfileDto, String
         return BaseEncoding.base64().encode(value.getEndpointKeyHash());
     }
 
-    public int getPageSize() {
-        return pageSize;
-    }
-
     public EndpointProfileDataProvider getDataProvider() {
         return dataProvider;
     }
 
     public void setDataProvider(EndpointProfileDataProvider dataProvider) {
         this.dataProvider = dataProvider;
+    }
+
+    @Override
+    protected SimplePager getPager() {
+        return new SimplePager(SimplePager.TextLocation.CENTER, pagerResources, false, 0, true){
+            @Override
+            protected String createText() {
+                Range range = getDisplay().getVisibleRange();
+                int currentPage = range.getStart() / (range.getLength() != 0 ? range.getLength() : 1) + 1;
+                return Utils.messages.pagerText(currentPage + "");
+            }
+
+            @Override
+            public void setPageStart(int index) {
+                if (getDisplay() != null) {
+                    Range range = getDisplay().getVisibleRange();
+                    int pageSize = range.getLength();
+
+                    index = Math.max(0, index);
+                    if (index != range.getStart()) {
+                        getDisplay().setVisibleRange(index, pageSize);
+                    }
+                }
+            }
+        };
     }
 }

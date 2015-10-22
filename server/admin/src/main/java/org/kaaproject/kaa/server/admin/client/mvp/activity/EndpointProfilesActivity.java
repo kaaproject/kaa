@@ -75,32 +75,32 @@ public class EndpointProfilesActivity extends AbstractActivity implements BaseLi
     }
 
     private void getGroupsList() {
-        KaaAdmin.getDataSource().loadEndpointGroups(applicationId, new AsyncCallback<List<EndpointGroupDto>>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                Utils.handleException(caught, listView);
-            }
-            @Override
-            public void onSuccess(List<EndpointGroupDto> result) {
-                AbstractGrid<EndpointProfileDto, ?> listWidget = listView.getListWidget();
-                EndpointProfileGrid grid = null;
-                if (listWidget instanceof EndpointProfileGrid) {
-                    grid = (EndpointProfileGrid) listWidget;
-                    if (!gridLoaded) {
+        AbstractGrid<EndpointProfileDto, ?> listWidget = listView.getListWidget();
+        if (listWidget instanceof EndpointProfileGrid) {
+            final EndpointProfileGrid grid = (EndpointProfileGrid) listWidget;
+            if (!gridLoaded) {
+                KaaAdmin.getDataSource().loadEndpointGroups(applicationId, new AsyncCallback<List<EndpointGroupDto>>() {
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        Utils.handleException(caught, listView);
+                    }
+
+                    @Override
+                    public void onSuccess(List<EndpointGroupDto> result) {
                         EndpointProfileDataProvider alreadyCreatedDataProvider = grid.getDataProvider();
                         if (alreadyCreatedDataProvider != null)
                             alreadyCreatedDataProvider.removeDataDisplay(grid.getDataGrid());
                         if (listView.getListWidget().getDataGrid().getVisibleRange().getStart() != 0) {
                             listView.getListWidget().getDataGrid().setVisibleRangeAndClearData(
-                                    new Range(0, grid.getPageSize()), false);
+                                    new Range(0, listView.getListWidget().getPageSize()), false);
                         }
                         populateListBox(result);
-                    } else {
-                        dataProvider = grid.getDataProvider();
                     }
-                }
+                });
+            } else {
+                dataProvider = grid.getDataProvider();
             }
-        });
+        }
     }
 
     private void populateListBox(List<EndpointGroupDto> result) {
@@ -133,7 +133,7 @@ public class EndpointProfilesActivity extends AbstractActivity implements BaseLi
             public void onValueChange(ValueChangeEvent<EndpointGroupDto> valueChangeEvent) {
                 dataProvider.setNewGroup(valueChangeEvent.getValue().getId());
                 listView.getListWidget().getDataGrid().setVisibleRangeAndClearData(
-                        new Range(0, Integer.valueOf(EndpointProfileDataProvider.DEFAULT_LIMIT) -1), true);
+                        new Range(0, listView.getListWidget().getPageSize()), true);
             }
         }));
 
