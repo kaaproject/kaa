@@ -30,7 +30,8 @@ public interface EndpointProfileView extends BaseDetailsView {
     SizedTextBox getKeyHash();
     SizedTextBox getId();
     SizedTextBox getNotificationVersion();
-    SizedTextBox getSystemNfVersion();
+    SizedTextBox getProfileSchemaVersion();
+    SizedTextBox getConfigurationSchemaVersion();
     SizedTextBox getUserNfVersion();
     SizedTextBox getLogSchemaVer();
 

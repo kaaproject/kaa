@@ -40,11 +40,8 @@ import java.util.List;
 public class EndpointProfileActivity extends
         AbstractDetailsActivity<EndpointProfileViewDto, EndpointProfileView, EndpointProfilePlace> {
 
-    private String applicationId;
-
     public EndpointProfileActivity(EndpointProfilePlace place, ClientFactory clientFactory) {
         super(place, clientFactory);
-        this.applicationId = place.getApplicationId();
     }
 
     @Override
@@ -84,8 +81,8 @@ public class EndpointProfileActivity extends
         detailsView.getKeyHash().setValue(BaseEncoding.base64().encode(profileDto.getEndpointKeyHash()));
 
         if (userDto != null) {
-            detailsView.getUserID()        .setValue(userDto.getId());
-            detailsView.getUserName()      .setValue(userDto.getUsername());
+            detailsView.getUserID().setValue(userDto.getId());
+            detailsView.getUserName().setValue(userDto.getUsername());
             detailsView.getUserExternalID().setValue(userDto.getExternalId());
 
             for (Widget widget : detailsView.getUserInfoList()) {
@@ -97,10 +94,11 @@ public class EndpointProfileActivity extends
             }
         }
 
-        detailsView.getNotificationVersion().setValue(profileDto.getNotificationVersion() + "");
-        detailsView.getSystemNfVersion()    .setValue(profileDto.getSystemNfVersion() + "");
-        detailsView.getUserNfVersion()      .setValue(profileDto.getUserNfVersion() + "");
-        detailsView.getLogSchemaVer()       .setValue(profileDto.getLogSchemaVersion() + "");
+        detailsView.getProfileSchemaVersion().setValue(profileDto.getProfileVersion() + "");
+        detailsView.getConfigurationSchemaVersion().setValue(profileDto.getConfigurationVersion() + "");
+        detailsView.getNotificationVersion().setValue(profileDto.getUserNfVersion() + "");
+        detailsView.getUserNfVersion().setValue(profileDto.getUserNfVersion() + "");
+        detailsView.getLogSchemaVer().setValue(profileDto.getLogSchemaVersion() + "");
 
         List<EndpointGroupDto> groupDtoList = entity.getGroupDtoList();
         if (groupDtoList != null) {
@@ -112,7 +110,7 @@ public class EndpointProfileActivity extends
             detailsView.getTopicsGrid().getDataGrid().setRowData(endpointNotificationTopics);
         } else detailsView.getTopicsGrid().getDataGrid().setRowData(new ArrayList<TopicDto>());
 
-        detailsView.getSchemaName() .setValue(profileSchemaDto.getName());
+        detailsView.getSchemaName().setValue(profileSchemaDto.getName());
         detailsView.getDescription().setValue(profileSchemaDto.getDescription());
 
         RecordField endpointProfileRecord = entity.getEndpointProfileRecord();

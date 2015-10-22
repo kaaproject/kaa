@@ -36,10 +36,10 @@ import java.util.List;
 
 public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements EndpointProfileView {
 
-
     private SizedTextBox endpointKeyHash;
     private SizedTextBox notificationVersion;
-    private SizedTextBox systemNfVersion;
+    private SizedTextBox profileVersion;
+    private SizedTextBox configurationVersion;
     private SizedTextBox userNfVersion;
     private SizedTextBox logSchemaVersion;
 
@@ -114,17 +114,23 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
         userInfoList.add(userExternalIDLabel);
         userInfoList.add(userExternalID);
 
+        Label profileVersionLabel = new Label(Utils.constants.profileSchemaVersion());
+        profileVersion = new KaaAdminSizedTextBox(-1, false);
+        profileVersion.setWidth("100%");
+        detailsTable.setWidget(++row, 0, profileVersionLabel);
+        detailsTable.setWidget(row, 1, profileVersion);
+
+        Label configurationVersionLabel = new Label(Utils.constants.configurationSchemaVersion());
+        configurationVersion = new KaaAdminSizedTextBox(-1, false);
+        configurationVersion.setWidth("100%");
+        detailsTable.setWidget(++row, 0, configurationVersionLabel);
+        detailsTable.setWidget(row, 1, configurationVersion);
+
         Label notificationVersionLabel = new Label(Utils.constants.notificationSchemaVersion());
         notificationVersion = new KaaAdminSizedTextBox(-1, false);
         notificationVersion.setWidth("100%");
         detailsTable.setWidget(++row, 0, notificationVersionLabel);
         detailsTable.setWidget(row, 1, notificationVersion);
-
-        Label systemNfVersionLabel = new Label(Utils.constants.systemNotificationVersion());
-        systemNfVersion = new KaaAdminSizedTextBox(-1, false);
-        systemNfVersion.setWidth("100%");
-        detailsTable.setWidget(++row, 0, systemNfVersionLabel);
-        detailsTable.setWidget(row, 1, systemNfVersion);
 
         Label userNfVersionLabel = new Label(Utils.constants.userNotificationVersion());
         userNfVersion = new KaaAdminSizedTextBox(-1, false);
@@ -175,9 +181,10 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
 
         topicsGrid = new TopicGrid(false, true);
         topicsGrid.setSize("700px", "200px");
-        Label topicLabel = new Label(Utils.constants.notificationTopics());
+        Label topicLabel = new Label(Utils.constants.subscribedOnNfTopics());
         topicLabel.addStyleName(Utils.kaaAdminStyle.bAppContentTitleLabel());
         detailsTable.setWidget(++row, 0, topicLabel);
+        detailsTable.getFlexCellFormatter().setColSpan(row, 0, 3);
         topicLabel.getElement().getParentElement().getStyle().setPropertyPx("paddingBottom", 10);
         detailsTable.setWidget(++row, 0, topicsGrid);
         detailsTable.getFlexCellFormatter().setColSpan(row, 0, 3);
@@ -192,7 +199,6 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
     protected void resetImpl() {
         endpointKeyHash.setValue("");
         notificationVersion.setValue("");
-        systemNfVersion.setValue("");
         userNfVersion.setValue("");
         logSchemaVersion.setValue("");
         userID.setValue("");
@@ -200,6 +206,8 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
         userExternalID.setValue("");
         schemaName.setValue("");
         description.setValue("");
+        profileVersion.setValue("");
+        configurationVersion.setValue("");
 
         schemaForm.getRecordWidget().clear();
     }
@@ -222,11 +230,6 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
     @Override
     public SizedTextBox getNotificationVersion() {
         return notificationVersion;
-    }
-
-    @Override
-    public SizedTextBox getSystemNfVersion() {
-        return systemNfVersion;
     }
 
     @Override
@@ -277,6 +280,16 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
     @Override
     public RecordPanel getSchemaForm() {
         return schemaForm;
+    }
+
+    @Override
+    public SizedTextBox getConfigurationSchemaVersion() {
+        return configurationVersion;
+    }
+
+    @Override
+    public SizedTextBox getProfileSchemaVersion() {
+        return profileVersion;
     }
 
     @Override

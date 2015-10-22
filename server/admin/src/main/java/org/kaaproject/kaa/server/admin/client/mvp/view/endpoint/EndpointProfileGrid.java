@@ -26,14 +26,8 @@ import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 public class EndpointProfileGrid extends AbstractGrid<EndpointProfileDto, String> {
 
-    public static final int DEFAULT_PAGE_SIZE = 10;   // ten rows in grid per page
     public int pageSize;
     private EndpointProfileDataProvider dataProvider;
-
-    public EndpointProfileGrid() {
-        super(Style.Unit.PX, false, DEFAULT_PAGE_SIZE);
-        this.pageSize = DEFAULT_PAGE_SIZE;
-    }
 
     public EndpointProfileGrid(int pageSize) {
         super(Style.Unit.PX, false, pageSize);
@@ -50,15 +44,6 @@ public class EndpointProfileGrid extends AbstractGrid<EndpointProfileDto, String
                     @Override
                     public String getValue(EndpointProfileDto item) {
                         return BaseEncoding.base64().encode(item.getEndpointKeyHash());
-                    }
-                }, 160);
-
-        prefWidth += constructStringColumn(table,
-                Utils.constants.endpointID(),
-                new StringValueProvider<EndpointProfileDto>() {
-                    @Override
-                    public String getValue(EndpointProfileDto item) {
-                        return item.getId();
                     }
                 }, 160);
 
@@ -85,7 +70,7 @@ public class EndpointProfileGrid extends AbstractGrid<EndpointProfileDto, String
                 new StringValueProvider<EndpointProfileDto>() {
                     @Override
                     public String getValue(EndpointProfileDto item) {
-                        return item.getNotificationVersion() + "";
+                        return item.getUserNfVersion() + "";
                     }
                 }, 80);
 
