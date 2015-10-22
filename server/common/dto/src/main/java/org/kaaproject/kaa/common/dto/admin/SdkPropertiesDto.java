@@ -50,7 +50,8 @@ public class SdkPropertiesDto implements HasId, Serializable {
                             Integer profileSchemaVersion, Integer notificationSchemaVersion,
                             Integer logSchemaVersion,
                             SdkPlatform targetPlatform, List<String> aefMapIds,
-                            String defaultVerifierToken, String applicationToken) {
+                            String defaultVerifierToken, String applicationToken,
+                            String createdUsername, Long createdTime, String name) {
         super();
         this.applicationId = applicationId;
         this.configurationSchemaVersion = configurationSchemaVersion;
@@ -61,6 +62,9 @@ public class SdkPropertiesDto implements HasId, Serializable {
         this.aefMapIds = aefMapIds;
         this.defaultVerifierToken = defaultVerifierToken;
         this.applicationToken = applicationToken;
+        this.createdUsername = createdUsername;
+        this.createdTime = createdTime;
+        this.name = name;
     }
 
     public String getApplicationId() {

@@ -293,7 +293,8 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
                                         Integer notificationSchemaVersion, List<String> aefMapIds,
                                         Integer logSchemaVersion, String defaultVerifierToken) {
         return ThriftDtoConverter.toDataStruct(new SdkPropertiesDto(appId, configSchemaVersion, profileSchemaVersion,
-                notificationSchemaVersion, logSchemaVersion, sdkPlatform, aefMapIds, defaultVerifierToken, null));
+                notificationSchemaVersion, logSchemaVersion, sdkPlatform, aefMapIds, defaultVerifierToken, null,
+                "devuser", 100000L, "someName"));
     }
 
 

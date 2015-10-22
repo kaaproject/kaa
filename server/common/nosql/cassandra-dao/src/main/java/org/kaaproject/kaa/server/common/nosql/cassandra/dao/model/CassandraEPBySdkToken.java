@@ -23,7 +23,6 @@ import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.Cassand
 import java.io.Serializable;
 import java.nio.ByteBuffer;
 
-import com.datastax.driver.mapping.annotations.ClusteringColumn;
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;

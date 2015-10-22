@@ -51,6 +51,7 @@ public class SdkKeyTest {
 
     private SdkPropertiesDto generateSdkPropertiesDto(String appId) {
         List<String> aefMapIdsList = new ArrayList<>(Arrays.asList("firstId", "secondId", "thirdId"));
-        return new SdkPropertiesDto(appId, 2, 3, 4, 5, SdkPlatform.ANDROID, aefMapIdsList, "someVerifierToken", "someApplicationToken");
+        return new SdkPropertiesDto(appId, 2, 3, 4, 5, SdkPlatform.ANDROID, aefMapIdsList, "someVerifierToken", "someApplicationToken",
+                "devuser", 100000L, "someName");
     }
 }

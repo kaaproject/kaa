@@ -243,6 +243,6 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
                 .from(CassandraModelConstants.EP_BY_SDK_TOKEN_COLUMN_FAMILY_NAME)
                 .where(QueryBuilder.eq(CassandraModelConstants.EP_BY_SDK_TOKEN_SDK_TOKEN_PROPERTY, sdkToken));
 
-        return this.findOneByStatement(query) != null;
+        return this.execute(query).one() != null;
     }
 }

@@ -42,8 +42,15 @@ public class SdkKeyServiceImpl implements SdkKeyService {
     @Autowired
     private SdkKeyDao<SdkKey> sdkKeyDao;
 
-    @Autowired
     private EndpointProfileDao<EndpointProfile> endpointProfileDao;
+
+    public EndpointProfileDao<EndpointProfile> getEndpointProfileDao() {
+        return endpointProfileDao;
+    }
+
+    public void setEndpointProfileDao(EndpointProfileDao<EndpointProfile> endpointProfileDao) {
+        this.endpointProfileDao = endpointProfileDao;
+    }
 
     @Override
     public SdkPropertiesDto saveSdkKey(SdkPropertiesDto sdkPropertiesDto) {

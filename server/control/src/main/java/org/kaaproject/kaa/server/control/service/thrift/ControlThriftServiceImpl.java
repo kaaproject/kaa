@@ -1028,14 +1028,14 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
             }
 
             sdkPropertiesDto.setApplicationToken(appToken);
-//            sdkPropertiesDto = sdkKeyService.saveSdkKey(sdkPropertiesDto);
-//            String sdkToken = new SdkKey(sdkPropertiesDto).getToken();
-            String sdkToken = null;
-            if (sdkPropertiesDto.getToken() != null) {
-                sdkToken = sdkPropertiesDto.getToken();
-            } else {
-                throw new TException("Undefined SDK token");
+
+            String sdkToken = sdkPropertiesDto.getToken();
+            if (sdkToken == null) {
+                // Used for SDK generation via REST API which does not support SDK profiles as of October, 2015
+                LOG.warn("No SDK profile is used for SDK generation.");
+                sdkToken = new SdkKey(sdkPropertiesDto).getToken();
             }
+
             LOG.debug("Sdk properties for sdk generation: {}", sdkPropertiesDto);
 
             SdkGenerator generator = SdkGeneratorFactory.createSdkGenerator(sdkPropertiesDto.getTargetPlatform());

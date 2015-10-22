@@ -82,7 +82,7 @@ CREATE TABLE IF NOT EXISTS kaa.ep_profile (
     user_nf_ver int,
     log_schema_ver int,
     ecf_ver_state list < frozen < ecf_ver_state > >,
-    server_hash text
+    server_hash text,
     sdk_token text
 );
 

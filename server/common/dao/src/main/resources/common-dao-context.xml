@@ -53,6 +53,10 @@
         <property name="endpointUserDao" ref="endpointUserDao"/>
     </bean>
 
+    <bean id="sdkKeyService" class="org.kaaproject.kaa.server.common.dao.service.SdkKeyServiceImpl">
+        <property name="endpointProfileDao" ref="endpointProfileDao"/>
+    </bean>
+    
     <bean id="notificationService" class="org.kaaproject.kaa.server.common.dao.service.NotificationServiceImpl">
         <property name="notificationDao" ref="notificationDao"/>
         <property name="unicastNotificationDao" ref="unicastNotificationDao"/>
