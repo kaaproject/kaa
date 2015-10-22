@@ -15,6 +15,10 @@
  */
 package org.kaaproject.kaa.client;
 
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.util.List;
+
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.KaaDataChannel;
 import org.kaaproject.kaa.client.configuration.base.ConfigurationListener;
@@ -30,6 +34,7 @@ import org.kaaproject.kaa.client.event.registration.EndpointRegistrationManager;
 import org.kaaproject.kaa.client.event.registration.OnAttachEndpointOperationCallback;
 import org.kaaproject.kaa.client.event.registration.OnDetachEndpointOperationCallback;
 import org.kaaproject.kaa.client.event.registration.UserAttachCallback;
+import org.kaaproject.kaa.client.exceptions.KaaException;
 import org.kaaproject.kaa.client.logging.LogStorage;
 import org.kaaproject.kaa.client.logging.LogUploadStrategy;
 import org.kaaproject.kaa.client.notification.NotificationListener;
@@ -39,14 +44,10 @@ import org.kaaproject.kaa.client.notification.UnavailableTopicException;
 import org.kaaproject.kaa.client.profile.ProfileContainer;
 import org.kaaproject.kaa.common.endpoint.gen.Topic;
 
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.util.List;
-
 /**
  * <p>
  * Root interface for the Kaa client.
- * This interface contain methods that are predefined and does not contain any auto-generated code. 
+ * This interface contain methods that are predefined and does not contain any auto-generated code.
  * </p>
  *
  *
@@ -71,7 +72,7 @@ public interface GenericKaaClient {
      *
      * @see AbstractKaaClient#start()
      */
-    public void start();
+    public void start() throws KaaException;
 
     /**
      * Stops Kaa's workflow.
@@ -103,17 +104,17 @@ public interface GenericKaaClient {
      * Sync of updated profile with server
      */
     void updateProfile();
-    
+
     /**
      * Sets the configuration storage that will be used to persist configuration.
-     * 
+     *
      * @param storage to use for configuration persistence
      */
     void setConfigurationStorage(ConfigurationStorage storage);
 
     /**
      * Register configuration update listener
-     * 
+     *
      * @param listener to register
      * @return true if listener is registered, false if already registered
      */
@@ -121,7 +122,7 @@ public interface GenericKaaClient {
 
     /**
      * Removes configuration update listener
-     * 
+     *
      * @param listener to register
      * @return true if listener is removed, false if not found
      */
@@ -244,7 +245,7 @@ public interface GenericKaaClient {
      *             optional.
      */
     void subscribeToTopic(String topicId) throws UnavailableTopicException;
-    
+
     /**
      * <p>
      * Subscribe to notifications relating to the specified optional topic.
@@ -298,7 +299,7 @@ public interface GenericKaaClient {
      * @see #syncTopicsList()
      */
     void subscribeToTopics(List<String> topicIds, boolean forceSync) throws UnavailableTopicException;
-    
+
     /**
      * <p>
      * Unsubscribe from notifications relating to the specified optional topic.
@@ -339,7 +340,7 @@ public interface GenericKaaClient {
      * @see #syncTopicsList()
      */
     void unsubscribeFromTopic(String topicId, boolean forceSync) throws UnavailableTopicException;
-    
+
     /**
      * <p>
      * Unsubscribe from notifications relating to the specified list of optional
@@ -400,15 +401,15 @@ public interface GenericKaaClient {
      * Use it as a convenient way to make different consequent changes in the
      * optional subscription:
      * </p>
-     * 
+     *
      * <pre>
      * {
      *     // Make subscription changes
      *     kaaClient.subscribeOnTopics(Arrays.asList(&quot;optional_topic1&quot;, &quot;optional_topic2&quot;, &quot;optional_topic3&quot;), false);
      *     kaaClient.unsubscribeFromTopic(&quot;optional_topic4&quot;, false);
-     * 
+     *
      *     // Add listeners for topics here
-     * 
+     *
      *     // Commit changes
      *     kaaClient.syncTopicsList();
      * }

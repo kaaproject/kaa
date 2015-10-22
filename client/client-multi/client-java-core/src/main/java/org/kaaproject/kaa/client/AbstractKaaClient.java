@@ -176,7 +176,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
         kaaClientState = new KaaClientPropertiesState(context.createPersistentStorage(), context.getBase64(), this.properties);
 
         TransportContext transportContext = buildTransportContext(properties, kaaClientState);
-        
+
         bootstrapManager = buildBootstrapManager(properties, kaaClientState, transportContext);
 
         channelManager = buildChannelManager(bootstrapManager, bootstrapServers);
@@ -187,7 +187,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
 
         bootstrapManager.setChannelManager(channelManager);
         bootstrapManager.setFailoverManager(failoverManager);
-        
+
         profileManager = buildProfileManager(properties, kaaClientState, transportContext);
         notificationManager = buildNotificationManager(properties, kaaClientState, transportContext);
         eventManager = buildEventManager(properties, kaaClientState, transportContext);
@@ -205,12 +205,14 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
         transportContext.getUserTransport().setEndpointRegistrationProcessor(endpointRegistrationManager);
         transportContext.getLogTransport().setLogProcessor(logCollector);
         transportContext.initTransports(this.channelManager, this.kaaClientState);
-        
+
         eventFamilyFactory = new EventFamilyFactory(eventManager, context.getExecutorContext());
     }
 
     @Override
-    public void start() {
+    public void start() throws KaaException {
+        checkReadiness();
+
         context.getExecutorContext().init();
         getLifeCycleExecutor().submit(new Runnable() {
             @Override
@@ -242,6 +244,13 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
                 }
             }
         });
+    }
+
+    private void checkReadiness() throws KaaException {
+        if (profileManager == null || !profileManager.isInitialized()) {
+            LOG.error("Profile manager isn't initialized: maybe profile container isn't set");
+            throw new KaaException("Profile manager isn't initialized: maybe profile container isn't set");
+        }
     }
 
     @Override
@@ -518,7 +527,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
         RedirectionTransport redirectionTransport = buildRedirectionTransport(properties, kaaClientState);
         LogTransport logTransport = buildLogTransport(properties, kaaClientState);
 
-        
+
         EndpointObjectHash publicKeyHash = EndpointObjectHash.fromSHA1(kaaClientState.getPublicKey().getEncoded());
         MetaDataTransport mdTransport = new DefaultMetaDataTransport();
         mdTransport.setClientProperties(properties);

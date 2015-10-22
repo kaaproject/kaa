@@ -29,12 +29,35 @@ import org.mockito.Mockito;
 public class DefaultProfileManagerTest {
 
     @Test
+    public void testProfileManagerIsInitialized() {
+        ProfileTransport transport = mock(ProfileTransport.class);
+        DefaultProfileManager profileManager = new DefaultProfileManager(transport);
+
+        ProfileSerializer profileSerializer = new ProfileSerializer();
+
+        if (profileSerializer.isDefault()) {
+            Assert.assertTrue(profileManager.isInitialized());
+        } else {
+            Assert.assertFalse(profileManager.isInitialized());
+
+            profileManager.setProfileContainer(new ProfileContainer() {
+                @Override
+                public Profile getProfile() {
+                    return new Profile();
+                }
+            });
+
+            Assert.assertTrue(profileManager.isInitialized());
+        }
+    }
+
+    @Test
     public void testProfileManager() throws IOException {
         ProfileTransport transport = mock(ProfileTransport.class);
 
         DefaultProfileManager profileManager = new DefaultProfileManager(transport);
         profileManager.setProfileContainer(new ProfileContainer() {
-            
+
             @Override
             public Profile getProfile() {
                 return new Profile();

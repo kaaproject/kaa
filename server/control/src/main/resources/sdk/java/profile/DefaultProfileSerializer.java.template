@@ -37,9 +37,13 @@ class ProfileSerializer {
         ${profile_class} profile;
         if (container != null) {
             profile = container.getProfile();
-        }else{
-		    profile = new ${profile_class}();
-		}
+        } else {
+            profile = new ${profile_class}();
+        }
         return converter.toByteArray(profile);
+    }
+
+    boolean isDefault() {
+        return true;
     }
 }

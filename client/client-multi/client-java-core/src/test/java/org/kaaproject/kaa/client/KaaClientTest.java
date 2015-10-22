@@ -39,11 +39,13 @@ import org.kaaproject.kaa.client.exceptions.KaaException;
 import org.kaaproject.kaa.client.persistence.KaaClientPropertiesState;
 import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.client.persistence.PersistentStorage;
+import org.kaaproject.kaa.client.profile.ProfileContainer;
 import org.kaaproject.kaa.client.transport.TransportException;
 import org.kaaproject.kaa.client.util.CommonsBase64;
 import org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData;
 import org.kaaproject.kaa.common.endpoint.gen.ProtocolVersionPair;
 import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
+import org.kaaproject.kaa.schema.base.Profile;
 import org.mockito.Mockito;
 
 public class KaaClientTest {
@@ -81,6 +83,13 @@ public class KaaClientTest {
                 return bsManagerMock;
             }
         };
+
+        client.setProfileContainer(new ProfileContainer() {
+            @Override
+            public Profile getProfile() {
+                return new Profile();
+            }
+        });
     }
 
     @Test
