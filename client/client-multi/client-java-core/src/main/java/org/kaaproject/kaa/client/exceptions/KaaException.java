@@ -17,7 +17,7 @@ package org.kaaproject.kaa.client.exceptions;
 
 /**
  * Basic exception of Kaa client SDK.
- * 
+ *
  * @author Andrew Shvayka
  *
  */
@@ -27,5 +27,9 @@ public class KaaException extends Exception{
 
     public KaaException(Exception cause){
         super(cause);
+    }
+
+    public KaaException(String message){
+        super(message);
     }
 }

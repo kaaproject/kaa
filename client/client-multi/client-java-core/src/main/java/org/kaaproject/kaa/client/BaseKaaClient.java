@@ -20,6 +20,7 @@ import java.security.GeneralSecurityException;
 
 import javax.annotation.Generated;
 
+import org.kaaproject.kaa.client.exceptions.KaaException;
 import org.kaaproject.kaa.schema.base.Configuration;
 import org.kaaproject.kaa.schema.base.Log;
 
@@ -42,12 +43,14 @@ public class BaseKaaClient extends AbstractKaaClient implements KaaClient {
     }
 
     @Override
-    public void addLogRecord(Log record) {
+    public void addLogRecord(Log record) throws KaaException {
+        checkClientState(State.STARTED, "Kaa client is not started");
         logCollector.addLogRecord(record);
     }
 
     @Override
-    public Configuration getConfiguration() {
+    public Configuration getConfiguration() throws KaaException {
+        checkClientState(State.STARTED, "Kaa client is not started");
         return configurationManager.getConfiguration();
     }
 }

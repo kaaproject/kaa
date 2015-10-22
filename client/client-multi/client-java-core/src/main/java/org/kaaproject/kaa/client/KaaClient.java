@@ -26,18 +26,19 @@ import org.kaaproject.kaa.client.channel.KaaDataChannel;
 import org.kaaproject.kaa.client.event.EventFamilyFactory;
 import org.kaaproject.kaa.client.event.EventListenersResolver;
 import org.kaaproject.kaa.client.event.registration.EndpointRegistrationManager;
+import org.kaaproject.kaa.client.exceptions.KaaException;
 import org.kaaproject.kaa.schema.base.Configuration;
 import org.kaaproject.kaa.schema.base.Log;
 
 /**
  * <p>
  * Base interface to operate with {@link Kaa} library.
- * 
+ *
  * </p>
- * 
+ *
  * @author Yaroslav Zeygerman
  * @author Andrew Shvayka
- * 
+ *
  * @see EventFamilyFactory
  * @see EndpointRegistrationManager
  * @see EventListenersResolver
@@ -55,12 +56,12 @@ public interface KaaClient extends GenericKaaClient {
      * @param record
      *            New log record object
      */
-    void addLogRecord(Log record);
+    void addLogRecord(Log record) throws KaaException;
 
     /**
      * Returns latest configuration.
-     * 
+     *
      * @return configuration
      */
-    Configuration getConfiguration();
+    Configuration getConfiguration() throws KaaException;
 }
