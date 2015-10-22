@@ -23,7 +23,6 @@ import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
-import org.kaaproject.kaa.server.admin.client.mvp.view.endpoint.EndpointProfileGrid;
 import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.kaaproject.kaa.server.admin.shared.services.ServiceErrorCode;
@@ -33,25 +32,22 @@ import java.util.List;
 
 public class EndpointProfileDataProvider extends AbstractDataProvider<EndpointProfileDto> {
 
-    public static final String DEFAULT_LIMIT = "11";  // Hardcoded for 10-row page size, see EndpointProfileGrid.class
     public static final String DEFAULT_OFFSET = "0";
-    private String limit = DEFAULT_LIMIT;
+    private String limit = "20";  // took from AbstractGrid<...>.class see AvroUI
+    private String pageSize;
     private String offset = DEFAULT_OFFSET;
     private String groupID;
     private List<EndpointProfileDto> endpointProfilesList;
     private int previousStart = -1;
 
-    public EndpointProfileDataProvider(AbstractGrid<EndpointProfileDto, ?> dataGrid,
-                                       HasErrorMessage hasErrorMessage,
-                                       String groupID) {
-        super(dataGrid, hasErrorMessage, false);
+    private static volatile EndpointProfileDataProvider instance;
+
+    private EndpointProfileDataProvider(AbstractGrid<EndpointProfileDto, ?> dataGrid,
+                                       HasErrorMessage hasErrorMessage, String groupID) {
+        super(dataGrid, hasErrorMessage, true);
         this.groupID = groupID;
         endpointProfilesList = new ArrayList<>();
-        addDataDisplay();
-        if (dataGrid instanceof EndpointProfileGrid) {
-            ((EndpointProfileGrid) dataGrid).setDataProvider(this);
-        }
-        limit = (dataGrid.getPageSize() + 1) + "";
+        pageSize = limit = (dataGrid.getPageSize() + 1) + "";
     }
 
     @Override
@@ -97,7 +93,15 @@ public class EndpointProfileDataProvider extends AbstractDataProvider<EndpointPr
     private void reset() {
         endpointProfilesList.clear();
         previousStart = -1;
-        limit = DEFAULT_LIMIT;
+        limit = pageSize;
         offset = DEFAULT_OFFSET;
+    }
+
+    public static synchronized EndpointProfileDataProvider getInstance(AbstractGrid<EndpointProfileDto, ?> dataGrid,
+                                                                       HasErrorMessage hasErrorMessage, String groupID) {
+        if (instance == null) {
+            instance = new EndpointProfileDataProvider(dataGrid, hasErrorMessage, groupID);
+        }
+        return instance;
     }
 }

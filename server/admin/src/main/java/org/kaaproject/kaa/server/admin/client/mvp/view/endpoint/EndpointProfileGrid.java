@@ -23,12 +23,9 @@ import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.view.client.Range;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
-import org.kaaproject.kaa.server.admin.client.mvp.data.EndpointProfileDataProvider;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 public class EndpointProfileGrid extends AbstractGrid<EndpointProfileDto, String> {
-
-    private EndpointProfileDataProvider dataProvider;
 
     public EndpointProfileGrid(int pageSize) {
         super(Style.Unit.PX, false, pageSize);
@@ -89,14 +86,6 @@ public class EndpointProfileGrid extends AbstractGrid<EndpointProfileDto, String
     @Override
     protected String getObjectId(EndpointProfileDto value) {
         return BaseEncoding.base64().encode(value.getEndpointKeyHash());
-    }
-
-    public EndpointProfileDataProvider getDataProvider() {
-        return dataProvider;
-    }
-
-    public void setDataProvider(EndpointProfileDataProvider dataProvider) {
-        this.dataProvider = dataProvider;
     }
 
     @Override
