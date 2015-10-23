@@ -64,7 +64,6 @@ CREATE TABLE IF NOT EXISTS kaa.ep_profile (
     ep_key blob,
     user_id text,
     access_token text,
-    pf_schema_id text,
     cf_group_state list < frozen < ep_group_state > >,
     nf_group_state list < frozen < ep_group_state > >,
     cf_seq_num int,
