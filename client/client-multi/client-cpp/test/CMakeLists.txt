@@ -53,7 +53,7 @@ include_directories (
         ${CMAKE_CURRENT_SOURCE_DIR}/..
         ${Boost_INCLUDE_DIRS}
         ${Avro_INCLUDE_DIRS} 
-        ${BOTAN_INCLUDE_DIRS}
+        ${BOTAN_INCLUDE_DIR}
         ${SQLITE3_INCLUDE_DIR}
 
 )
