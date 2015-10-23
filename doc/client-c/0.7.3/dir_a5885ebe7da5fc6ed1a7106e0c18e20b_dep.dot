@@ -1,0 +1,16 @@
+digraph "/var/lib/jenkins/workspace/kaa_stable/client/client-multi/client-c/src/kaa/platform-impl/Econais" {
+  bgcolor=transparent;
+  compound=true
+  node [ fontsize="10", fontname="FreeSans"];
+  edge [ labelfontsize="10", labelfontname="FreeSans"];
+  subgraph clusterdir_ac945a678f77578aa2e77d1814e34588 {
+    graph [ bgcolor="#ddddee", pencolor="black", label="platform-impl" fontname="FreeSans", fontsize="10", URL="dir_ac945a678f77578aa2e77d1814e34588.html"]
+  subgraph clusterdir_a5885ebe7da5fc6ed1a7106e0c18e20b {
+    graph [ bgcolor="#eeeeff", pencolor="black", label="" URL="dir_a5885ebe7da5fc6ed1a7106e0c18e20b.html"];
+    dir_a5885ebe7da5fc6ed1a7106e0c18e20b [shape=plaintext label="Econais"];
+    dir_8d2fdab9b7e35c93e38518ee92f53f08 [shape=box label="EC19D" color="black" fillcolor="white" style="filled" URL="dir_8d2fdab9b7e35c93e38518ee92f53f08.html"];
+  }
+  }
+  dir_e23d472d76342075ad9c73af932db45b [shape=box label="platform" URL="dir_e23d472d76342075ad9c73af932db45b.html"];
+  dir_8d2fdab9b7e35c93e38518ee92f53f08->dir_e23d472d76342075ad9c73af932db45b [headlabel="1", labeldistance=1.5 headhref="dir_000021_000012.html"];
+}
