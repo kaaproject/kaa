@@ -53,7 +53,7 @@ import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
 import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
-import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
+import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.endpoint.gen.BasicEndpointProfile;
 import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
@@ -64,7 +64,7 @@ import org.kaaproject.kaa.server.common.dao.ConfigurationService;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
 import org.kaaproject.kaa.server.common.dao.NotificationService;
 import org.kaaproject.kaa.server.common.dao.ProfileService;
-import org.kaaproject.kaa.server.common.dao.SdkKeyService;
+import org.kaaproject.kaa.server.common.dao.SdkProfileService;
 import org.kaaproject.kaa.server.common.dao.TopicService;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
 import org.kaaproject.kaa.server.common.dao.impl.ApplicationDao;
@@ -86,7 +86,7 @@ import org.kaaproject.kaa.server.common.dao.model.sql.ConfigurationSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.EndpointGroup;
 import org.kaaproject.kaa.server.common.dao.model.sql.ProfileFilter;
 import org.kaaproject.kaa.server.common.dao.model.sql.ProfileSchema;
-import org.kaaproject.kaa.server.common.dao.model.sql.SdkKey;
+import org.kaaproject.kaa.server.common.dao.model.sql.SdkProfile;
 import org.kaaproject.kaa.server.common.dao.model.sql.Tenant;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.MongoDBTestRunner;
 import org.kaaproject.kaa.server.operations.pojo.SyncContext;
@@ -148,8 +148,8 @@ public class OperationsServiceIT extends AbstractTest {
     private static final BasicEndpointProfile FAKE_ENDPOINT_PROFILE = new BasicEndpointProfile("dummy profile 3");
     private static final byte[] ENDPOINT_KEY = getRandEndpointKey();
     private static final byte[] ENDPOINT_KEY2 = getRandEndpointKey();
-    private static final SdkPropertiesDto SDK_PROPERTIES = new SdkPropertiesDto(null, CONF_SCHEMA_VERSION,
-            PROFILE_SCHEMA_VERSION, 1, 1, SdkPlatform.JAVA, null, null, null, null, null, null);
+    private static final SdkProfileDto SDK_PROFILE = new SdkProfileDto(null, CONF_SCHEMA_VERSION,
+            PROFILE_SCHEMA_VERSION, 1, 1, null, null, null, null, null, null);
     private String SDK_TOKEN;
 
     public static final String NEW_COMPLEX_CONFIG = "service/delta/complexFieldsDeltaNew.json";
@@ -219,7 +219,7 @@ public class OperationsServiceIT extends AbstractTest {
     protected ProfileFilterDao<ProfileFilter> profileFilterDao;
 
     @Autowired
-    protected SdkKeyService sdkKeyService;
+    protected SdkProfileService sdkProfileService;
 
     private EndpointUserDto userDto;
 
@@ -261,9 +261,9 @@ public class OperationsServiceIT extends AbstractTest {
 
         application = applicationDao.findById(applicationDto.getId());
 
-        SDK_PROPERTIES.setApplicationId(applicationDto.getId());
-        SDK_TOKEN = new SdkKey(SDK_PROPERTIES).getToken();
-        sdkKeyService.saveSdkKey(SDK_PROPERTIES);
+        SDK_PROFILE.setApplicationId(applicationDto.getId());
+        SDK_TOKEN = new SdkProfile(SDK_PROFILE).getToken();
+        sdkProfileService.saveSdkProfile(SDK_PROFILE);
 
         EndpointGroup groupAll = endpointGroupDao.findByAppIdAndWeight(application.getStringId(), 0);
 

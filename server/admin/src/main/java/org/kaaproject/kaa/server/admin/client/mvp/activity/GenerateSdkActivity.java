@@ -25,7 +25,7 @@ import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
 import org.kaaproject.avro.ui.gwt.client.widget.BusyPopup;
 import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
-import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
+import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
@@ -39,7 +39,7 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 
-public class GenerateSdkActivity extends AbstractDetailsActivity<SdkPropertiesDto, GenerateSdkView, GenerateSdkPlace> {
+public class GenerateSdkActivity extends AbstractDetailsActivity<SdkProfileDto, GenerateSdkView, GenerateSdkPlace> {
 
     private String applicationId;
 
@@ -64,8 +64,8 @@ public class GenerateSdkActivity extends AbstractDetailsActivity<SdkPropertiesDt
     }
 
     @Override
-    protected SdkPropertiesDto newEntity() {
-        SdkPropertiesDto sdkPropertiesDto = new SdkPropertiesDto();
+    protected SdkProfileDto newEntity() {
+        SdkProfileDto sdkPropertiesDto = new SdkProfileDto();
         sdkPropertiesDto.setApplicationId(applicationId);
         return sdkPropertiesDto;
     }
@@ -149,7 +149,6 @@ public class GenerateSdkActivity extends AbstractDetailsActivity<SdkPropertiesDt
                 getValue().getMajorVersion());
         entity.setLogSchemaVersion(detailsView.getLogSchemaVersion().
                 getValue().getMajorVersion());
-//        entity.setTargetPlatform(detailsView.getTargetPlatform().getValue());
 
         List<String> aefMapIds = new ArrayList<>();
         List<AefMapInfoDto> aefMaps = detailsView.getSelectedAefMaps().getValues();
@@ -171,7 +170,7 @@ public class GenerateSdkActivity extends AbstractDetailsActivity<SdkPropertiesDt
     }
 
     @Override
-    protected void getEntity(String id, AsyncCallback<SdkPropertiesDto> callback) {}
+    protected void getEntity(String id, AsyncCallback<SdkProfileDto> callback) {}
 
 
     @Override
@@ -199,5 +198,5 @@ public class GenerateSdkActivity extends AbstractDetailsActivity<SdkPropertiesDt
     }
 
     @Override
-    protected void editEntity(SdkPropertiesDto entity, final AsyncCallback<SdkPropertiesDto> callback) {}
+    protected void editEntity(SdkProfileDto entity, final AsyncCallback<SdkProfileDto> callback) {}
 }

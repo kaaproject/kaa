@@ -27,7 +27,6 @@ import static org.kaaproject.kaa.server.common.dao.DaoConstants.SDK_PROFILE_NAME
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.SDK_PROFILE_NOTIFICATION_SCHEMA_VERSION;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.SDK_PROFILE_PROFILE_SCHEMA_VERSION;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.SDK_PROFILE_TABLE_NAME;
-//import static org.kaaproject.kaa.server.common.dao.DaoConstants.SDK_PROFILE_TARGET_PLATFORM;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.SDK_PROFILE_TOKEN;
 
 import java.io.Serializable;
@@ -40,8 +39,6 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-//import javax.persistence.EnumType;
-//import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -50,13 +47,11 @@ import org.apache.commons.codec.binary.Base64;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.kaaproject.kaa.common.dto.DtoByteMarshaller;
-import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
-//import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
-import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
+import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 
 @Entity
 @Table(name = SDK_PROFILE_TABLE_NAME)
-public final class SdkKey extends GenericModel<SdkPropertiesDto> implements Serializable {
+public final class SdkProfile extends GenericModel<SdkProfileDto> implements Serializable {
 
     private static final long serialVersionUID = -5963289882951330950L;
     private static final String HASH_ALGORITHM = "SHA1";
@@ -84,10 +79,6 @@ public final class SdkKey extends GenericModel<SdkPropertiesDto> implements Seri
     @Column(name = SDK_PROFILE_LOG_SCHEMA_VERSION)
     private Integer logSchemaVersion;
 
-//    @Column(name = SDK_PROFILE_TARGET_PLATFORM)
-//    @Enumerated(EnumType.STRING)
-//    private SdkPlatform targetPlatform;
-
     @ElementCollection
     private List<String> aefMapIds;
 
@@ -103,14 +94,14 @@ public final class SdkKey extends GenericModel<SdkPropertiesDto> implements Seri
     @Column(name = SDK_PROFILE_ENDPOINT_COUNT)
     private Integer endpointCount = 0;
 
-    public SdkKey() {
+    public SdkProfile() {
     }
 
-    public SdkKey(Long id) {
+    public SdkProfile(Long id) {
         this.id = id;
     }
 
-    public SdkKey(SdkPropertiesDto dto) {
+    public SdkProfile(SdkProfileDto dto) {
         if (dto != null) {
             try {
                 this.id = ModelUtils.getLongId(dto.getId());
@@ -120,7 +111,6 @@ public final class SdkKey extends GenericModel<SdkPropertiesDto> implements Seri
                 this.profileSchemaVersion = dto.getProfileSchemaVersion();
                 this.notificationSchemaVersion = dto.getNotificationSchemaVersion();
                 this.logSchemaVersion = dto.getLogSchemaVersion();
-//                this.targetPlatform = dto.getTargetPlatform();
 
                 if (dto.getAefMapIds() != null) {
                     this.aefMapIds = new ArrayList<>(dto.getAefMapIds().size());
@@ -149,14 +139,9 @@ public final class SdkKey extends GenericModel<SdkPropertiesDto> implements Seri
                 dto.setCreatedTime(null);
                 dto.setEndpointCount(null);
 
-                SdkPlatform targetPlatform = dto.getTargetPlatform();
-                dto.setTargetPlatform(null);
-
                 MessageDigest messageDigest = MessageDigest.getInstance(HASH_ALGORITHM);
                 messageDigest.update(DtoByteMarshaller.toBytes(dto));
                 this.token = Base64.encodeBase64String(messageDigest.digest());
-
-                dto.setTargetPlatform(targetPlatform);
 
                 dto.setId(this.getStringId());
                 dto.setCreatedUsername(this.createdUsername);
@@ -231,14 +216,6 @@ public final class SdkKey extends GenericModel<SdkPropertiesDto> implements Seri
         this.logSchemaVersion = logSchemaVersion;
     }
 
-//    public SdkPlatform getTargetPlatform() {
-//        return targetPlatform;
-//    }
-//
-//    public void setTargetPlatform(SdkPlatform targetPlatform) {
-//        this.targetPlatform = targetPlatform;
-//    }
-
     public List<String> getAefMapIds() {
         return aefMapIds;
     }
@@ -280,13 +257,13 @@ public final class SdkKey extends GenericModel<SdkPropertiesDto> implements Seri
     }
 
     @Override
-    protected SdkPropertiesDto createDto() {
-        return new SdkPropertiesDto();
+    protected SdkProfileDto createDto() {
+        return new SdkProfileDto();
     }
 
     @Override
-    public SdkPropertiesDto toDto() {
-        SdkPropertiesDto dto = this.createDto();
+    public SdkProfileDto toDto() {
+        SdkProfileDto dto = this.createDto();
 
         dto.setId(this.getStringId());
         dto.setToken(this.token);
@@ -301,7 +278,6 @@ public final class SdkKey extends GenericModel<SdkPropertiesDto> implements Seri
         dto.setProfileSchemaVersion(this.profileSchemaVersion);
         dto.setNotificationSchemaVersion(this.notificationSchemaVersion);
         dto.setLogSchemaVersion(this.logSchemaVersion);
-//        dto.setTargetPlatform(this.targetPlatform);
 
         if (this.aefMapIds != null) {
             dto.setAefMapIds(new ArrayList<String>(this.aefMapIds.size()));
@@ -327,7 +303,7 @@ public final class SdkKey extends GenericModel<SdkPropertiesDto> implements Seri
             return false;
         }
 
-        SdkKey other = (SdkKey) o;
+        SdkProfile other = (SdkProfile) o;
 
         if (application != null ? !application.equals(other.application) : other.application != null) {
             return false;
@@ -350,9 +326,6 @@ public final class SdkKey extends GenericModel<SdkPropertiesDto> implements Seri
         if (logSchemaVersion != null ? !logSchemaVersion.equals(other.logSchemaVersion) : other.logSchemaVersion != null) {
             return false;
         }
-//        if (targetPlatform != null ? !targetPlatform.equals(other.targetPlatform) : other.targetPlatform != null) {
-//            return false;
-//        }
         if (aefMapIds != null ? !aefMapIds.equals(other.aefMapIds) : other.aefMapIds != null) {
             return false;
         }
@@ -379,7 +352,6 @@ public final class SdkKey extends GenericModel<SdkPropertiesDto> implements Seri
         result = 31 * result + (profileSchemaVersion != null ? profileSchemaVersion.hashCode() : 0);
         result = 31 * result + (notificationSchemaVersion != null ? notificationSchemaVersion.hashCode() : 0);
         result = 31 * result + (logSchemaVersion != null ? logSchemaVersion.hashCode() : 0);
-//        result = 31 * result + (targetPlatform != null ? targetPlatform.hashCode() : 0);
         result = 31 * result + (aefMapIds != null ? aefMapIds.hashCode() : 0);
         result = 31 * result + (defaultVerifierToken != null ? defaultVerifierToken.hashCode() : 0);
         result = 31 * result + (createdUsername != null ? createdUsername.hashCode() : 0);
@@ -398,7 +370,6 @@ public final class SdkKey extends GenericModel<SdkPropertiesDto> implements Seri
                 ", profileSchemaVersion=" + profileSchemaVersion +
                 ", notificationSchemaVersion=" + notificationSchemaVersion +
                 ", logSchemaVersion=" + logSchemaVersion +
-//                ", targetPlatform=" + targetPlatform +
                 ", aefMapIds=" + aefMapIds != null ? Arrays.toString(aefMapIds.toArray()) : null +
                 ", defaultVerifierToken=" + defaultVerifierToken +
                 ", createdUsername=" + createdUsername +

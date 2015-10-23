@@ -35,7 +35,8 @@ import org.kaaproject.kaa.common.dto.StructureRecordDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.admin.RecordKey.RecordFiles;
 import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
-import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
+import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
+import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
@@ -267,9 +268,9 @@ public class DataSource {
         });
     }
 
-    public void generateSdk(SdkPropertiesDto key,
+    public void generateSdk(SdkProfileDto sdkProfile, SdkPlatform targetPlatform,
             final AsyncCallback<String> callback) {
-        rpcService.generateSdk(key,
+        rpcService.generateSdk(sdkProfile, targetPlatform,
                 new DataCallback<String>(callback) {
                     @Override
                     protected void onResult(String result) {
@@ -1198,7 +1199,7 @@ public class DataSource {
 
     }
 
-    public void addSdkProfile(SdkPropertiesDto sdkProfile, final AsyncCallback<Void> callback) {
+    public void addSdkProfile(SdkProfileDto sdkProfile, final AsyncCallback<Void> callback) {
         rpcService.addSdkProfile(sdkProfile, new DataCallback<Void>(callback) {
             @Override
             protected void onResult(Void result) {
@@ -1210,7 +1211,7 @@ public class DataSource {
         rpcService.deleteSdkProfile(sdkProfileId, new DataCallback<Void>(callback) {
             @Override
             protected void onResult(Void result) {
-                eventBus.fireEvent(new DataEvent(SdkPropertiesDto.class));
+                eventBus.fireEvent(new DataEvent(SdkProfileDto.class));
             }
         });
     }
@@ -1223,18 +1224,18 @@ public class DataSource {
         });
     }
 
-    public void getSdkProfile(String sdkProfileId, final AsyncCallback<SdkPropertiesDto> callback) {
-        rpcService.getSdkProfile(sdkProfileId, new DataCallback<SdkPropertiesDto>(callback) {
+    public void getSdkProfile(String sdkProfileId, final AsyncCallback<SdkProfileDto> callback) {
+        rpcService.getSdkProfile(sdkProfileId, new DataCallback<SdkProfileDto>(callback) {
             @Override
-            protected void onResult(SdkPropertiesDto result) {
+            protected void onResult(SdkProfileDto result) {
             }
         });
     }
 
-    public void loadSdkProfiles(String applicationId, final AsyncCallback<List<SdkPropertiesDto>> callback) {
-        rpcService.getSdkProfilesByApplicationId(applicationId, new DataCallback<List<SdkPropertiesDto>>(callback) {
+    public void loadSdkProfiles(String applicationId, final AsyncCallback<List<SdkProfileDto>> callback) {
+        rpcService.getSdkProfilesByApplicationId(applicationId, new DataCallback<List<SdkProfileDto>>(callback) {
             @Override
-            protected void onResult(List<SdkPropertiesDto> result) {
+            protected void onResult(List<SdkProfileDto> result) {
             }
         });
     }

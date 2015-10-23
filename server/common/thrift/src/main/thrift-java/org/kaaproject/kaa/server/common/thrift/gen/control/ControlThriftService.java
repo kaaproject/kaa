@@ -262,7 +262,7 @@ public class ControlThriftService {
 
     public List<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct> getSdkProfilesByApplicationId(String applicationId) throws ControlThriftException, org.apache.thrift.TException;
 
-    public Sdk generateSdk(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct sdkProperties) throws ControlThriftException, org.apache.thrift.TException;
+    public Sdk generateSdk(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct sdkProfile, SdkPlatform targetPlatform) throws ControlThriftException, org.apache.thrift.TException;
 
     public boolean isSdkProfileUsed(String sdkToken) throws ControlThriftException, org.apache.thrift.TException;
 
@@ -494,7 +494,7 @@ public class ControlThriftService {
 
     public void getSdkProfilesByApplicationId(String applicationId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
-    public void generateSdk(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct sdkProperties, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+    public void generateSdk(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct sdkProfile, SdkPlatform targetPlatform, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
     public void isSdkProfileUsed(String sdkToken, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
@@ -2554,16 +2554,17 @@ public class ControlThriftService {
       throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "getSdkProfilesByApplicationId failed: unknown result");
     }
 
-    public Sdk generateSdk(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct sdkProperties) throws ControlThriftException, org.apache.thrift.TException
+    public Sdk generateSdk(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct sdkProfile, SdkPlatform targetPlatform) throws ControlThriftException, org.apache.thrift.TException
     {
-      send_generateSdk(sdkProperties);
+      send_generateSdk(sdkProfile, targetPlatform);
       return recv_generateSdk();
     }
 
-    public void send_generateSdk(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct sdkProperties) throws org.apache.thrift.TException
+    public void send_generateSdk(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct sdkProfile, SdkPlatform targetPlatform) throws org.apache.thrift.TException
     {
       generateSdk_args args = new generateSdk_args();
-      args.setSdkProperties(sdkProperties);
+      args.setSdkProfile(sdkProfile);
+      args.setTargetPlatform(targetPlatform);
       sendBase("generateSdk", args);
     }
 
@@ -5799,24 +5800,27 @@ public class ControlThriftService {
       }
     }
 
-    public void generateSdk(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct sdkProperties, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+    public void generateSdk(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct sdkProfile, SdkPlatform targetPlatform, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
       checkReady();
-      generateSdk_call method_call = new generateSdk_call(sdkProperties, resultHandler, this, ___protocolFactory, ___transport);
+      generateSdk_call method_call = new generateSdk_call(sdkProfile, targetPlatform, resultHandler, this, ___protocolFactory, ___transport);
       this.___currentMethod = method_call;
       ___manager.call(method_call);
     }
 
     public static class generateSdk_call extends org.apache.thrift.async.TAsyncMethodCall {
-      private org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct sdkProperties;
-      public generateSdk_call(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct sdkProperties, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+      private org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct sdkProfile;
+      private SdkPlatform targetPlatform;
+      public generateSdk_call(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct sdkProfile, SdkPlatform targetPlatform, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
         super(client, protocolFactory, transport, resultHandler, false);
-        this.sdkProperties = sdkProperties;
+        this.sdkProfile = sdkProfile;
+        this.targetPlatform = targetPlatform;
       }
 
       public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
         prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("generateSdk", org.apache.thrift.protocol.TMessageType.CALL, 0));
         generateSdk_args args = new generateSdk_args();
-        args.setSdkProperties(sdkProperties);
+        args.setSdkProfile(sdkProfile);
+        args.setTargetPlatform(targetPlatform);
         args.write(prot);
         prot.writeMessageEnd();
       }
@@ -8704,7 +8708,7 @@ public class ControlThriftService {
       public generateSdk_result getResult(I iface, generateSdk_args args) throws org.apache.thrift.TException {
         generateSdk_result result = new generateSdk_result();
         try {
-          result.success = iface.generateSdk(args.sdkProperties);
+          result.success = iface.generateSdk(args.sdkProfile, args.targetPlatform);
         } catch (ControlThriftException ControlException) {
           result.ControlException = ControlException;
         }
@@ -13913,7 +13917,7 @@ public class ControlThriftService {
       }
 
       public void start(I iface, generateSdk_args args, org.apache.thrift.async.AsyncMethodCallback<Sdk> resultHandler) throws TException {
-        iface.generateSdk(args.sdkProperties,resultHandler);
+        iface.generateSdk(args.sdkProfile, args.targetPlatform,resultHandler);
       }
     }
 
@@ -81000,7 +81004,8 @@ public class ControlThriftService {
   public static class generateSdk_args implements org.apache.thrift.TBase<generateSdk_args, generateSdk_args._Fields>, java.io.Serializable, Cloneable, Comparable<generateSdk_args>   {
     private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("generateSdk_args");
 
-    private static final org.apache.thrift.protocol.TField SDK_PROPERTIES_FIELD_DESC = new org.apache.thrift.protocol.TField("sdkProperties", org.apache.thrift.protocol.TType.STRUCT, (short)1);
+    private static final org.apache.thrift.protocol.TField SDK_PROFILE_FIELD_DESC = new org.apache.thrift.protocol.TField("sdkProfile", org.apache.thrift.protocol.TType.STRUCT, (short)1);
+    private static final org.apache.thrift.protocol.TField TARGET_PLATFORM_FIELD_DESC = new org.apache.thrift.protocol.TField("targetPlatform", org.apache.thrift.protocol.TType.I32, (short)2);
 
     private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
     static {
@@ -81008,11 +81013,21 @@ public class ControlThriftService {
       schemes.put(TupleScheme.class, new generateSdk_argsTupleSchemeFactory());
     }
 
-    public org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct sdkProperties; // required
+    public org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct sdkProfile; // required
+    /**
+     * 
+     * @see SdkPlatform
+     */
+    public SdkPlatform targetPlatform; // required
 
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-      SDK_PROPERTIES((short)1, "sdkProperties");
+      SDK_PROFILE((short)1, "sdkProfile"),
+      /**
+       * 
+       * @see SdkPlatform
+       */
+      TARGET_PLATFORM((short)2, "targetPlatform");
 
       private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -81027,8 +81042,10 @@ public class ControlThriftService {
        */
       public static _Fields findByThriftId(int fieldId) {
         switch(fieldId) {
-          case 1: // SDK_PROPERTIES
-            return SDK_PROPERTIES;
+          case 1: // SDK_PROFILE
+            return SDK_PROFILE;
+          case 2: // TARGET_PLATFORM
+            return TARGET_PLATFORM;
           default:
             return null;
         }
@@ -81072,8 +81089,10 @@ public class ControlThriftService {
     public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
     static {
       Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
-      tmpMap.put(_Fields.SDK_PROPERTIES, new org.apache.thrift.meta_data.FieldMetaData("sdkProperties", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+      tmpMap.put(_Fields.SDK_PROFILE, new org.apache.thrift.meta_data.FieldMetaData("sdkProfile", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT          , "data")));
+      tmpMap.put(_Fields.TARGET_PLATFORM, new org.apache.thrift.meta_data.FieldMetaData("targetPlatform", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.EnumMetaData(org.apache.thrift.protocol.TType.ENUM, SdkPlatform.class)));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
       org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(generateSdk_args.class, metaDataMap);
     }
@@ -81082,18 +81101,23 @@ public class ControlThriftService {
     }
 
     public generateSdk_args(
-      org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct sdkProperties)
+      org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct sdkProfile,
+      SdkPlatform targetPlatform)
     {
       this();
-      this.sdkProperties = sdkProperties;
+      this.sdkProfile = sdkProfile;
+      this.targetPlatform = targetPlatform;
     }
 
     /**
      * Performs a deep copy on <i>other</i>.
      */
     public generateSdk_args(generateSdk_args other) {
-      if (other.isSetSdkProperties()) {
-        this.sdkProperties = other.sdkProperties;
+      if (other.isSetSdkProfile()) {
+        this.sdkProfile = other.sdkProfile;
+      }
+      if (other.isSetTargetPlatform()) {
+        this.targetPlatform = other.targetPlatform;
       }
     }
 
@@ -81103,40 +81127,81 @@ public class ControlThriftService {
 
     @Override
     public void clear() {
-      this.sdkProperties = null;
+      this.sdkProfile = null;
+      this.targetPlatform = null;
     }
 
-    public org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct getSdkProperties() {
-      return this.sdkProperties;
+    public org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct getSdkProfile() {
+      return this.sdkProfile;
     }
 
-    public generateSdk_args setSdkProperties(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct sdkProperties) {
-      this.sdkProperties = sdkProperties;
+    public generateSdk_args setSdkProfile(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct sdkProfile) {
+      this.sdkProfile = sdkProfile;
       return this;
     }
 
-    public void unsetSdkProperties() {
-      this.sdkProperties = null;
+    public void unsetSdkProfile() {
+      this.sdkProfile = null;
     }
 
-    /** Returns true if field sdkProperties is set (has been assigned a value) and false otherwise */
-    public boolean isSetSdkProperties() {
-      return this.sdkProperties != null;
+    /** Returns true if field sdkProfile is set (has been assigned a value) and false otherwise */
+    public boolean isSetSdkProfile() {
+      return this.sdkProfile != null;
     }
 
-    public void setSdkPropertiesIsSet(boolean value) {
+    public void setSdkProfileIsSet(boolean value) {
       if (!value) {
-        this.sdkProperties = null;
+        this.sdkProfile = null;
+      }
+    }
+
+    /**
+     * 
+     * @see SdkPlatform
+     */
+    public SdkPlatform getTargetPlatform() {
+      return this.targetPlatform;
+    }
+
+    /**
+     * 
+     * @see SdkPlatform
+     */
+    public generateSdk_args setTargetPlatform(SdkPlatform targetPlatform) {
+      this.targetPlatform = targetPlatform;
+      return this;
+    }
+
+    public void unsetTargetPlatform() {
+      this.targetPlatform = null;
+    }
+
+    /** Returns true if field targetPlatform is set (has been assigned a value) and false otherwise */
+    public boolean isSetTargetPlatform() {
+      return this.targetPlatform != null;
+    }
+
+    public void setTargetPlatformIsSet(boolean value) {
+      if (!value) {
+        this.targetPlatform = null;
       }
     }
 
     public void setFieldValue(_Fields field, Object value) {
       switch (field) {
-      case SDK_PROPERTIES:
+      case SDK_PROFILE:
         if (value == null) {
-          unsetSdkProperties();
+          unsetSdkProfile();
         } else {
-          setSdkProperties((org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct)value);
+          setSdkProfile((org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct)value);
+        }
+        break;
+
+      case TARGET_PLATFORM:
+        if (value == null) {
+          unsetTargetPlatform();
+        } else {
+          setTargetPlatform((SdkPlatform)value);
         }
         break;
 
@@ -81145,8 +81210,11 @@ public class ControlThriftService {
 
     public Object getFieldValue(_Fields field) {
       switch (field) {
-      case SDK_PROPERTIES:
-        return getSdkProperties();
+      case SDK_PROFILE:
+        return getSdkProfile();
+
+      case TARGET_PLATFORM:
+        return getTargetPlatform();
 
       }
       throw new IllegalStateException();
@@ -81159,8 +81227,10 @@ public class ControlThriftService {
       }
 
       switch (field) {
-      case SDK_PROPERTIES:
-        return isSetSdkProperties();
+      case SDK_PROFILE:
+        return isSetSdkProfile();
+      case TARGET_PLATFORM:
+        return isSetTargetPlatform();
       }
       throw new IllegalStateException();
     }
@@ -81178,12 +81248,21 @@ public class ControlThriftService {
       if (that == null)
         return false;
 
-      boolean this_present_sdkProperties = true && this.isSetSdkProperties();
-      boolean that_present_sdkProperties = true && that.isSetSdkProperties();
-      if (this_present_sdkProperties || that_present_sdkProperties) {
-        if (!(this_present_sdkProperties && that_present_sdkProperties))
+      boolean this_present_sdkProfile = true && this.isSetSdkProfile();
+      boolean that_present_sdkProfile = true && that.isSetSdkProfile();
+      if (this_present_sdkProfile || that_present_sdkProfile) {
+        if (!(this_present_sdkProfile && that_present_sdkProfile))
           return false;
-        if (!this.sdkProperties.equals(that.sdkProperties))
+        if (!this.sdkProfile.equals(that.sdkProfile))
+          return false;
+      }
+
+      boolean this_present_targetPlatform = true && this.isSetTargetPlatform();
+      boolean that_present_targetPlatform = true && that.isSetTargetPlatform();
+      if (this_present_targetPlatform || that_present_targetPlatform) {
+        if (!(this_present_targetPlatform && that_present_targetPlatform))
+          return false;
+        if (!this.targetPlatform.equals(that.targetPlatform))
           return false;
       }
 
@@ -81194,10 +81273,15 @@ public class ControlThriftService {
     public int hashCode() {
       HashCodeBuilder builder = new HashCodeBuilder();
 
-      boolean present_sdkProperties = true && (isSetSdkProperties());
-      builder.append(present_sdkProperties);
-      if (present_sdkProperties)
-        builder.append(sdkProperties);
+      boolean present_sdkProfile = true && (isSetSdkProfile());
+      builder.append(present_sdkProfile);
+      if (present_sdkProfile)
+        builder.append(sdkProfile);
+
+      boolean present_targetPlatform = true && (isSetTargetPlatform());
+      builder.append(present_targetPlatform);
+      if (present_targetPlatform)
+        builder.append(targetPlatform.getValue());
 
       return builder.toHashCode();
     }
@@ -81210,12 +81294,22 @@ public class ControlThriftService {
 
       int lastComparison = 0;
 
-      lastComparison = Boolean.valueOf(isSetSdkProperties()).compareTo(other.isSetSdkProperties());
+      lastComparison = Boolean.valueOf(isSetSdkProfile()).compareTo(other.isSetSdkProfile());
       if (lastComparison != 0) {
         return lastComparison;
       }
-      if (isSetSdkProperties()) {
-        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.sdkProperties, other.sdkProperties);
+      if (isSetSdkProfile()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.sdkProfile, other.sdkProfile);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      lastComparison = Boolean.valueOf(isSetTargetPlatform()).compareTo(other.isSetTargetPlatform());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetTargetPlatform()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.targetPlatform, other.targetPlatform);
         if (lastComparison != 0) {
           return lastComparison;
         }
@@ -81240,11 +81334,19 @@ public class ControlThriftService {
       StringBuilder sb = new StringBuilder("generateSdk_args(");
       boolean first = true;
 
-      sb.append("sdkProperties:");
-      if (this.sdkProperties == null) {
+      sb.append("sdkProfile:");
+      if (this.sdkProfile == null) {
         sb.append("null");
       } else {
-        sb.append(this.sdkProperties);
+        sb.append(this.sdkProfile);
+      }
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("targetPlatform:");
+      if (this.targetPlatform == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.targetPlatform);
       }
       first = false;
       sb.append(")");
@@ -81290,11 +81392,19 @@ public class ControlThriftService {
             break;
           }
           switch (schemeField.id) {
-            case 1: // SDK_PROPERTIES
+            case 1: // SDK_PROFILE
               if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
-                struct.sdkProperties = new org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct();
-                struct.sdkProperties.read(iprot);
-                struct.setSdkPropertiesIsSet(true);
+                struct.sdkProfile = new org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct();
+                struct.sdkProfile.read(iprot);
+                struct.setSdkProfileIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
+            case 2: // TARGET_PLATFORM
+              if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
+                struct.targetPlatform = SdkPlatform.findByValue(iprot.readI32());
+                struct.setTargetPlatformIsSet(true);
               } else { 
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
               }
@@ -81314,9 +81424,14 @@ public class ControlThriftService {
         struct.validate();
 
         oprot.writeStructBegin(STRUCT_DESC);
-        if (struct.sdkProperties != null) {
-          oprot.writeFieldBegin(SDK_PROPERTIES_FIELD_DESC);
-          struct.sdkProperties.write(oprot);
+        if (struct.sdkProfile != null) {
+          oprot.writeFieldBegin(SDK_PROFILE_FIELD_DESC);
+          struct.sdkProfile.write(oprot);
+          oprot.writeFieldEnd();
+        }
+        if (struct.targetPlatform != null) {
+          oprot.writeFieldBegin(TARGET_PLATFORM_FIELD_DESC);
+          oprot.writeI32(struct.targetPlatform.getValue());
           oprot.writeFieldEnd();
         }
         oprot.writeFieldStop();
@@ -81337,23 +81452,33 @@ public class ControlThriftService {
       public void write(org.apache.thrift.protocol.TProtocol prot, generateSdk_args struct) throws org.apache.thrift.TException {
         TTupleProtocol oprot = (TTupleProtocol) prot;
         BitSet optionals = new BitSet();
-        if (struct.isSetSdkProperties()) {
+        if (struct.isSetSdkProfile()) {
           optionals.set(0);
         }
-        oprot.writeBitSet(optionals, 1);
-        if (struct.isSetSdkProperties()) {
-          struct.sdkProperties.write(oprot);
+        if (struct.isSetTargetPlatform()) {
+          optionals.set(1);
+        }
+        oprot.writeBitSet(optionals, 2);
+        if (struct.isSetSdkProfile()) {
+          struct.sdkProfile.write(oprot);
+        }
+        if (struct.isSetTargetPlatform()) {
+          oprot.writeI32(struct.targetPlatform.getValue());
         }
       }
 
       @Override
       public void read(org.apache.thrift.protocol.TProtocol prot, generateSdk_args struct) throws org.apache.thrift.TException {
         TTupleProtocol iprot = (TTupleProtocol) prot;
-        BitSet incoming = iprot.readBitSet(1);
+        BitSet incoming = iprot.readBitSet(2);
         if (incoming.get(0)) {
-          struct.sdkProperties = new org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct();
-          struct.sdkProperties.read(iprot);
-          struct.setSdkPropertiesIsSet(true);
+          struct.sdkProfile = new org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct();
+          struct.sdkProfile.read(iprot);
+          struct.setSdkProfileIsSet(true);
+        }
+        if (incoming.get(1)) {
+          struct.targetPlatform = SdkPlatform.findByValue(iprot.readI32());
+          struct.setTargetPlatformIsSet(true);
         }
       }
     }

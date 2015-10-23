@@ -62,7 +62,7 @@ import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
 import org.kaaproject.kaa.common.dto.UpdateStatus;
 import org.kaaproject.kaa.common.dto.UserDto;
-import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
+import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.common.core.schema.KaaSchemaFactoryImpl;
 import org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService;
@@ -1799,15 +1799,14 @@ public class ControlApiCommandProcessor {
             int notificationSchemaVersion = Integer.parseInt(line.getOptionValue("nsv"));
             int logSchemaVersion = Integer.parseInt(line.getOptionValue("lsv"));
 
-            SdkPropertiesDto sdkPropertiesDto = new SdkPropertiesDto();
-            sdkPropertiesDto.setTargetPlatform(toSdkPlatform(sdkPlatform));
-            sdkPropertiesDto.setApplicationId(applicationId);
-            sdkPropertiesDto.setProfileSchemaVersion(profileSchemaVersion);
-            sdkPropertiesDto.setConfigurationSchemaVersion(configurationSchemaVersion);
-            sdkPropertiesDto.setNotificationSchemaVersion(notificationSchemaVersion);
-            sdkPropertiesDto.setLogSchemaVersion(logSchemaVersion);
+            SdkProfileDto sdkProfileDto = new SdkProfileDto();
+            sdkProfileDto.setApplicationId(applicationId);
+            sdkProfileDto.setProfileSchemaVersion(profileSchemaVersion);
+            sdkProfileDto.setConfigurationSchemaVersion(configurationSchemaVersion);
+            sdkProfileDto.setNotificationSchemaVersion(notificationSchemaVersion);
+            sdkProfileDto.setLogSchemaVersion(logSchemaVersion);
 
-            Sdk sdk = client.generateSdk(toDataStruct(sdkPropertiesDto));
+            Sdk sdk = client.generateSdk(toDataStruct(sdkProfileDto), sdkPlatform);
 
             writer.println("Generated SDK: " + sdk.getFileName());
 

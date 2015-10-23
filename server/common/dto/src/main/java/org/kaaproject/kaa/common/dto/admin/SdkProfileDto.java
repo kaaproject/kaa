@@ -21,11 +21,9 @@ import java.util.List;
 
 import org.kaaproject.kaa.common.dto.HasId;
 
-public class SdkPropertiesDto implements HasId, Serializable {
+public class SdkProfileDto implements HasId, Serializable {
 
     private static final long serialVersionUID = 2433663439327120870L;
-
-    public static final String SDK_KEY_PARAMETER = "sdkKey";
 
     private String id;
     private String applicationId;
@@ -33,7 +31,6 @@ public class SdkPropertiesDto implements HasId, Serializable {
     private Integer profileSchemaVersion;
     private Integer notificationSchemaVersion;
     private Integer logSchemaVersion;
-    private SdkPlatform targetPlatform;
     private List<String> aefMapIds;
     private String defaultVerifierToken;
     private String applicationToken;
@@ -43,13 +40,13 @@ public class SdkPropertiesDto implements HasId, Serializable {
     private Long createdTime;
     private Integer endpointCount = 0;
 
-    public SdkPropertiesDto() {
+    public SdkProfileDto() {
     }
 
-    public SdkPropertiesDto(String applicationId, Integer configurationSchemaVersion,
+    public SdkProfileDto(String applicationId, Integer configurationSchemaVersion,
                             Integer profileSchemaVersion, Integer notificationSchemaVersion,
                             Integer logSchemaVersion,
-                            SdkPlatform targetPlatform, List<String> aefMapIds,
+                            List<String> aefMapIds,
                             String defaultVerifierToken, String applicationToken,
                             String createdUsername, Long createdTime, String name) {
         super();
@@ -58,7 +55,6 @@ public class SdkPropertiesDto implements HasId, Serializable {
         this.profileSchemaVersion = profileSchemaVersion;
         this.notificationSchemaVersion = notificationSchemaVersion;
         this.logSchemaVersion = logSchemaVersion;
-        this.targetPlatform = targetPlatform;
         this.aefMapIds = aefMapIds;
         this.defaultVerifierToken = defaultVerifierToken;
         this.applicationToken = applicationToken;
@@ -97,14 +93,6 @@ public class SdkPropertiesDto implements HasId, Serializable {
 
     public void setNotificationSchemaVersion(Integer notificationSchemaVersion) {
         this.notificationSchemaVersion = notificationSchemaVersion;
-    }
-
-    public SdkPlatform getTargetPlatform() {
-        return targetPlatform;
-    }
-
-    public void setTargetPlatform(SdkPlatform targetPlatform) {
-        this.targetPlatform = targetPlatform;
     }
 
     public List<String> getAefMapIds() {
@@ -184,7 +172,7 @@ public class SdkPropertiesDto implements HasId, Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        SdkPropertiesDto that = (SdkPropertiesDto) o;
+        SdkProfileDto that = (SdkProfileDto) o;
 
         if (aefMapIds != null ? !aefMapIds.equals(that.aefMapIds) : that.aefMapIds != null) {
             return false;
@@ -208,9 +196,6 @@ public class SdkPropertiesDto implements HasId, Serializable {
             return false;
         }
         if (profileSchemaVersion != null ? !profileSchemaVersion.equals(that.profileSchemaVersion) : that.profileSchemaVersion != null) {
-            return false;
-        }
-        if (targetPlatform != that.targetPlatform) {
             return false;
         }
         if (name != null ? !name.equals(that.name) : that.name != null) {
@@ -239,7 +224,6 @@ public class SdkPropertiesDto implements HasId, Serializable {
         result = 31 * result + (profileSchemaVersion != null ? profileSchemaVersion.hashCode() : 0);
         result = 31 * result + (notificationSchemaVersion != null ? notificationSchemaVersion.hashCode() : 0);
         result = 31 * result + (logSchemaVersion != null ? logSchemaVersion.hashCode() : 0);
-        result = 31 * result + (targetPlatform != null ? targetPlatform.hashCode() : 0);
         result = 31 * result + (aefMapIds != null ? aefMapIds.hashCode() : 0);
         result = 31 * result + (defaultVerifierToken != null ? defaultVerifierToken.hashCode() : 0);
         result = 31 * result + (applicationToken != null ? applicationToken.hashCode() : 0);
@@ -260,7 +244,6 @@ public class SdkPropertiesDto implements HasId, Serializable {
                 ", profileSchemaVersion=" + profileSchemaVersion +
                 ", notificationSchemaVersion=" + notificationSchemaVersion +
                 ", logSchemaVersion=" + logSchemaVersion +
-                ", targetPlatform=" + targetPlatform +
                 ", aefMapIds=" + aefMapIds +
                 ", defaultVerifierToken='" + defaultVerifierToken + '\'' +
                 ", applicationToken='" + applicationToken + '\'' +

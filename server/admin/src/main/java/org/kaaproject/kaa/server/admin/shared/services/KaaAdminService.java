@@ -35,7 +35,8 @@ import org.kaaproject.kaa.common.dto.StructureRecordDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.admin.RecordKey;
 import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
-import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
+import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
+import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
@@ -99,19 +100,19 @@ public interface KaaAdminService extends RemoteService {
 
     public SchemaVersions getSchemaVersionsByApplicationId(String applicationId) throws KaaAdminServiceException;
 
-    public void addSdkProfile(SdkPropertiesDto sdkProfile) throws KaaAdminServiceException;
+    public void addSdkProfile(SdkProfileDto sdkProfile) throws KaaAdminServiceException;
 
     public void deleteSdkProfile(String sdkProfileId) throws KaaAdminServiceException;
 
     public boolean checkSdkProfileUsage(String sdkToken) throws KaaAdminServiceException;
 
-    public SdkPropertiesDto getSdkProfile(String sdkProfileId) throws KaaAdminServiceException;
+    public SdkProfileDto getSdkProfile(String sdkProfileId) throws KaaAdminServiceException;
 
-    public List<SdkPropertiesDto> getSdkProfilesByApplicationId(String applicationId) throws KaaAdminServiceException;
+    public List<SdkProfileDto> getSdkProfilesByApplicationId(String applicationId) throws KaaAdminServiceException;
 
-    public String generateSdk(SdkPropertiesDto key) throws KaaAdminServiceException;
+    public String generateSdk(SdkProfileDto sdkProfile, SdkPlatform targetPlatform) throws KaaAdminServiceException;
 
-    public FileData getSdk(SdkPropertiesDto key) throws KaaAdminServiceException;
+    public FileData getSdk(SdkProfileDto sdkProfile, SdkPlatform targetPlatform) throws KaaAdminServiceException;
 
     public void flushSdkCache() throws KaaAdminServiceException;
 

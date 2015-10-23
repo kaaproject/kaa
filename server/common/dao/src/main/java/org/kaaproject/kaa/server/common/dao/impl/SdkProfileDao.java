@@ -18,7 +18,7 @@ package org.kaaproject.kaa.server.common.dao.impl;
 
 import java.util.List;
 
-public interface SdkKeyDao<T> extends Dao<T, String> {
+public interface SdkProfileDao<T> extends Dao<T, String> {
 
     /**
      * Returns an SDK profile with the given token.
@@ -27,7 +27,7 @@ public interface SdkKeyDao<T> extends Dao<T, String> {
      *
      * @return An SDK profile with the given token
      */
-    public T findSdkKeyByToken(String token);
+    public T findSdkProfileByToken(String token);
 
     /**
      * Returns a list of SDK profiles for an application with the given identifier.
@@ -36,5 +36,5 @@ public interface SdkKeyDao<T> extends Dao<T, String> {
      *
      * @return A list of SDK profiles for an application with the given identifier
      */
-    public List<T> findSdkKeysByApplicationId(String applicationId);
+    public List<T> findSdkProfileByApplicationId(String applicationId);
 }

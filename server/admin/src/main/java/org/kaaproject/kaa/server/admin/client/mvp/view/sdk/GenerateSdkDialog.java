@@ -34,6 +34,8 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 /**
  * @author Bohdan Khablenko
  *
+ * @see org.kaaproject.kaa.server.admin.client.mvp.activity.SdkProfilesActivity
+ *
  * @since v0.8.0
  */
 public class GenerateSdkDialog extends AvroUiDialog {

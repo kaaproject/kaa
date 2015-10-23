@@ -18,7 +18,6 @@ package org.kaaproject.kaa.server.admin.client.mvp.view.sdk;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -27,7 +26,6 @@ import java.util.Map;
 
 import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
 import org.kaaproject.kaa.common.dto.SchemaDto;
-import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.GenerateSdkView;
@@ -64,7 +62,6 @@ public class GenerateSdkViewImpl extends BaseDetailsViewImpl implements Generate
     private SchemaListBox profileSchemaVersion;
     private SchemaListBox notificationSchemaVersion;
     private SchemaListBox logSchemaVersion;
-//    private ValueListBox<SdkPlatform> targetPlatform;
 
     private List<AefMapInfoDto> aefMaps;
     private AefMapInfoDtoComparator aefMapComparator = new AefMapInfoDtoComparator();
@@ -131,34 +128,6 @@ public class GenerateSdkViewImpl extends BaseDetailsViewImpl implements Generate
         logSchemaVersion.addValueChangeHandler(this);
         detailsTable.setWidget(row, 0, label);
         detailsTable.setWidget(row, 1, logSchemaVersion);
-
-//        row++;
-//        label = new Label(Utils.constants.targetPlatform());
-//        label.addStyleName(REQUIRED);
-//        Renderer<SdkPlatform> targetPlatformRenderer = new Renderer<SdkPlatform>() {
-//            @Override
-//            public String render(SdkPlatform object) {
-//                if (object != null) {
-//                    return Utils.constants.getString(object.getResourceKey());
-//                } else {
-//                    return "";
-//                }
-//            }
-//
-//            @Override
-//            public void render(SdkPlatform object, Appendable appendable) throws IOException {
-//                appendable.append(render(object));
-//            }
-//        };
-//        targetPlatform = new ValueListBox<>(targetPlatformRenderer);
-//        targetPlatform.addValueChangeHandler(new ValueChangeHandler<SdkPlatform>() {
-//            @Override
-//            public void onValueChange(ValueChangeEvent<SdkPlatform> event) {
-//                fireChanged();
-//            }
-//        });
-//        detailsTable.setWidget(row, 0, label);
-//        detailsTable.setWidget(row, 1, targetPlatform);
 
         row++;
         FlexTable ecfsTable = new FlexTable();
@@ -308,11 +277,6 @@ public class GenerateSdkViewImpl extends BaseDetailsViewImpl implements Generate
         return logSchemaVersion;
     }
 
-//    @Override
-//    public ValueListBox<SdkPlatform> getTargetPlatform() {
-//        return targetPlatform;
-//    }
-
     @Override
     public MultiValueListBox<AefMapInfoDto> getSelectedAefMaps() {
         return selectedAefMaps;
@@ -338,8 +302,6 @@ public class GenerateSdkViewImpl extends BaseDetailsViewImpl implements Generate
         profileSchemaVersion.reset();
         notificationSchemaVersion.reset();
         logSchemaVersion.reset();
-//        targetPlatform.setValue(SdkPlatform.ANDROID);
-//        targetPlatform.setAcceptableValues(Arrays.asList(SdkPlatform.values()));
         availableAefMaps.reset();
         selectedAefMaps.reset();
         addAefMapButton.setEnabled(false);
@@ -354,7 +316,6 @@ public class GenerateSdkViewImpl extends BaseDetailsViewImpl implements Generate
         result &= profileSchemaVersion.getValue() != null;
         result &= notificationSchemaVersion.getValue() != null;
         result &= logSchemaVersion.getValue() != null;
-//        result &= targetPlatform.getValue() != null;
         result &= name.getValue().length() > 0;
         return result;
     }

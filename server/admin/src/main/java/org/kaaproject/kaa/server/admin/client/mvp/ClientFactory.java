@@ -24,7 +24,7 @@ import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
-import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
+import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
@@ -67,7 +67,7 @@ public interface ClientFactory {
 
     UserProfileView getUserProfileView();
 
-    BaseListView<SdkPropertiesDto> getSdkProfilesView();
+    BaseListView<SdkProfileDto> getSdkProfilesView();
     BasePropertiesView getGeneralPropertiesView();
 
     BasePropertiesView getMailPropertiesView();

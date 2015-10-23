@@ -332,7 +332,6 @@ public class DaoConstants {
     public static final String SDK_PROFILE_NOTIFICATION_SCHEMA_VERSION = "notification_schema_version";
     public static final String SDK_PROFILE_PROFILE_SCHEMA_VERSION = "profile_schema_version";
     public static final String SDK_PROFILE_TABLE_NAME = "sdk_token";
-    public static final String SDK_PROFILE_TARGET_PLATFORM = "target_platform";
     public static final String SDK_PROFILE_TOKEN = "token";
 
     private DaoConstants() {

@@ -28,27 +28,27 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
-import org.kaaproject.kaa.server.common.dao.impl.SdkKeyDao;
-import org.kaaproject.kaa.server.common.dao.model.sql.SdkKey;
+import org.kaaproject.kaa.server.common.dao.impl.SdkProfileDao;
+import org.kaaproject.kaa.server.common.dao.model.sql.SdkProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class HibernateSdkKeyDao extends HibernateAbstractDao<SdkKey> implements SdkKeyDao<SdkKey> {
+public class HibernateSdkProfileDao extends HibernateAbstractDao<SdkProfile> implements SdkProfileDao<SdkProfile> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(HibernateSdkKeyDao.class);
+    private static final Logger LOG = LoggerFactory.getLogger(HibernateSdkProfileDao.class);
 
     @Override
-    protected Class<SdkKey> getEntityClass() {
-        return SdkKey.class;
+    protected Class<SdkProfile> getEntityClass() {
+        return SdkProfile.class;
     }
 
     @Override
-    public SdkKey findSdkKeyByToken(String token) {
+    public SdkProfile findSdkProfileByToken(String token) {
         LOG.debug("Searching for an SDK profile by token: [{}]", token);
 
-        SdkKey found = null;
+        SdkProfile found = null;
         if (StringUtils.isNotBlank(token)) {
             found = this.findOneByCriterion(Restrictions.eq(SDK_TOKEN_PROPERTY, token));
         }
@@ -62,10 +62,10 @@ public class HibernateSdkKeyDao extends HibernateAbstractDao<SdkKey> implements 
     }
 
     @Override
-    public List<SdkKey> findSdkKeysByApplicationId(String applicationId) {
+    public List<SdkProfile> findSdkProfileByApplicationId(String applicationId) {
         LOG.debug("Searching for SDK profiles by application ID: [{}]", applicationId);
 
-        List<SdkKey> found = Collections.emptyList();
+        List<SdkProfile> found = Collections.emptyList();
         if (StringUtils.isNotBlank(applicationId)) {
             Criterion criterion = Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(applicationId));
             found = this.findListByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS, criterion);

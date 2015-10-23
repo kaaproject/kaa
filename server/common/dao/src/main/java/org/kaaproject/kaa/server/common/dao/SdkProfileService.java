@@ -18,12 +18,12 @@ package org.kaaproject.kaa.server.common.dao;
 
 import java.util.List;
 
-import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
+import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 
 /**
- * The interface for SdkKey service.
+ * The interface for SdkProfile service.
  */
-public interface SdkKeyService {
+public interface SdkProfileService {
 
     /**
      * Save sdk properties. If sdk properties object has id, then sdk key will
@@ -34,7 +34,7 @@ public interface SdkKeyService {
      * @param sdkPropertiesDto the sdk properties dto
      * @return the saved application dto object
      */
-    SdkPropertiesDto saveSdkKey(SdkPropertiesDto sdkPropertiesDto);
+    SdkProfileDto saveSdkProfile(SdkProfileDto sdkPropertiesDto);
 
     /**
      * Returns an SDK profile by its identifier.
@@ -43,7 +43,7 @@ public interface SdkKeyService {
      *
      * @return An SDK profile with the given identifier
      */
-    SdkPropertiesDto findSdkKeyById(String id);
+    SdkProfileDto findSdkProfileById(String id);
 
     /**
      * Returns an SDK profile by its token.
@@ -52,7 +52,7 @@ public interface SdkKeyService {
      *
      * @return An SDK profile with the given token
      */
-    SdkPropertiesDto findSdkKeyByToken(String token);
+    SdkProfileDto findSdkProfileByToken(String token);
 
     /**
      * Returns a list of SDK profiles for an application with the given
@@ -63,7 +63,7 @@ public interface SdkKeyService {
      * @return A list of SDK profiles for an application with the given
      *         identifier
      */
-    List<SdkPropertiesDto> findSdkKeysByApplicationId(String applicationId);
+    List<SdkProfileDto> findSdkProfilesByApplicationId(String applicationId);
 
     /**
      * Removes an SDK profile from the database by its identifier.

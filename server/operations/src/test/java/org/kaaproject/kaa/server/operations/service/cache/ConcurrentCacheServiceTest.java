@@ -50,7 +50,7 @@ import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.HistoryDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
+import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventAction;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventMapDto;
@@ -64,7 +64,7 @@ import org.kaaproject.kaa.server.common.dao.EndpointService;
 import org.kaaproject.kaa.server.common.dao.EventClassService;
 import org.kaaproject.kaa.server.common.dao.HistoryService;
 import org.kaaproject.kaa.server.common.dao.ProfileService;
-import org.kaaproject.kaa.server.common.dao.SdkKeyService;
+import org.kaaproject.kaa.server.common.dao.SdkProfileService;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
 import org.kaaproject.kaa.server.operations.service.cache.concurrent.ConcurrentCacheService;
 import org.kaaproject.kaa.server.operations.service.event.EventClassFamilyVersion;
@@ -121,7 +121,7 @@ public class ConcurrentCacheServiceTest {
     private static final EndpointConfigurationDto CF1 = new EndpointConfigurationDto();
     private static final ConfigurationSchemaDto CF1_SCHEMA = new ConfigurationSchemaDto();
     private static final ProfileSchemaDto PF1_SCHEMA = new ProfileSchemaDto();
-    private static final SdkPropertiesDto SDK_PROPERTIES = new SdkPropertiesDto();
+    private static final SdkProfileDto SDK_PROFILE = new SdkProfileDto();
     private static final ProfileFilterDto TEST_PROFILE_FILTER = new ProfileFilterDto();
     private static final List<ProfileFilterDto> TEST_PROFILE_FILTER_LIST = Collections.singletonList(TEST_PROFILE_FILTER);
 
@@ -156,7 +156,7 @@ public class ConcurrentCacheServiceTest {
     private EndpointService endpointService;
     private EventClassService eventClassService;
     private ApplicationEventMapService applicationEventMapService;
-    private SdkKeyService sdkKeyService;
+    private SdkProfileService sdkProfileService;
 
     @Before
     public void prepare() throws GeneralSecurityException {
@@ -174,14 +174,14 @@ public class ConcurrentCacheServiceTest {
             }
         });
 
-        SDK_PROPERTIES.setApplicationToken(TEST_APP_TOKEN);
-        SDK_PROPERTIES.setApplicationId(APP_ID);
-        SDK_PROPERTIES.setDefaultVerifierToken(DEFAULT_VERIFIER_TOKEN);
-        when(sdkKeyService.findSdkKeyByToken(TEST_SDK_TOKEN)).then(new Answer<SdkPropertiesDto>() {
+        SDK_PROFILE.setApplicationToken(TEST_APP_TOKEN);
+        SDK_PROFILE.setApplicationId(APP_ID);
+        SDK_PROFILE.setDefaultVerifierToken(DEFAULT_VERIFIER_TOKEN);
+        when(sdkProfileService.findSdkProfileByToken(TEST_SDK_TOKEN)).then(new Answer<SdkProfileDto>() {
             @Override
-            public SdkPropertiesDto answer(InvocationOnMock invocationOnMock) throws Throwable {
+            public SdkProfileDto answer(InvocationOnMock invocationOnMock) throws Throwable {
                 sleepABit();
-                return SDK_PROPERTIES;
+                return SDK_PROFILE;
             }
         });
 
@@ -392,12 +392,12 @@ public class ConcurrentCacheServiceTest {
     @Test
     public void testGetAppTokenBySdkToken() {
         assertEquals(TEST_APP_TOKEN, cacheService.getAppTokenBySdkToken(TEST_SDK_TOKEN));
-        verify(sdkKeyService, times(1)).findSdkKeyByToken(TEST_SDK_TOKEN);
-        reset(sdkKeyService);
+        verify(sdkProfileService, times(1)).findSdkProfileByToken(TEST_SDK_TOKEN);
+        reset(sdkProfileService);
 
         assertEquals(TEST_APP_TOKEN, cacheService.getAppTokenBySdkToken(TEST_SDK_TOKEN));
-        verify(sdkKeyService, never()).findSdkKeyByToken(TEST_SDK_TOKEN);
-        reset(sdkKeyService);
+        verify(sdkProfileService, never()).findSdkProfileByToken(TEST_SDK_TOKEN);
+        reset(sdkProfileService);
     }
 
     @Test
@@ -560,13 +560,13 @@ public class ConcurrentCacheServiceTest {
 
     @Test
     public void testGetSdkProperties() {
-        assertEquals(SDK_PROPERTIES, cacheService.getSdkPropertiesBySdkToken(TEST_SDK_TOKEN));
-        verify(sdkKeyService, times(1)).findSdkKeyByToken(TEST_SDK_TOKEN);
-        reset(sdkKeyService);
+        assertEquals(SDK_PROFILE, cacheService.getSdkProfileBySdkToken(TEST_SDK_TOKEN));
+        verify(sdkProfileService, times(1)).findSdkProfileByToken(TEST_SDK_TOKEN);
+        reset(sdkProfileService);
 
-        assertEquals(SDK_PROPERTIES, cacheService.getSdkPropertiesBySdkToken(TEST_SDK_TOKEN));
-        verify(sdkKeyService, times(0)).findSdkKeyByToken(TEST_SDK_TOKEN);
-        reset(sdkKeyService);
+        assertEquals(SDK_PROFILE, cacheService.getSdkProfileBySdkToken(TEST_SDK_TOKEN));
+        verify(sdkProfileService, times(0)).findSdkProfileByToken(TEST_SDK_TOKEN);
+        reset(sdkProfileService);
     }
 
     @Test
@@ -709,7 +709,7 @@ public class ConcurrentCacheServiceTest {
         endpointService = mock(EndpointService.class);
         eventClassService = mock(EventClassService.class);
         applicationEventMapService = mock(ApplicationEventMapService.class);
-        sdkKeyService = mock(SdkKeyService.class);
+        sdkProfileService = mock(SdkProfileService.class);
 
         ReflectionTestUtils.invokeMethod(cacheService, "setApplicationService", appService);
         ReflectionTestUtils.invokeMethod(cacheService, "setConfigurationService", configurationService);
@@ -718,7 +718,7 @@ public class ConcurrentCacheServiceTest {
         ReflectionTestUtils.invokeMethod(cacheService, "setEndpointService", endpointService);
         ReflectionTestUtils.invokeMethod(cacheService, "setEventClassService", eventClassService);
         ReflectionTestUtils.invokeMethod(cacheService, "setApplicationEventMapService", applicationEventMapService);
-        ReflectionTestUtils.invokeMethod(cacheService, "setSdkKeyService", sdkKeyService);
+        ReflectionTestUtils.invokeMethod(cacheService, "setSdkKeyService", sdkProfileService);
     }
 
     private HistoryDto buildNotMatchingHistoryDto(ChangeType changeType) {

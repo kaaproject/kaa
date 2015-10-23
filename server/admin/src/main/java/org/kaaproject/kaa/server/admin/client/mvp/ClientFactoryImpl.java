@@ -25,7 +25,7 @@ import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
-import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
+import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
@@ -121,7 +121,7 @@ public class ClientFactoryImpl implements ClientFactory {
     private final ApplicationView createApplicationView = new ApplicationViewImpl(true, KaaAdmin.checkAuthorities(KaaAuthorityDto.TENANT_ADMIN));
     private final ApplicationView applicationView = new ApplicationViewImpl(false, KaaAdmin.checkAuthorities(KaaAuthorityDto.TENANT_ADMIN));
 
-    private final BaseListView<SdkPropertiesDto> sdkProfilesView = new SdkProfilesViewImpl();
+    private final BaseListView<SdkProfileDto> sdkProfilesView = new SdkProfilesViewImpl();
     private final GenerateSdkView generateSdkView = new GenerateSdkViewImpl();
 
     private final BaseListView<UserDto> usersView = new UsersViewImpl();
@@ -249,7 +249,7 @@ public class ClientFactoryImpl implements ClientFactory {
     }
 
     @Override
-    public BaseListView<SdkPropertiesDto> getSdkProfilesView() {
+    public BaseListView<SdkProfileDto> getSdkProfilesView() {
         return sdkProfilesView;
     }
 

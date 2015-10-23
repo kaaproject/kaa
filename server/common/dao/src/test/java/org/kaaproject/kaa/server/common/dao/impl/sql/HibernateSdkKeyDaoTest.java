@@ -21,7 +21,7 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kaaproject.kaa.server.common.dao.model.sql.SdkKey;
+import org.kaaproject.kaa.server.common.dao.model.sql.SdkProfile;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -35,22 +35,22 @@ public class HibernateSdkKeyDaoTest extends HibernateAbstractTest {
 
     @Test
     public void saveTest() {
-        SdkKey saved = this.generateSdkKey(null, null);
+        SdkProfile saved = this.generateSdkProfile(null, null);
         Assert.assertNotNull(saved.getId());
     }
 
     @Test
-    public void findSdkKeyByTokenTest() {
+    public void findSdkProfileByTokenTest() {
         String token = HibernateSdkKeyDaoTest.class.getName();
-        SdkKey saved = this.generateSdkKey(null, token);
-        SdkKey loaded = sdkKeyDao.findSdkKeyByToken(token);
+        SdkProfile saved = this.generateSdkProfile(null, token);
+        SdkProfile loaded = sdkProfileDao.findSdkProfileByToken(token);
         Assert.assertEquals(saved, loaded);
     }
 
     @Test
-    public void findSdkKeysByApplicationIdTest() {
-        SdkKey saved = this.generateSdkKey(null, null);
-        List<SdkKey> loaded = sdkKeyDao.findSdkKeysByApplicationId(saved.getApplication().getId().toString());
+    public void findSdkProfilesByApplicationIdTest() {
+        SdkProfile saved = this.generateSdkProfile(null, null);
+        List<SdkProfile> loaded = sdkProfileDao.findSdkProfileByApplicationId(saved.getApplication().getId().toString());
         Assert.assertEquals(1, loaded.size());
         Assert.assertEquals(saved, loaded.get(0));
     }

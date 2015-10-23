@@ -37,7 +37,7 @@ import org.apache.commons.compress.compressors.CompressorOutputStream;
 import org.apache.commons.compress.compressors.CompressorStreamFactory;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
+import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.server.common.Version;
 import org.kaaproject.kaa.server.common.thrift.gen.control.Sdk;
 import org.kaaproject.kaa.server.common.zk.ServerNameUtil;
@@ -126,7 +126,7 @@ public class CppSdkGenerator extends SdkGenerator {
     @Override
     public Sdk generateSdk(String buildVersion,
             List<BootstrapNodeInfo> bootstrapNodes, String sdkToken,
-            SdkPropertiesDto sdkProperties,
+            SdkProfileDto sdkProfile,
             String profileSchemaBody,
             String notificationSchemaBody,
             String configurationProtocolSchemaBody,
@@ -135,11 +135,11 @@ public class CppSdkGenerator extends SdkGenerator {
             List<EventFamilyMetadata> eventFamilies,
             String logSchemaBody) throws Exception {
 
-        Integer configurationSchemaVersion = sdkProperties.getConfigurationSchemaVersion();
-        Integer profileSchemaVersion = sdkProperties.getProfileSchemaVersion();
-        Integer notificationSchemaVersion = sdkProperties.getNotificationSchemaVersion();
-        Integer logSchemaVersion = sdkProperties.getLogSchemaVersion();
-        String defaultVerifierToken = sdkProperties.getDefaultVerifierToken();
+        Integer configurationSchemaVersion = sdkProfile.getConfigurationSchemaVersion();
+        Integer profileSchemaVersion = sdkProfile.getProfileSchemaVersion();
+        Integer notificationSchemaVersion = sdkProfile.getNotificationSchemaVersion();
+        Integer logSchemaVersion = sdkProfile.getLogSchemaVersion();
+        String defaultVerifierToken = sdkProfile.getDefaultVerifierToken();
 
         String sdkTemplateLocation = System.getProperty("server_home_dir") + "/" + CPP_SDK_DIR + "/" + CPP_SDK_PREFIX + buildVersion + ".tar.gz";
 

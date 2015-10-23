@@ -19,7 +19,7 @@ package org.kaaproject.kaa.server.admin.client.mvp.data;
 import java.util.List;
 
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
-import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
+import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
 import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
@@ -32,11 +32,11 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  *
  * @since v0.8.0
  */
-public class SdkProfilesDataProvider extends AbstractDataProvider<SdkPropertiesDto> {
+public class SdkProfilesDataProvider extends AbstractDataProvider<SdkProfileDto> {
 
     private final String applicationId;
 
-    public SdkProfilesDataProvider(AbstractGrid<SdkPropertiesDto, ?> dataGrid, HasErrorMessage hasErrorMessage, String applicationId) {
+    public SdkProfilesDataProvider(AbstractGrid<SdkProfileDto, ?> dataGrid, HasErrorMessage hasErrorMessage, String applicationId) {
         super(dataGrid, hasErrorMessage, false);
         this.applicationId = applicationId;
         this.addDataDisplay();
@@ -45,10 +45,10 @@ public class SdkProfilesDataProvider extends AbstractDataProvider<SdkPropertiesD
     @Override
     protected void loadData(final LoadCallback callback) {
         if (!Utils.isEmpty(applicationId)) {
-            KaaAdmin.getDataSource().loadSdkProfiles(applicationId, new AsyncCallback<List<SdkPropertiesDto>>() {
+            KaaAdmin.getDataSource().loadSdkProfiles(applicationId, new AsyncCallback<List<SdkProfileDto>>() {
 
                 @Override
-                public void onSuccess(List<SdkPropertiesDto> result) {
+                public void onSuccess(List<SdkProfileDto> result) {
                     callback.onSuccess(result);
                 }
 

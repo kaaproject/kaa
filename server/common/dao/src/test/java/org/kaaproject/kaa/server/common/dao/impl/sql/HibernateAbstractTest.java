@@ -49,7 +49,7 @@ import org.kaaproject.kaa.server.common.dao.impl.LogSchemaDao;
 import org.kaaproject.kaa.server.common.dao.impl.NotificationSchemaDao;
 import org.kaaproject.kaa.server.common.dao.impl.ProfileFilterDao;
 import org.kaaproject.kaa.server.common.dao.impl.ProfileSchemaDao;
-import org.kaaproject.kaa.server.common.dao.impl.SdkKeyDao;
+import org.kaaproject.kaa.server.common.dao.impl.SdkProfileDao;
 import org.kaaproject.kaa.server.common.dao.impl.TenantDao;
 import org.kaaproject.kaa.server.common.dao.impl.TopicDao;
 import org.kaaproject.kaa.server.common.dao.impl.UserDao;
@@ -69,7 +69,7 @@ import org.kaaproject.kaa.server.common.dao.model.sql.LogSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.NotificationSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.ProfileFilter;
 import org.kaaproject.kaa.server.common.dao.model.sql.ProfileSchema;
-import org.kaaproject.kaa.server.common.dao.model.sql.SdkKey;
+import org.kaaproject.kaa.server.common.dao.model.sql.SdkProfile;
 import org.kaaproject.kaa.server.common.dao.model.sql.Tenant;
 import org.kaaproject.kaa.server.common.dao.model.sql.Topic;
 import org.kaaproject.kaa.server.common.dao.model.sql.User;
@@ -117,7 +117,7 @@ public abstract class HibernateAbstractTest {
     @Autowired
     protected UserVerifierDao<UserVerifier> verifierDao;
     @Autowired
-    protected SdkKeyDao<SdkKey> sdkKeyDao;
+    protected SdkProfileDao<SdkProfile> sdkProfileDao;
 
     protected Tenant generateTenant() {
         LOG.debug("Generate tenant...");
@@ -501,8 +501,8 @@ public abstract class HibernateAbstractTest {
         return verifierDao.save(verifier);
     }
 
-    protected SdkKey generateSdkKey(Application application, String token) {
-        SdkKey entity = new SdkKey();
+    protected SdkProfile generateSdkProfile(Application application, String token) {
+        SdkProfile entity = new SdkProfile();
 
         if (application == null) {
             application = this.generateApplication(null);
@@ -514,7 +514,7 @@ public abstract class HibernateAbstractTest {
         }
         entity.setToken(token);
 
-        return sdkKeyDao.save(entity);
+        return sdkProfileDao.save(entity);
     }
 
 }

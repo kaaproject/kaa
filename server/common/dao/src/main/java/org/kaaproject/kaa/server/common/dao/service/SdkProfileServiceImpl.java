@@ -19,14 +19,14 @@ package org.kaaproject.kaa.server.common.dao.service;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
-import org.kaaproject.kaa.server.common.dao.SdkKeyService;
+import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
+import org.kaaproject.kaa.server.common.dao.SdkProfileService;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
 import org.kaaproject.kaa.server.common.dao.impl.DaoUtil;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
-import org.kaaproject.kaa.server.common.dao.impl.SdkKeyDao;
+import org.kaaproject.kaa.server.common.dao.impl.SdkProfileDao;
 import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
-import org.kaaproject.kaa.server.common.dao.model.sql.SdkKey;
+import org.kaaproject.kaa.server.common.dao.model.sql.SdkProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,12 +35,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
-public class SdkKeyServiceImpl implements SdkKeyService {
+public class SdkProfileServiceImpl implements SdkProfileService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SdkKeyServiceImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SdkProfileServiceImpl.class);
 
     @Autowired
-    private SdkKeyDao<SdkKey> sdkKeyDao;
+    private SdkProfileDao<SdkProfile> sdkProfileDao;
 
     private EndpointProfileDao<EndpointProfile> endpointProfileDao;
 
@@ -53,27 +53,27 @@ public class SdkKeyServiceImpl implements SdkKeyService {
     }
 
     @Override
-    public SdkPropertiesDto saveSdkKey(SdkPropertiesDto sdkPropertiesDto) {
-        SdkPropertiesDto saved = null;
+    public SdkProfileDto saveSdkProfile(SdkProfileDto sdkPropertiesDto) {
+        SdkProfileDto saved = null;
 
         if (Validator.isValidSqlObject(sdkPropertiesDto)) {
             if (StringUtils.isNotBlank(sdkPropertiesDto.getId())) {
-                SdkKey entity = new SdkKey(sdkPropertiesDto);
-                SdkKey loaded = sdkKeyDao.findSdkKeyByToken(entity.getToken());
+                SdkProfile entity = new SdkProfile(sdkPropertiesDto);
+                SdkProfile loaded = sdkProfileDao.findSdkProfileByToken(entity.getToken());
 
                 LOG.debug("Saving SDK profile [{}] for application [{}]", entity.getToken(), sdkPropertiesDto.getApplicationId());
 
                 if (loaded == null || loaded.getStringId().equals(entity.getStringId())) {
-                    saved = DaoUtil.getDto(sdkKeyDao.save(entity));
+                    saved = DaoUtil.getDto(sdkProfileDao.save(entity));
                 } else {
                     throw new IncorrectParameterException("An SDK profile with token [" + entity.getToken() + "] already exists.");
                 }
             } else {
-                SdkKey entity = new SdkKey(sdkPropertiesDto);
-                SdkKey loaded = sdkKeyDao.findSdkKeyByToken(entity.getToken());
+                SdkProfile entity = new SdkProfile(sdkPropertiesDto);
+                SdkProfile loaded = sdkProfileDao.findSdkProfileByToken(entity.getToken());
 
                 if (loaded == null) {
-                    saved = DaoUtil.getDto(sdkKeyDao.save(entity));
+                    saved = DaoUtil.getDto(sdkProfileDao.save(entity));
                 } else {
                     saved = DaoUtil.getDto(loaded);
                 }
@@ -84,33 +84,33 @@ public class SdkKeyServiceImpl implements SdkKeyService {
     }
 
     @Override
-    public SdkPropertiesDto findSdkKeyById(String id) {
-        SdkPropertiesDto sdkPropertiesDto = null;
+    public SdkProfileDto findSdkProfileById(String id) {
+        SdkProfileDto sdkPropertiesDto = null;
         if (Validator.isValidId(id)) {
-            sdkPropertiesDto = DaoUtil.getDto(sdkKeyDao.findById(id));
+            sdkPropertiesDto = DaoUtil.getDto(sdkProfileDao.findById(id));
         }
         return sdkPropertiesDto;
     }
 
     @Override
-    public SdkPropertiesDto findSdkKeyByToken(String token) {
-        SdkPropertiesDto sdkPropertiesDto = null;
+    public SdkProfileDto findSdkProfileByToken(String token) {
+        SdkProfileDto sdkPropertiesDto = null;
         if (Validator.isValidId(token)) {
-            sdkPropertiesDto = DaoUtil.getDto(sdkKeyDao.findSdkKeyByToken(token));
+            sdkPropertiesDto = DaoUtil.getDto(sdkProfileDao.findSdkProfileByToken(token));
         }
         return sdkPropertiesDto;
     }
 
     @Override
-    public List<SdkPropertiesDto> findSdkKeysByApplicationId(String applicationId) {
+    public List<SdkProfileDto> findSdkProfilesByApplicationId(String applicationId) {
         Validator.validateId(applicationId, "Unable to find SDK profiles. Invalid application ID: " + applicationId);
-        return DaoUtil.convertDtoList(sdkKeyDao.findSdkKeysByApplicationId(applicationId));
+        return DaoUtil.convertDtoList(sdkProfileDao.findSdkProfileByApplicationId(applicationId));
     }
 
     @Override
     public void removeSdkProfileById(String id) {
         Validator.validateId(id, "Unable to remove SDK profile. Invalid SDK profile ID: " + id);
-        sdkKeyDao.removeById(id);
+        sdkProfileDao.removeById(id);
         LOG.debug("Removed SDK profile [{}]", id);
     }
 

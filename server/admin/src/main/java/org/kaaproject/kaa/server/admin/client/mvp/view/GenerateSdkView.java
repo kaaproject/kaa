@@ -19,7 +19,6 @@ package org.kaaproject.kaa.server.admin.client.mvp.view;
 import java.util.List;
 
 import org.kaaproject.kaa.common.dto.SchemaDto;
-import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.MultiValueListBox;
@@ -35,7 +34,6 @@ public interface GenerateSdkView extends BaseDetailsView {
     ValueListBox<SchemaDto> getProfileSchemaVersion();
     ValueListBox<SchemaDto> getNotificationSchemaVersion();
     ValueListBox<SchemaDto> getLogSchemaVersion();
-//    ValueListBox<SdkPlatform> getTargetPlatform();
     MultiValueListBox<AefMapInfoDto> getSelectedAefMaps();
     ValueListBox<UserVerifierDto> getDefaultUserVerifier();
 

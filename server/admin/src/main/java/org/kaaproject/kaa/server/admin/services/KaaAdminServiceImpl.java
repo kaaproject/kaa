@@ -61,7 +61,7 @@ import org.kaaproject.kaa.common.dto.UserDto;
 import org.kaaproject.kaa.common.dto.admin.RecordKey;
 import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
 import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
-import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
+import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
@@ -523,7 +523,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
-    public void addSdkProfile(SdkPropertiesDto sdkProfile) throws KaaAdminServiceException {
+    public void addSdkProfile(SdkProfileDto sdkProfile) throws KaaAdminServiceException {
         this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
             sdkProfile.setCreatedUsername(this.getCurrentUser().getUsername());
@@ -561,7 +561,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
-    public SdkPropertiesDto getSdkProfile(String sdkProfileId) throws KaaAdminServiceException {
+    public SdkProfileDto getSdkProfile(String sdkProfileId) throws KaaAdminServiceException {
         this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
             if (isEmpty(sdkProfileId)) {
@@ -574,7 +574,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
-    public List<SdkPropertiesDto> getSdkProfilesByApplicationId(String applicationId) throws KaaAdminServiceException {
+    public List<SdkProfileDto> getSdkProfilesByApplicationId(String applicationId) throws KaaAdminServiceException {
         this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
             this.checkApplicationId(applicationId);
@@ -585,36 +585,58 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
-    public String generateSdk(SdkPropertiesDto key) throws KaaAdminServiceException {
+    public String generateSdk(SdkProfileDto sdkProfile, SdkPlatform targetPlatform) throws KaaAdminServiceException {
         try {
-            doGenerateSdk(key);
-            return Base64.encodeObject(key, Base64.URL_SAFE);
+            doGenerateSdk(sdkProfile, targetPlatform);
+            return Base64.encodeObject(new CacheService.SdkKey(sdkProfile, targetPlatform), Base64.URL_SAFE);
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
     }
 
     @Override
-    public FileData getSdk(SdkPropertiesDto key) throws KaaAdminServiceException {
+    public FileData getSdk(SdkProfileDto sdkProfile, SdkPlatform targetPlatform) throws KaaAdminServiceException {
         try {
-            return doGenerateSdk(key);
+            return doGenerateSdk(sdkProfile, targetPlatform);
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
     }
 
-    private FileData doGenerateSdk(SdkPropertiesDto key) throws KaaAdminServiceException {
+    private FileData doGenerateSdk(SdkProfileDto sdkProfile, SdkPlatform targetPlatform) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            checkApplicationId(key.getApplicationId());
-            FileData sdkFile = cacheService.getSdk(key);
+            checkApplicationId(sdkProfile.getApplicationId());
+            FileData sdkFile = cacheService.getSdk(new CacheService.SdkKey(sdkProfile, targetPlatform));
             if (sdkFile == null) {
-                Sdk sdk = clientProvider.getClient().generateSdk(toDataStruct(key));
+                Sdk sdk = null;
+                switch (targetPlatform) {
+                    case JAVA:
+                        sdk = clientProvider
+                                .getClient()
+                                .generateSdk(toDataStruct(sdkProfile), org.kaaproject.kaa.server.common.thrift.gen.control.SdkPlatform.JAVA);
+                        break;
+                    case ANDROID:
+                        sdk = clientProvider
+                                .getClient()
+                                .generateSdk(toDataStruct(sdkProfile), org.kaaproject.kaa.server.common.thrift.gen.control.SdkPlatform.ANDROID);
+                        break;
+                    case CPP:
+                        sdk = clientProvider
+                                .getClient()
+                                .generateSdk(toDataStruct(sdkProfile), org.kaaproject.kaa.server.common.thrift.gen.control.SdkPlatform.CPP);
+                        break;
+                    case C:
+                        sdk = clientProvider
+                                .getClient()
+                                .generateSdk(toDataStruct(sdkProfile), org.kaaproject.kaa.server.common.thrift.gen.control.SdkPlatform.C);
+                        break;
+                }
                 sdkFile = new FileData();
                 sdkFile.setFileName(sdk.getFileName());
-                sdkFile.setContentType(key.getTargetPlatform().getContentType());
+                sdkFile.setContentType(targetPlatform.getContentType());
                 sdkFile.setFileData(sdk.getData());
-                cacheService.putSdk(key, sdkFile);
+                cacheService.putSdk(new CacheService.SdkKey(sdkProfile, targetPlatform), sdkFile);
             }
             return sdkFile;
         } catch (Exception e) {
@@ -628,7 +650,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         try {
             List<ApplicationDto> applications = getApplications();
             for (ApplicationDto application : applications) {
-                for (SdkPropertiesDto key : cacheService.getCachedSdkKeys(application.getId())) {
+                for (CacheService.SdkKey key : cacheService.getCachedSdkKeys(application.getId())) {
                     cacheService.flushSdk(key);
                 }
             }

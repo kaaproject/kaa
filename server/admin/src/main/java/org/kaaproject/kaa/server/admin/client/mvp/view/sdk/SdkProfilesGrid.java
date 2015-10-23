@@ -20,7 +20,7 @@ import org.kaaproject.avro.ui.gwt.client.widget.grid.cell.ActionButtonCell;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.cell.ActionButtonCell.ActionListener;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.cell.ActionButtonCell.ActionValidator;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEvent;
-import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
+import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.grid.AbstractKaaGrid;
 import org.kaaproject.kaa.server.admin.client.mvp.view.grid.KaaRowAction;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
@@ -38,103 +38,95 @@ import com.google.gwt.user.cellview.client.SafeHtmlHeader;
  *
  * @since v0.8.0
  */
-public class SdkProfilesGrid extends AbstractKaaGrid<SdkPropertiesDto, String> {
+public class SdkProfilesGrid extends AbstractKaaGrid<SdkProfileDto, String> {
 
-    private Column<SdkPropertiesDto, SdkPropertiesDto> generateSdkColumn;
+    private Column<SdkProfileDto, SdkProfileDto> generateSdkColumn;
 
     public SdkProfilesGrid() {
         super(Unit.PX, true);
     }
 
     @Override
-    protected float constructColumnsImpl(DataGrid<SdkPropertiesDto> table) {
+    protected float constructColumnsImpl(DataGrid<SdkProfileDto> table) {
         float prefWidth = 0;
 
         prefWidth += this.constructStringColumn(table, Utils.constants.name(),
-                new StringValueProvider<SdkPropertiesDto>() {
+                new StringValueProvider<SdkProfileDto>() {
                     @Override
-                    public String getValue(SdkPropertiesDto item) {
+                    public String getValue(SdkProfileDto item) {
                         return item.getName();
                     }
                 }, 40);
 
         prefWidth += this.constructStringColumn(table, Utils.constants.author(),
-                new StringValueProvider<SdkPropertiesDto>() {
+                new StringValueProvider<SdkProfileDto>() {
                     @Override
-                    public String getValue(SdkPropertiesDto item) {
+                    public String getValue(SdkProfileDto item) {
                         return item.getCreatedUsername();
                     }
                 }, 40);
 
         prefWidth += this.constructStringColumn(table, Utils.constants.dateCreated(),
-                new StringValueProvider<SdkPropertiesDto>() {
+                new StringValueProvider<SdkProfileDto>() {
                     @Override
-                    public String getValue(SdkPropertiesDto item) {
+                    public String getValue(SdkProfileDto item) {
                         return Utils.millisecondsToDateString(item.getCreatedTime());
                     }
                 }, 40);
 
         prefWidth += this.constructStringColumn(table, Utils.constants.configuration(),
-                new StringValueProvider<SdkPropertiesDto>() {
+                new StringValueProvider<SdkProfileDto>() {
                     @Override
-                    public String getValue(SdkPropertiesDto item) {
+                    public String getValue(SdkProfileDto item) {
                         return "v" + item.getConfigurationSchemaVersion().toString();
                     }
                 }, 40);
 
         prefWidth += this.constructStringColumn(table, Utils.constants.profile(),
-                new StringValueProvider<SdkPropertiesDto>() {
+                new StringValueProvider<SdkProfileDto>() {
                     @Override
-                    public String getValue(SdkPropertiesDto item) {
+                    public String getValue(SdkProfileDto item) {
                         return "v" + item.getProfileSchemaVersion().toString();
                     }
                 }, 40);
 
         prefWidth += this.constructStringColumn(table, Utils.constants.notification(),
-                new StringValueProvider<SdkPropertiesDto>() {
+                new StringValueProvider<SdkProfileDto>() {
                     @Override
-                    public String getValue(SdkPropertiesDto item) {
+                    public String getValue(SdkProfileDto item) {
                         return "v" + item.getNotificationSchemaVersion().toString();
                     }
                 }, 40);
 
         prefWidth += this.constructStringColumn(table, Utils.constants.log(),
-                new StringValueProvider<SdkPropertiesDto>() {
+                new StringValueProvider<SdkProfileDto>() {
                     @Override
-                    public String getValue(SdkPropertiesDto item) {
+                    public String getValue(SdkProfileDto item) {
                         return "v" + item.getLogSchemaVersion().toString();
                     }
                 }, 40);
 
         prefWidth += this.constructStringColumn(table, Utils.constants.sdkToken(),
-                new StringValueProvider<SdkPropertiesDto>() {
+                new StringValueProvider<SdkProfileDto>() {
                     @Override
-                    public String getValue(SdkPropertiesDto item) {
+                    public String getValue(SdkProfileDto item) {
                         return item.getToken();
                     }
                 }, 80);
 
         prefWidth += this.constructStringColumn(table, Utils.constants.ecfs(),
-                new StringValueProvider<SdkPropertiesDto>() {
+                new StringValueProvider<SdkProfileDto>() {
                     @Override
-                    public String getValue(SdkPropertiesDto item) {
+                    public String getValue(SdkProfileDto item) {
                         return Integer.toString(item.getAefMapIds().size());
                     }
                 }, 40);
-
-//        prefWidth += this.constructStringColumn(table, Utils.constants.numberOfEps(),
-//                new StringValueProvider<SdkPropertiesDto>() {
-//                    @Override
-//                    public String getValue(SdkPropertiesDto item) {
-//                        return item.getEndpointCount().toString();
-//                    }
-//                }, 40);
 
         return prefWidth;
     }
 
     @Override
-    protected float constructActions(DataGrid<SdkPropertiesDto> table, float prefWidth) {
+    protected float constructActions(DataGrid<SdkProfileDto> table, float prefWidth) {
         float result = 0;
 
         if (enableActions) {
@@ -166,33 +158,33 @@ public class SdkProfilesGrid extends AbstractKaaGrid<SdkPropertiesDto, String> {
         return result;
     }
 
-    private Column<SdkPropertiesDto, SdkPropertiesDto> constructGenerateSdkColumn(String label) {
-        ActionListener<SdkPropertiesDto> actionListener = new ActionListener<SdkPropertiesDto>() {
+    private Column<SdkProfileDto, SdkProfileDto> constructGenerateSdkColumn(String label) {
+        ActionListener<SdkProfileDto> actionListener = new ActionListener<SdkProfileDto>() {
             @Override
-            public void onItemAction(SdkPropertiesDto value) {
+            public void onItemAction(SdkProfileDto value) {
                 SdkProfilesGrid.this.generateSdk(value);
             }
         };
 
-        ActionValidator<SdkPropertiesDto> actionValidator = new ActionValidator<SdkPropertiesDto>() {
+        ActionValidator<SdkProfileDto> actionValidator = new ActionValidator<SdkProfileDto>() {
             @Override
-            public boolean canPerformAction(SdkPropertiesDto value) {
+            public boolean canPerformAction(SdkProfileDto value) {
                 return !embedded;
             }
         };
 
-        ActionButtonCell<SdkPropertiesDto> cell;
-        cell = new ActionButtonCell<SdkPropertiesDto>(Utils.resources.download(), label, embedded, actionListener, actionValidator);
+        ActionButtonCell<SdkProfileDto> cell;
+        cell = new ActionButtonCell<SdkProfileDto>(Utils.resources.download(), label, embedded, actionListener, actionValidator);
 
-        return new Column<SdkPropertiesDto, SdkPropertiesDto>(cell) {
+        return new Column<SdkProfileDto, SdkProfileDto>(cell) {
             @Override
-            public SdkPropertiesDto getValue(SdkPropertiesDto item) {
+            public SdkProfileDto getValue(SdkProfileDto item) {
                 return item;
             }
         };
     }
 
-    private void generateSdk(SdkPropertiesDto value) {
+    private void generateSdk(SdkProfileDto value) {
         RowActionEvent<String> rowGenerateSdkEvent = new RowActionEvent<>(value.getId(), KaaRowAction.GENERATE_SDK);
         this.fireEvent(rowGenerateSdkEvent);
     }

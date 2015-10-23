@@ -17,7 +17,7 @@
 package org.kaaproject.kaa.server.admin.client.mvp.view.sdk;
 
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
-import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
+import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseListViewImpl;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
@@ -26,14 +26,14 @@ import org.kaaproject.kaa.server.admin.client.util.Utils;
  *
  * @since v0.8.0
  */
-public class SdkProfilesViewImpl extends BaseListViewImpl<SdkPropertiesDto> {
+public class SdkProfilesViewImpl extends BaseListViewImpl<SdkProfileDto> {
 
     public SdkProfilesViewImpl() {
         super(true);
     }
 
     @Override
-    protected AbstractGrid<SdkPropertiesDto, String> createGrid() {
+    protected AbstractGrid<SdkProfileDto, String> createGrid() {
         return new SdkProfilesGrid();
     }
 

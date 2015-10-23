@@ -20,7 +20,7 @@ import org.kaaproject.avro.ui.gwt.client.widget.BusyPopup;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEvent;
 import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
-import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
+import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
@@ -41,22 +41,22 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  *
  * @since v0.8.0
  */
-public class SdkProfilesActivity extends AbstractListActivity<SdkPropertiesDto, SdkProfilesPlace> {
+public class SdkProfilesActivity extends AbstractListActivity<SdkProfileDto, SdkProfilesPlace> {
 
     private final String applicationId;
 
     public SdkProfilesActivity(SdkProfilesPlace place, ClientFactory clientFactory) {
-        super(place, SdkPropertiesDto.class, clientFactory);
+        super(place, SdkProfileDto.class, clientFactory);
         this.applicationId = place.getApplicationId();
     }
 
     @Override
-    protected BaseListView<SdkPropertiesDto> getView() {
+    protected BaseListView<SdkProfileDto> getView() {
         return clientFactory.getSdkProfilesView();
     }
 
     @Override
-    protected AbstractDataProvider<SdkPropertiesDto> getDataProvider(AbstractGrid<SdkPropertiesDto, ?> dataGrid) {
+    protected AbstractDataProvider<SdkProfileDto> getDataProvider(AbstractGrid<SdkProfileDto, ?> dataGrid) {
         return new SdkProfilesDataProvider(dataGrid, listView, applicationId);
     }
 
@@ -75,7 +75,7 @@ public class SdkProfilesActivity extends AbstractListActivity<SdkPropertiesDto, 
         SdkProfilesActivity.this.getView().clearError();
 
         BusyPopup.showPopup();
-        KaaAdmin.getDataSource().getSdkProfile(id, new AsyncCallback<SdkPropertiesDto>() {
+        KaaAdmin.getDataSource().getSdkProfile(id, new AsyncCallback<SdkProfileDto>() {
 
             @Override
             public void onFailure(Throwable cause) {
@@ -84,7 +84,7 @@ public class SdkProfilesActivity extends AbstractListActivity<SdkPropertiesDto, 
             }
 
             @Override
-            public void onSuccess(final SdkPropertiesDto profile) {
+            public void onSuccess(final SdkProfileDto profile) {
 
                 KaaAdmin.getDataSource().checkSdkProfileUsage(profile.getToken(), new AsyncCallback<Boolean>() {
 
@@ -100,11 +100,8 @@ public class SdkProfilesActivity extends AbstractListActivity<SdkPropertiesDto, 
                         if (!used) {
                             KaaAdmin.getDataSource().deleteSdkProfile(id, callback);
                         } else {
-                            StringBuilder message = new StringBuilder();
-                            message.append("Failed to delete SDK profile ");
-                            message.append("\"").append(profile.getToken()).append("\": ");
-                            message.append("an associated endpoint profile has been found.");
-                            Exception cause = new IllegalArgumentException(message.toString());
+                            String message = "Failed to delete SDK profile: Associated endpoint profiles have been found.";
+                            Exception cause = new IllegalArgumentException(message);
                             Utils.handleException(cause, SdkProfilesActivity.this.getView());
                         }
                     }
@@ -117,7 +114,7 @@ public class SdkProfilesActivity extends AbstractListActivity<SdkPropertiesDto, 
     protected void onCustomRowAction(RowActionEvent<String> event) {
         if (event.getAction() == KaaRowAction.GENERATE_SDK) {
 
-            KaaAdmin.getDataSource().getSdkProfile(event.getClickedId(), new AsyncCallback<SdkPropertiesDto>() {
+            KaaAdmin.getDataSource().getSdkProfile(event.getClickedId(), new AsyncCallback<SdkProfileDto>() {
 
                 @Override
                 public void onFailure(Throwable caught) {
@@ -125,16 +122,14 @@ public class SdkProfilesActivity extends AbstractListActivity<SdkPropertiesDto, 
                 }
 
                 @Override
-                public void onSuccess(final SdkPropertiesDto sdkProfile) {
+                public void onSuccess(final SdkProfileDto sdkProfile) {
 
                     GenerateSdkDialog.show(new GenerateSdkDialog.Listener() {
 
                         @Override
                         public void onGenerateSdk(SdkPlatform targetPlatform) {
-                            sdkProfile.setTargetPlatform(targetPlatform);
-
                             BusyPopup.showPopup();
-                            KaaAdmin.getDataSource().generateSdk(sdkProfile, new AsyncCallback<String>() {
+                            KaaAdmin.getDataSource().generateSdk(sdkProfile, targetPlatform, new AsyncCallback<String>() {
 
                                 @Override
                                 public void onFailure(Throwable caught) {
