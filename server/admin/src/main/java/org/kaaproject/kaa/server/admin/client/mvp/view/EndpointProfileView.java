@@ -28,7 +28,6 @@ import java.util.List;
 public interface EndpointProfileView extends BaseDetailsView {
 
     SizedTextBox getKeyHash();
-    SizedTextBox getId();
     SizedTextBox getNotificationVersion();
     SizedTextBox getProfileSchemaVersion();
     SizedTextBox getConfigurationSchemaVersion();
@@ -38,13 +37,12 @@ public interface EndpointProfileView extends BaseDetailsView {
     SizedTextBox getUserID();
     SizedTextBox getUserName();
     SizedTextBox getUserExternalID();
+    List<Widget> getUserInfoList();
 
     SizedTextBox getSchemaName();
     SizedTextBox getDescription();
-
-    List<Widget> getUserInfoList();
-
-    TopicGrid getTopicsGrid();
-    AbstractGrid<EndpointGroupDto, String> getGroupsGrid();
     RecordPanel getSchemaForm();
+
+    AbstractGrid<EndpointGroupDto, String> getGroupsGrid();
+    TopicGrid getTopicsGrid();
 }

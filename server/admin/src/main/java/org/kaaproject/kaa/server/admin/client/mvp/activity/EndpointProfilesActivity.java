@@ -132,7 +132,7 @@ public class EndpointProfilesActivity extends AbstractActivity implements BaseLi
             public void onClick(ClickEvent clickEvent) {
                 listView.clearError();
                 String value = listView.getEndpointKeyHashTextBox().getValue();
-                if (value != null && !"".equals(value)) {
+                if (value != null && !value.isEmpty()) {
                     findEndpointFromThisApplication(value);
                 } else {
                     Utils.handleException(new IllegalArgumentException(Utils.messages.emptyEndpointKeyHash()), listView);

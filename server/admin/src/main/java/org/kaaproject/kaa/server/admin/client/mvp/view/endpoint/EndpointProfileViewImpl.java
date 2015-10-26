@@ -223,11 +223,6 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
     }
 
     @Override
-    public SizedTextBox getId() {
-        return null;
-    }
-
-    @Override
     public SizedTextBox getNotificationVersion() {
         return notificationVersion;
     }
@@ -243,13 +238,13 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
     }
 
     @Override
-    public TopicGrid getTopicsGrid() {
-        return topicsGrid;
+    public SizedTextBox getConfigurationSchemaVersion() {
+        return configurationVersion;
     }
 
     @Override
-    public AbstractGrid<EndpointGroupDto, String> getGroupsGrid() {
-        return groupsGrid;
+    public SizedTextBox getProfileSchemaVersion() {
+        return profileVersion;
     }
 
     @Override
@@ -263,6 +258,16 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
     }
 
     @Override
+    public SizedTextBox getUserExternalID() {
+        return userExternalID;
+    }
+
+    @Override
+    public List<Widget> getUserInfoList() {
+        return userInfoList;
+    }
+
+    @Override
     public SizedTextBox getSchemaName() {
         return schemaName;
     }
@@ -273,27 +278,17 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
     }
 
     @Override
-    public SizedTextBox getUserExternalID() {
-        return userExternalID;
-    }
-
-    @Override
     public RecordPanel getSchemaForm() {
         return schemaForm;
     }
 
     @Override
-    public SizedTextBox getConfigurationSchemaVersion() {
-        return configurationVersion;
+    public AbstractGrid<EndpointGroupDto, String> getGroupsGrid() {
+        return groupsGrid;
     }
 
     @Override
-    public SizedTextBox getProfileSchemaVersion() {
-        return profileVersion;
-    }
-
-    @Override
-    public List<Widget> getUserInfoList() {
-        return userInfoList;
+    public TopicGrid getTopicsGrid() {
+        return topicsGrid;
     }
 }
