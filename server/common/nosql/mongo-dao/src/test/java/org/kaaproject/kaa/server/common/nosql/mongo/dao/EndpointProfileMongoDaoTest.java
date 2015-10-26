@@ -44,6 +44,11 @@ public class EndpointProfileMongoDaoTest extends AbstractMongoTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(EndpointProfileMongoDaoTest.class);
 
+    private static final String TEST_ENDPOINT_GROUP_ID = "124";
+    private static final String TEST_LIMIT = "3";
+    private static final String TEST_OFFSET = "0";
+    private static final int GENERATED_PROFILES_COUNT = 5;
+
     @BeforeClass
     public static void init() throws Exception {
         MongoDBTestRunner.setUp();
@@ -85,27 +90,26 @@ public class EndpointProfileMongoDaoTest extends AbstractMongoTest {
 
     @Test
     public void findBodyByEndpointGroupIdTest() {
-        String endpointGroupId = "111";
-        EndpointProfileDto endpointProfileDto = generateEndpointProfileWithGroupId(endpointGroupId);
-        EndpointProfilesPageDto found;
-        String limit = "1";
-        String offset = "0";
-        PageLinkDto pageLink = new PageLinkDto(endpointGroupId, limit, offset);
-        found = endpointProfileDao.findBodyByEndpointGroupId(pageLink);
+        for (int i = 0; i < GENERATED_PROFILES_COUNT; i++) {
+            generateEndpointProfileWithGroupId(TEST_ENDPOINT_GROUP_ID);
+        }
+        int lim = Integer.valueOf(TEST_LIMIT);
+        PageLinkDto pageLink = new PageLinkDto(TEST_ENDPOINT_GROUP_ID, TEST_LIMIT, TEST_OFFSET);
+        EndpointProfilesPageDto found = endpointProfileDao.findBodyByEndpointGroupId(pageLink);
         Assert.assertFalse(found.getEndpointProfilesBody().isEmpty());
-        Assert.assertEquals(endpointProfileDto.getProfile(), found.getEndpointProfilesBody().get(0).getProfile());
-
+        Assert.assertEquals(lim, found.getEndpointProfilesBody().size());
     }
 
     @Test
     public void findByEndpointGroupIdTest() {
-        String endpointGroupId = "111";
-        EndpointProfilesPageDto found;
-        EndpointProfileDto endpointProfile = generateEndpointProfileWithGroupId(endpointGroupId);
-        String limit = "1";
-        String offset = "0";
-        found = endpointProfileDao.findByEndpointGroupId(new PageLinkDto(endpointGroupId, limit, offset));
-        Assert.assertEquals(endpointProfile, found.getEndpointProfiles().get(0));
+        for (int i = 0; i < GENERATED_PROFILES_COUNT; i++) {
+            generateEndpointProfileWithGroupId(TEST_ENDPOINT_GROUP_ID);
+        }
+        int lim = Integer.valueOf(TEST_LIMIT);
+        PageLinkDto pageLink = new PageLinkDto(TEST_ENDPOINT_GROUP_ID, TEST_LIMIT, TEST_OFFSET);
+        EndpointProfilesPageDto found = endpointProfileDao.findByEndpointGroupId(pageLink);
+        Assert.assertFalse(found.getEndpointProfiles().isEmpty());
+        Assert.assertEquals(lim, found.getEndpointProfiles().size());
     }
 
     @Test

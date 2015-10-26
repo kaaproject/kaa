@@ -632,7 +632,7 @@ public class AbstractTest {
 
     protected EndpointProfileDto generateEndpointProfileWithGroupId(String endpointGroupId) {
         EndpointProfileDto profileDto = new EndpointProfileDto();
-        profileDto.setEndpointKeyHash("TEST_KEY_HASH".getBytes());
+        profileDto.setEndpointKeyHash(generateString("TEST_KEY_HASH").getBytes());
         String appId = generateApplication().getId();
         profileDto.setApplicationId(appId);
         List<EndpointGroupStateDto> cfGroupState = new ArrayList<>();
