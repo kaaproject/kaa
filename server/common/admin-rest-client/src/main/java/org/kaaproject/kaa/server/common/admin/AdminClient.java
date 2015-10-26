@@ -24,7 +24,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,6 +36,7 @@ import org.apache.http.HttpHost;
 import org.kaaproject.kaa.common.dto.*;
 import org.kaaproject.kaa.common.dto.admin.AuthResultDto;
 import org.kaaproject.kaa.common.dto.admin.ResultCode;
+import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
@@ -183,7 +186,7 @@ public class AdminClient {
         return restTemplate.getForObject(url + "configurationSchema/" + configurationSchemaId, ConfigurationSchemaDto.class);
     }
 
-    
+
     public List<ConfigurationSchemaDto> getConfigurationSchemas(String applicationId) throws Exception {
         ParameterizedTypeReference<List<ConfigurationSchemaDto>> typeRef = new ParameterizedTypeReference<List<ConfigurationSchemaDto>>() {};
         ResponseEntity<List<ConfigurationSchemaDto>> entity = restTemplate.exchange(url + "configurationSchemas/"+applicationId, HttpMethod.GET, null, typeRef);
@@ -195,7 +198,7 @@ public class AdminClient {
         ResponseEntity<List<NotificationSchemaDto>> entity = restTemplate.exchange(url + "notificationSchemas/"+applicationId, HttpMethod.GET, null, typeRef);
         return entity.getBody();
     }
-    
+
     public List<TopicDto> getTopics(String applicationId) throws Exception {
         ParameterizedTypeReference<List<TopicDto>> typeRef = new ParameterizedTypeReference<List<TopicDto>>() {};
         ResponseEntity<List<TopicDto>> entity = restTemplate.exchange(url + "topics/"+applicationId, HttpMethod.GET, null, typeRef);
@@ -321,7 +324,54 @@ public class AdminClient {
     public UserVerifierDto editUserVerifierDto(UserVerifierDto userVerifierDto) throws Exception {
         return restTemplate.postForObject(url + "userVerifier", userVerifierDto, UserVerifierDto.class);
     }
-    
+
+    public SdkProfileDto createSdkProfile(SdkProfileDto sdkProfile) throws Exception {
+        return restTemplate.postForObject(url + "addSdkProfile", sdkProfile, SdkProfileDto.class);
+    }
+
+    public void deleteSdkProfile(SdkProfileDto sdkProfile) throws Exception {
+        MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
+        params.add("topicId", sdkProfile.getId());
+        restTemplate.postForLocation(url + "deleteSdkProfile", params);
+    }
+
+    public SdkProfileDto getSdkProfile(String sdkProfileId) throws Exception {
+        ParameterizedTypeReference<SdkProfileDto> typeRef = new ParameterizedTypeReference<SdkProfileDto>() {};
+        ResponseEntity<SdkProfileDto> entity = restTemplate.exchange(url + "sdkProfile/" + sdkProfileId, HttpMethod.GET, null, typeRef);
+        return entity.getBody();
+    }
+
+    public List<SdkProfileDto> getSdkProfiles(String applicationId) throws Exception {
+        ParameterizedTypeReference<List<SdkProfileDto>> typeRef = new ParameterizedTypeReference<List<SdkProfileDto>>() {};
+        ResponseEntity<List<SdkProfileDto>> entity = restTemplate.exchange(url + "sdkProfiles/"+applicationId, HttpMethod.GET, null, typeRef);
+        return entity.getBody();
+    }
+
+    // TODO: Needs more testing
+    public void downloadSdk(String sdkProfileId, SdkPlatform targetPlatform, String destination) {
+        FileResponseExtractor extractor = new FileResponseExtractor(new File(destination));
+
+        Map<String, String> parameters = new LinkedHashMap<>();
+        parameters.put("sdkProfileId", sdkProfileId);
+        parameters.put("targetPlatform", targetPlatform.toString());
+
+        restTemplate.execute(url + "sdk", HttpMethod.POST, null, extractor, parameters);
+    }
+
+    // TODO: Needs more testing
+    public FileData downloadSdk(String sdkProfileId, SdkPlatform targetPlatform) {
+        FileDataResponseExtractor extractor = new FileDataResponseExtractor();
+
+        Map<String, String> parameters = new LinkedHashMap<>();
+        parameters.put("sdkProfileId", sdkProfileId);
+        parameters.put("targetPlatform", targetPlatform.toString());
+
+        return restTemplate.execute(url + "sdk", HttpMethod.POST, null, extractor, parameters);
+    }
+
+    /**
+     * @deprecated
+     */
     public void downloadSdk(SdkProfileDto key, String destination) throws Exception {
         FileResponseExtractor extractor = new FileResponseExtractor( new File(destination));
         final List<MediaType> mediaTypes = Arrays.asList(MediaType.APPLICATION_JSON,
@@ -354,7 +404,10 @@ public class AdminClient {
         restTemplate.execute(url + "sdk", HttpMethod.POST, request, extractor);
         logger.info("Downloaded sdk to file '{}'", extractor.getDestFile());
     }
-    
+
+    /**
+     * @deprecated
+     */
     public FileData downloadSdk(SdkProfileDto key) throws Exception {
         FileDataResponseExtractor extractor = new FileDataResponseExtractor();
         final List<MediaType> mediaTypes = Arrays.asList(MediaType.APPLICATION_JSON,

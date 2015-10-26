@@ -26,7 +26,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.widget.MultiValueListBox;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.ValueListBox;
 
-public interface GenerateSdkView extends BaseDetailsView {
+public interface AddSdkProfileView extends BaseDetailsView {
 
     HasValue<String> getName();
 

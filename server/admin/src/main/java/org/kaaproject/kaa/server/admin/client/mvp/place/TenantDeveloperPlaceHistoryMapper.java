@@ -23,7 +23,7 @@ import com.google.gwt.place.shared.WithTokenizers;
     ApplicationsPlace.Tokenizer.class,
     ApplicationPlace.Tokenizer.class,
     SdkProfilesPlace.Tokenizer.class,
-    GenerateSdkPlace.Tokenizer.class,
+    AddSdkProfilePlace.Tokenizer.class,
     ProfileSchemasPlace.Tokenizer.class,
     ProfileSchemaPlace.Tokenizer.class,
     ConfigurationSchemasPlace.Tokenizer.class,

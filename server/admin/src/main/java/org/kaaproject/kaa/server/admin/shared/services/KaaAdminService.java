@@ -24,7 +24,6 @@ import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
@@ -103,8 +102,6 @@ public interface KaaAdminService extends RemoteService {
     public void addSdkProfile(SdkProfileDto sdkProfile) throws KaaAdminServiceException;
 
     public void deleteSdkProfile(String sdkProfileId) throws KaaAdminServiceException;
-
-    public boolean checkSdkProfileUsage(String sdkToken) throws KaaAdminServiceException;
 
     public SdkProfileDto getSdkProfile(String sdkProfileId) throws KaaAdminServiceException;
 

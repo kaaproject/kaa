@@ -25,7 +25,7 @@ import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
 import org.kaaproject.kaa.server.admin.client.mvp.data.SdkProfilesDataProvider;
-import org.kaaproject.kaa.server.admin.client.mvp.place.GenerateSdkPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.AddSdkProfilePlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.SdkProfilesPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseListView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.grid.KaaRowAction;
@@ -62,7 +62,7 @@ public class SdkProfilesActivity extends AbstractListActivity<SdkProfileDto, Sdk
 
     @Override
     protected Place newEntityPlace() {
-        return new GenerateSdkPlace(applicationId);
+        return new AddSdkProfilePlace(applicationId);
     }
 
     @Override
@@ -75,37 +75,17 @@ public class SdkProfilesActivity extends AbstractListActivity<SdkProfileDto, Sdk
         SdkProfilesActivity.this.getView().clearError();
 
         BusyPopup.showPopup();
-        KaaAdmin.getDataSource().getSdkProfile(id, new AsyncCallback<SdkProfileDto>() {
+        KaaAdmin.getDataSource().deleteSdkProfile(id, new AsyncCallback<Void>() {
 
             @Override
-            public void onFailure(Throwable cause) {
+            public void onFailure(Throwable caught) {
                 BusyPopup.hidePopup();
-                Utils.handleException(cause, SdkProfilesActivity.this.getView());
+                Utils.handleException(caught, SdkProfilesActivity.this.getView());
             }
 
             @Override
-            public void onSuccess(final SdkProfileDto profile) {
-
-                KaaAdmin.getDataSource().checkSdkProfileUsage(profile.getToken(), new AsyncCallback<Boolean>() {
-
-                    @Override
-                    public void onFailure(Throwable cause) {
-                        BusyPopup.hidePopup();
-                        Utils.handleException(cause, SdkProfilesActivity.this.getView());
-                    }
-
-                    @Override
-                    public void onSuccess(Boolean used) {
-                        BusyPopup.hidePopup();
-                        if (!used) {
-                            KaaAdmin.getDataSource().deleteSdkProfile(id, callback);
-                        } else {
-                            String message = "Failed to delete SDK profile: Associated endpoint profiles have been found.";
-                            Exception cause = new IllegalArgumentException(message);
-                            Utils.handleException(cause, SdkProfilesActivity.this.getView());
-                        }
-                    }
-                });
+            public void onSuccess(Void result) {
+                BusyPopup.hidePopup();
             }
         });
     }

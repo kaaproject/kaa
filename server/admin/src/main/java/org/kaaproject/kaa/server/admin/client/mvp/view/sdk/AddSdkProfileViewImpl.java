@@ -28,7 +28,7 @@ import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
 import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
-import org.kaaproject.kaa.server.admin.client.mvp.view.GenerateSdkView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.AddSdkProfileView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.MultiAefMapListBox;
@@ -52,7 +52,7 @@ import com.google.gwt.user.client.ui.ValueListBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class GenerateSdkViewImpl extends BaseDetailsViewImpl implements GenerateSdkView, ValueChangeHandler<SchemaDto>  {
+public class AddSdkProfileViewImpl extends BaseDetailsViewImpl implements AddSdkProfileView, ValueChangeHandler<SchemaDto>  {
 
     private static final String REQUIRED = Utils.avroUiStyle.requiredField();
 
@@ -75,7 +75,7 @@ public class GenerateSdkViewImpl extends BaseDetailsViewImpl implements Generate
     private ValueListBox<UserVerifierDto> defaultUserVerifier;
 
 
-    public GenerateSdkViewImpl() {
+    public AddSdkProfileViewImpl() {
         super(true);
     }
 

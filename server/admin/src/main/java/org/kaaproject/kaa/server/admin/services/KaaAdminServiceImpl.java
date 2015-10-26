@@ -44,7 +44,6 @@ import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
@@ -526,6 +525,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     public void addSdkProfile(SdkProfileDto sdkProfile) throws KaaAdminServiceException {
         this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
+            this.checkApplicationId(sdkProfile.getApplicationId());
             sdkProfile.setCreatedUsername(this.getCurrentUser().getUsername());
             sdkProfile.setCreatedTime(System.currentTimeMillis());
             clientProvider.getClient().addSdkProfile(ThriftDtoConverter.toDataStruct(sdkProfile));
@@ -538,23 +538,12 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     public void deleteSdkProfile(String sdkProfileId) throws KaaAdminServiceException {
         this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            if (isEmpty(sdkProfileId)) {
-                throw new IllegalArgumentException("SDK profile ID is empty!");
+            SdkProfileDto sdkProfile = this.checkSdkProfileId(sdkProfileId);
+            if (!clientProvider.getClient().isSdkProfileUsed(sdkProfile.getToken())) {
+                clientProvider.getClient().deleteSdkProfile(sdkProfileId);
+            } else {
+                throw new IllegalArgumentException("Associated endpoint profiles have been found.");
             }
-            clientProvider.getClient().deleteSdkProfile(sdkProfileId);
-        } catch (Exception cause) {
-            throw Utils.handleException(cause);
-        }
-    }
-
-    @Override
-    public boolean checkSdkProfileUsage(String sdkToken) throws KaaAdminServiceException {
-        this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
-        try {
-            if (isEmpty(sdkToken)) {
-                throw new IllegalArgumentException("SDK token is empty!");
-            }
-            return clientProvider.getClient().isSdkProfileUsed(sdkToken);
         } catch (Exception cause) {
             throw Utils.handleException(cause);
         }
@@ -564,9 +553,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     public SdkProfileDto getSdkProfile(String sdkProfileId) throws KaaAdminServiceException {
         this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            if (isEmpty(sdkProfileId)) {
-                throw new IllegalArgumentException("SDK profile ID is empty!");
-            }
+            this.checkSdkProfileId(sdkProfileId);
             return ThriftDtoConverter.toDto(clientProvider.getClient().getSdkProfile(sdkProfileId));
         } catch (Exception cause) {
             throw Utils.handleException(cause);
@@ -2471,5 +2458,17 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         }
     }
 
+    public SdkProfileDto checkSdkProfileId(String sdkProfileId) throws KaaAdminServiceException {
+        try {
+            if (isEmpty(sdkProfileId)) {
+                throw new IllegalArgumentException("The SDK profile identifier is empty!");
+            }
+            SdkProfileDto sdkProfile = ThriftDtoConverter.toDto(clientProvider.getClient().getSdkProfile(sdkProfileId));
+            Utils.checkNotNull(sdkProfile);
+            return sdkProfile;
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
 
 }

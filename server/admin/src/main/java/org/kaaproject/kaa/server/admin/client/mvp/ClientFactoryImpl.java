@@ -43,7 +43,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.BaseSchemaView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EcfSchemaView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EcfView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointGroupView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.GenerateSdkView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.AddSdkProfileView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.HeaderView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.LogAppenderView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.NavigationView;
@@ -78,7 +78,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.notification.Notification
 import org.kaaproject.kaa.server.admin.client.mvp.view.profile.ProfileFilterViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.profile.ProfileSchemaViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.profile.ProfileSchemasViewImpl;
-import org.kaaproject.kaa.server.admin.client.mvp.view.sdk.GenerateSdkViewImpl;
+import org.kaaproject.kaa.server.admin.client.mvp.view.sdk.AddSdkProfileViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.sdk.SdkProfilesViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.settings.GeneralPropertiesViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.settings.MailPropertiesViewImpl;
@@ -122,7 +122,7 @@ public class ClientFactoryImpl implements ClientFactory {
     private final ApplicationView applicationView = new ApplicationViewImpl(false, KaaAdmin.checkAuthorities(KaaAuthorityDto.TENANT_ADMIN));
 
     private final BaseListView<SdkProfileDto> sdkProfilesView = new SdkProfilesViewImpl();
-    private final GenerateSdkView generateSdkView = new GenerateSdkViewImpl();
+    private final AddSdkProfileView generateSdkView = new AddSdkProfileViewImpl();
 
     private final BaseListView<UserDto> usersView = new UsersViewImpl();
     private final UserView createUserView = new UserViewImpl(true);
@@ -254,7 +254,7 @@ public class ClientFactoryImpl implements ClientFactory {
     }
 
     @Override
-    public GenerateSdkView getGenerateSdkView() {
+    public AddSdkProfileView getAddSdkProfileView() {
         return generateSdkView;
     }
 

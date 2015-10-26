@@ -30,20 +30,20 @@ import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
-import org.kaaproject.kaa.server.admin.client.mvp.place.GenerateSdkPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.AddSdkProfilePlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.SdkProfilesPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.view.GenerateSdkView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.AddSdkProfileView;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 
-public class GenerateSdkActivity extends AbstractDetailsActivity<SdkProfileDto, GenerateSdkView, GenerateSdkPlace> {
+public class AddSdkProfileActivity extends AbstractDetailsActivity<SdkProfileDto, AddSdkProfileView, AddSdkProfilePlace> {
 
     private String applicationId;
 
-    public GenerateSdkActivity(GenerateSdkPlace place, ClientFactory clientFactory) {
+    public AddSdkProfileActivity(AddSdkProfilePlace place, ClientFactory clientFactory) {
         super(place, clientFactory);
         this.applicationId = place.getApplicationId();
     }
@@ -54,13 +54,13 @@ public class GenerateSdkActivity extends AbstractDetailsActivity<SdkProfileDto, 
     }
 
     @Override
-    protected String getEntityId(GenerateSdkPlace place) {
+    protected String getEntityId(AddSdkProfilePlace place) {
         return null;
     }
 
     @Override
-    protected GenerateSdkView getView(boolean create) {
-        return clientFactory.getGenerateSdkView();
+    protected AddSdkProfileView getView(boolean create) {
+        return clientFactory.getAddSdkProfileView();
     }
 
     @Override
@@ -186,7 +186,7 @@ public class GenerateSdkActivity extends AbstractDetailsActivity<SdkProfileDto, 
                 @Override
                 public void onSuccessImpl(Void result) {
                     detailsView.reset();
-                    GenerateSdkActivity.this.goTo(new SdkProfilesPlace(applicationId));
+                    AddSdkProfileActivity.this.goTo(new SdkProfilesPlace(applicationId));
                 }
 
                 @Override

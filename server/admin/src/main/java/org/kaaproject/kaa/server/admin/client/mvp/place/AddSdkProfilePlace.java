@@ -21,11 +21,11 @@ import org.kaaproject.kaa.server.admin.client.util.Utils;
 import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
 
-public class GenerateSdkPlace extends TreePlace {
+public class AddSdkProfilePlace extends TreePlace {
 
     private String applicationId;
 
-    public GenerateSdkPlace(String applicationId) {
+    public AddSdkProfilePlace(String applicationId) {
         this.applicationId = applicationId;
     }
 
@@ -38,17 +38,17 @@ public class GenerateSdkPlace extends TreePlace {
         return Utils.constants.generateSdk();
     }
 
-    @Prefix(value = "genSdk")
-    public static class Tokenizer implements PlaceTokenizer<GenerateSdkPlace>, PlaceConstants {
+    @Prefix(value = "addSdkProfile")
+    public static class Tokenizer implements PlaceTokenizer<AddSdkProfilePlace>, PlaceConstants {
 
         @Override
-        public GenerateSdkPlace getPlace(String token) {
+        public AddSdkProfilePlace getPlace(String token) {
             PlaceParams.paramsFromToken(token);
-            return new GenerateSdkPlace(PlaceParams.getParam(APPLICATION_ID));
+            return new AddSdkProfilePlace(PlaceParams.getParam(APPLICATION_ID));
         }
 
         @Override
-        public String getToken(GenerateSdkPlace place) {
+        public String getToken(AddSdkProfilePlace place) {
             PlaceParams.clear();
             PlaceParams.putParam(APPLICATION_ID, place.getApplicationId());
             return PlaceParams.generateToken();
@@ -66,7 +66,7 @@ public class GenerateSdkPlace extends TreePlace {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        GenerateSdkPlace other = (GenerateSdkPlace) obj;
+        AddSdkProfilePlace other = (AddSdkProfilePlace) obj;
         if (applicationId == null) {
             if (other.applicationId != null) {
                 return false;

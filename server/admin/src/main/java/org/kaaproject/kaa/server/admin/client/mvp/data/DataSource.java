@@ -24,7 +24,6 @@ import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
@@ -1212,14 +1211,6 @@ public class DataSource {
             @Override
             protected void onResult(Void result) {
                 eventBus.fireEvent(new DataEvent(SdkProfileDto.class));
-            }
-        });
-    }
-
-    public void checkSdkProfileUsage(String sdkToken, final AsyncCallback<Boolean> callback) {
-        rpcService.checkSdkProfileUsage(sdkToken, new DataCallback<Boolean>(callback) {
-            @Override
-            protected void onResult(Boolean result) {
             }
         });
     }

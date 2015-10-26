@@ -30,7 +30,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.place.EcfsPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EndpointGroupPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EndpointGroupsPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.GeneralPropertiesPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.place.GenerateSdkPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.AddSdkProfilePlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.LogAppenderPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.LogAppendersPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.LogSchemaPlace;
@@ -88,8 +88,8 @@ public class AppActivityMapper implements ActivityMapper {
                 return new ApplicationActivity((ApplicationPlace) place, clientFactory);
             } else if (clazz == SdkProfilesPlace.class) {
                 return new SdkProfilesActivity((SdkProfilesPlace) place, clientFactory);
-            } else if (clazz == GenerateSdkPlace.class) {
-                return new GenerateSdkActivity((GenerateSdkPlace) place, clientFactory);
+            } else if (clazz == AddSdkProfilePlace.class) {
+                return new AddSdkProfileActivity((AddSdkProfilePlace) place, clientFactory);
             } else if (clazz == UsersPlace.class) {
                 return new UsersActivity((UsersPlace) place, clientFactory);
             } else if (clazz ==  UserPlace.class) {
