@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.server.operations.service.thrift;
 
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 
 import org.apache.thrift.TException;
@@ -27,11 +28,11 @@ import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.OperationsThriftService;
+import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaService;
 import org.kaaproject.kaa.server.operations.service.cache.AppSeqNumber;
 import org.kaaproject.kaa.server.operations.service.cache.AppVersionKey;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
-import org.kaaproject.kaa.server.operations.service.thrift.OperationsThriftServiceImpl;
 import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -137,5 +138,12 @@ public class OperationsThriftServiceTest {
     @Test
     public void testServerName() throws TException{
         Assert.assertEquals("operations", operationsThriftService.serverName());
+    }
+
+    @Test
+    public void testSetRedirectionRule() throws TException{
+        RedirectionRule redirectionRule = new RedirectionRule();
+        operationsThriftService.setRedirectionRule(redirectionRule);
+        Mockito.verify(akkaService, atLeastOnce()).onRedirectionRule(redirectionRule);
     }
 }

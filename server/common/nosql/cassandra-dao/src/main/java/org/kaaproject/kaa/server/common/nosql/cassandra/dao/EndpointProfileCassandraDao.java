@@ -201,7 +201,9 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
         List<CassandraEndpointGroupState> cfGroupState = new ArrayList<>();
         List<String> endpointGroupIds = new ArrayList<>();
         List<Statement> statementList = new ArrayList<>();
-        cfGroupState.addAll(storedProfile.getCfGroupState());
+        if (storedProfile.getCfGroupState() != null) {
+            cfGroupState.addAll(storedProfile.getCfGroupState());
+        }
         if (cfGroupState != null) {
             for (CassandraEndpointGroupState cf : cfGroupState) {
                 endpointGroupIds.add(cf.getEndpointGroupId());

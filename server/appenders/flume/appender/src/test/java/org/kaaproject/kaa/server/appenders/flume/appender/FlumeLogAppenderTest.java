@@ -139,6 +139,15 @@ public class FlumeLogAppenderTest {
     }
 
     @Test
+    public void appendWhenClosedTest() {
+        appender.close();
+        LogEventPack eventPack = new LogEventPack();
+        TestLogDeliveryCallback callback = new TestLogDeliveryCallback();
+        appender.doAppend(eventPack, callback);
+        Assert.assertTrue(callback.internallError);
+    }
+
+    @Test
     public void appendWithEmptyClientManagerTest() throws EventDeliveryException {
         LogEventPack eventPack = new LogEventPack();
         ReflectionTestUtils.setField(appender, "flumeClientManager", null);
