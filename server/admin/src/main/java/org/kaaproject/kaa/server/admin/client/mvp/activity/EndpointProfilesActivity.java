@@ -85,16 +85,16 @@ public class EndpointProfilesActivity extends AbstractActivity implements BaseLi
                             listView.getListWidget().getDataGrid().setVisibleRangeAndClearData(
                                     new Range(0, listView.getListWidget().getPageSize()), false);
                         }
-                        populateListBox(result);
+                        populateListBoxAndGrid(result);
                 }
             });
         }
     }
 
-    private void populateListBox(List<EndpointGroupDto> result) {
+    private void populateListBoxAndGrid(List<EndpointGroupDto> result) {
         for (EndpointGroupDto endGroup: result) {
             if (endGroup.getWeight() == 0) {
-                getDataProvider("").setNewGroup(endGroup.getId());
+                getDataProvider().setNewGroup(endGroup.getId());
                 listView.getListWidget().getDataGrid().setVisibleRangeAndClearData(
                         new Range(0, listView.getListWidget().getPageSize()), true);
                 listView.getEndpointGroupsInfo().setValue(endGroup);
@@ -121,7 +121,7 @@ public class EndpointProfilesActivity extends AbstractActivity implements BaseLi
         registrations.add(listView.getEndpointGroupsInfo().addValueChangeHandler(new ValueChangeHandler<EndpointGroupDto>() {
             @Override
             public void onValueChange(ValueChangeEvent<EndpointGroupDto> valueChangeEvent) {
-                getDataProvider("").setNewGroup(valueChangeEvent.getValue().getId());
+                getDataProvider().setNewGroup(valueChangeEvent.getValue().getId());
                 listView.getListWidget().getDataGrid().setVisibleRangeAndClearData(
                         new Range(0, listView.getListWidget().getPageSize()), true);
             }
@@ -187,7 +187,7 @@ public class EndpointProfilesActivity extends AbstractActivity implements BaseLi
         registrations.clear();
     }
 
-    public EndpointProfileDataProvider getDataProvider(String groupID) {
-        return EndpointProfileDataProvider.getInstance(listView.getListWidget(), listView, groupID);
+    public EndpointProfileDataProvider getDataProvider() {
+        return EndpointProfileDataProvider.getInstance(listView.getListWidget(), listView);
     }
 }

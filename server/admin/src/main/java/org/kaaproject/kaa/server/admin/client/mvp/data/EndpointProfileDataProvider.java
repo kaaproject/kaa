@@ -43,16 +43,16 @@ public class EndpointProfileDataProvider extends AbstractDataProvider<EndpointPr
     private static volatile EndpointProfileDataProvider instance;
 
     private EndpointProfileDataProvider(AbstractGrid<EndpointProfileDto, ?> dataGrid,
-                                       HasErrorMessage hasErrorMessage, String groupID) {
+                                       HasErrorMessage hasErrorMessage) {
         super(dataGrid, hasErrorMessage, true);
-        this.groupID = groupID;
+        this.groupID = "";
         endpointProfilesList = new ArrayList<>();
         pageSize = limit = (dataGrid.getPageSize() + 1) + "";
     }
 
     @Override
     protected void onRangeChanged(HasData<EndpointProfileDto> display) {
-        if (groupID != null) {
+        if (groupID != null && !"".equals(groupID)) {
             int start = display.getVisibleRange().getStart();
             if (previousStart < start) {
                 previousStart = start;
@@ -98,9 +98,9 @@ public class EndpointProfileDataProvider extends AbstractDataProvider<EndpointPr
     }
 
     public static synchronized EndpointProfileDataProvider getInstance(AbstractGrid<EndpointProfileDto, ?> dataGrid,
-                                                                       HasErrorMessage hasErrorMessage, String groupID) {
+                                                                       HasErrorMessage hasErrorMessage) {
         if (instance == null) {
-            instance = new EndpointProfileDataProvider(dataGrid, hasErrorMessage, groupID);
+            instance = new EndpointProfileDataProvider(dataGrid, hasErrorMessage);
         }
         return instance;
     }
