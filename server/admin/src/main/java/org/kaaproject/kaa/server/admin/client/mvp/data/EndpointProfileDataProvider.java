@@ -52,7 +52,7 @@ public class EndpointProfileDataProvider extends AbstractDataProvider<EndpointPr
 
     @Override
     protected void onRangeChanged(HasData<EndpointProfileDto> display) {
-        if (groupID != null && !"".equals(groupID)) {
+        if (groupID != null && !groupID.isEmpty()) {
             int start = display.getVisibleRange().getStart();
             if (previousStart < start) {
                 previousStart = start;
