@@ -140,24 +140,24 @@ public class AbstractCassandraTest {
         return profileDto;
     }
 
-    protected EndpointProfileDto generateEndpointProfileWithEndpointGroupId(String appId, String accessToken, List<String> topicIds) {
+    protected EndpointProfileDto generateEndpointProfileWithEndpointGroupId(String appId, boolean nfGroupStateOnly) {
         byte[] keyHash = generateBytes();
         if (appId == null) {
             appId = generateStringId();
         }
-        if (accessToken == null) {
-            accessToken = generateStringId();
-        }
         EndpointProfileDto profileDto = new EndpointProfileDto();
         profileDto.setApplicationId(appId);
-        profileDto.setSubscriptions(topicIds);
         profileDto.setEndpointKeyHash(keyHash);
-        profileDto.setAccessToken(accessToken);
+        profileDto.setAccessToken(generateStringId());
         profileDto.setProfile("test Profile");
-        List<EndpointGroupStateDto> cfGroupState = new ArrayList<>();
-        EndpointGroupStateDto cf = new EndpointGroupStateDto(TEST_ENDPOINT_GROUP_ID, null, null);
-        cfGroupState.add(cf);
-        profileDto.setCfGroupStates(cfGroupState);
+        List<EndpointGroupStateDto> groupState = new ArrayList<>();
+        groupState.add(new EndpointGroupStateDto(TEST_ENDPOINT_GROUP_ID, null, null));
+        if (nfGroupStateOnly) {
+            profileDto.setNfGroupStates(groupState);
+            profileDto.setCfGroupStates(null);
+        } else {
+            profileDto.setCfGroupStates(groupState);
+        }
         return endpointProfileDao.save(new CassandraEndpointProfile(profileDto)).toDto();
     }
 

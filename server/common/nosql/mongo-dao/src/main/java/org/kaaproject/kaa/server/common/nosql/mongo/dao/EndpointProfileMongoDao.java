@@ -29,6 +29,7 @@ import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoEndpointProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
@@ -43,6 +44,7 @@ import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelC
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_USER_ID;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.ENDPOINT_GROUP_ID;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_CF_GROUP_STATE;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_NF_GROUP_STATE;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
@@ -67,8 +69,9 @@ public class EndpointProfileMongoDao extends AbstractMongoDao<MongoEndpointProfi
         EndpointProfilesPageDto endpointProfilesPageDto = new EndpointProfilesPageDto();
         String next = null;
         int lim = Integer.valueOf(pageLink.getLimit());
-        List<MongoEndpointProfile> mongoEndpointProfileList = find(query(where(EP_CF_GROUP_STATE + "." + ENDPOINT_GROUP_ID)
-                .is(pageLink.getEndpointGroupId())).skip(Integer.parseInt(pageLink.getOffset()))
+        List<MongoEndpointProfile> mongoEndpointProfileList = find(query(new Criteria().orOperator(where(EP_CF_GROUP_STATE + "." + ENDPOINT_GROUP_ID)
+                .is(pageLink.getEndpointGroupId()), where(EP_NF_GROUP_STATE + "." + ENDPOINT_GROUP_ID).is(pageLink.getEndpointGroupId())))
+                .skip(Integer.parseInt(pageLink.getOffset()))
                 .limit(Integer.parseInt(pageLink.getLimit()) + 1));
         if (mongoEndpointProfileList.size() == (lim + 1)) {
             String offset = Integer.toString(lim + Integer.valueOf(pageLink.getOffset()));
@@ -91,7 +94,8 @@ public class EndpointProfileMongoDao extends AbstractMongoDao<MongoEndpointProfi
         String profile = "profile";
         String next = null;
         int lim = Integer.valueOf(pageLink.getLimit());
-        Query query = Query.query(where(EP_CF_GROUP_STATE + "." + ENDPOINT_GROUP_ID).is(pageLink.getEndpointGroupId()));
+        Query query = Query.query(new Criteria().orOperator(where(EP_CF_GROUP_STATE + "." + ENDPOINT_GROUP_ID).is(pageLink.getEndpointGroupId()),
+                where(EP_NF_GROUP_STATE + "." + ENDPOINT_GROUP_ID).is(pageLink.getEndpointGroupId())));
         query.skip(Integer.parseInt(pageLink.getOffset())).limit(Integer.parseInt(pageLink.getLimit()) + 1);
         query.fields().include(profile);
         query.fields().include(EP_ENDPOINT_KEY_HASH);

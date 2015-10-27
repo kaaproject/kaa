@@ -91,7 +91,19 @@ public class EndpointProfileMongoDaoTest extends AbstractMongoTest {
     @Test
     public void findBodyByEndpointGroupIdTest() {
         for (int i = 0; i < GENERATED_PROFILES_COUNT; i++) {
-            generateEndpointProfileWithGroupId(TEST_ENDPOINT_GROUP_ID);
+            generateEndpointProfileWithGroupId(TEST_ENDPOINT_GROUP_ID, false);
+        }
+        int lim = Integer.valueOf(TEST_LIMIT);
+        PageLinkDto pageLink = new PageLinkDto(TEST_ENDPOINT_GROUP_ID, TEST_LIMIT, TEST_OFFSET);
+        EndpointProfilesPageDto found = endpointProfileDao.findBodyByEndpointGroupId(pageLink);
+        Assert.assertFalse(found.getEndpointProfilesBody().isEmpty());
+        Assert.assertEquals(lim, found.getEndpointProfilesBody().size());
+    }
+
+    @Test
+    public void findBodyByEndpointGroupIdWithNfGroupStateTest() {
+        for (int i = 0; i < GENERATED_PROFILES_COUNT; i++) {
+            generateEndpointProfileWithGroupId(TEST_ENDPOINT_GROUP_ID, true);
         }
         int lim = Integer.valueOf(TEST_LIMIT);
         PageLinkDto pageLink = new PageLinkDto(TEST_ENDPOINT_GROUP_ID, TEST_LIMIT, TEST_OFFSET);
@@ -103,7 +115,19 @@ public class EndpointProfileMongoDaoTest extends AbstractMongoTest {
     @Test
     public void findByEndpointGroupIdTest() {
         for (int i = 0; i < GENERATED_PROFILES_COUNT; i++) {
-            generateEndpointProfileWithGroupId(TEST_ENDPOINT_GROUP_ID);
+            generateEndpointProfileWithGroupId(TEST_ENDPOINT_GROUP_ID, false);
+        }
+        int lim = Integer.valueOf(TEST_LIMIT);
+        PageLinkDto pageLink = new PageLinkDto(TEST_ENDPOINT_GROUP_ID, TEST_LIMIT, TEST_OFFSET);
+        EndpointProfilesPageDto found = endpointProfileDao.findByEndpointGroupId(pageLink);
+        Assert.assertFalse(found.getEndpointProfiles().isEmpty());
+        Assert.assertEquals(lim, found.getEndpointProfiles().size());
+    }
+
+    @Test
+    public void findByEndpointGroupIdWithNfGroupStateTest() {
+        for (int i = 0; i < GENERATED_PROFILES_COUNT; i++) {
+            generateEndpointProfileWithGroupId(TEST_ENDPOINT_GROUP_ID, true);
         }
         int lim = Integer.valueOf(TEST_LIMIT);
         PageLinkDto pageLink = new PageLinkDto(TEST_ENDPOINT_GROUP_ID, TEST_LIMIT, TEST_OFFSET);
