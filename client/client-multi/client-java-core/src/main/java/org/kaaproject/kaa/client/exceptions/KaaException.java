@@ -28,8 +28,4 @@ public class KaaException extends Exception{
     public KaaException(Exception cause){
         super(cause);
     }
-
-    public KaaException(String message){
-        super(message);
-    }
 }

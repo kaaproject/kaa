@@ -34,7 +34,6 @@ import org.kaaproject.kaa.client.event.registration.EndpointRegistrationManager;
 import org.kaaproject.kaa.client.event.registration.OnAttachEndpointOperationCallback;
 import org.kaaproject.kaa.client.event.registration.OnDetachEndpointOperationCallback;
 import org.kaaproject.kaa.client.event.registration.UserAttachCallback;
-import org.kaaproject.kaa.client.exceptions.KaaException;
 import org.kaaproject.kaa.client.logging.LogStorage;
 import org.kaaproject.kaa.client.logging.LogUploadStrategy;
 import org.kaaproject.kaa.client.notification.NotificationListener;
@@ -72,24 +71,24 @@ public interface GenericKaaClient {
      *
      * @see AbstractKaaClient#start()
      */
-    public void start() throws KaaException;
+    public void start();
 
     /**
      * Stops Kaa's workflow.
      *
      * @see AbstractKaaClient#stop()
      */
-    public void stop() throws KaaException;
+    public void stop();
 
     /**
      * Pauses Kaa's workflow.
      */
-    public void pause() throws KaaException;
+    public void pause();
 
     /**
      * Resumes Kaa's workflow.
      */
-    public void resume() throws KaaException;
+    public void resume();
     /**
      * Sets profile container implemented by the user.
      *
@@ -103,7 +102,7 @@ public interface GenericKaaClient {
     /**
      * Sync of updated profile with server
      */
-    void updateProfile() throws KaaException;
+    void updateProfile();
 
     /**
      * Sets the configuration storage that will be used to persist configuration.
@@ -160,7 +159,7 @@ public interface GenericKaaClient {
      * @return List of available topics
      *
      */
-    List<Topic> getTopics() throws KaaException;
+    List<Topic> getTopics();
 
     /**
      * <p>
@@ -244,7 +243,7 @@ public interface GenericKaaClient {
      *             Throw if unknown topic id is provided or topic isn't
      *             optional.
      */
-    void subscribeToTopic(String topicId) throws UnavailableTopicException, KaaException;
+    void subscribeToTopic(String topicId) throws UnavailableTopicException;
 
     /**
      * <p>
@@ -263,7 +262,7 @@ public interface GenericKaaClient {
      *
      * @see #syncTopicsList()
      */
-    void subscribeToTopic(String topicId, boolean forceSync) throws UnavailableTopicException, KaaException;
+    void subscribeToTopic(String topicId, boolean forceSync) throws UnavailableTopicException;
 
     /**
      * <p>
@@ -278,7 +277,7 @@ public interface GenericKaaClient {
      *             Throw if unknown topic id is provided or topic isn't
      *             optional.
      */
-    void subscribeToTopics(List<String> topicIds) throws UnavailableTopicException, KaaException;
+    void subscribeToTopics(List<String> topicIds) throws UnavailableTopicException;
 
     /**
      * <p>
@@ -298,7 +297,7 @@ public interface GenericKaaClient {
      *
      * @see #syncTopicsList()
      */
-    void subscribeToTopics(List<String> topicIds, boolean forceSync) throws UnavailableTopicException, KaaException;
+    void subscribeToTopics(List<String> topicIds, boolean forceSync) throws UnavailableTopicException;
 
     /**
      * <p>
@@ -316,7 +315,7 @@ public interface GenericKaaClient {
      *             Throw if unknown topic id is provided or topic isn't
      *             optional.
      */
-    void unsubscribeFromTopic(String topicId) throws UnavailableTopicException, KaaException;
+    void unsubscribeFromTopic(String topicId) throws UnavailableTopicException;
 
     /**
      * <p>
@@ -339,7 +338,7 @@ public interface GenericKaaClient {
      *
      * @see #syncTopicsList()
      */
-    void unsubscribeFromTopic(String topicId, boolean forceSync) throws UnavailableTopicException, KaaException;
+    void unsubscribeFromTopic(String topicId, boolean forceSync) throws UnavailableTopicException;
 
     /**
      * <p>
@@ -358,7 +357,7 @@ public interface GenericKaaClient {
      *             Throw if unknown topic id is provided or topic isn't
      *             optional.
      */
-    void unsubscribeFromTopics(List<String> topicIds) throws UnavailableTopicException, KaaException;
+    void unsubscribeFromTopics(List<String> topicIds) throws UnavailableTopicException;
 
     /**
      * <p>
@@ -382,7 +381,7 @@ public interface GenericKaaClient {
      *
      * @see #syncTopicsList()
      */
-    void unsubscribeFromTopics(List<String> topicIds, boolean forceSync) throws UnavailableTopicException, KaaException;
+    void unsubscribeFromTopics(List<String> topicIds, boolean forceSync) throws UnavailableTopicException;
 
     /**
      * <p>
@@ -415,7 +414,7 @@ public interface GenericKaaClient {
      * }
      * </pre>
      */
-    void syncTopicsList() throws KaaException;
+    void syncTopicsList();
 
     /**
      * Set user implementation of a log storage.
@@ -447,7 +446,7 @@ public interface GenericKaaClient {
      *
      * @return Request ID of submitted request
      */
-    void findEventListeners(List<String> eventFQNs, FindEventListenersCallback listener) throws KaaException;
+    void findEventListeners(List<String> eventFQNs, FindEventListenersCallback listener);
 
     /**
      * Retrieves Kaa channel manager
@@ -526,7 +525,7 @@ public interface GenericKaaClient {
      * @see org.kaaproject.kaa.client.event.EndpointAccessToken
      * @see org.kaaproject.kaa.client.event.registration.OnAttachEndpointOperationCallback
      */
-    void attachEndpoint(EndpointAccessToken endpointAccessToken, OnAttachEndpointOperationCallback resultListener) throws KaaException;
+    void attachEndpoint(EndpointAccessToken endpointAccessToken, OnAttachEndpointOperationCallback resultListener);
 
     /**
      * Updates with new endpoint detach request
@@ -537,7 +536,7 @@ public interface GenericKaaClient {
      * @see org.kaaproject.kaa.client.event.EndpointKeyHash
      * @see OnDetachEndpointOperationCallback
      */
-    void detachEndpoint(EndpointKeyHash endpointKeyHash, OnDetachEndpointOperationCallback resultListener) throws KaaException;
+    void detachEndpoint(EndpointKeyHash endpointKeyHash, OnDetachEndpointOperationCallback resultListener);
 
     /**
      * Creates user attach request using default verifier. Default verifier is selected during SDK generation.
@@ -549,7 +548,7 @@ public interface GenericKaaClient {
      *
      * @see UserAttachCallback
      */
-    void attachUser(String userExternalId, String userAccessToken, UserAttachCallback callback) throws KaaException;
+    void attachUser(String userExternalId, String userAccessToken, UserAttachCallback callback);
 
     /**
      * Creates user attach request using specified verifier.
@@ -561,7 +560,7 @@ public interface GenericKaaClient {
      *
      * @see UserAttachCallback
      */
-    void attachUser(String userVerifierToken, String userExternalId, String userAccessToken, UserAttachCallback callback) throws KaaException;
+    void attachUser(String userVerifierToken, String userExternalId, String userAccessToken, UserAttachCallback callback);
 
     /**
      * Checks if current endpoint is attached to user.

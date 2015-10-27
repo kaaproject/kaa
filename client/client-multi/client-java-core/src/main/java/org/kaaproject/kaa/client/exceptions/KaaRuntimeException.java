@@ -22,4 +22,8 @@ public class KaaRuntimeException extends RuntimeException {
     public KaaRuntimeException(Exception cause) {
         super(cause);
     }
+
+    public KaaRuntimeException(String message){
+        super(message);
+    }
 }
