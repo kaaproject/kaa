@@ -210,7 +210,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
     }
 
     @Override
-    public void start() throws KaaException {
+    public void start() {
         checkReadiness();
 
         context.getExecutorContext().init();
@@ -246,10 +246,14 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
         });
     }
 
-    private void checkReadiness() throws KaaException {
+    private void checkReadiness() {
         if (profileManager == null || !profileManager.isInitialized()) {
             LOG.error("Profile manager isn't initialized: maybe profile container isn't set");
-            throw new KaaException("Profile manager isn't initialized: maybe profile container isn't set");
+            if (stateListener != null) {
+                stateListener.onStartFailure(new KaaException("Profile manager isn't initialized: maybe profile container isn't set"));
+            } else {
+                throw new KaaRuntimeException("Profile manager isn't initialized: maybe profile container isn't set");
+            }
         }
     }
 

@@ -34,7 +34,6 @@ import org.kaaproject.kaa.client.event.registration.EndpointRegistrationManager;
 import org.kaaproject.kaa.client.event.registration.OnAttachEndpointOperationCallback;
 import org.kaaproject.kaa.client.event.registration.OnDetachEndpointOperationCallback;
 import org.kaaproject.kaa.client.event.registration.UserAttachCallback;
-import org.kaaproject.kaa.client.exceptions.KaaException;
 import org.kaaproject.kaa.client.logging.LogStorage;
 import org.kaaproject.kaa.client.logging.LogUploadStrategy;
 import org.kaaproject.kaa.client.notification.NotificationListener;
@@ -72,7 +71,7 @@ public interface GenericKaaClient {
      *
      * @see AbstractKaaClient#start()
      */
-    public void start() throws KaaException;
+    public void start();
 
     /**
      * Stops Kaa's workflow.
