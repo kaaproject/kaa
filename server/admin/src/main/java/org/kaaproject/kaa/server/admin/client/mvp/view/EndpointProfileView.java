@@ -31,11 +31,9 @@ public interface EndpointProfileView extends BaseDetailsView {
     SizedTextBox getNotificationVersion();
     SizedTextBox getProfileSchemaVersion();
     SizedTextBox getConfigurationSchemaVersion();
-    SizedTextBox getUserNfVersion();
     SizedTextBox getLogSchemaVer();
 
     SizedTextBox getUserID();
-    SizedTextBox getUserName();
     SizedTextBox getUserExternalID();
     List<Widget> getUserInfoList();
 

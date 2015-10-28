@@ -40,11 +40,9 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
     private SizedTextBox notificationVersion;
     private SizedTextBox profileVersion;
     private SizedTextBox configurationVersion;
-    private SizedTextBox userNfVersion;
     private SizedTextBox logSchemaVersion;
 
     private SizedTextBox userID;
-    private SizedTextBox userName;
     private SizedTextBox userExternalID;
 
     private SizedTextBox schemaName;
@@ -98,14 +96,6 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
         userInfoList.add(userIDLabel);
         userInfoList.add(userID);
 
-        Label userNameLabel = new Label(Utils.constants.userName());
-        userName = new KaaAdminSizedTextBox(-1, false);
-        userName.setWidth("100%");
-        detailsTable.setWidget(++row, 0, userNameLabel);
-        detailsTable.setWidget(row, 1, userName);
-        userInfoList.add(userNameLabel);
-        userInfoList.add(userName);
-
         Label userExternalIDLabel = new Label(Utils.constants.userExternalId());
         userExternalID = new KaaAdminSizedTextBox(-1, false);
         userExternalID.setWidth("100%");
@@ -131,12 +121,6 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
         notificationVersion.setWidth("100%");
         detailsTable.setWidget(++row, 0, notificationVersionLabel);
         detailsTable.setWidget(row, 1, notificationVersion);
-
-        Label userNfVersionLabel = new Label(Utils.constants.userNotificationVersion());
-        userNfVersion = new KaaAdminSizedTextBox(-1, false);
-        userNfVersion.setWidth("100%");
-        detailsTable.setWidget(++row, 0, userNfVersionLabel);
-        detailsTable.setWidget(row, 1, userNfVersion);
 
         Label logSchemaVersionLabel = new Label(Utils.constants.logSchemaVersion());
         logSchemaVersion = new KaaAdminSizedTextBox(-1, false);
@@ -199,10 +183,8 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
     protected void resetImpl() {
         endpointKeyHash.setValue("");
         notificationVersion.setValue("");
-        userNfVersion.setValue("");
         logSchemaVersion.setValue("");
         userID.setValue("");
-        userName.setValue("");
         userExternalID.setValue("");
         schemaName.setValue("");
         description.setValue("");
@@ -228,11 +210,6 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
     }
 
     @Override
-    public SizedTextBox getUserNfVersion() {
-        return userNfVersion;
-    }
-
-    @Override
     public SizedTextBox getLogSchemaVer() {
         return logSchemaVersion;
     }
@@ -250,11 +227,6 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
     @Override
     public SizedTextBox getUserID() {
         return userID;
-    }
-
-    @Override
-    public SizedTextBox getUserName() {
-        return userName;
     }
 
     @Override

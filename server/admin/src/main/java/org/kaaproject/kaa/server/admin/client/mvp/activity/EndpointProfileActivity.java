@@ -82,7 +82,6 @@ public class EndpointProfileActivity extends
 
         if (userDto != null) {
             detailsView.getUserID().setValue(userDto.getId());
-            detailsView.getUserName().setValue(userDto.getUsername());
             detailsView.getUserExternalID().setValue(userDto.getExternalId());
 
             for (Widget widget : detailsView.getUserInfoList()) {
@@ -97,7 +96,6 @@ public class EndpointProfileActivity extends
         detailsView.getProfileSchemaVersion().setValue(profileDto.getProfileVersion() + "");
         detailsView.getConfigurationSchemaVersion().setValue(profileDto.getConfigurationVersion() + "");
         detailsView.getNotificationVersion().setValue(profileDto.getUserNfVersion() + "");
-        detailsView.getUserNfVersion().setValue(profileDto.getUserNfVersion() + "");
         detailsView.getLogSchemaVer().setValue(profileDto.getLogSchemaVersion() + "");
 
         List<EndpointGroupDto> groupDtoList = entity.getGroupDtoList();
