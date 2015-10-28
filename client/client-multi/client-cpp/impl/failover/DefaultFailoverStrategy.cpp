@@ -21,17 +21,18 @@ namespace kaa {
 const std::size_t DefaultFailoverStrategy::DEFAULT_BOOTSTRAP_SERVERS_RETRY_PERIOD;
 const std::size_t DefaultFailoverStrategy::DEFAULT_OPERATION_SERVERS_RETRY_PERIOD;
 const std::size_t DefaultFailoverStrategy::DEFAULT_NO_OPERATION_SERVERS_RETRY_PERIOD;
+const std::size_t DefaultFailoverStrategy::DEFAULT_CURRENT_BOOTSTRAP_SERVER_NA;
 const std::size_t DefaultFailoverStrategy::DEFAULT_NO_CONNECTIVITY_RETRY_PERIOD;
 
 FailoverStrategyDecision DefaultFailoverStrategy::onFailover(Failover failover)
 {
 	switch (failover) {
-		case Failover::NO_BOOTSTRAP_SERVERS:
+        case Failover::BOOTSTRAP_SERVERS_NA:
 			return FailoverStrategyDecision(FailoverStrategyAction::RETRY, bootstrapServersRetryPeriod_);
-		case Failover::NO_OPERATION_SERVERS:
-			return FailoverStrategyDecision(FailoverStrategyAction::RETRY, noOperationServersRetryPeriod_);
-		case Failover::ALL_OPERATION_SERVERS_NA:
-			return FailoverStrategyDecision(FailoverStrategyAction::RETRY, operationServersRetryPeriod_);
+        case Failover::NO_OPERATION_SERVERS_RECEIVED:
+            return FailoverStrategyDecision(FailoverStrategyAction::USE_NEXT_BOOTSTRAP, noOperationServersRetryPeriod_);
+        case Failover::OPERATION_SERVERS_NA:
+            return FailoverStrategyDecision(FailoverStrategyAction::RETRY, operationServersRetryPeriod_);
 		case Failover::NO_CONNECTIVITY:
 			return FailoverStrategyDecision(FailoverStrategyAction::RETRY, noConnectivityRetryPeriod_);
 		default:

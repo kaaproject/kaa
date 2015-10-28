@@ -53,7 +53,7 @@ include_directories (
         ${CMAKE_CURRENT_SOURCE_DIR}/..
         ${Boost_INCLUDE_DIRS}
         ${Avro_INCLUDE_DIRS} 
-        ${BOTAN_INCLUDE_DIRS}
+        ${BOTAN_INCLUDE_DIR}
         ${SQLITE3_INCLUDE_DIR}
 
 )
@@ -115,6 +115,7 @@ set ( KAA_TEST_SOURCES
         TestRunner.cpp
         impl/common/EndpointObjectHashTest.cpp
         impl/common/AvroByteArrayConverterTest.cpp
+        impl/bootstrap/BootstrapFailoverTest.cpp
         impl/configuration/ConfigurationPersistenceTest.cpp
         impl/configuration/ConfigurationProcessorTest.cpp
         impl/configuration/ConfigurationManagerTest.cpp

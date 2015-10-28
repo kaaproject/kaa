@@ -17,7 +17,7 @@
 set(KAA_SOURCE_FILES 
         ${KAA_SOURCE_FILES}
         ${KAA_SRC_FOLDER}/platform-impl/posix/posix_kaa_client.c
-        ${KAA_SRC_FOLDER}/platform-impl/posix/posix_kaa_failover_strategy.c
+        ${KAA_SRC_FOLDER}/platform-impl/common/kaa_failover_strategy.c
         ${KAA_SRC_FOLDER}/platform-impl/common/sha.c
         ${KAA_SRC_FOLDER}/platform-impl/common/sha1.c
         ${KAA_SRC_FOLDER}/platform-impl/cc32xx/logger.c

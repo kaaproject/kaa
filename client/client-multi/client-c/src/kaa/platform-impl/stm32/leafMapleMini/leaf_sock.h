@@ -79,4 +79,15 @@ typedef struct leaf_sockaddr_in kaa_sockaddr_storage_t;
                   ((((unsigned long)(n) & 0xFF0000)) >> 8) | \
                   ((((unsigned long)(n) & 0xFF000000)) >> 24))
 
+#define KAA_HTONLL(n) (((((unsigned long long)(n) & 0xFF)) << 56) | \
+                       ((((unsigned long long)(n) & 0xFF00)) << 48) | \
+                       ((((unsigned long long)(n) & 0xFF0000)) << 24) | \
+                       ((((unsigned long long)(n) & 0xFF000000)) << 8) | \
+                       ((((unsigned long long)(n) & 0xFF00000000)) >> 8) | \
+                       ((((unsigned long long)(n) & 0xFF0000000000)) >> 24) | \
+                       ((((unsigned long long)(n) & 0xFF000000000000)) >> 48) | \
+                       ((((unsigned long long)(n) & 0xFF00000000000000)) >> 56))
+
+#define KAA_NTOHLL(n) KAA_HTONLL(n)
+
 #endif /* LEAF_SOCK_H_ */

@@ -259,7 +259,6 @@ public class Compiler {
         VelocityContext context = new VelocityContext();
 
         List<String> symbols = schema.getEnumSymbols();
-        Collections.sort(symbols);
 
         context.put("schema", schema);
         context.put("symbols", symbols);

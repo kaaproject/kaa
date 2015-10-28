@@ -133,6 +133,8 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractKaaClient.class);
     private static final long LONG_POLL_TIMEOUT = 60000L;
 
+    protected static final boolean FORCE_SYNC = true;
+
     private volatile boolean isInitialized = false;
 
     protected final ConfigurationManager configurationManager;
@@ -154,6 +156,31 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
 
     protected final KaaClientPlatformContext context;
     protected final KaaClientStateListener stateListener;
+
+    protected enum State {
+        CREATED,
+        STARTED,
+        PAUSED,
+        STOPPED
+    };
+
+    protected State clientState = State.CREATED;
+
+    protected void checkClientState(State expected, String message) {
+        if (clientState != expected) {
+            throw new KaaRuntimeException(message);
+        }
+    }
+
+    protected void checkClientStateNot(State expected, String message) {
+        if (clientState == expected) {
+            throw new KaaRuntimeException(message);
+        }
+    }
+
+    protected void setClientState(State state) {
+        clientState = state;
+    }
 
     AbstractKaaClient(KaaClientPlatformContext context, KaaClientStateListener listener) throws IOException, GeneralSecurityException {
         this.context = context;
@@ -211,6 +238,9 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
 
     @Override
     public void start() {
+        checkClientStateNot(State.STARTED, "Kaa client is already started");
+        checkClientStateNot(State.PAUSED, "Kaa client is paused, need to be resumed");
+
         checkReadiness();
 
         context.getExecutorContext().init();
@@ -244,6 +274,8 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
                 }
             }
         });
+
+        setClientState(State.STARTED);
     }
 
     private void checkReadiness() {
@@ -259,6 +291,9 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
 
     @Override
     public void stop() {
+        checkClientStateNot(State.CREATED, "Kaa client is not started");
+        checkClientStateNot(State.STOPPED, "Kaa client is already stopped");
+
         getLifeCycleExecutor().submit(new Runnable() {
             @Override
             public void run() {
@@ -279,10 +314,14 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
             }
         });
         context.getExecutorContext().stop();
+
+        setClientState(State.STOPPED);
     }
 
     @Override
     public void pause() {
+        checkClientState(State.STARTED, "Kaa client is not started (" + clientState.toString().toLowerCase() + " now)");
+
         getLifeCycleExecutor().submit(new Runnable() {
             @Override
             public void run() {
@@ -300,10 +339,14 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
                 }
             }
         });
+
+        setClientState(State.PAUSED);
     }
 
     @Override
     public void resume() {
+        checkClientState(State.PAUSED, "Kaa client isn't paused");
+
         getLifeCycleExecutor().submit(new Runnable() {
             @Override
             public void run() {
@@ -320,6 +363,8 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
                 }
             }
         });
+
+        setClientState(State.STARTED);
     }
 
     private ExecutorService getLifeCycleExecutor() {
@@ -333,6 +378,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
 
     @Override
     public void updateProfile() {
+        checkClientState(State.STARTED, "Kaa client isn't started");
         this.profileManager.updateProfile();
     }
 
@@ -353,6 +399,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
 
     @Override
     public List<Topic> getTopics() {
+        checkClientState(State.STARTED, "Kaa client isn't started");
         return this.notificationManager.getTopics();
     }
 
@@ -388,46 +435,51 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
 
     @Override
     public void subscribeToTopic(String topicId) throws UnavailableTopicException {
-        this.notificationManager.subscribeToTopic(topicId, true);
+        subscribeToTopic(topicId, FORCE_SYNC);
     }
 
     @Override
     public void subscribeToTopic(String topicId, boolean forceSync) throws UnavailableTopicException {
-        this.notificationManager.subscribeToTopic(topicId, forceSync);
+        checkClientState(State.STARTED, "Kaa client isn't started");
+        notificationManager.subscribeToTopic(topicId, forceSync);
     }
 
     @Override
     public void subscribeToTopics(List<String> topicIds) throws UnavailableTopicException {
-        this.notificationManager.subscribeToTopics(topicIds, true);
+        subscribeToTopics(topicIds, FORCE_SYNC);
     }
 
     @Override
     public void subscribeToTopics(List<String> topicIds, boolean forceSync) throws UnavailableTopicException {
-        this.notificationManager.subscribeToTopics(topicIds, forceSync);
+        checkClientState(State.STARTED, "Kaa client isn't started");
+        notificationManager.subscribeToTopics(topicIds, forceSync);
     }
 
     @Override
     public void unsubscribeFromTopic(String topicId) throws UnavailableTopicException {
-        this.notificationManager.unsubscribeFromTopic(topicId, true);
+        unsubscribeFromTopic(topicId, FORCE_SYNC);
     }
 
     @Override
     public void unsubscribeFromTopic(String topicId, boolean forceSync) throws UnavailableTopicException {
-        this.notificationManager.unsubscribeFromTopic(topicId, forceSync);
+        checkClientState(State.STARTED, "Kaa client isn't started");
+        notificationManager.unsubscribeFromTopic(topicId, forceSync);
     }
 
     @Override
     public void unsubscribeFromTopics(List<String> topicIds) throws UnavailableTopicException {
-        this.notificationManager.unsubscribeFromTopics(topicIds, true);
+        unsubscribeFromTopics(topicIds, FORCE_SYNC);
     }
 
     @Override
     public void unsubscribeFromTopics(List<String> topicIds, boolean forceSync) throws UnavailableTopicException {
+        checkClientState(State.STARTED, "Kaa client isn't started");
         this.notificationManager.unsubscribeFromTopics(topicIds, forceSync);
     }
 
     @Override
     public void syncTopicsList() {
+        checkClientState(State.STARTED, "Kaa client isn't started");
         this.notificationManager.sync();
     }
 
@@ -443,11 +495,13 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
 
     @Override
     public EventFamilyFactory getEventFamilyFactory() {
+        //TODO: on which stage do we need to check client's state, here or in a specific event factory?
         return eventFamilyFactory;
     }
 
     @Override
     public void findEventListeners(List<String> eventFQNs, FindEventListenersCallback listener) {
+        checkClientState(State.STARTED, "Kaa client isn't started");
         eventManager.findEventListeners(eventFQNs, listener);
     }
 
@@ -488,21 +542,25 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
 
     @Override
     public void attachEndpoint(EndpointAccessToken endpointAccessToken, OnAttachEndpointOperationCallback resultListener) {
+        checkClientState(State.STARTED, "Kaa client isn't started");
         endpointRegistrationManager.attachEndpoint(endpointAccessToken, resultListener);
     }
 
     @Override
     public void detachEndpoint(EndpointKeyHash endpointKeyHash, OnDetachEndpointOperationCallback resultListener) {
+        checkClientState(State.STARTED, "Kaa client isn't started");
         endpointRegistrationManager.detachEndpoint(endpointKeyHash, resultListener);
     }
 
     @Override
     public void attachUser(String userExternalId, String userAccessToken, UserAttachCallback callback) {
+        checkClientState(State.STARTED, "Kaa client isn't started");
         endpointRegistrationManager.attachUser(userExternalId, userAccessToken, callback);
     }
 
     @Override
     public void attachUser(String userVerifierToken, String userExternalId, String userAccessToken, UserAttachCallback callback) {
+        checkClientState(State.STARTED, "Kaa client isn't started");
         endpointRegistrationManager.attachUser(userVerifierToken, userExternalId, userAccessToken, callback);
     }
 

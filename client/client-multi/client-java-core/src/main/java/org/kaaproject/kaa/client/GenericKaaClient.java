@@ -472,20 +472,6 @@ public interface GenericKaaClient {
 
     /**
      * <p>
-     * Retrieves endpoint public key hash.
-     * </p>
-     *
-     * <p>
-     * Required in {@link EndpointRegistrationManager} implementation to react
-     * on detach response from Operations server.
-     * </p>
-     *
-     * @return String containing current endpoint's public key hash.
-     */
-    String getEndpointKeyHash();
-
-    /**
-     * <p>
      * Retrieves the client's private key.
      * </p>
      *
@@ -497,6 +483,20 @@ public interface GenericKaaClient {
      * @return client's private key
      */
     PrivateKey getClientPrivateKey();
+
+    /**
+     * <p>
+     * Retrieves endpoint public key hash.
+     * </p>
+     *
+     * <p>
+     * Required in {@link EndpointRegistrationManager} implementation to react
+     * on detach response from Operations server.
+     * </p>
+     *
+     * @return String containing current endpoint's public key hash.
+     */
+    String getEndpointKeyHash();
 
     /**
      * Set new access token for a current endpoint
@@ -516,8 +516,8 @@ public interface GenericKaaClient {
     /**
      * Updates with new endpoint attach request<br>
      * <br>
-     * {@link org.kaaproject.kaa.client.event.registration.OnAttachEndpointOperationCallback} is populated with {@link org.kaaproject.kaa.client.event.EndpointKeyHash} of an
-     * attached endpoint.
+     * {@link org.kaaproject.kaa.client.event.registration.OnAttachEndpointOperationCallback} is populated with
+     * {@link org.kaaproject.kaa.client.event.EndpointKeyHash} of an attached endpoint.
      *
      * @param endpointAccessToken Access token of the attaching endpoint
      * @param resultListener Listener to notify about result of the endpoint attaching

@@ -28,13 +28,13 @@ import java.util.UUID;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
+import org.kaaproject.kaa.server.operations.service.akka.actors.supervision.SupervisionStrategyFactory;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointAwareMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointStopMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.logs.LogEventPackMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.notification.ThriftNotificationMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.stats.ApplicationActorStatusResponse;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.stats.StatusRequestMessage;
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.stats.StatusRequestState;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.topic.NotificationMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.topic.TopicSubscriptionMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventDeliveryMessage;
@@ -53,6 +53,7 @@ import org.slf4j.LoggerFactory;
 import akka.actor.ActorRef;
 import akka.actor.LocalActorRef;
 import akka.actor.Props;
+import akka.actor.SupervisorStrategy;
 import akka.actor.Terminated;
 import akka.actor.UntypedActor;
 import akka.japi.Creator;
@@ -104,6 +105,11 @@ public class ApplicationActor extends UntypedActor {
         this.userVerifierSessions = new HashMap<>();
         this.applicationLogActor = getOrCreateLogActor();
         this.userVerifierActor = getOrCreateUserVerifierActor();
+    }
+
+    @Override
+    public SupervisorStrategy supervisorStrategy() {
+        return SupervisionStrategyFactory.createApplicationActorStrategy(context);
     }
 
     /**
