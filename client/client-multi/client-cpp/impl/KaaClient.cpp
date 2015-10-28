@@ -92,12 +92,22 @@ void KaaClient::start()
     checkClientStateNot(State::STARTED, "Kaa client is already started");
     checkClientStateNot(State::PAUSED, "Kaa client is paused, need to be resumed");
 
+    checkReadiness();
+
     executorContext_->getLifeCycleExecutor().add([this]
     {
         bootstrapManager_->receiveOperationsServerList();
     });
 
     setClientState(State::STARTED);
+}
+
+void KaaClient:: checkReadiness()
+{
+    if (!profileManager_ || !profileManager_->isInitialized()) {
+        KAA_LOG_ERROR("Profile manager isn't initialized: maybe profile container isn't set");
+        throw KaaException("Profile manager isn't initialized: maybe profile container isn't set");
+    }
 }
 
 void KaaClient::stop()
@@ -565,7 +575,8 @@ void KaaClient::setLogUploadStrategy(ILogUploadStrategyPtr strategy) {
 #endif
 }
 
-void KaaClient::setFailoverStrategy(IFailoverStrategyPtr strategy) {
+void KaaClient::setFailoverStrategy(IFailoverStrategyPtr strategy)
+{
     if (!strategy) {
         KAA_LOG_ERROR("Failed to set failover strategy: bad data");
         throw KaaException("Bad failover strategy");

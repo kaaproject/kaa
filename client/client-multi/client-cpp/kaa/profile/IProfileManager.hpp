@@ -20,6 +20,7 @@
 #include <boost/shared_ptr.hpp>
 
 #include "kaa/profile/IProfileContainer.hpp"
+#include "kaa/common/EndpointObjectHash.hpp"
 
 namespace kaa {
 
@@ -43,6 +44,11 @@ public:
      * Notifies server that profile has been updated.
      */
     virtual void updateProfile() = 0;
+
+    /**
+     * Check if a profile container is set what is mandatory in case of a non-default profile.
+     */
+    virtual bool isInitialized() = 0;
 
     /**
      * Returns serialized profile
