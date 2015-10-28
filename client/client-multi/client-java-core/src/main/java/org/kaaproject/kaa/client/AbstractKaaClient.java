@@ -61,6 +61,7 @@ import org.kaaproject.kaa.client.configuration.base.ConfigurationListener;
 import org.kaaproject.kaa.client.configuration.base.ConfigurationManager;
 import org.kaaproject.kaa.client.configuration.base.ResyncConfigurationManager;
 import org.kaaproject.kaa.client.configuration.storage.ConfigurationStorage;
+import org.kaaproject.kaa.client.context.ExecutorContext;
 import org.kaaproject.kaa.client.context.TransportContext;
 import org.kaaproject.kaa.client.event.DefaultEventManager;
 import org.kaaproject.kaa.client.event.EndpointAccessToken;
@@ -193,7 +194,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
         eventManager = buildEventManager(properties, kaaClientState, transportContext);
         endpointRegistrationManager = buildRegistrationManager(properties, kaaClientState, transportContext);
         logCollector = buildLogCollector(properties, kaaClientState, transportContext);
-        configurationManager = buildConfigurationManager(properties, kaaClientState, transportContext);
+        configurationManager = buildConfigurationManager(properties, kaaClientState, transportContext, context.getExecutorContext());
 
         transportContext.getRedirectionTransport().setBootstrapManager(bootstrapManager);
         transportContext.getBootstrapTransport().setBootstrapManager(bootstrapManager);
@@ -565,8 +566,9 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
         return new DefaultFailoverManager(channelManager, context.getExecutorContext());
     }
 
-    protected ResyncConfigurationManager buildConfigurationManager(KaaClientProperties properties, KaaClientState kaaClientState, TransportContext transportContext) {
-        return new ResyncConfigurationManager(properties, kaaClientState);
+    protected ResyncConfigurationManager buildConfigurationManager(KaaClientProperties properties, KaaClientState kaaClientState,
+                                                                   TransportContext transportContext, ExecutorContext executorContext) {
+        return new ResyncConfigurationManager(properties, kaaClientState, executorContext);
     }
 
     protected DefaultLogCollector buildLogCollector(KaaClientProperties properties, KaaClientState kaaClientState, TransportContext transportContext) {

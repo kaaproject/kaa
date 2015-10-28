@@ -26,6 +26,7 @@ import org.kaaproject.kaa.client.KaaClientProperties;
 import org.kaaproject.kaa.client.configuration.ConfigurationHashContainer;
 import org.kaaproject.kaa.client.configuration.ConfigurationProcessor;
 import org.kaaproject.kaa.client.configuration.storage.ConfigurationStorage;
+import org.kaaproject.kaa.client.context.ExecutorContext;
 import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.slf4j.Logger;
@@ -42,11 +43,13 @@ public abstract class AbstractConfigurationManager implements ConfigurationManag
     private ConfigurationStorage storage;
     private ConfigurationHashContainer container = new HashContainer();
     private KaaClientState state;
+    private final ExecutorContext executorContext;
 
-    public AbstractConfigurationManager(KaaClientProperties properties, KaaClientState state) {
+    public AbstractConfigurationManager(KaaClientProperties properties, KaaClientState state, ExecutorContext executorContext) {
         super();
         this.properties = properties;
         this.state = state;
+        this.executorContext = executorContext;
     }
 
     @Override
@@ -89,7 +92,16 @@ public abstract class AbstractConfigurationManager implements ConfigurationManag
                         storage.saveConfiguration(ByteBuffer.wrap(configurationData));
                         LOG.debug("Persisted configuration data from storage {}", storage);
                     }
-                    deserializer.notify(Collections.unmodifiableCollection(listeners), configurationData);
+                    executorContext.getCallbackExecutor().submit(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                deserializer.notify(Collections.unmodifiableCollection(listeners), configurationData);
+                            } catch (IOException e) {
+                                LOG.error("Unable to notify all listeners: ", e);
+                            }
+                        }
+                    });
                 } else {
                     LOG.warn("Only full resync delta is supported!");
                 }
