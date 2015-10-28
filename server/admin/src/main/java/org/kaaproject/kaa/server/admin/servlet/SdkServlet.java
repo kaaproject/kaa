@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.iharder.Base64;
 
-import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
+import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.server.admin.services.cache.CacheService;
 import org.slf4j.Logger;
@@ -56,9 +56,9 @@ public class SdkServlet extends HttpServlet implements Servlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String sdkKeyBase64 = request.getParameter(SdkPropertiesDto.SDK_KEY_PARAMETER);
+        String sdkKeyBase64 = request.getParameter(CacheService.SdkKey.SDK_KEY_PARAMETER);
         try {
-            SdkPropertiesDto key = (SdkPropertiesDto)Base64.decodeToObject(sdkKeyBase64, Base64.URL_SAFE, null);
+            CacheService.SdkKey key = (CacheService.SdkKey)Base64.decodeToObject(sdkKeyBase64, Base64.URL_SAFE, null);
             FileData sdkFile = cacheService.getSdk(key);
             response.setContentType(sdkFile.getContentType());
             ServletUtils.prepareDisposition(request, response, sdkFile.getFileName());

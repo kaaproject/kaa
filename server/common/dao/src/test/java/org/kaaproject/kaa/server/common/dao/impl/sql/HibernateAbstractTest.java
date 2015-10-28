@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ import org.kaaproject.kaa.server.common.dao.impl.LogSchemaDao;
 import org.kaaproject.kaa.server.common.dao.impl.NotificationSchemaDao;
 import org.kaaproject.kaa.server.common.dao.impl.ProfileFilterDao;
 import org.kaaproject.kaa.server.common.dao.impl.ProfileSchemaDao;
-import org.kaaproject.kaa.server.common.dao.impl.SdkKeyDao;
+import org.kaaproject.kaa.server.common.dao.impl.SdkProfileDao;
 import org.kaaproject.kaa.server.common.dao.impl.TenantDao;
 import org.kaaproject.kaa.server.common.dao.impl.TopicDao;
 import org.kaaproject.kaa.server.common.dao.impl.UserDao;
@@ -69,7 +69,7 @@ import org.kaaproject.kaa.server.common.dao.model.sql.LogSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.NotificationSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.ProfileFilter;
 import org.kaaproject.kaa.server.common.dao.model.sql.ProfileSchema;
-import org.kaaproject.kaa.server.common.dao.model.sql.SdkKey;
+import org.kaaproject.kaa.server.common.dao.model.sql.SdkProfile;
 import org.kaaproject.kaa.server.common.dao.model.sql.Tenant;
 import org.kaaproject.kaa.server.common.dao.model.sql.Topic;
 import org.kaaproject.kaa.server.common.dao.model.sql.User;
@@ -117,7 +117,7 @@ public abstract class HibernateAbstractTest {
     @Autowired
     protected UserVerifierDao<UserVerifier> verifierDao;
     @Autowired
-    protected SdkKeyDao<SdkKey> sdkKeyDao;
+    protected SdkProfileDao<SdkProfile> sdkProfileDao;
 
     protected Tenant generateTenant() {
         LOG.debug("Generate tenant...");
@@ -501,21 +501,20 @@ public abstract class HibernateAbstractTest {
         return verifierDao.save(verifier);
     }
 
-    protected SdkKey generateSdkKey(Application app, String token, byte[] key) {
-        SdkKey sdkKey = new SdkKey();
-        if (app == null) {
-            app = generateApplication(null);
+    protected SdkProfile generateSdkProfile(Application application, String token) {
+        SdkProfile entity = new SdkProfile();
+
+        if (application == null) {
+            application = this.generateApplication(null);
         }
-        sdkKey.setApplication(app);
+        entity.setApplication(application);
+
         if (token == null) {
             token = "token";
         }
-        sdkKey.setToken(token);
-        if (key == null) {
-            key = new byte[] {1, 2, 3, 4, 5};
-        }
-        sdkKey.setData(key);
-        return sdkKeyDao.save(sdkKey);
+        entity.setToken(token);
+
+        return sdkProfileDao.save(entity);
     }
 
 }

@@ -27,8 +27,7 @@ import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
-import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
+import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftException;
@@ -53,9 +52,10 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
         NotificationSchemaDto notificationSchema = createUserNotificationSchema(application.getId());
         LogSchemaDto logSchema = createLogSchema(application.getId());
 
-        Sdk sdk = client.generateSdk(getSdkProperties(SdkPlatform.JAVA, application.getId(),
+        Sdk sdk = client.generateSdk(getSdkProfile(application.getId(),
                 profileSchema.getMajorVersion(), configSchema.getMajorVersion(), notificationSchema.getMajorVersion(),
-                null, logSchema.getMajorVersion(), null));
+                null, logSchema.getMajorVersion(), null),
+                org.kaaproject.kaa.server.common.thrift.gen.control.SdkPlatform.JAVA);
         Assert.assertNotNull(sdk);
         Assert.assertFalse(strIsEmpty(sdk.getFileName()));
         Assert.assertNotNull(sdk.getData());
@@ -79,12 +79,13 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
         ApplicationEventFamilyMapDto aefMap = createApplicationEventFamilyMap(application.getId(), null, 1);
         List<String> aefMapIds = Collections.singletonList(aefMap.getId());
 
-        Sdk sdk = client.generateSdk(getSdkProperties(SdkPlatform.JAVA,
+        Sdk sdk = client.generateSdk(getSdkProfile(
                 application.getId(),
                 profileSchema.getMajorVersion(),
                 configSchema.getMajorVersion(),
                 notificationSchema.getMajorVersion(),
-                aefMapIds, logSchema.getMajorVersion(), null));
+                aefMapIds, logSchema.getMajorVersion(), null),
+                org.kaaproject.kaa.server.common.thrift.gen.control.SdkPlatform.JAVA);
 
         Assert.assertNotNull(sdk);
         Assert.assertFalse(strIsEmpty(sdk.getFileName()));
@@ -109,12 +110,13 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
         ApplicationEventFamilyMapDto aefMap = createApplicationEventFamilyMap(application.getId(), null, 1);
         List<String> aefMapIds = Collections.singletonList(aefMap.getId());
 
-        Sdk sdk = client.generateSdk(getSdkProperties(SdkPlatform.ANDROID,
+        Sdk sdk = client.generateSdk(getSdkProfile(
                 application.getId(),
                 profileSchema.getMajorVersion(),
                 configSchema.getMajorVersion(),
                 notificationSchema.getMajorVersion(),
-                aefMapIds, logSchema.getMajorVersion(), null));
+                aefMapIds, logSchema.getMajorVersion(), null),
+                org.kaaproject.kaa.server.common.thrift.gen.control.SdkPlatform.ANDROID);
 
         Assert.assertNotNull(sdk);
         Assert.assertFalse(strIsEmpty(sdk.getFileName()));
@@ -136,11 +138,12 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
         NotificationSchemaDto notificationSchema = createUserNotificationSchema(application.getId());
         LogSchemaDto logSchema = createLogSchema(application.getId());
 
-        Sdk sdk = client.generateSdk(getSdkProperties(SdkPlatform.CPP, application.getId(),
+        Sdk sdk = client.generateSdk(getSdkProfile(application.getId(),
                 profileSchema.getMajorVersion(),
                 configSchema.getMajorVersion(),
                 notificationSchema.getMajorVersion(),
-                null, logSchema.getMajorVersion(), null));
+                null, logSchema.getMajorVersion(), null),
+                org.kaaproject.kaa.server.common.thrift.gen.control.SdkPlatform.CPP);
         Assert.assertNotNull(sdk);
         Assert.assertFalse(strIsEmpty(sdk.getFileName()));
         Assert.assertNotNull(sdk.getData());
@@ -164,12 +167,13 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
         ApplicationEventFamilyMapDto aefMap = createApplicationEventFamilyMap(application.getId(), null, 1);
         List<String> aefMapIds = Collections.singletonList(aefMap.getId());
 
-        Sdk sdk = client.generateSdk(getSdkProperties(SdkPlatform.CPP,
+        Sdk sdk = client.generateSdk(getSdkProfile(
                 application.getId(),
                 profileSchema.getMajorVersion(),
                 configSchema.getMajorVersion(),
                 notificationSchema.getMajorVersion(),
-                aefMapIds, logSchema.getMajorVersion(), null));
+                aefMapIds, logSchema.getMajorVersion(), null),
+                org.kaaproject.kaa.server.common.thrift.gen.control.SdkPlatform.CPP);
 
         Assert.assertNotNull(sdk);
         Assert.assertFalse(strIsEmpty(sdk.getFileName()));
@@ -191,11 +195,12 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
         NotificationSchemaDto notificationSchema = createUserNotificationSchema(application.getId());
         LogSchemaDto logSchema = createLogSchema(application.getId());
 
-        Sdk sdk = client.generateSdk(getSdkProperties(SdkPlatform.C, application.getId(),
+        Sdk sdk = client.generateSdk(getSdkProfile(application.getId(),
                 profileSchema.getMajorVersion(),
                 configSchema.getMajorVersion(),
                 notificationSchema.getMajorVersion(),
-                null, logSchema.getMajorVersion(), null));
+                null, logSchema.getMajorVersion(), null),
+                org.kaaproject.kaa.server.common.thrift.gen.control.SdkPlatform.C);
         Assert.assertNotNull(sdk);
         Assert.assertFalse(strIsEmpty(sdk.getFileName()));
         Assert.assertNotNull(sdk.getData());
@@ -219,12 +224,13 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
         ApplicationEventFamilyMapDto aefMap = createApplicationEventFamilyMap(application.getId(), null, 1);
         List<String> aefMapIds = Collections.singletonList(aefMap.getId());
 
-        Sdk sdk = client.generateSdk(getSdkProperties(SdkPlatform.C,
+        Sdk sdk = client.generateSdk(getSdkProfile(
                 application.getId(),
                 profileSchema.getMajorVersion(),
                 configSchema.getMajorVersion(),
                 notificationSchema.getMajorVersion(),
-                aefMapIds, logSchema.getMajorVersion(), null));
+                aefMapIds, logSchema.getMajorVersion(), null),
+                org.kaaproject.kaa.server.common.thrift.gen.control.SdkPlatform.C);
 
         Assert.assertNotNull(sdk);
         Assert.assertFalse(strIsEmpty(sdk.getFileName()));
@@ -240,7 +246,8 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
      */
     @Test(expected = ControlThriftException.class)
     public void testGenerateJavaSdkWithInvalidApplication() throws TException, IOException {
-        client.generateSdk(getSdkProperties(SdkPlatform.JAVA, "123", 1, 1, 1, null, 0, null));
+        client.generateSdk(getSdkProfile("123", 1, 1, 1, null, 0, null),
+                org.kaaproject.kaa.server.common.thrift.gen.control.SdkPlatform.JAVA);
     }
 
     /**
@@ -253,7 +260,8 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
     @Test(expected = ControlThriftException.class)
     public void testGenerateJavaSdkWithInvalidProfileSchema() throws TException, IOException {
         ApplicationDto application = createApplication();
-        client.generateSdk(getSdkProperties(SdkPlatform.JAVA, application.getId(), 2, 2, 2, null, 0, null));
+        client.generateSdk(getSdkProfile(application.getId(), 2, 2, 2, null, 0, null),
+                org.kaaproject.kaa.server.common.thrift.gen.control.SdkPlatform.JAVA);
     }
 
     /**
@@ -267,8 +275,9 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
     public void testGenerateJavaSdkWithInvalidConfigurationSchema() throws TException, IOException {
         ApplicationDto application = createApplication();
         ProfileSchemaDto profileSchema = createProfileSchema(application.getId());
-        client.generateSdk(getSdkProperties(SdkPlatform.JAVA, application.getId(),
-                profileSchema.getMajorVersion(), 2, 2, null, 0, null));
+        client.generateSdk(getSdkProfile(application.getId(),
+                profileSchema.getMajorVersion(), 2, 2, null, 0, null),
+                org.kaaproject.kaa.server.common.thrift.gen.control.SdkPlatform.JAVA);
     }
 
     /**
@@ -283,17 +292,19 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
         ApplicationDto application = createApplication();
         ProfileSchemaDto profileSchema = createProfileSchema(application.getId());
         ConfigurationSchemaDto configSchema = createConfigurationSchema(application.getId());
-        client.generateSdk(getSdkProperties(SdkPlatform.JAVA, application.getId(), profileSchema.getMajorVersion(),
-                configSchema.getMajorVersion(), 2, null, 0, null));
+        client.generateSdk(getSdkProfile(application.getId(), profileSchema.getMajorVersion(),
+                configSchema.getMajorVersion(), 2, null, 0, null),
+                org.kaaproject.kaa.server.common.thrift.gen.control.SdkPlatform.JAVA);
     }
 
 
-    private DataStruct getSdkProperties(org.kaaproject.kaa.common.dto.admin.SdkPlatform sdkPlatform, String appId,
+    private DataStruct getSdkProfile(String appId,
                                         Integer profileSchemaVersion, Integer configSchemaVersion,
                                         Integer notificationSchemaVersion, List<String> aefMapIds,
                                         Integer logSchemaVersion, String defaultVerifierToken) {
-        return ThriftDtoConverter.toDataStruct(new SdkPropertiesDto(appId, configSchemaVersion, profileSchemaVersion,
-                notificationSchemaVersion, logSchemaVersion, sdkPlatform, aefMapIds, defaultVerifierToken, null));
+        return ThriftDtoConverter.toDataStruct(new SdkProfileDto(appId, configSchemaVersion, profileSchemaVersion,
+                notificationSchemaVersion, logSchemaVersion, aefMapIds, defaultVerifierToken, null,
+                "devuser", 100000L, "someName"));
     }
 
 
