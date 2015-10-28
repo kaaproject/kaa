@@ -82,9 +82,18 @@ public interface ProfileManager {
      *
      */
     byte[] getSerializedProfile() throws IOException;
-    
+
     /**
      * Force sync of updated profile with server
      */
     void updateProfile();
+
+    /**
+     * Retrieves ready-to-use state.
+     *
+     * A user should provide a profile container in case of a non-default profile schema.
+     *
+     * @return True if ready.
+     */
+    boolean isInitialized();
 }

@@ -241,6 +241,8 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
         checkClientStateNot(State.STARTED, "Kaa client is already started");
         checkClientStateNot(State.PAUSED, "Kaa client is paused, need to be resumed");
 
+        checkReadiness();
+
         context.getExecutorContext().init();
         getLifeCycleExecutor().submit(new Runnable() {
             @Override
@@ -274,6 +276,17 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
         });
 
         setClientState(State.STARTED);
+    }
+
+    private void checkReadiness() {
+        if (profileManager == null || !profileManager.isInitialized()) {
+            LOG.error("Profile manager isn't initialized: maybe profile container isn't set");
+            if (stateListener != null) {
+                stateListener.onStartFailure(new KaaException("Profile manager isn't initialized: maybe profile container isn't set"));
+            } else {
+                throw new KaaRuntimeException("Profile manager isn't initialized: maybe profile container isn't set");
+            }
+        }
     }
 
     @Override
