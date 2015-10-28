@@ -43,11 +43,13 @@ public class BaseKaaClient extends AbstractKaaClient implements KaaClient {
 
     @Override
     public void addLogRecord(Log record) {
+        checkClientState(State.STARTED, "Kaa client is not started");
         logCollector.addLogRecord(record);
     }
 
     @Override
     public Configuration getConfiguration() {
+        checkClientState(State.STARTED, "Kaa client is not started");
         return configurationManager.getConfiguration();
     }
 }

@@ -89,20 +89,17 @@ void KaaClient::init(int options /*= KAA_DEFAULT_OPTIONS*/)
 
 void KaaClient::start()
 {
+    checkClientStateNot(State::STARTED, "Kaa client is already started");
+    checkClientStateNot(State::PAUSED, "Kaa client is paused, need to be resumed");
+
     checkReadiness();
 
     executorContext_->getLifeCycleExecutor().add([this]
     {
-#ifdef KAA_USE_CONFIGURATION
-        auto configHash = configurationPersistenceManager_->getConfigurationHash().getHashDigest();
-        if (configHash.empty()) {
-            SequenceNumber sn = { 0, 0, 1 };
-            status_->setAppSeqNumber(sn);
-            setDefaultConfiguration();
-        }
-#endif
         bootstrapManager_->receiveOperationsServerList();
     });
+
+    setClientState(State::STARTED);
 }
 
 void KaaClient:: checkReadiness()
@@ -115,28 +112,41 @@ void KaaClient:: checkReadiness()
 
 void KaaClient::stop()
 {
+    checkClientStateNot(State::CREATED, "Kaa client is not started");
+    checkClientStateNot(State::STOPPED, "Kaa client is already stopped");
+
     executorContext_->getLifeCycleExecutor().add([this]
                                                 {
                                                     channelManager_->shutdown();
                                                 });
     executorContext_->stop();
+
+    setClientState(State::STOPPED);
 }
 
 void KaaClient::pause()
 {
+    checkClientState(State::STARTED, "Kaa client is not started");
+
     executorContext_->getLifeCycleExecutor().add([this]
                                                 {
                                                     status_->save();
                                                     channelManager_->pause();
                                                 });
+
+    setClientState(State::PAUSED);
 }
 
 void KaaClient::resume()
 {
+    checkClientState(State::PAUSED, "Kaa client isn't paused");
+
     executorContext_->getLifeCycleExecutor().add([this]
                                                 {
                                                     channelManager_->resume();
                                                 });
+
+    setClientState(State::STARTED);
 }
 
 void KaaClient::initKaaConfiguration()
@@ -149,6 +159,10 @@ void KaaClient::initKaaConfiguration()
     configurationProcessor_->addOnProcessedObserver(*configurationManager_);
     configurationProcessor_->subscribeForUpdates(*configurationManager_);
     configurationManager_->subscribeForConfigurationChanges(*configurationPersistenceManager_);
+
+    SequenceNumber sn = { 0, 0, 1 };
+    status_->setAppSeqNumber(sn);
+    setDefaultConfiguration();
 #endif
 }
 
@@ -333,6 +347,7 @@ void KaaClient::removeConfigurationListener(IConfigurationReceiver &receiver) {
 
 const KaaRootConfiguration& KaaClient::getConfiguration() {
 #ifdef KAA_USE_CONFIGURATION
+    checkClientState(State::STARTED, "Kaa client isn't started");
     return configurationManager_->getConfiguration();
 #else
     throw KaaException("Failed to subscribe to get configuration. Configuration subsystem is disabled");
@@ -356,6 +371,7 @@ void KaaClient::removeTopicListListener(INotificationTopicListListener& listener
 
 Topics KaaClient::getTopics() {
 #ifdef KAA_USE_NOTIFICATIONS
+    checkClientState(State::STARTED, "Kaa client isn't started");
     return notificationManager_->getTopics();
 #else
     throw KaaException("Failed to get topics. Notification subsystem is disabled");
@@ -394,6 +410,7 @@ void KaaClient::removeNotificationListener(const std::string& topidId, INotifica
 
 void KaaClient::subscribeToTopic(const std::string& id, bool forceSync) {
 #ifdef KAA_USE_NOTIFICATIONS
+    checkClientState(State::STARTED, "Kaa client isn't started");
     notificationManager_->subscribeToTopic(id, forceSync);
 #else
     throw KaaException("Failed to subscribe to topics. Notification subsystem is disabled");
@@ -402,6 +419,7 @@ void KaaClient::subscribeToTopic(const std::string& id, bool forceSync) {
 
 void KaaClient::subscribeToTopics(const std::list<std::string>& idList, bool forceSync) {
 #ifdef KAA_USE_NOTIFICATIONS
+    checkClientState(State::STARTED, "Kaa client isn't started");
     notificationManager_->subscribeToTopics(idList, forceSync);
 #else
     throw KaaException("Failed to subscribe to topics. Notification subsystem is disabled");
@@ -409,6 +427,7 @@ void KaaClient::subscribeToTopics(const std::list<std::string>& idList, bool for
 }
 void KaaClient::unsubscribeFromTopic(const std::string& id, bool forceSync) {
 #ifdef KAA_USE_NOTIFICATIONS
+    checkClientState(State::STARTED, "Kaa client isn't started");
     notificationManager_->unsubscribeFromTopic(id, forceSync);
 #else
     throw KaaException("Failed to unsubscribe to topics. Notification subsystem is disabled");
@@ -417,6 +436,7 @@ void KaaClient::unsubscribeFromTopic(const std::string& id, bool forceSync) {
 
 void KaaClient::unsubscribeFromTopics(const std::list<std::string>& idList, bool forceSync) {
 #ifdef KAA_USE_NOTIFICATIONS
+    checkClientState(State::STARTED, "Kaa client isn't started");
     notificationManager_->unsubscribeFromTopics(idList, forceSync);
 #else
     throw KaaException("Failed to unsubscribe to topics. Notification subsystem is disabled");
@@ -424,6 +444,7 @@ void KaaClient::unsubscribeFromTopics(const std::list<std::string>& idList, bool
 }
 void KaaClient::syncTopicSubscriptions() {
 #ifdef KAA_USE_NOTIFICATIONS
+    checkClientState(State::STARTED, "Kaa client isn't started");
     notificationManager_->sync();
 #else
     throw KaaException("Failed to get synchronized . Notification subsystem is disabled");
@@ -433,6 +454,7 @@ void KaaClient::syncTopicSubscriptions() {
 void KaaClient::attachEndpoint(const std::string&  endpointAccessToken
                               , IAttachEndpointCallbackPtr listener) {
 #ifdef KAA_USE_EVENTS
+    checkClientState(State::STARTED, "Kaa client isn't started");
     return registrationManager_->attachEndpoint(endpointAccessToken, listener);
 #else
     throw KaaException("Failed to attach endpoint. Event subsystem is disabled");
@@ -442,6 +464,7 @@ void KaaClient::attachEndpoint(const std::string&  endpointAccessToken
 void KaaClient::detachEndpoint(const std::string&  endpointKeyHash
                               , IDetachEndpointCallbackPtr listener) {
 #ifdef KAA_USE_EVENTS
+    checkClientState(State::STARTED, "Kaa client isn't started");
     return registrationManager_->detachEndpoint(endpointKeyHash, listener);
 #else
     throw KaaException("Failed to detach endpoint. Event subsystem is disabled");
@@ -451,6 +474,7 @@ void KaaClient::detachEndpoint(const std::string&  endpointKeyHash
 void KaaClient::attachUser(const std::string& userExternalId, const std::string& userAccessToken
                           , IUserAttachCallbackPtr listener) {
 #ifdef KAA_USE_EVENTS
+    checkClientState(State::STARTED, "Kaa client isn't started");
     return registrationManager_->attachUser(userExternalId, userAccessToken, listener);
 #else
     throw KaaException("Failed to attach user. Event subsystem is disabled");
@@ -460,6 +484,7 @@ void KaaClient::attachUser(const std::string& userExternalId, const std::string&
 void KaaClient::attachUser(const std::string& userExternalId, const std::string& userAccessToken
                           , const std::string& userVerifierToken, IUserAttachCallbackPtr listener) {
 #ifdef KAA_USE_EVENTS
+    checkClientState(State::STARTED, "Kaa client isn't started");
     return registrationManager_->attachUser(userExternalId, userAccessToken, userVerifierToken, listener);
 #else
     throw KaaException("Failed to attach user. Event subsystem is disabled");
@@ -485,14 +510,17 @@ bool KaaClient::isAttachedToUser() {
 EventFamilyFactory& KaaClient::getEventFamilyFactory()
 {
 #ifdef KAA_USE_EVENTS
+    //TODO: on which stage do we need to check client's state, here or in a specific event factory?
     return *eventFamilyFactory_;
 #else
     throw KaaException("Failed to retrieve EventFamilyFactory. Event subsystem is disabled");
 #endif
 }
 
-std::int32_t KaaClient::findEventListeners(const std::list<std::string>& eventFQNs, IFetchEventListenersPtr listener) {
+std::int32_t KaaClient::findEventListeners(const std::list<std::string>& eventFQNs, IFetchEventListenersPtr listener)
+{
 #ifdef KAA_USE_EVENTS
+    checkClientState(State::STARTED, "Kaa client isn't started");
     return eventManager_->findEventListeners(eventFQNs, listener);
 #else
     throw KaaException("Failed to find event listeners. Event subsystem is disabled");
@@ -525,6 +553,7 @@ std::string KaaClient::getEndpointAccessToken()
 
 void KaaClient::addLogRecord(const KaaUserLogRecord& record) {
 #ifdef KAA_USE_LOGGING
+    checkClientState(State::STARTED, "Kaa client isn't started");
     return logCollector_->addLogRecord(record);
 #else
     throw KaaException("Failed to add log record. Logging subsystem is disabled");
@@ -580,8 +609,27 @@ IKaaDataDemultiplexer& KaaClient::getBootstrapDemultiplexer()
 
 void KaaClient::updateProfile()
 {
-   profileManager_->updateProfile();
+    checkClientState(State::STARTED, "Kaa client isn't started");
+    profileManager_->updateProfile();
 }
 }
 
+void KaaClient::setClientState(State state)
+{
+    clientState_ = state;
+}
+
+void KaaClient::checkClientState(State expected, const std::string& message)
+{
+    if (clientState_ != expected) {
+        throw KaaException(message);
+    }
+}
+
+void KaaClient::checkClientStateNot(State unexpected, const std::string& message)
+{
+    if (clientState_ == unexpected) {
+        throw KaaException(message);
+    }
+}
 

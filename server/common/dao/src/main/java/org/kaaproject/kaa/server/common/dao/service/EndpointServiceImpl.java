@@ -33,6 +33,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.kaaproject.kaa.common.dto.ChangeDto;
+import org.kaaproject.kaa.common.dto.ChangeNotificationDto;
 import org.kaaproject.kaa.common.dto.ChangeType;
 import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
@@ -113,9 +114,9 @@ public class EndpointServiceImpl implements EndpointService {
 
     @Override
     @Transactional
-    public void removeEndpointGroupById(String id) {
+    public ChangeNotificationDto removeEndpointGroupById(String id) {
         validateSqlId(id, "Can't remove endpoint group by id. Incorrect id " + id);
-        removeEndpointGroup(id, false);
+        return removeEndpointGroup(id, false);
     }
 
     @Override
@@ -415,8 +416,9 @@ public class EndpointServiceImpl implements EndpointService {
      * @param id          endpoint group id
      * @param forceRemove boolean flag define if its removing groups by application.
      */
-    private void removeEndpointGroup(String id, boolean forceRemove) {
+    private ChangeNotificationDto removeEndpointGroup(String id, boolean forceRemove) {
         EndpointGroup endpointGroup = endpointGroupDao.findById(id);
+        ChangeNotificationDto changeDto = null;
         if (endpointGroup != null) {
             if (endpointGroup.getWeight() != 0 || forceRemove) {
                 LOG.debug("Cascade delete endpoint group with profile filter and configurations.");
@@ -424,11 +426,18 @@ public class EndpointServiceImpl implements EndpointService {
 //                configurationDao.removeByEndpointGroupId(id);
 //                TODO: need to add to history about deleted configurations and profile filters
                 endpointGroupDao.removeById(id);
-                addHistory(endpointGroup.toDto(), ChangeType.REMOVE_GROUP);
+                EndpointGroupDto groupDto = endpointGroup.toDto();
+                HistoryDto historyDto = addHistory(groupDto, ChangeType.REMOVE_GROUP);
+                changeDto = new ChangeNotificationDto();
+                changeDto.setAppId(endpointGroup.getApplicationId());
+                changeDto.setAppSeqNumber(historyDto.getSequenceNumber());
+                changeDto.setGroupId(groupDto.getId());
+                changeDto.setGroupSeqNumber(groupDto.getSequenceNumber());
             } else {
                 LOG.warn("Can't remove default endpoint group by id [{}]", id);
             }
         }
+        return changeDto;
     }
 
     @Override

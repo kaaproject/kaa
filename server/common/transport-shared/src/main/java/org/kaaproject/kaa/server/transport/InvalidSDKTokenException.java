@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,24 @@
  * limitations under the License.
  */
 
-package org.kaaproject.kaa.client.configuration.delta;
+package org.kaaproject.kaa.server.transport;
 
 /**
- * Field with this delta type uses the default value ({@link DeltaType} implementation)
- *
- * @author Yaroslav Zeygerman
+ * Class that represents exception that is thrown when client makes request
+ * and uses invalid SDK token
  *
  */
-public class DefaultDeltaType extends EmptyDeltaType {
+public class InvalidSDKTokenException extends Exception {
 
-    DefaultDeltaType() {
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -6241500436883054355L;
 
+    /**
+     * Instantiates a new invalid sdk token exception
+     *
+     * @param message the message
+     */
+    public InvalidSDKTokenException() {
+        super();
     }
-
-    @Override
-    public boolean isDefault() {
-        return true;
-    }
-
 }

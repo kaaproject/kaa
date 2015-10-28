@@ -249,8 +249,15 @@ kaa_error_t kaa_tcp_channel_create(kaa_transport_channel_interface_t *self
     /*
      * Creates Kaa TCP parser.
      */
+
     kaa_tcp_channel->parser = (kaatcp_parser_t *) KAA_MALLOC(sizeof(kaatcp_parser_t));
-    if (!kaa_tcp_channel->parser) {
+
+    if (kaa_tcp_channel->parser) {
+        kaa_tcp_channel->parser->payload_buffer_size = KAATCP_PARSER_MAX_MESSAGE_LENGTH;
+        kaa_tcp_channel->parser->payload = (char *) KAA_MALLOC(kaa_tcp_channel->parser->payload_buffer_size);
+    }
+
+    if (!kaa_tcp_channel->parser || !kaa_tcp_channel->parser->payload) {
         KAA_LOG_ERROR(logger, KAA_ERR_NOMEM, "Failed to create Kaa TCP parser");
         kaa_tcp_channel_destroy_context(kaa_tcp_channel);
         return KAA_ERR_NOMEM;
@@ -408,7 +415,7 @@ kaa_error_t kaa_tcp_channel_destroy_context(void *context)
  */
 kaa_error_t kaa_tcp_channel_init(void *context, kaa_transport_context_t *transport_context)
 {
-    KAA_RETURN_IF_NIL4(context, transport_context, transport_context->platform_protocol, transport_context->bootstrap_manager, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL5(context, transport_context, transport_context->kaa_context, transport_context->kaa_context->platform_protocol, transport_context->kaa_context->bootstrap_manager, KAA_ERR_BADPARAM);
     kaa_tcp_channel_t *channel = (kaa_tcp_channel_t *) context;
     channel->transport_context = *transport_context;
     return KAA_ERR_NONE;
@@ -647,7 +654,7 @@ void kaa_tcp_channel_kaasync_message_callback(void *context, kaatcp_kaasync_t *m
 
     if (!zipped && !encrypted) {
         kaa_error_t error_code =
-                kaa_platform_protocol_process_server_sync(channel->transport_context.platform_protocol
+                kaa_platform_protocol_process_server_sync(channel->transport_context.kaa_context->platform_protocol
                                                         , message->sync_request
                                                         , message->sync_request_size);
         if (error_code)
@@ -685,7 +692,7 @@ void kaa_tcp_channel_pingresp_message_callback(void *context)
  */
 static kaa_error_t kaa_tcp_channel_on_access_point_failed(kaa_tcp_channel_t *self)
 {
-    kaa_error_t error_code = kaa_bootstrap_manager_on_access_point_failed(self->transport_context.bootstrap_manager
+    kaa_error_t error_code = kaa_bootstrap_manager_on_access_point_failed(self->transport_context.kaa_context->bootstrap_manager
                                                             , &self->protocol_id
                                                             , self->channel_operation_type);
     if (error_code != KAA_ERR_NOT_FOUND) {
@@ -757,7 +764,7 @@ kaa_error_t kaa_tcp_channel_authorize(kaa_tcp_channel_t *self)
     char *sync_buffer = NULL;
     size_t sync_size = 0;
 
-    error_code = kaa_platform_protocol_serialize_client_sync(self->transport_context.platform_protocol
+    error_code = kaa_platform_protocol_serialize_client_sync(self->transport_context.kaa_context->platform_protocol
                                                            , &serialize_info
                                                            , &sync_buffer
                                                            , &sync_size);
@@ -1053,7 +1060,7 @@ kaa_error_t kaa_tcp_channel_write_pending_services(kaa_tcp_channel_t *self
     char *sync_buffer = NULL;
     size_t sync_size = 0;
 
-    error_code = kaa_platform_protocol_serialize_client_sync(self->transport_context.platform_protocol
+    error_code = kaa_platform_protocol_serialize_client_sync(self->transport_context.kaa_context->platform_protocol
                                                            , &serialize_info
                                                            , &sync_buffer
                                                            , &sync_size);

@@ -260,11 +260,14 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
 
     @Override
     public synchronized void onTransportConnectionInfoUpdated(TransportConnectionInfo newServer) {
+        LOG.debug("Transport connection info updated for server: {}", newServer);
+
         if (isShutdown) {
             LOG.warn("Can't process server update. Channel manager is down");
             return;
         }
         if (newServer.getServerType() == ServerType.OPERATIONS) {
+            LOG.info("Adding new operations server: {}", newServer);
             lastServers.put(newServer.getTransportId(), newServer);
         }
 
@@ -324,7 +327,6 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
                         System.exit(EXIT_FAILURE);
                         break;
                 }
-//                onTransportConnectionInfoUpdated(nextConnectionInfo);
             } else {
                 LOG.trace("Can't find next bootstrap server");
                 FailoverDecision decision = failoverManager.onFailover(FailoverStatus.BOOTSTRAP_SERVERS_NA);

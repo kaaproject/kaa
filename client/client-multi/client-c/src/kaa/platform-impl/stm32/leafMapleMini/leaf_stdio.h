@@ -25,4 +25,6 @@
 
 #include <stdio.h>
 
+#define KAA_EXIT(e) exit(e)
+
 #endif /* LEAF_STDIO_H_ */

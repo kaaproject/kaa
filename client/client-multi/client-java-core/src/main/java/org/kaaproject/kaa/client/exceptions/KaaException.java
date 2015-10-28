@@ -17,7 +17,7 @@ package org.kaaproject.kaa.client.exceptions;
 
 /**
  * Basic exception of Kaa client SDK.
- * 
+ *
  * @author Andrew Shvayka
  *
  */
