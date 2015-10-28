@@ -133,6 +133,8 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractKaaClient.class);
     private static final long LONG_POLL_TIMEOUT = 60000L;
 
+    protected static final boolean FORCE_SYNC = true;
+
     private volatile boolean isInitialized = false;
 
     protected final ConfigurationManager configurationManager;
@@ -420,40 +422,40 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
 
     @Override
     public void subscribeToTopic(String topicId) throws UnavailableTopicException {
-        subscribeToTopic(topicId, true);
+        subscribeToTopic(topicId, FORCE_SYNC);
     }
 
     @Override
     public void subscribeToTopic(String topicId, boolean forceSync) throws UnavailableTopicException {
         checkClientState(State.STARTED, "Kaa client isn't started");
-        this.notificationManager.subscribeToTopic(topicId, forceSync);
+        notificationManager.subscribeToTopic(topicId, forceSync);
     }
 
     @Override
     public void subscribeToTopics(List<String> topicIds) throws UnavailableTopicException {
-        subscribeToTopics(topicIds, true);
+        subscribeToTopics(topicIds, FORCE_SYNC);
     }
 
     @Override
     public void subscribeToTopics(List<String> topicIds, boolean forceSync) throws UnavailableTopicException {
         checkClientState(State.STARTED, "Kaa client isn't started");
-        this.notificationManager.subscribeToTopics(topicIds, forceSync);
+        notificationManager.subscribeToTopics(topicIds, forceSync);
     }
 
     @Override
     public void unsubscribeFromTopic(String topicId) throws UnavailableTopicException {
-        unsubscribeFromTopic(topicId, true);
+        unsubscribeFromTopic(topicId, FORCE_SYNC);
     }
 
     @Override
     public void unsubscribeFromTopic(String topicId, boolean forceSync) throws UnavailableTopicException {
         checkClientState(State.STARTED, "Kaa client isn't started");
-        this.notificationManager.unsubscribeFromTopic(topicId, forceSync);
+        notificationManager.unsubscribeFromTopic(topicId, forceSync);
     }
 
     @Override
     public void unsubscribeFromTopics(List<String> topicIds) throws UnavailableTopicException {
-        unsubscribeFromTopics(topicIds, true);
+        unsubscribeFromTopics(topicIds, FORCE_SYNC);
     }
 
     @Override
