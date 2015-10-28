@@ -28,6 +28,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.PageLinkDto;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoEndpointProfile;
@@ -95,7 +96,7 @@ public class EndpointProfileMongoDaoTest extends AbstractMongoTest {
         }
         int lim = Integer.valueOf(TEST_LIMIT);
         PageLinkDto pageLink = new PageLinkDto(TEST_ENDPOINT_GROUP_ID, TEST_LIMIT, TEST_OFFSET);
-        EndpointProfilesPageDto found = endpointProfileDao.findBodyByEndpointGroupId(pageLink);
+        EndpointProfilesBodyDto found = endpointProfileDao.findBodyByEndpointGroupId(pageLink);
         Assert.assertFalse(found.getEndpointProfilesBody().isEmpty());
         Assert.assertEquals(lim, found.getEndpointProfilesBody().size());
     }
@@ -107,7 +108,7 @@ public class EndpointProfileMongoDaoTest extends AbstractMongoTest {
         }
         int lim = Integer.valueOf(TEST_LIMIT);
         PageLinkDto pageLink = new PageLinkDto(TEST_ENDPOINT_GROUP_ID, TEST_LIMIT, TEST_OFFSET);
-        EndpointProfilesPageDto found = endpointProfileDao.findBodyByEndpointGroupId(pageLink);
+        EndpointProfilesBodyDto found = endpointProfileDao.findBodyByEndpointGroupId(pageLink);
         Assert.assertFalse(found.getEndpointProfilesBody().isEmpty());
         Assert.assertEquals(lim, found.getEndpointProfilesBody().size());
     }

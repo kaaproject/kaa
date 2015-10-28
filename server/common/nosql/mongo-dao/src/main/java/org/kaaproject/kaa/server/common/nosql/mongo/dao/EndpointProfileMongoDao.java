@@ -22,6 +22,7 @@ import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
 
 import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.PageLinkDto;
 import org.kaaproject.kaa.server.common.dao.DaoConstants;
@@ -87,10 +88,10 @@ public class EndpointProfileMongoDao extends AbstractMongoDao<MongoEndpointProfi
     }
 
     @Override
-    public EndpointProfilesPageDto findBodyByEndpointGroupId(PageLinkDto pageLink) {
+    public EndpointProfilesBodyDto findBodyByEndpointGroupId(PageLinkDto pageLink) {
         LOG.debug("Find endpoint profiles body by endpoint group id [{}] ", pageLink.getEndpointGroupId());
-        EndpointProfilesPageDto endpointProfilesPageDto = new EndpointProfilesPageDto();
-        List<EndpointProfileBodyDto> endpointProfilesBody = new ArrayList<>();
+        EndpointProfilesBodyDto endpointProfilesBodyDto = new EndpointProfilesBodyDto();
+        List<EndpointProfileBodyDto> profilesBody = new ArrayList<>();
         String profile = "profile";
         String next = null;
         int lim = Integer.valueOf(pageLink.getLimit());
@@ -113,12 +114,12 @@ public class EndpointProfileMongoDao extends AbstractMongoDao<MongoEndpointProfi
             if (epList.getProfile() != null) {
                 endpointProfileBodyDto.setProfile(epList.getProfile().toString());
             }
-            endpointProfilesBody.add(endpointProfileBodyDto);
+            profilesBody.add(endpointProfileBodyDto);
         }
         pageLink.setNext(next);
-        endpointProfilesPageDto.setPageLinkDto(pageLink);
-        endpointProfilesPageDto.setEndpointProfilesBody(endpointProfilesBody);
-        return endpointProfilesPageDto;
+        endpointProfilesBodyDto.setPageLinkDto(pageLink);
+        endpointProfilesBodyDto.setEndpointProfilesBody(profilesBody);
+        return endpointProfilesBodyDto;
     }
 
     @Override

@@ -16,21 +16,29 @@
 
 package org.kaaproject.kaa.common.dto;
 
-import java.io.Serializable;
 import java.util.List;
 
-public class EndpointProfilesBodyDto implements Serializable {
+public class EndpointProfilesBodyDto extends AbstractEndpointProfilesDto {
 
     private static final long serialVersionUID = -3301431577852472525L;
 
     private List<EndpointProfileBodyDto> endpointProfilesBody;
     private String next;
 
-    public EndpointProfilesBodyDto() {}
+    public EndpointProfilesBodyDto() {
+    }
 
     public EndpointProfilesBodyDto(List<EndpointProfileBodyDto> endpointProfileBody, String next) {
        this.endpointProfilesBody = endpointProfileBody;
        this.next = next;
+    }
+
+    public boolean hasEndpointBodies() {
+        boolean result = false;
+        if (endpointProfilesBody != null) {
+            result = !endpointProfilesBody.isEmpty();
+        }
+        return result;
     }
 
     public List<EndpointProfileBodyDto> getEndpointProfilesBody() {

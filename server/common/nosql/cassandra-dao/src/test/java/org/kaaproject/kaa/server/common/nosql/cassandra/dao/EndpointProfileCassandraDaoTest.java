@@ -23,6 +23,7 @@ import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.PageLinkDto;
@@ -92,11 +93,11 @@ public class EndpointProfileCassandraDaoTest extends AbstractCassandraTest {
         String id = endpointProfileList.get(0).getCfGroupStates().get(0).getEndpointGroupId();
         int lim = Integer.valueOf(TEST_LIMIT);
         PageLinkDto pageLink = new PageLinkDto(id, TEST_LIMIT, TEST_OFFSET);
-        EndpointProfilesPageDto found = endpointProfileDao.findBodyByEndpointGroupId(pageLink);
+        EndpointProfilesBodyDto found = endpointProfileDao.findBodyByEndpointGroupId(pageLink);
         Assert.assertFalse(found.getEndpointProfilesBody().isEmpty());
         Assert.assertEquals(lim, found.getEndpointProfilesBody().size());
         pageLink.setApplicationId(TEST_APPID);
-        EndpointProfilesPageDto foundbyAppId = endpointProfileDao.findBodyByEndpointGroupId(pageLink);
+        EndpointProfilesBodyDto foundbyAppId = endpointProfileDao.findBodyByEndpointGroupId(pageLink);
         Assert.assertFalse(foundbyAppId.getEndpointProfilesBody().isEmpty());
         Assert.assertEquals(lim, foundbyAppId.getEndpointProfilesBody().size());
     }
@@ -110,11 +111,11 @@ public class EndpointProfileCassandraDaoTest extends AbstractCassandraTest {
         String id = endpointProfileList.get(0).getNfGroupStates().get(0).getEndpointGroupId();
         int lim = Integer.valueOf(TEST_LIMIT);
         PageLinkDto pageLink = new PageLinkDto(id, TEST_LIMIT, TEST_OFFSET);
-        EndpointProfilesPageDto found = endpointProfileDao.findBodyByEndpointGroupId(pageLink);
+        EndpointProfilesBodyDto found = endpointProfileDao.findBodyByEndpointGroupId(pageLink);
         Assert.assertFalse(found.getEndpointProfilesBody().isEmpty());
         Assert.assertEquals(lim, found.getEndpointProfilesBody().size());
         pageLink.setApplicationId(TEST_APPID);
-        EndpointProfilesPageDto foundbyAppId = endpointProfileDao.findBodyByEndpointGroupId(pageLink);
+        EndpointProfilesBodyDto foundbyAppId = endpointProfileDao.findBodyByEndpointGroupId(pageLink);
         Assert.assertFalse(foundbyAppId.getEndpointProfilesBody().isEmpty());
         Assert.assertEquals(lim, foundbyAppId.getEndpointProfilesBody().size());
     }

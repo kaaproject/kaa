@@ -24,6 +24,7 @@ import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.PageLinkDto;
@@ -48,7 +49,7 @@ public interface EndpointService {
      * @param pageLink the page link dto
      * @return the endpoint profiles page dto
      */
-    EndpointProfilesPageDto findEndpointProfileBodyByEndpointGroupId(PageLinkDto pageLink);
+    EndpointProfilesBodyDto findEndpointProfileBodyByEndpointGroupId(PageLinkDto pageLink);
 
     /**
      * Find endpoint groups by application id.

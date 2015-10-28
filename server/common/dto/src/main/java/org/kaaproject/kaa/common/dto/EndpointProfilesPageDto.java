@@ -60,14 +60,6 @@ public class EndpointProfilesPageDto implements Serializable {
         return result;
     }
 
-    public boolean hasEndpointBodies() {
-        boolean result = false;
-        if (endpointProfilesBody != null) {
-            result = !endpointProfilesBody.isEmpty();
-        }
-        return result;
-    }
-
     public List<EndpointProfileBodyDto> getEndpointProfilesBody() {
         return endpointProfilesBody;
     }
