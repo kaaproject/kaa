@@ -89,7 +89,7 @@ void KaaClient::init(int options /*= KAA_DEFAULT_OPTIONS*/)
 
 void KaaClient::start()
 {
-    checkClientStateNot(State::STARTED, "Kaa client is already run");
+    checkClientStateNot(State::STARTED, "Kaa client is already started");
     checkClientStateNot(State::PAUSED, "Kaa client is paused, need to be resumed");
 
     executorContext_->getLifeCycleExecutor().add([this]
