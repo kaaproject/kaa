@@ -183,7 +183,8 @@ public class KaaAdminController {
         EndpointProfilesPageDto endpointProfilesPageDto = kaaAdminService.getEndpointProfileByEndpointGroupId(endpointGroupId, limit, offset);
         if (endpointProfilesPageDto.hasEndpointProfiles()) {
             PageLinkDto pageLinkDto = createNext(endpointProfilesPageDto.getPageLinkDto(), request);
-            endpointProfilesPageDto.setPageLinkDto(pageLinkDto);
+            endpointProfilesPageDto.setNext(pageLinkDto.getNext());
+            endpointProfilesPageDto.setPageLinkDto(null);
         }
         return endpointProfilesPageDto;
     }
