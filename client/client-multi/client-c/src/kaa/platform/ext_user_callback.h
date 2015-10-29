@@ -100,6 +100,37 @@ typedef struct {
 } kaa_attachment_status_listeners_t;
 
 
+/**
+ * @brief .
+ *
+ * @param[in]   context              Callback's context.
+ * @param[in]   endpoint_key_hash    .
+ *
+ * @return  Error code
+ */
+typedef kaa_error_t (*on_endpoint_attached_fn)(void *context, const char *endpoint_key_hash);
+
+
+/**
+ * @brief .
+ *
+ * @param[in]   context              Callback's context.
+ *
+ * @return  Error code
+ */
+typedef kaa_error_t (*on_endpoint_detached_fn)(void *context);
+
+
+/**
+ * @brief .
+ */
+typedef struct {
+    void                     *context;
+    on_endpoint_attached_fn   on_attached;
+    on_endpoint_detached_fn   on_detached;
+} kaa_endpoint_status_listener_t;
+
+
 #ifdef __cplusplus
 }    /* extern "C" */
 #endif
