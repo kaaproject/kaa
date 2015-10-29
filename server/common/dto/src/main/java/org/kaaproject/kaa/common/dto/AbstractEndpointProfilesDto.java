@@ -18,13 +18,13 @@ package org.kaaproject.kaa.common.dto;
 
 import java.io.Serializable;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
-@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class AbstractEndpointProfilesDto implements Serializable {
 
     private static final long serialVersionUID = 3355356067164498361L;
 
+    @JsonIgnore
     protected PageLinkDto pageLinkDto;
     protected String next;
 

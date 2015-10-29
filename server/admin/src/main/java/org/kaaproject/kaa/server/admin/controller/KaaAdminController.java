@@ -184,7 +184,6 @@ public class KaaAdminController {
         if (endpointProfilesPageDto.hasEndpointProfiles()) {
             PageLinkDto pageLinkDto = createNext(endpointProfilesPageDto.getPageLinkDto(), request);
             endpointProfilesPageDto.setNext(pageLinkDto.getNext());
-            endpointProfilesPageDto.setPageLinkDto(null);
         }
         return endpointProfilesPageDto;
     }
@@ -203,7 +202,6 @@ public class KaaAdminController {
         if (endpointProfilesBodyDto.hasEndpointBodies()) {
             PageLinkDto pageLinkDto = createNext(endpointProfilesBodyDto.getPageLinkDto(), request);
             endpointProfilesBodyDto.setNext(pageLinkDto.getNext());
-            endpointProfilesBodyDto.setPageLinkDto(null);
         }
         return endpointProfilesBodyDto;
     }
