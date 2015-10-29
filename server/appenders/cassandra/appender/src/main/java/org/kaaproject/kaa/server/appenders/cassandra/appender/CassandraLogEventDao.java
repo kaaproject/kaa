@@ -84,69 +84,69 @@ public class CassandraLogEventDao implements LogEventDao {
     private CassandraConfig configuration;
 
     public CassandraLogEventDao(CassandraConfig configuration) throws UnknownHostException {
-        if (configuration != null) {
-            LOG.info("Init cassandra log event dao...");
-            this.configuration = configuration;
-            keyspaceName = configuration.getKeySpace();
-            List<InetSocketAddress> clusterNodes = new ArrayList<>();
-            List<CassandraServer> nodes = configuration.getCassandraServers();
-            for (CassandraServer node : nodes) {
-                clusterNodes.add(new InetSocketAddress(InetAddress.getByName(node.getHost()), node.getPort()));
-            }
-
-            Cluster.Builder builder = Cluster.builder().addContactPointsWithPorts(clusterNodes);
-            LOG.info("Init cassandra cluster with nodes {}", Arrays.toString(clusterNodes.toArray()));
-
-            CassandraCredential cc = configuration.getCassandraCredential();
-            if (cc != null) {
-                builder.withCredentials(cc.getUser(), cc.getPassword());
-                LOG.trace("Init cassandra cluster with username {} and password {}", cc.getUser(), cc.getPassword());
-            }
-
-            CassandraSocketOption option = configuration.getCassandraSocketOption();
-            if (option != null) {
-                SocketOptions so = new SocketOptions();
-                if (option.getSoLinger() != null) {
-                    so.setSoLinger(option.getSoLinger());
-                }
-                if (option.getKeepAlive() != null) {
-                    so.setKeepAlive(option.getKeepAlive());
-                }
-                if (option.getReuseAddress()) {
-                    so.setReuseAddress(option.getReuseAddress());
-                }
-                if (option.getTcpNoDelay() != null) {
-                    so.setTcpNoDelay(option.getTcpNoDelay());
-                }
-                if (option.getConnectionTimeout() != null) {
-                    so.setConnectTimeoutMillis(option.getConnectionTimeout());
-                }
-                if (option.getReadTimeout() != null) {
-                    so.setReadTimeoutMillis(option.getReadTimeout());
-                }
-                if (option.getReceiveBufferSize() != null) {
-                    so.setReceiveBufferSize(option.getReceiveBufferSize());
-                }
-                if (option.getSendBufferSize() != null) {
-                    so.setSendBufferSize(option.getSendBufferSize());
-                }
-                builder.withSocketOptions(so);
-                LOG.trace("Init cassandra cluster with socket options {}", option);
-            }
-
-            CassandraWriteConsistencyLevel ccLevel = configuration.getCassandraWriteConsistencyLevel();
-            if (ccLevel != null) {
-                writeConsistencyLevel = ConsistencyLevel.valueOf(ccLevel.name());
-                LOG.trace("Init cassandra cluster with consistency level {}", ccLevel.name());
-            }
-            CassandraCompression cassandraCompression = configuration.getCassandraCompression();
-            if (cassandraCompression != null) {
-                builder.withCompression(ProtocolOptions.Compression.valueOf(cassandraCompression.name()));
-                LOG.trace("Init cassandra cluster with compression {}", cassandraCompression.name());
-            }
-            batchType = configuration.getCassandraBatchType();
-            cluster = builder.build();
+        if (configuration == null)
+            throw new IllegalArgumentException("Configuration shouldn't be null");
+        LOG.info("Init cassandra log event dao...");
+        this.configuration = configuration;
+        keyspaceName = configuration.getKeySpace();
+        List<InetSocketAddress> clusterNodes = new ArrayList<>();
+        List<CassandraServer> nodes = configuration.getCassandraServers();
+        for (CassandraServer node : nodes) {
+            clusterNodes.add(new InetSocketAddress(InetAddress.getByName(node.getHost()), node.getPort()));
         }
+
+        Cluster.Builder builder = Cluster.builder().addContactPointsWithPorts(clusterNodes);
+        LOG.info("Init cassandra cluster with nodes {}", Arrays.toString(clusterNodes.toArray()));
+
+        CassandraCredential cc = configuration.getCassandraCredential();
+        if (cc != null) {
+            builder.withCredentials(cc.getUser(), cc.getPassword());
+            LOG.trace("Init cassandra cluster with username {} and password {}", cc.getUser(), cc.getPassword());
+        }
+
+        CassandraSocketOption option = configuration.getCassandraSocketOption();
+        if (option != null) {
+            SocketOptions so = new SocketOptions();
+            if (option.getSoLinger() != null) {
+                so.setSoLinger(option.getSoLinger());
+            }
+            if (option.getKeepAlive() != null) {
+                so.setKeepAlive(option.getKeepAlive());
+            }
+            if (option.getReuseAddress()) {
+                so.setReuseAddress(option.getReuseAddress());
+            }
+            if (option.getTcpNoDelay() != null) {
+                so.setTcpNoDelay(option.getTcpNoDelay());
+            }
+            if (option.getConnectionTimeout() != null) {
+                so.setConnectTimeoutMillis(option.getConnectionTimeout());
+            }
+            if (option.getReadTimeout() != null) {
+                so.setReadTimeoutMillis(option.getReadTimeout());
+            }
+            if (option.getReceiveBufferSize() != null) {
+                so.setReceiveBufferSize(option.getReceiveBufferSize());
+            }
+            if (option.getSendBufferSize() != null) {
+                so.setSendBufferSize(option.getSendBufferSize());
+            }
+            builder.withSocketOptions(so);
+            LOG.trace("Init cassandra cluster with socket options {}", option);
+        }
+
+        CassandraWriteConsistencyLevel ccLevel = configuration.getCassandraWriteConsistencyLevel();
+        if (ccLevel != null) {
+            writeConsistencyLevel = ConsistencyLevel.valueOf(ccLevel.name());
+            LOG.trace("Init cassandra cluster with consistency level {}", ccLevel.name());
+        }
+        CassandraCompression cassandraCompression = configuration.getCassandraCompression();
+        if (cassandraCompression != null) {
+            builder.withCompression(ProtocolOptions.Compression.valueOf(cassandraCompression.name()));
+            LOG.trace("Init cassandra cluster with compression {}", cassandraCompression.name());
+        }
+        batchType = configuration.getCassandraBatchType();
+        cluster = builder.build();
     }
 
     @Override

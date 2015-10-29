@@ -48,4 +48,8 @@ class ProfileSerializer {
             throw new RuntimeException("Profile is not set!");
         }
     }
+
+    boolean isDefault() {
+        return false;
+    }
 }

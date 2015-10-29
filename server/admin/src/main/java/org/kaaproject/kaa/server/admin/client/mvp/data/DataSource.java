@@ -384,7 +384,7 @@ public class DataSource {
     
     public void generateSimpleSchemaForm(String fileItemName,
             final AsyncCallback<RecordField> callback) {
-        rpcService.generateSimpleSchemaForm(fileItemName, 
+        rpcService.generateSimpleSchemaForm(fileItemName,
                 new DataCallback<RecordField>(callback) {
                     @Override
                     protected void onResult(RecordField result) {
@@ -394,7 +394,7 @@ public class DataSource {
     
     public void generateCommonSchemaForm(String fileItemName,
             final AsyncCallback<RecordField> callback) {
-        rpcService.generateCommonSchemaForm(fileItemName, 
+        rpcService.generateCommonSchemaForm(fileItemName,
                 new DataCallback<RecordField>(callback) {
                     @Override
                     protected void onResult(RecordField result) {
@@ -404,7 +404,7 @@ public class DataSource {
     
     public void generateConfigurationSchemaForm(String fileItemName,
             final AsyncCallback<RecordField> callback) {
-        rpcService.generateConfigurationSchemaForm(fileItemName, 
+        rpcService.generateConfigurationSchemaForm(fileItemName,
                 new DataCallback<RecordField>(callback) {
                     @Override
                     protected void onResult(RecordField result) {
@@ -414,7 +414,7 @@ public class DataSource {
     
     public void generateEcfSchemaForm(String fileItemName,
             final AsyncCallback<RecordField> callback) {
-        rpcService.generateEcfSchemaForm(fileItemName, 
+        rpcService.generateEcfSchemaForm(fileItemName,
                 new DataCallback<RecordField>(callback) {
                     @Override
                     protected void onResult(RecordField result) {
@@ -538,7 +538,7 @@ public class DataSource {
     public void editConfigurationSchemaForm(
             ConfigurationSchemaDto configurationSchema,
             final AsyncCallback<ConfigurationSchemaDto> callback) {
-        rpcService.editConfigurationSchemaForm(configurationSchema, 
+        rpcService.editConfigurationSchemaForm(configurationSchema,
                 new DataCallback<ConfigurationSchemaDto>(callback) {
                     @Override
                     protected void onResult(ConfigurationSchemaDto result) {
@@ -615,7 +615,7 @@ public class DataSource {
 
     public void editLogSchemaForm(LogSchemaDto logSchema, 
             final AsyncCallback<LogSchemaDto> callback) {
-        rpcService.editLogSchemaForm(logSchema, 
+        rpcService.editLogSchemaForm(logSchema,
                 new DataCallback<LogSchemaDto>(callback) {
                     @Override
                     protected void onResult(LogSchemaDto result) {
@@ -993,7 +993,7 @@ public class DataSource {
     
     public void getRecordDataFromFile(String schema, String fileItemName,
                     final AsyncCallback<RecordField> callback) {
-        rpcService.getRecordDataFromFile(schema, fileItemName, 
+        rpcService.getRecordDataFromFile(schema, fileItemName,
                 new DataCallback<RecordField>(callback) {
                     @Override
                     protected void onResult(RecordField result) {
@@ -1020,6 +1020,15 @@ public class DataSource {
             protected void onResult(List<LogAppenderDto> result) {
             }
         });
+    }
+
+    public void getLogAppender(String appenderId, final AsyncCallback<LogAppenderDto> callback){
+        rpcService.getRestLogAppender(appenderId,
+                new DataCallback<LogAppenderDto>(callback) {
+                    @Override
+                    protected void onResult(LogAppenderDto result) {
+                    }
+                });
     }
 
     public void getLogAppenderForm(String appenderId,
@@ -1084,6 +1093,15 @@ public class DataSource {
     public void getUserVerifierForm(String userVerifierId,
             final AsyncCallback<UserVerifierDto> callback) {
         rpcService.getUserVerifierForm(userVerifierId,
+                new DataCallback<UserVerifierDto>(callback) {
+                    @Override
+                    protected void onResult(UserVerifierDto result) {
+                    }
+                });
+    }
+
+    public void getUserVerifier(String userVerifierId, final AsyncCallback<UserVerifierDto> callback){
+        rpcService.getRestUserVerifier(userVerifierId,
                 new DataCallback<UserVerifierDto>(callback) {
             @Override
             protected void onResult(UserVerifierDto result) {

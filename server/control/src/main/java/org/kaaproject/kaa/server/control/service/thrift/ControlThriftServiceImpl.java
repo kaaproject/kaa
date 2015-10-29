@@ -29,6 +29,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.avro.Schema;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.thrift.TException;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.common.dto.AbstractSchemaDto;
@@ -47,6 +48,7 @@ import org.kaaproject.kaa.common.dto.HasId;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
+import org.kaaproject.kaa.common.dto.PageLinkDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TenantAdminDto;
@@ -203,6 +205,54 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
     private volatile OperationsServerResolver resolver;
 
     private Object zkLock = new Object();
+
+    /*
+     * (non-Javadoc)
+     * @see
+     * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
+     * .Iface#getEndpointProfileByEndpointGroupId()
+     */
+    /* CLI method */
+    @Override
+    public DataStruct getEndpointProfileByEndpointGroupId(DataStruct pageLink) throws TException {
+        return toGenericDataStruct(endpointService.findEndpointProfileByEndpointGroupId(ThriftDtoConverter.<PageLinkDto>toGenericDto(pageLink)));
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see
+     * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
+     * .Iface#getEndpointProfileBodyByEndpointGroupId()
+     */
+    /* CLI method */
+    @Override
+    public DataStruct getEndpointProfileBodyByEndpointGroupId(DataStruct pageLink) throws TException {
+        return toGenericDataStruct(endpointService.findEndpointProfileBodyByEndpointGroupId(ThriftDtoConverter.<PageLinkDto>toGenericDto(pageLink)));
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see
+     * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
+     * .Iface#getEndpointProfileByKeyHash(java.lang.String)
+     */
+    /* CLI method */
+    @Override
+    public DataStruct getEndpointProfileByKeyHash(String endpointProfileKeyHash) throws TException {
+        return toDataStruct(endpointService.findEndpointProfileByKeyHash(Base64.decodeBase64(endpointProfileKeyHash)));
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see
+     * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
+     * .Iface#getEndpointProfileBodyByKeyHash(java.lang.String)
+     */
+    /* CLI method */
+    @Override
+    public DataStruct getEndpointProfileBodyByKeyHash(String endpointProfileKeyHash) throws TException {
+        return toGenericDataStruct(endpointService.findEndpointProfileBodyByKeyHash(Base64.decodeBase64(endpointProfileKeyHash)));
+    }
 
     /*
      * (non-Javadoc)

@@ -121,7 +121,7 @@ public class EndpointActorMessageProcessor {
 
     private final Map<UUID, UserVerificationResponseMessage> userAttachResponseMap;
 
-    private final int inactivityTimeout;
+    private final long inactivityTimeout;
 
     protected EndpointActorMessageProcessor(AkkaContext context, String appToken, EndpointObjectHash key, String actorKey) {
         super();
