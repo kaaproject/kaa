@@ -248,7 +248,7 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
         }
         Statement deleteEpsByAppId = delete().from(EP_BY_APP_ID_COLUMN_FAMILY_NAME).where(eq(EP_BY_APP_ID_APPLICATION_ID_PROPERTY, appId));
         executeBatch(deleteEps, deleteEpsByAppId);
-        LOG.trace("Execute statements {}, {}, {} like batch", deleteEps, deleteEpsByAppId);
+        LOG.trace("Execute statements {}, {} like batch", deleteEps, deleteEpsByAppId);
     }
 
     @Override
