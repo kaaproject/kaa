@@ -34,6 +34,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.Base64Util;
+import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
 import org.kaaproject.kaa.server.operations.service.akka.actors.core.user.LocalUserActorMessageProcessor;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.EndpointEventTimeoutMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventReceiveMessage;
@@ -94,6 +95,7 @@ public class UserActorMessageProcessorTest {
     private RouteTableAddress address2;
     private RouteTableAddress address3;
 
+    private AkkaContext akkaContextMock;
     private CacheService cacheServiceMock;
     private EventService eventServiceMock;
     private ActorContext actorContextMock;
@@ -105,7 +107,13 @@ public class UserActorMessageProcessorTest {
         eventServiceMock = mock(EventService.class);
         originatorRefMock = mock(ActorRef.class);
         actorContextMock = mock(ActorContext.class);
-        messageProcessor = spy(new LocalUserActorMessageProcessor(cacheServiceMock, eventServiceMock, USER_ID, TENANT_ID));
+        
+        akkaContextMock = mock(AkkaContext.class);
+        when(akkaContextMock.getCacheService()).thenReturn(cacheServiceMock);
+        when(akkaContextMock.getEventService()).thenReturn(eventServiceMock);
+        when(akkaContextMock.getEventTimeout()).thenReturn(60 * 1000L);
+        
+        messageProcessor = spy(new LocalUserActorMessageProcessor(akkaContextMock, USER_ID, TENANT_ID));
         doReturn("dummyPathName").when(messageProcessor).getActorPathName(any(ActorRef.class));
         Mockito.doNothing().when(messageProcessor).scheduleTimeoutMessage(Mockito.any(ActorContext.class), Mockito.any(EndpointEvent.class));
         Mockito.doNothing().when(messageProcessor).sendEventToLocal(Mockito.any(ActorContext.class), Mockito.any(EndpointEventReceiveMessage.class));
