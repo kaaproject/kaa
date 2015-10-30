@@ -110,7 +110,7 @@ kaa_error_t kaa_user_manager_set_attachment_listeners(kaa_user_manager_t *self
  * @brief .
  *
  * @param[in]   self                     The user manager instance.
- * @param[in]   endpoint_access_token    .
+ * @param[in]   endpoint_access_token    Null-terminated string representing endpoint access token.
  *
  * @return      Error code.
  */
@@ -120,8 +120,8 @@ kaa_error_t kaa_user_manager_attach_endpoint(kaa_user_manager_t *self, const cha
 /**
  * @brief .
  *
- * @param[in]   self                     The user manager instance.
- * @param[in]   endpoint_access_token    .
+ * @param[in]   self                 The user manager instance.
+ * @param[in]   endpoint_hash_key    Unique endpoint id.
  *
  * @return      Error code.
  */

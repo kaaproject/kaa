@@ -102,10 +102,10 @@ typedef struct {
 
 
 /**
- * @brief .
+ * @brief Notifies about attach attempt of endpoint was sucssed.
  *
  * @param[in]   context              Callback's context.
- * @param[in]   endpoint_key_hash    .
+ * @param[in]   endpoint_key_hash    endpoint_id.
  *
  * @return  Error code
  */
@@ -113,7 +113,7 @@ typedef kaa_error_t (*on_endpoint_attached_fn)(void *context, const kaa_endpoint
 
 
 /**
- * @brief .
+ * @brief Notifies about detach attempt of endpoint was sucssed.
  *
  * @param[in]   context              Callback's context.
  *
@@ -123,12 +123,12 @@ typedef kaa_error_t (*on_endpoint_detached_fn)(void *context);
 
 
 /**
- * @brief .
+ * @brief Interface for the endpoint attachment status receiver.
  */
 typedef struct {
-    void                     *context;
-    on_endpoint_attached_fn   on_attached;
-    on_endpoint_detached_fn   on_detached;
+    void                     *context;     /**< Context to pass to all functions below. */
+    on_endpoint_attached_fn   on_attached; /**< Called when the current endpoint attach another endpoint to the user. */
+    on_endpoint_detached_fn   on_detached; /**< Called when the current endpoint detach another endpoint from the user. */
 } kaa_endpoint_status_listener_t;
 
 
