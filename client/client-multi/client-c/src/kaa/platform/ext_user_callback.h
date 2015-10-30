@@ -123,12 +123,24 @@ typedef kaa_error_t (*on_endpoint_detached_fn)(void *context);
 
 
 /**
+ * @brief Notifies about attach attempt was failed.
+ *
+ * @param[in]   context       Callback's context.
+ *
+ * @return  Error code
+ */
+typedef kaa_error_t (*on_endpoint_failed_fn)(void *context);
+
+
+/**
  * @brief Interface for the endpoint attachment status receiver.
  */
 typedef struct {
-    void                     *context;     /**< Context to pass to all functions below. */
-    on_endpoint_attached_fn   on_attached; /**< Called when the current endpoint attach another endpoint to the user. */
-    on_endpoint_detached_fn   on_detached; /**< Called when the current endpoint detach another endpoint from the user. */
+    void                    *context;     /**< Context to pass to all functions below. */
+    on_endpoint_attached_fn  on_attached; /**< Called when the current endpoint attach another endpoint to the user. */
+    on_endpoint_detached_fn  on_detached; /**< Called when the current endpoint detach another endpoint from the user. */
+    on_endpoint_failed_fn    on_attach_failed;  /**< Called the attach attempt is failed. */
+    on_endpoint_failed_fn    on_detach_failed;  /**< Called the detach attempt is failed. */
 } kaa_endpoint_status_listener_t;
 
 

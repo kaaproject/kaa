@@ -104,14 +104,12 @@ static void dtor_endpoint_info(void *data)
 
 static bool match_predicate_endpoint_info(void *data, void *context)
 {
-    KAA_RETURN_IF_NIL(data, false);
+    KAA_RETURN_IF_NIL2(data, context, false);
 
     kaa_endpoint_info_t *endpoint_item = (kaa_endpoint_info_t*)data;
     uint16_t request_id = *(uint16_t*)context;
 
-    if (request_id == endpoint_item->request_id)
-        return true;
-    return false;
+    return request_id == endpoint_item->request_id;
 }
 
 static void destroy_user_info(user_info_t *user_info)
@@ -238,8 +236,8 @@ kaa_error_t kaa_user_manager_attach_endpoint(kaa_user_manager_t *self, const cha
 {
     KAA_RETURN_IF_NIL2(self, endpoint_access_token, KAA_ERR_BADPARAM);
 
-    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to attach endpoint by access token "
-                                              "(endpoint_access_token = \"%s\")"
+    KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Going to attach endpoint by access token "
+                                             "(endpoint_access_token = \"%s\")"
                                               , endpoint_access_token);
 
     kaa_endpoint_info_t *info = KAA_CALLOC(1, sizeof(kaa_endpoint_info_t));
@@ -278,7 +276,7 @@ kaa_error_t kaa_user_manager_detach_endpoint(kaa_user_manager_t *self, const kaa
 {
     KAA_RETURN_IF_NIL2(self, endpoint_hash_key, KAA_ERR_BADPARAM);
 
-    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Detach endpoint");
+    KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Going to detach endpoint");
 
 
     kaa_endpoint_info_t *info = KAA_CALLOC(1, sizeof(kaa_endpoint_info_t));
@@ -630,8 +628,12 @@ kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self
 
                     if (result_code == USER_RESULT_FAILURE) {
                         kaa_list_node_t *node = kaa_list_find_next(kaa_list_begin(self->attach_endpoints), match_predicate_endpoint_info, (void*)&request_id);
-                        if (node)
+                        if (node) {
+                            kaa_endpoint_info_t *info = (kaa_endpoint_info_t*)kaa_list_get_data(node);
+                            if (info->listener && info->listener->on_attach_failed)
+                                info->listener->on_attach_failed(info->listener->context);
                             kaa_list_remove_at(self->attach_endpoints, node, dtor_endpoint_info);
+                        }
                         continue;
                     }
 
@@ -670,8 +672,12 @@ kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self
 
                     if (result_code == USER_RESULT_FAILURE) {
                         kaa_list_node_t *node = kaa_list_find_next(kaa_list_begin(self->detach_endpoints), match_predicate_endpoint_info, (void*)&request_id);
-                        if (node)
+                        if (node) {
+                            kaa_endpoint_info_t *info = (kaa_endpoint_info_t*)kaa_list_get_data(node);
+                            if (info->listener && info->listener->on_detach_failed)
+                                info->listener->on_detach_failed(info->listener->context);
                             kaa_list_remove_at(self->detach_endpoints, node, dtor_endpoint_info);
+                        }
                         continue;
                     }
 
