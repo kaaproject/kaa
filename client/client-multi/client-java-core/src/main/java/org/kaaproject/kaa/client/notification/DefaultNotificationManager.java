@@ -50,7 +50,7 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
     private Map<String, Topic> topics = new HashMap<String, Topic>();
 
     private final ExecutorContext executorContext;
-    private final NotificationDeserializer deserializer = new NotificationDeserializer();
+    private final NotificationDeserializer deserializer;
     private final Set<NotificationListener> mandatoryListeners = new HashSet<NotificationListener>();
     private final Map<String, List<NotificationListener>> optionalListeners = new HashMap<String, List<NotificationListener>>();
     private final Set<NotificationTopicListListener> topicsListeners = new HashSet<NotificationTopicListListener>();
@@ -65,6 +65,7 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
         this.state = state;
         this.transport = transport;
         this.executorContext = executorContext;
+        this.deserializer = new NotificationDeserializer(executorContext);
 
         List<Topic> topicList = state.getTopics();
 

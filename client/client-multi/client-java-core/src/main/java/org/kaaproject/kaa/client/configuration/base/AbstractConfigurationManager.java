@@ -37,7 +37,7 @@ public abstract class AbstractConfigurationManager implements ConfigurationManag
 
     private final Set<ConfigurationListener> listeners = Collections.newSetFromMap(new ConcurrentHashMap<ConfigurationListener, Boolean>());
     private final KaaClientProperties properties;
-    protected final ConfigurationDeserializer deserializer = new ConfigurationDeserializer();
+    protected final ConfigurationDeserializer deserializer;
 
     private volatile byte[] configurationData;
     private ConfigurationStorage storage;
@@ -50,6 +50,7 @@ public abstract class AbstractConfigurationManager implements ConfigurationManag
         this.properties = properties;
         this.state = state;
         this.executorContext = executorContext;
+        this.deserializer = new ConfigurationDeserializer(executorContext);
     }
 
     @Override
@@ -92,16 +93,7 @@ public abstract class AbstractConfigurationManager implements ConfigurationManag
                         storage.saveConfiguration(ByteBuffer.wrap(configurationData));
                         LOG.debug("Persisted configuration data from storage {}", storage);
                     }
-                    executorContext.getCallbackExecutor().submit(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                deserializer.notify(Collections.unmodifiableCollection(listeners), configurationData);
-                            } catch (IOException e) {
-                                LOG.error("Unable to notify all listeners: ", e);
-                            }
-                        }
-                    });
+                    deserializer.notify(Collections.unmodifiableCollection(listeners), configurationData);
                 } else {
                     LOG.warn("Only full resync delta is supported!");
                 }
