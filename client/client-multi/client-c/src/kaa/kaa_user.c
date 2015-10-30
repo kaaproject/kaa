@@ -38,6 +38,8 @@
 #define EXTERNAL_SYSTEM_ENDPOINT_ATTACH_FIELD      0x01
 #define EXTERNAL_SYSTEM_ENDPOINT_DETACH_FIELD      0x02
 
+#define USER_SYNC_ENDPOINT_ID_OPTION               0x01
+
 
 
 extern kaa_transport_channel_interface_t *kaa_channel_manager_get_transport_channel(kaa_channel_manager_t *self
@@ -637,7 +639,7 @@ kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self
                         continue;
                     }
 
-                    if (options & 0x01) {
+                    if (options & USER_SYNC_ENDPOINT_ID_OPTION) {
                         memcpy(endpoint_id, reader->current, KAA_ENDPOINT_ID_LENGTH);
                         reader->current  += KAA_ENDPOINT_ID_LENGTH;
                         remaining_length -= KAA_ENDPOINT_ID_LENGTH;
