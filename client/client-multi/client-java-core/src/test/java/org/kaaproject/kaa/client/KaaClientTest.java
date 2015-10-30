@@ -185,6 +185,10 @@ public class KaaClientTest {
     @Test
     public void failureOnResumeTest() {
         client.start();
+        Mockito.verify(stateListener, Mockito.timeout(1000)).onStarted();
+        client.pause();
+        Mockito.verify(stateListener, Mockito.timeout(1000)).onPaused();
+
         KaaInternalChannelManager channelManager = Mockito.mock(KaaInternalChannelManager.class);
         Mockito.doThrow(new RuntimeException()).when(channelManager).resume();
         ReflectionTestUtils.setField(client, "channelManager", channelManager);
