@@ -70,6 +70,7 @@ import org.kaaproject.kaa.common.dto.UserDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
+import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.common.core.algorithms.generation.DefaultRecordGenerationAlgorithmImpl;
 import org.kaaproject.kaa.server.common.core.configuration.BaseDataFactory;
 import org.kaaproject.kaa.server.common.core.configuration.OverrideDataFactory;
@@ -125,6 +126,8 @@ public class AbstractTest {
     protected TopicService topicService;
     @Autowired
     protected UserService userService;
+    @Autowired
+    protected UserVerifierService verifierService;
     @Autowired
     protected UserConfigurationService userConfigurationService;
     @Autowired
@@ -184,11 +187,9 @@ public class AbstractTest {
     /**
      * Gets the resource as string.
      *
-     * @param path
-     *            the path
+     * @param path the path
      * @return the resource as string
-     * @throws java.io.IOException
-     *             Signals that an I/O exception has occurred.
+     * @throws java.io.IOException Signals that an I/O exception has occurred.
      */
     protected static String getResourceAsString(String path) throws IOException {
         URL url = Thread.currentThread().getContextClassLoader().getResource(path);
@@ -293,7 +294,7 @@ public class AbstractTest {
     }
 
     protected List<ConfigurationDto> generateConfiguration(String schemaId, String groupId, int count, boolean activate,
-            boolean useBaseSchema) {
+                                                           boolean useBaseSchema) {
         List<ConfigurationDto> ids = Collections.emptyList();
         try {
             ConfigurationSchemaDto schemaDto;
@@ -449,6 +450,21 @@ public class AbstractTest {
         return tenant;
     }
 
+
+    protected UserVerifierDto generateUserVerifier(String appId, String verifierToken) {
+        UserVerifierDto verifier = new UserVerifierDto();
+        verifier.setName("GENERATED test Verifier");
+        if (isBlank(appId)) {
+            appId = generateApplication().getId();
+        }
+        verifier.setApplicationId(appId);
+        if (verifierToken == null) {
+            verifierToken = "token";
+        }
+        verifier.setVerifierToken(verifierToken);
+        return verifierService.saveUserVerifier(verifier);
+    }
+
     protected List<UserDto> generateUsers(String tenantId, KaaAuthorityDto authority, int count) {
         List<UserDto> users = new ArrayList<>(count);
         UserDto userDto = null;
@@ -596,26 +612,38 @@ public class AbstractTest {
     }
 
     protected EndpointUserConfigurationDto generateEndpointUserConfiguration(EndpointUserDto endpointUser, ApplicationDto applicationDto,
-            ConfigurationSchemaDto configurationSchema) {
+                                                                             ConfigurationSchemaDto configurationSchema) {
         return generateEndpointUserConfiguration(endpointUser, applicationDto, configurationSchema, UUID.randomUUID().toString());
     }
 
     protected EndpointUserConfigurationDto generateEndpointUserConfiguration(EndpointUserDto endpointUser, ApplicationDto applicationDto,
-            ConfigurationSchemaDto configurationSchema, String body) {
+                                                                             ConfigurationSchemaDto configurationSchema, String body) {
+        return generateEndpointUserConfiguration(endpointUser, applicationDto, configurationSchema, body, false);
+    }
+
+    protected EndpointUserConfigurationDto generateEndpointUserConfiguration(EndpointUserDto endpointUser, ApplicationDto applicationDto,
+                                                                             ConfigurationSchemaDto configurationSchema, String body, boolean isNullAppDto) {
         EndpointUserConfigurationDto configurationDto = new EndpointUserConfigurationDto();
+        configurationDto.setBody(body);
+
         if (endpointUser == null) {
             endpointUser = generateEndpointUser(null);
         }
-        if (applicationDto == null) {
-            applicationDto = generateApplication();
+        if (!isNullAppDto) {
+            if (applicationDto == null) {
+                applicationDto = generateApplication();
+            }
+            configurationDto.setAppToken(applicationDto.getApplicationToken());
+        } else {
+            return userConfigurationService.saveUserConfiguration(configurationDto);
         }
         configurationDto.setUserId(endpointUser.getId());
+
         if (configurationSchema == null) {
             configurationSchema = generateConfSchema(applicationDto.getId(), 1).get(0);
         }
         configurationDto.setSchemaVersion(configurationSchema.getMajorVersion());
-        configurationDto.setBody(body);
-        configurationDto.setAppToken(applicationDto.getApplicationToken());
+
         return userConfigurationService.saveUserConfiguration(configurationDto);
     }
 }

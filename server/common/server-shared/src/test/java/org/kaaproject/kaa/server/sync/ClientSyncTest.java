@@ -24,6 +24,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class ClientSyncTest {
+
     @Test
     public void isValidProfileHashExistsTest() {
         ClientSyncMetaData clientSyncMetaData = mock(ClientSyncMetaData.class);
@@ -47,5 +48,6 @@ public class ClientSyncTest {
         when(clientSyncMetaData.getProfileHash()).thenReturn(null);
         ClientSync clientSync = new ClientSync(0, clientSyncMetaData, profileClientSync, null, null, null, null, null);
         Assert.assertEquals(clientSync.isValid(), false);
+        Assert.assertNotNull(new ClientSyncMetaData().toString());
     }
 }
