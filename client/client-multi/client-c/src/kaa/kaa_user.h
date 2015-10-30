@@ -125,7 +125,7 @@ kaa_error_t kaa_user_manager_attach_endpoint(kaa_user_manager_t *self, const cha
  *
  * @return      Error code.
  */
-kaa_error_t kaa_user_manager_detach_endpoint(kaa_user_manager_t *self, const char *endpoint_hash_key, kaa_endpoint_status_listener_t *listener);
+kaa_error_t kaa_user_manager_detach_endpoint(kaa_user_manager_t *self, const kaa_endpoint_id_p endpoint_hash_key, kaa_endpoint_status_listener_t *listener);
 
 #ifdef __cplusplus
 }      /* extern "C" */

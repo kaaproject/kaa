@@ -55,12 +55,13 @@ typedef struct {
 } user_info_t;
 
 typedef struct {
-    uint16_t     request_id;
-    char         *endpoint_token;
-    size_t       endpoint_token_len;
-    bool         is_waiting_response;
+    uint16_t        request_id;
+    char           *access_token;
+    size_t          access_token_length;
+    kaa_endpoint_id endpoint_token;
+    bool            is_waiting_response;
     kaa_endpoint_status_listener_t *listener;
-} endpoint_info_t;
+} kaa_endpoint_info_t;
 
 struct kaa_user_manager_t {
     kaa_attachment_status_listeners_t   attachment_listeners;               /*!< Client code-defined user attachment listeners */
@@ -92,6 +93,26 @@ typedef enum {
 static kaa_service_t user_sync_services[1] = {KAA_SERVICE_USER};
 
 
+static void dtor_endpoint_info(void *data)
+{
+    KAA_RETURN_IF_NIL(data, );
+    kaa_endpoint_info_t *endpoint_info = (kaa_endpoint_info_t*)data;
+    if(endpoint_info->access_token)
+        KAA_FREE(endpoint_info->access_token);
+    KAA_FREE(endpoint_info);
+}
+
+static bool match_predicate_endpoint_info(void *data, void *context)
+{
+    KAA_RETURN_IF_NIL(data, false);
+
+    kaa_endpoint_info_t *endpoint_item = (kaa_endpoint_info_t*)data;
+    uint16_t request_id = *(uint16_t*)context;
+
+    if (request_id == endpoint_item->request_id)
+        return true;
+    return false;
+}
 
 static void destroy_user_info(user_info_t *user_info)
 {
@@ -171,8 +192,8 @@ kaa_error_t kaa_user_manager_create(kaa_user_manager_t **user_manager_p
 void kaa_user_manager_destroy(kaa_user_manager_t *self)
 {
     if (self) {
-        kaa_list_destroy(self->attach_endpoints, NULL);
-        kaa_list_destroy(self->detach_endpoints, NULL);
+        kaa_list_destroy(self->attach_endpoints, dtor_endpoint_info);
+        kaa_list_destroy(self->detach_endpoints, dtor_endpoint_info);
         destroy_user_info(self->user_info);
         KAA_FREE(self);
     }
@@ -217,23 +238,23 @@ kaa_error_t kaa_user_manager_attach_endpoint(kaa_user_manager_t *self, const cha
 {
     KAA_RETURN_IF_NIL2(self, endpoint_access_token, KAA_ERR_BADPARAM);
 
-    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to attach to endpoint "
-                                              "(endpoint_access_token id = \"%s\")"
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to attach endpoint by access token "
+                                              "(endpoint_access_token = \"%s\")"
                                               , endpoint_access_token);
 
-    endpoint_info_t *info = KAA_CALLOC(1, sizeof(endpoint_info_t));
-    if (!info)
-        return KAA_ERR_NOMEM;
+    kaa_endpoint_info_t *info = KAA_CALLOC(1, sizeof(kaa_endpoint_info_t));
+    KAA_RETURN_IF_NIL(info, KAA_ERR_NOMEM);
 
-    info->endpoint_token_len = strlen(endpoint_access_token);
-    info->endpoint_token     = KAA_MALLOC(info->endpoint_token_len);
 
-    if (!info->endpoint_token) {
-        KAA_FREE(info);
+    info->access_token_length = strlen(endpoint_access_token);
+    info->access_token        = KAA_MALLOC(info->access_token_length);
+
+    if (!info->access_token) {
+        dtor_endpoint_info((void*)info);
         return KAA_ERR_NOMEM;
     }
 
-    memcpy(info->endpoint_token, endpoint_access_token, info->endpoint_token_len);
+    memcpy(info->access_token, endpoint_access_token, info->access_token_length);
 
     if (listener)
         info->listener = listener;
@@ -241,8 +262,7 @@ kaa_error_t kaa_user_manager_attach_endpoint(kaa_user_manager_t *self, const cha
     info->request_id = ++self->endpoint_request_counter;
 
     if (!kaa_list_push_back(self->attach_endpoints, (void*)info)) {
-        KAA_FREE(info->endpoint_token);
-        KAA_FREE(info);
+        dtor_endpoint_info((void*)info);
         return KAA_ERR_NOMEM;
     }
 
@@ -254,28 +274,17 @@ kaa_error_t kaa_user_manager_attach_endpoint(kaa_user_manager_t *self, const cha
     return KAA_ERR_NONE;
 }
 
-kaa_error_t kaa_user_manager_detach_endpoint(kaa_user_manager_t *self, const char *endpoint_hash_key, kaa_endpoint_status_listener_t *listener)
+kaa_error_t kaa_user_manager_detach_endpoint(kaa_user_manager_t *self, const kaa_endpoint_id_p endpoint_hash_key, kaa_endpoint_status_listener_t *listener)
 {
     KAA_RETURN_IF_NIL2(self, endpoint_hash_key, KAA_ERR_BADPARAM);
 
-    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to detach from endpoint "
-                                              "(endpoint_hash_key id = \"%s\")"
-                                              , endpoint_hash_key);
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Detach endpoint");
 
 
-    endpoint_info_t *info = KAA_CALLOC(1, sizeof(endpoint_info_t));
-    if (!info)
-        return KAA_ERR_NOMEM;
+    kaa_endpoint_info_t *info = KAA_CALLOC(1, sizeof(kaa_endpoint_info_t));
+    KAA_RETURN_IF_NIL(info, KAA_ERR_NOMEM);
 
-    info->endpoint_token_len = strlen(endpoint_hash_key);
-    info->endpoint_token     = KAA_MALLOC(info->endpoint_token_len);
-
-    if (!info->endpoint_token) {
-        KAA_FREE(info);
-        return KAA_ERR_NOMEM;
-    }
-
-    memcpy(info->endpoint_token, endpoint_hash_key, info->endpoint_token_len);
+    memcpy(info->endpoint_token, endpoint_hash_key, KAA_ENDPOINT_ID_LENGTH);
 
     if (listener)
         info->listener = listener;
@@ -283,8 +292,7 @@ kaa_error_t kaa_user_manager_detach_endpoint(kaa_user_manager_t *self, const cha
     info->request_id = ++self->endpoint_request_counter;
 
     if (!kaa_list_push_back(self->detach_endpoints, (void*)info)) {
-        KAA_FREE(info->endpoint_token);
-        KAA_FREE(info);
+        dtor_endpoint_info((void*)info);
         return KAA_ERR_NOMEM;
     }
 
@@ -332,9 +340,8 @@ static size_t kaa_user_request_get_size_no_header(kaa_user_manager_t *self)
 
         kaa_list_node_t *node = kaa_list_begin(self->attach_endpoints);
         while (node) {
-            endpoint_info_t *endpoint = (endpoint_info_t*)kaa_list_get_data(node);
-            expected_size += sizeof(uint32_t) //request id + endpoint access token length
-                             + kaa_aligned_size_get(endpoint->endpoint_token_len);
+            kaa_endpoint_info_t *info = (kaa_endpoint_info_t*)kaa_list_get_data(node);
+            expected_size += sizeof(uint32_t) + kaa_aligned_size_get(info->access_token_length); //request id + endpoint access token length
             node = kaa_list_next(node);
         }
     }
@@ -418,20 +425,18 @@ kaa_error_t kaa_user_request_serialize(kaa_user_manager_t *self, kaa_platform_me
         writer->current += sizeof(uint16_t);
 
         while (node) {
-            endpoint_info_t *info = (endpoint_info_t*)kaa_list_get_data(node);
+            kaa_endpoint_info_t *info = (kaa_endpoint_info_t*)kaa_list_get_data(node);
 
             if (!info->is_waiting_response) {
                 *((uint16_t*)writer->current) = KAA_HTONS(info->request_id);
                 writer->current += sizeof(uint16_t);
-                *((uint16_t*)writer->current) = KAA_HTONS((uint16_t)info->endpoint_token_len);
+                *((uint16_t*)writer->current) = KAA_HTONS((uint16_t)info->access_token_length);
                 writer->current += sizeof(uint16_t);
-                KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "TOKEN_LEN %d ENDPOINTS %d", info->endpoint_token_len, kaa_list_get_size(self->attach_endpoints));
                 if (kaa_platform_message_write_aligned(writer
-                                                     , info->endpoint_token
-                                                     , info->endpoint_token_len))
+                                                     , info->access_token
+                                                     , info->access_token_length))
                 {
-                    KAA_LOG_ERROR(self->logger, KAA_ERR_WRITE_FAILED, "Failed to write the user Endpoint access token\"%s\""
-                                                                             , info->endpoint_token);
+                    KAA_LOG_ERROR(self->logger, KAA_ERR_WRITE_FAILED, "Failed to write the user Endpoint access token");
                     return KAA_ERR_WRITE_FAILED;
                 }
 
@@ -450,14 +455,14 @@ kaa_error_t kaa_user_request_serialize(kaa_user_manager_t *self, kaa_platform_me
         writer->current += sizeof(uint16_t);
 
         while (node) {
-            endpoint_info_t *info = (endpoint_info_t*)kaa_list_get_data(node);
+            kaa_endpoint_info_t *info = (kaa_endpoint_info_t*)kaa_list_get_data(node);
 
             if (!info->is_waiting_response) {
                 *((uint16_t*)writer->current) = KAA_HTONS(info->request_id);
                 writer->current += sizeof(uint32_t);
 
-                memcpy(writer->current, info->endpoint_token, info->endpoint_token_len);
-                writer->current += info->endpoint_token_len;
+                memcpy(writer->current, info->endpoint_token, KAA_ENDPOINT_ID_LENGTH);
+                writer->current += KAA_ENDPOINT_ID_LENGTH;
 
                 info->is_waiting_response = true;
             }
@@ -611,7 +616,7 @@ kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self
                 uint8_t  result_code;
                 uint8_t  options;
                 uint16_t request_id;
-                char     endpoint_id[KAA_ENDPOINT_ID_LENGTH+1];
+                kaa_endpoint_id endpoint_id;
 
                 if (sizeof(uint32_t) > remaining_length)
                     return KAA_ERR_INVALID_BUFFER_SIZE;
@@ -620,44 +625,28 @@ kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self
                     result_code = *(reader->current++);
                     options     = *(reader->current++);
                     request_id  = KAA_NTOHS(*(uint16_t*)reader->current);
-                    reader->current += sizeof(uint16_t);
+                    reader->current  += sizeof(uint16_t);
                     remaining_length -= sizeof(uint32_t);
 
                     if (result_code == USER_RESULT_FAILURE) {
-                        kaa_list_node_t *node = kaa_list_begin(self->attach_endpoints);
-
-                        while (node) {
-                            endpoint_info_t *info = (endpoint_info_t*)kaa_list_get_data(node);
-                            if (info->request_id == request_id) {
-                                kaa_list_remove_at(self->attach_endpoints, node, NULL);
-                                break;
-                            }
-                            node = kaa_list_next(node);
-                        }
+                        kaa_list_node_t *node = kaa_list_find_next(kaa_list_begin(self->attach_endpoints), match_predicate_endpoint_info, (void*)&request_id);
+                        if (node)
+                            kaa_list_remove_at(self->attach_endpoints, node, dtor_endpoint_info);
                         continue;
                     }
 
                     if (options & 0x01) {
                         memcpy(endpoint_id, reader->current, KAA_ENDPOINT_ID_LENGTH);
-                        endpoint_id[KAA_ENDPOINT_ID_LENGTH] = 0;
                         reader->current  += KAA_ENDPOINT_ID_LENGTH;
                         remaining_length -= KAA_ENDPOINT_ID_LENGTH;
 
-                        kaa_list_node_t *node = kaa_list_begin(self->attach_endpoints);
-
-                        while (node) {
-                            endpoint_info_t *info = (endpoint_info_t*)kaa_list_get_data(node);
-
-                            if (info->request_id == request_id) {
-                                if (info->listener && info->listener->on_attached)
-                                    info->listener->on_attached(info->listener->context, endpoint_id);
-                                kaa_list_remove_at(self->attach_endpoints, node, NULL);
-                                break;
-                            }
-
-                            node = kaa_list_next(node);
+                        kaa_list_node_t *node = kaa_list_find_next(kaa_list_begin(self->attach_endpoints), match_predicate_endpoint_info, (void*)&request_id);
+                        if (node) {
+                            kaa_endpoint_info_t *info = (kaa_endpoint_info_t*)kaa_list_get_data(node);
+                            if (info->listener && info->listener->on_attached)
+                                info->listener->on_attached(info->listener->context, &endpoint_id);
+                            kaa_list_remove_at(self->attach_endpoints, node, dtor_endpoint_info);
                         }
-
                     }
                 }
 
@@ -680,32 +669,18 @@ kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self
                     remaining_length -= sizeof(uint32_t);
 
                     if (result_code == USER_RESULT_FAILURE) {
-                        kaa_list_node_t *node = kaa_list_begin(self->detach_endpoints);
-
-                        while (node) {
-                            endpoint_info_t *info = (endpoint_info_t*)kaa_list_get_data(node);
-                            if (info->request_id == request_id) {
-                                kaa_list_remove_at(self->detach_endpoints, node, NULL);
-                                break;
-                            }
-                            node = kaa_list_next(node);
-                        }
+                        kaa_list_node_t *node = kaa_list_find_next(kaa_list_begin(self->detach_endpoints), match_predicate_endpoint_info, (void*)&request_id);
+                        if (node)
+                            kaa_list_remove_at(self->detach_endpoints, node, dtor_endpoint_info);
                         continue;
                     }
 
-                    kaa_list_node_t *node = kaa_list_begin(self->detach_endpoints);
-
-                    while (node) {
-                        endpoint_info_t *info = (endpoint_info_t*)kaa_list_get_data(node);
-
-                        if (info->request_id == request_id) {
-                            if (info->listener && info->listener->on_detached)
-                                info->listener->on_detached(info->listener->context);
-                            kaa_list_remove_at(self->detach_endpoints, node, NULL);
-                            break;
-                        }
-
-                        node = kaa_list_next(node);
+                    kaa_list_node_t *node = kaa_list_find_next(kaa_list_begin(self->detach_endpoints), match_predicate_endpoint_info, (void*)&request_id);
+                    if (node) {
+                        kaa_endpoint_info_t *info = (kaa_endpoint_info_t*)kaa_list_get_data(node);
+                        if (info->listener && info->listener->on_detached)
+                            info->listener->on_detached(info->listener->context);
+                        kaa_list_remove_at(self->detach_endpoints, node, dtor_endpoint_info);
                     }
                 }
 

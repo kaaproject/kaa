@@ -23,6 +23,7 @@
 #ifndef EXT_USER_CALLBACK_H_
 #define EXT_USER_CALLBACK_H_
 
+#include "../kaa_common.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -95,7 +96,7 @@ typedef struct {
     void                           *context;           /**< Context to pass to all functions below. */
     on_attached_fn                  on_attached;       /**< Called when the current endpoint was attached to the user by another endpoint. */
     on_detached_fn                  on_detached;       /**< Called when the current endpoint was detached from the user by another endpoint. */
-    on_attach_success_fn     on_attach_success; /**< Called when the current endpoint was successfully attached to the user. See @link kaa_user_manager_attach_to_user @endlink. */
+    on_attach_success_fn            on_attach_success; /**< Called when the current endpoint was successfully attached to the user. See @link kaa_user_manager_attach_to_user @endlink. */
     on_attach_failed_fn             on_attach_failed;  /**< Called the attach attempt is failed. */
 } kaa_attachment_status_listeners_t;
 
@@ -108,7 +109,7 @@ typedef struct {
  *
  * @return  Error code
  */
-typedef kaa_error_t (*on_endpoint_attached_fn)(void *context, const char *endpoint_key_hash);
+typedef kaa_error_t (*on_endpoint_attached_fn)(void *context, const kaa_endpoint_id_p endpoint_key_hash);
 
 
 /**
