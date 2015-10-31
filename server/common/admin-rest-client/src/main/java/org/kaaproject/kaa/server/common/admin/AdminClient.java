@@ -80,6 +80,38 @@ public class AdminClient {
         url = "http://"+host+":"+port + "/kaaAdmin/rest/api/";
     }
 
+    public EndpointProfilesPageDto getEndpointProfileByEndpointGroupId(PageLinkDto pageLink) throws Exception {
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<String, String>();
+        params.add("endpointGroupId", pageLink.getEndpointGroupId());
+        params.add("limit", pageLink.getLimit());
+        params.add("offset", pageLink.getOffset());
+        ParameterizedTypeReference<EndpointProfilesPageDto> typeRef = new ParameterizedTypeReference<EndpointProfilesPageDto>() {};
+        ResponseEntity<EndpointProfilesPageDto> entity = restTemplate.exchange(url + "endpointProfileByGroupId/" + params, HttpMethod.GET, null, typeRef);
+        return entity.getBody();
+    }
+
+    public EndpointProfilesBodyDto getEndpointProfileBodyByEndpointGroupId(PageLinkDto pageLink) throws Exception {
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<String, String>();
+        params.add("endpointGroupId", pageLink.getEndpointGroupId());
+        params.add("limit", pageLink.getLimit());
+        params.add("offset", pageLink.getOffset());
+        ParameterizedTypeReference<EndpointProfilesBodyDto> typeRef = new ParameterizedTypeReference<EndpointProfilesBodyDto>() {};
+        ResponseEntity<EndpointProfilesBodyDto> entity = restTemplate.exchange(url + "endpointProfileBodyByGroupId/" + params, HttpMethod.GET, null, typeRef);
+        return entity.getBody();
+    }
+
+    public EndpointProfileDto getEndpointProfileByKeyHash(String endpointProfileKeyHash) throws Exception {
+        ParameterizedTypeReference<EndpointProfileDto> typeRef = new ParameterizedTypeReference<EndpointProfileDto>() {};
+        ResponseEntity<EndpointProfileDto> entity = restTemplate.exchange(url + "endpointProfile/" + endpointProfileKeyHash, HttpMethod.GET, null, typeRef);
+        return entity.getBody();
+    }
+
+    public EndpointProfileBodyDto getEndpointProfileBodyByKeyHash(String endpointProfileKeyHash) throws Exception {
+        ParameterizedTypeReference<EndpointProfileBodyDto> typeRef = new ParameterizedTypeReference<EndpointProfileBodyDto>() {};
+        ResponseEntity<EndpointProfileBodyDto> entity = restTemplate.exchange(url + "endpointProfileBody/" + endpointProfileKeyHash, HttpMethod.GET, null, typeRef);
+        return entity.getBody();
+    }
+
     public AuthResultDto checkAuth() throws Exception {
         return restTemplate.getForObject(url + "auth/checkAuth", AuthResultDto.class);
     }
@@ -321,7 +353,7 @@ public class AdminClient {
     public UserVerifierDto editUserVerifierDto(UserVerifierDto userVerifierDto) throws Exception {
         return restTemplate.postForObject(url + "userVerifier", userVerifierDto, UserVerifierDto.class);
     }
-    
+
     public void downloadSdk(SdkPropertiesDto key, String destination) throws Exception {
         FileResponseExtractor extractor = new FileResponseExtractor( new File(destination));
         final List<MediaType> mediaTypes = Arrays.asList(MediaType.APPLICATION_JSON,
@@ -354,7 +386,7 @@ public class AdminClient {
         restTemplate.execute(url + "sdk", HttpMethod.POST, request, extractor);
         logger.info("Downloaded sdk to file '{}'", extractor.getDestFile());
     }
-    
+
     public FileData downloadSdk(SdkPropertiesDto key) throws Exception {
         FileDataResponseExtractor extractor = new FileDataResponseExtractor();
         final List<MediaType> mediaTypes = Arrays.asList(MediaType.APPLICATION_JSON,
