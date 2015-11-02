@@ -52,7 +52,9 @@ import org.kaaproject.kaa.common.dto.ChangeProfileFilterNotification;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
+import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
@@ -645,5 +647,32 @@ public class AbstractTest {
         configurationDto.setSchemaVersion(configurationSchema.getMajorVersion());
 
         return userConfigurationService.saveUserConfiguration(configurationDto);
+    }
+
+    protected EndpointProfileDto generateEndpointProfile(String appId, List<String> topicIds) {
+        EndpointProfileDto profileDto = new EndpointProfileDto();
+        profileDto.setApplicationId(appId);
+        profileDto.setSubscriptions(topicIds);
+        profileDto.setEndpointKeyHash("TEST_KEY_HASH".getBytes());
+        profileDto.setProfile("{\"title\": \"TEST\"}");
+        return endpointService.saveEndpointProfile(profileDto);
+    }
+
+    protected EndpointProfileDto generateEndpointProfileWithGroupId(String endpointGroupId, boolean nfGroupStateOnly) {
+        EndpointProfileDto profileDto = new EndpointProfileDto();
+        profileDto.setEndpointKeyHash(generateString("TEST_KEY_HASH").getBytes());
+        String appId = generateApplication().getId();
+        profileDto.setApplicationId(appId);
+        List<EndpointGroupStateDto> groupState = new ArrayList<>();
+        groupState.add(new EndpointGroupStateDto(endpointGroupId, null, null));
+        profileDto.setCfGroupStates(groupState);
+        profileDto.setProfile("{\"title\": \"TEST\"}");
+        if (nfGroupStateOnly) {
+            profileDto.setNfGroupStates(groupState);
+            profileDto.setCfGroupStates(null);
+        } else {
+            profileDto.setCfGroupStates(groupState);
+        }
+        return endpointService.saveEndpointProfile(profileDto);
     }
 }

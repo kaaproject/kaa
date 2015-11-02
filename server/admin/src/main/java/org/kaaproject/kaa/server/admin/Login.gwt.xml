@@ -25,6 +25,8 @@
   <inherits name="com.google.gwt.json.JSON" />
   <inherits name="org.kaaproject.kaa.common.dto.Dto"/>
   <inherits name="org.kaaproject.avro.ui.gwt.client.AvroUIClient"/>
+
+  <inherits name="com.google.common.io.Io"/>
   
   <!--  Need for SuperDev mode-->
   <add-linker name="xsiframe"/>

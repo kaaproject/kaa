@@ -29,6 +29,10 @@ public class EndpointGroupGrid extends AbstractKaaGrid<EndpointGroupDto, String>
         super(Unit.PX, true);
     }
 
+    public EndpointGroupGrid(boolean embedded) {
+        super(Unit.PX, false, embedded);
+    }
+
     @Override
     protected float constructColumnsImpl(DataGrid<EndpointGroupDto> table) {
         float prefWidth = 0;

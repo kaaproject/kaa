@@ -61,6 +61,21 @@ exception ControlThriftException {
 service ControlThriftService extends cli.CliThriftService{
 
 /**
+*    EndpointProfileViewer
+*/
+
+  data getEndpointProfileViewDtoByEndpointKeyHash(1: string endpointProfileKeyHash) throws(1: ControlThriftException ControlException)
+
+/**
+*   EndpointProfile
+*/
+
+  data getEndpointProfileByKeyHash(1: id endpointProfileKeyHash) throws(1: ControlThriftException ControlException)
+  data getEndpointProfileByEndpointGroupId(1: data pageLink) throws(1: ControlThriftException ControlException)
+  data getEndpointProfileBodyByKeyHash(1: id endpointProfileKeyHash) throws(1: ControlThriftException ControlException)
+  data getEndpointProfileBodyByEndpointGroupId(1: data pageLink) throws(1: ControlThriftException ControlException)
+
+/**
 *   Tenants
 */
 

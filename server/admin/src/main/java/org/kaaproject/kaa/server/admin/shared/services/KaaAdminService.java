@@ -24,6 +24,11 @@ import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileViewDto;
+import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
+import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
@@ -57,6 +62,16 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 @RemoteServiceRelativePath("springGwtServices/kaaAdminService")
 public interface KaaAdminService extends RemoteService {
+
+    public EndpointProfileViewDto getEndpointProfileViewDtoByEndpointProfileKeyHash(String endpointProfileKeyHash) throws KaaAdminServiceException;
+
+    public EndpointProfilesPageDto getEndpointProfileByEndpointGroupId(String endpointGroupId, String limit, String offset) throws KaaAdminServiceException;
+
+    public EndpointProfileDto getEndpointProfileByKeyHash(String endpointProfileKeyHash) throws KaaAdminServiceException;
+
+    public EndpointProfilesBodyDto getEndpointProfileBodyByEndpointGroupId(String endpointGroupId, String limit, String offset) throws KaaAdminServiceException;
+
+    public EndpointProfileBodyDto getEndpointProfileBodyByKeyHash(String endpointProfileKeyHash) throws KaaAdminServiceException;
 
     public List<TenantUserDto> getTenants() throws KaaAdminServiceException;
 
