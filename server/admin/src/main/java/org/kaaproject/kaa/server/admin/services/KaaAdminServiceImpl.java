@@ -23,10 +23,13 @@ import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.to
 import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toGenericDataStruct;
 import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toGenericDto;
 import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toGenericDtoList;
+
 import java.io.IOException;
 import java.security.InvalidParameterException;
 import java.util.*;
+
 import net.iharder.Base64;
+
 import org.apache.avro.Schema;
 import org.apache.avro.SchemaParseException;
 import org.apache.avro.generic.GenericRecord;
@@ -56,7 +59,8 @@ import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.UserDto;
 import org.kaaproject.kaa.common.dto.admin.RecordKey;
 import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
-import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
+import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
+import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
@@ -96,6 +100,7 @@ import org.kaaproject.kaa.server.common.plugin.KaaPluginConfig;
 import org.kaaproject.kaa.server.common.plugin.PluginConfig;
 import org.kaaproject.kaa.server.common.plugin.PluginType;
 import org.kaaproject.kaa.server.common.thrift.gen.control.Sdk;
+import org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -109,6 +114,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import com.google.common.base.Charsets;
 
 @Service("kaaAdminService")
@@ -516,36 +522,108 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
-    public String generateSdk(SdkPropertiesDto key) throws KaaAdminServiceException {
+    public void addSdkProfile(SdkProfileDto sdkProfile) throws KaaAdminServiceException {
+        this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            doGenerateSdk(key);
-            return Base64.encodeObject(key, Base64.URL_SAFE);
+            this.checkApplicationId(sdkProfile.getApplicationId());
+            sdkProfile.setCreatedUsername(this.getCurrentUser().getUsername());
+            sdkProfile.setCreatedTime(System.currentTimeMillis());
+            clientProvider.getClient().addSdkProfile(ThriftDtoConverter.toDataStruct(sdkProfile));
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
+
+    @Override
+    public void deleteSdkProfile(String sdkProfileId) throws KaaAdminServiceException {
+        this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            SdkProfileDto sdkProfile = this.checkSdkProfileId(sdkProfileId);
+            if (!clientProvider.getClient().isSdkProfileUsed(sdkProfile.getToken())) {
+                clientProvider.getClient().deleteSdkProfile(sdkProfileId);
+            } else {
+                throw new IllegalArgumentException("Associated endpoint profiles have been found.");
+            }
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
+
+    @Override
+    public SdkProfileDto getSdkProfile(String sdkProfileId) throws KaaAdminServiceException {
+        this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            this.checkSdkProfileId(sdkProfileId);
+            return ThriftDtoConverter.toDto(clientProvider.getClient().getSdkProfile(sdkProfileId));
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
+
+    @Override
+    public List<SdkProfileDto> getSdkProfilesByApplicationId(String applicationId) throws KaaAdminServiceException {
+        this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            this.checkApplicationId(applicationId);
+            return ThriftDtoConverter.toDtoList(clientProvider.getClient().getSdkProfilesByApplicationId(applicationId));
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
+
+    @Override
+    public String generateSdk(SdkProfileDto sdkProfile, SdkPlatform targetPlatform) throws KaaAdminServiceException {
+        try {
+            doGenerateSdk(sdkProfile, targetPlatform);
+            return Base64.encodeObject(new CacheService.SdkKey(sdkProfile, targetPlatform), Base64.URL_SAFE);
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
     }
 
     @Override
-    public FileData getSdk(SdkPropertiesDto key) throws KaaAdminServiceException {
+    public FileData getSdk(SdkProfileDto sdkProfile, SdkPlatform targetPlatform) throws KaaAdminServiceException {
         try {
-            return doGenerateSdk(key);
+            return doGenerateSdk(sdkProfile, targetPlatform);
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
     }
 
-    private FileData doGenerateSdk(SdkPropertiesDto key) throws KaaAdminServiceException {
+    private FileData doGenerateSdk(SdkProfileDto sdkProfile, SdkPlatform targetPlatform) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            checkApplicationId(key.getApplicationId());
-            FileData sdkFile = cacheService.getSdk(key);
+            checkApplicationId(sdkProfile.getApplicationId());
+            FileData sdkFile = cacheService.getSdk(new CacheService.SdkKey(sdkProfile, targetPlatform));
             if (sdkFile == null) {
-                Sdk sdk = clientProvider.getClient().generateSdk(toDataStruct(key));
+                Sdk sdk = null;
+                switch (targetPlatform) {
+                    case JAVA:
+                        sdk = clientProvider
+                                .getClient()
+                                .generateSdk(toDataStruct(sdkProfile), org.kaaproject.kaa.server.common.thrift.gen.control.SdkPlatform.JAVA);
+                        break;
+                    case ANDROID:
+                        sdk = clientProvider
+                                .getClient()
+                                .generateSdk(toDataStruct(sdkProfile), org.kaaproject.kaa.server.common.thrift.gen.control.SdkPlatform.ANDROID);
+                        break;
+                    case CPP:
+                        sdk = clientProvider
+                                .getClient()
+                                .generateSdk(toDataStruct(sdkProfile), org.kaaproject.kaa.server.common.thrift.gen.control.SdkPlatform.CPP);
+                        break;
+                    case C:
+                        sdk = clientProvider
+                                .getClient()
+                                .generateSdk(toDataStruct(sdkProfile), org.kaaproject.kaa.server.common.thrift.gen.control.SdkPlatform.C);
+                        break;
+                }
                 sdkFile = new FileData();
                 sdkFile.setFileName(sdk.getFileName());
-                sdkFile.setContentType(key.getTargetPlatform().getContentType());
+                sdkFile.setContentType(targetPlatform.getContentType());
                 sdkFile.setFileData(sdk.getData());
-                cacheService.putSdk(key, sdkFile);
+                cacheService.putSdk(new CacheService.SdkKey(sdkProfile, targetPlatform), sdkFile);
             }
             return sdkFile;
         } catch (Exception e) {
@@ -559,7 +637,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         try {
             List<ApplicationDto> applications = getApplications();
             for (ApplicationDto application : applications) {
-                for (SdkPropertiesDto key : cacheService.getCachedSdkKeys(application.getId())) {
+                for (CacheService.SdkKey key : cacheService.getCachedSdkKeys(application.getId())) {
                     cacheService.flushSdk(key);
                 }
             }
@@ -1901,13 +1979,13 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throw Utils.handleException(e);
         }
     }
-    
+
     private void checkExpiredDate(NotificationDto notification) throws KaaAdminServiceException {
         if (null != notification.getExpiredAt() && notification.getExpiredAt().before(new Date())) {
             throw new IllegalArgumentException("Overdue expiry time for notification!");
         }
     }
-    
+
     @Override
     public void sendNotification(NotificationDto notification,
                                  RecordField notificationData) throws KaaAdminServiceException {
@@ -2377,6 +2455,19 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             clientProvider.getClient().editUserConfiguration(toGenericDataStruct(endpointUserConfiguration));
         } catch (Exception e) {
             throw Utils.handleException(e);
+        }
+    }
+
+    public SdkProfileDto checkSdkProfileId(String sdkProfileId) throws KaaAdminServiceException {
+        try {
+            if (isEmpty(sdkProfileId)) {
+                throw new IllegalArgumentException("The SDK profile identifier is empty!");
+            }
+            SdkProfileDto sdkProfile = ThriftDtoConverter.toDto(clientProvider.getClient().getSdkProfile(sdkProfileId));
+            Utils.checkNotNull(sdkProfile);
+            return sdkProfile;
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
         }
     }
 

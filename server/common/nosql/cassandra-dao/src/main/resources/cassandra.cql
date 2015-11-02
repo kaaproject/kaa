@@ -82,7 +82,8 @@ CREATE TABLE IF NOT EXISTS kaa.ep_profile (
     user_nf_ver int,
     log_schema_ver int,
     ecf_ver_state list < frozen < ecf_ver_state > >,
-    server_hash text
+    server_hash text,
+    sdk_token text
 );
 
 CREATE TABLE IF NOT EXISTS kaa.app_eps (
@@ -94,6 +95,11 @@ CREATE TABLE IF NOT EXISTS kaa.app_eps (
 CREATE TABLE IF NOT EXISTS kaa.access_token_eps (
     access_token text PRIMARY KEY ,
     ep_key_hash blob,
+);
+
+CREATE TABLE IF NOT EXISTS kaa.sdk_token_eps (
+    sdk_token text PRIMARY KEY,
+    ep_key_hash blob
 );
 
 CREATE TABLE IF NOT EXISTS kaa.user_conf (

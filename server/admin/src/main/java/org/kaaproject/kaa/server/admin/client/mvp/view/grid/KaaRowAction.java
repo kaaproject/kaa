@@ -25,10 +25,10 @@ public class KaaRowAction {
 
     /** The Constant SEND_NOTIFICATION. */
     public static final int SEND_NOTIFICATION = RowActionEvent.MAX_ACTION + 1;
-    
+
     /** The Constant DOWNLOAD_LOG_SCHEMA_LIBRARY. */
     public static final int DOWNLOAD_LOG_SCHEMA_LIBRARY = RowActionEvent.MAX_ACTION + 2;
-    
+
     /** The Constant DOWNLOAD_SCHEMA. */
     public static final int DOWNLOAD_SCHEMA = RowActionEvent.MAX_ACTION + 3;
 
@@ -37,5 +37,8 @@ public class KaaRowAction {
 
     /** The Constant DOWNLOAD_OVERRIDE_SCHEMA. */
     public static final int DOWNLOAD_OVERRIDE_SCHEMA = RowActionEvent.MAX_ACTION + 5;
-    
+
+    /** The Constant GENERATE_SDK. */
+    public static final int GENERATE_SDK = RowActionEvent.MAX_ACTION + 6;
+
 }

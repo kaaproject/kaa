@@ -63,7 +63,7 @@ public class AbstractCassandraTest {
         List<CassandraEndpointNotification> savedNotifications = new ArrayList<>();
         String appId = generateStringId();
         if (endpointKeyHash == null) {
-            endpointKeyHash = ByteBuffer.wrap(generateEndpointProfile(appId, null, null).getEndpointKeyHash());
+            endpointKeyHash = ByteBuffer.wrap(generateEndpointProfile(appId, null, null, null).getEndpointKeyHash());
         }
         String schemaId = generateStringId();
         for (int i = 0; i < count; i++) {
@@ -109,11 +109,15 @@ public class AbstractCassandraTest {
         return configurations;
     }
 
-    protected EndpointProfileDto generateEndpointProfile(String appId, String accessToken, List<String> topicIds) {
+    protected EndpointProfileDto generateEndpointProfile(String appId, String sdkToken, String accessToken, List<String> topicIds) {
         byte[] keyHash = generateBytes();
 
         if (appId == null) {
             appId = generateStringId();
+        }
+
+        if (sdkToken == null) {
+            sdkToken = generateStringId();
         }
 
         if (accessToken == null) {
@@ -122,6 +126,7 @@ public class AbstractCassandraTest {
 
         EndpointProfileDto profileDto = new EndpointProfileDto();
         profileDto.setApplicationId(appId);
+        profileDto.setSdkToken(sdkToken);
         profileDto.setSubscriptions(topicIds);
         profileDto.setEndpointKeyHash(keyHash);
         profileDto.setAccessToken(accessToken);

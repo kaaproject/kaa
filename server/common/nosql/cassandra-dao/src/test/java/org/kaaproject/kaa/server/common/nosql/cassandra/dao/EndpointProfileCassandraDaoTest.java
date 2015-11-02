@@ -38,28 +38,28 @@ public class EndpointProfileCassandraDaoTest extends AbstractCassandraTest {
 
     @Test
     public void testSave() throws Exception {
-        EndpointProfileDto endpointProfile = generateEndpointProfile(null, null, null);
+        EndpointProfileDto endpointProfile = generateEndpointProfile(null, null, null, null);
         EndpointProfile found = endpointProfileDao.findByKeyHash(endpointProfile.getEndpointKeyHash());
         Assert.assertEquals(endpointProfile, found.toDto());
     }
 
     @Test
     public void testFindByKeyHash() throws Exception {
-        EndpointProfileDto expected = generateEndpointProfile(null, null, null);
+        EndpointProfileDto expected = generateEndpointProfile(null, null, null, null);
         EndpointProfile found = endpointProfileDao.findByKeyHash(expected.getEndpointKeyHash());
         Assert.assertEquals(expected, found.toDto());
     }
 
     @Test
     public void testGetCountByKeyHash() throws Exception {
-        EndpointProfileDto endpointProfile = generateEndpointProfile(null, null, null);
+        EndpointProfileDto endpointProfile = generateEndpointProfile(null, null, null, null);
         long count = endpointProfileDao.getCountByKeyHash(endpointProfile.getEndpointKeyHash());
         Assert.assertEquals(1L, count);
     }
 
     @Test
     public void testRemoveByKeyHash() throws Exception {
-        EndpointProfileDto expected = generateEndpointProfile(null, null, null);
+        EndpointProfileDto expected = generateEndpointProfile(null, null, null, null);
         endpointProfileDao.removeByKeyHash(expected.getEndpointKeyHash());
         EndpointProfile found = endpointProfileDao.findByKeyHash(expected.getEndpointKeyHash());
         Assert.assertNull(found);
@@ -67,7 +67,7 @@ public class EndpointProfileCassandraDaoTest extends AbstractCassandraTest {
 
     @Test
     public void testRemoveById() throws Exception {
-        EndpointProfileDto expected = generateEndpointProfile(null, null, null);
+        EndpointProfileDto expected = generateEndpointProfile(null, null, null, null);
         endpointProfileDao.removeById(ByteBuffer.wrap(expected.getEndpointKeyHash()));
         EndpointProfile found = endpointProfileDao.findByKeyHash(expected.getEndpointKeyHash());
         Assert.assertNull(found);
@@ -75,38 +75,45 @@ public class EndpointProfileCassandraDaoTest extends AbstractCassandraTest {
 
     @Test
     public void testRemoveByIdNullKey() throws Exception {
-        EndpointProfileDto expected = generateEndpointProfile(null, null, null);
+        EndpointProfileDto expected = generateEndpointProfile(null, null, null, null);
         EndpointProfile found = endpointProfileDao.findByKeyHash(expected.getEndpointKeyHash());
         Assert.assertNotNull(found);
     }
 
     @Test
     public void testFindById() throws Exception {
-        EndpointProfileDto expected = generateEndpointProfile(null, null, null);
+        EndpointProfileDto expected = generateEndpointProfile(null, null, null, null);
         EndpointProfile found = endpointProfileDao.findById(ByteBuffer.wrap(expected.getEndpointKeyHash()));
         Assert.assertEquals(expected, found.toDto());
     }
 
     @Test
     public void testFindByIdNullKey() throws Exception {
-        EndpointProfileDto expected = generateEndpointProfile(null, null, null);
+        EndpointProfileDto expected = generateEndpointProfile(null, null, null, null);
         EndpointProfile found = endpointProfileDao.findById(null);
         Assert.assertNull(found);
     }
 
     @Test
     public void testFindByAccessToken() throws Exception {
-        EndpointProfileDto expected = generateEndpointProfile(null, null, null);
+        EndpointProfileDto expected = generateEndpointProfile(null, null, null, null);
         EndpointProfile found = endpointProfileDao.findByAccessToken(expected.getAccessToken());
         Assert.assertEquals(expected, found.toDto());
     }
 
     @Test
     public void testFindByEndpointUserId() throws Exception {
-        EndpointProfileDto endpointProfileDto = generateEndpointProfile(null, null, null);
+        EndpointProfileDto endpointProfileDto = generateEndpointProfile(null, null, null, null);
         EndpointUserDto endpointUserDto = generateEndpointUser(Arrays.asList(endpointProfileDto.getId()));
         List<CassandraEndpointProfile> found = endpointProfileDao.findByEndpointUserId(endpointUserDto.getId());
         Assert.assertFalse(found.isEmpty());
         Assert.assertEquals(endpointProfileDto, found.get(0).toDto());
+    }
+
+    @Test
+    public void testCheckSdkToken() throws Exception {
+        this.generateEndpointProfile(null, "alpha", null, null);
+        Assert.assertTrue(endpointProfileDao.checkSdkToken("alpha"));
+        Assert.assertFalse(endpointProfileDao.checkSdkToken("beta"));
     }
 }

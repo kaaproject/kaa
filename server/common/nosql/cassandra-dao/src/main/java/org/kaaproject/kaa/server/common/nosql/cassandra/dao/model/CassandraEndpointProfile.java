@@ -52,6 +52,7 @@ import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.Cassand
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_PROFILE_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_PROFILE_SCHEMA_ID_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_PROFILE_VERSION_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_SDK_TOKEN_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_USER_ID_PROPERTY;
 
 @Table(name = EP_COLUMN_FAMILY_NAME)
@@ -114,7 +115,8 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
     private List<CassandraEventClassFamilyVersionState> ecfVersionStates;
     @Column(name = EP_SERVER_HASH_PROPERTY)
     private String serverHash;
-
+    @Column(name = EP_SDK_TOKEN_PROPERTY)
+    private String sdkToken;
 
     public CassandraEndpointProfile() {
     }
@@ -145,6 +147,7 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
         this.logSchemaVersion = dto.getLogSchemaVersion();
         this.ecfVersionStates = convertECFVersionDtoToModelList(dto.getEcfVersionStates());
         this.serverHash = dto.getServerHash();
+        this.sdkToken = dto.getSdkToken();
     }
 
     public void setId(String id) {
@@ -345,6 +348,14 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
         this.serverHash = serverHash;
     }
 
+    public String getSdkToken() {
+        return sdkToken;
+    }
+
+    public void setSdkToken(String sdkToken) {
+        this.sdkToken = sdkToken;
+    }
+
     public void setApplicationId(String applicationId) {
         this.applicationId = applicationId;
     }
@@ -391,6 +402,7 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
         if (profileHash != null ? !profileHash.equals(that.profileHash) : that.profileHash != null) return false;
         if (profileSchemaId != null ? !profileSchemaId.equals(that.profileSchemaId) : that.profileSchemaId != null)
             return false;
+        if (sdkToken != null ? !sdkToken.equals(that.sdkToken) : that.sdkToken != null) return false;
         if (serverHash != null ? !serverHash.equals(that.serverHash) : that.serverHash != null) return false;
         if (subscriptions != null ? !subscriptions.equals(that.subscriptions) : that.subscriptions != null)
             return false;
@@ -425,6 +437,7 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
         result = 31 * result + logSchemaVersion;
         result = 31 * result + (ecfVersionStates != null ? ecfVersionStates.hashCode() : 0);
         result = 31 * result + (serverHash != null ? serverHash.hashCode() : 0);
+        result = 31 * result + (sdkToken != null ? sdkToken.hashCode() : 0);
         return result;
     }
 
@@ -456,6 +469,7 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
                 ", logSchemaVersion=" + logSchemaVersion +
                 ", ecfVersionStates=" + ecfVersionStates +
                 ", serverHash='" + serverHash + '\'' +
+                ", sdkToken=" + sdkToken +
                 '}';
     }
 
@@ -487,6 +501,7 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
         dto.setLogSchemaVersion(logSchemaVersion);
         dto.setEcfVersionStates(DaoUtil.<EventClassFamilyVersionStateDto>convertDtoList(ecfVersionStates));
         dto.setServerHash(serverHash);
+        dto.setSdkToken(sdkToken);
         return dto;
     }
 }
