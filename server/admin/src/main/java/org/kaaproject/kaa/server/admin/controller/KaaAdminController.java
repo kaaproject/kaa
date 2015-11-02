@@ -183,7 +183,7 @@ public class KaaAdminController {
         EndpointProfilesPageDto endpointProfilesPageDto = kaaAdminService.getEndpointProfileByEndpointGroupId(endpointGroupId, limit, offset);
         if (endpointProfilesPageDto.hasEndpointProfiles()) {
             PageLinkDto pageLinkDto = createNext(endpointProfilesPageDto.getPageLinkDto(), request);
-            endpointProfilesPageDto.setPageLinkDto(pageLinkDto);
+            endpointProfilesPageDto.setNext(pageLinkDto.getNext());
         }
         return endpointProfilesPageDto;
     }
@@ -198,23 +198,10 @@ public class KaaAdminController {
             @RequestParam(value = "limit", defaultValue = DEFAULT_LIMIT) String limit,
             @RequestParam(value = "offset", defaultValue = DEFAULT_OFFSET) String offset,
             HttpServletRequest request) throws KaaAdminServiceException {
-        EndpointProfilesPageDto endpointProfilesPageDto = kaaAdminService.getEndpointProfileBodyByEndpointGroupId(endpointGroupId, limit, offset);
-        if (endpointProfilesPageDto.hasEndpointBodies()) {
-            PageLinkDto pageLinkDto = createNext(endpointProfilesPageDto.getPageLinkDto(), request);
-            endpointProfilesPageDto.setPageLinkDto(pageLinkDto);
-        }
-        return convertToEndpointProfilesBodyDto(endpointProfilesPageDto);
-    }
-
-    private EndpointProfilesBodyDto convertToEndpointProfilesBodyDto(EndpointProfilesPageDto endpointProfilesPageDto) {
-        EndpointProfilesBodyDto endpointProfilesBodyDto = new EndpointProfilesBodyDto();
-        List<EndpointProfileBodyDto> endpointProfileBodyDto = endpointProfilesPageDto.getEndpointProfilesBody();
-        if (endpointProfileBodyDto != null) {
-            endpointProfilesBodyDto.setEndpointProfilesBody(endpointProfileBodyDto);
-        }
-        String next = endpointProfilesPageDto.getPageLinkDto().getNext();
-        if (next != null) {
-            endpointProfilesBodyDto.setNext(next);
+        EndpointProfilesBodyDto endpointProfilesBodyDto = kaaAdminService.getEndpointProfileBodyByEndpointGroupId(endpointGroupId, limit, offset);
+        if (endpointProfilesBodyDto.hasEndpointBodies()) {
+            PageLinkDto pageLinkDto = createNext(endpointProfilesBodyDto.getPageLinkDto(), request);
+            endpointProfilesBodyDto.setNext(pageLinkDto.getNext());
         }
         return endpointProfilesBodyDto;
     }

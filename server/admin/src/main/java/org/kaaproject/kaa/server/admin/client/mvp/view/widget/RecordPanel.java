@@ -189,7 +189,7 @@ public class RecordPanel extends SimplePanel implements HasValue<RecordField>, C
 
     @Override
     public void onChange(ChangeEvent event) {
-        boolean enabled = recordFileUpload.getFileName().length()>0 && 
+        boolean enabled = recordFileUpload.getFileName().length()>0 &&
                           recordFieldWidget.getValue() != null;
         uploadButton.setEnabled(enabled);
     }

@@ -20,6 +20,7 @@ import org.kaaproject.kaa.common.dto.plugin.PluginInfoDto;
 
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.ValueListBox;
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.RecordPanel;
 
 public interface BasePluginView extends BaseDetailsView {
 
@@ -34,5 +35,7 @@ public interface BasePluginView extends BaseDetailsView {
     HasValue<String> getCreatedUsername();
 
     HasValue<RecordField> getConfiguration();
+
+    RecordPanel getSchemaForm();
 
 }

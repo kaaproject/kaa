@@ -17,26 +17,26 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>org.kaaproject</groupId>
-		<version>0.7.3-SNAPSHOT</version>
-		<artifactId>kaa</artifactId>
-	</parent>
-	<groupId>org.kaaproject.kaa</groupId>
-	<artifactId>common</artifactId>
-	<packaging>pom</packaging>
+    <parent>
+        <groupId>org.kaaproject</groupId>
+        <version>0.8.0-SNAPSHOT</version>
+        <artifactId>kaa</artifactId>
+    </parent>
+    <groupId>org.kaaproject.kaa</groupId>
+    <artifactId>common</artifactId>
+    <packaging>pom</packaging>
 
-	<name>Kaa Common</name>
-	<url>http://kaaproject.org</url>
+    <name>Kaa Common</name>
+    <url>http://kaaproject.org</url>
 
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<main.dir>${basedir}/..</main.dir>
-	</properties>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <main.dir>${basedir}/..</main.dir>
+    </properties>
 
-	<modules>
-		<module>endpoint-shared</module>
-		<module>core</module>
-	</modules>
+    <modules>
+        <module>endpoint-shared</module>
+        <module>core</module>
+    </modules>
 
 </project>

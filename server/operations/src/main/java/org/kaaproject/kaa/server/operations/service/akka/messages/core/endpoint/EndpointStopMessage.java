@@ -20,7 +20,7 @@ import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import akka.actor.ActorRef;
 
 
-public class EndpointStopMessage{
+public class EndpointStopMessage {
     private final EndpointObjectHash endpointKey;
     private final String actorKey;
     private final ActorRef originator;

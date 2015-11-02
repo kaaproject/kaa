@@ -73,6 +73,8 @@ public class NettyTcpMessageTest {
 
     @Test
     public void syncTest() {
+        SyncRequest syncRequest = new SyncRequest();
+        Assert.assertNotNull(syncRequest);
         UUID channelId = UUID.randomUUID();
         ChannelContext ctx = Mockito.mock(ChannelContext.class);
         ChannelType channelType = ChannelType.ASYNC;
@@ -137,5 +139,4 @@ public class NettyTcpMessageTest {
         Assert.assertEquals(ctx, message.getChannelContext());
         Assert.assertEquals(session, message.getSessionInfo());
     }
-
 }

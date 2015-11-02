@@ -16,21 +16,27 @@
 
 package org.kaaproject.kaa.common.dto;
 
-import java.io.Serializable;
 import java.util.List;
 
-public class EndpointProfilesBodyDto implements Serializable {
+public class EndpointProfilesBodyDto extends AbstractEndpointProfilesDto {
 
     private static final long serialVersionUID = -3301431577852472525L;
 
     private List<EndpointProfileBodyDto> endpointProfilesBody;
-    private String next;
 
-    public EndpointProfilesBodyDto() {}
+    public EndpointProfilesBodyDto() {
+    }
 
-    public EndpointProfilesBodyDto(List<EndpointProfileBodyDto> endpointProfileBody, String next) {
+    public EndpointProfilesBodyDto(List<EndpointProfileBodyDto> endpointProfileBody) {
        this.endpointProfilesBody = endpointProfileBody;
-       this.next = next;
+    }
+
+    public boolean hasEndpointBodies() {
+        boolean result = false;
+        if (endpointProfilesBody != null) {
+            result = !endpointProfilesBody.isEmpty();
+        }
+        return result;
     }
 
     public List<EndpointProfileBodyDto> getEndpointProfilesBody() {
@@ -41,20 +47,11 @@ public class EndpointProfilesBodyDto implements Serializable {
         this.endpointProfilesBody = endpointProfileBody;
     }
 
-    public String getNext() {
-        return next;
-    }
-
-    public void setNext(String next) {
-        this.next = next;
-    }
-
     @Override
     public int hashCode() {
         final int prime = 31;
-        int result = 1;
+        int result = super.hashCode();
         result = prime * result + ((endpointProfilesBody == null) ? 0 : endpointProfilesBody.hashCode());
-        result = prime * result + ((next == null) ? 0 : next.hashCode());
         return result;
     }
 
@@ -62,7 +59,7 @@ public class EndpointProfilesBodyDto implements Serializable {
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
-        if (obj == null)
+        if (!super.equals(obj))
             return false;
         if (getClass() != obj.getClass())
             return false;
@@ -71,11 +68,6 @@ public class EndpointProfilesBodyDto implements Serializable {
             if (other.endpointProfilesBody != null)
                 return false;
         } else if (!endpointProfilesBody.equals(other.endpointProfilesBody))
-            return false;
-        if (next == null) {
-            if (other.next != null)
-                return false;
-        } else if (!next.equals(other.next))
             return false;
         return true;
     }

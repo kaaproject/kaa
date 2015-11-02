@@ -32,6 +32,7 @@
   <!--  inherits name="com.google.gwt.user.theme.dark.DarkResources"/-->
 
     <!-- Enable debug ID. -->
+  <inherits name="com.google.gwt.json.JSON" />
   <inherits name="com.google.gwt.user.Debug"/>
   <inherits name="com.google.gwt.activity.Activity"/>
   <inherits name="com.google.gwt.place.Place"/>

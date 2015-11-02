@@ -30,6 +30,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
+import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.EndpointEventTimeoutMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventDeliveryMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventDeliveryMessage.EventDeliveryStatus;
@@ -90,16 +91,19 @@ public class LocalUserActorMessageProcessor {
 
     private final Map<String, EndpointObjectHash> endpoints;
 
+    private final long eventTimeout;
+
     private boolean firstConnectRequestToActor = true;
 
     private final Map<RouteTableAddress, GlobalRouteInfo> localRoutes;
 
     private String mainUserNode;
 
-    LocalUserActorMessageProcessor(CacheService cacheService, EventService eventService, String userId, String tenantId) {
+    LocalUserActorMessageProcessor(AkkaContext context, String userId, String tenantId) {
         super();
-        this.cacheService = cacheService;
-        this.eventService = eventService;
+        this.cacheService = context.getCacheService();
+        this.eventService = context.getEventService();
+        this.eventTimeout = context.getEventTimeout();
         this.userId = userId;
         this.tenantId = tenantId;
         this.endpoints = new HashMap<>();
@@ -438,7 +442,11 @@ public class LocalUserActorMessageProcessor {
     void scheduleTimeoutMessage(ActorContext context, EndpointEvent event) {
         context.system()
                 .scheduler()
-                .scheduleOnce(Duration.create(event.getTTL(), TimeUnit.MILLISECONDS), context.self(),
+                .scheduleOnce(Duration.create(getTTL(event), TimeUnit.MILLISECONDS), context.self(),
                         new EndpointEventTimeoutMessage(event), context.dispatcher(), context.self());
+    }
+    
+    private long getTTL(EndpointEvent event){
+        return Math.max(eventTimeout - (System.currentTimeMillis() - event.getCreateTime()), 0L);
     }
 }

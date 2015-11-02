@@ -19,9 +19,9 @@ package org.kaaproject.kaa.server.common.dao.impl;
 import java.nio.ByteBuffer;
 import java.util.List;
 
-import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.PageLinkDto;
 import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
@@ -57,7 +57,7 @@ public interface EndpointProfileDao<T extends EndpointProfile> extends Dao<T, By
      * @param pageLink the page link dto
      * @return the endpoint profiles page dto
      */
-    EndpointProfilesPageDto findBodyByEndpointGroupId(PageLinkDto pageLink);
+    EndpointProfilesBodyDto findBodyByEndpointGroupId(PageLinkDto pageLink);
 
     /**
      * Find endpoint profile body by endpoint key hash.

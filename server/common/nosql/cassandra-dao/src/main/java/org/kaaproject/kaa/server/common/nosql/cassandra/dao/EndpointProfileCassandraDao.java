@@ -26,6 +26,7 @@ import com.google.common.collect.Sets;
 import org.apache.commons.codec.binary.Base64;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
+import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.PageLinkDto;
 import org.kaaproject.kaa.server.common.dao.DaoConstants;
@@ -201,7 +202,9 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
         List<CassandraEndpointGroupState> cfGroupState = new ArrayList<>();
         List<String> endpointGroupIds = new ArrayList<>();
         List<Statement> statementList = new ArrayList<>();
-        cfGroupState.addAll(storedProfile.getCfGroupState());
+        if (storedProfile.getCfGroupState() != null) {
+            cfGroupState.addAll(storedProfile.getCfGroupState());
+        }
         if (cfGroupState != null) {
             for (CassandraEndpointGroupState cf : cfGroupState) {
                 endpointGroupIds.add(cf.getEndpointGroupId());
@@ -245,7 +248,7 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
         }
         Statement deleteEpsByAppId = delete().from(EP_BY_APP_ID_COLUMN_FAMILY_NAME).where(eq(EP_BY_APP_ID_APPLICATION_ID_PROPERTY, appId));
         executeBatch(deleteEps, deleteEpsByAppId);
-        LOG.trace("Execute statements {}, {}, {} like batch", deleteEps, deleteEpsByAppId);
+        LOG.trace("Execute statements {}, {} like batch", deleteEps, deleteEpsByAppId);
     }
 
     @Override
@@ -308,24 +311,24 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
         return endpointProfilesPageDto;
     }
 
-    private EndpointProfilesPageDto createNextBodyPage(List<EndpointProfileBodyDto> endpointProfilesBodyDto, String endpointGroupId, String limit) {
-        EndpointProfilesPageDto endpointProfilesPageDto = new EndpointProfilesPageDto();
+    private EndpointProfilesBodyDto createNextBodyPage(List<EndpointProfileBodyDto> profilesBodyDto, String endpointGroupId, String limit) {
+        EndpointProfilesBodyDto endpointProfilesBodyDto = new EndpointProfilesBodyDto();
         PageLinkDto pageLinkDto = new PageLinkDto();
         String next;
         int lim = Integer.valueOf(limit);
-        if (endpointProfilesBodyDto.size() == (lim + 1)) {
+        if (profilesBodyDto.size() == (lim + 1)) {
             pageLinkDto.setEndpointGroupId(endpointGroupId);
             pageLinkDto.setLimit(limit);
-            pageLinkDto.setOffset(Base64.encodeBase64String(endpointProfilesBodyDto.get(lim).getEndpointKeyHash()));
-            endpointProfilesBodyDto.remove(lim);
+            pageLinkDto.setOffset(Base64.encodeBase64String(profilesBodyDto.get(lim).getEndpointKeyHash()));
+            profilesBodyDto.remove(lim);
             next = null;
         } else {
             next = DaoConstants.LAST_PAGE_MESSAGE;
         }
         pageLinkDto.setNext(next);
-        endpointProfilesPageDto.setPageLinkDto(pageLinkDto);
-        endpointProfilesPageDto.setEndpointProfilesBody(endpointProfilesBodyDto);
-        return endpointProfilesPageDto;
+        endpointProfilesBodyDto.setPageLinkDto(pageLinkDto);
+        endpointProfilesBodyDto.setEndpointProfilesBody(profilesBodyDto);
+        return endpointProfilesBodyDto;
     }
 
     @Override
@@ -345,19 +348,19 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
     }
 
     @Override
-    public EndpointProfilesPageDto findBodyByEndpointGroupId(PageLinkDto pageLink) {
+    public EndpointProfilesBodyDto findBodyByEndpointGroupId(PageLinkDto pageLink) {
         LOG.debug("Try to find endpoint profile body by endpoint group id [{}]", pageLink.getEndpointGroupId());
-        EndpointProfilesPageDto endpointProfilesPageDto;
-        List<EndpointProfileBodyDto> endpointProfilesBodyDto;
+        EndpointProfilesBodyDto endpointProfilesBodyDto;
+        List<EndpointProfileBodyDto> profilesBodyDto;
         ByteBuffer[] keyHashList;
         if (pageLink.getApplicationId() != null) {
             keyHashList = cassandraEPByAppIdDao.findEPByAppId(pageLink, pageLink.getApplicationId());
         } else {
             keyHashList = cassandraEPByEndpointGroupIdDao.findEPByEndpointGroupId(pageLink);
         }
-        endpointProfilesBodyDto = findEndpointProfilesBodyList(keyHashList, pageLink.getEndpointGroupId());
-        endpointProfilesPageDto = createNextBodyPage(endpointProfilesBodyDto, pageLink.getEndpointGroupId(), pageLink.getLimit());
-        return endpointProfilesPageDto;
+        profilesBodyDto = findEndpointProfilesBodyList(keyHashList, pageLink.getEndpointGroupId());
+        endpointProfilesBodyDto = createNextBodyPage(profilesBodyDto, pageLink.getEndpointGroupId(), pageLink.getLimit());
+        return endpointProfilesBodyDto;
     }
 
     @Override

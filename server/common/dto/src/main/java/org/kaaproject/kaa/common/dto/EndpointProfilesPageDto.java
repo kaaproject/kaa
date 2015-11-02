@@ -16,24 +16,19 @@
 
 package org.kaaproject.kaa.common.dto;
 
-import java.io.Serializable;
 import java.util.List;
 
-public class EndpointProfilesPageDto implements Serializable {
+public class EndpointProfilesPageDto extends AbstractEndpointProfilesDto {
 
     private static final long serialVersionUID = 6368165337840879484L;
 
-    private List<EndpointProfileBodyDto> endpointProfilesBody;
     private List<EndpointProfileDto> endpointProfiles;
-    private PageLinkDto pageLinkDto;
 
-    public EndpointProfilesPageDto() {}
+    public EndpointProfilesPageDto() {
+    }
 
-    public EndpointProfilesPageDto(List<EndpointProfileDto> endpointProfiles,
-            List<EndpointProfileBodyDto> endpointProfilesBodyDto, PageLinkDto pageLinkDto) {
+    public EndpointProfilesPageDto(List<EndpointProfileDto> endpointProfiles) {
        this.endpointProfiles = endpointProfiles;
-       this.endpointProfilesBody = endpointProfilesBodyDto;
-       this.pageLinkDto = pageLinkDto;
     }
 
     public List<EndpointProfileDto> getEndpointProfiles() {
@@ -44,14 +39,6 @@ public class EndpointProfilesPageDto implements Serializable {
         this.endpointProfiles = endpointProfiles;
     }
 
-    public PageLinkDto getPageLinkDto() {
-        return pageLinkDto;
-    }
-
-    public void setPageLinkDto(PageLinkDto pageLinkDto) {
-        this.pageLinkDto = pageLinkDto;
-    }
-
     public boolean hasEndpointProfiles() {
         boolean result = false;
         if (endpointProfiles != null) {
@@ -60,29 +47,11 @@ public class EndpointProfilesPageDto implements Serializable {
         return result;
     }
 
-    public boolean hasEndpointBodies() {
-        boolean result = false;
-        if (endpointProfilesBody != null) {
-            result = !endpointProfilesBody.isEmpty();
-        }
-        return result;
-    }
-
-    public List<EndpointProfileBodyDto> getEndpointProfilesBody() {
-        return endpointProfilesBody;
-    }
-
-    public void setEndpointProfilesBody(List<EndpointProfileBodyDto> endpointProfilesBody) {
-        this.endpointProfilesBody = endpointProfilesBody;
-    }
-
     @Override
     public int hashCode() {
         final int prime = 31;
-        int result = 1;
+        int result = super.hashCode();
         result = prime * result + ((endpointProfiles == null) ? 0 : endpointProfiles.hashCode());
-        result = prime * result + ((endpointProfilesBody == null) ? 0 : endpointProfilesBody.hashCode());
-        result = prime * result + ((pageLinkDto == null) ? 0 : pageLinkDto.hashCode());
         return result;
     }
 
@@ -90,7 +59,7 @@ public class EndpointProfilesPageDto implements Serializable {
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
-        if (obj == null)
+        if (!super.equals(obj))
             return false;
         if (getClass() != obj.getClass())
             return false;
@@ -99,16 +68,6 @@ public class EndpointProfilesPageDto implements Serializable {
             if (other.endpointProfiles != null)
                 return false;
         } else if (!endpointProfiles.equals(other.endpointProfiles))
-            return false;
-        if (endpointProfilesBody == null) {
-            if (other.endpointProfilesBody != null)
-                return false;
-        } else if (!endpointProfilesBody.equals(other.endpointProfilesBody))
-            return false;
-        if (pageLinkDto == null) {
-            if (other.pageLinkDto != null)
-                return false;
-        } else if (!pageLinkDto.equals(other.pageLinkDto))
             return false;
         return true;
     }
