@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 CyberVision, Inc.
+ * Copyright 2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,24 +14,18 @@
  * limitations under the License.
  */
 
-package org.kaaproject.kaa.server.admin.shared;
+package org.kaaproject.kaa.server.admin.client.mvp.view;
 
-/*
- * This code is automatically generated. In order to change content of this class edit Version.template file 
- */
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.ValueListBox;
+import org.kaaproject.kaa.common.dto.EndpointGroupDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 
-/**
- * The Class Version provides access to useful project version information.
- * This information is populated during pre-compilation phase.
- */
-public final class Version {
+public interface EndpointProfilesView extends BaseListView<EndpointProfileDto>{
 
-    /** The Constant PROJECT_VERSION. */
-    public static final String PROJECT_VERSION = "0.8.0-SNAPSHOT";
+    ValueListBox<EndpointGroupDto> getEndpointGroupsInfo();
 
-    /**
-     * Instantiates a new version.
-     */
-    private Version(){
-    }
+    Button getFindEndpointButton();
+    TextBox getEndpointKeyHashTextBox();
 }

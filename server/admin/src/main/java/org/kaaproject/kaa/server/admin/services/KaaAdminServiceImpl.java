@@ -16,29 +16,15 @@
 
 package org.kaaproject.kaa.server.admin.services;
 
-import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
-import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toDataStruct;
-import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toDto;
-import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toDtoList;
-import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toGenericDataStruct;
-import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toGenericDto;
-import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toGenericDtoList;
-
-import java.io.IOException;
-import java.security.InvalidParameterException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import com.google.common.base.Charsets;
 import net.iharder.Base64;
-
 import org.apache.avro.Schema;
 import org.apache.avro.SchemaParseException;
+import org.apache.avro.generic.GenericDatumReader;
 import org.apache.avro.generic.GenericRecord;
+import org.apache.avro.io.DatumReader;
+import org.apache.avro.io.DecoderFactory;
+import org.apache.avro.io.JsonDecoder;
 import org.hibernate.StaleObjectStateException;
 import org.kaaproject.avro.ui.converter.FormAvroConverter;
 import org.kaaproject.avro.ui.converter.SchemaFormAvroConverter;
@@ -52,6 +38,7 @@ import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileViewDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
@@ -124,7 +111,23 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.google.common.base.Charsets;
+import java.io.IOException;
+import java.security.InvalidParameterException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
+import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toDataStruct;
+import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toDto;
+import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toDtoList;
+import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toGenericDataStruct;
+import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toGenericDto;
+import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toGenericDtoList;
 
 @Service("kaaAdminService")
 public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
@@ -176,6 +179,45 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     {
         for (PluginType type : PluginType.values()) {
             pluginsInfo.put(type, new HashMap<String, PluginInfoDto>());
+        }
+    }
+
+    @Override
+    public EndpointProfileViewDto getEndpointProfileViewDtoByEndpointProfileKeyHash(String endpointProfileKeyHash)
+            throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            EndpointProfileViewDto viewDto = toGenericDto(clientProvider
+                    .getClient().getEndpointProfileViewDtoByEndpointKeyHash(endpointProfileKeyHash));
+
+            ProfileSchemaDto schemaDto = viewDto.getProfileSchemaDto();
+            if (schemaDto != null) {
+                convertToSchemaForm(schemaDto, simpleSchemaFormAvroConverter);
+                /* check for empty schemas*/
+                viewDto.setEndpointProfileRecord(
+                        generateFormDataFromJson(schemaDto.getSchema(), viewDto.getEndpointProfileDto().getProfile()));
+            }
+            viewDto.setProfileSchemaDto(schemaDto);
+            for (EndpointGroupDto groupDto : viewDto.getGroupDtoList()) {
+                Utils.checkNotNull(groupDto);
+            }
+
+            return viewDto;
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    private RecordField generateFormDataFromJson(String avroSchema, String json)
+            throws KaaAdminServiceException {
+        try {
+            Schema schema = new Schema.Parser().parse(avroSchema);
+            JsonDecoder jsonDecoder = DecoderFactory.get().jsonDecoder(schema, json);
+            DatumReader<GenericRecord> datumReader = new GenericDatumReader<GenericRecord>(schema);
+            GenericRecord genericRecord = datumReader.read(null, jsonDecoder);
+            return FormAvroConverter.createRecordFieldFromGenericRecord(genericRecord);
+        } catch (Exception e) {
+            throw Utils.handleException(e);
         }
     }
 

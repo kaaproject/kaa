@@ -61,6 +61,12 @@ exception ControlThriftException {
 service ControlThriftService extends cli.CliThriftService{
 
 /**
+*    EndpointProfileViewer
+*/
+
+  data getEndpointProfileViewDtoByEndpointKeyHash(1: string endpointProfileKeyHash) throws(1: ControlThriftException ControlException)
+
+/**
 *   EndpointProfile
 */
 

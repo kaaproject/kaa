@@ -16,14 +16,16 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.data;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.web.bindery.event.shared.EventBus;
 import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileViewDto;
+import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
@@ -54,8 +56,8 @@ import org.kaaproject.kaa.server.admin.shared.properties.PropertiesDto;
 import org.kaaproject.kaa.server.admin.shared.schema.SchemaInfoDto;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceAsync;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.web.bindery.event.shared.EventBus;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DataSource {
 
@@ -730,6 +732,21 @@ public class DataSource {
                     protected void onResult(EndpointGroupDto result) {
                     }
                 });
+    }
+
+    public void getEndpointProfileByGroupID(String groupID, String limit, String offset,
+            AsyncCallback<EndpointProfilesPageDto> callback) {
+        rpcService.getEndpointProfileByEndpointGroupId(groupID, limit, offset, callback);
+    }
+
+    public void getEndpointProfileByKeyHash(String endpointKeyHash,
+            AsyncCallback<EndpointProfileDto> callback) {
+        rpcService.getEndpointProfileByKeyHash(endpointKeyHash, callback);
+    }
+
+    public void getEndpointProfileViewDtoByEndpointProfileKeyHash(String endpointKeyHash,
+            AsyncCallback<EndpointProfileViewDto> callback) {
+        rpcService.getEndpointProfileViewDtoByEndpointProfileKeyHash(endpointKeyHash, callback);
     }
 
     public void loadProfileFilterRecords(String endpointGroupId, boolean includeDeprecated,

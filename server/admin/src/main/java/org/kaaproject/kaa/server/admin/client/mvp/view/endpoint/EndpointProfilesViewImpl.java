@@ -1,0 +1,117 @@
+/*
+ * Copyright 2015 CyberVision, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.kaaproject.kaa.server.admin.client.mvp.view.endpoint;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.ValueListBox;
+import com.google.gwt.user.client.ui.Widget;
+import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
+import org.kaaproject.kaa.common.dto.EndpointGroupDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointProfilesView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseListViewImpl;
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.EndpointGroupsInfoListBox;
+import org.kaaproject.kaa.server.admin.client.util.Utils;
+
+public class EndpointProfilesViewImpl extends BaseListViewImpl<EndpointProfileDto> implements EndpointProfilesView {
+
+    private static final int DEFAULT_PAGE_SIZE = 10;
+
+    interface EndpointProfilesUiBinder extends UiBinder<Widget, EndpointProfilesViewImpl> { }
+    private static EndpointProfilesUiBinder uiBinder = GWT.create(EndpointProfilesUiBinder.class);
+
+    @UiField public HorizontalPanel filterPanel;
+
+    private EndpointGroupsInfoListBox listBox;
+    private TextBox endpointKeyHash;
+    private Button findEndpointButton;
+
+    public EndpointProfilesViewImpl() {
+        super(false);
+
+        FlexTable flexTable = new FlexTable();
+        flexTable.setStyleName(Utils.avroUiStyle.fieldWidget());
+        Label endpointGroupLabel = new Label(Utils.constants.endpointGroup());
+        listBox = new EndpointGroupsInfoListBox();
+        listBox.getElement().getStyle().setPropertyPx("minWidth", 100);
+        HorizontalPanel groupPanel = new HorizontalPanel();
+        groupPanel.setSpacing(15);
+        groupPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+        groupPanel.add(endpointGroupLabel);
+        groupPanel.add(listBox);
+
+        HorizontalPanel keyHashPanel = new HorizontalPanel();
+        keyHashPanel.setSpacing(15);
+        keyHashPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+        Label endpointKeyHashLabel = new Label(Utils.constants.endpointKeyHash());
+        endpointKeyHash = new TextBox();
+        endpointKeyHash.setWidth("100%");
+        findEndpointButton = new Button(Utils.constants.find());
+        findEndpointButton.addStyleName(Utils.avroUiStyle.buttonSmall());
+        keyHashPanel.add(endpointKeyHashLabel);
+        keyHashPanel.add(endpointKeyHash);
+        keyHashPanel.add(findEndpointButton);
+
+        flexTable.setWidget(0, 0, groupPanel);
+        flexTable.setWidget(0, 1, keyHashPanel);
+
+        filterPanel.add(flexTable);
+    }
+
+    @Override
+    protected Widget createAndBindUi() {
+        return uiBinder.createAndBindUi(this);
+    }
+
+    @Override
+    public ValueListBox<EndpointGroupDto> getEndpointGroupsInfo() {
+        return listBox;
+    }
+
+    @Override
+    public Button getFindEndpointButton() {
+        return findEndpointButton;
+    }
+
+    @Override
+    public TextBox getEndpointKeyHashTextBox() {
+        return endpointKeyHash;
+    }
+
+    @Override
+    protected AbstractGrid<EndpointProfileDto, String> createGrid() {
+        return new EndpointProfileGrid(DEFAULT_PAGE_SIZE);
+    }
+
+    @Override
+    protected String titleString() {
+        return Utils.constants.endpointProfiles();
+    }
+
+    @Override
+    protected String addButtonString() {
+        return "";
+    }
+}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +40,6 @@ import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelC
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_CF_SEQ_NUM;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_CHANGED_FLAG;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_CONFIGURATION_HASH;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_USER_CONFIGURATION_HASH;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_CONFIGURATION_VERSION;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_ECF_VERSION_STATE;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_ENDPOINT_KEY;
@@ -51,10 +50,10 @@ import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelC
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_NF_SEQ_NUM;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_NOTIFICATION_VERSION;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_PROFILE_HASH;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_PROFILE_SCHEMA_ID;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_PROFILE_VERSION;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SERVER_HASH;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SYSTEM_NF_VERSION;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_USER_CONFIGURATION_HASH;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_USER_ID;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_USER_NF_VERSION;
 
@@ -78,8 +77,6 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
     @Indexed
     @Field(EP_ACCESS_TOKEN)
     private String accessToken;
-    @Field(EP_PROFILE_SCHEMA_ID)
-    private String profileSchemaId;
     @Field(EP_CF_GROUP_STATE)
     private List<EndpointGroupState> cfGroupState;
     @Field(EP_NF_GROUP_STATE)
@@ -128,7 +125,6 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         this.endpointKeyHash = dto.getEndpointKeyHash();
         this.endpointUserId = dto.getEndpointUserId();
         this.accessToken = dto.getAccessToken();
-        this.profileSchemaId = dto.getProfileSchemaId();
         this.cfGroupState = MongoDaoUtil.convertDtoToModelList(dto.getCfGroupStates());
         this.nfGroupState = MongoDaoUtil.convertDtoToModelList(dto.getNfGroupStates());
         this.cfSequenceNumber = dto.getCfSequenceNumber();
@@ -193,10 +189,6 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
 
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
-    }
-
-    public String getProfileSchemaId() {
-        return profileSchemaId;
     }
 
     public List<EndpointGroupState> getCfGroupState() {
@@ -417,9 +409,6 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         if (!Arrays.equals(profileHash, that.profileHash)) {
             return false;
         }
-        if (profileSchemaId != null ? !profileSchemaId.equals(that.profileSchemaId) : that.profileSchemaId != null) {
-            return false;
-        }
         if (subscriptions != null ? !subscriptions.equals(that.subscriptions) : that.subscriptions != null) {
             return false;
         }
@@ -432,7 +421,6 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         int result = applicationId != null ? applicationId.hashCode() : 0;
         result = 31 * result + (endpointKey != null ? Arrays.hashCode(endpointKey) : 0);
         result = 31 * result + (endpointKeyHash != null ? Arrays.hashCode(endpointKeyHash) : 0);
-        result = 31 * result + (profileSchemaId != null ? profileSchemaId.hashCode() : 0);
         result = 31 * result + (cfGroupState != null ? cfGroupState.hashCode() : 0);
         result = 31 * result + (nfGroupState != null ? nfGroupState.hashCode() : 0);
         result = 31 * result + cfSequenceNumber;
@@ -459,7 +447,6 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
                 ", applicationId=" + applicationId +
                 ", endpointKey=" + Arrays.toString(endpointKey) +
                 ", endpointKeyHash=" + Arrays.toString(endpointKeyHash) +
-                ", profileSchemaId=" + profileSchemaId +
                 ", cfGroupState=" + cfGroupState +
                 ", nfGroupState=" + nfGroupState +
                 ", cfSequenceNumber=" + cfSequenceNumber +
@@ -499,7 +486,6 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         dto.setProfile(profile != null ? profile.toString() : "");
         dto.setProfileHash(profileHash);
         dto.setProfileVersion(profileVersion);
-        dto.setProfileSchemaId(profileSchemaId);
         dto.setNotificationVersion(notificationVersion);
         dto.setSubscriptions(subscriptions);
         dto.setNtHash(ntHash);
