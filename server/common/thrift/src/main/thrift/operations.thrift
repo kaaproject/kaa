@@ -187,7 +187,7 @@ struct UserConfigurationUpdate {
   5: binary ucfHash
 }
 
-service OperationsThriftService extends cli.CliThriftService{
+service OperationsThriftService {
 
 /**
 *   Application Sequence Numbers

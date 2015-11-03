@@ -1,0 +1,1483 @@
+/*
+ * Copyright 2014-2015 CyberVision, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.kaaproject.kaa.server.control.service;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import org.apache.avro.Schema;
+import org.apache.thrift.TException;
+import org.kaaproject.kaa.common.avro.GenericAvroConverter;
+import org.kaaproject.kaa.common.dto.AbstractSchemaDto;
+import org.kaaproject.kaa.common.dto.ApplicationDto;
+import org.kaaproject.kaa.common.dto.ChangeConfigurationNotification;
+import org.kaaproject.kaa.common.dto.ChangeNotificationDto;
+import org.kaaproject.kaa.common.dto.ChangeProfileFilterNotification;
+import org.kaaproject.kaa.common.dto.ChangeType;
+import org.kaaproject.kaa.common.dto.ConfigurationDto;
+import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointGroupDto;
+import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
+import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
+import org.kaaproject.kaa.common.dto.EndpointUserDto;
+import org.kaaproject.kaa.common.dto.HasId;
+import org.kaaproject.kaa.common.dto.NotificationDto;
+import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
+import org.kaaproject.kaa.common.dto.NotificationTypeDto;
+import org.kaaproject.kaa.common.dto.ProfileFilterDto;
+import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.SchemaDto;
+import org.kaaproject.kaa.common.dto.StructureRecordDto;
+import org.kaaproject.kaa.common.dto.TenantAdminDto;
+import org.kaaproject.kaa.common.dto.TenantDto;
+import org.kaaproject.kaa.common.dto.TopicDto;
+import org.kaaproject.kaa.common.dto.UpdateNotificationDto;
+import org.kaaproject.kaa.common.dto.UserDto;
+import org.kaaproject.kaa.common.dto.admin.RecordKey;
+import org.kaaproject.kaa.common.dto.admin.RecordKey.RecordFiles;
+import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
+import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
+import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
+import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
+import org.kaaproject.kaa.common.dto.event.EventClassDto;
+import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
+import org.kaaproject.kaa.common.dto.event.EventClassType;
+import org.kaaproject.kaa.common.dto.event.EventSchemaVersionDto;
+import org.kaaproject.kaa.common.dto.file.FileData;
+import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
+import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
+import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
+import org.kaaproject.kaa.common.hash.EndpointObjectHash;
+import org.kaaproject.kaa.server.common.Version;
+import org.kaaproject.kaa.server.common.core.schema.DataSchema;
+import org.kaaproject.kaa.server.common.core.schema.ProtocolSchema;
+import org.kaaproject.kaa.server.common.dao.ApplicationEventMapService;
+import org.kaaproject.kaa.server.common.dao.ApplicationService;
+import org.kaaproject.kaa.server.common.dao.ConfigurationService;
+import org.kaaproject.kaa.server.common.dao.EndpointService;
+import org.kaaproject.kaa.server.common.dao.EventClassService;
+import org.kaaproject.kaa.server.common.dao.LogAppendersService;
+import org.kaaproject.kaa.server.common.dao.LogSchemaService;
+import org.kaaproject.kaa.server.common.dao.NotificationService;
+import org.kaaproject.kaa.server.common.dao.ProfileService;
+import org.kaaproject.kaa.server.common.dao.SdkKeyService;
+import org.kaaproject.kaa.server.common.dao.TopicService;
+import org.kaaproject.kaa.server.common.dao.UserConfigurationService;
+import org.kaaproject.kaa.server.common.dao.UserService;
+import org.kaaproject.kaa.server.common.dao.UserVerifierService;
+import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
+import org.kaaproject.kaa.server.common.dao.exception.NotFoundException;
+import org.kaaproject.kaa.server.common.dao.model.sql.SdkKey;
+import org.kaaproject.kaa.server.common.log.shared.RecordWrapperSchemaGenerator;
+import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
+import org.kaaproject.kaa.server.common.thrift.gen.operations.Operation;
+import org.kaaproject.kaa.server.common.thrift.gen.operations.OperationsThriftService.Iface;
+import org.kaaproject.kaa.server.common.thrift.gen.operations.UserConfigurationUpdate;
+import org.kaaproject.kaa.server.common.zk.control.ControlNode;
+import org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo;
+import org.kaaproject.kaa.server.common.zk.operations.OperationsNodeListener;
+import org.kaaproject.kaa.server.control.service.exception.ControlServiceException;
+import org.kaaproject.kaa.server.control.service.log.RecordLibraryGenerator;
+import org.kaaproject.kaa.server.control.service.sdk.SdkGenerator;
+import org.kaaproject.kaa.server.control.service.sdk.SdkGeneratorFactory;
+import org.kaaproject.kaa.server.control.service.sdk.event.EventFamilyMetadata;
+import org.kaaproject.kaa.server.control.service.zk.ControlZkService;
+import org.kaaproject.kaa.server.hash.ConsistentHashResolver;
+import org.kaaproject.kaa.server.resolve.OperationsServerResolver;
+import org.kaaproject.kaa.server.thrift.NeighborTemplate;
+import org.kaaproject.kaa.server.thrift.Neighbors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.helpers.MessageFormatter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+/**
+ * The Class DefaultControlService.
+ */
+@Service
+public class DefaultControlService implements ControlService {
+
+    /** The Constant DEFAULT_NEIGHBOR_CONNECTIONS_SIZE. */
+    private static final int DEFAULT_NEIGHBOR_CONNECTIONS_SIZE = 10;
+    
+    /** The Constant DEFAULT_USER_HASH_PARTITIONS_SIZE. */
+    private static final int DEFAULT_USER_HASH_PARTITIONS_SIZE = 10;
+
+    /** The Constant LOG. */
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultControlService.class);
+
+    /** The Constant SCHEMA_NAME_PATTERN. */
+    private static final String SCHEMA_NAME_PATTERN = "kaa-record-schema-l{}.avsc";
+    
+    /** The Constant DATA_NAME_PATTERN. */
+    private static final String DATA_NAME_PATTERN = "kaa-{}-schema-v{}.avsc";
+
+    /** The user service. */
+    @Autowired
+    private UserService userService;
+
+    /** The application service. */
+    @Autowired
+    private ApplicationService applicationService;
+
+    /** The configuration service. */
+    @Autowired
+    private ConfigurationService configurationService;
+
+    /** The user configuration service. */
+    @Autowired
+    private UserConfigurationService userConfigurationService;
+
+    /** The profile service. */
+    @Autowired
+    private ProfileService profileService;
+
+    /** The endpoint service. */
+    @Autowired
+    private EndpointService endpointService;
+
+    /** The notification service. */
+    @Autowired
+    private NotificationService notificationService;
+
+    /** The topic service. */
+    @Autowired
+    private TopicService topicService;
+
+    /** The event class service. */
+    @Autowired
+    private EventClassService eventClassService;
+
+    /** The application event map service. */
+    @Autowired
+    private ApplicationEventMapService applicationEventMapService;
+
+    /** The control zk service. */
+    @Autowired
+    private ControlZkService controlZKService;
+
+    /** The log schema service. */
+    @Autowired
+    private LogSchemaService logSchemaService;
+
+    /** The log appender service. */
+    @Autowired
+    private LogAppendersService logAppenderService;
+
+    /** The user verifier service. */
+    @Autowired
+    private UserVerifierService userVerifierService;
+
+    /** The sdk key service. */
+    @Autowired
+    private SdkKeyService sdkKeyService;
+
+    /** The neighbor connections size. */
+    @Value("#{properties[max_number_neighbor_connections]}")
+    private int neighborConnectionsSize = DEFAULT_NEIGHBOR_CONNECTIONS_SIZE;
+
+    /** The user hash partitions. */
+    @Value("#{properties[user_hash_partitions]}")
+    private int userHashPartitions = DEFAULT_USER_HASH_PARTITIONS_SIZE;
+
+    /** The neighbors. */
+    private volatile Neighbors<NeighborTemplate<UserConfigurationUpdate>, UserConfigurationUpdate> neighbors;
+
+    /** The resolver. */
+    private volatile OperationsServerResolver resolver;
+
+    /** The zk lock. */
+    private Object zkLock = new Object();
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getTenants()
+     */
+    @Override
+    public List<TenantDto> getTenants() throws ControlServiceException {
+        return userService.findAllTenants();
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getTenant(java.lang.String)
+     */
+    @Override
+    public TenantDto getTenant(String tenantId) throws ControlServiceException {
+        return userService.findTenantById(tenantId);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#editTenant(org.kaaproject.kaa.common.dto.TenantDto)
+     */
+    @Override
+    public TenantDto editTenant(TenantDto tenant) throws ControlServiceException {
+        return userService.saveTenant(tenant);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#deleteTenant(java.lang.String)
+     */
+    @Override
+    public void deleteTenant(String tenantId) throws ControlServiceException {
+        userService.removeTenantById(tenantId);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getUsers()
+     */
+    @Override
+    public List<UserDto> getUsers() throws ControlServiceException {
+        return userService.findAllUsers();
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getTenantUsers(java.lang.String)
+     */
+    @Override
+    public List<UserDto> getTenantUsers(String tenantId) throws ControlServiceException {
+        return userService.findAllTenantUsers(tenantId);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getUser(java.lang.String)
+     */
+    @Override
+    public UserDto getUser(String userId) throws ControlServiceException {
+        return userService.findUserById(userId);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getUserByExternalUid(java.lang.String)
+     */
+    @Override
+    public UserDto getUserByExternalUid(String uid) throws ControlServiceException {
+        return userService.findUserByExternalUid(uid);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#editUser(org.kaaproject.kaa.common.dto.UserDto)
+     */
+    @Override
+    public UserDto editUser(UserDto user) throws ControlServiceException {
+        return userService.saveUser(user);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#deleteUser(java.lang.String)
+     */
+    @Override
+    public void deleteUser(String userId) throws ControlServiceException {
+        userService.removeUserById(userId);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getTenantAdmins()
+     */
+    @Override
+    public List<TenantAdminDto> getTenantAdmins() throws ControlServiceException {
+        return userService.findAllTenantAdmins();
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getTenantAdmin(java.lang.String)
+     */
+    @Override
+    public TenantAdminDto getTenantAdmin(String tenantId) throws ControlServiceException {
+        return userService.findTenantAdminById(tenantId);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#editTenantAdmin(org.kaaproject.kaa.common.dto.TenantAdminDto)
+     */
+    @Override
+    public TenantAdminDto editTenantAdmin(TenantAdminDto tenantAdmin) throws ControlServiceException {
+        return userService.saveTenantAdmin(tenantAdmin);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#deleteTenantAdmin(java.lang.String)
+     */
+    @Override
+    public void deleteTenantAdmin(String tenantId) throws ControlServiceException {
+        userService.removeTenantAdminById(tenantId);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getApplication(java.lang.String)
+     */
+    @Override
+    public ApplicationDto getApplication(String applicationId) throws ControlServiceException {
+        return applicationService.findAppById(applicationId);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getApplicationByApplicationToken(java.lang.String)
+     */
+    @Override
+    public ApplicationDto getApplicationByApplicationToken(String applicationToken) throws ControlServiceException {
+        return applicationService.findAppByApplicationToken(applicationToken);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getApplicationsByTenantId(java.lang.String)
+     */
+    @Override
+    public List<ApplicationDto> getApplicationsByTenantId(String tenantId) throws ControlServiceException {
+        return applicationService.findAppsByTenantId(tenantId);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#editApplication(org.kaaproject.kaa.common.dto.ApplicationDto)
+     */
+    @Override
+    public ApplicationDto editApplication(ApplicationDto application) throws ControlServiceException {
+        return applicationService.saveApp(application);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#deleteApplication(java.lang.String)
+     */
+    @Override
+    public void deleteApplication(String applicationId) throws ControlServiceException {
+        applicationService.removeAppById(applicationId);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getConfigurationSchemasByApplicationId(java.lang.String)
+     */
+    @Override
+    public List<ConfigurationSchemaDto> getConfigurationSchemasByApplicationId(String applicationId) throws ControlServiceException {
+        return configurationService.findConfSchemasByAppId(applicationId);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getConfigurationSchema(java.lang.String)
+     */
+    @Override
+    public ConfigurationSchemaDto getConfigurationSchema(String configurationSchemaId) throws ControlServiceException {
+        return configurationService.findConfSchemaById(configurationSchemaId);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#editConfigurationSchema(org.kaaproject.kaa.common.dto.ConfigurationSchemaDto)
+     */
+    @Override
+    public ConfigurationSchemaDto editConfigurationSchema(ConfigurationSchemaDto configurationSchema) throws ControlServiceException {
+        ConfigurationSchemaDto confSchema = null;
+        try {
+            confSchema = configurationService.saveConfSchema(configurationSchema);
+        } catch (IncorrectParameterException e) {
+            LOG.error("Can't generate protocol schema. Can't save configuration schema.");
+            throw new ControlServiceException(e);
+        }
+        return confSchema;
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getProfileSchemasByApplicationId(java.lang.String)
+     */
+    @Override
+    public List<ProfileSchemaDto> getProfileSchemasByApplicationId(String applicationId) throws ControlServiceException {
+        return profileService.findProfileSchemasByAppId(applicationId);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getProfileSchema(java.lang.String)
+     */
+    @Override
+    public ProfileSchemaDto getProfileSchema(String profileSchemaId) throws ControlServiceException {
+        return profileService.findProfileSchemaById(profileSchemaId);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#editProfileSchema(org.kaaproject.kaa.common.dto.ProfileSchemaDto)
+     */
+    @Override
+    public ProfileSchemaDto editProfileSchema(ProfileSchemaDto profileSchema) throws ControlServiceException {
+        return profileService.saveProfileSchema(profileSchema);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getEndpointGroupsByApplicationId(java.lang.String)
+     */
+    @Override
+    public List<EndpointGroupDto> getEndpointGroupsByApplicationId(String applicationId) throws ControlServiceException {
+        return endpointService.findEndpointGroupsByAppId(applicationId);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getEndpointGroup(java.lang.String)
+     */
+    @Override
+    public EndpointGroupDto getEndpointGroup(String endpointGroupId) throws ControlServiceException {
+        return endpointService.findEndpointGroupById(endpointGroupId);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#editEndpointGroup(org.kaaproject.kaa.common.dto.EndpointGroupDto)
+     */
+    @Override
+    public EndpointGroupDto editEndpointGroup(EndpointGroupDto endpointGroup) throws ControlServiceException {
+        return endpointService.saveEndpointGroup(endpointGroup);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#deleteEndpointGroup(java.lang.String)
+     */
+    @Override
+    public void deleteEndpointGroup(String endpointGroupId) throws ControlServiceException {
+        ChangeNotificationDto notification = endpointService.removeEndpointGroupById(endpointGroupId);
+        if (notification != null) {
+            notifyEndpoints(notification, null, null);
+        }
+
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#removeTopicsFromEndpointGroup(java.lang.String, java.lang.String)
+     */
+    @Override
+    public EndpointGroupDto removeTopicsFromEndpointGroup(String endpointGroupId, String topicId) throws ControlServiceException {
+        return notifyAndGetPayload(endpointService.removeTopicFromEndpointGroup(endpointGroupId, topicId));
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#addTopicsToEndpointGroup(java.lang.String, java.lang.String)
+     */
+    @Override
+    public EndpointGroupDto addTopicsToEndpointGroup(String endpointGroupId, String topicId) throws ControlServiceException {
+        return notifyAndGetPayload(endpointService.addTopicToEndpointGroup(endpointGroupId, topicId));
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getProfileFilter(java.lang.String)
+     */
+    @Override
+    public ProfileFilterDto getProfileFilter(String profileFilterId) throws ControlServiceException {
+        return profileService.findProfileFilterById(profileFilterId);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getProfileFilterRecordsByEndpointGroupId(java.lang.String, boolean)
+     */
+    @Override
+    public List<StructureRecordDto<ProfileFilterDto>> getProfileFilterRecordsByEndpointGroupId(String endpointGroupId, boolean includeDeprecated) throws ControlServiceException {
+        return new ArrayList<>(profileService.findAllProfileFilterRecordsByEndpointGroupId(endpointGroupId, includeDeprecated));
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getProfileFilterRecord(java.lang.String, java.lang.String)
+     */
+    @Override
+    public StructureRecordDto<ProfileFilterDto> getProfileFilterRecord(String schemaId, String endpointGroupId) throws ControlServiceException {
+        return profileService.findProfileFilterRecordBySchemaIdAndEndpointGroupId(schemaId, endpointGroupId);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getVacantProfileSchemasByEndpointGroupId(java.lang.String)
+     */
+    @Override
+    public List<SchemaDto> getVacantProfileSchemasByEndpointGroupId(String endpointGroupId) throws ControlServiceException {
+        return profileService.findVacantSchemasByEndpointGroupId(endpointGroupId);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#editProfileFilter(org.kaaproject.kaa.common.dto.ProfileFilterDto)
+     */
+    @Override
+    public ProfileFilterDto editProfileFilter(ProfileFilterDto profileFilter) throws ControlServiceException {
+        return profileService.saveProfileFilter(profileFilter);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getConfigurationRecordsByEndpointGroupId(java.lang.String, boolean)
+     */
+    @Override
+    public List<StructureRecordDto<ConfigurationDto>> getConfigurationRecordsByEndpointGroupId(String endpointGroupId, boolean includeDeprecated) throws ControlServiceException {
+        return new ArrayList<>(configurationService
+                .findAllConfigurationRecordsByEndpointGroupId(endpointGroupId, includeDeprecated));
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getConfigurationRecord(java.lang.String, java.lang.String)
+     */
+    @Override
+    public StructureRecordDto<ConfigurationDto> getConfigurationRecord(String schemaId, String endpointGroupId) throws ControlServiceException {
+        return configurationService.findConfigurationRecordBySchemaIdAndEndpointGroupId(schemaId, endpointGroupId);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getVacantConfigurationSchemasByEndpointGroupId(java.lang.String)
+     */
+    @Override
+    public List<SchemaDto> getVacantConfigurationSchemasByEndpointGroupId(String endpointGroupId) throws ControlServiceException {
+        return configurationService.findVacantSchemasByEndpointGroupId(endpointGroupId);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getConfiguration(java.lang.String)
+     */
+    @Override
+    public ConfigurationDto getConfiguration(String configurationId) throws ControlServiceException {
+        return configurationService.findConfigurationById(configurationId);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#editConfiguration(org.kaaproject.kaa.common.dto.ConfigurationDto)
+     */
+    @Override
+    public ConfigurationDto editConfiguration(ConfigurationDto configuration) throws ControlServiceException {
+        return configurationService.saveConfiguration(configuration);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#editUserConfiguration(org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto)
+     */
+    @Override
+    public void editUserConfiguration(EndpointUserConfigurationDto configuration) throws ControlServiceException {
+        ApplicationDto appDto = applicationService.findAppByApplicationToken(configuration.getAppToken());
+
+        EndpointUserDto userDto = endpointService.findEndpointUserByExternalIdAndTenantId(configuration.getUserId(), appDto.getTenantId());
+
+        configuration.setUserId(userDto.getId());
+        configuration = userConfigurationService.saveUserConfiguration(configuration);
+
+        EndpointObjectHash hash = EndpointObjectHash.fromString(configuration.getBody());
+
+        checkNeighbors();
+
+        OperationsNodeInfo server = resolve(configuration.getUserId());
+
+        if (server != null) {
+            UserConfigurationUpdate msg = new UserConfigurationUpdate(appDto.getTenantId(), configuration.getUserId(), configuration.getAppToken(),
+                    configuration.getSchemaVersion(), hash.getDataBuf());
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Sending message {} to [{}]", msg, Neighbors.getServerID(server.getConnectionInfo()));
+            }
+            neighbors.sendMessage(server.getConnectionInfo(), msg);
+        } else {
+            LOG.warn("Can't find server for user [{}]", configuration.getUserId());
+        }
+    }
+
+    /**
+     * Check neighbors.
+     */
+    private void checkNeighbors() {
+        if (neighbors == null) {
+            synchronized (zkLock) {
+                if (neighbors == null) {
+                    neighbors = new Neighbors<NeighborTemplate<UserConfigurationUpdate>, UserConfigurationUpdate>(
+                            new NeighborTemplate<UserConfigurationUpdate>() {
+                                @Override
+                                public void process(Iface client, List<UserConfigurationUpdate> messages) throws TException {
+                                    client.sendUserConfigurationUpdates(messages);
+                                }
+
+                                @Override
+                                public void onServerError(String serverId, Exception e) {
+                                    LOG.error("Can't send configuration update to {}", serverId, e);
+                                }
+                            }, neighborConnectionsSize);
+                    ControlNode zkNode = controlZKService.getControlZKNode();
+                    neighbors.setZkNode(zkNode.getControlServerInfo().getConnectionInfo(), zkNode);
+                }
+            }
+        }
+    }
+
+    /**
+     * Resolve.
+     *
+     * @param userId the user id
+     * @return the operations node info
+     */
+    private OperationsNodeInfo resolve(String userId) {
+        if (resolver == null) {
+            synchronized (zkLock) {
+                if (resolver == null) {
+                    ControlNode zkNode = controlZKService.getControlZKNode();
+                    resolver = new ConsistentHashResolver(zkNode.getCurrentOperationServerNodes(), userHashPartitions);
+                    zkNode.addListener(new OperationsNodeListener() {
+                        @Override
+                        public void onNodeUpdated(OperationsNodeInfo node) {
+                            LOG.info("Update of node {} is pushed to resolver {}", node, resolver);
+                            resolver.onNodeUpdated(node);
+                        }
+
+                        @Override
+                        public void onNodeRemoved(OperationsNodeInfo node) {
+                            LOG.info("Remove of node {} is pushed to resolver {}", node, resolver);
+                            resolver.onNodeRemoved(node);
+                        }
+
+                        @Override
+                        public void onNodeAdded(OperationsNodeInfo node) {
+                            LOG.info("Add of node {} is pushed to resolver {}", node, resolver);
+                            resolver.onNodeAdded(node);
+                        }
+                    });
+                }
+            }
+        }
+        return resolver.getNode(userId);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#activateConfiguration(java.lang.String, java.lang.String)
+     */
+    @Override
+    public ConfigurationDto activateConfiguration(String configurationId, String activatedUsername) throws ControlServiceException {
+        ChangeConfigurationNotification cfgNotification = configurationService.activateConfiguration(configurationId, activatedUsername);
+        ChangeNotificationDto notification = cfgNotification.getChangeNotificationDto();
+        if (notification != null) {
+            notifyEndpoints(notification, null, cfgNotification.getConfigurationDto());
+        }
+        return cfgNotification.getConfigurationDto();
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#deactivateConfiguration(java.lang.String, java.lang.String)
+     */
+    @Override
+    public ConfigurationDto deactivateConfiguration(String configurationId, String deactivatedUsername) throws ControlServiceException {
+        ChangeConfigurationNotification cfgNotification = configurationService
+                .deactivateConfiguration(configurationId, deactivatedUsername);
+        ChangeNotificationDto notification = cfgNotification.getChangeNotificationDto();
+        if (notification != null) {
+            notifyEndpoints(notification, null, cfgNotification.getConfigurationDto());
+        }
+        return cfgNotification.getConfigurationDto();
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#deleteConfigurationRecord(java.lang.String, java.lang.String, java.lang.String)
+     */
+    @Override
+    public void deleteConfigurationRecord(String schemaId, String endpointGroupId, String deactivatedUsername) throws ControlServiceException {
+        ChangeConfigurationNotification cfgNotification = configurationService.deleteConfigurationRecord(schemaId, endpointGroupId,
+                deactivatedUsername);
+        if (cfgNotification != null) {
+            ChangeNotificationDto notification = cfgNotification.getChangeNotificationDto();
+            if (notification != null) {
+                notifyEndpoints(notification, null, cfgNotification.getConfigurationDto());
+            }
+        }
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#activateProfileFilter(java.lang.String, java.lang.String)
+     */
+    @Override
+    public ProfileFilterDto activateProfileFilter(String profileFilterId, String activatedUsername) throws ControlServiceException {
+        ChangeProfileFilterNotification cpfNotification = profileService.activateProfileFilter(profileFilterId, activatedUsername);
+        ChangeNotificationDto notification = cpfNotification.getChangeNotificationDto();
+        if (notification != null) {
+            notifyEndpoints(notification, cpfNotification.getProfileFilterDto(), null);
+        }
+        return cpfNotification.getProfileFilterDto();
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#deactivateProfileFilter(java.lang.String, java.lang.String)
+     */
+    @Override
+    public ProfileFilterDto deactivateProfileFilter(String profileFilterId, String deactivatedUsername) throws ControlServiceException {
+        ChangeProfileFilterNotification cpfNotification = profileService.deactivateProfileFilter(profileFilterId, deactivatedUsername);
+        ChangeNotificationDto notification = cpfNotification.getChangeNotificationDto();
+        if (notification != null) {
+            notifyEndpoints(notification, cpfNotification.getProfileFilterDto(), null);
+        }
+        return cpfNotification.getProfileFilterDto();
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#deleteProfileFilterRecord(java.lang.String, java.lang.String, java.lang.String)
+     */
+    @Override
+    public void deleteProfileFilterRecord(String schemaId, String endpointGroupId, String deactivatedUsername) throws ControlServiceException {
+        ChangeProfileFilterNotification cpfNotification = profileService.deleteProfileFilterRecord(schemaId, endpointGroupId,
+                deactivatedUsername);
+        if (cpfNotification != null) {
+            ChangeNotificationDto notification = cpfNotification.getChangeNotificationDto();
+            if (notification != null) {
+                notifyEndpoints(notification, cpfNotification.getProfileFilterDto(), null);
+            }
+        }
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#generateSdk(org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto)
+     */
+    @Override
+    public FileData generateSdk(SdkPropertiesDto sdkProperties) throws ControlServiceException {
+        ApplicationDto application = applicationService.findAppById(sdkProperties.getApplicationId());
+        if (application == null) {
+            throw new NotFoundException("Application not found!");
+        }
+        ProfileSchemaDto profileSchema = profileService.findProfileSchemaByAppIdAndVersion(sdkProperties.getApplicationId(),
+                sdkProperties.getProfileSchemaVersion());
+        if (profileSchema == null) {
+            throw new NotFoundException("Profile schema not found!");
+        }
+        ConfigurationSchemaDto configurationSchema = configurationService.findConfSchemaByAppIdAndVersion(sdkProperties.getApplicationId(),
+                sdkProperties.getConfigurationSchemaVersion());
+        if (configurationSchema == null) {
+            throw new NotFoundException("Configuration schema not found!");
+        }
+        ConfigurationDto defaultConfiguration = configurationService.findDefaultConfigurationBySchemaId(configurationSchema.getId());
+        if (defaultConfiguration == null) {
+            throw new NotFoundException("Default configuration not found!");
+        }
+        NotificationSchemaDto notificationSchema = notificationService.findNotificationSchemaByAppIdAndTypeAndVersion(sdkProperties.getApplicationId(),
+                NotificationTypeDto.USER, sdkProperties.getNotificationSchemaVersion());
+        if (notificationSchema == null) {
+            throw new NotFoundException("Notification schema not found!");
+        }
+
+        LogSchemaDto logSchema = logSchemaService.findLogSchemaByAppIdAndVersion(sdkProperties.getApplicationId(),
+                sdkProperties.getLogSchemaVersion());
+        if (logSchema == null) {
+            throw new NotFoundException("Log schema not found!");
+        }
+
+        DataSchema profileDataSchema = new DataSchema(profileSchema.getSchema());
+        DataSchema notificationDataSchema = new DataSchema(notificationSchema.getSchema());
+        ProtocolSchema protocolSchema = new ProtocolSchema(configurationSchema.getProtocolSchema());
+        DataSchema logDataSchema = new DataSchema(logSchema.getSchema());
+
+        String appToken = application.getApplicationToken();
+        String profileSchemaBody = profileDataSchema.getRawSchema();
+
+        byte[] defaultConfigurationData = GenericAvroConverter.toRawData(defaultConfiguration.getBody(),
+                configurationSchema.getBaseSchema());
+
+        List<EventFamilyMetadata> eventFamilies = new ArrayList<>();
+        if (sdkProperties.getAefMapIds() != null) {
+            List<ApplicationEventFamilyMapDto> aefMaps = applicationEventMapService.findApplicationEventFamilyMapsByIds(sdkProperties.getAefMapIds());
+            for (ApplicationEventFamilyMapDto aefMap : aefMaps) {
+                EventFamilyMetadata efm = new EventFamilyMetadata();
+                efm.setVersion(aefMap.getVersion());
+                efm.setEventMaps(aefMap.getEventMaps());
+                EventClassFamilyDto ecf = eventClassService.findEventClassFamilyById(aefMap.getEcfId());
+                efm.setEcfName(ecf.getName());
+                efm.setEcfNamespace(ecf.getNamespace());
+                efm.setEcfClassName(ecf.getClassName());
+                List<EventSchemaVersionDto> ecfSchemas = ecf.getSchemas();
+                for (EventSchemaVersionDto ecfSchema : ecfSchemas) {
+                    if (ecfSchema.getVersion() == efm.getVersion()) {
+                        efm.setEcfSchema(ecfSchema.getSchema());
+                        break;
+                    }
+                }
+                eventFamilies.add(efm);
+            }
+        }
+
+        sdkProperties.setApplicationToken(appToken);
+        sdkProperties = sdkKeyService.saveSdkKey(sdkProperties);
+        String sdkToken = new SdkKey(sdkProperties).getToken();
+        LOG.debug("Sdk properties for sdk generation: {}", sdkProperties);
+
+        SdkGenerator generator = SdkGeneratorFactory.createSdkGenerator(sdkProperties.getTargetPlatform());
+        FileData sdkFile = null;
+        try {
+            sdkFile = generator.generateSdk(Version.PROJECT_VERSION, controlZKService.getCurrentBootstrapNodes(), sdkToken,
+                    sdkProperties, profileSchemaBody, notificationDataSchema.getRawSchema(), protocolSchema.getRawSchema(),
+                    configurationSchema.getBaseSchema(), defaultConfigurationData, eventFamilies, logDataSchema.getRawSchema());
+        } catch (Exception e) {
+            LOG.error("Unable to generate SDK", e);
+            throw new ControlServiceException(e);
+        }
+        sdkFile.setContentType(sdkProperties.getTargetPlatform().getContentType());
+        return sdkFile;
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#generateRecordStructureLibrary(java.lang.String, int)
+     */
+    @Override
+    public FileData generateRecordStructureLibrary(String applicationId, int logSchemaVersion) throws ControlServiceException {
+        ApplicationDto application = applicationService.findAppById(applicationId);
+        if (application == null) {
+            throw new NotFoundException("Application not found!");
+        }
+        LogSchemaDto logSchema = logSchemaService.findLogSchemaByAppIdAndVersion(applicationId, logSchemaVersion);
+        if (logSchema == null) {
+            throw new NotFoundException("Log schema not found!");
+        }
+        try {
+            return RecordLibraryGenerator.generateRecordLibrary(logSchemaVersion, logSchema.getSchema());
+        } catch (Exception e) {
+            LOG.error("Unable to generate Record Structure Library", e);
+            throw new ControlServiceException(e);
+        }
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#editNotificationSchema(org.kaaproject.kaa.common.dto.NotificationSchemaDto)
+     */
+    @Override
+    public NotificationSchemaDto editNotificationSchema(NotificationSchemaDto notificationSchema) throws ControlServiceException {
+        return notificationService
+                .saveNotificationSchema(notificationSchema);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getNotificationSchema(java.lang.String)
+     */
+    @Override
+    public NotificationSchemaDto getNotificationSchema(String notificationSchemaId) throws ControlServiceException {
+        return notificationService.findNotificationSchemaById(notificationSchemaId);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getNotificationSchemasByAppId(java.lang.String)
+     */
+    @Override
+    public List<NotificationSchemaDto> getNotificationSchemasByAppId(String applicationId) throws ControlServiceException {
+        return notificationService.findNotificationSchemasByAppId(applicationId);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getUserNotificationSchemasByAppId(java.lang.String)
+     */
+    @Override
+    public List<SchemaDto> getUserNotificationSchemasByAppId(String applicationId) throws ControlServiceException {
+        return notificationService.findUserNotificationSchemasByAppId(applicationId);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#findNotificationSchemasByAppIdAndType(java.lang.String, org.kaaproject.kaa.common.dto.NotificationTypeDto)
+     */
+    @Override
+    public List<NotificationSchemaDto> findNotificationSchemasByAppIdAndType(String applicationId, NotificationTypeDto type) throws ControlServiceException {
+        return notificationService.findNotificationSchemasByAppIdAndType(applicationId, type);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#editLogSchema(org.kaaproject.kaa.common.dto.logs.LogSchemaDto)
+     */
+    @Override
+    public LogSchemaDto editLogSchema(LogSchemaDto logSchemaDto) throws ControlServiceException {
+        return logSchemaService.saveLogSchema(logSchemaDto);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getLogSchemasByApplicationId(java.lang.String)
+     */
+    @Override
+    public List<LogSchemaDto> getLogSchemasByApplicationId(String applicationId) throws ControlServiceException {
+        return logSchemaService.findLogSchemasByAppId(applicationId);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getLogSchema(java.lang.String)
+     */
+    @Override
+    public LogSchemaDto getLogSchema(String logSchemaId) throws ControlServiceException {
+        return logSchemaService.findLogSchemaById(logSchemaId);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getLogSchemaByApplicationIdAndVersion(java.lang.String, int)
+     */
+    @Override
+    public LogSchemaDto getLogSchemaByApplicationIdAndVersion(String applicationId, int version) throws ControlServiceException {
+        return logSchemaService.findLogSchemaByAppIdAndVersion(applicationId, version);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#editNotification(org.kaaproject.kaa.common.dto.NotificationDto)
+     */
+    @Override
+    public NotificationDto editNotification(NotificationDto notification) throws ControlServiceException {
+        return notifyAndGetPayload(notificationService.saveNotification(notification));
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getNotification(java.lang.String)
+     */
+    @Override
+    public NotificationDto getNotification(String notificationId) throws ControlServiceException {
+        return notificationService.findNotificationById(notificationId);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getNotificationsByTopicId(java.lang.String)
+     */
+    @Override
+    public List<NotificationDto> getNotificationsByTopicId(String topicId) throws ControlServiceException {
+        return notificationService.findNotificationsByTopicId(topicId);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#editTopic(org.kaaproject.kaa.common.dto.TopicDto)
+     */
+    @Override
+    public TopicDto editTopic(TopicDto topic) throws ControlServiceException {
+        return topicService.saveTopic(topic);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getTopic(java.lang.String)
+     */
+    @Override
+    public TopicDto getTopic(String topicId) throws ControlServiceException {
+        return topicService.findTopicById(topicId);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getTopicByAppId(java.lang.String)
+     */
+    @Override
+    public List<TopicDto> getTopicByAppId(String appId) throws ControlServiceException {
+        return topicService.findTopicsByAppId(appId);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getTopicByEndpointGroupId(java.lang.String)
+     */
+    @Override
+    public List<TopicDto> getTopicByEndpointGroupId(String endpointGroupId) throws ControlServiceException {
+        return topicService.findTopicsByEndpointGroupId(endpointGroupId);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getVacantTopicByEndpointGroupId(java.lang.String)
+     */
+    @Override
+    public List<TopicDto> getVacantTopicByEndpointGroupId(String endpointGroupId) throws ControlServiceException {
+        return topicService.findVacantTopicsByEndpointGroupId(endpointGroupId);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#deleteTopicById(java.lang.String)
+     */
+    @Override
+    public void deleteTopicById(String topicId) throws ControlServiceException {
+        for (UpdateNotificationDto<EndpointGroupDto> dto : topicService.removeTopicById(topicId)) {
+            notifyAndGetPayload(dto);
+        }
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getUnicastNotification(java.lang.String)
+     */
+    @Override
+    public EndpointNotificationDto getUnicastNotification(String notificationId) throws ControlServiceException {
+        return notificationService.findUnicastNotificationById(notificationId);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#editUnicastNotification(org.kaaproject.kaa.common.dto.EndpointNotificationDto)
+     */
+    @Override
+    public EndpointNotificationDto editUnicastNotification(EndpointNotificationDto notification) throws ControlServiceException {
+        return notifyAndGetPayload(notificationService.saveUnicastNotification(notification));
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getUnicastNotificationsByKeyHash(byte[])
+     */
+    @Override
+    public List<EndpointNotificationDto> getUnicastNotificationsByKeyHash(byte[] keyhash) throws ControlServiceException {
+        List<EndpointNotificationDto> structList = Collections.emptyList();
+        if (keyhash != null) {
+            structList = notificationService.findUnicastNotificationsByKeyHash(keyhash);
+        }
+        return structList;
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getConfigurationSchemaVersionsByApplicationId(java.lang.String)
+     */
+    @Override
+    public List<SchemaDto> getConfigurationSchemaVersionsByApplicationId(String applicationId) throws ControlServiceException {
+        return configurationService.findConfigurationSchemaVersionsByAppId(applicationId);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getProfileSchemaVersionsByApplicationId(java.lang.String)
+     */
+    @Override
+    public List<SchemaDto> getProfileSchemaVersionsByApplicationId(String applicationId) throws ControlServiceException {
+        return profileService.findProfileSchemaVersionsByAppId(applicationId);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getNotificationSchemaVersionsByApplicationId(java.lang.String)
+     */
+    @Override
+    public List<SchemaDto> getNotificationSchemaVersionsByApplicationId(String applicationId) throws ControlServiceException {
+        return notificationService.findNotificationSchemaVersionsByAppId(applicationId);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getLogSchemaVersionsByApplicationId(java.lang.String)
+     */
+    @Override
+    public List<SchemaDto> getLogSchemaVersionsByApplicationId(String applicationId) throws ControlServiceException {
+        return logSchemaService.findLogSchemaVersionsByApplicationId(applicationId);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#editEventClassFamily(org.kaaproject.kaa.common.dto.event.EventClassFamilyDto)
+     */
+    @Override
+    public EventClassFamilyDto editEventClassFamily(EventClassFamilyDto eventClassFamily) throws ControlServiceException {
+        return eventClassService.saveEventClassFamily(eventClassFamily);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getEventClassFamiliesByTenantId(java.lang.String)
+     */
+    @Override
+    public List<EventClassFamilyDto> getEventClassFamiliesByTenantId(String tenantId) throws ControlServiceException {
+        return eventClassService.findEventClassFamiliesByTenantId(tenantId);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getEventClassFamily(java.lang.String)
+     */
+    @Override
+    public EventClassFamilyDto getEventClassFamily(String eventClassFamilyId) throws ControlServiceException {
+        return eventClassService.findEventClassFamilyById(eventClassFamilyId);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#addEventClassFamilySchema(java.lang.String, java.lang.String, java.lang.String)
+     */
+    @Override
+    public void addEventClassFamilySchema(String eventClassFamilyId, String eventClassFamilySchema, String createdUsername)
+            throws ControlServiceException {
+        eventClassService.addEventClassFamilySchema(eventClassFamilyId, eventClassFamilySchema, createdUsername);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getEventClassesByFamilyIdVersionAndType(java.lang.String, int, org.kaaproject.kaa.common.dto.event.EventClassType)
+     */
+    @Override
+    public List<EventClassDto> getEventClassesByFamilyIdVersionAndType(String ecfId, int version, EventClassType type)
+            throws ControlServiceException {
+        return eventClassService.findEventClassesByFamilyIdVersionAndType(ecfId, version, type);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#editApplicationEventFamilyMap(org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto)
+     */
+    @Override
+    public ApplicationEventFamilyMapDto editApplicationEventFamilyMap(ApplicationEventFamilyMapDto applicationEventFamilyMap) throws ControlServiceException {
+        return applicationEventMapService.saveApplicationEventFamilyMap(applicationEventFamilyMap);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getApplicationEventFamilyMap(java.lang.String)
+     */
+    @Override
+    public ApplicationEventFamilyMapDto getApplicationEventFamilyMap(String applicationEventFamilyMapId) throws ControlServiceException {
+        return applicationEventMapService.findApplicationEventFamilyMapById(applicationEventFamilyMapId);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getApplicationEventFamilyMapsByApplicationId(java.lang.String)
+     */
+    @Override
+    public List<ApplicationEventFamilyMapDto> getApplicationEventFamilyMapsByApplicationId(String applicationId) throws ControlServiceException {
+        return applicationEventMapService.findApplicationEventFamilyMapsByApplicationId(applicationId);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getVacantEventClassFamiliesByApplicationId(java.lang.String)
+     */
+    @Override
+    public List<EcfInfoDto> getVacantEventClassFamiliesByApplicationId(String applicationId) throws ControlServiceException {
+        return applicationEventMapService.findVacantEventClassFamiliesByApplicationId(applicationId);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getEventClassFamiliesByApplicationId(java.lang.String)
+     */
+    @Override
+    public List<AefMapInfoDto> getEventClassFamiliesByApplicationId(String applicationId) throws ControlServiceException {
+        return applicationEventMapService.findEventClassFamiliesByApplicationId(applicationId);
+    }
+
+    /**
+     * Notify endpoints.
+     *
+     * @param notification the notification
+     * @param profileFilter the profile filter
+     * @param configuration the configuration
+     */
+    private void notifyEndpoints(ChangeNotificationDto notification, ProfileFilterDto profileFilter, ConfigurationDto configuration) {
+        Notification thriftNotification = new Notification();
+        thriftNotification.setAppId(notification.getAppId());
+        thriftNotification.setAppSeqNumber(notification.getAppSeqNumber());
+        thriftNotification.setGroupId(notification.getGroupId());
+        thriftNotification.setGroupSeqNumber(notification.getGroupSeqNumber());
+        if (profileFilter != null) {
+            thriftNotification.setProfileFilterId(profileFilter.getId());
+            thriftNotification.setProfileFilterSeqNumber(profileFilter.getSequenceNumber());
+        }
+        if (configuration != null) {
+            thriftNotification.setConfigurationId(configuration.getId());
+            thriftNotification.setConfigurationSeqNumber(configuration.getSequenceNumber());
+        }
+        controlZKService.sendEndpointNotification(thriftNotification);
+    }
+
+    /**
+     * Notify endpoints.
+     *
+     * @param notification the notification
+     */
+    private <T> void notifyEndpoints(UpdateNotificationDto<T> notification) {
+        Notification thriftNotification = new Notification();
+        thriftNotification.setAppId(notification.getAppId());
+        thriftNotification.setAppSeqNumber(notification.getAppSeqNumber());
+        thriftNotification.setGroupId(notification.getGroupId());
+        thriftNotification.setGroupSeqNumber(notification.getGroupSeqNumber());
+        thriftNotification.setTopicId(notification.getTopicId());
+        thriftNotification.setOp(getOperation(notification.getChangeType()));
+        T payload = notification.getPayload();
+        if (payload != null) {
+            if (payload instanceof NotificationDto) {
+                NotificationDto dto = (NotificationDto) payload;
+                thriftNotification.setNotificationId(dto.getId());
+            } else if (payload instanceof EndpointNotificationDto) {
+                EndpointNotificationDto unicastDto = (EndpointNotificationDto) payload;
+                thriftNotification.setKeyHash(unicastDto.getEndpointKeyHash());
+                thriftNotification.setUnicastNotificationId(unicastDto.getId());
+            }
+        }
+        controlZKService.sendEndpointNotification(thriftNotification);
+    }
+
+    /**
+     * Notify and get payload.
+     *
+     * @param notification the notification
+     * @return the checks for id
+     */
+    private <T> T notifyAndGetPayload(UpdateNotificationDto<T> notification) {
+        T result = null;
+        if (notification != null) {
+            notifyEndpoints(notification);
+            T payload = notification.getPayload();
+            if (payload instanceof HasId && payload != null) {
+                result = payload;
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Gets the operation.
+     *
+     * @param type the type
+     * @return the operation
+     */
+    private Operation getOperation(ChangeType type) {
+        Operation operation = null;
+        if (type != null) {
+            try {
+                operation = Operation.valueOf(type.name());
+            } catch (IllegalArgumentException ex) {
+                LOG.info("Unsupported change type. Check Operation and ChangeType enums.");
+            }
+        }
+        return operation;
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getEndpointUsers()
+     */
+    @Override
+    public List<EndpointUserDto> getEndpointUsers() throws ControlServiceException {
+        return endpointService.findAllEndpointUsers();
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getEndpointUser(java.lang.String)
+     */
+    @Override
+    public EndpointUserDto getEndpointUser(String endpointUserId) throws ControlServiceException {
+        return endpointService.findEndpointUserById(endpointUserId);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#editEndpointUser(org.kaaproject.kaa.common.dto.EndpointUserDto)
+     */
+    @Override
+    public EndpointUserDto editEndpointUser(EndpointUserDto endpointUser) throws ControlServiceException {
+        return endpointService.saveEndpointUser(endpointUser);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#deleteEndpointUser(java.lang.String)
+     */
+    @Override
+    public void deleteEndpointUser(String endpointUserId) throws ControlServiceException {
+        endpointService.removeEndpointUserById(endpointUserId);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#generateEndpointUserAccessToken(java.lang.String, java.lang.String)
+     */
+    @Override
+    public String generateEndpointUserAccessToken(String externalUid, String tenantId) throws ControlServiceException {
+        return endpointService.generateEndpointUserAccessToken(externalUid, tenantId);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getLogAppendersByApplicationId(java.lang.String)
+     */
+    @Override
+    public List<LogAppenderDto> getLogAppendersByApplicationId(String applicationId) throws ControlServiceException {
+        return logAppenderService.findAllAppendersByAppId(applicationId);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getLogAppender(java.lang.String)
+     */
+    @Override
+    public LogAppenderDto getLogAppender(String logAppenderId) throws ControlServiceException {
+        return logAppenderService.findLogAppenderById(logAppenderId);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#editLogAppender(org.kaaproject.kaa.common.dto.logs.LogAppenderDto)
+     */
+    @Override
+    public LogAppenderDto editLogAppender(LogAppenderDto logAppender) throws ControlServiceException {
+        LogAppenderDto saved = null;
+        if (logAppender != null) {
+            saved = logAppenderService.saveLogAppender(logAppender);
+            if (saved != null) {
+                Notification thriftNotification = new Notification();
+                thriftNotification.setAppId(saved.getApplicationId());
+                thriftNotification.setAppenderId(saved.getId());
+                if (logAppender.getId() == null) {
+                    LOG.info("Add new log appender ...");
+                    thriftNotification.setOp(Operation.ADD_LOG_APPENDER);
+                    LOG.info("Send notification to operation servers about new appender.");
+                } else {
+                    thriftNotification.setOp(Operation.UPDATE_LOG_APPENDER);
+                    LOG.info("Send notification to operation servers about update appender configuration.");
+                }
+                controlZKService.sendEndpointNotification(thriftNotification);
+            }
+        }
+        return saved;
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#deleteLogAppender(java.lang.String)
+     */
+    @Override
+    public void deleteLogAppender(String logAppenderId) throws ControlServiceException {
+        LogAppenderDto logAppenderDto = logAppenderService.findLogAppenderById(logAppenderId);
+        LOG.info("Remove log appender ...");
+        logAppenderService.removeLogAppenderById(logAppenderId);
+        Notification thriftNotification = new Notification();
+        thriftNotification.setAppId(logAppenderDto.getApplicationId());
+        thriftNotification.setAppenderId(logAppenderDto.getId());
+        thriftNotification.setOp(Operation.REMOVE_LOG_APPENDER);
+        LOG.info("Send notification to operation servers about removing appender.");
+        controlZKService.sendEndpointNotification(thriftNotification);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getUserVerifiersByApplicationId(java.lang.String)
+     */
+    @Override
+    public List<UserVerifierDto> getUserVerifiersByApplicationId(String applicationId) throws ControlServiceException {
+        return userVerifierService.findUserVerifiersByAppId(applicationId);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getUserVerifier(java.lang.String)
+     */
+    @Override
+    public UserVerifierDto getUserVerifier(String userVerifierId) throws ControlServiceException {
+        return userVerifierService.findUserVerifierById(userVerifierId);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#editUserVerifier(org.kaaproject.kaa.common.dto.user.UserVerifierDto)
+     */
+    @Override
+    public UserVerifierDto editUserVerifier(UserVerifierDto userVerifier) throws ControlServiceException {
+        LOG.info("Adding new user verifier {}", userVerifier);
+        UserVerifierDto saved = null;
+        if (userVerifier != null) {
+            saved = userVerifierService.saveUserVerifier(userVerifier);
+            LOG.info("Saved user verifier {}", saved);
+            if (saved != null) {
+                Notification thriftNotification = new Notification();
+                thriftNotification.setAppId(saved.getApplicationId());
+                thriftNotification.setUserVerifierToken(saved.getVerifierToken());
+                if (userVerifier.getId() == null) {
+                    LOG.info("Add new user verifier ...");
+                    thriftNotification.setOp(Operation.ADD_USER_VERIFIER);
+                    LOG.info("Send notification to operation servers about new user verifier.");
+                } else {
+                    thriftNotification.setOp(Operation.UPDATE_USER_VERIFIER);
+                    LOG.info("Send notification to operation servers about update user verifier configuration.");
+                }
+                controlZKService.sendEndpointNotification(thriftNotification);
+            }
+        }
+        return saved;
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#deleteUserVerifier(java.lang.String)
+     */
+    @Override
+    public void deleteUserVerifier(String userVerifierId) throws ControlServiceException {
+        UserVerifierDto userVerifierDto = userVerifierService.findUserVerifierById(userVerifierId);
+        LOG.info("Remove user verifier ...");
+        userVerifierService.removeUserVerifierById(userVerifierId);
+        Notification thriftNotification = new Notification();
+        thriftNotification.setAppId(userVerifierDto.getApplicationId());
+        thriftNotification.setUserVerifierToken(userVerifierDto.getVerifierToken());
+        thriftNotification.setOp(Operation.REMOVE_USER_VERIFIER);
+        LOG.info("Send notification to operation servers about removing user verifier.");
+        controlZKService.sendEndpointNotification(thriftNotification);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getRecordStructureSchema(java.lang.String, int)
+     */
+    @Override
+    public FileData getRecordStructureSchema(String applicationId, int logSchemaVersion) throws ControlServiceException {
+        ApplicationDto application = applicationService.findAppById(applicationId);
+        if (application == null) {
+            throw new NotFoundException("Application not found!");
+        }
+        LogSchemaDto logSchema = logSchemaService.findLogSchemaByAppIdAndVersion(applicationId, logSchemaVersion);
+        if (logSchema == null) {
+            throw new NotFoundException("Log schema not found!");
+        }
+
+        Schema recordWrapperSchema = null;
+        try {
+            recordWrapperSchema = RecordWrapperSchemaGenerator.generateRecordWrapperSchema(logSchema.getSchema());
+        } catch (IOException e) {
+            LOG.error("Unable to get Record Structure Schema", e);
+            throw new ControlServiceException(e);
+        }
+        String libraryFileName = MessageFormatter.arrayFormat(SCHEMA_NAME_PATTERN, new Object[] { logSchemaVersion }).getMessage();
+        String schemaInJson = recordWrapperSchema.toString(true);
+        byte[] schemaData = schemaInJson.getBytes(StandardCharsets.UTF_8);
+
+        FileData schema = new FileData();
+        schema.setFileName(libraryFileName);
+        schema.setFileData(schemaData);
+        return schema;
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getRecordStructureData(org.kaaproject.kaa.common.dto.admin.RecordKey)
+     */
+    @Override
+    public FileData getRecordStructureData(RecordKey key) throws ControlServiceException {
+        ApplicationDto application = applicationService.findAppById(key.getApplicationId());
+        if (application == null) {
+            throw new NotFoundException("Application not found!");
+        }
+
+        FileData data = new FileData();
+        if (RecordFiles.LOG_LIBRARY.equals(key.getRecordFiles())) {
+            data = generateRecordStructureLibrary(key.getApplicationId(), key.getSchemaVersion());
+        } else {
+            AbstractSchemaDto schemaDto = null;
+            String fileName = null;
+            String schema = null;
+            switch (key.getRecordFiles()) {
+                case LOG_SCHEMA:
+                    schemaDto = logSchemaService.findLogSchemaByAppIdAndVersion(key.getApplicationId(), key.getSchemaVersion());
+                    checkSchema(schemaDto, RecordFiles.LOG_SCHEMA);
+                    Schema recordWrapperSchema = null;
+                    try {
+                        recordWrapperSchema = RecordWrapperSchemaGenerator.generateRecordWrapperSchema(schemaDto.getSchema());
+                    } catch (IOException e) {
+                        LOG.error("Unable to get Record Structure Schema", e);
+                        throw new ControlServiceException(e);
+                    }
+                    schema = recordWrapperSchema.toString(true);
+                    fileName = MessageFormatter.arrayFormat(DATA_NAME_PATTERN, new Object[]{"log", key.getSchemaVersion()}).getMessage();
+                    break;
+                case CONFIGURATION_SCHEMA:
+                    schemaDto = configurationService.findConfSchemaByAppIdAndVersion(key.getApplicationId(), key.getSchemaVersion());
+                    checkSchema(schemaDto, RecordFiles.CONFIGURATION_SCHEMA);
+                    schema = schemaDto.getSchema();
+                    fileName = MessageFormatter.arrayFormat(DATA_NAME_PATTERN, new Object[]{"configuration", key.getSchemaVersion()}).getMessage();
+                    break;
+                case CONFIGURATION_BASE_SCHEMA:
+                    schemaDto = configurationService.findConfSchemaByAppIdAndVersion(key.getApplicationId(), key.getSchemaVersion());
+                    checkSchema(schemaDto, RecordFiles.CONFIGURATION_BASE_SCHEMA);
+                    schema = ((ConfigurationSchemaDto)schemaDto).getBaseSchema();
+                    fileName = MessageFormatter.arrayFormat(DATA_NAME_PATTERN, new Object[]{"configuration-base", key.getSchemaVersion()}).getMessage();
+                    break;
+                case CONFIGURATION_OVERRIDE_SCHEMA:
+                    schemaDto = configurationService.findConfSchemaByAppIdAndVersion(key.getApplicationId(), key.getSchemaVersion());
+                    checkSchema(schemaDto, RecordFiles.CONFIGURATION_OVERRIDE_SCHEMA);
+                    schema = ((ConfigurationSchemaDto)schemaDto).getOverrideSchema();
+                    fileName = MessageFormatter.arrayFormat(DATA_NAME_PATTERN, new Object[]{"configuration-override", key.getSchemaVersion()}).getMessage();
+                    break;
+                case NOTIFICATION_SCHEMA:
+                    schemaDto = notificationService.findNotificationSchemaByAppIdAndTypeAndVersion(key.getApplicationId(), NotificationTypeDto.USER, key.getSchemaVersion());
+                    checkSchema(schemaDto, RecordFiles.NOTIFICATION_SCHEMA);
+                    schema = schemaDto.getSchema();
+                    fileName = MessageFormatter.arrayFormat(DATA_NAME_PATTERN, new Object[]{"notification", key.getSchemaVersion()}).getMessage();
+                    break;
+                case PROFILE_SCHEMA:
+                    schemaDto = profileService.findProfileSchemaByAppIdAndVersion(key.getApplicationId(), key.getSchemaVersion());
+                    checkSchema(schemaDto, RecordFiles.PROFILE_SCHEMA);
+                    schema = schemaDto.getSchema();
+                    fileName = MessageFormatter.arrayFormat(DATA_NAME_PATTERN, new Object[]{"profile", key.getSchemaVersion()}).getMessage();
+                    break;
+                default:
+                    break;
+            }
+            byte[] schemaData = schema.getBytes(StandardCharsets.UTF_8);
+            data.setFileName(fileName);
+            data.setFileData(schemaData);
+        }
+        return data;
+    }
+
+    /**
+     * Check schema.
+     *
+     * @param schemaDto the schema dto
+     * @param file the file
+     * @throws ControlServiceException the control service exception
+     */
+    private void checkSchema(AbstractSchemaDto schemaDto, RecordFiles file) throws NotFoundException {
+        if(schemaDto == null) {            
+            throw new NotFoundException("Schema " + file + " not found!");
+        }
+    }
+}

@@ -51,7 +51,7 @@
 
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
         <property name="driverClassName" value="#{dao[jdbc_driver_className]}" />
-        <property name="url" value="jdbc:h2:mem:#{dao[jdbc_host]};DATABASE_TO_UPPER=true" />
+        <property name="url" value="jdbc:h2:mem:kaa;DATABASE_TO_UPPER=true" />
         <property name="username" value="#{dao[jdbc_username]}" />
         <property name="password" value="#{dao[jdbc_password]}" />
     </bean>
@@ -63,4 +63,11 @@
     <!-- End of mandatory beans declaration -->
     
     <bean id="persistenceExceptionTranslationPostProcessor" class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
+
+    <bean id="org.h2.tools.Server-WebServer" class="org.h2.tools.Server"
+          factory-method="createWebServer" depends-on="dataSource"
+          init-method="start" lazy-init="false" destroy-method="stop">
+        <constructor-arg value="-web,-webPort,11111"/>
+    </bean>
+
 </beans>

@@ -1,0 +1,79 @@
+/*
+ * Copyright 2014 CyberVision, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.kaaproject.kaa.server.control;
+
+import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.*;
+
+import java.io.IOException;
+import java.util.List;
+
+import org.apache.thrift.TException;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.kaaproject.kaa.common.dto.ApplicationDto;
+import org.kaaproject.kaa.common.dto.SchemaDto;
+import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
+import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
+import org.kaaproject.kaa.server.common.admin.AdminClient;
+import org.kaaproject.kaa.server.common.nosql.mongo.dao.MongoDBTestRunner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class ControlServerLogSchemaIT extends AbstractTestControlServer {
+
+    @Before
+    public void beforeTest() throws Exception {
+        super.beforeTest();
+        Thread.sleep(100);
+    }
+    
+    /** The Constant logger. */
+    private static final Logger LOG = LoggerFactory.getLogger(ControlServerLogSchemaIT.class);
+
+    @Test
+    public void getLogSchemasByApplicationIdTest() throws Exception {
+        LogSchemaDto logSchemaDto = createLogSchema();
+        List<LogSchemaDto> found = client.getLogSchemas(logSchemaDto.getApplicationId());
+        Assert.assertEquals(2, found.size());
+    }
+
+    @Test
+    public void getLogSchemasByIdTest() throws Exception {
+        LogSchemaDto logSchemaDto = createLogSchema();
+        LogSchemaDto found = client.getLogSchema(logSchemaDto.getId());
+        Assert.assertEquals(logSchemaDto, found);
+    }
+
+    @Test
+    public void getLogSchemaByApplicationTokenAndVersionTest() throws Exception {
+        ApplicationDto app = createApplication(tenantAdminDto);
+        LogSchemaDto logSchemaDto = createLogSchema(app.getId());
+        LogSchemaDto found = client.getLogSchemaByApplicationTokenAndSchemaVersion(app.getApplicationToken(), logSchemaDto.getMajorVersion());
+        Assert.assertEquals(logSchemaDto, found);
+    }
+
+    @Test
+    public void getLogSchemaVersionsByApplicationIdTest() throws Exception {
+        LogSchemaDto logSchemaDto = createLogSchema();
+        SchemaVersions schemaVersions = client.getSchemaVersionsByApplicationId(logSchemaDto.getApplicationId());
+        List<SchemaDto> found = schemaVersions.getLogSchemaVersions();
+        Assert.assertEquals(2, found.size());
+    }
+}

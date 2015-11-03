@@ -32,7 +32,7 @@ public class TransportProperties extends Properties {
      */
     private static final long serialVersionUID = -3398931583634951967L;
 
-    private static final String FILTER_PREFIX = "transport.";
+    private static final String FILTER_PREFIX = "transport_";
 
     public TransportProperties(Properties source) {
         super();
