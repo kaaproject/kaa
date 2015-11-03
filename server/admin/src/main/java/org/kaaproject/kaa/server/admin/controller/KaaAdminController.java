@@ -214,7 +214,7 @@ public class KaaAdminController {
             if (HTTP_PORT != port && HTTPS_PORT != port) {
                 nextUrl.append(":").append(port);
             }
-            String next = nextUrl.append("/kaaAdmin/rest/api/endpointProfileByGroupId?").append(pageLink.getNextUrlPart()).toString();
+            String next = nextUrl.append(request.getRequestURI()).append("?").append(pageLink.getNextUrlPart()).toString();
             pageLink.setNext(next);
             logger.debug("Generated next url {}", next);
         }
