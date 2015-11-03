@@ -254,6 +254,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
                         "Requested item was not found!",
                         ServiceErrorCode.ITEM_NOT_FOUND);
             }
+            checkApplicationId(profileBodyDto.getAppId());
             return profileBodyDto;
         } catch (Exception e) {
             throw Utils.handleException(e);
