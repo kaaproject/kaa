@@ -57,7 +57,7 @@
         </property>
         <property name="jpaProperties">
             <props>
-                <prop key="hibernate.hbm2ddl.auto">create-drop</prop>
+                <prop key="hibernate.hbm2ddl.auto">#{admin_dao[hibernate_hbm2ddl_auto]}</prop>
                 <prop key="hibernate.dialect">#{admin_dao[hibernate_dialect]}</prop>
                 <prop key="hibernate.format_sql">#{admin_dao[hibernate_format_sql]}</prop>
                 <prop key="hibernate.show_sql">#{admin_dao[hibernate_show_sql]}</prop>
@@ -70,7 +70,7 @@
         <qualifier value="admin"/>
     </bean>
 	
-    <bean id="messagingService" class="org.kaaproject.kaa.server.admin.services.messaging.MessagingService" depends-on="adminTransactionManager" init-method="init" destroy-method="destroy">
+    <bean id="messagingService" class="org.kaaproject.kaa.server.admin.services.messaging.MessagingService" init-method="init" destroy-method="destroy">
             <property name="sendPoolSize" value="10"/>
             <property name="sendTimeout" value="20"/>
     </bean>

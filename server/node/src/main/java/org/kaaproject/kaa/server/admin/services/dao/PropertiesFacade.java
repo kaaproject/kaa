@@ -54,7 +54,6 @@ public class PropertiesFacade {
     @PersistenceContext(unitName = "kaaSec")
     private EntityManager em;
 
-    @Transactional("admin")
     public <S extends SpecificRecordBase> S getSpecificProperties(Class<S> propertiesClass) {
         Properties entity = findOrCreateByClass(propertiesClass);
         S specificProperties = null;
@@ -73,13 +72,11 @@ public class PropertiesFacade {
         return specificProperties;
     }
     
-    @Transactional("admin")
     public <S extends SpecificRecordBase> PropertiesDto getPropertiesDto(Class<S> propertiesClass) throws Exception {
         Properties entity = findOrCreateByClass(propertiesClass);
         return toDto(entity, propertiesClass);
     }
     
-    @Transactional("admin")
     public <S extends SpecificRecordBase> PropertiesDto editPropertiesDto(PropertiesDto propertiesDto, Class<S> propertiesClass) throws Exception {
         Properties entity = findOrCreateByClass(propertiesClass);
         GenericRecord record = FormAvroConverter.createGenericRecordFromRecordField(propertiesDto.getConfiguration());

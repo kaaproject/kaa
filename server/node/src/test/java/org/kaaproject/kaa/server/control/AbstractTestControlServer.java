@@ -32,6 +32,7 @@ import java.util.UUID;
 import javax.sql.DataSource;
 
 import org.apache.avro.Schema;
+import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.lang.StringUtils;
 import org.apache.thrift.TException;
 import org.apache.xerces.impl.dv.util.Base64;
@@ -200,6 +201,11 @@ public abstract class AbstractTestControlServer {
     
     protected static String tenantDeveloperUser = DEFAULT_TENANT_DEVELOPER_USER;
     protected static String tenantDeveloperPassword = DEFAULT_TENANT_DEVELOPER_PASSWORD;
+    
+    protected TenantUserDto tenantAdminDto;
+    protected UserDto tenantDeveloperDto;
+    
+    private static boolean kaaAdminCreated = false;
 
     /** The kaa node initialization service. */
     @Autowired
@@ -210,13 +216,9 @@ public abstract class AbstractTestControlServer {
 
     private final Random random = new Random();
 
-    private static DataSource dataSource;
-    
     @Autowired
-    public void setDataSource(DataSource dataSource){
-        AbstractTestControlServer.dataSource = dataSource;
-    }
-    
+    private DataSource dataSource;
+        
     /**
      * Inits the.
      *
@@ -237,7 +239,6 @@ public abstract class AbstractTestControlServer {
     @AfterClass
     public static void after() throws Exception {
         TestCluster.stop();
-        clearDBData();
         MongoDBTestRunner.tearDown();
     }
 
@@ -260,10 +261,11 @@ public abstract class AbstractTestControlServer {
      */
     @After
     public void afterTest() throws Exception {
+        dropUsers();
         clearDBData();
     }
 
-    protected static void clearDBData() {
+    protected void clearDBData() {
         LOG.info("Deleting data from MongoDB database");
         DB db = MongoDBTestRunner.getDB();
         if (db != null) {
@@ -277,6 +279,7 @@ public abstract class AbstractTestControlServer {
             if (url.contains("h2")) {
                 LOG.info("Deleting data from H2 database");
                 new H2DBTestRunner().truncateTables(dataSource);
+//                new H2DBTestRunner().truncateSequences(dataSource);
             } else {
                 LOG.info("Deleting data from PostgreSQL database");
                 new PostgreDBTestRunner().truncateTables(dataSource);
@@ -284,6 +287,59 @@ public abstract class AbstractTestControlServer {
         } catch (SQLException ex) {
             LOG.error("Can't delete data from databases.", ex);
         }
+    }
+    
+    protected void loginKaaAdmin() throws Exception {
+        client.login(kaaAdminUser, kaaAdminPassword);
+    }
+    
+    protected void loginTenantAdmin(String username) throws Exception {
+        client.login(username, tenantAdminPassword);
+    }
+    
+    protected void loginTenantDeveloper(String username) throws Exception {
+        client.login(username, tenantDeveloperPassword);
+    }
+    
+    protected boolean createTenantAdminNeeded() {
+        return true;
+    }
+    
+    protected boolean createTenantDeveloperNeeded() {
+        return true;
+    }
+    
+    private void createUsers() throws Exception {
+        LOG.info("Creating users...");
+        if (!kaaAdminCreated) {
+            client.createKaaAdmin(kaaAdminUser, kaaAdminPassword);
+            kaaAdminCreated = true;
+        }
+        loginKaaAdmin();
+        if (createTenantAdminNeeded()) {
+            tenantAdminDto = createTenant(tenantAdminUser);            
+            loginTenantAdmin(tenantAdminUser);
+            if (createTenantDeveloperNeeded()) {
+                tenantDeveloperDto = createTenantDeveloper(tenantDeveloperUser);
+                loginTenantDeveloper(tenantDeveloperUser);
+            }
+        }
+    }
+    
+    private void dropUsers() throws Exception {
+        LOG.info("Dropping users...");
+        if (tenantAdminDto != null) {
+            loginTenantAdmin(tenantAdminUser);
+            for (UserDto user : client.getUsers()) {
+                client.deleteUser(user.getId());
+            }
+        }
+        loginKaaAdmin();
+        for (TenantUserDto tenant : client.getTenants()) {
+            client.deleteTenant(tenant.getId());
+        }
+        tenantAdminDto = null;
+        tenantDeveloperDto = null;
     }
 
     /**
@@ -375,43 +431,6 @@ public abstract class AbstractTestControlServer {
         @Override
         public int compare(HasId o1, HasId o2) {
             return o1.getId().compareTo(o2.getId());
-        }
-    }
-
-    protected void loginKaaAdmin() throws Exception {
-        client.login(kaaAdminUser, kaaAdminPassword);
-    }
-    
-    protected void loginTenantAdmin(String username) throws Exception {
-        client.login(username, tenantAdminPassword);
-    }
-    
-    protected void loginTenantDeveloper(String username) throws Exception {
-        client.login(username, tenantDeveloperPassword);
-    }
-    
-    protected boolean createTenantAdminNeeded() {
-        return true;
-    }
-    
-    protected boolean createTenantDeveloperNeeded() {
-        return true;
-    }
-    
-    protected TenantUserDto tenantAdminDto;
-    protected UserDto tenantDeveloperDto;
-
-    private void createUsers() throws Exception {
-        LOG.info("Creating users...");
-        client.createKaaAdmin(kaaAdminUser, kaaAdminPassword);
-        loginKaaAdmin();
-        if (createTenantAdminNeeded()) {
-            tenantAdminDto = createTenant(tenantAdminUser);            
-            loginTenantAdmin(tenantAdminUser);
-            if (createTenantDeveloperNeeded()) {
-                tenantDeveloperDto = createTenantDeveloper(tenantDeveloperUser);
-                loginTenantDeveloper(tenantDeveloperUser);
-            }
         }
     }
     

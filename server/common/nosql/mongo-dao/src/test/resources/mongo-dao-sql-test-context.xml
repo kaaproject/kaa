@@ -51,7 +51,7 @@
 
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
         <property name="driverClassName" value="#{dao[jdbc_driver_className]}" />
-        <property name="url" value="jdbc:h2:mem:kaa;DATABASE_TO_UPPER=true" />
+        <property name="url" value="jdbc:h2:mem:#{dao[jdbc_host]};DATABASE_TO_UPPER=true" />
         <property name="username" value="#{dao[jdbc_username]}" />
         <property name="password" value="#{dao[jdbc_password]}" />
     </bean>

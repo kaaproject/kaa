@@ -51,9 +51,9 @@
     <logger name="org.kaaproject.kaa.server.operations.service.event" level="WARN"/>
     <logger name="org.kaaproject.kaa.server.thrift" level="WARN"/>
     <logger name="org.kaaproject.kaa.server.common.Environment" level="INFO"/>
-    <logger name="org.springframework" level="DEBUG"/>
+    <logger name="org.springframework" level="INFO"/>
     <logger name="org.spring4gwt.server" level="INFO"/>
-    <logger name="org.hibernate" level="DEBUG"/>
+    <logger name="org.hibernate" level="INFO"/>
 
     <root level="INFO">
         <appender-ref ref="console"/>
