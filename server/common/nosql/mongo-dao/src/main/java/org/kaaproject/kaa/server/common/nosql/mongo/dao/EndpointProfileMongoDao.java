@@ -68,7 +68,6 @@ public class EndpointProfileMongoDao extends AbstractMongoDao<MongoEndpointProfi
     public EndpointProfilesPageDto findByEndpointGroupId(PageLinkDto pageLink) {
         LOG.debug("Find endpoint profiles by endpoint group id [{}] ", pageLink.getEndpointGroupId());
         EndpointProfilesPageDto endpointProfilesPageDto = new EndpointProfilesPageDto();
-        String next = null;
         int lim = Integer.valueOf(pageLink.getLimit());
         List<MongoEndpointProfile> mongoEndpointProfileList = find(query(new Criteria().orOperator(where(EP_CF_GROUP_STATE + "." + ENDPOINT_GROUP_ID)
                 .is(pageLink.getEndpointGroupId()), where(EP_NF_GROUP_STATE + "." + ENDPOINT_GROUP_ID).is(pageLink.getEndpointGroupId())))
@@ -79,9 +78,8 @@ public class EndpointProfileMongoDao extends AbstractMongoDao<MongoEndpointProfi
             pageLink.setOffset(offset);
             mongoEndpointProfileList.remove(lim);
         } else {
-            next = DaoConstants.LAST_PAGE_MESSAGE;
+            pageLink.setNext(DaoConstants.LAST_PAGE_MESSAGE);
         }
-        pageLink.setNext(next);
         endpointProfilesPageDto.setPageLinkDto(pageLink);
         endpointProfilesPageDto.setEndpointProfiles(convertDtoList(mongoEndpointProfileList));
         return endpointProfilesPageDto;
@@ -92,13 +90,11 @@ public class EndpointProfileMongoDao extends AbstractMongoDao<MongoEndpointProfi
         LOG.debug("Find endpoint profiles body by endpoint group id [{}] ", pageLink.getEndpointGroupId());
         EndpointProfilesBodyDto endpointProfilesBodyDto = new EndpointProfilesBodyDto();
         List<EndpointProfileBodyDto> profilesBody = new ArrayList<>();
-        String profile = "profile";
-        String next = null;
         int lim = Integer.valueOf(pageLink.getLimit());
         Query query = Query.query(new Criteria().orOperator(where(EP_CF_GROUP_STATE + "." + ENDPOINT_GROUP_ID).is(pageLink.getEndpointGroupId()),
                 where(EP_NF_GROUP_STATE + "." + ENDPOINT_GROUP_ID).is(pageLink.getEndpointGroupId())));
         query.skip(Integer.parseInt(pageLink.getOffset())).limit(Integer.parseInt(pageLink.getLimit()) + 1);
-        query.fields().include(profile);
+        query.fields().include(DaoConstants.PROFILE);
         query.fields().include(EP_ENDPOINT_KEY_HASH);
         List<MongoEndpointProfile> mongoEndpointProfileList = mongoTemplate.find(query, getDocumentClass());
         if (mongoEndpointProfileList.size() == (lim + 1)) {
@@ -106,7 +102,7 @@ public class EndpointProfileMongoDao extends AbstractMongoDao<MongoEndpointProfi
             pageLink.setOffset(offset);
             mongoEndpointProfileList.remove(lim);
         } else {
-            next = DaoConstants.LAST_PAGE_MESSAGE;
+            pageLink.setNext(DaoConstants.LAST_PAGE_MESSAGE);
         }
         for (MongoEndpointProfile epList : mongoEndpointProfileList) {
             EndpointProfileBodyDto endpointProfileBodyDto = new EndpointProfileBodyDto();
@@ -116,7 +112,6 @@ public class EndpointProfileMongoDao extends AbstractMongoDao<MongoEndpointProfi
             }
             profilesBody.add(endpointProfileBodyDto);
         }
-        pageLink.setNext(next);
         endpointProfilesBodyDto.setPageLinkDto(pageLink);
         endpointProfilesBodyDto.setEndpointProfilesBody(profilesBody);
         return endpointProfilesBodyDto;
@@ -133,11 +128,10 @@ public class EndpointProfileMongoDao extends AbstractMongoDao<MongoEndpointProfi
     @Override
     public EndpointProfileBodyDto findBodyByKeyHash(byte[] endpointKeyHash) {
         LOG.debug("Find endpoint profile body by endpoint key hash [{}] ", endpointKeyHash);
-        String profile = "profile";
         EndpointProfileBodyDto endpointProfileBodyDto = new EndpointProfileBodyDto();
         endpointProfileBodyDto.setEndpointKeyHash(endpointKeyHash);
         Query query = Query.query(where(EP_ENDPOINT_KEY_HASH).is(endpointKeyHash));
-        query.fields().include(profile);
+        query.fields().include(DaoConstants.PROFILE);
         DBObject profileObject = mongoTemplate.findOne(query, getDocumentClass()).getProfile();
         if (profileObject != null) {
             endpointProfileBodyDto.setProfile(profileObject.toString());
