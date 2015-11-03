@@ -299,7 +299,7 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
         if (cassandraEndpointProfileList.size() == (lim + 1)) {
             pageLinkDto.setEndpointGroupId(endpointGroupId);
             pageLinkDto.setLimit(limit);
-            pageLinkDto.setOffset(Base64.encodeBase64String(cassandraEndpointProfileList.get(lim).getEndpointKeyHash()));
+            pageLinkDto.setOffset(Base64.encodeBase64URLSafeString(cassandraEndpointProfileList.get(lim).getEndpointKeyHash()));
             cassandraEndpointProfileList.remove(lim);
             next = null;
         } else {
@@ -319,7 +319,7 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
         if (profilesBodyDto.size() == (lim + 1)) {
             pageLinkDto.setEndpointGroupId(endpointGroupId);
             pageLinkDto.setLimit(limit);
-            pageLinkDto.setOffset(Base64.encodeBase64String(profilesBodyDto.get(lim).getEndpointKeyHash()));
+            pageLinkDto.setOffset(Base64.encodeBase64URLSafeString(profilesBodyDto.get(lim).getEndpointKeyHash()));
             profilesBodyDto.remove(lim);
             next = null;
         } else {
