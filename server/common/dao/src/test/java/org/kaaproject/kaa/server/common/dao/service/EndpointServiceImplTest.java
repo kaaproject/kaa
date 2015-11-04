@@ -24,7 +24,12 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
+import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
+import org.kaaproject.kaa.common.dto.PageLinkDto;
 import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
 import org.kaaproject.kaa.server.common.dao.AbstractTest;
@@ -33,6 +38,8 @@ import org.kaaproject.kaa.server.common.dao.AbstractTest;
 public class EndpointServiceImplTest extends AbstractTest {
 
     private static final String INCORRECT_ID = "incorrect id";
+    private static final String DEFAULT_LIMIT = "1";
+    private static final String DEFAULT_OFFSET = "0";
 
     @Test
     public void findEndpointGroupsByAppIdTest() {
@@ -49,6 +56,44 @@ public class EndpointServiceImplTest extends AbstractTest {
         EndpointGroupDto foundGroup = endpointService.findEndpointGroupById(group.getId());
         Assert.assertNotNull(foundGroup);
         group = endpointService.findEndpointGroupById(INCORRECT_ID);
+    }
+
+    @Test
+    public void findEndpointProfileByEndpointGroupIdTest() {
+        EndpointGroupDto group = generateEndpointGroup(null);
+        String endpointGroupId = group.getId();
+        PageLinkDto pageLinkDto = new PageLinkDto(endpointGroupId, DEFAULT_LIMIT, DEFAULT_OFFSET);
+        EndpointProfileDto savedEndpointProfileDto = generateEndpointProfileWithGroupId(endpointGroupId, false);
+        EndpointProfilesPageDto endpointProfilesPage = endpointService.findEndpointProfileByEndpointGroupId(pageLinkDto);
+        EndpointProfileDto endpointProfileDto = endpointProfilesPage.getEndpointProfiles().get(0);
+        Assert.assertEquals(savedEndpointProfileDto, endpointProfileDto);
+    }
+
+    @Test
+    public void findEndpointProfileBodyByEndpointGroupIdTest() {
+        EndpointGroupDto group = generateEndpointGroup(null);
+        String endpointGroupId = group.getId();
+        PageLinkDto pageLinkDto = new PageLinkDto(endpointGroupId, DEFAULT_LIMIT, DEFAULT_OFFSET);
+        EndpointProfileDto savedEndpointProfileDto = generateEndpointProfileWithGroupId(endpointGroupId, false);
+        EndpointProfilesBodyDto endpointProfilesPage = endpointService.findEndpointProfileBodyByEndpointGroupId(pageLinkDto);
+        EndpointProfileBodyDto endpointProfileBodyDto = endpointProfilesPage.getEndpointProfilesBody().get(0);
+        Assert.assertEquals(savedEndpointProfileDto.getProfile(), endpointProfileBodyDto.getProfile());
+    }
+
+    @Test
+    public void findEndpointProfileByKeyHashTest() {
+        String endpointGroupId = "124";
+        EndpointProfileDto savedEndpointProfileDto = generateEndpointProfileWithGroupId(endpointGroupId, false);
+        EndpointProfileDto endpointProfileDto = endpointService.findEndpointProfileByKeyHash(savedEndpointProfileDto.getEndpointKeyHash());
+        Assert.assertEquals(savedEndpointProfileDto, endpointProfileDto);
+    }
+
+    @Test
+    public void findEndpointProfileBodyByKeyHashTest() {
+        String endpointGroupId = "124";
+        EndpointProfileDto savedEndpointProfileDto = generateEndpointProfileWithGroupId(endpointGroupId, false);
+        EndpointProfileBodyDto endpointProfileBodyDto = endpointService.findEndpointProfileBodyByKeyHash(savedEndpointProfileDto.getEndpointKeyHash());
+        Assert.assertEquals(savedEndpointProfileDto.getProfile(), endpointProfileBodyDto.getProfile());
     }
 
     @Test(expected = IncorrectParameterException.class)
