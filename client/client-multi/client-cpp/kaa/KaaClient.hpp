@@ -121,11 +121,27 @@ private:
 
     void setDefaultConfiguration();
 
+    void checkReadiness();
+
 public:
     static const int KAA_DEFAULT_OPTIONS = KaaOption::USE_DEFAULT_BOOTSTRAP_HTTP_CHANNEL   |
                                            KaaOption::USE_DEFAULT_OPERATION_KAATCP_CHANNEL |
                                            KaaOption::USE_DEFAULT_CONNECTIVITY_CHECKER;
 private:
+    enum class State {
+        CREATED,
+        STARTED,
+        PAUSED,
+        STOPPED
+    };
+
+    void setClientState(State state);
+    void checkClientState(State expected, const std::string& message);
+    void checkClientStateNot(State unexpected, const std::string& message);
+
+private:
+    State                                           clientState_ = State::CREATED;
+
     IKaaClientStateStoragePtr                       status_;
     IBootstrapManagerPtr                            bootstrapManager_;
     IFailoverStrategyPtr                            failoverStrategy_;

@@ -587,7 +587,7 @@
                 <executions>
                     <execution>
                         <id>copy-admin-web</id>
-                        <phase>validate</phase>
+                        <phase>process-classes</phase>
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
@@ -603,7 +603,7 @@
                     </execution>      
                     <execution>
                         <id>copy-conf</id>
-                        <phase>validate</phase>
+                        <phase>process-resources</phase>
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
@@ -956,9 +956,9 @@
                         <version>${gwt.version}</version>
                         <executions>
                             <execution>
+                                <phase>compile</phase>
                                 <goals>
                                     <goal>compile</goal>
-                                    <goal>test</goal>
                                 </goals>
                             </execution>
                         </executions>

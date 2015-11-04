@@ -19,6 +19,7 @@ package org.kaaproject.kaa.server.common.nosql.mongo.dao.model;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 public class EndpointProfileTest {
@@ -27,5 +28,63 @@ public class EndpointProfileTest {
     public void hashCodeEqualsTest(){
         EqualsVerifier.forClass(MongoEndpointProfile.class).suppress(Warning.NONFINAL_FIELDS).verify();
     }
-    
+
+    @Test
+    public void getSetTest(){
+        MongoEndpointProfile profile = new MongoEndpointProfile();
+
+        profile.setAccessToken(null);
+        profile.setCfGroupState(null);
+        profile.setChangedFlag(null);
+        profile.setConfigurationHash(null);
+        profile.setEcfVersionStates(null);
+        profile.setEndpointKey(null);
+        profile.setEndpointKeyHash(null);
+        profile.setEndpointUserId(null);
+        profile.setEcfVersionStates(null);
+        profile.setId(null);
+        profile.setNfGroupState(null);
+        profile.setNtHash(null);
+        profile.setProfile(null);
+        profile.setProfileHash(null);
+        profile.setServerHash(null);
+        profile.setSubscriptions(null);
+        profile.setUserConfigurationHash(null);
+
+        profile.setCfSequenceNumber(1);
+        profile.setConfigurationVersion(1);
+        profile.setLogSchemaVersion(1);
+        profile.setNfSequenceNumber(1);
+        profile.setNotificationVersion(1);
+        profile.setProfileVersion(1);
+        profile.setSystemNfVersion(1);
+        profile.setUserNfVersion(1);
+
+        Assert.assertNull(profile.getAccessToken());
+        Assert.assertNull(profile.getCfGroupState());
+        Assert.assertNull(profile.getChangedFlag());
+        Assert.assertNull(profile.getConfigurationHash());
+        Assert.assertNull(profile.getEcfVersionStates());
+        Assert.assertNull(profile.getEndpointKey());
+        Assert.assertNull(profile.getEndpointKeyHash());
+        Assert.assertNull(profile.getEndpointUserId());
+        Assert.assertNull(profile.getEcfVersionStates());
+        Assert.assertNull(profile.getId());
+        Assert.assertNull(profile.getNfGroupState());
+        Assert.assertNull(profile.getNtHash());
+        Assert.assertNull(profile.getProfile());
+        Assert.assertNull(profile.getProfileHash());
+        Assert.assertNull(profile.getServerHash());
+        Assert.assertNull(profile.getSubscriptions());
+        Assert.assertNull(profile.getUserConfigurationHash());
+
+        Assert.assertEquals(1,profile.getCfSequenceNumber());
+        Assert.assertEquals(1,profile.getConfigurationVersion());
+        Assert.assertEquals(1,profile.getLogSchemaVersion());
+        Assert.assertEquals(1,profile.getNfSequenceNumber());
+        Assert.assertEquals(1,profile.getNotificationVersion());
+        Assert.assertEquals(1,profile.getProfileVersion());
+        Assert.assertEquals(1,profile.getSystemNfVersion());
+        Assert.assertEquals(1,profile.getUserNfVersion());
+    }
 }

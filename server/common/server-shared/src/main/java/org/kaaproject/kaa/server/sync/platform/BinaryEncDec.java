@@ -330,11 +330,12 @@ public class BinaryEncDec implements PlatformEncDec {
             putUTF(buf, nf.getUserExternalId());
             putUTF(buf, nf.getEndpointAccessToken());
         }
-        if (userSync.getEndpointDetachResponses() != null) {
+        if (userSync.getUserDetachNotification() != null) {
             UserDetachNotification nf = userSync.getUserDetachNotification();
             buf.put(USER_DETACH_NOTIFICATION_FIELD_ID);
             buf.put(NOTHING);
             buf.putShort((short) nf.getEndpointAccessToken().length());
+            putUTF(buf, nf.getEndpointAccessToken());
         }
         if (userSync.getEndpointAttachResponses() != null) {
             buf.put(ENDPOINT_ATTACH_RESPONSE_FIELD_ID);
@@ -349,7 +350,7 @@ public class BinaryEncDec implements PlatformEncDec {
                 }
                 buf.putShort((short) response.getRequestId());
                 if (response.getEndpointKeyHash() != null) {
-                    putUTF(buf, response.getEndpointKeyHash());
+                    put(buf, Base64Util.decode(response.getEndpointKeyHash()));
                 }
             }
         }

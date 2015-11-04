@@ -17,6 +17,7 @@
 package org.kaaproject.kaa.server.appenders.file.appender;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 import java.io.File;
 import java.util.Arrays;
@@ -91,6 +92,15 @@ public class FileSystemLogAppenderTest {
     }
 
     @Test
+    public void appendToClosedAppenderTest() {
+        FileSystemLogAppender appender = new FileSystemLogAppender();
+        LogDeliveryCallback listener = mock(LogDeliveryCallback.class);
+        ReflectionTestUtils.setField(appender, "closed", true);
+        appender.doAppend(null, null, listener);
+        verify(listener).onInternalError();
+    }
+
+    @Test
     public void testAppendWithInternalError() throws Exception {
         FileSystemLogAppender appender = new FileSystemLogAppender();
         appender.setName("test");
@@ -147,27 +157,27 @@ public class FileSystemLogAppenderTest {
             appender.close();
         }
     }
-    
+
     private LogAppenderDto prepareConfig() throws Exception {
 
         LogAppenderDto logAppenderDto = new LogAppenderDto();
         logAppenderDto.setApplicationId(APPLICATION_ID);
         logAppenderDto.setName("test");
         logAppenderDto.setTenantId(TENANT_ID);
-        
+
         RawSchema rawSchema = new RawSchema(FileConfig.getClassSchema().toString());
-        DefaultRecordGenerationAlgorithm<RawData> algotithm = 
-                    new DefaultRecordGenerationAlgorithmImpl<>(rawSchema, new RawDataFactory());
+        DefaultRecordGenerationAlgorithm<RawData> algotithm =
+                new DefaultRecordGenerationAlgorithmImpl<>(rawSchema, new RawDataFactory());
         RawData rawData = algotithm.getRootData();
-        AvroJsonConverter<FileConfig> converter = 
+        AvroJsonConverter<FileConfig> converter =
                 new AvroJsonConverter<>(FileConfig.getClassSchema(), FileConfig.class);
         FileConfig fileConfig = converter.decodeJson(rawData.getRawData());
-        
+
         fileConfig.setLogsRootPath(System.getProperty("java.io.tmpdir") + File.separator + "tmp_logs_"+System.currentTimeMillis());
-        
+
         AvroByteArrayConverter<FileConfig> byteConverter = new AvroByteArrayConverter<>(FileConfig.class);
         byte[] rawConfiguration = byteConverter.toByteArray(fileConfig);
-        
+
         logAppenderDto.setRawConfiguration(rawConfiguration);
 
         return logAppenderDto;

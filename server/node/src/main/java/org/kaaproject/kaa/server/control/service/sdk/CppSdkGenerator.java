@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.avro.Schema;
 import org.apache.commons.codec.binary.Base64;
@@ -72,6 +73,9 @@ public class CppSdkGenerator extends SdkGenerator {
 
     /** The Constant APPLICATION_TOKEN_VAR. */
     private static final String SDK_VAR = "%{application.sdk_token}";
+
+    /** The Constant SDK_PROFILE_VERSION_VAR. */
+    private static final String SDK_PROFILE_VERSION_VAR = "%{application.profile_version}";
 
     /** The Constant CLIENT_PUB_KEY_LOCATION_VAR. */
     private static final String CLIENT_PUB_KEY_LOCATION_VAR = "%{application.public_key_location}";
@@ -176,14 +180,17 @@ public class CppSdkGenerator extends SdkGenerator {
         TarEntryData tarEntry = new TarEntryData(entry, data);
         cppSources.add(tarEntry);
 
+        Map<String, String> profileVars = new HashMap<String, String>();
+        profileVars.put(SDK_PROFILE_VERSION_VAR, profileSchemaVersion.toString());
         cppSources.addAll(processFeatureSchema(profileSchemaBody, PROFILE_SCHEMA_AVRO_SRC,
-                                               PROFILE_DEFINITIONS_TEMPLATE, PROFILE_DEFINITIONS_PATH));
+                                               PROFILE_DEFINITIONS_TEMPLATE, PROFILE_DEFINITIONS_PATH, profileVars));
+
         cppSources.addAll(processFeatureSchema(notificationSchemaBody, NOTIFICATION_SCHEMA_AVRO_SRC,
-                                               NOTIFICATION_DEFINITIONS_TEMPLATE, NOTIFICATION_DEFINITIONS_PATH));
+                                               NOTIFICATION_DEFINITIONS_TEMPLATE, NOTIFICATION_DEFINITIONS_PATH, null));
         cppSources.addAll(processFeatureSchema(logSchemaBody, LOG_SCHEMA_AVRO_SRC,
-                                               LOG_DEFINITIONS_TEMPLATE, LOG_DEFINITIONS_PATH));
+                                               LOG_DEFINITIONS_TEMPLATE, LOG_DEFINITIONS_PATH, null));
         cppSources.addAll(processFeatureSchema(configurationBaseSchema, CONFIGURATION_SCHEMA_AVRO_SRC,
-                                               CONFIGURATION_DEFINITIONS_TEMPLATE, CONFIGURATION_DEFINITIONS_PATH));
+                                               CONFIGURATION_DEFINITIONS_TEMPLATE, CONFIGURATION_DEFINITIONS_PATH, null));
 
         if (eventFamilies != null && !eventFamilies.isEmpty()) {
             cppSources.addAll(CppEventSourcesGenerator.generateEventSources(eventFamilies));
@@ -237,7 +244,8 @@ public class CppSdkGenerator extends SdkGenerator {
     }
 
     private List<TarEntryData> processFeatureSchema(String schemaBody, String schemaPath,
-                                                    String templatePath, String outputPath) throws IOException
+                                                    String templatePath, String outputPath,
+                                                    Map<String, String> vars) throws IOException
     {
         List<TarEntryData> cppSources = new LinkedList<>();
 
@@ -251,7 +259,15 @@ public class CppSdkGenerator extends SdkGenerator {
             Schema schema = new Schema.Parser().parse(schemaBody);
             String definitionsHpp = SdkGenerator.readResource(templatePath);
             entry = new TarArchiveEntry(outputPath);
-            byte [] definitionsData = replaceVar(definitionsHpp, RECORD_CLASS_NAME_VAR, schema.getName()).getBytes();
+
+            String templateStr = replaceVar(definitionsHpp, RECORD_CLASS_NAME_VAR, schema.getName());
+            if (vars != null && vars.size() > 0) {
+                for (Entry<String, String> var : vars.entrySet()) {
+                    templateStr = replaceVar(templateStr, var.getKey(), var.getValue());
+                }
+            }
+
+            byte [] definitionsData = templateStr.getBytes();
             entry.setSize(definitionsData.length);
             tarEntry = new TarEntryData(entry, definitionsData);
             cppSources.add(tarEntry);

@@ -65,13 +65,24 @@
         <property name="sessionFactory" ref="adminSessionFactory" />
         <qualifier value="admin"/>
     </bean>
+
+    <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+        <property name="defaultEncoding" value="UTF-8"/>
+        <property name="basenames">
+            <list>
+                <value>classpath:/admin-web/WEB-INF/KaaMessageSource</value>
+            </list>
+        </property>
+    </bean>
 	
     <bean id="messagingService" class="org.kaaproject.kaa.server.admin.services.messaging.MessagingService" init-method="init" destroy-method="destroy">
             <property name="sendPoolSize" value="10"/>
             <property name="sendTimeout" value="20"/>
     </bean>
+
+    <bean id="kaaAdminAuthListener" class="org.kaaproject.kaa.server.admin.services.auth.KaaAdminAuthListener"/>
 	
-	<bean id="kaaAuthService" class="org.kaaproject.kaa.server.admin.services.KaaAuthServiceImpl">
+    <bean id="kaaAuthService" class="org.kaaproject.kaa.server.admin.services.KaaAuthServiceImpl">
             <property name="passwordEncoder" ref="encoder"/>
     </bean>
     

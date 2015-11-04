@@ -45,6 +45,7 @@ extern void kaa_status_destroy(kaa_status_t *self);
 extern kaa_error_t kaa_profile_manager_create(kaa_profile_manager_t **profile_manager_p, kaa_status_t *status,
                                               kaa_channel_manager_t *channel_manager, kaa_logger_t *logger);
 extern void kaa_profile_manager_destroy(kaa_profile_manager_t *self);
+extern bool kaa_profile_manager_is_profile_set(kaa_profile_manager_t *self);
 
 extern kaa_error_t kaa_channel_manager_create(kaa_channel_manager_t **channel_manager_p, kaa_context_t *context);
 extern void kaa_channel_manager_destroy(kaa_channel_manager_t *self);
@@ -215,7 +216,7 @@ kaa_error_t kaa_init(kaa_context_t **kaa_context_p)
     if (error)
         return error;
 
-    KAA_LOG_INFO(logger, KAA_ERR_NONE, "Kaa SDK version %s, commit hash %s", BUILD_VERSION, BUILD_COMMIT_HASH);
+    KAA_LOG_INFO(logger, KAA_ERR_NONE, "Kaa SDK version %s, commit hash %s", KAA_BUILD_VERSION, KAA_BUILD_COMMIT_HASH);
 
     // Initialize general Kaa context
     error = kaa_context_create(kaa_context_p, logger);
@@ -304,6 +305,16 @@ bool kaa_process_failover(kaa_context_t *kaa_context)
 kaa_error_t kaa_context_set_status_registered(kaa_context_t *kaa_context, bool is_registered)
 {
     KAA_RETURN_IF_NIL(kaa_context, KAA_ERR_BADPARAM);
-
     return kaa_status_set_registered(kaa_context->status->status_instance, is_registered);
+}
+
+kaa_error_t kaa_check_readiness(kaa_context_t *kaa_context)
+{
+    KAA_RETURN_IF_NIL(kaa_context, KAA_ERR_BADPARAM);
+    if (!kaa_profile_manager_is_profile_set(kaa_context->profile_manager)) {
+        KAA_LOG_ERROR(kaa_context->logger, KAA_ERR_PROFILE_IS_NOT_SET, "Profile isn't set");
+        return KAA_ERR_PROFILE_IS_NOT_SET;
+    }
+
+    return KAA_ERR_NONE;
 }

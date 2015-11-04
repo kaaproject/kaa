@@ -54,6 +54,7 @@ import org.kaaproject.kaa.server.common.dao.impl.TenantDao;
 import org.kaaproject.kaa.server.common.dao.impl.TopicDao;
 import org.kaaproject.kaa.server.common.dao.impl.UserDao;
 import org.kaaproject.kaa.server.common.dao.impl.UserVerifierDao;
+import org.kaaproject.kaa.server.common.dao.impl.LogAppenderDao;
 import org.kaaproject.kaa.server.common.dao.model.sql.Application;
 import org.kaaproject.kaa.server.common.dao.model.sql.ApplicationEventFamilyMap;
 import org.kaaproject.kaa.server.common.dao.model.sql.ApplicationEventMap;
@@ -74,6 +75,7 @@ import org.kaaproject.kaa.server.common.dao.model.sql.Tenant;
 import org.kaaproject.kaa.server.common.dao.model.sql.Topic;
 import org.kaaproject.kaa.server.common.dao.model.sql.User;
 import org.kaaproject.kaa.server.common.dao.model.sql.UserVerifier;
+import org.kaaproject.kaa.server.common.dao.model.sql.LogAppender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,6 +86,8 @@ public abstract class HibernateAbstractTest {
 
     public static final Random RANDOM = new Random();
 
+    @Autowired
+    protected LogAppenderDao<LogAppender> appenderDao;
     @Autowired
     protected UserDao<User> userDao;
     @Autowired
@@ -353,6 +357,17 @@ public abstract class HibernateAbstractTest {
         return topicDao.save(topic);
     }
 
+    protected LogAppender generateLogAppender(Application app){
+        LogAppender appender = new LogAppender();
+        if (app == null) {
+            app = generateApplication(null);
+        }
+        appender.setApplication(app);
+        appender.setMinLogSchemaVersion(1);
+        appender.setMaxLogSchemaVersion(2);
+        return appenderDao.save(appender);
+    }
+
     protected List<EventClassFamily> generateEventClassFamily(Tenant tenant, int count) {
         int eventSchemaVersionsCount = 2;
         if (tenant == null) {
@@ -487,9 +502,9 @@ public abstract class HibernateAbstractTest {
         return null;
     }
 
-    protected UserVerifier generateUserVerifier(Application app, String verifierToken) {
+    protected UserVerifier generateUserVerifier(Application app, String verifierToken){
         UserVerifier verifier = new UserVerifier();
-        verifier.setName("GENERATED test Verifier" + UUID.randomUUID().toString());
+        verifier.setName("GENERATED test Verifier");
         if (app == null) {
             app = generateApplication(null);
         }
@@ -517,5 +532,4 @@ public abstract class HibernateAbstractTest {
         sdkKey.setData(key);
         return sdkKeyDao.save(sdkKey);
     }
-
 }

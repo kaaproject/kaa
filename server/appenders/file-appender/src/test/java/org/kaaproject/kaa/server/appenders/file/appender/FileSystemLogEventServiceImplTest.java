@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
 import org.junit.Assert;
@@ -86,6 +88,23 @@ public class FileSystemLogEventServiceImplTest {
             Mockito.verify(testLogger, Mockito.atLeast(2)).debug(Mockito.anyString(), Mockito.eq(tempDir));
 
             logEventService.removeAll(tempDir);
+        }
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void executeCommandFailureTest() throws Throwable {
+        String testDir = "testdir";
+        File targetTestDir = new File("target", testDir);
+        if (!targetTestDir.exists()) {
+            targetTestDir.mkdirs();
+        }
+        FileSystemLogEventServiceImpl service = new FileSystemLogEventServiceImpl();
+        Method executeCommand = FileSystemLogEventServiceImpl.class.getDeclaredMethod("executeCommand", File.class, String[].class);
+        executeCommand.setAccessible(true);
+        try {
+            executeCommand.invoke(service, "target", new String[]{"mkdir", testDir});
+        } catch (InvocationTargetException e){
+            throw e.getCause();
         }
     }
 }

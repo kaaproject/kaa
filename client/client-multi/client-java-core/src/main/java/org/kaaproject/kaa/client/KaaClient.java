@@ -32,12 +32,12 @@ import org.kaaproject.kaa.schema.base.Log;
 /**
  * <p>
  * Base interface to operate with {@link Kaa} library.
- * 
+ *
  * </p>
- * 
+ *
  * @author Yaroslav Zeygerman
  * @author Andrew Shvayka
- * 
+ *
  * @see EventFamilyFactory
  * @see EndpointRegistrationManager
  * @see EventListenersResolver
@@ -59,7 +59,7 @@ public interface KaaClient extends GenericKaaClient {
 
     /**
      * Returns latest configuration.
-     * 
+     *
      * @return configuration
      */
     Configuration getConfiguration();
