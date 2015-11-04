@@ -21,9 +21,11 @@ import java.io.PrintStream;
 
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TBinaryProtocol;
+import org.apache.thrift.protocol.TMultiplexedProtocol;
 import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
+import org.kaaproject.kaa.server.common.thrift.KaaThriftService;
 
 /**
  * CliSessionState.
@@ -82,7 +84,8 @@ public class CliSessionState {
     public void connect() throws TException {
         transport = new TSocket(host, port);
         TProtocol protocol = new TBinaryProtocol(transport);
-        client = new CliClient(protocol);
+        TMultiplexedProtocol mp = new TMultiplexedProtocol(protocol, KaaThriftService.KAA_NODE_SERVICE.getServiceName());
+        client = new CliClient(mp);
         transport.open();
         remoteServerName = client.serverName();
         remoteMode = true;

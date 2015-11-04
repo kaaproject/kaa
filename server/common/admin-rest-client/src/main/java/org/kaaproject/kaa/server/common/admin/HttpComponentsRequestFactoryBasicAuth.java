@@ -151,9 +151,7 @@ public class HttpComponentsRequestFactoryBasicAuth extends
         }
 
         public boolean retryRequest(final HttpResponse response, int executionCount, final HttpContext context) {
-            return executionCount <= maxRetries &&
-                (response.getStatusLine().getStatusCode() == HttpStatus.SC_SERVICE_UNAVAILABLE ||
-                 response.getStatusLine().getStatusCode() == HttpStatus.SC_NOT_FOUND);
+            return executionCount <= maxRetries && response.getStatusLine().getStatusCode() == HttpStatus.SC_SERVICE_UNAVAILABLE;
         }
 
         public long getRetryInterval() {

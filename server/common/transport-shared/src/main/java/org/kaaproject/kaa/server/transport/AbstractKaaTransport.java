@@ -41,8 +41,8 @@ public abstract class AbstractKaaTransport<T extends SpecificRecordBase> impleme
     private static final Charset UTF8 = Charset.forName("UTF-8");
     protected static final int SIZE_OF_INT = 4;
 
-    protected static final String BIND_INTERFACE_PROP_NAME = "transport.bindInterface";
-    protected static final String PUBLIC_INTERFACE_PROP_NAME = "transport.publicInterface";
+    protected static final String BIND_INTERFACE_PROP_NAME = "transport_bind_interface";
+    protected static final String PUBLIC_INTERFACE_PROP_NAME = "transport_public_interface";
     protected static final String LOCALHOST = "localhost";
 
     /**
