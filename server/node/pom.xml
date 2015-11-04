@@ -280,54 +280,45 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.kaaproject.kaa.server.appenders.file</groupId>
-            <artifactId>appender</artifactId>
-            <classifier>file</classifier>
+            <groupId>org.kaaproject.kaa.server.appenders</groupId>
+            <artifactId>file-appender</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>org.kaaproject.kaa.server.appenders.mongo</groupId>
-            <artifactId>appender</artifactId>
-            <classifier>mongo</classifier>
+            <groupId>org.kaaproject.kaa.server.appenders</groupId>
+            <artifactId>mongo-appender</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>org.kaaproject.kaa.server.appenders.flume</groupId>
-            <artifactId>appender</artifactId>
-            <classifier>flume</classifier>
+            <groupId>org.kaaproject.kaa.server.appenders</groupId>
+            <artifactId>flume-appender</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>org.kaaproject.kaa.server.appenders.rest</groupId>
-            <artifactId>appender</artifactId>
-            <classifier>rest</classifier>
+            <groupId>org.kaaproject.kaa.server.appenders</groupId>
+            <artifactId>rest-appender</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>org.kaaproject.kaa.server.verifiers.trustful</groupId>
-            <artifactId>verifier</artifactId>
-            <classifier>trustful</classifier>
+            <groupId>org.kaaproject.kaa.server.verifiers</groupId>
+            <artifactId>trustful-verifier</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>org.kaaproject.kaa.server.verifiers.gplus</groupId>
-            <artifactId>verifier</artifactId>
-            <classifier>gplus</classifier>
+            <groupId>org.kaaproject.kaa.server.verifiers</groupId>
+            <artifactId>gplus-verifier</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>org.kaaproject.kaa.server.verifiers.facebook</groupId>
-            <artifactId>verifier</artifactId>
-            <classifier>facebook</classifier>
+            <groupId>org.kaaproject.kaa.server.verifiers</groupId>
+            <artifactId>facebook-verifier</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>org.kaaproject.kaa.server.verifiers.twitter</groupId>
-            <artifactId>verifier</artifactId>
-            <classifier>twitter</classifier>
+            <groupId>org.kaaproject.kaa.server.verifiers</groupId>
+            <artifactId>twitter-verifier</artifactId>
             <scope>runtime</scope>
         </dependency>        
-        
         <dependency>
             <groupId>com.google.gwt</groupId>
             <artifactId>gwt-servlet</artifactId>
@@ -979,7 +970,8 @@
                             <runTarget>KaaAdmin.html</runTarget>
                             <persistentunitcachedir>${project.build.directory}</persistentunitcachedir>
                             <deploy>${project.build.directory}/gwt-deploy</deploy>
-                            <webappDirectory>${project.build.directory}/classes/admin-web</webappDirectory>                        </configuration>
+                            <webappDirectory>${project.build.directory}/classes/admin-web</webappDirectory>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>
@@ -1134,10 +1126,9 @@
             <id>cdap</id>
             <dependencies>
                 <dependency>
-                    <groupId>org.kaaproject.kaa.server.appenders.cdap</groupId>
-                    <artifactId>appender</artifactId>
+                    <groupId>org.kaaproject.kaa.server.appenders</groupId>
+                    <artifactId>cdap-appender</artifactId>
                     <version>${project.version}</version>
-                    <classifier>cdap</classifier>
                     <scope>runtime</scope>
                 </dependency>
                 <dependency>
@@ -1151,10 +1142,9 @@
             <id>oracle-nosql</id>
             <dependencies>
                 <dependency>
-                    <groupId>org.kaaproject.kaa.server.appenders.oracle-nosql</groupId>
-                    <artifactId>appender</artifactId>
+                    <groupId>org.kaaproject.kaa.server.appenders</groupId>
+                    <artifactId>oracle-nosql-appender</artifactId>
                     <version>${project.version}</version>
-                    <classifier>oracle-nosql</classifier>
                     <scope>runtime</scope>
                 </dependency>
             </dependencies>
@@ -1163,10 +1153,9 @@
             <id>cassandra</id>
             <dependencies>
                 <dependency>
-                    <groupId>org.kaaproject.kaa.server.appenders.cassandra</groupId>
-                    <artifactId>appender</artifactId>
+                    <groupId>org.kaaproject.kaa.server.appenders</groupId>
+                    <artifactId>cassandra-appender</artifactId>
                     <version>${project.version}</version>
-                    <classifier>cassandra</classifier>
                     <scope>runtime</scope>
                 </dependency>
             </dependencies>
@@ -1175,10 +1164,9 @@
             <id>kafka</id>
             <dependencies>
                 <dependency>
-                    <groupId>org.kaaproject.kaa.server.appenders.kafka</groupId>
-                    <artifactId>appender</artifactId>
+                    <groupId>org.kaaproject.kaa.server.appenders</groupId>
+                    <artifactId>kafka-appender</artifactId>
                     <version>${project.version}</version>
-                    <classifier>kafka</classifier>
                     <scope>runtime</scope>
                 </dependency>
             </dependencies>
@@ -1187,10 +1175,9 @@
             <id>couchbase</id>
             <dependencies>
                 <dependency>
-                    <groupId>org.kaaproject.kaa.server.appenders.couchbase</groupId>
-                    <artifactId>appender</artifactId>
+                    <groupId>org.kaaproject.kaa.server.appenders</groupId>
+                    <artifactId>couchbase-appender</artifactId>
                     <version>${project.version}</version>
-                    <classifier>couchbase</classifier>
                     <scope>runtime</scope>
                 </dependency>
             </dependencies>

@@ -16,18 +16,10 @@
 
 package org.kaaproject.kaa.server.control;
 
-import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toDataStruct;
-import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toDto;
-import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toDtoList;
-import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toGenericDto;
-import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toGenericDtoList;
-
-import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.apache.thrift.TException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
@@ -36,23 +28,17 @@ import org.kaaproject.kaa.common.dto.ConfigurationRecordDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.SchemaDto;
-import org.kaaproject.kaa.common.dto.StructureRecordDto;
 import org.kaaproject.kaa.common.dto.UpdateStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+/**
+ * The Class ControlServerConfigurationIT.
+ */
 public class ControlServerConfigurationIT extends AbstractTestControlServer {
-
-    /** The Constant logger. */
-    private static final Logger logger = LoggerFactory
-            .getLogger(ControlServerConfigurationIT.class);
 
     /**
      * Test create configuration.
      *
-     * @throws TException
-     *             the t exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws Exception the exception
      */
     @Test
     public void testCreateConfiguration() throws Exception {
@@ -65,9 +51,7 @@ public class ControlServerConfigurationIT extends AbstractTestControlServer {
     /**
      * Test get configuration record.
      *
-     * @throws TException
-     *             the t exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws Exception the exception
      */
     @Test
     public void testGetConfigurationRecord() throws Exception {
@@ -83,9 +67,7 @@ public class ControlServerConfigurationIT extends AbstractTestControlServer {
     /**
      * Test get configuration records by endpoint group id.
      *
-     * @throws TException
-     *             the t exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws Exception the exception
      */
     @Test
     public void testGetConfigurationRecordsByEndpointGroupId() throws Exception {
@@ -108,11 +90,9 @@ public class ControlServerConfigurationIT extends AbstractTestControlServer {
     }
 
     /**
-     * Test delete configuration record
+     * Test delete configuration record.
      *
-     * @throws TException
-     *             the t exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws Exception the exception
      */
     @Test
     public void testDeleteConfigurationRecord() throws Exception {
@@ -141,9 +121,7 @@ public class ControlServerConfigurationIT extends AbstractTestControlServer {
     /**
      * Test get vacant schemas by endpoint group id.
      *
-     * @throws TException
-     *             the t exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws Exception the exception
      */
     @Test
     public void testGetVacantSchemasByEndpointGroupId() throws Exception {
@@ -180,9 +158,7 @@ public class ControlServerConfigurationIT extends AbstractTestControlServer {
     /**
      * Test update configuration.
      *
-     * @throws TException
-     *             the t exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws Exception the exception
      */
     @Test
     public void testUpdateConfiguration() throws Exception {
@@ -201,9 +177,7 @@ public class ControlServerConfigurationIT extends AbstractTestControlServer {
     /**
      * Test activate configuration.
      *
-     * @throws TException
-     *             the t exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws Exception the exception
      */
     @Test
     public void testActivateConfiguration() throws Exception {
@@ -222,9 +196,7 @@ public class ControlServerConfigurationIT extends AbstractTestControlServer {
     /**
      * Test deactivate configuration.
      *
-     * @throws TException
-     *             the t exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws Exception the exception
      */
     @Test
     public void testDeactivateConfiguration() throws Exception {

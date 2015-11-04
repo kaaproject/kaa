@@ -17,35 +17,29 @@
 package org.kaaproject.kaa.server.control;
 
 
-import org.apache.thrift.TException;
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Test;
-import org.kaaproject.kaa.common.dto.DtoByteMarshaller;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
-import org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
-
-import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toDto;
-import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toDtoList;
 
 /**
  * The Class ControlServerNotificationSchemaIT.
  */
 public class ControlServerNotificationSchemaIT extends AbstractTestControlServer {
 
-    /** The Constant LOGGER. */
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(ControlServerNotificationSchemaIT.class);
 
     /**
-     * Test edit notification schema.
+     * Test create notification schema.
      *
-     * @throws TException the t exception
+     * @throws Exception the exception
      */
     @Test
     public void testCreateNotificationSchema() throws Exception {
@@ -57,7 +51,7 @@ public class ControlServerNotificationSchemaIT extends AbstractTestControlServer
     /**
      * Test get notification schema.
      *
-     * @throws TException the t exception
+     * @throws Exception the exception
      */
     @Test
     public void testGetNotificationSchema() throws Exception {
@@ -73,7 +67,7 @@ public class ControlServerNotificationSchemaIT extends AbstractTestControlServer
     /**
      * Test get notification schemas by app id.
      *
-     * @throws TException the t exception
+     * @throws Exception the exception
      */
     @Test
     public void testGetNotificationSchemasByAppId() throws Exception {
@@ -89,7 +83,7 @@ public class ControlServerNotificationSchemaIT extends AbstractTestControlServer
     /**
      * Test get user notification schemas by app id.
      *
-     * @throws TException the t exception
+     * @throws Exception the exception
      */
     @Test
     public void testGetUserNotificationSchemasByAppId() throws Exception {
@@ -105,7 +99,7 @@ public class ControlServerNotificationSchemaIT extends AbstractTestControlServer
     /**
      * Test get notification schema versions by app id.
      *
-     * @throws TException the t exception
+     * @throws Exception the exception
      */
     @Test
     public void testGetNotificationSchemaVersionsByAppId() throws Exception {

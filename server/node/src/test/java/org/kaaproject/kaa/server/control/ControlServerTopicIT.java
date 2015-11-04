@@ -17,15 +17,9 @@
 package org.kaaproject.kaa.server.control;
 
 
-import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toDto;
-import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toDtoList;
-
-import java.io.IOException;
 import java.util.List;
 
-import org.apache.thrift.TException;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
@@ -38,16 +32,14 @@ import org.slf4j.LoggerFactory;
  */
 public class ControlServerTopicIT extends AbstractTestControlServer {
 
-    /**
-     * The Constant LOGGER.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(ControlServerTopicIT.class);
+    /** The Constant LOG. */
+    private static final Logger LOG = LoggerFactory.getLogger(ControlServerTopicIT.class);
 
 
     /**
      * Test create topic.
      *
-     * @throws TException the t exception
+     * @throws Exception the exception
      */
     @Test
     public void testCreateTopic() throws Exception {
@@ -56,28 +48,28 @@ public class ControlServerTopicIT extends AbstractTestControlServer {
     }
 
     /**
-     * Test get topic by id.
+     * Test get topic.
      *
-     * @throws TException the t exception
+     * @throws Exception the exception
      */
     @Test
     public void testGetTopic() throws Exception {
         TopicDto topic = createTopic(null, TopicTypeDto.MANDATORY);
-        LOGGER.debug("Created topic with id {}", topic.getId());
+        LOG.debug("Created topic with id {}", topic.getId());
         TopicDto storedTopic = client.getTopic(topic.getId());
         Assert.assertNotNull(storedTopic);
         Assert.assertEquals(topic, storedTopic);
     }
 
     /**
-     * Test get topic by application id.
+     * Test get topic by app id.
      *
-     * @throws TException the t exception
+     * @throws Exception the exception
      */
     @Test
     public void testGetTopicByAppId() throws Exception {
         TopicDto topic = createTopic(null, TopicTypeDto.MANDATORY);
-        LOGGER.debug("Created topic with id {}", topic.getId());
+        LOG.debug("Created topic with id {}", topic.getId());
         List<TopicDto> storedTopic = client.getTopicsByApplicationId(topic.getApplicationId());
         Assert.assertNotNull(storedTopic);
         Assert.assertFalse(storedTopic.isEmpty());
@@ -87,14 +79,13 @@ public class ControlServerTopicIT extends AbstractTestControlServer {
     /**
      * Test get topic by endpoint group id.
      *
-     * @throws TException the t exception
-     * @throws IOException the IO exception
+     * @throws Exception the exception
      */
     @Test
     public void testGetTopicByEndpointGroupId() throws Exception {
         EndpointGroupDto group = createEndpointGroup();
         TopicDto topic = createTopic(group.getApplicationId(), TopicTypeDto.MANDATORY);
-        LOGGER.debug("Created topic with id {}", topic.getId());
+        LOG.debug("Created topic with id {}", topic.getId());
         client.addTopicToEndpointGroup(group.getId(), topic.getId());
         List<TopicDto> storedTopic = client.getTopicsByEndpointGroupId(group.getId());
         Assert.assertNotNull(storedTopic);
@@ -105,8 +96,7 @@ public class ControlServerTopicIT extends AbstractTestControlServer {
     /**
      * Test get vacant topic by endpoint group id.
      *
-     * @throws TException the t exception
-     * @throws IOException the IO exception
+     * @throws Exception the exception
      */
     @Test
     public void testGetVacantTopicByEndpointGroupId() throws Exception {
@@ -114,7 +104,7 @@ public class ControlServerTopicIT extends AbstractTestControlServer {
         TopicDto addedTopic = createTopic(group.getApplicationId(), TopicTypeDto.MANDATORY);
         client.addTopicToEndpointGroup(group.getId(), addedTopic.getId());
         TopicDto topic = createTopic(group.getApplicationId(), TopicTypeDto.MANDATORY);
-        LOGGER.debug("Created topic with id {}", topic.getId());
+        LOG.debug("Created topic with id {}", topic.getId());
         List<TopicDto> storedTopic = client.getVacantTopicsByEndpointGroupId(group.getId());
         Assert.assertNotNull(storedTopic);
         Assert.assertFalse(storedTopic.isEmpty());
@@ -124,12 +114,12 @@ public class ControlServerTopicIT extends AbstractTestControlServer {
     /**
      * Test delete topic by id.
      *
-     * @throws TException the t exception
+     * @throws Exception the exception
      */
     @Test
     public void testDeleteTopicById() throws Exception {
         final TopicDto topic = createTopic(null, TopicTypeDto.MANDATORY);
-        LOGGER.debug("Created topic with id {}", topic.getId());
+        LOG.debug("Created topic with id {}", topic.getId());
         TopicDto foundTopic = client.getTopic(topic.getId());
         Assert.assertNotNull(foundTopic);
         Assert.assertEquals(topic, foundTopic);
@@ -144,10 +134,9 @@ public class ControlServerTopicIT extends AbstractTestControlServer {
     }
 
     /**
-     * Test delete topic by application id.
+     * Test delete topic from endpoint group.
      *
-     * @throws TException the t exception
-     * @throws IOException the IO exception
+     * @throws Exception the exception
      */
     @Test
     public void testDeleteTopicFromEndpointGroup() throws Exception {
@@ -155,7 +144,7 @@ public class ControlServerTopicIT extends AbstractTestControlServer {
         String groupId = group.getId();
         TopicDto topic = createTopic(group.getApplicationId(), TopicTypeDto.MANDATORY);
         String topicId = topic.getId();
-        LOGGER.debug("Created topic with id {}", topicId);
+        LOG.debug("Created topic with id {}", topicId);
         client.addTopicToEndpointGroup(group.getId(), topicId);
         EndpointGroupDto found = client.getEndpointGroup(groupId);
         Assert.assertNotNull(found);
@@ -169,16 +158,15 @@ public class ControlServerTopicIT extends AbstractTestControlServer {
     }
 
     /**
-     * Test delete topic by application id.
+     * Test add topic to endpoint group.
      *
-     * @throws TException the t exception
-     * @throws IOException the IO exception
+     * @throws Exception the exception
      */
     @Test
     public void testAddTopicToEndpointGroup() throws Exception {
         EndpointGroupDto group = createEndpointGroup();
         TopicDto topic = createTopic(group.getApplicationId(), TopicTypeDto.MANDATORY);
-        LOGGER.debug("Created topic with id {}", topic.getId());
+        LOG.debug("Created topic with id {}", topic.getId());
         String groupId = group.getId();
         client.addTopicToEndpointGroup(group.getId(), topic.getId());
         EndpointGroupDto found = client.getEndpointGroup(groupId);

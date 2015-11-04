@@ -16,11 +16,9 @@
 
 package org.kaaproject.kaa.server.control;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.thrift.TException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
@@ -33,14 +31,15 @@ import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 
+/**
+ * The Class ControlServerSdkIT.
+ */
 public class ControlServerSdkIT extends AbstractTestControlServer {
 
     /**
-     * Test generate java SDK.
+     * Test generate java sdk.
      *
-     * @throws TException
-     *             the t exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws Exception the exception
      */
     @Test
     public void testGenerateJavaSdk() throws Exception {
@@ -60,11 +59,9 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
     }
 
     /**
-     * Test generate java SDK with event support.
+     * Test generate java sdk with event support.
      *
-     * @throws TException
-     *             the t exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws Exception the exception
      */
     @Test
     public void testGenerateJavaSdkWithEventSupport() throws Exception {
@@ -91,11 +88,9 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
     }
 
     /**
-     * Test generate android SDK with event support.
+     * Test generate android sdk with event support.
      *
-     * @throws TException
-     *             the t exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws Exception the exception
      */
     @Test
     public void testGenerateAndroidSdkWithEventSupport() throws Exception {
@@ -122,11 +117,9 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
     }
 
     /**
-     * Test generate Cpp SDK.
+     * Test generate cpp sdk.
      *
-     * @throws TException
-     *             the t exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws Exception the exception
      */
     @Test
     public void testGenerateCppSdk() throws Exception {
@@ -148,11 +141,9 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
     }
 
     /**
-     * Test generate Cpp SDK with event support.
+     * Test generate cpp sdk with event support.
      *
-     * @throws TException
-     *             the t exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws Exception the exception
      */
     @Test
     public void testGenerateCppSdkWithEventSupport() throws Exception {
@@ -179,11 +170,9 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
     }
 
     /**
-     * Test generate C SDK.
+     * Test generate c sdk.
      *
-     * @throws TException
-     *             the t exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws Exception the exception
      */
     @Test
     public void testGenerateCSdk() throws Exception {
@@ -205,11 +194,9 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
     }
 
     /**
-     * Test generate C SDK with event support.
+     * Test generate c sdk with event support.
      *
-     * @throws TException
-     *             the t exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws Exception the exception
      */
     @Test
     public void testGenerateCSdkWithEventSupport() throws Exception {
@@ -236,11 +223,9 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
     }
 
     /**
-     * Test generate java SDK with invalid application.
+     * Test generate java sdk with invalid application.
      *
-     * @throws TException
-     *             the t exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws Exception the exception
      */
     @Test
     public void testGenerateJavaSdkWithInvalidApplication() throws Exception {
@@ -253,11 +238,9 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
     }
 
     /**
-     * Test generate java SDK with invalid profile schema.
+     * Test generate java sdk with invalid profile schema.
      *
-     * @throws TException
-     *             the t exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws Exception the exception
      */
     @Test
     public void testGenerateJavaSdkWithInvalidProfileSchema() throws Exception {
@@ -272,11 +255,9 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
     }
 
     /**
-     * Test generate java SDK with invalid configuration schema.
+     * Test generate java sdk with invalid configuration schema.
      *
-     * @throws TException
-     *             the t exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws Exception the exception
      */
     @Test
     public void testGenerateJavaSdkWithInvalidConfigurationSchema() throws Exception {
@@ -293,11 +274,9 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
     }
 
     /**
-     * Test generate java SDK with invalid notification schema.
+     * Test generate java sdk with invalid notification schema.
      *
-     * @throws TException
-     *             the t exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws Exception the exception
      */
     @Test
     public void testGenerateJavaSdkWithInvalidNotificationSchema() throws Exception {
@@ -315,6 +294,19 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
     }
 
 
+    /**
+     * Gets the sdk properties.
+     *
+     * @param sdkPlatform the sdk platform
+     * @param appId the app id
+     * @param profileSchemaVersion the profile schema version
+     * @param configSchemaVersion the config schema version
+     * @param notificationSchemaVersion the notification schema version
+     * @param aefMapIds the aef map ids
+     * @param logSchemaVersion the log schema version
+     * @param defaultVerifierToken the default verifier token
+     * @return the sdk properties
+     */
     private SdkPropertiesDto getSdkProperties(org.kaaproject.kaa.common.dto.admin.SdkPlatform sdkPlatform, String appId,
                                         Integer profileSchemaVersion, Integer configSchemaVersion,
                                         Integer notificationSchemaVersion, List<String> aefMapIds,

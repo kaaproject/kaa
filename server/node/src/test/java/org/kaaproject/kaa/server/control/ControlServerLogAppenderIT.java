@@ -16,19 +16,23 @@
 
 package org.kaaproject.kaa.server.control;
 
-import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toDto;
-import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toDtoList;
-
-import java.io.IOException;
 import java.util.List;
 
-import org.apache.thrift.TException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 
+/**
+ * The Class ControlServerLogAppenderIT.
+ */
 public class ControlServerLogAppenderIT extends AbstractTestControlServer {
 
+    /**
+     * Gets the log appenders by application id test.
+     *
+     * @return the log appenders by application id test
+     * @throws Exception the exception
+     */
     @Test
     public void getLogAppendersByApplicationIdTest() throws Exception {
         LogAppenderDto appenderDto = createLogAppender(null, null);
@@ -36,6 +40,12 @@ public class ControlServerLogAppenderIT extends AbstractTestControlServer {
         Assert.assertEquals(1, found.size());
     }
 
+    /**
+     * Gets the log appenders by id test.
+     *
+     * @return the log appenders by id test
+     * @throws Exception the exception
+     */
     @Test
     public void getLogAppendersByIdTest() throws Exception {
         LogAppenderDto appenderDto = createLogAppender(null, null);
@@ -43,6 +53,11 @@ public class ControlServerLogAppenderIT extends AbstractTestControlServer {
         Assert.assertEquals(appenderDto, found);
     }
 
+    /**
+     * Delete log appender test.
+     *
+     * @throws Exception the exception
+     */
     @Test
     public void deleteLogAppenderTest() throws Exception {
         final LogAppenderDto appenderDto = createLogAppender(null, null);

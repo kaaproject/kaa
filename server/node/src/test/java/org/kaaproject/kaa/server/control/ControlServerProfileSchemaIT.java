@@ -16,37 +16,26 @@
 
 package org.kaaproject.kaa.server.control;
 
-import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toDataStruct;
-import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toDto;
-import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toDtoList;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.thrift.TException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+/**
+ * The Class ControlServerProfileSchemaIT.
+ */
 public class ControlServerProfileSchemaIT extends AbstractTestControlServer {
 
-    /** The Constant logger. */
-    private static final Logger logger = LoggerFactory
-            .getLogger(ControlServerProfileSchemaIT.class);
-    
     /**
      * Test create profile schema.
-     * 
-     * @throws TException
-     *             the t exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     *
+     * @throws Exception the exception
      */
     @Test
     public void testCreateProfileSchema() throws Exception {
@@ -56,10 +45,8 @@ public class ControlServerProfileSchemaIT extends AbstractTestControlServer {
     
     /**
      * Test get profile schema.
-     * 
-     * @throws TException
-     *             the t exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     *
+     * @throws Exception the exception
      */
     @Test
     public void testGetProfileSchema() throws Exception {
@@ -73,10 +60,8 @@ public class ControlServerProfileSchemaIT extends AbstractTestControlServer {
     
     /**
      * Test get profile schemas by application id.
-     * 
-     * @throws TException
-     *             the t exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     *
+     * @throws Exception the exception
      */
     @Test
     public void testGetProfileSchemasByApplicationId() throws Exception {
@@ -110,10 +95,8 @@ public class ControlServerProfileSchemaIT extends AbstractTestControlServer {
     
     /**
      * Test get profile schema versions by application id.
-     * 
-     * @throws TException
-     *             the t exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     *
+     * @throws Exception the exception
      */
     @Test
     public void testGetProfileSchemaVersionsByApplicationId() throws Exception {
@@ -149,10 +132,8 @@ public class ControlServerProfileSchemaIT extends AbstractTestControlServer {
     
     /**
      * Test update profile schema.
-     * 
-     * @throws TException
-     *             the t exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     *
+     * @throws Exception the exception
      */
     @Test
     public void testUpdateProfileSchema() throws Exception {

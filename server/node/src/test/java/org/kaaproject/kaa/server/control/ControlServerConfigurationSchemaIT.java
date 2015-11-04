@@ -16,16 +16,10 @@
 
 package org.kaaproject.kaa.server.control;
 
-import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toDataStruct;
-import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toDto;
-import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toDtoList;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.thrift.TException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
@@ -33,23 +27,16 @@ import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.common.dto.UpdateStatus;
 import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
-import org.kaaproject.kaa.server.common.core.schema.KaaSchemaFactoryImpl;
-import org.kaaproject.kaa.server.control.service.exception.ControlServiceException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+/**
+ * The Class ControlServerConfigurationSchemaIT.
+ */
 public class ControlServerConfigurationSchemaIT extends AbstractTestControlServer {
-
-    /** The Constant logger. */
-    private static final Logger logger = LoggerFactory
-            .getLogger(ControlServerConfigurationSchemaIT.class);
 
     /**
      * Test create configuration schema.
      *
-     * @throws TException
-     *             the t exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws Exception the exception
      */
     @Test
     public void testCreateConfigurationSchema() throws Exception {
@@ -61,9 +48,7 @@ public class ControlServerConfigurationSchemaIT extends AbstractTestControlServe
     /**
      * Test create invalid configuration schema.
      *
-     * @throws TException
-     *             the t exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws Exception the exception
      */
     @Test
     public void testCreateInvalidConfigurationSchema() throws Exception {
@@ -84,9 +69,7 @@ public class ControlServerConfigurationSchemaIT extends AbstractTestControlServe
     /**
      * Test get configuration schema.
      *
-     * @throws TException
-     *             the t exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws Exception the exception
      */
     @Test
     public void testGetConfigurationSchema() throws Exception {
@@ -101,9 +84,7 @@ public class ControlServerConfigurationSchemaIT extends AbstractTestControlServe
     /**
      * Test get configuration schemas by application id.
      *
-     * @throws TException
-     *             the t exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws Exception the exception
      */
     @Test
     public void testGetConfigurationSchemasByApplicationId() throws Exception {
@@ -140,9 +121,7 @@ public class ControlServerConfigurationSchemaIT extends AbstractTestControlServe
     /**
      * Test get configuration schema versions by application id.
      *
-     * @throws TException
-     *             the t exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws Exception the exception
      */
     @Test
     public void testGetConfigurationSchemaVersionsByApplicationId() throws Exception {
@@ -179,9 +158,7 @@ public class ControlServerConfigurationSchemaIT extends AbstractTestControlServe
     /**
      * Test update configuration schema.
      *
-     * @throws TException
-     *             the t exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws Exception the exception
      */
     @Test
     public void testUpdateConfigurationSchema() throws Exception {

@@ -64,10 +64,4 @@
     
     <bean id="persistenceExceptionTranslationPostProcessor" class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
 
-    <bean id="org.h2.tools.Server-WebServer" class="org.h2.tools.Server"
-          factory-method="createWebServer" depends-on="dataSource"
-          init-method="start" lazy-init="false" destroy-method="stop">
-        <constructor-arg value="-web,-webPort,11111"/>
-    </bean>
-
 </beans>

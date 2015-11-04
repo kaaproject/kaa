@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
 public class TestCluster {
     
     /** The Constant logger. */
-    private static final Logger logger = LoggerFactory
+    private static final Logger LOG = LoggerFactory
             .getLogger(TestCluster.class);
 
     /** The Constant BOOTSTRAP_NODE_HOST. */
@@ -53,28 +53,28 @@ public class TestCluster {
     /** The Constant ENDPOINT_NODE_HOST. */
     private static final String ENDPOINT_NODE_HOST = "192.168.0.101";
     
-    /** The control service static instance. */
+    /** The kaa node instance. */
     private static KaaNodeInitializationService kaaNodeInstance;
     
-    /** The zookeeper cluster static instance. */
+    /** The zk cluster. */
     private static TestingCluster zkCluster;
     
-    /** The endpoint node static instance. */
+    /** The endpoint node. */
     private static OperationsNode endpointNode;
     
-    /** The bootstrap node static instance. */
+    /** The bootstrap node. */
     private static BootstrapNode bootstrapNode;
     
-    /** The control server thread. */
+    /** The kaa node server thread. */
     private static Thread kaaNodeServerThread;
     
-    /** The Kaa Node Server started. */
+    /** The kaa node server started. */
     private static boolean kaaNodeServerStarted = false;
     
     /**
-     * Start.
+     * Check started.
      *
-     * @param controlService the control service
+     * @param kaaNodeInitializationService the kaa node initialization service
      * @throws Exception the exception
      */
     public static void checkStarted(KaaNodeInitializationService kaaNodeInitializationService) throws Exception {
@@ -99,9 +99,9 @@ public class TestCluster {
             kaaNodeServerThread = new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    logger.info("Kaa Node Started.");
+                    LOG.info("Kaa Node Started.");
                     kaaNodeInstance.start();
-                    logger.info("Kaa Node Stoped.");
+                    LOG.info("Kaa Node Stoped.");
                 }
             });
 
@@ -145,7 +145,7 @@ public class TestCluster {
      * Builds the bootstrap node info.
      *
      * @return the bootstrap node info
-     * @throws NoSuchAlgorithmException 
+     * @throws NoSuchAlgorithmException the no such algorithm exception
      */
     private static BootstrapNodeInfo buildBootstrapNodeInfo() throws NoSuchAlgorithmException {
         BootstrapNodeInfo nodeInfo = new BootstrapNodeInfo();
@@ -163,7 +163,7 @@ public class TestCluster {
     /**
      * Builds the endpoint node info.
      *
-     * @return the endpoint node info
+     * @return the operations node info
      */
     private static OperationsNodeInfo buildEndpointNodeInfo() {
         OperationsNodeInfo nodeInfo = new OperationsNodeInfo();

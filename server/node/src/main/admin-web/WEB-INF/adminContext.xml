@@ -40,22 +40,18 @@
 	<util:properties id="admin_dao" location="classpath:/admin-dao.properties" />
 	
     <bean id="adminDataSource"
-        class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        class="org.apache.commons.dbcp.BasicDataSource">
         <property name="driverClassName" value="#{admin_dao[jdbc_driver_className]}" />
         <property name="url" value="#{admin_dao[jdbc_url]}" />
         <property name="username" value="#{admin_dao[jdbc_username]}" />
         <property name="password" value="#{admin_dao[jdbc_password]}" />
     </bean>
  
-    <bean id="adminEntityManagerFactory"
-        class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+    <bean id="adminSessionFactory"
+        class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
         <property name="dataSource" ref="adminDataSource" />
         <property name="packagesToScan" value="org.kaaproject.kaa.server.admin" />
-        <property name="persistenceUnitName" value="kaaSec" />
-        <property name="jpaVendorAdapter">
-            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
-        </property>
-        <property name="jpaProperties">
+        <property name="hibernateProperties">
             <props>
                 <prop key="hibernate.hbm2ddl.auto">#{admin_dao[hibernate_hbm2ddl_auto]}</prop>
                 <prop key="hibernate.dialect">#{admin_dao[hibernate_dialect]}</prop>
@@ -65,8 +61,8 @@
         </property>
     </bean>
  
-    <bean id="adminTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
-        <property name="entityManagerFactory" ref="adminEntityManagerFactory" />
+    <bean id="adminTransactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+        <property name="sessionFactory" ref="adminSessionFactory" />
         <qualifier value="admin"/>
     </bean>
 	

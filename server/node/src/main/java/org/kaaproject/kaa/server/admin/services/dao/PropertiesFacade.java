@@ -17,15 +17,14 @@
 package org.kaaproject.kaa.server.admin.services.dao;
 
 import java.io.IOException;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
 
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.specific.SpecificRecordBase;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
 import org.kaaproject.avro.ui.converter.FormAvroConverter;
 import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
@@ -40,6 +39,7 @@ import org.kaaproject.kaa.server.common.core.configuration.RawDataFactory;
 import org.kaaproject.kaa.server.common.core.schema.RawSchema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,8 +51,18 @@ public class PropertiesFacade {
 
     private static final String SCHEMA = "SCHEMA$";
 
-    @PersistenceContext(unitName = "kaaSec")
-    private EntityManager em;
+    private static final String FQN_PROPERTY = "fqn";
+
+    @Autowired
+    private SessionFactory adminSessionFactory;
+    
+    private Session getSession() {
+        return adminSessionFactory.getCurrentSession();
+    }
+    
+    private Criteria getCriteria() {
+        return getSession().createCriteria(Properties.class);
+    }
 
     public <S extends SpecificRecordBase> S getSpecificProperties(Class<S> propertiesClass) {
         Properties entity = findOrCreateByClass(propertiesClass);
@@ -88,16 +98,16 @@ public class PropertiesFacade {
     }
     
     private Long save(Properties properties) {
-        em.persist(properties);
+        properties = (Properties) getSession().merge(properties);
         return properties.getId();
     }
     
     private <S extends SpecificRecordBase> Properties findOrCreateByClass(Class<S> propertiesClass) {
-        TypedQuery<Properties> query = em.createQuery("SELECT p FROM Properties p WHERE p.fqn = :fqn", Properties.class);
-        query.setParameter("fqn", propertiesClass.getName());
-        List<Properties> resultList = query.getResultList();
-        if (!resultList.isEmpty()) {
-            return resultList.get(0);
+        Criteria criteria = getCriteria();
+        criteria.add(Restrictions.eq(FQN_PROPERTY, propertiesClass.getName()));
+        Properties result = (Properties) criteria.uniqueResult();
+        if (result != null) {
+            return result;
         } else {
             return createDefault(propertiesClass);
         }

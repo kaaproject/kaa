@@ -16,34 +16,24 @@
 
 package org.kaaproject.kaa.server.control;
 
-import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toDto;
-import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toDtoList;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.thrift.TException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+/**
+ * The Class ControlServerEndpointGroupIT.
+ */
 public class ControlServerEndpointGroupIT extends AbstractTestControlServer {
 
-    /** The Constant logger. */
-    private static final Logger logger = LoggerFactory
-            .getLogger(ControlServerEndpointGroupIT.class);
-    
     /**
      * Test create endpoint group.
-     * 
-     * @throws TException
-     *             the t exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     *
+     * @throws Exception the exception
      */
     @Test
     public void testCreateEndpointGroup() throws Exception {
@@ -53,10 +43,8 @@ public class ControlServerEndpointGroupIT extends AbstractTestControlServer {
     
     /**
      * Test get endpoint group.
-     * 
-     * @throws TException
-     *             the t exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     *
+     * @throws Exception the exception
      */
     @Test
     public void testGetEndpointGroup() throws Exception {
@@ -70,10 +58,8 @@ public class ControlServerEndpointGroupIT extends AbstractTestControlServer {
     
     /**
      * Test get endpoint groups by application id.
-     * 
-     * @throws TException
-     *             the t exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     *
+     * @throws Exception the exception
      */
     @Test
     public void testGetEndpointGroupsByApplicationId() throws Exception {
@@ -107,10 +93,8 @@ public class ControlServerEndpointGroupIT extends AbstractTestControlServer {
     
     /**
      * Test delete endpoint group.
-     * 
-     * @throws TException
-     *             the t exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     *
+     * @throws Exception the exception
      */
     @Test
     public void testDeleteEndpointGroup() throws Exception {

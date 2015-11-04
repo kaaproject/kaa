@@ -16,37 +16,26 @@
 
 package org.kaaproject.kaa.server.control;
 
-import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.*;
-
-import java.io.IOException;
 import java.util.List;
 
-import org.apache.thrift.TException;
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
-import org.kaaproject.kaa.server.common.admin.AdminClient;
-import org.kaaproject.kaa.server.common.nosql.mongo.dao.MongoDBTestRunner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+/**
+ * The Class ControlServerLogSchemaIT.
+ */
 public class ControlServerLogSchemaIT extends AbstractTestControlServer {
 
-    @Before
-    public void beforeTest() throws Exception {
-        super.beforeTest();
-        Thread.sleep(100);
-    }
-    
-    /** The Constant logger. */
-    private static final Logger LOG = LoggerFactory.getLogger(ControlServerLogSchemaIT.class);
-
+    /**
+     * Gets the log schemas by application id test.
+     *
+     * @return the log schemas by application id test
+     * @throws Exception the exception
+     */
     @Test
     public void getLogSchemasByApplicationIdTest() throws Exception {
         LogSchemaDto logSchemaDto = createLogSchema();
@@ -54,6 +43,12 @@ public class ControlServerLogSchemaIT extends AbstractTestControlServer {
         Assert.assertEquals(2, found.size());
     }
 
+    /**
+     * Gets the log schemas by id test.
+     *
+     * @return the log schemas by id test
+     * @throws Exception the exception
+     */
     @Test
     public void getLogSchemasByIdTest() throws Exception {
         LogSchemaDto logSchemaDto = createLogSchema();
@@ -61,6 +56,12 @@ public class ControlServerLogSchemaIT extends AbstractTestControlServer {
         Assert.assertEquals(logSchemaDto, found);
     }
 
+    /**
+     * Gets the log schema by application token and version test.
+     *
+     * @return the log schema by application token and version test
+     * @throws Exception the exception
+     */
     @Test
     public void getLogSchemaByApplicationTokenAndVersionTest() throws Exception {
         ApplicationDto app = createApplication(tenantAdminDto);
@@ -69,6 +70,12 @@ public class ControlServerLogSchemaIT extends AbstractTestControlServer {
         Assert.assertEquals(logSchemaDto, found);
     }
 
+    /**
+     * Gets the log schema versions by application id test.
+     *
+     * @return the log schema versions by application id test
+     * @throws Exception the exception
+     */
     @Test
     public void getLogSchemaVersionsByApplicationIdTest() throws Exception {
         LogSchemaDto logSchemaDto = createLogSchema();

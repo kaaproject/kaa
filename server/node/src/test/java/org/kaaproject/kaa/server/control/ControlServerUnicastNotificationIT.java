@@ -18,10 +18,10 @@ package org.kaaproject.kaa.server.control;
 
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.thrift.TException;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
@@ -31,17 +31,24 @@ import org.kaaproject.kaa.server.common.nosql.mongo.dao.MongoDataLoader;
 /**
  * The Class ControlServerUnicastNotificationIT.
  */
+@Ignore
 public class ControlServerUnicastNotificationIT extends AbstractTestControlServer {
 
     /** The Constant KEY_HASH. */
     private static final byte[] KEY_HASH = Base64.decodeBase64("ZThNRW56Wm9GeU1tRDdXU0hkTnJGSnlFazhNPQ==");
 
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.AbstractTestControlServer#beforeTest()
+     */
     @Before
     public void beforeTest() throws Exception {
         MongoDataLoader.loadData();
         super.beforeTest();
     }
     
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.AbstractTestControlServer#afterTest()
+     */
     @After
     public void afterTest() throws Exception {
         MongoDBTestRunner.getDB().dropDatabase();
@@ -51,7 +58,7 @@ public class ControlServerUnicastNotificationIT extends AbstractTestControlServe
     /**
      * Test send unicast notification.
      *
-     * @throws TException the t exception
+     * @throws Exception the exception
      */
     @Test
     public void testSendUnicastNotification() throws Exception {

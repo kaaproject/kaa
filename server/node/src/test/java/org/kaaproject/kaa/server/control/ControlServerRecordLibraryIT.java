@@ -16,9 +16,6 @@
 
 package org.kaaproject.kaa.server.control;
 
-import java.io.IOException;
-
-import org.apache.thrift.TException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
@@ -26,13 +23,15 @@ import org.kaaproject.kaa.common.dto.admin.RecordKey;
 import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 
+/**
+ * The Class ControlServerRecordLibraryIT.
+ */
 public class ControlServerRecordLibraryIT extends AbstractTestControlServer {
 
     /**
      * Test generate record library.
      *
-     * @throws TException the t exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws Exception the exception
      */
     @Test
     public void testGenerateRecordLibrary() throws Exception {
@@ -44,6 +43,11 @@ public class ControlServerRecordLibraryIT extends AbstractTestControlServer {
         Assert.assertNotNull(library.getFileData());
     }
 
+    /**
+     * Test generate record library with empty app.
+     *
+     * @throws Exception the exception
+     */
     @Test
     public void testGenerateRecordLibraryWithEmptyApp() throws Exception {
         loginTenantDeveloper(tenantDeveloperUser);
@@ -55,6 +59,11 @@ public class ControlServerRecordLibraryIT extends AbstractTestControlServer {
         });
     }
 
+    /**
+     * Test generate record library with empty log schema.
+     *
+     * @throws Exception the exception
+     */
     @Test
     public void testGenerateRecordLibraryWithEmptyLogSchema() throws Exception {
         final ApplicationDto application = createApplication(tenantAdminDto);
@@ -67,6 +76,11 @@ public class ControlServerRecordLibraryIT extends AbstractTestControlServer {
         });
     }
 
+    /**
+     * Test get record structure schema.
+     *
+     * @throws Exception the exception
+     */
     @Test
     public void testGetRecordStructureSchema() throws Exception {
         ApplicationDto application = createApplication(tenantAdminDto);
@@ -78,6 +92,11 @@ public class ControlServerRecordLibraryIT extends AbstractTestControlServer {
         Assert.assertNotNull(library.getFileData());
     }
 
+    /**
+     * Test get record structure schema with empty app.
+     *
+     * @throws Exception the exception
+     */
     @Test
     public void testGetRecordStructureSchemaWithEmptyApp() throws Exception {
         loginTenantDeveloper(tenantDeveloperUser);
@@ -89,6 +108,11 @@ public class ControlServerRecordLibraryIT extends AbstractTestControlServer {
         });
     }
 
+    /**
+     * Test get record structure schema with empty log schema.
+     *
+     * @throws Exception the exception
+     */
     @Test
     public void testGetRecordStructureSchemaWithEmptyLogSchema() throws Exception {
         final ApplicationDto application = createApplication(tenantAdminDto);

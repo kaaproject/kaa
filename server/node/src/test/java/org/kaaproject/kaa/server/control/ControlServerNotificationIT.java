@@ -16,7 +16,6 @@
 
 package org.kaaproject.kaa.server.control;
 
-import org.apache.thrift.TException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.NotificationDto;
@@ -28,9 +27,9 @@ import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 public class ControlServerNotificationIT extends AbstractTestControlServer {
 
     /**
-     * Sends the notification.
+     * Send notification.
      *
-     * @throws TException the t exception
+     * @throws Exception the exception
      */
     @Test
     public void sendNotification() throws Exception {

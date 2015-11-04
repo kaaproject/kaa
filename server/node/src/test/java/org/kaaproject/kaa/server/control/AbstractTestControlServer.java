@@ -32,9 +32,7 @@ import java.util.UUID;
 import javax.sql.DataSource;
 
 import org.apache.avro.Schema;
-import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.lang.StringUtils;
-import org.apache.thrift.TException;
 import org.apache.xerces.impl.dv.util.Base64;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -48,7 +46,6 @@ import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
-import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.HasId;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
@@ -112,13 +109,22 @@ public abstract class AbstractTestControlServer {
     /** The Constant PORT. */
     private static final int PORT = 9080;
     
+    /** The Constant DEFAULT_KAA_ADMIN_USER. */
     private static final String DEFAULT_KAA_ADMIN_USER = "kaa";
+    
+    /** The Constant DEFAULT_KAA_ADMIN_PASSWORD. */
     private static final String DEFAULT_KAA_ADMIN_PASSWORD = "kaa123";
 
+    /** The Constant DEFAULT_TENANT_ADMIN_USER. */
     private static final String DEFAULT_TENANT_ADMIN_USER = "admin";
+    
+    /** The Constant DEFAULT_TENANT_ADMIN_PASSWORD. */
     private static final String DEFAULT_TENANT_ADMIN_PASSWORD = "admin123";
 
+    /** The Constant DEFAULT_TENANT_DEVELOPER_USER. */
     private static final String DEFAULT_TENANT_DEVELOPER_USER = "devuser";
+    
+    /** The Constant DEFAULT_TENANT_DEVELOPER_PASSWORD. */
     private static final String DEFAULT_TENANT_DEVELOPER_PASSWORD = "devuser123";
 
     /** The Constant TENANT. */
@@ -184,29 +190,39 @@ public abstract class AbstractTestControlServer {
     /** The Constant TEST_EVENT_CLASS_FAMILY_SCHEMA. */
     protected static final String TEST_EVENT_CLASS_FAMILY_SCHEMA = "control/data/testEventClassFamilySchema.json";
 
-    /** External id of the test Endpoint User */
+    /** The Constant ENDPOINT_USER_EXTERNAL_ID. */
     protected static final String ENDPOINT_USER_EXTERNAL_ID = "Generated Test Endpoint User External Id";
 
-    /** Name of the test Endpoint User */
+    /** The Constant ENDPOINT_USER_NAME. */
     protected static final String ENDPOINT_USER_NAME = "Generated Test Endpoint User Name";
 
     /** The Constant TEST_LOG_SCHEMA. */
     protected static final String TEST_LOG_SCHEMA = "control/data/testLogSchema.json";
     
+    /** The kaa admin user. */
     protected static String kaaAdminUser = DEFAULT_KAA_ADMIN_USER;
+    
+    /** The kaa admin password. */
     protected static String kaaAdminPassword = DEFAULT_KAA_ADMIN_PASSWORD;
     
+    /** The tenant admin user. */
     protected static String tenantAdminUser = DEFAULT_TENANT_ADMIN_USER;
+    
+    /** The tenant admin password. */
     protected static String tenantAdminPassword = DEFAULT_TENANT_ADMIN_PASSWORD;
     
+    /** The tenant developer user. */
     protected static String tenantDeveloperUser = DEFAULT_TENANT_DEVELOPER_USER;
+    
+    /** The tenant developer password. */
     protected static String tenantDeveloperPassword = DEFAULT_TENANT_DEVELOPER_PASSWORD;
     
+    /** The tenant admin dto. */
     protected TenantUserDto tenantAdminDto;
+    
+    /** The tenant developer dto. */
     protected UserDto tenantDeveloperDto;
     
-    private static boolean kaaAdminCreated = false;
-
     /** The kaa node initialization service. */
     @Autowired
     private KaaNodeInitializationService kaaNodeInitializationService;
@@ -214,16 +230,17 @@ public abstract class AbstractTestControlServer {
     /** The client. */
     protected AdminClient client;
 
+    /** The random. */
     private final Random random = new Random();
 
+    /** The data source. */
     @Autowired
     private DataSource dataSource;
-        
+    
     /**
      * Inits the.
      *
-     * @throws Exception
-     *             the exception
+     * @throws Exception the exception
      */
     @BeforeClass
     public static void init() throws Exception {
@@ -233,8 +250,7 @@ public abstract class AbstractTestControlServer {
     /**
      * After.
      *
-     * @throws Exception
-     *             the exception
+     * @throws Exception the exception
      */
     @AfterClass
     public static void after() throws Exception {
@@ -261,10 +277,12 @@ public abstract class AbstractTestControlServer {
      */
     @After
     public void afterTest() throws Exception {
-        dropUsers();
         clearDBData();
     }
 
+    /**
+     * Clear db data.
+     */
     protected void clearDBData() {
         LOG.info("Deleting data from MongoDB database");
         DB db = MongoDBTestRunner.getDB();
@@ -289,32 +307,61 @@ public abstract class AbstractTestControlServer {
         }
     }
     
+    /**
+     * Login kaa admin.
+     *
+     * @throws Exception the exception
+     */
     protected void loginKaaAdmin() throws Exception {
         client.login(kaaAdminUser, kaaAdminPassword);
     }
     
+    /**
+     * Login tenant admin.
+     *
+     * @param username the username
+     * @throws Exception the exception
+     */
     protected void loginTenantAdmin(String username) throws Exception {
         client.login(username, tenantAdminPassword);
     }
     
+    /**
+     * Login tenant developer.
+     *
+     * @param username the username
+     * @throws Exception the exception
+     */
     protected void loginTenantDeveloper(String username) throws Exception {
         client.login(username, tenantDeveloperPassword);
     }
     
+    /**
+     * Creates the tenant admin needed.
+     *
+     * @return true, if successful
+     */
     protected boolean createTenantAdminNeeded() {
         return true;
     }
     
+    /**
+     * Creates the tenant developer needed.
+     *
+     * @return true, if successful
+     */
     protected boolean createTenantDeveloperNeeded() {
         return true;
     }
     
+    /**
+     * Creates the users.
+     *
+     * @throws Exception the exception
+     */
     private void createUsers() throws Exception {
         LOG.info("Creating users...");
-        if (!kaaAdminCreated) {
-            client.createKaaAdmin(kaaAdminUser, kaaAdminPassword);
-            kaaAdminCreated = true;
-        }
+        client.createKaaAdmin(kaaAdminUser, kaaAdminPassword);
         loginKaaAdmin();
         if (createTenantAdminNeeded()) {
             tenantAdminDto = createTenant(tenantAdminUser);            
@@ -325,28 +372,11 @@ public abstract class AbstractTestControlServer {
             }
         }
     }
-    
-    private void dropUsers() throws Exception {
-        LOG.info("Dropping users...");
-        if (tenantAdminDto != null) {
-            loginTenantAdmin(tenantAdminUser);
-            for (UserDto user : client.getUsers()) {
-                client.deleteUser(user.getId());
-            }
-        }
-        loginKaaAdmin();
-        for (TenantUserDto tenant : client.getTenants()) {
-            client.deleteTenant(tenant.getId());
-        }
-        tenantAdminDto = null;
-        tenantDeveloperDto = null;
-    }
 
     /**
      * Generate string.
      *
-     * @param string
-     *            the string
+     * @param string the string
      * @return the string
      */
     protected static String generateString(String string) {
@@ -356,8 +386,7 @@ public abstract class AbstractTestControlServer {
     /**
      * Str is empty.
      *
-     * @param str
-     *            the str
+     * @param str the str
      * @return true, if successful
      */
     protected static boolean strIsEmpty(String str) {
@@ -392,12 +421,26 @@ public abstract class AbstractTestControlServer {
         return result;
     }
     
+    /**
+     * The Interface TestRestCall.
+     */
     protected interface TestRestCall {
         
+        /**
+         * Execute rest call.
+         *
+         * @throws Exception the exception
+         */
         void executeRestCall() throws Exception;
         
     }
     
+    /**
+     * Check not found.
+     *
+     * @param restCall the rest call
+     * @throws Exception the exception
+     */
     protected void checkNotFound(TestRestCall restCall) throws Exception {
         HttpStatus errorStatus = null;
         try {
@@ -409,6 +452,12 @@ public abstract class AbstractTestControlServer {
         Assert.assertEquals(HttpStatus.NOT_FOUND, errorStatus);
     }
     
+    /**
+     * Check bad request.
+     *
+     * @param restCall the rest call
+     * @throws Exception the exception
+     */
     protected void checkBadRequest(TestRestCall restCall) throws Exception {
         HttpStatus errorStatus = null;
         try {
@@ -434,6 +483,12 @@ public abstract class AbstractTestControlServer {
         }
     }
     
+    /**
+     * Creates the tenant.
+     *
+     * @return the tenant user dto
+     * @throws Exception the exception
+     */
     protected TenantUserDto createTenant() throws Exception {
         return createTenant(null);
     }
@@ -441,7 +496,8 @@ public abstract class AbstractTestControlServer {
     /**
      * Creates the tenant.
      *
-     * @return the tenant dto
+     * @param username the username
+     * @return the tenant user dto
      * @throws Exception the exception
      */
     protected TenantUserDto createTenant(String username) throws Exception {
@@ -465,6 +521,13 @@ public abstract class AbstractTestControlServer {
         return tenantUser;
     }
     
+    /**
+     * Creates the tenant developer.
+     *
+     * @param username the username
+     * @return the org.kaaproject.kaa.common.dto.admin. user dto
+     * @throws Exception the exception
+     */
     private org.kaaproject.kaa.common.dto.admin.UserDto createTenantDeveloper(String username) throws Exception {
         org.kaaproject.kaa.common.dto.admin.UserDto tenantDeveloper = new org.kaaproject.kaa.common.dto.admin.UserDto();
         tenantDeveloper.setAuthority(KaaAuthorityDto.TENANT_DEVELOPER);
@@ -485,8 +548,8 @@ public abstract class AbstractTestControlServer {
      * Creates the user.
      *
      * @param authority the authority
-     * @return the application dto
-     * @throws TException the t exception
+     * @return the user dto
+     * @throws Exception the exception
      */
     protected UserDto createUser(KaaAuthorityDto authority) throws Exception {
         return createUser(null, authority);
@@ -495,10 +558,10 @@ public abstract class AbstractTestControlServer {
     /**
      * Creates the user.
      *
-     * @param tenantId the tenant id
+     * @param tenant the tenant
      * @param authority the authority
      * @return the user dto
-     * @throws TException the t exception
+     * @throws Exception the exception
      */
     protected UserDto createUser(TenantUserDto tenant, KaaAuthorityDto authority) throws Exception {
         UserDto user = new UserDto();
@@ -520,18 +583,18 @@ public abstract class AbstractTestControlServer {
      * Creates the application.
      *
      * @return the application dto
-     * @throws TException the t exception
+     * @throws Exception the exception
      */
     protected ApplicationDto createApplication() throws Exception {
         return createApplication(null);
     }
 
     /**
-     * Creates the application for tenant.
+     * Creates the application.
      *
-     * @param tenantId the tenant id
+     * @param tenant the tenant
      * @return the application dto
-     * @throws TException the t exception
+     * @throws Exception the exception
      */
     protected ApplicationDto createApplication(TenantUserDto tenant) throws Exception {
         ApplicationDto application = new ApplicationDto();
@@ -549,20 +612,18 @@ public abstract class AbstractTestControlServer {
      * Creates the configuration schema.
      *
      * @return the configuration schema dto
-     * @throws TException the t exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws Exception the exception
      */
     protected ConfigurationSchemaDto createConfigurationSchema() throws Exception {
         return createConfigurationSchema(null);
     }
 
     /**
-     * Creates the configuration schema for application.
+     * Creates the configuration schema.
      *
      * @param applicationId the application id
      * @return the configuration schema dto
-     * @throws TException the t exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws Exception the exception
      */
     protected ConfigurationSchemaDto createConfigurationSchema(String applicationId) throws Exception {
         ConfigurationSchemaDto configurationSchema = new ConfigurationSchemaDto();
@@ -586,20 +647,18 @@ public abstract class AbstractTestControlServer {
      * Creates the profile schema.
      *
      * @return the profile schema dto
-     * @throws TException the t exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws Exception the exception
      */
     protected ProfileSchemaDto createProfileSchema() throws Exception {
         return createProfileSchema(null);
     }
 
     /**
-     * Creates the profile schema for application.
+     * Creates the profile schema.
      *
      * @param applicationId the application id
      * @return the profile schema dto
-     * @throws TException the t exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws Exception the exception
      */
     protected ProfileSchemaDto createProfileSchema(String applicationId) throws Exception {
         ProfileSchemaDto profileSchema = new ProfileSchemaDto();
@@ -622,20 +681,18 @@ public abstract class AbstractTestControlServer {
      * Creates the endpoint group.
      *
      * @return the endpoint group dto
-     * @throws TException the t exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws Exception the exception
      */
     protected EndpointGroupDto createEndpointGroup() throws Exception {
         return createEndpointGroup(null);
     }
 
     /**
-     * Creates the endpoint group for application.
+     * Creates the endpoint group.
      *
      * @param applicationId the application id
      * @return the endpoint group dto
-     * @throws TException the t exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws Exception the exception
      */
     protected EndpointGroupDto createEndpointGroup(String applicationId) throws Exception {
         EndpointGroupDto endpointGroup = new EndpointGroupDto();
@@ -658,21 +715,19 @@ public abstract class AbstractTestControlServer {
      * Creates the profile filter.
      *
      * @return the profile filter dto
-     * @throws TException the t exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws Exception the exception
      */
     protected ProfileFilterDto createProfileFilter() throws Exception {
         return createProfileFilter(null, null);
     }
 
     /**
-     * Creates the profile filter for profile schema.
+     * Creates the profile filter.
      *
      * @param profileSchemaId the profile schema id
-     * @param endpointGroupId       the endpoint group id
+     * @param endpointGroupId the endpoint group id
      * @return the profile filter dto
-     * @throws TException  the t exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws Exception the exception
      */
     protected ProfileFilterDto createProfileFilter(String profileSchemaId, String endpointGroupId) throws Exception {
         ApplicationDto application = createApplication(tenantAdminDto);
@@ -680,14 +735,13 @@ public abstract class AbstractTestControlServer {
     }
 
     /**
-     * Creates the profile filter for profile schema.
+     * Creates the profile filter.
      *
      * @param profileSchemaId the profile schema id
      * @param endpointGroupId the endpoint group id
-     * @param applicationId       the application id
+     * @param applicationId the application id
      * @return the profile filter dto
-     * @throws TException the t exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws Exception the exception
      */
     protected ProfileFilterDto createProfileFilter(String profileSchemaId, String endpointGroupId, String applicationId) throws Exception {
         ProfileFilterDto profileFilter = new ProfileFilterDto();
@@ -727,21 +781,19 @@ public abstract class AbstractTestControlServer {
      * Creates the configuration.
      *
      * @return the configuration dto
-     * @throws TException the t exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws Exception the exception
      */
     protected ConfigurationDto createConfiguration() throws Exception {
         return createConfiguration(null, null);
     }
 
     /**
-     * Creates the configuration for configuration schema.
+     * Creates the configuration.
      *
      * @param configurationSchemaId the configuration schema id
-     * @param endpointGroupId       the endpoint group id
+     * @param endpointGroupId the endpoint group id
      * @return the configuration dto
-     * @throws TException  the t exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws Exception the exception
      */
     protected ConfigurationDto createConfiguration(String configurationSchemaId, String endpointGroupId) throws Exception {
         ApplicationDto application = createApplication(tenantAdminDto);
@@ -749,14 +801,13 @@ public abstract class AbstractTestControlServer {
     }
 
     /**
-     * Creates the configuration for configuration schema.
+     * Creates the configuration.
      *
      * @param configurationSchemaId the configuration schema id
-     * @param endpointGroupId       the endpoint group id
-     * @param applicationId       the application id
+     * @param endpointGroupId the endpoint group id
+     * @param applicationId the application id
      * @return the configuration dto
-     * @throws TException  the t exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws Exception the exception
      */
     protected ConfigurationDto createConfiguration(String configurationSchemaId, String endpointGroupId, String applicationId) throws Exception {
         ConfigurationDto configuration = new ConfigurationDto();
@@ -800,8 +851,8 @@ public abstract class AbstractTestControlServer {
      *
      * @param appId the app id
      * @param type the type
-     * @return the user dto
-     * @throws TException the t exception
+     * @return the topic dto
+     * @throws Exception the exception
      */
     protected TopicDto createTopic(String appId, TopicTypeDto type) throws Exception {
         TopicDto topicDto = new TopicDto();
@@ -823,8 +874,8 @@ public abstract class AbstractTestControlServer {
      *
      * @param appId the app id
      * @param type the type
-     * @return the user dto
-     * @throws TException the t exception
+     * @return the notification schema dto
+     * @throws Exception the exception
      */
     protected NotificationSchemaDto createNotificationSchema(String appId, NotificationTypeDto type) throws Exception {
         NotificationSchemaDto notificationSchema = new NotificationSchemaDto();
@@ -849,8 +900,7 @@ public abstract class AbstractTestControlServer {
      *
      * @param appId the app id
      * @return the notification schema dto
-     * @throws TException the t exception
-     * @throws IOException the IO exception
+     * @throws Exception the exception
      */
     protected NotificationSchemaDto createUserNotificationSchema(String appId) throws Exception {
         NotificationSchemaDto notificationSchema = new NotificationSchemaDto();
@@ -871,20 +921,18 @@ public abstract class AbstractTestControlServer {
      * Creates the log schema.
      *
      * @return the log schema dto
-     * @throws TException the t exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws Exception the exception
      */
     protected LogSchemaDto createLogSchema() throws Exception {
         return createLogSchema(null);
     }
 
     /**
-     * Creates the log schema for application.
+     * Creates the log schema.
      *
      * @param applicationId the application id
      * @return the log schema dto
-     * @throws TException the t exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws Exception the exception
      */
     protected LogSchemaDto createLogSchema(String applicationId) throws Exception {
         LogSchemaDto logSchema = new LogSchemaDto();
@@ -903,15 +951,12 @@ public abstract class AbstractTestControlServer {
     }
 
     /**
-     * Creates the log appender for application.
+     * Creates the log appender.
      *
-     * @param applicationId
-     *            the application id
-     * @return the log schema dto
-     * @throws TException
-     *             the t exception
-     * @throws IOException
-     *             Signals that an I/O exception has occurred.
+     * @param application the application
+     * @param schema the schema
+     * @return the log appender dto
+     * @throws Exception the exception
      */
     protected LogAppenderDto createLogAppender(ApplicationDto application, LogSchemaDto schema)
             throws Exception {
@@ -948,13 +993,13 @@ public abstract class AbstractTestControlServer {
 
 
     /**
-     * Creates the notification.
+     * Send notification.
      *
      * @param appId the app id
      * @param schemaId the schema id
      * @param type the type
-     * @return the user dto
-     * @throws TException the t exception
+     * @return the notification dto
+     * @throws Exception the exception
      */
     protected NotificationDto sendNotification(String appId, String schemaId, NotificationTypeDto type) throws Exception {
         NotificationDto notification = new NotificationDto();
@@ -980,14 +1025,14 @@ public abstract class AbstractTestControlServer {
     }
 
     /**
-     * Creates the unicast notification.
+     * Send unicast notification.
      *
      * @param keyHash the key hash
      * @param appId the app id
      * @param schemaId the schema id
      * @param type the type
-     * @return the user dto
-     * @throws TException the t exception
+     * @return the endpoint notification dto
+     * @throws Exception the exception
      */
     protected EndpointNotificationDto sendUnicastNotification(byte[] keyHash, String appId, 
             String schemaId, NotificationTypeDto type) throws Exception {
@@ -1017,7 +1062,7 @@ public abstract class AbstractTestControlServer {
      * Creates the event class family.
      *
      * @return the event class family dto
-     * @throws TException the t exception
+     * @throws Exception the exception
      */
     protected EventClassFamilyDto createEventClassFamily() throws Exception {
         return createEventClassFamily(null, null);
@@ -1028,19 +1073,19 @@ public abstract class AbstractTestControlServer {
      *
      * @param tenantId the tenant id
      * @return the event class family dto
-     * @throws TException the t exception
+     * @throws Exception the exception
      */
     protected EventClassFamilyDto createEventClassFamily(String tenantId) throws Exception {
         return createEventClassFamily(tenantId, null);
     }
 
     /**
-     * Creates the event class family for tenant.
+     * Creates the event class family.
      *
      * @param tenantId the tenant id
      * @param classNameSuffix the class name suffix
      * @return the event class family dto
-     * @throws TException the t exception
+     * @throws Exception the exception
      */
     protected EventClassFamilyDto createEventClassFamily(String tenantId, String classNameSuffix) throws Exception {
         EventClassFamilyDto eventClassFamily = new EventClassFamilyDto();
@@ -1068,8 +1113,7 @@ public abstract class AbstractTestControlServer {
      * Creates the application event family map.
      *
      * @return the application event family map dto
-     * @throws TException the t exception
-     * @throws IOException
+     * @throws Exception the exception
      */
     protected ApplicationEventFamilyMapDto createApplicationEventFamilyMap() throws Exception {
         return createApplicationEventFamilyMap(null, null, 1);
@@ -1079,10 +1123,10 @@ public abstract class AbstractTestControlServer {
      * Creates the application event family map.
      *
      * @param applicationId the application id
-     * @param ecfId the event class family id
+     * @param ecfId the ecf id
+     * @param version the version
      * @return the application event family map dto
-     * @throws TException the t exception
-     * @throws IOException
+     * @throws Exception the exception
      */
     protected ApplicationEventFamilyMapDto createApplicationEventFamilyMap(String applicationId, String ecfId, int version) throws Exception {
         ApplicationEventFamilyMapDto applicationEventFamilyMap = new ApplicationEventFamilyMapDto();

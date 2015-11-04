@@ -16,13 +16,11 @@
 
 package org.kaaproject.kaa.server.control;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import org.apache.avro.Schema;
-import org.apache.thrift.TException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
@@ -30,15 +28,15 @@ import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
 import org.kaaproject.kaa.common.dto.event.EventSchemaVersionDto;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+/**
+ * The Class ControlServerEventClassFamilyIT.
+ */
 public class ControlServerEventClassFamilyIT extends AbstractTestControlServer {
 
-    /** The Constant logger. */
-    private static final Logger logger = LoggerFactory
-            .getLogger(ControlServerEventClassFamilyIT.class);
-    
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.AbstractTestControlServer#createTenantAdminNeeded()
+     */
     @Override
     protected boolean createTenantAdminNeeded() {
         return false;
@@ -54,9 +52,8 @@ public class ControlServerEventClassFamilyIT extends AbstractTestControlServer {
     
     /**
      * Test create event class family.
-     * 
-     * @throws TException
-     *             the t exception
+     *
+     * @throws Exception the exception
      */
     @Test
     public void testCreateEventClassFamily() throws Exception {
@@ -66,9 +63,8 @@ public class ControlServerEventClassFamilyIT extends AbstractTestControlServer {
     
     /**
      * Test get event class family.
-     * 
-     * @throws TException
-     *             the t exception
+     *
+     * @throws Exception the exception
      */
     @Test
     public void testGetEventClassFamily() throws Exception {
@@ -82,9 +78,8 @@ public class ControlServerEventClassFamilyIT extends AbstractTestControlServer {
     
     /**
      * Test get event class families by tenant id.
-     * 
-     * @throws TException
-     *             the t exception
+     *
+     * @throws Exception the exception
      */
     @Test
     public void testGetEventClassFamiliesByTenantId() throws Exception {
@@ -112,9 +107,8 @@ public class ControlServerEventClassFamilyIT extends AbstractTestControlServer {
     
     /**
      * Test update event class family.
-     * 
-     * @throws TException
-     *             the t exception
+     *
+     * @throws Exception the exception
      */
     @Test
     public void testUpdateEventClassFamily() throws Exception {
@@ -129,11 +123,9 @@ public class ControlServerEventClassFamilyIT extends AbstractTestControlServer {
     }
     
     /**
-     * Test get Event Classes by family id and version
-     * 
-     * @throws TException
-     *             the t exception
-     * @throws IOException 
+     * Test get event classes by family id version and type.
+     *
+     * @throws Exception the exception
      */
     @Test
     public void testGetEventClassesByFamilyIdVersionAndType() throws Exception {
@@ -150,9 +142,8 @@ public class ControlServerEventClassFamilyIT extends AbstractTestControlServer {
     
     /**
      * Test duplicate event class family name.
-     * 
-     * @throws TException
-     *             the t exception
+     *
+     * @throws Exception the exception
      */
     @Test
     public void testDuplicateEventClassFamilyName() throws Exception {
@@ -172,10 +163,8 @@ public class ControlServerEventClassFamilyIT extends AbstractTestControlServer {
     
     /**
      * Test add event class family schema.
-     * 
-     * @throws TException
-     *             the t exception
-     * @throws IOException 
+     *
+     * @throws Exception the exception
      */
     @Test
     public void testAddEventClassFamilySchema() throws Exception {
@@ -206,10 +195,8 @@ public class ControlServerEventClassFamilyIT extends AbstractTestControlServer {
     
     /**
      * Test duplicate event class family fqns.
-     * 
-     * @throws TException
-     *             the t exception
-     * @throws IOException 
+     *
+     * @throws Exception the exception
      */
     @Test
     public void testDuplicateEventClassFamilyFqns() throws Exception {

@@ -16,18 +16,10 @@
 
 package org.kaaproject.kaa.server.control;
 
-import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toDataStruct;
-import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toDto;
-import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toDtoList;
-import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toGenericDto;
-import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toGenericDtoList;
-
-import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.apache.thrift.TException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
@@ -36,23 +28,17 @@ import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterRecordDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.SchemaDto;
-import org.kaaproject.kaa.common.dto.StructureRecordDto;
 import org.kaaproject.kaa.common.dto.UpdateStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+/**
+ * The Class ControlServerProfileFilterIT.
+ */
 public class ControlServerProfileFilterIT extends AbstractTestControlServer {
 
-    /** The Constant logger. */
-    private static final Logger logger = LoggerFactory
-            .getLogger(ControlServerProfileFilterIT.class);
-    
     /**
      * Test create profile filter.
-     * 
-     * @throws TException
-     *             the t exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     *
+     * @throws Exception the exception
      */
     @Test
     public void testCreateProfileFilter() throws Exception {
@@ -62,10 +48,8 @@ public class ControlServerProfileFilterIT extends AbstractTestControlServer {
     
     /**
      * Test get profile filter record.
-     * 
-     * @throws TException
-     *             the t exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     *
+     * @throws Exception the exception
      */
     @Test
     public void testGetProfileFilterRecord() throws Exception {
@@ -80,10 +64,8 @@ public class ControlServerProfileFilterIT extends AbstractTestControlServer {
     
     /**
      * Test get profile filter records by endpoint group id.
-     * 
-     * @throws TException
-     *             the t exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     *
+     * @throws Exception the exception
      */
     @Test
     public void testGetProfileFilterRecordsByEndpointGroupId() throws Exception {
@@ -106,11 +88,9 @@ public class ControlServerProfileFilterIT extends AbstractTestControlServer {
     }
     
     /**
-     * Test delete profile filter record
-     * 
-     * @throws TException
-     *             the t exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     * Test delete profile filter record.
+     *
+     * @throws Exception the exception
      */
     @Test
     public void testDeleteProfileFilterRecord() throws Exception {
@@ -137,10 +117,8 @@ public class ControlServerProfileFilterIT extends AbstractTestControlServer {
     
     /**
      * Test get vacant schemas by endpoint group id.
-     * 
-     * @throws TException
-     *             the t exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     *
+     * @throws Exception the exception
      */
     @Test
     public void testGetVacantSchemasByEndpointGroupId() throws Exception {
@@ -176,10 +154,8 @@ public class ControlServerProfileFilterIT extends AbstractTestControlServer {
     
     /**
      * Test update profile filter.
-     * 
-     * @throws TException
-     *             the t exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     *
+     * @throws Exception the exception
      */
     @Test
     public void testUpdateProfileFilter() throws Exception {
@@ -197,10 +173,8 @@ public class ControlServerProfileFilterIT extends AbstractTestControlServer {
     
     /**
      * Test activate profile filter.
-     * 
-     * @throws TException
-     *             the t exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     *
+     * @throws Exception the exception
      */
     @Test
     public void testActivateProfileFilter() throws Exception {
@@ -217,10 +191,8 @@ public class ControlServerProfileFilterIT extends AbstractTestControlServer {
     
     /**
      * Test deactivate profile filter.
-     * 
-     * @throws TException
-     *             the t exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     *
+     * @throws Exception the exception
      */
     @Test
     public void testDeactivateProfileFilter() throws Exception {

@@ -20,30 +20,47 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
-
 import org.apache.commons.lang.RandomStringUtils;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Restrictions;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.server.admin.services.entity.Authority;
 import org.kaaproject.kaa.server.admin.services.entity.CreateUserResult;
 import org.kaaproject.kaa.server.admin.services.entity.User;
 import org.kaaproject.kaa.server.admin.services.util.Utils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+@SuppressWarnings("unchecked")
 @Repository("userFacade")
 @Transactional("admin")
 public class UserFacade {
 
-    @PersistenceContext(unitName = "kaaSec")
-    private EntityManager em;
+    private static final String ID_PROPERTY = "id";
+    private static final String PASSWORD_RESET_HASH_PROPERTY = "passwordResetHash";
+    private static final String MAIL_PROPERTY = "mail";
+    private static final String USERNAME_PROPERTY = "username";
+    private static final String AUTHORITY_PROPERTY = "authority";
+    
+    @Autowired
+    private SessionFactory adminSessionFactory;
+    
+    protected Session getSession() {
+        return adminSessionFactory.getCurrentSession();
+    }
+    
+    private Criteria getCriteria() {
+        return getSession().createCriteria(User.class);
+    }
 
     public Long save(User user) {
-        em.persist(user);
+        user = (User) getSession().merge(user);
         return user.getId();
     }
 
@@ -102,120 +119,75 @@ public class UserFacade {
     }
 
     public List<User> getAll() {
-        return em.createQuery("SELECT u FROM User u", User.class)
-                .getResultList();
+        return getCriteria().list();
     }
 
     public boolean isAuthorityExists(String authority) {
-        TypedQuery<Authority> query = em.createQuery(
-                "SELECT a FROM Authority a WHERE a.authority = :authority",
-                Authority.class);
-        query.setParameter("authority", authority);
-        List<Authority> resultList = query.getResultList();
+        Criteria criteria = getSession().createCriteria(Authority.class);
+        criteria.add(Restrictions.eq(AUTHORITY_PROPERTY, authority));
+        List<Authority> resultList = criteria.list();
         return !resultList.isEmpty();
     }
 
     public User findByUserName(String userName) {
-        TypedQuery<User> query = em
-                .createQuery(
-                        "SELECT u FROM User u WHERE u.username = :username",
-                        User.class);
-        query.setParameter("username", userName);
-        List<User> resultList = query.getResultList();
-        if (!resultList.isEmpty()) {
-            return resultList.get(0);
-        } else {
-            return null;
-        }
+        Criteria criteria = getCriteria();
+        criteria.add(Restrictions.eq(USERNAME_PROPERTY, userName));
+        return (User) criteria.uniqueResult();
+    }
+    
+    public User findById(Long id) {
+        return findById(id, false);
     }
 
-    public User findById(Long id) {
-        TypedQuery<User> query = em.createQuery(
-                "SELECT u FROM User u WHERE u.id = :id", User.class);
-        query.setParameter("id", id);
-        List<User> resultList = query.getResultList();
-        if (!resultList.isEmpty()) {
-            return resultList.get(0);
+    public User findById(Long id, boolean lazy) {
+        if (lazy) {
+            return (User) getSession().load(User.class, id);
         } else {
-            return null;
+            return (User) getSession().get(User.class, id);
         }
     }
 
     public User findByUsernameOrMail(String usernameOrMail) {
-        TypedQuery<User> query = em.createQuery(
-                "SELECT u FROM User u WHERE u.username = :usernameOrMail"
-                        + " OR u.mail = :usernameOrMail", User.class);
-        query.setParameter("usernameOrMail", usernameOrMail);
-        List<User> resultList = query.getResultList();
-        if (!resultList.isEmpty()) {
-            return resultList.get(0);
-        } else {
-            return null;
-        }
+        Criteria criteria = getCriteria();
+        Criterion usernameCriterion = Restrictions.eq(USERNAME_PROPERTY, usernameOrMail);
+        Criterion mailCriterion = Restrictions.eq(MAIL_PROPERTY, usernameOrMail);
+        criteria.add(Restrictions.or(usernameCriterion, mailCriterion));
+        return (User) criteria.uniqueResult();
     }
 
     public User findByPasswordResetHash(String passwordResetHash) {
-        TypedQuery<User> query = em
-                .createQuery(
-                        "SELECT u FROM User u WHERE u.passwordResetHash = :passwordResetHash",
-                        User.class);
-        query.setParameter("passwordResetHash", passwordResetHash);
-        List<User> resultList = query.getResultList();
-        if (!resultList.isEmpty()) {
-            return resultList.get(0);
-        } else {
-            return null;
-        }
+        Criteria criteria = getCriteria();
+        criteria.add(Restrictions.eq(PASSWORD_RESET_HASH_PROPERTY, passwordResetHash));
+        return (User) criteria.uniqueResult();
     }
 
     public void deleteUser(Long id) {
-        User user = findById(id);
+        User user = findById(id, true);
         if (user != null) {
-            em.remove(user);
+            getSession().delete(user);
         }
     }
 
     public User checkUserNameOccupied(String userName, Long userId) {
-        TypedQuery<User> query;
+        Criteria criteria = getCriteria();
+        Criterion usernameCriterion = Restrictions.eq(USERNAME_PROPERTY, userName);
         if (userId != null) {
-            query = em
-                    .createQuery(
-                            "SELECT u FROM User u WHERE u.username = :username AND u.id != :userId",
-                            User.class);
-            query.setParameter("userId", userId);
+            criteria.add(Restrictions.and(usernameCriterion, Restrictions.not(Restrictions.eq(ID_PROPERTY, userId))));
         } else {
-            query = em.createQuery(
-                    "SELECT u FROM User u WHERE u.username = :username",
-                    User.class);
+            criteria.add(usernameCriterion);
         }
-        query.setParameter("username", userName);
-        List<User> resultList = query.getResultList();
-        if (!resultList.isEmpty()) {
-            return resultList.get(0);
-        } else {
-            return null;
-        }
+        return (User) criteria.uniqueResult();
     }
 
     public User checkEmailOccupied(String mail, Long userId) {
-        TypedQuery<User> query;
+        Criteria criteria = getCriteria();
+        Criterion mailCriterion = Restrictions.eq(MAIL_PROPERTY, mail);
         if (userId != null) {
-            query = em
-                    .createQuery(
-                            "SELECT u FROM User u WHERE u.mail = :mail AND u.id != :userId",
-                            User.class);
-            query.setParameter("userId", userId);
+            criteria.add(Restrictions.and(mailCriterion, Restrictions.not(Restrictions.eq(ID_PROPERTY, userId))));
         } else {
-            query = em.createQuery("SELECT u FROM User u WHERE u.mail = :mail",
-                    User.class);
+            criteria.add(mailCriterion);
         }
-        query.setParameter("mail", mail);
-        List<User> resultList = query.getResultList();
-        if (!resultList.isEmpty()) {
-            return resultList.get(0);
-        } else {
-            return null;
-        }
+        return (User) criteria.uniqueResult();
     }
 
 }

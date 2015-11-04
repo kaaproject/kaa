@@ -16,12 +16,10 @@
 
 package org.kaaproject.kaa.server.control;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.thrift.TException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
@@ -29,21 +27,16 @@ import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+/**
+ * The Class ControlServerApplicationEventMapIT.
+ */
 public class ControlServerApplicationEventMapIT extends AbstractTestControlServer {
 
-    /** The Constant logger. */
-    private static final Logger logger = LoggerFactory
-            .getLogger(ControlServerApplicationEventMapIT.class);
-    
     /**
      * Test create application event family map.
-     * 
-     * @throws TException
-     *             the t exception
-     * @throws IOException 
+     *
+     * @throws Exception the exception
      */
     @Test
     public void testCreateApplicationEventFamilyMap() throws Exception {
@@ -53,10 +46,8 @@ public class ControlServerApplicationEventMapIT extends AbstractTestControlServe
     
     /**
      * Test get application event family map.
-     * 
-     * @throws TException
-     *             the t exception
-     * @throws IOException 
+     *
+     * @throws Exception the exception
      */
     @Test
     public void testGetApplicationEventFamilyMap() throws Exception {
@@ -70,10 +61,8 @@ public class ControlServerApplicationEventMapIT extends AbstractTestControlServe
     
     /**
      * Test get application event family maps by application id.
-     * 
-     * @throws TException
-     *             the t exception
-     * @throws IOException 
+     *
+     * @throws Exception the exception
      */
     @Test
     public void testGetApplicationEventFamilyMapsByApplicationId() throws Exception {
@@ -98,10 +87,8 @@ public class ControlServerApplicationEventMapIT extends AbstractTestControlServe
     
     /**
      * Test update application event family map.
-     * 
-     * @throws TException
-     *             the t exception
-     * @throws IOException 
+     *
+     * @throws Exception the exception
      */
     @Test  //(expected = ControlThriftException.class)
     public void testUpdateApplicationEventFamilyMap() throws Exception {
@@ -116,10 +103,8 @@ public class ControlServerApplicationEventMapIT extends AbstractTestControlServe
     
     /**
      * Test get vacant event class families by application id.
-     * 
-     * @throws TException
-     *             the t exception
-     * @throws IOException 
+     *
+     * @throws Exception the exception
      */
     @Test
     public void testGetVacantEventClassFamiliesByApplicationId() throws Exception {
@@ -147,10 +132,8 @@ public class ControlServerApplicationEventMapIT extends AbstractTestControlServe
     
     /**
      * Test get event class families by application id.
-     * 
-     * @throws TException
-     *             the t exception
-     * @throws IOException 
+     *
+     * @throws Exception the exception
      */
     @Test
     public void testGetEventClassFamiliesByApplicationId() throws Exception {
