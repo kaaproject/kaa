@@ -22,6 +22,8 @@ typedef i32 Integer
 
 typedef i64 Long
 
+typedef bool Boolean
+
 /**
 *   Hex string for 12 bytes mongo ObjectId
 */

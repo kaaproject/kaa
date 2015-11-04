@@ -72,42 +72,40 @@ public class Validator {
     }
 
     /**
-     * This method validate object. If object not equals <code>null</code> and id is valid than
-     * return <code>true</code>.
+     * Checks whether the given identifiable object is not <code>null</code>.
      *
-     * @param id the <code>HasId</code> object
-     * @return the boolean result
+     * @param object An identifiable object to check
+     *
+     * @return <code>true</code> if the argument is not null, <code>false</code> otherwise
      */
-    public static boolean isValidObject(HasId id) {
-        boolean correct = false;
-        if (id != null) {
-            correct = true;
-        }
-        return correct;
+    public static boolean isValidObject(HasId object) {
+        return (object != null);
     }
 
     /**
-     * This method validate object. If object not equals <code>null</code> and id is valid than
-     * return <code>true</code>.
+     * Checks whether the given object's ID is blank or can be parsed as <code>long</code>.
      *
-     * @param id the <code>HasId</code> object
-     * @return the boolean result
+     * @param object An identifiable object to check
+     *
+     * @return <code>true</code> if the given object's ID is blank or can be parsed as <code>long</code>, <code>false</code> otherwise.
      */
-    public static boolean isValidSqlObject(HasId id) {
+    public static boolean isValidSqlObject(HasId object) {
         boolean correct = false;
-        if (id != null) {
-            String sid = id.getId();
-            if (StringUtils.isNotBlank(sid)) {
+
+        if (object != null) {
+            String id = object.getId();
+            if (StringUtils.isNotBlank(id)) {
                 try {
-                    Long.valueOf(sid);
+                    Long.parseLong(id);
                     correct = true;
-                } catch (NumberFormatException e) {
-                   LOG.debug("Exception while validating id. Can not parse id to long");
+                } catch (NumberFormatException cause) {
+                    LOG.debug("Exception during ID validation: the ID is not blank, but cannot be parsed as long.");
                 }
             } else {
                 correct = true;
             }
         }
+
         return correct;
     }
 

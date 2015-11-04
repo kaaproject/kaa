@@ -20,7 +20,7 @@ import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ApplicationPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.place.GenerateSdkPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.SdkProfilesPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.ApplicationView;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -44,7 +44,7 @@ public class ApplicationActivity
             registrations.add(detailsView.getGenerateSdkButton().addClickHandler(new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent event) {
-                    goTo(new GenerateSdkPlace(entityId));
+                    goTo(new SdkProfilesPlace(entityId));
                 }
             }));
         }

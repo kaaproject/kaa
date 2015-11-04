@@ -24,6 +24,7 @@ namespace cpp kaa
 typedef shared.ObjectId id
 typedef shared.DataStruct data
 typedef shared.Integer int
+typedef shared.Boolean boolean
 
 enum SdkPlatform {
   JAVA = 1,
@@ -210,7 +211,13 @@ service ControlThriftService extends cli.CliThriftService{
 *   Client SDK
 */
 
-  Sdk generateSdk(1: data sdkProperties) throws(1: ControlThriftException ControlException)
+  void addSdkProfile(1: data sdkProfile) throws(1: ControlThriftException ControlException)
+  void deleteSdkProfile(1: id sdkProfileId) throws(1: ControlThriftException ControlException)
+  data getSdkProfile(1: id sdkProfileId) throws(1: ControlThriftException ControlException)
+  list<data> getSdkProfilesByApplicationId(1: id applicationId) throws(1: ControlThriftException ControlException)
+  Sdk generateSdk(1: data sdkProfile, 2: SdkPlatform targetPlatform) throws(1: ControlThriftException ControlException)
+  
+  boolean isSdkProfileUsed(1: id sdkToken) throws(1: ControlThriftException ControlException)
 
 /**
 *   Events
