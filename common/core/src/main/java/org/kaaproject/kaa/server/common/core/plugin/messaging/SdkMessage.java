@@ -1,20 +1,28 @@
 package org.kaaproject.kaa.server.common.core.plugin.messaging;
 
-import org.kaaproject.kaa.server.common.core.plugin.base.BaseContractMessageDef;
-import org.kaaproject.kaa.server.common.core.plugin.def.ContractMessageDef;
-import org.kaaproject.kaa.server.common.core.plugin.instance.KaaPluginMessage;
+import java.util.UUID;
 
-public class SdkMessage implements KaaPluginMessage {
+import org.kaaproject.kaa.server.common.core.plugin.instance.KaaMessage;
+
+public class SdkMessage implements KaaMessage {
 
     private static final long serialVersionUID = -8369085602140052037L;
 
-    @Override
-    public ContractMessageDef getMessageDef() {
-        return new BaseContractMessageDef(SdkMessage.class.getName(), 1);
+    private final UUID uid;
+    private final byte[] data;
+
+    public SdkMessage(UUID uid, byte[] data) {
+        super();
+        this.uid = uid;
+        this.data = data;
     }
 
-    public SdkMessage(byte[] data) {
+    public UUID getUid() {
+        return uid;
+    }
 
+    public byte[] getData() {
+        return data;
     }
 
 }

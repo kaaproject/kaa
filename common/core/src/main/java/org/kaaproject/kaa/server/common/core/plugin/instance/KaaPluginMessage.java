@@ -1,11 +1,9 @@
 package org.kaaproject.kaa.server.common.core.plugin.instance;
 
-import java.io.Serializable;
+import java.util.UUID;
 
-import org.kaaproject.kaa.server.common.core.plugin.def.ContractMessageDef;
+public interface KaaPluginMessage extends KaaMessageWrapper{
 
-public interface KaaPluginMessage extends Serializable {
-
-    ContractMessageDef getMessageDef();
+    UUID getUid();
 
 }

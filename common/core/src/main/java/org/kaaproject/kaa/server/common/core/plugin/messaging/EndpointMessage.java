@@ -1,21 +1,21 @@
 package org.kaaproject.kaa.server.common.core.plugin.messaging;
 
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
-import org.kaaproject.kaa.server.common.core.plugin.base.BaseContractMessageDef;
-import org.kaaproject.kaa.server.common.core.plugin.def.ContractMessageDef;
-import org.kaaproject.kaa.server.common.core.plugin.instance.KaaPluginMessage;
+import org.kaaproject.kaa.server.common.core.plugin.instance.KaaMessage;
 
-public class EndpointMessage implements KaaPluginMessage {
+public class EndpointMessage implements KaaMessage {
 
     private static final long serialVersionUID = -7358355594071995237L;
 
-    @Override
-    public ContractMessageDef getMessageDef() {
-        return new BaseContractMessageDef(SdkMessage.class.getName(), 1);
+    private final EndpointObjectHash key;
+
+    public EndpointMessage(EndpointObjectHash key) {
+        super();
+        this.key = key;
     }
 
-    public EndpointObjectHash getEndpointKey() {
-        return null;
+    public EndpointObjectHash getKey() {
+        return key;
     }
 
     public byte[] getMessageData() {
