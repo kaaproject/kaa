@@ -1,17 +1,6 @@
 package org.kaaproject.kaa.server.plugin.rest.definition;
 
-import org.kaaproject.kaa.server.common.core.plugin.base.BasePluginContractDef;
-import org.kaaproject.kaa.server.common.core.plugin.base.BasePluginContractItemDef;
-import org.kaaproject.kaa.server.common.core.plugin.def.ContractType;
-import org.kaaproject.kaa.server.common.core.plugin.def.PluginContractDef;
-import org.kaaproject.kaa.server.common.core.plugin.def.PluginContractDirection;
-import org.kaaproject.kaa.server.common.core.plugin.def.PluginDef;
-import org.kaaproject.kaa.server.common.core.plugin.def.PluginScope;
-import org.kaaproject.kaa.server.plugin.rest.messages.EndpointRequestMessage;
-import org.kaaproject.kaa.server.plugin.rest.messages.EndpointResponseMessage;
-
 import java.io.IOException;
-import java.io.Serializable;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -19,6 +8,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
+
+import org.kaaproject.kaa.server.common.core.plugin.def.PluginContractDef;
+import org.kaaproject.kaa.server.common.core.plugin.def.PluginContractDirection;
+import org.kaaproject.kaa.server.common.core.plugin.def.PluginDef;
+import org.kaaproject.kaa.server.common.core.plugin.def.PluginScope;
+import org.kaaproject.kaa.server.plugin.contracts.messaging.MessagingPluginContract;
 
 public class KaaRestPluginDefinition implements PluginDef {
 
@@ -55,20 +50,11 @@ public class KaaRestPluginDefinition implements PluginDef {
     @Override
     public Set<PluginContractDef> getPluginContracts() {
         Set<PluginContractDef> contracts = new HashSet<>();
-        contracts.add(BasePluginContractDef.builder("rest_plugin", 1).withDirection(PluginContractDirection.IN).withType(ContractType.ROUTE)
-                .withItem(
-                        BasePluginContractItemDef.builder("getFromEndpoint")
-                                .withInMessage(EndpointRequestMessage.class).withOutMessage(EndpointResponseMessage.class)
-                                .withSchema(readFileAsString("rest_plugin_read_item.avsc")).build())
-                .withItem(
-                        BasePluginContractItemDef.builder("postToEndpoint")
-                                .withInMessage(EndpointRequestMessage.class).withOutMessage(EndpointResponseMessage.class)
-                                .withSchema(readFileAsString("rest_plugin_write_item.avsc")).build())
-                .build());
+        contracts.add(MessagingPluginContract.buildMessagingContract(PluginContractDirection.OUT,
+                readFileAsString("rest_plugin_read_item.avsc"), readFileAsString("rest_plugin_write_item.avsc")));
 
         return contracts;
     }
-
 
     private String readFileAsString(String fileName) {
         String fileBody = null;

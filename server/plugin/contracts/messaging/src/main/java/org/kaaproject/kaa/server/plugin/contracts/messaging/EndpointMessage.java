@@ -1,4 +1,4 @@
-package org.kaaproject.kaa.server.common.core.plugin.messaging;
+package org.kaaproject.kaa.server.plugin.contracts.messaging;
 
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.core.plugin.instance.KaaMessage;

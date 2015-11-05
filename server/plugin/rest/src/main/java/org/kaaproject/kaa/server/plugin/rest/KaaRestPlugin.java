@@ -21,7 +21,8 @@ public class KaaRestPlugin implements KaaPlugin {
     }
 
     @Override
-    public void onMessage(KaaPluginMessage msg, PluginExecutionContext ctx) {
+    public void onPluginMessage(KaaPluginMessage msg, PluginExecutionContext ctx) {
+        // TODO Auto-generated method stub
 
     }
 

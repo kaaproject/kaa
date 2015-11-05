@@ -1,4 +1,4 @@
-package org.kaaproject.kaa.server.common.core.plugin.messaging;
+package org.kaaproject.kaa.server.plugin.messaging;
 
 import java.util.UUID;
 

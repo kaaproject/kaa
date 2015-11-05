@@ -1,4 +1,4 @@
-package org.kaaproject.kaa.server.common.core.plugin.messaging;
+package org.kaaproject.kaa.server.plugin.messaging;
 
 import java.nio.ByteBuffer;
 import java.util.UUID;
@@ -11,6 +11,7 @@ import org.kaaproject.kaa.server.common.core.plugin.instance.KaaMessage;
 import org.kaaproject.kaa.server.common.core.plugin.instance.KaaPluginMessage;
 import org.kaaproject.kaa.server.common.core.plugin.instance.KaaSdkMessage;
 import org.kaaproject.kaa.server.common.core.plugin.instance.SDKPlatform;
+import org.kaaproject.kaa.server.plugin.contracts.messaging.EndpointMessage;
 
 @Plugin(EndpointMessagingPluginDefinition.class)
 public class EndpointMessagePlugin implements KaaSdkPlugin {
