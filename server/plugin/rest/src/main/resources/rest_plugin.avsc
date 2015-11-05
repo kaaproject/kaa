@@ -1,0 +1,36 @@
+{
+    "type":"record",
+    "name":"KaaRestPluginConfigSchema",
+    "namespace":"org.kaaproject.kaa.server.plugin.rest.gen",
+    "fields":[
+        {
+            "name":"host",
+            "type":"string"
+        },
+        {
+            "name":"port",
+            "type":"int"
+        },
+        {
+            "name":"httpSchema",
+            "displayName":"Http schema",
+            "by_default":"HTTP",
+            "type":{
+                "name":"HttpSchemaType",
+                "type":"enum",
+                "symbols":[
+                    "HTTP",
+                    "HTTPS"
+                ]
+            }
+        },
+        {
+            "name":"keyStoreFileName",
+            "type":"string"
+        },
+        {
+            "name":"keyStorePass",
+            "type":"string"
+        }
+    ]
+}

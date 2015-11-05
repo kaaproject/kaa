@@ -43,6 +43,7 @@
         <module>appenders</module>
         <module>transports</module>
         <module>verifiers</module>
+        <module>plugin</module>
     </modules>
 
 </project>
