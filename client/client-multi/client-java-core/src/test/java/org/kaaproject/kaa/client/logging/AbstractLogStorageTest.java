@@ -272,6 +272,7 @@ public abstract class AbstractLogStorageTest {
         receivedCount -= logBlock.getRecords().size();
         Assert.assertEquals(insertionCount - receivedCount, storage.getStatus().getRecordCount());
         Assert.assertEquals((insertionCount - receivedCount) * 3, storage.getStatus().getConsumedVolume());
+        storage.close();
     }
 
     private int addIfNotEmpty(int count, LogBlock logBlock) {

@@ -28,7 +28,7 @@ struct ThriftOperationsServer {
 
 typedef list<ThriftOperationsServer> serversList
 
-service BootstrapThriftService extends cli.CliThriftService{
+service BootstrapThriftService {
     
     /**
      *   Set Operations Servers List

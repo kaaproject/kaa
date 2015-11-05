@@ -34,4 +34,15 @@ public class H2DBTestRunner extends DBTestRunner {
         return new StringBuilder("DELETE FROM ").append(FORMATER).toString();
     }
 
+//    @Override
+//    protected PreparedStatement prepareGetSequencesStatement(
+//            Connection connection) throws SQLException {
+//        return connection.prepareStatement("SELECT SEQUENCE_NAME FROM INFORMATION_SCHEMA.SEQUENCES WHERE SEQUENCE_SCHEMA = 'PUBLIC'");
+//    }
+//
+//    @Override
+//    protected String getTrancateSequenceSql() {
+//        return new StringBuilder("ALTER SEQUENCE ").append(FORMATER).append(" RESTART WITH 1").toString();
+//    }
+
 }

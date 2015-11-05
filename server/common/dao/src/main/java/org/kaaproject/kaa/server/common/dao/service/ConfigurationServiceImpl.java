@@ -425,7 +425,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
                     removeCascadeConfigurationSchema(savedSchema.getId());
                     throw new IncorrectParameterException("Can't save default configuration.");
                 }
-            } catch (IOException | ConfigurationGenerationException e) {
+            } catch (Exception e) {
                 LOG.error("Can't generate configuration based on protocol schema.", e);
                 removeCascadeConfigurationSchema(savedSchema.getId());
                 throw new IncorrectParameterException("Can't save default configuration.");

@@ -30,11 +30,18 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.thrift.TException;
+import org.apache.thrift.protocol.TBinaryProtocol;
+import org.apache.thrift.protocol.TMultiplexedProtocol;
+import org.apache.thrift.protocol.TProtocol;
+import org.apache.thrift.transport.TTransport;
+import org.kaaproject.kaa.server.common.thrift.KaaThriftService;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.OperationsThriftService;
+import org.kaaproject.kaa.server.common.thrift.gen.operations.OperationsThriftService.Iface;
 import org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Function;
 import com.twitter.common.quantity.Amount;
 import com.twitter.common.quantity.Time;
 import com.twitter.common.thrift.Thrift;
@@ -178,7 +185,14 @@ public final class NeighborConnection<T extends NeighborTemplate<V>, V> {
             Set<InetSocketAddress> backends = new HashSet<InetSocketAddress>();
             backends.add(address);
             thrift = clientFactory.withMaxConnectionsPerEndpoint(maxNumberConnection)
-                    .withSocketTimeout(Amount.of(socketTimeout, Time.SECONDS)).build(backends);
+                    .withSocketTimeout(Amount.of(socketTimeout, Time.SECONDS)).
+                    withClientFactory(new Function<TTransport, OperationsThriftService.Iface>(){
+                        @Override
+                        public Iface apply(TTransport transport) {
+                            TProtocol protocol = new TBinaryProtocol(transport);
+                            TMultiplexedProtocol mprotocol = new TMultiplexedProtocol(protocol, KaaThriftService.OPERATIONS_SERVICE.getServiceName());
+                            return new OperationsThriftService.Client(mprotocol);
+                        }}).build(backends);
             for (int i = 0; i < maxNumberConnection; i++) {
                 EventWorker worker = new EventWorker(template);
                 workers.add(executor.submit(worker));

@@ -26,6 +26,9 @@ public class ProfileFilterRecordDto implements Serializable {
     private ProfileFilterDto activeProfileFilter; 
     private ProfileFilterDto inactiveProfileFilter;
     
+    public ProfileFilterRecordDto() {
+    }
+    
     public ProfileFilterRecordDto(ProfileFilterDto activeProfileFilter, ProfileFilterDto inactiveProfileFilter) {
         this.activeProfileFilter = activeProfileFilter;
         this.inactiveProfileFilter = inactiveProfileFilter;
