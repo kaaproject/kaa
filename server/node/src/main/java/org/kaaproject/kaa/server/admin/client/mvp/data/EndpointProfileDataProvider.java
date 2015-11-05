@@ -42,8 +42,7 @@ public class EndpointProfileDataProvider extends AbstractDataProvider<EndpointPr
 
     private static volatile EndpointProfileDataProvider instance;
 
-    private EndpointProfileDataProvider(AbstractGrid<EndpointProfileDto, ?> dataGrid,
-                                        HasErrorMessage hasErrorMessage) {
+    private EndpointProfileDataProvider(AbstractGrid<EndpointProfileDto, ?> dataGrid, HasErrorMessage hasErrorMessage) {
         super(dataGrid, hasErrorMessage, true);
         this.groupID = "";
         endpointProfilesList = new ArrayList<>();
