@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.common.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 import java.util.Arrays;
 
@@ -25,12 +27,15 @@ public class EndpointProfileBodyDto implements Serializable {
 
     private byte[] endpointKeyHash;
     private String profile;
+    @JsonIgnore
+    private String appId;
 
     public EndpointProfileBodyDto() {}
 
-    public EndpointProfileBodyDto(byte[] endpointKeyHash, String profile) {
+    public EndpointProfileBodyDto(byte[] endpointKeyHash, String profile, String appId) {
        this.endpointKeyHash = endpointKeyHash;
        this.profile = profile;
+        this.appId = appId;
     }
 
     public byte[] getEndpointKeyHash() {
@@ -47,6 +52,10 @@ public class EndpointProfileBodyDto implements Serializable {
 
     public void setProfile(String profile) {
         this.profile = profile;
+    }
+
+    public String getAppId() {
+        return appId;
     }
 
     @Override

@@ -22,10 +22,9 @@ import com.datastax.driver.core.Statement;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Sets;
-
 import org.apache.commons.codec.binary.Base64;
-import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.PageLinkDto;
@@ -64,6 +63,7 @@ import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoU
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.convertStringToKeyHash;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getByteBuffer;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getBytes;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_APP_ID_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_BY_APP_ID_APPLICATION_ID_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_BY_APP_ID_COLUMN_FAMILY_NAME;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_BY_APP_ID_ENDPOINT_KEY_HASH_PROPERTY;
@@ -173,14 +173,16 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
     public EndpointProfileBodyDto findBodyByKeyHash(byte[] endpointKeyHash) {
         LOG.debug("Try to find endpoint profile body by key hash [{}]", endpointKeyHash);
         String profile = null;
-        ResultSet resultSet = execute(select(EP_PROFILE_PROPERTY).from(getColumnFamilyName())
+        String appId = null;
+        ResultSet resultSet = execute(select(EP_PROFILE_PROPERTY, EP_APP_ID_PROPERTY).from(getColumnFamilyName())
                 .where(eq(EP_EP_KEY_HASH_PROPERTY, getByteBuffer(endpointKeyHash))));
         Row row = resultSet.one();
         if (row != null) {
-            profile = row.getString(0);
+            profile = row.getString(EP_PROFILE_PROPERTY);
+            appId = row.getString(EP_APP_ID_PROPERTY);
         }
         LOG.debug("[{}] Found endpoint profile body {}", endpointKeyHash, profile);
-        return new EndpointProfileBodyDto(endpointKeyHash, profile);
+        return new EndpointProfileBodyDto(endpointKeyHash, profile, appId);
     }
 
     @Override
@@ -299,7 +301,7 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
         if (cassandraEndpointProfileList.size() == (lim + 1)) {
             pageLinkDto.setEndpointGroupId(endpointGroupId);
             pageLinkDto.setLimit(limit);
-            pageLinkDto.setOffset(Base64.encodeBase64String(cassandraEndpointProfileList.get(lim).getEndpointKeyHash()));
+            pageLinkDto.setOffset(Base64.encodeBase64URLSafeString(cassandraEndpointProfileList.get(lim).getEndpointKeyHash()));
             cassandraEndpointProfileList.remove(lim);
             next = null;
         } else {
@@ -319,7 +321,7 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
         if (profilesBodyDto.size() == (lim + 1)) {
             pageLinkDto.setEndpointGroupId(endpointGroupId);
             pageLinkDto.setLimit(limit);
-            pageLinkDto.setOffset(Base64.encodeBase64String(profilesBodyDto.get(lim).getEndpointKeyHash()));
+            pageLinkDto.setOffset(Base64.encodeBase64URLSafeString(profilesBodyDto.get(lim).getEndpointKeyHash()));
             profilesBodyDto.remove(lim);
             next = null;
         } else {

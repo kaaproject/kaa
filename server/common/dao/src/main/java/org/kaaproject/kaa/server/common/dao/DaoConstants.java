@@ -328,6 +328,8 @@ public class DaoConstants {
 
     public static final String LAST_PAGE_MESSAGE = "It is the last page";
 
+    public static final String PROFILE = "profile";
+
     private DaoConstants() {
         throw new UnsupportedOperationException("Not supported");
     }

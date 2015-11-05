@@ -114,14 +114,6 @@ public class EndpointGroupDto implements HasId, Serializable {
         this.endpointCount = endpointCount;
     }
 
-    public boolean isGroupAll() {
-        boolean result = false;
-        if (weight == 0) {
-            result = true;
-        }
-        return result;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {

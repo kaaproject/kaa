@@ -35,10 +35,7 @@
 
     <modules>
         <module>common</module>
-        <module>admin</module>
-        <module>operations</module>
-        <module>control</module>
-        <module>bootstrap</module>
+        <module>node</module>
         <module>flume</module>
         <module>appenders</module>
         <module>transports</module>

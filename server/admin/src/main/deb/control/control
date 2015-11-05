@@ -1,8 +1,0 @@
-Package: kaa-[[artifactId]]
-Version: [[version]]
-Section: misc
-Priority: optional
-Architecture: all
-Maintainer: kaaproject
-Description: Kaa Admin Web Server
-Distribution: development
