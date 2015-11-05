@@ -21,12 +21,15 @@ package org.kaaproject.kaa.server.common.thrift.util;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+
 import org.apache.thrift.TException;
 import org.apache.thrift.TServiceClient;
 import org.apache.thrift.protocol.TBinaryProtocol;
+import org.apache.thrift.protocol.TMultiplexedProtocol;
 import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
+import org.kaaproject.kaa.server.common.thrift.KaaThriftService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,6 +72,7 @@ public class ThriftClient<T extends TServiceClient> implements Runnable {
      *
      * @param endpointHost the endpoint host
      * @param endpointPort the endpoint port
+     * @param kaaThriftService the kaa thrift service
      * @param clazz the clazz
      * @throws NoSuchMethodException the no such method exception
      * @throws SecurityException the security exception
@@ -77,7 +81,7 @@ public class ThriftClient<T extends TServiceClient> implements Runnable {
      * @throws IllegalArgumentException the illegal argument exception
      * @throws InvocationTargetException the invocation target exception
      */
-    public ThriftClient(String endpointHost, int endpointPort, Class<T> clazz) 
+    public ThriftClient(String endpointHost, int endpointPort, KaaThriftService kaaThriftService, Class<T> clazz) 
             throws NoSuchMethodException,
                    InstantiationException, 
                    IllegalAccessException, 
@@ -89,7 +93,8 @@ public class ThriftClient<T extends TServiceClient> implements Runnable {
         transport = new TSocket(endpointHost, endpointPort);
         LOG.debug("ThriftClient sokcet to "+endpointHost+":"+endpointPort+" created.");
         TProtocol protocol = new TBinaryProtocol(transport);
-        client = tConstructor.newInstance(protocol, protocol);
+        TMultiplexedProtocol mp = new TMultiplexedProtocol(protocol, kaaThriftService.getServiceName());
+        client = tConstructor.newInstance(mp, mp);
         LOG.debug("ThriftClient new Client to "+endpointHost+":"+endpointPort+" created.");
     }
     

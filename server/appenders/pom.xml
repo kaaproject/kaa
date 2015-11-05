@@ -34,36 +34,40 @@
         <main.dir>${basedir}/../..</main.dir>
     </properties>
     <modules>
-        <module>file</module>
-        <module>mongo</module>
-        <module>flume</module>
-        <module>rest</module>
-        <module>couchbase</module>
-        <module>kafka</module>
+        <module>file-appender</module>
+        <module>mongo-appender</module>
+        <module>flume-appender</module>
+        <module>rest-appender</module>
     </modules>
     <profiles>
         <profile>
             <id>cdap</id>
             <modules>
-                <module>cdap</module>
+                <module>cdap-appender</module>
             </modules>
         </profile>
         <profile>
             <id>oracle-nosql</id>
             <modules>
-                <module>oracle-nosql</module>
+                <module>oracle-nosql-appender</module>
             </modules>
         </profile>
         <profile>
             <id>cassandra</id>
             <modules>
-                <module>cassandra</module>
+                <module>cassandra-appender</module>
             </modules>
         </profile>
         <profile>
+            <id>kafka</id>
+            <modules>
+                <module>kafka-appender</module>
+            </modules>
+        </profile>        
+        <profile>
             <id>couchbase</id>
             <modules>
-                <module>couchbase</module>
+                <module>couchbase-appender</module>
             </modules>
         </profile>
     </profiles>

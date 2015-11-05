@@ -35,6 +35,11 @@ public abstract class DBTestRunner {
         Set<String> tableNames = getTableNames(dataSource);
         truncateTables(tableNames, dataSource);
     }
+    
+//    public void truncateSequences(DataSource dataSource) throws SQLException {
+//        Set<String> sequenceNames = getSequenceNames(dataSource);
+//        truncateSequences(sequenceNames, dataSource);
+//    }
 
     private Set<String> getTableNames(DataSource dataSource) throws SQLException {
         Set<String> tableNames = new HashSet<>();
@@ -47,6 +52,18 @@ public abstract class DBTestRunner {
         }
         return tableNames;
     }
+    
+//    private Set<String> getSequenceNames(DataSource dataSource) throws SQLException {
+//        Set<String> sequenceNames = new HashSet<>();
+//        try (Connection connection = dataSource.getConnection();
+//                PreparedStatement preparedStatement = prepareGetSequencesStatement(connection);
+//                ResultSet resultSet = preparedStatement.executeQuery()) {
+//            while (resultSet.next()) {
+//                sequenceNames.add(resultSet.getString(1));
+//            }
+//        }
+//        return sequenceNames;
+//    }
 
     private void truncateTables(Set<String> tableNames, DataSource dataSource) throws SQLException {
         if (tableNames == null || tableNames.isEmpty()) {
@@ -59,9 +76,25 @@ public abstract class DBTestRunner {
             statement.executeBatch();
         }
     }
+    
+//    private void truncateSequences(Set<String> sequenceNames, DataSource dataSource) throws SQLException {
+//        if (sequenceNames == null || sequenceNames.isEmpty()) {
+//            return;
+//        }
+//        try (Connection connection = dataSource.getConnection(); Statement statement = connection.createStatement()) {
+//            for (String sequenceName : sequenceNames) {
+//                statement.addBatch(MessageFormat.format(getTrancateSequenceSql(), sequenceName));
+//            }
+//            statement.executeBatch();
+//        }
+//    }
 
     protected abstract PreparedStatement prepareStatement(Connection connection) throws SQLException;
+    
+//    protected abstract PreparedStatement prepareGetSequencesStatement(Connection connection) throws SQLException;
 
     protected abstract String getTrancateSql();
+    
+ //   protected abstract String getTrancateSequenceSql();
 
 }
