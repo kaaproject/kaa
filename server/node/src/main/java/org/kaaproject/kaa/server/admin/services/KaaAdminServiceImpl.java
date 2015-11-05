@@ -182,7 +182,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             }
             EndpointGroupDto endpointGroupDto = getEndpointGroup(endpointGroupId);
             PageLinkDto pageLinkDto = new PageLinkDto(endpointGroupId, limit, offset);
-            if (endpointGroupDto.isGroupAll()) {
+            if (isGroupAll(endpointGroupDto)) {
                 pageLinkDto.setApplicationId(endpointGroupDto.getApplicationId());
             }
             EndpointProfilesPageDto endpointProfilesPage = controlService.getEndpointProfileByEndpointGroupId(pageLinkDto);
@@ -204,7 +204,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             }
             EndpointGroupDto endpointGroupDto = getEndpointGroup(endpointGroupId);
             PageLinkDto pageLinkDto = new PageLinkDto(endpointGroupId, limit, offset);
-            if (endpointGroupDto.isGroupAll()) {
+            if (isGroupAll(endpointGroupDto)) {
                 pageLinkDto.setApplicationId(endpointGroupDto.getApplicationId());
             }
             EndpointProfilesBodyDto endpointProfilesBodyDto = controlService.getEndpointProfileBodyByEndpointGroupId(pageLinkDto);
@@ -2415,6 +2415,14 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         } else {
             throw new KaaAdminServiceException("You are not authorized to perform this operation!", ServiceErrorCode.NOT_AUTHORIZED);
         }
+    }
+
+    private boolean isGroupAll(EndpointGroupDto groupDto) {
+        boolean result = false;
+        if (groupDto != null && groupDto.getWeight() == 0) {
+            result = true;
+        }
+        return result;
     }
 
     @Override
