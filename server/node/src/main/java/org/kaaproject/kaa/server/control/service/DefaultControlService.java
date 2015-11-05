@@ -35,12 +35,17 @@ import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
+import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.HasId;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
+import org.kaaproject.kaa.common.dto.PageLinkDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.SchemaDto;
@@ -109,6 +114,8 @@ import org.slf4j.helpers.MessageFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import org.apache.commons.codec.binary.Base64;
 
 /**
  * The Class DefaultControlService.
@@ -1466,6 +1473,26 @@ public class DefaultControlService implements ControlService {
             data.setFileData(schemaData);
         }
         return data;
+    }
+
+    @Override
+    public EndpointProfilesBodyDto getEndpointProfileBodyByEndpointGroupId(PageLinkDto pageLinkDto) throws ControlServiceException {
+        return endpointService.findEndpointProfileBodyByEndpointGroupId(pageLinkDto);
+    }
+
+    @Override
+    public EndpointProfileDto getEndpointProfileByKeyHash(String endpointProfileKeyHash) throws ControlServiceException {
+        return endpointService.findEndpointProfileByKeyHash(Base64.decodeBase64(endpointProfileKeyHash));
+    }
+
+    @Override
+    public EndpointProfileBodyDto getEndpointProfileBodyByKeyHash(String endpointProfileKeyHash) throws ControlServiceException {
+        return endpointService.findEndpointProfileBodyByKeyHash(Base64.decodeBase64(endpointProfileKeyHash));
+    }
+
+    @Override
+    public EndpointProfilesPageDto getEndpointProfileByEndpointGroupId(PageLinkDto pageLinkDto) throws ControlServiceException {
+        return endpointService.findEndpointProfileByEndpointGroupId(pageLinkDto);
     }
 
     /**

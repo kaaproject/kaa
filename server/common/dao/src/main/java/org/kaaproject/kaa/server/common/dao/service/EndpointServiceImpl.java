@@ -37,9 +37,13 @@ import org.kaaproject.kaa.common.dto.ChangeNotificationDto;
 import org.kaaproject.kaa.common.dto.ChangeType;
 import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
+import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.HistoryDto;
+import org.kaaproject.kaa.common.dto.PageLinkDto;
 import org.kaaproject.kaa.common.dto.UpdateNotificationDto;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
 import org.kaaproject.kaa.server.common.dao.HistoryService;
@@ -79,7 +83,7 @@ public class EndpointServiceImpl implements EndpointService {
     private ProfileFilterDao<ProfileFilter> verifierDao;
     @Autowired
     private HistoryService historyService;
-    
+
     private EndpointProfileDao<EndpointProfile> endpointProfileDao;
     private EndpointConfigurationDao<EndpointConfiguration> endpointConfigurationDao;
     private EndpointUserDao<EndpointUser> endpointUserDao;
@@ -165,7 +169,7 @@ public class EndpointServiceImpl implements EndpointService {
         UpdateNotificationDto<EndpointGroupDto> dto = null;
         EndpointGroup endpointGroup = endpointGroupDao.removeTopicFromEndpointGroup(id, topicId);
         if (endpointGroup != null) {
-            dto = new UpdateNotificationDto<EndpointGroupDto>();
+            dto = new UpdateNotificationDto<>();
             HistoryDto history = addHistory(endpointGroup.toDto(), ChangeType.REMOVE_TOPIC, topicId);
             if (history != null) {
                 dto.setAppId(history.getApplicationId());
@@ -188,7 +192,7 @@ public class EndpointServiceImpl implements EndpointService {
         UpdateNotificationDto<EndpointGroupDto> dto = null;
         EndpointGroup endpointGroup = endpointGroupDao.addTopicToEndpointGroup(id, topicId);
         if (endpointGroup != null) {
-            dto = new UpdateNotificationDto<EndpointGroupDto>();
+            dto = new UpdateNotificationDto<>();
             HistoryDto history = addHistory(endpointGroup.toDto(), ChangeType.ADD_TOPIC, topicId);
             if (history != null) {
                 dto.setAppId(history.getApplicationId());
@@ -205,10 +209,25 @@ public class EndpointServiceImpl implements EndpointService {
     }
 
     @Override
+    @Transactional
+    public EndpointProfilesPageDto findEndpointProfileByEndpointGroupId(PageLinkDto pageLink) {
+        validateSqlId(pageLink.getLimit(), "Can't find endpoint group by id. Incorrect limit parameter " + pageLink.getLimit());
+        validateString(pageLink.getOffset(), "Can't find endpoint group by id. Incorrect offset parameter " + pageLink.getOffset());
+        return endpointProfileDao.findByEndpointGroupId(pageLink);
+    }
+
+    @Override
+    @Transactional
+    public EndpointProfilesBodyDto findEndpointProfileBodyByEndpointGroupId(PageLinkDto pageLink) {
+        validateSqlId(pageLink.getLimit(), "Can't find endpoint group by id. Incorrect limit parameter " + pageLink.getLimit());
+        validateString(pageLink.getOffset(), "Can't find endpoint group by id. Incorrect offset parameter " + pageLink.getOffset());
+        return endpointProfileDao.findBodyByEndpointGroupId(pageLink);
+    }
+
+    @Override
     public EndpointConfigurationDto findEndpointConfigurationByHash(byte[] hash) {
         validateHash(hash, "Can't find endpoint configuration by hash. Invalid configuration hash " + hash);
         return getDto(endpointConfigurationDao.findByHash(hash));
-
     }
 
     @Override
@@ -221,6 +240,13 @@ public class EndpointServiceImpl implements EndpointService {
         validateHash(endpointProfileKeyHash, "Can't find endpoint profile by key hash. Invalid key hash "
                 + endpointProfileKeyHash);
         return getDto(endpointProfileDao.findByKeyHash(endpointProfileKeyHash));
+    }
+
+    @Override
+    public EndpointProfileBodyDto findEndpointProfileBodyByKeyHash(byte[] endpointProfileKeyHash) {
+        validateHash(endpointProfileKeyHash, "Can't find endpoint profile by key hash. Invalid key hash "
+                + endpointProfileKeyHash);
+        return endpointProfileDao.findBodyByKeyHash(endpointProfileKeyHash);
     }
 
     @Override

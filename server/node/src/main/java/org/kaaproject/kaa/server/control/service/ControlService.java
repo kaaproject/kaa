@@ -23,11 +23,16 @@ import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
+import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
+import org.kaaproject.kaa.common.dto.PageLinkDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.SchemaDto;
@@ -61,7 +66,7 @@ public interface ControlService {
      * @return the tenants
      * @throws ControlServiceException the control service exception
      */
-    public List<TenantDto> getTenants() throws ControlServiceException;
+    List<TenantDto> getTenants() throws ControlServiceException;
     
     /**
      * Gets the tenant.
@@ -70,7 +75,7 @@ public interface ControlService {
      * @return the tenant
      * @throws ControlServiceException the control service exception
      */
-    public TenantDto getTenant(String tenantId) throws ControlServiceException;
+    TenantDto getTenant(String tenantId) throws ControlServiceException;
     
     /**
      * Edits the tenant.
@@ -79,7 +84,7 @@ public interface ControlService {
      * @return the tenant dto
      * @throws ControlServiceException the control service exception
      */
-    public TenantDto editTenant(TenantDto tenant) throws ControlServiceException;
+    TenantDto editTenant(TenantDto tenant) throws ControlServiceException;
     
     /**
      * Delete tenant.
@@ -87,7 +92,7 @@ public interface ControlService {
      * @param tenantId the tenant id
      * @throws ControlServiceException the control service exception
      */
-    public void deleteTenant(String tenantId) throws ControlServiceException;
+    void deleteTenant(String tenantId) throws ControlServiceException;
     
     /**
      * Gets the users.
@@ -95,7 +100,7 @@ public interface ControlService {
      * @return the users
      * @throws ControlServiceException the control service exception
      */
-    public List<UserDto> getUsers() throws ControlServiceException; 
+    List<UserDto> getUsers() throws ControlServiceException; 
     
     /**
      * Gets the tenant users.
@@ -104,7 +109,7 @@ public interface ControlService {
      * @return the tenant users
      * @throws ControlServiceException the control service exception
      */
-    public List<UserDto> getTenantUsers(String tenantId) throws ControlServiceException;
+    List<UserDto> getTenantUsers(String tenantId) throws ControlServiceException;
     
     /**
      * Gets the user.
@@ -113,7 +118,7 @@ public interface ControlService {
      * @return the user
      * @throws ControlServiceException the control service exception
      */
-    public UserDto getUser(String userId) throws ControlServiceException;
+    UserDto getUser(String userId) throws ControlServiceException;
     
     /**
      * Gets the user by external uid.
@@ -122,7 +127,7 @@ public interface ControlService {
      * @return the user by external uid
      * @throws ControlServiceException the control service exception
      */
-    public UserDto getUserByExternalUid(String uid) throws ControlServiceException;
+    UserDto getUserByExternalUid(String uid) throws ControlServiceException;
     
     /**
      * Edits the user.
@@ -131,7 +136,7 @@ public interface ControlService {
      * @return the user dto
      * @throws ControlServiceException the control service exception
      */
-    public UserDto editUser(UserDto user) throws ControlServiceException;
+    UserDto editUser(UserDto user) throws ControlServiceException;
     
     /**
      * Delete user.
@@ -139,7 +144,7 @@ public interface ControlService {
      * @param userId the user id
      * @throws ControlServiceException the control service exception
      */
-    public void deleteUser(String userId) throws ControlServiceException;
+    void deleteUser(String userId) throws ControlServiceException;
     
     /**
      * Gets the tenant admins.
@@ -147,7 +152,7 @@ public interface ControlService {
      * @return the tenant admins
      * @throws ControlServiceException the control service exception
      */
-    public List<TenantAdminDto> getTenantAdmins() throws ControlServiceException;
+    List<TenantAdminDto> getTenantAdmins() throws ControlServiceException;
     
     /**
      * Gets the tenant admin.
@@ -156,7 +161,7 @@ public interface ControlService {
      * @return the tenant admin
      * @throws ControlServiceException the control service exception
      */
-    public TenantAdminDto getTenantAdmin(String tenantId) throws ControlServiceException;
+    TenantAdminDto getTenantAdmin(String tenantId) throws ControlServiceException;
     
     /**
      * Edits the tenant admin.
@@ -165,7 +170,7 @@ public interface ControlService {
      * @return the tenant admin dto
      * @throws ControlServiceException the control service exception
      */
-    public TenantAdminDto editTenantAdmin(TenantAdminDto tenantAdmin) throws ControlServiceException;
+    TenantAdminDto editTenantAdmin(TenantAdminDto tenantAdmin) throws ControlServiceException;
     
     /**
      * Delete tenant admin.
@@ -173,7 +178,7 @@ public interface ControlService {
      * @param tenantId the tenant id
      * @throws ControlServiceException the control service exception
      */
-    public void deleteTenantAdmin(String tenantId) throws ControlServiceException;
+    void deleteTenantAdmin(String tenantId) throws ControlServiceException;
     
     /**
      * Gets the application.
@@ -182,7 +187,7 @@ public interface ControlService {
      * @return the application
      * @throws ControlServiceException the control service exception
      */
-    public ApplicationDto getApplication(String applicationId) throws ControlServiceException;
+    ApplicationDto getApplication(String applicationId) throws ControlServiceException;
     
     /**
      * Gets the application by application token.
@@ -191,7 +196,7 @@ public interface ControlService {
      * @return the application by application token
      * @throws ControlServiceException the control service exception
      */
-    public ApplicationDto getApplicationByApplicationToken(String applicationToken) throws ControlServiceException;
+    ApplicationDto getApplicationByApplicationToken(String applicationToken) throws ControlServiceException;
     
     /**
      * Gets the applications by tenant id.
@@ -200,7 +205,7 @@ public interface ControlService {
      * @return the applications by tenant id
      * @throws ControlServiceException the control service exception
      */
-    public List<ApplicationDto> getApplicationsByTenantId(String tenantId) throws ControlServiceException;
+    List<ApplicationDto> getApplicationsByTenantId(String tenantId) throws ControlServiceException;
     
     /**
      * Edits the application.
@@ -209,7 +214,7 @@ public interface ControlService {
      * @return the application dto
      * @throws ControlServiceException the control service exception
      */
-    public ApplicationDto editApplication(ApplicationDto application) throws ControlServiceException;
+    ApplicationDto editApplication(ApplicationDto application) throws ControlServiceException;
     
     /**
      * Delete application.
@@ -217,7 +222,7 @@ public interface ControlService {
      * @param applicationId the application id
      * @throws ControlServiceException the control service exception
      */
-    public void deleteApplication(String applicationId) throws ControlServiceException;
+    void deleteApplication(String applicationId) throws ControlServiceException;
     
     /**
      * Gets the configuration schemas by application id.
@@ -226,7 +231,7 @@ public interface ControlService {
      * @return the configuration schemas by application id
      * @throws ControlServiceException the control service exception
      */
-    public List<ConfigurationSchemaDto> getConfigurationSchemasByApplicationId(String applicationId) throws ControlServiceException;
+    List<ConfigurationSchemaDto> getConfigurationSchemasByApplicationId(String applicationId) throws ControlServiceException;
     
     /**
      * Gets the configuration schema.
@@ -235,7 +240,7 @@ public interface ControlService {
      * @return the configuration schema
      * @throws ControlServiceException the control service exception
      */
-    public ConfigurationSchemaDto getConfigurationSchema(String configurationSchemaId) throws ControlServiceException;
+    ConfigurationSchemaDto getConfigurationSchema(String configurationSchemaId) throws ControlServiceException;
     
     /**
      * Edits the configuration schema.
@@ -244,7 +249,7 @@ public interface ControlService {
      * @return the configuration schema dto
      * @throws ControlServiceException the control service exception
      */
-    public ConfigurationSchemaDto editConfigurationSchema(ConfigurationSchemaDto configurationSchema) throws ControlServiceException;
+    ConfigurationSchemaDto editConfigurationSchema(ConfigurationSchemaDto configurationSchema) throws ControlServiceException;
     
     /**
      * Gets the profile schemas by application id.
@@ -253,7 +258,7 @@ public interface ControlService {
      * @return the profile schemas by application id
      * @throws ControlServiceException the control service exception
      */
-    public List<ProfileSchemaDto> getProfileSchemasByApplicationId(String applicationId) throws ControlServiceException;
+    List<ProfileSchemaDto> getProfileSchemasByApplicationId(String applicationId) throws ControlServiceException;
     
     /**
      * Gets the profile schema.
@@ -262,7 +267,7 @@ public interface ControlService {
      * @return the profile schema
      * @throws ControlServiceException the control service exception
      */
-    public ProfileSchemaDto getProfileSchema(String profileSchemaId) throws ControlServiceException;
+    ProfileSchemaDto getProfileSchema(String profileSchemaId) throws ControlServiceException;
     
     /**
      * Edits the profile schema.
@@ -271,7 +276,7 @@ public interface ControlService {
      * @return the profile schema dto
      * @throws ControlServiceException the control service exception
      */
-    public ProfileSchemaDto editProfileSchema(ProfileSchemaDto profileSchema) throws ControlServiceException;
+    ProfileSchemaDto editProfileSchema(ProfileSchemaDto profileSchema) throws ControlServiceException;
     
     /**
      * Gets the endpoint groups by application id.
@@ -280,7 +285,7 @@ public interface ControlService {
      * @return the endpoint groups by application id
      * @throws ControlServiceException the control service exception
      */
-    public List<EndpointGroupDto> getEndpointGroupsByApplicationId(String applicationId) throws ControlServiceException;
+    List<EndpointGroupDto> getEndpointGroupsByApplicationId(String applicationId) throws ControlServiceException;
     
     /**
      * Gets the endpoint group.
@@ -289,7 +294,7 @@ public interface ControlService {
      * @return the endpoint group
      * @throws ControlServiceException the control service exception
      */
-    public EndpointGroupDto getEndpointGroup(String endpointGroupId) throws ControlServiceException;
+    EndpointGroupDto getEndpointGroup(String endpointGroupId) throws ControlServiceException;
     
     /**
      * Edits the endpoint group.
@@ -298,7 +303,7 @@ public interface ControlService {
      * @return the endpoint group dto
      * @throws ControlServiceException the control service exception
      */
-    public EndpointGroupDto editEndpointGroup(EndpointGroupDto endpointGroup) throws ControlServiceException;
+    EndpointGroupDto editEndpointGroup(EndpointGroupDto endpointGroup) throws ControlServiceException;
     
     /**
      * Delete endpoint group.
@@ -306,7 +311,7 @@ public interface ControlService {
      * @param endpointGroupId the endpoint group id
      * @throws ControlServiceException the control service exception
      */
-    public void deleteEndpointGroup(String endpointGroupId) throws ControlServiceException;
+    void deleteEndpointGroup(String endpointGroupId) throws ControlServiceException;
     
     /**
      * Removes the topics from endpoint group.
@@ -316,7 +321,7 @@ public interface ControlService {
      * @return the endpoint group dto
      * @throws ControlServiceException the control service exception
      */
-    public EndpointGroupDto removeTopicsFromEndpointGroup(String endpointGroupId, String topicId) throws ControlServiceException;
+    EndpointGroupDto removeTopicsFromEndpointGroup(String endpointGroupId, String topicId) throws ControlServiceException;
     
     /**
      * Adds the topics to endpoint group.
@@ -326,7 +331,7 @@ public interface ControlService {
      * @return the endpoint group dto
      * @throws ControlServiceException the control service exception
      */
-    public EndpointGroupDto addTopicsToEndpointGroup(String endpointGroupId, String topicId) throws ControlServiceException;
+    EndpointGroupDto addTopicsToEndpointGroup(String endpointGroupId, String topicId) throws ControlServiceException;
     
     /**
      * Gets the profile filter.
@@ -335,7 +340,7 @@ public interface ControlService {
      * @return the profile filter
      * @throws ControlServiceException the control service exception
      */
-    public ProfileFilterDto getProfileFilter(String profileFilterId) throws ControlServiceException;
+    ProfileFilterDto getProfileFilter(String profileFilterId) throws ControlServiceException;
     
     /**
      * Gets the profile filter records by endpoint group id.
@@ -345,7 +350,7 @@ public interface ControlService {
      * @return the profile filter records by endpoint group id
      * @throws ControlServiceException the control service exception
      */
-    public List<StructureRecordDto<ProfileFilterDto>> getProfileFilterRecordsByEndpointGroupId(String endpointGroupId, boolean includeDeprecated) throws ControlServiceException;
+    List<StructureRecordDto<ProfileFilterDto>> getProfileFilterRecordsByEndpointGroupId(String endpointGroupId, boolean includeDeprecated) throws ControlServiceException;
     
     /**
      * Gets the profile filter record.
@@ -355,7 +360,7 @@ public interface ControlService {
      * @return the profile filter record
      * @throws ControlServiceException the control service exception
      */
-    public StructureRecordDto<ProfileFilterDto> getProfileFilterRecord(String schemaId, String endpointGroupId) throws ControlServiceException;
+    StructureRecordDto<ProfileFilterDto> getProfileFilterRecord(String schemaId, String endpointGroupId) throws ControlServiceException;
     
     /**
      * Gets the vacant profile schemas by endpoint group id.
@@ -364,7 +369,7 @@ public interface ControlService {
      * @return the vacant profile schemas by endpoint group id
      * @throws ControlServiceException the control service exception
      */
-    public List<SchemaDto> getVacantProfileSchemasByEndpointGroupId(String endpointGroupId) throws ControlServiceException;
+    List<SchemaDto> getVacantProfileSchemasByEndpointGroupId(String endpointGroupId) throws ControlServiceException;
     
     /**
      * Edits the profile filter.
@@ -373,7 +378,7 @@ public interface ControlService {
      * @return the profile filter dto
      * @throws ControlServiceException the control service exception
      */
-    public ProfileFilterDto editProfileFilter(ProfileFilterDto profileFilter) throws ControlServiceException;
+    ProfileFilterDto editProfileFilter(ProfileFilterDto profileFilter) throws ControlServiceException;
     
     /**
      * Gets the configuration records by endpoint group id.
@@ -383,7 +388,7 @@ public interface ControlService {
      * @return the configuration records by endpoint group id
      * @throws ControlServiceException the control service exception
      */
-    public List<StructureRecordDto<ConfigurationDto>> getConfigurationRecordsByEndpointGroupId(String endpointGroupId, boolean includeDeprecated) throws ControlServiceException;
+    List<StructureRecordDto<ConfigurationDto>> getConfigurationRecordsByEndpointGroupId(String endpointGroupId, boolean includeDeprecated) throws ControlServiceException;
     
     /**
      * Gets the configuration record.
@@ -393,7 +398,7 @@ public interface ControlService {
      * @return the configuration record
      * @throws ControlServiceException the control service exception
      */
-    public StructureRecordDto<ConfigurationDto> getConfigurationRecord(String schemaId, String endpointGroupId) throws ControlServiceException;
+    StructureRecordDto<ConfigurationDto> getConfigurationRecord(String schemaId, String endpointGroupId) throws ControlServiceException;
     
     /**
      * Gets the vacant configuration schemas by endpoint group id.
@@ -402,7 +407,7 @@ public interface ControlService {
      * @return the vacant configuration schemas by endpoint group id
      * @throws ControlServiceException the control service exception
      */
-    public List<SchemaDto> getVacantConfigurationSchemasByEndpointGroupId(String endpointGroupId) throws ControlServiceException;
+    List<SchemaDto> getVacantConfigurationSchemasByEndpointGroupId(String endpointGroupId) throws ControlServiceException;
     
     /**
      * Gets the configuration.
@@ -411,7 +416,7 @@ public interface ControlService {
      * @return the configuration
      * @throws ControlServiceException the control service exception
      */
-    public ConfigurationDto getConfiguration(String configurationId) throws ControlServiceException;
+    ConfigurationDto getConfiguration(String configurationId) throws ControlServiceException;
     
     /**
      * Edits the configuration.
@@ -420,7 +425,7 @@ public interface ControlService {
      * @return the configuration dto
      * @throws ControlServiceException the control service exception
      */
-    public ConfigurationDto editConfiguration(ConfigurationDto configuration) throws ControlServiceException;
+    ConfigurationDto editConfiguration(ConfigurationDto configuration) throws ControlServiceException;
     
     /**
      * Edits the user configuration.
@@ -428,7 +433,7 @@ public interface ControlService {
      * @param configuration the configuration
      * @throws ControlServiceException the control service exception
      */
-    public void editUserConfiguration(EndpointUserConfigurationDto configuration) throws ControlServiceException;
+    void editUserConfiguration(EndpointUserConfigurationDto configuration) throws ControlServiceException;
     
     /**
      * Activate configuration.
@@ -438,7 +443,7 @@ public interface ControlService {
      * @return the configuration dto
      * @throws ControlServiceException the control service exception
      */
-    public ConfigurationDto activateConfiguration(String configurationId, String activatedUsername) throws ControlServiceException;
+    ConfigurationDto activateConfiguration(String configurationId, String activatedUsername) throws ControlServiceException;
     
     /**
      * Deactivate configuration.
@@ -448,7 +453,7 @@ public interface ControlService {
      * @return the configuration dto
      * @throws ControlServiceException the control service exception
      */
-    public ConfigurationDto deactivateConfiguration(String configurationId, String deactivatedUsername) throws ControlServiceException;
+    ConfigurationDto deactivateConfiguration(String configurationId, String deactivatedUsername) throws ControlServiceException;
     
     /**
      * Delete configuration record.
@@ -458,7 +463,7 @@ public interface ControlService {
      * @param deactivatedUsername the deactivated username
      * @throws ControlServiceException the control service exception
      */
-    public void deleteConfigurationRecord(String schemaId, String endpointGroupId, String deactivatedUsername) throws ControlServiceException;
+    void deleteConfigurationRecord(String schemaId, String endpointGroupId, String deactivatedUsername) throws ControlServiceException;
     
     /**
      * Activate profile filter.
@@ -468,7 +473,7 @@ public interface ControlService {
      * @return the profile filter dto
      * @throws ControlServiceException the control service exception
      */
-    public ProfileFilterDto activateProfileFilter(String profileFilterId, String activatedUsername) throws ControlServiceException;
+    ProfileFilterDto activateProfileFilter(String profileFilterId, String activatedUsername) throws ControlServiceException;
     
     /**
      * Deactivate profile filter.
@@ -478,7 +483,7 @@ public interface ControlService {
      * @return the profile filter dto
      * @throws ControlServiceException the control service exception
      */
-    public ProfileFilterDto deactivateProfileFilter(String profileFilterId, String deactivatedUsername) throws ControlServiceException;
+    ProfileFilterDto deactivateProfileFilter(String profileFilterId, String deactivatedUsername) throws ControlServiceException;
     
     /**
      * Delete profile filter record.
@@ -488,7 +493,7 @@ public interface ControlService {
      * @param deactivatedUsername the deactivated username
      * @throws ControlServiceException the control service exception
      */
-    public void deleteProfileFilterRecord(String schemaId, String endpointGroupId, String deactivatedUsername) throws ControlServiceException;
+    void deleteProfileFilterRecord(String schemaId, String endpointGroupId, String deactivatedUsername) throws ControlServiceException;
     
     /**
      * Generate sdk.
@@ -497,7 +502,7 @@ public interface ControlService {
      * @return the file data
      * @throws ControlServiceException the control service exception
      */
-    public FileData generateSdk(SdkPropertiesDto sdkProperties) throws ControlServiceException;
+    FileData generateSdk(SdkPropertiesDto sdkProperties) throws ControlServiceException;
     
     /**
      * Generate record structure library.
@@ -507,7 +512,7 @@ public interface ControlService {
      * @return the file data
      * @throws ControlServiceException the control service exception
      */
-    public FileData generateRecordStructureLibrary(String applicationId, int logSchemaVersion) throws ControlServiceException;
+    FileData generateRecordStructureLibrary(String applicationId, int logSchemaVersion) throws ControlServiceException;
     
     /**
      * Edits the notification schema.
@@ -516,7 +521,7 @@ public interface ControlService {
      * @return the notification schema dto
      * @throws ControlServiceException the control service exception
      */
-    public NotificationSchemaDto editNotificationSchema(NotificationSchemaDto notificationSchema) throws ControlServiceException;
+    NotificationSchemaDto editNotificationSchema(NotificationSchemaDto notificationSchema) throws ControlServiceException;
     
     /**
      * Gets the notification schema.
@@ -525,7 +530,7 @@ public interface ControlService {
      * @return the notification schema
      * @throws ControlServiceException the control service exception
      */
-    public NotificationSchemaDto getNotificationSchema(String notificationSchemaId) throws ControlServiceException;
+    NotificationSchemaDto getNotificationSchema(String notificationSchemaId) throws ControlServiceException;
     
     /**
      * Gets the notification schemas by app id.
@@ -534,7 +539,7 @@ public interface ControlService {
      * @return the notification schemas by app id
      * @throws ControlServiceException the control service exception
      */
-    public List<NotificationSchemaDto> getNotificationSchemasByAppId(String applicationId) throws ControlServiceException;
+    List<NotificationSchemaDto> getNotificationSchemasByAppId(String applicationId) throws ControlServiceException;
     
     /**
      * Gets the user notification schemas by app id.
@@ -543,7 +548,7 @@ public interface ControlService {
      * @return the user notification schemas by app id
      * @throws ControlServiceException the control service exception
      */
-    public List<SchemaDto> getUserNotificationSchemasByAppId(String applicationId) throws ControlServiceException;
+    List<SchemaDto> getUserNotificationSchemasByAppId(String applicationId) throws ControlServiceException;
     
     /**
      * Find notification schemas by app id and type.
@@ -553,7 +558,7 @@ public interface ControlService {
      * @return the list
      * @throws ControlServiceException the control service exception
      */
-    public List<NotificationSchemaDto> findNotificationSchemasByAppIdAndType(String applicationId, NotificationTypeDto type) throws ControlServiceException;
+    List<NotificationSchemaDto> findNotificationSchemasByAppIdAndType(String applicationId, NotificationTypeDto type) throws ControlServiceException;
     
     /**
      * Edits the log schema.
@@ -562,7 +567,7 @@ public interface ControlService {
      * @return the log schema dto
      * @throws ControlServiceException the control service exception
      */
-    public LogSchemaDto editLogSchema(LogSchemaDto logSchemaDto) throws ControlServiceException;
+    LogSchemaDto editLogSchema(LogSchemaDto logSchemaDto) throws ControlServiceException;
     
     /**
      * Gets the log schemas by application id.
@@ -571,7 +576,7 @@ public interface ControlService {
      * @return the log schemas by application id
      * @throws ControlServiceException the control service exception
      */
-    public List<LogSchemaDto> getLogSchemasByApplicationId(String applicationId) throws ControlServiceException;
+    List<LogSchemaDto> getLogSchemasByApplicationId(String applicationId) throws ControlServiceException;
     
     /**
      * Gets the log schema.
@@ -580,7 +585,7 @@ public interface ControlService {
      * @return the log schema
      * @throws ControlServiceException the control service exception
      */
-    public LogSchemaDto getLogSchema(String logSchemaId) throws ControlServiceException;
+    LogSchemaDto getLogSchema(String logSchemaId) throws ControlServiceException;
     
     /**
      * Gets the log schema by application id and version.
@@ -590,7 +595,7 @@ public interface ControlService {
      * @return the log schema by application id and version
      * @throws ControlServiceException the control service exception
      */
-    public LogSchemaDto getLogSchemaByApplicationIdAndVersion(String applicationId, int version) throws ControlServiceException;
+    LogSchemaDto getLogSchemaByApplicationIdAndVersion(String applicationId, int version) throws ControlServiceException;
     
     /**
      * Edits the notification.
@@ -599,7 +604,7 @@ public interface ControlService {
      * @return the notification dto
      * @throws ControlServiceException the control service exception
      */
-    public NotificationDto editNotification(NotificationDto notification) throws ControlServiceException;
+    NotificationDto editNotification(NotificationDto notification) throws ControlServiceException;
     
     /**
      * Gets the notification.
@@ -608,7 +613,7 @@ public interface ControlService {
      * @return the notification
      * @throws ControlServiceException the control service exception
      */
-    public NotificationDto getNotification(String notificationId) throws ControlServiceException;
+    NotificationDto getNotification(String notificationId) throws ControlServiceException;
     
     /**
      * Gets the notifications by topic id.
@@ -617,7 +622,7 @@ public interface ControlService {
      * @return the notifications by topic id
      * @throws ControlServiceException the control service exception
      */
-    public List<NotificationDto> getNotificationsByTopicId(String topicId) throws ControlServiceException;
+    List<NotificationDto> getNotificationsByTopicId(String topicId) throws ControlServiceException;
     
     /**
      * Edits the topic.
@@ -626,7 +631,7 @@ public interface ControlService {
      * @return the topic dto
      * @throws ControlServiceException the control service exception
      */
-    public TopicDto editTopic(TopicDto topic) throws ControlServiceException;
+    TopicDto editTopic(TopicDto topic) throws ControlServiceException;
     
     /**
      * Gets the topic.
@@ -635,7 +640,7 @@ public interface ControlService {
      * @return the topic
      * @throws ControlServiceException the control service exception
      */
-    public TopicDto getTopic(String topicId) throws ControlServiceException;
+    TopicDto getTopic(String topicId) throws ControlServiceException;
     
     /**
      * Gets the topic by app id.
@@ -644,7 +649,7 @@ public interface ControlService {
      * @return the topic by app id
      * @throws ControlServiceException the control service exception
      */
-    public List<TopicDto> getTopicByAppId(String appId) throws ControlServiceException;
+    List<TopicDto> getTopicByAppId(String appId) throws ControlServiceException;
     
     /**
      * Gets the topic by endpoint group id.
@@ -653,7 +658,7 @@ public interface ControlService {
      * @return the topic by endpoint group id
      * @throws ControlServiceException the control service exception
      */
-    public List<TopicDto> getTopicByEndpointGroupId(String endpointGroupId) throws ControlServiceException;
+    List<TopicDto> getTopicByEndpointGroupId(String endpointGroupId) throws ControlServiceException;
     
     /**
      * Gets the vacant topic by endpoint group id.
@@ -662,7 +667,7 @@ public interface ControlService {
      * @return the vacant topic by endpoint group id
      * @throws ControlServiceException the control service exception
      */
-    public List<TopicDto> getVacantTopicByEndpointGroupId(String endpointGroupId) throws ControlServiceException;
+    List<TopicDto> getVacantTopicByEndpointGroupId(String endpointGroupId) throws ControlServiceException;
     
     /**
      * Delete topic by id.
@@ -670,7 +675,7 @@ public interface ControlService {
      * @param topicId the topic id
      * @throws ControlServiceException the control service exception
      */
-    public void deleteTopicById(String topicId) throws ControlServiceException;
+    void deleteTopicById(String topicId) throws ControlServiceException;
     
     /**
      * Gets the unicast notification.
@@ -679,7 +684,7 @@ public interface ControlService {
      * @return the unicast notification
      * @throws ControlServiceException the control service exception
      */
-    public EndpointNotificationDto getUnicastNotification(String notificationId) throws ControlServiceException;
+    EndpointNotificationDto getUnicastNotification(String notificationId) throws ControlServiceException;
     
     /**
      * Edits the unicast notification.
@@ -688,7 +693,7 @@ public interface ControlService {
      * @return the endpoint notification dto
      * @throws ControlServiceException the control service exception
      */
-    public EndpointNotificationDto editUnicastNotification(EndpointNotificationDto notification) throws ControlServiceException;
+    EndpointNotificationDto editUnicastNotification(EndpointNotificationDto notification) throws ControlServiceException;
     
     /**
      * Gets the unicast notifications by key hash.
@@ -697,7 +702,7 @@ public interface ControlService {
      * @return the unicast notifications by key hash
      * @throws ControlServiceException the control service exception
      */
-    public List<EndpointNotificationDto> getUnicastNotificationsByKeyHash(byte[] keyhash) throws ControlServiceException;
+    List<EndpointNotificationDto> getUnicastNotificationsByKeyHash(byte[] keyhash) throws ControlServiceException;
     
     /**
      * Gets the configuration schema versions by application id.
@@ -706,7 +711,7 @@ public interface ControlService {
      * @return the configuration schema versions by application id
      * @throws ControlServiceException the control service exception
      */
-    public List<SchemaDto> getConfigurationSchemaVersionsByApplicationId(String applicationId) throws ControlServiceException;
+    List<SchemaDto> getConfigurationSchemaVersionsByApplicationId(String applicationId) throws ControlServiceException;
     
     /**
      * Gets the profile schema versions by application id.
@@ -715,7 +720,7 @@ public interface ControlService {
      * @return the profile schema versions by application id
      * @throws ControlServiceException the control service exception
      */
-    public List<SchemaDto> getProfileSchemaVersionsByApplicationId(String applicationId) throws ControlServiceException;
+    List<SchemaDto> getProfileSchemaVersionsByApplicationId(String applicationId) throws ControlServiceException;
     
     /**
      * Gets the notification schema versions by application id.
@@ -724,7 +729,7 @@ public interface ControlService {
      * @return the notification schema versions by application id
      * @throws ControlServiceException the control service exception
      */
-    public List<SchemaDto> getNotificationSchemaVersionsByApplicationId(String applicationId) throws ControlServiceException;
+    List<SchemaDto> getNotificationSchemaVersionsByApplicationId(String applicationId) throws ControlServiceException;
     
     /**
      * Gets the log schema versions by application id.
@@ -733,7 +738,7 @@ public interface ControlService {
      * @return the log schema versions by application id
      * @throws ControlServiceException the control service exception
      */
-    public List<SchemaDto> getLogSchemaVersionsByApplicationId(String applicationId) throws ControlServiceException;
+    List<SchemaDto> getLogSchemaVersionsByApplicationId(String applicationId) throws ControlServiceException;
     
     /**
      * Edits the event class family.
@@ -742,7 +747,7 @@ public interface ControlService {
      * @return the event class family dto
      * @throws ControlServiceException the control service exception
      */
-    public EventClassFamilyDto editEventClassFamily(EventClassFamilyDto eventClassFamily) throws ControlServiceException;
+    EventClassFamilyDto editEventClassFamily(EventClassFamilyDto eventClassFamily) throws ControlServiceException;
     
     /**
      * Gets the event class families by tenant id.
@@ -751,7 +756,7 @@ public interface ControlService {
      * @return the event class families by tenant id
      * @throws ControlServiceException the control service exception
      */
-    public List<EventClassFamilyDto> getEventClassFamiliesByTenantId(String tenantId) throws ControlServiceException;
+    List<EventClassFamilyDto> getEventClassFamiliesByTenantId(String tenantId) throws ControlServiceException;
     
     /**
      * Gets the event class family.
@@ -760,7 +765,7 @@ public interface ControlService {
      * @return the event class family
      * @throws ControlServiceException the control service exception
      */
-    public EventClassFamilyDto getEventClassFamily(String eventClassFamilyId) throws ControlServiceException;
+    EventClassFamilyDto getEventClassFamily(String eventClassFamilyId) throws ControlServiceException;
     
     /**
      * Adds the event class family schema.
@@ -770,7 +775,7 @@ public interface ControlService {
      * @param createdUsername the created username
      * @throws ControlServiceException the control service exception
      */
-    public void addEventClassFamilySchema(String eventClassFamilyId, String eventClassFamilySchema, String createdUsername) throws ControlServiceException;
+    void addEventClassFamilySchema(String eventClassFamilyId, String eventClassFamilySchema, String createdUsername) throws ControlServiceException;
     
     /**
      * Gets the event classes by family id version and type.
@@ -781,7 +786,7 @@ public interface ControlService {
      * @return the event classes by family id version and type
      * @throws ControlServiceException the control service exception
      */
-    public List<EventClassDto> getEventClassesByFamilyIdVersionAndType(String ecfId, int version, EventClassType type) throws ControlServiceException;
+    List<EventClassDto> getEventClassesByFamilyIdVersionAndType(String ecfId, int version, EventClassType type) throws ControlServiceException;
     
     /**
      * Edits the application event family map.
@@ -790,7 +795,7 @@ public interface ControlService {
      * @return the application event family map dto
      * @throws ControlServiceException the control service exception
      */
-    public ApplicationEventFamilyMapDto editApplicationEventFamilyMap(ApplicationEventFamilyMapDto applicationEventFamilyMap) throws ControlServiceException;
+    ApplicationEventFamilyMapDto editApplicationEventFamilyMap(ApplicationEventFamilyMapDto applicationEventFamilyMap) throws ControlServiceException;
     
     /**
      * Gets the application event family map.
@@ -799,7 +804,7 @@ public interface ControlService {
      * @return the application event family map
      * @throws ControlServiceException the control service exception
      */
-    public ApplicationEventFamilyMapDto getApplicationEventFamilyMap(String applicationEventFamilyMapId) throws ControlServiceException;
+    ApplicationEventFamilyMapDto getApplicationEventFamilyMap(String applicationEventFamilyMapId) throws ControlServiceException;
     
     /**
      * Gets the application event family maps by application id.
@@ -808,7 +813,7 @@ public interface ControlService {
      * @return the application event family maps by application id
      * @throws ControlServiceException the control service exception
      */
-    public List<ApplicationEventFamilyMapDto> getApplicationEventFamilyMapsByApplicationId(String applicationId) throws ControlServiceException;
+    List<ApplicationEventFamilyMapDto> getApplicationEventFamilyMapsByApplicationId(String applicationId) throws ControlServiceException;
     
     /**
      * Gets the vacant event class families by application id.
@@ -817,7 +822,7 @@ public interface ControlService {
      * @return the vacant event class families by application id
      * @throws ControlServiceException the control service exception
      */
-    public List<EcfInfoDto> getVacantEventClassFamiliesByApplicationId(String applicationId) throws ControlServiceException;
+    List<EcfInfoDto> getVacantEventClassFamiliesByApplicationId(String applicationId) throws ControlServiceException;
     
     /**
      * Gets the event class families by application id.
@@ -826,7 +831,7 @@ public interface ControlService {
      * @return the event class families by application id
      * @throws ControlServiceException the control service exception
      */
-    public List<AefMapInfoDto> getEventClassFamiliesByApplicationId(String applicationId) throws ControlServiceException;
+    List<AefMapInfoDto> getEventClassFamiliesByApplicationId(String applicationId) throws ControlServiceException;
     
     /**
      * Gets the endpoint users.
@@ -834,7 +839,7 @@ public interface ControlService {
      * @return the endpoint users
      * @throws ControlServiceException the control service exception
      */
-    public List<EndpointUserDto> getEndpointUsers() throws ControlServiceException;
+    List<EndpointUserDto> getEndpointUsers() throws ControlServiceException;
     
     /**
      * Gets the endpoint user.
@@ -843,7 +848,7 @@ public interface ControlService {
      * @return the endpoint user
      * @throws ControlServiceException the control service exception
      */
-    public EndpointUserDto getEndpointUser(String endpointUserId) throws ControlServiceException;
+    EndpointUserDto getEndpointUser(String endpointUserId) throws ControlServiceException;
     
     /**
      * Edits the endpoint user.
@@ -852,7 +857,7 @@ public interface ControlService {
      * @return the endpoint user dto
      * @throws ControlServiceException the control service exception
      */
-    public EndpointUserDto editEndpointUser(EndpointUserDto endpointUser) throws ControlServiceException;
+    EndpointUserDto editEndpointUser(EndpointUserDto endpointUser) throws ControlServiceException;
     
     /**
      * Delete endpoint user.
@@ -860,7 +865,7 @@ public interface ControlService {
      * @param endpointUserId the endpoint user id
      * @throws ControlServiceException the control service exception
      */
-    public void deleteEndpointUser(String endpointUserId) throws ControlServiceException;
+    void deleteEndpointUser(String endpointUserId) throws ControlServiceException;
     
     /**
      * Generate endpoint user access token.
@@ -870,7 +875,7 @@ public interface ControlService {
      * @return the string
      * @throws ControlServiceException the control service exception
      */
-    public String generateEndpointUserAccessToken(String externalUid, String tenantId) throws ControlServiceException;
+    String generateEndpointUserAccessToken(String externalUid, String tenantId) throws ControlServiceException;
     
     /**
      * Gets the log appenders by application id.
@@ -879,7 +884,7 @@ public interface ControlService {
      * @return the log appenders by application id
      * @throws ControlServiceException the control service exception
      */
-    public List<LogAppenderDto> getLogAppendersByApplicationId(String applicationId) throws ControlServiceException;
+    List<LogAppenderDto> getLogAppendersByApplicationId(String applicationId) throws ControlServiceException;
     
     /**
      * Gets the log appender.
@@ -888,7 +893,7 @@ public interface ControlService {
      * @return the log appender
      * @throws ControlServiceException the control service exception
      */
-    public LogAppenderDto getLogAppender(String logAppenderId) throws ControlServiceException;
+    LogAppenderDto getLogAppender(String logAppenderId) throws ControlServiceException;
     
     /**
      * Edits the log appender.
@@ -897,7 +902,7 @@ public interface ControlService {
      * @return the log appender dto
      * @throws ControlServiceException the control service exception
      */
-    public LogAppenderDto editLogAppender(LogAppenderDto logAppender) throws ControlServiceException;
+    LogAppenderDto editLogAppender(LogAppenderDto logAppender) throws ControlServiceException;
     
     /**
      * Delete log appender.
@@ -905,7 +910,7 @@ public interface ControlService {
      * @param logAppenderId the log appender id
      * @throws ControlServiceException the control service exception
      */
-    public void deleteLogAppender(String logAppenderId) throws ControlServiceException;
+    void deleteLogAppender(String logAppenderId) throws ControlServiceException;
     
     /**
      * Gets the user verifiers by application id.
@@ -914,7 +919,7 @@ public interface ControlService {
      * @return the user verifiers by application id
      * @throws ControlServiceException the control service exception
      */
-    public List<UserVerifierDto> getUserVerifiersByApplicationId(String applicationId) throws ControlServiceException;
+    List<UserVerifierDto> getUserVerifiersByApplicationId(String applicationId) throws ControlServiceException;
     
     /**
      * Gets the user verifier.
@@ -923,7 +928,7 @@ public interface ControlService {
      * @return the user verifier
      * @throws ControlServiceException the control service exception
      */
-    public UserVerifierDto getUserVerifier(String userVerifierId) throws ControlServiceException;
+    UserVerifierDto getUserVerifier(String userVerifierId) throws ControlServiceException;
     
     /**
      * Edits the user verifier.
@@ -932,7 +937,7 @@ public interface ControlService {
      * @return the user verifier dto
      * @throws ControlServiceException the control service exception
      */
-    public UserVerifierDto editUserVerifier(UserVerifierDto userVerifier) throws ControlServiceException;
+    UserVerifierDto editUserVerifier(UserVerifierDto userVerifier) throws ControlServiceException;
     
     /**
      * Delete user verifier.
@@ -940,7 +945,7 @@ public interface ControlService {
      * @param userVerifierId the user verifier id
      * @throws ControlServiceException the control service exception
      */
-    public void deleteUserVerifier(String userVerifierId) throws ControlServiceException;
+    void deleteUserVerifier(String userVerifierId) throws ControlServiceException;
     
     /**
      * Gets the record structure schema.
@@ -950,7 +955,7 @@ public interface ControlService {
      * @return the record structure schema
      * @throws ControlServiceException the control service exception
      */
-    public FileData getRecordStructureSchema(String applicationId, int logSchemaVersion) throws ControlServiceException;
+    FileData getRecordStructureSchema(String applicationId, int logSchemaVersion) throws ControlServiceException;
     
     /**
      * Gets the record structure data.
@@ -959,6 +964,41 @@ public interface ControlService {
      * @return the record structure data
      * @throws ControlServiceException the control service exception
      */
-    public FileData getRecordStructureData(RecordKey key) throws ControlServiceException;
- 
+    FileData getRecordStructureData(RecordKey key) throws ControlServiceException;
+
+    /**
+     * Gets page of EndpointProfilesBodyDto objects by endpoint group id.
+     *
+     * @param pageLinkDto the page object include endpoint group id, limit and offset.
+     * @return the EndpointProfilesBodyDto object.
+     * @throws ControlServiceException the control service exception
+     */
+    EndpointProfilesBodyDto getEndpointProfileBodyByEndpointGroupId(PageLinkDto pageLinkDto) throws ControlServiceException;
+
+    /**
+     * Gets endpoint profile by endpoint key hash.
+     *
+     * @param endpointProfileKeyHash the endpoint key hash in string representation.
+     * @return the EndpointProfileDto object.
+     * @throws ControlServiceException the control service exception
+     */
+    EndpointProfileDto getEndpointProfileByKeyHash(String endpointProfileKeyHash) throws ControlServiceException;
+
+    /**
+     ** Gets endpoint profile body by endpoint key hash.
+     *
+     * @param endpointProfileKeyHash the endpoint key hash in string representation.
+     * @return the EndpointProfileBodyDto object.
+     * @throws ControlServiceException the control service exception
+     */
+    EndpointProfileBodyDto getEndpointProfileBodyByKeyHash(String endpointProfileKeyHash) throws ControlServiceException;
+
+    /**
+     * Gets page of EndpointProfilesBodyDto objects by endpoint group id.
+     *
+     * @param pageLinkDto the page object include endpoint group id, limit and offset.
+     * @return the EndpointProfilesPageDto object.
+     * @throws ControlServiceException the control service exception
+     */
+    EndpointProfilesPageDto getEndpointProfileByEndpointGroupId(PageLinkDto pageLinkDto) throws ControlServiceException;
 }

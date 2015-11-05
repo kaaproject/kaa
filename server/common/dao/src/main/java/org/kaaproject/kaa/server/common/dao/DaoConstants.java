@@ -326,6 +326,9 @@ public class DaoConstants {
     public static final String SDK_TOKEN_TOKEN = "token";
     public static final String SDK_TOKEN_RAW_DATA = "raw_data";
 
+    public static final String LAST_PAGE_MESSAGE = "It is the last page";
+
+    public static final String PROFILE = "profile";
 
     private DaoConstants() {
         throw new UnsupportedOperationException("Not supported");
