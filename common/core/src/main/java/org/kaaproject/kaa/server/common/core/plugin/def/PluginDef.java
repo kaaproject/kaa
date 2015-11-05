@@ -1,6 +1,7 @@
 package org.kaaproject.kaa.server.common.core.plugin.def;
 
 import java.io.Serializable;
+import java.net.URISyntaxException;
 import java.util.Set;
 
 public interface PluginDef extends Serializable {
@@ -13,7 +14,7 @@ public interface PluginDef extends Serializable {
 
     PluginScope getScope();
 
-    String getConfigurationSchema();
+    String getConfigurationSchema() throws URISyntaxException;
 
     Set<PluginContractDef> getPluginContracts();
 
