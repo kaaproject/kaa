@@ -75,7 +75,7 @@ public interface SdkProfileService {
     /**
      * Checks whether an SDK profile is used by at least one endpoint.
      *
-     * @param id The token of the SDK profile to check
+     * @param token The token of the SDK profile to check
      *
      * @return <code>true</code> if the SDK profile is used, <code>false</code>
      *         otherwise

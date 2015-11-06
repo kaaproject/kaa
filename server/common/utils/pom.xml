@@ -17,7 +17,6 @@
     <groupId>org.kaaproject.kaa.server.common</groupId>
     <artifactId>utils</artifactId>
     <packaging>jar</packaging>
-
     <name>Kaa Server Common Utils</name>
     <url>http://kaaproject.org</url>
 

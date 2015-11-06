@@ -18,6 +18,7 @@ package org.kaaproject.kaa.server.common.nosql.cassandra.dao;
 
 import org.cassandraunit.dataset.cql.ClassPathCQLDataSet;
 import org.junit.ClassRule;
+import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
@@ -44,6 +45,7 @@ import java.util.UUID;
 public class AbstractCassandraTest {
 
     private static final Random RANDOM = new Random();
+    private static final String TEST_ENDPOINT_GROUP_ID = "124";
 
     @ClassRule
     public static CustomCassandraCQLUnit cassandraUnit = new CustomCassandraCQLUnit(new ClassPathCQLDataSet("cassandra.cql", "kaa"));
@@ -99,7 +101,7 @@ public class AbstractCassandraTest {
     }
 
     protected List<CassandraEndpointConfiguration> generateConfiguration(int count) {
-        List<CassandraEndpointConfiguration> configurations = new ArrayList();
+        List<CassandraEndpointConfiguration> configurations = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             CassandraEndpointConfiguration configuration = new CassandraEndpointConfiguration();
             configuration.setConfiguration(ByteBuffer.wrap(generateBytes()));
@@ -130,6 +132,39 @@ public class AbstractCassandraTest {
         profileDto.setSubscriptions(topicIds);
         profileDto.setEndpointKeyHash(keyHash);
         profileDto.setAccessToken(accessToken);
+        return endpointProfileDao.save(new CassandraEndpointProfile(profileDto)).toDto();
+    }
+
+    protected EndpointProfileDto generateEndpointProfileForTestUpdate(String id, List<EndpointGroupStateDto> cfGroupState) {
+        EndpointProfileDto profileDto = new EndpointProfileDto();
+        profileDto.setId(id);
+        profileDto.setApplicationId(generateStringId());
+        profileDto.setEndpointKeyHash("TEST_KEY_HASH".getBytes());
+        profileDto.setAccessToken(generateStringId());
+        profileDto.setCfGroupStates(cfGroupState);
+        profileDto.setSdkToken(UUID.randomUUID().toString());
+        return profileDto;
+    }
+
+    protected EndpointProfileDto generateEndpointProfileWithEndpointGroupId(String appId, boolean nfGroupStateOnly) {
+        byte[] keyHash = generateBytes();
+        if (appId == null) {
+            appId = generateStringId();
+        }
+        EndpointProfileDto profileDto = new EndpointProfileDto();
+        profileDto.setApplicationId(appId);
+        profileDto.setEndpointKeyHash(keyHash);
+        profileDto.setAccessToken(generateStringId());
+        profileDto.setProfile("test Profile");
+        List<EndpointGroupStateDto> groupState = new ArrayList<>();
+        groupState.add(new EndpointGroupStateDto(TEST_ENDPOINT_GROUP_ID, null, null));
+        if (nfGroupStateOnly) {
+            profileDto.setNfGroupStates(groupState);
+            profileDto.setCfGroupStates(null);
+        } else {
+            profileDto.setCfGroupStates(groupState);
+        }
+        profileDto.setSdkToken(UUID.randomUUID().toString());
         return endpointProfileDao.save(new CassandraEndpointProfile(profileDto)).toDto();
     }
 

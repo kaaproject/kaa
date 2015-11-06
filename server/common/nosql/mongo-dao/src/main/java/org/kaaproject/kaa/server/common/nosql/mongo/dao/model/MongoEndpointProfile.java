@@ -248,6 +248,14 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         return profile;
     }
 
+    public String getProfileAsString() {
+        String pfBody = null;
+        if (profile != null) {
+            pfBody = profile.toString();
+        }
+        return pfBody;
+    }
+
     public void setProfile(DBObject profile) {
         this.profile = profile;
     }

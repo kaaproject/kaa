@@ -30,7 +30,7 @@ Copyright 2014-2015 CyberVision, Inc.
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <main.dir>${basedir}</main.dir>
-        <akka.version>2.3.1</akka.version>
+        <akka.version>2.3.14</akka.version>
         <spring.version>4.0.2.RELEASE</spring.version>
         <spring.security.version>3.2.5.RELEASE</spring.security.version>
         <spring.data.version>Fowler-RELEASE</spring.data.version>
@@ -55,7 +55,7 @@ Copyright 2014-2015 CyberVision, Inc.
         <apache.velocity>1.7</apache.velocity>
         <zookeeper.version>3.4.6</zookeeper.version>
         <curator.version>2.9.0</curator.version>
-        <libthrift.version>0.9.1</libthrift.version>
+        <libthrift.version>0.9.3</libthrift.version>
         <commons-cli.version>1.2</commons-cli.version>
         <commons-io.version>2.4</commons-io.version>
         <commons-codec.version>1.9</commons-codec.version>
@@ -115,7 +115,6 @@ Copyright 2014-2015 CyberVision, Inc.
 
         <iharder.version>2.3.8</iharder.version>
         <hsqldb.version>2.3.2</hsqldb.version>
-        <versly-wsdoc.version>1.0-SNAPSHOT</versly-wsdoc.version>
         <ant.version>1.9.4</ant.version>
         <hibernate-jpa-2.1-api.version>1.0.0.Final</hibernate-jpa-2.1-api.version>
         <cdap-stream-client.version>1.0.1</cdap-stream-client.version>
@@ -189,7 +188,7 @@ Copyright 2014-2015 CyberVision, Inc.
                     </plugin>
                     <plugin>
                         <artifactId>maven-failsafe-plugin</artifactId>
-                        <version>2.17</version>
+                        <version>2.18</version>
                         <configuration>
                             <argLine>${jacoco.agent.it.argLine}</argLine>
                             <systemPropertyVariables>
@@ -325,8 +324,13 @@ Copyright 2014-2015 CyberVision, Inc.
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.17</version>
+                    <version>2.18</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>2.18</version>
+                </plugin>                
                 <!--This plugin's configuration is used to store Eclipse 
                     m2e settings only. It has no influence on the Maven build itself. -->
                 <plugin>
@@ -491,6 +495,7 @@ Copyright 2014-2015 CyberVision, Inc.
 			<exclude>**/source/esp8266/driver/uart.c</exclude>
 			<exclude>**/source/esp8266/include/driver/uart*.h</exclude>
 			<exclude>**/source/cc32xx/platform/cc32xx/app.ld</exclude>
+                        <exclude>**/security.policy</exclude>
                     </excludes>
                 </configuration>
             </plugin>
@@ -572,76 +577,29 @@ Copyright 2014-2015 CyberVision, Inc.
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.kaaproject.kaa.server.appenders.cdap</groupId>
-                <artifactId>config</artifactId>
+                <groupId>org.kaaproject.kaa.server.appenders</groupId>
+                <artifactId>file-appender</artifactId>
                 <version>${project.version}</version>
-                <classifier>cdap</classifier>
             </dependency>
             <dependency>
-                <groupId>org.kaaproject.kaa.server.appenders.oracle-nosql</groupId>
-                <artifactId>config</artifactId>
+                <groupId>org.kaaproject.kaa.server.appenders</groupId>
+                <artifactId>mongo-appender</artifactId>
                 <version>${project.version}</version>
-                <classifier>oracle-nosql</classifier>
             </dependency>
             <dependency>
-                <groupId>org.kaaproject.kaa.server.appenders.file</groupId>
-                <artifactId>config</artifactId>
+                <groupId>org.kaaproject.kaa.server.appenders</groupId>
+                <artifactId>flume-appender</artifactId>
                 <version>${project.version}</version>
-                <classifier>file</classifier>
             </dependency>
             <dependency>
-                <groupId>org.kaaproject.kaa.server.appenders.file</groupId>
-                <artifactId>appender</artifactId>
+                <groupId>org.kaaproject.kaa.server.appenders</groupId>
+                <artifactId>rest-appender</artifactId>
                 <version>${project.version}</version>
-                <classifier>file</classifier>
             </dependency>
             <dependency>
-                <groupId>org.kaaproject.kaa.server.appenders.mongo</groupId>
-                <artifactId>config</artifactId>
+                <groupId>org.kaaproject.kaa.server.appenders</groupId>
+                <artifactId>couchbase-appender</artifactId>
                 <version>${project.version}</version>
-                <classifier>mongo</classifier>
-            </dependency>
-            <dependency>
-                <groupId>org.kaaproject.kaa.server.appenders.mongo</groupId>
-                <artifactId>appender</artifactId>
-                <version>${project.version}</version>
-                <classifier>mongo</classifier>
-            </dependency>
-            <dependency>
-                <groupId>org.kaaproject.kaa.server.appenders.flume</groupId>
-                <artifactId>config</artifactId>
-                <version>${project.version}</version>
-                <classifier>flume</classifier>
-            </dependency>
-            <dependency>
-                <groupId>org.kaaproject.kaa.server.appenders.flume</groupId>
-                <artifactId>appender</artifactId>
-                <version>${project.version}</version>
-                <classifier>flume</classifier>
-            </dependency>
-            <dependency>
-                <groupId>org.kaaproject.kaa.server.appenders.rest</groupId>
-                <artifactId>config</artifactId>
-                <version>${project.version}</version>
-                <classifier>rest</classifier>
-            </dependency>
-            <dependency>
-                <groupId>org.kaaproject.kaa.server.appenders.rest</groupId>
-                <artifactId>appender</artifactId>
-                <version>${project.version}</version>
-                <classifier>rest</classifier>
-            </dependency>
-            <dependency>
-                <groupId>org.kaaproject.kaa.server.appenders.couchbase</groupId>
-                <artifactId>config</artifactId>
-                <version>${project.version}</version>
-                <classifier>couchbase</classifier>
-            </dependency>
-            <dependency>
-                <groupId>org.kaaproject.kaa.server.appenders.couchbase</groupId>
-                <artifactId>appender</artifactId>
-                <version>${project.version}</version>
-                <classifier>couchbase</classifier>
             </dependency>
             <dependency>
                 <groupId>org.kaaproject.kaa.common</groupId>
@@ -705,51 +663,23 @@ Copyright 2014-2015 CyberVision, Inc.
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.kaaproject.kaa.server.verifiers.trustful</groupId>
-                <artifactId>verifier</artifactId>
-                <classifier>trustful</classifier>
+                <groupId>org.kaaproject.kaa.server.verifiers</groupId>
+                <artifactId>trustful-verifier</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.kaaproject.kaa.server.verifiers.twitter</groupId>
-                <artifactId>verifier</artifactId>
-                <classifier>twitter</classifier>
+                <groupId>org.kaaproject.kaa.server.verifiers</groupId>
+                <artifactId>twitter-verifier</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.kaaproject.kaa.server.verifiers.facebook</groupId>
-                <artifactId>verifier</artifactId>
-                <classifier>facebook</classifier>
+                <groupId>org.kaaproject.kaa.server.verifiers</groupId>
+                <artifactId>facebook-verifier</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.kaaproject.kaa.server.verifiers.gplus</groupId>
-                <artifactId>verifier</artifactId>
-                <classifier>gplus</classifier>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.kaaproject.kaa.server.verifiers.trustful</groupId>
-                <artifactId>config</artifactId>
-                <classifier>trustful</classifier>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.kaaproject.kaa.server.verifiers.facebook</groupId>
-                <artifactId>config</artifactId>
-                <classifier>facebook</classifier>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.kaaproject.kaa.server.verifiers.twitter</groupId>
-                <artifactId>config</artifactId>
-                <classifier>twitter</classifier>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.kaaproject.kaa.server.verifiers.gplus</groupId>
-                <artifactId>config</artifactId>
-                <classifier>gplus</classifier>
+                <groupId>org.kaaproject.kaa.server.verifiers</groupId>
+                <artifactId>gplus-verifier</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -760,11 +690,6 @@ Copyright 2014-2015 CyberVision, Inc.
             <dependency>
                 <groupId>org.kaaproject.kaa.client</groupId>
                 <artifactId>client-java-core</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.kaaproject.kaa.server</groupId>
-                <artifactId>operations</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -813,6 +738,11 @@ Copyright 2014-2015 CyberVision, Inc.
                 <artifactId>jetty-webapp</artifactId>
                 <version>${jetty.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-annotations</artifactId>
+                <version>${jetty.version}</version>
+            </dependency>            
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-servlet</artifactId>
@@ -1238,11 +1168,6 @@ Copyright 2014-2015 CyberVision, Inc.
                 <groupId>org.hsqldb</groupId>
                 <artifactId>hsqldb</artifactId>
                 <version>${hsqldb.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.versly</groupId>
-                <artifactId>versly-wsdoc</artifactId>
-                <version>${versly-wsdoc.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.ant</groupId>

@@ -34,6 +34,9 @@ import org.kaaproject.kaa.client.channel.impl.channels.DefaultOperationTcpChanne
 import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
+import org.kaaproject.kaa.common.channels.protocols.kaatcp.listeners.ConnAckListener;
+import org.kaaproject.kaa.common.channels.protocols.kaatcp.listeners.SyncResponseListener;
+import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.ConnAck;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.Disconnect;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.Disconnect.DisconnectReason;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.PingResponse;
@@ -42,6 +45,7 @@ import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType;
 import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
 import org.mockito.Mockito;
+import org.springframework.test.util.ReflectionTestUtils;
 
 public class DefaultOperationTcpChannelTest {
 
@@ -120,7 +124,7 @@ public class DefaultOperationTcpChannelTest {
         tcpChannel.os.write(new org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.SyncResponse(responseCreator.toByteArray(response), false, false).getFrame().array());
         Thread.sleep(1000);  // sleep a bit to let the message to be received
         tcpChannel.sync(TransportType.USER); // causes call to KaaDataMultiplexer.compileRequest(...) for "KAA_SYNC" messsage
-        
+
         Mockito.verify(multiplexer, Mockito.times(2)).compileRequest(Mockito.anyMapOf(TransportType.class, ChannelDirection.class));
 
         tcpChannel.sync(TransportType.EVENT);

@@ -80,7 +80,7 @@ void KaaChannelManager::onServerFailed(ITransportConnectionInfoPtr connectionInf
         if (nextConnectionInfo) {
             onTransportConnectionInfoUpdated(nextConnectionInfo);
         } else {
-            FailoverStrategyDecision decision = failoverStrategy_->onFailover(Failover::NO_BOOTSTRAP_SERVERS);
+            FailoverStrategyDecision decision = failoverStrategy_->onFailover(Failover::BOOTSTRAP_SERVERS_NA);
             switch (decision.getAction()) {
                  case FailoverStrategyAction::NOOP:
                      KAA_LOG_WARN("No operation is performed according to failover strategy decision.");
@@ -102,6 +102,8 @@ void KaaChannelManager::onServerFailed(ITransportConnectionInfoPtr connectionInf
                      KAA_LOG_WARN("Stopping application according to failover strategy decision!");
                      exit(EXIT_FAILURE);
                      break;
+                 default:
+                    break;
              }
         }
     } else {
@@ -152,7 +154,7 @@ bool KaaChannelManager::addChannelToList(IDataChannelPtr channel)
     auto res = channels_.insert(channel);
 
     if (res.second) {
-    	channel->setFailoverStrategy(failoverStrategy_);
+        channel->setFailoverStrategy(failoverStrategy_);
         channel->setConnectivityChecker(connectivityChecker_);
 
         ITransportConnectionInfoPtr connectionInfo;

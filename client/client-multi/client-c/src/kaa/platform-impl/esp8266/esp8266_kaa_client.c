@@ -79,7 +79,7 @@ struct kaa_client_t {
 #ifndef KAA_DISABLE_FEATURE_LOGGING
     void                                *log_storage_context;
     void                                *log_upload_strategy_context;
-#endif  
+#endif
 };
 
 static kaa_error_t kaa_client_init_channel(kaa_client_t *kaa_client, kaa_client_channel_type_t channel_type);
@@ -134,13 +134,13 @@ kaa_error_t kaa_client_create(kaa_client_t **client, kaa_client_props_t *props) 
         return error_code;
     }
 #endif
-    
+
     KAA_LOG_INFO(self->context->logger,KAA_ERR_NONE, "Kaa client initiallized");
     *client = self;
     return error_code;
 }
 
-kaa_context_t *kaa_client_get_context(kaa_client_t *client) 
+kaa_context_t *kaa_client_get_context(kaa_client_t *client)
 {
     KAA_RETURN_IF_NIL(client, NULL);
     return client->context;
@@ -252,8 +252,12 @@ kaa_error_t kaa_client_start(kaa_client_t *kaa_client,
                              kaa_time_t max_delay) {
     KAA_RETURN_IF_NIL(kaa_client, KAA_ERR_BADPARAM);
 
-    kaa_error_t error_code = KAA_ERR_NONE; 
-    
+    kaa_error_t error_code = kaa_check_readiness(kaa_client->kaa_context);
+    if (error_code != KAA_ERR_NONE) {
+        KAA_LOG_ERROR(kaa_client->kaa_context->logger, error_code, "Cannot start Kaa client: Kaa context is not fully initialized");
+        return error_code;
+    }
+
     kaa_client->external_process = external_process;
     kaa_client->external_process_context = external_process_context;
     kaa_client->external_process_max_delay = max_delay;
@@ -302,7 +306,7 @@ kaa_error_t kaa_client_start(kaa_client_t *kaa_client,
             }
         }
 #ifndef KAA_DISABLE_FEATURE_LOGGING
-      ext_log_upload_timeout(kaa_client->kaa_context->log_collector);
+      ext_log_upload_timeout(kaa_client->context->log_collector);
 #endif
     }
     KAA_LOG_INFO(kaa_client->context->logger, KAA_ERR_NONE, "Kaa client stopped");
@@ -424,7 +428,7 @@ void kaa_client_destroy(kaa_client_t *self)
 
 
 #ifndef KAA_DISABLE_FEATURE_LOGGING
-kaa_error_t kaa_log_collector_init(kaa_client_t *kaa_client) 
+kaa_error_t kaa_log_collector_init(kaa_client_t *kaa_client)
 {
     KAA_RETURN_IF_NIL(kaa_client, KAA_ERR_BADPARAM);
     kaa_error_t error_code  = ext_unlimited_log_storage_create(&kaa_client->log_storage_context,

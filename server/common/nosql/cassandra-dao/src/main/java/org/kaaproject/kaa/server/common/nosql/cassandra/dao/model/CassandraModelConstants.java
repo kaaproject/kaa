@@ -142,6 +142,13 @@ public class CassandraModelConstants {
     public static final String EP_BY_SDK_TOKEN_ENDPOINT_KEY_HASH_PROPERTY = ENDPOINT_KEY_HASH_PROPERTY;
 
     /**
+     * CassandraEPByEndpointGroupId constants
+     */
+    public static final String EP_BY_ENDPOINT_GROUP_ID_COLUMN_FAMILY_NAME = "endpoint_group_id_eps";
+    public static final String EP_BY_ENDPOINT_GROUP_ID_ENDPOINT_GROUP_ID_PROPERTY = "ep_group_id";
+    public static final String EP_BY_ENDPOINT_GROUP_ID_ENDPOINT_KEY_HASH_PROPERTY = ENDPOINT_KEY_HASH_PROPERTY;
+
+    /**
      * CassandraTopicLastSecNum constants
      */
     public static final String TOPIC_ID_SEQ_NUMBER_COLUMN_FAMILY_NAME = "topic_seq";
@@ -178,12 +185,4 @@ public class CassandraModelConstants {
     public static final String EVENT_CLASS_FAMILY_VERSION_STATE_USER_TYPE_NAME = "ecf_ver_state";
     public static final String EVENT_CLASS_FAMILY_VERSION_STATE_ECF_ID_PROPERTY = "ecf_id";
     public static final String EVENT_CLASS_FAMILY_VERSION_STATE_ECF_VERSION_PROPERTY = "ecf_ver";
-
-    /**
-     * Cassandra EventClassFamilyVersionStateUserType constants.
-     */
-    public static final String NF_SCHEMA_VER_USER_TYPE_NAME = "nf_schema_ver";
-    public static final String NF_SCHEMA_VER_NF_TYPE_PROPERTY = "nf_type";
-    public static final String NF_SCHEMA_VER_VERSION_PROPERTY = "version";
-    public static final String NF_SCHEMA_VER_BATCH_NUMBER_PROPERTY = "batch_num";
 }

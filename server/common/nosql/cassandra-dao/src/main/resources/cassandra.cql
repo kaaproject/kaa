@@ -97,6 +97,12 @@ CREATE TABLE IF NOT EXISTS kaa.access_token_eps (
     ep_key_hash blob,
 );
 
+CREATE TABLE IF NOT EXISTS kaa.endpoint_group_id_eps (
+    ep_group_id text ,
+    ep_key_hash blob,
+    PRIMARY KEY (ep_group_id, ep_key_hash)
+);
+
 CREATE TABLE IF NOT EXISTS kaa.sdk_token_eps (
     sdk_token text PRIMARY KEY,
     ep_key_hash blob

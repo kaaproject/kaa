@@ -317,7 +317,7 @@
                                 <fileEncoding>utf-8</fileEncoding>
                             </preinstallScriptlet>
                             <postinstallScriptlet>
-                                <scriptFile>src/deb/control/postinst</scriptFile>
+                                <scriptFile>src/rpm/control/postinst</scriptFile>
                                 <fileEncoding>utf-8</fileEncoding>
                             </postinstallScriptlet>
                             <preremoveScriptlet>
