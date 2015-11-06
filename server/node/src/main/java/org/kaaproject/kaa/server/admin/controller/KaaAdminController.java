@@ -50,6 +50,7 @@ import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
 import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
@@ -382,7 +383,7 @@ public class KaaAdminController {
     public ApplicationDto editApplication(@RequestBody ApplicationDto application) throws KaaAdminServiceException {
         return kaaAdminService.editApplication(application);
     }
-    
+
     /**
      * Delete application by application id.
      *
@@ -452,7 +453,7 @@ public class KaaAdminController {
             throw Utils.handleException(e);
         }
     }
-    
+
     /**
      * Delete user by user id.
      *
@@ -494,7 +495,7 @@ public class KaaAdminController {
             throw Utils.handleException(e);
         }
     }
-    
+
     /**
      * Flushes all cached Sdks within tenant.
      *
@@ -507,6 +508,89 @@ public class KaaAdminController {
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
+    }
+
+    /**
+     * Saves a CTL schema.
+     */
+    @RequestMapping(value = "saveCTLSchema", method = RequestMethod.POST)
+    @ResponseBody
+    public CTLSchemaDto saveCTLSchema(CTLSchemaDto schema) throws KaaAdminServiceException {
+        return kaaAdminService.saveCTLSchema(schema);
+    }
+
+    /**
+     * Deletes a CTL schema by its identifier.
+     */
+    @RequestMapping(value = "deleteCTLSchema", method = RequestMethod.POST)
+    public void deleteCTLSchemaById(@RequestParam(value = "schemaId") String schemaId) throws KaaAdminServiceException {
+        kaaAdminService.deleteCTLSchemaById(schemaId);
+    }
+
+    /**
+     * Deletes a CTL schema by its fully qualified name and version number.
+     */
+    @RequestMapping(value = "deleteCTLSchema", method = RequestMethod.POST)
+    public void deleteCTLSchemaByFqnAndVersion(@RequestParam(value = "fqn") String fqn, @RequestParam(value = "version") int version)
+            throws KaaAdminServiceException {
+        kaaAdminService.deleteCTLSchemaByFqnAndVersion(fqn, version);
+    }
+
+    /**
+     * Deletes CTL schemas of a tenant.
+     */
+    @RequestMapping(value = "deleteCTLSchemas", method = RequestMethod.POST)
+    public void deleteCTLSchemasByTenantId(@RequestParam(value = "tenantId") String tenantId) throws KaaAdminServiceException {
+        kaaAdminService.deleteCTLSchemasByTenantId(tenantId);
+    }
+
+    /**
+     * Delets CTL schemas of an application.
+     */
+    @RequestMapping(value = "deleteCTLSchemas", method = RequestMethod.POST)
+    public void deleteCTLSchemaByApplicationId(@RequestParam(value = "applicationId") String applicationId) throws KaaAdminServiceException {
+        kaaAdminService.deleteCTLSchemasByApplicationId(applicationId);
+    }
+
+    /**
+     * Gets a CTL schema by its identifier.
+     */
+    @RequestMapping(value = "CTLSchema/{schemaId}", method = RequestMethod.POST)
+    public CTLSchemaDto getCTLSchemaById(@PathVariable String schemaId) throws KaaAdminServiceException {
+        return kaaAdminService.getCTLSchemaById(schemaId);
+    }
+
+    /**
+     * Gets a CTL schema by its fully qualified name and version number.
+     */
+    @RequestMapping(value = "CTLSchema", method = RequestMethod.POST)
+    public CTLSchemaDto getCTLSchemaByFqnAndVersion(@RequestParam(value = "fqn") String fqn, @RequestParam(value = "version") int version)
+            throws KaaAdminServiceException {
+        return kaaAdminService.getCTLSchemaByFqnAndVersion(fqn, version);
+    }
+
+    /**
+     * Gets CTL schemas of a tenant.
+     */
+    @RequestMapping(value = "CTLSchemas", method = RequestMethod.POST)
+    public List<CTLSchemaDto> getCTLSchemasByTenantId(@RequestParam(value = "tenantId") String tenantId) throws KaaAdminServiceException {
+        return kaaAdminService.getCTLSchemasByTenantId(tenantId);
+    }
+
+    /**
+     * Gets CTL schemas of an application.
+     */
+    @RequestMapping(value = "CTLSchemas", method = RequestMethod.POST)
+    public List<CTLSchemaDto> getCTLSchemasByApplicationId(@RequestParam(value = "applicationId") String applicationId) throws KaaAdminServiceException {
+        return kaaAdminService.getCTLSchemasByApplicationId(applicationId);
+    }
+
+    /**
+     * Gets system CTL schemas.
+     */
+    @RequestMapping(value = "CTLSchemas/system", method = RequestMethod.POST)
+    public List<CTLSchemaDto> getSystemCTLSchemas() throws KaaAdminServiceException {
+        return kaaAdminService.getSystemCTLSchemas();
     }
 
     /**
@@ -540,7 +624,7 @@ public class KaaAdminController {
         byte[] data = getFileContent(file);
         return kaaAdminService.editProfileSchema(profileSchema, data);
     }
-    
+
     /**
      * Edits existing profile schema.
      *
@@ -634,7 +718,7 @@ public class KaaAdminController {
         byte[] data = getFileContent(file);
         return kaaAdminService.editNotificationSchema(notificationSchema, data);
     }
-    
+
     /**
      * Edits existing notification schema.
      *
@@ -687,7 +771,7 @@ public class KaaAdminController {
         byte[] data = getFileContent(file);
         return kaaAdminService.editLogSchema(logSchema, data);
     }
-    
+
     /**
      * Edits existing log schema.
      *
@@ -737,7 +821,7 @@ public class KaaAdminController {
     public void deleteLogAppender(@RequestParam(value="logAppenderId") String logAppenderId) throws KaaAdminServiceException {
         kaaAdminService.deleteLogAppender(logAppenderId);
     }
-    
+
     /**
      * Gets all user verifiers by application id.
      *
@@ -776,7 +860,7 @@ public class KaaAdminController {
     @ResponseStatus(value = HttpStatus.OK)
     public void deleteUserVerifier(@RequestParam(value="userVerifierId") String userVerifierId) throws KaaAdminServiceException {
         kaaAdminService.deleteUserVerifier(userVerifierId);
-    }    
+    }
 
     /**
      * Generate log library by record key.
@@ -1238,7 +1322,7 @@ public class KaaAdminController {
             @PathVariable String applicationId) throws KaaAdminServiceException {
         return kaaAdminService.getEventClassFamiliesByApplicationId(applicationId);
     }
-    
+
     /**
      * Edits endpoint group to the list of all endpoint groups.
      *
