@@ -6,7 +6,7 @@ import org.kaaproject.kaa.server.common.dao.model.sql.Tenant;
 
 import java.io.Serializable;
 
-public class CLTSchema extends GenericModel implements Serializable {
+public class CTLSchema extends GenericModel implements Serializable {
 
     private String scope;
     private Tenant tenant;

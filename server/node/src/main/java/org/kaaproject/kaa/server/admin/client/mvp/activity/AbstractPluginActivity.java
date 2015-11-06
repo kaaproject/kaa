@@ -18,8 +18,8 @@ package org.kaaproject.kaa.server.admin.client.mvp.activity;
 import java.util.List;
 
 import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
-import org.kaaproject.kaa.common.dto.plugin.PluginDto;
-import org.kaaproject.kaa.common.dto.plugin.PluginInfoDto;
+import org.kaaproject.kaa.common.dto.plugin.legacy.PluginDto;
+import org.kaaproject.kaa.common.dto.plugin.legacy.PluginInfoDto;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.place.AbstractPluginPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BasePluginView;

@@ -23,6 +23,7 @@
 
     <modules>
         <module>common</module>
+        <module>core</module>
         <module>contracts</module>
         <module>rest</module>
         <module>messaging</module>
@@ -33,6 +34,11 @@
             <dependency>
                 <groupId>org.kaaproject.kaa.common</groupId>
                 <artifactId>core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.plugin</groupId>
+                <artifactId>common</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>

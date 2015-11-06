@@ -18,7 +18,7 @@ package org.kaaproject.kaa.common.dto.logs;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.kaaproject.kaa.common.dto.plugin.PluginDto;
+import org.kaaproject.kaa.common.dto.plugin.legacy.PluginDto;
 
 public class LogAppenderDto extends PluginDto {
 

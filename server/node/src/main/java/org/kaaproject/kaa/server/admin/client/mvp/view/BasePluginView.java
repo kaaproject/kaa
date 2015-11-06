@@ -16,10 +16,11 @@
 package org.kaaproject.kaa.server.admin.client.mvp.view;
 
 import org.kaaproject.avro.ui.shared.RecordField;
-import org.kaaproject.kaa.common.dto.plugin.PluginInfoDto;
+import org.kaaproject.kaa.common.dto.plugin.legacy.PluginInfoDto;
 
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.ValueListBox;
+
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.RecordPanel;
 
 public interface BasePluginView extends BaseDetailsView {

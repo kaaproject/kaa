@@ -18,7 +18,7 @@ package org.kaaproject.kaa.server.common.dao.model.sql;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import org.kaaproject.kaa.common.dto.plugin.PluginDto;
+import org.kaaproject.kaa.common.dto.plugin.legacy.PluginDto;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -28,6 +28,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
 import java.io.Serializable;
 import java.util.Arrays;
 

@@ -17,6 +17,8 @@ import org.kaaproject.kaa.server.plugin.contracts.messaging.MessagingPluginContr
 
 public class KaaRestPluginDefinition implements PluginDef {
 
+    private static final long serialVersionUID = 3242496999565136016L;
+    
     private static final String REST_PLUGIN_TYPE = "REST";
 
     public KaaRestPluginDefinition() {

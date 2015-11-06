@@ -15,16 +15,16 @@
         <artifactId>plugin</artifactId>
     </parent>
     <groupId>org.kaaproject.kaa.server.plugin</groupId>
-    <artifactId>common</artifactId>
+    <artifactId>core</artifactId>
     <packaging>jar</packaging>
 
-    <name>Kaa Plugin Common</name>
+    <name>Kaa Plugin Core</name>
     <url>http://kaaproject.org</url>
 
     <dependencies>
         <dependency>
-            <groupId>org.kaaproject.kaa.common</groupId>
-            <artifactId>core</artifactId>
+            <groupId>org.kaaproject.kaa.server.plugin</groupId>
+            <artifactId>common</artifactId>
         </dependency>
     </dependencies>
 

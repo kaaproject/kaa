@@ -16,7 +16,7 @@
 
 package org.kaaproject.kaa.common.dto.user;
 
-import org.kaaproject.kaa.common.dto.plugin.PluginDto;
+import org.kaaproject.kaa.common.dto.plugin.legacy.PluginDto;
 
 public class UserVerifierDto extends PluginDto {
 

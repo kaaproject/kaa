@@ -633,6 +633,11 @@ Copyright 2014-2015 CyberVision, Inc.
                 <version>${project.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.kaaproject.kaa.server.plugin</groupId>
+                <artifactId>core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.kaaproject.kaa.server.transports.http</groupId>
                 <artifactId>transport</artifactId>
                 <classifier>http</classifier>

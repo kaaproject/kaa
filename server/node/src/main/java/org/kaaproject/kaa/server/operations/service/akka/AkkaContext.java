@@ -16,6 +16,7 @@
 package org.kaaproject.kaa.server.operations.service.akka;
 
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
+import org.kaaproject.kaa.server.common.dao.PluginService;
 import org.kaaproject.kaa.server.operations.service.OperationsService;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
 import org.kaaproject.kaa.server.operations.service.event.EventService;
@@ -35,7 +36,7 @@ import com.typesafe.config.ConfigFactory;
 public class AkkaContext {
 
     private static final String ENDPOINT_ACTOR_TIMEOUT = "endpoint_actor_timeout";
-    
+
     private static final String ENDPOINT_EVENT_TIMEOUT = "endpoint_event_timeout";
 
     private static final String IO_WORKER_COUNT_PROP_NAME = "io_worker_count";
@@ -69,24 +70,27 @@ public class AkkaContext {
 
     @Autowired
     private LogAppenderService logAppenderService;
-    
+
     @Autowired
     private EndpointUserService endpointUserService;
-    
+
+    @Autowired
+    private PluginService pluginService;
+
     @Value("#{properties[support_unencrypted_connection]}")
     private Boolean supportUnencryptedConnection;
-    
+
     private final Config config;
-    
+
     public AkkaContext() {
         config = ConfigFactory.parseResources(AKKA_CONF_FILE_NAME).withFallback(ConfigFactory.load());
     }
-    
-    public Config getConfig(){
+
+    public Config getConfig() {
         return config;
     }
 
-    public int getIOWorkerCount(){
+    public int getIOWorkerCount() {
         return config.getInt(IO_WORKER_COUNT_PROP_NAME);
     }
 
@@ -132,6 +136,10 @@ public class AkkaContext {
 
     public EndpointUserService getEndpointUserService() {
         return endpointUserService;
+    }
+
+    public PluginService getPluginService() {
+        return pluginService;
     }
 
     public Boolean getSupportUnencryptedConnection() {
