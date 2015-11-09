@@ -17,11 +17,7 @@
 package org.kaaproject.kaa.server.common.nosql.mongo.dao;
 
 import com.mongodb.DBObject;
-
-import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
-
 import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
-
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
@@ -39,15 +35,16 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.ENDPOINT_GROUP_ID;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.ENDPOINT_PROFILE;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_ACCESS_TOKEN;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_APPLICATION_ID;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_CF_GROUP_STATE;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_ENDPOINT_KEY_HASH;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_NF_GROUP_STATE;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SDK_TOKEN;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_USER_ID;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.ENDPOINT_GROUP_ID;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_CF_GROUP_STATE;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_NF_GROUP_STATE;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 

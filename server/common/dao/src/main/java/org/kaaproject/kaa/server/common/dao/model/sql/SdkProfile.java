@@ -138,7 +138,9 @@ public final class SdkProfile extends GenericModel<SdkProfileDto> implements Ser
                 dto.setCreatedUsername(null);
                 dto.setCreatedTime(null);
                 dto.setEndpointCount(null);
+                dto.setToken(null);
 
+                // TODO: Update logic for profile token generation.
                 MessageDigest messageDigest = MessageDigest.getInstance(HASH_ALGORITHM);
                 messageDigest.update(DtoByteMarshaller.toBytes(dto));
                 this.token = Base64.encodeBase64String(messageDigest.digest());
@@ -147,6 +149,7 @@ public final class SdkProfile extends GenericModel<SdkProfileDto> implements Ser
                 dto.setCreatedUsername(this.createdUsername);
                 dto.setCreatedTime(this.createdTime);
                 dto.setEndpointCount(this.endpointCount);
+                dto.setToken(this.token);
 
                 if (this.aefMapIds != null) {
                     dto.setAefMapIds(new ArrayList<String>(this.aefMapIds.size()));

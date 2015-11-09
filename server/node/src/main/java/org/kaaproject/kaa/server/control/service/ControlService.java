@@ -23,6 +23,7 @@ import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileViewDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
@@ -1042,4 +1043,13 @@ public interface ControlService {
      * @throws ControlServiceException
      */
     SdkProfileDto saveSdkProfile(SdkProfileDto sdkProfile)  throws ControlServiceException ;
+
+    /**
+     * Gets endpoint profile view for web ui.
+     *
+     * @param endpointProfileKeyHash the endpoint key hash in string representation.
+     * @return the EndpointProfileViewDto object
+     * @throws ControlServiceException the control service exception.
+     */
+    EndpointProfileViewDto getEndpointProfileViewDtoByEndpointKeyHash(String endpointProfileKeyHash) throws ControlServiceException;
 }

@@ -27,14 +27,14 @@ import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.PageLinkDto;
-import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointProfile;
 import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointProfile;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.ArrayList;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 

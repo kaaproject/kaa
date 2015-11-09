@@ -34,6 +34,8 @@ import com.google.gwt.place.shared.WithTokenizers;
     LogSchemaPlace.Tokenizer.class,
     EndpointGroupsPlace.Tokenizer.class,
     EndpointGroupPlace.Tokenizer.class,
+    EndpointProfilesPlace.Tokenizer.class,
+    EndpointProfilePlace.Tokenizer.class,
     ProfileFilterPlace.Tokenizer.class,
     ConfigurationPlace.Tokenizer.class,
     TopicsPlace.Tokenizer.class,

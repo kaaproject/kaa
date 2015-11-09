@@ -16,15 +16,14 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view;
 
-import java.util.List;
-
+import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.ValueListBox;
 import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.MultiValueListBox;
 
-import com.google.gwt.user.client.ui.HasValue;
-import com.google.gwt.user.client.ui.ValueListBox;
+import java.util.List;
 
 public interface AddSdkProfileView extends BaseDetailsView {
 

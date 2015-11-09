@@ -90,7 +90,6 @@ public class CassandraModelConstants {
     public static final String EP_EP_KEY_HASH_PROPERTY = ENDPOINT_KEY_HASH_PROPERTY;
     public static final String EP_EP_KEY_PROPERTY = "ep_key";
     public static final String EP_USER_ID_PROPERTY = USER_ID_PROPERTY;
-    public static final String EP_PROFILE_SCHEMA_ID_PROPERTY = "pf_schema_id";
     public static final String EP_CONFIG_GROUP_STATE_PROPERTY = "cf_group_state";
     public static final String EP_NOTIFICATION_GROUP_STATE_PROPERTY = "nf_group_state";
     public static final String EP_CONFIGURATION_SEQUENCE_NUMBER_PROPERTY = "cf_seq_num";

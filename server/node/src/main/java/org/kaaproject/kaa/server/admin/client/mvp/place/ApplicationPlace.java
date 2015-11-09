@@ -112,6 +112,7 @@ public class ApplicationPlace extends TreePlace {
             result.add(new LogAppendersPlace(applicationId));
             result.add(new UserVerifiersPlace(applicationId));
             result.add(new EndpointUsersPlace(applicationId));
+            result.add(new EndpointProfilesPlace(applicationId));
             callback.onSuccess(result, display);
         }
 

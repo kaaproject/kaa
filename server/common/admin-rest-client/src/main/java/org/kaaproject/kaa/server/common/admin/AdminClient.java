@@ -16,24 +16,28 @@
 package org.kaaproject.kaa.server.common.admin;
 
 
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpHost;
-import org.kaaproject.kaa.common.dto.*;
+import org.kaaproject.kaa.common.dto.ApplicationDto;
+import org.kaaproject.kaa.common.dto.ConfigurationDto;
+import org.kaaproject.kaa.common.dto.ConfigurationRecordDto;
+import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointGroupDto;
+import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
+import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
+import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
+import org.kaaproject.kaa.common.dto.NotificationDto;
+import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
+import org.kaaproject.kaa.common.dto.PageLinkDto;
+import org.kaaproject.kaa.common.dto.ProfileFilterDto;
+import org.kaaproject.kaa.common.dto.ProfileFilterRecordDto;
+import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.SchemaDto;
+import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.admin.AuthResultDto;
 import org.kaaproject.kaa.common.dto.admin.RecordKey;
 import org.kaaproject.kaa.common.dto.admin.ResultCode;
@@ -71,6 +75,20 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RequestCallback;
 import org.springframework.web.client.ResponseExtractor;
 import org.springframework.web.client.RestTemplate;
+
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class AdminClient {
 
@@ -638,22 +656,22 @@ public class AdminClient {
         return entity.getBody();
     }
 
-    // TODO: Needs more testing
     public void downloadSdk(String sdkProfileId, SdkPlatform targetPlatform, String destination) {
         FileResponseExtractor extractor = new FileResponseExtractor(new File(destination));
-        Map<String, String> parameters = new LinkedHashMap<>();
-        parameters.put("sdkProfileId", sdkProfileId);
-        parameters.put("targetPlatform", targetPlatform.toString());
-        restTemplate.execute(url + "sdk", HttpMethod.POST, null, extractor, parameters);
+        MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
+        parameters.add("sdkProfileId", sdkProfileId);
+        parameters.add("targetPlatform", targetPlatform.toString());
+        RequestCallback request = new DataRequestCallback<>(parameters);
+        restTemplate.execute(url + "sdk", HttpMethod.POST, request, extractor);
     }
 
-    // TODO: Needs more testing
     public FileData downloadSdk(String sdkProfileId, SdkPlatform targetPlatform) {
         FileDataResponseExtractor extractor = new FileDataResponseExtractor();
-        Map<String, String> parameters = new LinkedHashMap<>();
-        parameters.put("sdkProfileId", sdkProfileId);
-        parameters.put("targetPlatform", targetPlatform.toString());
-        return restTemplate.execute(url + "sdk", HttpMethod.POST, null, extractor, parameters);
+        MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
+        parameters.add("sdkProfileId", sdkProfileId);
+        parameters.add("targetPlatform", targetPlatform.toString());
+        RequestCallback request = new DataRequestCallback<>(parameters);
+        return restTemplate.execute(url + "sdk", HttpMethod.POST, request, extractor);
     }
 
     public void downloadSdk(SdkProfileDto key, String destination) throws Exception {

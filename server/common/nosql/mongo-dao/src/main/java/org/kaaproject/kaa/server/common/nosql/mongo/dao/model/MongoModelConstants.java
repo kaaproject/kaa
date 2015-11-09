@@ -84,7 +84,6 @@ public class MongoModelConstants {
     public static final String EP_ENDPOINT_KEY_HASH = ENDPOINT_KEY_HASH;
     public static final String EP_USER_ID = "endpoint_user_id";
     public static final String EP_ACCESS_TOKEN = ACCESS_TOKEN;
-    public static final String EP_PROFILE_SCHEMA_ID = "profile_schema_id";
     public static final String EP_CF_GROUP_STATE = "cf_group_state";
     public static final String EP_NF_GROUP_STATE = "nf_group_state";
     public static final String EP_CF_SEQ_NUM = "cf_seq_num";

@@ -20,7 +20,6 @@ import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Statement;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
-
 import com.google.common.base.Predicates;
 import com.google.common.collect.Sets;
 import org.apache.commons.codec.binary.Base64;
@@ -41,8 +40,8 @@ import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEPByE
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEPBySdkToken;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointProfile;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointUser;
-import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.type.CassandraEndpointGroupState;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.type.CassandraEndpointGroupState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

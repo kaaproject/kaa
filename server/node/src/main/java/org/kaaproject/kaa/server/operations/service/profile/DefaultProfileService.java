@@ -205,7 +205,7 @@ public class DefaultProfileService implements ProfileService {
      *
      * @param profileRaw
      *            the profile raw
-     * @param appId
+     * @param appToken
      *            the app id
      * @param schemaVersion
      *            the schema version

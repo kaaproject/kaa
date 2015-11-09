@@ -48,10 +48,10 @@ public class TestCluster {
             .getLogger(TestCluster.class);
 
     /** The Constant BOOTSTRAP_NODE_HOST. */
-    private static final String BOOTSTRAP_NODE_HOST = "192.168.0.202";
+    private static final String BOOTSTRAP_NODE_HOST = "127.0.0.1";
     
-    /** The Constant ENDPOINT_NODE_HOST. */
-    private static final String ENDPOINT_NODE_HOST = "192.168.0.101";
+    /** The Constant OPERATIONS_NODE_HOST. */
+    private static final String OPERATIONS_NODE_HOST = "127.0.0.1";
     
     /** The kaa node instance. */
     private static KaaNodeInitializationService kaaNodeInstance;
@@ -153,7 +153,7 @@ public class TestCluster {
         X509EncodedKeySpec x509EncodedKeySpec = new X509EncodedKeySpec(
                 keys.getPublic().getEncoded());
         ByteBuffer testKeyData = ByteBuffer.wrap(x509EncodedKeySpec.getEncoded());
-        nodeInfo.setConnectionInfo(new ConnectionInfo(BOOTSTRAP_NODE_HOST, 1000, testKeyData));
+        nodeInfo.setConnectionInfo(new ConnectionInfo(BOOTSTRAP_NODE_HOST, 10090, testKeyData));
         nodeInfo.setTimeStarted(System.currentTimeMillis());
         nodeInfo.setTransports(new ArrayList<TransportMetaData>());
         
@@ -168,7 +168,7 @@ public class TestCluster {
     private static OperationsNodeInfo buildEndpointNodeInfo() {
         OperationsNodeInfo nodeInfo = new OperationsNodeInfo();
         ByteBuffer testKeyData = ByteBuffer.wrap(new byte[]{10,11,12,45,34,23,67,89,66,12});
-        nodeInfo.setConnectionInfo(new ConnectionInfo(ENDPOINT_NODE_HOST, 1000,testKeyData));
+        nodeInfo.setConnectionInfo(new ConnectionInfo(OPERATIONS_NODE_HOST, 10090,testKeyData));
         nodeInfo.setLoadInfo(new LoadInfo(1, 1.0));
         nodeInfo.setTimeStarted(System.currentTimeMillis());
         nodeInfo.setTransports(new ArrayList<TransportMetaData>());

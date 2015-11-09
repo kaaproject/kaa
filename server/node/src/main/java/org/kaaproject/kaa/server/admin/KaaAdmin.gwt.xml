@@ -42,6 +42,8 @@
   <inherits name="org.kaaproject.kaa.common.dto.Dto"/>
   <inherits name="org.kaaproject.avro.ui.gwt.client.AvroUIClient"/>
 
+  <inherits name="com.google.common.io.Io"/>
+
   <!--  inherits name='com.google.gwt.visualization.Visualization'/-->
 
   <set-property name="gwt.enableDebugId" value="true"/>

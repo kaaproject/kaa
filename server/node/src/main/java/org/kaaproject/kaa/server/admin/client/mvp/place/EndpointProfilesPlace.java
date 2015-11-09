@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 CyberVision, Inc.
+ * Copyright 2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,63 +16,70 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.place;
 
-import com.google.gwt.place.shared.PlaceTokenizer;
-import com.google.gwt.place.shared.Prefix;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-public class AddSdkProfilePlace extends TreePlace {
+import com.google.gwt.place.shared.PlaceTokenizer;
+import com.google.gwt.place.shared.Prefix;
 
-    private String applicationId;
+public class EndpointProfilesPlace extends TreePlace {
 
-    public AddSdkProfilePlace(String applicationId) {
+    protected String applicationId;
+    private boolean gridLoaded;
+
+    public EndpointProfilesPlace(String applicationId) {
         this.applicationId = applicationId;
+        this.gridLoaded = false;
+    }
+
+    public EndpointProfilesPlace(String applicationId, boolean gridLoaded) {
+        this.applicationId = applicationId;
+        this.gridLoaded = gridLoaded;
     }
 
     public String getApplicationId() {
         return applicationId;
     }
 
-    @Override
-    public String getName() {
-        return Utils.constants.generateSdk();
+    public boolean isGridLoaded() {
+        return gridLoaded;
     }
 
-    @Prefix(value = "addSdkProfile")
-    public static class Tokenizer implements PlaceTokenizer<AddSdkProfilePlace>, PlaceConstants {
+    @Override
+    public String getName() {
+        return Utils.constants.endpointProfiles();
+    }
+
+    @Prefix(value = "endProfile")
+    public static class Tokenizer implements PlaceTokenizer<EndpointProfilesPlace>, PlaceConstants {
 
         @Override
-        public AddSdkProfilePlace getPlace(String token) {
-            PlaceParams.paramsFromToken(token);
-            return new AddSdkProfilePlace(PlaceParams.getParam(APPLICATION_ID));
-        }
-
-        @Override
-        public String getToken(AddSdkProfilePlace place) {
+        public String getToken(EndpointProfilesPlace place) {
             PlaceParams.clear();
             PlaceParams.putParam(APPLICATION_ID, place.getApplicationId());
             return PlaceParams.generateToken();
+        }
+
+        @Override
+        public EndpointProfilesPlace getPlace(String token) {
+            PlaceParams.paramsFromToken(token);
+            return new EndpointProfilesPlace(PlaceParams.getParam(APPLICATION_ID));
         }
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
+        if (this == obj)
             return true;
-        }
-        if (obj == null) {
+        if (obj == null)
             return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (getClass() != obj.getClass())
             return false;
-        }
-        AddSdkProfilePlace other = (AddSdkProfilePlace) obj;
+        EndpointProfilesPlace other = (EndpointProfilesPlace) obj;
         if (applicationId == null) {
-            if (other.applicationId != null) {
+            if (other.applicationId != null)
                 return false;
-            }
-        } else if (!applicationId.equals(other.applicationId)) {
+        } else if (!applicationId.equals(other.applicationId))
             return false;
-        }
         return true;
     }
 
@@ -83,8 +90,6 @@ public class AddSdkProfilePlace extends TreePlace {
 
     @Override
     public TreePlace createDefaultPreviousPlace() {
-        return new SdkProfilesPlace(applicationId);
+        return new ApplicationPlace(applicationId);
     }
-
 }
-

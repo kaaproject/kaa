@@ -150,6 +150,7 @@ public class ProfileServiceIT extends AbstractTest {
         sdkPropertiesDto.setConfigurationSchemaVersion(1);
         sdkPropertiesDto.setNotificationSchemaVersion(1);
         sdkPropertiesDto.setLogSchemaVersion(1);
+        sdkPropertiesDto.setApplicationToken(APP_TOKEN);
         sdkPropertiesDto = sdkProfileService.saveSdkProfile(sdkPropertiesDto);
         sdkToken = new SdkProfile(sdkPropertiesDto).getToken();
 
@@ -159,6 +160,7 @@ public class ProfileServiceIT extends AbstractTest {
         newSdkProfileDto.setConfigurationSchemaVersion(1);
         newSdkProfileDto.setNotificationSchemaVersion(1);
         newSdkProfileDto.setLogSchemaVersion(1);
+        newSdkProfileDto.setApplicationToken(APP_TOKEN);
         newSdkProfileDto = sdkProfileService.saveSdkProfile(newSdkProfileDto);
         newSdkToken = new SdkProfile(newSdkProfileDto).getToken();
     }

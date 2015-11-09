@@ -16,26 +16,6 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.sdk;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
-import org.kaaproject.kaa.common.dto.SchemaDto;
-import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
-import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
-import org.kaaproject.kaa.server.admin.client.mvp.view.AddSdkProfileView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
-import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
-import org.kaaproject.kaa.server.admin.client.mvp.view.widget.MultiAefMapListBox;
-import org.kaaproject.kaa.server.admin.client.mvp.view.widget.MultiValueListBox;
-import org.kaaproject.kaa.server.admin.client.mvp.view.widget.SchemaListBox;
-import org.kaaproject.kaa.server.admin.client.util.Utils;
-
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -51,6 +31,25 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ValueListBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
+import org.kaaproject.kaa.common.dto.SchemaDto;
+import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
+import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
+import org.kaaproject.kaa.server.admin.client.mvp.view.AddSdkProfileView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.MultiAefMapListBox;
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.MultiValueListBox;
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.SchemaListBox;
+import org.kaaproject.kaa.server.admin.client.util.Utils;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class AddSdkProfileViewImpl extends BaseDetailsViewImpl implements AddSdkProfileView, ValueChangeHandler<SchemaDto>  {
 

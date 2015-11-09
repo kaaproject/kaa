@@ -16,8 +16,8 @@
 
 package org.kaaproject.kaa.server.admin.shared.services;
 
-import java.util.List;
-
+import com.google.gwt.user.client.rpc.RemoteService;
+import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
@@ -26,6 +26,7 @@ import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileViewDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
@@ -57,11 +58,12 @@ import org.kaaproject.kaa.server.admin.shared.config.ConfigurationRecordFormDto;
 import org.kaaproject.kaa.server.admin.shared.properties.PropertiesDto;
 import org.kaaproject.kaa.server.admin.shared.schema.SchemaInfoDto;
 
-import com.google.gwt.user.client.rpc.RemoteService;
-import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
+import java.util.List;
 
 @RemoteServiceRelativePath("springGwtServices/kaaAdminService")
 public interface KaaAdminService extends RemoteService {
+
+    public EndpointProfileViewDto getEndpointProfileViewDtoByEndpointProfileKeyHash(String endpointProfileKeyHash) throws KaaAdminServiceException;
 
     public EndpointProfilesPageDto getEndpointProfileByEndpointGroupId(String endpointGroupId, String limit, String offset) throws KaaAdminServiceException;
 
@@ -111,7 +113,7 @@ public interface KaaAdminService extends RemoteService {
 
     public SchemaVersions getSchemaVersionsByApplicationId(String applicationId) throws KaaAdminServiceException;
 
-    public void addSdkProfile(SdkProfileDto sdkProfile) throws KaaAdminServiceException;
+    public SdkProfileDto addSdkProfile(SdkProfileDto sdkProfile) throws KaaAdminServiceException;
 
     public void deleteSdkProfile(String sdkProfileId) throws KaaAdminServiceException;
 

@@ -501,9 +501,9 @@ public class KaaAdminController {
      * Stores a new SDK profile into the database.
      */
     @RequestMapping(value="addSdkProfile", method=RequestMethod.POST)
-    @ResponseStatus(value = HttpStatus.OK)
-    public void addSdkProfile(@RequestBody SdkProfileDto sdkProfile) throws KaaAdminServiceException {
-        kaaAdminService.addSdkProfile(sdkProfile);
+    @ResponseBody
+    public SdkProfileDto addSdkProfile(@RequestBody SdkProfileDto sdkProfile) throws KaaAdminServiceException {
+        return kaaAdminService.addSdkProfile(sdkProfile);
     }
 
     /**

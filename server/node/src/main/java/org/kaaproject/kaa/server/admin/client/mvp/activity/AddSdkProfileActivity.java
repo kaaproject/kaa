@@ -16,11 +16,9 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
-import static org.kaaproject.kaa.server.admin.client.util.Utils.getMaxSchemaVersions;
-
-import java.util.ArrayList;
-import java.util.List;
-
+import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
 import org.kaaproject.avro.ui.gwt.client.widget.BusyPopup;
 import org.kaaproject.kaa.common.dto.SchemaDto;
@@ -35,9 +33,10 @@ import org.kaaproject.kaa.server.admin.client.mvp.place.SdkProfilesPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.AddSdkProfileView;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.AcceptsOneWidget;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.kaaproject.kaa.server.admin.client.util.Utils.getMaxSchemaVersions;
 
 public class AddSdkProfileActivity extends AbstractDetailsActivity<SdkProfileDto, AddSdkProfileView, AddSdkProfilePlace> {
 
@@ -181,10 +180,10 @@ public class AddSdkProfileActivity extends AbstractDetailsActivity<SdkProfileDto
             detailsView.setErrorMessage(Utils.constants.specifyVerifier());
         } else {
 
-            KaaAdmin.getDataSource().addSdkProfile(entity, new BusyAsyncCallback<Void>() {
+            KaaAdmin.getDataSource().addSdkProfile(entity, new BusyAsyncCallback<SdkProfileDto>() {
 
                 @Override
-                public void onSuccessImpl(Void result) {
+                public void onSuccessImpl(SdkProfileDto result) {
                     detailsView.reset();
                     AddSdkProfileActivity.this.goTo(new SdkProfilesPlace(applicationId));
                 }

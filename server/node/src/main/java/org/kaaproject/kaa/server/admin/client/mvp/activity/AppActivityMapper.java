@@ -29,6 +29,8 @@ import org.kaaproject.kaa.server.admin.client.mvp.place.EcfSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EcfsPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EndpointGroupPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EndpointGroupsPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.EndpointProfilePlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.EndpointProfilesPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.GeneralPropertiesPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.AddSdkProfilePlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.LogAppenderPlace;
@@ -120,6 +122,10 @@ public class AppActivityMapper implements ActivityMapper {
                 return new EndpointGroupsActivity((EndpointGroupsPlace) place, clientFactory);
             } else if (clazz == EndpointGroupPlace.class) {
                 return new EndpointGroupActivity((EndpointGroupPlace) place, clientFactory);
+            } else if (clazz ==  EndpointProfilesPlace.class) {
+                return new EndpointProfilesActivity((EndpointProfilesPlace) place, clientFactory);
+            } else if (clazz ==  EndpointProfilePlace.class) {
+                return new EndpointProfileActivity((EndpointProfilePlace) place, clientFactory);
             } else if (clazz == ProfileFilterPlace.class) {
                 return new ProfileFilterActivity((ProfileFilterPlace) place, clientFactory);
             } else if (clazz == ConfigurationPlace.class) {
