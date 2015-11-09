@@ -13,28 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kaaproject.kaa.server.plugin.contracts.messaging;
 
-import org.kaaproject.kaa.common.hash.EndpointObjectHash;
-import org.kaaproject.kaa.server.common.core.plugin.instance.KaaMessage;
+package org.kaaproject.kaa.common.dto.ctl;
 
-public class EndpointMessage implements KaaMessage {
-
-    private static final long serialVersionUID = -7358355594071995237L;
-
-    private final EndpointObjectHash key;
-
-    public EndpointMessage(EndpointObjectHash key) {
-        super();
-        this.key = key;
-    }
-
-    public EndpointObjectHash getKey() {
-        return key;
-    }
-
-    public byte[] getMessageData() {
-        return null;
-    }
-
+public enum CTLSchemaScope {
+    SYSTEM, TENANT, APPLICATION;
 }
