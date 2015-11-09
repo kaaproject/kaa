@@ -27,6 +27,7 @@ import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
+import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
@@ -34,6 +35,7 @@ import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
+import org.kaaproject.kaa.server.admin.client.mvp.view.AddSdkProfileView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.AefMapView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.ApplicationView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseListView;
@@ -45,7 +47,6 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.EcfView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointGroupView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointProfileView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointProfilesView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.GenerateSdkView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.HeaderView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.LogAppenderView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.NavigationView;
@@ -66,9 +67,10 @@ public interface ClientFactory {
     NavigationView getNavigationView();
 
     UserProfileView getUserProfileView();
-    
+
+    BaseListView<SdkProfileDto> getSdkProfilesView();
     BasePropertiesView getGeneralPropertiesView();
-    
+
     BasePropertiesView getMailPropertiesView();
 
     BaseListView<TenantUserDto> getTenantsView();
@@ -78,8 +80,8 @@ public interface ClientFactory {
     BaseListView<ApplicationDto> getApplicationsView();
     ApplicationView getCreateApplicationView();
     ApplicationView getApplicationView();
-    
-    GenerateSdkView getGenerateSdkView();
+
+    AddSdkProfileView getAddSdkProfileView();
 
     BaseListView<UserDto> getUsersView();
     UserView getCreateUserView();
@@ -117,7 +119,7 @@ public interface ClientFactory {
     BaseListView<TopicDto> getTopicsView();
     TopicView getTopicView();
     TopicView getCreateTopicView();
-    
+
     SendNotificationView getSendNotificationView();
 
     BaseListView<EventClassFamilyDto> getEcfsView();
@@ -141,7 +143,7 @@ public interface ClientFactory {
     BaseListView<UserVerifierDto> getUserVerifiersView();
     UserVerifierView getUserVerifierView();
     UserVerifierView getCreateUserVerifierView();
-    
+
     UpdateUserConfigView getUpdateUserConfigView();
 
 }

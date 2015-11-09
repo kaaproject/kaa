@@ -36,6 +36,7 @@ public class CassandraModelConstants {
     public static final String LAST_MOD_TIME_PROPERTY = "last_mod_time";
     public static final String SCHEMA_ID_PROPERTY = "schema_id";
     public static final String TOPIC_ID_PROPERTY = "topic_id";
+    public static final String SDK_TOKEN_PROPERTY = "sdk_token";
     public static final String KEY_DELIMITER= "::";
 
     /**
@@ -105,6 +106,7 @@ public class CassandraModelConstants {
     public static final String EP_LOG_SCHEMA_VERSION_PROPERTY = "log_schema_ver";
     public static final String EP_ECF_VERSION_STATE_PROPERTY = "ecf_ver_state";
     public static final String EP_SERVER_HASH_PROPERTY = "server_hash";
+    public static final String EP_SDK_TOKEN_PROPERTY = SDK_TOKEN_PROPERTY;
 
     /**
      * Cassandra endpoint user constants.
@@ -130,6 +132,13 @@ public class CassandraModelConstants {
     public static final String EP_BY_APP_ID_COLUMN_FAMILY_NAME = "app_eps";
     public static final String EP_BY_APP_ID_APPLICATION_ID_PROPERTY = APPLICATION_ID_PROPERTY;
     public static final String EP_BY_APP_ID_ENDPOINT_KEY_HASH_PROPERTY = ENDPOINT_KEY_HASH_PROPERTY;
+
+    /**
+     * CassandraEPBySdkToken constants.
+     */
+    public static final String EP_BY_SDK_TOKEN_COLUMN_FAMILY_NAME = "sdk_token_eps";
+    public static final String EP_BY_SDK_TOKEN_SDK_TOKEN_PROPERTY = SDK_TOKEN_PROPERTY;
+    public static final String EP_BY_SDK_TOKEN_ENDPOINT_KEY_HASH_PROPERTY = ENDPOINT_KEY_HASH_PROPERTY;
 
     /**
      * CassandraEPByEndpointGroupId constants

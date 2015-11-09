@@ -22,7 +22,6 @@ import java.util.List;
 import net.sf.ehcache.Ehcache;
 
 import org.kaaproject.kaa.common.dto.admin.RecordKey;
-import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
 import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.server.admin.services.cache.CacheService;
 import org.kaaproject.kaa.server.admin.services.util.Utils;
@@ -38,7 +37,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CacheServiceImpl implements CacheService {
-    
+
     private static final String SDK_CACHE = "sdkCache";
     private static final String RECORD_LIBRARY_CACHE = "recordLibraryCache";
     private static final String RECORD_SCHEMA_CACHE = "recordSchemaCache";
@@ -53,30 +52,30 @@ public class CacheServiceImpl implements CacheService {
 
     @Override
     @Cacheable(value = SDK_CACHE, key = "#key", unless="#result == null")
-    public FileData getSdk(SdkPropertiesDto key) {
+    public FileData getSdk(SdkKey key) {
         return null;
     }
-    
+
     @Override
     @CachePut(value = SDK_CACHE, key = "#key")
-    public FileData putSdk(SdkPropertiesDto key, FileData sdkFile) {
+    public FileData putSdk(SdkKey key, FileData sdkFile) {
         return sdkFile;
     }
 
     @Override
     @CacheEvict(value = SDK_CACHE, key = "#key")
-    public void flushSdk(SdkPropertiesDto key) {
+    public void flushSdk(SdkKey key) {
     }
-    
-    public List<SdkPropertiesDto> getCachedSdkKeys(String applicationId) {
-        List<SdkPropertiesDto> keys = new ArrayList<>();
+
+    public List<SdkKey> getCachedSdkKeys(String applicationId) {
+        List<SdkKey> keys = new ArrayList<>();
         Ehcache cache = (Ehcache) adminCacheManager.getCache(SDK_CACHE).getNativeCache();
         List<?> cachedKeys = cache.getKeysWithExpiryCheck();
         for (Object cachedKey : cachedKeys) {
-            if (cachedKey instanceof SdkPropertiesDto) {
-                SdkPropertiesDto cachedSdkPropertiesDto = (SdkPropertiesDto)cachedKey;
-                if (applicationId.equals(cachedSdkPropertiesDto.getApplicationId())) {
-                    keys.add(cachedSdkPropertiesDto);
+            if (cachedKey instanceof SdkKey) {
+                SdkKey cachedSdkKey = (SdkKey)cachedKey;
+                if (applicationId.equals(cachedSdkKey.getSdkProfile().getApplicationId())) {
+                    keys.add(cachedSdkKey);
                 }
             }
         }

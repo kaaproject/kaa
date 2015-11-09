@@ -33,11 +33,14 @@ import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.filter.CassandraEPByAccessTokenDao;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.filter.CassandraEPByAppIdDao;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.filter.CassandraEPByEndpointGroupIdDao;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.filter.CassandraEPBySdkTokenDao;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEPByAccessToken;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEPByAppId;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEPByEndpointGroupId;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEPBySdkToken;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointProfile;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointUser;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.type.CassandraEndpointGroupState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,6 +87,8 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
     @Autowired
     private CassandraEPByAccessTokenDao cassandraEPByAccessTokenDao;
     @Autowired
+    private CassandraEPBySdkTokenDao cassandraEPBySdkTokenDao;
+    @Autowired
     private CassandraEPByEndpointGroupIdDao cassandraEPByEndpointGroupIdDao;
 
     private EndpointUserCassandraDao endpointUserDao;
@@ -119,6 +124,8 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
             statementList.add(cassandraEPByAccessTokenDao.getSaveQuery(new CassandraEPByAccessToken(accessToken, epKeyHash)));
         }
         statementList.add(getSaveQuery(profile));
+        Statement saveBySdkTokenId = cassandraEPBySdkTokenDao.getSaveQuery(new CassandraEPBySdkToken(profile.getSdkToken(), epKeyHash));
+        statementList.add(saveBySdkTokenId);
         Set<String> groupIdSet = getEndpointProfilesGroupIdSet(profile);
         for (String groupId : groupIdSet) {
             statementList.add(cassandraEPByEndpointGroupIdDao.getSaveQuery(
@@ -417,6 +424,42 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
 
     public void setEndpointUserDao(EndpointUserCassandraDao endpointUserDao) {
         this.endpointUserDao = endpointUserDao;
+    }
+
+    /**
+     * @deprecated This method needs additional testing and thus is not
+     *             recommended to use as of October, 2015.
+     */
+    @Override
+    public List<CassandraEndpointProfile> findBySdkToken(String sdkToken) {
+        LOG.debug("Trying to find endpoint profiles by SDK token {}", sdkToken);
+
+        Statement query = QueryBuilder
+                .select()
+                .from(CassandraModelConstants.EP_BY_SDK_TOKEN_COLUMN_FAMILY_NAME)
+                .where(QueryBuilder.eq(CassandraModelConstants.EP_BY_SDK_TOKEN_SDK_TOKEN_PROPERTY, sdkToken));
+
+        LOG.trace("Executing statement {}", query);
+
+        List<CassandraEndpointProfile> profiles = this.findListByStatement(query);
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Endpoint profiles found: [{}]", Arrays.toString(profiles.toArray()));
+        }
+
+        return profiles;
+    }
+
+    @Override
+    public boolean checkSdkToken(String sdkToken) {
+        LOG.debug("Checking for endpoint profiles with SDK token {}", sdkToken);
+
+        Statement query = QueryBuilder
+                .select()
+                .from(CassandraModelConstants.EP_BY_SDK_TOKEN_COLUMN_FAMILY_NAME)
+                .where(QueryBuilder.eq(CassandraModelConstants.EP_BY_SDK_TOKEN_SDK_TOKEN_PROPERTY, sdkToken));
+
+        return this.execute(query).one() != null;
     }
 
     private Set<String> getEndpointProfilesGroupIdSet(CassandraEndpointProfile profile) {

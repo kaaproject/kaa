@@ -51,6 +51,7 @@ public class EndpointProfileDto implements HasId, Serializable {
     private int logSchemaVersion;
     private List<EventClassFamilyVersionStateDto> ecfVersionStates;
     private String serverHash;
+    private String sdkToken;
 
     @Override
     public String getId() {
@@ -254,6 +255,14 @@ public class EndpointProfileDto implements HasId, Serializable {
         this.serverHash = serverHash;
     }
 
+    public String getSdkToken() {
+        return sdkToken;
+    }
+
+    public void setSdkToken(String sdkToken) {
+        this.sdkToken = sdkToken;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -322,6 +331,9 @@ public class EndpointProfileDto implements HasId, Serializable {
         if (subscriptions != null ? !subscriptions.equals(that.subscriptions) : that.subscriptions != null) {
             return false;
         }
+        if (sdkToken != null ? !sdkToken.equals(that.sdkToken) : that.sdkToken != null) {
+            return false;
+        }
 
         return true;
     }
@@ -347,6 +359,7 @@ public class EndpointProfileDto implements HasId, Serializable {
         result = 31 * result + notificationVersion;
         result = 31 * result + systemNfVersion;
         result = 31 * result + userNfVersion;
+        result = 31 * result + (sdkToken != null ? sdkToken.hashCode() : 0);
         return result;
     }
 
@@ -401,6 +414,8 @@ public class EndpointProfileDto implements HasId, Serializable {
         builder.append(ecfVersionStates);
         builder.append(", serverHash=");
         builder.append(serverHash);
+        builder.append(", sdkToken=");
+        builder.append(sdkToken);
         builder.append("]");
         return builder.toString();
     }

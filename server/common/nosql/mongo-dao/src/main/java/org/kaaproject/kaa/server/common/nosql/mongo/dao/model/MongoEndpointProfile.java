@@ -51,6 +51,7 @@ import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelC
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_NOTIFICATION_VERSION;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_PROFILE_HASH;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_PROFILE_VERSION;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SDK_TOKEN;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SERVER_HASH;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SYSTEM_NF_VERSION;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_USER_CONFIGURATION_HASH;
@@ -113,6 +114,9 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
     private List<EventClassFamilyVersionState> ecfVersionStates;
     @Field(EP_SERVER_HASH)
     private String serverHash;
+    @Indexed
+    @Field(EP_SDK_TOKEN)
+    private String sdkToken;
 
 
     public MongoEndpointProfile() {
@@ -144,6 +148,7 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         this.logSchemaVersion = dto.getLogSchemaVersion();
         this.ecfVersionStates = MongoDaoUtil.convertECFVersionDtoToModelList(dto.getEcfVersionStates());
         this.serverHash = dto.getServerHash();
+        this.sdkToken = dto.getSdkToken();
     }
 
     @Override
@@ -352,6 +357,14 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         this.serverHash = serverHash;
     }
 
+    public String getSdkToken() {
+        return sdkToken;
+    }
+
+    public void setSdkToken(String sdkToken) {
+        this.sdkToken = sdkToken;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -420,6 +433,9 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         if (subscriptions != null ? !subscriptions.equals(that.subscriptions) : that.subscriptions != null) {
             return false;
         }
+        if (sdkToken != null ? !sdkToken.equals(that.sdkToken) : that.sdkToken != null) {
+            return false;
+        }
 
         return true;
     }
@@ -445,6 +461,7 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         result = 31 * result + (ntHash != null ? Arrays.hashCode(ntHash) : 0);
         result = 31 * result + systemNfVersion;
         result = 31 * result + userNfVersion;
+        result = 31 * result + (sdkToken != null ? sdkToken.hashCode() : 0);
         return result;
     }
 
@@ -471,6 +488,7 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
                 ", ntHash=" + Arrays.toString(ntHash) +
                 ", systemNfVersion=" + systemNfVersion +
                 ", userNfVersion=" + userNfVersion +
+                ", sdkToken=" + sdkToken +
                 '}';
     }
 
@@ -502,6 +520,7 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         dto.setLogSchemaVersion(logSchemaVersion);
         dto.setEcfVersionStates(DaoUtil.<EventClassFamilyVersionStateDto>convertDtoList(ecfVersionStates));
         dto.setServerHash(serverHash);
+        dto.setSdkToken(sdkToken);
         return dto;
     }
 }

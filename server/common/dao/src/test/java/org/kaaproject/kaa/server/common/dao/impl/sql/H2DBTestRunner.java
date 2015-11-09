@@ -31,7 +31,7 @@ public class H2DBTestRunner extends DBTestRunner {
 
     @Override
     protected String getTrancateSql() {
-        return new StringBuilder("DELETE FROM ").append(FORMATER).toString();
+        return new StringBuilder("SET REFERENTIAL_INTEGRITY FALSE; TRUNCATE TABLE ").append(FORMATER).append("; SET REFERENTIAL_INTEGRITY TRUE;").toString();
     }
 
 //    @Override

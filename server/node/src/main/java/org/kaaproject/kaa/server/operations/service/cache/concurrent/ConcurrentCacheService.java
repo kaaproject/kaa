@@ -41,7 +41,7 @@ import org.kaaproject.kaa.common.dto.HistoryDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
-import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
+import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventAction;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventMapDto;
@@ -56,7 +56,7 @@ import org.kaaproject.kaa.server.common.dao.EndpointService;
 import org.kaaproject.kaa.server.common.dao.EventClassService;
 import org.kaaproject.kaa.server.common.dao.HistoryService;
 import org.kaaproject.kaa.server.common.dao.ProfileService;
-import org.kaaproject.kaa.server.common.dao.SdkKeyService;
+import org.kaaproject.kaa.server.common.dao.SdkProfileService;
 import org.kaaproject.kaa.server.common.dao.TopicService;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
 import org.kaaproject.kaa.server.operations.service.cache.AppSeqNumber;
@@ -122,7 +122,7 @@ public class ConcurrentCacheService implements CacheService {
     private ApplicationEventMapService applicationEventMapService;
 
     @Autowired
-    private SdkKeyService sdkKeyService;
+    private SdkProfileService sdkProfileService;
 
     /** The app seq number memorizer. */
     private final CacheTemporaryMemorizer<String, AppSeqNumber> appSeqNumberMemorizer = new CacheTemporaryMemorizer<>();
@@ -152,7 +152,7 @@ public class ConcurrentCacheService implements CacheService {
     private final CacheTemporaryMemorizer<AppVersionKey, ProfileSchemaDto> pfSchemaMemorizer = new CacheTemporaryMemorizer<>();
 
     /** The sdk properties memorized. */
-    private final CacheTemporaryMemorizer<String, SdkPropertiesDto> sdkPropsMemorizer = new CacheTemporaryMemorizer<>();
+    private final CacheTemporaryMemorizer<String, SdkProfileDto> sdkProfileMemorizer = new CacheTemporaryMemorizer<>();
 
     /** The endpoint key memorizer. */
     private final CacheTemporaryMemorizer<EndpointObjectHash, PublicKey> endpointKeyMemorizer = new CacheTemporaryMemorizer<>();
@@ -538,12 +538,12 @@ public class ConcurrentCacheService implements CacheService {
 
     @Override
     @Cacheable("sdkProperties")
-    public SdkPropertiesDto getSdkPropertiesBySdkToken(String key) {
-        return sdkPropsMemorizer.compute(key, new Computable<String, SdkPropertiesDto>() {
+    public SdkProfileDto getSdkProfileBySdkToken(String key) {
+        return sdkProfileMemorizer.compute(key, new Computable<String, SdkProfileDto>() {
             @Override
-            public SdkPropertiesDto compute(String key) {
+            public SdkProfileDto compute(String key) {
                 LOG.debug("Fetching result for getSdkPropertiesBySdkToken");
-                return sdkKeyService.findSdkKeyByToken(key);
+                return sdkProfileService.findSdkProfileByToken(key);
             }
         });
     }
@@ -684,8 +684,8 @@ public class ConcurrentCacheService implements CacheService {
             @Override
             public String compute(String key) {
                 LOG.debug("Fetching result for sdk token: {} to retrieve application token", key);
-                SdkPropertiesDto sdkPropertiesDto = sdkKeyService.findSdkKeyByToken(key);
-                String appToken = sdkPropertiesDto != null? sdkPropertiesDto.getApplicationToken() : null;
+                SdkProfileDto sdkProfileDto = sdkProfileService.findSdkProfileByToken(key);
+                String appToken = sdkProfileDto != null? sdkProfileDto.getApplicationToken() : null;
                 LOG.trace("Resolved application token: {}", appToken);
                 return appToken;
             }
@@ -890,8 +890,8 @@ public class ConcurrentCacheService implements CacheService {
     }
 
     @Override
-    public void setSdkKeyService(SdkKeyService sdkKeyService) {
-        this.sdkKeyService = sdkKeyService;
+    public void setSdkProfileService(SdkProfileService sdkProfileService) {
+        this.sdkProfileService = sdkProfileService;
     }
 
     /**

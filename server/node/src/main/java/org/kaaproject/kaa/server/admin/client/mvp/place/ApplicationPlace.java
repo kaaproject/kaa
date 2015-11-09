@@ -104,6 +104,7 @@ public class ApplicationPlace extends TreePlace {
         protected void loadData(LoadCallback callback,
                 HasData<TreePlace> display) {
             List<TreePlace> result = new ArrayList<TreePlace>();
+            result.add(new SdkProfilesPlace(applicationId));
             result.add(new SchemasPlace(applicationId));
             result.add(new TopicsPlace(applicationId));
             result.add(new EndpointGroupsPlace(applicationId));

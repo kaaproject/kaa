@@ -23,6 +23,7 @@ import java.util.List;
 import org.kaaproject.kaa.common.dto.ChangeConfigurationNotification;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
+import org.kaaproject.kaa.common.dto.HistoryDto;
 import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.common.dto.StructureRecordDto;
 
@@ -103,7 +104,7 @@ public interface ConfigurationService {
     /**
      * Activate configuration. Activate existing inactive configuration.
      * After that last active configuration will be deactivated.
-     * Also will be added information to history {@link HistoryService#saveHistory()}
+     * Also will be added information to history {@link HistoryService#saveHistory(HistoryDto)}}
      *
      * @param id the string id
      * @param activatedUsername the activated username
@@ -166,7 +167,7 @@ public interface ConfigurationService {
     ConfigurationSchemaDto findConfSchemaByAppIdAndVersion(String applicationId, int version);
 
     /**
-     * Save Configuration schema. Please see {@link ConfigurationService#saveConfSchema()}
+     * Save Configuration schema. Please see {@link ConfigurationService#saveConfSchema(ConfigurationSchemaDto, String)}
      *
      * @param configurationSchema the configuration schema
      * @param groupId group id for generated default configuration based on schema
