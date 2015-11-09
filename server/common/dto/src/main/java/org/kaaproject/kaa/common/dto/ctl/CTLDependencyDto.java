@@ -19,14 +19,13 @@ package org.kaaproject.kaa.common.dto.ctl;
 import java.io.Serializable;
 
 /**
- * Uniquely identifies a Common Type Library schema that other schemas may use
- * as a dependency for their own definitions.
- * 
+ * Uniquely identifies {@link org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto} so
+ * other Common Type Library schemas may use it as a dependency for their own
+ * definitions.
+ *
  * @author Andrew Shvayka
  * @author Bohdan Khablenko
- * 
- * @see org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto
- * 
+ *
  * @since v0.8.0
  */
 public class CTLDependencyDto implements Serializable {

@@ -58,6 +58,7 @@ import org.kaaproject.kaa.common.dto.UserDto;
 import org.kaaproject.kaa.common.dto.admin.RecordKey;
 import org.kaaproject.kaa.common.dto.admin.RecordKey.RecordFiles;
 import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
@@ -75,6 +76,7 @@ import org.kaaproject.kaa.server.common.core.schema.DataSchema;
 import org.kaaproject.kaa.server.common.core.schema.ProtocolSchema;
 import org.kaaproject.kaa.server.common.dao.ApplicationEventMapService;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
+import org.kaaproject.kaa.server.common.dao.CTLService;
 import org.kaaproject.kaa.server.common.dao.ConfigurationService;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
 import org.kaaproject.kaa.server.common.dao.EventClassService;
@@ -114,7 +116,6 @@ import org.slf4j.helpers.MessageFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
 import org.apache.commons.codec.binary.Base64;
 
 /**
@@ -125,7 +126,7 @@ public class DefaultControlService implements ControlService {
 
     /** The Constant DEFAULT_NEIGHBOR_CONNECTIONS_SIZE. */
     private static final int DEFAULT_NEIGHBOR_CONNECTIONS_SIZE = 10;
-    
+
     /** The Constant DEFAULT_USER_HASH_PARTITIONS_SIZE. */
     private static final int DEFAULT_USER_HASH_PARTITIONS_SIZE = 10;
 
@@ -134,7 +135,7 @@ public class DefaultControlService implements ControlService {
 
     /** The Constant SCHEMA_NAME_PATTERN. */
     private static final String SCHEMA_NAME_PATTERN = "kaa-record-schema-l{}.avsc";
-    
+
     /** The Constant DATA_NAME_PATTERN. */
     private static final String DATA_NAME_PATTERN = "kaa-{}-schema-v{}.avsc";
 
@@ -197,6 +198,9 @@ public class DefaultControlService implements ControlService {
     /** The sdk key service. */
     @Autowired
     private SdkKeyService sdkKeyService;
+
+    @Autowired
+    private CTLService ctlService;
 
     /** The neighbor connections size. */
     @Value("#{properties[max_number_neighbor_connections]}")
@@ -1503,8 +1507,83 @@ public class DefaultControlService implements ControlService {
      * @throws ControlServiceException the control service exception
      */
     private void checkSchema(AbstractSchemaDto schemaDto, RecordFiles file) throws NotFoundException {
-        if(schemaDto == null) {            
+        if(schemaDto == null) {
             throw new NotFoundException("Schema " + file + " not found!");
         }
+    }
+
+    @Override
+    public CTLSchemaDto saveCTLSchema(CTLSchemaDto schema) throws ControlServiceException {
+        return ctlService.saveCTLSchema(schema);
+    }
+
+    @Override
+    public void deleteCTLSchemaById(String schemaId) throws ControlServiceException {
+        ctlService.removeCTLSchemaById(schemaId);
+    }
+
+    @Override
+    public void deleteCTLSchemaByFqnAndVersion(String fqn, int version) throws ControlServiceException {
+        ctlService.removeCTLSchemaByFqnAndVersion(fqn, version);
+    }
+
+//    @Override
+//    public void deleteCTLSchemasByTenantId(String tenantId) throws ControlServiceException {
+//        ctlService.removeCTLSchemasByTenantId(tenantId);
+//    }
+
+//    @Override
+//    public void deleteCTLSchemasByApplicationId(String applicationId) throws ControlServiceException {
+//        ctlService.removeCTLSchemasByApplicationId(applicationId);
+//    }
+
+    @Override
+    public CTLSchemaDto getCTLSchemaById(String schemaId) throws ControlServiceException {
+        return ctlService.findCTLSchemaById(schemaId);
+    }
+
+    @Override
+    public CTLSchemaDto getCTLSchemaByFqnAndVersion(String fqn, int version) throws ControlServiceException {
+        return ctlService.findCTLSchemaByFqnAndVersion(fqn, version);
+    }
+
+    @Override
+    public List<CTLSchemaDto> getCTLSchemas() throws ControlServiceException {
+        return ctlService.findCTLSchemas();
+    }
+
+    @Override
+    public List<CTLSchemaDto> getCTLSchemasByFqn(String fqn) throws ControlServiceException {
+        return ctlService.findCTLSchemasByFqn(fqn);
+    }
+
+    @Override
+    public List<CTLSchemaDto> getCTLSchemasByTenantId(String tenantId) throws ControlServiceException {
+        return ctlService.findCTLSchemasByTenantId(tenantId);
+    }
+
+    @Override
+    public List<CTLSchemaDto> getCTLSchemasByApplicationId(String applicationId) throws ControlServiceException {
+        return ctlService.findCTLSchemasByApplicationId(applicationId);
+    }
+
+    @Override
+    public List<CTLSchemaDto> getSystemCTLSchemas() throws ControlServiceException {
+        return ctlService.findSystemCTLSchemas();
+    }
+
+    @Override
+    public FileData getShallowCTLSchema(String fqn, int version) {
+        return null;
+    }
+
+    @Override
+    public FileData getFlatCTLSchema(String fqn, int version) {
+        return null;
+    }
+
+    @Override
+    public FileData[] getDeepCTLSchema(String fqn, int version) {
+        return null;
     }
 }

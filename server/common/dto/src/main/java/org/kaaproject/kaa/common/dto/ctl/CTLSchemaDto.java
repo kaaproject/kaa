@@ -24,7 +24,7 @@ import org.kaaproject.kaa.common.dto.HasId;
 /**
  * @author Andrew Shvayka
  * @author Bohdan Khablenko
- * 
+ *
  * @since v0.8.0
  */
 public class CTLSchemaDto implements HasId, Serializable {
@@ -218,5 +218,9 @@ public class CTLSchemaDto implements HasId, Serializable {
         builder.append(dependencies);
         builder.append("]");
         return builder.toString();
+    }
+
+    public CTLDependencyDto asDependency() {
+        return new CTLDependencyDto(this.fqn, this.version);
     }
 }

@@ -539,18 +539,18 @@ public class KaaAdminController {
     /**
      * Deletes CTL schemas of a tenant.
      */
-    @RequestMapping(value = "deleteCTLSchemas", method = RequestMethod.POST)
-    public void deleteCTLSchemasByTenantId(@RequestParam(value = "tenantId") String tenantId) throws KaaAdminServiceException {
-        kaaAdminService.deleteCTLSchemasByTenantId(tenantId);
-    }
+//    @RequestMapping(value = "deleteCTLSchemas", method = RequestMethod.POST)
+//    public void deleteCTLSchemasByTenantId(@RequestParam(value = "tenantId") String tenantId) throws KaaAdminServiceException {
+//        kaaAdminService.deleteCTLSchemasByTenantId(tenantId);
+//    }
 
     /**
-     * Delets CTL schemas of an application.
+     * Deletes CTL schemas of an application.
      */
-    @RequestMapping(value = "deleteCTLSchemas", method = RequestMethod.POST)
-    public void deleteCTLSchemaByApplicationId(@RequestParam(value = "applicationId") String applicationId) throws KaaAdminServiceException {
-        kaaAdminService.deleteCTLSchemasByApplicationId(applicationId);
-    }
+//    @RequestMapping(value = "deleteCTLSchemas", method = RequestMethod.POST)
+//    public void deleteCTLSchemaByApplicationId(@RequestParam(value = "applicationId") String applicationId) throws KaaAdminServiceException {
+//        kaaAdminService.deleteCTLSchemasByApplicationId(applicationId);
+//    }
 
     /**
      * Gets a CTL schema by its identifier.
@@ -567,6 +567,14 @@ public class KaaAdminController {
     public CTLSchemaDto getCTLSchemaByFqnAndVersion(@RequestParam(value = "fqn") String fqn, @RequestParam(value = "version") int version)
             throws KaaAdminServiceException {
         return kaaAdminService.getCTLSchemaByFqnAndVersion(fqn, version);
+    }
+
+    /**
+     * Gets CTL schemas with the given fully qualified name.
+     */
+    @RequestMapping(value = "CTLSchemas", method = RequestMethod.POST)
+    public List<CTLSchemaDto> getCTLSchemasByFqn(@RequestParam(value = "fqn") String fqn) throws KaaAdminServiceException {
+        return kaaAdminService.getCTLSchemasByFqn(fqn);
     }
 
     /**
@@ -591,6 +599,10 @@ public class KaaAdminController {
     @RequestMapping(value = "CTLSchemas/system", method = RequestMethod.POST)
     public List<CTLSchemaDto> getSystemCTLSchemas() throws KaaAdminServiceException {
         return kaaAdminService.getSystemCTLSchemas();
+    }
+
+    @RequestMapping(value = "getCTLSchema/{type}")
+    public void getCTLSchema(@RequestParam(value = "fqn") String fqn, @RequestParam(value = "version") int version)  throws KaaAdminServiceException {
     }
 
     /**

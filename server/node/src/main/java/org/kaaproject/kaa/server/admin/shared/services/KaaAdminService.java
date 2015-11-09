@@ -329,13 +329,15 @@ public interface KaaAdminService extends RemoteService {
 
     public void deleteCTLSchemaByFqnAndVersion(String fqn, int version) throws KaaAdminServiceException;
 
-    public void deleteCTLSchemasByTenantId(String tenantId) throws KaaAdminServiceException;
+//    public void deleteCTLSchemasByTenantId(String tenantId) throws KaaAdminServiceException;
 
-    public void deleteCTLSchemasByApplicationId(String applicationId) throws KaaAdminServiceException;
+//    public void deleteCTLSchemasByApplicationId(String applicationId) throws KaaAdminServiceException;
 
     public CTLSchemaDto getCTLSchemaById(String schemaId) throws KaaAdminServiceException;
 
     public CTLSchemaDto getCTLSchemaByFqnAndVersion(String fqn, int version) throws KaaAdminServiceException;
+
+    public List<CTLSchemaDto> getCTLSchemasByFqn(String fqn) throws KaaAdminServiceException;
 
     public List<CTLSchemaDto> getCTLSchemasByTenantId(String tenantId) throws KaaAdminServiceException;
 
