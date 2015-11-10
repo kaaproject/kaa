@@ -637,7 +637,7 @@ kaa_error_t kaa_event_request_serialize(kaa_event_manager_t *self, size_t reques
     KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to serialize client event sync");
 
     /* write extension header */
-    uint32_t extension_options = 0;
+    uint16_t extension_options = 0;
     if (self->sequence_number_status != KAA_EVENT_SEQUENCE_NUMBER_SYNCHRONIZED) {
         extension_options |= KAA_EVENT_CLIENT_SYNC_EXTENSION_FLAG_SEQUENCE_NUMBER_SYNC;
         KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to sync event SQN");
@@ -825,7 +825,7 @@ static kaa_error_t kaa_event_read_listeners_response(kaa_event_manager_t *self, 
 
 kaa_error_t kaa_event_handle_server_sync(kaa_event_manager_t *self
                                        , kaa_platform_message_reader_t *reader
-                                       , uint32_t extension_options
+                                       , uint16_t extension_options
                                        , size_t extension_length
                                        , size_t request_id)
 {
