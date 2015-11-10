@@ -16,52 +16,72 @@
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:tx="http://www.springframework.org/schema/tx"
-       xmlns:aop="http://www.springframework.org/schema/aop"
-       xmlns:mongo="http://www.springframework.org/schema/data/mongo"
-       xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-            http://www.springframework.org/schema/beans/spring-beans.xsd
-            http://www.springframework.org/schema/context
-            http://www.springframework.org/schema/context/spring-context-4.0.xsd
-            http://www.springframework.org/schema/tx
-            http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
-            http://www.springframework.org/schema/aop
-            http://www.springframework.org/schema/aop/spring-aop.xsd
-            http://www.springframework.org/schema/data/mongo
-            http://www.springframework.org/schema/data/mongo/spring-mongo.xsd
-            http://www.springframework.org/schema/util
-            http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+            http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
 
     <!-- In order to implement support of custom SQL platform, one should declare following mandatory beans -->
-
-    <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
-        <property name="dataSource" ref="dataSource" />
-        <property name="packagesToScan" value="org.kaaproject.kaa.server.common.dao.model.sql" />
-        <property name="hibernateProperties">
-            <props>
-                <prop key="hibernate.hbm2ddl.auto">#{dao[hibernate_hbm2ddl_auto]}</prop>
-                <prop key="hibernate.dialect">#{dao[hibernate_dialect]}</prop>
-                <prop key="hibernate.format_sql">#{dao[hibernate_format_sql]}</prop>
-                <prop key="hibernate.show_sql">#{dao[hibernate_show_sql]}</prop>
-            </props>
-        </property>
-    </bean>
-
-    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
-        <property name="driverClassName" value="#{dao[jdbc_driver_className]}" />
-        <property name="url" value="jdbc:h2:mem:#{dao[jdbc_host]};DATABASE_TO_UPPER=true" />
-        <property name="username" value="#{dao[jdbc_username]}" />
-        <property name="password" value="#{dao[jdbc_password]}" />
-    </bean>
-
-    <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
-        <property name="sessionFactory" ref="sessionFactory" />
-    </bean>
 
     <!-- End of mandatory beans declaration -->
 
     <bean id="persistenceExceptionTranslationPostProcessor"
-        class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
+          class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor"/>
+
+    <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
+    <beans profile="postgres">
+
+        <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+            <property name="dataSource" ref="dataSource"/>
+            <property name="packagesToScan" value="org.kaaproject.kaa.server.common.dao.model.sql"/>
+            <property name="hibernateProperties">
+                <props>
+                    <prop key="hibernate.hbm2ddl.auto">#{dao[hibernate_hbm2ddl_auto]}</prop>
+                    <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQL82Dialect</prop>
+                    <prop key="hibernate.format_sql">#{dao[hibernate_format_sql]}</prop>
+                    <prop key="hibernate.show_sql">#{dao[hibernate_show_sql]}</prop>
+                </props>
+            </property>
+        </bean>
+
+        <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+            <property name="driverClassName" value="org.postgresql.Driver"/>
+            <property name="url" value="jdbc:postgresql://localhost:5432/kaa"/>
+            <property name="username" value="postgres"/>
+            <property name="password" value="admin"/>
+        </bean>
+    </beans>
+
+    <beans profile="h2">
+
+        <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+            <property name="dataSource" ref="dataSource"/>
+            <property name="packagesToScan" value="org.kaaproject.kaa.server.common.dao.model.sql"/>
+            <property name="hibernateProperties">
+                <props>
+                    <prop key="hibernate.hbm2ddl.auto">#{dao[hibernate_hbm2ddl_auto]}</prop>
+                    <prop key="hibernate.dialect">#{dao[hibernate_dialect]}</prop>
+                    <prop key="hibernate.format_sql">#{dao[hibernate_format_sql]}</prop>
+                    <prop key="hibernate.show_sql">#{dao[hibernate_show_sql]}</prop>
+                </props>
+            </property>
+        </bean>
+
+        <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+            <property name="driverClassName" value="#{dao[jdbc_driver_className]}"/>
+            <property name="url" value="jdbc:#{dao[jdbc_url_db_name]}:mem:kaa;DATABASE_TO_UPPER=true;MODE=PostgreSQL"/>
+            <property name="username" value="#{dao[jdbc_username]}"/>
+            <property name="password" value="#{dao[jdbc_password]}"/>
+        </bean>
+
+        <!-- provides a H2 console to look into the db if necessary -->
+        <!-- Connection instructions : go to http://localhost:11111 -->
+        <bean id="org.h2.tools.Server-WebServer" class="org.h2.tools.Server"
+              factory-method="createWebServer" depends-on="dataSource"
+              init-method="start" lazy-init="false" destroy-method="stop">
+            <constructor-arg value="-web,-webPort,11111"/>
+        </bean>
+    </beans>
+
 </beans>

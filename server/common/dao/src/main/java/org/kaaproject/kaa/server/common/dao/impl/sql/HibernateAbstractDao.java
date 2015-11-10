@@ -26,6 +26,7 @@ import org.kaaproject.kaa.server.common.dao.model.sql.GenericModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
 
 import java.util.ArrayList;
 import java.util.Arrays;
