@@ -546,9 +546,8 @@ public class BinaryEncDec implements PlatformEncDec {
                 throw new PlatformEncDecException(MessageFormat.format(
                         "Extension header is to small. Available {0}, current possition is {1}!", buf.remaining(), buf.position()));
             }
-            int extMetaData = buf.getInt();
-            byte type = (byte) ((extMetaData & 0xFF000000) >> 24);
-            int options = extMetaData & 0x00FFFFFF;
+            short type = buf.getShort();
+            int options = buf.getShort();
             int payloadLength = buf.getInt();
             if (buf.remaining() < payloadLength) {
                 throw new PlatformEncDecException(MessageFormat.format(
