@@ -1527,16 +1527,6 @@ public class DefaultControlService implements ControlService {
         ctlService.removeCTLSchemaByFqnAndVersion(fqn, version);
     }
 
-//    @Override
-//    public void deleteCTLSchemasByTenantId(String tenantId) throws ControlServiceException {
-//        ctlService.removeCTLSchemasByTenantId(tenantId);
-//    }
-
-//    @Override
-//    public void deleteCTLSchemasByApplicationId(String applicationId) throws ControlServiceException {
-//        ctlService.removeCTLSchemasByApplicationId(applicationId);
-//    }
-
     @Override
     public CTLSchemaDto getCTLSchemaById(String schemaId) throws ControlServiceException {
         return ctlService.findCTLSchemaById(schemaId);
@@ -1553,11 +1543,6 @@ public class DefaultControlService implements ControlService {
     }
 
     @Override
-    public List<CTLSchemaDto> getCTLSchemasByFqn(String fqn) throws ControlServiceException {
-        return ctlService.findCTLSchemasByFqn(fqn);
-    }
-
-    @Override
     public List<CTLSchemaDto> getCTLSchemasByTenantId(String tenantId) throws ControlServiceException {
         return ctlService.findCTLSchemasByTenantId(tenantId);
     }
@@ -1568,22 +1553,30 @@ public class DefaultControlService implements ControlService {
     }
 
     @Override
+    public List<CTLSchemaDto> getCTLSchemasByFqn(String fqn) throws ControlServiceException {
+        return ctlService.findCTLSchemasByFqn(fqn);
+    }
+
+    @Override
     public List<CTLSchemaDto> getSystemCTLSchemas() throws ControlServiceException {
         return ctlService.findSystemCTLSchemas();
     }
 
     @Override
-    public FileData getShallowCTLSchema(String fqn, int version) {
+    public FileData generateShallowCTLSchema(String fqn, int version) throws ControlServiceException {
+        // TODO: Implement in KAA-606
         return null;
     }
 
     @Override
-    public FileData getFlatCTLSchema(String fqn, int version) {
+    public FileData generateFlatCTLSchema(String fqn, int version) throws ControlServiceException {
+        // TODO: Implement in KAA-606
         return null;
     }
 
     @Override
-    public FileData[] getDeepCTLSchema(String fqn, int version) {
+    public List<FileData> generateDeepCTLSchema(String fqn, int version) throws ControlServiceException {
+        // TODO: Implement in KAA-606
         return null;
     }
 }

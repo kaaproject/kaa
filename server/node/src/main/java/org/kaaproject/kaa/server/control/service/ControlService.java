@@ -1040,24 +1040,6 @@ public interface ControlService {
     void deleteCTLSchemaByFqnAndVersion(String fqn, int version) throws ControlServiceException;
 
     /**
-     * Deletes CTL schemas of a tenant.
-     *
-     * @param tenantId A tenant identifier
-     *
-     * @throws ControlServiceException
-     */
-//    void deleteCTLSchemasByTenantId(String tenantId) throws ControlServiceException;
-
-    /**
-     * Deletes CTL schemas of an application.
-     *
-     * @param applicationId An application identifier
-     *
-     * @throws ControlServiceException
-     */
-//    void deleteCTLSchemasByApplicationId(String applicationId) throws ControlServiceException;
-
-    /**
      * Gets a CTL schema by its identifier.
      *
      * @param schemaId A CTL schema identifier
@@ -1081,6 +1063,7 @@ public interface ControlService {
      */
     CTLSchemaDto getCTLSchemaByFqnAndVersion(String fqn, int version) throws ControlServiceException;
 
+
     /**
      * Gets CTL schemas available in the database.
      *
@@ -1089,15 +1072,6 @@ public interface ControlService {
      * @throws ControlServiceException
      */
     List<CTLSchemaDto> getCTLSchemas() throws ControlServiceException;
-
-    /**
-     * Gets CTL schemas with the given fully qualified name.
-     *
-     * @param fqn A fully qualified CTL name
-     *
-     * @return CTL schemas with the given fully qualified name
-     */
-    List<CTLSchemaDto> getCTLSchemasByFqn(String fqn) throws ControlServiceException;
 
     /**
      * Gets CTL schemas of a tenant.
@@ -1122,6 +1096,15 @@ public interface ControlService {
     List<CTLSchemaDto> getCTLSchemasByApplicationId(String applicationId) throws ControlServiceException;
 
     /**
+     * Gets CTL schemas that share the given fully qualified name.
+     *
+     * @param fqn A fully qualified CTL schema name
+     *
+     * @return CTL schemas that share the given fully qualified name
+     */
+    List<CTLSchemaDto> getCTLSchemasByFqn(String fqn) throws ControlServiceException;
+
+    /**
      * Gets system CTL schemas.
      *
      * @return {@link org.kaaproject.kaa.common.dto.ctl.CTLSchemaScope#SYSTEM}
@@ -1132,32 +1115,32 @@ public interface ControlService {
     List<CTLSchemaDto> getSystemCTLSchemas() throws ControlServiceException;
 
     /**
-     * Gets a CTL schema as a JSON file.
+     * Generates a CTL schema as a JSON file.
      *
      * @param fqn A fully qualified CTL schema name
      * @param version A CTL schema version number
      *
      * @return A CTL schema as a JSON file
      */
-    FileData getShallowCTLSchema(String fqn, int version);
+    FileData generateShallowCTLSchema(String fqn, int version) throws ControlServiceException;
 
     /**
-     * Gets a CTL schema with all of its dependencies inline as a JSON file.
+     * Generates a CTL schema with all of its dependencies inline as a JSON file.
      *
      * @param fqn A fully qualified CTL schema name
      * @param version A CTL schema version number
      *
      * @return A CTL schema with all of its dependencies inline as a JSON file
      */
-    FileData getFlatCTLSchema(String fqn, int version);
+    FileData generateFlatCTLSchema(String fqn, int version) throws ControlServiceException;
 
     /**
-     * Gets a CTL schema and all of its dependencies as JSON files.
+     * Generates a CTL schema and all of its dependencies as JSON files.
      *
      * @param fqn A fully qualified CTL schema name
      * @param version A CTL schema version number
      *
      * @return A CTL schema and all of its dependencies as JSON files
      */
-    FileData[] getDeepCTLSchema(String fqn, int version);
+    List<FileData> generateDeepCTLSchema(String fqn, int version) throws ControlServiceException;
 }

@@ -31,7 +31,25 @@ import java.util.regex.Pattern;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpHost;
-import org.kaaproject.kaa.common.dto.*;
+import org.kaaproject.kaa.common.dto.ApplicationDto;
+import org.kaaproject.kaa.common.dto.ConfigurationDto;
+import org.kaaproject.kaa.common.dto.ConfigurationRecordDto;
+import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointGroupDto;
+import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
+import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
+import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
+import org.kaaproject.kaa.common.dto.NotificationDto;
+import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
+import org.kaaproject.kaa.common.dto.PageLinkDto;
+import org.kaaproject.kaa.common.dto.ProfileFilterDto;
+import org.kaaproject.kaa.common.dto.ProfileFilterRecordDto;
+import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.SchemaDto;
+import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.admin.AuthResultDto;
 import org.kaaproject.kaa.common.dto.admin.RecordKey;
 import org.kaaproject.kaa.common.dto.admin.ResultCode;
@@ -39,6 +57,7 @@ import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
 import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
@@ -364,7 +383,7 @@ public class AdminClient {
         ResponseEntity<List<NotificationSchemaDto>> entity = restTemplate.exchange(url + "notificationSchemas/"+applicationId, HttpMethod.GET, null, typeRef);
         return entity.getBody();
     }
-    
+
     public List<SchemaDto> getUserNotificationSchemas(String applicationId) throws Exception {
         ParameterizedTypeReference<List<SchemaDto>> typeRef = new ParameterizedTypeReference<List<SchemaDto>>() {};
         ResponseEntity<List<SchemaDto>> entity = restTemplate.exchange(url + "userNotificationSchemas/"+applicationId, HttpMethod.GET, null, typeRef);
@@ -786,4 +805,54 @@ public class AdminClient {
         };
         return bar;
     }
+
+    public CTLSchemaDto saveCTLSchema(CTLSchemaDto schema) {
+        return restTemplate.postForObject(url + "saveCTLSchema", schema, CTLSchemaDto.class);
+    }
+
+    public void deleteCTLSchemaById(String schemaId) {
+        MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
+        params.add("schemaId", schemaId);
+        restTemplate.postForLocation(url + "deleteCTLSchema", params);
+    }
+
+    public void deleteCTLSchemaByFqnAndVersion(String fqn, int version) {
+        MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
+        params.add("fqn", fqn);
+        params.add("version", version);
+        restTemplate.postForLocation(url + "deleteCTLSchema", params);
+    }
+
+    public CTLSchemaDto getCTLSchemaById(String schemaId) {
+        return restTemplate.getForObject(url + "CTLSchema/" + schemaId, CTLSchemaDto.class);
+    }
+
+    public CTLSchemaDto getCTLSchemaByFqnAndVersion(String fqn, int version) {
+        return restTemplate.getForObject(url + "CTLSchema?fqn={fqn}&version={version}", CTLSchemaDto.class, fqn, version);
+    }
+
+    public List<CTLSchemaDto> getCTLSchemasByTenantId(String tenantId) {
+        ParameterizedTypeReference<List<CTLSchemaDto>> typeRef = new ParameterizedTypeReference<List<CTLSchemaDto>>() {};
+        ResponseEntity<List<CTLSchemaDto>> entity = restTemplate.exchange(url + "CTLSchemas?tenantId=" + tenantId, HttpMethod.GET, null, typeRef);
+        return entity.getBody();
+    }
+
+    public List<CTLSchemaDto> getCTLSchemasByApplicationId(String applicationId) {
+        ParameterizedTypeReference<List<CTLSchemaDto>> typeRef = new ParameterizedTypeReference<List<CTLSchemaDto>>() {};
+        ResponseEntity<List<CTLSchemaDto>> entity = restTemplate.exchange(url + "CTLSchemas?applicationId=" + applicationId, HttpMethod.GET, null, typeRef);
+        return entity.getBody();
+    }
+
+    public List<CTLSchemaDto> getCTLSchemasByFqn(String fqn) {
+        ParameterizedTypeReference<List<CTLSchemaDto>> typeRef = new ParameterizedTypeReference<List<CTLSchemaDto>>() {};
+        ResponseEntity<List<CTLSchemaDto>> entity = restTemplate.exchange(url + "CTLSchemas?fqn=" + fqn, HttpMethod.GET, null, typeRef);
+        return entity.getBody();
+    }
+
+    public List<CTLSchemaDto> getSystemCTLSchemas() {
+        ParameterizedTypeReference<List<CTLSchemaDto>> typeRef = new ParameterizedTypeReference<List<CTLSchemaDto>>() {};
+        ResponseEntity<List<CTLSchemaDto>> entity = restTemplate.exchange(url + "CTLSchemas/system", HttpMethod.GET, null, typeRef);
+        return entity.getBody();
+    }
+
 }

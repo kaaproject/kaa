@@ -56,22 +56,6 @@ public interface CTLService {
     void removeCTLSchemaByFqnAndVersion(String fqn, int version);
 
     /**
-     * Removes CTL schemas that belong to a tenant with the given identifier
-     * from the database.
-     *
-     * @param tenantId A tenant identifier
-     */
-//    void removeCTLSchemasByTenantId(String tenantId);
-
-    /**
-     * Removes CTL schemas of an application with the given identifier from the
-     * database.
-     *
-     * @param applicationId An application identifier
-     */
-//    void removeCTLSchemasByApplicationId(String applicationId);
-
-    /**
      * Returns a CTL schema with the given identifier.
      *
      * @param id A CTL schema identifier
@@ -93,20 +77,20 @@ public interface CTLService {
     CTLSchemaDto findCTLSchemaByFqnAndVersion(String fqn, int version);
 
     /**
+     * Returns a CTL schema with the given fully qualified name and the highest
+     * version number among other schemas that share the same name.
+     *
+     * @param fqn A fully qualified CTL schema name
+     * @return The latest CTL schema with the given fully qualified name
+     */
+    CTLSchemaDto findLatestCTLSchemaByFqn(String fqn);
+
+    /**
      * Returns CTL schemas available in the database.
      *
      * @return CTL schemas available in the database
      */
     List<CTLSchemaDto> findCTLSchemas();
-
-    /**
-     * Returns CTL schemas that share the given fully qualified name.
-     *
-     * @param fqn A fully qualified CTL schema name
-     *
-     * @return CTL schemas that share the given fully qualified name
-     */
-    List<CTLSchemaDto> findCTLSchemasByFqn(String fqn);
 
     /**
      * Returns CTL schemas of a tenant with the given identifier.
@@ -127,13 +111,13 @@ public interface CTLService {
     List<CTLSchemaDto> findCTLSchemasByApplicationId(String applicationId);
 
     /**
-     * Returns a CTL schema with the given fully qualified name and the highest
-     * version number among other schemas that share the same name.
+     * Returns CTL schemas that share the given fully qualified name.
      *
      * @param fqn A fully qualified CTL schema name
-     * @return The latest CTL schema with the given fully qualified name
+     *
+     * @return CTL schemas that share the given fully qualified name
      */
-    CTLSchemaDto findLatestCTLSchemaByFqn(String fqn);
+    List<CTLSchemaDto> findCTLSchemasByFqn(String fqn);
 
     /**
      * Returns {@link org.kaaproject.kaa.common.dto.ctl.CTLSchemaScope#SYSTEM}

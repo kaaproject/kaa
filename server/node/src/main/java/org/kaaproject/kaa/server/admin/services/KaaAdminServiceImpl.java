@@ -2479,15 +2479,18 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     private void checkCTLSchemaId(String schemaId) throws KaaAdminServiceException {
-        if (isEmpty(schemaId)) {
+        if (schemaId == null || schemaId.isEmpty()) {
             throw new IllegalArgumentException("The CTL schema ID is empty!");
         }
     }
 
-    private void checkCTLSchemaFqnAndVersion(String fqn, int version) throws KaaAdminServiceException {
-        if (isEmpty(fqn)) {
+    private void checkCTLSchemaFqn(String fqn) throws KaaAdminServiceException {
+        if (fqn == null || fqn.isEmpty()) {
             throw new IllegalArgumentException("The fully qualified name is empty!");
         }
+    }
+
+    private void checkCTLSchemaVersion(int version) throws KaaAdminServiceException {
         if (version <= 0) {
             throw new IllegalArgumentException("The version number is not positive!");
         }
@@ -2497,25 +2500,19 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     public CTLSchemaDto saveCTLSchema(CTLSchemaDto schema) throws KaaAdminServiceException {
         this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            this.checkCTLSchemaFqnAndVersion(schema.getFqn(), schema.getVersion());
             this.checkApplicationId(schema.getApplicationId());
             this.checkTenantId(schema.getTenantId());
 
-            for (CTLSchemaDto other : controlService.getCTLSchemas()) {
-                if (schema.getFqn().equals(other.getFqn()) && schema.getVersion() == other.getVersion()) {
-                    String message;
-
-                    if (schema.equals(other)) {
-                        message = "A CTL schema cannot depend on itself!";
-                    } else {
-                        message = "A CTL schema with the FQN and version number specified already exists!";
-                    }
-
-                    throw new IllegalArgumentException(message);
-                }
+            for (CTLDependencyDto dependency : schema.getDependencies()) {
+                CTLSchemaDto found = controlService.getCTLSchemaByFqnAndVersion(dependency.getFqn(), dependency.getVersion());
+                Utils.checkNotNull(found);
             }
 
-            // TODO: Determine whether the dependency graph is a tree
+            try {
+                new Schema.Parser().parse(schema.getBody());
+            } catch (SchemaParseException cause) {
+                throw new IllegalArgumentException("The CTL schema body is not a valid JSON string!");
+            }
 
             return controlService.saveCTLSchema(schema);
         } catch (Exception cause) {
@@ -2531,23 +2528,27 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             CTLSchemaDto schemaDto = controlService.getCTLSchemaById(schemaId);
             Utils.checkNotNull(schemaDto);
 
-            // Do we really need these checks?
             this.checkApplicationId(schemaDto.getApplicationId());
             this.checkTenantId(schemaDto.getTenantId());
 
             List<CTLSchemaDto> dependents = new ArrayList<>();
             CTLDependencyDto dependency = schemaDto.asDependency();
 
-            for (CTLSchemaDto other : controlService.getCTLSchemas()) {
-                if (other.getDependencies().contains(dependency)) {
-                    dependents.add(other);
+            for (CTLSchemaDto schema : controlService.getCTLSchemas()) {
+                if (schema.getDependencies().contains(dependency)) {
+                    dependents.add(schema);
                 }
             }
 
             if (!dependents.isEmpty()) {
-                StringBuilder message = new StringBuilder("Unable to delete the CTL schema specified! Dependents founds: ");
-                for (CTLSchemaDto dependent : dependents) {
-                    message.append(dependent.asDependency().toString());
+                StringBuilder message = new StringBuilder("Unable to delete the CTL schema specified! Dependents found: ");
+                for (int i = 0; i < dependents.size(); i++) {
+                    CTLSchemaDto dependent = dependents.get(i);
+                    message.append("\"").append(dependent.getFqn()).append("\"");
+                    message.append(" ").append("(v").append(dependent.getVersion()).append(")");
+                    if (i != dependents.size() - 1) {
+                        message.append(", ");
+                    }
                 }
                 throw new IllegalArgumentException(message.toString());
             }
@@ -2560,60 +2561,10 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
 
     @Override
     public void deleteCTLSchemaByFqnAndVersion(String fqn, int version) throws KaaAdminServiceException {
-        this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
-        try {
-            this.checkCTLSchemaFqnAndVersion(fqn, version);
-            CTLSchemaDto schemaDto = controlService.getCTLSchemaByFqnAndVersion(fqn, version);
-            Utils.checkNotNull(schemaDto);
-
-            // Do we really need these checks?
-            this.checkApplicationId(schemaDto.getApplicationId());
-            this.checkTenantId(schemaDto.getTenantId());
-
-            List<CTLSchemaDto> dependents = new ArrayList<>();
-            CTLDependencyDto dependency = schemaDto.asDependency();
-
-            for (CTLSchemaDto other : controlService.getCTLSchemas()) {
-                if (other.getDependencies().contains(dependency)) {
-                    dependents.add(other);
-                }
-            }
-
-            if (!dependents.isEmpty()) {
-                StringBuilder message = new StringBuilder("Unable to delete the CTL schema specified! Dependents founds: ");
-                for (CTLSchemaDto dependent : dependents) {
-                    message.append(dependent.asDependency().toString());
-                }
-                throw new IllegalArgumentException(message.toString());
-            }
-
-            controlService.deleteCTLSchemaByFqnAndVersion(fqn, version);
-        } catch (Exception cause) {
-            throw Utils.handleException(cause);
-        }
+        CTLSchemaDto schemaDto = this.getCTLSchemaByFqnAndVersion(fqn, version);
+        Utils.checkNotNull(schemaDto);
+        this.deleteCTLSchemaById(schemaDto.getId());
     }
-
-//    @Override
-//    public void deleteCTLSchemasByTenantId(String tenantId) throws KaaAdminServiceException {
-//        this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
-//        try {
-//            this.checkTenantId(tenantId);
-//            controlService.deleteCTLSchemasByTenantId(tenantId);
-//        } catch (Exception cause) {
-//            throw Utils.handleException(cause);
-//        }
-//    }
-
-//    @Override
-//    public void deleteCTLSchemasByApplicationId(String applicationId) throws KaaAdminServiceException {
-//        this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
-//        try {
-//            this.checkApplicationId(applicationId);
-//            controlService.deleteCTLSchemasByApplicationId(applicationId);
-//        } catch (Exception cause) {
-//            throw Utils.handleException(cause);
-//        }
-//    }
 
     @Override
     public CTLSchemaDto getCTLSchemaById(String schemaId) throws KaaAdminServiceException {
@@ -2630,21 +2581,9 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     public CTLSchemaDto getCTLSchemaByFqnAndVersion(String fqn, int version) throws KaaAdminServiceException {
         this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            this.checkCTLSchemaFqnAndVersion(fqn, version);
+            this.checkCTLSchemaFqn(fqn);
+            this.checkCTLSchemaVersion(version);
             return controlService.getCTLSchemaByFqnAndVersion(fqn, version);
-        } catch (Exception cause) {
-            throw Utils.handleException(cause);
-        }
-    }
-
-    @Override
-    public List<CTLSchemaDto> getCTLSchemasByFqn(String fqn) throws KaaAdminServiceException {
-        this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
-        try {
-            if (isEmpty(fqn)) {
-                throw new IllegalArgumentException("The fully qualified name is empty!");
-            }
-            return controlService.getCTLSchemasByFqn(fqn);
         } catch (Exception cause) {
             throw Utils.handleException(cause);
         }
@@ -2673,10 +2612,60 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
+    public List<CTLSchemaDto> getCTLSchemasByFqn(String fqn) throws KaaAdminServiceException {
+        this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            this.checkCTLSchemaFqn(fqn);
+            return controlService.getCTLSchemasByFqn(fqn);
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
+
+    @Override
     public List<CTLSchemaDto> getSystemCTLSchemas() throws KaaAdminServiceException {
         this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
             return controlService.getSystemCTLSchemas();
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
+
+    @Override
+    public FileData getShallowCTLSchema(String fqn, int version) throws KaaAdminServiceException {
+        this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            CTLSchemaDto schema = this.getCTLSchemaByFqnAndVersion(fqn, version);
+            this.checkApplicationId(schema.getApplicationId());
+            this.checkTenantId(schema.getTenantId());
+            return controlService.generateShallowCTLSchema(fqn, version);
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
+
+    @Override
+    public FileData getFlatCTLSchema(String fqn, int version) throws KaaAdminServiceException {
+        this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            CTLSchemaDto schema = this.getCTLSchemaByFqnAndVersion(fqn, version);
+            this.checkApplicationId(schema.getApplicationId());
+            this.checkTenantId(schema.getTenantId());
+            return controlService.generateFlatCTLSchema(fqn, version);
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
+
+    @Override
+    public List<FileData> getDeepCTLSchema(String fqn, int version) throws KaaAdminServiceException {
+        this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            CTLSchemaDto schema = this.getCTLSchemaByFqnAndVersion(fqn, version);
+            this.checkApplicationId(schema.getApplicationId());
+            this.checkTenantId(schema.getTenantId());
+            return controlService.generateDeepCTLSchema(fqn, version);
         } catch (Exception cause) {
             throw Utils.handleException(cause);
         }
