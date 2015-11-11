@@ -1179,19 +1179,15 @@ public abstract class AbstractTestControlServer {
         return savedApplicationEventFamilyMap;
     }
 
-    protected CTLSchemaDto createCTLSchema() throws Exception {
-        return this.createCTLSchema(CTLSchemaScope.APPLICATION);
-    }
-
-    protected CTLSchemaDto createCTLSchema(CTLSchemaScope scope) throws Exception {
+    protected CTLSchemaDto createCTLSchema(String fqn, Integer version, CTLSchemaScope scope) throws Exception {
         ApplicationDto application = this.createApplication();
 
         CTLSchemaDto schema = new CTLSchemaDto();
         schema.setApplicationId(application.getId());
         schema.setTenantId(application.getTenantId());
-        schema.setFqn(AbstractTestControlServer.generateString("CTL_SCHEMA"));
-        schema.setVersion(1);
-        schema.setScope(scope);
+        schema.setFqn(fqn == null ? AbstractTestControlServer.generateString("CTL_SCHEMA") : fqn);
+        schema.setVersion(version == null ? 1 : version.intValue());
+        schema.setScope(scope == null ? CTLSchemaScope.APPLICATION : scope);
         schema.setDependencies(new ArrayList<CTLDependencyDto>());
         schema.setBody(new String());
         return client.saveCTLSchema(schema);

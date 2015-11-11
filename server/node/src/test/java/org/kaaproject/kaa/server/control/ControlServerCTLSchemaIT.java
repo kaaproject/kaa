@@ -30,16 +30,36 @@ import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScope;
  */
 public class ControlServerCTLSchemaIT extends AbstractTestControlServer {
 
+    private final String FQN = this.getClass().getName();
+    private final Integer VERSION = 42;
+
+    private final String UNKNOWN_ID = "schemaId";
+    private final String UNKNOWN_FQN = "schemaFqn";
+
+    private final String UNKNOWN_TENANT_ID = "tenantId";
+    private final String UNKNOWN_APPLICATION_ID = "applicationId";
+
     @Test
-    public void saveCTLSchemaTest() throws Exception {
-        CTLSchemaDto schema = this.createCTLSchema();
+    public void saveCTLSchemaPositiveTest() throws Exception {
+        CTLSchemaDto schema = this.createCTLSchema(null, null, null);
         Assert.assertNotNull(schema.getId());
     }
 
+    /*
+     * A CTL schema update is forbidden. Throw an exception if a CTL schema
+     * already exists in the database.
+     */
+    @Test(expected = Exception.class)
+    public void saveCTLSchemaNegativeTest() throws Exception {
+        this.createCTLSchema(FQN, VERSION, null);
+        this.createCTLSchema(FQN, VERSION, null);
+    }
+
     @Test
-    public void deleteCTLSchemaByIdTest() throws Exception {
-        final CTLSchemaDto schema = this.createCTLSchema();
+    public void deleteCTLSchemaByIdPositiveTest() throws Exception {
+        final CTLSchemaDto schema = this.createCTLSchema(null, null, null);
         client.deleteCTLSchemaById(schema.getId());
+
         this.checkNotFound(new TestRestCall() {
             @Override
             public void executeRestCall() throws Exception {
@@ -49,34 +69,75 @@ public class ControlServerCTLSchemaIT extends AbstractTestControlServer {
     }
 
     @Test
-    public void deleteCTLSchemaByFqnAndVesionTest() throws Exception {
-        final CTLSchemaDto schema = this.createCTLSchema();
-        client.deleteCTLSchemaByFqnAndVersion(schema.getFqn(), schema.getVersion());
+    public void deleteCTLSchemaByIdNegativeTest() throws Exception {
         this.checkNotFound(new TestRestCall() {
             @Override
             public void executeRestCall() throws Exception {
-                client.getCTLSchemaByFqnAndVersion(schema.getFqn(), schema.getVersion());
+                client.deleteCTLSchemaById(UNKNOWN_ID);
             }
         });
     }
 
     @Test
-    public void getCTLSchemaByIdTest() throws Exception {
-        CTLSchemaDto saved = this.createCTLSchema();
+    public void deleteCTLSchemaByFqnAndVersionPositiveTest() throws Exception {
+        final CTLSchemaDto schema = this.createCTLSchema(FQN, VERSION, null);
+        client.deleteCTLSchemaByFqnAndVersion(FQN, VERSION);
+
+        this.checkNotFound(new TestRestCall() {
+            @Override
+            public void executeRestCall() throws Exception {
+                client.getCTLSchemaById(schema.getId());
+            }
+        });
+    }
+
+    @Test
+    public void deleteCTLSchemaByFqnAndVersionNegativeTest() throws Exception {
+        this.checkNotFound(new TestRestCall() {
+            @Override
+            public void executeRestCall() throws Exception {
+                client.deleteCTLSchemaByFqnAndVersion(UNKNOWN_FQN, VERSION);
+            }
+        });
+    }
+
+    @Test
+    public void getCTLSchemaByIdPositiveTest() throws Exception {
+        CTLSchemaDto saved = this.createCTLSchema(null, null, CTLSchemaScope.APPLICATION);
         CTLSchemaDto loaded = client.getCTLSchemaById(saved.getId());
         Assert.assertEquals(saved, loaded);
     }
 
     @Test
-    public void getCTLSchemaByFqnAndVersionTest() throws Exception {
-        CTLSchemaDto saved = this.createCTLSchema();
+    public void getCTLSchemaByIdNegativeTest() throws Exception {
+        this.checkNotFound(new TestRestCall() {
+            @Override
+            public void executeRestCall() throws Exception {
+                client.getCTLSchemaById(UNKNOWN_ID);
+            }
+        });
+    }
+
+    @Test
+    public void getCTLSchemaByFqnAndVersionPositiveTest() throws Exception {
+        CTLSchemaDto saved = this.createCTLSchema(null, null, null);
         CTLSchemaDto loaded = client.getCTLSchemaByFqnAndVersion(saved.getFqn(), saved.getVersion());
         Assert.assertEquals(saved, loaded);
     }
 
     @Test
-    public void getCTLSchemasByTenantIdTest() throws Exception {
-        CTLSchemaDto saved = this.createCTLSchema();
+    public void getCTLSchemaByFqnAndVersionNegativeTest() throws Exception {
+        this.checkNotFound(new TestRestCall() {
+            @Override
+            public void executeRestCall() throws Exception {
+                client.getCTLSchemaByFqnAndVersion(UNKNOWN_ID, VERSION);
+            }
+        });
+    }
+
+    @Test
+    public void getCTLSchemasByTenantIdPositiveTest() throws Exception {
+        CTLSchemaDto saved = this.createCTLSchema(null, null, null);
         List<CTLSchemaDto> loaded = client.getCTLSchemasByTenantId(saved.getTenantId());
         Assert.assertNotNull(loaded);
         Assert.assertEquals(1, loaded.size());
@@ -84,8 +145,18 @@ public class ControlServerCTLSchemaIT extends AbstractTestControlServer {
     }
 
     @Test
-    public void getCTLSchemasByApplicationIdTest() throws Exception {
-        CTLSchemaDto saved = this.createCTLSchema();
+    public void getCTLSchemasByTenantIdPositiveNegativeTest() throws Exception {
+        this.checkNotFound(new TestRestCall() {
+            @Override
+            public void executeRestCall() throws Exception {
+                client.getCTLSchemasByTenantId(UNKNOWN_TENANT_ID);
+            }
+        });
+    }
+
+    @Test
+    public void getCTLSchemasByApplicationIdPositiveTest() throws Exception {
+        CTLSchemaDto saved = this.createCTLSchema(null, null, null);
         List<CTLSchemaDto> loaded = client.getCTLSchemasByApplicationId(saved.getApplicationId());
         Assert.assertNotNull(loaded);
         Assert.assertEquals(1, loaded.size());
@@ -93,8 +164,18 @@ public class ControlServerCTLSchemaIT extends AbstractTestControlServer {
     }
 
     @Test
-    public void getCTLSchemasByFqnTest() throws Exception {
-        CTLSchemaDto saved = this.createCTLSchema();
+    public void getCTLSchemasByApplicationIdPositiveNegativeTest() throws Exception {
+        this.checkNotFound(new TestRestCall() {
+            @Override
+            public void executeRestCall() throws Exception {
+                client.getCTLSchemasByApplicationId(UNKNOWN_APPLICATION_ID);
+            }
+        });
+    }
+
+    @Test
+    public void getCTLSchemasByFqnPositiveTest() throws Exception {
+        CTLSchemaDto saved = this.createCTLSchema(null, null, null);
         List<CTLSchemaDto> loaded = client.getCTLSchemasByFqn(saved.getFqn());
         Assert.assertNotNull(loaded);
         Assert.assertEquals(1, loaded.size());
@@ -102,12 +183,21 @@ public class ControlServerCTLSchemaIT extends AbstractTestControlServer {
     }
 
     @Test
+    public void getCTLSchemasByFqnNegativeTest() throws Exception {
+        this.checkNotFound(new TestRestCall() {
+            @Override
+            public void executeRestCall() throws Exception {
+                client.getCTLSchemasByFqn(UNKNOWN_FQN);
+            }
+        });
+    }
+
+    @Test
     public void getSystemCTLSchemas() throws Exception {
-        CTLSchemaDto saved = this.createCTLSchema(CTLSchemaScope.SYSTEM);
+        CTLSchemaDto saved = this.createCTLSchema(null, null, CTLSchemaScope.SYSTEM);
         List<CTLSchemaDto> loaded = client.getSystemCTLSchemas();
         Assert.assertNotNull(loaded);
         Assert.assertEquals(1, loaded.size());
         Assert.assertEquals(saved, loaded.get(0));
-
     }
 }
