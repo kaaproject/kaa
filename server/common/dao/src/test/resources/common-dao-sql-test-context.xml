@@ -47,7 +47,7 @@
 
         <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
             <property name="driverClassName" value="org.postgresql.Driver"/>
-            <property name="url" value="jdbc:postgresql://localhost:5432/kaa"/>
+            <property name="url" value="jdbc:postgresql://127.0.0.1:5432/kaa"/>
             <property name="username" value="postgres"/>
             <property name="password" value="admin"/>
         </bean>

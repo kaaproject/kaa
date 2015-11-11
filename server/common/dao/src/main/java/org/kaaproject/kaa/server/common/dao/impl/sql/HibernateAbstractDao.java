@@ -16,6 +16,7 @@
 package org.kaaproject.kaa.server.common.dao.impl.sql;
 
 import org.hibernate.Criteria;
+import org.hibernate.LockMode;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -123,6 +124,15 @@ public abstract class HibernateAbstractDao<T extends GenericModel<?>> implements
         String className = getSimpleClassName();
         LOG.trace("Searching {} entity by criterion [{}] ", className, criterion);
         Criteria criteria = getCriteria();
+        criteria.add(criterion);
+        return (T) criteria.uniqueResult();
+    }
+
+    protected T findOneByCriterionWithLock(Criterion criterion, LockMode lockMode) {
+        String className = getSimpleClassName();
+        LOG.trace("Searching {} entity by criterion [{}] ", className, criterion);
+        Criteria criteria = getCriteria();
+        criteria.setLockMode(lockMode);
         criteria.add(criterion);
         return (T) criteria.uniqueResult();
     }
