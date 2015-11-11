@@ -41,4 +41,44 @@ public class PluginInstanceDto implements HasId, Serializable {
         this.id = id;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public PluginInstanceState getState() {
+        return state;
+    }
+
+    public void setState(PluginInstanceState state) {
+        this.state = state;
+    }
+
+    public byte[] getConfigurationData() {
+        return configurationData;
+    }
+
+    public void setConfigurationData(byte[] configurationData) {
+        this.configurationData = configurationData;
+    }
+
+    public PluginDto getPluginDefinition() {
+        return pluginDefinition;
+    }
+
+    public void setPluginDefinition(PluginDto pluginDefinition) {
+        this.pluginDefinition = pluginDefinition;
+    }
+
+    public Set<PluginContractInstanceDto> getContracts() {
+        return contracts;
+    }
+
+    public void setContracts(Set<PluginContractInstanceDto> contracts) {
+        this.contracts = contracts;
+    }
+
 }

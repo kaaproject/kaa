@@ -16,6 +16,7 @@
 package org.kaaproject.kaa.common.dto.plugin;
 
 import java.io.Serializable;
+import java.util.Set;
 
 import org.kaaproject.kaa.common.dto.HasId;
 
@@ -25,7 +26,7 @@ public class PluginContractInstanceDto implements HasId, Serializable {
 
     private String id;
     private PluginContractDto contract;
-    
+    private Set<PluginContractInstanceItemDto> items;
 
     public String getId() {
         return id;
@@ -41,6 +42,14 @@ public class PluginContractInstanceDto implements HasId, Serializable {
 
     public void setContract(PluginContractDto contract) {
         this.contract = contract;
+    }
+
+    public Set<PluginContractInstanceItemDto> getItems() {
+        return items;
+    }
+
+    public void setItems(Set<PluginContractInstanceItemDto> items) {
+        this.items = items;
     }
 
 }

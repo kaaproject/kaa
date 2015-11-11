@@ -22,7 +22,7 @@ import org.kaaproject.kaa.common.dto.HasId;
 public class ContractDto implements HasId, Serializable {
 
     private static final long serialVersionUID = -3635444368421499582L;
-    
+
     private String id;
     private String name;
     private Integer version;

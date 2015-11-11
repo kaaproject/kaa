@@ -22,9 +22,16 @@ import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 
 public class PluginContractInstanceItemDto implements HasId, Serializable {
 
+    private static final long serialVersionUID = -6023668365684883106L;
+
     private String id;
     private String parentId;
+    private String pluginInstanceId;
+    private String pluginContractInstanceId;
+    private String confSchema;
     private byte[] confData;
+    private PluginContractMessageDto inMessage;
+    private PluginContractMessageDto outMessage;
     private CTLSchemaDto inMessageSchema;
     private CTLSchemaDto outMessageSchema;
 
@@ -36,6 +43,78 @@ public class PluginContractInstanceItemDto implements HasId, Serializable {
     @Override
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getConfSchema() {
+        return confSchema;
+    }
+
+    public void setConfSchema(String confSchema) {
+        this.confSchema = confSchema;
+    }
+
+    public String getPluginInstanceId() {
+        return pluginInstanceId;
+    }
+
+    public void setPluginInstanceId(String pluginInstanceId) {
+        this.pluginInstanceId = pluginInstanceId;
+    }
+
+    public String getPluginContractInstanceId() {
+        return pluginContractInstanceId;
+    }
+
+    public void setPluginContractInstanceId(String pluginContractInstanceId) {
+        this.pluginContractInstanceId = pluginContractInstanceId;
+    }
+
+    public String getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(String parentId) {
+        this.parentId = parentId;
+    }
+
+    public byte[] getConfData() {
+        return confData;
+    }
+
+    public void setConfData(byte[] confData) {
+        this.confData = confData;
+    }
+
+    public PluginContractMessageDto getInMessage() {
+        return inMessage;
+    }
+
+    public void setInMessage(PluginContractMessageDto inMessage) {
+        this.inMessage = inMessage;
+    }
+
+    public PluginContractMessageDto getOutMessage() {
+        return outMessage;
+    }
+
+    public void setOutMessage(PluginContractMessageDto outMessage) {
+        this.outMessage = outMessage;
+    }
+
+    public CTLSchemaDto getInMessageSchema() {
+        return inMessageSchema;
+    }
+
+    public void setInMessageSchema(CTLSchemaDto inMessageSchema) {
+        this.inMessageSchema = inMessageSchema;
+    }
+
+    public CTLSchemaDto getOutMessageSchema() {
+        return outMessageSchema;
+    }
+
+    public void setOutMessageSchema(CTLSchemaDto outMessageSchema) {
+        this.outMessageSchema = outMessageSchema;
     }
 
 }
