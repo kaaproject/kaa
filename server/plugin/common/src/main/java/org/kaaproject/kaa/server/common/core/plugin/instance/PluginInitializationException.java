@@ -15,14 +15,15 @@
  */
 package org.kaaproject.kaa.server.common.core.plugin.instance;
 
-import org.kaaproject.kaa.common.hash.EndpointObjectHash;
-import org.kaaproject.kaa.server.common.core.plugin.def.SDKPlatform;
+public class PluginInitializationException extends PluginLifecycleException {
 
+    private static final long serialVersionUID = -6779948937767964486L;
 
-public interface KaaSdkMessage extends KaaMessageWrapper {
+    public PluginInitializationException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-    EndpointObjectHash getEndpointKey();
-    
-    SDKPlatform getPlatform();
-
+    public PluginInitializationException(String message) {
+        super(message);
+    }
 }

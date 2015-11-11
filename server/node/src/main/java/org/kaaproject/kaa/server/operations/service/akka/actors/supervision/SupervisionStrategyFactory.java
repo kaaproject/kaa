@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.actors.supervision;
 
+import org.kaaproject.kaa.server.common.core.plugin.instance.PluginLifecycleException;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
 
 import scala.concurrent.duration.Duration;
@@ -46,7 +47,9 @@ public final class SupervisionStrategyFactory {
         return new OneForOneStrategy(-1, Duration.Inf(), new Function<Throwable, SupervisorStrategy.Directive>() {
             @Override
             public Directive apply(Throwable t) throws Exception {
-                if (t instanceof Error) {
+                if (t instanceof PluginLifecycleException){
+                    return OneForOneStrategy.stop();
+                } else if (t instanceof Error) {
                     return OneForOneStrategy.escalate();
                 } else {
                     return OneForOneStrategy.resume();
@@ -59,7 +62,9 @@ public final class SupervisionStrategyFactory {
         return new OneForOneStrategy(-1, Duration.Inf(), new Function<Throwable, SupervisorStrategy.Directive>() {
             @Override
             public Directive apply(Throwable t) throws Exception {
-                if (t instanceof Error) {
+                if (t instanceof PluginLifecycleException){
+                    return OneForOneStrategy.stop();
+                } else if (t instanceof Error) {
                     return OneForOneStrategy.escalate();
                 } else {
                     return OneForOneStrategy.restart();
@@ -72,7 +77,9 @@ public final class SupervisionStrategyFactory {
         return new OneForOneStrategy(-1, Duration.Inf(), new Function<Throwable, SupervisorStrategy.Directive>() {
             @Override
             public Directive apply(Throwable t) throws Exception {
-                if (t instanceof Error) {
+                if (t instanceof PluginLifecycleException){
+                    return OneForOneStrategy.stop();
+                } else if (t instanceof Error) {
                     return OneForOneStrategy.escalate();
                 } else if (t instanceof RuntimeException) {
                     return OneForOneStrategy.resume();

@@ -15,14 +15,14 @@
  */
 package org.kaaproject.kaa.server.common.core.plugin.instance;
 
-import org.kaaproject.kaa.common.hash.EndpointObjectHash;
-import org.kaaproject.kaa.server.common.core.plugin.def.SDKPlatform;
+import org.kaaproject.kaa.server.common.core.plugin.def.PluginExecutionContext;
 
+public interface KaaSdkPlugin extends KaaPlugin {
 
-public interface KaaSdkMessage extends KaaMessageWrapper {
+    void onSdkMessage(KaaSdkMessage message, PluginExecutionContext ctx);
 
-    EndpointObjectHash getEndpointKey();
-    
-    SDKPlatform getPlatform();
+    byte[] encodeSDKMessage(KaaSdkMessage msg);
+
+    KaaSdkMessage decodeSDKMessage(KaaSdkMessage message, byte[] data);
 
 }

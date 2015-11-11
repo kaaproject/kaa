@@ -13,16 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kaaproject.kaa.server.common.core.plugin.def;
+package org.kaaproject.kaa.server.common.core.plugin.instance;
 
-import org.kaaproject.kaa.server.common.core.plugin.instance.KaaSdkMessage;
+public class PluginLifecycleException extends Exception {
 
-public interface KaaSdkPlugin extends KaaPlugin {
+    private static final long serialVersionUID = -7243314540723895153L;
 
-    void onSdkMessage(KaaSdkMessage message, PluginExecutionContext ctx);
+    PluginLifecycleException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-    byte[] encodeSDKMessage(KaaSdkMessage msg);
-
-    KaaSdkMessage decodeSDKMessage(KaaSdkMessage message, byte[] data);
+    PluginLifecycleException(String message) {
+        super(message);
+    }
 
 }

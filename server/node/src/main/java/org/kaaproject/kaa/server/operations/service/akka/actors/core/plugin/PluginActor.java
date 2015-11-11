@@ -15,6 +15,7 @@
  */
 package org.kaaproject.kaa.server.operations.service.akka.actors.core.plugin;
 
+import org.kaaproject.kaa.server.common.core.plugin.instance.PluginLifecycleException;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,23 +23,23 @@ import org.slf4j.LoggerFactory;
 import akka.actor.UntypedActor;
 import akka.japi.Creator;
 
-public class ApplicationPluginActor extends UntypedActor {
+public class PluginActor extends UntypedActor {
 
     /** The Constant LOG. */
-    private static final Logger LOG = LoggerFactory.getLogger(ApplicationPluginActor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PluginActor.class);
 
     private final String pluginInstanceId;
-    private final ApplicationPluginActorMessageProcessor processor;
+    private final PluginActorMessageProcessor processor;
 
-    private ApplicationPluginActor(AkkaContext context, String pluginInstanceId) {
+    private PluginActor(AkkaContext context, String pluginInstanceId) throws PluginLifecycleException {
         this.pluginInstanceId = pluginInstanceId;
-        this.processor = new ApplicationPluginActorMessageProcessor(context, pluginInstanceId);
+        this.processor = new PluginActorMessageProcessor(context, pluginInstanceId);
     }
 
     /**
      * The Class ActorCreator.
      */
-    public static class ActorCreator implements Creator<ApplicationPluginActor> {
+    public static class ActorCreator implements Creator<PluginActor> {
 
         /** The Constant serialVersionUID. */
         private static final long serialVersionUID = 1L;
@@ -66,8 +67,8 @@ public class ApplicationPluginActor extends UntypedActor {
          * @see akka.japi.Creator#create()
          */
         @Override
-        public ApplicationPluginActor create() throws Exception {
-            return new ApplicationPluginActor(context, pluginInstanceId);
+        public PluginActor create() throws Exception {
+            return new PluginActor(context, pluginInstanceId);
         }
     }
 

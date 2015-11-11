@@ -15,7 +15,15 @@
  */
 package org.kaaproject.kaa.server.common.core.plugin.instance;
 
-public enum SDKPlatform {
+public class PluginInstantiationException extends PluginLifecycleException {
 
-    C, CPP, JAVA, ANDROID, OBJ_C
+    private static final long serialVersionUID = -6779948937767964486L;
+
+    public PluginInstantiationException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public PluginInstantiationException(String message) {
+        super(message);
+    }
 }

@@ -15,10 +15,10 @@
  */
 package org.kaaproject.kaa.server.plugin.rest;
 
-import org.kaaproject.kaa.server.common.core.plugin.def.KaaPlugin;
 import org.kaaproject.kaa.server.common.core.plugin.def.Plugin;
 import org.kaaproject.kaa.server.common.core.plugin.def.PluginExecutionContext;
 import org.kaaproject.kaa.server.common.core.plugin.def.PluginInitContext;
+import org.kaaproject.kaa.server.common.core.plugin.instance.KaaPlugin;
 import org.kaaproject.kaa.server.common.core.plugin.instance.KaaPluginMessage;
 import org.kaaproject.kaa.server.plugin.rest.definition.KaaRestPluginDefinition;
 import org.kaaproject.kaa.server.plugin.rest.gen.KaaRestPluginConfigSchema;
