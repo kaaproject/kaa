@@ -1,6 +1,8 @@
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
-import org.kaaproject.kaa.common.dto.CTLSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
+import org.kaaproject.kaa.server.common.dao.impl.DaoUtil;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -17,18 +19,19 @@ import javax.persistence.UniqueConstraint;
 import java.io.Serializable;
 import java.util.Set;
 
+import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
+
 @Entity
 @Table(name = "ctl", uniqueConstraints =
-@UniqueConstraint(columnNames = {"version", "fqn", "tenant_id"}, name = "ctl_unique_constraint"))
+@UniqueConstraint(columnNames = {"metainfo_id", "tenant_id"}, name = "ctl_unique_constraint"))
 public class CTLSchema extends GenericModel<CTLSchemaDto> implements Serializable {
 
-    private Integer version;
-    private String fqn;
+    @ManyToOne(optional = true, fetch = FetchType.EAGER)
+    @JoinColumn(nullable = false, name = "metainfo_id", foreignKey = @ForeignKey(name = "fk_ctl_metainfo_id"))
+    private CTLSchemaMetaInfo metaInfo;
     @ManyToOne(optional = true, fetch = FetchType.EAGER)
     @JoinColumn(nullable = true, name = "tenant_id", foreignKey = @ForeignKey(name = "fk_ctl_tenant_id"))
     private Tenant tenant;
-    @Enumerated(EnumType.STRING)
-    private CTLSchemaScope scope;
     @ManyToOne(optional = true, fetch = FetchType.EAGER)
     @JoinColumn(nullable = true, name = "app_id", foreignKey = @ForeignKey(name = "fk_ctl_app_id"))
     private Application application;
@@ -39,20 +42,34 @@ public class CTLSchema extends GenericModel<CTLSchemaDto> implements Serializabl
             inverseJoinColumns = {@JoinColumn(name = "child_id")}, inverseForeignKey = @ForeignKey(name = "fk_ctl_ch_id"))
     private Set<CTLSchema> dependencySet;
 
-    public Integer getVersion() {
-        return version;
+    public CTLSchema() {
     }
 
-    public void setVersion(Integer version) {
-        this.version = version;
+    public CTLSchema(CTLSchemaDto dto) {
+        this.id = getLongId(dto.getId());
+        this.metaInfo = new CTLSchemaMetaInfo(dto.getMetaInfo());
+
+        Long tenantId = getLongId(dto.getTenantId());
+        this.tenant = tenantId != null ? new Tenant(tenantId) : null;
+
+        Long appId = getLongId(dto.getAppId());
+        this.application = appId != null ? new Application(appId) : null;
+        this.body = dto.getBody();
+
+        Set<CTLSchemaDto> dependencies = dto.getDependencySet();
+        if (dependencies != null && !dependencies.isEmpty()) {
+            for (CTLSchemaDto dependency : dependencies) {
+                dependencySet.add(new CTLSchema(dependency));
+            }
+        }
     }
 
-    public String getFqn() {
-        return fqn;
+    public CTLSchemaMetaInfo getMetaInfo() {
+        return metaInfo;
     }
 
-    public void setFqn(String fqn) {
-        this.fqn = fqn;
+    public void setMetaInfo(CTLSchemaMetaInfo metaInfo) {
+        this.metaInfo = metaInfo;
     }
 
     public Tenant getTenant() {
@@ -61,14 +78,6 @@ public class CTLSchema extends GenericModel<CTLSchemaDto> implements Serializabl
 
     public void setTenant(Tenant tenant) {
         this.tenant = tenant;
-    }
-
-    public CTLSchemaScope getScope() {
-        return scope;
-    }
-
-    public void setScope(CTLSchemaScope scope) {
-        this.scope = scope;
     }
 
     public Application getApplication() {
@@ -103,6 +112,12 @@ public class CTLSchema extends GenericModel<CTLSchemaDto> implements Serializabl
     @Override
     public CTLSchemaDto toDto() {
         CTLSchemaDto ctlSchemaDto = createDto();
+        ctlSchemaDto.setId(getStringId());
+        ctlSchemaDto.setAppId(application != null ? application.getStringId() : null);
+        ctlSchemaDto.setTenantId(tenant != null ? tenant.getStringId() : null);
+        ctlSchemaDto.setMetaInfo(metaInfo.toDto());
+        ctlSchemaDto.setBody(body);
+        ctlSchemaDto.setDependencySet(DaoUtil.convertDtoSet(dependencySet));
         return ctlSchemaDto;
     }
 }

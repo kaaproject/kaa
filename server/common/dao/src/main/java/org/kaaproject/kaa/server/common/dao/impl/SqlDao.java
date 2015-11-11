@@ -16,8 +16,11 @@
 
 package org.kaaproject.kaa.server.common.dao.impl;
 
+import org.hibernate.LockOptions;
+
 public interface SqlDao<T> extends Dao<T, String> {
 
+    void lock(Object o, LockOptions lockOptions);
     /**
      * Find object by id.
      *
@@ -27,6 +30,14 @@ public interface SqlDao<T> extends Dao<T, String> {
      * @return the found object or null if object not found
      */
     T findById(String id, boolean lazy);
+
+    /**
+     * @param id
+     * @param lazy
+     * @param lockOptions
+     * @return
+     */
+    T findById(String id, boolean lazy, LockOptions lockOptions);
 
     /**
      * Persist model object

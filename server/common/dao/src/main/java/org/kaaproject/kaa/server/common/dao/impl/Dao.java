@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.common.dao.impl;
 
+import org.hibernate.LockOptions;
+
 import java.util.List;
 
 /**
@@ -46,6 +48,14 @@ public interface Dao<T, K> {
      * @return the found object
      */
     T findById(K id);
+
+    /**
+     *
+     * @param id
+     * @param lockOptions
+     * @return
+     */
+    T findById(K id, LockOptions lockOptions);
 
     /**
      * Remove all objects from collection/table.

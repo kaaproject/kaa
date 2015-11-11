@@ -4,10 +4,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kaaproject.kaa.common.dto.TenantDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.server.common.dao.UserService;
-import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchema;
-import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchemaScope;
-import org.kaaproject.kaa.server.common.dao.model.sql.Tenant;
 import org.kaaproject.kaa.server.common.dao.service.CTLSchemaServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +41,7 @@ public class HibernateCTLSchemaDaoTest extends HibernateAbstractTest {
     private TenantDto tenant;
 
     @Before
-    public void go() {
+    public void before() {
         if (tenant == null) {
             tenant = userService.findTenantByName(SUPER_TENANT);
             if (tenant == null) {
@@ -53,28 +52,33 @@ public class HibernateCTLSchemaDaoTest extends HibernateAbstractTest {
         }
     }
 
-    @Test
-    @Rollback(false)
+    @Test(expected = RuntimeException.class)
     public void saveCTLSchema() throws InterruptedException {
-        ctlSchemaService.save(generateCTLSchema(new Tenant(tenant)));
+        ctlSchemaService.save(generateCTLSchema(null));
+        ctlSchemaService.save(generateCTLSchema(tenant.getId()));
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void saveCTLSchemaWithSameFqnAndVersion() throws InterruptedException {
+        ctlSchemaService.save(generateCTLSchema(tenant.getId()));
         ctlSchemaService.save(generateCTLSchema(null));
     }
 
     @Test
     @Rollback(false)
     public void multiThreadCTLSchemaSaveTest() throws InterruptedException, ExecutionException {
-        List<Future<CTLSchema>> list = new ArrayList<>();
+        List<Future<CTLSchemaDto>> list = new ArrayList<>();
         for (int i = 0; i < 100; i++) {
             final int x = i;
-            list.add(executorService.submit(new Callable<CTLSchema>() {
+            list.add(executorService.submit(new Callable<CTLSchemaDto>() {
                 @Override
-                public CTLSchema call() {
-                    CTLSchema sch = null;
+                public CTLSchemaDto call() {
+                    CTLSchemaDto sch = null;
                     try {
-                        if (x % 2 == 0) {
-                            sch = ctlSchemaService.save(generateCTLSchema(new Tenant(tenant)));
-                        } else {
+                        if (x % 77 == 0) {
                             sch = ctlSchemaService.save(generateCTLSchema(null));
+                        } else {
+                            sch = ctlSchemaService.save(generateCTLSchema(generateTenantDto().getId()));
                         }
                     } catch (Throwable t) {
                         LOG.warn("Catch exception {}", t.getCause(), t);
@@ -83,18 +87,22 @@ public class HibernateCTLSchemaDaoTest extends HibernateAbstractTest {
                 }
             }));
         }
-        for (Future<CTLSchema> f : list) {
-            LOG.debug("id {}", f.get().getId());
+        for (Future<CTLSchemaDto> f : list) {
+            LOG.debug("id {}", f.get());
         }
     }
 
-    private CTLSchema generateCTLSchema(Tenant tenant) {
-        CTLSchema ctlSchema = new CTLSchema();
+    private CTLSchemaDto generateCTLSchema(String tenantId) {
+        CTLSchemaDto ctlSchema = new CTLSchemaDto();
+        ctlSchema.setMetaInfo(new CTLSchemaMetaInfoDto("org.kaaproject.kaa.ctl.TestSchema", 1));
         ctlSchema.setBody(UUID.randomUUID().toString());
-        ctlSchema.setVersion(1);
-        ctlSchema.setTenant(tenant);
-        ctlSchema.setFqn("org.kaaproject.kaa.ctl.TestSchema");
-        ctlSchema.setScope(CTLSchemaScope.SYSTEM);
+        ctlSchema.setTenantId(tenantId);
         return ctlSchema;
+    }
+
+    private TenantDto generateTenantDto() {
+        TenantDto tn = new TenantDto();
+        tn.setName(UUID.randomUUID().toString());
+        return userService.saveTenant(tn);
     }
 }

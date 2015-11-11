@@ -17,6 +17,7 @@ package org.kaaproject.kaa.server.common.dao.impl.sql;
 
 import org.hibernate.Criteria;
 import org.hibernate.LockMode;
+import org.hibernate.LockOptions;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -27,7 +28,6 @@ import org.kaaproject.kaa.server.common.dao.model.sql.GenericModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -213,11 +213,21 @@ public abstract class HibernateAbstractDao<T extends GenericModel<?>> implements
 
     @Override
     public T findById(String id) {
-        return findById(id, false);
+        return findById(id, false, LockOptions.NONE);
+    }
+
+    @Override
+    public T findById(String id, LockOptions lockOptions) {
+        return findById(id, false, lockOptions);
     }
 
     @Override
     public T findById(String id, boolean lazy) {
+        return findById(id, lazy, LockOptions.NONE);
+    }
+
+    @Override
+    public T findById(String id, boolean lazy, LockOptions lockOptions) {
         T result = null;
         String className = getSimpleClassName();
         LOG.debug("Searching {} entity by id [{}] ", className, id);
@@ -228,6 +238,7 @@ public abstract class HibernateAbstractDao<T extends GenericModel<?>> implements
             } else {
                 result = (T) session.get(getEntityClass(), Long.parseLong(id));
             }
+            session.buildLockRequest(lockOptions).setScope(true).lock(result);
         }
         if (LOG.isTraceEnabled()) {
             LOG.trace("[{}] Search result: {}.", id, result);
@@ -251,6 +262,11 @@ public abstract class HibernateAbstractDao<T extends GenericModel<?>> implements
             session.delete(findById(id, true));
             LOG.debug("Removed {} entity by id [{}]", getSimpleClassName(), id);
         }
+    }
+
+    @Override
+    public void lock(Object o, LockOptions lockOptions) {
+        getSession().buildLockRequest(lockOptions).lock(o);
     }
 
     protected void remove(T o) {
