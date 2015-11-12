@@ -20,6 +20,21 @@ import org.hibernate.LockOptions;
 
 public interface SqlDao<T> extends Dao<T, String> {
 
+    void refreshSession();
+    /**
+     * Save object. Will be returned object with id.
+     *
+     * @param o the domain object
+     * @param flush specify if session flush needed.
+     * @return the saved object
+     */
+    T save(T o, boolean flush);
+
+    /**
+     *
+     * @param o the domain object
+     * @param lockOptions
+     */
     void lock(Object o, LockOptions lockOptions);
     /**
      * Find object by id.
@@ -38,6 +53,14 @@ public interface SqlDao<T> extends Dao<T, String> {
      * @return
      */
     T findById(String id, boolean lazy, LockOptions lockOptions);
+
+    /**
+     *
+     * @param id
+     * @param lockOptions
+     * @return
+     */
+    T findById(String id, LockOptions lockOptions);
 
     /**
      * Persist model object

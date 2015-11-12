@@ -6,8 +6,8 @@ import org.junit.runner.RunWith;
 import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
+import org.kaaproject.kaa.server.common.dao.CTLService;
 import org.kaaproject.kaa.server.common.dao.UserService;
-import org.kaaproject.kaa.server.common.dao.service.CTLSchemaServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +33,7 @@ public class HibernateCTLSchemaDaoTest extends HibernateAbstractTest {
     private static final Logger LOG = LoggerFactory.getLogger(HibernateCTLSchemaDaoTest.class);
     public static final String SUPER_TENANT = "SuperTenant";
     @Autowired
-    private CTLSchemaServiceImpl ctlSchemaService;
+    private CTLService ctlService;
     @Autowired
     private UserService userService;
 
@@ -54,14 +54,14 @@ public class HibernateCTLSchemaDaoTest extends HibernateAbstractTest {
 
     @Test(expected = RuntimeException.class)
     public void saveCTLSchema() throws InterruptedException {
-        ctlSchemaService.save(generateCTLSchema(null));
-        ctlSchemaService.save(generateCTLSchema(tenant.getId()));
+        ctlService.saveCTLSchema(generateCTLSchema(null, 10));
+        ctlService.saveCTLSchema(generateCTLSchema(tenant.getId(), 10));
     }
 
     @Test(expected = RuntimeException.class)
     public void saveCTLSchemaWithSameFqnAndVersion() throws InterruptedException {
-        ctlSchemaService.save(generateCTLSchema(tenant.getId()));
-        ctlSchemaService.save(generateCTLSchema(null));
+        ctlService.saveCTLSchema(generateCTLSchema(tenant.getId(), 11));
+        ctlService.saveCTLSchema(generateCTLSchema(null, 11));
     }
 
     @Test
@@ -75,13 +75,9 @@ public class HibernateCTLSchemaDaoTest extends HibernateAbstractTest {
                 public CTLSchemaDto call() {
                     CTLSchemaDto sch = null;
                     try {
-                        if (x % 77 == 0) {
-                            sch = ctlSchemaService.save(generateCTLSchema(null));
-                        } else {
-                            sch = ctlSchemaService.save(generateCTLSchema(generateTenantDto().getId()));
-                        }
+                        sch = ctlService.saveCTLSchema(generateCTLSchema(generateTenantDto().getId()));
                     } catch (Throwable t) {
-                        LOG.warn("Catch exception {}", t.getCause(), t);
+                        LOG.warn("---> Test Catch exception {}", t.getCause(), t);
                     }
                     return sch;
                 }
@@ -93,8 +89,12 @@ public class HibernateCTLSchemaDaoTest extends HibernateAbstractTest {
     }
 
     private CTLSchemaDto generateCTLSchema(String tenantId) {
+        return generateCTLSchema(tenantId, 100);
+    }
+
+    private CTLSchemaDto generateCTLSchema(String tenantId, int version) {
         CTLSchemaDto ctlSchema = new CTLSchemaDto();
-        ctlSchema.setMetaInfo(new CTLSchemaMetaInfoDto("org.kaaproject.kaa.ctl.TestSchema", 1));
+        ctlSchema.setMetaInfo(new CTLSchemaMetaInfoDto("org.kaaproject.kaa.ctl.TestSchema", version));
         ctlSchema.setBody(UUID.randomUUID().toString());
         ctlSchema.setTenantId(tenantId);
         return ctlSchema;

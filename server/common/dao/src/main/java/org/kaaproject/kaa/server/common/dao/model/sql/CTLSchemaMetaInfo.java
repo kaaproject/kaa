@@ -31,6 +31,7 @@ public class CTLSchemaMetaInfo extends GenericModel<CTLSchemaMetaInfoDto> implem
         this.fqn = dto.getFqn();
         this.version = dto.getVersion();
         this.schemaScopeDto = dto.getSchemaScopeDto();
+        this.count = dto.getCount();
     }
 
     public CTLSchemaMetaInfo(String fqn, Integer version) {
@@ -74,6 +75,7 @@ public class CTLSchemaMetaInfo extends GenericModel<CTLSchemaMetaInfoDto> implem
         ctlSchemaMetaInfoDto.setFqn(fqn);
         ctlSchemaMetaInfoDto.setVersion(version);
         ctlSchemaMetaInfoDto.setSchemaScopeDto(schemaScopeDto);
+        ctlSchemaMetaInfoDto.setCount(count);
         return ctlSchemaMetaInfoDto;
     }
 
@@ -83,6 +85,10 @@ public class CTLSchemaMetaInfo extends GenericModel<CTLSchemaMetaInfoDto> implem
 
     public Long incrementCount() {
         return count++;
+    }
+
+    public void setCount(Long count) {
+        this.count = count;
     }
 
     @Override

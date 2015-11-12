@@ -29,6 +29,10 @@ public class CTLSchemaDto implements HasId, Serializable {
     private String appId;
     private CTLSchemaScopeDto scope;
     private String body;
+    private String name;
+    private String description;
+    private String createdUsername;
+    private long createdTime;
     private Set<CTLSchemaDto> dependencySet;
 
     @Override
@@ -81,11 +85,98 @@ public class CTLSchemaDto implements HasId, Serializable {
         this.body = body;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getCreatedUsername() {
+        return createdUsername;
+    }
+
+    public void setCreatedUsername(String createdUsername) {
+        this.createdUsername = createdUsername;
+    }
+
+    public long getCreatedTime() {
+        return createdTime;
+    }
+
+    public void setCreatedTime(long createdTime) {
+        this.createdTime = createdTime;
+    }
+
     public Set<CTLSchemaDto> getDependencySet() {
         return dependencySet;
     }
 
     public void setDependencySet(Set<CTLSchemaDto> dependencySet) {
         this.dependencySet = dependencySet;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        CTLSchemaDto that = (CTLSchemaDto) o;
+
+        if (createdTime != that.createdTime) return false;
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        if (metaInfo != null ? !metaInfo.equals(that.metaInfo) : that.metaInfo != null) return false;
+        if (tenantId != null ? !tenantId.equals(that.tenantId) : that.tenantId != null) return false;
+        if (appId != null ? !appId.equals(that.appId) : that.appId != null) return false;
+        if (scope != that.scope) return false;
+        if (body != null ? !body.equals(that.body) : that.body != null) return false;
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        if (description != null ? !description.equals(that.description) : that.description != null) return false;
+        if (createdUsername != null ? !createdUsername.equals(that.createdUsername) : that.createdUsername != null)
+            return false;
+        return !(dependencySet != null ? !dependencySet.equals(that.dependencySet) : that.dependencySet != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (metaInfo != null ? metaInfo.hashCode() : 0);
+        result = 31 * result + (tenantId != null ? tenantId.hashCode() : 0);
+        result = 31 * result + (appId != null ? appId.hashCode() : 0);
+        result = 31 * result + (scope != null ? scope.hashCode() : 0);
+        result = 31 * result + (body != null ? body.hashCode() : 0);
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (description != null ? description.hashCode() : 0);
+        result = 31 * result + (createdUsername != null ? createdUsername.hashCode() : 0);
+        result = 31 * result + (int) (createdTime ^ (createdTime >>> 32));
+        result = 31 * result + (dependencySet != null ? dependencySet.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "CTLSchemaDto{" +
+                "id='" + id + '\'' +
+                ", metaInfo=" + metaInfo +
+                ", tenantId='" + tenantId + '\'' +
+                ", appId='" + appId + '\'' +
+                ", scope=" + scope +
+                ", body='" + body + '\'' +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", createdUsername='" + createdUsername + '\'' +
+                ", createdTime=" + createdTime +
+                ", dependencySet=" + dependencySet +
+                '}';
     }
 }

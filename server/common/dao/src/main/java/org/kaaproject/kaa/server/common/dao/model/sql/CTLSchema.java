@@ -1,17 +1,16 @@
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
 import org.kaaproject.kaa.server.common.dao.impl.DaoUtil;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -35,7 +34,18 @@ public class CTLSchema extends GenericModel<CTLSchemaDto> implements Serializabl
     @ManyToOne(optional = true, fetch = FetchType.EAGER)
     @JoinColumn(nullable = true, name = "app_id", foreignKey = @ForeignKey(name = "fk_ctl_app_id"))
     private Application application;
+    @Lob
     private String body;
+
+    private String name;
+
+    @Column(length = 1000)
+    private String description;
+
+    private String createdUsername;
+
+    private long createdTime;
+
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name = "ctl_dependency",
             joinColumns = {@JoinColumn(name = "parent_id")}, foreignKey = @ForeignKey(name = "fk_ctl_pr_id"),
@@ -103,6 +113,8 @@ public class CTLSchema extends GenericModel<CTLSchemaDto> implements Serializabl
     public void setDependencySet(Set<CTLSchema> dependencySet) {
         this.dependencySet = dependencySet;
     }
+
+    private void updateCreatedTime(){}
 
     @Override
     protected CTLSchemaDto createDto() {

@@ -41,6 +41,7 @@
                     <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQL82Dialect</prop>
                     <prop key="hibernate.format_sql">#{dao[hibernate_format_sql]}</prop>
                     <prop key="hibernate.show_sql">#{dao[hibernate_show_sql]}</prop>
+                    <prop key="current_session_context_class">thread</prop>
                 </props>
             </property>
         </bean>

@@ -17,5 +17,5 @@
 package org.kaaproject.kaa.common.dto.ctl;
 
 public enum CTLSchemaScopeDto {
-    SYSTEM, TENANT, APPLICATION, PLUGIN;
+    SYSTEM, TENANT, APPLICATION, APPLICATION_LOCAL, PLUGIN_LOCAL;
 }

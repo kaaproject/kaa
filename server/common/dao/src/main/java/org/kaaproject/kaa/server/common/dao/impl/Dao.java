@@ -50,14 +50,6 @@ public interface Dao<T, K> {
     T findById(K id);
 
     /**
-     *
-     * @param id
-     * @param lockOptions
-     * @return
-     */
-    T findById(K id, LockOptions lockOptions);
-
-    /**
      * Remove all objects from collection/table.
      */
     void removeAll();

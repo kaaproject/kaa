@@ -52,6 +52,13 @@ public abstract class HibernateAbstractDao<T extends GenericModel<?>> implements
         return sessionFactory.getCurrentSession();
     }
 
+    public void refreshSession() {
+        Session session = sessionFactory.getCurrentSession();
+        session.close();
+        sessionFactory.openSession();
+    }
+
+
     protected Criteria getCriteria() {
         return getSession().createCriteria(getEntityClass());
     }
@@ -153,15 +160,24 @@ public abstract class HibernateAbstractDao<T extends GenericModel<?>> implements
     }
 
     @Override
-    public T save(T o) {
+    public T save(T o, boolean flush) {
         LOG.debug("Saving {} entity {}", getEntityClass(), o);
-        o = (T) getSession().merge(o);
+        Session session = getSession();
+        o = (T) session.merge(o);
+        if (flush) {
+            session.flush();
+        }
         if (LOG.isTraceEnabled()) {
             LOG.trace("Saving result: {}", o);
         } else {
             LOG.debug("Saving result: {}", o != null);
         }
         return o;
+    }
+
+    @Override
+    public T save(T o) {
+        return save(o, false);
     }
 
     public T update(T o) {
