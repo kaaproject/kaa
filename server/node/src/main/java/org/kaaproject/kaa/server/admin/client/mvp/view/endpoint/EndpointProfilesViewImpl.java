@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,13 +46,20 @@ public class EndpointProfilesViewImpl extends BaseListViewImpl<EndpointProfileDt
 
     private EndpointGroupsInfoListBox listBox;
     private TextBox endpointKeyHash;
+    private Button resetButton;
     private Button findEndpointButton;
 
     public EndpointProfilesViewImpl() {
         super(false);
 
+        int column = 0;
         FlexTable flexTable = new FlexTable();
         flexTable.setStyleName(Utils.avroUiStyle.fieldWidget());
+
+        resetButton = new Button(Utils.constants.reset());
+        flexTable.setWidget(0, column, resetButton);
+        flexTable.getFlexCellFormatter().setVerticalAlignment(0, column++, HasVerticalAlignment.ALIGN_MIDDLE);
+
         Label endpointGroupLabel = new Label(Utils.constants.endpointGroup());
         listBox = new EndpointGroupsInfoListBox();
         listBox.getElement().getStyle().setPropertyPx("minWidth", 100);
@@ -61,6 +68,7 @@ public class EndpointProfilesViewImpl extends BaseListViewImpl<EndpointProfileDt
         groupPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
         groupPanel.add(endpointGroupLabel);
         groupPanel.add(listBox);
+        flexTable.setWidget(0, column++, groupPanel);
 
         HorizontalPanel keyHashPanel = new HorizontalPanel();
         keyHashPanel.setSpacing(15);
@@ -73,9 +81,7 @@ public class EndpointProfilesViewImpl extends BaseListViewImpl<EndpointProfileDt
         keyHashPanel.add(endpointKeyHashLabel);
         keyHashPanel.add(endpointKeyHash);
         keyHashPanel.add(findEndpointButton);
-
-        flexTable.setWidget(0, 0, groupPanel);
-        flexTable.setWidget(0, 1, keyHashPanel);
+        flexTable.setWidget(0, column, keyHashPanel);
 
         filterPanel.add(flexTable);
     }
@@ -113,5 +119,10 @@ public class EndpointProfilesViewImpl extends BaseListViewImpl<EndpointProfileDt
     @Override
     protected String addButtonString() {
         return "";
+    }
+
+    @Override
+    public Button getResetButton() {
+        return resetButton;
     }
 }

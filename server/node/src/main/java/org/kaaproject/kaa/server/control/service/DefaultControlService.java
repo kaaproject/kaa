@@ -1538,6 +1538,9 @@ public class DefaultControlService implements ControlService {
         EndpointProfileDto endpointProfileDto = endpointService.findEndpointProfileByKeyHash(Base64.decodeBase64(endpointProfileKeyHash));
         viewDto.setEndpointProfileDto(endpointProfileDto);
 
+        /*    Getting SDK profile    */
+        viewDto.setSdkProfileDto(sdkProfileService.findSdkProfileByToken(endpointProfileDto.getSdkToken()));
+
         /*    Getting endpoint user    */
         String externalId = endpointProfileDto.getEndpointUserId();
         EndpointUserDto userDto = null;

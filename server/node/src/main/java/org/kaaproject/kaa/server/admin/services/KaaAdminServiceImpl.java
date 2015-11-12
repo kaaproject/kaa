@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.base.Charsets;
 import com.google.common.base.Charsets;
 import net.iharder.Base64;
 import org.apache.avro.Schema;
@@ -72,6 +71,7 @@ import org.kaaproject.kaa.common.dto.admin.RecordKey;
 import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
 import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
+import org.kaaproject.kaa.common.dto.admin.SdkProfileViewDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
@@ -110,6 +110,7 @@ import org.kaaproject.kaa.server.common.plugin.KaaPluginConfig;
 import org.kaaproject.kaa.server.common.plugin.PluginConfig;
 import org.kaaproject.kaa.server.common.plugin.PluginType;
 import org.kaaproject.kaa.server.control.service.ControlService;
+import org.kaaproject.kaa.server.control.service.exception.ControlServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -123,18 +124,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.io.IOException;
-import java.security.InvalidParameterException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 
 @Service("kaaAdminService")
 public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
@@ -710,6 +699,71 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             return controlService.getSdkProfilesByApplicationId(applicationId);
         } catch (Exception cause) {
             throw Utils.handleException(cause);
+        }
+    }
+
+    @Override
+    public SdkProfileViewDto getSdkProfileView(String sdkProfileId) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+
+        try {
+            SdkProfileViewDto viewDto = new SdkProfileViewDto();
+            SdkProfileDto sdkProfile = controlService.getSdkProfile(sdkProfileId);
+            viewDto.setSdkProfile(sdkProfile);
+
+            String applicationId = sdkProfile.getApplicationId();
+            List<ApplicationEventFamilyMapDto> aefDtoList = new ArrayList<>();
+            List<ApplicationEventFamilyMapDto> aefMaps = controlService.
+                    getApplicationEventFamilyMapsByApplicationId(applicationId);
+            List<String> aefMapIds = sdkProfile.getAefMapIds();
+            for (ApplicationEventFamilyMapDto aefDto : aefMaps) {
+                if (aefMapIds.contains(aefDto.getId())){
+                    aefDtoList.add(aefDto);
+                }
+            }
+            viewDto.setAefMapDtoList(aefDtoList);
+
+            List<ConfigurationSchemaDto> configSchemas =
+                    controlService.getConfigurationSchemasByApplicationId(applicationId);
+            for (ConfigurationSchemaDto dto : configSchemas) {
+                if (dto.getMajorVersion() == sdkProfile.getConfigurationSchemaVersion()) {
+                    viewDto.setConfigurationSchemaName(dto.getName() + " (v." + dto.getMajorVersion()
+                            + "." + dto.getMinorVersion() + ")");
+                    viewDto.setConfigurationSchemaId(dto.getId());
+                }
+            }
+
+            List<ProfileSchemaDto> profileSchemas = controlService.getProfileSchemasByApplicationId(applicationId);
+            for (ProfileSchemaDto dto : profileSchemas) {
+                if (dto.getMajorVersion() == sdkProfile.getProfileSchemaVersion()) {
+                    viewDto.setProfileSchemaName(dto.getName() + " (v." + dto.getMajorVersion()
+                            + "." + dto.getMinorVersion() + ")");
+                    viewDto.setProfileSchemaId(dto.getId());
+                }
+            }
+
+            List<NotificationSchemaDto> notificationSchemas =
+                    controlService.getNotificationSchemasByAppId(applicationId);
+            for (NotificationSchemaDto dto : notificationSchemas) {
+                if (dto.getMajorVersion() == sdkProfile.getNotificationSchemaVersion()) {
+                    viewDto.setNotificationSchemaName(dto.getName() + " (v." + dto.getMajorVersion()
+                            + "." + dto.getMinorVersion() + ")");
+                    viewDto.setNotificationSchemaId(dto.getId());
+                }
+            }
+
+            List<LogSchemaDto> logSchemas = controlService.getLogSchemasByApplicationId(applicationId);
+            for (LogSchemaDto dto : logSchemas) {
+                if (dto.getMajorVersion() == sdkProfile.getLogSchemaVersion()) {
+                    viewDto.setLogSchemaName(dto.getName() + " (v." + dto.getMajorVersion()
+                            + "." + dto.getMinorVersion() + ")");
+                    viewDto.setLogSchemaId(dto.getId());
+                }
+            }
+
+            return viewDto;
+        } catch (ControlServiceException e) {
+            throw Utils.handleException(e);
         }
     }
 

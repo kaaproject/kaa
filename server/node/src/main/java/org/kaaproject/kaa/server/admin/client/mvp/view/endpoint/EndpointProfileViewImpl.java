@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.endpoint;
 
+import com.google.gwt.dom.client.Style;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.CaptionPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
@@ -37,23 +39,17 @@ import java.util.List;
 public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements EndpointProfileView {
 
     private SizedTextBox endpointKeyHash;
-    private SizedTextBox notificationVersion;
-    private SizedTextBox profileVersion;
-    private SizedTextBox configurationVersion;
-    private SizedTextBox logSchemaVersion;
-
     private SizedTextBox userID;
     private SizedTextBox userExternalID;
+    private List<Widget> userInfoList;
 
     private SizedTextBox schemaName;
     private SizedTextBox description;
-
-    private List<Widget> userInfoList;
-
-    private TopicGrid topicsGrid;
-    private AbstractGrid<EndpointGroupDto, String> groupsGrid;
-
     private RecordPanel schemaForm;
+
+    private Anchor sdkAnchor;
+    private AbstractGrid<EndpointGroupDto, String> groupsGrid;
+    private TopicGrid topicsGrid;
 
     public EndpointProfileViewImpl() {
         super(true);
@@ -71,7 +67,7 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
 
     @Override
     protected String getSubTitle() {
-        return Utils.constants.endpointProfile();
+        return Utils.constants.endpointProfileDetails();
     }
 
     @Override
@@ -104,50 +100,35 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
         userInfoList.add(userExternalIDLabel);
         userInfoList.add(userExternalID);
 
-        Label profileVersionLabel = new Label(Utils.constants.profileSchemaVersion());
-        profileVersion = new KaaAdminSizedTextBox(-1, false);
-        profileVersion.setWidth("100%");
-        detailsTable.setWidget(++row, 0, profileVersionLabel);
-        detailsTable.setWidget(row, 1, profileVersion);
-
-        Label configurationVersionLabel = new Label(Utils.constants.configurationSchemaVersion());
-        configurationVersion = new KaaAdminSizedTextBox(-1, false);
-        configurationVersion.setWidth("100%");
-        detailsTable.setWidget(++row, 0, configurationVersionLabel);
-        detailsTable.setWidget(row, 1, configurationVersion);
-
-        Label notificationVersionLabel = new Label(Utils.constants.notificationSchemaVersion());
-        notificationVersion = new KaaAdminSizedTextBox(-1, false);
-        notificationVersion.setWidth("100%");
-        detailsTable.setWidget(++row, 0, notificationVersionLabel);
-        detailsTable.setWidget(row, 1, notificationVersion);
-
-        Label logSchemaVersionLabel = new Label(Utils.constants.logSchemaVersion());
-        logSchemaVersion = new KaaAdminSizedTextBox(-1, false);
-        logSchemaVersion.setWidth("100%");
-        detailsTable.setWidget(++row, 0, logSchemaVersionLabel);
-        detailsTable.setWidget(row, 1, logSchemaVersion);
+        Label sdkLabel = new Label(Utils.constants.sdkProfile());
+        sdkAnchor = new Anchor();
+        sdkAnchor.getElement().getStyle().setCursor(Style.Cursor.POINTER);
+        sdkAnchor.setWidth("100%");
+        detailsTable.getFlexCellFormatter().setHeight(row, 0, "40px");
+        detailsTable.setWidget(row, 0, sdkLabel);
+        detailsTable.setWidget(row++, 1, sdkAnchor);
 
         CaptionPanel formPanel = new CaptionPanel(Utils.constants.profileSchema());
         FlexTable recordTable = new FlexTable();
 
+        int recordTableRow = 0;
         Label schemaNameLabel = new Label(Utils.constants.schemaName());
         schemaName = new KaaAdminSizedTextBox(-1, false);
         schemaName.setWidth("100%");
-        recordTable.setWidget(0, 0, schemaNameLabel);
-        recordTable.setWidget(0, 1, schemaName);
+        recordTable.setWidget(recordTableRow, 0, schemaNameLabel);
+        recordTable.setWidget(recordTableRow++, 1, schemaName);
 
         Label descriptionLabel = new Label(Utils.constants.schemaDescription());
         description = new KaaAdminSizedTextBox(-1, false);
         description.setWidth("100%");
-        recordTable.setWidget(1, 0, descriptionLabel);
-        recordTable.setWidget(1, 1, description);
+        recordTable.setWidget(recordTableRow, 0, descriptionLabel);
+        recordTable.setWidget(recordTableRow++, 1, description);
 
         schemaForm = new RecordPanel(new AvroWidgetsConfig.Builder().
                 recordPanelWidth(700).createConfig(),
                 Utils.constants.schema(), this, false, true);
-        recordTable.setWidget(2, 0, schemaForm);
-        recordTable.getFlexCellFormatter().setColSpan(2, 0, 3);
+        recordTable.setWidget(recordTableRow, 0, schemaForm);
+        recordTable.getFlexCellFormatter().setColSpan(recordTableRow, 0, 3);
 
         formPanel.add(recordTable);
         detailsTable.setWidget(++row, 0, formPanel);
@@ -182,14 +163,11 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
     @Override
     protected void resetImpl() {
         endpointKeyHash.setValue("");
-        notificationVersion.setValue("");
-        logSchemaVersion.setValue("");
         userID.setValue("");
         userExternalID.setValue("");
+        sdkAnchor.setText("");
         schemaName.setValue("");
         description.setValue("");
-        profileVersion.setValue("");
-        configurationVersion.setValue("");
 
         schemaForm.getRecordWidget().clear();
     }
@@ -202,26 +180,6 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
     @Override
     public SizedTextBox getKeyHash() {
         return endpointKeyHash;
-    }
-
-    @Override
-    public SizedTextBox getNotificationVersion() {
-        return notificationVersion;
-    }
-
-    @Override
-    public SizedTextBox getLogSchemaVer() {
-        return logSchemaVersion;
-    }
-
-    @Override
-    public SizedTextBox getConfigurationSchemaVersion() {
-        return configurationVersion;
-    }
-
-    @Override
-    public SizedTextBox getProfileSchemaVersion() {
-        return profileVersion;
     }
 
     @Override
@@ -252,6 +210,11 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
     @Override
     public RecordPanel getSchemaForm() {
         return schemaForm;
+    }
+
+    @Override
+    public Anchor getSdkAnchor() {
+        return sdkAnchor;
     }
 
     @Override

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -108,6 +108,15 @@ public class EndpointProfilesActivity extends AbstractActivity implements BaseLi
 
         listView.clearError();
 
+        registrations.add(listView.getResetButton().addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                listView.getEndpointKeyHashTextBox().setValue("");
+                gridLoaded = false;
+                getGroupsList();
+            }
+        }));
+
         registrations.add(listView.getRowActionsSource().addRowActionHandler(new RowActionEventHandler<String>() {
             @Override
             public void onRowAction(RowActionEvent<String> event) {
@@ -159,7 +168,9 @@ public class EndpointProfilesActivity extends AbstractActivity implements BaseLi
                     if (((KaaAdminServiceException) caught).getErrorCode() == ServiceErrorCode.ITEM_NOT_FOUND) {
                         listView.getListWidget().getDataGrid().setRowData(new ArrayList<EndpointProfileDto>());
                     }
-                } else Utils.handleException(caught, listView);
+                } else {
+                    Utils.handleException(caught, listView);
+                }
             }
 
             @Override

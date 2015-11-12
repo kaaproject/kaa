@@ -17,28 +17,20 @@
 package org.kaaproject.kaa.server.admin.client.mvp.view;
 
 import com.google.gwt.user.client.ui.Anchor;
-import com.google.gwt.user.client.ui.Widget;
 import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
-import org.kaaproject.kaa.common.dto.EndpointGroupDto;
-import org.kaaproject.kaa.server.admin.client.mvp.view.topic.TopicGrid;
-import org.kaaproject.kaa.server.admin.client.mvp.view.widget.RecordPanel;
+import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 
-import java.util.List;
+public interface SdkProfileView extends BaseDetailsView {
 
-public interface EndpointProfileView extends BaseDetailsView {
+    SizedTextBox getSdkName();
+    SizedTextBox getSdkAuthor();
+    SizedTextBox getSdkDateCreated();
+    Anchor getSdkConfigurationVersion();
+    Anchor getSdkProfileVersion();
+    Anchor getSdkNotificationVersion();
+    Anchor getSdkLoggingVersion();
+    SizedTextBox getSdkProfileToken();
 
-    SizedTextBox getKeyHash();
-
-    SizedTextBox getUserID();
-    SizedTextBox getUserExternalID();
-    List<Widget> getUserInfoList();
-
-    SizedTextBox getSchemaName();
-    SizedTextBox getDescription();
-    RecordPanel getSchemaForm();
-
-    Anchor getSdkAnchor();
-    AbstractGrid<EndpointGroupDto, String> getGroupsGrid();
-    TopicGrid getTopicsGrid();
+    AbstractGrid<ApplicationEventFamilyMapDto, String> getSdkAefMapsGrid();
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import com.google.gwt.place.shared.WithTokenizers;
     ApplicationsPlace.Tokenizer.class,
     ApplicationPlace.Tokenizer.class,
     SdkProfilesPlace.Tokenizer.class,
+    SdkProfilePlace.Tokenizer.class,
     AddSdkProfilePlace.Tokenizer.class,
     ProfileSchemasPlace.Tokenizer.class,
     ProfileSchemaPlace.Tokenizer.class,
