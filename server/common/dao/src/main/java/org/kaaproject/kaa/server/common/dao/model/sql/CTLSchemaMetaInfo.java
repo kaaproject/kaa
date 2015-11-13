@@ -9,6 +9,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.persistence.Version;
 import java.io.Serializable;
 
 @Entity
@@ -22,6 +23,8 @@ public class CTLSchemaMetaInfo extends GenericModel<CTLSchemaMetaInfoDto> implem
     private CTLSchemaScopeDto schemaScopeDto;
     @Column(name = "count")
     private Long count = 0L;
+    @Version
+    private Long OPT_LOCK;
 
     public CTLSchemaMetaInfo() {
     }

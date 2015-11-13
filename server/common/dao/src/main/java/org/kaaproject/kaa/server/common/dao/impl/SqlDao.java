@@ -17,10 +17,11 @@
 package org.kaaproject.kaa.server.common.dao.impl;
 
 import org.hibernate.LockOptions;
+import org.hibernate.Session;
 
 public interface SqlDao<T> extends Dao<T, String> {
 
-    void refreshSession();
+    Session getSession();
     /**
      * Save object. Will be returned object with id.
      *
@@ -32,10 +33,9 @@ public interface SqlDao<T> extends Dao<T, String> {
 
     /**
      *
-     * @param o the domain object
      * @param lockOptions
      */
-    void lock(Object o, LockOptions lockOptions);
+    Session.LockRequest lockRequest(LockOptions lockOptions);
     /**
      * Find object by id.
      *

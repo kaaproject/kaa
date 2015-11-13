@@ -1,8 +1,6 @@
 package org.kaaproject.kaa.server.common.dao.service;
 
 
-import org.hibernate.LockMode;
-import org.hibernate.LockOptions;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
@@ -15,7 +13,6 @@ import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchemaMetaInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,7 +26,6 @@ import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getDto;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateObject;
 
 @Service
-@Transactional
 public class CTLServiceImpl implements CTLService {
 
     private static final Logger LOG = LoggerFactory.getLogger(CTLServiceImpl.class);
@@ -39,64 +35,53 @@ public class CTLServiceImpl implements CTLService {
     @Autowired
     private CTLSchemaMetaInfoDao<CTLSchemaMetaInfo> schemaMetaInfoDao;
 
-    Object huita = new Object();
+    public CTLServiceImpl() {
+    }
 
+    @Override
+    @Transactional
     public CTLSchemaDto saveCTLSchema(CTLSchemaDto unSavedSchema) {
-        CTLSchemaDto savedCtlSchemaDto;
-        synchronized (huita) {
-            schemaMetaInfoDao.refreshSession();
-            validateCTLSchemaObject(unSavedSchema);
-            CTLSchemaMetaInfoDto metaInfo = unSavedSchema.getMetaInfo();
+        validateCTLSchemaObject(unSavedSchema);
 
-            CTLSchemaScopeDto currentScope = null;
-            if (isBlank(unSavedSchema.getTenantId())) {
-                currentScope = SYSTEM;
-            } else if (!isBlank(unSavedSchema.getTenantId())) {
-                currentScope = TENANT;
-            } else if (!isBlank(unSavedSchema.getAppId())) {
-                currentScope = APPLICATION;
-            }
-            metaInfo.setSchemaScopeDto(currentScope);
+        CTLSchemaMetaInfoDto metaInfo = unSavedSchema.getMetaInfo();
 
-            CTLSchemaMetaInfo uniqueMetaInfo;
-            try {
-
-                uniqueMetaInfo = schemaMetaInfoDao.findByFqnAndVersion(metaInfo.getFqn(), metaInfo.getVersion());
-                if (uniqueMetaInfo == null) {
-                    uniqueMetaInfo = schemaMetaInfoDao.save(new CTLSchemaMetaInfo(metaInfo), true);
-                }
-            } catch (DataIntegrityViolationException ex) {
-                LOG.warn("---> Got DataIntegrityViolationException. Its ok for multy thread");
-//            schemaMetaInfoDao.refreshSession();
-                uniqueMetaInfo = schemaMetaInfoDao.findByFqnAndVersion(metaInfo.getFqn(), metaInfo.getVersion());
-            } catch (Exception e) {
-                throw new RuntimeException("Database processing exception.");
-            }
-            LockOptions lockOptions = new LockOptions(LockMode.PESSIMISTIC_WRITE);
-            lockOptions.setTimeOut(1000);
-
-            schemaMetaInfoDao.lock(uniqueMetaInfo, lockOptions);
-
-            switch (uniqueMetaInfo.getSchemaScopeDto()) {
-                case SYSTEM:
-                    throw new RuntimeException("Disable to store system ctl schema with same fqn and version.");
-                case TENANT:
-                    if (currentScope == SYSTEM) {
-                        throw new RuntimeException("Disable to store system ctl schema. Tenant's scope schema already exists with the same fqn and version.");
-                    }
-                    break;
-                case APPLICATION:
-                    break;
-                default:
-                    break;
-
-            }
-            CTLSchema ctlSchema = new CTLSchema(unSavedSchema);
-            ctlSchema.setMetaInfo(uniqueMetaInfo);
-            savedCtlSchemaDto = getDto(ctlSchemaDao.save(ctlSchema));
-            uniqueMetaInfo.incrementCount();
+        CTLSchemaScopeDto currentScope = null;
+        if (isBlank(unSavedSchema.getTenantId())) {
+            currentScope = SYSTEM;
+        } else if (!isBlank(unSavedSchema.getTenantId())) {
+            currentScope = TENANT;
+        } else if (!isBlank(unSavedSchema.getAppId())) {
+            currentScope = APPLICATION;
         }
-        return savedCtlSchemaDto;
+        metaInfo.setSchemaScopeDto(currentScope);
+
+        CTLSchemaMetaInfo uniqueMetaInfo;
+        try {
+            uniqueMetaInfo = schemaMetaInfoDao.save(new CTLSchemaMetaInfo(metaInfo));
+        } catch (Exception e) {
+            LOG.warn("---> Got rollback during save metainfo object.");
+            uniqueMetaInfo = schemaMetaInfoDao.findByFqnAndVersion(metaInfo.getFqn(), metaInfo.getVersion());
+        }
+
+        switch (uniqueMetaInfo.getSchemaScopeDto()) {
+            case SYSTEM:
+                throw new RuntimeException("Disable to store system ctl schema with same fqn and version.");
+            case TENANT:
+                if (currentScope == SYSTEM) {
+                    throw new RuntimeException("Disable to store system ctl schema. Tenant's scope schema already exists with the same fqn and version.");
+                }
+                break;
+            case APPLICATION:
+                break;
+            default:
+                break;
+
+        }
+        CTLSchema ctlSchema = new CTLSchema(unSavedSchema);
+        ctlSchema.setMetaInfo(uniqueMetaInfo);
+        CTLSchemaDto dto = getDto(ctlSchemaDao.save(ctlSchema));
+        schemaMetaInfoDao.incrementCount(uniqueMetaInfo);
+        return dto;
     }
 
     @Override

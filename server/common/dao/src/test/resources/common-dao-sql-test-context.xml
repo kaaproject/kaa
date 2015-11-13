@@ -41,7 +41,9 @@
                     <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQL82Dialect</prop>
                     <prop key="hibernate.format_sql">#{dao[hibernate_format_sql]}</prop>
                     <prop key="hibernate.show_sql">#{dao[hibernate_show_sql]}</prop>
-                    <prop key="current_session_context_class">thread</prop>
+                    <prop key="hibernate.transaction.auto_close_session">true</prop>
+                    <prop key="hibernate.connection.pool_size">200</prop>
+                    <!--<prop key="hibernate.generate_statistics">true</prop>-->
                 </props>
             </property>
         </bean>

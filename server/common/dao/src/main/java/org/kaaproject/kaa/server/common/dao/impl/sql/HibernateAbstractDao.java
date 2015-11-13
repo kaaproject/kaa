@@ -48,16 +48,9 @@ public abstract class HibernateAbstractDao<T extends GenericModel<?>> implements
 
     protected abstract Class<T> getEntityClass();
 
-    protected Session getSession() {
+    public Session getSession() {
         return sessionFactory.getCurrentSession();
     }
-
-    public void refreshSession() {
-        Session session = sessionFactory.getCurrentSession();
-        session.close();
-        sessionFactory.openSession();
-    }
-
 
     protected Criteria getCriteria() {
         return getSession().createCriteria(getEntityClass());
@@ -281,8 +274,8 @@ public abstract class HibernateAbstractDao<T extends GenericModel<?>> implements
     }
 
     @Override
-    public void lock(Object o, LockOptions lockOptions) {
-        getSession().buildLockRequest(lockOptions).lock(o);
+    public Session.LockRequest lockRequest(LockOptions lockOptions) {
+        return getSession().buildLockRequest(lockOptions);
     }
 
     protected void remove(T o) {
