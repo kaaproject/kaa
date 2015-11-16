@@ -1210,11 +1210,11 @@ struct RedirectSyncResponse {
         { }
 };
 
-struct PluginSync {
-    int32_t pluginId;
+struct ExtensionSync {
+    int32_t extensionId;
     std::vector<uint8_t> payload;
-    PluginSync() :
-        pluginId(int32_t()),
+    ExtensionSync() :
+        extensionId(int32_t()),
         payload(std::vector<uint8_t>())
         { }
 };
@@ -1369,8 +1369,8 @@ private:
     boost::any value_;
 public:
     size_t idx() const { return idx_; }
-    std::vector<PluginSync > get_array() const;
-    void set_array(const std::vector<PluginSync >& v);
+    std::vector<ExtensionSync > get_array() const;
+    void set_array(const std::vector<ExtensionSync >& v);
     bool is_null() const {
         return (idx_ == 1);
     }
@@ -1390,7 +1390,7 @@ struct SyncRequest {
     typedef _endpoint_avsc_Union__45__ userSyncRequest_t;
     typedef _endpoint_avsc_Union__46__ eventSyncRequest_t;
     typedef _endpoint_avsc_Union__47__ logSyncRequest_t;
-    typedef _endpoint_avsc_Union__48__ pluginSyncRequests_t;
+    typedef _endpoint_avsc_Union__48__ extensionSyncRequests_t;
     int32_t requestId;
     syncRequestMetaData_t syncRequestMetaData;
     bootstrapSyncRequest_t bootstrapSyncRequest;
@@ -1400,7 +1400,7 @@ struct SyncRequest {
     userSyncRequest_t userSyncRequest;
     eventSyncRequest_t eventSyncRequest;
     logSyncRequest_t logSyncRequest;
-    pluginSyncRequests_t pluginSyncRequests;
+    extensionSyncRequests_t extensionSyncRequests;
     SyncRequest() :
         requestId(int32_t()),
         syncRequestMetaData(syncRequestMetaData_t()),
@@ -1411,7 +1411,7 @@ struct SyncRequest {
         userSyncRequest(userSyncRequest_t()),
         eventSyncRequest(eventSyncRequest_t()),
         logSyncRequest(logSyncRequest_t()),
-        pluginSyncRequests(pluginSyncRequests_t())
+        extensionSyncRequests(extensionSyncRequests_t())
         { }
 };
 
@@ -1565,8 +1565,8 @@ private:
     boost::any value_;
 public:
     size_t idx() const { return idx_; }
-    std::vector<PluginSync > get_array() const;
-    void set_array(const std::vector<PluginSync >& v);
+    std::vector<ExtensionSync > get_array() const;
+    void set_array(const std::vector<ExtensionSync >& v);
     bool is_null() const {
         return (idx_ == 1);
     }
@@ -1586,7 +1586,7 @@ struct SyncResponse {
     typedef _endpoint_avsc_Union__54__ eventSyncResponse_t;
     typedef _endpoint_avsc_Union__55__ redirectSyncResponse_t;
     typedef _endpoint_avsc_Union__56__ logSyncResponse_t;
-    typedef _endpoint_avsc_Union__57__ pluginSyncResponses_t;
+    typedef _endpoint_avsc_Union__57__ extensionSyncResponses_t;
     int32_t requestId;
     SyncResponseResultType status;
     bootstrapSyncResponse_t bootstrapSyncResponse;
@@ -1597,7 +1597,7 @@ struct SyncResponse {
     eventSyncResponse_t eventSyncResponse;
     redirectSyncResponse_t redirectSyncResponse;
     logSyncResponse_t logSyncResponse;
-    pluginSyncResponses_t pluginSyncResponses;
+    extensionSyncResponses_t extensionSyncResponses;
     SyncResponse() :
         requestId(int32_t()),
         status(SyncResponseResultType()),
@@ -1609,7 +1609,7 @@ struct SyncResponse {
         eventSyncResponse(eventSyncResponse_t()),
         redirectSyncResponse(redirectSyncResponse_t()),
         logSyncResponse(logSyncResponse_t()),
-        pluginSyncResponses(pluginSyncResponses_t())
+        extensionSyncResponses(extensionSyncResponses_t())
         { }
 };
 
@@ -1716,8 +1716,8 @@ public:
     void set_LogSyncResponse(const LogSyncResponse& v);
     RedirectSyncResponse get_RedirectSyncResponse() const;
     void set_RedirectSyncResponse(const RedirectSyncResponse& v);
-    PluginSync get_PluginSync() const;
-    void set_PluginSync(const PluginSync& v);
+    ExtensionSync get_ExtensionSync() const;
+    void set_ExtensionSync(const ExtensionSync& v);
     SyncRequest get_SyncRequest() const;
     void set_SyncRequest(const SyncRequest& v);
     SyncResponse get_SyncResponse() const;
@@ -2400,15 +2400,15 @@ void _endpoint_avsc_Union__47__::set_LogSyncRequest(const LogSyncRequest& v) {
 }
 
 inline
-std::vector<PluginSync > _endpoint_avsc_Union__48__::get_array() const {
+std::vector<ExtensionSync > _endpoint_avsc_Union__48__::get_array() const {
     if (idx_ != 0) {
         throw avro::Exception("Invalid type for union");
     }
-    return boost::any_cast<std::vector<PluginSync > >(value_);
+    return boost::any_cast<std::vector<ExtensionSync > >(value_);
 }
 
 inline
-void _endpoint_avsc_Union__48__::set_array(const std::vector<PluginSync >& v) {
+void _endpoint_avsc_Union__48__::set_array(const std::vector<ExtensionSync >& v) {
     idx_ = 0;
     value_ = v;
 }
@@ -2526,15 +2526,15 @@ void _endpoint_avsc_Union__56__::set_LogSyncResponse(const LogSyncResponse& v) {
 }
 
 inline
-std::vector<PluginSync > _endpoint_avsc_Union__57__::get_array() const {
+std::vector<ExtensionSync > _endpoint_avsc_Union__57__::get_array() const {
     if (idx_ != 0) {
         throw avro::Exception("Invalid type for union");
     }
-    return boost::any_cast<std::vector<PluginSync > >(value_);
+    return boost::any_cast<std::vector<ExtensionSync > >(value_);
 }
 
 inline
-void _endpoint_avsc_Union__57__::set_array(const std::vector<PluginSync >& v) {
+void _endpoint_avsc_Union__57__::set_array(const std::vector<ExtensionSync >& v) {
     idx_ = 0;
     value_ = v;
 }
@@ -3156,15 +3156,15 @@ void _endpoint_avsc_Union__58__::set_RedirectSyncResponse(const RedirectSyncResp
 }
 
 inline
-PluginSync _endpoint_avsc_Union__58__::get_PluginSync() const {
+ExtensionSync _endpoint_avsc_Union__58__::get_ExtensionSync() const {
     if (idx_ != 44) {
         throw avro::Exception("Invalid type for union");
     }
-    return boost::any_cast<PluginSync >(value_);
+    return boost::any_cast<ExtensionSync >(value_);
 }
 
 inline
-void _endpoint_avsc_Union__58__::set_PluginSync(const PluginSync& v) {
+void _endpoint_avsc_Union__58__::set_ExtensionSync(const ExtensionSync& v) {
     idx_ = 44;
     value_ = v;
 }
@@ -3259,7 +3259,7 @@ inline _endpoint_avsc_Union__44__::_endpoint_avsc_Union__44__() : idx_(0), value
 inline _endpoint_avsc_Union__45__::_endpoint_avsc_Union__45__() : idx_(0), value_(UserSyncRequest()) { }
 inline _endpoint_avsc_Union__46__::_endpoint_avsc_Union__46__() : idx_(0), value_(EventSyncRequest()) { }
 inline _endpoint_avsc_Union__47__::_endpoint_avsc_Union__47__() : idx_(0), value_(LogSyncRequest()) { }
-inline _endpoint_avsc_Union__48__::_endpoint_avsc_Union__48__() : idx_(0), value_(std::vector<PluginSync >()) { }
+inline _endpoint_avsc_Union__48__::_endpoint_avsc_Union__48__() : idx_(0), value_(std::vector<ExtensionSync >()) { }
 inline _endpoint_avsc_Union__49__::_endpoint_avsc_Union__49__() : idx_(0), value_(BootstrapSyncResponse()) { }
 inline _endpoint_avsc_Union__50__::_endpoint_avsc_Union__50__() : idx_(0), value_(ProfileSyncResponse()) { }
 inline _endpoint_avsc_Union__51__::_endpoint_avsc_Union__51__() : idx_(0), value_(ConfigurationSyncResponse()) { }
@@ -3268,7 +3268,7 @@ inline _endpoint_avsc_Union__53__::_endpoint_avsc_Union__53__() : idx_(0), value
 inline _endpoint_avsc_Union__54__::_endpoint_avsc_Union__54__() : idx_(0), value_(EventSyncResponse()) { }
 inline _endpoint_avsc_Union__55__::_endpoint_avsc_Union__55__() : idx_(0), value_(RedirectSyncResponse()) { }
 inline _endpoint_avsc_Union__56__::_endpoint_avsc_Union__56__() : idx_(0), value_(LogSyncResponse()) { }
-inline _endpoint_avsc_Union__57__::_endpoint_avsc_Union__57__() : idx_(0), value_(std::vector<PluginSync >()) { }
+inline _endpoint_avsc_Union__57__::_endpoint_avsc_Union__57__() : idx_(0), value_(std::vector<ExtensionSync >()) { }
 inline _endpoint_avsc_Union__58__::_endpoint_avsc_Union__58__() : idx_(0), value_(TopicState()) { }
 }
 namespace avro {
@@ -5117,13 +5117,13 @@ template<> struct codec_traits<kaa::RedirectSyncResponse> {
     }
 };
 
-template<> struct codec_traits<kaa::PluginSync> {
-    static void encode(Encoder& e, const kaa::PluginSync& v) {
-        avro::encode(e, v.pluginId);
+template<> struct codec_traits<kaa::ExtensionSync> {
+    static void encode(Encoder& e, const kaa::ExtensionSync& v) {
+        avro::encode(e, v.extensionId);
         avro::encode(e, v.payload);
     }
-    static void decode(Decoder& d, kaa::PluginSync& v) {
-        avro::decode(d, v.pluginId);
+    static void decode(Decoder& d, kaa::ExtensionSync& v) {
+        avro::decode(d, v.extensionId);
         avro::decode(d, v.payload);
     }
 };
@@ -5394,7 +5394,7 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__48__> {
         switch (n) {
         case 0:
             {
-                std::vector<kaa::PluginSync > vv;
+                std::vector<kaa::ExtensionSync > vv;
                 avro::decode(d, vv);
                 v.set_array(vv);
             }
@@ -5418,7 +5418,7 @@ template<> struct codec_traits<kaa::SyncRequest> {
         avro::encode(e, v.userSyncRequest);
         avro::encode(e, v.eventSyncRequest);
         avro::encode(e, v.logSyncRequest);
-        avro::encode(e, v.pluginSyncRequests);
+        avro::encode(e, v.extensionSyncRequests);
     }
     static void decode(Decoder& d, kaa::SyncRequest& v) {
         avro::decode(d, v.requestId);
@@ -5430,7 +5430,7 @@ template<> struct codec_traits<kaa::SyncRequest> {
         avro::decode(d, v.userSyncRequest);
         avro::decode(d, v.eventSyncRequest);
         avro::decode(d, v.logSyncRequest);
-        avro::decode(d, v.pluginSyncRequests);
+        avro::decode(d, v.extensionSyncRequests);
     }
 };
 
@@ -5700,7 +5700,7 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__57__> {
         switch (n) {
         case 0:
             {
-                std::vector<kaa::PluginSync > vv;
+                std::vector<kaa::ExtensionSync > vv;
                 avro::decode(d, vv);
                 v.set_array(vv);
             }
@@ -5725,7 +5725,7 @@ template<> struct codec_traits<kaa::SyncResponse> {
         avro::encode(e, v.eventSyncResponse);
         avro::encode(e, v.redirectSyncResponse);
         avro::encode(e, v.logSyncResponse);
-        avro::encode(e, v.pluginSyncResponses);
+        avro::encode(e, v.extensionSyncResponses);
     }
     static void decode(Decoder& d, kaa::SyncResponse& v) {
         avro::decode(d, v.requestId);
@@ -5738,7 +5738,7 @@ template<> struct codec_traits<kaa::SyncResponse> {
         avro::decode(d, v.eventSyncResponse);
         avro::decode(d, v.redirectSyncResponse);
         avro::decode(d, v.logSyncResponse);
-        avro::decode(d, v.pluginSyncResponses);
+        avro::decode(d, v.extensionSyncResponses);
     }
 };
 
@@ -5890,7 +5890,7 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__58__> {
             avro::encode(e, v.get_RedirectSyncResponse());
             break;
         case 44:
-            avro::encode(e, v.get_PluginSync());
+            avro::encode(e, v.get_ExtensionSync());
             break;
         case 45:
             avro::encode(e, v.get_SyncRequest());
@@ -6217,9 +6217,9 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__58__> {
             break;
         case 44:
             {
-                kaa::PluginSync vv;
+                kaa::ExtensionSync vv;
                 avro::decode(d, vv);
-                v.set_PluginSync(vv);
+                v.set_ExtensionSync(vv);
             }
             break;
         case 45:

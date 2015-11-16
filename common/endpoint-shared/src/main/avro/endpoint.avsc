@@ -436,9 +436,9 @@
 {
     "namespace": "org.kaaproject.kaa.common.endpoint.gen",
     "type": "record",
-    "name": "PluginSync",
+    "name": "ExtensionSync",
     "fields": [
-        {"name": "pluginId", "type": "int"},
+        {"name": "extensionId", "type": "int"},
         {"name": "payload", "type": "bytes"}
     ]
 },
@@ -457,7 +457,7 @@
      {"name": "userSyncRequest", "type": ["org.kaaproject.kaa.common.endpoint.gen.UserSyncRequest", "null"]},
      {"name": "eventSyncRequest", "type": ["org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest", "null"]},
      {"name": "logSyncRequest", "type": ["org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest", "null"]},
-     {"name": "pluginSyncRequests", "type": [{"type": "array", "items":"org.kaaproject.kaa.common.endpoint.gen.PluginSync"}, "null"]}
+     {"name": "extensionSyncRequests", "type": [{"type": "array", "items":"org.kaaproject.kaa.common.endpoint.gen.ExtensionSync"}, "null"]}
  ]
 },
 {
@@ -476,7 +476,7 @@
      {"name": "eventSyncResponse", "type": ["org.kaaproject.kaa.common.endpoint.gen.EventSyncResponse", "null"]},
      {"name": "redirectSyncResponse", "type": ["org.kaaproject.kaa.common.endpoint.gen.RedirectSyncResponse", "null"]},
      {"name": "logSyncResponse", "type": ["org.kaaproject.kaa.common.endpoint.gen.LogSyncResponse", "null"]},
-     {"name": "pluginSyncResponses", "type": [{"type": "array", "items":"org.kaaproject.kaa.common.endpoint.gen.PluginSync"}, "null"]}
+     {"name": "extensionSyncResponses", "type": [{"type": "array", "items":"org.kaaproject.kaa.common.endpoint.gen.ExtensionSync"}, "null"]}
  ]
 },
 {
