@@ -727,8 +727,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
                     controlService.getConfigurationSchemasByApplicationId(applicationId);
             for (ConfigurationSchemaDto dto : configSchemas) {
                 if (dto.getMajorVersion() == sdkProfile.getConfigurationSchemaVersion()) {
-                    viewDto.setConfigurationSchemaName(dto.getName() + " (v." + dto.getMajorVersion()
-                            + "." + dto.getMinorVersion() + ")");
+                    viewDto.setConfigurationSchemaName(dto.getName() + " (v." + dto.getMajorVersion() + ")");
                     viewDto.setConfigurationSchemaId(dto.getId());
                 }
             }
@@ -736,8 +735,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             List<ProfileSchemaDto> profileSchemas = controlService.getProfileSchemasByApplicationId(applicationId);
             for (ProfileSchemaDto dto : profileSchemas) {
                 if (dto.getMajorVersion() == sdkProfile.getProfileSchemaVersion()) {
-                    viewDto.setProfileSchemaName(dto.getName() + " (v." + dto.getMajorVersion()
-                            + "." + dto.getMinorVersion() + ")");
+                    viewDto.setProfileSchemaName(dto.getName() + " (v." + dto.getMajorVersion() + ")");
                     viewDto.setProfileSchemaId(dto.getId());
                 }
             }
@@ -746,8 +744,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
                     controlService.getNotificationSchemasByAppId(applicationId);
             for (NotificationSchemaDto dto : notificationSchemas) {
                 if (dto.getMajorVersion() == sdkProfile.getNotificationSchemaVersion()) {
-                    viewDto.setNotificationSchemaName(dto.getName() + " (v." + dto.getMajorVersion()
-                            + "." + dto.getMinorVersion() + ")");
+                    viewDto.setNotificationSchemaName(dto.getName() + " (v." + dto.getMajorVersion() + ")");
                     viewDto.setNotificationSchemaId(dto.getId());
                 }
             }
@@ -755,8 +752,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             List<LogSchemaDto> logSchemas = controlService.getLogSchemasByApplicationId(applicationId);
             for (LogSchemaDto dto : logSchemas) {
                 if (dto.getMajorVersion() == sdkProfile.getLogSchemaVersion()) {
-                    viewDto.setLogSchemaName(dto.getName() + " (v." + dto.getMajorVersion()
-                            + "." + dto.getMinorVersion() + ")");
+                    viewDto.setLogSchemaName(dto.getName() + " (v." + dto.getMajorVersion() + ")");
                     viewDto.setLogSchemaId(dto.getId());
                 }
             }

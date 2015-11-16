@@ -125,7 +125,7 @@ public class EndpointProfileActivity extends
         final SdkProfileDto sdkDto = entity.getSdkProfileDto();
         if (sdkDto != null) {
             String sdkName = sdkDto.getName();
-            detailsView.getSdkAnchor().setText((sdkName != null) ? sdkName : sdkDto.getToken());
+            detailsView.getSdkAnchor().setText((sdkName != null && !sdkName.isEmpty()) ? sdkName : sdkDto.getToken());
             registrations.add(detailsView.getSdkAnchor().addClickHandler(new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent clickEvent) {
