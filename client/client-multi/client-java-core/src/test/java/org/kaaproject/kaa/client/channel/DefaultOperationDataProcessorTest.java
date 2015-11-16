@@ -47,7 +47,7 @@ public class DefaultOperationDataProcessorTest {
     @Test
     public void testUpRequestCreationWithNullTypes() throws Exception {
         DefaultOperationDataProcessor operationsDataProcessor = new DefaultOperationDataProcessor();
-        assertNull(operationsDataProcessor.compileRequest(null));
+        assertNull(operationsDataProcessor.compileRequest((Map<TransportType, ChannelDirection>)null));
     }
 
     @Test

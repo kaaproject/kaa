@@ -21,8 +21,10 @@ import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
 
 import org.kaaproject.kaa.client.bootstrap.BootstrapManager;
@@ -88,6 +90,10 @@ import org.kaaproject.kaa.client.notification.UnavailableTopicException;
 import org.kaaproject.kaa.client.persistence.KaaClientPropertiesState;
 import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.client.persistence.PersistentStorage;
+import org.kaaproject.kaa.client.plugin.ExtPluginContext;
+import org.kaaproject.kaa.client.plugin.PluginInitializationException;
+import org.kaaproject.kaa.client.plugin.PluginInstance;
+import org.kaaproject.kaa.client.plugin.PluginInstanceAPI;
 import org.kaaproject.kaa.client.profile.DefaultProfileManager;
 import org.kaaproject.kaa.client.profile.ProfileContainer;
 import org.kaaproject.kaa.client.profile.ProfileManager;
@@ -158,10 +164,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
     protected final KaaClientStateListener stateListener;
 
     protected enum State {
-        CREATED,
-        STARTED,
-        PAUSED,
-        STOPPED
+        CREATED, STARTED, PAUSED, STOPPED
     };
 
     protected State clientState = State.CREATED;
@@ -210,7 +213,11 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
         failoverManager = buildFailoverManager(channelManager);
         channelManager.setFailoverManager(failoverManager);
 
-        initializeChannels(channelManager, transportContext);
+        DefaultOperationDataProcessor operationsDataProcessor = new DefaultOperationDataProcessor();
+
+        initializePlugins(getExtensionMapping(), operationsDataProcessor);
+
+        initializeChannels(channelManager, transportContext, operationsDataProcessor);
 
         bootstrapManager.setChannelManager(channelManager);
         bootstrapManager.setFailoverManager(failoverManager);
@@ -234,6 +241,27 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
         transportContext.initTransports(this.channelManager, this.kaaClientState);
 
         eventFamilyFactory = new EventFamilyFactory(eventManager, context.getExecutorContext());
+    }
+
+    private final Map<Integer, PluginInstance<? extends PluginInstanceAPI>> pluginInstanceMap = new LinkedHashMap<>();
+
+    private void initializePlugins(Map<Integer, Class<? extends PluginInstance<? extends PluginInstanceAPI>>> extensionMapping,
+            DefaultOperationDataProcessor operationsDataProcessor) {
+        for (Entry<Integer, Class<? extends PluginInstance<? extends PluginInstanceAPI>>> entry : extensionMapping.entrySet()) {
+            Integer extId = entry.getKey();
+            Class<? extends PluginInstance<? extends PluginInstanceAPI>> clazz = entry.getValue();
+            try {
+                PluginInstance<? extends PluginInstanceAPI> pluginInstance = clazz.newInstance();
+                pluginInstance.init(new ExtPluginContext(extId, channelManager, context));
+                pluginInstanceMap.put(extId, pluginInstance);
+            } catch (InstantiationException | IllegalAccessException | PluginInitializationException e) {
+                LOG.warn("[{}] FAILED to initialize plugin {}", extId, clazz, e);
+            }
+        }
+    }
+
+    protected PluginInstanceAPI getPluginInstanceAPI(Integer extension) {
+        return pluginInstanceMap.get(extension).getPluginAPI();
     }
 
     @Override
@@ -495,7 +523,8 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
 
     @Override
     public EventFamilyFactory getEventFamilyFactory() {
-        //TODO: on which stage do we need to check client's state, here or in a specific event factory?
+        // TODO: on which stage do we need to check client's state, here or in a
+        // specific event factory?
         return eventFamilyFactory;
     }
 
@@ -589,7 +618,6 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
         RedirectionTransport redirectionTransport = buildRedirectionTransport(properties, kaaClientState);
         LogTransport logTransport = buildLogTransport(properties, kaaClientState);
 
-
         EndpointObjectHash publicKeyHash = EndpointObjectHash.fromSHA1(kaaClientState.getPublicKey().getEncoded());
         MetaDataTransport mdTransport = new DefaultMetaDataTransport();
         mdTransport.setClientProperties(properties);
@@ -601,17 +629,19 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
                 configurationTransport, userTransport, redirectionTransport, logTransport);
     }
 
-    protected KaaInternalChannelManager buildChannelManager(BootstrapManager bootstrapManager, Map<TransportProtocolId, List<TransportConnectionInfo>> bootstrapServers) {
-        KaaInternalChannelManager channelManager = new DefaultChannelManager(bootstrapManager, bootstrapServers, context.getExecutorContext());
+    protected KaaInternalChannelManager buildChannelManager(BootstrapManager bootstrapManager,
+            Map<TransportProtocolId, List<TransportConnectionInfo>> bootstrapServers) {
+        KaaInternalChannelManager channelManager = new DefaultChannelManager(bootstrapManager, bootstrapServers,
+                context.getExecutorContext());
         channelManager.setConnectivityChecker(context.createConnectivityChecker());
         return channelManager;
     }
 
-    protected void initializeChannels(KaaInternalChannelManager channelManager, TransportContext transportContext) {
+    protected void initializeChannels(KaaInternalChannelManager channelManager, TransportContext transportContext,
+            DefaultOperationDataProcessor operationsDataProcessor) {
         DefaultBootstrapDataProcessor bootstrapDataProcessor = new DefaultBootstrapDataProcessor();
         bootstrapDataProcessor.setBootstrapTransport(transportContext.getBootstrapTransport());
 
-        DefaultOperationDataProcessor operationsDataProcessor = new DefaultOperationDataProcessor();
         operationsDataProcessor.setConfigurationTransport(transportContext.getConfigurationTransport());
         operationsDataProcessor.setEventTransport(transportContext.getEventTransport());
         operationsDataProcessor.setMetaDataTransport(transportContext.getMdTransport());
@@ -632,36 +662,45 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
         channelManager.addChannel(operationsChannel);
     }
 
+    protected abstract Map<Integer, Class<? extends PluginInstance<? extends PluginInstanceAPI>>> getExtensionMapping();
+
     protected FailoverManager buildFailoverManager(KaaChannelManager channelManager) {
         return new DefaultFailoverManager(channelManager, context.getExecutorContext());
     }
 
-    protected ResyncConfigurationManager buildConfigurationManager(KaaClientProperties properties, KaaClientState kaaClientState, TransportContext transportContext) {
+    protected ResyncConfigurationManager buildConfigurationManager(KaaClientProperties properties, KaaClientState kaaClientState,
+            TransportContext transportContext) {
         return new ResyncConfigurationManager(properties, kaaClientState);
     }
 
-    protected DefaultLogCollector buildLogCollector(KaaClientProperties properties, KaaClientState kaaClientState, TransportContext transportContext) {
+    protected DefaultLogCollector buildLogCollector(KaaClientProperties properties, KaaClientState kaaClientState,
+            TransportContext transportContext) {
         return new DefaultLogCollector(transportContext.getLogTransport(), context.getExecutorContext(), channelManager, failoverManager);
     }
 
-    protected DefaultEndpointRegistrationManager buildRegistrationManager(KaaClientProperties properties, KaaClientState kaaClientState, TransportContext transportContext) {
-        return new DefaultEndpointRegistrationManager(kaaClientState, context.getExecutorContext(),
-                transportContext.getUserTransport(), transportContext.getProfileTransport());
+    protected DefaultEndpointRegistrationManager buildRegistrationManager(KaaClientProperties properties, KaaClientState kaaClientState,
+            TransportContext transportContext) {
+        return new DefaultEndpointRegistrationManager(kaaClientState, context.getExecutorContext(), transportContext.getUserTransport(),
+                transportContext.getProfileTransport());
     }
 
-    protected DefaultEventManager buildEventManager(KaaClientProperties properties, KaaClientState kaaClientState, TransportContext transportContext) {
+    protected DefaultEventManager buildEventManager(KaaClientProperties properties, KaaClientState kaaClientState,
+            TransportContext transportContext) {
         return new DefaultEventManager(kaaClientState, context.getExecutorContext(), transportContext.getEventTransport());
     }
 
-    protected DefaultNotificationManager buildNotificationManager(KaaClientProperties properties, KaaClientState kaaClientState, TransportContext transportContext) {
+    protected DefaultNotificationManager buildNotificationManager(KaaClientProperties properties, KaaClientState kaaClientState,
+            TransportContext transportContext) {
         return new DefaultNotificationManager(kaaClientState, context.getExecutorContext(), transportContext.getNotificationTransport());
     }
 
-    protected ProfileManager buildProfileManager(KaaClientProperties properties, KaaClientState kaaClientState, TransportContext transportContext) {
+    protected ProfileManager buildProfileManager(KaaClientProperties properties, KaaClientState kaaClientState,
+            TransportContext transportContext) {
         return new DefaultProfileManager(transportContext.getProfileTransport());
     }
 
-    protected BootstrapManager buildBootstrapManager(KaaClientProperties properties, KaaClientState kaaClientState, TransportContext transportContext) {
+    protected BootstrapManager buildBootstrapManager(KaaClientProperties properties, KaaClientState kaaClientState,
+            TransportContext transportContext) {
         return new DefaultBootstrapManager(transportContext.getBootstrapTransport(), context.getExecutorContext());
     }
 

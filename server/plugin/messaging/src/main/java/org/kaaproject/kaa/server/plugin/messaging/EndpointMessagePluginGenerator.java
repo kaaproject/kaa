@@ -16,10 +16,12 @@
 package org.kaaproject.kaa.server.plugin.messaging;
 
 import java.util.List;
+import java.util.Set;
 
 import org.kaaproject.kaa.server.common.core.plugin.def.SdkApiFile;
 import org.kaaproject.kaa.server.common.core.plugin.generator.AbstractSdkApiGenerator;
 import org.kaaproject.kaa.server.common.core.plugin.generator.SpecificPluginSdkApiGenerationContext;
+import org.kaaproject.kaa.server.common.core.plugin.instance.PluginContractInstance;
 import org.kaaproject.kaa.server.plugin.messaging.gen.Configuration;
 
 public class EndpointMessagePluginGenerator extends AbstractSdkApiGenerator<Configuration> {
@@ -27,6 +29,8 @@ public class EndpointMessagePluginGenerator extends AbstractSdkApiGenerator<Conf
     @Override
     protected List<SdkApiFile> generatePluginSdkApi(SpecificPluginSdkApiGenerationContext<Configuration> context) {
         Configuration configuration = context.getConfiguration();
+        Set<PluginContractInstance> contractInstances = context.getPluginContracts();
+        
         configuration.getMessageFamilyFqn();
         return null;
     }

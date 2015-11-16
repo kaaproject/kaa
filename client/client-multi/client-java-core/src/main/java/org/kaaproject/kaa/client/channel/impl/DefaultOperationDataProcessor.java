@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.client.channel.impl;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -197,5 +198,11 @@ public class DefaultOperationDataProcessor implements KaaDataMultiplexer, KaaDat
         if (eventTransport != null) {
             eventTransport.releaseEventManager();
         }
+    }
+
+    @Override
+    public byte[] compileRequest(List<Integer> extIds) throws Exception {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

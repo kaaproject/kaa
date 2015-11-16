@@ -195,6 +195,12 @@ public interface KaaChannelManager {
     void syncAll(TransportType type);
 
     /**
+     * Invoke sync on active channel by specified plugin extension
+     * @param extId - plugin extension
+     */
+    void sync(int extId);
+
+    /**
      * Returns information about server that is used for data transfer for specified {@link TransportType} 
      * @param type - type that is used to identify active channel
      * @return

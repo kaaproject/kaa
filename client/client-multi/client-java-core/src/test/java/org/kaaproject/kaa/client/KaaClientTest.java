@@ -21,6 +21,7 @@ import java.io.OutputStream;
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +46,8 @@ import org.kaaproject.kaa.client.logging.AbstractLogCollector;
 import org.kaaproject.kaa.client.persistence.KaaClientPropertiesState;
 import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.client.persistence.PersistentStorage;
+import org.kaaproject.kaa.client.plugin.PluginInstance;
+import org.kaaproject.kaa.client.plugin.PluginInstanceAPI;
 import org.kaaproject.kaa.client.profile.ProfileContainer;
 import org.kaaproject.kaa.client.profile.ProfileRuntimeException;
 import org.kaaproject.kaa.client.schema.SchemaRuntimeException;
@@ -90,6 +93,11 @@ public class KaaClientTest {
             protected DefaultBootstrapManager buildBootstrapManager(KaaClientProperties properties, KaaClientState kaaClientState,
                                                                     TransportContext transportContext) {
                 return bsManagerMock;
+            }
+
+            @Override
+            protected Map<Integer, Class<? extends PluginInstance<? extends PluginInstanceAPI>>> getExtensionMapping() {
+                return Collections.emptyMap();
             }
         };
 

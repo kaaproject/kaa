@@ -545,4 +545,10 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
     public void setFailoverManager(FailoverManager failoverManager) {
         this.failoverManager = failoverManager;
     }
+
+    @Override
+    public void sync(int extId) {
+        // TODO Auto-generated method stub
+        
+    }
 }

@@ -17,6 +17,7 @@
 package org.kaaproject.kaa.client.channel.impl;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import org.kaaproject.kaa.client.channel.BootstrapTransport;
@@ -67,5 +68,11 @@ public class DefaultBootstrapDataProcessor implements KaaDataMultiplexer, KaaDat
 
     @Override
     public void postProcess() {
+    }
+
+    @Override
+    public byte[] compileRequest(List<Integer> extIds) throws Exception {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

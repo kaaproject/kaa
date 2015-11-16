@@ -189,6 +189,12 @@ public class DefaultBootstrapManagerTest {
             // TODO Auto-generated method stub
             return null;
         }
+
+        @Override
+        public void sync(int extId) {
+            // TODO Auto-generated method stub
+            
+        }
     }
 
     @Test
