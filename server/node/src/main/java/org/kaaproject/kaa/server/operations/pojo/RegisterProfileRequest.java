@@ -44,10 +44,10 @@ public class RegisterProfileRequest {
     /**
      * Instantiates a new register profile request.
      *
-     * @param appToken            the app token
-     * @param endpointKey            the endpoint key
+     * @param appToken          the app token
+     * @param endpointKey       the endpoint key
      * @param sdkToken          the sdk token
-     * @param profile            the profile body
+     * @param profile           the profile body
      */
     public RegisterProfileRequest(String appToken, byte[] endpointKey, String sdkToken, byte[] profile) {
         this(appToken, endpointKey, sdkToken, profile, null);
@@ -60,6 +60,7 @@ public class RegisterProfileRequest {
      * @param endpointKey        the endpoint key
      * @param sdkToken           the sdk token
      * @param profile            the profile body
+     * @param accessToken        the access token
      */
     public RegisterProfileRequest(String appToken, byte[] endpointKey, String sdkToken, byte[] profile, String accessToken) {
         super();

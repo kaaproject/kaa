@@ -18,7 +18,7 @@ package org.kaaproject.kaa.common.channels.protocols.kaatcp;
 /**
  * KaatcpProtocolExeption Class.
  * Used to indicate protocol parsing exceptions.
- * @author Andrey Panasenko <apanasenko@cybervisiontech.com>
+ * @author Andrey Panasenko apanasenko@cybervisiontech.com
  *
  */
 public class KaaTcpProtocolException extends Exception {
@@ -30,7 +30,7 @@ public class KaaTcpProtocolException extends Exception {
 
     /**
      * Default constructor with error message
-     * @param string
+     * @param string the string
      */
     public KaaTcpProtocolException(String string) {
         super(string);

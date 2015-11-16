@@ -145,7 +145,7 @@ public class LoadDistributionService extends Thread {
     /**
      * Sets the recalculation_period.
      *
-     * @param recalculation_period the recalculation_period to set
+     * @param recalculationPeriod the recalculation period to set
      */
     public void setRecalculationPeriod(int recalculationPeriod) {
         this.recalculationPeriod = recalculationPeriod;

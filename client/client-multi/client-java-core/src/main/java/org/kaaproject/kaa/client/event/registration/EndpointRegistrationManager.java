@@ -28,10 +28,8 @@ import org.kaaproject.kaa.client.event.EndpointKeyHash;
  * To assign endpoints to user current endpoint has to be already attached,
  * otherwise attach/detach operations will fail.<br>
  * Current endpoint can be attached to user in two ways:
- * <il>
- * <li>By calling {@link #attachUser(String, String, UserAttachCallback)}</li>
- * <li>Attached from another endpoint</li>
- * </il>
+ * By calling {@link #attachUser(String, String, UserAttachCallback)}
+ * Attached from another endpoint
  * <br>
  * Attaching current endpoint to user:
  * <pre>
@@ -112,9 +110,9 @@ public interface EndpointRegistrationManager {
      * Creates user attach request using default verifier. Default verifier is selected during SDK generation.
      * If there was no default verifier selected this method will throw runtime exception.
      *
-     * @param userExternalId
-     * @param userAccessToken
-     * @param callback called when authentication result received
+     * @param userExternalId    the user external id
+     * @param userAccessToken   the user access token
+     * @param callback          called when authentication result received
      *
      * @see UserAttachCallback
      */
@@ -123,10 +121,10 @@ public interface EndpointRegistrationManager {
     /**
      * Creates user attach request using specified verifier.
      *
-     * @param userVerifierToken
-     * @param userExternalId
-     * @param userAccessToken
-     * @param callback called when authentication result received
+     * @param userVerifierToken the user verifier token
+     * @param userExternalId    the user external id
+     * @param userAccessToken   the user access token
+     * @param callback          called when authentication result received
      *
      * @see UserAttachCallback
      */
@@ -142,7 +140,7 @@ public interface EndpointRegistrationManager {
     /**
      * Sets callback for notifications when current endpoint is attached to user
      *
-     * @param callback
+     * @param callback the callback
      *
      * @see AttachEndpointToUserCallback
      */
@@ -151,7 +149,7 @@ public interface EndpointRegistrationManager {
     /**
      * Sets callback for notifications when current endpoint is detached from user
      *
-     * @param callback
+     * @param callback the callback
      *
      * @see DetachEndpointFromUserCallback
      */

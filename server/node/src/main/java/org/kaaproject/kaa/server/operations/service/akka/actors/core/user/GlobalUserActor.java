@@ -44,8 +44,9 @@ public class GlobalUserActor extends UntypedActor {
     /**
      * Instantiates a new user actor.
      *
-     * @param operationsService
-     *            the operations service
+     * @param context   the context
+     * @param userId    the user id
+     * @param tenantId  the tenant id
      */
     private GlobalUserActor(AkkaContext context, String userId, String tenantId) {
         this.messageProcessor = new GlobalUserActorMessageProcessor(context, userId, tenantId);
@@ -82,11 +83,9 @@ public class GlobalUserActor extends UntypedActor {
         /**
          * Instantiates a new actor creator.
          *
-         * @param operationsService
-         *            the operations service
-         * @param eventService
-         * @param notificationDeltaService
-         *            the notification delta service
+         * @param context   the context
+         * @param userId    the user id
+         * @param tenantId  the tenant id
          */
         public ActorCreator(AkkaContext context, String userId, String tenantId) {
             super();

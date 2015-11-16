@@ -90,7 +90,6 @@
  * }
  * </pre>
  *
- * @see org.kaaproject.kaa.client.profile.AbstractProfileContainer
  * @see org.kaaproject.kaa.client.profile.ProfileManager
  *
  */

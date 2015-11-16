@@ -23,8 +23,6 @@ package org.kaaproject.kaa.client.logging;
  * a log upload strategy on each adding of new log record in order to check
  * whether to send logs to the server or clean up local storage.</p>
  *
- * <p>Reference implementation is present and use by default
- * ({@link MemoryLogStorage}).</p>
  */
 public interface LogStorageStatus {
     /**

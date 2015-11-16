@@ -32,8 +32,9 @@ public interface ConfigurationProcessor {
     /**
      * Routine for processing received configuration data.
      *
-     * @param buffer The input buffer with raw data
-     * @param fullResync Notify whether configuration is a full resync
+     * @param   buffer      The input buffer with raw data
+     * @param   fullResync  Notify whether configuration is a full resync
+     * @throws  IOException the io exception
      */
     void processConfigurationData(ByteBuffer buffer, boolean fullResync) throws IOException;
 

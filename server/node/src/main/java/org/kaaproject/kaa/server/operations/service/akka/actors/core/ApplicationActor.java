@@ -90,10 +90,8 @@ public class ApplicationActor extends UntypedActor {
     /**
      * Instantiates a new application actor.
      *
-     * @param operationsService
-     *            the operations service
-     * @param notificationDeltaService
-     *            the notification delta service
+     * @param context the context
+     * @param applicationToken the application token
      */
     private ApplicationActor(AkkaContext context, String applicationToken) {
         this.context = context;
@@ -128,10 +126,8 @@ public class ApplicationActor extends UntypedActor {
         /**
          * Instantiates a new actor creator.
          *
-         * @param operationsService
-         *            the operations service
-         * @param notificationDeltaService
-         *            the notification delta service
+         * @param context the context
+         * @param applicationToken the application token
          */
         public ActorCreator(AkkaContext context, String applicationToken) {
             super();

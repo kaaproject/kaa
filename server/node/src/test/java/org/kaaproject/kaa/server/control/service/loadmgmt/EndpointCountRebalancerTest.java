@@ -40,7 +40,7 @@ public class EndpointCountRebalancerTest {
 
     /**
      * Check rebalance() operation with empty history Test method for
-     * {@link org.kaaproject.kaa.server.control.service.loadmgmt.dynamicmgmt.DefaultRebalancer#recalculate(java.util.Map)}
+     * {@link org.kaaproject.kaa.server.control.service.loadmgmt.dynamicmgmt.EndpointCountRebalancer#recalculate(java.util.Map)}
      * .
      */
     @Test
@@ -67,7 +67,7 @@ public class EndpointCountRebalancerTest {
      * With load 10,30,55 - average will be 31 its more than default minimum 10
      * recalculate should generate rule for dns3 to drop connection to dns1 with
      * probability 0.2 Test method for
-     * {@link org.kaaproject.kaa.server.control.service.loadmgmt.dynamicmgmt.DefaultRebalancer#recalculate(java.util.Map)}
+     * {@link org.kaaproject.kaa.server.control.service.loadmgmt.dynamicmgmt.EndpointCountRebalancer#recalculate(java.util.Map)}
      * .
      */
     @Test

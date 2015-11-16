@@ -33,7 +33,7 @@ public interface DetachEndpointFromUserCallback {
     /**
      * Callback on current endpoint is detached from user.
      *
-     * @param endpointAccessToken
+     * @param endpointAccessToken the endpoint access token
      */
     void onDetachedFromUser(String endpointAccessToken);
 }

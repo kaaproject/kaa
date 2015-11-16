@@ -31,7 +31,7 @@ public interface ChangedAttachedEndpointListCallback {
     /**
      * Callback on attached endpoints list changed
      *
-     * @param attachedEndpoints
+     * @param attachedEndpoints the attached endpoints
      *
      * @see EndpointAccessToken
      * @see EndpointKeyHash

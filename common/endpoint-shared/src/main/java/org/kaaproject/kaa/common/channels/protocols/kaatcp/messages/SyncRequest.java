@@ -27,9 +27,9 @@ import org.kaaproject.kaa.common.channels.protocols.kaatcp.KaaTcpProtocolExcepti
 public class SyncRequest extends Sync {
 
     /**
-     * @param avroObject
-     * @param isZipped
-     * @param isEcrypted
+     * @param avroObject the avro object
+     * @param isZipped   the is zipped
+     * @param isEcrypted the is ecrypted
      */
     public SyncRequest(byte[] avroObject, boolean isZipped, boolean isEcrypted) {
         super(true, avroObject, isZipped, isEcrypted);
@@ -37,8 +37,8 @@ public class SyncRequest extends Sync {
 
     /**
      * Constructor used to migrate from KaaSync after Variable Header decode.
-     * @param old KaaSync object which used to create new
-     * @throws KaaTcpProtocolException
+     * @param   old KaaSync object which used to create new
+     * @throws  KaaTcpProtocolException the kaa tcp protocol exception
      */
     public SyncRequest(KaaSync old) throws KaaTcpProtocolException {
         super(old);

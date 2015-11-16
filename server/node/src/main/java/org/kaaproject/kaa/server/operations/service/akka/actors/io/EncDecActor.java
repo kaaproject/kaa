@@ -54,9 +54,9 @@ public class EncDecActor extends UntypedActor {
     /**
      * Instantiates a new enc dec actor.
      * 
-     * @param epsActor
-     *            the eps actor
-     * @param supportUnencryptedConnection
+     * @param epsActor          the eps actor
+     * @param context           the context
+     * @param platformProtocols the platform protocols
      */
     public EncDecActor(ActorRef epsActor, AkkaContext context, Set<String> platformProtocols) {
         super();
@@ -104,8 +104,9 @@ public class EncDecActor extends UntypedActor {
         /**
          * Instantiates a new actor creator.
          * 
-         * @param epsActor
-         *            the eps actor
+         * @param epsActor          the eps actor
+         * @param context           the context
+         * @param platformProtocols the platform protocols
          */
         public ActorCreator(ActorRef epsActor, AkkaContext context, Set<String> platformProtocols) {
             super();

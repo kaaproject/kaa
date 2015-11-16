@@ -55,14 +55,10 @@ public class SyncRequestMessage extends EndpointAwareMessage implements ChannelA
     /**
      * Instantiates a new sync request message.
      * 
-     * @param appToken
-     *            the app token
-     * @param key
-     *            the key
-     * @param request
-     *            the request
-     * @param originator
-     *            the originator
+     * @param session           the session
+     * @param request           the request
+     * @param requestMessage    the request message
+     * @param originator        the originator
      */
     public SyncRequestMessage(SessionInfo session, ClientSync request, Message requestMessage, ActorRef originator) {
         super(session.getApplicationToken(), session.getKey(), originator);

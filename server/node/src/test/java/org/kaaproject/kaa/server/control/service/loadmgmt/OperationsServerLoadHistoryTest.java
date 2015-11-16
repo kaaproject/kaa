@@ -41,7 +41,7 @@ public class OperationsServerLoadHistoryTest {
     }
 
     /**
-     * Test method for {@link org.kaaproject.kaa.server.control.service.loadmgmt.dynamicmgmt.OperationsServerLoadHistory#addOpsServerLoad(int, int, int)}.
+     * Test method for {@link org.kaaproject.kaa.server.control.service.loadmgmt.dynamicmgmt.OperationsServerLoadHistory#addOpsServerLoad(LoadInfo)}.
      */
     @Test
     public void testAddOpsServerLoad() {

@@ -44,7 +44,7 @@ public interface KaaDataChannel {
     /**
      * Updates the channel's state of the specific service.
      *
-     * @param type
+     * @param types
      *            transport types to sync.
      * @see TransportType
      *
@@ -139,7 +139,6 @@ public interface KaaDataChannel {
      * Retrieves info about current used server
      *
      * @return Server info
-     * @see ServerInfo
      *
      */
     TransportConnectionInfo getServer();

@@ -50,7 +50,8 @@ public class AvroJsonConverter<T extends SpecificRecordBase> {
     /**
      * Instantiates a new Avro json converter based on class.
      *
-     * @param typeParameterClass the type parameter class
+     * @param schema                the schema
+     * @param typeParameterClass    the type parameter class
      */
     public AvroJsonConverter(Schema schema, Class<T> typeParameterClass) {
         super();

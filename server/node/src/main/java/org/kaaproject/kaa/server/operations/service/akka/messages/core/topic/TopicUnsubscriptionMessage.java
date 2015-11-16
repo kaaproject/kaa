@@ -34,9 +34,6 @@ public class TopicUnsubscriptionMessage extends EndpointAwareMessage{
      * Instantiates a new topic registration request message.
      *
      * @param topicId the topic id
-     * @param seqNumber the seq number
-     * @param systemNfSchemaVersion the system nf schema version
-     * @param userNfSchemaVersion the user nf schema version
      * @param appToken the app token
      * @param key the key
      * @param originator the originator

@@ -68,8 +68,8 @@ public interface LogAppender {
     /**
      * Do append.
      * 
-     * @param logEventPack
-     *            the log event pack
+     * @param logEventPack  the log event pack
+     * @param listener      the listener
      */
     void doAppend(LogEventPack logEventPack, LogDeliveryCallback listener);
 
