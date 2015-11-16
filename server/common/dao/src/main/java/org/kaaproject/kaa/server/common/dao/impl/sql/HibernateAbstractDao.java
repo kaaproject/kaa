@@ -15,7 +15,9 @@
  */
 package org.kaaproject.kaa.server.common.dao.impl.sql;
 
+import org.hibernate.CacheMode;
 import org.hibernate.Criteria;
+import org.hibernate.FlushMode;
 import org.hibernate.LockMode;
 import org.hibernate.LockOptions;
 import org.hibernate.Query;
@@ -49,7 +51,9 @@ public abstract class HibernateAbstractDao<T extends GenericModel<?>> implements
     protected abstract Class<T> getEntityClass();
 
     public Session getSession() {
-        return sessionFactory.getCurrentSession();
+        Session session = sessionFactory.getCurrentSession();
+        session.setFlushMode(FlushMode.ALWAYS);
+        return session;
     }
 
     protected Criteria getCriteria() {
@@ -125,6 +129,7 @@ public abstract class HibernateAbstractDao<T extends GenericModel<?>> implements
         LOG.trace("Searching {} entity by criterion [{}] ", className, criterion);
         Criteria criteria = getCriteria();
         criteria.add(criterion);
+//        criteria.setCacheMode(CacheMode.REFRESH);
         return (T) criteria.uniqueResult();
     }
 
@@ -275,6 +280,7 @@ public abstract class HibernateAbstractDao<T extends GenericModel<?>> implements
 
     @Override
     public Session.LockRequest lockRequest(LockOptions lockOptions) {
+        LOG.info("---> Got lock request");
         return getSession().buildLockRequest(lockOptions);
     }
 

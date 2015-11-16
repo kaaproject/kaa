@@ -41,18 +41,33 @@
                     <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQL82Dialect</prop>
                     <prop key="hibernate.format_sql">#{dao[hibernate_format_sql]}</prop>
                     <prop key="hibernate.show_sql">#{dao[hibernate_show_sql]}</prop>
-                    <prop key="hibernate.transaction.auto_close_session">true</prop>
-                    <prop key="hibernate.connection.pool_size">200</prop>
+
+                    <prop key="hibernate.c3p0.min_size">100</prop>
+                    <prop key="hibernate.c3p0.max_size">200</prop>
+                    <prop key="hibernate.c3p0.timeout">300</prop>
+                    <prop key="hibernate.c3p0.max_statements">50</prop>
+                    <prop key="hibernate.c3p0.idle_test_period">3000</prop>
+
                     <!--<prop key="hibernate.generate_statistics">true</prop>-->
                 </props>
             </property>
         </bean>
 
-        <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
-            <property name="driverClassName" value="org.postgresql.Driver"/>
-            <property name="url" value="jdbc:postgresql://127.0.0.1:5432/kaa"/>
-            <property name="username" value="postgres"/>
-            <property name="password" value="admin"/>
+        <bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig">
+            <property name="poolName" value="springHikariCP" />
+            <property name="connectionTestQuery" value="SELECT 1" />
+            <property name="dataSourceClassName" value="org.postgresql.ds.PGSimpleDataSource" />
+            <property name="dataSourceProperties">
+                <props>
+                    <prop key="url">jdbc:postgresql://127.0.0.1:5432/kaa</prop>
+                    <prop key="user">postgres</prop>
+                    <prop key="password">admin</prop>
+                </props>
+            </property>
+        </bean>
+
+        <bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
+            <constructor-arg ref="hikariConfig" />
         </bean>
     </beans>
 

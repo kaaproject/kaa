@@ -1,13 +1,12 @@
 package org.kaaproject.kaa.server.common.dao.impl.sql;
 
-import org.hibernate.LockMode;
-import org.hibernate.LockOptions;
 import org.hibernate.criterion.Restrictions;
 import org.kaaproject.kaa.server.common.dao.impl.CTLSchemaMetaInfoDao;
 import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchemaMetaInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,23 +30,26 @@ public class HibernateCTLSchemaMetaInfoDao extends HibernateAbstractDao<CTLSchem
     public CTLSchemaMetaInfo save(CTLSchemaMetaInfo metaInfo) {
         CTLSchemaMetaInfo uniqueMetaInfo = findByFqnAndVersion(metaInfo.getFqn(), metaInfo.getVersion());
         if (uniqueMetaInfo == null) {
-            uniqueMetaInfo = super.save(metaInfo);
+            uniqueMetaInfo = super.save(metaInfo, true);
         }
+        LOG.info("---> count {}", uniqueMetaInfo.getCount());
         return uniqueMetaInfo;
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = Exception.class)
+    @Transactional(propagation = Propagation.REQUIRED)
     public CTLSchemaMetaInfo incrementCount(CTLSchemaMetaInfo metaInfo) {
-        CTLSchemaMetaInfo uniqueMetaInfo = findByFqnAndVersion(metaInfo.getFqn(), metaInfo.getVersion());
+        CTLSchemaMetaInfo uniqueMetaInfo = findById(metaInfo.getStringId());
         if (uniqueMetaInfo != null) {
             uniqueMetaInfo.incrementCount();
+        } else {
+            LOG.info("---> Null");
         }
-        return uniqueMetaInfo;
+        return super.save(uniqueMetaInfo, true);
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public CTLSchemaMetaInfo findByFqnAndVersion(String fqn, Integer version) {
         CTLSchemaMetaInfo ctlSchema = null;
         LOG.debug("Searching ctl metadata by fqn [{}] and version [{}]", fqn, version);

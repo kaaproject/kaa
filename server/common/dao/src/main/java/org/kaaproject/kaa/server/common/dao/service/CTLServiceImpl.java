@@ -1,6 +1,8 @@
 package org.kaaproject.kaa.server.common.dao.service;
 
 
+import org.hibernate.LockMode;
+import org.hibernate.LockOptions;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
@@ -14,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -29,6 +32,7 @@ import static org.kaaproject.kaa.server.common.dao.service.Validator.validateObj
 public class CTLServiceImpl implements CTLService {
 
     private static final Logger LOG = LoggerFactory.getLogger(CTLServiceImpl.class);
+    private final LockOptions lo = new LockOptions(LockMode.PESSIMISTIC_WRITE);
 
     @Autowired
     private CTLSchemaDao<CTLSchema> ctlSchemaDao;
@@ -39,9 +43,10 @@ public class CTLServiceImpl implements CTLService {
     }
 
     @Override
-    @Transactional
+    @Transactional(isolation = Isolation.READ_UNCOMMITTED)
     public CTLSchemaDto saveCTLSchema(CTLSchemaDto unSavedSchema) {
         validateCTLSchemaObject(unSavedSchema);
+        LOG.info("---> Session: {}, this: {}", schemaMetaInfoDao.getSession().hashCode(), this.hashCode());
 
         CTLSchemaMetaInfoDto metaInfo = unSavedSchema.getMetaInfo();
 
@@ -55,32 +60,37 @@ public class CTLServiceImpl implements CTLService {
         }
         metaInfo.setSchemaScopeDto(currentScope);
 
-        CTLSchemaMetaInfo uniqueMetaInfo;
-        try {
-            uniqueMetaInfo = schemaMetaInfoDao.save(new CTLSchemaMetaInfo(metaInfo));
-        } catch (Exception e) {
-            LOG.warn("---> Got rollback during save metainfo object.");
-            uniqueMetaInfo = schemaMetaInfoDao.findByFqnAndVersion(metaInfo.getFqn(), metaInfo.getVersion());
-        }
+        CTLSchemaDto dto;
+        synchronized (this) {
+            CTLSchemaMetaInfo uniqueMetaInfo;
+            try {
+                uniqueMetaInfo = schemaMetaInfoDao.save(new CTLSchemaMetaInfo(metaInfo));
+            } catch (Exception e) {
+                LOG.warn("---> Got rollback during save metainfo object.");
+                uniqueMetaInfo = schemaMetaInfoDao.findByFqnAndVersion(metaInfo.getFqn(), metaInfo.getVersion());
+            }
+            schemaMetaInfoDao.lockRequest(lo).setScope(true).lock(uniqueMetaInfo);
 
-        switch (uniqueMetaInfo.getSchemaScopeDto()) {
-            case SYSTEM:
-                throw new RuntimeException("Disable to store system ctl schema with same fqn and version.");
-            case TENANT:
-                if (currentScope == SYSTEM) {
-                    throw new RuntimeException("Disable to store system ctl schema. Tenant's scope schema already exists with the same fqn and version.");
-                }
-                break;
-            case APPLICATION:
-                break;
-            default:
-                break;
+            switch (uniqueMetaInfo.getSchemaScopeDto()) {
+                case SYSTEM:
+                    throw new RuntimeException("Disable to store system ctl schema with same fqn and version.");
+                case TENANT:
+                    if (currentScope == SYSTEM) {
+                        throw new RuntimeException("Disable to store system ctl schema. Tenant's scope schema already exists with the same fqn and version.");
+                    }
+                    break;
+                case APPLICATION:
+                    break;
+                default:
+                    break;
 
+            }
+            CTLSchema ctlSchema = new CTLSchema(unSavedSchema);
+            ctlSchema.setMetaInfo(uniqueMetaInfo);
+            schemaMetaInfoDao.incrementCount(uniqueMetaInfo);
+            dto = getDto(ctlSchemaDao.save(ctlSchema, true));
+            LOG.info("---> end trans");
         }
-        CTLSchema ctlSchema = new CTLSchema(unSavedSchema);
-        ctlSchema.setMetaInfo(uniqueMetaInfo);
-        CTLSchemaDto dto = getDto(ctlSchemaDao.save(ctlSchema));
-        schemaMetaInfoDao.incrementCount(uniqueMetaInfo);
         return dto;
     }
 

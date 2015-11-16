@@ -23,8 +23,8 @@ public class CTLSchemaMetaInfo extends GenericModel<CTLSchemaMetaInfoDto> implem
     private CTLSchemaScopeDto schemaScopeDto;
     @Column(name = "count")
     private Long count = 0L;
-    @Version
-    private Long OPT_LOCK;
+//    @Version
+//    private Long OPT_LOCK;
 
     public CTLSchemaMetaInfo() {
     }
