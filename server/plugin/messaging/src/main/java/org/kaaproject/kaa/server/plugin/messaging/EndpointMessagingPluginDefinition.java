@@ -3,11 +3,13 @@ package org.kaaproject.kaa.server.plugin.messaging;
 import java.util.Set;
 
 import org.kaaproject.kaa.server.common.core.plugin.base.BasePluginDef;
+import org.kaaproject.kaa.server.common.core.plugin.def.CommunicationPluginDef;
 import org.kaaproject.kaa.server.common.core.plugin.def.PluginContractDef;
 import org.kaaproject.kaa.server.common.core.plugin.def.PluginContractDirection;
-import org.kaaproject.kaa.server.common.core.plugin.def.PluginDef;
 import org.kaaproject.kaa.server.common.core.plugin.def.PluginScope;
+import org.kaaproject.kaa.server.common.core.plugin.generator.PluginSdkApiGenerator;
 import org.kaaproject.kaa.server.plugin.contracts.messaging.MessagingPluginContract;
+import org.kaaproject.kaa.server.plugin.messaging.gen.Configuration;
 
 /*
  * Copyright 2014-2015 CyberVision, Inc.
@@ -24,15 +26,17 @@ import org.kaaproject.kaa.server.plugin.contracts.messaging.MessagingPluginContr
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public class EndpointMessagingPluginDefinition implements PluginDef {
+public class EndpointMessagingPluginDefinition implements CommunicationPluginDef {
 
     private static final long serialVersionUID = -5566067441896469264L;
 
     private final BasePluginDef pluginDef;
 
     public EndpointMessagingPluginDefinition() {
-        this.pluginDef = new BasePluginDef.Builder("Endpoint Messaging Plugin", 1).withSchema(null).withScope(PluginScope.ENDPOINT)
-                .withType("LOL").withContract(MessagingSDKContract.buildMessagingSDKContract())
+        this.pluginDef = new BasePluginDef.Builder("Endpoint Messaging Plugin", 1)
+                .withSchema(Configuration.SCHEMA$.toString())
+                .withScope(PluginScope.ENDPOINT).withType("LOL")
+                .withContract(MessagingSDKContract.buildMessagingSDKContract())
                 .withContract(MessagingPluginContract.buildMessagingContract(PluginContractDirection.IN)).build();
     }
 
@@ -63,5 +67,10 @@ public class EndpointMessagingPluginDefinition implements PluginDef {
 
     public Set<PluginContractDef> getPluginContracts() {
         return pluginDef.getPluginContracts();
+    }
+
+    @Override
+    public Class<? extends PluginSdkApiGenerator> getSdkGeneratorClass() {
+        return EndpointMessagePluginGenerator.class;
     }
 }

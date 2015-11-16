@@ -13,23 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kaaproject.kaa.server.common.core.plugin.def;
+package org.kaaproject.kaa.server.common.core.plugin.instance;
 
-import java.io.Serializable;
-import java.util.Set;
+import org.kaaproject.kaa.server.common.core.plugin.def.PluginExecutionContext;
 
-public interface PluginDef extends Serializable {
+public interface KaaCommunicationPlugin extends KaaPlugin {
 
-    String getName();
+    void onSdkMessage(KaaSdkMessage message, PluginExecutionContext ctx);
 
-    int getVersion();
+    byte[] encodeSDKMessage(KaaSdkMessage msg);
 
-    String getType();
-
-    PluginScope getScope();
-
-    String getConfigurationSchema();
-
-    Set<PluginContractDef> getPluginContracts();
+    KaaSdkMessage decodeSDKMessage(KaaSdkMessage message, byte[] data);
 
 }

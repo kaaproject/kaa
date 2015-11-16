@@ -60,7 +60,7 @@ public class KaaRestPluginDefinition implements PluginDef {
     }
 
     @Override
-    public String getConfigurationSchema() throws URISyntaxException {
+    public String getConfigurationSchema() {
         return readFileAsString("rest_plugin.avsc");
     }
 

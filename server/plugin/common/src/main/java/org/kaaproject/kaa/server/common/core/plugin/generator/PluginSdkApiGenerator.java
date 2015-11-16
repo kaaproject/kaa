@@ -13,23 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kaaproject.kaa.server.common.core.plugin.def;
+package org.kaaproject.kaa.server.common.core.plugin.generator;
 
-import java.io.Serializable;
-import java.util.Set;
+import java.util.List;
 
-public interface PluginDef extends Serializable {
+import org.kaaproject.kaa.server.common.core.plugin.def.SdkApiFile;
 
-    String getName();
+public interface PluginSdkApiGenerator {
 
-    int getVersion();
-
-    String getType();
-
-    PluginScope getScope();
-
-    String getConfigurationSchema();
-
-    Set<PluginContractDef> getPluginContracts();
+    List<SdkApiFile> generatePluginSdkApi(PluginSdkApiGenerationContext context) throws SdkApiGenerationException;
 
 }

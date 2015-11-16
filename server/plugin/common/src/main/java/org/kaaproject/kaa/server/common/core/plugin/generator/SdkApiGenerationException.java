@@ -13,23 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kaaproject.kaa.server.common.core.plugin.def;
+package org.kaaproject.kaa.server.common.core.plugin.generator;
 
-import java.io.Serializable;
-import java.util.Set;
+public class SdkApiGenerationException extends Exception {
 
-public interface PluginDef extends Serializable {
+    private static final long serialVersionUID = -3612632120671645772L;
 
-    String getName();
+    public SdkApiGenerationException() {
+        super();
+    }
 
-    int getVersion();
+    public SdkApiGenerationException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-    String getType();
+    public SdkApiGenerationException(String message) {
+        super(message);
+    }
 
-    PluginScope getScope();
-
-    String getConfigurationSchema();
-
-    Set<PluginContractDef> getPluginContracts();
+    public SdkApiGenerationException(Throwable cause) {
+        super(cause);
+    }
 
 }

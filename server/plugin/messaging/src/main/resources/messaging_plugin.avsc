@@ -1,0 +1,11 @@
+{
+    "type":"record",
+    "name":"Configuration",
+    "namespace":"org.kaaproject.kaa.server.plugin.messaging.gen",
+    "fields":[
+        {
+            "name": "messageFamilyFqn",
+            "type": [ { "type" : "string", "avro.java.string" : "String"}, "null" ]
+        }
+    ]
+}

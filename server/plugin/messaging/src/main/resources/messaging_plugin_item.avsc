@@ -1,0 +1,11 @@
+{
+    "type":"record",
+    "name":"ItemConfiguration",
+    "namespace":"org.kaaproject.kaa.server.plugin.messaging.gen",
+    "fields":[
+        {
+            "name":"methodName",
+            "type": [ { "type" : "string", "avro.java.string" : "String"}, "null" ]
+        }
+    ]
+}

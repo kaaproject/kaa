@@ -26,6 +26,7 @@ public class PluginContractInstanceItemDto implements HasId, Serializable {
 
     private String id;
     private String parentId;
+    private String name;
     private String pluginInstanceId;
     private String pluginContractInstanceId;
     private String confSchema;
@@ -115,6 +116,14 @@ public class PluginContractInstanceItemDto implements HasId, Serializable {
 
     public void setOutMessageSchema(CTLSchemaDto outMessageSchema) {
         this.outMessageSchema = outMessageSchema;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
 }

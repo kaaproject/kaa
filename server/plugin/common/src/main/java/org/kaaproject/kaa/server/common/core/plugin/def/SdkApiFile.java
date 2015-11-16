@@ -16,20 +16,26 @@
 package org.kaaproject.kaa.server.common.core.plugin.def;
 
 import java.io.Serializable;
-import java.util.Set;
 
-public interface PluginDef extends Serializable {
+public final class SdkApiFile implements Serializable {
 
-    String getName();
+    private static final long serialVersionUID = 9004353147181958230L;
 
-    int getVersion();
+    private final String fileName;
+    private final byte[] fileData;
 
-    String getType();
+    private SdkApiFile(String fileName, byte[] fileData) {
+        super();
+        this.fileName = fileName;
+        this.fileData = fileData;
+    }
 
-    PluginScope getScope();
+    public String getFileName() {
+        return fileName;
+    }
 
-    String getConfigurationSchema();
-
-    Set<PluginContractDef> getPluginContracts();
+    public byte[] getFileData() {
+        return fileData;
+    }
 
 }

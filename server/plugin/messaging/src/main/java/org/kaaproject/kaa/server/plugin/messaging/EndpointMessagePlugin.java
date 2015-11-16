@@ -25,15 +25,15 @@ import org.kaaproject.kaa.server.common.core.plugin.def.SDKPlatform;
 import org.kaaproject.kaa.server.common.core.plugin.instance.KaaMessage;
 import org.kaaproject.kaa.server.common.core.plugin.instance.KaaPluginMessage;
 import org.kaaproject.kaa.server.common.core.plugin.instance.KaaSdkMessage;
-import org.kaaproject.kaa.server.common.core.plugin.instance.KaaSdkPlugin;
+import org.kaaproject.kaa.server.common.core.plugin.instance.KaaCommunicationPlugin;
 import org.kaaproject.kaa.server.plugin.contracts.messaging.EndpointMessage;
 
 @Plugin(EndpointMessagingPluginDefinition.class)
-public class EndpointMessagePlugin implements KaaSdkPlugin {
+public class EndpointMessagePlugin implements KaaCommunicationPlugin {
 
     @Override
     public void init(PluginInitContext context) {
-        // TODO Auto-generated method stub
+
     }
 
     @Override
@@ -76,13 +76,14 @@ public class EndpointMessagePlugin implements KaaSdkPlugin {
         // May be important for serialization;
         SDKPlatform platform = sdkMessage.getPlatform();
         KaaMessage msg = sdkMessage.getMsg();
-        if(msg instanceof SdkMessage){
+        if (msg instanceof SdkMessage) {
             SdkMessage sdkMsg = (SdkMessage) msg;
-            //UUID size + payload size;
+            // UUID size + payload size;
             ByteBuffer bb = ByteBuffer.wrap(new byte[16 + sdkMsg.getData().length]);
             bb.putLong(sdkMsg.getUid().getMostSignificantBits());
             bb.putLong(sdkMsg.getUid().getLeastSignificantBits());
             bb.put(sdkMsg.getData());
+            return bb.array();
         }
         return null;
     }

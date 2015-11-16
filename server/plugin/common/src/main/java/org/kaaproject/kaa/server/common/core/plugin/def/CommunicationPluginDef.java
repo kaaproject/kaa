@@ -13,16 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kaaproject.kaa.server.common.core.plugin.instance;
+package org.kaaproject.kaa.server.common.core.plugin.def;
 
-import org.kaaproject.kaa.server.common.core.plugin.def.PluginExecutionContext;
+import org.kaaproject.kaa.server.common.core.plugin.generator.PluginSdkApiGenerator;
 
-public interface KaaSdkPlugin extends KaaPlugin {
+public interface CommunicationPluginDef extends PluginDef {
 
-    void onSdkMessage(KaaSdkMessage message, PluginExecutionContext ctx);
-
-    byte[] encodeSDKMessage(KaaSdkMessage msg);
-
-    KaaSdkMessage decodeSDKMessage(KaaSdkMessage message, byte[] data);
+    Class<? extends PluginSdkApiGenerator> getSdkGeneratorClass();
 
 }
