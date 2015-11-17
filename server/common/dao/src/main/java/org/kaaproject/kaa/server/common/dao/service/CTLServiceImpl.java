@@ -16,9 +16,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
@@ -43,7 +44,7 @@ public class CTLServiceImpl implements CTLService {
     }
 
     @Override
-    @Transactional(isolation = Isolation.READ_UNCOMMITTED)
+    @Transactional
     public CTLSchemaDto saveCTLSchema(CTLSchemaDto unSavedSchema) {
         validateCTLSchemaObject(unSavedSchema);
         LOG.info("---> Session: {}, this: {}", schemaMetaInfoDao.getSession().hashCode(), this.hashCode());
@@ -118,7 +119,7 @@ public class CTLServiceImpl implements CTLService {
     public CTLSchemaDto findCTLSchemaByFqnAndVerAndTenantId(String fqn, Integer version, String tenantId) {
         return DaoUtil.getDto(ctlSchemaDao.findByFqnAndVerAndTenantId(fqn, version, tenantId));
     }
-
+    
     @Override
     public List<CTLSchemaDto> findCTLSchemasByApplicationId(String appId) {
         return DaoUtil.convertDtoList(ctlSchemaDao.findByApplicationId(appId));
@@ -135,6 +136,11 @@ public class CTLServiceImpl implements CTLService {
     }
 
     @Override
+    public List<CTLSchemaMetaInfoDto> findSystemCTLSchemasMetaInfo() {
+        return DaoUtil.convertDtoList(schemaMetaInfoDao.findSystemSchemaMetaInfo());
+    }
+
+    @Override
     public CTLSchemaDto findLatestCTLSchemaByFqn(String fqn) {
         return DaoUtil.getDto(ctlSchemaDao.findLatestByFqn(fqn));
     }
@@ -144,11 +150,57 @@ public class CTLServiceImpl implements CTLService {
         return DaoUtil.convertDtoList(ctlSchemaDao.find());
     }
 
+    @Override
+    public List<CTLSchemaMetaInfoDto> findCTLSchemasMetaInfoByApplicationId(String appId) {
+        return getMetaInfoFromCTLSchema(ctlSchemaDao.findMetaInfoByApplicationId(appId));
+    }
+
+    @Override
+    public List<CTLSchemaMetaInfoDto> findCTLSchemasMetaInfoByTenantId(String tenantId) {
+        return null;
+    }
+
+    @Override
+    public List<CTLSchemaDto> findAvailableCTLSchemas(String tenantId) {
+        return null;
+    }
+
+    @Override
+    public List<CTLSchemaMetaInfoDto> findAvailableCTLSchemasMetaInfo(String tenantId) {
+        return null;
+    }
+
+    @Override
+    public List<CTLSchemaDto> findCTLSchemaDependents(String schemaId) {
+        List<CTLSchemaDto> list = Collections.emptyList();
+        CTLSchema schemaDto = ctlSchemaDao.findById(schemaId);
+        if (schemaDto != null) {
+            list = DaoUtil.convertDtoList(ctlSchemaDao.findDependentsSchemas(schemaDto.getId()));
+        }
+        return list;
+    }
+
+    @Override
+    public List<CTLSchemaDto> findCTLSchemaDependents(String fqn, int version, String tenantId) {
+        return null;
+    }
+
     private void validateCTLSchemaObject(CTLSchemaDto ctlSchema) {
         validateObject(ctlSchema, "Error");
         CTLSchemaMetaInfoDto metaInfo = ctlSchema.getMetaInfo();
         if (metaInfo == null) {
             throw new RuntimeException("Invalid object ");
         }
+    }
+
+    private List<CTLSchemaMetaInfoDto> getMetaInfoFromCTLSchema(List<CTLSchema> schemas) {
+        List<CTLSchemaMetaInfoDto> metaInfoDtoList = Collections.emptyList();
+        if (!schemas.isEmpty()) {
+            metaInfoDtoList = new ArrayList<>(schemas.size());
+            for (CTLSchema schema : schemas) {
+                metaInfoDtoList.add(getDto(schema.getMetaInfo()));
+            }
+        }
+        return metaInfoDtoList;
     }
 }

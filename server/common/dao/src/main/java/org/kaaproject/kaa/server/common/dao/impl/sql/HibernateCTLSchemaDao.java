@@ -1,6 +1,7 @@
 package org.kaaproject.kaa.server.common.dao.impl.sql;
 
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.server.common.dao.impl.CTLSchemaDao;
 import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchema;
@@ -67,5 +68,12 @@ public class HibernateCTLSchemaDao extends HibernateAbstractDao<CTLSchema> imple
     @Override
     public void removeByFqnAndVerAndTenantId(String fqn, Integer version, String tenantId) {
 
+    }
+
+    @Override
+    public List<CTLSchema> findDependentsSchemas(Long schemaId) {
+        List<CTLSchema> dependentsList = findListByCriterionWithAlias("dependencySet", "dep", JoinType.INNER_JOIN,
+                Restrictions.eq("dep.id", schemaId));
+        return dependentsList;
     }
 }

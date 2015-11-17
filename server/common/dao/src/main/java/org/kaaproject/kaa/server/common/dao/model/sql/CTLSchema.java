@@ -16,6 +16,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
@@ -50,7 +51,7 @@ public class CTLSchema extends GenericModel<CTLSchemaDto> implements Serializabl
     @JoinTable(name = "ctl_dependency",
             joinColumns = {@JoinColumn(name = "parent_id")}, foreignKey = @ForeignKey(name = "fk_ctl_pr_id"),
             inverseJoinColumns = {@JoinColumn(name = "child_id")}, inverseForeignKey = @ForeignKey(name = "fk_ctl_ch_id"))
-    private Set<CTLSchema> dependencySet;
+    private Set<CTLSchema> dependencySet = new HashSet<>();
 
     public CTLSchema() {
     }
@@ -114,7 +115,8 @@ public class CTLSchema extends GenericModel<CTLSchemaDto> implements Serializabl
         this.dependencySet = dependencySet;
     }
 
-    private void updateCreatedTime(){}
+    private void updateCreatedTime() {
+    }
 
     @Override
     protected CTLSchemaDto createDto() {
@@ -131,5 +133,21 @@ public class CTLSchema extends GenericModel<CTLSchemaDto> implements Serializabl
         ctlSchemaDto.setBody(body);
         ctlSchemaDto.setDependencySet(DaoUtil.convertDtoSet(dependencySet));
         return ctlSchemaDto;
+    }
+
+    @Override
+    public String toString() {
+        return "CTLSchema{" +
+                "id=" + id +
+                ", metaInfo=" + metaInfo +
+                ", tenant=" + tenant +
+                ", application=" + application +
+                ", body='" + body + '\'' +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", createdUsername='" + createdUsername + '\'' +
+                ", createdTime=" + createdTime +
+                ", dependencySet=" + dependencySet +
+                '}';
     }
 }

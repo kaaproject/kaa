@@ -8,6 +8,7 @@ import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.server.common.dao.CTLService;
 import org.kaaproject.kaa.server.common.dao.UserService;
+import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +16,13 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -86,6 +91,26 @@ public class HibernateCTLSchemaDaoTest extends HibernateAbstractTest {
         for (Future<CTLSchemaDto> f : list) {
             LOG.debug("id {}", f.get());
         }
+    }
+
+    @Test
+    @Rollback(false)
+    public void saveCTLSchemaWithDependency() throws InterruptedException {
+        Set<CTLSchemaDto> dep = new HashSet<>();
+        dep.add(ctlService.saveCTLSchema(generateCTLSchema(tenant.getId(), 20)));
+        dep.add(ctlService.saveCTLSchema(generateCTLSchema(tenant.getId(), 21)));
+        CTLSchemaDto unsaved = generateCTLSchema(tenant.getId(), 22);
+        unsaved.setDependencySet(dep);
+        ctlService.saveCTLSchema(unsaved);
+    }
+
+
+    @Test
+    @Rollback(false)
+    @Transactional
+    public void saveCTLSchemaWithDependencsddasy() throws InterruptedException {
+        LOG.info("---> {}",Arrays.toString(ctlSchemaDao.findDependentsSchemas("561").toArray()));
+
     }
 
     private CTLSchemaDto generateCTLSchema(String tenantId) {

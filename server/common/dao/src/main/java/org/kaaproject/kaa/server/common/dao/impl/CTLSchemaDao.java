@@ -19,4 +19,8 @@ public interface CTLSchemaDao<T> extends SqlDao<T> {
     T updateScope(CTLSchemaDto ctlSchema);
 
     void removeByFqnAndVerAndTenantId(String fqn, Integer version, String tenantId);
+
+    List<T> findDependentsSchemas(Long schemaId);
+
+    List<T> findMetaInfoByApplicationId(String appId);
 }
