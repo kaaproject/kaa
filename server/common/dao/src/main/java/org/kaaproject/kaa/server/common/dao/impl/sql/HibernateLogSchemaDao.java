@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.apache.commons.lang.StringUtils.isNotBlank;
@@ -52,34 +53,44 @@ public class HibernateLogSchemaDao extends HibernateAbstractDao<LogSchema> imple
             schemas = findListByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS,
                     Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(applicationId)));
         }
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("[{}] Search result: {}.", applicationId, Arrays.toString(schemas.toArray()));
+        } else {
+            LOG.debug("[{}] Search result: {}.", applicationId, schemas.size());
+        }
         return schemas;
     }
 
     @Override
     public LogSchema findByApplicationIdAndVersion(String applicationId, int version) {
-        LOG.debug("Find log schema by applicationId [{}] and version [{}] ", applicationId, version);
-        LogSchema schema = null;
+        LOG.debug("Searching log schema by applicationId [{}] and version [{}] ", applicationId, version);
+        LogSchema logSchema = null;
         if (isNotBlank(applicationId)) {
-            schema = findOneByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS, Restrictions.and(
+            logSchema = findOneByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS, Restrictions.and(
                     Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(applicationId)),
                     Restrictions.eq(MAJOR_VERSION_PROPERTY, version)));
         }
-        return schema;
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("[{},{}] Search result: {}.", applicationId, version, logSchema);
+        } else {
+            LOG.debug("[{},{}] Search result: {}.", applicationId, version, logSchema != null);
+        }
+        return logSchema;
     }
 
     @Override
     public void removeByApplicationId(String applicationId) {
-        LOG.debug("Remove log schema  by application id [{}] ", applicationId);
         if (isNotBlank(applicationId)) {
             List<LogSchema> logSchemas = findListByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS,
                     Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(applicationId)));
             removeList(logSchemas);
         }
+        LOG.debug("Removed log schema  by application id [{}] ", applicationId);
     }
 
     @Override
     public LogSchema findLatestLogSchemaByAppId(String applicationId) {
-        LOG.debug("Find latest log schema  by application id [{}]", applicationId);
+        LOG.debug("Searching latest log schema  by application id [{}]", applicationId);
         LogSchema logSchema = null;
         if (isNotBlank(applicationId)) {
             Criteria criteria = getCriteria();
@@ -87,6 +98,11 @@ public class HibernateLogSchemaDao extends HibernateAbstractDao<LogSchema> imple
             Criterion criterion = Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(applicationId));
             logSchema = (LogSchema) criteria.add(criterion).addOrder(Order.desc(MAJOR_VERSION_PROPERTY))
                     .addOrder(Order.desc(MINOR_VERSION_PROPERTY)).setMaxResults(FIRST).uniqueResult();
+        }
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("[{}] Search result: {}.", applicationId, logSchema);
+        } else {
+            LOG.debug("[{}] Search result: {}.", applicationId, logSchema != null);
         }
         return logSchema;
     }

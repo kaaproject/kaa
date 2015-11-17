@@ -85,11 +85,10 @@ public class HibernateApplicationDao extends HibernateAbstractDao<Application> i
                 Restrictions.and(
                         Restrictions.eq(TENANT_REFERENCE, Long.valueOf(tenantId)),
                         Restrictions.eq(APPLICATION_NAME_PROPERTY, name)));
-        LOG.debug("Found application {} by tenant id [{}] and name [{}]", application, tenantId, name);
         if (LOG.isTraceEnabled()) {
             LOG.trace("[{},{}] Search result: {}.", name, tenantId, application);
         } else {
-            LOG.trace("[{},{}] Search result: {}.", name, tenantId, application != null);
+            LOG.debug("[{},{}] Search result: {}.", name, tenantId, application != null);
         }
         return application;
     }

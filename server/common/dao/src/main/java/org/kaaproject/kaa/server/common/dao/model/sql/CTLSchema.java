@@ -19,38 +19,56 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CTL_SCHEMA_APPLICATION_FK;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CTL_SCHEMA_APPLICATION_ID;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CTL_SCHEMA_BODY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CTL_SCHEMA_CREATED_TIME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CTL_SCHEMA_CREATED_USERNAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CTL_SCHEMA_DESCRIPTION;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CTL_SCHEMA_JOIN_TABLE_CHILD_FK;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CTL_SCHEMA_JOIN_TABLE_CHILD_ID;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CTL_SCHEMA_JOIN_TABLE_NAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CTL_SCHEMA_JOIN_TABLE_PARENT_FK;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CTL_SCHEMA_JOIN_TABLE_PARENT_ID;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CTL_SCHEMA_META_INFO_FK;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CTL_SCHEMA_META_INFO_ID;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CTL_SCHEMA_NAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CTL_SCHEMA_TABLE_NAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CTL_SCHEMA_TENANT_FK;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CTL_SCHEMA_TENANT_ID;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CTL_SCHEMA_UNIQUE_CONSTRAINT;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
 
 @Entity
-@Table(name = "ctl", uniqueConstraints =
-@UniqueConstraint(columnNames = {"metainfo_id", "tenant_id"}, name = "ctl_unique_constraint"))
+@Table(name = CTL_SCHEMA_TABLE_NAME, uniqueConstraints =
+@UniqueConstraint(columnNames = {CTL_SCHEMA_META_INFO_ID, CTL_SCHEMA_TENANT_ID}, name = CTL_SCHEMA_UNIQUE_CONSTRAINT))
 public class CTLSchema extends GenericModel<CTLSchemaDto> implements Serializable {
 
     @ManyToOne(optional = true, fetch = FetchType.EAGER)
-    @JoinColumn(nullable = false, name = "metainfo_id", foreignKey = @ForeignKey(name = "fk_ctl_metainfo_id"))
+    @JoinColumn(nullable = false, name = CTL_SCHEMA_META_INFO_ID, foreignKey = @ForeignKey(name = CTL_SCHEMA_META_INFO_FK))
     private CTLSchemaMetaInfo metaInfo;
     @ManyToOne(optional = true, fetch = FetchType.EAGER)
-    @JoinColumn(nullable = true, name = "tenant_id", foreignKey = @ForeignKey(name = "fk_ctl_tenant_id"))
+    @JoinColumn(nullable = true, name = CTL_SCHEMA_TENANT_ID, foreignKey = @ForeignKey(name = CTL_SCHEMA_TENANT_FK))
     private Tenant tenant;
     @ManyToOne(optional = true, fetch = FetchType.EAGER)
-    @JoinColumn(nullable = true, name = "app_id", foreignKey = @ForeignKey(name = "fk_ctl_app_id"))
+    @JoinColumn(nullable = true, name = CTL_SCHEMA_APPLICATION_ID, foreignKey = @ForeignKey(name = CTL_SCHEMA_APPLICATION_FK))
     private Application application;
     @Lob
+    @Column(name = CTL_SCHEMA_BODY)
     private String body;
-
+    @Column(name = CTL_SCHEMA_NAME)
     private String name;
-
-    @Column(length = 1000)
+    @Column(length = 1000, name = CTL_SCHEMA_DESCRIPTION)
     private String description;
-
+    @Column(name = CTL_SCHEMA_CREATED_USERNAME)
     private String createdUsername;
-
+    @Column(name = CTL_SCHEMA_CREATED_TIME)
     private long createdTime;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinTable(name = "ctl_dependency",
-            joinColumns = {@JoinColumn(name = "parent_id")}, foreignKey = @ForeignKey(name = "fk_ctl_pr_id"),
-            inverseJoinColumns = {@JoinColumn(name = "child_id")}, inverseForeignKey = @ForeignKey(name = "fk_ctl_ch_id"))
+    @JoinTable(name = CTL_SCHEMA_JOIN_TABLE_NAME,
+            joinColumns = {@JoinColumn(name = CTL_SCHEMA_JOIN_TABLE_PARENT_ID)}, foreignKey = @ForeignKey(name = CTL_SCHEMA_JOIN_TABLE_PARENT_FK),
+            inverseJoinColumns = {@JoinColumn(name = CTL_SCHEMA_JOIN_TABLE_CHILD_ID)}, inverseForeignKey = @ForeignKey(name = CTL_SCHEMA_JOIN_TABLE_CHILD_FK))
     private Set<CTLSchema> dependencySet = new HashSet<>();
 
     public CTLSchema() {

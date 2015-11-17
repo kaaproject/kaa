@@ -1,7 +1,5 @@
 package org.kaaproject.kaa.server.common.dao.impl;
 
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
-
 import java.util.List;
 
 public interface CTLSchemaDao<T> extends SqlDao<T> {
@@ -16,11 +14,9 @@ public interface CTLSchemaDao<T> extends SqlDao<T> {
 
     T findByFqnAndVerAndTenantId(String fqn, Integer version, String tenantId);
 
-    T updateScope(CTLSchemaDto ctlSchema);
-
     void removeByFqnAndVerAndTenantId(String fqn, Integer version, String tenantId);
 
     List<T> findDependentsSchemas(Long schemaId);
 
-    List<T> findMetaInfoByApplicationId(String appId);
+    List<T> findAvailableSchemas(String tenantId);
 }

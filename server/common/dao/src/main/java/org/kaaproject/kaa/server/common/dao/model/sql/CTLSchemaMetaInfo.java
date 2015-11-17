@@ -9,22 +9,28 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import javax.persistence.Version;
 import java.io.Serializable;
 
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CTL_SCHEMA_META_INFO_FQN;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CTL_SCHEMA_META_INFO_SCOPE;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CTL_SCHEMA_META_INFO_TABLE_NAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CTL_SCHEMA_META_INFO_UNIQUE_CONSTRAINT;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CTL_SCHEMA_META_INFO_VERSION;
+
 @Entity
-@Table(name = "ctl_metainfo", uniqueConstraints =
-@UniqueConstraint(columnNames = {"version", "fqn"}, name = "ctl_metainfo_unique_constraint"))
+@Table(name = CTL_SCHEMA_META_INFO_TABLE_NAME, uniqueConstraints =
+@UniqueConstraint(columnNames = {CTL_SCHEMA_META_INFO_VERSION, CTL_SCHEMA_META_INFO_FQN}, name = CTL_SCHEMA_META_INFO_UNIQUE_CONSTRAINT))
 public class CTLSchemaMetaInfo extends GenericModel<CTLSchemaMetaInfoDto> implements Serializable {
 
+    @Column(name = CTL_SCHEMA_META_INFO_FQN)
     private String fqn;
+    @Column(name = CTL_SCHEMA_META_INFO_VERSION)
     private Integer version;
+    @Column(name = CTL_SCHEMA_META_INFO_SCOPE)
     @Enumerated(EnumType.STRING)
-    private CTLSchemaScopeDto schemaScopeDto;
+    private CTLSchemaScopeDto scope;
     @Column(name = "count")
     private Long count = 0L;
-//    @Version
-//    private Long OPT_LOCK;
 
     public CTLSchemaMetaInfo() {
     }
@@ -33,7 +39,7 @@ public class CTLSchemaMetaInfo extends GenericModel<CTLSchemaMetaInfoDto> implem
         this.id = ModelUtils.getLongId(dto.getId());
         this.fqn = dto.getFqn();
         this.version = dto.getVersion();
-        this.schemaScopeDto = dto.getSchemaScopeDto();
+        this.scope = dto.getScope();
         this.count = dto.getCount();
     }
 
@@ -58,12 +64,12 @@ public class CTLSchemaMetaInfo extends GenericModel<CTLSchemaMetaInfoDto> implem
         this.version = version;
     }
 
-    public CTLSchemaScopeDto getSchemaScopeDto() {
-        return schemaScopeDto;
+    public CTLSchemaScopeDto getScope() {
+        return scope;
     }
 
-    public void setSchemaScopeDto(CTLSchemaScopeDto schemaScopeDto) {
-        this.schemaScopeDto = schemaScopeDto;
+    public void setScope(CTLSchemaScopeDto scope) {
+        this.scope = scope;
     }
 
     @Override
@@ -77,7 +83,7 @@ public class CTLSchemaMetaInfo extends GenericModel<CTLSchemaMetaInfoDto> implem
         ctlSchemaMetaInfoDto.setId(getStringId());
         ctlSchemaMetaInfoDto.setFqn(fqn);
         ctlSchemaMetaInfoDto.setVersion(version);
-        ctlSchemaMetaInfoDto.setSchemaScopeDto(schemaScopeDto);
+        ctlSchemaMetaInfoDto.setScope(scope);
         ctlSchemaMetaInfoDto.setCount(count);
         return ctlSchemaMetaInfoDto;
     }
@@ -99,7 +105,7 @@ public class CTLSchemaMetaInfo extends GenericModel<CTLSchemaMetaInfoDto> implem
         return "CTLSchemaMetaInfo{" +
                 "fqn='" + fqn + '\'' +
                 ", version=" + version +
-                ", schemaScopeDto=" + schemaScopeDto +
+                ", scope=" + scope +
                 ", count=" + count +
                 '}';
     }

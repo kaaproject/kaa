@@ -17,5 +17,15 @@
 package org.kaaproject.kaa.common.dto.ctl;
 
 public enum CTLSchemaScopeDto {
-    SYSTEM, TENANT, APPLICATION, APPLICATION_LOCAL, PLUGIN_LOCAL;
+    SYSTEM(0), TENANT(1), APPLICATION(2), APPLICATION_LOCAL(3), PLUGIN_LOCAL(3);
+
+    private int level;
+
+    private CTLSchemaScopeDto(int level) {
+        this.level = level;
+    }
+
+    public int getLevel() {
+        return level;
+    }
 }

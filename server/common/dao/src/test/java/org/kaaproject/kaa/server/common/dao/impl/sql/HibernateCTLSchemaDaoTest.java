@@ -109,7 +109,7 @@ public class HibernateCTLSchemaDaoTest extends HibernateAbstractTest {
     @Rollback(false)
     @Transactional
     public void saveCTLSchemaWithDependencsddasy() throws InterruptedException {
-        LOG.info("---> {}",Arrays.toString(ctlSchemaDao.findDependentsSchemas("561").toArray()));
+        LOG.info("---> {}",Arrays.toString(ctlSchemaDao.findDependentsSchemas(561L).toArray()));
 
     }
 

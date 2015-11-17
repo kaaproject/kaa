@@ -59,7 +59,7 @@
             <property name="dataSourceClassName" value="org.postgresql.ds.PGSimpleDataSource" />
             <property name="dataSourceProperties">
                 <props>
-                    <prop key="url">jdbc:postgresql://127.0.0.1:5432/kaa</prop>
+                    <prop key="url">jdbc:postgresql://localhost:5432/kaa</prop>
                     <prop key="user">postgres</prop>
                     <prop key="password">admin</prop>
                 </props>

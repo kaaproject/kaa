@@ -25,7 +25,7 @@ public class CTLSchemaMetaInfoDto implements HasId, Serializable {
     private String id;
     private String fqn;
     private Integer version;
-    private CTLSchemaScopeDto schemaScopeDto;
+    private CTLSchemaScopeDto scope;
     private Long count = 0L;
 
     public CTLSchemaMetaInfoDto() {
@@ -62,12 +62,12 @@ public class CTLSchemaMetaInfoDto implements HasId, Serializable {
         this.version = version;
     }
 
-    public CTLSchemaScopeDto getSchemaScopeDto() {
-        return schemaScopeDto;
+    public CTLSchemaScopeDto getScope() {
+        return scope;
     }
 
-    public void setSchemaScopeDto(CTLSchemaScopeDto schemaScopeDto) {
-        this.schemaScopeDto = schemaScopeDto;
+    public void setScope(CTLSchemaScopeDto scope) {
+        this.scope = scope;
     }
 
     public Long getCount() {

@@ -27,7 +27,6 @@ public class CTLSchemaDto implements HasId, Serializable {
     private CTLSchemaMetaInfoDto metaInfo;
     private String tenantId;
     private String appId;
-    private CTLSchemaScopeDto scope;
     private String body;
     private String name;
     private String description;
@@ -67,14 +66,6 @@ public class CTLSchemaDto implements HasId, Serializable {
 
     public void setAppId(String appId) {
         this.appId = appId;
-    }
-
-    public CTLSchemaScopeDto getScope() {
-        return scope;
-    }
-
-    public void setScope(CTLSchemaScopeDto scope) {
-        this.scope = scope;
     }
 
     public String getBody() {
@@ -137,7 +128,6 @@ public class CTLSchemaDto implements HasId, Serializable {
         if (metaInfo != null ? !metaInfo.equals(that.metaInfo) : that.metaInfo != null) return false;
         if (tenantId != null ? !tenantId.equals(that.tenantId) : that.tenantId != null) return false;
         if (appId != null ? !appId.equals(that.appId) : that.appId != null) return false;
-        if (scope != that.scope) return false;
         if (body != null ? !body.equals(that.body) : that.body != null) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
         if (description != null ? !description.equals(that.description) : that.description != null) return false;
@@ -153,7 +143,6 @@ public class CTLSchemaDto implements HasId, Serializable {
         result = 31 * result + (metaInfo != null ? metaInfo.hashCode() : 0);
         result = 31 * result + (tenantId != null ? tenantId.hashCode() : 0);
         result = 31 * result + (appId != null ? appId.hashCode() : 0);
-        result = 31 * result + (scope != null ? scope.hashCode() : 0);
         result = 31 * result + (body != null ? body.hashCode() : 0);
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (description != null ? description.hashCode() : 0);
@@ -170,7 +159,6 @@ public class CTLSchemaDto implements HasId, Serializable {
                 ", metaInfo=" + metaInfo +
                 ", tenantId='" + tenantId + '\'' +
                 ", appId='" + appId + '\'' +
-                ", scope=" + scope +
                 ", body='" + body + '\'' +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
