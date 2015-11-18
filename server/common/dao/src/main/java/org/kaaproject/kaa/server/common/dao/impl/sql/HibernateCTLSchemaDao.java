@@ -115,10 +115,10 @@ public class HibernateCTLSchemaDao extends HibernateAbstractDao<CTLSchema> imple
     }
 
     @Override
-    public List<CTLSchema> findDependentsSchemas(Long schemaId) {
+    public List<CTLSchema> findDependentsSchemas(String schemaId) {
         LOG.debug("Searching dependents ctl schemas for schema with id [{}]", schemaId);
         List<CTLSchema> dependentsList = findListByCriterionWithAlias(CTL_SCHEMA_DEPENDENCY_PROP, CTL_SCHEMA_DEPENDENCY_ALIAS,
-                JoinType.INNER_JOIN, Restrictions.eq(CTL_SCHEMA_DEPENDENCY_ID_ALIAS, schemaId));
+                JoinType.INNER_JOIN, Restrictions.eq(CTL_SCHEMA_DEPENDENCY_ID_ALIAS, Long.valueOf(schemaId)));
         if (LOG.isTraceEnabled()) {
             LOG.trace("[{}] Search result: [{}].", schemaId, Arrays.toString(dependentsList.toArray()));
         } else {
@@ -130,8 +130,8 @@ public class HibernateCTLSchemaDao extends HibernateAbstractDao<CTLSchema> imple
     @Override
     public List<CTLSchema> findAvailableSchemas(String tenantId) {
         LOG.debug("Searching available ctl schemas for tenant with id [{}]", tenantId);
-        List<CTLSchema> availableSchemas = findListByCriterion(Restrictions.eqOrIsNull(CTL_SCHEMA_TENANT_ID_ALIAS,
-                Long.valueOf(tenantId)));
+        List<CTLSchema> availableSchemas = findListByCriterion(Restrictions.or(Restrictions.eq(CTL_SCHEMA_TENANT_ID_ALIAS,
+                Long.valueOf(tenantId)), Restrictions.isNull(CTL_SCHEMA_TENANT_ID_ALIAS)));
         if (LOG.isTraceEnabled()) {
             LOG.trace("[{}] Search result: [{}].", tenantId, Arrays.toString(availableSchemas.toArray()));
         } else {

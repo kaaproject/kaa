@@ -49,31 +49,37 @@ public class CTLServiceImpl implements CTLService {
         validateCTLSchemaObject(unSavedSchema);
         CTLSchemaMetaInfoDto metaInfo = unSavedSchema.getMetaInfo();
         CTLSchemaScopeDto currentScope = null;
-        if (isBlank(unSavedSchema.getTenantId())) {
-            currentScope = SYSTEM;
-        } else if (!isBlank(unSavedSchema.getTenantId())) {
-            currentScope = TENANT;
-        } else if (!isBlank(unSavedSchema.getAppId())) {
-            currentScope = APPLICATION;
+        if (metaInfo.getScope() == null) {
+            if (isBlank(unSavedSchema.getTenantId())) {
+                currentScope = SYSTEM;
+            } else if (!isBlank(unSavedSchema.getAppId())) {
+                currentScope = APPLICATION;
+            } else if (!isBlank(unSavedSchema.getTenantId())) {
+                currentScope = TENANT;
+            }
+            metaInfo.setScope(currentScope);
         }
-        metaInfo.setScope(currentScope);
 
         CTLSchemaDto dto;
         synchronized (this) {
+            boolean existing = false;
             CTLSchemaMetaInfo uniqueMetaInfo;
             try {
                 uniqueMetaInfo = schemaMetaInfoDao.save(new CTLSchemaMetaInfo(metaInfo));
             } catch (Exception e) {
+                existing = true;
                 uniqueMetaInfo = schemaMetaInfoDao.findByFqnAndVersion(metaInfo.getFqn(), metaInfo.getVersion());
             }
             schemaMetaInfoDao.lockRequest(lockOptions).setScope(true).lock(uniqueMetaInfo);
 
             switch (uniqueMetaInfo.getScope()) {
                 case SYSTEM:
-                    throw new RuntimeException("Disable to store system ctl schema with same fqn and version.");
+                    if (existing) {
+                        throw new DatabaseProcessingException("Disable to store system ctl schema with same fqn and version.");
+                    }
                 case TENANT:
-                    if (currentScope == SYSTEM) {
-                        throw new RuntimeException("Disable to store system ctl schema. Tenant's scope schema already exists with the same fqn and version.");
+                    if (currentScope == SYSTEM && existing) {
+                        throw new DatabaseProcessingException("Disable to store system ctl schema. Tenant's scope schema already exists with the same fqn and version.");
                     }
                     break;
                 case APPLICATION:
@@ -84,6 +90,7 @@ public class CTLServiceImpl implements CTLService {
             }
             CTLSchema ctlSchema = new CTLSchema(unSavedSchema);
             ctlSchema.setMetaInfo(uniqueMetaInfo);
+            schemaMetaInfoDao.refresh(uniqueMetaInfo);
             schemaMetaInfoDao.incrementCount(uniqueMetaInfo);
             dto = getDto(ctlSchemaDao.save(ctlSchema, true));
         }
@@ -123,7 +130,15 @@ public class CTLServiceImpl implements CTLService {
     @Override
     public void removeCTLSchemaByFqnAndVerAndTenantId(String fqn, Integer version, String tenantId) {
         LOG.debug("Remove ctl schema by fqn {} version {} and tenant id {}", fqn, version, tenantId);
-        ctlSchemaDao.removeByFqnAndVerAndTenantId(fqn, version, tenantId);
+        CTLSchema ctlSchema = ctlSchemaDao.findByFqnAndVerAndTenantId(fqn, version, tenantId);
+        if (ctlSchema != null) {
+            List<CTLSchema> dependsList = ctlSchemaDao.findDependentsSchemas(ctlSchema.getStringId());
+            if (dependsList.isEmpty()) {
+                ctlSchemaDao.removeById(ctlSchema.getStringId());
+            } else {
+                throw new DatabaseProcessingException("Forbidden to delete ctl schema with relations.");
+            }
+        }
     }
 
     @Override
@@ -211,7 +226,7 @@ public class CTLServiceImpl implements CTLService {
         List<CTLSchemaDto> list = Collections.emptyList();
         CTLSchema schemaDto = ctlSchemaDao.findById(schemaId);
         if (schemaDto != null) {
-            list = convertDtoList(ctlSchemaDao.findDependentsSchemas(schemaDto.getId()));
+            list = convertDtoList(ctlSchemaDao.findDependentsSchemas(schemaDto.getStringId()));
         }
         return list;
     }
@@ -222,7 +237,7 @@ public class CTLServiceImpl implements CTLService {
         List<CTLSchemaDto> schemas = Collections.emptyList();
         CTLSchema schema = ctlSchemaDao.findByFqnAndVerAndTenantId(fqn, version, tenantId);
         if (schema != null) {
-            schemas = convertDtoList(ctlSchemaDao.findDependentsSchemas(schema.getId()));
+            schemas = convertDtoList(ctlSchemaDao.findDependentsSchemas(schema.getStringId()));
         }
         return schemas;
     }

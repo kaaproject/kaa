@@ -16,7 +16,7 @@ public interface CTLSchemaDao<T> extends SqlDao<T> {
 
     void removeByFqnAndVerAndTenantId(String fqn, Integer version, String tenantId);
 
-    List<T> findDependentsSchemas(Long schemaId);
+    List<T> findDependentsSchemas(String schemaId);
 
     List<T> findAvailableSchemas(String tenantId);
 }

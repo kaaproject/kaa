@@ -101,6 +101,29 @@ public class CTLSchemaMetaInfo extends GenericModel<CTLSchemaMetaInfoDto> implem
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        CTLSchemaMetaInfo metaInfo = (CTLSchemaMetaInfo) o;
+
+        if (fqn != null ? !fqn.equals(metaInfo.fqn) : metaInfo.fqn != null) return false;
+        if (version != null ? !version.equals(metaInfo.version) : metaInfo.version != null) return false;
+        if (scope != metaInfo.scope) return false;
+        return count != null ? count.equals(metaInfo.count) : metaInfo.count == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = fqn != null ? fqn.hashCode() : 0;
+        result = 31 * result + (version != null ? version.hashCode() : 0);
+        result = 31 * result + (scope != null ? scope.hashCode() : 0);
+        result = 31 * result + (count != null ? count.hashCode() : 0);
+        return result;
+    }
+
+    @Override
     public String toString() {
         return "CTLSchemaMetaInfo{" +
                 "fqn='" + fqn + '\'' +

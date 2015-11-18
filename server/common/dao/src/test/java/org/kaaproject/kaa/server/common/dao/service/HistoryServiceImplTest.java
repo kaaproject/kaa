@@ -34,9 +34,9 @@ public class HistoryServiceImplTest extends AbstractTest {
 
     @Before
     public void beforeTest() {
-        application = generateApplication();
-        generateConfSchema(application.getId(), 1);
-        generateProfSchema(application.getId(), 1);
+        application = generateApplicationDto();
+        generateConfSchemaDto(application.getId(), 1);
+        generateProfSchemaDto(application.getId(), 1);
     }
 
     @Test

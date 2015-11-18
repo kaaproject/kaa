@@ -1,14 +1,14 @@
 package org.kaaproject.kaa.server.common.dao.impl.sql;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.server.common.dao.CTLService;
-import org.kaaproject.kaa.server.common.dao.UserService;
 import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchema;
+import org.kaaproject.kaa.server.common.dao.model.sql.Tenant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,35 +18,37 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+
+import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/common-dao-test-context.xml")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+@Transactional
 public class HibernateCTLSchemaDaoTest extends HibernateAbstractTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(HibernateCTLSchemaDaoTest.class);
     public static final String SUPER_TENANT = "SuperTenant";
+
     @Autowired
     private CTLService ctlService;
-    @Autowired
-    private UserService userService;
 
-    private ExecutorService executorService = Executors.newFixedThreadPool(10);
     private TenantDto tenant;
+    private CTLSchemaDto firstSchema;
+    private CTLSchemaDto secondSchema;
+    private CTLSchemaDto thirdSchema;
+    private CTLSchemaDto fourthSchema;
+    private CTLSchemaDto mainSchema;
+    private CTLSchemaDto systemSchema;
+
 
     @Before
     public void before() {
+        clearDBData();
         if (tenant == null) {
             tenant = userService.findTenantByName(SUPER_TENANT);
             if (tenant == null) {
@@ -55,79 +57,89 @@ public class HibernateCTLSchemaDaoTest extends HibernateAbstractTest {
                 tenant = userService.saveTenant(tn);
             }
         }
+        Set<CTLSchemaDto> dependency = new HashSet<>();
+        firstSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN, tenant.getId(), 1));
+        dependency.add(firstSchema);
+        secondSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN, tenant.getId(), 2));
+        dependency.add(secondSchema);
+        thirdSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN, tenant.getId(), 3));
+        dependency.add(thirdSchema);
+        fourthSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN, tenant.getId(), 4));
+        dependency.add(fourthSchema);
+        mainSchema = generateCTLSchemaDto(DEFAULT_FQN, tenant.getId(), 7);
+        mainSchema.setDependencySet(dependency);
+        mainSchema = ctlService.saveCTLSchema(mainSchema);
+        systemSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN, null, 50));
     }
 
-    @Test(expected = RuntimeException.class)
-    public void saveCTLSchema() throws InterruptedException {
-        ctlService.saveCTLSchema(generateCTLSchema(null, 10));
-        ctlService.saveCTLSchema(generateCTLSchema(tenant.getId(), 10));
-    }
-
-    @Test(expected = RuntimeException.class)
-    public void saveCTLSchemaWithSameFqnAndVersion() throws InterruptedException {
-        ctlService.saveCTLSchema(generateCTLSchema(tenant.getId(), 11));
-        ctlService.saveCTLSchema(generateCTLSchema(null, 11));
-    }
-
-    @Test
-    @Rollback(false)
-    public void multiThreadCTLSchemaSaveTest() throws InterruptedException, ExecutionException {
-        List<Future<CTLSchemaDto>> list = new ArrayList<>();
-        for (int i = 0; i < 100; i++) {
-            final int x = i;
-            list.add(executorService.submit(new Callable<CTLSchemaDto>() {
-                @Override
-                public CTLSchemaDto call() {
-                    CTLSchemaDto sch = null;
-                    try {
-                        sch = ctlService.saveCTLSchema(generateCTLSchema(generateTenantDto().getId()));
-                    } catch (Throwable t) {
-                        LOG.warn("---> Test Catch exception {}", t.getCause(), t);
-                    }
-                    return sch;
-                }
-            }));
-        }
-        for (Future<CTLSchemaDto> f : list) {
-            LOG.debug("id {}", f.get());
-        }
+    @Test(expected = Exception.class)
+    public void saveCTLSchemaWithSameFqnAndVersion() {
+        ctlSchemaDao.save(generateCTLSchema(DEFAULT_FQN, new Tenant(tenant), 11, null));
+        ctlSchemaDao.save(generateCTLSchema(DEFAULT_FQN, null, 11, null));
     }
 
     @Test
     @Rollback(false)
     public void saveCTLSchemaWithDependency() throws InterruptedException {
-        Set<CTLSchemaDto> dep = new HashSet<>();
-        dep.add(ctlService.saveCTLSchema(generateCTLSchema(tenant.getId(), 20)));
-        dep.add(ctlService.saveCTLSchema(generateCTLSchema(tenant.getId(), 21)));
-        CTLSchemaDto unsaved = generateCTLSchema(tenant.getId(), 22);
-        unsaved.setDependencySet(dep);
-        ctlService.saveCTLSchema(unsaved);
+        List<CTLSchemaDto> dep = convertDtoList(ctlSchemaDao.findDependentsSchemas(mainSchema.getId()));
+        Assert.assertTrue(dep.isEmpty());
+        List<CTLSchemaDto> expected = Arrays.asList(mainSchema);
+        dep = convertDtoList(ctlSchemaDao.findDependentsSchemas(firstSchema.getId()));
+        Assert.assertEquals(expected.size(), dep.size());
+        dep = convertDtoList(ctlSchemaDao.findDependentsSchemas(secondSchema.getId()));
+        Assert.assertEquals(expected.size(), dep.size());
+        dep = convertDtoList(ctlSchemaDao.findDependentsSchemas(thirdSchema.getId()));
+        Assert.assertEquals(expected.size(), dep.size());
+        dep = convertDtoList(ctlSchemaDao.findDependentsSchemas(fourthSchema.getId()));
+        Assert.assertEquals(expected.size(), dep.size());
     }
 
 
     @Test
     @Rollback(false)
-    @Transactional
-    public void saveCTLSchemaWithDependencsddasy() throws InterruptedException {
-        LOG.info("---> {}",Arrays.toString(ctlSchemaDao.findDependentsSchemas(561L).toArray()));
+    public void testFindByFqnAndVerAndTenantId() {
+        CTLSchema found = ctlSchemaDao.findByFqnAndVerAndTenantId(firstSchema.getMetaInfo().getFqn(), firstSchema.getMetaInfo().getVersion(), firstSchema.getTenantId());
+        Assert.assertEquals(firstSchema, found.toDto());
+    }
+
+    @Test
+    @Rollback(false)
+    public void testFindSystemSchemas() {
+        List<CTLSchema> found = ctlSchemaDao.findSystemSchemas();
+        Assert.assertEquals(getIdsDto(Arrays.asList(systemSchema)), getIds(found));
+    }
+
+    @Test
+    @Rollback(false)
+    public void testFindByTenantId() {
+        List<CTLSchema> found = ctlSchemaDao.findByTenantId(tenant.getId());
+        Assert.assertEquals(getIdsDto(Arrays.asList(firstSchema, secondSchema, thirdSchema, fourthSchema, mainSchema)), getIds(found));
+    }
+
+    @Test
+    @Rollback(false)
+    public void testFindByApplicationId() {
 
     }
 
-    private CTLSchemaDto generateCTLSchema(String tenantId) {
-        return generateCTLSchema(tenantId, 100);
+    @Test
+    @Rollback(false)
+    public void testFindLatestByFqn() {
+        CTLSchema latest = ctlSchemaDao.findLatestByFqn(DEFAULT_FQN);
+        Assert.assertEquals(systemSchema, latest.toDto());
     }
 
-    private CTLSchemaDto generateCTLSchema(String tenantId, int version) {
-        CTLSchemaDto ctlSchema = new CTLSchemaDto();
-        ctlSchema.setMetaInfo(new CTLSchemaMetaInfoDto("org.kaaproject.kaa.ctl.TestSchema", version));
-        ctlSchema.setBody(UUID.randomUUID().toString());
-        ctlSchema.setTenantId(tenantId);
-        return ctlSchema;
+    @Test
+    @Rollback(false)
+    public void testRemoveByFqnAndVerAndTenantId() {
+        ctlSchemaDao.removeByFqnAndVerAndTenantId(systemSchema.getMetaInfo().getFqn(), systemSchema.getMetaInfo().getVersion(), tenant.getId());
+        Assert.assertNull(ctlSchemaDao.findById(systemSchema.getId()));
     }
 
-    private TenantDto generateTenantDto() {
-        TenantDto tn = new TenantDto();
-        tn.setName(UUID.randomUUID().toString());
-        return userService.saveTenant(tn);
+    @Test
+    @Rollback(false)
+    public void testFindAvailableSchemas() {
+        List<CTLSchema> found = ctlSchemaDao.findAvailableSchemas(tenant.getId());
+        Assert.assertEquals(getIdsDto(Arrays.asList(firstSchema, secondSchema, thirdSchema, fourthSchema, mainSchema, systemSchema)), getIds(found));
     }
 }

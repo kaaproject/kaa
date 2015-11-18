@@ -47,10 +47,10 @@ public class CTLSchema extends GenericModel<CTLSchemaDto> implements Serializabl
     @ManyToOne(optional = true, fetch = FetchType.EAGER)
     @JoinColumn(nullable = false, name = CTL_SCHEMA_META_INFO_ID, foreignKey = @ForeignKey(name = CTL_SCHEMA_META_INFO_FK))
     private CTLSchemaMetaInfo metaInfo;
-    @ManyToOne(optional = true, fetch = FetchType.EAGER)
+    @ManyToOne(optional = true, fetch = FetchType.LAZY)
     @JoinColumn(nullable = true, name = CTL_SCHEMA_TENANT_ID, foreignKey = @ForeignKey(name = CTL_SCHEMA_TENANT_FK))
     private Tenant tenant;
-    @ManyToOne(optional = true, fetch = FetchType.EAGER)
+    @ManyToOne(optional = true, fetch = FetchType.LAZY)
     @JoinColumn(nullable = true, name = CTL_SCHEMA_APPLICATION_ID, foreignKey = @ForeignKey(name = CTL_SCHEMA_APPLICATION_FK))
     private Application application;
     @Lob
@@ -65,7 +65,7 @@ public class CTLSchema extends GenericModel<CTLSchemaDto> implements Serializabl
     @Column(name = CTL_SCHEMA_CREATED_TIME)
     private long createdTime;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = CTL_SCHEMA_JOIN_TABLE_NAME,
             joinColumns = {@JoinColumn(name = CTL_SCHEMA_JOIN_TABLE_PARENT_ID)}, foreignKey = @ForeignKey(name = CTL_SCHEMA_JOIN_TABLE_PARENT_FK),
             inverseJoinColumns = {@JoinColumn(name = CTL_SCHEMA_JOIN_TABLE_CHILD_ID)}, inverseForeignKey = @ForeignKey(name = CTL_SCHEMA_JOIN_TABLE_CHILD_FK))
@@ -151,6 +151,40 @@ public class CTLSchema extends GenericModel<CTLSchemaDto> implements Serializabl
         ctlSchemaDto.setBody(body);
         ctlSchemaDto.setDependencySet(DaoUtil.convertDtoSet(dependencySet));
         return ctlSchemaDto;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        CTLSchema schema = (CTLSchema) o;
+
+        if (createdTime != schema.createdTime) return false;
+        if (metaInfo != null ? !metaInfo.equals(schema.metaInfo) : schema.metaInfo != null) return false;
+        if (tenant != null ? !tenant.equals(schema.tenant) : schema.tenant != null) return false;
+        if (application != null ? !application.equals(schema.application) : schema.application != null) return false;
+        if (body != null ? !body.equals(schema.body) : schema.body != null) return false;
+        if (name != null ? !name.equals(schema.name) : schema.name != null) return false;
+        if (description != null ? !description.equals(schema.description) : schema.description != null) return false;
+        if (createdUsername != null ? !createdUsername.equals(schema.createdUsername) : schema.createdUsername != null)
+            return false;
+        return dependencySet != null ? dependencySet.equals(schema.dependencySet) : schema.dependencySet == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = metaInfo != null ? metaInfo.hashCode() : 0;
+        result = 31 * result + (tenant != null ? tenant.hashCode() : 0);
+        result = 31 * result + (application != null ? application.hashCode() : 0);
+        result = 31 * result + (body != null ? body.hashCode() : 0);
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (description != null ? description.hashCode() : 0);
+        result = 31 * result + (createdUsername != null ? createdUsername.hashCode() : 0);
+        result = 31 * result + (int) (createdTime ^ (createdTime >>> 32));
+        result = 31 * result + (dependencySet != null ? dependencySet.hashCode() : 0);
+        return result;
     }
 
     @Override

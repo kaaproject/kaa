@@ -16,12 +16,11 @@
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-            http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
-
-    <!-- In order to implement support of custom SQL platform, one should declare following mandatory beans -->
-
-    <!-- End of mandatory beans declaration -->
+       http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd">
 
     <bean id="persistenceExceptionTranslationPostProcessor"
           class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor"/>
@@ -42,9 +41,9 @@
                     <prop key="hibernate.format_sql">#{dao[hibernate_format_sql]}</prop>
                     <prop key="hibernate.show_sql">#{dao[hibernate_show_sql]}</prop>
 
-                    <prop key="hibernate.c3p0.min_size">100</prop>
-                    <prop key="hibernate.c3p0.max_size">200</prop>
-                    <prop key="hibernate.c3p0.timeout">300</prop>
+                    <prop key="hibernate.c3p0.min_size">10</prop>
+                    <prop key="hibernate.c3p0.max_size">50</prop>
+                    <prop key="hibernate.c3p0.timeout">100</prop>
                     <prop key="hibernate.c3p0.max_statements">50</prop>
                     <prop key="hibernate.c3p0.idle_test_period">3000</prop>
 
@@ -82,15 +81,31 @@
                     <prop key="hibernate.dialect">#{dao[hibernate_dialect]}</prop>
                     <prop key="hibernate.format_sql">#{dao[hibernate_format_sql]}</prop>
                     <prop key="hibernate.show_sql">#{dao[hibernate_show_sql]}</prop>
+
+                    <prop key="hibernate.c3p0.min_size">10</prop>
+                    <prop key="hibernate.c3p0.max_size">50</prop>
+                    <prop key="hibernate.c3p0.timeout">100</prop>
+                    <prop key="hibernate.c3p0.max_statements">50</prop>
+                    <prop key="hibernate.c3p0.idle_test_period">3000</prop>
                 </props>
             </property>
         </bean>
 
-        <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
-            <property name="driverClassName" value="#{dao[jdbc_driver_className]}"/>
-            <property name="url" value="jdbc:#{dao[jdbc_url_db_name]}:mem:kaa;DATABASE_TO_UPPER=true;MODE=PostgreSQL"/>
-            <property name="username" value="#{dao[jdbc_username]}"/>
-            <property name="password" value="#{dao[jdbc_password]}"/>
+        <bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig">
+            <property name="poolName" value="springHikariCP" />
+            <property name="connectionTestQuery" value="VALUES 1" />
+            <property name="dataSourceClassName" value="org.h2.jdbcx.JdbcDataSource" />
+            <property name="dataSourceProperties">
+                <props>
+                    <prop key="url">jdbc:#{dao[jdbc_url_db_name]}:mem:kaa;DATABASE_TO_UPPER=true;MODE=PostgreSQL</prop>
+                    <prop key="user">#{dao[jdbc_username]}</prop>
+                    <prop key="password">#{dao[jdbc_password]}</prop>
+                </props>
+            </property>
+        </bean>
+
+        <bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
+            <constructor-arg ref="hikariConfig" />
         </bean>
 
         <!-- provides a H2 console to look into the db if necessary -->

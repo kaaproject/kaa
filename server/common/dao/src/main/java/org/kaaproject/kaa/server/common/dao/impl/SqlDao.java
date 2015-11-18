@@ -16,11 +16,25 @@
 
 package org.kaaproject.kaa.server.common.dao.impl;
 
+import org.hibernate.FlushMode;
 import org.hibernate.LockOptions;
 import org.hibernate.Session;
 
 public interface SqlDao<T> extends Dao<T, String> {
 
+    /**
+     * Re-read object from database.
+     *
+     * @param object
+     */
+    void refresh(Object object);
+
+    Session getSession(FlushMode flushMode);
+
+    /**
+     *
+     * @return
+     */
     Session getSession();
     /**
      * Save object. Will be returned object with id.
@@ -45,22 +59,6 @@ public interface SqlDao<T> extends Dao<T, String> {
      * @return the found object or null if object not found
      */
     T findById(String id, boolean lazy);
-
-    /**
-     * @param id
-     * @param lazy
-     * @param lockOptions
-     * @return
-     */
-    T findById(String id, boolean lazy, LockOptions lockOptions);
-
-    /**
-     *
-     * @param id
-     * @param lockOptions
-     * @return
-     */
-    T findById(String id, LockOptions lockOptions);
 
     /**
      * Persist model object

@@ -50,14 +50,21 @@ public abstract class HibernateAbstractDao<T extends GenericModel<?>> implements
 
     protected abstract Class<T> getEntityClass();
 
+    @Override
     public Session getSession(FlushMode flushMode) {
         Session session = sessionFactory.getCurrentSession();
         session.setFlushMode(flushMode);
         return session;
     }
 
+    @Override
     public Session getSession() {
         return getSession(FlushMode.AUTO);
+    }
+
+    @Override
+    public void refresh(Object object) {
+        getSession().refresh(object);
     }
 
     protected Criteria getCriteria() {
@@ -230,21 +237,11 @@ public abstract class HibernateAbstractDao<T extends GenericModel<?>> implements
 
     @Override
     public T findById(String id) {
-        return findById(id, false, LockOptions.NONE);
-    }
-
-    @Override
-    public T findById(String id, LockOptions lockOptions) {
-        return findById(id, false, lockOptions);
+        return findById(id, false);
     }
 
     @Override
     public T findById(String id, boolean lazy) {
-        return findById(id, lazy, LockOptions.NONE);
-    }
-
-    @Override
-    public T findById(String id, boolean lazy, LockOptions lockOptions) {
         T result = null;
         String className = getSimpleClassName();
         LOG.debug("Searching {} entity by id [{}] ", className, id);
@@ -255,7 +252,6 @@ public abstract class HibernateAbstractDao<T extends GenericModel<?>> implements
             } else {
                 result = (T) session.get(getEntityClass(), Long.parseLong(id));
             }
-            lockRequest(lockOptions).lock(result);
         }
         if (LOG.isTraceEnabled()) {
             LOG.trace("[{}] Search result: {}.", id, result);
