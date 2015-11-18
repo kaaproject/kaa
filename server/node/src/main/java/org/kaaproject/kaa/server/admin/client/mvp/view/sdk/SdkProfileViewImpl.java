@@ -47,12 +47,12 @@ public class SdkProfileViewImpl extends BaseDetailsViewImpl implements SdkProfil
 
     @Override
     protected String getCreateTitle() {
-        return Utils.constants.sdkProfiles();
+        return Utils.constants.sdkProfile();
     }
 
     @Override
     protected String getViewTitle() {
-        return Utils.constants.sdkProfiles();
+        return Utils.constants.sdkProfile();
     }
 
     @Override
