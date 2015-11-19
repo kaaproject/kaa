@@ -26,6 +26,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 
@@ -34,6 +35,9 @@ import javax.sql.DataSource;
 import org.apache.avro.Schema;
 import org.apache.commons.lang.StringUtils;
 import org.apache.xerces.impl.dv.util.Base64;
+import org.codehaus.jackson.node.ArrayNode;
+import org.codehaus.jackson.node.JsonNodeFactory;
+import org.codehaus.jackson.node.ObjectNode;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -1179,17 +1183,40 @@ public abstract class AbstractTestControlServer {
         return savedApplicationEventFamilyMap;
     }
 
-    protected CTLSchemaDto createCTLSchema(String fqn, Integer version, CTLSchemaScope scope) throws Exception {
-        ApplicationDto application = this.createApplication();
+    protected CTLSchemaDto createCTLSchema(String name, String namespace, Integer version, CTLSchemaScope scope, List<CTLDependencyDto> dependencies,
+            Map<String, String> fields) throws Exception {
 
         CTLSchemaDto schema = new CTLSchemaDto();
-        schema.setApplicationId(application.getId());
-        schema.setTenantId(application.getTenantId());
-        schema.setFqn(fqn == null ? AbstractTestControlServer.generateString("CTL_SCHEMA") : fqn);
-        schema.setVersion(version == null ? 1 : version.intValue());
-        schema.setScope(scope == null ? CTLSchemaScope.APPLICATION : scope);
-        schema.setDependencies(new ArrayList<CTLDependencyDto>());
-        schema.setBody(new String());
+        JsonNodeFactory factory = JsonNodeFactory.instance;
+
+        schema.setFqn(namespace + "." + name);
+        schema.setVersion(version);
+        schema.setScope(scope);
+        if (scope != CTLSchemaScope.SYSTEM) {
+            ApplicationDto application = this.createApplication();
+            schema.setTenantId(application.getTenantId());
+            schema.setApplicationId(application.getId());
+        }
+        schema.setDependencies(dependencies);
+
+        ArrayNode jsonFields = factory.arrayNode();
+        if (fields != null) {
+            for (Map.Entry<String, String> field : fields.entrySet()) {
+                ObjectNode jsonField = factory.objectNode();
+                jsonField.put("name", field.getKey());
+                jsonField.put("type", field.getValue());
+                jsonFields.add(jsonField);
+            }
+        }
+
+        ObjectNode jsonBody = factory.objectNode();
+        jsonBody.put("type", "record");
+        jsonBody.put("name", name);
+        jsonBody.put("namespace", namespace);
+        jsonBody.put("fields", jsonFields);
+
+        schema.setBody(jsonBody.toString());
+
         return client.saveCTLSchema(schema);
     }
 

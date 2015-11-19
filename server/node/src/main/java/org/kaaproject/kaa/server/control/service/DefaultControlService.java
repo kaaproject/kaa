@@ -59,6 +59,7 @@ import org.kaaproject.kaa.common.dto.admin.RecordKey;
 import org.kaaproject.kaa.common.dto.admin.RecordKey.RecordFiles;
 import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
@@ -1523,8 +1524,8 @@ public class DefaultControlService implements ControlService {
     }
 
     @Override
-    public void deleteCTLSchemaByFqnAndVersion(String fqn, int version) throws ControlServiceException {
-        ctlService.removeCTLSchemaByFqnAndVersion(fqn, version);
+    public void deleteCTLSchemaByFqnAndVersionAndTenantId(String fqn, int version, String tenantId) throws ControlServiceException {
+        ctlService.removeCTLSchemaByFqnAndVersionAndTenantId(fqn, version, tenantId);
     }
 
     @Override
@@ -1533,50 +1534,43 @@ public class DefaultControlService implements ControlService {
     }
 
     @Override
-    public CTLSchemaDto getCTLSchemaByFqnAndVersion(String fqn, int version) throws ControlServiceException {
-        return ctlService.findCTLSchemaByFqnAndVersion(fqn, version);
+    public CTLSchemaDto getCTLSchemaByFqnVersionAndTenantId(String fqn, int version, String tenantId) throws ControlServiceException {
+        return ctlService.findCTLSchemaByFqnAndVersionAndTenantId(fqn, version, tenantId);
     }
 
     @Override
-    public List<CTLSchemaDto> getCTLSchemas() throws ControlServiceException {
-        return ctlService.findCTLSchemas();
-    }
-
-    @Override
-    public List<CTLSchemaDto> getCTLSchemasByTenantId(String tenantId) throws ControlServiceException {
-        return ctlService.findCTLSchemasByTenantId(tenantId);
-    }
-
-    @Override
-    public List<CTLSchemaDto> getCTLSchemasByApplicationId(String applicationId) throws ControlServiceException {
-        return ctlService.findCTLSchemasByApplicationId(applicationId);
-    }
-
-    @Override
-    public List<CTLSchemaDto> getCTLSchemasByFqn(String fqn) throws ControlServiceException {
-        return ctlService.findCTLSchemasByFqn(fqn);
-    }
-
-    @Override
-    public List<CTLSchemaDto> getSystemCTLSchemas() throws ControlServiceException {
-        return ctlService.findSystemCTLSchemas();
-    }
-
-    @Override
-    public FileData generateShallowCTLSchema(String fqn, int version) throws ControlServiceException {
-        // TODO: Implement in KAA-606
+    public List<CTLSchemaMetaInfoDto> getAvailableCTLSchemasMetaInfoByTenantId(String tenantId) throws ControlServiceException {
+        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public FileData generateFlatCTLSchema(String fqn, int version) throws ControlServiceException {
-        // TODO: Implement in KAA-606
+    public List<CTLSchemaMetaInfoDto> getCTLSchemasMetaInfoByTenantId(String tenantId) throws ControlServiceException {
+        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public List<FileData> generateDeepCTLSchema(String fqn, int version) throws ControlServiceException {
-        // TODO: Implement in KAA-606
+    public List<CTLSchemaMetaInfoDto> getCTLSchemasMetaInfoByApplicationId(String applicationId) throws ControlServiceException {
+        // TODO Auto-generated method stub
         return null;
     }
+
+    @Override
+    public List<CTLSchemaMetaInfoDto> getSystemCTLSchemasMetaInfo() throws ControlServiceException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public List<CTLSchemaDto> getCTLSchemaDependents(String schemaId) throws ControlServiceException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public List<CTLSchemaDto> getCTLSchemaDependents(String fqn, int version, String tenantId) throws ControlServiceException {
+        return ctlService.findCTLSchemaDependents(fqn, version, tenantId);
+    }
+
 }

@@ -23,9 +23,6 @@ import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 /**
  * A service to manage Common Type Library schemas.
  *
- * @author Andrew Shvayka
- * @author Bohdan Khablenko
- *
  * @since v0.8.0
  */
 public interface CTLService {
@@ -47,13 +44,14 @@ public interface CTLService {
     void removeCTLSchemaById(String id);
 
     /**
-     * Removes a CTL schema with the given fully qualified name and version
-     * number from the database.
+     * Removes a CTL schema of the given tenant with the given fully qualified
+     * name and version number from the database.
      *
      * @param fqn A fully qualified CTL schema name
      * @param version A CTL schema version number
+     * @param tenantId A tenant identifier
      */
-    void removeCTLSchemaByFqnAndVersion(String fqn, int version);
+    void removeCTLSchemaByFqnAndVersionAndTenantId(String fqn, int version, String tenantId);
 
     /**
      * Returns a CTL schema with the given identifier.
@@ -65,25 +63,17 @@ public interface CTLService {
     CTLSchemaDto findCTLSchemaById(String id);
 
     /**
-     * Returns a CTL schema with the given fully qualified name and version
-     * number.
+     * Returns a CTL schema of the given tenant with the given fully qualified
+     * name and version number.
      *
      * @param fqn A fully qualified CTL schema name
      * @param version A CTL schema version number
+     * @param tenantId A tenant identifier
      *
      * @return A CTL schema with the given fully qualified name and version
      *         number
      */
-    CTLSchemaDto findCTLSchemaByFqnAndVersion(String fqn, int version);
-
-    /**
-     * Returns a CTL schema with the given fully qualified name and the highest
-     * version number among other schemas that share the same name.
-     *
-     * @param fqn A fully qualified CTL schema name
-     * @return The latest CTL schema with the given fully qualified name
-     */
-    CTLSchemaDto findLatestCTLSchemaByFqn(String fqn);
+    CTLSchemaDto findCTLSchemaByFqnAndVersionAndTenantId(String fqn, int version, String tenantId);
 
     /**
      * Returns CTL schemas available in the database.
@@ -111,15 +101,6 @@ public interface CTLService {
     List<CTLSchemaDto> findCTLSchemasByApplicationId(String applicationId);
 
     /**
-     * Returns CTL schemas that share the given fully qualified name.
-     *
-     * @param fqn A fully qualified CTL schema name
-     *
-     * @return CTL schemas that share the given fully qualified name
-     */
-    List<CTLSchemaDto> findCTLSchemasByFqn(String fqn);
-
-    /**
      * Returns {@link org.kaaproject.kaa.common.dto.ctl.CTLSchemaScope#SYSTEM}
      * scoped CTL schemas.
      *
@@ -128,33 +109,7 @@ public interface CTLService {
      */
     List<CTLSchemaDto> findSystemCTLSchemas();
 
-    /**
-     * Returns a CTL schema as JSON.
-     *
-     * @param fqn A fully qualified CTL schema name
-     * @param version A CTL schema version number
-     *
-     * @return A CTL schema as JSON
-     */
-    String getCTLSchemaShallow(String fqn, int version);
+    List<CTLSchemaDto> findCTLSchemaDependents(String schemaId);
 
-    /**
-     * Returns a CTL schema with all of its dependencies inline as JSON.
-     *
-     * @param fqn A fully qualified CTL schema name
-     * @param version A CTL schema version number
-     *
-     * @return A CTL schema with all of its dependencies inline as JSON
-     */
-    String getCTLSchemaFlat(String fqn, int version);
-
-    /**
-     * Returns a CTL schema and all of its dependencies as JSON.
-     *
-     * @param fqn A fully qualified CTL schema name
-     * @param version A CTL schema version number
-     *
-     * @return A CTL schema and all of its dependencies as JSON
-     */
-    List<String> getCTLSchemaDeep(String fqn, int version);
+    List<CTLSchemaDto> findCTLSchemaDependents(String fqn, int version, String tenantId);
 }

@@ -18,14 +18,11 @@ package org.kaaproject.kaa.common.dto.ctl;
 
 /**
  * Defines the scope of a Common Type Library schema.
- * 
- * @author Andrew Shvayka
- * @author Bohdan Khablenko
- * 
+ *
  * @see org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto
- * 
+ *
  * @since v0.8.0
  */
 public enum CTLSchemaScope {
-    SYSTEM, TENANT, APPLICATION;
+    SYSTEM, TENANT, APPLICATION, LOCAL;
 }

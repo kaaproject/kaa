@@ -22,6 +22,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import jline.internal.Log;
+
 import org.apache.commons.lang3.StringUtils;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
@@ -51,6 +53,8 @@ import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScope;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
@@ -513,101 +517,56 @@ public class KaaAdminController {
     /**
      * Saves a CTL schema.
      */
-    @RequestMapping(value = "saveCTLSchema", method = RequestMethod.POST)
+    @RequestMapping(value = "CTL/saveSchema", method = RequestMethod.POST)
     @ResponseBody
     public CTLSchemaDto saveCTLSchema(@RequestBody CTLSchemaDto schema) throws KaaAdminServiceException {
         return kaaAdminService.saveCTLSchema(schema);
     }
 
     /**
-     * Deletes a CTL schema by its identifier.
+     * Removes a CTL schema by its fully qualified name and version number.
      */
-    @RequestMapping(value = "deleteCTLSchema", method = RequestMethod.POST)
+    @RequestMapping(value = "CTL/deleteSchema", params = { "fqn", "version" }, method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
-    public void deleteCTLSchemaById(@RequestParam(value = "schemaId") String schemaId) throws KaaAdminServiceException {
-        kaaAdminService.deleteCTLSchemaById(schemaId);
-    }
-
-    /**
-     * Deletes a CTL schema by its fully qualified name and version number.
-     */
-    @RequestMapping(value = "deleteCTLSchema", method = RequestMethod.POST)
-    @ResponseStatus(value = HttpStatus.OK)
-    public void deleteCTLSchemaByFqnAndVersion(
-            @RequestParam(value = "fqn") String fqn,
-            @RequestParam(value = "version") int version)
-                    throws KaaAdminServiceException {
+    public void deleteCTLSchemaByFqnAndVersion(@RequestParam String fqn, @RequestParam int version) throws KaaAdminServiceException {
         kaaAdminService.deleteCTLSchemaByFqnAndVersion(fqn, version);
     }
 
     /**
-     * Gets a CTL schema by its identifier.
+     * Retrieves a CTL schema by its fully qualified name and version number.
      */
-    @RequestMapping(value = "CTLSchema/{schemaId}", method = RequestMethod.GET)
+    @RequestMapping(value = "CTL/getSchema", params = { "fqn", "version" }, method = RequestMethod.GET)
     @ResponseBody
-    public CTLSchemaDto getCTLSchemaById(@PathVariable String schemaId) throws KaaAdminServiceException {
-        return kaaAdminService.getCTLSchemaById(schemaId);
-    }
-
-    /**
-     * Gets a CTL schema by its fully qualified name and version number.
-     */
-    @RequestMapping(value = "CTLSchema", method = RequestMethod.GET)
-    @ResponseBody
-    public CTLSchemaDto getCTLSchemaByFqnAndVersion(
-            @RequestParam(value = "fqn") String fqn,
-            @RequestParam(value = "version") int version)
-                    throws KaaAdminServiceException {
+    public CTLSchemaDto getCTLSchemaByFqnAndVersion(@RequestParam String fqn, @RequestParam int version) throws KaaAdminServiceException {
         return kaaAdminService.getCTLSchemaByFqnAndVersion(fqn, version);
     }
 
     /**
-     * Gets CTL schemas of a tenant.
+     * Retrieves a list of CTL schemas available for the current tenant.
      */
-    @RequestMapping(value = "CTLSchemas", method = RequestMethod.GET)
+    @RequestMapping(value = "CTL/getSchemas", method = RequestMethod.GET)
     @ResponseBody
-    public List<CTLSchemaDto> getCTLSchemasByTenantId(@RequestParam(value = "tenantId") String tenantId) throws KaaAdminServiceException {
-        return kaaAdminService.getCTLSchemasByTenantId(tenantId);
+    public List<CTLSchemaMetaInfoDto> getCTLSchemasAvailable() throws KaaAdminServiceException {
+        return kaaAdminService.getCTLSchemasAvailable();
     }
 
     /**
-     * Gets CTL schemas of an application.
+     * Retrieves a list of CTL schemas available for the current user filtered
+     * by scope.
      */
-    @RequestMapping(value = "CTLSchemas", method = RequestMethod.GET)
+    @RequestMapping(value = "CTL/getSchemas", params = { "scope" }, method = RequestMethod.GET)
     @ResponseBody
-    public List<CTLSchemaDto> getCTLSchemasByApplicationId(@RequestParam(value = "applicationId") String applicationId) throws KaaAdminServiceException {
+    public List<CTLSchemaMetaInfoDto> getCTLSchemasByScope(@RequestParam(value = "scope") String scopeName) throws KaaAdminServiceException {
+        return kaaAdminService.getCTLSchemasByScope(scopeName);
+    }
+
+    /**
+     * Retrieves a list of CTL schemas by application identifier.
+     */
+    @RequestMapping(value = "CTL/getSchemas", params = { "applicationId" }, method = RequestMethod.GET)
+    @ResponseBody
+    public List<CTLSchemaMetaInfoDto> getCTLSchemasByApplicationId(@RequestParam String applicationId) throws KaaAdminServiceException {
         return kaaAdminService.getCTLSchemasByApplicationId(applicationId);
-    }
-
-    /**
-     * Gets CTL schemas by their shared fully qualified name.
-     */
-    @RequestMapping(value = "CTLSchema", method = RequestMethod.GET)
-    @ResponseBody
-    public List<CTLSchemaDto> getCTLSchemasByFqn(@RequestParam(value = "fqn") String fqn) throws KaaAdminServiceException {
-        return kaaAdminService.getCTLSchemasByFqn(fqn);
-    }
-
-    /**
-     * Gets system CTL schemas.
-     */
-    @RequestMapping(value = "CTLSchemas/system", method = RequestMethod.GET)
-    @ResponseBody
-    public List<CTLSchemaDto> getSystemCTLSchemas() throws KaaAdminServiceException {
-        return kaaAdminService.getSystemCTLSchemas();
-    }
-
-    /**
-     * Gets a CTL schema file.
-     */
-    @RequestMapping(value = "getCTLSchema/{type}", method = RequestMethod.GET)
-    @ResponseStatus(value = HttpStatus.OK)
-    public void downloadCTLSchema(
-            @RequestParam(value = "fqn") String fqn,
-            @RequestParam(value = "version") int version,
-            @PathVariable String type)
-                    throws KaaAdminServiceException {
-        // TODO: Implement in KAA-606
     }
 
     /**
