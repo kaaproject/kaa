@@ -13,28 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kaaproject.kaa.client.plugin.messaging.ext1.avro;
+package org.kaaproject.kaa.client.plugin.messaging.common.v1.msg;
 
-import org.apache.avro.Schema;
-import org.apache.avro.specific.SpecificRecordBase;
+public enum MessageType {
 
-public class ClassC extends SpecificRecordBase {
+    ENTITY((short) 0), VOID((short)1), ACK((short) 2), ERROR((short) 3);
 
-    @Override
-    public Schema getSchema() {
-        // TODO Auto-generated method stub
-        return null;
+    private final short code;
+
+    private MessageType(short type) {
+        this.code = type;
     }
 
-    @Override
-    public Object get(int field) {
-        // TODO Auto-generated method stub
-        return null;
+    public static MessageType get(short code) {
+        for (MessageType type : MessageType.values()) {
+            if (type.code == code) {
+                return type;
+            }
+        }
+        throw new IllegalArgumentException("No MessageType with code: " + code);
     }
 
-    @Override
-    public void put(int field, Object value) {
-        // TODO Auto-generated method stub
+    public short getCode() {
+        return code;
+    }
 
-    } 
 }

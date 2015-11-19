@@ -13,28 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kaaproject.kaa.client.plugin.messaging.ext1.avro;
+package org.kaaproject.kaa.client.plugin.messaging.common.v1.future;
 
-import org.apache.avro.Schema;
-import org.apache.avro.specific.SpecificRecordBase;
+public class ExecutionResult<T> {
 
-public class ClassC extends SpecificRecordBase {
+    private final T t;
+    private final Exception e;
 
-    @Override
-    public Schema getSchema() {
-        // TODO Auto-generated method stub
-        return null;
+    public ExecutionResult(T t, Exception e) {
+        super();
+        this.t = t;
+        this.e = e;
     }
 
-    @Override
-    public Object get(int field) {
-        // TODO Auto-generated method stub
-        return null;
+    public T get() {
+        return t;
     }
 
-    @Override
-    public void put(int field, Object value) {
-        // TODO Auto-generated method stub
+    public Exception getE() {
+        return e;
+    }
 
-    } 
 }

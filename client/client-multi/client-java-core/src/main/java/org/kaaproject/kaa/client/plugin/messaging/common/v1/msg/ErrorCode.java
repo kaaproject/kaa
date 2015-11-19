@@ -13,28 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kaaproject.kaa.client.plugin.messaging.ext1.avro;
+package org.kaaproject.kaa.client.plugin.messaging.common.v1.msg;
 
-import org.apache.avro.Schema;
-import org.apache.avro.specific.SpecificRecordBase;
+public enum ErrorCode {
 
-public class ClassC extends SpecificRecordBase {
+    NO_LISTENER_ASSIGNED(1), EXECUTION_ERROR(2), SERIALIZATION_ERROR(3), NULL_RESPONSE_ERROR(3);
 
-    @Override
-    public Schema getSchema() {
-        // TODO Auto-generated method stub
-        return null;
+    private final int code;
+
+    private ErrorCode(int code) {
+        this.code = code;
     }
 
-    @Override
-    public Object get(int field) {
-        // TODO Auto-generated method stub
-        return null;
+    public int getCode() {
+        return code;
     }
 
-    @Override
-    public void put(int field, Object value) {
-        // TODO Auto-generated method stub
+    public static ErrorCode get(int errorCode) {
+        for (ErrorCode type : ErrorCode.values()) {
+            if (type.code == errorCode) {
+                return type;
+            }
+        }
+        throw new IllegalArgumentException("No ErrorCode with code: " + errorCode);
+    }
 
-    } 
 }

@@ -13,28 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kaaproject.kaa.client.plugin.messaging.common.v1;
+package org.kaaproject.kaa.client.plugin.messaging.common.v1.msg;
 
+import java.nio.ByteBuffer;
 import java.util.UUID;
 
-import org.apache.avro.specific.SpecificRecordBase;
+public abstract class AbstractPayloadMessage extends AbstractMessage implements PayloadMessage {
 
-public class Message<T extends SpecificRecordBase> {
+    private static final int MESSAGE_HEADER_SIZE = 16 + 2 + 2 + 4;
 
-    private final UUID uuid;
-    private final T msg;
-
-    public Message(UUID uid, T msg) {
-        this.uuid = uid;
-        this.msg = msg;
+    protected AbstractPayloadMessage(UUID uid, short methodId) {
+        super(uid, methodId);
     }
 
-    public UUID getUuid() {
-        return uuid;
+    @Override
+    public int getSize() {
+        return MESSAGE_HEADER_SIZE + getPayload().length;
     }
-
-    public T getMsg() {
-        return msg;
+    
+    @Override
+    public void pushTo(ByteBuffer bb){
+        super.pushTo(bb);
+        bb.putInt(this.getPayload().length);
+        bb.put(this.getPayload());
     }
 
 }

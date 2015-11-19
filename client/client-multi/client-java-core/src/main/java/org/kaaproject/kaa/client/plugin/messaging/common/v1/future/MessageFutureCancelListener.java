@@ -13,28 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kaaproject.kaa.client.plugin.messaging.ext1.avro;
+package org.kaaproject.kaa.client.plugin.messaging.common.v1.future;
 
-import org.apache.avro.Schema;
-import org.apache.avro.specific.SpecificRecordBase;
+import java.util.UUID;
 
-public class ClassC extends SpecificRecordBase {
+public interface MessageFutureCancelListener {
 
-    @Override
-    public Schema getSchema() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+    void onCanceled(UUID uid);
 
-    @Override
-    public Object get(int field) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public void put(int field, Object value) {
-        // TODO Auto-generated method stub
-
-    } 
 }

@@ -15,6 +15,27 @@
  */
 package org.kaaproject.kaa.client.plugin.messaging.ext1.avro;
 
-public class ClassB {
+import org.apache.avro.Schema;
+import org.apache.avro.specific.SpecificRecordBase;
+
+public class ClassB extends SpecificRecordBase {
+
+    @Override
+    public Schema getSchema() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Object get(int field) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void put(int field, Object value) {
+        // TODO Auto-generated method stub
+        
+    }
 
 }

@@ -15,26 +15,10 @@
  */
 package org.kaaproject.kaa.client.plugin.messaging.ext1;
 
-import java.util.concurrent.Future;
-
-import org.kaaproject.kaa.client.plugin.PluginInstanceAPI;
-import org.kaaproject.kaa.client.plugin.messaging.ext1.avro.ClassA;
-import org.kaaproject.kaa.client.plugin.messaging.ext1.avro.ClassB;
 import org.kaaproject.kaa.client.plugin.messaging.ext1.avro.ClassC;
 
-public interface Messaging1PluginAPI extends PluginInstanceAPI {
+public interface MethodCListener {
 
-    void setMethodAListener(MethodAListener listener);
+    ClassC onEvent();
 
-    void setMethodBListener(MethodBListener listener);
-
-    void setMethodCListener(MethodCListener listener);
-
-    Future<Void> sendA(ClassA msg);
-
-    Future<ClassA> getA();
-
-    Future<ClassB> getB(ClassA msg);
-
-    Future<ClassC> getC(ClassA param);
 }

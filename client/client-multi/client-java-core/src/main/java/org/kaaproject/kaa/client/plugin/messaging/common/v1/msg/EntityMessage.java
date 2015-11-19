@@ -13,28 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kaaproject.kaa.client.plugin.messaging.ext1.avro;
+package org.kaaproject.kaa.client.plugin.messaging.common.v1.msg;
 
-import org.apache.avro.Schema;
-import org.apache.avro.specific.SpecificRecordBase;
+import java.util.UUID;
 
-public class ClassC extends SpecificRecordBase {
+public class EntityMessage extends AbstractPayloadMessage {
 
-    @Override
-    public Schema getSchema() {
-        // TODO Auto-generated method stub
-        return null;
+    private final byte[] payload;
+
+    public EntityMessage(byte[] payload, short methodId) {
+        this(UUID.randomUUID(), payload, methodId);
+    }
+
+    public EntityMessage(UUID uid, byte[] msg, short methodId) {
+        super(uid, methodId);
+        this.payload = msg;
     }
 
     @Override
-    public Object get(int field) {
-        // TODO Auto-generated method stub
-        return null;
+    public byte[] getPayload() {
+        return payload;
     }
 
     @Override
-    public void put(int field, Object value) {
-        // TODO Auto-generated method stub
+    public MessageType getType() {
+        return MessageType.ENTITY;
+    }
 
-    } 
 }

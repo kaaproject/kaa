@@ -13,28 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kaaproject.kaa.client.plugin.messaging.ext1.avro;
+package org.kaaproject.kaa.client.plugin.messaging.common.v1.msg;
 
-import org.apache.avro.Schema;
-import org.apache.avro.specific.SpecificRecordBase;
+import java.util.UUID;
 
-public class ClassC extends SpecificRecordBase {
+public class VoidMessage extends AbstractMessage {
 
-    @Override
-    public Schema getSchema() {
-        // TODO Auto-generated method stub
-        return null;
+    public VoidMessage(short methodId) {
+        this(UUID.randomUUID(), methodId);
+    }
+
+    public VoidMessage(UUID uid, short methodId) {
+        super(uid, methodId);
     }
 
     @Override
-    public Object get(int field) {
-        // TODO Auto-generated method stub
-        return null;
+    public MessageType getType() {
+        return MessageType.VOID;
     }
 
-    @Override
-    public void put(int field, Object value) {
-        // TODO Auto-generated method stub
-
-    } 
 }

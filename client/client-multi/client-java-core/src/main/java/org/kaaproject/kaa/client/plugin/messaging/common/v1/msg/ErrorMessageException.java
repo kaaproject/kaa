@@ -13,28 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kaaproject.kaa.client.plugin.messaging.ext1.avro;
+package org.kaaproject.kaa.client.plugin.messaging.common.v1.msg;
 
-import org.apache.avro.Schema;
-import org.apache.avro.specific.SpecificRecordBase;
+public class ErrorMessageException extends Exception {
+    private static final long serialVersionUID = -5351939297132399269L;
 
-public class ClassC extends SpecificRecordBase {
+    private final int code;
 
-    @Override
-    public Schema getSchema() {
-        // TODO Auto-generated method stub
-        return null;
+    public ErrorMessageException(int code, String message) {
+        super(message);
+        this.code = code;
     }
 
-    @Override
-    public Object get(int field) {
-        // TODO Auto-generated method stub
-        return null;
+    public int getCode() {
+        return code;
     }
 
-    @Override
-    public void put(int field, Object value) {
-        // TODO Auto-generated method stub
-
-    } 
 }
