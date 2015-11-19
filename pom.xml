@@ -569,6 +569,12 @@ Copyright 2014-2015 CyberVision, Inc.
                 <groupId>org.kaaproject.kaa.server.appenders</groupId>
                 <artifactId>flume-appender</artifactId>
                 <version>${project.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>servlet-api</artifactId>
+                        <groupId>org.mortbay.jetty</groupId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.kaaproject.kaa.server.appenders</groupId>
