@@ -21,12 +21,6 @@ import java.util.List;
 
 import org.kaaproject.kaa.common.dto.HasId;
 
-/**
- * @author Andrew Shvayka
- * @author Bohdan Khablenko
- *
- * @since v0.8.0
- */
 public class CTLSchemaDto implements HasId, Serializable {
 
     private static final long serialVersionUID = 6967757225688280884L;

@@ -42,6 +42,7 @@ import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
@@ -327,24 +328,16 @@ public interface KaaAdminService extends RemoteService {
 
     public void deleteCTLSchemaById(String schemaId) throws KaaAdminServiceException;
 
-    public void deleteCTLSchemaByFqnAndVersion(String fqn, int version) throws KaaAdminServiceException;
+    public void deleteCTLSchemaByFqnAndVersion(String fqn, Integer version) throws KaaAdminServiceException;
 
     public CTLSchemaDto getCTLSchemaById(String schemaId) throws KaaAdminServiceException;
 
-    public CTLSchemaDto getCTLSchemaByFqnAndVersion(String fqn, int version) throws KaaAdminServiceException;
+    public CTLSchemaDto getCTLSchemaByFqnAndVersion(String fqn, Integer version) throws KaaAdminServiceException;
 
-    public List<CTLSchemaDto> getCTLSchemasByTenantId(String tenantId) throws KaaAdminServiceException;
+    public List<CTLSchemaMetaInfoDto> getCTLSchemasAvailable() throws KaaAdminServiceException;
 
-    public List<CTLSchemaDto> getCTLSchemasByApplicationId(String applicationId) throws KaaAdminServiceException;
+    public List<CTLSchemaMetaInfoDto> getCTLSchemasByScope(String scopeName) throws KaaAdminServiceException;
 
-    public List<CTLSchemaDto> getCTLSchemasByFqn(String fqn) throws KaaAdminServiceException;
-
-    public List<CTLSchemaDto> getSystemCTLSchemas() throws KaaAdminServiceException;
-
-    public FileData getShallowCTLSchema(String fqn, int version) throws KaaAdminServiceException;
-
-    public FileData getFlatCTLSchema(String fqn, int version) throws KaaAdminServiceException;
-
-    public List<FileData> getDeepCTLSchema(String fqn, int version) throws KaaAdminServiceException;
+    public List<CTLSchemaMetaInfoDto> getCTLSchemasByApplicationId(String applicationId) throws KaaAdminServiceException;
 
 }

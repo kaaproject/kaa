@@ -58,6 +58,7 @@ import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
@@ -807,51 +808,36 @@ public class AdminClient {
     }
 
     public CTLSchemaDto saveCTLSchema(CTLSchemaDto schema) {
-        return restTemplate.postForObject(url + "saveCTLSchema", schema, CTLSchemaDto.class);
+        return restTemplate.postForObject(url + "CTL/saveSchema", schema, CTLSchemaDto.class);
     }
 
-    public void deleteCTLSchemaById(String schemaId) {
-        MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
-        params.add("schemaId", schemaId);
-        restTemplate.postForLocation(url + "deleteCTLSchema", params);
-    }
-
-    public void deleteCTLSchemaByFqnAndVersion(String fqn, int version) {
+    public void deleteCTLSchemaByFqnAndVersion(String fqn, Integer version) {
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
         params.add("fqn", fqn);
         params.add("version", version);
-        restTemplate.postForLocation(url + "deleteCTLSchema", params);
+        restTemplate.postForLocation(url + "CTL/deleteSchema", params);
     }
 
-    public CTLSchemaDto getCTLSchemaById(String schemaId) {
-        return restTemplate.getForObject(url + "CTLSchema/" + schemaId, CTLSchemaDto.class);
+    public CTLSchemaDto getCTLSchemaByFqnAndVersion(String fqn, Integer version) {
+        return restTemplate.getForObject(url + "CTL/getSchema?fqn={fqn}&version={version}", CTLSchemaDto.class, fqn, version);
     }
 
-    public CTLSchemaDto getCTLSchemaByFqnAndVersion(String fqn, int version) {
-        return restTemplate.getForObject(url + "CTLSchema?fqn={fqn}&version={version}", CTLSchemaDto.class, fqn, version);
-    }
-
-    public List<CTLSchemaDto> getCTLSchemasByTenantId(String tenantId) {
-        ParameterizedTypeReference<List<CTLSchemaDto>> typeRef = new ParameterizedTypeReference<List<CTLSchemaDto>>() {};
-        ResponseEntity<List<CTLSchemaDto>> entity = restTemplate.exchange(url + "CTLSchemas?tenantId=" + tenantId, HttpMethod.GET, null, typeRef);
+    public List<CTLSchemaMetaInfoDto> getCTLSchemasAvailable() {
+        ParameterizedTypeReference<List<CTLSchemaMetaInfoDto>> typeRef = new ParameterizedTypeReference<List<CTLSchemaMetaInfoDto>>() {};
+        ResponseEntity<List<CTLSchemaMetaInfoDto>> entity = restTemplate.exchange(url + "CTL/getSchemas", HttpMethod.GET, null, typeRef);
         return entity.getBody();
     }
 
-    public List<CTLSchemaDto> getCTLSchemasByApplicationId(String applicationId) {
-        ParameterizedTypeReference<List<CTLSchemaDto>> typeRef = new ParameterizedTypeReference<List<CTLSchemaDto>>() {};
-        ResponseEntity<List<CTLSchemaDto>> entity = restTemplate.exchange(url + "CTLSchemas?applicationId=" + applicationId, HttpMethod.GET, null, typeRef);
+    public List<CTLSchemaMetaInfoDto> getCTLSchemasByScope(String scopeName) {
+        ParameterizedTypeReference<List<CTLSchemaMetaInfoDto>> typeRef = new ParameterizedTypeReference<List<CTLSchemaMetaInfoDto>>() {};
+        ResponseEntity<List<CTLSchemaMetaInfoDto>> entity = restTemplate.exchange(url + "CTL/getSchemas?scope=" + scopeName, HttpMethod.GET, null, typeRef);
         return entity.getBody();
     }
 
-    public List<CTLSchemaDto> getCTLSchemasByFqn(String fqn) {
-        ParameterizedTypeReference<List<CTLSchemaDto>> typeRef = new ParameterizedTypeReference<List<CTLSchemaDto>>() {};
-        ResponseEntity<List<CTLSchemaDto>> entity = restTemplate.exchange(url + "CTLSchemas?fqn=" + fqn, HttpMethod.GET, null, typeRef);
-        return entity.getBody();
-    }
-
-    public List<CTLSchemaDto> getSystemCTLSchemas() {
-        ParameterizedTypeReference<List<CTLSchemaDto>> typeRef = new ParameterizedTypeReference<List<CTLSchemaDto>>() {};
-        ResponseEntity<List<CTLSchemaDto>> entity = restTemplate.exchange(url + "CTLSchemas/system", HttpMethod.GET, null, typeRef);
+    public List<CTLSchemaMetaInfoDto> getCTLSchemasByApplicationId(String applicationId) {
+        ParameterizedTypeReference<List<CTLSchemaMetaInfoDto>> typeRef = new ParameterizedTypeReference<List<CTLSchemaMetaInfoDto>>() {};
+        ResponseEntity<List<CTLSchemaMetaInfoDto>> entity = restTemplate.exchange(url + "CTL/getSchemas?applicationId=" + applicationId, HttpMethod.GET, null,
+                typeRef);
         return entity.getBody();
     }
 
