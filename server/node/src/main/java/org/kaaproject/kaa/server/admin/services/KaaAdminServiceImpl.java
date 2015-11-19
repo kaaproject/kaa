@@ -2561,11 +2561,8 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             if (schema.getDependencies() != null) {
                 for (CTLDependencyDto dependency : schema.getDependencies()) {
                     try {
-                        CTLSchemaDto dependencySchema = controlService.getCTLSchemaByFqnVersionAndTenantId(
-                                dependency.getFqn(),
-                                dependency.getVersion(),
+                        CTLSchemaDto dependencySchema = controlService.getCTLSchemaByFqnVersionAndTenantId(dependency.getFqn(), dependency.getVersion(),
                                 getCurrentUser().getTenantId());
-
                         types.put(dependency.getFqn(), this.parse(dependencySchema));
                     } catch (Exception cause) {
                         throw new IllegalArgumentException("Unable to locate dependency " + dependency.toString());
