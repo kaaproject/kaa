@@ -16,7 +16,7 @@ public interface CTLService {
      * @param ctlSchema the ctlSchema object
      * @return CTLSchemaDto the updated object
      */
-    CTLSchemaDto updateCTLSchemaScope(CTLSchemaDto ctlSchema);
+    CTLSchemaDto updateCTLSchema(CTLSchemaDto ctlSchema);
 
     /**
      * This method
@@ -151,7 +151,7 @@ public interface CTLService {
      * @param tenantId
      * @return
      */
-    List<CTLSchemaDto> findCTLSchemaDependents(String fqn, int version, String tenantId);
+    List<CTLSchemaDto> findCTLSchemaDependents(String fqn, Integer version, String tenantId);
 
 
 }

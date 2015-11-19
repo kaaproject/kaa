@@ -43,6 +43,7 @@ import org.kaaproject.kaa.common.dto.UpdateNotificationDto;
 import org.kaaproject.kaa.common.dto.UserDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
@@ -136,6 +137,7 @@ public class AbstractTest {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractTest.class);
 
     protected static final Random RANDOM = new Random(0);
+    protected static final String SUPER_TENANT = "SuperTenant";
 
     protected static final String TENANT_NAME = "Generated Test Tenant";
     protected static final String USER_NAME = "Generated Test Username";
@@ -738,12 +740,21 @@ public class AbstractTest {
     }
 
     protected CTLSchemaDto generateCTLSchemaDto(String tenantId) {
-        return generateCTLSchemaDto(DEFAULT_FQN, tenantId, 100);
+        return generateCTLSchemaDto(DEFAULT_FQN, tenantId, 100, CTLSchemaScopeDto.TENANT);
     }
 
-    protected CTLSchemaDto generateCTLSchemaDto(String fqn, String tenantId, int version) {
+    protected CTLSchemaDto generateCTLSchemaDto(String fqn, String tenantId, int version, CTLSchemaScopeDto scopeDto) {
         CTLSchemaDto ctlSchema = new CTLSchemaDto();
-        ctlSchema.setMetaInfo(new CTLSchemaMetaInfoDto(fqn, version));
+        CTLSchemaMetaInfoDto metaInfoDto = new CTLSchemaMetaInfoDto(fqn, version);
+        if (scopeDto == null) {
+            if (isBlank(tenantId)) {
+                scopeDto = CTLSchemaScopeDto.SYSTEM;
+            } else {
+                scopeDto = CTLSchemaScopeDto.TENANT;
+            }
+        }
+        metaInfoDto.setScope(scopeDto);
+        ctlSchema.setMetaInfo(metaInfoDto);
         ctlSchema.setBody(UUID.randomUUID().toString());
         ctlSchema.setTenantId(tenantId);
         return ctlSchema;

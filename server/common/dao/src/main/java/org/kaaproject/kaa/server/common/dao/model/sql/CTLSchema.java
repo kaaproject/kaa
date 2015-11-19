@@ -136,6 +136,38 @@ public class CTLSchema extends GenericModel<CTLSchemaDto> implements Serializabl
     private void updateCreatedTime() {
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getCreatedUsername() {
+        return createdUsername;
+    }
+
+    public void setCreatedUsername(String createdUsername) {
+        this.createdUsername = createdUsername;
+    }
+
+    public long getCreatedTime() {
+        return createdTime;
+    }
+
+    public void setCreatedTime(long createdTime) {
+        this.createdTime = createdTime;
+    }
+
     @Override
     protected CTLSchemaDto createDto() {
         return new CTLSchemaDto();

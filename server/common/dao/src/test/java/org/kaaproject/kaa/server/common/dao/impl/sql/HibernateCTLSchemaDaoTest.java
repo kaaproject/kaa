@@ -32,7 +32,6 @@ import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
 public class HibernateCTLSchemaDaoTest extends HibernateAbstractTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(HibernateCTLSchemaDaoTest.class);
-    public static final String SUPER_TENANT = "SuperTenant";
 
     @Autowired
     private CTLService ctlService;
@@ -58,18 +57,18 @@ public class HibernateCTLSchemaDaoTest extends HibernateAbstractTest {
             }
         }
         Set<CTLSchemaDto> dependency = new HashSet<>();
-        firstSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN, tenant.getId(), 1));
+        firstSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN, tenant.getId(), 1, null));
         dependency.add(firstSchema);
-        secondSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN, tenant.getId(), 2));
+        secondSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN, tenant.getId(), 2, null));
         dependency.add(secondSchema);
-        thirdSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN, tenant.getId(), 3));
+        thirdSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN, tenant.getId(), 3, null));
         dependency.add(thirdSchema);
-        fourthSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN, tenant.getId(), 4));
+        fourthSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN, tenant.getId(), 4, null));
         dependency.add(fourthSchema);
-        mainSchema = generateCTLSchemaDto(DEFAULT_FQN, tenant.getId(), 7);
+        mainSchema = generateCTLSchemaDto(DEFAULT_FQN, tenant.getId(), 7, null);
         mainSchema.setDependencySet(dependency);
         mainSchema = ctlService.saveCTLSchema(mainSchema);
-        systemSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN, null, 50));
+        systemSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN, null, 50, null));
     }
 
     @Test(expected = Exception.class)

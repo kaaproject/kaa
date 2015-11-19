@@ -75,6 +75,7 @@ import org.kaaproject.kaa.server.common.core.algorithms.generation.DefaultRecord
 import org.kaaproject.kaa.server.common.core.configuration.RawData;
 import org.kaaproject.kaa.server.common.core.configuration.RawDataFactory;
 import org.kaaproject.kaa.server.common.core.schema.RawSchema;
+import org.kaaproject.kaa.server.common.dao.AbstractTest;
 import org.kaaproject.kaa.server.common.dao.impl.sql.H2DBTestRunner;
 import org.kaaproject.kaa.server.common.dao.impl.sql.PostgreDBTestRunner;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.MongoDBTestRunner;
@@ -98,7 +99,7 @@ import com.mongodb.DB;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/common-test-context.xml")
 @DirtiesContext(classMode = ClassMode.AFTER_CLASS)
-public abstract class AbstractTestControlServer {
+public abstract class AbstractTestControlServer extends AbstractTest {
 
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory
@@ -374,15 +375,15 @@ public abstract class AbstractTestControlServer {
         }
     }
 
-    /**
-     * Generate string.
-     *
-     * @param string the string
-     * @return the string
-     */
-    protected static String generateString(String string) {
-        return string + "_" + UUID.randomUUID().toString();
-    }
+//    /**
+//     * Generate string.
+//     *
+//     * @param string the string
+//     * @return the string
+//     */
+//    protected static String generateString(String string) {
+//        return string + "_" + UUID.randomUUID().toString();
+//    }
 
     /**
      * Str is empty.

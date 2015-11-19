@@ -41,21 +41,18 @@
                     <prop key="hibernate.format_sql">#{dao[hibernate_format_sql]}</prop>
                     <prop key="hibernate.show_sql">#{dao[hibernate_show_sql]}</prop>
 
-                    <prop key="hibernate.c3p0.min_size">10</prop>
-                    <prop key="hibernate.c3p0.max_size">50</prop>
-                    <prop key="hibernate.c3p0.timeout">100</prop>
-                    <prop key="hibernate.c3p0.max_statements">50</prop>
-                    <prop key="hibernate.c3p0.idle_test_period">3000</prop>
-
                     <!--<prop key="hibernate.generate_statistics">true</prop>-->
                 </props>
             </property>
         </bean>
 
         <bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig">
-            <property name="poolName" value="springHikariCP" />
+            <property name="poolName" value="SpringHikariCP" />
             <property name="connectionTestQuery" value="SELECT 1" />
             <property name="dataSourceClassName" value="org.postgresql.ds.PGSimpleDataSource" />
+            <property name="connectionTimeout" value="10000" />
+            <property name="maximumPoolSize" value="256" />
+            <property name="idleTimeout" value="120000" />
             <property name="dataSourceProperties">
                 <props>
                     <prop key="url">jdbc:postgresql://localhost:5432/kaa</prop>
@@ -81,20 +78,17 @@
                     <prop key="hibernate.dialect">#{dao[hibernate_dialect]}</prop>
                     <prop key="hibernate.format_sql">#{dao[hibernate_format_sql]}</prop>
                     <prop key="hibernate.show_sql">#{dao[hibernate_show_sql]}</prop>
-
-                    <prop key="hibernate.c3p0.min_size">10</prop>
-                    <prop key="hibernate.c3p0.max_size">50</prop>
-                    <prop key="hibernate.c3p0.timeout">100</prop>
-                    <prop key="hibernate.c3p0.max_statements">50</prop>
-                    <prop key="hibernate.c3p0.idle_test_period">3000</prop>
                 </props>
             </property>
         </bean>
 
         <bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig">
-            <property name="poolName" value="springHikariCP" />
+            <property name="poolName" value="SpringHikariCP" />
             <property name="connectionTestQuery" value="VALUES 1" />
             <property name="dataSourceClassName" value="org.h2.jdbcx.JdbcDataSource" />
+            <property name="connectionTimeout" value="10000" />
+            <property name="maximumPoolSize" value="100" />
+            <property name="idleTimeout" value="120000" />
             <property name="dataSourceProperties">
                 <props>
                     <prop key="url">jdbc:#{dao[jdbc_url_db_name]}:mem:kaa;DATABASE_TO_UPPER=true;MODE=PostgreSQL</prop>

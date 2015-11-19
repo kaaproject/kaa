@@ -43,7 +43,8 @@ public class HibernateCTLSchemaDao extends HibernateAbstractDao<CTLSchema> imple
         if (isNotBlank(fqn) && version != null) {
             ctlSchema = findOneByCriterionWithAlias(CTL_SCHEMA_META_INFO_PROPERTY, CTL_SCHEMA_META_INFO_ALIAS, Restrictions.and(
                     Restrictions.eq(CTL_SCHEMA_META_INFO_ALIAS_VERSION, version),
-                    Restrictions.eq(CTL_SCHEMA_META_INFO_ALIAS_FQN, fqn)));
+                    Restrictions.eq(CTL_SCHEMA_META_INFO_ALIAS_FQN, fqn),
+                    Restrictions.eq(CTL_SCHEMA_TENANT_ID_ALIAS, Long.valueOf(tenantId))));
         }
         if (LOG.isTraceEnabled()) {
             LOG.trace("[{},{}] Search result: [{}].", fqn, version, ctlSchema);
