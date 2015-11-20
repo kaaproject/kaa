@@ -28,7 +28,7 @@ import org.kaaproject.kaa.common.dto.HistoryDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
-import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
+import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.dao.ApplicationEventMapService;
@@ -39,7 +39,7 @@ import org.kaaproject.kaa.server.common.dao.EndpointService;
 import org.kaaproject.kaa.server.common.dao.EventClassService;
 import org.kaaproject.kaa.server.common.dao.HistoryService;
 import org.kaaproject.kaa.server.common.dao.ProfileService;
-import org.kaaproject.kaa.server.common.dao.SdkKeyService;
+import org.kaaproject.kaa.server.common.dao.SdkProfileService;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
 import org.kaaproject.kaa.server.operations.service.event.EventClassFqnVersion;
 import org.kaaproject.kaa.server.operations.service.event.RouteTableKey;
@@ -134,12 +134,12 @@ public interface CacheService {
     ProfileSchemaDto getProfileSchemaByAppAndVersion(AppVersionKey key);
 
     /**
-     * Gets the sdk properties by sdk token.
+     * Gets the sdk profile by sdk token.
      *
      * @param key the sdk token
-     * @return sdk properties by sdk token
+     * @return sdk profile by sdk token
      */
-    SdkPropertiesDto getSdkPropertiesBySdkToken(String key);
+    SdkProfileDto getSdkProfileBySdkToken(String key);
 
     /**
      * Gets the merged configuration.
@@ -275,9 +275,9 @@ public interface CacheService {
     /**
      * Setter for test purposes only
      *
-     * @param sdkKeyService the new sdk key service
+     * @param sdkProfileService the new sdk profile service
      */
-    void setSdkKeyService(SdkKeyService sdkKeyService);
+    void setSdkProfileService(SdkProfileService sdkProfileService);
 
     /**
      * Cache invalidate method.

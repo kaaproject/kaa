@@ -319,13 +319,23 @@ public class DaoConstants {
     public static final String LOG_APPENDER_CONFIRM_DELIVERY = "confirm_delivery";
 
     /**
-     * SDK token constants
+     * SDK profile constants
      */
-    public static final String SDK_TOKEN_TABLE_NAME = "sdk_token";
-    public static final String SDK_TOKEN_APPLICATION_ID = "application_id";
-    public static final String SDK_TOKEN_TOKEN = "token";
-    public static final String SDK_TOKEN_RAW_DATA = "raw_data";
+    public static final String SDK_PROFILE_APPLICATION_ID = APPLICATION_ID;
+    public static final String SDK_PROFILE_CONFIGURATION_SCHEMA_VERSION = "configuration_schema_version";
+    public static final String SDK_PROFILE_CREATED_TIME = CREATED_TIME;
+    public static final String SDK_PROFILE_CREATED_USERNAME = CREATED_USERNAME;
+    public static final String SDK_PROFILE_DEFAULT_VERIFIER_TOKEN = "default_verifier_token";
+    public static final String SDK_PROFILE_ENDPOINT_COUNT = ENDPOINT_COUNT;
+    public static final String SDK_PROFILE_LOG_SCHEMA_VERSION = "log_schema_version";
+    public static final String SDK_PROFILE_NAME = NAME;
+    public static final String SDK_PROFILE_NOTIFICATION_SCHEMA_VERSION = "notification_schema_version";
+    public static final String SDK_PROFILE_PROFILE_SCHEMA_VERSION = "profile_schema_version";
+    public static final String SDK_PROFILE_TABLE_NAME = "sdk_token";
+    public static final String SDK_PROFILE_TOKEN = "token";
 
+    public static final String LAST_PAGE_MESSAGE = "It is the last page";
+    public static final String PROFILE = "profile";
 
     private DaoConstants() {
         throw new UnsupportedOperationException("Not supported");

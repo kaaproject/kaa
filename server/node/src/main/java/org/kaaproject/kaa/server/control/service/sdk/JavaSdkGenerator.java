@@ -42,7 +42,7 @@ import org.apache.avro.generic.GenericData.StringType;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
-import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
+import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.server.common.Environment;
 import org.kaaproject.kaa.server.common.Version;
@@ -377,17 +377,17 @@ public class JavaSdkGenerator extends SdkGenerator {
      * java.util.List)
      */
     @Override
-    public FileData generateSdk(String buildVersion, List<BootstrapNodeInfo> bootstrapNodes, String sdkToken, SdkPropertiesDto sdkProperties,
+    public FileData generateSdk(String buildVersion, List<BootstrapNodeInfo> bootstrapNodes, String sdkToken, SdkProfileDto sdkProfile,
                            String profileSchemaBody, String notificationSchemaBody, String configurationProtocolSchemaBody,
                            String configurationSchemaBody, byte[] defaultConfigurationData, List<EventFamilyMetadata> eventFamilies,
                            String logSchemaBody)
             throws Exception {
 
-        Integer configurationSchemaVersion = sdkProperties.getConfigurationSchemaVersion();
-        Integer profileSchemaVersion = sdkProperties.getProfileSchemaVersion();
-        Integer notificationSchemaVersion = sdkProperties.getNotificationSchemaVersion();
-        Integer logSchemaVersion = sdkProperties.getLogSchemaVersion();
-        String defaultVerifierToken = sdkProperties.getDefaultVerifierToken();
+        Integer configurationSchemaVersion = sdkProfile.getConfigurationSchemaVersion();
+        Integer profileSchemaVersion = sdkProfile.getProfileSchemaVersion();
+        Integer notificationSchemaVersion = sdkProfile.getNotificationSchemaVersion();
+        Integer logSchemaVersion = sdkProfile.getLogSchemaVersion();
+        String defaultVerifierToken = sdkProfile.getDefaultVerifierToken();
 
         Schema configurationSchema = new Schema.Parser().parse(configurationSchemaBody);
         Schema profileSchema = new Schema.Parser().parse(profileSchemaBody);

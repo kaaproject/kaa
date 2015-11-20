@@ -45,7 +45,7 @@ extern void kaa_configuration_manager_destroy(kaa_configuration_manager_t *self)
 
 extern kaa_error_t kaa_configuration_manager_get_size(kaa_configuration_manager_t *self, size_t *expected_size);
 extern kaa_error_t kaa_configuration_manager_request_serialize(kaa_configuration_manager_t *self, kaa_platform_message_writer_t *writer);
-extern kaa_error_t kaa_configuration_manager_handle_server_sync(kaa_configuration_manager_t *self, kaa_platform_message_reader_t *reader, uint32_t extension_options, size_t extension_length);
+extern kaa_error_t kaa_configuration_manager_handle_server_sync(kaa_configuration_manager_t *self, kaa_platform_message_reader_t *reader, uint16_t extension_options, size_t extension_length);
 
 
 static kaa_logger_t *logger = NULL;
@@ -81,7 +81,7 @@ void test_create_request()
     ASSERT_EQUAL(kaa_configuration_manager_request_serialize(config_manager, writer), KAA_ERR_NONE);
 
     char *cursor = writer->begin;
-    ASSERT_EQUAL(*cursor, KAA_CONFIGURATION_EXTENSION_TYPE);
+    ASSERT_EQUAL(KAA_HTONS(*((uint16_t *) cursor)), KAA_CONFIGURATION_EXTENSION_TYPE);
     cursor += sizeof(uint32_t);
 
     ASSERT_EQUAL(KAA_NTOHL(*((uint32_t *) cursor)), sizeof(uint32_t) + SHA_1_DIGEST_LENGTH);    // checking payload size

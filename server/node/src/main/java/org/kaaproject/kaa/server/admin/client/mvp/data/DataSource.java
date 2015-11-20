@@ -16,14 +16,16 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.data;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.web.bindery.event.shared.EventBus;
 import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileViewDto;
+import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
@@ -34,7 +36,8 @@ import org.kaaproject.kaa.common.dto.StructureRecordDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.admin.RecordKey.RecordFiles;
 import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
-import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
+import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
+import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
@@ -54,8 +57,8 @@ import org.kaaproject.kaa.server.admin.shared.properties.PropertiesDto;
 import org.kaaproject.kaa.server.admin.shared.schema.SchemaInfoDto;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceAsync;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.web.bindery.event.shared.EventBus;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DataSource {
 
@@ -69,9 +72,9 @@ public class DataSource {
     private List<UserDto> users;
 
     private List<EventClassFamilyDto> ecfs;
-    
+
     private List<PluginInfoDto> logAppenderPluginInfos;
-    
+
     private List<PluginInfoDto> userVerifierPluginInfos;
 
     public DataSource(KaaAdminServiceAsync rpcService, EventBus eventBus) {
@@ -98,7 +101,7 @@ public class DataSource {
                     }
                 });
     }
-    
+
     public void getMailProperties(
             final AsyncCallback<PropertiesDto> callback) {
         rpcService.getMailProperties(
@@ -118,7 +121,7 @@ public class DataSource {
                     }
                 });
     }
-    
+
     public void getGeneralProperties(
             final AsyncCallback<PropertiesDto> callback) {
         rpcService.getGeneralProperties(
@@ -266,9 +269,9 @@ public class DataSource {
         });
     }
 
-    public void generateSdk(SdkPropertiesDto key,
+    public void generateSdk(SdkProfileDto sdkProfile, SdkPlatform targetPlatform,
             final AsyncCallback<String> callback) {
-        rpcService.generateSdk(key,
+        rpcService.generateSdk(sdkProfile, targetPlatform,
                 new DataCallback<String>(callback) {
                     @Override
                     protected void onResult(String result) {
@@ -349,7 +352,7 @@ public class DataSource {
             }
         });
     }
-    
+
     public void createSimpleEmptySchemaForm(final AsyncCallback<RecordField> callback) {
         rpcService.createSimpleEmptySchemaForm(new DataCallback<RecordField>(callback) {
                     @Override
@@ -381,7 +384,7 @@ public class DataSource {
                     }
                 });
     }
-    
+
     public void generateSimpleSchemaForm(String fileItemName,
             final AsyncCallback<RecordField> callback) {
         rpcService.generateSimpleSchemaForm(fileItemName,
@@ -391,7 +394,7 @@ public class DataSource {
                     }
                 });
     }
-    
+
     public void generateCommonSchemaForm(String fileItemName,
             final AsyncCallback<RecordField> callback) {
         rpcService.generateCommonSchemaForm(fileItemName,
@@ -401,7 +404,7 @@ public class DataSource {
                     }
                 });
     }
-    
+
     public void generateConfigurationSchemaForm(String fileItemName,
             final AsyncCallback<RecordField> callback) {
         rpcService.generateConfigurationSchemaForm(fileItemName,
@@ -411,7 +414,7 @@ public class DataSource {
                     }
                 });
     }
-    
+
     public void generateEcfSchemaForm(String fileItemName,
             final AsyncCallback<RecordField> callback) {
         rpcService.generateEcfSchemaForm(fileItemName,
@@ -613,7 +616,7 @@ public class DataSource {
                 });
     }
 
-    public void editLogSchemaForm(LogSchemaDto logSchema, 
+    public void editLogSchemaForm(LogSchemaDto logSchema,
             final AsyncCallback<LogSchemaDto> callback) {
         rpcService.editLogSchemaForm(logSchema,
                 new DataCallback<LogSchemaDto>(callback) {
@@ -730,6 +733,21 @@ public class DataSource {
                     protected void onResult(EndpointGroupDto result) {
                     }
                 });
+    }
+
+    public void getEndpointProfileByGroupID(String groupID, String limit, String offset,
+            AsyncCallback<EndpointProfilesPageDto> callback) {
+        rpcService.getEndpointProfileByEndpointGroupId(groupID, limit, offset, callback);
+    }
+
+    public void getEndpointProfileByKeyHash(String endpointKeyHash,
+            AsyncCallback<EndpointProfileDto> callback) {
+        rpcService.getEndpointProfileByKeyHash(endpointKeyHash, callback);
+    }
+
+    public void getEndpointProfileViewDtoByEndpointProfileKeyHash(String endpointKeyHash,
+            AsyncCallback<EndpointProfileViewDto> callback) {
+        rpcService.getEndpointProfileViewDtoByEndpointProfileKeyHash(endpointKeyHash, callback);
     }
 
     public void loadProfileFilterRecords(String endpointGroupId, boolean includeDeprecated,
@@ -871,7 +889,7 @@ public class DataSource {
             }
         });
     }
-    
+
     public void getVacantConfigurationSchemaInfos(String endpointGroupId,
             final AsyncCallback<List<SchemaInfoDto>> callback) {
         rpcService.getVacantConfigurationSchemaInfosByEndpointGroupId(endpointGroupId,
@@ -891,7 +909,7 @@ public class DataSource {
             }
         });
     }
-    
+
     public void getUserNotificationSchemaInfosByApplicationId(String applicationId,
             final AsyncCallback<List<SchemaInfoDto>> callback) {
         rpcService.getUserNotificationSchemaInfosByApplicationId(applicationId,
@@ -990,7 +1008,7 @@ public class DataSource {
                     }
                 });
     }
-    
+
     public void getRecordDataFromFile(String schema, String fileItemName,
                     final AsyncCallback<RecordField> callback) {
         rpcService.getRecordDataFromFile(schema, fileItemName,
@@ -1000,7 +1018,7 @@ public class DataSource {
                     }
                 });
     }
-    
+
     public void sendNotification(
             NotificationDto notification, RecordField notificationData,
             final AsyncCallback<Void> callback) {
@@ -1062,7 +1080,7 @@ public class DataSource {
             }
         });
     }
-    
+
     public void loadLogAppenderPluginInfos(
             final AsyncCallback<List<PluginInfoDto>> callback) {
         if (logAppenderPluginInfos == null) {
@@ -1078,8 +1096,8 @@ public class DataSource {
                 callback.onSuccess(logAppenderPluginInfos);
             }
         }
-    }    
-    
+    }
+
     public void loadUserVerifiers(String applicationId,
             final AsyncCallback<List<UserVerifierDto>> callback) {
         rpcService.getUserVerifiersByApplicationId(applicationId,
@@ -1130,7 +1148,7 @@ public class DataSource {
             }
         });
     }
-    
+
     public void loadUserVerifierPluginInfos(
             final AsyncCallback<List<PluginInfoDto>> callback) {
         if (userVerifierPluginInfos == null) {
@@ -1146,8 +1164,8 @@ public class DataSource {
                 callback.onSuccess(userVerifierPluginInfos);
             }
         }
-    }    
-    
+    }
+
     public void getUserConfigurationSchemaInfosByApplicationId(String applicationId,
             final AsyncCallback<List<SchemaInfoDto>> callback) {
         rpcService.getUserConfigurationSchemaInfosByApplicationId(applicationId,
@@ -1157,7 +1175,7 @@ public class DataSource {
             }
         });
     }
-    
+
     public void editUserConfiguration(
             EndpointUserConfigurationDto endpointUserConfiguration,
             String applicationId, RecordField configurationData,
@@ -1197,4 +1215,36 @@ public class DataSource {
 
     }
 
+    public void addSdkProfile(SdkProfileDto sdkProfile, final AsyncCallback<SdkProfileDto> callback) {
+        rpcService.addSdkProfile(sdkProfile, new DataCallback<SdkProfileDto>(callback) {
+            @Override
+            protected void onResult(SdkProfileDto callback) {
+            }
+        });
+    }
+
+    public void deleteSdkProfile(String sdkProfileId, final AsyncCallback<Void> callback) {
+        rpcService.deleteSdkProfile(sdkProfileId, new DataCallback<Void>(callback) {
+            @Override
+            protected void onResult(Void result) {
+                eventBus.fireEvent(new DataEvent(SdkProfileDto.class));
+            }
+        });
+    }
+
+    public void getSdkProfile(String sdkProfileId, final AsyncCallback<SdkProfileDto> callback) {
+        rpcService.getSdkProfile(sdkProfileId, new DataCallback<SdkProfileDto>(callback) {
+            @Override
+            protected void onResult(SdkProfileDto result) {
+            }
+        });
+    }
+
+    public void loadSdkProfiles(String applicationId, final AsyncCallback<List<SdkProfileDto>> callback) {
+        rpcService.getSdkProfilesByApplicationId(applicationId, new DataCallback<List<SdkProfileDto>>(callback) {
+            @Override
+            protected void onResult(List<SdkProfileDto> result) {
+            }
+        });
+    }
 }

@@ -56,7 +56,7 @@ extern void        kaa_log_collector_destroy(kaa_log_collector_t *self);
 extern kaa_error_t kaa_logging_request_serialize(kaa_log_collector_t *self, kaa_platform_message_writer_t *writer);
 extern kaa_error_t kaa_logging_handle_server_sync(kaa_log_collector_t *self
                                                 , kaa_platform_message_reader_t *reader
-                                                , uint32_t extension_options
+                                                , uint16_t extension_options
                                                 , size_t extension_length);
 extern kaa_error_t kaa_logging_request_get_size(kaa_log_collector_t *self, size_t *expected_size);
 
@@ -272,12 +272,12 @@ void test_create_request()
     kaa_platform_message_writer_destroy(writer);
 
     char *buf_cursor = buffer;
-    ASSERT_EQUAL(KAA_LOGGING_EXTENSION_TYPE, *buf_cursor);
-    ++buf_cursor;
+    ASSERT_EQUAL(KAA_LOGGING_EXTENSION_TYPE, KAA_HTONS(*(uint16_t*)buf_cursor));
+    buf_cursor += sizeof(uint16_t);
 
-    char options[] = { 0x00, 0x00, 0x01 };
-    ASSERT_EQUAL(memcmp(buf_cursor, options, 3), 0);
-    buf_cursor += 3;
+    char options[] = { 0x00, 0x01 };
+    ASSERT_EQUAL(memcmp(buf_cursor, options, 2), 0);
+    buf_cursor += 2;
 
     ASSERT_EQUAL(*(uint32_t *) buf_cursor, KAA_HTONL(20));
     buf_cursor += sizeof(uint32_t);

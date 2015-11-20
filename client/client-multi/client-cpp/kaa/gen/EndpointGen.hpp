@@ -1210,6 +1210,15 @@ struct RedirectSyncResponse {
         { }
 };
 
+struct ExtensionSync {
+    int32_t extensionId;
+    std::vector<uint8_t> payload;
+    ExtensionSync() :
+        extensionId(int32_t()),
+        payload(std::vector<uint8_t>())
+        { }
+};
+
 struct _endpoint_avsc_Union__40__ {
 private:
     size_t idx_;
@@ -1354,45 +1363,14 @@ public:
     _endpoint_avsc_Union__47__();
 };
 
-struct SyncRequest {
-    typedef _endpoint_avsc_Union__40__ syncRequestMetaData_t;
-    typedef _endpoint_avsc_Union__41__ bootstrapSyncRequest_t;
-    typedef _endpoint_avsc_Union__42__ profileSyncRequest_t;
-    typedef _endpoint_avsc_Union__43__ configurationSyncRequest_t;
-    typedef _endpoint_avsc_Union__44__ notificationSyncRequest_t;
-    typedef _endpoint_avsc_Union__45__ userSyncRequest_t;
-    typedef _endpoint_avsc_Union__46__ eventSyncRequest_t;
-    typedef _endpoint_avsc_Union__47__ logSyncRequest_t;
-    int32_t requestId;
-    syncRequestMetaData_t syncRequestMetaData;
-    bootstrapSyncRequest_t bootstrapSyncRequest;
-    profileSyncRequest_t profileSyncRequest;
-    configurationSyncRequest_t configurationSyncRequest;
-    notificationSyncRequest_t notificationSyncRequest;
-    userSyncRequest_t userSyncRequest;
-    eventSyncRequest_t eventSyncRequest;
-    logSyncRequest_t logSyncRequest;
-    SyncRequest() :
-        requestId(int32_t()),
-        syncRequestMetaData(syncRequestMetaData_t()),
-        bootstrapSyncRequest(bootstrapSyncRequest_t()),
-        profileSyncRequest(profileSyncRequest_t()),
-        configurationSyncRequest(configurationSyncRequest_t()),
-        notificationSyncRequest(notificationSyncRequest_t()),
-        userSyncRequest(userSyncRequest_t()),
-        eventSyncRequest(eventSyncRequest_t()),
-        logSyncRequest(logSyncRequest_t())
-        { }
-};
-
 struct _endpoint_avsc_Union__48__ {
 private:
     size_t idx_;
     boost::any value_;
 public:
     size_t idx() const { return idx_; }
-    BootstrapSyncResponse get_BootstrapSyncResponse() const;
-    void set_BootstrapSyncResponse(const BootstrapSyncResponse& v);
+    std::vector<ExtensionSync > get_array() const;
+    void set_array(const std::vector<ExtensionSync >& v);
     bool is_null() const {
         return (idx_ == 1);
     }
@@ -1403,14 +1381,48 @@ public:
     _endpoint_avsc_Union__48__();
 };
 
+struct SyncRequest {
+    typedef _endpoint_avsc_Union__40__ syncRequestMetaData_t;
+    typedef _endpoint_avsc_Union__41__ bootstrapSyncRequest_t;
+    typedef _endpoint_avsc_Union__42__ profileSyncRequest_t;
+    typedef _endpoint_avsc_Union__43__ configurationSyncRequest_t;
+    typedef _endpoint_avsc_Union__44__ notificationSyncRequest_t;
+    typedef _endpoint_avsc_Union__45__ userSyncRequest_t;
+    typedef _endpoint_avsc_Union__46__ eventSyncRequest_t;
+    typedef _endpoint_avsc_Union__47__ logSyncRequest_t;
+    typedef _endpoint_avsc_Union__48__ extensionSyncRequests_t;
+    int32_t requestId;
+    syncRequestMetaData_t syncRequestMetaData;
+    bootstrapSyncRequest_t bootstrapSyncRequest;
+    profileSyncRequest_t profileSyncRequest;
+    configurationSyncRequest_t configurationSyncRequest;
+    notificationSyncRequest_t notificationSyncRequest;
+    userSyncRequest_t userSyncRequest;
+    eventSyncRequest_t eventSyncRequest;
+    logSyncRequest_t logSyncRequest;
+    extensionSyncRequests_t extensionSyncRequests;
+    SyncRequest() :
+        requestId(int32_t()),
+        syncRequestMetaData(syncRequestMetaData_t()),
+        bootstrapSyncRequest(bootstrapSyncRequest_t()),
+        profileSyncRequest(profileSyncRequest_t()),
+        configurationSyncRequest(configurationSyncRequest_t()),
+        notificationSyncRequest(notificationSyncRequest_t()),
+        userSyncRequest(userSyncRequest_t()),
+        eventSyncRequest(eventSyncRequest_t()),
+        logSyncRequest(logSyncRequest_t()),
+        extensionSyncRequests(extensionSyncRequests_t())
+        { }
+};
+
 struct _endpoint_avsc_Union__49__ {
 private:
     size_t idx_;
     boost::any value_;
 public:
     size_t idx() const { return idx_; }
-    ProfileSyncResponse get_ProfileSyncResponse() const;
-    void set_ProfileSyncResponse(const ProfileSyncResponse& v);
+    BootstrapSyncResponse get_BootstrapSyncResponse() const;
+    void set_BootstrapSyncResponse(const BootstrapSyncResponse& v);
     bool is_null() const {
         return (idx_ == 1);
     }
@@ -1427,8 +1439,8 @@ private:
     boost::any value_;
 public:
     size_t idx() const { return idx_; }
-    ConfigurationSyncResponse get_ConfigurationSyncResponse() const;
-    void set_ConfigurationSyncResponse(const ConfigurationSyncResponse& v);
+    ProfileSyncResponse get_ProfileSyncResponse() const;
+    void set_ProfileSyncResponse(const ProfileSyncResponse& v);
     bool is_null() const {
         return (idx_ == 1);
     }
@@ -1445,8 +1457,8 @@ private:
     boost::any value_;
 public:
     size_t idx() const { return idx_; }
-    NotificationSyncResponse get_NotificationSyncResponse() const;
-    void set_NotificationSyncResponse(const NotificationSyncResponse& v);
+    ConfigurationSyncResponse get_ConfigurationSyncResponse() const;
+    void set_ConfigurationSyncResponse(const ConfigurationSyncResponse& v);
     bool is_null() const {
         return (idx_ == 1);
     }
@@ -1463,8 +1475,8 @@ private:
     boost::any value_;
 public:
     size_t idx() const { return idx_; }
-    UserSyncResponse get_UserSyncResponse() const;
-    void set_UserSyncResponse(const UserSyncResponse& v);
+    NotificationSyncResponse get_NotificationSyncResponse() const;
+    void set_NotificationSyncResponse(const NotificationSyncResponse& v);
     bool is_null() const {
         return (idx_ == 1);
     }
@@ -1481,8 +1493,8 @@ private:
     boost::any value_;
 public:
     size_t idx() const { return idx_; }
-    EventSyncResponse get_EventSyncResponse() const;
-    void set_EventSyncResponse(const EventSyncResponse& v);
+    UserSyncResponse get_UserSyncResponse() const;
+    void set_UserSyncResponse(const UserSyncResponse& v);
     bool is_null() const {
         return (idx_ == 1);
     }
@@ -1499,8 +1511,8 @@ private:
     boost::any value_;
 public:
     size_t idx() const { return idx_; }
-    RedirectSyncResponse get_RedirectSyncResponse() const;
-    void set_RedirectSyncResponse(const RedirectSyncResponse& v);
+    EventSyncResponse get_EventSyncResponse() const;
+    void set_EventSyncResponse(const EventSyncResponse& v);
     bool is_null() const {
         return (idx_ == 1);
     }
@@ -1517,8 +1529,8 @@ private:
     boost::any value_;
 public:
     size_t idx() const { return idx_; }
-    LogSyncResponse get_LogSyncResponse() const;
-    void set_LogSyncResponse(const LogSyncResponse& v);
+    RedirectSyncResponse get_RedirectSyncResponse() const;
+    void set_RedirectSyncResponse(const RedirectSyncResponse& v);
     bool is_null() const {
         return (idx_ == 1);
     }
@@ -1529,15 +1541,52 @@ public:
     _endpoint_avsc_Union__55__();
 };
 
+struct _endpoint_avsc_Union__56__ {
+private:
+    size_t idx_;
+    boost::any value_;
+public:
+    size_t idx() const { return idx_; }
+    LogSyncResponse get_LogSyncResponse() const;
+    void set_LogSyncResponse(const LogSyncResponse& v);
+    bool is_null() const {
+        return (idx_ == 1);
+    }
+    void set_null() {
+        idx_ = 1;
+        value_ = boost::any();
+    }
+    _endpoint_avsc_Union__56__();
+};
+
+struct _endpoint_avsc_Union__57__ {
+private:
+    size_t idx_;
+    boost::any value_;
+public:
+    size_t idx() const { return idx_; }
+    std::vector<ExtensionSync > get_array() const;
+    void set_array(const std::vector<ExtensionSync >& v);
+    bool is_null() const {
+        return (idx_ == 1);
+    }
+    void set_null() {
+        idx_ = 1;
+        value_ = boost::any();
+    }
+    _endpoint_avsc_Union__57__();
+};
+
 struct SyncResponse {
-    typedef _endpoint_avsc_Union__48__ bootstrapSyncResponse_t;
-    typedef _endpoint_avsc_Union__49__ profileSyncResponse_t;
-    typedef _endpoint_avsc_Union__50__ configurationSyncResponse_t;
-    typedef _endpoint_avsc_Union__51__ notificationSyncResponse_t;
-    typedef _endpoint_avsc_Union__52__ userSyncResponse_t;
-    typedef _endpoint_avsc_Union__53__ eventSyncResponse_t;
-    typedef _endpoint_avsc_Union__54__ redirectSyncResponse_t;
-    typedef _endpoint_avsc_Union__55__ logSyncResponse_t;
+    typedef _endpoint_avsc_Union__49__ bootstrapSyncResponse_t;
+    typedef _endpoint_avsc_Union__50__ profileSyncResponse_t;
+    typedef _endpoint_avsc_Union__51__ configurationSyncResponse_t;
+    typedef _endpoint_avsc_Union__52__ notificationSyncResponse_t;
+    typedef _endpoint_avsc_Union__53__ userSyncResponse_t;
+    typedef _endpoint_avsc_Union__54__ eventSyncResponse_t;
+    typedef _endpoint_avsc_Union__55__ redirectSyncResponse_t;
+    typedef _endpoint_avsc_Union__56__ logSyncResponse_t;
+    typedef _endpoint_avsc_Union__57__ extensionSyncResponses_t;
     int32_t requestId;
     SyncResponseResultType status;
     bootstrapSyncResponse_t bootstrapSyncResponse;
@@ -1548,6 +1597,7 @@ struct SyncResponse {
     eventSyncResponse_t eventSyncResponse;
     redirectSyncResponse_t redirectSyncResponse;
     logSyncResponse_t logSyncResponse;
+    extensionSyncResponses_t extensionSyncResponses;
     SyncResponse() :
         requestId(int32_t()),
         status(SyncResponseResultType()),
@@ -1558,7 +1608,8 @@ struct SyncResponse {
         userSyncResponse(userSyncResponse_t()),
         eventSyncResponse(eventSyncResponse_t()),
         redirectSyncResponse(redirectSyncResponse_t()),
-        logSyncResponse(logSyncResponse_t())
+        logSyncResponse(logSyncResponse_t()),
+        extensionSyncResponses(extensionSyncResponses_t())
         { }
 };
 
@@ -1571,7 +1622,7 @@ struct TopicSubscriptionInfo {
         { }
 };
 
-struct _endpoint_avsc_Union__56__ {
+struct _endpoint_avsc_Union__58__ {
 private:
     size_t idx_;
     boost::any value_;
@@ -1665,13 +1716,15 @@ public:
     void set_LogSyncResponse(const LogSyncResponse& v);
     RedirectSyncResponse get_RedirectSyncResponse() const;
     void set_RedirectSyncResponse(const RedirectSyncResponse& v);
+    ExtensionSync get_ExtensionSync() const;
+    void set_ExtensionSync(const ExtensionSync& v);
     SyncRequest get_SyncRequest() const;
     void set_SyncRequest(const SyncRequest& v);
     SyncResponse get_SyncResponse() const;
     void set_SyncResponse(const SyncResponse& v);
     TopicSubscriptionInfo get_TopicSubscriptionInfo() const;
     void set_TopicSubscriptionInfo(const TopicSubscriptionInfo& v);
-    _endpoint_avsc_Union__56__();
+    _endpoint_avsc_Union__58__();
 };
 
 inline
@@ -2347,7 +2400,21 @@ void _endpoint_avsc_Union__47__::set_LogSyncRequest(const LogSyncRequest& v) {
 }
 
 inline
-BootstrapSyncResponse _endpoint_avsc_Union__48__::get_BootstrapSyncResponse() const {
+std::vector<ExtensionSync > _endpoint_avsc_Union__48__::get_array() const {
+    if (idx_ != 0) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<std::vector<ExtensionSync > >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__48__::set_array(const std::vector<ExtensionSync >& v) {
+    idx_ = 0;
+    value_ = v;
+}
+
+inline
+BootstrapSyncResponse _endpoint_avsc_Union__49__::get_BootstrapSyncResponse() const {
     if (idx_ != 0) {
         throw avro::Exception("Invalid type for union");
     }
@@ -2355,13 +2422,13 @@ BootstrapSyncResponse _endpoint_avsc_Union__48__::get_BootstrapSyncResponse() co
 }
 
 inline
-void _endpoint_avsc_Union__48__::set_BootstrapSyncResponse(const BootstrapSyncResponse& v) {
+void _endpoint_avsc_Union__49__::set_BootstrapSyncResponse(const BootstrapSyncResponse& v) {
     idx_ = 0;
     value_ = v;
 }
 
 inline
-ProfileSyncResponse _endpoint_avsc_Union__49__::get_ProfileSyncResponse() const {
+ProfileSyncResponse _endpoint_avsc_Union__50__::get_ProfileSyncResponse() const {
     if (idx_ != 0) {
         throw avro::Exception("Invalid type for union");
     }
@@ -2369,13 +2436,13 @@ ProfileSyncResponse _endpoint_avsc_Union__49__::get_ProfileSyncResponse() const 
 }
 
 inline
-void _endpoint_avsc_Union__49__::set_ProfileSyncResponse(const ProfileSyncResponse& v) {
+void _endpoint_avsc_Union__50__::set_ProfileSyncResponse(const ProfileSyncResponse& v) {
     idx_ = 0;
     value_ = v;
 }
 
 inline
-ConfigurationSyncResponse _endpoint_avsc_Union__50__::get_ConfigurationSyncResponse() const {
+ConfigurationSyncResponse _endpoint_avsc_Union__51__::get_ConfigurationSyncResponse() const {
     if (idx_ != 0) {
         throw avro::Exception("Invalid type for union");
     }
@@ -2383,13 +2450,13 @@ ConfigurationSyncResponse _endpoint_avsc_Union__50__::get_ConfigurationSyncRespo
 }
 
 inline
-void _endpoint_avsc_Union__50__::set_ConfigurationSyncResponse(const ConfigurationSyncResponse& v) {
+void _endpoint_avsc_Union__51__::set_ConfigurationSyncResponse(const ConfigurationSyncResponse& v) {
     idx_ = 0;
     value_ = v;
 }
 
 inline
-NotificationSyncResponse _endpoint_avsc_Union__51__::get_NotificationSyncResponse() const {
+NotificationSyncResponse _endpoint_avsc_Union__52__::get_NotificationSyncResponse() const {
     if (idx_ != 0) {
         throw avro::Exception("Invalid type for union");
     }
@@ -2397,13 +2464,13 @@ NotificationSyncResponse _endpoint_avsc_Union__51__::get_NotificationSyncRespons
 }
 
 inline
-void _endpoint_avsc_Union__51__::set_NotificationSyncResponse(const NotificationSyncResponse& v) {
+void _endpoint_avsc_Union__52__::set_NotificationSyncResponse(const NotificationSyncResponse& v) {
     idx_ = 0;
     value_ = v;
 }
 
 inline
-UserSyncResponse _endpoint_avsc_Union__52__::get_UserSyncResponse() const {
+UserSyncResponse _endpoint_avsc_Union__53__::get_UserSyncResponse() const {
     if (idx_ != 0) {
         throw avro::Exception("Invalid type for union");
     }
@@ -2411,13 +2478,13 @@ UserSyncResponse _endpoint_avsc_Union__52__::get_UserSyncResponse() const {
 }
 
 inline
-void _endpoint_avsc_Union__52__::set_UserSyncResponse(const UserSyncResponse& v) {
+void _endpoint_avsc_Union__53__::set_UserSyncResponse(const UserSyncResponse& v) {
     idx_ = 0;
     value_ = v;
 }
 
 inline
-EventSyncResponse _endpoint_avsc_Union__53__::get_EventSyncResponse() const {
+EventSyncResponse _endpoint_avsc_Union__54__::get_EventSyncResponse() const {
     if (idx_ != 0) {
         throw avro::Exception("Invalid type for union");
     }
@@ -2425,13 +2492,13 @@ EventSyncResponse _endpoint_avsc_Union__53__::get_EventSyncResponse() const {
 }
 
 inline
-void _endpoint_avsc_Union__53__::set_EventSyncResponse(const EventSyncResponse& v) {
+void _endpoint_avsc_Union__54__::set_EventSyncResponse(const EventSyncResponse& v) {
     idx_ = 0;
     value_ = v;
 }
 
 inline
-RedirectSyncResponse _endpoint_avsc_Union__54__::get_RedirectSyncResponse() const {
+RedirectSyncResponse _endpoint_avsc_Union__55__::get_RedirectSyncResponse() const {
     if (idx_ != 0) {
         throw avro::Exception("Invalid type for union");
     }
@@ -2439,616 +2506,14 @@ RedirectSyncResponse _endpoint_avsc_Union__54__::get_RedirectSyncResponse() cons
 }
 
 inline
-void _endpoint_avsc_Union__54__::set_RedirectSyncResponse(const RedirectSyncResponse& v) {
+void _endpoint_avsc_Union__55__::set_RedirectSyncResponse(const RedirectSyncResponse& v) {
     idx_ = 0;
-    value_ = v;
-}
-
-inline
-LogSyncResponse _endpoint_avsc_Union__55__::get_LogSyncResponse() const {
-    if (idx_ != 0) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<LogSyncResponse >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__55__::set_LogSyncResponse(const LogSyncResponse& v) {
-    idx_ = 0;
-    value_ = v;
-}
-
-inline
-TopicState _endpoint_avsc_Union__56__::get_TopicState() const {
-    if (idx_ != 0) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<TopicState >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__56__::set_TopicState(const TopicState& v) {
-    idx_ = 0;
-    value_ = v;
-}
-
-inline
-SyncResponseStatus _endpoint_avsc_Union__56__::get_SyncResponseStatus() const {
-    if (idx_ != 1) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<SyncResponseStatus >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__56__::set_SyncResponseStatus(const SyncResponseStatus& v) {
-    idx_ = 1;
-    value_ = v;
-}
-
-inline
-NotificationType _endpoint_avsc_Union__56__::get_NotificationType() const {
-    if (idx_ != 2) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<NotificationType >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__56__::set_NotificationType(const NotificationType& v) {
-    idx_ = 2;
-    value_ = v;
-}
-
-inline
-SubscriptionType _endpoint_avsc_Union__56__::get_SubscriptionType() const {
-    if (idx_ != 3) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<SubscriptionType >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__56__::set_SubscriptionType(const SubscriptionType& v) {
-    idx_ = 3;
-    value_ = v;
-}
-
-inline
-SubscriptionCommandType _endpoint_avsc_Union__56__::get_SubscriptionCommandType() const {
-    if (idx_ != 4) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<SubscriptionCommandType >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__56__::set_SubscriptionCommandType(const SubscriptionCommandType& v) {
-    idx_ = 4;
-    value_ = v;
-}
-
-inline
-SyncResponseResultType _endpoint_avsc_Union__56__::get_SyncResponseResultType() const {
-    if (idx_ != 5) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<SyncResponseResultType >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__56__::set_SyncResponseResultType(const SyncResponseResultType& v) {
-    idx_ = 5;
-    value_ = v;
-}
-
-inline
-LogDeliveryErrorCode _endpoint_avsc_Union__56__::get_LogDeliveryErrorCode() const {
-    if (idx_ != 6) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<LogDeliveryErrorCode >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__56__::set_LogDeliveryErrorCode(const LogDeliveryErrorCode& v) {
-    idx_ = 6;
-    value_ = v;
-}
-
-inline
-UserAttachErrorCode _endpoint_avsc_Union__56__::get_UserAttachErrorCode() const {
-    if (idx_ != 7) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<UserAttachErrorCode >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__56__::set_UserAttachErrorCode(const UserAttachErrorCode& v) {
-    idx_ = 7;
-    value_ = v;
-}
-
-inline
-SubscriptionCommand _endpoint_avsc_Union__56__::get_SubscriptionCommand() const {
-    if (idx_ != 8) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<SubscriptionCommand >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__56__::set_SubscriptionCommand(const SubscriptionCommand& v) {
-    idx_ = 8;
-    value_ = v;
-}
-
-inline
-UserAttachRequest _endpoint_avsc_Union__56__::get_UserAttachRequest() const {
-    if (idx_ != 9) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<UserAttachRequest >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__56__::set_UserAttachRequest(const UserAttachRequest& v) {
-    idx_ = 9;
-    value_ = v;
-}
-
-inline
-UserAttachResponse _endpoint_avsc_Union__56__::get_UserAttachResponse() const {
-    if (idx_ != 10) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<UserAttachResponse >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__56__::set_UserAttachResponse(const UserAttachResponse& v) {
-    idx_ = 10;
-    value_ = v;
-}
-
-inline
-UserAttachNotification _endpoint_avsc_Union__56__::get_UserAttachNotification() const {
-    if (idx_ != 11) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<UserAttachNotification >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__56__::set_UserAttachNotification(const UserAttachNotification& v) {
-    idx_ = 11;
-    value_ = v;
-}
-
-inline
-UserDetachNotification _endpoint_avsc_Union__56__::get_UserDetachNotification() const {
-    if (idx_ != 12) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<UserDetachNotification >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__56__::set_UserDetachNotification(const UserDetachNotification& v) {
-    idx_ = 12;
-    value_ = v;
-}
-
-inline
-EndpointAttachRequest _endpoint_avsc_Union__56__::get_EndpointAttachRequest() const {
-    if (idx_ != 13) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<EndpointAttachRequest >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__56__::set_EndpointAttachRequest(const EndpointAttachRequest& v) {
-    idx_ = 13;
-    value_ = v;
-}
-
-inline
-EndpointAttachResponse _endpoint_avsc_Union__56__::get_EndpointAttachResponse() const {
-    if (idx_ != 14) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<EndpointAttachResponse >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__56__::set_EndpointAttachResponse(const EndpointAttachResponse& v) {
-    idx_ = 14;
-    value_ = v;
-}
-
-inline
-EndpointDetachRequest _endpoint_avsc_Union__56__::get_EndpointDetachRequest() const {
-    if (idx_ != 15) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<EndpointDetachRequest >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__56__::set_EndpointDetachRequest(const EndpointDetachRequest& v) {
-    idx_ = 15;
-    value_ = v;
-}
-
-inline
-EndpointDetachResponse _endpoint_avsc_Union__56__::get_EndpointDetachResponse() const {
-    if (idx_ != 16) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<EndpointDetachResponse >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__56__::set_EndpointDetachResponse(const EndpointDetachResponse& v) {
-    idx_ = 16;
-    value_ = v;
-}
-
-inline
-Event _endpoint_avsc_Union__56__::get_Event() const {
-    if (idx_ != 17) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<Event >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__56__::set_Event(const Event& v) {
-    idx_ = 17;
-    value_ = v;
-}
-
-inline
-EventListenersRequest _endpoint_avsc_Union__56__::get_EventListenersRequest() const {
-    if (idx_ != 18) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<EventListenersRequest >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__56__::set_EventListenersRequest(const EventListenersRequest& v) {
-    idx_ = 18;
-    value_ = v;
-}
-
-inline
-EventListenersResponse _endpoint_avsc_Union__56__::get_EventListenersResponse() const {
-    if (idx_ != 19) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<EventListenersResponse >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__56__::set_EventListenersResponse(const EventListenersResponse& v) {
-    idx_ = 19;
-    value_ = v;
-}
-
-inline
-EventSequenceNumberRequest _endpoint_avsc_Union__56__::get_EventSequenceNumberRequest() const {
-    if (idx_ != 20) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<EventSequenceNumberRequest >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__56__::set_EventSequenceNumberRequest(const EventSequenceNumberRequest& v) {
-    idx_ = 20;
-    value_ = v;
-}
-
-inline
-EventSequenceNumberResponse _endpoint_avsc_Union__56__::get_EventSequenceNumberResponse() const {
-    if (idx_ != 21) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<EventSequenceNumberResponse >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__56__::set_EventSequenceNumberResponse(const EventSequenceNumberResponse& v) {
-    idx_ = 21;
-    value_ = v;
-}
-
-inline
-Notification _endpoint_avsc_Union__56__::get_Notification() const {
-    if (idx_ != 22) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<Notification >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__56__::set_Notification(const Notification& v) {
-    idx_ = 22;
-    value_ = v;
-}
-
-inline
-Topic _endpoint_avsc_Union__56__::get_Topic() const {
-    if (idx_ != 23) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<Topic >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__56__::set_Topic(const Topic& v) {
-    idx_ = 23;
-    value_ = v;
-}
-
-inline
-LogEntry _endpoint_avsc_Union__56__::get_LogEntry() const {
-    if (idx_ != 24) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<LogEntry >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__56__::set_LogEntry(const LogEntry& v) {
-    idx_ = 24;
-    value_ = v;
-}
-
-inline
-SyncRequestMetaData _endpoint_avsc_Union__56__::get_SyncRequestMetaData() const {
-    if (idx_ != 25) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<SyncRequestMetaData >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__56__::set_SyncRequestMetaData(const SyncRequestMetaData& v) {
-    idx_ = 25;
-    value_ = v;
-}
-
-inline
-ProfileSyncRequest _endpoint_avsc_Union__56__::get_ProfileSyncRequest() const {
-    if (idx_ != 26) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<ProfileSyncRequest >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__56__::set_ProfileSyncRequest(const ProfileSyncRequest& v) {
-    idx_ = 26;
-    value_ = v;
-}
-
-inline
-ProtocolVersionPair _endpoint_avsc_Union__56__::get_ProtocolVersionPair() const {
-    if (idx_ != 27) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<ProtocolVersionPair >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__56__::set_ProtocolVersionPair(const ProtocolVersionPair& v) {
-    idx_ = 27;
-    value_ = v;
-}
-
-inline
-BootstrapSyncRequest _endpoint_avsc_Union__56__::get_BootstrapSyncRequest() const {
-    if (idx_ != 28) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<BootstrapSyncRequest >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__56__::set_BootstrapSyncRequest(const BootstrapSyncRequest& v) {
-    idx_ = 28;
-    value_ = v;
-}
-
-inline
-ConfigurationSyncRequest _endpoint_avsc_Union__56__::get_ConfigurationSyncRequest() const {
-    if (idx_ != 29) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<ConfigurationSyncRequest >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__56__::set_ConfigurationSyncRequest(const ConfigurationSyncRequest& v) {
-    idx_ = 29;
-    value_ = v;
-}
-
-inline
-NotificationSyncRequest _endpoint_avsc_Union__56__::get_NotificationSyncRequest() const {
-    if (idx_ != 30) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<NotificationSyncRequest >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__56__::set_NotificationSyncRequest(const NotificationSyncRequest& v) {
-    idx_ = 30;
-    value_ = v;
-}
-
-inline
-UserSyncRequest _endpoint_avsc_Union__56__::get_UserSyncRequest() const {
-    if (idx_ != 31) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<UserSyncRequest >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__56__::set_UserSyncRequest(const UserSyncRequest& v) {
-    idx_ = 31;
-    value_ = v;
-}
-
-inline
-EventSyncRequest _endpoint_avsc_Union__56__::get_EventSyncRequest() const {
-    if (idx_ != 32) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<EventSyncRequest >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__56__::set_EventSyncRequest(const EventSyncRequest& v) {
-    idx_ = 32;
-    value_ = v;
-}
-
-inline
-LogSyncRequest _endpoint_avsc_Union__56__::get_LogSyncRequest() const {
-    if (idx_ != 33) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<LogSyncRequest >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__56__::set_LogSyncRequest(const LogSyncRequest& v) {
-    idx_ = 33;
-    value_ = v;
-}
-
-inline
-ProtocolMetaData _endpoint_avsc_Union__56__::get_ProtocolMetaData() const {
-    if (idx_ != 34) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<ProtocolMetaData >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__56__::set_ProtocolMetaData(const ProtocolMetaData& v) {
-    idx_ = 34;
-    value_ = v;
-}
-
-inline
-BootstrapSyncResponse _endpoint_avsc_Union__56__::get_BootstrapSyncResponse() const {
-    if (idx_ != 35) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<BootstrapSyncResponse >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__56__::set_BootstrapSyncResponse(const BootstrapSyncResponse& v) {
-    idx_ = 35;
-    value_ = v;
-}
-
-inline
-ProfileSyncResponse _endpoint_avsc_Union__56__::get_ProfileSyncResponse() const {
-    if (idx_ != 36) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<ProfileSyncResponse >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__56__::set_ProfileSyncResponse(const ProfileSyncResponse& v) {
-    idx_ = 36;
-    value_ = v;
-}
-
-inline
-ConfigurationSyncResponse _endpoint_avsc_Union__56__::get_ConfigurationSyncResponse() const {
-    if (idx_ != 37) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<ConfigurationSyncResponse >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__56__::set_ConfigurationSyncResponse(const ConfigurationSyncResponse& v) {
-    idx_ = 37;
-    value_ = v;
-}
-
-inline
-NotificationSyncResponse _endpoint_avsc_Union__56__::get_NotificationSyncResponse() const {
-    if (idx_ != 38) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<NotificationSyncResponse >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__56__::set_NotificationSyncResponse(const NotificationSyncResponse& v) {
-    idx_ = 38;
-    value_ = v;
-}
-
-inline
-UserSyncResponse _endpoint_avsc_Union__56__::get_UserSyncResponse() const {
-    if (idx_ != 39) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<UserSyncResponse >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__56__::set_UserSyncResponse(const UserSyncResponse& v) {
-    idx_ = 39;
-    value_ = v;
-}
-
-inline
-EventSyncResponse _endpoint_avsc_Union__56__::get_EventSyncResponse() const {
-    if (idx_ != 40) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<EventSyncResponse >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__56__::set_EventSyncResponse(const EventSyncResponse& v) {
-    idx_ = 40;
-    value_ = v;
-}
-
-inline
-LogDeliveryStatus _endpoint_avsc_Union__56__::get_LogDeliveryStatus() const {
-    if (idx_ != 41) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<LogDeliveryStatus >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__56__::set_LogDeliveryStatus(const LogDeliveryStatus& v) {
-    idx_ = 41;
     value_ = v;
 }
 
 inline
 LogSyncResponse _endpoint_avsc_Union__56__::get_LogSyncResponse() const {
-    if (idx_ != 42) {
+    if (idx_ != 0) {
         throw avro::Exception("Invalid type for union");
     }
     return boost::any_cast<LogSyncResponse >(value_);
@@ -3056,12 +2521,628 @@ LogSyncResponse _endpoint_avsc_Union__56__::get_LogSyncResponse() const {
 
 inline
 void _endpoint_avsc_Union__56__::set_LogSyncResponse(const LogSyncResponse& v) {
+    idx_ = 0;
+    value_ = v;
+}
+
+inline
+std::vector<ExtensionSync > _endpoint_avsc_Union__57__::get_array() const {
+    if (idx_ != 0) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<std::vector<ExtensionSync > >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__57__::set_array(const std::vector<ExtensionSync >& v) {
+    idx_ = 0;
+    value_ = v;
+}
+
+inline
+TopicState _endpoint_avsc_Union__58__::get_TopicState() const {
+    if (idx_ != 0) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<TopicState >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__58__::set_TopicState(const TopicState& v) {
+    idx_ = 0;
+    value_ = v;
+}
+
+inline
+SyncResponseStatus _endpoint_avsc_Union__58__::get_SyncResponseStatus() const {
+    if (idx_ != 1) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<SyncResponseStatus >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__58__::set_SyncResponseStatus(const SyncResponseStatus& v) {
+    idx_ = 1;
+    value_ = v;
+}
+
+inline
+NotificationType _endpoint_avsc_Union__58__::get_NotificationType() const {
+    if (idx_ != 2) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<NotificationType >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__58__::set_NotificationType(const NotificationType& v) {
+    idx_ = 2;
+    value_ = v;
+}
+
+inline
+SubscriptionType _endpoint_avsc_Union__58__::get_SubscriptionType() const {
+    if (idx_ != 3) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<SubscriptionType >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__58__::set_SubscriptionType(const SubscriptionType& v) {
+    idx_ = 3;
+    value_ = v;
+}
+
+inline
+SubscriptionCommandType _endpoint_avsc_Union__58__::get_SubscriptionCommandType() const {
+    if (idx_ != 4) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<SubscriptionCommandType >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__58__::set_SubscriptionCommandType(const SubscriptionCommandType& v) {
+    idx_ = 4;
+    value_ = v;
+}
+
+inline
+SyncResponseResultType _endpoint_avsc_Union__58__::get_SyncResponseResultType() const {
+    if (idx_ != 5) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<SyncResponseResultType >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__58__::set_SyncResponseResultType(const SyncResponseResultType& v) {
+    idx_ = 5;
+    value_ = v;
+}
+
+inline
+LogDeliveryErrorCode _endpoint_avsc_Union__58__::get_LogDeliveryErrorCode() const {
+    if (idx_ != 6) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<LogDeliveryErrorCode >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__58__::set_LogDeliveryErrorCode(const LogDeliveryErrorCode& v) {
+    idx_ = 6;
+    value_ = v;
+}
+
+inline
+UserAttachErrorCode _endpoint_avsc_Union__58__::get_UserAttachErrorCode() const {
+    if (idx_ != 7) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<UserAttachErrorCode >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__58__::set_UserAttachErrorCode(const UserAttachErrorCode& v) {
+    idx_ = 7;
+    value_ = v;
+}
+
+inline
+SubscriptionCommand _endpoint_avsc_Union__58__::get_SubscriptionCommand() const {
+    if (idx_ != 8) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<SubscriptionCommand >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__58__::set_SubscriptionCommand(const SubscriptionCommand& v) {
+    idx_ = 8;
+    value_ = v;
+}
+
+inline
+UserAttachRequest _endpoint_avsc_Union__58__::get_UserAttachRequest() const {
+    if (idx_ != 9) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<UserAttachRequest >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__58__::set_UserAttachRequest(const UserAttachRequest& v) {
+    idx_ = 9;
+    value_ = v;
+}
+
+inline
+UserAttachResponse _endpoint_avsc_Union__58__::get_UserAttachResponse() const {
+    if (idx_ != 10) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<UserAttachResponse >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__58__::set_UserAttachResponse(const UserAttachResponse& v) {
+    idx_ = 10;
+    value_ = v;
+}
+
+inline
+UserAttachNotification _endpoint_avsc_Union__58__::get_UserAttachNotification() const {
+    if (idx_ != 11) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<UserAttachNotification >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__58__::set_UserAttachNotification(const UserAttachNotification& v) {
+    idx_ = 11;
+    value_ = v;
+}
+
+inline
+UserDetachNotification _endpoint_avsc_Union__58__::get_UserDetachNotification() const {
+    if (idx_ != 12) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<UserDetachNotification >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__58__::set_UserDetachNotification(const UserDetachNotification& v) {
+    idx_ = 12;
+    value_ = v;
+}
+
+inline
+EndpointAttachRequest _endpoint_avsc_Union__58__::get_EndpointAttachRequest() const {
+    if (idx_ != 13) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<EndpointAttachRequest >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__58__::set_EndpointAttachRequest(const EndpointAttachRequest& v) {
+    idx_ = 13;
+    value_ = v;
+}
+
+inline
+EndpointAttachResponse _endpoint_avsc_Union__58__::get_EndpointAttachResponse() const {
+    if (idx_ != 14) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<EndpointAttachResponse >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__58__::set_EndpointAttachResponse(const EndpointAttachResponse& v) {
+    idx_ = 14;
+    value_ = v;
+}
+
+inline
+EndpointDetachRequest _endpoint_avsc_Union__58__::get_EndpointDetachRequest() const {
+    if (idx_ != 15) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<EndpointDetachRequest >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__58__::set_EndpointDetachRequest(const EndpointDetachRequest& v) {
+    idx_ = 15;
+    value_ = v;
+}
+
+inline
+EndpointDetachResponse _endpoint_avsc_Union__58__::get_EndpointDetachResponse() const {
+    if (idx_ != 16) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<EndpointDetachResponse >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__58__::set_EndpointDetachResponse(const EndpointDetachResponse& v) {
+    idx_ = 16;
+    value_ = v;
+}
+
+inline
+Event _endpoint_avsc_Union__58__::get_Event() const {
+    if (idx_ != 17) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<Event >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__58__::set_Event(const Event& v) {
+    idx_ = 17;
+    value_ = v;
+}
+
+inline
+EventListenersRequest _endpoint_avsc_Union__58__::get_EventListenersRequest() const {
+    if (idx_ != 18) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<EventListenersRequest >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__58__::set_EventListenersRequest(const EventListenersRequest& v) {
+    idx_ = 18;
+    value_ = v;
+}
+
+inline
+EventListenersResponse _endpoint_avsc_Union__58__::get_EventListenersResponse() const {
+    if (idx_ != 19) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<EventListenersResponse >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__58__::set_EventListenersResponse(const EventListenersResponse& v) {
+    idx_ = 19;
+    value_ = v;
+}
+
+inline
+EventSequenceNumberRequest _endpoint_avsc_Union__58__::get_EventSequenceNumberRequest() const {
+    if (idx_ != 20) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<EventSequenceNumberRequest >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__58__::set_EventSequenceNumberRequest(const EventSequenceNumberRequest& v) {
+    idx_ = 20;
+    value_ = v;
+}
+
+inline
+EventSequenceNumberResponse _endpoint_avsc_Union__58__::get_EventSequenceNumberResponse() const {
+    if (idx_ != 21) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<EventSequenceNumberResponse >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__58__::set_EventSequenceNumberResponse(const EventSequenceNumberResponse& v) {
+    idx_ = 21;
+    value_ = v;
+}
+
+inline
+Notification _endpoint_avsc_Union__58__::get_Notification() const {
+    if (idx_ != 22) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<Notification >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__58__::set_Notification(const Notification& v) {
+    idx_ = 22;
+    value_ = v;
+}
+
+inline
+Topic _endpoint_avsc_Union__58__::get_Topic() const {
+    if (idx_ != 23) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<Topic >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__58__::set_Topic(const Topic& v) {
+    idx_ = 23;
+    value_ = v;
+}
+
+inline
+LogEntry _endpoint_avsc_Union__58__::get_LogEntry() const {
+    if (idx_ != 24) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<LogEntry >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__58__::set_LogEntry(const LogEntry& v) {
+    idx_ = 24;
+    value_ = v;
+}
+
+inline
+SyncRequestMetaData _endpoint_avsc_Union__58__::get_SyncRequestMetaData() const {
+    if (idx_ != 25) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<SyncRequestMetaData >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__58__::set_SyncRequestMetaData(const SyncRequestMetaData& v) {
+    idx_ = 25;
+    value_ = v;
+}
+
+inline
+ProfileSyncRequest _endpoint_avsc_Union__58__::get_ProfileSyncRequest() const {
+    if (idx_ != 26) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<ProfileSyncRequest >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__58__::set_ProfileSyncRequest(const ProfileSyncRequest& v) {
+    idx_ = 26;
+    value_ = v;
+}
+
+inline
+ProtocolVersionPair _endpoint_avsc_Union__58__::get_ProtocolVersionPair() const {
+    if (idx_ != 27) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<ProtocolVersionPair >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__58__::set_ProtocolVersionPair(const ProtocolVersionPair& v) {
+    idx_ = 27;
+    value_ = v;
+}
+
+inline
+BootstrapSyncRequest _endpoint_avsc_Union__58__::get_BootstrapSyncRequest() const {
+    if (idx_ != 28) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<BootstrapSyncRequest >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__58__::set_BootstrapSyncRequest(const BootstrapSyncRequest& v) {
+    idx_ = 28;
+    value_ = v;
+}
+
+inline
+ConfigurationSyncRequest _endpoint_avsc_Union__58__::get_ConfigurationSyncRequest() const {
+    if (idx_ != 29) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<ConfigurationSyncRequest >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__58__::set_ConfigurationSyncRequest(const ConfigurationSyncRequest& v) {
+    idx_ = 29;
+    value_ = v;
+}
+
+inline
+NotificationSyncRequest _endpoint_avsc_Union__58__::get_NotificationSyncRequest() const {
+    if (idx_ != 30) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<NotificationSyncRequest >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__58__::set_NotificationSyncRequest(const NotificationSyncRequest& v) {
+    idx_ = 30;
+    value_ = v;
+}
+
+inline
+UserSyncRequest _endpoint_avsc_Union__58__::get_UserSyncRequest() const {
+    if (idx_ != 31) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<UserSyncRequest >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__58__::set_UserSyncRequest(const UserSyncRequest& v) {
+    idx_ = 31;
+    value_ = v;
+}
+
+inline
+EventSyncRequest _endpoint_avsc_Union__58__::get_EventSyncRequest() const {
+    if (idx_ != 32) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<EventSyncRequest >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__58__::set_EventSyncRequest(const EventSyncRequest& v) {
+    idx_ = 32;
+    value_ = v;
+}
+
+inline
+LogSyncRequest _endpoint_avsc_Union__58__::get_LogSyncRequest() const {
+    if (idx_ != 33) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<LogSyncRequest >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__58__::set_LogSyncRequest(const LogSyncRequest& v) {
+    idx_ = 33;
+    value_ = v;
+}
+
+inline
+ProtocolMetaData _endpoint_avsc_Union__58__::get_ProtocolMetaData() const {
+    if (idx_ != 34) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<ProtocolMetaData >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__58__::set_ProtocolMetaData(const ProtocolMetaData& v) {
+    idx_ = 34;
+    value_ = v;
+}
+
+inline
+BootstrapSyncResponse _endpoint_avsc_Union__58__::get_BootstrapSyncResponse() const {
+    if (idx_ != 35) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<BootstrapSyncResponse >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__58__::set_BootstrapSyncResponse(const BootstrapSyncResponse& v) {
+    idx_ = 35;
+    value_ = v;
+}
+
+inline
+ProfileSyncResponse _endpoint_avsc_Union__58__::get_ProfileSyncResponse() const {
+    if (idx_ != 36) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<ProfileSyncResponse >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__58__::set_ProfileSyncResponse(const ProfileSyncResponse& v) {
+    idx_ = 36;
+    value_ = v;
+}
+
+inline
+ConfigurationSyncResponse _endpoint_avsc_Union__58__::get_ConfigurationSyncResponse() const {
+    if (idx_ != 37) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<ConfigurationSyncResponse >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__58__::set_ConfigurationSyncResponse(const ConfigurationSyncResponse& v) {
+    idx_ = 37;
+    value_ = v;
+}
+
+inline
+NotificationSyncResponse _endpoint_avsc_Union__58__::get_NotificationSyncResponse() const {
+    if (idx_ != 38) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<NotificationSyncResponse >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__58__::set_NotificationSyncResponse(const NotificationSyncResponse& v) {
+    idx_ = 38;
+    value_ = v;
+}
+
+inline
+UserSyncResponse _endpoint_avsc_Union__58__::get_UserSyncResponse() const {
+    if (idx_ != 39) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<UserSyncResponse >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__58__::set_UserSyncResponse(const UserSyncResponse& v) {
+    idx_ = 39;
+    value_ = v;
+}
+
+inline
+EventSyncResponse _endpoint_avsc_Union__58__::get_EventSyncResponse() const {
+    if (idx_ != 40) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<EventSyncResponse >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__58__::set_EventSyncResponse(const EventSyncResponse& v) {
+    idx_ = 40;
+    value_ = v;
+}
+
+inline
+LogDeliveryStatus _endpoint_avsc_Union__58__::get_LogDeliveryStatus() const {
+    if (idx_ != 41) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<LogDeliveryStatus >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__58__::set_LogDeliveryStatus(const LogDeliveryStatus& v) {
+    idx_ = 41;
+    value_ = v;
+}
+
+inline
+LogSyncResponse _endpoint_avsc_Union__58__::get_LogSyncResponse() const {
+    if (idx_ != 42) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<LogSyncResponse >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__58__::set_LogSyncResponse(const LogSyncResponse& v) {
     idx_ = 42;
     value_ = v;
 }
 
 inline
-RedirectSyncResponse _endpoint_avsc_Union__56__::get_RedirectSyncResponse() const {
+RedirectSyncResponse _endpoint_avsc_Union__58__::get_RedirectSyncResponse() const {
     if (idx_ != 43) {
         throw avro::Exception("Invalid type for union");
     }
@@ -3069,50 +3150,64 @@ RedirectSyncResponse _endpoint_avsc_Union__56__::get_RedirectSyncResponse() cons
 }
 
 inline
-void _endpoint_avsc_Union__56__::set_RedirectSyncResponse(const RedirectSyncResponse& v) {
+void _endpoint_avsc_Union__58__::set_RedirectSyncResponse(const RedirectSyncResponse& v) {
     idx_ = 43;
     value_ = v;
 }
 
 inline
-SyncRequest _endpoint_avsc_Union__56__::get_SyncRequest() const {
+ExtensionSync _endpoint_avsc_Union__58__::get_ExtensionSync() const {
     if (idx_ != 44) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<ExtensionSync >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__58__::set_ExtensionSync(const ExtensionSync& v) {
+    idx_ = 44;
+    value_ = v;
+}
+
+inline
+SyncRequest _endpoint_avsc_Union__58__::get_SyncRequest() const {
+    if (idx_ != 45) {
         throw avro::Exception("Invalid type for union");
     }
     return boost::any_cast<SyncRequest >(value_);
 }
 
 inline
-void _endpoint_avsc_Union__56__::set_SyncRequest(const SyncRequest& v) {
-    idx_ = 44;
+void _endpoint_avsc_Union__58__::set_SyncRequest(const SyncRequest& v) {
+    idx_ = 45;
     value_ = v;
 }
 
 inline
-SyncResponse _endpoint_avsc_Union__56__::get_SyncResponse() const {
-    if (idx_ != 45) {
+SyncResponse _endpoint_avsc_Union__58__::get_SyncResponse() const {
+    if (idx_ != 46) {
         throw avro::Exception("Invalid type for union");
     }
     return boost::any_cast<SyncResponse >(value_);
 }
 
 inline
-void _endpoint_avsc_Union__56__::set_SyncResponse(const SyncResponse& v) {
-    idx_ = 45;
+void _endpoint_avsc_Union__58__::set_SyncResponse(const SyncResponse& v) {
+    idx_ = 46;
     value_ = v;
 }
 
 inline
-TopicSubscriptionInfo _endpoint_avsc_Union__56__::get_TopicSubscriptionInfo() const {
-    if (idx_ != 46) {
+TopicSubscriptionInfo _endpoint_avsc_Union__58__::get_TopicSubscriptionInfo() const {
+    if (idx_ != 47) {
         throw avro::Exception("Invalid type for union");
     }
     return boost::any_cast<TopicSubscriptionInfo >(value_);
 }
 
 inline
-void _endpoint_avsc_Union__56__::set_TopicSubscriptionInfo(const TopicSubscriptionInfo& v) {
-    idx_ = 46;
+void _endpoint_avsc_Union__58__::set_TopicSubscriptionInfo(const TopicSubscriptionInfo& v) {
+    idx_ = 47;
     value_ = v;
 }
 
@@ -3164,15 +3259,17 @@ inline _endpoint_avsc_Union__44__::_endpoint_avsc_Union__44__() : idx_(0), value
 inline _endpoint_avsc_Union__45__::_endpoint_avsc_Union__45__() : idx_(0), value_(UserSyncRequest()) { }
 inline _endpoint_avsc_Union__46__::_endpoint_avsc_Union__46__() : idx_(0), value_(EventSyncRequest()) { }
 inline _endpoint_avsc_Union__47__::_endpoint_avsc_Union__47__() : idx_(0), value_(LogSyncRequest()) { }
-inline _endpoint_avsc_Union__48__::_endpoint_avsc_Union__48__() : idx_(0), value_(BootstrapSyncResponse()) { }
-inline _endpoint_avsc_Union__49__::_endpoint_avsc_Union__49__() : idx_(0), value_(ProfileSyncResponse()) { }
-inline _endpoint_avsc_Union__50__::_endpoint_avsc_Union__50__() : idx_(0), value_(ConfigurationSyncResponse()) { }
-inline _endpoint_avsc_Union__51__::_endpoint_avsc_Union__51__() : idx_(0), value_(NotificationSyncResponse()) { }
-inline _endpoint_avsc_Union__52__::_endpoint_avsc_Union__52__() : idx_(0), value_(UserSyncResponse()) { }
-inline _endpoint_avsc_Union__53__::_endpoint_avsc_Union__53__() : idx_(0), value_(EventSyncResponse()) { }
-inline _endpoint_avsc_Union__54__::_endpoint_avsc_Union__54__() : idx_(0), value_(RedirectSyncResponse()) { }
-inline _endpoint_avsc_Union__55__::_endpoint_avsc_Union__55__() : idx_(0), value_(LogSyncResponse()) { }
-inline _endpoint_avsc_Union__56__::_endpoint_avsc_Union__56__() : idx_(0), value_(TopicState()) { }
+inline _endpoint_avsc_Union__48__::_endpoint_avsc_Union__48__() : idx_(0), value_(std::vector<ExtensionSync >()) { }
+inline _endpoint_avsc_Union__49__::_endpoint_avsc_Union__49__() : idx_(0), value_(BootstrapSyncResponse()) { }
+inline _endpoint_avsc_Union__50__::_endpoint_avsc_Union__50__() : idx_(0), value_(ProfileSyncResponse()) { }
+inline _endpoint_avsc_Union__51__::_endpoint_avsc_Union__51__() : idx_(0), value_(ConfigurationSyncResponse()) { }
+inline _endpoint_avsc_Union__52__::_endpoint_avsc_Union__52__() : idx_(0), value_(NotificationSyncResponse()) { }
+inline _endpoint_avsc_Union__53__::_endpoint_avsc_Union__53__() : idx_(0), value_(UserSyncResponse()) { }
+inline _endpoint_avsc_Union__54__::_endpoint_avsc_Union__54__() : idx_(0), value_(EventSyncResponse()) { }
+inline _endpoint_avsc_Union__55__::_endpoint_avsc_Union__55__() : idx_(0), value_(RedirectSyncResponse()) { }
+inline _endpoint_avsc_Union__56__::_endpoint_avsc_Union__56__() : idx_(0), value_(LogSyncResponse()) { }
+inline _endpoint_avsc_Union__57__::_endpoint_avsc_Union__57__() : idx_(0), value_(std::vector<ExtensionSync >()) { }
+inline _endpoint_avsc_Union__58__::_endpoint_avsc_Union__58__() : idx_(0), value_(TopicState()) { }
 }
 namespace avro {
 template<> struct codec_traits<kaa::TopicState> {
@@ -5020,6 +5117,17 @@ template<> struct codec_traits<kaa::RedirectSyncResponse> {
     }
 };
 
+template<> struct codec_traits<kaa::ExtensionSync> {
+    static void encode(Encoder& e, const kaa::ExtensionSync& v) {
+        avro::encode(e, v.extensionId);
+        avro::encode(e, v.payload);
+    }
+    static void decode(Decoder& d, kaa::ExtensionSync& v) {
+        avro::decode(d, v.extensionId);
+        avro::decode(d, v.payload);
+    }
+};
+
 template<> struct codec_traits<kaa::_endpoint_avsc_Union__40__> {
     static void encode(Encoder& e, kaa::_endpoint_avsc_Union__40__ v) {
         e.encodeUnionIndex(v.idx());
@@ -5268,6 +5376,37 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__47__> {
     }
 };
 
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__48__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__48__ v) {
+        e.encodeUnionIndex(v.idx());
+        switch (v.idx()) {
+        case 0:
+            avro::encode(e, v.get_array());
+            break;
+        case 1:
+            e.encodeNull();
+            break;
+        }
+    }
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__48__& v) {
+        size_t n = d.decodeUnionIndex();
+        if (n >= 2) { throw avro::Exception("Union index too big"); }
+        switch (n) {
+        case 0:
+            {
+                std::vector<kaa::ExtensionSync > vv;
+                avro::decode(d, vv);
+                v.set_array(vv);
+            }
+            break;
+        case 1:
+            d.decodeNull();
+            v.set_null();
+            break;
+        }
+    }
+};
+
 template<> struct codec_traits<kaa::SyncRequest> {
     static void encode(Encoder& e, const kaa::SyncRequest& v) {
         avro::encode(e, v.requestId);
@@ -5279,6 +5418,7 @@ template<> struct codec_traits<kaa::SyncRequest> {
         avro::encode(e, v.userSyncRequest);
         avro::encode(e, v.eventSyncRequest);
         avro::encode(e, v.logSyncRequest);
+        avro::encode(e, v.extensionSyncRequests);
     }
     static void decode(Decoder& d, kaa::SyncRequest& v) {
         avro::decode(d, v.requestId);
@@ -5290,11 +5430,12 @@ template<> struct codec_traits<kaa::SyncRequest> {
         avro::decode(d, v.userSyncRequest);
         avro::decode(d, v.eventSyncRequest);
         avro::decode(d, v.logSyncRequest);
+        avro::decode(d, v.extensionSyncRequests);
     }
 };
 
-template<> struct codec_traits<kaa::_endpoint_avsc_Union__48__> {
-    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__48__ v) {
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__49__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__49__ v) {
         e.encodeUnionIndex(v.idx());
         switch (v.idx()) {
         case 0:
@@ -5305,7 +5446,7 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__48__> {
             break;
         }
     }
-    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__48__& v) {
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__49__& v) {
         size_t n = d.decodeUnionIndex();
         if (n >= 2) { throw avro::Exception("Union index too big"); }
         switch (n) {
@@ -5324,8 +5465,8 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__48__> {
     }
 };
 
-template<> struct codec_traits<kaa::_endpoint_avsc_Union__49__> {
-    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__49__ v) {
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__50__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__50__ v) {
         e.encodeUnionIndex(v.idx());
         switch (v.idx()) {
         case 0:
@@ -5336,7 +5477,7 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__49__> {
             break;
         }
     }
-    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__49__& v) {
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__50__& v) {
         size_t n = d.decodeUnionIndex();
         if (n >= 2) { throw avro::Exception("Union index too big"); }
         switch (n) {
@@ -5355,8 +5496,8 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__49__> {
     }
 };
 
-template<> struct codec_traits<kaa::_endpoint_avsc_Union__50__> {
-    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__50__ v) {
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__51__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__51__ v) {
         e.encodeUnionIndex(v.idx());
         switch (v.idx()) {
         case 0:
@@ -5367,7 +5508,7 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__50__> {
             break;
         }
     }
-    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__50__& v) {
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__51__& v) {
         size_t n = d.decodeUnionIndex();
         if (n >= 2) { throw avro::Exception("Union index too big"); }
         switch (n) {
@@ -5386,8 +5527,8 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__50__> {
     }
 };
 
-template<> struct codec_traits<kaa::_endpoint_avsc_Union__51__> {
-    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__51__ v) {
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__52__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__52__ v) {
         e.encodeUnionIndex(v.idx());
         switch (v.idx()) {
         case 0:
@@ -5398,7 +5539,7 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__51__> {
             break;
         }
     }
-    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__51__& v) {
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__52__& v) {
         size_t n = d.decodeUnionIndex();
         if (n >= 2) { throw avro::Exception("Union index too big"); }
         switch (n) {
@@ -5417,8 +5558,8 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__51__> {
     }
 };
 
-template<> struct codec_traits<kaa::_endpoint_avsc_Union__52__> {
-    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__52__ v) {
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__53__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__53__ v) {
         e.encodeUnionIndex(v.idx());
         switch (v.idx()) {
         case 0:
@@ -5429,7 +5570,7 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__52__> {
             break;
         }
     }
-    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__52__& v) {
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__53__& v) {
         size_t n = d.decodeUnionIndex();
         if (n >= 2) { throw avro::Exception("Union index too big"); }
         switch (n) {
@@ -5448,8 +5589,8 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__52__> {
     }
 };
 
-template<> struct codec_traits<kaa::_endpoint_avsc_Union__53__> {
-    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__53__ v) {
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__54__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__54__ v) {
         e.encodeUnionIndex(v.idx());
         switch (v.idx()) {
         case 0:
@@ -5460,7 +5601,7 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__53__> {
             break;
         }
     }
-    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__53__& v) {
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__54__& v) {
         size_t n = d.decodeUnionIndex();
         if (n >= 2) { throw avro::Exception("Union index too big"); }
         switch (n) {
@@ -5479,8 +5620,8 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__53__> {
     }
 };
 
-template<> struct codec_traits<kaa::_endpoint_avsc_Union__54__> {
-    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__54__ v) {
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__55__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__55__ v) {
         e.encodeUnionIndex(v.idx());
         switch (v.idx()) {
         case 0:
@@ -5491,7 +5632,7 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__54__> {
             break;
         }
     }
-    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__54__& v) {
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__55__& v) {
         size_t n = d.decodeUnionIndex();
         if (n >= 2) { throw avro::Exception("Union index too big"); }
         switch (n) {
@@ -5510,8 +5651,8 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__54__> {
     }
 };
 
-template<> struct codec_traits<kaa::_endpoint_avsc_Union__55__> {
-    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__55__ v) {
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__56__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__56__ v) {
         e.encodeUnionIndex(v.idx());
         switch (v.idx()) {
         case 0:
@@ -5522,7 +5663,7 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__55__> {
             break;
         }
     }
-    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__55__& v) {
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__56__& v) {
         size_t n = d.decodeUnionIndex();
         if (n >= 2) { throw avro::Exception("Union index too big"); }
         switch (n) {
@@ -5531,6 +5672,37 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__55__> {
                 kaa::LogSyncResponse vv;
                 avro::decode(d, vv);
                 v.set_LogSyncResponse(vv);
+            }
+            break;
+        case 1:
+            d.decodeNull();
+            v.set_null();
+            break;
+        }
+    }
+};
+
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__57__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__57__ v) {
+        e.encodeUnionIndex(v.idx());
+        switch (v.idx()) {
+        case 0:
+            avro::encode(e, v.get_array());
+            break;
+        case 1:
+            e.encodeNull();
+            break;
+        }
+    }
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__57__& v) {
+        size_t n = d.decodeUnionIndex();
+        if (n >= 2) { throw avro::Exception("Union index too big"); }
+        switch (n) {
+        case 0:
+            {
+                std::vector<kaa::ExtensionSync > vv;
+                avro::decode(d, vv);
+                v.set_array(vv);
             }
             break;
         case 1:
@@ -5553,6 +5725,7 @@ template<> struct codec_traits<kaa::SyncResponse> {
         avro::encode(e, v.eventSyncResponse);
         avro::encode(e, v.redirectSyncResponse);
         avro::encode(e, v.logSyncResponse);
+        avro::encode(e, v.extensionSyncResponses);
     }
     static void decode(Decoder& d, kaa::SyncResponse& v) {
         avro::decode(d, v.requestId);
@@ -5565,6 +5738,7 @@ template<> struct codec_traits<kaa::SyncResponse> {
         avro::decode(d, v.eventSyncResponse);
         avro::decode(d, v.redirectSyncResponse);
         avro::decode(d, v.logSyncResponse);
+        avro::decode(d, v.extensionSyncResponses);
     }
 };
 
@@ -5579,8 +5753,8 @@ template<> struct codec_traits<kaa::TopicSubscriptionInfo> {
     }
 };
 
-template<> struct codec_traits<kaa::_endpoint_avsc_Union__56__> {
-    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__56__ v) {
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__58__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__58__ v) {
         e.encodeUnionIndex(v.idx());
         switch (v.idx()) {
         case 0:
@@ -5716,19 +5890,22 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__56__> {
             avro::encode(e, v.get_RedirectSyncResponse());
             break;
         case 44:
-            avro::encode(e, v.get_SyncRequest());
+            avro::encode(e, v.get_ExtensionSync());
             break;
         case 45:
-            avro::encode(e, v.get_SyncResponse());
+            avro::encode(e, v.get_SyncRequest());
             break;
         case 46:
+            avro::encode(e, v.get_SyncResponse());
+            break;
+        case 47:
             avro::encode(e, v.get_TopicSubscriptionInfo());
             break;
         }
     }
-    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__56__& v) {
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__58__& v) {
         size_t n = d.decodeUnionIndex();
-        if (n >= 47) { throw avro::Exception("Union index too big"); }
+        if (n >= 48) { throw avro::Exception("Union index too big"); }
         switch (n) {
         case 0:
             {
@@ -6040,19 +6217,26 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__56__> {
             break;
         case 44:
             {
+                kaa::ExtensionSync vv;
+                avro::decode(d, vv);
+                v.set_ExtensionSync(vv);
+            }
+            break;
+        case 45:
+            {
                 kaa::SyncRequest vv;
                 avro::decode(d, vv);
                 v.set_SyncRequest(vv);
             }
             break;
-        case 45:
+        case 46:
             {
                 kaa::SyncResponse vv;
                 avro::decode(d, vv);
                 v.set_SyncResponse(vv);
             }
             break;
-        case 46:
+        case 47:
             {
                 kaa::TopicSubscriptionInfo vv;
                 avro::decode(d, vv);

@@ -361,7 +361,7 @@ kaa_access_point_t *kaa_bootstrap_manager_get_bootstrap_access_point(kaa_bootstr
 
 kaa_error_t kaa_bootstrap_manager_handle_server_sync(kaa_bootstrap_manager_t *self
                                                    , kaa_platform_message_reader_t *reader
-                                                   , uint32_t extension_options
+                                                   , uint16_t extension_options
                                                    , size_t extension_length)
 {
     KAA_RETURN_IF_NIL2(self, reader, KAA_ERR_BADPARAM);

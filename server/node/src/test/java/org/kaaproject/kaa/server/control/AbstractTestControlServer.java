@@ -95,7 +95,7 @@ import com.mongodb.DB;
  * The Class AbstractTestControlServer.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "/control/common-test-context.xml")
+@ContextConfiguration(locations = "/common-test-context.xml")
 @DirtiesContext(classMode = ClassMode.AFTER_CLASS)
 public abstract class AbstractTestControlServer {
 

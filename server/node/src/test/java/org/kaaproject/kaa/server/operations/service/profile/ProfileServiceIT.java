@@ -33,11 +33,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
-import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
+import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.endpoint.gen.BasicEndpointProfile;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.schema.base.Profile;
-import org.kaaproject.kaa.server.common.dao.SdkKeyService;
+import org.kaaproject.kaa.server.common.dao.SdkProfileService;
 import org.kaaproject.kaa.server.common.dao.impl.ApplicationDao;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
 import org.kaaproject.kaa.server.common.dao.impl.ProfileSchemaDao;
@@ -46,7 +46,7 @@ import org.kaaproject.kaa.server.common.dao.AbstractTest;
 import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
 import org.kaaproject.kaa.server.common.dao.model.sql.Application;
 import org.kaaproject.kaa.server.common.dao.model.sql.ProfileSchema;
-import org.kaaproject.kaa.server.common.dao.model.sql.SdkKey;
+import org.kaaproject.kaa.server.common.dao.model.sql.SdkProfile;
 import org.kaaproject.kaa.server.common.dao.model.sql.Tenant;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.MongoDBTestRunner;
 import org.kaaproject.kaa.server.operations.pojo.RegisterProfileRequest;
@@ -88,7 +88,7 @@ public class ProfileServiceIT extends AbstractTest {
     protected ProfileService profileService;
 
     @Autowired
-    protected SdkKeyService sdkKeyService;
+    protected SdkProfileService sdkProfileService;
 
     @Autowired
     protected EndpointProfileDao<EndpointProfile> endpointProfileDao;
@@ -144,23 +144,25 @@ public class ProfileServiceIT extends AbstractTest {
         profileSchema2.setApplication(application);
         profileSchema2 = profileSchemaDao.save(profileSchema2);
 
-        SdkPropertiesDto sdkPropertiesDto = new SdkPropertiesDto();
+        SdkProfileDto sdkPropertiesDto = new SdkProfileDto();
         sdkPropertiesDto.setApplicationId(application.getStringId());
         sdkPropertiesDto.setProfileSchemaVersion(profileSchema.getMajorVersion());
         sdkPropertiesDto.setConfigurationSchemaVersion(1);
         sdkPropertiesDto.setNotificationSchemaVersion(1);
         sdkPropertiesDto.setLogSchemaVersion(1);
-        sdkPropertiesDto = sdkKeyService.saveSdkKey(sdkPropertiesDto);
-        sdkToken = new SdkKey(sdkPropertiesDto).getToken();
+        sdkPropertiesDto.setApplicationToken(APP_TOKEN);
+        sdkPropertiesDto = sdkProfileService.saveSdkProfile(sdkPropertiesDto);
+        sdkToken = new SdkProfile(sdkPropertiesDto).getToken();
 
-        SdkPropertiesDto newSdkPropertiesDto = new SdkPropertiesDto();
-        newSdkPropertiesDto.setApplicationId(application.getStringId());
-        newSdkPropertiesDto.setProfileSchemaVersion(profileSchema2.getMajorVersion());
-        newSdkPropertiesDto.setConfigurationSchemaVersion(1);
-        newSdkPropertiesDto.setNotificationSchemaVersion(1);
-        newSdkPropertiesDto.setLogSchemaVersion(1);
-        newSdkPropertiesDto = sdkKeyService.saveSdkKey(newSdkPropertiesDto);
-        newSdkToken = new SdkKey(newSdkPropertiesDto).getToken();
+        SdkProfileDto newSdkProfileDto = new SdkProfileDto();
+        newSdkProfileDto.setApplicationId(application.getStringId());
+        newSdkProfileDto.setProfileSchemaVersion(profileSchema2.getMajorVersion());
+        newSdkProfileDto.setConfigurationSchemaVersion(1);
+        newSdkProfileDto.setNotificationSchemaVersion(1);
+        newSdkProfileDto.setLogSchemaVersion(1);
+        newSdkProfileDto.setApplicationToken(APP_TOKEN);
+        newSdkProfileDto = sdkProfileService.saveSdkProfile(newSdkProfileDto);
+        newSdkToken = new SdkProfile(newSdkProfileDto).getToken();
     }
 
     @After

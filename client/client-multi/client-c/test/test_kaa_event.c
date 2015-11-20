@@ -57,7 +57,7 @@ extern kaa_error_t kaa_event_manager_add_event_to_transaction(kaa_event_manager_
                                                             , kaa_endpoint_id_p target);
 
 extern kaa_error_t kaa_event_request_get_size(kaa_event_manager_t *self, size_t *expected_size);
-extern kaa_error_t kaa_event_handle_server_sync(kaa_event_manager_t *self, kaa_platform_message_reader_t *reader, uint32_t extension_options, size_t extension_length, size_t request_id);
+extern kaa_error_t kaa_event_handle_server_sync(kaa_event_manager_t *self, kaa_platform_message_reader_t *reader, uint16_t extension_options, size_t extension_length, size_t request_id);
 extern kaa_error_t kaa_event_request_serialize(kaa_event_manager_t *self, size_t request_id, kaa_platform_message_writer_t *writer);
 extern kaa_error_t kaa_event_manager_add_on_event_callback(kaa_event_manager_t *self, const char *fqn, kaa_event_callback_t callback);
 

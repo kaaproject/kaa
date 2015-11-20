@@ -44,7 +44,7 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.kaaproject.kaa.avro.avrogenc.Compiler;
 import org.kaaproject.kaa.avro.avrogenc.StyleUtils;
-import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
+import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.server.common.Environment;
 import org.kaaproject.kaa.server.common.Version;
@@ -116,7 +116,7 @@ public class CSdkGenerator extends SdkGenerator {
     @Override
     public FileData generateSdk(String buildVersion,
                            List<BootstrapNodeInfo> bootstrapNodes, String sdkToken,
-                           SdkPropertiesDto sdkProperties,
+                           SdkProfileDto sdkProfile,
                            String profileSchemaBody,
                            String notificationSchemaBody,
                            String configurationProtocolSchemaBody,
@@ -125,11 +125,11 @@ public class CSdkGenerator extends SdkGenerator {
                            List<EventFamilyMetadata> eventFamilies,
                            String logSchemaBody) throws Exception {
 
-        Integer configurationSchemaVersion = sdkProperties.getConfigurationSchemaVersion();
-        Integer profileSchemaVersion = sdkProperties.getProfileSchemaVersion();
-        Integer notificationSchemaVersion = sdkProperties.getNotificationSchemaVersion();
-        Integer logSchemaVersion = sdkProperties.getLogSchemaVersion();
-        String defaultVerifierToken = sdkProperties.getDefaultVerifierToken();
+        Integer configurationSchemaVersion = sdkProfile.getConfigurationSchemaVersion();
+        Integer profileSchemaVersion = sdkProfile.getProfileSchemaVersion();
+        Integer notificationSchemaVersion = sdkProfile.getNotificationSchemaVersion();
+        Integer logSchemaVersion = sdkProfile.getLogSchemaVersion();
+        String defaultVerifierToken = sdkProfile.getDefaultVerifierToken();
 
         String sdkTemplateLocation = Environment.getServerHomeDir() + "/" + C_SDK_DIR + "/" + C_SDK_PREFIX + buildVersion + ".tar.gz";
 

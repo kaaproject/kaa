@@ -16,27 +16,34 @@
 package org.kaaproject.kaa.server.common.admin;
 
 
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Arrays;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpHost;
-import org.kaaproject.kaa.common.dto.*;
+import org.kaaproject.kaa.common.dto.ApplicationDto;
+import org.kaaproject.kaa.common.dto.ConfigurationDto;
+import org.kaaproject.kaa.common.dto.ConfigurationRecordDto;
+import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointGroupDto;
+import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
+import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
+import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
+import org.kaaproject.kaa.common.dto.NotificationDto;
+import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
+import org.kaaproject.kaa.common.dto.PageLinkDto;
+import org.kaaproject.kaa.common.dto.ProfileFilterDto;
+import org.kaaproject.kaa.common.dto.ProfileFilterRecordDto;
+import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.SchemaDto;
+import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.admin.AuthResultDto;
 import org.kaaproject.kaa.common.dto.admin.RecordKey;
 import org.kaaproject.kaa.common.dto.admin.ResultCode;
 import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
-import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
+import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
+import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
@@ -69,6 +76,20 @@ import org.springframework.web.client.RequestCallback;
 import org.springframework.web.client.ResponseExtractor;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class AdminClient {
 
     private static final Logger logger = LoggerFactory.getLogger(AdminClient.class);
@@ -82,6 +103,38 @@ public class AdminClient {
         ClientHttpRequestFactory requestFactory = new HttpComponentsRequestFactoryBasicAuth(new HttpHost(host, port, "http"));
         restTemplate.setRequestFactory(requestFactory);
         url = "http://"+host+":"+port + "/kaaAdmin/rest/api/";
+    }
+
+    public EndpointProfilesPageDto getEndpointProfileByEndpointGroupId(PageLinkDto pageLink) throws Exception {
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<String, String>();
+        params.add("endpointGroupId", pageLink.getEndpointGroupId());
+        params.add("limit", pageLink.getLimit());
+        params.add("offset", pageLink.getOffset());
+        ParameterizedTypeReference<EndpointProfilesPageDto> typeRef = new ParameterizedTypeReference<EndpointProfilesPageDto>() {};
+        ResponseEntity<EndpointProfilesPageDto> entity = restTemplate.exchange(url + "endpointProfileByGroupId/" + params, HttpMethod.GET, null, typeRef);
+        return entity.getBody();
+    }
+
+    public EndpointProfilesBodyDto getEndpointProfileBodyByEndpointGroupId(PageLinkDto pageLink) throws Exception {
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<String, String>();
+        params.add("endpointGroupId", pageLink.getEndpointGroupId());
+        params.add("limit", pageLink.getLimit());
+        params.add("offset", pageLink.getOffset());
+        ParameterizedTypeReference<EndpointProfilesBodyDto> typeRef = new ParameterizedTypeReference<EndpointProfilesBodyDto>() {};
+        ResponseEntity<EndpointProfilesBodyDto> entity = restTemplate.exchange(url + "endpointProfileBodyByGroupId/" + params, HttpMethod.GET, null, typeRef);
+        return entity.getBody();
+    }
+
+    public EndpointProfileDto getEndpointProfileByKeyHash(String endpointProfileKeyHash) throws Exception {
+        ParameterizedTypeReference<EndpointProfileDto> typeRef = new ParameterizedTypeReference<EndpointProfileDto>() {};
+        ResponseEntity<EndpointProfileDto> entity = restTemplate.exchange(url + "endpointProfile/" + endpointProfileKeyHash, HttpMethod.GET, null, typeRef);
+        return entity.getBody();
+    }
+
+    public EndpointProfileBodyDto getEndpointProfileBodyByKeyHash(String endpointProfileKeyHash) throws Exception {
+        ParameterizedTypeReference<EndpointProfileBodyDto> typeRef = new ParameterizedTypeReference<EndpointProfileBodyDto>() {};
+        ResponseEntity<EndpointProfileBodyDto> entity = restTemplate.exchange(url + "endpointProfileBody/" + endpointProfileKeyHash, HttpMethod.GET, null, typeRef);
+        return entity.getBody();
     }
 
     public AuthResultDto checkAuth() throws Exception {
@@ -124,11 +177,11 @@ public class AdminClient {
         ResponseEntity<List<TenantUserDto>> entity = restTemplate.exchange(url + "tenants", HttpMethod.GET, null, typeRef);
         return entity.getBody();
     }
-    
+
     public TenantUserDto getTenant(String userId) throws Exception {
         return restTemplate.getForObject(url + "tenant/" + userId, TenantUserDto.class);
     }
-    
+
     public void deleteTenant(String userId) throws Exception {
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
         params.add("userId", userId);
@@ -144,15 +197,15 @@ public class AdminClient {
         ResponseEntity<List<ApplicationDto>> entity = restTemplate.exchange(url + "applications", HttpMethod.GET, null, typeRef);
         return entity.getBody();
     }
-    
+
     public ApplicationDto getApplication(String applicationId) throws Exception {
         return restTemplate.getForObject(url + "application/" + applicationId, ApplicationDto.class);
     }
-    
+
     public ApplicationDto getApplicationByApplicationToken(String token) throws Exception {
         return restTemplate.getForObject(url + "application/token/" + token, ApplicationDto.class);
     }
-    
+
     public void deleteApplication(String applicationId) throws Exception {
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
         params.add("applicationId", applicationId);
@@ -162,7 +215,7 @@ public class AdminClient {
     public ConfigurationSchemaDto createConfigurationSchema(ConfigurationSchemaDto configurationSchema, String schemaResource) throws Exception {
         return createConfigurationSchema(configurationSchema, getFileResource(schemaResource));
     }
-    
+
     public ConfigurationSchemaDto createConfigurationSchema(ConfigurationSchemaDto configurationSchema, ByteArrayResource schemaResource) throws Exception {
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
         params.add("configurationSchema", configurationSchema);
@@ -173,18 +226,18 @@ public class AdminClient {
     public ConfigurationSchemaDto editConfigurationSchema(ConfigurationSchemaDto configurationSchema) throws Exception {
         return restTemplate.postForObject(url + "editConfigurationSchema", configurationSchema, ConfigurationSchemaDto.class);
     }
-    
+
     public ProfileSchemaDto createProfileSchema(ProfileSchemaDto profileSchema, String schemaResource) throws Exception {
         return createProfileSchema(profileSchema, getFileResource(schemaResource));
     }
-    
+
     public ProfileSchemaDto createProfileSchema(ProfileSchemaDto profileSchema, ByteArrayResource schemaResource) throws Exception {
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
         params.add("profileSchema", profileSchema);
         params.add("file", schemaResource);
         return restTemplate.postForObject(url + "createProfileSchema", params, ProfileSchemaDto.class);
     }
-    
+
     public ProfileSchemaDto editProfileSchema(ProfileSchemaDto profileSchema) throws Exception {
         return restTemplate.postForObject(url + "editProfileSchema", profileSchema, ProfileSchemaDto.class);
     }
@@ -192,29 +245,29 @@ public class AdminClient {
     public NotificationSchemaDto createNotificationSchema(NotificationSchemaDto notificationSchema, String schemaResource) throws Exception {
         return createNotificationSchema(notificationSchema, getFileResource(schemaResource));
     }
-    
+
     public NotificationSchemaDto createNotificationSchema(NotificationSchemaDto notificationSchema, ByteArrayResource schemaResource) throws Exception {
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
         params.add("notificationSchema", notificationSchema);
         params.add("file", schemaResource);
         return restTemplate.postForObject(url + "createNotificationSchema", params, NotificationSchemaDto.class);
     }
-    
+
     public NotificationSchemaDto editNotificationSchema(NotificationSchemaDto notificationSchema) throws Exception {
         return restTemplate.postForObject(url + "editNotificationSchema", notificationSchema, NotificationSchemaDto.class);
     }
-    
+
     public LogSchemaDto createLogSchema(LogSchemaDto logSchema, String schemaResource) throws Exception {
         return createLogSchema(logSchema, getFileResource(schemaResource));
     }
-    
+
     public LogSchemaDto createLogSchema(LogSchemaDto logSchema, ByteArrayResource schemaResource) throws Exception {
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
         params.add("logSchema", logSchema);
         params.add("file", schemaResource);
         return restTemplate.postForObject(url + "createLogSchema", params, LogSchemaDto.class);
     }
-    
+
     public LogSchemaDto editLogSchema(LogSchemaDto logSchema) throws Exception {
         return restTemplate.postForObject(url + "editLogSchema", logSchema, LogSchemaDto.class);
     }
@@ -222,23 +275,23 @@ public class AdminClient {
     public TopicDto createTopic(TopicDto topic) throws Exception {
         return restTemplate.postForObject(url + "topic", topic, TopicDto.class);
     }
-    
+
     public TopicDto getTopic(String topicId) throws Exception {
         return restTemplate.getForObject(url + "topic/" + topicId, TopicDto.class);
     }
-    
+
     public List<TopicDto> getTopicsByApplicationId(String applicationId) throws Exception {
         ParameterizedTypeReference<List<TopicDto>> typeRef = new ParameterizedTypeReference<List<TopicDto>>() {};
         ResponseEntity<List<TopicDto>> entity = restTemplate.exchange(url + "topics/"+applicationId, HttpMethod.GET, null, typeRef);
         return entity.getBody();
     }
-    
+
     public List<TopicDto> getTopicsByEndpointGroupId(String endpointGroupId) throws Exception {
         ParameterizedTypeReference<List<TopicDto>> typeRef = new ParameterizedTypeReference<List<TopicDto>>() {};
         ResponseEntity<List<TopicDto>> entity = restTemplate.exchange(url + "topics?endpointGroupId={endpointGroupId}", HttpMethod.GET, null, typeRef, endpointGroupId);
         return entity.getBody();
     }
-    
+
     public List<TopicDto> getVacantTopicsByEndpointGroupId(String endpointGroupId) throws Exception {
         ParameterizedTypeReference<List<TopicDto>> typeRef = new ParameterizedTypeReference<List<TopicDto>>() {};
         ResponseEntity<List<TopicDto>> entity = restTemplate.exchange(url + "vacantTopics/"+endpointGroupId, HttpMethod.GET, null, typeRef);
@@ -248,14 +301,14 @@ public class AdminClient {
     public void addTopicToEndpointGroup(EndpointGroupDto endpointGroup, TopicDto topic) throws Exception {
         addTopicToEndpointGroup(endpointGroup.getId(), topic.getId());
     }
-    
+
     public void addTopicToEndpointGroup(String endpointGroupId, String topicId) throws Exception {
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
         params.add("endpointGroupId", endpointGroupId);
         params.add("topicId", topicId);
         restTemplate.postForObject(url + "addTopicToEpGroup", params, Void.class);
     }
-    
+
     public void removeTopicFromEndpointGroup(String endpointGroupId, String topicId) throws Exception {
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
         params.add("endpointGroupId", endpointGroupId);
@@ -281,7 +334,7 @@ public class AdminClient {
     public EndpointNotificationDto sendUnicastNotification(NotificationDto notification, String clientKeyHash, String notificationResource) throws Exception {
         return sendUnicastNotification(notification, clientKeyHash, getFileResource(notificationResource));
     }
-    
+
     public EndpointNotificationDto sendUnicastNotification(NotificationDto notification, String clientKeyHash,
             String notificationResourceName, String notificationResourceBody) throws Exception {
         return sendUnicastNotification(notification, clientKeyHash, getStringResource(notificationResourceName, notificationResourceBody));
@@ -302,7 +355,7 @@ public class AdminClient {
     public ProfileSchemaDto getProfileSchema(String profileSchemaId) throws Exception {
         return restTemplate.getForObject(url + "profileSchema/" + profileSchemaId, ProfileSchemaDto.class);
     }
-    
+
     public NotificationSchemaDto getNotificationSchema(String notificationSchemaId) throws Exception {
         return restTemplate.getForObject(url + "notificationSchema/" + notificationSchemaId, NotificationSchemaDto.class);
     }
@@ -314,13 +367,13 @@ public class AdminClient {
     public SchemaVersions getSchemaVersionsByApplicationId(String applicationId) throws Exception {
         return restTemplate.getForObject(url + "schemaVersions/" + applicationId, SchemaVersions.class);
     }
-    
+
     public List<ConfigurationSchemaDto> getConfigurationSchemas(String applicationId) throws Exception {
         ParameterizedTypeReference<List<ConfigurationSchemaDto>> typeRef = new ParameterizedTypeReference<List<ConfigurationSchemaDto>>() {};
         ResponseEntity<List<ConfigurationSchemaDto>> entity = restTemplate.exchange(url + "configurationSchemas/"+applicationId, HttpMethod.GET, null, typeRef);
         return entity.getBody();
     }
-    
+
     public List<ProfileSchemaDto> getProfileSchemas(String applicationId) throws Exception {
         ParameterizedTypeReference<List<ProfileSchemaDto>> typeRef = new ParameterizedTypeReference<List<ProfileSchemaDto>>() {};
         ResponseEntity<List<ProfileSchemaDto>> entity = restTemplate.exchange(url + "profileSchemas/"+applicationId, HttpMethod.GET, null, typeRef);
@@ -332,19 +385,19 @@ public class AdminClient {
         ResponseEntity<List<NotificationSchemaDto>> entity = restTemplate.exchange(url + "notificationSchemas/"+applicationId, HttpMethod.GET, null, typeRef);
         return entity.getBody();
     }
-    
+
     public List<SchemaDto> getUserNotificationSchemas(String applicationId) throws Exception {
         ParameterizedTypeReference<List<SchemaDto>> typeRef = new ParameterizedTypeReference<List<SchemaDto>>() {};
         ResponseEntity<List<SchemaDto>> entity = restTemplate.exchange(url + "userNotificationSchemas/"+applicationId, HttpMethod.GET, null, typeRef);
         return entity.getBody();
     }
-    
+
     public List<LogSchemaDto> getLogSchemas(String applicationId) throws Exception {
         ParameterizedTypeReference<List<LogSchemaDto>> typeRef = new ParameterizedTypeReference<List<LogSchemaDto>>() {};
         ResponseEntity<List<LogSchemaDto>> entity = restTemplate.exchange(url + "logSchemas/"+applicationId, HttpMethod.GET, null, typeRef);
         return entity.getBody();
     }
-    
+
     public List<TopicDto> getTopics(String applicationId) throws Exception {
         ParameterizedTypeReference<List<TopicDto>> typeRef = new ParameterizedTypeReference<List<TopicDto>>() {};
         ResponseEntity<List<TopicDto>> entity = restTemplate.exchange(url + "topics/"+applicationId, HttpMethod.GET, null, typeRef);
@@ -354,7 +407,7 @@ public class AdminClient {
     public void deleteTopic(TopicDto topic) throws Exception {
         deleteTopic(topic.getId());
     }
-    
+
     public void deleteTopic(String topicId) throws Exception {
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
         params.add("topicId", topicId);
@@ -364,11 +417,11 @@ public class AdminClient {
     public EndpointGroupDto editEndpointGroup(EndpointGroupDto endpointGroup) throws Exception {
         return restTemplate.postForObject(url + "endpointGroup", endpointGroup, EndpointGroupDto.class);
     }
-    
+
     public EndpointGroupDto getEndpointGroup(String endpointGroupId) throws Exception {
         return restTemplate.getForObject(url + "endpointGroup/" + endpointGroupId, EndpointGroupDto.class);
     }
-    
+
     public void deleteEndpointGroup(String endpointGroupId) throws Exception {
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
         params.add("endpointGroupId", endpointGroupId);
@@ -380,13 +433,13 @@ public class AdminClient {
         ResponseEntity<List<EndpointGroupDto>> entity = restTemplate.exchange(url + "endpointGroups/"+applicationId, HttpMethod.GET, null, typeRef);
         return entity.getBody();
     }
-    
+
     public List<SchemaDto> getVacantConfigurationSchemasByEndpointGroupId(String endpointGroupId) throws Exception {
         ParameterizedTypeReference<List<SchemaDto>> typeRef = new ParameterizedTypeReference<List<SchemaDto>>() {};
         ResponseEntity<List<SchemaDto>> entity = restTemplate.exchange(url + "vacantConfigurationSchemas/"+endpointGroupId, HttpMethod.GET, null, typeRef);
         return entity.getBody();
     }
-    
+
     public void deleteConfigurationRecord(String schemaId, String endpointGroupId) throws Exception {
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
         params.add("schemaId", schemaId);
@@ -405,16 +458,16 @@ public class AdminClient {
     public ConfigurationDto editConfiguration(ConfigurationDto configuration) throws Exception {
         return restTemplate.postForObject(url + "configuration", configuration, ConfigurationDto.class);
     }
-    
+
     public ConfigurationRecordDto getConfigurationRecord(String schemaId, String endpointGroupId) throws Exception {
-        return restTemplate.getForObject(url + "configurationRecord?schemaId={schemaId}&endpointGroupId={endpointGroupId}", 
+        return restTemplate.getForObject(url + "configurationRecord?schemaId={schemaId}&endpointGroupId={endpointGroupId}",
                 ConfigurationRecordDto.class, schemaId, endpointGroupId);
     }
 
     public ConfigurationDto activateConfiguration(String configurationId) throws Exception {
         return restTemplate.postForObject(url + "activateConfiguration", configurationId, ConfigurationDto.class);
     }
-    
+
     public ConfigurationDto deactivateConfiguration(String configurationId) throws Exception {
         return restTemplate.postForObject(url + "deactivateConfiguration", configurationId, ConfigurationDto.class);
     }
@@ -426,25 +479,25 @@ public class AdminClient {
     public ProfileFilterDto editProfileFilter(ProfileFilterDto profileFilter) throws Exception {
         return restTemplate.postForObject(url + "profileFilter", profileFilter, ProfileFilterDto.class);
     }
-    
+
     public ProfileFilterRecordDto getProfileFilterRecord(String schemaId, String endpointGroupId) throws Exception {
-        return restTemplate.getForObject(url + "profileFilterRecord?schemaId={schemaId}&endpointGroupId={endpointGroupId}", 
+        return restTemplate.getForObject(url + "profileFilterRecord?schemaId={schemaId}&endpointGroupId={endpointGroupId}",
                 ProfileFilterRecordDto.class, schemaId, endpointGroupId);
     }
-    
+
     public List<SchemaDto> getVacantProfileSchemasByEndpointGroupId(String endpointGroupId) throws Exception {
         ParameterizedTypeReference<List<SchemaDto>> typeRef = new ParameterizedTypeReference<List<SchemaDto>>() {};
         ResponseEntity<List<SchemaDto>> entity = restTemplate.exchange(url + "vacantProfileSchemas/"+endpointGroupId, HttpMethod.GET, null, typeRef);
         return entity.getBody();
     }
-    
+
     public void deleteProfileFilterRecord(String schemaId, String endpointGroupId) throws Exception {
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
         params.add("schemaId", schemaId);
         params.add("endpointGroupId", endpointGroupId);
         restTemplate.postForObject(url + "delProfileFilterRecord", params, Void.class);
     }
-    
+
     public List<ProfileFilterRecordDto> getProfileFilterRecords(String endpointGroupId, boolean includeDeprecated) throws Exception {
         ParameterizedTypeReference<List<ProfileFilterRecordDto>> typeRef = new ParameterizedTypeReference<List<ProfileFilterRecordDto>>() {};
         ResponseEntity<List<ProfileFilterRecordDto>> entity = restTemplate.exchange(url +
@@ -456,7 +509,7 @@ public class AdminClient {
     public ProfileFilterDto activateProfileFilter(String profileFilterId) throws Exception {
         return restTemplate.postForObject(url + "activateProfileFilter", profileFilterId, ProfileFilterDto.class);
     }
-    
+
     public ProfileFilterDto deactivateProfileFilter(String profileFilterId) throws Exception {
         return restTemplate.postForObject(url + "deactivateProfileFilter", profileFilterId, ProfileFilterDto.class);
     }
@@ -464,11 +517,11 @@ public class AdminClient {
     public UserDto editUser(UserDto user) throws Exception {
         return restTemplate.postForObject(url + "user", user, UserDto.class);
     }
-    
+
     public UserDto getUser(String userId) throws Exception {
         return restTemplate.getForObject(url + "user/" + userId, UserDto.class);
     }
-    
+
     public void deleteUser(String userId) throws Exception {
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
         params.add("userId", userId);
@@ -490,7 +543,7 @@ public class AdminClient {
     public EventClassFamilyDto editEventClassFamily(EventClassFamilyDto eventClassFamily) throws Exception {
         return restTemplate.postForObject(url + "eventClassFamily", eventClassFamily, EventClassFamilyDto.class);
     }
-    
+
     public EventClassFamilyDto getEventClassFamilyById(String ecfId) {
         return restTemplate.getForObject(url + "eventClassFamily/" + ecfId, EventClassFamilyDto.class);
     }
@@ -506,7 +559,7 @@ public class AdminClient {
         }
         throw new RuntimeException("Family with name " + familyName + " not found!");
     }
-    
+
     public List<EventClassFamilyDto> getEventClassFamilies() {
         ParameterizedTypeReference<List<EventClassFamilyDto>> typeRef = new ParameterizedTypeReference<List<EventClassFamilyDto>>() {};
         ResponseEntity<List<EventClassFamilyDto>> entity = restTemplate.exchange(url + "eventClassFamilies", HttpMethod.GET, null, typeRef);
@@ -534,23 +587,23 @@ public class AdminClient {
     public ApplicationEventFamilyMapDto editApplicationEventFamilyMap(ApplicationEventFamilyMapDto applicationEventFamilyMap) throws Exception {
         return restTemplate.postForObject(url + "applicationEventMap", applicationEventFamilyMap, ApplicationEventFamilyMapDto.class);
     }
-    
+
     public ApplicationEventFamilyMapDto getApplicationEventFamilyMap(String aefMapId) throws Exception {
         return restTemplate.getForObject(url + "applicationEventMap/" + aefMapId, ApplicationEventFamilyMapDto.class);
     }
-    
+
     public List<ApplicationEventFamilyMapDto> getApplicationEventFamilyMapsByApplicationId(String applicationId) throws Exception {
         ParameterizedTypeReference<List<ApplicationEventFamilyMapDto>> typeRef = new ParameterizedTypeReference<List<ApplicationEventFamilyMapDto>>() {};
         ResponseEntity<List<ApplicationEventFamilyMapDto>> entity = restTemplate.exchange(url + "applicationEventMaps/"+applicationId, HttpMethod.GET, null, typeRef);
         return entity.getBody();
     }
-    
+
     public List<EcfInfoDto> getVacantEventClassFamiliesByApplicationId(String applicationId) throws Exception {
         ParameterizedTypeReference<List<EcfInfoDto>> typeRef = new ParameterizedTypeReference<List<EcfInfoDto>>() {};
         ResponseEntity<List<EcfInfoDto>> entity = restTemplate.exchange(url + "vacantEventClassFamilies/"+applicationId, HttpMethod.GET, null, typeRef);
         return entity.getBody();
     }
-    
+
     public List<AefMapInfoDto> getEventClassFamiliesByApplicationId(String applicationId) throws Exception {
         ParameterizedTypeReference<List<AefMapInfoDto>> typeRef = new ParameterizedTypeReference<List<AefMapInfoDto>>() {};
         ResponseEntity<List<AefMapInfoDto>> entity = restTemplate.exchange(url + "eventClassFamilies/"+applicationId, HttpMethod.GET, null, typeRef);
@@ -570,39 +623,79 @@ public class AdminClient {
         ResponseEntity<List<LogAppenderDto>> entity = restTemplate.exchange(url + "logAppenders/"+applicationId, HttpMethod.GET, null, typeRef);
         return entity.getBody();
     }
-    
+
     public void deleteLogAppender(String logAppenderId) throws Exception {
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
         params.add("logAppenderId", logAppenderId);
         restTemplate.postForLocation(url + "delLogAppender", params);
     }
-    
+
     public UserVerifierDto editUserVerifierDto(UserVerifierDto userVerifierDto) throws Exception {
         return restTemplate.postForObject(url + "userVerifier", userVerifierDto, UserVerifierDto.class);
     }
-    
-    public void downloadSdk(SdkPropertiesDto key, String destination) throws Exception {
+
+    public SdkProfileDto createSdkProfile(SdkProfileDto sdkProfile) throws Exception {
+        return restTemplate.postForObject(url + "addSdkProfile", sdkProfile, SdkProfileDto.class);
+    }
+
+    public void deleteSdkProfile(SdkProfileDto sdkProfile) throws Exception {
+        MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
+        params.add("topicId", sdkProfile.getId());
+        restTemplate.postForLocation(url + "deleteSdkProfile", params);
+    }
+
+    public SdkProfileDto getSdkProfile(String sdkProfileId) throws Exception {
+        ParameterizedTypeReference<SdkProfileDto> typeRef = new ParameterizedTypeReference<SdkProfileDto>() {};
+        ResponseEntity<SdkProfileDto> entity = restTemplate.exchange(url + "sdkProfile/" + sdkProfileId, HttpMethod.GET, null, typeRef);
+        return entity.getBody();
+    }
+
+    public List<SdkProfileDto> getSdkProfiles(String applicationId) throws Exception {
+        ParameterizedTypeReference<List<SdkProfileDto>> typeRef = new ParameterizedTypeReference<List<SdkProfileDto>>() {};
+        ResponseEntity<List<SdkProfileDto>> entity = restTemplate.exchange(url + "sdkProfiles/"+applicationId, HttpMethod.GET, null, typeRef);
+        return entity.getBody();
+    }
+
+    public void downloadSdk(String sdkProfileId, SdkPlatform targetPlatform, String destination) {
+        FileResponseExtractor extractor = new FileResponseExtractor(new File(destination));
+        MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
+        parameters.add("sdkProfileId", sdkProfileId);
+        parameters.add("targetPlatform", targetPlatform.toString());
+        RequestCallback request = new DataRequestCallback<>(parameters);
+        restTemplate.execute(url + "sdk", HttpMethod.POST, request, extractor);
+    }
+
+    public FileData downloadSdk(String sdkProfileId, SdkPlatform targetPlatform) {
+        FileDataResponseExtractor extractor = new FileDataResponseExtractor();
+        MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
+        parameters.add("sdkProfileId", sdkProfileId);
+        parameters.add("targetPlatform", targetPlatform.toString());
+        RequestCallback request = new DataRequestCallback<>(parameters);
+        return restTemplate.execute(url + "sdk", HttpMethod.POST, request, extractor);
+    }
+
+    public void downloadSdk(SdkProfileDto key, String destination) throws Exception {
         FileResponseExtractor extractor = new FileResponseExtractor( new File(destination));
         RequestCallback request = new DataRequestCallback<>(key);
         restTemplate.execute(url + "sdk", HttpMethod.POST, request, extractor);
         logger.info("Downloaded sdk to file '{}'", extractor.getDestFile());
     }
-    
+
     public FileData downloadLogRecordLibrary(RecordKey key) throws Exception {
         FileDataResponseExtractor extractor = new FileDataResponseExtractor();
         RequestCallback request = new DataRequestCallback<>(key);
         FileData data = restTemplate.execute(url + "logLibrary", HttpMethod.POST, request, extractor);
         return data;
     }
-    
+
     public FileData downloadLogRecordSchema(RecordKey key) throws Exception {
         FileDataResponseExtractor extractor = new FileDataResponseExtractor();
         RequestCallback request = new DataRequestCallback<>(key);
         FileData data = restTemplate.execute(url + "logRecordSchema", HttpMethod.POST, request, extractor);
         return data;
     }
-    
-    public FileData downloadSdk(SdkPropertiesDto key) throws Exception {
+
+    public FileData downloadSdk(SdkProfileDto key) throws Exception {
         FileDataResponseExtractor extractor = new FileDataResponseExtractor();
         RequestCallback request = new DataRequestCallback<>(key);
         FileData data = restTemplate.execute(url + "sdk", HttpMethod.POST, request, extractor);
@@ -614,18 +707,18 @@ public class AdminClient {
     }
 
     private static final Pattern fileNamePattern = Pattern.compile("^(.+?)filename=\"(.+?)\"");
-    
+
     private class DataRequestCallback<T> implements RequestCallback {
 
         private List<MediaType> mediaTypes = Arrays.asList(MediaType.APPLICATION_JSON,
                 MediaType.valueOf("application/*+json"));
-        
+
         private HttpEntity<T> requestEntity;
-        
+
         public DataRequestCallback(T entity) {
             requestEntity = new HttpEntity<>(entity);
         }
-        
+
         @SuppressWarnings("unchecked")
         @Override
         public void doWithRequest(ClientHttpRequest httpRequest) throws IOException {

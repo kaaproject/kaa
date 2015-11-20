@@ -46,6 +46,7 @@
         <sdk.path>${project.build.directory}/sdk</sdk.path>
         <script.java.options></script.java.options>
     </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>
@@ -54,6 +55,10 @@
         <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>
             <artifactId>netty-server</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava-gwt</artifactId>
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>

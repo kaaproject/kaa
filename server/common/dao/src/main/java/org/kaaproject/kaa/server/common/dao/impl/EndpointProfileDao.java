@@ -19,7 +19,11 @@ package org.kaaproject.kaa.server.common.dao.impl;
 import java.nio.ByteBuffer;
 import java.util.List;
 
+import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
+import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
+import org.kaaproject.kaa.common.dto.PageLinkDto;
 import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
 
 /**
@@ -38,6 +42,30 @@ public interface EndpointProfileDao<T extends EndpointProfile> extends Dao<T, By
      * @return the endpoint profile object
      */
     T findByKeyHash(byte[] endpointKeyHash);
+
+    /**
+     * Find endpoint profile by endpoint group id.
+     *
+     * @param pageLink the page link dto
+     * @return the endpoint profiles page dto
+     */
+    EndpointProfilesPageDto findByEndpointGroupId(PageLinkDto pageLink);
+
+    /**
+     * Find endpoint profile body by endpoint group id.
+     *
+     * @param pageLink the page link dto
+     * @return the endpoint profiles page dto
+     */
+    EndpointProfilesBodyDto findBodyByEndpointGroupId(PageLinkDto pageLink);
+
+    /**
+     * Find endpoint profile body by endpoint key hash.
+     *
+     * @param endpointKeyHash the endpoint key hash
+     * @return the endpoint profile body dto
+     */
+    EndpointProfileBodyDto findBodyByKeyHash(byte[] endpointKeyHash);
 
     /**
      * Gets the count of endpoint profile by key hash.
@@ -76,4 +104,19 @@ public interface EndpointProfileDao<T extends EndpointProfile> extends Dao<T, By
      * @return the endpoint user
      */
     List<T> findByEndpointUserId(String endpointUserId);
+
+    /**
+     * @deprecated The functionality of this method is not yet necessary.
+     */
+    List<T> findBySdkToken(String sdkToken);
+
+    /**
+     * Checks whether there are any endpoint profiles with the given SDK token.
+     *
+     * @param sdkToken An SDK token
+     *
+     * @return <code>true</code> if there is at least one endpoint profile with
+     *         the given SDK token, <code>false</code> otherwise
+     */
+    boolean checkSdkToken(String sdkToken);
 }
