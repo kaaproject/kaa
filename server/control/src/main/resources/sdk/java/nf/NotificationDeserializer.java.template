@@ -43,7 +43,7 @@ class NotificationDeserializer {
         this.executorContext = executorContext;
     }
 
-    void notify(Collection<NotificationListener> listeners, Topic topic, byte[] notificationData) throws IOException{
+    void notify(Collection<NotificationListener> listeners, final Topic topic, byte[] notificationData) throws IOException{
         final ${notification_class} notification = fromByteArray(notificationData);
         for (final NotificationListener listener : listeners) {
             executorContext.getCallbackExecutor().submit(new Runnable() {
