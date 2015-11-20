@@ -23,6 +23,11 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+/**
+ * A Common Type Library schema.
+ *
+ * @since v0.8.0
+ */
 public class CTLSchemaDto extends AbstractCTLSchemaDto implements HasId, Serializable {
 
     private CTLSchemaMetaInfoDto metaInfo;
@@ -85,10 +90,10 @@ public class CTLSchemaDto extends AbstractCTLSchemaDto implements HasId, Seriali
         infoDto.setCreatedUsername(createdUsername);
         infoDto.setDescription(description);
         if (dependencySet != null && !dependencySet.isEmpty()) {
-            Set<CTLDependencyDto> dependencies = new HashSet<>();
+            Set<CTLSchemaMetaInfoDto> dependencies = new HashSet<>();
             for (CTLSchemaDto dep : dependencySet) {
                 CTLSchemaMetaInfoDto mi = dep.getMetaInfo();
-                dependencies.add(new CTLDependencyDto(mi.getFqn(), mi.getVersion()));
+                dependencies.add(new CTLSchemaMetaInfoDto(mi.getFqn(), mi.getVersion()));
             }
             infoDto.setDependencies(dependencies);
         }
@@ -97,20 +102,29 @@ public class CTLSchemaDto extends AbstractCTLSchemaDto implements HasId, Seriali
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
         CTLSchemaDto that = (CTLSchemaDto) o;
 
-        if (createdTime != that.createdTime) return false;
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (metaInfo != null ? !metaInfo.equals(that.metaInfo) : that.metaInfo != null) return false;
-        if (tenantId != null ? !tenantId.equals(that.tenantId) : that.tenantId != null) return false;
+        if (createdTime != that.createdTime)
+            return false;
+        if (id != null ? !id.equals(that.id) : that.id != null)
+            return false;
+        if (metaInfo != null ? !metaInfo.equals(that.metaInfo) : that.metaInfo != null)
+            return false;
+        if (tenantId != null ? !tenantId.equals(that.tenantId) : that.tenantId != null)
+            return false;
         if (applicationId != null ? !applicationId.equals(that.applicationId) : that.applicationId != null)
             return false;
-        if (body != null ? !body.equals(that.body) : that.body != null) return false;
-        if (name != null ? !name.equals(that.name) : that.name != null) return false;
-        if (description != null ? !description.equals(that.description) : that.description != null) return false;
+        if (body != null ? !body.equals(that.body) : that.body != null)
+            return false;
+        if (name != null ? !name.equals(that.name) : that.name != null)
+            return false;
+        if (description != null ? !description.equals(that.description) : that.description != null)
+            return false;
         if (createdUsername != null ? !createdUsername.equals(that.createdUsername) : that.createdUsername != null)
             return false;
         return !(dependencySet != null ? !dependencySet.equals(that.dependencySet) : that.dependencySet != null);

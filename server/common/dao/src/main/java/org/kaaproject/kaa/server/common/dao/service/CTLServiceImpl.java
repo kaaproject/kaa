@@ -133,7 +133,7 @@ public class CTLServiceImpl implements CTLService {
 
     @Override
     public void removeCTLSchemaByFqnAndVerAndTenantId(String fqn, Integer version, String tenantId) {
-        if (isBlank(fqn) || version == null || isBlank(tenantId)) {
+        if (isBlank(fqn) || version == null) {
             throw new IncorrectParameterException("Incorrect parameters for ctl schema request.");
         }
         LOG.debug("Remove ctl schema by fqn {} version {} and tenant id {}", fqn, version, tenantId);
@@ -164,7 +164,7 @@ public class CTLServiceImpl implements CTLService {
 
     @Override
     public CTLSchemaDto findCTLSchemaByFqnAndVerAndTenantId(String fqn, Integer version, String tenantId) {
-        if (isBlank(fqn) || version == null || isBlank(tenantId)) {
+        if (isBlank(fqn) || version == null) {
             throw new IncorrectParameterException("Incorrect parameters for ctl schema request.");
         }
         LOG.debug("Find ctl schema by fqn {} version {} and tenant id {}", fqn, version, tenantId);
@@ -250,7 +250,7 @@ public class CTLServiceImpl implements CTLService {
 
     @Override
     public List<CTLSchemaDto> findCTLSchemaDependents(String fqn, Integer version, String tenantId) {
-        if (isBlank(fqn) || version == null || isBlank(tenantId)) {
+        if (isBlank(fqn) || version == null) {
             throw new IncorrectParameterException("Incorrect parameters for ctl schema request.");
         }
         LOG.debug("Find dependents schemas for schema with fqn {} version {} and tenantId {}", fqn, version, tenantId);

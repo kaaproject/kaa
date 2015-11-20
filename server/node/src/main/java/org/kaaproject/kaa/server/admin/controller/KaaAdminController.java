@@ -552,6 +552,15 @@ public class KaaAdminController {
     /**
      * Saves a CTL schema.
      */
+    @RequestMapping(value = "CTL/saveSchema", params = { "body" }, method = RequestMethod.POST)
+    @ResponseBody
+    public CTLSchemaInfoDto saveCTLSchema(@RequestParam String body) throws KaaAdminServiceException {
+        return kaaAdminService.saveCTLSchema(body);
+    }
+
+    /**
+     * Saves a CTL schema.
+     */
     @RequestMapping(value = "CTL/saveSchema", method = RequestMethod.POST)
     @ResponseBody
     public CTLSchemaInfoDto saveCTLSchema(@RequestBody CTLSchemaInfoDto schema) throws KaaAdminServiceException {

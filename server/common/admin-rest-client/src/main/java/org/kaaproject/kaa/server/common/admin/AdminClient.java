@@ -850,6 +850,12 @@ public class AdminClient {
         return bar;
     }
 
+    public CTLSchemaInfoDto saveCTLSchema(String body) {
+        MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
+        params.add("body", body);
+        return restTemplate.postForObject(url + "CTL/saveSchema", params, CTLSchemaInfoDto.class);
+    }
+
     public CTLSchemaInfoDto saveCTLSchema(CTLSchemaInfoDto schema) {
         return restTemplate.postForObject(url + "CTL/saveSchema", schema, CTLSchemaInfoDto.class);
     }

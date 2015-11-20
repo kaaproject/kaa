@@ -5,18 +5,26 @@ import org.kaaproject.kaa.common.dto.HasId;
 import java.io.Serializable;
 import java.util.Set;
 
+/**
+ * An object of this class represents
+ * {@link org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto} for REST API calls.
+ *
+ * @author Igor Khanenko
+ *
+ * @since v0.8.0
+ */
 public class CTLSchemaInfoDto extends AbstractCTLSchemaDto implements HasId, Serializable {
 
     private String fqn;
     private Integer version;
     private CTLSchemaScopeDto scope;
-    private Set<CTLDependencyDto> dependencies;
+    private Set<CTLSchemaMetaInfoDto> dependencies;
 
-    public Set<CTLDependencyDto> getDependencies() {
+    public Set<CTLSchemaMetaInfoDto> getDependencies() {
         return dependencies;
     }
 
-    public void setDependencies(Set<CTLDependencyDto> dependencies) {
+    public void setDependencies(Set<CTLSchemaMetaInfoDto> dependencies) {
         this.dependencies = dependencies;
     }
 
@@ -46,14 +54,19 @@ public class CTLSchemaInfoDto extends AbstractCTLSchemaDto implements HasId, Ser
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
         CTLSchemaInfoDto infoDto = (CTLSchemaInfoDto) o;
 
-        if (fqn != null ? !fqn.equals(infoDto.fqn) : infoDto.fqn != null) return false;
-        if (version != null ? !version.equals(infoDto.version) : infoDto.version != null) return false;
-        if (scope != infoDto.scope) return false;
+        if (fqn != null ? !fqn.equals(infoDto.fqn) : infoDto.fqn != null)
+            return false;
+        if (version != null ? !version.equals(infoDto.version) : infoDto.version != null)
+            return false;
+        if (scope != infoDto.scope)
+            return false;
         return dependencies != null ? dependencies.equals(infoDto.dependencies) : infoDto.dependencies == null;
 
     }
