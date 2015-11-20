@@ -28,7 +28,7 @@ import org.kaaproject.kaa.common.dto.HistoryDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
-import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
+import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.core.configuration.BaseData;
@@ -39,7 +39,7 @@ import org.kaaproject.kaa.server.common.dao.EndpointService;
 import org.kaaproject.kaa.server.common.dao.EventClassService;
 import org.kaaproject.kaa.server.common.dao.HistoryService;
 import org.kaaproject.kaa.server.common.dao.ProfileService;
-import org.kaaproject.kaa.server.common.dao.SdkKeyService;
+import org.kaaproject.kaa.server.common.dao.SdkProfileService;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
 import org.kaaproject.kaa.server.operations.service.cache.AppSeqNumber;
 import org.kaaproject.kaa.server.operations.service.cache.AppVersionKey;
@@ -131,7 +131,7 @@ public class ESTestCacheService implements CacheService {
     }
 
     @Override
-    public SdkPropertiesDto getSdkPropertiesBySdkToken(String key) {
+    public SdkProfileDto getSdkProfileBySdkToken(String key) {
         return null;
     }
 
@@ -358,7 +358,7 @@ public class ESTestCacheService implements CacheService {
      * @see org.kaaproject.kaa.server.operations.service.cache.CacheService#setSdkKeyService(org.kaaproject.kaa.server.common.dao.SdkKeyService)
      */
     @Override
-    public void setSdkKeyService(SdkKeyService sdkKeyService) {
+    public void setSdkProfileService(SdkProfileService sdkKeyService) {
         // TODO Auto-generated method stub
     }
 

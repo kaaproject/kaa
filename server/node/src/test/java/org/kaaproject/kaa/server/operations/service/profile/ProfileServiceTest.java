@@ -25,7 +25,7 @@ import org.junit.Test;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EventClassFamilyVersionStateDto;
 import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
-import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
+import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
@@ -74,7 +74,8 @@ public class ProfileServiceTest {
     public void testPopulateVersionStates() {
         EndpointProfileDto dtoMock = Mockito.mock(EndpointProfileDto.class);
 
-        SdkPropertiesDto sdkProperties = new SdkPropertiesDto(null, 1, 2, 3, 4, SdkPlatform.JAVA, Collections.EMPTY_LIST, null, null);
+        SdkProfileDto sdkProperties = new SdkProfileDto(null, 1, 2, 3, 4, Collections.EMPTY_LIST, null, null,
+                null, null, null);
 
         ApplicationEventFamilyMapDto applicationEventFamilyMap = new ApplicationEventFamilyMapDto();
         applicationEventFamilyMap.setVersion(7);

@@ -16,34 +16,33 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
-import static org.kaaproject.kaa.server.admin.client.util.Utils.getMaxSchemaVersions;
-
-import java.util.ArrayList;
-import java.util.List;
-
+import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
 import org.kaaproject.avro.ui.gwt.client.widget.BusyPopup;
 import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
-import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
+import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
-import org.kaaproject.kaa.server.admin.client.mvp.place.GenerateSdkPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.view.GenerateSdkView;
-import org.kaaproject.kaa.server.admin.client.servlet.ServletHelper;
+import org.kaaproject.kaa.server.admin.client.mvp.place.AddSdkProfilePlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.SdkProfilesPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.view.AddSdkProfileView;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.AcceptsOneWidget;
+import java.util.ArrayList;
+import java.util.List;
 
-public class GenerateSdkActivity extends AbstractDetailsActivity<SdkPropertiesDto, GenerateSdkView, GenerateSdkPlace> {
+import static org.kaaproject.kaa.server.admin.client.util.Utils.getMaxSchemaVersions;
+
+public class AddSdkProfileActivity extends AbstractDetailsActivity<SdkProfileDto, AddSdkProfileView, AddSdkProfilePlace> {
 
     private String applicationId;
 
-    public GenerateSdkActivity(GenerateSdkPlace place, ClientFactory clientFactory) {
+    public AddSdkProfileActivity(AddSdkProfilePlace place, ClientFactory clientFactory) {
         super(place, clientFactory);
         this.applicationId = place.getApplicationId();
     }
@@ -54,18 +53,18 @@ public class GenerateSdkActivity extends AbstractDetailsActivity<SdkPropertiesDt
     }
 
     @Override
-    protected String getEntityId(GenerateSdkPlace place) {
+    protected String getEntityId(AddSdkProfilePlace place) {
         return null;
     }
 
     @Override
-    protected GenerateSdkView getView(boolean create) {
-        return clientFactory.getGenerateSdkView();
+    protected AddSdkProfileView getView(boolean create) {
+        return clientFactory.getAddSdkProfileView();
     }
 
     @Override
-    protected SdkPropertiesDto newEntity() {
-        SdkPropertiesDto sdkPropertiesDto = new SdkPropertiesDto();
+    protected SdkProfileDto newEntity() {
+        SdkProfileDto sdkPropertiesDto = new SdkProfileDto();
         sdkPropertiesDto.setApplicationId(applicationId);
         return sdkPropertiesDto;
     }
@@ -91,7 +90,7 @@ public class GenerateSdkActivity extends AbstractDetailsActivity<SdkPropertiesDt
 
                     @Override
                     public void onSuccess(final List<AefMapInfoDto> ecfs) {
-                        KaaAdmin.getDataSource().loadUserVerifiers(applicationId, 
+                        KaaAdmin.getDataSource().loadUserVerifiers(applicationId,
                                 new AsyncCallback<List<UserVerifierDto>>() {
                                     @Override
                                     public void onFailure(Throwable caught) {
@@ -111,34 +110,36 @@ public class GenerateSdkActivity extends AbstractDetailsActivity<SdkPropertiesDt
             }
         });
     }
-    
-    private void onInfoRetrieved(SchemaVersions schemaVersions, 
-            List<AefMapInfoDto> aefMaps, 
+
+    private void onInfoRetrieved(SchemaVersions schemaVersions,
+            List<AefMapInfoDto> aefMaps,
             List<UserVerifierDto> userVerifiers) {
-        
+
         List<SchemaDto> confSchemaVersions = schemaVersions.getConfigurationSchemaVersions();
-        detailsView.getConfigurationSchemaVersion().setValue(getMaxSchemaVersions(confSchemaVersions), true);
+        detailsView.getConfigurationSchemaVersion().setValue(getMaxSchemaVersions(confSchemaVersions));
         detailsView.getConfigurationSchemaVersion().setAcceptableValues(confSchemaVersions);
-        
+
         List<SchemaDto> pfSchemaVersions = schemaVersions.getProfileSchemaVersions();
-        detailsView.getProfileSchemaVersion().setValue(getMaxSchemaVersions(pfSchemaVersions), true);
+        detailsView.getProfileSchemaVersion().setValue(getMaxSchemaVersions(pfSchemaVersions));
         detailsView.getProfileSchemaVersion().setAcceptableValues(pfSchemaVersions);
 
         List<SchemaDto> notSchemaVersions = schemaVersions.getNotificationSchemaVersions();
-        detailsView.getNotificationSchemaVersion().setValue(getMaxSchemaVersions(notSchemaVersions), true);
+        detailsView.getNotificationSchemaVersion().setValue(getMaxSchemaVersions(notSchemaVersions));
         detailsView.getNotificationSchemaVersion().setAcceptableValues(notSchemaVersions);
-        
+
         List<SchemaDto> logSchemaVersions = schemaVersions.getLogSchemaVersions();
-        detailsView.getLogSchemaVersion().setValue(getMaxSchemaVersions(logSchemaVersions), true);
+        detailsView.getLogSchemaVersion().setValue(getMaxSchemaVersions(logSchemaVersions));
         detailsView.getLogSchemaVersion().setAcceptableValues(logSchemaVersions);
-        
+
         detailsView.setAefMaps(aefMaps);
-        
+
         detailsView.getDefaultUserVerifier().setAcceptableValues(userVerifiers);
     }
- 
+
     @Override
     protected void onSave() {
+        entity.setName(detailsView.getName().getValue());
+
         entity.setConfigurationSchemaVersion(detailsView.getConfigurationSchemaVersion().
                 getValue().getMajorVersion());
         entity.setProfileSchemaVersion(detailsView.getProfileSchemaVersion().
@@ -147,8 +148,7 @@ public class GenerateSdkActivity extends AbstractDetailsActivity<SdkPropertiesDt
                 getValue().getMajorVersion());
         entity.setLogSchemaVersion(detailsView.getLogSchemaVersion().
                 getValue().getMajorVersion());
-        entity.setTargetPlatform(detailsView.getTargetPlatform().getValue());
-        
+
         List<String> aefMapIds = new ArrayList<>();
         List<AefMapInfoDto> aefMaps = detailsView.getSelectedAefMaps().getValues();
         if (aefMaps != null) {
@@ -162,16 +162,16 @@ public class GenerateSdkActivity extends AbstractDetailsActivity<SdkPropertiesDt
                     .getValue().getVerifierToken());
         }
     }
-    
+
     @Override
     protected void loadEntity() {
         onEntityRetrieved();
     }
 
     @Override
-    protected void getEntity(String id, AsyncCallback<SdkPropertiesDto> callback) {}
+    protected void getEntity(String id, AsyncCallback<SdkProfileDto> callback) {}
 
-    
+
     @Override
     protected void doSave(final EventBus eventBus) {
         onSave();
@@ -180,22 +180,22 @@ public class GenerateSdkActivity extends AbstractDetailsActivity<SdkPropertiesDt
             detailsView.setErrorMessage(Utils.constants.specifyVerifier());
         } else {
 
-            KaaAdmin.getDataSource().generateSdk(entity,new BusyAsyncCallback<String>() {
+            KaaAdmin.getDataSource().addSdkProfile(entity, new BusyAsyncCallback<SdkProfileDto>() {
+
+                @Override
+                public void onSuccessImpl(SdkProfileDto result) {
+                    detailsView.reset();
+                    AddSdkProfileActivity.this.goTo(new SdkProfilesPlace(applicationId));
+                }
 
                 @Override
                 public void onFailureImpl(Throwable caught) {
                     Utils.handleException(caught, detailsView);
                 }
-
-                @Override
-                public void onSuccessImpl(String key) {
-                    detailsView.clearError();
-                    ServletHelper.downloadSdk(key);
-                }
             });
         }
     }
-    
+
     @Override
-    protected void editEntity(SdkPropertiesDto entity, final AsyncCallback<SdkPropertiesDto> callback) {}
+    protected void editEntity(SdkProfileDto entity, final AsyncCallback<SdkProfileDto> callback) {}
 }

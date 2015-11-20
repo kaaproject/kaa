@@ -655,6 +655,7 @@ public class AbstractTest {
         profileDto.setSubscriptions(topicIds);
         profileDto.setEndpointKeyHash("TEST_KEY_HASH".getBytes());
         profileDto.setProfile("{\"title\": \"TEST\"}");
+        profileDto.setSdkToken(UUID.randomUUID().toString());
         return endpointService.saveEndpointProfile(profileDto);
     }
 
@@ -673,6 +674,7 @@ public class AbstractTest {
         } else {
             profileDto.setCfGroupStates(groupState);
         }
+        profileDto.setSdkToken(UUID.randomUUID().toString());
         return endpointService.saveEndpointProfile(profileDto);
     }
 }

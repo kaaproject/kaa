@@ -29,11 +29,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.base.Charsets;
+import com.google.common.base.Charsets;
 import net.iharder.Base64;
-
 import org.apache.avro.Schema;
 import org.apache.avro.SchemaParseException;
+import org.apache.avro.generic.GenericDatumReader;
 import org.apache.avro.generic.GenericRecord;
+import org.apache.avro.io.DatumReader;
+import org.apache.avro.io.DecoderFactory;
+import org.apache.avro.io.JsonDecoder;
 import org.hibernate.StaleObjectStateException;
 import org.kaaproject.avro.ui.converter.FormAvroConverter;
 import org.kaaproject.avro.ui.converter.SchemaFormAvroConverter;
@@ -47,6 +52,7 @@ import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileViewDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
@@ -65,7 +71,8 @@ import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.UserDto;
 import org.kaaproject.kaa.common.dto.admin.RecordKey;
 import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
-import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
+import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
+import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLDependencyDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
@@ -122,7 +129,17 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.google.common.base.Charsets;
+import java.io.IOException;
+import java.security.InvalidParameterException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 
 @Service("kaaAdminService")
 public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
@@ -175,6 +192,44 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     {
         for (PluginType type : PluginType.values()) {
             pluginsInfo.put(type, new HashMap<String, PluginInfoDto>());
+        }
+    }
+
+    @Override
+    public EndpointProfileViewDto getEndpointProfileViewDtoByEndpointProfileKeyHash(String endpointProfileKeyHash)
+            throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            EndpointProfileViewDto viewDto = controlService.getEndpointProfileViewDtoByEndpointKeyHash(endpointProfileKeyHash);
+
+            ProfileSchemaDto schemaDto = viewDto.getProfileSchemaDto();
+            if (schemaDto != null) {
+                convertToSchemaForm(schemaDto, simpleSchemaFormAvroConverter);
+                /* check for empty schemas*/
+                viewDto.setEndpointProfileRecord(
+                        generateFormDataFromJson(schemaDto.getSchema(), viewDto.getEndpointProfileDto().getProfile()));
+            }
+            viewDto.setProfileSchemaDto(schemaDto);
+            for (EndpointGroupDto groupDto : viewDto.getGroupDtoList()) {
+                Utils.checkNotNull(groupDto);
+            }
+
+            return viewDto;
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    private RecordField generateFormDataFromJson(String avroSchema, String json)
+            throws KaaAdminServiceException {
+        try {
+            Schema schema = new Schema.Parser().parse(avroSchema);
+            JsonDecoder jsonDecoder = DecoderFactory.get().jsonDecoder(schema, json);
+            DatumReader<GenericRecord> datumReader = new GenericDatumReader<GenericRecord>(schema);
+            GenericRecord genericRecord = datumReader.read(null, jsonDecoder);
+            return FormAvroConverter.createRecordFieldFromGenericRecord(genericRecord);
+        } catch (Exception e) {
+            throw Utils.handleException(e);
         }
     }
 
@@ -614,32 +669,83 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
-    public String generateSdk(SdkPropertiesDto key) throws KaaAdminServiceException {
+    public SdkProfileDto addSdkProfile(SdkProfileDto sdkProfile) throws KaaAdminServiceException {
+        this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            doGenerateSdk(key);
-            return Base64.encodeObject(key, Base64.URL_SAFE);
+            this.checkApplicationId(sdkProfile.getApplicationId());
+            sdkProfile.setCreatedUsername(this.getCurrentUser().getUsername());
+            sdkProfile.setCreatedTime(System.currentTimeMillis());
+            return controlService.saveSdkProfile(sdkProfile);
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
+
+    @Override
+    public void deleteSdkProfile(String sdkProfileId) throws KaaAdminServiceException {
+        this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            SdkProfileDto sdkProfile = this.checkSdkProfileId(sdkProfileId);
+            if (!controlService.isSdkProfileUsed(sdkProfile.getToken())) {
+                controlService.deleteSdkProfile(sdkProfileId);
+            } else {
+                throw new IllegalArgumentException("Associated endpoint profiles have been found.");
+            }
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
+
+    @Override
+    public SdkProfileDto getSdkProfile(String sdkProfileId) throws KaaAdminServiceException {
+        this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            this.checkSdkProfileId(sdkProfileId);
+            return controlService.getSdkProfile(sdkProfileId);
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
+
+    @Override
+    public List<SdkProfileDto> getSdkProfilesByApplicationId(String applicationId) throws KaaAdminServiceException {
+        this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            this.checkApplicationId(applicationId);
+            return controlService.getSdkProfilesByApplicationId(applicationId);
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
+
+    @Override
+    public String generateSdk(SdkProfileDto sdkProfile, SdkPlatform targetPlatform) throws KaaAdminServiceException {
+        try {
+            doGenerateSdk(sdkProfile, targetPlatform);
+            return Base64.encodeObject(new CacheService.SdkKey(sdkProfile, targetPlatform), Base64.URL_SAFE);
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
     }
 
     @Override
-    public FileData getSdk(SdkPropertiesDto key) throws KaaAdminServiceException {
+    public FileData getSdk(SdkProfileDto sdkProfile, SdkPlatform targetPlatform) throws KaaAdminServiceException {
         try {
-            return doGenerateSdk(key);
+            return doGenerateSdk(sdkProfile, targetPlatform);
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
     }
 
-    private FileData doGenerateSdk(SdkPropertiesDto key) throws KaaAdminServiceException {
+    private FileData doGenerateSdk(SdkProfileDto sdkProfile, SdkPlatform targetPlatform) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            checkApplicationId(key.getApplicationId());
-            FileData sdkFile = cacheService.getSdk(key);
+            checkApplicationId(sdkProfile.getApplicationId());
+            CacheService.SdkKey sdkKey = new CacheService.SdkKey(sdkProfile, targetPlatform);
+            FileData sdkFile = cacheService.getSdk(sdkKey);
             if (sdkFile == null) {
-                sdkFile = controlService.generateSdk(key);
-                cacheService.putSdk(key, sdkFile);
+                sdkFile = controlService.generateSdk(sdkProfile, targetPlatform);
+                cacheService.putSdk(sdkKey, sdkFile);
             }
             return sdkFile;
         } catch (Exception e) {
@@ -653,7 +759,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         try {
             List<ApplicationDto> applications = getApplications();
             for (ApplicationDto application : applications) {
-                for (SdkPropertiesDto key : cacheService.getCachedSdkKeys(application.getId())) {
+                for (CacheService.SdkKey key : cacheService.getCachedSdkKeys(application.getId())) {
                     cacheService.flushSdk(key);
                 }
             }
@@ -2729,9 +2835,22 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             } else {
                 throw new IllegalArgumentException("You do not have permission to perform this operation!");
             }
+
         } catch (Exception cause) {
             throw Utils.handleException(cause);
         }
     }
 
+    public SdkProfileDto checkSdkProfileId(String sdkProfileId) throws KaaAdminServiceException {
+        try {
+            if (isEmpty(sdkProfileId)) {
+                throw new IllegalArgumentException("The SDK profile identifier is empty!");
+            }
+            SdkProfileDto sdkProfile = controlService.getSdkProfile(sdkProfileId);
+            Utils.checkNotNull(sdkProfile);
+            return sdkProfile;
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
 }

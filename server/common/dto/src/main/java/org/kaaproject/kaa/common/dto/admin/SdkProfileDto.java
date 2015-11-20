@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,11 +21,9 @@ import java.util.List;
 
 import org.kaaproject.kaa.common.dto.HasId;
 
-public class SdkPropertiesDto implements HasId, Serializable {
+public class SdkProfileDto implements HasId, Serializable {
 
     private static final long serialVersionUID = 2433663439327120870L;
-
-    public static final String SDK_KEY_PARAMETER = "sdkKey";
 
     private String id;
     private String applicationId;
@@ -33,29 +31,36 @@ public class SdkPropertiesDto implements HasId, Serializable {
     private Integer profileSchemaVersion;
     private Integer notificationSchemaVersion;
     private Integer logSchemaVersion;
-    private SdkPlatform targetPlatform;
     private List<String> aefMapIds;
     private String defaultVerifierToken;
     private String applicationToken;
+    private String name;
+    private String token;
+    private String createdUsername;
+    private Long createdTime;
+    private Integer endpointCount = 0;
 
-    public SdkPropertiesDto() {
+    public SdkProfileDto() {
     }
 
-    public SdkPropertiesDto(String applicationId, Integer configurationSchemaVersion,
+    public SdkProfileDto(String applicationId, Integer configurationSchemaVersion,
                             Integer profileSchemaVersion, Integer notificationSchemaVersion,
                             Integer logSchemaVersion,
-                            SdkPlatform targetPlatform, List<String> aefMapIds,
-                            String defaultVerifierToken, String applicationToken) {
+                            List<String> aefMapIds,
+                            String defaultVerifierToken, String applicationToken,
+                            String createdUsername, Long createdTime, String name) {
         super();
         this.applicationId = applicationId;
         this.configurationSchemaVersion = configurationSchemaVersion;
         this.profileSchemaVersion = profileSchemaVersion;
         this.notificationSchemaVersion = notificationSchemaVersion;
         this.logSchemaVersion = logSchemaVersion;
-        this.targetPlatform = targetPlatform;
         this.aefMapIds = aefMapIds;
         this.defaultVerifierToken = defaultVerifierToken;
         this.applicationToken = applicationToken;
+        this.createdUsername = createdUsername;
+        this.createdTime = createdTime;
+        this.name = name;
     }
 
     public String getApplicationId() {
@@ -90,14 +95,6 @@ public class SdkPropertiesDto implements HasId, Serializable {
         this.notificationSchemaVersion = notificationSchemaVersion;
     }
 
-    public SdkPlatform getTargetPlatform() {
-        return targetPlatform;
-    }
-
-    public void setTargetPlatform(SdkPlatform targetPlatform) {
-        this.targetPlatform = targetPlatform;
-    }
-
     public List<String> getAefMapIds() {
         return aefMapIds;
     }
@@ -113,7 +110,7 @@ public class SdkPropertiesDto implements HasId, Serializable {
     public void setLogSchemaVersion(Integer logSchemaVersion) {
         this.logSchemaVersion = logSchemaVersion;
     }
-    
+
     public String getDefaultVerifierToken() {
         return defaultVerifierToken;
     }
@@ -130,13 +127,52 @@ public class SdkPropertiesDto implements HasId, Serializable {
         this.applicationToken = applicationToken;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public String getCreatedUsername() {
+        return createdUsername;
+    }
+
+    public void setCreatedUsername(String createdUsername) {
+        this.createdUsername = createdUsername;
+    }
+
+    public Long getCreatedTime() {
+        return createdTime;
+    }
+
+    public void setCreatedTime(Long createdTime) {
+        this.createdTime = createdTime;
+    }
+
+    public Integer getEndpointCount() {
+        return endpointCount;
+    }
+
+    public void setEndpointCount(Integer endpointCount) {
+        this.endpointCount = endpointCount;
+    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        SdkPropertiesDto that = (SdkPropertiesDto) o;
+        SdkProfileDto that = (SdkProfileDto) o;
 
         if (aefMapIds != null ? !aefMapIds.equals(that.aefMapIds) : that.aefMapIds != null) {
             return false;
@@ -162,7 +198,19 @@ public class SdkPropertiesDto implements HasId, Serializable {
         if (profileSchemaVersion != null ? !profileSchemaVersion.equals(that.profileSchemaVersion) : that.profileSchemaVersion != null) {
             return false;
         }
-        if (targetPlatform != that.targetPlatform) {
+        if (name != null ? !name.equals(that.name) : that.name != null) {
+            return false;
+        }
+        if (token != null ? !token.equals(that.token) : that.token != null) {
+            return false;
+        }
+        if (createdUsername != null ? !createdUsername.equals(that.createdUsername) : that.createdUsername != null) {
+            return false;
+        }
+        if (createdTime != null ? !createdTime.equals(that.createdTime) : that.createdTime != null) {
+            return false;
+        }
+        if (endpointCount != null ? !endpointCount.equals(that.endpointCount) : that.endpointCount != null) {
             return false;
         }
 
@@ -176,10 +224,14 @@ public class SdkPropertiesDto implements HasId, Serializable {
         result = 31 * result + (profileSchemaVersion != null ? profileSchemaVersion.hashCode() : 0);
         result = 31 * result + (notificationSchemaVersion != null ? notificationSchemaVersion.hashCode() : 0);
         result = 31 * result + (logSchemaVersion != null ? logSchemaVersion.hashCode() : 0);
-        result = 31 * result + (targetPlatform != null ? targetPlatform.hashCode() : 0);
         result = 31 * result + (aefMapIds != null ? aefMapIds.hashCode() : 0);
         result = 31 * result + (defaultVerifierToken != null ? defaultVerifierToken.hashCode() : 0);
         result = 31 * result + (applicationToken != null ? applicationToken.hashCode() : 0);
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (token != null ? token.hashCode() : 0);
+        result = 31 * result + (createdUsername != null ? createdUsername.hashCode() : 0);
+        result = 31 * result + (createdTime != null ? createdTime.hashCode() : 0);
+        result = 31 * result + (endpointCount != null ? endpointCount.hashCode() : 0);
         return result;
     }
 
@@ -192,10 +244,14 @@ public class SdkPropertiesDto implements HasId, Serializable {
                 ", profileSchemaVersion=" + profileSchemaVersion +
                 ", notificationSchemaVersion=" + notificationSchemaVersion +
                 ", logSchemaVersion=" + logSchemaVersion +
-                ", targetPlatform=" + targetPlatform +
                 ", aefMapIds=" + aefMapIds +
                 ", defaultVerifierToken='" + defaultVerifierToken + '\'' +
                 ", applicationToken='" + applicationToken + '\'' +
+                ", name='" + name + '\'' +
+                ", token='" + token + '\'' +
+                ", createdUsername='" + createdUsername + '\'' +
+                ", createdTime='" + createdTime + '\'' +
+                ", endpointCount='" + endpointCount + '\'' +
                 '}';
     }
 

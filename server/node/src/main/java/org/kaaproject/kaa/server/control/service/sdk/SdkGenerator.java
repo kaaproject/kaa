@@ -24,7 +24,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
 
-import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
+import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo;
 import org.kaaproject.kaa.server.control.service.sdk.event.EventFamilyMetadata;
@@ -47,7 +47,7 @@ public abstract class SdkGenerator {
      * @param buildVersion the build version
      * @param bootstrapNodes the bootstrap nodes
      * @param sdkToken the sdk token
-     * @param sdkProperties the sdk properties
+     * @param sdkProfile the sdk profile
      * @param profileSchemaBody the profile schema body
      * @param notificationSchemaBody the notification schema body
      * @param configurationProtocolSchemaBody the configuration protocol schema body
@@ -59,16 +59,16 @@ public abstract class SdkGenerator {
      * @return the sdk
      * @throws Exception the exception
      */
-    public abstract FileData generateSdk(String buildVersion, 
+    public abstract FileData generateSdk(String buildVersion,
             List<BootstrapNodeInfo> bootstrapNodes,
             String sdkToken,
-            SdkPropertiesDto sdkProperties,
+            SdkProfileDto sdkProfile,
             String profileSchemaBody,
-            String notificationSchemaBody, 
+            String notificationSchemaBody,
             String configurationProtocolSchemaBody,
             String configurationBaseSchemaBody,
-            byte[] defaultConfigurationData, 
-            List<EventFamilyMetadata> eventFamilies, 
+            byte[] defaultConfigurationData,
+            List<EventFamilyMetadata> eventFamilies,
             String logSchemaBody) throws Exception; //NOSONAR
 
     /**

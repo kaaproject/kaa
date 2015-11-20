@@ -63,8 +63,8 @@ kaa_error_t kaa_platform_message_header_write(kaa_platform_message_writer_t* wri
                                             , uint16_t protocol_version);
 
 kaa_error_t kaa_platform_message_write_extension_header(kaa_platform_message_writer_t* writer
-                                                      , uint8_t extension_type
-                                                      , uint32_t options
+                                                      , uint16_t extension_type
+                                                      , uint16_t options
                                                       , uint32_t payload_size);
 
 
@@ -89,8 +89,8 @@ kaa_error_t kaa_platform_message_header_read(kaa_platform_message_reader_t* read
                                            , uint16_t *extension_count);
 
 kaa_error_t kaa_platform_message_read_extension_header(kaa_platform_message_reader_t *reader
-                                                     , uint8_t *extension_type
-                                                     , uint32_t *extension_options
+                                                     , uint16_t *extension_type
+                                                     , uint16_t *extension_options
                                                      , uint32_t *extension_payload_length);
 
 bool kaa_platform_message_is_buffer_large_enough(kaa_platform_message_reader_t *reader

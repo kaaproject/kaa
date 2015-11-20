@@ -49,7 +49,7 @@ extern void        kaa_profile_manager_destroy(kaa_profile_manager_t *self);
 
 extern kaa_error_t kaa_profile_need_profile_resync(kaa_profile_manager_t *kaa_context, bool *result);
 extern kaa_error_t kaa_profile_request_get_size(kaa_profile_manager_t *self, size_t *expected_size);
-extern kaa_error_t kaa_profile_handle_server_sync(kaa_profile_manager_t *self, kaa_platform_message_reader_t *reader, uint32_t extension_options, size_t extension_length);
+extern kaa_error_t kaa_profile_handle_server_sync(kaa_profile_manager_t *self, kaa_platform_message_reader_t *reader, uint16_t extension_options, size_t extension_length);
 extern kaa_error_t kaa_profile_request_serialize(kaa_profile_manager_t *self, kaa_platform_message_writer_t* writer);
 extern bool kaa_profile_manager_is_profile_set(kaa_profile_manager_t *self);
 
@@ -294,7 +294,7 @@ void test_profile_handle_sync()
 
     bool need_resync = false;
     kaa_error_t error_code = KAA_ERR_NONE;
-    uint32_t extension_options = 0x1; /* Need resync */
+    uint16_t extension_options = 0x1; /* Need resync */
 
     const size_t buffer_size = 6;
     char buffer[buffer_size];

@@ -29,8 +29,10 @@ import org.kaaproject.kaa.server.admin.client.mvp.place.EcfSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EcfsPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EndpointGroupPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EndpointGroupsPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.EndpointProfilePlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.EndpointProfilesPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.GeneralPropertiesPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.place.GenerateSdkPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.AddSdkProfilePlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.LogAppenderPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.LogAppendersPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.LogSchemaPlace;
@@ -41,6 +43,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.place.NotificationSchemasPlace
 import org.kaaproject.kaa.server.admin.client.mvp.place.ProfileFilterPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ProfileSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ProfileSchemasPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.SdkProfilesPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.SendNotificationPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.TenantPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.TenantsPlace;
@@ -85,8 +88,10 @@ public class AppActivityMapper implements ActivityMapper {
                 return new ApplicationsActivity((ApplicationsPlace) place, clientFactory);
             } else if (clazz == ApplicationPlace.class) {
                 return new ApplicationActivity((ApplicationPlace) place, clientFactory);
-            } else if (clazz == GenerateSdkPlace.class) {
-                return new GenerateSdkActivity((GenerateSdkPlace) place, clientFactory);
+            } else if (clazz == SdkProfilesPlace.class) {
+                return new SdkProfilesActivity((SdkProfilesPlace) place, clientFactory);
+            } else if (clazz == AddSdkProfilePlace.class) {
+                return new AddSdkProfileActivity((AddSdkProfilePlace) place, clientFactory);
             } else if (clazz == UsersPlace.class) {
                 return new UsersActivity((UsersPlace) place, clientFactory);
             } else if (clazz ==  UserPlace.class) {
@@ -117,6 +122,10 @@ public class AppActivityMapper implements ActivityMapper {
                 return new EndpointGroupsActivity((EndpointGroupsPlace) place, clientFactory);
             } else if (clazz == EndpointGroupPlace.class) {
                 return new EndpointGroupActivity((EndpointGroupPlace) place, clientFactory);
+            } else if (clazz ==  EndpointProfilesPlace.class) {
+                return new EndpointProfilesActivity((EndpointProfilesPlace) place, clientFactory);
+            } else if (clazz ==  EndpointProfilePlace.class) {
+                return new EndpointProfileActivity((EndpointProfilePlace) place, clientFactory);
             } else if (clazz == ProfileFilterPlace.class) {
                 return new ProfileFilterActivity((ProfileFilterPlace) place, clientFactory);
             } else if (clazz == ConfigurationPlace.class) {

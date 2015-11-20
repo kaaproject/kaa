@@ -42,6 +42,10 @@ public class TopicGrid extends AbstractKaaGrid<TopicDto, String> {
         super(Unit.PX, true, embedded);
     }
 
+    public TopicGrid(boolean enableActions, boolean embedded) {
+        super(Unit.PX, enableActions, embedded);
+    }
+
     @Override
     protected float constructColumnsImpl(DataGrid<TopicDto> table) {
         float prefWidth = 0;

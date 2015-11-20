@@ -49,7 +49,8 @@ import org.kaaproject.kaa.common.dto.admin.AuthResultDto;
 import org.kaaproject.kaa.common.dto.admin.RecordKey;
 import org.kaaproject.kaa.common.dto.admin.ResultCode;
 import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
-import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
+import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
+import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
@@ -479,16 +480,17 @@ public class KaaAdminController {
     }
 
     /**
-     * Gets the sdk by sdk key.
-     *
+     * Generates an SDK for the specified target platform from an SDK profile .
      */
     @RequestMapping(value="sdk", method=RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
-    public void getSdk(@RequestBody SdkPropertiesDto key,
+    public void getSdk(@RequestParam(value = "sdkProfileId") String sdkProfileId,
+            @RequestParam(value = "targetPlatform") String targetPlatform,
             HttpServletRequest request,
             HttpServletResponse response) throws KaaAdminServiceException {
         try {
-            FileData sdkData = kaaAdminService.getSdk(key);
+            SdkProfileDto sdkProfile = kaaAdminService.getSdkProfile(sdkProfileId);
+            FileData sdkData = kaaAdminService.getSdk(sdkProfile, SdkPlatform.valueOf(targetPlatform.toUpperCase()));
             response.setContentType(sdkData.getContentType());
             ServletUtils.prepareDisposition(request, response, sdkData.getFileName());
             response.setContentLength(sdkData.getFileData().length);
@@ -498,6 +500,42 @@ public class KaaAdminController {
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
+    }
+
+    /**
+     * Stores a new SDK profile into the database.
+     */
+    @RequestMapping(value="addSdkProfile", method=RequestMethod.POST)
+    @ResponseBody
+    public SdkProfileDto addSdkProfile(@RequestBody SdkProfileDto sdkProfile) throws KaaAdminServiceException {
+        return kaaAdminService.addSdkProfile(sdkProfile);
+    }
+
+    /**
+     * Deletes an SDK profile by its identifier.
+     */
+    @RequestMapping(value="deleteSdkProfile", method=RequestMethod.POST)
+    @ResponseStatus(value = HttpStatus.OK)
+    public void deleteSdkProfile(@RequestParam(value = "sdkProfileId") String sdkProfileId) throws KaaAdminServiceException {
+        kaaAdminService.deleteSdkProfile(sdkProfileId);
+    }
+
+    /**
+     * Returns an SDK profile by its identifier.
+     */
+    @RequestMapping(value = "sdkProfile/{sdkProfileId}")
+    @ResponseBody
+    public SdkProfileDto getSdkProfile(@PathVariable String sdkProfileId) throws KaaAdminServiceException {
+        return kaaAdminService.getSdkProfile(sdkProfileId);
+    }
+
+    /**
+     * Returns a list of SDK profiles for the given application.
+     */
+    @RequestMapping(value="sdkProfiles/{applicationId}")
+    @ResponseBody
+    public List<SdkProfileDto> getSdkProfilesByApplicationId(@PathVariable String applicationId) throws KaaAdminServiceException {
+        return kaaAdminService.getSdkProfilesByApplicationId(applicationId);
     }
 
     /**

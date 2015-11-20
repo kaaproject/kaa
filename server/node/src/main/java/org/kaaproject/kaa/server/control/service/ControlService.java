@@ -16,8 +16,6 @@
 
 package org.kaaproject.kaa.server.control.service;
 
-import java.util.List;
-
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
@@ -25,6 +23,7 @@ import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileViewDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
@@ -42,9 +41,10 @@ import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.UserDto;
 import org.kaaproject.kaa.common.dto.admin.RecordKey;
-import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
+import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
+import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
@@ -56,6 +56,8 @@ import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.control.service.exception.ControlServiceException;
+
+import java.util.List;
 
 /**
  * The Interface ControlService.
@@ -506,7 +508,7 @@ public interface ControlService {
      * @return the file data
      * @throws ControlServiceException the control service exception
      */
-    FileData generateSdk(SdkPropertiesDto sdkProperties) throws ControlServiceException;
+    FileData generateSdk(SdkProfileDto sdkProperties, SdkPlatform platform) throws ControlServiceException;
 
     /**
      * Generate record structure library.
@@ -1032,4 +1034,52 @@ public interface ControlService {
 
     List<CTLSchemaDto> getCTLSchemaDependents(String fqn, int version, String tenantId) throws ControlServiceException;
 
+    /**
+     * Gets SdkProfileDto object by sdk profile id.
+     *
+     * @param sdkProfileId sdk profile id
+     * @return the SdkProfileDto
+     * @throws ControlServiceException
+     */
+    SdkProfileDto getSdkProfile(String sdkProfileId) throws ControlServiceException;
+
+    /**
+     *
+     * @param applicationId
+     * @return
+     * @throws ControlServiceException
+     */
+    List<SdkProfileDto> getSdkProfilesByApplicationId(String applicationId)  throws ControlServiceException ;
+
+    /**
+     *
+     * @param sdkProfileId
+     * @throws ControlServiceException
+     */
+    void deleteSdkProfile(String sdkProfileId)  throws ControlServiceException ;
+
+    /**
+     *
+     * @param token
+     * @return
+     * @throws ControlServiceException
+     */
+    boolean isSdkProfileUsed(String token)  throws ControlServiceException ;
+
+    /**
+     *
+     * @param sdkProfile
+     * @return saved SdkProfileDto object.
+     * @throws ControlServiceException
+     */
+    SdkProfileDto saveSdkProfile(SdkProfileDto sdkProfile)  throws ControlServiceException ;
+
+    /**
+     * Gets endpoint profile view for web ui.
+     *
+     * @param endpointProfileKeyHash the endpoint key hash in string representation.
+     * @return the EndpointProfileViewDto object
+     * @throws ControlServiceException the control service exception.
+     */
+    EndpointProfileViewDto getEndpointProfileViewDtoByEndpointKeyHash(String endpointProfileKeyHash) throws ControlServiceException;
 }
