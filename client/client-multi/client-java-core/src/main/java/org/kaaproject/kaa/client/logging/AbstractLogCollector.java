@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.kaaproject.kaa.client.channel.FailoverManager;
@@ -51,12 +52,9 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractLogCollector implements LogCollector, LogProcessor {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractLogCollector.class);
 
-    public static final long MAX_BATCH_VOLUME = 512 * 1024; // Framework
-                                                            // limitation
-
     protected final ExecutorContext executorContext;
     private final LogTransport transport;
-    private final Set<Integer> timeouts = Collections.newSetFromMap(new ConcurrentHashMap<Integer, Boolean>());
+    private final ConcurrentHashMap<Integer, Future<?>> timeouts = new ConcurrentHashMap<>();
     private final KaaChannelManager channelManager;
     private final FailoverManager failoverManager;
 
@@ -119,16 +117,20 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
                 request.setRequestId(group.getBlockId());
                 request.setLogEntries(logs);
 
-                LOG.info("Adding following bucket id [{}] for timeout tracking", group.getBlockId());
-                timeouts.add(group.getBlockId());
-
                 final LogBlock timeoutGroup = group;
-                executorContext.getScheduledExecutor().schedule(new Runnable() {
+                Future<?> timeoutFuture = executorContext.getScheduledExecutor().schedule(new Runnable() {
                     @Override
                     public void run() {
-                        checkDeliveryTimeout(timeoutGroup.getBlockId());
+                        if (!Thread.currentThread().isInterrupted()) {
+                            checkDeliveryTimeout(timeoutGroup.getBlockId());
+                        } else {
+                            LOG.debug("Timeout check worker for block: {} was interrupted", timeoutGroup.getBlockId());
+                        }
                     }
                 }, strategy.getTimeout(), TimeUnit.SECONDS);
+
+                LOG.info("Adding following bucket id [{}] for timeout tracking", group.getBlockId());
+                timeouts.put(group.getBlockId(), timeoutFuture);
             }
         } else {
             LOG.warn("Log group is null: log group size is too small");
@@ -155,7 +157,8 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
                     isAlreadyScheduled = true;
                 }
                 LOG.info("Removing bucket id from timeouts: {}", response.getRequestId());
-                timeouts.remove(response.getRequestId());
+                Future<?> timeoutFuture = timeouts.remove(response.getRequestId());
+                timeoutFuture.cancel(true);
             }
 
             if (!isAlreadyScheduled) {
@@ -166,7 +169,13 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
 
     @Override
     public void stop() {
+        LOG.debug("Closing storage");
         storage.close();
+        LOG.debug("Clearing timeouts map");
+        for (Future<?> timeoutFuture : timeouts.values()) {
+            timeoutFuture.cancel(true);
+        }
+        timeouts.clear();
     }
 
     private void processUploadDecision(LogUploadStrategyDecision decision) {
@@ -205,11 +214,11 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
         }
     }
 
-    private boolean checkDeliveryTimeout(int bucketId) {
+    private void checkDeliveryTimeout(int bucketId) {
         LOG.debug("Checking for a delivery timeout of the bucket with id: [{}] ", bucketId);
-        boolean isTimeout = timeouts.remove(bucketId);
+        Future<?> timeoutFuture = timeouts.remove(bucketId);
 
-        if (isTimeout) {
+        if (timeoutFuture != null) {
             LOG.info("Log delivery timeout detected for the bucket with id: [{}]", bucketId);
             storage.notifyUploadFailed(bucketId);
             final LogFailoverCommand controller = this.controller;
@@ -219,11 +228,10 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
                     strategy.onTimeout(controller);
                 }
             });
+            timeoutFuture.cancel(true);
         } else {
             LOG.trace("No log delivery timeout for the bucket with id [{}] was detected", bucketId);
         }
-
-        return isTimeout;
     }
 
     protected void uploadIfNeeded() {
