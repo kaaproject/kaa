@@ -97,7 +97,7 @@ public class BinaryEncDecTest {
     @Test(expected = PlatformEncDecException.class)
     public void testWrongPayloadLengthData() throws PlatformEncDecException {
         encDec.decode(concat(buildHeader(Constants.KAA_PLATFORM_PROTOCOL_BINARY_ID, 1, 1),
-                buildExtensionHeader(BinaryEncDec.META_DATA_EXTENSION_ID, 0, 0, 0, 200)));
+                buildExtensionHeader(BinaryEncDec.META_DATA_EXTENSION_ID, 0, 0, 200)));
     }
 
     @Test
@@ -108,7 +108,7 @@ public class BinaryEncDecTest {
         md[2] = 3;
         md[3] = 4;
         ClientSync sync = encDec.decode(concat(buildHeader(Constants.KAA_PLATFORM_PROTOCOL_BINARY_ID, 1, 1),
-                buildExtensionHeader(BinaryEncDec.META_DATA_EXTENSION_ID, 0, 0, 0, md.length), md));
+                buildExtensionHeader(BinaryEncDec.META_DATA_EXTENSION_ID, 0, 0, md.length), md));
         Assert.assertNotNull(sync);
         Assert.assertNotNull(sync.getClientSyncMetaData());
         Assert.assertEquals(1 * 256 * 256 * 256 + 2 * 256 * 256 + 3 * 256 + 4, sync.getRequestId());
@@ -229,7 +229,7 @@ public class BinaryEncDecTest {
         profileHash[MAGIC_INDEX] = MAGIC_NUMBER + 1;
         buf.put(profileHash);
         buf.put("12345678900987654321abcdEFGH".getBytes(Charset.forName("UTF-8")));
-        return concat(buildExtensionHeader(BinaryEncDec.META_DATA_EXTENSION_ID, 0, 0, 0x0F, buf.array().length), buf.array());
+        return concat(buildExtensionHeader(BinaryEncDec.META_DATA_EXTENSION_ID, 0, 0x0F, buf.array().length), buf.array());
     }
 
     @Test
@@ -259,7 +259,7 @@ public class BinaryEncDecTest {
         buf.put((byte) 0);
 
         ClientSync sync = encDec.decode(concat(buildHeader(Constants.KAA_PLATFORM_PROTOCOL_BINARY_ID, 1, 2), getValidMetaData(),
-                buildExtensionHeader(BinaryEncDec.PROFILE_EXTENSION_ID, 0, 0, 0, buf.array().length), buf.array()));
+                buildExtensionHeader(BinaryEncDec.PROFILE_EXTENSION_ID, 0, 0, buf.array().length), buf.array()));
         Assert.assertNotNull(sync);
         Assert.assertNotNull(sync.getClientSyncMetaData());
         Assert.assertNotNull(sync.getProfileSync());
@@ -311,7 +311,7 @@ public class BinaryEncDecTest {
         buf.put(keyHash);
 
         ClientSync sync = encDec.decode(concat(buildHeader(Constants.KAA_PLATFORM_PROTOCOL_BINARY_ID, 1, 2), getValidMetaData(),
-                buildExtensionHeader(BinaryEncDec.USER_EXTENSION_ID, 0, 0, 0, buf.array().length), buf.array()));
+                buildExtensionHeader(BinaryEncDec.USER_EXTENSION_ID, 0, 0, buf.array().length), buf.array()));
         Assert.assertNotNull(sync);
         Assert.assertNotNull(sync.getClientSyncMetaData());
         Assert.assertNotNull(sync.getUserSync());
@@ -343,7 +343,7 @@ public class BinaryEncDecTest {
         buf.put((byte) 0);
 
         ClientSync sync = encDec.decode(concat(buildHeader(Constants.KAA_PLATFORM_PROTOCOL_BINARY_ID, 1, 2), getValidMetaData(),
-                buildExtensionHeader(BinaryEncDec.LOGGING_EXTENSION_ID, 0, 0, 0, buf.array().length), buf.array()));
+                buildExtensionHeader(BinaryEncDec.LOGGING_EXTENSION_ID, 0, 0, buf.array().length), buf.array()));
         Assert.assertNotNull(sync);
         Assert.assertNotNull(sync.getClientSyncMetaData());
         Assert.assertNotNull(sync.getLogSync());
@@ -361,7 +361,7 @@ public class BinaryEncDecTest {
         buf.putInt(MAGIC_NUMBER);
 
         ClientSync sync = encDec.decode(concat(buildHeader(Constants.KAA_PLATFORM_PROTOCOL_BINARY_ID, 1, 2), getValidMetaData(),
-                buildExtensionHeader(BinaryEncDec.CONFIGURATION_EXTENSION_ID, 0, 0, 0, buf.array().length), buf.array()));
+                buildExtensionHeader(BinaryEncDec.CONFIGURATION_EXTENSION_ID, 0, 0, buf.array().length), buf.array()));
         Assert.assertNotNull(sync);
         Assert.assertNotNull(sync.getClientSyncMetaData());
         Assert.assertNotNull(sync.getConfigurationSync());
@@ -380,7 +380,7 @@ public class BinaryEncDecTest {
         buf.put(hash);
 
         ClientSync sync = encDec.decode(concat(buildHeader(Constants.KAA_PLATFORM_PROTOCOL_BINARY_ID, 1, 2), getValidMetaData(),
-                buildExtensionHeader(BinaryEncDec.CONFIGURATION_EXTENSION_ID, 0, 0, 0x02, buf.array().length), buf.array()));
+                buildExtensionHeader(BinaryEncDec.CONFIGURATION_EXTENSION_ID, 0, 0x02, buf.array().length), buf.array()));
         Assert.assertNotNull(sync);
         Assert.assertNotNull(sync.getClientSyncMetaData());
         Assert.assertNotNull(sync.getConfigurationSync());
@@ -431,7 +431,7 @@ public class BinaryEncDecTest {
         buf.put(hash);
 
         ClientSync sync = encDec.decode(concat(buildHeader(Constants.KAA_PLATFORM_PROTOCOL_BINARY_ID, 1, 2), getValidMetaData(),
-                buildExtensionHeader(BinaryEncDec.NOTIFICATION_EXTENSION_ID, 0, 0, 0x02, buf.array().length), buf.array()));
+                buildExtensionHeader(BinaryEncDec.NOTIFICATION_EXTENSION_ID, 0, 0x02, buf.array().length), buf.array()));
         Assert.assertNotNull(sync);
         Assert.assertNotNull(sync.getClientSyncMetaData());
         Assert.assertNotNull(sync.getNotificationSync());
@@ -491,7 +491,7 @@ public class BinaryEncDecTest {
         buf.put(data);
 
         ClientSync sync = encDec.decode(concat(buildHeader(Constants.KAA_PLATFORM_PROTOCOL_BINARY_ID, 1, 2), getValidMetaData(),
-                buildExtensionHeader(BinaryEncDec.EVENT_EXTENSION_ID, 0, 0, 0x02, buf.array().length), buf.array()));
+                buildExtensionHeader(BinaryEncDec.EVENT_EXTENSION_ID, 0, 0x02, buf.array().length), buf.array()));
         Assert.assertNotNull(sync);
         Assert.assertNotNull(sync.getClientSyncMetaData());
         Assert.assertNotNull(sync.getEventSync());
@@ -518,12 +518,11 @@ public class BinaryEncDecTest {
         return buf.array();
     }
 
-    private byte[] buildExtensionHeader(int type, int optionsA, int optionsB, int optionsC, int length) {
+    private byte[] buildExtensionHeader(int type, int optionsA, int optionsB, int length) {
         ByteBuffer buf = ByteBuffer.wrap(new byte[8]);
-        buf.put((byte) type);
+        buf.putShort((short) type);
         buf.put((byte) optionsA);
         buf.put((byte) optionsB);
-        buf.put((byte) optionsC);
         buf.putInt(length);
         return buf.array();
     }

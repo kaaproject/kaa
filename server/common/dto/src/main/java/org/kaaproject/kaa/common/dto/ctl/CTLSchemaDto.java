@@ -19,20 +19,32 @@ package org.kaaproject.kaa.common.dto.ctl;
 import org.kaaproject.kaa.common.dto.HasId;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
-public class CTLSchemaDto implements HasId, Serializable {
+public class CTLSchemaDto extends AbstractCTLSchemaDto implements HasId, Serializable {
 
-    private String id;
     private CTLSchemaMetaInfoDto metaInfo;
-    private String tenantId;
-    private String appId;
-    private String body;
-    private String name;
-    private String description;
-    private String createdUsername;
-    private long createdTime;
     private Set<CTLSchemaDto> dependencySet;
+
+    public CTLSchemaDto() {
+    }
+
+    public CTLSchemaDto(CTLSchemaInfoDto infoDto, Set<CTLSchemaDto> dependencySet) {
+        Objects.requireNonNull(infoDto);
+        if (infoDto != null) {
+            this.dependencySet = dependencySet;
+            this.metaInfo = new CTLSchemaMetaInfoDto(infoDto.getFqn(), infoDto.getVersion(), infoDto.getScope());
+            id = infoDto.getId();
+            applicationId = infoDto.getApplicationId();
+            tenantId = infoDto.getTenantId();
+            body = infoDto.getBody();
+            createdTime = infoDto.getCreatedTime();
+            createdUsername = infoDto.getCreatedUsername();
+            description = infoDto.getDescription();
+        }
+    }
 
     @Override
     public String getId() {
@@ -52,68 +64,35 @@ public class CTLSchemaDto implements HasId, Serializable {
         this.metaInfo = metaInfo;
     }
 
-    public String getTenantId() {
-        return tenantId;
-    }
-
-    public void setTenantId(String tenantId) {
-        this.tenantId = tenantId;
-    }
-
-    public String getAppId() {
-        return appId;
-    }
-
-    public void setAppId(String appId) {
-        this.appId = appId;
-    }
-
-    public String getBody() {
-        return body;
-    }
-
-    public void setBody(String body) {
-        this.body = body;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getCreatedUsername() {
-        return createdUsername;
-    }
-
-    public void setCreatedUsername(String createdUsername) {
-        this.createdUsername = createdUsername;
-    }
-
-    public long getCreatedTime() {
-        return createdTime;
-    }
-
-    public void setCreatedTime(long createdTime) {
-        this.createdTime = createdTime;
-    }
-
     public Set<CTLSchemaDto> getDependencySet() {
         return dependencySet;
     }
 
     public void setDependencySet(Set<CTLSchemaDto> dependencySet) {
         this.dependencySet = dependencySet;
+    }
+
+    public CTLSchemaInfoDto toCTLSchemaInfoDto() {
+        CTLSchemaInfoDto infoDto = new CTLSchemaInfoDto();
+        infoDto.setId(id);
+        infoDto.setFqn(metaInfo.getFqn());
+        infoDto.setVersion(metaInfo.getVersion());
+        infoDto.setScope(metaInfo.getScope());
+        infoDto.setApplicationId(applicationId);
+        infoDto.setTenantId(tenantId);
+        infoDto.setBody(body);
+        infoDto.setCreatedTime(createdTime);
+        infoDto.setCreatedUsername(createdUsername);
+        infoDto.setDescription(description);
+        if (dependencySet != null && !dependencySet.isEmpty()) {
+            Set<CTLDependencyDto> dependencies = new HashSet<>();
+            for (CTLSchemaDto dep : dependencySet) {
+                CTLSchemaMetaInfoDto mi = dep.getMetaInfo();
+                dependencies.add(new CTLDependencyDto(mi.getFqn(), mi.getVersion()));
+            }
+            infoDto.setDependencies(dependencies);
+        }
+        return infoDto;
     }
 
     @Override
@@ -127,7 +106,8 @@ public class CTLSchemaDto implements HasId, Serializable {
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (metaInfo != null ? !metaInfo.equals(that.metaInfo) : that.metaInfo != null) return false;
         if (tenantId != null ? !tenantId.equals(that.tenantId) : that.tenantId != null) return false;
-        if (appId != null ? !appId.equals(that.appId) : that.appId != null) return false;
+        if (applicationId != null ? !applicationId.equals(that.applicationId) : that.applicationId != null)
+            return false;
         if (body != null ? !body.equals(that.body) : that.body != null) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
         if (description != null ? !description.equals(that.description) : that.description != null) return false;
@@ -142,7 +122,7 @@ public class CTLSchemaDto implements HasId, Serializable {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (metaInfo != null ? metaInfo.hashCode() : 0);
         result = 31 * result + (tenantId != null ? tenantId.hashCode() : 0);
-        result = 31 * result + (appId != null ? appId.hashCode() : 0);
+        result = 31 * result + (applicationId != null ? applicationId.hashCode() : 0);
         result = 31 * result + (body != null ? body.hashCode() : 0);
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (description != null ? description.hashCode() : 0);
@@ -158,7 +138,7 @@ public class CTLSchemaDto implements HasId, Serializable {
                 "id='" + id + '\'' +
                 ", metaInfo=" + metaInfo +
                 ", tenantId='" + tenantId + '\'' +
-                ", appId='" + appId + '\'' +
+                ", appId='" + applicationId + '\'' +
                 ", body='" + body + '\'' +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +

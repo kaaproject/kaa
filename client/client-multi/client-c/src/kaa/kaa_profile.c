@@ -267,7 +267,7 @@ kaa_error_t kaa_profile_request_serialize(kaa_profile_manager_t *self, kaa_platf
 
 kaa_error_t kaa_profile_handle_server_sync(kaa_profile_manager_t *self
                                          , kaa_platform_message_reader_t *reader
-                                         , uint32_t extension_options
+                                         , uint16_t extension_options
                                          , size_t extension_length)
 {
     KAA_RETURN_IF_NIL2(self, reader, KAA_ERR_BADPARAM);

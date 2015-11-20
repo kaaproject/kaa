@@ -26,7 +26,7 @@ public class CTLSchemaMetaInfo extends GenericModel<CTLSchemaMetaInfoDto> implem
     private String fqn;
     @Column(name = CTL_SCHEMA_META_INFO_VERSION)
     private Integer version;
-    @Column(name = CTL_SCHEMA_META_INFO_SCOPE)
+    @Column(name = CTL_SCHEMA_META_INFO_SCOPE, nullable = false)
     @Enumerated(EnumType.STRING)
     private CTLSchemaScopeDto scope;
     @Column(name = "count")

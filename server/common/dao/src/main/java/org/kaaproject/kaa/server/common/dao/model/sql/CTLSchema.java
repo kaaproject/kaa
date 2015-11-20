@@ -81,7 +81,7 @@ public class CTLSchema extends GenericModel<CTLSchemaDto> implements Serializabl
         Long tenantId = getLongId(dto.getTenantId());
         this.tenant = tenantId != null ? new Tenant(tenantId) : null;
 
-        Long appId = getLongId(dto.getAppId());
+        Long appId = getLongId(dto.getApplicationId());
         this.application = appId != null ? new Application(appId) : null;
         this.body = dto.getBody();
 
@@ -177,7 +177,7 @@ public class CTLSchema extends GenericModel<CTLSchemaDto> implements Serializabl
     public CTLSchemaDto toDto() {
         CTLSchemaDto ctlSchemaDto = createDto();
         ctlSchemaDto.setId(getStringId());
-        ctlSchemaDto.setAppId(application != null ? application.getStringId() : null);
+        ctlSchemaDto.setApplicationId(application != null ? application.getStringId() : null);
         ctlSchemaDto.setTenantId(tenant != null ? tenant.getStringId() : null);
         ctlSchemaDto.setMetaInfo(metaInfo.toDto());
         ctlSchemaDto.setBody(body);

@@ -296,7 +296,7 @@ public class CTLServiceImpl implements CTLService {
                 dst.setTenant(null);
             }
         }
-        String appId = src.getAppId();
+        String appId = src.getApplicationId();
         if (isBlank(appId)) {
             if (SYSTEM.equals(scope) || TENANT.equals(scope)) {
                 dst.setApplication(null);

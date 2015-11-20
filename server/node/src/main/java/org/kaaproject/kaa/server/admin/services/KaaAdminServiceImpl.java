@@ -21,9 +21,11 @@ import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 import java.io.IOException;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -73,6 +75,11 @@ import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
 import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLDependencyDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaInfoDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
@@ -106,6 +113,7 @@ import org.kaaproject.kaa.server.admin.shared.services.KaaAdminService;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.kaaproject.kaa.server.admin.shared.services.ServiceErrorCode;
 import org.kaaproject.kaa.server.common.core.schema.KaaSchemaFactoryImpl;
+import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchemaMetaInfo;
 import org.kaaproject.kaa.server.common.plugin.KaaPluginConfig;
 import org.kaaproject.kaa.server.common.plugin.PluginConfig;
 import org.kaaproject.kaa.server.common.plugin.PluginType;
@@ -2582,6 +2590,271 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         }
     }
 
+    /**
+     * Checks whether the current user has permission to access the given CTL
+     * schema. The check passes if either the current user and the given CTL
+     * schema belong to the same tenant or the current user is a
+     * {@link org.kaaproject.kaa.common.dto.KaaAuthorityDto#KAA_ADMIN} and the
+     * given CTL schema is
+     * {@link org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto#SYSTEM}.
+     *
+     * @param schema A CTL schema to check
+     *
+     * @throws KaaAdminServiceException - if the check fails.
+     */
+    private void checkCTLAuthority(CTLSchemaDto schema) throws KaaAdminServiceException {
+        AuthUserDto currentUser = this.getCurrentUser();
+        if ((schema.getMetaInfo().getScope() != CTLSchemaScopeDto.SYSTEM || currentUser.getAuthority() != KaaAuthorityDto.KAA_ADMIN)
+                && (schema.getMetaInfo().getScope() == CTLSchemaScopeDto.SYSTEM || !schema.getTenantId().equals(currentUser.getTenantId()))) {
+            throw new KaaAdminServiceException("You do not have permission to perform this operation!", ServiceErrorCode.PERMISSION_DENIED);
+        }
+    }
+
+    private void checkCTLSchemaId(String schemaId) throws KaaAdminServiceException {
+        if (schemaId == null || schemaId.isEmpty()) {
+            throw new IllegalArgumentException("Missing CTL schema ID!");
+        }
+    }
+
+    private void checkCTLSchemaFqn(String fqn) throws KaaAdminServiceException {
+        if (fqn == null || fqn.isEmpty()) {
+            throw new IllegalArgumentException("Missing fully qualified CTL schema name!");
+        }
+    }
+
+    private void checkCTLSchemaVersion(Integer version) throws KaaAdminServiceException {
+        if (version == null) {
+            throw new IllegalArgumentException("Missing CTL schema version number!");
+        } else if (version <= 0) {
+            throw new IllegalArgumentException("The CTL schema version is not a positive number!");
+        }
+    }
+
+    private CTLSchemaScopeDto getCTLSchemaScopeByName(String name) {
+        name = name.toUpperCase();
+        for (CTLSchemaScopeDto scope : CTLSchemaScopeDto.values()) {
+            if (name.equals(scope.name())) {
+                return scope;
+            }
+        }
+        throw new IllegalArgumentException("Invalid CTL schema scope name!");
+    }
+
+    /**
+     * This class is used to validate CTL schemas on save.
+     *
+     * @author Bohdan Khablenko
+     *
+     * @since v0.8.0
+     *
+     * @see #saveCTLSchema(CTLSchemaInfoDto)
+     */
+    public class CTLSchemaParser {
+
+        private final Schema.Parser parser = new Schema.Parser();
+
+        /**
+         * Parses the given CTL schema along with its dependencies as an
+         * {@link org.apache.avro.Schema Avro schema}.
+         *
+         * @param schema A CTL schema to parse
+         *
+         * @return A parsed CTL schema as an Avro schema
+         *
+         * @throws IllegalArgumentException - if the given CTL schema is invalid
+         *             and thus cannot be parsed.
+         */
+        public Schema parse(CTLSchemaInfoDto schema) throws KaaAdminServiceException {
+            Map<String, Schema> types = new HashMap<>();
+
+            if (schema.getDependencies() != null) {
+                for (CTLDependencyDto dependency : schema.getDependencies()) {
+                    try {
+                        CTLSchemaDto dependencySchema = controlService.getCTLSchemaByFqnVersionAndTenantId(dependency.getFqn(), dependency.getVersion(),
+                                getCurrentUser().getTenantId());
+                        types.put(dependency.getFqn(), this.parse(dependencySchema.toCTLSchemaInfoDto()));
+                    } catch (Exception cause) {
+                        throw new IllegalArgumentException("Unable to locate dependency " + dependency.toString());
+                    }
+                }
+            }
+
+            try {
+                return this.parser.addTypes(types).parse(schema.getBody());
+            } catch (Exception cause) {
+                throw new IllegalArgumentException("Unable to parse CTL schema: " + cause.getMessage());
+            }
+        }
+    }
+
+    @Override
+    public CTLSchemaInfoDto saveCTLSchema(CTLSchemaInfoDto schema) throws KaaAdminServiceException {
+        this.checkAuthority(KaaAuthorityDto.values());
+        try {
+            Utils.checkNotNull(schema);
+
+            if (schema.getScope() == CTLSchemaScopeDto.SYSTEM) {
+                if (schema.getTenantId() != null) {
+                    throw new IllegalArgumentException("A system CTL schema cannot be tied to a tenant!");
+                } else if (schema.getApplicationId() != null) {
+                    throw new IllegalArgumentException("A system CTL schema cannot be tied to an application!");
+                }
+            } else if (schema.getScope() == CTLSchemaScopeDto.TENANT) {
+                if (schema.getTenantId() == null) {
+                    throw new IllegalArgumentException("A tenant CTL schema must contain tenant id!");
+                } else if (schema.getApplicationId() != null) {
+                    throw new IllegalArgumentException("A tenant CTL schema cannot be tied to an application!");
+                } else {
+                    checkTenantId(schema.getTenantId());
+                }
+            } else {
+                this.checkApplicationId(schema.getApplicationId());
+            }
+
+            // Check if the schema dependencies are present in the database
+            List<CTLDependencyDto> missingDependencies = new ArrayList<>();
+            Set<CTLSchemaDto> dependencies = new HashSet<>();
+            if (schema.getDependencies() != null) {
+                for (CTLDependencyDto dependency : schema.getDependencies()) {
+                    CTLSchemaDto schemaFound = controlService.getCTLSchemaByFqnVersionAndTenantId(dependency.getFqn(), dependency.getVersion(), schema.getTenantId());
+                    if (schemaFound == null) {
+                        missingDependencies.add(dependency);
+                    } else {
+                        dependencies.add(schemaFound);
+                    }
+                }
+            }
+            if (!missingDependencies.isEmpty()) {
+                String message = "The following dependencies are missing from the database: " + Arrays.toString(missingDependencies.toArray());
+                throw new IllegalArgumentException(message);
+            }
+
+            // Check if the schema body is valid
+            new CTLSchemaParser().parse(schema);
+            CTLSchemaDto result = controlService.saveCTLSchema(new CTLSchemaDto(schema, dependencies));
+            return result != null ? result.toCTLSchemaInfoDto() : null;
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
+
+    @Override
+    public void deleteCTLSchemaById(String schemaId) throws KaaAdminServiceException {
+        this.checkAuthority(KaaAuthorityDto.values());
+        try {
+            this.checkCTLSchemaId(schemaId);
+            CTLSchemaDto schemaFound = controlService.getCTLSchemaById(schemaId);
+            Utils.checkNotNull(schemaFound);
+            this.checkCTLAuthority(schemaFound);
+
+            List<CTLSchemaDto> schemaDependents = controlService.getCTLSchemaDependents(schemaId);
+            if (schemaDependents != null && !schemaDependents.isEmpty()) {
+                String message = "Unable to delete the CTL schema as it is referenced by " + Arrays.toString(schemaDependents.toArray());
+                throw new IllegalArgumentException(message);
+            }
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
+
+    @Override
+    public void deleteCTLSchemaByFqnAndVersion(String fqn, Integer version) throws KaaAdminServiceException {
+        this.checkAuthority(KaaAuthorityDto.values());
+        try {
+            this.checkCTLSchemaFqn(fqn);
+            this.checkCTLSchemaVersion(version);
+            String tenantId = this.getCurrentUser().getTenantId();
+            CTLSchemaDto schemaFound = controlService.getCTLSchemaByFqnVersionAndTenantId(fqn, version, tenantId);
+            Utils.checkNotNull(schemaFound);
+            this.checkCTLAuthority(schemaFound);
+
+            List<CTLSchemaDto> schemaDependents = controlService.getCTLSchemaDependents(fqn, version, tenantId);
+            if (schemaDependents != null && !schemaDependents.isEmpty()) {
+                String message = "Unable to delete the CTL schema as it is referenced by " + Arrays.toString(schemaDependents.toArray());
+                throw new IllegalArgumentException(message);
+            }
+
+            controlService.deleteCTLSchemaByFqnAndVersionAndTenantId(fqn, version, tenantId);
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
+
+    @Override
+    public CTLSchemaInfoDto getCTLSchemaById(String schemaId) throws KaaAdminServiceException {
+        this.checkAuthority(KaaAuthorityDto.values());
+        try {
+            this.checkCTLSchemaId(schemaId);
+            CTLSchemaDto schemaFound = controlService.getCTLSchemaById(schemaId);
+            Utils.checkNotNull(schemaFound);
+            if (schemaFound.getMetaInfo().getScope() != CTLSchemaScopeDto.SYSTEM) {
+                this.checkCTLAuthority(schemaFound);
+            }
+            return schemaFound != null ? schemaFound.toCTLSchemaInfoDto() : null;
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
+
+    @Override
+    public CTLSchemaInfoDto getCTLSchemaByFqnAndVersion(String fqn, Integer version) throws KaaAdminServiceException {
+        this.checkAuthority(KaaAuthorityDto.values());
+        try {
+            this.checkCTLSchemaFqn(fqn);
+            this.checkCTLSchemaVersion(version);
+            String tenantId = this.getCurrentUser().getTenantId();
+            CTLSchemaDto schemaFound = controlService.getCTLSchemaByFqnVersionAndTenantId(fqn, version, tenantId);
+            Utils.checkNotNull(schemaFound);
+            if (schemaFound.getMetaInfo().getScope() != CTLSchemaScopeDto.SYSTEM) {
+                this.checkCTLAuthority(schemaFound);
+            }
+            return schemaFound != null ? schemaFound.toCTLSchemaInfoDto() : null;
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
+
+    @Override
+    public List<CTLSchemaMetaInfoDto> getCTLSchemasAvailable() throws KaaAdminServiceException {
+        this.checkAuthority(KaaAuthorityDto.values());
+        try {
+            String tenantId = this.getCurrentUser().getTenantId();
+            return controlService.getAvailableCTLSchemasMetaInfoByTenantId(tenantId);
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
+
+    @Override
+    public List<CTLSchemaMetaInfoDto> getCTLSchemasByApplicationId(String applicationId) throws KaaAdminServiceException {
+        this.checkAuthority(KaaAuthorityDto.values());
+        try {
+            this.checkApplicationId(applicationId);
+            return controlService.getCTLSchemasMetaInfoByApplicationId(applicationId);
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
+
+    @Override
+    public List<CTLSchemaMetaInfoDto> getCTLSchemasByScope(String scopeName) throws KaaAdminServiceException {
+        this.checkAuthority(KaaAuthorityDto.values());
+        try {
+            CTLSchemaScopeDto scope = this.getCTLSchemaScopeByName(scopeName);
+            AuthUserDto currentUser = this.getCurrentUser();
+            if (scope == CTLSchemaScopeDto.TENANT && currentUser.getAuthority() != KaaAuthorityDto.KAA_ADMIN) {
+                return controlService.getCTLSchemasMetaInfoByTenantId(currentUser.getTenantId());
+            } else if (scope == CTLSchemaScopeDto.SYSTEM) {
+                return controlService.getSystemCTLSchemasMetaInfo();
+            } else {
+                throw new IllegalArgumentException("You do not have permission to perform this operation!");
+            }
+
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
+
     public SdkProfileDto checkSdkProfileId(String sdkProfileId) throws KaaAdminServiceException {
         try {
             if (isEmpty(sdkProfileId)) {
@@ -2594,5 +2867,4 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throw Utils.handleException(cause);
         }
     }
-
 }

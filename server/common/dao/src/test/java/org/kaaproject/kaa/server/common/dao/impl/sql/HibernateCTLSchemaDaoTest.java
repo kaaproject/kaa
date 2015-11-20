@@ -103,6 +103,13 @@ public class HibernateCTLSchemaDaoTest extends HibernateAbstractTest {
 
     @Test
     @Rollback(false)
+    public void testFindSystemByFqnAndVerAndTenantId() {
+        CTLSchema found = ctlSchemaDao.findByFqnAndVerAndTenantId(systemSchema.getMetaInfo().getFqn(), systemSchema.getMetaInfo().getVersion(), systemSchema.getTenantId());
+        Assert.assertEquals(systemSchema, found.toDto());
+    }
+
+    @Test
+    @Rollback(false)
     public void testFindSystemSchemas() {
         List<CTLSchema> found = ctlSchemaDao.findSystemSchemas();
         Assert.assertEquals(getIdsDto(Arrays.asList(systemSchema)), getIds(found));
@@ -131,7 +138,7 @@ public class HibernateCTLSchemaDaoTest extends HibernateAbstractTest {
     @Test
     @Rollback(false)
     public void testRemoveByFqnAndVerAndTenantId() {
-        ctlSchemaDao.removeByFqnAndVerAndTenantId(systemSchema.getMetaInfo().getFqn(), systemSchema.getMetaInfo().getVersion(), tenant.getId());
+        ctlSchemaDao.removeByFqnAndVerAndTenantId(systemSchema.getMetaInfo().getFqn(), systemSchema.getMetaInfo().getVersion(), systemSchema.getTenantId());
         Assert.assertNull(ctlSchemaDao.findById(systemSchema.getId()));
     }
 

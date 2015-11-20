@@ -73,7 +73,7 @@ public class CTLSchemaServiceImplTest extends AbstractTest {
         systemSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN, null, 50, null));
         tenantSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN, tenant.getId(), 77, null));
         CTLSchemaDto unsaved = generateCTLSchemaDto(DEFAULT_FQN, tenant.getId(), 80, CTLSchemaScopeDto.APPLICATION);
-        unsaved.setAppId(appDto.getId());
+        unsaved.setApplicationId(appDto.getId());
         appSchema = ctlService.saveCTLSchema(unsaved);
         allSchemaList = Arrays.asList(firstSchema, secondSchema, thirdSchema, fourthSchema, mainSchema, systemSchema, tenantSchema, appSchema);
     }
@@ -147,7 +147,7 @@ public class CTLSchemaServiceImplTest extends AbstractTest {
     @Test
     public void testFindSystemCTLSchemasMetaInfo() {
         List<CTLSchemaMetaInfoDto> appSchemas = ctlService.findSystemCTLSchemasMetaInfo();
-        Assert.assertEquals(getIdsDto(Arrays.asList(systemSchema.getMetaInfo())), getIdsDto(appSchemas));
+        Assert.assertEquals(Arrays.asList(systemSchema.getMetaInfo()), appSchemas);
     }
 
     @Test
