@@ -104,7 +104,7 @@ public class HibernateCTLSchemaDaoTest extends HibernateAbstractTest {
     @Test
     @Rollback(false)
     public void testFindSystemByFqnAndVerAndTenantId() {
-        CTLSchema found = ctlSchemaDao.findByFqnAndVerAndTenantId(systemSchema.getMetaInfo().getFqn(), systemSchema.getMetaInfo().getVersion(), systemSchema.getTenantId());
+        CTLSchema found = ctlSchemaDao.findByFqnAndVerAndTenantId(systemSchema.getMetaInfo().getFqn(), systemSchema.getMetaInfo().getVersion(), tenant.getId());
         Assert.assertEquals(systemSchema, found.toDto());
     }
 
