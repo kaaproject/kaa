@@ -8,6 +8,6 @@ Kaa is an open-source middleware platform for building, managing, and integratin
 For further information please visit
 
 * [Kaa website](http://www.kaaproject.org/)
-* [Project wiki](https://docs.kaaproject.org/display/KAA/)
+* [Project wiki](http://docs.kaaproject.org/display/KAA/)
 * [Task tracker](http://jira.kaaproject.org/browse/KAA/)
 * [Google group](https://groups.google.com/forum/#!forum/kaaproject)
