@@ -86,6 +86,8 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.notification.Notification
 import org.kaaproject.kaa.server.admin.client.mvp.view.profile.ProfileFilterViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.profile.ProfileSchemaViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.profile.ProfileSchemasViewImpl;
+import org.kaaproject.kaa.server.admin.client.mvp.view.profile.ServerProfileSchemaViewImpl;
+import org.kaaproject.kaa.server.admin.client.mvp.view.profile.ServerProfileSchemasViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.sdk.AddSdkProfileViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.sdk.SdkProfilesViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.settings.GeneralPropertiesViewImpl;
@@ -134,6 +136,10 @@ public class ClientFactoryImpl implements ClientFactory {
     private final BaseListView<ProfileSchemaDto> profileSchemasView = new ProfileSchemasViewImpl();
     private final BaseSchemaView profileSchemaView = new ProfileSchemaViewImpl(false);
     private final BaseSchemaView createProfileSchemaView = new ProfileSchemaViewImpl(true);
+
+    private final BaseListView<ProfileSchemaDto> serverProfileSchemasView = new ServerProfileSchemasViewImpl();
+    private final BaseSchemaView serverProfileSchemaView = new ServerProfileSchemaViewImpl(false);
+    private final BaseSchemaView createServerProfileSchemaView = new ServerProfileSchemaViewImpl(true);
 
     private final BaseListView<ConfigurationSchemaDto> configurationSchemasView = new ConfigurationSchemasViewImpl();
     private final BaseSchemaView configurationSchemaView = new ConfigurationSchemaViewImpl(false);
@@ -292,6 +298,21 @@ public class ClientFactoryImpl implements ClientFactory {
     @Override
     public BaseSchemaView getCreateProfileSchemaView() {
         return createProfileSchemaView;
+    }
+
+    @Override
+    public BaseListView<ProfileSchemaDto> getServerProfileSchemasView() {
+        return serverProfileSchemasView;
+    }
+
+    @Override
+    public BaseSchemaView getServerProfileSchemaView() {
+        return serverProfileSchemaView;
+    }
+
+    @Override
+    public BaseSchemaView getCreateServerProfileSchemaView() {
+        return createServerProfileSchemaView;
     }
 
     @Override

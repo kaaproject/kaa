@@ -98,7 +98,7 @@ public class SchemasPlace extends TreePlace {
         protected void loadData(LoadCallback callback,
                 HasData<TreePlace> display) {
             List<TreePlace> result = new ArrayList<TreePlace>();
-            result.add(new ProfileSchemasPlace(applicationId));
+            result.add(new ProfilesPlace(applicationId));
             result.add(new ConfigurationSchemasPlace(applicationId));
             result.add(new NotificationSchemasPlace(applicationId));
             result.add(new LogSchemasPlace(applicationId));
