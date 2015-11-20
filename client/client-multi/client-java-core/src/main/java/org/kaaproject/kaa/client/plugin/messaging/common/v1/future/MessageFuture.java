@@ -93,7 +93,7 @@ public class MessageFuture<V> implements Future<V> {
 
     @Override
     public V get() throws InterruptedException, ExecutionException {
-        ExecutionResult<V> result = queue.poll();
+        ExecutionResult<V> result = queue.take();
         return processResult(result);
     }
 
