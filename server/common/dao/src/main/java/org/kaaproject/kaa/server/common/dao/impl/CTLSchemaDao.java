@@ -81,7 +81,7 @@ public interface CTLSchemaDao<T> extends SqlDao<T> {
      * @param schemaId the schema identifier.
      * @return the list of dependents schemas from schema with given identifier.
      */
-    List<T> findDependentsSchemas(String schemaId);
+    List<T> findDependentSchemas(String schemaId);
 
     /**
      * Find available for tenant(include system scope) CTL schemas by given tenant identifier.

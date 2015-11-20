@@ -139,7 +139,7 @@ public class CTLServiceImpl implements CTLService {
         LOG.debug("Remove ctl schema by fqn {} version {} and tenant id {}", fqn, version, tenantId);
         CTLSchema ctlSchema = ctlSchemaDao.findByFqnAndVerAndTenantId(fqn, version, tenantId);
         if (ctlSchema != null) {
-            List<CTLSchema> dependsList = ctlSchemaDao.findDependentsSchemas(ctlSchema.getStringId());
+            List<CTLSchema> dependsList = ctlSchemaDao.findDependentSchemas(ctlSchema.getStringId());
             if (dependsList.isEmpty()) {
                 ctlSchemaDao.removeById(ctlSchema.getStringId());
             } else {
@@ -243,7 +243,7 @@ public class CTLServiceImpl implements CTLService {
         List<CTLSchemaDto> list = Collections.emptyList();
         CTLSchema schemaDto = ctlSchemaDao.findById(schemaId);
         if (schemaDto != null) {
-            list = convertDtoList(ctlSchemaDao.findDependentsSchemas(schemaDto.getStringId()));
+            list = convertDtoList(ctlSchemaDao.findDependentSchemas(schemaDto.getStringId()));
         }
         return list;
     }
@@ -257,7 +257,7 @@ public class CTLServiceImpl implements CTLService {
         List<CTLSchemaDto> schemas = Collections.emptyList();
         CTLSchema schema = ctlSchemaDao.findByFqnAndVerAndTenantId(fqn, version, tenantId);
         if (schema != null) {
-            schemas = convertDtoList(ctlSchemaDao.findDependentsSchemas(schema.getStringId()));
+            schemas = convertDtoList(ctlSchemaDao.findDependentSchemas(schema.getStringId()));
         }
         return schemas;
     }

@@ -79,16 +79,16 @@ public class HibernateCTLSchemaDaoTest extends HibernateAbstractTest {
 
     @Test
     public void saveCTLSchemaWithDependency() throws InterruptedException {
-        List<CTLSchemaDto> dep = convertDtoList(ctlSchemaDao.findDependentsSchemas(mainSchema.getId()));
+        List<CTLSchemaDto> dep = convertDtoList(ctlSchemaDao.findDependentSchemas(mainSchema.getId()));
         Assert.assertTrue(dep.isEmpty());
         List<CTLSchemaDto> expected = Arrays.asList(mainSchema);
-        dep = convertDtoList(ctlSchemaDao.findDependentsSchemas(firstSchema.getId()));
+        dep = convertDtoList(ctlSchemaDao.findDependentSchemas(firstSchema.getId()));
         Assert.assertEquals(expected.size(), dep.size());
-        dep = convertDtoList(ctlSchemaDao.findDependentsSchemas(secondSchema.getId()));
+        dep = convertDtoList(ctlSchemaDao.findDependentSchemas(secondSchema.getId()));
         Assert.assertEquals(expected.size(), dep.size());
-        dep = convertDtoList(ctlSchemaDao.findDependentsSchemas(thirdSchema.getId()));
+        dep = convertDtoList(ctlSchemaDao.findDependentSchemas(thirdSchema.getId()));
         Assert.assertEquals(expected.size(), dep.size());
-        dep = convertDtoList(ctlSchemaDao.findDependentsSchemas(fourthSchema.getId()));
+        dep = convertDtoList(ctlSchemaDao.findDependentSchemas(fourthSchema.getId()));
         Assert.assertEquals(expected.size(), dep.size());
     }
 

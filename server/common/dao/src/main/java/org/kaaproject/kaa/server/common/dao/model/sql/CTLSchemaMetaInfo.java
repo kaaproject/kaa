@@ -19,12 +19,15 @@ package org.kaaproject.kaa.server.common.dao.model.sql;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+
 import java.io.Serializable;
 
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.CTL_SCHEMA_META_INFO_FQN;
@@ -46,6 +49,7 @@ public class CTLSchemaMetaInfo extends GenericModel<CTLSchemaMetaInfoDto> implem
     @Enumerated(EnumType.STRING)
     private CTLSchemaScopeDto scope;
     @Column(name = "count")
+    @JsonIgnore
     private Long count = 0L;
 
     public CTLSchemaMetaInfo() {
