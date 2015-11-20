@@ -29,27 +29,38 @@ public interface SqlDao<T> extends Dao<T, String> {
      */
     void refresh(Object object);
 
+    /**
+     * Get hibernate session with the given flush mode option.
+     *
+     * @param flushMode the {@link org.hibernate.FlushMode} object.
+     * @return the {@link org.hibernate.Session} object.
+     */
     Session getSession(FlushMode flushMode);
 
     /**
+     * Get hibernate session.
      *
-     * @return
+     * @return the {@link org.hibernate.Session} object.
      */
     Session getSession();
+
     /**
      * Save object. Will be returned object with id.
      *
-     * @param o the domain object
+     * @param o     the domain object
      * @param flush specify if session flush needed.
      * @return the saved object
      */
     T save(T o, boolean flush);
 
     /**
+     * Build lock request with the given {@link org.hibernate.LockOptions} object
      *
      * @param lockOptions
+     * @return the {@link org.hibernate.Session.LockRequest} object.
      */
     Session.LockRequest lockRequest(LockOptions lockOptions);
+
     /**
      * Find object by id.
      *
