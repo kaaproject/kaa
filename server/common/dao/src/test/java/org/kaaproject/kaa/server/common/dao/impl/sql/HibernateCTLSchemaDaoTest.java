@@ -78,7 +78,6 @@ public class HibernateCTLSchemaDaoTest extends HibernateAbstractTest {
     }
 
     @Test
-    @Rollback(false)
     public void saveCTLSchemaWithDependency() throws InterruptedException {
         List<CTLSchemaDto> dep = convertDtoList(ctlSchemaDao.findDependentsSchemas(mainSchema.getId()));
         Assert.assertTrue(dep.isEmpty());
@@ -95,55 +94,42 @@ public class HibernateCTLSchemaDaoTest extends HibernateAbstractTest {
 
 
     @Test
-    @Rollback(false)
     public void testFindByFqnAndVerAndTenantId() {
         CTLSchema found = ctlSchemaDao.findByFqnAndVerAndTenantId(firstSchema.getMetaInfo().getFqn(), firstSchema.getMetaInfo().getVersion(), firstSchema.getTenantId());
         Assert.assertEquals(firstSchema, found.toDto());
     }
 
     @Test
-    @Rollback(false)
     public void testFindSystemByFqnAndVerAndTenantId() {
         CTLSchema found = ctlSchemaDao.findByFqnAndVerAndTenantId(systemSchema.getMetaInfo().getFqn(), systemSchema.getMetaInfo().getVersion(), tenant.getId());
         Assert.assertEquals(systemSchema, found.toDto());
     }
 
     @Test
-    @Rollback(false)
     public void testFindSystemSchemas() {
         List<CTLSchema> found = ctlSchemaDao.findSystemSchemas();
         Assert.assertEquals(getIdsDto(Arrays.asList(systemSchema)), getIds(found));
     }
 
     @Test
-    @Rollback(false)
     public void testFindByTenantId() {
         List<CTLSchema> found = ctlSchemaDao.findByTenantId(tenant.getId());
         Assert.assertEquals(getIdsDto(Arrays.asList(firstSchema, secondSchema, thirdSchema, fourthSchema, mainSchema)), getIds(found));
     }
 
     @Test
-    @Rollback(false)
-    public void testFindByApplicationId() {
-
-    }
-
-    @Test
-    @Rollback(false)
     public void testFindLatestByFqn() {
         CTLSchema latest = ctlSchemaDao.findLatestByFqn(DEFAULT_FQN);
         Assert.assertEquals(systemSchema, latest.toDto());
     }
 
     @Test
-    @Rollback(false)
     public void testRemoveByFqnAndVerAndTenantId() {
         ctlSchemaDao.removeByFqnAndVerAndTenantId(systemSchema.getMetaInfo().getFqn(), systemSchema.getMetaInfo().getVersion(), systemSchema.getTenantId());
         Assert.assertNull(ctlSchemaDao.findById(systemSchema.getId()));
     }
 
     @Test
-    @Rollback(false)
     public void testFindAvailableSchemas() {
         List<CTLSchema> found = ctlSchemaDao.findAvailableSchemas(tenant.getId());
         Assert.assertEquals(getIdsDto(Arrays.asList(firstSchema, secondSchema, thirdSchema, fourthSchema, mainSchema, systemSchema)), getIds(found));
