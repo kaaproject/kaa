@@ -17,9 +17,14 @@
 #ifndef I_CONFIGURATION_MANAGER_HPP_
 #define I_CONFIGURATION_MANAGER_HPP_
 
-#include "kaa/configuration/manager/IConfigurationReceiver.hpp"
+#include "kaa/configuration/storage/IConfigurationStorage.hpp"
+#include "kaa/configuration/gen/ConfigurationDefinitions.hpp"
 
 namespace kaa {
+
+class IConfigurationReceiver;
+class IConfigurationHashContainer;
+class IConfigurationProcessor;
 
 /**
  * Manages received configuration updates.
@@ -28,21 +33,22 @@ namespace kaa {
  */
 class IConfigurationManager {
 public:
-    virtual ~IConfigurationManager() {}
+
+    virtual void init() = 0;
 
     /**
      * Subscribes listener of configuration updates.
      *
      * @param receiver Listener to be added to notification list.
      */
-    virtual void subscribeForConfigurationChanges(IConfigurationReceiver &receiver) = 0;
+    virtual void addReceiver(IConfigurationReceiver &receiver) = 0;
 
     /**
      * Unsubscribes listener of configuration updates.
      *
      * @param receiver Listener to be removed from notification list.
      */
-    virtual void unsubscribeFromConfigurationChanges(IConfigurationReceiver &receiver) = 0;
+    virtual void removeReceiver(IConfigurationReceiver &receiver) = 0;
 
     /**
      * Returns full configuration tree which is actual at current moment.
@@ -50,6 +56,20 @@ public:
      * @return @link ICommonRecord @endlink containing current configuration tree.
      */
     virtual const KaaRootConfiguration& getConfiguration() = 0;
+
+    /**
+     * Provide storage object which is able to persist encoded configuration data.
+     *
+     * @param storage Object which will save and load configuration data
+     * @see ConfigurationStorage
+     */
+    virtual void setConfigurationStorage(IConfigurationStoragePtr storage) = 0;
+
+    virtual IConfigurationProcessor& getConfigurationProcessor() = 0;
+
+    virtual IConfigurationHashContainer& getConfigurationHashContainer() = 0;
+
+    virtual ~IConfigurationManager() = default;
 };
 
 typedef std::shared_ptr<IConfigurationManager> IConfigurationManagerPtr;

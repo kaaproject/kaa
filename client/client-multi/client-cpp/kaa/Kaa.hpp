@@ -17,63 +17,115 @@
 #ifndef KAA_HPP_
 #define KAA_HPP_
 
-#include "kaa/KaaClient.hpp"
-#include <botan/botan.h>
 #include <memory>
+
+#include <botan/botan.h>
+
+#include "kaa/IKaaClient.hpp"
+#include "kaa/IKaaClientStateListener.hpp"
+#include "kaa/IKaaClientPlatformContext.hpp"
+#include "kaa/KaaClientPlatformContext.hpp"
+
+#ifdef __GNUC__
+#define KAA_DEPRECATED __attribute__ ((deprecated))
+#elif defined(_MSC_VER)
+#define KAA_DEPRECATED __declspec(deprecated)
+#else
+#pragma message("WARNING: You need to implement KAA_DEPRECATED for this compiler")
+#endif
 
 namespace kaa {
 
 /**
- * Entry point to the Kaa library.
+ * @brief Creates a new Kaa client based on @link IKaaClientPlatformContext @endlink and optional
+ * @link IKaaClientStateListener @endlink.
  *
- * Responsible for the Kaa initialization and start/stop actions.
  */
 class Kaa
 {
 public:
     /**
-     * Initialize Kaa library
+     * @brief Use @link newClient() @endlink to create a Kaa client instance.
      */
-    static void init(int options = KaaClient::KAA_DEFAULT_OPTIONS);
+    Kaa() = delete;
 
     /**
-     * Starts Kaa's workflow.
+     * @brief Use @link newClient() @endlink to create a Kaa client instance.
      */
+    Kaa(const Kaa&) = delete;
+
+    /**
+     * @brief Use @link newClient() @endlink to create a Kaa client instance.
+     */
+    Kaa& operator=(const Kaa&) = delete;
+
+    /**
+     * @brief Creates a new instance of a Kaa client.
+     *
+     * @note In case of sharing a single instance of a platform context among several Kaa clients, use
+     * @link SharedExecutorContext @endlink as an executor.
+     *
+     * @param context     Platform context.
+     * @param listener    Kaa client state listener.
+     *
+     * @return New instance of Kaa client.
+     */
+    static std::shared_ptr<IKaaClient> newClient(IKaaClientPlatformContextPtr context = std::make_shared<KaaClientPlatformContext>()
+                                               , IKaaClientStateListenerPtr listener = IKaaClientStateListenerPtr());
+
+    /**
+     * @brief Initialize Kaa library.
+     *
+     * @deprecated Use @link newClient() @endlink to create a Kaa client instance.
+     */
+    KAA_DEPRECATED
+    static void init(int options = 0/* unused */);
+
+    /**
+     * @brief Starts Kaa's workflow.
+     *
+     * @deprecated Use @link kaa::IKaaClient::start().
+     */
+    KAA_DEPRECATED
     static void start();
 
     /**
-     * Stops Kaa's workflow.
+     * @brief Stops Kaa's workflow.
+     *
+     * @deprecated Use @link kaa::IKaaClient::stop().
      */
+    KAA_DEPRECATED
     static void stop();
 
     /**
-     * Retrieves the Kaa client.
+     * @brief Pauses Kaa's workflow.
      *
-     * @return @link IKaaClient @endlink instance.
-     *
+     * @deprecated Use @link kaa::IKaaClient::pause().
      */
-    static IKaaClient& getKaaClient();
-
-    /**
-     * Pauses Kaa's workflow.
-     */
+    KAA_DEPRECATED
     static void pause();
 
     /**
-     * Resumes Kaa's workflow.
+     * @brief Resumes Kaa's workflow.
+     *
+     * @deprecated Use @link kaa::IKaaClient::resume().
      */
+    KAA_DEPRECATED
     static void resume();
 
-private:
-    Kaa();
-    ~Kaa();
-    Kaa(const Kaa&);
-    Kaa& operator=(const Kaa&);
+    /**
+     * @brief Retrieves the Kaa client.
+     *
+     * @deprecated Use @link newClient() @endlink to create a Kaa client instance.
+     *
+     * @return @link IKaaClient @endlink instance.
+     */
+    KAA_DEPRECATED
+    static IKaaClient& getKaaClient();
 
 private:
-    static Botan::LibraryInitializer botanInit_;
-    static std::unique_ptr<KaaClient> client_;
-
+    static Botan::LibraryInitializer     botanInit_;
+    static std::shared_ptr<IKaaClient>   client_;
 };
 
 }

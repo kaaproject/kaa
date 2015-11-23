@@ -19,7 +19,7 @@
 
 #include "kaa/KaaDefaults.hpp"
 
-#ifdef KAA_THREADSAFE
+//#ifdef KAA_THREADSAFE
 
 #include <mutex>
 #include <atomic>
@@ -57,7 +57,7 @@ typedef std::atomic_int_fast32_t RequestId;
 
 #define kaa_thread_local thread_local
 
-#else
+#if 0
 
 #define KAA_MUTEX
 #define KAA_R_MUTEX
