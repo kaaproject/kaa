@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-#ifdef KAA_DEFAULT_CONNECTIVITY_CHECKER
-
 #include "kaa/channel/connectivity/PingConnectivityChecker.hpp"
 
 #include <string>
@@ -60,4 +58,3 @@ bool PingConnectivityChecker::checkConnectivity()
 
 } /* namespace kaa */
 
-#endif

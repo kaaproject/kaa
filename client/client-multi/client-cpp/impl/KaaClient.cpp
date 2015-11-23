@@ -98,12 +98,12 @@ void KaaClient::start()
      */
     executorContext_.init();
 
-#ifdef KAA_USE_CONFIGURATION
-    configurationManager_->init();
-#endif
     executorContext_.getLifeCycleExecutor().add([this]
         {
             try {
+#ifdef KAA_USE_CONFIGURATION
+                configurationManager_->init();
+#endif
                 bootstrapManager_->receiveOperationsServerList();
                 stateListener_->onStarted();
             } catch (std::exception& e) {
@@ -114,6 +114,10 @@ void KaaClient::start()
 
 void KaaClient::stop()
 {
+    /*
+     * To prevent a race condition between stopping a client when it is already destroyed,
+     * pass a reference to this client to a 'stop' task.
+     */
     auto thisRef = shared_from_this();
     executorContext_.getLifeCycleExecutor().add([this, thisRef]
         {
