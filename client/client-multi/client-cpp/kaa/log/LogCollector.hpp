@@ -35,6 +35,7 @@ namespace kaa {
 
 class IExecutorContext;
 class LoggingTransport;
+class KaaClientProperties;
 
 typedef std::chrono::system_clock clock_t;
 
@@ -62,7 +63,7 @@ private:
  */
 class LogCollector : public ILogCollector, public ILogProcessor, public ILogFailoverCommand {
 public:
-    LogCollector(IKaaChannelManagerPtr manager, IExecutorContext& executorContext);
+    LogCollector(IKaaChannelManagerPtr manager, IExecutorContext& executorContext, const KaaClientProperties& clientProperties);
 
     virtual void addLogRecord(const KaaUserLogRecord& record);
 

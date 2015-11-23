@@ -134,10 +134,8 @@ if ( NOT KAA_WITHOUT_CONFIGURATION )
     message("CONFIGURATION ENABLED")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_USE_CONFIGURATION")
     set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
-            impl/configuration/ConfigurationProcessor.cpp
             impl/configuration/ConfigurationTransport.cpp
             impl/configuration/manager/ConfigurationManager.cpp
-            impl/configuration/storage/ConfigurationPersistenceManager.cpp
             impl/configuration/storage/FileConfigurationStorage.cpp
     )
 endif()
@@ -279,10 +277,13 @@ set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
         impl/kaatcp/ConnackMessage.cpp
         impl/kaatcp/KaaSyncResponse.cpp
         impl/kaatcp/KaaTcpResponseProcessor.cpp
+        impl/channel/connectivity/PingConnectivityChecker.cpp
         impl/channel/TransportProtocolIdConstants.cpp
         impl/channel/IPTransportInfo.cpp
         impl/failover/DefaultFailoverStrategy.cpp
+        impl/context/AbstractExecutorContext.cpp
         impl/context/SimpleExecutorContext.cpp
+        impl/KaaClientProperties.cpp
     )
 
 # Builds Kaa libraries.
