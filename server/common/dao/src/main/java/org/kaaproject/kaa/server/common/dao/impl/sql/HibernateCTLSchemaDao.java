@@ -1,3 +1,19 @@
+/*
+ * Copyright 2015 CyberVision, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.kaaproject.kaa.server.common.dao.impl.sql;
 
 import org.hibernate.Criteria;
@@ -43,10 +59,13 @@ public class HibernateCTLSchemaDao extends HibernateAbstractDao<CTLSchema> imple
         if (isNotBlank(fqn) && version != null) {
             ctlSchema = findOneByCriterionWithAlias(CTL_SCHEMA_META_INFO_PROPERTY, CTL_SCHEMA_META_INFO_ALIAS, Restrictions.and(
                     Restrictions.eq(CTL_SCHEMA_META_INFO_ALIAS_VERSION, version),
-                    Restrictions.eq(CTL_SCHEMA_META_INFO_ALIAS_FQN, fqn), tenantId != null
-                            ? Restrictions.eq(CTL_SCHEMA_TENANT_ID_ALIAS, Long.valueOf(tenantId))
-                            : Restrictions.eq(CTL_SCHEMA_META_INFO_ALIAS_SCOPE, CTLSchemaScopeDto.SYSTEM))
-            );
+                    Restrictions.eq(CTL_SCHEMA_META_INFO_ALIAS_FQN, fqn),
+                    Restrictions.or(
+                            tenantId != null
+                                    ? Restrictions.eq(CTL_SCHEMA_TENANT_ID_ALIAS, Long.valueOf(tenantId))
+                                    : Restrictions.isNull(CTL_SCHEMA_TENANT_ID_ALIAS),
+                            Restrictions.eq(CTL_SCHEMA_META_INFO_ALIAS_SCOPE, CTLSchemaScopeDto.SYSTEM))
+            ));
         }
         if (LOG.isTraceEnabled()) {
             LOG.trace("[{},{}] Search result: [{}].", fqn, version, ctlSchema);
@@ -118,7 +137,7 @@ public class HibernateCTLSchemaDao extends HibernateAbstractDao<CTLSchema> imple
     }
 
     @Override
-    public List<CTLSchema> findDependentsSchemas(String schemaId) {
+    public List<CTLSchema> findDependentSchemas(String schemaId) {
         LOG.debug("Searching dependents ctl schemas for schema with id [{}]", schemaId);
         List<CTLSchema> dependentsList = findListByCriterionWithAlias(CTL_SCHEMA_DEPENDENCY_PROP, CTL_SCHEMA_DEPENDENCY_ALIAS,
                 JoinType.INNER_JOIN, Restrictions.eq(CTL_SCHEMA_DEPENDENCY_ID_ALIAS, Long.valueOf(schemaId)));
@@ -133,8 +152,17 @@ public class HibernateCTLSchemaDao extends HibernateAbstractDao<CTLSchema> imple
     @Override
     public List<CTLSchema> findAvailableSchemas(String tenantId) {
         LOG.debug("Searching available ctl schemas for tenant with id [{}]", tenantId);
-        List<CTLSchema> availableSchemas = findListByCriterion(Restrictions.or(Restrictions.eq(CTL_SCHEMA_TENANT_ID_ALIAS,
-                Long.valueOf(tenantId)), Restrictions.isNull(CTL_SCHEMA_TENANT_ID_ALIAS)));
+        List<CTLSchema> availableSchemas;
+        if (tenantId != null) {
+            availableSchemas = this.findListByCriterion(Restrictions.or(
+                    Restrictions.eq(CTL_SCHEMA_TENANT_ID_ALIAS, Long.valueOf(tenantId)),
+                    Restrictions.isNull(CTL_SCHEMA_TENANT_ID_ALIAS)));
+//                    Restrictions.or(
+//                            Restrictions.eq(CTL_SCHEMA_TENANT_ID_ALIAS, Long.valueOf(tenantId)),
+//                            Restrictions.isNull(CTL_SCHEMA_TENANT_ID_ALIAS)));
+        } else {
+            availableSchemas = this.findListByCriterion(Restrictions.isNull(CTL_SCHEMA_TENANT_ID_ALIAS));
+        }
         if (LOG.isTraceEnabled()) {
             LOG.trace("[{}] Search result: [{}].", tenantId, Arrays.toString(availableSchemas.toArray()));
         } else {

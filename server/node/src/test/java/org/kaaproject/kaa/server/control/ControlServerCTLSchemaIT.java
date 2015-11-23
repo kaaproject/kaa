@@ -16,20 +16,19 @@
 
 package org.kaaproject.kaa.server.control;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.kaaproject.kaa.common.dto.ctl.CTLDependencyDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaInfoDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+
+import org.junit.Assert;
+import org.junit.Test;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaInfoDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Bohdan Khablenko
@@ -70,14 +69,30 @@ public class ControlServerCTLSchemaIT extends AbstractTestControlServer {
         CTLSchemaInfoDto beta = this.createCTLSchema(this.randomFieldType(), DEFAULT_NAMESPACE, 1, CTLSchemaScopeDto.SYSTEM, null, null);
         Assert.assertNotNull(beta.getId());
 
-        Set<CTLDependencyDto> dependencies = new HashSet<>();
-        dependencies.add(new CTLDependencyDto(beta.getFqn(), beta.getVersion()));
+        Set<CTLSchemaMetaInfoDto> dependencies = new HashSet<>();
+        dependencies.add(new CTLSchemaMetaInfoDto(beta.getFqn(), beta.getVersion()));
 
         Map<String, String> fields = new HashMap<>();
         fields.put(this.randomFieldName(), beta.getFqn());
 
         this.loginTenantDeveloper(tenantDeveloperUser);
         CTLSchemaInfoDto alpha = this.createCTLSchema(this.randomFieldType(), DEFAULT_NAMESPACE, 1, CTLSchemaScopeDto.TENANT, dependencies, fields);
+        Assert.assertNotNull(alpha.getId());
+    }
+
+    /**
+     * Saves a CTL schema to the database.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void saveCTLSchemaBodyTest() throws Exception {
+        this.loginKaaAdmin();
+        CTLSchemaInfoDto beta = client.saveCTLSchema(getResourceAsString(TEST_CTL_SCHEMA_BETA));
+        Assert.assertNotNull(beta.getId());
+
+        this.loginTenantDeveloper(tenantDeveloperUser);
+        CTLSchemaInfoDto alpha = client.saveCTLSchema(getResourceAsString(TEST_CTL_SCHEMA_ALPHA));
         Assert.assertNotNull(alpha.getId());
     }
 
@@ -92,8 +107,8 @@ public class ControlServerCTLSchemaIT extends AbstractTestControlServer {
         // Declare a dependency
         String dependencyFqn = DEFAULT_NAMESPACE + "." + this.randomFieldType();
         Integer dependencyVersion = 1;
-        Set<CTLDependencyDto> dependencies = new HashSet<>();
-        dependencies.add(new CTLDependencyDto(dependencyFqn, dependencyVersion));
+        Set<CTLSchemaMetaInfoDto> dependencies = new HashSet<>();
+        dependencies.add(new CTLSchemaMetaInfoDto(dependencyFqn, dependencyVersion));
 
         // Map a CTL schema field name to its type
         Map<String, String> fields = new HashMap<>();
@@ -133,8 +148,8 @@ public class ControlServerCTLSchemaIT extends AbstractTestControlServer {
         this.loginTenantDeveloper(tenantDeveloperUser);
         CTLSchemaInfoDto dependency = this.createCTLSchema(this.randomFieldType(), DEFAULT_NAMESPACE, 1, CTLSchemaScopeDto.TENANT, null, null);
 
-        Set<CTLDependencyDto> dependencies = new HashSet<>();
-        dependencies.add(new CTLDependencyDto(dependency.getFqn(), dependency.getVersion()));
+        Set<CTLSchemaMetaInfoDto> dependencies = new HashSet<>();
+        dependencies.add(new CTLSchemaMetaInfoDto(dependency.getFqn(), dependency.getVersion()));
 
         Map<String, String> fields = new HashMap<>();
         fields.put(this.randomFieldName(), dependency.getFqn());
