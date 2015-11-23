@@ -111,7 +111,7 @@ set ( KAA_TEST_SOURCES
         ../impl/failover/DefaultFailoverStrategy.cpp
         ../impl/utils/ThreadPool.cpp
         ../impl/context/SimpleExecutorContext.cpp
-        ../impl/context/SharedExecutorContext.cpp
+        ../impl/context/AbstractExecutorContext.cpp
         ../impl/KaaClientProperties.cpp
         TestRunner.cpp
         impl/common/EndpointObjectHashTest.cpp

@@ -23,7 +23,8 @@
 namespace kaa {
 
 SimpleExecutorContext::SimpleExecutorContext(std::size_t lifeCycleThreadCount, std::size_t apiThreadCount, std::size_t callbackThreadCount)
-    : apiThreadCount_(apiThreadCount), callbackThreadCount_(callbackThreadCount), lifeCycleThreadCount_(lifeCycleThreadCount)
+    : AbstractExecutorContext(), apiThreadCount_(apiThreadCount), callbackThreadCount_(callbackThreadCount)
+    , lifeCycleThreadCount_(lifeCycleThreadCount)
 {
     if (!lifeCycleThreadCount_ || !apiThreadCount_ || !callbackThreadCount_) {
         KAA_LOG_ERROR(boost::format("Failed to create executor context: lifeCycleThreadCount %u, apiThreadCount_ %u, callbackThreadCount_ %u,")
@@ -32,14 +33,14 @@ SimpleExecutorContext::SimpleExecutorContext(std::size_t lifeCycleThreadCount, s
     }
 }
 
-void SimpleExecutorContext::init()
+void SimpleExecutorContext::doInit()
 {
     lifeCycleExecutor_ = createExecutor(lifeCycleThreadCount_);
     apiExecutor_ = createExecutor(apiThreadCount_);
     callbackExecutor_ = createExecutor(callbackThreadCount_);
 }
 
-void SimpleExecutorContext::stop()
+void SimpleExecutorContext::doStop()
 {
     shutdownExecutor(lifeCycleExecutor_);
     shutdownExecutor(apiExecutor_);

@@ -62,9 +62,6 @@ public:
     /**
      * @brief Creates a new instance of a Kaa client.
      *
-     * @note In case of sharing a single instance of a platform context among several Kaa clients, use
-     * @link SharedExecutorContext @endlink as an executor.
-     *
      * @param context     Platform context.
      * @param listener    Kaa client state listener.
      *

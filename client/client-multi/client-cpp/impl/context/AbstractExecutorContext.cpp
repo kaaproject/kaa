@@ -14,32 +14,30 @@
  * limitations under the License.
  */
 
-#include "kaa/context/SharedExecutorContext.hpp"
-
-#include "kaa/common/exception/KaaException.hpp"
+#include "kaa/context/AbstractExecutorContext.hpp"
 
 namespace kaa {
 
-void SharedExecutorContext::init()
+void AbstractExecutorContext::init()
 {
     KAA_MUTEX_LOCKING("useCountGuard_");
     KAA_MUTEX_UNIQUE_DECLARE(useCountLock_, useCountGuard_);
     KAA_MUTEX_LOCKED("useCountGuard_");
 
     if (!useCount_++) {
-        SimpleExecutorContext::init();
+        doInit();
     }
 }
 
-void SharedExecutorContext::stop()
+void AbstractExecutorContext::stop()
 {
     KAA_MUTEX_LOCKING("useCountGuard_");
     KAA_MUTEX_UNIQUE_DECLARE(useCountLock_, useCountGuard_);
     KAA_MUTEX_LOCKED("useCountGuard_");
 
     if (useCount_ && !(--useCount_)) {
-        SimpleExecutorContext::stop();
+        doStop();
     }
 }
 
-} /* namespace kaa */
+}

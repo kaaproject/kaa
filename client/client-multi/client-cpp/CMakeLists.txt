@@ -281,8 +281,8 @@ set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
         impl/channel/TransportProtocolIdConstants.cpp
         impl/channel/IPTransportInfo.cpp
         impl/failover/DefaultFailoverStrategy.cpp
+        impl/context/AbstractExecutorContext.cpp
         impl/context/SimpleExecutorContext.cpp
-        impl/context/SharedExecutorContext.cpp
         impl/KaaClientProperties.cpp
     )
 
