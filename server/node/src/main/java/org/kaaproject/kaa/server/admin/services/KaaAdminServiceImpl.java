@@ -30,9 +30,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.base.Charsets;
-import com.google.common.base.Charsets;
 import net.iharder.Base64;
+
 import org.apache.avro.Schema;
 import org.apache.avro.SchemaParseException;
 import org.apache.avro.generic.GenericDatumReader;
@@ -40,6 +39,9 @@ import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.io.DatumReader;
 import org.apache.avro.io.DecoderFactory;
 import org.apache.avro.io.JsonDecoder;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.ObjectNode;
 import org.hibernate.StaleObjectStateException;
 import org.kaaproject.avro.ui.converter.FormAvroConverter;
 import org.kaaproject.avro.ui.converter.SchemaFormAvroConverter;
@@ -75,7 +77,6 @@ import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
 import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLDependencyDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaInfoDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
@@ -113,7 +114,6 @@ import org.kaaproject.kaa.server.admin.shared.services.KaaAdminService;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.kaaproject.kaa.server.admin.shared.services.ServiceErrorCode;
 import org.kaaproject.kaa.server.common.core.schema.KaaSchemaFactoryImpl;
-import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchemaMetaInfo;
 import org.kaaproject.kaa.server.common.plugin.KaaPluginConfig;
 import org.kaaproject.kaa.server.common.plugin.PluginConfig;
 import org.kaaproject.kaa.server.common.plugin.PluginType;
@@ -132,17 +132,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.security.InvalidParameterException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
+import com.google.common.base.Charsets;
 
 @Service("kaaAdminService")
 public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
@@ -208,7 +198,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             ProfileSchemaDto schemaDto = viewDto.getProfileSchemaDto();
             if (schemaDto != null) {
                 convertToSchemaForm(schemaDto, simpleSchemaFormAvroConverter);
-                /* check for empty schemas*/
+                /* check for empty schemas */
                 viewDto.setEndpointProfileRecord(
                         generateFormDataFromJson(schemaDto.getSchema(), viewDto.getEndpointProfileDto().getProfile()));
             }
@@ -333,7 +323,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     private void scanPluginsPackage(ClassPathScanningCandidateComponentProvider scanner,
-                                    String packageName) throws Exception {
+            String packageName) throws Exception {
         Set<BeanDefinition> beans = scanner.findCandidateComponents(packageName);
         for (BeanDefinition bean : beans) {
             Class<?> clazz = Class.forName(bean.getBeanClassName());
@@ -894,7 +884,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
 
     @Override
     public ProfileSchemaDto editProfileSchema(ProfileSchemaDto profileSchema,
-                                              byte[] schema) throws KaaAdminServiceException {
+            byte[] schema) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
             if (isEmpty(profileSchema.getId())) {
@@ -958,7 +948,6 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throw Utils.handleException(e);
         }
     }
-
 
     @Override
     public List<ConfigurationSchemaDto> getConfigurationSchemasByApplicationId(
@@ -1218,7 +1207,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
 
     @Override
     public LogSchemaDto editLogSchema(LogSchemaDto logSchema,
-                                      byte[] schema) throws KaaAdminServiceException {
+            byte[] schema) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
             if (isEmpty(logSchema.getId())) {
@@ -1332,7 +1321,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         }
     }
 
-    private void checkSchemaId(String schemaId) throws IllegalArgumentException{
+    private void checkSchemaId(String schemaId) throws IllegalArgumentException {
         if (isEmpty(schemaId)) {
             throw new IllegalArgumentException("The schemaId parameter is empty.");
         }
@@ -1607,7 +1596,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     private ConfigurationRecordFormDto toConfigurationRecordFormDto(ConfigurationDto configuration,
-                                                                    Schema schema)
+            Schema schema)
             throws KaaAdminServiceException, IOException {
 
         String body = configuration.getBody();
@@ -1790,7 +1779,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     private void setPluginRawConfigurationFromJson(PluginDto plugin, PluginType type) {
         LOG.trace("Updating plugin {} configuration using info {}", plugin, pluginsInfo.get(type));
         PluginInfoDto pluginInfo = pluginsInfo.get(type).get(plugin.getPluginClassName());
-        if(pluginInfo == null){
+        if (pluginInfo == null) {
             LOG.error("Plugin configuration for class name {} is not found", plugin.getPluginClassName());
             throw new InvalidParameterException("Plugin configuration for class name " + plugin.getPluginClassName() + " is not found");
         }
@@ -1956,7 +1945,6 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         }
     }
 
-
     @Override
     public UserVerifierDto editUserVerifier(UserVerifierDto userVerifier)
             throws KaaAdminServiceException {
@@ -2112,7 +2100,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
 
     @Override
     public void sendNotification(NotificationDto notification,
-                                 RecordField notificationData) throws KaaAdminServiceException {
+            RecordField notificationData) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
             checkExpiredDate(notification);
@@ -2169,7 +2157,6 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         }
     }
 
-
     @Override
     public List<EventClassFamilyDto> getEventClassFamilies()
             throws KaaAdminServiceException {
@@ -2222,7 +2209,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
 
     @Override
     public void addEventClassFamilySchemaForm(String eventClassFamilyId,
-                                              RecordField schemaForm) throws KaaAdminServiceException {
+            RecordField schemaForm) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
         try {
             Schema schema = ecfSchemaFormAvroConverter.createSchemaFromSchemaForm(schemaForm);
@@ -2353,7 +2340,8 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
-    public String getRecordLibraryByApplicationIdAndSchemaVersion(String applicationId, int logSchemaVersion, RecordKey.RecordFiles file) throws KaaAdminServiceException {
+    public String getRecordLibraryByApplicationIdAndSchemaVersion(String applicationId, int logSchemaVersion, RecordKey.RecordFiles file)
+            throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
             checkApplicationId(applicationId);
@@ -2365,7 +2353,8 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
-    public String getRecordDataByApplicationIdAndSchemaVersion(String applicationId, int schemaVersion, RecordKey.RecordFiles file) throws KaaAdminServiceException {
+    public String getRecordDataByApplicationIdAndSchemaVersion(String applicationId, int schemaVersion, RecordKey.RecordFiles file)
+            throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
             checkApplicationId(applicationId);
@@ -2665,26 +2654,93 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
          *             and thus cannot be parsed.
          */
         public Schema parse(CTLSchemaInfoDto schema) throws KaaAdminServiceException {
-            Map<String, Schema> types = new HashMap<>();
-
             if (schema.getDependencies() != null) {
-                for (CTLDependencyDto dependency : schema.getDependencies()) {
+                for (CTLSchemaMetaInfoDto dependency : schema.getDependencies()) {
                     try {
                         CTLSchemaDto dependencySchema = controlService.getCTLSchemaByFqnVersionAndTenantId(dependency.getFqn(), dependency.getVersion(),
                                 getCurrentUser().getTenantId());
-                        types.put(dependency.getFqn(), this.parse(dependencySchema.toCTLSchemaInfoDto()));
+                        this.parse(dependencySchema.toCTLSchemaInfoDto());
                     } catch (Exception cause) {
-                        throw new IllegalArgumentException("Unable to locate dependency " + dependency.toString());
+                        String message = "Unable to locate dependency \"" + dependency.getFqn() + "\" (version " + dependency.getVersion() + ")";
+                        throw new IllegalArgumentException(message);
                     }
                 }
             }
 
             try {
-                return this.parser.addTypes(types).parse(schema.getBody());
+                /*
+                 * Parsed schemas are automatically added to the set of types
+                 * known to the parser.
+                 */
+                return parser.parse(schema.getBody());
             } catch (Exception cause) {
                 throw new IllegalArgumentException("Unable to parse CTL schema: " + cause.getMessage());
             }
         }
+    }
+
+    @Override
+    public CTLSchemaInfoDto saveCTLSchema(String body) throws KaaAdminServiceException {
+        CTLSchemaInfoDto schema = new CTLSchemaInfoDto();
+        try {
+            ObjectNode object = new ObjectMapper().readValue(body, ObjectNode.class);
+
+            if (!object.has("type") || !object.get("type").isTextual() || !object.get("type").getTextValue().equals("record")) {
+                throw new IllegalArgumentException("The data provided is not a record!");
+            }
+
+            if (!object.has("namespace") || !object.get("namespace").isTextual()) {
+                throw new IllegalArgumentException("No namespace specified!");
+            } else if (!object.has("name") || !object.get("name").isTextual()) {
+                throw new IllegalArgumentException("No name specified!");
+            } else {
+                schema.setFqn(object.get("namespace").getTextValue() + "." + object.get("name").getTextValue());
+            }
+
+            if (!object.has("version") || !object.get("version").isInt()) {
+                throw new IllegalArgumentException("No version specified!");
+            } else {
+                schema.setVersion(object.get("version").asInt());
+            }
+
+            schema.setTenantId(this.getCurrentUser().getTenantId());
+
+            if (object.has("application") && object.get("application").isTextual()) {
+                schema.setApplicationId(object.get("application").asText());
+            }
+
+            String tenantId = this.getCurrentUser().getTenantId();
+            if (tenantId != null && schema.getApplicationId() != null) {
+                schema.setScope(CTLSchemaScopeDto.APPLICATION);
+            } else if (tenantId != null && schema.getApplicationId() == null) {
+                schema.setScope(CTLSchemaScopeDto.TENANT);
+            } else if (tenantId == null && schema.getApplicationId() == null) {
+                schema.setScope(CTLSchemaScopeDto.SYSTEM);
+            } else {
+                throw new IllegalArgumentException("Unable to determine the scope!");
+            }
+
+            Set<CTLSchemaMetaInfoDto> dependencies = new HashSet<>();
+            if (!object.has("dependencies")) {
+                schema.setDependencies(dependencies);
+            } else if (!object.get("dependencies").isArray()) {
+                throw new IllegalArgumentException("Illegal dependencies format!");
+            } else {
+                for (JsonNode child : object.get("dependencies")) {
+                    if (!child.isObject() || !child.has("fqn") || !child.get("fqn").isTextual() || !child.has("version") || !child.get("version").isInt()) {
+                        throw new IllegalArgumentException("Wrong dependency format!");
+                    } else {
+                        dependencies.add(new CTLSchemaMetaInfoDto(child.get("fqn").asText(), child.get("version").asInt()));
+                    }
+                    schema.setDependencies(dependencies);
+                }
+            }
+
+            schema.setBody(body);
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+        return this.saveCTLSchema(schema);
     }
 
     @Override
@@ -2701,22 +2757,23 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
                 }
             } else if (schema.getScope() == CTLSchemaScopeDto.TENANT) {
                 if (schema.getTenantId() == null) {
-                    throw new IllegalArgumentException("A tenant CTL schema must contain tenant id!");
+                    throw new IllegalArgumentException("A tenant CTL schema must include a tenant identifier!");
                 } else if (schema.getApplicationId() != null) {
                     throw new IllegalArgumentException("A tenant CTL schema cannot be tied to an application!");
                 } else {
-                    checkTenantId(schema.getTenantId());
+                    this.checkTenantId(schema.getTenantId());
                 }
             } else {
                 this.checkApplicationId(schema.getApplicationId());
             }
 
             // Check if the schema dependencies are present in the database
-            List<CTLDependencyDto> missingDependencies = new ArrayList<>();
+            List<CTLSchemaMetaInfoDto> missingDependencies = new ArrayList<>();
             Set<CTLSchemaDto> dependencies = new HashSet<>();
             if (schema.getDependencies() != null) {
-                for (CTLDependencyDto dependency : schema.getDependencies()) {
-                    CTLSchemaDto schemaFound = controlService.getCTLSchemaByFqnVersionAndTenantId(dependency.getFqn(), dependency.getVersion(), schema.getTenantId());
+                for (CTLSchemaMetaInfoDto dependency : schema.getDependencies()) {
+                    CTLSchemaDto schemaFound = controlService.getCTLSchemaByFqnVersionAndTenantId(dependency.getFqn(), dependency.getVersion(),
+                            schema.getTenantId());
                     if (schemaFound == null) {
                         missingDependencies.add(dependency);
                     } else {
@@ -2731,6 +2788,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
 
             // Check if the schema body is valid
             new CTLSchemaParser().parse(schema);
+
             CTLSchemaDto result = controlService.saveCTLSchema(new CTLSchemaDto(schema, dependencies));
             return result != null ? result.toCTLSchemaInfoDto() : null;
         } catch (Exception cause) {
@@ -2849,7 +2907,6 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             } else {
                 throw new IllegalArgumentException("You do not have permission to perform this operation!");
             }
-
         } catch (Exception cause) {
             throw Utils.handleException(cause);
         }

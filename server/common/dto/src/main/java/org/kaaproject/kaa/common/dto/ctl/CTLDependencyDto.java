@@ -19,12 +19,13 @@ package org.kaaproject.kaa.common.dto.ctl;
 import java.io.Serializable;
 
 /**
- * Identifies {@link org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto} inside the
- * {@link org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto#TENANT} scope so
- * other Common Type Library schemas may use it as a dependency for their own
- * definitions.
+ * Identifies {@link org.kaaproject.kaa.common.dto.ctl.CTLSchemaInfoDto} inside
+ * {@link org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto#TENANT} so other
+ * CTL schemas may use it as a dependency for their own definitions.
  *
- * @since v0.8.0
+ * @author Bohdan Khablenko
+ *
+ * @deprecated
  */
 public class CTLDependencyDto implements Serializable {
 
@@ -102,7 +103,6 @@ public class CTLDependencyDto implements Serializable {
 
     @Override
     public String toString() {
-//        return "CTLDependencyDto [fqn=" + fqn + ", version=" + version + "]";
-        return "\"" + this.fqn + "\" v" + this.version;
+        return "CTLDependencyDto [fqn=" + fqn + ", version=" + version + "]";
     }
 }

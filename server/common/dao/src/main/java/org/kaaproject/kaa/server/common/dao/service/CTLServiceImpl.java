@@ -133,13 +133,13 @@ public class CTLServiceImpl implements CTLService {
 
     @Override
     public void removeCTLSchemaByFqnAndVerAndTenantId(String fqn, Integer version, String tenantId) {
-        if (isBlank(fqn) || version == null || isBlank(tenantId)) {
+        if (isBlank(fqn) || version == null) {
             throw new IncorrectParameterException("Incorrect parameters for ctl schema request.");
         }
         LOG.debug("Remove ctl schema by fqn {} version {} and tenant id {}", fqn, version, tenantId);
         CTLSchema ctlSchema = ctlSchemaDao.findByFqnAndVerAndTenantId(fqn, version, tenantId);
         if (ctlSchema != null) {
-            List<CTLSchema> dependsList = ctlSchemaDao.findDependentsSchemas(ctlSchema.getStringId());
+            List<CTLSchema> dependsList = ctlSchemaDao.findDependentSchemas(ctlSchema.getStringId());
             if (dependsList.isEmpty()) {
                 ctlSchemaDao.removeById(ctlSchema.getStringId());
             } else {
@@ -164,7 +164,7 @@ public class CTLServiceImpl implements CTLService {
 
     @Override
     public CTLSchemaDto findCTLSchemaByFqnAndVerAndTenantId(String fqn, Integer version, String tenantId) {
-        if (isBlank(fqn) || version == null || isBlank(tenantId)) {
+        if (isBlank(fqn) || version == null) {
             throw new IncorrectParameterException("Incorrect parameters for ctl schema request.");
         }
         LOG.debug("Find ctl schema by fqn {} version {} and tenant id {}", fqn, version, tenantId);
@@ -243,21 +243,21 @@ public class CTLServiceImpl implements CTLService {
         List<CTLSchemaDto> list = Collections.emptyList();
         CTLSchema schemaDto = ctlSchemaDao.findById(schemaId);
         if (schemaDto != null) {
-            list = convertDtoList(ctlSchemaDao.findDependentsSchemas(schemaDto.getStringId()));
+            list = convertDtoList(ctlSchemaDao.findDependentSchemas(schemaDto.getStringId()));
         }
         return list;
     }
 
     @Override
     public List<CTLSchemaDto> findCTLSchemaDependents(String fqn, Integer version, String tenantId) {
-        if (isBlank(fqn) || version == null || isBlank(tenantId)) {
+        if (isBlank(fqn) || version == null) {
             throw new IncorrectParameterException("Incorrect parameters for ctl schema request.");
         }
         LOG.debug("Find dependents schemas for schema with fqn {} version {} and tenantId {}", fqn, version, tenantId);
         List<CTLSchemaDto> schemas = Collections.emptyList();
         CTLSchema schema = ctlSchemaDao.findByFqnAndVerAndTenantId(fqn, version, tenantId);
         if (schema != null) {
-            schemas = convertDtoList(ctlSchemaDao.findDependentsSchemas(schema.getStringId()));
+            schemas = convertDtoList(ctlSchemaDao.findDependentSchemas(schema.getStringId()));
         }
         return schemas;
     }

@@ -336,6 +336,8 @@ public interface KaaAdminService extends RemoteService {
 
     public void editUserConfiguration(EndpointUserConfigurationDto endpointUserConfiguration, String applicationId, RecordField configurationData) throws KaaAdminServiceException;
 
+    public CTLSchemaInfoDto saveCTLSchema(String body) throws KaaAdminServiceException;
+
     public CTLSchemaInfoDto saveCTLSchema(CTLSchemaInfoDto schema) throws KaaAdminServiceException;
 
     public void deleteCTLSchemaById(String schemaId) throws KaaAdminServiceException;

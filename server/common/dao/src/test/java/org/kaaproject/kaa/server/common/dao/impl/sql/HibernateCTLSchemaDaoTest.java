@@ -78,72 +78,58 @@ public class HibernateCTLSchemaDaoTest extends HibernateAbstractTest {
     }
 
     @Test
-    @Rollback(false)
     public void saveCTLSchemaWithDependency() throws InterruptedException {
-        List<CTLSchemaDto> dep = convertDtoList(ctlSchemaDao.findDependentsSchemas(mainSchema.getId()));
+        List<CTLSchemaDto> dep = convertDtoList(ctlSchemaDao.findDependentSchemas(mainSchema.getId()));
         Assert.assertTrue(dep.isEmpty());
         List<CTLSchemaDto> expected = Arrays.asList(mainSchema);
-        dep = convertDtoList(ctlSchemaDao.findDependentsSchemas(firstSchema.getId()));
+        dep = convertDtoList(ctlSchemaDao.findDependentSchemas(firstSchema.getId()));
         Assert.assertEquals(expected.size(), dep.size());
-        dep = convertDtoList(ctlSchemaDao.findDependentsSchemas(secondSchema.getId()));
+        dep = convertDtoList(ctlSchemaDao.findDependentSchemas(secondSchema.getId()));
         Assert.assertEquals(expected.size(), dep.size());
-        dep = convertDtoList(ctlSchemaDao.findDependentsSchemas(thirdSchema.getId()));
+        dep = convertDtoList(ctlSchemaDao.findDependentSchemas(thirdSchema.getId()));
         Assert.assertEquals(expected.size(), dep.size());
-        dep = convertDtoList(ctlSchemaDao.findDependentsSchemas(fourthSchema.getId()));
+        dep = convertDtoList(ctlSchemaDao.findDependentSchemas(fourthSchema.getId()));
         Assert.assertEquals(expected.size(), dep.size());
     }
 
 
     @Test
-    @Rollback(false)
     public void testFindByFqnAndVerAndTenantId() {
         CTLSchema found = ctlSchemaDao.findByFqnAndVerAndTenantId(firstSchema.getMetaInfo().getFqn(), firstSchema.getMetaInfo().getVersion(), firstSchema.getTenantId());
         Assert.assertEquals(firstSchema, found.toDto());
     }
 
     @Test
-    @Rollback(false)
     public void testFindSystemByFqnAndVerAndTenantId() {
-        CTLSchema found = ctlSchemaDao.findByFqnAndVerAndTenantId(systemSchema.getMetaInfo().getFqn(), systemSchema.getMetaInfo().getVersion(), systemSchema.getTenantId());
+        CTLSchema found = ctlSchemaDao.findByFqnAndVerAndTenantId(systemSchema.getMetaInfo().getFqn(), systemSchema.getMetaInfo().getVersion(), tenant.getId());
         Assert.assertEquals(systemSchema, found.toDto());
     }
 
     @Test
-    @Rollback(false)
     public void testFindSystemSchemas() {
         List<CTLSchema> found = ctlSchemaDao.findSystemSchemas();
         Assert.assertEquals(getIdsDto(Arrays.asList(systemSchema)), getIds(found));
     }
 
     @Test
-    @Rollback(false)
     public void testFindByTenantId() {
         List<CTLSchema> found = ctlSchemaDao.findByTenantId(tenant.getId());
         Assert.assertEquals(getIdsDto(Arrays.asList(firstSchema, secondSchema, thirdSchema, fourthSchema, mainSchema)), getIds(found));
     }
 
     @Test
-    @Rollback(false)
-    public void testFindByApplicationId() {
-
-    }
-
-    @Test
-    @Rollback(false)
     public void testFindLatestByFqn() {
         CTLSchema latest = ctlSchemaDao.findLatestByFqn(DEFAULT_FQN);
         Assert.assertEquals(systemSchema, latest.toDto());
     }
 
     @Test
-    @Rollback(false)
     public void testRemoveByFqnAndVerAndTenantId() {
         ctlSchemaDao.removeByFqnAndVerAndTenantId(systemSchema.getMetaInfo().getFqn(), systemSchema.getMetaInfo().getVersion(), systemSchema.getTenantId());
         Assert.assertNull(ctlSchemaDao.findById(systemSchema.getId()));
     }
 
     @Test
-    @Rollback(false)
     public void testFindAvailableSchemas() {
         List<CTLSchema> found = ctlSchemaDao.findAvailableSchemas(tenant.getId());
         Assert.assertEquals(getIdsDto(Arrays.asList(firstSchema, secondSchema, thirdSchema, fourthSchema, mainSchema, systemSchema)), getIds(found));

@@ -1,23 +1,20 @@
+/*
+ * Copyright 2015 CyberVision, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.kaaproject.kaa.server.common.dao.model.sql;
-
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
-import org.kaaproject.kaa.server.common.dao.impl.DaoUtil;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ForeignKey;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
 
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.CTL_SCHEMA_APPLICATION_FK;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.CTL_SCHEMA_APPLICATION_ID;
@@ -39,11 +36,32 @@ import static org.kaaproject.kaa.server.common.dao.DaoConstants.CTL_SCHEMA_TENAN
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.CTL_SCHEMA_UNIQUE_CONSTRAINT;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
 
+import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
+import org.kaaproject.kaa.server.common.dao.impl.DaoUtil;
+
 @Entity
 @Table(name = CTL_SCHEMA_TABLE_NAME, uniqueConstraints =
 @UniqueConstraint(columnNames = {CTL_SCHEMA_META_INFO_ID, CTL_SCHEMA_TENANT_ID}, name = CTL_SCHEMA_UNIQUE_CONSTRAINT))
 public class CTLSchema extends GenericModel<CTLSchemaDto> implements Serializable {
 
+    private static final long serialVersionUID = -1179381742235545494L;
+    
     @ManyToOne(optional = true, fetch = FetchType.EAGER)
     @JoinColumn(nullable = false, name = CTL_SCHEMA_META_INFO_ID, foreignKey = @ForeignKey(name = CTL_SCHEMA_META_INFO_FK))
     private CTLSchemaMetaInfo metaInfo;
@@ -65,7 +83,7 @@ public class CTLSchema extends GenericModel<CTLSchemaDto> implements Serializabl
     @Column(name = CTL_SCHEMA_CREATED_TIME)
     private long createdTime;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = CTL_SCHEMA_JOIN_TABLE_NAME,
             joinColumns = {@JoinColumn(name = CTL_SCHEMA_JOIN_TABLE_PARENT_ID)}, foreignKey = @ForeignKey(name = CTL_SCHEMA_JOIN_TABLE_PARENT_FK),
             inverseJoinColumns = {@JoinColumn(name = CTL_SCHEMA_JOIN_TABLE_CHILD_ID)}, inverseForeignKey = @ForeignKey(name = CTL_SCHEMA_JOIN_TABLE_CHILD_FK))

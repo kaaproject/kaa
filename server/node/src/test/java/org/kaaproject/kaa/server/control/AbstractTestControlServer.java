@@ -16,7 +16,22 @@
 
 package org.kaaproject.kaa.server.control;
 
-import com.mongodb.DB;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.net.URL;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
+
+import javax.sql.DataSource;
+
 import org.apache.avro.Schema;
 import org.apache.commons.lang.StringUtils;
 import org.apache.xerces.impl.dv.util.Base64;
@@ -43,15 +58,13 @@ import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.SchemaDto;
-import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
 import org.kaaproject.kaa.common.dto.UpdateStatus;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLDependencyDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaInfoDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventAction;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
@@ -84,20 +97,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.client.HttpClientErrorException;
 
-import javax.sql.DataSource;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.net.URL;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
+import com.mongodb.DB;
 
 /**
  * The Class AbstractTestControlServer.
@@ -1184,7 +1184,10 @@ public abstract class AbstractTestControlServer extends AbstractTest {
         return savedApplicationEventFamilyMap;
     }
 
-    protected CTLSchemaInfoDto createCTLSchema(String name, String namespace, Integer version, CTLSchemaScopeDto scope, Set<CTLDependencyDto> dependencies,
+    protected static final String TEST_CTL_SCHEMA_ALPHA = "control/data/ctl/alpha.json";
+    protected static final String TEST_CTL_SCHEMA_BETA = "control/data/ctl/beta.json";
+
+    protected CTLSchemaInfoDto createCTLSchema(String name, String namespace, Integer version, CTLSchemaScopeDto scope, Set<CTLSchemaMetaInfoDto> dependencies,
                                                Map<String, String> fields) throws Exception {
 
         CTLSchemaInfoDto schema = new CTLSchemaInfoDto();
