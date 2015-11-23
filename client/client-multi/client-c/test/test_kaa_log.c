@@ -38,6 +38,7 @@
 #include "platform/sock.h"
 #include "platform/ext_log_storage.h"
 #include "platform/ext_log_upload_strategy.h"
+#include "plugins/kaa_plugin.h"
 
 
 
@@ -88,6 +89,10 @@ typedef struct {
     bool on_unmark_by_id_count;
 } mock_storage_context_t;
 
+typedef struct {
+    COMMON_PLUGIN_FIELDS
+    struct kaa_log_collector *log_collector;
+} mock_logging_plugin_t;
 
 
 /*
@@ -246,6 +251,7 @@ void test_create_request()
     kaa_log_collector_t *log_collector = NULL;
     error_code = kaa_log_collector_create(&log_collector, status, channel_manager, logger);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+    ((mock_logging_plugin_t*)kaa_context.kaa_plugins[0])->log_collector = log_collector;
 
     mock_strategy_context_t strategy;
     memset(&strategy, 0, sizeof(mock_strategy_context_t));
@@ -254,7 +260,7 @@ void test_create_request()
     error_code = kaa_logging_init(log_collector, create_mock_storage(), &strategy);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    error_code = kaa_logging_add_record(log_collector, test_log_record);
+    error_code = kaa_logging_add_record(&kaa_context, test_log_record);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     size_t expected_size = 0;
@@ -378,6 +384,7 @@ void test_timeout()
     kaa_log_collector_t *log_collector = NULL;
     error_code = kaa_log_collector_create(&log_collector, status, channel_manager, logger);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+    ((mock_logging_plugin_t*)kaa_context.kaa_plugins[0])->log_collector = log_collector;
 
     kaa_user_log_record_t *test_log_record = kaa_test_log_record_create();
     test_log_record->data = kaa_string_copy_create(TEST_LOG_BUFFER);
@@ -391,7 +398,7 @@ void test_timeout()
     error_code = kaa_logging_init(log_collector, create_mock_storage(), &strategy);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    error_code = kaa_logging_add_record(log_collector, test_log_record);
+    error_code = kaa_logging_add_record(&kaa_context, test_log_record);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     size_t request_buffer_size = 256;
@@ -405,7 +412,7 @@ void test_timeout()
 
     sleep(TEST_TIMEOUT + 1);
 
-    error_code = kaa_logging_add_record(log_collector, test_log_record);
+    error_code = kaa_logging_add_record(&kaa_context, test_log_record);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     ASSERT_NOT_NULL(strategy.on_timeout_count);
@@ -428,6 +435,7 @@ void test_decline_timeout()
     kaa_log_collector_t *log_collector = NULL;
     error_code = kaa_log_collector_create(&log_collector, status, channel_manager, logger);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+    ((mock_logging_plugin_t*)kaa_context.kaa_plugins[0])->log_collector = log_collector;
 
     kaa_user_log_record_t *test_log_record = kaa_test_log_record_create();
     test_log_record->data = kaa_string_copy_create(TEST_LOG_BUFFER);
@@ -444,7 +452,7 @@ void test_decline_timeout()
     error_code = kaa_logging_init(log_collector, storage, &strategy);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    error_code = kaa_logging_add_record(log_collector, test_log_record);
+    error_code = kaa_logging_add_record(&kaa_context, test_log_record);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     size_t request_buffer_size = 256;
@@ -486,7 +494,7 @@ void test_decline_timeout()
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
     ASSERT_NOT_NULL(storage->on_remove_by_id_count);
 
-    error_code = kaa_logging_add_record(log_collector, test_log_record);
+    error_code = kaa_logging_add_record(&kaa_context, test_log_record);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     ASSERT_NULL(strategy.on_timeout_count);
@@ -508,8 +516,12 @@ int test_init(void)
     if (error || !logger)
         return error;
 
-
+    kaa_context.kaa_plugins = KAA_CALLOC(1, sizeof(kaa_plugin_t*));
+    kaa_context.kaa_plugins[0] = kaa_logging_plugin_create(&kaa_context);
+    kaa_context.kaa_plugin_count = 1;
     kaa_context.logger = logger;
+    kaa_context.status = status;
+    kaa_context.channel_manager = channel_manager;
 
 #ifndef KAA_DISABLE_FEATURE_LOGGING
     error = kaa_status_create(&status);
@@ -532,6 +544,9 @@ int test_deinit(void)
     kaa_status_destroy(status);
 #endif
     kaa_log_destroy(logger);
+
+    KAA_FREE(kaa_context.kaa_plugins[0]);
+    KAA_FREE(kaa_context.kaa_plugins);
 
     return 0;
 }

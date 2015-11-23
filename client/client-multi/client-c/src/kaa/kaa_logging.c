@@ -23,16 +23,18 @@
 #include "platform/sock.h"
 #include "platform/time.h"
 #include "platform/ext_sha.h"
+#include "kaa_status.h"
 #include "kaa_logging.h"
 #include "collections/kaa_list.h"
 #include "kaa_common.h"
-#include "kaa_status.h"
 #include "kaa_channel_manager.h"
 #include "kaa_platform_utils.h"
 #include "kaa_platform_common.h"
 #include "utilities/kaa_mem.h"
 #include "utilities/kaa_log.h"
 #include "avro_src/avro/io.h"
+#include "plugins/kaa_plugin.h"
+#include "platform-impl/common/ext_log_upload_strategies.h"
 
 
 
@@ -42,10 +44,12 @@
 
 
 extern kaa_transport_channel_interface_t *kaa_channel_manager_get_transport_channel(kaa_channel_manager_t *self
-                                                                                  , kaa_service_t service_type);
+                                                                                  , uint16_t plugin_type);
 
 extern bool ext_log_upload_strategy_is_timeout_strategy(void *strategy);
 
+extern kaa_error_t ext_unlimited_log_storage_create(void **log_storage_context_p
+                                                  , kaa_logger_t *logger);
 
 
 typedef enum {
@@ -69,9 +73,13 @@ struct kaa_log_collector {
     bool                        is_sync_ignored;
 };
 
+typedef struct {
+    COMMON_PLUGIN_FIELDS
+    struct kaa_log_collector *log_collector;
+} kaa_logging_plugin_t;
 
 
-static const kaa_service_t logging_sync_services[1] = {KAA_SERVICE_LOGGING};
+static const uint16_t logging_sync_plugins[] = { KAA_PLUGIN_LOGGING };
 
 
 kaa_error_t kaa_logging_need_logging_resync(kaa_log_collector_t *self, bool *result)
@@ -222,9 +230,9 @@ static void update_storage(kaa_log_collector_t *self)
         case UPLOAD:
             KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Initiating log upload...");
             kaa_transport_channel_interface_t *channel =
-                    kaa_channel_manager_get_transport_channel(self->channel_manager, logging_sync_services[0]);
+                    kaa_channel_manager_get_transport_channel(self->channel_manager, logging_sync_plugins[0]);
             if (channel)
-                channel->sync_handler(channel->context, logging_sync_services, 1);
+                channel->sync_handler(channel->context, logging_sync_plugins, 1);
             break;
         default:
             KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Upload will not be triggered now.");
@@ -234,43 +242,48 @@ static void update_storage(kaa_log_collector_t *self)
 
 
 
-kaa_error_t kaa_logging_add_record(kaa_log_collector_t *self, kaa_user_log_record_t *entry)
+kaa_error_t kaa_logging_add_record(kaa_context_t *context, kaa_user_log_record_t *entry)
 {
-    KAA_RETURN_IF_NIL2(self, entry, KAA_ERR_BADPARAM);
-    KAA_RETURN_IF_NIL(self->log_storage_context, KAA_ERR_NOT_INITIALIZED);
+    KAA_RETURN_IF_NIL2(context, entry, KAA_ERR_BADPARAM);
+
+    kaa_logging_plugin_t *plugin;
+    if (kaa_plugin_find_by_type(context, KAA_PLUGIN_LOGGING, (kaa_plugin_t**)&plugin))
+        return KAA_ERR_NOT_INITIALIZED;
+
+    KAA_RETURN_IF_NIL(plugin->log_collector->log_storage_context, KAA_ERR_NOT_INITIALIZED);
 
     kaa_log_record_t record = { NULL, entry->get_size(entry) };
     if (!record.size) {
-        KAA_LOG_ERROR(self->logger, KAA_ERR_BADDATA, "Failed to add log record: serialized record size is null."
+        KAA_LOG_ERROR(plugin->log_collector->logger, KAA_ERR_BADDATA, "Failed to add log record: serialized record size is null."
                                                                                 "Maybe log record schema is empty");
         return KAA_ERR_BADDATA;
     }
 
-    kaa_error_t error = ext_log_storage_allocate_log_record_buffer(self->log_storage_context, &record);
+    kaa_error_t error = ext_log_storage_allocate_log_record_buffer(plugin->log_collector->log_storage_context, &record);
     if (error) {
-        KAA_LOG_ERROR(self->logger, KAA_ERR_BADDATA, "Failed to add log record: cannot allocate buffer for log record");
+        KAA_LOG_ERROR(plugin->log_collector->logger, KAA_ERR_BADDATA, "Failed to add log record: cannot allocate buffer for log record");
         return error;
     }
 
     avro_writer_t writer = avro_writer_memory((char *)record.data, record.size);
     if (!writer) {
-        KAA_LOG_ERROR(self->logger, KAA_ERR_BADDATA, "Failed to add log record: cannot create serializer")
-        ext_log_storage_deallocate_log_record_buffer(self->log_storage_context, &record);
+        KAA_LOG_ERROR(plugin->log_collector->logger, KAA_ERR_BADDATA, "Failed to add log record: cannot create serializer")
+        ext_log_storage_deallocate_log_record_buffer(plugin->log_collector->log_storage_context, &record);
         return KAA_ERR_NOMEM;
     }
 
     entry->serialize(writer, entry);
     avro_writer_free(writer);
 
-    error = ext_log_storage_add_log_record(self->log_storage_context, &record);
+    error = ext_log_storage_add_log_record(plugin->log_collector->log_storage_context, &record);
     if (error) {
-        KAA_LOG_ERROR(self->logger, error, "Failed to add log record to storage");
-        ext_log_storage_deallocate_log_record_buffer(self->log_storage_context, &record);
+        KAA_LOG_ERROR(plugin->log_collector->logger, error, "Failed to add log record to storage");
+        ext_log_storage_deallocate_log_record_buffer(plugin->log_collector->log_storage_context, &record);
         return error;
     }
-    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Added log record, size %zu", record.size);
-    if (!is_timeout(self))
-        update_storage(self);
+    KAA_LOG_TRACE(plugin->log_collector->logger, KAA_ERR_NONE, "Added log record, size %zu", record.size);
+    if (!is_timeout(plugin->log_collector))
+        update_storage(plugin->log_collector);
 
     return KAA_ERR_NONE;
 }
@@ -444,12 +457,114 @@ kaa_error_t kaa_logging_handle_server_sync(kaa_log_collector_t *self
 }
 
 
-extern void ext_log_upload_timeout(kaa_log_collector_t *self)
+extern void ext_log_upload_timeout(kaa_context_t *context)
 {
-    if (!is_timeout(self))
-        update_storage(self);
-    else if (ext_log_upload_strategy_is_timeout_strategy(self->log_upload_strategy_context))
-        update_storage(self);
+    kaa_logging_plugin_t *plugin;
+
+    if (kaa_plugin_find_by_type(context, KAA_PLUGIN_LOGGING, (kaa_plugin_t**)&plugin))
+        return;
+
+    if (!is_timeout(plugin->log_collector))
+        update_storage(plugin->log_collector);
+    else if (ext_log_upload_strategy_is_timeout_strategy(plugin->log_collector->log_upload_strategy_context))
+        update_storage(plugin->log_collector);
+}
+
+kaa_error_t kaa_logging_plugin_request_get_size(kaa_plugin_t *self, size_t *expected_size)
+{
+    return kaa_logging_request_get_size(((kaa_logging_plugin_t*)self)->log_collector, expected_size);
+}
+
+kaa_error_t kaa_logging_plugin_request_serialize(kaa_plugin_t *self, kaa_platform_message_writer_t *writer)
+{
+    kaa_error_t err_code;
+
+    bool need_resync = false;
+    err_code = kaa_logging_need_logging_resync(((kaa_logging_plugin_t*)self)->log_collector, &need_resync);
+    if (!err_code) {
+        if (need_resync) {
+            err_code = kaa_logging_request_serialize(((kaa_logging_plugin_t*)self)->log_collector, writer);
+            if (err_code)
+                KAA_LOG_ERROR(self->context->logger, err_code, "Failed to serialize the logging extension");
+        }
+        else
+            return KAA_ERR_NOTHING_TODO;
+    } else
+        KAA_LOG_ERROR(self->context->logger, err_code, "Failed to read logging's 'need_resync' flag");
+    return err_code;
+}
+
+kaa_error_t kaa_logging_plugin_request_handle_server_sync(kaa_plugin_t *self, kaa_platform_message_reader_t *reader,
+                                                         uint32_t request_id, uint16_t options, uint32_t length)
+{
+    return kaa_logging_handle_server_sync(((kaa_logging_plugin_t*)self)->log_collector
+                                              , reader
+                                              , options
+                                              , length);
+}
+
+kaa_error_t kaa_logging_plugin_init(kaa_plugin_t *self)
+{
+    kaa_error_t error_code;
+    error_code = kaa_log_collector_create(&((kaa_logging_plugin_t*)self)->log_collector,
+                                            (kaa_status_t*)self->context->status, self->context->channel_manager, self->context->logger);
+
+#ifndef KAA_DISABLE_FEATURE_LOGGING
+    if (!error_code) {
+        void *log_storage_context;
+        void *log_upload_strategy_context;
+        kaa_log_collector_t *log_collector = ((kaa_logging_plugin_t*)self)->log_collector;
+
+        kaa_error_t error_code = ext_unlimited_log_storage_create(&log_storage_context
+                                                                  , self->context->logger);
+        if (error_code) {
+            KAA_LOG_ERROR(self->context->logger, error_code, "Failed to create log storage");
+            return error_code;
+        }
+
+        error_code = ext_log_upload_strategy_create(self->context, &log_upload_strategy_context, KAA_LOG_UPLOAD_VOLUME_STRATEGY);
+        if (error_code) {
+            KAA_LOG_ERROR(self->context->logger, error_code, "Failed to create log upload strategy");
+            return error_code;
+        }
+
+        error_code = kaa_logging_init(log_collector
+                                      , log_storage_context
+                                      , log_upload_strategy_context);
+        if (error_code) {
+            KAA_LOG_ERROR(self->context->logger, error_code,"Failed to init log collector");
+            return error_code;
+        }
+
+        KAA_LOG_INFO(self->context->logger, KAA_ERR_NONE, "Log collector init completed");
+    }
+#endif
+    return error_code;
+
+}
+
+kaa_error_t kaa_logging_plugin_deinit(kaa_plugin_t *self)
+{
+    kaa_log_collector_destroy(((kaa_logging_plugin_t*)self)->log_collector);
+    ((kaa_logging_plugin_t*)self)->log_collector = NULL;
+    return KAA_ERR_NONE;
+}
+
+kaa_plugin_t *kaa_logging_plugin_create(kaa_context_t *context)
+{
+    kaa_logging_plugin_t *plugin = KAA_CALLOC(1, sizeof(kaa_logging_plugin_t));
+
+    plugin->init_fn = kaa_logging_plugin_init;
+    plugin->deinit_fn = kaa_logging_plugin_deinit;
+    plugin->request_get_size_fn = kaa_logging_plugin_request_get_size;
+    plugin->request_serialize_fn = kaa_logging_plugin_request_serialize;
+    plugin->request_handle_server_sync_fn = kaa_logging_plugin_request_handle_server_sync;
+
+    plugin->plugin_name = "logging";
+    plugin->extension_type = KAA_PLUGIN_LOGGING;
+    plugin->context = context;
+
+    return (kaa_plugin_t*)plugin;
 }
 
 #endif

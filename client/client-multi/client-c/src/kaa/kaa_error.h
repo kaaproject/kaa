@@ -64,6 +64,8 @@ typedef enum {
     KAA_ERR_TCPCHANNEL_AP_RESOLVE_FAILED   = -101,
     KAA_ERR_TCPCHANNEL_PARSER_INIT_FAILED  = -102,
     KAA_ERR_TCPCHANNEL_PARSER_ERROR        = -103,
+
+    KAA_ERR_NOTHING_TODO = -104
 } kaa_error_t;
 
 #ifdef __cplusplus

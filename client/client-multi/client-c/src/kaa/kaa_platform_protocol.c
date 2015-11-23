@@ -34,59 +34,61 @@
 #include "kaa_platform_common.h"
 #include "kaa_platform_utils.h"
 
+#include "plugins/kaa_plugin.h"
 
 
-/** External channel manager API */
-extern kaa_error_t kaa_channel_manager_bootstrap_request_get_size(kaa_channel_manager_t *self
-                                                                , size_t *expected_size);
 
-extern kaa_error_t kaa_bootstrap_manager_bootstrap_request_serialize(kaa_bootstrap_manager_t *self, kaa_platform_message_writer_t* writer);
+///** External channel manager API */
+//extern kaa_error_t kaa_channel_manager_bootstrap_request_get_size(kaa_channel_manager_t *self
+//                                                                , size_t *expected_size);
 
-/** External bootstrap manager API */
-extern kaa_error_t kaa_bootstrap_manager_handle_server_sync(kaa_bootstrap_manager_t *self
-                                                          , kaa_platform_message_reader_t *reader
-                                                          , uint16_t extension_options
-                                                          , size_t extension_length);
+//extern kaa_error_t kaa_bootstrap_manager_bootstrap_request_serialize(kaa_bootstrap_manager_t *self, kaa_platform_message_writer_t* writer);
 
-/** External user manager API */
-extern kaa_error_t kaa_user_request_get_size(kaa_user_manager_t *self, size_t *expected_size);
-extern kaa_error_t kaa_user_request_serialize(kaa_user_manager_t *self, kaa_platform_message_writer_t* writer);
-extern kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self, kaa_platform_message_reader_t *reader, uint16_t extension_options, size_t extension_length);
+///** External bootstrap manager API */
+//extern kaa_error_t kaa_bootstrap_manager_handle_server_sync(kaa_bootstrap_manager_t *self
+//                                                          , kaa_platform_message_reader_t *reader
+//                                                          , uint16_t extension_options
+//                                                          , size_t extension_length);
 
-/** External profile API */
-extern kaa_error_t kaa_profile_need_profile_resync(kaa_profile_manager_t *kaa_context, bool *result);
-extern kaa_error_t kaa_profile_request_get_size(kaa_profile_manager_t *self, size_t *expected_size);
-extern kaa_error_t kaa_profile_request_serialize(kaa_profile_manager_t *self, kaa_platform_message_writer_t* writer);
-extern kaa_error_t kaa_profile_handle_server_sync(kaa_profile_manager_t *self, kaa_platform_message_reader_t *reader, uint16_t extension_options, size_t extension_length);
+///** External user manager API */
+//extern kaa_error_t kaa_user_request_get_size(kaa_user_manager_t *self, size_t *expected_size);
+//extern kaa_error_t kaa_user_request_serialize(kaa_user_manager_t *self, kaa_platform_message_writer_t* writer);
+//extern kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self, kaa_platform_message_reader_t *reader, uint16_t extension_options, size_t extension_length);
 
-/** External event manager API */
-#ifndef KAA_DISABLE_FEATURE_EVENTS
-extern kaa_error_t kaa_event_request_get_size(kaa_event_manager_t *self, size_t *expected_size);
-extern kaa_error_t kaa_event_request_serialize(kaa_event_manager_t *self, size_t request_id, kaa_platform_message_writer_t *writer);
-extern kaa_error_t kaa_event_handle_server_sync(kaa_event_manager_t *self, kaa_platform_message_reader_t *reader, uint16_t extension_options, size_t extension_length, size_t request_id);
-#endif
+///** External profile API */
+//extern kaa_error_t kaa_profile_need_profile_resync(kaa_profile_manager_t *kaa_context, bool *result);
+//extern kaa_error_t kaa_profile_request_get_size(kaa_profile_manager_t *self, size_t *expected_size);
+//extern kaa_error_t kaa_profile_request_serialize(kaa_profile_manager_t *self, kaa_platform_message_writer_t* writer);
+//extern kaa_error_t kaa_profile_handle_server_sync(kaa_profile_manager_t *self, kaa_platform_message_reader_t *reader, uint16_t extension_options, size_t extension_length);
 
-/** External logging API */
-#ifndef KAA_DISABLE_FEATURE_LOGGING
-extern kaa_error_t kaa_logging_need_logging_resync(kaa_log_collector_t *self, bool *result);
-extern kaa_error_t kaa_logging_request_get_size(kaa_log_collector_t *self, size_t *expected_size);
-extern kaa_error_t kaa_logging_request_serialize(kaa_log_collector_t *self, kaa_platform_message_writer_t *writer);
-extern kaa_error_t kaa_logging_handle_server_sync(kaa_log_collector_t *self, kaa_platform_message_reader_t *reader, uint16_t extension_options, size_t extension_length);
-#endif
+///** External event manager API */
+//#ifndef KAA_DISABLE_FEATURE_EVENTS
+//extern kaa_error_t kaa_event_request_get_size(kaa_event_manager_t *self, size_t *expected_size);
+//extern kaa_error_t kaa_event_request_serialize(kaa_event_manager_t *self, size_t request_id, kaa_platform_message_writer_t *writer);
+//extern kaa_error_t kaa_event_handle_server_sync(kaa_event_manager_t *self, kaa_platform_message_reader_t *reader, uint16_t extension_options, size_t extension_length, size_t request_id);
+//#endif
 
-/** External configuration API */
-#ifndef KAA_DISABLE_FEATURE_CONFIGURATION
-extern kaa_error_t kaa_configuration_manager_get_size(kaa_configuration_manager_t *self, size_t *expected_size);
-extern kaa_error_t kaa_configuration_manager_request_serialize(kaa_configuration_manager_t *self, kaa_platform_message_writer_t *writer);
-extern kaa_error_t kaa_configuration_manager_handle_server_sync(kaa_configuration_manager_t *self, kaa_platform_message_reader_t *reader, uint16_t extension_options, size_t extension_length);
-#endif
+///** External logging API */
+//#ifndef KAA_DISABLE_FEATURE_LOGGING
+//extern kaa_error_t kaa_logging_need_logging_resync(kaa_log_collector_t *self, bool *result);
+//extern kaa_error_t kaa_logging_request_get_size(kaa_log_collector_t *self, size_t *expected_size);
+//extern kaa_error_t kaa_logging_request_serialize(kaa_log_collector_t *self, kaa_platform_message_writer_t *writer);
+//extern kaa_error_t kaa_logging_handle_server_sync(kaa_log_collector_t *self, kaa_platform_message_reader_t *reader, uint16_t extension_options, size_t extension_length);
+//#endif
 
-/** External notification API */
-#ifndef KAA_DISABLE_FEATURE_NOTIFICATION
-extern kaa_error_t kaa_notification_manager_get_size(kaa_notification_manager_t *self, size_t *expected_size);
-extern kaa_error_t kaa_notification_manager_request_serialize(kaa_notification_manager_t *self, kaa_platform_message_writer_t *writer);
-extern kaa_error_t kaa_notification_manager_handle_server_sync(kaa_notification_manager_t *self, kaa_platform_message_reader_t *reader, uint32_t extension_length);
-#endif
+///** External configuration API */
+//#ifndef KAA_DISABLE_FEATURE_CONFIGURATION
+//extern kaa_error_t kaa_configuration_manager_get_size(kaa_configuration_manager_t *self, size_t *expected_size);
+//extern kaa_error_t kaa_configuration_manager_request_serialize(kaa_configuration_manager_t *self, kaa_platform_message_writer_t *writer);
+//extern kaa_error_t kaa_configuration_manager_handle_server_sync(kaa_configuration_manager_t *self, kaa_platform_message_reader_t *reader, uint16_t extension_options, size_t extension_length);
+//#endif
+
+///** External notification API */
+//#ifndef KAA_DISABLE_FEATURE_NOTIFICATION
+//extern kaa_error_t kaa_notification_manager_get_size(kaa_notification_manager_t *self, size_t *expected_size);
+//extern kaa_error_t kaa_notification_manager_request_serialize(kaa_notification_manager_t *self, kaa_platform_message_writer_t *writer);
+//extern kaa_error_t kaa_notification_manager_handle_server_sync(kaa_notification_manager_t *self, kaa_platform_message_reader_t *reader, uint32_t extension_length);
+//#endif
 
 /** External status API */
 extern kaa_error_t kaa_status_save(kaa_status_t *self);
@@ -98,8 +100,29 @@ struct kaa_platform_protocol_t
     kaa_status_t  *status;
     kaa_logger_t  *logger;
     uint32_t       request_id;
+    uint32_t       sync_request_id;
 };
 
+kaa_error_t kaa_platform_protocol_get_context(kaa_platform_protocol_t *self, kaa_context_t **context)
+{
+    KAA_RETURN_IF_NIL2(self, context, KAA_ERR_BADPARAM);
+    *context = self->kaa_context;
+    return KAA_ERR_NONE;
+}
+
+kaa_error_t kaa_platform_protocol_get_status(kaa_platform_protocol_t *self, kaa_status_t **status)
+{
+    KAA_RETURN_IF_NIL2(self, status, KAA_ERR_BADPARAM);
+    *status = self->status;
+    return KAA_ERR_NONE;
+}
+
+kaa_error_t kaa_platform_protocol_get_request_id(kaa_platform_protocol_t *self, uint32_t *request_id)
+{
+    KAA_RETURN_IF_NIL2(self, request_id, KAA_ERR_BADPARAM);
+    *request_id = self->request_id;
+    return KAA_ERR_NONE;
+}
 
 
 kaa_error_t kaa_meta_data_request_get_size(size_t *expected_size)
@@ -192,7 +215,40 @@ void kaa_platform_protocol_destroy(kaa_platform_protocol_t *self)
 }
 
 
+static kaa_error_t kaa_client_sync_get_size(kaa_platform_protocol_t *self, const uint16_t plugins[], size_t plugins_count, size_t *expected_size)
+{
+    KAA_RETURN_IF_NIL4(self, plugins, plugins_count, expected_size, KAA_ERR_BADPARAM)
 
+    *expected_size = KAA_PROTOCOL_MESSAGE_HEADER_SIZE;
+
+    size_t extension_size = 0;
+    uint32_t i = 0;
+    kaa_plugin_t *plugin;
+    kaa_error_t err_code = KAA_ERR_NONE;
+
+    //kaa_plugins[1].request_get_size_fn(self, &extension_size);
+
+    while (!err_code && i != plugins_count) {
+        err_code = kaa_plugin_find_by_type(self->kaa_context, plugins[i++], &plugin);//&kaa_plugins[plugins[i++]];
+
+        KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "kaa_client_sync_get_size(1) plugin index %d plugin %p", plugins[i], plugin);
+
+        if (!err_code) {
+            err_code = plugin->request_get_size_fn(plugin, &extension_size);
+
+            if(!err_code)
+                KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Calculated %s extension size %u", plugin->plugin_name, extension_size);
+
+            *expected_size += extension_size;
+        }
+    }
+
+    if (err_code)
+        KAA_LOG_ERROR(self->logger, err_code, "Failed to query extension size in %s service", plugin->plugin_name);
+
+    return err_code;
+}
+/*
 static kaa_error_t kaa_client_sync_get_size(kaa_platform_protocol_t *self
                                           , const kaa_service_t services[]
                                           , size_t services_count
@@ -294,9 +350,54 @@ static kaa_error_t kaa_client_sync_get_size(kaa_platform_protocol_t *self
 
     return err_code;
 }
+*/
 
 
+static kaa_error_t kaa_client_sync_serialize(kaa_platform_protocol_t *self
+                                           , const uint16_t plugins[]
+                                           , size_t plugins_count
+                                           , char* buffer
+                                           , size_t *size)
+{
+    uint32_t i = 0;
+    kaa_plugin_t *plugin;
+    kaa_platform_message_writer_t *writer = NULL;
+    kaa_error_t error_code = kaa_platform_message_writer_create(&writer, buffer, *size);
+    KAA_RETURN_IF_ERR(error_code);
 
+    uint16_t total_plugins_count = plugins_count;
+
+    error_code = kaa_platform_message_header_write(writer, KAA_PLATFORM_PROTOCOL_ID, KAA_PLATFORM_PROTOCOL_VERSION);
+    if (error_code) {
+        KAA_LOG_ERROR(self->logger, error_code, "Failed to write the client sync header");
+        return error_code;
+    }
+    char *extension_count_p = writer->current;
+    writer->current += KAA_PROTOCOL_EXTENSIONS_COUNT_SIZE;
+
+    while (!error_code && plugins_count--) {
+        error_code = kaa_plugin_find_by_type(self->kaa_context, plugins[i++], &plugin);
+
+        if (!error_code) {
+            error_code = plugin->request_serialize_fn(plugin, writer);
+            if (error_code == KAA_ERR_NOTHING_TODO)
+            {
+                --total_plugins_count;
+                error_code = KAA_ERR_NONE;
+            }
+            else if (error_code)
+                KAA_LOG_ERROR(self->logger, error_code, "Failed to serialize the %s extension", plugin->plugin_name);
+        }
+    }
+
+    total_plugins_count = KAA_HTONS(total_plugins_count);
+    memcpy(extension_count_p, &total_plugins_count, sizeof(uint16_t));
+    *size = writer->current - writer->begin;
+    kaa_platform_message_writer_destroy(writer);
+
+    return error_code;
+}
+/*
 static kaa_error_t kaa_client_sync_serialize(kaa_platform_protocol_t *self
                                            , const kaa_service_t services[]
                                            , size_t services_count
@@ -307,7 +408,7 @@ static kaa_error_t kaa_client_sync_serialize(kaa_platform_protocol_t *self
     kaa_error_t error_code = kaa_platform_message_writer_create(&writer, buffer, *size);
     KAA_RETURN_IF_ERR(error_code);
 
-    uint16_t total_services_count = services_count + 1 /* Meta extension */;
+    uint16_t total_services_count = services_count + 1 ;// Meta extension
 
     error_code = kaa_platform_message_header_write(writer, KAA_PLATFORM_PROTOCOL_ID, KAA_PLATFORM_PROTOCOL_VERSION);
     if (error_code) {
@@ -410,7 +511,7 @@ static kaa_error_t kaa_client_sync_serialize(kaa_platform_protocol_t *self
 
     return error_code;
 }
-
+*/
 
 
 kaa_error_t kaa_platform_protocol_serialize_client_sync(kaa_platform_protocol_t *self
@@ -419,20 +520,20 @@ kaa_error_t kaa_platform_protocol_serialize_client_sync(kaa_platform_protocol_t 
                                                       , size_t *buffer_size)
 {
     KAA_RETURN_IF_NIL4(self, info, buffer, buffer_size, KAA_ERR_BADPARAM);
-    KAA_RETURN_IF_NIL3(info->allocator, info->services, info->services_count, KAA_ERR_BADDATA);
+    KAA_RETURN_IF_NIL3(info->allocator, info->plugins, info->plugin_count, KAA_ERR_BADDATA);
 
     KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Serializing client sync...");
 
     *buffer_size = 0;
-    kaa_error_t error = kaa_client_sync_get_size(self, info->services, info->services_count, buffer_size);
+    kaa_error_t error = kaa_client_sync_get_size(self, info->plugins, info->plugin_count, buffer_size);
     KAA_RETURN_IF_ERR(error)
 
-    KAA_LOG_DEBUG(self->logger, KAA_ERR_NONE, "Going to request sync buffer (size %zu)", *buffer_size);
+    KAA_LOG_DEBUG(self->logger, KAA_ERR_NONE, "Going to request sync buffer (size %u)", *buffer_size);
 
     *buffer = info->allocator(info->allocator_context, *buffer_size);
     if (*buffer) {
         self->request_id++;
-        error = kaa_client_sync_serialize(self, info->services, info->services_count, *buffer, buffer_size);
+        error = kaa_client_sync_serialize(self, info->plugins, info->plugin_count, *buffer, buffer_size);
     } else {
         error = KAA_ERR_WRITE_FAILED;
     }
@@ -440,14 +541,87 @@ kaa_error_t kaa_platform_protocol_serialize_client_sync(kaa_platform_protocol_t 
     if (error) {
         self->request_id--;
     } else {
-        KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Client sync serialized: request id '%u', payload size '%zu'", self->request_id, *buffer_size);
+        KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Client sync serialized: request id '%u', payload size '%u'", self->request_id, *buffer_size);
     }
 
     return error;
 }
 
+kaa_error_t kaa_platform_protocol_process_server_sync(kaa_platform_protocol_t *self
+                                                    , const char *buffer
+                                                    , size_t buffer_size)
+{
+    KAA_RETURN_IF_NIL3(self, buffer, buffer_size, KAA_ERR_BADPARAM);
 
+    KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Server sync received: payload size '%u'", buffer_size);
 
+    kaa_platform_message_reader_t *reader = NULL;
+    kaa_error_t err_code = kaa_platform_message_reader_create(&reader, buffer, buffer_size);
+    KAA_RETURN_IF_ERR(err_code);
+
+    uint32_t protocol_id = 0;
+    uint16_t protocol_version = 0;
+    uint16_t extension_count = 0;
+
+    err_code = kaa_platform_message_header_read(reader, &protocol_id, &protocol_version, &extension_count);
+    KAA_RETURN_IF_ERR(err_code);
+
+    if (protocol_id != KAA_PLATFORM_PROTOCOL_ID) {
+        KAA_LOG_ERROR(self->logger, KAA_ERR_BAD_PROTOCOL_ID, "Unsupported protocol ID %x", protocol_id);
+        return KAA_ERR_BAD_PROTOCOL_ID;
+    }
+    if (protocol_version != KAA_PLATFORM_PROTOCOL_VERSION) {
+        KAA_LOG_ERROR(self->logger, KAA_ERR_BAD_PROTOCOL_VERSION, "Unsupported protocol version %u", protocol_version);
+        return KAA_ERR_BAD_PROTOCOL_VERSION;
+    }
+
+    uint16_t extension_type = 0;
+    uint16_t extension_options = 0;
+    uint32_t extension_length = 0;
+
+    self->sync_request_id = 0;
+
+    int sz = reader->end - reader->begin;
+    for(int it = 0; it < sz; ++it)
+    {
+        if(!(it % 32))
+            fprintf(stderr, "\n");
+        fprintf(stderr, "%02X ", (unsigned char)reader->begin[it]);
+    }
+    fprintf(stderr, "\n");
+
+    while (!err_code && kaa_platform_message_is_buffer_large_enough(reader, KAA_PROTOCOL_MESSAGE_HEADER_SIZE)) {
+        err_code = kaa_platform_message_read_extension_header(reader
+                                                              , &extension_type
+                                                              , &extension_options
+                                                              , &extension_length);
+        KAA_RETURN_IF_ERR(err_code);
+        kaa_plugin_t *plugin;
+
+        err_code = kaa_plugin_find_by_type(self->kaa_context, extension_type, &plugin);
+
+        if (!err_code) {
+            KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "plugin %s", plugin->plugin_name);
+            plugin->request_handle_server_sync_fn(plugin, reader, self->sync_request_id, extension_options, extension_length);
+        } else
+            KAA_LOG_WARN(self->logger, KAA_ERR_UNSUPPORTED, "Unsupported extension received (type = %u)", extension_type);
+
+        KAA_RETURN_IF_ERR(err_code);
+    }
+
+    kaa_platform_message_reader_destroy(reader);
+
+    if (!err_code) {
+        err_code = kaa_status_save(self->status);
+        KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Server sync successfully processed");
+    } else {
+        KAA_LOG_ERROR(self->logger, err_code,
+                "Server sync is corrupted. Failed to read extension with type %u", extension_type);
+    }
+
+    return err_code;
+}
+/*
 kaa_error_t kaa_platform_protocol_process_server_sync(kaa_platform_protocol_t *self
                                                     , const char *buffer
                                                     , size_t buffer_size)
@@ -572,4 +746,54 @@ kaa_error_t kaa_platform_protocol_process_server_sync(kaa_platform_protocol_t *s
     }
 
     return error_code;
+}
+*/
+
+kaa_error_t kaa_meta_plugin_request_get_size(kaa_plugin_t *self, size_t *expected_size)
+{
+    return kaa_meta_data_request_get_size(expected_size);
+}
+
+kaa_error_t kaa_meta_plugin_request_serialize(kaa_plugin_t *self, kaa_platform_message_writer_t *writer)
+{
+    return kaa_meta_data_request_serialize(self->context->platform_protocol, writer, self->context->platform_protocol->request_id);
+}
+
+kaa_error_t kaa_meta_plugin_request_handle_server_sync(kaa_plugin_t *self, kaa_platform_message_reader_t *reader,
+                                                         uint32_t request_id, uint16_t options, uint32_t length)
+{
+    kaa_error_t err_code;
+    KAA_LOG_INFO(self->context->platform_protocol->logger, KAA_ERR_NONE, "Received meta server sync: options 0, payload size %u", sizeof(uint32_t));
+    err_code = kaa_platform_message_read(reader, &request_id, sizeof(uint32_t));
+    self->context->platform_protocol->sync_request_id = KAA_NTOHL(request_id);
+    KAA_LOG_TRACE(self->context->platform_protocol->logger, KAA_ERR_NONE, "Server sync request id %u", self->context->platform_protocol->sync_request_id);
+    return err_code;
+}
+
+
+kaa_error_t kaa_meta_plugin_init(kaa_plugin_t *self)
+{
+    return KAA_ERR_NONE;
+}
+
+kaa_error_t kaa_meta_plugin_deinit(kaa_plugin_t *self)
+{
+    return KAA_ERR_NONE;
+}
+
+kaa_plugin_t *kaa_meta_plugin_create(kaa_context_t *context)
+{
+    kaa_plugin_t *plugin = KAA_CALLOC(1, sizeof(kaa_plugin_t));
+
+    plugin->init_fn = kaa_meta_plugin_init;
+    plugin->deinit_fn = kaa_meta_plugin_deinit;
+    plugin->request_get_size_fn = kaa_meta_plugin_request_get_size;
+    plugin->request_serialize_fn = kaa_meta_plugin_request_serialize;
+    plugin->request_handle_server_sync_fn = kaa_meta_plugin_request_handle_server_sync;
+
+    plugin->plugin_name = "meta data";
+    plugin->extension_type = KAA_PLUGIN_META_DATA;
+    plugin->context = context;
+
+    return plugin;
 }

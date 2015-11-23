@@ -29,6 +29,7 @@
 #include "../../platform-impl/common/kaa_tcp_channel.h"
 #include "../../platform-impl/common/ext_log_upload_strategies.h"
 #include "../../platform/ext_kaa_failover_strategy.h"
+#include "../../plugins/kaa_plugin.h"
 
 typedef enum {
     KAA_CLIENT_CHANNEL_STATE_CONNECTED = 0,
@@ -40,25 +41,25 @@ typedef enum {
     KAA_CLIENT_CHANNEL_TYPE_OPERATIONS
 } kaa_client_channel_type_t;
 
-static kaa_service_t BOOTSTRAP_SERVICE[] = { KAA_SERVICE_BOOTSTRAP };
-static const int BOOTSTRAP_SERVICE_COUNT = sizeof(BOOTSTRAP_SERVICE) / sizeof(kaa_service_t);
+static uint16_t BOOTSTRAP_PLUGIN[] = { KAA_PLUGIN_BOOTSTRAP };
+static const int BOOTSTRAP_PLUGIN_COUNT = sizeof(BOOTSTRAP_PLUGIN) / sizeof(uint16_t);
 
-static kaa_service_t OPERATIONS_SERVICES[] = { KAA_SERVICE_PROFILE
-                                             , KAA_SERVICE_USER
+static uint16_t OPERATIONS_PLUGINS[] = {    KAA_PLUGIN_PROFILE
+                                          , KAA_PLUGIN_USER
 #ifndef KAA_DISABLE_FEATURE_CONFIGURATION
-                                             , KAA_SERVICE_CONFIGURATION
+                                          , KAA_PLUGIN_CONFIGURATION
 #endif
 #ifndef KAA_DISABLE_FEATURE_EVENTS
-                                             , KAA_SERVICE_EVENT
+                                          , KAA_PLUGIN_EVENT
 #endif
 #ifndef KAA_DISABLE_FEATURE_LOGGING
-                                             , KAA_SERVICE_LOGGING
+                                          , KAA_PLUGIN_LOGGING
 #endif
 #ifndef KAA_DISABLE_FEATURE_NOTIFICATION
-                                             , KAA_SERVICE_NOTIFICATION
+                                          , KAA_PLUGIN_NOTIFICATION
 #endif
                                              };
-static const int OPERATIONS_SERVICES_COUNT = sizeof(OPERATIONS_SERVICES) / sizeof(kaa_service_t);
+static const int OPERATIONS_PLUGIN_COUNT = sizeof(OPERATIONS_PLUGINS) / sizeof(uint16_t);
 
 struct kaa_client_t {
     kaa_context_t                       *context;
@@ -85,14 +86,6 @@ struct kaa_client_t {
 static kaa_error_t kaa_client_init_channel(kaa_client_t *kaa_client, kaa_client_channel_type_t channel_type);
 static kaa_error_t kaa_client_deinit_channel(kaa_client_t *kaa_client);
 static kaa_error_t on_kaa_tcp_channel_event(void *context, kaa_tcp_channel_event_t event_type, kaa_fd_t fd);
-
-#ifndef KAA_DISABLE_FEATURE_LOGGING
-
-extern kaa_error_t ext_unlimited_log_storage_create(void **log_storage_context_p
-                                                  , kaa_logger_t *logger);
-
-kaa_error_t kaa_log_collector_init(kaa_client_t *client);
-#endif
 
 #define KAA_RETURN_IF_ERR_MSG(E, msg) \
         { if(E) { printf("Error %i. \"%s\"\n",(E), (msg)); return (E); } }
@@ -127,7 +120,9 @@ kaa_error_t kaa_client_create(kaa_client_t **client, kaa_client_props_t *props) 
     self->operate = true;
 
 #ifndef KAA_DISABLE_FEATURE_LOGGING
-    error_code = kaa_log_collector_init(self);
+    kaa_plugin_t *plugin;
+    kaa_plugin_find_by_type(self->kaa_context, KAA_PLUGIN_LOGGING, &plugin);
+    error_code = plugin->last_error;
     if (error_code) {
         KAA_LOG_ERROR(self->context->logger, error_code, "Failed to init Kaa log collector, error %d", error_code);
         kaa_client_destroy(self);
@@ -306,7 +301,7 @@ kaa_error_t kaa_client_start(kaa_client_t *kaa_client,
             }
         }
 #ifndef KAA_DISABLE_FEATURE_LOGGING
-      ext_log_upload_timeout(kaa_client->context->log_collector);
+      ext_log_upload_timeout(kaa_client->context);
 #endif
     }
     KAA_LOG_INFO(kaa_client->context->logger, KAA_ERR_NONE, "Kaa client stopped");
@@ -326,14 +321,14 @@ kaa_error_t kaa_client_init_channel(kaa_client_t *kaa_client, kaa_client_channel
         case KAA_CLIENT_CHANNEL_TYPE_BOOTSTRAP:
             error_code = kaa_tcp_channel_create(&kaa_client->channel
                                               , kaa_client->context->logger
-                                              , BOOTSTRAP_SERVICE
-                                              , BOOTSTRAP_SERVICE_COUNT);
+                                              , BOOTSTRAP_PLUGIN
+                                              , BOOTSTRAP_PLUGIN_COUNT);
             break;
         case KAA_CLIENT_CHANNEL_TYPE_OPERATIONS:
             error_code = kaa_tcp_channel_create(&kaa_client->channel
                                               , kaa_client->context->logger
-                                              , OPERATIONS_SERVICES
-                                              , OPERATIONS_SERVICES_COUNT);
+                                              , OPERATIONS_PLUGINS
+                                              , OPERATIONS_PLUGIN_COUNT);
             break;
     }
 
@@ -392,7 +387,7 @@ kaa_error_t kaa_client_deinit_channel(kaa_client_t *kaa_client)
     kaa_client->channel.context = NULL;
     kaa_client->channel.destroy = NULL;
     kaa_client->channel.get_protocol_id = NULL;
-    kaa_client->channel.get_supported_services = NULL;
+    kaa_client->channel.get_supported_plugins = NULL;
     kaa_client->channel.init = NULL;
     kaa_client->channel.set_access_point = NULL;
     kaa_client->channel.sync_handler = NULL;
@@ -424,39 +419,3 @@ void kaa_client_destroy(kaa_client_t *self)
 
     KAA_FREE(self);
 }
-
-
-
-#ifndef KAA_DISABLE_FEATURE_LOGGING
-kaa_error_t kaa_log_collector_init(kaa_client_t *kaa_client)
-{
-    KAA_RETURN_IF_NIL(kaa_client, KAA_ERR_BADPARAM);
-    kaa_error_t error_code  = ext_unlimited_log_storage_create(&kaa_client->log_storage_context,
-                                                               kaa_client->context->logger);
-
-    if (error_code) {
-       KAA_LOG_ERROR(kaa_client->context->logger, error_code, "Failed to create log storage");
-       return error_code;
-    }
-
-    error_code = ext_log_upload_strategy_create(kaa_client->context
-                                              ,&kaa_client->log_upload_strategy_context
-                                              , KAA_LOG_UPLOAD_VOLUME_STRATEGY);
-    if (error_code) {
-        KAA_LOG_ERROR(kaa_client->context->logger, error_code, "Failed to create log upload strategy");
-        return error_code;
-    }
-
-    error_code = kaa_logging_init(kaa_client->context->log_collector
-                                , kaa_client->log_storage_context
-                                , kaa_client->log_upload_strategy_context);
-    if (error_code) {
-        KAA_LOG_ERROR(kaa_client->context->logger, error_code,"Failed to init log collector");
-        return error_code;
-    }
-
-    KAA_LOG_INFO(kaa_client->context->logger, KAA_ERR_NONE, "Log collector init completed");
-    return error_code;
-}
-#endif
-

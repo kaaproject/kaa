@@ -33,6 +33,7 @@
 #include "utilities/kaa_mem.h"
 #include "utilities/kaa_log.h"
 #include "platform/sock.h"
+#include "plugins/kaa_plugin.h"
 
 
 
@@ -73,6 +74,12 @@ static bool is_attach_failed_invoked = false;
 static bool last_is_attached_result = false;
 
 
+typedef struct {
+    COMMON_PLUGIN_FIELDS
+    struct kaa_user_manager_t *manager;
+} mock_user_plugin_t;
+
+
 
 static kaa_error_t on_attached(void *context, const char *user_external_id, const char *endpoint_access_token)
 {
@@ -108,7 +115,7 @@ void test_specified_user_verifier()
 {
     KAA_TRACE_IN(logger);
 
-    ASSERT_EQUAL(kaa_user_manager_attach_to_user(user_manager, USER_EXTERNAL_ID, ACCESS_TOKEN, USER_VERIFIER), KAA_ERR_NONE);
+    ASSERT_EQUAL(kaa_user_manager_attach_to_user(&kaa_context, USER_EXTERNAL_ID, ACCESS_TOKEN, USER_VERIFIER), KAA_ERR_NONE);
 
     size_t expected_size = 0;
     ASSERT_EQUAL(kaa_user_request_get_size(user_manager, &expected_size), KAA_ERR_NONE);
@@ -244,8 +251,16 @@ int test_init(void)
         return error;
     }
 
+    kaa_context.kaa_plugins = KAA_CALLOC(1, sizeof(kaa_plugin_t*));
+    kaa_context.kaa_plugins[0] = kaa_user_plugin_create(&kaa_context);
+    kaa_context.kaa_plugin_count = 1;
+    kaa_context.logger = logger;
+    kaa_context.status = status;
+    kaa_context.channel_manager = channel_manager;
+    ((mock_user_plugin_t*)kaa_context.kaa_plugins[0])->manager = user_manager;
+
     kaa_attachment_status_listeners_t listeners = { NULL, &on_attached, &on_detached, &on_attach_success, &on_attach_failed };
-    error = kaa_user_manager_set_attachment_listeners(user_manager, &listeners);
+    error = kaa_user_manager_set_attachment_listeners(&kaa_context, &listeners);
     if (error) {
         return error;
     }
@@ -259,6 +274,9 @@ int test_deinit(void)
     kaa_channel_manager_destroy(channel_manager);
     kaa_status_destroy(status);
     kaa_log_destroy(logger);
+
+    KAA_FREE(kaa_context.kaa_plugins[0]);
+    KAA_FREE(kaa_context.kaa_plugins);
 
     return 0;
 }

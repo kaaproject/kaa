@@ -90,6 +90,11 @@ typedef struct kaa_status_holder_t                  kaa_status_holder_t;
     typedef struct kaa_failover_strategy_t       kaa_failover_strategy_t;
 #endif
 
+#ifndef KAA_PLUGIN_T
+# define KAA_PLUGIN_T
+typedef struct kaa_plugin_t kaa_plugin_t;
+#endif
+
 /**
  * General Kaa endpoint context. Contains private structures of all Kaa endpoint SDK subsystems that can be used
  * independently to perform API calls to specific subsystems.
@@ -97,16 +102,19 @@ typedef struct kaa_status_holder_t                  kaa_status_holder_t;
 typedef struct kaa_context_s {
     kaa_status_holder_t         *status;                 /**< See @link kaa_status.h @endlink. */
     kaa_platform_protocol_t     *platform_protocol;      /**< See @link kaa_platform_protocol.h @endlink. */
-    kaa_bootstrap_manager_t     *bootstrap_manager;      /**< See @link kaa_bootstrap.h @endlink. */
+    //kaa_bootstrap_manager_t     *bootstrap_manager;      /**< See @link kaa_bootstrap.h @endlink. */
     kaa_channel_manager_t       *channel_manager;        /**< See @link kaa_channel_manager.h @endlink. */
-    kaa_profile_manager_t       *profile_manager;        /**< See @link kaa_profile.h @endlink. */
-    kaa_user_manager_t          *user_manager;           /**< See @link kaa_user.h @endlink. */
-    kaa_event_manager_t         *event_manager;          /**< See @link kaa_event.h @endlink. */
-    kaa_log_collector_t         *log_collector;          /**< See @link kaa_logging.h @endlink. */
+    //kaa_profile_manager_t       *profile_manager;        /**< See @link kaa_profile.h @endlink. */
+    //kaa_user_manager_t          *user_manager;           /**< See @link kaa_user.h @endlink. */
+    //kaa_event_manager_t         *event_manager;          /**< See @link kaa_event.h @endlink. */
+    //kaa_log_collector_t         *log_collector;          /**< See @link kaa_logging.h @endlink. */
     kaa_configuration_manager_t *configuration_manager;  /**< See @link kaa_configuration_manager.h @endlink. */
     kaa_logger_t                *logger;                 /**< See @link kaa_log.h @endlink. */
-    kaa_notification_manager_t  *notification_manager;   /**< See @link kaa_notification.h @endlink. */
+    //kaa_notification_manager_t  *notification_manager;   /**< See @link kaa_notification.h @endlink. */
     kaa_failover_strategy_t     *failover_strategy;
+
+    kaa_plugin_t               **kaa_plugins;
+    size_t                       kaa_plugin_count;
 } kaa_context_t;
 
 #ifdef __cplusplus

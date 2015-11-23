@@ -61,12 +61,11 @@ typedef struct {
 
     time_t    upload_retry_ts;
 
-    kaa_channel_manager_t   *channel_manager;
-    kaa_bootstrap_manager_t *bootstrap_manager;
+    kaa_context_t *context;
 } ext_log_upload_strategy_t;
 
 extern kaa_transport_channel_interface_t *kaa_channel_manager_get_transport_channel(kaa_channel_manager_t *self
-                                                                                  , kaa_service_t service_type);
+                                                                                  , uint16_t plugin_type);
 
 /*
  * Strategy implementation.
@@ -74,7 +73,7 @@ extern kaa_transport_channel_interface_t *kaa_channel_manager_get_transport_chan
 
 kaa_error_t ext_log_upload_strategy_create(struct kaa_context_s *context, void **strategy_p, uint8_t type)
 {
-    KAA_RETURN_IF_NIL5(strategy_p, context, context->channel_manager, context->bootstrap_manager, type, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL3(strategy_p, context, type, KAA_ERR_BADPARAM);
 
     ext_log_upload_strategy_t *strategy = (ext_log_upload_strategy_t *) KAA_MALLOC(sizeof(ext_log_upload_strategy_t));
     KAA_RETURN_IF_NIL(strategy, KAA_ERR_NOMEM);
@@ -87,10 +86,9 @@ kaa_error_t ext_log_upload_strategy_create(struct kaa_context_s *context, void *
 
     strategy->type = type;
     strategy->upload_retry_ts = 0;
-    strategy->timeout = KAA_TIME() + strategy->upload_timeout;
+    strategy->timeout = KAA_TIME() + strategy->upload_timeout;    
 
-    strategy->bootstrap_manager = context->bootstrap_manager;
-    strategy->channel_manager   = context->channel_manager;
+    strategy->context = context;
 
     *strategy_p = strategy;
 
@@ -158,14 +156,14 @@ kaa_error_t ext_log_upload_strategy_on_timeout(void *context)
     KAA_RETURN_IF_NIL(context, KAA_ERR_BADPARAM);
 
     ext_log_upload_strategy_t *self = (ext_log_upload_strategy_t *)context;
-    kaa_transport_channel_interface_t *channel = kaa_channel_manager_get_transport_channel(self->channel_manager
-                                                                                         , KAA_SERVICE_LOGGING);
+    kaa_transport_channel_interface_t *channel = kaa_channel_manager_get_transport_channel(self->context->channel_manager
+                                                                                         , KAA_PLUGIN_LOGGING);
     if (channel) {
         self->upload_retry_ts = 0;
         kaa_transport_protocol_id_t protocol_id;
         kaa_error_t error_code = channel->get_protocol_id(channel->context, &protocol_id);
         KAA_RETURN_IF_ERR(error_code);
-        error_code = kaa_bootstrap_manager_on_access_point_failed(self->bootstrap_manager
+        error_code = kaa_bootstrap_manager_on_access_point_failed(self->context
                                                                 , &protocol_id
                                                                 , KAA_SERVER_OPERATIONS);
         return error_code;

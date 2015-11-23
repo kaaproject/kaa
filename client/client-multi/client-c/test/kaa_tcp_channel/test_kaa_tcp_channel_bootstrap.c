@@ -152,7 +152,7 @@ void test_create_kaa_tcp_channel()
     kaa_transport_channel_interface_t *channel = NULL;
     channel = KAA_CALLOC(1,sizeof(kaa_transport_channel_interface_t));
 
-    kaa_service_t bootstrap_services[] = {KAA_SERVICE_BOOTSTRAP};
+    uint16_t bootstrap_services[] = {KAA_PLUGIN_BOOTSTRAP};
 
     error_code = kaa_tcp_channel_create(channel,logger,bootstrap_services,1);
 
@@ -160,7 +160,7 @@ void test_create_kaa_tcp_channel()
 
     ASSERT_NOT_NULL(channel->context);
     ASSERT_NOT_NULL(channel->get_protocol_id);
-    ASSERT_NOT_NULL(channel->get_supported_services);
+    ASSERT_NOT_NULL(channel->get_supported_plugins);
     ASSERT_NOT_NULL(channel->init);
     ASSERT_NOT_NULL(channel->destroy);
     ASSERT_NOT_NULL(channel->set_access_point);
@@ -173,13 +173,13 @@ void test_create_kaa_tcp_channel()
     ASSERT_EQUAL(protocol_info.id, 0x56c8ff92);
     ASSERT_EQUAL(protocol_info.version, 1);
 
-    kaa_service_t *r_supported_services;
+    uint16_t *r_supported_services;
     size_t r_supported_service_count = 0;
-    error_code = channel->get_supported_services(channel->context,&r_supported_services,&r_supported_service_count);
+    error_code = channel->get_supported_plugins(channel->context,&r_supported_services,&r_supported_service_count);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     ASSERT_EQUAL(r_supported_service_count, 1);
-    ASSERT_EQUAL(r_supported_services[0], KAA_SERVICE_BOOTSTRAP);
+    ASSERT_EQUAL(r_supported_services[0], KAA_PLUGIN_BOOTSTRAP);
 
     channel->destroy(channel->context);
 
@@ -204,7 +204,7 @@ void test_set_access_point_full_success_bootstrap()
     kaa_transport_channel_interface_t *channel = NULL;
     channel = KAA_CALLOC(1,sizeof(kaa_transport_channel_interface_t));
 
-    kaa_service_t bootstrap_services[] = {KAA_SERVICE_BOOTSTRAP};
+    uint16_t bootstrap_services[] = {KAA_PLUGIN_BOOTSTRAP};
 
     error_code = kaa_tcp_channel_create(channel,logger,bootstrap_services,1);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
@@ -234,7 +234,7 @@ void test_set_access_point_connecting_error()
     kaa_transport_channel_interface_t *channel = NULL;
     channel = KAA_CALLOC(1,sizeof(kaa_transport_channel_interface_t));
 
-    kaa_service_t bootstrap_services[] = {KAA_SERVICE_BOOTSTRAP};
+    uint16_t bootstrap_services[] = {KAA_PLUGIN_BOOTSTRAP};
 
     error_code = kaa_tcp_channel_create(channel,logger,bootstrap_services,1);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
@@ -278,7 +278,7 @@ void test_set_access_point_io_error()
     kaa_transport_channel_interface_t *channel = NULL;
     channel = KAA_CALLOC(1,sizeof(kaa_transport_channel_interface_t));
 
-    kaa_service_t bootstrap_services[] = {KAA_SERVICE_BOOTSTRAP};
+    uint16_t bootstrap_services[] = {KAA_PLUGIN_BOOTSTRAP};
 
     error_code = kaa_tcp_channel_create(channel,logger,bootstrap_services,1);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
@@ -347,7 +347,7 @@ void test_bootstrap_sync_success()
     kaa_transport_channel_interface_t *channel = NULL;
     channel = KAA_CALLOC(1,sizeof(kaa_transport_channel_interface_t));
 
-    kaa_service_t bootstrap_services[] = {KAA_SERVICE_BOOTSTRAP};
+    uint16_t bootstrap_services[] = {KAA_PLUGIN_BOOTSTRAP};
 
     error_code = kaa_tcp_channel_create(channel,logger,bootstrap_services,1);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
@@ -452,8 +452,8 @@ void test_set_access_point(kaa_transport_channel_interface_t *channel)
     //Fill with fake pointers, just for non null
     kaa_transport_context_t transport_context;
     transport_context.kaa_context = (kaa_context_t*)calloc(1, sizeof(kaa_context_t));
-    transport_context.kaa_context->platform_protocol = (kaa_platform_protocol_t *)CONNECTION_DATA;
-    transport_context.kaa_context->bootstrap_manager = (kaa_bootstrap_manager_t *)CONNECTION_DATA;
+    //transport_context.kaa_context->platform_protocol = (kaa_platform_protocol_t *)CONNECTION_DATA;
+    //transport_context.kaa_context->bootstrap_manager = (kaa_bootstrap_manager_t *)CONNECTION_DATA;
 
     kaa_error_t error_code = channel->init(channel->context, &transport_context);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
@@ -497,7 +497,7 @@ void test_set_access_point(kaa_transport_channel_interface_t *channel)
 
 /* Mocket functions */
 
-kaa_error_t kaa_bootstrap_manager_on_access_point_failed(kaa_bootstrap_manager_t *self
+kaa_error_t kaa_bootstrap_manager_on_access_point_failed(kaa_context_t *context
                                                        , kaa_transport_protocol_id_t *protocol_id
                                                        , kaa_server_type_t type)
 {
@@ -696,8 +696,8 @@ kaa_error_t kaa_platform_protocol_serialize_client_sync(kaa_platform_protocol_t 
                                                       , size_t *buffer_size)
 {
 
-    if (info->services_count == 1
-            && info->services[0] == KAA_SERVICE_BOOTSTRAP) {
+    if (info->plugin_count == 1
+            && info->plugins[0] == KAA_PLUGIN_BOOTSTRAP) {
         if (info->allocator && info->allocator_context) {
             char *alloc_buffer = info->allocator(info->allocator_context, sizeof(CONNECT_PACK));
             if (alloc_buffer) {

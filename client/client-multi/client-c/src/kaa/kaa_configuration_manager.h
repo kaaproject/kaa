@@ -19,17 +19,11 @@
 
 #include "gen/kaa_configuration_definitions.h"
 #include "platform/ext_configuration_receiver.h"
+#include "kaa_context.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-
-#ifndef KAA_CONFIGURATION_MANAGER_T
-#define KAA_CONFIGURATION_MANAGER_T
-    typedef struct kaa_configuration_manager kaa_configuration_manager_t;
-#endif
-
 
 
 /**
@@ -40,7 +34,7 @@ extern "C" {
  * @return  The current configuration data (NOTE: don't modify this instance), or NULL if something went wrong.
  *          Don't cache this pointer, it could become invalid after the next configuration update.
  */
-const kaa_root_configuration_t *kaa_configuration_manager_get_configuration(kaa_configuration_manager_t *self);
+const kaa_root_configuration_t *kaa_configuration_manager_get_configuration(kaa_context_t *context);
 
 
 
@@ -52,7 +46,7 @@ const kaa_root_configuration_t *kaa_configuration_manager_get_configuration(kaa_
  *
  * @return  Error code.
  */
-kaa_error_t kaa_configuration_manager_set_root_receiver(kaa_configuration_manager_t *self, const kaa_configuration_root_receiver_t *receiver);
+kaa_error_t kaa_configuration_manager_set_root_receiver(kaa_context_t *context, const kaa_configuration_root_receiver_t *receiver);
 
 
 

@@ -50,8 +50,9 @@ typedef char* (*kaa_buffer_alloc_fn)(void *context, size_t buffer_size);
  * Serialize info structure
  */
 typedef struct {
-    kaa_service_t *services;        /**< Non-empty list of services to include into the sync message */
-    size_t services_count;          /**< Number of elements in @c services */
+    //kaa_service_t *services;        /**< Non-empty list of services to include into the sync message */
+    uint16_t *plugins;             /**< */
+    size_t plugin_count;          /**< Number of elements in @c plugins */
     kaa_buffer_alloc_fn allocator;  /**< Pointer to a buffer memory allocation function */
     void *allocator_context;        /**< Context to be passed to the @c allocator callback as @c context parameter */
 } kaa_serialize_info_t;
@@ -88,6 +89,11 @@ kaa_error_t kaa_platform_protocol_serialize_client_sync(kaa_platform_protocol_t 
 kaa_error_t kaa_platform_protocol_process_server_sync(kaa_platform_protocol_t *self
                                                     , const char *buffer
                                                     , size_t buffer_size);
+
+
+kaa_error_t kaa_platform_protocol_get_context(kaa_platform_protocol_t *self, kaa_context_t **context);
+kaa_error_t kaa_platform_protocol_get_status(kaa_platform_protocol_t *self, kaa_status_t **status);
+kaa_error_t kaa_platform_protocol_get_request_id(kaa_platform_protocol_t *self, uint32_t *request_id);
 
 #ifdef __cplusplus
 }      /* extern "C" */

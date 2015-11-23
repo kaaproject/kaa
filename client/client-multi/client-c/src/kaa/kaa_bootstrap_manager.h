@@ -51,15 +51,14 @@ typedef enum {
 /**
  * @brief Notifies some error has occurred while using an access point.
  *
- * @param[in]   self           Bootstrap manager.
+ * @param[in]   context        Kaa context.
  * @param[in]   protocol_id    Transport protocol id that failed access point belongs to.
  * @param[in]   type           Server type that failed access point belongs to.
  * @return                     Error code.
  *
  * @see kaa_transport_protocol_id_t
  */
-kaa_error_t kaa_bootstrap_manager_on_access_point_failed(kaa_bootstrap_manager_t *self
-                                                       , kaa_transport_protocol_id_t *protocol_id
+kaa_error_t kaa_bootstrap_manager_on_access_point_failed(kaa_context_t *context, kaa_transport_protocol_id_t *protocol_id
                                                        , kaa_server_type_t type);
 
 #ifdef __cplusplus

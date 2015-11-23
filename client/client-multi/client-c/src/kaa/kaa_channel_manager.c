@@ -31,12 +31,13 @@
 #include "kaa_platform_protocol.h"
 #include "kaa_platform_utils.h"
 #include "platform-impl/posix/posix_kaa_failover_strategy.h"
+#include "plugins/kaa_plugin.h"
 
 
-extern kaa_access_point_t *kaa_bootstrap_manager_get_operations_access_point(kaa_bootstrap_manager_t *self
+extern kaa_access_point_t *kaa_bootstrap_manager_get_operations_access_point(kaa_context_t *context
                                                                         , kaa_transport_protocol_id_t *protocol_info);
 
-extern kaa_access_point_t *kaa_bootstrap_manager_get_bootstrap_access_point(kaa_bootstrap_manager_t *self
+extern kaa_access_point_t *kaa_bootstrap_manager_get_bootstrap_access_point(kaa_context_t *context
                                                                           , kaa_transport_protocol_id_t *protocol_id);
 
 typedef struct {
@@ -134,14 +135,14 @@ kaa_error_t kaa_transport_channel_id_calculate(kaa_transport_channel_interface_t
     *channel_id = prime * (*channel_id) + protoco_id.id;
     *channel_id = prime * (*channel_id) + protoco_id.version;
 
-    *channel_id = prime * (*channel_id) + (ptrdiff_t)channel->get_supported_services;
-    size_t services_count = 0;
-    kaa_service_t *services = NULL;
-    channel->get_supported_services(channel->context, &services, &services_count);
-    if (services) {
+    *channel_id = prime * (*channel_id) + (ptrdiff_t)channel->get_supported_plugins;
+    size_t plugin_count = 0;
+    uint16_t *plugins = NULL;
+    channel->get_supported_plugins(channel->context, &plugins, &plugin_count);
+    if (plugins) {
         size_t i = 0;
-        for (; i < services_count; ++i)
-            *channel_id = prime * (*channel_id) + (int) services[i];
+        for (; i < plugin_count; ++i)
+            *channel_id = prime * (*channel_id) + (int) plugins[i];
     }
 
     return KAA_ERR_NONE;
@@ -155,20 +156,20 @@ void kaa_channel_manager_destroy(kaa_channel_manager_t *self)
     }
 }
 
-static bool is_bootstrap_service_supported(kaa_transport_channel_interface_t *channel)
+static bool is_bootstrap_plugin_supported(kaa_transport_channel_interface_t *channel)
 {
     KAA_RETURN_IF_NIL(channel, false);
 
-    kaa_service_t *services;
-    size_t service_count;
-    kaa_error_t error_code = channel->get_supported_services(channel->context
-                                                           , &services
-                                                           , &service_count);
+    uint16_t *plugins;
+    size_t plugin_count;
+    kaa_error_t error_code = channel->get_supported_plugins(channel->context
+                                                           , &plugins
+                                                           , &plugin_count);
 
     if (!error_code) {
         size_t i = 0;
-        for (; i < service_count; ++i) {
-            if (services[i] == KAA_SERVICE_BOOTSTRAP) {
+        for (; i < plugin_count; ++i) {
+            if (plugins[i] == KAA_PLUGIN_BOOTSTRAP) {
                 return true;
             }
         }
@@ -203,7 +204,7 @@ static kaa_error_t add_channel(kaa_channel_manager_t *self
 
     wrapper->channel_id = id;
     wrapper->channel = *channel;
-    wrapper->server_type = is_bootstrap_service_supported(channel) ? KAA_SERVER_BOOTSTRAP : KAA_SERVER_OPERATIONS;
+    wrapper->server_type = is_bootstrap_plugin_supported(channel) ? KAA_SERVER_BOOTSTRAP : KAA_SERVER_OPERATIONS;
 
     it = kaa_list_push_front(self->transport_channels, wrapper);
     if (!it) {
@@ -254,9 +255,9 @@ static kaa_error_t init_channel(kaa_channel_manager_t *self
                                                                 server_type == KAA_SERVER_BOOTSTRAP;
 
         if (is_bootstrap_channel) {
-            access_point = kaa_bootstrap_manager_get_bootstrap_access_point(self->kaa_context->bootstrap_manager, &protocol_id);
+            access_point = kaa_bootstrap_manager_get_bootstrap_access_point(self->kaa_context, &protocol_id);
         } else {
-            access_point = kaa_bootstrap_manager_get_operations_access_point(self->kaa_context->bootstrap_manager, &protocol_id);
+            access_point = kaa_bootstrap_manager_get_operations_access_point(self->kaa_context, &protocol_id);
         }
 
         if (access_point) {
@@ -316,34 +317,34 @@ kaa_error_t kaa_channel_manager_remove_transport_channel(kaa_channel_manager_t *
 }
 
 kaa_transport_channel_interface_t *kaa_channel_manager_get_transport_channel(kaa_channel_manager_t *self
-                                                                           , kaa_service_t service_type)
+                                                                           , uint16_t plugin_type)
 {
     KAA_RETURN_IF_NIL(self, NULL);
 
     kaa_error_t error_code = KAA_ERR_NONE;
 
     kaa_transport_channel_wrapper_t *channel_wrapper;
-    kaa_service_t *services;
-    size_t service_count;
+    uint16_t *plugins;
+    size_t plugin_count;
 
     kaa_list_node_t *it = kaa_list_begin(self->transport_channels);
     while (it) {
         channel_wrapper = (kaa_transport_channel_wrapper_t *) kaa_list_get_data(it);
 
-        error_code = channel_wrapper->channel.get_supported_services(channel_wrapper->channel.context
-                                                                   , &services
-                                                                   , &service_count);
-        if (error_code || !services || !service_count) {
-            KAA_LOG_WARN(self->kaa_context->logger, error_code, "Failed to retrieve list of supported services "
+        error_code = channel_wrapper->channel.get_supported_plugins(channel_wrapper->channel.context
+                                                                   , &plugins
+                                                                   , &plugin_count);
+        if (error_code || !plugins || !plugin_count) {
+            KAA_LOG_WARN(self->kaa_context->logger, error_code, "Failed to retrieve list of supported plugins "
                                         "for transport channel [0x%08X]", channel_wrapper->channel_id);
             continue;
         }
 
-        while (service_count--) {
-            if (*services++ == service_type) {
+        while (plugin_count--) {
+            if (*plugins++ == plugin_type) {
                 KAA_LOG_TRACE(self->kaa_context->logger, KAA_ERR_NONE, "Transport channel "
-                        "[0x%08X] for service %u was found"
-                        , channel_wrapper->channel_id, service_type);
+                        "[0x%08X] for plugin %u was found"
+                        , channel_wrapper->channel_id, plugin_type);
                 return &channel_wrapper->channel;
             }
         }
@@ -352,7 +353,7 @@ kaa_transport_channel_interface_t *kaa_channel_manager_get_transport_channel(kaa
     }
 
     KAA_LOG_WARN(self->kaa_context->logger, KAA_ERR_NOT_FOUND,
-            "Failed to find transport channel for service %u", service_type);
+            "Failed to find transport channel for plugin %u", plugin_type);
 
     return NULL;
 }
