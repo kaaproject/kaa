@@ -51,6 +51,7 @@ import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaExportMethod;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaInfoDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
@@ -613,6 +614,33 @@ public class KaaAdminController {
     @ResponseBody
     public List<CTLSchemaMetaInfoDto> getCTLSchemasByApplicationId(@RequestParam String applicationId) throws KaaAdminServiceException {
         return kaaAdminService.getCTLSchemasByApplicationId(applicationId);
+    }
+    
+    /**
+     * Exports a CTL schema and, depending on the export type specified, all of
+     * its dependencies.
+     */
+    @RequestMapping(value = "CTL/exportSchema", params = { "fqn", "version", "method" }, method = RequestMethod.POST)
+    @ResponseStatus(value = HttpStatus.OK)
+    public void exportCTLSchema(
+            @RequestParam String fqn,
+            @RequestParam int version,
+            @RequestParam String method,
+            HttpServletRequest request,
+            HttpServletResponse response)
+                    throws KaaAdminServiceException {
+        
+        try {
+            FileData output = kaaAdminService.exportCTLSchema(fqn, version, CTLSchemaExportMethod.valueOf(method.toUpperCase()));
+            ServletUtils.prepareDisposition(request, response, output.getFileName());
+            response.setContentType(output.getContentType());
+            response.setContentLength(output.getFileData().length);
+            response.setBufferSize(BUFFER);
+            response.getOutputStream().write(output.getFileData());
+            response.flushBuffer();
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
     }
 
     /**

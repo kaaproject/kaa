@@ -1659,4 +1659,19 @@ public class DefaultControlService implements ControlService {
         return ctlService.findCTLSchemaDependents(fqn, version, tenantId);
     }
 
+    @Override
+    public FileData exportCTLSchemaShallow(CTLSchemaDto schema) throws ControlServiceException {
+        return ctlService.shallowExport(schema);
+    }
+
+    @Override
+    public FileData exportCTLSchemaFlat(CTLSchemaDto schema) throws ControlServiceException {
+        return ctlService.flatExport(schema);
+    }
+
+    @Override
+    public FileData exportCTLSchemaDeep(CTLSchemaDto schema) throws ControlServiceException {
+        return ctlService.deepExport(schema);
+    }
+
 }

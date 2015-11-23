@@ -1,11 +1,34 @@
 package org.kaaproject.kaa.server.common.dao.service;
 
 
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto.SYSTEM;
+import static org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto.TENANT;
+import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
+import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getDto;
+import static org.kaaproject.kaa.server.common.dao.service.Validator.validateObject;
+import static org.kaaproject.kaa.server.common.dao.service.Validator.validateSqlId;
+import static org.kaaproject.kaa.server.common.dao.service.Validator.validateString;
+
+import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.ArrayNode;
+import org.codehaus.jackson.node.ObjectNode;
 import org.hibernate.LockMode;
 import org.hibernate.LockOptions;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
+import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.server.common.dao.CTLService;
 import org.kaaproject.kaa.server.common.dao.exception.DatabaseProcessingException;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
@@ -19,19 +42,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto.SYSTEM;
-import static org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto.TENANT;
-import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
-import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getDto;
-import static org.kaaproject.kaa.server.common.dao.service.Validator.validateObject;
-import static org.kaaproject.kaa.server.common.dao.service.Validator.validateSqlId;
-import static org.kaaproject.kaa.server.common.dao.service.Validator.validateString;
 
 @Service
 @Transactional
@@ -302,5 +312,91 @@ public class CTLServiceImpl implements CTLService {
                 dst.setApplication(null);
             }
         }
+    }
+    
+    @Override
+    public FileData shallowExport(CTLSchemaDto schema) {
+        FileData result = new FileData();
+        result.setContentType("application/json");
+        result.setFileName(schema.getMetaInfo().getFqn() + "-v" + schema.getMetaInfo().getVersion() + ".json");
+        result.setFileData(schema.getBody().getBytes());
+        return result;
+    }
+
+    @Override
+    public FileData flatExport(CTLSchemaDto schema) {
+        try {
+            FileData result = new FileData();
+            result.setContentType("application/json");
+            result.setFileName(schema.getMetaInfo().getFqn() + "-v" + schema.getMetaInfo().getVersion() + ".json");
+            result.setFileData(this.inlineDependencies(schema).toString().getBytes());
+            return result;
+        } catch (Exception cause) {
+            throw new RuntimeException("An unexpected exception occured: " + cause.toString());
+        }
+    }
+
+    @Override
+    public FileData deepExport(CTLSchemaDto schema) {
+        try {
+            ByteArrayOutputStream content = new ByteArrayOutputStream();
+            ZipOutputStream out = new ZipOutputStream(content);
+            List<FileData> files = this.recursiveShallowExport(new ArrayList<FileData>(), schema);
+            for (FileData file : files) {
+                out.putNextEntry(new ZipEntry(file.getFileName()));
+                out.write(file.getFileData());
+                out.closeEntry();
+            }
+            out.close();
+
+            FileData result = new FileData();
+            result.setContentType("application/zip");
+            result.setFileName("schemas.zip");
+            result.setFileData(content.toByteArray());
+            return result;
+        } catch (Exception cause) {
+            throw new RuntimeException("An unexpected exception occured: " + cause.toString());
+        }
+    }
+
+    private ObjectNode inlineDependencies(CTLSchemaDto schema) throws Exception {
+        ObjectNode object = new ObjectMapper().readValue(schema.getBody(), ObjectNode.class);
+
+        ArrayNode dependencies = (ArrayNode) object.get("dependencies");
+        Map<String, Integer> versions = new HashMap<>();
+        if (dependencies != null) {
+            for (JsonNode node : dependencies) {
+                ObjectNode dependency = (ObjectNode) node;
+                versions.put(dependency.get("fqn").getTextValue(), dependency.get("version").getIntValue());
+            }
+        }
+
+        ArrayNode fields = (ArrayNode) object.get("fields");
+        if (fields != null) {
+            for (JsonNode node : fields) {
+                ObjectNode field = (ObjectNode) node;
+                String type = field.get("type").getTextValue();
+                ObjectNode value = this.inlineDependencies(this.findCTLSchemaByFqnAndVerAndTenantId(type, versions.get(type), schema.getTenantId()));
+                field.put("type", value);
+            }
+        }
+
+        return object;
+    }
+
+    private List<FileData> recursiveShallowExport(List<FileData> files, CTLSchemaDto parent) throws Exception {
+        files.add(this.shallowExport(parent));
+        ObjectNode object = new ObjectMapper().readValue(parent.getBody(), ObjectNode.class);
+        ArrayNode dependencies = (ArrayNode) object.get("dependencies");
+        if (dependencies != null) {
+            for (JsonNode node : dependencies) {
+                ObjectNode dependency = (ObjectNode) node;
+                String fqn = dependency.get("fqn").getTextValue();
+                Integer version = dependency.get("version").getIntValue();
+                CTLSchemaDto child = this.findCTLSchemaByFqnAndVerAndTenantId(fqn, version, parent.getTenantId());
+                this.recursiveShallowExport(files, child);
+            }
+        }
+        return files;
     }
 }

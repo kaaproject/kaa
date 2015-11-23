@@ -1033,6 +1033,12 @@ public interface ControlService {
     List<CTLSchemaDto> getCTLSchemaDependents(String schemaId) throws ControlServiceException;
 
     List<CTLSchemaDto> getCTLSchemaDependents(String fqn, int version, String tenantId) throws ControlServiceException;
+    
+    FileData exportCTLSchemaShallow(CTLSchemaDto schema) throws ControlServiceException;
+    
+    FileData exportCTLSchemaFlat(CTLSchemaDto schema) throws ControlServiceException;
+    
+    FileData exportCTLSchemaDeep(CTLSchemaDto schema) throws ControlServiceException;
 
     /**
      * Gets SdkProfileDto object by sdk profile id.

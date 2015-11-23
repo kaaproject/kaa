@@ -78,6 +78,7 @@ import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaExportMethod;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaInfoDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
@@ -2911,7 +2912,33 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throw Utils.handleException(cause);
         }
     }
-
+    
+    @Override
+    public FileData exportCTLSchema(String fqn, int version, CTLSchemaExportMethod method) throws KaaAdminServiceException {
+        try {
+            this.checkCTLSchemaFqn(fqn);
+            this.checkCTLSchemaVersion(version);
+            String tenantId = this.getCurrentUser().getTenantId();
+            CTLSchemaDto schemaFound = controlService.getCTLSchemaByFqnVersionAndTenantId(fqn, version, tenantId);
+            Utils.checkNotNull(schemaFound);
+            if (schemaFound.getMetaInfo().getScope() != CTLSchemaScopeDto.SYSTEM) {
+                this.checkCTLAuthority(schemaFound);
+            }
+            switch (method) {
+                case SHALLOW:
+                    return controlService.exportCTLSchemaShallow(schemaFound);
+                case FLAT:
+                    return controlService.exportCTLSchemaFlat(schemaFound);
+                case DEEP:
+                    return controlService.exportCTLSchemaDeep(schemaFound);
+                default:
+                    throw new IllegalArgumentException("The export method " + method.name() + " is not currently supported!");
+            }
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
+    
     public SdkProfileDto checkSdkProfileId(String sdkProfileId) throws KaaAdminServiceException {
         try {
             if (isEmpty(sdkProfileId)) {

@@ -18,6 +18,7 @@ package org.kaaproject.kaa.server.common.dao;
 
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
+import org.kaaproject.kaa.common.dto.file.FileData;
 
 import java.util.List;
 
@@ -175,4 +176,10 @@ public interface CTLService {
      * fully qualified name and version.
      */
     List<CTLSchemaDto> findCTLSchemaDependents(String fqn, Integer version, String tenantId);
+    
+    FileData shallowExport(CTLSchemaDto schema);
+    
+    FileData flatExport(CTLSchemaDto schema);
+    
+    FileData deepExport(CTLSchemaDto schema);
 }
