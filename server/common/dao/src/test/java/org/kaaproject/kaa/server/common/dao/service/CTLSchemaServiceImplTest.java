@@ -98,7 +98,7 @@ public class CTLSchemaServiceImplTest extends AbstractTest {
         Assert.assertNull(ctlService.findCTLSchemaById(schemaId));
     }
 
-    @Test(expected = IncorrectParameterException.class)
+    @Test
     public void testRemoveCTLSchemaByFqnAndVerAndWithoutTenantId() {
         String schemaId = systemSchema.getId();
         ctlService.removeCTLSchemaByFqnAndVerAndTenantId(systemSchema.getMetaInfo().getFqn(),
