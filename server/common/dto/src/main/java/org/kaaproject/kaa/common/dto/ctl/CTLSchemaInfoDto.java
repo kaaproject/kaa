@@ -31,6 +31,8 @@ import java.util.Set;
  */
 public class CTLSchemaInfoDto extends AbstractCTLSchemaDto implements HasId, Serializable {
 
+    private static final long serialVersionUID = 3509310026130071994L;
+    
     private String fqn;
     private Integer version;
     private CTLSchemaScopeDto scope;

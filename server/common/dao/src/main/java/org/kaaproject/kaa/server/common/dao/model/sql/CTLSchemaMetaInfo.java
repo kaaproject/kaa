@@ -16,10 +16,13 @@
 
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CTL_SCHEMA_META_INFO_FQN;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CTL_SCHEMA_META_INFO_SCOPE;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CTL_SCHEMA_META_INFO_TABLE_NAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CTL_SCHEMA_META_INFO_UNIQUE_CONSTRAINT;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CTL_SCHEMA_META_INFO_VERSION;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -28,19 +31,16 @@ import javax.persistence.Enumerated;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import java.io.Serializable;
-
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.CTL_SCHEMA_META_INFO_FQN;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.CTL_SCHEMA_META_INFO_SCOPE;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.CTL_SCHEMA_META_INFO_TABLE_NAME;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.CTL_SCHEMA_META_INFO_UNIQUE_CONSTRAINT;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.CTL_SCHEMA_META_INFO_VERSION;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
 
 @Entity
 @Table(name = CTL_SCHEMA_META_INFO_TABLE_NAME, uniqueConstraints =
 @UniqueConstraint(columnNames = {CTL_SCHEMA_META_INFO_VERSION, CTL_SCHEMA_META_INFO_FQN}, name = CTL_SCHEMA_META_INFO_UNIQUE_CONSTRAINT))
 public class CTLSchemaMetaInfo extends GenericModel<CTLSchemaMetaInfoDto> implements Serializable {
 
+    private static final long serialVersionUID = 3185049875063895954L;
+    
     @Column(name = CTL_SCHEMA_META_INFO_FQN)
     private String fqn;
     @Column(name = CTL_SCHEMA_META_INFO_VERSION)
@@ -49,7 +49,6 @@ public class CTLSchemaMetaInfo extends GenericModel<CTLSchemaMetaInfoDto> implem
     @Enumerated(EnumType.STRING)
     private CTLSchemaScopeDto scope;
     @Column(name = "count")
-    @JsonIgnore
     private Long count = 0L;
 
     public CTLSchemaMetaInfo() {

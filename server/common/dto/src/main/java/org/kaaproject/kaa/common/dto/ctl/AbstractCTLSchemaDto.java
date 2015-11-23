@@ -20,8 +20,10 @@ import org.kaaproject.kaa.common.dto.HasId;
 
 import java.io.Serializable;
 
-public class AbstractCTLSchemaDto implements Serializable, HasId {
+public abstract class AbstractCTLSchemaDto implements Serializable, HasId {
 
+    private static final long serialVersionUID = -3623332405545906155L;
+    
     protected String id;
     protected String tenantId;
     protected String applicationId;

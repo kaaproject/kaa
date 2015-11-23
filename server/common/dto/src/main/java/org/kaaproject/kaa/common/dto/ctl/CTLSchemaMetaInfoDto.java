@@ -18,14 +18,19 @@ package org.kaaproject.kaa.common.dto.ctl;
 
 import org.kaaproject.kaa.common.dto.HasId;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 
 public class CTLSchemaMetaInfoDto implements HasId, Serializable {
 
+    private static final long serialVersionUID = 365372783241958657L;
+    
     private String id;
     private String fqn;
     private Integer version;
     private CTLSchemaScopeDto scope;
+    @JsonIgnore
     private Long count = 0L;
 
     public CTLSchemaMetaInfoDto() {
