@@ -32,11 +32,11 @@ public class ServerProfileSchemaViewImpl extends BaseSchemaViewImpl {
 
     @Override
     protected String getViewTitle() {
-        return "Server" + Utils.constants.profileSchema();
+        return Utils.constants.serverProfileSchema();
     }
 
     @Override
     protected String getSubTitle() {
-        return "Server" + Utils.constants.profileSchemaDetails();
+        return Utils.constants.profileSchemaDetails();
     }
 }

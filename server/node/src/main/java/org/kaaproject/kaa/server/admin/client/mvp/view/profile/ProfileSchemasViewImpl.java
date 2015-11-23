@@ -35,7 +35,7 @@ public class ProfileSchemasViewImpl extends BaseListViewImpl<ProfileSchemaDto> {
 
     @Override
     protected String titleString() {
-        return Utils.constants.profileSchemas();
+        return Utils.constants.endpointProfileSchemas();
     }
 
     @Override

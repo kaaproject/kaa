@@ -48,13 +48,13 @@ public class ServerProfileSchemaActivity extends
     @Override
     protected void getEntity(String id,
                              AsyncCallback<ProfileSchemaDto> callback) {
-        KaaAdmin.getDataSource().getProfileSchemaForm(id, callback);
+        KaaAdmin.getDataSource().getServerProfileSchemaForm(id, callback);
     }
 
     @Override
     protected void editEntity(ProfileSchemaDto entity,
                               AsyncCallback<ProfileSchemaDto> callback) {
-        KaaAdmin.getDataSource().editProfileSchemaForm(entity, callback);
+        KaaAdmin.getDataSource().editServerProfileSchemaForm(entity, callback);
     }
 
     @Override

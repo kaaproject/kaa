@@ -35,7 +35,7 @@ public class ServerProfileSchemasViewImpl extends BaseListViewImpl<ProfileSchema
 
     @Override
     protected String titleString() {
-        return "Server" + Utils.constants.profileSchemas();
+        return Utils.constants.serverProfileSchemas();
     }
 
     @Override

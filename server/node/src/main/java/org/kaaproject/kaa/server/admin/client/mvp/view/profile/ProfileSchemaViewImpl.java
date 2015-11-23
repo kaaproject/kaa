@@ -32,7 +32,7 @@ public class ProfileSchemaViewImpl extends BaseSchemaViewImpl {
 
     @Override
     protected String getViewTitle() {
-        return Utils.constants.profileSchema();
+        return Utils.constants.endpointProfileSchema();
     }
 
     @Override

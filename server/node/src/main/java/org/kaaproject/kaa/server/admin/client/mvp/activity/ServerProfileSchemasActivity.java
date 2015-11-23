@@ -25,9 +25,7 @@ import org.kaaproject.kaa.common.dto.admin.RecordKey;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
-import org.kaaproject.kaa.server.admin.client.mvp.data.ProfileSchemasDataProvider;
-import org.kaaproject.kaa.server.admin.client.mvp.place.ProfileSchemaPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.place.ProfileSchemasPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.data.ServerProfileSchemasDataProvider;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ServerProfileSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ServerProfileSchemasPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseListView;
@@ -52,7 +50,7 @@ public class ServerProfileSchemasActivity extends AbstractListActivity<ProfileSc
     @Override
     protected AbstractDataProvider<ProfileSchemaDto> getDataProvider(
             AbstractGrid<ProfileSchemaDto,?> dataGrid) {
-        return new ProfileSchemasDataProvider(dataGrid, listView, applicationId);
+        return new ServerProfileSchemasDataProvider(dataGrid, listView, applicationId);
     }
 
     @Override

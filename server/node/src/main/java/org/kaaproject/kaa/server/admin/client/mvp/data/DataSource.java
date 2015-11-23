@@ -526,6 +526,37 @@ public class DataSource {
                     }
                 });
     }
+    public void loadServerProfileSchemas(String applicationId,
+                                   final AsyncCallback<List<ProfileSchemaDto>> callback) {
+        rpcService.getProfileSchemasByApplicationId(applicationId,
+                new DataCallback<List<ProfileSchemaDto>>(callback) {
+                    @Override
+                    protected void onResult(List<ProfileSchemaDto> result) {
+                    }
+                });
+
+    }
+
+    public void editServerProfileSchemaForm(ProfileSchemaDto profileSchema,
+            final AsyncCallback<ProfileSchemaDto> callback) {
+        rpcService.editProfileSchemaForm(profileSchema,
+                new DataCallback<ProfileSchemaDto>(callback) {
+                    @Override
+                    protected void onResult(ProfileSchemaDto result) {
+                        eventBus.fireEvent(new DataEvent(ProfileSchemaDto.class));
+                    }
+                });
+    }
+
+    public void getServerProfileSchemaForm(String profileSchemaId,
+            final AsyncCallback<ProfileSchemaDto> callback) {
+        rpcService.getProfileSchemaForm(profileSchemaId,
+                new DataCallback<ProfileSchemaDto>(callback) {
+                    @Override
+                    protected void onResult(ProfileSchemaDto result) {
+                    }
+                });
+    }
 
     public void loadConfigurationSchemas(String applicationId,
             final AsyncCallback<List<ConfigurationSchemaDto>> callback) {
