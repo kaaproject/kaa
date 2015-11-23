@@ -560,6 +560,8 @@ public class KaaAdminController {
 
     /**
      * Saves a CTL schema.
+     * 
+     * @deprecated Use {@link #saveCTLSchema(String)} instead.
      */
     @RequestMapping(value = "CTL/saveSchema", method = RequestMethod.POST)
     @ResponseBody
