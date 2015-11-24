@@ -20,6 +20,7 @@ import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Statement;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
+import com.datastax.driver.core.querybuilder.Update;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Sets;
 import org.apache.commons.codec.binary.Base64;
@@ -60,6 +61,7 @@ import static com.datastax.driver.core.querybuilder.QueryBuilder.delete;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.eq;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.in;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.select;
+import static com.datastax.driver.core.querybuilder.QueryBuilder.set;
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getDto;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.convertKeyHashToString;
@@ -76,6 +78,8 @@ import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.Cassand
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_COLUMN_FAMILY_NAME;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_EP_KEY_HASH_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_PROFILE_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_SERVER_PROFILE_ID_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_SERVER_PROFILE_PROPERTY;
 
 @Repository(value = "endpointProfileDao")
 public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraEndpointProfile, ByteBuffer> implements EndpointProfileDao<CassandraEndpointProfile> {
@@ -460,6 +464,15 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
                 .where(QueryBuilder.eq(CassandraModelConstants.EP_BY_SDK_TOKEN_SDK_TOKEN_PROPERTY, sdkToken));
 
         return this.execute(query).one() != null;
+    }
+
+    @Override
+    public CassandraEndpointProfile updateProfileServer(byte[] keyHash, String schemaId, String serverProfile) {
+        LOG.debug("Updating server profile for endpoint profile with key hash [{}] with schema id [{}]", keyHash, schemaId);
+        Statement update = QueryBuilder.update(CassandraModelConstants.EP_COLUMN_FAMILY_NAME)
+                .with(set(EP_SERVER_PROFILE_PROPERTY, serverProfile)).where(eq(EP_EP_KEY_HASH_PROPERTY, keyHash))
+                .onlyIf(eq(EP_SERVER_PROFILE_ID_PROPERTY, schemaId));
+        return findOneByStatement(update);
     }
 
     private Set<String> getEndpointProfilesGroupIdSet(CassandraEndpointProfile profile) {

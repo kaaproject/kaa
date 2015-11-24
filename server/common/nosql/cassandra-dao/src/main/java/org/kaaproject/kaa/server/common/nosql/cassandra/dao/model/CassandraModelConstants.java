@@ -107,6 +107,8 @@ public class CassandraModelConstants {
     public static final String EP_ECF_VERSION_STATE_PROPERTY = "ecf_ver_state";
     public static final String EP_SERVER_HASH_PROPERTY = "server_hash";
     public static final String EP_SDK_TOKEN_PROPERTY = SDK_TOKEN_PROPERTY;
+    public static final String EP_SERVER_PROFILE_PROPERTY = "srv_pf";
+    public static final String EP_SERVER_PROFILE_ID_PROPERTY = "srv_pf_id";
 
     /**
      * Cassandra endpoint user constants.

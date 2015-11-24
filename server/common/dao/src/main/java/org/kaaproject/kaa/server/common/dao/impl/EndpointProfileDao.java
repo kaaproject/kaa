@@ -119,4 +119,14 @@ public interface EndpointProfileDao<T extends EndpointProfile> extends Dao<T, By
      *         the given SDK token, <code>false</code> otherwise
      */
     boolean checkSdkToken(String sdkToken);
+
+    /**
+     * Update endpoint profile with given keyHash, profile schema id and given server profile.
+     *
+     * @param keyHash       the endpoint profile key hash.
+     * @param schemaId      the given server profile schema id.
+     * @param serverProfile the given server profile data.
+     * @return the updated endpoint profile with.
+     */
+    T updateProfileServer(byte[] keyHash, String schemaId, String serverProfile);
 }

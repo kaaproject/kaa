@@ -31,4 +31,8 @@ public interface EndpointProfile extends ToDto<EndpointProfileDto>{
 
     List<String> getSubscriptions();
 
+    String getServerProfileSchemaId();
+
+    String getServerProfile();
+
 }

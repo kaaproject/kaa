@@ -56,11 +56,13 @@ import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.Cassand
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_PROFILE_HASH_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_PROFILE_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_PROFILE_VERSION_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_SDK_TOKEN_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_SERVER_HASH_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_SERVER_PROFILE_ID_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_SERVER_PROFILE_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_SUBSCRIPTIONS_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_SYSTEM_NOTIFICATION_VERSION_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_USER_CONFIG_HASH_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_SDK_TOKEN_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_USER_ID_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_USER_NOTIFICATION_VERSION_PROPERTY;
 
@@ -124,6 +126,10 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
     private String serverHash;
     @Column(name = EP_SDK_TOKEN_PROPERTY)
     private String sdkToken;
+    @Column(name = EP_SERVER_PROFILE_ID_PROPERTY)
+    private String serverProfileSchemaId;
+    @Column(name = EP_SERVER_PROFILE_PROPERTY)
+    private String serverProfile;
 
     public CassandraEndpointProfile() {
     }
@@ -154,6 +160,8 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
         this.ecfVersionStates = convertECFVersionDtoToModelList(dto.getEcfVersionStates());
         this.serverHash = dto.getServerHash();
         this.sdkToken = dto.getSdkToken();
+        this.serverProfileSchemaId = dto.getServerProfileServiceId();
+        this.serverProfile = dto.getServerProfile();
     }
 
     public void setId(String id) {
@@ -298,6 +306,24 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
         return subscriptions;
     }
 
+    @Override
+    public String getServerProfileSchemaId() {
+        return serverProfileSchemaId;
+    }
+
+    public void setServerProfileSchemaId(String serverProfileSchemaId) {
+        this.serverProfileSchemaId = serverProfileSchemaId;
+    }
+
+    @Override
+    public String getServerProfile() {
+        return serverProfile;
+    }
+
+    public void setServerProfile(String serverProfile) {
+        this.serverProfile = serverProfile;
+    }
+
     public void setSubscriptions(List<String> subscriptions) {
         this.subscriptions = subscriptions;
     }
@@ -377,31 +403,28 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
         if (systemNfVersion != that.systemNfVersion) return false;
         if (userNfVersion != that.userNfVersion) return false;
         if (logSchemaVersion != that.logSchemaVersion) return false;
-        if (endpointKeyHash != null ? !endpointKeyHash.equals(that.endpointKeyHash) : that.endpointKeyHash != null)
-            return false;
+        if (endpointKeyHash != null ? !endpointKeyHash.equals(that.endpointKeyHash) : that.endpointKeyHash != null) return false;
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (endpointProfileKey != null ? !endpointProfileKey.equals(that.endpointProfileKey) : that.endpointProfileKey != null)
             return false;
-        if (applicationId != null ? !applicationId.equals(that.applicationId) : that.applicationId != null)
-            return false;
-        if (endpointUserId != null ? !endpointUserId.equals(that.endpointUserId) : that.endpointUserId != null)
-            return false;
+        if (applicationId != null ? !applicationId.equals(that.applicationId) : that.applicationId != null) return false;
+        if (endpointUserId != null ? !endpointUserId.equals(that.endpointUserId) : that.endpointUserId != null) return false;
         if (accessToken != null ? !accessToken.equals(that.accessToken) : that.accessToken != null) return false;
         if (cfGroupState != null ? !cfGroupState.equals(that.cfGroupState) : that.cfGroupState != null) return false;
         if (nfGroupState != null ? !nfGroupState.equals(that.nfGroupState) : that.nfGroupState != null) return false;
         if (profile != null ? !profile.equals(that.profile) : that.profile != null) return false;
         if (profileHash != null ? !profileHash.equals(that.profileHash) : that.profileHash != null) return false;
-        if (configurationHash != null ? !configurationHash.equals(that.configurationHash) : that.configurationHash != null)
-            return false;
+        if (configurationHash != null ? !configurationHash.equals(that.configurationHash) : that.configurationHash != null) return false;
         if (userConfigurationHash != null ? !userConfigurationHash.equals(that.userConfigurationHash) : that.userConfigurationHash != null)
             return false;
-        if (subscriptions != null ? !subscriptions.equals(that.subscriptions) : that.subscriptions != null)
-            return false;
+        if (subscriptions != null ? !subscriptions.equals(that.subscriptions) : that.subscriptions != null) return false;
         if (ntHash != null ? !ntHash.equals(that.ntHash) : that.ntHash != null) return false;
-        if (ecfVersionStates != null ? !ecfVersionStates.equals(that.ecfVersionStates) : that.ecfVersionStates != null)
-            return false;
+        if (ecfVersionStates != null ? !ecfVersionStates.equals(that.ecfVersionStates) : that.ecfVersionStates != null) return false;
         if (serverHash != null ? !serverHash.equals(that.serverHash) : that.serverHash != null) return false;
-        return !(sdkToken != null ? !sdkToken.equals(that.sdkToken) : that.sdkToken != null);
+        if (sdkToken != null ? !sdkToken.equals(that.sdkToken) : that.sdkToken != null) return false;
+        if (serverProfileSchemaId != null ? !serverProfileSchemaId.equals(that.serverProfileSchemaId) : that.serverProfileSchemaId != null)
+            return false;
+        return serverProfile != null ? serverProfile.equals(that.serverProfile) : that.serverProfile == null;
 
     }
 
@@ -432,6 +455,8 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
         result = 31 * result + (ecfVersionStates != null ? ecfVersionStates.hashCode() : 0);
         result = 31 * result + (serverHash != null ? serverHash.hashCode() : 0);
         result = 31 * result + (sdkToken != null ? sdkToken.hashCode() : 0);
+        result = 31 * result + (serverProfileSchemaId != null ? serverProfileSchemaId.hashCode() : 0);
+        result = 31 * result + (serverProfile != null ? serverProfile.hashCode() : 0);
         return result;
     }
 
@@ -463,6 +488,8 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
                 ", ecfVersionStates=" + ecfVersionStates +
                 ", serverHash='" + serverHash + '\'' +
                 ", sdkToken='" + sdkToken + '\'' +
+                ", serverProfileSchemaId='" + serverProfileSchemaId + '\'' +
+                ", serverProfile='" + serverProfile + '\'' +
                 '}';
     }
 
@@ -494,6 +521,8 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
         dto.setEcfVersionStates(DaoUtil.<EventClassFamilyVersionStateDto>convertDtoList(ecfVersionStates));
         dto.setServerHash(serverHash);
         dto.setSdkToken(sdkToken);
+        dto.setServerProfile(serverProfile);
+        dto.setServerProfileServiceId(serverProfileSchemaId);
         return dto;
     }
 }
