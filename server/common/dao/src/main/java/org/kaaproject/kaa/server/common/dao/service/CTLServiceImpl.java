@@ -11,14 +11,14 @@ import static org.kaaproject.kaa.server.common.dao.service.Validator.validateSql
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateString;
 
 import java.io.ByteArrayOutputStream;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import org.apache.avro.Schema;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
@@ -51,6 +51,26 @@ public class CTLServiceImpl implements CTLService {
     public static final String GENERATED = "Generated";
 
     private final LockOptions lockOptions = new LockOptions(LockMode.PESSIMISTIC_WRITE);
+    
+    /**
+     * A template for naming exported CTL schemas.
+     * 
+     * @see #shallowExport(CTLSchemaDto)
+     * @see #flatExport(CTLSchemaDto)
+     */
+    private static final String CTL_EXPORT_TEMPLATE = "{0}.v{1}.avsc";
+
+    /**
+     * The name of the archive to put exported CTL schemas into.
+     * 
+     * @see #deepExport(CTLSchemaDto)
+     */
+    private static final String CTL_EXPORT_ZIP_NAME = "schemas.zip";
+
+    /**
+     * Used to format CTL schema body.
+     */
+    private static final ObjectMapper FORMATTER = new ObjectMapper();
 
     @Autowired
     private CTLSchemaDao<CTLSchema> ctlSchemaDao;
@@ -316,11 +336,19 @@ public class CTLServiceImpl implements CTLService {
     
     @Override
     public FileData shallowExport(CTLSchemaDto schema) {
-        FileData result = new FileData();
-        result.setContentType("application/json");
-        result.setFileName(schema.getMetaInfo().getFqn() + "-v" + schema.getMetaInfo().getVersion() + ".json");
-        result.setFileData(schema.getBody().getBytes());
-        return result;
+        try {
+            FileData result = new FileData();
+            result.setContentType("application/json");
+            result.setFileName(MessageFormat.format(CTL_EXPORT_TEMPLATE, schema.getMetaInfo().getFqn(), schema.getMetaInfo().getVersion()));
+
+            // Format schema body
+            Object json = FORMATTER.readValue(schema.getBody(), Object.class);
+            result.setFileData(FORMATTER.writerWithDefaultPrettyPrinter().writeValueAsString(json).getBytes());
+
+            return result;
+        } catch (Exception cause) {
+            throw new RuntimeException("An unexpected exception occured: " + cause.toString());
+        }
     }
 
     @Override
@@ -328,8 +356,15 @@ public class CTLServiceImpl implements CTLService {
         try {
             FileData result = new FileData();
             result.setContentType("application/json");
-            result.setFileName(schema.getMetaInfo().getFqn() + "-v" + schema.getMetaInfo().getVersion() + ".json");
-            result.setFileData(this.inlineDependencies(schema).toString().getBytes());
+            result.setFileName(MessageFormat.format(CTL_EXPORT_TEMPLATE, schema.getMetaInfo().getFqn(), schema.getMetaInfo().getVersion()));
+
+            // Get schema body
+            String body = this.parseDependencies(schema, new Schema.Parser()).toString();
+
+            // Format schema body
+            Object json = FORMATTER.readValue(body, Object.class);
+            result.setFileData(FORMATTER.writerWithDefaultPrettyPrinter().writeValueAsString(json).getBytes());
+
             return result;
         } catch (Exception cause) {
             throw new RuntimeException("An unexpected exception occured: " + cause.toString());
@@ -351,7 +386,7 @@ public class CTLServiceImpl implements CTLService {
 
             FileData result = new FileData();
             result.setContentType("application/zip");
-            result.setFileName("schemas.zip");
+            result.setFileName(CTL_EXPORT_ZIP_NAME);
             result.setFileData(content.toByteArray());
             return result;
         } catch (Exception cause) {
@@ -359,29 +394,13 @@ public class CTLServiceImpl implements CTLService {
         }
     }
 
-    private ObjectNode inlineDependencies(CTLSchemaDto schema) throws Exception {
-        ObjectNode object = new ObjectMapper().readValue(schema.getBody(), ObjectNode.class);
-
-        ArrayNode dependencies = (ArrayNode) object.get("dependencies");
-        Map<String, Integer> versions = new HashMap<>();
-        if (dependencies != null) {
-            for (JsonNode node : dependencies) {
-                ObjectNode dependency = (ObjectNode) node;
-                versions.put(dependency.get("fqn").getTextValue(), dependency.get("version").getIntValue());
+    private Schema parseDependencies(CTLSchemaDto schema, final Schema.Parser parser) {
+        if (schema.getDependencySet() != null) {
+            for (CTLSchemaDto dependency : schema.getDependencySet()) {
+                this.parseDependencies(dependency, parser);
             }
         }
-
-        ArrayNode fields = (ArrayNode) object.get("fields");
-        if (fields != null) {
-            for (JsonNode node : fields) {
-                ObjectNode field = (ObjectNode) node;
-                String type = field.get("type").getTextValue();
-                ObjectNode value = this.inlineDependencies(this.findCTLSchemaByFqnAndVerAndTenantId(type, versions.get(type), schema.getTenantId()));
-                field.put("type", value);
-            }
-        }
-
-        return object;
+        return parser.parse(schema.getBody());
     }
 
     private List<FileData> recursiveShallowExport(List<FileData> files, CTLSchemaDto parent) throws Exception {
