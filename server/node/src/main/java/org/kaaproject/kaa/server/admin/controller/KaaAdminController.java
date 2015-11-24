@@ -617,8 +617,8 @@ public class KaaAdminController {
     }
     
     /**
-     * Exports a CTL schema and, depending on the export type specified, all of
-     * its dependencies.
+     * Exports a CTL schema and, depending on the export method specified, all
+     * of its dependencies.
      */
     @RequestMapping(value = "CTL/exportSchema", params = { "fqn", "version", "method" }, method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)

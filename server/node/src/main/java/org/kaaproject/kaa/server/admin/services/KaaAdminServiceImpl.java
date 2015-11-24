@@ -2621,13 +2621,11 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     private CTLSchemaScopeDto getCTLSchemaScopeByName(String name) {
-        name = name.toUpperCase();
-        for (CTLSchemaScopeDto scope : CTLSchemaScopeDto.values()) {
-            if (name.equals(scope.name())) {
-                return scope;
-            }
+        try {
+            return CTLSchemaScopeDto.valueOf(name.toUpperCase());
+        } catch (Exception cause) {
+            throw new IllegalArgumentException("Invalid CTL schema scope name!");
         }
-        throw new IllegalArgumentException("Invalid CTL schema scope name!");
     }
 
     /**
@@ -2899,8 +2897,8 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     public List<CTLSchemaMetaInfoDto> getCTLSchemasByScope(String scopeName) throws KaaAdminServiceException {
         this.checkAuthority(KaaAuthorityDto.values());
         try {
-            CTLSchemaScopeDto scope = this.getCTLSchemaScopeByName(scopeName);
             AuthUserDto currentUser = this.getCurrentUser();
+            CTLSchemaScopeDto scope = this.getCTLSchemaScopeByName(scopeName);
             if (scope == CTLSchemaScopeDto.TENANT && currentUser.getAuthority() != KaaAuthorityDto.KAA_ADMIN) {
                 return controlService.getCTLSchemasMetaInfoByTenantId(currentUser.getTenantId());
             } else if (scope == CTLSchemaScopeDto.SYSTEM) {

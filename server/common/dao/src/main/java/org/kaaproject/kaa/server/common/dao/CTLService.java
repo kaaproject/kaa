@@ -177,9 +177,34 @@ public interface CTLService {
      */
     List<CTLSchemaDto> findCTLSchemaDependents(String fqn, Integer version, String tenantId);
     
+    /**
+     * Exports the body of a CTL schema.
+     * 
+     * @param schema A CTL schema to export
+     * 
+     * @return A file containing the body of a CTL schema
+     */
     FileData shallowExport(CTLSchemaDto schema);
-    
+
+    /**
+     * Exports the body of a CTL schema with all dependencies inline,
+     * recursively.
+     * 
+     * @param schema A CTL schema to export
+     * 
+     * @return A file containing the body of a CTL schema with all dependencies
+     *         inline, recursively
+     */
     FileData flatExport(CTLSchemaDto schema);
-    
+
+    /**
+     * Exports the body of a CTL schema with all dependencies as different
+     * files, recursively.
+     * 
+     * @param schema A CTL schema to export
+     * 
+     * @return An archive containing the body of a CTL schema as a file and all
+     *         dependencies as different files, recursively.
+     */
     FileData deepExport(CTLSchemaDto schema);
 }
