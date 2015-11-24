@@ -18,6 +18,8 @@ package org.kaaproject.kaa.server.bootstrap;
 
 import org.kaaproject.kaa.server.bootstrap.service.initialization.BootstrapInitializationService;
 import org.kaaproject.kaa.server.common.AbstractServerApplication;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -30,6 +32,9 @@ public class BootstrapServerApplication extends AbstractServerApplication {
 
     private static final String[] DEFAULT_APPLICATION_CONFIGURATION_FILES = new String[] { "bootstrap-server.properties" };
 
+    /** The Constant LOG. */
+    private static final Logger LOG = LoggerFactory.getLogger(BootstrapServerApplication.class);
+
     /**
      * The main method.
      * 
@@ -37,6 +42,13 @@ public class BootstrapServerApplication extends AbstractServerApplication {
      *            the arguments
      */
     public static void main(String[] args) {
+        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+            @Override
+            public void uncaughtException(Thread th, Throwable ex) {
+                LOG.error("Uncaught exception: ", ex);
+            }
+        });
+
         BootstrapServerApplication app = new BootstrapServerApplication(DEFAULT_APPLICATION_CONTEXT_XMLS,
                 DEFAULT_APPLICATION_CONFIGURATION_FILES);
         app.startAndWait(args);

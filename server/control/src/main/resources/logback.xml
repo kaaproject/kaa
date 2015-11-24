@@ -15,12 +15,6 @@
   limitations under the License.
 -->
 <configuration>
-    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>%d{ISO8601} [%thread] %-5level %logger{36} - %msg%n</pattern>
-        </encoder>
-    </appender>
-
     <appender name="fileLogAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${server_log_dir}/kaa-control-server${server_log_sufix}.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
@@ -38,7 +32,6 @@
     <logger name="org.hibernate" level="INFO"/>
 
     <root level="INFO">
-        <appender-ref ref="console"/>
         <appender-ref ref="fileLogAppender"/>
     </root>
 

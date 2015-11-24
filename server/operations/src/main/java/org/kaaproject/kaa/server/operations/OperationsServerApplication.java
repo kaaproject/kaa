@@ -18,7 +18,14 @@ package org.kaaproject.kaa.server.operations;
 
 import org.kaaproject.kaa.server.common.AbstractServerApplication;
 import org.kaaproject.kaa.server.operations.service.bootstrap.OperationsBootstrapService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
+
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 
 /**
  * Main class that is used to launch Operations Server.
@@ -30,6 +37,9 @@ public class OperationsServerApplication extends AbstractServerApplication {
     private static final String[] DEFAULT_APPLICATION_CONFIGURATION_FILES = new String[] {
             "operations-server.properties", "dao.properties" };
 
+    /** The Constant LOG. */
+    private static final Logger LOG = LoggerFactory.getLogger(OperationsServerApplication.class);
+
     /**
      * The main method. Used to launch Operations Server.
      * 
@@ -37,6 +47,13 @@ public class OperationsServerApplication extends AbstractServerApplication {
      *            the arguments
      */
     public static void main(String[] args) {
+        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+            @Override
+            public void uncaughtException(Thread th, Throwable ex) {
+                LOG.error("Uncaught exception: ", ex);
+            }
+        });
+
         OperationsServerApplication app = new OperationsServerApplication(DEFAULT_APPLICATION_CONTEXT_XMLS,
                 DEFAULT_APPLICATION_CONFIGURATION_FILES);
         app.startAndWait(args);
