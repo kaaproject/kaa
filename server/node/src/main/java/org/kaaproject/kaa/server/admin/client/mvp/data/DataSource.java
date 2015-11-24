@@ -781,6 +781,10 @@ public class DataSource {
         rpcService.getEndpointProfileViewDtoByEndpointProfileKeyHash(endpointKeyHash, callback);
     }
 
+    public void generateRecordFromSchemaJson(String avroSchema, AsyncCallback<RecordField> callback) {
+        rpcService.generateRecordFromSchemaJson(avroSchema, callback);
+    }
+
     public void loadProfileFilterRecords(String endpointGroupId, boolean includeDeprecated,
             final AsyncCallback<List<StructureRecordDto<ProfileFilterDto>>> callback) {
         rpcService.getProfileFilterRecordsByEndpointGroupId(endpointGroupId, includeDeprecated,

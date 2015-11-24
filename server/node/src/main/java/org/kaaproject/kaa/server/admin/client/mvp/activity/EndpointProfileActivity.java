@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,16 @@
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
 import com.google.common.io.BaseEncoding;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.gwt.user.client.ui.Widget;
 import org.kaaproject.avro.ui.gwt.client.widget.BusyPopup;
+import org.kaaproject.avro.ui.gwt.client.widget.dialog.ConfirmDialog;
 import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
@@ -32,6 +37,8 @@ import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EndpointProfilePlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.ProfileSchemaPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.ServerProfileSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointProfileView;
 
 import java.util.ArrayList;
@@ -76,7 +83,7 @@ public class EndpointProfileActivity extends
 
         EndpointProfileDto profileDto = entity.getEndpointProfileDto();
         EndpointUserDto userDto = entity.getEndpointUserDto();
-        ProfileSchemaDto profileSchemaDto = entity.getProfileSchemaDto();
+        final ProfileSchemaDto profileSchemaDto = entity.getProfileSchemaDto();
 
         detailsView.getKeyHash().setValue(BaseEncoding.base64().encode(profileDto.getEndpointKeyHash()));
 
@@ -93,11 +100,6 @@ public class EndpointProfileActivity extends
             }
         }
 
-        detailsView.getProfileSchemaVersion().setValue(profileDto.getProfileVersion() + "");
-        detailsView.getConfigurationSchemaVersion().setValue(profileDto.getConfigurationVersion() + "");
-        detailsView.getNotificationVersion().setValue(profileDto.getUserNfVersion() + "");
-        detailsView.getLogSchemaVer().setValue(profileDto.getLogSchemaVersion() + "");
-
         List<EndpointGroupDto> groupDtoList = entity.getGroupDtoList();
         if (groupDtoList != null) {
             detailsView.getGroupsGrid().getDataGrid().setRowData(groupDtoList);
@@ -108,14 +110,112 @@ public class EndpointProfileActivity extends
             detailsView.getTopicsGrid().getDataGrid().setRowData(endpointNotificationTopics);
         } else detailsView.getTopicsGrid().getDataGrid().setRowData(new ArrayList<TopicDto>());
 
-        detailsView.getSchemaName().setValue(profileSchemaDto.getName());
-        detailsView.getDescription().setValue(profileSchemaDto.getDescription());
+        detailsView.getEndpointProfSchemaName().setText(profileSchemaDto.getName());
+        registrations.add(detailsView.getEndpointProfSchemaName().addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                ProfileSchemaPlace endpointProfSchemaPlace = new ProfileSchemaPlace(place.getApplicationId(),
+                        profileSchemaDto.getId());
+                endpointProfSchemaPlace.setPreviousPlace(place);
+                goTo(endpointProfSchemaPlace);
+            }
+        }));
 
-        RecordField endpointProfileRecord = entity.getEndpointProfileRecord();
+        final RecordField endpointProfileRecord = entity.getEndpointProfileRecord();
         if (endpointProfileRecord != null) {
-            detailsView.getSchemaForm().reset();
-            detailsView.getSchemaForm().setValue(endpointProfileRecord);
+            detailsView.getEndpointProfForm().reset();
+            detailsView.getEndpointProfForm().setValue(endpointProfileRecord);
         }
+
+        detailsView.getServerProfSchemaName().setText(profileSchemaDto.getName());
+        registrations.add(detailsView.getServerProfSchemaName().addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                ServerProfileSchemaPlace serverProfSchemaPlace = new ServerProfileSchemaPlace(place.getApplicationId(),
+                        profileSchemaDto.getId());
+                serverProfSchemaPlace.setPreviousPlace(place);
+                goTo(serverProfSchemaPlace);
+            }
+        }));
+
+//        RecordField serverProfileRecord = entity.getServerProfileRecord();
+        if (endpointProfileRecord != null) {
+            detailsView.getServerProfForm().reset();
+            detailsView.getServerProfForm().setValue(endpointProfileRecord);
+        }
+
+        registrations.add(detailsView.getDeleteButton().addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                deleteItem(detailsView.getServerProfForm().getValue());
+            }
+        }));
+
+        //        RecordField serverProfileRecord = entity.getServerProfileRecord();
+        if (endpointProfileRecord != null) {
+            detailsView.getAddButton().setEnabled(false);
+            detailsView.getEditButton().setEnabled(true);
+            detailsView.getDeleteButton().setEnabled(true);
+            detailsView.getServerProfRecord().setValue(endpointProfileRecord);
+        } else {
+            detailsView.getAddButton().setEnabled(true);
+            detailsView.getDeleteButton().setEnabled(false);
+        }
+
+        final String profileSchemaDtoId = profileSchemaDto.getId();
+        KaaAdmin.getDataSource().loadProfileSchemas(place.getApplicationId(),
+                new AsyncCallback<List<ProfileSchemaDto>>() {
+            @Override
+            public void onFailure(Throwable throwable) {
+                org.kaaproject.kaa.server.admin.client.util.Utils.handleException(throwable, detailsView);
+            }
+
+            @Override
+            public void onSuccess(List<ProfileSchemaDto> result) {
+                for (ProfileSchemaDto dto : result) {
+                    if (/*profileSchemaDtoId != null && */profileSchemaDtoId.equals(dto.getId())) {
+                        detailsView.getServerSchemasListBox().setValue(dto);
+                    }
+                }
+                detailsView.getServerSchemasListBox().setAcceptableValues(result);
+            }
+        });
+
+        registrations.add(detailsView.getServerSchemasListBox().addValueChangeHandler(new ValueChangeHandler<ProfileSchemaDto>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<ProfileSchemaDto> valueChangeEvent) {
+                String schema = valueChangeEvent.getValue().getSchema();
+                KaaAdmin.getDataSource().generateRecordFromSchemaJson(schema, new AsyncCallback<RecordField>() {
+                    @Override
+                    public void onFailure(Throwable throwable) {
+                        org.kaaproject.kaa.server.admin.client.util.Utils.handleException(throwable, detailsView);
+                    }
+
+                    @Override
+                    public void onSuccess(RecordField recordField) {
+                        detailsView.getServerProfRecord().setValue(recordField);
+                    }
+                });
+            }
+        }));
+    }
+
+    private void deleteItem(final RecordField value) {
+        ConfirmDialog.ConfirmListener listener = new ConfirmDialog.ConfirmListener() {
+            public void onNo() {
+            }
+
+            public void onYes() {
+//                AbstractGrid.this.onRowDelete(AbstractGrid.this.getObjectId(value));
+                detailsView.getServerProfForm().reset();
+                detailsView.getServerProfRecord().setValue(null);
+            }
+        };
+        String question = org.kaaproject.avro.ui.gwt.client.util.Utils.messages.deleteSelectedEntryQuestion();
+        String title = org.kaaproject.avro.ui.gwt.client.util.Utils.messages.deleteSelectedEntryTitle();
+        ConfirmDialog dialog = new ConfirmDialog(listener, title, question);
+        dialog.center();
+        dialog.show();
     }
 
     @Override

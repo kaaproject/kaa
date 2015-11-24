@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,30 +16,40 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view;
 
+import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Widget;
+import org.kaaproject.avro.ui.gwt.client.widget.RecordFieldWidget;
 import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.topic.TopicGrid;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.RecordPanel;
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.ServerProfileSchemasInfoListBox;
 
 import java.util.List;
 
 public interface EndpointProfileView extends BaseDetailsView {
 
     SizedTextBox getKeyHash();
-    SizedTextBox getNotificationVersion();
-    SizedTextBox getProfileSchemaVersion();
-    SizedTextBox getConfigurationSchemaVersion();
-    SizedTextBox getLogSchemaVer();
 
     SizedTextBox getUserID();
     SizedTextBox getUserExternalID();
     List<Widget> getUserInfoList();
 
-    SizedTextBox getSchemaName();
-    SizedTextBox getDescription();
-    RecordPanel getSchemaForm();
+    Anchor getEndpointProfSchemaName();
+    RecordPanel getEndpointProfForm();
+
+    Anchor getServerProfSchemaName();
+    RecordPanel getServerProfForm();
+
+    Button getAddButton();
+    Button getDeleteButton();
+    Button getEditButton();
+    Button getSaveProfileButton();
+
+    RecordFieldWidget getServerProfRecord();
+    ServerProfileSchemasInfoListBox getServerSchemasListBox();
 
     AbstractGrid<EndpointGroupDto, String> getGroupsGrid();
     TopicGrid getTopicsGrid();
