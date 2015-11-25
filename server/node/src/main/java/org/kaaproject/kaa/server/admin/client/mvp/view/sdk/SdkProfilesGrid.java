@@ -188,8 +188,4 @@ public class SdkProfilesGrid extends AbstractKaaGrid<SdkProfileDto, String> {
         RowActionEvent<String> rowGenerateSdkEvent = new RowActionEvent<>(value.getId(), KaaRowAction.GENERATE_SDK);
         this.fireEvent(rowGenerateSdkEvent);
     }
-
-    @Override
-    public void onRowClicked(String id) {
-    }
 }

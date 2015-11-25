@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,15 @@
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
 import com.google.common.io.BaseEncoding;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.gwt.user.client.ui.Widget;
 import org.kaaproject.avro.ui.gwt.client.widget.BusyPopup;
+import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEvent;
+import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEventHandler;
 import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
@@ -29,9 +33,13 @@ import org.kaaproject.kaa.common.dto.EndpointProfileViewDto;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
+import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
+import org.kaaproject.kaa.server.admin.client.mvp.place.EndpointGroupPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EndpointProfilePlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.SdkProfilePlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.TopicPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointProfileView;
 
 import java.util.ArrayList;
@@ -52,6 +60,27 @@ public class EndpointProfileActivity extends
 
     protected void bind(final EventBus eventBus) {
         super.bind(eventBus);
+
+        registrations.add(detailsView.getGroupsGrid().addRowActionHandler(new RowActionEventHandler<String>() {
+            @Override
+            public void onRowAction(RowActionEvent<String> rowActionEvent) {
+                String id = rowActionEvent.getClickedId();
+                EndpointGroupPlace endpointGroupPlace =
+                        new EndpointGroupPlace(place.getApplicationId(), id, false, false);
+                endpointGroupPlace.setPreviousPlace(place);
+                goTo(endpointGroupPlace);
+            }
+        }));
+
+        registrations.add(detailsView.getTopicsGrid().addRowActionHandler(new RowActionEventHandler<String>() {
+            @Override
+            public void onRowAction(RowActionEvent<String> rowActionEvent) {
+                String id = rowActionEvent.getClickedId();
+                TopicPlace topicPlace = new TopicPlace(place.getApplicationId(), id);
+                topicPlace.setPreviousPlace(place);
+                goTo(topicPlace);
+            }
+        }));
     }
 
     @Override
@@ -93,10 +122,22 @@ public class EndpointProfileActivity extends
             }
         }
 
-        detailsView.getProfileSchemaVersion().setValue(profileDto.getProfileVersion() + "");
-        detailsView.getConfigurationSchemaVersion().setValue(profileDto.getConfigurationVersion() + "");
-        detailsView.getNotificationVersion().setValue(profileDto.getUserNfVersion() + "");
-        detailsView.getLogSchemaVer().setValue(profileDto.getLogSchemaVersion() + "");
+        final SdkProfileDto sdkDto = entity.getSdkProfileDto();
+        if (sdkDto != null) {
+            String sdkName = sdkDto.getName();
+            detailsView.getSdkAnchor().setText((sdkName != null && !sdkName.isEmpty()) ? sdkName : sdkDto.getToken());
+            registrations.add(detailsView.getSdkAnchor().addClickHandler(new ClickHandler() {
+                @Override
+                public void onClick(ClickEvent clickEvent) {
+                    SdkProfilePlace sdkProfilePlace =
+                            new SdkProfilePlace(place.getApplicationId(), sdkDto.getId());
+                    sdkProfilePlace.setPreviousPlace(place);
+                    goTo(sdkProfilePlace);
+                }
+            }));
+        } else {
+            detailsView.getSdkAnchor().setText("");
+        }
 
         List<EndpointGroupDto> groupDtoList = entity.getGroupDtoList();
         if (groupDtoList != null) {
@@ -106,7 +147,9 @@ public class EndpointProfileActivity extends
         List<TopicDto> endpointNotificationTopics = entity.getEndpointNotificationTopics();
         if (endpointNotificationTopics != null) {
             detailsView.getTopicsGrid().getDataGrid().setRowData(endpointNotificationTopics);
-        } else detailsView.getTopicsGrid().getDataGrid().setRowData(new ArrayList<TopicDto>());
+        } else {
+            detailsView.getTopicsGrid().getDataGrid().setRowData(new ArrayList<TopicDto>());
+        }
 
         detailsView.getSchemaName().setValue(profileSchemaDto.getName());
         detailsView.getDescription().setValue(profileSchemaDto.getDescription());

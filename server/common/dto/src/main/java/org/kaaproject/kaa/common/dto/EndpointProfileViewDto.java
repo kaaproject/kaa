@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package org.kaaproject.kaa.common.dto;
 
 import org.kaaproject.avro.ui.shared.RecordField;
+import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 
 import java.io.Serializable;
 import java.util.List;
@@ -31,6 +32,7 @@ public class EndpointProfileViewDto implements Serializable {
     private List<EndpointGroupDto> groupDtoList;
     private RecordField endpointProfileRecord;
     private List<TopicDto> endpointNotificationTopics;
+    private SdkProfileDto sdkProfileDto;
 
     public EndpointProfileViewDto() {}
 
@@ -82,6 +84,14 @@ public class EndpointProfileViewDto implements Serializable {
         this.endpointNotificationTopics = endpointNotificationTopics;
     }
 
+    public SdkProfileDto getSdkProfileDto() {
+        return sdkProfileDto;
+    }
+
+    public void setSdkProfileDto(SdkProfileDto sdkProfileDto) {
+        this.sdkProfileDto = sdkProfileDto;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -98,7 +108,9 @@ public class EndpointProfileViewDto implements Serializable {
         if (groupDtoList != null ? !groupDtoList.equals(that.groupDtoList) : that.groupDtoList != null) return false;
         if (endpointProfileRecord != null ? !endpointProfileRecord.equals(that.endpointProfileRecord) : that.endpointProfileRecord != null)
             return false;
-        return !(endpointNotificationTopics != null ? !endpointNotificationTopics.equals(that.endpointNotificationTopics) : that.endpointNotificationTopics != null);
+        if (endpointNotificationTopics != null ? !endpointNotificationTopics.equals(that.endpointNotificationTopics) : that.endpointNotificationTopics != null)
+            return false;
+        return !(sdkProfileDto != null ? !sdkProfileDto.equals(that.sdkProfileDto) : that.sdkProfileDto != null);
 
     }
 
@@ -110,6 +122,7 @@ public class EndpointProfileViewDto implements Serializable {
         result = 31 * result + (groupDtoList != null ? groupDtoList.hashCode() : 0);
         result = 31 * result + (endpointProfileRecord != null ? endpointProfileRecord.hashCode() : 0);
         result = 31 * result + (endpointNotificationTopics != null ? endpointNotificationTopics.hashCode() : 0);
+        result = 31 * result + (sdkProfileDto != null ? sdkProfileDto.hashCode() : 0);
         return result;
     }
 
@@ -122,6 +135,7 @@ public class EndpointProfileViewDto implements Serializable {
                 ", groupDtoList=" + groupDtoList +
                 ", endpointProfileRecord=" + endpointProfileRecord +
                 ", endpointNotificationTopics=" + endpointNotificationTopics +
+                ", sdkProfileDto=" + sdkProfileDto +
                 '}';
     }
 }

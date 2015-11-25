@@ -28,7 +28,7 @@ import com.google.gwt.place.shared.Prefix;
  */
 public class SdkProfilesPlace extends TreePlace {
 
-    private final String applicationId;
+    protected String applicationId;
 
     public String getApplicationId() {
         return applicationId;

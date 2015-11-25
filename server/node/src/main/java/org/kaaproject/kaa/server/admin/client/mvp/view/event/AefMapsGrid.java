@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,10 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.cellview.client.DataGrid;
 
 public class AefMapsGrid extends AbstractKaaGrid<ApplicationEventFamilyMapDto, String> {
+
+    public AefMapsGrid() {
+        super(Unit.PX, false, true);
+    }
 
     public AefMapsGrid(Unit unit) {
         super(unit, false);
@@ -68,7 +72,6 @@ public class AefMapsGrid extends AbstractKaaGrid<ApplicationEventFamilyMapDto, S
                         return Utils.millisecondsToDateString(item.getCreatedTime());
                     }
                 }, 80);
-        
 
         return prefWidth;
     }

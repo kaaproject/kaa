@@ -43,6 +43,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.place.NotificationSchemasPlace
 import org.kaaproject.kaa.server.admin.client.mvp.place.ProfileFilterPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ProfileSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ProfileSchemasPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.SdkProfilePlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.SdkProfilesPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.SendNotificationPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.TenantPlace;
@@ -90,6 +91,8 @@ public class AppActivityMapper implements ActivityMapper {
                 return new ApplicationActivity((ApplicationPlace) place, clientFactory);
             } else if (clazz == SdkProfilesPlace.class) {
                 return new SdkProfilesActivity((SdkProfilesPlace) place, clientFactory);
+            } else if (clazz == SdkProfilePlace.class) {
+                return new SdkProfileActivity((SdkProfilePlace) place, clientFactory);
             } else if (clazz == AddSdkProfilePlace.class) {
                 return new AddSdkProfileActivity((AddSdkProfilePlace) place, clientFactory);
             } else if (clazz == UsersPlace.class) {
