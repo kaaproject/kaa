@@ -51,6 +51,8 @@ import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaInfoDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
@@ -435,7 +437,7 @@ public class KaaAdminController {
     public ApplicationDto editApplication(@RequestBody ApplicationDto application) throws KaaAdminServiceException {
         return kaaAdminService.editApplication(application);
     }
-    
+
     /**
      * Delete application by application id.
      *
@@ -520,7 +522,7 @@ public class KaaAdminController {
             throw Utils.handleException(e);
         }
     }
-    
+
     /**
      * Delete user by user id.
      *
@@ -642,6 +644,70 @@ public class KaaAdminController {
     }
 
     /**
+     * Saves a CTL schema.
+     */
+    @RequestMapping(value = "CTL/saveSchema", params = { "body" }, method = RequestMethod.POST)
+    @ResponseBody
+    public CTLSchemaInfoDto saveCTLSchema(@RequestParam String body) throws KaaAdminServiceException {
+        return kaaAdminService.saveCTLSchema(body);
+    }
+
+    /**
+     * Saves a CTL schema.
+     */
+    @RequestMapping(value = "CTL/saveSchema", method = RequestMethod.POST)
+    @ResponseBody
+    public CTLSchemaInfoDto saveCTLSchema(@RequestBody CTLSchemaInfoDto schema) throws KaaAdminServiceException {
+        return kaaAdminService.saveCTLSchema(schema);
+    }
+
+    /**
+     * Removes a CTL schema by its fully qualified name and version number.
+     */
+    @RequestMapping(value = "CTL/deleteSchema", params = { "fqn", "version" }, method = RequestMethod.POST)
+    @ResponseStatus(value = HttpStatus.OK)
+    public void deleteCTLSchemaByFqnAndVersion(@RequestParam String fqn, @RequestParam int version) throws KaaAdminServiceException {
+        kaaAdminService.deleteCTLSchemaByFqnAndVersion(fqn, version);
+    }
+
+    /**
+     * Retrieves a CTL schema by its fully qualified name and version number.
+     */
+    @RequestMapping(value = "CTL/getSchema", params = { "fqn", "version" }, method = RequestMethod.GET)
+    @ResponseBody
+    public CTLSchemaInfoDto getCTLSchemaByFqnAndVersion(@RequestParam String fqn, @RequestParam int version) throws KaaAdminServiceException {
+        return kaaAdminService.getCTLSchemaByFqnAndVersion(fqn, version);
+    }
+
+    /**
+     * Retrieves a list of CTL schemas available for the current tenant.
+     */
+    @RequestMapping(value = "CTL/getSchemas", method = RequestMethod.GET)
+    @ResponseBody
+    public List<CTLSchemaMetaInfoDto> getCTLSchemasAvailable() throws KaaAdminServiceException {
+        return kaaAdminService.getCTLSchemasAvailable();
+    }
+
+    /**
+     * Retrieves a list of CTL schemas available for the current user filtered
+     * by scope.
+     */
+    @RequestMapping(value = "CTL/getSchemas", params = { "scope" }, method = RequestMethod.GET)
+    @ResponseBody
+    public List<CTLSchemaMetaInfoDto> getCTLSchemasByScope(@RequestParam(value = "scope") String scopeName) throws KaaAdminServiceException {
+        return kaaAdminService.getCTLSchemasByScope(scopeName);
+    }
+
+    /**
+     * Retrieves a list of CTL schemas by application identifier.
+     */
+    @RequestMapping(value = "CTL/getSchemas", params = { "applicationId" }, method = RequestMethod.GET)
+    @ResponseBody
+    public List<CTLSchemaMetaInfoDto> getCTLSchemasByApplicationId(@RequestParam String applicationId) throws KaaAdminServiceException {
+        return kaaAdminService.getCTLSchemasByApplicationId(applicationId);
+    }
+
+    /**
      * Gets the profile schemas by application id.
      *
      * @param   applicationId the application id
@@ -682,7 +748,7 @@ public class KaaAdminController {
         byte[] data = getFileContent(file);
         return kaaAdminService.editProfileSchema(profileSchema, data);
     }
-    
+
     /**
      * Edits existing profile schema.
      *

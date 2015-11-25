@@ -16,26 +16,6 @@
 
 package org.kaaproject.kaa.server.operations.service.cache;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.atMost;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.never;
-
-import java.security.GeneralSecurityException;
-import java.security.KeyPairGenerator;
-import java.security.PublicKey;
-import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -57,6 +37,7 @@ import org.kaaproject.kaa.common.dto.event.ApplicationEventMapDto;
 import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
+import org.kaaproject.kaa.server.common.dao.AbstractTest;
 import org.kaaproject.kaa.server.common.dao.ApplicationEventMapService;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.dao.ConfigurationService;
@@ -79,10 +60,30 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.security.GeneralSecurityException;
+import java.security.KeyPairGenerator;
+import java.security.PublicKey;
+import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.atMost;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/operations/cache-test-context.xml")
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
-public class ConcurrentCacheServiceTest {
+public class ConcurrentCacheServiceTest extends AbstractTest {
     private static final int EVENT_CLASS_FAMILY_VERSION = 42;
 
     private static final String EVENT_CLASS_ID = "EVENT_CLASS_ID";
@@ -682,21 +683,21 @@ public class ConcurrentCacheServiceTest {
     }
 
     @Test
-    public void testIsSupported(){
-        for(ChangeType change : ChangeType.values()){
+    public void testIsSupported() {
+        for (ChangeType change : ChangeType.values()) {
             switch (change) {
-            case ADD_CONF:
-            case ADD_PROF:
-            case ADD_TOPIC:
-            case REMOVE_CONF:
-            case REMOVE_PROF:
-            case REMOVE_TOPIC:
-            case REMOVE_GROUP:
-                Assert.assertTrue(ConcurrentCacheService.isSupported(change));
-                break;
-            default:
-                Assert.assertFalse(ConcurrentCacheService.isSupported(change));
-                break;
+                case ADD_CONF:
+                case ADD_PROF:
+                case ADD_TOPIC:
+                case REMOVE_CONF:
+                case REMOVE_PROF:
+                case REMOVE_TOPIC:
+                case REMOVE_GROUP:
+                    Assert.assertTrue(ConcurrentCacheService.isSupported(change));
+                    break;
+                default:
+                    Assert.assertFalse(ConcurrentCacheService.isSupported(change));
+                    break;
             }
         }
     }
@@ -755,7 +756,6 @@ public class ConcurrentCacheServiceTest {
     }
 
 
-
     private List<HistoryDto> getResultHistoryList() {
         List<HistoryDto> expectedList = new ArrayList<>();
         expectedList.add(buildMatchingHistoryDto(ChangeType.ADD_CONF));
@@ -776,7 +776,7 @@ public class ConcurrentCacheServiceTest {
         }
     }
 
-    public static void launchCodeInParallelThreads(final int nThreads, final Runnable task){
+    public static void launchCodeInParallelThreads(final int nThreads, final Runnable task) {
         final CountDownLatch startGate = new CountDownLatch(1);
         final CountDownLatch endGate = new CountDownLatch(nThreads);
 

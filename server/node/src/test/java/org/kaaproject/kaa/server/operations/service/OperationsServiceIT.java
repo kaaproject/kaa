@@ -118,7 +118,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/operations/common-test-context.xml")
-@DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
+@DirtiesContext(classMode = ClassMode.AFTER_CLASS)
 @Transactional
 public class OperationsServiceIT extends AbstractTest {
     private static final Charset UTF_8 = Charset.forName("UTF-8");
@@ -171,52 +171,10 @@ public class OperationsServiceIT extends AbstractTest {
     protected OperationsService operationsService;
 
     @Autowired
-    protected ConfigurationService configurationService;
-
-    @Autowired
-    protected NotificationService notificationService;
-
-    @Autowired
-    protected TopicService topicService;
-
-    @Autowired
-    protected ApplicationService applicationService;
-
-    @Autowired
-    protected ProfileService profileService;
-
-    @Autowired
-    protected EndpointService endpointService;
-
-    @Autowired
-    protected EndpointUserDao<EndpointUser> endpointUserDao;
-
-    @Autowired
     protected TenantDao<Tenant> customerDao;
 
     @Autowired
-    protected ApplicationDao<Application> applicationDao;
-
-    @Autowired
-    protected ConfigurationSchemaDao<ConfigurationSchema> configurationSchemaDao;
-
-    @Autowired
-    protected ConfigurationDao<Configuration> configurationDao;
-
-    @Autowired
     protected EndpointConfigurationDao<EndpointConfiguration> endpointConfigurationDao;
-
-    @Autowired
-    protected EndpointProfileDao<EndpointProfile> endpointProfileDao;
-
-    @Autowired
-    protected ProfileSchemaDao<ProfileSchema> profileSchemaDao;
-
-    @Autowired
-    protected EndpointGroupDao<EndpointGroup> endpointGroupDao;
-
-    @Autowired
-    protected ProfileFilterDao<ProfileFilter> profileFilterDao;
 
     @Autowired
     protected SdkProfileService sdkProfileService;
@@ -233,6 +191,11 @@ public class OperationsServiceIT extends AbstractTest {
     @AfterClass
     public static void after() throws Exception {
         MongoDBTestRunner.tearDown();
+    }
+
+    @After
+    public void afterTest() {
+        endpointConfigurationDao.removeAll();
     }
 
     @Before
@@ -837,12 +800,6 @@ public class OperationsServiceIT extends AbstractTest {
         Assert.assertNotNull(response.getEventSync().getEventListenersResponses());
         Assert.assertEquals(1, response.getEventSync().getEventListenersResponses().size());
         Assert.assertEquals(SyncStatus.FAILURE, response.getEventSync().getEventListenersResponses().get(0).getResult());
-    }
-
-
-    @After
-    public void afterTest() {
-        endpointConfigurationDao.removeAll();
     }
 
     public static String getResourceAsString(String path) throws IOException {

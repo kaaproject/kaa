@@ -40,7 +40,7 @@ public class HibernateProfileSchemaDaoTest extends HibernateAbstractTest {
         Assert.assertEquals(3, schemas.size());
         ProfileSchema schema  = schemas.get(0);
         Application app = schema.getApplication();
-        List<ProfileSchema> found = schemaDao.findByApplicationId(app.getId().toString());
+        List<ProfileSchema> found = profileSchemaDao.findByApplicationId(app.getId().toString());
         Assert.assertEquals(3, found.size());
         Assert.assertEquals(schemas, found);
     }
@@ -51,7 +51,7 @@ public class HibernateProfileSchemaDaoTest extends HibernateAbstractTest {
         Assert.assertEquals(4, schemas.size());
         ProfileSchema schema = schemas.get(2);
         Application app = schema.getApplication();
-        ProfileSchema found = schemaDao.findByAppIdAndVersion(app.getId().toString(), schema.getMajorVersion());
+        ProfileSchema found = profileSchemaDao.findByAppIdAndVersion(app.getId().toString(), schema.getMajorVersion());
         Assert.assertNotNull(found);
         Assert.assertEquals(3, found.getMajorVersion());
     }
@@ -62,7 +62,7 @@ public class HibernateProfileSchemaDaoTest extends HibernateAbstractTest {
         Assert.assertEquals(4, schemas.size());
         ProfileSchema schema  = schemas.get(0);
         Application app = schema.getApplication();
-        ProfileSchema found = schemaDao.findLatestByAppId(app.getId().toString());
+        ProfileSchema found = profileSchemaDao.findLatestByAppId(app.getId().toString());
         Assert.assertNotNull(found);
         Assert.assertEquals(4, found.getMajorVersion());
     }

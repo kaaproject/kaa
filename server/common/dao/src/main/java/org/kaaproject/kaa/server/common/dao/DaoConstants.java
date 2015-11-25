@@ -283,11 +283,11 @@ public class DaoConstants {
      * Plugin constants.
      */
     public static final String PLUGIN_TABLE_NAME = "plugin";
-    public static final String PLUGIN_NAME = "name";
+    public static final String PLUGIN_NAME = NAME;
     public static final String PLUGIN_DESCRIPTION = DESCRIPTION;
     public static final String PLUGIN_CREATED_USERNAME = CREATED_USERNAME;
     public static final String PLUGIN_CREATED_TIME = CREATED_TIME;
-    public static final String PLUGIN_APPLICATION_ID = "application_id";
+    public static final String PLUGIN_APPLICATION_ID = APPLICATION_ID;
     public static final String PLUGIN_TYPE_NAME = "plugin_type_name";
     public static final String PLUGIN_CLASS_NAME = "plugin_class_name";
     public static final String PLUGIN_RAW_CONFIGURATION = "raw_configuration";
@@ -333,6 +333,53 @@ public class DaoConstants {
     public static final String SDK_PROFILE_PROFILE_SCHEMA_VERSION = "profile_schema_version";
     public static final String SDK_PROFILE_TABLE_NAME = "sdk_token";
     public static final String SDK_PROFILE_TOKEN = "token";
+
+    /**
+     * CTL schema constants
+     */
+    public static final String CTL_SCHEMA_TABLE_NAME = "ctl";
+    public static final String CTL_SCHEMA_APPLICATION_ID = APPLICATION_ID;
+    public static final String CTL_SCHEMA_TENANT_ID = TENANT_ID;
+    public static final String CTL_SCHEMA_META_INFO_ID = "metainfo_id";
+    public static final String CTL_SCHEMA_BODY = "body";
+    public static final String CTL_SCHEMA_NAME = NAME;
+    public static final String CTL_SCHEMA_DESCRIPTION = DESCRIPTION;
+    public static final String CTL_SCHEMA_CREATED_USERNAME = CREATED_USERNAME;
+    public static final String CTL_SCHEMA_CREATED_TIME = CREATED_TIME;
+    // CTL schema foreign keys
+    public static final String CTL_SCHEMA_APPLICATION_FK = "fk_ctl_app_id";
+    public static final String CTL_SCHEMA_TENANT_FK = "fk_ctl_tenant_id";
+    public static final String CTL_SCHEMA_META_INFO_FK = "fk_ctl_metainfo_id";
+    public static final String CTL_SCHEMA_JOIN_TABLE_PARENT_FK = "fk_ctl_pr_id";
+    public static final String CTL_SCHEMA_JOIN_TABLE_CHILD_FK = "fk_ctl_ch_id";
+    // CTL schema constraints
+    public static final String CTL_SCHEMA_UNIQUE_CONSTRAINT = "ctl_unique_constraint";
+    public static final String CTL_SCHEMA_JOIN_TABLE_NAME = "ctl_dependency";
+    public static final String CTL_SCHEMA_JOIN_TABLE_PARENT_ID = "parent_id";
+    public static final String CTL_SCHEMA_JOIN_TABLE_CHILD_ID = "child_id";
+    // Properties and alias constants
+    public static final String CTL_SCHEMA_TENANT_ID_ALIAS = "tenant.id";
+    public static final String CTL_SCHEMA_APPLICATION_ID_ALIAS = "application.id";
+    public static final String CTL_SCHEMA_DEPENDENCY_PROP = "dependencySet";
+    public static final String CTL_SCHEMA_DEPENDENCY_ALIAS = "dep";
+    public static final String CTL_SCHEMA_DEPENDENCY_ID_ALIAS = CTL_SCHEMA_DEPENDENCY_ALIAS + "." + ID;
+
+
+    /**
+     * CTL schema meta info constants
+     */
+    public static final String CTL_SCHEMA_META_INFO_TABLE_NAME = "ctl_metainfo";
+    public static final String CTL_SCHEMA_META_INFO_FQN = FQN;
+    public static final String CTL_SCHEMA_META_INFO_VERSION = VERSION;
+    public static final String CTL_SCHEMA_META_INFO_SCOPE = "scope";
+    public static final String CTL_SCHEMA_META_INFO_UNIQUE_CONSTRAINT = "ctl_metainfo_unique_constraint";
+    // Properties and alias constants
+    public static final String CTL_SCHEMA_META_INFO_PROPERTY = "metaInfo";
+    public static final String CTL_SCHEMA_META_INFO_ALIAS = "mi";
+    public static final String CTL_SCHEMA_META_INFO_ALIAS_VERSION = CTL_SCHEMA_META_INFO_ALIAS + "." + CTL_SCHEMA_META_INFO_VERSION;
+    public static final String CTL_SCHEMA_META_INFO_ALIAS_FQN = CTL_SCHEMA_META_INFO_ALIAS + "." + CTL_SCHEMA_META_INFO_FQN;
+    public static final String CTL_SCHEMA_META_INFO_ALIAS_SCOPE = CTL_SCHEMA_META_INFO_ALIAS + "." + CTL_SCHEMA_META_INFO_SCOPE;
+
 
     public static final String LAST_PAGE_MESSAGE = "It is the last page";
     public static final String PROFILE = "profile";

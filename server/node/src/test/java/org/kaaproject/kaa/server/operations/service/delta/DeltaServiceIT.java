@@ -16,20 +16,6 @@
 
 package org.kaaproject.kaa.server.operations.service.delta;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
-
-import javax.transaction.Transactional;
-
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericContainer;
 import org.apache.avro.generic.GenericRecord;
@@ -55,11 +41,7 @@ import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.common.endpoint.gen.BasicEndpointProfile;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.core.algorithms.delta.DeltaCalculatorException;
-import org.kaaproject.kaa.server.common.dao.ApplicationService;
-import org.kaaproject.kaa.server.common.dao.ConfigurationService;
-import org.kaaproject.kaa.server.common.dao.EndpointService;
-import org.kaaproject.kaa.server.common.dao.ProfileService;
-import org.kaaproject.kaa.server.common.dao.UserService;
+import org.kaaproject.kaa.server.common.dao.AbstractTest;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.MongoDBTestRunner;
 import org.kaaproject.kaa.server.operations.pojo.GetDeltaRequest;
@@ -71,16 +53,27 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import javax.transaction.Transactional;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/operations/common-test-context.xml")
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 @Transactional
-@ActiveProfiles(value = "mongo")
-public class DeltaServiceIT {
+public class DeltaServiceIT extends AbstractTest {
     private static final Charset UTF_8 = Charset.forName("UTF-8");
 
     protected static final Logger LOG = LoggerFactory.getLogger(DeltaServiceIT.class);
@@ -105,27 +98,8 @@ public class DeltaServiceIT {
 
     @Autowired
     protected DeltaService deltaService;
-
-    @Autowired
-    protected UserService userService;
-
-    @Autowired
-    protected ApplicationService applicationService;
-
-    @Autowired
-    protected EndpointService endpointService;
-
-    @Autowired
-    protected ConfigurationService configurationService;
-
-    @Autowired
-    protected ProfileService profileService;
-
     @Autowired
     protected CacheService cacheService;
-
-    @Autowired
-    protected ConfigurationService confService;
 
     private TenantDto tenant;
     private ApplicationDto application;

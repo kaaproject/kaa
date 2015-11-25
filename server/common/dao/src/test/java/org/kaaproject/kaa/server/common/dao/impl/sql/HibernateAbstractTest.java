@@ -16,19 +16,6 @@
 
 package org.kaaproject.kaa.server.common.dao.impl.sql;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
-import java.util.UUID;
-
 import org.junit.Assert;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
@@ -37,27 +24,12 @@ import org.kaaproject.kaa.common.dto.UpdateStatus;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventAction;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
 import org.kaaproject.kaa.server.common.core.schema.KaaSchemaFactoryImpl;
-import org.kaaproject.kaa.server.common.dao.impl.ApplicationDao;
-import org.kaaproject.kaa.server.common.dao.impl.ApplicationEventFamilyMapDao;
-import org.kaaproject.kaa.server.common.dao.impl.ConfigurationDao;
-import org.kaaproject.kaa.server.common.dao.impl.ConfigurationSchemaDao;
-import org.kaaproject.kaa.server.common.dao.impl.EndpointGroupDao;
-import org.kaaproject.kaa.server.common.dao.impl.EventClassDao;
-import org.kaaproject.kaa.server.common.dao.impl.EventClassFamilyDao;
-import org.kaaproject.kaa.server.common.dao.impl.HistoryDao;
-import org.kaaproject.kaa.server.common.dao.impl.LogSchemaDao;
-import org.kaaproject.kaa.server.common.dao.impl.NotificationSchemaDao;
-import org.kaaproject.kaa.server.common.dao.impl.ProfileFilterDao;
-import org.kaaproject.kaa.server.common.dao.impl.ProfileSchemaDao;
-import org.kaaproject.kaa.server.common.dao.impl.SdkProfileDao;
-import org.kaaproject.kaa.server.common.dao.impl.TenantDao;
-import org.kaaproject.kaa.server.common.dao.impl.TopicDao;
-import org.kaaproject.kaa.server.common.dao.impl.UserDao;
-import org.kaaproject.kaa.server.common.dao.impl.UserVerifierDao;
-import org.kaaproject.kaa.server.common.dao.impl.LogAppenderDao;
+import org.kaaproject.kaa.server.common.dao.AbstractTest;
 import org.kaaproject.kaa.server.common.dao.model.sql.Application;
 import org.kaaproject.kaa.server.common.dao.model.sql.ApplicationEventFamilyMap;
 import org.kaaproject.kaa.server.common.dao.model.sql.ApplicationEventMap;
+import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchema;
+import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchemaMetaInfo;
 import org.kaaproject.kaa.server.common.dao.model.sql.Change;
 import org.kaaproject.kaa.server.common.dao.model.sql.Configuration;
 import org.kaaproject.kaa.server.common.dao.model.sql.ConfigurationSchema;
@@ -66,6 +38,7 @@ import org.kaaproject.kaa.server.common.dao.model.sql.EventClass;
 import org.kaaproject.kaa.server.common.dao.model.sql.EventClassFamily;
 import org.kaaproject.kaa.server.common.dao.model.sql.EventSchemaVersion;
 import org.kaaproject.kaa.server.common.dao.model.sql.History;
+import org.kaaproject.kaa.server.common.dao.model.sql.LogAppender;
 import org.kaaproject.kaa.server.common.dao.model.sql.LogSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.NotificationSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.ProfileFilter;
@@ -75,53 +48,27 @@ import org.kaaproject.kaa.server.common.dao.model.sql.Tenant;
 import org.kaaproject.kaa.server.common.dao.model.sql.Topic;
 import org.kaaproject.kaa.server.common.dao.model.sql.User;
 import org.kaaproject.kaa.server.common.dao.model.sql.UserVerifier;
-import org.kaaproject.kaa.server.common.dao.model.sql.LogAppender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
-public abstract class HibernateAbstractTest {
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+
+import static org.apache.commons.lang.StringUtils.isBlank;
+
+public abstract class HibernateAbstractTest extends AbstractTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(HibernateAbstractTest.class);
-
-    public static final Random RANDOM = new Random();
-
-    @Autowired
-    protected LogAppenderDao<LogAppender> appenderDao;
-    @Autowired
-    protected UserDao<User> userDao;
-    @Autowired
-    protected TenantDao<Tenant> tenantDao;
-    @Autowired
-    protected ApplicationDao<Application> applicationDao;
-    @Autowired
-    protected EndpointGroupDao<EndpointGroup> endpointGroupDao;
-    @Autowired
-    protected ConfigurationSchemaDao<ConfigurationSchema> configurationSchemaDao;
-    @Autowired
-    protected ConfigurationDao<Configuration> configurationDao;
-    @Autowired
-    protected ProfileSchemaDao<ProfileSchema> schemaDao;
-    @Autowired
-    protected ProfileFilterDao<ProfileFilter> profileFilterDao;
-    @Autowired
-    protected TopicDao<Topic> topicDao;
-    @Autowired
-    protected HistoryDao<History> historyDao;
-    @Autowired
-    protected EventClassFamilyDao<EventClassFamily> eventClassFamilyDao;
-    @Autowired
-    protected EventClassDao<EventClass> eventClassDao;
-    @Autowired
-    protected ApplicationEventFamilyMapDao<ApplicationEventFamilyMap> applicationEventFamilyMapDao;
-    @Autowired
-    protected LogSchemaDao<LogSchema> logSchemaDao;
-    @Autowired
-    protected NotificationSchemaDao<NotificationSchema> notificationSchemaDao;
-    @Autowired
-    protected UserVerifierDao<UserVerifier> verifierDao;
-    @Autowired
-    protected SdkProfileDao<SdkProfile> sdkProfileDao;
 
     protected Tenant generateTenant() {
         LOG.debug("Generate tenant...");
@@ -277,7 +224,7 @@ public abstract class HibernateAbstractTest {
                 schemaDto.setCreatedUsername("Test User");
                 schemaDto.setMajorVersion(i + 1);
                 schemaDto.setName("Test Name");
-                schemaDto = schemaDao.save(schemaDto);
+                schemaDto = profileSchemaDao.save(schemaDto);
                 Assert.assertNotNull(schemaDto);
                 schemas.add(schemaDto);
             }
@@ -341,7 +288,7 @@ public abstract class HibernateAbstractTest {
 
     protected Topic generateTopic(Application app, TopicTypeDto type, String topicName) {
         Topic topic = new Topic();
-        if(topicName != null && !topicName.isEmpty()){
+        if (topicName != null && !topicName.isEmpty()) {
             topic.setName(topicName);
         } else {
             topic.setName("Generated Topic name");
@@ -357,7 +304,7 @@ public abstract class HibernateAbstractTest {
         return topicDao.save(topic);
     }
 
-    protected LogAppender generateLogAppender(Application app){
+    protected LogAppender generateLogAppender(Application app) {
         LogAppender appender = new LogAppender();
         if (app == null) {
             app = generateApplication(null);
@@ -426,7 +373,8 @@ public abstract class HibernateAbstractTest {
         return eventClasses;
     }
 
-    protected List<ApplicationEventFamilyMap> generateApplicationEventFamilyMap(Tenant tenant, Application application, EventClassFamily eventClassFamily, int count, boolean generateApplicationEventMaps) {
+    protected List<ApplicationEventFamilyMap> generateApplicationEventFamilyMap(Tenant tenant, Application application,
+                                                                                EventClassFamily eventClassFamily, int count, boolean generateApplicationEventMaps) {
         int applicationEventMapCount = 2;
         if (tenant == null) {
             tenant = generateTenant();
@@ -493,16 +441,19 @@ public abstract class HibernateAbstractTest {
 
     protected String readSchemaFileAsString(String filePath) throws IOException {
         try {
-            Path path = Paths.get(Thread.currentThread().getContextClassLoader().getResource(filePath).toURI());
-            byte[] bytes = Files.readAllBytes(path);
-            return new String(bytes);
+            URL url = Thread.currentThread().getContextClassLoader().getResource(filePath);
+            if (url != null) {
+                Path path = Paths.get(url.toURI());
+                byte[] bytes = Files.readAllBytes(path);
+                return new String(bytes);
+            }
         } catch (URISyntaxException e) {
             LOG.error("Can't generate configs {}", e);
         }
         return null;
     }
 
-    protected UserVerifier generateUserVerifier(Application app, String verifierToken){
+    protected UserVerifier generateUserVerifier(Application app, String verifierToken) {
         UserVerifier verifier = new UserVerifier();
         verifier.setName("GENERATED test Verifier");
         if (app == null) {
@@ -530,5 +481,19 @@ public abstract class HibernateAbstractTest {
         entity.setToken(token);
 
         return sdkProfileDao.save(entity);
+    }
+
+    protected CTLSchema generateCTLSchema(String fqn, Tenant tenant, int version, String body) {
+        CTLSchema ctlSchema = new CTLSchema();
+        ctlSchema.setMetaInfo(new CTLSchemaMetaInfo(fqn, version));
+        if (isBlank(body)) {
+            body = UUID.randomUUID().toString();
+        }
+        ctlSchema.setBody(body);
+        if (tenant == null) {
+            tenant = generateTenant();
+        }
+        ctlSchema.setTenant(tenant);
+        return ctlSchema;
     }
 }

@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.common.dao.impl;
 
+import org.hibernate.LockOptions;
+
 import java.util.List;
 
 /**
