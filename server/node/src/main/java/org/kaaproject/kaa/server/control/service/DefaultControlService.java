@@ -443,8 +443,8 @@ public class DefaultControlService implements ControlService {
      */
     @Override
     public List<ServerProfileSchemaDto> getServerProfileSchemasByApplicationId(String applicationId) throws ControlServiceException {
-        return serverProfileService.findServerProfileSchemasByAppId(applicationId);
-//        return toServProfList(profileService.findProfileSchemasByAppId(applicationId));
+//        return serverProfileService.findServerProfileSchemasByAppId(applicationId);
+        return toServProfList(profileService.findProfileSchemasByAppId(applicationId));
     }
 
     /* (non-Javadoc)
@@ -452,8 +452,8 @@ public class DefaultControlService implements ControlService {
      */
     @Override
     public ServerProfileSchemaDto getServerProfileSchema(String serverProfileSchemaId) throws ControlServiceException {
-        return serverProfileService.findServerProfileSchema(serverProfileSchemaId);
-//        return toServProf(profileService.findProfileSchemaById(serverProfileSchemaId));
+//        return serverProfileService.findServerProfileSchema(serverProfileSchemaId);
+        return toServProf(profileService.findProfileSchemaById(serverProfileSchemaId));
     }
 
     /* (non-Javadoc)
@@ -461,8 +461,8 @@ public class DefaultControlService implements ControlService {
      */
     @Override
     public ServerProfileSchemaDto editServerProfileSchema(ServerProfileSchemaDto serverProfileSchema) throws ControlServiceException {
-        return serverProfileService.saveServerProfileSchema(serverProfileSchema);
-//        return toServProf(profileService.saveProfileSchema(fromServProf(serverProfileSchema)));
+//        return serverProfileService.saveServerProfileSchema(serverProfileSchema);
+        return toServProf(profileService.saveProfileSchema(fromServProf(serverProfileSchema)));
     }
 
     /*==============================================================*/
@@ -1551,6 +1551,13 @@ public class DefaultControlService implements ControlService {
                     checkSchema(schemaDto, RecordFiles.PROFILE_SCHEMA);
                     schema = schemaDto.getSchema();
                     fileName = MessageFormatter.arrayFormat(DATA_NAME_PATTERN, new Object[]{"profile", key.getSchemaVersion()}).getMessage();
+                    break;
+                case SERVER_PROFILE_SCHEMA:
+//                    schemaDto = serverProfileService.findServerProfileSchema("" + key.getSchemaVersion());
+                    schemaDto = getServerProfileSchema("" + key.getSchemaVersion());
+                    checkSchema(schemaDto, RecordFiles.PROFILE_SCHEMA);
+                    schema = schemaDto.getSchema();
+                    fileName = MessageFormatter.arrayFormat(DATA_NAME_PATTERN, new Object[]{"profile", schemaDto.getMajorVersion()}).getMessage();
                     break;
                 default:
                     break;

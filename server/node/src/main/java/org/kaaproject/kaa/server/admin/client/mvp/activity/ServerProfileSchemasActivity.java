@@ -70,9 +70,10 @@ public class ServerProfileSchemasActivity extends AbstractListActivity<ServerPro
 
     @Override
     protected void onCustomRowAction(RowActionEvent<String> event) {
-        Integer schemaVersion = Integer.valueOf(event.getClickedId());
+        int schemaId = Integer.valueOf(event.getClickedId());
         if (event.getAction() == KaaRowAction.DOWNLOAD_SCHEMA) {
-            KaaAdmin.getDataSource().getRecordData(applicationId, schemaVersion, RecordKey.RecordFiles.PROFILE_SCHEMA, new AsyncCallback<String>() {
+            KaaAdmin.getDataSource().getRecordData(applicationId, schemaId, RecordKey.RecordFiles.SERVER_PROFILE_SCHEMA,
+                    new AsyncCallback<String>() {
                 @Override
                 public void onFailure(Throwable caught) {
                     Utils.handleException(caught, listView);

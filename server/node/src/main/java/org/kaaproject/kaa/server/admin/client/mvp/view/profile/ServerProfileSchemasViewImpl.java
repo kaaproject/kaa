@@ -30,7 +30,12 @@ public class ServerProfileSchemasViewImpl extends BaseListViewImpl<ServerProfile
 
     @Override
     protected AbstractGrid<ServerProfileSchemaDto, String> createGrid() {
-        return new BaseSchemasGrid<ServerProfileSchemaDto>();
+        return new BaseSchemasGrid<ServerProfileSchemaDto>() {
+            @Override
+            protected Integer getDownloadSchemaColumnClickedId(ServerProfileSchemaDto value) {
+                return Integer.valueOf(value.getId());
+            }
+        };
     }
 
     @Override
