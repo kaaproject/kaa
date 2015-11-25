@@ -61,7 +61,7 @@ public class DefaultOperationHttpChannelTest {
         }
 
         public void verify() throws Exception {
-            Mockito.verify(getMultiplexer(), Mockito.times(wantedNumberOfInvocations)).compileRequest(Mockito.anyMap());
+            Mockito.verify(getMultiplexer(), Mockito.times(wantedNumberOfInvocations)).compileRequest(Mockito.any(ChannelSyncTask.class));
             Mockito.verify(getDemultiplexer(), Mockito.times(wantedNumberOfInvocations)).processResponse(Mockito.any(byte[].class));
         }
     }
@@ -106,14 +106,24 @@ public class DefaultOperationHttpChannelTest {
 
         channel.setServer(server);
 
-        channel.sync(TransportType.EVENT);
+        Map<TransportType, ChannelDirection> map = new HashMap<>();
+        map.put(TransportType.EVENT, ChannelDirection.BIDIRECTIONAL);
+        channel.sync(new DefaultSyncTask(map, false));
         channel.setDemultiplexer(demultiplexer);
         channel.setDemultiplexer(null);
-        channel.sync(TransportType.EVENT);
+
+        map = new HashMap<>();
+        map.put(TransportType.EVENT, ChannelDirection.BIDIRECTIONAL);
+        channel.sync(new DefaultSyncTask(map, false));
         channel.setMultiplexer(multiplexer);
         channel.setMultiplexer(null);
-        channel.sync(TransportType.BOOTSTRAP);
-        channel.sync(TransportType.EVENT);
+
+        map = new HashMap<>();
+        map.put(TransportType.BOOTSTRAP, ChannelDirection.BIDIRECTIONAL);
+        channel.sync(new DefaultSyncTask(map, false));
+        map = new HashMap<>();
+        map.put(TransportType.EVENT, ChannelDirection.BIDIRECTIONAL);
+        channel.sync(new DefaultSyncTask(map, false));
 
         channel.verify();
     }
@@ -137,7 +147,7 @@ public class DefaultOperationHttpChannelTest {
         KaaDataMultiplexer multiplexer = Mockito.mock(KaaDataMultiplexer.class);
         KaaDataDemultiplexer demultiplexer = Mockito.mock(KaaDataDemultiplexer.class);
         DefaultOperationHttpChannelFake channel = new DefaultOperationHttpChannelFake(client, state, failoverManager, 0);
-        channel.syncAll();
+        channel.sync(new DefaultSyncTask(channel.getSupportedTransportTypes(), true));
         channel.setDemultiplexer(demultiplexer);
         channel.setMultiplexer(multiplexer);
         channel.shutdown();
@@ -146,8 +156,11 @@ public class DefaultOperationHttpChannelTest {
                 TransportProtocolIdConstants.HTTP_TRANSPORT_ID, "localhost", 9889, KeyUtil.generateKeyPair().getPublic());
         channel.setServer(server);
 
-        channel.sync(TransportType.EVENT);
-        channel.syncAll();
+        Map<TransportType, ChannelDirection> map = new HashMap<>();
+        map.put(TransportType.EVENT, ChannelDirection.BIDIRECTIONAL);
+
+        channel.sync(new DefaultSyncTask(map, false));
+        channel.sync(new DefaultSyncTask(channel.getSupportedTransportTypes(), true));
 
         channel.verify();
     }

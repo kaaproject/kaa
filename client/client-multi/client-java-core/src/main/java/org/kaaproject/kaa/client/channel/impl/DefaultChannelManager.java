@@ -28,6 +28,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.kaaproject.kaa.client.bootstrap.BootstrapManager;
 import org.kaaproject.kaa.client.channel.ChannelDirection;
+import org.kaaproject.kaa.client.channel.ChannelSyncTask;
+import org.kaaproject.kaa.client.channel.DefaultSyncTask;
 import org.kaaproject.kaa.client.channel.FailoverDecision;
 import org.kaaproject.kaa.client.channel.FailoverManager;
 import org.kaaproject.kaa.client.channel.FailoverStatus;
@@ -42,6 +44,7 @@ import org.kaaproject.kaa.client.channel.TransportProtocolId;
 import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
 import org.kaaproject.kaa.client.channel.impl.sync.SyncTask;
 import org.kaaproject.kaa.client.context.ExecutorContext;
+import org.kaaproject.kaa.client.plugin.ExtensionId;
 import org.kaaproject.kaa.common.TransportType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,8 +78,8 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
     private KaaDataMultiplexer bootstrapMultiplexer;
     private KaaDataDemultiplexer bootstrapDemultiplexer;
 
-    public DefaultChannelManager(BootstrapManager manager, Map<TransportProtocolId,
-            List<TransportConnectionInfo>> bootststrapServers, ExecutorContext executorContext) {
+    public DefaultChannelManager(BootstrapManager manager, Map<TransportProtocolId, List<TransportConnectionInfo>> bootststrapServers,
+            ExecutorContext executorContext) {
         if (manager == null || bootststrapServers == null || bootststrapServers.isEmpty()) {
             throw new ChannelRuntimeException("Failed to create channel manager");
         }
@@ -249,6 +252,11 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
     }
 
     @Override
+    public void sync(ExtensionId extId) {
+        sync(extId, false, false);
+    }
+
+    @Override
     public synchronized KaaDataChannel getChannel(String id) {
         for (KaaDataChannel channel : channels) {
             if (channel.getId().equals(id)) {
@@ -297,58 +305,62 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
                 LOG.trace("Using next bootstrap server");
                 FailoverDecision decision = failoverManager.onFailover(FailoverStatus.CURRENT_BOOTSTRAP_SERVER_NA);
                 switch (decision.getAction()) {
-                    case NOOP:
-                        LOG.warn("No operation is performed according to failover strategy decision");
-                        break;
-                    case RETRY:
-                        long retryPeriod = decision.getRetryPeriod();
-                        LOG.warn("Attempt to reconnect to the current bootstrap server will be made in {} ms, " +
-                                "according to failover strategy decision", retryPeriod);
-                        executorContext.getScheduledExecutor().schedule(new Runnable() {
-                            @Override
-                            public void run() {
-                                onTransportConnectionInfoUpdated(server);
-                            }
-                        }, retryPeriod, TimeUnit.MILLISECONDS);
-                        break;
-                    case USE_NEXT_BOOTSTRAP:
-                        retryPeriod = decision.getRetryPeriod();
-                        LOG.warn("Attempt to connect to the next bootstrap server will be made in {} ms, " +
-                                    "according to failover strategy decision", retryPeriod);
-                        executorContext.getScheduledExecutor().schedule(new Runnable() {
-                            @Override
-                            public void run() {
-                                onTransportConnectionInfoUpdated(nextConnectionInfo);
-                            }
-                        }, retryPeriod, TimeUnit.MILLISECONDS);
-                        break;
-                    case STOP_APP:
-                        LOG.warn("Stopping application according to failover strategy decision!");
-                        System.exit(EXIT_FAILURE);
-                        break;
+                case NOOP:
+                    LOG.warn("No operation is performed according to failover strategy decision");
+                    break;
+                case RETRY:
+                    long retryPeriod = decision.getRetryPeriod();
+                    LOG.warn("Attempt to reconnect to the current bootstrap server will be made in {} ms, "
+                            + "according to failover strategy decision", retryPeriod);
+                    executorContext.getScheduledExecutor().schedule(new Runnable() {
+                        @Override
+                        public void run() {
+                            onTransportConnectionInfoUpdated(server);
+                        }
+                    }, retryPeriod, TimeUnit.MILLISECONDS);
+                    break;
+                case USE_NEXT_BOOTSTRAP:
+                    retryPeriod = decision.getRetryPeriod();
+                    LOG.warn("Attempt to connect to the next bootstrap server will be made in {} ms, "
+                            + "according to failover strategy decision", retryPeriod);
+                    executorContext.getScheduledExecutor().schedule(new Runnable() {
+                        @Override
+                        public void run() {
+                            onTransportConnectionInfoUpdated(nextConnectionInfo);
+                        }
+                    }, retryPeriod, TimeUnit.MILLISECONDS);
+                    break;
+                case STOP_APP:
+                    LOG.warn("Stopping application according to failover strategy decision!");
+                    System.exit(EXIT_FAILURE);
+                    break;
+                default:
+                    break;
                 }
             } else {
                 LOG.trace("Can't find next bootstrap server");
                 FailoverDecision decision = failoverManager.onFailover(FailoverStatus.BOOTSTRAP_SERVERS_NA);
                 switch (decision.getAction()) {
-                    case NOOP:
-                        LOG.warn("No operation is performed according to failover strategy decision");
-                        break;
-                    case RETRY:
-                        long retryPeriod = decision.getRetryPeriod();
-                        LOG.warn("Attempt to reconnect to first bootstrap server will be made in {} ms, " +
-                                 "according to failover strategy decision", retryPeriod);
-                        executorContext.getScheduledExecutor().schedule(new Runnable() {
-                            @Override
-                            public void run() {
-                                onTransportConnectionInfoUpdated(server);
-                            }
-                        }, retryPeriod, TimeUnit.MILLISECONDS);
-                        break;
-                    case STOP_APP:
-                        LOG.warn("Stopping application according to failover strategy decision!");
-                        System.exit(EXIT_FAILURE);
-                        break;
+                case NOOP:
+                    LOG.warn("No operation is performed according to failover strategy decision");
+                    break;
+                case RETRY:
+                    long retryPeriod = decision.getRetryPeriod();
+                    LOG.warn("Attempt to reconnect to first bootstrap server will be made in {} ms, "
+                            + "according to failover strategy decision", retryPeriod);
+                    executorContext.getScheduledExecutor().schedule(new Runnable() {
+                        @Override
+                        public void run() {
+                            onTransportConnectionInfoUpdated(server);
+                        }
+                    }, retryPeriod, TimeUnit.MILLISECONDS);
+                    break;
+                case STOP_APP:
+                    LOG.warn("Stopping application according to failover strategy decision!");
+                    System.exit(EXIT_FAILURE);
+                    break;
+                default:
+                    break;
                 }
             }
         } else {
@@ -411,7 +423,7 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
             for (KaaDataChannel channel : channels) {
                 channel.shutdown();
             }
-            for(SyncWorker worker: syncWorkers.values()){
+            for (SyncWorker worker : syncWorkers.values()) {
                 worker.shutdown();
             }
         }
@@ -466,11 +478,24 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
     }
 
     private void sync(TransportType type, boolean ack, boolean all) {
+        sync(type, null, ack, all);
+    }
+
+    private void sync(ExtensionId extId, boolean ack, boolean all) {
+        sync(null, extId, ack, all);
+    }
+
+    private void sync(TransportType type, ExtensionId extId, boolean ack, boolean all) {
         LOG.debug("Lookup channel by type {}", type);
         KaaDataChannel channel = getChannel(type);
         BlockingQueue<SyncTask> queue = syncTaskQueueMap.get(channel.getId());
         if (queue != null) {
-            queue.offer(new SyncTask(type, ack, all));
+            if (type != null) {
+                queue.offer(new SyncTask(type, ack, all));
+            }
+            if (extId != null) {
+                queue.offer(new SyncTask(extId, ack, all));
+            }
         } else {
             LOG.warn("Can't find queue for channel [{}]", channel.getId());
         }
@@ -519,16 +544,36 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
                         LOG.debug("[{}] Merging task {} with {}", channel.getId(), task, additionalTasks);
                         task = SyncTask.merge(task, additionalTasks);
                     }
+                    Map<TransportType, ChannelDirection> typeMap;
+                    Map<TransportType, ChannelDirection> supportedTypesMap = channel.getSupportedTransportTypes();
+
+                    ChannelSyncTask channelSyncTask;
                     if (task.isAll()) {
-                        LOG.debug("[{}] Going to invoke syncAll method for types {}", channel.getId(), task.getTypes());
-                        channel.syncAll();
-                    } else if (task.isAckOnly()) {
-                        LOG.debug("[{}] Going to invoke syncAck method for types {}", channel.getId(), task.getTypes());
-                        channel.syncAck(task.getTypes());
+                        typeMap = supportedTypesMap;
+                        channelSyncTask = new DefaultSyncTask(typeMap, true);
                     } else {
-                        LOG.debug("[{}] Going to invoke sync method", channel.getId());
-                        channel.sync(task.getTypes());
+                        typeMap = new HashMap<>(supportedTypesMap.size());
+                        if (task.getTypes() != null && task.getTypes().size() > 0) {
+                            for (TransportType type : task.getTypes()) {
+                                LOG.info("Processing sync {} for channel [{}]", type, getId());
+                                ChannelDirection direction = supportedTypesMap.get(type);
+                                if (direction != null) {
+                                    typeMap.put(type, direction);
+                                } else {
+                                    LOG.error("Unsupported type {} for channel [{}]", type, getId());
+                                }
+                            }
+                            // TODO: review logic in this block
+                            for (Map.Entry<TransportType, ChannelDirection> typeEntry : supportedTypesMap.entrySet()) {
+                                if (!typeMap.containsKey(typeEntry.getKey())) {
+                                    typeMap.put(typeEntry.getKey(), ChannelDirection.DOWN);
+                                }
+                            }
+                        }
+                        channelSyncTask = new DefaultSyncTask(typeMap, task.getExts(), task.isAckOnly());
                     }
+                    LOG.debug("[{}] Going to invoke syncAll method for task {}", channel.getId(), task);
+                    channel.sync(channelSyncTask);
                 } catch (InterruptedException e) {
                     LOG.debug("[{}] Worker is interrupted", channel.getId(), e);
                 }
@@ -544,11 +589,5 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
 
     public void setFailoverManager(FailoverManager failoverManager) {
         this.failoverManager = failoverManager;
-    }
-
-    @Override
-    public void sync(int extId) {
-        // TODO Auto-generated method stub
-        
     }
 }

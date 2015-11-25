@@ -17,11 +17,9 @@
 package org.kaaproject.kaa.client.channel.impl.channels;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.concurrent.RunnableScheduledFuture;
 import java.util.concurrent.ScheduledExecutorService;
@@ -29,13 +27,15 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 import org.kaaproject.kaa.client.AbstractKaaClient;
 import org.kaaproject.kaa.client.channel.ChannelDirection;
+import org.kaaproject.kaa.client.channel.ChannelSyncTask;
+import org.kaaproject.kaa.client.channel.DefaultSyncTask;
 import org.kaaproject.kaa.client.channel.FailoverManager;
 import org.kaaproject.kaa.client.channel.IPTransportInfo;
 import org.kaaproject.kaa.client.channel.KaaDataChannel;
 import org.kaaproject.kaa.client.channel.KaaDataDemultiplexer;
 import org.kaaproject.kaa.client.channel.KaaDataMultiplexer;
-import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
 import org.kaaproject.kaa.client.channel.ServerType;
+import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
 import org.kaaproject.kaa.client.channel.TransportProtocolId;
 import org.kaaproject.kaa.client.channel.TransportProtocolIdConstants;
 import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
@@ -102,7 +102,8 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
                     }
                 }
                 if (!stopped) {
-                    currentCommand = new PollCommand(httpClient, DefaultOperationsChannel.this, getSupportedTransportTypes(), currentServer);
+                    ChannelSyncTask syncAll = new DefaultSyncTask(getSupportedTransportTypes(), true);
+                    currentCommand = new PollCommand(httpClient, DefaultOperationsChannel.this, syncAll, currentServer);
                     if (!Thread.currentThread().isInterrupted()) {
                         currentCommand.execute();
                     }
@@ -168,10 +169,10 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
     }
 
     @Override
-    public LinkedHashMap<String, byte[]> createRequest(Map<TransportType, ChannelDirection> types) {// NOSONAR
+    public LinkedHashMap<String, byte[]> createRequest(ChannelSyncTask task) {// NOSONAR
         LinkedHashMap<String, byte[]> request = null;
         try {
-            byte[] requestBodyRaw = multiplexer.compileRequest(types);
+            byte[] requestBodyRaw = multiplexer.compileRequest(task);
             synchronized (httpClientLock) {
                 request = HttpRequestCreator.createOperationHttpRequest(requestBodyRaw, httpClient.getEncoderDecoder());
             }
@@ -213,12 +214,10 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
     }
 
     @Override
-    public synchronized void sync(TransportType type) {
-        sync(Collections.singleton(type));
-    }
-
-    @Override
-    public synchronized void sync(Set<TransportType> types) {
+    public synchronized void sync(ChannelSyncTask task) {
+        if(task.isAckOnly()){
+            LOG.info("Sync ack message is ignored for Channel {}", getId());
+        }
         if (isShutdown) {
             LOG.info("Can't sync. Channel [{}] is down", getId());
             return;
@@ -238,46 +237,17 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
         if (currentServer == null) {
             LOG.warn("Can't sync. Server is null");
         }
-        for (TransportType type : types) {
-            LOG.info("Processing sync {} for channel [{}]", type, getId());
-            if (getSupportedTransportTypes().get(type) == null) {
-                LOG.error("Unsupported type {} for channel [{}]", type, getId());
-                return;
+        if (task.getTypes() != null) {
+            for (TransportType type : task.getTypes().keySet()) {
+                LOG.info("Processing sync {} for channel [{}]", type, getId());
+                if (getSupportedTransportTypes().get(type) == null) {
+                    LOG.error("Unsupported type {} for channel [{}]", type, getId());
+                    return;
+                }
             }
         }
         stopPoll();
         startPoll();
-    }
-
-    @Override
-    public synchronized void syncAll() {
-        if (isShutdown) {
-            LOG.info("Can't sync. Channel [{}] is down", getId());
-            return;
-        }
-        if (isPaused) {
-            LOG.info("Can't sync. Channel [{}] is paused", getId());
-            return;
-        }
-        LOG.info("Processing sync all for channel [{}]", getId());
-        if (multiplexer != null && demultiplexer != null) {
-            if (currentServer != null) {
-                stopPoll();
-                startPoll();
-            } else {
-                LOG.warn("Can't sync. Server is null");
-            }
-        }
-    }
-
-    @Override
-    public void syncAck(TransportType type) {
-        syncAck(Collections.singleton(type));
-    }
-
-    @Override
-    public void syncAck(Set<TransportType> types) {
-        LOG.info("Sync ack message is ignored for Channel {}", getId());
     }
 
     @Override

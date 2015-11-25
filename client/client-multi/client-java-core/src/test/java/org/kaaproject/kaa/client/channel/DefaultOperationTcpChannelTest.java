@@ -27,6 +27,8 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Test;
 import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
@@ -34,18 +36,12 @@ import org.kaaproject.kaa.client.channel.impl.channels.DefaultOperationTcpChanne
 import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
-import org.kaaproject.kaa.common.channels.protocols.kaatcp.listeners.ConnAckListener;
-import org.kaaproject.kaa.common.channels.protocols.kaatcp.listeners.SyncResponseListener;
-import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.ConnAck;
-import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.Disconnect;
-import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.Disconnect.DisconnectReason;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.PingResponse;
 import org.kaaproject.kaa.common.endpoint.gen.SyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType;
 import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
 import org.mockito.Mockito;
-import org.springframework.test.util.ReflectionTestUtils;
 
 public class DefaultOperationTcpChannelTest {
 
@@ -105,12 +101,17 @@ public class DefaultOperationTcpChannelTest {
         AvroByteArrayConverter<SyncResponse> responseCreator = new AvroByteArrayConverter<SyncResponse>(SyncResponse.class);
         AvroByteArrayConverter<SyncRequest> requestCreator = new AvroByteArrayConverter<SyncRequest>(SyncRequest.class);
         KaaDataMultiplexer multiplexer = Mockito.mock(KaaDataMultiplexer.class);
-        Mockito.when(multiplexer.compileRequest(Mockito.anyMapOf(TransportType.class, ChannelDirection.class))).thenReturn(requestCreator.toByteArray(new SyncRequest()));
+        Mockito.when(multiplexer.compileRequest(Mockito.any(ChannelSyncTask.class))).thenReturn(requestCreator.toByteArray(new SyncRequest()));
         KaaDataDemultiplexer demultiplexer = Mockito.mock(KaaDataDemultiplexer.class);
         tcpChannel.setMultiplexer(multiplexer);
         tcpChannel.setDemultiplexer(demultiplexer);
-        tcpChannel.sync(TransportType.USER);        // will cause call to KaaDataMultiplexer.compileRequest(...) after "CONNECT" messsage
-        tcpChannel.sync(TransportType.PROFILE);
+        
+        Map<TransportType, ChannelDirection> map = new HashMap<>();
+        map.put(TransportType.USER, ChannelDirection.BIDIRECTIONAL);
+        tcpChannel.sync(new DefaultSyncTask(map, false));        // will cause call to KaaDataMultiplexer.compileRequest(...) after "CONNECT" messsage
+        map = new HashMap<>();
+        map.put(TransportType.PROFILE, ChannelDirection.BIDIRECTIONAL);
+        tcpChannel.sync(new DefaultSyncTask(map, false));
 
         TransportConnectionInfo server = IPTransportInfoTest.createTestServerInfo(ServerType.OPERATIONS, TransportProtocolIdConstants.TCP_TRANSPORT_ID,
                 "localhost", 9009, KeyUtil.generateKeyPair().getPublic());
@@ -123,25 +124,21 @@ public class DefaultOperationTcpChannelTest {
         response.setStatus(SyncResponseResultType.SUCCESS);
         tcpChannel.os.write(new org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.SyncResponse(responseCreator.toByteArray(response), false, false).getFrame().array());
         Thread.sleep(1000);  // sleep a bit to let the message to be received
-        tcpChannel.sync(TransportType.USER); // causes call to KaaDataMultiplexer.compileRequest(...) for "KAA_SYNC" messsage
+        map = new HashMap<>();
+        map.put(TransportType.USER, ChannelDirection.BIDIRECTIONAL);
+        tcpChannel.sync(new DefaultSyncTask(map, false));; // causes call to KaaDataMultiplexer.compileRequest(...) for "KAA_SYNC" messsage
 
-        Mockito.verify(multiplexer, Mockito.times(2)).compileRequest(Mockito.anyMapOf(TransportType.class, ChannelDirection.class));
+        Mockito.verify(multiplexer, Mockito.times(2)).compileRequest(Mockito.any(ChannelSyncTask.class));
 
-        tcpChannel.sync(TransportType.EVENT);
+        map = new HashMap<>();
+        map.put(TransportType.EVENT, ChannelDirection.BIDIRECTIONAL);
+        tcpChannel.sync(new DefaultSyncTask(map, false));;
 
-        Mockito.verify(multiplexer, Mockito.times(3)).compileRequest(Mockito.anyMapOf(TransportType.class, ChannelDirection.class));
+        Mockito.verify(multiplexer, Mockito.times(3)).compileRequest(Mockito.any(ChannelSyncTask.class));
         Mockito.verify(tcpChannel.socketMock, Mockito.times(3)).getOutputStream();
 
         Mockito.reset(multiplexer);
-        tcpChannel.os.write(new PingResponse().getFrame().array());
-
-        tcpChannel.syncAll();
-        Mockito.verify(multiplexer, Mockito.times(1)).compileRequest(tcpChannel.getSupportedTransportTypes());
-        tcpChannel.os.write(new Disconnect(DisconnectReason.INTERNAL_ERROR).getFrame().array());
-
-        tcpChannel.syncAll();
-        Mockito.verify(multiplexer, Mockito.times(1)).compileRequest(tcpChannel.getSupportedTransportTypes());
-        tcpChannel.shutdown();
+        tcpChannel.os.write(new PingResponse().getFrame().array());;
     }
 
     @Test

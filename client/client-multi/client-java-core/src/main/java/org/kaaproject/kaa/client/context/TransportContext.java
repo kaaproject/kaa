@@ -16,6 +16,8 @@
 package org.kaaproject.kaa.client.context;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Map;
 
 import org.kaaproject.kaa.client.channel.BootstrapTransport;
 import org.kaaproject.kaa.client.channel.ConfigurationTransport;
@@ -29,8 +31,15 @@ import org.kaaproject.kaa.client.channel.ProfileTransport;
 import org.kaaproject.kaa.client.channel.RedirectionTransport;
 import org.kaaproject.kaa.client.channel.UserTransport;
 import org.kaaproject.kaa.client.persistence.KaaClientState;
+import org.kaaproject.kaa.client.plugin.ExtensionId;
+import org.kaaproject.kaa.client.plugin.PluginInstance;
+import org.kaaproject.kaa.client.plugin.PluginInstanceAPI;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class TransportContext {
+
+    private static final Logger LOG = LoggerFactory.getLogger(TransportContext.class);
 
     private final MetaDataTransport mdTransport;
     private final BootstrapTransport bootstrapTransport;
@@ -41,11 +50,14 @@ public final class TransportContext {
     private final UserTransport userTransport;
     private final RedirectionTransport redirectionTransport;
     private final LogTransport logTransport;
+    private final Map<ExtensionId, PluginInstance<? extends PluginInstanceAPI>> pluginInstanceMap;
 
-    public TransportContext(MetaDataTransport mdTransport, BootstrapTransport bootstrapTransport, ProfileTransport profileTransport,
-            EventTransport eventTransport, NotificationTransport notificationTransport, ConfigurationTransport configurationTransport,
-            UserTransport userTransport, RedirectionTransport redirectionTransport, LogTransport logTransport) {
+    public TransportContext(Map<ExtensionId, PluginInstance<? extends PluginInstanceAPI>> pluginInstanceMap, MetaDataTransport mdTransport,
+            BootstrapTransport bootstrapTransport, ProfileTransport profileTransport, EventTransport eventTransport,
+            NotificationTransport notificationTransport, ConfigurationTransport configurationTransport, UserTransport userTransport,
+            RedirectionTransport redirectionTransport, LogTransport logTransport) {
         super();
+        this.pluginInstanceMap = pluginInstanceMap;
         this.mdTransport = mdTransport;
         this.bootstrapTransport = bootstrapTransport;
         this.profileTransport = profileTransport;
@@ -91,6 +103,23 @@ public final class TransportContext {
 
     public LogTransport getLogTransport() {
         return logTransport;
+    }
+    
+    public Map<ExtensionId, PluginInstance<? extends PluginInstanceAPI>> getPluginInstances() {
+        return Collections.unmodifiableMap(pluginInstanceMap);
+    }
+
+    public PluginInstance<? extends PluginInstanceAPI> getPluginInstance(ExtensionId extensionId) {
+        if (extensionId == null) {
+            throw new IllegalArgumentException("Extension Id can't be null!");
+        }
+        PluginInstance<? extends PluginInstanceAPI> pluginInstance = pluginInstanceMap.get(extensionId);
+        if (pluginInstance == null) {
+            LOG.error("Can't find plugin instance for {}!", extensionId);
+            throw new IllegalStateException("Plugin instance can't be null!");
+        } else {
+            return pluginInstance;
+        }
     }
 
     public void initTransports(KaaChannelManager channelManager, KaaClientState clientState) {

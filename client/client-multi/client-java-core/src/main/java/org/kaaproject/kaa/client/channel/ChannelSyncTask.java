@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,30 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.kaaproject.kaa.client.channel;
 
+import java.util.Map;
+import java.util.Set;
 
-/**
- * Multiplexer collects the info about states from different services and
- * compiles it in one request.
- *
- * Required in user implementation of any kind of data channel.
- *
- * @author Yaroslav Zeygerman
- * @author Andrew Shvayka
- *
- */
-public interface KaaDataMultiplexer {
+import org.kaaproject.kaa.client.plugin.ExtensionId;
+import org.kaaproject.kaa.common.TransportType;
 
-    /**
-     * Compiles request for given sync task.
-     *     * 
-     * @return the serialized request data.
-     *
-     * @see ChannelSyncTask
-     *
-     */
-    byte[] compileRequest(ChannelSyncTask task) throws Exception;
+public interface ChannelSyncTask {
+
+    Map<TransportType, ChannelDirection> getTypes();
+
+    Set<ExtensionId> getExtensions();
+
+    boolean isSyncAllExtensions();
+
+    boolean isAckOnly();
 
 }

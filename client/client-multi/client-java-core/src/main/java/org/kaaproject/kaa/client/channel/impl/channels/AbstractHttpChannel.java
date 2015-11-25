@@ -16,27 +16,23 @@
 
 package org.kaaproject.kaa.client.channel.impl.channels;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.kaaproject.kaa.client.AbstractKaaClient;
-import org.kaaproject.kaa.client.channel.ChannelDirection;
+import org.kaaproject.kaa.client.channel.DefaultSyncTask;
 import org.kaaproject.kaa.client.channel.FailoverManager;
 import org.kaaproject.kaa.client.channel.IPTransportInfo;
 import org.kaaproject.kaa.client.channel.KaaDataChannel;
 import org.kaaproject.kaa.client.channel.KaaDataDemultiplexer;
 import org.kaaproject.kaa.client.channel.KaaDataMultiplexer;
+import org.kaaproject.kaa.client.channel.ChannelSyncTask;
 import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
 import org.kaaproject.kaa.client.channel.TransportProtocolId;
 import org.kaaproject.kaa.client.channel.TransportProtocolIdConstants;
 import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
 import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.client.transport.AbstractHttpClient;
-import org.kaaproject.kaa.common.TransportType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,12 +74,7 @@ public abstract class AbstractHttpChannel implements KaaDataChannel {
     }
 
     @Override
-    public synchronized void sync(TransportType type) {
-        sync(Collections.singleton(type));
-    }
-
-    @Override
-    public synchronized void sync(Set<TransportType> types) {
+    public synchronized void sync(ChannelSyncTask task) {
         if (isShutdown) {
             LOG.info("Can't sync. Channel {} is down", getId());
             return;
@@ -104,48 +95,7 @@ public abstract class AbstractHttpChannel implements KaaDataChannel {
             lastConnectionFailed = true;
             LOG.warn("Can't sync. Server is null");
         }
-        Map<TransportType, ChannelDirection> typeMap = new HashMap<>(1);
-        for (TransportType type : types) {
-            LOG.info("Processing sync {} for channel {}", type, getId());
-            ChannelDirection direction = getSupportedTransportTypes().get(type);
-            if (direction != null) {
-                typeMap.put(type, direction);
-            } else {
-                LOG.error("Unsupported type {} for channel {}", type, getId());
-            }
-        }
-        executor.submit(createChannelRunnable(typeMap));
-    }
-
-    @Override
-    public synchronized void syncAll() {
-        if (isShutdown) {
-            LOG.info("Can't sync. Channel {} is down", getId());
-            return;
-        }
-        if (isPaused) {
-            LOG.info("Can't sync. Channel {} is paused", getId());
-            return;
-        }
-        LOG.info("Processing sync all for channel {}", getId());
-        if (multiplexer != null && demultiplexer != null) {
-            if (currentServer != null) {
-                executor.submit(createChannelRunnable(getSupportedTransportTypes()));
-            } else {
-                lastConnectionFailed = true;
-                LOG.warn("Can't sync. Server is null");
-            }
-        }
-    }
-
-    @Override
-    public void syncAck(TransportType type) {
-        syncAck(Collections.singleton(type));
-    }
-
-    @Override
-    public void syncAck(Set<TransportType> types) {
-        LOG.info("Sync ack message is ignored for Channel {}", getId());
+        executor.submit(createChannelRunnable(task));
     }
 
     @Override
@@ -177,9 +127,13 @@ public abstract class AbstractHttpChannel implements KaaDataChannel {
                     currentServer.getPublicKey());
             if (lastConnectionFailed && !isPaused) {
                 lastConnectionFailed = false;
-                syncAll();
+                sync(getSyncAllTask());
             }
         }
+    }
+
+    private DefaultSyncTask getSyncAllTask() {
+        return new DefaultSyncTask(getSupportedTransportTypes(), true);
     }
 
     protected abstract String getURLSufix();
@@ -231,7 +185,7 @@ public abstract class AbstractHttpChannel implements KaaDataChannel {
             }
             if (lastConnectionFailed) {
                 lastConnectionFailed = false;
-                syncAll();
+                sync(getSyncAllTask());
             }
         }
     }
@@ -269,6 +223,6 @@ public abstract class AbstractHttpChannel implements KaaDataChannel {
         return httpClient;
     }
 
-    protected abstract Runnable createChannelRunnable(Map<TransportType, ChannelDirection> typeMap);
+    protected abstract Runnable createChannelRunnable(ChannelSyncTask task);
 
 }

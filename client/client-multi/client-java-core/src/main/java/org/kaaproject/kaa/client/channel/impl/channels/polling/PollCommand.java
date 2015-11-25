@@ -16,12 +16,10 @@
 package org.kaaproject.kaa.client.channel.impl.channels.polling;
 
 import java.util.LinkedHashMap;
-import java.util.Map;
 
-import org.kaaproject.kaa.client.channel.ChannelDirection;
+import org.kaaproject.kaa.client.channel.ChannelSyncTask;
 import org.kaaproject.kaa.client.channel.IPTransportInfo;
 import org.kaaproject.kaa.client.transport.AbstractHttpClient;
-import org.kaaproject.kaa.common.TransportType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,22 +30,22 @@ public class PollCommand implements Command {
 
     private final AbstractHttpClient httpClient;
     private final RawDataProcessor processor;
-    private final Map<TransportType, ChannelDirection> transportTypes;
+    private final ChannelSyncTask syncTask;
     private final IPTransportInfo serverInfo;
     private volatile boolean canceled = false;
 
-    public PollCommand(AbstractHttpClient client, RawDataProcessor processor, Map<TransportType, ChannelDirection> transportTypes, IPTransportInfo serverInfo) {
+    public PollCommand(AbstractHttpClient client, RawDataProcessor processor, ChannelSyncTask syncTask, IPTransportInfo serverInfo) {
         this.httpClient = client;
         this.serverInfo = serverInfo;
         this.processor = processor;
-        this.transportTypes = transportTypes;
+        this.syncTask = syncTask;
     }
 
     @Override
     public void execute() {
         try {
             if (httpClient != null ) {
-                LinkedHashMap<String, byte[]> request = processor.createRequest(transportTypes); //NOSONAR
+                LinkedHashMap<String, byte[]> request = processor.createRequest(syncTask); //NOSONAR
                 if (request != null && !canceled) {
                     byte[] responseDataRaw = httpClient.executeHttpRequest("", request, false);
                     processor.onResponse(responseDataRaw);

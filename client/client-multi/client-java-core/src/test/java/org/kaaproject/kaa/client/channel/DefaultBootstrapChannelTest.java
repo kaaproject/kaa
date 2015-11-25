@@ -19,7 +19,9 @@ package org.kaaproject.kaa.client.channel;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
 import org.junit.Assert;
@@ -54,7 +56,7 @@ public class DefaultBootstrapChannelTest {
         }
 
         public void verify() throws Exception {
-            Mockito.verify(getMultiplexer(), Mockito.times(wantedNumberOfInvocations)).compileRequest(Mockito.anyMap());
+            Mockito.verify(getMultiplexer(), Mockito.times(wantedNumberOfInvocations)).compileRequest(Mockito.any(ChannelSyncTask.class));
             Mockito.verify(getDemultiplexer(), Mockito.times(wantedNumberOfInvocations))
                     .processResponse(Mockito.eq(new byte[] { 5, 5, 5 }));
         }
@@ -122,18 +124,23 @@ public class DefaultBootstrapChannelTest {
 
         channel.setServer(server);
 
-        channel.sync(TransportType.BOOTSTRAP);
+        Map<TransportType, ChannelDirection> map = new HashMap<>();
+        map.put(TransportType.BOOTSTRAP, ChannelDirection.BIDIRECTIONAL);
+        channel.sync(new DefaultSyncTask(map, false));
         channel.setDemultiplexer(demultiplexer);
         channel.setDemultiplexer(null);
-        channel.sync(TransportType.BOOTSTRAP);
+        channel.sync(new DefaultSyncTask(map, false));
         channel.setMultiplexer(multiplexer);
         channel.setMultiplexer(null);
-        channel.sync(TransportType.CONFIGURATION);
-        channel.sync(TransportType.BOOTSTRAP);
+        map.clear();
+        map.put(TransportType.CONFIGURATION, ChannelDirection.BIDIRECTIONAL);
+        channel.sync(new DefaultSyncTask(map, false));
+        map.clear();
+        map.put(TransportType.BOOTSTRAP, ChannelDirection.BIDIRECTIONAL);
+        channel.sync(new DefaultSyncTask(map, false));
 
         channel.verify();
     }
-
 
     @Test
     public void testShutdown() throws Exception {
@@ -162,8 +169,10 @@ public class DefaultBootstrapChannelTest {
                 "localhost", 9889, KeyUtil.generateKeyPair().getPublic());
         channel.setServer(server);
 
-        channel.sync(TransportType.BOOTSTRAP);
-        channel.syncAll();
+        Map<TransportType, ChannelDirection> map = new HashMap<>();
+        map.put(TransportType.BOOTSTRAP, ChannelDirection.BIDIRECTIONAL);
+        channel.sync(new DefaultSyncTask(map, false));
+        channel.sync(new DefaultSyncTask(channel.getSupportedTransportTypes(), true));
 
         channel.verify();
     }

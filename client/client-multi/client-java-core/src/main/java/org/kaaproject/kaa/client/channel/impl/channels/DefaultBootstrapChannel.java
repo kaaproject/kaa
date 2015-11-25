@@ -22,8 +22,10 @@ import java.util.Map;
 
 import org.kaaproject.kaa.client.AbstractKaaClient;
 import org.kaaproject.kaa.client.channel.ChannelDirection;
+import org.kaaproject.kaa.client.channel.DefaultSyncTask;
 import org.kaaproject.kaa.client.channel.FailoverManager;
 import org.kaaproject.kaa.client.channel.ServerType;
+import org.kaaproject.kaa.client.channel.ChannelSyncTask;
 import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.common.TransportType;
 import org.slf4j.Logger;
@@ -46,7 +48,7 @@ public class DefaultBootstrapChannel extends AbstractHttpChannel {
         @Override
         public void run() {
             try {
-                processTypes(SUPPORTED_TYPES);
+                processTypes(new DefaultSyncTask(SUPPORTED_TYPES, false));
                 connectionFailed(false);
             } catch (Exception e) {
                 LOG.error("Failed to receive operation servers list {}", e);
@@ -60,9 +62,9 @@ public class DefaultBootstrapChannel extends AbstractHttpChannel {
         super(client, state, failoverManager);
     }
 
-    private void processTypes(Map<TransportType, ChannelDirection> types) throws Exception {
+    private void processTypes(ChannelSyncTask task) throws Exception {
         LOG.trace("Processing types for [{}]", getId());
-        byte[] requestBodyRaw = getMultiplexer().compileRequest(types);
+        byte[] requestBodyRaw = getMultiplexer().compileRequest(task);
         byte[] decodedResponse = null;
         synchronized (this) {
             LinkedHashMap<String, byte[]> requestEntity = HttpRequestCreator.createBootstrapHttpRequest(requestBodyRaw, getHttpClient()
@@ -89,7 +91,7 @@ public class DefaultBootstrapChannel extends AbstractHttpChannel {
     }
 
     @Override
-    protected Runnable createChannelRunnable(Map<TransportType, ChannelDirection> typeMap) {
+    protected Runnable createChannelRunnable(ChannelSyncTask task) {
         return new BootstrapRunnable();
     }
 

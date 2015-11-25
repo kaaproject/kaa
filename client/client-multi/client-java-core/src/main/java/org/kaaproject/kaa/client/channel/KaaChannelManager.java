@@ -21,6 +21,7 @@ import java.util.List;
 import org.kaaproject.kaa.client.channel.impl.channels.DefaultBootstrapChannel;
 import org.kaaproject.kaa.client.channel.impl.channels.DefaultOperationHttpChannel;
 import org.kaaproject.kaa.client.channel.impl.channels.DefaultOperationsChannel;
+import org.kaaproject.kaa.client.plugin.ExtensionId;
 import org.kaaproject.kaa.common.TransportType;
 
 /**
@@ -198,7 +199,7 @@ public interface KaaChannelManager {
      * Invoke sync on active channel by specified plugin extension
      * @param extId - plugin extension
      */
-    void sync(int extId);
+    void sync(ExtensionId extId);
 
     /**
      * Returns information about server that is used for data transfer for specified {@link TransportType} 

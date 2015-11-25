@@ -17,7 +17,6 @@
 package org.kaaproject.kaa.client.channel;
 
 import java.util.Map;
-import java.util.Set;
 
 import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
 import org.kaaproject.kaa.common.TransportType;
@@ -27,56 +26,20 @@ import org.kaaproject.kaa.common.TransportType;
  * server.
  *
  * @author Yaroslav Zeygerman
+ * @author Andrew Shvayka
  *
  */
 public interface KaaDataChannel {
 
     /**
-     * Updates the channel's state of the specific service.
+     * Issues sync based on the data specified in task.
      *
-     * @param type
-     *            transport type of the service.
-     * @see TransportType
-     *
-     */
-    void sync(TransportType type);
-
-    /**
-     * Updates the channel's state of the specific service.
-     *
-     * @param type
-     *            transport types to sync.
-     * @see TransportType
+     * @param task
+     *            sync task.
+     * @see ChannelSyncTask
      *
      */
-    void sync(Set<TransportType> types);
-
-    /**
-     * Updates the channel's state of all supported services.
-     */
-    void syncAll();
-
-    /**
-     * Notifies channel about successful acknowledgment of the sync only in case
-     * of smth change.
-     *
-     * @param type
-     *            transport type of the service.
-     * @see TransportType
-     *
-     */
-    void syncAck(TransportType type);
-
-    /**
-     * Notifies channel about successful acknowledgment of the sync only in case
-     * of smth change.
-     *
-     * @param type
-     *            transport type to ack.
-     * @see TransportType
-     *
-     */
-    void syncAck(Set<TransportType> type);
+    void sync(ChannelSyncTask task);
 
     /**
      * Retrieves the channel's id. It should be unique in existing channels

@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.client.channel.impl;
 
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -30,10 +32,16 @@ import org.kaaproject.kaa.client.channel.MetaDataTransport;
 import org.kaaproject.kaa.client.channel.NotificationTransport;
 import org.kaaproject.kaa.client.channel.ProfileTransport;
 import org.kaaproject.kaa.client.channel.RedirectionTransport;
+import org.kaaproject.kaa.client.channel.ChannelSyncTask;
 import org.kaaproject.kaa.client.channel.UserTransport;
+import org.kaaproject.kaa.client.context.TransportContext;
+import org.kaaproject.kaa.client.plugin.ExtensionId;
+import org.kaaproject.kaa.client.plugin.PluginInstance;
+import org.kaaproject.kaa.client.plugin.PluginInstanceAPI;
 import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
 import org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest;
+import org.kaaproject.kaa.common.endpoint.gen.ExtensionSync;
 import org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.SyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
@@ -44,10 +52,11 @@ import org.slf4j.LoggerFactory;
 public class DefaultOperationDataProcessor implements KaaDataMultiplexer, KaaDataDemultiplexer {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultOperationDataProcessor.class);
-    private final AtomicInteger   requestsCounter = new AtomicInteger(0);
+    private final AtomicInteger requestsCounter = new AtomicInteger(0);
     private final AvroByteArrayConverter<SyncRequest> requestConverter = new AvroByteArrayConverter<>(SyncRequest.class);
     private final AvroByteArrayConverter<SyncResponse> responseConverter = new AvroByteArrayConverter<>(SyncResponse.class);
 
+    private TransportContext transportContext;
     private MetaDataTransport metaDataTransport;
     private ConfigurationTransport configurationTransport;
     private EventTransport eventTransport;
@@ -56,6 +65,10 @@ public class DefaultOperationDataProcessor implements KaaDataMultiplexer, KaaDat
     private UserTransport userTransport;
     private RedirectionTransport redirectionTransport;
     private LogTransport logTransport;
+
+    public synchronized void setTransportContext(TransportContext transportContext) {
+        this.transportContext = transportContext;
+    }
 
     public synchronized void setRedirectionTransport(RedirectionTransport redirectionTransport) {
         this.redirectionTransport = redirectionTransport;
@@ -123,66 +136,87 @@ public class DefaultOperationDataProcessor implements KaaDataMultiplexer, KaaDat
     }
 
     @Override
-    public synchronized byte[] compileRequest(Map<TransportType, ChannelDirection> types) throws Exception {
-        if (types != null) {
-            SyncRequest request = new SyncRequest();
-            request.setRequestId(requestsCounter.incrementAndGet());
-
+    public synchronized byte[] compileRequest(ChannelSyncTask task) throws Exception {
+        SyncRequest request = new SyncRequest();
+        request.setRequestId(requestsCounter.incrementAndGet());
+        if (task.getTypes() != null) {
             if (metaDataTransport != null) {
                 request.setSyncRequestMetaData(metaDataTransport.createMetaDataRequest());
             }
-            for (Map.Entry<TransportType, ChannelDirection> type : types.entrySet()) {
+            for (Map.Entry<TransportType, ChannelDirection> type : task.getTypes().entrySet()) {
                 boolean isDownDirection = type.getValue().equals(ChannelDirection.DOWN);
-                switch(type.getKey()) {
-                    case CONFIGURATION:
-                        if (configurationTransport != null) {
-                            request.setConfigurationSyncRequest(configurationTransport.createConfigurationRequest());
-                        }
-                        break;
-                    case EVENT:
+                switch (type.getKey()) {
+                case CONFIGURATION:
+                    if (configurationTransport != null) {
+                        request.setConfigurationSyncRequest(configurationTransport.createConfigurationRequest());
+                    }
+                    break;
+                case EVENT:
+                    if (isDownDirection) {
+                        request.setEventSyncRequest(new EventSyncRequest());
+                    } else if (eventTransport != null) {
+                        request.setEventSyncRequest(eventTransport.createEventRequest(request.getRequestId()));
+                    }
+                    break;
+                case NOTIFICATION:
+                    if (notificationTransport != null) {
                         if (isDownDirection) {
-                            request.setEventSyncRequest(new EventSyncRequest());
-                        } else if (eventTransport != null) {
-                            request.setEventSyncRequest(eventTransport.createEventRequest(request.getRequestId()));
+                            request.setNotificationSyncRequest(notificationTransport.createEmptyNotificationRequest());
+                        } else {
+                            request.setNotificationSyncRequest(notificationTransport.createNotificationRequest());
                         }
-                        break;
-                    case NOTIFICATION:
-                        if (notificationTransport != null) {
-                            if (isDownDirection) {
-                                request.setNotificationSyncRequest(notificationTransport.createEmptyNotificationRequest());
-                            } else {
-                                request.setNotificationSyncRequest(notificationTransport.createNotificationRequest());
-                            }
-                        }
-                        break;
-                    case PROFILE:
-                        if (!isDownDirection && profileTransport != null) {
-                            request.setProfileSyncRequest(profileTransport.createProfileRequest());
-                        }
-                        break;
-                    case USER:
-                        if (isDownDirection) {
-                            request.setUserSyncRequest(new UserSyncRequest());
-                        } else if (userTransport != null) {
-                            request.setUserSyncRequest(userTransport.createUserRequest());
-                        }
-                        break;
-                    case LOGGING:
-                        if (isDownDirection) {
-                            request.setLogSyncRequest(new LogSyncRequest());
-                        } else if (logTransport != null) {
-                            request.setLogSyncRequest(logTransport.createLogRequest());
-                        }
-                        break;
-                    default:
-                        LOG.error("Invalid transport type {}", type.getKey());
-                        return null; //NOSONAR
+                    }
+                    break;
+                case PROFILE:
+                    if (!isDownDirection && profileTransport != null) {
+                        request.setProfileSyncRequest(profileTransport.createProfileRequest());
+                    }
+                    break;
+                case USER:
+                    if (isDownDirection) {
+                        request.setUserSyncRequest(new UserSyncRequest());
+                    } else if (userTransport != null) {
+                        request.setUserSyncRequest(userTransport.createUserRequest());
+                    }
+                    break;
+                case LOGGING:
+                    if (isDownDirection) {
+                        request.setLogSyncRequest(new LogSyncRequest());
+                    } else if (logTransport != null) {
+                        request.setLogSyncRequest(logTransport.createLogRequest());
+                    }
+                    break;
+                default:
+                    LOG.error("Invalid transport type {}", type.getKey());
+                    return null; // NOSONAR
                 }
             }
-            LOG.info("Created Sync request: {}", request);
-            return requestConverter.toByteArray(request);
         }
-        return null; //NOSONAR
+        List<ExtensionSync> syncs = new ArrayList<>();
+        if (task.isSyncAllExtensions()) {
+            for (Map.Entry<ExtensionId, PluginInstance<? extends PluginInstanceAPI>> pluginInstanceEntry : transportContext
+                    .getPluginInstances().entrySet()) {
+                byte[] data = pluginInstanceEntry.getValue().getPluginAdapter().getPendingData();
+                if (data != null) {
+                    syncs.add(new ExtensionSync(pluginInstanceEntry.getKey().getValue(), ByteBuffer.wrap(data)));
+                } else {
+                    LOG.debug("Nothing to sync for plugin with extension id {}", pluginInstanceEntry.getKey().getValue());
+                }
+            }
+        } else {
+            for (ExtensionId extensionId : task.getExtensions()) {
+                PluginInstance<? extends PluginInstanceAPI> pluginInstance = transportContext.getPluginInstance(extensionId);
+                byte[] data = pluginInstance.getPluginAdapter().getPendingData();
+                if (data != null) {
+                    syncs.add(new ExtensionSync(extensionId.getValue(), ByteBuffer.wrap(data)));
+                } else {
+                    LOG.debug("Nothing to sync for plugin with extension id {}", extensionId);
+                }
+            }
+        }
+        request.setExtensionSyncRequests(syncs);
+        LOG.info("Created Sync request: {}", request);
+        return requestConverter.toByteArray(request);
     }
 
     @Override
@@ -198,11 +232,5 @@ public class DefaultOperationDataProcessor implements KaaDataMultiplexer, KaaDat
         if (eventTransport != null) {
             eventTransport.releaseEventManager();
         }
-    }
-
-    @Override
-    public byte[] compileRequest(List<Integer> extIds) throws Exception {
-        // TODO Auto-generated method stub
-        return null;
     }
 }

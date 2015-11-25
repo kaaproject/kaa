@@ -21,16 +21,16 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.kaaproject.kaa.client.channel.ChannelDirection;
+import org.kaaproject.kaa.client.channel.ChannelSyncTask;
+import org.kaaproject.kaa.client.channel.DefaultSyncTask;
 import org.kaaproject.kaa.client.channel.FailoverDecision;
 import org.kaaproject.kaa.client.channel.FailoverManager;
 import org.kaaproject.kaa.client.channel.FailoverStatus;
@@ -287,16 +287,16 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
         sendFrame(new Disconnect(DisconnectReason.NONE));
     }
 
-    private void sendKaaSyncRequest(Map<TransportType, ChannelDirection> types) throws Exception {
+    private void sendKaaSyncRequest(ChannelSyncTask task) throws Exception {
         LOG.debug("Sending KaaSync from channel [{}]", getId());
-        byte[] body = multiplexer.compileRequest(types);
+        byte[] body = multiplexer.compileRequest(task);
         byte[] requestBodyEncoded = encDec.encodeData(body);
         sendFrame(new SyncRequest(requestBodyEncoded, false, true));
     }
 
     private void sendConnect() throws Exception {
         LOG.debug("Sending Connect to channel [{}]", getId());
-        byte[] body = multiplexer.compileRequest(getSupportedTransportTypes());
+        byte[] body = multiplexer.compileRequest(new DefaultSyncTask(getSupportedTransportTypes(), true));
         byte[] requestBodyEncoded = encDec.encodeData(body);
         byte[] sessionKey = encDec.getEncodedSessionKey();
         byte[] signature = encDec.sign(sessionKey);
@@ -361,18 +361,19 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
 
             FailoverDecision decision = failoverManager.onFailover(FailoverStatus.NO_CONNECTIVITY);
             switch (decision.getAction()) {
-                case NOOP:
-                    LOG.warn("No operation is performed according to failover strategy decision");
-                    break;
-                case RETRY:
-                    long retryPeriod = decision.getRetryPeriod();
-                    LOG.warn("Attempt to reconnect will be made in {} ms " +
-                            "according to failover strategy decision", retryPeriod);
-                    scheduleOpenConnectionTask(retryPeriod);
+            case NOOP:
+                LOG.warn("No operation is performed according to failover strategy decision");
                 break;
-                case STOP_APP:
-                    LOG.warn("Stopping application according to failover strategy decision!");
-                    System.exit(EXIT_FAILURE);
+            case RETRY:
+                long retryPeriod = decision.getRetryPeriod();
+                LOG.warn("Attempt to reconnect will be made in {} ms " + "according to failover strategy decision", retryPeriod);
+                scheduleOpenConnectionTask(retryPeriod);
+                break;
+            case STOP_APP:
+                LOG.warn("Stopping application according to failover strategy decision!");
+                System.exit(EXIT_FAILURE);
+            default:
+                break;
             }
         } else {
             failoverManager.onServerFailed(currentServer);
@@ -417,12 +418,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
     }
 
     @Override
-    public synchronized void sync(TransportType type) {
-        sync(Collections.singleton(type));
-    }
-
-    @Override
-    public synchronized void sync(Set<TransportType> types) {
+    public synchronized void sync(ChannelSyncTask task) {
         if (channelState == State.SHUTDOWN) {
             LOG.info("Can't sync. Channel [{}] is down", getId());
             return;
@@ -448,80 +444,10 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
             return;
         }
 
-        Map<TransportType, ChannelDirection> typeMap = new HashMap<>(getSupportedTransportTypes().size());
-        for (TransportType type : types) {
-            LOG.info("Processing sync {} for channel [{}]", type, getId());
-            ChannelDirection direction = getSupportedTransportTypes().get(type);
-            if (direction != null) {
-                typeMap.put(type, direction);
-            } else {
-                LOG.error("Unsupported type {} for channel [{}]", type, getId());
-            }
-            for (Map.Entry<TransportType, ChannelDirection> typeIt : getSupportedTransportTypes().entrySet()) {
-                if (!typeIt.getKey().equals(type)) {
-                    typeMap.put(typeIt.getKey(), ChannelDirection.DOWN);
-                }
-            }
-        }
         try {
-            sendKaaSyncRequest(typeMap);
+            sendKaaSyncRequest(task);
         } catch (Exception e) {
             LOG.error("Failed to sync channel [{}]", getId(), e);
-        }
-    }
-
-    @Override
-    public synchronized void syncAll() {
-        if (channelState == State.SHUTDOWN) {
-            LOG.info("Can't sync. Channel [{}] is down", getId());
-            return;
-        }
-        if (channelState == State.PAUSE) {
-            LOG.info("Can't sync. Channel [{}] is paused", getId());
-            return;
-        }
-        if (channelState != State.OPENED) {
-            LOG.info("Can't sync. Channel [{}] is waiting for CONNACK + KAASYNC message", getId());
-            return;
-        }
-        LOG.info("Processing sync all for channel [{}]", getId());
-        if (multiplexer != null && demultiplexer != null) {
-            if (currentServer != null && socket != null) {
-                try {
-                    sendKaaSyncRequest(getSupportedTransportTypes());
-                } catch (Exception e) {
-                    LOG.error("Failed to sync channel [{}]: {}", getId(), e);
-                    onServerFailed();
-                }
-            } else {
-                LOG.warn("Can't sync. Server is {}, socket is {}", currentServer, socket);
-            }
-        }
-    }
-
-    @Override
-    public void syncAck(TransportType type) {
-        LOG.info("Adding sync acknowledgement for type {} as a regular sync for channel [{}]", type, getId());
-        syncAck(Collections.singleton(type));
-    }
-
-    @Override
-    public void syncAck(Set<TransportType> types) {
-        synchronized (this) {
-            if (channelState != State.OPENED) {
-                LOG.info("First KaaSync message received and processed for channel [{}]", getId());
-                channelState = State.OPENED;
-                failoverManager.onServerConnected(currentServer);
-                LOG.debug("There are pending requests for channel [{}] -> starting sync", getId());
-                syncAll();
-            } else {
-                LOG.debug("Acknowledgment is pending for channel [{}] -> starting sync", getId());
-                if (types.size() == 1) {
-                    sync(types.iterator().next());
-                } else {
-                    syncAll();
-                }
-            }
         }
     }
 
@@ -557,10 +483,8 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
             if (executor == null) {
                 executor = createExecutor();
             }
-            if (oldServer == null
-                        || socket == null
-                        || !oldServer.getHost().equals(currentServer.getHost())
-                        || oldServer.getPort() != currentServer.getPort()) {
+            if (oldServer == null || socket == null || !oldServer.getHost().equals(currentServer.getHost())
+                    || oldServer.getPort() != currentServer.getPort()) {
                 LOG.info("New server's: {} host or ip is different from the old {}, reconnecting", oldServer, oldServer);
                 closeConnection();
                 scheduleOpenConnectionTask(0);

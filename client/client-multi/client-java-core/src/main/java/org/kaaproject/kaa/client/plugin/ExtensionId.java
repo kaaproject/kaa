@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,30 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package org.kaaproject.kaa.client.channel;
-
+package org.kaaproject.kaa.client.plugin;
 
 /**
- * Multiplexer collects the info about states from different services and
- * compiles it in one request.
- *
- * Required in user implementation of any kind of data channel.
- *
- * @author Yaroslav Zeygerman
+ * Represents unique identifier of plugin instance within current SDK profile.
+ * 
  * @author Andrew Shvayka
  *
  */
-public interface KaaDataMultiplexer {
+public class ExtensionId {
+
+    private final int id;
+
+    public ExtensionId(int id) {
+        super();
+        this.id = id;
+    }
 
     /**
-     * Compiles request for given sync task.
-     *     * 
-     * @return the serialized request data.
-     *
-     * @see ChannelSyncTask
-     *
+     * Integer extension id value that is used in transport layer
+     * 
+     * @return extension id
      */
-    byte[] compileRequest(ChannelSyncTask task) throws Exception;
+    public int getValue() {
+        return id;
+    }
+
+    @Override
+    public String toString() {
+        return "ExtensionId [id=" + id + "]";
+    }
 
 }

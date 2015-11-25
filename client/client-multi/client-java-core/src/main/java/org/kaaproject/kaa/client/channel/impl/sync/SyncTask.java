@@ -20,26 +20,39 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.kaaproject.kaa.client.plugin.ExtensionId;
 import org.kaaproject.kaa.common.TransportType;
 
 public class SyncTask {
+    private static final Set<TransportType> EMPTY_TYPES = Collections.emptySet();
+    private static final Set<ExtensionId> EMPTY_EXTS = Collections.emptySet();
     private final Set<TransportType> types;
+    private final Set<ExtensionId> exts;
     private final boolean ackOnly;
     private final boolean all;
 
     public SyncTask(TransportType type, boolean ackOnly, boolean all) {
-        this(Collections.singleton(type), ackOnly, all);
+        this(Collections.singleton(type), EMPTY_EXTS, ackOnly, all);
     }
 
-    public SyncTask(Set<TransportType> types, boolean ackOnly, boolean all) {
+    public SyncTask(ExtensionId ext, boolean ackOnly, boolean all) {
+        this(EMPTY_TYPES, Collections.singleton(ext), ackOnly, all);
+    }
+
+    public SyncTask(Set<TransportType> types, Set<ExtensionId> extensions, boolean ackOnly, boolean all) {
         super();
         this.types = types;
+        this.exts = extensions;
         this.ackOnly = ackOnly;
         this.all = all;
     }
 
     public Set<TransportType> getTypes() {
         return types;
+    }
+
+    public Set<ExtensionId> getExts() {
+        return exts;
     }
 
     public boolean isAckOnly() {
@@ -52,27 +65,23 @@ public class SyncTask {
 
     public static SyncTask merge(SyncTask task, List<SyncTask> additionalTasks) {
         Set<TransportType> types = new HashSet<TransportType>();
+        Set<ExtensionId> exts = new HashSet<ExtensionId>();
         types.addAll(task.types);
+        exts.addAll(task.exts);
         boolean ack = task.ackOnly;
         boolean all = task.all;
         for (SyncTask aTask : additionalTasks) {
             types.addAll(aTask.types);
+            exts.addAll(aTask.exts);
             ack = ack && aTask.ackOnly;
             all = all || aTask.all;
         }
-        return new SyncTask(types, ack, all);
+        return new SyncTask(types, exts, ack, all);
     }
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("SyncTask [types=");
-        builder.append(types);
-        builder.append(", ackOnly=");
-        builder.append(ackOnly);
-        builder.append(", all=");
-        builder.append(all);
-        builder.append("]");
-        return builder.toString();
+        return "SyncTask [types=" + types + ", extensions=" + exts + ", ackOnly=" + ackOnly + ", all=" + all + "]";
     }
+
 }

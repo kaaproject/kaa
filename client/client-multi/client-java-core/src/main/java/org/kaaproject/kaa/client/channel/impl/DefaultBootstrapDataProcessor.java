@@ -17,14 +17,11 @@
 package org.kaaproject.kaa.client.channel.impl;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 import org.kaaproject.kaa.client.channel.BootstrapTransport;
-import org.kaaproject.kaa.client.channel.ChannelDirection;
 import org.kaaproject.kaa.client.channel.KaaDataDemultiplexer;
 import org.kaaproject.kaa.client.channel.KaaDataMultiplexer;
-import org.kaaproject.kaa.common.TransportType;
+import org.kaaproject.kaa.client.channel.ChannelSyncTask;
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
 import org.kaaproject.kaa.common.endpoint.gen.SyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
@@ -44,7 +41,7 @@ public class DefaultBootstrapDataProcessor implements KaaDataMultiplexer, KaaDat
     }
 
     @Override
-    public synchronized byte[] compileRequest(Map<TransportType, ChannelDirection> types) throws IOException {
+    public synchronized byte[] compileRequest(ChannelSyncTask task) throws IOException {
         if (transport != null) {
             SyncRequest request = transport.createResolveRequest();
             LOG.trace("Created Resolve request {}", request);
@@ -68,11 +65,5 @@ public class DefaultBootstrapDataProcessor implements KaaDataMultiplexer, KaaDat
 
     @Override
     public void postProcess() {
-    }
-
-    @Override
-    public byte[] compileRequest(List<Integer> extIds) throws Exception {
-        // TODO Auto-generated method stub
-        return null;
     }
 }

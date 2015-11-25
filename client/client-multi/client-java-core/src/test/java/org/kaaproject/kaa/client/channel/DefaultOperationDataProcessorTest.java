@@ -45,17 +45,11 @@ public class DefaultOperationDataProcessorTest {
     private static final int REQUEST_ID = 42;
     
     @Test
-    public void testUpRequestCreationWithNullTypes() throws Exception {
-        DefaultOperationDataProcessor operationsDataProcessor = new DefaultOperationDataProcessor();
-        assertNull(operationsDataProcessor.compileRequest((Map<TransportType, ChannelDirection>)null));
-    }
-
-    @Test
     public void testUpRequestCreationWithUnknownType() throws Exception {
         DefaultOperationDataProcessor operationsDataProcessor = new DefaultOperationDataProcessor();
         Map<TransportType, ChannelDirection> types = new HashMap<>();
         types.put(TransportType.BOOTSTRAP, ChannelDirection.BIDIRECTIONAL);
-        assertNull(operationsDataProcessor.compileRequest(types));
+        assertNull(operationsDataProcessor.compileRequest(new DefaultSyncTask(types, false)));
     }
 
     @Test
@@ -70,7 +64,7 @@ public class DefaultOperationDataProcessorTest {
         transportTypes.put(TransportType.EVENT, ChannelDirection.BIDIRECTIONAL);
         transportTypes.put(TransportType.LOGGING, ChannelDirection.BIDIRECTIONAL);
 
-        assertNotNull(operationsDataProcessor.compileRequest(transportTypes));
+        assertNotNull(operationsDataProcessor.compileRequest(new DefaultSyncTask(transportTypes, false)));
     }
 
     @Test
@@ -101,7 +95,7 @@ public class DefaultOperationDataProcessorTest {
         transportTypes.put(TransportType.EVENT, ChannelDirection.BIDIRECTIONAL);
         transportTypes.put(TransportType.LOGGING, ChannelDirection.BIDIRECTIONAL);
 
-        assertNotNull(operationsDataProcessor.compileRequest(transportTypes));
+        assertNotNull(operationsDataProcessor.compileRequest(new DefaultSyncTask(transportTypes, false)));
         Mockito.verify(profileTransport, Mockito.times(1)).createProfileRequest();
         Mockito.verify(eventTransport, Mockito.times(1)).createEventRequest(Mockito.anyInt());
         Mockito.verify(notificationTransport, Mockito.times(1)).createNotificationRequest();
@@ -139,7 +133,7 @@ public class DefaultOperationDataProcessorTest {
         transportTypes.put(TransportType.EVENT, ChannelDirection.DOWN);
         transportTypes.put(TransportType.LOGGING, ChannelDirection.DOWN);
 
-        assertNotNull(operationsDataProcessor.compileRequest(transportTypes));
+        assertNotNull(operationsDataProcessor.compileRequest(new DefaultSyncTask(transportTypes, false)));
         Mockito.verify(profileTransport, Mockito.times(0)).createProfileRequest();
         Mockito.verify(eventTransport, Mockito.times(0)).createEventRequest(Mockito.anyInt());
         Mockito.verify(notificationTransport, Mockito.times(0)).createNotificationRequest();

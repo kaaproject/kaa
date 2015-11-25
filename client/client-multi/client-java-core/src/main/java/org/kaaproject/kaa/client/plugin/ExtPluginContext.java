@@ -22,11 +22,11 @@ import org.kaaproject.kaa.client.channel.KaaChannelManager;
 
 public final class ExtPluginContext implements PluginContext {
 
-    private final int extId;
+    private final ExtensionId extId;
     private final KaaClientPlatformContext kaaContext;
     private final KaaChannelManager cm;
 
-    public ExtPluginContext(int extId, KaaChannelManager cm, KaaClientPlatformContext kaaContext) {
+    public ExtPluginContext(ExtensionId extId, KaaChannelManager cm, KaaClientPlatformContext kaaContext) {
         super();
         this.extId = extId;
         this.kaaContext = kaaContext;

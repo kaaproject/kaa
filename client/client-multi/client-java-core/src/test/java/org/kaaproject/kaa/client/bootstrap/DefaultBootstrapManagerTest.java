@@ -49,6 +49,7 @@ import org.kaaproject.kaa.client.channel.TransportProtocolIdConstants;
 import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
 import org.kaaproject.kaa.client.channel.impl.DefaultFailoverManager;
 import org.kaaproject.kaa.client.context.ExecutorContext;
+import org.kaaproject.kaa.client.plugin.ExtensionId;
 import org.kaaproject.kaa.client.transport.TransportException;
 import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData;
@@ -191,7 +192,7 @@ public class DefaultBootstrapManagerTest {
         }
 
         @Override
-        public void sync(int extId) {
+        public void sync(ExtensionId extId) {
             // TODO Auto-generated method stub
             
         }

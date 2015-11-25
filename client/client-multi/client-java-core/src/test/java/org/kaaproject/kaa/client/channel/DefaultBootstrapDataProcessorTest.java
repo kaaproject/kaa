@@ -19,12 +19,10 @@ package org.kaaproject.kaa.client.channel;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.client.channel.impl.DefaultBootstrapDataProcessor;
-import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
 import org.kaaproject.kaa.common.endpoint.gen.BootstrapSyncResponse;
 import org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData;
@@ -41,14 +39,14 @@ public class DefaultBootstrapDataProcessorTest {
         BootstrapTransport transport = Mockito.mock(BootstrapTransport.class);
         Mockito.when(transport.createResolveRequest()).thenReturn(new SyncRequest());
         processor.setBootstrapTransport(transport);
-        Assert.assertNotNull(processor.compileRequest((Map<TransportType, ChannelDirection>)null));
+        Assert.assertNotNull(processor.compileRequest((ChannelSyncTask)null));
         Mockito.verify(transport, Mockito.times(1)).createResolveRequest();
     }
 
     @Test
     public void testRequestCreationWithNullTransport() throws IOException {
         DefaultBootstrapDataProcessor processor = new DefaultBootstrapDataProcessor();
-        Assert.assertNull(processor.compileRequest((Map<TransportType, ChannelDirection>)null));
+        Assert.assertNull(processor.compileRequest((ChannelSyncTask)null));
     }
 
     @Test

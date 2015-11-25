@@ -91,6 +91,7 @@ import org.kaaproject.kaa.client.persistence.KaaClientPropertiesState;
 import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.client.persistence.PersistentStorage;
 import org.kaaproject.kaa.client.plugin.ExtPluginContext;
+import org.kaaproject.kaa.client.plugin.ExtensionId;
 import org.kaaproject.kaa.client.plugin.PluginInitializationException;
 import org.kaaproject.kaa.client.plugin.PluginInstance;
 import org.kaaproject.kaa.client.plugin.PluginInstanceAPI;
@@ -162,6 +163,8 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
 
     protected final KaaClientPlatformContext context;
     protected final KaaClientStateListener stateListener;
+
+    private final Map<ExtensionId, PluginInstance<? extends PluginInstanceAPI>> pluginInstanceMap = new LinkedHashMap<>();
 
     protected enum State {
         CREATED, STARTED, PAUSED, STOPPED
@@ -243,12 +246,10 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
         eventFamilyFactory = new EventFamilyFactory(eventManager, context.getExecutorContext());
     }
 
-    private final Map<Integer, PluginInstance<? extends PluginInstanceAPI>> pluginInstanceMap = new LinkedHashMap<>();
-
-    private void initializePlugins(Map<Integer, Class<? extends PluginInstance<? extends PluginInstanceAPI>>> extensionMapping,
+    private void initializePlugins(Map<ExtensionId, Class<? extends PluginInstance<? extends PluginInstanceAPI>>> extensionMapping,
             DefaultOperationDataProcessor operationsDataProcessor) {
-        for (Entry<Integer, Class<? extends PluginInstance<? extends PluginInstanceAPI>>> entry : extensionMapping.entrySet()) {
-            Integer extId = entry.getKey();
+        for (Entry<ExtensionId, Class<? extends PluginInstance<? extends PluginInstanceAPI>>> entry : extensionMapping.entrySet()) {
+            ExtensionId extId = entry.getKey();
             Class<? extends PluginInstance<? extends PluginInstanceAPI>> clazz = entry.getValue();
             try {
                 PluginInstance<? extends PluginInstanceAPI> pluginInstance = clazz.newInstance();
@@ -625,8 +626,8 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
         mdTransport.setEndpointPublicKeyhash(publicKeyHash);
         mdTransport.setTimeout(LONG_POLL_TIMEOUT);
 
-        return new TransportContext(mdTransport, bootstrapTransport, profileTransport, eventTransport, notificationTransport,
-                configurationTransport, userTransport, redirectionTransport, logTransport);
+        return new TransportContext(Collections.unmodifiableMap(pluginInstanceMap), mdTransport, bootstrapTransport, profileTransport,
+                eventTransport, notificationTransport, configurationTransport, userTransport, redirectionTransport, logTransport);
     }
 
     protected KaaInternalChannelManager buildChannelManager(BootstrapManager bootstrapManager,
@@ -642,7 +643,6 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
         DefaultBootstrapDataProcessor bootstrapDataProcessor = new DefaultBootstrapDataProcessor();
         bootstrapDataProcessor.setBootstrapTransport(transportContext.getBootstrapTransport());
 
-        operationsDataProcessor.setConfigurationTransport(transportContext.getConfigurationTransport());
         operationsDataProcessor.setEventTransport(transportContext.getEventTransport());
         operationsDataProcessor.setMetaDataTransport(transportContext.getMdTransport());
         operationsDataProcessor.setNotificationTransport(transportContext.getNotificationTransport());
@@ -662,7 +662,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
         channelManager.addChannel(operationsChannel);
     }
 
-    protected abstract Map<Integer, Class<? extends PluginInstance<? extends PluginInstanceAPI>>> getExtensionMapping();
+    protected abstract Map<ExtensionId, Class<? extends PluginInstance<? extends PluginInstanceAPI>>> getExtensionMapping();
 
     protected FailoverManager buildFailoverManager(KaaChannelManager channelManager) {
         return new DefaultFailoverManager(channelManager, context.getExecutorContext());

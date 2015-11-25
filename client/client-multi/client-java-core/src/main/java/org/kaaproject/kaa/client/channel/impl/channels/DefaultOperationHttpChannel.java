@@ -24,6 +24,7 @@ import org.kaaproject.kaa.client.AbstractKaaClient;
 import org.kaaproject.kaa.client.channel.ChannelDirection;
 import org.kaaproject.kaa.client.channel.FailoverManager;
 import org.kaaproject.kaa.client.channel.ServerType;
+import org.kaaproject.kaa.client.channel.ChannelSyncTask;
 import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.client.transport.TransportException;
 import org.kaaproject.kaa.common.TransportType;
@@ -31,7 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class DefaultOperationHttpChannel extends AbstractHttpChannel {
-    public static final Logger LOG = LoggerFactory //NOSONAR
+    public static final Logger LOG = LoggerFactory // NOSONAR
             .getLogger(DefaultOperationsChannel.class);
 
     private static final Map<TransportType, ChannelDirection> SUPPORTED_TYPES = new HashMap<TransportType, ChannelDirection>();
@@ -44,16 +45,16 @@ public class DefaultOperationHttpChannel extends AbstractHttpChannel {
 
     private class OperationRunnable implements Runnable {
 
-        private final Map<TransportType, ChannelDirection> typesToProcess;
+        private final ChannelSyncTask task;
 
-        OperationRunnable(Map<TransportType, ChannelDirection> types) {
-            this.typesToProcess = types;
+        OperationRunnable(ChannelSyncTask task) {
+            this.task = task;
         }
 
         @Override
         public void run() {
             try {
-                processTypes(typesToProcess);
+                processTask(task);
                 connectionFailed(false);
             } catch (TransportException e) {
                 LOG.error("Failed to receive response from the operation {}", e);
@@ -69,12 +70,13 @@ public class DefaultOperationHttpChannel extends AbstractHttpChannel {
         super(client, state, failoverManager);
     }
 
-    private void processTypes(Map<TransportType, ChannelDirection> types) throws Exception {
-        byte[] requestBodyRaw = getMultiplexer().compileRequest(types);
-        byte [] decodedResponse = null;
+    private void processTask(ChannelSyncTask task) throws Exception {
+        byte[] requestBodyRaw = getMultiplexer().compileRequest(task);
+        byte[] decodedResponse = null;
         synchronized (this) {
-            LinkedHashMap<String, byte[]> requestEntity = HttpRequestCreator.createOperationHttpRequest(requestBodyRaw, getHttpClient().getEncoderDecoder());
-            byte [] responseDataRaw = getHttpClient().executeHttpRequest("", requestEntity, false);
+            LinkedHashMap<String, byte[]> requestEntity = HttpRequestCreator.createOperationHttpRequest(requestBodyRaw, getHttpClient()
+                    .getEncoderDecoder());
+            byte[] responseDataRaw = getHttpClient().executeHttpRequest("", requestEntity, false);
             decodedResponse = getHttpClient().getEncoderDecoder().decodeData(responseDataRaw);
         }
         getDemultiplexer().processResponse(decodedResponse);
@@ -96,11 +98,10 @@ public class DefaultOperationHttpChannel extends AbstractHttpChannel {
     }
 
     @Override
-    protected Runnable createChannelRunnable(
-            Map<TransportType, ChannelDirection> typeMap) {
-        return new OperationRunnable(typeMap);
+    protected Runnable createChannelRunnable(ChannelSyncTask task) {
+        return new OperationRunnable(task);
     }
-    
+
     @Override
     protected String getURLSufix() {
         return "/EP/Sync";
