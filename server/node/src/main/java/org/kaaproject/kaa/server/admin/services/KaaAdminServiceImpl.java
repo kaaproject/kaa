@@ -2716,7 +2716,11 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             } else if (tenantId == null && schema.getApplicationId() == null) {
                 schema.setScope(CTLSchemaScopeDto.SYSTEM);
             } else {
-                throw new IllegalArgumentException("Unable to determine the scope!");
+                /*
+                 * The Kaa administrator is trying to save an application CTL
+                 * schema.
+                 */
+                throw new IllegalArgumentException("You do not have permission to perform this operation!");
             }
 
             Set<CTLSchemaMetaInfoDto> dependencies = new HashSet<>();
@@ -2727,7 +2731,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             } else {
                 for (JsonNode child : object.get("dependencies")) {
                     if (!child.isObject() || !child.has("fqn") || !child.get("fqn").isTextual() || !child.has("version") || !child.get("version").isInt()) {
-                        throw new IllegalArgumentException("Wrong dependency format!");
+                        throw new IllegalArgumentException("Illegal dependency format!");
                     } else {
                         dependencies.add(new CTLSchemaMetaInfoDto(child.get("fqn").asText(), child.get("version").asInt()));
                     }
@@ -2742,8 +2746,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         return this.saveCTLSchema(schema);
     }
 
-    @Override
-    public CTLSchemaInfoDto saveCTLSchema(CTLSchemaInfoDto schema) throws KaaAdminServiceException {
+    private CTLSchemaInfoDto saveCTLSchema(CTLSchemaInfoDto schema) throws KaaAdminServiceException {
         this.checkAuthority(KaaAuthorityDto.values());
         try {
             Utils.checkNotNull(schema);

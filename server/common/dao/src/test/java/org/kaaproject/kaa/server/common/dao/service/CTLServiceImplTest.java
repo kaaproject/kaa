@@ -1,5 +1,7 @@
 package org.kaaproject.kaa.server.common.dao.service;
 
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -27,9 +29,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 @Ignore("This test should be extended and initialized with proper context in each NoSQL submodule")
-public class CTLSchemaServiceImplTest extends AbstractTest {
+public class CTLServiceImplTest extends AbstractTest {
 
-    private static final Logger LOG = LoggerFactory.getLogger(CTLSchemaServiceImplTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CTLServiceImplTest.class);
 
     private ExecutorService executorService = Executors.newFixedThreadPool(10);
 
@@ -45,9 +47,15 @@ public class CTLSchemaServiceImplTest extends AbstractTest {
     private CTLSchemaDto appSchema;
     private List<CTLSchemaDto> allSchemaList;
 
+    private static final String TEST_CTL_SCHEMA_ALPHA = "dao/ctl/alpha.json";
+    private static final String TEST_CTL_SCHEMA_ALPHA_FLAT = "dao/ctl/alphaFlat.json";
+    private static final String TEST_CTL_SCHEMA_BETA = "dao/ctl/beta.json";
+
+    private CTLSchemaDto alpha;
+    private CTLSchemaDto beta;
 
     @Before
-    public void before() {
+    public void before() throws Exception {
         clearDBData();
         if (tenant == null) {
             tenant = userService.findTenantByName(SUPER_TENANT);
@@ -75,7 +83,25 @@ public class CTLSchemaServiceImplTest extends AbstractTest {
         CTLSchemaDto unsaved = generateCTLSchemaDto(DEFAULT_FQN, tenant.getId(), 80, CTLSchemaScopeDto.APPLICATION);
         unsaved.setApplicationId(appDto.getId());
         appSchema = ctlService.saveCTLSchema(unsaved);
-        allSchemaList = Arrays.asList(firstSchema, secondSchema, thirdSchema, fourthSchema, mainSchema, systemSchema, tenantSchema, appSchema);
+
+        beta = new CTLSchemaDto();
+        CTLSchemaMetaInfoDto betaMetaInfo = new CTLSchemaMetaInfoDto("org.kaaproject.kaa.Beta", 1);
+        betaMetaInfo.setScope(CTLSchemaScopeDto.TENANT);
+        beta.setMetaInfo(betaMetaInfo);
+        beta.setBody(getResourceAsString(TEST_CTL_SCHEMA_BETA));
+        beta = ctlService.saveCTLSchema(beta);
+
+        alpha = new CTLSchemaDto();
+        CTLSchemaMetaInfoDto alphaMetaInfo = new CTLSchemaMetaInfoDto("org.kaaproject.kaa.Alpha", 1);
+        alphaMetaInfo.setScope(CTLSchemaScopeDto.TENANT);
+        Set<CTLSchemaDto> alphaDependencies = new HashSet<>();
+        alphaDependencies.add(beta);
+        alpha.setMetaInfo(alphaMetaInfo);
+        alpha.setDependencySet(alphaDependencies);
+        alpha.setBody(getResourceAsString(TEST_CTL_SCHEMA_ALPHA));
+        alpha = ctlService.saveCTLSchema(alpha);
+
+        allSchemaList = Arrays.asList(firstSchema, secondSchema, thirdSchema, fourthSchema, mainSchema, systemSchema, tenantSchema, appSchema, beta, alpha);
     }
 
     @Test
@@ -93,16 +119,16 @@ public class CTLSchemaServiceImplTest extends AbstractTest {
     @Test
     public void testRemoveCTLSchemaByFqnAndVerAndTenantId() {
         String schemaId = tenantSchema.getId();
-        ctlService.removeCTLSchemaByFqnAndVerAndTenantId(tenantSchema.getMetaInfo().getFqn(),
-                tenantSchema.getMetaInfo().getVersion(), tenantSchema.getTenantId());
+        ctlService.removeCTLSchemaByFqnAndVerAndTenantId(tenantSchema.getMetaInfo().getFqn(), tenantSchema.getMetaInfo().getVersion(),
+                tenantSchema.getTenantId());
         Assert.assertNull(ctlService.findCTLSchemaById(schemaId));
     }
 
-    @Test(expected = IncorrectParameterException.class)
+    @Test
     public void testRemoveCTLSchemaByFqnAndVerAndWithoutTenantId() {
         String schemaId = systemSchema.getId();
-        ctlService.removeCTLSchemaByFqnAndVerAndTenantId(systemSchema.getMetaInfo().getFqn(),
-                systemSchema.getMetaInfo().getVersion(), systemSchema.getTenantId());
+        ctlService.removeCTLSchemaByFqnAndVerAndTenantId(systemSchema.getMetaInfo().getFqn(), systemSchema.getMetaInfo().getVersion(),
+                systemSchema.getTenantId());
         Assert.assertNull(ctlService.findCTLSchemaById(schemaId));
     }
 
@@ -176,24 +202,20 @@ public class CTLSchemaServiceImplTest extends AbstractTest {
 
     @Test
     public void testFindCTLSchemaDependentsByFqnVersionTenantId() {
-        List<CTLSchemaDto> appSchemas = ctlService.findCTLSchemaDependents(firstSchema.getMetaInfo().getFqn(),
-                firstSchema.getMetaInfo().getVersion(), tenant.getId());
+        List<CTLSchemaDto> appSchemas = ctlService.findCTLSchemaDependents(firstSchema.getMetaInfo().getFqn(), firstSchema.getMetaInfo().getVersion(),
+                tenant.getId());
         Assert.assertEquals(Arrays.asList(mainSchema), appSchemas);
 
-        appSchemas = ctlService.findCTLSchemaDependents(secondSchema.getMetaInfo().getFqn(),
-                secondSchema.getMetaInfo().getVersion(), tenant.getId());
+        appSchemas = ctlService.findCTLSchemaDependents(secondSchema.getMetaInfo().getFqn(), secondSchema.getMetaInfo().getVersion(), tenant.getId());
         Assert.assertEquals(Arrays.asList(mainSchema), appSchemas);
 
-        appSchemas = ctlService.findCTLSchemaDependents(thirdSchema.getMetaInfo().getFqn(),
-                thirdSchema.getMetaInfo().getVersion(), tenant.getId());
+        appSchemas = ctlService.findCTLSchemaDependents(thirdSchema.getMetaInfo().getFqn(), thirdSchema.getMetaInfo().getVersion(), tenant.getId());
         Assert.assertEquals(Arrays.asList(mainSchema), appSchemas);
 
-        appSchemas = ctlService.findCTLSchemaDependents(fourthSchema.getMetaInfo().getFqn(),
-                fourthSchema.getMetaInfo().getVersion(), tenant.getId());
+        appSchemas = ctlService.findCTLSchemaDependents(fourthSchema.getMetaInfo().getFqn(), fourthSchema.getMetaInfo().getVersion(), tenant.getId());
         Assert.assertEquals(Arrays.asList(mainSchema), appSchemas);
 
-        appSchemas = ctlService.findCTLSchemaDependents(mainSchema.getMetaInfo().getFqn(),
-                mainSchema.getMetaInfo().getVersion(), tenant.getId());
+        appSchemas = ctlService.findCTLSchemaDependents(mainSchema.getMetaInfo().getFqn(), mainSchema.getMetaInfo().getVersion(), tenant.getId());
         Assert.assertTrue(appSchemas.isEmpty());
 
     }
@@ -226,5 +248,21 @@ public class CTLSchemaServiceImplTest extends AbstractTest {
         }
         CTLSchemaDto schemaDto = ctlService.findCTLSchemaByFqnAndVerAndTenantId(DEFAULT_FQN, 100, tenantId);
         Assert.assertEquals(Long.valueOf(100L), schemaDto.getMetaInfo().getCount());
+    }
+
+    @Test
+    public void testShallowExport() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode expected = mapper.readTree(getResourceAsString(TEST_CTL_SCHEMA_ALPHA));
+        JsonNode actual = mapper.readTree(ctlService.shallowExport(alpha).getFileData());
+        Assert.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testFlatExport() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode expected = mapper.readTree(getResourceAsString(TEST_CTL_SCHEMA_ALPHA_FLAT));
+        JsonNode actual = mapper.readTree(ctlService.flatExport(alpha).getFileData());
+        Assert.assertEquals(expected, actual);
     }
 }

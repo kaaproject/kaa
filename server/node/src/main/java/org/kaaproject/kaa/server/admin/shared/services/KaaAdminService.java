@@ -340,8 +340,6 @@ public interface KaaAdminService extends RemoteService {
 
     public CTLSchemaInfoDto saveCTLSchema(String body) throws KaaAdminServiceException;
 
-    public CTLSchemaInfoDto saveCTLSchema(CTLSchemaInfoDto schema) throws KaaAdminServiceException;
-
     public void deleteCTLSchemaById(String schemaId) throws KaaAdminServiceException;
 
     public void deleteCTLSchemaByFqnAndVersion(String fqn, Integer version) throws KaaAdminServiceException;

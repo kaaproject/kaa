@@ -560,17 +560,6 @@ public class KaaAdminController {
     }
 
     /**
-     * Saves a CTL schema.
-     * 
-     * @deprecated Use {@link #saveCTLSchema(String)} instead.
-     */
-    @RequestMapping(value = "CTL/saveSchema", method = RequestMethod.POST)
-    @ResponseBody
-    public CTLSchemaInfoDto saveCTLSchema(@RequestBody CTLSchemaInfoDto schema) throws KaaAdminServiceException {
-        return kaaAdminService.saveCTLSchema(schema);
-    }
-
-    /**
      * Removes a CTL schema by its fully qualified name and version number.
      */
     @RequestMapping(value = "CTL/deleteSchema", params = { "fqn", "version" }, method = RequestMethod.POST)
