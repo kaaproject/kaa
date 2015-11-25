@@ -520,19 +520,13 @@ public class DefaultOperationsService implements OperationsService {
     /**
      * Calculate configuration delta.
      *
-     * @param request
-     *            the request
-     * @param profile
-     *            the profile
-     * @param historyDelta
-     *            the history delta
-     * @param curAppSeqNumber
-     *            the cur app seq number
-     * @param fetchSchema
-     *            the fetch schema
+     * @param metaData          the metaData
+     * @param request           the request
+     * @param context           the context
+     * @param historyDelta      the history delta
+     * @param curAppSeqNumber   the cur app seq number
      * @return the gets the delta response
-     * @throws GetDeltaException
-     *             the get delta exception
+     * @throws GetDeltaException the get delta exception
      */
     private GetDeltaResponse calculateConfigurationDelta(ClientSyncMetaData metaData, ConfigurationClientSync request, SyncContext context,
             HistoryDelta historyDelta, int curAppSeqNumber) throws GetDeltaException {
@@ -552,12 +546,14 @@ public class DefaultOperationsService implements OperationsService {
     /**
      * Fetch history.
      *
-     * @param request
-     *            the request
-     * @param profile
-     *            the profile
-     * @param curAppSeqNumber
-     *            the cur app seq number
+     * @param endpointId        the endpoint id
+     * @param requesHash        the reques hash
+     * @param applicationToken  the application token
+     * @param profile           the profile
+     * @param subject           the subject
+     * @param startSeqNumber    the start seq number
+     * @param endSeqNumber      the end seq number
+     *
      * @return the history delta
      */
     private HistoryDelta fetchHistory(String endpointId, int requesHash, String applicationToken, EndpointProfileDto profile,
@@ -574,8 +570,8 @@ public class DefaultOperationsService implements OperationsService {
     /**
      * Checks if is first request.
      *
-     * @param request
-     *            the request
+     * @param profile the profile
+     * @param subject the subject
      * @return true, if is first request
      */
     public static boolean isFirstRequest(EndpointProfileDto profile, HistorySubject subject) {

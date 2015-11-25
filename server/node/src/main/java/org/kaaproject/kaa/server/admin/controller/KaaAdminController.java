@@ -173,6 +173,13 @@ public class KaaAdminController {
 
     /**
      * Gets the endpoint profile by endpoint group id.
+     *
+     * @param   endpointGroupId   the endpoint group id
+     * @param   limit             the limit
+     * @param   offset            the offset
+     * @param   request           the request
+     * @return  the endpoint profiles page dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value = "endpointProfileByGroupId", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -191,6 +198,13 @@ public class KaaAdminController {
 
     /**
      * Gets the endpoint profile body by endpoint group id.
+     *
+     * @param   endpointGroupId   the endpoint group id
+     * @param   limit             the limit
+     * @param   offset            the offset
+     * @param   request           the request
+     * @return  the endpoint profiles body dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value = "endpointProfileBodyByGroupId", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -225,6 +239,9 @@ public class KaaAdminController {
     /**
      * Gets the endpoint profile by endpoint key.
      *
+     * @param   endpointProfileKey the endpoint profile key
+     * @return  the endpoint profile dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="endpointProfile/{endpointProfileKey}", method=RequestMethod.GET)
     @ResponseBody
@@ -235,6 +252,9 @@ public class KaaAdminController {
     /**
      * Gets the endpoint profile body by endpoint key.
      *
+     * @param   endpointProfileKey the endpoint profile key
+     * @return  the endpoint profile body dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="endpointProfileBody/{endpointProfileKey}", method=RequestMethod.GET)
     @ResponseBody
@@ -245,6 +265,9 @@ public class KaaAdminController {
     /**
      * Check auth of kaa admin.
      *
+     * @param   request the request
+     * @return  the auth result dto
+     * @throws  Exception the exception
      */
     @RequestMapping(value="auth/checkAuth", method=RequestMethod.GET)
     @ResponseBody
@@ -260,6 +283,9 @@ public class KaaAdminController {
     /**
      * Creates the kaa admin with specific name and password.
      *
+     * @param   username    the username
+     * @param   password    the password
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="auth/createKaaAdmin", method=RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
@@ -275,6 +301,11 @@ public class KaaAdminController {
     /**
      * Change password of user with specific name if old password valid.
      *
+     * @param   username      the username
+     * @param   oldPassword   the old password
+     * @param   newPassword   the new password
+     * @return  the result code
+     * @throws  Exception the exception
      */
     @RequestMapping(value="auth/changePassword", method=RequestMethod.POST)
     @ResponseBody
@@ -296,6 +327,8 @@ public class KaaAdminController {
     /**
      * Gets all tenants.
      *
+     * @return the list of tenant user dto
+     * @throws KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="tenants", method=RequestMethod.GET)
     @ResponseBody
@@ -306,6 +339,9 @@ public class KaaAdminController {
     /**
      * Gets the tenant by user id.
      *
+     * @param   userId the user id
+     * @return  the tenant user dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="tenant/{userId}", method=RequestMethod.GET)
     @ResponseBody
@@ -317,6 +353,9 @@ public class KaaAdminController {
     /**
      * Edits tenant to the list of all tenants.
      *
+     * @param   tenantUser the tenant user
+     * @return  the tenant user dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="tenant", method=RequestMethod.POST)
     @ResponseBody
@@ -337,6 +376,8 @@ public class KaaAdminController {
     /**
      * Delete tenant by user id.
      *
+     * @param   userId the user id
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="delTenant", method=RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
@@ -347,6 +388,8 @@ public class KaaAdminController {
     /**
      * Gets all applications.
      *
+     * @return the list application dto
+     * @throws KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="applications", method=RequestMethod.GET)
     @ResponseBody
@@ -357,6 +400,9 @@ public class KaaAdminController {
     /**
      * Gets the application by its id.
      *
+     * @param   applicationId the application id
+     * @return  the application dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="application/{applicationId}", method=RequestMethod.GET)
     @ResponseBody
@@ -367,6 +413,9 @@ public class KaaAdminController {
     /**
      * Gets the application by its id.
      *
+     * @param   applicationToken the application token
+     * @return  the application dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="application/token/{applicationToken}", method=RequestMethod.GET)
     @ResponseBody
@@ -377,6 +426,9 @@ public class KaaAdminController {
     /**
      * Edits application to the list of all applications.
      *
+     * @param   application the application
+     * @return  the application dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="application", method=RequestMethod.POST)
     @ResponseBody
@@ -387,6 +439,8 @@ public class KaaAdminController {
     /**
      * Delete application by application id.
      *
+     * @param   applicationId the application id
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="delApplication", method=RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
@@ -397,6 +451,8 @@ public class KaaAdminController {
     /**
      * Gets the user profile of current user.
      *
+     * @return the user dto
+     * @throws KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="userProfile", method=RequestMethod.GET)
     @ResponseBody
@@ -407,6 +463,9 @@ public class KaaAdminController {
     /**
      * Edits user profile to all user profiles.
      *
+     * @param   userDto the user dto
+     * @return  the user dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="userProfile", method=RequestMethod.POST)
     @ResponseBody
@@ -417,6 +476,8 @@ public class KaaAdminController {
     /**
      * Gets all users.
      *
+     * @return the list user dto
+     * @throws KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="users", method=RequestMethod.GET)
     @ResponseBody
@@ -427,6 +488,9 @@ public class KaaAdminController {
     /**
      * Gets the user by his id.
      *
+     * @param   userId the user id
+     * @return  the user dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="user/{userId}", method=RequestMethod.GET)
     @ResponseBody
@@ -437,6 +501,9 @@ public class KaaAdminController {
     /**
      * Edits user to the list of all users.
      *
+     * @param   user the user
+     * @return  the user dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="user", method=RequestMethod.POST)
     @ResponseBody
@@ -457,6 +524,8 @@ public class KaaAdminController {
     /**
      * Delete user by user id.
      *
+     * @param   userId the user id
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="delUser", method=RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
@@ -467,6 +536,9 @@ public class KaaAdminController {
     /**
      * Gets the schema versions by application id.
      *
+     * @param   applicationId the application id
+     * @return  the schema versions
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="schemaVersions/{applicationId}", method=RequestMethod.GET)
     @ResponseBody
@@ -476,6 +548,12 @@ public class KaaAdminController {
 
     /**
      * Generates an SDK for the specified target platform from an SDK profile .
+     *
+     * @param   sdkProfileId    the sdk profile id
+     * @param   targetPlatform  the target platform
+     * @param   request         the request
+     * @param   response        the response
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="sdk", method=RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
@@ -499,6 +577,10 @@ public class KaaAdminController {
 
     /**
      * Stores a new SDK profile into the database.
+     *
+     * @param   sdkProfile the sdk profile
+     * @return  the sdk profile dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="addSdkProfile", method=RequestMethod.POST)
     @ResponseBody
@@ -508,6 +590,9 @@ public class KaaAdminController {
 
     /**
      * Deletes an SDK profile by its identifier.
+     *
+     * @param   sdkProfileId the sdk profile id
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="deleteSdkProfile", method=RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
@@ -517,6 +602,10 @@ public class KaaAdminController {
 
     /**
      * Returns an SDK profile by its identifier.
+     *
+     * @param   sdkProfileId the sdk profile id
+     * @return  the sdk profile dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value = "sdkProfile/{sdkProfileId}")
     @ResponseBody
@@ -526,6 +615,10 @@ public class KaaAdminController {
 
     /**
      * Returns a list of SDK profiles for the given application.
+     *
+     * @param   applicationId the application id
+     * @return  the list sdk profile dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="sdkProfiles/{applicationId}")
     @ResponseBody
@@ -536,6 +629,7 @@ public class KaaAdminController {
     /**
      * Flushes all cached Sdks within tenant.
      *
+     * @throws KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="flushSdkCache", method=RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
@@ -550,6 +644,9 @@ public class KaaAdminController {
     /**
      * Gets the profile schemas by application id.
      *
+     * @param   applicationId the application id
+     * @return  the list profile schema dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="profileSchemas/{applicationId}", method=RequestMethod.GET)
     @ResponseBody
@@ -560,6 +657,9 @@ public class KaaAdminController {
     /**
      * Gets the profile schema by her id.
      *
+     * @param   profileSchemaId the profile schema id
+     * @return  the profile schema dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="profileSchema/{profileSchemaId}", method=RequestMethod.GET)
     @ResponseBody
@@ -570,6 +670,10 @@ public class KaaAdminController {
     /**
      * Adds profile schema to the list of all profile schemas.
      *
+     * @param   profileSchema   the profile schema
+     * @param   file            the file
+     * @return  the profile schema dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="createProfileSchema", method=RequestMethod.POST, consumes = { "multipart/mixed", "multipart/form-data" })
     @ResponseBody
@@ -582,6 +686,9 @@ public class KaaAdminController {
     /**
      * Edits existing profile schema.
      *
+     * @param   profileSchema the profile schema
+     * @return  the profile schema dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="editProfileSchema", method=RequestMethod.POST)
     @ResponseBody
@@ -592,6 +699,9 @@ public class KaaAdminController {
     /**
      * Gets the configuration schemas by application id.
      *
+     * @param   applicationId the application id
+     * @return  the сonfiguration schema dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="configurationSchemas/{applicationId}", method=RequestMethod.GET)
     @ResponseBody
@@ -602,6 +712,9 @@ public class KaaAdminController {
     /**
      * Gets the configuration schema by her id.
      *
+     * @param   configurationSchemaId the сonfiguration schema id
+     * @return  the сonfiguration schema dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="configurationSchema/{configurationSchemaId}", method=RequestMethod.GET)
     @ResponseBody
@@ -612,6 +725,10 @@ public class KaaAdminController {
     /**
      * Adds configuration schema to the list of all configuration schemas.
      *
+     * @param   configurationSchema   the сonfiguration schema
+     * @param   file                  the file
+     * @return  the сonfiguration schema dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="createConfigurationSchema", method=RequestMethod.POST, consumes = { "multipart/mixed", "multipart/form-data" })
     @ResponseBody
@@ -624,6 +741,9 @@ public class KaaAdminController {
     /**
      * Edits existing configuration schema.
      *
+     * @param   configurationSchema the сonfiguration schema
+     * @return  the сonfiguration schema dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="editConfigurationSchema", method=RequestMethod.POST)
     @ResponseBody
@@ -634,6 +754,9 @@ public class KaaAdminController {
     /**
      * Gets the notification schemas by application id.
      *
+     * @param   applicationId the application id
+     * @return  the list notification schema dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="notificationSchemas/{applicationId}", method=RequestMethod.GET)
     @ResponseBody
@@ -644,6 +767,9 @@ public class KaaAdminController {
     /**
      * Gets the user notification schemas by application id.
      *
+     * @param   applicationId the application id
+     * @return  the list schema dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="userNotificationSchemas/{applicationId}", method=RequestMethod.GET)
     @ResponseBody
@@ -654,6 +780,9 @@ public class KaaAdminController {
     /**
      * Gets the notification schema by her id.
      *
+     * @param   notificationSchemaId the notification schema id
+     * @return  the notification schema dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="notificationSchema/{notificationSchemaId}", method=RequestMethod.GET)
     @ResponseBody
@@ -664,6 +793,10 @@ public class KaaAdminController {
     /**
      * Adds notification schema to the list of all notification schemas.
      *
+     * @param   notificationSchema  the notification schema
+     * @param   file                the file
+     * @return  the notification schema dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="createNotificationSchema", method=RequestMethod.POST, consumes = { "multipart/mixed", "multipart/form-data" })
     @ResponseBody
@@ -672,10 +805,13 @@ public class KaaAdminController {
         byte[] data = getFileContent(file);
         return kaaAdminService.editNotificationSchema(notificationSchema, data);
     }
-    
+
     /**
      * Edits existing notification schema.
      *
+     * @param   notificationSchema the notification schema
+     * @return  the notification schema dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="editNotificationSchema", method=RequestMethod.POST)
     @ResponseBody
@@ -686,6 +822,9 @@ public class KaaAdminController {
     /**
      * Gets all log schemas by application id.
      *
+     * @param   applicationId the application id
+     * @return  the list log schema dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="logSchemas/{applicationId}", method=RequestMethod.GET)
     @ResponseBody
@@ -696,6 +835,9 @@ public class KaaAdminController {
     /**
      * Gets the log schema by its id.
      *
+     * @param   logSchemaId the log schema id
+     * @return  the log schema dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="logSchema/{logSchemaId}", method=RequestMethod.GET)
     @ResponseBody
@@ -706,6 +848,10 @@ public class KaaAdminController {
     /**
      * Gets the log schema by application token and schema version.
      *
+     * @param   applicationToken    the application token
+     * @param   schemaVersion       the schema version
+     * @return  the log schema dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="logSchema/{applicationToken}/{schemaVersion}", method=RequestMethod.GET)
     @ResponseBody
@@ -717,6 +863,10 @@ public class KaaAdminController {
     /**
      * Adds log schema to the list of all log schemas.
      *
+     * @param   logSchema   the log schema
+     * @param   file        the file
+     * @return  the log schema dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="createLogSchema", method=RequestMethod.POST, consumes = { "multipart/mixed", "multipart/form-data" })
     @ResponseBody
@@ -725,10 +875,13 @@ public class KaaAdminController {
         byte[] data = getFileContent(file);
         return kaaAdminService.editLogSchema(logSchema, data);
     }
-    
+
     /**
      * Edits existing log schema.
      *
+     * @param   logSchema the log schema
+     * @return  the log schema dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="editLogSchema", method=RequestMethod.POST)
     @ResponseBody
@@ -739,6 +892,9 @@ public class KaaAdminController {
     /**
      * Gets all log appenders by application id.
      *
+     * @param   applicationId the application id
+     * @return  the list log appender dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="logAppenders/{applicationId}", method=RequestMethod.GET)
     @ResponseBody
@@ -749,6 +905,9 @@ public class KaaAdminController {
     /**
      * Gets the log appender by its id.
      *
+     * @param   logAppenderId the log appender id
+     * @return  the log appender dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="logAppender/{logAppenderId}", method=RequestMethod.GET)
     @ResponseBody
@@ -759,6 +918,9 @@ public class KaaAdminController {
     /**
      * Edits log appender.
      *
+     * @param   logAppender the log appender
+     * @return  the log appender dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="logAppender", method=RequestMethod.POST)
     @ResponseBody
@@ -769,6 +931,8 @@ public class KaaAdminController {
     /**
      * Delete log appender by its id.
      *
+     * @param   logAppenderId the log appender id
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="delLogAppender", method=RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
@@ -779,6 +943,9 @@ public class KaaAdminController {
     /**
      * Gets all user verifiers by application id.
      *
+     * @param   applicationId the application id
+     * @return  the list user verifier dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="userVerifiers/{applicationId}", method=RequestMethod.GET)
     @ResponseBody
@@ -789,6 +956,9 @@ public class KaaAdminController {
     /**
      * Gets the user verifier by its id.
      *
+     * @param   userVerifierId the user verifier id
+     * @return  the user verifier dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="userVerifier/{userVerifierId}", method=RequestMethod.GET)
     @ResponseBody
@@ -799,6 +969,9 @@ public class KaaAdminController {
     /**
      * Edits user verifier.
      *
+     * @param   userVerifier the user verifier
+     * @return  the user verifier dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="userVerifier", method=RequestMethod.POST)
     @ResponseBody
@@ -809,6 +982,8 @@ public class KaaAdminController {
     /**
      * Delete user verifier by its id.
      *
+     * @param   userVerifierId the user verifier id
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="delUserVerifier", method=RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
@@ -819,6 +994,10 @@ public class KaaAdminController {
     /**
      * Generate log library by record key.
      *
+     * @param   key       the key
+     * @param   request   the request
+     * @param   response  the response
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value = "logLibrary", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
@@ -841,6 +1020,10 @@ public class KaaAdminController {
     /**
      * Get log record schema with header and log schema inside by record key.
      *
+     * @param   key         the key
+     * @param   request     the request
+     * @param   response    the response
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value = "logRecordSchema", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
@@ -860,9 +1043,12 @@ public class KaaAdminController {
         }
     }
 
-    /**
+     /**
      * Gets all endpoint groups by application id.
      *
+     * @param   applicationId the application id
+     * @return  the list endpoint group dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="endpointGroups/{applicationId}", method=RequestMethod.GET)
     @ResponseBody
@@ -873,6 +1059,9 @@ public class KaaAdminController {
     /**
      * Gets the endpoint group by its id.
      *
+     * @param   endpointGroupId the endpoint group id
+     * @return  the endpoint group dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="endpointGroup/{endpointGroupId}", method=RequestMethod.GET)
     @ResponseBody
@@ -883,6 +1072,9 @@ public class KaaAdminController {
     /**
      * Edits endpoint group to the list of all endpoint groups.
      *
+     * @param   endpointGroup the endpoint group
+     * @return  the endpoint group dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="endpointGroup", method=RequestMethod.POST)
     @ResponseBody
@@ -893,6 +1085,8 @@ public class KaaAdminController {
     /**
      * Delete endpoint group by its id.
      *
+     * @param   endpointGroupId the endpoint group id
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="delEndpointGroup", method=RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
@@ -903,6 +1097,10 @@ public class KaaAdminController {
     /**
      * Gets the profile filter records by endpoint group id.
      *
+     * @param   endpointGroupId     the endpoint group id
+     * @param   includeDeprecated   the include deprecated
+     * @return  the list profile filter record dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="profileFilterRecords", method=RequestMethod.GET)
     @ResponseBody
@@ -915,6 +1113,10 @@ public class KaaAdminController {
     /**
      * Gets the profile filter record by schema id and endpoint group id.
      *
+     * @param   schemaId        the schema id
+     * @param   endpointGroupId the endpoint group id
+     * @return  the profile filter record dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="profileFilterRecord", method=RequestMethod.GET)
     @ResponseBody
@@ -927,6 +1129,9 @@ public class KaaAdminController {
     /**
      * Gets the vacant profile schemas by endpoint group id.
      *
+     * @param   endpointGroupId the endpoint group id
+     * @return  the list schema dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="vacantProfileSchemas/{endpointGroupId}", method=RequestMethod.GET)
     @ResponseBody
@@ -937,6 +1142,9 @@ public class KaaAdminController {
     /**
      * Edits profile filter to the list of all profile filters.
      *
+     * @param   profileFilter the profile filter
+     * @return  the profile filter dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="profileFilter", method=RequestMethod.POST)
     @ResponseBody
@@ -947,6 +1155,9 @@ public class KaaAdminController {
     /**
      * Activate profile filter by his id.
      *
+     * @param   profileFilterId the profile filter id
+     * @return  the profile filter dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="activateProfileFilter", method=RequestMethod.POST)
     @ResponseBody
@@ -957,6 +1168,9 @@ public class KaaAdminController {
     /**
      * Deactivate profile filter by his id.
      *
+     * @param   profileFilterId the profile filter id
+     * @return  the profile filter dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="deactivateProfileFilter", method=RequestMethod.POST)
     @ResponseBody
@@ -967,6 +1181,9 @@ public class KaaAdminController {
     /**
      * Delete profile filter record by schema id and endpoin group id.
      *
+     * @param   schemaId        the schema id
+     * @param   endpointGroupId the endpoint group id
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="delProfileFilterRecord", method=RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
@@ -979,6 +1196,10 @@ public class KaaAdminController {
     /**
      * Gets the configuration records by endpoint group id.
      *
+     * @param   endpointGroupId     the endpoint group id
+     * @param   includeDeprecated   the include deprecated
+     * @return  the list configuration record dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="configurationRecords", method=RequestMethod.GET)
     @ResponseBody
@@ -991,6 +1212,10 @@ public class KaaAdminController {
     /**
      * Gets the configuration record by schema id and endpoint group id.
      *
+     * @param   schemaId        the schema id
+     * @param   endpointGroupId the endpoint group id
+     * @return  the configuration record dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="configurationRecord", method=RequestMethod.GET)
     @ResponseBody
@@ -1003,6 +1228,9 @@ public class KaaAdminController {
     /**
      * Gets the vacant configuration schemas by endpoint group id.
      *
+     * @param   endpointGroupId the endpoint group id
+     * @return  the list schema dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="vacantConfigurationSchemas/{endpointGroupId}", method=RequestMethod.GET)
     @ResponseBody
@@ -1014,6 +1242,9 @@ public class KaaAdminController {
     /**
      * Edits the configuration to the list of all configurations.
      *
+     * @param   configuration the configuration
+     * @return  the configuration dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="configuration", method=RequestMethod.POST)
     @ResponseBody
@@ -1024,6 +1255,9 @@ public class KaaAdminController {
     /**
      * Activate configuration by its id.
      *
+     * @param   configurationId the configuration id
+     * @return  the configuration dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="activateConfiguration", method=RequestMethod.POST)
     @ResponseBody
@@ -1034,6 +1268,9 @@ public class KaaAdminController {
     /**
      * Deactivate configuration by its id.
      *
+     * @param   configurationId the configuration id
+     * @return  the configuration dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="deactivateConfiguration", method=RequestMethod.POST)
     @ResponseBody
@@ -1044,6 +1281,9 @@ public class KaaAdminController {
     /**
      * Delete configuration record by schema id and endpoint group id.
      *
+     * @param   schemaId        the schema id
+     * @param   endpointGroupId the endpoint group id
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="delConfigurationRecord", method=RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
@@ -1056,6 +1296,9 @@ public class KaaAdminController {
     /**
      * Gets all topics by application id.
      *
+     * @param   applicationId the application id
+     * @return  the topic dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="topics/{applicationId}", method=RequestMethod.GET)
     @ResponseBody
@@ -1066,6 +1309,9 @@ public class KaaAdminController {
     /**
      * Gets all topics by endpoint group id.
      *
+     * @param   endpointGroupId the endpoint group id
+     * @return  the topic dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="topics", method=RequestMethod.GET)
     @ResponseBody
@@ -1077,6 +1323,9 @@ public class KaaAdminController {
     /**
      * Gets all vacant topics by endpoint group id.
      *
+     * @param   endpointGroupId the endpoint group id
+     * @return  the topic dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="vacantTopics/{endpointGroupId}", method=RequestMethod.GET)
     @ResponseBody
@@ -1087,6 +1336,9 @@ public class KaaAdminController {
     /**
      * Gets the topic by his id.
      *
+     * @param   topicId the topic id
+     * @return  the topic dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="topic/{topicId}", method=RequestMethod.GET)
     @ResponseBody
@@ -1097,6 +1349,9 @@ public class KaaAdminController {
     /**
      * Edits topic to the list of all topics.
      *
+     * @param   topic the topic
+     * @return  the topic dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="topic", method=RequestMethod.POST)
     @ResponseBody
@@ -1107,6 +1362,8 @@ public class KaaAdminController {
     /**
      * Delete topic by his id.
      *
+     * @param   topicId the topic id
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="delTopic", method=RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
@@ -1117,6 +1374,9 @@ public class KaaAdminController {
     /**
      * Adds the topic with specific id to endpoint group with specific id.
      *
+     * @param   endpointGroupId the endpoint group id
+     * @param   topicId         the topic id
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="addTopicToEpGroup", method=RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
@@ -1129,6 +1389,9 @@ public class KaaAdminController {
     /**
      * Removes the topic with specific id to endpoint group with specific id.
      *
+     * @param   endpointGroupId the endpoint group id
+     * @param   topicId         the topic id
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="removeTopicFromEpGroup", method=RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
@@ -1141,6 +1404,10 @@ public class KaaAdminController {
     /**
      * Send notification, with information from specific file, to the client.
      *
+     * @param   notification    the notification
+     * @param   file            the file
+     * @return  the notification dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="sendNotification", method=RequestMethod.POST, consumes = { "multipart/mixed", "multipart/form-data" })
     @ResponseBody
@@ -1154,6 +1421,11 @@ public class KaaAdminController {
     /**
      * Send unicast notification, with information from specific file, to the client identified by clientKeyHash.
      *
+     * @param   notification    the notification
+     * @param   clientKeyHash   the client key hash
+     * @param   file            the file
+     * @return  the endpoint notification dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="sendUnicastNotification", method=RequestMethod.POST, consumes = { "multipart/mixed", "multipart/form-data" })
     @ResponseBody
@@ -1168,6 +1440,8 @@ public class KaaAdminController {
     /**
      * Gets all event class families.
      *
+     * @return  the list event class family dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="eventClassFamilies", method=RequestMethod.GET)
     @ResponseBody
@@ -1178,6 +1452,9 @@ public class KaaAdminController {
     /**
      * Gets the event class family by its id.
      *
+     * @param   eventClassFamilyId the event class family id
+     * @return  the event class family dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="eventClassFamily/{eventClassFamilyId}", method=RequestMethod.GET)
     @ResponseBody
@@ -1188,6 +1465,9 @@ public class KaaAdminController {
     /**
      * Edits event class family to the list of all event class families.
      *
+     * @param   eventClassFamily the event class family
+     * @return  the event class family dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="eventClassFamily", method=RequestMethod.POST)
     @ResponseBody
@@ -1199,6 +1479,9 @@ public class KaaAdminController {
      * Adds the event class family schema to the event class family with specific id.
      * Current user will be marked as creator of schema.
      *
+     * @param   eventClassFamilyId  the event class family id
+     * @param   file                the file
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="addEventClassFamilySchema", method=RequestMethod.POST, consumes = { "multipart/mixed", "multipart/form-data" })
     @ResponseStatus(value = HttpStatus.OK)
@@ -1212,6 +1495,11 @@ public class KaaAdminController {
     /**
      * Gets the event classes by family its id, version and type.
      *
+     * @param   eventClassFamilyId  the event class family id
+     * @param   version             the version
+     * @param   type                the type
+     * @return  the list event class dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="eventClasses", method=RequestMethod.GET)
     @ResponseBody
@@ -1225,6 +1513,9 @@ public class KaaAdminController {
     /**
      * Gets all application event family maps by application id.
      *
+     * @param   applicationId the application id
+     * @return  list the application event family map dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="applicationEventMaps/{applicationId}", method=RequestMethod.GET)
     @ResponseBody
@@ -1236,6 +1527,9 @@ public class KaaAdminController {
     /**
      * Gets the application event family map by its id.
      *
+     * @param   applicationEventFamilyMapId the application event family map
+     * @return  the application event family map dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="applicationEventMap/{applicationEventFamilyMapId}", method=RequestMethod.GET)
     @ResponseBody
@@ -1247,6 +1541,9 @@ public class KaaAdminController {
     /**
      * Edits application event family map to the list of all event family maps.
      *
+     * @param   applicationEventFamilyMap the application event family map
+     * @return  the application event family map dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="applicationEventMap", method=RequestMethod.POST)
     @ResponseBody
@@ -1258,6 +1555,9 @@ public class KaaAdminController {
     /**
      * Gets all vacant event class families by application id.
      *
+     * @param   applicationId the application id
+     * @return  the list ecf info dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="vacantEventClassFamilies/{applicationId}", method=RequestMethod.GET)
     @ResponseBody
@@ -1269,6 +1569,9 @@ public class KaaAdminController {
     /**
      * Gets all event class families by application id.
      *
+     * @param   applicationId the application id
+     * @return  the list aef map info dto
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="eventClassFamilies/{applicationId}", method=RequestMethod.GET)
     @ResponseBody
@@ -1280,6 +1583,8 @@ public class KaaAdminController {
     /**
      * Edits endpoint group to the list of all endpoint groups.
      *
+     * @param   endpointUserConfiguration the endpoint user configuration
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     @RequestMapping(value="userConfiguration", method=RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
@@ -1290,6 +1595,9 @@ public class KaaAdminController {
     /**
      * Gets the file content.
      *
+     * @param   file the file
+     * @return  the file content
+     * @throws  KaaAdminServiceException the kaa admin service exception
      */
     private byte[] getFileContent(MultipartFile file) throws KaaAdminServiceException {
         if (!file.isEmpty()) {

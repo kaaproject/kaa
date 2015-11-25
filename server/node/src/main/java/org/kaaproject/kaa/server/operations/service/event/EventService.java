@@ -67,7 +67,7 @@ public interface EventService {
      * null in serverIdList mean broadcast to all servers.
      * 
      * @param routeInfos
-     *            Collection<RouteInfo>
+     *            Collection of type RouteInfo
      * @param serverIdList
      *            list of operations servers in thriftHost:thriftPort format.
      */
@@ -103,14 +103,14 @@ public interface EventService {
      * which includes RouteInfo,UserRouteInfo and Event messages
      * 
      * @param messages
-     *            List<EventMessage>
+     *            List of type EventMessage
      */
     void sendEventMessage(List<Message> messages);
 
     /**
      * Used to set ZooKepper node.
      * 
-     * @param operationsNode
+     * @param operationsNode the operations node
      */
     void setZkNode(OperationsNode operationsNode);
 
@@ -125,15 +125,15 @@ public interface EventService {
     /**
      * Sends routing information about endpoint to global user actor
      * 
-     * @param route
+     * @param route the route
      */
     void sendEndpointRouteInfo(GlobalRouteInfo route);
 
     /**
      * Sends configuration update information to specific endpoint actor;
      * 
-     * @param serverId
-     * @param update
+     * @param serverId the server id
+     * @param update the update
      */
     void sendEndpointStateInfo(String serverId, EndpointUserConfigurationUpdate update);
 
@@ -149,7 +149,7 @@ public interface EventService {
 
     /**
      * Returns id of the node that should contain global user actor
-     * @param userId
+     * @param userId the user id
      * @return id of the global user actor node
      */
     String getUserNode(String userId);

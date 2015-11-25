@@ -89,6 +89,7 @@ public class MemBucket {
     /**
      * Shrinks current bucket to the newSize
      * @param newSize expected max size of a bucket inclusively
+     * @param newCount the new count
      * @return removed from the bucket records
      */
     public List<LogRecord> shrinkToSize(long newSize, int newCount) {

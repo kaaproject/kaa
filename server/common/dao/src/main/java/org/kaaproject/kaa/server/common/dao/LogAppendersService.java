@@ -24,32 +24,32 @@ import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 public interface LogAppendersService {
 
     /**
-     * @param appId
-     * @return
+     * @param   appId the app id
+     * @return  the list log appender dto
      */
     List<LogAppenderDto> findAllAppendersByAppId(String appId);
 
     /**
-     * @param appId
-     * @param schemaVersion
-     * @return
+     * @param   appId           the app id
+     * @param   schemaVersion   the schema version
+     * @return  the list log appender dto
      */
     List<LogAppenderDto> findLogAppendersByAppIdAndSchemaVersion(String appId, int schemaVersion);
 
     /**
-     * @param id
+     * @param id the id
      */
     void removeLogAppenderById(String id);
 
     /**
-     * @param id
-     * @return
+     * @param   id the id
+     * @return  the log appender dto
      */
     LogAppenderDto findLogAppenderById(String id);
 
     /**
-     * @param logAppenderDto
-     * @return
+     * @param   logAppenderDto the log appender dto
+     * @return  the log appender dto
      */
     LogAppenderDto saveLogAppender(LogAppenderDto logAppenderDto);
 

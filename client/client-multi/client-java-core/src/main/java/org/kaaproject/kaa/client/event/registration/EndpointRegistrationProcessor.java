@@ -65,13 +65,16 @@ public interface EndpointRegistrationProcessor {
     /**
      * Updates the manager's state.
      *
-     * @param attachResponses the list of attach responses.
-     * @param detachResponses the list of detach responses.
-     * @param userResponse the user attach response.
+     * @param   attachResponses         the list of attach responses.
+     * @param   detachResponses         the list of detach responses.
+     * @param   userResponse            the user attach response.
+     * @param   userAttachNotification  the user attach notification
+     * @param   userDetachNotification  the user detach notification
      *
-     * @see EndpointAttachResponse
-     * @see EndpointDetachResponse
-     * @see UserAttachResponse
+     * @throws  IOException the io exception
+     * @see     EndpointAttachResponse
+     * @see     EndpointDetachResponse
+     * @see     UserAttachResponse
      */
     void onUpdate(List<EndpointAttachResponse> attachResponses,
             List<EndpointDetachResponse> detachResponses,

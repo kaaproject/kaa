@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Andrew Shvayka
  *
- * @param <T>
+ * @param <T> the type T
  */
 public class KaaFlumeEventReader<T extends SpecificRecordBase> {
     private static final Logger LOG = LoggerFactory.getLogger(KaaFlumeEventReader.class);

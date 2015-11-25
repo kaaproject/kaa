@@ -40,9 +40,8 @@ public class ApplicationUserVerifierActor extends UntypedActor {
     /**
      * Instantiates a new application log actor.
      *
-     * @param endpointUserService
-     *
-     *            the log appender service
+     * @param context           the context
+     * @param applicationToken  the application token
      */
     private ApplicationUserVerifierActor(AkkaContext context, String applicationToken) {
         this.applicationId = context.getApplicationService().findAppByApplicationToken(applicationToken).getId();
@@ -65,8 +64,8 @@ public class ApplicationUserVerifierActor extends UntypedActor {
         /**
          * Instantiates a new actor creator.
          *
-         * @param logAppenderService
-         *            the log appender service
+         * @param context           the context
+         * @param applicationToken  the application token
          */
         public ActorCreator(AkkaContext context, String applicationToken) {
             super();

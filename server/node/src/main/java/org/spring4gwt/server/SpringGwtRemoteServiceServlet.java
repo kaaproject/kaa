@@ -83,7 +83,7 @@ public class SpringGwtRemoteServiceServlet extends RemoteServiceServlet {
 	 * request ending in /myService will be handled by bean with name
 	 * "myService".
 	 * 
-	 * @param request
+	 * @param  request the request
 	 * @return handler bean
 	 */
 	protected Object getBean(HttpServletRequest request) {
@@ -101,7 +101,7 @@ public class SpringGwtRemoteServiceServlet extends RemoteServiceServlet {
 	/**
 	 * Parse the service name from the request URL.
 	 * 
-	 * @param request
+	 * @param  request the request
 	 * @return bean name
 	 */
 	protected String getService(HttpServletRequest request) {

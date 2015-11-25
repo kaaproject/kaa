@@ -18,6 +18,7 @@ package org.kaaproject.kaa.server.control.service.loadmgmt.dynamicmgmt;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -62,7 +63,7 @@ public class EndpointCountRebalancer implements Rebalancer {
 
     @Override
     public Map<Integer, List<RedirectionRule>> recalculate(Map<Integer, OperationsServerLoadHistory> opsServerLoadHistory) {
-        Map<Integer, List<RedirectionRule>> result = new HashMap<Integer, List<RedirectionRule>>();
+        Map<Integer, List<RedirectionRule>> result = new HashMap<>();
         if (opsServerLoadHistory.size() == 0) {
             LOG.debug("No ops server load history yet");
             return result;
@@ -73,7 +74,7 @@ public class EndpointCountRebalancer implements Rebalancer {
         }
         for(Entry<Integer, OperationsServerLoadHistory> accessPointHistory : opsServerLoadHistory.entrySet()){
             LOG.debug("Access point: {} has {} history items", accessPointHistory.getKey(), accessPointHistory.getValue().getHistory().size());
-            for(OperationsServerLoad load : accessPointHistory.getValue().getHistory()){
+            for (OperationsServerLoad load : accessPointHistory.getValue().getHistory()) {
                 LOG.debug("History: {}", load);
             }
         }
@@ -106,7 +107,7 @@ public class EndpointCountRebalancer implements Rebalancer {
                 LOG.debug("No redirection rules for {}", targetLoad);
                 continue;
             }
-            List<RedirectionRule> redirectionRules = new ArrayList<RedirectionRule>();
+            List<RedirectionRule> redirectionRules = new ArrayList<>();
             for (Entry<Integer, Double> targetWeight : weights.entrySet()) {
                 if (targetWeight.getValue() < 0) {
                     continue;
@@ -127,7 +128,7 @@ public class EndpointCountRebalancer implements Rebalancer {
     }
 
     private Map<Integer, Double> calculateWeights(Map<Integer, OperationsServerLoadHistory> opsServerLoadHistory, int targetLoad) {
-        Map<Integer, Double> weights = new HashMap<Integer, Double>();
+        Map<Integer, Double> weights = new LinkedHashMap<>();
 
         double totalPosWeight = 0;
         double totalNegWeight = 0;

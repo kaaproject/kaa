@@ -36,7 +36,6 @@ import org.kaaproject.kaa.schema.base.Log;
  * @see LogStorage
  * @see LogStorageStatus
  * @see LogUploadStrategy
- * @see LogUploadConfiguration
  */
 @Generated("LogCollector.java.template")
 public interface LogCollector extends GenericLogCollector{

@@ -500,9 +500,10 @@ public interface ControlService {
     /**
      * Generate sdk.
      *
-     * @param sdkProperties the sdk properties
-     * @return the file data
-     * @throws ControlServiceException the control service exception
+     * @param   sdkProperties   the sdk properties
+     * @param   platform        the platform
+     * @return  the file data
+     * @throws  ControlServiceException the control service exception
      */
     FileData generateSdk(SdkProfileDto sdkProperties, SdkPlatform platform) throws ControlServiceException;
     
@@ -1009,47 +1010,47 @@ public interface ControlService {
      *
      * @param sdkProfileId sdk profile id
      * @return the SdkProfileDto
-     * @throws ControlServiceException
+     * @throws ControlServiceException the control service exception
      */
     SdkProfileDto getSdkProfile(String sdkProfileId) throws ControlServiceException;
 
     /**
      *
-     * @param applicationId
-     * @return
-     * @throws ControlServiceException
+     * @param   applicationId the application id
+     * @return  the list sdk profile dto
+     * @throws  ControlServiceException the control service exception
      */
     List<SdkProfileDto> getSdkProfilesByApplicationId(String applicationId)  throws ControlServiceException ;
 
     /**
      *
-     * @param sdkProfileId
-     * @throws ControlServiceException
+     * @param   sdkProfileId the sdk profile id
+     * @throws  ControlServiceException the control service exception
      */
     void deleteSdkProfile(String sdkProfileId)  throws ControlServiceException ;
 
     /**
      *
-     * @param token
-     * @return
-     * @throws ControlServiceException
+     * @param   token the token
+     * @return  boolean the sdk profile usage
+     * @throws  ControlServiceException the control service exception
      */
     boolean isSdkProfileUsed(String token)  throws ControlServiceException ;
 
     /**
      *
-     * @param sdkProfile
-     * @return saved SdkProfileDto object.
-     * @throws ControlServiceException
+     * @param   sdkProfile the sdk profile
+     * @return  saved SdkProfileDto object.
+     * @throws  ControlServiceException the control service exception
      */
     SdkProfileDto saveSdkProfile(SdkProfileDto sdkProfile)  throws ControlServiceException ;
 
     /**
      * Gets endpoint profile view for web ui.
      *
-     * @param endpointProfileKeyHash the endpoint key hash in string representation.
-     * @return the EndpointProfileViewDto object
-     * @throws ControlServiceException the control service exception.
+     * @param   endpointProfileKeyHash the endpoint key hash in string representation.
+     * @return  the EndpointProfileViewDto object
+     * @throws  ControlServiceException the control service exception.
      */
     EndpointProfileViewDto getEndpointProfileViewDtoByEndpointKeyHash(String endpointProfileKeyHash) throws ControlServiceException;
 }

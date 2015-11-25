@@ -63,6 +63,7 @@ public class Disconnect extends MqttFrame {
 
     /**
      * Default constructor.
+     * @param reason the reason
      */
     public Disconnect(DisconnectReason reason) {
         setMessageType(MessageType.DISCONNECT);

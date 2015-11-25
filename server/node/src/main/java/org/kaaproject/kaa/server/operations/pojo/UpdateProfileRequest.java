@@ -52,6 +52,8 @@ public class UpdateProfileRequest {
      *            the app token
      * @param endpointKeyHash
      *            the endpoint key hash
+     * @param accessToken
+     *            the access token
      * @param profile
      *            the profile
      * @param sdkToken

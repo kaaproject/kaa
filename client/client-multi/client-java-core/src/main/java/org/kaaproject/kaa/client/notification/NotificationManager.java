@@ -33,7 +33,6 @@ import org.kaaproject.kaa.common.endpoint.gen.Topic;
  * @author Yaroslav Zeygerman
  * @author Denis Kimcherenko
  *
- * @see AbstractNotificationListener
  * @see NotificationTopicListListener
  * @see NotificationListenerInfo
  *
@@ -82,8 +81,6 @@ public interface NotificationManager {
      *
      * @param listener
      *            Listener to receive notifications
-     *
-     * @see AbstractNotificationListener
      */
     void addNotificationListener(NotificationListener listener);
 
@@ -104,8 +101,6 @@ public interface NotificationManager {
      *
      * @throws UnavailableTopicException
      *             Throw if unknown topic id is provided.
-     *
-     * @see AbstractNotificationListener
      */
     void addNotificationListener(String topicId, NotificationListener listener) throws UnavailableTopicException;
 
@@ -117,8 +112,6 @@ public interface NotificationManager {
      *
      * @param listener
      *            Listener to receive notifications
-     *
-     * @see AbstractNotificationListener
      */
     void removeNotificationListener(NotificationListener listener);
 
@@ -139,8 +132,6 @@ public interface NotificationManager {
      *
      * @throws UnavailableTopicException
      *             Throw if unknown topic id is provided.
-     *
-     * @see AbstractNotificationListener
      */
     void removeNotificationListener(String topicId, NotificationListener listener) throws UnavailableTopicException;
 

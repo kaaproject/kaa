@@ -21,9 +21,6 @@ import java.io.IOException;
 /**
  * <p>Interface for the profile manager.</p>
  *
- * <p>Responsible for the management of the user-defined profile container
- * ({@link AbstractProfileContainer})</p>
- *
  * <p>Profile manager is used to track any profile updates.
  * If no container is set, Kaa won't be able to process these updates.</p>
  *
@@ -61,8 +58,6 @@ import java.io.IOException;
  * @author Yaroslav Zeygerman
  * @author Andrew Shvayka
  *
- * @see AbstractProfileContainer
- * @see SerializedProfileContainer
  */
 public interface ProfileManager {
 
@@ -70,7 +65,6 @@ public interface ProfileManager {
      * Sets profile container implemented by the user.
      *
      * @param container User-defined container
-     * @see AbstractProfileContainer
      *
      */
     void setProfileContainer(ProfileContainer container);
@@ -79,6 +73,7 @@ public interface ProfileManager {
      * Retrieves serialized profile
      *
      * @return serialized profile data
+     * @throws IOException the io exception
      *
      */
     byte[] getSerializedProfile() throws IOException;

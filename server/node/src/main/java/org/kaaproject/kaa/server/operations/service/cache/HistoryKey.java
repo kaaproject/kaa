@@ -52,6 +52,7 @@ public final class HistoryKey implements Serializable{
      * Instantiates a new history key.
      *
      * @param appToken the app token
+     * @param historySubject the history subject
      * @param oldSeqNumber the old seq number
      * @param newSeqNumber the new seq number
      * @param confSchemaVersion the conf schema version

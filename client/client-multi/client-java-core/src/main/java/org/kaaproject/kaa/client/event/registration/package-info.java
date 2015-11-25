@@ -23,11 +23,9 @@
  *  gives API to manage endpoint-to-user attachments.<br>
  *  <br>
  *  In scope of this java endpoint sdk provides next functionality:
- *  <il>
- *      <li>Attach current endpoint to user entity;</li>
- *      <li>Attach other endpoint to user entity;</li>
- *      <li>Detach endpoint from user entity.</li>
- *  </il>
+ *      Attach current endpoint to user entity;
+ *      Attach other endpoint to user entity;
+ *      Detach endpoint from user entity.
  *  <br>
  *  If endpoint is assumed to be attached or detached by another application it
  *  is possible to set up callback for notifications when this endpoint becomes 
@@ -62,13 +60,12 @@
  * }
  * </pre>
  * EndpointKeyHash for endpoint can be received with AttachEndpoint operation
- * provided from Operations server. See {@link org.kaaproject.kaa.client.event.registration.EndpointOperationCallback}. <br>
+ * provided from Operations server. <br>
  * <br>
  * If current endpoint is assumed to be attached or detached by another endpoint,
  * specific {@link org.kaaproject.kaa.client.event.registration.AttachEndpointToUserCallback} and {@link org.kaaproject.kaa.client.event.registration.DetachEndpointFromUserCallback}
  * may be specified to receive notification about such event.<br>
  * <br>
- * </p>
  */
 package org.kaaproject.kaa.client.event.registration;
 

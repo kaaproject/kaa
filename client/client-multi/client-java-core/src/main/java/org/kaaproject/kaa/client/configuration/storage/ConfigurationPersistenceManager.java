@@ -36,8 +36,9 @@ public interface ConfigurationPersistenceManager {
     /**
      * Provide storage object which is able to persist encoded configuration data.
      *
-     * @param storage Object which will save and load configuration data
-     * @see ConfigurationStorage
+     * @param   storage Object which will save and load configuration data
+     * @throws  IOException the io exception
+     * @see     ConfigurationStorage
      */
     void setConfigurationStorage(ConfigurationStorage storage) throws IOException;
 

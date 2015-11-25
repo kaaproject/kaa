@@ -36,7 +36,6 @@ package org.kaaproject.kaa.client.logging;
  * @see LogStorage
  * @see LogStorageStatus
  * @see LogUploadStrategy
- * @see LogUploadConfiguration
  */
 public interface GenericLogCollector {
     /**

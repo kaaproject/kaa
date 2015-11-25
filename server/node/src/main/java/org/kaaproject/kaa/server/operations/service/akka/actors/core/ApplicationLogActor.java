@@ -41,9 +41,8 @@ public class ApplicationLogActor extends UntypedActor {
     /**
      * Instantiates a new application log actor.
      *
-     * @param logAppenderService
-     *
-     *            the log appender service
+     * @param context           the context
+     * @param applicationToken  the application token
      */
     private ApplicationLogActor(AkkaContext context, String applicationToken) {
         this.applicationToken = applicationToken;
@@ -66,8 +65,8 @@ public class ApplicationLogActor extends UntypedActor {
         /**
          * Instantiates a new actor creator.
          *
-         * @param logAppenderService
-         *            the log appender service
+         * @param context           the context
+         * @param applicationToken  the application token
          */
         public ActorCreator(AkkaContext context, String applicationToken) {
             super();

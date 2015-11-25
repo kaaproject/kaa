@@ -622,9 +622,10 @@ public class JavaSdkGenerator extends SdkGenerator {
     /**
      * Generate schema class.
      *
-     * @param schema the schema
-     * @return the list
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @param   schema          the schema
+     * @param   uniqueSchemas   the unique schemas
+     * @return  the list
+     * @throws  IOException Signals that an I/O exception has occurred.
      */
     public static List<JavaDynamicBean> generateSchemaSources(Schema schema, Map<String, Schema> uniqueSchemas) throws IOException {
         SpecificCompiler compiler = new SpecificCompiler(schema);

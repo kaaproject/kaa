@@ -82,8 +82,8 @@ public abstract class AbstractLogAppender<T extends SpecificRecordBase> implemen
     /**
      * Change parameters of log appender.
      * 
-     * @param appender
-     *            the appender
+     * @param appender      the appender
+     * @param configuration the configuration
      */
 
     protected abstract void initFromConfiguration(LogAppenderDto appender, T configuration);
@@ -188,6 +188,7 @@ public abstract class AbstractLogAppender<T extends SpecificRecordBase> implemen
      * @param header
      *            the header
      * @return the list
+     * @throws IOException the io exception
      */
     protected List<LogEventDto> generateLogEvent(LogEventPack logEventPack, RecordHeader header) throws IOException {
         LOG.debug("Generate LogEventDto objects from LogEventPack [{}] and header [{}]", logEventPack, header);
