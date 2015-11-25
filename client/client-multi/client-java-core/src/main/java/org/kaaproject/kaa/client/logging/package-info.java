@@ -60,7 +60,7 @@
  * }
  * </pre>
  *
- * <h5>Add new log record</h5>
+ * <h3>Add new log record</h3>
  * <pre>
  * {@code
  * // Get a Log Collector reference
@@ -72,17 +72,15 @@
  * }
  * </pre>
  *
- * <h5>Logging components</h5>
+ * <h3>Logging components</h3>
  *
  * <p>Kaa SDK logging stuff is based on three main components - log storage
  * ({@link org.kaaproject.kaa.client.logging.LogStorage},
  * {@link org.kaaproject.kaa.client.logging.LogStorageStatus}), upload strategy
- * ({@link org.kaaproject.kaa.client.logging.LogUploadStrategy}) and configuration
- * ({@link org.kaaproject.kaa.client.logging.LogUploadConfiguration}). For each
+ * ({@link org.kaaproject.kaa.client.logging.LogUploadStrategy}) and configuration.
+ * For each
  * of these components there is a reference implementation using by defaults
- * ({@link org.kaaproject.kaa.client.logging.MemoryLogStorage},
  * {@link org.kaaproject.kaa.client.logging.DefaultLogUploadStrategy},
- * {@link org.kaaproject.kaa.client.logging.DefaultLogUploadConfiguration}
  * correspondingly).</p>
  *
  * <p>The log storage is responsible for a log persistence.<b>The reference
@@ -96,14 +94,11 @@
  * <p>The configuration is used to define all limitations that affects
  * on a log collection stuff. The reference implementation works with three
  * parameters: batch volume (8KB), threshold volume (32KB) and maximum allowed
- * volume (1MB). More details about them see in
- * {@link org.kaaproject.kaa.client.logging.LogUploadConfiguration}.</p>
+ * volume (1MB).</p>
  *
  * <p>If there are need in some specific triggers for upload or you want to use
  * more reliable storage, simply set your own implementation for interested
  * component ({@link org.kaaproject.kaa.client.logging.LogCollector#setStorage(LogStorage)},
- * {@link org.kaaproject.kaa.client.logging.LogCollector#setStorageStatus(LogStorageStatus)},
- * {@link org.kaaproject.kaa.client.logging.LogCollector#setStrategy(LogUploadStrategy)},
- * {@link org.kaaproject.kaa.client.logging.LogCollector#setConfiguration(LogUploadConfiguration)}).</p>
+ * {@link org.kaaproject.kaa.client.logging.LogCollector#setStrategy(LogUploadStrategy)}.</p>
  */
 package org.kaaproject.kaa.client.logging;

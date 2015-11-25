@@ -38,6 +38,7 @@ import org.kaaproject.kaa.common.dto.admin.RecordKey.RecordFiles;
 import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
 import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
+import org.kaaproject.kaa.common.dto.admin.SdkProfileViewDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
@@ -1236,6 +1237,14 @@ public class DataSource {
         rpcService.getSdkProfile(sdkProfileId, new DataCallback<SdkProfileDto>(callback) {
             @Override
             protected void onResult(SdkProfileDto result) {
+            }
+        });
+    }
+
+    public void getSdkProfileView(String sdkProfileId, final AsyncCallback<SdkProfileViewDto> callback) {
+        rpcService.getSdkProfileView(sdkProfileId, new DataCallback<SdkProfileViewDto>(callback) {
+            @Override
+            protected void onResult(SdkProfileViewDto result) {
             }
         });
     }

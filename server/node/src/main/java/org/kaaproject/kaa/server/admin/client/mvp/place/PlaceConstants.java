@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,4 +34,5 @@ public interface PlaceConstants {
     public static final String SHOW_ACTIVE = "active";
     public static final String RANDOM = "random";
     public static final String PLUGIN_ID = "pluginId";
+    public static final String SDK_ID = "sdkId";
 }

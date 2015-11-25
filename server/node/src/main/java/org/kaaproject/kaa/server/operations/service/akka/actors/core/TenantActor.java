@@ -107,11 +107,8 @@ public class TenantActor extends UntypedActor {
         /**
          * Instantiates a new actor creator.
          *
-         * @param endpointService
-         *            the endpoint service
-         * @param notificationDeltaService
-         *            the notification delta service
-         * @param eventService
+         * @param context the context
+         * @param tenantId the tenant id
          */
         public ActorCreator(AkkaContext context, String tenantId) {
             super();

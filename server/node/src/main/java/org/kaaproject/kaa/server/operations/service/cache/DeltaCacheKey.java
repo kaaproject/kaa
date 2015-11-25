@@ -56,6 +56,8 @@ public final class DeltaCacheKey implements Serializable {
      *            the app config version key
      * @param endpointGroups
      *            the endpoint groups
+     * @param userConfHash
+     *            the user conf hash
      * @param endpointConfHash
      *            the endpoint conf hash
      */
@@ -71,6 +73,8 @@ public final class DeltaCacheKey implements Serializable {
      *            the app config version key
      * @param endpointGroups
      *            the endpoint groups
+     * @param userConfHash
+     *            the user conf hash
      * @param endpointConfHash
      *            the endpoint conf hash
      * @param resyncOnly

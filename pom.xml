@@ -142,10 +142,6 @@ Copyright 2014-2015 CyberVision, Inc.
             <activation>
                 <jdk>1.8</jdk>
             </activation>
-            <properties>
-                <!-- Temporary fix for javadoc issue in Java 8 -->
-                <additionalparam>-Xdoclint:none</additionalparam>
-            </properties>
         </profile>
         <profile>
             <id>jenkins</id>
@@ -311,7 +307,10 @@ Copyright 2014-2015 CyberVision, Inc.
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <version>2.9.1</version>
                     <configuration>
-                        <detectOfflineLinks>false</detectOfflineLinks>
+                        <detectOfflineLinks>true</detectOfflineLinks>
+                        <excludePackageNames>
+                            *.gen.*;org.kaaproject.kaa.server.admin.client.i18n
+                        </excludePackageNames>
                     </configuration>
                     <executions>
                         <execution>
@@ -331,7 +330,7 @@ Copyright 2014-2015 CyberVision, Inc.
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-failsafe-plugin</artifactId>
                     <version>2.18</version>
-                </plugin>                
+                </plugin>
                 <!--This plugin's configuration is used to store Eclipse 
                     m2e settings only. It has no influence on the Maven build itself. -->
                 <plugin>

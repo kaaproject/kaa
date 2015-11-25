@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,6 +53,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointProfilesView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.HeaderView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.LogAppenderView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.NavigationView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.SdkProfileView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.SendNotificationView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.TenantView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.TopicView;
@@ -87,6 +88,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.profile.ProfileFilterView
 import org.kaaproject.kaa.server.admin.client.mvp.view.profile.ProfileSchemaViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.profile.ProfileSchemasViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.sdk.AddSdkProfileViewImpl;
+import org.kaaproject.kaa.server.admin.client.mvp.view.sdk.SdkProfileViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.sdk.SdkProfilesViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.settings.GeneralPropertiesViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.settings.MailPropertiesViewImpl;
@@ -125,6 +127,7 @@ public class ClientFactoryImpl implements ClientFactory {
     private final ApplicationView applicationView = new ApplicationViewImpl(false, KaaAdmin.checkAuthorities(KaaAuthorityDto.TENANT_ADMIN));
 
     private final BaseListView<SdkProfileDto> sdkProfilesView = new SdkProfilesViewImpl();
+    private final SdkProfileView sdkProfileView = new SdkProfileViewImpl();
     private final AddSdkProfileView generateSdkView = new AddSdkProfileViewImpl();
 
     private final BaseListView<UserDto> usersView = new UsersViewImpl();
@@ -257,6 +260,11 @@ public class ClientFactoryImpl implements ClientFactory {
     @Override
     public BaseListView<SdkProfileDto> getSdkProfilesView() {
         return sdkProfilesView;
+    }
+
+    @Override
+    public SdkProfileView getSdkProfileView() {
+        return sdkProfileView;
     }
 
     @Override

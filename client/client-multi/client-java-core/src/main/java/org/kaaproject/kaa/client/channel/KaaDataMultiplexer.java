@@ -31,11 +31,12 @@ public interface KaaDataMultiplexer {
 
     /**
      * Compiles request for given sync task.
-     *     * 
-     * @return the serialized request data.
+     *
+     * @param   task the sync task 
+     * @return  the serialized request data.
+     * @throws  Exception the exception
      *
      * @see ChannelSyncTask
-     *
      */
     byte[] compileRequest(ChannelSyncTask task) throws Exception;
 

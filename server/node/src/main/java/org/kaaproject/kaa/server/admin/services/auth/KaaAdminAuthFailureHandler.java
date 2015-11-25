@@ -88,6 +88,8 @@ public class KaaAdminAuthFailureHandler implements AuthenticationFailureHandler 
      * If {@code forwardToDestination} is set to true, request scope will be used, otherwise it will attempt to store
      * the exception in the session. If there is no session and {@code allowSessionCreation} is {@code true} a session
      * will be created. Otherwise the exception will not be stored.
+     * @param request   the request
+     * @param exception the exception
      */
     protected final void saveException(HttpServletRequest request, AuthenticationException exception) {
 
@@ -111,6 +113,7 @@ public class KaaAdminAuthFailureHandler implements AuthenticationFailureHandler 
     /**
      * If set to <tt>true</tt>, performs a forward to the failure destination URL instead of a redirect. Defaults to
      * <tt>false</tt>.
+     * @param forwardToDestination the forward to destination
      */
     public void setUseForward(boolean forwardToDestination) {
         this.forwardToDestination = forwardToDestination;
@@ -118,6 +121,7 @@ public class KaaAdminAuthFailureHandler implements AuthenticationFailureHandler 
 
     /**
      * Allows overriding of the behaviour when redirecting to a target URL.
+     * @param redirectStrategy the redirect strategy
      */
     public void setRedirectStrategy(RedirectStrategy redirectStrategy) {
         this.redirectStrategy = redirectStrategy;

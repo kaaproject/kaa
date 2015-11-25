@@ -250,8 +250,6 @@ public class SyncContext {
     /**
      * Require immediate reply.
      *
-     * @param response
-     *            the response
      * @return true, if successful
      */
     public boolean requireImmediateReply() {

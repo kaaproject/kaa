@@ -53,10 +53,9 @@ public class GetDeltaRequest {
     /**
      * Instantiates a new delta request.
      *
-     * @param applicationToken
-     *            the application token
-     * @param sequenceNumber
-     *            the sequence number
+     * @param applicationToken  the application token
+     * @param sequenceNumber    the sequence number
+     * @param resyncOnly        the resyncOnly
      */
     public GetDeltaRequest(String applicationToken, int sequenceNumber, boolean resyncOnly) {
         this(applicationToken, null, sequenceNumber, resyncOnly);
@@ -91,12 +90,10 @@ public class GetDeltaRequest {
     /**
      * Instantiates a new delta request.
      *
-     * @param applicationToken
-     *            the application token
-     * @param configurationHash
-     *            the configuration hash
-     * @param sequenceNumber
-     *            the sequence number
+     * @param applicationToken  the application token
+     * @param configurationHash the configuration hash
+     * @param sequenceNumber    the sequence number
+     * @param resyncOnly        the resyn only
      */
     public GetDeltaRequest(String applicationToken, EndpointObjectHash configurationHash, int sequenceNumber, boolean resyncOnly) {
         this(applicationToken, configurationHash, sequenceNumber, false, resyncOnly);
@@ -107,16 +104,14 @@ public class GetDeltaRequest {
      *
      * @param applicationToken
      *            the application token
-     * @param endpointKeyHash
-     *            the endpoint key hash
-     * @param profileHash
-     *            the profile hash
      * @param configurationHash
      *            the configuration hash
      * @param sequenceNumber
      *            the sequence number
      * @param fetchSchema
      *            the fetch schema
+     * @param resyncOnly
+     *            the resync only
      */
     public GetDeltaRequest(String applicationToken, EndpointObjectHash configurationHash, int sequenceNumber, boolean fetchSchema,
             boolean resyncOnly) {

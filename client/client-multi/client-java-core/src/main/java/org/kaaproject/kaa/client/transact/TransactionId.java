@@ -34,6 +34,7 @@ public final class TransactionId {
 
     /**
      * Copy constructor. Copies id from other TransactionId object.
+     * @param trxId the trx id
      */
     public TransactionId(TransactionId trxId) {
         this.id = trxId.id;
@@ -41,6 +42,7 @@ public final class TransactionId {
 
     /**
      * Constructs object with predefined id.
+     * @param id the id
      */
     public TransactionId(String id) {
         this.id = id;

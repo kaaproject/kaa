@@ -29,6 +29,7 @@ public interface ConfigurationHashContainer {
     /**
      * Retrieves configuration data hash.
      *
+     * @return EndpointObjectHash the endpoint object hash
      * @see EndpointObjectHash
      *
      */

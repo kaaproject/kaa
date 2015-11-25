@@ -50,6 +50,7 @@ public class DeltaCacheEntry implements Serializable {
      * @param configuration the configuration
      * @param delta the delta
      * @param hash the hash
+     * @param userConfigurationHash  the user configuration hash
      */
     public DeltaCacheEntry(byte[] configuration, RawBinaryDelta delta, EndpointObjectHash hash, EndpointObjectHash userConfigurationHash) {
         super();

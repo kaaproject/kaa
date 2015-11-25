@@ -64,7 +64,7 @@ public class OperationsServerLoadHistory {
         /**
          * Sets the registered users count.
          *
-         * @param registeredUsersCount the registeredUsersCount to set
+         * @param loadInfo the load info to set
          */
         public void setLoadInfo(LoadInfo loadInfo) {
             this.loadInfo = loadInfo;
@@ -79,9 +79,7 @@ public class OperationsServerLoadHistory {
     /**
      * Adds the Operations server load to the history
      *
-     * @param registeredUsersCount the registered users count
-     * @param processedRequestCount the processed request count
-     * @param deltaCalculationCount the delta calculation count
+     * @param load the load
      */
     public void addOpsServerLoad(LoadInfo load) {
         removeOldHistory();

@@ -25,6 +25,7 @@ public class GUID {
      *
      * @param len
      *            the desired number of characters
+     * @return the string
      */
     public static String get(int len) {
         return get(len, CHARS.length);
@@ -41,8 +42,8 @@ public class GUID {
      * @param len
      *            the desired number of characters
      * @param radix
-     *            the number of allowable values for each character (must be <=
-     *            62)
+     *            the number of allowable values for each character (must be equals or grater than 62)
+     * @return the strign
      */
     public static String get(int len, int radix) {
         if (radix > CHARS.length) {
@@ -59,6 +60,7 @@ public class GUID {
     /**
      * Generate a RFC4122, version 4 ID. Example:
      * "92329D39-6F5C-4520-ABFC-AAB64544E172"
+     * @return the string
      */
     public static String get() {
         char[] uuid = new char[36];

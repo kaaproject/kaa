@@ -38,7 +38,7 @@ public interface AkkaService extends MessageHandler {
     /**
      * On redirection rule set
      * 
-     * @param redirectionRule
+     * @param redirectionRule the redirection rule
      */
     void onRedirectionRule(RedirectionRule redirectionRule);
 

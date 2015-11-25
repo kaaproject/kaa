@@ -254,7 +254,7 @@ public interface GenericKaaClient {
      *            Id of a optional topic.
      * @param forceSync
      *            Define whether current subscription update should be accepted
-     *            immediately (see {@link #sync()}).
+     *            immediately.
      *
      * @throws UnavailableTopicException
      *             Throw if unknown topic id is provided or topic isn't
@@ -289,7 +289,7 @@ public interface GenericKaaClient {
      *            List of optional topic id.
      * @param forceSync
      *            Define whether current subscription update should be accepted
-     *            immediately (see {@link #sync()}).
+     *            immediately.
      *
      * @throws UnavailableTopicException
      *             Throw if unknown topic id is provided or topic isn't
@@ -330,7 +330,7 @@ public interface GenericKaaClient {
      *            Id of a optional topic.
      * @param forceSync
      *            Define whether current subscription update should be accepted
-     *            immediately (see {@link #sync()}).
+     *            immediately.
      *
      * @throws UnavailableTopicException
      *             Throw if unknown topic id is provided or topic isn't
@@ -373,7 +373,7 @@ public interface GenericKaaClient {
      *            List of optional topic id.
      * @param forceSync
      *            Define whether current subscription update should be accepted
-     *            immediately (see {@link #sync()}).
+     *            immediately.
      *
      * @throws UnavailableTopicException
      *             Throw if unknown topic id is provided or topic isn't
@@ -443,8 +443,6 @@ public interface GenericKaaClient {
      *
      * @param eventFQNs     List of event class FQNs which have to be supported by endpoint.
      * @param listener      Result listener {@link FindEventListenersCallback}}
-     *
-     * @return Request ID of submitted request
      */
     void findEventListeners(List<String> eventFQNs, FindEventListenersCallback listener);
 
@@ -500,41 +498,44 @@ public interface GenericKaaClient {
 
     /**
      * Set new access token for a current endpoint
+     * @param token the token
      */
     void setEndpointAccessToken(String token);
 
     /**
      * Generate new access token for a current endpoint
+     * @return String containing new endpoint access token
      */
     String refreshEndpointAccessToken();
 
     /**
      * Retrieve an access token for a current endpoint
+     * @return String containing current endpoint access token
      */
     String getEndpointAccessToken();
 
     /**
      * Updates with new endpoint attach request<br>
      * <br>
-     * {@link org.kaaproject.kaa.client.event.registration.OnAttachEndpointOperationCallback} is populated with
-     * {@link org.kaaproject.kaa.client.event.EndpointKeyHash} of an attached endpoint.
+     * {@link   org.kaaproject.kaa.client.event.registration.OnAttachEndpointOperationCallback} is populated with
+     * {@link   org.kaaproject.kaa.client.event.EndpointKeyHash} of an attached endpoint.
      *
-     * @param endpointAccessToken Access token of the attaching endpoint
-     * @param resultListener Listener to notify about result of the endpoint attaching
+     * @param   endpointAccessToken Access token of the attaching endpoint
+     * @param   resultListener      Listener to notify about result of the endpoint attaching
      *
-     * @see org.kaaproject.kaa.client.event.EndpointAccessToken
-     * @see org.kaaproject.kaa.client.event.registration.OnAttachEndpointOperationCallback
+     * @see     org.kaaproject.kaa.client.event.EndpointAccessToken
+     * @see     org.kaaproject.kaa.client.event.registration.OnAttachEndpointOperationCallback
      */
     void attachEndpoint(EndpointAccessToken endpointAccessToken, OnAttachEndpointOperationCallback resultListener);
 
     /**
      * Updates with new endpoint detach request
      *
-     * @param endpointKeyHash Key hash of the detaching endpoint
-     * @param resultListener Listener to notify about result of the enpoint attaching
+     * @param   endpointKeyHash Key hash of the detaching endpoint
+     * @param   resultListener Listener to notify about result of the enpoint attaching
      *
-     * @see org.kaaproject.kaa.client.event.EndpointKeyHash
-     * @see OnDetachEndpointOperationCallback
+     * @see     org.kaaproject.kaa.client.event.EndpointKeyHash
+     * @see     OnDetachEndpointOperationCallback
      */
     void detachEndpoint(EndpointKeyHash endpointKeyHash, OnDetachEndpointOperationCallback resultListener);
 
@@ -542,9 +543,9 @@ public interface GenericKaaClient {
      * Creates user attach request using default verifier. Default verifier is selected during SDK generation.
      * If there was no default verifier selected this method will throw runtime exception.
      *
-     * @param userExternalId
-     * @param userAccessToken
-     * @param callback called when authentication result received
+     * @param userExternalId    the user external id
+     * @param userAccessToken   the user access token
+     * @param callback          called when authentication result received
      *
      * @see UserAttachCallback
      */
@@ -553,10 +554,10 @@ public interface GenericKaaClient {
     /**
      * Creates user attach request using specified verifier.
      *
-     * @param userVerifierToken
-     * @param userExternalId
-     * @param userAccessToken
-     * @param callback called when authentication result received
+     * @param userVerifierToken the user verifier token
+     * @param userExternalId    the user external id
+     * @param userAccessToken   the user access token
+     * @param callback          called when authentication result received
      *
      * @see UserAttachCallback
      */
@@ -572,18 +573,18 @@ public interface GenericKaaClient {
     /**
      * Sets callback for notifications when current endpoint is attached to user
      *
-     * @param listener
+     * @param   listener the listener
      *
-     * @see org.kaaproject.kaa.client.event.registration.AttachEndpointToUserCallback
+     * @see     org.kaaproject.kaa.client.event.registration.AttachEndpointToUserCallback
      */
     void setAttachedListener(AttachEndpointToUserCallback listener);
 
     /**
      * Sets callback for notifications when current endpoint is detached from user
      *
-     * @param listener
+     * @param   listener the listener
      *
-     * @see org.kaaproject.kaa.client.event.registration.DetachEndpointFromUserCallback
+     * @see     org.kaaproject.kaa.client.event.registration.DetachEndpointFromUserCallback
      */
     void setDetachedListener(DetachEndpointFromUserCallback listener);
 }

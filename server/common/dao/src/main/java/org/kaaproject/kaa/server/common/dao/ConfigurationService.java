@@ -185,8 +185,7 @@ public interface ConfigurationService {
      * <li>Protocol Schema</li>
      * <li>Base Data - Configuration attached to default group</li>
      * </ul>
-     * </p>
-     * After that will added information to history {@link HistoryService#saveHistory()}
+     * After that will added information to history {@link HistoryService#saveHistory(HistoryDto historyDto)}
      *
      * @param configurationSchema the configuration schema
      * @return the configuration schema dto

@@ -54,8 +54,10 @@ public class EndpointActor extends UntypedActor {
     /**
      * Instantiates a new endpoint actor.
      *
-     * @param operationsService
-     *            the operations service
+     * @param context           the context
+     * @param endpointActorKey  the endpoint actor key
+     * @param appToken          the app token
+     * @param key               the key
      */
     public EndpointActor(AkkaContext context, String endpointActorKey, String appToken, EndpointObjectHash key) {
         this.messageProcessor = new EndpointActorMessageProcessor(context, appToken, key, endpointActorKey);
@@ -84,8 +86,10 @@ public class EndpointActor extends UntypedActor {
         /**
          * Instantiates a new actor creator.
          *
-         * @param operationsService
-         *            the operations service
+         * @param context           the context
+         * @param endpointActorKey  the endpoint actor key
+         * @param appToken          the app token
+         * @param key               the key
          */
         public ActorCreator(AkkaContext context, String endpointActorKey, String appToken, EndpointObjectHash key) {
             super();

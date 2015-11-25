@@ -49,12 +49,11 @@ import org.kaaproject.kaa.common.TransportType;
  * {@link TransportType} for data transferring. For example, if there are two
  * {@link KaaDataChannel} implementations <b>ChannelA</b> and <b>ChannelB</b>
  * such as: <br>
- * <il> <li>
  * <b>ChannelA</b> is data transceiver ({@link ChannelDirection#BIDIRECTIONAL})
  * for transport types [{@link TransportType#EVENT},
- * {@link TransportType#LOGGING}];</li> <li>
+ * {@link TransportType#LOGGING}];
  * <b>ChannelB</b> is data transmitter ({@link ChannelDirection#UP}) for [
- * {@link TransportType#EVENT}].</li> <il> <br>
+ * {@link TransportType#EVENT}]. <br>
  * and they are added to {@link #addChannel(KaaDataChannel)} in the following
  * order: <br>
  * 
@@ -106,6 +105,7 @@ public interface KaaChannelManager {
      *            using the specified channel.
      * @param channel
      *            the channel to be added.
+     * @throws KaaInvalidChannelException the kaa invalid channel exception
      * @see KaaDataChannel
      *
      */
@@ -179,13 +179,13 @@ public interface KaaChannelManager {
 
     /**
      * Invoke sync on active channel by specified transport type
-     * @param type
+     * @param type the type
      */
     void sync(TransportType type);
 
     /**
      * Invoke sync acknowledgement on active channel by specified transport type
-     * @param type
+     * @param type the type
      */
     void syncAck(TransportType type);
 
@@ -203,8 +203,8 @@ public interface KaaChannelManager {
 
     /**
      * Returns information about server that is used for data transfer for specified {@link TransportType} 
-     * @param type - type that is used to identify active channel
-     * @return
+     * @param   type - type that is used to identify active channel
+     * @return  TransportConnectionInfo active server
      */
     TransportConnectionInfo getActiveServer(TransportType type);
 

@@ -26,6 +26,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
 import org.kaaproject.kaa.server.admin.client.mvp.data.SdkProfilesDataProvider;
 import org.kaaproject.kaa.server.admin.client.mvp.place.AddSdkProfilePlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.SdkProfilePlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.SdkProfilesPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseListView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.grid.KaaRowAction;
@@ -67,7 +68,7 @@ public class SdkProfilesActivity extends AbstractListActivity<SdkProfileDto, Sdk
 
     @Override
     protected Place existingEntityPlace(String id) {
-        return new SdkProfilesPlace(id);
+        return new SdkProfilePlace(applicationId, id);
     }
 
     @Override

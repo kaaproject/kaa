@@ -78,6 +78,7 @@ public interface EndpointService {
      * Remove endpoint group by id.
      *
      * @param applicationId the application id
+     * @return the change notification dto
      */
     ChangeNotificationDto removeEndpointGroupById(String applicationId);
 
@@ -206,8 +207,9 @@ public interface EndpointService {
     /**
      * Find endpoint user by id.
      *
-     * @param id the id
-     * @return the endpoint user dto
+     * @param   externalId  the external id
+     * @param   tenantId    the tenant id
+     * @return  the endpoint user dto
      */
     EndpointUserDto findEndpointUserByExternalIdAndTenantId(String externalId, String tenantId);
 

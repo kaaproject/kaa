@@ -116,14 +116,6 @@ import org.slf4j.LoggerFactory;
  * </p>
  *
  * <p>
- * Class contains abstract methods
- * {@link AbstractKaaClient#createHttpClient(String, PrivateKey, PublicKey, PublicKey)}
- * and {@link AbstractKaaClient#createPersistentStorage()} which are used to
- * reference the platform-specific implementation of http client and Kaa's state
- * persistent storage.
- * </p>
- *
- * <p>
  * Http client ({@link AbstractHttpClient}) is used to provide basic
  * communication with Bootstrap and Operation servers using HTTP protocol.
  * </p>

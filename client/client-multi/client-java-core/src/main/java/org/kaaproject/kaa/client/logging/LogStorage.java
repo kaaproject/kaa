@@ -47,7 +47,8 @@ public interface LogStorage {
      * <p>The size of retrieved log records should NOT be greater than specified
      * block size.</p>
      *
-     * @param blockSize Maximum size of sending log block
+     * @param blockSize     Maximum size of sending log block
+     * @param batchCount    the batch ciunt
      * @return New log block ({@link  LogBlock})
      */
     LogBlock getRecordBlock(long blockSize, int batchCount);

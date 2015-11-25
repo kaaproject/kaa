@@ -22,8 +22,8 @@ public final class UserTenantKey {
     private final String userId;
     private final String tenantId;
     /**
-     * @param userId2
-     * @param tenantId2
+     * @param userId    the user id
+     * @param tenantId  the user id
      */
     public UserTenantKey(String userId, String tenantId) {
         this.userId = userId;

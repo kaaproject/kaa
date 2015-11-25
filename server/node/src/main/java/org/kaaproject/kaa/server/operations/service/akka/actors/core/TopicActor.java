@@ -230,13 +230,11 @@ public class TopicActor extends UntypedActor {
     /**
      * Filter map.
      *
-     * @param pendingNotificationMap
-     *            the pending notification map
-     * @param systemNfSchemaVersion
-     *            the system nf schema version
-     * @param userNfSchemaVersion
-     *            the user nf schema version
-     * @return the list
+     * @param   pendingNotificationMap  the pending notification map
+     * @param   systemNfSchemaVersion   the system nf schema version
+     * @param   userNfSchemaVersion     the user nf schema version
+     * @param   calendar                the calendar
+     * @return  the list
      */
     public static List<NotificationDto> filterMap(SortedMap<Integer, NotificationDto> pendingNotificationMap, int systemNfSchemaVersion,
             int userNfSchemaVersion, Calendar calendar) {

@@ -102,7 +102,6 @@ public interface KaaDataChannel {
      * Retrieves info about current used server
      *
      * @return Server info
-     * @see ServerInfo
      *
      */
     TransportConnectionInfo getServer();

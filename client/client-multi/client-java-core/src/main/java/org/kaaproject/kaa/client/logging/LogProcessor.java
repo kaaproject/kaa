@@ -41,6 +41,7 @@ public interface LogProcessor {
      * Updates the state using response from the server.
      *
      * @param response the response from the remote server.
+     * @throws IOException the io exception
      *
      */
     void onLogResponse(LogSyncResponse response) throws IOException;

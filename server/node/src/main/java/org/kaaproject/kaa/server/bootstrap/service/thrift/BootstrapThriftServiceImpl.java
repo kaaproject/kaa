@@ -40,7 +40,7 @@ public class BootstrapThriftServiceImpl implements
 
     /**
      * Thrift method to receive new list of Operations servers
-     * @param operationsServersList List<ThriftOperationsServer>
+     * @param operationsServersList the list of type ThriftOperationsServer
      */
     /* (non-Javadoc)
      * @see org.kaaproject.kaa.server.common.thrift.gen.bootstrap.BootstrapThriftService.Iface#onOperationsServerListUpdate(java.util.List)

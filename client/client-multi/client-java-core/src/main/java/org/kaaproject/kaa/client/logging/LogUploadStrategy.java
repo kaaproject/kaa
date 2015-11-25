@@ -75,13 +75,14 @@ public interface LogUploadStrategy {
 
     /**
      * Handles timeout of log delivery
-     * @param controller
+     * @param controller the controller
      */
     void onTimeout(LogFailoverCommand controller);
 
     /**
      * Handles failure of log delivery
-     * @param controller
+     * @param controller the controller
+     * @param code the code
      */
     void onFailure(LogFailoverCommand controller, LogDeliveryErrorCode code);
 }

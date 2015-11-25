@@ -38,9 +38,10 @@ public class LogEventPackMessage {
 
     /**
      * Instantiates a new log event pack message.
-     * 
-     * @param logEventPack
-     *            the log event pack
+     *
+     * @param requestId     the request id
+     * @param originator    the originator
+     * @param logEventPack  the log event pack
      */
     public LogEventPackMessage(int requestId, ActorRef originator, LogEventPack logEventPack) {
         this.requestId = requestId;
