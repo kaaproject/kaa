@@ -35,6 +35,7 @@ import org.kaaproject.kaa.common.dto.PageLinkDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.SchemaDto;
+import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.StructureRecordDto;
 import org.kaaproject.kaa.common.dto.TenantAdminDto;
 import org.kaaproject.kaa.common.dto.TenantDto;
@@ -281,6 +282,33 @@ public interface ControlService {
      * @throws ControlServiceException the control service exception
      */
     ProfileSchemaDto editProfileSchema(ProfileSchemaDto profileSchema) throws ControlServiceException;
+
+    /**
+     * Gets the server profile schemas by application id.
+     *
+     * @param applicationId the application id
+     * @return the server profile schemas by application id
+     * @throws ControlServiceException
+     */
+    List<ServerProfileSchemaDto> getServerProfileSchemasByApplicationId(String applicationId) throws ControlServiceException;
+
+    /**
+     * Gets the server profile schema.
+     *
+     * @param serverProfileSchemaId the server profile schema id
+     * @return the server profile schema dto
+     * @throws ControlServiceException
+     */
+    ServerProfileSchemaDto getServerProfileSchema(String serverProfileSchemaId) throws ControlServiceException;
+
+    /**
+     * Edits the server profile schema.
+     *
+     * @param serverProfileSchema the server profile schema
+     * @return the server profile schema dto
+     * @throws ControlServiceException
+     */
+    ServerProfileSchemaDto editServerProfileSchema(ServerProfileSchemaDto serverProfileSchema) throws ControlServiceException;
 
     /**
      * Gets the endpoint groups by application id.

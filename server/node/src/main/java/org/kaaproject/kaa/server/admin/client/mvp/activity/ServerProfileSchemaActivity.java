@@ -18,22 +18,22 @@ package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.kaaproject.avro.ui.shared.RecordField;
-import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ServerProfileSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseSchemaView;
 
 public class ServerProfileSchemaActivity extends
-        AbstractSchemaActivity<ProfileSchemaDto, BaseSchemaView, ServerProfileSchemaPlace> {
+        AbstractSchemaActivity<ServerProfileSchemaDto, BaseSchemaView, ServerProfileSchemaPlace> {
 
     public ServerProfileSchemaActivity(ServerProfileSchemaPlace place, ClientFactory clientFactory) {
         super(place, clientFactory);
     }
 
     @Override
-    protected ProfileSchemaDto newSchema() {
-        return new ProfileSchemaDto();
+    protected ServerProfileSchemaDto newSchema() {
+        return new ServerProfileSchemaDto();
     }
 
     @Override
@@ -47,13 +47,13 @@ public class ServerProfileSchemaActivity extends
 
     @Override
     protected void getEntity(String id,
-                             AsyncCallback<ProfileSchemaDto> callback) {
+                             AsyncCallback<ServerProfileSchemaDto> callback) {
         KaaAdmin.getDataSource().getServerProfileSchemaForm(id, callback);
     }
 
     @Override
-    protected void editEntity(ProfileSchemaDto entity,
-                              AsyncCallback<ProfileSchemaDto> callback) {
+    protected void editEntity(ServerProfileSchemaDto entity,
+                              AsyncCallback<ServerProfileSchemaDto> callback) {
         KaaAdmin.getDataSource().editServerProfileSchemaForm(entity, callback);
     }
 

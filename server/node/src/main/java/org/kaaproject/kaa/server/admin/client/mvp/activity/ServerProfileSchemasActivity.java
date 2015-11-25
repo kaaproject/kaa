@@ -20,7 +20,7 @@ import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEvent;
-import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.admin.RecordKey;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
@@ -33,23 +33,23 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.grid.KaaRowAction;
 import org.kaaproject.kaa.server.admin.client.servlet.ServletHelper;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-public class ServerProfileSchemasActivity extends AbstractListActivity<ProfileSchemaDto, ServerProfileSchemasPlace> {
+public class ServerProfileSchemasActivity extends AbstractListActivity<ServerProfileSchemaDto, ServerProfileSchemasPlace> {
 
     private String applicationId;
 
     public ServerProfileSchemasActivity(ServerProfileSchemasPlace place, ClientFactory clientFactory) {
-        super(place, ProfileSchemaDto.class, clientFactory);
+        super(place, ServerProfileSchemaDto.class, clientFactory);
         this.applicationId = place.getApplicationId();
     }
 
     @Override
-    protected BaseListView<ProfileSchemaDto> getView() {
+    protected BaseListView<ServerProfileSchemaDto> getView() {
         return clientFactory.getServerProfileSchemasView();
     }
 
     @Override
-    protected AbstractDataProvider<ProfileSchemaDto> getDataProvider(
-            AbstractGrid<ProfileSchemaDto,?> dataGrid) {
+    protected AbstractDataProvider<ServerProfileSchemaDto> getDataProvider(
+            AbstractGrid<ServerProfileSchemaDto,?> dataGrid) {
         return new ServerProfileSchemasDataProvider(dataGrid, listView, applicationId);
     }
 

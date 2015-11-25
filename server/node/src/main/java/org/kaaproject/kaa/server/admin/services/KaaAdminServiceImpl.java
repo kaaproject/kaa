@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,6 +67,7 @@ import org.kaaproject.kaa.common.dto.PageLinkDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.SchemaDto;
+import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.StructureRecordDto;
 import org.kaaproject.kaa.common.dto.TenantAdminDto;
 import org.kaaproject.kaa.common.dto.TenantDto;
@@ -944,6 +945,89 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
                 profileSchema.setSchema(storedProfileSchema.getSchema());
             }
             return controlService.editProfileSchema(profileSchema);
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
+    public List<ServerProfileSchemaDto> getServerProfileSchemasByApplicationId(
+            String applicationId) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            checkApplicationId(applicationId);
+            return controlService.getServerProfileSchemasByApplicationId(applicationId);
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
+    public ServerProfileSchemaDto getServerProfileSchema(String serverProfileSchemaId)
+            throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            ServerProfileSchemaDto profileSchema = controlService.getServerProfileSchema(serverProfileSchemaId);
+            Utils.checkNotNull(profileSchema);
+            checkApplicationId(profileSchema.getApplicationId());
+            return profileSchema;
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
+    public ServerProfileSchemaDto editServerProfileSchema(ServerProfileSchemaDto serverProfileSchema,
+                                                          byte[] schema) throws KaaAdminServiceException {
+
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            if (isEmpty(serverProfileSchema.getId())) {
+                serverProfileSchema.setCreatedUsername(getCurrentUser().getUsername());
+                checkApplicationId(serverProfileSchema.getApplicationId());
+                setSchema(serverProfileSchema, schema);
+            } else {
+                ServerProfileSchemaDto storedProfileSchema =
+                        controlService.getServerProfileSchema(serverProfileSchema.getId());
+                Utils.checkNotNull(storedProfileSchema);
+                checkApplicationId(storedProfileSchema.getApplicationId());
+                serverProfileSchema.setSchema(storedProfileSchema.getSchema());
+            }
+            return controlService.editServerProfileSchema(serverProfileSchema);
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
+    public ServerProfileSchemaDto getServerProfileSchemaForm(String serverProfileSchemaId)
+            throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            ServerProfileSchemaDto profileSchema = getServerProfileSchema(serverProfileSchemaId);
+            convertToSchemaForm(profileSchema, simpleSchemaFormAvroConverter);
+            return profileSchema;
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
+    public ServerProfileSchemaDto editServerProfileSchemaForm(ServerProfileSchemaDto serverProfileSchema)
+            throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            if (isEmpty(serverProfileSchema.getId())) {
+                serverProfileSchema.setCreatedUsername(getCurrentUser().getUsername());
+                checkApplicationId(serverProfileSchema.getApplicationId());
+                convertToStringSchema(serverProfileSchema, simpleSchemaFormAvroConverter);
+            } else {
+                ServerProfileSchemaDto storedProfileSchema = controlService.getServerProfileSchema(serverProfileSchema.getId());
+                Utils.checkNotNull(storedProfileSchema);
+                checkApplicationId(storedProfileSchema.getApplicationId());
+                serverProfileSchema.setSchema(storedProfileSchema.getSchema());
+            }
+            return controlService.editServerProfileSchema(serverProfileSchema);
         } catch (Exception e) {
             throw Utils.handleException(e);
         }

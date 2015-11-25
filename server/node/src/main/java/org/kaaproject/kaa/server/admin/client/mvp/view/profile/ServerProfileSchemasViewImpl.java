@@ -17,20 +17,20 @@
 package org.kaaproject.kaa.server.admin.client.mvp.view.profile;
 
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
-import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseListViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.schema.BaseSchemasGrid;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-public class ServerProfileSchemasViewImpl extends BaseListViewImpl<ProfileSchemaDto> {
+public class ServerProfileSchemasViewImpl extends BaseListViewImpl<ServerProfileSchemaDto> {
 
     public ServerProfileSchemasViewImpl() {
         super(true);
     }
 
     @Override
-    protected AbstractGrid<ProfileSchemaDto, String> createGrid() {
-        return new BaseSchemasGrid<ProfileSchemaDto>();
+    protected AbstractGrid<ServerProfileSchemaDto, String> createGrid() {
+        return new BaseSchemasGrid<ServerProfileSchemaDto>();
     }
 
     @Override

@@ -54,6 +54,7 @@ import org.kaaproject.kaa.common.dto.PageLinkDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.SchemaDto;
+import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.StructureRecordDto;
 import org.kaaproject.kaa.common.dto.TenantAdminDto;
 import org.kaaproject.kaa.common.dto.TenantDto;
@@ -92,6 +93,7 @@ import org.kaaproject.kaa.server.common.dao.LogSchemaService;
 import org.kaaproject.kaa.server.common.dao.NotificationService;
 import org.kaaproject.kaa.server.common.dao.ProfileService;
 import org.kaaproject.kaa.server.common.dao.SdkProfileService;
+import org.kaaproject.kaa.server.common.dao.ServerProfileService;
 import org.kaaproject.kaa.server.common.dao.TopicService;
 import org.kaaproject.kaa.server.common.dao.UserConfigurationService;
 import org.kaaproject.kaa.server.common.dao.UserService;
@@ -123,12 +125,6 @@ import org.slf4j.helpers.MessageFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.apache.commons.codec.binary.Base64;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * The Class DefaultControlService.
@@ -170,6 +166,10 @@ public class DefaultControlService implements ControlService {
     /** The profile service. */
     @Autowired
     private ProfileService profileService;
+
+    /** The server profile service. */
+//    @Autowired
+    private ServerProfileService serverProfileService;
 
     /** The endpoint service. */
     @Autowired
@@ -437,6 +437,77 @@ public class DefaultControlService implements ControlService {
     public ProfileSchemaDto editProfileSchema(ProfileSchemaDto profileSchema) throws ControlServiceException {
         return profileService.saveProfileSchema(profileSchema);
     }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getServerProfileSchemasByApplicationId(java.lang.String)
+     */
+    @Override
+    public List<ServerProfileSchemaDto> getServerProfileSchemasByApplicationId(String applicationId) throws ControlServiceException {
+        return serverProfileService.findServerProfileSchemasByAppId(applicationId);
+//        return toServProfList(profileService.findProfileSchemasByAppId(applicationId));
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getServerProfileSchema(java.lang.String)
+     */
+    @Override
+    public ServerProfileSchemaDto getServerProfileSchema(String serverProfileSchemaId) throws ControlServiceException {
+        return serverProfileService.findServerProfileSchema(serverProfileSchemaId);
+//        return toServProf(profileService.findProfileSchemaById(serverProfileSchemaId));
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#editServerProfileSchema(org.kaaproject.kaa.common.dto.ServerProfileSchemaDto)
+     */
+    @Override
+    public ServerProfileSchemaDto editServerProfileSchema(ServerProfileSchemaDto serverProfileSchema) throws ControlServiceException {
+        return serverProfileService.saveServerProfileSchema(serverProfileSchema);
+//        return toServProf(profileService.saveProfileSchema(fromServProf(serverProfileSchema)));
+    }
+
+    /*==============================================================*/
+    /*==============================================================*/
+    /*=============== TO DELETE!!! =================================*/
+    private ServerProfileSchemaDto toServProf(ProfileSchemaDto dto) {
+        ServerProfileSchemaDto servProf = new ServerProfileSchemaDto();
+        servProf.setId(dto.getId());
+        servProf.setApplicationId(dto.getApplicationId());
+        servProf.setSchema(dto.getSchema());
+        servProf.setSchemaForm(dto.getSchemaForm());
+        servProf.setName(dto.getName());
+        servProf.setDescription(dto.getDescription());
+        servProf.setCreatedUsername(dto.getCreatedUsername());
+        servProf.setCreatedTime(dto.getCreatedTime());
+        servProf.setEndpointCount(dto.getEndpointCount());
+        servProf.setMajorVersion(dto.getMajorVersion());
+        servProf.setMinorVersion(dto.getMinorVersion());
+        return servProf;
+    }
+    private ProfileSchemaDto fromServProf(ServerProfileSchemaDto dto) {
+        ProfileSchemaDto prof = new ProfileSchemaDto();
+        prof.setId(dto.getId());
+        prof.setApplicationId(dto.getApplicationId());
+        prof.setSchema(dto.getSchema());
+        prof.setSchemaForm(dto.getSchemaForm());
+        prof.setName(dto.getName());
+        prof.setDescription(dto.getDescription());
+        prof.setCreatedUsername(dto.getCreatedUsername());
+        prof.setCreatedTime(dto.getCreatedTime());
+        prof.setEndpointCount(dto.getEndpointCount());
+        prof.setMajorVersion(dto.getMajorVersion());
+        prof.setMinorVersion(dto.getMinorVersion());
+        return prof;
+    }
+    private List<ServerProfileSchemaDto> toServProfList(List<ProfileSchemaDto> profileSchemas) {
+        List<ServerProfileSchemaDto> servDtos = new ArrayList<>();
+        for (ProfileSchemaDto dto : profileSchemas) {
+            servDtos.add(toServProf(dto));
+        }
+        return servDtos;
+    }
+    /*=============== TO DELETE!!! =================================*/
+    /*==============================================================*/
+    /*==============================================================*/
 
     /* (non-Javadoc)
      * @see org.kaaproject.kaa.server.control.service.ControlService#getEndpointGroupsByApplicationId(java.lang.String)
