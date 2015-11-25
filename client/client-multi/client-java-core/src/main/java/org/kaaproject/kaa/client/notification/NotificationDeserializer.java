@@ -20,6 +20,7 @@ import java.util.Collection;
 
 import javax.annotation.Generated;
 
+import org.kaaproject.kaa.client.context.ExecutorContext;
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
 import org.kaaproject.kaa.common.endpoint.gen.Topic;
 import org.kaaproject.kaa.schema.base.Notification;
@@ -36,16 +37,25 @@ import org.kaaproject.kaa.schema.base.Notification;
 class NotificationDeserializer {
 
     private final AvroByteArrayConverter<Notification> converter = new AvroByteArrayConverter<Notification>(Notification.class);
+    private final ExecutorContext executorContext;
 
-    void notify(Collection<NotificationListener> listeners, Topic topic, byte[] notificationData) throws IOException{
-        Notification notification = fromByteArray(notificationData);
-        for(NotificationListener listener : listeners){
-            listener.onNotification(topic.getId(), notification);
+    public NotificationDeserializer(ExecutorContext executorContext) {
+        this.executorContext = executorContext;
+    }
+
+    void notify(Collection<NotificationListener> listeners, final Topic topic, byte[] notificationData) throws IOException{
+        final Notification notification = fromByteArray(notificationData);
+        for (final NotificationListener listener : listeners) {
+            executorContext.getCallbackExecutor().submit(new Runnable() {
+                @Override
+                public void run() {
+                    listener.onNotification(topic.getId(), notification);
+                }
+            });
         }
     }
     
     private Notification fromByteArray(byte[] data) throws IOException {
         return converter.fromByteArray(data);
     }
-
 }

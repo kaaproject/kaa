@@ -21,6 +21,7 @@ import java.util.Arrays;
 import javax.annotation.Generated;
 
 import org.kaaproject.kaa.client.KaaClientProperties;
+import org.kaaproject.kaa.client.context.ExecutorContext;
 import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.schema.base.Configuration;
 import org.slf4j.Logger;
@@ -31,8 +32,8 @@ public class ResyncConfigurationManager extends AbstractConfigurationManager imp
     
     private static final Logger LOG = LoggerFactory.getLogger(ResyncConfigurationManager.class);
     
-    public ResyncConfigurationManager(KaaClientProperties properties, KaaClientState state) {
-        super(properties, state);
+    public ResyncConfigurationManager(KaaClientProperties properties, KaaClientState state, ExecutorContext executorContext) {
+        super(properties, state, executorContext);
     }
 
     @Override

@@ -23,10 +23,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.atLeast;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -236,6 +233,7 @@ public class EventManagerTest {
 
         EventTransport transport = Mockito.mock(EventTransport.class);
         ExecutorContext executorContext = Mockito.mock(ExecutorContext.class);
+        Mockito.when(executorContext.getCallbackExecutor()).thenReturn(Executors.newFixedThreadPool(1));
         EventManager eventManager = new DefaultEventManager(state, executorContext, transport);
 
         List<String> eventFQNs = new ArrayList<String>();
@@ -253,7 +251,7 @@ public class EventManagerTest {
 
         eventManager.eventListenersResponseReceived(response);
 
-        verify(fetchListener, times(1)).onEventListenersReceived(anyListOf(String.class));
+        verify(fetchListener, timeout(1000).times(1)).onEventListenersReceived(anyListOf(String.class));
         verify(fetchListener, times(1)).onRequestFailed();
     }
 }
