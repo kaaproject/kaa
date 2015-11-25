@@ -20,7 +20,6 @@ import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Statement;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
-import com.datastax.driver.core.querybuilder.Update;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Sets;
 import org.apache.commons.codec.binary.Base64;
@@ -469,10 +468,12 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
     @Override
     public CassandraEndpointProfile updateProfileServer(byte[] keyHash, String schemaId, String serverProfile) {
         LOG.debug("Updating server profile for endpoint profile with key hash [{}] with schema id [{}]", keyHash, schemaId);
+        ByteBuffer key = ByteBuffer.wrap(keyHash);
         Statement update = QueryBuilder.update(CassandraModelConstants.EP_COLUMN_FAMILY_NAME)
-                .with(set(EP_SERVER_PROFILE_PROPERTY, serverProfile)).where(eq(EP_EP_KEY_HASH_PROPERTY, keyHash))
+                .with(set(EP_SERVER_PROFILE_PROPERTY, serverProfile)).where(eq(EP_EP_KEY_HASH_PROPERTY, key))
                 .onlyIf(eq(EP_SERVER_PROFILE_ID_PROPERTY, schemaId));
-        return findOneByStatement(update);
+        execute(update);
+        return findById(key);
     }
 
     private Set<String> getEndpointProfilesGroupIdSet(CassandraEndpointProfile profile) {

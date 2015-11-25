@@ -53,7 +53,7 @@ public class EndpointProfileDto implements HasId, Serializable {
     private List<EventClassFamilyVersionStateDto> ecfVersionStates;
     private String serverHash;
     private String sdkToken;
-    private String serverProfileServiceId;
+    private String serverProfileSchemaId;
 
     @Override
     public String getId() {
@@ -145,12 +145,12 @@ public class EndpointProfileDto implements HasId, Serializable {
         this.serverProfile = serverProfile;
     }
 
-    public String getServerProfileServiceId() {
-        return serverProfileServiceId;
+    public String getServerProfileSchemaId() {
+        return serverProfileSchemaId;
     }
 
-    public void setServerProfileServiceId(String serverProfileServiceId) {
-        this.serverProfileServiceId = serverProfileServiceId;
+    public void setServerProfileSchemaId(String serverProfileSchemaId) {
+        this.serverProfileSchemaId = serverProfileSchemaId;
     }
 
     public byte[] getProfileHash() {

@@ -43,6 +43,7 @@ public class DaoConstants {
     public static final String FQN_PROPERTY = "fqn";
     public static final String CLASS_NAME_PROPERTY = "className";
     public static final String SDK_TOKEN_PROPERTY = "token";
+    public static final String CREATED_TIME_PROPERTY = "createdTime";
 
     public static final String TENANT_ALIAS = "tenant";
     public static final String PROFILE_SCHEMA_ALIAS = "profileSchema";

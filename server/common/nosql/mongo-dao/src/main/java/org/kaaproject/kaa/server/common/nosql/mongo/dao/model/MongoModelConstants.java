@@ -102,6 +102,8 @@ public class MongoModelConstants {
     public static final String EP_ECF_VERSION_STATE = "ecf_version_state";
     public static final String EP_SERVER_HASH = "server_hash";
     public static final String EP_SDK_TOKEN = "sdk_token";
+    public static final String EP_SERVER_PROFILE_ID_PROPERTY = "srv_profile_id";
+    public static final String EP_SERVER_PROFILE_PROPERTY = "srv_profile";
 
     /**
      * MongoEndpointUserConfiguration constants.
