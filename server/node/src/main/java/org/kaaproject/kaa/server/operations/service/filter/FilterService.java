@@ -18,6 +18,7 @@ package org.kaaproject.kaa.server.operations.service.filter;
 
 import java.util.List;
 
+import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.server.operations.service.cache.AppVersionKey;
 
@@ -33,19 +34,19 @@ public interface FilterService {
      * Gets all matching filters by key and body.
      *
      * @param appProfileVersionKey the key that is build from AppToken and profile version. 
-     * @param profileBody the profile body
+     * @param profile the profile
      * @return the all matching filters
      */
-    List<ProfileFilterDto> getAllMatchingFilters(AppVersionKey appProfileVersionKey, String profileBody);
+    List<ProfileFilterDto> getAllMatchingFilters(AppVersionKey appProfileVersionKey, EndpointProfileDto profile);
 
     /**
      * Check if profileBody matches filter that is represented by filter id.
      *
      * @param appToken the app token
      * @param profileFilterId the profile filter id
-     * @param profileBody the profile body
+     * @param profile the profile
      * @return true, if successful
      */
-    boolean matches(String appToken, String profileFilterId, String profileBody);
+    boolean matches(String appToken, String profileFilterId, EndpointProfileDto profile);
 
 }

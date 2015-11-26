@@ -42,7 +42,8 @@ import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
 
 public class DefaultHistoryDeltaServiceTest {
-    private static final String PROFILE_BODY = "dummy";
+    private static final String CLIENT_PROFILE_BODY = "client_dummy";
+    private static final String SERVER_PROFILE_BODY = "server_dummy";
     private static final int PROFILE_VERSION = 3;
     private static final int CONF_VERSION = 2;
     private static final String APP1_ID = "APP1_ID";
@@ -75,13 +76,14 @@ public class DefaultHistoryDeltaServiceTest {
         profile.setApplicationId(APP1_ID);
         profile.setConfigurationVersion(CONF_VERSION);
         profile.setProfileVersion(PROFILE_VERSION);
-        profile.setClientProfileBody(PROFILE_BODY);
-    };
+        profile.setClientProfileBody(CLIENT_PROFILE_BODY);
+        profile.setServerProfileBody(SERVER_PROFILE_BODY);
+    }
 
     @After
     public void after() {
         historyDeltaService = null;
-    };
+    }
 
     @Test
     public void testInitial() {
@@ -92,7 +94,7 @@ public class DefaultHistoryDeltaServiceTest {
         filter.setId(PF1_ID);
         allFilters.add(filter);
 
-        Mockito.when(filterService.getAllMatchingFilters(Mockito.any(AppVersionKey.class), Mockito.any(String.class))).thenReturn(allFilters);
+        Mockito.when(filterService.getAllMatchingFilters(Mockito.any(AppVersionKey.class), Mockito.any(EndpointProfileDto.class))).thenReturn(allFilters);
         Mockito.when(cacheService.getConfIdByKey(Mockito.any(ConfigurationIdKey.class))).thenReturn(CF1_ID);
 
         HistoryDelta historyDelta = historyDeltaService.getDelta(profile, APP1_TOKEN, 0);
@@ -153,7 +155,7 @@ public class DefaultHistoryDeltaServiceTest {
         profile.setCfGroupStates(toList(new EndpointGroupStateDto(EG1_ID, PF1_ID, CF1_ID)));
         profile.setNfGroupStates(toList(new EndpointGroupStateDto(EG1_ID, PF1_ID, CF1_ID)));
         Mockito.when(cacheService.getHistory(Mockito.any(HistoryKey.class))).thenReturn(toList(toDto(ChangeType.ADD_TOPIC, EG1_ID)));
-        Mockito.when(filterService.matches(Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenReturn(true);
+        Mockito.when(filterService.matches(Mockito.anyString(), Mockito.anyString(), Mockito.any(EndpointProfileDto.class))).thenReturn(true);
         HistoryDelta historyDelta = historyDeltaService.getDelta(profile, HistorySubject.NOTIFICATION, APP1_TOKEN, 101, 102);
 
         Assert.assertNotNull(historyDelta);
@@ -168,7 +170,7 @@ public class DefaultHistoryDeltaServiceTest {
         profile.setCfGroupStates(toList(new EndpointGroupStateDto(EG1_ID, PF1_ID, CF1_ID)));
         profile.setNfGroupStates(toList(new EndpointGroupStateDto(EG1_ID, PF1_ID, CF1_ID)));
         Mockito.when(cacheService.getHistory(Mockito.any(HistoryKey.class))).thenReturn(toList(toDto(ChangeType.REMOVE_TOPIC, EG1_ID)));
-        Mockito.when(filterService.matches(Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenReturn(true);
+        Mockito.when(filterService.matches(Mockito.anyString(), Mockito.anyString(), Mockito.any(EndpointProfileDto.class))).thenReturn(true);
         HistoryDelta historyDelta = historyDeltaService.getDelta(profile, HistorySubject.CONFIGURATION, APP1_TOKEN, 101, 102);
 
         Assert.assertNotNull(historyDelta);
@@ -183,7 +185,7 @@ public class DefaultHistoryDeltaServiceTest {
         profile.setCfGroupStates(toList(new EndpointGroupStateDto(EG1_ID, PF1_ID, CF1_ID)));
         profile.setNfGroupStates(toList(new EndpointGroupStateDto(EG1_ID, PF1_ID, CF1_ID)));
         Mockito.when(cacheService.getHistory(Mockito.any(HistoryKey.class))).thenReturn(toList(toDto(ChangeType.ADD_CONF, EG1_ID)));
-        Mockito.when(filterService.matches(Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenReturn(true);
+        Mockito.when(filterService.matches(Mockito.anyString(), Mockito.anyString(), Mockito.any(EndpointProfileDto.class))).thenReturn(true);
         HistoryDelta historyDelta = historyDeltaService.getDelta(profile, HistorySubject.NOTIFICATION, APP1_TOKEN, 101, 102);
 
         Assert.assertNotNull(historyDelta);
@@ -199,7 +201,7 @@ public class DefaultHistoryDeltaServiceTest {
         profile.setCfGroupStates(toList(new EndpointGroupStateDto(EG1_ID, PF1_ID, CF1_ID)));
         profile.setNfGroupStates(toList(new EndpointGroupStateDto(EG1_ID, PF1_ID, CF1_ID)));
         Mockito.when(cacheService.getHistory(Mockito.any(HistoryKey.class))).thenReturn(toList(toDto(ChangeType.REMOVE_CONF, EG1_ID)));
-        Mockito.when(filterService.matches(Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenReturn(true);
+        Mockito.when(filterService.matches(Mockito.anyString(), Mockito.anyString(), Mockito.any(EndpointProfileDto.class))).thenReturn(true);
         HistoryDelta historyDelta = historyDeltaService.getDelta(profile, HistorySubject.NOTIFICATION, APP1_TOKEN, 101, 102);
 
         Assert.assertNotNull(historyDelta);
@@ -214,7 +216,7 @@ public class DefaultHistoryDeltaServiceTest {
         profile.setCfGroupStates(toList(new EndpointGroupStateDto(EG1_ID, PF1_ID, CF1_ID)));
         profile.setNfGroupStates(toList(new EndpointGroupStateDto(EG1_ID, PF1_ID, CF1_ID)));
         Mockito.when(cacheService.getHistory(Mockito.any(HistoryKey.class))).thenReturn(toList(toDto(ChangeType.REMOVE_PROF, EG1_ID)));
-        Mockito.when(filterService.matches(Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenReturn(true);
+        Mockito.when(filterService.matches(Mockito.anyString(), Mockito.anyString(), Mockito.any(EndpointProfileDto.class))).thenReturn(true);
         HistoryDelta historyDelta = historyDeltaService.getDelta(profile, HistorySubject.NOTIFICATION, APP1_TOKEN, 101, 102);
 
         Assert.assertNotNull(historyDelta);
@@ -229,7 +231,7 @@ public class DefaultHistoryDeltaServiceTest {
         profile.setCfGroupStates(toList(new EndpointGroupStateDto(EG1_ID, PF1_ID, CF1_ID)));
         profile.setNfGroupStates(toList(new EndpointGroupStateDto(EG1_ID, PF1_ID, CF1_ID)));
         Mockito.when(cacheService.getHistory(Mockito.any(HistoryKey.class))).thenReturn(toList(toDto(ChangeType.ADD_PROF, EG1_ID, PF2_ID)));
-        Mockito.when(filterService.matches(Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenReturn(true);
+        Mockito.when(filterService.matches(Mockito.anyString(), Mockito.anyString(), Mockito.any(EndpointProfileDto.class))).thenReturn(true);
         HistoryDelta historyDelta = historyDeltaService.getDelta(profile, HistorySubject.NOTIFICATION, APP1_TOKEN, 101, 102);
 
         Assert.assertNotNull(historyDelta);
@@ -245,7 +247,7 @@ public class DefaultHistoryDeltaServiceTest {
         profile.setCfGroupStates(toList(new EndpointGroupStateDto(EG1_ID, PF1_ID, CF1_ID)));
         profile.setNfGroupStates(toList(new EndpointGroupStateDto(EG1_ID, PF1_ID, CF1_ID)));
         Mockito.when(cacheService.getHistory(Mockito.any(HistoryKey.class))).thenReturn(toList(toDto(ChangeType.ADD_PROF, EG1_ID, PF2_ID)));
-        Mockito.when(filterService.matches(Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenReturn(false);
+        Mockito.when(filterService.matches(Mockito.anyString(), Mockito.anyString(), Mockito.any(EndpointProfileDto.class))).thenReturn(false);
         HistoryDelta historyDelta = historyDeltaService.getDelta(profile, HistorySubject.CONFIGURATION, APP1_TOKEN, 101, 102);
 
         Assert.assertNotNull(historyDelta);
@@ -260,7 +262,7 @@ public class DefaultHistoryDeltaServiceTest {
         profile.setCfGroupStates(toList(new EndpointGroupStateDto(EG1_ID, PF1_ID, CF1_ID)));
         profile.setNfGroupStates(toList(new EndpointGroupStateDto(EG1_ID, PF1_ID, CF1_ID)));
         Mockito.when(cacheService.getHistory(Mockito.any(HistoryKey.class))).thenReturn(toList(toDto(ChangeType.UPDATE, EG1_ID, PF2_ID)));
-        Mockito.when(filterService.matches(Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenReturn(false);
+        Mockito.when(filterService.matches(Mockito.anyString(), Mockito.anyString(), Mockito.any(EndpointProfileDto.class))).thenReturn(false);
         HistoryDelta historyDelta = historyDeltaService.getDelta(profile, HistorySubject.NOTIFICATION, APP1_TOKEN, 101, 102);
 
         Assert.assertNotNull(historyDelta);
@@ -275,7 +277,7 @@ public class DefaultHistoryDeltaServiceTest {
         profile.setCfGroupStates(toList(new EndpointGroupStateDto(EG1_ID, PF1_ID, CF1_ID)));
         profile.setNfGroupStates(toList(new EndpointGroupStateDto(EG1_ID, PF1_ID, CF1_ID)));
         Mockito.when(cacheService.getHistory(Mockito.any(HistoryKey.class))).thenReturn(toList(toDto(ChangeType.ADD_TOPIC, EG2_ID)));
-        Mockito.when(filterService.matches(Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenReturn(true);
+        Mockito.when(filterService.matches(Mockito.anyString(), Mockito.anyString(), Mockito.any(EndpointProfileDto.class))).thenReturn(true);
         HistoryDelta historyDelta = historyDeltaService.getDelta(profile, HistorySubject.CONFIGURATION, APP1_TOKEN, 101, 102);
 
         Assert.assertNotNull(historyDelta);
@@ -290,7 +292,7 @@ public class DefaultHistoryDeltaServiceTest {
         profile.setCfGroupStates(toList(new EndpointGroupStateDto(EG1_ID, PF1_ID, CF1_ID)));
         profile.setNfGroupStates(toList(new EndpointGroupStateDto(EG1_ID, PF1_ID, CF1_ID)));
         Mockito.when(cacheService.getHistory(Mockito.any(HistoryKey.class))).thenReturn(toList(toDto(ChangeType.REMOVE_TOPIC, EG2_ID)));
-        Mockito.when(filterService.matches(Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenReturn(true);
+        Mockito.when(filterService.matches(Mockito.anyString(), Mockito.anyString(), Mockito.any(EndpointProfileDto.class))).thenReturn(true);
         HistoryDelta historyDelta = historyDeltaService.getDelta(profile, HistorySubject.NOTIFICATION, APP1_TOKEN, 101, 102);
 
         Assert.assertNotNull(historyDelta);
@@ -305,7 +307,7 @@ public class DefaultHistoryDeltaServiceTest {
         profile.setCfGroupStates(toList(new EndpointGroupStateDto(EG1_ID, PF1_ID, CF1_ID)));
         profile.setNfGroupStates(toList(new EndpointGroupStateDto(EG1_ID, PF1_ID, CF1_ID)));
         Mockito.when(cacheService.getHistory(Mockito.any(HistoryKey.class))).thenReturn(toList(toDto(ChangeType.ADD_PROF, EG2_ID, PF2_ID)));
-        Mockito.when(filterService.matches(Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenReturn(true);
+        Mockito.when(filterService.matches(Mockito.anyString(), Mockito.anyString(), Mockito.any(EndpointProfileDto.class))).thenReturn(true);
         HistoryDelta historyDelta = historyDeltaService.getDelta(profile, HistorySubject.CONFIGURATION, APP1_TOKEN, 101, 102);
 
         Assert.assertNotNull(historyDelta);
@@ -320,7 +322,7 @@ public class DefaultHistoryDeltaServiceTest {
         profile.setCfGroupStates(toList(new EndpointGroupStateDto(EG1_ID, PF1_ID, CF1_ID)));
         profile.setNfGroupStates(toList(new EndpointGroupStateDto(EG1_ID, PF1_ID, CF1_ID)));
         Mockito.when(cacheService.getHistory(Mockito.any(HistoryKey.class))).thenReturn(toList(toDto(ChangeType.ADD_PROF, EG2_ID, PF2_ID)));
-        Mockito.when(filterService.matches(Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenReturn(true);
+        Mockito.when(filterService.matches(Mockito.anyString(), Mockito.anyString(), Mockito.any(EndpointProfileDto.class))).thenReturn(true);
         Mockito.when(cacheService.getConfIdByKey(Mockito.any(ConfigurationIdKey.class))).thenReturn(CF2_ID);
         HistoryDelta historyDelta = historyDeltaService.getDelta(profile, HistorySubject.NOTIFICATION, APP1_TOKEN, 101, 102);
 
@@ -338,7 +340,7 @@ public class DefaultHistoryDeltaServiceTest {
         profile.setCfGroupStates(toList(new EndpointGroupStateDto(EG1_ID, PF1_ID, CF1_ID)));
         profile.setNfGroupStates(toList(new EndpointGroupStateDto(EG1_ID, PF1_ID, CF1_ID)));
         Mockito.when(cacheService.getHistory(Mockito.any(HistoryKey.class))).thenReturn(toList(toDto(ChangeType.ADD_PROF, EG2_ID, PF2_ID)));
-        Mockito.when(filterService.matches(Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenReturn(false);
+        Mockito.when(filterService.matches(Mockito.anyString(), Mockito.anyString(), Mockito.any(EndpointProfileDto.class))).thenReturn(false);
         HistoryDelta historyDelta = historyDeltaService.getDelta(profile, HistorySubject.CONFIGURATION, APP1_TOKEN, 101, 102);
 
         Assert.assertNotNull(historyDelta);
