@@ -1480,8 +1480,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             }
             return controlService.editConfiguration(configuration);
         } catch (Exception e) {
-            throw Utils.handleExceptionWithCause(e, HibernateOptimisticLockingFailureException.class,
-                    "Someone has already updated the configuration. Reload page to be able to edit it", true);
+            throw Utils.handleException(e, "Someone has already updated the configuration. Reload page to be able to edit it");
         }
     }
 

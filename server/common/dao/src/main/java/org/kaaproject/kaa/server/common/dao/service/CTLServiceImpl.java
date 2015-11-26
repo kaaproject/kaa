@@ -17,6 +17,7 @@ import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchemaMetaInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -93,7 +94,13 @@ public class CTLServiceImpl implements CTLService {
                 }
                 schemaMetaInfoDao.refresh(uniqueMetaInfo);
                 schemaMetaInfoDao.incrementCount(uniqueMetaInfo);
-                dto = getDto(ctlSchemaDao.save(ctlSchema, true));
+                try {
+                    dto = getDto(ctlSchemaDao.save(ctlSchema, true));
+                } catch (DataIntegrityViolationException ex) {
+                    throw new DatabaseProcessingException("Can't save cql schema with same fqn, version and tenant id.");
+                } catch (Exception ex) {
+                    throw new DatabaseProcessingException(ex);
+                }
             }
             return dto;
         } else {
