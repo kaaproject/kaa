@@ -74,11 +74,14 @@ public class FilterQueryLanguageTest {
         Assert.assertEquals(Boolean.TRUE, filter.matches(profile));
     }
 
-    @Test(expected = SpelEvaluationException.class)
-    public void testQueryWithPrimitiveFieldAccessCheckRoot() {
-        String filterBody = "simpleField == 'SIMPLE_FIELD'";
+    @Test
+    public void testQueryNoServerProfileBody() {
+        String filterBody = "#" + DefaultFilter.CLIENT_PROFILE_VARIABLE_NAME + "." + "simpleField == 'SIMPLE_FIELD'";
         Filter filter = new DefaultFilter(filterBody, PROFILE_SCHEMA);
-        Assert.assertEquals(Boolean.FALSE, filter.matches(profile));
+        String profileBody = profile.getServerProfileBody();
+        profile.setServerProfileBody(null);
+        Assert.assertEquals(Boolean.TRUE, filter.matches(profile));
+        profile.setServerProfileBody(profileBody);
     }
 
     @Test
@@ -95,6 +98,13 @@ public class FilterQueryLanguageTest {
     @Test
     public void testQueryWithArraySizeChecking() {
         String filterBody = "#" + DefaultFilter.CLIENT_PROFILE_VARIABLE_NAME + "." + "arraySimpleField.size() == 2";
+        Filter filter = new DefaultFilter(filterBody, PROFILE_SCHEMA);
+        Assert.assertEquals(Boolean.TRUE, filter.matches(profile));
+    }
+
+    @Test
+    public void testQueryWithArraySizeCheckingDeprecatedProfileFilter() {
+        String filterBody = "arraySimpleField.size() == 2";
         Filter filter = new DefaultFilter(filterBody, PROFILE_SCHEMA);
         Assert.assertEquals(Boolean.TRUE, filter.matches(profile));
     }

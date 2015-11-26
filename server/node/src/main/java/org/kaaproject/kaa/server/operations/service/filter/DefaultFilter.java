@@ -81,17 +81,21 @@ public class DefaultFilter implements Filter {
      */
     @Override
     public boolean matches(EndpointProfileDto profile) {
-        GenericRecord serverProfileGenericRecord;
-        GenericRecord clientProfileGenericRecord;
+        GenericRecord serverProfileGenericRecord = null;
+        GenericRecord clientProfileGenericRecord = null;
         try {
-            serverProfileGenericRecord = avroConverter.decodeJson(profile.getServerProfileBody());
-            clientProfileGenericRecord = avroConverter.decodeJson(profile.getClientProfileBody());
+            if (profile.getServerProfileBody() != null) {
+                serverProfileGenericRecord = avroConverter.decodeJson(profile.getServerProfileBody());
+            }
+            if (profile.getClientProfileBody() != null) {
+                clientProfileGenericRecord = avroConverter.decodeJson(profile.getClientProfileBody());
+            }
         } catch (IOException ioe) {
             LOG.error("Error decoding avro object from Json string", ioe);
             return false;
         }
 
-        StandardEvaluationContext evaluationContext = new StandardEvaluationContext();
+        StandardEvaluationContext evaluationContext = new StandardEvaluationContext(clientProfileGenericRecord);
 
         evaluationContext.addPropertyAccessor(new GenericRecordPropertyAccessor());
         evaluationContext.setVariable(CLIENT_PROFILE_VARIABLE_NAME, clientProfileGenericRecord);
