@@ -53,6 +53,8 @@ import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelC
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_PROFILE_VERSION;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SDK_TOKEN;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SERVER_HASH;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SERVER_PROFILE_ID_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SERVER_PROFILE_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SYSTEM_NF_VERSION;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_USER_CONFIGURATION_HASH;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_USER_ID;
@@ -117,6 +119,10 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
     @Indexed
     @Field(EP_SDK_TOKEN)
     private String sdkToken;
+    @Field(EP_SERVER_PROFILE_ID_PROPERTY)
+    private String serverProfileSchemaId;
+    @Field(EP_SERVER_PROFILE_PROPERTY)
+    private String serverProfile;
 
 
     public MongoEndpointProfile() {
@@ -149,6 +155,8 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         this.ecfVersionStates = MongoDaoUtil.convertECFVersionDtoToModelList(dto.getEcfVersionStates());
         this.serverHash = dto.getServerHash();
         this.sdkToken = dto.getSdkToken();
+        this.serverProfileSchemaId = dto.getServerProfileSchemaId();
+        this.serverProfile = dto.getServerProfile();
     }
 
     @Override
@@ -366,6 +374,24 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
     }
 
     @Override
+    public String getServerProfileSchemaId() {
+        return serverProfileSchemaId;
+    }
+
+    public void setServerProfileSchemaId(String serverProfileSchemaId) {
+        this.serverProfileSchemaId = serverProfileSchemaId;
+    }
+
+    @Override
+    public String getServerProfile() {
+        return serverProfile;
+    }
+
+    public void setServerProfile(String serverProfile) {
+        this.serverProfile = serverProfile;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -521,6 +547,8 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         dto.setEcfVersionStates(DaoUtil.<EventClassFamilyVersionStateDto>convertDtoList(ecfVersionStates));
         dto.setServerHash(serverHash);
         dto.setSdkToken(sdkToken);
+        dto.setServerProfile(serverProfile);
+        dto.setServerProfileSchemaId(serverProfileSchemaId);
         return dto;
     }
 }
