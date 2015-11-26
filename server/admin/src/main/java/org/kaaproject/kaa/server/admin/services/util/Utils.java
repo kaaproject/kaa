@@ -53,6 +53,9 @@ public class Utils {
             return (KaaAdminServiceException) exceptionWithCause;
         } else if (exceptionWithCause instanceof IllegalArgumentException || cause.contains("IncorrectParameterException")) {
             return new KaaAdminServiceException(exceptionWithCause.getMessage(), ServiceErrorCode.BAD_REQUEST_PARAMS);
+        } else if (cause.contains("MailSendException") || cause.contains("MessagingException")) {
+            return new KaaAdminServiceException("Failed to send email with temporary password. See server logs for details.",
+                    ServiceErrorCode.GENERAL_ERROR);
         } else if (StringUtils.isNotBlank(cause) && cause.equals(expectedCauseClass.getCanonicalName())) {
             return new KaaAdminServiceException(errorMessage, ServiceErrorCode.GENERAL_ERROR);
         } else {

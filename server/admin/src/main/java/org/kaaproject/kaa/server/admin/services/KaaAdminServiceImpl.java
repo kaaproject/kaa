@@ -2207,13 +2207,17 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         return result;
     }
 
-    private Long saveUser(org.kaaproject.kaa.common.dto.admin.UserDto user)
-            throws Exception {
+    private Long saveUser(org.kaaproject.kaa.common.dto.admin.UserDto user) throws Exception {
         CreateUserResult result = userFacade.saveUserDto(user, passwordEncoder);
-        if (!isEmpty(result.getPassword())) {
-            messagingService.sendTempPassword(user.getUsername(),
-                    result.getPassword(),
-                    user.getMail());
+        try {
+            if (!isEmpty(result.getPassword())) {
+                messagingService.sendTempPassword(user.getUsername(),
+                        result.getPassword(),
+                        user.getMail());
+            }
+        } catch (Exception e) {
+            userFacade.deleteUser(result.getUserId());
+            throw Utils.handleException(e);
         }
         return result.getUserId();
     }
