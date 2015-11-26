@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,6 +71,41 @@ public class ServerProfileSchemaDto implements HasId, Serializable {
         this.schemaForm = schemaForm;
     }
 
+//    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) return true;
+//        if (o == null || getClass() != o.getClass()) return false;
+//
+//        ServerProfileSchemaDto that = (ServerProfileSchemaDto) o;
+//
+//        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+//        if (createdTime != null ? !createdTime.equals(that.createdTime) : that.createdTime != null) return false;
+//        if (applicationId != null ? !applicationId.equals(that.applicationId) : that.applicationId != null)
+//            return false;
+//        return schemaDto != null ? schemaDto.equals(that.schemaDto) : that.schemaDto == null;
+//
+//    }
+//
+//    @Override
+//    public int hashCode() {
+//        int result = id != null ? id.hashCode() : 0;
+//        result = 31 * result + (createdTime != null ? createdTime.hashCode() : 0);
+//        result = 31 * result + (applicationId != null ? applicationId.hashCode() : 0);
+//        result = 31 * result + (schemaDto != null ? schemaDto.hashCode() : 0);
+//        return result;
+//    }
+//
+//    @Override
+//    public String toString() {
+//        return "ServerProfileSchemaDto{" +
+//                "id='" + id + '\'' +
+//                ", createdTime=" + createdTime +
+//                ", applicationId='" + applicationId + '\'' +
+//                ", schemaDto=" + schemaDto +
+//                '}';
+//    }
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -82,7 +117,8 @@ public class ServerProfileSchemaDto implements HasId, Serializable {
         if (createdTime != null ? !createdTime.equals(that.createdTime) : that.createdTime != null) return false;
         if (applicationId != null ? !applicationId.equals(that.applicationId) : that.applicationId != null)
             return false;
-        return schemaDto != null ? schemaDto.equals(that.schemaDto) : that.schemaDto == null;
+        if (schemaDto != null ? !schemaDto.equals(that.schemaDto) : that.schemaDto != null) return false;
+        return !(schemaForm != null ? !schemaForm.equals(that.schemaForm) : that.schemaForm != null);
 
     }
 
@@ -92,6 +128,7 @@ public class ServerProfileSchemaDto implements HasId, Serializable {
         result = 31 * result + (createdTime != null ? createdTime.hashCode() : 0);
         result = 31 * result + (applicationId != null ? applicationId.hashCode() : 0);
         result = 31 * result + (schemaDto != null ? schemaDto.hashCode() : 0);
+        result = 31 * result + (schemaForm != null ? schemaForm.hashCode() : 0);
         return result;
     }
 
@@ -102,6 +139,7 @@ public class ServerProfileSchemaDto implements HasId, Serializable {
                 ", createdTime=" + createdTime +
                 ", applicationId='" + applicationId + '\'' +
                 ", schemaDto=" + schemaDto +
+                ", schemaForm=" + schemaForm +
                 '}';
     }
 }

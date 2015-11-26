@@ -45,7 +45,9 @@ import org.codehaus.jackson.node.ObjectNode;
 import org.hibernate.StaleObjectStateException;
 import org.kaaproject.avro.ui.converter.FormAvroConverter;
 import org.kaaproject.avro.ui.converter.SchemaFormAvroConverter;
+import org.kaaproject.avro.ui.shared.FormField;
 import org.kaaproject.avro.ui.shared.RecordField;
+import org.kaaproject.avro.ui.shared.StringField;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.common.dto.AbstractSchemaDto;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
@@ -1029,10 +1031,26 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
+            int version = 0;
             if (isEmpty(serverProfileSchema.getId())) {
-                serverProfileSchema.getSchemaDto().setCreatedUsername(getCurrentUser().getUsername());
-                checkApplicationId(serverProfileSchema.getApplicationId());
+                CTLSchemaDto ctlSchemaDto = serverProfileSchema.getSchemaDto();
+                ServerProfileSchemaDto latestServerProfileSchema =
+                        controlService.findLatestServerProfileSchema(serverProfileSchema.getApplicationId());
+                if (latestServerProfileSchema != null) {
+                    version = latestServerProfileSchema.getSchemaDto().getMetaInfo().getVersion();
+                }
+                CTLSchemaMetaInfoDto metaInfoDto = new CTLSchemaMetaInfoDto(
+                        getDeclaredFqn(serverProfileSchema.getSchemaForm()), ++version,
+                        CTLSchemaScopeDto.SERVER_PROFILE_SCHEMA);
+                ctlSchemaDto.setMetaInfo(metaInfoDto);
+                ctlSchemaDto.setCreatedTime(new Date().getTime());
                 convertToStringSchema(serverProfileSchema, simpleSchemaFormAvroConverter);
+                ctlSchemaDto.setCreatedUsername(getCurrentUser().getUsername());
+                ctlSchemaDto.setTenantId(getCurrentUser().getTenantId());
+                CTLSchemaDto savedCtlSchemaDto = controlService.saveCTLSchema(ctlSchemaDto);
+                serverProfileSchema.setCreatedTime(new Date().getTime());
+                serverProfileSchema.setSchemaDto(savedCtlSchemaDto);
+                checkApplicationId(serverProfileSchema.getApplicationId());
             } else {
                 ServerProfileSchemaDto storedProfileSchema = controlService.getServerProfileSchema(serverProfileSchema.getId());
                 Utils.checkNotNull(storedProfileSchema);
@@ -1043,6 +1061,21 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
+    }
+
+    private static final String RECORD_NAMESPACE_FIELD = "recordNamespace";
+    private static final String RECORD_NAME_FIELD = "recordName";
+    public String getDeclaredFqn(RecordField rec) {
+        FormField nameField = rec.getFieldByName(RECORD_NAME_FIELD);
+        FormField namespaceField = rec.getFieldByName(RECORD_NAMESPACE_FIELD);
+        if (nameField != null && namespaceField != null) {
+            String name = ((StringField)nameField).getValue();
+            String namespace = ((StringField)namespaceField).getValue();
+            if (!name.isEmpty() && !namespace.isEmpty()) {
+                return namespace + "." + name;
+            }
+        }
+        return null;
     }
 
     @Override

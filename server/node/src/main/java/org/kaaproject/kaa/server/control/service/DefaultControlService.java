@@ -24,7 +24,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.google.gwt.user.client.Random;
 import org.apache.avro.Schema;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.thrift.TException;
@@ -169,7 +168,7 @@ public class DefaultControlService implements ControlService {
     private ProfileService profileService;
 
     /** The server profile service. */
-//    @Autowired
+    @Autowired
     private ServerProfileService serverProfileService;
 
     /** The endpoint service. */
@@ -444,8 +443,7 @@ public class DefaultControlService implements ControlService {
      */
     @Override
     public List<ServerProfileSchemaDto> getServerProfileSchemasByApplicationId(String applicationId) throws ControlServiceException {
-//        return serverProfileService.findServerProfileSchemasByAppId(applicationId);
-        return toServProfList(profileService.findProfileSchemasByAppId(applicationId));
+        return serverProfileService.findServerProfileSchemasByAppId(applicationId);
     }
 
     /* (non-Javadoc)
@@ -453,8 +451,7 @@ public class DefaultControlService implements ControlService {
      */
     @Override
     public ServerProfileSchemaDto getServerProfileSchema(String serverProfileSchemaId) throws ControlServiceException {
-//        return serverProfileService.findServerProfileSchema(serverProfileSchemaId);
-        return toServProf(profileService.findProfileSchemaById(serverProfileSchemaId));
+        return serverProfileService.findServerProfileSchema(serverProfileSchemaId);
     }
 
     /* (non-Javadoc)
@@ -462,52 +459,17 @@ public class DefaultControlService implements ControlService {
      */
     @Override
     public ServerProfileSchemaDto editServerProfileSchema(ServerProfileSchemaDto serverProfileSchema) throws ControlServiceException {
-//        return serverProfileService.saveServerProfileSchema(serverProfileSchema);
-        return toServProf(profileService.saveProfileSchema(fromServProf(serverProfileSchema)));
+        return serverProfileService.saveServerProfileSchema(serverProfileSchema);
     }
 
-    /*==============================================================*/
-    /*==============================================================*/
-    /*=============== TO DELETE!!! =================================*/
-    private ServerProfileSchemaDto toServProf(ProfileSchemaDto dto) {
-        CTLSchemaDto ctlDto = new CTLSchemaDto();
-        ServerProfileSchemaDto servProf = new ServerProfileSchemaDto();
-        servProf.setSchemaDto(ctlDto);
-        servProf.setId(dto.getId());
-        servProf.setApplicationId(dto.getApplicationId());
-        servProf.getSchemaDto().setBody(dto.getSchema());
-        servProf.setSchemaForm(dto.getSchemaForm());
-        servProf.getSchemaDto().setName(dto.getName());
-        servProf.getSchemaDto().setDescription(dto.getDescription());
-        servProf.getSchemaDto().setCreatedUsername(dto.getCreatedUsername());
-        servProf.setCreatedTime(dto.getCreatedTime());
-        return servProf;
+    @Override
+    public ServerProfileSchemaDto findLatestServerProfileSchema(String applicationId) throws ControlServiceException {
+        return serverProfileService.findLatestServerProfileSchema(applicationId);
     }
-    private ProfileSchemaDto fromServProf(ServerProfileSchemaDto dto) {
-        ProfileSchemaDto prof = new ProfileSchemaDto();
-        prof.setId(dto.getId());
-        prof.setApplicationId(dto.getApplicationId());
-        prof.setSchema(dto.getSchemaDto().getBody());
-        prof.setSchemaForm(dto.getSchemaForm());
-        prof.setName(dto.getSchemaDto().getName());
-        prof.setDescription(dto.getSchemaDto().getDescription());
-        prof.setCreatedUsername(dto.getSchemaDto().getCreatedUsername());
-        return prof;
-    }
-    private List<ServerProfileSchemaDto> toServProfList(List<ProfileSchemaDto> profileSchemas) {
-        List<ServerProfileSchemaDto> servDtos = new ArrayList<>();
-        for (ProfileSchemaDto dto : profileSchemas) {
-            servDtos.add(toServProf(dto));
-        }
-        return servDtos;
-    }
-    /*=============== TO DELETE!!! =================================*/
-    /*==============================================================*/
-    /*==============================================================*/
 
     /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.control.service.ControlService#getEndpointGroupsByApplicationId(java.lang.String)
-     */
+         * @see org.kaaproject.kaa.server.control.service.ControlService#getEndpointGroupsByApplicationId(java.lang.String)
+         */
     @Override
     public List<EndpointGroupDto> getEndpointGroupsByApplicationId(String applicationId) throws ControlServiceException {
         return endpointService.findEndpointGroupsByAppId(applicationId);
@@ -1549,11 +1511,11 @@ public class DefaultControlService implements ControlService {
                     fileName = MessageFormatter.arrayFormat(DATA_NAME_PATTERN, new Object[]{"profile", key.getSchemaVersion()}).getMessage();
                     break;
                 case SERVER_PROFILE_SCHEMA:
-//                  ServerProfileSchemaDto ctlSchemaDto = serverProfileService.findServerProfileSchema("" + key.getSchemaVersion());
-                    ServerProfileSchemaDto ctlSchemaDto = getServerProfileSchema("" + key.getSchemaVersion());
+                  ServerProfileSchemaDto ctlSchemaDto = serverProfileService.findServerProfileSchema("" + key.getSchemaVersion());
                     checkSchema(ctlSchemaDto, RecordFiles.PROFILE_SCHEMA);
                     schema = ctlSchemaDto.getSchemaDto().getBody();
-                    fileName = MessageFormatter.arrayFormat(DATA_NAME_PATTERN, new Object[]{"profile", /*Utils.millisecondsToDateString(ctlSchemaDto.getCreatedTime())*/5}).getMessage();
+//                    String dateString = Utils.millisecondsToDateString(ctlSchemaDto.getCreatedTime());
+                    fileName = MessageFormatter.arrayFormat(DATA_NAME_PATTERN, new Object[]{"profile", /*dateString*/5}).getMessage();
                     break;
                 default:
                     break;

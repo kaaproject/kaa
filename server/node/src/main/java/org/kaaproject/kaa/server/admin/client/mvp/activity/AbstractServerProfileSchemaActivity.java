@@ -96,6 +96,8 @@ public abstract class AbstractServerProfileSchemaActivity<T extends ServerProfil
         entity.getSchemaDto().setName(detailsView.getName().getValue());
         entity.getSchemaDto().setDescription(detailsView.getDescription().getValue());
         entity.setSchemaForm(detailsView.getSchemaForm().getValue());
+        entity.getSchemaDto().setApplicationId(place.getApplicationId());
+        entity.setApplicationId(place.getApplicationId());
     }
 
     @Override

@@ -310,6 +310,8 @@ public interface ControlService {
      */
     ServerProfileSchemaDto editServerProfileSchema(ServerProfileSchemaDto serverProfileSchema) throws ControlServiceException;
 
+    ServerProfileSchemaDto findLatestServerProfileSchema(String applicationId) throws ControlServiceException;
+
     /**
      * Gets the endpoint groups by application id.
      *

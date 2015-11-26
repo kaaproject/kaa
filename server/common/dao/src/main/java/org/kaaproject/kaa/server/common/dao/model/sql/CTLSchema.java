@@ -109,6 +109,9 @@ public class CTLSchema extends GenericModel<CTLSchemaDto> implements Serializabl
                 dependencySet.add(new CTLSchema(dependency));
             }
         }
+
+        this.name = dto.getName();
+        this.createdUsername = dto.getCreatedUsername();
     }
 
     public CTLSchemaMetaInfo getMetaInfo() {
@@ -200,6 +203,8 @@ public class CTLSchema extends GenericModel<CTLSchemaDto> implements Serializabl
         ctlSchemaDto.setMetaInfo(metaInfo.toDto());
         ctlSchemaDto.setBody(body);
         ctlSchemaDto.setDependencySet(DaoUtil.convertDtoSet(dependencySet));
+        ctlSchemaDto.setCreatedUsername(createdUsername);
+        ctlSchemaDto.setName(name);
         return ctlSchemaDto;
     }
 
