@@ -910,10 +910,22 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         dto.setSchemaForm(schemaForm);
     }
 
+    private void convertToSchemaForm(ServerProfileSchemaDto dto, SchemaFormAvroConverter converter) throws IOException {
+        Schema schema = new Schema.Parser().parse(dto.getSchemaDto().getBody());
+        RecordField schemaForm = converter.createSchemaFormFromSchema(schema);
+        dto.setSchemaForm(schemaForm);
+    }
+
     private void convertToStringSchema(AbstractSchemaDto dto, SchemaFormAvroConverter converter) throws Exception {
         Schema schema = converter.createSchemaFromSchemaForm(dto.getSchemaForm());
         String schemaString = SchemaFormAvroConverter.createSchemaString(schema, true);
         dto.setSchema(schemaString);
+    }
+
+    private void convertToStringSchema(ServerProfileSchemaDto dto, SchemaFormAvroConverter converter) throws Exception {
+        Schema schema = converter.createSchemaFromSchemaForm(dto.getSchemaForm());
+        String schemaString = SchemaFormAvroConverter.createSchemaString(schema, true);
+        dto.getSchemaDto().setBody(schemaString);
     }
 
     @Override
@@ -983,7 +995,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
             if (isEmpty(serverProfileSchema.getId())) {
-                serverProfileSchema.setCreatedUsername(getCurrentUser().getUsername());
+                serverProfileSchema.getSchemaDto().setCreatedUsername(getCurrentUser().getUsername());
                 checkApplicationId(serverProfileSchema.getApplicationId());
                 setSchema(serverProfileSchema, schema);
             } else {
@@ -991,7 +1003,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
                         controlService.getServerProfileSchema(serverProfileSchema.getId());
                 Utils.checkNotNull(storedProfileSchema);
                 checkApplicationId(storedProfileSchema.getApplicationId());
-                serverProfileSchema.setSchema(storedProfileSchema.getSchema());
+                serverProfileSchema.getSchemaDto().setBody(storedProfileSchema.getSchemaDto().getBody());
             }
             return controlService.editServerProfileSchema(serverProfileSchema);
         } catch (Exception e) {
@@ -1018,14 +1030,14 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
             if (isEmpty(serverProfileSchema.getId())) {
-                serverProfileSchema.setCreatedUsername(getCurrentUser().getUsername());
+                serverProfileSchema.getSchemaDto().setCreatedUsername(getCurrentUser().getUsername());
                 checkApplicationId(serverProfileSchema.getApplicationId());
                 convertToStringSchema(serverProfileSchema, simpleSchemaFormAvroConverter);
             } else {
                 ServerProfileSchemaDto storedProfileSchema = controlService.getServerProfileSchema(serverProfileSchema.getId());
                 Utils.checkNotNull(storedProfileSchema);
                 checkApplicationId(storedProfileSchema.getApplicationId());
-                serverProfileSchema.setSchema(storedProfileSchema.getSchema());
+                serverProfileSchema.getSchemaDto().setBody(storedProfileSchema.getSchemaDto().getBody());
             }
             return controlService.editServerProfileSchema(serverProfileSchema);
         } catch (Exception e) {
@@ -2497,6 +2509,12 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         String schema = new String(data);
         validateSchema(schema);
         schemaDto.setSchema(new KaaSchemaFactoryImpl().createDataSchema(schema).getRawSchema());
+    }
+
+    private void setSchema(ServerProfileSchemaDto schemaDto, byte[] data) throws KaaAdminServiceException {
+        String schema = new String(data);
+        validateSchema(schema);
+        schemaDto.getSchemaDto().setBody(new KaaSchemaFactoryImpl().createDataSchema(schema).getRawSchema());
     }
 
     private void validateSchema(String schema) throws KaaAdminServiceException {

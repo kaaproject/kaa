@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.google.gwt.user.client.Random;
 import org.apache.avro.Schema;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.thrift.TException;
@@ -469,33 +470,28 @@ public class DefaultControlService implements ControlService {
     /*==============================================================*/
     /*=============== TO DELETE!!! =================================*/
     private ServerProfileSchemaDto toServProf(ProfileSchemaDto dto) {
+        CTLSchemaDto ctlDto = new CTLSchemaDto();
         ServerProfileSchemaDto servProf = new ServerProfileSchemaDto();
+        servProf.setSchemaDto(ctlDto);
         servProf.setId(dto.getId());
         servProf.setApplicationId(dto.getApplicationId());
-        servProf.setSchema(dto.getSchema());
+        servProf.getSchemaDto().setBody(dto.getSchema());
         servProf.setSchemaForm(dto.getSchemaForm());
-        servProf.setName(dto.getName());
-        servProf.setDescription(dto.getDescription());
-        servProf.setCreatedUsername(dto.getCreatedUsername());
+        servProf.getSchemaDto().setName(dto.getName());
+        servProf.getSchemaDto().setDescription(dto.getDescription());
+        servProf.getSchemaDto().setCreatedUsername(dto.getCreatedUsername());
         servProf.setCreatedTime(dto.getCreatedTime());
-        servProf.setEndpointCount(dto.getEndpointCount());
-        servProf.setMajorVersion(dto.getMajorVersion());
-        servProf.setMinorVersion(dto.getMinorVersion());
         return servProf;
     }
     private ProfileSchemaDto fromServProf(ServerProfileSchemaDto dto) {
         ProfileSchemaDto prof = new ProfileSchemaDto();
         prof.setId(dto.getId());
         prof.setApplicationId(dto.getApplicationId());
-        prof.setSchema(dto.getSchema());
+        prof.setSchema(dto.getSchemaDto().getBody());
         prof.setSchemaForm(dto.getSchemaForm());
-        prof.setName(dto.getName());
-        prof.setDescription(dto.getDescription());
-        prof.setCreatedUsername(dto.getCreatedUsername());
-        prof.setCreatedTime(dto.getCreatedTime());
-        prof.setEndpointCount(dto.getEndpointCount());
-        prof.setMajorVersion(dto.getMajorVersion());
-        prof.setMinorVersion(dto.getMinorVersion());
+        prof.setName(dto.getSchemaDto().getName());
+        prof.setDescription(dto.getSchemaDto().getDescription());
+        prof.setCreatedUsername(dto.getSchemaDto().getCreatedUsername());
         return prof;
     }
     private List<ServerProfileSchemaDto> toServProfList(List<ProfileSchemaDto> profileSchemas) {
@@ -1553,11 +1549,11 @@ public class DefaultControlService implements ControlService {
                     fileName = MessageFormatter.arrayFormat(DATA_NAME_PATTERN, new Object[]{"profile", key.getSchemaVersion()}).getMessage();
                     break;
                 case SERVER_PROFILE_SCHEMA:
-//                    schemaDto = serverProfileService.findServerProfileSchema("" + key.getSchemaVersion());
-                    schemaDto = getServerProfileSchema("" + key.getSchemaVersion());
-                    checkSchema(schemaDto, RecordFiles.PROFILE_SCHEMA);
-                    schema = schemaDto.getSchema();
-                    fileName = MessageFormatter.arrayFormat(DATA_NAME_PATTERN, new Object[]{"profile", schemaDto.getMajorVersion()}).getMessage();
+//                  ServerProfileSchemaDto ctlSchemaDto = serverProfileService.findServerProfileSchema("" + key.getSchemaVersion());
+                    ServerProfileSchemaDto ctlSchemaDto = getServerProfileSchema("" + key.getSchemaVersion());
+                    checkSchema(ctlSchemaDto, RecordFiles.PROFILE_SCHEMA);
+                    schema = ctlSchemaDto.getSchemaDto().getBody();
+                    fileName = MessageFormatter.arrayFormat(DATA_NAME_PATTERN, new Object[]{"profile", /*Utils.millisecondsToDateString(ctlSchemaDto.getCreatedTime())*/5}).getMessage();
                     break;
                 default:
                     break;
@@ -1674,10 +1670,16 @@ public class DefaultControlService implements ControlService {
      *
      * @param schemaDto the schema dto
      * @param file the file
-     * @throws ControlServiceException the control service exception
+     * @throws NotFoundException the control service exception
      */
     private void checkSchema(AbstractSchemaDto schemaDto, RecordFiles file) throws NotFoundException {
         if(schemaDto == null) {
+            throw new NotFoundException("Schema " + file + " not found!");
+        }
+    }
+
+    private void checkSchema(ServerProfileSchemaDto schemaDto, RecordFiles file) throws NotFoundException {
+        if(schemaDto.getSchemaDto() == null) {
             throw new NotFoundException("Schema " + file + " not found!");
         }
     }

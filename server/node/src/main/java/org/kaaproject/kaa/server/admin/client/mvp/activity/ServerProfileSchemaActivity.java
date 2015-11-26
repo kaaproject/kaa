@@ -19,13 +19,14 @@ package org.kaaproject.kaa.server.admin.client.mvp.activity;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ServerProfileSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseSchemaView;
 
 public class ServerProfileSchemaActivity extends
-        AbstractSchemaActivity<ServerProfileSchemaDto, BaseSchemaView, ServerProfileSchemaPlace> {
+        AbstractServerProfileSchemaActivity<ServerProfileSchemaDto, BaseSchemaView, ServerProfileSchemaPlace> {
 
     public ServerProfileSchemaActivity(ServerProfileSchemaPlace place, ClientFactory clientFactory) {
         super(place, clientFactory);
@@ -33,7 +34,12 @@ public class ServerProfileSchemaActivity extends
 
     @Override
     protected ServerProfileSchemaDto newSchema() {
-        return new ServerProfileSchemaDto();
+        RecordField rec = new RecordField();
+        CTLSchemaDto ctlDto = new CTLSchemaDto();
+        ServerProfileSchemaDto serverProfileSchemaDto = new ServerProfileSchemaDto();
+        serverProfileSchemaDto.setSchemaDto(ctlDto);
+        serverProfileSchemaDto.setSchemaForm(rec);
+        return serverProfileSchemaDto;
     }
 
     @Override
