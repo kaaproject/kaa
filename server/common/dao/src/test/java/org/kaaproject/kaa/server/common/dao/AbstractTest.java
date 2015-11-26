@@ -718,7 +718,7 @@ public class AbstractTest {
         profileDto.setApplicationId(appId);
         profileDto.setSubscriptions(topicIds);
         profileDto.setEndpointKeyHash("TEST_KEY_HASH".getBytes());
-        profileDto.setProfile("{\"title\": \"TEST\"}");
+        profileDto.setClientProfileBody("{\"title\": \"TEST\"}");
         profileDto.setSdkToken(UUID.randomUUID().toString());
         return endpointService.saveEndpointProfile(profileDto);
     }
@@ -728,9 +728,9 @@ public class AbstractTest {
         profileDto.setApplicationId(appId);
         profileDto.setServerProfileSchemaId(profileSchemaId);
         profileDto.setEndpointKeyHash("TEST_KEY_HASH".getBytes());
-        profileDto.setProfile("{\"title\": \"TEST\"}");
+        profileDto.setClientProfileBody("{\"title\": \"TEST\"}");
         profileDto.setSdkToken(UUID.randomUUID().toString());
-        profileDto.setServerProfile(srvProfileBody);
+        profileDto.setServerProfileBody(srvProfileBody);
         return endpointService.saveEndpointProfile(profileDto);
     }
 
@@ -742,7 +742,7 @@ public class AbstractTest {
         List<EndpointGroupStateDto> groupState = new ArrayList<>();
         groupState.add(new EndpointGroupStateDto(endpointGroupId, null, null));
         profileDto.setCfGroupStates(groupState);
-        profileDto.setProfile("{\"title\": \"TEST\"}");
+        profileDto.setClientProfileBody("{\"title\": \"TEST\"}");
         if (nfGroupStateOnly) {
             profileDto.setNfGroupStates(groupState);
             profileDto.setCfGroupStates(null);

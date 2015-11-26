@@ -38,9 +38,8 @@ public class EndpointProfileDto implements HasId, Serializable {
     private int nfSequenceNumber;
     private List<String> subscriptions;
     private byte[] ntHash;
-    private Boolean changedFlag;
-    private String profile;
-    private String serverProfile;
+    private String clientProfileBody;
+    private String serverProfileBody;
     private byte[] profileHash;
     private int profileVersion;
     private byte[] configurationHash;
@@ -121,28 +120,20 @@ public class EndpointProfileDto implements HasId, Serializable {
         this.nfGroupState = nfGroupState;
     }
 
-    public Boolean getChangedFlag() {
-        return changedFlag;
+    public String getClientProfileBody() {
+        return clientProfileBody;
     }
 
-    public void setChangedFlag(Boolean changedFlag) {
-        this.changedFlag = changedFlag;
+    public void setClientProfileBody(String clientProfileBody) {
+        this.clientProfileBody = clientProfileBody;
     }
 
-    public String getProfile() {
-        return profile;
+    public String getServerProfileBody() {
+        return serverProfileBody;
     }
 
-    public void setProfile(String profile) {
-        this.profile = profile;
-    }
-
-    public String getServerProfile() {
-        return serverProfile;
-    }
-
-    public void setServerProfile(String serverProfile) {
-        this.serverProfile = serverProfile;
+    public void setServerProfileBody(String serverProfileBody) {
+        this.serverProfileBody = serverProfileBody;
     }
 
     public String getServerProfileSchemaId() {
@@ -316,9 +307,6 @@ public class EndpointProfileDto implements HasId, Serializable {
         if (applicationId != null ? !applicationId.equals(that.applicationId) : that.applicationId != null) {
             return false;
         }
-        if (changedFlag != null ? !changedFlag.equals(that.changedFlag) : that.changedFlag != null) {
-            return false;
-        }
         if (!Arrays.equals(configurationHash, that.configurationHash)) {
             return false;
         }
@@ -340,7 +328,7 @@ public class EndpointProfileDto implements HasId, Serializable {
         if (!Arrays.equals(ntHash, that.ntHash)) {
             return false;
         }
-        if (profile != null ? !profile.equals(that.profile) : that.profile != null) {
+        if (clientProfileBody != null ? !clientProfileBody.equals(that.clientProfileBody) : that.clientProfileBody != null) {
             return false;
         }
         if (!Arrays.equals(profileHash, that.profileHash)) {
@@ -367,8 +355,7 @@ public class EndpointProfileDto implements HasId, Serializable {
         result = 31 * result + (ntHash != null ? Arrays.hashCode(ntHash) : 0);
         result = 31 * result + nfSequenceNumber;
         result = 31 * result + cfSequenceNumber;
-        result = 31 * result + (changedFlag != null ? changedFlag.hashCode() : 0);
-        result = 31 * result + (profile != null ? profile.hashCode() : 0);
+        result = 31 * result + (clientProfileBody != null ? clientProfileBody.hashCode() : 0);
         result = 31 * result + (profileHash != null ? Arrays.hashCode(profileHash) : 0);
         result = 31 * result + profileVersion;
         result = 31 * result + (configurationHash != null ? Arrays.hashCode(configurationHash) : 0);
@@ -408,10 +395,8 @@ public class EndpointProfileDto implements HasId, Serializable {
         builder.append(cfSequenceNumber);
         builder.append(", nfSequenceNumber=");
         builder.append(nfSequenceNumber);
-        builder.append(", changedFlag=");
-        builder.append(changedFlag);
-        builder.append(", profile=");
-        builder.append(profile);
+        builder.append(", clientProfileBody=");
+        builder.append(clientProfileBody);
         builder.append(", profileHash=");
         builder.append(Arrays.toString(profileHash));
         builder.append(", profileVersion=");

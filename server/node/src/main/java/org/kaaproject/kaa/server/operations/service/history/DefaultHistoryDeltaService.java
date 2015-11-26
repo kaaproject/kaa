@@ -71,7 +71,7 @@ public class DefaultHistoryDeltaService implements HistoryDeltaService {
         String endpointId = Base64Util.encode(profile);
         ConfigurationIdKey confIdKey = new ConfigurationIdKey(applicationToken, curAppSeqNumber, profile.getConfigurationVersion());
         AppVersionKey appProfileVersionKey = new AppVersionKey(confIdKey.getApplicationToken(), profile.getProfileVersion());
-        List<ProfileFilterDto> filters = filterService.getAllMatchingFilters(appProfileVersionKey, profile.getProfile().toString());
+        List<ProfileFilterDto> filters = filterService.getAllMatchingFilters(appProfileVersionKey, profile.getClientProfileBody().toString());
         LOG.debug("[{}] Found {} matching filters", endpointId, filters.size());
         List<EndpointGroupStateDto> result = new ArrayList<EndpointGroupStateDto>(filters.size());
         for (ProfileFilterDto filter : filters) {
@@ -167,7 +167,7 @@ public class DefaultHistoryDeltaService implements HistoryDeltaService {
                 } else if (changeType == ChangeType.ADD_PROF) {
                     LOG.trace("[{}] Detected {} for {} on group {}", endpointId, changeType, change.getProfileFilterId(),
                             change.getEndpointGroupId());
-                    if (!filterService.matches(historyKey.getAppToken(), change.getProfileFilterId(), profile.getProfile().toString())) {
+                    if (!filterService.matches(historyKey.getAppToken(), change.getProfileFilterId(), profile.getClientProfileBody().toString())) {
                         LOG.trace("[{}] Detected {} does not match current profile body which means configuration/topic list change",
                                 endpointId, change.getProfileFilterId());
                         groupsMap.remove(egs.getEndpointGroupId());
@@ -180,7 +180,7 @@ public class DefaultHistoryDeltaService implements HistoryDeltaService {
                 if (changeType == ChangeType.ADD_PROF) {
                     LOG.trace("[{}] Detected {} for {} on group {}", endpointId, changeType, change.getProfileFilterId(),
                             change.getEndpointGroupId());
-                    if (filterService.matches(historyKey.getAppToken(), change.getProfileFilterId(), profile.getProfile().toString())) {
+                    if (filterService.matches(historyKey.getAppToken(), change.getProfileFilterId(), profile.getClientProfileBody().toString())) {
                         LOG.trace("[{}] Detected {} match current profile body which means possible configuration/topic list change",
                                 endpointId, change.getProfileFilterId());
                         egs = new EndpointGroupStateDto(groupId, change.getProfileFilterId(), null);

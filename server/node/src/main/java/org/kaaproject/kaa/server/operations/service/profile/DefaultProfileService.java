@@ -73,7 +73,7 @@ public class DefaultProfileService implements ProfileService {
      * (non-Javadoc)
      *
      * @see org.kaaproject.kaa.server.operations.service.profile.ProfileService#
-     * getProfile (org.kaaproject.kaa.common.hash.EndpointObjectHash)
+     * getClientProfileBody (org.kaaproject.kaa.common.hash.EndpointObjectHash)
      */
     @Override
     public EndpointProfileDto getProfile(EndpointObjectHash endpointKey) {
@@ -115,7 +115,7 @@ public class DefaultProfileService implements ProfileService {
             dto.setApplicationId(appSeqNumber.getAppId());
             dto.setEndpointKey(request.getEndpointKey());
             dto.setEndpointKeyHash(keyHash.getData());
-            dto.setProfile(profileJson);
+            dto.setClientProfileBody(profileJson);
             dto.setProfileHash(EndpointObjectHash.fromSHA1(request.getProfile()).getData());
 
             populateVersionStates(appSeqNumber.getTenantId(), dto, sdkProfile);
@@ -126,7 +126,6 @@ public class DefaultProfileService implements ProfileService {
 
             dto.setCfSequenceNumber(0);
             dto.setNfSequenceNumber(0);
-            dto.setChangedFlag(Boolean.FALSE);
 
             try {
                 cacheService.putEndpointKey(keyHash, KeyUtil.getPublic(dto.getEndpointKey()));
@@ -163,7 +162,7 @@ public class DefaultProfileService implements ProfileService {
         if (request.getAccessToken() != null) {
             dto.setAccessToken(request.getAccessToken());
         }
-        dto.setProfile(profileJson);
+        dto.setClientProfileBody(profileJson);
         dto.setProfileHash(EndpointObjectHash.fromSHA1(request.getProfile()).getData());
 
         populateVersionStates(appSeqNumber.getTenantId(), dto, sdkProfile);

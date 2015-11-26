@@ -200,7 +200,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
                 convertToSchemaForm(schemaDto, simpleSchemaFormAvroConverter);
                 /* check for empty schemas */
                 viewDto.setEndpointProfileRecord(
-                        generateFormDataFromJson(schemaDto.getSchema(), viewDto.getEndpointProfileDto().getProfile()));
+                        generateFormDataFromJson(schemaDto.getSchema(), viewDto.getEndpointProfileDto().getClientProfileBody()));
             }
             viewDto.setProfileSchemaDto(schemaDto);
             for (EndpointGroupDto groupDto : viewDto.getGroupDtoList()) {
