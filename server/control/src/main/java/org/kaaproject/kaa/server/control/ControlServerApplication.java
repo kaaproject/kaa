@@ -17,9 +17,8 @@
 package org.kaaproject.kaa.server.control;
 
 import org.kaaproject.kaa.server.common.AbstractServerApplication;
+import org.kaaproject.kaa.server.common.utils.ExceptionHandlerUtil;
 import org.kaaproject.kaa.server.control.service.ControlService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -32,9 +31,6 @@ public class ControlServerApplication extends AbstractServerApplication {
     private static final String[] DEFAULT_APPLICATION_CONFIGURATION_FILES = new String[] {
             "control-server.properties", "dao.properties" };
 
-    /** The Constant LOG. */
-    private static final Logger LOG = LoggerFactory.getLogger(ControlServerApplication.class);
-
     /**
      * The main method.
      *
@@ -42,12 +38,7 @@ public class ControlServerApplication extends AbstractServerApplication {
      *            the arguments
      */
     public static void main(String[] args) {
-        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-            @Override
-            public void uncaughtException(Thread th, Throwable ex) {
-                LOG.error("Uncaught exception: ", ex);
-            }
-        });
+        Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandlerUtil());
 
         ControlServerApplication app = new ControlServerApplication(DEFAULT_APPLICATION_CONTEXT_XMLS, DEFAULT_APPLICATION_CONFIGURATION_FILES);
         app.startAndWait(args);
