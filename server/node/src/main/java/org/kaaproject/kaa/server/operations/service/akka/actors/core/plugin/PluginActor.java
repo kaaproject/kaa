@@ -52,8 +52,8 @@ public class PluginActor extends UntypedActor {
         /**
          * Instantiates a new actor creator.
          *
-         * @param logAppenderService
-         *            the log appender service
+         * @param context the akka context
+         * @param context the plugin instance id
          */
         public ActorCreator(AkkaContext context, String pluginInstanceId) {
             super();
