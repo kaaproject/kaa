@@ -1,11 +1,33 @@
 package org.kaaproject.kaa.server.common.dao.service;
 
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto.SYSTEM;
+import static org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto.TENANT;
+import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
+import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getDto;
+import static org.kaaproject.kaa.server.common.dao.service.Validator.validateObject;
+import static org.kaaproject.kaa.server.common.dao.service.Validator.validateSqlId;
+import static org.kaaproject.kaa.server.common.dao.service.Validator.validateString;
 
+import java.io.ByteArrayOutputStream;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import org.apache.avro.Schema;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.ArrayNode;
+import org.codehaus.jackson.node.ObjectNode;
 import org.hibernate.LockMode;
 import org.hibernate.LockOptions;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
+import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.server.common.dao.CTLService;
 import org.kaaproject.kaa.server.common.dao.exception.DatabaseProcessingException;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
@@ -17,30 +39,43 @@ import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchemaMetaInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto.SYSTEM;
-import static org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto.TENANT;
-import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
-import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getDto;
-import static org.kaaproject.kaa.server.common.dao.service.Validator.validateObject;
-import static org.kaaproject.kaa.server.common.dao.service.Validator.validateSqlId;
-import static org.kaaproject.kaa.server.common.dao.service.Validator.validateString;
 
 @Service
 @Transactional
 public class CTLServiceImpl implements CTLService {
 
+    private static final String JSON = "application/json";
+    private static final String ZIP = "application/zip";
+    private static final String VERSION = "version";
+    private static final String FQN = "fqn";
     private static final Logger LOG = LoggerFactory.getLogger(CTLServiceImpl.class);
-    public static final String GENERATED = "Generated";
+    private static final String DEPENDENCIES = "dependencies";
+    private static final String GENERATED = "Generated";
 
     private final LockOptions lockOptions = new LockOptions(LockMode.PESSIMISTIC_WRITE);
+
+    /**
+     * A template for naming exported CTL schemas.
+     * 
+     * @see #shallowExport(CTLSchemaDto)
+     * @see #flatExport(CTLSchemaDto)
+     */
+    private static final String CTL_EXPORT_TEMPLATE = "{0}.v{1}.avsc";
+
+    /**
+     * The name of the archive to put exported CTL schemas into.
+     * 
+     * @see #deepExport(CTLSchemaDto)
+     */
+    private static final String CTL_EXPORT_ZIP_NAME = "schemas.zip";
+
+    /**
+     * Used to format CTL schema body.
+     */
+    private static final ObjectMapper FORMATTER = new ObjectMapper();
 
     @Autowired
     private CTLSchemaDao<CTLSchema> ctlSchemaDao;
@@ -70,19 +105,20 @@ public class CTLServiceImpl implements CTLService {
                 schemaMetaInfoDao.lockRequest(lockOptions).setScope(true).lock(uniqueMetaInfo);
 
                 switch (uniqueMetaInfo.getScope()) {
-                    case SYSTEM:
-                        if (existing) {
-                            throw new DatabaseProcessingException("Disable to store system ctl schema with same fqn and version.");
-                        }
-                    case TENANT:
-                        if (currentScope == SYSTEM && existing) {
-                            throw new DatabaseProcessingException("Disable to store system ctl schema. Tenant's scope schema already exists with the same fqn and version.");
-                        }
-                        break;
-                    case APPLICATION:
-                        break;
-                    default:
-                        break;
+                case SYSTEM:
+                    if (existing) {
+                        throw new DatabaseProcessingException("Disable to store system ctl schema with same fqn and version.");
+                    }
+                case TENANT:
+                    if (currentScope == SYSTEM && existing) {
+                        throw new DatabaseProcessingException(
+                                "Disable to store system ctl schema. Tenant's scope schema already exists with the same fqn and version.");
+                    }
+                    break;
+                case APPLICATION:
+                    break;
+                default:
+                    break;
 
                 }
                 CTLSchema ctlSchema = new CTLSchema(unSavedSchema);
@@ -93,7 +129,13 @@ public class CTLServiceImpl implements CTLService {
                 }
                 schemaMetaInfoDao.refresh(uniqueMetaInfo);
                 schemaMetaInfoDao.incrementCount(uniqueMetaInfo);
-                dto = getDto(ctlSchemaDao.save(ctlSchema, true));
+                try {
+                    dto = getDto(ctlSchemaDao.save(ctlSchema, true));
+                } catch (DataIntegrityViolationException ex) {
+                    throw new DatabaseProcessingException("Can't save cql schema with same fqn, version and tenant id.");
+                } catch (Exception ex) {
+                    throw new DatabaseProcessingException(ex);
+                }
             }
             return dto;
         } else {
@@ -302,5 +344,100 @@ public class CTLServiceImpl implements CTLService {
                 dst.setApplication(null);
             }
         }
+    }
+
+    @Override
+    public FileData shallowExport(CTLSchemaDto schema) {
+        try {
+            FileData result = new FileData();
+            result.setContentType(JSON);
+            result.setFileName(MessageFormat.format(CTL_EXPORT_TEMPLATE, schema.getMetaInfo().getFqn(), schema.getMetaInfo().getVersion()));
+
+            // Format schema body
+            Object json = FORMATTER.readValue(schema.getBody(), Object.class);
+            result.setFileData(FORMATTER.writerWithDefaultPrettyPrinter().writeValueAsString(json).getBytes());
+
+            return result;
+        } catch (Exception cause) {
+            throw new RuntimeException("An unexpected exception occured: " + cause.toString());
+        }
+    }
+
+    @Override
+    public Schema flatExportAsSchema(CTLSchemaDto schema) {
+        return this.parseDependencies(schema, new Schema.Parser());
+    }
+
+    @Override
+    public String flatExportAsString(CTLSchemaDto schema) {
+        return flatExportAsSchema(schema).toString();
+    }
+
+    @Override
+    public FileData flatExport(CTLSchemaDto schema) {
+        try {
+            FileData result = new FileData();
+            result.setContentType(JSON);
+            result.setFileName(MessageFormat.format(CTL_EXPORT_TEMPLATE, schema.getMetaInfo().getFqn(), schema.getMetaInfo().getVersion()));
+
+            // Get schema body
+            String body = flatExportAsString(schema);
+
+            // Format schema body
+            Object json = FORMATTER.readValue(body, Object.class);
+            result.setFileData(FORMATTER.writerWithDefaultPrettyPrinter().writeValueAsString(json).getBytes());
+
+            return result;
+        } catch (Exception cause) {
+            throw new RuntimeException("An unexpected exception occured: " + cause.toString());
+        }
+    }
+
+    @Override
+    public FileData deepExport(CTLSchemaDto schema) {
+        try {
+            ByteArrayOutputStream content = new ByteArrayOutputStream();
+            ZipOutputStream out = new ZipOutputStream(content);
+            List<FileData> files = this.recursiveShallowExport(new ArrayList<FileData>(), schema);
+            for (FileData file : files) {
+                out.putNextEntry(new ZipEntry(file.getFileName()));
+                out.write(file.getFileData());
+                out.closeEntry();
+            }
+            out.close();
+
+            FileData result = new FileData();
+            result.setContentType(ZIP);
+            result.setFileName(CTL_EXPORT_ZIP_NAME);
+            result.setFileData(content.toByteArray());
+            return result;
+        } catch (Exception cause) {
+            throw new RuntimeException("An unexpected exception occured: " + cause.toString());
+        }
+    }
+
+    private Schema parseDependencies(CTLSchemaDto schema, final Schema.Parser parser) {
+        if (schema.getDependencySet() != null) {
+            for (CTLSchemaDto dependency : schema.getDependencySet()) {
+                this.parseDependencies(dependency, parser);
+            }
+        }
+        return parser.parse(schema.getBody());
+    }
+
+    private List<FileData> recursiveShallowExport(List<FileData> files, CTLSchemaDto parent) throws Exception {
+        files.add(this.shallowExport(parent));
+        ObjectNode object = new ObjectMapper().readValue(parent.getBody(), ObjectNode.class);
+        ArrayNode dependencies = (ArrayNode) object.get(DEPENDENCIES);
+        if (dependencies != null) {
+            for (JsonNode node : dependencies) {
+                ObjectNode dependency = (ObjectNode) node;
+                String fqn = dependency.get(FQN).getTextValue();
+                Integer version = dependency.get(VERSION).getIntValue();
+                CTLSchemaDto child = this.findCTLSchemaByFqnAndVerAndTenantId(fqn, version, parent.getTenantId());
+                this.recursiveShallowExport(files, child);
+            }
+        }
+        return files;
     }
 }

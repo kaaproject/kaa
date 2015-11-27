@@ -247,34 +247,6 @@ public class AbstractTest {
         }
     }
 
-    /**
-     * AbstractTest
-     * Gets the resource as string.
-     *
-     * @param path the path
-     * @return the resource as string
-     * @throws java.io.IOException Signals that an I/O exception has occurred.
-     */
-    protected static String getResourceAsString(String path) throws IOException {
-        URL url = Thread.currentThread().getContextClassLoader().getResource(path);
-        String result = null;
-        if (url != null) {
-            File file = new File(url.getPath());
-            try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-                StringBuilder sb = new StringBuilder();
-                String line = br.readLine();
-
-                while (line != null) {
-                    sb.append(line);
-                    sb.append(System.lineSeparator());
-                    line = br.readLine();
-                }
-                result = sb.toString();
-            }
-        }
-        return result;
-    }
-
     protected String readSchemaFileAsString(String filePath) throws IOException {
         try {
             URI uri = this.getClass().getClassLoader().getResource(filePath).toURI();
