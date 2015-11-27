@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -1411,8 +1412,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             }
             return controlService.editConfiguration(configuration);
         } catch (Exception e) {
-            throw Utils.handleExceptionWithCause(e, HibernateOptimisticLockingFailureException.class,
-                    "Someone has already updated the configuration. Reload page to be able to edit it", true);
+            throw Utils.handleException(e, "Someone has already updated the configuration. Reload page to be able to edit it");
         }
     }
 
@@ -2492,11 +2492,33 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     private CTLSchemaScopeDto getCTLSchemaScopeByName(String name) {
-        try {
-            return CTLSchemaScopeDto.valueOf(name.toUpperCase());
-        } catch (Exception cause) {
-            throw new IllegalArgumentException("Invalid CTL schema scope name!");
+        name = name.toUpperCase();
+        for (CTLSchemaScopeDto scope : CTLSchemaScopeDto.values()) {
+            if (name.equals(scope.name())) {
+                return scope;
+            }
         }
+        throw new IllegalArgumentException("Invalid CTL schema scope name!");
+    }
+
+    /**
+     * Returns a string that contains fully qualified names and version numbers
+     * of the given CTL schemas.
+     *
+     * @param types A collection of CTL schemas
+     *
+     * @return A string that contains fully qualified names and version numbers
+     *         of the given CTL schemas
+     */
+    private String asText(Collection<CTLSchemaDto> types) {
+        StringBuilder message = new StringBuilder();
+        if (types != null) {
+            for (CTLSchemaDto type : types) {
+                CTLSchemaMetaInfoDto details = type.getMetaInfo();
+                message.append("\n").append("FQN: ").append(details.getFqn()).append(", version: ").append(details.getVersion());
+            }
+        }
+        return message.toString();
     }
 
     @Override
@@ -2548,7 +2570,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
 
             List<CTLSchemaDto> schemaDependents = controlService.getCTLSchemaDependents(schemaId);
             if (schemaDependents != null && !schemaDependents.isEmpty()) {
-                String message = "Unable to delete the CTL schema as it is referenced by " + Arrays.toString(schemaDependents.toArray());
+                String message = "Unable to delete the CTL schema as it is referenced by the following common type(s): " + this.asText(schemaDependents);
                 throw new IllegalArgumentException(message);
             }
         } catch (Exception cause) {
@@ -2569,7 +2591,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
 
             List<CTLSchemaDto> schemaDependents = controlService.getCTLSchemaDependents(fqn, version, tenantId);
             if (schemaDependents != null && !schemaDependents.isEmpty()) {
-                String message = "Unable to delete the CTL schema as it is referenced by " + Arrays.toString(schemaDependents.toArray());
+                String message = "Unable to delete the CTL schema as it is referenced by the following common type(s): " + this.asText(schemaDependents);
                 throw new IllegalArgumentException(message);
             }
 
