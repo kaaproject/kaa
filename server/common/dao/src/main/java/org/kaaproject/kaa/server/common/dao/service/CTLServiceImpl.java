@@ -1,6 +1,5 @@
 package org.kaaproject.kaa.server.common.dao.service;
 
-
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto.SYSTEM;
 import static org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto.TENANT;
@@ -47,11 +46,16 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class CTLServiceImpl implements CTLService {
 
+    private static final String JSON = "application/json";
+    private static final String ZIP = "application/zip";
+    private static final String VERSION = "version";
+    private static final String FQN = "fqn";
     private static final Logger LOG = LoggerFactory.getLogger(CTLServiceImpl.class);
-    public static final String GENERATED = "Generated";
+    private static final String DEPENDENCIES = "dependencies";
+    private static final String GENERATED = "Generated";
 
     private final LockOptions lockOptions = new LockOptions(LockMode.PESSIMISTIC_WRITE);
-    
+
     /**
      * A template for naming exported CTL schemas.
      * 
@@ -100,19 +104,20 @@ public class CTLServiceImpl implements CTLService {
                 schemaMetaInfoDao.lockRequest(lockOptions).setScope(true).lock(uniqueMetaInfo);
 
                 switch (uniqueMetaInfo.getScope()) {
-                    case SYSTEM:
-                        if (existing) {
-                            throw new DatabaseProcessingException("Disable to store system ctl schema with same fqn and version.");
-                        }
-                    case TENANT:
-                        if (currentScope == SYSTEM && existing) {
-                            throw new DatabaseProcessingException("Disable to store system ctl schema. Tenant's scope schema already exists with the same fqn and version.");
-                        }
-                        break;
-                    case APPLICATION:
-                        break;
-                    default:
-                        break;
+                case SYSTEM:
+                    if (existing) {
+                        throw new DatabaseProcessingException("Disable to store system ctl schema with same fqn and version.");
+                    }
+                case TENANT:
+                    if (currentScope == SYSTEM && existing) {
+                        throw new DatabaseProcessingException(
+                                "Disable to store system ctl schema. Tenant's scope schema already exists with the same fqn and version.");
+                    }
+                    break;
+                case APPLICATION:
+                    break;
+                default:
+                    break;
 
                 }
                 CTLSchema ctlSchema = new CTLSchema(unSavedSchema);
@@ -333,12 +338,12 @@ public class CTLServiceImpl implements CTLService {
             }
         }
     }
-    
+
     @Override
     public FileData shallowExport(CTLSchemaDto schema) {
         try {
             FileData result = new FileData();
-            result.setContentType("application/json");
+            result.setContentType(JSON);
             result.setFileName(MessageFormat.format(CTL_EXPORT_TEMPLATE, schema.getMetaInfo().getFqn(), schema.getMetaInfo().getVersion()));
 
             // Format schema body
@@ -352,14 +357,24 @@ public class CTLServiceImpl implements CTLService {
     }
 
     @Override
+    public Schema flatExportAsSchema(CTLSchemaDto schema) {
+        return this.parseDependencies(schema, new Schema.Parser());
+    }
+
+    @Override
+    public String flatExportAsString(CTLSchemaDto schema) {
+        return flatExportAsSchema(schema).toString();
+    }
+
+    @Override
     public FileData flatExport(CTLSchemaDto schema) {
         try {
             FileData result = new FileData();
-            result.setContentType("application/json");
+            result.setContentType(JSON);
             result.setFileName(MessageFormat.format(CTL_EXPORT_TEMPLATE, schema.getMetaInfo().getFqn(), schema.getMetaInfo().getVersion()));
 
             // Get schema body
-            String body = this.parseDependencies(schema, new Schema.Parser()).toString();
+            String body = flatExportAsString(schema);
 
             // Format schema body
             Object json = FORMATTER.readValue(body, Object.class);
@@ -385,7 +400,7 @@ public class CTLServiceImpl implements CTLService {
             out.close();
 
             FileData result = new FileData();
-            result.setContentType("application/zip");
+            result.setContentType(ZIP);
             result.setFileName(CTL_EXPORT_ZIP_NAME);
             result.setFileData(content.toByteArray());
             return result;
@@ -406,12 +421,12 @@ public class CTLServiceImpl implements CTLService {
     private List<FileData> recursiveShallowExport(List<FileData> files, CTLSchemaDto parent) throws Exception {
         files.add(this.shallowExport(parent));
         ObjectNode object = new ObjectMapper().readValue(parent.getBody(), ObjectNode.class);
-        ArrayNode dependencies = (ArrayNode) object.get("dependencies");
+        ArrayNode dependencies = (ArrayNode) object.get(DEPENDENCIES);
         if (dependencies != null) {
             for (JsonNode node : dependencies) {
                 ObjectNode dependency = (ObjectNode) node;
-                String fqn = dependency.get("fqn").getTextValue();
-                Integer version = dependency.get("version").getIntValue();
+                String fqn = dependency.get(FQN).getTextValue();
+                Integer version = dependency.get(VERSION).getIntValue();
                 CTLSchemaDto child = this.findCTLSchemaByFqnAndVerAndTenantId(fqn, version, parent.getTenantId());
                 this.recursiveShallowExport(files, child);
             }

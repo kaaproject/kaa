@@ -1,5 +1,17 @@
 package org.kaaproject.kaa.server.common.dao.service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Assert;
@@ -13,25 +25,9 @@ import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
 import org.kaaproject.kaa.server.common.dao.AbstractTest;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 @Ignore("This test should be extended and initialized with proper context in each NoSQL submodule")
 public class CTLServiceImplTest extends AbstractTest {
-
-    private static final Logger LOG = LoggerFactory.getLogger(CTLServiceImplTest.class);
 
     private ExecutorService executorService = Executors.newFixedThreadPool(10);
 
@@ -50,9 +46,11 @@ public class CTLServiceImplTest extends AbstractTest {
     private static final String TEST_CTL_SCHEMA_ALPHA = "dao/ctl/alpha.json";
     private static final String TEST_CTL_SCHEMA_ALPHA_FLAT = "dao/ctl/alphaFlat.json";
     private static final String TEST_CTL_SCHEMA_BETA = "dao/ctl/beta.json";
+    private static final String TEST_CTL_SCHEMA_GAMMA = "dao/ctl/gamma.json";
 
     private CTLSchemaDto alpha;
     private CTLSchemaDto beta;
+    private CTLSchemaDto gamma;
 
     @Before
     public void before() throws Exception {
@@ -84,13 +82,27 @@ public class CTLServiceImplTest extends AbstractTest {
         unsaved.setApplicationId(appDto.getId());
         appSchema = ctlService.saveCTLSchema(unsaved);
 
+        gamma = new CTLSchemaDto();
+        CTLSchemaMetaInfoDto gammaMetaInfo = new CTLSchemaMetaInfoDto("org.kaaproject.kaa.Gamma", 1);
+        gammaMetaInfo.setScope(CTLSchemaScopeDto.TENANT);
+        gamma.setMetaInfo(gammaMetaInfo);
+        gamma.setBody(readSchemaFileAsString(TEST_CTL_SCHEMA_GAMMA));
+        gamma = ctlService.saveCTLSchema(gamma);
+        
+        gamma = ctlService.findCTLSchemaById(gamma.getId());
+        
         beta = new CTLSchemaDto();
         CTLSchemaMetaInfoDto betaMetaInfo = new CTLSchemaMetaInfoDto("org.kaaproject.kaa.Beta", 1);
         betaMetaInfo.setScope(CTLSchemaScopeDto.TENANT);
+        Set<CTLSchemaDto> betaDependencies = new HashSet<>();
+        betaDependencies.add(gamma);
         beta.setMetaInfo(betaMetaInfo);
-        beta.setBody(getResourceAsString(TEST_CTL_SCHEMA_BETA));
+        beta.setDependencySet(betaDependencies);
+        beta.setBody(readSchemaFileAsString(TEST_CTL_SCHEMA_BETA));
         beta = ctlService.saveCTLSchema(beta);
 
+        beta = ctlService.findCTLSchemaById(beta.getId());
+        
         alpha = new CTLSchemaDto();
         CTLSchemaMetaInfoDto alphaMetaInfo = new CTLSchemaMetaInfoDto("org.kaaproject.kaa.Alpha", 1);
         alphaMetaInfo.setScope(CTLSchemaScopeDto.TENANT);
@@ -98,10 +110,13 @@ public class CTLServiceImplTest extends AbstractTest {
         alphaDependencies.add(beta);
         alpha.setMetaInfo(alphaMetaInfo);
         alpha.setDependencySet(alphaDependencies);
-        alpha.setBody(getResourceAsString(TEST_CTL_SCHEMA_ALPHA));
+        alpha.setBody(readSchemaFileAsString(TEST_CTL_SCHEMA_ALPHA));
+        
         alpha = ctlService.saveCTLSchema(alpha);
+        
+        alpha = ctlService.findCTLSchemaById(alpha.getId());
 
-        allSchemaList = Arrays.asList(firstSchema, secondSchema, thirdSchema, fourthSchema, mainSchema, systemSchema, tenantSchema, appSchema, beta, alpha);
+        allSchemaList = Arrays.asList(firstSchema, secondSchema, thirdSchema, fourthSchema, mainSchema, systemSchema, tenantSchema, appSchema, gamma, beta, alpha);
     }
 
     @Test
@@ -253,7 +268,7 @@ public class CTLServiceImplTest extends AbstractTest {
     @Test
     public void testShallowExport() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
-        JsonNode expected = mapper.readTree(getResourceAsString(TEST_CTL_SCHEMA_ALPHA));
+        JsonNode expected = mapper.readTree(readSchemaFileAsString(TEST_CTL_SCHEMA_ALPHA));
         JsonNode actual = mapper.readTree(ctlService.shallowExport(alpha).getFileData());
         Assert.assertEquals(expected, actual);
     }
@@ -261,7 +276,7 @@ public class CTLServiceImplTest extends AbstractTest {
     @Test
     public void testFlatExport() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
-        JsonNode expected = mapper.readTree(getResourceAsString(TEST_CTL_SCHEMA_ALPHA_FLAT));
+        JsonNode expected = mapper.readTree(readSchemaFileAsString(TEST_CTL_SCHEMA_ALPHA_FLAT));
         JsonNode actual = mapper.readTree(ctlService.flatExport(alpha).getFileData());
         Assert.assertEquals(expected, actual);
     }
