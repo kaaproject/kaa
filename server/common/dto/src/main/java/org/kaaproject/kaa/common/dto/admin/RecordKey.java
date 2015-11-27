@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,6 +47,7 @@ public class RecordKey implements Serializable {
         CONFIGURATION_SCHEMA,
         NOTIFICATION_SCHEMA,
         PROFILE_SCHEMA,
+        SERVER_PROFILE_SCHEMA,
         LOG_SCHEMA,
         LOG_LIBRARY,
     }

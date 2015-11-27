@@ -27,6 +27,9 @@ import java.util.Set;
 import org.apache.avro.Schema;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.thrift.TException;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.common.dto.AbstractSchemaDto;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
@@ -54,6 +57,7 @@ import org.kaaproject.kaa.common.dto.PageLinkDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.SchemaDto;
+import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.StructureRecordDto;
 import org.kaaproject.kaa.common.dto.TenantAdminDto;
 import org.kaaproject.kaa.common.dto.TenantDto;
@@ -92,6 +96,7 @@ import org.kaaproject.kaa.server.common.dao.LogSchemaService;
 import org.kaaproject.kaa.server.common.dao.NotificationService;
 import org.kaaproject.kaa.server.common.dao.ProfileService;
 import org.kaaproject.kaa.server.common.dao.SdkProfileService;
+import org.kaaproject.kaa.server.common.dao.ServerProfileService;
 import org.kaaproject.kaa.server.common.dao.TopicService;
 import org.kaaproject.kaa.server.common.dao.UserConfigurationService;
 import org.kaaproject.kaa.server.common.dao.UserService;
@@ -123,12 +128,6 @@ import org.slf4j.helpers.MessageFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.apache.commons.codec.binary.Base64;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * The Class DefaultControlService.
@@ -170,6 +169,10 @@ public class DefaultControlService implements ControlService {
     /** The profile service. */
     @Autowired
     private ProfileService profileService;
+
+    /** The server profile service. */
+    @Autowired
+    private ServerProfileService serverProfileService;
 
     /** The endpoint service. */
     @Autowired
@@ -439,8 +442,41 @@ public class DefaultControlService implements ControlService {
     }
 
     /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.control.service.ControlService#getEndpointGroupsByApplicationId(java.lang.String)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getServerProfileSchemasByApplicationId(java.lang.String)
      */
+    @Override
+    public List<ServerProfileSchemaDto> getServerProfileSchemasByApplicationId(String applicationId) throws ControlServiceException {
+        return serverProfileService.findServerProfileSchemasByAppId(applicationId);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#getServerProfileSchema(java.lang.String)
+     */
+    @Override
+    public ServerProfileSchemaDto getServerProfileSchema(String serverProfileSchemaId) throws ControlServiceException {
+        return serverProfileService.findServerProfileSchema(serverProfileSchemaId);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#editServerProfileSchema(org.kaaproject.kaa.common.dto.ServerProfileSchemaDto)
+     */
+    @Override
+    public ServerProfileSchemaDto editServerProfileSchema(ServerProfileSchemaDto serverProfileSchema) throws ControlServiceException {
+        serverProfileSchema.setSchemaDto(ctlService.saveCTLSchema(serverProfileSchema.getSchemaDto()));
+        return serverProfileService.saveServerProfileSchema(serverProfileSchema);
+    }
+
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#findLatestServerProfileSchema(java.lang.String)
+     */
+    @Override
+    public ServerProfileSchemaDto findLatestServerProfileSchema(String applicationId) throws ControlServiceException {
+        return serverProfileService.findLatestServerProfileSchema(applicationId);
+    }
+
+    /* (non-Javadoc)
+         * @see org.kaaproject.kaa.server.control.service.ControlService#getEndpointGroupsByApplicationId(java.lang.String)
+         */
     @Override
     public List<EndpointGroupDto> getEndpointGroupsByApplicationId(String applicationId) throws ControlServiceException {
         return endpointService.findEndpointGroupsByAppId(applicationId);
@@ -471,7 +507,6 @@ public class DefaultControlService implements ControlService {
         if (notification != null) {
             notifyEndpoints(notification, null, null);
         }
-
     }
 
     /* (non-Javadoc)
@@ -1481,6 +1516,14 @@ public class DefaultControlService implements ControlService {
                     schema = schemaDto.getSchema();
                     fileName = MessageFormatter.arrayFormat(DATA_NAME_PATTERN, new Object[]{"profile", key.getSchemaVersion()}).getMessage();
                     break;
+                case SERVER_PROFILE_SCHEMA:
+                    ServerProfileSchemaDto ctlSchemaDto =
+                          serverProfileService.findServerProfileSchema("" + key.getSchemaVersion());
+                    checkSchema(ctlSchemaDto, RecordFiles.PROFILE_SCHEMA);
+                    schema = ctlSchemaDto.getSchemaDto().getBody();
+                    Integer version = ctlSchemaDto.getSchemaDto().getMetaInfo().getVersion();
+                    fileName = MessageFormatter.arrayFormat(DATA_NAME_PATTERN, new Object[]{"profile", version}).getMessage();
+                    break;
                 default:
                     break;
             }
@@ -1596,10 +1639,16 @@ public class DefaultControlService implements ControlService {
      *
      * @param schemaDto the schema dto
      * @param file the file
-     * @throws ControlServiceException the control service exception
+     * @throws NotFoundException the control service exception
      */
     private void checkSchema(AbstractSchemaDto schemaDto, RecordFiles file) throws NotFoundException {
         if(schemaDto == null) {
+            throw new NotFoundException("Schema " + file + " not found!");
+        }
+    }
+
+    private void checkSchema(ServerProfileSchemaDto schemaDto, RecordFiles file) throws NotFoundException {
+        if(schemaDto.getSchemaDto() == null) {
             throw new NotFoundException("Schema " + file + " not found!");
         }
     }

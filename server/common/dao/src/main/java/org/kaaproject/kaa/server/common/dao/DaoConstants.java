@@ -43,6 +43,7 @@ public class DaoConstants {
     public static final String FQN_PROPERTY = "fqn";
     public static final String CLASS_NAME_PROPERTY = "className";
     public static final String SDK_TOKEN_PROPERTY = "token";
+    public static final String CREATED_TIME_PROPERTY = "createdTime";
 
     public static final String TENANT_ALIAS = "tenant";
     public static final String PROFILE_SCHEMA_ALIAS = "profileSchema";
@@ -140,6 +141,18 @@ public class DaoConstants {
      * Profile schema constants.
      */
     public static final String PROFILE_SCHEMA_TABLE_NAME = "profile_schema";
+
+    /**
+     * Server profile schema constants.
+     */
+    public static final String SERVER_PROFILE_SCHEMA_TABLE_NAME = "server_profile_schema";
+    public static final String SERVER_PROFILE_SCHEMA_APP_ID = APPLICATION_ID;
+    public static final String SERVER_PROFILE_SCHEMA_CTL_SCHEMA_ID = "ctl_id";
+    public static final String SERVER_PROFILE_SCHEMA_CREATED_TIME = CREATED_TIME;
+    // Foreign keys constants.
+    public static final String SERVER_PROFILE_SCHEMA_FK_APP_ID = "fk_server_pf_schema_app_id";
+    public static final String SERVER_PROFILE_SCHEMA_FK_CTL_SCHEMA_ID = "fk_server_pf_schema_ctl_id";
+
 
     /**
      * Profile filter constants.

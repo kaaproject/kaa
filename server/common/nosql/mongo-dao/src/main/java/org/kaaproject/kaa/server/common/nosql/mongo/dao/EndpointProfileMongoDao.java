@@ -44,9 +44,12 @@ import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelC
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_ENDPOINT_KEY_HASH;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_NF_GROUP_STATE;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SDK_TOKEN;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SERVER_PROFILE_ID_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SERVER_PROFILE_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_USER_ID;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
+import static org.springframework.data.mongodb.core.query.Update.update;
 
 @Repository
 public class EndpointProfileMongoDao extends AbstractMongoDao<MongoEndpointProfile, ByteBuffer> implements EndpointProfileDao<MongoEndpointProfile> {
@@ -199,5 +202,14 @@ public class EndpointProfileMongoDao extends AbstractMongoDao<MongoEndpointProfi
     public boolean checkSdkToken(String sdkToken) {
         LOG.debug("Checking for endpoint profiles with SDK token {}", sdkToken);
         return findOne(query(where(EP_SDK_TOKEN).is(sdkToken))) != null;
+    }
+
+    @Override
+    public MongoEndpointProfile updateProfileServer(byte[] keyHash, String schemaId, String serverProfile) {
+        LOG.debug("Update server endpoint profile for endpoint with key hash {}, schema is {}", keyHash, schemaId);
+        updateFirst(
+                query(where(EP_ENDPOINT_KEY_HASH).is(keyHash).and(EP_SERVER_PROFILE_ID_PROPERTY).is(schemaId)),
+                update(EP_SERVER_PROFILE_PROPERTY, serverProfile));
+        return findById(ByteBuffer.wrap(keyHash));
     }
 }

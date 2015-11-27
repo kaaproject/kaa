@@ -35,6 +35,7 @@ import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TenantAdminDto;
 import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
@@ -175,6 +176,8 @@ public class AbstractTest {
     protected LogAppendersService logAppendersService;
     @Autowired
     protected CTLService ctlService;
+    @Autowired
+    protected ServerProfileService serverProfileService;
 
     @Autowired
     protected LogAppenderDao<LogAppender> appenderDao;
@@ -720,6 +723,17 @@ public class AbstractTest {
         return endpointService.saveEndpointProfile(profileDto);
     }
 
+    protected EndpointProfileDto generateEndpointProfileDtoWithSchemaId(String appId, String profileSchemaId, String srvProfileBody) {
+        EndpointProfileDto profileDto = new EndpointProfileDto();
+        profileDto.setApplicationId(appId);
+        profileDto.setServerProfileSchemaId(profileSchemaId);
+        profileDto.setEndpointKeyHash("TEST_KEY_HASH".getBytes());
+        profileDto.setProfile("{\"title\": \"TEST\"}");
+        profileDto.setSdkToken(UUID.randomUUID().toString());
+        profileDto.setServerProfile(srvProfileBody);
+        return endpointService.saveEndpointProfile(profileDto);
+    }
+
     protected EndpointProfileDto generateEndpointProfileWithGroupIdDto(String endpointGroupId, boolean nfGroupStateOnly) {
         EndpointProfileDto profileDto = new EndpointProfileDto();
         profileDto.setEndpointKeyHash(generateString("TEST_KEY_HASH").getBytes());
@@ -758,6 +772,23 @@ public class AbstractTest {
         ctlSchema.setBody(UUID.randomUUID().toString());
         ctlSchema.setTenantId(tenantId);
         return ctlSchema;
+    }
+
+    protected ServerProfileSchemaDto generateServiceProfileSchema(String appId, String tenantId) {
+        return generateServiceProfileSchema(appId, tenantId, RANDOM.nextInt());
+    }
+
+    protected ServerProfileSchemaDto generateServiceProfileSchema(String appId, String tenantId, int version) {
+        ServerProfileSchemaDto schemaDto = new ServerProfileSchemaDto();
+        if(isBlank(tenantId)) {
+            ApplicationDto applicationDto = generateApplicationDto();
+            appId = applicationDto.getId();
+            tenantId = applicationDto.getTenantId();
+        }
+        schemaDto.setApplicationId(appId);
+        schemaDto.setCreatedTime(System.currentTimeMillis());
+        schemaDto.setSchemaDto(ctlService.saveCTLSchema(generateCTLSchemaDto(tenantId, DEFAULT_FQN, version, CTLSchemaScopeDto.SERVER_PROFILE_SCHEMA)));
+        return serverProfileService.saveServerProfileSchema(schemaDto);
     }
 
     protected List<String> getIds(List<? extends GenericModel> modelList) {
