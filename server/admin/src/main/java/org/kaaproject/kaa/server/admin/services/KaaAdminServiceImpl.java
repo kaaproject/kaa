@@ -2216,8 +2216,14 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
                         user.getMail());
             }
         } catch (Exception e) {
-            userFacade.deleteUser(result.getUserId());
-            throw Utils.handleException(e);
+            LOG.error("Can't send temporary password. Exception was catched: ", e);
+            if (isEmpty(user.getExternalUid())) {
+                if (isEmpty(user.getExternalUid())) {
+                    userFacade.deleteUser(result.getUserId());
+                }
+            }
+            throw new KaaAdminServiceException("Failed to send email with temporary password. See server logs for details.",
+                    ServiceErrorCode.GENERAL_ERROR);
         }
         return result.getUserId();
     }
