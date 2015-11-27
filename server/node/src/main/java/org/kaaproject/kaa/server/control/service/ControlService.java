@@ -1012,27 +1012,175 @@ public interface ControlService {
      */
     EndpointProfilesPageDto getEndpointProfileByEndpointGroupId(PageLinkDto pageLinkDto) throws ControlServiceException;
 
+    /**
+     * Saves a CTL schema to the database.
+     * 
+     * @param schema A CTL schema to save
+     * 
+     * @return The saved CTL schema
+     * 
+     * @throws ControlServiceException - if an exception occures.
+     */
     CTLSchemaDto saveCTLSchema(CTLSchemaDto schema) throws ControlServiceException;
 
+    /**
+     * Deletes a CTL schema from the database by its identifier.
+     * 
+     * @param schemaId A CTL schema identifier
+     * 
+     * @throws ControlServiceException - if an exception occures.
+     */
     void deleteCTLSchemaById(String schemaId) throws ControlServiceException;
 
+    /**
+     * Deletes a CTL schema from the database by its fully qualified name,
+     * version number and tenant identifier.
+     * 
+     * @param fqn A fully qualified CTL schema name
+     * @param version A CTL schema version number
+     * @param tenantId A tenant identifier
+     * 
+     * @throws ControlServiceException - if an exception occures.
+     */
     void deleteCTLSchemaByFqnAndVersionAndTenantId(String fqn, int version, String tenantId) throws ControlServiceException;
 
+    /**
+     * Returns a CTL schema by its identifier.
+     * 
+     * @param schemaId A CTL schema identifier
+     * 
+     * @return A CTL schema with the given identifier
+     * 
+     * @throws ControlServiceException - if an exception occures.
+     */
     CTLSchemaDto getCTLSchemaById(String schemaId) throws ControlServiceException;
 
+    /**
+     * Returns a CTL schema by its fully qualified name, version number and
+     * tenant identifier.
+     * 
+     * @param fqn A fully qualified CTL schema name
+     * @param version A CTL schema version number
+     * @param tenantId A tenant identifier
+     * 
+     * @return A CTL schema with the given fully qualified name, version number
+     *         and tenant identifier
+     * 
+     * @throws ControlServiceException - if an exception occures.
+     */
     CTLSchemaDto getCTLSchemaByFqnVersionAndTenantId(String fqn, int version, String tenantId) throws ControlServiceException;
 
+    /**
+     * Returns meta information about CTL schemas that are available for use by
+     * a tenant with the given identifier
+     * 
+     * @param tenantId A tenant identifier
+     * 
+     * @return Meta information about CTL schemas that are available for use by
+     *         a tenant with the given identifier
+     * 
+     * @throws ControlServiceException - if an exception occures.
+     */
     List<CTLSchemaMetaInfoDto> getAvailableCTLSchemasMetaInfoByTenantId(String tenantId) throws ControlServiceException;
 
+    /**
+     * Returns meta information about CTL schemas that are tied to a tenant with
+     * the given tenant identifier.
+     * 
+     * @param tenantId A tenant identifier
+     * 
+     * @return Meta information about CTL schemas that are tied to a tenant with
+     *         the given tenant identifier
+     * 
+     * @throws ControlServiceException - if an exception occures.
+     */
     List<CTLSchemaMetaInfoDto> getCTLSchemasMetaInfoByTenantId(String tenantId) throws ControlServiceException;
 
+    /**
+     * Returns meta information about CTL schemas that are tied to an
+     * application with the given application identifier.
+     * 
+     * @param applicationId An application identifier
+     * 
+     * @return Meta information about CTL schemas that are tied to an
+     *         application with the given application identifier
+     * 
+     * @throws ControlServiceException - if an exception occures.
+     */
     List<CTLSchemaMetaInfoDto> getCTLSchemasMetaInfoByApplicationId(String applicationId) throws ControlServiceException;
 
+    /**
+     * Returns meta information about system CTL schemas.
+     * 
+     * @see {@link org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto#SYSTEM}
+     * 
+     * @return Meta information about system CTL schemas
+     * 
+     * @throws ControlServiceException - if an exception occures.
+     */
     List<CTLSchemaMetaInfoDto> getSystemCTLSchemasMetaInfo() throws ControlServiceException;
 
+    /**
+     * Returns CTL schemas that reference a CTL schema with the given
+     * identifier.
+     * 
+     * @param schemaId A CTL schema identifier
+     * 
+     * @return CTL schemas that reference a CTL schema with the given identifier
+     * 
+     * @throws ControlServiceException - if an exception occures.
+     */
     List<CTLSchemaDto> getCTLSchemaDependents(String schemaId) throws ControlServiceException;
 
+    /**
+     * Returns CTL schemas that reference a CTL schema with the given fully
+     * qualified name, version number and tenant identifier.
+     * 
+     * @param fqn A fully qualified CTL schema name
+     * @param version A CTL schema version number
+     * @param tenantId A tenant identifier
+     * 
+     * @return CTL schemas that reference a CTL schema with the given fully
+     *         qualified name, version number and tenant identifier
+     * 
+     * @throws ControlServiceException - if an exception occures.
+     */
     List<CTLSchemaDto> getCTLSchemaDependents(String fqn, int version, String tenantId) throws ControlServiceException;
+
+    /**
+     * Exports the body of a CTL schema.
+     * 
+     * @param schema A CTL schema to export
+     * 
+     * @return A file containing the body of a CTL schema
+     * 
+     * @throws ControlServiceException - if an exception occures.
+     */
+    FileData exportCTLSchemaShallow(CTLSchemaDto schema) throws ControlServiceException;
+
+    /**
+     * Exports the body of a CTL schema with all dependencies inline,
+     * recursively.
+     * 
+     * @param schema A CTL schema to export
+     * @return A file containing the body of a CTL schema with all dependencies
+     *         inline, recursively
+     * @throws ControlServiceException - if an exception occures.
+     */
+    FileData exportCTLSchemaFlat(CTLSchemaDto schema) throws ControlServiceException;
+
+    /**
+     * Exports the body of a CTL schema with all dependencies as different
+     * files, recursively.
+     * 
+     * @param schema A CTL schema to export
+     * 
+     * @return An archive containing the body of a CTL schema as a file and all
+     *         dependencies as different files, recursively.
+     * 
+     * @throws ControlServiceException - if an exception occures.
+     */
+    FileData exportCTLSchemaDeep(CTLSchemaDto schema) throws ControlServiceException;
 
     /**
      * Gets SdkProfileDto object by sdk profile id.
