@@ -101,7 +101,7 @@ public class MessagingService {
             }
         }
     }
-    
+
     public void configureMailSender() {
         SmtpMailProperties smtpMailProperties = propertiesFacade.getSpecificProperties(SmtpMailProperties.class);
         Properties javaMailProperties = toJavaMailProperties(smtpMailProperties);
@@ -117,7 +117,7 @@ public class MessagingService {
         appBaseUrl = generalProperties.getBaseUrl();
         appName = generalProperties.getAppTitle();
     }
-    
+
     private Properties toJavaMailProperties(SmtpMailProperties smtpMailProperties) {
         Properties javaMailProperties = new Properties();
         String protocol = smtpMailProperties.getSmtpProtocol().toString().toLowerCase();
@@ -131,30 +131,16 @@ public class MessagingService {
         return javaMailProperties;
     }
 
-    public void sendTempPassword(final String username, final String password, final String email) {
-        try {
-            callAsync(new Callable<Void>() {
-                @Override
-                public Void call() throws Exception {
-                    String subject =  messages.getMessage("tempPasswordMailMessageSubject", new Object[]{appName}, Locale.ENGLISH);
-                    String text = messages.getMessage("tempPasswordMailMessageBody", new Object[]{appBaseUrl, appName, username, password}, Locale.ENGLISH);
-                    MimeMessage mimeMsg = kaaMessagingMailSender.createMimeMessage();
-                    MimeMessageHelper helper = new MimeMessageHelper(mimeMsg, "UTF-8");
-                    try {
-                        helper.setFrom(mailFrom);
-                        helper.setTo(email);
-                        helper.setSubject(subject);
-                        helper.setText(text, true);
-                        kaaMessagingMailSender.send(helper.getMimeMessage());
-                    } catch (MessagingException e) {
-                        LOG.error("Unexpected error while sendTempPasswordMail", e);
-                    }
-                    return null;
-                }
-            });
-        } catch (Exception e) {
-            LOG.error("Unexpected error while sendTempPasswordMail", e);
-        }
+    public void sendTempPassword(final String username, final String password, final String email) throws Exception {
+        String subject = messages.getMessage("tempPasswordMailMessageSubject", new Object[]{appName}, Locale.ENGLISH);
+        String text = messages.getMessage("tempPasswordMailMessageBody", new Object[]{appBaseUrl, appName, username, password}, Locale.ENGLISH);
+        MimeMessage mimeMsg = kaaMessagingMailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMsg, "UTF-8");
+        helper.setFrom(mailFrom);
+        helper.setTo(email);
+        helper.setSubject(subject);
+        helper.setText(text, true);
+        kaaMessagingMailSender.send(helper.getMimeMessage());
     }
 
     public void sendPasswordResetLink(final String passwordResetHash, final String username, final String email) {
