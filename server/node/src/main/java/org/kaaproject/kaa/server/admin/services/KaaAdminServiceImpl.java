@@ -1032,8 +1032,8 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
             int version = 0;
+            CTLSchemaDto ctlSchemaDto = serverProfileSchema.getSchemaDto();
             if (isEmpty(serverProfileSchema.getId())) {
-                CTLSchemaDto ctlSchemaDto = serverProfileSchema.getSchemaDto();
                 ServerProfileSchemaDto latestServerProfileSchema =
                         controlService.findLatestServerProfileSchema(serverProfileSchema.getApplicationId());
                 if (latestServerProfileSchema != null) {
@@ -1043,19 +1043,16 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
                         getDeclaredFqn(serverProfileSchema.getSchemaForm()), ++version,
                         CTLSchemaScopeDto.SERVER_PROFILE_SCHEMA);
                 ctlSchemaDto.setMetaInfo(metaInfoDto);
-                ctlSchemaDto.setCreatedTime(new Date().getTime());
                 convertToStringSchema(serverProfileSchema, simpleSchemaFormAvroConverter);
                 ctlSchemaDto.setCreatedUsername(getCurrentUser().getUsername());
                 ctlSchemaDto.setTenantId(getCurrentUser().getTenantId());
-                CTLSchemaDto savedCtlSchemaDto = controlService.saveCTLSchema(ctlSchemaDto);
                 serverProfileSchema.setCreatedTime(new Date().getTime());
-                serverProfileSchema.setSchemaDto(savedCtlSchemaDto);
                 checkApplicationId(serverProfileSchema.getApplicationId());
             } else {
                 ServerProfileSchemaDto storedProfileSchema = controlService.getServerProfileSchema(serverProfileSchema.getId());
                 Utils.checkNotNull(storedProfileSchema);
                 checkApplicationId(storedProfileSchema.getApplicationId());
-                serverProfileSchema.getSchemaDto().setBody(storedProfileSchema.getSchemaDto().getBody());
+                ctlSchemaDto.setBody(storedProfileSchema.getSchemaDto().getBody());
             }
             return controlService.editServerProfileSchema(serverProfileSchema);
         } catch (Exception e) {
@@ -1063,11 +1060,9 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         }
     }
 
-    private static final String RECORD_NAMESPACE_FIELD = "recordNamespace";
-    private static final String RECORD_NAME_FIELD = "recordName";
     public String getDeclaredFqn(RecordField rec) {
-        FormField nameField = rec.getFieldByName(RECORD_NAME_FIELD);
-        FormField namespaceField = rec.getFieldByName(RECORD_NAMESPACE_FIELD);
+        FormField nameField = rec.getFieldByName("recordNamespace");
+        FormField namespaceField = rec.getFieldByName("recordName");
         if (nameField != null && namespaceField != null) {
             String name = ((StringField)nameField).getValue();
             String namespace = ((StringField)namespaceField).getValue();

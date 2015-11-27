@@ -45,20 +45,21 @@ public class ServerProfileSchemasGrid<T extends ServerProfileSchemaDto> extends 
         float prefWidth = 0;
 
         prefWidth += constructStringColumn(table,
-                Utils.constants.dateCreated(),
+                Utils.constants.version(),
                 new StringValueProvider<T>() {
                     @Override
                     public String getValue(T item) {
-                        return Utils.millisecondsToDateString(item.getCreatedTime());
+                        return item.getSchemaDto().getMetaInfo().getVersion() + ".0";
                     }
-                }/*,
+                },
                 new Comparator<T>() {
                     @Override
                     public int compare(T o1, T o2) {
-                        return o1.compareTo(o2);
+                        return o1.getSchemaDto().getMetaInfo().getVersion()
+                                .compareTo(o2.getSchemaDto().getMetaInfo().getVersion());
                     }
                 },
-                Boolean.FALSE*/,
+                Boolean.FALSE,
                 80);
 
         prefWidth += constructStringColumn(table,
@@ -68,14 +69,14 @@ public class ServerProfileSchemasGrid<T extends ServerProfileSchemaDto> extends 
                     public String getValue(T item) {
                         return item.getSchemaDto().getName();
                     }
-                }/*,
+                },
                 new Comparator<T>() {
                     @Override
                     public int compare(T o1, T o2) {
-                        return o1.getName().compareToIgnoreCase(o2.getName());
+                        return o1.getSchemaDto().getName().compareToIgnoreCase(o2.getSchemaDto().getName());
                     }
                 },
-                null*/,
+                null,
                 80);
 
         prefWidth += constructStringColumn(table,
@@ -86,6 +87,23 @@ public class ServerProfileSchemasGrid<T extends ServerProfileSchemaDto> extends 
                         return item.getSchemaDto().getCreatedUsername();
                     }
                 }, 80);
+
+        prefWidth += constructStringColumn(table,
+                Utils.constants.dateCreated(),
+                new StringValueProvider<T>() {
+                    @Override
+                    public String getValue(T item) {
+                        return Utils.millisecondsToDateString(item.getCreatedTime());
+                    }
+                },
+                new Comparator<T>() {
+                    @Override
+                    public int compare(T o1, T o2) {
+                        return o1.getCreatedTime().compareTo(o2.getCreatedTime());
+                    }
+                },
+                Boolean.FALSE,
+                80);
 
         return prefWidth;
     }
@@ -109,9 +127,9 @@ public class ServerProfileSchemasGrid<T extends ServerProfileSchemaDto> extends 
                 new ActionButtonCell.ActionListener<T>() {
                     @Override
                     public void onItemAction(T value) {
-                        Integer schemaVersion = Integer.valueOf(value.getId());
+                        String schemaVersion = value.getId();
                         RowActionEvent<String> rowDownloadSchemaEvent =
-                                new RowActionEvent<>(String.valueOf(schemaVersion), KaaRowAction.DOWNLOAD_SCHEMA);
+                                new RowActionEvent<>(schemaVersion, KaaRowAction.DOWNLOAD_SCHEMA);
                         fireEvent(rowDownloadSchemaEvent);
                     }
                 }, new ActionButtonCell.ActionValidator<T>() {

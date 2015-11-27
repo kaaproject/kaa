@@ -27,6 +27,9 @@ import java.util.Set;
 import org.apache.avro.Schema;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.thrift.TException;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.common.dto.AbstractSchemaDto;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
@@ -459,9 +462,13 @@ public class DefaultControlService implements ControlService {
      */
     @Override
     public ServerProfileSchemaDto editServerProfileSchema(ServerProfileSchemaDto serverProfileSchema) throws ControlServiceException {
+        serverProfileSchema.setSchemaDto(ctlService.saveCTLSchema(serverProfileSchema.getSchemaDto()));
         return serverProfileService.saveServerProfileSchema(serverProfileSchema);
     }
 
+    /* (non-Javadoc)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#findLatestServerProfileSchema(java.lang.String)
+     */
     @Override
     public ServerProfileSchemaDto findLatestServerProfileSchema(String applicationId) throws ControlServiceException {
         return serverProfileService.findLatestServerProfileSchema(applicationId);
@@ -500,7 +507,6 @@ public class DefaultControlService implements ControlService {
         if (notification != null) {
             notifyEndpoints(notification, null, null);
         }
-
     }
 
     /* (non-Javadoc)
@@ -1511,11 +1517,12 @@ public class DefaultControlService implements ControlService {
                     fileName = MessageFormatter.arrayFormat(DATA_NAME_PATTERN, new Object[]{"profile", key.getSchemaVersion()}).getMessage();
                     break;
                 case SERVER_PROFILE_SCHEMA:
-                  ServerProfileSchemaDto ctlSchemaDto = serverProfileService.findServerProfileSchema("" + key.getSchemaVersion());
+                    ServerProfileSchemaDto ctlSchemaDto =
+                          serverProfileService.findServerProfileSchema("" + key.getSchemaVersion());
                     checkSchema(ctlSchemaDto, RecordFiles.PROFILE_SCHEMA);
                     schema = ctlSchemaDto.getSchemaDto().getBody();
-//                    String dateString = Utils.millisecondsToDateString(ctlSchemaDto.getCreatedTime());
-                    fileName = MessageFormatter.arrayFormat(DATA_NAME_PATTERN, new Object[]{"profile", /*dateString*/5}).getMessage();
+                    Integer version = ctlSchemaDto.getSchemaDto().getMetaInfo().getVersion();
+                    fileName = MessageFormatter.arrayFormat(DATA_NAME_PATTERN, new Object[]{"profile", version}).getMessage();
                     break;
                 default:
                     break;

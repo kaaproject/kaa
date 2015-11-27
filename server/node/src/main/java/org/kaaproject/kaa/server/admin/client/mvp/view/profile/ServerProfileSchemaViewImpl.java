@@ -39,4 +39,15 @@ public class ServerProfileSchemaViewImpl extends BaseSchemaViewImpl {
     protected String getSubTitle() {
         return Utils.constants.profileSchemaDetails();
     }
+
+    @Override
+    protected void initDetailsTable() {
+        super.initDetailsTable();
+        /*
+            Making invisible Endpoint count column because it is redundant.
+            see BaseSchemaViewImpl#initDetailsTable() for details.
+         */
+        detailsTable.getCellFormatter().setVisible(3, 0, false);
+        detailsTable.getCellFormatter().setVisible(3, 1, false);
+    }
 }

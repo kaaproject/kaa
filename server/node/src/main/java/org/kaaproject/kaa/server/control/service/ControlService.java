@@ -310,6 +310,13 @@ public interface ControlService {
      */
     ServerProfileSchemaDto editServerProfileSchema(ServerProfileSchemaDto serverProfileSchema) throws ControlServiceException;
 
+    /**
+     * Gets the latest created server profile schema for application.
+     *
+     * @param applicationId the application id
+     * @return the server profile schema dto
+     * @throws ControlServiceException
+     */
     ServerProfileSchemaDto findLatestServerProfileSchema(String applicationId) throws ControlServiceException;
 
     /**
