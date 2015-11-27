@@ -18,33 +18,33 @@ package org.kaaproject.kaa.server.admin.client.mvp.view.widget;
 
 import com.google.gwt.text.shared.Renderer;
 import com.google.gwt.user.client.ui.ValueListBox;
-import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-public class ServerProfileSchemasInfoListBox extends ValueListBox<ProfileSchemaDto> {
+public class ServerProfileSchemasInfoListBox extends ValueListBox<ServerProfileSchemaDto> {
 
     public ServerProfileSchemasInfoListBox() {
         super(new ServerProfileSchemaInfoRender());
     }
 
     public void reset() {
-        List<ProfileSchemaDto> emptyList = Collections.emptyList();
+        List<ServerProfileSchemaDto> emptyList = Collections.emptyList();
         setValue(null);
         setAcceptableValues(emptyList);
     }
 
-    static class ServerProfileSchemaInfoRender implements Renderer<ProfileSchemaDto> {
+    static class ServerProfileSchemaInfoRender implements Renderer<ServerProfileSchemaDto> {
 
         @Override
-        public String render(ProfileSchemaDto dto) {
-            return dto !=null ? (dto.getName()) : "";
+        public String render(ServerProfileSchemaDto dto) {
+            return dto !=null ? (dto.getSchemaDto().getName()) : "";
         }
 
         @Override
-        public void render(ProfileSchemaDto dto, Appendable appendable) throws IOException {
+        public void render(ServerProfileSchemaDto dto, Appendable appendable) throws IOException {
             appendable.append(render(dto));
         }
     }

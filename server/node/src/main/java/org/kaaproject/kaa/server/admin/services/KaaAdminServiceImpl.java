@@ -18,7 +18,9 @@ package org.kaaproject.kaa.server.admin.services;
 
 import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,10 +37,17 @@ import net.iharder.Base64;
 import org.apache.avro.Schema;
 import org.apache.avro.SchemaParseException;
 import org.apache.avro.generic.GenericDatumReader;
+import org.apache.avro.generic.GenericDatumWriter;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.io.DatumReader;
+import org.apache.avro.io.DatumWriter;
 import org.apache.avro.io.DecoderFactory;
+import org.apache.avro.io.EncoderFactory;
 import org.apache.avro.io.JsonDecoder;
+import org.apache.avro.io.JsonEncoder;
+import org.codehaus.jackson.JsonEncoding;
+import org.codehaus.jackson.JsonFactory;
+import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
@@ -57,6 +66,7 @@ import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileRecordFieldDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileViewDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
@@ -196,16 +206,30 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            EndpointProfileViewDto viewDto = controlService.getEndpointProfileViewDtoByEndpointKeyHash(endpointProfileKeyHash);
+            EndpointProfileViewDto viewDto =
+                    controlService.getEndpointProfileViewDtoByEndpointKeyHash(endpointProfileKeyHash);
 
+            EndpointProfileDto endpointProfileDto = viewDto.getEndpointProfileDto();
             ProfileSchemaDto schemaDto = viewDto.getProfileSchemaDto();
             if (schemaDto != null) {
                 convertToSchemaForm(schemaDto, simpleSchemaFormAvroConverter);
                 /* check for empty schemas */
                 viewDto.setEndpointProfileRecord(
-                        generateFormDataFromJson(schemaDto.getSchema(), viewDto.getEndpointProfileDto().getProfile()));
+                        generateFormDataFromJson(schemaDto.getSchema(),
+                                endpointProfileDto.getProfile()));
             }
             viewDto.setProfileSchemaDto(schemaDto);
+
+            ServerProfileSchemaDto serverProfileSchemaDto = viewDto.getServerProfileSchemaDto();
+            if (serverProfileSchemaDto != null) {
+                convertToSchemaForm(serverProfileSchemaDto, simpleSchemaFormAvroConverter);
+                if (endpointProfileDto.getServerProfile() != null) {
+                    viewDto.setServerProfileRecord(generateFormDataFromJson(serverProfileSchemaDto.getSchemaDto().getBody(),
+                                    endpointProfileDto.getServerProfile()));
+                }
+            }
+            viewDto.setServerProfileSchemaDto(serverProfileSchemaDto);
+
             for (EndpointGroupDto groupDto : viewDto.getGroupDtoList()) {
                 Utils.checkNotNull(groupDto);
             }
@@ -315,6 +339,47 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             }
             checkApplicationId(profileBodyDto.getAppId());
             return profileBodyDto;
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
+    public EndpointProfileRecordFieldDto updateEndpointProfile(EndpointProfileRecordFieldDto endpointProfileRecordDto)
+            throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            System.out.println("\n\n\n\tupdateEndpointProfile!!!!\n\n");
+            RecordField profileRecord = endpointProfileRecordDto.getProfileRecord();
+            EndpointProfileDto endpointProfileDto = endpointProfileRecordDto.getProfileDto();
+            String schemaId = endpointProfileDto.getServerProfileSchemaId();
+
+
+            if (schemaId != null && profileRecord != null) {
+//            ServerProfileSchemaDto serverProfileSchema = controlService.getServerProfileSchema(schemaId);
+//            String body = serverProfileSchema.getSchemaDto().getBody();
+                GenericRecord record = FormAvroConverter.createGenericRecordFromRecordField(profileRecord);
+
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                JsonGenerator jsonGenerator
+                        = new JsonFactory().createJsonGenerator(baos, JsonEncoding.UTF8);
+                jsonGenerator.useDefaultPrettyPrinter();
+                JsonEncoder jsonEncoder = EncoderFactory.get().jsonEncoder(record.getSchema(), jsonGenerator);
+                DatumWriter<GenericRecord> datumWriter = new GenericDatumWriter<GenericRecord>(record.getSchema());
+                datumWriter.write(record, jsonEncoder);
+                jsonEncoder.flush();
+                baos.flush();
+
+                endpointProfileDto.setServerProfile(new String(baos.toByteArray(), Charset.forName("UTF-8")));
+            }
+
+            EndpointProfileDto profileDto = controlService.updateEndpointProfile(endpointProfileDto);
+
+            checkApplicationId(profileDto.getApplicationId());
+            endpointProfileRecordDto.setProfileDto(profileDto);
+            System.out.println("\n\n\n\tReturning updateEndpointProfile!!!!" + "\n\tschema? : "
+                    + profileDto.getServerProfile() + "\n\tschema id? : " + profileDto.getServerProfileSchemaId() + "\n\n");
+            return endpointProfileRecordDto;
         } catch (Exception e) {
             throw Utils.handleException(e);
         }

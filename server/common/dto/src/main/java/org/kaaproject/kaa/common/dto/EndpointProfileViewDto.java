@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,8 +28,10 @@ public class EndpointProfileViewDto implements Serializable {
     private EndpointProfileDto endpointProfileDto;
     private EndpointUserDto endpointUserDto;
     private ProfileSchemaDto profileSchemaDto;
-    private List<EndpointGroupDto> groupDtoList;
+    private ServerProfileSchemaDto serverProfileSchemaDto;
     private RecordField endpointProfileRecord;
+    private RecordField serverProfileRecord;
+    private List<EndpointGroupDto> groupDtoList;
     private List<TopicDto> endpointNotificationTopics;
 
     public EndpointProfileViewDto() {}
@@ -58,12 +60,12 @@ public class EndpointProfileViewDto implements Serializable {
         this.profileSchemaDto = profileSchemaDto;
     }
 
-    public List<EndpointGroupDto> getGroupDtoList() {
-        return groupDtoList;
+    public ServerProfileSchemaDto getServerProfileSchemaDto() {
+        return serverProfileSchemaDto;
     }
 
-    public void setGroupDtoList(List<EndpointGroupDto> groupDtoList) {
-        this.groupDtoList = groupDtoList;
+    public void setServerProfileSchemaDto(ServerProfileSchemaDto serverProfileSchemaDto) {
+        this.serverProfileSchemaDto = serverProfileSchemaDto;
     }
 
     public RecordField getEndpointProfileRecord() {
@@ -72,6 +74,22 @@ public class EndpointProfileViewDto implements Serializable {
 
     public void setEndpointProfileRecord(RecordField endpointProfileRecord) {
         this.endpointProfileRecord = endpointProfileRecord;
+    }
+
+    public RecordField getServerProfileRecord() {
+        return serverProfileRecord;
+    }
+
+    public void setServerProfileRecord(RecordField serverProfileRecord) {
+        this.serverProfileRecord = serverProfileRecord;
+    }
+
+    public List<EndpointGroupDto> getGroupDtoList() {
+        return groupDtoList;
+    }
+
+    public void setGroupDtoList(List<EndpointGroupDto> groupDtoList) {
+        this.groupDtoList = groupDtoList;
     }
 
     public List<TopicDto> getEndpointNotificationTopics() {

@@ -24,6 +24,7 @@ import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileRecordFieldDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileViewDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
@@ -779,6 +780,12 @@ public class DataSource {
     public void getEndpointProfileViewDtoByEndpointProfileKeyHash(String endpointKeyHash,
             AsyncCallback<EndpointProfileViewDto> callback) {
         rpcService.getEndpointProfileViewDtoByEndpointProfileKeyHash(endpointKeyHash, callback);
+    }
+
+    public void updateEndpointProfile(EndpointProfileRecordFieldDto endpointProfileRecordDto,
+                                      AsyncCallback<EndpointProfileRecordFieldDto> callback){
+        rpcService.updateEndpointProfile(endpointProfileRecordDto, callback);
+
     }
 
     public void generateRecordFromSchemaJson(String avroSchema, AsyncCallback<RecordField> callback) {

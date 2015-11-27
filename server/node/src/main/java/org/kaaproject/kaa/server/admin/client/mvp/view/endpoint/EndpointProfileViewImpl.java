@@ -220,6 +220,13 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
             }
         });
 
+        saveProfileButton.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                serverProfPopup.hide();
+            }
+        });
+
         editButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
@@ -259,8 +266,12 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
         userID.setValue("");
         userExternalID.setValue("");
         endpointProfSchemaName.setText("");
+        serverProfSchemaName.setText("");
+        serverSchemasListBox.reset();
+        serverProfRecord.clear();
 
         endpointProfForm.getRecordWidget().clear();
+        serverProfForm.getRecordWidget().clear();
     }
 
     @Override
@@ -323,7 +334,7 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
 
     @Override
     public Button getSaveProfileButton() {
-        return saveButton;
+        return saveProfileButton;
     }
 
     @Override

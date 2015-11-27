@@ -1555,6 +1555,11 @@ public class DefaultControlService implements ControlService {
     }
 
     @Override
+    public EndpointProfileDto updateEndpointProfile(EndpointProfileDto endpointProfileDto) throws ControlServiceException {
+        return endpointService.saveEndpointProfile(endpointProfileDto);
+    }
+
+    @Override
     public SdkProfileDto getSdkProfile(String sdkProfileId) throws ControlServiceException {
         return sdkProfileService.findSdkProfileById(sdkProfileId);
     }
@@ -1601,6 +1606,14 @@ public class DefaultControlService implements ControlService {
         ProfileSchemaDto schemaDto = profileService
                 .findProfileSchemaByAppIdAndVersion(applicationId, profileVersion);
         viewDto.setProfileSchemaDto(schemaDto);
+
+        /*    Getting server profile RecordForm    */
+        String serverProfileSchemaId = endpointProfileDto.getServerProfileSchemaId();
+        System.out.println("\n\n\n\tserv prof id: " + serverProfileSchemaId + "\n\n");
+        if (serverProfileSchemaId != null && !serverProfileSchemaId.isEmpty()) {
+            viewDto.setServerProfileSchemaDto(serverProfileService.
+                    findServerProfileSchema(serverProfileSchemaId));
+        }
 
         /*    Getting notification topics    */
         List<TopicDto> topicsByApplicationId = topicService.findTopicsByAppId(applicationId);

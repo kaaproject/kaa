@@ -1049,6 +1049,15 @@ public interface ControlService {
      */
     EndpointProfilesPageDto getEndpointProfileByEndpointGroupId(PageLinkDto pageLinkDto) throws ControlServiceException;
 
+    /**
+     * Updates endpoint profile
+     *
+     * @param endpointProfileDto endpoint profile dto
+     * @return updated endpoint profile dto
+     * @throws ControlServiceException
+     */
+    EndpointProfileDto updateEndpointProfile(EndpointProfileDto endpointProfileDto) throws ControlServiceException;
+
     CTLSchemaDto saveCTLSchema(CTLSchemaDto schema) throws ControlServiceException;
 
     void deleteCTLSchemaById(String schemaId) throws ControlServiceException;
