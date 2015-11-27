@@ -29,6 +29,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.PingResponse;
+import org.kaaproject.kaa.common.dto.EndpointProfileDataDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
@@ -448,17 +449,15 @@ public class EndpointActorMessageProcessor {
         if (request != null) {
             if (request.getLogEntries() != null && request.getLogEntries().size() > 0) {
                 LOG.debug("[{}][{}] Processing log upload request {}", endpointKey, actorKey, request.getLogEntries().size());
-                LogEventPack logPack = new LogEventPack();
-                logPack.setDateCreated(System.currentTimeMillis());
-                logPack.setEndpointKey(Base64Util.encode(key.getData()));
+                EndpointProfileDataDto profileDto = convert(responseHolder.getEndpointProfile());
                 List<LogEvent> logEvents = new ArrayList<>(request.getLogEntries().size());
                 for (LogEntry logEntry : request.getLogEntries()) {
                     LogEvent logEvent = new LogEvent();
                     logEvent.setLogData(logEntry.getData().array());
                     logEvents.add(logEvent);
                 }
-                logPack.setEvents(logEvents);
-                logPack.setLogSchemaVersion(responseHolder.getEndpointProfile().getLogSchemaVersion());
+                LogEventPack logPack = new LogEventPack(profileDto, System.currentTimeMillis(), responseHolder.getEndpointProfile()
+                        .getLogSchemaVersion(), logEvents);
                 logPack.setUserId(state.getUserId());
                 context.parent().tell(new LogEventPackMessage(request.getRequestId(), context.self(), logPack), context.self());
             }
@@ -467,6 +466,11 @@ public class EndpointActorMessageProcessor {
                 logUploadResponseMap.clear();
             }
         }
+    }
+
+    private EndpointProfileDataDto convert(EndpointProfileDto profileDto) {
+        return new EndpointProfileDataDto(profileDto.getId(), endpointKey, profileDto.getProfileVersion(),
+                profileDto.getClientProfileBody(), profileDto.getServerProfileSchemaId(), profileDto.getServerProfileBody());
     }
 
     private void sendConnectToNewUser(ActorContext context, EndpointProfileDto endpointProfile) {

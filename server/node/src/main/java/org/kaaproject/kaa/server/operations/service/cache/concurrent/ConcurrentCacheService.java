@@ -40,6 +40,7 @@ import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.HistoryDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventAction;
@@ -57,6 +58,7 @@ import org.kaaproject.kaa.server.common.dao.EventClassService;
 import org.kaaproject.kaa.server.common.dao.HistoryService;
 import org.kaaproject.kaa.server.common.dao.ProfileService;
 import org.kaaproject.kaa.server.common.dao.SdkProfileService;
+import org.kaaproject.kaa.server.common.dao.ServerProfileService;
 import org.kaaproject.kaa.server.common.dao.TopicService;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
 import org.kaaproject.kaa.server.operations.service.cache.AppSeqNumber;
@@ -110,6 +112,9 @@ public class ConcurrentCacheService implements CacheService {
     /** The profile service. */
     @Autowired
     private ProfileService profileService;
+    
+    @Autowired
+    private ServerProfileService serverProfileService;
 
     /** The history service. */
     @Autowired
@@ -151,6 +156,9 @@ public class ConcurrentCacheService implements CacheService {
     /** The pf schema memorizer. */
     private final CacheTemporaryMemorizer<AppVersionKey, ProfileSchemaDto> pfSchemaMemorizer = new CacheTemporaryMemorizer<>();
 
+    /** The pf schema memorizer. */
+    private final CacheTemporaryMemorizer<String, ServerProfileSchemaDto> serverPfSchemaMemorizer = new CacheTemporaryMemorizer<>();
+
     /** The sdk properties memorized. */
     private final CacheTemporaryMemorizer<String, SdkProfileDto> sdkProfileMemorizer = new CacheTemporaryMemorizer<>();
 
@@ -177,6 +185,8 @@ public class ConcurrentCacheService implements CacheService {
 
     /** The topics memorizer. */
     private final CacheTemporaryMemorizer<String, TopicDto> topicsMemorizer = new CacheTemporaryMemorizer<String, TopicDto>();
+    
+    
 
     /** The history seq number comparator. */
     public static final Comparator<HistoryDto> HISTORY_SEQ_NUMBER_COMPARATOR = new Comparator<HistoryDto>() {
@@ -520,6 +530,20 @@ public class ConcurrentCacheService implements CacheService {
             }
         });
     }
+    
+    @Override
+    @Cacheable("serverProfileSchemas")
+    public ServerProfileSchemaDto getServerProfileSchemaById(String key) {
+        return serverPfSchemaMemorizer.compute(key, new Computable<String, ServerProfileSchemaDto>() {
+
+            @Override
+            public ServerProfileSchemaDto compute(String key) {
+                LOG.debug("Fetching result for getServerProfileSchemaById");
+                return serverProfileService.findServerProfileSchema(key);
+            }
+        });
+    }
+
 
     /*
      * (non-Javadoc)

@@ -68,10 +68,6 @@ public class LogEventPackMessage {
         return logEventPack.getDateCreated();
     }
 
-    public LogSchema getLogSchema() {
-        return logEventPack.getLogSchema();
-    }
-
     public int getLogSchemaVersion() {
         return logEventPack.getLogSchemaVersion();
     }
@@ -80,7 +76,7 @@ public class LogEventPackMessage {
         return logEventPack.getEvents();
     }
 
-    public void setLogSchema(LogSchema logSchema) {
-        logEventPack.setLogSchema(logSchema);
+    public LogSchema getLogSchema() {
+        return logEventPack.getLogSchema();
     }
 }

@@ -18,45 +18,44 @@ package org.kaaproject.kaa.server.common.log.shared.appender;
 
 import java.util.List;
 
+import org.kaaproject.kaa.common.dto.EndpointProfileDataDto;
+import org.kaaproject.kaa.server.common.log.shared.appender.data.ProfileInfo;
+
 public class LogEventPack {
 
-    private String endpointKey;
+    private final EndpointProfileDataDto profileDto;
 
-    private long dateCreated;
+    private final long dateCreated;
 
-    private int logSchemaVersion;
+    private final List<LogEvent> events;
+
+    private final int logSchemaVersion;
 
     private LogSchema logSchema;
 
-    private List<LogEvent> events;
-
     private String userId;
 
-    public LogEventPack() {
+    private ProfileInfo clientProfile;
 
-    }
+    private ProfileInfo serverProfile;
 
-    public LogEventPack(String endpointKey, long dateCreated, LogSchema logSchema, List<LogEvent> events) {
-        this.endpointKey = endpointKey;
+    public LogEventPack(EndpointProfileDataDto profileDto, long dateCreated, int logSchemaVersion, List<LogEvent> events) {
+        this.profileDto = profileDto;
         this.dateCreated = dateCreated;
-        this.logSchema = logSchema;
+        this.logSchemaVersion = logSchemaVersion;
         this.events = events;
     }
 
     public String getEndpointKey() {
-        return endpointKey;
+        return profileDto.getEndpointKey();
     }
 
-    public void setEndpointKey(String endpointKey) {
-        this.endpointKey = endpointKey;
+    public EndpointProfileDataDto getProfileDto() {
+        return profileDto;
     }
 
     public long getDateCreated() {
         return dateCreated;
-    }
-
-    public void setDateCreated(long dateCreated) {
-        this.dateCreated = dateCreated;
     }
 
     public LogSchema getLogSchema() {
@@ -71,16 +70,8 @@ public class LogEventPack {
         return logSchemaVersion;
     }
 
-    public void setLogSchemaVersion(int logSchemaVersion) {
-        this.logSchemaVersion = logSchemaVersion;
-    }
-
     public List<LogEvent> getEvents() {
         return events;
-    }
-
-    public void setEvents(List<LogEvent> events) {
-        this.events = events;
     }
 
     public String getUserId() {
@@ -91,10 +82,20 @@ public class LogEventPack {
         this.userId = userId;
     }
 
-    @Override
-    public String toString() {
-        return "LogEventPack [endpointKey=" + endpointKey + ", dateCreated=" + dateCreated + ", logSchemaVersion=" + logSchemaVersion + ", logSchema="
-                + logSchema + ", events=" + events + "]";
+    public ProfileInfo getClientProfile() {
+        return clientProfile;
+    }
+
+    public void setClientProfile(ProfileInfo clientProfile) {
+        this.clientProfile = clientProfile;
+    }
+
+    public ProfileInfo getServerProfile() {
+        return serverProfile;
+    }
+
+    public void setServerProfile(ProfileInfo serverProfile) {
+        this.serverProfile = serverProfile;
     }
 
 }
