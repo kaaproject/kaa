@@ -62,10 +62,10 @@ import org.kaaproject.kaa.common.dto.UpdateNotificationDto;
 import org.kaaproject.kaa.common.dto.UserDto;
 import org.kaaproject.kaa.common.dto.admin.RecordKey;
 import org.kaaproject.kaa.common.dto.admin.RecordKey.RecordFiles;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
@@ -123,12 +123,6 @@ import org.slf4j.helpers.MessageFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.apache.commons.codec.binary.Base64;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * The Class DefaultControlService.
@@ -1657,6 +1651,21 @@ public class DefaultControlService implements ControlService {
     @Override
     public List<CTLSchemaDto> getCTLSchemaDependents(String fqn, int version, String tenantId) throws ControlServiceException {
         return ctlService.findCTLSchemaDependents(fqn, version, tenantId);
+    }
+
+    @Override
+    public FileData exportCTLSchemaShallow(CTLSchemaDto schema) throws ControlServiceException {
+        return ctlService.shallowExport(schema);
+    }
+
+    @Override
+    public FileData exportCTLSchemaFlat(CTLSchemaDto schema) throws ControlServiceException {
+        return ctlService.flatExport(schema);
+    }
+
+    @Override
+    public FileData exportCTLSchemaDeep(CTLSchemaDto schema) throws ControlServiceException {
+        return ctlService.deepExport(schema);
     }
 
 }

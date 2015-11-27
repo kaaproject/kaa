@@ -86,9 +86,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -854,10 +852,6 @@ public class AdminClient {
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
         params.add("body", body);
         return restTemplate.postForObject(url + "CTL/saveSchema", params, CTLSchemaInfoDto.class);
-    }
-
-    public CTLSchemaInfoDto saveCTLSchema(CTLSchemaInfoDto schema) {
-        return restTemplate.postForObject(url + "CTL/saveSchema", schema, CTLSchemaInfoDto.class);
     }
 
     public void deleteCTLSchemaByFqnAndVersion(String fqn, Integer version) {
