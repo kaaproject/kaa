@@ -42,8 +42,8 @@ public interface Dao<T, K> {
     /**
      * Find object by id.
      *
-     * @param id the id
-     * @return the found object
+     * @param   id the id
+     * @return  the found object
      */
     T findById(K id);
 
@@ -60,9 +60,11 @@ public interface Dao<T, K> {
     void removeById(K id);
 
     /**
-     * @param o
-     * @param clazz
-     * @return
+     * @param   o       the o
+     * @param   clazz   the clazz
+     * @param   <V>     the V
+     * @return  the saved object
+     *
      */
     <V> V save(V o, Class<?> clazz);
 
