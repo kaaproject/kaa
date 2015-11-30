@@ -349,15 +349,12 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            System.out.println("\n\n\n\tupdateEndpointProfile!!!!\n\n");
             RecordField profileRecord = endpointProfileRecordDto.getProfileRecord();
             EndpointProfileDto endpointProfileDto = endpointProfileRecordDto.getProfileDto();
             String schemaId = endpointProfileDto.getServerProfileSchemaId();
 
 
             if (schemaId != null && profileRecord != null) {
-//            ServerProfileSchemaDto serverProfileSchema = controlService.getServerProfileSchema(schemaId);
-//            String body = serverProfileSchema.getSchemaDto().getBody();
                 GenericRecord record = FormAvroConverter.createGenericRecordFromRecordField(profileRecord);
 
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -377,8 +374,6 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
 
             checkApplicationId(profileDto.getApplicationId());
             endpointProfileRecordDto.setProfileDto(profileDto);
-            System.out.println("\n\n\n\tReturning updateEndpointProfile!!!!" + "\n\tschema? : "
-                    + profileDto.getServerProfile() + "\n\tschema id? : " + profileDto.getServerProfileSchemaId() + "\n\n");
             return endpointProfileRecordDto;
         } catch (Exception e) {
             throw Utils.handleException(e);

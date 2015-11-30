@@ -1609,10 +1609,10 @@ public class DefaultControlService implements ControlService {
 
         /*    Getting server profile RecordForm    */
         String serverProfileSchemaId = endpointProfileDto.getServerProfileSchemaId();
-        System.out.println("\n\n\n\tserv prof id: " + serverProfileSchemaId + "\n\n");
         if (serverProfileSchemaId != null && !serverProfileSchemaId.isEmpty()) {
-            viewDto.setServerProfileSchemaDto(serverProfileService.
-                    findServerProfileSchema(serverProfileSchemaId));
+            ServerProfileSchemaDto serverProfileSchema = serverProfileService.
+                    findServerProfileSchema(serverProfileSchemaId);
+            viewDto.setServerProfileSchemaDto(serverProfileSchema);
         }
 
         /*    Getting notification topics    */

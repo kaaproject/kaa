@@ -43,12 +43,12 @@ public interface EndpointProfileView extends BaseDetailsView {
     Anchor getServerProfSchemaName();
     RecordPanel getServerProfForm();
 
-    Button getAddButton();
+    Button getAddServerSchemaButton();
     Button getDeleteButton();
     Button getEditButton();
     Button getSaveProfileButton();
 
-    RecordFieldWidget getServerProfRecord();
+    RecordFieldWidget getServerProfEditor();
     ServerProfileSchemasInfoListBox getServerSchemasListBox();
 
     AbstractGrid<EndpointGroupDto, String> getGroupsGrid();

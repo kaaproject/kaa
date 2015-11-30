@@ -60,14 +60,14 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
     private Anchor serverProfSchemaName;
     private RecordPanel serverProfForm;
 
-    private Button addButton;
+    private Button addServerSchemaButton;
     private Button deleteButton;
     private Button editButton;
     private Button saveProfileButton;
 
     private ServerProfileSchemasInfoListBox serverSchemasListBox;
 
-    private RecordFieldWidget serverProfRecord;
+    private RecordFieldWidget serverProfEditor;
 
     public EndpointProfileViewImpl() {
         super(true);
@@ -169,10 +169,10 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
         HorizontalPanel buttonsPanel = new HorizontalPanel();
         buttonsPanel.setSpacing(15);
 
-        addButton = new Button("Add");
+        addServerSchemaButton = new Button("Add schema");
         deleteButton = new Button("Delete");
         editButton = new Button("Edit");
-        buttonsPanel.add(addButton);
+        buttonsPanel.add(addServerSchemaButton);
         buttonsPanel.add(deleteButton);
         buttonsPanel.add(editButton);
         detailsTable.setWidget(++row, 0, buttonsPanel);
@@ -181,10 +181,10 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
         final FormPopup serverProfPopup = new FormPopup();
         saveProfileButton = new Button("Save");
         serverProfPopup.addButton(saveProfileButton);
-        Button closePopupButton = new Button(Utils.constants.close());
-        serverProfPopup.addButton(closePopupButton);
+        Button closeServerProfPopupButton = new Button(Utils.constants.close());
+        serverProfPopup.addButton(closeServerProfPopupButton);
 
-        closePopupButton.addClickHandler(new ClickHandler() {
+        closeServerProfPopupButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
                 serverProfPopup.hide();
@@ -192,7 +192,7 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
         });
 
         FlexTable popupFlexTable = new FlexTable();
-        HorizontalPanel listBoxPanel = new HorizontalPanel();
+        final HorizontalPanel listBoxPanel = new HorizontalPanel();
         listBoxPanel.setSpacing(15);
         Label serverProfListLabel = new Label("Profile schema");
         serverSchemasListBox = new ServerProfileSchemasInfoListBox();
@@ -200,21 +200,22 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
         listBoxPanel.add(serverProfListLabel);
         listBoxPanel.add(serverSchemasListBox);
         popupFlexTable.setWidget(0, 0, listBoxPanel);
-        serverProfListLabel.getElement().getParentElement().getStyle().setPropertyPx("paddingBottom", 10);
+//        serverProfListLabel.getElement().getParentElement().getStyle().setPropertyPx("paddingBottom", 10);
 
         CaptionPanel recordPanel = new CaptionPanel("Server profile");
-        serverProfRecord = new RecordFieldWidget(new AvroWidgetsConfig.Builder().recordPanelWidth(700)
+        serverProfEditor = new RecordFieldWidget(new AvroWidgetsConfig.Builder().recordPanelWidth(700)
                 .createConfig());
-        serverProfRecord.getElement().getStyle().setPropertyPx("minHeight", 400);
-        recordPanel.add(serverProfRecord);
+        serverProfEditor.getElement().getStyle().setPropertyPx("minHeight", 400);
+        recordPanel.add(serverProfEditor);
         recordPanel.getElement().getStyle().setPropertyPx("minWidth", 700);
         popupFlexTable.setWidget(1, 0, recordPanel);
-//        popupFlexTable.getFlexCellFormatter().setColSpan(1, 0, 2);
+        popupFlexTable.getFlexCellFormatter().setColSpan(1, 0, 2);
         serverProfPopup.add(popupFlexTable);
 
-        addButton.addClickHandler(new ClickHandler() {
+        addServerSchemaButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
+                listBoxPanel.setVisible(true);
                 serverProfPopup.center();
                 serverProfPopup.show();
             }
@@ -230,6 +231,7 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
         editButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
+                listBoxPanel.setVisible(false);
                 serverProfPopup.center();
                 serverProfPopup.show();
             }
@@ -268,10 +270,15 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
         endpointProfSchemaName.setText("");
         serverProfSchemaName.setText("");
         serverSchemasListBox.reset();
-        serverProfRecord.clear();
+
+        addServerSchemaButton.setEnabled(false);
+        deleteButton.setEnabled(false);
+        editButton.setEnabled(false);
+        saveProfileButton.setEnabled(false);
 
         endpointProfForm.getRecordWidget().clear();
         serverProfForm.getRecordWidget().clear();
+        serverProfEditor.clear();
     }
 
     @Override
@@ -318,8 +325,8 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
     }
 
     @Override
-    public Button getAddButton() {
-        return addButton;
+    public Button getAddServerSchemaButton() {
+        return addServerSchemaButton;
     }
 
     @Override
@@ -348,8 +355,8 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
     }
 
     @Override
-    public RecordFieldWidget getServerProfRecord() {
-        return serverProfRecord;
+    public RecordFieldWidget getServerProfEditor() {
+        return serverProfEditor;
     }
 
     @Override
