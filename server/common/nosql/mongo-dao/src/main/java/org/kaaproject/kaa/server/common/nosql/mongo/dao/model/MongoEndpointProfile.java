@@ -139,8 +139,7 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         this.nfGroupState = MongoDaoUtil.convertDtoToModelList(dto.getNfGroupStates());
         this.cfSequenceNumber = dto.getCfSequenceNumber();
         this.nfSequenceNumber = dto.getNfSequenceNumber();
-        this.changedFlag = dto.getChangedFlag();
-        this.profile = (DBObject) JSON.parse(dto.getProfile());
+        this.profile = (DBObject) JSON.parse(dto.getClientProfileBody());
         this.profileHash = dto.getProfileHash();
         this.profileVersion = dto.getProfileVersion();
         this.configurationHash = dto.getConfigurationHash();
@@ -156,7 +155,7 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         this.serverHash = dto.getServerHash();
         this.sdkToken = dto.getSdkToken();
         this.serverProfileSchemaId = dto.getServerProfileSchemaId();
-        this.serverProfile = dto.getServerProfile();
+        this.serverProfile = dto.getServerProfileBody();
     }
 
     @Override
@@ -524,7 +523,6 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         dto.setId(id);
         dto.setCfGroupStates(DaoUtil.<EndpointGroupStateDto>convertDtoList(cfGroupState));
         dto.setNfGroupStates(DaoUtil.<EndpointGroupStateDto>convertDtoList(nfGroupState));
-        dto.setChangedFlag(changedFlag);
         dto.setCfSequenceNumber(cfSequenceNumber);
         dto.setNfSequenceNumber(nfSequenceNumber);
         dto.setConfigurationHash(configurationHash);
@@ -535,7 +533,7 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         dto.setEndpointKeyHash(endpointKeyHash);
         dto.setEndpointUserId(endpointUserId);
         dto.setAccessToken(accessToken);
-        dto.setProfile(profile != null ? profile.toString() : "");
+        dto.setClientProfileBody(profile != null ? profile.toString() : "");
         dto.setProfileHash(profileHash);
         dto.setProfileVersion(profileVersion);
         dto.setNotificationVersion(notificationVersion);
@@ -547,7 +545,7 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         dto.setEcfVersionStates(DaoUtil.<EventClassFamilyVersionStateDto>convertDtoList(ecfVersionStates));
         dto.setServerHash(serverHash);
         dto.setSdkToken(sdkToken);
-        dto.setServerProfile(serverProfile);
+        dto.setServerProfileBody(serverProfile);
         dto.setServerProfileSchemaId(serverProfileSchemaId);
         return dto;
     }

@@ -77,7 +77,7 @@ public class EndpointServiceImplTest extends AbstractTest {
         EndpointProfileDto savedEndpointProfileDto = generateEndpointProfileWithGroupIdDto(endpointGroupId, false);
         EndpointProfilesBodyDto endpointProfilesPage = endpointService.findEndpointProfileBodyByEndpointGroupId(pageLinkDto);
         EndpointProfileBodyDto endpointProfileBodyDto = endpointProfilesPage.getEndpointProfilesBody().get(0);
-        Assert.assertEquals(savedEndpointProfileDto.getProfile(), endpointProfileBodyDto.getProfile());
+        Assert.assertEquals(savedEndpointProfileDto.getClientProfileBody(), endpointProfileBodyDto.getProfile());
     }
 
     @Test
@@ -93,7 +93,7 @@ public class EndpointServiceImplTest extends AbstractTest {
         String endpointGroupId = "124";
         EndpointProfileDto savedEndpointProfileDto = generateEndpointProfileWithGroupIdDto(endpointGroupId, false);
         EndpointProfileBodyDto endpointProfileBodyDto = endpointService.findEndpointProfileBodyByKeyHash(savedEndpointProfileDto.getEndpointKeyHash());
-        Assert.assertEquals(savedEndpointProfileDto.getProfile(), endpointProfileBodyDto.getProfile());
+        Assert.assertEquals(savedEndpointProfileDto.getClientProfileBody(), endpointProfileBodyDto.getProfile());
     }
 
     @Test(expected = IncorrectParameterException.class)

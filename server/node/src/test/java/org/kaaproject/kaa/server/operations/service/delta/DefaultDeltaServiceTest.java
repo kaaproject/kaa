@@ -118,7 +118,7 @@ public class DefaultDeltaServiceTest {
         profile.setConfigurationHash(CONFIGURATION_HASH.getData());
         profile.setProfileVersion(1);
         profile.setConfigurationVersion(1);
-        profile.setProfile(PROFILE_BODY);
+        profile.setClientProfileBody(PROFILE_BODY);
         profile.setCfGroupStates(oldGroups);
         profile.setNfGroupStates(oldGroups);
         return profile;
@@ -132,7 +132,7 @@ public class DefaultDeltaServiceTest {
 //        GetDeltaResponse response = deltaService.getDelta(request);
 //
 //        assertNotNull(response);
-//        verify(profileService, times(0)).getProfile(ENDPOINT_KEY_HASH);
+//        verify(profileService, times(0)).getClientProfileBody(ENDPOINT_KEY_HASH);
 //        assertEquals(GetDeltaResponseType.NO_DELTA, response.getResponseType());
 //        assertEquals(null, response.getDelta());
 //        assertEquals(request.getSequenceNumber(), response.getSequenceNumber());
@@ -148,14 +148,14 @@ public class DefaultDeltaServiceTest {
 //        profile.setConfigurationHash(CONFIGURATION_HASH.getData());
 //        profile.setProfileVersion(1);
 //        profile.setConfigurationVersion(1);
-//        when(profileService.getProfile(ENDPOINT_KEY_HASH)).thenReturn(profile);
+//        when(profileService.getClientProfileBody(ENDPOINT_KEY_HASH)).thenReturn(profile);
 //
 //        GetDeltaRequest request = new GetDeltaRequest(TEST_APP, ENDPOINT_KEY_HASH,
 //                EndpointObjectHash.fromSHA1("invalidProfileHash"), null, 41);
 //        GetDeltaResponse response = deltaService.getDelta(request);
 //
 //        assertNotNull(response);
-//        verify(profileService, times(1)).getProfile(ENDPOINT_KEY_HASH);
+//        verify(profileService, times(1)).getClientProfileBody(ENDPOINT_KEY_HASH);
 //        assertEquals(GetDeltaResponseType.GET_PROFILE, response.getResponseType());
 //        assertEquals(null, response.getDelta());
 //        assertEquals(0, response.getSequenceNumber());
@@ -178,7 +178,7 @@ public class DefaultDeltaServiceTest {
 //        when(cacheService.getAppSeqNumber(TEST_APP)).thenReturn(42);
 //        when(cacheService.getHistory(historyKey)).thenReturn(historyList);
 //        when(filterService.matches(TEST_APP, "pf2", PROFILE_BODY)).thenReturn(true);
-//        when(profileService.getProfile(ENDPOINT_KEY_HASH)).thenReturn(profile);
+//        when(profileService.getClientProfileBody(ENDPOINT_KEY_HASH)).thenReturn(profile);
 //
 //        when(cacheService.getDelta(Mockito.any(DeltaCacheKey.class), Mockito.any(Computable.class)))
 //        .thenReturn(new DeltaCacheEntry(NEW_CONF, DELTA, EndpointObjectHash.fromSHA1("hash")));
@@ -188,7 +188,7 @@ public class DefaultDeltaServiceTest {
 //        GetDeltaResponse response = deltaService.getDelta(request);
 //
 //        assertNotNull(response);
-//        verify(profileService, times(1)).getProfile(ENDPOINT_KEY_HASH);
+//        verify(profileService, times(1)).getClientProfileBody(ENDPOINT_KEY_HASH);
 //        verify(profileService, times(1)).updateProfile(profile, 42, EndpointObjectHash.fromSHA1("hash"));
 //
 //        assertEquals(GetDeltaResponseType.DELTA, response.getResponseType());
@@ -212,7 +212,7 @@ public class DefaultDeltaServiceTest {
 //
 //        when(cacheService.getAppSeqNumber(TEST_APP)).thenReturn(42);
 //        when(cacheService.getHistory(historyKey)).thenReturn(historyList);
-//        when(profileService.getProfile(ENDPOINT_KEY_HASH)).thenReturn(profile);
+//        when(profileService.getClientProfileBody(ENDPOINT_KEY_HASH)).thenReturn(profile);
 //
 //        when(cacheService.getDelta(Mockito.any(DeltaCacheKey.class), Mockito.any(Computable.class)))
 //                .thenReturn(new DeltaCacheEntry(NEW_CONF, NEW_CONF_DELTA, EndpointObjectHash.fromSHA1(NEW_CONF)));
@@ -221,7 +221,7 @@ public class DefaultDeltaServiceTest {
 //        GetDeltaResponse response = deltaService.getDelta(request);
 //
 //        assertNotNull(response);
-//        verify(profileService, times(1)).getProfile(ENDPOINT_KEY_HASH);
+//        verify(profileService, times(1)).getClientProfileBody(ENDPOINT_KEY_HASH);
 //        verify(profileService, times(1)).updateProfile(profile, 42, EndpointObjectHash.fromSHA1(NEW_CONF));
 //
 //        assertEquals(GetDeltaResponseType.DELTA, response.getResponseType());
@@ -246,7 +246,7 @@ public class DefaultDeltaServiceTest {
 //        when(cacheService.getAppSeqNumber(TEST_APP)).thenReturn(42);
 //        when(cacheService.getHistory(historyKey)).thenReturn(historyList);
 //        when(filterService.matches(TEST_APP, "pf2", PROFILE_BODY)).thenReturn(true);
-//        when(profileService.getProfile(ENDPOINT_KEY_HASH)).thenReturn(profile);
+//        when(profileService.getClientProfileBody(ENDPOINT_KEY_HASH)).thenReturn(profile);
 //
 //        when(cacheService.getDelta(Mockito.any(DeltaCacheKey.class), Mockito.any(Computable.class))).thenReturn(
 //                new DeltaCacheEntry(NEW_CONF, NEW_CONF_DELTA, EndpointObjectHash.fromSHA1("hash")));
@@ -256,7 +256,7 @@ public class DefaultDeltaServiceTest {
 //        GetDeltaResponse response = deltaService.getDelta(request);
 //
 //        assertNotNull(response);
-//        verify(profileService, times(1)).getProfile(ENDPOINT_KEY_HASH);
+//        verify(profileService, times(1)).getClientProfileBody(ENDPOINT_KEY_HASH);
 //        verify(profileService, times(1)).updateProfile(profile, 42, EndpointObjectHash.fromSHA1("hash"));
 //
 //        assertEquals(GetDeltaResponseType.CONF_RESYNC, response.getResponseType());
@@ -280,7 +280,7 @@ public class DefaultDeltaServiceTest {
 //
 //        when(cacheService.getAppSeqNumber(TEST_APP)).thenReturn(42);
 //        when(cacheService.getHistory(historyKey)).thenReturn(historyList);
-//        when(profileService.getProfile(ENDPOINT_KEY_HASH)).thenReturn(profile);
+//        when(profileService.getClientProfileBody(ENDPOINT_KEY_HASH)).thenReturn(profile);
 //
 //        when(cacheService.getDelta(Mockito.any(DeltaCacheKey.class), Mockito.any(Computable.class)))
 //        .thenReturn(new DeltaCacheEntry(NEW_CONF, NEW_CONF_DELTA, EndpointObjectHash.fromSHA1(NEW_CONF)));
@@ -290,7 +290,7 @@ public class DefaultDeltaServiceTest {
 //        GetDeltaResponse response = deltaService.getDelta(request);
 //
 //        assertNotNull(response);
-//        verify(profileService, times(1)).getProfile(ENDPOINT_KEY_HASH);
+//        verify(profileService, times(1)).getClientProfileBody(ENDPOINT_KEY_HASH);
 //        verify(profileService, times(1)).updateProfile(profile, 42, EndpointObjectHash.fromSHA1(NEW_CONF));
 //
 //        assertEquals(GetDeltaResponseType.CONF_RESYNC, response.getResponseType());

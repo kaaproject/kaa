@@ -1187,43 +1187,50 @@ public abstract class AbstractTestControlServer extends AbstractTest {
     protected static final String TEST_CTL_SCHEMA_ALPHA = "control/data/ctl/alpha.json";
     protected static final String TEST_CTL_SCHEMA_BETA = "control/data/ctl/beta.json";
 
-    protected CTLSchemaInfoDto createCTLSchema(String name, String namespace, Integer version, CTLSchemaScopeDto scope, Set<CTLSchemaMetaInfoDto> dependencies,
-                                               Map<String, String> fields) throws Exception {
+    protected CTLSchemaInfoDto createCTLSchema(String name, String namespace, int version, CTLSchemaScopeDto scope, Set<CTLSchemaMetaInfoDto> dependencies,
+            Map<String, String> fields) throws Exception {
 
-        CTLSchemaInfoDto schema = new CTLSchemaInfoDto();
+        LOG.debug("Generating CTL schema...");
+
         JsonNodeFactory factory = JsonNodeFactory.instance;
 
-        schema.setFqn(namespace + "." + name);
-        schema.setVersion(version);
-        schema.setScope(scope);
-        if (scope == CTLSchemaScopeDto.TENANT) {
-            schema.setTenantId(tenantDeveloperDto.getTenantId());
-        } else if (scope == CTLSchemaScopeDto.APPLICATION) {
-            ApplicationDto application = createApplication(tenantAdminDto);
-            schema.setTenantId(application.getTenantId());
-            schema.setApplicationId(application.getId());
-        }
-        schema.setDependencies(dependencies);
+        ObjectNode body = factory.objectNode();
+        body.put("type", "record");
+        body.put("name", name);
+        body.put("namespace", namespace);
+        body.put("version", version);
 
-        ArrayNode jsonFields = factory.arrayNode();
+        // The argument is left for readability only
+        if (scope == CTLSchemaScopeDto.APPLICATION) {
+            ApplicationDto application = this.createApplication();
+            body.put("application", application.getId());
+        }
+
+        if (dependencies != null && !dependencies.isEmpty()) {
+            ArrayNode array = factory.arrayNode();
+            for (CTLSchemaMetaInfoDto dependency : dependencies) {
+                ObjectNode object = factory.objectNode();
+                object.put("fqn", dependency.getFqn());
+                object.put("version", dependency.getVersion());
+                array.add(object);
+            }
+            body.put("dependencies", array);
+        }
+
+        ArrayNode array = factory.arrayNode();
         if (fields != null) {
             for (Map.Entry<String, String> field : fields.entrySet()) {
-                ObjectNode jsonField = factory.objectNode();
-                jsonField.put("name", field.getKey());
-                jsonField.put("type", field.getValue());
-                jsonFields.add(jsonField);
+                ObjectNode object = factory.objectNode();
+                object.put("name", field.getKey());
+                object.put("type", field.getValue());
+                array.add(object);
             }
         }
+        body.put("fields", array);
 
-        ObjectNode jsonBody = factory.objectNode();
-        jsonBody.put("type", "record");
-        jsonBody.put("name", name);
-        jsonBody.put("namespace", namespace);
-        jsonBody.put("fields", jsonFields);
+        LOG.debug("CTL schema generated: " + body);
 
-        schema.setBody(jsonBody.toString());
-
-        return client.saveCTLSchema(schema);
+        return client.saveCTLSchema(body.toString());
     }
 
     /**
