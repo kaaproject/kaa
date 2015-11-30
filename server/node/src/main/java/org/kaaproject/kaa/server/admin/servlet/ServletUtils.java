@@ -33,7 +33,7 @@ public class ServletUtils {
             for (byte b: fileNameBytes) dispositionFileName += (char)(b & 0xff);
 
             String disposition = "attachment; filename=\"" + dispositionFileName + "\"";
-            response.setHeader("Content-disposition", disposition);
+            response.setHeader("Content-Disposition", disposition);
         } catch(UnsupportedEncodingException ence) {
            //
         }

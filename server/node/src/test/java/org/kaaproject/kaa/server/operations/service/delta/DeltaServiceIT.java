@@ -204,7 +204,7 @@ public class DeltaServiceIT extends AbstractTest {
 
         endpointProfile = new EndpointProfileDto();
         endpointProfile.setEndpointKeyHash(UUID.randomUUID().toString().getBytes());
-        endpointProfile.setProfile(PROFILE_JSON);
+        endpointProfile.setClientProfileBody(PROFILE_JSON);
         endpointProfile.setProfileHash(EndpointObjectHash.fromSHA1(PROFILE_BYTES).getData());
         endpointProfile.setConfigurationHash(endpointConfiguration.getConfigurationHash());
         endpointProfile.setConfigurationVersion(CONF_SCHEMA_VERSION);

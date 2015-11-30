@@ -155,7 +155,7 @@ public class AbstractCassandraTest {
         profileDto.setApplicationId(appId);
         profileDto.setEndpointKeyHash(keyHash);
         profileDto.setAccessToken(generateStringId());
-        profileDto.setProfile("test Profile");
+        profileDto.setClientProfileBody("test Profile");
         List<EndpointGroupStateDto> groupState = new ArrayList<>();
         groupState.add(new EndpointGroupStateDto(TEST_ENDPOINT_GROUP_ID, null, null));
         if (nfGroupStateOnly) {

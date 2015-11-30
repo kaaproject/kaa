@@ -22,7 +22,6 @@ import java.nio.ByteBuffer;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -80,7 +79,7 @@ public class EndpointProfileMongoDaoTest extends AbstractMongoTest {
         Assert.assertNotNull(endpointProfile);
         EndpointProfileBodyDto found = endpointProfileDao.findBodyByKeyHash(endpointProfile.getEndpointKeyHash());
         Assert.assertNotNull(found);
-        Assert.assertEquals(endpointProfile.getProfile(), found.getProfile());
+        Assert.assertEquals(endpointProfile.getClientProfileBody(), found.getProfile());
     }
 
     @Test

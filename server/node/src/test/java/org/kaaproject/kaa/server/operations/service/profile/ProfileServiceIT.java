@@ -181,7 +181,7 @@ public class ProfileServiceIT extends AbstractTest {
         Assert.assertTrue(Arrays.equals(ENDPOINT_KEY, dto.getEndpointKey()));
         Assert.assertTrue(Arrays.equals(EndpointObjectHash.fromSHA1(ENDPOINT_KEY).getData(),
                 dto.getEndpointKeyHash()));
-        Assert.assertEquals(baseAvroConverter.encodeToJson(ENDPOINT_PROFILE), dto.getProfile().replaceAll(" ", ""));
+        Assert.assertEquals(baseAvroConverter.encodeToJson(ENDPOINT_PROFILE), dto.getClientProfileBody().replaceAll(" ", ""));
         Assert.assertTrue(Arrays.equals(EndpointObjectHash.fromSHA1(profile).getData(), dto.getProfileHash()));
     }
 
@@ -192,7 +192,7 @@ public class ProfileServiceIT extends AbstractTest {
 
         EndpointProfileDto oldDto = profileService.registerProfile(request);
 
-        Assert.assertEquals(baseAvroConverter.encodeToJson(ENDPOINT_PROFILE), oldDto.getProfile().replaceAll(" ", ""));
+        Assert.assertEquals(baseAvroConverter.encodeToJson(ENDPOINT_PROFILE), oldDto.getClientProfileBody().replaceAll(" ", ""));
 
         byte[] newProfile = newAvroConverter.encode(NEW_ENDPOINT_PROFILE);
         UpdateProfileRequest updateRequest = new UpdateProfileRequest(APP_TOKEN,
@@ -205,7 +205,7 @@ public class ProfileServiceIT extends AbstractTest {
         Assert.assertNotNull(newDto);
         Assert.assertNotNull(newDto.getId());
         Assert.assertEquals(oldDto.getId(), newDto.getId());
-        Assert.assertEquals(newAvroConverter.encodeToJson(NEW_ENDPOINT_PROFILE), newDto.getProfile().replaceAll(" ", ""));
+        Assert.assertEquals(newAvroConverter.encodeToJson(NEW_ENDPOINT_PROFILE), newDto.getClientProfileBody().replaceAll(" ", ""));
         Assert.assertTrue(Arrays.equals(EndpointObjectHash.fromSHA1(newProfile).getData(),
                 newDto.getProfileHash()));
     }

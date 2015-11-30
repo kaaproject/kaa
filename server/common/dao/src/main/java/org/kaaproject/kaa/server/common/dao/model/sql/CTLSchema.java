@@ -155,9 +155,6 @@ public class CTLSchema extends GenericModel<CTLSchemaDto> implements Serializabl
         this.dependencySet = dependencySet;
     }
 
-    private void updateCreatedTime() {
-    }
-
     public String getName() {
         return name;
     }

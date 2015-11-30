@@ -38,8 +38,6 @@ import org.kaaproject.kaa.server.operations.service.cache.HistoryKey;
 import org.kaaproject.kaa.server.operations.service.cache.HistorySubject;
 import org.kaaproject.kaa.server.operations.service.delta.HistoryDelta;
 import org.kaaproject.kaa.server.operations.service.filter.FilterService;
-import org.kaaproject.kaa.server.operations.service.history.DefaultHistoryDeltaService;
-import org.kaaproject.kaa.server.operations.service.history.HistoryDeltaService;
 import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -77,7 +75,7 @@ public class DefaultHistoryDeltaServiceTest {
         profile.setApplicationId(APP1_ID);
         profile.setConfigurationVersion(CONF_VERSION);
         profile.setProfileVersion(PROFILE_VERSION);
-        profile.setProfile(PROFILE_BODY);
+        profile.setClientProfileBody(PROFILE_BODY);
     };
 
     @After

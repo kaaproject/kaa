@@ -145,7 +145,7 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
         this.nfGroupState = convertDtoToModelList(dto.getNfGroupStates());
         this.cfSequenceNumber = dto.getCfSequenceNumber();
         this.nfSequenceNumber = dto.getNfSequenceNumber();
-        this.profile = dto.getProfile();
+        this.profile = dto.getClientProfileBody();
         this.profileHash = getByteBuffer(dto.getProfileHash());
         this.profileVersion = dto.getProfileVersion();
         this.configurationHash = getByteBuffer(dto.getConfigurationHash());
@@ -161,7 +161,7 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
         this.serverHash = dto.getServerHash();
         this.sdkToken = dto.getSdkToken();
         this.serverProfileSchemaId = dto.getServerProfileSchemaId();
-        this.serverProfile = dto.getServerProfile();
+        this.serverProfile = dto.getServerProfileBody();
     }
 
     public void setId(String id) {
@@ -509,7 +509,7 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
         dto.setEndpointKeyHash(getBytes(endpointKeyHash));
         dto.setEndpointUserId(endpointUserId);
         dto.setAccessToken(accessToken);
-        dto.setProfile(profile);
+        dto.setClientProfileBody(profile);
         dto.setProfileHash(getBytes(profileHash));
         dto.setProfileVersion(profileVersion);
         dto.setNotificationVersion(notificationVersion);
@@ -521,7 +521,7 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
         dto.setEcfVersionStates(DaoUtil.<EventClassFamilyVersionStateDto>convertDtoList(ecfVersionStates));
         dto.setServerHash(serverHash);
         dto.setSdkToken(sdkToken);
-        dto.setServerProfile(serverProfile);
+        dto.setServerProfileBody(serverProfile);
         dto.setServerProfileSchemaId(serverProfileSchemaId);
         return dto;
     }

@@ -40,7 +40,7 @@ public class ControlServerCTLSchemaIT extends AbstractTestControlServer {
     private static final Logger LOG = LoggerFactory.getLogger(ControlServerCTLSchemaIT.class);
 
     private static final String DEFAULT_NAME = "name";
-    private static final String DEFAULT_NAMESPACE = "org.kaaproject.kaa.tests";
+    private static final String DEFAULT_NAMESPACE = "org.kaaproject.kaa";
     private static final String DEFAULT_TYPE = "Type";
 
     private final Random random = new Random();
@@ -65,28 +65,6 @@ public class ControlServerCTLSchemaIT extends AbstractTestControlServer {
      */
     @Test
     public void saveCTLSchemaTest() throws Exception {
-        this.loginKaaAdmin();
-        CTLSchemaInfoDto beta = this.createCTLSchema(this.randomFieldType(), DEFAULT_NAMESPACE, 1, CTLSchemaScopeDto.SYSTEM, null, null);
-        Assert.assertNotNull(beta.getId());
-
-        Set<CTLSchemaMetaInfoDto> dependencies = new HashSet<>();
-        dependencies.add(new CTLSchemaMetaInfoDto(beta.getFqn(), beta.getVersion()));
-
-        Map<String, String> fields = new HashMap<>();
-        fields.put(this.randomFieldName(), beta.getFqn());
-
-        this.loginTenantDeveloper(tenantDeveloperUser);
-        CTLSchemaInfoDto alpha = this.createCTLSchema(this.randomFieldType(), DEFAULT_NAMESPACE, 1, CTLSchemaScopeDto.TENANT, dependencies, fields);
-        Assert.assertNotNull(alpha.getId());
-    }
-
-    /**
-     * Saves a CTL schema to the database.
-     *
-     * @throws Exception
-     */
-    @Test
-    public void saveCTLSchemaBodyTest() throws Exception {
         this.loginKaaAdmin();
         CTLSchemaInfoDto beta = client.saveCTLSchema(getResourceAsString(TEST_CTL_SCHEMA_BETA));
         Assert.assertNotNull(beta.getId());
