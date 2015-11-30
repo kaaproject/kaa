@@ -16,29 +16,28 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.schema;
 
-import java.util.Comparator;
-
-import org.kaaproject.avro.ui.gwt.client.widget.grid.cell.ActionButtonCell;
-import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEvent;
-import org.kaaproject.kaa.common.dto.AbstractSchemaDto;
-import org.kaaproject.kaa.server.admin.client.mvp.view.grid.AbstractKaaGrid;
-import org.kaaproject.kaa.server.admin.client.mvp.view.grid.KaaRowAction;
-import org.kaaproject.kaa.server.admin.client.util.Utils;
-
-import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.user.cellview.client.SafeHtmlHeader;
+import org.kaaproject.avro.ui.gwt.client.widget.grid.cell.ActionButtonCell;
+import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEvent;
+import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
+import org.kaaproject.kaa.server.admin.client.mvp.view.grid.AbstractKaaGrid;
+import org.kaaproject.kaa.server.admin.client.mvp.view.grid.KaaRowAction;
+import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-public class BaseSchemasGrid<T extends AbstractSchemaDto> extends AbstractKaaGrid<T, String> {
+import java.util.Comparator;
+
+public class ServerProfileSchemasGrid<T extends ServerProfileSchemaDto> extends AbstractKaaGrid<T, String> {
 
     private Column<T, T> downloadSchemaColumn;
 
-    public BaseSchemasGrid() {
-        super(Unit.PX, false);
+    public ServerProfileSchemasGrid() {
+        super(Style.Unit.PX, false);
     }
 
     @Override
@@ -50,16 +49,17 @@ public class BaseSchemasGrid<T extends AbstractSchemaDto> extends AbstractKaaGri
                 new StringValueProvider<T>() {
                     @Override
                     public String getValue(T item) {
-                        return item.getMajorVersion() + "." + item.getMinorVersion();
+                        return item.getSchemaDto().getMetaInfo().getVersion() + ".0";
                     }
-                }, 
+                },
                 new Comparator<T>() {
                     @Override
                     public int compare(T o1, T o2) {
-                        return o1.compareTo(o2);
+                        return o1.getSchemaDto().getMetaInfo().getVersion()
+                                .compareTo(o2.getSchemaDto().getMetaInfo().getVersion());
                     }
                 },
-                Boolean.FALSE, 
+                Boolean.FALSE,
                 80);
 
         prefWidth += constructStringColumn(table,
@@ -67,16 +67,16 @@ public class BaseSchemasGrid<T extends AbstractSchemaDto> extends AbstractKaaGri
                 new StringValueProvider<T>() {
                     @Override
                     public String getValue(T item) {
-                        return item.getName();
+                        return item.getSchemaDto().getName();
                     }
-                }, 
+                },
                 new Comparator<T>() {
                     @Override
                     public int compare(T o1, T o2) {
-                        return o1.getName().compareToIgnoreCase(o2.getName());
+                        return o1.getSchemaDto().getName().compareToIgnoreCase(o2.getSchemaDto().getName());
                     }
                 },
-                null, 
+                null,
                 80);
 
         prefWidth += constructStringColumn(table,
@@ -84,7 +84,7 @@ public class BaseSchemasGrid<T extends AbstractSchemaDto> extends AbstractKaaGri
                 new StringValueProvider<T>() {
                     @Override
                     public String getValue(T item) {
-                        return item.getCreatedUsername();
+                        return item.getSchemaDto().getCreatedUsername();
                     }
                 }, 80);
 
@@ -95,16 +95,15 @@ public class BaseSchemasGrid<T extends AbstractSchemaDto> extends AbstractKaaGri
                     public String getValue(T item) {
                         return Utils.millisecondsToDateString(item.getCreatedTime());
                     }
-                }, 80);
-
-        prefWidth += constructStringColumn(table,
-                Utils.constants.numberOfEps(),
-                new StringValueProvider<T>() {
+                },
+                new Comparator<T>() {
                     @Override
-                    public String getValue(T item) {
-                        return item.getEndpointCount() + "";
+                    public int compare(T o1, T o2) {
+                        return o1.getCreatedTime().compareTo(o2.getCreatedTime());
                     }
-                }, 80);
+                },
+                Boolean.FALSE,
+                80);
 
         return prefWidth;
     }
@@ -117,7 +116,7 @@ public class BaseSchemasGrid<T extends AbstractSchemaDto> extends AbstractKaaGri
                     SafeHtmlUtils.fromSafeConstant(Utils.constants.downloadRecordSchema()));
             downloadSchemaColumn = constructDownloadSchemaColumn("");
             table.addColumn(downloadSchemaColumn, downloadRecordSchemaHeader);
-            table.setColumnWidth(downloadSchemaColumn, ACTION_COLUMN_WIDTH, Unit.PX);
+            table.setColumnWidth(downloadSchemaColumn, ACTION_COLUMN_WIDTH, Style.Unit.PX);
             result += ACTION_COLUMN_WIDTH;
         }
         return result;
@@ -128,9 +127,9 @@ public class BaseSchemasGrid<T extends AbstractSchemaDto> extends AbstractKaaGri
                 new ActionButtonCell.ActionListener<T>() {
                     @Override
                     public void onItemAction(T value) {
-                        Integer schemaVersion = getDownloadSchemaColumnClickedId(value);
+                        String schemaVersion = value.getId();
                         RowActionEvent<String> rowDownloadSchemaEvent =
-                                new RowActionEvent<>(String.valueOf(schemaVersion), KaaRowAction.DOWNLOAD_SCHEMA);
+                                new RowActionEvent<>(schemaVersion, KaaRowAction.DOWNLOAD_SCHEMA);
                         fireEvent(rowDownloadSchemaEvent);
                     }
                 }, new ActionButtonCell.ActionValidator<T>() {
@@ -147,9 +146,4 @@ public class BaseSchemasGrid<T extends AbstractSchemaDto> extends AbstractKaaGri
         };
         return column;
     }
-
-    protected Integer getDownloadSchemaColumnClickedId(T value) {
-        return value.getMajorVersion();
-    }
 }
-

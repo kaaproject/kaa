@@ -157,14 +157,14 @@ public class CTLServiceImpl implements CTLService {
                     CTLSchemaMetaInfo updated = schemaMetaInfoDao.updateScope(new CTLSchemaMetaInfo(newMetaInfo));
                     if (updated != null) {
                         schema.setMetaInfo(updated);
-                        updateEditableFields(ctlSchema, schema);
-                        return DaoUtil.getDto(ctlSchemaDao.save(schema));
                     } else {
                         throw new DatabaseProcessingException("Can't update scope for ctl meta info.");
                     }
-                } else {
+                } else if (metaInfo.getScope().getLevel() > newScope.getLevel()) {
                     throw new DatabaseProcessingException("Forbidden to update scope to lower level.");
                 }
+                updateEditableFields(ctlSchema, schema);
+                return DaoUtil.getDto(ctlSchemaDao.save(schema));
             } else {
                 throw new DatabaseProcessingException("Can't find ctl schema by id.");
             }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,18 @@
 
 package org.kaaproject.kaa.common.dto;
 
+import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 
-public class ServerProfileSchemaDto implements HasId {
+import java.io.Serializable;
+
+public class ServerProfileSchemaDto implements HasId, Serializable {
 
     private String id;
     private Long createdTime;
     private String applicationId;
     private CTLSchemaDto schemaDto;
+    private RecordField schemaForm;
 
     @Override
     public String getId() {
@@ -59,6 +63,14 @@ public class ServerProfileSchemaDto implements HasId {
         this.schemaDto = schemaDto;
     }
 
+    public RecordField getSchemaForm() {
+        return schemaForm;
+    }
+
+    public void setSchemaForm(RecordField schemaForm) {
+        this.schemaForm = schemaForm;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -70,7 +82,8 @@ public class ServerProfileSchemaDto implements HasId {
         if (createdTime != null ? !createdTime.equals(that.createdTime) : that.createdTime != null) return false;
         if (applicationId != null ? !applicationId.equals(that.applicationId) : that.applicationId != null)
             return false;
-        return schemaDto != null ? schemaDto.equals(that.schemaDto) : that.schemaDto == null;
+        if (schemaDto != null ? !schemaDto.equals(that.schemaDto) : that.schemaDto != null) return false;
+        return !(schemaForm != null ? !schemaForm.equals(that.schemaForm) : that.schemaForm != null);
 
     }
 
@@ -80,6 +93,7 @@ public class ServerProfileSchemaDto implements HasId {
         result = 31 * result + (createdTime != null ? createdTime.hashCode() : 0);
         result = 31 * result + (applicationId != null ? applicationId.hashCode() : 0);
         result = 31 * result + (schemaDto != null ? schemaDto.hashCode() : 0);
+        result = 31 * result + (schemaForm != null ? schemaForm.hashCode() : 0);
         return result;
     }
 
@@ -90,6 +104,7 @@ public class ServerProfileSchemaDto implements HasId {
                 ", createdTime=" + createdTime +
                 ", applicationId='" + applicationId + '\'' +
                 ", schemaDto=" + schemaDto +
+                ", schemaForm=" + schemaForm +
                 '}';
     }
 }

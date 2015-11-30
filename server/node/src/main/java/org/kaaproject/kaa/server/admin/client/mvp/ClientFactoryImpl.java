@@ -28,6 +28,7 @@ import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
@@ -137,7 +138,7 @@ public class ClientFactoryImpl implements ClientFactory {
     private final BaseSchemaView profileSchemaView = new ProfileSchemaViewImpl(false);
     private final BaseSchemaView createProfileSchemaView = new ProfileSchemaViewImpl(true);
 
-    private final BaseListView<ProfileSchemaDto> serverProfileSchemasView = new ServerProfileSchemasViewImpl();
+    private final BaseListView<ServerProfileSchemaDto> serverProfileSchemasView = new ServerProfileSchemasViewImpl();
     private final BaseSchemaView serverProfileSchemaView = new ServerProfileSchemaViewImpl(false);
     private final BaseSchemaView createServerProfileSchemaView = new ServerProfileSchemaViewImpl(true);
 
@@ -301,7 +302,7 @@ public class ClientFactoryImpl implements ClientFactory {
     }
 
     @Override
-    public BaseListView<ProfileSchemaDto> getServerProfileSchemasView() {
+    public BaseListView<ServerProfileSchemaDto> getServerProfileSchemasView() {
         return serverProfileSchemasView;
     }
 
