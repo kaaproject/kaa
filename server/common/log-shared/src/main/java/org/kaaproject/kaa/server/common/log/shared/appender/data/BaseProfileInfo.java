@@ -17,25 +17,23 @@ package org.kaaproject.kaa.server.common.log.shared.appender.data;
 
 public class BaseProfileInfo implements ProfileInfo {
 
-    private final String schemaId;
-    private final String schema;
+    private final BaseSchemaInfo schemaInfo;
     private final String body;
 
-    public BaseProfileInfo(String schemaId, String schema, String body) {
+    public BaseProfileInfo(BaseSchemaInfo schemaInfo, String body) {
         super();
-        this.schemaId = schemaId;
-        this.schema = schema;
+        this.schemaInfo = schemaInfo;
         this.body = body;
     }
 
     @Override
     public String getSchemaId() {
-        return schemaId;
+        return schemaInfo.getSchemaId();
     }
 
     @Override
     public String getSchema() {
-        return schema;
+        return schemaInfo.getSchema();
     }
 
     @Override

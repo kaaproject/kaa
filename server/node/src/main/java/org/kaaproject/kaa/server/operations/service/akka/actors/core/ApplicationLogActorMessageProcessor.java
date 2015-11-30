@@ -23,12 +23,14 @@ import java.util.Map;
 import org.kaaproject.kaa.common.dto.EndpointProfileDataDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
+import org.kaaproject.kaa.server.common.dao.CTLService;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogAppender;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryCallback;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryErrorCode;
-import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogSchema;
 import org.kaaproject.kaa.server.common.log.shared.appender.data.BaseProfileInfo;
+import org.kaaproject.kaa.server.common.log.shared.appender.data.BaseSchemaInfo;
+import org.kaaproject.kaa.server.common.log.shared.appender.data.BaseLogEventPack;
 import org.kaaproject.kaa.server.common.log.shared.appender.data.ProfileInfo;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
@@ -51,6 +53,7 @@ public class ApplicationLogActorMessageProcessor {
 
     private final LogAppenderService logAppenderService;
     private final CacheService cacheService;
+    private final CTLService ctlService;
 
     private final Map<String, LogAppender> logAppenders;
 
@@ -62,9 +65,9 @@ public class ApplicationLogActorMessageProcessor {
 
     private final Map<Integer, LogSchema> logSchemas;
 
-    private final Map<AppVersionKey, ProfileSchemaDto> clientProfileSchemas;
+    private final Map<AppVersionKey, BaseSchemaInfo> clientProfileSchemas;
 
-    private final Map<String, ServerProfileSchemaDto> serverProfileSchemas;
+    private final Map<String, BaseSchemaInfo> serverProfileSchemas;
 
     private final VoidCallback voidCallback;
 
@@ -72,6 +75,7 @@ public class ApplicationLogActorMessageProcessor {
         super();
         this.logAppenderService = context.getLogAppenderService();
         this.cacheService = context.getCacheService();
+        this.ctlService = context.getCtlService();
         this.applicationToken = applicationToken;
         this.applicationId = context.getApplicationService().findAppByApplicationToken(applicationToken).getId();
         this.logAppenders = new HashMap<>();
@@ -95,7 +99,6 @@ public class ApplicationLogActorMessageProcessor {
             for (LogAppender logAppender : optional) {
                 logAppender.doAppend(message.getLogEventPack(), voidCallback);
             }
-
             LogDeliveryCallback callback;
             if (required.size() > 1) {
                 callback = new MultiLogDeliveryCallback(message.getOriginator(), message.getRequestId(), required.size());
@@ -130,7 +133,7 @@ public class ApplicationLogActorMessageProcessor {
     }
 
     private void fetchSchemas(LogEventPackMessage message) {
-        LogEventPack logPack = message.getLogEventPack();
+        BaseLogEventPack logPack = message.getLogEventPack();
         LogSchema logSchema = logPack.getLogSchema();
         if (logSchema == null) {
             logSchema = logSchemas.get(message.getLogSchemaVersion());
@@ -144,22 +147,25 @@ public class ApplicationLogActorMessageProcessor {
         ProfileInfo clientProfile = logPack.getClientProfile();
         if (clientProfile == null) {
             AppVersionKey key = new AppVersionKey(applicationToken, profileDto.getClientProfileSchemaVersion());
-            ProfileSchemaDto schemaDto = clientProfileSchemas.get(key);
-            if (schemaDto == null) {
-                schemaDto = cacheService.getProfileSchemaByAppAndVersion(key);
-                clientProfileSchemas.put(key, schemaDto);
+            BaseSchemaInfo schemaInfo = clientProfileSchemas.get(key);
+            if (schemaInfo == null) {
+                ProfileSchemaDto schemaDto = cacheService.getProfileSchemaByAppAndVersion(key);
+                schemaInfo = new BaseSchemaInfo(schemaDto.getId(), schemaDto.getSchema());
+                clientProfileSchemas.put(key, schemaInfo);
             }
-            logPack.setClientProfile(new BaseProfileInfo(schemaDto.getId(), schemaDto.getSchema(), profileDto.getClientProfileBody()));
+            logPack.setClientProfile(new BaseProfileInfo(schemaInfo, profileDto.getClientProfileBody()));
         }
-        ProfileInfo serverProfile = logPack.getClientProfile();
-        if (serverProfile == null) {
-            if (profileDto.getServerProfileBody() != null) {
-                ServerProfileSchemaDto schemaDto = serverProfileSchemas.get(profileDto.getServerProfileSchemaId());
-                if()
-                 = cacheService.getServerProfileSchemaById(profileDto.getServerProfileSchemaId());
+        ProfileInfo serverProfile = logPack.getServerProfile();
+        if (serverProfile == null && profileDto.getServerProfileSchemaId() != null) {
+            BaseSchemaInfo schemaInfo = serverProfileSchemas.get(profileDto.getServerProfileSchemaId());
+            if (schemaInfo == null) {
+                ServerProfileSchemaDto serverSchemaDto = cacheService.getServerProfileSchemaById(profileDto.getServerProfileSchemaId());
+                String schema = ctlService.flatExportAsString(serverSchemaDto.getSchemaDto());
+                schemaInfo = new BaseSchemaInfo(serverSchemaDto.getId(), schema);
+                serverProfileSchemas.put(profileDto.getServerProfileSchemaId(), schemaInfo);
             }
+            logPack.setServerProfile(new BaseProfileInfo(schemaInfo, profileDto.getServerProfileBody()));
         }
-
     }
 
     private void sendErrorMessageToEndpoint(LogEventPackMessage message, LogDeliveryErrorCode errorCode) {

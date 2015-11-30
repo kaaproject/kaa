@@ -13,26 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kaaproject.kaa.server.common.log.shared.appender;
+package org.kaaproject.kaa.server.common.log.shared.appender.data;
 
-import java.util.List;
+public class BaseSchemaInfo {
+    private final String schemaId;
+    private final String schema;
 
-import org.kaaproject.kaa.server.common.log.shared.appender.data.ProfileInfo;
+    public BaseSchemaInfo(String schemaId, String schema) {
+        super();
+        this.schemaId = schemaId;
+        this.schema = schema;
+    }
 
-public interface LogEventPack {
+    public String getSchemaId() {
+        return schemaId;
+    }
 
-    String getEndpointKey();
+    public String getSchema() {
+        return schema;
+    }
 
-    String getUserId();
-
-    long getDateCreated();
-
-    LogSchema getLogSchema();
-
-    List<LogEvent> getEvents();
-
-    ProfileInfo getClientProfile();
-
-    ProfileInfo getServerProfile();
+    @Override
+    public String toString() {
+        return "BaseSchemaInfo [schemaId=" + schemaId + ", schema=" + schema + "]";
+    }
 
 }

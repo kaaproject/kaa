@@ -48,6 +48,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
+import org.kaaproject.kaa.common.dto.EndpointProfileDataDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
@@ -57,8 +58,8 @@ import org.kaaproject.kaa.server.appenders.oraclenosql.config.gen.OracleNoSqlCon
 import org.kaaproject.kaa.server.common.log.shared.appender.LogAppender;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryCallback;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
-import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogSchema;
+import org.kaaproject.kaa.server.common.log.shared.appender.data.BaseLogEventPack;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -179,7 +180,10 @@ public class OracleNoSqlLogAppenderTest {
 
         logAppender.close();
         TestLogDeliveryCallback callback = new TestLogDeliveryCallback();
-        logAppender.doAppend(new LogEventPack(), callback);
+        EndpointProfileDataDto profileDto = new EndpointProfileDataDto("1", ENDPOINT_KEY, 1, "test", null, null);
+        BaseLogEventPack logEventPack = new BaseLogEventPack(profileDto, DATE_CREATED, 1, null);
+
+        logAppender.doAppend(logEventPack, callback);
         Assert.assertTrue(callback.internallError);
     }
 
@@ -203,7 +207,8 @@ public class OracleNoSqlLogAppenderTest {
         schemaDto.setSchema(BasicEndpointProfile.SCHEMA$.toString());
         LogSchema schema = new LogSchema(schemaDto);
 
-        LogEventPack logEventPack = new LogEventPack(ENDPOINT_KEY, DATE_CREATED, schema, events);
+        EndpointProfileDataDto profileDto = new EndpointProfileDataDto("1", ENDPOINT_KEY, 1, "test", null, null);
+        BaseLogEventPack logEventPack = new BaseLogEventPack(profileDto, DATE_CREATED, schema.getVersion(), events);
 
         TestLogDeliveryCallback callback = new TestLogDeliveryCallback();
         logAppender.doAppend(logEventPack, callback);
@@ -222,6 +227,7 @@ public class OracleNoSqlLogAppenderTest {
         events.add(event1);
         events.add(event2);
         events.add(event3);
+        
 
         LogSchemaDto dto = new LogSchemaDto();
         dto.setSchema(EMPTY_SCHEMA);
@@ -229,9 +235,9 @@ public class OracleNoSqlLogAppenderTest {
         LogSchema schema = new LogSchema(dto);
         int version = dto.getMajorVersion();
 
-        LogEventPack logEventPack = new LogEventPack(ENDPOINT_KEY, DATE_CREATED, schema, events);
-        logEventPack.setLogSchemaVersion(version);
-
+        EndpointProfileDataDto profileDto = new EndpointProfileDataDto("1", ENDPOINT_KEY, 1, "test", null, null);
+        BaseLogEventPack logEventPack = new BaseLogEventPack(profileDto, DATE_CREATED, version, events);
+        logEventPack.setLogSchema(schema);
         Map<String, GenericAvroConverter<GenericRecord>> converters = new HashMap<>();
         GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<GenericRecord>(dto.getSchema()) {
 

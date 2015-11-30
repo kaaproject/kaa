@@ -6,6 +6,7 @@ import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogAppender;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryCallback;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
+import org.kaaproject.kaa.server.common.log.shared.appender.data.BaseLogEventPack;
 
 public class DefaultLogAppenderBuilderTest {
 

@@ -35,7 +35,7 @@ import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.Base64Util;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
-import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
+import org.kaaproject.kaa.server.common.log.shared.appender.data.BaseLogEventPack;
 import org.kaaproject.kaa.server.operations.pojo.SyncContext;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
 import org.kaaproject.kaa.server.operations.service.OperationsService;
@@ -456,7 +456,7 @@ public class EndpointActorMessageProcessor {
                     logEvent.setLogData(logEntry.getData().array());
                     logEvents.add(logEvent);
                 }
-                LogEventPack logPack = new LogEventPack(profileDto, System.currentTimeMillis(), responseHolder.getEndpointProfile()
+                BaseLogEventPack logPack = new BaseLogEventPack(profileDto, System.currentTimeMillis(), responseHolder.getEndpointProfile()
                         .getLogSchemaVersion(), logEvents);
                 logPack.setUserId(state.getUserId());
                 context.parent().tell(new LogEventPackMessage(request.getRequestId(), context.self(), logPack), context.self());
