@@ -94,10 +94,16 @@
                                 "symbols":[
                                     "HEADER_FIELD",
                                     "EVENT_FIELD",
+                                    "CLIENT_FIELD",
+                                    "SERVER_FIELD",
                                     "HEADER_JSON",
                                     "EVENT_JSON",
+                                    "CLIENT_JSON",
+                                    "SERVER_JSON",
                                     "HEADER_BINARY",
                                     "EVENT_BINARY",
+                                    "CLIENT_BINARY",
+                                    "SERVER_BINARY",
                                     "UUID",
                                     "TS"
                                 ]

@@ -18,6 +18,8 @@ package org.kaaproject.kaa.server.common.log.shared.appender;
 
 import java.util.List;
 
+import org.kaaproject.kaa.server.common.log.shared.appender.data.ProfileInfo;
+
 public class LogEventPack {
 
     private String endpointKey;
@@ -95,6 +97,14 @@ public class LogEventPack {
     public String toString() {
         return "LogEventPack [endpointKey=" + endpointKey + ", dateCreated=" + dateCreated + ", logSchemaVersion=" + logSchemaVersion + ", logSchema="
                 + logSchema + ", events=" + events + "]";
+    }
+
+    public ProfileInfo getClientProfile() {
+        return null;
+    }
+
+    public ProfileInfo getServerProfile() {
+        return null;
     }
 
 }

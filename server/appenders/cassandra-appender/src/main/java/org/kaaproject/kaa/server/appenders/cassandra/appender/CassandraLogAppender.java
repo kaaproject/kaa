@@ -98,6 +98,10 @@ public class CassandraLogAppender extends AbstractLogAppender<CassandraConfig> {
                         LOG.debug("[{}] appending {} logs to cassandra collection", tableName, logEventPack.getEvents().size());
                         GenericAvroConverter<GenericRecord> eventConverter = getConverter(logEventPack.getLogSchema().getSchema());
                         GenericAvroConverter<GenericRecord> headerConverter = getConverter(header.getSchema().toString());
+                        GenericAvroConverter<GenericRecord> clientProfileConverter = getConverter(logEventPack.getClientProfile().getSchema());
+                        String clientProfileJson = logEventPack.getClientProfile().getBody();
+                        GenericAvroConverter<GenericRecord> serverProfileConverter = getConverter(logEventPack.getServerProfile().getSchema());
+                        String serverProfileJson = logEventPack.getServerProfile().getBody();
                         List<CassandraLogEventDto> dtoList = generateCassandraLogEvent(logEventPack, header, eventConverter);
                         LOG.debug("[{}] saving {} objects", tableName, dtoList.size());
                         if (!dtoList.isEmpty()) {
@@ -106,11 +110,12 @@ public class CassandraLogAppender extends AbstractLogAppender<CassandraConfig> {
                             switch (executeRequestType) {
                                 case ASYNC:
                                     ListenableFuture<ResultSet> result = logEventDao.saveAsync(dtoList, tableName, eventConverter,
-                                            headerConverter);
+                                            headerConverter, clientProfileConverter, serverProfileConverter, clientProfileJson, serverProfileJson);
                                     Futures.addCallback(result, new Callback(listener, cassandraSuccessLogCount, cassandraFailureLogCount, logCount), callbackExecutor);
                                     break;
                                 case SYNC:
-                                    logEventDao.save(dtoList, tableName, eventConverter, headerConverter);
+                                    logEventDao.save(dtoList, tableName, eventConverter, headerConverter,
+                                            clientProfileConverter, serverProfileConverter, clientProfileJson, serverProfileJson);
                                     listener.onSuccess();
                                     cassandraSuccessLogCount.getAndAdd(logCount);
                                     break;

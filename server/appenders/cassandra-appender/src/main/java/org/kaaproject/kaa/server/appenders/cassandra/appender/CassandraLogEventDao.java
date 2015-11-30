@@ -232,19 +232,25 @@ public class CassandraLogEventDao implements LogEventDao {
 
     @Override
     public List<CassandraLogEventDto> save(List<CassandraLogEventDto> logEventDtoList, String tableName,
-            GenericAvroConverter<GenericRecord> eventConverter, GenericAvroConverter<GenericRecord> headerConverter)
+            GenericAvroConverter<GenericRecord> eventConverter, GenericAvroConverter<GenericRecord> headerConverter,
+            GenericAvroConverter<GenericRecord> clientProfileConverter, GenericAvroConverter<GenericRecord> serverProfileConverter,
+            String clientProfileJson, String serverProfileJson)
             throws IOException {
         LOG.debug("Execute bath request for cassandra table {}", tableName);
-        executeBatch(prepareQuery(logEventDtoList, tableName, eventConverter, headerConverter));
+        executeBatch(prepareQuery(logEventDtoList, tableName, eventConverter, headerConverter,
+                clientProfileConverter, serverProfileConverter, clientProfileJson, serverProfileJson));
         return logEventDtoList;
     }
 
     @Override
     public ListenableFuture<ResultSet> saveAsync(List<CassandraLogEventDto> logEventDtoList, String tableName,
-            GenericAvroConverter<GenericRecord> eventConverter, GenericAvroConverter<GenericRecord> headerConverter)
+            GenericAvroConverter<GenericRecord> eventConverter, GenericAvroConverter<GenericRecord> headerConverter,
+            GenericAvroConverter<GenericRecord> clientProfileConverter, GenericAvroConverter<GenericRecord> serverProfileConverter,
+            String clientProfileJson, String serverProfileJson)
             throws IOException {
         LOG.debug("Execute async bath request for cassandra table {}", tableName);
-        return executeBatchAsync(prepareQuery(logEventDtoList, tableName, eventConverter, headerConverter));
+        return executeBatchAsync(prepareQuery(logEventDtoList, tableName, eventConverter, headerConverter,
+                clientProfileConverter, serverProfileConverter, clientProfileJson, serverProfileJson));
     }
 
     @Override
@@ -295,10 +301,16 @@ public class CassandraLogEventDao implements LogEventDao {
     }
 
     private Insert[] prepareQuery(List<CassandraLogEventDto> logEventDtoList, String collectionName,
-            GenericAvroConverter<GenericRecord> eventConverter, GenericAvroConverter<GenericRecord> headerConverter)
+            GenericAvroConverter<GenericRecord> eventConverter, GenericAvroConverter<GenericRecord> headerConverter,
+            GenericAvroConverter<GenericRecord> clientProfileConverter, GenericAvroConverter<GenericRecord> serverProfileConverter,
+            String clientProfileJson, String serverProfileJson)
             throws IOException {
         String reuseTsValue = null;
         Insert[] insertArray = new Insert[logEventDtoList.size()];
+        GenericRecord clientProfile = clientProfileConverter.decodeJson(clientProfileJson);
+        ByteBuffer clientProfileBinary = ByteBuffer.wrap(clientProfileConverter.encode(clientProfile));
+        GenericRecord serverProfile = serverProfileConverter.decodeJson(serverProfileJson);
+        ByteBuffer serverProfileBinary = ByteBuffer.wrap(serverProfileConverter.encode(serverProfile));
         for (int i = 0; i < logEventDtoList.size(); i++) {
             CassandraLogEventDto dto = logEventDtoList.get(i);
             Insert insert = QueryBuilder.insertInto(keyspaceName, collectionName);
@@ -312,6 +324,12 @@ public class CassandraLogEventDao implements LogEventDao {
                     insert.value(element.getColumnName(),
                             formatField(element.getColumnType(), dto.getEvent().get(element.getValue())));
                     break;
+                case CLIENT_FIELD:
+                    insert.value(element.getColumnName(),
+                            formatField(element.getColumnType(), clientProfile.get(element.getValue())));
+                case SERVER_FIELD:
+                    insert.value(element.getColumnName(),
+                            formatField(element.getColumnType(), serverProfile.get(element.getValue())));
                 case HEADER_JSON:
                     insert.value(element.getColumnName(), headerConverter.encodeToJson(dto.getHeader()));
                     break;
@@ -323,6 +341,18 @@ public class CassandraLogEventDao implements LogEventDao {
                     break;
                 case EVENT_BINARY:
                     insert.value(element.getColumnName(), ByteBuffer.wrap(eventConverter.encode(dto.getEvent())));
+                    break;
+                case CLIENT_JSON:
+                    insert.value(element.getColumnName(), clientProfileJson);
+                    break;
+                case CLIENT_BINARY:
+                    insert.value(element.getColumnName(), clientProfileBinary);
+                    break;
+                case SERVER_JSON:
+                    insert.value(element.getColumnName(), serverProfileJson);
+                    break;
+                case SERVER_BINARY:
+                    insert.value(element.getColumnName(), serverProfileBinary);
                     break;
                 case UUID:
                     insert.value(element.getColumnName(), UUID.randomUUID());
