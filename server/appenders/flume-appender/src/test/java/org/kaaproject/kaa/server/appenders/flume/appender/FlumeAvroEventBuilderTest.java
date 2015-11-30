@@ -18,18 +18,20 @@ package org.kaaproject.kaa.server.appenders.flume.appender;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.flume.Event;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.kaaproject.kaa.common.dto.EndpointProfileDataDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeConfig;
 import org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeEventFormat;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
-import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogSchema;
+import org.kaaproject.kaa.server.common.log.shared.appender.data.BaseLogEventPack;
 
 public class FlumeAvroEventBuilderTest {
 
@@ -37,22 +39,29 @@ public class FlumeAvroEventBuilderTest {
 
     private static final int SCHEMA_VERSION = 10;
 
-    private LogEventPack eventPack;
+    private BaseLogEventPack eventPack;
     private FlumeEventBuilder eventBuilder;
     private String appToken;
+    private EndpointProfileDataDto profileDto;
 
     @Before
     public void init() {
         appToken = RandomStringUtils.randomNumeric(15);
-        eventPack = new LogEventPack();
+        
+        profileDto = new EndpointProfileDataDto("1", UUID.randomUUID().toString(), 1, "", "1", "");
+        
         List<LogEvent> list = generateEvents();
+        eventPack = generateEventPack(list);
+    }
 
-        eventPack.setEvents(list);
+    private BaseLogEventPack generateEventPack(List<LogEvent> list) {
+        BaseLogEventPack eventPack = new BaseLogEventPack(profileDto, System.currentTimeMillis(), SCHEMA_VERSION, list);
+        
         LogSchemaDto schemaDto = new LogSchemaDto();
         schemaDto.setMajorVersion(SCHEMA_VERSION);
         LogSchema logSchema = new LogSchema(schemaDto);
         eventPack.setLogSchema(logSchema);
-        eventPack.setLogSchemaVersion(SCHEMA_VERSION);
+        return eventPack;
     }
 
     @Test
@@ -72,7 +81,7 @@ public class FlumeAvroEventBuilderTest {
         FlumeConfig flumeConfig = new FlumeConfig();
         flumeConfig.setFlumeEventFormat(FlumeEventFormat.RECORDS_CONTAINER);
         eventBuilder.init(flumeConfig);
-        eventPack.setEvents(new ArrayList<LogEvent>());
+        eventPack = generateEventPack(new ArrayList<LogEvent>());
         List<Event> events = eventBuilder.generateEvents(eventPack, null, appToken);
         Assert.assertNull(events);
     }

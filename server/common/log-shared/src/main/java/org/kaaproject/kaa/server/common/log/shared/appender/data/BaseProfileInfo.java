@@ -13,15 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.kaaproject.kaa.server.common.log.shared.appender.data;
 
-public interface ProfileInfo {
+public class BaseProfileInfo implements ProfileInfo {
 
-    String getSchemaId();
+    private final BaseSchemaInfo schemaInfo;
+    private final String body;
 
-    String getSchema();
+    public BaseProfileInfo(BaseSchemaInfo schemaInfo, String body) {
+        super();
+        this.schemaInfo = schemaInfo;
+        this.body = body;
+    }
 
-    String getBody();
+    @Override
+    public String getSchemaId() {
+        return schemaInfo.getSchemaId();
+    }
+
+    @Override
+    public String getSchema() {
+        return schemaInfo.getSchema();
+    }
+
+    @Override
+    public String getBody() {
+        return body;
+    }
 
 }

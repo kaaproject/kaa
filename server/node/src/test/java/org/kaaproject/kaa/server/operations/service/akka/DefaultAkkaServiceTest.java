@@ -42,6 +42,8 @@ import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EventClassFamilyVersionStateDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
+import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.EndpointAttachRequest;
@@ -73,13 +75,14 @@ import org.kaaproject.kaa.server.common.Base64Util;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogAppender;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryCallback;
-import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogSchema;
+import org.kaaproject.kaa.server.common.log.shared.appender.data.BaseLogEventPack;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
 import org.kaaproject.kaa.server.operations.pojo.SyncContext;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
 import org.kaaproject.kaa.server.operations.service.OperationsService;
+import org.kaaproject.kaa.server.operations.service.cache.AppVersionKey;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
 import org.kaaproject.kaa.server.operations.service.cache.EventClassFqnKey;
 import org.kaaproject.kaa.server.operations.service.event.EndpointEvent;
@@ -115,7 +118,6 @@ import org.kaaproject.kaa.server.transport.channel.ChannelType;
 import org.kaaproject.kaa.server.transport.message.ErrorBuilder;
 import org.kaaproject.kaa.server.transport.message.MessageBuilder;
 import org.kaaproject.kaa.server.transport.message.SessionAwareMessage;
-import org.kaaproject.kaa.server.transport.message.SessionControlMessage;
 import org.kaaproject.kaa.server.transport.message.SessionInitMessage;
 import org.kaaproject.kaa.server.transport.session.SessionInfo;
 import org.mockito.Mockito;
@@ -1254,7 +1256,11 @@ public class DefaultAkkaServiceTest {
 
         LogAppender mockAppender = Mockito.mock(LogAppender.class);
         Mockito.when(logAppenderService.getApplicationAppenders(APP_ID)).thenReturn(Collections.singletonList(mockAppender));
-        Mockito.when(logAppenderService.getLogSchema(Mockito.anyString(), Mockito.anyInt())).thenReturn(Mockito.mock(LogSchema.class));
+        Mockito.when(logAppenderService.getLogSchema(Mockito.anyString(), Mockito.anyInt())).thenReturn(new LogSchema(new LogSchemaDto()));
+        ProfileSchemaDto profileSchemaDto = new ProfileSchemaDto();
+        profileSchemaDto.setId("1");
+        profileSchemaDto.setSchema("ClientProfileSchema");
+        when(cacheService.getProfileSchemaByAppAndVersion(new AppVersionKey(APP_TOKEN, 0))).thenReturn(profileSchemaDto);
         Mockito.when(mockAppender.isSchemaVersionSupported(Mockito.anyInt())).thenReturn(true);
 
         MessageBuilder responseBuilder = Mockito.mock(MessageBuilder.class);
@@ -1270,7 +1276,7 @@ public class DefaultAkkaServiceTest {
                 Mockito.any(ProfileClientSync.class));
         Mockito.verify(logAppenderService, Mockito.timeout(TIMEOUT).atLeastOnce()).getLogSchema(APP_ID, 44);
 
-        Mockito.verify(mockAppender, Mockito.timeout(TIMEOUT).atLeastOnce()).doAppend(Mockito.any(LogEventPack.class),
+        Mockito.verify(mockAppender, Mockito.timeout(TIMEOUT).atLeastOnce()).doAppend(Mockito.any(BaseLogEventPack.class),
                 Mockito.any(LogDeliveryCallback.class));
 
         Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce())

@@ -31,6 +31,7 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
+import org.kaaproject.kaa.common.dto.EndpointProfileDataDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
@@ -48,8 +49,8 @@ import org.kaaproject.kaa.server.appenders.cassandra.config.gen.OrderType;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogAppender;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryCallback;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
-import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogSchema;
+import org.kaaproject.kaa.server.common.log.shared.appender.data.BaseLogEventPack;
 import org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -71,17 +72,18 @@ public class CassandraLogAppenderTest {
     private LogAppenderDto appenderDto;
     private CassandraConfig configuration;
 
-    private LogEventPack logEventPack;
     private RecordHeader header;
 
     private String appToken;
     private String endpointKeyHash;
+    private EndpointProfileDataDto profileDto;
 
     private AvroByteArrayConverter<LogData> logDataConverter = new AvroByteArrayConverter<>(LogData.class);
 
     @Before
     public void beforeTest() throws IOException {
         endpointKeyHash = UUID.randomUUID().toString();
+        profileDto = new EndpointProfileDataDto("1", endpointKeyHash, 1, "", "1", "");
         appToken = String.valueOf(RANDOM.nextInt(Integer.MAX_VALUE));
 
         appenderDto = new LogAppenderDto();
@@ -97,10 +99,6 @@ public class CassandraLogAppenderTest {
         header.setEndpointKeyHash(endpointKeyHash);
         header.setHeaderVersion(1);
         header.setTimestamp(System.currentTimeMillis());
-
-        logEventPack = new LogEventPack();
-        logEventPack.setDateCreated(System.currentTimeMillis());
-        logEventPack.setEndpointKey(endpointKeyHash);
 
         CassandraServer server = new CassandraServer("127.0.0.1", 9142);
         configuration = new CassandraConfig();
@@ -147,19 +145,15 @@ public class CassandraLogAppenderTest {
         Assert.assertEquals(1, callback.getSuccessCount());
     }
 
-    private LogEventPack generateLogEventPack(int count) throws IOException {
-        LogEventPack logEventPack = new LogEventPack();
+    private BaseLogEventPack generateLogEventPack(int count) throws IOException {
         List<LogEvent> events = new ArrayList<>(count);
         for (int i = 0; i < count; i++) {
             LogEvent event = new LogEvent();
             event.setLogData(logDataConverter.toByteArray(new LogData(Level.DEBUG, UUID.randomUUID().toString())));
             events.add(event);
         }
-        logEventPack.setDateCreated(System.currentTimeMillis());
-        logEventPack.setEndpointKey(endpointKeyHash);
-
-        logEventPack.setLogSchemaVersion(2);
-        logEventPack.setEvents(events);
+        BaseLogEventPack logEventPack = new BaseLogEventPack(profileDto, System.currentTimeMillis(), 2, events);
+        
         LogSchemaDto logSchemaDto = new LogSchemaDto();
         logSchemaDto.setApplicationId(String.valueOf(RANDOM.nextInt()));
         logSchemaDto.setId(String.valueOf(RANDOM.nextInt()));

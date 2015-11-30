@@ -47,7 +47,7 @@ public class ApplicationLogActor extends UntypedActor {
      */
     private ApplicationLogActor(AkkaContext context, String applicationToken) {
         this.applicationToken = applicationToken;
-        this.messageProcessor = new ApplicationLogActorMessageProcessor(context.getLogAppenderService(), context.getApplicationService(), applicationToken);
+        this.messageProcessor = new ApplicationLogActorMessageProcessor(context, applicationToken);
     }
 
     /**

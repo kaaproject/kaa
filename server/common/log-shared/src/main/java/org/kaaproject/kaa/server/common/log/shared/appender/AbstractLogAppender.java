@@ -259,7 +259,7 @@ public abstract class AbstractLogAppender<T extends SpecificRecordBase> implemen
                     logHeader.setHeaderVersion(LOG_HEADER_VERSION);
                     break;
                 case LSVERSION:
-                    logHeader.setLogSchemaVersion(logEventPack.getLogSchemaVersion());
+                    logHeader.setLogSchemaVersion(logEventPack.getLogSchema().getVersion());
                     break;
                 default:
                     LOG.warn("Current header field [{}] doesn't support", field);

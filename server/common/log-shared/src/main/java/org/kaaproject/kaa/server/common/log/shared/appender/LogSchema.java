@@ -18,15 +18,11 @@ package org.kaaproject.kaa.server.common.log.shared.appender;
 
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 
-public class LogSchema {
+public final class LogSchema {
 
-    private LogSchemaDto logSchemaDto;
+    private final LogSchemaDto logSchemaDto;
 
     public LogSchema(LogSchemaDto logSchemaDto) {
-        this.logSchemaDto = logSchemaDto;
-    }
-
-    public void setLogSchemaDto(LogSchemaDto logSchemaDto) {
         this.logSchemaDto = logSchemaDto;
     }
 
