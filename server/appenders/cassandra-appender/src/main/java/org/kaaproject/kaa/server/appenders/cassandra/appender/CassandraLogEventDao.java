@@ -74,6 +74,9 @@ public class CassandraLogEventDao implements LogEventDao {
     private static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS $keyspace_name.$table_name ("
             + "$columns_definition PRIMARY KEY ( $primary_key_definition )) $clustering_definition;";
 
+    private static final String ABSENT_CLIENT_PROFILE_ERROR = "Client profile is not set!";
+    private static final String ABSENT_SERVER_PROFILE_ERROR = "Server profile is not set!";
+
     private final ConcurrentMap<String, ThreadLocal<SimpleDateFormat>> dateFormatMap = new ConcurrentHashMap<String, ThreadLocal<SimpleDateFormat>>();
 
     private Cluster cluster;
@@ -307,10 +310,23 @@ public class CassandraLogEventDao implements LogEventDao {
             throws IOException {
         String reuseTsValue = null;
         Insert[] insertArray = new Insert[logEventDtoList.size()];
-        GenericRecord clientProfile = clientProfileConverter.decodeJson(clientProfileJson);
-        ByteBuffer clientProfileBinary = ByteBuffer.wrap(clientProfileConverter.encode(clientProfile));
-        GenericRecord serverProfile = serverProfileConverter.decodeJson(serverProfileJson);
-        ByteBuffer serverProfileBinary = ByteBuffer.wrap(serverProfileConverter.encode(serverProfile));
+
+        // Process client profile data
+        GenericRecord clientProfile = null;
+        ByteBuffer clientProfileBinary = null;
+        if (clientProfileConverter != null) {
+            clientProfile = clientProfileConverter.decodeJson(clientProfileJson);
+            clientProfileBinary = ByteBuffer.wrap(clientProfileConverter.encode(clientProfile));
+        }
+
+        // Process server profile data
+        GenericRecord serverProfile = null;
+        ByteBuffer serverProfileBinary = null;
+        if (serverProfileConverter != null) {
+            serverProfile = serverProfileConverter.decodeJson(serverProfileJson);
+            serverProfileBinary = ByteBuffer.wrap(serverProfileConverter.encode(serverProfile));
+        }
+
         for (int i = 0; i < logEventDtoList.size(); i++) {
             CassandraLogEventDto dto = logEventDtoList.get(i);
             Insert insert = QueryBuilder.insertInto(keyspaceName, collectionName);
@@ -325,11 +341,19 @@ public class CassandraLogEventDao implements LogEventDao {
                             formatField(element.getColumnType(), dto.getEvent().get(element.getValue())));
                     break;
                 case CLIENT_FIELD:
-                    insert.value(element.getColumnName(),
-                            formatField(element.getColumnType(), clientProfile.get(element.getValue())));
+                    if (clientProfile != null) {
+                        insert.value(element.getColumnName(), formatField(element.getColumnType(), clientProfile.get(element.getValue())));
+                    } else {
+                        throw new RuntimeException(ABSENT_CLIENT_PROFILE_ERROR);
+                    }
+                    break;
                 case SERVER_FIELD:
-                    insert.value(element.getColumnName(),
-                            formatField(element.getColumnType(), serverProfile.get(element.getValue())));
+                    if (serverProfile != null) {
+                        insert.value(element.getColumnName(), formatField(element.getColumnType(), serverProfile.get(element.getValue())));
+                    } else {
+                        throw new RuntimeException(ABSENT_SERVER_PROFILE_ERROR);
+                    }
+                    break;
                 case HEADER_JSON:
                     insert.value(element.getColumnName(), headerConverter.encodeToJson(dto.getHeader()));
                     break;
@@ -343,16 +367,33 @@ public class CassandraLogEventDao implements LogEventDao {
                     insert.value(element.getColumnName(), ByteBuffer.wrap(eventConverter.encode(dto.getEvent())));
                     break;
                 case CLIENT_JSON:
-                    insert.value(element.getColumnName(), clientProfileJson);
+                    if (clientProfileJson != null) {
+                        insert.value(element.getColumnName(), clientProfileJson);
+                    }
+                    else {
+                        throw new RuntimeException(ABSENT_CLIENT_PROFILE_ERROR);
+                    }
                     break;
                 case CLIENT_BINARY:
-                    insert.value(element.getColumnName(), clientProfileBinary);
+                    if (clientProfileBinary != null) {
+                        insert.value(element.getColumnName(), clientProfileBinary);
+                    } else {
+                        throw new RuntimeException(ABSENT_CLIENT_PROFILE_ERROR);
+                    }
                     break;
                 case SERVER_JSON:
-                    insert.value(element.getColumnName(), serverProfileJson);
-                    break;
+                    if (serverProfileJson != null) {
+                        insert.value(element.getColumnName(), serverProfileJson);
+                    }
+                    else {
+                        throw new RuntimeException(ABSENT_SERVER_PROFILE_ERROR);
+                    }
                 case SERVER_BINARY:
-                    insert.value(element.getColumnName(), serverProfileBinary);
+                    if (serverProfileBinary != null) {
+                        insert.value(element.getColumnName(), clientProfileBinary);
+                    } else {
+                        throw new RuntimeException(ABSENT_SERVER_PROFILE_ERROR);
+                    }
                     break;
                 case UUID:
                     insert.value(element.getColumnName(), UUID.randomUUID());
