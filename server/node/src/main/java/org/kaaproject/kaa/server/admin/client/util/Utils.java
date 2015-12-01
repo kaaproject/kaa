@@ -42,6 +42,8 @@ import com.google.gwt.user.client.rpc.IncompatibleRemoteServiceException;
 import com.google.gwt.user.client.rpc.StatusCodeException;
 
 public class Utils {
+    
+    private static final int MAX_ERROR_LINE_LENGTH = 200; 
 
     public static final KaaAdminResources resources = GWT
             .create(KaaAdminResources.class);
@@ -104,7 +106,12 @@ public class Utils {
         } 
         if (!handled) {
             String message = parseErrorMessage(caught, errorMessageCustomizer);
-            hasErrorMessage.setErrorMessage(message);
+            String[] lines = message.split("\r\n|\r|\n");
+            if (lines.length > 1 || (lines.length == 1 && lines[0].length() >= MAX_ERROR_LINE_LENGTH) ) {
+                MessageDialog.showMessageDialog(AlertPanel.Type.ERROR, constants.errorTitle(), message);
+            } else {
+                hasErrorMessage.setErrorMessage(message);
+            }
         }
     }
     

@@ -27,6 +27,7 @@ public class CTLSchemaMetaInfoDto implements HasId, Serializable {
     private static final long serialVersionUID = 365372783241958657L;
     
     private String id;
+    private String name;
     private String fqn;
     private Integer version;
     private CTLSchemaScopeDto scope;
@@ -55,6 +56,14 @@ public class CTLSchemaMetaInfoDto implements HasId, Serializable {
     @Override
     public void setId(String id) {
         this.id = id;
+    }
+    
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getFqn() {

@@ -74,6 +74,23 @@ public class HibernateCTLSchemaDao extends HibernateAbstractDao<CTLSchema> imple
         }
         return ctlSchema;
     }
+    
+    @Override
+    public List<CTLSchema> findByFqnAndTenantId(String fqn, String tenantId) {
+        LOG.debug("Searching ctl schemas by fqn [{}] and tenantId [{}]", fqn, tenantId);
+        List<CTLSchema> schemas = null;
+        if (isNotBlank(fqn) && tenantId != null) {
+            schemas = findListByCriterionWithAlias(CTL_SCHEMA_META_INFO_PROPERTY, CTL_SCHEMA_META_INFO_ALIAS, Restrictions.and(
+                    Restrictions.eq(CTL_SCHEMA_TENANT_ID_ALIAS, Long.valueOf(tenantId)),
+                    Restrictions.eq(CTL_SCHEMA_META_INFO_ALIAS_FQN, fqn)));
+        }
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Search result: [{}].", Arrays.toString(schemas.toArray()));
+        } else {
+            LOG.debug("Search result: [{}].", schemas.size());
+        }
+        return schemas;
+    }
 
     @Override
     public List<CTLSchema> findSystemSchemas() {
@@ -170,4 +187,5 @@ public class HibernateCTLSchemaDao extends HibernateAbstractDao<CTLSchema> imple
         }
         return availableSchemas;
     }
+
 }
