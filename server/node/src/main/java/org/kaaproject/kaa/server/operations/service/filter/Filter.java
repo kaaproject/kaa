@@ -17,6 +17,8 @@
 package org.kaaproject.kaa.server.operations.service.filter;
 
 
+import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+
 /**
  * The interface Filter is used to model filtering of endpoint profiles.
  * 
@@ -27,10 +29,10 @@ public interface Filter {
     /**
      * check if profile body matches filter.
      *
-     * @param profileBody the profile body
+     * @param profile the profile
      * @return true, if profile body matches filter
      */
-    boolean matches(String profileBody);
+    boolean matches(EndpointProfileDto profile);
 
     /**
      * updates filter body. Used for performance to avoid recreation of filter
@@ -38,4 +40,5 @@ public interface Filter {
      * @param filterBody the filter body
      */
     void updateFilterBody(String filterBody);
+
 }
