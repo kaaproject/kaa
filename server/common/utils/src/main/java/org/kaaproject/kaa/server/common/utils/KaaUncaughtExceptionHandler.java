@@ -5,19 +5,16 @@ import org.slf4j.LoggerFactory;
 
 /**
  *
- * An ExceptionHandlerUtil class provides method to handle exceptions
+ * An KaaUncaughtExceptionHandler class provides method to handle exceptions
  * in that threads which don't contain own exceptoin handler
  *
  * @author Oleksandr Didukh
  *
  */
-public class ExceptionHandlerUtil implements Thread.UncaughtExceptionHandler {
+public class KaaUncaughtExceptionHandler implements Thread.UncaughtExceptionHandler {
 
     /** The Constant LOG. */
-    private static final Logger LOG = LoggerFactory.getLogger(ExceptionHandlerUtil.class);
-
-    public ExceptionHandlerUtil() {
-    }
+    private static final Logger LOG = LoggerFactory.getLogger(KaaUncaughtExceptionHandler.class);
 
     @Override
     public void uncaughtException(Thread thread, Throwable exception) {

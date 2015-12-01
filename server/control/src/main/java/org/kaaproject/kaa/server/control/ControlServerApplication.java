@@ -17,7 +17,7 @@
 package org.kaaproject.kaa.server.control;
 
 import org.kaaproject.kaa.server.common.AbstractServerApplication;
-import org.kaaproject.kaa.server.common.utils.ExceptionHandlerUtil;
+import org.kaaproject.kaa.server.common.utils.KaaUncaughtExceptionHandler;
 import org.kaaproject.kaa.server.control.service.ControlService;
 import org.springframework.context.ApplicationContext;
 
@@ -38,7 +38,7 @@ public class ControlServerApplication extends AbstractServerApplication {
      *            the arguments
      */
     public static void main(String[] args) {
-        Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandlerUtil());
+        Thread.setDefaultUncaughtExceptionHandler(new KaaUncaughtExceptionHandler());
 
         ControlServerApplication app = new ControlServerApplication(DEFAULT_APPLICATION_CONTEXT_XMLS, DEFAULT_APPLICATION_CONFIGURATION_FILES);
         app.startAndWait(args);
