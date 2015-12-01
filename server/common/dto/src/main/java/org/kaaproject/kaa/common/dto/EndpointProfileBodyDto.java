@@ -35,7 +35,7 @@ public class EndpointProfileBodyDto implements Serializable {
     public EndpointProfileBodyDto(byte[] endpointKeyHash, String profile, String appId) {
        this.endpointKeyHash = endpointKeyHash;
        this.profile = profile;
-        this.appId = appId;
+       this.appId = appId;
     }
 
     public byte[] getEndpointKeyHash() {

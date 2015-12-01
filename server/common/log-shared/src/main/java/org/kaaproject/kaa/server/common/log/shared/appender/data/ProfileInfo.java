@@ -13,26 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kaaproject.kaa.server.common.log.shared.appender;
+package org.kaaproject.kaa.server.common.log.shared.appender.data;
 
-import java.util.List;
+public interface ProfileInfo {
 
-import org.kaaproject.kaa.server.common.log.shared.appender.data.ProfileInfo;
+    String getSchemaId();
 
-public interface LogEventPack {
+    String getSchema();
 
-    String getEndpointKey();
-
-    String getUserId();
-
-    long getDateCreated();
-
-    LogSchema getLogSchema();
-
-    List<LogEvent> getEvents();
-
-    ProfileInfo getClientProfile();
-
-    ProfileInfo getServerProfile();
+    String getBody();
 
 }
