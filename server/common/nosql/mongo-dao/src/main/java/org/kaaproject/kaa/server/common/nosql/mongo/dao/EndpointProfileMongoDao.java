@@ -17,6 +17,7 @@
 package org.kaaproject.kaa.server.common.nosql.mongo.dao;
 
 import com.mongodb.DBObject;
+import org.kaaproject.kaa.common.dto.CTLDataDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
@@ -202,6 +203,20 @@ public class EndpointProfileMongoDao extends AbstractMongoDao<MongoEndpointProfi
     public boolean checkSdkToken(String sdkToken) {
         LOG.debug("Checking for endpoint profiles with SDK token {}", sdkToken);
         return findOne(query(where(EP_SDK_TOKEN).is(sdkToken))) != null;
+    }
+
+    @Override
+    public CTLDataDto findCtlDataByKeyHash(byte[] keyHash) {
+        CTLDataDto ctlData = null;
+        LOG.debug("Trying to find ctl data by endpoint key hash {}", keyHash);
+        Query query = Query.query(where(EP_ENDPOINT_KEY_HASH).is(keyHash));
+        query.fields().include(EP_SERVER_PROFILE_ID_PROPERTY).include(EP_SERVER_PROFILE_PROPERTY);
+        MongoEndpointProfile pf = mongoTemplate.findOne(query, getDocumentClass());
+        if (pf != null) {
+            ctlData = new CTLDataDto(pf.getServerProfileSchemaId(), pf.getServerProfile());
+        }
+        LOG.debug("[{}] Found ctl data {}", keyHash, ctlData);
+        return ctlData;
     }
 
     @Override

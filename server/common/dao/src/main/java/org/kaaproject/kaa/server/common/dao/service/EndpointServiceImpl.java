@@ -32,6 +32,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.kaaproject.kaa.common.dto.CTLDataDto;
 import org.kaaproject.kaa.common.dto.ChangeDto;
 import org.kaaproject.kaa.common.dto.ChangeNotificationDto;
 import org.kaaproject.kaa.common.dto.ChangeType;
@@ -254,6 +255,12 @@ public class EndpointServiceImpl implements EndpointService {
         validateHash(endpointProfileKeyHash, "Can't remove endpoint profile by key hash. Invalid key hash "
                 + endpointProfileKeyHash);
         endpointProfileDao.removeByKeyHash(endpointProfileKeyHash);
+    }
+
+    @Override
+    public CTLDataDto findCtlDataByKeyHash(byte[] keyHash) {
+        validateHash(keyHash, "Can't find ctl datat by key hash. Invalid key hash " + keyHash);
+        return endpointProfileDao.findCtlDataByKeyHash(keyHash);
     }
 
     @Override

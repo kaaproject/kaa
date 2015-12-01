@@ -16,15 +16,16 @@
 
 package org.kaaproject.kaa.server.common.dao.impl;
 
-import java.nio.ByteBuffer;
-import java.util.List;
-
+import org.kaaproject.kaa.common.dto.CTLDataDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.PageLinkDto;
 import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
+
+import java.nio.ByteBuffer;
+import java.util.List;
 
 /**
  * The interface Endpoint profile dao.
@@ -84,6 +85,7 @@ public interface EndpointProfileDao<T extends EndpointProfile> extends Dao<T, By
 
     /**
      * This method remove endpoint profile by application id.
+     *
      * @param appId application id
      */
     void removeByAppId(String appId);
@@ -114,11 +116,18 @@ public interface EndpointProfileDao<T extends EndpointProfile> extends Dao<T, By
      * Checks whether there are any endpoint profiles with the given SDK token.
      *
      * @param sdkToken An SDK token
-     *
      * @return <code>true</code> if there is at least one endpoint profile with
-     *         the given SDK token, <code>false</code> otherwise
+     * the given SDK token, <code>false</code> otherwise
      */
     boolean checkSdkToken(String sdkToken);
+
+    /**
+     * Find server profile data and ctl schema id by given endpoint key hash.
+     *
+     * @param keyHash the endpoint key hash
+     * @return the server profile data and ctl schema id
+     */
+    CTLDataDto findCtlDataByKeyHash(byte[] keyHash);
 
     /**
      * Update endpoint profile with given keyHash, profile schema id and given server profile.
