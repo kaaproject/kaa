@@ -31,7 +31,7 @@ public class LogEventTest {
     @Test
     public void basicLogEventTest() {
         LogEventDto logEventDto = new LogEventDto(HEADER, EVENT);
-        LogEvent logEvent = new LogEvent(logEventDto);
+        LogEvent logEvent = new LogEvent(logEventDto, null, null);
         DBObject dBHeader = logEvent.getHeader();
         DBObject dbEvent = logEvent.getEvent();
         Assert.assertEquals(HEADER_VALUE, dBHeader.get(KEY));

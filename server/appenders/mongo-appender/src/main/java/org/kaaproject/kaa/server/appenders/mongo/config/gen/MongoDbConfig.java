@@ -7,7 +7,7 @@ package org.kaaproject.kaa.server.appenders.mongo.config.gen;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class MongoDbConfig extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"MongoDbConfig\",\"namespace\":\"org.kaaproject.kaa.server.appenders.mongo.config.gen\",\"fields\":[{\"name\":\"mongoServers\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"MongoDbServer\",\"fields\":[{\"name\":\"host\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"Host\",\"weight\":0.75,\"by_default\":\"localhost\"},{\"name\":\"port\",\"type\":\"int\",\"displayName\":\"Port\",\"weight\":0.25,\"by_default\":27017}]}},\"displayName\":\"MongoDB nodes\",\"minRowCount\":1},{\"name\":\"mongoCredentials\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"MongoDBCredential\",\"fields\":[{\"name\":\"user\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"User\",\"weight\":0.5,\"by_default\":\"user\"},{\"name\":\"password\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"Password\",\"weight\":0.5,\"by_default\":\"password\"}]}},\"displayName\":\"Authentication credentials\",\"minRowCount\":0},{\"name\":\"dbName\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"MongoDB database name\",\"by_default\":\"kaa\"},{\"name\":\"connectionsPerHost\",\"type\":[\"int\",\"null\"],\"displayName\":\"Max connections per host\",\"by_default\":30},{\"name\":\"maxWaitTime\",\"type\":[\"int\",\"null\"],\"displayName\":\"Max wait time (ms)\",\"by_default\":120000},{\"name\":\"connectionTimeout\",\"type\":[\"int\",\"null\"],\"displayName\":\"Connection timeout (ms)\",\"by_default\":5000},{\"name\":\"socketTimeout\",\"type\":[\"int\",\"null\"],\"displayName\":\"Socket timeout (ms)\",\"by_default\":0},{\"name\":\"socketKeepalive\",\"type\":[\"boolean\",\"null\"],\"displayName\":\"Turn on socket keepalive\",\"by_default\":false}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"MongoDbConfig\",\"namespace\":\"org.kaaproject.kaa.server.appenders.mongo.config.gen\",\"fields\":[{\"name\":\"mongoServers\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"MongoDbServer\",\"fields\":[{\"name\":\"host\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"Host\",\"weight\":0.75,\"by_default\":\"localhost\"},{\"name\":\"port\",\"type\":\"int\",\"displayName\":\"Port\",\"weight\":0.25,\"by_default\":27017}]}},\"displayName\":\"MongoDB nodes\",\"minRowCount\":1},{\"name\":\"mongoCredentials\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"MongoDBCredential\",\"fields\":[{\"name\":\"user\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"User\",\"weight\":0.5,\"by_default\":\"user\"},{\"name\":\"password\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"Password\",\"weight\":0.5,\"by_default\":\"password\"}]}},\"displayName\":\"Authentication credentials\",\"minRowCount\":0},{\"name\":\"dbName\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"MongoDB database name\",\"by_default\":\"kaa\"},{\"name\":\"connectionsPerHost\",\"type\":[\"int\",\"null\"],\"displayName\":\"Max connections per host\",\"by_default\":30},{\"name\":\"maxWaitTime\",\"type\":[\"int\",\"null\"],\"displayName\":\"Max wait time (ms)\",\"by_default\":120000},{\"name\":\"connectionTimeout\",\"type\":[\"int\",\"null\"],\"displayName\":\"Connection timeout (ms)\",\"by_default\":5000},{\"name\":\"socketTimeout\",\"type\":[\"int\",\"null\"],\"displayName\":\"Socket timeout (ms)\",\"by_default\":0},{\"name\":\"socketKeepalive\",\"type\":[\"boolean\",\"null\"],\"displayName\":\"Turn on socket keepalive\",\"by_default\":false},{\"name\":\"clientProfileRequired\",\"type\":[\"boolean\",\"null\"],\"displayName\":\"Require client profile data\",\"by_default\":false},{\"name\":\"serverProfileRequired\",\"type\":[\"boolean\",\"null\"],\"displayName\":\"Require server profile data\",\"by_default\":false}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
    private java.util.List<org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbServer> mongoServers;
    private java.util.List<org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDBCredential> mongoCredentials;
@@ -17,6 +17,8 @@ public class MongoDbConfig extends org.apache.avro.specific.SpecificRecordBase i
    private java.lang.Integer connectionTimeout;
    private java.lang.Integer socketTimeout;
    private java.lang.Boolean socketKeepalive;
+   private java.lang.Boolean clientProfileRequired;
+   private java.lang.Boolean serverProfileRequired;
 
   /**
    * Default constructor.  Note that this does not initialize fields
@@ -28,7 +30,7 @@ public class MongoDbConfig extends org.apache.avro.specific.SpecificRecordBase i
   /**
    * All-args constructor.
    */
-  public MongoDbConfig(java.util.List<org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbServer> mongoServers, java.util.List<org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDBCredential> mongoCredentials, java.lang.String dbName, java.lang.Integer connectionsPerHost, java.lang.Integer maxWaitTime, java.lang.Integer connectionTimeout, java.lang.Integer socketTimeout, java.lang.Boolean socketKeepalive) {
+  public MongoDbConfig(java.util.List<org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbServer> mongoServers, java.util.List<org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDBCredential> mongoCredentials, java.lang.String dbName, java.lang.Integer connectionsPerHost, java.lang.Integer maxWaitTime, java.lang.Integer connectionTimeout, java.lang.Integer socketTimeout, java.lang.Boolean socketKeepalive, java.lang.Boolean clientProfileRequired, java.lang.Boolean serverProfileRequired) {
     this.mongoServers = mongoServers;
     this.mongoCredentials = mongoCredentials;
     this.dbName = dbName;
@@ -37,6 +39,8 @@ public class MongoDbConfig extends org.apache.avro.specific.SpecificRecordBase i
     this.connectionTimeout = connectionTimeout;
     this.socketTimeout = socketTimeout;
     this.socketKeepalive = socketKeepalive;
+    this.clientProfileRequired = clientProfileRequired;
+    this.serverProfileRequired = serverProfileRequired;
   }
 
   public org.apache.avro.Schema getSchema() { return SCHEMA$; }
@@ -51,6 +55,8 @@ public class MongoDbConfig extends org.apache.avro.specific.SpecificRecordBase i
     case 5: return connectionTimeout;
     case 6: return socketTimeout;
     case 7: return socketKeepalive;
+    case 8: return clientProfileRequired;
+    case 9: return serverProfileRequired;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -66,6 +72,8 @@ public class MongoDbConfig extends org.apache.avro.specific.SpecificRecordBase i
     case 5: connectionTimeout = (java.lang.Integer)value$; break;
     case 6: socketTimeout = (java.lang.Integer)value$; break;
     case 7: socketKeepalive = (java.lang.Boolean)value$; break;
+    case 8: clientProfileRequired = (java.lang.Boolean)value$; break;
+    case 9: serverProfileRequired = (java.lang.Boolean)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -190,6 +198,36 @@ public class MongoDbConfig extends org.apache.avro.specific.SpecificRecordBase i
     this.socketKeepalive = value;
   }
 
+  /**
+   * Gets the value of the 'clientProfileRequired' field.
+   */
+  public java.lang.Boolean getClientProfileRequired() {
+    return clientProfileRequired;
+  }
+
+  /**
+   * Sets the value of the 'clientProfileRequired' field.
+   * @param value the value to set.
+   */
+  public void setClientProfileRequired(java.lang.Boolean value) {
+    this.clientProfileRequired = value;
+  }
+
+  /**
+   * Gets the value of the 'serverProfileRequired' field.
+   */
+  public java.lang.Boolean getServerProfileRequired() {
+    return serverProfileRequired;
+  }
+
+  /**
+   * Sets the value of the 'serverProfileRequired' field.
+   * @param value the value to set.
+   */
+  public void setServerProfileRequired(java.lang.Boolean value) {
+    this.serverProfileRequired = value;
+  }
+
   /** Creates a new MongoDbConfig RecordBuilder */
   public static org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig.Builder newBuilder() {
     return new org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig.Builder();
@@ -219,6 +257,8 @@ public class MongoDbConfig extends org.apache.avro.specific.SpecificRecordBase i
     private java.lang.Integer connectionTimeout;
     private java.lang.Integer socketTimeout;
     private java.lang.Boolean socketKeepalive;
+    private java.lang.Boolean clientProfileRequired;
+    private java.lang.Boolean serverProfileRequired;
 
     /** Creates a new Builder */
     private Builder() {
@@ -260,6 +300,14 @@ public class MongoDbConfig extends org.apache.avro.specific.SpecificRecordBase i
         this.socketKeepalive = data().deepCopy(fields()[7].schema(), other.socketKeepalive);
         fieldSetFlags()[7] = true;
       }
+      if (isValidValue(fields()[8], other.clientProfileRequired)) {
+        this.clientProfileRequired = data().deepCopy(fields()[8].schema(), other.clientProfileRequired);
+        fieldSetFlags()[8] = true;
+      }
+      if (isValidValue(fields()[9], other.serverProfileRequired)) {
+        this.serverProfileRequired = data().deepCopy(fields()[9].schema(), other.serverProfileRequired);
+        fieldSetFlags()[9] = true;
+      }
     }
     
     /** Creates a Builder by copying an existing MongoDbConfig instance */
@@ -296,6 +344,14 @@ public class MongoDbConfig extends org.apache.avro.specific.SpecificRecordBase i
       if (isValidValue(fields()[7], other.socketKeepalive)) {
         this.socketKeepalive = data().deepCopy(fields()[7].schema(), other.socketKeepalive);
         fieldSetFlags()[7] = true;
+      }
+      if (isValidValue(fields()[8], other.clientProfileRequired)) {
+        this.clientProfileRequired = data().deepCopy(fields()[8].schema(), other.clientProfileRequired);
+        fieldSetFlags()[8] = true;
+      }
+      if (isValidValue(fields()[9], other.serverProfileRequired)) {
+        this.serverProfileRequired = data().deepCopy(fields()[9].schema(), other.serverProfileRequired);
+        fieldSetFlags()[9] = true;
       }
     }
 
@@ -499,6 +555,56 @@ public class MongoDbConfig extends org.apache.avro.specific.SpecificRecordBase i
       return this;
     }
 
+    /** Gets the value of the 'clientProfileRequired' field */
+    public java.lang.Boolean getClientProfileRequired() {
+      return clientProfileRequired;
+    }
+    
+    /** Sets the value of the 'clientProfileRequired' field */
+    public org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig.Builder setClientProfileRequired(java.lang.Boolean value) {
+      validate(fields()[8], value);
+      this.clientProfileRequired = value;
+      fieldSetFlags()[8] = true;
+      return this; 
+    }
+    
+    /** Checks whether the 'clientProfileRequired' field has been set */
+    public boolean hasClientProfileRequired() {
+      return fieldSetFlags()[8];
+    }
+    
+    /** Clears the value of the 'clientProfileRequired' field */
+    public org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig.Builder clearClientProfileRequired() {
+      clientProfileRequired = null;
+      fieldSetFlags()[8] = false;
+      return this;
+    }
+
+    /** Gets the value of the 'serverProfileRequired' field */
+    public java.lang.Boolean getServerProfileRequired() {
+      return serverProfileRequired;
+    }
+    
+    /** Sets the value of the 'serverProfileRequired' field */
+    public org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig.Builder setServerProfileRequired(java.lang.Boolean value) {
+      validate(fields()[9], value);
+      this.serverProfileRequired = value;
+      fieldSetFlags()[9] = true;
+      return this; 
+    }
+    
+    /** Checks whether the 'serverProfileRequired' field has been set */
+    public boolean hasServerProfileRequired() {
+      return fieldSetFlags()[9];
+    }
+    
+    /** Clears the value of the 'serverProfileRequired' field */
+    public org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig.Builder clearServerProfileRequired() {
+      serverProfileRequired = null;
+      fieldSetFlags()[9] = false;
+      return this;
+    }
+
     @Override
     public MongoDbConfig build() {
       try {
@@ -511,6 +617,8 @@ public class MongoDbConfig extends org.apache.avro.specific.SpecificRecordBase i
         record.connectionTimeout = fieldSetFlags()[5] ? this.connectionTimeout : (java.lang.Integer) defaultValue(fields()[5]);
         record.socketTimeout = fieldSetFlags()[6] ? this.socketTimeout : (java.lang.Integer) defaultValue(fields()[6]);
         record.socketKeepalive = fieldSetFlags()[7] ? this.socketKeepalive : (java.lang.Boolean) defaultValue(fields()[7]);
+        record.clientProfileRequired = fieldSetFlags()[8] ? this.clientProfileRequired : (java.lang.Boolean) defaultValue(fields()[8]);
+        record.serverProfileRequired = fieldSetFlags()[9] ? this.serverProfileRequired : (java.lang.Boolean) defaultValue(fields()[9]);
         return record;
       } catch (Exception e) {
         throw new org.apache.avro.AvroRuntimeException(e);

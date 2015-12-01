@@ -16,14 +16,19 @@
 
 package org.kaaproject.kaa.server.appenders.mongo.appender;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import org.apache.avro.generic.GenericRecord;
 import org.junit.After;
@@ -53,6 +58,9 @@ import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryCallback;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogSchema;
 import org.kaaproject.kaa.server.common.log.shared.appender.data.BaseLogEventPack;
+import org.kaaproject.kaa.server.common.log.shared.appender.data.BaseProfileInfo;
+import org.kaaproject.kaa.server.common.log.shared.appender.data.BaseSchemaInfo;
+import org.kaaproject.kaa.server.common.log.shared.appender.data.ProfileInfo;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.MongoDBTestRunner;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
@@ -77,6 +85,9 @@ public class MongoDBLogAppenderTest {
     private static final String LOG_DATA = "null";
     private static final long DATE_CREATED = System.currentTimeMillis();
 
+    private static final String SERVER_PROFILE_SCHEMA_FILE = "server_profile_schema.avsc";
+    private static final String SERVER_PROFILE_CONTENT_FILE = "server_profile_content.json";
+
     private LogAppender logAppender;
 
     @BeforeClass
@@ -100,38 +111,7 @@ public class MongoDBLogAppenderTest {
 
     @Before
     public void beforeTest() throws Exception {
-        logAppender = new MongoDbLogAppender();
-
-        LogAppenderDto appenderDto = new LogAppenderDto();
-        appenderDto.setApplicationId(APPLICATION_ID);
-        appenderDto.setApplicationToken(APPLICATION_TOKEN);
-        appenderDto.setTenantId(TENANT_ID);
-        appenderDto.setHeaderStructure(Arrays.asList(LogHeaderStructureDto.values()));
-
-        String dbName = MongoDBTestRunner.getDB().getName();
-        List<ServerAddress> serverAddresses = MongoDBTestRunner.getDB().getMongo().getServerAddressList();
-        List<MongoDbServer> servers = new ArrayList<>();
-        for (ServerAddress serverAddress : serverAddresses) {
-            servers.add(new MongoDbServer(serverAddress.getHost(), serverAddress.getPort()));
-        }
-        List<MongoDBCredential> credentials = new ArrayList<>();
-
-        RawSchema rawSchema = new RawSchema(MongoDbConfig.getClassSchema().toString());
-        DefaultRecordGenerationAlgorithm<RawData> algotithm = new DefaultRecordGenerationAlgorithmImpl<>(rawSchema, new RawDataFactory());
-        RawData rawData = algotithm.getRootData();
-        AvroJsonConverter<MongoDbConfig> converter = new AvroJsonConverter<>(MongoDbConfig.getClassSchema(), MongoDbConfig.class);
-        MongoDbConfig mongoDbConfig = converter.decodeJson(rawData.getRawData());
-
-        mongoDbConfig.setMongoServers(servers);
-        mongoDbConfig.setMongoCredentials(credentials);
-        mongoDbConfig.setDbName(dbName);
-
-        AvroByteArrayConverter<MongoDbConfig> byteConverter = new AvroByteArrayConverter<>(MongoDbConfig.class);
-        byte[] rawConfiguration = byteConverter.toByteArray(mongoDbConfig);
-
-        appenderDto.setRawConfiguration(rawConfiguration);
-
-        logAppender.init(appenderDto);
+        this.initLogAppender(false, false);
     }
 
     @Test
@@ -225,7 +205,7 @@ public class MongoDBLogAppenderTest {
         TestLogDeliveryCallback callback = new TestLogDeliveryCallback();
         logAppender.doAppend(logEventPack, callback);
         Assert.assertTrue(callback.internallError);
-        Mockito.verify(logEventDao, Mockito.never()).save(Mockito.anyList(), Mockito.anyString());
+        Mockito.verify(logEventDao, Mockito.never()).save(Mockito.anyList(), Mockito.<ProfileInfo>anyObject(), Mockito.<ProfileInfo>anyObject(), Mockito.anyString());
         ReflectionTestUtils.setField(logAppender, "logEventDao", eventDao);
     }
 
@@ -252,6 +232,10 @@ public class MongoDBLogAppenderTest {
         BaseLogEventPack logEventPack = new BaseLogEventPack(profileDto, DATE_CREATED, schema.getVersion(), events);
         logEventPack.setLogSchema(schema);
 
+        BaseSchemaInfo schemaInfo = new BaseSchemaInfo(Integer.toString(new Random().nextInt()), this.getResourceAsString(SERVER_PROFILE_SCHEMA_FILE));
+        String body = this.getResourceAsString(SERVER_PROFILE_CONTENT_FILE);
+        logEventPack.setServerProfile(new BaseProfileInfo(schemaInfo, body));
+
         String collectionName = (String) ReflectionTestUtils.getField(logAppender, "collectionName");
         Assert.assertEquals(0, MongoDBTestRunner.getDB().getCollection(collectionName).count());
         TestLogDeliveryCallback callback = new TestLogDeliveryCallback();
@@ -259,6 +243,47 @@ public class MongoDBLogAppenderTest {
         Assert.assertTrue(callback.success);
         collectionName = (String) ReflectionTestUtils.getField(logAppender, "collectionName");
         Assert.assertEquals(3, MongoDBTestRunner.getDB().getCollection(collectionName).count());
+    }
+
+    /**
+     * This log appender requires server profile data. The test is to check that
+     * log records without a server profile set will not be appended.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void doAppendNegativeTest() throws Exception {
+        // Reinitilize the log appender to require server profile data
+        this.initLogAppender(false, true);
+
+        GenericAvroConverter<BasicEndpointProfile> converter = new GenericAvroConverter<BasicEndpointProfile>(BasicEndpointProfile.SCHEMA$);
+        BasicEndpointProfile log = new BasicEndpointProfile("body");
+        List<LogEvent> logEvents = new ArrayList<>();
+
+        LogEvent alpha = new LogEvent();
+        alpha.setLogData(converter.encode(log));
+        logEvents.add(alpha);
+
+        LogEvent beta = new LogEvent();
+        beta.setLogData(converter.encode(log));
+        logEvents.add(alpha);
+
+        LogEvent gamma = new LogEvent();
+        gamma.setLogData(converter.encode(log));
+        logEvents.add(alpha);
+
+        LogSchemaDto logSchemaDto = new LogSchemaDto();
+        logSchemaDto.setSchema(BasicEndpointProfile.SCHEMA$.toString());
+        LogSchema logSchema = new LogSchema(logSchemaDto);
+
+        EndpointProfileDataDto profileDto = new EndpointProfileDataDto("1", ENDPOINT_KEY, 1, "", null, null);
+        BaseLogEventPack logEventPack = new BaseLogEventPack(profileDto, DATE_CREATED, logSchema.getVersion(), logEvents);
+        logEventPack.setLogSchema(logSchema);
+
+        String collectionName = (String) ReflectionTestUtils.getField(this.logAppender, "collectionName");
+        Assert.assertEquals(0, MongoDBTestRunner.getDB().getCollection(collectionName).count());
+        this.logAppender.doAppend(logEventPack, new TestLogDeliveryCallback());
+        Assert.assertEquals(0, MongoDBTestRunner.getDB().getCollection(collectionName).count());
     }
 
     private static class TestLogDeliveryCallback implements LogDeliveryCallback {
@@ -288,5 +313,63 @@ public class MongoDBLogAppenderTest {
             remoteError = true;
         }
 
+    }
+
+    private void initLogAppender(boolean requireClientProfile, boolean requireServerProfile) throws Exception {
+        logAppender = new MongoDbLogAppender();
+
+        LogAppenderDto appenderDto = new LogAppenderDto();
+        appenderDto.setApplicationId(APPLICATION_ID);
+        appenderDto.setApplicationToken(APPLICATION_TOKEN);
+        appenderDto.setTenantId(TENANT_ID);
+        appenderDto.setHeaderStructure(Arrays.asList(LogHeaderStructureDto.values()));
+
+        String dbName = MongoDBTestRunner.getDB().getName();
+        List<ServerAddress> serverAddresses = MongoDBTestRunner.getDB().getMongo().getServerAddressList();
+        List<MongoDbServer> servers = new ArrayList<>();
+        for (ServerAddress serverAddress : serverAddresses) {
+            servers.add(new MongoDbServer(serverAddress.getHost(), serverAddress.getPort()));
+        }
+        List<MongoDBCredential> credentials = new ArrayList<>();
+
+        RawSchema rawSchema = new RawSchema(MongoDbConfig.getClassSchema().toString());
+        DefaultRecordGenerationAlgorithm<RawData> algotithm = new DefaultRecordGenerationAlgorithmImpl<>(rawSchema, new RawDataFactory());
+        RawData rawData = algotithm.getRootData();
+        AvroJsonConverter<MongoDbConfig> converter = new AvroJsonConverter<>(MongoDbConfig.getClassSchema(), MongoDbConfig.class);
+        MongoDbConfig mongoDbConfig = converter.decodeJson(rawData.getRawData());
+
+        mongoDbConfig.setMongoServers(servers);
+        mongoDbConfig.setMongoCredentials(credentials);
+        mongoDbConfig.setDbName(dbName);
+        mongoDbConfig.setServerProfileRequired(requireClientProfile);
+        mongoDbConfig.setServerProfileRequired(requireServerProfile);
+
+        AvroByteArrayConverter<MongoDbConfig> byteConverter = new AvroByteArrayConverter<>(MongoDbConfig.class);
+        byte[] rawConfiguration = byteConverter.toByteArray(mongoDbConfig);
+
+        appenderDto.setRawConfiguration(rawConfiguration);
+
+        logAppender.init(appenderDto);
+    }
+
+    protected String getResourceAsString(String path) throws IOException {
+        URL url = Thread.currentThread().getContextClassLoader().getResource(path);
+        File file = new File(url.getPath());
+        String result;
+        BufferedReader br = new BufferedReader(new FileReader(file));
+        try {
+            StringBuilder sb = new StringBuilder();
+            String line = br.readLine();
+
+            while (line != null) {
+                sb.append(line);
+                sb.append(System.lineSeparator());
+                line = br.readLine();
+            }
+            result = sb.toString();
+        } finally {
+            br.close();
+        }
+        return result;
     }
 }
