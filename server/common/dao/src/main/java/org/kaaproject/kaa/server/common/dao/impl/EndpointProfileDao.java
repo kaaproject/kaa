@@ -128,5 +128,5 @@ public interface EndpointProfileDao<T extends EndpointProfile> extends Dao<T, By
      * @param serverProfile the given server profile data.
      * @return the updated endpoint profile with.
      */
-    T updateProfileServer(byte[] keyHash, String schemaId, String serverProfile);
+    T updateServerProfile(byte[] keyHash, String schemaId, String serverProfile);
 }

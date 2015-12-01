@@ -19,6 +19,7 @@ package org.kaaproject.kaa.server.operations.service.akka.actors.core;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointStopMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.ServerProfileUpdateMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.SyncRequestMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.logs.LogDeliveryMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.notification.ThriftNotificationMessage;
@@ -132,6 +133,8 @@ public class EndpointActor extends UntypedActor {
             processDisconnectMessage((ChannelAware) message);
         } else if (message instanceof SessionPingMessage) {
             processPingMessage((ChannelAware) message);
+        } else if (message instanceof ServerProfileUpdateMessage) {
+            processServerProfileUpdate((ServerProfileUpdateMessage) message);
         } else if (message instanceof ThriftNotificationMessage) {
             processThriftNotification((ThriftNotificationMessage) message);
         } else if (message instanceof NotificationMessage) {
@@ -180,8 +183,12 @@ public class EndpointActor extends UntypedActor {
         messageProcessor.processPingMessage(context(), message);
     }
 
+    private void processServerProfileUpdate(ServerProfileUpdateMessage message) {
+        messageProcessor.processServerProfileUpdate();
+    }
+    
     private void processThriftNotification(ThriftNotificationMessage message) {
-        messageProcessor.processThriftNotification(context(), message);
+        messageProcessor.processThriftNotification(context());
     }
 
     private void processNotification(NotificationMessage message) {

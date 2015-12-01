@@ -160,7 +160,7 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
         this.ecfVersionStates = convertECFVersionDtoToModelList(dto.getEcfVersionStates());
         this.serverHash = dto.getServerHash();
         this.sdkToken = dto.getSdkToken();
-        this.serverProfileSchemaId = dto.getServerProfileSchemaId();
+        this.serverProfileSchemaId = dto.getServerProfileCtlSchemaId();
         this.serverProfile = dto.getServerProfileBody();
     }
 
@@ -522,7 +522,7 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
         dto.setServerHash(serverHash);
         dto.setSdkToken(sdkToken);
         dto.setServerProfileBody(serverProfile);
-        dto.setServerProfileSchemaId(serverProfileSchemaId);
+        dto.setServerProfileCtlSchemaId(serverProfileSchemaId);
         return dto;
     }
 }

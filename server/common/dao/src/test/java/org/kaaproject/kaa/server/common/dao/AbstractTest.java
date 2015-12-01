@@ -698,7 +698,7 @@ public class AbstractTest {
     protected EndpointProfileDto generateEndpointProfileDtoWithSchemaId(String appId, String profileSchemaId, String srvProfileBody) {
         EndpointProfileDto profileDto = new EndpointProfileDto();
         profileDto.setApplicationId(appId);
-        profileDto.setServerProfileSchemaId(profileSchemaId);
+        profileDto.setServerProfileCtlSchemaId(profileSchemaId);
         profileDto.setEndpointKeyHash("TEST_KEY_HASH".getBytes());
         profileDto.setClientProfileBody("{\"title\": \"TEST\"}");
         profileDto.setSdkToken(UUID.randomUUID().toString());

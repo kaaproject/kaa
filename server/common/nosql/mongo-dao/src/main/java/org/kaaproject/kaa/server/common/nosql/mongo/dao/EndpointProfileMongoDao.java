@@ -205,11 +205,12 @@ public class EndpointProfileMongoDao extends AbstractMongoDao<MongoEndpointProfi
     }
 
     @Override
-    public MongoEndpointProfile updateProfileServer(byte[] keyHash, String schemaId, String serverProfile) {
+    public MongoEndpointProfile updateServerProfile(byte[] keyHash, String schemaId, String serverProfile) {
         LOG.debug("Update server endpoint profile for endpoint with key hash {}, schema is {}", keyHash, schemaId);
         updateFirst(
-                query(where(EP_ENDPOINT_KEY_HASH).is(keyHash).and(EP_SERVER_PROFILE_ID_PROPERTY).is(schemaId)),
-                update(EP_SERVER_PROFILE_PROPERTY, serverProfile));
+                query(where(EP_ENDPOINT_KEY_HASH).is(keyHash)),
+                update(EP_SERVER_PROFILE_PROPERTY, serverProfile)
+                .addToSet(EP_SERVER_PROFILE_ID_PROPERTY, schemaId));
         return findById(ByteBuffer.wrap(keyHash));
     }
 }

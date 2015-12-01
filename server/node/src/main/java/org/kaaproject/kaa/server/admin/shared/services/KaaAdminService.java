@@ -81,7 +81,7 @@ public interface KaaAdminService extends RemoteService {
 
     public EndpointProfileBodyDto getEndpointProfileBodyByKeyHash(String endpointProfileKeyHash) throws KaaAdminServiceException;
 
-    public EndpointProfileRecordFieldDto updateEndpointProfile(EndpointProfileRecordFieldDto endpointProfileRecordDto) throws KaaAdminServiceException;
+    public EndpointProfileRecordFieldDto updateServerProfile(EndpointProfileRecordFieldDto endpointProfileRecordDto) throws KaaAdminServiceException;
 
     public List<TenantUserDto> getTenants() throws KaaAdminServiceException;
 
@@ -166,8 +166,6 @@ public interface KaaAdminService extends RemoteService {
     public List<ServerProfileSchemaDto> getServerProfileSchemasByApplicationId(String applicationId) throws KaaAdminServiceException;
 
     public ServerProfileSchemaDto getServerProfileSchema(String serverProfileSchemaId) throws KaaAdminServiceException;
-
-    public ServerProfileSchemaDto editServerProfileSchema(ServerProfileSchemaDto serverProfileSchema, byte[] schema) throws KaaAdminServiceException;
 
     public ServerProfileSchemaDto getServerProfileSchemaForm(String serverProfileSchemaId) throws KaaAdminServiceException;
 

@@ -28,7 +28,6 @@ import org.junit.Test;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDataDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
@@ -53,7 +52,7 @@ import akka.actor.ActorRef;
 
 public class ApplicationLogActorTest {
 
-    private static final String SERVER_PROFILE_SCHEMA_ID = "73";
+    private static final String SERVER_PROFILE_CTL_SCHEMA_ID = "173";
 
     private static final int CLIENT_SCHEMA_VERSION = 42;
 
@@ -115,10 +114,7 @@ public class ApplicationLogActorTest {
         when(cacheService.getProfileSchemaByAppAndVersion(new AppVersionKey(APP_TOKEN, CLIENT_SCHEMA_VERSION)))
                 .thenReturn(profileSchemaDto);
         CTLSchemaDto schemaDto = new CTLSchemaDto();
-        ServerProfileSchemaDto serverProfileSchemaDto = new ServerProfileSchemaDto();
-        serverProfileSchemaDto.setId(SERVER_PROFILE_SCHEMA_ID);
-        serverProfileSchemaDto.setSchemaDto(schemaDto);
-        when(cacheService.getServerProfileSchemaById(SERVER_PROFILE_SCHEMA_ID)).thenReturn(serverProfileSchemaDto);
+        when(cacheService.getCtlSchemaById(SERVER_PROFILE_CTL_SCHEMA_ID)).thenReturn(schemaDto);
         when(ctlService.flatExportAsString(schemaDto)).thenReturn("ServerProfileSchema");
     }
 
@@ -253,7 +249,7 @@ public class ApplicationLogActorTest {
 
     public BaseLogEventPack getTestPack(int logSchemaVersion, LogSchema logSchema) {
         EndpointProfileDataDto profileDto = new EndpointProfileDataDto("1", "EndpointKey", CLIENT_SCHEMA_VERSION, "",
-                SERVER_PROFILE_SCHEMA_ID, "");
+                SERVER_PROFILE_CTL_SCHEMA_ID, "");
         BaseLogEventPack logEventPack = new BaseLogEventPack(profileDto, System.currentTimeMillis(), logSchemaVersion,
                 new ArrayList<LogEvent>());
         logEventPack.setLogSchema(logSchema);
