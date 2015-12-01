@@ -19,6 +19,7 @@ package org.kaaproject.kaa.server.common.nosql.cassandra.dao;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kaaproject.kaa.common.dto.CTLDataDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
@@ -37,6 +38,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/cassandra-client-test-context.xml")
@@ -122,7 +124,7 @@ public class EndpointProfileCassandraDaoTest extends AbstractCassandraTest {
 
     @Test
     public void testFindBodyByKeyHash() throws Exception {
-        EndpointProfileDto expected = generateEndpointProfileWithEndpointGroupId(null,false);
+        EndpointProfileDto expected = generateEndpointProfileWithEndpointGroupId(null, false);
         EndpointProfileBodyDto found = endpointProfileDao.findBodyByKeyHash(expected.getEndpointKeyHash());
         Assert.assertFalse(found.getProfile().isEmpty());
         Assert.assertEquals(expected.getClientProfileBody(), found.getProfile());
@@ -237,8 +239,16 @@ public class EndpointProfileCassandraDaoTest extends AbstractCassandraTest {
 
     @Test
     public void testCheckSdkToken() throws Exception {
-        this.generateEndpointProfile(null, "alpha", null, null);
+        generateEndpointProfile(null, "alpha", null, null);
         Assert.assertTrue(endpointProfileDao.checkSdkToken("alpha"));
         Assert.assertFalse(endpointProfileDao.checkSdkToken("beta"));
+    }
+
+    @Test
+    public void testFindCtlDataByKeyHash() {
+        CTLDataDto dataDto = new CTLDataDto(String.valueOf(RANDOM.nextInt()), UUID.randomUUID().toString());
+        EndpointProfileDto ep = generateEndpointProfile(dataDto);
+        CTLDataDto found = endpointProfileDao.findCtlDataByKeyHash(ep.getEndpointKeyHash());
+        Assert.assertEquals(dataDto, found);
     }
 }
