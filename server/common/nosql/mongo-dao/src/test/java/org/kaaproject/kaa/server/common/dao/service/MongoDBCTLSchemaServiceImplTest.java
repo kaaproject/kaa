@@ -29,7 +29,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/mongo-dao-test-context.xml")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-public class MongoDBCTLSchemaServiceImplTest extends CTLSchemaServiceImplTest {
+public class MongoDBCTLSchemaServiceImplTest extends CTLServiceImplTest {
 
     @BeforeClass
     public static void init() throws Exception {
