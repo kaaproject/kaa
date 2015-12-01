@@ -19,6 +19,8 @@ package org.kaaproject.kaa.server.operations;
 import org.kaaproject.kaa.server.common.AbstractServerApplication;
 import org.kaaproject.kaa.server.operations.service.bootstrap.OperationsBootstrapService;
 import org.springframework.context.ApplicationContext;
+import org.kaaproject.kaa.server.common.utils.KaaUncaughtExceptionHandler;
+
 
 /**
  * Main class that is used to launch Operations Server.
@@ -37,6 +39,8 @@ public class OperationsServerApplication extends AbstractServerApplication {
      *            the arguments
      */
     public static void main(String[] args) {
+        Thread.setDefaultUncaughtExceptionHandler(new KaaUncaughtExceptionHandler());
+
         OperationsServerApplication app = new OperationsServerApplication(DEFAULT_APPLICATION_CONTEXT_XMLS,
                 DEFAULT_APPLICATION_CONFIGURATION_FILES);
         app.startAndWait(args);

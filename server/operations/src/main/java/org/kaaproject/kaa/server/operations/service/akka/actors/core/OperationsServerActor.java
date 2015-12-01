@@ -68,15 +68,15 @@ public class OperationsServerActor extends UntypedActor {
     private OperationsServerActor(AkkaContext context) {
         super();
         this.context = context;
-        this.tenants = new HashMap<String, ActorRef>();
-        this.statusRequestStatesMap = new HashMap<UUID, StatusRequestState>();
+        this.tenants = new HashMap<>();
+        this.statusRequestStatesMap = new HashMap<>();
     }
 
     @Override
     public SupervisorStrategy supervisorStrategy() {
         return SupervisionStrategyFactory.createOpsActorStrategy(context);
     }
-    
+
     /**
      * The Class ActorCreator.
      */

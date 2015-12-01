@@ -18,6 +18,7 @@ package org.kaaproject.kaa.server.bootstrap;
 
 import org.kaaproject.kaa.server.bootstrap.service.initialization.BootstrapInitializationService;
 import org.kaaproject.kaa.server.common.AbstractServerApplication;
+import org.kaaproject.kaa.server.common.utils.KaaUncaughtExceptionHandler;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -37,6 +38,8 @@ public class BootstrapServerApplication extends AbstractServerApplication {
      *            the arguments
      */
     public static void main(String[] args) {
+        Thread.setDefaultUncaughtExceptionHandler(new KaaUncaughtExceptionHandler());
+
         BootstrapServerApplication app = new BootstrapServerApplication(DEFAULT_APPLICATION_CONTEXT_XMLS,
                 DEFAULT_APPLICATION_CONFIGURATION_FILES);
         app.startAndWait(args);
