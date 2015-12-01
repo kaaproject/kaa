@@ -56,6 +56,7 @@ import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.ServerProfileSchemaViewDto;
 import org.kaaproject.kaa.common.dto.StructureRecordDto;
 import org.kaaproject.kaa.common.dto.TenantAdminDto;
 import org.kaaproject.kaa.common.dto.TenantDto;
@@ -2000,14 +2001,25 @@ public class DefaultControlService implements ControlService {
         /* Getting endpoint profile RecordForm */
         String applicationId = endpointProfileDto.getApplicationId();
         int profileVersion = endpointProfileDto.getProfileVersion();
-        ProfileSchemaDto schemaDto = profileService.findProfileSchemaByAppIdAndVersion(applicationId, profileVersion);
+        ProfileSchemaDto schemaDto =
+                profileService.findProfileSchemaByAppIdAndVersion(applicationId, profileVersion);
         viewDto.setProfileSchemaDto(schemaDto);
 
         /* Getting server profile RecordForm */
         String serverProfileSchemaId = endpointProfileDto.getServerProfileCtlSchemaId();
         if (serverProfileSchemaId != null && !serverProfileSchemaId.isEmpty()) {
-            ServerProfileSchemaDto serverProfileSchema = serverProfileService.findServerProfileSchema(serverProfileSchemaId);
-            viewDto.setServerProfileSchemaDto(serverProfileSchema);
+            CTLSchemaDto ctlSchemaDto = ctlService.findCTLSchemaById(serverProfileSchemaId);
+            ServerProfileSchemaDto serverProfileSchema = null;
+//            ServerProfileSchemaDto serverProfileSchema = serverProfileService.findServerProfileSchema(serverProfileSchemaId);
+            List<ServerProfileSchemaDto> serverProfileSchemas =
+                    serverProfileService.findServerProfileSchemasByAppId(applicationId);
+            for (ServerProfileSchemaDto dto : serverProfileSchemas) {
+                if (dto.getCtlSchemaId().equals(serverProfileSchemaId)) {
+                    serverProfileSchema = dto;
+                }
+            }
+
+            viewDto.setServerProfileSchemaDto(new ServerProfileSchemaViewDto(serverProfileSchema, ctlSchemaDto));
         }
 
         /* Getting notification topics */

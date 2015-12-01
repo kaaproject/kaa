@@ -26,7 +26,7 @@ import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.ServerProfileSchemaViewDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
@@ -92,7 +92,7 @@ public interface ClientFactory {
     BaseSchemaView getProfileSchemaView();
     BaseSchemaView getCreateProfileSchemaView();
 
-    BaseListView<ServerProfileSchemaDto> getServerProfileSchemasView();
+    BaseListView<ServerProfileSchemaViewDto> getServerProfileSchemasView();
     BaseSchemaView getServerProfileSchemaView();
     BaseSchemaView getCreateServerProfileSchemaView();
 

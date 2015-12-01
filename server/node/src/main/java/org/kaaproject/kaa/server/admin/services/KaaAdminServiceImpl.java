@@ -79,6 +79,7 @@ import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.ServerProfileSchemaViewDto;
 import org.kaaproject.kaa.common.dto.StructureRecordDto;
 import org.kaaproject.kaa.common.dto.TenantAdminDto;
 import org.kaaproject.kaa.common.dto.TenantDto;
@@ -221,14 +222,15 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             }
             viewDto.setProfileSchemaDto(schemaDto);
 
-            ServerProfileSchemaDto serverProfileSchemaDto = viewDto.getServerProfileSchemaDto();
+            ServerProfileSchemaViewDto serverProfileSchemaDto = viewDto.getServerProfileSchemaDto();
             if (serverProfileSchemaDto != null) {
-                CTLSchemaDto ctlSchemaDto = controlService.getCTLSchemaById(serverProfileSchemaDto.getCtlSchemaId());
+                CTLSchemaDto ctlSchemaDto =
+                        controlService.getCTLSchemaById(serverProfileSchemaDto.getProfileSchemaDto().getCtlSchemaId());
                 String ctlSchemaBody = controlService.exportCTLSchemaFlatAsString(ctlSchemaDto);
                 Schema schema = new Schema.Parser().parse(ctlSchemaBody);
 
                 RecordField schemaForm = simpleSchemaFormAvroConverter.createSchemaFormFromSchema(schema);
-                serverProfileSchemaDto.setSchemaForm(schemaForm);
+                serverProfileSchemaDto.getProfileSchemaDto().setSchemaForm(schemaForm);
 
                 if (endpointProfileDto.getServerProfileBody() != null) {
                     viewDto.setServerProfileRecord(generateFormDataFromJson(ctlSchemaBody, endpointProfileDto.getServerProfileBody()));
@@ -995,11 +997,20 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
-    public List<ServerProfileSchemaDto> getServerProfileSchemasByApplicationId(String applicationId) throws KaaAdminServiceException {
+    public List<ServerProfileSchemaViewDto> getServerProfileSchemasByApplicationId(String applicationId) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
             checkApplicationId(applicationId);
-            return controlService.getServerProfileSchemasByApplicationId(applicationId);
+            List<ServerProfileSchemaViewDto> viewDtoList = new ArrayList<>();
+            List<ServerProfileSchemaDto> serverProfileSchemas = controlService.getServerProfileSchemasByApplicationId(applicationId);
+            for (ServerProfileSchemaDto dto : serverProfileSchemas) {
+                String ctlSchemaId = dto.getCtlSchemaId();
+                if (ctlSchemaId != null) {
+                    CTLSchemaDto ctlDto = controlService.getCTLSchemaById(ctlSchemaId);
+                    viewDtoList.add(new ServerProfileSchemaViewDto(dto, ctlDto));
+                }
+            }
+            return viewDtoList;
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
@@ -1019,30 +1030,77 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
-    public ServerProfileSchemaDto getServerProfileSchemaForm(String serverProfileSchemaId) throws KaaAdminServiceException {
+    public ServerProfileSchemaViewDto getServerProfileSchemaForm(String serverProfileSchemaId) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
+
             ServerProfileSchemaDto profileSchema = getServerProfileSchema(serverProfileSchemaId);
+            CTLSchemaDto ctlSchemaDto = null;
+            String ctlSchemaId = profileSchema.getCtlSchemaId();
+            if (ctlSchemaId != null) {
+                ctlSchemaDto = controlService.getCTLSchemaById(ctlSchemaId);
+            }
             convertToSchemaForm(profileSchema, simpleSchemaFormAvroConverter);
-            return profileSchema;
+            return new ServerProfileSchemaViewDto(profileSchema, ctlSchemaDto);
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
     }
 
     @Override
-    public ServerProfileSchemaDto editServerProfileSchemaForm(ServerProfileSchemaDto serverProfileSchema) throws KaaAdminServiceException {
+    public ServerProfileSchemaViewDto editServerProfileSchemaForm(ServerProfileSchemaViewDto serverProfileSchema) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            checkApplicationId(serverProfileSchema.getApplicationId());
-            serverProfileSchema.setCreatedUser(getCurrentUser().getUsername());
-            serverProfileSchema.setCreatedTime(new Date().getTime());
-            return controlService.saveServerProfileSchema(serverProfileSchema);
+            String applicationId = serverProfileSchema.getProfileSchemaDto().getApplicationId();
+            checkApplicationId(applicationId);
+            String ctlSchemaId = serverProfileSchema.getProfileSchemaDto().getCtlSchemaId();
+            if (isEmpty(ctlSchemaId)) {
+
+                serverProfileSchema.getProfileSchemaDto().setCreatedUser(getCurrentUser().getUsername());
+                serverProfileSchema.getProfileSchemaDto().setCreatedTime(new Date().getTime());
+
+                String body = null;
+                RecordField schemaForm = serverProfileSchema.getProfileSchemaDto().getSchemaForm();
+                if (schemaForm != null) {
+                    GenericRecord record = FormAvroConverter.createGenericRecordFromRecordField(schemaForm);
+                    GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(record.getSchema());
+                    body = converter.encodeToJson(record);
+                }
+                serverProfileSchema.getCtlSchemaDto().setBody(body);
+
+                int version = 0;
+                ServerProfileSchemaDto latestServerProfileSchema =
+                        controlService.findLatestServerProfileSchema(applicationId);
+                if (latestServerProfileSchema != null && latestServerProfileSchema.getCtlSchemaId() != null) {
+                    version = controlService.getCTLSchemaById(latestServerProfileSchema.getCtlSchemaId()).getMetaInfo().getVersion();
+                }
+                CTLSchemaMetaInfoDto metaInfoDto = new CTLSchemaMetaInfoDto(
+                        getDeclaredFqn(schemaForm), ++version,
+                        CTLSchemaScopeDto.SERVER_PROFILE_SCHEMA);
+                serverProfileSchema.getCtlSchemaDto().setMetaInfo(metaInfoDto);
+
+                CTLSchemaDto savedCtlSchemaDto = controlService.saveCTLSchema(serverProfileSchema.getCtlSchemaDto());
+                serverProfileSchema.getProfileSchemaDto().setCtlSchemaId(savedCtlSchemaDto.getId());
+                ServerProfileSchemaDto serverProfileSchemaDto =
+                        controlService.saveServerProfileSchema(serverProfileSchema.getProfileSchemaDto());
+
+                serverProfileSchema = new ServerProfileSchemaViewDto(serverProfileSchemaDto, savedCtlSchemaDto);
+            } else {
+                CTLSchemaDto savedCtlSchema = controlService.getCTLSchemaById(ctlSchemaId);
+                savedCtlSchema.setName(serverProfileSchema.getCtlSchemaDto().getName());
+                savedCtlSchema.setDescription(serverProfileSchema.getCtlSchemaDto().getDescription());
+                CTLSchemaDto ctlSchemaDto = controlService.saveCTLSchema(savedCtlSchema);
+
+                serverProfileSchema.setCtlSchemaDto(ctlSchemaDto);
+            }
+
+            return serverProfileSchema;
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
     }
 
+    /*TODO: delete this method and replace for RecordField#getDeclaredFqn() in line#1065 when Avro-UI will be available*/
     public String getDeclaredFqn(RecordField rec) {
         FormField nameField = rec.getFieldByName("recordNamespace");
         FormField namespaceField = rec.getFieldByName("recordName");

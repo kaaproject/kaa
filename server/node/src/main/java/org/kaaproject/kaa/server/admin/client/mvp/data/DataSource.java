@@ -33,7 +33,7 @@ import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.SchemaDto;
-import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.ServerProfileSchemaViewDto;
 import org.kaaproject.kaa.common.dto.StructureRecordDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.admin.RecordKey.RecordFiles;
@@ -529,32 +529,32 @@ public class DataSource {
                 });
     }
     public void loadServerProfileSchemas(String applicationId,
-                                   final AsyncCallback<List<ServerProfileSchemaDto>> callback) {
+                                   final AsyncCallback<List<ServerProfileSchemaViewDto>> callback) {
         rpcService.getServerProfileSchemasByApplicationId(applicationId,
-                new DataCallback<List<ServerProfileSchemaDto>>(callback) {
+                new DataCallback<List<ServerProfileSchemaViewDto>>(callback) {
                     @Override
-                    protected void onResult(List<ServerProfileSchemaDto> result) {
+                    protected void onResult(List<ServerProfileSchemaViewDto> result) {
                     }
                 });
     }
 
-    public void editServerProfileSchemaForm(ServerProfileSchemaDto profileSchema,
-            final AsyncCallback<ServerProfileSchemaDto> callback) {
+    public void editServerProfileSchemaForm(ServerProfileSchemaViewDto profileSchema,
+            final AsyncCallback<ServerProfileSchemaViewDto> callback) {
         rpcService.editServerProfileSchemaForm(profileSchema,
-                new DataCallback<ServerProfileSchemaDto>(callback) {
+                new DataCallback<ServerProfileSchemaViewDto>(callback) {
                     @Override
-                    protected void onResult(ServerProfileSchemaDto result) {
-                        eventBus.fireEvent(new DataEvent(ServerProfileSchemaDto.class));
+                    protected void onResult(ServerProfileSchemaViewDto result) {
+                        eventBus.fireEvent(new DataEvent(ServerProfileSchemaViewDto.class));
                     }
                 });
     }
 
     public void getServerProfileSchemaForm(String profileSchemaId,
-            final AsyncCallback<ServerProfileSchemaDto> callback) {
+            final AsyncCallback<ServerProfileSchemaViewDto> callback) {
         rpcService.getServerProfileSchemaForm(profileSchemaId,
-                new DataCallback<ServerProfileSchemaDto>(callback) {
+                new DataCallback<ServerProfileSchemaViewDto>(callback) {
                     @Override
-                    protected void onResult(ServerProfileSchemaDto result) {
+                    protected void onResult(ServerProfileSchemaViewDto result) {
                     }
                 });
     }
@@ -784,7 +784,8 @@ public class DataSource {
 
     public void updateEndpointProfile(EndpointProfileRecordFieldDto endpointProfileRecordDto,
                                       AsyncCallback<EndpointProfileRecordFieldDto> callback){
-        rpcService.updateEndpointProfile(endpointProfileRecordDto, callback);
+//        rpcService.updateEndpointProfile(endpointProfileRecordDto, callback);
+        rpcService.updateServerProfile(endpointProfileRecordDto, callback);
 
     }
 
