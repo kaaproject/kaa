@@ -91,56 +91,7 @@ public class CassandraLogAppenderTest {
 
     @Before
     public void beforeTest() throws IOException {
-        endpointKeyHash = UUID.randomUUID().toString();
-        profileDto = new EndpointProfileDataDto("1", endpointKeyHash, 1, "", "1", "");
-        appToken = String.valueOf(RANDOM.nextInt(Integer.MAX_VALUE));
-
-        appenderDto = new LogAppenderDto();
-        appenderDto.setId("Test_id");
-        appenderDto.setApplicationToken(appToken);
-        appenderDto.setName("Test Name");
-        appenderDto.setTenantId(String.valueOf(RANDOM.nextInt()));
-        appenderDto.setHeaderStructure(Arrays.asList(LogHeaderStructureDto.values()));
-        appenderDto.setApplicationToken(appToken);
-
-        header = new RecordHeader();
-        header.setApplicationToken(appToken);
-        header.setEndpointKeyHash(endpointKeyHash);
-        header.setHeaderVersion(1);
-        header.setTimestamp(System.currentTimeMillis());
-
-        CassandraServer server = new CassandraServer("127.0.0.1", 9142);
-        configuration = new CassandraConfig();
-        configuration.setCassandraBatchType(CassandraBatchType.UNLOGGED);
-        configuration.setKeySpace(KEY_SPACE_NAME);
-        configuration.setTableNamePattern("logs_$app_token_$config_hash");
-        configuration.setCassandraExecuteRequestType(CassandraExecuteRequestType.ASYNC);
-        configuration.setCassandraServers(Arrays.asList(server));
-        configuration.setCallbackThreadPoolSize(3);
-        configuration.setExecutorThreadPoolSize(3);
-
-        List<ColumnMappingElement> columnMapping = new ArrayList<ColumnMappingElement>();
-        columnMapping.add(new ColumnMappingElement(ColumnMappingElementType.HEADER_FIELD, "endpointKeyHash", "endpointKeyHash",
-                ColumnType.TEXT, true, false));
-        columnMapping.add(new ColumnMappingElement(ColumnMappingElementType.EVENT_JSON, "", "event_json", ColumnType.TEXT, false, false));
-        columnMapping.add(new ColumnMappingElement(ColumnMappingElementType.UUID, "", "binid", ColumnType.UUID, false, true));
-
-        // Do NOT change the column name of the following element!
-        columnMapping.add(new ColumnMappingElement(ColumnMappingElementType.SERVER_FIELD, "", "server_field", ColumnType.TEXT, false, false));
-
-        configuration.setColumnMapping(columnMapping);
-
-        List<ClusteringElement> clusteringMapping = new ArrayList<ClusteringElement>();
-        clusteringMapping.add(new ClusteringElement("binid", OrderType.DESC));
-        configuration.setClusteringMapping(clusteringMapping);
-
-        AvroByteArrayConverter<CassandraConfig> converter = new AvroByteArrayConverter<>(CassandraConfig.class);
-        byte[] rawConfiguration = converter.toByteArray(configuration);
-        appenderDto.setRawConfiguration(rawConfiguration);
-
-        logAppender = new CassandraLogAppender();
-        logAppender.init(appenderDto);
-        logAppender.setApplicationToken(appToken);
+        this.initLogAppender(false);
     }
 
     @Test
@@ -165,6 +116,7 @@ public class CassandraLogAppenderTest {
      */
     @Test
     public void doAppendNegativeTest() throws Exception {
+        this.initLogAppender(true);
         this.logAppender.doAppend(this.generateLogEventPack(5, false), new DeliveryCallback());
         /*
          * Check that a server error has occured because no server profile is
@@ -233,6 +185,60 @@ public class CassandraLogAppenderTest {
         public int getSuccessCount() {
             return successCount.get();
         }
+    }
+
+    private void initLogAppender(boolean addServerField) throws IOException {
+        endpointKeyHash = UUID.randomUUID().toString();
+        profileDto = new EndpointProfileDataDto("1", endpointKeyHash, 1, "", "1", "");
+        appToken = String.valueOf(RANDOM.nextInt(Integer.MAX_VALUE));
+
+        appenderDto = new LogAppenderDto();
+        appenderDto.setId("Test_id");
+        appenderDto.setApplicationToken(appToken);
+        appenderDto.setName("Test Name");
+        appenderDto.setTenantId(String.valueOf(RANDOM.nextInt()));
+        appenderDto.setHeaderStructure(Arrays.asList(LogHeaderStructureDto.values()));
+        appenderDto.setApplicationToken(appToken);
+
+        header = new RecordHeader();
+        header.setApplicationToken(appToken);
+        header.setEndpointKeyHash(endpointKeyHash);
+        header.setHeaderVersion(1);
+        header.setTimestamp(System.currentTimeMillis());
+
+        CassandraServer server = new CassandraServer("127.0.0.1", 9142);
+        configuration = new CassandraConfig();
+        configuration.setCassandraBatchType(CassandraBatchType.UNLOGGED);
+        configuration.setKeySpace(KEY_SPACE_NAME);
+        configuration.setTableNamePattern("logs_$app_token_$config_hash");
+        configuration.setCassandraExecuteRequestType(CassandraExecuteRequestType.ASYNC);
+        configuration.setCassandraServers(Arrays.asList(server));
+        configuration.setCallbackThreadPoolSize(3);
+        configuration.setExecutorThreadPoolSize(3);
+
+        List<ColumnMappingElement> columnMapping = new ArrayList<ColumnMappingElement>();
+        columnMapping.add(new ColumnMappingElement(ColumnMappingElementType.HEADER_FIELD, "endpointKeyHash", "endpointKeyHash", ColumnType.TEXT, true, false));
+        columnMapping.add(new ColumnMappingElement(ColumnMappingElementType.EVENT_JSON, "", "event_json", ColumnType.TEXT, false, false));
+        columnMapping.add(new ColumnMappingElement(ColumnMappingElementType.UUID, "", "binid", ColumnType.UUID, false, true));
+
+        if (addServerField) {
+            // Do NOT change the column name of the following element!
+            columnMapping.add(new ColumnMappingElement(ColumnMappingElementType.SERVER_FIELD, "", "server_field", ColumnType.TEXT, false, false));
+        }
+
+        configuration.setColumnMapping(columnMapping);
+
+        List<ClusteringElement> clusteringMapping = new ArrayList<ClusteringElement>();
+        clusteringMapping.add(new ClusteringElement("binid", OrderType.DESC));
+        configuration.setClusteringMapping(clusteringMapping);
+
+        AvroByteArrayConverter<CassandraConfig> converter = new AvroByteArrayConverter<>(CassandraConfig.class);
+        byte[] rawConfiguration = converter.toByteArray(configuration);
+        appenderDto.setRawConfiguration(rawConfiguration);
+
+        logAppender = new CassandraLogAppender();
+        logAppender.init(appenderDto);
+        logAppender.setApplicationToken(appToken);
     }
 
     protected String getResourceAsString(String path) throws IOException {
