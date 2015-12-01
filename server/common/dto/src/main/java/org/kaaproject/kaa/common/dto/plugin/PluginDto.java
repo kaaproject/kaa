@@ -15,9 +15,10 @@
  */
 package org.kaaproject.kaa.common.dto.plugin;
 
-import java.io.Serializable;
-
 import org.kaaproject.kaa.common.dto.HasId;
+
+import java.io.Serializable;
+import java.util.Set;
 
 public class PluginDto implements HasId, Serializable {
 
@@ -28,9 +29,10 @@ public class PluginDto implements HasId, Serializable {
     private String type;
     private String scope;
     private String confSchema;
+    private Set<PluginContractDto> pluginContractSet;
+    private Set<PluginInstanceDto> pluginInstanceSet;
 
-    private PluginDto() {
-        super();
+    public PluginDto() {
     }
 
     @Override

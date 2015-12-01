@@ -1,9 +1,3 @@
-package org.kaaproject.kaa.server.common.dao.model.sql.plugin;
-
-import org.kaaproject.kaa.server.common.dao.model.sql.GenericModel;
-
-import java.io.Serializable;
-
 /*
  * Copyright 2014-2015 CyberVision, Inc.
  *
@@ -19,6 +13,17 @@ import java.io.Serializable;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package org.kaaproject.kaa.server.common.dao.model.sql.plugin;
+
+import org.kaaproject.kaa.server.common.dao.model.sql.GenericModel;
+
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import java.io.Serializable;
+
+@Entity
+@Table(name = "contract_message")
 public class ContractMessage extends GenericModel implements Serializable {
 
     private String fqn;

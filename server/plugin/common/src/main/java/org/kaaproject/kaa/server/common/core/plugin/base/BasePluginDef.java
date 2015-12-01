@@ -42,7 +42,7 @@ public class BasePluginDef implements PluginDef {
         this.type = type;
         this.scope = scope;
         this.confSchema = confSchema;
-        this.contracts = new HashSet<PluginContractDef>();
+        this.contracts = new HashSet<>();
     }
 
     @Override

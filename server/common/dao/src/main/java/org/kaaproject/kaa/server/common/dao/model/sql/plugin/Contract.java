@@ -15,26 +15,58 @@
  */
 package org.kaaproject.kaa.server.common.dao.model.sql.plugin;
 
+import org.kaaproject.kaa.common.dto.plugin.ContractDto;
+import org.kaaproject.kaa.common.dto.plugin.ContractType;
 import org.kaaproject.kaa.server.common.dao.model.sql.GenericModel;
+import org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Set;
 
-public class Contract extends GenericModel implements Serializable {
+@Entity
+@Table(name = "contract")
+public class Contract extends GenericModel<ContractDto> implements Serializable {
 
+    @Column
     private String name;
+    @Column
     private Integer version;
-    private String type;
+    @Column
+    @Enumerated(value = EnumType.STRING)
+    private ContractType type;
+    @Column
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "contract")
     private Set<ContractItem> contractItems;
+    @Column
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "contract")
     private Set<PluginContract> pluginContracts;
 
-    @Override
-    protected Object createDto() {
-        return null;
+    public Contract(ContractDto dto) {
+        this.id = ModelUtils.getLongId(dto.getId());
+        this.name = dto.getName();
+        this.version = dto.getVersion();
+        this.type = dto.getType();
     }
 
     @Override
-    public Object toDto() {
-        return null;
+    protected ContractDto createDto() {
+        return new ContractDto();
+    }
+
+    @Override
+    public ContractDto toDto() {
+        ContractDto dto = createDto();
+        dto.setId(getStringId());
+        dto.setName(name);
+        dto.setVersion(version);
+        dto.setType(type);
+        return dto;
     }
 }
