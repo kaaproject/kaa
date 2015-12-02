@@ -46,10 +46,7 @@ import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.server.common.Environment;
 import org.kaaproject.kaa.server.common.Version;
-import org.kaaproject.kaa.server.common.zk.ServerNameUtil;
 import org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo;
-import org.kaaproject.kaa.server.common.zk.gen.TransportMetaData;
-import org.kaaproject.kaa.server.common.zk.gen.VersionConnectionInfoPair;
 import org.kaaproject.kaa.server.control.service.sdk.compiler.JavaDynamicBean;
 import org.kaaproject.kaa.server.control.service.sdk.compiler.JavaDynamicCompiler;
 import org.kaaproject.kaa.server.control.service.sdk.compress.ZipEntryData;
@@ -63,8 +60,6 @@ import org.slf4j.helpers.MessageFormatter;
  * The Class JavaSdkGenerator.
  */
 public class JavaSdkGenerator extends SdkGenerator {
-
-    private static final String SEPARATOR = ":";
 
     /**
      * The Constant logger.
@@ -722,41 +717,20 @@ public class JavaSdkGenerator extends SdkGenerator {
      * @return the byte[]
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    private byte[] generateClientProperties(InputStream clientPropertiesStream, List<BootstrapNodeInfo> bootstrapNodes,
-                                            String sdkToken, String configurationProtocolSchemaBody,
-                                            byte[] defaultConfigurationData)
-            throws IOException {
+    private byte[] generateClientProperties(InputStream clientPropertiesStream,
+                                            List<BootstrapNodeInfo> bootstrapNodes,
+                                            String sdkToken,
+                                            String configurationProtocolSchemaBody,
+                                            byte[] defaultConfigurationData) throws IOException {
 
         Properties clientProperties = new Properties();
         clientProperties.load(clientPropertiesStream);
 
-        String bootstrapServers = "";
-
         LOG.debug("[sdk generateClientProperties] bootstrapNodes.size(): {}", bootstrapNodes.size());
-        for (int nodeIndex = 0; nodeIndex < bootstrapNodes.size(); ++nodeIndex) {
-            BootstrapNodeInfo node = bootstrapNodes.get(nodeIndex);
-            List<TransportMetaData> supportedChannels = node.getTransports();
-
-            int accessPointId = ServerNameUtil.crc32(node.getConnectionInfo());
-
-            for (int chIndex = 0; chIndex < supportedChannels.size(); ++chIndex) {
-                TransportMetaData transport = supportedChannels.get(chIndex);
-                for (VersionConnectionInfoPair pair : transport.getConnectionInfo()) {
-                    bootstrapServers += accessPointId;
-                    bootstrapServers += SEPARATOR;
-                    bootstrapServers += transport.getId();
-                    bootstrapServers += SEPARATOR;
-                    bootstrapServers += pair.getVersion();
-                    bootstrapServers += SEPARATOR;
-                    bootstrapServers += Base64.encodeBase64String(pair.getConenctionInfo().array());
-                    bootstrapServers += ";";
-                }
-            }
-        }
 
         clientProperties.put(BUILD_VERSION, Version.PROJECT_VERSION);
         clientProperties.put(BUILD_COMMIT_HASH, Version.COMMIT_HASH);
-        clientProperties.put(BOOTSTRAP_SERVERS_PROPERTY, bootstrapServers);
+        clientProperties.put(BOOTSTRAP_SERVERS_PROPERTY, CommonSdkUtil.bootstrapNodesToString(bootstrapNodes));
         clientProperties.put(SDK_TOKEN_PROPERTY, sdkToken);
         clientProperties.put(CONFIG_SCHEMA_DEFAULT_PROPERTY, configurationProtocolSchemaBody);
         clientProperties.put(CONFIG_DATA_DEFAULT_PROPERTY, Base64.encodeBase64String(defaultConfigurationData));

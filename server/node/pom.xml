@@ -755,6 +755,16 @@
                                     <outputDirectory>${sdk.path}/c</outputDirectory>
                                     <destFileName>kaa-client-sdk-${project.version}.tar.gz</destFileName>
                                 </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.client</groupId>
+                                    <artifactId>client-objective-c</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>objc-sdk</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${sdk.path}/objc</outputDirectory>
+                                    <destFileName>kaa-client-sdk-${project.version}.tar.gz</destFileName>
+                                </artifactItem>
                             </artifactItems>
                         </configuration>
                     </execution>

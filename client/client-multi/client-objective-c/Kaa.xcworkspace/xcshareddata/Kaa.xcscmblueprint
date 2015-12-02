@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "0CA4F3CFE55A12407B44C8109D3620D699EFEF07",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "0CA4F3CFE55A12407B44C8109D3620D699EFEF07" : 0,
+    "B401B74FA4825A3AF8BEAD942EB222B09AC26B7C" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "8FE1BCB9-AB7D-4D85-B95B-A4B1D479C183",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "0CA4F3CFE55A12407B44C8109D3620D699EFEF07" : "kaa-client-objective-c",
+    "B401B74FA4825A3AF8BEAD942EB222B09AC26B7C" : "..\/.."
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "Kaa",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "Kaa.xcworkspace",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "github.com:abohomol\/kaa-client-objective-c.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "0CA4F3CFE55A12407B44C8109D3620D699EFEF07"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "github.com:kaaproject\/kaa.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "B401B74FA4825A3AF8BEAD942EB222B09AC26B7C"
+    }
+  ]
+}
