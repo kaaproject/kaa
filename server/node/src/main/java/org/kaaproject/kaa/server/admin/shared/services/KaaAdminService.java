@@ -368,4 +368,6 @@ public interface KaaAdminService extends RemoteService {
     public CtlSchemaFormDto saveCTLSchemaForm(CtlSchemaFormDto ctlSchemaForm) throws KaaAdminServiceException;
     
     public FileData exportCTLSchema(String fqn, int version, CTLSchemaExportMethod method) throws KaaAdminServiceException;
+    
+    public String prepareCTLSchemaExport(String fqn, int version, CTLSchemaExportMethod method) throws KaaAdminServiceException;
 }

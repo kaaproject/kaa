@@ -21,11 +21,14 @@ import java.util.List;
 import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
 import org.kaaproject.avro.ui.gwt.client.widget.dialog.ConfirmDialog;
 import org.kaaproject.avro.ui.shared.RecordField;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaExportMethod;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.place.CtlSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.CtlSchemaView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.ActionsButton.ActionMenuItemListener;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.RecordPanel.FormDataLoader;
+import org.kaaproject.kaa.server.admin.client.servlet.ServletHelper;
 import org.kaaproject.kaa.server.admin.client.util.ErrorMessageCustomizer;
 import org.kaaproject.kaa.server.admin.client.util.SchemaErrorMessageCustomizer;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
@@ -158,12 +161,56 @@ public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto,
             }
             detailsView.getVersion().setAcceptableValues(schemaVersions);
             detailsView.setTitle(entity.getFqnString());
+            
+            detailsView.enableSingleExportMode(!entity.hasDependencies());
+            
+            if (entity.hasDependencies()) {
+                registrations.add(detailsView.getExportActionsButton().addMenuItem(Utils.constants.shallow(), new ActionMenuItemListener() {
+                    @Override
+                    public void onMenuItemSelected() {
+                        exportSchema(CTLSchemaExportMethod.SHALLOW);
+                    }
+                }));
+                registrations.add(detailsView.getExportActionsButton().addMenuItem(Utils.constants.deep(), new ActionMenuItemListener() {
+                    @Override
+                    public void onMenuItemSelected() {
+                        exportSchema(CTLSchemaExportMethod.DEEP);
+                    }
+                }));
+                registrations.add(detailsView.getExportActionsButton().addMenuItem(Utils.constants.flat(), new ActionMenuItemListener() {
+                    @Override
+                    public void onMenuItemSelected() {
+                        exportSchema(CTLSchemaExportMethod.FLAT);
+                    }
+                }));
+            } else {
+                registrations.add(detailsView.getExportButton().addClickHandler(new ClickHandler() {
+                    @Override
+                    public void onClick(ClickEvent event) {
+                        exportSchema(CTLSchemaExportMethod.FLAT);
+                    }
+                }));
+            }
         }
         detailsView.getName().setValue(entity.getSchemaName());
         detailsView.getDescription().setValue(entity.getDescription());
         detailsView.getCreatedUsername().setValue(entity.getCreatedUsername());
         detailsView.getCreatedDateTime().setValue(Utils.millisecondsToDateTimeString(entity.getCreatedTime()));
         detailsView.getSchemaForm().setValue(entity.getSchema(), fireChanged);
+    }
+    
+    private void exportSchema(CTLSchemaExportMethod method) {
+        AsyncCallback<String> schemaExportCallback = new AsyncCallback<String>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                Utils.handleException(caught, detailsView);
+            }
+            @Override
+            public void onSuccess(String key) {
+                ServletHelper.exportCtlSchema(key);
+            }
+        };
+        KaaAdmin.getDataSource().prepareCTLSchemaExport(place.getFqn(), version, method, schemaExportCallback);
     }
     
     @Override

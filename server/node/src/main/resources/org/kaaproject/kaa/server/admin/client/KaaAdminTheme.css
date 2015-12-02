@@ -53,6 +53,18 @@
     width: 0;
 }
 
+.buttonCaret:after {
+    border-left: 5px solid rgba(0, 0, 0, 0);
+    border-right: 5px solid rgba(0, 0, 0, 0);
+    border-top: 5px solid #fff;
+    content: "";
+    display: inline-block;
+    height: 0;
+    vertical-align: middle;
+    width: 0;
+    margin-left: 10px;
+}
+
 .b-nav-panel {
 	box-sizing: border-box;
 	border-top: 1px solid #CCCCCC;

@@ -16,6 +16,7 @@ package org.kaaproject.kaa.server.admin.client.mvp.view;
  * limitations under the License.
  */
 
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.ActionsButton;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.RecordPanel;
 
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -25,6 +26,12 @@ import com.google.gwt.user.client.ui.ValueListBox;
 public interface CtlSchemaView extends BaseDetailsView {
 
     public HasClickHandlers getCreateNewSchemaVersionButton();
+    
+    public HasClickHandlers getExportButton();
+    
+    public ActionsButton getExportActionsButton();
+    
+    public void enableSingleExportMode(boolean enable);
 
     public HasClickHandlers getDeleteSchemaVersionButton();
 

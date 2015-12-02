@@ -41,6 +41,7 @@ import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaExportMethod;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
@@ -700,6 +701,16 @@ public class DataSource {
                 eventBus.fireEvent(new DataEvent(SchemaFqnDto.class));
             }
         });
+    }
+    
+    public void prepareCTLSchemaExport(String fqn, int version, CTLSchemaExportMethod method, 
+            final AsyncCallback<String> callback) {
+        rpcService.prepareCTLSchemaExport(fqn,
+                version, method, new DataCallback<String>(callback) {
+                    @Override
+                    protected void onResult(String result) {
+                    }
+                });
     }
 
     public void loadApplicationEventFamilyMaps(String applicationId,

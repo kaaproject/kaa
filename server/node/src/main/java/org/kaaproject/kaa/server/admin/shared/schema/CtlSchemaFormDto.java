@@ -27,6 +27,7 @@ public class CtlSchemaFormDto extends SchemaFqnDto {
     private String ctlSchemaId;
     private Integer version;
     private RecordField schema;
+    private boolean hasDependencies;
     
     private String description;
     private String createdUsername;
@@ -64,6 +65,14 @@ public class CtlSchemaFormDto extends SchemaFqnDto {
 
     public void setSchema(RecordField schema) {
         this.schema = schema;
+    }
+    
+    public boolean hasDependencies() {
+        return hasDependencies;
+    }
+
+    public void setHasDependencies(boolean hasDependencies) {
+        this.hasDependencies = hasDependencies;
     }
 
     public String getDescription() {
