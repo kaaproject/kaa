@@ -184,7 +184,7 @@ public class EndpointActor extends UntypedActor {
     }
 
     private void processServerProfileUpdate(ServerProfileUpdateMessage message) {
-        messageProcessor.processServerProfileUpdate();
+        messageProcessor.processServerProfileUpdate(context());
     }
     
     private void processThriftNotification(ThriftNotificationMessage message) {

@@ -258,7 +258,7 @@ public class EndpointServiceImpl implements EndpointService {
     }
 
     @Override
-    public CTLDataDto findCtlDataByKeyHash(byte[] keyHash) {
+    public CTLDataDto findServerProfileByKeyHash(byte[] keyHash) {
         validateHash(keyHash, "Can't find ctl datat by key hash. Invalid key hash " + keyHash);
         return endpointProfileDao.findCtlDataByKeyHash(keyHash);
     }

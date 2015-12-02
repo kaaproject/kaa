@@ -35,7 +35,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
-import org.kaaproject.kaa.server.common.dao.impl.DaoUtil;
 
 @Entity
 @Table(name = SERVER_PROFILE_SCHEMA_TABLE_NAME)

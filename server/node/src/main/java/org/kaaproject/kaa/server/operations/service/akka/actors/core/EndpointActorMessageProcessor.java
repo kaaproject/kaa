@@ -29,6 +29,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.PingResponse;
+import org.kaaproject.kaa.common.dto.CTLDataDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDataDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
@@ -156,8 +157,22 @@ public class EndpointActorMessageProcessor {
         tellParent(context, response);
     }
 
-    public void processServerProfileUpdate() {
-        // TODO Auto-generated method stub
+    public void processServerProfileUpdate(ActorContext context) {
+        EndpointProfileDto endpointProfile = state.getProfile();
+        if (endpointProfile != null) {
+            CTLDataDto serverProfileDto = operationsService.getServerEndpointProfile(key);
+            if (serverProfileDto != null) {
+                endpointProfile.setServerProfileCtlSchemaId(serverProfileDto.getCtlSchemaId());
+                endpointProfile.setServerProfileBody(serverProfileDto.getBody());
+            } else {
+                endpointProfile.setServerProfileCtlSchemaId(null);
+                endpointProfile.setServerProfileBody(null);
+            }
+            state.setProfile(endpointProfile);
+            processThriftNotification(context);
+        } else {
+            LOG.warn("[{}][{}] Can't update server profile for an empty state", endpointKey, actorKey);
+        }
     }
 
     public void processThriftNotification(ActorContext context) {

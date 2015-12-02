@@ -32,6 +32,7 @@ import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
 import org.kaaproject.kaa.server.operations.service.akka.actors.supervision.SupervisionStrategyFactory;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointAwareMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointStopMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.ServerProfileUpdateMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.logs.LogEventPackMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.notification.ThriftNotificationMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.stats.ApplicationActorStatusResponse;
@@ -294,7 +295,7 @@ public class ApplicationActor extends UntypedActor {
         ActorMetaData endpointActor = endpointSessions.get(keyHash);
         if (endpointActor != null) {
             if (message.getNotification().getOp() == Operation.UPDATE_SERVER_PROFILE) {
-                endpointActor.actorRef.tell(message, self());
+                endpointActor.actorRef.tell(new ServerProfileUpdateMessage(), self());
             } else {
                 endpointActor.actorRef
                         .tell(NotificationMessage.fromUnicastId(message.getNotification().getUnicastNotificationId()), self());
