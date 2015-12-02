@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.server.control.service;
 
+import org.kaaproject.avro.ui.shared.Fqn;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
@@ -59,6 +60,7 @@ import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.control.service.exception.ControlServiceException;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * The Interface ControlService.
@@ -1192,6 +1194,10 @@ public interface ControlService {
      * @throws ControlServiceException - if an exception occures.
      */
     List<CTLSchemaDto> getCTLSchemaDependents(String fqn, int version, String tenantId) throws ControlServiceException;
+    
+    List<CTLSchemaDto> getCTLSchemasByFqnAndTenantId(String fqn, String tenantId) throws ControlServiceException;
+    
+    Map<Fqn, List<Integer>> getAvailableCTLSchemaVersionsByTenantId(String tenantId) throws ControlServiceException;
 
     /**
      * Exports the body of a CTL schema.

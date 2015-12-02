@@ -34,4 +34,7 @@ public interface PlaceConstants {
     public static final String SHOW_ACTIVE = "active";
     public static final String RANDOM = "random";
     public static final String PLUGIN_ID = "pluginId";
+    public static final String FQN = "fqn";
+    public static final String SOURCE_FQN = "srcFqn";
+    public static final String SOURCE_VERSION = "srcVer";
 }

@@ -192,6 +192,11 @@
         statistics="false">
         <persistence strategy="localTempSwap" />
     </cache>
+    
+    <cache name="ctlCache" maxEntriesLocalHeap="20" eternal="false" timeToIdleSeconds="3600" timeToLiveSeconds="3600" diskSpoolBufferSizeMB="30"
+           maxEntriesLocalDisk="1000" diskExpiryThreadIntervalSeconds="120" memoryStoreEvictionPolicy="LRU" statistics="false">
+        <persistence strategy="localTempSwap" />
+    </cache>
 
     <cache name="serverProfileSchemas" maxEntriesLocalHeap="20"
         eternal="false" timeToIdleSeconds="300" timeToLiveSeconds="300"

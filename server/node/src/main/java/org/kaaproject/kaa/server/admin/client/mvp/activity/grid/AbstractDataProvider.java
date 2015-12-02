@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
+import org.kaaproject.avro.ui.gwt.client.widget.grid.ColumnFilterEvent;
 import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
@@ -30,7 +31,7 @@ import com.google.gwt.user.cellview.client.ColumnSortList;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
 
-public abstract class AbstractDataProvider<T> extends AsyncDataProvider<T> implements ColumnSortEvent.Handler {
+public abstract class AbstractDataProvider<T> extends AsyncDataProvider<T> implements ColumnSortEvent.Handler, ColumnFilterEvent.Handler {
 
     protected List<T> data;
 
@@ -50,6 +51,7 @@ public abstract class AbstractDataProvider<T> extends AsyncDataProvider<T> imple
         this.dataGrid = dataGrid;
         callback = new LoadCallback(hasErrorMessage);
         dataGrid.getDataGrid().addColumnSortHandler(this);
+        dataGrid.addColumnFilterEventHandler(this);
         if (addDisplay) {
             addDataDisplay(dataGrid.getDataGrid());
         }
@@ -97,24 +99,27 @@ public abstract class AbstractDataProvider<T> extends AsyncDataProvider<T> imple
     
     @Override
     public void onColumnSort(ColumnSortEvent event) {
-        Column<?,?> column = event.getColumn();
-        boolean isSortAscending = event.isSortAscending();
-        if (column != null) {
-            dataGrid.sort(data, column, isSortAscending);
-        }
-        updateRowData(0, data);
+        updateData();
     }
+    
+    @Override
+    public void onColumnFilter(ColumnFilterEvent event) {
+        updateData();
+    }
+    
 
     private void updateData () {
+        List<T> filteredData = dataGrid.filter(data);
+        updateRowCount(filteredData.size(), true);
         ColumnSortList sortList = dataGrid.getDataGrid().getColumnSortList();
         Column<?,?> column = (sortList == null || sortList.size() == 0) ? null
                 : sortList.get(0).getColumn();
         boolean isSortAscending = (sortList == null || sortList.size() == 0) ? false
                 : sortList.get(0).isAscending();
         if (column != null) {
-            dataGrid.sort(data, column, isSortAscending);
+            dataGrid.sort(filteredData, column, isSortAscending);
         }        
-        updateRowData(0, data);
+        updateRowData(0, filteredData);
     }
 
     public class LoadCallback {
@@ -136,7 +141,6 @@ public abstract class AbstractDataProvider<T> extends AsyncDataProvider<T> imple
             if (data == null) {
                 data = Collections.<T>emptyList();
             }
-            updateRowCount(data.size(), true);
             updateData();
             loaded = true;
             hasErrorMessage.clearError();

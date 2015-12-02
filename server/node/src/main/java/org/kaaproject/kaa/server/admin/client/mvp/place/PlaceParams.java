@@ -74,6 +74,10 @@ public class PlaceParams {
         }
     }
     
+    public static boolean hasParam(String key) {
+        return paramsMap.containsKey(key);
+    }
+    
     public static double getDoubleParam(String key) {
         String val = paramsMap.get(key);
         try {

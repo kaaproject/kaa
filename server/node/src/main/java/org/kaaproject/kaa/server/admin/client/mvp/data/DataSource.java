@@ -16,8 +16,9 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.data;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.web.bindery.event.shared.EventBus;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
@@ -42,6 +43,7 @@ import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaExportMethod;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
@@ -56,11 +58,13 @@ import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.admin.client.mvp.event.data.DataEvent;
 import org.kaaproject.kaa.server.admin.shared.config.ConfigurationRecordFormDto;
 import org.kaaproject.kaa.server.admin.shared.properties.PropertiesDto;
+import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaFormDto;
+import org.kaaproject.kaa.server.admin.shared.schema.SchemaFqnDto;
 import org.kaaproject.kaa.server.admin.shared.schema.SchemaInfoDto;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceAsync;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.web.bindery.event.shared.EventBus;
 
 public class DataSource {
 
@@ -665,6 +669,78 @@ public class DataSource {
                 new DataCallback<LogSchemaDto>(callback) {
                     @Override
                     protected void onResult(LogSchemaDto result) {
+                    }
+                });
+    }
+    
+    public void getTenantCTLSchemaFqns(
+            final AsyncCallback<List<SchemaFqnDto>> callback) {
+        rpcService.getTenantCTLSchemaFqns(
+                new DataCallback<List<SchemaFqnDto>>(callback) {
+                    @Override
+                    protected void onResult(List<SchemaFqnDto> result) {
+                    }
+                });
+    }
+    
+    public void getCTLSchemaForm(String fqn, Integer version,
+            final AsyncCallback<CtlSchemaFormDto> callback) {
+        rpcService.getCTLSchemaForm(fqn, version,
+                new DataCallback<CtlSchemaFormDto>(callback) {
+                    @Override
+                    protected void onResult(CtlSchemaFormDto result) {
+                    }
+                });
+    }
+    
+    public void createNewCTLSchemaFormInstance(String sourceFqn, Integer sourceVersion, 
+            final AsyncCallback<CtlSchemaFormDto> callback) {
+        rpcService.createNewCTLSchemaFormInstance(sourceFqn, sourceVersion, 
+                new DataCallback<CtlSchemaFormDto>(callback) {
+                    @Override
+                    protected void onResult(CtlSchemaFormDto result) {
+                    }
+        });
+    }
+    
+    public void generateCtlSchemaForm(String fileItemName,
+            final AsyncCallback<RecordField> callback) {
+        rpcService.generateCtlSchemaForm(fileItemName,
+                new DataCallback<RecordField>(callback) {
+                    @Override
+                    protected void onResult(RecordField result) {
+                    }
+                });
+    }
+    
+    public void editCTLSchemaForm(CtlSchemaFormDto ctlSchemaForm,
+            final AsyncCallback<CtlSchemaFormDto> callback) {
+        rpcService.saveCTLSchemaForm(ctlSchemaForm, 
+                new DataCallback<CtlSchemaFormDto>(callback) {
+                    @Override
+                    protected void onResult(CtlSchemaFormDto result) {
+                        eventBus.fireEvent(new DataEvent(SchemaFqnDto.class));
+                    }
+        });
+    }
+    
+    public void deleteCTLSchema(String fqn, Integer version,
+            final AsyncCallback<Void> callback) {
+        rpcService.deleteCTLSchemaByFqnAndVersion(fqn, version, 
+                new DataCallback<Void>(callback) {
+            @Override
+            protected void onResult(Void result) {
+                eventBus.fireEvent(new DataEvent(SchemaFqnDto.class));
+            }
+        });
+    }
+    
+    public void prepareCTLSchemaExport(String fqn, int version, CTLSchemaExportMethod method, 
+            final AsyncCallback<String> callback) {
+        rpcService.prepareCTLSchemaExport(fqn,
+                version, method, new DataCallback<String>(callback) {
+                    @Override
+                    protected void onResult(String result) {
                     }
                 });
     }

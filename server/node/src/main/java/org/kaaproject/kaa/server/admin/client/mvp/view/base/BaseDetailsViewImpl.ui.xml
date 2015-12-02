@@ -43,7 +43,7 @@
                                                 </gwt:Label>
                                             </gwt:cell>
                                             <gwt:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" height="100%">
-                                                <gwt:HorizontalPanel height="100%" styleName="{avroUiStyle.buttonsPanel}">
+                                                <gwt:HorizontalPanel ui:field="buttonsPanel" height="100%" styleName="{avroUiStyle.buttonsPanel}">
                                                     <gwt:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" height="100%">
                                                         <gwt:Button ui:field="saveButton"></gwt:Button>
                                                     </gwt:cell>

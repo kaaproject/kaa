@@ -43,12 +43,14 @@ public class CTLSchemaDto extends AbstractCTLSchemaDto implements HasId, Seriali
         if (infoDto != null) {
             this.dependencySet = dependencySet;
             this.metaInfo = new CTLSchemaMetaInfoDto(infoDto.getFqn(), infoDto.getVersion(), infoDto.getScope());
+            this.metaInfo.setId(infoDto.getMetaInfoId());
             id = infoDto.getId();
             applicationId = infoDto.getApplicationId();
             tenantId = infoDto.getTenantId();
             body = infoDto.getBody();
             createdTime = infoDto.getCreatedTime();
             createdUsername = infoDto.getCreatedUsername();
+            name = infoDto.getName();
             description = infoDto.getDescription();
         }
     }
@@ -85,11 +87,13 @@ public class CTLSchemaDto extends AbstractCTLSchemaDto implements HasId, Seriali
         infoDto.setFqn(metaInfo.getFqn());
         infoDto.setVersion(metaInfo.getVersion());
         infoDto.setScope(metaInfo.getScope());
+        infoDto.setMetaInfoId(metaInfo.getId());
         infoDto.setApplicationId(applicationId);
         infoDto.setTenantId(tenantId);
         infoDto.setBody(body);
         infoDto.setCreatedTime(createdTime);
         infoDto.setCreatedUsername(createdUsername);
+        infoDto.setName(name);
         infoDto.setDescription(description);
         if (dependencySet != null && !dependencySet.isEmpty()) {
             Set<CTLSchemaMetaInfoDto> dependencies = new HashSet<>();

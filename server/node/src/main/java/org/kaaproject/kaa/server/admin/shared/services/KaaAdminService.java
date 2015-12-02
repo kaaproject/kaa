@@ -16,8 +16,7 @@
 
 package org.kaaproject.kaa.server.admin.shared.services;
 
-import com.google.gwt.user.client.rpc.RemoteService;
-import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
+import java.util.List;
 
 import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
@@ -62,9 +61,12 @@ import org.kaaproject.kaa.common.dto.plugin.PluginInfoDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.admin.shared.config.ConfigurationRecordFormDto;
 import org.kaaproject.kaa.server.admin.shared.properties.PropertiesDto;
+import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaFormDto;
+import org.kaaproject.kaa.server.admin.shared.schema.SchemaFqnDto;
 import org.kaaproject.kaa.server.admin.shared.schema.SchemaInfoDto;
 
-import java.util.List;
+import com.google.gwt.user.client.rpc.RemoteService;
+import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 @RemoteServiceRelativePath("springGwtServices/kaaAdminService")
 public interface KaaAdminService extends RemoteService {
@@ -354,6 +356,8 @@ public interface KaaAdminService extends RemoteService {
     public void editUserConfiguration(EndpointUserConfigurationDto endpointUserConfiguration, String applicationId, RecordField configurationData) throws KaaAdminServiceException;
 
     public CTLSchemaInfoDto saveCTLSchema(String body) throws KaaAdminServiceException;
+    
+    public CTLSchemaInfoDto saveCTLSchema(CTLSchemaInfoDto schema) throws KaaAdminServiceException;
 
     public void deleteCTLSchemaById(String schemaId) throws KaaAdminServiceException;
 
@@ -369,5 +373,17 @@ public interface KaaAdminService extends RemoteService {
 
     public List<CTLSchemaMetaInfoDto> getCTLSchemasByApplicationId(String applicationId) throws KaaAdminServiceException;
     
+    public List<SchemaFqnDto> getTenantCTLSchemaFqns() throws KaaAdminServiceException;
+    
+    public CtlSchemaFormDto getCTLSchemaForm(String fqn, Integer version) throws KaaAdminServiceException;
+    
+    public CtlSchemaFormDto createNewCTLSchemaFormInstance(String sourceFqn, Integer sourceVersion) throws KaaAdminServiceException;
+    
+    public RecordField generateCtlSchemaForm(String fileItemName) throws KaaAdminServiceException;
+    
+    public CtlSchemaFormDto saveCTLSchemaForm(CtlSchemaFormDto ctlSchemaForm) throws KaaAdminServiceException;
+    
     public FileData exportCTLSchema(String fqn, int version, CTLSchemaExportMethod method) throws KaaAdminServiceException;
+    
+    public String prepareCTLSchemaExport(String fqn, int version, CTLSchemaExportMethod method) throws KaaAdminServiceException;
 }
