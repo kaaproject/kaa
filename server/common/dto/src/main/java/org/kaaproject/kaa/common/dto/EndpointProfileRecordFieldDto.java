@@ -22,8 +22,11 @@ import java.io.Serializable;
 
 public class EndpointProfileRecordFieldDto implements Serializable {
 
-    RecordField profileRecord;
-    EndpointProfileDto profileDto;
+    private static final long serialVersionUID = -3360718445400939841L;
+
+    private RecordField profileRecord;
+    private byte[] endpointKeyHash;
+    private String ctlSchemaId;
 
     public RecordField getProfileRecord() {
         return profileRecord;
@@ -33,11 +36,19 @@ public class EndpointProfileRecordFieldDto implements Serializable {
         this.profileRecord = profileRecord;
     }
 
-    public EndpointProfileDto getProfileDto() {
-        return profileDto;
+    public byte[] getEndpointKeyHash() {
+        return endpointKeyHash;
     }
 
-    public void setProfileDto(EndpointProfileDto profileDto) {
-        this.profileDto = profileDto;
+    public void setEndpointKeyHash(byte[] endpointKeyHash) {
+        this.endpointKeyHash = endpointKeyHash;
+    }
+
+    public String getCtlSchemaId() {
+        return ctlSchemaId;
+    }
+
+    public void setCtlSchemaId(String ctlSchemaId) {
+        this.ctlSchemaId = ctlSchemaId;
     }
 }

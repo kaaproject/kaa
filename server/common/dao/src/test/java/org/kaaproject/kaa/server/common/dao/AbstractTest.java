@@ -698,7 +698,7 @@ public class AbstractTest {
     protected EndpointProfileDto generateEndpointProfileDtoWithSchemaId(String appId, String profileSchemaId, String srvProfileBody) {
         EndpointProfileDto profileDto = new EndpointProfileDto();
         profileDto.setApplicationId(appId);
-        profileDto.setServerProfileSchemaId(profileSchemaId);
+        profileDto.setServerProfileCtlSchemaId(profileSchemaId);
         profileDto.setEndpointKeyHash("TEST_KEY_HASH".getBytes());
         profileDto.setClientProfileBody("{\"title\": \"TEST\"}");
         profileDto.setSdkToken(UUID.randomUUID().toString());
@@ -759,7 +759,7 @@ public class AbstractTest {
         }
         schemaDto.setApplicationId(appId);
         schemaDto.setCreatedTime(System.currentTimeMillis());
-        schemaDto.setSchemaDto(ctlService.saveCTLSchema(generateCTLSchemaDto(tenantId, DEFAULT_FQN, version, CTLSchemaScopeDto.SERVER_PROFILE_SCHEMA)));
+        schemaDto.setCtlSchemaId(ctlService.saveCTLSchema(generateCTLSchemaDto(tenantId, DEFAULT_FQN, version, CTLSchemaScopeDto.SERVER_PROFILE_SCHEMA)).getId());
         return serverProfileService.saveServerProfileSchema(schemaDto);
     }
 

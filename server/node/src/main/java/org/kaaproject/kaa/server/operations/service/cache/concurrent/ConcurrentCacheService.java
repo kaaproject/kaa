@@ -40,9 +40,9 @@ import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.HistoryDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventAction;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventMapDto;
@@ -52,13 +52,13 @@ import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.core.configuration.BaseData;
 import org.kaaproject.kaa.server.common.dao.ApplicationEventMapService;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
+import org.kaaproject.kaa.server.common.dao.CTLService;
 import org.kaaproject.kaa.server.common.dao.ConfigurationService;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
 import org.kaaproject.kaa.server.common.dao.EventClassService;
 import org.kaaproject.kaa.server.common.dao.HistoryService;
 import org.kaaproject.kaa.server.common.dao.ProfileService;
 import org.kaaproject.kaa.server.common.dao.SdkProfileService;
-import org.kaaproject.kaa.server.common.dao.ServerProfileService;
 import org.kaaproject.kaa.server.common.dao.TopicService;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
 import org.kaaproject.kaa.server.operations.service.cache.AppSeqNumber;
@@ -114,7 +114,7 @@ public class ConcurrentCacheService implements CacheService {
     private ProfileService profileService;
     
     @Autowired
-    private ServerProfileService serverProfileService;
+    private CTLService ctlService;
 
     /** The history service. */
     @Autowired
@@ -157,7 +157,7 @@ public class ConcurrentCacheService implements CacheService {
     private final CacheTemporaryMemorizer<AppVersionKey, ProfileSchemaDto> pfSchemaMemorizer = new CacheTemporaryMemorizer<>();
 
     /** The pf schema memorizer. */
-    private final CacheTemporaryMemorizer<String, ServerProfileSchemaDto> serverPfSchemaMemorizer = new CacheTemporaryMemorizer<>();
+    private final CacheTemporaryMemorizer<String, CTLSchemaDto> ctlSchemaMemorizer = new CacheTemporaryMemorizer<>();
 
     /** The sdk properties memorized. */
     private final CacheTemporaryMemorizer<String, SdkProfileDto> sdkProfileMemorizer = new CacheTemporaryMemorizer<>();
@@ -532,14 +532,13 @@ public class ConcurrentCacheService implements CacheService {
     }
     
     @Override
-    @Cacheable("serverProfileSchemas")
-    public ServerProfileSchemaDto getServerProfileSchemaById(String key) {
-        return serverPfSchemaMemorizer.compute(key, new Computable<String, ServerProfileSchemaDto>() {
-
+    @Cacheable("ctlSchemas")
+    public CTLSchemaDto getCtlSchemaById(String key) {
+        return ctlSchemaMemorizer.compute(key, new Computable<String, CTLSchemaDto>() {
             @Override
-            public ServerProfileSchemaDto compute(String key) {
-                LOG.debug("Fetching result for getServerProfileSchemaById");
-                return serverProfileService.findServerProfileSchema(key);
+            public CTLSchemaDto compute(String key) {
+                LOG.debug("Fetching result for ctl schemas");
+                return ctlService.findCTLSchemaById(key);
             }
         });
     }

@@ -21,6 +21,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
 import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.ServerProfileSchemaViewDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
@@ -31,7 +32,7 @@ import org.kaaproject.kaa.server.admin.client.util.ErrorMessageCustomizer;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 public class ServerProfileSchemaActivity
-        extends AbstractDetailsActivity<ServerProfileSchemaDto, BaseSchemaView, ServerProfileSchemaPlace>
+        extends AbstractDetailsActivity<ServerProfileSchemaViewDto, BaseSchemaView, ServerProfileSchemaPlace>
         implements ErrorMessageCustomizer, RecordPanel.FormDataLoader {
 
     private static final String  LEFT_SQUARE_BRACKET = "[";
@@ -46,11 +47,13 @@ public class ServerProfileSchemaActivity
         this.applicationId = place.getApplicationId();
     }
 
-    protected ServerProfileSchemaDto newSchema() {
+    protected ServerProfileSchemaViewDto newSchema() {
+        ServerProfileSchemaViewDto serverProfileSchemaViewDto = new ServerProfileSchemaViewDto();
         CTLSchemaDto ctlDto = new CTLSchemaDto();
-        ServerProfileSchemaDto serverProfileSchemaDto = new ServerProfileSchemaDto();
-        serverProfileSchemaDto.setSchemaDto(ctlDto);
-        return serverProfileSchemaDto;
+        ServerProfileSchemaDto schemaDto = new ServerProfileSchemaDto();
+        serverProfileSchemaViewDto.setCtlSchemaDto(ctlDto);
+        serverProfileSchemaViewDto.setProfileSchemaDto(schemaDto);
+        return serverProfileSchemaViewDto;
     }
 
     @Override
@@ -68,9 +71,10 @@ public class ServerProfileSchemaActivity
     }
 
     @Override
-    protected ServerProfileSchemaDto newEntity() {
-        ServerProfileSchemaDto schema = newSchema();
-        schema.setApplicationId(applicationId);
+    protected ServerProfileSchemaViewDto newEntity() {
+        ServerProfileSchemaViewDto schema = newSchema();
+        schema.getProfileSchemaDto().setApplicationId(applicationId);
+        schema.getCtlSchemaDto().setApplicationId(applicationId);
         return schema;
     }
 
@@ -81,9 +85,9 @@ public class ServerProfileSchemaActivity
 
     @Override
     protected void onEntityRetrieved() {
-        detailsView.getName().setValue(entity.getSchemaDto().getName());
-        detailsView.getDescription().setValue(entity.getSchemaDto().getDescription());
-        detailsView.getCreatedUsername().setValue(entity.getSchemaDto().getCreatedUsername());
+        detailsView.getName().setValue(entity.getCtlSchemaDto().getName());
+        detailsView.getDescription().setValue(entity.getCtlSchemaDto().getDescription());
+        detailsView.getCreatedUsername().setValue(entity.getCtlSchemaDto().getCreatedUsername());
         detailsView.getEndpointCount().setValue("");
         if (create) {
             createEmptySchemaForm(new BusyAsyncCallback<RecordField>() {
@@ -99,20 +103,20 @@ public class ServerProfileSchemaActivity
             });
             detailsView.getSchemaForm().setFormDataLoader(this);
         } else {
-            detailsView.getVersion().setValue(entity.getSchemaDto().getMetaInfo().getVersion() + ".0");
-            detailsView.getCreatedDateTime().setValue(Utils.millisecondsToDateTimeString(entity.getCreatedTime()));
-            detailsView.getSchemaForm().setValue(entity.getSchemaForm());
+            detailsView.getVersion().setValue(entity.getCtlSchemaDto().getMetaInfo().getVersion() + ".0");
+            detailsView.getCreatedDateTime().setValue(Utils.millisecondsToDateTimeString(entity.getProfileSchemaDto().getCreatedTime()));
+            detailsView.getSchemaForm().setValue(entity.getProfileSchemaDto().getSchemaForm());
         }
     }
 
     @Override
     protected void onSave() {
-        entity.getSchemaDto().setName(detailsView.getName().getValue());
-        entity.getSchemaDto().setDescription(detailsView.getDescription().getValue());
-        entity.setSchemaForm(detailsView.getSchemaForm().getValue());
+        entity.getCtlSchemaDto().setName(detailsView.getName().getValue());
+        entity.getCtlSchemaDto().setDescription(detailsView.getDescription().getValue());
+        entity.getProfileSchemaDto().setSchemaForm(detailsView.getSchemaForm().getValue());
         String applicationId = place.getApplicationId();
-        entity.getSchemaDto().setApplicationId(applicationId);
-        entity.setApplicationId(applicationId);
+        entity.getCtlSchemaDto().setApplicationId(applicationId);
+        entity.getProfileSchemaDto().setApplicationId(applicationId);
     }
 
     @Override
@@ -142,20 +146,17 @@ public class ServerProfileSchemaActivity
     }
 
     @Override
-    protected void getEntity(String id,
-                             AsyncCallback<ServerProfileSchemaDto> callback) {
+    protected void getEntity(String id, AsyncCallback<ServerProfileSchemaViewDto> callback) {
         KaaAdmin.getDataSource().getServerProfileSchemaForm(id, callback);
     }
 
     @Override
-    protected void editEntity(ServerProfileSchemaDto entity,
-                              AsyncCallback<ServerProfileSchemaDto> callback) {
+    protected void editEntity(ServerProfileSchemaViewDto entity, AsyncCallback<ServerProfileSchemaViewDto> callback) {
         KaaAdmin.getDataSource().editServerProfileSchemaForm(entity, callback);
     }
 
     @Override
-    public void loadFormData(String fileItemName,
-                             AsyncCallback<RecordField> callback) {
+    public void loadFormData(String fileItemName, AsyncCallback<RecordField> callback) {
         KaaAdmin.getDataSource().generateSimpleSchemaForm(fileItemName, callback);
     }
 }

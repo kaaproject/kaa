@@ -154,7 +154,7 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         this.ecfVersionStates = MongoDaoUtil.convertECFVersionDtoToModelList(dto.getEcfVersionStates());
         this.serverHash = dto.getServerHash();
         this.sdkToken = dto.getSdkToken();
-        this.serverProfileSchemaId = dto.getServerProfileSchemaId();
+        this.serverProfileSchemaId = dto.getServerProfileCtlSchemaId();
         this.serverProfile = dto.getServerProfileBody();
     }
 
@@ -546,7 +546,7 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         dto.setServerHash(serverHash);
         dto.setSdkToken(sdkToken);
         dto.setServerProfileBody(serverProfile);
-        dto.setServerProfileSchemaId(serverProfileSchemaId);
+        dto.setServerProfileCtlSchemaId(serverProfileSchemaId);
         return dto;
     }
 }

@@ -16,9 +16,15 @@
 
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
-import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
-import org.kaaproject.kaa.server.common.dao.impl.DaoUtil;
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.SERVER_PROFILE_SCHEMA_APP_ID;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.SERVER_PROFILE_SCHEMA_CREATED_TIME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.SERVER_PROFILE_SCHEMA_CTL_SCHEMA_ID;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.SERVER_PROFILE_SCHEMA_FK_APP_ID;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.SERVER_PROFILE_SCHEMA_FK_CTL_SCHEMA_ID;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.SERVER_PROFILE_SCHEMA_TABLE_NAME;
+
+import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -27,15 +33,9 @@ import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import java.io.Serializable;
 
-import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.SERVER_PROFILE_SCHEMA_APP_ID;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.SERVER_PROFILE_SCHEMA_CREATED_TIME;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.SERVER_PROFILE_SCHEMA_CTL_SCHEMA_ID;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.SERVER_PROFILE_SCHEMA_FK_APP_ID;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.SERVER_PROFILE_SCHEMA_FK_CTL_SCHEMA_ID;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.SERVER_PROFILE_SCHEMA_TABLE_NAME;
+import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
+import org.kaaproject.kaa.server.common.dao.impl.DaoUtil;
 
 @Entity
 @Table(name = SERVER_PROFILE_SCHEMA_TABLE_NAME)
@@ -61,10 +61,6 @@ public class ServerProfileSchema extends GenericModel<ServerProfileSchemaDto> im
         String appId = dto.getApplicationId();
         if (!isBlank(appId)) {
             this.application = new Application(ModelUtils.getLongId(appId));
-        }
-        CTLSchemaDto ctlSchemaDto = dto.getSchemaDto();
-        if (ctlSchemaDto != null) {
-            this.ctlSchema = new CTLSchema(ctlSchemaDto);
         }
     }
 
@@ -103,7 +99,7 @@ public class ServerProfileSchema extends GenericModel<ServerProfileSchemaDto> im
         dto.setId(getStringId());
         dto.setApplicationId(ModelUtils.getStringId(application));
         dto.setCreatedTime(createdTime);
-        dto.setSchemaDto(DaoUtil.getDto(ctlSchema));
+        dto.setCtlSchemaId(ctlSchema.getStringId());
         return dto;
     }
 

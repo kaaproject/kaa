@@ -198,7 +198,7 @@
         <persistence strategy="localTempSwap" />
     </cache>
 
-    <cache name="serverProfileSchemas" maxEntriesLocalHeap="20"
+    <cache name="ctlSchemas" maxEntriesLocalHeap="20"
         eternal="false" timeToIdleSeconds="300" timeToLiveSeconds="300"
         diskSpoolBufferSizeMB="30" maxEntriesLocalDisk="1000"
         diskExpiryThreadIntervalSeconds="120" memoryStoreEvictionPolicy="LRU"

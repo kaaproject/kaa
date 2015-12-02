@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.ServerProfileSchemaViewDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
@@ -143,7 +143,7 @@ public class ClientFactoryImpl implements ClientFactory {
     private final BaseSchemaView profileSchemaView = new ProfileSchemaViewImpl(false);
     private final BaseSchemaView createProfileSchemaView = new ProfileSchemaViewImpl(true);
 
-    private final BaseListView<ServerProfileSchemaDto> serverProfileSchemasView = new ServerProfileSchemasViewImpl();
+    private final BaseListView<ServerProfileSchemaViewDto> serverProfileSchemasView = new ServerProfileSchemasViewImpl();
     private final BaseSchemaView serverProfileSchemaView = new ServerProfileSchemaViewImpl(false);
     private final BaseSchemaView createServerProfileSchemaView = new ServerProfileSchemaViewImpl(true);
 
@@ -311,7 +311,7 @@ public class ClientFactoryImpl implements ClientFactory {
     }
 
     @Override
-    public BaseListView<ServerProfileSchemaDto> getServerProfileSchemasView() {
+    public BaseListView<ServerProfileSchemaViewDto> getServerProfileSchemasView() {
         return serverProfileSchemasView;
     }
 

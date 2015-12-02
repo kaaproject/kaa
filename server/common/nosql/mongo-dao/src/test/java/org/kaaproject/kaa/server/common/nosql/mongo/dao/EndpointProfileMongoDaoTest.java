@@ -18,6 +18,7 @@ package org.kaaproject.kaa.server.common.nosql.mongo.dao;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.UUID;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -25,6 +26,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kaaproject.kaa.common.dto.CTLDataDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
@@ -189,5 +191,13 @@ public class EndpointProfileMongoDaoTest extends AbstractMongoTest {
         endpointProfileDao.removeByAppId(endpointProfile.getApplicationId());
         MongoEndpointProfile found = endpointProfileDao.findByKeyHash(keyHash);
         Assert.assertNull(found);
+    }
+
+    @Test
+    public void testFindCtlDataByKeyHash() {
+        CTLDataDto dataDto = new CTLDataDto(String.valueOf(RANDOM.nextInt()), UUID.randomUUID().toString());
+        EndpointProfileDto ep = generateEndpointProfileDtoWithSchemaId(null, dataDto.getCtlSchemaId(), dataDto.getBody());
+        CTLDataDto found = endpointProfileDao.findCtlDataByKeyHash(ep.getEndpointKeyHash());
+        Assert.assertEquals(dataDto, found);
     }
 }

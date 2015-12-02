@@ -16,17 +16,22 @@
 
 package org.kaaproject.kaa.common.dto;
 
-import org.kaaproject.avro.ui.shared.RecordField;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
-
 import java.io.Serializable;
 
+import org.kaaproject.avro.ui.shared.RecordField;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties({ "schemaForm" })
 public class ServerProfileSchemaDto implements HasId, Serializable {
 
+    private static final long serialVersionUID = -4059563981228353624L;
     private String id;
     private Long createdTime;
+    //TODO: save this field.
+    private String createdUser;
     private String applicationId;
-    private CTLSchemaDto schemaDto;
+    private String ctlSchemaId;
     private RecordField schemaForm;
 
     @Override
@@ -55,12 +60,12 @@ public class ServerProfileSchemaDto implements HasId, Serializable {
         this.applicationId = applicationId;
     }
 
-    public CTLSchemaDto getSchemaDto() {
-        return schemaDto;
+    public String getCtlSchemaId() {
+        return ctlSchemaId;
     }
 
-    public void setSchemaDto(CTLSchemaDto schemaDto) {
-        this.schemaDto = schemaDto;
+    public void setCtlSchemaId(String ctlSchemaId) {
+        this.ctlSchemaId = ctlSchemaId;
     }
 
     public RecordField getSchemaForm() {
@@ -71,40 +76,55 @@ public class ServerProfileSchemaDto implements HasId, Serializable {
         this.schemaForm = schemaForm;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+    public String getCreatedUser() {
+        return createdUser;
+    }
 
-        ServerProfileSchemaDto that = (ServerProfileSchemaDto) o;
-
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (createdTime != null ? !createdTime.equals(that.createdTime) : that.createdTime != null) return false;
-        if (applicationId != null ? !applicationId.equals(that.applicationId) : that.applicationId != null)
-            return false;
-        if (schemaDto != null ? !schemaDto.equals(that.schemaDto) : that.schemaDto != null) return false;
-        return !(schemaForm != null ? !schemaForm.equals(that.schemaForm) : that.schemaForm != null);
-
+    public void setCreatedUser(String createdUser) {
+        this.createdUser = createdUser;
     }
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (createdTime != null ? createdTime.hashCode() : 0);
-        result = 31 * result + (applicationId != null ? applicationId.hashCode() : 0);
-        result = 31 * result + (schemaDto != null ? schemaDto.hashCode() : 0);
-        result = 31 * result + (schemaForm != null ? schemaForm.hashCode() : 0);
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((applicationId == null) ? 0 : applicationId.hashCode());
+        result = prime * result + ((ctlSchemaId == null) ? 0 : ctlSchemaId.hashCode());
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
         return result;
     }
 
     @Override
-    public String toString() {
-        return "ServerProfileSchemaDto{" +
-                "id='" + id + '\'' +
-                ", createdTime=" + createdTime +
-                ", applicationId='" + applicationId + '\'' +
-                ", schemaDto=" + schemaDto +
-                ", schemaForm=" + schemaForm +
-                '}';
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ServerProfileSchemaDto other = (ServerProfileSchemaDto) obj;
+        if (applicationId == null) {
+            if (other.applicationId != null)
+                return false;
+        } else if (!applicationId.equals(other.applicationId))
+            return false;
+        if (ctlSchemaId == null) {
+            if (other.ctlSchemaId != null)
+                return false;
+        } else if (!ctlSchemaId.equals(other.ctlSchemaId))
+            return false;
+        if (id == null) {
+            if (other.id != null)
+                return false;
+        } else if (!id.equals(other.id))
+            return false;
+        return true;
     }
+
+    @Override
+    public String toString() {
+        return "ServerProfileSchemaDto [id=" + id + ", createdTime=" + createdTime + ", createdUser=" + createdUser + ", applicationId="
+                + applicationId + ", ctlSchemaId=" + ctlSchemaId + ", schemaForm=" + schemaForm + "]";
+    }
+
 }

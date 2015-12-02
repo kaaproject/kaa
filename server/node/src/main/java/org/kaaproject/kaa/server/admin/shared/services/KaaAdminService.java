@@ -37,6 +37,7 @@ import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.ServerProfileSchemaViewDto;
 import org.kaaproject.kaa.common.dto.StructureRecordDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.admin.RecordKey;
@@ -83,7 +84,7 @@ public interface KaaAdminService extends RemoteService {
 
     public EndpointProfileBodyDto getEndpointProfileBodyByKeyHash(String endpointProfileKeyHash) throws KaaAdminServiceException;
 
-    public EndpointProfileRecordFieldDto updateEndpointProfile(EndpointProfileRecordFieldDto endpointProfileRecordDto) throws KaaAdminServiceException;
+    public EndpointProfileRecordFieldDto updateServerProfile(EndpointProfileRecordFieldDto endpointProfileRecordDto) throws KaaAdminServiceException;
 
     public List<TenantUserDto> getTenants() throws KaaAdminServiceException;
 
@@ -165,15 +166,13 @@ public interface KaaAdminService extends RemoteService {
 
     public ProfileSchemaDto editProfileSchemaForm(ProfileSchemaDto profileSchema) throws KaaAdminServiceException;
 
-    public List<ServerProfileSchemaDto> getServerProfileSchemasByApplicationId(String applicationId) throws KaaAdminServiceException;
+    public List<ServerProfileSchemaViewDto> getServerProfileSchemasByApplicationId(String applicationId) throws KaaAdminServiceException;
 
     public ServerProfileSchemaDto getServerProfileSchema(String serverProfileSchemaId) throws KaaAdminServiceException;
 
-    public ServerProfileSchemaDto editServerProfileSchema(ServerProfileSchemaDto serverProfileSchema, byte[] schema) throws KaaAdminServiceException;
+    public ServerProfileSchemaViewDto getServerProfileSchemaForm(String serverProfileSchemaId) throws KaaAdminServiceException;
 
-    public ServerProfileSchemaDto getServerProfileSchemaForm(String serverProfileSchemaId) throws KaaAdminServiceException;
-
-    public ServerProfileSchemaDto editServerProfileSchemaForm(ServerProfileSchemaDto serverProfileSchema) throws KaaAdminServiceException;
+    public ServerProfileSchemaViewDto editServerProfileSchemaForm(ServerProfileSchemaViewDto serverProfileSchema) throws KaaAdminServiceException;
 
     public List<ConfigurationSchemaDto> getConfigurationSchemasByApplicationId(String applicationId) throws KaaAdminServiceException;
 

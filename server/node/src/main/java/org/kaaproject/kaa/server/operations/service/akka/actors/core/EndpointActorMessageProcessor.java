@@ -45,7 +45,6 @@ import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.SyncRequestMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.logs.LogDeliveryMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.logs.LogEventPackMessage;
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.notification.ThriftNotificationMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.ActorTimeoutMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.ChannelTimeoutMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.RequestTimeoutMessage;
@@ -157,11 +156,13 @@ public class EndpointActorMessageProcessor {
         tellParent(context, response);
     }
 
-    public void processThriftNotification(ActorContext context, ThriftNotificationMessage message) {
+    public void processServerProfileUpdate() {
+        // TODO Auto-generated method stub
+    }
+
+    public void processThriftNotification(ActorContext context) {
         Set<ChannelMetaData> channels = state.getChannelsByTypes(TransportType.CONFIGURATION, TransportType.NOTIFICATION);
-
         LOG.debug("[{}][{}] Processing thrift norification for {} channels", endpointKey, actorKey, channels.size());
-
         syncChannels(context, channels, true, true);
     }
 
@@ -470,7 +471,7 @@ public class EndpointActorMessageProcessor {
 
     private EndpointProfileDataDto convert(EndpointProfileDto profileDto) {
         return new EndpointProfileDataDto(profileDto.getId(), endpointKey, profileDto.getProfileVersion(),
-                profileDto.getClientProfileBody(), profileDto.getServerProfileSchemaId(), profileDto.getServerProfileBody());
+                profileDto.getClientProfileBody(), profileDto.getServerProfileCtlSchemaId(), profileDto.getServerProfileBody());
     }
 
     private void sendConnectToNewUser(ActorContext context, EndpointProfileDto endpointProfile) {

@@ -22,15 +22,15 @@ import java.util.Map;
 
 import org.kaaproject.kaa.common.dto.EndpointProfileDataDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.server.common.dao.CTLService;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogAppender;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryCallback;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryErrorCode;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogSchema;
+import org.kaaproject.kaa.server.common.log.shared.appender.data.BaseLogEventPack;
 import org.kaaproject.kaa.server.common.log.shared.appender.data.BaseProfileInfo;
 import org.kaaproject.kaa.server.common.log.shared.appender.data.BaseSchemaInfo;
-import org.kaaproject.kaa.server.common.log.shared.appender.data.BaseLogEventPack;
 import org.kaaproject.kaa.server.common.log.shared.appender.data.ProfileInfo;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
@@ -156,13 +156,13 @@ public class ApplicationLogActorMessageProcessor {
             logPack.setClientProfile(new BaseProfileInfo(schemaInfo, profileDto.getClientProfileBody()));
         }
         ProfileInfo serverProfile = logPack.getServerProfile();
-        if (serverProfile == null && profileDto.getServerProfileSchemaId() != null) {
-            BaseSchemaInfo schemaInfo = serverProfileSchemas.get(profileDto.getServerProfileSchemaId());
+        if (serverProfile == null && profileDto.getServerProfileCtlSchemaId() != null) {
+            BaseSchemaInfo schemaInfo = serverProfileSchemas.get(profileDto.getServerProfileCtlSchemaId());
             if (schemaInfo == null) {
-                ServerProfileSchemaDto serverSchemaDto = cacheService.getServerProfileSchemaById(profileDto.getServerProfileSchemaId());
-                String schema = ctlService.flatExportAsString(serverSchemaDto.getSchemaDto());
-                schemaInfo = new BaseSchemaInfo(serverSchemaDto.getId(), schema);
-                serverProfileSchemas.put(profileDto.getServerProfileSchemaId(), schemaInfo);
+                CTLSchemaDto ctlSchemaDto = cacheService.getCtlSchemaById(profileDto.getServerProfileCtlSchemaId());
+                String schema = ctlService.flatExportAsString(ctlSchemaDto);
+                schemaInfo = new BaseSchemaInfo(ctlSchemaDto.getId(), schema);
+                serverProfileSchemas.put(profileDto.getServerProfileCtlSchemaId(), schemaInfo);
             }
             logPack.setServerProfile(new BaseProfileInfo(schemaInfo, profileDto.getServerProfileBody()));
         }

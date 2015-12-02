@@ -310,7 +310,7 @@ public interface ControlService {
      * @return the server profile schema dto
      * @throws ControlServiceException
      */
-    ServerProfileSchemaDto editServerProfileSchema(ServerProfileSchemaDto serverProfileSchema) throws ControlServiceException;
+    ServerProfileSchemaDto saveServerProfileSchema(ServerProfileSchemaDto serverProfileSchema) throws ControlServiceException;
 
     /**
      * Gets the latest created server profile schema for application.
@@ -1220,6 +1220,17 @@ public interface ControlService {
      * @throws ControlServiceException - if an exception occures.
      */
     FileData exportCTLSchemaFlat(CTLSchemaDto schema) throws ControlServiceException;
+    
+    /**
+     * Exports the body of a CTL schema with all dependencies inline,
+     * recursively.
+     * 
+     * @param schema A CTL schema to export
+     * @return A string containing the body of a CTL schema with all dependencies
+     *         inline, recursively
+     * @throws ControlServiceException - if an exception occures.
+     */
+    String exportCTLSchemaFlatAsString(CTLSchemaDto schema) throws ControlServiceException;
 
     /**
      * Exports the body of a CTL schema with all dependencies as different
@@ -1282,4 +1293,6 @@ public interface ControlService {
      * @throws ControlServiceException the control service exception.
      */
     EndpointProfileViewDto getEndpointProfileViewDtoByEndpointKeyHash(String endpointProfileKeyHash) throws ControlServiceException;
+
+    
 }
