@@ -49,6 +49,7 @@
                 <configuration>
                     <descriptors>
                         <descriptor>assembly/client-cpp-sdk.xml</descriptor>
+                        <descriptor>assembly/client-cpp-sdk-templates.xml</descriptor>
                     </descriptors>
                 </configuration>
                 <executions>
