@@ -32,6 +32,7 @@ import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaInfoDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
+import org.kaaproject.kaa.server.admin.services.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.kaaproject.kaa.server.control.service.ControlService;
 import org.kaaproject.kaa.server.control.service.exception.ControlServiceException;
@@ -161,11 +162,13 @@ public class CTLSchemaParser {
                 try {
                     CTLSchemaDto dependencySchema = controlService.getCTLSchemaByFqnVersionAndTenantId(dependency.getFqn(),
                             dependency.getVersion(), tenantId);
+                    if (dependencySchema == null) {
+                        String message = "Unable to locate dependency \"" + dependency.getFqn() + "\" (version " + dependency.getVersion() + ")";
+                        throw new IllegalArgumentException(message);
+                    }
                     validate(dependencySchema.toCTLSchemaInfoDto());
                 } catch (Exception cause) {
-                    String message = "Unable to locate dependency \"" + dependency.getFqn() + "\" (version " + dependency.getVersion()
-                            + ")";
-                    throw new IllegalArgumentException(message);
+                    throw Utils.handleException(cause);
                 }
             }
         }
@@ -177,7 +180,7 @@ public class CTLSchemaParser {
              */
             return parser.parse(schema.getBody());
         } catch (Exception cause) {
-            throw new IllegalArgumentException("Unable to parse CTL schema: " + cause.getMessage());
+            throw new IllegalArgumentException("Unable to parse CTL schema \"" + schema.getFqn() + "\" (version " + schema.getVersion() + "): " + cause.getMessage());
         }
     }
 }

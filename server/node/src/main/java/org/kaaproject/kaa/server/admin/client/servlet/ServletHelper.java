@@ -21,6 +21,7 @@ import java.util.Map.Entry;
 
 import org.kaaproject.kaa.common.dto.admin.RecordKey;
 import org.kaaproject.kaa.server.admin.services.cache.CacheService;
+import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaExportKey;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
@@ -29,6 +30,7 @@ public class ServletHelper {
 
     public final static String KAA_SDK_SERVLET_PATH = "servlet/kaaSdkServlet";
     public final static String KAA_RECORD_LIBRARY_SERVLET_PATH = "servlet/kaaRecordLibraryServlet";
+    public final static String KAA_CTL_EXPORT_SERVLET_PATH = "servlet/kaaCtlExportServlet";
 
     public static void downloadSdk(String key) {
         String getUrl = composeURL(KAA_SDK_SERVLET_PATH,
@@ -39,6 +41,12 @@ public class ServletHelper {
 
     public static void downloadRecordLibrary(String key) {
         String getUrl = composeURL(KAA_RECORD_LIBRARY_SERVLET_PATH, RecordKey.RECORD_KEY_PARAMETER + "=" + key);
+        String url = GWT.getModuleBaseURL() + getUrl;
+        Window.open( url, "_self", "enabled");
+    }
+    
+    public static void exportCtlSchema(String key) {
+        String getUrl = composeURL(KAA_CTL_EXPORT_SERVLET_PATH, CtlSchemaExportKey.CTL_EXPORT_KEY_PARAMETER + "=" + key);
         String url = GWT.getModuleBaseURL() + getUrl;
         Window.open( url, "_self", "enabled");
     }

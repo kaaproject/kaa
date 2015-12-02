@@ -102,6 +102,10 @@ public class CTLSchema extends GenericModel<CTLSchemaDto> implements Serializabl
         Long appId = getLongId(dto.getApplicationId());
         this.application = appId != null ? new Application(appId) : null;
         this.body = dto.getBody();
+        this.name = dto.getName();
+        this.description = dto.getDescription();
+        this.createdUsername = dto.getCreatedUsername();
+        this.createdTime = dto.getCreatedTime();
 
         Set<CTLSchemaDto> dependencies = dto.getDependencySet();
         if (dependencies != null && !dependencies.isEmpty()) {
@@ -194,6 +198,10 @@ public class CTLSchema extends GenericModel<CTLSchemaDto> implements Serializabl
         ctlSchemaDto.setId(getStringId());
         ctlSchemaDto.setApplicationId(application != null ? application.getStringId() : null);
         ctlSchemaDto.setTenantId(tenant != null ? tenant.getStringId() : null);
+        ctlSchemaDto.setCreatedTime(createdTime);
+        ctlSchemaDto.setCreatedUsername(createdUsername);
+        ctlSchemaDto.setName(name);
+        ctlSchemaDto.setDescription(description);
         ctlSchemaDto.setMetaInfo(metaInfo.toDto());
         ctlSchemaDto.setBody(body);
         ctlSchemaDto.setDependencySet(DaoUtil.convertDtoSet(dependencySet));

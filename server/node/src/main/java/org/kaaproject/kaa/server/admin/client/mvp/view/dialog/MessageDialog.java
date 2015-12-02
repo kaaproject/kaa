@@ -20,10 +20,13 @@ import org.kaaproject.avro.ui.gwt.client.widget.AlertPanel;
 import org.kaaproject.avro.ui.gwt.client.widget.dialog.AvroUiDialog;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
+import com.google.gwt.dom.client.Style.Overflow;
+import com.google.gwt.dom.client.Style.WhiteSpace;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -63,6 +66,10 @@ public class MessageDialog extends AvroUiDialog {
         setWidget(dialogContents);
         
         AlertPanel messageLabel = new AlertPanel(type);
+        messageLabel.getElement().getStyle().setWhiteSpace(WhiteSpace.PRE_WRAP);
+        messageLabel.getElement().getStyle().setProperty("maxHeight", "400px");
+        messageLabel.getElement().getStyle().setProperty("maxWidth", Window.getClientWidth()*2/3 + "px");
+        messageLabel.getElement().getStyle().setOverflowY(Overflow.AUTO);
         messageLabel.setMessage(message);
         dialogContents.add(messageLabel);
         

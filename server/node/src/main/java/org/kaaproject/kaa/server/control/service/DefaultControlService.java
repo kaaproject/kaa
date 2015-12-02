@@ -20,13 +20,16 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.avro.Schema;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.thrift.TException;
+import org.kaaproject.avro.ui.shared.Fqn;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.common.dto.AbstractSchemaDto;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
@@ -1654,6 +1657,27 @@ public class DefaultControlService implements ControlService {
     }
 
     @Override
+    public List<CTLSchemaDto> getCTLSchemasByFqnAndTenantId(String fqn, String tenantId) throws ControlServiceException {
+        return ctlService.findCTLSchemasByFqnAndTenantId(fqn, tenantId);
+    }
+
+    @Override
+    public Map<Fqn, List<Integer>> getAvailableCTLSchemaVersionsByTenantId(
+            String tenantId) throws ControlServiceException {
+        Map<Fqn, List<Integer>> ctlSchemaVersions = new HashMap<>(); 
+        List<CTLSchemaMetaInfoDto> ctlSchemaInfos = ctlService.findAvailableCTLSchemasMetaInfo(tenantId);
+        for (CTLSchemaMetaInfoDto ctlSchemaInfo : ctlSchemaInfos) {
+            Fqn fqn = new Fqn(ctlSchemaInfo.getFqn());
+            List<Integer> schemaVersions = ctlSchemaVersions.get(fqn);
+            if (schemaVersions == null) {
+                schemaVersions = new ArrayList<>();
+                ctlSchemaVersions.put(fqn, schemaVersions);
+            }
+            schemaVersions.add(ctlSchemaInfo.getVersion());
+        }
+        return ctlSchemaVersions;
+    }
+    
     public FileData exportCTLSchemaShallow(CTLSchemaDto schema) throws ControlServiceException {
         return ctlService.shallowExport(schema);
     }

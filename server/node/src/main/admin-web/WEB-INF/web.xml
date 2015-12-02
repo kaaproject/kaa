@@ -41,6 +41,12 @@
             <servlet-class>org.kaaproject.kaa.server.admin.servlet.RecordServlet</servlet-class>
             <load-on-startup>1</load-on-startup>
         </servlet>
+        
+        <servlet>
+            <servlet-name>kaaCtlExportServlet</servlet-name>
+            <servlet-class>org.kaaproject.kaa.server.admin.servlet.CtlExportServlet</servlet-class>
+            <load-on-startup>1</load-on-startup>
+        </servlet>        
 
         <servlet>
             <servlet-name>kaaFileUploadServlet</servlet-name>
@@ -84,6 +90,11 @@
         <servlet-mapping>
             <servlet-name>kaaRecordLibraryServlet</servlet-name>
             <url-pattern>/kaaAdmin/servlet/kaaRecordLibraryServlet</url-pattern>
+        </servlet-mapping>
+        
+        <servlet-mapping>
+            <servlet-name>kaaCtlExportServlet</servlet-name>
+            <url-pattern>/kaaAdmin/servlet/kaaCtlExportServlet</url-pattern>
         </servlet-mapping>
 
         <servlet-mapping>

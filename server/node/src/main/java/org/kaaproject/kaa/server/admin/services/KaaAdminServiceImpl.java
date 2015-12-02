@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.server.admin.services;
 
+import static org.kaaproject.kaa.server.admin.services.util.Utils.getCurrentUser;
 import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 
 import java.io.IOException;
@@ -26,6 +27,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -40,8 +42,11 @@ import org.apache.avro.io.DatumReader;
 import org.apache.avro.io.DecoderFactory;
 import org.apache.avro.io.JsonDecoder;
 import org.hibernate.StaleObjectStateException;
+import org.kaaproject.avro.ui.converter.CtlSource;
 import org.kaaproject.avro.ui.converter.FormAvroConverter;
 import org.kaaproject.avro.ui.converter.SchemaFormAvroConverter;
+import org.kaaproject.avro.ui.shared.Fqn;
+import org.kaaproject.avro.ui.shared.FqnVersion;
 import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.common.dto.AbstractSchemaDto;
@@ -108,6 +113,9 @@ import org.kaaproject.kaa.server.admin.services.schema.SimpleSchemaFormAvroConve
 import org.kaaproject.kaa.server.admin.services.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.config.ConfigurationRecordFormDto;
 import org.kaaproject.kaa.server.admin.shared.properties.PropertiesDto;
+import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaExportKey;
+import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaFormDto;
+import org.kaaproject.kaa.server.admin.shared.schema.SchemaFqnDto;
 import org.kaaproject.kaa.server.admin.shared.schema.SchemaInfoDto;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminService;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
@@ -125,9 +133,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
-import org.springframework.orm.hibernate4.HibernateOptimisticLockingFailureException;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -639,7 +644,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
             this.checkApplicationId(sdkProfile.getApplicationId());
-            sdkProfile.setCreatedUsername(this.getCurrentUser().getUsername());
+            sdkProfile.setCreatedUsername(getCurrentUser().getUsername());
             sdkProfile.setCreatedTime(System.currentTimeMillis());
             return controlService.saveSdkProfile(sdkProfile);
         } catch (Exception cause) {
@@ -1298,7 +1303,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     public ProfileFilterDto editProfileFilter(ProfileFilterDto profileFilter) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            String username = this.getCurrentUser().getUsername();
+            String username = getCurrentUser().getUsername();
             if (isEmpty(profileFilter.getId())) {
                 profileFilter.setCreatedUsername(username);
                 checkEndpointGroupId(profileFilter.getEndpointGroupId());
@@ -1321,7 +1326,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             ProfileFilterDto storedProfileFilter = controlService.getProfileFilter(profileFilterId);
             Utils.checkNotNull(storedProfileFilter);
             checkEndpointGroupId(storedProfileFilter.getEndpointGroupId());
-            String username = this.getCurrentUser().getUsername();
+            String username = getCurrentUser().getUsername();
             return controlService.activateProfileFilter(profileFilterId, username);
         } catch (Exception e) {
             throw Utils.handleException(e);
@@ -1335,7 +1340,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             ProfileFilterDto storedProfileFilter = controlService.getProfileFilter(profileFilterId);
             Utils.checkNotNull(storedProfileFilter);
             checkEndpointGroupId(storedProfileFilter.getEndpointGroupId());
-            String username = this.getCurrentUser().getUsername();
+            String username = getCurrentUser().getUsername();
             return controlService.deactivateProfileFilter(profileFilterId, username);
         } catch (Exception e) {
             throw Utils.handleException(e);
@@ -1350,7 +1355,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             StructureRecordDto<ProfileFilterDto> record = controlService.getProfileFilterRecord(schemaId, endpointGroupId);
             Utils.checkNotNull(record);
             checkEndpointGroupId(record.getEndpointGroupId());
-            String username = this.getCurrentUser().getUsername();
+            String username = getCurrentUser().getUsername();
             controlService.deleteProfileFilterRecord(schemaId, endpointGroupId, username);
         } catch (Exception e) {
             throw Utils.handleException(e);
@@ -1400,7 +1405,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     public ConfigurationDto editConfiguration(ConfigurationDto configuration) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            String username = this.getCurrentUser().getUsername();
+            String username = getCurrentUser().getUsername();
             if (isEmpty(configuration.getId())) {
                 configuration.setCreatedUsername(username);
                 checkEndpointGroupId(configuration.getEndpointGroupId());
@@ -1438,7 +1443,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             ConfigurationDto storedConfiguration = controlService.getConfiguration(configurationId);
             Utils.checkNotNull(storedConfiguration);
             checkEndpointGroupId(storedConfiguration.getEndpointGroupId());
-            String username = this.getCurrentUser().getUsername();
+            String username = getCurrentUser().getUsername();
             return controlService.activateConfiguration(configurationId, username);
         } catch (Exception e) {
             throw Utils.handleException(e);
@@ -1463,7 +1468,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             ConfigurationDto storedConfiguration = controlService.getConfiguration(configurationId);
             Utils.checkNotNull(storedConfiguration);
             checkEndpointGroupId(storedConfiguration.getEndpointGroupId());
-            String username = this.getCurrentUser().getUsername();
+            String username = getCurrentUser().getUsername();
             return controlService.deactivateConfiguration(configurationId, username);
         } catch (Exception e) {
             throw Utils.handleException(e);
@@ -1598,7 +1603,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             StructureRecordDto<ConfigurationDto> record = controlService.getConfigurationRecord(schemaId, endpointGroupId);
             Utils.checkNotNull(record);
             checkEndpointGroupId(record.getEndpointGroupId());
-            String username = this.getCurrentUser().getUsername();
+            String username = getCurrentUser().getUsername();
             controlService.deleteConfigurationRecord(schemaId, endpointGroupId, username);
         } catch (Exception e) {
             throw Utils.handleException(e);
@@ -2086,7 +2091,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
                 Utils.checkNotNull(storedEventClassFamily);
                 checkTenantId(storedEventClassFamily.getTenantId());
             } else {
-                String username = this.getCurrentUser().getUsername();
+                String username = getCurrentUser().getUsername();
                 eventClassFamily.setCreatedUsername(username);
             }
             eventClassFamily.setTenantId(getTenantId());
@@ -2107,7 +2112,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             Utils.checkNotNull(storedEventClassFamily);
             checkTenantId(storedEventClassFamily.getTenantId());
 
-            String username = this.getCurrentUser().getUsername();
+            String username = getCurrentUser().getUsername();
             controlService.addEventClassFamilySchema(eventClassFamilyId, schemaString, username);
         } catch (Exception e) {
             throw Utils.handleException(e);
@@ -2132,7 +2137,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             Utils.checkNotNull(storedEventClassFamily);
             checkTenantId(storedEventClassFamily.getTenantId());
 
-            String username = this.getCurrentUser().getUsername();
+            String username = getCurrentUser().getUsername();
             controlService.addEventClassFamilySchema(eventClassFamilyId, schema, username);
         } catch (Exception e) {
             throw Utils.handleException(e);
@@ -2186,7 +2191,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
             if (isEmpty(applicationEventFamilyMap.getId())) {
-                String username = this.getCurrentUser().getUsername();
+                String username = getCurrentUser().getUsername();
                 applicationEventFamilyMap.setCreatedUsername(username);
                 checkApplicationId(applicationEventFamilyMap.getApplicationId());
             } else {
@@ -2384,15 +2389,6 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         return getCurrentUser().getTenantId();
     }
 
-    private AuthUserDto getCurrentUser() throws KaaAdminServiceException {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication.getPrincipal() instanceof AuthUserDto) {
-            return (AuthUserDto) authentication.getPrincipal();
-        } else {
-            throw new KaaAdminServiceException("You are not authorized to perform this operation!", ServiceErrorCode.NOT_AUTHORIZED);
-        }
-    }
-
     private boolean isGroupAll(EndpointGroupDto groupDto) {
         boolean result = false;
         if (groupDto != null && groupDto.getWeight() == 0) {
@@ -2464,7 +2460,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
      *             - if the check fails.
      */
     private void checkCTLAuthority(CTLSchemaDto schema) throws KaaAdminServiceException {
-        AuthUserDto currentUser = this.getCurrentUser();
+        AuthUserDto currentUser = getCurrentUser();
         if ((schema.getMetaInfo().getScope() != CTLSchemaScopeDto.SYSTEM || currentUser.getAuthority() != KaaAuthorityDto.KAA_ADMIN)
                 && (schema.getMetaInfo().getScope() == CTLSchemaScopeDto.SYSTEM || !schema.getTenantId().equals(currentUser.getTenantId()))) {
             throw new KaaAdminServiceException("You do not have permission to perform this operation!", ServiceErrorCode.PERMISSION_DENIED);
@@ -2510,6 +2506,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
      * @return A string that contains fully qualified names and version numbers
      *         of the given CTL schemas
      */
+    
     private String asText(Collection<CTLSchemaDto> types) {
         StringBuilder message = new StringBuilder();
         if (types != null) {
@@ -2558,6 +2555,60 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throw Utils.handleException(cause);
         }
     }
+    
+    @Override
+    public CTLSchemaInfoDto saveCTLSchema(CTLSchemaInfoDto schema) throws KaaAdminServiceException {
+        this.checkAuthority(KaaAuthorityDto.values());
+        try {
+            Utils.checkNotNull(schema);
+
+            if (schema.getScope() == CTLSchemaScopeDto.SYSTEM) {
+                if (schema.getTenantId() != null) {
+                    throw new IllegalArgumentException("A system CTL schema cannot be tied to a tenant!");
+                } else if (schema.getApplicationId() != null) {
+                    throw new IllegalArgumentException("A system CTL schema cannot be tied to an application!");
+                }
+            } else if (schema.getScope() == CTLSchemaScopeDto.TENANT) {
+                if (schema.getTenantId() == null) {
+                    throw new IllegalArgumentException("A tenant CTL schema must include a tenant identifier!");
+                } else if (schema.getApplicationId() != null) {
+                    throw new IllegalArgumentException("A tenant CTL schema cannot be tied to an application!");
+                } else {
+                    this.checkTenantId(schema.getTenantId());
+                }
+            } else {
+                this.checkApplicationId(schema.getApplicationId());
+            }
+
+            // Check if the schema dependencies are present in the database
+            List<CTLSchemaMetaInfoDto> missingDependencies = new ArrayList<>();
+            Set<CTLSchemaDto> dependencies = new HashSet<>();
+            if (schema.getDependencies() != null) {
+                for (CTLSchemaMetaInfoDto dependency : schema.getDependencies()) {
+                    CTLSchemaDto schemaFound = controlService.getCTLSchemaByFqnVersionAndTenantId(dependency.getFqn(), dependency.getVersion(),
+                            schema.getTenantId());
+                    if (schemaFound == null) {
+                        missingDependencies.add(dependency);
+                    } else {
+                        dependencies.add(schemaFound);
+                    }
+                }
+            }
+            if (!missingDependencies.isEmpty()) {
+                String message = "The following dependencies are missing from the database: " + Arrays.toString(missingDependencies.toArray());
+                throw new IllegalArgumentException(message);
+            }
+
+            // Check if the schema body is valid
+            CTLSchemaParser parser = new CTLSchemaParser(controlService, getCurrentUser().getTenantId());
+            parser.validate(schema);
+
+            CTLSchemaDto result = controlService.saveCTLSchema(new CTLSchemaDto(schema, dependencies));
+            return result != null ? result.toCTLSchemaInfoDto() : null;
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
 
     @Override
     public void deleteCTLSchemaById(String schemaId) throws KaaAdminServiceException {
@@ -2584,7 +2635,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         try {
             this.checkCTLSchemaFqn(fqn);
             this.checkCTLSchemaVersion(version);
-            String tenantId = this.getCurrentUser().getTenantId();
+            String tenantId = getCurrentUser().getTenantId();
             CTLSchemaDto schemaFound = controlService.getCTLSchemaByFqnVersionAndTenantId(fqn, version, tenantId);
             Utils.checkNotNull(schemaFound);
             this.checkCTLAuthority(schemaFound);
@@ -2623,7 +2674,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         try {
             this.checkCTLSchemaFqn(fqn);
             this.checkCTLSchemaVersion(version);
-            String tenantId = this.getCurrentUser().getTenantId();
+            String tenantId = getCurrentUser().getTenantId();
             CTLSchemaDto schemaFound = controlService.getCTLSchemaByFqnVersionAndTenantId(fqn, version, tenantId);
             Utils.checkNotNull(schemaFound);
             if (schemaFound.getMetaInfo().getScope() != CTLSchemaScopeDto.SYSTEM) {
@@ -2639,7 +2690,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     public List<CTLSchemaMetaInfoDto> getCTLSchemasAvailable() throws KaaAdminServiceException {
         this.checkAuthority(KaaAuthorityDto.values());
         try {
-            String tenantId = this.getCurrentUser().getTenantId();
+            String tenantId = getCurrentUser().getTenantId();
             return controlService.getAvailableCTLSchemasMetaInfoByTenantId(tenantId);
         } catch (Exception cause) {
             throw Utils.handleException(cause);
@@ -2661,7 +2712,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     public List<CTLSchemaMetaInfoDto> getCTLSchemasByScope(String scopeName) throws KaaAdminServiceException {
         this.checkAuthority(KaaAuthorityDto.values());
         try {
-            AuthUserDto currentUser = this.getCurrentUser();
+            AuthUserDto currentUser = getCurrentUser();
             CTLSchemaScopeDto scope = this.getCTLSchemaScopeByName(scopeName);
             if (scope == CTLSchemaScopeDto.TENANT && currentUser.getAuthority() != KaaAuthorityDto.KAA_ADMIN) {
                 return controlService.getCTLSchemasMetaInfoByTenantId(currentUser.getTenantId());
@@ -2674,13 +2725,198 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throw Utils.handleException(cause);
         }
     }
+    
+    @Override
+    public List<SchemaFqnDto> getTenantCTLSchemaFqns() throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            AuthUserDto currentUser = getCurrentUser();
+            List<CTLSchemaMetaInfoDto> ctlSchemas = controlService.getCTLSchemasMetaInfoByTenantId(currentUser.getTenantId());
+            Set<SchemaFqnDto> ctlSchemaFqns = new HashSet<>();
+            for (CTLSchemaMetaInfoDto ctlSchema : ctlSchemas) {
+                ctlSchemaFqns.add(new SchemaFqnDto(ctlSchema.getFqn(), ctlSchema.getName()));
+            }
+            List<SchemaFqnDto> ctlSchemaFqnsList = new ArrayList<>();
+            ctlSchemaFqnsList.addAll(ctlSchemaFqns);
+            return ctlSchemaFqnsList;
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
+    
+    @Override
+    public CtlSchemaFormDto getCTLSchemaForm(String fqn, Integer version) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            CtlSchemaFormDto ctlSchemaForm = null;
+            AuthUserDto currentUser = getCurrentUser();
+            CTLSchemaDto ctlSchema = null;
+            List<CTLSchemaDto> ctlSchemas = controlService.getCTLSchemasByFqnAndTenantId(fqn, currentUser.getTenantId());
+            Integer maxVersion = Integer.MIN_VALUE;
+            if (ctlSchemas != null && !ctlSchemas.isEmpty()) {
+                for (CTLSchemaDto currentCtlSchema : ctlSchemas) {
+                    Integer currentVersion = currentCtlSchema.getMetaInfo().getVersion();
+                    if (version == null) {
+                        if (currentVersion > maxVersion) {
+                            maxVersion = currentVersion;
+                            ctlSchema = currentCtlSchema;
+                        }
+                    } else if (currentVersion.equals(version)) {
+                        ctlSchema = currentCtlSchema;
+                    }
+                }
+            }
+            if (ctlSchema != null) {
+                ctlSchemaForm = new CtlSchemaFormDto(fqn);
+                ctlSchemaForm.setCtlSchemaId(ctlSchema.getId());
+                ctlSchemaForm.setSchemaName(ctlSchema.getName());
+                ctlSchemaForm.setDescription(ctlSchema.getDescription());
+                ctlSchemaForm.setCreatedTime(ctlSchema.getCreatedTime());
+                ctlSchemaForm.setCreatedUsername(ctlSchema.getCreatedUsername());
+                ctlSchemaForm.setHasDependencies(ctlSchema.getDependencySet() != null && !ctlSchema.getDependencySet().isEmpty());
+                SchemaFormAvroConverter converter = getCtlSchemaConverterForTenantId(currentUser.getTenantId());
+                RecordField form = converter.createSchemaFormFromSchema(ctlSchema.getBody());
+                ctlSchemaForm.setSchema(form);
+                List<Integer> availableVersions = form.getContext().getAvailableVersions(new Fqn(fqn));
+                Collections.sort(availableVersions);
+                ctlSchemaForm.setAvailableVersions(availableVersions);
+            }
+            return ctlSchemaForm;
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
+    
+    @Override
+    public CtlSchemaFormDto createNewCTLSchemaFormInstance(String sourceFqn, Integer sourceVersion) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            AuthUserDto currentUser = getCurrentUser();
+            SchemaFormAvroConverter converter = getCtlSchemaConverterForTenantId(currentUser.getTenantId());
+            CTLSchemaInfoDto sourceCtlSchema = null;
+            if (!isEmpty(sourceFqn) && sourceVersion != null) {
+                sourceCtlSchema = getCTLSchemaByFqnAndVersion(sourceFqn, sourceVersion);
+            }
+            CtlSchemaFormDto ctlSchemaForm = null;
+            if (sourceCtlSchema != null) {
+                ctlSchemaForm = new CtlSchemaFormDto(sourceFqn);
+                ctlSchemaForm.setSchemaName(sourceCtlSchema.getName());
+                ctlSchemaForm.setDescription(sourceCtlSchema.getDescription());
+                RecordField form = converter.createSchemaFormFromSchema(sourceCtlSchema.getBody());
+                form.updateVersion(form.getContext().getMaxVersion(new Fqn(sourceFqn))+1);
+                ctlSchemaForm.setSchema(form);
+            } else {
+                ctlSchemaForm = new CtlSchemaFormDto();
+                RecordField form = converter.getEmptySchemaFormInstance();
+                form.updateVersion(1);
+                ctlSchemaForm.setSchema(form);
+            }
+            return ctlSchemaForm;
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
+
+    @Override
+    public RecordField generateCtlSchemaForm(String fileItemName)
+            throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            byte[] data = getFileContent(fileItemName);
+            String avroSchema = new String(data);
+            SchemaFormAvroConverter converter = getCtlSchemaConverterForTenantId(getCurrentUser().getTenantId());
+            RecordField form = converter.createSchemaFormFromSchema(avroSchema);
+            if (form.getVersion() == null) {
+                form.updateVersion(1);
+            }
+            return form;
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
+    public CtlSchemaFormDto saveCTLSchemaForm(CtlSchemaFormDto ctlSchemaForm) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            AuthUserDto currentUser = getCurrentUser();
+            CTLSchemaInfoDto ctlSchemaInfo = null;
+            if (!isEmpty(ctlSchemaForm.getCtlSchemaId())) {
+                ctlSchemaInfo = getCTLSchemaById(ctlSchemaForm.getCtlSchemaId());
+                if (ctlSchemaInfo == null) {
+                    throw new KaaAdminServiceException(
+                            "Requested item was not found!",
+                            ServiceErrorCode.ITEM_NOT_FOUND);
+                }
+            } else {
+                ctlSchemaInfo = new CTLSchemaInfoDto();
+            }
+            ctlSchemaInfo.setName(ctlSchemaForm.getSchemaName());
+            ctlSchemaInfo.setDescription(ctlSchemaForm.getDescription());
+
+            if (isEmpty(ctlSchemaInfo.getId())) {
+                ctlSchemaInfo.setCreatedUsername(currentUser.getUsername());
+                RecordField schemaForm = ctlSchemaForm.getSchema();
+                ctlSchemaInfo.setFqn(schemaForm.getDeclaredFqn().getFqnString());
+                ctlSchemaInfo.setVersion(schemaForm.getVersion());
+                List<FqnVersion> dependenciesList = schemaForm.getContext().getCtlDependenciesList();
+                Set<CTLSchemaMetaInfoDto> dependencies = new HashSet<>();
+                for (FqnVersion fqnVersion : dependenciesList) {
+                    dependencies.add(new CTLSchemaMetaInfoDto(fqnVersion.getFqnString(), fqnVersion.getVersion()));
+                }
+                ctlSchemaInfo.setDependencies(dependencies);
+                ctlSchemaInfo.setTenantId(currentUser.getTenantId());
+                ctlSchemaInfo.setScope(CTLSchemaScopeDto.TENANT);
+                
+                SchemaFormAvroConverter converter = getCtlSchemaConverterForTenantId(currentUser.getTenantId());
+                Schema avroSchema = converter.createSchemaFromSchemaForm(schemaForm);
+                String schemaBody = SchemaFormAvroConverter.createSchemaString(avroSchema, true);
+                ctlSchemaInfo.setBody(schemaBody);
+            }
+            
+            CTLSchemaInfoDto savedCtlSchemaInfo = saveCTLSchema(ctlSchemaInfo);
+            if (savedCtlSchemaInfo != null) {
+                CtlSchemaFormDto result = new CtlSchemaFormDto(savedCtlSchemaInfo.getFqn());
+                result.setVersion(savedCtlSchemaInfo.getVersion());
+                result.setSchemaName(savedCtlSchemaInfo.getName());
+                result.setDescription(savedCtlSchemaInfo.getDescription());
+                result.setCreatedTime(savedCtlSchemaInfo.getCreatedTime());
+                result.setCreatedUsername(savedCtlSchemaInfo.getCreatedUsername());
+                SchemaFormAvroConverter converter = getCtlSchemaConverterForTenantId(currentUser.getTenantId());
+                RecordField form = converter.createSchemaFormFromSchema(savedCtlSchemaInfo.getBody());
+                result.setSchema(form);
+                List<Integer> availableVersions = form.getContext().getAvailableVersions(new Fqn(savedCtlSchemaInfo.getFqn()));
+                Collections.sort(availableVersions);
+                result.setAvailableVersions(availableVersions);
+                return result;
+            }
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+        return null;
+    }
+    
+    private SchemaFormAvroConverter getCtlSchemaConverterForTenantId(String tenantId) throws KaaAdminServiceException {
+        try {
+            final Map<Fqn, List<Integer>> ctlTypes = controlService.getAvailableCTLSchemaVersionsByTenantId(tenantId);
+            CtlSource ctlSource = new CtlSource() {
+                @Override
+                public Map<Fqn, List<Integer>> getCtlTypes() {
+                    return ctlTypes;
+                }
+            };
+            return new SchemaFormAvroConverter(ctlSource);
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
 
     @Override
     public FileData exportCTLSchema(String fqn, int version, CTLSchemaExportMethod method) throws KaaAdminServiceException {
         try {
             this.checkCTLSchemaFqn(fqn);
             this.checkCTLSchemaVersion(version);
-            String tenantId = this.getCurrentUser().getTenantId();
+            String tenantId = getCurrentUser().getTenantId();
             CTLSchemaDto schemaFound = controlService.getCTLSchemaByFqnVersionAndTenantId(fqn, version, tenantId);
             Utils.checkNotNull(schemaFound);
             if (schemaFound.getMetaInfo().getScope() != CTLSchemaScopeDto.SYSTEM) {
@@ -2700,6 +2936,26 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throw Utils.handleException(cause);
         }
     }
+    
+    @Override
+    public String prepareCTLSchemaExport(String fqn, int version,
+            CTLSchemaExportMethod method) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            this.checkCTLSchemaFqn(fqn);
+            this.checkCTLSchemaVersion(version);
+            String tenantId = getCurrentUser().getTenantId();
+            CTLSchemaDto schemaFound = controlService.getCTLSchemaByFqnVersionAndTenantId(fqn, version, tenantId);
+            Utils.checkNotNull(schemaFound);
+            if (schemaFound.getMetaInfo().getScope() != CTLSchemaScopeDto.SYSTEM) {
+                this.checkCTLAuthority(schemaFound);
+            }
+            CtlSchemaExportKey key = new CtlSchemaExportKey(fqn, version, method);
+            return Base64.encodeObject(key, Base64.URL_SAFE);
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
 
     public SdkProfileDto checkSdkProfileId(String sdkProfileId) throws KaaAdminServiceException {
         try {
@@ -2713,4 +2969,6 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throw Utils.handleException(cause);
         }
     }
+
+
 }

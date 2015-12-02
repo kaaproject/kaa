@@ -16,12 +16,15 @@
 
 package org.kaaproject.kaa.server.admin.services.util;
 
+import org.kaaproject.kaa.server.admin.services.entity.AuthUserDto;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.kaaproject.kaa.server.admin.shared.services.ServiceErrorCode;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
 import org.kaaproject.kaa.server.common.dao.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 public class Utils {
 
@@ -68,4 +71,12 @@ public class Utils {
         return reference;
     }
 
+    public static AuthUserDto getCurrentUser() throws KaaAdminServiceException {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication.getPrincipal() instanceof AuthUserDto) {
+            return (AuthUserDto) authentication.getPrincipal();
+        } else {
+            throw new KaaAdminServiceException("You are not authorized to perform this operation!", ServiceErrorCode.NOT_AUTHORIZED);
+        }
+    }
 }
