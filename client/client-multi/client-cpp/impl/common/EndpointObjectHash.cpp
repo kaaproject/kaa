@@ -16,6 +16,8 @@
 
 #include <vector>
 
+#include <botan/sha160.h>
+
 #include "kaa/common/EndpointObjectHash.hpp"
 #include "kaa/common/exception/KaaException.hpp"
 
