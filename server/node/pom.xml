@@ -44,6 +44,7 @@
         <script.server.desc>Kaa Node</script.server.desc>
         <script.server.additional.commands></script.server.additional.commands>
         <sdk.path>${project.build.directory}/sdk</sdk.path>
+        <templates.path>${project.build.directory}/conf/sdk</templates.path>
         <script.java.options></script.java.options>
     </properties>
 
@@ -753,6 +754,53 @@
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${sdk.path}/c</outputDirectory>
                                     <destFileName>kaa-client-sdk-${project.version}.tar.gz</destFileName>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>unpack</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.client</groupId>
+                                    <artifactId>client-java-desktop</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>java-sdk-templates</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${templates.path}/java</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.client</groupId>
+                                    <artifactId>client-java-android</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>java-android-sdk-templates</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${templates.path}/java</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.client</groupId>
+                                    <artifactId>client-cpp</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>cpp-sdk-templates</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${templates.path}/cpp</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.client</groupId>
+                                    <artifactId>client-c</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>c-sdk-templates</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${templates.path}/c</outputDirectory>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>
