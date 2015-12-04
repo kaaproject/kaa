@@ -70,6 +70,7 @@ public class KaaClientTest {
     public void beforeTest() throws Exception {
         platformContext = Mockito.mock(KaaClientPlatformContext.class);
         clientProperties = Mockito.mock(KaaClientProperties.class);
+        clientProperties = Mockito.mock(KaaClientProperties.class);
         stateListener = Mockito.mock(KaaClientStateListener.class);
         storage = Mockito.mock(PersistentStorage.class);
 

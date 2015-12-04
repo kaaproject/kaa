@@ -38,16 +38,19 @@ import static org.junit.Assert.*;
 
 public class KaaClientPropertiesStateTest {
 
+    private static final String workDir = "work_dir" + System.getProperty("file.separator");
+
     public static KaaClientProperties getProperties() throws IOException {
-        KaaClientProperties props = new KaaClientProperties(CommonsBase64.getInstance());
-        props.setProperty("state.file_location", "state.properties");
-        props.setProperty("keys.public", "key.public");
-        File pub = new File("key.public");
+        KaaClientProperties props = new KaaClientProperties();
+        props.setProperty("kaa.work_dir", "work_dir/");
+        props.setProperty("state.file_name", "state.properties");
+        props.setProperty("keys.public_name", "key.public");
+        File pub = new File(workDir + "key.public");
         pub.deleteOnExit();
-        props.setProperty("keys.private", "key.private");
-        File priv = new File("key.private");
+        props.setProperty("keys.private_name", "key.private");
+        File priv = new File(workDir + "key.private");
         priv.deleteOnExit();
-        File state = new File("state.properties");
+        File state = new File(workDir + "state.properties");
         state.deleteOnExit();
         props.setProperty(KaaClientProperties.TRANSPORT_POLL_DELAY, "0");
         props.setProperty(KaaClientProperties.TRANSPORT_POLL_PERIOD, "1");
@@ -61,8 +64,8 @@ public class KaaClientPropertiesStateTest {
         KaaClientState state = new KaaClientPropertiesState(new FilePersistentStorage(), CommonsBase64.getInstance(), getProperties());
         state.getPublicKey();
         state.getPrivateKey();
-        File pub = new File("key.public");
-        File priv = new File("key.private");
+        File pub = new File(workDir + "key.public");
+        File priv = new File(workDir + "key.private");
         assertArrayEquals(KeyUtil.getPrivate(priv).getEncoded(), state.getPrivateKey().getEncoded());
         assertArrayEquals(KeyUtil.getPublic(pub).getEncoded(), state.getPublicKey().getEncoded());
         pub.delete();
@@ -161,8 +164,8 @@ public class KaaClientPropertiesStateTest {
     @Test
     public void testClean() throws Exception {
         KaaClientState state = new KaaClientPropertiesState(new FilePersistentStorage(), CommonsBase64.getInstance(), getProperties());
-        File stateProps = new File("state.properties");
-        File statePropsBckp = new File("state.properties_bckp");
+        File stateProps = new File(workDir + "state.properties");
+        File statePropsBckp = new File(workDir + "state.properties_bckp");
         state.persist();
         state.persist();
         assertTrue(stateProps.exists());

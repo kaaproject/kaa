@@ -35,7 +35,11 @@ public class KaaClientPropertiesTest {
     @Test
     public void testGetBootstrapServers() throws Exception {
         System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
-        KaaClientProperties properties = new KaaClientProperties(CommonsBase64.getInstance());
+        KaaClientProperties properties = new KaaClientProperties();
+
+//      /* is it possible to use KaaClientProperties in that's way? */
+        properties.setBase64(CommonsBase64.getInstance());
+
         Map<TransportProtocolId, List<TransportConnectionInfo>> bootstraps = properties.getBootstrapServers();
         assertEquals(1, bootstraps.size());
 
@@ -52,42 +56,42 @@ public class KaaClientPropertiesTest {
     @Test
     public void testGetSdkToken() throws IOException {
         System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
-        KaaClientProperties properties = new KaaClientProperties(CommonsBase64.getInstance());
+        KaaClientProperties properties = new KaaClientProperties();
         assertEquals("O7D+oECY1jhs6qIK8LA0zdaykmQ=", properties.getSdkToken());
     }
 
     @Test
     public void testGetPollDelay() throws IOException {
         System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
-        KaaClientProperties properties = new KaaClientProperties(CommonsBase64.getInstance());
+        KaaClientProperties properties = new KaaClientProperties();
         assertEquals(0, properties.getPollDelay().intValue());
     }
 
     @Test
     public void testGetPollPeriod() throws IOException {
         System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
-        KaaClientProperties properties = new KaaClientProperties(CommonsBase64.getInstance());
+        KaaClientProperties properties = new KaaClientProperties();
         assertEquals(10, properties.getPollPeriod().intValue());
     }
 
     @Test
     public void testGetPollUnit() throws IOException {
         System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
-        KaaClientProperties properties = new KaaClientProperties(CommonsBase64.getInstance());
+        KaaClientProperties properties = new KaaClientProperties();
         assertEquals(TimeUnit.SECONDS, properties.getPollUnit());
     }
 
     @Test
     public void testGetDefaultConfigData() throws IOException {
         System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
-        KaaClientProperties properties = new KaaClientProperties(CommonsBase64.getInstance());
+        KaaClientProperties properties = new KaaClientProperties();
         assertEquals(null, properties.getDefaultConfigData());
     }
 
     @Test
     public void testGetDefaultConfigSchema() throws IOException {
         System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
-        KaaClientProperties properties = new KaaClientProperties(CommonsBase64.getInstance());
+        KaaClientProperties properties = new KaaClientProperties();
         assertEquals(null, properties.getDefaultConfigSchema());
     }
 

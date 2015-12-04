@@ -62,18 +62,16 @@ public class KaaClientProperties extends Properties {
 
     private static final String PROPERTIES_HASH_ALGORITHM = "SHA";
 
-    private final Base64 base64;  
+    private Base64 base64;
 
     private byte[] propertiesHash;
     
-    public KaaClientProperties(Base64 base64, Properties properties) {
+    public KaaClientProperties(Properties properties) {
         super(properties);
-        this.base64 = base64;
     }
 
-    public KaaClientProperties(Base64 base64) throws IOException {
+    public KaaClientProperties() throws IOException {
         super(loadProperties());
-        this.base64 = base64;
     }
 
     private static Properties loadProperties() throws IOException {
@@ -157,7 +155,7 @@ public class KaaClientProperties extends Properties {
                 ProtocolMetaData md = new ProtocolMetaData();
                 md.setAccessPointId(Integer.valueOf(tokens[0]));
                 md.setProtocolVersionInfo(new ProtocolVersionPair(Integer.valueOf(tokens[1]), Integer.valueOf(tokens[2])));
-                md.setConnectionInfo(ByteBuffer.wrap(base64.decodeBase64(tokens[3])));
+                md.setConnectionInfo(ByteBuffer.wrap(getBase64().decodeBase64(tokens[3])));
                 TransportProtocolId key = new TransportProtocolId(md.getProtocolVersionInfo().getId(), md.getProtocolVersionInfo()
                         .getVersion());
                 List<TransportConnectionInfo> serverList = servers.get(key);
@@ -173,7 +171,7 @@ public class KaaClientProperties extends Properties {
 
     public byte[] getDefaultConfigData() {
         String config = getProperty(KaaClientProperties.CONFIG_DATA_DEFAULT);
-        return (config != null) ? base64.decodeBase64(config.getBytes(Charsets.UTF_8)) : null;
+        return (config != null) ? getBase64().decodeBase64(config.getBytes(Charsets.UTF_8)) : null;
     }
 
     public byte[] getDefaultConfigSchema() {
@@ -181,4 +179,11 @@ public class KaaClientProperties extends Properties {
         return (schema != null) ? schema.getBytes(Charsets.UTF_8) : null;
     }
 
+    public Base64 getBase64() {
+        return base64;
+    }
+
+    public void setBase64(Base64 base64) {
+        this.base64 = base64;
+    }
 }

@@ -71,10 +71,14 @@ public class KaaClientPropertiesState implements KaaClientState {
     private static final String IS_REGISTERED = "is_registered";
     private static final String IS_ATTACHED = "is_attached";
 
-    public static final String STATE_FILE_LOCATION = "state.file_location";
-    public static final String CLIENT_PRIVATE_KEY_FILE_LOCATION = "keys.private";
-    public static final String CLIENT_PUBLIC_KEY_FILE_LOCATION = "keys.public";
+    public static final String FILE_SEPARATOR = System.getProperty("file.separator");
+    public static final String WORKING_DIR = "kaa.work_dir";
 
+    public static final String STATE_FILE_NAME = "state.file_name";
+    public static final String CLIENT_PRIVATE_KEY_FILE_NAME = "keys.private_name";
+    public static final String CLIENT_PUBLIC_KEY_FILE_NAME = "keys.public_name";
+
+    public static final String WORKING_DIR_DEFAULT = "client_files" + FILE_SEPARATOR;
     public static final String STATE_FILE_DEFAULT = "state.properties";
     public static final String CLIENT_PRIVATE_KEY_DEFAULT = "key.private";
     public static final String CLIENT_PUBLIC_KEY_DEFAULT = "key.public";
@@ -86,6 +90,7 @@ public class KaaClientPropertiesState implements KaaClientState {
     private final PersistentStorage storage;
     private final Base64 base64;
     private final Properties state;
+    private final String workDirLocation;
     private final String stateFileLocation;
     private final String clientPrivateKeyFileLocation;
     private final String clientPublicKeyFileLocation;
@@ -101,13 +106,24 @@ public class KaaClientPropertiesState implements KaaClientState {
         super();
         this.storage = storage;
         this.base64 = base64;
-        stateFileLocation = properties.containsKey(STATE_FILE_LOCATION) ? properties.getProperty(STATE_FILE_LOCATION) : STATE_FILE_DEFAULT;
 
-        clientPrivateKeyFileLocation = properties.containsKey(CLIENT_PRIVATE_KEY_FILE_LOCATION) ? properties
-                .getProperty(CLIENT_PRIVATE_KEY_FILE_LOCATION) : CLIENT_PRIVATE_KEY_DEFAULT;
+        properties.setBase64(base64);
+        String workDirProperty = properties.getProperty(WORKING_DIR);
+        String workDir = workDirProperty != null && !workDirProperty.isEmpty() ? workDirProperty : WORKING_DIR_DEFAULT;
+        workDirLocation = workDir.endsWith(FILE_SEPARATOR) ? workDir : workDir + FILE_SEPARATOR;
 
-        clientPublicKeyFileLocation = properties.containsKey(CLIENT_PUBLIC_KEY_FILE_LOCATION) ? properties
-                .getProperty(CLIENT_PUBLIC_KEY_FILE_LOCATION) : CLIENT_PUBLIC_KEY_DEFAULT;
+        String stateFileName = properties.getProperty(STATE_FILE_NAME);
+        stateFileLocation = stateFileName != null && !stateFileName.isEmpty() ?
+                workDirLocation + stateFileName : workDirLocation + STATE_FILE_DEFAULT;
+
+        String privateKeyName = properties.getProperty(CLIENT_PRIVATE_KEY_FILE_NAME);
+        clientPrivateKeyFileLocation = privateKeyName != null && !privateKeyName.isEmpty()
+                ? workDirLocation + privateKeyName
+                : workDirLocation + CLIENT_PRIVATE_KEY_DEFAULT;
+
+        String publicKeyName = properties.getProperty(CLIENT_PUBLIC_KEY_FILE_NAME);
+        clientPublicKeyFileLocation = publicKeyName != null && !publicKeyName.isEmpty()
+                ? workDirLocation + publicKeyName : workDirLocation + CLIENT_PUBLIC_KEY_DEFAULT;
 
         LOG.info("Version: '{}', commit hash: '{}'", properties.getBuildVersion(), properties.getCommitHash());
 
