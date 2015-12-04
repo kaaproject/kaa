@@ -55,15 +55,14 @@ std::shared_ptr<ConfigurationSyncRequest> ConfigurationTransport::createConfigur
 
 void ConfigurationTransport::onConfigurationResponse(const ConfigurationSyncResponse &response)
 {
-    if (response.responseStatus != SyncResponseStatus::NO_DELTA) {
-        clientStatus_->setConfigurationSequenceNumber(response.appStateSeqNumber);
-        if (configurationProcessor_ && !response.confDeltaBody.is_null()) {
-            configurationProcessor_->processConfigurationData(response.confDeltaBody.get_bytes()
-                                                            , response.responseStatus == SyncResponseStatus::RESYNC);
-        }
+    clientStatus_->setConfigurationSequenceNumber(response.appStateSeqNumber);
 
-        syncAck();
+    if (configurationProcessor_ && !response.confDeltaBody.is_null()) {
+        configurationProcessor_->processConfigurationData(response.confDeltaBody.get_bytes()
+                                                        , response.responseStatus == SyncResponseStatus::RESYNC);
     }
+
+    syncAck();
 }
 
 }  // namespace kaa
