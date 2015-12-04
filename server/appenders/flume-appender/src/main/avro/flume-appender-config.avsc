@@ -23,14 +23,14 @@
             "type":"int"
         },
         {
-            "name":"clientProfileRequired",
-            "displayName":"Require client profile data",
+            "name":"includeClientProfile",
+            "displayName":"Include client profile data",
             "by_default":false,
-            "type":["boolean", "null"]
+            "type": ["boolean", "null"]
         },
         {
-            "name":"serverProfileRequired",
-            "displayName":"Require server profile data",
+            "name":"includeServerProfile",
+            "displayName":"Include server profile data",
             "by_default":false,
             "type":["boolean", "null"]
         },

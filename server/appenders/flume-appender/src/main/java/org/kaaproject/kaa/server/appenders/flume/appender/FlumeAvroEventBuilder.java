@@ -44,15 +44,18 @@ public class FlumeAvroEventBuilder extends FlumeEventBuilder {
 
     private static final String AVRO_SCHEMA_HEADER_LITERAL = "flume.avro.schema.literal";
 
+    private static final String CLIENT_PROFILE_NOT_SET = "Client profile is not set!";
+    private static final String SERVER_PROFILE_NOT_SET = "Server profile is not set!";
+
     private FlumeEventFormat flumeEventFormat;
-    private boolean clientProfileRequired;
-    private boolean serverProfileRequired;
+    private boolean includeClientProfile;
+    private boolean includeServerProfile;
 
     @Override
     public void init(FlumeConfig configuration) {
         flumeEventFormat = configuration.getFlumeEventFormat();
-        clientProfileRequired = configuration.getClientProfileRequired();
-        serverProfileRequired = configuration.getServerProfileRequired();
+        includeClientProfile = configuration.getIncludeClientProfile();
+        includeServerProfile = configuration.getIncludeServerProfile();
     }
 
     @Override
@@ -76,14 +79,14 @@ public class FlumeAvroEventBuilder extends FlumeEventBuilder {
 
     private Event generateRecordsContainerEvent(String appToken, LogSchema schema, List<LogEvent> logEvents,
                                                 ProfileInfo clientProfile, ProfileInfo serverProfile, RecordHeader header) {
-        if (clientProfile == null && clientProfileRequired) {
-            LOG.error("Can't  generate records container event. Client profile is not set!");
-            throw new RuntimeException("Client profile is not set!");
+        if (clientProfile == null && includeClientProfile) {
+            LOG.error("Can't  generate records container event. " + CLIENT_PROFILE_NOT_SET);
+            throw new RuntimeException(CLIENT_PROFILE_NOT_SET);
         }
 
-        if (serverProfile == null && serverProfileRequired) {
-            LOG.error("Can't  generate records container event. Server profile is not set!");
-            throw new RuntimeException("Server profile is not set!");
+        if (serverProfile == null && includeServerProfile) {
+            LOG.error("Can't  generate records container event. " + SERVER_PROFILE_NOT_SET);
+            throw new RuntimeException(SERVER_PROFILE_NOT_SET);
         }
 
         Event event = null;
@@ -92,20 +95,16 @@ public class FlumeAvroEventBuilder extends FlumeEventBuilder {
         logData.setApplicationToken(appToken);
         logData.setRecordHeader(header);
 
-        if (clientProfileRequired) {
+        if (includeClientProfile) {
             if (clientProfile != null) {
                 logData.setClientProfileBody(clientProfile.getBody());
-            }
-            if (clientProfile != null) {
                 logData.setClientSchemaId(clientProfile.getSchemaId());
             }
         }
 
-        if (serverProfileRequired) {
+        if (includeServerProfile) {
             if (serverProfile != null) {
                 logData.setServerProfileBody(serverProfile.getBody());
-            }
-            if (serverProfile != null) {
                 logData.setServerSchemaId(serverProfile.getSchemaId());
             }
         }
