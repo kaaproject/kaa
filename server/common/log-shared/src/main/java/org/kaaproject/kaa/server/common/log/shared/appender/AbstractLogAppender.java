@@ -262,7 +262,9 @@ public abstract class AbstractLogAppender<T extends SpecificRecordBase> implemen
                     logHeader.setLogSchemaVersion(logEventPack.getLogSchema().getVersion());
                     break;
                 default:
-                    LOG.warn("Current header field [{}] doesn't support", field);
+                    if (LOG.isWarnEnabled()) {
+                        LOG.warn("Current header field [{}] doesn't support", field);
+                    }
                     break;
                 }
             }
