@@ -149,7 +149,13 @@ public interface EndpointService {
      */
     void removeEndpointProfileByKeyHash(byte[] endpointProfileKeyHash);
 
-    CTLDataDto findCtlDataByKeyHash(byte[] keyHash);
+    /**
+     * Find server profile body and schema by keyHash.
+     *
+     * @param endpointProfileKeyHash the endpoint profile key hash
+     * @return the server profile by key hash
+     */
+    CTLDataDto findServerProfileByKeyHash(byte[] keyHash);
 
     /**
      * Remove endpoint profile by application id.
