@@ -23,16 +23,16 @@ public class EndpointProfileDataDto {
     private final String serverProfileBody;
 
     private final int clientProfileSchemaVersion;
-    private final String serverProfileSchemaId;
+    private final String serverProfileCtlSchemaId;
 
     public EndpointProfileDataDto(String id, String endpointKey, int clientProfileSchemaVersion, String clientProfileBody,
-            String serverProfileSchemaId, String serverProfileBody) {
+            String serverProfileCtlSchemaId, String serverProfileBody) {
         super();
         this.id = id;
         this.endpointKey = endpointKey;
         this.clientProfileSchemaVersion = clientProfileSchemaVersion;
         this.clientProfileBody = clientProfileBody;
-        this.serverProfileSchemaId = serverProfileSchemaId;
+        this.serverProfileCtlSchemaId = serverProfileCtlSchemaId;
         this.serverProfileBody = serverProfileBody;
     }
 
@@ -56,15 +56,15 @@ public class EndpointProfileDataDto {
         return clientProfileSchemaVersion;
     }
 
-    public String getServerProfileSchemaId() {
-        return serverProfileSchemaId;
+    public String getServerProfileCtlSchemaId() {
+        return serverProfileCtlSchemaId;
     }
 
     @Override
     public String toString() {
         return "EndpointProfileDataDto [id=" + id + ", endpointKey=" + endpointKey + ", clientProfileBody=" + clientProfileBody
                 + ", serverProfileBody=" + serverProfileBody + ", clientProfileSchemaVersion=" + clientProfileSchemaVersion
-                + ", serverProfileSchemaId=" + serverProfileSchemaId + "]";
+                + ", serverProfileCtlSchemaId=" + serverProfileCtlSchemaId + "]";
     }
 
 }

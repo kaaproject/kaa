@@ -65,6 +65,15 @@ public interface CTLSchemaDao<T> extends SqlDao<T> {
      * @return the CTL schema with the given fully qualified name, version and tenant identifier.
      */
     T findByFqnAndVerAndTenantId(String fqn, Integer version, String tenantId);
+    
+    /**
+     * Find CTL schemas with the given fully qualified name and tenant identifier.
+     *
+     * @param fqn      the fully qualified name.
+     * @param tenantId the tenant identifier.
+     * @return the CTL schemas with the given fully qualified name and tenant identifier.
+     */
+    List<T> findByFqnAndTenantId(String fqn, String tenantId);
 
     /**
      * Remove CTL schemas with the given fully qualified name, version and tenant identifier.

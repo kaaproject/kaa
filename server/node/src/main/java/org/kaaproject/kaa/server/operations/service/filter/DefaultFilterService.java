@@ -19,6 +19,7 @@ package org.kaaproject.kaa.server.operations.service.filter;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
 import org.kaaproject.kaa.server.operations.service.cache.AppVersionKey;
@@ -60,7 +61,7 @@ public class DefaultFilterService implements FilterService {
      * java.lang.String)
      */
     @Override
-    public List<ProfileFilterDto> getAllMatchingFilters(AppVersionKey appProfileVersionKey, String profileBody) {
+    public List<ProfileFilterDto> getAllMatchingFilters(AppVersionKey appProfileVersionKey, EndpointProfileDto profile) {
         ProfileSchemaDto profileSchema = cacheService.getProfileSchemaByAppAndVersion(appProfileVersionKey);
         List<ProfileFilterDto> filters = cacheService.getFilters(appProfileVersionKey);
         LOG.trace("Found {} filters by {}", filters.size(), appProfileVersionKey);
@@ -74,7 +75,7 @@ public class DefaultFilterService implements FilterService {
             }
             LOG.trace("matching profile body with filter {}", filter);
             try {
-                if (filter.matches(profileBody)) {
+                if (filter.matches(profile)) {
                     matchingFilters.add(filterBody);
                     LOG.trace("profile body matched");
                 }
@@ -95,13 +96,13 @@ public class DefaultFilterService implements FilterService {
      * (java.lang.String, java.lang.String)
      */
     @Override
-    public boolean matches(String appToken, String profileFilterId, String profileBody) {
+    public boolean matches(String appToken, String profileFilterId, EndpointProfileDto profile) {
         ProfileFilterDto filterDto = cacheService.getFilter(profileFilterId);
         AppVersionKey appProfileVersionKey = new AppVersionKey(appToken, filterDto.getMajorVersion());
         ProfileSchemaDto profileSchema = cacheService.getProfileSchemaByAppAndVersion(appProfileVersionKey);
         Filter filter = new DefaultFilter(filterDto.getBody(), profileSchema.getSchema());
         LOG.trace("matching profile body with filter {}", filter);
-        return filter.matches(profileBody);
+        return filter.matches(profile);
     }
 
 }

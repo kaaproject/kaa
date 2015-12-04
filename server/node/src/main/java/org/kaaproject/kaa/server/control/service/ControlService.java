@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.server.control.service;
 
+import org.kaaproject.avro.ui.shared.Fqn;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
@@ -59,6 +60,7 @@ import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.control.service.exception.ControlServiceException;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * The Interface ControlService.
@@ -308,7 +310,7 @@ public interface ControlService {
      * @return the server profile schema dto
      * @throws ControlServiceException
      */
-    ServerProfileSchemaDto editServerProfileSchema(ServerProfileSchemaDto serverProfileSchema) throws ControlServiceException;
+    ServerProfileSchemaDto saveServerProfileSchema(ServerProfileSchemaDto serverProfileSchema) throws ControlServiceException;
 
     /**
      * Gets the latest created server profile schema for application.
@@ -1192,6 +1194,10 @@ public interface ControlService {
      * @throws ControlServiceException - if an exception occures.
      */
     List<CTLSchemaDto> getCTLSchemaDependents(String fqn, int version, String tenantId) throws ControlServiceException;
+    
+    List<CTLSchemaDto> getCTLSchemasByFqnAndTenantId(String fqn, String tenantId) throws ControlServiceException;
+    
+    Map<Fqn, List<Integer>> getAvailableCTLSchemaVersionsByTenantId(String tenantId) throws ControlServiceException;
 
     /**
      * Exports the body of a CTL schema.
@@ -1214,6 +1220,17 @@ public interface ControlService {
      * @throws ControlServiceException - if an exception occures.
      */
     FileData exportCTLSchemaFlat(CTLSchemaDto schema) throws ControlServiceException;
+    
+    /**
+     * Exports the body of a CTL schema with all dependencies inline,
+     * recursively.
+     * 
+     * @param schema A CTL schema to export
+     * @return A string containing the body of a CTL schema with all dependencies
+     *         inline, recursively
+     * @throws ControlServiceException - if an exception occures.
+     */
+    String exportCTLSchemaFlatAsString(CTLSchemaDto schema) throws ControlServiceException;
 
     /**
      * Exports the body of a CTL schema with all dependencies as different
@@ -1276,4 +1293,6 @@ public interface ControlService {
      * @throws ControlServiceException the control service exception.
      */
     EndpointProfileViewDto getEndpointProfileViewDtoByEndpointKeyHash(String endpointProfileKeyHash) throws ControlServiceException;
+
+    
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.web.bindery.event.shared.EventBus;
 import com.google.web.bindery.event.shared.SimpleEventBus;
+
 import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
@@ -28,7 +29,7 @@ import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.ServerProfileSchemaViewDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
@@ -46,6 +47,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.BaseListView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BasePropertiesView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseRecordView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseSchemaView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.CtlSchemaView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EcfSchemaView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EcfView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointGroupView;
@@ -68,6 +70,8 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.application.ApplicationsV
 import org.kaaproject.kaa.server.admin.client.mvp.view.config.ConfigurationSchemaViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.config.ConfigurationSchemasViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.config.ConfigurationViewImpl;
+import org.kaaproject.kaa.server.admin.client.mvp.view.ctl.CtlSchemaViewImpl;
+import org.kaaproject.kaa.server.admin.client.mvp.view.ctl.CtlSchemasViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.endpoint.EndpointGroupViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.endpoint.EndpointGroupsViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.endpoint.EndpointProfileViewImpl;
@@ -104,6 +108,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.user.UsersViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.verifier.UserVerifierViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.verifier.UserVerifiersViewImpl;
 import org.kaaproject.kaa.server.admin.shared.config.ConfigurationRecordFormDto;
+import org.kaaproject.kaa.server.admin.shared.schema.SchemaFqnDto;
 
 public class ClientFactoryImpl implements ClientFactory {
 
@@ -138,7 +143,7 @@ public class ClientFactoryImpl implements ClientFactory {
     private final BaseSchemaView profileSchemaView = new ProfileSchemaViewImpl(false);
     private final BaseSchemaView createProfileSchemaView = new ProfileSchemaViewImpl(true);
 
-    private final BaseListView<ServerProfileSchemaDto> serverProfileSchemasView = new ServerProfileSchemasViewImpl();
+    private final BaseListView<ServerProfileSchemaViewDto> serverProfileSchemasView = new ServerProfileSchemasViewImpl();
     private final BaseSchemaView serverProfileSchemaView = new ServerProfileSchemaViewImpl(false);
     private final BaseSchemaView createServerProfileSchemaView = new ServerProfileSchemaViewImpl(true);
 
@@ -193,6 +198,10 @@ public class ClientFactoryImpl implements ClientFactory {
     private final AefMapView createAefMapView = new AefMapViewImpl(true);
 
     private final UpdateUserConfigView updateUserConfigView = new UpdateUserConfigViewImpl();
+    
+    private final BaseListView<SchemaFqnDto> ctlSchemasView = new CtlSchemasViewImpl();
+    private final CtlSchemaView createCtlSchemaView = new CtlSchemaViewImpl(true);
+    private final CtlSchemaView ctlSchemaView = new CtlSchemaViewImpl(false);
 
     private Place homePlace;
 
@@ -302,7 +311,7 @@ public class ClientFactoryImpl implements ClientFactory {
     }
 
     @Override
-    public BaseListView<ServerProfileSchemaDto> getServerProfileSchemasView() {
+    public BaseListView<ServerProfileSchemaViewDto> getServerProfileSchemasView() {
         return serverProfileSchemasView;
     }
 
@@ -509,6 +518,21 @@ public class ClientFactoryImpl implements ClientFactory {
     @Override
     public UpdateUserConfigView getUpdateUserConfigView() {
         return updateUserConfigView;
+    }
+
+    @Override
+    public BaseListView<SchemaFqnDto> getCtlSchemasView() {
+        return ctlSchemasView;
+    }
+
+    @Override
+    public CtlSchemaView getCreateCtlSchemaView() {
+        return createCtlSchemaView;
+    }
+
+    @Override
+    public CtlSchemaView getCtlSchemaView() {
+        return ctlSchemaView;
     }
 
 }

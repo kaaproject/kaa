@@ -78,6 +78,7 @@ import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryCallback;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogSchema;
 import org.kaaproject.kaa.server.common.log.shared.appender.data.BaseLogEventPack;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
+import org.kaaproject.kaa.server.common.thrift.gen.operations.Operation;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
 import org.kaaproject.kaa.server.operations.pojo.SyncContext;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
@@ -161,6 +162,7 @@ public class DefaultAkkaServiceTest {
     private SyncContext simpleResponse;
     private SyncContext noDeltaResponse;
     private SyncContext deltaResponse;
+    private SyncContext deltaResponseWithProfile;
     private SyncContext noDeltaResponseWithTopicState;
     private NotificationDto topicNotification;
     private LogAppenderService logAppenderService;
@@ -174,6 +176,8 @@ public class DefaultAkkaServiceTest {
     private ByteBuffer clientPublicKeyHash;
 
     private ByteBuffer targetPublicKeyHash;
+    
+    private EndpointProfileDto mockProfile;
 
     @Before
     public void before() throws GeneralSecurityException {
@@ -256,7 +260,16 @@ public class DefaultAkkaServiceTest {
         confSyncResponse.setResponseStatus(org.kaaproject.kaa.server.sync.SyncResponseStatus.DELTA);
         response.setConfigurationSync(confSyncResponse);
         deltaResponse = new SyncContext(response);
-
+        
+        response = new ServerSync();
+        response.setStatus(org.kaaproject.kaa.server.sync.SyncStatus.SUCCESS);
+        confSyncResponse = new ConfigurationServerSync();
+        confSyncResponse.setResponseStatus(org.kaaproject.kaa.server.sync.SyncResponseStatus.DELTA);
+        response.setConfigurationSync(confSyncResponse);
+        deltaResponseWithProfile = new SyncContext(response);
+        mockProfile = mock(EndpointProfileDto.class);
+        deltaResponseWithProfile.setEndpointProfile(mockProfile);
+        
         response = new ServerSync();
         response.setRequestId(REQUEST_ID);
         response.setStatus(org.kaaproject.kaa.server.sync.SyncStatus.SUCCESS);
@@ -1571,6 +1584,43 @@ public class DefaultAkkaServiceTest {
         byte[] response = responseConverter.toByteArray(targetSyncResponse);
         byte[] encodedData = targetCrypt.encodeData(response);
         Mockito.verify(targetResponseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(encodedData, true);
+    }
+
+    @Test
+    public void testServerProfileUpdate() throws Exception {
+        ChannelContext channelContextMock = Mockito.mock(ChannelContext.class);
+
+        SyncRequest request = new SyncRequest();
+        request.setRequestId(REQUEST_ID);
+        SyncRequestMetaData md = buildSyncRequestMetaData();
+        request.setSyncRequestMetaData(md);
+
+        ConfigurationSyncRequest csRequest = new ConfigurationSyncRequest();
+        request.setConfigurationSyncRequest(csRequest);
+
+        Mockito.when(cacheService.getEndpointKey(EndpointObjectHash.fromBytes(clientPublicKeyHash.array()))).thenReturn(
+                clientPair.getPublic());
+        whenSync(deltaResponseWithProfile);
+
+        MessageBuilder responseBuilder = Mockito.mock(MessageBuilder.class);
+        ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
+
+        SessionInitMessage message = toSignedRequest(UUID.randomUUID(), ChannelType.SYNC_WITH_TIMEOUT, channelContextMock, request,
+                responseBuilder, errorBuilder);
+        Assert.assertNotNull(akkaService.getActorSystem());
+        akkaService.process(message);
+
+        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).syncProfile(Mockito.any(SyncContext.class),
+                Mockito.any(ProfileClientSync.class));
+
+        Notification thriftNotification = new Notification();
+        thriftNotification.setAppId(APP_ID);
+        thriftNotification.setOp(Operation.UPDATE_SERVER_PROFILE);
+        thriftNotification.setKeyHash(clientPublicKeyHash);
+        akkaService.onNotification(thriftNotification);
+
+        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT*100).atLeastOnce())
+                .getServerEndpointProfile(EndpointObjectHash.fromBytes(clientPublicKeyHash.array()));
     }
 
     private SyncRequestMetaData buildSyncRequestMetaData() {

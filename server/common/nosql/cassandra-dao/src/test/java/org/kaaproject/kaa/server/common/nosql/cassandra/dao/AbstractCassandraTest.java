@@ -18,6 +18,7 @@ package org.kaaproject.kaa.server.common.nosql.cassandra.dao;
 
 import org.cassandraunit.dataset.cql.ClassPathCQLDataSet;
 import org.junit.ClassRule;
+import org.kaaproject.kaa.common.dto.CTLDataDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
@@ -44,7 +45,7 @@ import java.util.UUID;
 
 public class AbstractCassandraTest {
 
-    private static final Random RANDOM = new Random();
+    protected static final Random RANDOM = new Random();
     private static final String TEST_ENDPOINT_GROUP_ID = "124";
 
     @ClassRule
@@ -111,7 +112,15 @@ public class AbstractCassandraTest {
         return configurations;
     }
 
+    protected EndpointProfileDto generateEndpointProfile(CTLDataDto dataDto) {
+        return generateEndpointProfile(null, null, null, null, dataDto);
+    }
+
     protected EndpointProfileDto generateEndpointProfile(String appId, String sdkToken, String accessToken, List<String> topicIds) {
+        return generateEndpointProfile(appId, sdkToken, accessToken, topicIds);
+    }
+
+    protected EndpointProfileDto generateEndpointProfile(String appId, String sdkToken, String accessToken, List<String> topicIds, CTLDataDto ctlDataDto) {
         byte[] keyHash = generateBytes();
 
         if (appId == null) {
@@ -132,6 +141,10 @@ public class AbstractCassandraTest {
         profileDto.setSubscriptions(topicIds);
         profileDto.setEndpointKeyHash(keyHash);
         profileDto.setAccessToken(accessToken);
+        if (ctlDataDto != null) {
+            profileDto.setServerProfileBody(ctlDataDto.getBody());
+            profileDto.setServerProfileCtlSchemaId(ctlDataDto.getCtlSchemaId());
+        }
         return endpointProfileDao.save(new CassandraEndpointProfile(profileDto)).toDto();
     }
 

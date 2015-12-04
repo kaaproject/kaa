@@ -27,10 +27,12 @@ import java.util.UUID;
 
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
+import org.kaaproject.kaa.server.common.thrift.gen.operations.Operation;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
 import org.kaaproject.kaa.server.operations.service.akka.actors.supervision.SupervisionStrategyFactory;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointAwareMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointStopMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.ServerProfileUpdateMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.logs.LogEventPackMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.notification.ThriftNotificationMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.stats.ApplicationActorStatusResponse;
@@ -234,15 +236,17 @@ public class ApplicationActor extends UntypedActor {
         if (notification.isSetNotificationId()) {
             LOG.debug("[{}] Forwarding message to specific topic", applicationToken);
             sendToSpecificTopic(message);
-        } else if (notification.isSetUnicastNotificationId()) {
+        } else if (notification.isSetKeyHash()) {
             LOG.debug("[{}] Forwarding message to specific endpoint", applicationToken);
             sendToSpecificEndpoint(message);
         } else if (notification.isSetAppenderId()) {
             LOG.debug("[{}] Forwarding message to application log actor", applicationToken);
             processLogNotificationMessage(message);
         } else if (notification.isSetUserVerifierToken()) {
-            LOG.debug("[{}] Forwarding message to application log actor", applicationToken);
+            LOG.debug("[{}] Forwarding message to application user verifier actor", applicationToken);
             processUserVerifierNotificationMessage(message);
+        } else if (notification.getKeyHash() != null) {
+
         } else {
             LOG.debug("[{}] Broadcasting message to all endpoints", applicationToken);
             broadcastToAllEndpoints(message);
@@ -290,7 +294,12 @@ public class ApplicationActor extends UntypedActor {
         EndpointObjectHash keyHash = EndpointObjectHash.fromBytes(message.getNotification().getKeyHash());
         ActorMetaData endpointActor = endpointSessions.get(keyHash);
         if (endpointActor != null) {
-            endpointActor.actorRef.tell(NotificationMessage.fromUnicastId(message.getNotification().getUnicastNotificationId()), self());
+            if (message.getNotification().getOp() == Operation.UPDATE_SERVER_PROFILE) {
+                endpointActor.actorRef.tell(new ServerProfileUpdateMessage(), self());
+            } else {
+                endpointActor.actorRef
+                        .tell(NotificationMessage.fromUnicastId(message.getNotification().getUnicastNotificationId()), self());
+            }
         } else {
             LOG.debug("[{}] Can't find endpoint actor that corresponds to {} ", applicationToken, keyHash);
         }

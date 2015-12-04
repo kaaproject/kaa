@@ -25,14 +25,14 @@ import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.user.cellview.client.SafeHtmlHeader;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.cell.ActionButtonCell;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEvent;
-import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.ServerProfileSchemaViewDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.grid.AbstractKaaGrid;
 import org.kaaproject.kaa.server.admin.client.mvp.view.grid.KaaRowAction;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import java.util.Comparator;
 
-public class ServerProfileSchemasGrid<T extends ServerProfileSchemaDto> extends AbstractKaaGrid<T, String> {
+public class ServerProfileSchemasGrid<T extends ServerProfileSchemaViewDto> extends AbstractKaaGrid<T, String> {
 
     private Column<T, T> downloadSchemaColumn;
 
@@ -49,14 +49,14 @@ public class ServerProfileSchemasGrid<T extends ServerProfileSchemaDto> extends 
                 new StringValueProvider<T>() {
                     @Override
                     public String getValue(T item) {
-                        return item.getSchemaDto().getMetaInfo().getVersion() + ".0";
+                        return item.getCtlSchemaDto().getMetaInfo().getVersion() + ".0";
                     }
                 },
                 new Comparator<T>() {
                     @Override
                     public int compare(T o1, T o2) {
-                        return o1.getSchemaDto().getMetaInfo().getVersion()
-                                .compareTo(o2.getSchemaDto().getMetaInfo().getVersion());
+                        return o1.getCtlSchemaDto().getMetaInfo().getVersion()
+                                .compareTo(o2.getCtlSchemaDto().getMetaInfo().getVersion());
                     }
                 },
                 Boolean.FALSE,
@@ -67,13 +67,13 @@ public class ServerProfileSchemasGrid<T extends ServerProfileSchemaDto> extends 
                 new StringValueProvider<T>() {
                     @Override
                     public String getValue(T item) {
-                        return item.getSchemaDto().getName();
+                        return item.getCtlSchemaDto().getName();
                     }
                 },
                 new Comparator<T>() {
                     @Override
                     public int compare(T o1, T o2) {
-                        return o1.getSchemaDto().getName().compareToIgnoreCase(o2.getSchemaDto().getName());
+                        return o1.getCtlSchemaDto().getName().compareToIgnoreCase(o2.getCtlSchemaDto().getName());
                     }
                 },
                 null,
@@ -84,7 +84,7 @@ public class ServerProfileSchemasGrid<T extends ServerProfileSchemaDto> extends 
                 new StringValueProvider<T>() {
                     @Override
                     public String getValue(T item) {
-                        return item.getSchemaDto().getCreatedUsername();
+                        return item.getCtlSchemaDto().getCreatedUsername();
                     }
                 }, 80);
 
@@ -93,13 +93,13 @@ public class ServerProfileSchemasGrid<T extends ServerProfileSchemaDto> extends 
                 new StringValueProvider<T>() {
                     @Override
                     public String getValue(T item) {
-                        return Utils.millisecondsToDateString(item.getCreatedTime());
+                        return Utils.millisecondsToDateString(item.getProfileSchemaDto().getCreatedTime());
                     }
                 },
                 new Comparator<T>() {
                     @Override
                     public int compare(T o1, T o2) {
-                        return o1.getCreatedTime().compareTo(o2.getCreatedTime());
+                        return o1.getProfileSchemaDto().getCreatedTime().compareTo(o2.getProfileSchemaDto().getCreatedTime());
                     }
                 },
                 Boolean.FALSE,
@@ -127,7 +127,7 @@ public class ServerProfileSchemasGrid<T extends ServerProfileSchemaDto> extends 
                 new ActionButtonCell.ActionListener<T>() {
                     @Override
                     public void onItemAction(T value) {
-                        String schemaVersion = value.getId();
+                        String schemaVersion = value.getProfileSchemaDto().getId();
                         RowActionEvent<String> rowDownloadSchemaEvent =
                                 new RowActionEvent<>(schemaVersion, KaaRowAction.DOWNLOAD_SCHEMA);
                         fireEvent(rowDownloadSchemaEvent);

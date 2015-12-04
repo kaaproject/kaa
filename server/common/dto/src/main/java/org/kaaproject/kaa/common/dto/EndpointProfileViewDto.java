@@ -28,7 +28,7 @@ public class EndpointProfileViewDto implements Serializable {
     private EndpointProfileDto endpointProfileDto;
     private EndpointUserDto endpointUserDto;
     private ProfileSchemaDto profileSchemaDto;
-    private ServerProfileSchemaDto serverProfileSchemaDto;
+    private ServerProfileSchemaViewDto serverProfileSchemaDto;
     private RecordField endpointProfileRecord;
     private RecordField serverProfileRecord;
     private List<EndpointGroupDto> groupDtoList;
@@ -60,11 +60,11 @@ public class EndpointProfileViewDto implements Serializable {
         this.profileSchemaDto = profileSchemaDto;
     }
 
-    public ServerProfileSchemaDto getServerProfileSchemaDto() {
+    public ServerProfileSchemaViewDto getServerProfileSchemaDto() {
         return serverProfileSchemaDto;
     }
 
-    public void setServerProfileSchemaDto(ServerProfileSchemaDto serverProfileSchemaDto) {
+    public void setServerProfileSchemaDto(ServerProfileSchemaViewDto serverProfileSchemaDto) {
         this.serverProfileSchemaDto = serverProfileSchemaDto;
     }
 
@@ -113,9 +113,13 @@ public class EndpointProfileViewDto implements Serializable {
             return false;
         if (profileSchemaDto != null ? !profileSchemaDto.equals(that.profileSchemaDto) : that.profileSchemaDto != null)
             return false;
-        if (groupDtoList != null ? !groupDtoList.equals(that.groupDtoList) : that.groupDtoList != null) return false;
+        if (serverProfileSchemaDto != null ? !serverProfileSchemaDto.equals(that.serverProfileSchemaDto) : that.serverProfileSchemaDto != null)
+            return false;
         if (endpointProfileRecord != null ? !endpointProfileRecord.equals(that.endpointProfileRecord) : that.endpointProfileRecord != null)
             return false;
+        if (serverProfileRecord != null ? !serverProfileRecord.equals(that.serverProfileRecord) : that.serverProfileRecord != null)
+            return false;
+        if (groupDtoList != null ? !groupDtoList.equals(that.groupDtoList) : that.groupDtoList != null) return false;
         return !(endpointNotificationTopics != null ? !endpointNotificationTopics.equals(that.endpointNotificationTopics) : that.endpointNotificationTopics != null);
 
     }
@@ -125,8 +129,10 @@ public class EndpointProfileViewDto implements Serializable {
         int result = endpointProfileDto != null ? endpointProfileDto.hashCode() : 0;
         result = 31 * result + (endpointUserDto != null ? endpointUserDto.hashCode() : 0);
         result = 31 * result + (profileSchemaDto != null ? profileSchemaDto.hashCode() : 0);
-        result = 31 * result + (groupDtoList != null ? groupDtoList.hashCode() : 0);
+        result = 31 * result + (serverProfileSchemaDto != null ? serverProfileSchemaDto.hashCode() : 0);
         result = 31 * result + (endpointProfileRecord != null ? endpointProfileRecord.hashCode() : 0);
+        result = 31 * result + (serverProfileRecord != null ? serverProfileRecord.hashCode() : 0);
+        result = 31 * result + (groupDtoList != null ? groupDtoList.hashCode() : 0);
         result = 31 * result + (endpointNotificationTopics != null ? endpointNotificationTopics.hashCode() : 0);
         return result;
     }
@@ -137,8 +143,10 @@ public class EndpointProfileViewDto implements Serializable {
                 "endpointProfileDto=" + endpointProfileDto +
                 ", endpointUserDto=" + endpointUserDto +
                 ", profileSchemaDto=" + profileSchemaDto +
-                ", groupDtoList=" + groupDtoList +
+                ", serverProfileSchemaDto=" + serverProfileSchemaDto +
                 ", endpointProfileRecord=" + endpointProfileRecord +
+                ", serverProfileRecord=" + serverProfileRecord +
+                ", groupDtoList=" + groupDtoList +
                 ", endpointNotificationTopics=" + endpointNotificationTopics +
                 '}';
     }

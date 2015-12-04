@@ -92,6 +92,16 @@ public interface CTLService {
     CTLSchemaDto findCTLSchemaByFqnAndVerAndTenantId(String fqn, Integer version, String tenantId);
 
     /**
+     * Find CTL schemas of the given tenant with the given fully qualified
+     * name.
+     *
+     * @param fqn      the fully qualified name.
+     * @param tenantId the tenant identifier.
+     * @return the CTL schemas with the given fully qualified name.
+     */
+    List<CTLSchemaDto> findCTLSchemasByFqnAndTenantId(String fqn, String tenantId);
+    
+    /**
      * Find a CTL schema of the given application identifier.
      *
      * @param appId

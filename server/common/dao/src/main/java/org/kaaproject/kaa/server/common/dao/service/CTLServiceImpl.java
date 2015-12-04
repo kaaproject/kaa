@@ -1,3 +1,19 @@
+/*
+ * Copyright 2014-2015 CyberVision, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.kaaproject.kaa.server.common.dao.service;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
@@ -153,7 +169,7 @@ public class CTLServiceImpl implements CTLService {
             CTLSchema schema = ctlSchemaDao.findById(ctlSchema.getId());
             if (schema != null) {
                 CTLSchemaMetaInfo metaInfo = schema.getMetaInfo();
-                if (metaInfo.getScope().getLevel() < newScope.getLevel()) {
+                if (metaInfo.getScope().getLevel() <= newScope.getLevel()) {
                     CTLSchemaMetaInfo updated = schemaMetaInfoDao.updateScope(new CTLSchemaMetaInfo(newMetaInfo));
                     if (updated != null) {
                         schema.setMetaInfo(updated);
@@ -211,6 +227,17 @@ public class CTLServiceImpl implements CTLService {
         }
         LOG.debug("Find ctl schema by fqn {} version {} and tenant id {}", fqn, version, tenantId);
         return DaoUtil.getDto(ctlSchemaDao.findByFqnAndVerAndTenantId(fqn, version, tenantId));
+    }
+    
+    @Override
+    public List<CTLSchemaDto> findCTLSchemasByFqnAndTenantId(String fqn,
+            String tenantId) {
+        if (isBlank(fqn)) {
+            throw new IncorrectParameterException("Incorrect parameters for ctl schema request.");
+        }
+        validateSqlId(tenantId, "Incorrect tenant id for ctl schema request.");
+        LOG.debug("Find ctl schema by fqn {} and tenant id {}", fqn, tenantId);
+        return convertDtoList(ctlSchemaDao.findByFqnAndTenantId(fqn, tenantId)); 
     }
 
     @Override
@@ -321,7 +348,9 @@ public class CTLServiceImpl implements CTLService {
         if (!schemas.isEmpty()) {
             metaInfoDtoList = new ArrayList<>(schemas.size());
             for (CTLSchema schema : schemas) {
-                metaInfoDtoList.add(getDto(schema.getMetaInfo()));
+                CTLSchemaMetaInfoDto metaInfoDto = getDto(schema.getMetaInfo());
+                metaInfoDto.setName(schema.getName());
+                metaInfoDtoList.add(metaInfoDto);
             }
         }
         return metaInfoDtoList;

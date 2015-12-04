@@ -23,6 +23,7 @@ import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ApplicationsPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EcfsPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.TenantCtlSchemasPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.TenantsPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.TreePlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.TreePlace.PlaceCell;
@@ -54,9 +55,11 @@ public class NavigationTreeViewModel implements TreeViewModel {
             break;
         case TENANT_DEVELOPER:
             nodes.add(new ApplicationsPlace());
+            nodes.add(new TenantCtlSchemasPlace());
             break;
         case TENANT_USER:
             nodes.add(new ApplicationsPlace());
+            nodes.add(new TenantCtlSchemasPlace());
             break;
         }
     }

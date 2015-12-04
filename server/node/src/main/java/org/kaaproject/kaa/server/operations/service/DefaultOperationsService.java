@@ -34,6 +34,7 @@ import org.kaaproject.kaa.common.endpoint.security.MessageEncoderDecoder;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.common.hash.SHA1HashUtils;
 import org.kaaproject.kaa.server.common.Base64Util;
+import org.kaaproject.kaa.server.common.dao.EndpointService;
 import org.kaaproject.kaa.server.common.dao.UserConfigurationService;
 import org.kaaproject.kaa.server.operations.pojo.GetDeltaRequest;
 import org.kaaproject.kaa.server.operations.pojo.GetDeltaResponse;
@@ -115,6 +116,9 @@ public class DefaultOperationsService implements OperationsService {
 
     @Autowired
     UserConfigurationService userConfigurationService;
+
+    @Autowired
+    EndpointService endpointService;
 
     private String operationServerHash;
 
