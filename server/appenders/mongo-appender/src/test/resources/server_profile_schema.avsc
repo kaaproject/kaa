@@ -4,7 +4,7 @@
 +    "namespace" : "org.kaaproject.kaa",
 +    "fields" : [
 +        {
-+            "name" : "server_field",
++            "name" : "serverField",
 +            "type" : "int"
 +        }
 +    ]

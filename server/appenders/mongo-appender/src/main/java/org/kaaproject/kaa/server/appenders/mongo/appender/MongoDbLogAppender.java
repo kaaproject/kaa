@@ -42,8 +42,8 @@ public class MongoDbLogAppender extends AbstractLogAppender<MongoDbConfig> {
     private String collectionName;
     private boolean closed = false;
 
-    private boolean clientProfileRequired;
-    private boolean serverProfileRequired;
+    private boolean includeClientProfile;
+    private boolean includeServerProfile;
 
     public MongoDbLogAppender() {
         super(MongoDbConfig.class);
@@ -53,16 +53,9 @@ public class MongoDbLogAppender extends AbstractLogAppender<MongoDbConfig> {
     public void doAppend(LogEventPack logEventPack, RecordHeader header, LogDeliveryCallback listener) {
         if (!closed) {
             try {
-                ProfileInfo clientProfile = logEventPack.getClientProfile();
-                if (clientProfile == null && this.clientProfileRequired) {
-                    throw new RuntimeException("Client profile is not set!");
-                }
-
-                ProfileInfo serverProfile = logEventPack.getServerProfile();
-                if (serverProfile == null && serverProfileRequired) {
-                    throw new RuntimeException("Server profile is not set!");
-                }
-
+                ProfileInfo clientProfile = (this.includeClientProfile) ? logEventPack.getClientProfile() : null;
+                ProfileInfo serverProfile = (this.includeServerProfile) ? logEventPack.getServerProfile() : null;
+                
                 LOG.debug("[{}] appending {} logs to mongodb collection", collectionName, logEventPack.getEvents().size());
                 List<LogEventDto> dtos = generateLogEvent(logEventPack, header);
                 LOG.debug("[{}] saving {} objects", collectionName, dtos.size());
@@ -92,8 +85,8 @@ public class MongoDbLogAppender extends AbstractLogAppender<MongoDbConfig> {
         LOG.debug("Initializing new instance of MongoDB log appender");
         try {
             logEventDao = new LogEventMongoDao(configuration);
-            this.clientProfileRequired = configuration.getClientProfileRequired();
-            this.serverProfileRequired = configuration.getServerProfileRequired();
+            this.includeClientProfile = configuration.getIncludeClientProfile();
+            this.includeServerProfile = configuration.getIncludeServerProfile();
             createCollection(appender.getApplicationToken());
         } catch (Exception e) {
             LOG.error("Failed to init MongoDB log appender: ", e);

@@ -68,6 +68,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import com.mongodb.DB;
+import com.mongodb.DBObject;
 import com.mongodb.ServerAddress;
 
 public class MongoDBLogAppenderTest {
@@ -87,6 +88,14 @@ public class MongoDBLogAppenderTest {
 
     private static final String SERVER_PROFILE_SCHEMA_FILE = "server_profile_schema.avsc";
     private static final String SERVER_PROFILE_CONTENT_FILE = "server_profile_content.json";
+
+    // According to the server profile schema file
+    private static final String SERVER_FIELD_KEY = "serverField";
+
+    // According to the server profile content file
+    private static final int SERVER_FIELD_VALUE = 111;
+
+    private static final String SERVER_PROFILE = "serverProfile";
 
     private LogAppender logAppender;
 
@@ -111,6 +120,7 @@ public class MongoDBLogAppenderTest {
 
     @Before
     public void beforeTest() throws Exception {
+        // Do not include client and server profiles by default
         this.initLogAppender(false, false);
     }
 
@@ -210,7 +220,7 @@ public class MongoDBLogAppenderTest {
     }
 
     @Test
-    public void doAppendTest() throws IOException {
+    public void doAppendWithoutServerProfileTest() throws IOException {
         GenericAvroConverter<BasicEndpointProfile> converter = new GenericAvroConverter<BasicEndpointProfile>(BasicEndpointProfile.SCHEMA$);
         BasicEndpointProfile theLog = new BasicEndpointProfile("test");
         List<LogEvent> events = new ArrayList<>();
@@ -232,10 +242,6 @@ public class MongoDBLogAppenderTest {
         BaseLogEventPack logEventPack = new BaseLogEventPack(profileDto, DATE_CREATED, schema.getVersion(), events);
         logEventPack.setLogSchema(schema);
 
-        BaseSchemaInfo schemaInfo = new BaseSchemaInfo(Integer.toString(new Random().nextInt()), this.getResourceAsString(SERVER_PROFILE_SCHEMA_FILE));
-        String body = this.getResourceAsString(SERVER_PROFILE_CONTENT_FILE);
-        logEventPack.setServerProfile(new BaseProfileInfo(schemaInfo, body));
-
         String collectionName = (String) ReflectionTestUtils.getField(logAppender, "collectionName");
         Assert.assertEquals(0, MongoDBTestRunner.getDB().getCollection(collectionName).count());
         TestLogDeliveryCallback callback = new TestLogDeliveryCallback();
@@ -245,15 +251,9 @@ public class MongoDBLogAppenderTest {
         Assert.assertEquals(3, MongoDBTestRunner.getDB().getCollection(collectionName).count());
     }
 
-    /**
-     * This log appender requires server profile data. The test is to check that
-     * log records without a server profile set will not be appended.
-     *
-     * @throws Exception
-     */
     @Test
-    public void doAppendNegativeTest() throws Exception {
-        // Reinitilize the log appender to require server profile data
+    public void doAppendWithServerProfileTest() throws Exception {
+        // Reinitilize the log appender to include server profile data
         this.initLogAppender(false, true);
 
         GenericAvroConverter<BasicEndpointProfile> converter = new GenericAvroConverter<BasicEndpointProfile>(BasicEndpointProfile.SCHEMA$);
@@ -280,10 +280,50 @@ public class MongoDBLogAppenderTest {
         BaseLogEventPack logEventPack = new BaseLogEventPack(profileDto, DATE_CREATED, logSchema.getVersion(), logEvents);
         logEventPack.setLogSchema(logSchema);
 
-        String collectionName = (String) ReflectionTestUtils.getField(this.logAppender, "collectionName");
-        Assert.assertEquals(0, MongoDBTestRunner.getDB().getCollection(collectionName).count());
+        // Add server profile data
+        BaseSchemaInfo schemaInfo = new BaseSchemaInfo(Integer.toString(new Random().nextInt()), this.getResourceAsString(SERVER_PROFILE_SCHEMA_FILE));
+        String body = this.getResourceAsString(SERVER_PROFILE_CONTENT_FILE);
+        logEventPack.setServerProfile(new BaseProfileInfo(schemaInfo, body));
+
         this.logAppender.doAppend(logEventPack, new TestLogDeliveryCallback());
-        Assert.assertEquals(0, MongoDBTestRunner.getDB().getCollection(collectionName).count());
+        String collectionName = (String) ReflectionTestUtils.getField(this.logAppender, "collectionName");
+        DBObject serverProfile = (DBObject) MongoDBTestRunner.getDB().getCollection(collectionName).findOne().get(SERVER_PROFILE);
+        Assert.assertEquals(SERVER_FIELD_VALUE, serverProfile.get(SERVER_FIELD_KEY));
+    }
+
+    @Test
+    public void doAppendWithEmptyServerProfileTest() throws Exception {
+        // Reinitilize the log appender to include server profile data
+        this.initLogAppender(false, true);
+
+        GenericAvroConverter<BasicEndpointProfile> converter = new GenericAvroConverter<BasicEndpointProfile>(BasicEndpointProfile.SCHEMA$);
+        BasicEndpointProfile log = new BasicEndpointProfile("body");
+        List<LogEvent> logEvents = new ArrayList<>();
+
+        LogEvent alpha = new LogEvent();
+        alpha.setLogData(converter.encode(log));
+        logEvents.add(alpha);
+
+        LogEvent beta = new LogEvent();
+        beta.setLogData(converter.encode(log));
+        logEvents.add(alpha);
+
+        LogEvent gamma = new LogEvent();
+        gamma.setLogData(converter.encode(log));
+        logEvents.add(alpha);
+
+        LogSchemaDto logSchemaDto = new LogSchemaDto();
+        logSchemaDto.setSchema(BasicEndpointProfile.SCHEMA$.toString());
+        LogSchema logSchema = new LogSchema(logSchemaDto);
+
+        EndpointProfileDataDto profileDto = new EndpointProfileDataDto("1", ENDPOINT_KEY, 1, "", null, null);
+        BaseLogEventPack logEventPack = new BaseLogEventPack(profileDto, DATE_CREATED, logSchema.getVersion(), logEvents);
+        logEventPack.setLogSchema(logSchema);
+
+        this.logAppender.doAppend(logEventPack, new TestLogDeliveryCallback());
+        String collectionName = (String) ReflectionTestUtils.getField(this.logAppender, "collectionName");
+        DBObject serverProfile = (DBObject) MongoDBTestRunner.getDB().getCollection(collectionName).findOne().get(SERVER_PROFILE);
+        Assert.assertEquals(null, serverProfile);
     }
 
     private static class TestLogDeliveryCallback implements LogDeliveryCallback {
@@ -315,7 +355,7 @@ public class MongoDBLogAppenderTest {
 
     }
 
-    private void initLogAppender(boolean requireClientProfile, boolean requireServerProfile) throws Exception {
+    private void initLogAppender(boolean includeClientProfile, boolean includeServerProfile) throws Exception {
         logAppender = new MongoDbLogAppender();
 
         LogAppenderDto appenderDto = new LogAppenderDto();
@@ -341,8 +381,8 @@ public class MongoDBLogAppenderTest {
         mongoDbConfig.setMongoServers(servers);
         mongoDbConfig.setMongoCredentials(credentials);
         mongoDbConfig.setDbName(dbName);
-        mongoDbConfig.setServerProfileRequired(requireClientProfile);
-        mongoDbConfig.setServerProfileRequired(requireServerProfile);
+        mongoDbConfig.setIncludeClientProfile(includeClientProfile);
+        mongoDbConfig.setIncludeServerProfile(includeServerProfile);
 
         AvroByteArrayConverter<MongoDbConfig> byteConverter = new AvroByteArrayConverter<>(MongoDbConfig.class);
         byte[] rawConfiguration = byteConverter.toByteArray(mongoDbConfig);
