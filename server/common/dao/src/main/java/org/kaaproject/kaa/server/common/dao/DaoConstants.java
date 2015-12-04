@@ -137,11 +137,27 @@ public class DaoConstants {
     public static final String ABSTRACT_STRUCTURE_ENDPOINT_GROUP_ID = ENDPOINT_GROUP_ID;
     public static final String ABSTRACT_STRUCTURE_OPTIMISTIC_LOCK = "optimistic_lock";
 
+    
+    /**
+     * Base schema constants.
+     */
+    public static final String BASE_SCHEMA_TABLE_NAME = "base_schema";
+    public static final String BASE_SCHEMA_VERSION = VERSION;
+    public static final String BASE_SCHEMA_NAME = NAME;
+    public static final String BASE_SCHEMA_DESCRIPTION = DESCRIPTION;
+    public static final String BASE_SCHEMA_CREATED_USERNAME = CREATED_USERNAME;
+    public static final String BASE_SCHEMA_CREATED_TIME = CREATED_TIME;
+    public static final String BASE_SCHEMA_APPLICATION_ID = APPLICATION_ID;
+    public static final String BASE_SCHEMA_CTL_SCHEMA_ID = "ctl_id";
+    // Foreign keys constants.
+    public static final String BASE_SCHEMA_FK_APP_ID = "fk_server_pf_schema_app_id";
+    public static final String BASE_SCHEMA_FK_CTL_SCHEMA_ID = "fk_server_pf_schema_ctl_id";
+    
     /**
      * Profile schema constants.
      */
     public static final String PROFILE_SCHEMA_TABLE_NAME = "profile_schema";
-
+    
     /**
      * Server profile schema constants.
      */
@@ -190,7 +206,7 @@ public class DaoConstants {
     public static final String SCHEMA_CREATED_TIME = CREATED_TIME;
     public static final String SCHEMA_ENDPOINT_COUNT = ENDPOINT_COUNT;
     public static final String SCHEMA_APPLICATION_ID = APPLICATION_ID;
-
+    
     /**
      * Configuration schema constants.
      */

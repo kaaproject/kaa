@@ -28,7 +28,7 @@ public class EndpointProfileViewDto implements Serializable {
     private EndpointProfileDto endpointProfileDto;
     private EndpointUserDto endpointUserDto;
     private ProfileSchemaDto profileSchemaDto;
-    private ServerProfileSchemaViewDto serverProfileSchemaDto;
+    private ServerProfileSchemaDto serverProfileSchemaDto;
     private RecordField endpointProfileRecord;
     private RecordField serverProfileRecord;
     private List<EndpointGroupDto> groupDtoList;
@@ -60,11 +60,11 @@ public class EndpointProfileViewDto implements Serializable {
         this.profileSchemaDto = profileSchemaDto;
     }
 
-    public ServerProfileSchemaViewDto getServerProfileSchemaDto() {
+    public ServerProfileSchemaDto getServerProfileSchemaDto() {
         return serverProfileSchemaDto;
     }
 
-    public void setServerProfileSchemaDto(ServerProfileSchemaViewDto serverProfileSchemaDto) {
+    public void setServerProfileSchemaDto(ServerProfileSchemaDto serverProfileSchemaDto) {
         this.serverProfileSchemaDto = serverProfileSchemaDto;
     }
 

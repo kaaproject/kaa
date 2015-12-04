@@ -47,5 +47,6 @@ public class SimpleWidgetPanel extends LayoutPanel implements AcceptsOneWidget {
         if (w != null) {
             super.add(w);
         }
+        forceLayout();
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,22 +16,15 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view;
 
-import org.kaaproject.avro.ui.gwt.client.widget.ActionsButton;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.RecordPanel;
 
-import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.user.client.ui.HasConstrainedValue;
 import com.google.gwt.user.client.ui.HasValue;
-import com.google.gwt.user.client.ui.ValueListBox;
 
-public interface CtlSchemaView extends BaseDetailsView {
+public interface BaseCtlSchemaView extends BaseDetailsView {
 
-    public HasClickHandlers getCreateNewSchemaVersionButton();
-    
-    public ActionsButton getExportActionsButton();
-
-    public HasClickHandlers getDeleteSchemaVersionButton();
-
-    public ValueListBox<Integer> getVersion();
+    public HasValue<String> getVersion();
 
     public HasValue<String> getName();
 
@@ -40,8 +33,11 @@ public interface CtlSchemaView extends BaseDetailsView {
     public HasValue<String> getCreatedUsername();
 
     public HasValue<String> getCreatedDateTime();
+    
+    public boolean useExistingCtlSchema();
+    
+    public HasConstrainedValue<CTLSchemaMetaInfoDto> getCtlSchemaReference();
 
     public RecordPanel getSchemaForm();
 
 }
-

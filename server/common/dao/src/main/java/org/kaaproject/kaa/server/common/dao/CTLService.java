@@ -92,34 +92,6 @@ public interface CTLService {
     CTLSchemaDto findCTLSchemaByFqnAndVerAndTenantId(String fqn, Integer version, String tenantId);
 
     /**
-     * Find CTL schemas of the given tenant with the given fully qualified
-     * name.
-     *
-     * @param fqn      the fully qualified name.
-     * @param tenantId the tenant identifier.
-     * @return the CTL schemas with the given fully qualified name.
-     */
-    List<CTLSchemaDto> findCTLSchemasByFqnAndTenantId(String fqn, String tenantId);
-    
-    /**
-     * Find a CTL schema of the given application identifier.
-     *
-     * @param appId
-     *            the application identifier.
-     * @return the list of application CTL schemas in the database.
-     */
-    List<CTLSchemaDto> findCTLSchemasByApplicationId(String appId);
-
-    /**
-     * Find a CTL schema of the given tenant identifier.
-     *
-     * @param tenantId
-     *            the tenant identifier.
-     * @return the list of tenant CTL schemas in the database.
-     */
-    List<CTLSchemaDto> findCTLSchemasByTenantId(String tenantId);
-
-    /**
      * Find system CTL schemas available in the database.
      *
      * @return the list of available system CTL schemas in the database.
@@ -161,28 +133,17 @@ public interface CTLService {
      *         identifier.
      */
     List<CTLSchemaMetaInfoDto> findCTLSchemasMetaInfoByApplicationId(String appId);
-
+    
     /**
-     * Find meta information of CTL schemas with the given tenant identifier.
+     * Find meta information of CTL schemas with the given tenant identifier with tenant scope.
      *
      * @param tenantId
      *            the tenant identifier.
      * @return the list of meta information of CTL schemas with tenant
      *         identifier.
      */
-    List<CTLSchemaMetaInfoDto> findCTLSchemasMetaInfoByTenantId(String tenantId);
-
-    /**
-     * Find available CTL schemas for tenant(include system scope) with the
-     * given tenant identifier.
-     *
-     * @param tenantId
-     *            the tenant identifier.
-     * @return the list of available CTL schemas for tenant with given
-     *         identifier.
-     */
-    List<CTLSchemaDto> findAvailableCTLSchemas(String tenantId);
-
+    List<CTLSchemaMetaInfoDto> findTenantCTLSchemasMetaInfoByTenantId(String tenantId);
+    
     /**
      * Find available CTL schemas meta information schemas for tenant(include
      * system scope) with the given tenant identifier.
@@ -193,7 +154,7 @@ public interface CTLService {
      *         with given identifier.
      */
     List<CTLSchemaMetaInfoDto> findAvailableCTLSchemasMetaInfo(String tenantId);
-
+    
     /**
      * Find the dependents CTL schemas from CTL schema with the given schema
      * identifier

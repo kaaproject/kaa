@@ -1133,7 +1133,7 @@ public interface ControlService {
 
     /**
      * Returns meta information about CTL schemas that are tied to a tenant with
-     * the given tenant identifier.
+     * the given tenant identifier and tenant scope.
      * 
      * @param tenantId A tenant identifier
      * 
@@ -1142,8 +1142,8 @@ public interface ControlService {
      * 
      * @throws ControlServiceException - if an exception occures.
      */
-    List<CTLSchemaMetaInfoDto> getCTLSchemasMetaInfoByTenantId(String tenantId) throws ControlServiceException;
-
+    List<CTLSchemaMetaInfoDto> getTenantCTLSchemasMetaInfoByTenantId(String tenantId) throws ControlServiceException;
+    
     /**
      * Returns meta information about CTL schemas that are tied to an
      * application with the given application identifier.
@@ -1195,7 +1195,7 @@ public interface ControlService {
      */
     List<CTLSchemaDto> getCTLSchemaDependents(String fqn, int version, String tenantId) throws ControlServiceException;
     
-    List<CTLSchemaDto> getCTLSchemasByFqnAndTenantId(String fqn, String tenantId) throws ControlServiceException;
+    CTLSchemaDto getLatestCTLSchemaByFqn(String fqn) throws ControlServiceException;
     
     Map<Fqn, List<Integer>> getAvailableCTLSchemaVersionsByTenantId(String tenantId) throws ControlServiceException;
 
@@ -1220,6 +1220,18 @@ public interface ControlService {
      * @throws ControlServiceException - if an exception occures.
      */
     FileData exportCTLSchemaFlat(CTLSchemaDto schema) throws ControlServiceException;
+    
+    /**
+     * Exports the body of a CTL schema as java library with all dependencies inline,
+     * recursively.
+     * 
+     * @param schema
+     *            A CTL schema to export
+     * 
+     * @return A java archive file containing compiled classes of a CTL avro schema with all dependencies
+     *         inline, recursively
+     */
+    FileData exportCTLSchemaFlatAsLibrary(CTLSchemaDto schema) throws ControlServiceException;
     
     /**
      * Exports the body of a CTL schema with all dependencies inline,

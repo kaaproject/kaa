@@ -16,6 +16,27 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.kaaproject.avro.ui.gwt.client.widget.BusyPopup;
+import org.kaaproject.avro.ui.gwt.client.widget.dialog.ConfirmDialog;
+import org.kaaproject.avro.ui.shared.RecordField;
+import org.kaaproject.kaa.common.dto.EndpointGroupDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileRecordFieldDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileViewDto;
+import org.kaaproject.kaa.common.dto.EndpointUserDto;
+import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.TopicDto;
+import org.kaaproject.kaa.server.admin.client.KaaAdmin;
+import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
+import org.kaaproject.kaa.server.admin.client.mvp.place.EndpointProfilePlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.ProfileSchemaPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.ServerProfileSchemaPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointProfileView;
+
 import com.google.common.io.BaseEncoding;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -26,26 +47,6 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.gwt.user.client.ui.Widget;
-import org.kaaproject.avro.ui.gwt.client.widget.BusyPopup;
-import org.kaaproject.avro.ui.gwt.client.widget.dialog.ConfirmDialog;
-import org.kaaproject.avro.ui.shared.RecordField;
-import org.kaaproject.kaa.common.dto.EndpointGroupDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileRecordFieldDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileViewDto;
-import org.kaaproject.kaa.common.dto.EndpointUserDto;
-import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.ServerProfileSchemaViewDto;
-import org.kaaproject.kaa.common.dto.TopicDto;
-import org.kaaproject.kaa.server.admin.client.KaaAdmin;
-import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
-import org.kaaproject.kaa.server.admin.client.mvp.place.EndpointProfilePlace;
-import org.kaaproject.kaa.server.admin.client.mvp.place.ProfileSchemaPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.place.ServerProfileSchemaPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointProfileView;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class EndpointProfileActivity extends
         AbstractDetailsActivity<EndpointProfileViewDto, EndpointProfileView, EndpointProfilePlace> {
@@ -89,7 +90,7 @@ public class EndpointProfileActivity extends
         final EndpointProfileDto profileDto = entity.getEndpointProfileDto();
         EndpointUserDto userDto = entity.getEndpointUserDto();
         final ProfileSchemaDto profileSchemaDto = entity.getProfileSchemaDto();
-        final ServerProfileSchemaViewDto serverProfileSchemaDto = entity.getServerProfileSchemaDto();
+        final ServerProfileSchemaDto serverProfileSchemaDto = entity.getServerProfileSchemaDto();
 
         detailsView.getKeyHash().setValue(BaseEncoding.base64().encode(profileDto.getEndpointKeyHash()));
 
@@ -138,7 +139,7 @@ public class EndpointProfileActivity extends
         }
 
         if (serverProfileSchemaDto != null) {
-            String serverProfName = serverProfileSchemaDto.getCtlSchemaDto().getName();
+            String serverProfName = serverProfileSchemaDto.getName();
             detailsView.getServerProfSchemaName().setText(serverProfName != null ? serverProfName : "");
             serverProfNameClickHandler = detailsView.getServerProfSchemaName().addClickHandler(new ClickHandler() {
                 @Override
@@ -160,14 +161,14 @@ public class EndpointProfileActivity extends
         }));
 
         KaaAdmin.getDataSource().loadServerProfileSchemas(place.getApplicationId(),
-                new AsyncCallback<List<ServerProfileSchemaViewDto>>() {
+                new AsyncCallback<List<ServerProfileSchemaDto>>() {
             @Override
             public void onFailure(Throwable throwable) {
                 org.kaaproject.kaa.server.admin.client.util.Utils.handleException(throwable, detailsView);
             }
 
             @Override
-            public void onSuccess(List<ServerProfileSchemaViewDto> result) {
+            public void onSuccess(List<ServerProfileSchemaDto> result) {
                 if (!result.isEmpty()) {
                     detailsView.getServerSchemasListBox().setValue(result.get(0));
                 }
@@ -176,21 +177,22 @@ public class EndpointProfileActivity extends
         });
 
         registrations.add(detailsView.getServerSchemasListBox().addValueChangeHandler(
-                new ValueChangeHandler<ServerProfileSchemaViewDto>() {
+                new ValueChangeHandler<ServerProfileSchemaDto>() {
             @Override
-            public void onValueChange(ValueChangeEvent<ServerProfileSchemaViewDto> valueChangeEvent) {
-                String schema = valueChangeEvent.getValue().getCtlSchemaDto().getBody();
-                KaaAdmin.getDataSource().generateRecordFromSchemaJson(schema, new AsyncCallback<RecordField>() {
-                    @Override
-                    public void onFailure(Throwable throwable) {
-                        org.kaaproject.kaa.server.admin.client.util.Utils.handleException(throwable, detailsView);
-                    }
-
-                    @Override
-                    public void onSuccess(RecordField recordField) {
-                        detailsView.getServerProfEditor().setValue(recordField);
-                    }
-                });
+            public void onValueChange(ValueChangeEvent<ServerProfileSchemaDto> valueChangeEvent) {
+                String ctlSchemaId = valueChangeEvent.getValue().getCtlSchemaId();
+                //TODO:
+//                KaaAdmin.getDataSource().generateRecordFromSchemaJson(schema, new AsyncCallback<RecordField>() {
+//                    @Override
+//                    public void onFailure(Throwable throwable) {
+//                        org.kaaproject.kaa.server.admin.client.util.Utils.handleException(throwable, detailsView);
+//                    }
+//
+//                    @Override
+//                    public void onSuccess(RecordField recordField) {
+//                        detailsView.getServerProfEditor().setValue(recordField);
+//                    }
+//                });
             }
         }));
 
@@ -212,18 +214,19 @@ public class EndpointProfileActivity extends
             @Override
             public void onClick(ClickEvent clickEvent) {
                 if (detailsView.getServerProfEditor().getValue() != null) {
-                    String schema = detailsView.getServerSchemasListBox().getValue().getCtlSchemaDto().getBody();
-                    KaaAdmin.getDataSource().generateRecordFromSchemaJson(schema, new AsyncCallback<RecordField>() {
-                        @Override
-                        public void onFailure(Throwable throwable) {
-                            org.kaaproject.kaa.server.admin.client.util.Utils.handleException(throwable, detailsView);
-                        }
-
-                        @Override
-                        public void onSuccess(RecordField recordField) {
-                            detailsView.getServerProfEditor().setValue(recordField);
-                        }
-                    });
+                    String schemaId = detailsView.getServerSchemasListBox().getValue().getCtlSchemaId();
+                    //TODO:
+//                    KaaAdmin.getDataSource().generateRecordFromSchemaJson(schema, new AsyncCallback<RecordField>() {
+//                        @Override
+//                        public void onFailure(Throwable throwable) {
+//                            org.kaaproject.kaa.server.admin.client.util.Utils.handleException(throwable, detailsView);
+//                        }
+//
+//                        @Override
+//                        public void onSuccess(RecordField recordField) {
+//                            detailsView.getServerProfEditor().setValue(recordField);
+//                        }
+//                    });
                 }
             }
         }));
@@ -236,7 +239,7 @@ public class EndpointProfileActivity extends
                 endpointProfileRecordFieldDto.setProfileRecord(value);
 
                 final String serverSchemaId = detailsView.getServerSchemasListBox().getValue().getId();
-                final String serverSchemaName = detailsView.getServerSchemasListBox().getValue().getCtlSchemaDto().getName();
+                final String serverSchemaName = detailsView.getServerSchemasListBox().getValue().getName();
                 profileDto.setServerProfileCtlSchemaId(serverSchemaId);
                 endpointProfileRecordFieldDto.setEndpointKeyHash(profileDto.getEndpointKeyHash());
 

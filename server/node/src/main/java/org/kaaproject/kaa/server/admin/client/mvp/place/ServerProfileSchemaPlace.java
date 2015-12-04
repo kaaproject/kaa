@@ -27,7 +27,7 @@ public class ServerProfileSchemaPlace extends AbstractSchemaPlace {
 
     @Override
     public String getName() {
-        return "Server " + Utils.constants.profileSchema();
+        return Utils.constants.serverProfileSchema();
     }
 
     @Override

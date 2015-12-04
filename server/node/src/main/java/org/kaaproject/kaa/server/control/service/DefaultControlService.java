@@ -16,8 +16,11 @@
 
 package org.kaaproject.kaa.server.control.service;
 
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -30,7 +33,6 @@ import org.apache.avro.Schema;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.thrift.TException;
 import org.kaaproject.avro.ui.shared.Fqn;
-import org.kaaproject.avro.ui.gwt.client.util.Utils;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.common.dto.AbstractSchemaDto;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
@@ -59,7 +61,6 @@ import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.ServerProfileSchemaViewDto;
 import org.kaaproject.kaa.common.dto.StructureRecordDto;
 import org.kaaproject.kaa.common.dto.TenantAdminDto;
 import org.kaaproject.kaa.common.dto.TenantDto;
@@ -115,7 +116,7 @@ import org.kaaproject.kaa.server.common.zk.control.ControlNode;
 import org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo;
 import org.kaaproject.kaa.server.common.zk.operations.OperationsNodeListener;
 import org.kaaproject.kaa.server.control.service.exception.ControlServiceException;
-import org.kaaproject.kaa.server.control.service.log.RecordLibraryGenerator;
+import org.kaaproject.kaa.server.control.service.schema.SchemaLibraryGenerator;
 import org.kaaproject.kaa.server.control.service.sdk.SdkGenerator;
 import org.kaaproject.kaa.server.control.service.sdk.SdkGeneratorFactory;
 import org.kaaproject.kaa.server.control.service.sdk.event.EventFamilyMetadata;
@@ -151,6 +152,15 @@ public class DefaultControlService implements ControlService {
 
     /** The Constant DATA_NAME_PATTERN. */
     private static final String DATA_NAME_PATTERN = "kaa-{}-schema-v{}.avsc";
+    
+    /** The Constant LOG_SCHEMA_LIBRARY_NAME_PATTERN. */
+    private static final String LOG_SCHEMA_LIBRARY_NAME_PATTERN = "kaa-record-lib-l{}";
+    
+    /**
+     * A template for naming exported CTL library schemas.
+     * @see #exportCTLSchemaFlatAsLibrary(CTLSchemaDto)
+     */
+    private static final String CTL_LIBRARY_EXPORT_TEMPLATE = "{0}.v{1}";
 
     /** The user service. */
     @Autowired
@@ -566,16 +576,11 @@ public class DefaultControlService implements ControlService {
      */
     @Override
     public ServerProfileSchemaDto saveServerProfileSchema(ServerProfileSchemaDto serverProfileSchema) throws ControlServiceException {
-        if(Utils.isBlank(serverProfileSchema.getId())){
-            if(Utils.isNotBlank(serverProfileSchema.getCtlSchemaId())){
-                return serverProfileService.saveServerProfileSchema(serverProfileSchema);
-            }else{
-                LOG.error("Server profile schema has no CTL schema ID");
-                throw new ControlServiceException("Server profile schema has no CTL schema ID");
-            }
-        }else{
-            LOG.error("Can't edit existing server profile schema with id: {}", serverProfileSchema.getId());
-            throw new ControlServiceException("Can't edit existing server profile schema"); 
+        if (isNotBlank(serverProfileSchema.getCtlSchemaId())) {
+            return serverProfileService.saveServerProfileSchema(serverProfileSchema);
+        } else {
+            LOG.error("Server profile schema has no CTL schema ID");
+            throw new ControlServiceException("Server profile schema has no CTL schema ID");
         }
     }
 
@@ -1092,7 +1097,10 @@ public class DefaultControlService implements ControlService {
             throw new NotFoundException("Log schema not found!");
         }
         try {
-            return RecordLibraryGenerator.generateRecordLibrary(logSchemaVersion, logSchema.getSchema());
+            Schema recordWrapperSchema = RecordWrapperSchemaGenerator.generateRecordWrapperSchema(logSchema.getSchema());
+            String fileName = MessageFormatter.arrayFormat(LOG_SCHEMA_LIBRARY_NAME_PATTERN,
+                    new Object[]{logSchemaVersion}).getMessage();
+            return SchemaLibraryGenerator.generateSchemaLibrary(recordWrapperSchema, fileName);
         } catch (Exception e) {
             LOG.error("Unable to generate Record Structure Library", e);
             throw new ControlServiceException(e);
@@ -2021,8 +2029,8 @@ public class DefaultControlService implements ControlService {
                     serverProfileSchema = dto;
                 }
             }
-
-            viewDto.setServerProfileSchemaDto(new ServerProfileSchemaViewDto(serverProfileSchema, ctlSchemaDto));
+//TODO:
+            //viewDto.setServerProfileSchemaDto(new ServerProfileSchemaViewDto(serverProfileSchema, ctlSchemaDto));
         }
 
         /* Getting notification topics */
@@ -2103,12 +2111,12 @@ public class DefaultControlService implements ControlService {
     public List<CTLSchemaMetaInfoDto> getAvailableCTLSchemasMetaInfoByTenantId(String tenantId) throws ControlServiceException {
         return ctlService.findAvailableCTLSchemasMetaInfo(tenantId);
     }
-
+    
     @Override
-    public List<CTLSchemaMetaInfoDto> getCTLSchemasMetaInfoByTenantId(String tenantId) throws ControlServiceException {
-        return ctlService.findCTLSchemasMetaInfoByTenantId(tenantId);
+    public List<CTLSchemaMetaInfoDto> getTenantCTLSchemasMetaInfoByTenantId(String tenantId) throws ControlServiceException {
+        return ctlService.findTenantCTLSchemasMetaInfoByTenantId(tenantId);
     }
-
+    
     @Override
     public List<CTLSchemaMetaInfoDto> getCTLSchemasMetaInfoByApplicationId(String applicationId) throws ControlServiceException {
         return ctlService.findCTLSchemasMetaInfoByApplicationId(applicationId);
@@ -2130,8 +2138,8 @@ public class DefaultControlService implements ControlService {
     }
 
     @Override
-    public List<CTLSchemaDto> getCTLSchemasByFqnAndTenantId(String fqn, String tenantId) throws ControlServiceException {
-        return ctlService.findCTLSchemasByFqnAndTenantId(fqn, tenantId);
+    public CTLSchemaDto getLatestCTLSchemaByFqn(String fqn) throws ControlServiceException {
+        return ctlService.findLatestCTLSchemaByFqn(fqn);
     }
 
     @Override
@@ -2161,6 +2169,19 @@ public class DefaultControlService implements ControlService {
     }
     
     @Override
+    public FileData exportCTLSchemaFlatAsLibrary(CTLSchemaDto schema) throws ControlServiceException {
+        try {
+            Schema avroSchema = ctlService.flatExportAsSchema(schema);
+            String fileName = MessageFormat.format(CTL_LIBRARY_EXPORT_TEMPLATE, 
+                    schema.getMetaInfo().getFqn(), schema.getMetaInfo().getVersion());
+            return SchemaLibraryGenerator.generateSchemaLibrary(avroSchema, fileName);
+        } catch (Exception e) {
+            LOG.error("Unable to export flat CTL schema as library", e);
+            throw new ControlServiceException(e);
+        }
+    }
+    
+    @Override
     public String exportCTLSchemaFlatAsString(CTLSchemaDto schema) throws ControlServiceException {
         return ctlService.flatExportAsString(schema);
     }
@@ -2169,5 +2190,6 @@ public class DefaultControlService implements ControlService {
     public FileData exportCTLSchemaDeep(CTLSchemaDto schema) throws ControlServiceException {
         return ctlService.deepExport(schema);
     }
+
 
 }

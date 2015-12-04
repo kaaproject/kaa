@@ -16,10 +16,6 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp;
 
-import com.google.gwt.place.shared.Place;
-import com.google.gwt.place.shared.PlaceController;
-import com.google.web.bindery.event.shared.EventBus;
-
 import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
@@ -27,7 +23,7 @@ import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.ServerProfileSchemaViewDto;
+import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
@@ -40,6 +36,7 @@ import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.AddSdkProfileView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.AefMapView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.ApplicationView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.BaseCtlSchemaView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseListView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BasePropertiesView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseRecordView;
@@ -62,6 +59,10 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.UserVerifierView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.UserView;
 import org.kaaproject.kaa.server.admin.shared.config.ConfigurationRecordFormDto;
 import org.kaaproject.kaa.server.admin.shared.schema.SchemaFqnDto;
+
+import com.google.gwt.place.shared.Place;
+import com.google.gwt.place.shared.PlaceController;
+import com.google.web.bindery.event.shared.EventBus;
 
 public interface ClientFactory {
     EventBus getEventBus();
@@ -95,9 +96,9 @@ public interface ClientFactory {
     BaseSchemaView getProfileSchemaView();
     BaseSchemaView getCreateProfileSchemaView();
 
-    BaseListView<ServerProfileSchemaViewDto> getServerProfileSchemasView();
-    BaseSchemaView getServerProfileSchemaView();
-    BaseSchemaView getCreateServerProfileSchemaView();
+    BaseListView<ServerProfileSchemaDto> getServerProfileSchemasView();
+    BaseCtlSchemaView getServerProfileSchemaView();
+    BaseCtlSchemaView getCreateServerProfileSchemaView();
 
     BaseListView<ConfigurationSchemaDto> getConfigurationSchemasView();
     BaseSchemaView getConfigurationSchemaView();

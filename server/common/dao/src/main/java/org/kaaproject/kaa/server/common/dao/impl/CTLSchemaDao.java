@@ -33,12 +33,12 @@ public interface CTLSchemaDao<T> extends SqlDao<T> {
     List<T> findSystemSchemas();
 
     /**
-     * Find CTL schemas with the given tenant identifier.
+     * Find CTL schemas with the given tenant identifier with tenant scope.
      *
      * @param tenantId the tenant identifier.
      * @return the list of CTL schemas with given tenant identifier.
      */
-    List<T> findByTenantId(String tenantId);
+    List<T> findTenantSchemasByTenantId(String tenantId);
 
     /**
      * Find CTL schemas with the given application identifier.
@@ -67,15 +67,6 @@ public interface CTLSchemaDao<T> extends SqlDao<T> {
     T findByFqnAndVerAndTenantId(String fqn, Integer version, String tenantId);
     
     /**
-     * Find CTL schemas with the given fully qualified name and tenant identifier.
-     *
-     * @param fqn      the fully qualified name.
-     * @param tenantId the tenant identifier.
-     * @return the CTL schemas with the given fully qualified name and tenant identifier.
-     */
-    List<T> findByFqnAndTenantId(String fqn, String tenantId);
-
-    /**
      * Remove CTL schemas with the given fully qualified name, version and tenant identifier.
      *
      * @param fqn      the fully qualified name.
@@ -99,4 +90,5 @@ public interface CTLSchemaDao<T> extends SqlDao<T> {
      * @return the list of available schemas.
      */
     List<T> findAvailableSchemas(String tenantId);
+    
 }

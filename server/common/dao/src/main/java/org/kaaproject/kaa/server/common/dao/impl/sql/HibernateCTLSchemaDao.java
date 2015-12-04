@@ -17,6 +17,7 @@
 package org.kaaproject.kaa.server.common.dao.impl.sql;
 
 import org.hibernate.Criteria;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
@@ -27,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -51,6 +53,18 @@ public class HibernateCTLSchemaDao extends HibernateAbstractDao<CTLSchema> imple
     protected Class<CTLSchema> getEntityClass() {
         return CTLSchema.class;
     }
+    
+    private Criterion buildScopeCriterion(CTLSchemaScopeDto... scopes) {
+        List<Criterion> scopeCriterions = new ArrayList<>();
+        for (CTLSchemaScopeDto scope : scopes) {
+              scopeCriterions.add(Restrictions.eq(CTL_SCHEMA_META_INFO_ALIAS_SCOPE, scope));
+        }
+        if (scopeCriterions.size() == 1) {
+            return scopeCriterions.get(0);
+        } else {
+            return Restrictions.or(scopeCriterions.toArray(new Criterion[scopeCriterions.size()]));
+        }
+    }
 
     @Override
     public CTLSchema findByFqnAndVerAndTenantId(String fqn, Integer version, String tenantId) {
@@ -64,7 +78,7 @@ public class HibernateCTLSchemaDao extends HibernateAbstractDao<CTLSchema> imple
                             tenantId != null
                                     ? Restrictions.eq(CTL_SCHEMA_TENANT_ID_ALIAS, Long.valueOf(tenantId))
                                     : Restrictions.isNull(CTL_SCHEMA_TENANT_ID_ALIAS),
-                            Restrictions.eq(CTL_SCHEMA_META_INFO_ALIAS_SCOPE, CTLSchemaScopeDto.SYSTEM))
+                                    buildScopeCriterion(CTLSchemaScopeDto.SYSTEM))
             ));
         }
         if (LOG.isTraceEnabled()) {
@@ -74,29 +88,12 @@ public class HibernateCTLSchemaDao extends HibernateAbstractDao<CTLSchema> imple
         }
         return ctlSchema;
     }
-    
-    @Override
-    public List<CTLSchema> findByFqnAndTenantId(String fqn, String tenantId) {
-        LOG.debug("Searching ctl schemas by fqn [{}] and tenantId [{}]", fqn, tenantId);
-        List<CTLSchema> schemas = null;
-        if (isNotBlank(fqn) && tenantId != null) {
-            schemas = findListByCriterionWithAlias(CTL_SCHEMA_META_INFO_PROPERTY, CTL_SCHEMA_META_INFO_ALIAS, Restrictions.and(
-                    Restrictions.eq(CTL_SCHEMA_TENANT_ID_ALIAS, Long.valueOf(tenantId)),
-                    Restrictions.eq(CTL_SCHEMA_META_INFO_ALIAS_FQN, fqn)));
-        }
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Search result: [{}].", Arrays.toString(schemas.toArray()));
-        } else {
-            LOG.debug("Search result: [{}].", schemas.size());
-        }
-        return schemas;
-    }
 
     @Override
     public List<CTLSchema> findSystemSchemas() {
         LOG.debug("Searching system ctl metadata");
         List<CTLSchema> schemas = findListByCriterionWithAlias(CTL_SCHEMA_META_INFO_PROPERTY, CTL_SCHEMA_META_INFO_ALIAS,
-                Restrictions.eq(CTL_SCHEMA_META_INFO_ALIAS_SCOPE, CTLSchemaScopeDto.SYSTEM));
+                buildScopeCriterion(CTLSchemaScopeDto.SYSTEM));
         if (LOG.isTraceEnabled()) {
             LOG.trace("Search result: [{}].", Arrays.toString(schemas.toArray()));
         } else {
@@ -106,9 +103,11 @@ public class HibernateCTLSchemaDao extends HibernateAbstractDao<CTLSchema> imple
     }
 
     @Override
-    public List<CTLSchema> findByTenantId(String tenantId) {
+    public List<CTLSchema> findTenantSchemasByTenantId(String tenantId) {
         LOG.debug("Searching ctl schemas by tenant id [{}]", tenantId);
-        List<CTLSchema> availableSchemas = findListByCriterion(Restrictions.eq(CTL_SCHEMA_TENANT_ID_ALIAS, Long.valueOf(tenantId)));
+        List<CTLSchema> availableSchemas = findListByCriterionWithAlias(CTL_SCHEMA_META_INFO_PROPERTY, CTL_SCHEMA_META_INFO_ALIAS,
+                Restrictions.and(Restrictions.eq(CTL_SCHEMA_TENANT_ID_ALIAS, Long.valueOf(tenantId)),
+                        buildScopeCriterion(CTLSchemaScopeDto.TENANT)));
         if (LOG.isTraceEnabled()) {
             LOG.trace("[{}] Search result: [{}].", tenantId, Arrays.toString(availableSchemas.toArray()));
         } else {
@@ -171,14 +170,17 @@ public class HibernateCTLSchemaDao extends HibernateAbstractDao<CTLSchema> imple
         LOG.debug("Searching available ctl schemas for tenant with id [{}]", tenantId);
         List<CTLSchema> availableSchemas;
         if (tenantId != null) {
-            availableSchemas = this.findListByCriterion(Restrictions.or(
-                    Restrictions.eq(CTL_SCHEMA_TENANT_ID_ALIAS, Long.valueOf(tenantId)),
-                    Restrictions.isNull(CTL_SCHEMA_TENANT_ID_ALIAS)));
-//                    Restrictions.or(
-//                            Restrictions.eq(CTL_SCHEMA_TENANT_ID_ALIAS, Long.valueOf(tenantId)),
-//                            Restrictions.isNull(CTL_SCHEMA_TENANT_ID_ALIAS)));
+            availableSchemas = this.findListByCriterionWithAlias(CTL_SCHEMA_META_INFO_PROPERTY, CTL_SCHEMA_META_INFO_ALIAS,
+                    Restrictions.and(
+                            Restrictions.or(
+                                            Restrictions.eq(CTL_SCHEMA_TENANT_ID_ALIAS, Long.valueOf(tenantId)),
+                                            Restrictions.isNull(CTL_SCHEMA_TENANT_ID_ALIAS)
+                                           ), 
+                            buildScopeCriterion(CTLSchemaScopeDto.SYSTEM, CTLSchemaScopeDto.TENANT)
+                                    )
+            );
         } else {
-            availableSchemas = this.findListByCriterion(Restrictions.isNull(CTL_SCHEMA_TENANT_ID_ALIAS));
+            availableSchemas = this.findSystemSchemas();
         }
         if (LOG.isTraceEnabled()) {
             LOG.trace("[{}] Search result: [{}].", tenantId, Arrays.toString(availableSchemas.toArray()));
@@ -187,5 +189,5 @@ public class HibernateCTLSchemaDao extends HibernateAbstractDao<CTLSchema> imple
         }
         return availableSchemas;
     }
-
+    
 }

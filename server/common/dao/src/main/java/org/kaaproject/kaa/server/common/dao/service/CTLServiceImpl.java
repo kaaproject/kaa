@@ -230,31 +230,6 @@ public class CTLServiceImpl implements CTLService {
     }
     
     @Override
-    public List<CTLSchemaDto> findCTLSchemasByFqnAndTenantId(String fqn,
-            String tenantId) {
-        if (isBlank(fqn)) {
-            throw new IncorrectParameterException("Incorrect parameters for ctl schema request.");
-        }
-        validateSqlId(tenantId, "Incorrect tenant id for ctl schema request.");
-        LOG.debug("Find ctl schema by fqn {} and tenant id {}", fqn, tenantId);
-        return convertDtoList(ctlSchemaDao.findByFqnAndTenantId(fqn, tenantId)); 
-    }
-
-    @Override
-    public List<CTLSchemaDto> findCTLSchemasByApplicationId(String appId) {
-        validateSqlId(appId, "Incorrect application id for ctl schema request.");
-        LOG.debug("Find ctl schemas by application id {}", appId);
-        return convertDtoList(ctlSchemaDao.findByApplicationId(appId));
-    }
-
-    @Override
-    public List<CTLSchemaDto> findCTLSchemasByTenantId(String tenantId) {
-        validateSqlId(tenantId, "Incorrect tenant id for ctl schema request.");
-        LOG.debug("Find ctl schemas by tenant id {}", tenantId);
-        return convertDtoList(ctlSchemaDao.findByTenantId(tenantId));
-    }
-
-    @Override
     public List<CTLSchemaDto> findSystemCTLSchemas() {
         LOG.debug("Find system ctl schemas");
         return convertDtoList(ctlSchemaDao.findSystemSchemas());
@@ -285,26 +260,20 @@ public class CTLServiceImpl implements CTLService {
         LOG.debug("Find meta info for ctl schemas by application id {}", appId);
         return getMetaInfoFromCTLSchema(ctlSchemaDao.findByApplicationId(appId));
     }
-
+    
     @Override
-    public List<CTLSchemaMetaInfoDto> findCTLSchemasMetaInfoByTenantId(String tenantId) {
+    public List<CTLSchemaMetaInfoDto> findTenantCTLSchemasMetaInfoByTenantId(String tenantId) {
         validateSqlId(tenantId, "Incorrect tenant id for ctl schema request.");
         LOG.debug("Find meta info for ctl schemas by tenant id {}", tenantId);
-        return getMetaInfoFromCTLSchema(ctlSchemaDao.findByTenantId(tenantId));
+        return getMetaInfoFromCTLSchema(ctlSchemaDao.findTenantSchemasByTenantId(tenantId));
     }
-
-    @Override
-    public List<CTLSchemaDto> findAvailableCTLSchemas(String tenantId) {
-        LOG.debug("Find system and tenant scopes ctl schemas by tenant id {}", tenantId);
-        return convertDtoList(ctlSchemaDao.findAvailableSchemas(tenantId));
-    }
-
+    
     @Override
     public List<CTLSchemaMetaInfoDto> findAvailableCTLSchemasMetaInfo(String tenantId) {
         LOG.debug("Find system and tenant scopes ctl schemas by tenant id {}", tenantId);
         return getMetaInfoFromCTLSchema(ctlSchemaDao.findAvailableSchemas(tenantId));
     }
-
+    
     @Override
     public List<CTLSchemaDto> findCTLSchemaDependents(String schemaId) {
         validateSqlId(schemaId, "Incorrect schema id for ctl schema request.");
@@ -421,7 +390,7 @@ public class CTLServiceImpl implements CTLService {
             throw new RuntimeException("An unexpected exception occured: " + cause.toString());
         }
     }
-
+    
     @Override
     public FileData deepExport(CTLSchemaDto schema) {
         try {
@@ -469,4 +438,5 @@ public class CTLServiceImpl implements CTLService {
         }
         return files;
     }
+
 }

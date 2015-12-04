@@ -19,6 +19,7 @@ package org.kaaproject.kaa.server.admin.shared.schema;
 import java.util.List;
 
 import org.kaaproject.avro.ui.shared.RecordField;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
 
 public class CtlSchemaFormDto extends SchemaFqnDto {
 
@@ -26,6 +27,8 @@ public class CtlSchemaFormDto extends SchemaFqnDto {
     
     private String ctlSchemaId;
     private Integer version;
+    private CTLSchemaScopeDto scope;
+    private String applicationId;
     private RecordField schema;
     private boolean hasDependencies;
     
@@ -57,6 +60,22 @@ public class CtlSchemaFormDto extends SchemaFqnDto {
 
     public void setVersion(Integer version) {
         this.version = version;
+    }
+    
+    public CTLSchemaScopeDto getScope() {
+        return scope;
+    }
+
+    public void setScope(CTLSchemaScopeDto scope) {
+        this.scope = scope;
+    }
+    
+    public String getApplicationId() {
+        return applicationId;
+    }
+
+    public void setApplicationId(String applicationId) {
+        this.applicationId = applicationId;
     }
 
     public RecordField getSchema() {

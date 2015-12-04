@@ -16,6 +16,13 @@
 
 package org.kaaproject.kaa.server.common.dao.impl.sql;
 
+import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,17 +36,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/common-dao-test-context.xml")
@@ -125,12 +124,6 @@ public class HibernateCTLSchemaDaoTest extends HibernateAbstractTest {
     public void testFindSystemSchemas() {
         List<CTLSchema> found = ctlSchemaDao.findSystemSchemas();
         Assert.assertEquals(getIdsDto(Arrays.asList(systemSchema)), getIds(found));
-    }
-
-    @Test
-    public void testFindByTenantId() {
-        List<CTLSchema> found = ctlSchemaDao.findByTenantId(tenant.getId());
-        Assert.assertEquals(getIdsDto(Arrays.asList(firstSchema, secondSchema, thirdSchema, fourthSchema, mainSchema)), getIds(found));
     }
 
     @Test

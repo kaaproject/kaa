@@ -16,120 +16,37 @@
 
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
-import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.SERVER_PROFILE_SCHEMA_APP_ID;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.SERVER_PROFILE_SCHEMA_CREATED_TIME;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.SERVER_PROFILE_SCHEMA_CTL_SCHEMA_ID;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.SERVER_PROFILE_SCHEMA_FK_APP_ID;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.SERVER_PROFILE_SCHEMA_FK_CTL_SCHEMA_ID;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.SERVER_PROFILE_SCHEMA_TABLE_NAME;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ForeignKey;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
-import org.kaaproject.kaa.server.common.dao.impl.DaoUtil;
 
 @Entity
 @Table(name = SERVER_PROFILE_SCHEMA_TABLE_NAME)
-public class ServerProfileSchema extends GenericModel<ServerProfileSchemaDto> implements Serializable {
+@OnDelete(action = OnDeleteAction.CASCADE)
+public final class ServerProfileSchema extends BaseSchema<ServerProfileSchemaDto> implements Serializable {
 
-    private static final long serialVersionUID = -1449864115582350072L;
-
-    @Column(name = SERVER_PROFILE_SCHEMA_CREATED_TIME)
-    private Long createdTime;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = SERVER_PROFILE_SCHEMA_APP_ID, foreignKey = @ForeignKey(name = SERVER_PROFILE_SCHEMA_FK_APP_ID))
-    private Application application;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = SERVER_PROFILE_SCHEMA_CTL_SCHEMA_ID, foreignKey = @ForeignKey(name = SERVER_PROFILE_SCHEMA_FK_CTL_SCHEMA_ID))
-    private CTLSchema ctlSchema;
+    private static final long serialVersionUID = -5685244135453079314L;
 
     public ServerProfileSchema() {
     }
 
+    public ServerProfileSchema(Long id) {
+        setId(id);
+    }
+
     public ServerProfileSchema(ServerProfileSchemaDto dto) {
-        this.id = ModelUtils.getLongId(dto);
-        this.createdTime = dto.getCreatedTime();
-        String appId = dto.getApplicationId();
-        if (!isBlank(appId)) {
-            this.application = new Application(ModelUtils.getLongId(appId));
-        }
-    }
-
-    public Long getCreatedTime() {
-        return createdTime;
-    }
-
-    public void setCreatedTime(Long createdTime) {
-        this.createdTime = createdTime;
-    }
-
-    public Application getApplication() {
-        return application;
-    }
-
-    public void setApplication(Application application) {
-        this.application = application;
-    }
-
-    public CTLSchema getCtlSchema() {
-        return ctlSchema;
-    }
-
-    public void setCtlSchema(CTLSchema ctlSchema) {
-        this.ctlSchema = ctlSchema;
+        super(dto);
     }
 
     @Override
     protected ServerProfileSchemaDto createDto() {
         return new ServerProfileSchemaDto();
-    }
-
-    @Override
-    public ServerProfileSchemaDto toDto() {
-        ServerProfileSchemaDto dto = new ServerProfileSchemaDto();
-        dto.setId(getStringId());
-        dto.setApplicationId(ModelUtils.getStringId(application));
-        dto.setCreatedTime(createdTime);
-        dto.setCtlSchemaId(ctlSchema.getStringId());
-        return dto;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        ServerProfileSchema that = (ServerProfileSchema) o;
-
-        if (createdTime != null ? !createdTime.equals(that.createdTime) : that.createdTime != null) return false;
-        if (application != null ? !application.equals(that.application) : that.application != null) return false;
-        return ctlSchema != null ? ctlSchema.equals(that.ctlSchema) : that.ctlSchema == null;
-
-    }
-
-    @Override
-    public int hashCode() {
-        int result = createdTime != null ? createdTime.hashCode() : 0;
-        result = 31 * result + (application != null ? application.hashCode() : 0);
-        result = 31 * result + (ctlSchema != null ? ctlSchema.hashCode() : 0);
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        return "ServerProfileSchema{" +
-                "createdTime=" + createdTime +
-                ", application=" + application +
-                ", ctlSchema=" + ctlSchema +
-                '}';
     }
 }

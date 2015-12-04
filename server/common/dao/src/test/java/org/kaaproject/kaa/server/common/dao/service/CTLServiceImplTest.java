@@ -183,19 +183,6 @@ public class CTLServiceImplTest extends AbstractTest {
     }
 
     @Test
-    public void testFindCTLSchemasByApplicationId() {
-        List<CTLSchemaDto> appSchemas = ctlService.findCTLSchemasByApplicationId(appDto.getId());
-        Assert.assertEquals(Arrays.asList(appSchema), appSchemas);
-    }
-
-    @Test
-    public void testFindCTLSchemasByTenantId() {
-        List<CTLSchemaDto> appSchemas = ctlService.findCTLSchemasByTenantId(tenant.getId());
-        Assert.assertEquals(getIdsDto(Arrays.asList(firstSchema, secondSchema, thirdSchema, fourthSchema, mainSchema, tenantSchema, appSchema)),
-                getIdsDto(appSchemas));
-    }
-
-    @Test
     public void testFindSystemCTLSchemas() {
         List<CTLSchemaDto> appSchemas = ctlService.findSystemCTLSchemas();
         Assert.assertEquals(getIdsDto(Arrays.asList(systemSchema)), getIdsDto(appSchemas));
@@ -211,24 +198,6 @@ public class CTLServiceImplTest extends AbstractTest {
     public void testFindLatestCTLSchemaByFqn() {
         CTLSchemaDto latest = ctlService.findLatestCTLSchemaByFqn(DEFAULT_FQN);
         Assert.assertEquals(Integer.valueOf(80), latest.getMetaInfo().getVersion());
-    }
-
-    @Test
-    public void testFindAvailableCTLSchemas() {
-        List<CTLSchemaDto> appSchemas = ctlService.findAvailableCTLSchemas(tenant.getId());
-        Assert.assertEquals(getIdsDto(allSchemaList), getIdsDto(appSchemas));
-    }
-
-    @Test
-    public void testFindAvailableCTLSchemasMetaInfo() {
-        List<CTLSchemaDto> appSchemas = ctlService.findAvailableCTLSchemas(tenant.getId());
-        Assert.assertEquals(allSchemaList.size(), appSchemas.size());
-    }
-
-    @Test
-    public void testFindCTLSchemaDependents() {
-        List<CTLSchemaDto> appSchemas = ctlService.findAvailableCTLSchemas(tenant.getId());
-        Assert.assertEquals(allSchemaList.size(), appSchemas.size());
     }
 
     @Test

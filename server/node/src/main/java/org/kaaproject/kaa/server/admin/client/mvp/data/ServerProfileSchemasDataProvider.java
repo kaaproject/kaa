@@ -16,20 +16,21 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.data;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
+import java.util.List;
+
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
-import org.kaaproject.kaa.common.dto.ServerProfileSchemaViewDto;
+import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
 import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 
-import java.util.List;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class ServerProfileSchemasDataProvider extends AbstractDataProvider<ServerProfileSchemaViewDto> {
+public class ServerProfileSchemasDataProvider extends AbstractDataProvider<ServerProfileSchemaDto> {
 
     private String applicationId;
 
-    public ServerProfileSchemasDataProvider(AbstractGrid<ServerProfileSchemaViewDto,?> dataGrid,
+    public ServerProfileSchemasDataProvider(AbstractGrid<ServerProfileSchemaDto,?> dataGrid,
                                       HasErrorMessage hasErrorMessage,
                                       String applicationId) {
         super(dataGrid, hasErrorMessage, false);
@@ -39,14 +40,14 @@ public class ServerProfileSchemasDataProvider extends AbstractDataProvider<Serve
 
     @Override
     protected void loadData(final LoadCallback callback) {
-        KaaAdmin.getDataSource().loadServerProfileSchemas(applicationId, new AsyncCallback<List<ServerProfileSchemaViewDto>>() {
+        KaaAdmin.getDataSource().loadServerProfileSchemas(applicationId, new AsyncCallback<List<ServerProfileSchemaDto>>() {
             @Override
             public void onFailure(Throwable caught) {
                 callback.onFailure(caught);
 
             }
             @Override
-            public void onSuccess(List<ServerProfileSchemaViewDto> result) {
+            public void onSuccess(List<ServerProfileSchemaDto> result) {
                 callback.onSuccess(result);
             }
         });

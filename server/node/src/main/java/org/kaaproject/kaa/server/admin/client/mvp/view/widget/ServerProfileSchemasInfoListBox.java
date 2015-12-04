@@ -16,35 +16,36 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.widget;
 
-import com.google.gwt.text.shared.Renderer;
-import com.google.gwt.user.client.ui.ValueListBox;
-import org.kaaproject.kaa.common.dto.ServerProfileSchemaViewDto;
-
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-public class ServerProfileSchemasInfoListBox extends ValueListBox<ServerProfileSchemaViewDto> {
+import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
+
+import com.google.gwt.text.shared.Renderer;
+import com.google.gwt.user.client.ui.ValueListBox;
+
+public class ServerProfileSchemasInfoListBox extends ValueListBox<ServerProfileSchemaDto> {
 
     public ServerProfileSchemasInfoListBox() {
         super(new ServerProfileSchemaInfoRender());
     }
 
     public void reset() {
-        List<ServerProfileSchemaViewDto> emptyList = Collections.emptyList();
+        List<ServerProfileSchemaDto> emptyList = Collections.emptyList();
         setValue(null);
         setAcceptableValues(emptyList);
     }
 
-    static class ServerProfileSchemaInfoRender implements Renderer<ServerProfileSchemaViewDto> {
+    static class ServerProfileSchemaInfoRender implements Renderer<ServerProfileSchemaDto> {
 
         @Override
-        public String render(ServerProfileSchemaViewDto dto) {
-            return dto !=null ? (dto.getCtlSchemaDto().getName()) : "";
+        public String render(ServerProfileSchemaDto dto) {
+            return dto !=null ? (dto.getName()) : "";
         }
 
         @Override
-        public void render(ServerProfileSchemaViewDto dto, Appendable appendable) throws IOException {
+        public void render(ServerProfileSchemaDto dto, Appendable appendable) throws IOException {
             appendable.append(render(dto));
         }
     }

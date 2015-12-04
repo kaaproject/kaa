@@ -26,36 +26,26 @@ public class CtlSchemaExportKey implements Serializable {
     
     public static final String CTL_EXPORT_KEY_PARAMETER = "ctlExportKey";
     
-    private String fqn;
-    private int version;
+    private String ctlSchemaId;
     private CTLSchemaExportMethod exportMethod;
     
     public CtlSchemaExportKey() {
         super();
     }
     
-    public CtlSchemaExportKey(String fqn, int version,
+    public CtlSchemaExportKey(String ctlSchemaId,
             CTLSchemaExportMethod exportMethod) {
         super();
-        this.fqn = fqn;
-        this.version = version;
+        this.ctlSchemaId = ctlSchemaId;
         this.exportMethod = exportMethod;
     }
 
-    public String getFqn() {
-        return fqn;
+    public String getCtlSchemaId() {
+        return ctlSchemaId;
     }
 
-    public void setFqn(String fqn) {
-        this.fqn = fqn;
-    }
-
-    public int getVersion() {
-        return version;
-    }
-
-    public void setVersion(int version) {
-        this.version = version;
+    public void setCtlSchemaId(String ctlSchemaId) {
+        this.ctlSchemaId = ctlSchemaId;
     }
 
     public CTLSchemaExportMethod getExportMethod() {
@@ -71,9 +61,9 @@ public class CtlSchemaExportKey implements Serializable {
         final int prime = 31;
         int result = 1;
         result = prime * result
+                + ((ctlSchemaId == null) ? 0 : ctlSchemaId.hashCode());
+        result = prime * result
                 + ((exportMethod == null) ? 0 : exportMethod.hashCode());
-        result = prime * result + ((fqn == null) ? 0 : fqn.hashCode());
-        result = prime * result + version;
         return result;
     }
 
@@ -89,17 +79,14 @@ public class CtlSchemaExportKey implements Serializable {
             return false;
         }
         CtlSchemaExportKey other = (CtlSchemaExportKey) obj;
-        if (exportMethod != other.exportMethod) {
-            return false;
-        }
-        if (fqn == null) {
-            if (other.fqn != null) {
+        if (ctlSchemaId == null) {
+            if (other.ctlSchemaId != null) {
                 return false;
             }
-        } else if (!fqn.equals(other.fqn)) {
+        } else if (!ctlSchemaId.equals(other.ctlSchemaId)) {
             return false;
         }
-        if (version != other.version) {
+        if (exportMethod != other.exportMethod) {
             return false;
         }
         return true;
@@ -108,14 +95,12 @@ public class CtlSchemaExportKey implements Serializable {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("CtlSchemaExportKey [fqn=");
-        builder.append(fqn);
-        builder.append(", version=");
-        builder.append(version);
+        builder.append("CtlSchemaExportKey [ctlSchemaId=");
+        builder.append(ctlSchemaId);
         builder.append(", exportMethod=");
         builder.append(exportMethod);
         builder.append("]");
         return builder.toString();
     }
-    
+
 }

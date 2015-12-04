@@ -91,6 +91,10 @@ public class CTLSchema extends GenericModel<CTLSchemaDto> implements Serializabl
 
     public CTLSchema() {
     }
+    
+    public CTLSchema(Long id) {
+        this.id = id;
+    }
 
     public CTLSchema(CTLSchemaDto dto) {
         this.id = getLongId(dto.getId());

@@ -16,11 +16,6 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp;
 
-import com.google.gwt.place.shared.Place;
-import com.google.gwt.place.shared.PlaceController;
-import com.google.web.bindery.event.shared.EventBus;
-import com.google.web.bindery.event.shared.SimpleEventBus;
-
 import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
@@ -29,7 +24,7 @@ import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.ServerProfileSchemaViewDto;
+import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
@@ -43,6 +38,7 @@ import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.view.AddSdkProfileView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.AefMapView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.ApplicationView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.BaseCtlSchemaView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseListView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BasePropertiesView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseRecordView;
@@ -110,6 +106,11 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.verifier.UserVerifiersVie
 import org.kaaproject.kaa.server.admin.shared.config.ConfigurationRecordFormDto;
 import org.kaaproject.kaa.server.admin.shared.schema.SchemaFqnDto;
 
+import com.google.gwt.place.shared.Place;
+import com.google.gwt.place.shared.PlaceController;
+import com.google.web.bindery.event.shared.EventBus;
+import com.google.web.bindery.event.shared.SimpleEventBus;
+
 public class ClientFactoryImpl implements ClientFactory {
 
     private final EventBus eventBus = new SimpleEventBus();
@@ -143,9 +144,9 @@ public class ClientFactoryImpl implements ClientFactory {
     private final BaseSchemaView profileSchemaView = new ProfileSchemaViewImpl(false);
     private final BaseSchemaView createProfileSchemaView = new ProfileSchemaViewImpl(true);
 
-    private final BaseListView<ServerProfileSchemaViewDto> serverProfileSchemasView = new ServerProfileSchemasViewImpl();
-    private final BaseSchemaView serverProfileSchemaView = new ServerProfileSchemaViewImpl(false);
-    private final BaseSchemaView createServerProfileSchemaView = new ServerProfileSchemaViewImpl(true);
+    private final BaseListView<ServerProfileSchemaDto> serverProfileSchemasView = new ServerProfileSchemasViewImpl();
+    private final BaseCtlSchemaView serverProfileSchemaView = new ServerProfileSchemaViewImpl(false);
+    private final BaseCtlSchemaView createServerProfileSchemaView = new ServerProfileSchemaViewImpl(true);
 
     private final BaseListView<ConfigurationSchemaDto> configurationSchemasView = new ConfigurationSchemasViewImpl();
     private final BaseSchemaView configurationSchemaView = new ConfigurationSchemaViewImpl(false);
@@ -311,17 +312,17 @@ public class ClientFactoryImpl implements ClientFactory {
     }
 
     @Override
-    public BaseListView<ServerProfileSchemaViewDto> getServerProfileSchemasView() {
+    public BaseListView<ServerProfileSchemaDto> getServerProfileSchemasView() {
         return serverProfileSchemasView;
     }
 
     @Override
-    public BaseSchemaView getServerProfileSchemaView() {
+    public BaseCtlSchemaView getServerProfileSchemaView() {
         return serverProfileSchemaView;
     }
 
     @Override
-    public BaseSchemaView getCreateServerProfileSchemaView() {
+    public BaseCtlSchemaView getCreateServerProfileSchemaView() {
         return createServerProfileSchemaView;
     }
 

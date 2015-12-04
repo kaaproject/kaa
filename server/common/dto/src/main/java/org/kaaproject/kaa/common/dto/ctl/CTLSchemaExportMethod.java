@@ -40,5 +40,11 @@ public enum CTLSchemaExportMethod {
      * Return the body of a CTL schema as a file and all dependencies as
      * different files, recursively.
      */
-    DEEP;
+    DEEP,
+    
+    /**
+     * Return the java archive with compiled classes of a CTL schema with all dependencies,
+     * recursively.
+     */
+    LIBRARY;
 }

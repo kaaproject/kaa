@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.server.common.dao.service;
 
+import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getDto;
@@ -27,24 +28,24 @@ import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.server.common.dao.ServerProfileService;
 import org.kaaproject.kaa.server.common.dao.exception.DatabaseProcessingException;
-import org.kaaproject.kaa.server.common.dao.impl.CTLSchemaDao;
+import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
 import org.kaaproject.kaa.server.common.dao.impl.ServerProfileSchemaDao;
 import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
-import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.ServerProfileSchema;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ServerProfileServiceImpl implements ServerProfileService {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(ServerProfileServiceImpl.class);
 
     @Autowired
     private ServerProfileSchemaDao<ServerProfileSchema> serverProfileSchemaDao;
-
-    @Autowired
-    private CTLSchemaDao<CTLSchema> ctlSchemaDao;
 
     private EndpointProfileDao<EndpointProfile> endpointProfileDao;
 
@@ -52,10 +53,31 @@ public class ServerProfileServiceImpl implements ServerProfileService {
     @Transactional
     public ServerProfileSchemaDto saveServerProfileSchema(ServerProfileSchemaDto dto) {
         Validator.validateObject(dto, "Incorrect server profile schema object.");
-        CTLSchema ctlSchema = ctlSchemaDao.findById(dto.getCtlSchemaId());
-        ServerProfileSchema serverProfileSchema = new ServerProfileSchema(dto);
-        serverProfileSchema.setCtlSchema(ctlSchema);
-        return getDto(serverProfileSchemaDao.save(serverProfileSchema));
+        String appId = dto.getApplicationId();
+        if (isNotBlank(appId)) {
+            String id = dto.getId();
+            if (isBlank(id)) {
+                ServerProfileSchema serverProfileSchema = serverProfileSchemaDao.findLatestByAppId(appId);
+                int version = 0;
+                if (serverProfileSchema != null) {
+                    version = serverProfileSchema.getVersion();
+                }
+                dto.setVersion(++version);
+                dto.setCreatedTime(System.currentTimeMillis());
+            } else {
+                ServerProfileSchemaDto oldServerProfileSchemaDto = getDto(serverProfileSchemaDao.findById(id));
+                if (oldServerProfileSchemaDto != null) {
+                    oldServerProfileSchemaDto.editFields(dto);
+                    dto = oldServerProfileSchemaDto;
+                } else {
+                    LOG.error("Can't find server profile schema with given id [{}].", id);
+                    throw new IncorrectParameterException("Invalid server profile schema id: " + id);
+                }
+            }
+            return getDto(serverProfileSchemaDao.save(new ServerProfileSchema(dto)));
+        } else {
+            throw new IncorrectParameterException("Invalid server profile schema object. Application identifier is not specified!");
+        }
     }
 
     @Override

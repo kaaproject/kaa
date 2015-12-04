@@ -34,7 +34,7 @@ import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.SchemaDto;
-import org.kaaproject.kaa.common.dto.ServerProfileSchemaViewDto;
+import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.StructureRecordDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.admin.RecordKey.RecordFiles;
@@ -44,6 +44,8 @@ import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaExportMethod;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
@@ -61,6 +63,7 @@ import org.kaaproject.kaa.server.admin.shared.properties.PropertiesDto;
 import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaFormDto;
 import org.kaaproject.kaa.server.admin.shared.schema.SchemaFqnDto;
 import org.kaaproject.kaa.server.admin.shared.schema.SchemaInfoDto;
+import org.kaaproject.kaa.server.admin.shared.schema.ServerProfileSchemaViewDto;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceAsync;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -533,32 +536,41 @@ public class DataSource {
                 });
     }
     public void loadServerProfileSchemas(String applicationId,
-                                   final AsyncCallback<List<ServerProfileSchemaViewDto>> callback) {
+                                   final AsyncCallback<List<ServerProfileSchemaDto>> callback) {
         rpcService.getServerProfileSchemasByApplicationId(applicationId,
-                new DataCallback<List<ServerProfileSchemaViewDto>>(callback) {
+                new DataCallback<List<ServerProfileSchemaDto>>(callback) {
                     @Override
-                    protected void onResult(List<ServerProfileSchemaViewDto> result) {
+                    protected void onResult(List<ServerProfileSchemaDto> result) {
                     }
                 });
     }
 
-    public void editServerProfileSchemaForm(ServerProfileSchemaViewDto profileSchema,
+    public void getServerProfileSchemaView(String serverProfileSchemaId,
             final AsyncCallback<ServerProfileSchemaViewDto> callback) {
-        rpcService.editServerProfileSchemaForm(profileSchema,
+        rpcService.getServerProfileSchemaView(serverProfileSchemaId,
                 new DataCallback<ServerProfileSchemaViewDto>(callback) {
                     @Override
                     protected void onResult(ServerProfileSchemaViewDto result) {
-                        eventBus.fireEvent(new DataEvent(ServerProfileSchemaViewDto.class));
                     }
                 });
     }
-
-    public void getServerProfileSchemaForm(String profileSchemaId,
+    
+    public void saveServerProfileSchemaView(ServerProfileSchemaViewDto servderProfileSchema,
             final AsyncCallback<ServerProfileSchemaViewDto> callback) {
-        rpcService.getServerProfileSchemaForm(profileSchemaId,
+        rpcService.saveServerProfileSchemaView(servderProfileSchema,
                 new DataCallback<ServerProfileSchemaViewDto>(callback) {
                     @Override
                     protected void onResult(ServerProfileSchemaViewDto result) {
+                        eventBus.fireEvent(new DataEvent(ServerProfileSchemaDto.class));
+                    }
+                });
+    }
+    
+    public void getAvailableCtlSchemaReferences(final AsyncCallback<List<CTLSchemaMetaInfoDto>> callback) {
+        rpcService.getAvailableTenantCTLSchemaReferences( 
+                new DataCallback<List<CTLSchemaMetaInfoDto>>(callback) {
+                    @Override
+                    protected void onResult(List<CTLSchemaMetaInfoDto> result) {
                     }
                 });
     }
@@ -693,9 +705,10 @@ public class DataSource {
                 });
     }
     
-    public void createNewCTLSchemaFormInstance(String sourceFqn, Integer sourceVersion, 
+    public void createNewCTLSchemaFormInstance(String sourceFqn, Integer sourceVersion, CTLSchemaScopeDto scope,
+            String applicationId,
             final AsyncCallback<CtlSchemaFormDto> callback) {
-        rpcService.createNewCTLSchemaFormInstance(sourceFqn, sourceVersion, 
+        rpcService.createNewCTLSchemaFormInstance(sourceFqn, sourceVersion,  scope, applicationId,
                 new DataCallback<CtlSchemaFormDto>(callback) {
                     @Override
                     protected void onResult(CtlSchemaFormDto result) {
@@ -735,10 +748,9 @@ public class DataSource {
         });
     }
     
-    public void prepareCTLSchemaExport(String fqn, int version, CTLSchemaExportMethod method, 
+    public void prepareCTLSchemaExport(String ctlSchemaId, CTLSchemaExportMethod method, 
             final AsyncCallback<String> callback) {
-        rpcService.prepareCTLSchemaExport(fqn,
-                version, method, new DataCallback<String>(callback) {
+        rpcService.prepareCTLSchemaExport(ctlSchemaId, method, new DataCallback<String>(callback) {
                     @Override
                     protected void onResult(String result) {
                     }

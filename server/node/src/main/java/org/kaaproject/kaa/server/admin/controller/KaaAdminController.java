@@ -42,6 +42,7 @@ import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterRecordDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.SchemaDto;
+import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.admin.AuthResultDto;
 import org.kaaproject.kaa.common.dto.admin.RecordKey;
@@ -54,6 +55,7 @@ import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaExportMethod;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaInfoDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
@@ -553,10 +555,12 @@ public class KaaAdminController {
     /**
      * Saves a CTL schema.
      */
-    @RequestMapping(value = "CTL/saveSchema", params = { "body" }, method = RequestMethod.POST)
+    @RequestMapping(value = "CTL/saveSchema", params = { "body", "scope", "applicationId" }, method = RequestMethod.POST)
     @ResponseBody
-    public CTLSchemaInfoDto saveCTLSchema(@RequestParam String body) throws KaaAdminServiceException {
-        return kaaAdminService.saveCTLSchema(body);
+    public CTLSchemaInfoDto saveCTLSchema(@RequestParam String body, 
+            @RequestParam(required = false) CTLSchemaScopeDto scope,  
+            @RequestParam(required = false) String applicationId) throws KaaAdminServiceException {
+        return kaaAdminService.saveCTLSchema(body, scope, applicationId);
     }
 
     /**
@@ -631,6 +635,36 @@ public class KaaAdminController {
             throw Utils.handleException(cause);
         }
     }
+    
+    /**
+     * Gets the server profile schemas by application id.
+     *
+     */
+    @RequestMapping(value="serverProfileSchemas/{applicationId}", method=RequestMethod.GET)
+    @ResponseBody
+    public List<ServerProfileSchemaDto> getServerProfileSchemasByApplicationId(@PathVariable String applicationId) throws KaaAdminServiceException {
+        return kaaAdminService.getServerProfileSchemasByApplicationId(applicationId);
+    }
+
+    /**
+     * Gets the server profile schema by its id.
+     *
+     */
+    @RequestMapping(value="serverProfileSchema/{serverProfileSchemaId}", method=RequestMethod.GET)
+    @ResponseBody
+    public ServerProfileSchemaDto getServerProfileSchema(@PathVariable String serverProfileSchemaId) throws KaaAdminServiceException {
+        return kaaAdminService.getServerProfileSchema(serverProfileSchemaId);
+    }
+
+    /**
+     * Saves server profile schema.
+     *
+     */
+    @RequestMapping(value="saveServerProfileSchema", method=RequestMethod.POST)
+    @ResponseBody
+    public ServerProfileSchemaDto saveServerProfileSchema(@RequestBody ServerProfileSchemaDto serverProfileSchema) throws KaaAdminServiceException {
+        return kaaAdminService.saveServerProfileSchema(serverProfileSchema);
+    }
 
     /**
      * Gets the profile schemas by application id.
@@ -643,7 +677,7 @@ public class KaaAdminController {
     }
 
     /**
-     * Gets the profile schema by her id.
+     * Gets the profile schema by its id.
      *
      */
     @RequestMapping(value="profileSchema/{profileSchemaId}", method=RequestMethod.GET)
