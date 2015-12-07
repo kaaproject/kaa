@@ -72,16 +72,16 @@ public class KaaClientPropertiesState implements KaaClientState {
     private static final String IS_ATTACHED = "is_attached";
 
     public static final String FILE_SEPARATOR = System.getProperty("file.separator");
-    public static final String WORKING_DIR = "kaa.work_dir";
+    public static final String WORKING_DIR_PROPERTY = "kaa.work_dir";
 
-    public static final String STATE_FILE_NAME = "state.file_name";
-    public static final String CLIENT_PRIVATE_KEY_FILE_NAME = "keys.private_name";
-    public static final String CLIENT_PUBLIC_KEY_FILE_NAME = "keys.public_name";
+    public static final String STATE_FILE_NAME_PROPERTY = "state.file_name";
+    public static final String CLIENT_PRIVATE_KEY_FILE_NAME_PROPERTY = "keys.private_name";
+    public static final String CLIENT_PUBLIC_KEY_FILE_NAME_PROPERTY = "keys.public_name";
 
-    public static final String WORKING_DIR_DEFAULT = "client_files" + FILE_SEPARATOR;
-    public static final String STATE_FILE_DEFAULT = "state.properties";
-    public static final String CLIENT_PRIVATE_KEY_DEFAULT = "key.private";
-    public static final String CLIENT_PUBLIC_KEY_DEFAULT = "key.public";
+    public static final String WORKING_DIR_DEFAULT = "." + FILE_SEPARATOR;
+    public static final String STATE_FILE_NAME_DEFAULT = "state.properties";
+    public static final String CLIENT_PRIVATE_KEY_NAME_DEFAULT = "key.private";
+    public static final String CLIENT_PUBLIC_KEY_NAME_DEFAULT = "key.public";
 
     private static final String EVENT_SEQ_NUM = "event.seq.num";
 
@@ -108,22 +108,20 @@ public class KaaClientPropertiesState implements KaaClientState {
         this.base64 = base64;
 
         properties.setBase64(base64);
-        String workDirProperty = properties.getProperty(WORKING_DIR);
-        String workDir = workDirProperty != null && !workDirProperty.isEmpty() ? workDirProperty : WORKING_DIR_DEFAULT;
+        String workDirProperty = properties.getProperty(WORKING_DIR_PROPERTY);
+        String workDir = isEmpty(workDirProperty) ? workDirProperty : WORKING_DIR_DEFAULT;
         workDirLocation = workDir.endsWith(FILE_SEPARATOR) ? workDir : workDir + FILE_SEPARATOR;
 
-        String stateFileName = properties.getProperty(STATE_FILE_NAME);
-        stateFileLocation = stateFileName != null && !stateFileName.isEmpty() ?
-                workDirLocation + stateFileName : workDirLocation + STATE_FILE_DEFAULT;
+        String stateFileName = properties.getProperty(STATE_FILE_NAME_PROPERTY);
+        stateFileLocation = isEmpty(stateFileName) ? workDirLocation + stateFileName : workDirLocation + STATE_FILE_NAME_DEFAULT;
 
-        String privateKeyName = properties.getProperty(CLIENT_PRIVATE_KEY_FILE_NAME);
-        clientPrivateKeyFileLocation = privateKeyName != null && !privateKeyName.isEmpty()
-                ? workDirLocation + privateKeyName
-                : workDirLocation + CLIENT_PRIVATE_KEY_DEFAULT;
+        String privateKeyName = properties.getProperty(CLIENT_PRIVATE_KEY_FILE_NAME_PROPERTY);
+        clientPrivateKeyFileLocation = isEmpty(privateKeyName) ? workDirLocation + privateKeyName
+                : workDirLocation + CLIENT_PRIVATE_KEY_NAME_DEFAULT;
 
-        String publicKeyName = properties.getProperty(CLIENT_PUBLIC_KEY_FILE_NAME);
-        clientPublicKeyFileLocation = publicKeyName != null && !publicKeyName.isEmpty()
-                ? workDirLocation + publicKeyName : workDirLocation + CLIENT_PUBLIC_KEY_DEFAULT;
+        String publicKeyName = properties.getProperty(CLIENT_PUBLIC_KEY_FILE_NAME_PROPERTY);
+        clientPublicKeyFileLocation = isEmpty(publicKeyName) ? workDirLocation + publicKeyName
+                : workDirLocation + CLIENT_PUBLIC_KEY_NAME_DEFAULT;
 
         LOG.info("Version: '{}', commit hash: '{}'", properties.getBuildVersion(), properties.getCommitHash());
 
@@ -177,6 +175,10 @@ public class KaaClientPropertiesState implements KaaClientState {
             LOG.info("First SDK start");
             setPropertiesHash(properties.getPropertiesHash());
         }
+    }
+
+    private boolean isEmpty(String property) {
+        return property != null && !property.isEmpty();
     }
 
     private void parseNfSubscriptions() {
