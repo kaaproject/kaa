@@ -2699,12 +2699,16 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         try {
             this.checkApplicationId(applicationId);
             org.kaaproject.kaa.common.dto.plugin.PluginDto plugin = controlService.getPluginById(pluginId);
+
+            // Validate plugin configuration
             GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(plugin.getConfSchema());
             converter.decodeJson(configuration);
+
             PluginInstanceDto pluginInstance = new PluginInstanceDto();
             pluginInstance.setName(name == null || name.isEmpty() ? UUID.randomUUID().toString() : name);
             pluginInstance.setPluginDefinition(plugin);
             pluginInstance.setState(PluginInstanceState.ACTIVE);
+
             return controlService.createPluginInstance(pluginInstance);
         } catch (Exception cause) {
             throw Utils.handleException(cause);

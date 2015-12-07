@@ -1682,7 +1682,6 @@ public class KaaAdminController {
         return kaaAdminService.editPluginContract(pluginContract);
     }
 
-    // TODO: Unsure about the mapping
     @RequestMapping(value = "plugins/addPluginContract", params = { "pluginInstanceId" }, method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
     public void addPluginContractToPluginInstance(
