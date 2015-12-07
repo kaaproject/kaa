@@ -52,7 +52,12 @@ import org.kaaproject.kaa.common.dto.event.EventClassType;
 import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
+import org.kaaproject.kaa.common.dto.plugin.PluginContractDto;
+import org.kaaproject.kaa.common.dto.plugin.PluginDto;
+import org.kaaproject.kaa.common.dto.plugin.PluginInstanceDto;
+import org.kaaproject.kaa.common.dto.plugin.PluginInstanceState;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
+import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.kaaproject.kaa.server.control.service.exception.ControlServiceException;
 
 import java.util.List;
@@ -1053,4 +1058,29 @@ public interface ControlService {
      * @throws  ControlServiceException the control service exception.
      */
     EndpointProfileViewDto getEndpointProfileViewDtoByEndpointKeyHash(String endpointProfileKeyHash) throws ControlServiceException;
+
+    public List<PluginDto> getPlugins() throws ControlServiceException;
+
+    public PluginDto getPluginById(String pluginId) throws ControlServiceException;
+
+    public List<PluginInstanceDto> getPluginInstances(String applicationId) throws ControlServiceException;
+
+    public PluginInstanceDto getPluginInstanceById(String instanceId) throws ControlServiceException;
+
+    public PluginInstanceDto createPluginInstance(PluginInstanceDto instance) throws ControlServiceException;
+
+    public void deletePluginInstance(String instanceId) throws ControlServiceException;
+
+    public void setPluginInstanceState(String instanceId, PluginInstanceState state) throws ControlServiceException;
+
+    public List<PluginContractDto> getPluginContracts(String pluginInstanceId) throws ControlServiceException;
+
+    public PluginContractDto getPluginContractById(String pluginContractId) throws ControlServiceException;
+
+    public PluginContractDto editPluginContract(PluginContractDto pluginContract) throws ControlServiceException;
+
+    public void addPluginContractToPluginInstance(String pluginInstanceId, PluginContractDto pluginContract) throws ControlServiceException;
+
+    public void removePluginContractFromPluginInstance(String pluginInstanceId, String pluginContractId) throws ControlServiceException;
+
 }

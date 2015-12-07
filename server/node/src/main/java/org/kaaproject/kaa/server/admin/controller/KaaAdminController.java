@@ -60,6 +60,9 @@ import org.kaaproject.kaa.common.dto.event.EventClassType;
 import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
+import org.kaaproject.kaa.common.dto.plugin.PluginContractDto;
+import org.kaaproject.kaa.common.dto.plugin.PluginDto;
+import org.kaaproject.kaa.common.dto.plugin.PluginInstanceDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.admin.services.cache.CacheService;
 import org.kaaproject.kaa.server.admin.services.dao.UserFacade;
@@ -1611,6 +1614,93 @@ public class KaaAdminController {
             logger.error("No file found in post request!");
             throw new KaaAdminServiceException("No file found in post request!", ServiceErrorCode.FILE_NOT_FOUND);
         }
+    }
+
+    @RequestMapping(value = "plugins/getPlugins", method = RequestMethod.GET)
+    @ResponseBody
+    public List<PluginDto> getPlugins() throws KaaAdminServiceException {
+        return kaaAdminService.getPlugins();
+    }
+
+    @RequestMapping(value = "plugins/getPlugin", params = { "id" }, method = RequestMethod.GET)
+    @ResponseBody
+    public PluginDto getPluginById(String id) throws KaaAdminServiceException {
+        return kaaAdminService.getPluginById(id);
+    }
+
+    @RequestMapping(value = "plugins/getInstances", params = { "applicationId" }, method = RequestMethod.GET)
+    @ResponseBody
+    public List<PluginInstanceDto> getPluginInstances(String applicationId) throws KaaAdminServiceException {
+        return kaaAdminService.getPluginInstances(applicationId);
+    }
+
+    @RequestMapping(value = "plugins/getInstance", params = { "id" }, method = RequestMethod.GET)
+    @ResponseBody
+    public PluginInstanceDto getPluginInstance(String id) throws KaaAdminServiceException {
+        return kaaAdminService.getPluginInstanceById(id);
+    }
+
+    @RequestMapping(value = "plugins/createInstance", params = { "pluginId", "applicationId", "name", "configuration" }, method = RequestMethod.POST)
+    @ResponseBody
+    public PluginInstanceDto createPluginInstance(
+            String pluginId,
+            String applicationId,
+            String name,
+            String configuration)
+                    throws KaaAdminServiceException {
+
+        return kaaAdminService.createPluginInstance(pluginId, applicationId, name, configuration);
+    }
+
+    @RequestMapping(value = "plugins/deleteInstance", params = { "id" }, method = RequestMethod.POST)
+    @ResponseStatus(value = HttpStatus.OK)
+    public void deletePluginInstanceById(String id) throws KaaAdminServiceException {
+        kaaAdminService.deletePluginInstanceById(id);
+    }
+
+    @RequestMapping(value = "plugins/setInstanceState", params = { "id", "state" }, method = RequestMethod.POST)
+    @ResponseStatus(value = HttpStatus.OK)
+    public void setPluginInstanceState(String id, String state) throws KaaAdminServiceException {
+        kaaAdminService.setPluginInstanceState(id, state);
+    }
+
+    @RequestMapping(value = "plugins/getPluginContracts", params = { "pluginInstanceId" }, method = RequestMethod.GET)
+    @ResponseBody
+    public List<PluginContractDto> getPluginContracts(String pluginInstanceId) throws KaaAdminServiceException {
+        return kaaAdminService.getPluginContracts(pluginInstanceId);
+    }
+
+    @RequestMapping(value = "plugins/getPluginContract", params = { "id" }, method = RequestMethod.GET)
+    @ResponseBody
+    public PluginContractDto getPluginContractById(String id) throws KaaAdminServiceException {
+        return kaaAdminService.getPluginContractById(id);
+    }
+
+    @RequestMapping(value = "plugins/editPluginContract", method = RequestMethod.POST)
+    @ResponseBody
+    public PluginContractDto editPluginContract(@RequestBody PluginContractDto pluginContract) throws KaaAdminServiceException {
+        return kaaAdminService.editPluginContract(pluginContract);
+    }
+
+    // TODO: Unsure about the mapping
+    @RequestMapping(value = "plugins/addPluginContract", params = { "pluginInstanceId" }, method = RequestMethod.POST)
+    @ResponseStatus(value = HttpStatus.OK)
+    public void addPluginContractToPluginInstance(
+            @RequestParam String pluginInstanceId,
+            @RequestBody PluginContractDto pluginContract)
+                    throws KaaAdminServiceException {
+
+        kaaAdminService.addPluginContractToPluginInstance(pluginInstanceId, pluginContract);
+    }
+
+    @RequestMapping(value = "plugin/removePluginContract", params = { "pluginInstanceId", "pluginContractId" }, method = RequestMethod.POST)
+    @ResponseStatus(value = HttpStatus.OK)
+    public void removePluginContractFromPluginInstance(
+            String pluginInstanceId,
+            String pluginContractId)
+                    throws KaaAdminServiceException {
+
+        kaaAdminService.removePluginContractFromPluginInstance(pluginInstanceId, pluginContractId);
     }
 
 }
