@@ -101,7 +101,6 @@
 		398CE92D1BE26E0000D31E34 /* TransportProtocolIdHolder.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B803FD361B9EF52300187E61 /* TransportProtocolIdHolder.h */; };
 		398CE92E1BE26E0000D31E34 /* IPTransportInfo.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B8A8DF971B9F4871002CEF3E /* IPTransportInfo.h */; };
 		398CE92F1BE26E0000D31E34 /* ConfigurationStorage.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B81161121B4BBB3D00C4E0C6 /* ConfigurationStorage.h */; };
-		398CE9301BE26E0000D31E34 /* ConfigurationPersistenceManager.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B8FBD9EB1B9E0094009A2BA3 /* ConfigurationPersistenceManager.h */; };
 		398CE9311BE26E0000D31E34 /* SimpleConfigurationStorage.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B8FBD9ED1B9E0243009A2BA3 /* SimpleConfigurationStorage.h */; };
 		398CE9321BE26E0000D31E34 /* ConfigurationCommon.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B803F8ED1B7A5AA2009C2C28 /* ConfigurationCommon.h */; };
 		398CE9331BE26E0000D31E34 /* ConfigurationDeserializer.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B803F8EF1B7A5C86009C2C28 /* ConfigurationDeserializer.h */; };
@@ -467,7 +466,6 @@
 		B8EFF1FA1BC8FE8C002551A9 /* MessageEncoderDecoderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B8EFF1F91BC8FE8C002551A9 /* MessageEncoderDecoderTests.m */; };
 		B8F14E251BD8E200001D1B02 /* BaseKaaClient.h in Headers */ = {isa = PBXBuildFile; fileRef = B8F14E221BD8E200001D1B02 /* BaseKaaClient.h */; };
 		B8F14E261BD8E200001D1B02 /* BaseKaaClient.m in Sources */ = {isa = PBXBuildFile; fileRef = B8F14E231BD8E200001D1B02 /* BaseKaaClient.m */; };
-		B8FBD9EC1B9E0094009A2BA3 /* ConfigurationPersistenceManager.h in Headers */ = {isa = PBXBuildFile; fileRef = B8FBD9EB1B9E0094009A2BA3 /* ConfigurationPersistenceManager.h */; };
 		B8FBD9EF1B9E0243009A2BA3 /* SimpleConfigurationStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = B8FBD9ED1B9E0243009A2BA3 /* SimpleConfigurationStorage.h */; };
 		B8FBD9F01B9E0243009A2BA3 /* SimpleConfigurationStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = B8FBD9EE1B9E0243009A2BA3 /* SimpleConfigurationStorage.m */; };
 		B8FBD9F41B9E02DB009A2BA3 /* AbstractHttpClient.h in Headers */ = {isa = PBXBuildFile; fileRef = B8FBD9F21B9E02DB009A2BA3 /* AbstractHttpClient.h */; };
@@ -586,7 +584,6 @@
 				398CE92D1BE26E0000D31E34 /* TransportProtocolIdHolder.h in Copy Files */,
 				398CE92E1BE26E0000D31E34 /* IPTransportInfo.h in Copy Files */,
 				398CE92F1BE26E0000D31E34 /* ConfigurationStorage.h in Copy Files */,
-				398CE9301BE26E0000D31E34 /* ConfigurationPersistenceManager.h in Copy Files */,
 				398CE9311BE26E0000D31E34 /* SimpleConfigurationStorage.h in Copy Files */,
 				398CE9321BE26E0000D31E34 /* ConfigurationCommon.h in Copy Files */,
 				398CE9331BE26E0000D31E34 /* ConfigurationDeserializer.h in Copy Files */,
@@ -976,7 +973,6 @@
 		B8EFF1F91BC8FE8C002551A9 /* MessageEncoderDecoderTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MessageEncoderDecoderTests.m; sourceTree = "<group>"; };
 		B8F14E221BD8E200001D1B02 /* BaseKaaClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseKaaClient.h; sourceTree = "<group>"; };
 		B8F14E231BD8E200001D1B02 /* BaseKaaClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseKaaClient.m; sourceTree = "<group>"; };
-		B8FBD9EB1B9E0094009A2BA3 /* ConfigurationPersistenceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ConfigurationPersistenceManager.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		B8FBD9ED1B9E0243009A2BA3 /* SimpleConfigurationStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleConfigurationStorage.h; sourceTree = "<group>"; };
 		B8FBD9EE1B9E0243009A2BA3 /* SimpleConfigurationStorage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SimpleConfigurationStorage.m; sourceTree = "<group>"; };
 		B8FBD9F21B9E02DB009A2BA3 /* AbstractHttpClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = AbstractHttpClient.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -1104,7 +1100,6 @@
 			isa = PBXGroup;
 			children = (
 				B81161121B4BBB3D00C4E0C6 /* ConfigurationStorage.h */,
-				B8FBD9EB1B9E0094009A2BA3 /* ConfigurationPersistenceManager.h */,
 				B8FBD9ED1B9E0243009A2BA3 /* SimpleConfigurationStorage.h */,
 				B8FBD9EE1B9E0243009A2BA3 /* SimpleConfigurationStorage.m */,
 			);
@@ -1769,7 +1764,6 @@
 				B81161161B4BC23A00C4E0C6 /* NotificationTopicListDelegate.h in Headers */,
 				B83CCD191B8CAB3B003D4B0B /* TransactionId.h in Headers */,
 				B848228C1B8DBB54004E370B /* NotificationCommon.h in Headers */,
-				B8FBD9EC1B9E0094009A2BA3 /* ConfigurationPersistenceManager.h in Headers */,
 				B87E26121C089C4B00E47D24 /* KAADummyNotification.h in Headers */,
 				B876298E1B8CB45B006AD5EF /* EndpointRegistrationProcessor.h in Headers */,
 				39AEB27A1BBA6A3E0045FB32 /* PeriodicLogUploadStrategy.h in Headers */,

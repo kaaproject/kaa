@@ -32,7 +32,6 @@
 #import "UserTransport.h"
 #import "BootstrapTransport.h"
 #import "BootstrapManager.h"
-#import "ConfigurationPersistenceManager.h"
 #import "RedirectionTransport.h"
 #import "MetaDataTransport.h"
 #import "KaaClientStateDelegate.h"
