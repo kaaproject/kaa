@@ -68,6 +68,7 @@
                 <version>${rat.version}</version>
                 <configuration>
                     <excludes>
+                        <exclude>**/*.template</exclude>
                         <exclude>**/gcovr.log</exclude>
                         <exclude>**/gcovr-report.xml</exclude>
                         <exclude>**/unittest_result.xml</exclude>
