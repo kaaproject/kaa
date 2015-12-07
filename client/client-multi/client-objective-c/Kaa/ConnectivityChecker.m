@@ -44,12 +44,10 @@
     
 #endif
     
-    if (reachabilityRef != NULL)
-    {
+    if (reachabilityRef != NULL) {
         SCNetworkReachabilityFlags flags = 0;
         
-        if(SCNetworkReachabilityGetFlags(reachabilityRef, &flags))
-        {
+        if(SCNetworkReachabilityGetFlags(reachabilityRef, &flags)) {
             BOOL isReachable = ((flags & kSCNetworkFlagsReachable) != 0);
             BOOL connectionRequired = ((flags & kSCNetworkFlagsConnectionRequired) != 0);
             returnValue = (isReachable && !connectionRequired) ? YES : NO;
