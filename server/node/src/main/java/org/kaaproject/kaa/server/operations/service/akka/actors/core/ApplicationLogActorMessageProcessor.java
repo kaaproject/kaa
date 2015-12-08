@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.kaaproject.kaa.common.dto.EndpointProfileDataDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.server.common.dao.CTLService;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogAppender;
@@ -67,7 +68,7 @@ public class ApplicationLogActorMessageProcessor {
 
     private final Map<AppVersionKey, BaseSchemaInfo> clientProfileSchemas;
 
-    private final Map<String, BaseSchemaInfo> serverProfileSchemas;
+    private final Map<AppVersionKey, BaseSchemaInfo> serverProfileSchemas;
 
     private final VoidCallback voidCallback;
 
@@ -146,23 +147,27 @@ public class ApplicationLogActorMessageProcessor {
         EndpointProfileDataDto profileDto = logPack.getProfileDto();
         ProfileInfo clientProfile = logPack.getClientProfile();
         if (clientProfile == null) {
-            AppVersionKey key = new AppVersionKey(applicationToken, profileDto.getClientProfileSchemaVersion());
+            AppVersionKey key = new AppVersionKey(applicationToken, profileDto.getClientProfileVersion());
             BaseSchemaInfo schemaInfo = clientProfileSchemas.get(key);
             if (schemaInfo == null) {
-                ProfileSchemaDto schemaDto = cacheService.getProfileSchemaByAppAndVersion(key);
-                schemaInfo = new BaseSchemaInfo(schemaDto.getId(), schemaDto.getSchema());
+                ProfileSchemaDto profileSchema = cacheService.getProfileSchemaByAppAndVersion(key);
+                CTLSchemaDto ctlSchemaDto = cacheService.getCtlSchemaById(profileSchema.getCtlSchemaId());
+                String schema = ctlService.flatExportAsString(ctlSchemaDto);
+                schemaInfo = new BaseSchemaInfo(ctlSchemaDto.getId(), schema);
                 clientProfileSchemas.put(key, schemaInfo);
             }
             logPack.setClientProfile(new BaseProfileInfo(schemaInfo, profileDto.getClientProfileBody()));
         }
         ProfileInfo serverProfile = logPack.getServerProfile();
-        if (serverProfile == null && profileDto.getServerProfileCtlSchemaId() != null) {
-            BaseSchemaInfo schemaInfo = serverProfileSchemas.get(profileDto.getServerProfileCtlSchemaId());
+        if (serverProfile == null) {
+            AppVersionKey key = new AppVersionKey(applicationToken, profileDto.getServerProfileVersion());
+            BaseSchemaInfo schemaInfo = serverProfileSchemas.get(key);
             if (schemaInfo == null) {
-                CTLSchemaDto ctlSchemaDto = cacheService.getCtlSchemaById(profileDto.getServerProfileCtlSchemaId());
+                ServerProfileSchemaDto serverProfileSchema = cacheService.getServerProfileSchemaByAppAndVersion(key);
+                CTLSchemaDto ctlSchemaDto = cacheService.getCtlSchemaById(serverProfileSchema.getCtlSchemaId());
                 String schema = ctlService.flatExportAsString(ctlSchemaDto);
                 schemaInfo = new BaseSchemaInfo(ctlSchemaDto.getId(), schema);
-                serverProfileSchemas.put(profileDto.getServerProfileCtlSchemaId(), schemaInfo);
+                serverProfileSchemas.put(key, schemaInfo);
             }
             logPack.setServerProfile(new BaseProfileInfo(schemaInfo, profileDto.getServerProfileBody()));
         }

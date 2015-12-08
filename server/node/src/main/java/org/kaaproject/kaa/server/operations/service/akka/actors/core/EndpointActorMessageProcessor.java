@@ -162,11 +162,11 @@ public class EndpointActorMessageProcessor {
         if (endpointProfile != null) {
             CTLDataDto serverProfileDto = operationsService.getServerEndpointProfile(key);
             if (serverProfileDto != null) {
-                endpointProfile.setServerProfileCtlSchemaId(serverProfileDto.getCtlSchemaId());
+                endpointProfile.setServerProfileVersion(serverProfileDto.getServerProfileVersion());
                 endpointProfile.setServerProfileBody(serverProfileDto.getBody());
             } else {
-                endpointProfile.setServerProfileCtlSchemaId(null);
-                endpointProfile.setServerProfileBody(null);
+                endpointProfile.setServerProfileVersion(0);
+                endpointProfile.setServerProfileBody("");
             }
             state.setProfile(endpointProfile);
             processThriftNotification(context);
@@ -485,8 +485,8 @@ public class EndpointActorMessageProcessor {
     }
 
     private EndpointProfileDataDto convert(EndpointProfileDto profileDto) {
-        return new EndpointProfileDataDto(profileDto.getId(), endpointKey, profileDto.getProfileVersion(),
-                profileDto.getClientProfileBody(), profileDto.getServerProfileCtlSchemaId(), profileDto.getServerProfileBody());
+        return new EndpointProfileDataDto(profileDto.getId(), endpointKey, profileDto.getClientProfileVersion(),
+                profileDto.getClientProfileBody(), profileDto.getServerProfileVersion(), profileDto.getServerProfileBody());
     }
 
     private void sendConnectToNewUser(ActorContext context, EndpointProfileDto endpointProfile) {

@@ -75,7 +75,7 @@ public class ServerProfileSchemaActivity
     @Override
     public void loadFormData(String fileItemName,
             AsyncCallback<RecordField> callback) {
-        KaaAdmin.getDataSource().generateSimpleSchemaForm(fileItemName, callback);
+        KaaAdmin.getDataSource().generateCommonSchemaForm(fileItemName, callback);
     }
 
     @Override

@@ -30,8 +30,6 @@ public class DaoConstants {
     public static final String ENDPOINT_GROUPS_PROPERTY = "endpointGroups";
     public static final String STATUS_PROPERTY = "status";
     public static final String SEQUENCE_NUMBER_PROPERTY = "sequenceNumber";
-    public static final String MAJOR_VERSION_PROPERTY = "majorVersion";
-    public static final String MINOR_VERSION_PROPERTY = "minorVersion";
     public static final String APPLICATION_PROPERTY = "application";
     public static final String TOPIC_TYPE_PROPERTY = "type";
     public static final String WEIGHT_PROPERTY = "weight";
@@ -39,6 +37,7 @@ public class DaoConstants {
     public static final String CONFIGURATION_SCHEMA_PROPERTY = "configurationSchema";
     public static final String ECF_PROPERTY = "ecf";
     public static final String VERSION_PROPERTY = "version";
+    public static final String SCHEMA_VERSION_PROPERTY = "schemaVersion";
     public static final String EVENT_CLASS_TYPE_PROPERTY = "type";
     public static final String FQN_PROPERTY = "fqn";
     public static final String CLASS_NAME_PROPERTY = "className";
@@ -70,8 +69,6 @@ public class DaoConstants {
     public static final String NAME = "name";
     public static final String SEQUENCE_NUMBER = "sequence_number";
     public static final String TENANT_ID = "tenant_id";
-    public static final String MAJOR_VERSION = "major_version";
-    public static final String MINOR_VERSION = "minor_version";
     public static final String DESCRIPTION = "description";
     public static final String CREATED_TIME = "created_time";
     public static final String LAST_MODIFY_TIME = "last_modify_time";
@@ -120,8 +117,7 @@ public class DaoConstants {
      */
     public static final String ABSTRACT_STRUCTURE_TABLE_NAME = "abstract_structure";
     public static final String ABSTRACT_STRUCTURE_SEQUENCE_NUMBER = SEQUENCE_NUMBER;
-    public static final String ABSTRACT_STRUCTURE_MAJOR_VERSION = MAJOR_VERSION;
-    public static final String ABSTRACT_STRUCTURE_MINOR_VERSION = MINOR_VERSION;
+    public static final String ABSTRACT_STRUCTURE_SCHEMA_VERSION = "schema_version";
     public static final String ABSTRACT_STRUCTURE_DESCRIPTION = DESCRIPTION;
     public static final String ABSTRACT_STRUCTURE_CREATED_TIME = CREATED_TIME;
     public static final String ABSTRACT_STRUCTURE_LAST_MODIFY_TIME = LAST_MODIFY_TIME;
@@ -197,8 +193,7 @@ public class DaoConstants {
      * Schema constants.
      */
     public static final String SCHEMA_TABLE_NAME = "schema";
-    public static final String SCHEMA_MAJOR_VERSION = MAJOR_VERSION;
-    public static final String SCHEMA_MINOR_VERSION = MINOR_VERSION;
+    public static final String SCHEMA_VERSION = VERSION;
     public static final String SCHEMA_SCHEMA = "schema";
     public static final String SCHEMA_NAME = NAME;
     public static final String SCHEMA_DESCRIPTION = DESCRIPTION;

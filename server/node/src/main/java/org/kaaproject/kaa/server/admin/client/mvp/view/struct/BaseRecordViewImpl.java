@@ -18,11 +18,11 @@ package org.kaaproject.kaa.server.admin.client.mvp.view.struct;
 
 import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
 import org.kaaproject.kaa.common.dto.AbstractStructureDto;
-import org.kaaproject.kaa.common.dto.SchemaDto;
+import org.kaaproject.kaa.common.dto.VersionDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseRecordView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
-import org.kaaproject.kaa.server.admin.client.mvp.view.widget.SchemaListBox;
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.VersionListBox;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -32,9 +32,9 @@ import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public abstract class BaseRecordViewImpl<T extends AbstractStructureDto,V> extends BaseDetailsViewImpl implements BaseRecordView<T,V>, ValueChangeHandler<SchemaDto> {
+public abstract class BaseRecordViewImpl<T extends AbstractStructureDto,V> extends BaseDetailsViewImpl implements BaseRecordView<T,V>, ValueChangeHandler<VersionDto> {
 
-    private SchemaListBox schema;
+    private VersionListBox schema;
     private SizedTextBox schemaVersion;
     private AbstractRecordPanel<T,V> recordPanel;
 
@@ -56,7 +56,7 @@ public abstract class BaseRecordViewImpl<T extends AbstractStructureDto,V> exten
 
         if (create) {
             schemaLabel.addStyleName(Utils.avroUiStyle.requiredField());
-            schema = new SchemaListBox();
+            schema = new VersionListBox();
             schema.setWidth("80px");
             VerticalPanel panel = new VerticalPanel();
             panel.setWidth("100%");
@@ -78,7 +78,7 @@ public abstract class BaseRecordViewImpl<T extends AbstractStructureDto,V> exten
     }
 
     @Override
-    public void onValueChange(ValueChangeEvent<SchemaDto> event) {
+    public void onValueChange(ValueChangeEvent<VersionDto> event) {
         recordPanel.setSchemaSelected(schema.getValue() != null);
     }
 
@@ -101,7 +101,7 @@ public abstract class BaseRecordViewImpl<T extends AbstractStructureDto,V> exten
     }
 
     @Override
-    public SchemaListBox getSchema() {
+    public VersionListBox getSchema() {
         return schema;
     }
 

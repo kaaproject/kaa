@@ -66,7 +66,7 @@ public abstract class AbstractSchemaActivity<T extends AbstractSchemaDto, V exte
 
     @Override
     protected void onEntityRetrieved() {
-        String version = entity.getMajorVersion() + "." + entity.getMinorVersion();
+        String version = entity.getVersion() + "";
         detailsView.getVersion().setValue(version);
         detailsView.getName().setValue(entity.getName());
         detailsView.getDescription().setValue(entity.getDescription());

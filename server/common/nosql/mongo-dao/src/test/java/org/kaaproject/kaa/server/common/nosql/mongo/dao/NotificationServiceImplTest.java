@@ -36,10 +36,10 @@ import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
-import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
 import org.kaaproject.kaa.common.dto.UpdateNotificationDto;
+import org.kaaproject.kaa.common.dto.VersionDto;
 import org.kaaproject.kaa.server.common.core.schema.KaaSchemaFactoryImpl;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
 import org.slf4j.Logger;
@@ -116,7 +116,7 @@ public class NotificationServiceImplTest extends AbstractMongoTest {
         NotificationSchemaDto schema = generateNotificationSchemaDto(null, null);
         Assert.assertNotNull(schema);
         Assert.assertTrue(isNotBlank(schema.getId()));
-        Assert.assertEquals(2, schema.getMajorVersion());
+        Assert.assertEquals(2, schema.getVersion());
         Assert.assertEquals(NotificationTypeDto.USER, schema.getType());
     }
 
@@ -164,7 +164,7 @@ public class NotificationServiceImplTest extends AbstractMongoTest {
     @Test
     public void testFindUserNotificationSchemasByAppId() {
         NotificationDto dto = generateNotificationsDto(null, null, 1, null).get(0);
-        List<SchemaDto> schemas = notificationService.findUserNotificationSchemasByAppId(dto.getApplicationId());
+        List<VersionDto> schemas = notificationService.findUserNotificationSchemasByAppId(dto.getApplicationId());
         generateNotificationSchemaDto(dto.getApplicationId(), NotificationTypeDto.SYSTEM);
         Assert.assertEquals(2, schemas.size());
     }
@@ -173,7 +173,7 @@ public class NotificationServiceImplTest extends AbstractMongoTest {
     public void testFindNotificationSchemaVersionsByAppId() {
         NotificationDto dto = generateNotificationsDto(null, null, 1, null).get(0);
         generateNotificationSchemaDto(dto.getApplicationId(), NotificationTypeDto.SYSTEM);
-        List<SchemaDto> schemas = notificationService.findNotificationSchemaVersionsByAppId(dto.getApplicationId());
+        List<VersionDto> schemas = notificationService.findNotificationSchemaVersionsByAppId(dto.getApplicationId());
         Assert.assertEquals(3, schemas.size());
     }
 

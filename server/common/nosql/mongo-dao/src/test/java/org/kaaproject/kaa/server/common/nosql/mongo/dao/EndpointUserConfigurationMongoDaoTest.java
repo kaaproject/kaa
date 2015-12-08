@@ -75,7 +75,7 @@ public class EndpointUserConfigurationMongoDaoTest extends AbstractMongoTest {
         EndpointUserConfigurationDto firstUserConfigurationDto = generateEndpointUserConfigurationDto(userDto, appDto, schema, readSchemaFileAsString("dao/user/overrideData.json"));
         generateEndpointUserConfigurationDto(userDto, appDto, null, readSchemaFileAsString("dao/user/overrideData.json"));
         generateEndpointUserConfigurationDto(null, null, null, readSchemaFileAsString("dao/user/overrideData.json"));
-        MongoEndpointUserConfiguration found = endpointUserConfigurationDao.findByUserIdAndAppTokenAndSchemaVersion(userDto.getId(), appDto.getApplicationToken(), schema.getMajorVersion());
+        MongoEndpointUserConfiguration found = endpointUserConfigurationDao.findByUserIdAndAppTokenAndSchemaVersion(userDto.getId(), appDto.getApplicationToken(), schema.getVersion());
         Assert.assertEquals(firstUserConfigurationDto, found.toDto());
     }
 
@@ -87,8 +87,8 @@ public class EndpointUserConfigurationMongoDaoTest extends AbstractMongoTest {
         generateEndpointUserConfigurationDto(userDto, appDto, configurationSchemaDto, readSchemaFileAsString("dao/user/overrideData.json"));
         generateEndpointUserConfigurationDto(userDto, appDto, null, readSchemaFileAsString("dao/user/overrideData.json"));
         generateEndpointUserConfigurationDto(userDto, appDto, null, readSchemaFileAsString("dao/user/overrideData.json"));
-        endpointUserConfigurationDao.removeByUserIdAndAppTokenAndSchemaVersion(userDto.getId(), appDto.getApplicationToken(), configurationSchemaDto.getMajorVersion());
-        MongoEndpointUserConfiguration removed = endpointUserConfigurationDao.findByUserIdAndAppTokenAndSchemaVersion(userDto.getId(), appDto.getApplicationToken(), configurationSchemaDto.getMajorVersion());
+        endpointUserConfigurationDao.removeByUserIdAndAppTokenAndSchemaVersion(userDto.getId(), appDto.getApplicationToken(), configurationSchemaDto.getVersion());
+        MongoEndpointUserConfiguration removed = endpointUserConfigurationDao.findByUserIdAndAppTokenAndSchemaVersion(userDto.getId(), appDto.getApplicationToken(), configurationSchemaDto.getVersion());
         Assert.assertNull(removed);
         List<MongoEndpointUserConfiguration> foundList = endpointUserConfigurationDao.findByUserId(userDto.getId());
         Assert.assertEquals(2, foundList.size());

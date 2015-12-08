@@ -38,9 +38,9 @@ import org.kaaproject.kaa.common.dto.ChangeType;
 import org.kaaproject.kaa.common.dto.HistoryDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.common.dto.StructureRecordDto;
 import org.kaaproject.kaa.common.dto.UpdateStatus;
+import org.kaaproject.kaa.common.dto.VersionDto;
 import org.kaaproject.kaa.server.common.dao.HistoryService;
 import org.kaaproject.kaa.server.common.dao.ProfileService;
 import org.kaaproject.kaa.server.common.dao.exception.DatabaseProcessingException;
@@ -81,12 +81,12 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public List<SchemaDto> findProfileSchemaVersionsByAppId(String applicationId) {
+    public List<VersionDto> findProfileSchemaVersionsByAppId(String applicationId) {
         validateId(applicationId, "Can't find profile schemas. Invalid application id: " + applicationId);
         List<ProfileSchema> profileSchemas = profileSchemaDao.findByApplicationId(applicationId);
-        List<SchemaDto> schemas = new ArrayList<>();
+        List<VersionDto> schemas = new ArrayList<>();
         for (ProfileSchema profileSchema : profileSchemas) {
-            schemas.add(profileSchema.toSchemaDto());
+            schemas.add(profileSchema.toVersionDto());
         }
         return schemas;
     }
@@ -108,13 +108,12 @@ public class ProfileServiceImpl implements ProfileService {
             String id = profileSchemaDto.getId();
             if (StringUtils.isBlank(id)) {
                 ProfileSchema profileSchema = profileSchemaDao.findLatestByAppId(appId);
-                int majorVersion = 0;
+                int version = -1;
                 if (profileSchema != null) {
-                    majorVersion = profileSchema.getMajorVersion();
+                    version = profileSchema.getVersion();
                 }
-                profileSchemaDto.setMinorVersion(0);
                 profileSchemaDto.setId(null);
-                profileSchemaDto.setMajorVersion(++majorVersion);
+                profileSchemaDto.setVersion(++version);
                 profileSchemaDto.setCreatedTime(System.currentTimeMillis());
             } else {
                 ProfileSchemaDto oldProfileSchemaDto = getDto(profileSchemaDao.findById(id));
@@ -177,8 +176,8 @@ public class ProfileServiceImpl implements ProfileService {
         Collection<ProfileFilterDto> profileFilters = convertDtoList(profileFilterDao.findActualByEndpointGroupId(endpointGroupId));
         List<StructureRecordDto<ProfileFilterDto>> records = StructureRecordDto.convertToRecords(profileFilters);
         if (includeDeprecated) {
-            List<SchemaDto> schemas = findVacantSchemasByEndpointGroupId(endpointGroupId);
-            for (SchemaDto schema : schemas) {
+            List<VersionDto> schemas = findVacantSchemasByEndpointGroupId(endpointGroupId);
+            for (VersionDto schema : schemas) {
                 ProfileFilterDto deprecatedProfileFilter = getDto(profileFilterDao.findLatestDeprecated(schema.getId(), endpointGroupId));
                 if (deprecatedProfileFilter != null) {
                     StructureRecordDto<ProfileFilterDto> record = new StructureRecordDto<>();
@@ -219,7 +218,7 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public List<SchemaDto> findVacantSchemasByEndpointGroupId(String endpointGroupId) {
+    public List<VersionDto> findVacantSchemasByEndpointGroupId(String endpointGroupId) {
         validateId(endpointGroupId, "Can't find vacant schemas. Invalid endpoint group id: " + endpointGroupId);
         EndpointGroup group = endpointGroupDao.findById(endpointGroupId);
         List<ProfileFilter> profileFilters = profileFilterDao.findActualByEndpointGroupId(endpointGroupId);
@@ -228,9 +227,9 @@ public class ProfileServiceImpl implements ProfileService {
             usedSchemaIds.add(filter.getSchemaId());
         }
         List<ProfileSchema> schemas = profileSchemaDao.findVacantSchemas(group.getApplicationId(), usedSchemaIds);
-        List<SchemaDto> schemaDtoList = new ArrayList<>();
+        List<VersionDto> schemaDtoList = new ArrayList<>();
         for (ProfileSchema schema : schemas) {
-            schemaDtoList.add(schema.toSchemaDto());
+            schemaDtoList.add(schema.toVersionDto());
         }
         return schemaDtoList;
     }
@@ -272,8 +271,7 @@ public class ProfileServiceImpl implements ProfileService {
                     profileFilterDto.setSequenceNumber(latestFilter.getSequenceNumber());
                 }
                 profileFilterDto.setApplicationId(profileSchemaDto.getApplicationId());
-                profileFilterDto.setMajorVersion(profileSchemaDto.getMajorVersion());
-                profileFilterDto.setMinorVersion(profileSchemaDto.getMinorVersion());
+                profileFilterDto.setSchemaVersion(profileSchemaDto.getVersion());
                 profileFilterDto.setCreatedTime(System.currentTimeMillis());
             } else {
                 throw new IncorrectParameterException("Can't update profile filter, invalid profile schema id " + id);
@@ -447,7 +445,7 @@ public class ProfileServiceImpl implements ProfileService {
         history.setApplicationId(dto.getApplicationId());
         ChangeDto change = new ChangeDto();
         change.setProfileFilterId(dto.getId());
-        change.setPfMajorVersion(dto.getMajorVersion());
+        change.setPfVersion(dto.getSchemaVersion());
         change.setEndpointGroupId(dto.getEndpointGroupId());
         change.setType(type);
         history.setChange(change);

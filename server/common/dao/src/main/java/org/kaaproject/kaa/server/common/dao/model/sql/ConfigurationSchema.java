@@ -164,7 +164,7 @@ public final class ConfigurationSchema extends Schema<ConfigurationSchemaDto> im
 
     @Override
     public String toString() {
-        return "ConfigurationSchema [majorVersion=" + majorVersion + ", minorVersion=" + minorVersion + ", name=" + name + ", description="
+        return "ConfigurationSchema [version=" + version + ", name=" + name + ", description="
                 + description + ", createdUsername=" + createdUsername + ", createdTime=" + createdTime + ", endpointCount=" + endpointCount + ", id=" + id
                 + "]";
     }

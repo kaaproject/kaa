@@ -44,12 +44,18 @@ public class DefaultFilter implements Filter {
     private static final Logger LOG = LoggerFactory
             .getLogger(DefaultFilter.class);
 
-    /** The schema body. */
-    private String schemaBody;
+    /** The profile schema body. */
+    private String profileSchemaBody;
     
-    /** The avro converter. */
-    private GenericAvroConverter<GenericRecord> avroConverter;
+    /** The server profile schema body. */
+    private String serverProfileSchemaBody;
     
+    /** The profile avro converter. */
+    private GenericAvroConverter<GenericRecord> profileAvroConverter;
+
+    /** The server profile avro converter. */
+    private GenericAvroConverter<GenericRecord> serverProfileAvroConverter;
+
     /** The expression. */
     private Expression expression;
 
@@ -59,13 +65,17 @@ public class DefaultFilter implements Filter {
      * @param filterBody the filter body
      * @param schemaBody the schema body
      */
-    public DefaultFilter(String filterBody, String schemaBody) {
-        this.schemaBody = schemaBody;
+    public DefaultFilter(String filterBody, String profileSchemaBody, String serverProfileSchemaBody) {
+        this.profileSchemaBody = profileSchemaBody;
+        this.serverProfileSchemaBody = serverProfileSchemaBody;
 
         this.expression = new SpelExpressionParser().parseExpression(filterBody);
 
-        this.avroConverter = new GenericAvroConverter<>(
-                new Schema.Parser().parse(this.schemaBody));
+        this.profileAvroConverter = new GenericAvroConverter<>(
+                new Schema.Parser().parse(this.profileSchemaBody));
+        
+        this.serverProfileAvroConverter = new GenericAvroConverter<>(
+                new Schema.Parser().parse(this.serverProfileSchemaBody));
     }
 
     /* (non-Javadoc)
@@ -85,10 +95,10 @@ public class DefaultFilter implements Filter {
         GenericRecord clientProfileGenericRecord = null;
         try {
             if (profile.getServerProfileBody() != null) {
-                serverProfileGenericRecord = avroConverter.decodeJson(profile.getServerProfileBody());
+                serverProfileGenericRecord = serverProfileAvroConverter.decodeJson(profile.getServerProfileBody());
             }
             if (profile.getClientProfileBody() != null) {
-                clientProfileGenericRecord = avroConverter.decodeJson(profile.getClientProfileBody());
+                clientProfileGenericRecord = profileAvroConverter.decodeJson(profile.getClientProfileBody());
             }
         } catch (IOException ioe) {
             LOG.error("Error decoding avro object from Json string", ioe);
@@ -113,7 +123,8 @@ public class DefaultFilter implements Filter {
         StringBuilder stringBuilder = new StringBuilder()
                 .append(getClass().getName())
                 .append(" [filterBody=\"").append(expression.getExpressionString()).append("\",")
-                .append(" schemaBody=\"").append(schemaBody).append("\"]");
+                .append(" profileSchemaBody=\"").append(profileSchemaBody).append("\",")
+                .append(" serverProfileSchemaBody=\"").append(serverProfileSchemaBody).append("\"]");
         return stringBuilder.toString();
     }
 }

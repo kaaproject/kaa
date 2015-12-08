@@ -70,8 +70,9 @@ public class DefaultHistoryDeltaService implements HistoryDeltaService {
     public HistoryDelta getDelta(EndpointProfileDto profile, String applicationToken, int curAppSeqNumber) {
         String endpointId = Base64Util.encode(profile);
         ConfigurationIdKey confIdKey = new ConfigurationIdKey(applicationToken, curAppSeqNumber, profile.getConfigurationVersion());
-        AppVersionKey appProfileVersionKey = new AppVersionKey(confIdKey.getApplicationToken(), profile.getProfileVersion());
-        List<ProfileFilterDto> filters = filterService.getAllMatchingFilters(appProfileVersionKey, profile);
+        AppVersionKey appProfileVersionKey = new AppVersionKey(confIdKey.getApplicationToken(), profile.getClientProfileVersion());
+        AppVersionKey appServerProfileVersionKey = new AppVersionKey(confIdKey.getApplicationToken(), profile.getServerProfileVersion());
+        List<ProfileFilterDto> filters = filterService.getAllMatchingFilters(appProfileVersionKey, appServerProfileVersionKey, profile);
         LOG.debug("[{}] Found {} matching filters", endpointId, filters.size());
         List<EndpointGroupStateDto> result = new ArrayList<>(filters.size());
         for (ProfileFilterDto filter : filters) {
@@ -117,7 +118,7 @@ public class DefaultHistoryDeltaService implements HistoryDeltaService {
         }
 
         HistoryKey historyKey = new HistoryKey(applicationToken, subject, oldAppSeqNumber, curAppSeqNumber,
-                profile.getConfigurationVersion(), profile.getProfileVersion());
+                profile.getConfigurationVersion(), profile.getClientProfileVersion());
         ConfigurationIdKey confIdKey = new ConfigurationIdKey(applicationToken, curAppSeqNumber, profile.getConfigurationVersion());
 
         List<EndpointGroupStateDto> endpointGroups;

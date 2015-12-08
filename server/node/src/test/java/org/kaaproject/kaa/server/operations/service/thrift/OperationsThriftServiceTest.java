@@ -75,7 +75,7 @@ public class OperationsThriftServiceTest {
         appDto.setApplicationToken(TEST_APP_TOKEN);
 
         ProfileFilterDto pfDto = new ProfileFilterDto();
-        pfDto.setMajorVersion(PF_VERSION);
+        pfDto.setSchemaVersion(PF_VERSION);
 
         Mockito.when(applicationService.findAppById(TEST_APP_ID)).thenReturn(appDto);
         Mockito.when(cacheService.getFilter(TEST_PF_ID)).thenReturn(pfDto);
@@ -101,7 +101,7 @@ public class OperationsThriftServiceTest {
         appDto.setApplicationToken(TEST_APP_TOKEN);
 
         ProfileFilterDto pfDto = new ProfileFilterDto();
-        pfDto.setMajorVersion(PF_VERSION);
+        pfDto.setSchemaVersion(PF_VERSION);
 
         Mockito.when(applicationService.findAppById(TEST_APP_ID)).thenReturn(appDto);
         Mockito.when(cacheService.getAppSeqNumber(TEST_APP_TOKEN)).thenReturn(new AppSeqNumber(TEST_TENANT_ID, TEST_APP_ID, TEST_APP_TOKEN, 0));
@@ -123,7 +123,7 @@ public class OperationsThriftServiceTest {
         notification.setAppSeqNumber(TEST_APP_SEQ_NUMBER);
 
         ProfileFilterDto pfDto = new ProfileFilterDto();
-        pfDto.setMajorVersion(PF_VERSION);
+        pfDto.setSchemaVersion(PF_VERSION);
 
         Mockito.when(applicationService.findAppById(TEST_APP_ID)).thenReturn(null);
         operationsThriftService.onNotification(notification);

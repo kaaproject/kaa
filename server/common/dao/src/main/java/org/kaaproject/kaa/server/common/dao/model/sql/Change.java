@@ -74,8 +74,8 @@ public final class Change extends GenericModel<ChangeDto> implements Serializabl
         if (dto != null) {
             this.id = getLongId(dto.getId());
             this.type = dto.getType();
-            this.filterVersion = dto.getPfMajorVersion();
-            this.configurationVersion = dto.getCfMajorVersion();
+            this.filterVersion = dto.getPfVersion();
+            this.configurationVersion = dto.getCfVersion();
             this.groupId = getLongId(dto.getEndpointGroupId());
             this.profileFilterId = getLongId(dto.getProfileFilterId());
             this.configurationId = getLongId(dto.getConfigurationId());
@@ -224,10 +224,10 @@ public final class Change extends GenericModel<ChangeDto> implements Serializabl
         changeDto.setId(getStringId());
         changeDto.setType(type);
         changeDto.setConfigurationId(ModelUtils.getStringId(configurationId));
-        changeDto.setCfMajorVersion(configurationVersion);
+        changeDto.setCfVersion(configurationVersion);
         changeDto.setEndpointGroupId(ModelUtils.getStringId(groupId));
         changeDto.setProfileFilterId(ModelUtils.getStringId(profileFilterId));
-        changeDto.setPfMajorVersion(filterVersion);
+        changeDto.setPfVersion(filterVersion);
         changeDto.setTopicId(ModelUtils.getStringId(topicId));
         return changeDto;
     }

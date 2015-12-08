@@ -22,6 +22,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.HashSet;
 
 import org.apache.avro.generic.GenericRecord;
 import org.junit.After;
@@ -34,17 +35,22 @@ import org.junit.runner.RunWith;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
 import org.kaaproject.kaa.common.endpoint.gen.BasicEndpointProfile;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
-import org.kaaproject.kaa.schema.base.Profile;
+import org.kaaproject.kaa.schema.system.EmptyData;
+import org.kaaproject.kaa.server.common.dao.AbstractTest;
 import org.kaaproject.kaa.server.common.dao.SdkProfileService;
 import org.kaaproject.kaa.server.common.dao.impl.ApplicationDao;
+import org.kaaproject.kaa.server.common.dao.impl.CTLSchemaDao;
+import org.kaaproject.kaa.server.common.dao.impl.CTLSchemaMetaInfoDao;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
 import org.kaaproject.kaa.server.common.dao.impl.ProfileSchemaDao;
 import org.kaaproject.kaa.server.common.dao.impl.TenantDao;
-import org.kaaproject.kaa.server.common.dao.AbstractTest;
 import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
 import org.kaaproject.kaa.server.common.dao.model.sql.Application;
+import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchema;
+import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchemaMetaInfo;
 import org.kaaproject.kaa.server.common.dao.model.sql.ProfileSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.SdkProfile;
 import org.kaaproject.kaa.server.common.dao.model.sql.Tenant;
@@ -76,12 +82,12 @@ public class ProfileServiceIT extends AbstractTest {
     private String sdkToken;
     private String newSdkToken;
 
-    private static final Profile ENDPOINT_PROFILE = new Profile();
+    private static final EmptyData ENDPOINT_PROFILE = new EmptyData();
     private static final BasicEndpointProfile NEW_ENDPOINT_PROFILE = new BasicEndpointProfile("newprofile");
 
     protected static final Logger LOG = LoggerFactory.getLogger(ProfileServiceIT.class);
 
-    private final GenericAvroConverter<GenericRecord> baseAvroConverter = new GenericAvroConverter<GenericRecord>(Profile.SCHEMA$);
+    private final GenericAvroConverter<GenericRecord> baseAvroConverter = new GenericAvroConverter<GenericRecord>(EmptyData.SCHEMA$);
     private final GenericAvroConverter<GenericRecord> newAvroConverter = new GenericAvroConverter<GenericRecord>(BasicEndpointProfile.SCHEMA$);
 
     @Autowired
@@ -101,6 +107,12 @@ public class ProfileServiceIT extends AbstractTest {
 
     @Autowired
     protected ProfileSchemaDao<ProfileSchema> profileSchemaDao;
+    
+    @Autowired
+    protected CTLSchemaDao<CTLSchema> ctlSchemaDao;
+    
+    @Autowired
+    protected CTLSchemaMetaInfoDao<CTLSchemaMetaInfo> ctlSchemaMetaInfoDao;
 
     private Tenant tenant;
     private Application application;
@@ -129,24 +141,54 @@ public class ProfileServiceIT extends AbstractTest {
         application.setApplicationToken(APP_TOKEN);
         application.setTenant(tenant);
         application = applicationDao.save(application);
+        
+        CTLSchemaMetaInfo metaInfo = new CTLSchemaMetaInfo();
+        metaInfo.setVersion(1);
+        metaInfo.setFqn(EmptyData.SCHEMA$.getFullName());
+        metaInfo.setScope(CTLSchemaScopeDto.PROFILE_SCHEMA);
+        
+        metaInfo = ctlSchemaMetaInfoDao.save(metaInfo);
+
+        CTLSchema ctlSchema = new CTLSchema();
+        ctlSchema.setTenant(tenant);
+        ctlSchema.setApplication(application);
+        ctlSchema.setBody(EmptyData.SCHEMA$.toString());
+        ctlSchema.setDependencySet(new HashSet<CTLSchema>());
+        ctlSchema.setMetaInfo(metaInfo);
+        
+        ctlSchema = ctlSchemaDao.save(ctlSchema);
 
         profileSchema = new ProfileSchema();
-        profileSchema.setMajorVersion(PROFILE_SCHEMA_VERSION);
-        profileSchema.setMinorVersion(0);
-        profileSchema.setSchema(Profile.SCHEMA$.toString());
+        profileSchema.setVersion(PROFILE_SCHEMA_VERSION);
+        profileSchema.setCtlSchema(ctlSchema);
         profileSchema.setApplication(application);
         profileSchema = profileSchemaDao.save(profileSchema);
         
+        metaInfo = new CTLSchemaMetaInfo();
+        metaInfo.setVersion(1);
+        metaInfo.setFqn(BasicEndpointProfile.SCHEMA$.getFullName());
+        metaInfo.setScope(CTLSchemaScopeDto.PROFILE_SCHEMA);
+        
+        metaInfo = ctlSchemaMetaInfoDao.save(metaInfo);
+
+        ctlSchema = new CTLSchema();
+        ctlSchema.setTenant(tenant);
+        ctlSchema.setApplication(application);
+        ctlSchema.setBody(BasicEndpointProfile.SCHEMA$.toString());
+        ctlSchema.setDependencySet(new HashSet<CTLSchema>());
+        ctlSchema.setMetaInfo(metaInfo);
+        
+        ctlSchema = ctlSchemaDao.save(ctlSchema);
+        
         profileSchema2 = new ProfileSchema();
-        profileSchema2.setMajorVersion(NEW_PROFILE_SCHEMA_VERSION);
-        profileSchema2.setMinorVersion(0);
-        profileSchema2.setSchema(BasicEndpointProfile.SCHEMA$.toString());
+        profileSchema2.setVersion(NEW_PROFILE_SCHEMA_VERSION);
+        profileSchema2.setCtlSchema(ctlSchema);
         profileSchema2.setApplication(application);
         profileSchema2 = profileSchemaDao.save(profileSchema2);
 
         SdkProfileDto sdkPropertiesDto = new SdkProfileDto();
         sdkPropertiesDto.setApplicationId(application.getStringId());
-        sdkPropertiesDto.setProfileSchemaVersion(profileSchema.getMajorVersion());
+        sdkPropertiesDto.setProfileSchemaVersion(profileSchema.getVersion());
         sdkPropertiesDto.setConfigurationSchemaVersion(1);
         sdkPropertiesDto.setNotificationSchemaVersion(1);
         sdkPropertiesDto.setLogSchemaVersion(1);
@@ -156,7 +198,7 @@ public class ProfileServiceIT extends AbstractTest {
 
         SdkProfileDto newSdkProfileDto = new SdkProfileDto();
         newSdkProfileDto.setApplicationId(application.getStringId());
-        newSdkProfileDto.setProfileSchemaVersion(profileSchema2.getMajorVersion());
+        newSdkProfileDto.setProfileSchemaVersion(profileSchema2.getVersion());
         newSdkProfileDto.setConfigurationSchemaVersion(1);
         newSdkProfileDto.setNotificationSchemaVersion(1);
         newSdkProfileDto.setLogSchemaVersion(1);

@@ -32,7 +32,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.kaaproject.kaa.common.dto.CTLDataDto;
 import org.kaaproject.kaa.common.dto.ChangeDto;
 import org.kaaproject.kaa.common.dto.ChangeNotificationDto;
 import org.kaaproject.kaa.common.dto.ChangeType;
@@ -258,12 +257,6 @@ public class EndpointServiceImpl implements EndpointService {
     }
 
     @Override
-    public CTLDataDto findServerProfileByKeyHash(byte[] keyHash) {
-        validateHash(keyHash, "Can't find ctl datat by key hash. Invalid key hash " + keyHash);
-        return endpointProfileDao.findCtlDataByKeyHash(keyHash);
-    }
-
-    @Override
     public void removeEndpointProfileByAppId(String appId) {
         validateSqlId(appId, "Can't remove endpoint profile by application id. Invalid application id " + appId);
         endpointProfileDao.removeByAppId(appId);
@@ -279,6 +272,8 @@ public class EndpointServiceImpl implements EndpointService {
         if (isBlank(endpointProfileDto.getId())) {
             if (endpointProfileDao.getCountByKeyHash(keyHash) == 0) {
                 LOG.debug("Register new endpoint profile.");
+                endpointProfileDto.setServerProfileVersion(0);
+                endpointProfileDto.setServerProfileBody("");
                 dto = getDto(endpointProfileDao.save(endpointProfileDto));
             } else {
                 EndpointProfile storedProfile = endpointProfileDao.findByKeyHash(keyHash);

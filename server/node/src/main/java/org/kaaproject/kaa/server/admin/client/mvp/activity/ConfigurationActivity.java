@@ -20,8 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.kaaproject.avro.ui.shared.RecordField;
-import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.common.dto.StructureRecordDto;
+import org.kaaproject.kaa.common.dto.VersionDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ConfigurationPlace;
@@ -65,7 +65,7 @@ public class ConfigurationActivity extends AbstractRecordActivity<ConfigurationR
     
     
     @Override
-    protected void schemaSelected(SchemaDto schema) {
+    protected void schemaSelected(VersionDto schema) {
         RecordField configurationRecord = ((SchemaInfoDto)schema).getSchemaForm();
         ConfigurationRecordFormDto inactiveStruct = record.getInactiveStructureDto();
         inactiveStruct.setConfigurationRecord(configurationRecord);
@@ -76,9 +76,9 @@ public class ConfigurationActivity extends AbstractRecordActivity<ConfigurationR
     protected void bind(final EventBus eventBus) {
         super.bind(eventBus);
         if (create) {
-            registrations.add(recordView.getSchema().addValueChangeHandler(new ValueChangeHandler<SchemaDto>() {
+            registrations.add(recordView.getSchema().addValueChangeHandler(new ValueChangeHandler<VersionDto>() {
                 @Override
-                public void onValueChange(ValueChangeEvent<SchemaDto> event) {
+                public void onValueChange(ValueChangeEvent<VersionDto> event) {
                     schemaSelected(event.getValue());
                 }
             }));
@@ -87,7 +87,7 @@ public class ConfigurationActivity extends AbstractRecordActivity<ConfigurationR
 
     @Override
     protected void getVacantSchemas(String endpointGroupId,
-            final AsyncCallback<List<SchemaDto>> callback) {
+            final AsyncCallback<List<VersionDto>> callback) {
         AsyncCallback<List<SchemaInfoDto>> schemaInfosCallback = new AsyncCallback<List<SchemaInfoDto>>() {
             @Override
             public void onFailure(Throwable caught) {
@@ -96,7 +96,7 @@ public class ConfigurationActivity extends AbstractRecordActivity<ConfigurationR
 
             @Override
             public void onSuccess(List<SchemaInfoDto> result) {
-                List<SchemaDto> schemas = new ArrayList<>();
+                List<VersionDto> schemas = new ArrayList<>();
                 schemas.addAll(result);
                 callback.onSuccess(schemas);
             }

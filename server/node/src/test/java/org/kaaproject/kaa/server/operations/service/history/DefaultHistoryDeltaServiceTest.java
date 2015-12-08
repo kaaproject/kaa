@@ -75,8 +75,9 @@ public class DefaultHistoryDeltaServiceTest {
         profile = new EndpointProfileDto();
         profile.setApplicationId(APP1_ID);
         profile.setConfigurationVersion(CONF_VERSION);
-        profile.setProfileVersion(PROFILE_VERSION);
+        profile.setClientProfileVersion(PROFILE_VERSION);
         profile.setClientProfileBody(CLIENT_PROFILE_BODY);
+        profile.setServerProfileVersion(PROFILE_VERSION);
         profile.setServerProfileBody(SERVER_PROFILE_BODY);
     }
 
@@ -94,7 +95,7 @@ public class DefaultHistoryDeltaServiceTest {
         filter.setId(PF1_ID);
         allFilters.add(filter);
 
-        Mockito.when(filterService.getAllMatchingFilters(Mockito.any(AppVersionKey.class), Mockito.any(EndpointProfileDto.class))).thenReturn(allFilters);
+        Mockito.when(filterService.getAllMatchingFilters(Mockito.any(AppVersionKey.class), Mockito.any(AppVersionKey.class), Mockito.any(EndpointProfileDto.class))).thenReturn(allFilters);
         Mockito.when(cacheService.getConfIdByKey(Mockito.any(ConfigurationIdKey.class))).thenReturn(CF1_ID);
 
         HistoryDelta historyDelta = historyDeltaService.getDelta(profile, APP1_TOKEN, 0);

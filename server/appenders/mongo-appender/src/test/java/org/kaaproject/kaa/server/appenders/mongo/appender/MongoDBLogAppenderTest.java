@@ -179,12 +179,12 @@ public class MongoDBLogAppenderTest {
         logAppender.close();
 
         TestLogDeliveryCallback callback = new TestLogDeliveryCallback();
-        EndpointProfileDataDto profileDto = new EndpointProfileDataDto("1", ENDPOINT_KEY, 1, "", null, null);
+        EndpointProfileDataDto profileDto = new EndpointProfileDataDto("1", ENDPOINT_KEY, 1, "", 0, null);
         BaseLogEventPack logEventPack = new BaseLogEventPack(profileDto, DATE_CREATED, 1, null);
 
         LogSchemaDto schemaDto = new LogSchemaDto();
         schemaDto.setSchema(BasicEndpointProfile.SCHEMA$.toString());
-        schemaDto.setMajorVersion(1);
+        schemaDto.setVersion(1);
         LogSchema schema = new LogSchema(schemaDto);
         logEventPack.setLogSchema(schema);
 
@@ -213,7 +213,7 @@ public class MongoDBLogAppenderTest {
         schemaDto.setSchema(BasicEndpointProfile.SCHEMA$.toString());
         LogSchema schema = new LogSchema(schemaDto);
 
-        EndpointProfileDataDto profileDto = new EndpointProfileDataDto("1", ENDPOINT_KEY, 1, "", null, null);
+        EndpointProfileDataDto profileDto = new EndpointProfileDataDto("1", ENDPOINT_KEY, 1, "", 0, null);
         BaseLogEventPack logEventPack = new BaseLogEventPack(profileDto, DATE_CREATED, schema.getVersion(), events);
         logEventPack.setLogSchema(schema);
 
@@ -248,7 +248,7 @@ public class MongoDBLogAppenderTest {
         schemaDto.setSchema(BasicEndpointProfile.SCHEMA$.toString());
         LogSchema schema = new LogSchema(schemaDto);
 
-        EndpointProfileDataDto profileDto = new EndpointProfileDataDto("1", ENDPOINT_KEY, 1, "", null, null);
+        EndpointProfileDataDto profileDto = new EndpointProfileDataDto("1", ENDPOINT_KEY, 1, "", 0, null);
         BaseLogEventPack logEventPack = new BaseLogEventPack(profileDto, DATE_CREATED, schema.getVersion(), events);
         logEventPack.setLogSchema(schema);
 

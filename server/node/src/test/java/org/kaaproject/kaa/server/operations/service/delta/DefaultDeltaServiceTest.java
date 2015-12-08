@@ -103,9 +103,9 @@ public class DefaultDeltaServiceTest {
         change.setType(changeType);
         change.setEndpointGroupId(endpointGroupId);
         change.setProfileFilterId(pfId);
-        change.setPfMajorVersion(pfVersion);
+        change.setPfVersion(pfVersion);
         change.setConfigurationId(cfId);
-        change.setCfMajorVersion(cfVersion);
+        change.setCfVersion(cfVersion);
         return change;
     }
 
@@ -116,7 +116,7 @@ public class DefaultDeltaServiceTest {
         profile.setNfSequenceNumber(1);
         profile.setProfileHash(PROFILE_HASH.getData());
         profile.setConfigurationHash(CONFIGURATION_HASH.getData());
-        profile.setProfileVersion(1);
+        profile.setClientProfileVersion(0);
         profile.setConfigurationVersion(1);
         profile.setClientProfileBody(PROFILE_BODY);
         profile.setCfGroupStates(oldGroups);

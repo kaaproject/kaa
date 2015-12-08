@@ -19,7 +19,6 @@ package org.kaaproject.kaa.server.common.dao;
 
 import java.util.List;
 
-import org.kaaproject.kaa.common.dto.CTLDataDto;
 import org.kaaproject.kaa.common.dto.ChangeNotificationDto;
 import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
@@ -148,14 +147,6 @@ public interface EndpointService {
      * @param endpointProfileKeyHash the endpoint profile key hash
      */
     void removeEndpointProfileByKeyHash(byte[] endpointProfileKeyHash);
-
-    /**
-     * Find server profile body and schema by keyHash.
-     *
-     * @param endpointProfileKeyHash the endpoint profile key hash
-     * @return the server profile by key hash
-     */
-    CTLDataDto findServerProfileByKeyHash(byte[] keyHash);
 
     /**
      * Remove endpoint profile by application id.

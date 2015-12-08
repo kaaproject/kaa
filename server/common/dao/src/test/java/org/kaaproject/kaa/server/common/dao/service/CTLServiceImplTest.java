@@ -54,6 +54,7 @@ public class CTLServiceImplTest extends AbstractTest {
     private CTLSchemaDto thirdSchema;
     private CTLSchemaDto fourthSchema;
     private CTLSchemaDto mainSchema;
+    private CTLSchemaDto defaultSystemSchema;
     private CTLSchemaDto systemSchema;
     private CTLSchemaDto tenantSchema;
     private CTLSchemaDto appSchema;
@@ -78,6 +79,8 @@ public class CTLServiceImplTest extends AbstractTest {
                 tn.setName(SUPER_TENANT);
                 tenant = userService.saveTenant(tn);
                 appDto = generateApplicationDto(tenant.getId());
+                List<CTLSchemaDto> ctlSchemas = ctlService.findSystemCTLSchemas();
+                defaultSystemSchema = ctlSchemas.get(0);
             }
         }
         Set<CTLSchemaDto> dependency = new HashSet<>();
@@ -185,13 +188,13 @@ public class CTLServiceImplTest extends AbstractTest {
     @Test
     public void testFindSystemCTLSchemas() {
         List<CTLSchemaDto> appSchemas = ctlService.findSystemCTLSchemas();
-        Assert.assertEquals(getIdsDto(Arrays.asList(systemSchema)), getIdsDto(appSchemas));
+        Assert.assertEquals(getIdsDto(Arrays.asList(defaultSystemSchema, systemSchema)), getIdsDto(appSchemas));
     }
 
     @Test
     public void testFindSystemCTLSchemasMetaInfo() {
         List<CTLSchemaMetaInfoDto> appSchemas = ctlService.findSystemCTLSchemasMetaInfo();
-        Assert.assertEquals(Arrays.asList(systemSchema.getMetaInfo()), appSchemas);
+        Assert.assertEquals(Arrays.asList(defaultSystemSchema.getMetaInfo(), systemSchema.getMetaInfo()), appSchemas);
     }
 
     @Test

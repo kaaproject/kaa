@@ -37,7 +37,7 @@ public class ControlServerRecordLibraryIT extends AbstractTestControlServer {
     public void testGenerateRecordLibrary() throws Exception {
         ApplicationDto application = createApplication(tenantAdminDto);
         LogSchemaDto logSchema = createLogSchema(application.getId());
-        FileData library = client.downloadLogRecordLibrary(new RecordKey(application.getId(), logSchema.getMajorVersion()));
+        FileData library = client.downloadLogRecordLibrary(new RecordKey(application.getId(), logSchema.getVersion()));
         Assert.assertNotNull(library);
         Assert.assertFalse(strIsEmpty(library.getFileName()));
         Assert.assertNotNull(library.getFileData());
@@ -86,7 +86,7 @@ public class ControlServerRecordLibraryIT extends AbstractTestControlServer {
         ApplicationDto application = createApplication(tenantAdminDto);
         LogSchemaDto logSchema = createLogSchema(application.getId());
 
-        FileData library = client.downloadLogRecordSchema(new RecordKey(application.getId(), logSchema.getMajorVersion()));
+        FileData library = client.downloadLogRecordSchema(new RecordKey(application.getId(), logSchema.getVersion()));
         Assert.assertNotNull(library);
         Assert.assertFalse(strIsEmpty(library.getFileName()));
         Assert.assertNotNull(library.getFileData());

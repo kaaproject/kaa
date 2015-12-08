@@ -143,7 +143,7 @@ public final class ProfileFilter extends AbstractStructure<ProfileFilterDto> imp
 
     @Override
     public String toString() {
-        return "ProfileFilter [body=" + body + ", sequenceNumber=" + sequenceNumber + ", majorVersion=" + majorVersion + ", minorVersion=" + minorVersion
+        return "ProfileFilter [body=" + body + ", sequenceNumber=" + sequenceNumber + ", schemaVersion=" + schemaVersion 
                 + ", description=" + description + ", createdTime=" + createdTime + ", lastModifyTime=" + lastModifyTime + ", activatedTime=" + activatedTime
                 + ", deactivatedTime=" + deactivatedTime + ", createdUsername=" + createdUsername + ", modifiedUsername=" + modifiedUsername
                 + ", activatedUsername=" + activatedUsername + ", deactivatedUsername=" + deactivatedUsername + ", endpointCount=" + endpointCount

@@ -90,6 +90,6 @@ public class NotificationSchema extends Schema<NotificationSchemaDto> implements
     }
 
     public int incrementVersion() {
-        return ++majorVersion;
+        return ++version;
     }
 }

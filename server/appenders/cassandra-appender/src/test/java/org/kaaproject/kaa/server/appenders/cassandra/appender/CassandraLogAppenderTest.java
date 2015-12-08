@@ -83,7 +83,7 @@ public class CassandraLogAppenderTest {
     @Before
     public void beforeTest() throws IOException {
         endpointKeyHash = UUID.randomUUID().toString();
-        profileDto = new EndpointProfileDataDto("1", endpointKeyHash, 1, "", "1", "");
+        profileDto = new EndpointProfileDataDto("1", endpointKeyHash, 1, "", 1, "");
         appToken = String.valueOf(RANDOM.nextInt(Integer.MAX_VALUE));
 
         appenderDto = new LogAppenderDto();

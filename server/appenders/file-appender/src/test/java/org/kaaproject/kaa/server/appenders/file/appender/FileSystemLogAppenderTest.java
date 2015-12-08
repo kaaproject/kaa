@@ -83,7 +83,7 @@ public class FileSystemLogAppenderTest {
             LogEvent logEvent = new LogEvent();
 
             logEvent.setLogData(converter.encode(theLog));
-            EndpointProfileDataDto profileDto = new EndpointProfileDataDto("1", "endpointKey", 1, "", null, null);
+            EndpointProfileDataDto profileDto = new EndpointProfileDataDto("1", "endpointKey", 1, "", 0, null);
             BaseLogEventPack logEventPack = new BaseLogEventPack(profileDto, 1234567l, schema.getVersion(), Collections.singletonList(logEvent));
             logEventPack.setLogSchema(schema);
             TestLogDeliveryCallback callback = new TestLogDeliveryCallback();
@@ -128,7 +128,7 @@ public class FileSystemLogAppenderTest {
             LogEvent logEvent = new LogEvent();
 
             logEvent.setLogData(new byte[0]);
-            EndpointProfileDataDto profileDto = new EndpointProfileDataDto("1", "endpointKey", 1, "", null, null);
+            EndpointProfileDataDto profileDto = new EndpointProfileDataDto("1", "endpointKey", 1, "", 0, null);
             BaseLogEventPack logEventPack = new BaseLogEventPack(profileDto, 1234567l, schema.getVersion(), Collections.singletonList(logEvent));
             logEventPack.setLogSchema(schema);
             TestLogDeliveryCallback callback = new TestLogDeliveryCallback();

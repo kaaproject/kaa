@@ -141,8 +141,8 @@ public class ClientFactoryImpl implements ClientFactory {
     private final UserView userView = new UserViewImpl(false);
 
     private final BaseListView<ProfileSchemaDto> profileSchemasView = new ProfileSchemasViewImpl();
-    private final BaseSchemaView profileSchemaView = new ProfileSchemaViewImpl(false);
-    private final BaseSchemaView createProfileSchemaView = new ProfileSchemaViewImpl(true);
+    private final BaseCtlSchemaView profileSchemaView = new ProfileSchemaViewImpl(false);
+    private final BaseCtlSchemaView createProfileSchemaView = new ProfileSchemaViewImpl(true);
 
     private final BaseListView<ServerProfileSchemaDto> serverProfileSchemasView = new ServerProfileSchemasViewImpl();
     private final BaseCtlSchemaView serverProfileSchemaView = new ServerProfileSchemaViewImpl(false);
@@ -302,12 +302,12 @@ public class ClientFactoryImpl implements ClientFactory {
     }
 
     @Override
-    public BaseSchemaView getProfileSchemaView() {
+    public BaseCtlSchemaView getProfileSchemaView() {
         return profileSchemaView;
     }
 
     @Override
-    public BaseSchemaView getCreateProfileSchemaView() {
+    public BaseCtlSchemaView getCreateProfileSchemaView() {
         return createProfileSchemaView;
     }
 

@@ -189,7 +189,7 @@ public class ConcurrentCacheServiceTest extends AbstractTest {
         final List<ConfigurationDto> configurations = new ArrayList<ConfigurationDto>();
         ConfigurationDto theConf = new ConfigurationDto();
         theConf.setId(CF1_ID);
-        theConf.setMajorVersion(CONF1_SCHEMA_VERSION);
+        theConf.setSchemaVersion(CONF1_SCHEMA_VERSION);
         configurations.add(theConf);
         when(configurationService.findConfigurationsByEndpointGroupId(ENDPOINT_GROUP1_ID)).then(new Answer<List<ConfigurationDto>>() {
             @Override
@@ -731,9 +731,9 @@ public class ConcurrentCacheServiceTest extends AbstractTest {
         notMatchingConfChange.setType(changeType);
         notMatchingConfChange.setEndpointGroupId(ENDPOINT_GROUP1_ID);
         notMatchingConfChange.setConfigurationId(CF3_ID);
-        notMatchingConfChange.setCfMajorVersion(CONF1_SCHEMA_VERSION + 1);
+        notMatchingConfChange.setCfVersion(CONF1_SCHEMA_VERSION + 1);
         notMatchingConfChange.setProfileFilterId(PF3_ID);
-        notMatchingConfChange.setPfMajorVersion(PROFILE1_SCHEMA_VERSION + 1);
+        notMatchingConfChange.setPfVersion(PROFILE1_SCHEMA_VERSION + 1);
         notMatchingHistory.setChange(notMatchingConfChange);
         return notMatchingHistory;
     }
@@ -748,9 +748,9 @@ public class ConcurrentCacheServiceTest extends AbstractTest {
         matchingConfChange.setType(changeType);
         matchingConfChange.setEndpointGroupId(ENDPOINT_GROUP1_ID);
         matchingConfChange.setConfigurationId(CF2_ID);
-        matchingConfChange.setCfMajorVersion(CONF1_SCHEMA_VERSION);
+        matchingConfChange.setCfVersion(CONF1_SCHEMA_VERSION);
         matchingConfChange.setProfileFilterId(PF2_ID);
-        matchingConfChange.setPfMajorVersion(PROFILE1_SCHEMA_VERSION);
+        matchingConfChange.setPfVersion(PROFILE1_SCHEMA_VERSION);
         matchingHistory.setChange(matchingConfChange);
         return matchingHistory;
     }

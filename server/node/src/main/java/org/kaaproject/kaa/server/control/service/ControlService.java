@@ -16,6 +16,9 @@
 
 package org.kaaproject.kaa.server.control.service;
 
+import java.util.List;
+import java.util.Map;
+
 import org.kaaproject.avro.ui.shared.Fqn;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
@@ -35,18 +38,18 @@ import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.common.dto.PageLinkDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.StructureRecordDto;
 import org.kaaproject.kaa.common.dto.TenantAdminDto;
 import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.UserDto;
+import org.kaaproject.kaa.common.dto.VersionDto;
 import org.kaaproject.kaa.common.dto.admin.RecordKey;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
@@ -58,9 +61,6 @@ import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.control.service.exception.ControlServiceException;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * The Interface ControlService.
@@ -413,7 +413,7 @@ public interface ControlService {
      * @return the vacant profile schemas by endpoint group id
      * @throws ControlServiceException the control service exception
      */
-    List<SchemaDto> getVacantProfileSchemasByEndpointGroupId(String endpointGroupId) throws ControlServiceException;
+    List<VersionDto> getVacantProfileSchemasByEndpointGroupId(String endpointGroupId) throws ControlServiceException;
 
     /**
      * Edits the profile filter.
@@ -452,7 +452,7 @@ public interface ControlService {
      * @return the vacant configuration schemas by endpoint group id
      * @throws ControlServiceException the control service exception
      */
-    List<SchemaDto> getVacantConfigurationSchemasByEndpointGroupId(String endpointGroupId) throws ControlServiceException;
+    List<VersionDto> getVacantConfigurationSchemasByEndpointGroupId(String endpointGroupId) throws ControlServiceException;
 
     /**
      * Gets the configuration.
@@ -593,7 +593,7 @@ public interface ControlService {
      * @return the user notification schemas by app id
      * @throws ControlServiceException the control service exception
      */
-    List<SchemaDto> getUserNotificationSchemasByAppId(String applicationId) throws ControlServiceException;
+    List<VersionDto> getUserNotificationSchemasByAppId(String applicationId) throws ControlServiceException;
 
     /**
      * Find notification schemas by app id and type.
@@ -756,7 +756,7 @@ public interface ControlService {
      * @return the configuration schema versions by application id
      * @throws ControlServiceException the control service exception
      */
-    List<SchemaDto> getConfigurationSchemaVersionsByApplicationId(String applicationId) throws ControlServiceException;
+    List<VersionDto> getConfigurationSchemaVersionsByApplicationId(String applicationId) throws ControlServiceException;
 
     /**
      * Gets the profile schema versions by application id.
@@ -765,7 +765,7 @@ public interface ControlService {
      * @return the profile schema versions by application id
      * @throws ControlServiceException the control service exception
      */
-    List<SchemaDto> getProfileSchemaVersionsByApplicationId(String applicationId) throws ControlServiceException;
+    List<VersionDto> getProfileSchemaVersionsByApplicationId(String applicationId) throws ControlServiceException;
 
     /**
      * Gets the notification schema versions by application id.
@@ -774,7 +774,7 @@ public interface ControlService {
      * @return the notification schema versions by application id
      * @throws ControlServiceException the control service exception
      */
-    List<SchemaDto> getNotificationSchemaVersionsByApplicationId(String applicationId) throws ControlServiceException;
+    List<VersionDto> getNotificationSchemaVersionsByApplicationId(String applicationId) throws ControlServiceException;
 
     /**
      * Gets the log schema versions by application id.
@@ -783,7 +783,7 @@ public interface ControlService {
      * @return the log schema versions by application id
      * @throws ControlServiceException the control service exception
      */
-    List<SchemaDto> getLogSchemaVersionsByApplicationId(String applicationId) throws ControlServiceException;
+    List<VersionDto> getLogSchemaVersionsByApplicationId(String applicationId) throws ControlServiceException;
 
     /**
      * Edits the event class family.

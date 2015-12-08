@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.kaaproject.kaa.common.dto.CTLDataDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
@@ -673,5 +674,12 @@ public class DefaultOperationsService implements OperationsService {
     @Override
     public EndpointProfileDto attachEndpointToUser(EndpointProfileDto profile, String appToken, String userExternalId) {
         return endpointUserService.attachEndpointToUser(profile, appToken, userExternalId);
+    }
+
+    @Override
+    public CTLDataDto getServerEndpointProfile(EndpointObjectHash key) {
+        EndpointProfileDto enpointProfile = profileService.getProfile(key);
+        CTLDataDto ctlDataDto = new CTLDataDto(enpointProfile.getServerProfileVersion(), enpointProfile.getServerProfileBody());
+        return ctlDataDto;
     }
 }

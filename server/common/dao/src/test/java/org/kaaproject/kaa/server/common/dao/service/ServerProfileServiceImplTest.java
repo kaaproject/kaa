@@ -69,18 +69,23 @@ public class ServerProfileServiceImplTest extends AbstractTest {
     @Test
     public void testFindServerProfileSchemasByAppId() {
         ApplicationDto app = generateApplicationDto();
+        
+        List<ServerProfileSchemaDto> found = serverProfileService.findServerProfileSchemasByAppId(app.getId());
+        Assert.assertEquals(1, found.size());
+        
         generateServiceProfileSchema(null, null);
         generateServiceProfileSchema(null, null);
         generateServiceProfileSchema(null, null);
         generateServiceProfileSchema(null, null);
 
         List<ServerProfileSchemaDto> expected = new ArrayList<>();
+        expected.add(found.get(0));
         expected.add(generateServiceProfileSchema(app.getId(), app.getTenantId()));
         expected.add(generateServiceProfileSchema(app.getId(), app.getTenantId()));
         expected.add(generateServiceProfileSchema(app.getId(), app.getTenantId()));
         expected.add(generateServiceProfileSchema(app.getId(), app.getTenantId()));
 
-        List<ServerProfileSchemaDto> found = serverProfileService.findServerProfileSchemasByAppId(app.getId());
+        found = serverProfileService.findServerProfileSchemasByAppId(app.getId());
         Assert.assertEquals(expected, found);
     }
 
@@ -111,19 +116,19 @@ public class ServerProfileServiceImplTest extends AbstractTest {
     @Test
     public void testSaveServerProfile() {
         ServerProfileSchemaDto schemaDto = generateServiceProfileSchema(null, null);
-        EndpointProfileDto ep = generateEndpointProfileDtoWithSchemaId(schemaDto.getApplicationId(), schemaDto.getId(), null);
+        EndpointProfileDto ep = generateEndpointProfileDtoWithSchemaVersion(schemaDto.getApplicationId(), schemaDto.getVersion(), null);
         EndpointProfileDto updated = serverProfileService.saveServerProfile(ep.getEndpointKeyHash(), "New profile body");
         Assert.assertArrayEquals(ep.getEndpointKeyHash(), updated.getEndpointKeyHash());
         Assert.assertNotEquals(ep.getServerProfileBody(), updated.getServerProfileBody());
-        Assert.assertEquals(ep.getServerProfileCtlSchemaId(), updated.getServerProfileCtlSchemaId());
+        Assert.assertEquals(ep.getServerProfileVersion(), updated.getServerProfileVersion());
     }
 
     @Test
     public void testFindServerProfileSchemaByKeyHash() {
         ServerProfileSchemaDto schemaDto = generateServiceProfileSchema(null, null);
-        EndpointProfileDto ep = generateEndpointProfileDtoWithSchemaId(schemaDto.getApplicationId(), schemaDto.getId(), null);
+        EndpointProfileDto ep = generateEndpointProfileDtoWithSchemaVersion(schemaDto.getApplicationId(), schemaDto.getVersion(), null);
         EndpointProfileDto found = endpointService.findEndpointProfileByKeyHash(ep.getEndpointKeyHash());
-        ServerProfileSchemaDto foundSchema = serverProfileService.findServerProfileSchema(found.getServerProfileCtlSchemaId());
+        ServerProfileSchemaDto foundSchema = serverProfileService.findServerProfileSchemaByAppIdAndVersion(found.getApplicationId(), found.getServerProfileVersion());
         Assert.assertEquals(schemaDto, foundSchema);
     }
 }

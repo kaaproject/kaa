@@ -26,7 +26,7 @@ public class EndpointProfileRecordFieldDto implements Serializable {
 
     private RecordField profileRecord;
     private byte[] endpointKeyHash;
-    private String ctlSchemaId;
+    private int serverProfileVersion;
 
     public RecordField getProfileRecord() {
         return profileRecord;
@@ -44,11 +44,12 @@ public class EndpointProfileRecordFieldDto implements Serializable {
         this.endpointKeyHash = endpointKeyHash;
     }
 
-    public String getCtlSchemaId() {
-        return ctlSchemaId;
+    public int getServerProfileVersion() {
+        return serverProfileVersion;
     }
 
-    public void setCtlSchemaId(String ctlSchemaId) {
-        this.ctlSchemaId = ctlSchemaId;
+    public void setServerProfileVersion(int serverProfileVersion) {
+        this.serverProfileVersion = serverProfileVersion;
     }
+  
 }

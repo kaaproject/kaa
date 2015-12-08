@@ -26,9 +26,9 @@ public class ChangeDto implements Serializable, HasId {
     private ChangeType type;
     private String endpointGroupId;
     private String profileFilterId;
-    private int pfMajorVersion;
+    private int pfVersion;
     private String configurationId;
-    private int cfMajorVersion;
+    private int cfVersion;
     private String topicId;
 
     
@@ -64,12 +64,12 @@ public class ChangeDto implements Serializable, HasId {
         this.profileFilterId = profileFilterId;
     }
 
-    public int getPfMajorVersion() {
-        return pfMajorVersion;
+    public int getPfVersion() {
+        return pfVersion;
     }
 
-    public void setPfMajorVersion(int pfMajorVersion) {
-        this.pfMajorVersion = pfMajorVersion;
+    public void setPfVersion(int pfVersion) {
+        this.pfVersion = pfVersion;
     }
 
     public String getConfigurationId() {
@@ -80,12 +80,12 @@ public class ChangeDto implements Serializable, HasId {
         this.configurationId = configurationId;
     }
 
-    public int getCfMajorVersion() {
-        return cfMajorVersion;
+    public int getCfVersion() {
+        return cfVersion;
     }
 
-    public void setCfMajorVersion(int cfMajorVersion) {
-        this.cfMajorVersion = cfMajorVersion;
+    public void setCfVersion(int cfVersion) {
+        this.cfVersion = cfVersion;
     }
 
     public String getTopicId() {
@@ -107,10 +107,10 @@ public class ChangeDto implements Serializable, HasId {
 
         ChangeDto changeDto = (ChangeDto) o;
 
-        if (cfMajorVersion != changeDto.cfMajorVersion) {
+        if (cfVersion != changeDto.cfVersion) {
             return false;
         }
-        if (pfMajorVersion != changeDto.pfMajorVersion) {
+        if (pfVersion != changeDto.pfVersion) {
             return false;
         }
         if (configurationId != null ? !configurationId.equals(changeDto.configurationId) : changeDto.configurationId != null) {
@@ -137,9 +137,9 @@ public class ChangeDto implements Serializable, HasId {
         int result = type != null ? type.hashCode() : 0;
         result = 31 * result + (endpointGroupId != null ? endpointGroupId.hashCode() : 0);
         result = 31 * result + (profileFilterId != null ? profileFilterId.hashCode() : 0);
-        result = 31 * result + pfMajorVersion;
+        result = 31 * result + pfVersion;
         result = 31 * result + (configurationId != null ? configurationId.hashCode() : 0);
-        result = 31 * result + cfMajorVersion;
+        result = 31 * result + cfVersion;
         result = 31 * result + (topicId != null ? topicId.hashCode() : 0);
         return result;
     }
@@ -151,9 +151,9 @@ public class ChangeDto implements Serializable, HasId {
                 "type=" + type +
                 ", endpointGroupId='" + endpointGroupId + '\'' +
                 ", profileFilterId='" + profileFilterId + '\'' +
-                ", pfMajorVersion=" + pfMajorVersion +
+                ", pfVersion=" + pfVersion +
                 ", configurationId='" + configurationId + '\'' +
-                ", cfMajorVersion=" + cfMajorVersion +
+                ", cfVersion=" + cfVersion +
                 ", topicId='" + topicId + '\'' +
                 '}';
     }

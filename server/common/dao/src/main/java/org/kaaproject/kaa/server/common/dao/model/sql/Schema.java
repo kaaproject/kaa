@@ -15,10 +15,16 @@
  */
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-import org.kaaproject.kaa.common.dto.AbstractSchemaDto;
-import org.kaaproject.kaa.common.dto.SchemaDto;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.SCHEMA_APPLICATION_ID;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.SCHEMA_CREATED_TIME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.SCHEMA_CREATED_USERNAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.SCHEMA_DESCRIPTION;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.SCHEMA_ENDPOINT_COUNT;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.SCHEMA_NAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.SCHEMA_SCHEMA;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.SCHEMA_TABLE_NAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.SCHEMA_VERSION;
+import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -30,17 +36,10 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.SCHEMA_APPLICATION_ID;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.SCHEMA_CREATED_TIME;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.SCHEMA_CREATED_USERNAME;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.SCHEMA_DESCRIPTION;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.SCHEMA_ENDPOINT_COUNT;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.SCHEMA_MAJOR_VERSION;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.SCHEMA_MINOR_VERSION;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.SCHEMA_NAME;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.SCHEMA_SCHEMA;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.SCHEMA_TABLE_NAME;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+import org.kaaproject.kaa.common.dto.AbstractSchemaDto;
+import org.kaaproject.kaa.common.dto.VersionDto;
 
 @Entity
 @Table(name = SCHEMA_TABLE_NAME)
@@ -49,11 +48,8 @@ public abstract class Schema<T extends AbstractSchemaDto> extends GenericModel<T
 
     private static final long serialVersionUID = 2866125011338808891L;
 
-    @Column(name = SCHEMA_MAJOR_VERSION)
-    protected int majorVersion;
-
-    @Column(name = SCHEMA_MINOR_VERSION)
-    protected int minorVersion;
+    @Column(name = SCHEMA_VERSION)
+    protected int version;
 
     @Lob
     @Column(name = SCHEMA_SCHEMA)
@@ -91,8 +87,7 @@ public abstract class Schema<T extends AbstractSchemaDto> extends GenericModel<T
             this.id = getLongId(dto);
             Long appId = getLongId(dto.getApplicationId());
             this.application = appId != null ? new Application(appId) : null;
-            this.majorVersion = dto.getMajorVersion();
-            this.minorVersion = dto.getMinorVersion();
+            this.version = dto.getVersion();
             this.schema = dto.getSchema();
             this.name = dto.getName();
             this.description = dto.getDescription();
@@ -101,23 +96,14 @@ public abstract class Schema<T extends AbstractSchemaDto> extends GenericModel<T
             this.endpointCount = dto.getEndpointCount();
         }
     }
-
-    public int getMajorVersion() {
-        return majorVersion;
+    
+    public int getVersion() {
+        return version;
     }
 
-    public void setMajorVersion(int majorVersion) {
-        this.majorVersion = majorVersion;
+    public void setVersion(int version) {
+        this.version = version;
     }
-
-    public int getMinorVersion() {
-        return minorVersion;
-    }
-
-    public void setMinorVersion(int minorVersion) {
-        this.minorVersion = minorVersion;
-    }
-
     public String getSchema() {
         return schema;
     }
@@ -187,8 +173,7 @@ public abstract class Schema<T extends AbstractSchemaDto> extends GenericModel<T
         final int prime = 33;
         int result = 1;
         result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + majorVersion;
-        result = prime * result + minorVersion;
+        result = prime * result + version;
         result = prime * result + ((schema == null) ? 0 : schema.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((description == null) ? 0 : description.hashCode());
@@ -219,10 +204,7 @@ public abstract class Schema<T extends AbstractSchemaDto> extends GenericModel<T
         } else if (!id.equals(other.id)) {
             return false;
         }
-        if (majorVersion != other.majorVersion) {
-            return false;
-        }
-        if (minorVersion != other.minorVersion) {
+        if (version != other.version) {
             return false;
         }
         if (schema == null) {
@@ -271,7 +253,7 @@ public abstract class Schema<T extends AbstractSchemaDto> extends GenericModel<T
 
     @Override
     public String toString() {
-        return "Schema [id=" + id + ", majorVersion=" + majorVersion + ", minorVersion=" + minorVersion + ", schema=" + schema + ", name=" + name
+        return "Schema [id=" + id + ", version=" + version + ", schema=" + schema + ", name=" + name
                 + ", description=" + description + ", createdUsername=" + createdUsername + ", createdTime=" + createdTime + ", endpointCount=" + endpointCount + "]";
     }
 
@@ -282,8 +264,7 @@ public abstract class Schema<T extends AbstractSchemaDto> extends GenericModel<T
         if (application != null) {
             dto.setApplicationId(application.getStringId());
         }
-        dto.setMajorVersion(majorVersion);
-        dto.setMinorVersion(minorVersion);
+        dto.setVersion(version);
         dto.setSchema(schema);
         dto.setName(name);
         dto.setDescription(description);
@@ -293,11 +274,10 @@ public abstract class Schema<T extends AbstractSchemaDto> extends GenericModel<T
         return dto;
     }
 
-    public SchemaDto toSchemaDto() {
-        SchemaDto dto = new SchemaDto();
+    public VersionDto toVersionDto() {
+        VersionDto dto = new VersionDto();
         dto.setId(getStringId());
-        dto.setMajorVersion(majorVersion);
-        dto.setMinorVersion(minorVersion);
+        dto.setVersion(version);
         return dto;
     }
 }

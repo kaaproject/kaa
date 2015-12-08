@@ -34,10 +34,12 @@ public interface FilterService {
      * Gets all matching filters by key and body.
      *
      * @param appProfileVersionKey the key that is build from AppToken and profile version. 
+     * @param appServerProfileVersionKey the key that is build from AppToken and server profile version. 
      * @param profile the profile
      * @return the all matching filters
      */
-    List<ProfileFilterDto> getAllMatchingFilters(AppVersionKey appProfileVersionKey, EndpointProfileDto profile);
+    List<ProfileFilterDto> getAllMatchingFilters(AppVersionKey appProfileVersionKey, 
+            AppVersionKey appServerProfileVersionKey, EndpointProfileDto profile);
 
     /**
      * Check if profileBody matches filter that is represented by filter id.

@@ -16,10 +16,10 @@
 
 package org.kaaproject.kaa.server.common.dao;
 
+import java.util.List;
+
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
-
-import java.util.List;
 
 /**
  * Server profile service
@@ -57,12 +57,15 @@ public interface ServerProfileService {
      * @return the list of server profile schemas for corresponding application.
      */
     List<ServerProfileSchemaDto> findServerProfileSchemasByAppId(String appId);
-
+    
     /**
-     * @param keyHash
-     * @return
+     * Find server profile schema by application id and version.
+     *
+     * @param appId the application id
+     * @param schemaVersion the schema version
+     * @return the server profile schema dto
      */
-    ServerProfileSchemaDto findServerProfileSchemaByKeyHash(byte[] keyHash);
+    ServerProfileSchemaDto findServerProfileSchemaByAppIdAndVersion(String appId, int schemaVersion);
 
     /**
      * Remove server profile schema with given identifier.

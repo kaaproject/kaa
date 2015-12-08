@@ -27,8 +27,7 @@ public abstract class AbstractStructureDto implements HasId, Serializable {
     protected String schemaId;
     protected String endpointGroupId;
     protected int sequenceNumber;
-    protected int majorVersion;
-    protected int minorVersion;
+    protected int schemaVersion;
     protected String description;
     protected long createdTime;
     protected long lastModifyTime;
@@ -51,8 +50,7 @@ public abstract class AbstractStructureDto implements HasId, Serializable {
         this.schemaId = other.schemaId;
         this.endpointGroupId = other.endpointGroupId;
         this.sequenceNumber = other.sequenceNumber;
-        this.majorVersion = other.majorVersion;
-        this.minorVersion = other.minorVersion;
+        this.schemaVersion = other.schemaVersion;
         this.description = other.description;
         this.createdTime = other.createdTime;
         this.lastModifyTime = other.lastModifyTime;
@@ -110,20 +108,12 @@ public abstract class AbstractStructureDto implements HasId, Serializable {
         this.sequenceNumber = sequenceNumber;
     }
 
-    public int getMajorVersion() {
-        return majorVersion;
+    public int getSchemaVersion() {
+        return schemaVersion;
     }
 
-    public void setMajorVersion(int majorVersion) {
-        this.majorVersion = majorVersion;
-    }
-
-    public int getMinorVersion() {
-        return minorVersion;
-    }
-
-    public void setMinorVersion(int minorVersion) {
-        this.minorVersion = minorVersion;
+    public void setSchemaVersion(int version) {
+        this.schemaVersion = version;
     }
 
     public String getDescription() {
@@ -244,10 +234,7 @@ public abstract class AbstractStructureDto implements HasId, Serializable {
         if (lastModifyTime != that.lastModifyTime) {
             return false;
         }
-        if (majorVersion != that.majorVersion) {
-            return false;
-        }
-        if (minorVersion != that.minorVersion) {
+        if (schemaVersion != that.schemaVersion) {
             return false;
         }
         if (sequenceNumber != that.sequenceNumber) {
@@ -278,8 +265,7 @@ public abstract class AbstractStructureDto implements HasId, Serializable {
         result = 31 * result + (schemaId != null ? schemaId.hashCode() : 0);
         result = 31 * result + (endpointGroupId != null ? endpointGroupId.hashCode() : 0);
         result = 31 * result + sequenceNumber;
-        result = 31 * result + majorVersion;
-        result = 31 * result + minorVersion;
+        result = 31 * result + schemaVersion;
         result = 31 * result + (int) (lastModifyTime ^ (lastModifyTime >>> 32));
         result = 31 * result + (body != null ? body.hashCode() : 0);
         result = 31 * result + (status != null ? status.hashCode() : 0);
@@ -294,8 +280,7 @@ public abstract class AbstractStructureDto implements HasId, Serializable {
                 ", profileSchemaId='" + schemaId + '\'' +
                 ", endpointGroupId='" + endpointGroupId + '\'' +
                 ", sequenceNumber=" + sequenceNumber +
-                ", majorVersion=" + majorVersion +
-                ", minorVersion=" + minorVersion +
+                ", schemaVersion=" + schemaVersion +
                 ", lastModifyTime=" + lastModifyTime +
                 ", status=" + status +
                 ", version=" + version +

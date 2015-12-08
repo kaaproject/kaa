@@ -16,6 +16,9 @@
 
 package org.kaaproject.kaa.server.admin.controller;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -41,9 +44,9 @@ import org.kaaproject.kaa.common.dto.PageLinkDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterRecordDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
+import org.kaaproject.kaa.common.dto.VersionDto;
 import org.kaaproject.kaa.common.dto.admin.AuthResultDto;
 import org.kaaproject.kaa.common.dto.admin.RecordKey;
 import org.kaaproject.kaa.common.dto.admin.ResultCode;
@@ -93,8 +96,6 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MultipartFile;
-
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 /**
  * The Class KaaAdminController.
@@ -555,12 +556,12 @@ public class KaaAdminController {
     /**
      * Saves a CTL schema.
      */
-    @RequestMapping(value = "CTL/saveSchema", params = { "body", "scope", "applicationId" }, method = RequestMethod.POST)
+    @RequestMapping(value = "CTL/saveSchema", params = { "body" }, method = RequestMethod.POST)
     @ResponseBody
     public CTLSchemaInfoDto saveCTLSchema(@RequestParam String body, 
-            @RequestParam(required = false) CTLSchemaScopeDto scope,  
+            @RequestParam(required = false) String scope,  
             @RequestParam(required = false) String applicationId) throws KaaAdminServiceException {
-        return kaaAdminService.saveCTLSchema(body, scope, applicationId);
+        return kaaAdminService.saveCTLSchema(body, isEmpty(scope) ? null : CTLSchemaScopeDto.valueOf(scope.toUpperCase()), applicationId);
     }
 
     /**
@@ -632,6 +633,7 @@ public class KaaAdminController {
             response.getOutputStream().write(output.getFileData());
             response.flushBuffer();
         } catch (Exception cause) {
+            
             throw Utils.handleException(cause);
         }
     }
@@ -687,25 +689,13 @@ public class KaaAdminController {
     }
 
     /**
-     * Adds profile schema to the list of all profile schemas.
+     * Saves profile schema.
      *
      */
-    @RequestMapping(value="createProfileSchema", method=RequestMethod.POST, consumes = { "multipart/mixed", "multipart/form-data" })
+    @RequestMapping(value="saveProfileSchema", method=RequestMethod.POST)
     @ResponseBody
-    public ProfileSchemaDto createProfileSchema(@RequestPart("profileSchema") ProfileSchemaDto profileSchema,
-            @RequestPart("file") MultipartFile file) throws KaaAdminServiceException {
-        byte[] data = getFileContent(file);
-        return kaaAdminService.editProfileSchema(profileSchema, data);
-    }
-
-    /**
-     * Edits existing profile schema.
-     *
-     */
-    @RequestMapping(value="editProfileSchema", method=RequestMethod.POST)
-    @ResponseBody
-    public ProfileSchemaDto editProfileSchema(@RequestBody ProfileSchemaDto profileSchema) throws KaaAdminServiceException {
-        return kaaAdminService.editProfileSchema(profileSchema, null);
+    public ProfileSchemaDto saveProfileSchema(@RequestBody ProfileSchemaDto profileSchema) throws KaaAdminServiceException {
+        return kaaAdminService.saveProfileSchema(profileSchema);
     }
 
     /**
@@ -766,7 +756,7 @@ public class KaaAdminController {
      */
     @RequestMapping(value="userNotificationSchemas/{applicationId}", method=RequestMethod.GET)
     @ResponseBody
-    public List<SchemaDto> getUserNotificationSchemasByApplicationId(@PathVariable String applicationId) throws KaaAdminServiceException {
+    public List<VersionDto> getUserNotificationSchemasByApplicationId(@PathVariable String applicationId) throws KaaAdminServiceException {
         return kaaAdminService.getUserNotificationSchemasByApplicationId(applicationId);
     }
 
@@ -1049,7 +1039,7 @@ public class KaaAdminController {
      */
     @RequestMapping(value="vacantProfileSchemas/{endpointGroupId}", method=RequestMethod.GET)
     @ResponseBody
-    public List<SchemaDto> getVacantProfileSchemasByEndpointGroupId(@PathVariable String endpointGroupId) throws KaaAdminServiceException {
+    public List<VersionDto> getVacantProfileSchemasByEndpointGroupId(@PathVariable String endpointGroupId) throws KaaAdminServiceException {
         return kaaAdminService.getVacantProfileSchemasByEndpointGroupId(endpointGroupId);
     }
 
@@ -1125,7 +1115,7 @@ public class KaaAdminController {
      */
     @RequestMapping(value="vacantConfigurationSchemas/{endpointGroupId}", method=RequestMethod.GET)
     @ResponseBody
-    public List<SchemaDto> getVacantConfigurationSchemasByEndpointGroupId(
+    public List<VersionDto> getVacantConfigurationSchemasByEndpointGroupId(
             @PathVariable String endpointGroupId) throws KaaAdminServiceException {
         return kaaAdminService.getVacantConfigurationSchemasByEndpointGroupId(endpointGroupId);
     }

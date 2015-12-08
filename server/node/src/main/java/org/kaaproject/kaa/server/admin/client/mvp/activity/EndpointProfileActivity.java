@@ -238,9 +238,10 @@ public class EndpointProfileActivity extends
                 final RecordField value = detailsView.getServerProfEditor().getValue();
                 endpointProfileRecordFieldDto.setProfileRecord(value);
 
-                final String serverSchemaId = detailsView.getServerSchemasListBox().getValue().getId();
+                final int serverSchemaVersion = detailsView.getServerSchemasListBox().getValue().getVersion();
                 final String serverSchemaName = detailsView.getServerSchemasListBox().getValue().getName();
-                profileDto.setServerProfileCtlSchemaId(serverSchemaId);
+                final String serverSchemaId = detailsView.getServerSchemasListBox().getValue().getId();
+                profileDto.setServerProfileVersion(serverSchemaVersion);
                 endpointProfileRecordFieldDto.setEndpointKeyHash(profileDto.getEndpointKeyHash());
 
                 KaaAdmin.getDataSource().updateEndpointProfile(endpointProfileRecordFieldDto,
@@ -306,7 +307,7 @@ public class EndpointProfileActivity extends
 
             public void onYes() {
                 EndpointProfileRecordFieldDto endpointProfileRecordFieldDto = new EndpointProfileRecordFieldDto();
-                profileDto.setServerProfileCtlSchemaId(null);
+                profileDto.setServerProfileVersion(0);
                 endpointProfileRecordFieldDto.setProfileRecord(null);
                 endpointProfileRecordFieldDto.setEndpointKeyHash(profileDto.getEndpointKeyHash());
 

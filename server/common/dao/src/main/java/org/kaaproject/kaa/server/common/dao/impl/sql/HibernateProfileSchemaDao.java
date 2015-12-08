@@ -33,7 +33,7 @@ import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_ALIA
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_REFERENCE;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.ID_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.MAJOR_VERSION_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.VERSION_PROPERTY;
 
 @Repository
 public class HibernateProfileSchemaDao extends HibernateAbstractDao<ProfileSchema> implements ProfileSchemaDao<ProfileSchema> {
@@ -63,7 +63,7 @@ public class HibernateProfileSchemaDao extends HibernateAbstractDao<ProfileSchem
         if (isNotBlank(appId)) {
             schema = findOneByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS, Restrictions.and(
                     Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)),
-                    Restrictions.eq(MAJOR_VERSION_PROPERTY, version)));
+                    Restrictions.eq(VERSION_PROPERTY, version)));
         }
         if (LOG.isTraceEnabled()) {
             LOG.trace("[{},{}] Search result: {}.", appId, version, schema);
@@ -80,7 +80,7 @@ public class HibernateProfileSchemaDao extends HibernateAbstractDao<ProfileSchem
         if (isNotBlank(appId)) {
             Criteria criteria = getCriteria().createAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS)
                     .add(Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)))
-                    .addOrder(Order.desc(MAJOR_VERSION_PROPERTY)).setMaxResults(FIRST);
+                    .addOrder(Order.desc(VERSION_PROPERTY)).setMaxResults(FIRST);
             latestSchema = findOneByCriteria(criteria);
         }
         if (LOG.isTraceEnabled()) {

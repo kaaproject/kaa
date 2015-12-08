@@ -176,7 +176,7 @@ public class DefaultProfileService implements ProfileService {
     }
 
     protected void populateVersionStates(String tenantId, EndpointProfileDto dto, SdkProfileDto sdkProfile) {
-        dto.setProfileVersion(sdkProfile.getProfileSchemaVersion());
+        dto.setClientProfileVersion(sdkProfile.getProfileSchemaVersion());
         dto.setConfigurationVersion(sdkProfile.getConfigurationSchemaVersion());
         dto.setUserNfVersion(sdkProfile.getNotificationSchemaVersion());
         dto.setLogSchemaVersion(sdkProfile.getLogSchemaVersion());
@@ -214,7 +214,7 @@ public class DefaultProfileService implements ProfileService {
         LOG.trace("Lookup profileSchema by appToken: {} and version: {}", appToken, schemaVersion);
 
         ProfileSchemaDto profileSchemaDto = cacheService.getProfileSchemaByAppAndVersion(new AppVersionKey(appToken, schemaVersion));
-        String profileSchema = profileSchemaDto.getSchema();
+        String profileSchema = cacheService.getFlatCtlSchemaById(profileSchemaDto.getCtlSchemaId());
 
         LOG.trace("ProfileSchema by appToken: {} and version: {} found: {}", appToken, schemaVersion, profileSchema);
 

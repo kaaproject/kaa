@@ -38,7 +38,7 @@ import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_REFE
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.ENDPOINT_GROUP_ALIAS;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.ENDPOINT_GROUP_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.ENDPOINT_GROUP_REFERENCE;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.MAJOR_VERSION_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.SCHEMA_VERSION_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PROFILE_SCHEMA_ALIAS;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PROFILE_SCHEMA_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PROFILE_SCHEMA_REFERENCE;
@@ -142,11 +142,11 @@ public class HibernateProfileFilterDao extends HibernateAbstractDao<ProfileFilte
     @Override
     public List<ProfileFilter> findByAppIdAndSchemaVersion(String appId, int schemaVersion) {
         List<ProfileFilter> filters = null;
-        LOG.debug("Searching configuration by application id [{}] and major version [{}]", appId, schemaVersion);
+        LOG.debug("Searching configuration by application id [{}] and schema version [{}]", appId, schemaVersion);
         if (isNotBlank(appId)) {
             filters = findListByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS, Restrictions.and(
                     Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)),
-                    Restrictions.eq(MAJOR_VERSION_PROPERTY, schemaVersion),
+                    Restrictions.eq(SCHEMA_VERSION_PROPERTY, schemaVersion),
                     Restrictions.eq(STATUS_PROPERTY, UpdateStatus.ACTIVE)));
         }
         if (LOG.isTraceEnabled()) {

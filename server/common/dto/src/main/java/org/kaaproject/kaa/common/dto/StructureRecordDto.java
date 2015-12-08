@@ -56,12 +56,8 @@ public class StructureRecordDto<T extends AbstractStructureDto> implements Seria
         this.inactiveStructureDto = inactiveStructureDto;
     }
 
-    public int getMajorVersion() {
-        return activeStructureDto != null ? activeStructureDto.getMajorVersion() : inactiveStructureDto.getMajorVersion();
-    }
-
-    public int getMinorVersion() {
-        return activeStructureDto != null ? activeStructureDto.getMinorVersion() : inactiveStructureDto.getMinorVersion();
+    public int getSchemaVersion() {
+        return activeStructureDto != null ? activeStructureDto.getSchemaVersion() : inactiveStructureDto.getSchemaVersion();
     }
 
     public String getDescription() {
@@ -111,10 +107,6 @@ public class StructureRecordDto<T extends AbstractStructureDto> implements Seria
 
     @Override
     public int compareTo(StructureRecordDto<T> o) { //NOSONAR
-        int result = this.getMajorVersion() - o.getMajorVersion();
-        if (result == 0) {
-            result = this.getMinorVersion() - o.getMinorVersion();
-        }
-        return result;
+        return this.getSchemaVersion() - o.getSchemaVersion();
     }
 }

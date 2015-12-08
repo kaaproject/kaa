@@ -29,9 +29,9 @@ import org.kaaproject.kaa.common.dto.ChangeConfigurationNotification;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
-import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.common.dto.StructureRecordDto;
 import org.kaaproject.kaa.common.dto.UpdateStatus;
+import org.kaaproject.kaa.common.dto.VersionDto;
 import org.kaaproject.kaa.server.common.core.algorithms.generation.ConfigurationGenerationException;
 import org.kaaproject.kaa.server.common.core.algorithms.schema.SchemaCreationException;
 import org.kaaproject.kaa.server.common.core.algorithms.schema.SchemaGenerationAlgorithm;
@@ -39,9 +39,9 @@ import org.kaaproject.kaa.server.common.core.algorithms.schema.SchemaGenerationA
 import org.kaaproject.kaa.server.common.core.algorithms.schema.SchemaGenerationAlgorithmFactoryImpl;
 import org.kaaproject.kaa.server.common.core.schema.DataSchema;
 import org.kaaproject.kaa.server.common.core.schema.KaaSchema;
+import org.kaaproject.kaa.server.common.dao.AbstractTest;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
 import org.kaaproject.kaa.server.common.dao.exception.UpdateStatusConflictException;
-import org.kaaproject.kaa.server.common.dao.AbstractTest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -247,7 +247,7 @@ public class ConfigurationServiceImplTest extends AbstractTest {
     public void createDefaultSchemaTest() {
         String id = generateApplicationDto().getId();
         ConfigurationSchemaDto schema = generateConfSchemaDto(id, 1).get(0);
-        ConfigurationDto config = configurationService.findConfigurationByAppIdAndVersion(id, schema.getMajorVersion());
+        ConfigurationDto config = configurationService.findConfigurationByAppIdAndVersion(id, schema.getVersion());
         Assert.assertEquals(config.getStatus(), UpdateStatus.ACTIVE);
     }
 
@@ -265,7 +265,7 @@ public class ConfigurationServiceImplTest extends AbstractTest {
         ConfigurationSchemaDto schema = generateConfSchemaDto(null, 1).get(0);
         String groupId = generateEndpointGroupDto(schema.getApplicationId()).getId();
         ConfigurationDto config = generateConfigurationDto(schema.getId(), groupId, 1, true, false).get(0);
-        ConfigurationDto configuration = configurationService.findConfigurationByEndpointGroupIdAndVersion(groupId, schema.getMajorVersion());
+        ConfigurationDto configuration = configurationService.findConfigurationByEndpointGroupIdAndVersion(groupId, schema.getVersion());
         Assert.assertNotNull(configuration);
         Assert.assertEquals(config, configuration);
     }
@@ -339,11 +339,11 @@ public class ConfigurationServiceImplTest extends AbstractTest {
         generateConfigurationDto(schemaOne.getId(), groupOne.getId(), 1, true, false);
         EndpointGroupDto groupTwo = generateEndpointGroupDto(application.getId());
 
-        List<SchemaDto> schemasOne = configurationService.findVacantSchemasByEndpointGroupId(groupOne.getId());
+        List<VersionDto> schemasOne = configurationService.findVacantSchemasByEndpointGroupId(groupOne.getId());
         Assert.assertFalse(schemasOne.isEmpty());
         Assert.assertEquals(4, schemasOne.size());
 
-        List<SchemaDto> schemasTwo = configurationService.findVacantSchemasByEndpointGroupId(groupTwo.getId());
+        List<VersionDto> schemasTwo = configurationService.findVacantSchemasByEndpointGroupId(groupTwo.getId());
         Assert.assertFalse(schemasTwo.isEmpty());
         Assert.assertEquals(5, schemasTwo.size());
     }
@@ -351,11 +351,11 @@ public class ConfigurationServiceImplTest extends AbstractTest {
     @Test
     public void findConfigurationSchemaVersionsByAppIdTest() {
         ConfigurationSchemaDto schemaDto = generateConfSchemaDto(null, 1).get(0);
-        List<SchemaDto> versions = configurationService.findConfigurationSchemaVersionsByAppId(schemaDto.getApplicationId());
+        List<VersionDto> versions = configurationService.findConfigurationSchemaVersionsByAppId(schemaDto.getApplicationId());
         Assert.assertFalse(versions.isEmpty());
         Assert.assertEquals(2, versions.size());
-        Assert.assertEquals(versions.get(0).getMajorVersion(), 1);
-        Assert.assertEquals(versions.get(1).getMajorVersion(), 2);
+        Assert.assertEquals(versions.get(0).getVersion(), 1);
+        Assert.assertEquals(versions.get(1).getVersion(), 2);
     }
 
     @Test(expected = IncorrectParameterException.class)

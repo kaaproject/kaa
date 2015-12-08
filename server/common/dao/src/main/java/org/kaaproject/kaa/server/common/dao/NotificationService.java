@@ -22,8 +22,8 @@ import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
-import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.common.dto.UpdateNotificationDto;
+import org.kaaproject.kaa.common.dto.VersionDto;
 
 /**
  * The Interface NotificationService.
@@ -100,7 +100,7 @@ public interface NotificationService {
      * @param applicationId the application id
      * @return the list
      */
-    List<SchemaDto> findUserNotificationSchemasByAppId(String applicationId);
+    List<VersionDto> findUserNotificationSchemasByAppId(String applicationId);
 
     /**
      * Find notification schema versions by app id.
@@ -108,7 +108,7 @@ public interface NotificationService {
      * @param applicationId the application id
      * @return the list
      */
-    List<SchemaDto> findNotificationSchemaVersionsByAppId(String applicationId);
+    List<VersionDto> findNotificationSchemaVersionsByAppId(String applicationId);
 
     /**
      * Removes the notification schemas by app id.

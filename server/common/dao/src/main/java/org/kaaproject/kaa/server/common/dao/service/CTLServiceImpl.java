@@ -19,6 +19,7 @@ package org.kaaproject.kaa.server.common.dao.service;
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto.SYSTEM;
 import static org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto.TENANT;
+import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getStringFromFile;
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getDto;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateObject;
@@ -29,6 +30,7 @@ import java.io.ByteArrayOutputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -41,6 +43,7 @@ import org.codehaus.jackson.node.ObjectNode;
 import org.hibernate.LockMode;
 import org.hibernate.LockOptions;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaInfoDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
 import org.kaaproject.kaa.common.dto.file.FileData;
@@ -70,6 +73,7 @@ public class CTLServiceImpl implements CTLService {
     private static final Logger LOG = LoggerFactory.getLogger(CTLServiceImpl.class);
     private static final String DEPENDENCIES = "dependencies";
     private static final String GENERATED = "Generated";
+    private static final String DEFAULT_SYSTEM_EMPTY_SCHEMA_FILE = "/default_system_empty_schema.avsc";
 
     private final LockOptions lockOptions = new LockOptions(LockMode.PESSIMISTIC_WRITE);
 
@@ -97,6 +101,30 @@ public class CTLServiceImpl implements CTLService {
     private CTLSchemaDao<CTLSchema> ctlSchemaDao;
     @Autowired
     private CTLSchemaMetaInfoDao<CTLSchemaMetaInfo> schemaMetaInfoDao;
+    
+    @Override
+    public CTLSchemaDto getOrCreateEmptySystemSchema(String createdUsername) {
+        CTLSchemaDto ctlSchema = findCTLSchemaByFqnAndVerAndTenantId(DEFAULT_SYSTEM_EMPTY_SCHEMA_FQN, 
+                DEFAULT_SYSTEM_EMPTY_SCHEMA_VERSION, null);
+        if (ctlSchema == null) {
+            CTLSchemaInfoDto schema = new CTLSchemaInfoDto();
+            schema.setName(GENERATED);
+            schema.setCreatedUsername(createdUsername);
+            schema.setScope(CTLSchemaScopeDto.SYSTEM);
+            schema.setFqn(DEFAULT_SYSTEM_EMPTY_SCHEMA_FQN);
+            schema.setVersion(DEFAULT_SYSTEM_EMPTY_SCHEMA_VERSION);
+            schema.setDependencies(new HashSet<CTLSchemaMetaInfoDto>());
+            String body = getStringFromFile(DEFAULT_SYSTEM_EMPTY_SCHEMA_FILE, CTLServiceImpl.class);
+            if (!body.isEmpty()) {
+                schema.setBody(body);
+            } else {
+                throw new RuntimeException("Can't read default system schema."); //NOSONAR
+            }
+            ctlSchema = new CTLSchemaDto(schema, new HashSet<CTLSchemaDto>());
+            ctlSchema = saveCTLSchema(ctlSchema);
+        }
+        return ctlSchema;
+    }
 
     @Override
     public CTLSchemaDto saveCTLSchema(CTLSchemaDto unSavedSchema) {

@@ -40,6 +40,7 @@ import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.HistoryDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
@@ -59,6 +60,7 @@ import org.kaaproject.kaa.server.common.dao.EventClassService;
 import org.kaaproject.kaa.server.common.dao.HistoryService;
 import org.kaaproject.kaa.server.common.dao.ProfileService;
 import org.kaaproject.kaa.server.common.dao.SdkProfileService;
+import org.kaaproject.kaa.server.common.dao.ServerProfileService;
 import org.kaaproject.kaa.server.common.dao.TopicService;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
 import org.kaaproject.kaa.server.operations.service.cache.AppSeqNumber;
@@ -113,6 +115,10 @@ public class ConcurrentCacheService implements CacheService {
     @Autowired
     private ProfileService profileService;
     
+    /** The server profile service. */
+    @Autowired
+    private ServerProfileService serverProfileService;
+    
     @Autowired
     private CTLService ctlService;
 
@@ -155,9 +161,15 @@ public class ConcurrentCacheService implements CacheService {
 
     /** The pf schema memorizer. */
     private final CacheTemporaryMemorizer<AppVersionKey, ProfileSchemaDto> pfSchemaMemorizer = new CacheTemporaryMemorizer<>();
+    
+    /** The spf schema memorizer. */
+    private final CacheTemporaryMemorizer<AppVersionKey, ServerProfileSchemaDto> spfSchemaMemorizer = new CacheTemporaryMemorizer<>();
 
-    /** The pf schema memorizer. */
+    /** The ctl schema memorizer. */
     private final CacheTemporaryMemorizer<String, CTLSchemaDto> ctlSchemaMemorizer = new CacheTemporaryMemorizer<>();
+
+    /** The ctl schema body memorizer. */
+    private final CacheTemporaryMemorizer<String, String> ctlSchemaBodyMemorizer = new CacheTemporaryMemorizer<>();
 
     /** The sdk properties memorized. */
     private final CacheTemporaryMemorizer<String, SdkProfileDto> sdkProfileMemorizer = new CacheTemporaryMemorizer<>();
@@ -249,7 +261,7 @@ public class ConcurrentCacheService implements CacheService {
                 String confId = null;
                 List<ConfigurationDto> configurations = configurationService.findConfigurationsByEndpointGroupId(key.getEndpointGroupId());
                 for (ConfigurationDto confDto : configurations) {
-                    if (confDto.getMajorVersion() == key.getConfigSchemaVersion()) {
+                    if (confDto.getSchemaVersion() == key.getConfigSchemaVersion()) {
                         confId = confDto.getId();
                         break;
                     }
@@ -304,11 +316,11 @@ public class ConcurrentCacheService implements CacheService {
                     } else if (changeType == ChangeType.ADD_TOPIC || changeType == ChangeType.REMOVE_TOPIC) {
                         relatedChanges.add(historyDto);
                     } else if (changeType == ChangeType.ADD_PROF || changeType == ChangeType.REMOVE_PROF) {
-                        if (changeDto.getPfMajorVersion() == key.getProfileSchemaVersion()) {
+                        if (changeDto.getPfVersion() == key.getProfileSchemaVersion()) {
                             relatedChanges.add(historyDto);
                         }
                     } else if (changeType == ChangeType.ADD_CONF || changeType == ChangeType.REMOVE_CONF) {
-                        if (changeDto.getCfMajorVersion() == key.getConfSchemaVersion()) { // NOSONAR
+                        if (changeDto.getCfVersion() == key.getConfSchemaVersion()) { // NOSONAR
                             relatedChanges.add(historyDto);
                         }
                     }
@@ -532,6 +544,22 @@ public class ConcurrentCacheService implements CacheService {
     }
     
     @Override
+    @Cacheable("serverProfileSchemas")
+    public ServerProfileSchemaDto getServerProfileSchemaByAppAndVersion(
+            AppVersionKey key) {
+        return spfSchemaMemorizer.compute(key, new Computable<AppVersionKey, ServerProfileSchemaDto>() {
+
+            @Override
+            public ServerProfileSchemaDto compute(AppVersionKey key) {
+                LOG.debug("Fetching result for getServerProfileSchemaByAppAndVersion");
+                ApplicationDto appDto = applicationService.findAppByApplicationToken(key.getApplicationToken());
+                ServerProfileSchemaDto value = serverProfileService.findServerProfileSchemaByAppIdAndVersion(appDto.getId(), key.getVersion());
+                return value;
+            }
+        });
+    }
+    
+    @Override
     @Cacheable("ctlSchemas")
     public CTLSchemaDto getCtlSchemaById(String key) {
         return ctlSchemaMemorizer.compute(key, new Computable<String, CTLSchemaDto>() {
@@ -542,7 +570,19 @@ public class ConcurrentCacheService implements CacheService {
             }
         });
     }
-
+    
+    @Override
+    @Cacheable("ctlSchemaBodies")
+    public String getFlatCtlSchemaById(String key) {
+        return ctlSchemaBodyMemorizer.compute(key, new Computable<String, String>() {
+            @Override
+            public String compute(String key) {
+                LOG.debug("Fetching result for ctl schemas");
+                CTLSchemaDto ctlSchema = ctlService.findCTLSchemaById(key);
+                return ctlService.flatExportAsString(ctlSchema);
+            }
+        });
+    }
 
     /*
      * (non-Javadoc)
@@ -938,4 +978,5 @@ public class ConcurrentCacheService implements CacheService {
             return false;
         }
     }
+
 }

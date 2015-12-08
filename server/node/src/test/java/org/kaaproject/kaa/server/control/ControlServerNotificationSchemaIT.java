@@ -23,7 +23,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
-import org.kaaproject.kaa.common.dto.SchemaDto;
+import org.kaaproject.kaa.common.dto.VersionDto;
 import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,7 +90,7 @@ public class ControlServerNotificationSchemaIT extends AbstractTestControlServer
         NotificationSchemaDto schemaDto = createNotificationSchema(null, NotificationTypeDto.USER);
         Assert.assertNotNull(schemaDto.getId());
         LOG.debug("Create notification schema with id {}", schemaDto.getId());
-        List<SchemaDto> foundSchema = client.getUserNotificationSchemas(schemaDto.getApplicationId());
+        List<VersionDto> foundSchema = client.getUserNotificationSchemas(schemaDto.getApplicationId());
         Assert.assertFalse(foundSchema.isEmpty());
         Assert.assertEquals(2, foundSchema.size());
         assertSchemasEquals(schemaDto, foundSchema.get(1));
@@ -107,7 +107,7 @@ public class ControlServerNotificationSchemaIT extends AbstractTestControlServer
         Assert.assertNotNull(schemaDto.getId());
         LOG.debug("Create notification schema with id {}", schemaDto.getId());
         SchemaVersions schemaVersions = client.getSchemaVersionsByApplicationId(schemaDto.getApplicationId());
-        List<SchemaDto> foundSchema = schemaVersions.getNotificationSchemaVersions();
+        List<VersionDto> foundSchema = schemaVersions.getNotificationSchemaVersions();
         Assert.assertFalse(foundSchema.isEmpty());
         Assert.assertEquals(2, foundSchema.size());
         assertSchemasEquals(schemaDto, foundSchema.get(1));

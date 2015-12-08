@@ -16,8 +16,26 @@
 
 package org.kaaproject.kaa.server.common.nosql.mongo.dao;
 
-import com.mongodb.DBObject;
-import org.kaaproject.kaa.common.dto.CTLDataDto;
+import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.ENDPOINT_GROUP_ID;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.ENDPOINT_PROFILE;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_ACCESS_TOKEN;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_APPLICATION_ID;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_CF_GROUP_STATE;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_ENDPOINT_KEY_HASH;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_NF_GROUP_STATE;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SDK_TOKEN;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SERVER_PROFILE_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SERVER_PROFILE_VERSION_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_USER_ID;
+import static org.springframework.data.mongodb.core.query.Criteria.where;
+import static org.springframework.data.mongodb.core.query.Query.query;
+import static org.springframework.data.mongodb.core.query.Update.update;
+
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
@@ -32,25 +50,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.ENDPOINT_GROUP_ID;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.ENDPOINT_PROFILE;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_ACCESS_TOKEN;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_APPLICATION_ID;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_CF_GROUP_STATE;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_ENDPOINT_KEY_HASH;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_NF_GROUP_STATE;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SDK_TOKEN;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SERVER_PROFILE_ID_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SERVER_PROFILE_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_USER_ID;
-import static org.springframework.data.mongodb.core.query.Criteria.where;
-import static org.springframework.data.mongodb.core.query.Query.query;
-import static org.springframework.data.mongodb.core.query.Update.update;
+import com.mongodb.DBObject;
 
 @Repository
 public class EndpointProfileMongoDao extends AbstractMongoDao<MongoEndpointProfile, ByteBuffer> implements EndpointProfileDao<MongoEndpointProfile> {
@@ -206,26 +206,12 @@ public class EndpointProfileMongoDao extends AbstractMongoDao<MongoEndpointProfi
     }
 
     @Override
-    public CTLDataDto findCtlDataByKeyHash(byte[] keyHash) {
-        CTLDataDto ctlData = null;
-        LOG.debug("Trying to find ctl data by endpoint key hash {}", keyHash);
-        Query query = Query.query(where(EP_ENDPOINT_KEY_HASH).is(keyHash));
-        query.fields().include(EP_SERVER_PROFILE_ID_PROPERTY).include(EP_SERVER_PROFILE_PROPERTY);
-        MongoEndpointProfile pf = mongoTemplate.findOne(query, getDocumentClass());
-        if (pf != null) {
-            ctlData = new CTLDataDto(pf.getServerProfileSchemaId(), pf.getServerProfile());
-        }
-        LOG.debug("[{}] Found ctl data {}", keyHash, ctlData);
-        return ctlData;
-    }
-
-    @Override
-    public MongoEndpointProfile updateServerProfile(byte[] keyHash, String schemaId, String serverProfile) {
-        LOG.debug("Update server endpoint profile for endpoint with key hash {}, schema is {}", keyHash, schemaId);
+    public MongoEndpointProfile updateServerProfile(byte[] keyHash, int version, String serverProfile) {
+        LOG.debug("Update server endpoint profile for endpoint with key hash {}, schema version is {}", keyHash, version);
         updateFirst(
                 query(where(EP_ENDPOINT_KEY_HASH).is(keyHash)),
                 update(EP_SERVER_PROFILE_PROPERTY, serverProfile)
-                .addToSet(EP_SERVER_PROFILE_ID_PROPERTY, schemaId));
+                .addToSet(EP_SERVER_PROFILE_VERSION_PROPERTY, version));
         return findById(ByteBuffer.wrap(keyHash));
     }
 }

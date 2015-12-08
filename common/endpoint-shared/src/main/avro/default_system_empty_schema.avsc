@@ -1,0 +1,6 @@
+{
+    "type": "record",
+    "name": "EmptyData",
+    "namespace": "org.kaaproject.kaa.schema.system",
+    "fields": []
+}

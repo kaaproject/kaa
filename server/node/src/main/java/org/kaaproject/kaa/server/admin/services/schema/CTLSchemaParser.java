@@ -108,9 +108,9 @@ public class CTLSchemaParser {
     
     private CTLSchemaScopeDto detectScope(CTLSchemaScopeDto scope, String applicationId) {
         if (scope != null) {
-            if (scope.getLevel() <= CTLSchemaScopeDto.APPLICATION.getLevel() && applicationId == null) {
+            if (scope.getLevel() >= CTLSchemaScopeDto.APPLICATION.getLevel() && applicationId == null) {
                 throw new IllegalArgumentException("Missing application identifier for provided scope " + scope.name() + "!");
-            } else if (scope.getLevel() > CTLSchemaScopeDto.APPLICATION.getLevel() && applicationId != null) {
+            } else if (scope.getLevel() < CTLSchemaScopeDto.APPLICATION.getLevel() && applicationId != null) {
                 throw new IllegalArgumentException("Application identifier can't be specified for provided scope " + scope.name() + "!");
             }
             if (scope == CTLSchemaScopeDto.SYSTEM && tenantId != null) {

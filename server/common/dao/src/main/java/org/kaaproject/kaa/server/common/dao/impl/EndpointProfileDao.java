@@ -16,16 +16,15 @@
 
 package org.kaaproject.kaa.server.common.dao.impl;
 
-import org.kaaproject.kaa.common.dto.CTLDataDto;
+import java.nio.ByteBuffer;
+import java.util.List;
+
 import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.PageLinkDto;
 import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
-
-import java.nio.ByteBuffer;
-import java.util.List;
 
 /**
  * The interface Endpoint profile dao.
@@ -122,20 +121,12 @@ public interface EndpointProfileDao<T extends EndpointProfile> extends Dao<T, By
     boolean checkSdkToken(String sdkToken);
 
     /**
-     * Find server profile data and ctl schema id by given endpoint key hash.
-     *
-     * @param keyHash the endpoint key hash
-     * @return the server profile data and ctl schema id
-     */
-    CTLDataDto findCtlDataByKeyHash(byte[] keyHash);
-
-    /**
-     * Update endpoint profile with given keyHash, profile schema id and given server profile.
+     * Update endpoint profile with given keyHash, server profile schema version and given server profile.
      *
      * @param keyHash       the endpoint profile key hash.
-     * @param schemaId      the given server profile schema id.
+     * @param version      the given server profile schema version.
      * @param serverProfile the given server profile data.
      * @return the updated endpoint profile with.
      */
-    T updateServerProfile(byte[] keyHash, String schemaId, String serverProfile);
+    T updateServerProfile(byte[] keyHash, int version, String serverProfile);
 }

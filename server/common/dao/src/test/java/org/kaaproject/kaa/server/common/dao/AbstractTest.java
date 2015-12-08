@@ -59,6 +59,7 @@ import org.kaaproject.kaa.server.common.core.schema.OverrideSchema;
 import org.kaaproject.kaa.server.common.dao.impl.ApplicationDao;
 import org.kaaproject.kaa.server.common.dao.impl.ApplicationEventFamilyMapDao;
 import org.kaaproject.kaa.server.common.dao.impl.CTLSchemaDao;
+import org.kaaproject.kaa.server.common.dao.impl.CTLSchemaMetaInfoDao;
 import org.kaaproject.kaa.server.common.dao.impl.ConfigurationDao;
 import org.kaaproject.kaa.server.common.dao.impl.ConfigurationSchemaDao;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointGroupDao;
@@ -82,6 +83,7 @@ import org.kaaproject.kaa.server.common.dao.model.Notification;
 import org.kaaproject.kaa.server.common.dao.model.sql.Application;
 import org.kaaproject.kaa.server.common.dao.model.sql.ApplicationEventFamilyMap;
 import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchema;
+import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchemaMetaInfo;
 import org.kaaproject.kaa.server.common.dao.model.sql.Configuration;
 import org.kaaproject.kaa.server.common.dao.model.sql.ConfigurationSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.EndpointGroup;
@@ -105,6 +107,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
 import javax.sql.DataSource;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -219,6 +222,8 @@ public class AbstractTest {
     protected SdkProfileDao<SdkProfile> sdkProfileDao;
     @Autowired
     protected CTLSchemaDao<CTLSchema> ctlSchemaDao;
+    @Autowired
+    protected CTLSchemaMetaInfoDao<CTLSchemaMetaInfo> ctlSchemaMetaInfoDao;
 
     protected Application application;
 
@@ -370,19 +375,22 @@ public class AbstractTest {
         return ids;
     }
 
-    protected List<ProfileSchemaDto> generateProfSchemaDto(String appId, int count) {
+    protected List<ProfileSchemaDto> generateProfSchemaDto(String tenantId, String appId, int count) {
         List<ProfileSchemaDto> schemas = Collections.emptyList();
         try {
+            if (isBlank(tenantId)) {
+                tenantId = generateTenantDto().getId();
+            }
             if (isBlank(appId)) {
-                appId = generateApplicationDto().getId();
+                appId = generateApplicationDto(tenantId).getId();
             }
             ProfileSchemaDto schemaDto;
+            CTLSchemaDto ctlSchemaDto = ctlService.saveCTLSchema(generateCTLSchemaDto(tenantId));
             schemas = new ArrayList<>(count);
             for (int i = 0; i < count; i++) {
                 schemaDto = new ProfileSchemaDto();
                 schemaDto.setApplicationId(appId);
-                schemaDto.setSchema(new KaaSchemaFactoryImpl().createDataSchema(readSchemaFileAsString("dao/schema/testDataSchema.json"))
-                        .getRawSchema());
+                schemaDto.setCtlSchemaId(ctlSchemaDto.getId());
                 schemaDto.setCreatedUsername("Test User");
                 schemaDto.setName("Test Name");
                 schemaDto = profileService.saveProfileSchema(schemaDto);
@@ -401,7 +409,7 @@ public class AbstractTest {
         try {
             ProfileSchemaDto schemaDto = null;
             if (isBlank(schemaId)) {
-                schemaDto = generateProfSchemaDto(null, 1).get(0);
+                schemaDto = generateProfSchemaDto(null, null, 1).get(0);
                 schemaId = schemaDto.getId();
             } else {
                 schemaDto = profileService.findProfileSchemaById(schemaId);
@@ -641,7 +649,7 @@ public class AbstractTest {
         logAppender = new LogAppenderDto();
         logAppender.setApplicationId(appId);
         logAppender.setName("Generated Appender");
-        int version = schema.getMajorVersion();
+        int version = schema.getVersion();
         logAppender.setMinLogSchemaVersion(version);
         logAppender.setMaxLogSchemaVersion(version);
         logAppender.setTenantId(app.getTenantId());
@@ -680,7 +688,7 @@ public class AbstractTest {
         if (configurationSchema == null) {
             configurationSchema = generateConfSchemaDto(applicationDto.getId(), 1).get(0);
         }
-        configurationDto.setSchemaVersion(configurationSchema.getMajorVersion());
+        configurationDto.setSchemaVersion(configurationSchema.getVersion());
 
         return userConfigurationService.saveUserConfiguration(configurationDto);
     }
@@ -695,10 +703,10 @@ public class AbstractTest {
         return endpointService.saveEndpointProfile(profileDto);
     }
 
-    protected EndpointProfileDto generateEndpointProfileDtoWithSchemaId(String appId, String profileSchemaId, String srvProfileBody) {
+    protected EndpointProfileDto generateEndpointProfileDtoWithSchemaVersion(String appId, int schemaVersion, String srvProfileBody) {
         EndpointProfileDto profileDto = new EndpointProfileDto();
         profileDto.setApplicationId(appId);
-        profileDto.setServerProfileCtlSchemaId(profileSchemaId);
+        profileDto.setServerProfileVersion(schemaVersion);
         profileDto.setEndpointKeyHash("TEST_KEY_HASH".getBytes());
         profileDto.setClientProfileBody("{\"title\": \"TEST\"}");
         profileDto.setSdkToken(UUID.randomUUID().toString());

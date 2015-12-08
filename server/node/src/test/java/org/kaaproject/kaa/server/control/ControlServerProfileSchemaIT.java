@@ -24,8 +24,10 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.SchemaDto;
+import org.kaaproject.kaa.common.dto.VersionDto;
 import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaInfoDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
 
 /**
  * The Class ControlServerProfileSchemaIT.
@@ -71,11 +73,13 @@ public class ControlServerProfileSchemaIT extends AbstractTestControlServer {
         
         loginTenantDeveloper(tenantDeveloperDto.getUsername());
         
+        CTLSchemaInfoDto ctlSchema = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, CTLSchemaScopeDto.TENANT, null, null, null);
+
         List<ProfileSchemaDto> defaultProfileSchemas = client.getProfileSchemas(application.getId());
         profileSchemas.addAll(defaultProfileSchemas);
 
         for (int i=0;i<10;i++) {
-            ProfileSchemaDto profileSchema = createProfileSchema(application.getId());
+            ProfileSchemaDto profileSchema = createProfileSchema(application.getId(), ctlSchema.getId());
             profileSchemas.add(profileSchema);
         }
         
@@ -109,8 +113,10 @@ public class ControlServerProfileSchemaIT extends AbstractTestControlServer {
         List<ProfileSchemaDto> defaultProfileSchemas = client.getProfileSchemas(application.getId());
         profileSchemas.addAll(defaultProfileSchemas);
 
+        CTLSchemaInfoDto ctlSchema = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, CTLSchemaScopeDto.TENANT, null, null, null);
+
         for (int i=0;i<10;i++) {
-            ProfileSchemaDto profileSchema = createProfileSchema(application.getId());
+            ProfileSchemaDto profileSchema = createProfileSchema(application.getId(), ctlSchema.getId());
             profileSchemas.add(profileSchema);
         }
         
@@ -118,14 +124,14 @@ public class ControlServerProfileSchemaIT extends AbstractTestControlServer {
         
         SchemaVersions schemaVersions = client.getSchemaVersionsByApplicationId(application.getId());
         
-        List<SchemaDto> storedProfileSchemas = schemaVersions.getProfileSchemaVersions();
+        List<VersionDto> storedProfileSchemas = schemaVersions.getProfileSchemaVersions();
 
         Collections.sort(storedProfileSchemas, new IdComparator());
         
         Assert.assertEquals(profileSchemas.size(), storedProfileSchemas.size());
         for (int i=0;i<profileSchemas.size();i++) {
             ProfileSchemaDto profileSchema = profileSchemas.get(i);
-            SchemaDto storedProfileSchema = storedProfileSchemas.get(i);
+            VersionDto storedProfileSchema = storedProfileSchemas.get(i);
             assertSchemasEquals(profileSchema, storedProfileSchema);
         }
     }
@@ -143,13 +149,13 @@ public class ControlServerProfileSchemaIT extends AbstractTestControlServer {
         profileSchema.setDescription("Test Desc 2");
         
         ProfileSchemaDto updatedProfileSchema = client
-                .editProfileSchema(profileSchema);
+                .saveProfileSchema(profileSchema);
 
         Assert.assertEquals(profileSchema.getApplicationId(), updatedProfileSchema.getApplicationId());
         Assert.assertEquals(profileSchema.getName(), updatedProfileSchema.getName());
         Assert.assertEquals(profileSchema.getDescription(), updatedProfileSchema.getDescription());
         Assert.assertEquals(profileSchema.getCreatedTime(), updatedProfileSchema.getCreatedTime());
-        Assert.assertEquals(profileSchema.getSchema(), updatedProfileSchema.getSchema());
+        Assert.assertEquals(profileSchema.getCtlSchemaId(), updatedProfileSchema.getCtlSchemaId());
     }
     
     /**
@@ -161,7 +167,7 @@ public class ControlServerProfileSchemaIT extends AbstractTestControlServer {
     private void assertProfileSchemasEquals(ProfileSchemaDto profileSchema, ProfileSchemaDto storedProfileSchema) {
         Assert.assertEquals(profileSchema.getId(), storedProfileSchema.getId());
         Assert.assertEquals(profileSchema.getApplicationId(), storedProfileSchema.getApplicationId());
-        Assert.assertEquals(profileSchema.getSchema(), storedProfileSchema.getSchema());
+        Assert.assertEquals(profileSchema.getCtlSchemaId(), storedProfileSchema.getCtlSchemaId());
     }
  
 }

@@ -22,9 +22,9 @@ import java.util.List;
 import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
 import org.kaaproject.kaa.common.dto.AbstractStructureDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
-import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.common.dto.StructureRecordDto;
 import org.kaaproject.kaa.common.dto.UpdateStatus;
+import org.kaaproject.kaa.common.dto.VersionDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.place.AbstractRecordPlace;
@@ -75,7 +75,7 @@ public abstract class AbstractRecordActivity<T extends AbstractStructureDto, F, 
 
     protected abstract void getRecord(String schemaId, String endpointGroupId, AsyncCallback<StructureRecordDto<T>> callback);
 
-    protected abstract void getVacantSchemas(String endpointGroupId, AsyncCallback<List<SchemaDto>> callback);
+    protected abstract void getVacantSchemas(String endpointGroupId, AsyncCallback<List<VersionDto>> callback);
 
     protected abstract void editStruct(T entity, AsyncCallback<T> callback);
 
@@ -85,7 +85,7 @@ public abstract class AbstractRecordActivity<T extends AbstractStructureDto, F, 
 
     protected abstract P getRecordPlaceImpl(String applicationId, String schemaId, String endpointGroupId, boolean create, boolean showActive, double random);
     
-    protected void schemaSelected(SchemaDto schema) {}
+    protected void schemaSelected(VersionDto schema) {}
 
     @Override
     public void start(AcceptsOneWidget containerWidget, EventBus eventBus) {
@@ -180,15 +180,15 @@ public abstract class AbstractRecordActivity<T extends AbstractStructureDto, F, 
 
     protected void onRecordRetrieved() {
         if (create) {
-            getVacantSchemas(endpointGroupId, new BusyAsyncCallback<List<SchemaDto>>() {
+            getVacantSchemas(endpointGroupId, new BusyAsyncCallback<List<VersionDto>>() {
                 @Override
                 public void onFailureImpl(Throwable caught) {
                     Utils.handleException(caught, recordView);
                 }
 
                 @Override
-                public void onSuccessImpl(List<SchemaDto> result) {
-                    SchemaDto schema = Utils.getMaxSchemaVersions(result);
+                public void onSuccessImpl(List<VersionDto> result) {
+                    VersionDto schema = Utils.getMaxSchemaVersions(result);
                     recordView.getSchema().setValue(schema);
                     recordView.getSchema().setAcceptableValues(result);
                     recordView.getRecordPanel().setData(record);
@@ -198,13 +198,12 @@ public abstract class AbstractRecordActivity<T extends AbstractStructureDto, F, 
             });
         }
         else {
-            String version = record.getMajorVersion() + "." + record.getMinorVersion();
+            String version = record.getSchemaVersion() + "";
             recordView.getSchemaVersion().setValue(version);
             if (record.hasActive() && !record.hasDraft()) {
                 T inactiveStruct = createInactiveStruct();
                 inactiveStruct.setSchemaId(record.getSchemaId());
-                inactiveStruct.setMajorVersion(record.getMajorVersion());
-                inactiveStruct.setMinorVersion(record.getMinorVersion());
+                inactiveStruct.setSchemaVersion(record.getSchemaVersion());
                 inactiveStruct.setDescription(record.getDescription());
                 copyBody(record.getActiveStructureDto(), inactiveStruct);
                 record.setInactiveStructureDto(inactiveStruct);
@@ -227,8 +226,7 @@ public abstract class AbstractRecordActivity<T extends AbstractStructureDto, F, 
         if (create) {
             schemaId = recordView.getSchema().getValue().getId();
             inactiveStruct.setSchemaId(schemaId);
-            inactiveStruct.setMajorVersion(recordView.getSchema().getValue().getMajorVersion());
-            inactiveStruct.setMinorVersion(recordView.getSchema().getValue().getMinorVersion());
+            inactiveStruct.setSchemaVersion(recordView.getSchema().getValue().getVersion());
         }
         inactiveStruct.setDescription(recordView.getRecordPanel().getDescription().getValue());
         updateBody(inactiveStruct, recordView.getRecordPanel().getBody().getValue());

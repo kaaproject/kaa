@@ -38,7 +38,11 @@ import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TenantAdminDto;
 import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.common.dto.UserDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
+import org.kaaproject.kaa.server.common.dao.CTLService;
 import org.kaaproject.kaa.server.common.dao.ConfigurationService;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
 import org.kaaproject.kaa.server.common.dao.ProfileService;
@@ -53,6 +57,7 @@ public abstract class AbstractServiceImplTest {
     protected static final String APPLICATION_NAME = "Generated Test Application";
     protected static final String TENANT_NAME = "Generated Test Tenant";
     protected static final String USER_NAME = "Generated Test Username";
+    protected static final String DEFAULT_FQN = "org.kaaproject.kaa.ctl.TestSchema";
 
     protected static final Random random = new Random(0);
 
@@ -62,6 +67,8 @@ public abstract class AbstractServiceImplTest {
     protected ConfigurationService configurationService;
     @Autowired
     protected ApplicationService applicationService;
+    @Autowired
+    protected CTLService ctlService;
     @Autowired
     protected ProfileService profileService;
     @Autowired
@@ -128,28 +135,49 @@ public abstract class AbstractServiceImplTest {
         }
         return null;
     }
+    
+    protected CTLSchemaDto generateCTLSchemaDto(String fqn, String tenantId, int version, CTLSchemaScopeDto scopeDto) {
+        CTLSchemaDto ctlSchema = new CTLSchemaDto();
+        CTLSchemaMetaInfoDto metaInfoDto = new CTLSchemaMetaInfoDto(fqn, version);
+        if (scopeDto == null) {
+            if (isBlank(tenantId)) {
+                scopeDto = CTLSchemaScopeDto.SYSTEM;
+            } else {
+                scopeDto = CTLSchemaScopeDto.TENANT;
+            }
+        }
+        metaInfoDto.setScope(scopeDto);
+        ctlSchema.setMetaInfo(metaInfoDto);
+        ctlSchema.setBody(UUID.randomUUID().toString());
+        ctlSchema.setTenantId(tenantId);
+        return ctlSchema;
+    }
 
-    protected List<ProfileSchemaDto> generateProfSchema(String applicationId, int count) {
+    protected List<ProfileSchemaDto> generateProfSchema(String tenantId, String applicationId, int count) {
         List<ProfileSchemaDto> schemas = Collections.emptyList();
         try {
-            if (isBlank(applicationId)) {
-                applicationId = generateApplication(null).getId();
+            if (isBlank(tenantId)) {
+                tenantId = generateTenant().getId();
             }
+            if (isBlank(applicationId)) {
+                applicationId = generateApplication(tenantId).getId();
+            }
+            CTLSchemaDto ctlSchemaDto = ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN, tenantId, 1, null));
             ProfileSchemaDto schemaDto;
             schemas = new ArrayList<>(count);
             for (int i = 0; i < count; i++) {
                 schemaDto = new ProfileSchemaDto();
                 schemaDto.setApplicationId(applicationId);
-                schemaDto.setSchema(readSchemaFileAsString("dao/schema/testDataSchema.json"));
+                schemaDto.setCtlSchemaId(ctlSchemaDto.getId());
                 schemaDto.setCreatedUsername("Test User");
                 schemaDto.setName("Test Name");
                 schemaDto = profileService.saveProfileSchema(schemaDto);
                 Assert.assertNotNull(schemaDto);
                 schemas.add(schemaDto);
             }
-        } catch (IOException e) {
-            LOG.error("Can't generate configs {}", e);
-            Assert.fail("Can't generate configurations.");
+        } catch (Exception e) {
+            LOG.error("Can't generate profile schemas {}", e);
+            Assert.fail("Can't generate profile schemas.");
         }
         return schemas;
     }
@@ -174,7 +202,7 @@ public abstract class AbstractServiceImplTest {
         try {
             ProfileSchemaDto schemaDto;
             if (isBlank(schemaId)) {
-                schemaDto = generateProfSchema(null, 1).get(0);
+                schemaDto = generateProfSchema(null, null, 1).get(0);
                 schemaId = schemaDto.getId();
             } else {
                 schemaDto = profileService.findProfileSchemaById(schemaId);

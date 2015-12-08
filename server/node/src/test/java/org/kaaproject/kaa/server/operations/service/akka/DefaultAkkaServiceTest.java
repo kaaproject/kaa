@@ -43,6 +43,8 @@ import org.kaaproject.kaa.common.dto.EventClassFamilyVersionStateDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest;
@@ -73,6 +75,7 @@ import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.common.hash.SHA1HashUtils;
 import org.kaaproject.kaa.server.common.Base64Util;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
+import org.kaaproject.kaa.server.common.dao.CTLService;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogAppender;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryCallback;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogSchema;
@@ -167,6 +170,7 @@ public class DefaultAkkaServiceTest {
     private NotificationDto topicNotification;
     private LogAppenderService logAppenderService;
     private EndpointUserService endpointUserService;
+    private CTLService ctlService;
 
     private KeyPair clientPair;
     private KeyPair targetPair;
@@ -194,6 +198,7 @@ public class DefaultAkkaServiceTest {
         eventService = mock(EventService.class);
         logAppenderService = mock(LogAppenderService.class);
         endpointUserService = mock(EndpointUserService.class);
+        ctlService = mock(CTLService.class);
 
         ReflectionTestUtils.setField(context, "cacheService", cacheService);
         ReflectionTestUtils.setField(context, "metricsService", metricsService);
@@ -204,6 +209,7 @@ public class DefaultAkkaServiceTest {
         ReflectionTestUtils.setField(context, "eventService", eventService);
         ReflectionTestUtils.setField(context, "logAppenderService", logAppenderService);
         ReflectionTestUtils.setField(context, "endpointUserService", endpointUserService);
+        ReflectionTestUtils.setField(context, "ctlService", ctlService);
 
         clientPair = KeyUtil.generateKeyPair();
         targetPair = KeyUtil.generateKeyPair();
@@ -1272,8 +1278,26 @@ public class DefaultAkkaServiceTest {
         Mockito.when(logAppenderService.getLogSchema(Mockito.anyString(), Mockito.anyInt())).thenReturn(new LogSchema(new LogSchemaDto()));
         ProfileSchemaDto profileSchemaDto = new ProfileSchemaDto();
         profileSchemaDto.setId("1");
-        profileSchemaDto.setSchema("ClientProfileSchema");
+        profileSchemaDto.setCtlSchemaId("22");
+        
+        CTLSchemaDto ctlSchema = new CTLSchemaDto();
+        ctlSchema.setId("22");
+        
         when(cacheService.getProfileSchemaByAppAndVersion(new AppVersionKey(APP_TOKEN, 0))).thenReturn(profileSchemaDto);
+        when(cacheService.getCtlSchemaById("22")).thenReturn(ctlSchema);
+        when(ctlService.flatExportAsString(ctlSchema)).thenReturn("ClientProfileSchema");
+        
+        ServerProfileSchemaDto serverProfileSchemaDto = new ServerProfileSchemaDto();
+        serverProfileSchemaDto.setId("1");
+        serverProfileSchemaDto.setCtlSchemaId("23");
+        
+        CTLSchemaDto serverCtlSchema = new CTLSchemaDto();
+        serverCtlSchema.setId("23");
+        
+        when(cacheService.getServerProfileSchemaByAppAndVersion(new AppVersionKey(APP_TOKEN, 0))).thenReturn(serverProfileSchemaDto);
+        when(cacheService.getCtlSchemaById("23")).thenReturn(serverCtlSchema);
+        when(ctlService.flatExportAsString(serverCtlSchema)).thenReturn("ServerProfileSchema");
+        
         Mockito.when(mockAppender.isSchemaVersionSupported(Mockito.anyInt())).thenReturn(true);
 
         MessageBuilder responseBuilder = Mockito.mock(MessageBuilder.class);

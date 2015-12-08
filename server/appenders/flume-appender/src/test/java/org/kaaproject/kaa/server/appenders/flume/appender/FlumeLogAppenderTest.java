@@ -189,7 +189,7 @@ public class FlumeLogAppenderTest {
     }
     
     private BaseLogEventPack generateLogEventPack(){
-        EndpointProfileDataDto profileDto = new EndpointProfileDataDto("1", UUID.randomUUID().toString(), 1, "", "1", "");
+        EndpointProfileDataDto profileDto = new EndpointProfileDataDto("1", UUID.randomUUID().toString(), 1, "", 1, "");
         List<LogEvent> events = Collections.emptyList();
         return new BaseLogEventPack(profileDto, System.currentTimeMillis(), 2, events);
     }

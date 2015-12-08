@@ -27,7 +27,6 @@ import static org.kaaproject.kaa.server.common.dao.service.Validator.validateId;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateSqlId;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateSqlObject;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -43,10 +42,9 @@ import org.kaaproject.kaa.common.dto.ChangeType;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.HistoryDto;
-import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.common.dto.StructureRecordDto;
 import org.kaaproject.kaa.common.dto.UpdateStatus;
-import org.kaaproject.kaa.server.common.core.algorithms.generation.ConfigurationGenerationException;
+import org.kaaproject.kaa.common.dto.VersionDto;
 import org.kaaproject.kaa.server.common.core.algorithms.generation.DefaultRecordGenerationAlgorithm;
 import org.kaaproject.kaa.server.common.core.algorithms.generation.DefaultRecordGenerationAlgorithmImpl;
 import org.kaaproject.kaa.server.common.core.algorithms.schema.SchemaCreationException;
@@ -77,7 +75,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -133,7 +130,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
             EndpointGroup endpointGroup = endpointGroupDao.findByAppIdAndWeight(appId, 0);
             if (endpointGroup != null) {
                 String endpointGroupId = String.valueOf(endpointGroup.getId());
-                configuration = getDto(configurationDao.findConfigurationByEndpointGroupIdAndVersion(endpointGroupId, configurationSchema.getMajorVersion()));
+                configuration = getDto(configurationDao.findConfigurationByEndpointGroupIdAndVersion(endpointGroupId, configurationSchema.getVersion()));
             } else {
                 LOG.warn("Can't find default group for application [{}]", appId);
             }
@@ -155,8 +152,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         Collection<ConfigurationDto> configurations = convertDtoList(configurationDao.findActualByEndpointGroupId(endpointGroupId));
         List<StructureRecordDto<ConfigurationDto>> records = StructureRecordDto.convertToRecords(configurations);
         if (includeDeprecated) {
-            List<SchemaDto> schemas = findVacantSchemasByEndpointGroupId(endpointGroupId);
-            for (SchemaDto schema : schemas) {
+            List<VersionDto> schemas = findVacantSchemasByEndpointGroupId(endpointGroupId);
+            for (VersionDto schema : schemas) {
                 ConfigurationDto deprecatedConfiguration = getDto(configurationDao.findLatestDeprecated(schema.getId(), endpointGroupId));
                 if (deprecatedConfiguration != null) {
                     StructureRecordDto<ConfigurationDto> record = new StructureRecordDto<>();
@@ -197,7 +194,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     @Override
-    public List<SchemaDto> findVacantSchemasByEndpointGroupId(String endpointGroupId) {
+    public List<VersionDto> findVacantSchemasByEndpointGroupId(String endpointGroupId) {
         validateId(endpointGroupId, "Can't find vacant schemas. Invalid endpoint group id: " + endpointGroupId);
         EndpointGroup group = endpointGroupDao.findById(endpointGroupId);
         List<Configuration> configurations = configurationDao.findActualByEndpointGroupId(endpointGroupId);
@@ -209,9 +206,9 @@ public class ConfigurationServiceImpl implements ConfigurationService {
             }
         }
         List<ConfigurationSchema> schemas = configurationSchemaDao.findVacantSchemas(group.getApplicationId(), usedSchemaIds);
-        List<SchemaDto> schemaDtoList = new ArrayList<>();
+        List<VersionDto> schemaDtoList = new ArrayList<>();
         for (ConfigurationSchema schema : schemas) {
-            schemaDtoList.add(schema.toSchemaDto());
+            schemaDtoList.add(schema.toVersionDto());
         }
         return schemaDtoList;
     }
@@ -243,8 +240,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
                     configurationDto.setSequenceNumber(oldActiveConfiguration.getSequenceNumber());
                 }
                 configurationDto.setApplicationId(configurationSchemaDto.getApplicationId());
-                configurationDto.setMajorVersion(configurationSchemaDto.getMajorVersion());
-                configurationDto.setMinorVersion(configurationSchemaDto.getMinorVersion());
+                configurationDto.setSchemaVersion(configurationSchemaDto.getVersion());
                 configurationDto.setProtocolSchema(configurationSchemaDto.getProtocolSchema());
                 configurationDto.setCreatedTime(System.currentTimeMillis());
             } else {
@@ -382,13 +378,13 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     @Override
-    public List<SchemaDto> findConfigurationSchemaVersionsByAppId(
+    public List<VersionDto> findConfigurationSchemaVersionsByAppId(
             String applicationId) {
         validateSqlId(applicationId, "Incorrect application id " + applicationId + ". Can't find configuration schema versions.");
         List<ConfigurationSchema> configurationSchemas = configurationSchemaDao.findByApplicationId(applicationId);
-        List<SchemaDto> schemas = new ArrayList<>();
+        List<VersionDto> schemas = new ArrayList<>();
         for (ConfigurationSchema configurationSchema : configurationSchemas) {
-            schemas.add(configurationSchema.toSchemaDto());
+            schemas.add(configurationSchema.toVersionDto());
         }
         return schemas;
     }
@@ -531,7 +527,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         history.setApplicationId(dto.getApplicationId());
         ChangeDto change = new ChangeDto();
         change.setConfigurationId(dto.getId());
-        change.setCfMajorVersion(dto.getMajorVersion());
+        change.setCfVersion(dto.getSchemaVersion());
         change.setEndpointGroupId(dto.getEndpointGroupId());
         change.setType(type);
         history.setChange(change);
@@ -550,12 +546,11 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         String id = configurationSchema.getId();
         if (isBlank(id)) {
             ConfigurationSchemaDto oldConfigurationSchemaDto = findLatestConfSchemaByAppId(configurationSchema.getApplicationId());
-            int majorVersion = 0;
+            int version = 0;
             if (oldConfigurationSchemaDto != null) {
-                majorVersion = oldConfigurationSchemaDto.getMajorVersion();
+                version = oldConfigurationSchemaDto.getVersion();
             }
-            configurationSchema.setMajorVersion(++majorVersion);
-            configurationSchema.setMinorVersion(0);
+            configurationSchema.setVersion(++version);
             configurationSchema.setCreatedTime(System.currentTimeMillis());
             try {
                 generateSchemas(configurationSchema);

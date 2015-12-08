@@ -20,6 +20,7 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getDto;
+import static org.kaaproject.kaa.server.common.dao.service.Validator.validateId;
 
 import java.nio.ByteBuffer;
 import java.util.List;
@@ -58,7 +59,7 @@ public class ServerProfileServiceImpl implements ServerProfileService {
             String id = dto.getId();
             if (isBlank(id)) {
                 ServerProfileSchema serverProfileSchema = serverProfileSchemaDao.findLatestByAppId(appId);
-                int version = 0;
+                int version = -1;
                 if (serverProfileSchema != null) {
                     version = serverProfileSchema.getVersion();
                 }
@@ -100,6 +101,12 @@ public class ServerProfileServiceImpl implements ServerProfileService {
         Validator.validateId(appId, "Incorrect application id.");
         return convertDtoList(serverProfileSchemaDao.findByAppId(appId));
     }
+    
+    @Override
+    public ServerProfileSchemaDto findServerProfileSchemaByAppIdAndVersion(String appId, int schemaVersion) {
+        validateId(appId, "Can't find server profile schema. Invalid application id: " + appId);
+        return getDto(serverProfileSchemaDao.findByAppIdAndVersion(appId, schemaVersion));
+    }
 
     @Override
     @Transactional
@@ -120,26 +127,12 @@ public class ServerProfileServiceImpl implements ServerProfileService {
         Validator.validateHash(keyHash, "Incorrect endpoint key hash.");
         EndpointProfile ep = endpointProfileDao.findById(ByteBuffer.wrap(keyHash));
         if (ep != null) {
-            String schemaId = ep.getServerProfileSchemaId();
-            ep = endpointProfileDao.updateServerProfile(keyHash, schemaId, serverProfile);
+            int schemaVersion = ep.getServerProfileVersion();
+            ep = endpointProfileDao.updateServerProfile(keyHash, schemaVersion, serverProfile);
         } else {
             throw new DatabaseProcessingException("Can't find endpoint profile by key hash " + keyHash);
         }
         return ep != null ? ep.toDto() : null;
-    }
-
-    @Override
-    public ServerProfileSchemaDto findServerProfileSchemaByKeyHash(byte[] keyHash) {
-        Validator.validateHash(keyHash, "Incorrect endpoint key hash.");
-        ServerProfileSchemaDto schemaDto = null;
-        EndpointProfile ep = endpointProfileDao.findById(ByteBuffer.wrap(keyHash));
-        if (ep != null) {
-            String schemaId = ep.getServerProfileSchemaId();
-            if (isNotBlank(schemaId)) {
-                schemaDto = findServerProfileSchema(schemaId);
-            }
-        }
-        return schemaDto;
     }
 
     public void setEndpointProfileDao(EndpointProfileDao<EndpointProfile> endpointProfileDao) {

@@ -21,6 +21,7 @@ import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
 import org.kaaproject.kaa.common.dto.UpdateStatus;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventAction;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
 import org.kaaproject.kaa.server.common.core.schema.KaaSchemaFactoryImpl;
@@ -165,7 +166,7 @@ public abstract class HibernateAbstractTest extends AbstractTest {
                 schema = new ConfigurationSchema();
                 schema.setApplication(app);
                 schema.setSchema(readSchemaFileAsString("dao/schema/testDataSchema.json"));
-                schema.setMajorVersion(i + 1);
+                schema.setVersion(i + 1);
                 schema = configurationSchemaDao.save(schema);
                 Assert.assertNotNull(schema);
                 schemas.add(schema);
@@ -195,7 +196,7 @@ public abstract class HibernateAbstractTest extends AbstractTest {
                 dto.setConfigurationBody(new byte[]{0, 2, 3, 4,});
                 dto.setConfigurationSchema(schema);
                 dto.setSequenceNumber(i);
-                dto.setMajorVersion(i + 1);
+                dto.setSchemaVersion(i + 1);
                 dto.setApplication(schema.getApplication());
                 dto.setEndpointGroup(group);
                 Configuration saved = configurationDao.save(dto);
@@ -215,21 +216,24 @@ public abstract class HibernateAbstractTest extends AbstractTest {
             if (app == null) {
                 app = generateApplication(null);
             }
+            
+            CTLSchemaDto ctlSchemaDto = ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN, app.getTenant().getStringId(), 1, null));
+            CTLSchema ctlSchema = ctlSchemaDao.findById(ctlSchemaDto.getId());
             ProfileSchema schemaDto;
             schemas = new ArrayList<>(count);
             for (int i = 0; i < count; i++) {
                 schemaDto = new ProfileSchema();
                 schemaDto.setApplication(app);
-                schemaDto.setSchema(readSchemaFileAsString("dao/schema/testDataSchema.json"));
                 schemaDto.setCreatedUsername("Test User");
-                schemaDto.setMajorVersion(i + 1);
+                schemaDto.setCtlSchema(ctlSchema);
+                schemaDto.setVersion(i + 1);
                 schemaDto.setName("Test Name");
                 schemaDto = profileSchemaDao.save(schemaDto);
                 Assert.assertNotNull(schemaDto);
                 schemas.add(schemaDto);
             }
-        } catch (IOException e) {
-            LOG.error("Can't generate configs {}", e);
+        } catch (Exception e) {
+            LOG.error("Can't generate profile schema {}", e);
             Assert.fail("Can't generate profile schema." + e.getMessage());
         }
         return schemas;
@@ -248,7 +252,7 @@ public abstract class HibernateAbstractTest extends AbstractTest {
                 notificationSchema.setApplication(app);
                 notificationSchema.setSchema(readSchemaFileAsString("dao/schema/testDataSchema.json"));
                 notificationSchema.setCreatedUsername("Test User");
-                notificationSchema.setMajorVersion(i + 1);
+                notificationSchema.setVersion(i + 1);
                 notificationSchema.setName("Test Name");
                 notificationSchema.setType(type == null ? NotificationTypeDto.SYSTEM : type);
                 notificationSchema = notificationSchemaDao.save(notificationSchema);
@@ -277,7 +281,7 @@ public abstract class HibernateAbstractTest extends AbstractTest {
             dto.setEndpointGroup(group);
             dto.setProfileSchema(schema);
             dto.setSequenceNumber(i);
-            dto.setMajorVersion(i + 1);
+            dto.setSchemaVersion(i + 1);
             dto.setApplication(schema.getApplication());
             ProfileFilter saved = profileFilterDao.save(dto);
             Assert.assertNotNull(saved);

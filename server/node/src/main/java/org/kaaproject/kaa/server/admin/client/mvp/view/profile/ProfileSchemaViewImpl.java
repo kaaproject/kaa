@@ -16,10 +16,10 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.profile;
 
-import org.kaaproject.kaa.server.admin.client.mvp.view.schema.BaseSchemaViewImpl;
+import org.kaaproject.kaa.server.admin.client.mvp.view.schema.BaseCtlSchemaViewImpl;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-public class ProfileSchemaViewImpl extends BaseSchemaViewImpl {
+public class ProfileSchemaViewImpl extends BaseCtlSchemaViewImpl {
 
     public ProfileSchemaViewImpl(boolean create) {
         super(create);

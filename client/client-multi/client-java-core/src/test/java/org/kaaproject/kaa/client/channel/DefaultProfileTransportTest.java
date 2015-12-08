@@ -32,7 +32,7 @@ import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.endpoint.gen.ProfileSyncResponse;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponseStatus;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
-import org.kaaproject.kaa.schema.base.Profile;
+import org.kaaproject.kaa.schema.system.EmptyData;
 import org.mockito.Mockito;
 
 public class DefaultProfileTransportTest {
@@ -153,8 +153,8 @@ public class DefaultProfileTransportTest {
         manager.setProfileContainer(new ProfileContainer() {
             
             @Override
-            public Profile getProfile() {
-                return new Profile();
+            public EmptyData getProfile() {
+                return new EmptyData();
             }
         });
         manager.updateProfile();

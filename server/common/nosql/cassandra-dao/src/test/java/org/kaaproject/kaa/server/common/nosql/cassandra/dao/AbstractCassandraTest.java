@@ -143,7 +143,7 @@ public class AbstractCassandraTest {
         profileDto.setAccessToken(accessToken);
         if (ctlDataDto != null) {
             profileDto.setServerProfileBody(ctlDataDto.getBody());
-            profileDto.setServerProfileCtlSchemaId(ctlDataDto.getCtlSchemaId());
+            profileDto.setServerProfileVersion(ctlDataDto.getServerProfileVersion());
         }
         return endpointProfileDao.save(new CassandraEndpointProfile(profileDto)).toDto();
     }

@@ -17,7 +17,6 @@
 package org.kaaproject.kaa.server.control;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import org.junit.Assert;
@@ -27,8 +26,10 @@ import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterRecordDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.common.dto.UpdateStatus;
+import org.kaaproject.kaa.common.dto.VersionDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaInfoDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
 
 /**
  * The Class ControlServerProfileFilterIT.
@@ -124,32 +125,25 @@ public class ControlServerProfileFilterIT extends AbstractTestControlServer {
     public void testGetVacantSchemasByEndpointGroupId() throws Exception {
         
         EndpointGroupDto endpointGroup = createEndpointGroup();
-        ProfileSchemaDto profileSchema1 = createProfileSchema(endpointGroup.getApplicationId());
-        ProfileSchemaDto profileSchema2 = createProfileSchema(endpointGroup.getApplicationId());
-        ProfileSchemaDto profileSchema3 = createProfileSchema(endpointGroup.getApplicationId());
+        
+        CTLSchemaInfoDto ctlSchema = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, CTLSchemaScopeDto.TENANT, null, null, null);
+        
+        ProfileSchemaDto profileSchema1 = createProfileSchema(endpointGroup.getApplicationId(), ctlSchema.getId());
+        ProfileSchemaDto profileSchema2 = createProfileSchema(endpointGroup.getApplicationId(), ctlSchema.getId());
+        ProfileSchemaDto profileSchema3 = createProfileSchema(endpointGroup.getApplicationId(), ctlSchema.getId());
         
         createProfileFilter(profileSchema1.getId(), endpointGroup.getId());
         createProfileFilter(profileSchema2.getId(), endpointGroup.getId());
         
-        List<SchemaDto> schemas = client.getVacantProfileSchemasByEndpointGroupId(endpointGroup.getId());
+        List<VersionDto> schemas = client.getVacantProfileSchemasByEndpointGroupId(endpointGroup.getId());
         
         Assert.assertNotNull(schemas);
         Assert.assertEquals(2, schemas.size());
-        Collections.sort(schemas, new Comparator<SchemaDto>() {
-            @Override
-            public int compare(SchemaDto o1, SchemaDto o2) {
-                int result = o1.getMajorVersion() - o2.getMajorVersion();
-                if (result == 0) {
-                    result = o1.getMinorVersion() - o2.getMinorVersion();
-                }
-                return result; 
-            }
-        });
-        SchemaDto schema = schemas.get(1);
+        Collections.sort(schemas);
+        VersionDto schema = schemas.get(1);
         Assert.assertNotNull(schema);
         Assert.assertEquals(profileSchema3.getId(), schema.getId());
-        Assert.assertEquals(profileSchema3.getMajorVersion(), schema.getMajorVersion());
-        Assert.assertEquals(profileSchema3.getMinorVersion(), schema.getMinorVersion());
+        Assert.assertEquals(profileSchema3.getVersion(), schema.getVersion());
     }
     
     /**

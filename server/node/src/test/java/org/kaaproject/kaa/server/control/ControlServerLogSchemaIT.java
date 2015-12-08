@@ -21,7 +21,7 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
-import org.kaaproject.kaa.common.dto.SchemaDto;
+import org.kaaproject.kaa.common.dto.VersionDto;
 import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 
@@ -66,7 +66,7 @@ public class ControlServerLogSchemaIT extends AbstractTestControlServer {
     public void getLogSchemaByApplicationTokenAndVersionTest() throws Exception {
         ApplicationDto app = createApplication(tenantAdminDto);
         LogSchemaDto logSchemaDto = createLogSchema(app.getId());
-        LogSchemaDto found = client.getLogSchemaByApplicationTokenAndSchemaVersion(app.getApplicationToken(), logSchemaDto.getMajorVersion());
+        LogSchemaDto found = client.getLogSchemaByApplicationTokenAndSchemaVersion(app.getApplicationToken(), logSchemaDto.getVersion());
         Assert.assertEquals(logSchemaDto, found);
     }
 
@@ -80,7 +80,7 @@ public class ControlServerLogSchemaIT extends AbstractTestControlServer {
     public void getLogSchemaVersionsByApplicationIdTest() throws Exception {
         LogSchemaDto logSchemaDto = createLogSchema();
         SchemaVersions schemaVersions = client.getSchemaVersionsByApplicationId(logSchemaDto.getApplicationId());
-        List<SchemaDto> found = schemaVersions.getLogSchemaVersions();
+        List<VersionDto> found = schemaVersions.getLogSchemaVersions();
         Assert.assertEquals(2, found.size());
     }
 }

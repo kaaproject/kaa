@@ -21,7 +21,7 @@ import java.io.File;
 import org.junit.Before;
 import org.junit.Test;
 import org.kaaproject.kaa.client.profile.ProfileContainer;
-import org.kaaproject.kaa.schema.base.Profile;
+import org.kaaproject.kaa.schema.system.EmptyData;
 import org.mockito.Mockito;
 
 public class DesktopKaaClientTest {
@@ -41,7 +41,7 @@ public class DesktopKaaClientTest {
         KaaClient clientSpy = Mockito.spy(Kaa.newClient(new DesktopKaaPlatformContext(), null));
 
         ProfileContainer profileContainerMock = Mockito.mock(ProfileContainer.class);
-        Mockito.when(profileContainerMock.getProfile()).thenReturn(new Profile());
+        Mockito.when(profileContainerMock.getProfile()).thenReturn(new EmptyData());
         clientSpy.setProfileContainer(profileContainerMock);
 
         try {
@@ -58,7 +58,7 @@ public class DesktopKaaClientTest {
         KaaClient clientSpy = Mockito.spy(Kaa.newClient(new DesktopKaaPlatformContext(), null));
 
         ProfileContainer profileContainerMock = Mockito.mock(ProfileContainer.class);
-        Mockito.when(profileContainerMock.getProfile()).thenReturn(new Profile());
+        Mockito.when(profileContainerMock.getProfile()).thenReturn(new EmptyData());
         clientSpy.setProfileContainer(profileContainerMock);
 
         // does nothing before initialization;
@@ -75,7 +75,7 @@ public class DesktopKaaClientTest {
 
         clientSpy.setProfileContainer(profileContainerMock);
 
-        Mockito.when(profileContainerMock.getProfile()).thenReturn(new Profile());
+        Mockito.when(profileContainerMock.getProfile()).thenReturn(new EmptyData());
 
         clientSpy.start();
 

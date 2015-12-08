@@ -48,7 +48,7 @@ public class FlumeAvroEventBuilderTest {
     public void init() {
         appToken = RandomStringUtils.randomNumeric(15);
         
-        profileDto = new EndpointProfileDataDto("1", UUID.randomUUID().toString(), 1, "", "1", "");
+        profileDto = new EndpointProfileDataDto("1", UUID.randomUUID().toString(), 1, "", 1, "");
         
         List<LogEvent> list = generateEvents();
         eventPack = generateEventPack(list);
@@ -58,7 +58,7 @@ public class FlumeAvroEventBuilderTest {
         BaseLogEventPack eventPack = new BaseLogEventPack(profileDto, System.currentTimeMillis(), SCHEMA_VERSION, list);
         
         LogSchemaDto schemaDto = new LogSchemaDto();
-        schemaDto.setMajorVersion(SCHEMA_VERSION);
+        schemaDto.setVersion(SCHEMA_VERSION);
         LogSchema logSchema = new LogSchema(schemaDto);
         eventPack.setLogSchema(logSchema);
         return eventPack;

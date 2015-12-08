@@ -27,6 +27,18 @@ import java.util.List;
  * Common type library service.
  */
 public interface CTLService {
+    
+    public static final String DEFAULT_SYSTEM_EMPTY_SCHEMA_FQN = "org.kaaproject.kaa.schema.system.EmptyData";
+    public static final int DEFAULT_SYSTEM_EMPTY_SCHEMA_VERSION = 1;
+    
+    /**
+     * Get or create empty CTL schema with system scope.
+     *
+     * @param createdUsername
+     *            the name of user.
+     * @return CTLSchemaDto the empty schema with system scope.
+     */
+    CTLSchemaDto getOrCreateEmptySystemSchema(String createdUsername);
 
     /**
      * Update existing CTL schema by the given CTL schema object.

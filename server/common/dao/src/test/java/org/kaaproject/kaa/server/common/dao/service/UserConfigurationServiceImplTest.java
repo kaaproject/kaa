@@ -48,7 +48,7 @@ public class UserConfigurationServiceImplTest extends AbstractTest {
         EndpointUserConfigurationDto firstUserConfigurationDto = generateEndpointUserConfigurationDto(userDto, appDto, schema, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON));
         generateEndpointUserConfigurationDto(userDto, appDto, null, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON));
         generateEndpointUserConfigurationDto(null, null, null, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON));
-        EndpointUserConfigurationDto found = userConfigurationService.findUserConfigurationByUserIdAndAppTokenAndSchemaVersion(userDto.getId(), appDto.getApplicationToken(), schema.getMajorVersion());
+        EndpointUserConfigurationDto found = userConfigurationService.findUserConfigurationByUserIdAndAppTokenAndSchemaVersion(userDto.getId(), appDto.getApplicationToken(), schema.getVersion());
         Assert.assertEquals(firstUserConfigurationDto, found);
     }
 
@@ -74,8 +74,8 @@ public class UserConfigurationServiceImplTest extends AbstractTest {
         generateEndpointUserConfigurationDto(userDto, appDto, schema, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON));
         generateEndpointUserConfigurationDto(userDto, appDto, null, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON));
         generateEndpointUserConfigurationDto(userDto, appDto, null, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON));
-        userConfigurationService.removeByUserIdAndAppTokenAndSchemaVersion(userDto.getId(), appDto.getApplicationToken(), schema.getMajorVersion());
-        EndpointUserConfigurationDto removed = userConfigurationService.findUserConfigurationByUserIdAndAppTokenAndSchemaVersion(userDto.getId(), appDto.getApplicationToken(), schema.getMajorVersion());
+        userConfigurationService.removeByUserIdAndAppTokenAndSchemaVersion(userDto.getId(), appDto.getApplicationToken(), schema.getVersion());
+        EndpointUserConfigurationDto removed = userConfigurationService.findUserConfigurationByUserIdAndAppTokenAndSchemaVersion(userDto.getId(), appDto.getApplicationToken(), schema.getVersion());
         Assert.assertNull(removed);
         List<EndpointUserConfigurationDto> foundList = userConfigurationService.findUserConfigurationByUserId(userDto.getId());
         Assert.assertEquals(2, foundList.size());

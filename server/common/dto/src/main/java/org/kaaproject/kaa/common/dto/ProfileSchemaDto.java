@@ -17,7 +17,7 @@
 package org.kaaproject.kaa.common.dto;
 
 
-public class ProfileSchemaDto extends AbstractSchemaDto {
+public class ProfileSchemaDto extends BaseSchemaDto {
 
     private static final long serialVersionUID = 6374536574939098298L;
 
@@ -34,13 +34,11 @@ public class ProfileSchemaDto extends AbstractSchemaDto {
     }
 
     @Override
-    public int hashCode() { //NOSONAR
-        return super.hashCode();
-    }
-
-    @Override
     public String toString() {
-        return "ProfileSchemaDto{" + super.toString() +
-                '}';
+        StringBuilder builder = new StringBuilder();
+        builder.append("ProfileSchemaDto [");
+        builder.append(super.toString());
+        builder.append("]");
+        return builder.toString();
     }
 }

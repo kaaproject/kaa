@@ -36,8 +36,9 @@ import org.kaaproject.kaa.common.dto.PageLinkDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterRecordDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.SchemaDto;
+import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
+import org.kaaproject.kaa.common.dto.VersionDto;
 import org.kaaproject.kaa.common.dto.admin.AuthResultDto;
 import org.kaaproject.kaa.common.dto.admin.RecordKey;
 import org.kaaproject.kaa.common.dto.admin.ResultCode;
@@ -48,6 +49,7 @@ import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaInfoDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
@@ -227,19 +229,12 @@ public class AdminClient {
         return restTemplate.postForObject(url + "editConfigurationSchema", configurationSchema, ConfigurationSchemaDto.class);
     }
 
-    public ProfileSchemaDto createProfileSchema(ProfileSchemaDto profileSchema, String schemaResource) throws Exception {
-        return createProfileSchema(profileSchema, getFileResource(schemaResource));
+    public ProfileSchemaDto saveProfileSchema(ProfileSchemaDto profileSchema) throws Exception {
+        return restTemplate.postForObject(url + "saveProfileSchema", profileSchema, ProfileSchemaDto.class);
     }
-
-    public ProfileSchemaDto createProfileSchema(ProfileSchemaDto profileSchema, ByteArrayResource schemaResource) throws Exception {
-        MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
-        params.add("profileSchema", profileSchema);
-        params.add("file", schemaResource);
-        return restTemplate.postForObject(url + "createProfileSchema", params, ProfileSchemaDto.class);
-    }
-
-    public ProfileSchemaDto editProfileSchema(ProfileSchemaDto profileSchema) throws Exception {
-        return restTemplate.postForObject(url + "editProfileSchema", profileSchema, ProfileSchemaDto.class);
+    
+    public ServerProfileSchemaDto saveServerProfileSchema(ServerProfileSchemaDto serverProfileSchema) throws Exception {
+        return restTemplate.postForObject(url + "saveServerProfileSchema", serverProfileSchema, ServerProfileSchemaDto.class);
     }
 
     public NotificationSchemaDto createNotificationSchema(NotificationSchemaDto notificationSchema, String schemaResource) throws Exception {
@@ -355,6 +350,10 @@ public class AdminClient {
     public ProfileSchemaDto getProfileSchema(String profileSchemaId) throws Exception {
         return restTemplate.getForObject(url + "profileSchema/" + profileSchemaId, ProfileSchemaDto.class);
     }
+    
+    public ServerProfileSchemaDto getServerProfileSchema(String serverProfileSchemaId) throws Exception {
+        return restTemplate.getForObject(url + "serverProfileSchema/" + serverProfileSchemaId, ServerProfileSchemaDto.class);
+    }
 
     public NotificationSchemaDto getNotificationSchema(String notificationSchemaId) throws Exception {
         return restTemplate.getForObject(url + "notificationSchema/" + notificationSchemaId, NotificationSchemaDto.class);
@@ -379,6 +378,12 @@ public class AdminClient {
         ResponseEntity<List<ProfileSchemaDto>> entity = restTemplate.exchange(url + "profileSchemas/"+applicationId, HttpMethod.GET, null, typeRef);
         return entity.getBody();
     }
+    
+    public List<ServerProfileSchemaDto> getServerProfileSchemas(String applicationId) throws Exception {
+        ParameterizedTypeReference<List<ServerProfileSchemaDto>> typeRef = new ParameterizedTypeReference<List<ServerProfileSchemaDto>>() {};
+        ResponseEntity<List<ServerProfileSchemaDto>> entity = restTemplate.exchange(url + "serverProfileSchemas/"+applicationId, HttpMethod.GET, null, typeRef);
+        return entity.getBody();
+    }
 
     public List<NotificationSchemaDto> getNotificationSchemas(String applicationId) throws Exception {
         ParameterizedTypeReference<List<NotificationSchemaDto>> typeRef = new ParameterizedTypeReference<List<NotificationSchemaDto>>() {};
@@ -386,9 +391,9 @@ public class AdminClient {
         return entity.getBody();
     }
 
-    public List<SchemaDto> getUserNotificationSchemas(String applicationId) throws Exception {
-        ParameterizedTypeReference<List<SchemaDto>> typeRef = new ParameterizedTypeReference<List<SchemaDto>>() {};
-        ResponseEntity<List<SchemaDto>> entity = restTemplate.exchange(url + "userNotificationSchemas/"+applicationId, HttpMethod.GET, null, typeRef);
+    public List<VersionDto> getUserNotificationSchemas(String applicationId) throws Exception {
+        ParameterizedTypeReference<List<VersionDto>> typeRef = new ParameterizedTypeReference<List<VersionDto>>() {};
+        ResponseEntity<List<VersionDto>> entity = restTemplate.exchange(url + "userNotificationSchemas/"+applicationId, HttpMethod.GET, null, typeRef);
         return entity.getBody();
     }
 
@@ -434,9 +439,9 @@ public class AdminClient {
         return entity.getBody();
     }
 
-    public List<SchemaDto> getVacantConfigurationSchemasByEndpointGroupId(String endpointGroupId) throws Exception {
-        ParameterizedTypeReference<List<SchemaDto>> typeRef = new ParameterizedTypeReference<List<SchemaDto>>() {};
-        ResponseEntity<List<SchemaDto>> entity = restTemplate.exchange(url + "vacantConfigurationSchemas/"+endpointGroupId, HttpMethod.GET, null, typeRef);
+    public List<VersionDto> getVacantConfigurationSchemasByEndpointGroupId(String endpointGroupId) throws Exception {
+        ParameterizedTypeReference<List<VersionDto>> typeRef = new ParameterizedTypeReference<List<VersionDto>>() {};
+        ResponseEntity<List<VersionDto>> entity = restTemplate.exchange(url + "vacantConfigurationSchemas/"+endpointGroupId, HttpMethod.GET, null, typeRef);
         return entity.getBody();
     }
 
@@ -485,9 +490,9 @@ public class AdminClient {
                 ProfileFilterRecordDto.class, schemaId, endpointGroupId);
     }
 
-    public List<SchemaDto> getVacantProfileSchemasByEndpointGroupId(String endpointGroupId) throws Exception {
-        ParameterizedTypeReference<List<SchemaDto>> typeRef = new ParameterizedTypeReference<List<SchemaDto>>() {};
-        ResponseEntity<List<SchemaDto>> entity = restTemplate.exchange(url + "vacantProfileSchemas/"+endpointGroupId, HttpMethod.GET, null, typeRef);
+    public List<VersionDto> getVacantProfileSchemasByEndpointGroupId(String endpointGroupId) throws Exception {
+        ParameterizedTypeReference<List<VersionDto>> typeRef = new ParameterizedTypeReference<List<VersionDto>>() {};
+        ResponseEntity<List<VersionDto>> entity = restTemplate.exchange(url + "vacantProfileSchemas/"+endpointGroupId, HttpMethod.GET, null, typeRef);
         return entity.getBody();
     }
 
@@ -848,9 +853,15 @@ public class AdminClient {
         return bar;
     }
 
-    public CTLSchemaInfoDto saveCTLSchema(String body) {
+    public CTLSchemaInfoDto saveCTLSchema(String body, CTLSchemaScopeDto scope, String applicationId) {
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
         params.add("body", body);
+        if (scope != null) {
+            params.add("scope", scope.name());
+        }
+        if (applicationId != null) {
+            params.add("applicationId", applicationId);
+        }
         return restTemplate.postForObject(url + "CTL/saveSchema", params, CTLSchemaInfoDto.class);
     }
 

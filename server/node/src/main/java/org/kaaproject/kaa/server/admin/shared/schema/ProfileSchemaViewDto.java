@@ -16,30 +16,24 @@
 
 package org.kaaproject.kaa.server.admin.shared.schema;
 
-import org.kaaproject.avro.ui.shared.RecordField;
-import org.kaaproject.kaa.common.dto.VersionDto;
+import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
 
-public class SchemaInfoDto extends VersionDto {
+public class ProfileSchemaViewDto extends BaseSchemaViewDto<ProfileSchemaDto> {
 
-    private static final long serialVersionUID = -8792655520011059405L;
+    private static final long serialVersionUID = -5289268279407697791L;
     
-    private RecordField schemaForm;
-
-    public SchemaInfoDto() {
+    public ProfileSchemaViewDto() {
         super();
     }
-    
-    public SchemaInfoDto(VersionDto versionDto) {
-        this.id = versionDto.getId();
-        this.version = versionDto.getVersion();
-    }
-    
-    public RecordField getSchemaForm() {
-        return schemaForm;
+
+    public ProfileSchemaViewDto(ProfileSchemaDto schema,
+            CtlSchemaFormDto ctlSchemaForm) {
+        super(schema, ctlSchemaForm);
     }
 
-    public void setSchemaForm(RecordField schemaForm) {
-        this.schemaForm = schemaForm;
+    @Override
+    protected ProfileSchemaDto createEmptySchema() {
+        return new ProfileSchemaDto();
     }
 
 }

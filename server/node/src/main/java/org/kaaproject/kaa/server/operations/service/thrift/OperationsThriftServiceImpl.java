@@ -127,7 +127,7 @@ public class OperationsThriftServiceImpl implements OperationsThriftService.Ifac
         if (appDto != null) {
             if (notification.getProfileFilterId() != null) {
                 ProfileFilterDto filterDto = cacheService.getFilter(notification.getProfileFilterId());
-                int version = filterDto.getMajorVersion();
+                int version = filterDto.getSchemaVersion();
                 cacheService.resetFilters(new AppVersionKey(appDto.getApplicationToken(), version));
             }
             if (notification.getGroupId() != null) {

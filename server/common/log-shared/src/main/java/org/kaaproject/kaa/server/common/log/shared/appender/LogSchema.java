@@ -39,7 +39,7 @@ public final class LogSchema {
     }
 
     public int getVersion() {
-        return logSchemaDto.getMajorVersion();
+        return logSchemaDto.getVersion();
     }
 
     @Override

@@ -79,6 +79,23 @@ public class HibernateServerProfileSchemaDao extends HibernateAbstractDao<Server
         }
         return schemas;
     }
+    
+    @Override
+    public ServerProfileSchema findByAppIdAndVersion(String appId, int version) {
+        LOG.debug("Searching server profile schema by application id [{}] and version [{}]", appId, version);
+        ServerProfileSchema schema = null;
+        if (isNotBlank(appId)) {
+            schema = findOneByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS, Restrictions.and(
+                    Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)),
+                    Restrictions.eq(VERSION_PROPERTY, version)));
+        }
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("[{},{}] Search result: {}.", appId, version, schema);
+        } else {
+            LOG.debug("[{},{}] Search result: {}.", appId, version, schema != null);
+        }
+        return schema;
+    }
 
     @Override
     public void removeByAppId(String appId) {

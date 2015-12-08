@@ -31,7 +31,7 @@ import java.util.List;
 
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_REFERENCE;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.MAJOR_VERSION_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.VERSION_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.NOTIFICATION_SCHEMA_TYPE_PROPERTY;
 
 @Repository
@@ -83,19 +83,19 @@ public class HibernateNotificationSchemaDao extends HibernateAbstractDao<Notific
     }
 
     @Override
-    public NotificationSchema findNotificationSchemasByAppIdAndTypeAndVersion(String appId, NotificationTypeDto type, int majorVersion) {
-        LOG.debug("Searching notification schema by application id [{}] type [{}] version [{}]", appId, type, majorVersion);
+    public NotificationSchema findNotificationSchemasByAppIdAndTypeAndVersion(String appId, NotificationTypeDto type, int version) {
+        LOG.debug("Searching notification schema by application id [{}] type [{}] version [{}]", appId, type, version);
         NotificationSchema schema = null;
         if (isNotBlank(appId)) {
             schema = findOneByCriterion(Restrictions.and(
                     Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)),
                     Restrictions.eq(NOTIFICATION_SCHEMA_TYPE_PROPERTY, type),
-                    Restrictions.eq(MAJOR_VERSION_PROPERTY, majorVersion)));
+                    Restrictions.eq(VERSION_PROPERTY, version)));
         }
         if (LOG.isTraceEnabled()) {
-            LOG.trace("[{},{},{}] Search result: {}.", appId, type, majorVersion, schema);
+            LOG.trace("[{},{},{}] Search result: {}.", appId, type, version, schema);
         } else {
-            LOG.debug("[{},{},{}] Search result: {}.", appId, type, majorVersion, schema != null);
+            LOG.debug("[{},{},{}] Search result: {}.", appId, type, version, schema != null);
         }
         return schema;
     }
@@ -108,7 +108,7 @@ public class HibernateNotificationSchemaDao extends HibernateAbstractDao<Notific
             Criteria criteria = getCriteria().add(Restrictions.and(
                     Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)),
                     Restrictions.eq(NOTIFICATION_SCHEMA_TYPE_PROPERTY, type)
-            )).addOrder(Order.desc(MAJOR_VERSION_PROPERTY)).setMaxResults(FIRST);
+            )).addOrder(Order.desc(VERSION_PROPERTY)).setMaxResults(FIRST);
             latestSchema = findOneByCriteria(criteria);
         }
         if (LOG.isTraceEnabled()) {

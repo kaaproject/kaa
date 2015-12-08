@@ -19,8 +19,8 @@ package org.kaaproject.kaa.server.admin.client.mvp.activity;
 import java.util.List;
 
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.common.dto.StructureRecordDto;
+import org.kaaproject.kaa.common.dto.VersionDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ProfileFilterPlace;
@@ -58,7 +58,7 @@ public class ProfileFilterActivity extends AbstractRecordActivity<ProfileFilterD
 
     @Override
     protected void getVacantSchemas(String endpointGroupId,
-            AsyncCallback<List<SchemaDto>> callback) {
+            AsyncCallback<List<VersionDto>> callback) {
         KaaAdmin.getDataSource().getVacantProfileSchemas(endpointGroupId, callback);
     }
 

@@ -15,24 +15,6 @@
  */
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-import org.kaaproject.kaa.common.dto.AbstractStructureDto;
-import org.kaaproject.kaa.common.dto.UpdateStatus;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.PrePersist;
-import javax.persistence.Table;
-import javax.persistence.Version;
-import java.io.Serializable;
-
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_STRUCTURE_ACTIVATED_TIME;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_STRUCTURE_ACTIVATED_USERNAME;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_STRUCTURE_APPLICATION_ID;
@@ -44,14 +26,31 @@ import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_STRUCTU
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_STRUCTURE_ENDPOINT_COUNT;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_STRUCTURE_ENDPOINT_GROUP_ID;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_STRUCTURE_LAST_MODIFY_TIME;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_STRUCTURE_MAJOR_VERSION;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_STRUCTURE_MINOR_VERSION;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_STRUCTURE_MODIFIED_USERNAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_STRUCTURE_OPTIMISTIC_LOCK;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_STRUCTURE_SCHEMA_VERSION;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_STRUCTURE_SEQUENCE_NUMBER;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_STRUCTURE_STATUS;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_STRUCTURE_TABLE_NAME;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_STRUCTURE_OPTIMISTIC_LOCK;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
+
+import java.io.Serializable;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Version;
+
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+import org.kaaproject.kaa.common.dto.AbstractStructureDto;
+import org.kaaproject.kaa.common.dto.UpdateStatus;
 
 @Entity
 @Table(name = ABSTRACT_STRUCTURE_TABLE_NAME)
@@ -63,11 +62,8 @@ public abstract class AbstractStructure<T extends AbstractStructureDto> extends 
     @Column(name = ABSTRACT_STRUCTURE_SEQUENCE_NUMBER)
     protected int sequenceNumber;
 
-    @Column(name = ABSTRACT_STRUCTURE_MAJOR_VERSION)
-    protected int majorVersion;
-
-    @Column(name = ABSTRACT_STRUCTURE_MINOR_VERSION)
-    protected int minorVersion;
+    @Column(name = ABSTRACT_STRUCTURE_SCHEMA_VERSION)
+    protected int schemaVersion;
 
     @Column(name = ABSTRACT_STRUCTURE_DESCRIPTION)
     protected String description;
@@ -132,8 +128,7 @@ public abstract class AbstractStructure<T extends AbstractStructureDto> extends 
         if (dto != null) {
             this.id = getLongId(dto);
             this.sequenceNumber = dto.getSequenceNumber();
-            this.majorVersion = dto.getMajorVersion();
-            this.minorVersion = dto.getMinorVersion();
+            this.schemaVersion = dto.getSchemaVersion();
             this.description = dto.getDescription();
             this.createdTime = dto.getCreatedTime();
             this.lastModifyTime = dto.getLastModifyTime();
@@ -164,21 +159,13 @@ public abstract class AbstractStructure<T extends AbstractStructureDto> extends 
     public void incrementSequenceNumber() {
         sequenceNumber++;
     }
-
-    public int getMajorVersion() {
-        return majorVersion;
+    
+    public int getSchemaVersion() {
+        return schemaVersion;
     }
 
-    public void setMajorVersion(int majorVersion) {
-        this.majorVersion = majorVersion;
-    }
-
-    public int getMinorVersion() {
-        return minorVersion;
-    }
-
-    public void setMinorVersion(int minorVersion) {
-        this.minorVersion = minorVersion;
+    public void setSchemaVersion(int schemaVersion) {
+        this.schemaVersion = schemaVersion;
     }
 
     public String getDescription() {
@@ -296,8 +283,7 @@ public abstract class AbstractStructure<T extends AbstractStructureDto> extends 
             dto.setEndpointGroupId(endpointGroup.getStringId());
         }
         dto.setSequenceNumber(sequenceNumber);
-        dto.setMajorVersion(majorVersion);
-        dto.setMinorVersion(minorVersion);
+        dto.setSchemaVersion(schemaVersion);
         dto.setDescription(description);
         dto.setCreatedTime(createdTime);
         dto.setLastModifyTime(lastModifyTime);
@@ -323,8 +309,7 @@ public abstract class AbstractStructure<T extends AbstractStructureDto> extends 
         int result = 1;
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + sequenceNumber;
-        result = prime * result + majorVersion;
-        result = prime * result + minorVersion;
+        result = prime * result + schemaVersion;
         result = prime * result + ((description == null) ? 0 : description.hashCode());
         result = prime * result + Long.valueOf(createdTime).hashCode();
         result = prime * result + Long.valueOf(lastModifyTime).hashCode();
@@ -364,10 +349,7 @@ public abstract class AbstractStructure<T extends AbstractStructureDto> extends 
         if (sequenceNumber != other.sequenceNumber) {
             return false;
         }
-        if (majorVersion != other.majorVersion) {
-            return false;
-        }
-        if (minorVersion != other.minorVersion) {
+        if (schemaVersion != other.schemaVersion) {
             return false;
         }
         if (description == null) {

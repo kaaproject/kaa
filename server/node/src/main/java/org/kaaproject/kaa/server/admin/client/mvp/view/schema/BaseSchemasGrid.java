@@ -50,7 +50,7 @@ public class BaseSchemasGrid<T extends AbstractSchemaDto> extends AbstractKaaGri
                 new StringValueProvider<T>() {
                     @Override
                     public String getValue(T item) {
-                        return item.getMajorVersion() + "." + item.getMinorVersion();
+                        return item.getVersion() + "";
                     }
                 }, 
                 new Comparator<T>() {
@@ -149,7 +149,7 @@ public class BaseSchemasGrid<T extends AbstractSchemaDto> extends AbstractKaaGri
     }
 
     protected Integer getDownloadSchemaColumnClickedId(T value) {
-        return value.getMajorVersion();
+        return value.getVersion();
     }
 }
 

@@ -109,7 +109,7 @@ public class HibernateProfileFilterDaoTest extends HibernateAbstractTest {
         Assert.assertEquals(1, filters.size());
         ProfileFilter first = filters.get(0);
         Application app = first.getApplication();
-        List<ProfileFilter> found = profileFilterDao.findByAppIdAndSchemaVersion(app.getId().toString(), first.getMajorVersion());
+        List<ProfileFilter> found = profileFilterDao.findByAppIdAndSchemaVersion(app.getId().toString(), first.getSchemaVersion());
         Assert.assertEquals(filters, found);
     }
 

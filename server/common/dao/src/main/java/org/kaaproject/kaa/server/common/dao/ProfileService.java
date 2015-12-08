@@ -23,8 +23,8 @@ import java.util.List;
 import org.kaaproject.kaa.common.dto.ChangeProfileFilterNotification;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.common.dto.StructureRecordDto;
+import org.kaaproject.kaa.common.dto.VersionDto;
 
 /**
  * The interface Profile service.
@@ -45,7 +45,7 @@ public interface ProfileService {
      * @param applicationId the application id
      * @return the list of <code>SchemaDto</code> objects
      */
-    List<SchemaDto> findProfileSchemaVersionsByAppId(String applicationId);
+    List<VersionDto> findProfileSchemaVersionsByAppId(String applicationId);
 
     /**
      * Find profile schema by id.
@@ -101,7 +101,7 @@ public interface ProfileService {
      * @param endpointGroupId the endpoint group id
      * @return the list of schema versions
      */
-    List<SchemaDto> findVacantSchemasByEndpointGroupId(String endpointGroupId);
+    List<VersionDto> findVacantSchemasByEndpointGroupId(String endpointGroupId);
 
     /**
      * Find profile filter by id.

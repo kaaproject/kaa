@@ -33,10 +33,10 @@ import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.StructureRecordDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
+import org.kaaproject.kaa.common.dto.VersionDto;
 import org.kaaproject.kaa.common.dto.admin.RecordKey.RecordFiles;
 import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
 import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
@@ -61,6 +61,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.event.data.DataEvent;
 import org.kaaproject.kaa.server.admin.shared.config.ConfigurationRecordFormDto;
 import org.kaaproject.kaa.server.admin.shared.properties.PropertiesDto;
 import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaFormDto;
+import org.kaaproject.kaa.server.admin.shared.schema.ProfileSchemaViewDto;
 import org.kaaproject.kaa.server.admin.shared.schema.SchemaFqnDto;
 import org.kaaproject.kaa.server.admin.shared.schema.SchemaInfoDto;
 import org.kaaproject.kaa.server.admin.shared.schema.ServerProfileSchemaViewDto;
@@ -515,23 +516,23 @@ public class DataSource {
 
     }
 
-    public void editProfileSchemaForm(ProfileSchemaDto profileSchema,
-            final AsyncCallback<ProfileSchemaDto> callback) {
-        rpcService.editProfileSchemaForm(profileSchema,
-                new DataCallback<ProfileSchemaDto>(callback) {
+    public void saveProfileSchemaView(ProfileSchemaViewDto profileSchemaView,
+            final AsyncCallback<ProfileSchemaViewDto> callback) {
+        rpcService.saveProfileSchemaView(profileSchemaView,
+                new DataCallback<ProfileSchemaViewDto>(callback) {
                     @Override
-                    protected void onResult(ProfileSchemaDto result) {
+                    protected void onResult(ProfileSchemaViewDto result) {
                         eventBus.fireEvent(new DataEvent(ProfileSchemaDto.class));
                     }
                 });
     }
 
-    public void getProfileSchemaForm(String profileSchemaId,
-            final AsyncCallback<ProfileSchemaDto> callback) {
-        rpcService.getProfileSchemaForm(profileSchemaId,
-                new DataCallback<ProfileSchemaDto>(callback) {
+    public void getProfileSchemaView(String profileSchemaId,
+            final AsyncCallback<ProfileSchemaViewDto> callback) {
+        rpcService.getProfileSchemaView(profileSchemaId,
+                new DataCallback<ProfileSchemaViewDto>(callback) {
                     @Override
-                    protected void onResult(ProfileSchemaDto result) {
+                    protected void onResult(ProfileSchemaViewDto result) {
                     }
                 });
     }
@@ -655,11 +656,11 @@ public class DataSource {
     }
 
     public void loadLogSchemasVersion(String applicationId,
-            final AsyncCallback<List<SchemaDto>> callback) {
+            final AsyncCallback<List<VersionDto>> callback) {
         rpcService.getLogSchemasVersions(applicationId,
-                new DataCallback<List<SchemaDto>>(callback) {
+                new DataCallback<List<VersionDto>>(callback) {
                     @Override
-                    protected void onResult(List<SchemaDto> result) {
+                    protected void onResult(List<VersionDto> result) {
                     }
                 });
     }
@@ -1012,11 +1013,11 @@ public class DataSource {
     }
 
     public void getVacantProfileSchemas(String endpointGroupId,
-            final AsyncCallback<List<SchemaDto>> callback) {
+            final AsyncCallback<List<VersionDto>> callback) {
         rpcService.getVacantProfileSchemasByEndpointGroupId(endpointGroupId,
-                new DataCallback<List<SchemaDto>>(callback) {
+                new DataCallback<List<VersionDto>>(callback) {
             @Override
-            protected void onResult(List<SchemaDto> result) {
+            protected void onResult(List<VersionDto> result) {
             }
         });
     }
@@ -1032,11 +1033,11 @@ public class DataSource {
     }
 
     public void getUserNotificationSchemas(String applicationId,
-            final AsyncCallback<List<SchemaDto>> callback) {
+            final AsyncCallback<List<VersionDto>> callback) {
         rpcService.getUserNotificationSchemasByApplicationId(applicationId,
-                new DataCallback<List<SchemaDto>>(callback) {
+                new DataCallback<List<VersionDto>>(callback) {
             @Override
-            protected void onResult(List<SchemaDto> result) {
+            protected void onResult(List<VersionDto> result) {
             }
         });
     }

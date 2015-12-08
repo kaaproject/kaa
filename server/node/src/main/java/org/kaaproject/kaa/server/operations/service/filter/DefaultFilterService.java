@@ -22,6 +22,7 @@ import java.util.List;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.server.operations.service.cache.AppVersionKey;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
 import org.slf4j.Logger;
@@ -61,15 +62,19 @@ public class DefaultFilterService implements FilterService {
      * java.lang.String)
      */
     @Override
-    public List<ProfileFilterDto> getAllMatchingFilters(AppVersionKey appProfileVersionKey, EndpointProfileDto profile) {
+    public List<ProfileFilterDto> getAllMatchingFilters(AppVersionKey appProfileVersionKey, AppVersionKey appServerProfileVersopnKey,
+            EndpointProfileDto profile) {
         ProfileSchemaDto profileSchema = cacheService.getProfileSchemaByAppAndVersion(appProfileVersionKey);
+        ServerProfileSchemaDto serverProfileSchema = cacheService.getServerProfileSchemaByAppAndVersion(appServerProfileVersopnKey);
+        String profileSchemaBody = cacheService.getFlatCtlSchemaById(profileSchema.getCtlSchemaId());
+        String serverProfileSchemaBody = cacheService.getFlatCtlSchemaById(serverProfileSchema.getCtlSchemaId());
         List<ProfileFilterDto> filters = cacheService.getFilters(appProfileVersionKey);
         LOG.trace("Found {} filters by {}", filters.size(), appProfileVersionKey);
         List<ProfileFilterDto> matchingFilters = new LinkedList<ProfileFilterDto>();
         Filter filter = null;
         for (ProfileFilterDto filterBody : filters) {
             if (filter == null) {
-                filter = new DefaultFilter(filterBody.getBody(), profileSchema.getSchema());
+                filter = new DefaultFilter(filterBody.getBody(), profileSchemaBody, serverProfileSchemaBody);
             } else {
                 filter.updateFilterBody(filterBody.getBody());
             }
@@ -98,9 +103,13 @@ public class DefaultFilterService implements FilterService {
     @Override
     public boolean matches(String appToken, String profileFilterId, EndpointProfileDto profile) {
         ProfileFilterDto filterDto = cacheService.getFilter(profileFilterId);
-        AppVersionKey appProfileVersionKey = new AppVersionKey(appToken, filterDto.getMajorVersion());
+        AppVersionKey appProfileVersionKey = new AppVersionKey(appToken, filterDto.getSchemaVersion());
+        AppVersionKey appServerProfileVersionKey = new AppVersionKey(appToken, profile.getServerProfileVersion());
         ProfileSchemaDto profileSchema = cacheService.getProfileSchemaByAppAndVersion(appProfileVersionKey);
-        Filter filter = new DefaultFilter(filterDto.getBody(), profileSchema.getSchema());
+        ServerProfileSchemaDto serverProfileSchema = cacheService.getServerProfileSchemaByAppAndVersion(appServerProfileVersionKey);
+        String profileSchemaBody = cacheService.getFlatCtlSchemaById(profileSchema.getCtlSchemaId());
+        String serverProfileSchemaBody = cacheService.getFlatCtlSchemaById(serverProfileSchema.getCtlSchemaId());
+        Filter filter = new DefaultFilter(filterDto.getBody(), profileSchemaBody, serverProfileSchemaBody);
         LOG.trace("matching profile body with filter {}", filter);
         return filter.matches(profile);
     }

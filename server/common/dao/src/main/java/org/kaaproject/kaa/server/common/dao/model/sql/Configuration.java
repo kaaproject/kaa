@@ -169,8 +169,8 @@ public final class Configuration extends AbstractStructure<ConfigurationDto> imp
 
     @Override
     public String toString() {
-        return "Configuration [sequenceNumber=" + sequenceNumber + ", majorVersion="
-                + majorVersion + ", minorVersion=" + minorVersion + ", description=" + description + ", createdTime=" + createdTime + ", lastModifyTime="
+        return "Configuration [sequenceNumber=" + sequenceNumber + ", schemaVersion="
+                + schemaVersion + ", description=" + description + ", createdTime=" + createdTime + ", lastModifyTime="
                 + lastModifyTime + ", activatedTime=" + activatedTime + ", deactivatedTime=" + deactivatedTime + ", createdUsername=" + createdUsername
                 + ", modifiedUsername=" + modifiedUsername + ", activatedUsername=" + activatedUsername + ", deactivatedUsername=" + deactivatedUsername
                 + ", endpointCount=" + endpointCount + ", status=" + status + ", id=" + id + ", version=" + getVersion() + "]";
