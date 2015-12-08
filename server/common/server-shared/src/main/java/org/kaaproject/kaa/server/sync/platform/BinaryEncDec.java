@@ -37,6 +37,7 @@ import org.kaaproject.kaa.server.sync.EventClientSync;
 import org.kaaproject.kaa.server.sync.EventListenersRequest;
 import org.kaaproject.kaa.server.sync.EventListenersResponse;
 import org.kaaproject.kaa.server.sync.EventServerSync;
+import org.kaaproject.kaa.server.sync.ExtensionSync;
 import org.kaaproject.kaa.server.sync.LogClientSync;
 import org.kaaproject.kaa.server.sync.LogDeliveryStatus;
 import org.kaaproject.kaa.server.sync.LogEntry;
@@ -136,12 +137,6 @@ public class BinaryEncDec implements PlatformEncDec {
     private static final int TOPIC_LIST_HASH_SIZE = 20;
 
     // Profile client sync fields
-    private static final byte CONF_SCHEMA_VERSION_FIELD_ID = 0;
-    private static final byte PROFILE_SCHEMA_VERSION_FIELD_ID = 1;
-    private static final byte SYSTEM_NOTIFICATION_SCHEMA_VERSION_FIELD_ID = 2;
-    private static final byte USER_NOTIFICATION_SCHEMA_VERSION_FIELD_ID = 3;
-    private static final byte LOG_SCHEMA_VERSION_FIELD_ID = 4;
-    private static final byte EVENT_FAMILY_VERSIONS_COUNT_FIELD_ID = 5;
     private static final byte PUBLIC_KEY_FIELD_ID = 6;
     private static final byte ACCESS_TOKEN_FIELD_ID = 7;
 
@@ -177,7 +172,7 @@ public class BinaryEncDec implements PlatformEncDec {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * org.kaaproject.kaa.server.operations.service.akka.actors.io.platform.
      * PlatformEncDec#getId()
@@ -259,6 +254,10 @@ public class BinaryEncDec implements PlatformEncDec {
             encode(buf, sync.getRedirectSync());
             extensionCount++;
         }
+        for (ExtensionSync ext : sync.getExtSyncList()) {
+            encode(buf, ext);
+            extensionCount++;
+        }
 
         buf.putShort(EXTENSIONS_COUNT_POSITION, extensionCount);
         byte[] result = buf.toByteArray();
@@ -268,10 +267,17 @@ public class BinaryEncDec implements PlatformEncDec {
         return result;
     }
 
+    private void encode(GrowingByteBuffer buf, ExtensionSync ext) {
+        buf.putShort((short) ext.getExtensionId());
+        buf.putShort((short) 0);
+        buf.putInt(ext.getData().length);
+        buf.put(ext.getData());
+    }
+
     private void buildExtensionHeader(GrowingByteBuffer buf, short extensionId, byte optionA, byte optionB, int length) {
         buf.putShort(extensionId);
         buf.put(optionA);
-        buf.put(optionB);        
+        buf.put(optionB);
         buf.putInt(length);
     }
 
@@ -296,8 +302,8 @@ public class BinaryEncDec implements PlatformEncDec {
     }
 
     private void encode(GrowingByteBuffer buf, ProfileServerSync profileSync) {
-        buildExtensionHeader(buf, PROFILE_EXTENSION_ID, NOTHING,
-                             (profileSync.getResponseStatus() == SyncResponseStatus.RESYNC ? RESYNC : NOTHING), 0);
+        buildExtensionHeader(buf, PROFILE_EXTENSION_ID, NOTHING, (profileSync.getResponseStatus() == SyncResponseStatus.RESYNC ? RESYNC
+                : NOTHING), 0);
     }
 
     private void encode(GrowingByteBuffer buf, UserServerSync userSync) {
@@ -540,7 +546,8 @@ public class BinaryEncDec implements PlatformEncDec {
     }
 
     private ClientSync parseExtensions(ByteBuffer buf, int protocolVersion, int extensionsCount) throws PlatformEncDecException {
-        ClientSync sync = new ClientSync();
+        List<ExtensionSync> pluginExtensions = new ArrayList<ExtensionSync>(extensionsCount);
+        ClientSync sync = new ClientSync(pluginExtensions);
         for (short extPos = 0; extPos < extensionsCount; extPos++) {
             if (buf.remaining() < MIN_SIZE_OF_EXTENSION_HEADER) {
                 throw new PlatformEncDecException(MessageFormat.format(
@@ -580,10 +587,17 @@ public class BinaryEncDec implements PlatformEncDec {
                 parseEventClientSync(sync, buf, options, payloadLength);
                 break;
             default:
+                pluginExtensions.add(parsePluginExtenstion(buf, type, options, payloadLength));
                 break;
             }
         }
         return validate(sync);
+    }
+
+    private ExtensionSync parsePluginExtenstion(ByteBuffer buf, short type, int options, int payloadLength) {
+        byte[] payload = new byte[payloadLength];
+        buf.get(payload);
+        return new ExtensionSync(type, payload);
     }
 
     private void parseClientSyncMetaData(ClientSync sync, ByteBuffer buf, int options, int payloadLength) throws PlatformEncDecException {
@@ -703,7 +717,7 @@ public class BinaryEncDec implements PlatformEncDec {
         sync.setEventSync(eventSync);
     }
 
-    private void  parseNotificationClientSync(ClientSync sync, ByteBuffer buf, int options, int payloadLength) {
+    private void parseNotificationClientSync(ClientSync sync, ByteBuffer buf, int options, int payloadLength) {
         int payloadLimitPosition = buf.position() + payloadLength;
         if (hasOption(options, CLIENT_METASYNC_NOTIFICATION_HAS_TOPIC_LIST_HASH)) {
             payloadLimitPosition -= TOPIC_LIST_HASH_SIZE;

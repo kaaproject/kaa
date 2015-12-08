@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.operations.service;
 
+import static org.kaaproject.kaa.common.Utils.toByteArray;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
@@ -580,17 +582,6 @@ public class DefaultOperationsService implements OperationsService {
         } else {
             return profile.getNfGroupStates() == null || profile.getNfGroupStates().size() == 0;
         }
-    }
-
-    /**
-     * To byte array.
-     *
-     * @param buffer
-     *            the buffer
-     * @return the byte[]
-     */
-    private static byte[] toByteArray(ByteBuffer buffer) {
-        return Arrays.copyOf(buffer.array(), buffer.array().length);
     }
 
     /*

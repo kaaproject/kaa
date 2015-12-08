@@ -16,6 +16,15 @@
 
 package org.kaaproject.kaa.server.sync.platform;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.Constants;
@@ -39,6 +48,7 @@ import org.kaaproject.kaa.server.sync.ClientSync;
 import org.kaaproject.kaa.server.sync.ConfigurationServerSync;
 import org.kaaproject.kaa.server.sync.Event;
 import org.kaaproject.kaa.server.sync.EventServerSync;
+import org.kaaproject.kaa.server.sync.ExtensionSync;
 import org.kaaproject.kaa.server.sync.LogDeliveryStatus;
 import org.kaaproject.kaa.server.sync.LogServerSync;
 import org.kaaproject.kaa.server.sync.NotificationServerSync;
@@ -49,14 +59,6 @@ import org.kaaproject.kaa.server.sync.SyncStatus;
 import org.kaaproject.kaa.server.sync.UserServerSync;
 import org.kaaproject.kaa.server.sync.UserVerifierErrorCode;
 import org.kaaproject.kaa.server.sync.bootstrap.BootstrapServerSync;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
 
 public class AvroEncDecTest {
 
@@ -75,14 +77,15 @@ public class AvroEncDecTest {
 
     @Test
     public void convertSyncRequestTest() {
-        ClientSync clientSync = new ClientSync();
+        ClientSync clientSync = new ClientSync(new ArrayList<ExtensionSync>());
         Assert.assertEquals(clientSync, AvroEncDec.convert(new SyncRequest()));
     }
 
     @Test
     public void convertServerSyncTest() {
         SyncResponse syncResponse = new SyncResponse();
-        Assert.assertEquals(syncResponse, AvroEncDec.convert(new ServerSync()));
+        syncResponse.setExtensionSyncResponses(Collections.<org.kaaproject.kaa.common.endpoint.gen.ExtensionSync>emptyList());
+        Assert.assertEquals(syncResponse, AvroEncDec.convert(new ServerSync(new ArrayList<ExtensionSync>())));
     }
 
     @Test

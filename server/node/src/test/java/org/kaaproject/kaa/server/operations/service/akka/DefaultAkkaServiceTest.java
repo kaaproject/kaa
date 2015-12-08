@@ -51,6 +51,7 @@ import org.kaaproject.kaa.common.endpoint.gen.EventSequenceNumberRequest;
 import org.kaaproject.kaa.common.endpoint.gen.EventSequenceNumberResponse;
 import org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.EventSyncResponse;
+import org.kaaproject.kaa.common.endpoint.gen.ExtensionSync;
 import org.kaaproject.kaa.common.endpoint.gen.LogEntry;
 import org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.NotificationSyncRequest;
@@ -115,7 +116,6 @@ import org.kaaproject.kaa.server.transport.channel.ChannelType;
 import org.kaaproject.kaa.server.transport.message.ErrorBuilder;
 import org.kaaproject.kaa.server.transport.message.MessageBuilder;
 import org.kaaproject.kaa.server.transport.message.SessionAwareMessage;
-import org.kaaproject.kaa.server.transport.message.SessionControlMessage;
 import org.kaaproject.kaa.server.transport.message.SessionInitMessage;
 import org.kaaproject.kaa.server.transport.session.SessionInfo;
 import org.mockito.Mockito;
@@ -807,6 +807,7 @@ public class DefaultAkkaServiceTest {
         akkaService.process(message);
 
         SyncResponse response = new SyncResponse();
+        response.setExtensionSyncResponses(Collections.<ExtensionSync>emptyList());
         response.setRequestId(request.getRequestId());
         response.setStatus(SyncResponseResultType.REDIRECT);
         response.setRedirectSyncResponse(new RedirectSyncResponse("testDNS".hashCode()));
@@ -891,6 +892,7 @@ public class DefaultAkkaServiceTest {
         akkaService.process(message);
 
         SyncResponse response = new SyncResponse();
+        response.setExtensionSyncResponses(Collections.<ExtensionSync>emptyList());
         response.setRequestId(request.getRequestId());
         response.setStatus(SyncResponseResultType.REDIRECT);
         response.setRedirectSyncResponse(new RedirectSyncResponse("testDNS".hashCode()));
@@ -1024,6 +1026,7 @@ public class DefaultAkkaServiceTest {
                 Mockito.any(ProfileClientSync.class));
 
         SyncResponse eventResponse = new SyncResponse();
+        eventResponse.setExtensionSyncResponses(Collections.<ExtensionSync>emptyList());
         eventResponse.setRequestId(REQUEST_ID);
         eventResponse.setStatus(SyncResponseResultType.SUCCESS);
         eventResponse.setEventSyncResponse(new EventSyncResponse());
@@ -1087,6 +1090,7 @@ public class DefaultAkkaServiceTest {
                 Mockito.any(ProfileClientSync.class));
 
         SyncResponse eventResponse = new SyncResponse();
+        eventResponse.setExtensionSyncResponses(Collections.<ExtensionSync>emptyList());
         eventResponse.setRequestId(REQUEST_ID);
         eventResponse.setStatus(SyncResponseResultType.SUCCESS);
         eventResponse.setEventSyncResponse(new EventSyncResponse());
@@ -1454,6 +1458,7 @@ public class DefaultAkkaServiceTest {
                 Mockito.any(ProfileClientSync.class));
 
         SyncResponse targetSyncResponse = new SyncResponse();
+        targetSyncResponse.setExtensionSyncResponses(Collections.<ExtensionSync>emptyList());
         targetSyncResponse.setRequestId(REQUEST_ID);
         targetSyncResponse.setStatus(SyncResponseResultType.SUCCESS);
         targetSyncResponse.setUserSyncResponse(new UserSyncResponse());
@@ -1555,6 +1560,7 @@ public class DefaultAkkaServiceTest {
         Mockito.verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).syncProfile(Mockito.any(SyncContext.class),
                 Mockito.any(ProfileClientSync.class));
         SyncResponse targetSyncResponse = new SyncResponse();
+        targetSyncResponse.setExtensionSyncResponses(Collections.<ExtensionSync>emptyList());
         targetSyncResponse.setRequestId(REQUEST_ID);
         targetSyncResponse.setStatus(SyncResponseResultType.SUCCESS);
         targetSyncResponse.setUserSyncResponse(new UserSyncResponse());

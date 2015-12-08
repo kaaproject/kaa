@@ -26,13 +26,14 @@ import org.kaaproject.kaa.server.common.core.plugin.instance.KaaMessage;
 import org.kaaproject.kaa.server.common.core.plugin.instance.KaaPluginMessage;
 import org.kaaproject.kaa.server.common.core.plugin.instance.KaaSdkMessage;
 import org.kaaproject.kaa.server.common.core.plugin.instance.KaaCommunicationPlugin;
+import org.kaaproject.kaa.server.common.core.plugin.instance.PluginLifecycleException;
 import org.kaaproject.kaa.server.plugin.contracts.messaging.EndpointMessage;
 
 @Plugin(EndpointMessagingPluginDefinition.class)
 public class EndpointMessagePlugin implements KaaCommunicationPlugin {
 
     @Override
-    public void init(PluginInitContext context) {
+    public void init(PluginInitContext context) throws PluginLifecycleException {
 
     }
 
@@ -86,6 +87,11 @@ public class EndpointMessagePlugin implements KaaCommunicationPlugin {
             return bb.array();
         }
         return null;
+    }
+
+    @Override
+    public void stop() throws PluginLifecycleException {
+        // TODO Auto-generated method stub
     }
 
 }
