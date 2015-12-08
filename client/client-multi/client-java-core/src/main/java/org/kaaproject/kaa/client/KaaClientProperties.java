@@ -39,6 +39,8 @@ import org.kaaproject.kaa.common.endpoint.gen.ProtocolVersionPair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.kaaproject.kaa.client.util.Utils.isBlank;
+
 /**
  * Service class to store base endpoint configuration
  */
@@ -59,24 +61,34 @@ public class KaaClientProperties extends Properties {
     public static final String CONFIG_DATA_DEFAULT = "config.data.default";
     public static final String CONFIG_SCHEMA_DEFAULT = "config.schema.default";
     public static final String SDK_TOKEN = "sdk_token";
+    public static final String WORKING_DIR_PROPERTY = "kaa.work_dir";
+    public static final String FILE_SEPARATOR = System.getProperty("file.separator");
+    public static final String STATE_FILE_NAME_PROPERTY = "state.file_name";
+    public static final String CLIENT_PRIVATE_KEY_FILE_NAME_PROPERTY = "keys.private_name";
+    public static final String CLIENT_PUBLIC_KEY_FILE_NAME_PROPERTY = "keys.public_name";
+
 
     private static final String PROPERTIES_HASH_ALGORITHM = "SHA";
 
     private Base64 base64;
 
     private byte[] propertiesHash;
-    
+
+    public KaaClientProperties() throws IOException {
+        super(loadProperties(null));
+    }
+
+    public KaaClientProperties(String propertiesLocation) throws IOException {
+        super(loadProperties(propertiesLocation));
+    }
+
     public KaaClientProperties(Properties properties) {
         super(properties);
     }
 
-    public KaaClientProperties() throws IOException {
-        super(loadProperties());
-    }
-
-    private static Properties loadProperties() throws IOException {
+    private static Properties loadProperties(String propsLocation) throws IOException {
         Properties properties = null;
-        String propertiesLocation = DEFAULT_CLIENT_PROPERTIES;
+        String propertiesLocation = isBlank(propsLocation) ? DEFAULT_CLIENT_PROPERTIES : propsLocation;
         if (System.getProperty(KAA_CLIENT_PROPERTIES_FILE) != null) {
             propertiesLocation = System.getProperty(KAA_CLIENT_PROPERTIES_FILE);
         }
@@ -186,4 +198,52 @@ public class KaaClientProperties extends Properties {
     public void setBase64(Base64 base64) {
         this.base64 = base64;
     }
+
+    public String getWorkingDirectory() {
+        return getProperty(WORKING_DIR_PROPERTY);
+    }
+
+    public void setWorkingDirectory(String workDir) {
+        checkNotBlankProperty(workDir, "Working directory folder name couldn't be blank");
+        setProperty(WORKING_DIR_PROPERTY, checkDir(workDir));
+    }
+
+    private String checkDir(String workDir) {
+        return workDir.endsWith(FILE_SEPARATOR) ? workDir : workDir + FILE_SEPARATOR;
+    }
+
+
+    public String getStateFileName() {
+        return getProperty(STATE_FILE_NAME_PROPERTY);
+    }
+
+    public void setStateFileName(String fileName) {
+        checkNotBlankProperty(fileName, "State file name couldn't be blank");
+        setProperty(STATE_FILE_NAME_PROPERTY, fileName);
+    }
+
+    public String getPublicKeyFileName() {
+        return getProperty(CLIENT_PUBLIC_KEY_FILE_NAME_PROPERTY);
+    }
+
+    public void setPublicKeyFileName(String fileName) {
+        checkNotBlankProperty(fileName, "Public key file name couldn't be blank");
+        setProperty(CLIENT_PUBLIC_KEY_FILE_NAME_PROPERTY, fileName);
+    }
+
+    public String getPrivateKeyFileName() {
+        return getProperty(CLIENT_PRIVATE_KEY_FILE_NAME_PROPERTY);
+    }
+
+    public void setPrivateKeyFileName(String fileName) {
+        checkNotBlankProperty(fileName, "Private key file name couldn't be blank");
+        setProperty(CLIENT_PRIVATE_KEY_FILE_NAME_PROPERTY, fileName);
+    }
+
+    private static void checkNotBlankProperty(String fileName, String errorMessage) {
+        if (isBlank(fileName)) {
+            throw new IllegalArgumentException(errorMessage);
+        }
+    }
+
 }

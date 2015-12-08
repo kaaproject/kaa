@@ -46,12 +46,12 @@ public class KaaClientPropertiesStateTest {
 
     public static KaaClientProperties getProperties() throws IOException {
         KaaClientProperties props = new KaaClientProperties();
-        props.setProperty(KaaClientPropertiesState.WORKING_DIR_PROPERTY, WORK_DIR);
-        props.setProperty(KaaClientPropertiesState.STATE_FILE_NAME_PROPERTY, STATE_PROPERTIES);
-        props.setProperty(KaaClientPropertiesState.CLIENT_PUBLIC_KEY_FILE_NAME_PROPERTY, KEY_PUBLIC);
+        props.setProperty(KaaClientProperties.WORKING_DIR_PROPERTY, WORK_DIR);
+        props.setProperty(KaaClientProperties.STATE_FILE_NAME_PROPERTY, STATE_PROPERTIES);
+        props.setProperty(KaaClientProperties.CLIENT_PUBLIC_KEY_FILE_NAME_PROPERTY, KEY_PUBLIC);
         File pub = new File(WORK_DIR + KEY_PUBLIC);
         pub.deleteOnExit();
-        props.setProperty(KaaClientPropertiesState.CLIENT_PRIVATE_KEY_FILE_NAME_PROPERTY, KEY_PRIVATE);
+        props.setProperty(KaaClientProperties.CLIENT_PRIVATE_KEY_FILE_NAME_PROPERTY, KEY_PRIVATE);
         File priv = new File(WORK_DIR + KEY_PRIVATE);
         priv.deleteOnExit();
         File state = new File(WORK_DIR + STATE_PROPERTIES);
