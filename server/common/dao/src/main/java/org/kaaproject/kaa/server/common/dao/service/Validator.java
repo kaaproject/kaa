@@ -113,8 +113,8 @@ public class Validator {
      * This method validate <code>String</code> id. If id is invalid than throw
      * <code>IncorrectParameterException</code> exception
      *
-     * @param id
-     * @param errorMessage message for exception
+     * @param id            the id
+     * @param errorMessage  the error message for exception
      */
     public static void validateId(String id, String errorMessage) {
         if (!isValidId(id)) {
@@ -124,8 +124,8 @@ public class Validator {
 
     /**
      *
-     * @param id
-     * @param errorMessage
+     * @param id            the id
+     * @param errorMessage  the error message for exception
      */
     public static void validateSqlId(String id, String errorMessage) {
         try {
@@ -139,8 +139,8 @@ public class Validator {
      * This method validate <code>String</code> string. If string is invalid than throw
      * <code>IncorrectParameterException</code> exception
      *
-     * @param id
-     * @param errorMessage message for exception
+     * @param id            the id
+     * @param errorMessage  the error message for exception
      */
     public static void validateString(String id, String errorMessage) {
         if (id == null || id.isEmpty()) {
@@ -152,8 +152,8 @@ public class Validator {
      * This method validate <code>byte</code> array hash. If hash is invalid than throw
      * <code>IncorrectParameterException</code> exception
      *
-     * @param hash
-     * @param errorMessage message for exception
+     * @param hash          the hash
+     * @param errorMessage  the error message for exception
      */
     public static void validateHash(byte[] hash, String errorMessage) {
         if (!isValidHash(hash)) {
@@ -165,8 +165,8 @@ public class Validator {
      * This method validate <code>HasId</code> object. If object is invalid than throw
      * <code>IncorrectParameterException</code> exception
      *
-     * @param hasId
-     * @param errorMessage message for exception
+     * @param hasId         the hash id
+     * @param errorMessage  the error message for exception
      */
     public static void validateObject(HasId hasId, String errorMessage) {
         if (!isValidObject(hasId)) {
@@ -178,8 +178,8 @@ public class Validator {
      * This method validate <code>HasId</code> object. If object is invalid than throw
      * <code>IncorrectParameterException</code> exception
      *
-     * @param hasId
-     * @param errorMessage message for exception
+     * @param hasId         the hash id
+     * @param errorMessage  the error message for exceptio
      */
     public static void validateSqlObject(HasId hasId, String errorMessage) {
         if (!isValidSqlObject(hasId)) {

@@ -309,7 +309,7 @@ Copyright 2014-2015 CyberVision, Inc.
                     <configuration>
                         <detectOfflineLinks>true</detectOfflineLinks>
                         <excludePackageNames>
-                            *.gen.*;org.kaaproject.kaa.server.admin.client.i18n;org.kaaproject.kaa.server.admin.shared.services;
+                            *.gen.*;org.kaaproject.kaa.server.admin.client.i18n;org.kaaproject.kaa.server.admin.shared.services;org.kaaproject.kaa.schema.base
                         </excludePackageNames>
                     </configuration>
                     <executions>

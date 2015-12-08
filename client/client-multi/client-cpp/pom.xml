@@ -49,6 +49,7 @@
                 <configuration>
                     <descriptors>
                         <descriptor>assembly/client-cpp-sdk.xml</descriptor>
+                        <descriptor>assembly/client-cpp-sdk-templates.xml</descriptor>
                     </descriptors>
                 </configuration>
                 <executions>
@@ -67,6 +68,7 @@
                 <version>${rat.version}</version>
                 <configuration>
                     <excludes>
+                        <exclude>**/*.template</exclude>
                         <exclude>**/gcovr.log</exclude>
                         <exclude>**/gcovr-report.xml</exclude>
                         <exclude>**/unittest_result.xml</exclude>

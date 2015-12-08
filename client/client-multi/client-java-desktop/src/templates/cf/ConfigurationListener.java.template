@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,27 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.kaaproject.kaa.client.configuration.base;
 
-package org.kaaproject.kaa.server.common.dao.impl;
+import javax.annotation.Generated;
 
-import java.util.List;
+import ${configuration_class_package}.${configuration_class};
 
-public interface LogAppenderDao<T> extends SqlDao<T> {
-
+/**
+ * The listener to configuration updates.
+ *
+ * @author Andrew Shvayka
+ *
+ */
+@Generated("ConfigurationListener.java.template")
+public interface ConfigurationListener {
     /**
+     * Called on each configuration update.
      *
-     * @param   appId the app id
-     * @return  the list of log appenders
-     */
-    List<T> findByAppId(String appId);
-
-    /**
-     * Find log appenders by application id and schema version
+     * @param configuration the configuration object.
      *
-     * @param appId the application id
-     * @param schemaVersion the log schema version
-     * @return the list of log appenders
      */
-    List<T> findByAppIdAndSchemaVersion(String appId, int schemaVersion);
-
+    void onConfigurationUpdate(${configuration_class} configuration);
 }

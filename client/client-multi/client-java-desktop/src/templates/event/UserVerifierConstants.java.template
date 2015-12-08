@@ -13,27 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.kaaproject.kaa.client.event.registration;
 
-package org.kaaproject.kaa.server.common.dao.impl;
+public class UserVerifierConstants {
 
-import java.util.List;
-
-public interface LogAppenderDao<T> extends SqlDao<T> {
-
-    /**
-     *
-     * @param   appId the app id
-     * @return  the list of log appenders
-     */
-    List<T> findByAppId(String appId);
-
-    /**
-     * Find log appenders by application id and schema version
-     *
-     * @param appId the application id
-     * @param schemaVersion the log schema version
-     * @return the list of log appenders
-     */
-    List<T> findByAppIdAndSchemaVersion(String appId, int schemaVersion);
+    static final String DEFAULT_USER_VERIFIER_TOKEN = ${default_user_verifier_token};
 
 }

@@ -14,26 +14,21 @@
  * limitations under the License.
  */
 
-package org.kaaproject.kaa.server.common.dao.impl;
+package org.kaaproject.kaa.client.profile;
 
-import java.util.List;
+import ${profile_class_package}.${profile_class};
 
-public interface LogAppenderDao<T> extends SqlDao<T> {
-
-    /**
-     *
-     * @param   appId the app id
-     * @return  the list of log appenders
-     */
-    List<T> findByAppId(String appId);
+/**
+ * Interface for the profile container.
+ */
+public interface ProfileContainer {
 
     /**
-     * Find log appenders by application id and schema version
+     * Retrieves serialized profile
      *
-     * @param appId the application id
-     * @param schemaVersion the log schema version
-     * @return the list of log appenders
+     * @return byte array with serialized profile
+     *
      */
-    List<T> findByAppIdAndSchemaVersion(String appId, int schemaVersion);
+    ${profile_class} getProfile();
 
 }
