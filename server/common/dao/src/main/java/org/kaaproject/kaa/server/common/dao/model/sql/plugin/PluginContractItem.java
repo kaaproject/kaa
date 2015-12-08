@@ -17,9 +17,13 @@ package org.kaaproject.kaa.server.common.dao.model.sql.plugin;
 
 import org.kaaproject.kaa.server.common.dao.model.sql.GenericModel;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.io.Serializable;
 
-public class PluginContractItem extends GenericModel implements Serializable{
+@Entity
+@Table(name = "plugin_contract_item")
+public class PluginContractItem extends GenericModel implements Serializable {
 
     private String configSchema;
     private PluginContract pluginContract;

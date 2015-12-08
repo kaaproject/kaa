@@ -15,12 +15,17 @@
  */
 package org.kaaproject.kaa.server.common.dao.model.sql.plugin;
 
+import org.kaaproject.kaa.common.dto.plugin.PluginDto;
 import org.kaaproject.kaa.server.common.dao.model.sql.GenericModel;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Set;
 
-public class Plugin extends GenericModel implements Serializable {
+@Entity
+@Table(name = "plugin")
+public class Plugin extends GenericModel<PluginDto> implements Serializable {
 
     private String type;
     private String scope;
@@ -29,12 +34,13 @@ public class Plugin extends GenericModel implements Serializable {
     private Set<PluginContract> pluginContracts;
 
     @Override
-    protected Object createDto() {
-        return null;
+    protected PluginDto createDto() {
+        return new PluginDto();
     }
 
     @Override
-    public Object toDto() {
-        return null;
+    public PluginDto toDto() {
+        PluginDto dto = createDto();
+        return dto;
     }
 }

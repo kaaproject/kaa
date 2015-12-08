@@ -471,7 +471,7 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>        
+            </plugin>
             
             <!-- Gwt webapp configuration -->
             <plugin>

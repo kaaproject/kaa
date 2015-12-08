@@ -26,8 +26,8 @@ public class PluginContractInstanceItem extends GenericModel implements Serializ
     private PluginContractInstance pluginContractInstance;
     private PluginContractItem pluginContractItem;
     private PluginContractItem parentPluginContractItem;
-    private CTLSchema inMessageSchema;
-    private CTLSchema outMessageSchema;
+    private String inMessageSchema;
+    private String outMessageSchema;
     private Set<ContractItemRoute> contractItemRoutes;
 
     @Override

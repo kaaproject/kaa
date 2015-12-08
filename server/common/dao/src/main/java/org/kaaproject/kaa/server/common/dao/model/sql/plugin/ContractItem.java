@@ -15,26 +15,37 @@
  */
 package org.kaaproject.kaa.server.common.dao.model.sql.plugin;
 
+import org.kaaproject.kaa.common.dto.plugin.ContractItemDto;
 import org.kaaproject.kaa.server.common.dao.model.sql.GenericModel;
 
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Set;
 
-public class ContractItem extends GenericModel implements Serializable {
+@Entity
+@Table(name = "contract_item")
+public class ContractItem extends GenericModel<ContractItemDto> implements Serializable {
 
     private String name;
     private Contract contract;
+    @ManyToOne
     private ContractMessage inMessage;
+    @ManyToOne
     private ContractMessage outMessage;
+    @OneToMany
     private Set<PluginContractItem> pluginContractItems;
 
     @Override
-    protected Object createDto() {
-        return null;
+    protected ContractItemDto createDto() {
+        return new ContractItemDto();
     }
 
     @Override
-    public Object toDto() {
-        return null;
+    public ContractItemDto toDto() {
+        ContractItemDto dto = createDto();
+        return dto;
     }
 }

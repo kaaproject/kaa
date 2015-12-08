@@ -1279,7 +1279,7 @@ Copyright 2014-2015 CyberVision, Inc.
             <id>central</id>
             <url>http://repo1.maven.org/maven2/</url>
         </repository>
-    	<repository>
+        <repository>
             <id>twitter-twttr</id>
             <url>http://maven.twttr.com/</url>
         </repository>
