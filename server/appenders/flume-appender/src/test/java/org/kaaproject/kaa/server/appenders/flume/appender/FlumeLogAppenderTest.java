@@ -99,7 +99,7 @@ public class FlumeLogAppenderTest {
 
         FlumeConfig flumeConfig = FlumeConfig.newBuilder().setFlumeEventFormat(FlumeEventFormat.RECORDS_CONTAINER)
                 .setHostsBalancing(nodes).setExecutorThreadPoolSize(2).setCallbackThreadPoolSize(2)
-                .setClientsThreadPoolSize(2).build();
+                .setClientsThreadPoolSize(2).setIncludeClientProfile(false).setIncludeServerProfile(false).build();
 
         AvroByteArrayConverter<FlumeConfig> converter = new AvroByteArrayConverter<>(FlumeConfig.class);
         byte[] rawConfiguration = converter.toByteArray(flumeConfig);
