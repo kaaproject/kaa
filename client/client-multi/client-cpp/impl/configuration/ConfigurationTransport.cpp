@@ -15,8 +15,10 @@
  */
 
 #include "kaa/configuration/ConfigurationTransport.hpp"
+
+#include <utility>
+
 #include "kaa/configuration/IConfigurationProcessor.hpp"
-#include "kaa/configuration/storage/IConfigurationPersistenceManager.hpp"
 #include "kaa/configuration/IConfigurationHashContainer.hpp"
 
 #ifdef KAA_USE_CONFIGURATION
@@ -25,10 +27,10 @@
 
 namespace kaa {
 
-ConfigurationTransport::ConfigurationTransport(IKaaChannelManager& channelManager, IConfigurationProcessor *configProcessor, IConfigurationHashContainer *hashContainer, IKaaClientStateStoragePtr status)
+ConfigurationTransport::ConfigurationTransport(IKaaChannelManager& channelManager, IKaaClientStateStoragePtr status)
     : AbstractKaaTransport(channelManager)
-    , configurationProcessor_(configProcessor)
-    , hashContainer_(hashContainer)
+    , configurationProcessor_(nullptr)
+    , hashContainer_(nullptr)
 {
     setClientState(status);
 }
@@ -40,8 +42,8 @@ void ConfigurationTransport::sync()
 
 std::shared_ptr<ConfigurationSyncRequest> ConfigurationTransport::createConfigurationRequest()
 {
-    if (!clientStatus_) {
-        throw KaaException("Can not generate ConfigurationSyncRequest: Status was not provided");
+    if (!clientStatus_ || !hashContainer_) {
+        throw KaaException("Can not generate ConfigurationSyncRequest: configuration transport is not initialized");
     }
 
     std::shared_ptr<ConfigurationSyncRequest> request(new ConfigurationSyncRequest);
@@ -53,15 +55,14 @@ std::shared_ptr<ConfigurationSyncRequest> ConfigurationTransport::createConfigur
 
 void ConfigurationTransport::onConfigurationResponse(const ConfigurationSyncResponse &response)
 {
-    if (response.responseStatus != SyncResponseStatus::NO_DELTA) {
-        clientStatus_->setConfigurationSequenceNumber(response.appStateSeqNumber);
-        if (!response.confDeltaBody.is_null()) {
-            std::vector<std::uint8_t> data = response.confDeltaBody.get_bytes();
-            configurationProcessor_->processConfigurationData(data.data(), data.size()
-                    , response.responseStatus == SyncResponseStatus::RESYNC);
-        }
-        syncAck();
+    clientStatus_->setConfigurationSequenceNumber(response.appStateSeqNumber);
+
+    if (configurationProcessor_ && !response.confDeltaBody.is_null()) {
+        configurationProcessor_->processConfigurationData(response.confDeltaBody.get_bytes()
+                                                        , response.responseStatus == SyncResponseStatus::RESYNC);
     }
+
+    syncAck();
 }
 
 }  // namespace kaa

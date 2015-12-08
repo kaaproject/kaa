@@ -16,15 +16,21 @@
 
 #include "kaa/Kaa.hpp"
 
+#include <memory>
+
+#include "kaa/KaaClient.hpp"
+#include "kaa/common/exception/KaaException.hpp"
+#include "kaa/KaaClientPlatformContext.hpp"
+#include "kaa/DummyKaaClientStateListener.hpp"
+
 namespace kaa {
 
 Botan::LibraryInitializer Kaa::botanInit_("thread_safe=true");
-std::unique_ptr<KaaClient> Kaa::client_;
+std::shared_ptr<IKaaClient> Kaa::client_;
 
 void Kaa::init(int options)
 {
-    client_.reset(new KaaClient);
-    client_->init(options);
+    client_.reset(new KaaClient(std::make_shared<KaaClientPlatformContext>(), std::make_shared<DummyKaaClientStateListener>()));
 }
 
 void Kaa::start()
@@ -50,6 +56,15 @@ void Kaa::pause()
 void Kaa::resume()
 {
     client_->resume();
+}
+
+std::shared_ptr<IKaaClient> Kaa::newClient(IKaaClientPlatformContextPtr context
+                                         , IKaaClientStateListenerPtr listener)
+{
+    if (!context) {
+        throw KaaException("Kaa client platform context is null");
+    }
+    return std::shared_ptr<IKaaClient>(new KaaClient(context, listener));
 }
 
 }

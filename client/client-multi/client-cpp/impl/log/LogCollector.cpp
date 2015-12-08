@@ -26,6 +26,7 @@
 #include "kaa/log/LogRecord.hpp"
 #include "kaa/context/IExecutorContext.hpp"
 #include "kaa/utils/IThreadPool.hpp"
+#include "kaa/KaaClientProperties.hpp"
 
 #ifdef KAA_USE_SQLITE_LOG_STORAGE
 #include "kaa/log/SQLiteDBLogStorage.hpp"
@@ -35,13 +36,13 @@
 
 namespace kaa {
 
-LogCollector::LogCollector(IKaaChannelManagerPtr manager, IExecutorContext& executorContext)
+LogCollector::LogCollector(IKaaChannelManagerPtr manager, IExecutorContext& executorContext, const KaaClientProperties& clientProperties)
     : transport_(nullptr), channelManager_(manager), timeoutAccessPointId_(0),
       logUploadCheckTimer_("LogCollector logUploadCheckTimer"), scheduledUploadTimer_("LogCollector uploadTimer"),
       timeoutTimer_("LogCollector timeoutTimer"), executorContext_(executorContext)
 {
 #ifdef KAA_USE_SQLITE_LOG_STORAGE
-    storage_.reset(new SQLiteDBLogStorage());
+    storage_.reset(new SQLiteDBLogStorage(clientProperties.getLogsDatabaseFileName()));
 #else
     storage_.reset(new MemoryLogStorage());
 #endif

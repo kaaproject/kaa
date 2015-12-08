@@ -29,7 +29,7 @@ public:
     FileConfigurationStorage(const std::string& filename) : filename_(filename) { }
     FileConfigurationStorage(std::string&& filename) : filename_(std::move(filename)) { }
 
-    virtual void saveConfiguration(std::vector<std::uint8_t>&& bytes);
+    virtual void saveConfiguration(const std::vector<std::uint8_t>& bytes);
     virtual std::vector<std::uint8_t> loadConfiguration();
     virtual void clearConfiguration();
 

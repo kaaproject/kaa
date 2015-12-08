@@ -76,10 +76,8 @@ set ( KAA_TEST_SOURCES
         ../impl/transport/HttpDataProcessor.cpp
         ../impl/bootstrap/BootstrapManager.cpp
         ../impl/bootstrap/BootstrapTransport.cpp
-        ../impl/configuration/ConfigurationProcessor.cpp
         ../impl/configuration/ConfigurationTransport.cpp
         ../impl/configuration/manager/ConfigurationManager.cpp
-        ../impl/configuration/storage/ConfigurationPersistenceManager.cpp
         ../impl/configuration/storage/FileConfigurationStorage.cpp
         ../impl/event/registration/EndpointRegistrationManager.cpp
         ../impl/event/registration/UserTransport.cpp
@@ -107,17 +105,18 @@ set ( KAA_TEST_SOURCES
         ../impl/kaatcp/KaaSyncResponse.cpp
         ../impl/kaatcp/KaaTcpResponseProcessor.cpp
         ../impl/channel/connectivity/IPConnectivityChecker.cpp
+        ../impl/channel/connectivity/PingConnectivityChecker.cpp
         ../impl/channel/TransportProtocolIdConstants.cpp
         ../impl/channel/IPTransportInfo.cpp
         ../impl/failover/DefaultFailoverStrategy.cpp
         ../impl/utils/ThreadPool.cpp
         ../impl/context/SimpleExecutorContext.cpp
+        ../impl/context/AbstractExecutorContext.cpp
+        ../impl/KaaClientProperties.cpp
         TestRunner.cpp
         impl/common/EndpointObjectHashTest.cpp
         impl/common/AvroByteArrayConverterTest.cpp
         impl/bootstrap/BootstrapFailoverTest.cpp
-        impl/configuration/ConfigurationPersistenceTest.cpp
-        impl/configuration/ConfigurationProcessorTest.cpp
         impl/configuration/ConfigurationManagerTest.cpp
         impl/configuration/FileConfigurationStorageTest.cpp
         impl/http/HttpUrlTest.cpp
@@ -145,6 +144,8 @@ set ( KAA_TEST_SOURCES
         impl/log/strategies/RecordCountWithTimeLimitLogUploadStrategyTest.cpp
         impl/log/strategies/StorageSizeWithTimeLimitLogUploadStrategyTest.cpp
         impl/profile/ProfileManagerTest.cpp
+        impl/channel/PingConnectivityCheckerTest.cpp
+        impl/KaaClientPropertiesTest.cpp
     )
 
 add_executable ( kaatest  ${KAA_TEST_SOURCES})
