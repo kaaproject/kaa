@@ -26,37 +26,6 @@
 namespace kaa {
 
 Botan::LibraryInitializer Kaa::botanInit_("thread_safe=true");
-std::shared_ptr<IKaaClient> Kaa::client_;
-
-void Kaa::init(int options)
-{
-    client_.reset(new KaaClient(std::make_shared<KaaClientPlatformContext>(), std::make_shared<DummyKaaClientStateListener>()));
-}
-
-void Kaa::start()
-{
-    client_->start();
-}
-
-void Kaa::stop()
-{
-    client_->stop();
-}
-
-IKaaClient& Kaa::getKaaClient()
-{
-    return *client_;
-}
-
-void Kaa::pause()
-{
-    client_->pause();
-}
-
-void Kaa::resume()
-{
-    client_->resume();
-}
 
 std::shared_ptr<IKaaClient> Kaa::newClient(IKaaClientPlatformContextPtr context
                                          , IKaaClientStateListenerPtr listener)
