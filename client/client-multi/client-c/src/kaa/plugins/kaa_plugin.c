@@ -20,6 +20,7 @@
 
 #include "kaa_plugin.h"
 #include "../kaa_common.h"
+#include "../platform/kaa_client.h"
 #include "../gen/kaa_plugin_gen.h"
 #include "../utilities/kaa_mem.h"
 
@@ -50,6 +51,7 @@ kaa_error_t kaa_create_plugins(kaa_context_t *context)
     for (int i = 0; i < context->kaa_plugin_count; ++i) {
         context->kaa_plugins[i] = kaa_available_plugins[i].create_fn(context);
         if (context->kaa_plugins[i]) {
+            fprintf(stderr, "[PLUGIN] %s created \n", context->kaa_plugins[i]->plugin_name);
             error_code = context->kaa_plugins[i]->init_fn(context->kaa_plugins[i]);
             context->kaa_plugins[i]->last_error = error_code;
         }
@@ -60,6 +62,8 @@ kaa_error_t kaa_create_plugins(kaa_context_t *context)
 
 kaa_error_t kaa_destroy_plugins(kaa_context_t *context)
 {
+    KAA_RETURN_IF_NIL(context, KAA_ERR_BADPARAM);
+
     for (int i = 0; i < context->kaa_plugin_count; ++i) {
         context->kaa_plugins[i]->deinit_fn(context->kaa_plugins[i]);
     }
@@ -67,4 +71,63 @@ kaa_error_t kaa_destroy_plugins(kaa_context_t *context)
     context->kaa_plugins = NULL;
     context->kaa_plugin_count = 0;
     return KAA_ERR_NONE;
+}
+
+kaa_error_t kaa_get_supported_plugins(uint16_t **array, int *size)
+{
+    KAA_RETURN_IF_NIL2(array, size, KAA_ERR_BADPARAM);
+    *array = (uint16_t*)KAA_CALLOC(kaa_available_plugins_count, sizeof(int));
+    for (int i = 0; i < kaa_available_plugins_count; ++i) {
+        (*array)[i] = kaa_available_plugins[i].type;
+    }
+    *size=kaa_available_plugins_count;
+    return KAA_ERR_NONE;
+}
+
+
+#define BOOTSTRAP_AUTHORIZED_ARRAY_SIZE 2
+
+kaa_error_t kaa_get_bootstrap_authorized_array(uint16_t **array, int *size)
+{
+    KAA_RETURN_IF_NIL2(array, size, KAA_ERR_BADPARAM);
+    *array = (uint16_t*)KAA_CALLOC(2, sizeof(int));
+
+    *size  = 0;
+    for (int i = 0; i < BOOTSTRAP_AUTHORIZED_ARRAY_SIZE; ++i) {
+        if (kaa_available_plugins[i].type == KAA_PLUGIN_META_DATA) {
+            (*array)[0] = kaa_available_plugins[i].type;
+            *size += 1;
+        } else if (kaa_available_plugins[i].type == KAA_PLUGIN_BOOTSTRAP) {
+            (*array)[1] = kaa_available_plugins[i].type;
+            *size += 1;
+        }
+    }
+
+    if (*size < BOOTSTRAP_AUTHORIZED_ARRAY_SIZE) {
+        *size = 0;
+        return KAA_ERR_BADDATA;
+    }
+
+    return KAA_ERR_NONE;
+}
+
+kaa_error_t kaa_get_operation_authorized_array(uint16_t **array, int *size)
+{
+    KAA_RETURN_IF_NIL2(array, size, KAA_ERR_BADPARAM);
+    int count = kaa_available_plugins_count - 1; // without bootstrap
+    int indx = 0;
+    *array = (uint16_t*)KAA_CALLOC(count, sizeof(int));
+    for (int i = 0; i < kaa_available_plugins_count; ++i) {
+        if(kaa_available_plugins[i].type != KAA_PLUGIN_BOOTSTRAP) {
+            (*array)[indx++] = kaa_available_plugins[i].type;
+        }
+    }
+    *size=count;
+    return KAA_ERR_NONE;
+}
+
+void kaa_free_supported_plugins_array(uint16_t *array)
+{
+    if(array)
+        KAA_FREE(array);
 }

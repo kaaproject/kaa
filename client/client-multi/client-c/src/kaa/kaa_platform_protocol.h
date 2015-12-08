@@ -50,8 +50,7 @@ typedef char* (*kaa_buffer_alloc_fn)(void *context, size_t buffer_size);
  * Serialize info structure
  */
 typedef struct {
-    //kaa_service_t *services;        /**< Non-empty list of services to include into the sync message */
-    uint16_t *plugins;             /**< */
+    uint16_t *plugins;             /**< Non-empty list of plugins to include into the sync message*/
     size_t plugin_count;          /**< Number of elements in @c plugins */
     kaa_buffer_alloc_fn allocator;  /**< Pointer to a buffer memory allocation function */
     void *allocator_context;        /**< Context to be passed to the @c allocator callback as @c context parameter */

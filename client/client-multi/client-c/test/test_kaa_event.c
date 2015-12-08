@@ -135,10 +135,10 @@ void test_kaa_event_listeners_serialize_request()
     expected_size += kaa_aligned_size_get(fqn1_len) + kaa_aligned_size_get(fqn2_len);
 
     kaa_event_listeners_callback_t callback = { NULL, NULL, NULL };
-    ASSERT_NOT_EQUAL(kaa_event_manager_find_event_listeners(plugin.context, fqns, 2, &callback), KAA_ERR_NONE);
+    ASSERT_NOT_EQUAL(kaa_event_plugin_find_event_listeners((kaa_plugin_t*)&plugin, fqns, 2, &callback), KAA_ERR_NONE);
 
     callback = (kaa_event_listeners_callback_t) { NULL, &event_listeners_callback, &event_listeners_request_failed };
-    ASSERT_EQUAL(kaa_event_manager_find_event_listeners(plugin.context, fqns, 2, &callback), KAA_ERR_NONE);
+    ASSERT_EQUAL(kaa_event_plugin_find_event_listeners((kaa_plugin_t*)&plugin, fqns, 2, &callback), KAA_ERR_NONE);
 
     size_t actual_size = 0;
     ASSERT_EQUAL(kaa_event_request_get_size(event_manager, &actual_size), KAA_ERR_NONE);
@@ -527,7 +527,7 @@ void test_event_blocks()
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     kaa_event_block_id trx_id = 0;
-    error_code = kaa_event_create_transaction(plugin.context, &trx_id);
+    error_code = kaa_event_create_transaction((kaa_plugin_t*)&plugin, &trx_id);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
     ASSERT_NOT_NULL(trx_id);
 
@@ -546,7 +546,7 @@ void test_event_blocks()
     error_code = kaa_event_manager_add_event_to_transaction(event_manager, trx_id, "test.fqn3", NULL, 0, NULL);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    error_code = kaa_event_finish_transaction(&kaa_context, trx_id);
+    error_code = kaa_event_finish_transaction((kaa_plugin_t*)&plugin, trx_id);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     size_t expected_size = KAA_EXTENSION_HEADER_SIZE

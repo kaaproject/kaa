@@ -262,11 +262,20 @@ kaa_error_t kaa_client_init_operations_channel(kaa_client_t *kaa_client)
     KAA_RETURN_IF_NIL(kaa_client, KAA_ERR_BADPARAM);
     kaa_error_t error_code = KAA_ERR_NONE;
     KAA_LOG_TRACE(kaa_client->kaa_context->logger, KAA_ERR_NONE, "Start operations channel initialization");
-    error_code = kaa_tcp_channel_create(&kaa_client->operations_channel
-                                      , kaa_client->kaa_context->logger
-                                      , OPERATIONS_PLUGINS
-                                      , OPERATIONS_PLUGIN_COUNT);
+
+    int *supported_plugins = NULL;
+    int  supported_plugins_size = 0;
+
+    error_code = kaa_get_operation_authorized_array(&supported_plugins, &supported_plugins_size);
+
+    if(!error_code)
+        error_code = kaa_tcp_channel_create(&kaa_client->channel
+                                          , kaa_client->kaa_context->logger
+                                          , supported_plugins
+                                          , supported_plugins_size);
+
     if (error_code) {
+        kaa_free_supported_plugins_array(supported_plugins);
         KAA_LOG_ERROR(kaa_client->kaa_context->logger, error_code, "Operations channel initialization failed");
         return error_code;
     }
@@ -358,9 +367,11 @@ kaa_error_t kaa_client_start(kaa_client_t *kaa_client
         return error_code;
     }
 
-    error_code = kaa_tcp_channel_create(&kaa_client->bootstrap_channel
+    uint16_t *tmp_supported_plugins = (uint16_t*)KAA_CALLOC(BOOTSTRAP_PLUGIN_COUNT, sizeof(uint16_t));
+    memmove(tmp_supported_plugins, BOOTSTRAP_PLUGIN, BOOTSTRAP_PLUGIN_COUNT * sizeof(uint16_t));
+    error_code = kaa_tcp_channel_create(&kaa_client->channel
                                       , kaa_client->kaa_context->logger
-                                      , BOOTSTRAP_PLUGIN
+                                      , tmp_supported_plugins
                                       , BOOTSTRAP_PLUGIN_COUNT);
     if (error_code) {
         KAA_LOG_ERROR(kaa_client->kaa_context->logger, error_code, "Error during Kaa bootstrap channel creation");
@@ -700,22 +711,6 @@ kaa_error_t kaa_init_security_stuff()
     sndc_printf("SHA calculated\n");
     return KAA_ERR_NONE;
 }
-
-/**
- * Example code for configuration update
- */
-//kaa_error_t kaa_client_configuration_update(kaa_client_t *kaa_client, const kaa_root_configuration_t *configuration)
-//{
-//    if (!kaa_client || !configuration) {
-//        return KAA_ERR_BADPARAM;
-//    }
-//    sndc_printf("New configuration update.... timeout %d\n", configuration->timeout);
-//
-//    KAA_LOG_DEBUG(kaa_client->kaa_context->logger,
-//                    KAA_ERR_NONE,
-//                    "New configuration update.... timeout %d", configuration->timeout);
-//    return KAA_ERR_NONE;
-//}
 
 void ext_write_log(FILE * sink, const char * buffer, size_t message_size)
 {

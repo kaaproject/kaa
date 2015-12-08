@@ -693,7 +693,7 @@ void kaa_tcp_channel_pingresp_message_callback(void *context)
  */
 static kaa_error_t kaa_tcp_channel_on_access_point_failed(kaa_tcp_channel_t *self)
 {
-    kaa_error_t error_code = kaa_bootstrap_manager_on_access_point_failed(self->transport_context.kaa_context
+    kaa_error_t error_code = kaa_bootstrap_plugin_on_access_point_failed(self->transport_context.kaa_context
                                                             , &self->protocol_id
                                                             , self->channel_operation_type);
     if (error_code != KAA_ERR_NOT_FOUND) {
@@ -1326,17 +1326,17 @@ bool kaa_tcp_channel_connection_is_ready_to_terminate(kaa_transport_channel_inte
     KAA_RETURN_IF_NIL2(self, self->context, false);
 
     if (((kaa_tcp_channel_t *)(self->context))->channel_state == KAA_TCP_CHANNEL_DISCONNECTING) {
-//        KAA_LOG_TRACE(((kaa_tcp_channel_t *)(self->context))->logger, KAA_ERR_NONE
-//                                                        , "Kaa TCP channel [0x%08X] disconnecting..."
-//                                                        , ((kaa_tcp_channel_t *)(self->context))->access_point.id);
+        KAA_LOG_TRACE(((kaa_tcp_channel_t *)(self->context))->logger, KAA_ERR_NONE
+                                                        , "Kaa TCP channel [0x%08X] disconnecting..."
+                                                        , ((kaa_tcp_channel_t *)(self->context))->access_point.id);
         //Check if buffer is empty, close socket.
         char *buf = NULL;
         size_t buf_size = 0;
         kaa_error_t error_code = kaa_buffer_get_unprocessed_space(((kaa_tcp_channel_t *)(self->context))->out_buffer, &buf, &buf_size);
         if (error_code || buf_size) {
-//            KAA_LOG_TRACE(((kaa_tcp_channel_t *)(self->context))->logger, error_code
-//                , "Kaa TCP channel [0x%08X] out buffer not empty %d bytes remains to transmit, continue disconnecting..."
-//                , ((kaa_tcp_channel_t *)(self->context))->access_point.id, buf_size);
+            KAA_LOG_TRACE(((kaa_tcp_channel_t *)(self->context))->logger, error_code
+                , "Kaa TCP channel [0x%08X] out buffer not empty %d bytes remains to transmit, continue disconnecting..."
+                , ((kaa_tcp_channel_t *)(self->context))->access_point.id, buf_size);
             return false;
         } else {
             return true;

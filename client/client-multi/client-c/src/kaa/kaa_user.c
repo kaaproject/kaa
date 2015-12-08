@@ -30,7 +30,6 @@
 #include "collections/kaa_list.h"
 #include "kaa_common.h"
 #include "kaa_platform_protocol.h"
-#include "plugins/kaa_plugin.h"
 
 
 
@@ -47,7 +46,7 @@
 extern kaa_transport_channel_interface_t *kaa_channel_manager_get_transport_channel(kaa_channel_manager_t *self
                                                                                   , uint16_t plugin_type);
 
-
+extern kaa_status_t *kaa_get_status(kaa_context_t *kaa_context);
 
 typedef struct {
     char          *user_external_id;
@@ -206,59 +205,62 @@ void kaa_user_manager_destroy(kaa_user_manager_t *self)
     }
 }
 
-bool kaa_user_manager_is_attached_to_user(kaa_context_t *context)
+bool kaa_user_plugin_is_attached_to_user(kaa_plugin_t *plugin)
 {
-    KAA_RETURN_IF_NIL(context, false);
+    KAA_RETURN_IF_NIL(plugin, false);
 
-    kaa_user_plugin_t *plugin;
-    if (kaa_plugin_find_by_type(context, KAA_PLUGIN_USER, (kaa_plugin_t**)&plugin) && !plugin->manager->status)
+    kaa_user_plugin_t *user_plugin;
+    if (plugin->extension_type != KAA_PLUGIN_USER)
         return false;
+    user_plugin = (kaa_user_plugin_t*)plugin;
 
-    return plugin->manager->status->is_attached;
+    return user_plugin->manager->status->is_attached;
 }
 
-kaa_error_t kaa_user_manager_attach_to_user(kaa_context_t *context
+kaa_error_t kaa_user_plugin_attach_to_user(kaa_plugin_t *plugin
                                           , const char *user_external_id
                                           , const char *access_token
                                           , const char *user_verifier_token)
 {
-    KAA_RETURN_IF_NIL3(context, user_external_id, access_token, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL3(plugin, user_external_id, access_token, KAA_ERR_BADPARAM);
 
-    kaa_user_plugin_t *plugin;
-    if (kaa_plugin_find_by_type(context, KAA_PLUGIN_USER, (kaa_plugin_t**)&plugin))
+    kaa_user_plugin_t *user_plugin;
+    if (plugin->extension_type != KAA_PLUGIN_USER)
         return KAA_ERR_NOT_INITIALIZED;
+    user_plugin = (kaa_user_plugin_t*)plugin;
 
-    KAA_LOG_TRACE(plugin->manager->logger, KAA_ERR_NONE, "Going to attach to user "
+    KAA_LOG_TRACE(user_plugin->manager->logger, KAA_ERR_NONE, "Going to attach to user "
                                               "(external id = \"%s\", access token = \"%s\", verifier token = \"%s\")"
                                               , user_external_id, access_token, user_verifier_token);
 
-    if (plugin->manager->is_waiting_user_attach_response) {
-        destroy_user_info(plugin->manager->user_info);
-        plugin->manager->user_info = NULL;
-        plugin->manager->is_waiting_user_attach_response = false;
+    if (user_plugin->manager->is_waiting_user_attach_response) {
+        destroy_user_info(user_plugin->manager->user_info);
+        user_plugin->manager->user_info = NULL;
+        user_plugin->manager->is_waiting_user_attach_response = false;
     }
 
-    plugin->manager->user_info = create_user_info(user_external_id, access_token, user_verifier_token);
-    if (!plugin->manager->user_info)
+    user_plugin->manager->user_info = create_user_info(user_external_id, access_token, user_verifier_token);
+    if (!user_plugin->manager->user_info)
         return KAA_ERR_NOMEM;
 
     kaa_transport_channel_interface_t *channel =
-            kaa_channel_manager_get_transport_channel(plugin->manager->channel_manager, user_sync_plugins[0]);
+            kaa_channel_manager_get_transport_channel(user_plugin->manager->channel_manager, user_sync_plugins[0]);
     if (channel)
         channel->sync_handler(channel->context, user_sync_plugins, 1);
 
     return KAA_ERR_NONE;
 }
 
-kaa_error_t kaa_user_manager_attach_endpoint(kaa_context_t *context, const char *endpoint_access_token, kaa_endpoint_status_listener_t *listener)
+kaa_error_t kaa_user_plugin_attach_endpoint(kaa_plugin_t *plugin, const char *endpoint_access_token, kaa_endpoint_status_listener_t *listener)
 {
-    KAA_RETURN_IF_NIL2(context, endpoint_access_token, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL2(plugin, endpoint_access_token, KAA_ERR_BADPARAM);
 
-    kaa_user_plugin_t *plugin;
-    if (kaa_plugin_find_by_type(context, KAA_PLUGIN_USER, (kaa_plugin_t**)&plugin))
+    kaa_user_plugin_t *user_plugin;
+    if (plugin->extension_type != KAA_PLUGIN_USER)
         return KAA_ERR_NOT_INITIALIZED;
+    user_plugin = (kaa_user_plugin_t*)plugin;
 
-    KAA_LOG_INFO(plugin->manager->logger, KAA_ERR_NONE, "Going to attach endpoint by access token "
+    KAA_LOG_INFO(user_plugin->manager->logger, KAA_ERR_NONE, "Going to attach endpoint by access token "
                                              "(endpoint_access_token = \"%s\")"
                                               , endpoint_access_token);
 
@@ -279,30 +281,31 @@ kaa_error_t kaa_user_manager_attach_endpoint(kaa_context_t *context, const char 
     if (listener)
         info->listener = listener;
 
-    info->request_id = ++plugin->manager->endpoint_request_counter;
+    info->request_id = ++user_plugin->manager->endpoint_request_counter;
 
-    if (!kaa_list_push_back(plugin->manager->attach_endpoints, (void*)info)) {
+    if (!kaa_list_push_back(user_plugin->manager->attach_endpoints, (void*)info)) {
         dtor_endpoint_info((void*)info);
         return KAA_ERR_NOMEM;
     }
 
     kaa_transport_channel_interface_t *channel =
-            kaa_channel_manager_get_transport_channel(plugin->manager->channel_manager, user_sync_plugins[0]);
+            kaa_channel_manager_get_transport_channel(user_plugin->manager->channel_manager, user_sync_plugins[0]);
     if (channel)
         channel->sync_handler(channel->context, user_sync_plugins, 1);
 
     return KAA_ERR_NONE;
 }
 
-kaa_error_t kaa_user_manager_detach_endpoint(kaa_context_t *context, const kaa_endpoint_id_p endpoint_hash_key, kaa_endpoint_status_listener_t *listener)
+kaa_error_t kaa_user_plugin_detach_endpoint(kaa_plugin_t *plugin, const kaa_endpoint_id_p endpoint_hash_key, kaa_endpoint_status_listener_t *listener)
 {
-    KAA_RETURN_IF_NIL2(context, endpoint_hash_key, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL2(plugin, endpoint_hash_key, KAA_ERR_BADPARAM);
 
-    kaa_user_plugin_t *plugin;
-    if (kaa_plugin_find_by_type(context, KAA_PLUGIN_USER, (kaa_plugin_t**)&plugin))
+    kaa_user_plugin_t *user_plugin;
+    if (plugin->extension_type != KAA_PLUGIN_USER)
         return KAA_ERR_NOT_INITIALIZED;
+    user_plugin = (kaa_user_plugin_t*)plugin;
 
-    KAA_LOG_INFO(plugin->manager->logger, KAA_ERR_NONE, "Going to detach endpoint");
+    KAA_LOG_INFO(user_plugin->manager->logger, KAA_ERR_NONE, "Going to detach endpoint");
 
 
     kaa_endpoint_info_t *info = KAA_CALLOC(1, sizeof(kaa_endpoint_info_t));
@@ -313,15 +316,15 @@ kaa_error_t kaa_user_manager_detach_endpoint(kaa_context_t *context, const kaa_e
     if (listener)
         info->listener = listener;
 
-    info->request_id = ++plugin->manager->endpoint_request_counter;
+    info->request_id = ++user_plugin->manager->endpoint_request_counter;
 
-    if (!kaa_list_push_back(plugin->manager->detach_endpoints, (void*)info)) {
+    if (!kaa_list_push_back(user_plugin->manager->detach_endpoints, (void*)info)) {
         dtor_endpoint_info((void*)info);
         return KAA_ERR_NOMEM;
     }
 
     kaa_transport_channel_interface_t *channel =
-            kaa_channel_manager_get_transport_channel(plugin->manager->channel_manager, user_sync_plugins[0]);
+            kaa_channel_manager_get_transport_channel(user_plugin->manager->channel_manager, user_sync_plugins[0]);
     if (channel)
         channel->sync_handler(channel->context, user_sync_plugins, 1);
 
@@ -330,25 +333,26 @@ kaa_error_t kaa_user_manager_detach_endpoint(kaa_context_t *context, const kaa_e
 }
 
 #ifdef DEFAULT_USER_VERIFIER_TOKEN
-kaa_error_t kaa_user_manager_default_attach_to_user(kaa_context_t *context
+kaa_error_t kaa_user_plugin_default_attach_to_user(kaa_context_t *context
                                                   , const char *user_external_id
                                                   , const char *access_token)
 {
     KAA_RETURN_IF_NIL3(context, user_external_id, access_token, KAA_ERR_BADPARAM);
-    return kaa_user_manager_attach_to_user(context, user_external_id, access_token, DEFAULT_USER_VERIFIER_TOKEN);
+    return kaa_user_plugin_attach_to_user(plugin, user_external_id, access_token, DEFAULT_USER_VERIFIER_TOKEN);
 }
 #endif
 
-kaa_error_t kaa_user_manager_set_attachment_listeners(kaa_context_t *context
+kaa_error_t kaa_user_plugin_set_attachment_listeners(kaa_plugin_t *plugin
                                                     , const kaa_attachment_status_listeners_t *listeners)
 {
-    KAA_RETURN_IF_NIL(context, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL(plugin, KAA_ERR_BADPARAM);
 
-    kaa_user_plugin_t *plugin;
-    if (kaa_plugin_find_by_type(context, KAA_PLUGIN_USER, (kaa_plugin_t**)&plugin))
+    kaa_user_plugin_t *user_plugin;
+    if (plugin->extension_type != KAA_PLUGIN_USER)
         return KAA_ERR_NOT_INITIALIZED;
+    user_plugin = (kaa_user_plugin_t*)plugin;
 
-    plugin->manager->attachment_listeners = *listeners;
+    user_plugin->manager->attachment_listeners = *listeners;
     return KAA_ERR_NONE;
 }
 
@@ -751,7 +755,7 @@ kaa_error_t kaa_user_plugin_request_handle_server_sync(kaa_plugin_t *self, kaa_p
 kaa_error_t kaa_user_plugin_init(kaa_plugin_t *self)
 {
     return kaa_user_manager_create(&((kaa_user_plugin_t*)self)->manager,
-                                   (kaa_status_t*)self->context->status, self->context->channel_manager, self->context->logger);
+                                   kaa_get_status(self->context), self->context->channel_manager, self->context->logger);
 }
 
 kaa_error_t kaa_user_plugin_deinit(kaa_plugin_t *self)

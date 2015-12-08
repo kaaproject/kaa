@@ -59,7 +59,9 @@ kaa_topic_listener_t topic_listener_2;
 typedef struct {
     COMMON_PLUGIN_FIELDS
     struct kaa_notification_manager_t *manager;
-} test_kaa_notification_plugin_t;
+} mock_kaa_notification_plugin_t;
+
+kaa_plugin_t *kaa_plugin;
 //-----------------------------------------------------------------------------------------------
 void on_notification(void* contextmock, uint64_t *topic_id, kaa_notification_t *notif)
 {
@@ -89,6 +91,11 @@ int test_init()
     if (err) {
         return err;
     }
+    err = kaa_plugin_find_by_type(context, KAA_PLUGIN_NOTIFICATION, &kaa_plugin);
+    if (err) {
+        return err;
+    }
+
     KAA_TRACE_IN(context->logger);
     listener.callback = &on_notification;
     listener.context = NULL;
@@ -120,8 +127,8 @@ int test_deinit()
 void test_deserializing()
 {
     KAA_TRACE_IN(context->logger);
-    test_kaa_notification_plugin_t *plugin;
-    kaa_plugin_find_by_type(context, KAA_PLUGIN_NOTIFICATION, &plugin);
+//    mock_kaa_notification_plugin_t *plugin;
+//    kaa_plugin_find_by_type(context, KAA_PLUGIN_NOTIFICATION, (kaa_plugin_t**)&plugin);
     kaa_notification_t *notification = kaa_notification_notification_create();
     const char *message = "Hello World!!!\n";
     notification->message = kaa_string_copy_create(message);
@@ -202,31 +209,31 @@ void test_deserializing()
 void test_notification_listeners_adding_and_removing()
 {
     KAA_TRACE_IN(context->logger);
-    err = kaa_add_notification_listener(context, &listener, &id);
+    err = kaa_add_notification_listener(kaa_plugin, &listener, &id);
     ASSERT_EQUAL(err, KAA_ERR_NONE);
 
-    err = kaa_add_notification_listener(context, &listener, &id);
+    err = kaa_add_notification_listener(kaa_plugin, &listener, &id);
     ASSERT_NOT_EQUAL(err, KAA_ERR_NONE);
 
-    err = kaa_add_notification_listener(context, &listener_2, &id2);
+    err = kaa_add_notification_listener(kaa_plugin, &listener_2, &id2);
     ASSERT_EQUAL(err, KAA_ERR_NONE);
 
-    err = kaa_remove_notification_listener(context, &id);
+    err = kaa_remove_notification_listener(kaa_plugin, &id);
     ASSERT_EQUAL(err, KAA_ERR_NONE);
 
-    err = kaa_remove_notification_listener(context, &id);
+    err = kaa_remove_notification_listener(kaa_plugin, &id);
     ASSERT_NOT_EQUAL(err, KAA_ERR_NONE);
 
-    err = kaa_remove_notification_listener(context, &id2);
+    err = kaa_remove_notification_listener(kaa_plugin, &id2);
     ASSERT_EQUAL(err, KAA_ERR_NONE);
 
-    err = kaa_add_optional_notification_listener(context, &listener, &topic_id, &id);
+    err = kaa_add_optional_notification_listener(kaa_plugin, &listener, &topic_id, &id);
     ASSERT_EQUAL(err, KAA_ERR_NONE);
 
-    err = kaa_add_optional_notification_listener(context, &listener, &topic_id, &id);
+    err = kaa_add_optional_notification_listener(kaa_plugin, &listener, &topic_id, &id);
     ASSERT_NOT_EQUAL(err, KAA_ERR_NONE);
 
-    err = kaa_add_optional_notification_listener(context, &listener_2, &topic_id, &id2);
+    err = kaa_add_optional_notification_listener(kaa_plugin, &listener_2, &topic_id, &id2);
     ASSERT_EQUAL(err, KAA_ERR_NONE);
 
     *(uint32_t *)pointer_to_sqn = KAA_HTONL((uint32_t) 100); // Need to change sqn
@@ -235,13 +242,13 @@ void test_notification_listeners_adding_and_removing()
 
     ASSERT_EQUAL(listener_has_been_notified, true); // whether callback has been called
 
-    err = kaa_remove_optional_notification_listener(context, &topic_id, &id);
+    err = kaa_remove_optional_notification_listener(kaa_plugin, &topic_id, &id);
     ASSERT_EQUAL(err, KAA_ERR_NONE);
 
-    err = kaa_remove_optional_notification_listener(context, &topic_id, &id);
+    err = kaa_remove_optional_notification_listener(kaa_plugin, &topic_id, &id);
     ASSERT_NOT_EQUAL(err, KAA_ERR_NONE);
 
-    err = kaa_remove_optional_notification_listener(context, &topic_id, &id2);
+    err = kaa_remove_optional_notification_listener(kaa_plugin, &topic_id, &id2);
     ASSERT_EQUAL(err, KAA_ERR_NONE);
 
     KAA_TRACE_OUT(context->logger);
@@ -250,25 +257,25 @@ void test_notification_listeners_adding_and_removing()
 void test_topic_list_listeners_adding_and_removing()
 {
     KAA_TRACE_IN(context->logger);
-    err = kaa_get_topics(context, &topics);
+    err = kaa_get_topics(kaa_plugin, &topics);
     ASSERT_EQUAL(err, KAA_ERR_NONE);
 
-    err = kaa_add_topic_list_listener(context, &topic_listener, &id);
+    err = kaa_add_topic_list_listener(kaa_plugin, &topic_listener, &id);
     ASSERT_EQUAL(err, KAA_ERR_NONE);
 
-    err = kaa_add_topic_list_listener(context, &topic_listener, &id);
+    err = kaa_add_topic_list_listener(kaa_plugin, &topic_listener, &id);
     ASSERT_NOT_EQUAL(err, KAA_ERR_NONE);
 
-    err = kaa_add_topic_list_listener(context, &topic_listener_2, &id2);
+    err = kaa_add_topic_list_listener(kaa_plugin, &topic_listener_2, &id2);
     ASSERT_EQUAL(err, KAA_ERR_NONE);
 
-    err = kaa_remove_topic_list_listener(context, &id);
+    err = kaa_remove_topic_list_listener(kaa_plugin, &id);
     ASSERT_EQUAL(err, KAA_ERR_NONE);
 
-    err = kaa_remove_topic_list_listener(context, &id);
+    err = kaa_remove_topic_list_listener(kaa_plugin, &id);
     ASSERT_NOT_EQUAL(err, KAA_ERR_NONE);
 
-    err = kaa_remove_topic_list_listener(context, &id2);
+    err = kaa_remove_topic_list_listener(kaa_plugin, &id2);
     ASSERT_EQUAL(err, KAA_ERR_NONE);
 
     KAA_TRACE_OUT(context->logger);
@@ -277,7 +284,7 @@ void test_topic_list_listeners_adding_and_removing()
 void test_retrieving_topic_list()
 {
     KAA_TRACE_IN(context->logger);
-    err = kaa_get_topics(context, &topics);
+    err = kaa_get_topics(kaa_plugin, &topics);
     ASSERT_EQUAL(err, KAA_ERR_NONE);
 
     size_t topics_size = kaa_list_get_size(topics);
@@ -311,24 +318,24 @@ void test_subscriptions()
 {
     KAA_TRACE_IN(context->logger);
 
-    err = kaa_subscribe_to_topic(context, &topic_id, false);
+    err = kaa_subscribe_to_topic(kaa_plugin, &topic_id, false);
     ASSERT_EQUAL(err, KAA_ERR_NONE);
 
-    err = kaa_unsubscribe_from_topic(context, &topic_id, false);
+    err = kaa_unsubscribe_from_topic(kaa_plugin, &topic_id, false);
     ASSERT_EQUAL(err, KAA_ERR_NONE);
 
     uint64_t fake_ids[2] = { 22, 11 };
-    err = kaa_subscribe_to_topics(context, fake_ids, 2, false);
+    err = kaa_subscribe_to_topics(kaa_plugin, fake_ids, 2, false);
     ASSERT_NOT_EQUAL(err, KAA_ERR_NONE);
 
-    err = kaa_unsubscribe_from_topics(context, fake_ids, 2, false);
+    err = kaa_unsubscribe_from_topics(kaa_plugin, fake_ids, 2, false);
     ASSERT_NOT_EQUAL(err, KAA_ERR_NONE);
 
     uint64_t existing_ids[1] = { 22 };
-    err = kaa_subscribe_to_topics(context, existing_ids, 1, false);
+    err = kaa_subscribe_to_topics(kaa_plugin, existing_ids, 1, false);
     ASSERT_EQUAL(err, KAA_ERR_NONE);
 
-    err = kaa_unsubscribe_from_topics(context, existing_ids, 1, false);
+    err = kaa_unsubscribe_from_topics(kaa_plugin, existing_ids, 1, false);
     ASSERT_EQUAL(err, KAA_ERR_NONE);
 
     KAA_TRACE_OUT(context->logger);

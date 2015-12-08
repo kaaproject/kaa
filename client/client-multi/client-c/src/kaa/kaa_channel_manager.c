@@ -158,7 +158,7 @@ void kaa_channel_manager_destroy(kaa_channel_manager_t *self)
 
 static bool is_bootstrap_plugin_supported(kaa_transport_channel_interface_t *channel)
 {
-    KAA_RETURN_IF_NIL(channel, false);
+    KAA_RETURN_IF_NIL(channel, false);    
 
     uint16_t *plugins;
     size_t plugin_count;

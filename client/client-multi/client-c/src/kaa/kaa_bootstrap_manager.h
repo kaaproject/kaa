@@ -28,6 +28,8 @@
 #include "kaa_error.h"
 #include "kaa_common.h"
 #include "platform/ext_transport_channel.h"
+#include "plugins/kaa_plugin.h"
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -51,14 +53,14 @@ typedef enum {
 /**
  * @brief Notifies some error has occurred while using an access point.
  *
- * @param[in]   context        Kaa context.
+ * @param[in]   plugin         Bootstrap plugin.
  * @param[in]   protocol_id    Transport protocol id that failed access point belongs to.
  * @param[in]   type           Server type that failed access point belongs to.
  * @return                     Error code.
  *
  * @see kaa_transport_protocol_id_t
  */
-kaa_error_t kaa_bootstrap_manager_on_access_point_failed(kaa_context_t *context, kaa_transport_protocol_id_t *protocol_id
+kaa_error_t kaa_bootstrap_plugin_on_access_point_failed(kaa_plugin_t *plugin, kaa_transport_protocol_id_t *protocol_id
                                                        , kaa_server_type_t type);
 
 #ifdef __cplusplus

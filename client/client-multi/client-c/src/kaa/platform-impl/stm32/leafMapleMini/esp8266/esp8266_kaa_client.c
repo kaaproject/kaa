@@ -423,13 +423,13 @@ kaa_error_t kaa_client_start(kaa_client_t *kaa_client
     KAA_LOG_INFO(kaa_client->kaa_context->logger, KAA_ERR_NONE, "Starting Kaa client...");
 
     const kaa_configuration_root_receiver_t config_receiver = { kaa_client, configuration_update };
-    error_code = kaa_configuration_manager_set_root_receiver(kaa_client->kaa_context, &config_receiver);
+    error_code = kaa_configuration_plugin_set_root_receiver(kaa_client->kaa_context, &config_receiver);
     if (error_code) {
         KAA_LOG_ERROR(kaa_client->kaa_context->logger, error_code, "Error registering Configuration root receiver");
         return error_code;
     }
 
-    const kaa_root_configuration_t *config = kaa_configuration_manager_get_configuration(kaa_client->kaa_context);
+    const kaa_root_configuration_t *config = kaa_configuration_plugin_get_configuration(kaa_client->kaa_context);
     if (config) {
         configuration_update(kaa_client, config);
     }
@@ -547,23 +547,34 @@ kaa_error_t kaa_client_init_channel(kaa_client_t *kaa_client, kaa_client_channel
 
     KAA_LOG_TRACE(kaa_client->kaa_context->logger, KAA_ERR_NONE, "Initializing channel....");
 
+    uint16_t *tmp_supported_plugins = NULL;
+    int  supported_plugins_size;
+
     switch (channel_type) {
         case KAA_CLIENT_CHANNEL_TYPE_BOOTSTRAP:
-            error_code = kaa_tcp_channel_create(&kaa_client->channel,
-                    kaa_client->kaa_context->logger,
-                    BOOTSTRAP_PLUGIN, BOOTSTRAP_PLUGIN_COUNT);
-            break;
-        case KAA_CLIENT_CHANNEL_TYPE_OPERATIONS:
+            error_code = kaa_get_bootstrap_authorized_array(&supported_plugins, &supported_plugins_size);
             error_code = kaa_tcp_channel_create(&kaa_client->channel
                                               , kaa_client->kaa_context->logger
-                                              , OPERATIONS_PLUGIN
-                                              , OPERATIONS_PLUGIn_COUNT);
+                                              , tmp_supported_plugins
+                                              , BOOTSTRAP_PLUGIN_COUNT);
+            break;
+        case KAA_CLIENT_CHANNEL_TYPE_OPERATIONS:
+            error_code = kaa_get_operation_authorized_array(&supported_plugins, &supported_plugins_size);
+            if(!error_code)
+                error_code = kaa_tcp_channel_create(&kaa_client->channel
+                                                  , kaa_client->kaa_context->logger
+                                                  , tmp_supported_plugins
+                                                  , supported_plugins_size);
+            if(error_code)
+                kaa_free_supported_plugins_array(tmp_supported_plugins);
             break;
     }
+
     if (error_code) {
-        KAA_LOG_ERROR(kaa_client->kaa_context->logger, error_code, "Error initializing channel %d", channel_type);
+        KAA_LOG_ERROR(kaa_client->kaa_context->logger, error_code, "Failed to create transport channel, type %d", channel_type);
         return error_code;
     }
+
     error_code = kaa_tcp_channel_set_keepalive_timeout(&kaa_client->channel, 120);
     if (error_code) {
         KAA_LOG_ERROR(kaa_client->kaa_context->logger, error_code, "Error set keepalive");

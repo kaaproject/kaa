@@ -73,6 +73,9 @@ kaa_error_t kaa_tcp_channel_create(kaa_transport_channel_interface_t *self
                                  , kaa_logger_t *logger
                                  , uint16_t *supported_plugins
                                  , size_t supported_plugin_count);
+//kaa_error_t kaa_tcp_channel_create(kaa_transport_channel_interface_t *self
+//                                 , kaa_logger_t *logger
+//                                 , bool bootstrap_found);
 
 
 /**

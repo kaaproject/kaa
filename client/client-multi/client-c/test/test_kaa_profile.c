@@ -41,8 +41,8 @@
 extern kaa_error_t kaa_status_create(kaa_status_t **kaa_status_p);
 extern void        kaa_status_destroy(kaa_status_t *self);
 
-extern kaa_error_t kaa_channel_manager_create(kaa_channel_manager_t **channel_manager_p, kaa_context_t *context);
-extern void        kaa_channel_manager_destroy(kaa_channel_manager_t *self);
+extern kaa_error_t kaa_channel_plugin_create(kaa_channel_manager_t **channel_manager_p, kaa_context_t *context);
+extern void        kaa_channel_plugin_destroy(kaa_channel_manager_t *self);
 
 extern kaa_error_t kaa_profile_manager_create(kaa_profile_manager_t **profile_manager_p, kaa_status_t *status
         , kaa_channel_manager_t *channel_manager, kaa_logger_t *logger);
@@ -60,6 +60,7 @@ static kaa_logger_t *logger = NULL;
 static kaa_status_t *status = NULL;
 static kaa_channel_manager_t *channel_manager = NULL;
 static kaa_profile_manager_t *profile_manager = NULL;
+static kaa_plugin_t *kaa_plugin = NULL;
 
 
 typedef struct {
@@ -103,7 +104,7 @@ void test_profile_is_set()
     ASSERT_FALSE(kaa_profile_manager_is_profile_set(&kaa_context));
     kaa_profile_t *profile = kaa_profile_basic_endpoint_profile_test_create();
     profile->profile_body = kaa_string_copy_create("test");
-    kaa_error_t error = kaa_profile_manager_update_profile(&kaa_context, profile);
+    kaa_error_t error = kaa_profile_plugin_update_profile(kaa_plugin, profile);
     profile->destroy(profile);
     ASSERT_EQUAL(error, KAA_ERR_NONE);
     ASSERT_TRUE(kaa_profile_manager_is_profile_set(&kaa_context));
@@ -122,7 +123,7 @@ void test_profile_update()
 
     kaa_profile_t *profile1 = kaa_profile_basic_endpoint_profile_test_create();
     profile1->profile_body = kaa_string_copy_create("dummy");
-    kaa_error_t error = kaa_profile_manager_update_profile(&kaa_context, profile1);
+    kaa_error_t error = kaa_profile_plugin_update_profile(kaa_plugin, profile1);
     ASSERT_EQUAL(error, KAA_ERR_NONE);
 
     bool need_resync = false;
@@ -130,7 +131,7 @@ void test_profile_update()
     ASSERT_EQUAL(error, KAA_ERR_NONE);
     ASSERT_TRUE(need_resync);
 
-    error = kaa_profile_manager_update_profile(&kaa_context, profile1);
+    error = kaa_profile_plugin_update_profile(kaa_plugin, profile1);
     ASSERT_EQUAL(error, KAA_ERR_NONE);
 
     error = kaa_profile_need_profile_resync(profile_manager, &need_resync);
@@ -141,7 +142,7 @@ void test_profile_update()
 
     kaa_profile_t *profile2 = kaa_profile_basic_endpoint_profile_test_create();
     profile2->profile_body = kaa_string_copy_create("new_dummy");
-    error = kaa_profile_manager_update_profile(&kaa_context, profile2);
+    error = kaa_profile_plugin_update_profile(kaa_plugin, profile2);
     ASSERT_EQUAL(error, KAA_ERR_NONE);
 
     error = kaa_profile_need_profile_resync(profile_manager, &need_resync);
@@ -172,7 +173,7 @@ void test_profile_sync_get_size()
 
     size_t profile_sync_size = 0;
 
-    error_code = kaa_profile_manager_update_profile(&kaa_context, profile);
+    error_code = kaa_profile_plugin_update_profile(kaa_plugin, profile);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     status->is_registered = true;
@@ -191,7 +192,7 @@ void test_profile_sync_get_size()
     ASSERT_EQUAL(expected_size, profile_sync_size);
 
     const char *access_token = "access token";
-    error_code = kaa_profile_manager_set_endpoint_access_token(&kaa_context, access_token);
+    error_code = kaa_profile_plugin_set_endpoint_access_token(kaa_plugin, access_token);
 
     expected_size += sizeof(uint32_t)
                    + strlen(access_token);
@@ -225,10 +226,10 @@ void test_profile_sync_serialize()
 
     profile->serialize(avro_writer, profile);
 
-    error_code = kaa_profile_manager_update_profile(&kaa_context, profile);
+    error_code = kaa_profile_plugin_update_profile(kaa_plugin, profile);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
     status->is_registered = false;
-    error_code = kaa_profile_manager_set_endpoint_access_token(&kaa_context, access_token);
+    error_code = kaa_profile_plugin_set_endpoint_access_token(kaa_plugin, access_token);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     size_t profile_sync_size;
@@ -351,7 +352,8 @@ int test_init(void)
     }
 
     kaa_context.kaa_plugins = KAA_CALLOC(1, sizeof(kaa_plugin_t*));
-    kaa_context.kaa_plugins[0] = kaa_profile_plugin_create(&kaa_context);
+    kaa_plugin = kaa_profile_plugin_create(&kaa_context);
+    kaa_context.kaa_plugins[0] = kaa_plugin;
     kaa_context.kaa_plugin_count = 1;
     kaa_context.logger = logger;
     kaa_context.status = status;

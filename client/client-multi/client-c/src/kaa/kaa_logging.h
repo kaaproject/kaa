@@ -28,7 +28,7 @@
 # include "gen/kaa_logging_definitions.h"
 # include "platform/ext_log_storage.h"
 # include "platform/ext_log_upload_strategy.h"
-# include "kaa_context.h"
+# include "plugins/kaa_plugin.h"
 
 # ifdef __cplusplus
 extern "C" {
@@ -37,33 +37,15 @@ extern "C" {
 
 
 /**
- * Private log collector structure.
- */
-
-
-///**
-// * @brief Initializes data collection module with the storage interface, upload strategy, and other settings.
-// *
-// * @param[in] self                          Pointer to a @link kaa_log_collector_t @endlink instance.
-// * @param[in] log_storage_context           Log storage context.
-// * @param[in] log_upload_strategy_context   Log upload strategy context.
-// *
-// * @return  Error code.
-// */
-//kaa_error_t kaa_logging_init(kaa_log_collector_t *self, void *log_storage_context, void *log_upload_strategy_context);
-
-
-
-/**
  * @brief Serializes and adds a log record to the log storage.
  *
- * @param[in] context Pointer to a @link kaa_context_t @endlink instance.
+ * @param[in] context Pointer to a logging plugin instance.
  * @param[in] entry   Pointer to log entry to be added to the storage.
  *
  * @return  Error code.
  *
  */
-kaa_error_t kaa_logging_add_record(kaa_context_t *context, kaa_user_log_record_t *entry);
+kaa_error_t kaa_logging_add_record(kaa_plugin_t *plugin, kaa_user_log_record_t *entry);
 
 # ifdef __cplusplus
 }      /* extern "C" */

@@ -31,6 +31,7 @@
 #include "../../platform/ext_system_logger.h"
 #include "../../platform/time.h"
 #include "../../kaa_platform_common.h"
+#include "../../plugins/kaa_plugin.h"
 #include "kaa_tcp_channel.h"
 
 
@@ -159,8 +160,12 @@ kaa_error_t kaa_tcp_channel_create(kaa_transport_channel_interface_t *self
                                  , kaa_logger_t *logger
                                  , uint16_t *supported_plugins
                                  , size_t supported_plugin_count)
+//kaa_error_t kaa_tcp_channel_create(kaa_transport_channel_interface_t *self
+//                                 , kaa_logger_t *logger
+//                                 , bool bootstrap_found)
 {
     KAA_RETURN_IF_NIL4(self, logger, supported_plugins, supported_plugin_count, KAA_ERR_BADPARAM);
+//    KAA_RETURN_IF_NIL2(self, logger, KAA_ERR_BADPARAM);
 
     KAA_LOG_TRACE(logger, KAA_ERR_NONE, "Kaa TCP channel creating....");
 
@@ -176,10 +181,10 @@ kaa_error_t kaa_tcp_channel_create(kaa_transport_channel_interface_t *self
             break;
         }
     }
-    if (bootstrap_found && supported_plugin_count > 1) {
+    if (bootstrap_found && supported_plugin_count > 2) {
         //unsupported configuration
         KAA_LOG_ERROR(logger,KAA_ERR_BADPARAM,"Kaa TCP channel creating, error unsupported configuration,  "
-                                "supports: one Bootstrap service or all other in any combination")
+                                "supports: only Meta Data and Bootstrap plugins or all other in any combination")
         KAA_RETURN_IF_ERR(KAA_ERR_BADPARAM);
     }
 
@@ -192,22 +197,10 @@ kaa_error_t kaa_tcp_channel_create(kaa_transport_channel_interface_t *self
     kaa_tcp_channel->access_point.state = AP_NOT_SET;
     kaa_tcp_channel->access_point.socket_descriptor = KAA_TCP_SOCKET_NOT_SET;
 
-    /*
-     * Copies supported services.
-     */
-    kaa_tcp_channel->supported_plugins = (uint16_t *)
-                    KAA_MALLOC(supported_plugin_count * sizeof(uint16_t));
-    if (!kaa_tcp_channel->supported_plugins) {
-        KAA_LOG_ERROR(logger, KAA_ERR_NOMEM, "Failed to copy supported plugins");
-        kaa_tcp_channel_destroy_context(kaa_tcp_channel);
-        return KAA_ERR_NOMEM;
-    }
+    KAA_LOG_TRACE(logger, KAA_ERR_NONE, "supported_plugins %p", supported_plugins);
 
+    kaa_tcp_channel->supported_plugins = supported_plugins;
     kaa_tcp_channel->supported_plugin_count = supported_plugin_count;
-    i = 0;
-    for (; i < supported_plugin_count; ++i) {
-        kaa_tcp_channel->supported_plugins[i] = supported_plugins[i];
-    }
 
     /*
      * Define type of channel (bootstrap or operations)
@@ -305,9 +298,14 @@ kaa_error_t kaa_tcp_channel_create(kaa_transport_channel_interface_t *self
 
 static kaa_error_t kaa_tcp_channel_on_access_point_failed(kaa_tcp_channel_t *self)
 {
-    kaa_error_t error_code = kaa_bootstrap_manager_on_access_point_failed(self->transport_context.kaa_context
-                                                            , &self->protocol_id
-                                                            , self->channel_operation_type);
+    kaa_plugin_t *plugin;
+    kaa_error_t error_code = kaa_plugin_find_by_type(self->transport_context.kaa_context, KAA_PLUGIN_BOOTSTRAP, &plugin);
+
+    if(!error_code)
+        error_code = kaa_bootstrap_plugin_on_access_point_failed(plugin
+                                                                , &self->protocol_id
+                                                                , self->channel_operation_type);
+
     if (error_code != KAA_ERR_EVENT_NOT_ATTACHED) {
         KAA_LOG_ERROR(self->logger, error_code, "Kaa TCP channel [0x%08X] "
                 "error notifying bootstrap manager on access point failure"
@@ -353,7 +351,7 @@ kaa_error_t kaa_tcp_channel_sync_handler(void *context, const uint16_t plugins[]
     KAA_RETURN_IF_NIL(context, KAA_ERR_BADPARAM);
     kaa_error_t error_code = KAA_ERR_NONE;
 
-    KAA_LOG_TRACE(((kaa_tcp_channel_t *) context)->logger, KAA_ERR_NONE, "Kaa TCP channel [0x%08X] sync for %u pluginss"
+    KAA_LOG_TRACE(((kaa_tcp_channel_t *) context)->logger, KAA_ERR_NONE, "Kaa TCP channel [0x%08X] sync for %u plugins"
                                                                                     , ((kaa_tcp_channel_t *) context)->access_point.id
                                                                                     , plugin_count);
 
@@ -406,12 +404,12 @@ kaa_error_t kaa_tcp_channel_destroy_context(void *context)
     kaa_tcp_channel_release_access_point(channel);
 
     kaa_buffer_destroy(channel->in_buffer);
-    kaa_buffer_destroy(channel->out_buffer);
+    kaa_buffer_destroy(channel->out_buffer);    
 
     if (channel->pending_request_plugins) {
         KAA_FREE(channel->pending_request_plugins);
         channel->pending_request_plugins = NULL;
-    }
+    }    
 
     if (channel->supported_plugins) {
         KAA_FREE(channel->supported_plugins);
@@ -887,7 +885,9 @@ kaa_error_t kaa_tcp_channel_check_keepalive(kaa_transport_channel_interface_t *s
             //Send ping request
 
             if (tcp_channel->keepalive.last_sent_keepalive > tcp_channel->keepalive.last_receive_keepalive) {
-                kaa_bootstrap_manager_on_access_point_failed(tcp_channel->transport_context.kaa_context, &tcp_channel->protocol_id, tcp_channel->channel_operation_type);
+                kaa_plugin_t *plugin;
+                kaa_plugin_find_by_type(tcp_channel->transport_context.kaa_context, KAA_PLUGIN_BOOTSTRAP, &plugin);
+                kaa_bootstrap_plugin_on_access_point_failed(plugin, &tcp_channel->protocol_id, tcp_channel->channel_operation_type);
                 return KAA_ERR_TIMEOUT;
             }
 
@@ -1476,7 +1476,7 @@ kaa_error_t kaa_tcp_channel_release_access_point(kaa_tcp_channel_t *self)
         KAA_FREE(self->access_point.public_key);
         self->access_point.public_key = NULL;
         self->access_point.public_key_length = 0;
-    }
+    }    
 
     return error_code;
 }

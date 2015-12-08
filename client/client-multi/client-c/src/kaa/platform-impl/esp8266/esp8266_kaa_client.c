@@ -317,23 +317,31 @@ kaa_error_t kaa_client_init_channel(kaa_client_t *kaa_client, kaa_client_channel
 
     KAA_LOG_TRACE(kaa_client->context->logger, KAA_ERR_NONE, "Initializing channel....");
 
+    uint16_t *tmp_supported_plugins = NULL;
+    int  supported_plugins_size;
+
     switch (channel_type) {
         case KAA_CLIENT_CHANNEL_TYPE_BOOTSTRAP:
+            error_code = kaa_get_bootstrap_authorized_array(&supported_plugins, &supported_plugins_size);
             error_code = kaa_tcp_channel_create(&kaa_client->channel
-                                              , kaa_client->context->logger
-                                              , BOOTSTRAP_PLUGIN
+                                              , kaa_client->kaa_context->logger
+                                              , tmp_supported_plugins
                                               , BOOTSTRAP_PLUGIN_COUNT);
             break;
         case KAA_CLIENT_CHANNEL_TYPE_OPERATIONS:
-            error_code = kaa_tcp_channel_create(&kaa_client->channel
-                                              , kaa_client->context->logger
-                                              , OPERATIONS_PLUGINS
-                                              , OPERATIONS_PLUGIN_COUNT);
+            error_code = kaa_get_operation_authorized_array(&supported_plugins, &supported_plugins_size);
+            if(!error_code)
+                error_code = kaa_tcp_channel_create(&kaa_client->channel
+                                                  , kaa_client->kaa_context->logger
+                                                  , tmp_supported_plugins
+                                                  , supported_plugins_size);
+            if(error_code)
+                kaa_free_supported_plugins_array(tmp_supported_plugins);
             break;
     }
 
     if (error_code) {
-        KAA_LOG_ERROR(kaa_client->context->logger, error_code, "Failed to create transport channel, type %d", channel_type);
+        KAA_LOG_ERROR(kaa_client->kaa_context->logger, error_code, "Failed to create transport channel, type %d", channel_type);
         return error_code;
     }
 

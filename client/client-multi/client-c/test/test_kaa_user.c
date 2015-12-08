@@ -66,6 +66,7 @@ static kaa_user_manager_t *user_manager = NULL;
 static kaa_logger_t *logger = NULL;
 static kaa_status_t *status = NULL;
 static kaa_channel_manager_t *channel_manager = NULL;
+static kaa_plugin_t *kaa_plugin = NULL;
 
 static bool is_on_attached_invoked = false;
 static bool is_on_detached_invoked = false;
@@ -115,7 +116,7 @@ void test_specified_user_verifier()
 {
     KAA_TRACE_IN(logger);
 
-    ASSERT_EQUAL(kaa_user_manager_attach_to_user(&kaa_context, USER_EXTERNAL_ID, ACCESS_TOKEN, USER_VERIFIER), KAA_ERR_NONE);
+    ASSERT_EQUAL(kaa_user_plugin_attach_to_user(kaa_plugin, USER_EXTERNAL_ID, ACCESS_TOKEN, USER_VERIFIER), KAA_ERR_NONE);
 
     size_t expected_size = 0;
     ASSERT_EQUAL(kaa_user_request_get_size(user_manager, &expected_size), KAA_ERR_NONE);
@@ -252,7 +253,8 @@ int test_init(void)
     }
 
     kaa_context.kaa_plugins = KAA_CALLOC(1, sizeof(kaa_plugin_t*));
-    kaa_context.kaa_plugins[0] = kaa_user_plugin_create(&kaa_context);
+    kaa_plugin = kaa_user_plugin_create(&kaa_context);
+    kaa_context.kaa_plugins[0] = kaa_plugin;
     kaa_context.kaa_plugin_count = 1;
     kaa_context.logger = logger;
     kaa_context.status = status;
@@ -260,7 +262,7 @@ int test_init(void)
     ((mock_user_plugin_t*)kaa_context.kaa_plugins[0])->manager = user_manager;
 
     kaa_attachment_status_listeners_t listeners = { NULL, &on_attached, &on_detached, &on_attach_success, &on_attach_failed };
-    error = kaa_user_manager_set_attachment_listeners(&kaa_context, &listeners);
+    error = kaa_user_plugin_set_attachment_listeners(kaa_plugin, &listeners);
     if (error) {
         return error;
     }

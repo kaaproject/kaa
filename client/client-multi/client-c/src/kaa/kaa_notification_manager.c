@@ -30,13 +30,14 @@
 #include "kaa_platform_utils.h"
 #include "kaa_channel_manager.h"
 #include "platform-impl/common/kaa_htonll.h"
-#include "plugins/kaa_plugin.h"
 
 #include "platform/sock.h"
 
 
 extern kaa_transport_channel_interface_t *kaa_channel_manager_get_transport_channel(kaa_channel_manager_t *self
                                                                                   , uint16_t plugin_type);
+
+extern kaa_status_t *kaa_get_status(kaa_context_t *kaa_context);
 
 
 kaa_error_t kaa_sync_topic_subscriptions_internal(kaa_notification_manager_t *self);
@@ -551,29 +552,30 @@ kaa_error_t kaa_notification_manager_create(kaa_notification_manager_t **self, k
     return KAA_ERR_NONE;
 }
 
-kaa_error_t kaa_add_notification_listener(kaa_context_t *context, kaa_notification_listener_t *listener, uint32_t* listener_id)
+kaa_error_t kaa_add_notification_listener(kaa_plugin_t *plugin, kaa_notification_listener_t *listener, uint32_t* listener_id)
 {
-    KAA_RETURN_IF_NIL2(context, listener, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL2(plugin, listener, KAA_ERR_BADPARAM);
 
-    kaa_notification_plugin_t *plugin;
-    if (kaa_plugin_find_by_type(context, KAA_PLUGIN_NOTIFICATION, (kaa_plugin_t**)&plugin))
+    kaa_notification_plugin_t *notification_plugin;
+    if (plugin->extension_type != KAA_PLUGIN_NOTIFICATION)
         return KAA_ERR_NOT_INITIALIZED;
+    notification_plugin = (kaa_notification_plugin_t*)plugin;
 
     if (!listener->callback) {
-        KAA_LOG_WARN(plugin->manager->logger, KAA_ERR_BADPARAM, "Failed to add mandatory notification listener: NULL callback");
+        KAA_LOG_WARN(notification_plugin->manager->logger, KAA_ERR_BADPARAM, "Failed to add mandatory notification listener: NULL callback");
         return KAA_ERR_BADPARAM;
     }
 
     uint32_t id;
     kaa_error_t err = kaa_calculate_notification_listener_id(listener, &id);
     if (err) {
-        KAA_LOG_WARN(plugin->manager->logger, err, "Failed to calculate mandatory listener id");
+        KAA_LOG_WARN(notification_plugin->manager->logger, err, "Failed to calculate mandatory listener id");
         return err;
     }
-    KAA_LOG_TRACE(plugin->manager->logger, KAA_ERR_NONE, "Going to add mandatory notification listener, id '%lu'", id);
+    KAA_LOG_TRACE(notification_plugin->manager->logger, KAA_ERR_NONE, "Going to add mandatory notification listener, id '%lu'", id);
 
-    if (kaa_list_find_next(kaa_list_begin(plugin->manager->mandatory_listeners), &kaa_find_notification_listener_by_id, &id)) {
-        KAA_LOG_WARN(plugin->manager->logger, KAA_ERR_ALREADY_EXISTS, "Failed to add mandatory listener: listener is already subscribed");
+    if (kaa_list_find_next(kaa_list_begin(notification_plugin->manager->mandatory_listeners), &kaa_find_notification_listener_by_id, &id)) {
+        KAA_LOG_WARN(notification_plugin->manager->logger, KAA_ERR_ALREADY_EXISTS, "Failed to add mandatory listener: listener is already subscribed");
         return KAA_ERR_ALREADY_EXISTS;
     }
 
@@ -581,9 +583,9 @@ kaa_error_t kaa_add_notification_listener(kaa_context_t *context, kaa_notificati
                                                         KAA_MALLOC(sizeof(kaa_notification_listener_wrapper_t));
     KAA_RETURN_IF_NIL(wrapper, KAA_ERR_NOMEM);
 
-    if (!kaa_list_push_front(plugin->manager->mandatory_listeners, wrapper)) {
+    if (!kaa_list_push_front(notification_plugin->manager->mandatory_listeners, wrapper)) {
         KAA_FREE(wrapper);
-        KAA_LOG_WARN(plugin->manager->logger, KAA_ERR_NOMEM, "Failed to add mandatory listener");
+        KAA_LOG_WARN(notification_plugin->manager->logger, KAA_ERR_NOMEM, "Failed to add mandatory listener");
         return KAA_ERR_NOMEM;
     }
 
@@ -593,46 +595,48 @@ kaa_error_t kaa_add_notification_listener(kaa_context_t *context, kaa_notificati
     if (listener_id) {
         *listener_id = id;
     }
-    KAA_LOG_TRACE(plugin->manager->logger, KAA_ERR_NONE, "Added mandatory notification listener id '%lu'", id);
+    KAA_LOG_TRACE(notification_plugin->manager->logger, KAA_ERR_NONE, "Added mandatory notification listener id '%lu'", id);
     return KAA_ERR_NONE;
 }
 
-kaa_error_t kaa_remove_notification_listener(kaa_context_t *context, uint32_t *listener_id)
+kaa_error_t kaa_remove_notification_listener(kaa_plugin_t *plugin, uint32_t *listener_id)
 {
-    KAA_RETURN_IF_NIL2(context, listener_id, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL2(plugin, listener_id, KAA_ERR_BADPARAM);
 
-    kaa_notification_plugin_t *plugin;
-    if (kaa_plugin_find_by_type(context, KAA_PLUGIN_NOTIFICATION, (kaa_plugin_t**)&plugin))
+    kaa_notification_plugin_t *notification_plugin;
+    if (plugin->extension_type != KAA_PLUGIN_NOTIFICATION)
         return KAA_ERR_NOT_INITIALIZED;
+    notification_plugin = (kaa_notification_plugin_t*)plugin;
 
-    KAA_LOG_TRACE(plugin->manager->logger, KAA_ERR_NONE, "Going to remove mandatory notification listener, id '%lu'", *listener_id);
+    KAA_LOG_TRACE(notification_plugin->manager->logger, KAA_ERR_NONE, "Going to remove mandatory notification listener, id '%lu'", *listener_id);
 
-    kaa_error_t err =  kaa_list_remove_first(plugin->manager->mandatory_listeners
+    kaa_error_t err =  kaa_list_remove_first(notification_plugin->manager->mandatory_listeners
                                            , &kaa_find_notification_listener_by_id
                                            , listener_id
                                            , &kaa_data_destroy);
     if (err) {
-        KAA_LOG_TRACE(plugin->manager->logger, err, "Failed to remove mandatory notification listener: the listener with id '%lu' is not found", *listener_id);
+        KAA_LOG_TRACE(notification_plugin->manager->logger, err, "Failed to remove mandatory notification listener: the listener with id '%lu' is not found", *listener_id);
     } else {
-        KAA_LOG_TRACE(plugin->manager->logger, err, "Removed mandatory notification listener, id '%lu'", *listener_id);
+        KAA_LOG_TRACE(notification_plugin->manager->logger, err, "Removed mandatory notification listener, id '%lu'", *listener_id);
     }
 
     return err;
 }
 
-kaa_error_t kaa_add_optional_notification_listener(kaa_context_t *context
+kaa_error_t kaa_add_optional_notification_listener(kaa_plugin_t *plugin
                                                  , kaa_notification_listener_t *listener
                                                  , uint64_t *topic_id
                                                  , uint32_t *listener_id)
 {
-    KAA_RETURN_IF_NIL4(context, listener, listener->callback, topic_id, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL4(plugin, listener, listener->callback, topic_id, KAA_ERR_BADPARAM);
 
-    kaa_notification_plugin_t *plugin;
-    if (kaa_plugin_find_by_type(context, KAA_PLUGIN_NOTIFICATION, (kaa_plugin_t**)&plugin))
+    kaa_notification_plugin_t *notification_plugin;
+    if (plugin->extension_type != KAA_PLUGIN_NOTIFICATION)
         return KAA_ERR_NOT_INITIALIZED;
+    notification_plugin = (kaa_notification_plugin_t*)plugin;
 
-    if (!kaa_list_find_next(kaa_list_begin(plugin->manager->topics), &kaa_find_topic_by_id, topic_id)) {
-        KAA_LOG_WARN(plugin->manager->logger, KAA_ERR_NOT_FOUND, "Failed to add optional notification listener: "
+    if (!kaa_list_find_next(kaa_list_begin(notification_plugin->manager->topics), &kaa_find_topic_by_id, topic_id)) {
+        KAA_LOG_WARN(notification_plugin->manager->logger, KAA_ERR_NOT_FOUND, "Failed to add optional notification listener: "
                                                             "topic with id '%llu' not found", *topic_id);
         return KAA_ERR_NOT_FOUND;
     }
@@ -640,15 +644,15 @@ kaa_error_t kaa_add_optional_notification_listener(kaa_context_t *context
     uint32_t id;
     kaa_error_t err = kaa_calculate_notification_listener_id(listener, &id);
     if (err) {
-        KAA_LOG_WARN(plugin->manager->logger, err, "Failed to calculate optional listener id");
+        KAA_LOG_WARN(notification_plugin->manager->logger, err, "Failed to calculate optional listener id");
         return err;
     }
-    KAA_LOG_TRACE(plugin->manager->logger, KAA_ERR_NONE, "Going to add optional notification listener: id '%lu', topic id '%llu'", id, *topic_id);
+    KAA_LOG_TRACE(notification_plugin->manager->logger, KAA_ERR_NONE, "Going to add optional notification listener: id '%lu', topic id '%llu'", id, *topic_id);
 
     kaa_notification_listener_wrapper_t *wrapper = (kaa_notification_listener_wrapper_t *) KAA_MALLOC(sizeof(kaa_notification_listener_wrapper_t));
     KAA_RETURN_IF_NIL(wrapper, KAA_ERR_NOMEM);
 
-    kaa_list_node_t *opt_listeners_node = kaa_list_find_next(kaa_list_begin(plugin->manager->optional_listeners)
+    kaa_list_node_t *opt_listeners_node = kaa_list_find_next(kaa_list_begin(notification_plugin->manager->optional_listeners)
                                                            , &kaa_find_optional_notification_listener_by_id
                                                            , topic_id);
     if (!opt_listeners_node) {
@@ -666,7 +670,7 @@ kaa_error_t kaa_add_optional_notification_listener(kaa_context_t *context
             return KAA_ERR_NOMEM;
         }
 
-        if (!kaa_list_push_front(plugin->manager->optional_listeners, optional_wrapper)) {
+        if (!kaa_list_push_front(notification_plugin->manager->optional_listeners, optional_wrapper)) {
             KAA_FREE(wrapper);
             destroy_optional_listeners_wrapper(optional_wrapper);
             return KAA_ERR_NOMEM;
@@ -678,7 +682,7 @@ kaa_error_t kaa_add_optional_notification_listener(kaa_context_t *context
                 (kaa_optional_notification_listeners_wrapper_t *) kaa_list_get_data(opt_listeners_node);
 
         if (kaa_list_find_next(kaa_list_begin(optional_wrapper->listeners), &kaa_find_notification_listener_by_id, &id)) {
-            KAA_LOG_WARN(plugin->manager->logger, KAA_ERR_ALREADY_EXISTS, "Failed to add the optional listener: the listener is already subscribed");
+            KAA_LOG_WARN(notification_plugin->manager->logger, KAA_ERR_ALREADY_EXISTS, "Failed to add the optional listener: the listener is already subscribed");
             KAA_FREE(wrapper);
             return KAA_ERR_ALREADY_EXISTS;
         }
@@ -695,26 +699,27 @@ kaa_error_t kaa_add_optional_notification_listener(kaa_context_t *context
         *listener_id = id;
     }
 
-    KAA_LOG_TRACE(plugin->manager->logger, KAA_ERR_NONE, "Added optional notification listener: id '%lu', topic id '%llu'", id, *topic_id);
+    KAA_LOG_TRACE(notification_plugin->manager->logger, KAA_ERR_NONE, "Added optional notification listener: id '%lu', topic id '%llu'", id, *topic_id);
 
     return KAA_ERR_NONE;
 }
 
-kaa_error_t kaa_remove_optional_notification_listener(kaa_context_t *context, uint64_t *topic_id, uint32_t *listener_id)
+kaa_error_t kaa_remove_optional_notification_listener(kaa_plugin_t *plugin, uint64_t *topic_id, uint32_t *listener_id)
 {
-    KAA_RETURN_IF_NIL3(context, topic_id, listener_id, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL3(plugin, topic_id, listener_id, KAA_ERR_BADPARAM);
 
-    kaa_notification_plugin_t *plugin;
-    if (kaa_plugin_find_by_type(context, KAA_PLUGIN_NOTIFICATION, (kaa_plugin_t**)&plugin))
+    kaa_notification_plugin_t *notification_plugin;
+    if (plugin->extension_type != KAA_PLUGIN_NOTIFICATION)
         return KAA_ERR_NOT_INITIALIZED;
+    notification_plugin = (kaa_notification_plugin_t*)plugin;
 
-    KAA_LOG_TRACE(plugin->manager->logger, KAA_ERR_NONE, "Going to remove optional notification listener: id '%u', topic id '%u'", *listener_id, *topic_id);
+    KAA_LOG_TRACE(notification_plugin->manager->logger, KAA_ERR_NONE, "Going to remove optional notification listener: id '%u', topic id '%u'", *listener_id, *topic_id);
 
-    kaa_list_node_t *opt_listeners_node = kaa_list_find_next(kaa_list_begin(plugin->manager->optional_listeners)
+    kaa_list_node_t *opt_listeners_node = kaa_list_find_next(kaa_list_begin(notification_plugin->manager->optional_listeners)
                                                            , &kaa_find_optional_notification_listener_by_id
                                                            , topic_id);
     if (!opt_listeners_node) {
-        KAA_LOG_WARN(plugin->manager->logger, KAA_ERR_NOT_FOUND, "Failed to remove the optional listener: there is no listeners subscribed on this topic (topic id '%llu').", *topic_id);
+        KAA_LOG_WARN(notification_plugin->manager->logger, KAA_ERR_NOT_FOUND, "Failed to remove the optional listener: there is no listeners subscribed on this topic (topic id '%llu').", *topic_id);
         return KAA_ERR_NOT_FOUND;
     }
 
@@ -726,44 +731,45 @@ kaa_error_t kaa_remove_optional_notification_listener(kaa_context_t *context, ui
                                             , listener_id
                                             , &kaa_data_destroy);
     if (error) {
-        KAA_LOG_WARN(plugin->manager->logger, KAA_ERR_NOT_FOUND, "Failed to remove the optional listener: the listener with id '%lu' is not found", *listener_id);
+        KAA_LOG_WARN(notification_plugin->manager->logger, KAA_ERR_NOT_FOUND, "Failed to remove the optional listener: the listener with id '%lu' is not found", *listener_id);
         return error;
     } else {
-        KAA_LOG_TRACE(plugin->manager->logger, KAA_ERR_NONE, "Removed optional notification listener id: '%lu', topic id '%llu'", *listener_id, *topic_id);
+        KAA_LOG_TRACE(notification_plugin->manager->logger, KAA_ERR_NONE, "Removed optional notification listener id: '%lu', topic id '%llu'", *listener_id, *topic_id);
         if (!kaa_list_get_size(optional_wrapper->listeners)) {
-            kaa_list_remove_at(plugin->manager->optional_listeners, opt_listeners_node, &destroy_optional_listeners_wrapper);
+            kaa_list_remove_at(notification_plugin->manager->optional_listeners, opt_listeners_node, &destroy_optional_listeners_wrapper);
         }
         return KAA_ERR_NONE;
     }
 }
 
-kaa_error_t kaa_add_topic_list_listener(kaa_context_t *context, kaa_topic_listener_t *listener, uint32_t *topic_listener_id)
+kaa_error_t kaa_add_topic_list_listener(kaa_plugin_t *plugin, kaa_topic_listener_t *listener, uint32_t *topic_listener_id)
 {
-    KAA_RETURN_IF_NIL3(context, listener, listener->callback, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL3(plugin, listener, listener->callback, KAA_ERR_BADPARAM);
 
-    kaa_notification_plugin_t *plugin;
-    if (kaa_plugin_find_by_type(context, KAA_PLUGIN_NOTIFICATION, (kaa_plugin_t**)&plugin))
+    kaa_notification_plugin_t *notification_plugin;
+    if (plugin->extension_type != KAA_PLUGIN_NOTIFICATION)
         return KAA_ERR_NOT_INITIALIZED;
+    notification_plugin = (kaa_notification_plugin_t*)plugin;
 
     uint32_t id;
     kaa_error_t err = kaa_calculate_topic_listener_id(listener, &id);
     if (err) {
-        KAA_LOG_WARN(plugin->manager->logger, err, "Failed to calculate mandatory listener's id");
+        KAA_LOG_WARN(notification_plugin->manager->logger, err, "Failed to calculate mandatory listener's id");
         return err;
     }
-    KAA_LOG_TRACE(plugin->manager->logger, KAA_ERR_NONE, "Going to add topic list listener, id '%lu'", id);
+    KAA_LOG_TRACE(notification_plugin->manager->logger, KAA_ERR_NONE, "Going to add topic list listener, id '%lu'", id);
 
     kaa_topic_listener_wrapper_t *wrapper = (kaa_topic_listener_wrapper_t *) KAA_MALLOC(sizeof(kaa_topic_listener_wrapper_t));
     KAA_RETURN_IF_NIL(wrapper, KAA_ERR_NOMEM);
 
-    if (kaa_list_find_next(kaa_list_begin(plugin->manager->topics_listeners), &kaa_find_topic_listener_by_id, &id)) {
-        KAA_LOG_WARN(plugin->manager->logger, KAA_ERR_ALREADY_EXISTS, "Failed to add topic the listener: the listener is already subscribed");
+    if (kaa_list_find_next(kaa_list_begin(notification_plugin->manager->topics_listeners), &kaa_find_topic_listener_by_id, &id)) {
+        KAA_LOG_WARN(notification_plugin->manager->logger, KAA_ERR_ALREADY_EXISTS, "Failed to add topic the listener: the listener is already subscribed");
         KAA_FREE(wrapper);
         return KAA_ERR_ALREADY_EXISTS;
     }
 
-    if (!kaa_list_push_front(plugin->manager->topics_listeners, wrapper)) {
-        KAA_LOG_ERROR(plugin->manager->logger, KAA_ERR_NOMEM, "Failed to add the topic listener");
+    if (!kaa_list_push_front(notification_plugin->manager->topics_listeners, wrapper)) {
+        KAA_LOG_ERROR(notification_plugin->manager->logger, KAA_ERR_NOMEM, "Failed to add the topic listener");
         KAA_FREE(wrapper);
         return KAA_ERR_NOMEM;
     }
@@ -773,42 +779,44 @@ kaa_error_t kaa_add_topic_list_listener(kaa_context_t *context, kaa_topic_listen
     if (topic_listener_id) {
         *topic_listener_id = id;
     }
-    KAA_LOG_TRACE(plugin->manager->logger, KAA_ERR_NONE, "Added topic list listener, id '%lu'", id);
+    KAA_LOG_TRACE(notification_plugin->manager->logger, KAA_ERR_NONE, "Added topic list listener, id '%lu'", id);
     return KAA_ERR_NONE;
 }
 
-kaa_error_t kaa_remove_topic_list_listener(kaa_context_t *context, uint32_t *topic_listener_id)
+kaa_error_t kaa_remove_topic_list_listener(kaa_plugin_t *plugin, uint32_t *topic_listener_id)
 {
-    KAA_RETURN_IF_NIL2(context, topic_listener_id, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL2(plugin, topic_listener_id, KAA_ERR_BADPARAM);
 
-    kaa_notification_plugin_t *plugin;
-    if (kaa_plugin_find_by_type(context, KAA_PLUGIN_NOTIFICATION, (kaa_plugin_t**)&plugin))
+    kaa_notification_plugin_t *notification_plugin;
+    if (plugin->extension_type != KAA_PLUGIN_NOTIFICATION)
         return KAA_ERR_NOT_INITIALIZED;
+    notification_plugin = (kaa_notification_plugin_t*)plugin;
 
 
-    KAA_LOG_TRACE(plugin->manager->logger, KAA_ERR_NONE, "Going to remove topic list listener, id '%lu'", *topic_listener_id);
+    KAA_LOG_TRACE(notification_plugin->manager->logger, KAA_ERR_NONE, "Going to remove topic list listener, id '%lu'", *topic_listener_id);
 
-    kaa_error_t err =  kaa_list_remove_first(plugin->manager->topics_listeners
+    kaa_error_t err =  kaa_list_remove_first(notification_plugin->manager->topics_listeners
                                            , &kaa_find_topic_listener_by_id
                                            , topic_listener_id
                                            , &kaa_data_destroy);
     if (err) {
-        KAA_LOG_WARN(plugin->manager->logger, err, "Failed to remove topic list listener: listener id '%lu' not found", *topic_listener_id);
+        KAA_LOG_WARN(notification_plugin->manager->logger, err, "Failed to remove topic list listener: listener id '%lu' not found", *topic_listener_id);
         return err;
     }
-    KAA_LOG_TRACE(plugin->manager->logger, err, "Removed topic list listener, id '%lu'", *topic_listener_id);
+    KAA_LOG_TRACE(notification_plugin->manager->logger, err, "Removed topic list listener, id '%lu'", *topic_listener_id);
     return err;
 }
 
-kaa_error_t kaa_get_topics(kaa_context_t *context, kaa_list_t **topics)
+kaa_error_t kaa_get_topics(kaa_plugin_t *plugin, kaa_list_t **topics)
 {
-    KAA_RETURN_IF_NIL2(context, topics, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL2(plugin, topics, KAA_ERR_BADPARAM);
 
-    kaa_notification_plugin_t *plugin;
-    if (kaa_plugin_find_by_type(context, KAA_PLUGIN_NOTIFICATION, (kaa_plugin_t**)&plugin))
+    kaa_notification_plugin_t *notification_plugin;
+    if (plugin->extension_type != KAA_PLUGIN_NOTIFICATION)
         return KAA_ERR_NOT_INITIALIZED;
+    notification_plugin = (kaa_notification_plugin_t*)plugin;
 
-    *topics = plugin->manager->topics;
+    *topics = notification_plugin->manager->topics;
     return KAA_ERR_NONE;
 }
 
@@ -903,137 +911,142 @@ static kaa_error_t kaa_add_subscribtions_or_unsubscribtions(kaa_notification_man
    kaa_list_destroy(new_subscriptions, NULL);
    return KAA_ERR_NONE;
 }
-kaa_error_t kaa_subscribe_to_topic(kaa_context_t *context, uint64_t *topic_id, bool force_sync)
+kaa_error_t kaa_subscribe_to_topic(kaa_plugin_t *plugin, uint64_t *topic_id, bool force_sync)
 {
-    KAA_RETURN_IF_NIL2(context, topic_id, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL2(plugin, topic_id, KAA_ERR_BADPARAM);
 
-    kaa_notification_plugin_t *plugin;
-    if (kaa_plugin_find_by_type(context, KAA_PLUGIN_NOTIFICATION, (kaa_plugin_t**)&plugin))
+    kaa_notification_plugin_t *notification_plugin;
+    if (plugin->extension_type != KAA_PLUGIN_NOTIFICATION)
         return KAA_ERR_NOT_INITIALIZED;
+    notification_plugin = (kaa_notification_plugin_t*)plugin;
+
 
     kaa_topic_t* topic = NULL;
-    kaa_error_t err = kaa_find_topic(plugin->manager, &topic, topic_id);
+    kaa_error_t err = kaa_find_topic(notification_plugin->manager, &topic, topic_id);
     if (err) {
-        KAA_LOG_WARN(plugin->manager->logger, KAA_ERR_BADPARAM, "Failed to subscribe to the topic with id '%llu'.", *topic_id);
+        KAA_LOG_WARN(notification_plugin->manager->logger, KAA_ERR_BADPARAM, "Failed to subscribe to the topic with id '%llu'.", *topic_id);
         return err;
     }
     if (topic->subscription_type == MANDATORY_SUBSCRIPTION) {
-        KAA_LOG_WARN(plugin->manager->logger, KAA_ERR_BADPARAM, "Failed to subscribe to the topic with id '%llu'. Topic isn't optional.", *topic_id);
+        KAA_LOG_WARN(notification_plugin->manager->logger, KAA_ERR_BADPARAM, "Failed to subscribe to the topic with id '%llu'. Topic isn't optional.", *topic_id);
         return KAA_ERR_BADPARAM;
     }
-    err = kaa_add_subscribtion_or_unsubscribtion(plugin->manager->subscriptions, topic_id);
+    err = kaa_add_subscribtion_or_unsubscribtion(notification_plugin->manager->subscriptions, topic_id);
     KAA_RETURN_IF_ERR(err);
 
     if (force_sync) {
-        KAA_LOG_INFO(plugin->manager->logger, KAA_ERR_NONE, "Going to subscribe to topic '%llu'", *topic_id);
-        kaa_sync_topic_subscriptions_internal(plugin->manager);
+        KAA_LOG_INFO(notification_plugin->manager->logger, KAA_ERR_NONE, "Going to subscribe to topic '%llu'", *topic_id);
+        kaa_sync_topic_subscriptions_internal(notification_plugin->manager);
     } else {
-        KAA_LOG_INFO(plugin->manager->logger, KAA_ERR_NONE, "Subscription to topic '%llu' is postponed till sync", *topic_id);
+        KAA_LOG_INFO(notification_plugin->manager->logger, KAA_ERR_NONE, "Subscription to topic '%llu' is postponed till sync", *topic_id);
     }
     return KAA_ERR_NONE;
 }
 
-kaa_error_t kaa_subscribe_to_topics(kaa_context_t *context, uint64_t *topic_ids, size_t size, bool force_sync)
+kaa_error_t kaa_subscribe_to_topics(kaa_plugin_t *plugin, uint64_t *topic_ids, size_t size, bool force_sync)
 {
-    KAA_RETURN_IF_NIL2(context, topic_ids, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL2(plugin, topic_ids, KAA_ERR_BADPARAM);
 
-    kaa_notification_plugin_t *plugin;
-    if (kaa_plugin_find_by_type(context, KAA_PLUGIN_NOTIFICATION, (kaa_plugin_t**)&plugin))
+    kaa_notification_plugin_t *notification_plugin;
+    if (plugin->extension_type != KAA_PLUGIN_NOTIFICATION)
         return KAA_ERR_NOT_INITIALIZED;
+    notification_plugin = (kaa_notification_plugin_t*)plugin;
 
     kaa_topic_t *topic = NULL;
     kaa_error_t err = KAA_ERR_NONE;
     size_t size_copy = size;
     while (size_copy--) {
-        err = kaa_find_topic(plugin->manager, &topic, topic_ids + size_copy);
+        err = kaa_find_topic(notification_plugin->manager, &topic, topic_ids + size_copy);
         if (err) {
-            KAA_LOG_WARN(plugin->manager->logger, err, "Failed to subscribe to the topic: topic not found, id '%llu'", topic_ids[size_copy]);
+            KAA_LOG_WARN(notification_plugin->manager->logger, err, "Failed to subscribe to the topic: topic not found, id '%llu'", topic_ids[size_copy]);
             return err;
         } else {
             if (topic->subscription_type == MANDATORY_SUBSCRIPTION) {
-                KAA_LOG_WARN(plugin->manager->logger, KAA_ERR_BADPARAM, "Failed to subscribe to the topics. Topic with id '%llu'. Topic isn't optional.", topic_ids[size_copy]);
+                KAA_LOG_WARN(notification_plugin->manager->logger, KAA_ERR_BADPARAM, "Failed to subscribe to the topics. Topic with id '%llu'. Topic isn't optional.", topic_ids[size_copy]);
                 return KAA_ERR_BADPARAM;
             }
         }
     }
     if (force_sync) {
-        KAA_LOG_INFO(plugin->manager->logger, KAA_ERR_NONE, "Going to subscribe to the topics");
+        KAA_LOG_INFO(notification_plugin->manager->logger, KAA_ERR_NONE, "Going to subscribe to the topics");
     } else {
-        KAA_LOG_INFO(plugin->manager->logger, KAA_ERR_NONE, "Subscription to topics is postponed till sync");
+        KAA_LOG_INFO(notification_plugin->manager->logger, KAA_ERR_NONE, "Subscription to topics is postponed till sync");
     }
-    err = kaa_add_subscribtions_or_unsubscribtions(plugin->manager, topic_ids, size, SUBSCRIPTION_ID);
+    err = kaa_add_subscribtions_or_unsubscribtions(notification_plugin->manager, topic_ids, size, SUBSCRIPTION_ID);
     KAA_RETURN_IF_ERR(err);
 
     if (force_sync) {
-        kaa_sync_topic_subscriptions_internal(plugin->manager);
+        kaa_sync_topic_subscriptions_internal(notification_plugin->manager);
     }
 
     return KAA_ERR_NONE;
 }
 
-kaa_error_t kaa_unsubscribe_from_topic(kaa_context_t *context, uint64_t *topic_id, bool force_sync)
+kaa_error_t kaa_unsubscribe_from_topic(kaa_plugin_t *plugin, uint64_t *topic_id, bool force_sync)
 {
-    KAA_RETURN_IF_NIL2(context, topic_id, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL2(plugin, topic_id, KAA_ERR_BADPARAM);
 
-    kaa_notification_plugin_t *plugin;
-    if (kaa_plugin_find_by_type(context, KAA_PLUGIN_NOTIFICATION, (kaa_plugin_t**)&plugin))
+    kaa_notification_plugin_t *notification_plugin;
+    if (plugin->extension_type != KAA_PLUGIN_NOTIFICATION)
         return KAA_ERR_NOT_INITIALIZED;
+    notification_plugin = (kaa_notification_plugin_t*)plugin;
 
     kaa_topic_t* topic = NULL;
-    kaa_error_t err = kaa_find_topic(plugin->manager, &topic, topic_id);
+    kaa_error_t err = kaa_find_topic(notification_plugin->manager, &topic, topic_id);
     if (err) {
-        KAA_LOG_WARN(plugin->manager->logger, err, "Failed to unsubscribe from the topic with id '%llu'.", *topic_id);
+        KAA_LOG_WARN(notification_plugin->manager->logger, err, "Failed to unsubscribe from the topic with id '%llu'.", *topic_id);
         return err;
     }
     if (topic->subscription_type == MANDATORY_SUBSCRIPTION) {
-        KAA_LOG_WARN(plugin->manager->logger, KAA_ERR_BADPARAM, "Failed to unsubscribe from the topic with id '%llu'. Topic isn't optional.", *topic_id);
+        KAA_LOG_WARN(notification_plugin->manager->logger, KAA_ERR_BADPARAM, "Failed to unsubscribe from the topic with id '%llu'. Topic isn't optional.", *topic_id);
         return KAA_ERR_BADPARAM;
     }
-    err = kaa_add_subscribtion_or_unsubscribtion(plugin->manager->unsubscriptions, topic_id);
+    err = kaa_add_subscribtion_or_unsubscribtion(notification_plugin->manager->unsubscriptions, topic_id);
     KAA_RETURN_IF_ERR(err);
 
     if (force_sync) {
-        KAA_LOG_INFO(plugin->manager->logger, KAA_ERR_NONE, "Going to unsubscribe from the topic '%llu'", *topic_id);
-        kaa_sync_topic_subscriptions_internal(plugin->manager);
+        KAA_LOG_INFO(notification_plugin->manager->logger, KAA_ERR_NONE, "Going to unsubscribe from the topic '%llu'", *topic_id);
+        kaa_sync_topic_subscriptions_internal(notification_plugin->manager);
     } else {
-        KAA_LOG_INFO(plugin->manager->logger, KAA_ERR_NONE, "Unsubscription from the topic '%llu' is postponed till sync", *topic_id);
+        KAA_LOG_INFO(notification_plugin->manager->logger, KAA_ERR_NONE, "Unsubscription from the topic '%llu' is postponed till sync", *topic_id);
     }
     return KAA_ERR_NONE;
 }
 
-kaa_error_t kaa_unsubscribe_from_topics(kaa_context_t *context, uint64_t *topic_ids, size_t size, bool force_sync)
+kaa_error_t kaa_unsubscribe_from_topics(kaa_plugin_t *plugin, uint64_t *topic_ids, size_t size, bool force_sync)
 {
-    KAA_RETURN_IF_NIL2(context, topic_ids, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL2(plugin, topic_ids, KAA_ERR_BADPARAM);
 
-    kaa_notification_plugin_t *plugin;
-    if (kaa_plugin_find_by_type(context, KAA_PLUGIN_NOTIFICATION, (kaa_plugin_t**)&plugin))
+    kaa_notification_plugin_t *notification_plugin;
+    if (plugin->extension_type != KAA_PLUGIN_NOTIFICATION)
         return KAA_ERR_NOT_INITIALIZED;
+    notification_plugin = (kaa_notification_plugin_t*)plugin;
 
     kaa_topic_t *topic = NULL;
     kaa_error_t err = KAA_ERR_NONE;
     size_t size_copy = size;
     while (size_copy--) {
-        err = kaa_find_topic(plugin->manager, &topic, topic_ids + size_copy);
+        err = kaa_find_topic(notification_plugin->manager, &topic, topic_ids + size_copy);
         if (err) {
-            KAA_LOG_WARN(plugin->manager->logger, err, "Failed to unsubscribe from the topic: topic not found, id '%llu'", topic_ids[size_copy]);
+            KAA_LOG_WARN(notification_plugin->manager->logger, err, "Failed to unsubscribe from the topic: topic not found, id '%llu'", topic_ids[size_copy]);
             return err;
         } else {
             if (topic->subscription_type == MANDATORY_SUBSCRIPTION) {
-                KAA_LOG_WARN(plugin->manager->logger, KAA_ERR_BADPARAM, "Failed to unsubscribe from the topics. Topic with id '%llu'. Topic isn't optional.", topic_ids[size_copy]);
+                KAA_LOG_WARN(notification_plugin->manager->logger, KAA_ERR_BADPARAM, "Failed to unsubscribe from the topics. Topic with id '%llu'. Topic isn't optional.", topic_ids[size_copy]);
                 return KAA_ERR_BADPARAM;
             }
         }
     }
     if (force_sync) {
-          KAA_LOG_INFO(plugin->manager->logger, KAA_ERR_NONE, "Going to unsubscribe from the topics");
+          KAA_LOG_INFO(notification_plugin->manager->logger, KAA_ERR_NONE, "Going to unsubscribe from the topics");
       } else {
-          KAA_LOG_INFO(plugin->manager->logger, KAA_ERR_NONE, "Unsubscription from the topics is postponed till sync");
+          KAA_LOG_INFO(notification_plugin->manager->logger, KAA_ERR_NONE, "Unsubscription from the topics is postponed till sync");
       }
-    err = kaa_add_subscribtions_or_unsubscribtions(plugin->manager, topic_ids, size, UNSUBSCRIPTION_ID);
+    err = kaa_add_subscribtions_or_unsubscribtions(notification_plugin->manager, topic_ids, size, UNSUBSCRIPTION_ID);
     KAA_RETURN_IF_ERR(err);
 
     if (force_sync) {
-        kaa_sync_topic_subscriptions_internal(plugin->manager);
+        kaa_sync_topic_subscriptions_internal(notification_plugin->manager);
     }
     return KAA_ERR_NONE;
 }
@@ -1058,14 +1071,15 @@ kaa_error_t kaa_sync_topic_subscriptions_internal(kaa_notification_manager_t *se
     return do_sync(self);
 }
 
-kaa_error_t kaa_sync_topic_subscriptions(kaa_context_t *context)
+kaa_error_t kaa_sync_topic_subscriptions(kaa_plugin_t *plugin)
 {
-    KAA_RETURN_IF_NIL(context, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL(plugin, KAA_ERR_BADPARAM);
 
-    kaa_notification_plugin_t *plugin;
-    if (kaa_plugin_find_by_type(context, KAA_PLUGIN_NOTIFICATION, (kaa_plugin_t**)&plugin))
+    kaa_notification_plugin_t *notification_plugin;
+    if (plugin->extension_type != KAA_PLUGIN_NOTIFICATION)
         return KAA_ERR_NOT_INITIALIZED;
-    return kaa_sync_topic_subscriptions_internal(plugin->manager);
+    notification_plugin = (kaa_notification_plugin_t*)plugin;
+    return kaa_sync_topic_subscriptions_internal(notification_plugin->manager);
 }
 
 kaa_error_t kaa_topic_list_updated(kaa_notification_manager_t *self, kaa_list_t *new_topics)
@@ -1145,10 +1159,10 @@ static void kaa_notify_notification_listeners(void *data, void* context)
    kaa_notification_manager_t *self = (kaa_notification_manager_t *)context;
 
    while(notification_list_node) {
-       kaa_notification_wrapper_t *wrapper = (kaa_notification_wrapper_t *)kaa_list_get_data(notification_list_node);       
+       kaa_notification_wrapper_t *wrapper = (kaa_notification_wrapper_t *)kaa_list_get_data(notification_list_node);
        kaa_list_node_t *it = kaa_list_find_next(kaa_list_begin(self->status->topic_states)
                                                        , &kaa_find_topic_state_by_id
-                                                       , &node->topic_id);       
+                                                       , &node->topic_id);
        if (it) {
            kaa_topic_state_t *state = (kaa_topic_state_t *) kaa_list_get_data(it);
            if (wrapper->sqn > state->sqn_number) {
@@ -1369,7 +1383,7 @@ kaa_error_t kaa_notification_plugin_request_handle_server_sync(kaa_plugin_t *sel
 kaa_error_t kaa_notification_plugin_init(kaa_plugin_t *self)
 {
     return kaa_notification_manager_create(&((kaa_notification_plugin_t*)self)->manager,
-                                            (kaa_status_t*)self->context->status, self->context->channel_manager, self->context->logger);
+                                            kaa_get_status(self->context), self->context->channel_manager, self->context->logger);
 }
 
 kaa_error_t kaa_notification_plugin_deinit(kaa_plugin_t *self)

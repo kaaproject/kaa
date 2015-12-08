@@ -41,31 +41,11 @@
 
 
 
-//extern kaa_error_t ext_unlimited_log_storage_create(void **log_storage_context_p
-//                                                  , kaa_logger_t *logger);
-
 extern void ext_log_upload_timeout(kaa_context_t *context);
 
 
-static uint16_t BOOTSTRAP_PLUGIN[] = { KAA_PLUGIN_BOOTSTRAP };
+static uint16_t BOOTSTRAP_PLUGIN[] = { KAA_PLUGIN_META_DATA, KAA_PLUGIN_BOOTSTRAP };
 static const int BOOTSTRAP_PLUGIN_COUNT = sizeof(BOOTSTRAP_PLUGIN) / sizeof(uint16_t);
-
-static uint16_t OPERATIONS_PLUGINS[] = {     KAA_PLUGIN_PROFILE
-                                           , KAA_PLUGIN_USER
-#ifndef KAA_DISABLE_FEATURE_CONFIGURATION
-                                           , KAA_PLUGIN_CONFIGURATION
-#endif
-#ifndef KAA_DISABLE_FEATURE_EVENTS
-                                           , KAA_PLUGIN_EVENT
-#endif
-#ifndef KAA_DISABLE_FEATURE_LOGGING
-                                           , KAA_PLUGIN_LOGGING
-#endif
-#ifndef KAA_DISABLE_FEATURE_NOTIFICATION
-                                           , KAA_PLUGIN_NOTIFICATION
-#endif
-                                             };
-static const int OPERATIONS_PLUGIN_COUNT = sizeof(OPERATIONS_PLUGINS) / sizeof(uint16_t);
 
 
 
@@ -358,18 +338,26 @@ kaa_error_t kaa_client_init_channel(kaa_client_t *kaa_client, kaa_client_channel
 
     KAA_LOG_TRACE(kaa_client->kaa_context->logger, KAA_ERR_NONE, "Initializing channel....");
 
+    uint16_t *tmp_supported_plugins = NULL;
+    int  supported_plugins_size;
+
     switch (channel_type) {
         case KAA_CLIENT_CHANNEL_TYPE_BOOTSTRAP:
+            error_code = kaa_get_bootstrap_authorized_array(&tmp_supported_plugins, &supported_plugins_size);
             error_code = kaa_tcp_channel_create(&kaa_client->channel
                                               , kaa_client->kaa_context->logger
-                                              , BOOTSTRAP_PLUGIN
+                                              , tmp_supported_plugins
                                               , BOOTSTRAP_PLUGIN_COUNT);
             break;
         case KAA_CLIENT_CHANNEL_TYPE_OPERATIONS:
-            error_code = kaa_tcp_channel_create(&kaa_client->channel
-                                              , kaa_client->kaa_context->logger
-                                              , OPERATIONS_PLUGINS
-                                              , OPERATIONS_PLUGIN_COUNT);
+            error_code = kaa_get_operation_authorized_array(&tmp_supported_plugins, &supported_plugins_size);
+            if(!error_code)
+                error_code = kaa_tcp_channel_create(&kaa_client->channel
+                                                  , kaa_client->kaa_context->logger
+                                                  , tmp_supported_plugins
+                                                  , supported_plugins_size);
+            if(error_code)
+                kaa_free_supported_plugins_array(tmp_supported_plugins);
             break;
     }
 

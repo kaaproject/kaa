@@ -31,7 +31,7 @@ extern "C" {
 #include <stddef.h>
 #include "kaa_error.h"
 #include "platform/ext_event_listeners_callback.h"
-#include "kaa_context.h"
+# include "plugins/kaa_plugin.h"
 
 typedef void (*kaa_event_callback_t)(const char *event_fqn, const char *event_data, size_t event_data_size, kaa_endpoint_id_p event_source);
 typedef size_t kaa_event_block_id;
@@ -40,14 +40,14 @@ typedef size_t kaa_event_block_id;
  * @brief Initiates a request to the server to search for available event listeners by given FQNs.
  *
  *
- * @param[in]       context             Valid pointer to the Kaa context.
+ * @param[in]       plugin              Valid pointer to the event plugin.
  * @param[in]       fqns                List of FQN strings.
  * @param[in]       fqns_count          Number of FQNs in the list.
  * @param[in]       callback            Pointer to callback structure.
  *
  * @return Error code.
  */
-kaa_error_t kaa_event_manager_find_event_listeners(kaa_context_t *context, const char *fqns[], size_t fqns_count, const kaa_event_listeners_callback_t *callback);
+kaa_error_t kaa_event_plugin_find_event_listeners(kaa_plugin_t *plugin, const char *fqns[], size_t fqns_count, const kaa_event_listeners_callback_t *callback);
 
 
 /**
@@ -55,12 +55,12 @@ kaa_error_t kaa_event_manager_find_event_listeners(kaa_context_t *context, const
  *
  * Returns a new id which must be used to add an event to the block.
  *
- * @param[in]       context             Valid pointer to the Kaa context.
+ * @param[in]       plugin              Valid pointer to the event plugin.
  * @param[in,out]   trx_id              Pointer to the @link kaa_event_block_id @endlink instance which will be fulfilled with a corresponding ID.
  *
  * @return Error code.
  */
-kaa_error_t kaa_event_create_transaction(kaa_context_t *context, kaa_event_block_id *trx_id);
+kaa_error_t kaa_event_create_transaction(kaa_plugin_t *plugin, kaa_event_block_id *trx_id);
 
 
 /**
@@ -68,23 +68,23 @@ kaa_error_t kaa_event_create_transaction(kaa_context_t *context, kaa_event_block
  *
  * The event block is identified by the given trx_id.
  *
- * @param[in]       context             Valid pointer to the Kaa context.
+ * @param[in]       plugin              Valid pointer to the event plugin.
  * @param[in]       trx_id              The ID of the event block to be sent.
  *
  * @return Error code.
  */
-kaa_error_t kaa_event_finish_transaction(kaa_context_t *context, kaa_event_block_id trx_id);
+kaa_error_t kaa_event_finish_transaction(kaa_plugin_t *plugin, kaa_event_block_id trx_id);
 
 
 /**
  * @brief Removes the event block without sending events.
  *
- * @param[in]       context             Valid pointer to the Kaa context.
+ * @param[in]       plugin              Valid pointer to the event plugin.
  * @param[in]       trx_id              The ID of the event block to be sent.
  *
  * @return Error code.
  */
-kaa_error_t kaa_event_remove_transaction(kaa_context_t *context, kaa_event_block_id trx_id);
+kaa_error_t kaa_event_remove_transaction(kaa_plugin_t *plugin, kaa_event_block_id trx_id);
 
 /**
  * @brief Find class family name of the event by its fully-qualified name.

@@ -33,7 +33,6 @@
 #include "utilities/kaa_mem.h"
 #include "utilities/kaa_log.h"
 #include "avro_src/avro/io.h"
-#include "plugins/kaa_plugin.h"
 #include "platform-impl/common/ext_log_upload_strategies.h"
 
 
@@ -50,6 +49,8 @@ extern bool ext_log_upload_strategy_is_timeout_strategy(void *strategy);
 
 extern kaa_error_t ext_unlimited_log_storage_create(void **log_storage_context_p
                                                   , kaa_logger_t *logger);
+
+extern kaa_status_t *kaa_get_status(kaa_context_t *kaa_context);
 
 
 typedef enum {
@@ -242,48 +243,49 @@ static void update_storage(kaa_log_collector_t *self)
 
 
 
-kaa_error_t kaa_logging_add_record(kaa_context_t *context, kaa_user_log_record_t *entry)
+kaa_error_t kaa_logging_add_record(kaa_plugin_t *plugin, kaa_user_log_record_t *entry)
 {
-    KAA_RETURN_IF_NIL2(context, entry, KAA_ERR_BADPARAM);
+    kaa_logging_plugin_t *logging_plugin;
+    KAA_RETURN_IF_NIL2(plugin, entry, KAA_ERR_BADPARAM);
 
-    kaa_logging_plugin_t *plugin;
-    if (kaa_plugin_find_by_type(context, KAA_PLUGIN_LOGGING, (kaa_plugin_t**)&plugin))
+    if (plugin->extension_type != KAA_PLUGIN_LOGGING)
         return KAA_ERR_NOT_INITIALIZED;
+    logging_plugin = (kaa_logging_plugin_t*)plugin;
 
-    KAA_RETURN_IF_NIL(plugin->log_collector->log_storage_context, KAA_ERR_NOT_INITIALIZED);
+    KAA_RETURN_IF_NIL(logging_plugin->log_collector->log_storage_context, KAA_ERR_NOT_INITIALIZED);
 
     kaa_log_record_t record = { NULL, entry->get_size(entry) };
     if (!record.size) {
-        KAA_LOG_ERROR(plugin->log_collector->logger, KAA_ERR_BADDATA, "Failed to add log record: serialized record size is null."
+        KAA_LOG_ERROR(logging_plugin->log_collector->logger, KAA_ERR_BADDATA, "Failed to add log record: serialized record size is null."
                                                                                 "Maybe log record schema is empty");
         return KAA_ERR_BADDATA;
     }
 
-    kaa_error_t error = ext_log_storage_allocate_log_record_buffer(plugin->log_collector->log_storage_context, &record);
+    kaa_error_t error = ext_log_storage_allocate_log_record_buffer(logging_plugin->log_collector->log_storage_context, &record);
     if (error) {
-        KAA_LOG_ERROR(plugin->log_collector->logger, KAA_ERR_BADDATA, "Failed to add log record: cannot allocate buffer for log record");
+        KAA_LOG_ERROR(logging_plugin->log_collector->logger, KAA_ERR_BADDATA, "Failed to add log record: cannot allocate buffer for log record");
         return error;
     }
 
     avro_writer_t writer = avro_writer_memory((char *)record.data, record.size);
     if (!writer) {
-        KAA_LOG_ERROR(plugin->log_collector->logger, KAA_ERR_BADDATA, "Failed to add log record: cannot create serializer")
-        ext_log_storage_deallocate_log_record_buffer(plugin->log_collector->log_storage_context, &record);
+        KAA_LOG_ERROR(logging_plugin->log_collector->logger, KAA_ERR_BADDATA, "Failed to add log record: cannot create serializer")
+        ext_log_storage_deallocate_log_record_buffer(logging_plugin->log_collector->log_storage_context, &record);
         return KAA_ERR_NOMEM;
     }
 
     entry->serialize(writer, entry);
     avro_writer_free(writer);
 
-    error = ext_log_storage_add_log_record(plugin->log_collector->log_storage_context, &record);
+    error = ext_log_storage_add_log_record(logging_plugin->log_collector->log_storage_context, &record);
     if (error) {
-        KAA_LOG_ERROR(plugin->log_collector->logger, error, "Failed to add log record to storage");
-        ext_log_storage_deallocate_log_record_buffer(plugin->log_collector->log_storage_context, &record);
+        KAA_LOG_ERROR(logging_plugin->log_collector->logger, error, "Failed to add log record to storage");
+        ext_log_storage_deallocate_log_record_buffer(logging_plugin->log_collector->log_storage_context, &record);
         return error;
     }
-    KAA_LOG_TRACE(plugin->log_collector->logger, KAA_ERR_NONE, "Added log record, size %zu", record.size);
-    if (!is_timeout(plugin->log_collector))
-        update_storage(plugin->log_collector);
+    KAA_LOG_TRACE(logging_plugin->log_collector->logger, KAA_ERR_NONE, "Added log record, size %zu", record.size);
+    if (!is_timeout(logging_plugin->log_collector))
+        update_storage(logging_plugin->log_collector);
 
     return KAA_ERR_NONE;
 }
@@ -507,7 +509,7 @@ kaa_error_t kaa_logging_plugin_init(kaa_plugin_t *self)
 {
     kaa_error_t error_code;
     error_code = kaa_log_collector_create(&((kaa_logging_plugin_t*)self)->log_collector,
-                                            (kaa_status_t*)self->context->status, self->context->channel_manager, self->context->logger);
+                                            kaa_get_status(self->context), self->context->channel_manager, self->context->logger);
 
 #ifndef KAA_DISABLE_FEATURE_LOGGING
     if (!error_code) {

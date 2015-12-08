@@ -17,8 +17,6 @@
 # ifndef KAA_PLUGIN_GEN_H_
 # define KAA_PLUGIN_GEN_H_
 
-#include "../kaa_context.h"
-
 # ifdef __cplusplus
 extern "C" {
 # endif
@@ -26,11 +24,22 @@ extern "C" {
 typedef kaa_plugin_t* (*kaa_plugin_create)(kaa_context_t *context);
 
 typedef struct {
+    uint16_t type;
     kaa_plugin_create create_fn;
 } kaa_plugin_info_t;
 
 extern kaa_plugin_info_t kaa_available_plugins[];
 extern size_t kaa_available_plugins_count;
+
+
+kaa_plugin_t *kaa_get_bootstrap_plugin(kaa_client_t *client);
+kaa_plugin_t *kaa_get_profile_plugin(kaa_client_t *client);
+kaa_plugin_t *kaa_get_user_plugin(kaa_client_t *client);
+kaa_plugin_t *kaa_get_logging_plugin(kaa_client_t *client);
+kaa_plugin_t *kaa_get_configuration_plugin(kaa_client_t *client);
+kaa_plugin_t *kaa_get_notification_plugin(kaa_client_t *client);
+kaa_plugin_t *kaa_get_event_plugin(kaa_client_t *client);
+
 
 #ifdef __cplusplus
 }      /* extern "C" */

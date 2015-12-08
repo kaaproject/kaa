@@ -47,6 +47,18 @@ void *kaa_trace_memory_allocs_calloc(size_t n, size_t s, const char *file, int l
 #endif
 }
 
+void *  kaa_trace_memory_allocs_realloc(void * p, size_t s, const char *file, int line)
+{
+#if KAA_LOG_LEVEL_TRACE_ENABLED
+    void *ptr = __KAA_REALLOC(p, s);
+    if (logger_)
+        kaa_log_write(logger_, file, line, KAA_LOG_LEVEL_TRACE, KAA_ERR_NONE, "Reallocated %p memory block to %u bytes at {%p}", p, s, ptr);
+    return ptr;
+#else
+    return realloc(p, s);
+#endif
+}
+
 void kaa_trace_memory_allocs_free(void * p, const char *file, int line)
 {
 #if KAA_LOG_LEVEL_TRACE_ENABLED

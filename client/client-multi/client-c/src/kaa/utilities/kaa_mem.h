@@ -29,11 +29,13 @@ extern "C" {
 
 void *  kaa_trace_memory_allocs_malloc(size_t s, const char *file, int line);
 void *  kaa_trace_memory_allocs_calloc(size_t n, size_t s, const char *file, int line);
+void *  kaa_trace_memory_allocs_realloc(void * p, size_t s, const char *file, int line);
 void    kaa_trace_memory_allocs_free(void * p, const char *file, int line);
 void    kaa_trace_memory_allocs_set_logger(kaa_logger_t *logger);
 
 #define KAA_MALLOC(S)           kaa_trace_memory_allocs_malloc(S, __FILE__, __LINE__)
 #define KAA_CALLOC(N,S)         kaa_trace_memory_allocs_calloc((N), (S), __FILE__, __LINE__)
+#define KAA_REALLOC(P,S)        kaa_trace_memory_allocs_realloc((P), (S), __FILE__, __LINE__)
 #define KAA_FREE(P)             kaa_trace_memory_allocs_free((P), __FILE__, __LINE__)
 
 #ifdef __cplusplus

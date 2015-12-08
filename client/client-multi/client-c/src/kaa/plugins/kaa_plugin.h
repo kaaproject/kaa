@@ -54,6 +54,11 @@ kaa_error_t kaa_plugin_find_by_type(kaa_context_t *context, uint16_t type, kaa_p
 kaa_error_t kaa_create_plugins(kaa_context_t *context);
 kaa_error_t kaa_destroy_plugins(kaa_context_t *context);
 
+kaa_error_t kaa_get_supported_plugins(uint16_t **array, int *size);
+kaa_error_t kaa_get_bootstrap_authorized_array(uint16_t **array, int *size);
+kaa_error_t kaa_get_operation_authorized_array(uint16_t **array, int *size);
+void kaa_free_supported_plugins_array(uint16_t *array);
+
 #ifdef __cplusplus
 }      /* extern "C" */
 #endif
