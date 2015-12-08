@@ -13,17 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kaaproject.kaa.server.common.core.plugin.instance;
+package org.kaaproject.kaa.server.sync;
 
-import org.kaaproject.kaa.server.common.core.plugin.def.PluginExecutionContext;
-import org.kaaproject.kaa.server.common.core.plugin.def.PluginInitContext;
+/**
+ * Holds extension id that identifies plugin instance within certain SDK profile
+ * and data to be transfers between SDK and plugin instance.
+ * 
+ * @author Andrew Shvayka
+ *
+ */
+public class ExtensionSync {
 
-public interface KaaPlugin {
+    private final int extensionId;
+    private final byte[] data;
 
-    void init(PluginInitContext context) throws PluginLifecycleException;
+    public ExtensionSync(int extensionId, byte[] data) {
+        super();
+        this.extensionId = extensionId;
+        this.data = data;
+    }
 
-    void onPluginMessage(KaaPluginMessage msg, PluginExecutionContext ctx);
-    
-    void stop() throws PluginLifecycleException;
+    public int getExtensionId() {
+        return extensionId;
+    }
+
+    public byte[] getData() {
+        return data;
+    }
 
 }

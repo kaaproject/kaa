@@ -29,7 +29,9 @@ public class ClientSyncTest {
     public void isValidProfileHashExistsTest() {
         ClientSyncMetaData clientSyncMetaData = mock(ClientSyncMetaData.class);
         when(clientSyncMetaData.getProfileHash()).thenReturn(ByteBuffer.allocate(0));
-        ClientSync clientSync = new ClientSync(0, clientSyncMetaData, null, null, null, null, null, null);
+        ClientSync clientSync = new ClientSync();
+        clientSync.setRequestId(0);
+        clientSync.setClientSyncMetaData(clientSyncMetaData);
         Assert.assertEquals(clientSync.isValid(), true);
     }
 
@@ -37,7 +39,9 @@ public class ClientSyncTest {
     public void isValidProfileHashNullRequestNullTest() {
         ClientSyncMetaData clientSyncMetaData = mock(ClientSyncMetaData.class);
         when(clientSyncMetaData.getProfileHash()).thenReturn(null);
-        ClientSync clientSync = new ClientSync(0, clientSyncMetaData, null, null, null, null, null, null);
+        ClientSync clientSync = new ClientSync();
+        clientSync.setRequestId(0);
+        clientSync.setClientSyncMetaData(clientSyncMetaData);
         Assert.assertEquals(clientSync.isValid(), false);
     }
 
@@ -46,7 +50,10 @@ public class ClientSyncTest {
         ClientSyncMetaData clientSyncMetaData = mock(ClientSyncMetaData.class);
         ProfileClientSync profileClientSync = mock(ProfileClientSync.class);
         when(clientSyncMetaData.getProfileHash()).thenReturn(null);
-        ClientSync clientSync = new ClientSync(0, clientSyncMetaData, profileClientSync, null, null, null, null, null);
+        ClientSync clientSync = new ClientSync();
+        clientSync.setRequestId(0);
+        clientSync.setClientSyncMetaData(clientSyncMetaData);
+        clientSync.setProfileSync(profileClientSync);
         Assert.assertEquals(clientSync.isValid(), false);
         Assert.assertNotNull(new ClientSyncMetaData().toString());
     }

@@ -13,17 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kaaproject.kaa.server.common.core.plugin.instance;
+package org.kaaproject.kaa.common;
 
-import org.kaaproject.kaa.server.common.core.plugin.def.PluginExecutionContext;
-import org.kaaproject.kaa.server.common.core.plugin.def.PluginInitContext;
+import java.nio.ByteBuffer;
 
-public interface KaaPlugin {
+public class Utils {
 
-    void init(PluginInitContext context) throws PluginLifecycleException;
-
-    void onPluginMessage(KaaPluginMessage msg, PluginExecutionContext ctx);
+    /**
+     * To byte array.
+     *
+     * @param buffer
+     *            the buffer
+     * @return the byte[]
+     */
+    public static byte[] toByteArray(ByteBuffer buffer) {
+        byte[] result = new byte[buffer.remaining()];
+        buffer.get(result);
+        return result;
+    }
     
-    void stop() throws PluginLifecycleException;
-
 }

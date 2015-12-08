@@ -13,17 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kaaproject.kaa.server.common.core.plugin.instance;
+package org.kaaproject.kaa.server.operations.service.akka.messages.core.plugin;
 
-import org.kaaproject.kaa.server.common.core.plugin.def.PluginExecutionContext;
-import org.kaaproject.kaa.server.common.core.plugin.def.PluginInitContext;
-
-public interface KaaPlugin {
-
-    void init(PluginInitContext context) throws PluginLifecycleException;
-
-    void onPluginMessage(KaaPluginMessage msg, PluginExecutionContext ctx);
-    
-    void stop() throws PluginLifecycleException;
+/**
+ * This message is used to deliver data from EndpointActor to corresponding
+ * PluginInstanceActor and vice versa.
+ * 
+ * @author Andrew Shvayka
+ *
+ */
+public class PluginExtenstionMessage {
 
 }

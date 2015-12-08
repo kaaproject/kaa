@@ -20,6 +20,7 @@ import org.kaaproject.kaa.server.common.core.plugin.def.PluginExecutionContext;
 import org.kaaproject.kaa.server.common.core.plugin.def.PluginInitContext;
 import org.kaaproject.kaa.server.common.core.plugin.instance.KaaPlugin;
 import org.kaaproject.kaa.server.common.core.plugin.instance.KaaPluginMessage;
+import org.kaaproject.kaa.server.common.core.plugin.instance.PluginLifecycleException;
 import org.kaaproject.kaa.server.plugin.rest.definition.KaaRestPluginDefinition;
 import org.kaaproject.kaa.server.plugin.rest.gen.KaaRestPluginConfigSchema;
 
@@ -31,7 +32,7 @@ import static org.kaaproject.kaa.server.plugin.rest.gen.HttpSchemaType.HTTP;
 public class KaaRestPlugin implements KaaPlugin {
 
     @Override
-    public void init(PluginInitContext context) {
+    public void init(PluginInitContext context) throws PluginLifecycleException {
 
     }
 
@@ -51,5 +52,11 @@ public class KaaRestPlugin implements KaaPlugin {
         httpServer.start();
         System.in.read();
         httpServer.stop();
+    }
+
+    @Override
+    public void stop() throws PluginLifecycleException {
+        // TODO Auto-generated method stub
+
     }
 }

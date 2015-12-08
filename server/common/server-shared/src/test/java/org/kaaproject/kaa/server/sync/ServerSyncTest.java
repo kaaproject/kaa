@@ -86,8 +86,16 @@ public class ServerSyncTest {
 
     @Test
     public void deepCopyServerSyncTest() {
-        ServerSync serverSync = new ServerSync(1, SyncStatus.SUCCESS, profileServerSync, configurationServerSync,
-                notificationServerSync, userServerSync, eventServerSync, redirectServerSync, logServerSync);
+        ServerSync serverSync = new ServerSync();
+        serverSync.setRequestId(1);
+        serverSync.setStatus(SyncStatus.SUCCESS);
+        serverSync.setProfileSync(profileServerSync);
+        serverSync.setConfigurationSync(configurationServerSync);
+        serverSync.setNotificationSync(notificationServerSync);
+        serverSync.setUserSync(userServerSync);
+        serverSync.setEventSync(eventServerSync);
+        serverSync.setRedirectSync(redirectServerSync);
+        serverSync.setLogSync(logServerSync);
 
         ServerSync serverSyncCopy = ServerSync.deepCopy(serverSync);
         Assert.assertEquals(serverSync, serverSyncCopy);

@@ -15,12 +15,15 @@
  */
 package org.kaaproject.kaa.server.sync;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.kaaproject.kaa.server.sync.bootstrap.BootstrapClientSync;
 
 /**
  * The Class ClientSync represents sync information sent from client to server.
  */
-public final class ClientSync {
+public final class ClientSync extends PluginSync {
 
     /** The request id. */
     private int requestId;
@@ -48,44 +51,18 @@ public final class ClientSync {
 
     /** The log sync. */
     private LogClientSync logSync;
+    
+    private List<ExtensionSync> extSyncList;
 
     public ClientSync() {
+        super(Collections.<ExtensionSync>emptyList());
     }
 
-    /**
-     * All-args constructor.
-     *
-     * @param requestId
-     *            the request id
-     * @param syncRequestMetaData
-     *            the sync request meta data
-     * @param profileSync
-     *            the profile sync request
-     * @param configurationSyncRequest
-     *            the configuration sync request
-     * @param notificationSyncRequest
-     *            the notification sync request
-     * @param userSyncRequest
-     *            the user sync request
-     * @param eventSyncRequest
-     *            the event sync request
-     * @param logSyncRequest
-     *            the log sync request
-     */
-    public ClientSync(int requestId, ClientSyncMetaData clientSyncMetaData, ProfileClientSync profileSync,
-            ConfigurationClientSync configurationSync, NotificationClientSync notificationSync, UserClientSync userSync,
-            EventClientSync eventSync, LogClientSync logSync) {
-        this.requestId = requestId;
-        this.clientSyncMetaData = clientSyncMetaData;
-        this.profileSync = profileSync;
-        this.configurationSync = configurationSync;
-        this.notificationSync = notificationSync;
-        this.userSync = userSync;
-        this.eventSync = eventSync;
-        this.logSync = logSync;
+    public ClientSync(List<ExtensionSync> extSyncList) {
+        super(extSyncList);
     }
 
-    /**
+    /**  
      * Gets the value of the 'requestId' field.
      *
      * @return the request id
@@ -243,6 +220,14 @@ public final class ClientSync {
 
     public void setBootstrapSync(BootstrapClientSync bootstrapSync) {
         this.bootstrapSync = bootstrapSync;
+    }
+
+    public List<ExtensionSync> getExtSyncList() {
+        return extSyncList;
+    }
+
+    public void setExtSyncList(List<ExtensionSync> extSyncList) {
+        this.extSyncList = extSyncList;
     }
 
     public boolean isValid() {

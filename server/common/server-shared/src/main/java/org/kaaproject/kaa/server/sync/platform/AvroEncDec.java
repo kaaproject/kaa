@@ -15,6 +15,8 @@
  */
 package org.kaaproject.kaa.server.sync.platform;
 
+import static org.kaaproject.kaa.common.Utils.toByteArray;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -70,6 +72,7 @@ import org.kaaproject.kaa.server.sync.Event;
 import org.kaaproject.kaa.server.sync.EventClientSync;
 import org.kaaproject.kaa.server.sync.EventListenersRequest;
 import org.kaaproject.kaa.server.sync.EventServerSync;
+import org.kaaproject.kaa.server.sync.ExtensionSync;
 import org.kaaproject.kaa.server.sync.LogClientSync;
 import org.kaaproject.kaa.server.sync.LogDeliveryStatus;
 import org.kaaproject.kaa.server.sync.LogEntry;
@@ -189,7 +192,7 @@ public class AvroEncDec implements PlatformEncDec {
      * @return the client sync
      */
     public static ClientSync convert(SyncRequest source) {
-        ClientSync dest = new ClientSync();
+        ClientSync dest = new ClientSync(convertExts(source.getExtensionSyncRequests()));
         dest.setRequestId(source.getRequestId());
         dest.setClientSyncMetaData(convert(source.getSyncRequestMetaData()));
         dest.setBootstrapSync(convert(source.getBootstrapSyncRequest()));
@@ -211,6 +214,7 @@ public class AvroEncDec implements PlatformEncDec {
      */
     public static SyncResponse convert(ServerSync source) {
         SyncResponse sync = new SyncResponse();
+        sync.setExtensionSyncResponses(convertExtsToAvro(source.getExtSyncList()));
         sync.setRequestId(source.getRequestId());
         sync.setStatus(convert(source.getStatus()));
         sync.setBootstrapSyncResponse(convert(source.getBootstrapSync()));
@@ -222,6 +226,30 @@ public class AvroEncDec implements PlatformEncDec {
         sync.setUserSyncResponse(convert(source.getUserSync()));
         sync.setLogSyncResponse(convert(source.getLogSync()));
         return sync;
+    }
+
+    private static List<ExtensionSync> convertExts(List<org.kaaproject.kaa.common.endpoint.gen.ExtensionSync> extSyncList) {
+        if (extSyncList == null || extSyncList.size() == 0) {
+            return Collections.emptyList();
+        } else {
+            List<ExtensionSync> extenstions = new ArrayList<>(extSyncList.size());
+            for (org.kaaproject.kaa.common.endpoint.gen.ExtensionSync syncSource : extSyncList) {
+                extenstions.add(new ExtensionSync(syncSource.getExtensionId(), toByteArray(syncSource.getPayload())));
+            }
+            return extenstions;
+        }
+    }
+
+    private static List<org.kaaproject.kaa.common.endpoint.gen.ExtensionSync> convertExtsToAvro(List<ExtensionSync> extSyncList) {
+        if (extSyncList == null || extSyncList.size() == 0) {
+            return Collections.emptyList();
+        } else {
+            List<org.kaaproject.kaa.common.endpoint.gen.ExtensionSync> extenstions = new ArrayList<>(extSyncList.size());
+            for (ExtensionSync syncSource : extSyncList) {
+                extenstions.add(new org.kaaproject.kaa.common.endpoint.gen.ExtensionSync(syncSource.getExtensionId(), ByteBuffer.wrap(syncSource.getData())));
+            }
+            return extenstions;
+        }
     }
 
     /**
@@ -426,17 +454,24 @@ public class AvroEncDec implements PlatformEncDec {
     }
 
     private static UserAttachErrorCode convert(UserVerifierErrorCode errorCode) {
-        if(errorCode == null){
+        if (errorCode == null) {
             return null;
         }
-        switch(errorCode){
-            case NO_VERIFIER_CONFIGURED : return UserAttachErrorCode.NO_VERIFIER_CONFIGURED;
-            case TOKEN_INVALID : return UserAttachErrorCode.TOKEN_INVALID;
-            case TOKEN_EXPIRED : return UserAttachErrorCode.TOKEN_EXPIRED;
-            case INTERNAL_ERROR : return UserAttachErrorCode.INTERNAL_ERROR;
-            case CONNECTION_ERROR : return UserAttachErrorCode.CONNECTION_ERROR;
-            case REMOTE_ERROR : return UserAttachErrorCode.REMOTE_ERROR;
-            default: return UserAttachErrorCode.OTHER;
+        switch (errorCode) {
+        case NO_VERIFIER_CONFIGURED:
+            return UserAttachErrorCode.NO_VERIFIER_CONFIGURED;
+        case TOKEN_INVALID:
+            return UserAttachErrorCode.TOKEN_INVALID;
+        case TOKEN_EXPIRED:
+            return UserAttachErrorCode.TOKEN_EXPIRED;
+        case INTERNAL_ERROR:
+            return UserAttachErrorCode.INTERNAL_ERROR;
+        case CONNECTION_ERROR:
+            return UserAttachErrorCode.CONNECTION_ERROR;
+        case REMOTE_ERROR:
+            return UserAttachErrorCode.REMOTE_ERROR;
+        default:
+            return UserAttachErrorCode.OTHER;
         }
     }
 
@@ -480,24 +515,30 @@ public class AvroEncDec implements PlatformEncDec {
         sync.setDeliveryStatuses(statuses);
         return sync;
     }
-    
+
     private static org.kaaproject.kaa.common.endpoint.gen.LogDeliveryStatus convert(LogDeliveryStatus source) {
         if (source == null) {
             return null;
         }
-        return new org.kaaproject.kaa.common.endpoint.gen.LogDeliveryStatus(source.getRequestId(), convert(source.getResult()), convert(source.getErrorCode()));
+        return new org.kaaproject.kaa.common.endpoint.gen.LogDeliveryStatus(source.getRequestId(), convert(source.getResult()),
+                convert(source.getErrorCode()));
     }
 
     private static LogDeliveryErrorCode convert(org.kaaproject.kaa.server.sync.LogDeliveryErrorCode errorCode) {
-        if(errorCode == null){
+        if (errorCode == null) {
             return null;
         }
-        switch(errorCode){
-            case NO_APPENDERS_CONFIGURED : return LogDeliveryErrorCode.NO_APPENDERS_CONFIGURED;
-            case APPENDER_INTERNAL_ERROR : return LogDeliveryErrorCode.APPENDER_INTERNAL_ERROR;
-            case REMOTE_INTERNAL_ERROR : return LogDeliveryErrorCode.REMOTE_INTERNAL_ERROR;
-            case REMOTE_CONNECTION_ERROR : return LogDeliveryErrorCode.REMOTE_CONNECTION_ERROR;
-            default: return null;
+        switch (errorCode) {
+        case NO_APPENDERS_CONFIGURED:
+            return LogDeliveryErrorCode.NO_APPENDERS_CONFIGURED;
+        case APPENDER_INTERNAL_ERROR:
+            return LogDeliveryErrorCode.APPENDER_INTERNAL_ERROR;
+        case REMOTE_INTERNAL_ERROR:
+            return LogDeliveryErrorCode.REMOTE_INTERNAL_ERROR;
+        case REMOTE_CONNECTION_ERROR:
+            return LogDeliveryErrorCode.REMOTE_CONNECTION_ERROR;
+        default:
+            return null;
         }
     }
 
@@ -629,8 +670,8 @@ public class AvroEncDec implements PlatformEncDec {
         }
         UserClientSync sync = new UserClientSync();
         if (source.getUserAttachRequest() != null) {
-            sync.setUserAttachRequest(new UserAttachRequest(source.getUserAttachRequest().getUserVerifierId(), source.getUserAttachRequest().getUserExternalId(), source
-                    .getUserAttachRequest().getUserAccessToken()));
+            sync.setUserAttachRequest(new UserAttachRequest(source.getUserAttachRequest().getUserVerifierId(), source
+                    .getUserAttachRequest().getUserExternalId(), source.getUserAttachRequest().getUserAccessToken()));
         }
         if (source.getEndpointAttachRequests() != null) {
             List<EndpointAttachRequest> requests = new ArrayList<>(source.getEndpointAttachRequests().size());
