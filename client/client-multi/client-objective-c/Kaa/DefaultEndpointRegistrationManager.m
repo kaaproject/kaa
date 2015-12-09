@@ -43,13 +43,15 @@
 @property (nonatomic,strong) NSMutableDictionary *attachEndpointRequests;
 @property (nonatomic,strong) NSMutableDictionary *detachEndpointRequests;
 
+@property (nonatomic) int attachRequestId;
+@property (nonatomic) int detachRequestId;
+
 - (void)onEndpointAccessTokenChanged;
 - (void)notifyAttachedDelegate:(SyncResponseResultType)result
                       delegate:(id<OnAttachEndpointOperationDelegate>)delegate
                        keyHash:(EndpointKeyHash *)keyHash;
 - (void)notifyDetachedDelegate:(SyncResponseResultType)result
                       delegate:(id<OnDetachEndpointOperationDelegate>)delegate;
-- (int)getRandomInteger;
 
 @end
 
@@ -63,6 +65,8 @@
     if (self) {
         self.state = state;
         self.context = context;
+        self.attachRequestId = 0;
+        self.detachRequestId = 0;
         self.userTransport = userTransport;
         self.profileTransport = profileTransport;
         
@@ -95,7 +99,7 @@
 }
 
 - (void)attachEndpoint:(EndpointAccessToken *)accessToken delegate:(id<OnAttachEndpointOperationDelegate>)delegate {
-    NSNumber *requestId = [NSNumber numberWithInt:[self getRandomInteger]];
+    NSNumber *requestId = [NSNumber numberWithInt:self.attachRequestId++];
     DDLogInfo(@"%@ Going to attach Endpoint by access token: %@", TAG, accessToken);
     @synchronized (self.attachEndpointRequests) {
         [self.attachEndpointRequests setObject:accessToken forKey:requestId];
@@ -111,7 +115,7 @@
 }
 
 - (void)detachEndpoint:(EndpointKeyHash *)keyHash delegate:(id<OnDetachEndpointOperationDelegate>)delegate {
-    NSNumber *requestId = [NSNumber numberWithInt:[self getRandomInteger]];
+    NSNumber *requestId = [NSNumber numberWithInt:self.detachRequestId++];
     DDLogInfo(@"%@ Going to detach Endpoint by endpoint key hash: %@", TAG, keyHash);
     @synchronized (self.detachEndpointRequests) {
         [self.detachEndpointRequests setObject:keyHash forKey:requestId];
@@ -280,12 +284,6 @@ userDetachNotification:(UserDetachNotification *)detachNotification {
 - (void)onEndpointAccessTokenChanged {
     if (self.profileTransport) {
         [self.profileTransport sync];
-    }
-}
-
-- (int)getRandomInteger {
-    @synchronized (self) {
-        return arc4random();
     }
 }
 
