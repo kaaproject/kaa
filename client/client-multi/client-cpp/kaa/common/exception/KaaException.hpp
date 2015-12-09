@@ -38,7 +38,7 @@ class KaaException : public std::exception {
 public:
     KaaException() : message_("") {}
 
-    KaaException(boost::format f) {
+    KaaException(boost::format& f) {
         std::stringstream ss;
         ss << "[Kaa OpenSource Project] Instruction failed! Details: \"" << f
            << "\" Original message: " << std::exception::what();
@@ -46,7 +46,7 @@ public:
         message_ = ss.str();
     }
 
-    KaaException(const std::string &message) {
+    KaaException(const std::string& message) {
         std::stringstream ss;
         ss << "[Kaa OpenSource Project] Instruction failed! Details: \"" << message
            << "\" Original message: " << std::exception::what();
@@ -54,11 +54,18 @@ public:
         message_ = ss.str();
     }
 
-    virtual const char * what() const throw () {
+    KaaException(const std::exception& e) {
+        std::stringstream ss;
+        ss << "[Kaa OpenSource Project] Instruction failed! Details: \"" << e.what();
+        captureStack(ss);
+        message_ = ss.str();
+    }
+
+    virtual const char * what() const throw() {
         return message_.c_str();
     }
 
-    virtual ~KaaException() throw () {}
+    virtual ~KaaException() = default;
 
 private:
     std::string message_;

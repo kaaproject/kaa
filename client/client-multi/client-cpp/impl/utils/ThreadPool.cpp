@@ -77,7 +77,7 @@ ThreadPool::ThreadPool(std::size_t workerCount): workerCount_(workerCount)
 
 ThreadPool::~ThreadPool()
 {
-    stop(true);
+    stop(!shutdownTimer_);
 }
 
 void ThreadPool::add(const ThreadPoolTask& task)

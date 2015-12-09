@@ -31,14 +31,12 @@ namespace kaa {
  */
 class IConfigurationStorage {
 public:
-    virtual ~IConfigurationStorage() {}
-
     /**
      * Specifies routine to persist configuration data.
      *
      * @param bytes Configuration binary data.
      */
-    virtual void saveConfiguration(std::vector<std::uint8_t>&& bytes) = 0;
+    virtual void saveConfiguration(const std::vector<std::uint8_t>& bytes) = 0;
 
     /**
      * Specifies routine to load configuration data.
@@ -51,6 +49,8 @@ public:
      * Clear configuration data (file).
      */
     virtual void clearConfiguration() = 0;
+
+    virtual ~IConfigurationStorage() = default;
 };
 
 typedef std::shared_ptr<IConfigurationStorage> IConfigurationStoragePtr;

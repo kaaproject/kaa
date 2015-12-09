@@ -28,8 +28,6 @@ namespace kaa {
  */
 class IConfigurationReceiver {
 public:
-    virtual ~IConfigurationReceiver() {};
-
     /**
      * Specific routine to process updated configuration.
      * Will be called by @link IConfigurationManager @endlink
@@ -38,6 +36,8 @@ public:
      * @param configuration Root record containing merged configuration.
      */
     virtual void onConfigurationUpdated(const KaaRootConfiguration &configuration) = 0;
+
+    virtual ~IConfigurationReceiver() = default;
 };
 
 }  // namespace kaa

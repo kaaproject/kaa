@@ -17,8 +17,9 @@
 #ifndef KAACLIENT_HPP_
 #define KAACLIENT_HPP_
 
-#include "kaa/IKaaClient.hpp"
+#include <memory>
 
+#include "kaa/IKaaClient.hpp"
 #include "kaa/ClientStatus.hpp"
 #include "kaa/event/EventManager.hpp"
 #include "kaa/profile/IProfileManager.hpp"
@@ -34,35 +35,24 @@
 #include "kaa/channel/impl/DefaultOperationTcpChannel.hpp"
 #include "kaa/channel/impl/DefaultOperationHttpChannel.hpp"
 #include "kaa/channel/impl/DefaultOperationLongPollChannel.hpp"
-#include "kaa/configuration/ConfigurationProcessor.hpp"
 #include "kaa/configuration/manager/ConfigurationManager.hpp"
-#include "kaa/configuration/storage/ConfigurationPersistenceManager.hpp"
 #include "kaa/log/LogCollector.hpp"
 #include "kaa/context/IExecutorContext.hpp"
+#include "kaa/IKaaClientStateListener.hpp"
+#include "kaa/IKaaClientPlatformContext.hpp"
+#include "kaa/KaaClientProperties.hpp"
 
 namespace kaa {
 
-typedef std::shared_ptr<IBootstrapManager> IBootstrapManagerPtr;
-
-typedef enum KaaOption
-{
-    USE_DEFAULT_BOOTSTRAP_HTTP_CHANNEL      = 0x01,
-    USE_DEFAULT_OPERATION_KAATCP_CHANNEL    = 0x02,
-    USE_DEFAULT_OPERATION_HTTP_CHANNEL      = 0x04,
-    USE_DEFAULT_OPERATION_LONG_POLL_CHANNEL = 0x08,
-    USE_DEFAULT_CONNECTIVITY_CHECKER        = 0x10
-} KaaOption;
-
-class KaaClient : public IKaaClient {
+class KaaClient : public IKaaClient,
+                  public std::enable_shared_from_this<IKaaClient> {
 public:
-    KaaClient();
-    virtual ~KaaClient() { }
+    KaaClient(IKaaClientPlatformContextPtr context, IKaaClientStateListenerPtr listener);
 
-    void init(int options = KAA_DEFAULT_OPTIONS);
-    void start();
-    void stop();
-    void pause();
-    void resume();
+    virtual void start();
+    virtual void stop();
+    virtual void pause();
+    virtual void resume();
 
     virtual void                                updateProfile();
     virtual IKaaChannelManager&                 getChannelManager();
@@ -98,14 +88,14 @@ public:
     virtual const KaaRootConfiguration&         getConfiguration();
     virtual void                                setConfigurationStorage(IConfigurationStoragePtr storage);
     virtual void                                attachEndpoint(const std::string&  endpointAccessToken
-                                                , IAttachEndpointCallbackPtr listener = IAttachEndpointCallbackPtr{});
+                                                , IAttachEndpointCallbackPtr listener = IAttachEndpointCallbackPtr());
     virtual void                                detachEndpoint(const std::string&  endpointKeyHash
-                                                , IDetachEndpointCallbackPtr listener = IDetachEndpointCallbackPtr{});
+                                                , IDetachEndpointCallbackPtr listener = IDetachEndpointCallbackPtr());
     virtual void                                attachUser(const std::string& userExternalId, const std::string& userAccessToken
-                                                          , IUserAttachCallbackPtr listener = IUserAttachCallbackPtr{});
+                                                          , IUserAttachCallbackPtr listener = IUserAttachCallbackPtr());
     virtual void                                attachUser(const std::string& userExternalId, const std::string& userAccessToken
                                                           , const std::string& userVerifierToken
-                                                          , IUserAttachCallbackPtr listener = IUserAttachCallbackPtr{});
+                                                          , IUserAttachCallbackPtr listener = IUserAttachCallbackPtr());
     virtual void                                setAttachStatusListener(IAttachStatusListenerPtr listener);
     virtual bool                                isAttachedToUser();
     virtual std::int32_t                        findEventListeners(const std::list<std::string>& eventFQNs
@@ -115,18 +105,13 @@ public:
     virtual IKaaDataDemultiplexer&              getBootstrapDemultiplexer();
 
 private:
-    void initKaaConfiguration();
+    void init();
+
     void initKaaTransport();
     void initClientKeys();
 
-    void setDefaultConfiguration();
-
     void checkReadiness();
 
-public:
-    static const int KAA_DEFAULT_OPTIONS = KaaOption::USE_DEFAULT_BOOTSTRAP_HTTP_CHANNEL   |
-                                           KaaOption::USE_DEFAULT_OPERATION_KAATCP_CHANNEL |
-                                           KaaOption::USE_DEFAULT_CONNECTIVITY_CHECKER;
 private:
     enum class State {
         CREATED,
@@ -142,34 +127,47 @@ private:
 private:
     State                                           clientState_ = State::CREATED;
 
-    IKaaClientStateStoragePtr                       status_;
-    IBootstrapManagerPtr                            bootstrapManager_;
-    IFailoverStrategyPtr                            failoverStrategy_;
+#ifdef KAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL
+    std::unique_ptr<DefaultBootstrapChannel>         bootstrapChannel_;
+#endif
+#ifdef KAA_DEFAULT_TCP_CHANNEL
+    std::unique_ptr<DefaultOperationTcpChannel>      opsTcpChannel_;
+#endif
+#ifdef KAA_DEFAULT_OPERATION_HTTP_CHANNEL
+    std::unique_ptr<DefaultOperationHttpChannel>     opsHttpChannel_;
+#endif
+#ifdef KAA_DEFAULT_LONG_POLL_CHANNEL
+    std::unique_ptr<DefaultOperationLongPollChannel> opsLongPollChannel_;
+#endif
 
-    std::unique_ptr<ProfileManager>                 profileManager_;
-    std::unique_ptr<NotificationManager>            notificationManager_;
+    IKaaClientPlatformContextPtr                     platformContext_;
+    IExecutorContext&                                executorContext_;
+    KaaClientProperties                              clientProperties_;
+    IKaaClientStateListenerPtr                       stateListener_;
 
-    std::unique_ptr<KeyPair> clientKeys_;
-    std::string              publicKeyHash_;
+    IKaaClientStateStoragePtr                        status_;
+    std::unique_ptr<IBootstrapManager>               bootstrapManager_;
+    std::unique_ptr<IKaaChannelManager>              channelManager_;
+    std::unique_ptr<SyncDataProcessor>               syncProcessor_;
+    IFailoverStrategyPtr                             failoverStrategy_;
 
+    std::unique_ptr<KeyPair>                         clientKeys_;
+    std::string                                      publicKeyHash_;
+    std::unique_ptr<ProfileManager>                  profileManager_;
+#ifdef KAA_USE_NOTIFICATIONS
+    std::unique_ptr<NotificationManager>             notificationManager_;
+#endif
+#ifdef KAA_USE_CONFIGURATION
     std::unique_ptr<ConfigurationManager>            configurationManager_;
-    std::unique_ptr<ConfigurationProcessor>          configurationProcessor_;
-    std::unique_ptr<ConfigurationPersistenceManager> configurationPersistenceManager_;
+#endif
+#ifdef KAA_USE_EVENTS
     std::unique_ptr<EventManager>                    eventManager_;
     std::unique_ptr<EventFamilyFactory>              eventFamilyFactory_;
     std::unique_ptr<EndpointRegistrationManager>     registrationManager_;
+#endif
+#ifdef KAA_USE_LOGGING
     std::unique_ptr<LogCollector>                    logCollector_;
-    std::unique_ptr<IKaaChannelManager>              channelManager_;
-    std::unique_ptr<SyncDataProcessor>               syncProcessor_;
-
-    std::unique_ptr<DefaultBootstrapChannel>          bootstrapChannel_;
-    std::unique_ptr<DefaultOperationTcpChannel>       opsTcpChannel_;
-    std::unique_ptr<DefaultOperationHttpChannel>      opsHttpChannel_;
-    std::unique_ptr<DefaultOperationLongPollChannel>  opsLongPollChannel_;
-
-    std::unique_ptr<IExecutorContext>                 executorContext_;
-
-    int options_;
+#endif
 };
 
 }

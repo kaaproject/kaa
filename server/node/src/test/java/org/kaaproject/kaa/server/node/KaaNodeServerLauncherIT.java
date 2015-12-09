@@ -150,7 +150,7 @@ public class KaaNodeServerLauncherIT {
             
             kaaNodeServerLauncherThread.start();
             
-            Thread.sleep(20000);
+            Thread.sleep(30000);
             
             transport = new TSocket(HOST, PORT);
             TProtocol protocol = new TBinaryProtocol(transport);

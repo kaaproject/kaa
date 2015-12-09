@@ -37,9 +37,17 @@ IF (APPLE)
   ENDIF ()
 ENDIF (APPLE)
 
+IF ($ENV{SQLITE_HOME})
+    SET(SQLITE_HOME $ENV{LIB_DIR})
+    MESSAGE("SQLITE_HOME=${SQLITE_HOME}")
+ELSE ()
+    SET(SQLITE_HOME $ENV{SQLITE_HOME})
+    MESSAGE("SQLITE_HOME=${SQLITE_HOME}")
+ENDIF ()
+
 FIND_PATH(SQLITE3_INCLUDE_DIR sqlite3.h
-  "$ENV{LIB_DIR}/include"
-  "$ENV{LIB_DIR}/include/sqlite"
+  "${SQLITE_HOME}/include"
+  "${SQLITE_HOME}/include/sqlite"
   #mingw
   c:/msys/local/include
   NO_DEFAULT_PATH
@@ -49,7 +57,7 @@ FIND_PATH(SQLITE3_INCLUDE_DIR sqlite3.h)
 FIND_LIBRARY(SQLITE3_LIBRARY NAMES sqlite3 sqlite3_i PATHS
   $ENV{LIB} 
   /usr/lib 
-  "$ENV{LIB_DIR}/lib"
+  "${SQLITE_HOME}/lib"
   #mingw
   c:/msys/local/lib
   NO_DEFAULT_PATH

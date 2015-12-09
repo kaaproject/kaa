@@ -25,9 +25,6 @@
 
 namespace kaa {
 
-class IConfigurationHashContainer;
-typedef std::shared_ptr<IConfigurationHashContainer> IConfigurationHashContainerPtr;
-
 /**
  * Container for the configuration data hash.
  */
@@ -42,8 +39,10 @@ public:
      */
     virtual EndpointObjectHash getConfigurationHash() = 0;
 
-    virtual ~IConfigurationHashContainer() {}
+    virtual ~IConfigurationHashContainer() = default;
 };
+
+typedef std::shared_ptr<IConfigurationHashContainer> IConfigurationHashContainerPtr;
 
 }  // namespace kaa
 

@@ -19,12 +19,31 @@
 
 #include <memory>
 
+#include "kaa/KaaThread.hpp"
 #include "kaa/utils/ThreadPool.hpp"
 #include "kaa/context/IExecutorContext.hpp"
 
 namespace kaa {
 
 class AbstractExecutorContext : public IExecutorContext {
+public:
+    AbstractExecutorContext()
+        : useCount_(0), awaitTerminationTimeout_(5)
+    {}
+
+    virtual void init();
+    virtual void stop();
+
+    void setAwaitTerminationTimeout(std::size_t awaitTerminationTimeout)
+    {
+        awaitTerminationTimeout_ = awaitTerminationTimeout;
+    }
+
+    std::size_t getAwaitTerminationTimeout()
+    {
+        return awaitTerminationTimeout_;
+    }
+
 protected:
     IThreadPoolPtr createExecutor(std::size_t threadCount)
     {
@@ -38,18 +57,15 @@ protected:
         }
     }
 
-    void setAwaitTerminationTimeout(std::size_t awaitTerminationTimeout)
-    {
-        awaitTerminationTimeout_ = awaitTerminationTimeout;
-    }
-
-    std::size_t getAwaitTerminationTimeout()
-    {
-        return awaitTerminationTimeout_;
-    }
-
 protected:
-    std::size_t awaitTerminationTimeout_ = 5; // in seconds
+    virtual void doInit() = 0;
+    virtual void doStop() = 0;
+
+private:
+    std::size_t useCount_;
+    KAA_MUTEX_DECLARE(useCountGuard_);
+
+    std::size_t awaitTerminationTimeout_; // in seconds
 };
 
 } /* namespace kaa */
