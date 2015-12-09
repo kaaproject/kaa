@@ -106,17 +106,19 @@ public interface EndpointProfileDao<T extends EndpointProfile> extends Dao<T, By
     List<T> findByEndpointUserId(String endpointUserId);
 
     /**
-     * @deprecated The functionality of this method is not yet necessary.
+     * @deprecated  The functionality of this method is not yet necessary.
+     * @param       sdkToken the sdk token
+     * @return      the list of endpoint profile objects
      */
     List<T> findBySdkToken(String sdkToken);
 
     /**
      * Checks whether there are any endpoint profiles with the given SDK token.
      *
-     * @param sdkToken An SDK token
+     * @param   sdkToken An SDK token
      *
-     * @return <code>true</code> if there is at least one endpoint profile with
-     *         the given SDK token, <code>false</code> otherwise
+     * @return  <code>true</code> if there is at least one endpoint profile with
+     *          the given SDK token, <code>false</code> otherwise
      */
     boolean checkSdkToken(String sdkToken);
 }

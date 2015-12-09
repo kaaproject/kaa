@@ -33,8 +33,6 @@ namespace kaa {
  */
 class IConfigurationProcessor {
 public:
-    virtual ~IConfigurationProcessor() {}
-
     /**
      * Routine for processing received configuration data.
      *
@@ -42,7 +40,9 @@ public:
      * @param data_length   Size of configuration data.
      * @param full_resunc   Signals if data contains full configuration resync or partial update
      */
-    virtual void processConfigurationData(const std::uint8_t *data, std::size_t dataLength, bool fullResync) = 0;
+    virtual void processConfigurationData(const std::vector<std::uint8_t>& data, bool fullResync) = 0;
+
+    virtual ~IConfigurationProcessor() = default;
 };
 
 typedef std::shared_ptr<IConfigurationProcessor> IConfigurationProcessorPtr;

@@ -17,9 +17,9 @@
 #ifndef SIMPLEEXECUTORCONTEXT_HPP_
 #define SIMPLEEXECUTORCONTEXT_HPP_
 
-#include "kaa/context/AbstractExecutorContext.hpp"
-
 #include <memory>
+
+#include "kaa/context/AbstractExecutorContext.hpp"
 
 namespace kaa {
 
@@ -29,15 +29,16 @@ public:
                         , std::size_t apiThreadCount = DEFAULT_THREAD_COUNT
                         , std::size_t callbackThreadCount = DEFAULT_THREAD_COUNT);
 
-    virtual void init();
-    virtual void stop();
-
     virtual IThreadPool& getLifeCycleExecutor() { return *lifeCycleExecutor_; }
     virtual IThreadPool& getApiExecutor() { return *apiExecutor_; }
     virtual IThreadPool& getCallbackExecutor() { return *callbackExecutor_; }
 
 public:
     static const std::size_t DEFAULT_THREAD_COUNT = 1;
+
+protected:
+    virtual void doInit();
+    virtual void doStop();
 
 private:
     const std::size_t    apiThreadCount_;

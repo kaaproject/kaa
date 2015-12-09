@@ -1,0 +1,29 @@
+    public void sendEventToAll(${event_class_fqn} event) {
+        sendEvent(event, null);
+    }
+
+    public void sendEvent(${event_class_fqn} event, String target) {
+        try {
+            AvroByteArrayConverter<${event_class_fqn}> converter = new AvroByteArrayConverter<>(${event_class_fqn}.class);
+            byte[] data = converter.toByteArray(event);
+            eventManager.produceEvent("${event_class_fqn}", data, target);
+        }
+        catch (IOException e) {
+            LOG.error("Exception caught while sending event with fqn [{}]: {}", "${event_class_fqn}", e.toString());
+        }
+    }
+
+    public void addEventToBlock(TransactionId trxId, ${event_class_fqn} event) {
+        addEventToBlock(trxId, event, null);
+    }
+
+    public void addEventToBlock(TransactionId trxId, ${event_class_fqn} event, String target) {
+        try {
+            AvroByteArrayConverter<${event_class_fqn}> converter = new AvroByteArrayConverter<>(${event_class_fqn}.class);
+            byte[] data = converter.toByteArray(event);
+            eventManager.produceEvent("${event_class_fqn}", data, target, trxId);
+        }
+        catch (IOException e) {
+            LOG.error("Exception caught while sending event with fqn [{}]: {}", "${event_class_fqn}", e.toString());
+        }
+    }

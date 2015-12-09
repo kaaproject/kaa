@@ -17,10 +17,14 @@
 #ifndef ICONFIGURATIONTRANSPORT_HPP_
 #define ICONFIGURATIONTRANSPORT_HPP_
 
-#include "kaa/gen/EndpointGen.hpp"
 #include <memory>
 
+#include "kaa/gen/EndpointGen.hpp"
+
 namespace kaa {
+
+class IConfigurationProcessor;
+class IConfigurationHashContainer;
 
 /**
  * Updates the Configuration manager state.
@@ -44,7 +48,23 @@ public:
      */
     virtual void onConfigurationResponse(const ConfigurationSyncResponse &response) = 0;
 
-    virtual ~IConfigurationTransport() {}
+    /**
+     * Sets the configuration hash container.
+     *
+     * @param container the container to be set.
+     * @see IConfigurationHashContainer
+     */
+    virtual void setConfigurationHashContainer(IConfigurationHashContainer* container) = 0;
+
+    /**
+     * Sets the configuration processor.
+     *
+     * @param processor the processor to be set.
+     * @see IConfigurationProcessor
+     */
+    virtual void setConfigurationProcessor(IConfigurationProcessor* processor) = 0;
+
+    virtual ~IConfigurationTransport() = default;
 };
 
 }  // namespace kaa
