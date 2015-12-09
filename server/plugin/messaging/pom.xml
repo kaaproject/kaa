@@ -49,6 +49,9 @@
                             <includes>
                                 <include>messaging_plugin.avsc</include>
                                 <include>messaging_plugin_item.avsc</include>
+                                <include>class_a.avsc</include>
+                                <include>class_b.avsc</include>
+                                <include>class_c.avsc</include>
                             </includes>
                         </configuration>
                     </execution>

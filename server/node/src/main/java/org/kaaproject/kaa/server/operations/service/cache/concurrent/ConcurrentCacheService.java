@@ -59,6 +59,7 @@ import org.kaaproject.kaa.server.common.dao.ProfileService;
 import org.kaaproject.kaa.server.common.dao.SdkProfileService;
 import org.kaaproject.kaa.server.common.dao.TopicService;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.plugin.SdkExtensionKey;
 import org.kaaproject.kaa.server.operations.service.cache.AppSeqNumber;
 import org.kaaproject.kaa.server.operations.service.cache.AppVersionKey;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
@@ -914,5 +915,11 @@ public class ConcurrentCacheService implements CacheService {
         default:
             return false;
         }
+    }
+
+    @Override
+    public String getPluginInstanceId(SdkExtensionKey pluginKey) {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

@@ -19,4 +19,6 @@ import org.kaaproject.kaa.server.common.core.plugin.def.PluginInitContext;
 
 public interface PluginSdkApiGenerationContext extends PluginInitContext {
 
+    int getExtensionId();
+
 }

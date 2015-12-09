@@ -15,13 +15,22 @@
  */
 package org.kaaproject.kaa.server.operations.service.akka.messages.core.plugin;
 
-/**
- * This message is used to deliver data from EndpointActor to corresponding
- * PluginInstanceActor and vice versa.
- * 
- * @author Andrew Shvayka
- *
- */
-public class PluginExtenstionMessage {
+public class PluginMessage extends EndpointExtensionMessage {
+
+    private final String pluginId;
+
+    public PluginMessage(String pluginId, EndpointExtensionMessage msg) {
+        super(msg);
+        this.pluginId = pluginId;
+    }
+
+    public String getPluginId() {
+        return pluginId;
+    }
+
+    @Override
+    public String toString() {
+        return "PluginMessage [pluginId=" + pluginId + ", endpointKey=" + getEpKey() + "]";
+    }
 
 }

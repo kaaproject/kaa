@@ -44,4 +44,9 @@ public class SpecificPluginSdkApiGenerationContext<T> implements PluginSdkApiGen
         return base.getPluginContracts();
     }
 
+    @Override
+    public int getExtensionId() {
+        return base.getExtensionId();
+    }
+
 }

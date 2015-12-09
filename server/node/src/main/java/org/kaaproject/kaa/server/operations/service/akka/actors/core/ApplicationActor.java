@@ -33,6 +33,9 @@ import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointStopMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.logs.LogEventPackMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.notification.ThriftNotificationMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.plugin.EndpointExtensionMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.plugin.PluginMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.plugin.SdkExtensionKey;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.stats.ApplicationActorStatusResponse;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.stats.StatusRequestMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.topic.NotificationMessage;
@@ -69,19 +72,23 @@ public class ApplicationActor extends UntypedActor {
     /** The Akka service context */
     private final AkkaContext context;
 
+    private final String applicationToken;
+
     /** The endpoint sessions. */
     private final Map<EndpointObjectHash, ActorMetaData> endpointSessions;
 
     private final Map<String, EndpointObjectHash> endpointActorMap;
 
-    /** The topic sessions. */
+    /** The topic actor sessions. */
     private final Map<String, ActorRef> topicSessions;
 
-    private final String applicationToken;
-
+    /** The log actor sessions. */
     private final Map<String, ActorRef> logsSessions;
 
+    /** The user verifier actor sessions. */
     private final Map<String, ActorRef> userVerifierSessions;
+
+    private final Map<SdkExtensionKey, String> pluginIdMap;
 
     private ActorRef applicationLogActor;
 
@@ -90,8 +97,10 @@ public class ApplicationActor extends UntypedActor {
     /**
      * Instantiates a new application actor.
      *
-     * @param context the context
-     * @param applicationToken the application token
+     * @param context
+     *            the context
+     * @param applicationToken
+     *            the application token
      */
     private ApplicationActor(AkkaContext context, String applicationToken) {
         this.context = context;
@@ -101,6 +110,7 @@ public class ApplicationActor extends UntypedActor {
         this.topicSessions = new HashMap<>();
         this.logsSessions = new HashMap<>();
         this.userVerifierSessions = new HashMap<>();
+        this.pluginIdMap = new HashMap<>();
         this.applicationLogActor = getOrCreateLogActor();
         this.userVerifierActor = getOrCreateUserVerifierActor();
     }
@@ -126,8 +136,10 @@ public class ApplicationActor extends UntypedActor {
         /**
          * Instantiates a new actor creator.
          *
-         * @param context the context
-         * @param applicationToken the application token
+         * @param context
+         *            the context
+         * @param applicationToken
+         *            the application token
          */
         public ActorCreator(AkkaContext context, String applicationToken) {
             super();
@@ -160,8 +172,9 @@ public class ApplicationActor extends UntypedActor {
         }
         if (message instanceof EndpointAwareMessage) {
             processEndpointAwareMessage((EndpointAwareMessage) message);
-        }
-        if (message instanceof SessionAware) {
+        } else if (message instanceof EndpointExtensionMessage) {
+            processExtensionMessage((EndpointExtensionMessage) message);
+        } else if (message instanceof SessionAware) {
             processSessionAwareMessage((SessionAware) message);
         } else if (message instanceof EndpointEventDeliveryMessage) {
             processEndpointEventDeliveryMessage((EndpointEventDeliveryMessage) message);
@@ -182,6 +195,18 @@ public class ApplicationActor extends UntypedActor {
         } else if (message instanceof StatusRequestMessage) {
             processStatusRequest((StatusRequestMessage) message);
         }
+    }
+
+    private void processExtensionMessage(EndpointExtensionMessage message) {
+        LOG.debug("[{}] Processing extension message {}", applicationToken, message);
+        SdkExtensionKey pluginKey = message.getExtKey();
+        String pluginId = pluginIdMap.get(pluginKey);
+        if (pluginId == null) {
+            pluginId = context.getCacheService().getPluginInstanceId(pluginKey);
+            pluginIdMap.put(pluginKey, pluginId);
+        }
+        LOG.debug("[{}] Going to forward this message to plugin with id [{}]", applicationToken, pluginId);
+        context().parent().tell(new PluginMessage(pluginId, message), context().self());
     }
 
     /**

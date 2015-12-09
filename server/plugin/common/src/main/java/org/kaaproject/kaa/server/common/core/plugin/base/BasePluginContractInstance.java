@@ -15,7 +15,9 @@
  */
 package org.kaaproject.kaa.server.common.core.plugin.base;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.kaaproject.kaa.server.common.core.plugin.def.PluginContractDef;
@@ -26,7 +28,7 @@ import org.kaaproject.kaa.server.common.core.plugin.instance.PluginContractItemI
 public class BasePluginContractInstance implements PluginContractInstance {
 
     private final PluginContractDef contract;
-    private final Map<PluginContractItemDef, PluginContractItemInfo> info;
+    private final Map<PluginContractItemDef, List<PluginContractItemInfo>> info;
 
     public BasePluginContractInstance(PluginContractDef contract) {
         super();
@@ -35,7 +37,12 @@ public class BasePluginContractInstance implements PluginContractInstance {
     }
 
     public void addContractItemInfo(PluginContractItemDef itemDef, PluginContractItemInfo itemInfo) {
-        info.put(itemDef, itemInfo);
+        List<PluginContractItemInfo> items = info.get(itemDef);
+        if(items == null){
+            items = new ArrayList<>();
+            info.put(itemDef, items);
+        }
+        items.add(itemInfo);
     }
 
     @Override
@@ -44,7 +51,7 @@ public class BasePluginContractInstance implements PluginContractInstance {
     }
 
     @Override
-    public PluginContractItemInfo getContractItemInfo(PluginContractItemDef itemDef) {
+    public List<PluginContractItemInfo> getContractItemInfo(PluginContractItemDef itemDef) {
         return info.get(itemDef);
     }
 
