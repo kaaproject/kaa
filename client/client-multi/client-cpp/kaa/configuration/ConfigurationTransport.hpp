@@ -19,9 +19,9 @@
 
 #include "kaa/KaaDefaults.hpp"
 
+#include "kaa/IKaaClientStateStorage.hpp"
 #include "kaa/channel/transport/AbstractKaaTransport.hpp"
 #include "kaa/channel/transport/IConfigurationTransport.hpp"
-#include "kaa/IKaaClientStateStorage.hpp"
 
 namespace kaa {
 
@@ -29,19 +29,29 @@ class IKaaChannelManager;
 class IConfigurationProcessor;
 class IConfigurationHashContainer;
 
-class ConfigurationTransport : public AbstractKaaTransport<TransportType::CONFIGURATION>, public IConfigurationTransport
-{
+class ConfigurationTransport : public AbstractKaaTransport<TransportType::CONFIGURATION>,
+                               public IConfigurationTransport {
 public:
-    ConfigurationTransport(IKaaChannelManager& channelManager, IConfigurationProcessor *configProcessor, IConfigurationHashContainer *hashContainer, IKaaClientStateStoragePtr status);
+    ConfigurationTransport(IKaaChannelManager& channelManager, IKaaClientStateStoragePtr status);
 
-    void sync();
+    virtual void sync();
 
     virtual std::shared_ptr<ConfigurationSyncRequest> createConfigurationRequest();
     virtual void onConfigurationResponse(const ConfigurationSyncResponse &response);
 
+    virtual void setConfigurationHashContainer(IConfigurationHashContainer* container)
+    {
+        hashContainer_ = container;
+    }
+
+    virtual void setConfigurationProcessor(IConfigurationProcessor* processor)
+    {
+        configurationProcessor_ = processor;
+    }
+
 private:
-    IConfigurationProcessor     *configurationProcessor_;
-    IConfigurationHashContainer *hashContainer_;
+    IConfigurationProcessor        *configurationProcessor_;
+    IConfigurationHashContainer    *hashContainer_;
 };
 
 }  // namespace kaa

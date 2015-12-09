@@ -29,7 +29,10 @@
 
 #include <boost/test/unit_test.hpp>
 
+#include "kaa/configuration/manager/IConfigurationReceiver.hpp"
+
 #include "headers/context/MockExecutorContext.hpp"
+#include "headers/MockKaaClientStateStorage.hpp"
 
 namespace kaa {
 
@@ -61,29 +64,26 @@ BOOST_AUTO_TEST_SUITE(ConfigurationManagerSuite)
 
 BOOST_AUTO_TEST_CASE(configurationUpdated)
 {
+    auto stateMock = std::make_shared<MockKaaClientStateStorage>();
+
     SimpleExecutorContext context;
     context.init();
-    ConfigurationManager manager(context);
+    ConfigurationManager manager(context, stateMock);
     ConfigurationReceiverMock receiver;
 
-    manager.subscribeForConfigurationChanges(receiver);
+    manager.addReceiver(receiver);
 
     AvroByteArrayConverter<KaaRootConfiguration> convert;
     auto rootConfig = std::make_shared<KaaRootConfiguration>();
     convert.fromByteArray(getDefaultConfigData().begin(), getDefaultConfigData().size(), *rootConfig);
 
-    manager.onDeltaReceived(0, rootConfig, true);
-    testSleep(1);
-    BOOST_CHECK(!receiver.isConfigurationReceived());
-
-    manager.onConfigurationProcessed();
+    manager.processConfigurationData(std::vector<std::uint8_t>(getDefaultConfigData().begin(), getDefaultConfigData().begin() + getDefaultConfigData().size()), true);
     testSleep(1);
     BOOST_CHECK(receiver.isConfigurationReceived());
 
-    manager.unsubscribeFromConfigurationChanges(receiver);
+    manager.removeReceiver(receiver);
     receiver.reset();
-    manager.onDeltaReceived(0, rootConfig, true);
-    manager.onConfigurationProcessed();
+    manager.processConfigurationData(std::vector<std::uint8_t>(getDefaultConfigData().begin(), getDefaultConfigData().begin() + getDefaultConfigData().size()), true);
     testSleep(1);
     BOOST_CHECK(!receiver.isConfigurationReceived());
 
@@ -94,14 +94,11 @@ BOOST_AUTO_TEST_CASE(configurationUpdated)
 
 BOOST_AUTO_TEST_CASE(configurationPartialUpdated)
 {
+    auto stateMock = std::make_shared<MockKaaClientStateStorage>();
     MockExecutorContext context;
-    ConfigurationManager manager(context);
+    ConfigurationManager manager(context, stateMock);
 
-    AvroByteArrayConverter<KaaRootConfiguration> convert;
-    auto rootConfig = std::make_shared<KaaRootConfiguration>();
-    convert.fromByteArray(getDefaultConfigData().begin(), getDefaultConfigData().size(), *rootConfig);
-
-    BOOST_CHECK_THROW(manager.onDeltaReceived(0, rootConfig, false), KaaException);
+    BOOST_CHECK_THROW(manager.processConfigurationData(std::vector<std::uint8_t>(getDefaultConfigData().begin(), getDefaultConfigData().begin() + getDefaultConfigData().size()), false);, KaaException);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

@@ -23,11 +23,11 @@
 namespace kaa {
 
 
-void FileConfigurationStorage::saveConfiguration(std::vector<std::uint8_t>&& bytes)
+void FileConfigurationStorage::saveConfiguration(const std::vector<std::uint8_t>& bytes)
 {
     std::ofstream outFile(filename_, std::ofstream::binary);
     if (outFile.good()) {
-        outFile.write(reinterpret_cast<char *>(bytes.data()), bytes.size());
+        outFile.write(reinterpret_cast<const char *>(bytes.data()), bytes.size());
         outFile.close();
     }
 }
