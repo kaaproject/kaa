@@ -67,6 +67,10 @@ public class CTLSchemaMetaInfo extends GenericModel<CTLSchemaMetaInfoDto> implem
         this.version = version;
     }
 
+    public CTLSchemaMetaInfo(Long id) {
+        this.id = id;
+    }
+
     public String getFqn() {
         return fqn;
     }
@@ -94,6 +98,11 @@ public class CTLSchemaMetaInfo extends GenericModel<CTLSchemaMetaInfoDto> implem
     @Override
     protected CTLSchemaMetaInfoDto createDto() {
         return new CTLSchemaMetaInfoDto();
+    }
+
+    @Override
+    protected GenericModel<CTLSchemaMetaInfoDto> newInstance(Long id) {
+        return new CTLSchemaMetaInfo(id);
     }
 
     @Override

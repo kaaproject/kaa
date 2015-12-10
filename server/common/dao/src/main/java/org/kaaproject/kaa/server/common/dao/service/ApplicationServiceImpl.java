@@ -52,7 +52,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
@@ -68,6 +70,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     private static final Logger LOG = LoggerFactory.getLogger(ApplicationServiceImpl.class);
 
     private static final String GROUP_ALL = "All";
+    private static final String DEFAULT_FILTER_BODY = "true";
 
     private static final String DEFAULT_CONFIGURATION_SCHEMA_FILE = "/default_configuration_schema.avsc";
     private static final String DEFAULT_NOTIFICATION_SCHEMA_FILE = "/default_notification_schema.avsc";
@@ -186,14 +189,15 @@ public class ApplicationServiceImpl implements ApplicationService {
                 if(groupDto != null) {
                     String groupId = groupDto.getId();
                     LOG.debug("Saved endpoint group with id [{}]", groupId);
-                    ProfileFilterDto filter = createDefaultProfileWithSchema(appId, groupId, createdUsername);
+                    ProfileSchemaDto profileSchema = createDefaultProfileSchema(appId, createdUsername);
                     ConfigurationDto configuration = createDefaultConfigurationWithSchema(appId, groupId, createdUsername);
-                    if (filter == null || configuration == null) {
+                    if (profileSchema == null || configuration == null) {
                         LOG.warn("Got error during creation application. Deleted application with id [{}]", appId);
                         removeCascadeApplication(appId);
                     }
                     LOG.debug("Creating default server profile schema");
-                    createDefaultServerProfileSchema(appId, createdUsername);
+                    ServerProfileSchemaDto serverProfileService = createDefaultServerProfileSchema(appId, createdUsername);
+                    createDefaultProfileFilter(groupDto.getId(), profileSchema, serverProfileService);
                     LOG.debug("Creating default notification schema");
                     createDefaultNotificationSchema(appId, createdUsername);
                     LOG.debug("Creating default log schema");
@@ -208,6 +212,21 @@ public class ApplicationServiceImpl implements ApplicationService {
         return appDto;
     }
 
+    private void createDefaultProfileFilter(String groupId, ProfileSchemaDto profileSchema, ServerProfileSchemaDto serverProfileSchema) {
+        ProfileFilterDto filterDto = new ProfileFilterDto();
+        filterDto.setBody(DEFAULT_FILTER_BODY);
+        filterDto.setEndpointGroupId(groupId);
+
+        Set<Integer> endpointSchemas = new HashSet<>();
+        endpointSchemas.add(profileSchema.getVersion());
+        filterDto.setEndpointSchemaVersions(endpointSchemas);
+
+        Set<Integer> serverSchemas = new HashSet<>();
+        serverSchemas.add(serverProfileSchema.getVersion());
+        filterDto.setServerSchemaVersions(serverSchemas);
+        profileService.saveProfileFilter(filterDto);
+    }
+
     private EndpointGroupDto createDefaultGroup(String appId, String createdUsername) {
         EndpointGroupDto endpointGroup = new EndpointGroupDto();
         endpointGroup.setName(GROUP_ALL);
@@ -216,7 +235,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         return endpointService.saveEndpointGroup(endpointGroup);
     }
 
-    private ProfileFilterDto createDefaultProfileWithSchema(String appId, String groupId, String createdUsername) {
+    private ProfileSchemaDto createDefaultProfileSchema(String appId, String createdUsername) {
         ProfileSchemaDto profileSchemaDto = new ProfileSchemaDto();
         profileSchemaDto.setApplicationId(appId);
         CTLSchemaDto ctlSchema = ctlService.getOrCreateEmptySystemSchema(createdUsername);
@@ -224,12 +243,10 @@ public class ApplicationServiceImpl implements ApplicationService {
         profileSchemaDto.setName(DEFAULT_SCHEMA_NAME);
         profileSchemaDto.setCreatedUsername(createdUsername);
         profileSchemaDto = profileService.saveProfileSchema(profileSchemaDto);
-
-        if (profileSchemaDto != null) {
-            return profileService.findLatestFilterBySchemaIdAndGroupId(profileSchemaDto.getId(), groupId);
-        } else {
+        if (profileSchemaDto == null) {
             throw new RuntimeException("Can't save default profile schema " + profileSchemaDto); //NOSONAR
         }
+        return profileSchemaDto;
     }
 
     private ConfigurationDto createDefaultConfigurationWithSchema(String appId, String groupId, String createdUsername) {
@@ -293,13 +310,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     private void removeCascadeApplication(String id) {
-//        configurationService.removeConfSchemasByAppId(id);
-//        endpointService.removeEndpointGroupByAppId(id);
-//        topicService.removeTopicsByAppId(id);
-//        endpointService.removeEndpointProfileByAppId(id);
-//        logSchemaService.removeLogSchemasByAppId(id);
         applicationDao.removeById(id);
-//        notificationService.removeNotificationSchemasByAppId(id);
     }
 
 }

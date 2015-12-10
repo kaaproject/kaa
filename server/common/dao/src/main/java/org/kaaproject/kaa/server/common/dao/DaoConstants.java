@@ -216,6 +216,7 @@ public class DaoConstants {
     public static final String CONFIGURATION_TABLE_NAME = "configuration";
     public static final String CONFIGURATION_CONFIGURATION_BODY = "configuration_body";
     public static final String CONFIGURATION_CONFIGURATION_SCHEMA_ID = "configuration_schema_id";
+    public static final String CONFIGURATION_CONFIGURATION_SCHEMA_VERSION = "configuration_schema_version";
 
     /**
      * Topic constants.

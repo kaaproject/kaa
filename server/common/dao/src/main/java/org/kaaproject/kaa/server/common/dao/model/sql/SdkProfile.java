@@ -240,6 +240,11 @@ public final class SdkProfile extends GenericModel<SdkProfileDto> implements Ser
     }
 
     @Override
+    protected GenericModel<SdkProfileDto> newInstance(Long id) {
+        return new SdkProfile(id);
+    }
+
+    @Override
     public SdkProfileDto toDto() {
         SdkProfileDto dto = this.createDto();
 

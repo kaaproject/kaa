@@ -128,7 +128,12 @@ public final class LogAppender extends Plugin<LogAppenderDto> implements Seriali
     protected LogAppenderDto createDto() {
         return new LogAppenderDto();
     }
-    
+
+    @Override
+    protected GenericModel<LogAppenderDto> newInstance(Long id) {
+        return new LogAppender(id);
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;

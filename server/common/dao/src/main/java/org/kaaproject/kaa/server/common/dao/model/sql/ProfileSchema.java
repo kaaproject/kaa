@@ -47,4 +47,9 @@ public final class ProfileSchema extends BaseSchema<ProfileSchemaDto> implements
     protected ProfileSchemaDto createDto() {
         return new ProfileSchemaDto();
     }
+
+    @Override
+    protected GenericModel<ProfileSchemaDto> newInstance(Long id) {
+        return new ProfileSchema(id);
+    }
 }

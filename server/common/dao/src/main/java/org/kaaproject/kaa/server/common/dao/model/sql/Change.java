@@ -219,6 +219,11 @@ public final class Change extends GenericModel<ChangeDto> implements Serializabl
     }
 
     @Override
+    protected GenericModel<ChangeDto> newInstance(Long id) {
+        return new Change(id);
+    }
+
+    @Override
     public ChangeDto toDto() {
         ChangeDto changeDto = createDto();
         changeDto.setId(getStringId());

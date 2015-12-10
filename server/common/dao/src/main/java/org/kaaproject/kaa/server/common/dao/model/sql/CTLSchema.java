@@ -201,6 +201,11 @@ public class CTLSchema extends GenericModel<CTLSchemaDto> implements Serializabl
     }
 
     @Override
+    protected GenericModel<CTLSchemaDto> newInstance(Long id) {
+        return new CTLSchema(id);
+    }
+
+    @Override
     public CTLSchemaDto toDto() {
         CTLSchemaDto ctlSchemaDto = createDto();
         ctlSchemaDto.setId(getStringId());

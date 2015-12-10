@@ -17,34 +17,57 @@
 package org.kaaproject.kaa.common.dto;
 
 
+import java.util.Set;
+
 public class ProfileFilterDto extends AbstractStructureDto {
 
     private static final long serialVersionUID = 3068910692262107362L;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof ProfileFilterDto)) {
-            return false;
-        }
+    private Set<Integer> endpointSchemaVersions;
+    private Set<Integer> serverSchemaVersions;
 
-        return super.equals(o);
+    public Set<Integer> getEndpointSchemaVersions() {
+        return endpointSchemaVersions;
     }
 
-//    public ProfileData getProfileData(DataSchema schema) {
-//        return new ProfileData(schema, body);
-//    }
+    public void setEndpointSchemaVersions(Set<Integer> endpointSchemaVersions) {
+        this.endpointSchemaVersions = endpointSchemaVersions;
+    }
+
+    public Set<Integer> getServerSchemaVersions() {
+        return serverSchemaVersions;
+    }
+
+    public void setServerSchemaVersions(Set<Integer> serverSchemaVersions) {
+        this.serverSchemaVersions = serverSchemaVersions;
+    }
 
     @Override
-    public int hashCode() { //NOSONAR
-        return super.hashCode();
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        ProfileFilterDto that = (ProfileFilterDto) o;
+
+        if (endpointSchemaVersions != null ? !endpointSchemaVersions.equals(that.endpointSchemaVersions) : that.endpointSchemaVersions != null) return false;
+        return serverSchemaVersions != null ? serverSchemaVersions.equals(that.serverSchemaVersions) : that.serverSchemaVersions == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (endpointSchemaVersions != null ? endpointSchemaVersions.hashCode() : 0);
+        result = 31 * result + (serverSchemaVersions != null ? serverSchemaVersions.hashCode() : 0);
+        return result;
     }
 
     @Override
     public String toString() {
-        return "ProfileFilterDto{" + super.toString() + "}";
+        return "ProfileFilterDto{" +
+                "endpointSchemaVersions=" + endpointSchemaVersions +
+                ", serverSchemaVersions=" + serverSchemaVersions +
+                "} " + super.toString();
     }
-
 }

@@ -179,6 +179,11 @@ public final class Application extends GenericModel<ApplicationDto> implements S
     }
 
     @Override
+    protected GenericModel<ApplicationDto> newInstance(Long id) {
+        return new Application(id);
+    }
+
+    @Override
     public ApplicationDto toDto() {
         ApplicationDto dto = createDto();
         dto.setId(getStringId());

@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.kaaproject.kaa.common.dto.ChangeDto;
@@ -126,25 +127,7 @@ public class ProfileServiceImpl implements ProfileService {
                     throw new IncorrectParameterException("Invalid profile schema id: " + id);
                 }
             }
-            ProfileSchemaDto profileSchema = getDto(profileSchemaDao.save(new ProfileSchema(profileSchemaDto)));
-            if (profileSchema != null) {
-                EndpointGroup group = endpointGroupDao.findByAppIdAndWeight(profileSchemaDto.getApplicationId(), 0);
-                ProfileFilterDto filter = new ProfileFilterDto();
-                filter.setBody(DEFAULT_FILTER_BODY);
-                filter.setEndpointGroupId(group.getId().toString());
-                filter.setSchemaId(profileSchema.getId());
-                filter = saveProfileFilter(filter);
-                if (filter != null) {
-                    activateProfileFilter(filter.getId(), profileSchema.getCreatedUsername());
-                } else {
-                    LOG.warn("Can't activate profile filter {}", filter);
-                    throw new IncorrectParameterException("Can't save profile filter.");
-                }
-            } else {
-                LOG.warn("Can't save profile schema {}", profileSchemaDto);
-                throw new IncorrectParameterException("Can't save profile schema.");
-            }
-            return profileSchema;
+            return getDto(profileSchemaDao.save(new ProfileSchema(profileSchemaDto)));
         } else {
             throw new IncorrectParameterException("Invalid profile schema object. Incorrect application id" + appId);
         }
@@ -251,7 +234,8 @@ public class ProfileServiceImpl implements ProfileService {
                 throw new UpdateStatusConflictException("Can't update profile filter, invalid old profile filter with id " + id);
             }
         } else {
-            String schemaId = profileFilterDto.getSchemaId();
+            Set<Integer> endpointSchemaVersions = profileFilterDto.getEndpointSchemaVersions();
+            Set<Integer> serverSchemaVersions = profileFilterDto.getServerSchemaVersions();
             String groupId = profileFilterDto.getEndpointGroupId();
             EndpointGroup group = endpointGroupDao.findById(groupId);
             if (group.getWeight() == 0) {
@@ -271,7 +255,6 @@ public class ProfileServiceImpl implements ProfileService {
                     profileFilterDto.setSequenceNumber(latestFilter.getSequenceNumber());
                 }
                 profileFilterDto.setApplicationId(profileSchemaDto.getApplicationId());
-                profileFilterDto.setSchemaVersion(profileSchemaDto.getVersion());
                 profileFilterDto.setCreatedTime(System.currentTimeMillis());
             } else {
                 throw new IncorrectParameterException("Can't update profile filter, invalid profile schema id " + id);
@@ -456,9 +439,11 @@ public class ProfileServiceImpl implements ProfileService {
         if (dto == null) {
             throw new IncorrectParameterException("Can't save profile filter. Incorrect object.");
         }
-        if (StringUtils.isBlank(dto.getSchemaId())) {
-            throw new IncorrectParameterException("Profile Filter object invalid. Profile Schema id invalid:"
-                    + dto.getSchemaId());
+        if (dto.getEndpointSchemaVersions() == null || dto.getEndpointSchemaVersions().isEmpty()) {
+            throw new IncorrectParameterException("Profile Filter object invalid. Endpoint profile schemas are empty.");
+        }
+        if (dto.getServerSchemaVersions() == null || dto.getServerSchemaVersions().isEmpty()) {
+            throw new IncorrectParameterException("Profile Filter object invalid. Server profile schemas are empty.");
         }
         if (StringUtils.isBlank(dto.getEndpointGroupId())) {
             throw new IncorrectParameterException("Profile Filter object invalid. Endpoint Group id invalid:"

@@ -45,5 +45,11 @@ public abstract class GenericModel<T> implements Serializable, ToDto<T> {
         return id != null ? id.toString() : null;
     }
 
+    public GenericModel<T> newInstance(String id) {
+        return newInstance(ModelUtils.getLongId(id));
+    }
+
     protected abstract T createDto();
+
+    protected abstract GenericModel<T> newInstance(Long id);
 }

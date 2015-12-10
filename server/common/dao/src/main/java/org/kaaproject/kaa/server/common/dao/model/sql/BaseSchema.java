@@ -45,7 +45,7 @@ import org.kaaproject.kaa.common.dto.VersionDto;
 @Entity
 @Table(name = BASE_SCHEMA_TABLE_NAME)
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class BaseSchema<T extends BaseSchemaDto> extends GenericModel<T> {
+public abstract class BaseSchema<T extends BaseSchemaDto> extends GenericModel<T> implements HasVersion {
 
     private static final long serialVersionUID = 2866125011338808891L;
 
