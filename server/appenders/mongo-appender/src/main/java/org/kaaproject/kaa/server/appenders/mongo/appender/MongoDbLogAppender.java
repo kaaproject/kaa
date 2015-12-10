@@ -25,6 +25,7 @@ import org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig;
 import org.kaaproject.kaa.server.common.log.shared.appender.AbstractLogAppender;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryCallback;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
+import org.kaaproject.kaa.server.common.log.shared.appender.data.ProfileInfo;
 import org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +42,9 @@ public class MongoDbLogAppender extends AbstractLogAppender<MongoDbConfig> {
     private String collectionName;
     private boolean closed = false;
 
+    private boolean includeClientProfile;
+    private boolean includeServerProfile;
+
     public MongoDbLogAppender() {
         super(MongoDbConfig.class);
     }
@@ -49,11 +53,14 @@ public class MongoDbLogAppender extends AbstractLogAppender<MongoDbConfig> {
     public void doAppend(LogEventPack logEventPack, RecordHeader header, LogDeliveryCallback listener) {
         if (!closed) {
             try {
+                ProfileInfo clientProfile = (this.includeClientProfile) ? logEventPack.getClientProfile() : null;
+                ProfileInfo serverProfile = (this.includeServerProfile) ? logEventPack.getServerProfile() : null;
+                
                 LOG.debug("[{}] appending {} logs to mongodb collection", collectionName, logEventPack.getEvents().size());
                 List<LogEventDto> dtos = generateLogEvent(logEventPack, header);
                 LOG.debug("[{}] saving {} objects", collectionName, dtos.size());
                 if (!dtos.isEmpty()) {
-                    logEventDao.save(dtos, collectionName);
+                    logEventDao.save(dtos, clientProfile, serverProfile, collectionName);
                     LOG.debug("[{}] appended {} logs to mongodb collection", collectionName, logEventPack.getEvents().size());
                 }
                 listener.onSuccess();
@@ -78,6 +85,8 @@ public class MongoDbLogAppender extends AbstractLogAppender<MongoDbConfig> {
         LOG.debug("Initializing new instance of MongoDB log appender");
         try {
             logEventDao = new LogEventMongoDao(configuration);
+            this.includeClientProfile = configuration.getIncludeClientProfile();
+            this.includeServerProfile = configuration.getIncludeServerProfile();
             createCollection(appender.getApplicationToken());
         } catch (Exception e) {
             LOG.error("Failed to init MongoDB log appender: ", e);
