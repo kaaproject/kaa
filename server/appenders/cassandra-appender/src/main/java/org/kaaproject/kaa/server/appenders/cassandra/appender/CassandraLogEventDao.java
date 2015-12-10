@@ -25,7 +25,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -41,6 +43,7 @@ import org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraSocketO
 import org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraWriteConsistencyLevel;
 import org.kaaproject.kaa.server.appenders.cassandra.config.gen.ClusteringElement;
 import org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnMappingElement;
+import org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnMappingElementType;
 import org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,7 +77,7 @@ public class CassandraLogEventDao implements LogEventDao {
     private static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS $keyspace_name.$table_name ("
             + "$columns_definition PRIMARY KEY ( $primary_key_definition )) $clustering_definition;";
 
-    private final ConcurrentMap<String, ThreadLocal<SimpleDateFormat>> dateFormatMap = new ConcurrentHashMap<String, ThreadLocal<SimpleDateFormat>>();
+    private final ConcurrentMap<String, ThreadLocal<SimpleDateFormat>> dateFormatMap = new ConcurrentHashMap<>();
 
     private Cluster cluster;
     private Session session;
@@ -297,8 +300,14 @@ public class CassandraLogEventDao implements LogEventDao {
     private Insert[] prepareQuery(List<CassandraLogEventDto> logEventDtoList, String collectionName,
             GenericAvroConverter<GenericRecord> eventConverter, GenericAvroConverter<GenericRecord> headerConverter)
             throws IOException {
-        String reuseTsValue = null;
         Insert[] insertArray = new Insert[logEventDtoList.size()];
+        Map<String, String> formatedTsMap = new HashMap<>();
+        long ts = System.currentTimeMillis();
+        for (ColumnMappingElement element : configuration.getColumnMapping()) {
+            if(element.getType() == ColumnMappingElementType.TS) {
+                formatedTsMap.put(element.getColumnName(), formatTs(ts, element));
+            }
+        }
         for (int i = 0; i < logEventDtoList.size(); i++) {
             CassandraLogEventDto dto = logEventDtoList.get(i);
             Insert insert = QueryBuilder.insertInto(keyspaceName, collectionName);
@@ -328,8 +337,7 @@ public class CassandraLogEventDao implements LogEventDao {
                     insert.value(element.getColumnName(), UUID.randomUUID());
                     break;
                 case TS:
-                    reuseTsValue = formatTs(reuseTsValue, element);
-                    insert.value(element.getColumnName(), reuseTsValue);
+                    insert.value(element.getColumnName(), formatedTsMap.get(element.getColumnName()));
                     break;
                 }
             }
@@ -343,30 +351,28 @@ public class CassandraLogEventDao implements LogEventDao {
         return insertArray;
     }
 
-    private String formatTs(String tsValue, ColumnMappingElement element) {
-        if (tsValue == null) {
-            long ts = System.currentTimeMillis();
-            final String pattern = element.getValue();
-            if (pattern == null || pattern.isEmpty()) {
-                tsValue = ts + "";
-            } else {
-                ThreadLocal<SimpleDateFormat> formatterTL = dateFormatMap.get(pattern);
-                if (formatterTL == null) {
-                    formatterTL = new ThreadLocal<SimpleDateFormat>() {
-                        @Override
-                        protected SimpleDateFormat initialValue() {
-                            return new SimpleDateFormat(pattern);
-                        }
-                    };
-                    dateFormatMap.putIfAbsent(pattern, formatterTL);
-                }
-                SimpleDateFormat formatter = formatterTL.get();
-                if (formatter == null) {
-                    formatter = new SimpleDateFormat(pattern);
-                    formatterTL.set(formatter);
-                }
-                tsValue = formatter.format(new Date(ts));
+    private String formatTs(long ts, ColumnMappingElement element) {
+        String tsValue;
+        final String pattern = element.getValue();
+        if (pattern == null || pattern.isEmpty()) {
+            tsValue = String.valueOf(ts);
+        } else {
+            ThreadLocal<SimpleDateFormat> formatterTL = dateFormatMap.get(pattern);
+            if (formatterTL == null) {
+                formatterTL = new ThreadLocal<SimpleDateFormat>() {
+                    @Override
+                    protected SimpleDateFormat initialValue() {
+                        return new SimpleDateFormat(pattern);
+                    }
+                };
+                dateFormatMap.putIfAbsent(pattern, formatterTL);
             }
+            SimpleDateFormat formatter = formatterTL.get();
+            if (formatter == null) {
+                formatter = new SimpleDateFormat(pattern);
+                formatterTL.set(formatter);
+            }
+            tsValue = formatter.format(new Date(ts));
         }
         return tsValue;
     }

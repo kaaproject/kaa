@@ -26,11 +26,13 @@ public class PluginDto implements HasId, Serializable {
 
     private String id;
     private String className;
-    private String type;
-    private String scope;
+    private PluginState state;
+    private String name;
+    private Integer version;
+    private PluginScope scope;
     private String confSchema;
-    private Set<PluginContractDto> pluginContractSet;
-    private Set<PluginInstanceDto> pluginInstanceSet;
+    private Set<PluginContractDto> pluginContracts;
+    private Set<PluginInstanceDto> pluginInstances;
 
     public PluginDto() {
     }
@@ -53,19 +55,35 @@ public class PluginDto implements HasId, Serializable {
         this.className = className;
     }
 
-    public String getType() {
-        return type;
+    public PluginState getState() {
+        return state;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setState(PluginState state) {
+        this.state = state;
     }
 
-    public String getScope() {
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
+    }
+
+    public PluginScope getScope() {
         return scope;
     }
 
-    public void setScope(String scope) {
+    public void setScope(PluginScope scope) {
         this.scope = scope;
     }
 
@@ -77,4 +95,19 @@ public class PluginDto implements HasId, Serializable {
         this.confSchema = confSchema;
     }
 
+    public Set<PluginContractDto> getPluginContracts() {
+        return pluginContracts;
+    }
+
+    public void setPluginContracts(Set<PluginContractDto> pluginContracts) {
+        this.pluginContracts = pluginContracts;
+    }
+
+    public Set<PluginInstanceDto> getPluginInstances() {
+        return pluginInstances;
+    }
+
+    public void setPluginInstances(Set<PluginInstanceDto> pluginInstances) {
+        this.pluginInstances = pluginInstances;
+    }
 }

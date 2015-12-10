@@ -26,6 +26,10 @@
             <groupId>org.kaaproject.kaa.common</groupId>
             <artifactId>core</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.common</groupId>
+            <artifactId>dto</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

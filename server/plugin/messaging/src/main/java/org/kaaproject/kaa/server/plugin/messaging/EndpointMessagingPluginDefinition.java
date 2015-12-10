@@ -2,11 +2,11 @@ package org.kaaproject.kaa.server.plugin.messaging;
 
 import java.util.Set;
 
+import org.kaaproject.kaa.common.dto.plugin.PluginContractDirection;
+import org.kaaproject.kaa.common.dto.plugin.PluginScope;
 import org.kaaproject.kaa.server.common.core.plugin.base.BasePluginDef;
 import org.kaaproject.kaa.server.common.core.plugin.def.CommunicationPluginDef;
 import org.kaaproject.kaa.server.common.core.plugin.def.PluginContractDef;
-import org.kaaproject.kaa.server.common.core.plugin.def.PluginContractDirection;
-import org.kaaproject.kaa.server.common.core.plugin.def.PluginScope;
 import org.kaaproject.kaa.server.common.core.plugin.generator.PluginSdkApiGenerator;
 import org.kaaproject.kaa.server.plugin.contracts.messaging.MessagingPluginContract;
 import org.kaaproject.kaa.server.plugin.messaging.gen.Configuration;

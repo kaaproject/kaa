@@ -15,6 +15,7 @@
  */
 package org.kaaproject.kaa.server.common.dao.model.sql.plugin;
 
+import org.kaaproject.kaa.common.dto.plugin.PluginContractInstanceDto;
 import org.kaaproject.kaa.server.common.dao.model.sql.GenericModel;
 
 import javax.persistence.Entity;
@@ -30,13 +31,19 @@ public class PluginContractInstance extends GenericModel implements Serializable
     private PluginInstance pluginInstance;
     private Set<PluginContractInstanceItem> pluginContractInstanceItems;
 
-    @Override
-    protected Object createDto() {
-        return null;
+    public PluginContractInstance() {
+    }
+
+    public PluginContractInstance(PluginContractInstanceDto dto) {
     }
 
     @Override
-    public Object toDto() {
-        return null;
+    protected PluginContractInstanceDto createDto() {
+        return createDto();
+    }
+
+    @Override
+    public PluginContractInstanceDto toDto() {
+        return new PluginContractInstanceDto();
     }
 }

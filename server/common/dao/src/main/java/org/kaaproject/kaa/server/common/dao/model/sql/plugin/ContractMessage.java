@@ -16,7 +16,9 @@
 
 package org.kaaproject.kaa.server.common.dao.model.sql.plugin;
 
+import org.kaaproject.kaa.common.dto.plugin.ContractMessageDto;
 import org.kaaproject.kaa.server.common.dao.model.sql.GenericModel;
+import org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -28,6 +30,15 @@ public class ContractMessage extends GenericModel implements Serializable {
 
     private String fqn;
     private Integer version;
+
+    public ContractMessage() {
+    }
+
+    public ContractMessage(ContractMessageDto dto) {
+        this.id = ModelUtils.getLongId(dto.getId());
+        this.fqn = dto.getFqn();
+        this.version = dto.getVersion();
+    }
 
     public String getFqn() {
         return fqn;

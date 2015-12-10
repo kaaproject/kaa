@@ -15,6 +15,8 @@
  */
 package org.kaaproject.kaa.server.common.core.plugin.def;
 
+import org.kaaproject.kaa.common.dto.plugin.ContractType;
+
 import java.io.Serializable;
 
 public interface ContractDef extends Serializable {

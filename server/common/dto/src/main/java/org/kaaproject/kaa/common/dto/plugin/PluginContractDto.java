@@ -15,17 +15,20 @@
  */
 package org.kaaproject.kaa.common.dto.plugin;
 
-import java.io.Serializable;
-
 import org.kaaproject.kaa.common.dto.HasId;
+
+import java.io.Serializable;
+import java.util.Set;
 
 public class PluginContractDto implements HasId, Serializable {
 
     private static final long serialVersionUID = -8204932871903228546L;
-    
+
     private String id;
     private PluginContractDirection direction;
     private ContractDto contract;
+    private Set<PluginContractItemDto> pluginContractItems;
+    private Set<PluginContractInstanceDto> pluginContractInstances;
 
     @Override
     public String getId() {
@@ -53,4 +56,19 @@ public class PluginContractDto implements HasId, Serializable {
         this.contract = contract;
     }
 
+    public Set<PluginContractItemDto> getPluginContractItems() {
+        return pluginContractItems;
+    }
+
+    public void setPluginContractItems(Set<PluginContractItemDto> pluginContractItems) {
+        this.pluginContractItems = pluginContractItems;
+    }
+
+    public Set<PluginContractInstanceDto> getPluginContractInstances() {
+        return pluginContractInstances;
+    }
+
+    public void setPluginContractInstances(Set<PluginContractInstanceDto> pluginContractInstances) {
+        this.pluginContractInstances = pluginContractInstances;
+    }
 }

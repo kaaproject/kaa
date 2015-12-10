@@ -15,9 +15,10 @@
  */
 package org.kaaproject.kaa.common.dto.plugin;
 
-import java.io.Serializable;
-
 import org.kaaproject.kaa.common.dto.HasId;
+
+import java.io.Serializable;
+import java.util.Set;
 
 public class ContractDto implements HasId, Serializable {
 
@@ -27,6 +28,7 @@ public class ContractDto implements HasId, Serializable {
     private String name;
     private Integer version;
     private ContractType type;
+    private Set<ContractItemDto> contractItems;
 
     @Override
     public String getId() {
@@ -62,4 +64,11 @@ public class ContractDto implements HasId, Serializable {
         this.type = type;
     }
 
+    public Set<ContractItemDto> getContractItems() {
+        return contractItems;
+    }
+
+    public void setContractItems(Set<ContractItemDto> contractItems) {
+        this.contractItems = contractItems;
+    }
 }

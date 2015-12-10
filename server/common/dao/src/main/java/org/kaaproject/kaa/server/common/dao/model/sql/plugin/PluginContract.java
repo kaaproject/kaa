@@ -15,28 +15,61 @@
  */
 package org.kaaproject.kaa.server.common.dao.model.sql.plugin;
 
+import org.kaaproject.kaa.common.dto.plugin.ContractDto;
+import org.kaaproject.kaa.common.dto.plugin.PluginContractDirection;
+import org.kaaproject.kaa.common.dto.plugin.PluginContractDto;
+import org.kaaproject.kaa.common.dto.plugin.PluginContractInstanceDto;
+import org.kaaproject.kaa.common.dto.plugin.PluginContractItemDto;
 import org.kaaproject.kaa.server.common.dao.model.sql.GenericModel;
+import org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Table(name = "plugin_contract")
 public class PluginContract extends GenericModel implements Serializable {
 
-    private String direction;
+    private PluginContractDirection direction;
     private Contract contract;
     private Plugin plugin;
-    private Set<PluginContractItem> pluginContractItems;
-    private Set<PluginContractInstance> pluginContractInstances;
+    private Set<PluginContractItem> pluginContractItems = new HashSet<>();
+    private Set<PluginContractInstance> pluginContractInstances = new HashSet<>();
 
-    public String getDirection() {
+    public PluginContract() {
+    }
+
+    public PluginContract(PluginContractDto dto) {
+        this.id = ModelUtils.getLongId(dto.getId());
+        this.direction = dto.getDirection();
+        ContractDto contractDto = dto.getContract();
+        if (contractDto != null) {
+            this.contract = new Contract(contractDto);
+        }
+
+        Set<PluginContractInstanceDto> instances = dto.getPluginContractInstances();
+        if (instances != null && !instances.isEmpty()) {
+            for (PluginContractInstanceDto instance : instances) {
+                pluginContractInstances.add(new PluginContractInstance(instance));
+            }
+        }
+
+        Set<PluginContractItemDto> items = dto.getPluginContractItems();
+        if (items != null && !items.isEmpty()) {
+            for (PluginContractItemDto item : items) {
+                pluginContractItems.add(new PluginContractItem(item));
+            }
+        }
+    }
+
+    public PluginContractDirection getDirection() {
         return direction;
     }
 
-    public void setDirection(String direction) {
+    public void setDirection(PluginContractDirection direction) {
         this.direction = direction;
     }
 
@@ -56,13 +89,29 @@ public class PluginContract extends GenericModel implements Serializable {
         this.plugin = plugin;
     }
 
-    @Override
-    protected Object createDto() {
-        return null;
+    public Set<PluginContractItem> getPluginContractItems() {
+        return pluginContractItems;
+    }
+
+    public void setPluginContractItems(Set<PluginContractItem> pluginContractItems) {
+        this.pluginContractItems = pluginContractItems;
+    }
+
+    public Set<PluginContractInstance> getPluginContractInstances() {
+        return pluginContractInstances;
+    }
+
+    public void setPluginContractInstances(Set<PluginContractInstance> pluginContractInstances) {
+        this.pluginContractInstances = pluginContractInstances;
     }
 
     @Override
-    public Object toDto() {
-        return null;
+    protected PluginContractDto createDto() {
+        return new PluginContractDto();
+    }
+
+    @Override
+    public PluginContractDto toDto() {
+        return createDto();
     }
 }

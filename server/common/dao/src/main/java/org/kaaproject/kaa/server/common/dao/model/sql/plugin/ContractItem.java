@@ -16,14 +16,14 @@
 package org.kaaproject.kaa.server.common.dao.model.sql.plugin;
 
 import org.kaaproject.kaa.common.dto.plugin.ContractItemDto;
+import org.kaaproject.kaa.common.dto.plugin.ContractMessageDto;
 import org.kaaproject.kaa.server.common.dao.model.sql.GenericModel;
+import org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.io.Serializable;
-import java.util.Set;
 
 @Entity
 @Table(name = "contract_item")
@@ -35,8 +35,22 @@ public class ContractItem extends GenericModel<ContractItemDto> implements Seria
     private ContractMessage inMessage;
     @ManyToOne
     private ContractMessage outMessage;
-    @OneToMany
-    private Set<PluginContractItem> pluginContractItems;
+
+    public ContractItem() {
+    }
+
+    public ContractItem(ContractItemDto dto) {
+        this.id = ModelUtils.getLongId(dto.getId());
+        this.name = dto.getName();
+        ContractMessageDto in = dto.getInMessage();
+        if (in != null) {
+            this.inMessage = new ContractMessage();
+        }
+        ContractMessageDto out = dto.getOutMessage();
+        if (out != null) {
+            this.outMessage = new ContractMessage();
+        }
+    }
 
     @Override
     protected ContractItemDto createDto() {
