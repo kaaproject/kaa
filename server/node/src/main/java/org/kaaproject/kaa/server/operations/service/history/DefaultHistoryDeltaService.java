@@ -118,7 +118,7 @@ public class DefaultHistoryDeltaService implements HistoryDeltaService {
         }
 
         HistoryKey historyKey = new HistoryKey(applicationToken, subject, oldAppSeqNumber, curAppSeqNumber,
-                profile.getConfigurationVersion(), profile.getClientProfileVersion());
+                profile.getConfigurationVersion(), profile.getClientProfileVersion(), profile.getServerProfileVersion());
         ConfigurationIdKey confIdKey = new ConfigurationIdKey(applicationToken, curAppSeqNumber, profile.getConfigurationVersion());
 
         List<EndpointGroupStateDto> endpointGroups;

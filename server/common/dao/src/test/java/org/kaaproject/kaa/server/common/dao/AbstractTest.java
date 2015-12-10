@@ -34,7 +34,7 @@ import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TenantAdminDto;
 import org.kaaproject.kaa.common.dto.TenantDto;
@@ -375,8 +375,8 @@ public class AbstractTest {
         return ids;
     }
 
-    protected List<ProfileSchemaDto> generateProfSchemaDto(String tenantId, String appId, int count) {
-        List<ProfileSchemaDto> schemas = Collections.emptyList();
+    protected List<EndpointProfileSchemaDto> generateProfSchemaDto(String tenantId, String appId, int count) {
+        List<EndpointProfileSchemaDto> schemas = Collections.emptyList();
         try {
             if (isBlank(tenantId)) {
                 tenantId = generateTenantDto().getId();
@@ -384,11 +384,11 @@ public class AbstractTest {
             if (isBlank(appId)) {
                 appId = generateApplicationDto(tenantId).getId();
             }
-            ProfileSchemaDto schemaDto;
+            EndpointProfileSchemaDto schemaDto;
             CTLSchemaDto ctlSchemaDto = ctlService.saveCTLSchema(generateCTLSchemaDto(tenantId));
             schemas = new ArrayList<>(count);
             for (int i = 0; i < count; i++) {
-                schemaDto = new ProfileSchemaDto();
+                schemaDto = new EndpointProfileSchemaDto();
                 schemaDto.setApplicationId(appId);
                 schemaDto.setCtlSchemaId(ctlSchemaDto.getId());
                 schemaDto.setCreatedUsername("Test User");
@@ -407,7 +407,7 @@ public class AbstractTest {
     protected List<ProfileFilterDto> generateFilterDto(String schemaId, String groupId, int count, boolean activate) {
         List<ProfileFilterDto> filters = Collections.emptyList();
         try {
-            ProfileSchemaDto schemaDto = null;
+            EndpointProfileSchemaDto schemaDto = null;
             if (isBlank(schemaId)) {
                 schemaDto = generateProfSchemaDto(null, null, 1).get(0);
                 schemaId = schemaDto.getId();

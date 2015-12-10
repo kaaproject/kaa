@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.kaaproject.kaa.common.dto.EndpointProfileDataDto;
-import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.server.common.dao.CTLService;
@@ -150,7 +150,7 @@ public class ApplicationLogActorMessageProcessor {
             AppVersionKey key = new AppVersionKey(applicationToken, profileDto.getClientProfileVersion());
             BaseSchemaInfo schemaInfo = clientProfileSchemas.get(key);
             if (schemaInfo == null) {
-                ProfileSchemaDto profileSchema = cacheService.getProfileSchemaByAppAndVersion(key);
+                EndpointProfileSchemaDto profileSchema = cacheService.getProfileSchemaByAppAndVersion(key);
                 CTLSchemaDto ctlSchemaDto = cacheService.getCtlSchemaById(profileSchema.getCtlSchemaId());
                 String schema = ctlService.flatExportAsString(ctlSchemaDto);
                 schemaInfo = new BaseSchemaInfo(ctlSchemaDto.getId(), schema);

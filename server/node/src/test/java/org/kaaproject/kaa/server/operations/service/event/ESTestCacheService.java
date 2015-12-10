@@ -26,7 +26,7 @@ import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.HistoryDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
@@ -127,7 +127,7 @@ public class ESTestCacheService implements CacheService {
      * @see org.kaaproject.kaa.server.operations.service.cache.CacheService#getProfileSchemaByAppAndVersion(org.kaaproject.kaa.server.operations.service.cache.AppVersionKey)
      */
     @Override
-    public ProfileSchemaDto getProfileSchemaByAppAndVersion(AppVersionKey key) {
+    public EndpointProfileSchemaDto getProfileSchemaByAppAndVersion(AppVersionKey key) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -261,7 +261,7 @@ public class ESTestCacheService implements CacheService {
      * @see org.kaaproject.kaa.server.operations.service.cache.CacheService#putProfileSchema(org.kaaproject.kaa.server.operations.service.cache.AppVersionKey, org.kaaproject.kaa.common.dto.ProfileSchemaDto)
      */
     @Override
-    public ProfileSchemaDto putProfileSchema(AppVersionKey key, ProfileSchemaDto value) {
+    public EndpointProfileSchemaDto putProfileSchema(AppVersionKey key, EndpointProfileSchemaDto value) {
         // TODO Auto-generated method stub
         return null;
     }

@@ -30,7 +30,7 @@ import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.StructureRecordDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
@@ -505,11 +505,11 @@ public class DataSource {
     }
 
     public void loadProfileSchemas(String applicationId,
-            final AsyncCallback<List<ProfileSchemaDto>> callback) {
+            final AsyncCallback<List<EndpointProfileSchemaDto>> callback) {
         rpcService.getProfileSchemasByApplicationId(applicationId,
-                new DataCallback<List<ProfileSchemaDto>>(callback) {
+                new DataCallback<List<EndpointProfileSchemaDto>>(callback) {
                     @Override
-                    protected void onResult(List<ProfileSchemaDto> result) {
+                    protected void onResult(List<EndpointProfileSchemaDto> result) {
                     }
                 });
 
@@ -521,7 +521,7 @@ public class DataSource {
                 new DataCallback<ProfileSchemaViewDto>(callback) {
                     @Override
                     protected void onResult(ProfileSchemaViewDto result) {
-                        eventBus.fireEvent(new DataEvent(ProfileSchemaDto.class));
+                        eventBus.fireEvent(new DataEvent(EndpointProfileSchemaDto.class));
                     }
                 });
     }

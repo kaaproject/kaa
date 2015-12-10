@@ -32,7 +32,7 @@ import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.StructureRecordDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
@@ -159,11 +159,11 @@ public interface KaaAdminService extends RemoteService {
 
     public RecordField generateEcfSchemaForm(String fileItemName) throws KaaAdminServiceException;
 
-    public List<ProfileSchemaDto> getProfileSchemasByApplicationId(String applicationId) throws KaaAdminServiceException;
+    public List<EndpointProfileSchemaDto> getProfileSchemasByApplicationId(String applicationId) throws KaaAdminServiceException;
 
-    public ProfileSchemaDto getProfileSchema(String profileSchemaId) throws KaaAdminServiceException;
+    public EndpointProfileSchemaDto getProfileSchema(String profileSchemaId) throws KaaAdminServiceException;
 
-    public ProfileSchemaDto saveProfileSchema(ProfileSchemaDto profileSchema) throws KaaAdminServiceException;
+    public EndpointProfileSchemaDto saveProfileSchema(EndpointProfileSchemaDto profileSchema) throws KaaAdminServiceException;
 
     public ProfileSchemaViewDto getProfileSchemaView(String profileSchemaId) throws KaaAdminServiceException;
 

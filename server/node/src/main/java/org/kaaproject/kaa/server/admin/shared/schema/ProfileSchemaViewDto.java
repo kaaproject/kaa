@@ -16,9 +16,9 @@
 
 package org.kaaproject.kaa.server.admin.shared.schema;
 
-import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 
-public class ProfileSchemaViewDto extends BaseSchemaViewDto<ProfileSchemaDto> {
+public class ProfileSchemaViewDto extends BaseSchemaViewDto<EndpointProfileSchemaDto> {
 
     private static final long serialVersionUID = -5289268279407697791L;
     
@@ -26,14 +26,14 @@ public class ProfileSchemaViewDto extends BaseSchemaViewDto<ProfileSchemaDto> {
         super();
     }
 
-    public ProfileSchemaViewDto(ProfileSchemaDto schema,
+    public ProfileSchemaViewDto(EndpointProfileSchemaDto schema,
             CtlSchemaFormDto ctlSchemaForm) {
         super(schema, ctlSchemaForm);
     }
 
     @Override
-    protected ProfileSchemaDto createEmptySchema() {
-        return new ProfileSchemaDto();
+    protected EndpointProfileSchemaDto createEmptySchema() {
+        return new EndpointProfileSchemaDto();
     }
 
 }

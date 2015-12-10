@@ -21,7 +21,7 @@ import java.util.List;
 
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.server.operations.service.cache.AppVersionKey;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
@@ -64,10 +64,11 @@ public class DefaultFilterService implements FilterService {
     @Override
     public List<ProfileFilterDto> getAllMatchingFilters(AppVersionKey appProfileVersionKey, AppVersionKey appServerProfileVersionKey,
             EndpointProfileDto profile) {
-        ProfileSchemaDto profileSchema = cacheService.getProfileSchemaByAppAndVersion(appProfileVersionKey);
+        EndpointProfileSchemaDto profileSchema = cacheService.getProfileSchemaByAppAndVersion(appProfileVersionKey);
         ServerProfileSchemaDto serverProfileSchema = cacheService.getServerProfileSchemaByAppAndVersion(appServerProfileVersionKey);
         String profileSchemaBody = cacheService.getFlatCtlSchemaById(profileSchema.getCtlSchemaId());
         String serverProfileSchemaBody = cacheService.getFlatCtlSchemaById(serverProfileSchema.getCtlSchemaId());
+        
         List<ProfileFilterDto> filters = cacheService.getFilters(appProfileVersionKey);
         LOG.trace("Found {} filters by {}", filters.size(), appProfileVersionKey);
         List<ProfileFilterDto> matchingFilters = new LinkedList<ProfileFilterDto>();
@@ -105,7 +106,7 @@ public class DefaultFilterService implements FilterService {
         ProfileFilterDto filterDto = cacheService.getFilter(profileFilterId);
         AppVersionKey appProfileVersionKey = new AppVersionKey(appToken, filterDto.getSchemaVersion());
         AppVersionKey appServerProfileVersionKey = new AppVersionKey(appToken, profile.getServerProfileVersion());
-        ProfileSchemaDto profileSchema = cacheService.getProfileSchemaByAppAndVersion(appProfileVersionKey);
+        EndpointProfileSchemaDto profileSchema = cacheService.getProfileSchemaByAppAndVersion(appProfileVersionKey);
         ServerProfileSchemaDto serverProfileSchema = cacheService.getServerProfileSchemaByAppAndVersion(appServerProfileVersionKey);
         String profileSchemaBody = cacheService.getFlatCtlSchemaById(profileSchema.getCtlSchemaId());
         String serverProfileSchemaBody = cacheService.getFlatCtlSchemaById(serverProfileSchema.getCtlSchemaId());

@@ -44,9 +44,10 @@ public class EndpointActorState {
     private long lastActivityTime;
     private int processedEventSeqNum = Integer.MIN_VALUE;
     private Map<String, Integer> subscriptionStates;
-    
+
     private boolean ucfHashIntialized;
     private byte[] ucfHash;
+    private boolean serverProfileChanged;
 
     public EndpointActorState(String endpointKey, String actorKey) {
         this.endpointKey = endpointKey;
@@ -171,16 +172,17 @@ public class EndpointActorState {
     }
 
     public boolean isUcfHashRequiresIntialization() {
-        if(!isValidForUser()){
+        if (!isValidForUser()) {
             return false;
         }
         return !ucfHashIntialized;
     }
 
     public boolean isUserConfigurationUpdatePending() {
-        if(!isValidForUser() || isUcfHashRequiresIntialization()){
+        if (!isValidForUser() || isUcfHashRequiresIntialization()) {
             return false;
-        };
+        }
+        ;
         return !Arrays.equals(ucfHash, endpointProfile.getUserConfigurationHash());
     }
 
@@ -204,4 +206,13 @@ public class EndpointActorState {
         }
         return list;
     }
+
+    public boolean isServerProfileChanged() {
+        return serverProfileChanged;
+    }
+
+    public void setServerProfileChanged(boolean serverProfileChanged) {
+        this.serverProfileChanged = serverProfileChanged;
+    }
+
 }

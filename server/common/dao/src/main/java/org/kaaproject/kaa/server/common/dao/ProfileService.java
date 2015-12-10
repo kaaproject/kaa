@@ -21,8 +21,9 @@ import java.util.Collection;
 import java.util.List;
 
 import org.kaaproject.kaa.common.dto.ChangeProfileFilterNotification;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.ProfileVersionPairDto;
 import org.kaaproject.kaa.common.dto.StructureRecordDto;
 import org.kaaproject.kaa.common.dto.VersionDto;
 
@@ -37,7 +38,7 @@ public interface ProfileService {
      * @param applicationId the application id
      * @return the list of profile schemas
      */
-    List<ProfileSchemaDto> findProfileSchemasByAppId(String applicationId);
+    List<EndpointProfileSchemaDto> findProfileSchemasByAppId(String applicationId);
 
     /**
      * Find schemas versions by application id.
@@ -53,7 +54,7 @@ public interface ProfileService {
      * @param id the profile schema id
      * @return the profile schema dto
      */
-    ProfileSchemaDto findProfileSchemaById(String id);
+    EndpointProfileSchemaDto findProfileSchemaById(String id);
 
     /**
      * Save profile schema.
@@ -61,7 +62,7 @@ public interface ProfileService {
      * @param profileSchemaDto the profile schema dto
      * @return the profile schema dto
      */
-    ProfileSchemaDto saveProfileSchema(ProfileSchemaDto profileSchemaDto);
+    EndpointProfileSchemaDto saveProfileSchema(EndpointProfileSchemaDto profileSchemaDto);
 
     /**
      * Remove profile schemas by application id.
@@ -93,7 +94,7 @@ public interface ProfileService {
      * @param endpointGroupId the endpoint group id
      * @return the structure record dto
      */
-    StructureRecordDto<ProfileFilterDto> findProfileFilterRecordBySchemaIdAndEndpointGroupId(String schemaId, String endpointGroupId);
+    StructureRecordDto<ProfileFilterDto> findProfileFilterRecordBySchemaIdAndEndpointGroupId(String endpointProfileSchemaId, String serverProfileSchemaId, String endpointGroupId);
 
     /**
      * Find all vacant profile schemas versions by endpoint group id.
@@ -101,7 +102,7 @@ public interface ProfileService {
      * @param endpointGroupId the endpoint group id
      * @return the list of schema versions
      */
-    List<VersionDto> findVacantSchemasByEndpointGroupId(String endpointGroupId);
+    List<ProfileVersionPairDto> findVacantSchemasByEndpointGroupId(String endpointGroupId);
 
     /**
      * Find profile filter by id.
@@ -145,14 +146,7 @@ public interface ProfileService {
      * @param deactivatedUsername the deactivated username
      * @return the change profile filter notification
      */
-    ChangeProfileFilterNotification deleteProfileFilterRecord(String schemaId, String groupId, String deactivatedUsername);
-
-    /**
-     * Remove profile filters by profile schema id.
-     *
-     * @param profileSchemaId the profile schema id
-     */
-    void removeProfileFiltersByProfileSchemaId(String profileSchemaId);
+    ChangeProfileFilterNotification deleteProfileFilterRecord(String endpointProfileSchemaId, String serverProfileSchemaId, String groupId, String deactivatedUsername);
 
     /**
      * Find profile filter by application id and version.
@@ -161,7 +155,7 @@ public interface ProfileService {
      * @param schemaVersion the schema version
      * @return the list of profile filters
      */
-    List<ProfileFilterDto> findProfileFilterByAppIdAndVersion(String appId, int schemaVersion);
+    List<ProfileFilterDto> findProfileFiltersByAppIdAndVersions(String appId, int clientSchemaVersion, int serverSchemaVersion);
 
     /**
      * Find profile schema by application id and version.
@@ -170,7 +164,7 @@ public interface ProfileService {
      * @param schemaVersion the schema version
      * @return the profile schema dto
      */
-    ProfileSchemaDto findProfileSchemaByAppIdAndVersion(String appId, int schemaVersion);
+    EndpointProfileSchemaDto findProfileSchemaByAppIdAndVersion(String appId, int schemaVersion);
 
     /**
      * Find profile filter by profile schema id and endpoint group id.
@@ -178,5 +172,5 @@ public interface ProfileService {
      * @param groupId the endpoint group id
      * @return found profile filter
      */
-    ProfileFilterDto findLatestFilterBySchemaIdAndGroupId(String schemaId, String groupId);
+    ProfileFilterDto findLatestFilterBySchemaIdsAndGroupId(String endpointProfileSchemaId, String serverProfileSchemaId, String groupId);
 }

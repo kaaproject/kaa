@@ -35,7 +35,7 @@ import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.PageLinkDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterRecordDto;
-import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.VersionDto;
@@ -237,8 +237,8 @@ public class AdminClient {
         return restTemplate.postForObject(url + "editConfigurationSchema", configurationSchema, ConfigurationSchemaDto.class);
     }
 
-    public ProfileSchemaDto saveProfileSchema(ProfileSchemaDto profileSchema) throws Exception {
-        return restTemplate.postForObject(url + "saveProfileSchema", profileSchema, ProfileSchemaDto.class);
+    public EndpointProfileSchemaDto saveProfileSchema(EndpointProfileSchemaDto profileSchema) throws Exception {
+        return restTemplate.postForObject(url + "saveProfileSchema", profileSchema, EndpointProfileSchemaDto.class);
     }
     
     public ServerProfileSchemaDto saveServerProfileSchema(ServerProfileSchemaDto serverProfileSchema) throws Exception {
@@ -355,8 +355,8 @@ public class AdminClient {
         return restTemplate.getForObject(url + "configurationSchema/" + configurationSchemaId, ConfigurationSchemaDto.class);
     }
 
-    public ProfileSchemaDto getProfileSchema(String profileSchemaId) throws Exception {
-        return restTemplate.getForObject(url + "profileSchema/" + profileSchemaId, ProfileSchemaDto.class);
+    public EndpointProfileSchemaDto getProfileSchema(String profileSchemaId) throws Exception {
+        return restTemplate.getForObject(url + "profileSchema/" + profileSchemaId, EndpointProfileSchemaDto.class);
     }
     
     public ServerProfileSchemaDto getServerProfileSchema(String serverProfileSchemaId) throws Exception {
@@ -381,9 +381,9 @@ public class AdminClient {
         return entity.getBody();
     }
 
-    public List<ProfileSchemaDto> getProfileSchemas(String applicationId) throws Exception {
-        ParameterizedTypeReference<List<ProfileSchemaDto>> typeRef = new ParameterizedTypeReference<List<ProfileSchemaDto>>() {};
-        ResponseEntity<List<ProfileSchemaDto>> entity = restTemplate.exchange(url + "profileSchemas/"+applicationId, HttpMethod.GET, null, typeRef);
+    public List<EndpointProfileSchemaDto> getProfileSchemas(String applicationId) throws Exception {
+        ParameterizedTypeReference<List<EndpointProfileSchemaDto>> typeRef = new ParameterizedTypeReference<List<EndpointProfileSchemaDto>>() {};
+        ResponseEntity<List<EndpointProfileSchemaDto>> entity = restTemplate.exchange(url + "profileSchemas/"+applicationId, HttpMethod.GET, null, typeRef);
         return entity.getBody();
     }
     

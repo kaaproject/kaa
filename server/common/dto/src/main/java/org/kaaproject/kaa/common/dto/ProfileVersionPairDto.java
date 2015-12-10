@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,22 +16,36 @@
 
 package org.kaaproject.kaa.common.dto;
 
-public class ProfileFilterDto extends AbstractStructureDto {
+import java.io.Serializable;
 
-    private static final long serialVersionUID = 3068910692262107362L;
+public class ProfileVersionPairDto implements Serializable {
 
-    private String endpointProfileSchemaId;
+    private static final long serialVersionUID = -7073061086587077053L;
+
+    private String endpointProfileSchemaid;
     private Integer endpointProfileSchemaVersion;
-
-    private String serverProfileSchemaId;
+    private String serverProfileSchemaid;
     private Integer serverProfileSchemaVersion;
 
-    public String getEndpointProfileSchemaId() {
-        return endpointProfileSchemaId;
+    public ProfileVersionPairDto() {
+        super();
     }
 
-    public void setEndpointProfileSchemaId(String endpointProfileSchemaId) {
-        this.endpointProfileSchemaId = endpointProfileSchemaId;
+    public ProfileVersionPairDto(String endpointProfileSchemaid, Integer endpointProfileSchemaVersion, String serverProfileSchemaid,
+            Integer serverProfileSchemaVersion) {
+        super();
+        this.endpointProfileSchemaid = endpointProfileSchemaid;
+        this.endpointProfileSchemaVersion = endpointProfileSchemaVersion;
+        this.serverProfileSchemaid = serverProfileSchemaid;
+        this.serverProfileSchemaVersion = serverProfileSchemaVersion;
+    }
+
+    public String getEndpointProfileSchemaid() {
+        return endpointProfileSchemaid;
+    }
+
+    public void setEndpointProfileSchemaid(String endpointProfileSchemaid) {
+        this.endpointProfileSchemaid = endpointProfileSchemaid;
     }
 
     public Integer getEndpointProfileSchemaVersion() {
@@ -42,12 +56,12 @@ public class ProfileFilterDto extends AbstractStructureDto {
         this.endpointProfileSchemaVersion = endpointProfileSchemaVersion;
     }
 
-    public String getServerProfileSchemaId() {
-        return serverProfileSchemaId;
+    public String getServerProfileSchemaid() {
+        return serverProfileSchemaid;
     }
 
-    public void setServerProfileSchemaId(String serverProfileSchemaId) {
-        this.serverProfileSchemaId = serverProfileSchemaId;
+    public void setServerProfileSchemaid(String serverProfileSchemaid) {
+        this.serverProfileSchemaid = serverProfileSchemaid;
     }
 
     public Integer getServerProfileSchemaVersion() {
@@ -61,11 +75,11 @@ public class ProfileFilterDto extends AbstractStructureDto {
     @Override
     public int hashCode() {
         final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((endpointProfileSchemaId == null) ? 0 : endpointProfileSchemaId.hashCode());
+        int result = 1;
         result = prime * result + ((endpointProfileSchemaVersion == null) ? 0 : endpointProfileSchemaVersion.hashCode());
-        result = prime * result + ((serverProfileSchemaId == null) ? 0 : serverProfileSchemaId.hashCode());
+        result = prime * result + ((endpointProfileSchemaid == null) ? 0 : endpointProfileSchemaid.hashCode());
         result = prime * result + ((serverProfileSchemaVersion == null) ? 0 : serverProfileSchemaVersion.hashCode());
+        result = prime * result + ((serverProfileSchemaid == null) ? 0 : serverProfileSchemaid.hashCode());
         return result;
     }
 
@@ -73,37 +87,39 @@ public class ProfileFilterDto extends AbstractStructureDto {
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
-        if (!super.equals(obj))
+        if (obj == null)
             return false;
         if (getClass() != obj.getClass())
             return false;
-        ProfileFilterDto other = (ProfileFilterDto) obj;
-        if (endpointProfileSchemaId == null) {
-            if (other.endpointProfileSchemaId != null)
-                return false;
-        } else if (!endpointProfileSchemaId.equals(other.endpointProfileSchemaId))
-            return false;
+        ProfileVersionPairDto other = (ProfileVersionPairDto) obj;
         if (endpointProfileSchemaVersion == null) {
             if (other.endpointProfileSchemaVersion != null)
                 return false;
         } else if (!endpointProfileSchemaVersion.equals(other.endpointProfileSchemaVersion))
             return false;
-        if (serverProfileSchemaId == null) {
-            if (other.serverProfileSchemaId != null)
+        if (endpointProfileSchemaid == null) {
+            if (other.endpointProfileSchemaid != null)
                 return false;
-        } else if (!serverProfileSchemaId.equals(other.serverProfileSchemaId))
+        } else if (!endpointProfileSchemaid.equals(other.endpointProfileSchemaid))
             return false;
         if (serverProfileSchemaVersion == null) {
             if (other.serverProfileSchemaVersion != null)
                 return false;
         } else if (!serverProfileSchemaVersion.equals(other.serverProfileSchemaVersion))
             return false;
+        if (serverProfileSchemaid == null) {
+            if (other.serverProfileSchemaid != null)
+                return false;
+        } else if (!serverProfileSchemaid.equals(other.serverProfileSchemaid))
+            return false;
         return true;
     }
 
     @Override
     public String toString() {
-        return "ProfileFilterDto{" + super.toString() + "}";
+        return "ProfileVersionPairDto [endpointProfileSchemaid=" + endpointProfileSchemaid + ", endpointProfileSchemaVersion="
+                + endpointProfileSchemaVersion + ", serverProfileSchemaid=" + serverProfileSchemaid + ", serverProfileSchemaVersion="
+                + serverProfileSchemaVersion + "]";
     }
 
 }

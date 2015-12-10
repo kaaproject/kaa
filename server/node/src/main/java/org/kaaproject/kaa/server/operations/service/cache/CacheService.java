@@ -26,7 +26,7 @@ import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.HistoryDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
@@ -92,7 +92,7 @@ public interface CacheService {
      * @param key the key
      * @return the filters
      */
-    List<ProfileFilterDto> getFilters(AppVersionKey key);
+    List<ProfileFilterDto> getFilters(AppProfileVersionsKey key);
 
     /**
      * Gets application event family maps by their ids.
@@ -133,7 +133,7 @@ public interface CacheService {
      * @param key the key
      * @return the conf schema by app
      */
-    ProfileSchemaDto getProfileSchemaByAppAndVersion(AppVersionKey key);
+    EndpointProfileSchemaDto getProfileSchemaByAppAndVersion(AppVersionKey key);
     
     /**
      * Gets the server profile schema by app.
@@ -312,7 +312,7 @@ public interface CacheService {
      * @param value the value
      * @return the profile schema dto
      */
-    ProfileSchemaDto putProfileSchema(AppVersionKey key, ProfileSchemaDto value);
+    EndpointProfileSchemaDto putProfileSchema(AppVersionKey key, EndpointProfileSchemaDto value);
 
     /**
      * Put configuration schema.

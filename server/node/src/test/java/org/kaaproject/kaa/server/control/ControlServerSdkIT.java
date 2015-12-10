@@ -24,7 +24,7 @@ import org.junit.Test;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
-import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
@@ -44,7 +44,7 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
     @Test
     public void testGenerateJavaSdk() throws Exception {
         ApplicationDto application = createApplication(tenantAdminDto);
-        ProfileSchemaDto profileSchema = createProfileSchema(application.getId(), null);
+        EndpointProfileSchemaDto profileSchema = createProfileSchema(application.getId(), null);
         ConfigurationSchemaDto configSchema = createConfigurationSchema(application.getId());
         NotificationSchemaDto notificationSchema = createUserNotificationSchema(application.getId());
         LogSchemaDto logSchema = createLogSchema(application.getId());
@@ -66,7 +66,7 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
     @Test
     public void testGenerateJavaSdkWithEventSupport() throws Exception {
         ApplicationDto application = createApplication(tenantAdminDto);
-        ProfileSchemaDto profileSchema = createProfileSchema(application.getId(), null);
+        EndpointProfileSchemaDto profileSchema = createProfileSchema(application.getId(), null);
         ConfigurationSchemaDto configSchema = createConfigurationSchema(application.getId());
         NotificationSchemaDto notificationSchema = createUserNotificationSchema(application.getId());
 
@@ -92,7 +92,7 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
     @Test
     public void testGenerateAndroidSdkWithEventSupport() throws Exception {
         ApplicationDto application = createApplication(tenantAdminDto);
-        ProfileSchemaDto profileSchema = createProfileSchema(application.getId(), null);
+        EndpointProfileSchemaDto profileSchema = createProfileSchema(application.getId(), null);
         ConfigurationSchemaDto configSchema = createConfigurationSchema(application.getId());
         NotificationSchemaDto notificationSchema = createUserNotificationSchema(application.getId());
         LogSchemaDto logSchema = createLogSchema(application.getId());
@@ -118,7 +118,7 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
     @Test
     public void testGenerateCppSdk() throws Exception {
         ApplicationDto application = createApplication(tenantAdminDto);
-        ProfileSchemaDto profileSchema = createProfileSchema(application.getId(), null);
+        EndpointProfileSchemaDto profileSchema = createProfileSchema(application.getId(), null);
         ConfigurationSchemaDto configSchema = createConfigurationSchema(application.getId());
         NotificationSchemaDto notificationSchema = createUserNotificationSchema(application.getId());
         LogSchemaDto logSchema = createLogSchema(application.getId());
@@ -140,7 +140,7 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
     @Test
     public void testGenerateCppSdkWithEventSupport() throws Exception {
         ApplicationDto application = createApplication(tenantAdminDto);
-        ProfileSchemaDto profileSchema = createProfileSchema(application.getId(), null);
+        EndpointProfileSchemaDto profileSchema = createProfileSchema(application.getId(), null);
         ConfigurationSchemaDto configSchema = createConfigurationSchema(application.getId());
         NotificationSchemaDto notificationSchema = createUserNotificationSchema(application.getId());
         LogSchemaDto logSchema = createLogSchema(application.getId());
@@ -166,7 +166,7 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
     @Test
     public void testGenerateCSdk() throws Exception {
         ApplicationDto application = createApplication(tenantAdminDto);
-        ProfileSchemaDto profileSchema = createProfileSchema(application.getId(), null);
+        EndpointProfileSchemaDto profileSchema = createProfileSchema(application.getId(), null);
         ConfigurationSchemaDto configSchema = createConfigurationSchema(application.getId());
         NotificationSchemaDto notificationSchema = createUserNotificationSchema(application.getId());
         LogSchemaDto logSchema = createLogSchema(application.getId());
@@ -191,7 +191,7 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
     @Test
     public void testGenerateCSdkWithEventSupport() throws Exception {
         ApplicationDto application = createApplication(tenantAdminDto);
-        ProfileSchemaDto profileSchema = createProfileSchema(application.getId(), null);
+        EndpointProfileSchemaDto profileSchema = createProfileSchema(application.getId(), null);
         ConfigurationSchemaDto configSchema = createConfigurationSchema(application.getId());
         NotificationSchemaDto notificationSchema = createUserNotificationSchema(application.getId());
         LogSchemaDto logSchema = createLogSchema(application.getId());
@@ -250,7 +250,7 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
     public void testGenerateJavaSdkWithInvalidConfigurationSchema() throws Exception {
         final ApplicationDto application = createApplication(tenantAdminDto);
         loginTenantDeveloper(tenantDeveloperUser);
-        final ProfileSchemaDto profileSchema = createProfileSchema(application.getId(), null);
+        final EndpointProfileSchemaDto profileSchema = createProfileSchema(application.getId(), null);
         checkNotFound(new TestRestCall() {
             @Override
             public void executeRestCall() throws Exception {
@@ -269,7 +269,7 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
     public void testGenerateJavaSdkWithInvalidNotificationSchema() throws Exception {
         final ApplicationDto application = createApplication(tenantAdminDto);
         loginTenantDeveloper(tenantDeveloperUser);
-        final ProfileSchemaDto profileSchema = createProfileSchema(application.getId(), null);
+        final EndpointProfileSchemaDto profileSchema = createProfileSchema(application.getId(), null);
         final ConfigurationSchemaDto configSchema = createConfigurationSchema(application.getId());
         checkNotFound(new TestRestCall() {
             @Override
