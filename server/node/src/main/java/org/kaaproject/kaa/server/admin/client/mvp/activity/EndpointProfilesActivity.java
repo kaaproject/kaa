@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,6 +44,8 @@ import org.kaaproject.kaa.server.admin.shared.services.ServiceErrorCode;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.kaaproject.kaa.server.admin.client.util.Utils.isNotBlank;
 
 public class EndpointProfilesActivity extends AbstractActivity implements BaseListView.Presenter {
 
@@ -132,10 +134,10 @@ public class EndpointProfilesActivity extends AbstractActivity implements BaseLi
             public void onClick(ClickEvent clickEvent) {
                 listView.clearError();
                 String value = listView.getEndpointKeyHashTextBox().getValue();
-                if (value != null && !value.isEmpty()) {
+                if (isNotBlank(value)) {
                     findEndpointFromThisApplication(value);
                 } else {
-                    Utils.handleException(new IllegalArgumentException(Utils.messages.emptyEndpointKeyHash()), listView);
+                    listView.getListWidget().getDataGrid().setRowData(new ArrayList<EndpointProfileDto>());
                 }
             }
         }));
