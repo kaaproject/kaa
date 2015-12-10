@@ -166,8 +166,7 @@
         if (bind) {
             [self.eventListenersRequests removeObjectForKey:[NSNumber numberWithInt:singleResponse.requestId]];
             [[self.executorContext getCallbackExecutor] addOperationWithBlock:^{
-                if (singleResponse.result == SYNC_RESPONSE_RESULT_TYPE_SUCCESS
-                    && singleResponse.listeners.branch == KAA_UNION_ARRAY_STRING_OR_NULL_BRANCH_0) {
+                if (singleResponse.result == SYNC_RESPONSE_RESULT_TYPE_SUCCESS) {
                     [bind.delegate onEventListenersReceived:((NSArray *)singleResponse.listeners.data)];
                 } else {
                     [bind.delegate onRequestFailed];
