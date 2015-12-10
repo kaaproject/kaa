@@ -25,8 +25,6 @@ import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileRecordFieldDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileViewDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
@@ -55,10 +53,11 @@ import org.kaaproject.kaa.common.dto.event.EventClassType;
 import org.kaaproject.kaa.common.dto.event.EventSchemaVersionDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
-import org.kaaproject.kaa.common.dto.plugin.PluginInfoDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.admin.client.mvp.event.data.DataEvent;
 import org.kaaproject.kaa.server.admin.shared.config.ConfigurationRecordFormDto;
+import org.kaaproject.kaa.server.admin.shared.endpoint.EndpointProfileViewDto;
+import org.kaaproject.kaa.server.admin.shared.plugin.PluginInfoDto;
 import org.kaaproject.kaa.server.admin.shared.properties.PropertiesDto;
 import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaFormDto;
 import org.kaaproject.kaa.server.admin.shared.schema.ProfileSchemaViewDto;
@@ -545,6 +544,27 @@ public class DataSource {
                     }
                 });
     }
+    
+    public void  getServerProfileSchemaInfosByApplicationId(String applicationId,
+                                            final AsyncCallback<List<SchemaInfoDto>> callback) {
+        rpcService.getServerProfileSchemaInfosByApplicationId(applicationId,  
+                new DataCallback<List<SchemaInfoDto>>(callback) {
+                    @Override
+                    protected void onResult(List<SchemaInfoDto> result) {
+                    }
+                });
+    }
+    
+    public void getServerProfileSchemaInfosByEndpointKey(
+            String endpointKeyHash,
+            final AsyncCallback<List<SchemaInfoDto>> callback) {
+        rpcService.getServerProfileSchemaInfosByEndpointKey(endpointKeyHash,
+                new DataCallback<List<SchemaInfoDto>>(callback) {
+                    @Override
+                    protected void onResult(List<SchemaInfoDto> result) {
+                    }
+                });
+    }
 
     public void getServerProfileSchemaView(String serverProfileSchemaId,
             final AsyncCallback<ServerProfileSchemaViewDto> callback) {
@@ -866,20 +886,14 @@ public class DataSource {
         rpcService.getEndpointProfileByKeyHash(endpointKeyHash, callback);
     }
 
-    public void getEndpointProfileViewDtoByEndpointProfileKeyHash(String endpointKeyHash,
+    public void getEndpointProfileViewByKeyHash(String endpointKeyHash,
             AsyncCallback<EndpointProfileViewDto> callback) {
-        rpcService.getEndpointProfileViewDtoByEndpointProfileKeyHash(endpointKeyHash, callback);
+        rpcService.getEndpointProfileViewByKeyHash(endpointKeyHash, callback);
     }
 
-    public void updateEndpointProfile(EndpointProfileRecordFieldDto endpointProfileRecordDto,
-                                      AsyncCallback<EndpointProfileRecordFieldDto> callback){
-//        rpcService.updateEndpointProfile(endpointProfileRecordDto, callback);
-        rpcService.updateServerProfile(endpointProfileRecordDto, callback);
-
-    }
-
-    public void generateRecordFromSchemaJson(String avroSchema, AsyncCallback<RecordField> callback) {
-        rpcService.generateRecordFromSchemaJson(avroSchema, callback);
+    public void updateServerProfile(String endpointKeyHash, int serverProfileVersion, RecordField serverProfileRecord,
+                                      AsyncCallback<EndpointProfileDto> callback){
+        rpcService.updateServerProfile(endpointKeyHash, serverProfileVersion, serverProfileRecord, callback);
     }
 
     public void loadProfileFilterRecords(String endpointGroupId, boolean includeDeprecated,

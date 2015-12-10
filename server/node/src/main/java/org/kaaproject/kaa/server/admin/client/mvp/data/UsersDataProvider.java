@@ -25,7 +25,6 @@ import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProv
 import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.view.client.HasData;
 
 public class UsersDataProvider extends AbstractDataProvider<UserDto>{
 

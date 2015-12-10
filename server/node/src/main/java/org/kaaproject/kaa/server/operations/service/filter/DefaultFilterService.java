@@ -62,10 +62,10 @@ public class DefaultFilterService implements FilterService {
      * java.lang.String)
      */
     @Override
-    public List<ProfileFilterDto> getAllMatchingFilters(AppVersionKey appProfileVersionKey, AppVersionKey appServerProfileVersopnKey,
+    public List<ProfileFilterDto> getAllMatchingFilters(AppVersionKey appProfileVersionKey, AppVersionKey appServerProfileVersionKey,
             EndpointProfileDto profile) {
         ProfileSchemaDto profileSchema = cacheService.getProfileSchemaByAppAndVersion(appProfileVersionKey);
-        ServerProfileSchemaDto serverProfileSchema = cacheService.getServerProfileSchemaByAppAndVersion(appServerProfileVersopnKey);
+        ServerProfileSchemaDto serverProfileSchema = cacheService.getServerProfileSchemaByAppAndVersion(appServerProfileVersionKey);
         String profileSchemaBody = cacheService.getFlatCtlSchemaById(profileSchema.getCtlSchemaId());
         String serverProfileSchemaBody = cacheService.getFlatCtlSchemaById(serverProfileSchema.getCtlSchemaId());
         List<ProfileFilterDto> filters = cacheService.getFilters(appProfileVersionKey);

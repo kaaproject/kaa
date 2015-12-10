@@ -58,8 +58,9 @@ public class MultiValueListBox<T> extends Composite implements
   public MultiValueListBox(Renderer<T> renderer, ProvidesKey<T> keyProvider) {
     this.keyProvider = keyProvider;
     this.renderer = renderer;
-    initWidget(new ListBox(true));
-
+    ListBox listBox = new ListBox();
+    listBox.setMultipleSelect(true);
+    initWidget(listBox);
     getListBox().addChangeHandler(new ChangeHandler() {
       public void onChange(ChangeEvent event) {
         List<T> newValue = new ArrayList<>();

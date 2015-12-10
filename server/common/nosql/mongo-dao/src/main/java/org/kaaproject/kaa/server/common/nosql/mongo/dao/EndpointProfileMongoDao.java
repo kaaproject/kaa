@@ -211,7 +211,7 @@ public class EndpointProfileMongoDao extends AbstractMongoDao<MongoEndpointProfi
         updateFirst(
                 query(where(EP_ENDPOINT_KEY_HASH).is(keyHash)),
                 update(EP_SERVER_PROFILE_PROPERTY, serverProfile)
-                .addToSet(EP_SERVER_PROFILE_VERSION_PROPERTY, version));
+                .set(EP_SERVER_PROFILE_VERSION_PROPERTY, version));
         return findById(ByteBuffer.wrap(keyHash));
     }
 }

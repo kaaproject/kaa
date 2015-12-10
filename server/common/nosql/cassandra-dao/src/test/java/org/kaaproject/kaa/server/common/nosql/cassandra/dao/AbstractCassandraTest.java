@@ -117,7 +117,7 @@ public class AbstractCassandraTest {
     }
 
     protected EndpointProfileDto generateEndpointProfile(String appId, String sdkToken, String accessToken, List<String> topicIds) {
-        return generateEndpointProfile(appId, sdkToken, accessToken, topicIds);
+        return generateEndpointProfile(appId, sdkToken, accessToken, topicIds, null);
     }
 
     protected EndpointProfileDto generateEndpointProfile(String appId, String sdkToken, String accessToken, List<String> topicIds, CTLDataDto ctlDataDto) {

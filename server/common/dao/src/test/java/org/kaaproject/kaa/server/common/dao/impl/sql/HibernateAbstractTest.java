@@ -16,12 +16,28 @@
 
 package org.kaaproject.kaa.server.common.dao.impl.sql;
 
+import static org.apache.commons.lang.StringUtils.isBlank;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+
 import org.junit.Assert;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
 import org.kaaproject.kaa.common.dto.UpdateStatus;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventAction;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
 import org.kaaproject.kaa.server.common.core.schema.KaaSchemaFactoryImpl;
@@ -51,21 +67,6 @@ import org.kaaproject.kaa.server.common.dao.model.sql.User;
 import org.kaaproject.kaa.server.common.dao.model.sql.UserVerifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-
-import static org.apache.commons.lang.StringUtils.isBlank;
 
 public abstract class HibernateAbstractTest extends AbstractTest {
 
@@ -216,9 +217,7 @@ public abstract class HibernateAbstractTest extends AbstractTest {
             if (app == null) {
                 app = generateApplication(null);
             }
-            
-            CTLSchemaDto ctlSchemaDto = ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN, app.getTenant().getStringId(), 1, null));
-            CTLSchema ctlSchema = ctlSchemaDao.findById(ctlSchemaDto.getId());
+            CTLSchema ctlSchema =  generateCTLSchema(DEFAULT_FQN, 1, app.getTenant(), null);
             ProfileSchema schemaDto;
             schemas = new ArrayList<>(count);
             for (int i = 0; i < count; i++) {
@@ -237,6 +236,28 @@ public abstract class HibernateAbstractTest extends AbstractTest {
             Assert.fail("Can't generate profile schema." + e.getMessage());
         }
         return schemas;
+    }
+    
+    protected CTLSchema generateCTLSchema(String fqn, int version, Tenant tenant, CTLSchemaScopeDto scope) {
+        if (scope == null) {
+            if (tenant == null) {
+                scope = CTLSchemaScopeDto.SYSTEM;
+            } else {
+                scope = CTLSchemaScopeDto.TENANT;
+            }
+        }
+        CTLSchemaMetaInfo metaInfo = new CTLSchemaMetaInfo();
+        metaInfo.setVersion(version);
+        metaInfo.setFqn(fqn);
+        metaInfo.setScope(scope);
+        metaInfo = ctlSchemaMetaInfoDao.save(metaInfo);
+        CTLSchema ctlSchema = new CTLSchema();
+        ctlSchema.setTenant(tenant);
+        ctlSchema.setBody(UUID.randomUUID().toString());
+        ctlSchema.setDependencySet(new HashSet<CTLSchema>());
+        ctlSchema.setMetaInfo(metaInfo);
+        ctlSchema = ctlSchemaDao.save(ctlSchema);
+        return ctlSchema;
     }
 
     protected List<NotificationSchema> generateNotificationSchema(Application app, int count, NotificationTypeDto type) {
@@ -487,17 +508,4 @@ public abstract class HibernateAbstractTest extends AbstractTest {
         return sdkProfileDao.save(entity);
     }
 
-    protected CTLSchema generateCTLSchema(String fqn, Tenant tenant, int version, String body) {
-        CTLSchema ctlSchema = new CTLSchema();
-        ctlSchema.setMetaInfo(new CTLSchemaMetaInfo(fqn, version));
-        if (isBlank(body)) {
-            body = UUID.randomUUID().toString();
-        }
-        ctlSchema.setBody(body);
-        if (tenant == null) {
-            tenant = generateTenant();
-        }
-        ctlSchema.setTenant(tenant);
-        return ctlSchema;
-    }
 }

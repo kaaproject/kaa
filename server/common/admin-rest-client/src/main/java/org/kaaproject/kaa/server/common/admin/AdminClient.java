@@ -138,6 +138,14 @@ public class AdminClient {
         ResponseEntity<EndpointProfileBodyDto> entity = restTemplate.exchange(url + "endpointProfileBody/" + endpointProfileKeyHash, HttpMethod.GET, null, typeRef);
         return entity.getBody();
     }
+    
+    public EndpointProfileDto updateServerProfile(String endpointProfileKey, int version, String serverProfileBody) throws Exception {
+        MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
+        params.add("endpointProfileKey", endpointProfileKey);
+        params.add("version", version);
+        params.add("serverProfileBody", serverProfileBody);
+        return restTemplate.postForObject(url + "updateServerProfile", params, EndpointProfileDto.class);
+    }
 
     public AuthResultDto checkAuth() throws Exception {
         return restTemplate.getForObject(url + "auth/checkAuth", AuthResultDto.class);

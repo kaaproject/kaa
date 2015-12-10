@@ -180,9 +180,15 @@ public class OracleNoSqlLogAppenderTest {
 
         logAppender.close();
         TestLogDeliveryCallback callback = new TestLogDeliveryCallback();
+        
+        LogSchemaDto schemaDto = new LogSchemaDto();
+        schemaDto.setSchema(BasicEndpointProfile.SCHEMA$.toString());
+        LogSchema schema = new LogSchema(schemaDto);
+        
         EndpointProfileDataDto profileDto = new EndpointProfileDataDto("1", ENDPOINT_KEY, 1, "test", 0, null);
-        BaseLogEventPack logEventPack = new BaseLogEventPack(profileDto, DATE_CREATED, 1, null);
-
+        BaseLogEventPack logEventPack = new BaseLogEventPack(profileDto, DATE_CREATED, schema.getVersion(), null);
+        logEventPack.setLogSchema(schema);
+        
         logAppender.doAppend(logEventPack, callback);
         Assert.assertTrue(callback.internallError);
     }
@@ -207,8 +213,10 @@ public class OracleNoSqlLogAppenderTest {
         schemaDto.setSchema(BasicEndpointProfile.SCHEMA$.toString());
         LogSchema schema = new LogSchema(schemaDto);
 
+        
         EndpointProfileDataDto profileDto = new EndpointProfileDataDto("1", ENDPOINT_KEY, 1, "test", 0, null);
         BaseLogEventPack logEventPack = new BaseLogEventPack(profileDto, DATE_CREATED, schema.getVersion(), events);
+        logEventPack.setLogSchema(schema);
 
         TestLogDeliveryCallback callback = new TestLogDeliveryCallback();
         logAppender.doAppend(logEventPack, callback);

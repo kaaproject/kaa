@@ -19,6 +19,7 @@ package org.kaaproject.kaa.server.control.service;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.avro.Schema;
 import org.kaaproject.avro.ui.shared.Fqn;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
@@ -27,7 +28,6 @@ import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileViewDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
@@ -275,6 +275,16 @@ public interface ControlService {
      * @throws ControlServiceException the control service exception
      */
     ProfileSchemaDto getProfileSchema(String profileSchemaId) throws ControlServiceException;
+    
+    /**
+     * Gets the profile schema by application id and profile schema version.
+     *
+     * @param applicationId the application id
+     * @param version the profile schema version
+     * @return the profile schema
+     * @throws ControlServiceException the control service exception
+     */
+    ProfileSchemaDto getProfileSchemaByApplicationIdAndVersion(String applicationId, int version) throws ControlServiceException;
 
     /**
      * Edits the profile schema.
@@ -302,6 +312,16 @@ public interface ControlService {
      * @throws ControlServiceException
      */
     ServerProfileSchemaDto getServerProfileSchema(String serverProfileSchemaId) throws ControlServiceException;
+    
+    /**
+     * Gets the server profile schema by application id and server profile schema version.
+     *
+     * @param applicationId the application id
+     * @param version the server profile schema version
+     * @return the server profile schema
+     * @throws ControlServiceException the control service exception
+     */
+    ServerProfileSchemaDto getServerProfileSchemaByApplicationIdAndVersion(String applicationId, int version) throws ControlServiceException;
 
     /**
      * Edits the server profile schema.
@@ -1024,22 +1044,22 @@ public interface ControlService {
     /**
      * Gets endpoint profile by endpoint key hash.
      *
-     * @param endpointProfileKeyHash the endpoint key hash in string
+     * @param endpointKeyHash the endpoint key hash in string
      *            representation.
      * @return the EndpointProfileDto object.
      * @throws ControlServiceException the control service exception
      */
-    EndpointProfileDto getEndpointProfileByKeyHash(String endpointProfileKeyHash) throws ControlServiceException;
+    EndpointProfileDto getEndpointProfileByKeyHash(String endpointKeyHash) throws ControlServiceException;
 
     /**
      ** Gets endpoint profile body by endpoint key hash.
      *
-     * @param endpointProfileKeyHash the endpoint key hash in string
+     * @param endpointKeyHash the endpoint key hash in string
      *            representation.
      * @return the EndpointProfileBodyDto object.
      * @throws ControlServiceException the control service exception
      */
-    EndpointProfileBodyDto getEndpointProfileBodyByKeyHash(String endpointProfileKeyHash) throws ControlServiceException;
+    EndpointProfileBodyDto getEndpointProfileBodyByKeyHash(String endpointKeyHash) throws ControlServiceException;
 
     /**
      * Gets page of EndpointProfilesBodyDto objects by endpoint group id.
@@ -1052,13 +1072,15 @@ public interface ControlService {
     EndpointProfilesPageDto getEndpointProfileByEndpointGroupId(PageLinkDto pageLinkDto) throws ControlServiceException;
 
     /**
-     * Updates endpoint profile
+     * Updates server profile of endpoint profile
      *
-     * @param endpointProfileDto endpoint profile dto
-     * @return updated endpoint profile dto
+     * @param endpointKeyHash the endpoint key hash identifier.
+     * @param version the server profile schema version
+     * @param serverProfile server profile data in string representation.
+     * @return the updated endpoint profile.
      * @throws ControlServiceException
      */
-    EndpointProfileDto updateEndpointProfile(EndpointProfileDto endpointProfileDto) throws ControlServiceException;
+    EndpointProfileDto updateServerProfile(String endpointKeyHash, int version, String serverProfile) throws ControlServiceException;
 
     /**
      * Saves a CTL schema to the database.
@@ -1243,6 +1265,17 @@ public interface ControlService {
      * @throws ControlServiceException - if an exception occures.
      */
     String exportCTLSchemaFlatAsString(CTLSchemaDto schema) throws ControlServiceException;
+    
+    /**
+     * Exports the CTL schema as avro schema with all dependencies inline,
+     * recursively.
+     * 
+     * @param schema A CTL schema to export
+     * @return An avro schema of a CTL schema with all dependencies
+     *         inline, recursively
+     * @throws ControlServiceException - if an exception occures.
+     */
+    Schema exportCTLSchemaFlatAsSchema(CTLSchemaDto schema) throws ControlServiceException;
 
     /**
      * Exports the body of a CTL schema with all dependencies as different
@@ -1297,14 +1330,4 @@ public interface ControlService {
      */
     SdkProfileDto saveSdkProfile(SdkProfileDto sdkProfile)  throws ControlServiceException ;
 
-    /**
-     * Gets endpoint profile view for web ui.
-     *
-     * @param endpointProfileKeyHash the endpoint key hash in string representation.
-     * @return the EndpointProfileViewDto object
-     * @throws ControlServiceException the control service exception.
-     */
-    EndpointProfileViewDto getEndpointProfileViewDtoByEndpointKeyHash(String endpointProfileKeyHash) throws ControlServiceException;
-
-    
 }

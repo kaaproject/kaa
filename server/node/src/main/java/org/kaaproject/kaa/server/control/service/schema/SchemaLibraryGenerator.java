@@ -33,8 +33,6 @@ import org.kaaproject.kaa.server.control.service.sdk.JavaSdkGenerator;
 import org.kaaproject.kaa.server.control.service.sdk.SchemaUtil;
 import org.kaaproject.kaa.server.control.service.sdk.compiler.JavaDynamicBean;
 import org.kaaproject.kaa.server.control.service.sdk.compiler.JavaDynamicCompiler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.slf4j.helpers.MessageFormatter;
 
 /**
@@ -43,12 +41,6 @@ import org.slf4j.helpers.MessageFormatter;
 public class SchemaLibraryGenerator {
     
     private static final String LIBRARY_NAME_PATTERN = "{}.jar";
-
-    /**
-     * The Constant LOG.
-     */
-    private static final Logger LOG = LoggerFactory
-            .getLogger(SchemaLibraryGenerator.class);
 
     /**
      * Generate schema java library.

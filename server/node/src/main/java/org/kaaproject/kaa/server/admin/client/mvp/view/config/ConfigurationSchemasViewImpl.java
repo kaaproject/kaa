@@ -19,7 +19,6 @@ package org.kaaproject.kaa.server.admin.client.mvp.view.config;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseListViewImpl;
-import org.kaaproject.kaa.server.admin.client.mvp.view.schema.BaseSchemasGrid;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 public class ConfigurationSchemasViewImpl extends BaseListViewImpl<ConfigurationSchemaDto> {

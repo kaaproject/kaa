@@ -87,6 +87,10 @@ public class BaseSchemaDto extends VersionDto {
         this.name = other.name;
         this.description = other.description;
     }
+    
+    public VersionDto toVersionDto() {
+        return new VersionDto(id, version);
+    }
 
     @Override
     public int hashCode() {

@@ -26,8 +26,6 @@ import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileRecordFieldDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileViewDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
@@ -58,9 +56,10 @@ import org.kaaproject.kaa.common.dto.event.EventClassType;
 import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
-import org.kaaproject.kaa.common.dto.plugin.PluginInfoDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.admin.shared.config.ConfigurationRecordFormDto;
+import org.kaaproject.kaa.server.admin.shared.endpoint.EndpointProfileViewDto;
+import org.kaaproject.kaa.server.admin.shared.plugin.PluginInfoDto;
 import org.kaaproject.kaa.server.admin.shared.properties.PropertiesDto;
 import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaFormDto;
 import org.kaaproject.kaa.server.admin.shared.schema.ProfileSchemaViewDto;
@@ -76,7 +75,7 @@ public interface KaaAdminService extends RemoteService {
 
     public RecordField generateRecordFromSchemaJson(String avroSchema) throws KaaAdminServiceException;
 
-    public EndpointProfileViewDto getEndpointProfileViewDtoByEndpointProfileKeyHash(String endpointProfileKeyHash) throws KaaAdminServiceException;
+    public EndpointProfileViewDto getEndpointProfileViewByKeyHash(String endpointProfileKeyHash) throws KaaAdminServiceException;
 
     public EndpointProfilesPageDto getEndpointProfileByEndpointGroupId(String endpointGroupId, String limit, String offset) throws KaaAdminServiceException;
 
@@ -84,9 +83,11 @@ public interface KaaAdminService extends RemoteService {
 
     public EndpointProfilesBodyDto getEndpointProfileBodyByEndpointGroupId(String endpointGroupId, String limit, String offset) throws KaaAdminServiceException;
 
-    public EndpointProfileBodyDto getEndpointProfileBodyByKeyHash(String endpointProfileKeyHash) throws KaaAdminServiceException;
+    public EndpointProfileBodyDto getEndpointProfileBodyByKeyHash(String endpointKeyHash) throws KaaAdminServiceException;
+    
+    public EndpointProfileDto updateServerProfile(String endpointKeyHash, int serverProfileVersion, String serverProfileBody) throws KaaAdminServiceException;
 
-    public EndpointProfileRecordFieldDto updateServerProfile(EndpointProfileRecordFieldDto endpointProfileRecordDto) throws KaaAdminServiceException;
+    public EndpointProfileDto updateServerProfile(String endpointKeyHash, int serverProfileVersion, RecordField serverProfileRecord) throws KaaAdminServiceException;
 
     public List<TenantUserDto> getTenants() throws KaaAdminServiceException;
 
@@ -386,6 +387,10 @@ public interface KaaAdminService extends RemoteService {
     public String prepareCTLSchemaExport(String ctlSchemaId, CTLSchemaExportMethod method) throws KaaAdminServiceException;
     
     public List<ServerProfileSchemaDto> getServerProfileSchemasByApplicationId(String applicationId) throws KaaAdminServiceException;
+    
+    public List<SchemaInfoDto> getServerProfileSchemaInfosByApplicationId(String applicationId) throws KaaAdminServiceException;
+     
+    public List<SchemaInfoDto> getServerProfileSchemaInfosByEndpointKey(String endpointKeyHash) throws KaaAdminServiceException;
     
     public ServerProfileSchemaDto getServerProfileSchema(String serverProfileSchemaId) throws KaaAdminServiceException;
     

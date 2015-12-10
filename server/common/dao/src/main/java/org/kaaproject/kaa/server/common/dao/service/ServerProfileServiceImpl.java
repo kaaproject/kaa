@@ -22,13 +22,11 @@ import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getDto;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateId;
 
-import java.nio.ByteBuffer;
 import java.util.List;
 
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.server.common.dao.ServerProfileService;
-import org.kaaproject.kaa.server.common.dao.exception.DatabaseProcessingException;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
 import org.kaaproject.kaa.server.common.dao.impl.ServerProfileSchemaDao;
@@ -41,6 +39,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class ServerProfileServiceImpl implements ServerProfileService {
     
     private static final Logger LOG = LoggerFactory.getLogger(ServerProfileServiceImpl.class);
@@ -51,7 +50,6 @@ public class ServerProfileServiceImpl implements ServerProfileService {
     private EndpointProfileDao<EndpointProfile> endpointProfileDao;
 
     @Override
-    @Transactional
     public ServerProfileSchemaDto saveServerProfileSchema(ServerProfileSchemaDto dto) {
         Validator.validateObject(dto, "Incorrect server profile schema object.");
         String appId = dto.getApplicationId();
@@ -82,21 +80,18 @@ public class ServerProfileServiceImpl implements ServerProfileService {
     }
 
     @Override
-    @Transactional
     public ServerProfileSchemaDto findLatestServerProfileSchema(String appId) {
         Validator.validateId(appId, "Incorrect application id.");
         return getDto(serverProfileSchemaDao.findLatestByAppId(appId));
     }
 
     @Override
-    @Transactional
     public ServerProfileSchemaDto findServerProfileSchema(String schemaId) {
         Validator.validateId(schemaId, "Incorrect server profile schema  id.");
         return getDto(serverProfileSchemaDao.findById(schemaId));
     }
 
     @Override
-    @Transactional
     public List<ServerProfileSchemaDto> findServerProfileSchemasByAppId(String appId) {
         Validator.validateId(appId, "Incorrect application id.");
         return convertDtoList(serverProfileSchemaDao.findByAppId(appId));
@@ -109,30 +104,21 @@ public class ServerProfileServiceImpl implements ServerProfileService {
     }
 
     @Override
-    @Transactional
     public void removeServerProfileSchemaById(String profileId) {
         Validator.validateId(profileId, "Incorrect server profile schema  id.");
         serverProfileSchemaDao.removeById(profileId);
     }
 
     @Override
-    @Transactional
     public void removeServerProfileSchemaByAppId(String appId) {
         Validator.validateId(appId, "Incorrect application id.");
         serverProfileSchemaDao.removeByAppId(appId);
     }
 
     @Override
-    public EndpointProfileDto saveServerProfile(byte[] keyHash, String serverProfile) {
+    public EndpointProfileDto saveServerProfile(byte[] keyHash, int version, String serverProfile) {
         Validator.validateHash(keyHash, "Incorrect endpoint key hash.");
-        EndpointProfile ep = endpointProfileDao.findById(ByteBuffer.wrap(keyHash));
-        if (ep != null) {
-            int schemaVersion = ep.getServerProfileVersion();
-            ep = endpointProfileDao.updateServerProfile(keyHash, schemaVersion, serverProfile);
-        } else {
-            throw new DatabaseProcessingException("Can't find endpoint profile by key hash " + keyHash);
-        }
-        return ep != null ? ep.toDto() : null;
+        return getDto(endpointProfileDao.updateServerProfile(keyHash, version, serverProfile));
     }
 
     public void setEndpointProfileDao(EndpointProfileDao<EndpointProfile> endpointProfileDao) {

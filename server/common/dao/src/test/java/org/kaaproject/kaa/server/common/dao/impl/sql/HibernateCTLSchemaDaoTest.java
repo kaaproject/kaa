@@ -16,12 +16,14 @@
 
 package org.kaaproject.kaa.server.common.dao.impl.sql;
 
+import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -31,6 +33,7 @@ import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.server.common.dao.CTLService;
 import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchema;
+import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchemaMetaInfo;
 import org.kaaproject.kaa.server.common.dao.model.sql.Tenant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,6 +93,20 @@ public class HibernateCTLSchemaDaoTest extends HibernateAbstractTest {
     public void saveCTLSchemaWithSameFqnAndVersion() {
         ctlSchemaDao.save(generateCTLSchema(DEFAULT_FQN, new Tenant(tenant), 11, null));
         ctlSchemaDao.save(generateCTLSchema(DEFAULT_FQN, null, 11, null));
+    }
+    
+    private CTLSchema generateCTLSchema(String fqn, Tenant tenant, int version, String body) {
+        CTLSchema ctlSchema = new CTLSchema();
+        ctlSchema.setMetaInfo(new CTLSchemaMetaInfo(fqn, version));
+        if (isBlank(body)) {
+            body = UUID.randomUUID().toString();
+        }
+        ctlSchema.setBody(body);
+        if (tenant == null) {
+            tenant = generateTenant();
+        }
+        ctlSchema.setTenant(tenant);
+        return ctlSchema;
     }
 
     @Test

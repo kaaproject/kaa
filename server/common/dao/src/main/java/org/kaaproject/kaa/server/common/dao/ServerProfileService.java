@@ -84,10 +84,11 @@ public interface ServerProfileService {
     /**
      * Save server profile data to endpoint profile.
      *
-     * @param keyHash       the endpoint key hash identifier.
+     * @param keyHash the endpoint key hash identifier.
+     * @param version the server profile schema version
      * @param serverProfile server profile data in string representation.
      * @return the saved endpoint profile.
      */
-    EndpointProfileDto saveServerProfile(byte[] keyHash, String serverProfile);
+    EndpointProfileDto saveServerProfile(byte[] keyHash, int version, String serverProfile);
 
 }

@@ -22,13 +22,13 @@ import org.kaaproject.avro.ui.gwt.client.widget.AvroWidgetsConfig;
 import org.kaaproject.avro.ui.gwt.client.widget.SizedTextArea;
 import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
 import org.kaaproject.avro.ui.shared.RecordField;
-import org.kaaproject.kaa.common.dto.plugin.PluginInfoDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BasePluginView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.PluginInfoListBox;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.RecordPanel;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
+import org.kaaproject.kaa.server.admin.shared.plugin.PluginInfoDto;
 
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;

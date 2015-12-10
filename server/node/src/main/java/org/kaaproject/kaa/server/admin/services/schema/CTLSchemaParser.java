@@ -80,10 +80,9 @@ public class CTLSchemaParser {
         }
 
         if (!object.has("version") || !object.get("version").isInt()) {
-            throw new IllegalArgumentException("No version specified!");
-        } else {
-            schema.setVersion(object.get("version").asInt());
-        }
+            object.put("version", 1);
+        } 
+        schema.setVersion(object.get("version").asInt());
 
         Set<CTLSchemaMetaInfoDto> dependencies = new HashSet<>();
         if (!object.has("dependencies")) {
@@ -101,7 +100,7 @@ public class CTLSchemaParser {
                 schema.setDependencies(dependencies);
             }
         }
-
+        body = new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(object);
         schema.setBody(body);
         return schema;
     }

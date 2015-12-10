@@ -16,7 +16,6 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.struct;
 
-import org.kaaproject.avro.ui.gwt.client.widget.grid.cell.ActionButtonCell;
 import org.kaaproject.kaa.common.dto.AbstractStructureDto;
 import org.kaaproject.kaa.common.dto.StructureRecordDto;
 import org.kaaproject.kaa.common.dto.admin.StructureRecordKey;
@@ -24,7 +23,6 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.grid.AbstractKaaGrid;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.DataGrid;
 
 public class BaseStructGrid<T extends AbstractStructureDto> extends AbstractKaaGrid<StructureRecordDto<T>, StructureRecordKey> {
@@ -99,26 +97,5 @@ public class BaseStructGrid<T extends AbstractStructureDto> extends AbstractKaaG
         return value.hasDraft() || !value.hasDeprecated();
     }
 
-
-    private Column constructDownloadColumn(String text) {
-        final ActionButtonCell cell = new ActionButtonCell<T>(Utils.resources.remove(), text, this.embedded, new ActionButtonCell.ActionListener<T>() {
-            @Override
-            public void onItemAction(T o) {
-
-            }
-        }, new ActionButtonCell.ActionValidator<T>() {
-            @Override
-            public boolean canPerformAction(T o) {
-                return false;
-            }
-        });
-        return new Column<T, T>(cell) {
-
-            @Override
-            public T getValue(T object) {
-                return object;
-            }
-        };
-    }
 
 }

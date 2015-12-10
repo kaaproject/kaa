@@ -56,7 +56,7 @@ public class ProfileSchemasPlace extends SchemasPlace {
 
     @Override
     public String getName() {
-        return "Endpoint " + Utils.constants.profile();
+        return Utils.constants.endpointProfile();
     }
 
     @Override

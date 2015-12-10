@@ -23,6 +23,7 @@ public class SchemaInfoDto extends VersionDto {
 
     private static final long serialVersionUID = -8792655520011059405L;
     
+    private String schemaName;
     private RecordField schemaForm;
 
     public SchemaInfoDto() {
@@ -42,4 +43,12 @@ public class SchemaInfoDto extends VersionDto {
         this.schemaForm = schemaForm;
     }
 
+    public String getSchemaName() {
+        return schemaName;
+    }
+
+    public void setSchemaName(String schemaName) {
+        this.schemaName = schemaName;
+    }
+ 
 }

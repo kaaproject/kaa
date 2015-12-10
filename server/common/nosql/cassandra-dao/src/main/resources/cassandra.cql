@@ -71,6 +71,7 @@ CREATE TABLE IF NOT EXISTS kaa.ep_profile (
     pf text,
     pf_hash blob,
     pf_ver int,
+    srv_pf_ver int,
     ucf_hash blob,
     cf_hash blob,
     cf_ver int,
@@ -83,7 +84,6 @@ CREATE TABLE IF NOT EXISTS kaa.ep_profile (
     ecf_ver_state list < frozen < ecf_ver_state > >,
     server_hash text,
     sdk_token text,
-    srv_pf_id text,
     srv_pf text
 );
 

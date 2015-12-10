@@ -65,16 +65,7 @@ public class SdkProfileServiceImpl implements SdkProfileService {
             if (StringUtils.isNotBlank(sdkProfileDto.getId())) {
                 throw new IncorrectParameterException("Update of existing SDK profile is prohibited.");
             } else {
-                if (StringUtils.isEmpty(sdkProfileDto.getToken())) {
-                    try {
-                        MessageDigest messageDigest = MessageDigest.getInstance(SDK_TOKEN_HASH_ALGORITHM);
-                        messageDigest.update(DtoByteMarshaller.toBytes(sdkProfileDto.toSdkTokenDto()));
-                        String token = Base64.encodeBase64String(messageDigest.digest());
-                        sdkProfileDto.setToken(token);
-                    } catch (NoSuchAlgorithmException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
+                SdkTokenGenerator.generateSdkToken(sdkProfileDto);
                 SdkProfile entity = new SdkProfile(sdkProfileDto);
                 SdkProfile loaded = sdkProfileDao.findSdkProfileByToken(entity.getToken());
                 if (loaded == null) {

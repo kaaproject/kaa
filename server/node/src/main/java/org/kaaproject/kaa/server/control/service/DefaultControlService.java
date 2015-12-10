@@ -24,10 +24,8 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.avro.Schema;
 import org.apache.commons.codec.binary.Base64;
@@ -43,11 +41,9 @@ import org.kaaproject.kaa.common.dto.ChangeType;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
-import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileViewDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
@@ -531,6 +527,18 @@ public class DefaultControlService implements ControlService {
     public ProfileSchemaDto getProfileSchema(String profileSchemaId) throws ControlServiceException {
         return profileService.findProfileSchemaById(profileSchemaId);
     }
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.kaaproject.kaa.server.control.service.ControlService#getProfileSchemaByApplicationIdAndVersion
+     * (java.lang.String, int)
+     */
+    @Override
+    public ProfileSchemaDto getProfileSchemaByApplicationIdAndVersion(String applicationId, int version) throws ControlServiceException {
+        return profileService.findProfileSchemaByAppIdAndVersion(applicationId, version);
+    }
 
     /*
      * (non-Javadoc)
@@ -564,6 +572,17 @@ public class DefaultControlService implements ControlService {
     @Override
     public ServerProfileSchemaDto getServerProfileSchema(String serverProfileSchemaId) throws ControlServiceException {
         return serverProfileService.findServerProfileSchema(serverProfileSchemaId);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.kaaproject.kaa.server.control.service.ControlService#
+     * getServerProfileSchemaByApplicationIdAndVersion(java.lang.String, int)
+     */
+    @Override
+    public ServerProfileSchemaDto getServerProfileSchemaByApplicationIdAndVersion(String applicationId, int version) throws ControlServiceException {
+        return serverProfileService.findServerProfileSchemaByAppIdAndVersion(applicationId, version);
     }
 
     /*
@@ -1948,17 +1967,15 @@ public class DefaultControlService implements ControlService {
     }
 
     @Override
-    public EndpointProfileDto updateEndpointProfile(EndpointProfileDto endpointProfileDto) throws ControlServiceException {
-        EndpointProfileDto profileDto = serverProfileService.saveServerProfile(endpointProfileDto.getEndpointKeyHash(),
-                endpointProfileDto.getServerProfileBody());
-
+    public EndpointProfileDto updateServerProfile(String endpointKeyHash, int version, String serverProfile) throws ControlServiceException {
+        EndpointProfileDto endpointProfileDto = serverProfileService.saveServerProfile(Base64.decodeBase64(endpointKeyHash), version,
+                serverProfile); 
         Notification thriftNotification = new Notification();
         thriftNotification.setAppId(endpointProfileDto.getApplicationId());
         thriftNotification.setKeyHash(endpointProfileDto.getEndpointKeyHash());
         thriftNotification.setOp(Operation.UPDATE_SERVER_PROFILE);
         controlZKService.sendEndpointNotification(thriftNotification);
-
-        return profileDto;
+        return endpointProfileDto;
     }
 
     @Override
@@ -1984,64 +2001,6 @@ public class DefaultControlService implements ControlService {
     @Override
     public SdkProfileDto saveSdkProfile(SdkProfileDto sdkProfile) throws ControlServiceException {
         return sdkProfileService.saveSdkProfile(sdkProfile);
-    }
-
-    @Override
-    public EndpointProfileViewDto getEndpointProfileViewDtoByEndpointKeyHash(String endpointProfileKeyHash) throws ControlServiceException {
-        EndpointProfileViewDto viewDto = new EndpointProfileViewDto();
-
-        /* Getting endpoint profile */
-        EndpointProfileDto endpointProfileDto = endpointService.findEndpointProfileByKeyHash(Base64.decodeBase64(endpointProfileKeyHash));
-        viewDto.setEndpointProfileDto(endpointProfileDto);
-
-        /* Getting endpoint user */
-        String externalId = endpointProfileDto.getEndpointUserId();
-        EndpointUserDto userDto = null;
-        if (externalId != null) {
-            userDto = endpointService.findEndpointUserById(externalId);
-        }
-        viewDto.setEndpointUserDto(userDto);
-
-        /* Getting endpoint profile RecordForm */
-        String applicationId = endpointProfileDto.getApplicationId();
-        ProfileSchemaDto clientProfileSchemaDto =
-                profileService.findProfileSchemaByAppIdAndVersion(applicationId, endpointProfileDto.getClientProfileVersion());
-        viewDto.setProfileSchemaDto(clientProfileSchemaDto);
-        ServerProfileSchemaDto serverProfileSchemaDto = 
-                serverProfileService.findServerProfileSchemaByAppIdAndVersion(applicationId, endpointProfileDto.getServerProfileVersion());
-        viewDto.setServerProfileSchemaDto(serverProfileSchemaDto);
-        
-        /* Getting notification topics */
-        List<TopicDto> topicsByApplicationId = topicService.findTopicsByAppId(applicationId);
-        List<String> endpointTopicsIDs = endpointProfileDto.getSubscriptions();
-        List<TopicDto> endpointTopics = null;
-        if (topicsByApplicationId != null && endpointTopicsIDs != null) {
-            endpointTopics = new ArrayList<>();
-            for (TopicDto topicDto : topicsByApplicationId) {
-                if (endpointTopicsIDs.contains(topicDto.getId()))
-                    endpointTopics.add(topicDto);
-            }
-            viewDto.setEndpointNotificationTopics(endpointTopics);
-        }
-
-        /* Getting endpoint groups */
-        Set<EndpointGroupDto> endpointGroups = new HashSet<>();
-        List<EndpointGroupStateDto> groupStateList = endpointProfileDto.getCfGroupStates();
-        if (groupStateList != null && !groupStateList.isEmpty()) {
-            for (EndpointGroupStateDto dto : groupStateList) {
-                endpointGroups.add(endpointService.findEndpointGroupById(dto.getEndpointGroupId()));
-            }
-        }
-        groupStateList = endpointProfileDto.getNfGroupStates();
-        if (groupStateList != null && !groupStateList.isEmpty()) {
-            for (EndpointGroupStateDto dto : groupStateList) {
-                endpointGroups.add(endpointService.findEndpointGroupById(dto.getEndpointGroupId()));
-            }
-        }
-        List<EndpointGroupDto> groupDtoList = new ArrayList<>();
-        groupDtoList.addAll(endpointGroups);
-        viewDto.setGroupDtoList(groupDtoList);
-        return viewDto;
     }
 
     /**
@@ -2163,11 +2122,17 @@ public class DefaultControlService implements ControlService {
     public String exportCTLSchemaFlatAsString(CTLSchemaDto schema) throws ControlServiceException {
         return ctlService.flatExportAsString(schema);
     }
+    
+    @Override
+    public Schema exportCTLSchemaFlatAsSchema(CTLSchemaDto schema) throws ControlServiceException {
+        return ctlService.flatExportAsSchema(schema);
+    }
 
     @Override
     public FileData exportCTLSchemaDeep(CTLSchemaDto schema) throws ControlServiceException {
         return ctlService.deepExport(schema);
     }
+
 
 
 }

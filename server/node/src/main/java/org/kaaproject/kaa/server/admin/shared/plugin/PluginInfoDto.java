@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kaaproject.kaa.common.dto.plugin;
+package org.kaaproject.kaa.server.admin.shared.plugin;
 
 import java.io.Serializable;
 

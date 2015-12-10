@@ -23,12 +23,12 @@ import java.util.List;
 import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
 import org.kaaproject.kaa.common.dto.VersionDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
-import org.kaaproject.kaa.common.dto.plugin.PluginInfoDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.place.LogAppenderPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.LogAppenderView;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
+import org.kaaproject.kaa.server.admin.shared.plugin.PluginInfoDto;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 

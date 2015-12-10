@@ -237,7 +237,7 @@ public class KaaAdminController {
     public EndpointProfileDto getEndpointProfileByKeyHash(@PathVariable String endpointProfileKey) throws KaaAdminServiceException {
         return kaaAdminService.getEndpointProfileByKeyHash(endpointProfileKey);
     }
-
+    
     /**
      * Gets the endpoint profile body by endpoint key.
      *
@@ -248,6 +248,18 @@ public class KaaAdminController {
         return kaaAdminService.getEndpointProfileBodyByKeyHash(endpointProfileKey);
     }
 
+    /**
+     * Update server profile of endpoint.
+     */
+    @RequestMapping(value="updateServerProfile", method=RequestMethod.POST)
+    @ResponseBody
+    public EndpointProfileDto updateServerProfile(
+            @RequestParam(value="endpointProfileKey") String endpointProfileKey,
+            @RequestParam(value="version") int version,
+            @RequestParam(value="serverProfileBody") String serverProfileBody) throws Exception {
+        return kaaAdminService.updateServerProfile(endpointProfileKey, version, serverProfileBody);
+    }
+    
     /**
      * Check auth of kaa admin.
      *

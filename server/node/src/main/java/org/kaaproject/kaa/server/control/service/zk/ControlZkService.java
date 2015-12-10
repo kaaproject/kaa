@@ -69,6 +69,7 @@ public class ControlZkService {
      */
     public void start() {
         if (getNodeConfig().isZkEnabled()) {
+            LOG.info("Control service starting ZooKepper connection to {}", getNodeConfig().getZkHostPortList());
             ControlNodeInfo nodeInfo = new ControlNodeInfo();
             ConnectionInfo connectionInfo = new ConnectionInfo(getNodeConfig().getThriftHost(), getNodeConfig().getThriftPort(), null);
             nodeInfo.setConnectionInfo(connectionInfo);
