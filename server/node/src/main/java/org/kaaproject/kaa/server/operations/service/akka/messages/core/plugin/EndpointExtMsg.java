@@ -17,20 +17,20 @@ package org.kaaproject.kaa.server.operations.service.akka.messages.core.plugin;
 
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 
-public class EndpointExtensionMessage {
+public class EndpointExtMsg implements PluginMsg {
     private final SdkExtensionKey extKey;
     private final EndpointObjectHash endpointKey;
     private final byte[] data;
 
-    public EndpointExtensionMessage(String sdkToken, int extensionId, EndpointObjectHash endpointKey, byte[] data) {
+    public EndpointExtMsg(String sdkToken, int extensionId, EndpointObjectHash endpointKey, byte[] data) {
         this(new SdkExtensionKey(sdkToken, extensionId), endpointKey, data);
     }
 
-    protected EndpointExtensionMessage(EndpointExtensionMessage msg) {
+    protected EndpointExtMsg(EndpointExtMsg msg) {
         this(msg.extKey, msg.endpointKey, msg.data);
     }
 
-    private EndpointExtensionMessage(SdkExtensionKey extKey, EndpointObjectHash endpointKey, byte[] data) {
+    private EndpointExtMsg(SdkExtensionKey extKey, EndpointObjectHash endpointKey, byte[] data) {
         super();
         this.extKey = extKey;
         this.endpointKey = endpointKey;

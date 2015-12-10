@@ -45,7 +45,7 @@ import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.logs.LogDeliveryMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.logs.LogEventPackMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.notification.ThriftNotificationMessage;
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.plugin.EndpointExtensionMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.plugin.EndpointExtMsg;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.ActorTimeoutMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.ChannelTimeoutMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.RequestTimeoutMessage;
@@ -278,7 +278,7 @@ public class EndpointActorMessageProcessor {
     private void processPluginSync(ActorContext context, ClientSync request) {
         EndpointProfileDto profile = state.getProfile();
         for (ExtensionSync ext : request.getExtSyncList()) {
-            EndpointExtensionMessage msg = new EndpointExtensionMessage(profile.getSdkToken(), ext.getExtensionId(), key, ext.getData());
+            EndpointExtMsg msg = new EndpointExtMsg(profile.getSdkToken(), ext.getExtensionId(), key, ext.getData());
             if (LOG.isTraceEnabled()) {
                 LOG.trace("[{}][{}] Forwarding {} message with payload {} to application actor", endpointKey, actorKey, msg,
                         Arrays.toString(msg.getData()));

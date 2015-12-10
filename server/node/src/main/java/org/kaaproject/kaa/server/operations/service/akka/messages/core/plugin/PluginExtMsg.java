@@ -15,11 +15,11 @@
  */
 package org.kaaproject.kaa.server.operations.service.akka.messages.core.plugin;
 
-public class PluginMessage extends EndpointExtensionMessage {
+public class PluginExtMsg extends EndpointExtMsg {
 
     private final String pluginId;
 
-    public PluginMessage(String pluginId, EndpointExtensionMessage msg) {
+    public PluginExtMsg(String pluginId, EndpointExtMsg msg) {
         super(msg);
         this.pluginId = pluginId;
     }
