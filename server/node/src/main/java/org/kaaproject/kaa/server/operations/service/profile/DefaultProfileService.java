@@ -167,12 +167,22 @@ public class DefaultProfileService implements ProfileService {
 
         populateVersionStates(appSeqNumber.getTenantId(), dto, sdkProfile);
 
+        doClearProfileGroupStates(dto);
+        return endpointService.saveEndpointProfile(dto);
+    }
+
+    @Override
+    public EndpointProfileDto clearProfileGroupStates(EndpointProfileDto dto) {
+        doClearProfileGroupStates(dto);
+        return endpointService.saveEndpointProfile(dto);
+    }
+
+    private void doClearProfileGroupStates(EndpointProfileDto dto) {
         List<EndpointGroupStateDto> egsList = new ArrayList<>();
         dto.setCfGroupStates(egsList);
         dto.setCfSequenceNumber(0);
         dto.setNfGroupStates(egsList);
         dto.setNfSequenceNumber(0);
-        return endpointService.saveEndpointProfile(dto);
     }
 
     protected void populateVersionStates(String tenantId, EndpointProfileDto dto, SdkProfileDto sdkProfile) {

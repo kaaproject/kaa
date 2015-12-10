@@ -26,7 +26,6 @@ public class ChangeDto implements Serializable, HasId {
     private ChangeType type;
     private String endpointGroupId;
     private String profileFilterId;
-    private int pfVersion;
     private String configurationId;
     private int cfVersion;
     private String topicId;
@@ -62,14 +61,6 @@ public class ChangeDto implements Serializable, HasId {
 
     public void setProfileFilterId(String profileFilterId) {
         this.profileFilterId = profileFilterId;
-    }
-
-    public int getPfVersion() {
-        return pfVersion;
-    }
-
-    public void setPfVersion(int pfVersion) {
-        this.pfVersion = pfVersion;
     }
 
     public String getConfigurationId() {
@@ -110,9 +101,6 @@ public class ChangeDto implements Serializable, HasId {
         if (cfVersion != changeDto.cfVersion) {
             return false;
         }
-        if (pfVersion != changeDto.pfVersion) {
-            return false;
-        }
         if (configurationId != null ? !configurationId.equals(changeDto.configurationId) : changeDto.configurationId != null) {
             return false;
         }
@@ -137,7 +125,6 @@ public class ChangeDto implements Serializable, HasId {
         int result = type != null ? type.hashCode() : 0;
         result = 31 * result + (endpointGroupId != null ? endpointGroupId.hashCode() : 0);
         result = 31 * result + (profileFilterId != null ? profileFilterId.hashCode() : 0);
-        result = 31 * result + pfVersion;
         result = 31 * result + (configurationId != null ? configurationId.hashCode() : 0);
         result = 31 * result + cfVersion;
         result = 31 * result + (topicId != null ? topicId.hashCode() : 0);
@@ -151,7 +138,6 @@ public class ChangeDto implements Serializable, HasId {
                 "type=" + type +
                 ", endpointGroupId='" + endpointGroupId + '\'' +
                 ", profileFilterId='" + profileFilterId + '\'' +
-                ", pfVersion=" + pfVersion +
                 ", configurationId='" + configurationId + '\'' +
                 ", cfVersion=" + cfVersion +
                 ", topicId='" + topicId + '\'' +

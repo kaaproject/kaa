@@ -28,7 +28,7 @@ import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.C
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.RequestTimeoutMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.topic.NotificationMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventReceiveMessage;
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointStateUpdateMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserConfigurationUpdateMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserActionMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.verification.UserVerificationResponseMessage;
 import org.kaaproject.kaa.server.transport.channel.ChannelAware;
@@ -125,8 +125,8 @@ public class EndpointActor extends UntypedActor {
             processEndpointEventReceiveMessage((EndpointEventReceiveMessage) message);
         } else if (message instanceof LogDeliveryMessage) {
             processLogDeliveryMessage((LogDeliveryMessage) message);
-        } else if (message instanceof EndpointStateUpdateMessage) {
-            processStateUpdateMessage((EndpointStateUpdateMessage) message);
+        } else if (message instanceof EndpointUserConfigurationUpdateMessage) {
+            processUserConfigurationUpdateMessage((EndpointUserConfigurationUpdateMessage) message);
         } else if (message instanceof UserVerificationResponseMessage) {
             processUserVerificationMessage((UserVerificationResponseMessage) message);
         } else if (message instanceof SessionDisconnectMessage) {
@@ -155,8 +155,8 @@ public class EndpointActor extends UntypedActor {
         }
     }
 
-    private void processStateUpdateMessage(EndpointStateUpdateMessage message) {
-        messageProcessor.processStateUpdate(context(), message);
+    private void processUserConfigurationUpdateMessage(EndpointUserConfigurationUpdateMessage message) {
+        messageProcessor.processUserConfigurationUpdate(context(), message);
     }
 
     private void processUserVerificationMessage(UserVerificationResponseMessage message) {

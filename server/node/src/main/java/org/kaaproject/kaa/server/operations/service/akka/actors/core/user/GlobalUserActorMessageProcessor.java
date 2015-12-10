@@ -24,7 +24,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointStateUpdateMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserConfigurationUpdateMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserConfigurationUpdate;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.UserConfigurationUpdate;
 import org.kaaproject.kaa.server.operations.service.event.EventService;
@@ -105,7 +105,7 @@ public class GlobalUserActorMessageProcessor {
         if (!Arrays.equals(newHash, route.getUcfHash())) {
             LOG.trace("Sending notification to route {}", route);
             if (route.isLocal()) {
-                context.parent().tell(new EndpointStateUpdateMessage(toUpdate(newHash, route)), context.self());
+                context.parent().tell(new EndpointUserConfigurationUpdateMessage(toUpdate(newHash, route)), context.self());
             } else {
                 eventService.sendEndpointStateInfo(route.getAddress().getServerId(), toUpdate(newHash, route));
             }

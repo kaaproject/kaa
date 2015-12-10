@@ -19,11 +19,11 @@ import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.
 
 import akka.actor.ActorRef;
 
-public class EndpointStateUpdateMessage extends EndpointAwareMessage implements TenantAwareMessage {
+public class EndpointUserConfigurationUpdateMessage extends EndpointAwareMessage implements TenantAwareMessage {
 
     private final EndpointUserConfigurationUpdate update;
 
-    public EndpointStateUpdateMessage(EndpointUserConfigurationUpdate update) {
+    public EndpointUserConfigurationUpdateMessage(EndpointUserConfigurationUpdate update) {
         super(update.getApplicationToken(), update.getKey(), ActorRef.noSender());
         this.update = update;
     }
@@ -37,7 +37,7 @@ public class EndpointStateUpdateMessage extends EndpointAwareMessage implements 
         return update.getUserId();
     }
 
-    public EndpointUserConfigurationUpdate getUpdate() {
+    public EndpointUserConfigurationUpdate getUserConfigurationUpdate() {
         return update;
     }
 

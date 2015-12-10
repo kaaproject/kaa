@@ -316,7 +316,8 @@ public class ConcurrentCacheService implements CacheService {
                     } else if (changeType == ChangeType.ADD_TOPIC || changeType == ChangeType.REMOVE_TOPIC) {
                         relatedChanges.add(historyDto);
                     } else if (changeType == ChangeType.ADD_PROF || changeType == ChangeType.REMOVE_PROF) {
-                        if (changeDto.getPfVersion() == key.getProfileSchemaVersion()) {
+                        ProfileFilterDto profileFilter = profileService.findProfileFilterById(changeDto.getProfileFilterId());
+                        if (supports(profileFilter, key.getClientProfileSchemaVersion(), key.getServerProfileSchemaVersion())) {
                             relatedChanges.add(historyDto);
                         }
                     } else if (changeType == ChangeType.ADD_CONF || changeType == ChangeType.REMOVE_CONF) {
@@ -327,6 +328,11 @@ public class ConcurrentCacheService implements CacheService {
                 }
 
                 return relatedChanges;
+            }
+
+            private boolean supports(ProfileFilterDto profileFilter, int clientProfileSchemaVersion, int serverProfileSchemaVersion) {
+                //TODO: add
+                throw new RuntimeException("Not implemented!");
             }
         });
     }

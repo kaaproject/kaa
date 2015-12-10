@@ -25,7 +25,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.kaaproject.kaa.common.dto.CTLDataDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
@@ -206,7 +205,7 @@ public class DefaultOperationsService implements OperationsService {
             LOG.debug("[{}][{}] calculating configuration delta using seq number {}", context.getEndpointKey(), context.getRequestHash(),
                     startSeqNumber);
             request.setAppStateSeqNumber(startSeqNumber);
-            HistoryDelta historyDelta = fetchHistory(context.getEndpointKey(), context.getRequestHash(), md.getApplicationToken(), profile,
+            HistoryDelta historyDelta = fetchHistory(context, md.getApplicationToken(), profile,
                     HistorySubject.CONFIGURATION, startSeqNumber, curAppSeqNumber);
             GetDeltaResponse confResponse = calculateConfigurationDelta(md, request, context, historyDelta, curAppSeqNumber);
             ConfigurationServerSync confSyncResponse = buildConfSyncResponse(confResponse, curAppSeqNumber);
@@ -241,7 +240,7 @@ public class DefaultOperationsService implements OperationsService {
             int startSeqNumber = Math.min(request.getAppStateSeqNumber(), profile.getNfSequenceNumber());
             LOG.debug("[{}][{}] calculating notification delta using seq number {}", context.getEndpointKey(), context.getRequestHash(),
                     startSeqNumber);
-            HistoryDelta historyDelta = fetchHistory(context.getEndpointKey(), context.getRequestHash(), md.getApplicationToken(), profile,
+            HistoryDelta historyDelta = fetchHistory(context, md.getApplicationToken(), profile,
                     HistorySubject.NOTIFICATION, startSeqNumber, curAppSeqNumber);
             GetNotificationResponse notificationResponse = calculateNotificationDelta(request, profile, historyDelta);
             context.setSubscriptionStates(notificationResponse.getSubscriptionStates());
@@ -565,13 +564,13 @@ public class DefaultOperationsService implements OperationsService {
      *            the cur app seq number
      * @return the history delta
      */
-    private HistoryDelta fetchHistory(String endpointId, int requesHash, String applicationToken, EndpointProfileDto profile,
+    private HistoryDelta fetchHistory(SyncContext context, String applicationToken, EndpointProfileDto profile,
             HistorySubject subject, int startSeqNumber, int endSeqNumber) {
         if (isFirstRequest(profile, subject)) {
-            LOG.debug("[{}] Profile has no endpoint groups yet. calculating full list", endpointId);
+            LOG.debug("[{}] Profile has no endpoint groups yet. calculating full list", context.getEndpointKey());
             return historyDeltaService.getDelta(profile, applicationToken, endSeqNumber);
         } else {
-            LOG.debug("[{}] Profile has endpoint groups. Calculating changes", endpointId);
+            LOG.debug("[{}] Profile has endpoint groups. Calculating changes", context.getEndpointKey());
             return historyDeltaService.getDelta(profile, subject, applicationToken, startSeqNumber, endSeqNumber);
         }
     }
@@ -677,9 +676,9 @@ public class DefaultOperationsService implements OperationsService {
     }
 
     @Override
-    public CTLDataDto getServerEndpointProfile(EndpointObjectHash key) {
-        EndpointProfileDto enpointProfile = profileService.getProfile(key);
-        CTLDataDto ctlDataDto = new CTLDataDto(enpointProfile.getServerProfileVersion(), enpointProfile.getServerProfileBody());
-        return ctlDataDto;
+    public EndpointProfileDto refreshServerEndpointProfile(EndpointObjectHash hash) {
+        EndpointProfileDto newProfile = profileService.getProfile(hash);
+        newProfile = profileService.clearProfileGroupStates(newProfile);
+        return newProfile;
     }
 }
