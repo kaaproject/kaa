@@ -64,7 +64,7 @@ import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.common.dto.PageLinkDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.StructureRecordDto;
 import org.kaaproject.kaa.common.dto.TenantAdminDto;
@@ -209,7 +209,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
                     endpointProfileView.setUserExternalId(endpointUser.getExternalId());
                 }
             }
-            ProfileSchemaDto clientProfileSchema = controlService.getProfileSchemaByApplicationIdAndVersion(
+            EndpointProfileSchemaDto clientProfileSchema = controlService.getProfileSchemaByApplicationIdAndVersion(
                             endpointProfile.getApplicationId(), 
                             endpointProfile.getClientProfileVersion());
             ServerProfileSchemaDto serverProfileSchema = controlService.getServerProfileSchemaByApplicationIdAndVersion(
@@ -921,7 +921,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
-    public List<ProfileSchemaDto> getProfileSchemasByApplicationId(String applicationId) throws KaaAdminServiceException {
+    public List<EndpointProfileSchemaDto> getProfileSchemasByApplicationId(String applicationId) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
             checkApplicationId(applicationId);
@@ -932,10 +932,10 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
-    public ProfileSchemaDto getProfileSchema(String profileSchemaId) throws KaaAdminServiceException {
+    public EndpointProfileSchemaDto getProfileSchema(String profileSchemaId) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            ProfileSchemaDto profileSchema = controlService.getProfileSchema(profileSchemaId);
+            EndpointProfileSchemaDto profileSchema = controlService.getProfileSchema(profileSchemaId);
             Utils.checkNotNull(profileSchema);
             checkApplicationId(profileSchema.getApplicationId());
             return profileSchema;
@@ -945,14 +945,14 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
-    public ProfileSchemaDto saveProfileSchema(ProfileSchemaDto profileSchema) throws KaaAdminServiceException {
+    public EndpointProfileSchemaDto saveProfileSchema(EndpointProfileSchemaDto profileSchema) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
             if (isEmpty(profileSchema.getId())) {
                 profileSchema.setCreatedUsername(getCurrentUser().getUsername());
                 checkApplicationId(profileSchema.getApplicationId());
             } else {
-                ProfileSchemaDto storedProfileSchema = controlService.getProfileSchema(profileSchema.getId());
+                EndpointProfileSchemaDto storedProfileSchema = controlService.getProfileSchema(profileSchema.getId());
                 Utils.checkNotNull(storedProfileSchema);
                 checkApplicationId(storedProfileSchema.getApplicationId());
             }
@@ -966,7 +966,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     public ProfileSchemaViewDto getProfileSchemaView(String profileSchemaId) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            ProfileSchemaDto profileSchema = getProfileSchema(profileSchemaId);
+            EndpointProfileSchemaDto profileSchema = getProfileSchema(profileSchemaId);
             CTLSchemaDto ctlSchemaDto = controlService.getCTLSchemaById(profileSchema.getCtlSchemaId());
             return new ProfileSchemaViewDto(profileSchema, toCtlSchemaForm(ctlSchemaDto));
         } catch (Exception e) {
@@ -978,7 +978,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     public ProfileSchemaViewDto saveProfileSchemaView(ProfileSchemaViewDto profileSchemaView) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            ProfileSchemaDto profileSchema = profileSchemaView.getSchema();
+            EndpointProfileSchemaDto profileSchema = profileSchemaView.getSchema();
             String applicationId = profileSchema.getApplicationId();
             checkApplicationId(applicationId);
             String ctlSchemaId = profileSchema.getCtlSchemaId();
@@ -992,7 +992,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
                     profileSchema.setCtlSchemaId(ctlSchemaForm.getCtlSchemaId());
                 }
             }
-            ProfileSchemaDto savedProfileSchema = saveProfileSchema(profileSchema);
+            EndpointProfileSchemaDto savedProfileSchema = saveProfileSchema(profileSchema);
             return getProfileSchemaView(savedProfileSchema.getId());
         } catch (Exception e) {
             throw Utils.handleException(e);

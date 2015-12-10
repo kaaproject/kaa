@@ -50,7 +50,7 @@ import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
@@ -236,7 +236,7 @@ public class OperationsServiceIT extends AbstractTest {
         profileSchemaObj.setVersion(PROFILE_SCHEMA_VERSION);
         profileSchemaObj.setCtlSchema(ctlSchema);
         profileSchemaObj.setApplication(application);
-        ProfileSchemaDto profileSchemaDto = profileService.saveProfileSchema(profileSchemaObj.toDto());
+        EndpointProfileSchemaDto profileSchemaDto = profileService.saveProfileSchema(profileSchemaObj.toDto());
 
         profileSchema = profileSchemaDao.findById(profileSchemaDto.getId());
 

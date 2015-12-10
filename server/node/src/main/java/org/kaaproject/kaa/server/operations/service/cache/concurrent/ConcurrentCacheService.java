@@ -39,7 +39,7 @@ import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.HistoryDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
@@ -63,6 +63,7 @@ import org.kaaproject.kaa.server.common.dao.SdkProfileService;
 import org.kaaproject.kaa.server.common.dao.ServerProfileService;
 import org.kaaproject.kaa.server.common.dao.TopicService;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
+import org.kaaproject.kaa.server.operations.service.cache.AppProfileVersionsKey;
 import org.kaaproject.kaa.server.operations.service.cache.AppSeqNumber;
 import org.kaaproject.kaa.server.operations.service.cache.AppVersionKey;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
@@ -145,7 +146,7 @@ public class ConcurrentCacheService implements CacheService {
     private final CacheTemporaryMemorizer<HistoryKey, List<HistoryDto>> historyMemorizer = new CacheTemporaryMemorizer<>();
 
     /** The filter lists memorizer. */
-    private final CacheTemporaryMemorizer<AppVersionKey, List<ProfileFilterDto>> filterListsMemorizer = new CacheTemporaryMemorizer<>();
+    private final CacheTemporaryMemorizer<AppProfileVersionsKey, List<ProfileFilterDto>> filterListsMemorizer = new CacheTemporaryMemorizer<>();
 
     /** The application event family maps memorizer. */
     private final CacheTemporaryMemorizer<List<String>, List<ApplicationEventFamilyMapDto>> aefmMemorizer = new CacheTemporaryMemorizer<>();
@@ -160,7 +161,7 @@ public class ConcurrentCacheService implements CacheService {
     private final CacheTemporaryMemorizer<AppVersionKey, ConfigurationSchemaDto> cfSchemaMemorizer = new CacheTemporaryMemorizer<>();
 
     /** The pf schema memorizer. */
-    private final CacheTemporaryMemorizer<AppVersionKey, ProfileSchemaDto> pfSchemaMemorizer = new CacheTemporaryMemorizer<>();
+    private final CacheTemporaryMemorizer<AppVersionKey, EndpointProfileSchemaDto> pfSchemaMemorizer = new CacheTemporaryMemorizer<>();
     
     /** The spf schema memorizer. */
     private final CacheTemporaryMemorizer<AppVersionKey, ServerProfileSchemaDto> spfSchemaMemorizer = new CacheTemporaryMemorizer<>();
@@ -317,7 +318,7 @@ public class ConcurrentCacheService implements CacheService {
                         relatedChanges.add(historyDto);
                     } else if (changeType == ChangeType.ADD_PROF || changeType == ChangeType.REMOVE_PROF) {
                         ProfileFilterDto profileFilter = profileService.findProfileFilterById(changeDto.getProfileFilterId());
-                        if (supports(profileFilter, key.getClientProfileSchemaVersion(), key.getServerProfileSchemaVersion())) {
+                        if (supports(profileFilter, key.getEndpointProfileSchemaVersion(), key.getServerProfileSchemaVersion())) {
                             relatedChanges.add(historyDto);
                         }
                     } else if (changeType == ChangeType.ADD_CONF || changeType == ChangeType.REMOVE_CONF) {
@@ -330,9 +331,9 @@ public class ConcurrentCacheService implements CacheService {
                 return relatedChanges;
             }
 
-            private boolean supports(ProfileFilterDto profileFilter, int clientProfileSchemaVersion, int serverProfileSchemaVersion) {
-                //TODO: add
-                throw new RuntimeException("Not implemented!");
+            private boolean supports(ProfileFilterDto profileFilter, int endpointProfileSchemaVersion, int serverProfileSchemaVersion) {
+                return (profileFilter.getEndpointProfileSchemaVersion() == null || profileFilter.getEndpointProfileSchemaVersion() == endpointProfileSchemaVersion)
+                        && (profileFilter.getServerProfileSchemaVersion() == null || profileFilter.getServerProfileSchemaVersion() == serverProfileSchemaVersion);
             }
         });
     }
@@ -380,14 +381,14 @@ public class ConcurrentCacheService implements CacheService {
      */
     @Override
     @Cacheable("filterLists")
-    public List<ProfileFilterDto> getFilters(AppVersionKey key) {
-        return filterListsMemorizer.compute(key, new Computable<AppVersionKey, List<ProfileFilterDto>>() {
+    public List<ProfileFilterDto> getFilters(AppProfileVersionsKey key) {
+        return filterListsMemorizer.compute(key, new Computable<AppProfileVersionsKey, List<ProfileFilterDto>>() {
 
             @Override
-            public List<ProfileFilterDto> compute(AppVersionKey key) {
+            public List<ProfileFilterDto> compute(AppProfileVersionsKey key) {
                 LOG.debug("Fetching result for getFilters");
                 ApplicationDto appDto = applicationService.findAppByApplicationToken(key.getApplicationToken());
-                List<ProfileFilterDto> value = profileService.findProfileFilterByAppIdAndVersion(appDto.getId(), key.getVersion());
+                List<ProfileFilterDto> value = profileService.findProfileFiltersByAppIdAndVersions(appDto.getId(), key.getEndpointProfileSchemaVersion(), key.getServerProfileSchemaVersion());
                 return value;
             }
         });
@@ -536,14 +537,14 @@ public class ConcurrentCacheService implements CacheService {
      */
     @Override
     @Cacheable("profileSchemas")
-    public ProfileSchemaDto getProfileSchemaByAppAndVersion(AppVersionKey key) {
-        return pfSchemaMemorizer.compute(key, new Computable<AppVersionKey, ProfileSchemaDto>() {
+    public EndpointProfileSchemaDto getProfileSchemaByAppAndVersion(AppVersionKey key) {
+        return pfSchemaMemorizer.compute(key, new Computable<AppVersionKey, EndpointProfileSchemaDto>() {
 
             @Override
-            public ProfileSchemaDto compute(AppVersionKey key) {
+            public EndpointProfileSchemaDto compute(AppVersionKey key) {
                 LOG.debug("Fetching result for getProfileSchemaByAppAndVersion");
                 ApplicationDto appDto = applicationService.findAppByApplicationToken(key.getApplicationToken());
-                ProfileSchemaDto value = profileService.findProfileSchemaByAppIdAndVersion(appDto.getId(), key.getVersion());
+                EndpointProfileSchemaDto value = profileService.findProfileSchemaByAppIdAndVersion(appDto.getId(), key.getVersion());
                 return value;
             }
         });
@@ -600,7 +601,7 @@ public class ConcurrentCacheService implements CacheService {
      */
     @Override
     @CachePut(value = "profileSchemas", key = "#key")
-    public ProfileSchemaDto putProfileSchema(AppVersionKey key, ProfileSchemaDto value) {
+    public EndpointProfileSchemaDto putProfileSchema(AppVersionKey key, EndpointProfileSchemaDto value) {
         return value;
     }
 

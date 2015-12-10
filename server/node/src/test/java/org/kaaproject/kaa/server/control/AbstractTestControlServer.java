@@ -56,7 +56,7 @@ import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
 import org.kaaproject.kaa.common.dto.UpdateStatus;
@@ -680,7 +680,7 @@ public abstract class AbstractTestControlServer extends AbstractTest {
      * @return the profile schema dto
      * @throws Exception the exception
      */
-    protected ProfileSchemaDto createProfileSchema() throws Exception {
+    protected EndpointProfileSchemaDto createProfileSchema() throws Exception {
         return createProfileSchema(null, null);
     }
 
@@ -691,8 +691,8 @@ public abstract class AbstractTestControlServer extends AbstractTest {
      * @return the profile schema dto
      * @throws Exception the exception
      */
-    protected ProfileSchemaDto createProfileSchema(String applicationId, String ctlSchemaId) throws Exception {
-        ProfileSchemaDto profileSchema = new ProfileSchemaDto();
+    protected EndpointProfileSchemaDto createProfileSchema(String applicationId, String ctlSchemaId) throws Exception {
+        EndpointProfileSchemaDto profileSchema = new EndpointProfileSchemaDto();
         profileSchema.setName(generateString("Test Schema"));
         profileSchema.setDescription(generateString("Test Desc"));
         if (strIsEmpty(applicationId)) {
@@ -707,7 +707,7 @@ public abstract class AbstractTestControlServer extends AbstractTest {
             profileSchema.setCtlSchemaId(ctlSchema.getId());
         }
         loginTenantDeveloper(tenantDeveloperDto.getUsername());
-        ProfileSchemaDto savedProfileSchema = client
+        EndpointProfileSchemaDto savedProfileSchema = client
                 .saveProfileSchema(profileSchema);
         return savedProfileSchema;
     }
@@ -792,7 +792,7 @@ public abstract class AbstractTestControlServer extends AbstractTest {
         }
 
         if (strIsEmpty(profileSchemaId)) {
-            ProfileSchemaDto profileSchema = createProfileSchema(applicationId, null);
+            EndpointProfileSchemaDto profileSchema = createProfileSchema(applicationId, null);
             profileFilter.setSchemaId(profileSchema.getId());
         }
         else {

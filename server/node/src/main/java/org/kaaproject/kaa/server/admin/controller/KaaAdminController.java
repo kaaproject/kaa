@@ -43,7 +43,7 @@ import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.PageLinkDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterRecordDto;
-import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.VersionDto;
@@ -686,7 +686,7 @@ public class KaaAdminController {
      */
     @RequestMapping(value="profileSchemas/{applicationId}", method=RequestMethod.GET)
     @ResponseBody
-    public List<ProfileSchemaDto> getProfileSchemasByApplicationId(@PathVariable String applicationId) throws KaaAdminServiceException {
+    public List<EndpointProfileSchemaDto> getProfileSchemasByApplicationId(@PathVariable String applicationId) throws KaaAdminServiceException {
         return kaaAdminService.getProfileSchemasByApplicationId(applicationId);
     }
 
@@ -696,7 +696,7 @@ public class KaaAdminController {
      */
     @RequestMapping(value="profileSchema/{profileSchemaId}", method=RequestMethod.GET)
     @ResponseBody
-    public ProfileSchemaDto getProfileSchema(@PathVariable String profileSchemaId) throws KaaAdminServiceException {
+    public EndpointProfileSchemaDto getProfileSchema(@PathVariable String profileSchemaId) throws KaaAdminServiceException {
         return kaaAdminService.getProfileSchema(profileSchemaId);
     }
 
@@ -706,7 +706,7 @@ public class KaaAdminController {
      */
     @RequestMapping(value="saveProfileSchema", method=RequestMethod.POST)
     @ResponseBody
-    public ProfileSchemaDto saveProfileSchema(@RequestBody ProfileSchemaDto profileSchema) throws KaaAdminServiceException {
+    public EndpointProfileSchemaDto saveProfileSchema(@RequestBody EndpointProfileSchemaDto profileSchema) throws KaaAdminServiceException {
         return kaaAdminService.saveProfileSchema(profileSchema);
     }
 

@@ -29,7 +29,7 @@ import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.HistoryDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventAction;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
@@ -121,7 +121,7 @@ public class ConcurrentCacheServiceTest extends AbstractTest {
 
     private static final EndpointConfigurationDto CF1 = new EndpointConfigurationDto();
     private static final ConfigurationSchemaDto CF1_SCHEMA = new ConfigurationSchemaDto();
-    private static final ProfileSchemaDto PF1_SCHEMA = new ProfileSchemaDto();
+    private static final EndpointProfileSchemaDto PF1_SCHEMA = new EndpointProfileSchemaDto();
     private static final SdkProfileDto SDK_PROFILE = new SdkProfileDto();
     private static final ProfileFilterDto TEST_PROFILE_FILTER = new ProfileFilterDto();
     private static final List<ProfileFilterDto> TEST_PROFILE_FILTER_LIST = Collections.singletonList(TEST_PROFILE_FILTER);
@@ -221,7 +221,7 @@ public class ConcurrentCacheServiceTest extends AbstractTest {
             }
         });
 
-        when(profileService.findProfileFilterByAppIdAndVersion(APP_ID, TEST_GET_PROFILES_KEY.getVersion())).then(
+        when(profileService.findProfileFiltersByAppIdAndVersion(APP_ID, TEST_GET_PROFILES_KEY.getVersion())).then(
                 new Answer<List<ProfileFilterDto>>() {
                     @Override
                     public List<ProfileFilterDto> answer(InvocationOnMock invocation) throws Throwable {
@@ -254,9 +254,9 @@ public class ConcurrentCacheServiceTest extends AbstractTest {
             }
         });
 
-        when(profileService.findProfileSchemaByAppIdAndVersion(APP_ID, PF_SCHEMA_KEY.getVersion())).then(new Answer<ProfileSchemaDto>() {
+        when(profileService.findProfileSchemaByAppIdAndVersion(APP_ID, PF_SCHEMA_KEY.getVersion())).then(new Answer<EndpointProfileSchemaDto>() {
             @Override
-            public ProfileSchemaDto answer(InvocationOnMock invocation) throws Throwable {
+            public EndpointProfileSchemaDto answer(InvocationOnMock invocation) throws Throwable {
                 sleepABit();
                 return PF1_SCHEMA;
             }
@@ -447,11 +447,11 @@ public class ConcurrentCacheServiceTest extends AbstractTest {
     @Test
     public void testGetFilters() throws GetDeltaException {
         assertEquals(TEST_PROFILE_FILTER_LIST, cacheService.getFilters(TEST_GET_PROFILES_KEY));
-        verify(profileService, times(1)).findProfileFilterByAppIdAndVersion(APP_ID, TEST_GET_PROFILES_KEY.getVersion());
+        verify(profileService, times(1)).findProfileFiltersByAppIdAndVersion(APP_ID, TEST_GET_PROFILES_KEY.getVersion());
         reset(profileService);
 
         assertEquals(TEST_PROFILE_FILTER_LIST, cacheService.getFilters(TEST_GET_PROFILES_KEY));
-        verify(profileService, times(0)).findProfileFilterByAppIdAndVersion(APP_ID, TEST_GET_PROFILES_KEY.getVersion());
+        verify(profileService, times(0)).findProfileFiltersByAppIdAndVersion(APP_ID, TEST_GET_PROFILES_KEY.getVersion());
         reset(profileService);
     }
 
@@ -465,7 +465,7 @@ public class ConcurrentCacheServiceTest extends AbstractTest {
                 }
             });
 
-            verify(profileService, atMost(2)).findProfileFilterByAppIdAndVersion(APP_ID, TEST_GET_PROFILES_KEY.getVersion());
+            verify(profileService, atMost(2)).findProfileFiltersByAppIdAndVersion(APP_ID, TEST_GET_PROFILES_KEY.getVersion());
             reset(profileService);
         }
     }

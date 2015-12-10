@@ -37,7 +37,7 @@ import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.common.dto.PageLinkDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.StructureRecordDto;
 import org.kaaproject.kaa.common.dto.TenantAdminDto;
@@ -265,7 +265,7 @@ public interface ControlService {
      * @return the profile schemas by application id
      * @throws ControlServiceException the control service exception
      */
-    List<ProfileSchemaDto> getProfileSchemasByApplicationId(String applicationId) throws ControlServiceException;
+    List<EndpointProfileSchemaDto> getProfileSchemasByApplicationId(String applicationId) throws ControlServiceException;
 
     /**
      * Gets the profile schema.
@@ -274,7 +274,7 @@ public interface ControlService {
      * @return the profile schema
      * @throws ControlServiceException the control service exception
      */
-    ProfileSchemaDto getProfileSchema(String profileSchemaId) throws ControlServiceException;
+    EndpointProfileSchemaDto getProfileSchema(String profileSchemaId) throws ControlServiceException;
     
     /**
      * Gets the profile schema by application id and profile schema version.
@@ -284,7 +284,7 @@ public interface ControlService {
      * @return the profile schema
      * @throws ControlServiceException the control service exception
      */
-    ProfileSchemaDto getProfileSchemaByApplicationIdAndVersion(String applicationId, int version) throws ControlServiceException;
+    EndpointProfileSchemaDto getProfileSchemaByApplicationIdAndVersion(String applicationId, int version) throws ControlServiceException;
 
     /**
      * Edits the profile schema.
@@ -293,7 +293,7 @@ public interface ControlService {
      * @return the profile schema dto
      * @throws ControlServiceException the control service exception
      */
-    ProfileSchemaDto editProfileSchema(ProfileSchemaDto profileSchema) throws ControlServiceException;
+    EndpointProfileSchemaDto editProfileSchema(EndpointProfileSchemaDto profileSchema) throws ControlServiceException;
 
     /**
      * Gets the server profile schemas by application id.

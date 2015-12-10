@@ -36,7 +36,7 @@ import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
@@ -108,7 +108,7 @@ public class DeltaServiceIT extends AbstractTest {
 
     private TenantDto tenant;
     private ApplicationDto application;
-    private ProfileSchemaDto profileSchema;
+    private EndpointProfileSchemaDto profileSchema;
     private ProfileFilterDto profileFilter;
     private EndpointProfileDto endpointProfile;
     private EndpointConfigurationDto endpointConfiguration;
@@ -169,11 +169,11 @@ public class DeltaServiceIT extends AbstractTest {
         
         profileCtlSchema = ctlService.saveCTLSchema(profileCtlSchema);
         
-        ProfileSchemaDto profileSchemaObj = new ProfileSchemaDto();
+        EndpointProfileSchemaDto profileSchemaObj = new EndpointProfileSchemaDto();
         profileSchemaObj.setVersion(PROFILE_SCHEMA_VERSION);
         profileSchemaObj.setCtlSchemaId(profileCtlSchema.getId());
         profileSchemaObj.setApplicationId(application.getId());
-        ProfileSchemaDto profileSchemaDto = profileService.saveProfileSchema(profileSchemaObj);
+        EndpointProfileSchemaDto profileSchemaDto = profileService.saveProfileSchema(profileSchemaObj);
 
         profileSchema = profileService.findProfileSchemaById(profileSchemaDto.getId());
 

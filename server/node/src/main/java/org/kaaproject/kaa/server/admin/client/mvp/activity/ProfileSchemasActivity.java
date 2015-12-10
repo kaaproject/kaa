@@ -17,7 +17,7 @@
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
-import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
 import org.kaaproject.kaa.server.admin.client.mvp.data.ProfileSchemasDataProvider;
@@ -27,23 +27,23 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.BaseListView;
 
 import com.google.gwt.place.shared.Place;
 
-public class ProfileSchemasActivity extends AbstractBaseCtlSchemasActivity<ProfileSchemaDto, ProfileSchemasPlace> {
+public class ProfileSchemasActivity extends AbstractBaseCtlSchemasActivity<EndpointProfileSchemaDto, ProfileSchemasPlace> {
 
     private String applicationId;
 
     public ProfileSchemasActivity(ProfileSchemasPlace place, ClientFactory clientFactory) {
-        super(place, ProfileSchemaDto.class, clientFactory);
+        super(place, EndpointProfileSchemaDto.class, clientFactory);
         this.applicationId = place.getApplicationId();
     }
 
     @Override
-    protected BaseListView<ProfileSchemaDto> getView() {
+    protected BaseListView<EndpointProfileSchemaDto> getView() {
         return clientFactory.getProfileSchemasView();
     }
 
     @Override
-    protected AbstractDataProvider<ProfileSchemaDto> getDataProvider(
-            AbstractGrid<ProfileSchemaDto,?> dataGrid) {
+    protected AbstractDataProvider<EndpointProfileSchemaDto> getDataProvider(
+            AbstractGrid<EndpointProfileSchemaDto,?> dataGrid) {
         return new ProfileSchemasDataProvider(dataGrid, listView, applicationId);
     }
 

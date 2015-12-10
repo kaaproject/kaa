@@ -25,7 +25,7 @@ import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterRecordDto;
-import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.UpdateStatus;
 import org.kaaproject.kaa.common.dto.VersionDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaInfoDto;
@@ -128,9 +128,9 @@ public class ControlServerProfileFilterIT extends AbstractTestControlServer {
         
         CTLSchemaInfoDto ctlSchema = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, CTLSchemaScopeDto.TENANT, null, null, null);
         
-        ProfileSchemaDto profileSchema1 = createProfileSchema(endpointGroup.getApplicationId(), ctlSchema.getId());
-        ProfileSchemaDto profileSchema2 = createProfileSchema(endpointGroup.getApplicationId(), ctlSchema.getId());
-        ProfileSchemaDto profileSchema3 = createProfileSchema(endpointGroup.getApplicationId(), ctlSchema.getId());
+        EndpointProfileSchemaDto profileSchema1 = createProfileSchema(endpointGroup.getApplicationId(), ctlSchema.getId());
+        EndpointProfileSchemaDto profileSchema2 = createProfileSchema(endpointGroup.getApplicationId(), ctlSchema.getId());
+        EndpointProfileSchemaDto profileSchema3 = createProfileSchema(endpointGroup.getApplicationId(), ctlSchema.getId());
         
         createProfileFilter(profileSchema1.getId(), endpointGroup.getId());
         createProfileFilter(profileSchema2.getId(), endpointGroup.getId());

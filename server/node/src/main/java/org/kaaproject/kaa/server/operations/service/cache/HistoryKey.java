@@ -44,7 +44,7 @@ public final class HistoryKey implements Serializable {
     private final int confSchemaVersion;
 
     /** The profile schema version. */
-    private final int clientProfileSchemaVersion;
+    private final int endpointProfileSchemaVersion;
 
     /** The profile schema version. */
     private final int serverProfileSchemaVersion;
@@ -66,14 +66,14 @@ public final class HistoryKey implements Serializable {
      *            the profile schema version
      */
     public HistoryKey(String appToken, HistorySubject historySubject, int oldSeqNumber, int newSeqNumber, int confSchemaVersion,
-            int clientProfileSchemaVersion, int serverProfileSchemaVersion) {
+            int endpointProfileSchemaVersion, int serverProfileSchemaVersion) {
         super();
         this.appToken = appToken;
         this.historySubject = historySubject;
         this.oldSeqNumber = oldSeqNumber;
         this.newSeqNumber = newSeqNumber;
         this.confSchemaVersion = confSchemaVersion;
-        this.clientProfileSchemaVersion = clientProfileSchemaVersion;
+        this.endpointProfileSchemaVersion = endpointProfileSchemaVersion;
         this.serverProfileSchemaVersion = serverProfileSchemaVersion;
     }
 
@@ -118,8 +118,8 @@ public final class HistoryKey implements Serializable {
      *
      * @return the profile schema version
      */
-    public int getClientProfileSchemaVersion() {
-        return clientProfileSchemaVersion;
+    public int getEndpointProfileSchemaVersion() {
+        return endpointProfileSchemaVersion;
     }
 
     public int getServerProfileSchemaVersion() {
@@ -135,7 +135,7 @@ public final class HistoryKey implements Serializable {
         result = prime * result + ((historySubject == null) ? 0 : historySubject.hashCode());
         result = prime * result + newSeqNumber;
         result = prime * result + oldSeqNumber;
-        result = prime * result + clientProfileSchemaVersion;
+        result = prime * result + endpointProfileSchemaVersion;
         result = prime * result + serverProfileSchemaVersion;
         return result;
     }
@@ -171,7 +171,7 @@ public final class HistoryKey implements Serializable {
         if (oldSeqNumber != other.oldSeqNumber) {
             return false;
         }
-        if (clientProfileSchemaVersion != other.clientProfileSchemaVersion) {
+        if (endpointProfileSchemaVersion != other.endpointProfileSchemaVersion) {
             return false;
         }
         if (serverProfileSchemaVersion != other.serverProfileSchemaVersion) {

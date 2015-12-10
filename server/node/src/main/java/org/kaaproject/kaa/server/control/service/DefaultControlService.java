@@ -54,7 +54,7 @@ import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.common.dto.PageLinkDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.StructureRecordDto;
 import org.kaaproject.kaa.common.dto.TenantAdminDto;
@@ -512,7 +512,7 @@ public class DefaultControlService implements ControlService {
      * getProfileSchemasByApplicationId(java.lang.String)
      */
     @Override
-    public List<ProfileSchemaDto> getProfileSchemasByApplicationId(String applicationId) throws ControlServiceException {
+    public List<EndpointProfileSchemaDto> getProfileSchemasByApplicationId(String applicationId) throws ControlServiceException {
         return profileService.findProfileSchemasByAppId(applicationId);
     }
 
@@ -524,7 +524,7 @@ public class DefaultControlService implements ControlService {
      * (java.lang.String)
      */
     @Override
-    public ProfileSchemaDto getProfileSchema(String profileSchemaId) throws ControlServiceException {
+    public EndpointProfileSchemaDto getProfileSchema(String profileSchemaId) throws ControlServiceException {
         return profileService.findProfileSchemaById(profileSchemaId);
     }
     
@@ -536,7 +536,7 @@ public class DefaultControlService implements ControlService {
      * (java.lang.String, int)
      */
     @Override
-    public ProfileSchemaDto getProfileSchemaByApplicationIdAndVersion(String applicationId, int version) throws ControlServiceException {
+    public EndpointProfileSchemaDto getProfileSchemaByApplicationIdAndVersion(String applicationId, int version) throws ControlServiceException {
         return profileService.findProfileSchemaByAppIdAndVersion(applicationId, version);
     }
 
@@ -548,7 +548,7 @@ public class DefaultControlService implements ControlService {
      * (org.kaaproject.kaa.common.dto.ProfileSchemaDto)
      */
     @Override
-    public ProfileSchemaDto editProfileSchema(ProfileSchemaDto profileSchema) throws ControlServiceException {
+    public EndpointProfileSchemaDto editProfileSchema(EndpointProfileSchemaDto profileSchema) throws ControlServiceException {
         return profileService.saveProfileSchema(profileSchema);
     }
 
@@ -1015,7 +1015,7 @@ public class DefaultControlService implements ControlService {
      */
     @Override
     public FileData generateSdk(SdkProfileDto sdkProfile, SdkPlatform platform) throws ControlServiceException {
-        ProfileSchemaDto profileSchema = profileService.findProfileSchemaByAppIdAndVersion(sdkProfile.getApplicationId(),
+        EndpointProfileSchemaDto profileSchema = profileService.findProfileSchemaByAppIdAndVersion(sdkProfile.getApplicationId(),
                 sdkProfile.getProfileSchemaVersion());
         if (profileSchema == null) {
             throw new NotFoundException("Profile schema not found!");

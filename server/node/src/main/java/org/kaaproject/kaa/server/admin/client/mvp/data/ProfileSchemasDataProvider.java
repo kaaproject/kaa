@@ -19,18 +19,18 @@ package org.kaaproject.kaa.server.admin.client.mvp.data;
 import java.util.List;
 
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
-import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
 import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class ProfileSchemasDataProvider extends AbstractDataProvider<ProfileSchemaDto>{
+public class ProfileSchemasDataProvider extends AbstractDataProvider<EndpointProfileSchemaDto>{
 
     private String applicationId;
 
-    public ProfileSchemasDataProvider(AbstractGrid<ProfileSchemaDto,?> dataGrid,
+    public ProfileSchemasDataProvider(AbstractGrid<EndpointProfileSchemaDto,?> dataGrid,
                                       HasErrorMessage hasErrorMessage,
                                       String applicationId) {
         super(dataGrid, hasErrorMessage, false);
@@ -40,14 +40,14 @@ public class ProfileSchemasDataProvider extends AbstractDataProvider<ProfileSche
 
     @Override
     protected void loadData(final LoadCallback callback) {
-        KaaAdmin.getDataSource().loadProfileSchemas(applicationId, new AsyncCallback<List<ProfileSchemaDto>>() {
+        KaaAdmin.getDataSource().loadProfileSchemas(applicationId, new AsyncCallback<List<EndpointProfileSchemaDto>>() {
             @Override
             public void onFailure(Throwable caught) {
                 callback.onFailure(caught);
 
             }
             @Override
-            public void onSuccess(List<ProfileSchemaDto> result) {
+            public void onSuccess(List<EndpointProfileSchemaDto> result) {
                 callback.onSuccess(result);
             }
         });

@@ -27,7 +27,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDataDto;
-import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
@@ -113,7 +113,7 @@ public class ApplicationLogActorTest {
         when(logAppenderService.getApplicationAppenders(APPLICATION_ID)).thenReturn(logAppenders);
         when(logAppender.isSchemaVersionSupported(Mockito.anyInt())).thenReturn(Boolean.TRUE);
 
-        ProfileSchemaDto profileSchemaDto = new ProfileSchemaDto();
+        EndpointProfileSchemaDto profileSchemaDto = new EndpointProfileSchemaDto();
         profileSchemaDto.setId("" + CLIENT_SCHEMA_VERSION);
         profileSchemaDto.setCtlSchemaId(CLIENT_PROFILE_CTL_SCHEMA_ID);
         

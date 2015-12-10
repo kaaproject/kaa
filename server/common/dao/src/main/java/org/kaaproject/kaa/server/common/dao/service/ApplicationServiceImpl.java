@@ -26,7 +26,7 @@ import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
@@ -217,7 +217,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     private ProfileFilterDto createDefaultProfileWithSchema(String appId, String groupId, String createdUsername) {
-        ProfileSchemaDto profileSchemaDto = new ProfileSchemaDto();
+        EndpointProfileSchemaDto profileSchemaDto = new EndpointProfileSchemaDto();
         profileSchemaDto.setApplicationId(appId);
         CTLSchemaDto ctlSchema = ctlService.getOrCreateEmptySystemSchema(createdUsername);
         profileSchemaDto.setCtlSchemaId(ctlSchema.getId());
@@ -226,7 +226,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         profileSchemaDto = profileService.saveProfileSchema(profileSchemaDto);
 
         if (profileSchemaDto != null) {
-            return profileService.findLatestFilterBySchemaIdAndGroupId(profileSchemaDto.getId(), groupId);
+            return profileService.findLatestFilterBySchemaIdsAndGroupId(profileSchemaDto.getId(), groupId);
         } else {
             throw new RuntimeException("Can't save default profile schema " + profileSchemaDto); //NOSONAR
         }

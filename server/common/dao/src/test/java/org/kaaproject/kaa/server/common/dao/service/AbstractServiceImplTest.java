@@ -34,7 +34,7 @@ import org.kaaproject.kaa.common.dto.ChangeProfileFilterNotification;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TenantAdminDto;
 import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.common.dto.UserDto;
@@ -153,8 +153,8 @@ public abstract class AbstractServiceImplTest {
         return ctlSchema;
     }
 
-    protected List<ProfileSchemaDto> generateProfSchema(String tenantId, String applicationId, int count) {
-        List<ProfileSchemaDto> schemas = Collections.emptyList();
+    protected List<EndpointProfileSchemaDto> generateProfSchema(String tenantId, String applicationId, int count) {
+        List<EndpointProfileSchemaDto> schemas = Collections.emptyList();
         try {
             if (isBlank(tenantId)) {
                 tenantId = generateTenant().getId();
@@ -163,10 +163,10 @@ public abstract class AbstractServiceImplTest {
                 applicationId = generateApplication(tenantId).getId();
             }
             CTLSchemaDto ctlSchemaDto = ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN, tenantId, 1, null));
-            ProfileSchemaDto schemaDto;
+            EndpointProfileSchemaDto schemaDto;
             schemas = new ArrayList<>(count);
             for (int i = 0; i < count; i++) {
-                schemaDto = new ProfileSchemaDto();
+                schemaDto = new EndpointProfileSchemaDto();
                 schemaDto.setApplicationId(applicationId);
                 schemaDto.setCtlSchemaId(ctlSchemaDto.getId());
                 schemaDto.setCreatedUsername("Test User");
@@ -200,7 +200,7 @@ public abstract class AbstractServiceImplTest {
     protected List<ProfileFilterDto> generateFilter(String schemaId, String groupId, int count, boolean activate) {
         List<ProfileFilterDto> filters = Collections.emptyList();
         try {
-            ProfileSchemaDto schemaDto;
+            EndpointProfileSchemaDto schemaDto;
             if (isBlank(schemaId)) {
                 schemaDto = generateProfSchema(null, null, 1).get(0);
                 schemaId = schemaDto.getId();

@@ -30,7 +30,7 @@ import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ChangeProfileFilterNotification;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.StructureRecordDto;
 import org.kaaproject.kaa.common.dto.UpdateStatus;
 import org.kaaproject.kaa.common.dto.VersionDto;
@@ -53,7 +53,7 @@ public class ProfileServiceImplTest extends AbstractTest {
         int profSchemaWithDefaultCount = profSchemaCount + 1;
         ApplicationDto application = generateApplicationDto(null);
         generateProfSchemaDto(application.getTenantId(), application.getId(), profSchemaCount);
-        List<ProfileSchemaDto> schemas = profileService.findProfileSchemasByAppId(application.getId());
+        List<EndpointProfileSchemaDto> schemas = profileService.findProfileSchemasByAppId(application.getId());
         Assert.assertNotNull(schemas);
         Assert.assertEquals(profSchemaWithDefaultCount, schemas.size());
     }
@@ -61,18 +61,18 @@ public class ProfileServiceImplTest extends AbstractTest {
     @Test
     public void findProfileSchemaByIdTest() {
         String schemaId = generateProfSchemaDto(null, null, 1).get(0).getId();
-        ProfileSchemaDto schemaDto = profileService.findProfileSchemaById(schemaId);
+        EndpointProfileSchemaDto schemaDto = profileService.findProfileSchemaById(schemaId);
         Assert.assertNotNull(schemaDto);
     }
 
     @Test
     public void saveProfileSchemaTest() {
         String schemaId = generateProfSchemaDto(null, null, 1).get(0).getId();
-        ProfileSchemaDto schemaDto = profileService.findProfileSchemaById(schemaId);
+        EndpointProfileSchemaDto schemaDto = profileService.findProfileSchemaById(schemaId);
         Assert.assertNotNull(schemaDto);
         int version = schemaDto.getVersion();
         schemaDto.setId(null);
-        ProfileSchemaDto saved = profileService.saveProfileSchema(schemaDto);
+        EndpointProfileSchemaDto saved = profileService.saveProfileSchema(schemaDto);
         Assert.assertNotNull(saved);
         Assert.assertNotEquals(version, saved.getVersion());
         Assert.assertNotEquals(schemaId, saved.getId());
@@ -83,7 +83,7 @@ public class ProfileServiceImplTest extends AbstractTest {
         int profSchemaCount = 2;
         ApplicationDto application = generateApplicationDto(null);
         generateProfSchemaDto(application.getTenantId(), application.getId(), profSchemaCount);
-        List<ProfileSchemaDto> schemas = profileService.findProfileSchemasByAppId(application.getId());
+        List<EndpointProfileSchemaDto> schemas = profileService.findProfileSchemasByAppId(application.getId());
         Assert.assertNotNull(schemas);
         Assert.assertFalse(schemas.isEmpty());
 
@@ -96,7 +96,7 @@ public class ProfileServiceImplTest extends AbstractTest {
     @Test
     public void removeProfileSchemaByIdTest() {
         String schemaId = generateProfSchemaDto(null, null, 1).get(0).getId();
-        ProfileSchemaDto schemaDto = profileService.findProfileSchemaById(schemaId);
+        EndpointProfileSchemaDto schemaDto = profileService.findProfileSchemaById(schemaId);
         Assert.assertNotNull(schemaDto);
         profileService.removeProfileSchemaById(schemaId);
         schemaDto = profileService.findProfileSchemaById(schemaId);
@@ -139,13 +139,13 @@ public class ProfileServiceImplTest extends AbstractTest {
 
     @Test
     public void removeProfileFiltersByProfileSchemaIdTest() {
-        List<ProfileSchemaDto> schemas = generateProfSchemaDto(null, null, 1);
-        ProfileSchemaDto schema = schemas.get(0);
-        List<ProfileFilterDto> filters = profileService.findProfileFilterByAppIdAndVersion(schema.getApplicationId(), schema.getVersion());
+        List<EndpointProfileSchemaDto> schemas = generateProfSchemaDto(null, null, 1);
+        EndpointProfileSchemaDto schema = schemas.get(0);
+        List<ProfileFilterDto> filters = profileService.findProfileFiltersByAppIdAndVersion(schema.getApplicationId(), schema.getVersion());
         Assert.assertNotNull(filters);
         Assert.assertFalse(filters.isEmpty());
         profileService.removeProfileFiltersByProfileSchemaId(schema.getId());
-        filters = profileService.findProfileFilterByAppIdAndVersion(schema.getApplicationId(), schema.getVersion());
+        filters = profileService.findProfileFiltersByAppIdAndVersion(schema.getApplicationId(), schema.getVersion());
         Assert.assertNotNull(filters);
         Assert.assertTrue(filters.isEmpty());
     }
@@ -153,7 +153,7 @@ public class ProfileServiceImplTest extends AbstractTest {
     @Test
     public void findProfileFilterByAppIdAndVersionTest() {
         ApplicationDto application = generateApplicationDto(null);
-        List<ProfileFilterDto> filters = profileService.findProfileFilterByAppIdAndVersion(application.getId(), 0);
+        List<ProfileFilterDto> filters = profileService.findProfileFiltersByAppIdAndVersion(application.getId(), 0);
         Assert.assertNotNull(filters);
         Assert.assertFalse(filters.isEmpty());
     }
@@ -161,7 +161,7 @@ public class ProfileServiceImplTest extends AbstractTest {
     @Test
     public void findProfileSchemaByAppIdTest() {
         ApplicationDto application = generateApplicationDto(null);
-        List<ProfileSchemaDto> schemas = profileService.findProfileSchemasByAppId(application.getId());
+        List<EndpointProfileSchemaDto> schemas = profileService.findProfileSchemasByAppId(application.getId());
         Assert.assertNotNull(schemas);
         Assert.assertFalse(schemas.isEmpty());
     }
@@ -232,10 +232,10 @@ public class ProfileServiceImplTest extends AbstractTest {
 
     @Test
     public void saveMoreFiltersTest() {
-        List<ProfileSchemaDto> schemas = generateProfSchemaDto(null, null, 1);
-        ProfileSchemaDto schema = schemas.get(0);
+        List<EndpointProfileSchemaDto> schemas = generateProfSchemaDto(null, null, 1);
+        EndpointProfileSchemaDto schema = schemas.get(0);
         generateFilterDto(schema.getId(), null, 10, true);
-        List<ProfileFilterDto> filters = profileService.findProfileFilterByAppIdAndVersion(schema.getApplicationId(), schema.getVersion());
+        List<ProfileFilterDto> filters = profileService.findProfileFiltersByAppIdAndVersion(schema.getApplicationId(), schema.getVersion());
         Assert.assertFalse(filters.isEmpty());
         Assert.assertEquals(filters.get(0).getStatus(), UpdateStatus.ACTIVE);
         Assert.assertEquals(schema.getId(), filters.get(0).getSchemaId());
@@ -247,7 +247,7 @@ public class ProfileServiceImplTest extends AbstractTest {
         EndpointGroupDto groupDto = generateEndpointGroupDto(application.getId());
         EndpointGroupDto groupDto2 = generateEndpointGroupDto(application.getId(), "OTHER_GROUP");
 
-        ProfileSchemaDto schema = generateProfSchemaDto(application.getTenantId(), application.getId(), 1).get(0);
+        EndpointProfileSchemaDto schema = generateProfSchemaDto(application.getTenantId(), application.getId(), 1).get(0);
 
         ProfileFilterDto filterDto = generateFilterDto(schema.getId(), groupDto.getId(), 1, false).get(0);
         Assert.assertNotNull(filterDto);
@@ -268,7 +268,7 @@ public class ProfileServiceImplTest extends AbstractTest {
         ChangeProfileFilterNotification activeTwo = profileService.activateProfileFilter(savedTwo.getId(), null);
         Assert.assertNotNull(activeTwo);
 
-        List<ProfileFilterDto> activeList = profileService.findProfileFilterByAppIdAndVersion(application.getId(), schema.getVersion());
+        List<ProfileFilterDto> activeList = profileService.findProfileFiltersByAppIdAndVersion(application.getId(), schema.getVersion());
         Assert.assertFalse(activeList.isEmpty());
         Set<String> groupIds = new HashSet<>();
         for (ProfileFilterDto dto : activeList) {
@@ -281,7 +281,7 @@ public class ProfileServiceImplTest extends AbstractTest {
     @Test(expected = UpdateStatusConflictException.class)
     public void updateDefaultProfileFilter() {
         String appId = generateApplicationDto(null).getId();
-        List<ProfileFilterDto> filters = profileService.findProfileFilterByAppIdAndVersion(appId, 0);
+        List<ProfileFilterDto> filters = profileService.findProfileFiltersByAppIdAndVersion(appId, 0);
         Assert.assertNotNull(filters);
         ProfileFilterDto filter = filters.get(0);
         filter.setId(null);
@@ -292,7 +292,7 @@ public class ProfileServiceImplTest extends AbstractTest {
     @Test(expected = IncorrectParameterException.class)
     public void deactivateDefaultProfileFilter() {
         String appId = generateApplicationDto(null).getId();
-        List<ProfileFilterDto> filters = profileService.findProfileFilterByAppIdAndVersion(appId, 0);
+        List<ProfileFilterDto> filters = profileService.findProfileFiltersByAppIdAndVersion(appId, 0);
         Assert.assertNotNull(filters);
         ProfileFilterDto filter = filters.get(0);
         profileService.deactivateProfileFilter(filter.getId(), null);
@@ -312,7 +312,7 @@ public class ProfileServiceImplTest extends AbstractTest {
     public void findProfileSchemaByAppIdAndVersionTest() {
         String appId = generateApplicationDto(null).getId();
         int schemaVersion = 0;
-        ProfileSchemaDto schema = profileService.findProfileSchemaByAppIdAndVersion(appId, schemaVersion);
+        EndpointProfileSchemaDto schema = profileService.findProfileSchemaByAppIdAndVersion(appId, schemaVersion);
         Assert.assertNotNull(schema);
         Assert.assertEquals(schemaVersion, schema.getVersion());
         Assert.assertEquals(appId, schema.getApplicationId());
@@ -323,7 +323,7 @@ public class ProfileServiceImplTest extends AbstractTest {
         ApplicationDto app = generateApplicationDto(null);
         String appId = app.getId();
         EndpointGroupDto groupDto = generateEndpointGroupDto(appId);
-        ProfileSchemaDto schema = generateProfSchemaDto(app.getTenantId(), appId, 1).get(0);
+        EndpointProfileSchemaDto schema = generateProfSchemaDto(app.getTenantId(), appId, 1).get(0);
         ProfileFilterDto filter = generateFilterDto(schema.getId(), groupDto.getId(), 3, true).get(2);
         Assert.assertEquals(UpdateStatus.ACTIVE, filter.getStatus());
         profileService.deactivateProfileFilter(filter.getId(), null);
@@ -338,7 +338,7 @@ public class ProfileServiceImplTest extends AbstractTest {
     public void saveProfileFilterWithIncorrectSchemaIdTest() {
         String appId = generateApplicationDto(null).getId();
         int schemaVersion = 0;
-        List<ProfileFilterDto> filters = profileService.findProfileFilterByAppIdAndVersion(appId, schemaVersion);
+        List<ProfileFilterDto> filters = profileService.findProfileFiltersByAppIdAndVersion(appId, schemaVersion);
         Assert.assertFalse(filters.isEmpty());
         ProfileFilterDto filter = filters.get(0);
         filter.setId(null);
@@ -350,7 +350,7 @@ public class ProfileServiceImplTest extends AbstractTest {
     public void saveProfileFilterWithIncorrectGroupIdTest() {
         String appId = generateApplicationDto(null).getId();
         int schemaVersion = 0;
-        List<ProfileFilterDto> filters = profileService.findProfileFilterByAppIdAndVersion(appId, schemaVersion);
+        List<ProfileFilterDto> filters = profileService.findProfileFiltersByAppIdAndVersion(appId, schemaVersion);
         Assert.assertFalse(filters.isEmpty());
         ProfileFilterDto filter = filters.get(0);
         filter.setId(null);
@@ -361,7 +361,7 @@ public class ProfileServiceImplTest extends AbstractTest {
     @Test
     public void deactivateProfileFilterTest() {
         String appId = generateApplicationDto(null).getId();
-        List<ProfileFilterDto> filters = profileService.findProfileFilterByAppIdAndVersion(appId, 0);
+        List<ProfileFilterDto> filters = profileService.findProfileFiltersByAppIdAndVersion(appId, 0);
         Assert.assertNotNull(filters);
         ProfileFilterDto filter = filters.get(0);
         filter.setId(null);
@@ -392,13 +392,13 @@ public class ProfileServiceImplTest extends AbstractTest {
     public void updateExistingProfileSchemaTest() {
         ApplicationDto app = generateApplicationDto(null);
         String appId = app.getId();
-        List<ProfileSchemaDto> schemas = generateProfSchemaDto(app.getTenantId(), appId, 1);
-        ProfileSchemaDto schema = profileService.findProfileSchemaById(schemas.get(0).getId());
+        List<EndpointProfileSchemaDto> schemas = generateProfSchemaDto(app.getTenantId(), appId, 1);
+        EndpointProfileSchemaDto schema = profileService.findProfileSchemaById(schemas.get(0).getId());
         Assert.assertNotNull(schema);
         ProfileSchema profileSchema = new ProfileSchema(schema);
         profileSchema.setName("Updated name");
         profileSchema.setDescription("Updated description");
-        ProfileSchemaDto saved = profileService.saveProfileSchema(profileSchema.toDto());
+        EndpointProfileSchemaDto saved = profileService.saveProfileSchema(profileSchema.toDto());
         Assert.assertNotNull(saved);
         Assert.assertEquals(schema.getId(), saved.getId());
         Assert.assertEquals(schema.getApplicationId(), saved.getApplicationId());
@@ -409,7 +409,7 @@ public class ProfileServiceImplTest extends AbstractTest {
     @Test(expected = IncorrectParameterException.class)
     public void updateExistingProfileSchemaWithIncorrectIdTest() {
         String appId = generateApplicationDto(null).getId();
-        ProfileSchemaDto profileSchema = new ProfileSchemaDto();
+        EndpointProfileSchemaDto profileSchema = new EndpointProfileSchemaDto();
         profileSchema.setId("-1");
         profileSchema.setApplicationId(appId);
         profileSchema.setName("Updated name");

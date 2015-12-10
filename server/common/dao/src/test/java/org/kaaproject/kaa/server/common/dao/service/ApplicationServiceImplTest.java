@@ -23,7 +23,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
-import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
 import org.kaaproject.kaa.server.common.dao.AbstractTest;
@@ -47,7 +47,7 @@ public class ApplicationServiceImplTest extends AbstractTest {
         Assert.assertEquals(0, foundApplications.size());
         TenantDto foundTenant = userService.findTenantById(tenant.getId());
         Assert.assertNotNull(foundTenant);
-        List<ProfileSchemaDto> foundProfileSchemas = profileService.findProfileSchemasByAppId(application.getId());
+        List<EndpointProfileSchemaDto> foundProfileSchemas = profileService.findProfileSchemasByAppId(application.getId());
         Assert.assertEquals(0, foundProfileSchemas.size());
         List<ConfigurationSchemaDto> foundConfigSchemas = configurationService.findConfSchemasByAppId(application.getId());
         Assert.assertEquals(0, foundConfigSchemas.size());

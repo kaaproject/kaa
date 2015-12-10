@@ -17,7 +17,7 @@
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
 import org.kaaproject.avro.ui.shared.RecordField;
-import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
@@ -30,7 +30,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class ProfileSchemaActivity
         extends
-        AbstractBaseCtlSchemaActivity<ProfileSchemaDto, ProfileSchemaViewDto, BaseCtlSchemaView, ProfileSchemaPlace> {
+        AbstractBaseCtlSchemaActivity<EndpointProfileSchemaDto, ProfileSchemaViewDto, BaseCtlSchemaView, ProfileSchemaPlace> {
 
     public ProfileSchemaActivity(ProfileSchemaPlace place,
             ClientFactory clientFactory) {
