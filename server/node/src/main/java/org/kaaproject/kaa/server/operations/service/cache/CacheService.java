@@ -294,7 +294,7 @@ public interface CacheService {
      *
      * @param key the key
      */
-    void resetFilters(AppVersionKey key);
+    void resetFilters(AppProfileVersionsKey key);
 
     /**
      * Cache invalidate method.
@@ -348,7 +348,7 @@ public interface CacheService {
      * @param value the value
      * @return the list
      */
-    List<ProfileFilterDto> putFilterList(AppVersionKey key, List<ProfileFilterDto> value);
+    List<ProfileFilterDto> putFilterList(AppProfileVersionsKey key, List<ProfileFilterDto> value);
 
     /**
      * Put history.

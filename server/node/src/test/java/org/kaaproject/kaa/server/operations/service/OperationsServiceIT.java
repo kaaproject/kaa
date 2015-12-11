@@ -250,7 +250,7 @@ public class OperationsServiceIT extends AbstractTest {
         profileFilterObj.setApplication(application);
         profileFilterObj.setEndpointGroup(endpointGroup);
         profileFilterObj.setBody("profileBody.contains(\"dummy\")");
-        profileFilterObj.setProfileSchema(endpointProfileSchema);
+        profileFilterObj.setEndpointProfileSchema(endpointProfileSchema);
         profileFilter = profileService.saveProfileFilter(profileFilterObj.toDto());
         profileService.activateProfileFilter(profileFilter.getId(), null);
 

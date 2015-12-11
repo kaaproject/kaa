@@ -103,7 +103,6 @@ public class DefaultDeltaServiceTest {
         change.setType(changeType);
         change.setEndpointGroupId(endpointGroupId);
         change.setProfileFilterId(pfId);
-        change.setPfVersion(pfVersion);
         change.setConfigurationId(cfId);
         change.setCfVersion(cfVersion);
         return change;

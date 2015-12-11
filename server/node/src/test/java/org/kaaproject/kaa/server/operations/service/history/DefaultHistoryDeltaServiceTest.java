@@ -31,6 +31,7 @@ import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.HistoryDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
+import org.kaaproject.kaa.server.operations.service.cache.AppProfileVersionsKey;
 import org.kaaproject.kaa.server.operations.service.cache.AppVersionKey;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
 import org.kaaproject.kaa.server.operations.service.cache.ConfigurationIdKey;
@@ -95,7 +96,7 @@ public class DefaultHistoryDeltaServiceTest {
         filter.setId(PF1_ID);
         allFilters.add(filter);
 
-        Mockito.when(filterService.getAllMatchingFilters(Mockito.any(AppVersionKey.class), Mockito.any(AppVersionKey.class), Mockito.any(EndpointProfileDto.class))).thenReturn(allFilters);
+        Mockito.when(filterService.getAllMatchingFilters(Mockito.any(AppProfileVersionsKey.class), Mockito.any(EndpointProfileDto.class))).thenReturn(allFilters);
         Mockito.when(cacheService.getConfIdByKey(Mockito.any(ConfigurationIdKey.class))).thenReturn(CF1_ID);
 
         HistoryDelta historyDelta = historyDeltaService.getDelta(profile, APP1_TOKEN, 0);

@@ -407,7 +407,7 @@ public class ConcurrentCacheService implements CacheService {
      */
     @Override
     @CacheEvict(value = "filterLists", key = "#key")
-    public void resetFilters(AppVersionKey key) {
+    public void resetFilters(AppProfileVersionsKey key) {
     }
 
     /*
@@ -420,7 +420,7 @@ public class ConcurrentCacheService implements CacheService {
      */
     @Override
     @CachePut(value = "filterLists", key = "#key")
-    public List<ProfileFilterDto> putFilterList(AppVersionKey key, List<ProfileFilterDto> value) {
+    public List<ProfileFilterDto> putFilterList(AppProfileVersionsKey key, List<ProfileFilterDto> value) {
         return value;
     }
 

@@ -188,7 +188,7 @@ public class DeltaServiceIT extends AbstractTest {
         profileFilterObj.setApplicationId(application.getId());
         profileFilterObj.setEndpointGroupId(endpointGroup.getId());
         profileFilterObj.setBody("profileBody.contains(\"dummy\")");
-        profileFilterObj.setSchemaId(profileSchema.getId());
+        profileFilterObj.setEndpointProfileSchemaId(profileSchema.getId());
         profileFilter = profileService.saveProfileFilter(profileFilterObj);
         profileService.activateProfileFilter(profileFilter.getId(), null);
 
@@ -221,6 +221,7 @@ public class DeltaServiceIT extends AbstractTest {
         egs.setProfileFilterId(pfAllId);
 
         endpointProfile = new EndpointProfileDto();
+        endpointProfile.setApplicationId(application.getId());
         endpointProfile.setEndpointKeyHash(UUID.randomUUID().toString().getBytes());
         endpointProfile.setClientProfileBody(PROFILE_JSON);
         endpointProfile.setProfileHash(EndpointObjectHash.fromSHA1(PROFILE_BYTES).getData());

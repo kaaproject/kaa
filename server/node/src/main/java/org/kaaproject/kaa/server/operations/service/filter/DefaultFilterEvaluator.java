@@ -88,12 +88,15 @@ public class DefaultFilterEvaluator implements FilterEvaluator {
     @Override
     public boolean matches(ProfileFilterDto filter) {
         Expression expression = new SpelExpressionParser().parseExpression(filter.getBody());
-        StandardEvaluationContext evaluationContext = new StandardEvaluationContext();
+        StandardEvaluationContext evaluationContext;
+        if (filter.getEndpointProfileSchemaVersion() != null) {
+            evaluationContext = new StandardEvaluationContext(clientProfileGenericRecord);
+            evaluationContext.setVariable(CLIENT_PROFILE_VARIABLE_NAME, clientProfileGenericRecord);
+        } else {
+            evaluationContext = new StandardEvaluationContext();
+        }
         evaluationContext.addPropertyAccessor(new GenericRecordPropertyAccessor());
         evaluationContext.setVariable(EP_KEYHASH_VARIABLE_NAME, epKey);
-        if (filter.getEndpointProfileSchemaVersion() != null) {
-            evaluationContext.setVariable(CLIENT_PROFILE_VARIABLE_NAME, clientProfileGenericRecord);
-        }
         if (filter.getServerProfileSchemaVersion() != null) {
             evaluationContext.setVariable(SERVER_PROFILE_VARIABLE_NAME, serverProfileGenericRecord);
         }

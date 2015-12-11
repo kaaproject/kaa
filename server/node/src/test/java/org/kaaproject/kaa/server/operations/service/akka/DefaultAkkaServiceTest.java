@@ -1644,7 +1644,7 @@ public class DefaultAkkaServiceTest {
         akkaService.onNotification(thriftNotification);
 
         Mockito.verify(operationsService, Mockito.timeout(TIMEOUT*100).atLeastOnce())
-                .getServerEndpointProfile(EndpointObjectHash.fromBytes(clientPublicKeyHash.array()));
+                .refreshServerEndpointProfile(EndpointObjectHash.fromBytes(clientPublicKeyHash.array()));
     }
 
     private SyncRequestMetaData buildSyncRequestMetaData() {

@@ -100,7 +100,7 @@ public class ESTestOperationsService implements OperationsService {
     }
 
     @Override
-    public CTLDataDto getServerEndpointProfile(EndpointObjectHash key) {
+    public EndpointProfileDto refreshServerEndpointProfile(EndpointObjectHash hash) {
         // TODO Auto-generated method stub
         return null;
     }

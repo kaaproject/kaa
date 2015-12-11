@@ -43,6 +43,7 @@ import org.kaaproject.kaa.server.common.dao.HistoryService;
 import org.kaaproject.kaa.server.common.dao.ProfileService;
 import org.kaaproject.kaa.server.common.dao.SdkProfileService;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
+import org.kaaproject.kaa.server.operations.service.cache.AppProfileVersionsKey;
 import org.kaaproject.kaa.server.operations.service.cache.AppSeqNumber;
 import org.kaaproject.kaa.server.operations.service.cache.AppVersionKey;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
@@ -83,15 +84,6 @@ public class ESTestCacheService implements CacheService {
      */
     @Override
     public List<HistoryDto> getHistory(HistoryKey historyKey) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.operations.service.cache.CacheService#getFilters(org.kaaproject.kaa.server.operations.service.cache.AppVersionKey)
-     */
-    @Override
-    public List<ProfileFilterDto> getFilters(AppVersionKey key) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -247,15 +239,6 @@ public class ESTestCacheService implements CacheService {
 
     }
 
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.operations.service.cache.CacheService#resetFilters(org.kaaproject.kaa.server.operations.service.cache.AppVersionKey)
-     */
-    @Override
-    public void resetFilters(AppVersionKey key) {
-        // TODO Auto-generated method stub
-
-    }
-
 
     /* (non-Javadoc)
      * @see org.kaaproject.kaa.server.operations.service.cache.CacheService#putProfileSchema(org.kaaproject.kaa.server.operations.service.cache.AppVersionKey, org.kaaproject.kaa.common.dto.ProfileSchemaDto)
@@ -289,15 +272,6 @@ public class ESTestCacheService implements CacheService {
      */
     @Override
     public ProfileFilterDto putFilter(String key, ProfileFilterDto value) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.operations.service.cache.CacheService#putFilterList(org.kaaproject.kaa.server.operations.service.cache.AppVersionKey, java.util.List)
-     */
-    @Override
-    public List<ProfileFilterDto> putFilterList(AppVersionKey key, List<ProfileFilterDto> value) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -436,6 +410,30 @@ public class ESTestCacheService implements CacheService {
 
     @Override
     public String getFlatCtlSchemaById(String id) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public List<ProfileFilterDto> getFilters(AppProfileVersionsKey key) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void resetFilters(AppProfileVersionsKey key) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public List<ProfileFilterDto> putFilterList(AppProfileVersionsKey key, List<ProfileFilterDto> value) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public EndpointGroupDto getDefaultGroup(String applicationToken) {
         // TODO Auto-generated method stub
         return null;
     }

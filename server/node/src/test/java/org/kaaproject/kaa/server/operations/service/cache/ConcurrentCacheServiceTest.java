@@ -94,6 +94,7 @@ public class ConcurrentCacheServiceTest extends AbstractTest {
     private static final String TENANT_ID = "TENANT_ID";
     private static final int CONF1_SCHEMA_VERSION = 1;
     private static final int PROFILE1_SCHEMA_VERSION = 1;
+    private static final int PROFILE1_SERVER_SCHEMA_VERSION = 1;
 
     private static final String CF1_ID = "cf1";
     private static final String CF2_ID = "cf2";
@@ -131,10 +132,11 @@ public class ConcurrentCacheServiceTest extends AbstractTest {
     private static final ConfigurationIdKey TEST_CONF_ID_KEY = new ConfigurationIdKey(APP_ID, TEST_APP_SEQ_NUMBER, CONF1_SCHEMA_VERSION,
             ENDPOINT_GROUP1_ID);
 
-    private static final HistoryKey TEST_HISTORY_KEY = new HistoryKey(TEST_APP_TOKEN, HistorySubject.CONFIGURATION, TEST_APP_SEQ_NUMBER, TEST_APP_SEQ_NUMBER_NEW,
-            CONF1_SCHEMA_VERSION, PROFILE1_SCHEMA_VERSION);
+    private static final HistoryKey TEST_HISTORY_KEY = new HistoryKey(TEST_APP_TOKEN, HistorySubject.CONFIGURATION, TEST_APP_SEQ_NUMBER,
+            TEST_APP_SEQ_NUMBER_NEW, CONF1_SCHEMA_VERSION, PROFILE1_SCHEMA_VERSION, PROFILE1_SERVER_SCHEMA_VERSION);
 
-    private static final AppVersionKey TEST_GET_PROFILES_KEY = new AppVersionKey(TEST_APP_TOKEN, PROFILE1_SCHEMA_VERSION);
+    private static final AppProfileVersionsKey TEST_GET_PROFILES_KEY = new AppProfileVersionsKey(TEST_APP_TOKEN, PROFILE1_SCHEMA_VERSION,
+            PROFILE1_SERVER_SCHEMA_VERSION);
 
     private static final AppVersionKey CF_SCHEMA_KEY = new AppVersionKey(TEST_APP_TOKEN, CONF1_SCHEMA_VERSION);
     private static final AppVersionKey PF_SCHEMA_KEY = new AppVersionKey(TEST_APP_TOKEN, PROFILE1_SCHEMA_VERSION);
@@ -213,22 +215,24 @@ public class ConcurrentCacheServiceTest extends AbstractTest {
         historyList.add(buildMatchingHistoryDto(ChangeType.REMOVE_TOPIC));
         historyList.add(buildMatchingHistoryDto(ChangeType.REMOVE_GROUP));
 
-        when(historyService.findHistoriesBySeqNumberRange(APP_ID, TEST_APP_SEQ_NUMBER, TEST_APP_SEQ_NUMBER_NEW)).then(new Answer<List<HistoryDto>>() {
-            @Override
-            public List<HistoryDto> answer(InvocationOnMock invocation) throws Throwable {
-                sleepABit();
-                return historyList;
-            }
-        });
-
-        when(profileService.findProfileFiltersByAppIdAndVersion(APP_ID, TEST_GET_PROFILES_KEY.getVersion())).then(
-                new Answer<List<ProfileFilterDto>>() {
+        when(historyService.findHistoriesBySeqNumberRange(APP_ID, TEST_APP_SEQ_NUMBER, TEST_APP_SEQ_NUMBER_NEW)).then(
+                new Answer<List<HistoryDto>>() {
                     @Override
-                    public List<ProfileFilterDto> answer(InvocationOnMock invocation) throws Throwable {
+                    public List<HistoryDto> answer(InvocationOnMock invocation) throws Throwable {
                         sleepABit();
-                        return TEST_PROFILE_FILTER_LIST;
+                        return historyList;
                     }
                 });
+
+        when(
+                profileService.findProfileFiltersByAppIdAndVersions(APP_ID, TEST_GET_PROFILES_KEY.getEndpointProfileSchemaVersion(),
+                        TEST_GET_PROFILES_KEY.getServerProfileSchemaVersion())).then(new Answer<List<ProfileFilterDto>>() {
+            @Override
+            public List<ProfileFilterDto> answer(InvocationOnMock invocation) throws Throwable {
+                sleepABit();
+                return TEST_PROFILE_FILTER_LIST;
+            }
+        });
 
         when(profileService.findProfileFilterById(PF1_ID)).then(new Answer<ProfileFilterDto>() {
             @Override
@@ -246,21 +250,23 @@ public class ConcurrentCacheServiceTest extends AbstractTest {
             }
         });
 
-        when(configurationService.findConfSchemaByAppIdAndVersion(APP_ID, CF_SCHEMA_KEY.getVersion())).then(new Answer<ConfigurationSchemaDto>() {
-            @Override
-            public ConfigurationSchemaDto answer(InvocationOnMock invocation) throws Throwable {
-                sleepABit();
-                return CF1_SCHEMA;
-            }
-        });
+        when(configurationService.findConfSchemaByAppIdAndVersion(APP_ID, CF_SCHEMA_KEY.getVersion())).then(
+                new Answer<ConfigurationSchemaDto>() {
+                    @Override
+                    public ConfigurationSchemaDto answer(InvocationOnMock invocation) throws Throwable {
+                        sleepABit();
+                        return CF1_SCHEMA;
+                    }
+                });
 
-        when(profileService.findProfileSchemaByAppIdAndVersion(APP_ID, PF_SCHEMA_KEY.getVersion())).then(new Answer<EndpointProfileSchemaDto>() {
-            @Override
-            public EndpointProfileSchemaDto answer(InvocationOnMock invocation) throws Throwable {
-                sleepABit();
-                return PF1_SCHEMA;
-            }
-        });
+        when(profileService.findProfileSchemaByAppIdAndVersion(APP_ID, PF_SCHEMA_KEY.getVersion())).then(
+                new Answer<EndpointProfileSchemaDto>() {
+                    @Override
+                    public EndpointProfileSchemaDto answer(InvocationOnMock invocation) throws Throwable {
+                        sleepABit();
+                        return PF1_SCHEMA;
+                    }
+                });
 
         KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
         SecureRandom random = SecureRandom.getInstance("SHA1PRNG", "SUN");
@@ -316,36 +322,36 @@ public class ConcurrentCacheServiceTest extends AbstractTest {
         evcDto.setEcfId(EVENT_CLASS_FAMILY_ID);
         evcDto.setVersion(EVENT_CLASS_FAMILY_VERSION);
 
+        when(eventClassService.findEventClassByTenantIdAndFQNAndVersion(TENANT_ID, EC_FQN, EVENT_CLASS_FAMILY_VERSION)).then(
+                new Answer<EventClassDto>() {
+                    @Override
+                    public EventClassDto answer(InvocationOnMock invocation) throws Throwable {
+                        sleepABit();
+                        return evcDto;
+                    }
+                });
 
-        when(eventClassService.findEventClassByTenantIdAndFQNAndVersion(TENANT_ID, EC_FQN, EVENT_CLASS_FAMILY_VERSION)).then(new Answer<EventClassDto>() {
-            @Override
-            public EventClassDto answer(InvocationOnMock invocation) throws Throwable {
-                sleepABit();
-                return evcDto;
-            }
-        });
+        when(applicationEventMapService.findByEcfIdAndVersion(EVENT_CLASS_FAMILY_ID, EVENT_CLASS_FAMILY_VERSION)).then(
+                new Answer<List<ApplicationEventFamilyMapDto>>() {
 
+                    @Override
+                    public List<ApplicationEventFamilyMapDto> answer(InvocationOnMock invocation) throws Throwable {
+                        ApplicationEventMapDto matchButSource = new ApplicationEventMapDto();
+                        matchButSource.setAction(ApplicationEventAction.SOURCE);
+                        matchButSource.setEventClassId(EVENT_CLASS_ID);
 
-        when(applicationEventMapService.findByEcfIdAndVersion(EVENT_CLASS_FAMILY_ID, EVENT_CLASS_FAMILY_VERSION)).then(new Answer<List<ApplicationEventFamilyMapDto>>() {
+                        ApplicationEventMapDto match = new ApplicationEventMapDto();
+                        match.setAction(ApplicationEventAction.BOTH);
+                        match.setEventClassId(EVENT_CLASS_ID);
 
-            @Override
-            public List<ApplicationEventFamilyMapDto> answer(InvocationOnMock invocation) throws Throwable {
-                ApplicationEventMapDto matchButSource = new ApplicationEventMapDto();
-                matchButSource.setAction(ApplicationEventAction.SOURCE);
-                matchButSource.setEventClassId(EVENT_CLASS_ID);
-
-                ApplicationEventMapDto match = new ApplicationEventMapDto();
-                match.setAction(ApplicationEventAction.BOTH);
-                match.setEventClassId(EVENT_CLASS_ID);
-
-                ApplicationEventFamilyMapDto mapping = new ApplicationEventFamilyMapDto();
-                mapping.setApplicationId(APP_ID);
-                mapping.setEcfId(EVENT_CLASS_FAMILY_ID);
-                mapping.setVersion(EVENT_CLASS_FAMILY_VERSION);
-                mapping.setEventMaps(Arrays.asList(matchButSource, match));
-                return Arrays.asList(mapping);
-            }
-        });
+                        ApplicationEventFamilyMapDto mapping = new ApplicationEventFamilyMapDto();
+                        mapping.setApplicationId(APP_ID);
+                        mapping.setEcfId(EVENT_CLASS_FAMILY_ID);
+                        mapping.setVersion(EVENT_CLASS_FAMILY_VERSION);
+                        mapping.setEventMaps(Arrays.asList(matchButSource, match));
+                        return Arrays.asList(mapping);
+                    }
+                });
 
         APPLICATION_EVENT_FAMILY_MAP_DTO.setEcfName("someName");
         when(applicationEventMapService.findApplicationEventFamilyMapsByIds(AEFMAP_IDS)).thenReturn(AEFM_LIST);
@@ -355,11 +361,13 @@ public class ConcurrentCacheServiceTest extends AbstractTest {
 
     @Test
     public void testGetAppSeqNumber() throws GetDeltaException {
-        assertEquals(new AppSeqNumber(TENANT_ID, TEST_APP_ID, TEST_APP_TOKEN, TEST_APP_SEQ_NUMBER), cacheService.getAppSeqNumber(TEST_APP_TOKEN));
+        assertEquals(new AppSeqNumber(TENANT_ID, TEST_APP_ID, TEST_APP_TOKEN, TEST_APP_SEQ_NUMBER),
+                cacheService.getAppSeqNumber(TEST_APP_TOKEN));
         verify(appService, times(1)).findAppByApplicationToken(TEST_APP_TOKEN);
         reset(appService);
 
-        assertEquals(new AppSeqNumber(TENANT_ID, TEST_APP_ID, TEST_APP_TOKEN, TEST_APP_SEQ_NUMBER), cacheService.getAppSeqNumber(TEST_APP_TOKEN));
+        assertEquals(new AppSeqNumber(TENANT_ID, TEST_APP_ID, TEST_APP_TOKEN, TEST_APP_SEQ_NUMBER),
+                cacheService.getAppSeqNumber(TEST_APP_TOKEN));
         verify(appService, times(0)).findAppByApplicationToken(TEST_APP_TOKEN);
         reset(appService);
     }
@@ -370,7 +378,8 @@ public class ConcurrentCacheServiceTest extends AbstractTest {
             launchCodeInParallelThreads(STRESS_TEST_N_THREADS, new Runnable() {
                 @Override
                 public void run() {
-                    assertEquals(new AppSeqNumber(TENANT_ID, TEST_APP_ID, TEST_APP_TOKEN, TEST_APP_SEQ_NUMBER), cacheService.getAppSeqNumber(TEST_APP_TOKEN));
+                    assertEquals(new AppSeqNumber(TENANT_ID, TEST_APP_ID, TEST_APP_TOKEN, TEST_APP_SEQ_NUMBER),
+                            cacheService.getAppSeqNumber(TEST_APP_TOKEN));
                 }
             });
 
@@ -447,11 +456,13 @@ public class ConcurrentCacheServiceTest extends AbstractTest {
     @Test
     public void testGetFilters() throws GetDeltaException {
         assertEquals(TEST_PROFILE_FILTER_LIST, cacheService.getFilters(TEST_GET_PROFILES_KEY));
-        verify(profileService, times(1)).findProfileFiltersByAppIdAndVersion(APP_ID, TEST_GET_PROFILES_KEY.getVersion());
+        verify(profileService, times(1)).findProfileFiltersByAppIdAndVersions(APP_ID, TEST_GET_PROFILES_KEY.getEndpointProfileSchemaVersion(),
+                TEST_GET_PROFILES_KEY.getServerProfileSchemaVersion());
         reset(profileService);
 
         assertEquals(TEST_PROFILE_FILTER_LIST, cacheService.getFilters(TEST_GET_PROFILES_KEY));
-        verify(profileService, times(0)).findProfileFiltersByAppIdAndVersion(APP_ID, TEST_GET_PROFILES_KEY.getVersion());
+        verify(profileService, times(0)).findProfileFiltersByAppIdAndVersions(APP_ID, TEST_GET_PROFILES_KEY.getEndpointProfileSchemaVersion(),
+                TEST_GET_PROFILES_KEY.getServerProfileSchemaVersion());
         reset(profileService);
     }
 
@@ -465,7 +476,8 @@ public class ConcurrentCacheServiceTest extends AbstractTest {
                 }
             });
 
-            verify(profileService, atMost(2)).findProfileFiltersByAppIdAndVersion(APP_ID, TEST_GET_PROFILES_KEY.getVersion());
+            verify(profileService, atMost(2)).findProfileFiltersByAppIdAndVersions(APP_ID, TEST_GET_PROFILES_KEY.getEndpointProfileSchemaVersion(),
+                    TEST_GET_PROFILES_KEY.getServerProfileSchemaVersion());
             reset(profileService);
         }
     }
@@ -610,7 +622,6 @@ public class ConcurrentCacheServiceTest extends AbstractTest {
         verify(endpointService, times(1)).findEndpointProfileByKeyHash(publicKeyHash2.getData());
         reset(endpointService);
 
-
         final EndpointProfileDto ep2 = new EndpointProfileDto();
         ep2.setEndpointKey(publicKey2.getEncoded());
 
@@ -671,13 +682,15 @@ public class ConcurrentCacheServiceTest extends AbstractTest {
 
     @Test
     public void testGetRouteKeys() throws GetDeltaException {
-        assertEquals(Collections.singleton(new RouteTableKey(TEST_APP_TOKEN, new EventClassFamilyVersion(EVENT_CLASS_FAMILY_ID, EVENT_CLASS_FAMILY_VERSION))),
-                cacheService.getRouteKeys(new EventClassFqnVersion(TENANT_ID, EC_FQN, EVENT_CLASS_FAMILY_VERSION)));
+        assertEquals(Collections.singleton(new RouteTableKey(TEST_APP_TOKEN, new EventClassFamilyVersion(EVENT_CLASS_FAMILY_ID,
+                EVENT_CLASS_FAMILY_VERSION))), cacheService.getRouteKeys(new EventClassFqnVersion(TENANT_ID, EC_FQN,
+                EVENT_CLASS_FAMILY_VERSION)));
         verify(eventClassService, times(1)).findEventClassByTenantIdAndFQNAndVersion(TENANT_ID, EC_FQN, EVENT_CLASS_FAMILY_VERSION);
         reset(eventClassService);
 
-        assertEquals(Collections.singleton(new RouteTableKey(TEST_APP_TOKEN, new EventClassFamilyVersion(EVENT_CLASS_FAMILY_ID, EVENT_CLASS_FAMILY_VERSION))),
-                cacheService.getRouteKeys(new EventClassFqnVersion(TENANT_ID, EC_FQN, EVENT_CLASS_FAMILY_VERSION)));
+        assertEquals(Collections.singleton(new RouteTableKey(TEST_APP_TOKEN, new EventClassFamilyVersion(EVENT_CLASS_FAMILY_ID,
+                EVENT_CLASS_FAMILY_VERSION))), cacheService.getRouteKeys(new EventClassFqnVersion(TENANT_ID, EC_FQN,
+                EVENT_CLASS_FAMILY_VERSION)));
         verify(eventClassService, times(0)).findEventClassByTenantIdAndFQNAndVersion(TENANT_ID, EC_FQN, EVENT_CLASS_FAMILY_VERSION);
         reset(eventClassService);
     }
@@ -686,18 +699,18 @@ public class ConcurrentCacheServiceTest extends AbstractTest {
     public void testIsSupported() {
         for (ChangeType change : ChangeType.values()) {
             switch (change) {
-                case ADD_CONF:
-                case ADD_PROF:
-                case ADD_TOPIC:
-                case REMOVE_CONF:
-                case REMOVE_PROF:
-                case REMOVE_TOPIC:
-                case REMOVE_GROUP:
-                    Assert.assertTrue(ConcurrentCacheService.isSupported(change));
-                    break;
-                default:
-                    Assert.assertFalse(ConcurrentCacheService.isSupported(change));
-                    break;
+            case ADD_CONF:
+            case ADD_PROF:
+            case ADD_TOPIC:
+            case REMOVE_CONF:
+            case REMOVE_PROF:
+            case REMOVE_TOPIC:
+            case REMOVE_GROUP:
+                Assert.assertTrue(ConcurrentCacheService.isSupported(change));
+                break;
+            default:
+                Assert.assertFalse(ConcurrentCacheService.isSupported(change));
+                break;
             }
         }
     }
@@ -733,7 +746,6 @@ public class ConcurrentCacheServiceTest extends AbstractTest {
         notMatchingConfChange.setConfigurationId(CF3_ID);
         notMatchingConfChange.setCfVersion(CONF1_SCHEMA_VERSION + 1);
         notMatchingConfChange.setProfileFilterId(PF3_ID);
-        notMatchingConfChange.setPfVersion(PROFILE1_SCHEMA_VERSION + 1);
         notMatchingHistory.setChange(notMatchingConfChange);
         return notMatchingHistory;
     }
@@ -750,11 +762,9 @@ public class ConcurrentCacheServiceTest extends AbstractTest {
         matchingConfChange.setConfigurationId(CF2_ID);
         matchingConfChange.setCfVersion(CONF1_SCHEMA_VERSION);
         matchingConfChange.setProfileFilterId(PF2_ID);
-        matchingConfChange.setPfVersion(PROFILE1_SCHEMA_VERSION);
         matchingHistory.setChange(matchingConfChange);
         return matchingHistory;
     }
-
 
     private List<HistoryDto> getResultHistoryList() {
         List<HistoryDto> expectedList = new ArrayList<>();
