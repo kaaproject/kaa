@@ -230,8 +230,10 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
 
     @Override
     public void start() {
-        checkClientStateNot(State.STARTED, "Kaa client is already started");
-        checkClientStateNot(State.PAUSED, "Kaa client is paused, need to be resumed");
+        if (context.needToCheckClientState()) {
+            checkClientStateNot(State.STARTED, "Kaa client is already started");
+            checkClientStateNot(State.PAUSED, "Kaa client is paused, need to be resumed");
+        }
 
         checkReadiness();
 
@@ -283,8 +285,10 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
 
     @Override
     public void stop() {
-        checkClientStateNot(State.CREATED, "Kaa client is not started");
-        checkClientStateNot(State.STOPPED, "Kaa client is already stopped");
+        if (context.needToCheckClientState()) {
+            checkClientStateNot(State.CREATED, "Kaa client is not started");
+            checkClientStateNot(State.STOPPED, "Kaa client is already stopped");
+        }
 
         getLifeCycleExecutor().submit(new Runnable() {
             @Override
@@ -312,7 +316,9 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
 
     @Override
     public void pause() {
-        checkClientState(State.STARTED, "Kaa client is not started (" + clientState.toString().toLowerCase() + " now)");
+        if (context.needToCheckClientState()) {
+            checkClientState(State.STARTED, "Kaa client is not started (" + clientState.toString().toLowerCase() + " now)");
+        }
 
         getLifeCycleExecutor().submit(new Runnable() {
             @Override
@@ -337,7 +343,9 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
 
     @Override
     public void resume() {
-        checkClientState(State.PAUSED, "Kaa client isn't paused");
+        if (context.needToCheckClientState()) {
+            checkClientState(State.PAUSED, "Kaa client isn't paused");
+        }
 
         getLifeCycleExecutor().submit(new Runnable() {
             @Override
