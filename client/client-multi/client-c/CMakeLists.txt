@@ -139,7 +139,6 @@ set (KAA_SOURCE_FILES
         ${KAA_SOURCE_FILES}
         ${KAA_SRC_FOLDER}/avro_src/io.c
         ${KAA_SRC_FOLDER}/avro_src/encoding_binary.c
-        ${KAA_SRC_FOLDER}/collections/kaa_deque.c
         ${KAA_SRC_FOLDER}/collections/kaa_list.c
         ${KAA_SRC_FOLDER}/utilities/kaa_log.c
         ${KAA_SRC_FOLDER}/utilities/kaa_mem.c

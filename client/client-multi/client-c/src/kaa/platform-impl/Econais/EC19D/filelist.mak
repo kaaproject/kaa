@@ -19,7 +19,7 @@ CFILES-ECONAIS-PLAT = kaa/platform-impl/Econais/EC19D/econais_ec19d_kaa_client.c
 CFILES-PLAT-IMPL = kaa/platform-impl/common/ext_log_storage_memory.c kaa/platform-impl/common/ext_log_upload_strategies.c kaa/platform-impl/common/kaa_failover_strategy.c kaa/platform-impl/common/kaa_tcp_channel.c kaa/platform-impl/common/kaa_htonll.c
 CFILES-PROTO = kaa/kaa_protocols/kaa_tcp/kaatcp_parser.c kaa/kaa_protocols/kaa_tcp/kaatcp_request.c
 CFILES-AVRO = kaa/avro_src/io.c kaa/avro_src/encoding_binary.c
-CFILES-COLLECTIONS = kaa/collections/kaa_deque.c kaa/collections/kaa_list.c
+CFILES-COLLECTIONS = kaa/collections/kaa_list.c
 CFILES-UTIL = kaa/utilities/kaa_log.c kaa/utilities/kaa_mem.c kaa/utilities/kaa_buffer.c
 CFILES-GEN = kaa/gen/kaa_logging_gen.c kaa/gen/kaa_profile_gen.c kaa/gen/kaa_configuration_gen.c kaa/gen/kaa_notification_gen.c
 
