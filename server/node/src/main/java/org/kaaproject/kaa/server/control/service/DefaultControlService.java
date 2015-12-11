@@ -39,11 +39,13 @@ import org.kaaproject.kaa.common.dto.ChangeNotificationDto;
 import org.kaaproject.kaa.common.dto.ChangeProfileFilterNotification;
 import org.kaaproject.kaa.common.dto.ChangeType;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
+import org.kaaproject.kaa.common.dto.ConfigurationRecordDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
@@ -54,9 +56,9 @@ import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.common.dto.PageLinkDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.ProfileFilterRecordDto;
+import org.kaaproject.kaa.common.dto.ProfileVersionPairDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.StructureRecordDto;
 import org.kaaproject.kaa.common.dto.TenantAdminDto;
 import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
@@ -704,7 +706,7 @@ public class DefaultControlService implements ControlService {
      * getProfileFilterRecordsByEndpointGroupId(java.lang.String, boolean)
      */
     @Override
-    public List<StructureRecordDto<ProfileFilterDto>> getProfileFilterRecordsByEndpointGroupId(String endpointGroupId,
+    public List<ProfileFilterRecordDto> getProfileFilterRecordsByEndpointGroupId(String endpointGroupId,
             boolean includeDeprecated) throws ControlServiceException {
         return new ArrayList<>(profileService.findAllProfileFilterRecordsByEndpointGroupId(endpointGroupId, includeDeprecated));
     }
@@ -716,9 +718,9 @@ public class DefaultControlService implements ControlService {
      * getProfileFilterRecord(java.lang.String, java.lang.String)
      */
     @Override
-    public StructureRecordDto<ProfileFilterDto> getProfileFilterRecord(String schemaId, String endpointGroupId)
+    public ProfileFilterRecordDto getProfileFilterRecord(String endpointProfileSchemaId, String serverProfileSchemaId,  String endpointGroupId)
             throws ControlServiceException {
-        return profileService.findProfileFilterRecordBySchemaIdAndEndpointGroupId(schemaId, endpointGroupId);
+        return profileService.findProfileFilterRecordBySchemaIdAndEndpointGroupId(endpointProfileSchemaId, serverProfileSchemaId, endpointGroupId);
     }
 
     /*
@@ -728,7 +730,7 @@ public class DefaultControlService implements ControlService {
      * getVacantProfileSchemasByEndpointGroupId(java.lang.String)
      */
     @Override
-    public List<VersionDto> getVacantProfileSchemasByEndpointGroupId(String endpointGroupId) throws ControlServiceException {
+    public List<ProfileVersionPairDto> getVacantProfileSchemasByEndpointGroupId(String endpointGroupId) throws ControlServiceException {
         return profileService.findVacantSchemasByEndpointGroupId(endpointGroupId);
     }
 
@@ -751,7 +753,7 @@ public class DefaultControlService implements ControlService {
      * getConfigurationRecordsByEndpointGroupId(java.lang.String, boolean)
      */
     @Override
-    public List<StructureRecordDto<ConfigurationDto>> getConfigurationRecordsByEndpointGroupId(String endpointGroupId,
+    public List<ConfigurationRecordDto> getConfigurationRecordsByEndpointGroupId(String endpointGroupId,
             boolean includeDeprecated) throws ControlServiceException {
         return new ArrayList<>(configurationService.findAllConfigurationRecordsByEndpointGroupId(endpointGroupId, includeDeprecated));
     }
@@ -763,7 +765,7 @@ public class DefaultControlService implements ControlService {
      * getConfigurationRecord(java.lang.String, java.lang.String)
      */
     @Override
-    public StructureRecordDto<ConfigurationDto> getConfigurationRecord(String schemaId, String endpointGroupId)
+    public ConfigurationRecordDto getConfigurationRecord(String schemaId, String endpointGroupId)
             throws ControlServiceException {
         return configurationService.findConfigurationRecordBySchemaIdAndEndpointGroupId(schemaId, endpointGroupId);
     }
@@ -994,9 +996,9 @@ public class DefaultControlService implements ControlService {
      * java.lang.String)
      */
     @Override
-    public void deleteProfileFilterRecord(String schemaId, String endpointGroupId, String deactivatedUsername)
+    public void deleteProfileFilterRecord(String endpointProfileSchemaId, String serverProfileSchemaId,  String endpointGroupId, String deactivatedUsername)
             throws ControlServiceException {
-        ChangeProfileFilterNotification cpfNotification = profileService.deleteProfileFilterRecord(schemaId, endpointGroupId,
+        ChangeProfileFilterNotification cpfNotification = profileService.deleteProfileFilterRecord(endpointProfileSchemaId, serverProfileSchemaId, endpointGroupId,
                 deactivatedUsername);
         if (cpfNotification != null) {
             ChangeNotificationDto notification = cpfNotification.getChangeNotificationDto();

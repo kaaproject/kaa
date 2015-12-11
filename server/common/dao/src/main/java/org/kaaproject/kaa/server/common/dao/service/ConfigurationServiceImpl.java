@@ -40,9 +40,9 @@ import org.kaaproject.kaa.common.dto.ChangeDto;
 import org.kaaproject.kaa.common.dto.ChangeNotificationDto;
 import org.kaaproject.kaa.common.dto.ChangeType;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
+import org.kaaproject.kaa.common.dto.ConfigurationRecordDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.HistoryDto;
-import org.kaaproject.kaa.common.dto.StructureRecordDto;
 import org.kaaproject.kaa.common.dto.UpdateStatus;
 import org.kaaproject.kaa.common.dto.VersionDto;
 import org.kaaproject.kaa.server.common.core.algorithms.generation.DefaultRecordGenerationAlgorithm;
@@ -147,16 +147,16 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     @Override
-    public Collection<StructureRecordDto<ConfigurationDto>> findAllConfigurationRecordsByEndpointGroupId(
+    public Collection<ConfigurationRecordDto> findAllConfigurationRecordsByEndpointGroupId(
             String endpointGroupId, boolean includeDeprecated) {
         Collection<ConfigurationDto> configurations = convertDtoList(configurationDao.findActualByEndpointGroupId(endpointGroupId));
-        List<StructureRecordDto<ConfigurationDto>> records = StructureRecordDto.convertToRecords(configurations);
+        List<ConfigurationRecordDto> records = ConfigurationRecordDto.convertToConfigurationRecords(configurations);
         if (includeDeprecated) {
             List<VersionDto> schemas = findVacantSchemasByEndpointGroupId(endpointGroupId);
             for (VersionDto schema : schemas) {
                 ConfigurationDto deprecatedConfiguration = getDto(configurationDao.findLatestDeprecated(schema.getId(), endpointGroupId));
                 if (deprecatedConfiguration != null) {
-                    StructureRecordDto<ConfigurationDto> record = new StructureRecordDto<>();
+                    ConfigurationRecordDto record = new ConfigurationRecordDto();
                     record.setActiveStructureDto(deprecatedConfiguration);
                     records.add(record);
                 }
@@ -167,9 +167,9 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     @Override
-    public StructureRecordDto<ConfigurationDto> findConfigurationRecordBySchemaIdAndEndpointGroupId(
+    public ConfigurationRecordDto findConfigurationRecordBySchemaIdAndEndpointGroupId(
             String schemaId, String endpointGroupId) {
-        StructureRecordDto<ConfigurationDto> record = new StructureRecordDto<>();
+        ConfigurationRecordDto record = new ConfigurationRecordDto();
         Collection<ConfigurationDto> configurations = convertDtoList(configurationDao.findActualBySchemaIdAndGroupId(schemaId, endpointGroupId));
         if (configurations != null) {
             for (ConfigurationDto configuration : configurations) {

@@ -23,8 +23,8 @@ import java.util.List;
 import org.kaaproject.kaa.common.dto.ChangeProfileFilterNotification;
 import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
+import org.kaaproject.kaa.common.dto.ProfileFilterRecordDto;
 import org.kaaproject.kaa.common.dto.ProfileVersionPairDto;
-import org.kaaproject.kaa.common.dto.StructureRecordDto;
 import org.kaaproject.kaa.common.dto.VersionDto;
 
 /**
@@ -85,7 +85,7 @@ public interface ProfileService {
      * @param includeDeprecated the include deprecated filters
      * @return the collection of profile filters
      */
-    Collection<StructureRecordDto<ProfileFilterDto>> findAllProfileFilterRecordsByEndpointGroupId(String endpointGroupId, boolean includeDeprecated);
+    Collection<ProfileFilterRecordDto> findAllProfileFilterRecordsByEndpointGroupId(String endpointGroupId, boolean includeDeprecated);
 
     /**
      * Find profile filter record by schema ids and endpoint group id.
@@ -95,7 +95,7 @@ public interface ProfileService {
      * @param endpointGroupId the endpoint group identifier
      * @return the structure record dto
      */
-    StructureRecordDto<ProfileFilterDto> findProfileFilterRecordBySchemaIdAndEndpointGroupId(String endpointProfileSchemaId, String serverProfileSchemaId, String endpointGroupId);
+    ProfileFilterRecordDto findProfileFilterRecordBySchemaIdAndEndpointGroupId(String endpointProfileSchemaId, String serverProfileSchemaId, String endpointGroupId);
 
     /**
      * Find all vacant profile schemas versions by endpoint group id.

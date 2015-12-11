@@ -24,6 +24,7 @@ import org.kaaproject.kaa.common.dto.ChangeType;
 import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.HistoryDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
+import org.kaaproject.kaa.common.dto.ProfileFilterRecordDto;
 import org.kaaproject.kaa.common.dto.ProfileVersionPairDto;
 import org.kaaproject.kaa.common.dto.StructureRecordDto;
 import org.kaaproject.kaa.common.dto.UpdateStatus;
@@ -153,16 +154,16 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public Collection<StructureRecordDto<ProfileFilterDto>> findAllProfileFilterRecordsByEndpointGroupId(
+    public Collection<ProfileFilterRecordDto> findAllProfileFilterRecordsByEndpointGroupId(
             String endpointGroupId, boolean includeDeprecated) {
         Collection<ProfileFilterDto> profileFilters = convertDtoList(profileFilterDao.findActualByEndpointGroupId(endpointGroupId));
-        List<StructureRecordDto<ProfileFilterDto>> records = StructureRecordDto.convertToRecords(profileFilters);
+        List<ProfileFilterRecordDto> records = ProfileFilterRecordDto.convertToProfileFilterRecords(profileFilters);
         if (includeDeprecated) {
             List<ProfileVersionPairDto> schemas = findVacantSchemasByEndpointGroupId(endpointGroupId);
             for (ProfileVersionPairDto schema : schemas) {
                 ProfileFilterDto deprecatedProfileFilter = getDto(profileFilterDao.findLatestDeprecated(schema.getId(), endpointGroupId));
                 if (deprecatedProfileFilter != null) {
-                    StructureRecordDto<ProfileFilterDto> record = new StructureRecordDto<>();
+                    ProfileFilterRecordDto record = new ProfileFilterRecordDto();
                     record.setActiveStructureDto(deprecatedProfileFilter);
                     records.add(record);
                 }
@@ -173,8 +174,8 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public StructureRecordDto<ProfileFilterDto> findProfileFilterRecordBySchemaIdAndEndpointGroupId(String endpointProfileSchemaId, String serverProfileSchemaId, String endpointGroupId) {
-        StructureRecordDto<ProfileFilterDto> record = new StructureRecordDto<>();
+    public ProfileFilterRecordDto findProfileFilterRecordBySchemaIdAndEndpointGroupId(String endpointProfileSchemaId, String serverProfileSchemaId, String endpointGroupId) {
+        ProfileFilterRecordDto record = new ProfileFilterRecordDto();
         Collection<ProfileFilterDto> profileFilters = convertDtoList(profileFilterDao.findActualBySchemaIdAndGroupId(schemaId, endpointGroupId));
         if (profileFilters != null) {
             for (ProfileFilterDto profileFilter : profileFilters) {
