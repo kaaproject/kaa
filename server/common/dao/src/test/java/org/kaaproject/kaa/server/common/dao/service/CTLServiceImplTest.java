@@ -58,7 +58,6 @@ public class CTLServiceImplTest extends AbstractTest {
     private CTLSchemaDto systemSchema;
     private CTLSchemaDto tenantSchema;
     private CTLSchemaDto appSchema;
-    private List<CTLSchemaDto> allSchemaList;
 
     private static final String TEST_CTL_SCHEMA_ALPHA = "dao/ctl/alpha.json";
     private static final String TEST_CTL_SCHEMA_ALPHA_FLAT = "dao/ctl/alphaFlat.json";
@@ -84,13 +83,13 @@ public class CTLServiceImplTest extends AbstractTest {
             }
         }
         Set<CTLSchemaDto> dependency = new HashSet<>();
-        firstSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN, tenant.getId(), 1, null));
+        firstSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN+1, tenant.getId(), 1, null));
         dependency.add(firstSchema);
-        secondSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN, tenant.getId(), 2, null));
+        secondSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN+2, tenant.getId(), 2, null));
         dependency.add(secondSchema);
-        thirdSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN, tenant.getId(), 3, null));
+        thirdSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN+3, tenant.getId(), 3, null));
         dependency.add(thirdSchema);
-        fourthSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN, tenant.getId(), 4, null));
+        fourthSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN+4, tenant.getId(), 4, null));
         dependency.add(fourthSchema);
         mainSchema = generateCTLSchemaDto(DEFAULT_FQN, tenant.getId(), 7, null);
         mainSchema.setDependencySet(dependency);
@@ -134,8 +133,6 @@ public class CTLServiceImplTest extends AbstractTest {
         alpha = ctlService.saveCTLSchema(alpha);
         
         alpha = ctlService.findCTLSchemaById(alpha.getId());
-
-        allSchemaList = Arrays.asList(firstSchema, secondSchema, thirdSchema, fourthSchema, mainSchema, systemSchema, tenantSchema, appSchema, gamma, beta, alpha);
     }
 
     @Test

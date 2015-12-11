@@ -16,6 +16,31 @@
 
 package org.kaaproject.kaa.server.common.dao;
 
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.charset.Charset;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystemAlreadyExistsException;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Random;
+import java.util.UUID;
+
+import javax.sql.DataSource;
+
 import org.junit.Assert;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ChangeConfigurationNotification;
@@ -26,6 +51,7 @@ import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.HasId;
@@ -34,7 +60,6 @@ import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TenantAdminDto;
 import org.kaaproject.kaa.common.dto.TenantDto;
@@ -105,31 +130,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
-
-import javax.sql.DataSource;
-
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.charset.Charset;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystemAlreadyExistsException;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
-
-import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 @ActiveProfiles({"h2"})
 public class AbstractTest {
@@ -420,7 +420,7 @@ public class AbstractTest {
                     groupId = generateEndpointGroupDto(schemaDto.getApplicationId()).getId();
                 }
                 dto.setEndpointGroupId(groupId);
-                dto.setSchemaId(schemaId);
+                dto.setEndpointProfileSchemaId(schemaId);
                 dto.setApplicationId(schemaDto.getApplicationId());
                 ProfileFilterDto saved = profileService.saveProfileFilter(dto);
                 Assert.assertNotNull(saved);
@@ -745,7 +745,14 @@ public class AbstractTest {
         }
         metaInfoDto.setScope(scopeDto);
         ctlSchema.setMetaInfo(metaInfoDto);
-        ctlSchema.setBody(UUID.randomUUID().toString());
+        String name = fqn.substring(fqn.lastIndexOf(".") + 1);
+        String namespace = fqn.substring(0, fqn.lastIndexOf("."));
+        StringBuilder body = new StringBuilder("{\"type\": \"record\",");
+        body = body.append("\"name\": \"").append(name).append("\",");
+        body = body.append("\"namespace\": \"").append(namespace).append("\",");
+        body = body.append("\"version\": ").append(version).append(",");
+        body = body.append("\"dependencies\": [], \"fields\": []}");
+        ctlSchema.setBody(body.toString());
         ctlSchema.setTenantId(tenantId);
         return ctlSchema;
     }

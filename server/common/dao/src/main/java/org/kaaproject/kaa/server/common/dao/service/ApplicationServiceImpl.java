@@ -16,17 +16,25 @@
 
 package org.kaaproject.kaa.server.common.dao.service;
 
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
+import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getDto;
+import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getStringFromFile;
+import static org.kaaproject.kaa.server.common.dao.service.Validator.isValidSqlId;
+import static org.kaaproject.kaa.server.common.dao.service.Validator.isValidSqlObject;
+
+import java.util.List;
+
 import org.apache.commons.lang.RandomStringUtils;
 import org.kaaproject.kaa.common.Constants;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
-import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
@@ -51,17 +59,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
-import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getDto;
-import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getStringFromFile;
-import static org.kaaproject.kaa.server.common.dao.service.Validator.isValidSqlId;
-import static org.kaaproject.kaa.server.common.dao.service.Validator.isValidSqlObject;
 
 @Service
 @Transactional
@@ -189,7 +186,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 if(groupDto != null) {
                     String groupId = groupDto.getId();
                     LOG.debug("Saved endpoint group with id [{}]", groupId);
-                    ProfileSchemaDto profileSchema = createDefaultProfileSchema(appId, createdUsername);
+                    EndpointProfileSchemaDto profileSchema = createDefaultProfileSchema(appId, createdUsername);
                     ConfigurationDto configuration = createDefaultConfigurationWithSchema(appId, groupId, createdUsername);
                     if (profileSchema == null || configuration == null) {
                         LOG.warn("Got error during creation application. Deleted application with id [{}]", appId);
@@ -197,7 +194,6 @@ public class ApplicationServiceImpl implements ApplicationService {
                     }
                     LOG.debug("Creating default server profile schema");
                     ServerProfileSchemaDto serverProfileService = createDefaultServerProfileSchema(appId, createdUsername);
-                    createDefaultProfileFilter(groupDto.getId(), profileSchema, serverProfileService);
                     LOG.debug("Creating default notification schema");
                     createDefaultNotificationSchema(appId, createdUsername);
                     LOG.debug("Creating default log schema");
@@ -212,20 +208,6 @@ public class ApplicationServiceImpl implements ApplicationService {
         return appDto;
     }
 
-    private void createDefaultProfileFilter(String groupId, ProfileSchemaDto profileSchema, ServerProfileSchemaDto serverProfileSchema) {
-        ProfileFilterDto filterDto = new ProfileFilterDto();
-        filterDto.setBody(DEFAULT_FILTER_BODY);
-        filterDto.setEndpointGroupId(groupId);
-
-        Set<Integer> endpointSchemas = new HashSet<>();
-        endpointSchemas.add(profileSchema.getVersion());
-        filterDto.setEndpointSchemaVersions(endpointSchemas);
-
-        Set<Integer> serverSchemas = new HashSet<>();
-        serverSchemas.add(serverProfileSchema.getVersion());
-        filterDto.setServerSchemaVersions(serverSchemas);
-        profileService.saveProfileFilter(filterDto);
-    }
 
     private EndpointGroupDto createDefaultGroup(String appId, String createdUsername) {
         EndpointGroupDto endpointGroup = new EndpointGroupDto();
@@ -235,7 +217,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         return endpointService.saveEndpointGroup(endpointGroup);
     }
 
-    private ProfileSchemaDto createDefaultProfileSchema(String appId, String createdUsername) {
+    private EndpointProfileSchemaDto createDefaultProfileSchema(String appId, String createdUsername) {
         EndpointProfileSchemaDto profileSchemaDto = new EndpointProfileSchemaDto();
         profileSchemaDto.setApplicationId(appId);
         CTLSchemaDto ctlSchema = ctlService.getOrCreateEmptySystemSchema(createdUsername);
