@@ -201,7 +201,7 @@ public class DefaultDeltaService implements DeltaService {
     }
 
     private boolean isChangePossible(GetDeltaRequest request, HistoryDelta historyDelta, boolean hashMismatch) {
-        return historyDelta.isConfigurationChanged() || request.isUserConfigurationChanged() || request.isServerProfileChanged() || hashMismatch;
+        return historyDelta.isConfigurationChanged() || request.isUserConfigurationChanged() || hashMismatch;
     }
 
     private boolean isFirstRequestWithUpToDateConfiguration(GetDeltaRequest request, EndpointProfileDto profile, byte[] configurationHash) {
