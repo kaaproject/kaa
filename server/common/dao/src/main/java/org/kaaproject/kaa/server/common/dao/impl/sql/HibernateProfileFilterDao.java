@@ -140,19 +140,19 @@ public class HibernateProfileFilterDao extends HibernateAbstractDao<ProfileFilte
     }
 
     @Override
-    public List<ProfileFilter> findByAppIdAndSchemaVersion(String appId, int schemaVersion) {
+    public List<ProfileFilter> findByAppIdAndSchemaVersions(String appId, int endpointSchemaVersion, int serverSchemaVersion) {
         List<ProfileFilter> filters = null;
-        LOG.debug("Searching configuration by application id [{}] and schema version [{}]", appId, schemaVersion);
+        LOG.debug("Searching configuration by application id [{}] and schema version [{}]", appId, serverSchemaVersion);
         if (isNotBlank(appId)) {
             filters = findListByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS, Restrictions.and(
                     Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)),
-                    Restrictions.eq(SCHEMA_VERSION_PROPERTY, schemaVersion),
+                    Restrictions.eq(SCHEMA_VERSION_PROPERTY, serverSchemaVersion),
                     Restrictions.eq(STATUS_PROPERTY, UpdateStatus.ACTIVE)));
         }
         if (LOG.isTraceEnabled()) {
-            LOG.trace("[{},{}] Search result: {}.", appId, schemaVersion, Arrays.toString(filters.toArray()));
+            LOG.trace("[{},{}] Search result: {}.", appId, serverSchemaVersion, Arrays.toString(filters.toArray()));
         } else {
-            LOG.debug("[{},{}] Search result: {}.", appId, schemaVersion, filters.size());
+            LOG.debug("[{},{}] Search result: {}.", appId, serverSchemaVersion, filters.size());
         }
         return filters;
     }

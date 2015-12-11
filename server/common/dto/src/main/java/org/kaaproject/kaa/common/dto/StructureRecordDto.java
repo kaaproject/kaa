@@ -17,21 +17,15 @@
 package org.kaaproject.kaa.common.dto;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-public class StructureRecordDto<T extends AbstractStructureDto> implements Serializable, Comparable<StructureRecordDto<T>> {
+public abstract class StructureRecordDto<T extends AbstractStructureDto> implements Serializable {
 
     private static final long serialVersionUID = -1326052725635723124L;
 
-    private T activeStructureDto;
-    private T inactiveStructureDto;
+    protected T activeStructureDto;
+    protected T inactiveStructureDto;
 
     public StructureRecordDto() {
-
     }
 
     public StructureRecordDto(T activeStructureDto, T inactiveStructureDto) {
@@ -56,10 +50,6 @@ public class StructureRecordDto<T extends AbstractStructureDto> implements Seria
         this.inactiveStructureDto = inactiveStructureDto;
     }
 
-    public int getSchemaVersion() {
-        return activeStructureDto != null ? activeStructureDto.getSchemaVersion() : inactiveStructureDto.getSchemaVersion();
-    }
-
     public String getDescription() {
         return activeStructureDto != null ? activeStructureDto.getDescription() : inactiveStructureDto.getDescription();
     }
@@ -80,33 +70,8 @@ public class StructureRecordDto<T extends AbstractStructureDto> implements Seria
         return inactiveStructureDto != null;
     }
 
-    public String getSchemaId() {
-        return activeStructureDto != null ? activeStructureDto.getSchemaId() : inactiveStructureDto.getSchemaId();
-    }
-
     public String getEndpointGroupId() {
         return activeStructureDto != null ? activeStructureDto.getEndpointGroupId() : inactiveStructureDto.getEndpointGroupId();
     }
-
-    public static <T extends AbstractStructureDto> List<StructureRecordDto<T>> convertToRecords(Collection<T> structures) {
-        Map<String, StructureRecordDto<T>> recordsMap = new HashMap<>();
-        for (T structure : structures) {
-            StructureRecordDto<T> record = recordsMap.get(structure.getSchemaId());
-            if (record == null) {
-                record = new StructureRecordDto<T>();
-                recordsMap.put(structure.getSchemaId(), record);
-            }
-            if (structure.getStatus()==UpdateStatus.ACTIVE) {
-                record.setActiveStructureDto(structure);
-            } else if (structure.getStatus()==UpdateStatus.INACTIVE) {
-                record.setInactiveStructureDto(structure);
-            }
-        }
-        return new ArrayList<>(recordsMap.values());
-    }
-
-    @Override
-    public int compareTo(StructureRecordDto<T> o) { //NOSONAR
-        return this.getSchemaVersion() - o.getSchemaVersion();
-    }
+   
 }

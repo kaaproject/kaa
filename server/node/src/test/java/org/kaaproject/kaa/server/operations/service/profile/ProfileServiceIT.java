@@ -51,7 +51,7 @@ import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
 import org.kaaproject.kaa.server.common.dao.model.sql.Application;
 import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchemaMetaInfo;
-import org.kaaproject.kaa.server.common.dao.model.sql.ProfileSchema;
+import org.kaaproject.kaa.server.common.dao.model.sql.EndpointProfileSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.SdkProfile;
 import org.kaaproject.kaa.server.common.dao.model.sql.Tenant;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.MongoDBTestRunner;
@@ -106,7 +106,7 @@ public class ProfileServiceIT extends AbstractTest {
     protected ApplicationDao<Application> applicationDao;
 
     @Autowired
-    protected ProfileSchemaDao<ProfileSchema> profileSchemaDao;
+    protected ProfileSchemaDao<EndpointProfileSchema> profileSchemaDao;
     
     @Autowired
     protected CTLSchemaDao<CTLSchema> ctlSchemaDao;
@@ -116,8 +116,8 @@ public class ProfileServiceIT extends AbstractTest {
 
     private Tenant tenant;
     private Application application;
-    private ProfileSchema profileSchema;
-    private ProfileSchema profileSchema2;
+    private EndpointProfileSchema endpointProfileSchema;
+    private EndpointProfileSchema endpointProfileSchema2;
 
     @BeforeClass
     public static void init() throws Exception {
@@ -158,11 +158,11 @@ public class ProfileServiceIT extends AbstractTest {
         
         ctlSchema = ctlSchemaDao.save(ctlSchema);
 
-        profileSchema = new ProfileSchema();
-        profileSchema.setVersion(PROFILE_SCHEMA_VERSION);
-        profileSchema.setCtlSchema(ctlSchema);
-        profileSchema.setApplication(application);
-        profileSchema = profileSchemaDao.save(profileSchema);
+        endpointProfileSchema = new EndpointProfileSchema();
+        endpointProfileSchema.setVersion(PROFILE_SCHEMA_VERSION);
+        endpointProfileSchema.setCtlSchema(ctlSchema);
+        endpointProfileSchema.setApplication(application);
+        endpointProfileSchema = profileSchemaDao.save(endpointProfileSchema);
         
         metaInfo = new CTLSchemaMetaInfo();
         metaInfo.setVersion(1);
@@ -180,15 +180,15 @@ public class ProfileServiceIT extends AbstractTest {
         
         ctlSchema = ctlSchemaDao.save(ctlSchema);
         
-        profileSchema2 = new ProfileSchema();
-        profileSchema2.setVersion(NEW_PROFILE_SCHEMA_VERSION);
-        profileSchema2.setCtlSchema(ctlSchema);
-        profileSchema2.setApplication(application);
-        profileSchema2 = profileSchemaDao.save(profileSchema2);
+        endpointProfileSchema2 = new EndpointProfileSchema();
+        endpointProfileSchema2.setVersion(NEW_PROFILE_SCHEMA_VERSION);
+        endpointProfileSchema2.setCtlSchema(ctlSchema);
+        endpointProfileSchema2.setApplication(application);
+        endpointProfileSchema2 = profileSchemaDao.save(endpointProfileSchema2);
 
         SdkProfileDto sdkPropertiesDto = new SdkProfileDto();
         sdkPropertiesDto.setApplicationId(application.getStringId());
-        sdkPropertiesDto.setProfileSchemaVersion(profileSchema.getVersion());
+        sdkPropertiesDto.setProfileSchemaVersion(endpointProfileSchema.getVersion());
         sdkPropertiesDto.setConfigurationSchemaVersion(1);
         sdkPropertiesDto.setNotificationSchemaVersion(1);
         sdkPropertiesDto.setLogSchemaVersion(1);
@@ -198,7 +198,7 @@ public class ProfileServiceIT extends AbstractTest {
 
         SdkProfileDto newSdkProfileDto = new SdkProfileDto();
         newSdkProfileDto.setApplicationId(application.getStringId());
-        newSdkProfileDto.setProfileSchemaVersion(profileSchema2.getVersion());
+        newSdkProfileDto.setProfileSchemaVersion(endpointProfileSchema2.getVersion());
         newSdkProfileDto.setConfigurationSchemaVersion(1);
         newSdkProfileDto.setNotificationSchemaVersion(1);
         newSdkProfileDto.setLogSchemaVersion(1);

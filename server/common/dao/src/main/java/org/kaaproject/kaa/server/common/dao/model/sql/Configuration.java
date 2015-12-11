@@ -29,6 +29,7 @@ import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONFIGURATION_CONFIGURATION_SCHEMA_VERSION;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONFIGURATION_CONFIGURATION_BODY;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONFIGURATION_CONFIGURATION_SCHEMA_ID;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONFIGURATION_TABLE_NAME;
@@ -44,6 +45,9 @@ public final class Configuration extends AbstractStructure<ConfigurationDto> imp
     private static final long serialVersionUID = -216908432141461265L;
 
     private static final Charset UTF8 = Charset.forName("UTF-8");
+
+    @Column(name = CONFIGURATION_CONFIGURATION_SCHEMA_VERSION)
+    protected int schemaVersion;
 
     @Lob
     @Column(name = CONFIGURATION_CONFIGURATION_BODY)
@@ -67,6 +71,7 @@ public final class Configuration extends AbstractStructure<ConfigurationDto> imp
             Long schemaId = getLongId(dto.getSchemaId());
             this.configurationSchema = schemaId != null ? new ConfigurationSchema(schemaId) : null;
             this.configurationBody = stringToBinary(dto.getBody());
+            this.schemaVersion = dto.getSchemaVersion();
         }
     }
 
@@ -148,6 +153,11 @@ public final class Configuration extends AbstractStructure<ConfigurationDto> imp
     @Override
     protected ConfigurationDto createDto() {
         return new ConfigurationDto();
+    }
+
+    @Override
+    protected GenericModel<ConfigurationDto> newInstance(Long id) {
+        return new Configuration(id);
     }
 
     @Override

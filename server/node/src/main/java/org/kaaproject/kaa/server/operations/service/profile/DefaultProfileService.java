@@ -226,7 +226,7 @@ public class DefaultProfileService implements ProfileService {
         EndpointProfileSchemaDto profileSchemaDto = cacheService.getProfileSchemaByAppAndVersion(new AppVersionKey(appToken, schemaVersion));
         String profileSchema = cacheService.getFlatCtlSchemaById(profileSchemaDto.getCtlSchemaId());
 
-        LOG.trace("ProfileSchema by appToken: {} and version: {} found: {}", appToken, schemaVersion, profileSchema);
+        LOG.trace("EndpointProfileSchema by appToken: {} and version: {} found: {}", appToken, schemaVersion, profileSchema);
 
         String profileJson = GenericAvroConverter.toJson(profileRaw, profileSchema);
         LOG.trace("Profile json : {} ", profileJson);

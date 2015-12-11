@@ -18,7 +18,6 @@ package org.kaaproject.kaa.server.common.dao;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getStringFromFile;
 
 import java.io.IOException;
 import java.net.URI;
@@ -113,6 +112,7 @@ import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchemaMetaInfo;
 import org.kaaproject.kaa.server.common.dao.model.sql.Configuration;
 import org.kaaproject.kaa.server.common.dao.model.sql.ConfigurationSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.EndpointGroup;
+import org.kaaproject.kaa.server.common.dao.model.sql.EndpointProfileSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.EventClass;
 import org.kaaproject.kaa.server.common.dao.model.sql.EventClassFamily;
 import org.kaaproject.kaa.server.common.dao.model.sql.GenericModel;
@@ -121,13 +121,11 @@ import org.kaaproject.kaa.server.common.dao.model.sql.LogAppender;
 import org.kaaproject.kaa.server.common.dao.model.sql.LogSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.NotificationSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.ProfileFilter;
-import org.kaaproject.kaa.server.common.dao.model.sql.ProfileSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.SdkProfile;
 import org.kaaproject.kaa.server.common.dao.model.sql.Tenant;
 import org.kaaproject.kaa.server.common.dao.model.sql.Topic;
 import org.kaaproject.kaa.server.common.dao.model.sql.User;
 import org.kaaproject.kaa.server.common.dao.model.sql.UserVerifier;
-import org.kaaproject.kaa.server.common.dao.service.CTLServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -195,7 +193,7 @@ public class AbstractTest {
     @Autowired
     protected ConfigurationDao<Configuration> configurationDao;
     @Autowired
-    protected ProfileSchemaDao<ProfileSchema> profileSchemaDao;
+    protected ProfileSchemaDao<EndpointProfileSchema> profileSchemaDao;
     @Autowired
     protected ProfileFilterDao<ProfileFilter> profileFilterDao;
     @Autowired
@@ -422,7 +420,7 @@ public class AbstractTest {
                     groupId = generateEndpointGroupDto(schemaDto.getApplicationId()).getId();
                 }
                 dto.setEndpointGroupId(groupId);
-                dto.setSchemaId(schemaId);
+                dto.setEndpointProfileSchemaId(schemaId);
                 dto.setApplicationId(schemaDto.getApplicationId());
                 ProfileFilterDto saved = profileService.saveProfileFilter(dto);
                 Assert.assertNotNull(saved);

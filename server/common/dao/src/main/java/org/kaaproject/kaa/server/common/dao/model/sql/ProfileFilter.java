@@ -27,9 +27,10 @@ import javax.persistence.Table;
 import java.io.Serializable;
 
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PROFILE_FILTER_BODY;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.PROFILE_FILTER_SCHEMA_ID;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PROFILE_FILTER_ENDPOINT_SCHEMA_ID;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PROFILE_FILTER_SERVER_SCHEMA_ID;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PROFILE_FILTER_TABLE_NAME;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
+import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getGenericModelWithId;
 
 @Entity
 @Table(name = PROFILE_FILTER_TABLE_NAME)
@@ -42,9 +43,11 @@ public final class ProfileFilter extends AbstractStructure<ProfileFilterDto> imp
     private String body;
 
     @ManyToOne
-    @JoinColumn(name = PROFILE_FILTER_SCHEMA_ID, nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private ProfileSchema profileSchema;
+    @JoinColumn(name = PROFILE_FILTER_ENDPOINT_SCHEMA_ID, nullable = false)
+    private EndpointProfileSchema endpointProfileSchema;
+    @ManyToOne
+    @JoinColumn(name = PROFILE_FILTER_SERVER_SCHEMA_ID, nullable = false)
+    private ServerProfileSchema serverProfileSchema;
 
     public ProfileFilter() {
     }
@@ -56,8 +59,8 @@ public final class ProfileFilter extends AbstractStructure<ProfileFilterDto> imp
     public ProfileFilter(ProfileFilterDto dto) {
         super(dto);
         this.body = dto.getBody();
-        Long schemaId = getLongId(dto.getSchemaId());
-        this.profileSchema = schemaId != null ? new ProfileSchema(schemaId) : null;
+        this.endpointProfileSchema = getGenericModelWithId(dto, new EndpointProfileSchema());
+        this.serverProfileSchema = getGenericModelWithId(dto, new ServerProfileSchema());
     }
 
     @Override
@@ -70,84 +73,33 @@ public final class ProfileFilter extends AbstractStructure<ProfileFilterDto> imp
         this.body = body;
     }
 
-    public ProfileSchema getProfileSchema() {
-        return profileSchema;
-    }
-
-    public void setProfileSchema(ProfileSchema profileSchema) {
-        this.profileSchema = profileSchema;
-    }
-
     @Override
     protected ProfileFilterDto createDto() {
         return new ProfileFilterDto();
     }
 
     @Override
+    protected GenericModel<ProfileFilterDto> newInstance(Long id) {
+        return new ProfileFilter(id);
+    }
+
+    @Override
     public ProfileFilterDto toDto() {
         ProfileFilterDto filterDto = super.toDto();
         filterDto.setBody(body);
-        filterDto.setSchemaId(profileSchema.getStringId());
+        if (endpointProfileSchema != null) {
+            filterDto.setEndpointProfileSchemaId(endpointProfileSchema.getStringId());
+            filterDto.setEndpointProfileSchemaVersion(endpointProfileSchema.getVersion());
+        }
+        if (serverProfileSchema != null) {
+            filterDto.setServerProfileSchemaId(serverProfileSchema.getStringId());
+            filterDto.setServerProfileSchemaVersion(serverProfileSchema.getVersion());
+        }
         return filterDto;
-    }
-
-    public String getSchemaId() {
-        return profileSchema.getStringId();
     }
 
     public String getGroupId() {
         return endpointGroup.getStringId();
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 43;
-        int result = 1;
-        result = prime * result + super.hashCode();
-        result = prime * result + ((body == null) ? 0 : body.hashCode());
-        result = prime * result + ((profileSchema == null) ? 0 : profileSchema.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (!super.equals(obj)) {
-            return false;
-        }
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        ProfileFilter other = (ProfileFilter) obj;
-        if (body == null) {
-            if (other.body != null) {
-                return false;
-            }
-        } else if (!body.equals(other.body)) {
-            return false;
-        }
-        if (profileSchema == null) {
-            if (other.profileSchema != null) {
-                return false;
-            }
-        } else if (!profileSchema.equals(other.profileSchema)) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return "ProfileFilter [body=" + body + ", sequenceNumber=" + sequenceNumber + ", schemaVersion=" + schemaVersion 
-                + ", description=" + description + ", createdTime=" + createdTime + ", lastModifyTime=" + lastModifyTime + ", activatedTime=" + activatedTime
-                + ", deactivatedTime=" + deactivatedTime + ", createdUsername=" + createdUsername + ", modifiedUsername=" + modifiedUsername
-                + ", activatedUsername=" + activatedUsername + ", deactivatedUsername=" + deactivatedUsername + ", endpointCount=" + endpointCount
-                + ", status=" + status + ", id=" + id + "]";
     }
 
 }

@@ -23,11 +23,13 @@ import org.apache.avro.Schema;
 import org.kaaproject.avro.ui.shared.Fqn;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
+import org.kaaproject.kaa.common.dto.ConfigurationRecordDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
@@ -37,9 +39,9 @@ import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.common.dto.PageLinkDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.ProfileFilterRecordDto;
+import org.kaaproject.kaa.common.dto.ProfileVersionPairDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.StructureRecordDto;
 import org.kaaproject.kaa.common.dto.TenantAdminDto;
 import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
@@ -413,18 +415,19 @@ public interface ControlService {
      * @return the profile filter records by endpoint group id
      * @throws ControlServiceException the control service exception
      */
-    List<StructureRecordDto<ProfileFilterDto>> getProfileFilterRecordsByEndpointGroupId(String endpointGroupId, boolean includeDeprecated)
+    List<ProfileFilterRecordDto> getProfileFilterRecordsByEndpointGroupId(String endpointGroupId, boolean includeDeprecated)
             throws ControlServiceException;
 
     /**
      * Gets the profile filter record.
      *
-     * @param schemaId the schema id
+     * @param endpointProfileSchemaId the endpoint profile schema id
+     * @param serverProfileSchemaId the server profile schema id 
      * @param endpointGroupId the endpoint group id
      * @return the profile filter record
      * @throws ControlServiceException the control service exception
      */
-    StructureRecordDto<ProfileFilterDto> getProfileFilterRecord(String schemaId, String endpointGroupId) throws ControlServiceException;
+    ProfileFilterRecordDto getProfileFilterRecord(String endpointProfileSchemaId, String serverProfileSchemaId, String endpointGroupId) throws ControlServiceException;
 
     /**
      * Gets the vacant profile schemas by endpoint group id.
@@ -433,7 +436,7 @@ public interface ControlService {
      * @return the vacant profile schemas by endpoint group id
      * @throws ControlServiceException the control service exception
      */
-    List<VersionDto> getVacantProfileSchemasByEndpointGroupId(String endpointGroupId) throws ControlServiceException;
+    List<ProfileVersionPairDto> getVacantProfileSchemasByEndpointGroupId(String endpointGroupId) throws ControlServiceException;
 
     /**
      * Edits the profile filter.
@@ -452,7 +455,7 @@ public interface ControlService {
      * @return the configuration records by endpoint group id
      * @throws ControlServiceException the control service exception
      */
-    List<StructureRecordDto<ConfigurationDto>> getConfigurationRecordsByEndpointGroupId(String endpointGroupId, boolean includeDeprecated)
+    List<ConfigurationRecordDto> getConfigurationRecordsByEndpointGroupId(String endpointGroupId, boolean includeDeprecated)
             throws ControlServiceException;
 
     /**
@@ -463,7 +466,7 @@ public interface ControlService {
      * @return the configuration record
      * @throws ControlServiceException the control service exception
      */
-    StructureRecordDto<ConfigurationDto> getConfigurationRecord(String schemaId, String endpointGroupId) throws ControlServiceException;
+    ConfigurationRecordDto getConfigurationRecord(String schemaId, String endpointGroupId) throws ControlServiceException;
 
     /**
      * Gets the vacant configuration schemas by endpoint group id.
@@ -553,12 +556,13 @@ public interface ControlService {
     /**
      * Delete profile filter record.
      *
-     * @param schemaId the schema id
+     * @param endpointProfileSchemaId the endpoint profile schema id
+     * @param serverProfileSchemaId the server profile schema id
      * @param endpointGroupId the endpoint group id
      * @param deactivatedUsername the deactivated username
      * @throws ControlServiceException the control service exception
      */
-    void deleteProfileFilterRecord(String schemaId, String endpointGroupId, String deactivatedUsername) throws ControlServiceException;
+    void deleteProfileFilterRecord(String endpointProfileSchemaId, String serverProfileSchemaId, String endpointGroupId, String deactivatedUsername) throws ControlServiceException;
 
     /**
      * Generate sdk.

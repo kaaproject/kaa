@@ -49,4 +49,9 @@ public final class ServerProfileSchema extends BaseSchema<ServerProfileSchemaDto
     protected ServerProfileSchemaDto createDto() {
         return new ServerProfileSchemaDto();
     }
+
+    @Override
+    protected GenericModel<ServerProfileSchemaDto> newInstance(Long id) {
+        return new ServerProfileSchema(id);
+    }
 }

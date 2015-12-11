@@ -28,8 +28,8 @@ import org.junit.runner.RunWith;
 import org.kaaproject.kaa.common.dto.UpdateStatus;
 import org.kaaproject.kaa.server.common.dao.model.sql.Application;
 import org.kaaproject.kaa.server.common.dao.model.sql.EndpointGroup;
+import org.kaaproject.kaa.server.common.dao.model.sql.EndpointProfileSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.ProfileFilter;
-import org.kaaproject.kaa.server.common.dao.model.sql.ProfileSchema;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -43,7 +43,7 @@ public class HibernateProfileFilterDaoTest extends HibernateAbstractTest {
     @Test
     public void findAllByProfileSchemaId() {
         List<ProfileFilter> filters = generateFilter(null, null, 1, null);
-        ProfileSchema schema = filters.get(0).getProfileSchema();
+        EndpointProfileSchema schema = filters.get(0).getProfileSchema();
         List<ProfileFilter> found = profileFilterDao.findAllByProfileSchemaId(schema.getId().toString());
         Assert.assertEquals(filters, found);
     }
@@ -68,7 +68,7 @@ public class HibernateProfileFilterDaoTest extends HibernateAbstractTest {
         List<ProfileFilter> filters = generateFilter(null, null, 4, UpdateStatus.DEPRECATED);
         ProfileFilter first = filters.get(0);
         EndpointGroup group = first.getEndpointGroup();
-        ProfileSchema schema = first.getProfileSchema();
+        EndpointProfileSchema schema = first.getProfileSchema();
         List<ProfileFilter> active = generateFilter(schema, group, 1, UpdateStatus.ACTIVE);
         generateConfiguration(null, group, 1, UpdateStatus.ACTIVE);
         List<ProfileFilter> inactive = generateFilter(schema, group, 1, UpdateStatus.INACTIVE);
@@ -86,7 +86,7 @@ public class HibernateProfileFilterDaoTest extends HibernateAbstractTest {
         Assert.assertEquals(10, filters.size());
         ProfileFilter first = filters.get(0);
         EndpointGroup group = first.getEndpointGroup();
-        ProfileSchema schema = first.getProfileSchema();
+        EndpointProfileSchema schema = first.getProfileSchema();
         ProfileFilter deprecated = profileFilterDao.findLatestDeprecated(schema.getId().toString(), group.getId().toString());
         Assert.assertEquals(UpdateStatus.DEPRECATED, deprecated.getStatus());
         Assert.assertEquals(9, deprecated.getSequenceNumber());
@@ -109,7 +109,7 @@ public class HibernateProfileFilterDaoTest extends HibernateAbstractTest {
         Assert.assertEquals(1, filters.size());
         ProfileFilter first = filters.get(0);
         Application app = first.getApplication();
-        List<ProfileFilter> found = profileFilterDao.findByAppIdAndSchemaVersion(app.getId().toString(), first.getSchemaVersion());
+        List<ProfileFilter> found = profileFilterDao.findByAppIdAndSchemaVersions(app.getId().toString(), endpointSchemaVersion, first.getSchemaVersion());
         Assert.assertEquals(filters, found);
     }
 
@@ -119,7 +119,7 @@ public class HibernateProfileFilterDaoTest extends HibernateAbstractTest {
         Assert.assertEquals(1, filters.size());
         ProfileFilter first = filters.get(0);
         EndpointGroup group = first.getEndpointGroup();
-        ProfileSchema schema = first.getProfileSchema();
+        EndpointProfileSchema schema = first.getProfileSchema();
         List<ProfileFilter> inactiveConfigs = generateFilter(schema, group, 1, UpdateStatus.INACTIVE);
         generateFilter(schema, group, 3, UpdateStatus.DEPRECATED);
         ProfileFilter found = profileFilterDao.findInactiveFilter(schema.getId().toString(), group.getId().toString());
@@ -132,7 +132,7 @@ public class HibernateProfileFilterDaoTest extends HibernateAbstractTest {
         Assert.assertEquals(1, filters.size());
         ProfileFilter first = filters.get(0);
         EndpointGroup group = first.getEndpointGroup();
-        ProfileSchema schema = first.getProfileSchema();
+        EndpointProfileSchema schema = first.getProfileSchema();
         generateFilter(schema, group, 3, UpdateStatus.DEPRECATED);
         generateFilter(schema, group, 1, UpdateStatus.INACTIVE);
         ProfileFilter found = profileFilterDao.findLatestFilter(schema.getId().toString(), group.getId().toString());
@@ -167,7 +167,7 @@ public class HibernateProfileFilterDaoTest extends HibernateAbstractTest {
         List<ProfileFilter> filters = generateFilter(null, null, 1, UpdateStatus.ACTIVE);
         Assert.assertEquals(1, filters.size());
         ProfileFilter first = filters.get(0);
-        ProfileSchema schema = first.getProfileSchema();
+        EndpointProfileSchema schema = first.getProfileSchema();
         EndpointGroup group = first.getEndpointGroup();
         Assert.assertEquals(UpdateStatus.ACTIVE, first.getStatus());
         ProfileFilter deactivated = profileFilterDao.deactivateOldFilter(schema.getId().toString(), group.getId().toString(), "Test user");
@@ -182,7 +182,7 @@ public class HibernateProfileFilterDaoTest extends HibernateAbstractTest {
         Assert.assertEquals(1, filters.size());
         ProfileFilter first = filters.get(0);
         EndpointGroup group = first.getEndpointGroup();
-        ProfileSchema schema = first.getProfileSchema();
+        EndpointProfileSchema schema = first.getProfileSchema();
         generateFilter(schema, group, 3, UpdateStatus.DEPRECATED);
         generateFilter(schema, group, 1, UpdateStatus.ACTIVE);
         long count = profileFilterDao.findActiveFilterCount(schema.getId().toString(), group.getId().toString());

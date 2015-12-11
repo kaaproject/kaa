@@ -171,7 +171,8 @@ public class DaoConstants {
      */
     public static final String PROFILE_FILTER_TABLE_NAME = "profile_filter";
     public static final String PROFILE_FILTER_BODY = "profile_filter_body";
-    public static final String PROFILE_FILTER_SCHEMA_ID = SCHEMA_ID;
+    public static final String PROFILE_FILTER_ENDPOINT_SCHEMA_ID = "endpoint_schema_id";
+    public static final String PROFILE_FILTER_SERVER_SCHEMA_ID = "endpoint_schema_id";
 
     /**
      * Endpoint group constants.
@@ -216,6 +217,7 @@ public class DaoConstants {
     public static final String CONFIGURATION_TABLE_NAME = "configuration";
     public static final String CONFIGURATION_CONFIGURATION_BODY = "configuration_body";
     public static final String CONFIGURATION_CONFIGURATION_SCHEMA_ID = "configuration_schema_id";
+    public static final String CONFIGURATION_CONFIGURATION_SCHEMA_VERSION = "configuration_schema_version";
 
     /**
      * Topic constants.

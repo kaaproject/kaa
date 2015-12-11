@@ -55,6 +55,11 @@ public class NotificationSchema extends Schema<NotificationSchemaDto> implements
     }
 
     @Override
+    protected GenericModel<NotificationSchemaDto> newInstance(Long id) {
+        return new NotificationSchema(id);
+    }
+
+    @Override
     public NotificationSchemaDto toDto() {
         NotificationSchemaDto dto = super.toDto();
         dto.setType(type);

@@ -62,9 +62,6 @@ public abstract class AbstractStructure<T extends AbstractStructureDto> extends 
     @Column(name = ABSTRACT_STRUCTURE_SEQUENCE_NUMBER)
     protected int sequenceNumber;
 
-    @Column(name = ABSTRACT_STRUCTURE_SCHEMA_VERSION)
-    protected int schemaVersion;
-
     @Column(name = ABSTRACT_STRUCTURE_DESCRIPTION)
     protected String description;
 
@@ -128,7 +125,6 @@ public abstract class AbstractStructure<T extends AbstractStructureDto> extends 
         if (dto != null) {
             this.id = getLongId(dto);
             this.sequenceNumber = dto.getSequenceNumber();
-            this.schemaVersion = dto.getSchemaVersion();
             this.description = dto.getDescription();
             this.createdTime = dto.getCreatedTime();
             this.lastModifyTime = dto.getLastModifyTime();
@@ -160,14 +156,6 @@ public abstract class AbstractStructure<T extends AbstractStructureDto> extends 
         sequenceNumber++;
     }
     
-    public int getSchemaVersion() {
-        return schemaVersion;
-    }
-
-    public void setSchemaVersion(int schemaVersion) {
-        this.schemaVersion = schemaVersion;
-    }
-
     public String getDescription() {
         return description;
     }
@@ -283,7 +271,6 @@ public abstract class AbstractStructure<T extends AbstractStructureDto> extends 
             dto.setEndpointGroupId(endpointGroup.getStringId());
         }
         dto.setSequenceNumber(sequenceNumber);
-        dto.setSchemaVersion(schemaVersion);
         dto.setDescription(description);
         dto.setCreatedTime(createdTime);
         dto.setLastModifyTime(lastModifyTime);
@@ -309,7 +296,6 @@ public abstract class AbstractStructure<T extends AbstractStructureDto> extends 
         int result = 1;
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + sequenceNumber;
-        result = prime * result + schemaVersion;
         result = prime * result + ((description == null) ? 0 : description.hashCode());
         result = prime * result + Long.valueOf(createdTime).hashCode();
         result = prime * result + Long.valueOf(lastModifyTime).hashCode();
@@ -347,9 +333,6 @@ public abstract class AbstractStructure<T extends AbstractStructureDto> extends 
             return false;
         }
         if (sequenceNumber != other.sequenceNumber) {
-            return false;
-        }
-        if (schemaVersion != other.schemaVersion) {
             return false;
         }
         if (description == null) {

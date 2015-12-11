@@ -113,6 +113,11 @@ public final class ConfigurationSchema extends Schema<ConfigurationSchemaDto> im
     }
 
     @Override
+    protected GenericModel<ConfigurationSchemaDto> newInstance(Long id) {
+        return new ConfigurationSchema(id);
+    }
+
+    @Override
     public int hashCode() {
         final int prime = 37;
         int result = 1;
