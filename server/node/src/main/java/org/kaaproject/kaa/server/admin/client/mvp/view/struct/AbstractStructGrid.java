@@ -18,64 +18,54 @@ package org.kaaproject.kaa.server.admin.client.mvp.view.struct;
 
 import org.kaaproject.kaa.common.dto.AbstractStructureDto;
 import org.kaaproject.kaa.common.dto.StructureRecordDto;
-import org.kaaproject.kaa.common.dto.admin.StructureRecordKey;
 import org.kaaproject.kaa.server.admin.client.mvp.view.grid.AbstractKaaGrid;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.cellview.client.DataGrid;
 
-public class BaseStructGrid<T extends AbstractStructureDto> extends AbstractKaaGrid<StructureRecordDto<T>, StructureRecordKey> {
+public abstract class AbstractStructGrid<R extends AbstractStructureDto, T extends StructureRecordDto<R>, K> extends AbstractKaaGrid<T, K> {
 
-    public BaseStructGrid() {
+    public AbstractStructGrid() {
         super(Unit.PX, true, true);
     }
 
     @Override
-    protected float constructColumnsImpl(DataGrid<StructureRecordDto<T>> table) {
+    protected float constructColumnsImpl(DataGrid<T> table) {
         float prefWidth = 0;
 
         prefWidth += constructStringColumn(table,
-                Utils.constants.schemaVersion(),
-                new StringValueProvider<StructureRecordDto<T>>() {
-                    @Override
-                    public String getValue(StructureRecordDto<T> item) {
-                        return item.getSchemaVersion() + "";
-                    }
-                }, 80);
-
-        prefWidth += constructStringColumn(table,
                 Utils.constants.description(),
-                new StringValueProvider<StructureRecordDto<T>>() {
+                new StringValueProvider<T>() {
                     @Override
-                    public String getValue(StructureRecordDto<T> item) {
+                    public String getValue(T item) {
                         return item.getDescription();
                     }
                 }, 160);
 
         prefWidth += constructStringColumn(table,
                 Utils.constants.numberOfEps(),
-                new StringValueProvider<StructureRecordDto<T>>() {
+                new StringValueProvider<T>() {
                     @Override
-                    public String getValue(StructureRecordDto<T> item) {
+                    public String getValue(T item) {
                         return item.getEndpointCount() + "";
                     }
                 }, 80);
 
         prefWidth += constructBooleanColumn(table,
                 Utils.constants.active(),
-                new BooleanValueProvider<StructureRecordDto<T>>() {
+                new BooleanValueProvider<T>() {
                     @Override
-                    public Boolean getValue(StructureRecordDto<T> item) {
+                    public Boolean getValue(T item) {
                         return item.hasActive() && !item.hasDeprecated();
                     }
                 }, 40);
 
         prefWidth += constructBooleanColumn(table,
                 Utils.constants.draft(),
-                new BooleanValueProvider<StructureRecordDto<T>>() {
+                new BooleanValueProvider<T>() {
                     @Override
-                    public Boolean getValue(StructureRecordDto<T> item) {
+                    public Boolean getValue(T item) {
                         return item.hasDraft();
                     }
                 }, 40);
@@ -84,18 +74,8 @@ public class BaseStructGrid<T extends AbstractStructureDto> extends AbstractKaaG
     }
 
     @Override
-    protected StructureRecordKey getObjectId(StructureRecordDto<T> value) {
-        if (value != null) {
-            return new StructureRecordKey(value.getSchemaId(), value.getEndpointGroupId());
-        } else {
-            return null;
-        }
-    }
-
-    @Override
-    protected boolean canDelete(StructureRecordDto<T> value) {
+    protected boolean canDelete(T value) {
         return value.hasDraft() || !value.hasDeprecated();
     }
-
 
 }

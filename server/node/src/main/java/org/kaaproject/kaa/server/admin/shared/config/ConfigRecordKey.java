@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package org.kaaproject.kaa.common.dto.admin;
+package org.kaaproject.kaa.server.admin.shared.config;
 
 import java.io.Serializable;
 
-public class StructureRecordKey implements Serializable {
+public class ConfigRecordKey implements Serializable {
 
     private static final long serialVersionUID = 3302320660468092090L;
 
     private String schemaId;
     private String endpointGroupId;
 
-    public StructureRecordKey() {
+    public ConfigRecordKey() {
     }
 
-    public StructureRecordKey(String schemaId, String endpointGroupId) {
+    public ConfigRecordKey(String schemaId, String endpointGroupId) {
         this.schemaId = schemaId;
         this.endpointGroupId = endpointGroupId;
     }
@@ -71,7 +71,7 @@ public class StructureRecordKey implements Serializable {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        StructureRecordKey other = (StructureRecordKey) obj;
+        ConfigRecordKey other = (ConfigRecordKey) obj;
         if (endpointGroupId == null) {
             if (other.endpointGroupId != null) {
                 return false;
@@ -91,8 +91,13 @@ public class StructureRecordKey implements Serializable {
 
     @Override
     public String toString() {
-        return "StructureRecordKey [schemaId=" + schemaId
-                + ", endpointGroupId=" + endpointGroupId + "]";
+        StringBuilder builder = new StringBuilder();
+        builder.append("ConfigRecordKey [schemaId=");
+        builder.append(schemaId);
+        builder.append(", endpointGroupId=");
+        builder.append(endpointGroupId);
+        builder.append("]");
+        return builder.toString();
     }
 
 }

@@ -41,7 +41,7 @@ public class VersionListBox extends ValueListBox<VersionDto> {
 
         @Override
         public String render(VersionDto object) {
-            return object != null ? object.getVersion() + "" : "";
+            return object != null && object.getVersion() > -1 ? object.getVersion() + "" : "";
         }
 
         @Override

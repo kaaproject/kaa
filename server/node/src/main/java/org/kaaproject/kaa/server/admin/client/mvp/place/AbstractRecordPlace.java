@@ -22,20 +22,17 @@ public abstract class AbstractRecordPlace extends TreePlace {
 
     private String applicationId;
     private String endpointGroupId;
-    private String schemaId;
     private boolean create;
     private boolean showActive;
     private double random;
 
     public AbstractRecordPlace(String applicationId,
-            String schemaId,
             String endpointGroupId,
             boolean create,
             boolean showActive,
             double random) {
         this.applicationId = applicationId;
         this.endpointGroupId = endpointGroupId;
-        this.schemaId = schemaId;
         this.create = create;
         this.showActive = showActive;
         this.random = random;
@@ -47,10 +44,6 @@ public abstract class AbstractRecordPlace extends TreePlace {
 
     public String getEndpointGroupId() {
         return endpointGroupId;
-    }
-
-    public String getSchemaId() {
-        return schemaId;
     }
 
     public boolean isCreate() {
@@ -71,26 +64,27 @@ public abstract class AbstractRecordPlace extends TreePlace {
         public P getPlace(String token) {
             PlaceParams.paramsFromToken(token);
             return getPlaceImpl(PlaceParams.getParam(APPLICATION_ID),
-                                PlaceParams.getParam(SCHEMA_ID),
                                PlaceParams.getParam(ENDPOINT_GROUP_ID),
                                PlaceParams.getBooleanParam(CREATE),
                                PlaceParams.getBooleanParam(SHOW_ACTIVE),
                                PlaceParams.getDoubleParam(RANDOM));
         }
 
-        protected abstract P getPlaceImpl(String applicationId, String schemaId, String endpointGroupId, boolean create, boolean showActive, double random);
+        protected abstract P getPlaceImpl(String applicationId, String endpointGroupId, boolean create, boolean showActive, double random);
 
         @Override
         public String getToken(P place) {
             PlaceParams.clear();
             PlaceParams.putParam(APPLICATION_ID, place.getApplicationId());
-            PlaceParams.putParam(SCHEMA_ID, place.getSchemaId());
             PlaceParams.putParam(ENDPOINT_GROUP_ID, place.getEndpointGroupId());
             PlaceParams.putBooleanParam(CREATE, place.isCreate());
             PlaceParams.putBooleanParam(SHOW_ACTIVE, place.isShowActive());
             PlaceParams.putDoubleParam(RANDOM, place.getRandom());
+            updateTokenImpl(place);
             return PlaceParams.generateToken();
         }
+        
+        protected abstract void updateTokenImpl(P place);
     }
 
     @Override
@@ -111,11 +105,6 @@ public abstract class AbstractRecordPlace extends TreePlace {
             return false;
         if (Double.doubleToLongBits(random) != Double
                 .doubleToLongBits(other.random))
-            return false;
-        if (schemaId == null) {
-            if (other.schemaId != null)
-                return false;
-        } else if (!schemaId.equals(other.schemaId))
             return false;
         if (showActive != other.showActive)
             return false;

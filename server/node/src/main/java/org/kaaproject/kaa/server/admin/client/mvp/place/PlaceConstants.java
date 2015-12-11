@@ -24,6 +24,8 @@ public interface PlaceConstants {
     public static final String TENANT_ID = "tenId";
     public static final String APPLICATION_ID = "appId";
     public static final String SCHEMA_ID = "schemaId";
+    public static final String ENDPOINT_PROFILE_SCHEMA_ID = "epSchemaId";
+    public static final String SERVER_PROFILE_SCHEMA_ID = "spSchemaId";
     public static final String ENDPOINT_GROUP_ID = "endGroupId";
     public static final String ENDPOINT_PROFILE_KEY_HASH = "endProfKeyHash";
     public static final String INCL_DEPR_PF = "inclDepPf";

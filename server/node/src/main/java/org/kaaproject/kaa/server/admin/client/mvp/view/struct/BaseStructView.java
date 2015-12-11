@@ -339,7 +339,7 @@ public abstract class BaseStructView<T extends AbstractStructureDto, V> extends 
         }
     }
 
-    public void setSchemaSelected(boolean selected) {
+    public void fireSchemaSelected() {
         fireChanged();
     }
 
