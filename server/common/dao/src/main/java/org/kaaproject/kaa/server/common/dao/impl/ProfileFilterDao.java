@@ -28,10 +28,11 @@ public interface ProfileFilterDao<T> extends SqlDao<T> {
     /**
      * Find all profile filters by profile schema id
      *
-     * @param profileSchemaId the profile schema id
+     * @param endpointProfileSchemaId the endpoint profile schema id
+     * @param serverProfileSchemaId the server profile schema id
      * @return the list of profile schemas
      */
-    List<T> findAllByProfileSchemaId(String profileSchemaId);
+    List<T> findAllByProfileSchemaId(String endpointProfileSchemaId, String serverProfileSchemaId);
 
     /**
      * Find actual profile filters by endpoint group id.
@@ -70,10 +71,10 @@ public interface ProfileFilterDao<T> extends SqlDao<T> {
      * Find profile filters by application and schema version.
      *
      * @param appId the application id
-     * @param schemaVersion the schema version
+     * @param endpointSchemaVersion
      * @return the list of profile filters
      */
-    List<T> findByAppIdAndSchemaVersion(String appId, int schemaVersion);
+    List<T> findByAppIdAndSchemaVersions(String appId, int endpointSchemaVersion, int serverSchemaVersion);
 
     /**
      * Find inactive profile filters.

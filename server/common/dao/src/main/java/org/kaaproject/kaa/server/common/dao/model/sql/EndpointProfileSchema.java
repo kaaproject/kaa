@@ -28,18 +28,18 @@ import static org.kaaproject.kaa.server.common.dao.DaoConstants.PROFILE_SCHEMA_T
 @Entity
 @Table(name = PROFILE_SCHEMA_TABLE_NAME)
 @OnDelete(action = OnDeleteAction.CASCADE)
-public final class ProfileSchema extends BaseSchema<EndpointProfileSchemaDto> implements Serializable {
+public final class EndpointProfileSchema extends BaseSchema<EndpointProfileSchemaDto> implements Serializable {
 
     private static final long serialVersionUID = 953188575107921799L;
 
-    public ProfileSchema() {
+    public EndpointProfileSchema() {
     }
 
-    public ProfileSchema(Long id) {
+    public EndpointProfileSchema(Long id) {
         setId(id);
     }
 
-    public ProfileSchema(EndpointProfileSchemaDto dto) {
+    public EndpointProfileSchema(EndpointProfileSchemaDto dto) {
         super(dto);
     }
 
@@ -49,7 +49,7 @@ public final class ProfileSchema extends BaseSchema<EndpointProfileSchemaDto> im
     }
 
     @Override
-    protected GenericModel<ProfileSchemaDto> newInstance(Long id) {
-        return new ProfileSchema(id);
+    protected GenericModel<EndpointProfileSchemaDto> newInstance(Long id) {
+        return new EndpointProfileSchema(id);
     }
 }

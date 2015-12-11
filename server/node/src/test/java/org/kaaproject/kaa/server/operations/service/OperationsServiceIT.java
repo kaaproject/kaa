@@ -70,9 +70,8 @@ import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchemaMetaInfo;
 import org.kaaproject.kaa.server.common.dao.model.sql.ConfigurationSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.EndpointGroup;
+import org.kaaproject.kaa.server.common.dao.model.sql.EndpointProfileSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.ProfileFilter;
-import org.kaaproject.kaa.server.common.dao.model.sql.ProfileSchema;
-import org.kaaproject.kaa.server.common.dao.model.sql.SdkProfile;
 import org.kaaproject.kaa.server.common.dao.model.sql.Tenant;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.MongoDBTestRunner;
 import org.kaaproject.kaa.server.operations.pojo.SyncContext;
@@ -146,7 +145,7 @@ public class OperationsServiceIT extends AbstractTest {
     private ConfigurationSchema confSchema;
     private Application application;
     private Tenant customer;
-    private ProfileSchema profileSchema;
+    private EndpointProfileSchema endpointProfileSchema;
     private ProfileFilterDto profileFilter;
     private TopicDto mandatoryTopicDto;
     private TopicDto optionalTopicDto;
@@ -232,13 +231,13 @@ public class OperationsServiceIT extends AbstractTest {
         
         ctlSchema = ctlSchemaDao.save(ctlSchema);
         
-        ProfileSchema profileSchemaObj = new ProfileSchema();
-        profileSchemaObj.setVersion(PROFILE_SCHEMA_VERSION);
-        profileSchemaObj.setCtlSchema(ctlSchema);
-        profileSchemaObj.setApplication(application);
-        EndpointProfileSchemaDto profileSchemaDto = profileService.saveProfileSchema(profileSchemaObj.toDto());
+        EndpointProfileSchema endpointProfileSchemaObj = new EndpointProfileSchema();
+        endpointProfileSchemaObj.setVersion(PROFILE_SCHEMA_VERSION);
+        endpointProfileSchemaObj.setCtlSchema(ctlSchema);
+        endpointProfileSchemaObj.setApplication(application);
+        EndpointProfileSchemaDto profileSchemaDto = profileService.saveProfileSchema(endpointProfileSchemaObj.toDto());
 
-        profileSchema = profileSchemaDao.findById(profileSchemaDto.getId());
+        endpointProfileSchema = profileSchemaDao.findById(profileSchemaDto.getId());
 
         EndpointGroup endpointGroup = new EndpointGroup();
         endpointGroup.setApplication(application);
@@ -251,7 +250,7 @@ public class OperationsServiceIT extends AbstractTest {
         profileFilterObj.setApplication(application);
         profileFilterObj.setEndpointGroup(endpointGroup);
         profileFilterObj.setBody("profileBody.contains(\"dummy\")");
-        profileFilterObj.setProfileSchema(profileSchema);
+        profileFilterObj.setProfileSchema(endpointProfileSchema);
         profileFilter = profileService.saveProfileFilter(profileFilterObj.toDto());
         profileService.activateProfileFilter(profileFilter.getId(), null);
 

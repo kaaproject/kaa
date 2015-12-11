@@ -37,7 +37,7 @@ import org.kaaproject.kaa.common.dto.VersionDto;
 import org.kaaproject.kaa.server.common.dao.AbstractTest;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
 import org.kaaproject.kaa.server.common.dao.exception.UpdateStatusConflictException;
-import org.kaaproject.kaa.server.common.dao.model.sql.ProfileSchema;
+import org.kaaproject.kaa.server.common.dao.model.sql.EndpointProfileSchema;
 
 @Ignore("This test should be extended and initialized with proper context in each NoSQL submodule")
 public class ProfileServiceImplTest extends AbstractTest {
@@ -395,10 +395,10 @@ public class ProfileServiceImplTest extends AbstractTest {
         List<EndpointProfileSchemaDto> schemas = generateProfSchemaDto(app.getTenantId(), appId, 1);
         EndpointProfileSchemaDto schema = profileService.findProfileSchemaById(schemas.get(0).getId());
         Assert.assertNotNull(schema);
-        ProfileSchema profileSchema = new ProfileSchema(schema);
-        profileSchema.setName("Updated name");
-        profileSchema.setDescription("Updated description");
-        EndpointProfileSchemaDto saved = profileService.saveProfileSchema(profileSchema.toDto());
+        EndpointProfileSchema endpointProfileSchema = new EndpointProfileSchema(schema);
+        endpointProfileSchema.setName("Updated name");
+        endpointProfileSchema.setDescription("Updated description");
+        EndpointProfileSchemaDto saved = profileService.saveProfileSchema(endpointProfileSchema.toDto());
         Assert.assertNotNull(saved);
         Assert.assertEquals(schema.getId(), saved.getId());
         Assert.assertEquals(schema.getApplicationId(), saved.getApplicationId());

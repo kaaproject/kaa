@@ -22,17 +22,15 @@ import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
 
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PROFILE_FILTER_BODY;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.PROFILE_FILTER_SCHEMA_ID;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PROFILE_FILTER_ENDPOINT_SCHEMA_ID;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PROFILE_FILTER_SERVER_SCHEMA_ID;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PROFILE_FILTER_TABLE_NAME;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getGenericModelIdds;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getGenericModelVersions;
+import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getGenericModelWithId;
 
 @Entity
 @Table(name = PROFILE_FILTER_TABLE_NAME)
@@ -44,12 +42,12 @@ public final class ProfileFilter extends AbstractStructure<ProfileFilterDto> imp
     @Column(name = PROFILE_FILTER_BODY)
     private String body;
 
-    @ManyToMany
-    @JoinColumn(name = PROFILE_FILTER_SCHEMA_ID, nullable = false)
-    private Set<ProfileSchema> profileSchemas = new HashSet<>();
-    @ManyToMany
-    @JoinColumn(name = PROFILE_FILTER_SCHEMA_ID, nullable = false)
-    private Set<ServerProfileSchema> serverProfileSchemas = new HashSet<>();
+    @ManyToOne
+    @JoinColumn(name = PROFILE_FILTER_ENDPOINT_SCHEMA_ID, nullable = false)
+    private EndpointProfileSchema endpointProfileSchema;
+    @ManyToOne
+    @JoinColumn(name = PROFILE_FILTER_SERVER_SCHEMA_ID, nullable = false)
+    private ServerProfileSchema serverProfileSchema;
 
     public ProfileFilter() {
     }
@@ -61,6 +59,8 @@ public final class ProfileFilter extends AbstractStructure<ProfileFilterDto> imp
     public ProfileFilter(ProfileFilterDto dto) {
         super(dto);
         this.body = dto.getBody();
+        this.endpointProfileSchema = getGenericModelWithId(dto, new EndpointProfileSchema());
+        this.serverProfileSchema = getGenericModelWithId(dto, new ServerProfileSchema());
     }
 
     @Override
@@ -87,14 +87,19 @@ public final class ProfileFilter extends AbstractStructure<ProfileFilterDto> imp
     public ProfileFilterDto toDto() {
         ProfileFilterDto filterDto = super.toDto();
         filterDto.setBody(body);
-        filterDto.setEndpointSchemaVersions(getGenericModelVersions(profileSchemas));
-        filterDto.setServerSchemaVersions(getGenericModelVersions(serverProfileSchemas));
+        if (endpointProfileSchema != null) {
+            filterDto.setEndpointProfileSchemaId(endpointProfileSchema.getStringId());
+            filterDto.setEndpointProfileSchemaVersion(endpointProfileSchema.getVersion());
+        }
+        if (serverProfileSchema != null) {
+            filterDto.setServerProfileSchemaId(serverProfileSchema.getStringId());
+            filterDto.setServerProfileSchemaVersion(serverProfileSchema.getVersion());
+        }
         return filterDto;
     }
 
     public String getGroupId() {
         return endpointGroup.getStringId();
     }
-
 
 }

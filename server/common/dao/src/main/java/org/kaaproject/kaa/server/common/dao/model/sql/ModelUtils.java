@@ -94,6 +94,15 @@ public final class ModelUtils {
         return topics;
     }
 
+    public static <V extends GenericModel> V getGenericModelWithId(HasId hasId, V model) {
+        if (hasId == null) {
+            model.setId(getLongId(hasId));
+            return model;
+        } else {
+            return null;
+        }
+    }
+
     public static <V> Set<V> getGenericModelIdds(Set<String> idSet, GenericModel model) {
         Set<V> dataSet = new HashSet<>();
         for (String id : idSet) {

@@ -16,8 +16,6 @@
 
 package org.kaaproject.kaa.server.common.dao.impl.sql;
 
-import static org.apache.commons.lang.StringUtils.isBlank;
-
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -51,6 +49,7 @@ import org.kaaproject.kaa.server.common.dao.model.sql.Change;
 import org.kaaproject.kaa.server.common.dao.model.sql.Configuration;
 import org.kaaproject.kaa.server.common.dao.model.sql.ConfigurationSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.EndpointGroup;
+import org.kaaproject.kaa.server.common.dao.model.sql.EndpointProfileSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.EventClass;
 import org.kaaproject.kaa.server.common.dao.model.sql.EventClassFamily;
 import org.kaaproject.kaa.server.common.dao.model.sql.EventSchemaVersion;
@@ -59,7 +58,6 @@ import org.kaaproject.kaa.server.common.dao.model.sql.LogAppender;
 import org.kaaproject.kaa.server.common.dao.model.sql.LogSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.NotificationSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.ProfileFilter;
-import org.kaaproject.kaa.server.common.dao.model.sql.ProfileSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.SdkProfile;
 import org.kaaproject.kaa.server.common.dao.model.sql.Tenant;
 import org.kaaproject.kaa.server.common.dao.model.sql.Topic;
@@ -211,17 +209,17 @@ public abstract class HibernateAbstractTest extends AbstractTest {
         return configs;
     }
 
-    protected List<ProfileSchema> generateProfSchema(Application app, int count) {
-        List<ProfileSchema> schemas = Collections.emptyList();
+    protected List<EndpointProfileSchema> generateProfSchema(Application app, int count) {
+        List<EndpointProfileSchema> schemas = Collections.emptyList();
         try {
             if (app == null) {
                 app = generateApplication(null);
             }
             CTLSchema ctlSchema =  generateCTLSchema(DEFAULT_FQN, 1, app.getTenant(), null);
-            ProfileSchema schemaDto;
+            EndpointProfileSchema schemaDto;
             schemas = new ArrayList<>(count);
             for (int i = 0; i < count; i++) {
-                schemaDto = new ProfileSchema();
+                schemaDto = new EndpointProfileSchema();
                 schemaDto.setApplication(app);
                 schemaDto.setCreatedUsername("Test User");
                 schemaDto.setCtlSchema(ctlSchema);
@@ -287,7 +285,7 @@ public abstract class HibernateAbstractTest extends AbstractTest {
         return schemas;
     }
 
-    protected List<ProfileFilter> generateFilter(ProfileSchema schema, EndpointGroup group, int count, UpdateStatus status) {
+    protected List<ProfileFilter> generateFilter(EndpointProfileSchema schema, EndpointGroup group, int count, UpdateStatus status) {
         if (schema == null) {
             schema = generateProfSchema(null, 1).get(0);
         }

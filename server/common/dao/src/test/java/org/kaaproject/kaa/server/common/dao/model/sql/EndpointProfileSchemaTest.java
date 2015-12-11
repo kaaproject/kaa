@@ -21,9 +21,9 @@ import nl.jqno.equalsverifier.Warning;
 
 import org.junit.Test;
 
-public class ProfileSchemaTest {
+public class EndpointProfileSchemaTest {
     @Test
     public void hashCodeEqualsTest(){
-        EqualsVerifier.forClass(ProfileSchema.class).suppress(Warning.NONFINAL_FIELDS).withRedefinedSuperclass().verify();
+        EqualsVerifier.forClass(EndpointProfileSchema.class).suppress(Warning.NONFINAL_FIELDS).withRedefinedSuperclass().verify();
     }
 }

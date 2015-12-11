@@ -22,7 +22,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kaaproject.kaa.server.common.dao.model.sql.Application;
-import org.kaaproject.kaa.server.common.dao.model.sql.ProfileSchema;
+import org.kaaproject.kaa.server.common.dao.model.sql.EndpointProfileSchema;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -32,37 +32,37 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration(locations = "/common-dao-test-context.xml")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @Transactional
-public class HibernateProfileSchemaDaoTest extends HibernateAbstractTest {
+public class HibernateEndpointProfileSchemaDaoTest extends HibernateAbstractTest {
 
     @Test
     public void findByApplicationId() {
-        List<ProfileSchema> schemas = generateProfSchema(null, 3);
+        List<EndpointProfileSchema> schemas = generateProfSchema(null, 3);
         Assert.assertEquals(3, schemas.size());
-        ProfileSchema schema  = schemas.get(0);
+        EndpointProfileSchema schema  = schemas.get(0);
         Application app = schema.getApplication();
-        List<ProfileSchema> found = profileSchemaDao.findByApplicationId(app.getId().toString());
+        List<EndpointProfileSchema> found = profileSchemaDao.findByApplicationId(app.getId().toString());
         Assert.assertEquals(3, found.size());
         Assert.assertEquals(schemas, found);
     }
 
     @Test
     public void findByAppIdAndVersion() {
-        List<ProfileSchema> schemas = generateProfSchema(null, 4);
+        List<EndpointProfileSchema> schemas = generateProfSchema(null, 4);
         Assert.assertEquals(4, schemas.size());
-        ProfileSchema schema = schemas.get(2);
+        EndpointProfileSchema schema = schemas.get(2);
         Application app = schema.getApplication();
-        ProfileSchema found = profileSchemaDao.findByAppIdAndVersion(app.getId().toString(), schema.getVersion());
+        EndpointProfileSchema found = profileSchemaDao.findByAppIdAndVersion(app.getId().toString(), schema.getVersion());
         Assert.assertNotNull(found);
         Assert.assertEquals(3, found.getVersion());
     }
 
     @Test
     public void findLatestByAppId() {
-        List<ProfileSchema> schemas = generateProfSchema(null, 4);
+        List<EndpointProfileSchema> schemas = generateProfSchema(null, 4);
         Assert.assertEquals(4, schemas.size());
-        ProfileSchema schema  = schemas.get(0);
+        EndpointProfileSchema schema  = schemas.get(0);
         Application app = schema.getApplication();
-        ProfileSchema found = profileSchemaDao.findLatestByAppId(app.getId().toString());
+        EndpointProfileSchema found = profileSchemaDao.findLatestByAppId(app.getId().toString());
         Assert.assertNotNull(found);
         Assert.assertEquals(4, found.getVersion());
     }
