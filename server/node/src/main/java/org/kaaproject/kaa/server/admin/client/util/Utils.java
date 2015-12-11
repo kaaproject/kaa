@@ -179,7 +179,7 @@ public class Utils {
         return result;
     }
 
-    public static VersionDto getMaxSchemaVersions(List<VersionDto> schemas) {
+    public static <T extends VersionDto> T getMaxSchemaVersions(List<T> schemas) {
         if (schemas != null && !schemas.isEmpty()) {
             return Collections.max(schemas);
         } else {

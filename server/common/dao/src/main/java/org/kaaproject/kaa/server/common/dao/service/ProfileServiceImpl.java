@@ -180,6 +180,7 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     public ProfileFilterRecordDto findProfileFilterRecordBySchemaIdAndEndpointGroupId(String endpointProfileSchemaId, String serverProfileSchemaId, String endpointGroupId) {
+        validateFilterSchemaIds(endpointProfileSchemaId, serverProfileSchemaId);
         ProfileFilterRecordDto record = new ProfileFilterRecordDto();
         Collection<ProfileFilterDto> profileFilters = convertDtoList(profileFilterDao.findActualBySchemaIdAndGroupId(endpointProfileSchemaId,
                 serverProfileSchemaId, endpointGroupId));

@@ -1031,7 +1031,7 @@ public class KaaAdminController {
     public List<ProfileFilterRecordDto> getProfileFilterRecordsByEndpointGroupId(
             @RequestParam(value="endpointGroupId") String endpointGroupId,
             @RequestParam(value="includeDeprecated") boolean includeDeprecated) throws KaaAdminServiceException {
-        return ProfileFilterRecordDto.formStructureRecords(kaaAdminService.getProfileFilterRecordsByEndpointGroupId(endpointGroupId, includeDeprecated));
+        return kaaAdminService.getProfileFilterRecordsByEndpointGroupId(endpointGroupId, includeDeprecated);
     }
 
     /**
@@ -1041,9 +1041,10 @@ public class KaaAdminController {
     @RequestMapping(value="profileFilterRecord", method=RequestMethod.GET)
     @ResponseBody
     public ProfileFilterRecordDto getProfileFilterRecord(
-            @RequestParam(value="schemaId") String schemaId,
+            @RequestParam(value="endpointProfileSchemaId") String endpointProfileSchemaId,
+            @RequestParam(value="serverProfileSchemaId") String serverProfileSchemaId,
             @RequestParam(value="endpointGroupId") String endpointGroupId) throws KaaAdminServiceException {
-        return ProfileFilterRecordDto.convertToProfileFilterRecords(kaaAdminService.getProfileFilterRecord(schemaId, endpointGroupId));
+        return kaaAdminService.getProfileFilterRecord(endpointProfileSchemaId, serverProfileSchemaId, endpointGroupId);
     }
 
     /**
@@ -1093,9 +1094,10 @@ public class KaaAdminController {
     @RequestMapping(value="delProfileFilterRecord", method=RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
     public void deleteProfileFilterRecord(
-            @RequestParam(value="schemaId") String schemaId,
+            @RequestParam(value="endpointProfileSchemaId") String endpointProfileSchemaId,
+            @RequestParam(value="serverProfileSchemaId") String serverProfileSchemaId,
             @RequestParam(value="endpointGroupId") String endpointGroupId) throws KaaAdminServiceException {
-        kaaAdminService.deleteProfileFilterRecord(schemaId, endpointGroupId);
+        kaaAdminService.deleteProfileFilterRecord(endpointProfileSchemaId, serverProfileSchemaId, endpointGroupId);
     }
 
     /**
@@ -1107,7 +1109,7 @@ public class KaaAdminController {
     public List<ConfigurationRecordDto> getConfigurationRecordsByEndpointGroupId(
             @RequestParam(value="endpointGroupId") String endpointGroupId,
             @RequestParam(value="includeDeprecated") boolean includeDeprecated) throws KaaAdminServiceException {
-        return ConfigurationRecordDto.formStructureRecords(kaaAdminService.getConfigurationRecordsByEndpointGroupId(endpointGroupId, includeDeprecated));
+        return kaaAdminService.getConfigurationRecordsByEndpointGroupId(endpointGroupId, includeDeprecated);
     }
 
     /**
@@ -1119,7 +1121,7 @@ public class KaaAdminController {
     public ConfigurationRecordDto getConfigurationRecord(
             @RequestParam(value="schemaId") String schemaId,
             @RequestParam(value="endpointGroupId") String endpointGroupId) throws KaaAdminServiceException {
-        return ConfigurationRecordDto.fromStructureRecord(kaaAdminService.getConfigurationRecord(schemaId, endpointGroupId));
+        return kaaAdminService.getConfigurationRecord(schemaId, endpointGroupId);
     }
 
     /**

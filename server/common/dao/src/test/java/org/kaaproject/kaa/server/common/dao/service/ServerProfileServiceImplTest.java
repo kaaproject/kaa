@@ -131,4 +131,17 @@ public class ServerProfileServiceImplTest extends AbstractTest {
         ServerProfileSchemaDto foundSchema = serverProfileService.findServerProfileSchemaByAppIdAndVersion(found.getApplicationId(), found.getServerProfileVersion());
         Assert.assertEquals(schemaDto, foundSchema);
     }
+
+//    @Test
+//    public void testFindVacantSchemasByGroupId() {
+//        ServerProfileSchemaDto sDto = generateServerProfileSchema(null, null);
+//        ServerProfileSchemaDto schemaDto = generateServerProfileSchema(null, null);
+//        ServerProfileSchemaDto schemaDto = generateServerProfileSchema(null, null);
+//        ServerProfileSchemaDto schemaDto = generateServerProfileSchema(null, null);
+//
+//        EndpointProfileDto ep = generateEndpointProfileDtoWithSchemaVersion(schemaDto.getApplicationId(), schemaDto.getVersion(), null);
+//        EndpointProfileDto found = endpointService.findEndpointProfileByKeyHash(ep.getEndpointKeyHash());
+//        ServerProfileSchemaDto foundSchema = serverProfileService.findServerProfileSchemaByAppIdAndVersion(found.getApplicationId(), found.getServerProfileVersion());
+//        Assert.assertEquals(schemaDto, foundSchema);
+//    }
 }

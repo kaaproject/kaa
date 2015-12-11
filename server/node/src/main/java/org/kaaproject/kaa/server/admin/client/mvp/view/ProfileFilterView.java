@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,19 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view;
 
-import org.kaaproject.kaa.common.dto.AbstractStructureDto;
-import org.kaaproject.kaa.server.admin.client.mvp.view.struct.AbstractRecordPanel;
+import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.VersionListBox;
 
 import com.google.gwt.user.client.ui.HasValue;
 
-public interface BaseRecordView<T extends AbstractStructureDto,V> extends BaseDetailsView {
+public interface ProfileFilterView extends BaseRecordView<ProfileFilterDto, String> {
 
-    //public VersionListBox getSchema();
+    public VersionListBox getEndpointProfileSchema();
 
-    //public HasValue<String> getSchemaVersion();
+    public HasValue<String> getEndpointProfileSchemaVersion();
+    
+    public VersionListBox getServerProfileSchema();
 
-    public AbstractRecordPanel<T,V> getRecordPanel();
+    public HasValue<String> getServerProfileSchemaVersion();
 
 }

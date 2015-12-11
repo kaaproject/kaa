@@ -16,13 +16,28 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.profile;
 
+import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
+import org.kaaproject.kaa.server.admin.client.mvp.view.ProfileFilterView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.struct.AbstractRecordPanel;
 import org.kaaproject.kaa.server.admin.client.mvp.view.struct.BaseRecordViewImpl;
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.VersionListBox;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-public class ProfileFilterViewImpl extends BaseRecordViewImpl<ProfileFilterDto, String> {
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
+public class ProfileFilterViewImpl extends BaseRecordViewImpl<ProfileFilterDto, String> 
+                                                                        implements ProfileFilterView {
+
+    private VersionListBox endpointProfileSchema;
+    private SizedTextBox endpointProfileSchemaVersion;
+    private VersionListBox serverProfileSchema;
+    private SizedTextBox serverProfileSchemaVersion;
+    
     public ProfileFilterViewImpl(boolean create) {
         super(create);
     }
@@ -46,5 +61,87 @@ public class ProfileFilterViewImpl extends BaseRecordViewImpl<ProfileFilterDto, 
     protected String getSubTitle() {
         return Utils.constants.profileFilterDetails();
     }
+    
+    
+    @Override
+    protected int initDetailsTableImpl() {
+        int row = -1;
+        Label endpointProfileSchemaLabel = new Label(Utils.constants.profileSchemaVersion());
+        Label serverProfileSchemaLabel = new Label(Utils.constants.serverProfileSchemaVersion());
+        
+        int endpointProfileSchemaRow = ++row;
+        int serverProfileSchemaRow = ++row;
+        
+        detailsTable.setWidget(endpointProfileSchemaRow, 0, endpointProfileSchemaLabel);
+        detailsTable.setWidget(serverProfileSchemaRow, 0, serverProfileSchemaLabel);
+
+        if (create) {
+            endpointProfileSchemaLabel.addStyleName(Utils.avroUiStyle.requiredField());
+            serverProfileSchemaLabel.addStyleName(Utils.avroUiStyle.requiredField());
+            
+            endpointProfileSchema = new VersionListBox();
+            endpointProfileSchema.setWidth("80px");
+            
+            serverProfileSchema = new VersionListBox();
+            serverProfileSchema.setWidth("80px");
+            
+            VerticalPanel panel = new VerticalPanel();
+            panel.setWidth("100%");
+            panel.add(endpointProfileSchema);
+            panel.add(new HTML("&nbsp;"));
+            detailsTable.setWidget(endpointProfileSchemaRow, 1, panel);
+            
+            panel = new VerticalPanel();
+            panel.setWidth("100%");
+            panel.add(serverProfileSchema);
+            panel.add(new HTML("&nbsp;"));
+            detailsTable.setWidget(serverProfileSchemaRow, 1, panel);
+            
+            endpointProfileSchema.addValueChangeHandler(this);
+            serverProfileSchema.addValueChangeHandler(this);
+        } else {
+            endpointProfileSchemaVersion = new KaaAdminSizedTextBox(-1, false);
+            endpointProfileSchemaVersion.setWidth("100%");
+            detailsTable.setWidget(endpointProfileSchemaRow, 1, endpointProfileSchemaVersion);
+            
+            serverProfileSchemaVersion = new KaaAdminSizedTextBox(-1, false);
+            serverProfileSchemaVersion.setWidth("100%");
+            detailsTable.setWidget(serverProfileSchemaRow, 1, serverProfileSchemaVersion);
+        }
+        return row;
+    }
+    
+    @Override
+    protected void resetImpl() {
+        super.resetImpl();
+        if (create) {
+            endpointProfileSchema.reset();
+            serverProfileSchema.reset();
+        } else {
+            endpointProfileSchemaVersion.setValue("");
+            serverProfileSchemaVersion.setValue("");
+        }
+    }
+
+    @Override
+    public VersionListBox getEndpointProfileSchema() {
+        return endpointProfileSchema;
+    }
+
+    @Override
+    public HasValue<String> getEndpointProfileSchemaVersion() {
+        return endpointProfileSchemaVersion;
+    }
+
+    @Override
+    public VersionListBox getServerProfileSchema() {
+        return serverProfileSchema;
+    }
+
+    @Override
+    public HasValue<String> getServerProfileSchemaVersion() {
+        return serverProfileSchemaVersion;
+    }
+
 
 }

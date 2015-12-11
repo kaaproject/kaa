@@ -22,17 +22,19 @@ import java.util.List;
 import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
+import org.kaaproject.kaa.common.dto.ConfigurationRecordDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.ProfileFilterRecordDto;
+import org.kaaproject.kaa.common.dto.ProfileVersionPairDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.StructureRecordDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.VersionDto;
 import org.kaaproject.kaa.common.dto.admin.RecordKey.RecordFiles;
@@ -56,6 +58,7 @@ import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.admin.client.mvp.event.data.DataEvent;
 import org.kaaproject.kaa.server.admin.shared.config.ConfigurationRecordFormDto;
+import org.kaaproject.kaa.server.admin.shared.config.ConfigurationRecordViewDto;
 import org.kaaproject.kaa.server.admin.shared.endpoint.EndpointProfileViewDto;
 import org.kaaproject.kaa.server.admin.shared.plugin.PluginInfoDto;
 import org.kaaproject.kaa.server.admin.shared.properties.PropertiesDto;
@@ -897,28 +900,29 @@ public class DataSource {
     }
 
     public void loadProfileFilterRecords(String endpointGroupId, boolean includeDeprecated,
-            final AsyncCallback<List<StructureRecordDto<ProfileFilterDto>>> callback) {
+            final AsyncCallback<List<ProfileFilterRecordDto>> callback) {
         rpcService.getProfileFilterRecordsByEndpointGroupId(endpointGroupId, includeDeprecated,
-                new DataCallback<List<StructureRecordDto<ProfileFilterDto>>>(callback) {
+                new DataCallback<List<ProfileFilterRecordDto>>(callback) {
                     @Override
-                    protected void onResult(List<StructureRecordDto<ProfileFilterDto>> result) {
+                    protected void onResult(List<ProfileFilterRecordDto> result) {
                     }
                 });
     }
 
-    public void getProfileFilterRecord(String schemaId, String endpointGroupId,
-            final AsyncCallback<StructureRecordDto<ProfileFilterDto>> callback) {
-        rpcService.getProfileFilterRecord(schemaId, endpointGroupId,
-                new DataCallback<StructureRecordDto<ProfileFilterDto>>(callback) {
+    public void getProfileFilterRecord(String endpointProfileSchemaId, String serverProfileSchemaId, String endpointGroupId,
+            final AsyncCallback<ProfileFilterRecordDto> callback) {
+        rpcService.getProfileFilterRecord(endpointProfileSchemaId, serverProfileSchemaId, endpointGroupId,
+                new DataCallback<ProfileFilterRecordDto>(callback) {
             @Override
-            protected void onResult(StructureRecordDto<ProfileFilterDto> result) {
+            protected void onResult(ProfileFilterRecordDto result) {
             }
         });
     }
 
-    public void deleteProfileFilterRecord(String schemaId, String endpointGroupId,
+    public void deleteProfileFilterRecord(String endpointProfileSchemaId, String serverProfileSchemaId, 
+            String endpointGroupId,
             final AsyncCallback<Void> callback) {
-        rpcService.deleteProfileFilterRecord(schemaId, endpointGroupId,
+        rpcService.deleteProfileFilterRecord(endpointProfileSchemaId, serverProfileSchemaId, endpointGroupId,
                 new DataCallback<Void>(callback) {
             @Override
             protected void onResult(Void result) {
@@ -962,21 +966,21 @@ public class DataSource {
     }
 
     public void loadConfigurationRecords(String endpointGroupId, boolean includeDeprecated,
-            final AsyncCallback<List<StructureRecordDto<ConfigurationDto>>> callback) {
+            final AsyncCallback<List<ConfigurationRecordDto>> callback) {
         rpcService.getConfigurationRecordsByEndpointGroupId(endpointGroupId, includeDeprecated,
-                new DataCallback<List<StructureRecordDto<ConfigurationDto>>>(callback) {
+                new DataCallback<List<ConfigurationRecordDto>>(callback) {
                     @Override
-                    protected void onResult(List<StructureRecordDto<ConfigurationDto>> result) {
+                    protected void onResult(List<ConfigurationRecordDto> result) {
                     }
                 });
     }
 
-    public void getConfigurationRecordForm(String schemaId, String endpointGroupId,
-            final AsyncCallback<StructureRecordDto<ConfigurationRecordFormDto>> callback) {
-        rpcService.getConfigurationRecordForm(schemaId, endpointGroupId,
-                new DataCallback<StructureRecordDto<ConfigurationRecordFormDto>>(callback) {
+    public void getConfigurationRecordView(String schemaId, String endpointGroupId,
+            final AsyncCallback<ConfigurationRecordViewDto> callback) {
+        rpcService.getConfigurationRecordView(schemaId, endpointGroupId,
+                new DataCallback<ConfigurationRecordViewDto>(callback) {
             @Override
-            protected void onResult(StructureRecordDto<ConfigurationRecordFormDto> result) {
+            protected void onResult(ConfigurationRecordViewDto result) {
             }
         });
     }
@@ -1027,11 +1031,11 @@ public class DataSource {
     }
 
     public void getVacantProfileSchemas(String endpointGroupId,
-            final AsyncCallback<List<VersionDto>> callback) {
+            final AsyncCallback<List<ProfileVersionPairDto>> callback) {
         rpcService.getVacantProfileSchemasByEndpointGroupId(endpointGroupId,
-                new DataCallback<List<VersionDto>>(callback) {
+                new DataCallback<List<ProfileVersionPairDto>>(callback) {
             @Override
-            protected void onResult(List<VersionDto> result) {
+            protected void onResult(List<ProfileVersionPairDto> result) {
             }
         });
     }
