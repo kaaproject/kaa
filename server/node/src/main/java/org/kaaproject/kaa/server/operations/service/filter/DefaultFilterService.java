@@ -20,9 +20,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
-import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
+import org.kaaproject.kaa.server.operations.service.cache.AppProfileVersionsKey;
 import org.kaaproject.kaa.server.operations.service.cache.AppVersionKey;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
 import org.slf4j.Logger;
@@ -62,26 +63,22 @@ public class DefaultFilterService implements FilterService {
      * java.lang.String)
      */
     @Override
-    public List<ProfileFilterDto> getAllMatchingFilters(AppVersionKey appProfileVersionKey, AppVersionKey appServerProfileVersionKey,
-            EndpointProfileDto profile) {
-        EndpointProfileSchemaDto profileSchema = cacheService.getProfileSchemaByAppAndVersion(appProfileVersionKey);
-        ServerProfileSchemaDto serverProfileSchema = cacheService.getServerProfileSchemaByAppAndVersion(appServerProfileVersionKey);
-        String profileSchemaBody = cacheService.getFlatCtlSchemaById(profileSchema.getCtlSchemaId());
-        String serverProfileSchemaBody = cacheService.getFlatCtlSchemaById(serverProfileSchema.getCtlSchemaId());
-        
-        List<ProfileFilterDto> filters = cacheService.getFilters(appProfileVersionKey);
-        LOG.trace("Found {} filters by {}", filters.size(), appProfileVersionKey);
+    public List<ProfileFilterDto> getAllMatchingFilters(AppProfileVersionsKey key, EndpointProfileDto profile) {
+        String endpointProfileSchemaBody = getEndpointProfileSchemaBody(key);
+        String serverProfileSchemaBody = getServerProfileSchemaBody(key);
+
+        List<ProfileFilterDto> filters = cacheService.getFilters(key);
+        LOG.trace("Found {} filters by {}", filters.size(), key);
         List<ProfileFilterDto> matchingFilters = new LinkedList<ProfileFilterDto>();
-        Filter filter = null;
+        FilterEvaluator filterEvaluator = null;
         for (ProfileFilterDto filterBody : filters) {
-            if (filter == null) {
-                filter = new DefaultFilter(filterBody.getBody(), profileSchemaBody, serverProfileSchemaBody);
-            } else {
-                filter.updateFilterBody(filterBody.getBody());
+            if (filterEvaluator == null) {
+                filterEvaluator = new DefaultFilterEvaluator();
+                filterEvaluator.init(profile, endpointProfileSchemaBody, serverProfileSchemaBody);
             }
-            LOG.trace("matching profile body with filter {}", filter);
+            LOG.trace("matching profile body with filter [{}]: {}", filterBody.getId(), filterBody.getBody());
             try {
-                if (filter.matches(profile)) {
+                if (filterEvaluator.matches(filterBody)) {
                     matchingFilters.add(filterBody);
                     LOG.trace("profile body matched");
                 }
@@ -104,15 +101,30 @@ public class DefaultFilterService implements FilterService {
     @Override
     public boolean matches(String appToken, String profileFilterId, EndpointProfileDto profile) {
         ProfileFilterDto filterDto = cacheService.getFilter(profileFilterId);
-        AppVersionKey appProfileVersionKey = new AppVersionKey(appToken, filterDto.getSchemaVersion());
-        AppVersionKey appServerProfileVersionKey = new AppVersionKey(appToken, profile.getServerProfileVersion());
-        EndpointProfileSchemaDto profileSchema = cacheService.getProfileSchemaByAppAndVersion(appProfileVersionKey);
-        ServerProfileSchemaDto serverProfileSchema = cacheService.getServerProfileSchemaByAppAndVersion(appServerProfileVersionKey);
-        String profileSchemaBody = cacheService.getFlatCtlSchemaById(profileSchema.getCtlSchemaId());
+        AppProfileVersionsKey key = new AppProfileVersionsKey(appToken, profile.getClientProfileVersion(),
+                profile.getServerProfileVersion());
+        String endpointProfileSchemaBody = getEndpointProfileSchemaBody(key);
+        String serverProfileSchemaBody = getServerProfileSchemaBody(key);
+
+        FilterEvaluator filterEvaluator = new DefaultFilterEvaluator();
+        filterEvaluator.init(profile, endpointProfileSchemaBody, serverProfileSchemaBody);
+        LOG.trace("matching profile body with filter {}", filterEvaluator);
+        return filterEvaluator.matches(filterDto);
+    }
+
+    private String getServerProfileSchemaBody(AppProfileVersionsKey key) {
+        ServerProfileSchemaDto serverProfileSchema = cacheService.getServerProfileSchemaByAppAndVersion(new AppVersionKey(key
+                .getApplicationToken(), key.getServerProfileSchemaVersion()));
+
         String serverProfileSchemaBody = cacheService.getFlatCtlSchemaById(serverProfileSchema.getCtlSchemaId());
-        Filter filter = new DefaultFilter(filterDto.getBody(), profileSchemaBody, serverProfileSchemaBody);
-        LOG.trace("matching profile body with filter {}", filter);
-        return filter.matches(profile);
+        return serverProfileSchemaBody;
+    }
+
+    private String getEndpointProfileSchemaBody(AppProfileVersionsKey key) {
+        EndpointProfileSchemaDto endpointProfileSchema = cacheService.getProfileSchemaByAppAndVersion(new AppVersionKey(key
+                .getApplicationToken(), key.getEndpointProfileSchemaVersion()));
+        String endpointProfileSchemaBody = cacheService.getFlatCtlSchemaById(endpointProfileSchema.getCtlSchemaId());
+        return endpointProfileSchemaBody;
     }
 
 }

@@ -392,7 +392,8 @@ public interface CacheService {
     void resetGroup(String key);
 
     CTLSchemaDto getCtlSchemaById(String id);
-    
+
     String getFlatCtlSchemaById(String id);
-    
+
+    EndpointGroupDto getDefaultGroup(String applicationToken);
 }
