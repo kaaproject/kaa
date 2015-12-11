@@ -17,6 +17,7 @@
 package org.kaaproject.kaa.server.common.dao.service;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.avro.generic.GenericContainer;
@@ -27,6 +28,7 @@ import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ChangeConfigurationNotification;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
+import org.kaaproject.kaa.common.dto.ConfigurationRecordDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.StructureRecordDto;
@@ -310,7 +312,7 @@ public class ConfigurationServiceImplTest extends AbstractTest {
         ConfigurationSchemaDto schema = generateConfSchemaDto(id, 1).get(0);
         EndpointGroupDto group = generateEndpointGroupDto(id);
         generateConfigurationDto(schema.getId(), group.getId(), 1, true, false);
-        List<StructureRecordDto<ConfigurationDto>> records = (List<StructureRecordDto<ConfigurationDto>>) configurationService.findAllConfigurationRecordsByEndpointGroupId(group.getId(), false);
+        List<ConfigurationRecordDto> records = (List<ConfigurationRecordDto>) configurationService.findAllConfigurationRecordsByEndpointGroupId(group.getId(), false);
         Assert.assertNotNull(records);
         Assert.assertEquals(1, records.size());
         ConfigurationDto activeConfiguration = records.get(0).getActiveStructureDto();

@@ -103,6 +103,14 @@ public final class Configuration extends AbstractStructure<ConfigurationDto> imp
         return endpointGroup != null ? endpointGroup.getStringId() : null;
     }
 
+    public int getSchemaVersion() {
+        return schemaVersion;
+    }
+
+    public void setSchemaVersion(int schemaVersion) {
+        this.schemaVersion = schemaVersion;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;

@@ -196,41 +196,4 @@ public abstract class AbstractServiceImplTest {
         group.setWeight(random.nextInt());
         return endpointService.saveEndpointGroup(group);
     }
-
-    protected List<ProfileFilterDto> generateFilter(String schemaId, String groupId, int count, boolean activate) {
-        List<ProfileFilterDto> filters = Collections.emptyList();
-        try {
-            EndpointProfileSchemaDto schemaDto;
-            if (isBlank(schemaId)) {
-                schemaDto = generateProfSchema(null, null, 1).get(0);
-                schemaId = schemaDto.getId();
-            } else {
-                schemaDto = profileService.findProfileSchemaById(schemaId);
-            }
-
-            filters = new ArrayList<>();
-            for (int i = 0; i < count; i++) {
-                ProfileFilterDto dto = new ProfileFilterDto();
-                dto.setId(null);
-                dto.setStatus(null);
-                if (isBlank(groupId)) {
-                    groupId = generateEndpointGroup(schemaDto.getApplicationId()).getId();
-                }
-                dto.setEndpointGroupId(groupId);
-                dto.setSchemaId(schemaId);
-                dto.setApplicationId(schemaDto.getApplicationId());
-                ProfileFilterDto saved = profileService.saveProfileFilter(dto);
-                Assert.assertNotNull(saved);
-                if (activate) {
-                    ChangeProfileFilterNotification notification = profileService.activateProfileFilter(saved.getId(), schemaDto.getCreatedUsername());
-                    saved = notification.getProfileFilterDto();
-                }
-                filters.add(saved);
-            }
-        } catch (Exception e) {
-            LOG.error("Can't generate configs {}", e);
-            Assert.fail("Can't generate configurations.");
-        }
-        return filters;
-    }
 }

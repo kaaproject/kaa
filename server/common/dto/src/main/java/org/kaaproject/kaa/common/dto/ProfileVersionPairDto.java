@@ -28,12 +28,20 @@ public class ProfileVersionPairDto implements Serializable {
     private Integer serverProfileSchemaVersion;
 
     public ProfileVersionPairDto() {
-        super();
+    }
+
+    public ProfileVersionPairDto(Integer endpointProfileSchemaVersion, String endpointProfileSchemaid) {
+        this.endpointProfileSchemaid = endpointProfileSchemaid;
+        this.endpointProfileSchemaVersion = endpointProfileSchemaVersion;
+    }
+
+    public ProfileVersionPairDto(String serverProfileSchemaid, Integer serverProfileSchemaVersion) {
+        this.serverProfileSchemaid = serverProfileSchemaid;
+        this.serverProfileSchemaVersion = serverProfileSchemaVersion;
     }
 
     public ProfileVersionPairDto(String endpointProfileSchemaid, Integer endpointProfileSchemaVersion, String serverProfileSchemaid,
-            Integer serverProfileSchemaVersion) {
-        super();
+                                 Integer serverProfileSchemaVersion) {
         this.endpointProfileSchemaid = endpointProfileSchemaid;
         this.endpointProfileSchemaVersion = endpointProfileSchemaVersion;
         this.serverProfileSchemaid = serverProfileSchemaid;

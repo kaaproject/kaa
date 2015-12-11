@@ -16,20 +16,6 @@
 
 package org.kaaproject.kaa.server.common.dao.impl.sql;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-
 import org.junit.Assert;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
@@ -59,12 +45,27 @@ import org.kaaproject.kaa.server.common.dao.model.sql.LogSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.NotificationSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.ProfileFilter;
 import org.kaaproject.kaa.server.common.dao.model.sql.SdkProfile;
+import org.kaaproject.kaa.server.common.dao.model.sql.ServerProfileSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.Tenant;
 import org.kaaproject.kaa.server.common.dao.model.sql.Topic;
 import org.kaaproject.kaa.server.common.dao.model.sql.User;
 import org.kaaproject.kaa.server.common.dao.model.sql.UserVerifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 public abstract class HibernateAbstractTest extends AbstractTest {
 
@@ -215,7 +216,7 @@ public abstract class HibernateAbstractTest extends AbstractTest {
             if (app == null) {
                 app = generateApplication(null);
             }
-            CTLSchema ctlSchema =  generateCTLSchema(DEFAULT_FQN, 1, app.getTenant(), null);
+            CTLSchema ctlSchema = generateCTLSchema(DEFAULT_FQN, 1, app.getTenant(), null);
             EndpointProfileSchema schemaDto;
             schemas = new ArrayList<>(count);
             for (int i = 0; i < count; i++) {
@@ -235,7 +236,7 @@ public abstract class HibernateAbstractTest extends AbstractTest {
         }
         return schemas;
     }
-    
+
     protected CTLSchema generateCTLSchema(String fqn, int version, Tenant tenant, CTLSchemaScopeDto scope) {
         if (scope == null) {
             if (tenant == null) {
@@ -285,12 +286,16 @@ public abstract class HibernateAbstractTest extends AbstractTest {
         return schemas;
     }
 
-    protected List<ProfileFilter> generateFilter(EndpointProfileSchema schema, EndpointGroup group, int count, UpdateStatus status) {
+    protected List<ProfileFilter> generateFilter(EndpointProfileSchema schema, ServerProfileSchema srvSchema, EndpointGroup group, int count, UpdateStatus status) {
         if (schema == null) {
             schema = generateProfSchema(null, 1).get(0);
         }
+        Application app = schema.getApplication();
+        if (srvSchema == null) {
+            srvSchema = new ServerProfileSchema(generateServerProfileSchema(app.getStringId(), app.getTenant().getStringId()));
+        }
         if (group == null) {
-            group = generateEndpointGroup(schema.getApplication(), null);
+            group = generateEndpointGroup(app, null);
         }
         List<ProfileFilter> filters = new ArrayList<>();
         for (int i = 0; i < count; i++) {
@@ -298,10 +303,10 @@ public abstract class HibernateAbstractTest extends AbstractTest {
             dto.setId(null);
             dto.setStatus(status != null ? status : UpdateStatus.INACTIVE);
             dto.setEndpointGroup(group);
-            dto.setProfileSchema(schema);
+            dto.setEndpointProfileSchema(schema);
+            dto.setServerProfileSchema(srvSchema);
             dto.setSequenceNumber(i);
-            dto.setSchemaVersion(i + 1);
-            dto.setApplication(schema.getApplication());
+            dto.setApplication(app);
             ProfileFilter saved = profileFilterDao.save(dto);
             Assert.assertNotNull(saved);
             filters.add(saved);

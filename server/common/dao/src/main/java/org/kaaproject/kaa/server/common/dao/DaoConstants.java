@@ -25,7 +25,8 @@ public class DaoConstants {
     public static final String EXTERNAL_UID_PROPERTY = "externalUid";
     public static final String NAME_PROPERTY = "name";
     public static final String AUTHORITY_PROPERTY = "authority";
-    public static final String PROFILE_SCHEMA_PROPERTY = "profileSchema";
+    public static final String ENDPOINT_PROFILE_SCHEMA_PROPERTY = "endpointProfileSchema";
+    public static final String SERVER_PROFILE_SCHEMA_PROPERTY = "serverProfileSchema";
     public static final String ENDPOINT_GROUP_PROPERTY = "endpointGroup";
     public static final String ENDPOINT_GROUPS_PROPERTY = "endpointGroups";
     public static final String STATUS_PROPERTY = "status";
@@ -45,7 +46,8 @@ public class DaoConstants {
     public static final String CREATED_TIME_PROPERTY = "createdTime";
 
     public static final String TENANT_ALIAS = "tenant";
-    public static final String PROFILE_SCHEMA_ALIAS = "profileSchema";
+    public static final String ENDPOINT_PROFILE_SCHEMA_ALIAS = "endpointProfileSchema";
+    public static final String SERVER_PROFILE_SCHEMA_ALIAS = "serverProfileSchema";
     public static final String ENDPOINT_GROUP_ALIAS = "endpointGroup";
     public static final String APPLICATION_ALIAS = "application";
     public static final String TOPIC_ALIAS = "topic";
@@ -53,7 +55,10 @@ public class DaoConstants {
     public static final String ECF_ALIAS = "ecf";
 
     public static final String TENANT_REFERENCE = TENANT_ALIAS + "." + ID_PROPERTY;
-    public static final String PROFILE_SCHEMA_REFERENCE = PROFILE_SCHEMA_ALIAS + "." + ID_PROPERTY;
+    public static final String ENDPOINT_PROFILE_SCHEMA_REFERENCE = ENDPOINT_PROFILE_SCHEMA_ALIAS + "." + ID_PROPERTY;
+    public static final String SERVER_PROFILE_SCHEMA_REFERENCE = SERVER_PROFILE_SCHEMA_ALIAS + "." + ID_PROPERTY;
+    public static final String ENDPOINT_PROFILE_SCHEMA_VERSION_REFERENCE = ENDPOINT_PROFILE_SCHEMA_ALIAS + "." + VERSION_PROPERTY;
+    public static final String SERVER_PROFILE_SCHEMA_VERSION_REFERENCE = SERVER_PROFILE_SCHEMA_ALIAS + "." + VERSION_PROPERTY;
     public static final String ENDPOINT_GROUP_REFERENCE = ENDPOINT_GROUP_ALIAS + "." + ID_PROPERTY;
     public static final String APPLICATION_REFERENCE = APPLICATION_ALIAS + "." + ID_PROPERTY;
     public static final String TOPIC_REFERENCE = TOPIC_ALIAS + "." + ID_PROPERTY;
@@ -172,7 +177,7 @@ public class DaoConstants {
     public static final String PROFILE_FILTER_TABLE_NAME = "profile_filter";
     public static final String PROFILE_FILTER_BODY = "profile_filter_body";
     public static final String PROFILE_FILTER_ENDPOINT_SCHEMA_ID = "endpoint_schema_id";
-    public static final String PROFILE_FILTER_SERVER_SCHEMA_ID = "endpoint_schema_id";
+    public static final String PROFILE_FILTER_SERVER_SCHEMA_ID = "server_schema_id";
 
     /**
      * Endpoint group constants.

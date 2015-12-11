@@ -44,6 +44,7 @@ import org.kaaproject.kaa.common.dto.PageLinkDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterRecordDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.ProfileVersionPairDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.VersionDto;
@@ -1042,7 +1043,7 @@ public class KaaAdminController {
     public ProfileFilterRecordDto getProfileFilterRecord(
             @RequestParam(value="schemaId") String schemaId,
             @RequestParam(value="endpointGroupId") String endpointGroupId) throws KaaAdminServiceException {
-        return ProfileFilterRecordDto.fromStructureRecord(kaaAdminService.getProfileFilterRecord(schemaId, endpointGroupId));
+        return ProfileFilterRecordDto.convertToProfileFilterRecords(kaaAdminService.getProfileFilterRecord(schemaId, endpointGroupId));
     }
 
     /**
@@ -1051,7 +1052,7 @@ public class KaaAdminController {
      */
     @RequestMapping(value="vacantProfileSchemas/{endpointGroupId}", method=RequestMethod.GET)
     @ResponseBody
-    public List<VersionDto> getVacantProfileSchemasByEndpointGroupId(@PathVariable String endpointGroupId) throws KaaAdminServiceException {
+    public List<ProfileVersionPairDto> getVacantProfileSchemasByEndpointGroupId(@PathVariable String endpointGroupId) throws KaaAdminServiceException {
         return kaaAdminService.getVacantProfileSchemasByEndpointGroupId(endpointGroupId);
     }
 

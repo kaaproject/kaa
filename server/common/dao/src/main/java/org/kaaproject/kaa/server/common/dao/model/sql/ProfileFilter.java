@@ -43,10 +43,10 @@ public final class ProfileFilter extends AbstractStructure<ProfileFilterDto> imp
     private String body;
 
     @ManyToOne
-    @JoinColumn(name = PROFILE_FILTER_ENDPOINT_SCHEMA_ID, nullable = false)
+    @JoinColumn(name = PROFILE_FILTER_ENDPOINT_SCHEMA_ID)
     private EndpointProfileSchema endpointProfileSchema;
     @ManyToOne
-    @JoinColumn(name = PROFILE_FILTER_SERVER_SCHEMA_ID, nullable = false)
+    @JoinColumn(name = PROFILE_FILTER_SERVER_SCHEMA_ID)
     private ServerProfileSchema serverProfileSchema;
 
     public ProfileFilter() {
@@ -83,6 +83,22 @@ public final class ProfileFilter extends AbstractStructure<ProfileFilterDto> imp
         return new ProfileFilter(id);
     }
 
+    public EndpointProfileSchema getEndpointProfileSchema() {
+        return endpointProfileSchema;
+    }
+
+    public void setEndpointProfileSchema(EndpointProfileSchema endpointProfileSchema) {
+        this.endpointProfileSchema = endpointProfileSchema;
+    }
+
+    public ServerProfileSchema getServerProfileSchema() {
+        return serverProfileSchema;
+    }
+
+    public void setServerProfileSchema(ServerProfileSchema serverProfileSchema) {
+        this.serverProfileSchema = serverProfileSchema;
+    }
+
     @Override
     public ProfileFilterDto toDto() {
         ProfileFilterDto filterDto = super.toDto();
@@ -102,4 +118,35 @@ public final class ProfileFilter extends AbstractStructure<ProfileFilterDto> imp
         return endpointGroup.getStringId();
     }
 
+    public Integer getEndpointProfileSchemaVersion() {
+        Integer version = null;
+        if (endpointProfileSchema != null) {
+            version = endpointProfileSchema.getVersion();
+        }
+        return version;
+    }
+
+    public Integer getServerProfileSchemaVersion() {
+        Integer version = null;
+        if (serverProfileSchema != null) {
+            version = serverProfileSchema.getVersion();
+        }
+        return version;
+    }
+
+    public String getEndpointProfileSchemaId() {
+        String id = null;
+        if (endpointProfileSchema != null) {
+            id = endpointProfileSchema.getStringId();
+        }
+        return id;
+    }
+
+    public String getServerProfileSchemaId() {
+        String id = null;
+        if (serverProfileSchema != null) {
+            id = serverProfileSchema.getStringId();
+        }
+        return id;
+    }
 }

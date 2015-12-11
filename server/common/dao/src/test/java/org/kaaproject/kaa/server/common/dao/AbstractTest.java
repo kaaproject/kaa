@@ -400,15 +400,24 @@ public class AbstractTest {
         return schemas;
     }
 
-    protected List<ProfileFilterDto> generateFilterDto(String schemaId, String groupId, int count, boolean activate) {
+    protected List<ProfileFilterDto> generateFilterDto(String schemaId, String serverSchemaId, String groupId, int count, boolean activate) {
         List<ProfileFilterDto> filters = Collections.emptyList();
         try {
-            EndpointProfileSchemaDto schemaDto = null;
+            EndpointProfileSchemaDto schemaDto;
             if (isBlank(schemaId)) {
                 schemaDto = generateProfSchemaDto(null, null, 1).get(0);
                 schemaId = schemaDto.getId();
             } else {
                 schemaDto = profileService.findProfileSchemaById(schemaId);
+            }
+            Application app = applicationDao.findByApplicationToken(schemaDto.getApplicationId());
+
+            ServerProfileSchemaDto serverProfileSchemaDto;
+            if (isBlank(serverSchemaId)) {
+                serverProfileSchemaDto = generateServerProfileSchema(app.getStringId(), app.getTenant().getStringId());
+                serverSchemaId = serverProfileSchemaDto.getId();
+            } else {
+                serverProfileSchemaDto = serverProfileService.findServerProfileSchema(serverSchemaId);
             }
 
             filters = new ArrayList<>();
@@ -421,6 +430,7 @@ public class AbstractTest {
                 }
                 dto.setEndpointGroupId(groupId);
                 dto.setEndpointProfileSchemaId(schemaId);
+                dto.setServerProfileSchemaId(serverSchemaId);
                 dto.setApplicationId(schemaDto.getApplicationId());
                 ProfileFilterDto saved = profileService.saveProfileFilter(dto);
                 Assert.assertNotNull(saved);
@@ -757,11 +767,11 @@ public class AbstractTest {
         return ctlSchema;
     }
 
-    protected ServerProfileSchemaDto generateServiceProfileSchema(String appId, String tenantId) {
-        return generateServiceProfileSchema(appId, tenantId, RANDOM.nextInt());
+    protected ServerProfileSchemaDto generateServerProfileSchema(String appId, String tenantId) {
+        return generateServerProfileSchema(appId, tenantId, RANDOM.nextInt());
     }
 
-    protected ServerProfileSchemaDto generateServiceProfileSchema(String appId, String tenantId, int version) {
+    protected ServerProfileSchemaDto generateServerProfileSchema(String appId, String tenantId, int version) {
         ServerProfileSchemaDto schemaDto = new ServerProfileSchemaDto();
         if(isBlank(tenantId)) {
             ApplicationDto applicationDto = generateApplicationDto();
@@ -770,7 +780,7 @@ public class AbstractTest {
         }
         schemaDto.setApplicationId(appId);
         schemaDto.setCreatedTime(System.currentTimeMillis());
-        schemaDto.setCtlSchemaId(ctlService.saveCTLSchema(generateCTLSchemaDto(tenantId, DEFAULT_FQN, version, CTLSchemaScopeDto.SERVER_PROFILE_SCHEMA)).getId());
+        schemaDto.setCtlSchemaId(ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN, tenantId, version, CTLSchemaScopeDto.SERVER_PROFILE_SCHEMA)).getId());
         return serverProfileService.saveServerProfileSchema(schemaDto);
     }
 
