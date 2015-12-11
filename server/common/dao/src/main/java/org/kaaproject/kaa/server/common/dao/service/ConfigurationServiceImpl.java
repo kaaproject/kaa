@@ -100,29 +100,26 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     @Autowired
     private SchemaGenerationAlgorithmFactory schemaGeneratorFactory;
 
-    private DefaultRecordGenerationAlgorithm<BaseData> configurationProcessor;
-
     private UuidValidator uuidValidator;
 
     @Override
     @Deprecated
     public ConfigurationDto findConfigurationByAppIdAndVersion(String applicationId, int version) {
-        validateSqlId(applicationId, "Application id is incorrect. Can't find configuration by application id "
-                + applicationId + " and version " + version);
+        validateSqlId(applicationId, "Application id is incorrect. Can't find configuration by application id " + applicationId
+                + " and version " + version);
         return getDto(configurationDao.findConfigurationByAppIdAndVersion(applicationId, version));
     }
 
     @Override
     public ConfigurationDto findConfigurationByEndpointGroupIdAndVersion(String endpointGroupId, int version) {
-        validateId(endpointGroupId, "Endpoint group id is incorrect. Can't find configuration by endpoint group id "
-                + endpointGroupId + " and version " + version);
+        validateId(endpointGroupId, "Endpoint group id is incorrect. Can't find configuration by endpoint group id " + endpointGroupId
+                + " and version " + version);
         return getDto(configurationDao.findConfigurationByEndpointGroupIdAndVersion(endpointGroupId, version));
     }
 
     @Override
     public ConfigurationDto findDefaultConfigurationBySchemaId(String schemaId) {
-        validateId(schemaId, "Schema id is incorrect. Can't find default configuration by schema id "
-                + schemaId);
+        validateId(schemaId, "Schema id is incorrect. Can't find default configuration by schema id " + schemaId);
         ConfigurationDto configuration = null;
         ConfigurationSchema configurationSchema = configurationSchemaDao.findById(schemaId);
         if (configurationSchema != null) {
@@ -130,7 +127,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
             EndpointGroup endpointGroup = endpointGroupDao.findByAppIdAndWeight(appId, 0);
             if (endpointGroup != null) {
                 String endpointGroupId = String.valueOf(endpointGroup.getId());
-                configuration = getDto(configurationDao.findConfigurationByEndpointGroupIdAndVersion(endpointGroupId, configurationSchema.getVersion()));
+                configuration = getDto(configurationDao.findConfigurationByEndpointGroupIdAndVersion(endpointGroupId,
+                        configurationSchema.getVersion()));
             } else {
                 LOG.warn("Can't find default group for application [{}]", appId);
             }
@@ -147,8 +145,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     @Override
-    public Collection<StructureRecordDto<ConfigurationDto>> findAllConfigurationRecordsByEndpointGroupId(
-            String endpointGroupId, boolean includeDeprecated) {
+    public Collection<StructureRecordDto<ConfigurationDto>> findAllConfigurationRecordsByEndpointGroupId(String endpointGroupId,
+            boolean includeDeprecated) {
         Collection<ConfigurationDto> configurations = convertDtoList(configurationDao.findActualByEndpointGroupId(endpointGroupId));
         List<StructureRecordDto<ConfigurationDto>> records = StructureRecordDto.convertToRecords(configurations);
         if (includeDeprecated) {
@@ -167,15 +165,15 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     @Override
-    public StructureRecordDto<ConfigurationDto> findConfigurationRecordBySchemaIdAndEndpointGroupId(
-            String schemaId, String endpointGroupId) {
+    public StructureRecordDto<ConfigurationDto> findConfigurationRecordBySchemaIdAndEndpointGroupId(String schemaId, String endpointGroupId) {
         StructureRecordDto<ConfigurationDto> record = new StructureRecordDto<>();
-        Collection<ConfigurationDto> configurations = convertDtoList(configurationDao.findActualBySchemaIdAndGroupId(schemaId, endpointGroupId));
+        Collection<ConfigurationDto> configurations = convertDtoList(configurationDao.findActualBySchemaIdAndGroupId(schemaId,
+                endpointGroupId));
         if (configurations != null) {
             for (ConfigurationDto configuration : configurations) {
-                if (configuration.getStatus()==UpdateStatus.ACTIVE) {
+                if (configuration.getStatus() == UpdateStatus.ACTIVE) {
                     record.setActiveStructureDto(configuration);
-                } else if (configuration.getStatus()==UpdateStatus.INACTIVE) {
+                } else if (configuration.getStatus() == UpdateStatus.INACTIVE) {
                     record.setInactiveStructureDto(configuration);
                 }
             }
@@ -188,7 +186,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         }
         if (record.isEmpty()) {
             LOG.debug("Can't find related Configuration record.");
-            throw new IncorrectParameterException("Configuration record not found, schemaId: " + schemaId + ", endpointGroupId: " + endpointGroupId); //NOSONAR
+            throw new IncorrectParameterException("Configuration record not found, schemaId: " + schemaId + ", endpointGroupId: "
+                    + endpointGroupId); // NOSONAR
         }
         return record;
     }
@@ -256,7 +255,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         return getDto(configurationDao.save(new Configuration(configurationDto)));
     }
 
-    private void validateUuids(ConfigurationDto currentConfiguration, ConfigurationDto previousConfiguration, ConfigurationSchemaDto configurationSchema) {
+    private void validateUuids(ConfigurationDto currentConfiguration, ConfigurationDto previousConfiguration,
+            ConfigurationSchemaDto configurationSchema) {
         try {
             EndpointGroup endpointGroup = endpointGroupDao.findById(currentConfiguration.getEndpointGroupId());
             GenericAvroConverter<GenericRecord> avroConverter;
@@ -283,7 +283,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
             if (body != null) {
                 currentConfiguration.setBody(body.getRawData());
             } else {
-                throw new RuntimeException("Can't generate json configuration body."); //NOSONAR
+                throw new RuntimeException("Can't generate json configuration body."); // NOSONAR
             }
         } catch (Exception e) {
             LOG.warn("Can't generate uuid fields for configuration {}", currentConfiguration);
@@ -305,7 +305,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
                 if (schemaId != null && groupId != null) {
                     configurationDao.deactivateOldConfiguration(schemaId, groupId, activatedUsername);
                 } else {
-                    throw new DatabaseProcessingException("Incorrect old configuration. Configuration schema or endpoint group id is empty.");
+                    throw new DatabaseProcessingException(
+                            "Incorrect old configuration. Configuration schema or endpoint group id is empty.");
                 }
                 ConfigurationDto configurationDto = getDto(configurationDao.activate(id, activatedUsername));
                 HistoryDto historyDto = addHistory(configurationDto, ChangeType.ADD_CONF);
@@ -378,8 +379,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     @Override
-    public List<VersionDto> findConfigurationSchemaVersionsByAppId(
-            String applicationId) {
+    public List<VersionDto> findConfigurationSchemaVersionsByAppId(String applicationId) {
         validateSqlId(applicationId, "Incorrect application id " + applicationId + ". Can't find configuration schema versions.");
         List<ConfigurationSchema> configurationSchemas = configurationSchemaDao.findByApplicationId(applicationId);
         List<VersionDto> schemas = new ArrayList<>();
@@ -388,8 +388,6 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         }
         return schemas;
     }
-
-
 
     @Override
     public ConfigurationSchemaDto findConfSchemaByAppIdAndVersion(String applicationId, int version) {
@@ -404,7 +402,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
             LOG.debug("Configuration schema with id [{}] saved. Generating default configuration", savedSchema.getId());
             try {
                 BaseSchema baseSchema = new BaseSchema(savedSchema.getBaseSchema());
-                configurationProcessor = new DefaultRecordGenerationAlgorithmImpl<BaseSchema, BaseData>(baseSchema, new BaseDataFactory());
+                DefaultRecordGenerationAlgorithm<BaseData> configurationProcessor = new DefaultRecordGenerationAlgorithmImpl<BaseSchema, BaseData>(
+                        baseSchema, new BaseDataFactory());
                 KaaData body = configurationProcessor.getRootData();
                 LOG.debug("Default configuration {} ", body.getRawData());
                 ConfigurationDto configurationDto = new ConfigurationDto();
@@ -517,7 +516,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
     private void removeCascadeConfigurationSchema(String id) {
         LOG.debug("Removing configurations and configuration schema by id " + id);
-//        configurationDao.removeByConfigurationSchemaId(id);
+        // configurationDao.removeByConfigurationSchemaId(id);
         configurationSchemaDao.removeById(id);
     }
 

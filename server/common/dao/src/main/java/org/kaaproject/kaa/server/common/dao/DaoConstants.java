@@ -366,6 +366,7 @@ public class DaoConstants {
     public static final String CTL_SCHEMA_TENANT_ID = TENANT_ID;
     public static final String CTL_SCHEMA_META_INFO_ID = "metainfo_id";
     public static final String CTL_SCHEMA_BODY = "body";
+    public static final String CTL_SCHEMA_DEFAULT_RECORD = "default_record";
     public static final String CTL_SCHEMA_NAME = NAME;
     public static final String CTL_SCHEMA_DESCRIPTION = DESCRIPTION;
     public static final String CTL_SCHEMA_CREATED_USERNAME = CREATED_USERNAME;

@@ -186,9 +186,8 @@ public class ApplicationServiceImpl implements ApplicationService {
                 if(groupDto != null) {
                     String groupId = groupDto.getId();
                     LOG.debug("Saved endpoint group with id [{}]", groupId);
-                    ProfileFilterDto filter = createDefaultProfileWithSchema(appId, groupId, createdUsername);
                     ConfigurationDto configuration = createDefaultConfigurationWithSchema(appId, groupId, createdUsername);
-                    if (filter == null || configuration == null) {
+                    if (configuration == null) {
                         LOG.warn("Got error during creation application. Deleted application with id [{}]", appId);
                         removeCascadeApplication(appId);
                     }
@@ -214,22 +213,6 @@ public class ApplicationServiceImpl implements ApplicationService {
         endpointGroup.setCreatedUsername(createdUsername);
         endpointGroup.setApplicationId(appId);
         return endpointService.saveEndpointGroup(endpointGroup);
-    }
-
-    private ProfileFilterDto createDefaultProfileWithSchema(String appId, String groupId, String createdUsername) {
-        EndpointProfileSchemaDto profileSchemaDto = new EndpointProfileSchemaDto();
-        profileSchemaDto.setApplicationId(appId);
-        CTLSchemaDto ctlSchema = ctlService.getOrCreateEmptySystemSchema(createdUsername);
-        profileSchemaDto.setCtlSchemaId(ctlSchema.getId());
-        profileSchemaDto.setName(DEFAULT_SCHEMA_NAME);
-        profileSchemaDto.setCreatedUsername(createdUsername);
-        profileSchemaDto = profileService.saveProfileSchema(profileSchemaDto);
-
-        if (profileSchemaDto != null) {
-            return profileService.findLatestFilterBySchemaIdsAndGroupId(profileSchemaDto.getId(), groupId);
-        } else {
-            throw new RuntimeException("Can't save default profile schema " + profileSchemaDto); //NOSONAR
-        }
     }
 
     private ConfigurationDto createDefaultConfigurationWithSchema(String appId, String groupId, String createdUsername) {

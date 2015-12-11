@@ -19,6 +19,7 @@ package org.kaaproject.kaa.server.common.dao.model.sql;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.CTL_SCHEMA_APPLICATION_FK;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.CTL_SCHEMA_APPLICATION_ID;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.CTL_SCHEMA_BODY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CTL_SCHEMA_DEFAULT_RECORD;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.CTL_SCHEMA_CREATED_TIME;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.CTL_SCHEMA_CREATED_USERNAME;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.CTL_SCHEMA_DESCRIPTION;
@@ -74,6 +75,9 @@ public class CTLSchema extends GenericModel<CTLSchemaDto> implements Serializabl
     @Lob
     @Column(name = CTL_SCHEMA_BODY)
     private String body;
+    @Lob
+    @Column(name = CTL_SCHEMA_DEFAULT_RECORD)
+    private String defaultRecord;
     @Column(name = CTL_SCHEMA_NAME)
     private String name;
     @Column(length = 1000, name = CTL_SCHEMA_DESCRIPTION)
@@ -106,6 +110,7 @@ public class CTLSchema extends GenericModel<CTLSchemaDto> implements Serializabl
         Long appId = getLongId(dto.getApplicationId());
         this.application = appId != null ? new Application(appId) : null;
         this.body = dto.getBody();
+        this.defaultRecord = dto.getDefaultRecord();
         this.name = dto.getName();
         this.description = dto.getDescription();
         this.createdUsername = dto.getCreatedUsername();
@@ -153,6 +158,14 @@ public class CTLSchema extends GenericModel<CTLSchemaDto> implements Serializabl
 
     public void setBody(String body) {
         this.body = body;
+    }
+
+    public String getDefaultRecord() {
+        return defaultRecord;
+    }
+
+    public void setDefaultRecord(String defaultRecord) {
+        this.defaultRecord = defaultRecord;
     }
 
     public Set<CTLSchema> getDependencySet() {
@@ -212,6 +225,7 @@ public class CTLSchema extends GenericModel<CTLSchemaDto> implements Serializabl
         ctlSchemaDto.setDescription(description);
         ctlSchemaDto.setMetaInfo(metaInfo.toDto());
         ctlSchemaDto.setBody(body);
+        ctlSchemaDto.setDefaultRecord(defaultRecord);
         ctlSchemaDto.setDependencySet(DaoUtil.convertDtoSet(dependencySet));
         ctlSchemaDto.setName(name);
         ctlSchemaDto.setCreatedUsername(createdUsername);

@@ -44,9 +44,13 @@ import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.HistoryDto;
 import org.kaaproject.kaa.common.dto.PageLinkDto;
+import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.UpdateNotificationDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
+import org.kaaproject.kaa.server.common.dao.CTLService;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
 import org.kaaproject.kaa.server.common.dao.HistoryService;
+import org.kaaproject.kaa.server.common.dao.ServerProfileService;
 import org.kaaproject.kaa.server.common.dao.exception.DatabaseProcessingException;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
 import org.kaaproject.kaa.server.common.dao.impl.ConfigurationDao;
@@ -83,6 +87,10 @@ public class EndpointServiceImpl implements EndpointService {
     private ProfileFilterDao<ProfileFilter> verifierDao;
     @Autowired
     private HistoryService historyService;
+    @Autowired
+    private ServerProfileService serverProfileService;
+    @Autowired
+    private CTLService ctlService;
 
     private EndpointProfileDao<EndpointProfile> endpointProfileDao;
     private EndpointConfigurationDao<EndpointConfiguration> endpointConfigurationDao;
@@ -269,11 +277,17 @@ public class EndpointServiceImpl implements EndpointService {
         byte[] keyHash = endpointProfileDto.getEndpointKeyHash();
         EndpointProfileDto dto;
         validateHash(keyHash, "Incorrect key hash for endpoint profile.");
+        if(endpointProfileDto.getServerProfileBody() == null){
+            ServerProfileSchemaDto serverProfileSchemaDto = serverProfileService.findLatestServerProfileSchema(endpointProfileDto.getApplicationId());
+            CTLSchemaDto schemaDto = ctlService.findCTLSchemaById(serverProfileSchemaDto.getCtlSchemaId());
+            LOG.debug("Set latest server profile schema [{}] and default record {} for endpoint with key [{}]", serverProfileSchemaDto.getVersion(), schemaDto.getBody(), keyHash);
+            endpointProfileDto.setServerProfileVersion(serverProfileSchemaDto.getVersion());
+            endpointProfileDto.setServerProfileBody(schemaDto.getBody());
+        }
         if (isBlank(endpointProfileDto.getId())) {
+            //TODO: Improve this to avoid redundant requests to DB and invalid logic.
             if (endpointProfileDao.getCountByKeyHash(keyHash) == 0) {
                 LOG.debug("Register new endpoint profile.");
-                endpointProfileDto.setServerProfileVersion(0);
-                endpointProfileDto.setServerProfileBody("");
                 dto = getDto(endpointProfileDao.save(endpointProfileDto));
             } else {
                 EndpointProfile storedProfile = endpointProfileDao.findByKeyHash(keyHash);

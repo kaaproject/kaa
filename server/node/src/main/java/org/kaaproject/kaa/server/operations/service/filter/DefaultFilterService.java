@@ -71,21 +71,14 @@ public class DefaultFilterService implements FilterService {
         LOG.trace("Found {} filters by {}", filters.size(), key);
         List<ProfileFilterDto> matchingFilters = new LinkedList<ProfileFilterDto>();
         FilterEvaluator filterEvaluator = null;
-        for (ProfileFilterDto filterBody : filters) {
+        for (ProfileFilterDto filter : filters) {
             if (filterEvaluator == null) {
                 filterEvaluator = new DefaultFilterEvaluator();
                 filterEvaluator.init(profile, endpointProfileSchemaBody, serverProfileSchemaBody);
             }
-            LOG.trace("matching profile body with filter [{}]: {}", filterBody.getId(), filterBody.getBody());
-            try {
-                if (filterEvaluator.matches(filterBody)) {
-                    matchingFilters.add(filterBody);
-                    LOG.trace("profile body matched");
-                }
-            } catch (EvaluationException ee) {
-                LOG.warn("Failed to process filter {} due to evaluate exception. Please check your filter body", filterBody.getBody(), ee);
-            } catch (Exception e) {
-                LOG.error("Failed to process filter {} due to exception", filterBody.getBody(), e);
+            LOG.trace("matching profile body with filter [{}]: {}", filter.getId(), filter.getBody());
+            if (checkFilter(filterEvaluator, filter)) {
+                matchingFilters.add(filter);
             }
         }
         return matchingFilters;
@@ -100,7 +93,6 @@ public class DefaultFilterService implements FilterService {
      */
     @Override
     public boolean matches(String appToken, String profileFilterId, EndpointProfileDto profile) {
-        ProfileFilterDto filterDto = cacheService.getFilter(profileFilterId);
         AppProfileVersionsKey key = new AppProfileVersionsKey(appToken, profile.getClientProfileVersion(),
                 profile.getServerProfileVersion());
         String endpointProfileSchemaBody = getEndpointProfileSchemaBody(key);
@@ -108,8 +100,25 @@ public class DefaultFilterService implements FilterService {
 
         FilterEvaluator filterEvaluator = new DefaultFilterEvaluator();
         filterEvaluator.init(profile, endpointProfileSchemaBody, serverProfileSchemaBody);
-        LOG.trace("matching profile body with filter {}", filterEvaluator);
-        return filterEvaluator.matches(filterDto);
+
+        ProfileFilterDto filter = cacheService.getFilter(profileFilterId);
+        LOG.trace("matching profile body with filter [{}]: {}", filter.getId(), filter.getBody());
+        return checkFilter(filterEvaluator, filter);
+    }
+
+    private boolean checkFilter(FilterEvaluator filterEvaluator, ProfileFilterDto filter) {
+        try {
+            if (filterEvaluator.matches(filter)) {
+                LOG.trace("profile body matched");
+                return true;
+            }
+        } catch (EvaluationException ee) {
+            LOG.warn("Failed to process filter [{}]: {} due to evaluate exception. Please check your filter body", filter.getId(),
+                    filter.getBody(), ee);
+        } catch (Exception e) {
+            LOG.error("Failed to process filter [{}]: {} due to exception", filter.getId(), filter.getBody(), e);
+        }
+        return false;
     }
 
     private String getServerProfileSchemaBody(AppProfileVersionsKey key) {
