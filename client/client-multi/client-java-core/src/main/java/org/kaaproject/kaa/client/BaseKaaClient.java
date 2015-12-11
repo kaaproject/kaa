@@ -71,6 +71,6 @@ public class BaseKaaClient extends AbstractKaaClient implements KaaClient {
      * Auto-generated based on plugin metadata;
      */
     public Messaging1PluginAPI getMessaging1PluginAPI() {
-        return (Messaging1PluginAPI) getPluginInstanceAPI(42);
+        return (Messaging1PluginAPI) getPluginInstanceAPI(new ExtensionId(42));
     }
 }

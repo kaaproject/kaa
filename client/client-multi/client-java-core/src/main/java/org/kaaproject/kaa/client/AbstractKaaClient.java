@@ -253,8 +253,8 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
         }
     }
 
-    protected PluginInstanceAPI getPluginInstanceAPI(Integer extension) {
-        return pluginInstanceMap.get(extension).getPluginAPI();
+    protected PluginInstanceAPI getPluginInstanceAPI(ExtensionId extensionId) {
+        return pluginInstanceMap.get(extensionId).getPluginAPI();
     }
 
     @Override
