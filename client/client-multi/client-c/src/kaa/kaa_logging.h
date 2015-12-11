@@ -21,26 +21,24 @@
  * Supplies API for Kaa data collection / logging subsystem.
  */
 
-# ifndef KAA_LOGGING_H_
-# define KAA_LOGGING_H_
+#ifndef KAA_LOGGING_H_
+#define KAA_LOGGING_H_
 
 
-# include "gen/kaa_logging_definitions.h"
-# include "platform/ext_log_storage.h"
-# include "platform/ext_log_upload_strategy.h"
+#include "gen/kaa_logging_definitions.h"
+#include "platform/ext_log_storage.h"
+#include "platform/ext_log_upload_strategy.h"
 
-# ifdef __cplusplus
+#ifdef __cplusplus
 extern "C" {
-# endif
+#endif
 
-
-
-/**
- * Private log collector structure.
- */
 
 #ifndef KAA_LOG_COLLECTOR_T
 # define KAA_LOG_COLLECTOR_T
+    /**
+     * Private log collector structure.
+     */
     typedef struct kaa_log_collector        kaa_log_collector_t;
 #endif
 
@@ -57,7 +55,6 @@ extern "C" {
 kaa_error_t kaa_logging_init(kaa_log_collector_t *self, void *log_storage_context, void *log_upload_strategy_context);
 
 
-
 /**
  * @brief Serializes and adds a log record to the log storage.
  *
@@ -65,12 +62,11 @@ kaa_error_t kaa_logging_init(kaa_log_collector_t *self, void *log_storage_contex
  * @param[in] entry   Pointer to log entry to be added to the storage.
  *
  * @return  Error code.
- *
  */
 kaa_error_t kaa_logging_add_record(kaa_log_collector_t *self, kaa_user_log_record_t *entry);
 
-# ifdef __cplusplus
+#ifdef __cplusplus
 }      /* extern "C" */
-# endif
+#endif
 
-# endif /* KAA_LOGGING_H_ */
+#endif /* KAA_LOGGING_H_ */

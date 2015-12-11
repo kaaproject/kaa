@@ -87,7 +87,7 @@ typedef struct kaa_status_holder_t                  kaa_status_holder_t;
 
 #ifndef KAA_FAILOVER_STRATEGY
 # define KAA_FAILOVER_STRATEGY
-    typedef struct kaa_failover_strategy_t       kaa_failover_strategy_t;
+    typedef struct kaa_failover_strategy_t          kaa_failover_strategy_t;
 #endif
 
 /**

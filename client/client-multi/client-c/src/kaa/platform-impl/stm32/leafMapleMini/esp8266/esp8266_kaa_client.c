@@ -642,7 +642,7 @@ kaa_error_t kaa_init_security_stuff(const char *kaa_public_key, const size_t kaa
 */
 kaa_error_t kaa_log_collector_init(kaa_client_t *kaa_client)
 {
-    KAA_RETURN_IF_NIL(kaa_client, KAA_ERR_BADPARAM)
+    KAA_RETURN_IF_NIL(kaa_client, KAA_ERR_BADPARAM);
     kaa_error_t error_code = ext_unlimited_log_storage_create(&kaa_client->log_storage_context
                                                             , kaa_client->kaa_context->logger);
 
