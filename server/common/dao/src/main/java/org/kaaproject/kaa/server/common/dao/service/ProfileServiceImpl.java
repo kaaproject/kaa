@@ -52,7 +52,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
@@ -103,7 +102,7 @@ public class ProfileServiceImpl implements ProfileService {
         validateSqlId(id, "Can't find profile schema. Invalid profile schema id: " + id);
         return getDto(profileSchemaDao.findById(id));
     }
-    
+
     @Override
     public EndpointProfileSchemaDto saveProfileSchema(EndpointProfileSchemaDto profileSchemaDto) {
         if (profileSchemaDto == null) {
@@ -218,14 +217,16 @@ public class ProfileServiceImpl implements ProfileService {
         Collections.sort(endpointProfileSchemas);
 
         Collection<ProfileVersionPairDto> pairVersionSet = new HashSet<>();
-        for (EndpointProfileSchemaDto endSchema : endpointProfileSchemas) {
+        for (int i = 0; i < endpointProfileSchemas.size(); i++) {
+            EndpointProfileSchemaDto endSchema = endpointProfileSchemas.get(i);
             for (ServerProfileSchemaDto serverSchema : serverSchemas) {
+                if (i == 0) {
+                    pairVersionSet.add(new ProfileVersionPairDto(serverSchema.getId(), serverSchema.getVersion()));
+                }
                 pairVersionSet.add(new ProfileVersionPairDto(endSchema.getId(), endSchema.getVersion(), serverSchema.getId(), serverSchema.getVersion()));
-                pairVersionSet.add(new ProfileVersionPairDto(serverSchema.getId(), serverSchema.getVersion()));
             }
             pairVersionSet.add(new ProfileVersionPairDto(endSchema.getVersion(), endSchema.getId()));
         }
-
         for (ProfileFilter pf : profileFilters) {
             pairVersionSet.remove(new ProfileVersionPairDto(pf.getEndpointProfileSchemaId(), pf.getEndpointProfileSchemaVersion(),
                     pf.getServerProfileSchemaId(), pf.getServerProfileSchemaVersion()));
@@ -258,16 +259,16 @@ public class ProfileServiceImpl implements ProfileService {
                 throw new UpdateStatusConflictException("Add profile filter to default group is forbidden!");
             }
             EndpointProfileSchemaDto endpointProfileSchemaDto = null;
-            if(endProfSchemaId != null){
+            if (endProfSchemaId != null) {
                 endpointProfileSchemaDto = findProfileSchemaById(endProfSchemaId);
-                if(endpointProfileSchemaDto == null){
+                if (endpointProfileSchemaDto == null) {
                     throw new IncorrectParameterException("Can't update profile filter, endpoint profile schema not found!");
                 }
             }
             ServerProfileSchemaDto serverProfileSchemaDto = null;
-            if(srvProfSchemaId != null){
+            if (srvProfSchemaId != null) {
                 serverProfileSchemaDto = serverProfileService.findServerProfileSchema(srvProfSchemaId);
-                if(serverProfileSchemaDto == null){
+                if (serverProfileSchemaDto == null) {
                     throw new IncorrectParameterException("Can't update profile filter, server profile schema not found!");
                 }
             }
@@ -280,9 +281,9 @@ public class ProfileServiceImpl implements ProfileService {
                 } else if (latestFilter != null) {
                     profileFilterDto.setSequenceNumber(latestFilter.getSequenceNumber());
                 }
-                if(endpointProfileSchemaDto != null){
+                if (endpointProfileSchemaDto != null) {
                     profileFilterDto.setApplicationId(endpointProfileSchemaDto.getApplicationId());
-                }else{
+                } else {
                     profileFilterDto.setApplicationId(serverProfileSchemaDto.getApplicationId());
                 }
                 profileFilterDto.setCreatedTime(System.currentTimeMillis());

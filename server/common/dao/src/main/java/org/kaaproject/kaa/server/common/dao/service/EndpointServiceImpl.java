@@ -72,7 +72,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
 public class EndpointServiceImpl implements EndpointService {
 
     private static final Logger LOG = LoggerFactory.getLogger(EndpointServiceImpl.class);
@@ -98,6 +97,7 @@ public class EndpointServiceImpl implements EndpointService {
     private EndpointUserDao<EndpointUser> endpointUserDao;
 
     @Override
+    @Transactional
     public List<EndpointGroupDto> findEndpointGroupsByAppId(String applicationId) {
         validateSqlId(applicationId, "Can't find endpoint groups by application id. Incorrect application id "
                 + applicationId);
@@ -105,12 +105,14 @@ public class EndpointServiceImpl implements EndpointService {
     }
 
     @Override
+    @Transactional
     public EndpointGroupDto findEndpointGroupById(String id) {
         validateSqlId(id, "Can't find endpoint group by id. Incorrect id " + id);
         return getDto(endpointGroupDao.findById(id));
     }
 
     @Override
+    @Transactional
     public void removeEndpointGroupByAppId(String applicationId) {
         validateSqlId(applicationId, "Can't remove endpoint groups by application id. Incorrect application id "
                 + applicationId);
@@ -123,12 +125,14 @@ public class EndpointServiceImpl implements EndpointService {
     }
 
     @Override
+    @Transactional
     public ChangeNotificationDto removeEndpointGroupById(String id) {
         validateSqlId(id, "Can't remove endpoint group by id. Incorrect id " + id);
         return removeEndpointGroup(id, false);
     }
 
     @Override
+    @Transactional
     public EndpointGroupDto saveEndpointGroup(EndpointGroupDto endpointGroupDto) {
         validateSqlObject(endpointGroupDto, "Can't save endpoint group object. Incorrect endpoint group object." + endpointGroupDto);
         EndpointGroupDto savedGroup = null;
@@ -167,6 +171,7 @@ public class EndpointServiceImpl implements EndpointService {
     }
 
     @Override
+    @Transactional
     public UpdateNotificationDto<EndpointGroupDto> removeTopicFromEndpointGroup(String id, String topicId) {
         validateSqlId(id, "Can't remove endpoint group topics " + topicId + ". Incorrect endpoint group id." + id);
         UpdateNotificationDto<EndpointGroupDto> dto = null;
@@ -189,6 +194,7 @@ public class EndpointServiceImpl implements EndpointService {
     }
 
     @Override
+    @Transactional
     public UpdateNotificationDto<EndpointGroupDto> addTopicToEndpointGroup(String id, String topicId) {
         validateSqlId(id, "Can't add topics " + topicId + " to endpoint group . Incorrect endpoint group id." + id);
         UpdateNotificationDto<EndpointGroupDto> dto = null;
@@ -211,6 +217,7 @@ public class EndpointServiceImpl implements EndpointService {
     }
 
     @Override
+    @Transactional
     public EndpointProfilesPageDto findEndpointProfileByEndpointGroupId(PageLinkDto pageLink) {
         validateSqlId(pageLink.getLimit(), "Can't find endpoint group by id. Incorrect limit parameter " + pageLink.getLimit());
         validateString(pageLink.getOffset(), "Can't find endpoint group by id. Incorrect offset parameter " + pageLink.getOffset());
@@ -218,6 +225,7 @@ public class EndpointServiceImpl implements EndpointService {
     }
 
     @Override
+    @Transactional
     public EndpointProfilesBodyDto findEndpointProfileBodyByEndpointGroupId(PageLinkDto pageLink) {
         validateSqlId(pageLink.getLimit(), "Can't find endpoint group by id. Incorrect limit parameter " + pageLink.getLimit());
         validateString(pageLink.getOffset(), "Can't find endpoint group by id. Incorrect offset parameter " + pageLink.getOffset());
@@ -263,6 +271,7 @@ public class EndpointServiceImpl implements EndpointService {
     }
 
     @Override
+    @Transactional
     public EndpointProfileDto saveEndpointProfile(EndpointProfileDto endpointProfileDto) {
         validateObject(endpointProfileDto, "Can't find endpoint profile object. Invalid endpoint profile object"
                 + endpointProfileDto);
@@ -416,6 +425,7 @@ public class EndpointServiceImpl implements EndpointService {
     }
 
     @Override
+    @Transactional
     public EndpointGroupDto findDefaultGroup(String appId) {
         validateSqlId(appId, "Can't find defualt endpoint group by app id. Incorrect app id " + appId);
         return getDto(endpointGroupDao.findByAppIdAndWeight(appId, DEFAULT_GROUP_WEIGHT));

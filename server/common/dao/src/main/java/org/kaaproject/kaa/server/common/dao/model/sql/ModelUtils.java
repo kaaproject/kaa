@@ -30,7 +30,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.avro.generic.GenericData;
 import org.apache.commons.io.IOUtils;
 import org.kaaproject.kaa.common.dto.HasId;
 import org.kaaproject.kaa.server.common.dao.model.ToDto;
@@ -94,16 +93,7 @@ public final class ModelUtils {
         return topics;
     }
 
-    public static <V extends GenericModel> V getGenericModelWithId(HasId hasId, V model) {
-        if (hasId != null) {
-            model.setId(getLongId(hasId));
-            return model;
-        } else {
-            return null;
-        }
-    }
-
-    public static <V> Set<V> getGenericModelIdds(Set<String> idSet, GenericModel model) {
+    public static <V> Set<V> getGenericModelIds(Set<String> idSet, GenericModel model) {
         Set<V> dataSet = new HashSet<>();
         for (String id : idSet) {
             dataSet.add((V) model.newInstance(id));
