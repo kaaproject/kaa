@@ -170,7 +170,7 @@ void KaaClient::initKaaTransport()
     EndpointObjectHash publicKeyHash(clientKeys_->getPublicKey().begin(), clientKeys_->getPublicKey().size());
 
     auto metaDataTransport = std::make_shared<MetaDataTransport>(status_, publicKeyHash, 60000L);
-    profileTransport_.reset(new ProfileTransport(*channelManager_, clientKeys_->getPublicKey()));
+    profileTransport_ = std::make_shared<ProfileTransport>(*channelManager_, clientKeys_->getPublicKey());
 #ifdef KAA_USE_CONFIGURATION
     auto configurationTransport = std::make_shared<ConfigurationTransport>(*channelManager_, status_);
     configurationTransport->setConfigurationProcessor(&configurationManager_->getConfigurationProcessor());
