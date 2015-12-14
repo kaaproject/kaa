@@ -29,7 +29,7 @@ static kaa_logger_t *logger = NULL;
 
 
 
-void test_kaatcp_connect()
+void test_kaatcp_connect(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -56,7 +56,7 @@ void test_kaatcp_connect()
     KAA_TRACE_OUT(logger);
 }
 
-void test_kaatcp_connect_without_key()
+void test_kaatcp_connect_without_key(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -79,7 +79,7 @@ void test_kaatcp_connect_without_key()
     KAA_TRACE_OUT(logger);
 }
 
-void test_kaatcp_disconnect()
+void test_kaatcp_disconnect(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -100,7 +100,7 @@ void test_kaatcp_disconnect()
     KAA_TRACE_OUT(logger);
 }
 
-void test_kaatcp_kaasync()
+void test_kaatcp_kaasync(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -123,7 +123,7 @@ void test_kaatcp_kaasync()
     KAA_TRACE_OUT(logger);
 }
 
-void test_kaatcp_ping()
+void test_kaatcp_ping(void)
 {
     KAA_TRACE_IN(logger);
 

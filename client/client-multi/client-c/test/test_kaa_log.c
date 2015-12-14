@@ -213,7 +213,7 @@ static void destroy_log_record(void *record_p)
     }
 }
 
-mock_storage_context_t *create_mock_storage()
+mock_storage_context_t *create_mock_storage(void)
 {
     mock_storage_context_t *storage = (mock_storage_context_t *)KAA_CALLOC(1, sizeof(mock_storage_context_t));
     KAA_RETURN_IF_NIL(storage, NULL);
@@ -233,7 +233,7 @@ kaa_error_t ext_log_storage_destroy(void *context)
 
 
 
-void test_create_request()
+void test_create_request(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -304,7 +304,7 @@ void test_create_request()
 
 
 
-void test_response()
+void test_response(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -367,7 +367,7 @@ void test_response()
 
 
 
-void test_timeout()
+void test_timeout(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -417,7 +417,7 @@ void test_timeout()
     KAA_TRACE_OUT(logger);
 }
 
-void test_decline_timeout()
+void test_decline_timeout(void)
 {
     KAA_TRACE_IN(logger);
 

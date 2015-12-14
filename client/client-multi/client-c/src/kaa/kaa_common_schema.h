@@ -38,7 +38,7 @@ extern "C" {
 
 
 typedef void (*serialize_fn)(avro_writer_t writer, void *data);
-typedef void *(*deserialize_fn)();
+typedef void *(*deserialize_fn)(void);
 typedef void *(*deserialize_wo_ctx_fn)(avro_reader_t reader);
 typedef void *(*deserialize_w_ctx_fn)(avro_reader_t reader, void *context);
 typedef size_t (*get_size_fn)(void *data);
@@ -146,7 +146,7 @@ size_t kaa_array_get_size(kaa_list_t *array, get_size_fn get_size);
 void kaa_null_serialize(avro_writer_t writer, void *data);
 void *kaa_null_deserialize(avro_reader_t reader);
 void kaa_null_destroy(void *data);
-size_t kaa_null_get_size();
+size_t kaa_null_get_size(void);
 
 void kaa_data_destroy(void *data);
 

@@ -33,7 +33,7 @@ typedef struct {
     destroy_fn   destroy;
 } kaa_test_log_record_t;
 
-kaa_test_log_record_t *kaa_test_log_record_create();
+kaa_test_log_record_t *kaa_test_log_record_create(void);
 kaa_test_log_record_t *kaa_test_log_record_deserialize(avro_reader_t reader);
 
 #ifdef __cplusplus

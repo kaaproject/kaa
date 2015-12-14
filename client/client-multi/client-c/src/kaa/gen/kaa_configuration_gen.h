@@ -31,8 +31,8 @@ extern "C" {
 # define KAA_UNION_NULL_OR_FIXED_BRANCH_0    0
 # define KAA_UNION_NULL_OR_FIXED_BRANCH_1    1
 
-kaa_union_t *kaa_union_null_or_fixed_branch_0_create();
-kaa_union_t *kaa_union_null_or_fixed_branch_1_create();
+kaa_union_t *kaa_union_null_or_fixed_branch_0_create(void);
+kaa_union_t *kaa_union_null_or_fixed_branch_1_create(void);
 
 kaa_union_t *kaa_union_null_or_fixed_deserialize(avro_reader_t reader);
 
@@ -48,7 +48,7 @@ typedef struct {
     destroy_fn   destroy;
 } kaa_configuration_root_record_t;
 
-kaa_configuration_root_record_t *kaa_configuration_root_record_create();
+kaa_configuration_root_record_t *kaa_configuration_root_record_create(void);
 kaa_configuration_root_record_t *kaa_configuration_root_record_deserialize(avro_reader_t reader);
 
 #ifdef __cplusplus

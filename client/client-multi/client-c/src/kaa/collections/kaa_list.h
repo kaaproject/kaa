@@ -48,7 +48,7 @@ typedef void (*process_data)(void *data, void *context);
  * @brief Creates empty list.
  * @return The list object.
  */
-kaa_list_t *kaa_list_create();
+kaa_list_t *kaa_list_create(void);
 
 /**
  * @brief Destroys list and all elements.

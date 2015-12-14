@@ -72,7 +72,7 @@ void ping_listener(void *context)
     ping_received = 1;
 }
 
-void test_kaatcp_parser()
+void test_kaatcp_parser(void)
 {
     KAA_TRACE_IN(logger);
 

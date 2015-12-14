@@ -32,7 +32,7 @@
 static char *kaa_public_key = NULL;
 static size_t kaa_public_key_length = 0;
 
-static void kaa_generate_pub_key()
+static void kaa_generate_pub_key(void)
 {
     const int kBits = 2048;
     const int kExp = 65537;
@@ -56,7 +56,7 @@ static void kaa_generate_pub_key()
     RSA_free(rsa);
 }
 
-static int kaa_init_key()
+static int kaa_init_key(void)
 {
     struct stat stat_result;
     int key_result = stat(KAA_KEY_STORAGE, &stat_result);

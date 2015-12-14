@@ -142,7 +142,7 @@ static void test_create_channel_interface(kaa_transport_channel_interface_t *cha
 
 
 
-void test_create_bootstrap_manager()
+void test_create_bootstrap_manager(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -166,7 +166,7 @@ void test_create_bootstrap_manager()
     KAA_TRACE_OUT(logger);
 }
 
-static kaa_access_point_t *create_access_point()
+static kaa_access_point_t *create_access_point(void)
 {
     const uint16_t MAX_CONNECTION_DATA_SIZE = 16;
 
@@ -192,7 +192,7 @@ static void destroy_access_point(kaa_access_point_t * access_point)
     }
 }
 
-void test_handle_server_sync()
+void test_handle_server_sync(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -393,7 +393,7 @@ static kaa_error_t find_bootstrap_access_point_index(kaa_transport_protocol_id_t
     return KAA_ERR_NOT_FOUND;
 }
 
-void test_bootstrap_channel()
+void test_bootstrap_channel(void)
 {
     KAA_TRACE_IN(logger);
 

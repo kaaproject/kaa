@@ -19,7 +19,7 @@
 
 typedef unsigned int kaa_time_t;
 
-kaa_time_t kaa_esp8266_get_time();
+kaa_time_t kaa_esp8266_get_time(void);
 
 #define KAA_TIME() kaa_esp8266_get_time()
 
