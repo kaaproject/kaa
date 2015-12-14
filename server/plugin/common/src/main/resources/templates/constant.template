@@ -1,0 +1,5 @@
+/**
+ * Auto-generated constant for method
+ * {@link ${packageName}.${className}#${methodName}(${paramType}) ${methodName}}
+ */
+private final short METHOD_${constant}_ID = ${constant};

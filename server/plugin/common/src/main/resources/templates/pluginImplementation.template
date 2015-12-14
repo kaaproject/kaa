@@ -1,0 +1,15 @@
+package ${packageName};
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+// TODO: Work in progress
+
+public class ${className} extends ${parentClassName} implements PluginInstance<${packageName}.${classNamePrefix}PluginAPI>, ${packageName}.${classNamePrefix}PluginAPI {
+
+    private static final Logger LOG = LoggerFactory.getLogger(${packageName}.${classNamePrefix}Plugin.class);
+
+${methodIdentifiers}
+
+${entityConverters}
+}

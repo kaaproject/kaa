@@ -22,6 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,11 +41,16 @@ public abstract class AbstractSdkApiGenerator<T extends SpecificRecordBase> impl
     protected static final String PLUGIN_API_TEMPLATE_FILE = "templates/pluginAPI.template";
     protected static final String PLUGIN_IMPLEMENTATION_TEMPLATE_FILE = "templates/pluginImplementation.template";
 
+    protected String prefix;
+    protected String namespace;
+
     /**
      * Allows different method signature generation strategies based on contract
      * item definitions.
      */
-    protected Map<PluginContractItemDef, PluginAPIMethodSignatureGenerator> signatureGenerators = new HashMap<>();
+    protected Map<PluginContractItemDef, MethodSignatureGenerator> signatureGenerators = new HashMap<>();
+
+    protected List<MethodSignature> signatures = new ArrayList<>();
 
     @Override
     public List<SdkApiFile> generatePluginSdkApi(PluginSdkApiGenerationContext context) throws SdkApiGenerationException {
@@ -84,6 +90,7 @@ public abstract class AbstractSdkApiGenerator<T extends SpecificRecordBase> impl
         return fileContent;
     }
 
+    protected static final String METHOD_NAME = "${methodName}";
     protected static final String RETURN_TYPE = "${returnType}";
     protected static final String PARAM_TYPE = "${paramType}";
 
@@ -101,4 +108,23 @@ public abstract class AbstractSdkApiGenerator<T extends SpecificRecordBase> impl
     // protected abstract List<SdkApiFile> generatePluginAPI(SpecificPluginSdkApiGenerationContext<T> context);
 
     // protected abstract List<SdkApiFile> generatePluginImplementation(SpecificPluginSdkApiGenerationContext<T> context);
+
+    protected String generateMethodConstants() {
+
+        StringBuilder buffer = new StringBuilder();
+        String template = this.readFileAsString("templates/constant.template");
+
+        for (MethodSignature signature : signatures) {
+            String source = template;
+            source = source.replace(PACKAGE_NAME, this.namespace);
+            source = source.replace(CLASS_NAME, MessageFormat.format(PLUGIN_API_CLASS_NAME_TEMPLATE, this.prefix));
+            source = source.replace(METHOD_NAME, signature.getMethodName());
+            source = source.replace(PARAM_TYPE, signature.getParamType());
+            source = source.replace("${constant}", Integer.toString(signature.getId()));
+
+            buffer.append(source).append("\n");
+        }
+
+        return buffer.toString();
+    }
 }

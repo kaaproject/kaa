@@ -33,9 +33,10 @@ import org.kaaproject.kaa.server.common.core.plugin.def.PluginContractDef;
 import org.kaaproject.kaa.server.common.core.plugin.def.PluginContractItemDef;
 import org.kaaproject.kaa.server.common.core.plugin.def.SdkApiFile;
 import org.kaaproject.kaa.server.common.core.plugin.generator.AbstractSdkApiGenerator;
-import org.kaaproject.kaa.server.common.core.plugin.generator.PluginAPIMethodSignatureGenerator;
+import org.kaaproject.kaa.server.common.core.plugin.generator.MethodSignature;
 import org.kaaproject.kaa.server.common.core.plugin.generator.PluginSdkApiGenerationContext;
 import org.kaaproject.kaa.server.common.core.plugin.generator.SpecificPluginSdkApiGenerationContext;
+import org.kaaproject.kaa.server.common.core.plugin.generator.api.MethodSignatureGenerator;
 import org.kaaproject.kaa.server.common.core.plugin.instance.PluginContractInstance;
 import org.kaaproject.kaa.server.common.core.plugin.instance.PluginContractItemInfo;
 import org.kaaproject.kaa.server.plugin.messaging.gen.Configuration;
@@ -52,16 +53,18 @@ public class EndpointMessagePluginGenerator extends AbstractSdkApiGenerator<Conf
      *
      * @author Bohdan Khablenko
      */
-    private class SendMsgMethodSignatureGenerator implements PluginAPIMethodSignatureGenerator {
+    private class SendMsgMethodSignatureGenerator implements MethodSignatureGenerator {
+
+        private static final String PARAM_NAME = "param";
 
         private static final String NULL_PARAM_TYPE_TEMPLATE = "";
         private static final String NULL_RETURN_TYPE_TEMPLATE = "java.util.concurrent.Future<Void>";
 
-        private static final String NON_NULL_PARAM_TYPE_TEMPLATE = "{0} param";
+        private static final String NON_NULL_PARAM_TYPE_TEMPLATE = "{0}";
         private static final String NON_NULL_RETURN_TYPE_TEMPLATE = "java.util.concurrent.Future<{0}>";
 
         @Override
-        public String generateMethodSignature(String methodName, String paramType, String returnType) {
+        public MethodSignature generateMethodSignature(String methodName, String paramType, String returnType) {
 
             // Insert the arguments into corresponding templates
             if (paramType == null && returnType == null) {
@@ -78,8 +81,9 @@ public class EndpointMessagePluginGenerator extends AbstractSdkApiGenerator<Conf
                 returnType = MessageFormat.format(NON_NULL_RETURN_TYPE_TEMPLATE, returnType);
             }
 
-            // Format method signature
-            return MessageFormat.format(METHOD_SIGNATURE_TEMPLATE, returnType, methodName, paramType);
+            String paramName = (paramType != null && !paramType.isEmpty()) ? PARAM_NAME : "";
+
+            return new MethodSignature(methodName, paramName, paramType, returnType);
         }
     }
 
@@ -89,15 +93,17 @@ public class EndpointMessagePluginGenerator extends AbstractSdkApiGenerator<Conf
      *
      * @author Bohdan Khablenko
      */
-    private class ReceiveMsgMethodSignatureGenerator implements PluginAPIMethodSignatureGenerator {
+    private class ReceiveMsgMethodSignatureGenerator implements MethodSignatureGenerator {
 
-        private static final String PARAM_TYPE_TEMPLATE = "{0}_MethodListener listener";
+        private static final String PARAM_NAME = "listener";
+
+        private static final String PARAM_TYPE_TEMPLATE = "{0}_MethodListener";
         private static final String RETURN_TYPE_TEMPLATE = "void";
 
         private static final String METHOD_LISTENER_NULL_PARAM_TYPE_TEMPLATE = "";
         private static final String METHOD_LISTENER_NULL_RETURN_TYPE_TEMPLATE = "void";
 
-        private static final String METHOD_LISTENER_NON_NULL_PARAM_TYPE_TEMPLATE = "{0} listener";
+        private static final String METHOD_LISTENER_NON_NULL_PARAM_TYPE_TEMPLATE = "{0}";
         private static final String METHOD_LISTENER_NON_NULL_RETURN_TYPE_TEMPLATE = "{0}";
 
         private static final String METHOD_LISTENER_TEMPLATE_FILE = "templates/listener.template";
@@ -111,7 +117,7 @@ public class EndpointMessagePluginGenerator extends AbstractSdkApiGenerator<Conf
         }
 
         @Override
-        public String generateMethodSignature(String methodName, String paramType, String returnType) {
+        public MethodSignature generateMethodSignature(String methodName, String paramType, String returnType) {
 
             // Pick a parameter type template for the method listener class
             String listenerParamTypeTemplate;
@@ -143,19 +149,19 @@ public class EndpointMessagePluginGenerator extends AbstractSdkApiGenerator<Conf
 
             paramType = MessageFormat.format(PARAM_TYPE_TEMPLATE, methodName);
             returnType = MessageFormat.format(RETURN_TYPE_TEMPLATE, returnType);
+            String paramName = (paramType != null && !paramType.isEmpty()) ? PARAM_NAME : "";
 
-            // Format method signature
-            return MessageFormat.format(METHOD_SIGNATURE_TEMPLATE, returnType, methodName, paramType);
+            return new MethodSignature(methodName, paramName, paramType, returnType);
         }
     }
 
-    /**
-     * Stores the package name.
-     */
-    private String namespace;
-
     private static final PluginContractItemDef SEND_MSG_DEF = MessagingSDKContract.buildSendMsgDef();
     private static final PluginContractItemDef RECEIVE_MSG_DEF = MessagingSDKContract.buildReceiveMsgDef();
+
+    public EndpointMessagePluginGenerator() {
+        // MessaingPluginAPI, MessagingPlugin
+        this.prefix = "Messaging";
+    }
 
     @Override
     public Class<Configuration> getConfigurationClass() {
@@ -165,7 +171,6 @@ public class EndpointMessagePluginGenerator extends AbstractSdkApiGenerator<Conf
     @Override
     protected List<SdkApiFile> generatePluginSdkApi(SpecificPluginSdkApiGenerationContext<Configuration> context) {
 
-        // Get the package name
         this.namespace = MessageFormat.format(PACKAGE_NAME_TEMPLATE, context.getConfiguration().getMessageFamilyFqn(), context.getExtensionId());
 
         List<SdkApiFile> sources = new ArrayList<>();
@@ -214,16 +219,17 @@ public class EndpointMessagePluginGenerator extends AbstractSdkApiGenerator<Conf
                         out = parser.parse(item.getOutMessageSchema()).getFullName();
                     }
 
-                    String signature = this.signatureGenerators.get(def).generateMethodSignature(name, in, out);
-                    signatureBuffer.append(signature).append(";\n");
+                    MethodSignature signature = this.signatureGenerators.get(def).generateMethodSignature(name, in, out);
+                    signature.setId(this.signatures.size() + 1);
+                    this.signatures.add(signature);
+                    signatureBuffer.append(signature.toString()).append(";\n");
                 }
             }
         }
 
         // Add the plugin API source file to the output
-        // TODO: Extract the hardcoded constants
-        String fileName = MessageFormat.format(SOURCE_FILE_NAME_TEMPLATE, MessageFormat.format(PLUGIN_API_CLASS_NAME_TEMPLATE, "Messaging"));
-        byte[] fileData = this.getPluginAPIFileData("Messaging", this.namespace, signatureBuffer.toString());
+        String fileName = MessageFormat.format(SOURCE_FILE_NAME_TEMPLATE, MessageFormat.format(PLUGIN_API_CLASS_NAME_TEMPLATE, this.prefix));
+        byte[] fileData = this.getPluginAPIFileData(this.prefix, this.namespace, signatureBuffer.toString());
         sources.add(new SdkApiFile(fileName, fileData));
 
         return sources;
@@ -231,8 +237,15 @@ public class EndpointMessagePluginGenerator extends AbstractSdkApiGenerator<Conf
 
     // @Override
     protected List<SdkApiFile> generatePluginImplementation(SpecificPluginSdkApiGenerationContext<Configuration> context) {
-        // TODO: Needs implementation
-        return Collections.emptyList();
+
+        // This method might produce more than a single source file
+        List<SdkApiFile> sources = new ArrayList<>();
+
+        String fileName = MessageFormat.format(SOURCE_FILE_NAME_TEMPLATE, MessageFormat.format(PLUGIN_IMPLEMENTATION_CLASS_NAME_TEMPLATE, this.prefix));
+        byte[] fileData = this.getPluginImplementationFileData(this.prefix, this.namespace, null);
+        sources.add(new SdkApiFile(fileName, fileData));
+
+        return sources;
     }
 
     /**
@@ -253,6 +266,7 @@ public class EndpointMessagePluginGenerator extends AbstractSdkApiGenerator<Conf
         String content = this.readFileAsString(PLUGIN_IMPLEMENTATION_TEMPLATE_FILE);
         content = content.replace(PACKAGE_NAME, packageName);
         content = content.replace(CLASS_NAME, MessageFormat.format(PLUGIN_IMPLEMENTATION_CLASS_NAME_TEMPLATE, className));
+        content = content.replace("${methodIdentifiers}", this.generateMethodConstants());
         // TODO: Finish the implementation
         return content.getBytes();
     }
@@ -263,7 +277,7 @@ public class EndpointMessagePluginGenerator extends AbstractSdkApiGenerator<Conf
         SpecificPluginSdkApiGenerationContext<Configuration> context = EndpointMessagePluginGenerator.getHardcodedContext();
         List<SdkApiFile> sources = subject.generatePluginSdkApi(context);
         for (SdkApiFile source : sources) {
-            System.out.println(source.getFileName());
+            System.out.println("// " + source.getFileName());
             System.out.println(new String(source.getFileData()));
         }
     }

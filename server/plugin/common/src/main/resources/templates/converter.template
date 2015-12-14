@@ -1,0 +1,10 @@
+/**
+ * Auto-generated thread-safe entity converter for
+ * {@link ${type}}
+ */
+private static final ThreadLocal<org.kaaproject.kaa.common.avro.AvroByteArrayConverter<${type}>> entity${constant}Converter = new ThreadLocal<org.kaaproject.kaa.common.avro.AvroByteArrayConverter<${type}>>() {
+    @Override
+    protected org.kaaproject.kaa.common.avro.AvroByteArrayConverter<${type}> initialValue() {
+        return new org.kaaproject.kaa.common.avro.AvroByteArrayConverter<${type}>(ClassA.class);
+    }
+};
