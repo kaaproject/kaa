@@ -31,6 +31,8 @@ public class ConfigurationDto extends AbstractStructureDto {
 
     public ConfigurationDto(ConfigurationDto other) {
         super(other);
+        this.schemaId = other.schemaId;
+        this.schemaVersion = other.getSchemaVersion();
         this.protocolSchema = other.protocolSchema;
     }
 

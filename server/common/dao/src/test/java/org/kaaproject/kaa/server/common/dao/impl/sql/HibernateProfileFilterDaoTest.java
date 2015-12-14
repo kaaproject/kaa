@@ -20,10 +20,12 @@ package org.kaaproject.kaa.server.common.dao.impl.sql;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.UpdateStatus;
 import org.kaaproject.kaa.server.common.dao.model.sql.Application;
 import org.kaaproject.kaa.server.common.dao.model.sql.EndpointGroup;
 import org.kaaproject.kaa.server.common.dao.model.sql.EndpointProfileSchema;
+import org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils;
 import org.kaaproject.kaa.server.common.dao.model.sql.ProfileFilter;
 import org.kaaproject.kaa.server.common.dao.model.sql.ServerProfileSchema;
 import org.springframework.test.annotation.DirtiesContext;
@@ -71,6 +73,28 @@ public class HibernateProfileFilterDaoTest extends HibernateAbstractTest {
         List<ProfileFilter> found = profileFilterDao.findActualBySchemaIdAndGroupId(schema.getStringId(), server.getStringId(), group.getStringId());
         Assert.assertEquals(actual.size(), found.size());
         Assert.assertEquals(actual, found);
+    }
+
+    @Test
+    public void findActualBySchemaIdAndGroupIdWithNullServerSchema() {
+        EndpointProfileSchema ps = generateProfSchema(null, 1).get(0);
+        List<ProfileFilter> filters = generateFilterWithoutSchemaGeneration(ps, null, null, 1, UpdateStatus.ACTIVE);
+        ProfileFilter first = filters.get(0);
+        EndpointGroup group = first.getEndpointGroup();
+        EndpointProfileSchema schema = first.getEndpointProfileSchema();
+        List<ProfileFilter> found = profileFilterDao.findActualBySchemaIdAndGroupId(schema.getStringId(), null, group.getStringId());
+        Assert.assertFalse(found.isEmpty());
+    }
+
+    @Test
+    public void findActualBySchemaIdAndGroupIdWithNullEndpointSchema() {
+        ServerProfileSchemaDto ss = generateServerProfileSchema(null, null);
+        List<ProfileFilter> filters = generateFilterWithoutSchemaGeneration(null, serverProfileSchemaDao.findById(ss.getId()), null, 1, UpdateStatus.ACTIVE);
+        ProfileFilter first = filters.get(0);
+        EndpointGroup group = first.getEndpointGroup();
+        ServerProfileSchema srv = first.getServerProfileSchema();
+        List<ProfileFilter> found = profileFilterDao.findActualBySchemaIdAndGroupId(null, srv.getStringId(), group.getStringId());
+        Assert.assertFalse(found.isEmpty());
     }
 
     @Test

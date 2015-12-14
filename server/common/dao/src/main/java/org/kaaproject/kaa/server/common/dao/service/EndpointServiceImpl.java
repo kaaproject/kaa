@@ -427,7 +427,7 @@ public class EndpointServiceImpl implements EndpointService {
     @Override
     @Transactional
     public EndpointGroupDto findDefaultGroup(String appId) {
-        validateSqlId(appId, "Can't find defualt endpoint group by app id. Incorrect app id " + appId);
+        validateSqlId(appId, "Can't find default endpoint group by app id. Incorrect app id " + appId);
         return getDto(endpointGroupDao.findByAppIdAndWeight(appId, DEFAULT_GROUP_WEIGHT));
     }
 

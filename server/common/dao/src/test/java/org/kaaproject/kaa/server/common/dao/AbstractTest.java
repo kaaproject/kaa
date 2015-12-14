@@ -98,6 +98,7 @@ import org.kaaproject.kaa.server.common.dao.impl.NotificationSchemaDao;
 import org.kaaproject.kaa.server.common.dao.impl.ProfileFilterDao;
 import org.kaaproject.kaa.server.common.dao.impl.ProfileSchemaDao;
 import org.kaaproject.kaa.server.common.dao.impl.SdkProfileDao;
+import org.kaaproject.kaa.server.common.dao.impl.ServerProfileSchemaDao;
 import org.kaaproject.kaa.server.common.dao.impl.TenantDao;
 import org.kaaproject.kaa.server.common.dao.impl.TopicDao;
 import org.kaaproject.kaa.server.common.dao.impl.UserDao;
@@ -122,6 +123,7 @@ import org.kaaproject.kaa.server.common.dao.model.sql.LogSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.NotificationSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.ProfileFilter;
 import org.kaaproject.kaa.server.common.dao.model.sql.SdkProfile;
+import org.kaaproject.kaa.server.common.dao.model.sql.ServerProfileSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.Tenant;
 import org.kaaproject.kaa.server.common.dao.model.sql.Topic;
 import org.kaaproject.kaa.server.common.dao.model.sql.User;
@@ -220,6 +222,8 @@ public class AbstractTest {
     protected CTLSchemaDao<CTLSchema> ctlSchemaDao;
     @Autowired
     protected CTLSchemaMetaInfoDao<CTLSchemaMetaInfo> ctlSchemaMetaInfoDao;
+    @Autowired
+    protected ServerProfileSchemaDao<ServerProfileSchema> serverProfileSchemaDao;
 
     protected Application application;
 

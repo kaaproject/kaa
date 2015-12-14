@@ -20,6 +20,7 @@ import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
 import org.kaaproject.kaa.common.dto.UpdateStatus;
 import org.kaaproject.kaa.server.common.dao.impl.ProfileFilterDao;
 import org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils;
@@ -82,8 +83,8 @@ public class HibernateProfileFilterDao extends HibernateAbstractDao<ProfileFilte
         if (isNotBlank(groupId)) {
             Criteria criteria = getCriteria();
             criteria.createAlias(ENDPOINT_GROUP_PROPERTY, ENDPOINT_GROUP_ALIAS);
-            criteria.createAlias(ENDPOINT_PROFILE_SCHEMA_PROPERTY, ENDPOINT_PROFILE_SCHEMA_ALIAS);
-            criteria.createAlias(SERVER_PROFILE_SCHEMA_PROPERTY, SERVER_PROFILE_SCHEMA_ALIAS);
+            criteria.createAlias(ENDPOINT_PROFILE_SCHEMA_PROPERTY, ENDPOINT_PROFILE_SCHEMA_ALIAS, JoinType.LEFT_OUTER_JOIN);
+            criteria.createAlias(SERVER_PROFILE_SCHEMA_PROPERTY, SERVER_PROFILE_SCHEMA_ALIAS, JoinType.LEFT_OUTER_JOIN);
             criteria.add(Restrictions.and(
                     Restrictions.eq(ENDPOINT_GROUP_REFERENCE, Long.valueOf(groupId)),
                     buildEqIdCriterion(ENDPOINT_PROFILE_SCHEMA_REFERENCE, endpointProfileSchemaId),
@@ -106,8 +107,8 @@ public class HibernateProfileFilterDao extends HibernateAbstractDao<ProfileFilte
         ProfileFilter filter = null;
         if (isNotBlank(groupId)) {
             Criteria criteria = getCriteria();
-            criteria.createAlias(ENDPOINT_PROFILE_SCHEMA_PROPERTY, ENDPOINT_PROFILE_SCHEMA_ALIAS);
-            criteria.createAlias(SERVER_PROFILE_SCHEMA_PROPERTY, SERVER_PROFILE_SCHEMA_ALIAS);
+            criteria.createAlias(ENDPOINT_PROFILE_SCHEMA_PROPERTY, ENDPOINT_PROFILE_SCHEMA_ALIAS, JoinType.LEFT_OUTER_JOIN);
+            criteria.createAlias(SERVER_PROFILE_SCHEMA_PROPERTY, SERVER_PROFILE_SCHEMA_ALIAS, JoinType.LEFT_OUTER_JOIN);
             criteria.createAlias(ENDPOINT_GROUP_PROPERTY, ENDPOINT_GROUP_ALIAS);
             Criterion crit = Restrictions.and(
                     Restrictions.eq(ENDPOINT_GROUP_REFERENCE, Long.valueOf(groupId)),
@@ -131,8 +132,8 @@ public class HibernateProfileFilterDao extends HibernateAbstractDao<ProfileFilte
         if (isNotBlank(appId)) {
             Criteria criteria = getCriteria();
             criteria.createAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS);
-            criteria.createAlias(ENDPOINT_PROFILE_SCHEMA_PROPERTY, ENDPOINT_PROFILE_SCHEMA_ALIAS);
-            criteria.createAlias(SERVER_PROFILE_SCHEMA_PROPERTY, SERVER_PROFILE_SCHEMA_ALIAS);
+            criteria.createAlias(ENDPOINT_PROFILE_SCHEMA_PROPERTY, ENDPOINT_PROFILE_SCHEMA_ALIAS, JoinType.LEFT_OUTER_JOIN);
+            criteria.createAlias(SERVER_PROFILE_SCHEMA_PROPERTY, SERVER_PROFILE_SCHEMA_ALIAS, JoinType.LEFT_OUTER_JOIN);
             Criterion criterion = Restrictions.and(
                     Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)),
                     Restrictions.eq(ENDPOINT_PROFILE_SCHEMA_VERSION_REFERENCE, endpointSchemaVersion),
@@ -156,8 +157,8 @@ public class HibernateProfileFilterDao extends HibernateAbstractDao<ProfileFilte
                 endpointProfileSchemaId, serverProfileSchemaId, groupId);
         if (isNotBlank(groupId)) {
             Criteria criteria = getCriteria();
-            criteria.createAlias(ENDPOINT_PROFILE_SCHEMA_PROPERTY, ENDPOINT_PROFILE_SCHEMA_ALIAS);
-            criteria.createAlias(SERVER_PROFILE_SCHEMA_PROPERTY, SERVER_PROFILE_SCHEMA_ALIAS);
+            criteria.createAlias(ENDPOINT_PROFILE_SCHEMA_PROPERTY, ENDPOINT_PROFILE_SCHEMA_ALIAS, JoinType.LEFT_OUTER_JOIN);
+            criteria.createAlias(SERVER_PROFILE_SCHEMA_PROPERTY, SERVER_PROFILE_SCHEMA_ALIAS, JoinType.LEFT_OUTER_JOIN);
             criteria.createAlias(ENDPOINT_GROUP_PROPERTY, ENDPOINT_GROUP_ALIAS);
             criteria.add(Restrictions.and(
                     Restrictions.eq(ENDPOINT_GROUP_REFERENCE, Long.valueOf(groupId)),
@@ -181,8 +182,8 @@ public class HibernateProfileFilterDao extends HibernateAbstractDao<ProfileFilte
         ProfileFilter filter = null;
         if (isNotBlank(groupId)) {
             Criteria criteria = getCriteria();
-            criteria.createAlias(ENDPOINT_PROFILE_SCHEMA_PROPERTY, ENDPOINT_PROFILE_SCHEMA_ALIAS);
-            criteria.createAlias(SERVER_PROFILE_SCHEMA_PROPERTY, SERVER_PROFILE_SCHEMA_ALIAS);
+            criteria.createAlias(ENDPOINT_PROFILE_SCHEMA_PROPERTY, ENDPOINT_PROFILE_SCHEMA_ALIAS, JoinType.LEFT_OUTER_JOIN);
+            criteria.createAlias(SERVER_PROFILE_SCHEMA_PROPERTY, SERVER_PROFILE_SCHEMA_ALIAS, JoinType.LEFT_OUTER_JOIN);
             criteria.createAlias(ENDPOINT_GROUP_PROPERTY, ENDPOINT_GROUP_ALIAS);
             criteria.add(Restrictions.and(
                     Restrictions.eq(ENDPOINT_GROUP_REFERENCE, Long.valueOf(groupId)),
@@ -243,8 +244,8 @@ public class HibernateProfileFilterDao extends HibernateAbstractDao<ProfileFilte
         ProfileFilter filter = null;
         if (isNotBlank(groupId)) {
             Criteria criteria = getCriteria();
-            criteria.createAlias(ENDPOINT_PROFILE_SCHEMA_PROPERTY, ENDPOINT_PROFILE_SCHEMA_ALIAS);
-            criteria.createAlias(SERVER_PROFILE_SCHEMA_PROPERTY, SERVER_PROFILE_SCHEMA_ALIAS);
+            criteria.createAlias(ENDPOINT_PROFILE_SCHEMA_PROPERTY, ENDPOINT_PROFILE_SCHEMA_ALIAS, JoinType.LEFT_OUTER_JOIN);
+            criteria.createAlias(SERVER_PROFILE_SCHEMA_PROPERTY, SERVER_PROFILE_SCHEMA_ALIAS, JoinType.LEFT_OUTER_JOIN);
             criteria.createAlias(ENDPOINT_GROUP_PROPERTY, ENDPOINT_GROUP_ALIAS);
             criteria.add(Restrictions.and(
                     Restrictions.eq(ENDPOINT_GROUP_REFERENCE, Long.valueOf(groupId)),
@@ -281,8 +282,8 @@ public class HibernateProfileFilterDao extends HibernateAbstractDao<ProfileFilte
                 endpointProfileSchemaId, serverProfileSchemaId, groupId);
         if (isNotBlank(groupId)) {
             Criteria criteria = getCriteria();
-            criteria.createAlias(ENDPOINT_PROFILE_SCHEMA_PROPERTY, ENDPOINT_PROFILE_SCHEMA_ALIAS);
-            criteria.createAlias(SERVER_PROFILE_SCHEMA_PROPERTY, SERVER_PROFILE_SCHEMA_ALIAS);
+            criteria.createAlias(ENDPOINT_PROFILE_SCHEMA_PROPERTY, ENDPOINT_PROFILE_SCHEMA_ALIAS, JoinType.LEFT_OUTER_JOIN);
+            criteria.createAlias(SERVER_PROFILE_SCHEMA_PROPERTY, SERVER_PROFILE_SCHEMA_ALIAS, JoinType.LEFT_OUTER_JOIN);
             criteria.createAlias(ENDPOINT_GROUP_PROPERTY, ENDPOINT_GROUP_ALIAS);
 
             criteria.add(Restrictions.and(
@@ -300,7 +301,6 @@ public class HibernateProfileFilterDao extends HibernateAbstractDao<ProfileFilte
     protected Class<ProfileFilter> getEntityClass() {
         return ProfileFilter.class;
     }
-
 
     private Criterion buildEqIdCriterion(String reference, String id) {
         Criterion criterion;

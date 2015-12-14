@@ -314,6 +314,34 @@ public abstract class HibernateAbstractTest extends AbstractTest {
         return filters;
     }
 
+    protected List<ProfileFilter> generateFilterWithoutSchemaGeneration(EndpointProfileSchema schema, ServerProfileSchema srvSchema, EndpointGroup group, int count, UpdateStatus status) {
+        Application app = null;
+        if (schema != null) {
+            app = schema.getApplication();
+        } else if (srvSchema != null) {
+            app = srvSchema.getApplication();
+        }
+        if (group == null) {
+            group = generateEndpointGroup(app, null);
+        }
+        List<ProfileFilter> filters = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            ProfileFilter dto = new ProfileFilter();
+            dto.setId(null);
+            dto.setStatus(status != null ? status : UpdateStatus.INACTIVE);
+            dto.setEndpointGroup(group);
+            dto.setEndpointProfileSchema(schema);
+            dto.setServerProfileSchema(srvSchema);
+            dto.setSequenceNumber(i);
+            dto.setApplication(app);
+            ProfileFilter saved = profileFilterDao.save(dto);
+            Assert.assertNotNull(saved);
+            filters.add(saved);
+        }
+        return filters;
+    }
+
+
     protected Topic generateTopic(Application app, TopicTypeDto type, String topicName) {
         Topic topic = new Topic();
         if (topicName != null && !topicName.isEmpty()) {
