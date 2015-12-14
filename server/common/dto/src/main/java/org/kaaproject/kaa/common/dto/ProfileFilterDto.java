@@ -57,13 +57,6 @@ public class ProfileFilterDto extends AbstractStructureDto {
     public void setServerProfileSchemaVersion(Integer serverProfileSchemaVersion) {
         this.serverProfileSchemaVersion = serverProfileSchemaVersion;
     }
-    
-    public ProfileVersionPairDto getProfileFilterVersionPair() {
-        return new ProfileVersionPairDto(endpointProfileSchemaId, 
-                endpointProfileSchemaVersion, 
-                serverProfileSchemaId,
-                serverProfileSchemaVersion);
-    }
 
     @Override
     public int hashCode() {

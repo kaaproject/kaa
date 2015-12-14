@@ -163,7 +163,7 @@ public class EndpointActorMessageProcessor {
             state.setProfile(endpointProfile);
             Set<ChannelMetaData> channels = state.getChannelsByTypes(TransportType.CONFIGURATION, TransportType.NOTIFICATION);
             LOG.debug("[{}][{}] Processing profile update for {} channels", endpointKey, actorKey, channels.size());
-            syncChannels(context, channels, false, false);
+            syncChannels(context, channels, true, true);
         } else {
             LOG.warn("[{}][{}] Can't update server profile for an empty state", endpointKey, actorKey);
         }

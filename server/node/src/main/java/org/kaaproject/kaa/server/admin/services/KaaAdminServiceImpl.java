@@ -130,6 +130,8 @@ import org.kaaproject.kaa.server.common.plugin.KaaPluginConfig;
 import org.kaaproject.kaa.server.common.plugin.PluginConfig;
 import org.kaaproject.kaa.server.common.plugin.PluginType;
 import org.kaaproject.kaa.server.control.service.ControlService;
+import org.kaaproject.kaa.server.operations.service.filter.DefaultFilterEvaluator;
+import org.kaaproject.kaa.server.operations.service.filter.el.GenericRecordPropertyAccessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -138,6 +140,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
+import org.springframework.expression.Expression;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
+import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -1532,12 +1537,59 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
                 profileFilter.setModifiedUsername(username);
                 ProfileFilterDto storedProfileFilter = controlService.getProfileFilter(profileFilter.getId());
                 Utils.checkNotNull(storedProfileFilter);
-                checkEndpointGroupId(storedProfileFilter.getEndpointGroupId());
+                checkEndpointGroupId(storedProfileFilter.getEndpointGroupId());                
             }
+            validateProfileFilterBody(profileFilter.getEndpointProfileSchemaId(), 
+                    profileFilter.getServerProfileSchemaId(), 
+                    profileFilter.getBody());
             return controlService.editProfileFilter(profileFilter);
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
+    }
+    
+    private void validateProfileFilterBody(String endpointProfileSchemaId, String serverProfileSchemaId, 
+            String filterBody) throws KaaAdminServiceException {
+        GenericRecord endpointProfileRecord = null;
+        GenericRecord serverProfileRecord = null;
+        try {
+            if (endpointProfileSchemaId != null) {
+                EndpointProfileSchemaDto endpointProfileSchema = getProfileSchema(endpointProfileSchemaId);
+                endpointProfileRecord = getDefaultRecordFromCtlSchema(endpointProfileSchema.getCtlSchemaId());
+            }
+            if (serverProfileSchemaId != null) {
+                ServerProfileSchemaDto serverProfileSchema = getServerProfileSchema(serverProfileSchemaId);
+                serverProfileRecord = getDefaultRecordFromCtlSchema(serverProfileSchema.getCtlSchemaId());
+            }
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+        try {
+            Expression expression = new SpelExpressionParser().parseExpression(filterBody);
+            StandardEvaluationContext evaluationContext;
+            if (endpointProfileRecord != null) {
+                evaluationContext = new StandardEvaluationContext(endpointProfileRecord);
+                evaluationContext.setVariable(DefaultFilterEvaluator.CLIENT_PROFILE_VARIABLE_NAME, endpointProfileRecord);
+            } else {
+                evaluationContext = new StandardEvaluationContext();
+            }
+            evaluationContext.addPropertyAccessor(new GenericRecordPropertyAccessor());
+            evaluationContext.setVariable(DefaultFilterEvaluator.EP_KEYHASH_VARIABLE_NAME, "test");
+            if (serverProfileRecord != null) {
+                evaluationContext.setVariable(DefaultFilterEvaluator.SERVER_PROFILE_VARIABLE_NAME, serverProfileRecord);
+            }
+            expression.getValue(evaluationContext, Boolean.class);
+        } catch (Exception e) {
+            throw new KaaAdminServiceException("Invalid profile filter body!", e, ServiceErrorCode.BAD_REQUEST_PARAMS);
+        }
+    }
+    
+    private GenericRecord getDefaultRecordFromCtlSchema(String ctlSchemaId) throws Exception {
+        CTLSchemaDto ctlSchema = controlService.getCTLSchemaById(ctlSchemaId);
+        Schema schema = controlService.exportCTLSchemaFlatAsSchema(ctlSchema);
+        GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(schema);
+        GenericRecord defaultRecord = converter.decodeJson(ctlSchema.getDefaultRecord());
+        return defaultRecord;
     }
 
     @Override
@@ -1637,8 +1689,11 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
                 checkEndpointGroupId(storedConfiguration.getEndpointGroupId());
             }
             return controlService.editConfiguration(configuration);
+        } catch (StaleObjectStateException e) {
+            throw new KaaAdminServiceException("Someone has already updated the configuration. Reload page to be able to edit it.",
+                    ServiceErrorCode.GENERAL_ERROR);
         } catch (Exception e) {
-            throw Utils.handleException(e, "Someone has already updated the configuration. Reload page to be able to edit it");
+            throw Utils.handleException(e);
         }
     }
 
@@ -1649,9 +1704,6 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             ConfigurationDto toSave = toConfigurationDto(configuration);
             ConfigurationDto stored = editConfiguration(toSave);
             return toConfigurationRecordFormDto(stored);
-        } catch (StaleObjectStateException e) {
-            throw new KaaAdminServiceException("Someone has already updated the configuration. Reload page to be able to edit it.",
-                    ServiceErrorCode.GENERAL_ERROR);
         } catch (Exception e) {
             throw Utils.handleException(e);
         }

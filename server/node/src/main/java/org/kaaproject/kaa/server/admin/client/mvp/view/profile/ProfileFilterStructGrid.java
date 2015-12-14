@@ -30,7 +30,7 @@ public class ProfileFilterStructGrid extends AbstractStructGrid<ProfileFilterDto
     protected float constructColumnsImpl(DataGrid<ProfileFilterRecordDto> table) {
         float prefWidth = 0;
         prefWidth += constructStringColumn(table,
-                Utils.constants.profileSchemaVersion(),
+                Utils.constants.endpointProfileSchema(),
                 new StringValueProvider<ProfileFilterRecordDto>() {
                     @Override
                     public String getValue(ProfileFilterRecordDto item) {
@@ -39,7 +39,7 @@ public class ProfileFilterStructGrid extends AbstractStructGrid<ProfileFilterDto
                     }
                 }, 60);
         prefWidth += constructStringColumn(table,
-                Utils.constants.serverProfileSchemaVersion(),
+                Utils.constants.serverProfileSchema(),
                 new StringValueProvider<ProfileFilterRecordDto>() {
                     @Override
                     public String getValue(ProfileFilterRecordDto item) {

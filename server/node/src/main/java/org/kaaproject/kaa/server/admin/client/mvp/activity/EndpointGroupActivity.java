@@ -285,6 +285,7 @@ public class EndpointGroupActivity
         detailsView.getName().setValue(entity.getName());
         if (!create) {
             detailsView.getWeight().setValue(entity.getWeight());
+            detailsView.setProfileFiltersVisible(entity.getWeight() > 0);
         }
         detailsView.getDescription().setValue(entity.getDescription());
         detailsView.getCreatedUsername().setValue(entity.getCreatedUsername());

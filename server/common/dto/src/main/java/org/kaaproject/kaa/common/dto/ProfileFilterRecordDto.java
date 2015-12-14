@@ -53,10 +53,14 @@ public class ProfileFilterRecordDto extends StructureRecordDto<ProfileFilterDto>
     public static List<ProfileFilterRecordDto> convertToProfileFilterRecords(Collection<ProfileFilterDto> profileFilters) {
         Map<ProfileVersionPairDto, ProfileFilterRecordDto> profileFiltterRecordsMap = new HashMap<>();
         for (ProfileFilterDto profileFilter : profileFilters) {
-            ProfileFilterRecordDto profileFilterRecord = profileFiltterRecordsMap.get(profileFilter.getProfileFilterVersionPair());
+            ProfileVersionPairDto versionPair = new ProfileVersionPairDto(profileFilter.getEndpointProfileSchemaId(), 
+                    profileFilter.getEndpointProfileSchemaVersion(), 
+                    profileFilter.getServerProfileSchemaId(),
+                    profileFilter.getServerProfileSchemaVersion());
+            ProfileFilterRecordDto profileFilterRecord = profileFiltterRecordsMap.get(versionPair);
             if (profileFilterRecord == null) {
                 profileFilterRecord = new ProfileFilterRecordDto();
-                profileFiltterRecordsMap.put(profileFilter.getProfileFilterVersionPair(), profileFilterRecord);
+                profileFiltterRecordsMap.put(versionPair, profileFilterRecord);
             }
             if (profileFilter.getStatus()==UpdateStatus.ACTIVE) {
                 profileFilterRecord.setActiveStructureDto(profileFilter);

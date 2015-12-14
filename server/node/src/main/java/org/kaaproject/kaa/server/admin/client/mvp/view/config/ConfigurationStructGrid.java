@@ -30,7 +30,7 @@ public class ConfigurationStructGrid extends AbstractStructGrid<ConfigurationDto
     protected float constructColumnsImpl(DataGrid<ConfigurationRecordDto> table) {
         float prefWidth = 0;
         prefWidth += constructStringColumn(table,
-                Utils.constants.schemaVersion(),
+                Utils.constants.configurationSchema(),
                 new StringValueProvider<ConfigurationRecordDto>() {
                     @Override
                     public String getValue(ConfigurationRecordDto item) {
