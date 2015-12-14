@@ -410,9 +410,9 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public List<ProfileFilterDto> findProfileFiltersByAppIdAndVersions(String appId, int endpointSchemaVersion, int serverSchemaVersion) {
+    public List<ProfileFilterDto> findProfileFiltersByAppIdAndVersionsCombination(String appId, int endpointSchemaVersion, int serverSchemaVersion) {
         validateId(appId, "Can't find profile filter. Invalid application id: " + appId);
-        return convertDtoList(profileFilterDao.findByAppIdAndSchemaVersions(appId, endpointSchemaVersion, serverSchemaVersion));
+        return convertDtoList(profileFilterDao.findByAppIdAndSchemaVersionsCombination(appId, endpointSchemaVersion, serverSchemaVersion));
     }
 
     @Override

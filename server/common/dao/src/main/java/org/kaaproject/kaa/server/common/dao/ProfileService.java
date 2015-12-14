@@ -158,7 +158,7 @@ public interface ProfileService {
      * @param serverSchemaVersion the schema version
      * @return the list of profile filters
      */
-    List<ProfileFilterDto> findProfileFiltersByAppIdAndVersions(String appId, int endpointSchemaVersion, int serverSchemaVersion);
+    List<ProfileFilterDto> findProfileFiltersByAppIdAndVersionsCombination(String appId, int endpointSchemaVersion, int serverSchemaVersion);
 
     /**
      * Find profile schema by application id and version.

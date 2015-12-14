@@ -227,7 +227,7 @@ public class ConcurrentCacheServiceTest extends AbstractTest {
                 });
 
         when(
-                profileService.findProfileFiltersByAppIdAndVersions(APP_ID, TEST_GET_PROFILES_KEY.getEndpointProfileSchemaVersion(),
+                profileService.findProfileFiltersByAppIdAndVersionsCombination(APP_ID, TEST_GET_PROFILES_KEY.getEndpointProfileSchemaVersion(),
                         TEST_GET_PROFILES_KEY.getServerProfileSchemaVersion())).then(new Answer<List<ProfileFilterDto>>() {
             @Override
             public List<ProfileFilterDto> answer(InvocationOnMock invocation) throws Throwable {
@@ -477,12 +477,12 @@ public class ConcurrentCacheServiceTest extends AbstractTest {
     @Test
     public void testGetFilters() throws GetDeltaException {
         assertEquals(TEST_PROFILE_FILTER_LIST, cacheService.getFilters(TEST_GET_PROFILES_KEY));
-        verify(profileService, times(1)).findProfileFiltersByAppIdAndVersions(APP_ID, TEST_GET_PROFILES_KEY.getEndpointProfileSchemaVersion(),
+        verify(profileService, times(1)).findProfileFiltersByAppIdAndVersionsCombination(APP_ID, TEST_GET_PROFILES_KEY.getEndpointProfileSchemaVersion(),
                 TEST_GET_PROFILES_KEY.getServerProfileSchemaVersion());
         reset(profileService);
 
         assertEquals(TEST_PROFILE_FILTER_LIST, cacheService.getFilters(TEST_GET_PROFILES_KEY));
-        verify(profileService, times(0)).findProfileFiltersByAppIdAndVersions(APP_ID, TEST_GET_PROFILES_KEY.getEndpointProfileSchemaVersion(),
+        verify(profileService, times(0)).findProfileFiltersByAppIdAndVersionsCombination(APP_ID, TEST_GET_PROFILES_KEY.getEndpointProfileSchemaVersion(),
                 TEST_GET_PROFILES_KEY.getServerProfileSchemaVersion());
         reset(profileService);
     }
@@ -497,7 +497,7 @@ public class ConcurrentCacheServiceTest extends AbstractTest {
                 }
             });
 
-            verify(profileService, atMost(2)).findProfileFiltersByAppIdAndVersions(APP_ID, TEST_GET_PROFILES_KEY.getEndpointProfileSchemaVersion(),
+            verify(profileService, atMost(2)).findProfileFiltersByAppIdAndVersionsCombination(APP_ID, TEST_GET_PROFILES_KEY.getEndpointProfileSchemaVersion(),
                     TEST_GET_PROFILES_KEY.getServerProfileSchemaVersion());
             reset(profileService);
         }

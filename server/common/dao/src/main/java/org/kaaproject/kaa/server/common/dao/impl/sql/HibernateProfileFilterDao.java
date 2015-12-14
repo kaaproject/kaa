@@ -126,7 +126,7 @@ public class HibernateProfileFilterDao extends HibernateAbstractDao<ProfileFilte
     }
 
     @Override
-    public List<ProfileFilter> findByAppIdAndSchemaVersions(String appId, int endpointSchemaVersion, int serverSchemaVersion) {
+    public List<ProfileFilter> findByAppIdAndSchemaVersionsCombination(String appId, int endpointSchemaVersion, int serverSchemaVersion) {
         List<ProfileFilter> filters = null;
         LOG.debug("Searching configuration by application id [{}] and schema version [{}]", appId, serverSchemaVersion);
         if (isNotBlank(appId)) {
@@ -136,9 +136,17 @@ public class HibernateProfileFilterDao extends HibernateAbstractDao<ProfileFilte
             criteria.createAlias(SERVER_PROFILE_SCHEMA_PROPERTY, SERVER_PROFILE_SCHEMA_ALIAS, JoinType.LEFT_OUTER_JOIN);
             Criterion criterion = Restrictions.and(
                     Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)),
-                    Restrictions.eq(ENDPOINT_PROFILE_SCHEMA_VERSION_REFERENCE, endpointSchemaVersion),
-                    Restrictions.eq(SERVER_PROFILE_SCHEMA_VERSION_REFERENCE, serverSchemaVersion),
-                    Restrictions.eq(STATUS_PROPERTY, UpdateStatus.ACTIVE));
+                    Restrictions.eq(STATUS_PROPERTY, UpdateStatus.ACTIVE),
+                    Restrictions.or(Restrictions.and(
+                            Restrictions.eq(ENDPOINT_PROFILE_SCHEMA_VERSION_REFERENCE, endpointSchemaVersion),
+                            Restrictions.eq(SERVER_PROFILE_SCHEMA_VERSION_REFERENCE, serverSchemaVersion)
+                    ), Restrictions.and(
+                            Restrictions.eq(ENDPOINT_PROFILE_SCHEMA_VERSION_REFERENCE, endpointSchemaVersion),
+                            Restrictions.isNull(SERVER_PROFILE_SCHEMA_VERSION_REFERENCE)
+                    ), Restrictions.and(
+                            Restrictions.eq(SERVER_PROFILE_SCHEMA_VERSION_REFERENCE, serverSchemaVersion),
+                            Restrictions.isNull(ENDPOINT_PROFILE_SCHEMA_VERSION_REFERENCE)
+                    )));
             criteria.add(criterion);
             filters = findListByCriteria(criteria);
         }

@@ -25,7 +25,6 @@ import org.kaaproject.kaa.common.dto.UpdateStatus;
 import org.kaaproject.kaa.server.common.dao.model.sql.Application;
 import org.kaaproject.kaa.server.common.dao.model.sql.EndpointGroup;
 import org.kaaproject.kaa.server.common.dao.model.sql.EndpointProfileSchema;
-import org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils;
 import org.kaaproject.kaa.server.common.dao.model.sql.ProfileFilter;
 import org.kaaproject.kaa.server.common.dao.model.sql.ServerProfileSchema;
 import org.springframework.test.annotation.DirtiesContext;
@@ -112,12 +111,17 @@ public class HibernateProfileFilterDaoTest extends HibernateAbstractTest {
 
     @Test
     public void findByAppIdAndSchemaVersion() {
-        List<ProfileFilter> filters = generateFilter(null, null, null, 1, UpdateStatus.ACTIVE);
-        Assert.assertEquals(1, filters.size());
-        ProfileFilter first = filters.get(0);
-        Application app = first.getApplication();
-        List<ProfileFilter> found = profileFilterDao.findByAppIdAndSchemaVersions(app.getStringId(), first.getEndpointProfileSchemaVersion()
-                , first.getServerProfileSchemaVersion());
+        Application app = generateApplication(null);
+        EndpointProfileSchema schema = generateProfSchema(app, 1).get(0);
+        ServerProfileSchemaDto srvSchema = generateServerProfileSchema(app.getStringId(), app.getTenant().getStringId(), 101);
+
+        generateFilter(schema, new ServerProfileSchema(srvSchema), null, 2, UpdateStatus.ACTIVE);
+
+        List<ProfileFilter> filters = generateFilterWithoutSchemaGeneration(schema, new ServerProfileSchema(srvSchema), null, 1, UpdateStatus.ACTIVE);
+        filters.addAll(generateFilterWithoutSchemaGeneration(null, new ServerProfileSchema(srvSchema), null, 1, UpdateStatus.ACTIVE));
+        filters.addAll(generateFilterWithoutSchemaGeneration(schema, null,null, 1, UpdateStatus.ACTIVE));
+
+        List<ProfileFilter> found = profileFilterDao.findByAppIdAndSchemaVersionsCombination(app.getStringId(), schema.getVersion(), srvSchema.getVersion());
         Assert.assertEquals(filters, found);
     }
 

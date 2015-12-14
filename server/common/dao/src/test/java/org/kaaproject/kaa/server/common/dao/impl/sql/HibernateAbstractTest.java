@@ -287,10 +287,14 @@ public abstract class HibernateAbstractTest extends AbstractTest {
     }
 
     protected List<ProfileFilter> generateFilter(EndpointProfileSchema schema, ServerProfileSchema srvSchema, EndpointGroup group, int count, UpdateStatus status) {
+        return generateFilter(generateApplication(null), schema, srvSchema, group, count, status);
+    }
+
+    protected List<ProfileFilter> generateFilter(Application app, EndpointProfileSchema schema, ServerProfileSchema srvSchema, EndpointGroup group, int count, UpdateStatus status) {
         if (schema == null) {
-            schema = generateProfSchema(null, 1).get(0);
+            schema = generateProfSchema(app, 1).get(0);
         }
-        Application app = schema.getApplication();
+
         if (srvSchema == null) {
             srvSchema = new ServerProfileSchema(generateServerProfileSchema(app.getStringId(), app.getTenant().getStringId()));
         }

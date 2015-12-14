@@ -31,6 +31,7 @@ import static org.kaaproject.kaa.server.common.dao.DaoConstants.PROFILE_FILTER_B
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PROFILE_FILTER_ENDPOINT_SCHEMA_ID;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PROFILE_FILTER_SERVER_SCHEMA_ID;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PROFILE_FILTER_TABLE_NAME;
+import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
 
 @Entity
 @Table(name = PROFILE_FILTER_TABLE_NAME)
@@ -61,11 +62,11 @@ public final class ProfileFilter extends AbstractStructure<ProfileFilterDto> imp
         this.body = dto.getBody();
         String endpointSchemaId = dto.getEndpointProfileSchemaId();
         if (isNotBlank(endpointSchemaId)) {
-            this.endpointProfileSchema = new EndpointProfileSchema(ModelUtils.getLongId(endpointSchemaId));
+            this.endpointProfileSchema = new EndpointProfileSchema(getLongId(endpointSchemaId));
         }
         String serverSchemaId = dto.getServerProfileSchemaId();
         if (isNotBlank(serverSchemaId)) {
-            this.serverProfileSchema = new ServerProfileSchema(ModelUtils.getLongId(serverSchemaId));
+            this.serverProfileSchema = new ServerProfileSchema(getLongId(serverSchemaId));
         }
     }
 
@@ -105,21 +106,6 @@ public final class ProfileFilter extends AbstractStructure<ProfileFilterDto> imp
         this.serverProfileSchema = serverProfileSchema;
     }
 
-    @Override
-    public ProfileFilterDto toDto() {
-        ProfileFilterDto filterDto = super.toDto();
-        filterDto.setBody(body);
-        if (endpointProfileSchema != null) {
-            filterDto.setEndpointProfileSchemaId(endpointProfileSchema.getStringId());
-            filterDto.setEndpointProfileSchemaVersion(endpointProfileSchema.getVersion());
-        }
-        if (serverProfileSchema != null) {
-            filterDto.setServerProfileSchemaId(serverProfileSchema.getStringId());
-            filterDto.setServerProfileSchemaVersion(serverProfileSchema.getVersion());
-        }
-        return filterDto;
-    }
-
     public String getGroupId() {
         return endpointGroup.getStringId();
     }
@@ -154,5 +140,53 @@ public final class ProfileFilter extends AbstractStructure<ProfileFilterDto> imp
             id = serverProfileSchema.getStringId();
         }
         return id;
+    }
+
+    @Override
+    public ProfileFilterDto toDto() {
+        ProfileFilterDto filterDto = super.toDto();
+        filterDto.setBody(body);
+        if (endpointProfileSchema != null) {
+            filterDto.setEndpointProfileSchemaId(endpointProfileSchema.getStringId());
+            filterDto.setEndpointProfileSchemaVersion(endpointProfileSchema.getVersion());
+        }
+        if (serverProfileSchema != null) {
+            filterDto.setServerProfileSchemaId(serverProfileSchema.getStringId());
+            filterDto.setServerProfileSchemaVersion(serverProfileSchema.getVersion());
+        }
+        return filterDto;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        ProfileFilter that = (ProfileFilter) o;
+
+        if (body != null ? !body.equals(that.body) : that.body != null) return false;
+        if (endpointProfileSchema != null ? !endpointProfileSchema.equals(that.endpointProfileSchema) : that.endpointProfileSchema != null)
+            return false;
+        return serverProfileSchema != null ? serverProfileSchema.equals(that.serverProfileSchema) : that.serverProfileSchema == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (body != null ? body.hashCode() : 0);
+        result = 31 * result + (endpointProfileSchema != null ? endpointProfileSchema.hashCode() : 0);
+        result = 31 * result + (serverProfileSchema != null ? serverProfileSchema.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "ProfileFilter{" +
+                "body='" + body + '\'' +
+                ", endpointProfileSchema=" + endpointProfileSchema +
+                ", serverProfileSchema=" + serverProfileSchema +
+                "} " + super.toString();
     }
 }

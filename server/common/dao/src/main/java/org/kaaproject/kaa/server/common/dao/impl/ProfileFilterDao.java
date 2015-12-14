@@ -61,7 +61,7 @@ public interface ProfileFilterDao<T> extends SqlDao<T> {
      * @param serverSchemaVersion the server schema version
      * @return the list of profile filters
      */
-    List<T> findByAppIdAndSchemaVersions(String appId, int endpointSchemaVersion, int serverSchemaVersion);
+    List<T> findByAppIdAndSchemaVersionsCombination(String appId, int endpointSchemaVersion, int serverSchemaVersion);
 
     /**
      * Find inactive profile filters.

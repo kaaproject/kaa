@@ -391,7 +391,7 @@ public class ConcurrentCacheService implements CacheService {
             public List<ProfileFilterDto> compute(AppProfileVersionsKey key) {
                 LOG.debug("Fetching result for getFilters");
                 ApplicationDto appDto = applicationService.findAppByApplicationToken(key.getApplicationToken());
-                List<ProfileFilterDto> value = profileService.findProfileFiltersByAppIdAndVersions(appDto.getId(),
+                List<ProfileFilterDto> value = profileService.findProfileFiltersByAppIdAndVersionsCombination(appDto.getId(),
                         key.getEndpointProfileSchemaVersion(), key.getServerProfileSchemaVersion());
                 return value;
             }
