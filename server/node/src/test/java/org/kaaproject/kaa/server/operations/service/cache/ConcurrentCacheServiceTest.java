@@ -95,6 +95,8 @@ public class ConcurrentCacheServiceTest extends AbstractTest {
     private static final int CONF1_SCHEMA_VERSION = 1;
     private static final int PROFILE1_SCHEMA_VERSION = 1;
     private static final int PROFILE1_SERVER_SCHEMA_VERSION = 1;
+    private static final int PROFILE2_SCHEMA_VERSION = 2;
+    private static final int PROFILE2_SERVER_SCHEMA_VERSION = 2;
 
     private static final String CF1_ID = "cf1";
     private static final String CF2_ID = "cf2";
@@ -239,6 +241,25 @@ public class ConcurrentCacheServiceTest extends AbstractTest {
             public ProfileFilterDto answer(InvocationOnMock invocation) throws Throwable {
                 sleepABit();
                 return TEST_PROFILE_FILTER;
+            }
+        });
+        when(profileService.findProfileFilterById(PF2_ID)).then(new Answer<ProfileFilterDto>() {
+            @Override
+            public ProfileFilterDto answer(InvocationOnMock invocation) throws Throwable {
+                sleepABit();
+                return TEST_PROFILE_FILTER;
+            }
+        });
+        when(profileService.findProfileFilterById(PF3_ID)).then(new Answer<ProfileFilterDto>() {
+            @Override
+            public ProfileFilterDto answer(InvocationOnMock invocation) throws Throwable {
+                sleepABit();
+                ProfileFilterDto dto = new ProfileFilterDto();
+                dto.setEndpointProfileSchemaId(PROFILE2_SCHEMA_VERSION+"");
+                dto.setEndpointProfileSchemaVersion(PROFILE2_SCHEMA_VERSION);
+                dto.setServerProfileSchemaId(PROFILE2_SERVER_SCHEMA_VERSION+"");
+                dto.setServerProfileSchemaVersion(PROFILE2_SERVER_SCHEMA_VERSION);
+                return dto;
             }
         });
 

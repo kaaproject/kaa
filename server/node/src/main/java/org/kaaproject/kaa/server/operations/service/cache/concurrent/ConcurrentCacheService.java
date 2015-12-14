@@ -540,7 +540,7 @@ public class ConcurrentCacheService implements CacheService {
      * (org.kaaproject.kaa.server.operations.service.cache.AppVersionKey)
      */
     @Override
-    @Cacheable("profileSchemas")
+    @Cacheable("endpointProfileSchemas")
     public EndpointProfileSchemaDto getProfileSchemaByAppAndVersion(AppVersionKey key) {
         return pfSchemaMemorizer.compute(key, new Computable<AppVersionKey, EndpointProfileSchemaDto>() {
 
@@ -604,7 +604,7 @@ public class ConcurrentCacheService implements CacheService {
      * org.kaaproject.kaa.common.dto.ProfileSchemaDto)
      */
     @Override
-    @CachePut(value = "profileSchemas", key = "#key")
+    @CachePut(value = "endpointProfileSchemas", key = "#key")
     public EndpointProfileSchemaDto putProfileSchema(AppVersionKey key, EndpointProfileSchemaDto value) {
         return value;
     }

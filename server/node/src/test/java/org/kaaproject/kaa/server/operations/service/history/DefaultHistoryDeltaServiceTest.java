@@ -27,6 +27,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.ChangeDto;
 import org.kaaproject.kaa.common.dto.ChangeType;
+import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.HistoryDto;
@@ -49,6 +50,7 @@ public class DefaultHistoryDeltaServiceTest {
     private static final int CONF_VERSION = 2;
     private static final String APP1_ID = "APP1_ID";
     private static final String APP1_TOKEN = "APP1_TOKEN";
+    private static final String EG_DEFAULT = "EG_DEFAULT";
     private static final String EG1_ID = "EG1_ID";
     private static final String EG2_ID = "EG2_ID";
     private static final String PF1_ID = "PF1_ID";
@@ -98,14 +100,17 @@ public class DefaultHistoryDeltaServiceTest {
 
         Mockito.when(filterService.getAllMatchingFilters(Mockito.any(AppProfileVersionsKey.class), Mockito.any(EndpointProfileDto.class))).thenReturn(allFilters);
         Mockito.when(cacheService.getConfIdByKey(Mockito.any(ConfigurationIdKey.class))).thenReturn(CF1_ID);
+        EndpointGroupDto egDto = new EndpointGroupDto();
+        egDto.setId(EG_DEFAULT);
+        Mockito.when(cacheService.getDefaultGroup(Mockito.any(String.class))).thenReturn(egDto);
 
         HistoryDelta historyDelta = historyDeltaService.getDelta(profile, APP1_TOKEN, 0);
 
         Assert.assertTrue(historyDelta.isConfigurationChanged());
         Assert.assertTrue(historyDelta.isTopicListChanged());
         Assert.assertNotNull(historyDelta.getEndpointGroupStates());
-        Assert.assertEquals(1, historyDelta.getEndpointGroupStates().size());
-        EndpointGroupStateDto egs = historyDelta.getEndpointGroupStates().get(0);
+        Assert.assertEquals(2, historyDelta.getEndpointGroupStates().size());
+        EndpointGroupStateDto egs = historyDelta.getEndpointGroupStates().get(1);
         Assert.assertNotNull(egs);
         Assert.assertEquals(CF1_ID, egs.getConfigurationId());
         Assert.assertEquals(PF1_ID, egs.getProfileFilterId());
