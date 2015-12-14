@@ -170,7 +170,7 @@ void KaaClient::initKaaTransport()
     EndpointObjectHash publicKeyHash(clientKeys_->getPublicKey().begin(), clientKeys_->getPublicKey().size());
 
     auto metaDataTransport = std::make_shared<MetaDataTransport>(status_, publicKeyHash, 60000L);
-    auto profileTransport = std::make_shared<ProfileTransport>(*channelManager_, clientKeys_->getPublicKey());
+    profileTransport_ = std::make_shared<ProfileTransport>(*channelManager_, clientKeys_->getPublicKey());
 #ifdef KAA_USE_CONFIGURATION
     auto configurationTransport = std::make_shared<ConfigurationTransport>(*channelManager_, status_);
     configurationTransport->setConfigurationProcessor(&configurationManager_->getConfigurationProcessor());
@@ -189,15 +189,15 @@ void KaaClient::initKaaTransport()
 #endif
     auto redirectionTransport = std::make_shared<RedirectionTransport>(*bootstrapManager_);
 
-    profileTransport->setProfileManager(profileManager_.get());
-    dynamic_cast<ProfileTransport*>(profileTransport.get())->setClientState(status_);
-    profileManager_->setTransport(profileTransport);
+    profileTransport_->setProfileManager(profileManager_.get());
+    dynamic_cast<ProfileTransport*>(profileTransport_.get())->setClientState(status_);
+    profileManager_->setTransport(profileTransport_);
 
     syncProcessor_.reset(
             new SyncDataProcessor(
               metaDataTransport
             , bootstrapTransport
-            , profileTransport
+            , profileTransport_
 #ifdef KAA_USE_CONFIGURATION
             , configurationTransport
 #else
@@ -500,6 +500,7 @@ const KeyPair& KaaClient::getClientKeyPair()
 void KaaClient::setEndpointAccessToken(const std::string& token)
 {
     status_->setEndpointAccessToken(token);
+    profileTransport_->sync();
 }
 
 std::string KaaClient::refreshEndpointAccessToken()

@@ -134,6 +134,7 @@ private:
     std::unique_ptr<IKaaChannelManager>              channelManager_;
     std::unique_ptr<SyncDataProcessor>               syncProcessor_;
     IFailoverStrategyPtr                             failoverStrategy_;
+    IProfileTransportPtr                             profileTransport_;
 
     std::unique_ptr<KeyPair>                         clientKeys_;
     std::string                                      publicKeyHash_;
