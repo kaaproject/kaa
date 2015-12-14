@@ -406,16 +406,14 @@ public class AbstractTest {
             EndpointProfileSchemaDto schemaDto;
             if (isBlank(schemaId)) {
                 schemaDto = generateProfSchemaDto(null, null, 1).get(0);
-                schemaId = schemaDto.getId();
             } else {
                 schemaDto = profileService.findProfileSchemaById(schemaId);
             }
-            Application app = applicationDao.findByApplicationToken(schemaDto.getApplicationId());
+            ApplicationDto app = applicationService.findAppById(schemaDto.getApplicationId());
 
             ServerProfileSchemaDto serverProfileSchemaDto;
             if (isBlank(serverSchemaId)) {
-                serverProfileSchemaDto = generateServerProfileSchema(app.getStringId(), app.getTenant().getStringId());
-                serverSchemaId = serverProfileSchemaDto.getId();
+                serverProfileSchemaDto = generateServerProfileSchema(app.getId(), app.getTenantId());
             } else {
                 serverProfileSchemaDto = serverProfileService.findServerProfileSchema(serverSchemaId);
             }
@@ -429,8 +427,10 @@ public class AbstractTest {
                     groupId = generateEndpointGroupDto(schemaDto.getApplicationId()).getId();
                 }
                 dto.setEndpointGroupId(groupId);
-                dto.setEndpointProfileSchemaId(schemaId);
-                dto.setServerProfileSchemaId(serverSchemaId);
+                dto.setEndpointProfileSchemaId(schemaDto.getId());
+                dto.setEndpointProfileSchemaVersion(schemaDto.getVersion());
+                dto.setServerProfileSchemaId(serverProfileSchemaDto.getId());
+                dto.setServerProfileSchemaVersion(serverProfileSchemaDto.getVersion());
                 dto.setApplicationId(schemaDto.getApplicationId());
                 ProfileFilterDto saved = profileService.saveProfileFilter(dto);
                 Assert.assertNotNull(saved);
@@ -700,6 +700,9 @@ public class AbstractTest {
     }
 
     protected EndpointProfileDto generateEndpointProfileDto(String appId, List<String> topicIds) {
+        if (isBlank(appId)) {
+            appId = generateApplicationDto().getId();
+        }
         EndpointProfileDto profileDto = new EndpointProfileDto();
         profileDto.setApplicationId(appId);
         profileDto.setSubscriptions(topicIds);

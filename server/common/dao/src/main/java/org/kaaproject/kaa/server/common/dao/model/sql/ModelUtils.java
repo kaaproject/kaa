@@ -95,7 +95,7 @@ public final class ModelUtils {
     }
 
     public static <V extends GenericModel> V getGenericModelWithId(HasId hasId, V model) {
-        if (hasId == null) {
+        if (hasId != null) {
             model.setId(getLongId(hasId));
             return model;
         } else {

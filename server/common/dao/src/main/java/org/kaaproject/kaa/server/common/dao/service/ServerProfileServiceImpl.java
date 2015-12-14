@@ -21,6 +21,7 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getDto;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateId;
+import static org.kaaproject.kaa.server.common.dao.service.Validator.validateSqlId;
 
 import java.util.List;
 
@@ -81,37 +82,37 @@ public class ServerProfileServiceImpl implements ServerProfileService {
 
     @Override
     public ServerProfileSchemaDto findLatestServerProfileSchema(String appId) {
-        Validator.validateId(appId, "Incorrect application id.");
+        validateSqlId(appId, "Incorrect application id.");
         return getDto(serverProfileSchemaDao.findLatestByAppId(appId));
     }
 
     @Override
     public ServerProfileSchemaDto findServerProfileSchema(String schemaId) {
-        Validator.validateId(schemaId, "Incorrect server profile schema  id.");
+        validateSqlId(schemaId, "Incorrect server profile schema  id.");
         return getDto(serverProfileSchemaDao.findById(schemaId));
     }
 
     @Override
     public List<ServerProfileSchemaDto> findServerProfileSchemasByAppId(String appId) {
-        Validator.validateId(appId, "Incorrect application id.");
+        validateSqlId(appId, "Incorrect application id.");
         return convertDtoList(serverProfileSchemaDao.findByAppId(appId));
     }
     
     @Override
     public ServerProfileSchemaDto findServerProfileSchemaByAppIdAndVersion(String appId, int schemaVersion) {
-        validateId(appId, "Can't find server profile schema. Invalid application id: " + appId);
+        validateSqlId(appId, "Can't find server profile schema. Invalid application id: " + appId);
         return getDto(serverProfileSchemaDao.findByAppIdAndVersion(appId, schemaVersion));
     }
 
     @Override
     public void removeServerProfileSchemaById(String profileId) {
-        Validator.validateId(profileId, "Incorrect server profile schema  id.");
+        validateSqlId(profileId, "Incorrect server profile schema  id.");
         serverProfileSchemaDao.removeById(profileId);
     }
 
     @Override
     public void removeServerProfileSchemaByAppId(String appId) {
-        Validator.validateId(appId, "Incorrect application id.");
+        validateSqlId(appId, "Incorrect application id.");
         serverProfileSchemaDao.removeByAppId(appId);
     }
 

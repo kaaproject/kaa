@@ -57,6 +57,7 @@ import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
 import org.kaaproject.kaa.common.dto.UpdateStatus;
@@ -681,7 +682,7 @@ public abstract class AbstractTestControlServer extends AbstractTest {
      * @throws Exception the exception
      */
     protected EndpointProfileSchemaDto createProfileSchema() throws Exception {
-        return createProfileSchema(null, null);
+        return createEndpointProfileSchema(null, null);
     }
 
     /**
@@ -691,7 +692,7 @@ public abstract class AbstractTestControlServer extends AbstractTest {
      * @return the profile schema dto
      * @throws Exception the exception
      */
-    protected EndpointProfileSchemaDto createProfileSchema(String applicationId, String ctlSchemaId) throws Exception {
+    protected EndpointProfileSchemaDto createEndpointProfileSchema(String applicationId, String ctlSchemaId) throws Exception {
         EndpointProfileSchemaDto profileSchema = new EndpointProfileSchemaDto();
         profileSchema.setName(generateString("Test Schema"));
         profileSchema.setDescription(generateString("Test Desc"));
@@ -711,6 +712,35 @@ public abstract class AbstractTestControlServer extends AbstractTest {
                 .saveProfileSchema(profileSchema);
         return savedProfileSchema;
     }
+    
+    /**
+     * Creates the profile schema.
+     *
+     * @param applicationId the application id
+     * @return the profile schema dto
+     * @throws Exception the exception
+     */
+    protected ServerProfileSchemaDto createServerProfileSchema(String applicationId, String ctlSchemaId) throws Exception {
+        ServerProfileSchemaDto profileSchema = new ServerProfileSchemaDto();
+        profileSchema.setName(generateString("Test Schema"));
+        profileSchema.setDescription(generateString("Test Desc"));
+        if (strIsEmpty(applicationId)) {
+            ApplicationDto application = createApplication(tenantAdminDto);
+            profileSchema.setApplicationId(application.getId());
+        }
+        else {
+            profileSchema.setApplicationId(applicationId);
+        }
+        if (strIsEmpty(ctlSchemaId)) {
+            CTLSchemaInfoDto ctlSchema = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, CTLSchemaScopeDto.TENANT, null, null, null);
+            profileSchema.setCtlSchemaId(ctlSchema.getId());
+        }
+        loginTenantDeveloper(tenantDeveloperDto.getUsername());
+        ServerProfileSchemaDto savedProfileSchema = client
+                .saveServerProfileSchema(profileSchema);
+        return savedProfileSchema;
+    }
+
 
     /**
      * Creates the endpoint group.
@@ -753,32 +783,33 @@ public abstract class AbstractTestControlServer extends AbstractTest {
      * @throws Exception the exception
      */
     protected ProfileFilterDto createProfileFilter() throws Exception {
-        return createProfileFilter(null, null);
+        return createProfileFilter(null, null, null);
     }
 
     /**
      * Creates the profile filter.
      *
-     * @param profileSchemaId the profile schema id
+     * @param endpointPfSchemaId the profile schema id
      * @param endpointGroupId the endpoint group id
      * @return the profile filter dto
      * @throws Exception the exception
      */
-    protected ProfileFilterDto createProfileFilter(String profileSchemaId, String endpointGroupId) throws Exception {
+    protected ProfileFilterDto createProfileFilter(String endpointPfSchemaId, String serverPfSchemaId, String endpointGroupId) throws Exception {
         ApplicationDto application = createApplication(tenantAdminDto);
-        return createProfileFilter(profileSchemaId, endpointGroupId, application.getId());
+        return createProfileFilter(endpointPfSchemaId, serverPfSchemaId, endpointGroupId, application.getId());
     }
 
     /**
      * Creates the profile filter.
      *
-     * @param profileSchemaId the profile schema id
+     * @param endpointPfSchemaId the profile schema id
+     * @param serverPfSchemaId the profile schema id
      * @param endpointGroupId the endpoint group id
      * @param applicationId the application id
      * @return the profile filter dto
      * @throws Exception the exception
      */
-    protected ProfileFilterDto createProfileFilter(String profileSchemaId, String endpointGroupId, String applicationId) throws Exception {
+    protected ProfileFilterDto createProfileFilter(String endpointPfSchemaId, String serverPfSchemaId, String endpointGroupId, String applicationId) throws Exception {
         ProfileFilterDto profileFilter = new ProfileFilterDto();
         String filter = getResourceAsString(TEST_PROFILE_FILTER);
         profileFilter.setBody(filter);
@@ -791,12 +822,19 @@ public abstract class AbstractTestControlServer extends AbstractTest {
             profileFilter.setApplicationId(applicationId);
         }
 
-        if (strIsEmpty(profileSchemaId)) {
-            EndpointProfileSchemaDto profileSchema = createProfileSchema(applicationId, null);
-            profileFilter.setSchemaId(profileSchema.getId());
+        if (strIsEmpty(endpointPfSchemaId)) {
+            EndpointProfileSchemaDto profileSchema = createEndpointProfileSchema(applicationId, null);
+            profileFilter.setEndpointProfileSchemaId(profileSchema.getId());
         }
         else {
-            profileFilter.setSchemaId(profileSchemaId);
+            profileFilter.setEndpointProfileSchemaId(endpointPfSchemaId);
+        }
+        if (strIsEmpty(serverPfSchemaId)) {
+            ServerProfileSchemaDto profileSchema = createServerProfileSchema(applicationId, null);
+            profileFilter.setEndpointProfileSchemaId(profileSchema.getId());
+        }
+        else {
+            profileFilter.setEndpointProfileSchemaId(serverPfSchemaId);
         }
         if (strIsEmpty(endpointGroupId)) {
             EndpointGroupDto endpointGroup = createEndpointGroup(applicationId);

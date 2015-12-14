@@ -59,8 +59,8 @@ public class ControlServerConfigurationIT extends AbstractTestControlServer {
         ConfigurationRecordDto configurationRecord = client.getConfigurationRecord(configuration.getSchemaId(), configuration.getEndpointGroupId());
 
         Assert.assertNotNull(configurationRecord);
-        Assert.assertNotNull(configurationRecord.getInactiveConfiguration());
-        assertConfigurationsEquals(configuration, configurationRecord.getInactiveConfiguration());
+        Assert.assertNotNull(configurationRecord.getInactiveStructureDto());
+        assertConfigurationsEquals(configuration, configurationRecord.getInactiveStructureDto());
     }
 
     /**
@@ -84,8 +84,8 @@ public class ControlServerConfigurationIT extends AbstractTestControlServer {
 
         Assert.assertNotNull(configurationRecords);
         Assert.assertEquals(2, configurationRecords.size());
-        assertConfigurationsEquals(configuration1, configurationRecords.get(0).getInactiveConfiguration());
-        assertConfigurationsEquals(configuration2, configurationRecords.get(1).getInactiveConfiguration());
+        assertConfigurationsEquals(configuration1, configurationRecords.get(0).getInactiveStructureDto());
+        assertConfigurationsEquals(configuration2, configurationRecords.get(1).getInactiveStructureDto());
     }
 
     /**
@@ -108,7 +108,7 @@ public class ControlServerConfigurationIT extends AbstractTestControlServer {
 
         Assert.assertNotNull(configurationRecords);
         Assert.assertEquals(1, configurationRecords.size());
-        assertConfigurationsEquals(configuration1, configurationRecords.get(0).getInactiveConfiguration());
+        assertConfigurationsEquals(configuration1, configurationRecords.get(0).getInactiveStructureDto());
 
         client.deleteConfigurationRecord(configuration1.getSchemaId(), endpointGroup.getId());
         configurationRecords = client.getConfigurationRecords(endpointGroup.getId(), false);

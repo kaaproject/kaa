@@ -45,10 +45,10 @@ public interface ServerProfileService {
     /**
      * Find server profile schema with given identifier.
      *
-     * @param profileId the server profile schema identifier.
+     * @param schemaId the server profile schema identifier.
      * @return the server profile schema.
      */
-    ServerProfileSchemaDto findServerProfileSchema(String profileId);
+    ServerProfileSchemaDto findServerProfileSchema(String schemaId);
 
     /**
      * Find server profile schemas with given application identifier.

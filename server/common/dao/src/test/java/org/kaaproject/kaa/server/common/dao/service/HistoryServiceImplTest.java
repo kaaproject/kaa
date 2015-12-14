@@ -42,28 +42,27 @@ public class HistoryServiceImplTest extends AbstractTest {
     @Test
     public void findHistoriesByAppIdTest() {
         List<HistoryDto> historyRows = historyService.findHistoriesByAppId(application.getId());
-        Assert.assertEquals(4, historyRows.size());
-        Assert.assertEquals(ChangeType.ADD_PROF, historyRows.get(0).getChange().getType());
+        Assert.assertEquals(2, historyRows.size());
+        Assert.assertEquals(ChangeType.ADD_CONF, historyRows.get(0).getChange().getType());
         Assert.assertEquals(ChangeType.ADD_CONF, historyRows.get(1).getChange().getType());
     }
 
     @Test
     public void findHistoryBySeqNumberTest() {
-        HistoryDto history = historyService.findHistoryBySeqNumber(application.getId(), 3);
+        HistoryDto history = historyService.findHistoryBySeqNumber(application.getId(), 2);
         Assert.assertEquals(ChangeType.ADD_CONF, history.getChange().getType());
     }
 
     @Test
     public void findHistoriesBySeqNumberStartTest() {
-        List<HistoryDto> historyRows = historyService.findHistoriesBySeqNumberStart(application.getId(), 2);
-        Assert.assertEquals(2, historyRows.size());
-        Assert.assertEquals(ChangeType.ADD_PROF, historyRows.get(1).getChange().getType());
+        List<HistoryDto> historyRows = historyService.findHistoriesBySeqNumberStart(application.getId(), 1);
+        Assert.assertEquals(1, historyRows.size());
         Assert.assertEquals(ChangeType.ADD_CONF, historyRows.get(0).getChange().getType());
     }
 
     @Test
     public void findHistoriesBySeqNumberRangeTest() {
-        List<HistoryDto> historyRows = historyService.findHistoriesBySeqNumberRange(application.getId(), 2, 3);
+        List<HistoryDto> historyRows = historyService.findHistoriesBySeqNumberRange(application.getId(), 1, 2);
         Assert.assertEquals(1, historyRows.size());
         Assert.assertEquals(ChangeType.ADD_CONF, historyRows.get(0).getChange().getType());
     }

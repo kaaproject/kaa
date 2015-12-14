@@ -79,7 +79,7 @@ public class ControlServerProfileSchemaIT extends AbstractTestControlServer {
         profileSchemas.addAll(defaultProfileSchemas);
 
         for (int i=0;i<10;i++) {
-            EndpointProfileSchemaDto profileSchema = createProfileSchema(application.getId(), ctlSchema.getId());
+            EndpointProfileSchemaDto profileSchema = createEndpointProfileSchema(application.getId(), ctlSchema.getId());
             profileSchemas.add(profileSchema);
         }
         
@@ -116,7 +116,7 @@ public class ControlServerProfileSchemaIT extends AbstractTestControlServer {
         CTLSchemaInfoDto ctlSchema = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, CTLSchemaScopeDto.TENANT, null, null, null);
 
         for (int i=0;i<10;i++) {
-            EndpointProfileSchemaDto profileSchema = createProfileSchema(application.getId(), ctlSchema.getId());
+            EndpointProfileSchemaDto profileSchema = createEndpointProfileSchema(application.getId(), ctlSchema.getId());
             profileSchemas.add(profileSchema);
         }
         

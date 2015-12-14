@@ -17,13 +17,16 @@ package org.kaaproject.kaa.server.common.dao.model.sql;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
+import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
 import java.io.Serializable;
 
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PROFILE_FILTER_BODY;
@@ -59,8 +62,12 @@ public final class ProfileFilter extends AbstractStructure<ProfileFilterDto> imp
     public ProfileFilter(ProfileFilterDto dto) {
         super(dto);
         this.body = dto.getBody();
-        this.endpointProfileSchema = getGenericModelWithId(dto, new EndpointProfileSchema());
-        this.serverProfileSchema = getGenericModelWithId(dto, new ServerProfileSchema());
+        EndpointProfileSchemaDto endpointSchemaDto = new EndpointProfileSchemaDto();
+        endpointSchemaDto.setId(dto.getEndpointProfileSchemaId());
+        this.endpointProfileSchema = getGenericModelWithId(endpointSchemaDto, new EndpointProfileSchema());
+        ServerProfileSchemaDto serverSchemaDto = new ServerProfileSchemaDto();
+        serverSchemaDto.setId(dto.getServerProfileSchemaId());
+        this.serverProfileSchema = getGenericModelWithId(serverSchemaDto, new ServerProfileSchema());
     }
 
     @Override

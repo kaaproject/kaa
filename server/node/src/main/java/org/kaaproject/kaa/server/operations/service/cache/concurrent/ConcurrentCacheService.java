@@ -334,7 +334,7 @@ public class ConcurrentCacheService implements CacheService {
                 return relatedChanges;
             }
 
-            private boolean supports(ProfileFilterDto profileFilter, int endpointProfileSchemaVersion, int serverProfileSchemaVersion) {
+            private boolean supports(ProfileFilterDto profileFilter, Integer endpointProfileSchemaVersion, Integer serverProfileSchemaVersion) {
                 return (profileFilter.getEndpointProfileSchemaVersion() == null || profileFilter.getEndpointProfileSchemaVersion() == endpointProfileSchemaVersion)
                         && (profileFilter.getServerProfileSchemaVersion() == null || profileFilter.getServerProfileSchemaVersion() == serverProfileSchemaVersion);
             }
