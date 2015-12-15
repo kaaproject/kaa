@@ -59,7 +59,7 @@ void ext_configuration_store(const char *buffer, size_t buffer_size);
  * @brief Called when Kaa need to remove configuration data.
  *
  */
-void ext_configuration_delete();
+void ext_configuration_delete(void);
 
 
 #ifdef __cplusplus

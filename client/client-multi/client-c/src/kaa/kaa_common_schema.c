@@ -477,7 +477,7 @@ void kaa_null_destroy(void *data)
 {
 }
 
-size_t kaa_null_get_size()
+size_t kaa_null_get_size(void)
 {
     return AVRO_NULL_SIZE;
 }

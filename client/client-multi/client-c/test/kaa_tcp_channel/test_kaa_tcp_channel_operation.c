@@ -151,7 +151,7 @@ void test_sync_exchange(kaa_transport_channel_interface_t *channel);
 /*
  * Test channel creation and destroy.
  */
-void test_create_kaa_tcp_channel()
+void test_create_kaa_tcp_channel(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -210,7 +210,7 @@ void test_create_kaa_tcp_channel()
  *  2. Authorize, send CONNECT and receive CONACK
  *  3. Receive Disconnect message, check connection drop and notify Bootstrap of AP failure
  */
-void test_kaa_tcp_channel_success_flow()
+void test_kaa_tcp_channel_success_flow(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -248,7 +248,7 @@ void test_kaa_tcp_channel_success_flow()
  *  3. Call Sync for EVENT than EVENT,LOGGING, check send SYNC for EVENT,LOGGING, receive SYNC.
  *  4. Receive Disconnect message, check connection drop and notify Bootstrap manager of AP failure
  */
-void test_kaa_tcp_channel_sync_flow()
+void test_kaa_tcp_channel_sync_flow(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -302,7 +302,7 @@ void test_kaa_tcp_channel_sync_flow()
  *  4. Imitate IO error on read.
  *  5. check disconnect notification
  */
-void test_kaa_tcp_channel_io_error_flow()
+void test_kaa_tcp_channel_io_error_flow(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -355,7 +355,7 @@ void test_kaa_tcp_channel_io_error_flow()
  * 2. Call sync several times before authorization complete, check that CONNECT is generated only once.
  * 3. Disconnect.
  */
-void test_kaa_tcp_channel_auth_double_sync_flow()
+void test_kaa_tcp_channel_auth_double_sync_flow(void)
 {
     KAA_TRACE_IN(logger);
 

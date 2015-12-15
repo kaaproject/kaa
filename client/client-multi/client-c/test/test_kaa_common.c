@@ -26,7 +26,7 @@
 
 static kaa_logger_t *logger = NULL;
 
-void test_profile_update()
+void test_profile_update(void)
 {
     KAA_TRACE_IN(logger);
 

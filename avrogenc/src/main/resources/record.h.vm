@@ -31,7 +31,7 @@ typedef struct {
 } ${prefix}_${record_name}_t;
 
 #if ($TypeConverter.isTypeOut($schema))
-${prefix}_${record_name}_t *${prefix}_${record_name}_create();
+${prefix}_${record_name}_t *${prefix}_${record_name}_create(void);
 #end
 #if ($TypeConverter.isTypeIn($schema))
 ${prefix}_${record_name}_t *${prefix}_${record_name}_deserialize(avro_reader_t reader);

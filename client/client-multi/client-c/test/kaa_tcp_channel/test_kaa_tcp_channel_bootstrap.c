@@ -143,7 +143,7 @@ void test_check_bootstrap_sync(kaa_transport_channel_interface_t *channel);
 /*
  * Test create and destroy bootstrap channel
  */
-void test_create_kaa_tcp_channel()
+void test_create_kaa_tcp_channel(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -195,7 +195,7 @@ void test_create_kaa_tcp_channel()
  * 3. Send disconnect, check sending.
  * 4. Check socket close.
  */
-void test_set_access_point_full_success_bootstrap()
+void test_set_access_point_full_success_bootstrap(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -225,7 +225,7 @@ void test_set_access_point_full_success_bootstrap()
 /*
  * Test connecting error during set access point.
  */
-void test_set_access_point_connecting_error()
+void test_set_access_point_connecting_error(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -269,7 +269,7 @@ void test_set_access_point_connecting_error()
  * 2. Imitate IO error on read
  * 3. Close socket, check bootstrap manager access point failure notification
  */
-void test_set_access_point_io_error()
+void test_set_access_point_io_error(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -338,7 +338,7 @@ void test_set_access_point_io_error()
  * 8. Send disconnect, check sending.
  * 9. Check socket close.
  */
-void test_bootstrap_sync_success()
+void test_bootstrap_sync_success(void)
 {
     KAA_TRACE_IN(logger);
 

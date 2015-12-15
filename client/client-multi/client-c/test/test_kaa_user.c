@@ -104,7 +104,7 @@ static kaa_error_t on_attach_failed(void *context, user_verifier_error_code_t er
     return KAA_ERR_NONE;
 }
 
-void test_specified_user_verifier()
+void test_specified_user_verifier(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -160,7 +160,7 @@ void test_specified_user_verifier()
     KAA_TRACE_OUT(logger);
 }
 
-void test_success_response()
+void test_success_response(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -192,7 +192,7 @@ void test_success_response()
     KAA_TRACE_OUT(logger);
 }
 
-void test_failed_response()
+void test_failed_response(void)
 {
     KAA_TRACE_IN(logger);
 

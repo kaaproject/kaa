@@ -33,7 +33,7 @@ static kaa_logger_t *logger = NULL;
 
 
 
-static void test_string_move_create()
+static void test_string_move_create(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -69,7 +69,7 @@ static void test_string_move_create()
 
 
 
-static void test_string_copy_create()
+static void test_string_copy_create(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -90,7 +90,7 @@ static void test_string_copy_create()
 
 
 
-static void test_string_get_size()
+static void test_string_get_size(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -110,7 +110,7 @@ static void test_string_get_size()
 
 
 
-static void test_string_serialize()
+static void test_string_serialize(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -160,7 +160,7 @@ static void test_string_serialize()
 
 
 
-static void test_string_deserialize()
+static void test_string_deserialize(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -192,7 +192,7 @@ static void test_string_deserialize()
 
 
 
-static void test_bytes_move_create()
+static void test_bytes_move_create(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -233,7 +233,7 @@ static void test_bytes_move_create()
 
 
 
-static void test_bytes_copy_create()
+static void test_bytes_copy_create(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -259,7 +259,7 @@ static void test_bytes_copy_create()
 
 
 
-static void test_bytes_get_size()
+static void test_bytes_get_size(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -278,7 +278,7 @@ static void test_bytes_get_size()
 
 
 
-static void test_bytes_serialize()
+static void test_bytes_serialize(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -329,7 +329,7 @@ static void test_bytes_serialize()
 
 
 
-static void test_bytes_deserialize()
+static void test_bytes_deserialize(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -363,7 +363,7 @@ static void test_bytes_deserialize()
 
 
 
-static void test_fixed_move_create()
+static void test_fixed_move_create(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -404,7 +404,7 @@ static void test_fixed_move_create()
 
 
 
-static void test_fixed_copy_create()
+static void test_fixed_copy_create(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -430,7 +430,7 @@ static void test_fixed_copy_create()
 
 
 
-static void test_fixed_get_size()
+static void test_fixed_get_size(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -449,7 +449,7 @@ static void test_fixed_get_size()
 
 
 
-static void test_fixed_serialize()
+static void test_fixed_serialize(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -500,7 +500,7 @@ static void test_fixed_serialize()
 
 
 
-static void test_fixed_deserialize()
+static void test_fixed_deserialize(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -534,7 +534,7 @@ static void test_fixed_deserialize()
 
 
 
-static void test_boolean_get_size()
+static void test_boolean_get_size(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -549,7 +549,7 @@ static void test_boolean_get_size()
 
 
 
-static void test_boolean_serialize()
+static void test_boolean_serialize(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -573,7 +573,7 @@ static void test_boolean_serialize()
 
 
 
-static void test_boolean_deserialize()
+static void test_boolean_deserialize(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -599,7 +599,7 @@ static void test_boolean_deserialize()
 
 
 
-static void test_int_get_size()
+static void test_int_get_size(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -614,7 +614,7 @@ static void test_int_get_size()
 
 
 
-static void test_int_serialize()
+static void test_int_serialize(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -638,7 +638,7 @@ static void test_int_serialize()
 
 
 
-static void test_int_deserialize()
+static void test_int_deserialize(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -664,7 +664,7 @@ static void test_int_deserialize()
 
 
 
-static void test_long_get_size()
+static void test_long_get_size(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -679,7 +679,7 @@ static void test_long_get_size()
 
 
 
-static void test_long_serialize()
+static void test_long_serialize(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -703,7 +703,7 @@ static void test_long_serialize()
 
 
 
-static void test_long_deserialize()
+static void test_long_deserialize(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -739,7 +739,7 @@ typedef enum {
 
 
 
-static void test_enum_get_size()
+static void test_enum_get_size(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -754,7 +754,7 @@ static void test_enum_get_size()
 
 
 
-static void test_enum_serialize()
+static void test_enum_serialize(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -778,7 +778,7 @@ static void test_enum_serialize()
 
 
 
-static void test_enum_deserialize()
+static void test_enum_deserialize(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -804,7 +804,7 @@ static void test_enum_deserialize()
 
 
 
-static void test_float_get_size()
+static void test_float_get_size(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -819,7 +819,7 @@ static void test_float_get_size()
 
 
 
-static void test_float_serialize()
+static void test_float_serialize(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -843,7 +843,7 @@ static void test_float_serialize()
 
 
 
-static void test_float_deserialize()
+static void test_float_deserialize(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -869,7 +869,7 @@ static void test_float_deserialize()
 
 
 
-static void test_double_get_size()
+static void test_double_get_size(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -884,7 +884,7 @@ static void test_double_get_size()
 
 
 
-static void test_double_serialize()
+static void test_double_serialize(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -908,7 +908,7 @@ static void test_double_serialize()
 
 
 
-static void test_double_deserialize()
+static void test_double_deserialize(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -934,12 +934,12 @@ static void test_double_deserialize()
 
 
 
-static void test_null_get_size()
+static void test_null_get_size(void)
 {
     KAA_TRACE_IN(logger);
 
     srand(time(NULL));
-    ASSERT_EQUAL(kaa_null_get_size(NULL), 0);
+    ASSERT_EQUAL(kaa_null_get_size(), 0);
 
     ASSERT_EQUAL(kaa_null_get_size(), AVRO_NULL_SIZE);
 
@@ -948,7 +948,7 @@ static void test_null_get_size()
 
 
 
-static void test_null_serialize()
+static void test_null_serialize(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -976,7 +976,7 @@ static void test_null_serialize()
 
 
 
-static void test_null_deserialize()
+static void test_null_deserialize(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -994,7 +994,7 @@ static void test_null_deserialize()
 
 
 
-static void test_array_get_size()
+static void test_array_get_size(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -1028,7 +1028,7 @@ static void test_array_get_size()
 
 
 
-static void test_null_array_serialize()
+static void test_null_array_serialize(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -1049,7 +1049,7 @@ static void test_null_array_serialize()
 
 
 
-static void test_empty_array_serialize()
+static void test_empty_array_serialize(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -1072,7 +1072,7 @@ static void test_empty_array_serialize()
 
 
 
-static void test_array_serialize()
+static void test_array_serialize(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -1119,7 +1119,7 @@ static void test_array_serialize()
 
 
 
-static float *create_float()
+static float *create_float(void)
 {
     float *float_value = (float *)KAA_MALLOC(sizeof(float));
     KAA_RETURN_IF_NIL(float_value, NULL);
@@ -1131,7 +1131,7 @@ void kaa_null_destroy(void *data)
 {
 }
 
-static void test_array_deserialize_wo_ctx()
+static void test_array_deserialize_wo_ctx(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -1199,7 +1199,7 @@ static void test_array_deserialize_wo_ctx()
 
 
 
-static void test_array_deserialize_w_ctx()
+static void test_array_deserialize_w_ctx(void)
 {
     KAA_TRACE_IN(logger);
 

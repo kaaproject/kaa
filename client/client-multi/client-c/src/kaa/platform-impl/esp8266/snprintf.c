@@ -811,7 +811,7 @@ int main (void)
 }
 #endif /* SNPRINTF_TEST */
 
-void abort() {}
+void abort(void) {}
 
 #endif /* !HAVE_SNPRINTF */
 /* Shut up the compaq compiler which hates empty files. This will

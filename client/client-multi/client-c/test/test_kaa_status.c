@@ -89,7 +89,7 @@ void ext_get_endpoint_public_key(char **buffer, size_t *buffer_size, bool *needs
     *needs_deallocation = false;
 }
 
-void test_create_status()
+void test_create_status(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -102,7 +102,7 @@ void test_create_status()
     kaa_status_destroy(status);
 }
 
-void test_status_persistense()
+void test_status_persistense(void)
 {
     KAA_TRACE_IN(logger);
 

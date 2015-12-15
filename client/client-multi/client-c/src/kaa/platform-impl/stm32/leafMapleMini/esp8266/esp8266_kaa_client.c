@@ -694,5 +694,5 @@ kaa_error_t kaa_log_collector_init(kaa_client_t *kaa_client)
 }
 
 // dummy method
-void ext_configuration_delete(const char *buffer, size_t buffer_size)
+void ext_configuration_delete(void)
 {}

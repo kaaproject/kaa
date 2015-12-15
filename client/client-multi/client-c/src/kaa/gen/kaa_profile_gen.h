@@ -33,7 +33,7 @@ typedef struct {
     destroy_fn   destroy;
 } kaa_profile_basic_endpoint_profile_test_t;
 
-kaa_profile_basic_endpoint_profile_test_t *kaa_profile_basic_endpoint_profile_test_create();
+kaa_profile_basic_endpoint_profile_test_t *kaa_profile_basic_endpoint_profile_test_create(void);
 kaa_profile_basic_endpoint_profile_test_t *kaa_profile_basic_endpoint_profile_test_deserialize(avro_reader_t reader);
 
 #ifdef __cplusplus

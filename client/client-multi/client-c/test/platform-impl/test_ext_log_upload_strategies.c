@@ -76,7 +76,7 @@ size_t ext_log_storage_get_records_count(const void *context)
 }
 
 
-void test_create_strategy()
+void test_create_strategy(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -101,7 +101,7 @@ void test_create_strategy()
     KAA_TRACE_OUT(logger);
 }
 
-void test_set_upload_timeout()
+void test_set_upload_timeout(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -120,7 +120,7 @@ void test_set_upload_timeout()
     KAA_TRACE_OUT(logger);
 }
 
-void test_set_batch_size()
+void test_set_batch_size(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -139,7 +139,7 @@ void test_set_batch_size()
     KAA_TRACE_OUT(logger);
 }
 
-void test_upload_decision_by_volume()
+void test_upload_decision_by_volume(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -174,7 +174,7 @@ void test_upload_decision_by_volume()
     KAA_TRACE_OUT(logger);
 }
 
-void test_upload_decision_by_count()
+void test_upload_decision_by_count(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -209,7 +209,7 @@ void test_upload_decision_by_count()
     KAA_TRACE_OUT(logger);
 }
 
-void test_upload_decision_by_timeout()
+void test_upload_decision_by_timeout(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -242,7 +242,7 @@ void test_upload_decision_by_timeout()
     KAA_TRACE_OUT(logger);
 }
 
-void test_noop_decision_on_failure()
+void test_noop_decision_on_failure(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -276,7 +276,7 @@ void test_noop_decision_on_failure()
     KAA_TRACE_OUT(logger);
 }
 
-void test_upload_decision_on_failure()
+void test_upload_decision_on_failure(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -355,7 +355,7 @@ static kaa_error_t test_sync_handler(void *context
     return KAA_ERR_NONE;
 }
 
-int test_init()
+int test_init(void)
 {
     kaa_error_t error = kaa_log_create(&logger, KAA_MAX_LOG_MESSAGE_LENGTH, KAA_MAX_LOG_LEVEL, NULL);
     if (error || !logger) {
@@ -383,7 +383,7 @@ int test_init()
     return 0;
 }
 
-int test_deinit()
+int test_deinit(void)
 {
     kaa_bootstrap_manager_destroy(bootstrap_manager);
     kaa_channel_manager_destroy(channel_manager);
