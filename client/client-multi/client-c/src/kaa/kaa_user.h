@@ -90,7 +90,8 @@ kaa_error_t kaa_user_manager_attach_to_user(kaa_user_manager_t *self
  * @brief Checks if current endpoint is attached to user.
  *
  * @param[in]   self    The user manager instance.
- * @return      TRUE if the endpoint is attached to user, FALSE otherwise.
+ * @retval      TRUE    The endpoint is attached to user
+ * @retval      FALSE   Otherwise
  */
 bool kaa_user_manager_is_attached_to_user(kaa_user_manager_t *self);
 

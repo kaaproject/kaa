@@ -50,7 +50,7 @@ kaa_error_t kaa_init(kaa_context_t **kaa_context_p);
 /**
  * @brief Starts Kaa's workflow.
  *
- * @b NOTE: Should be called after @link kaa_init() @endlink.
+ * @note Should be called after @link kaa_init() @endlink.
  *
  * @param[in]   kaa_context    Pointer to an initialized Kaa endpoint context.
  *
@@ -76,9 +76,9 @@ kaa_error_t kaa_deinit(kaa_context_t *kaa_context);
 /**
  * @brief Processes failovers.
  *
- * @param[in]   self           Bootstrap manager.
- * @return                     if failover is scheduled returns true, otherwise - false.
- *
+ * @param[in]   kaa_context    Bootstrap manager.
+ * @retval      true           Failover is scheduled
+ * @retval      false          Otherwise
  */
 bool kaa_process_failover(kaa_context_t *kaa_context);
 

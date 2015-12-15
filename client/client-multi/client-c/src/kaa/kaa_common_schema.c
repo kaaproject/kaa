@@ -41,7 +41,7 @@ size_t avro_long_get_size(int64_t l)
 
 void kaa_string_serialize(avro_writer_t writer, void *data)
 {
-    KAA_RETURN_IF_NIL2(writer, data,)
+    KAA_RETURN_IF_NIL2(writer, data,);
 
     kaa_string_t *str = (kaa_string_t *)data;
     if (str->data) {
@@ -484,7 +484,7 @@ size_t kaa_null_get_size()
 
 void kaa_data_destroy(void *data)
 {
-    KAA_RETURN_IF_NIL(data,)
+    KAA_RETURN_IF_NIL(data,);
     KAA_FREE(data);
 }
 

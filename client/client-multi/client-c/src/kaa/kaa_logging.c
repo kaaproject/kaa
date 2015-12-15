@@ -254,7 +254,7 @@ kaa_error_t kaa_logging_add_record(kaa_log_collector_t *self, kaa_user_log_recor
 
     avro_writer_t writer = avro_writer_memory((char *)record.data, record.size);
     if (!writer) {
-        KAA_LOG_ERROR(self->logger, KAA_ERR_BADDATA, "Failed to add log record: cannot create serializer")
+        KAA_LOG_ERROR(self->logger, KAA_ERR_BADDATA, "Failed to add log record: cannot create serializer");
         ext_log_storage_deallocate_log_record_buffer(self->log_storage_context, &record);
         return KAA_ERR_NOMEM;
     }
