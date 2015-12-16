@@ -132,6 +132,7 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/listfiles/platform/${KAA_PLATFORM}/CMakeList
 include_directories(KAA_INCLUDE_PATHS
                         ${KAA_INCLUDE_PATHS}
                         ${CMAKE_CURRENT_SOURCE_DIR}/${KAA_SRC_FOLDER}
+						${KAA_THIRDPARTY_HEADERS}
                    )
 
 # Sets path(s) to source files.
