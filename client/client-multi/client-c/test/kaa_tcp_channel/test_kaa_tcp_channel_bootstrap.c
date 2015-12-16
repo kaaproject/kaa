@@ -66,7 +66,7 @@ typedef struct {
 
 typedef struct {
     COMMON_PLUGIN_FIELDS
-    struct kaa_bootstrap_manager_t *manager;
+    kaa_bootstrap_manager_t *manager;
 } mock_bootstrap_plugin_t;
 
 static set_access_point_info_t access_point_test_info;
@@ -511,7 +511,7 @@ void test_set_access_point(kaa_transport_channel_interface_t *channel)
 
 /* Mocket functions */
 
-kaa_error_t kaa_bootstrap_plugin_on_access_point_failed(kaa_context_t *context
+kaa_error_t kaa_bootstrap_plugin_on_access_point_failed(kaa_plugin_t *plugin
                                                        , kaa_transport_protocol_id_t *protocol_id
                                                        , kaa_server_type_t type)
 {

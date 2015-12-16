@@ -286,7 +286,7 @@ kaa_error_t kaa_event_manager_create(kaa_event_manager_t **event_manager_p
                                    , kaa_channel_manager_t *channel_manager
                                    , kaa_logger_t *logger)
 {
-    KAA_RETURN_IF_NIL(event_manager_p, KAA_ERR_BADPARAM)
+    KAA_RETURN_IF_NIL(event_manager_p, KAA_ERR_BADPARAM);
 
     *event_manager_p = (kaa_event_manager_t *) KAA_MALLOC(sizeof(kaa_event_manager_t));
     KAA_RETURN_IF_NIL(*event_manager_p, KAA_ERR_NOMEM);
@@ -1221,7 +1221,7 @@ kaa_plugin_t *kaa_event_plugin_create(kaa_context_t *context)
 
     plugin->plugin_name = "event";
     plugin->extension_type = KAA_PLUGIN_EVENT;
-    //plugin->context = context;
+    plugin->context = context;
 
     return (kaa_plugin_t*)plugin;
 }
