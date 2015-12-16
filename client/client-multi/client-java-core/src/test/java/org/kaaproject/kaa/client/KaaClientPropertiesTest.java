@@ -16,20 +16,20 @@
 
 package org.kaaproject.kaa.client;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import org.junit.Test;
+import org.kaaproject.kaa.client.channel.ServerType;
+import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
+import org.kaaproject.kaa.client.channel.TransportProtocolId;
+import org.kaaproject.kaa.client.channel.TransportProtocolIdConstants;
+import org.kaaproject.kaa.client.util.CommonsBase64;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.Test;
-import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
-import org.kaaproject.kaa.client.channel.ServerType;
-import org.kaaproject.kaa.client.channel.TransportProtocolId;
-import org.kaaproject.kaa.client.channel.TransportProtocolIdConstants;
-import org.kaaproject.kaa.client.util.CommonsBase64;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class KaaClientPropertiesTest {
     @Test
@@ -99,7 +99,7 @@ public class KaaClientPropertiesTest {
     public void testGetWorkingDirectory() throws IOException {
         System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
         KaaClientProperties properties = new KaaClientProperties();
-        assertEquals("work_dir/", properties.getWorkingDirectory());
+        assertEquals(".", properties.getWorkingDirectory());
     }
 
     @Test

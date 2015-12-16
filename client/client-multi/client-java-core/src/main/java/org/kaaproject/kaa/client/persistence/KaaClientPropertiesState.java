@@ -16,25 +16,6 @@
 
 package org.kaaproject.kaa.client.persistence;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.charset.Charset;
-import java.security.KeyPair;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import org.apache.avro.io.BinaryDecoder;
 import org.apache.avro.io.BinaryEncoder;
 import org.apache.avro.io.DecoderFactory;
@@ -55,6 +36,25 @@ import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.charset.Charset;
+import java.security.KeyPair;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import static org.kaaproject.kaa.client.util.Utils.isBlank;
 
 public class KaaClientPropertiesState implements KaaClientState {
@@ -73,7 +73,7 @@ public class KaaClientPropertiesState implements KaaClientState {
     private static final String IS_REGISTERED = "is_registered";
     private static final String IS_ATTACHED = "is_attached";
 
-    public static final String FILE_SEPARATOR = System.getProperty("file.separator");
+    public static final String FILE_SEPARATOR = File.separator;
     public static final String WORKING_DIR_DEFAULT = "." + FILE_SEPARATOR;
     public static final String STATE_FILE_NAME_DEFAULT = "state.properties";
     public static final String CLIENT_PRIVATE_KEY_NAME_DEFAULT = "key.private";

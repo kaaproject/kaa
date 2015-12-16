@@ -16,6 +16,18 @@
 
 package org.kaaproject.kaa.client;
 
+import org.apache.commons.compress.utils.Charsets;
+import org.kaaproject.kaa.client.channel.GenericTransportInfo;
+import org.kaaproject.kaa.client.channel.ServerType;
+import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
+import org.kaaproject.kaa.client.channel.TransportProtocolId;
+import org.kaaproject.kaa.client.util.Base64;
+import org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData;
+import org.kaaproject.kaa.common.endpoint.gen.ProtocolVersionPair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.security.MessageDigest;
@@ -27,17 +39,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
-
-import org.apache.commons.compress.utils.Charsets;
-import org.kaaproject.kaa.client.channel.GenericTransportInfo;
-import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
-import org.kaaproject.kaa.client.channel.ServerType;
-import org.kaaproject.kaa.client.channel.TransportProtocolId;
-import org.kaaproject.kaa.client.util.Base64;
-import org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData;
-import org.kaaproject.kaa.common.endpoint.gen.ProtocolVersionPair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.kaaproject.kaa.client.util.Utils.isBlank;
 
@@ -62,7 +63,7 @@ public class KaaClientProperties extends Properties {
     public static final String CONFIG_SCHEMA_DEFAULT = "config.schema.default";
     public static final String SDK_TOKEN = "sdk_token";
     public static final String WORKING_DIR_PROPERTY = "kaa.work_dir";
-    public static final String FILE_SEPARATOR = System.getProperty("file.separator");
+    public static final String FILE_SEPARATOR = File.separator;
     public static final String STATE_FILE_NAME_PROPERTY = "state.file_name";
     public static final String CLIENT_PRIVATE_KEY_FILE_NAME_PROPERTY = "keys.private_name";
     public static final String CLIENT_PUBLIC_KEY_FILE_NAME_PROPERTY = "keys.public_name";
