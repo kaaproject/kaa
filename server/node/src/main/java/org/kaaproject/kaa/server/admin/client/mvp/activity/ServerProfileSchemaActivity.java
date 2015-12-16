@@ -16,48 +16,34 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
-import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
 import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.ServerProfileSchemaViewDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ServerProfileSchemaPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.view.BaseSchemaView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.widget.RecordPanel;
-import org.kaaproject.kaa.server.admin.client.util.ErrorMessageCustomizer;
-import org.kaaproject.kaa.server.admin.client.util.Utils;
+import org.kaaproject.kaa.server.admin.client.mvp.view.BaseCtlSchemaView;
+import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaFormDto;
+import org.kaaproject.kaa.server.admin.shared.schema.ServerProfileSchemaViewDto;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class ServerProfileSchemaActivity
-        extends AbstractDetailsActivity<ServerProfileSchemaViewDto, BaseSchemaView, ServerProfileSchemaPlace>
-        implements ErrorMessageCustomizer, RecordPanel.FormDataLoader {
-
-    private static final String  LEFT_SQUARE_BRACKET = "[";
-    private static final String  RIGHT_SQUARE_BRACKET = "]";
-    private static final String  SEMICOLON = ";";
-
-    protected String applicationId;
+        extends
+        AbstractBaseCtlSchemaActivity<ServerProfileSchemaDto, ServerProfileSchemaViewDto, BaseCtlSchemaView, ServerProfileSchemaPlace> {
 
     public ServerProfileSchemaActivity(ServerProfileSchemaPlace place,
-                                       ClientFactory clientFactory) {
+            ClientFactory clientFactory) {
         super(place, clientFactory);
-        this.applicationId = place.getApplicationId();
-    }
-
-    protected ServerProfileSchemaViewDto newSchema() {
-        ServerProfileSchemaViewDto serverProfileSchemaViewDto = new ServerProfileSchemaViewDto();
-        CTLSchemaDto ctlDto = new CTLSchemaDto();
-        ServerProfileSchemaDto schemaDto = new ServerProfileSchemaDto();
-        serverProfileSchemaViewDto.setCtlSchemaDto(ctlDto);
-        serverProfileSchemaViewDto.setProfileSchemaDto(schemaDto);
-        return serverProfileSchemaViewDto;
     }
 
     @Override
-    protected BaseSchemaView getView(boolean create) {
+    protected ServerProfileSchemaViewDto newSchema() {
+        return new ServerProfileSchemaViewDto();
+    }
+
+    @Override
+    protected BaseCtlSchemaView getView(boolean create) {
         if (create) {
             return clientFactory.getCreateServerProfileSchemaView();
         } else {
@@ -66,97 +52,36 @@ public class ServerProfileSchemaActivity
     }
 
     @Override
-    protected String getEntityId(ServerProfileSchemaPlace place) {
-        return place.getSchemaId();
+    protected void getEntity(String id,
+            AsyncCallback<ServerProfileSchemaViewDto> callback) {
+        KaaAdmin.getDataSource().getServerProfileSchemaView(id, callback);
     }
 
     @Override
-    protected ServerProfileSchemaViewDto newEntity() {
-        ServerProfileSchemaViewDto schema = newSchema();
-        schema.getProfileSchemaDto().setApplicationId(applicationId);
-        schema.getCtlSchemaDto().setApplicationId(applicationId);
-        return schema;
+    protected void editEntity(ServerProfileSchemaViewDto entity,
+            AsyncCallback<ServerProfileSchemaViewDto> callback) {
+        KaaAdmin.getDataSource().saveServerProfileSchemaView(entity, callback);
     }
 
     @Override
-    protected void bind(final EventBus eventBus) {
-        super.bind(eventBus);
+    protected void createEmptyCtlSchemaForm(AsyncCallback<CtlSchemaFormDto> callback) {
+        KaaAdmin.getDataSource().createNewCTLSchemaFormInstance(null, 
+                null, 
+                CTLSchemaScopeDto.SERVER_PROFILE_SCHEMA, 
+                applicationId, 
+                callback);
     }
 
     @Override
-    protected void onEntityRetrieved() {
-        detailsView.getName().setValue(entity.getCtlSchemaDto().getName());
-        detailsView.getDescription().setValue(entity.getCtlSchemaDto().getDescription());
-        detailsView.getCreatedUsername().setValue(entity.getCtlSchemaDto().getCreatedUsername());
-        detailsView.getEndpointCount().setValue("");
-        if (create) {
-            createEmptySchemaForm(new BusyAsyncCallback<RecordField>() {
-                @Override
-                public void onSuccessImpl(RecordField result) {
-                    detailsView.getSchemaForm().setValue(result);
-                }
-
-                @Override
-                public void onFailureImpl(Throwable caught) {
-                    Utils.handleException(caught, detailsView);
-                }
-            });
-            detailsView.getSchemaForm().setFormDataLoader(this);
-        } else {
-            detailsView.getVersion().setValue(entity.getCtlSchemaDto().getMetaInfo().getVersion() + ".0");
-            detailsView.getCreatedDateTime().setValue(Utils.millisecondsToDateTimeString(entity.getProfileSchemaDto().getCreatedTime()));
-            detailsView.getSchemaForm().setValue(entity.getProfileSchemaDto().getSchemaForm());
-        }
+    public void loadFormData(String fileItemName,
+            AsyncCallback<RecordField> callback) {
+        KaaAdmin.getDataSource().generateCommonSchemaForm(fileItemName, callback);
     }
 
     @Override
-    protected void onSave() {
-        entity.getCtlSchemaDto().setName(detailsView.getName().getValue());
-        entity.getCtlSchemaDto().setDescription(detailsView.getDescription().getValue());
-        entity.getProfileSchemaDto().setSchemaForm(detailsView.getSchemaForm().getValue());
-        String applicationId = place.getApplicationId();
-        entity.getCtlSchemaDto().setApplicationId(applicationId);
-        entity.getProfileSchemaDto().setApplicationId(applicationId);
+    protected ServerProfileSchemaPlace existingSchemaPlace(
+            String applicationId, String schemaId) {
+        return new ServerProfileSchemaPlace(applicationId, schemaId);
     }
 
-    @Override
-    public String customizeErrorMessage(Throwable caught) {
-        String errorMessage = caught.getLocalizedMessage();
-        int leftSquareBracketIndex = errorMessage.indexOf(LEFT_SQUARE_BRACKET);
-        int rightSquareBracketIndex = -1;
-        if (leftSquareBracketIndex != -1) {
-            rightSquareBracketIndex = errorMessage.indexOf(RIGHT_SQUARE_BRACKET, leftSquareBracketIndex);
-        }
-        if (rightSquareBracketIndex != -1) {
-            StringBuilder builder = new StringBuilder();
-            builder.append("Incorrect json schema: Please check your schema at");
-            String[] array = errorMessage.substring(leftSquareBracketIndex, rightSquareBracketIndex).split(SEMICOLON);
-            if (array != null && array.length == 2) {
-                builder.append(array[1]);
-                errorMessage = builder.toString();
-            }
-        } else {
-            return "Incorrect schema: Please validate your schema.";
-        }
-        return errorMessage;
-    }
-
-    protected void createEmptySchemaForm(AsyncCallback<RecordField> callback) {
-        KaaAdmin.getDataSource().createSimpleEmptySchemaForm(callback);
-    }
-
-    @Override
-    protected void getEntity(String id, AsyncCallback<ServerProfileSchemaViewDto> callback) {
-        KaaAdmin.getDataSource().getServerProfileSchemaForm(id, callback);
-    }
-
-    @Override
-    protected void editEntity(ServerProfileSchemaViewDto entity, AsyncCallback<ServerProfileSchemaViewDto> callback) {
-        KaaAdmin.getDataSource().editServerProfileSchemaForm(entity, callback);
-    }
-
-    @Override
-    public void loadFormData(String fileItemName, AsyncCallback<RecordField> callback) {
-        KaaAdmin.getDataSource().generateSimpleSchemaForm(fileItemName, callback);
-    }
 }

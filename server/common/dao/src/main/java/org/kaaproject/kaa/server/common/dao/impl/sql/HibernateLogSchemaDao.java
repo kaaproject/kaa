@@ -32,8 +32,7 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_ALIAS;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_REFERENCE;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.MAJOR_VERSION_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.MINOR_VERSION_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.VERSION_PROPERTY;
 
 @Repository
 public class HibernateLogSchemaDao extends HibernateAbstractDao<LogSchema> implements LogSchemaDao<LogSchema> {
@@ -68,7 +67,7 @@ public class HibernateLogSchemaDao extends HibernateAbstractDao<LogSchema> imple
         if (isNotBlank(applicationId)) {
             logSchema = findOneByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS, Restrictions.and(
                     Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(applicationId)),
-                    Restrictions.eq(MAJOR_VERSION_PROPERTY, version)));
+                    Restrictions.eq(VERSION_PROPERTY, version)));
         }
         if (LOG.isTraceEnabled()) {
             LOG.trace("[{},{}] Search result: {}.", applicationId, version, logSchema);
@@ -96,8 +95,8 @@ public class HibernateLogSchemaDao extends HibernateAbstractDao<LogSchema> imple
             Criteria criteria = getCriteria();
             criteria.createAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS);
             Criterion criterion = Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(applicationId));
-            logSchema = (LogSchema) criteria.add(criterion).addOrder(Order.desc(MAJOR_VERSION_PROPERTY))
-                    .addOrder(Order.desc(MINOR_VERSION_PROPERTY)).setMaxResults(FIRST).uniqueResult();
+            logSchema = (LogSchema) criteria.add(criterion).addOrder(Order.desc(VERSION_PROPERTY))
+                    .setMaxResults(FIRST).uniqueResult();
         }
         if (LOG.isTraceEnabled()) {
             LOG.trace("[{}] Search result: {}.", applicationId, logSchema);

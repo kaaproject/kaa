@@ -19,7 +19,7 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.kaaproject.kaa.server.common.dao.impl.ProfileSchemaDao;
-import org.kaaproject.kaa.server.common.dao.model.sql.ProfileSchema;
+import org.kaaproject.kaa.server.common.dao.model.sql.EndpointProfileSchema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -33,16 +33,16 @@ import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_ALIA
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_REFERENCE;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.ID_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.MAJOR_VERSION_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.VERSION_PROPERTY;
 
 @Repository
-public class HibernateProfileSchemaDao extends HibernateAbstractDao<ProfileSchema> implements ProfileSchemaDao<ProfileSchema> {
+public class HibernateProfileSchemaDao extends HibernateAbstractDao<EndpointProfileSchema> implements ProfileSchemaDao<EndpointProfileSchema> {
 
     private static final Logger LOG = LoggerFactory.getLogger(HibernateProfileSchemaDao.class);
 
     @Override
-    public List<ProfileSchema> findByApplicationId(String appId) {
-        List<ProfileSchema> schemas = Collections.emptyList();
+    public List<EndpointProfileSchema> findByApplicationId(String appId) {
+        List<EndpointProfileSchema> schemas = Collections.emptyList();
         LOG.debug("Searching profile schemas by application id [{}] ", appId);
         if (isNotBlank(appId)) {
             schemas = findListByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS,
@@ -57,13 +57,13 @@ public class HibernateProfileSchemaDao extends HibernateAbstractDao<ProfileSchem
     }
 
     @Override
-    public ProfileSchema findByAppIdAndVersion(String appId, int version) {
+    public EndpointProfileSchema findByAppIdAndVersion(String appId, int version) {
         LOG.debug("Searching profile schema by application id [{}] and version [{}]", appId, version);
-        ProfileSchema schema = null;
+        EndpointProfileSchema schema = null;
         if (isNotBlank(appId)) {
             schema = findOneByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS, Restrictions.and(
                     Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)),
-                    Restrictions.eq(MAJOR_VERSION_PROPERTY, version)));
+                    Restrictions.eq(VERSION_PROPERTY, version)));
         }
         if (LOG.isTraceEnabled()) {
             LOG.trace("[{},{}] Search result: {}.", appId, version, schema);
@@ -74,13 +74,13 @@ public class HibernateProfileSchemaDao extends HibernateAbstractDao<ProfileSchem
     }
 
     @Override
-    public ProfileSchema findLatestByAppId(String appId) {
-        ProfileSchema latestSchema = null;
+    public EndpointProfileSchema findLatestByAppId(String appId) {
+        EndpointProfileSchema latestSchema = null;
         LOG.debug("Searching latest profile schema by application id [{}] ", appId);
         if (isNotBlank(appId)) {
             Criteria criteria = getCriteria().createAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS)
                     .add(Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)))
-                    .addOrder(Order.desc(MAJOR_VERSION_PROPERTY)).setMaxResults(FIRST);
+                    .addOrder(Order.desc(VERSION_PROPERTY)).setMaxResults(FIRST);
             latestSchema = findOneByCriteria(criteria);
         }
         if (LOG.isTraceEnabled()) {
@@ -92,9 +92,9 @@ public class HibernateProfileSchemaDao extends HibernateAbstractDao<ProfileSchem
     }
 
     @Override
-    public List<ProfileSchema> findVacantSchemas(String appId, List<String> usedSchemaIds) {
+    public List<EndpointProfileSchema> findVacantSchemas(String appId, List<String> usedSchemaIds) {
         LOG.debug("Searching vacant schemas by application id [{}] and used schema ids [{}] ", appId, usedSchemaIds);
-        List<ProfileSchema> schemas = Collections.emptyList();
+        List<EndpointProfileSchema> schemas = Collections.emptyList();
         if (isNotBlank(appId)) {
             Criteria criteria = getCriteria().createAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS)
                     .add(Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)));
@@ -112,7 +112,7 @@ public class HibernateProfileSchemaDao extends HibernateAbstractDao<ProfileSchem
     }
 
     @Override
-    protected Class<ProfileSchema> getEntityClass() {
-        return ProfileSchema.class;
+    protected Class<EndpointProfileSchema> getEntityClass() {
+        return EndpointProfileSchema.class;
     }
 }

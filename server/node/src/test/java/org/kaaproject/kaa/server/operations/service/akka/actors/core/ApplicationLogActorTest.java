@@ -27,7 +27,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDataDto;
-import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
@@ -52,9 +53,13 @@ import akka.actor.ActorRef;
 
 public class ApplicationLogActorTest {
 
+    private static final String CLIENT_PROFILE_CTL_SCHEMA_ID = "144";
+    
     private static final String SERVER_PROFILE_CTL_SCHEMA_ID = "173";
 
     private static final int CLIENT_SCHEMA_VERSION = 42;
+    
+    private static final int SERVER_SCHEMA_VERSION = 33;
 
     private static final int REQUEST_ID = 42;
 
@@ -95,7 +100,7 @@ public class ApplicationLogActorTest {
         when(context.getCtlService()).thenReturn(ctlService);
 
         LogSchemaDto logSchemaDto = new LogSchemaDto();
-        logSchemaDto.setMajorVersion(TEST_SCHEMA_VERSION);
+        logSchemaDto.setVersion(TEST_SCHEMA_VERSION);
         logSchema = new LogSchema(logSchemaDto);
 
         logAppenders = new ArrayList<>();
@@ -108,14 +113,30 @@ public class ApplicationLogActorTest {
         when(logAppenderService.getApplicationAppenders(APPLICATION_ID)).thenReturn(logAppenders);
         when(logAppender.isSchemaVersionSupported(Mockito.anyInt())).thenReturn(Boolean.TRUE);
 
-        ProfileSchemaDto profileSchemaDto = new ProfileSchemaDto();
+        EndpointProfileSchemaDto profileSchemaDto = new EndpointProfileSchemaDto();
         profileSchemaDto.setId("" + CLIENT_SCHEMA_VERSION);
-        profileSchemaDto.setSchema("ClientProfileSchema");
+        profileSchemaDto.setCtlSchemaId(CLIENT_PROFILE_CTL_SCHEMA_ID);
+        
+        ServerProfileSchemaDto serverProfileSchemaDto = new ServerProfileSchemaDto();
+        serverProfileSchemaDto.setId("" + SERVER_SCHEMA_VERSION);
+        serverProfileSchemaDto.setCtlSchemaId(SERVER_PROFILE_CTL_SCHEMA_ID);
+        
         when(cacheService.getProfileSchemaByAppAndVersion(new AppVersionKey(APP_TOKEN, CLIENT_SCHEMA_VERSION)))
                 .thenReturn(profileSchemaDto);
-        CTLSchemaDto schemaDto = new CTLSchemaDto();
-        when(cacheService.getCtlSchemaById(SERVER_PROFILE_CTL_SCHEMA_ID)).thenReturn(schemaDto);
-        when(ctlService.flatExportAsString(schemaDto)).thenReturn("ServerProfileSchema");
+        when(cacheService.getServerProfileSchemaByAppAndVersion(new AppVersionKey(APP_TOKEN, SERVER_SCHEMA_VERSION)))
+        .thenReturn(serverProfileSchemaDto);
+        
+        CTLSchemaDto profileCtlSchemaDto = new CTLSchemaDto();
+        profileCtlSchemaDto.setId(CLIENT_PROFILE_CTL_SCHEMA_ID);
+
+        CTLSchemaDto serverProfileCtlSchemaDto = new CTLSchemaDto();
+        serverProfileCtlSchemaDto.setId(SERVER_PROFILE_CTL_SCHEMA_ID);
+
+        when(cacheService.getCtlSchemaById(CLIENT_PROFILE_CTL_SCHEMA_ID)).thenReturn(profileCtlSchemaDto);
+        when(cacheService.getCtlSchemaById(SERVER_PROFILE_CTL_SCHEMA_ID)).thenReturn(serverProfileCtlSchemaDto);
+        
+        when(ctlService.flatExportAsString(profileCtlSchemaDto)).thenReturn("ClientProfileSchema");
+        when(ctlService.flatExportAsString(serverProfileCtlSchemaDto)).thenReturn("ServerProfileSchema");
     }
 
     @Test
@@ -249,7 +270,7 @@ public class ApplicationLogActorTest {
 
     public BaseLogEventPack getTestPack(int logSchemaVersion, LogSchema logSchema) {
         EndpointProfileDataDto profileDto = new EndpointProfileDataDto("1", "EndpointKey", CLIENT_SCHEMA_VERSION, "",
-                SERVER_PROFILE_CTL_SCHEMA_ID, "");
+                SERVER_SCHEMA_VERSION, "");
         BaseLogEventPack logEventPack = new BaseLogEventPack(profileDto, System.currentTimeMillis(), logSchemaVersion,
                 new ArrayList<LogEvent>());
         logEventPack.setLogSchema(logSchema);

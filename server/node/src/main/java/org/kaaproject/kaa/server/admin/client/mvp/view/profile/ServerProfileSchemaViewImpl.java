@@ -16,10 +16,10 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.profile;
 
-import org.kaaproject.kaa.server.admin.client.mvp.view.schema.BaseSchemaViewImpl;
+import org.kaaproject.kaa.server.admin.client.mvp.view.schema.BaseCtlSchemaViewImpl;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-public class ServerProfileSchemaViewImpl extends BaseSchemaViewImpl {
+public class ServerProfileSchemaViewImpl extends BaseCtlSchemaViewImpl {
 
     public ServerProfileSchemaViewImpl(boolean create) {
         super(create);
@@ -27,7 +27,7 @@ public class ServerProfileSchemaViewImpl extends BaseSchemaViewImpl {
 
     @Override
     protected String getCreateTitle() {
-        return Utils.constants.addProfileSchema();
+        return Utils.constants.addServerProfileSchema();
     }
 
     @Override
@@ -37,17 +37,7 @@ public class ServerProfileSchemaViewImpl extends BaseSchemaViewImpl {
 
     @Override
     protected String getSubTitle() {
-        return Utils.constants.profileSchemaDetails();
+        return Utils.constants.serverProfileSchemaDetails();
     }
 
-    @Override
-    protected void initDetailsTable() {
-        super.initDetailsTable();
-        /*
-            Making invisible Endpoint count column because it is redundant.
-            see BaseSchemaViewImpl#initDetailsTable() for details.
-         */
-        detailsTable.getCellFormatter().setVisible(3, 0, false);
-        detailsTable.getCellFormatter().setVisible(3, 1, false);
-    }
 }

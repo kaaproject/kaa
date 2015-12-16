@@ -31,7 +31,7 @@ BOOST_AUTO_TEST_CASE(ProfileManagerIsInitializedTest)
 {
     ProfileManager profileManager;
 
-#if KAA_PROFILE_SCHEMA_VERSION > 1
+#if KAA_PROFILE_SCHEMA_VERSION > 0
     BOOST_CHECK(!profileManager.isInitialized());
     profileManager.setProfileContainer(std::make_shared<DefaultProfileContainer>());
     BOOST_CHECK(profileManager.isInitialized());

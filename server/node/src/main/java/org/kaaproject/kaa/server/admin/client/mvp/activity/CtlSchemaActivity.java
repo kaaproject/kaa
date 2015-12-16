@@ -19,14 +19,15 @@ package org.kaaproject.kaa.server.admin.client.mvp.activity;
 import java.util.List;
 
 import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
+import org.kaaproject.avro.ui.gwt.client.widget.ActionsButton.ActionMenuItemListener;
 import org.kaaproject.avro.ui.gwt.client.widget.dialog.ConfirmDialog;
 import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaExportMethod;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.place.CtlSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.CtlSchemaView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.widget.ActionsButton.ActionMenuItemListener;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.RecordPanel.FormDataLoader;
 import org.kaaproject.kaa.server.admin.client.servlet.ServletHelper;
 import org.kaaproject.kaa.server.admin.client.util.ErrorMessageCustomizer;
@@ -129,7 +130,8 @@ public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto,
     protected void onEntityRetrieved() {
         if (create) {
             KaaAdmin.getDataSource().createNewCTLSchemaFormInstance(place.getSourceFqn(), 
-                    place.getSourceVersion(), new BusyAsyncCallback<CtlSchemaFormDto>() {
+                    place.getSourceVersion(), CTLSchemaScopeDto.TENANT, null, 
+                    new BusyAsyncCallback<CtlSchemaFormDto>() {
                         @Override
                         public void onSuccessImpl(CtlSchemaFormDto result) {
                             entity = result;
@@ -162,8 +164,6 @@ public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto,
             detailsView.getVersion().setAcceptableValues(schemaVersions);
             detailsView.setTitle(entity.getFqnString());
             
-            detailsView.enableSingleExportMode(!entity.hasDependencies());
-            
             if (entity.hasDependencies()) {
                 registrations.add(detailsView.getExportActionsButton().addMenuItem(Utils.constants.shallow(), new ActionMenuItemListener() {
                     @Override
@@ -177,20 +177,19 @@ public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto,
                         exportSchema(CTLSchemaExportMethod.DEEP);
                     }
                 }));
-                registrations.add(detailsView.getExportActionsButton().addMenuItem(Utils.constants.flat(), new ActionMenuItemListener() {
-                    @Override
-                    public void onMenuItemSelected() {
-                        exportSchema(CTLSchemaExportMethod.FLAT);
-                    }
-                }));
-            } else {
-                registrations.add(detailsView.getExportButton().addClickHandler(new ClickHandler() {
-                    @Override
-                    public void onClick(ClickEvent event) {
-                        exportSchema(CTLSchemaExportMethod.FLAT);
-                    }
-                }));
             }
+            registrations.add(detailsView.getExportActionsButton().addMenuItem(Utils.constants.flat(), new ActionMenuItemListener() {
+                @Override
+                public void onMenuItemSelected() {
+                    exportSchema(CTLSchemaExportMethod.FLAT);
+                }
+            }));
+            registrations.add(detailsView.getExportActionsButton().addMenuItem(Utils.constants.javaLibrary(), new ActionMenuItemListener() {
+                @Override
+                public void onMenuItemSelected() {
+                    exportSchema(CTLSchemaExportMethod.LIBRARY);
+                }
+            }));            
         }
         detailsView.getName().setValue(entity.getSchemaName());
         detailsView.getDescription().setValue(entity.getDescription());
@@ -210,7 +209,7 @@ public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto,
                 ServletHelper.exportCtlSchema(key);
             }
         };
-        KaaAdmin.getDataSource().prepareCTLSchemaExport(place.getFqn(), version, method, schemaExportCallback);
+        KaaAdmin.getDataSource().prepareCTLSchemaExport(entity.getCtlSchemaId(), method, schemaExportCallback);
     }
     
     @Override

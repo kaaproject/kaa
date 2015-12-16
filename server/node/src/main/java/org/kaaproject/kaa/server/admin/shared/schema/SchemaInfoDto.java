@@ -17,22 +17,22 @@
 package org.kaaproject.kaa.server.admin.shared.schema;
 
 import org.kaaproject.avro.ui.shared.RecordField;
-import org.kaaproject.kaa.common.dto.SchemaDto;
+import org.kaaproject.kaa.common.dto.VersionDto;
 
-public class SchemaInfoDto extends SchemaDto {
+public class SchemaInfoDto extends VersionDto {
 
     private static final long serialVersionUID = -8792655520011059405L;
     
+    private String schemaName;
     private RecordField schemaForm;
 
     public SchemaInfoDto() {
         super();
     }
     
-    public SchemaInfoDto(SchemaDto schemaDto) {
-        this.id = schemaDto.getId();
-        this.majorVersion = schemaDto.getMajorVersion();
-        this.minorVersion = schemaDto.getMinorVersion();
+    public SchemaInfoDto(VersionDto versionDto) {
+        this.id = versionDto.getId();
+        this.version = versionDto.getVersion();
     }
     
     public RecordField getSchemaForm() {
@@ -43,4 +43,12 @@ public class SchemaInfoDto extends SchemaDto {
         this.schemaForm = schemaForm;
     }
 
+    public String getSchemaName() {
+        return schemaName;
+    }
+
+    public void setSchemaName(String schemaName) {
+        this.schemaName = schemaName;
+    }
+ 
 }

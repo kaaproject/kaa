@@ -22,10 +22,10 @@ import java.util.List;
 
 import org.kaaproject.kaa.common.dto.ChangeConfigurationNotification;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
+import org.kaaproject.kaa.common.dto.ConfigurationRecordDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.HistoryDto;
-import org.kaaproject.kaa.common.dto.SchemaDto;
-import org.kaaproject.kaa.common.dto.StructureRecordDto;
+import org.kaaproject.kaa.common.dto.VersionDto;
 
 /**
  * The interface Configuration service.
@@ -73,7 +73,7 @@ public interface ConfigurationService {
      * @param includeDeprecated the include deprecated
      * @return the list of structure records
      */
-    Collection<StructureRecordDto<ConfigurationDto>> findAllConfigurationRecordsByEndpointGroupId(String endpointGroupId, boolean includeDeprecated);
+    Collection<ConfigurationRecordDto> findAllConfigurationRecordsByEndpointGroupId(String endpointGroupId, boolean includeDeprecated);
 
     /**
      * Find configuration record by schema id and group id.
@@ -82,7 +82,7 @@ public interface ConfigurationService {
      * @param endpointGroupId the endpoint group id
      * @return the structure record dto
      */
-    StructureRecordDto<ConfigurationDto> findConfigurationRecordBySchemaIdAndEndpointGroupId(String schemaId, String endpointGroupId);
+    ConfigurationRecordDto findConfigurationRecordBySchemaIdAndEndpointGroupId(String schemaId, String endpointGroupId);
 
     /**
      * Find all vacant configuration schemas by group id.
@@ -91,7 +91,7 @@ public interface ConfigurationService {
      * @param endpointGroupId the group id
      * @return the list of schema objects
      */
-    List<SchemaDto> findVacantSchemasByEndpointGroupId(String endpointGroupId);
+    List<VersionDto> findVacantSchemasByEndpointGroupId(String endpointGroupId);
 
     /**
      * Save configuration. Configuration
@@ -155,7 +155,7 @@ public interface ConfigurationService {
      * @param applicationId the application id
      * @return the list
      */
-    List<SchemaDto> findConfigurationSchemaVersionsByAppId(String applicationId);
+    List<VersionDto> findConfigurationSchemaVersionsByAppId(String applicationId);
 
     /**
      * Find latest configuration schema by application id and schema version.

@@ -17,12 +17,12 @@ package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
 import java.util.List;
 
-import org.kaaproject.kaa.common.dto.plugin.PluginInfoDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.place.UserVerifierPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.UserVerifierView;
+import org.kaaproject.kaa.server.admin.shared.plugin.PluginInfoDto;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 

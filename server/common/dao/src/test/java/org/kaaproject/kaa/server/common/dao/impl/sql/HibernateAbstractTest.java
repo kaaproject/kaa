@@ -21,6 +21,7 @@ import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
 import org.kaaproject.kaa.common.dto.UpdateStatus;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventAction;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
 import org.kaaproject.kaa.server.common.core.schema.KaaSchemaFactoryImpl;
@@ -34,6 +35,7 @@ import org.kaaproject.kaa.server.common.dao.model.sql.Change;
 import org.kaaproject.kaa.server.common.dao.model.sql.Configuration;
 import org.kaaproject.kaa.server.common.dao.model.sql.ConfigurationSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.EndpointGroup;
+import org.kaaproject.kaa.server.common.dao.model.sql.EndpointProfileSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.EventClass;
 import org.kaaproject.kaa.server.common.dao.model.sql.EventClassFamily;
 import org.kaaproject.kaa.server.common.dao.model.sql.EventSchemaVersion;
@@ -42,8 +44,8 @@ import org.kaaproject.kaa.server.common.dao.model.sql.LogAppender;
 import org.kaaproject.kaa.server.common.dao.model.sql.LogSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.NotificationSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.ProfileFilter;
-import org.kaaproject.kaa.server.common.dao.model.sql.ProfileSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.SdkProfile;
+import org.kaaproject.kaa.server.common.dao.model.sql.ServerProfileSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.Tenant;
 import org.kaaproject.kaa.server.common.dao.model.sql.Topic;
 import org.kaaproject.kaa.server.common.dao.model.sql.User;
@@ -60,11 +62,10 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-
-import static org.apache.commons.lang.StringUtils.isBlank;
 
 public abstract class HibernateAbstractTest extends AbstractTest {
 
@@ -165,7 +166,7 @@ public abstract class HibernateAbstractTest extends AbstractTest {
                 schema = new ConfigurationSchema();
                 schema.setApplication(app);
                 schema.setSchema(readSchemaFileAsString("dao/schema/testDataSchema.json"));
-                schema.setMajorVersion(i + 1);
+                schema.setVersion(i + 1);
                 schema = configurationSchemaDao.save(schema);
                 Assert.assertNotNull(schema);
                 schemas.add(schema);
@@ -195,7 +196,7 @@ public abstract class HibernateAbstractTest extends AbstractTest {
                 dto.setConfigurationBody(new byte[]{0, 2, 3, 4,});
                 dto.setConfigurationSchema(schema);
                 dto.setSequenceNumber(i);
-                dto.setMajorVersion(i + 1);
+                dto.setSchemaVersion(i + 1);
                 dto.setApplication(schema.getApplication());
                 dto.setEndpointGroup(group);
                 Configuration saved = configurationDao.save(dto);
@@ -209,30 +210,53 @@ public abstract class HibernateAbstractTest extends AbstractTest {
         return configs;
     }
 
-    protected List<ProfileSchema> generateProfSchema(Application app, int count) {
-        List<ProfileSchema> schemas = Collections.emptyList();
+    protected List<EndpointProfileSchema> generateProfSchema(Application app, int count) {
+        List<EndpointProfileSchema> schemas = Collections.emptyList();
         try {
             if (app == null) {
                 app = generateApplication(null);
             }
-            ProfileSchema schemaDto;
+            CTLSchema ctlSchema = generateCTLSchema(DEFAULT_FQN, 1, app.getTenant(), null);
+            EndpointProfileSchema schemaDto;
             schemas = new ArrayList<>(count);
             for (int i = 0; i < count; i++) {
-                schemaDto = new ProfileSchema();
+                schemaDto = new EndpointProfileSchema();
                 schemaDto.setApplication(app);
-                schemaDto.setSchema(readSchemaFileAsString("dao/schema/testDataSchema.json"));
                 schemaDto.setCreatedUsername("Test User");
-                schemaDto.setMajorVersion(i + 1);
+                schemaDto.setCtlSchema(ctlSchema);
+                schemaDto.setVersion(i + 1);
                 schemaDto.setName("Test Name");
                 schemaDto = profileSchemaDao.save(schemaDto);
                 Assert.assertNotNull(schemaDto);
                 schemas.add(schemaDto);
             }
-        } catch (IOException e) {
-            LOG.error("Can't generate configs {}", e);
+        } catch (Exception e) {
+            LOG.error("Can't generate profile schema {}", e);
             Assert.fail("Can't generate profile schema." + e.getMessage());
         }
         return schemas;
+    }
+
+    protected CTLSchema generateCTLSchema(String fqn, int version, Tenant tenant, CTLSchemaScopeDto scope) {
+        if (scope == null) {
+            if (tenant == null) {
+                scope = CTLSchemaScopeDto.SYSTEM;
+            } else {
+                scope = CTLSchemaScopeDto.TENANT;
+            }
+        }
+        CTLSchemaMetaInfo metaInfo = new CTLSchemaMetaInfo();
+        metaInfo.setVersion(version);
+        metaInfo.setFqn(fqn);
+        metaInfo.setScope(scope);
+        metaInfo = ctlSchemaMetaInfoDao.save(metaInfo);
+        CTLSchema ctlSchema = new CTLSchema();
+        ctlSchema.setTenant(tenant);
+        ctlSchema.setBody(UUID.randomUUID().toString());
+        ctlSchema.setDependencySet(new HashSet<CTLSchema>());
+        ctlSchema.setMetaInfo(metaInfo);
+        ctlSchema = ctlSchemaDao.save(ctlSchema);
+        return ctlSchema;
     }
 
     protected List<NotificationSchema> generateNotificationSchema(Application app, int count, NotificationTypeDto type) {
@@ -248,7 +272,7 @@ public abstract class HibernateAbstractTest extends AbstractTest {
                 notificationSchema.setApplication(app);
                 notificationSchema.setSchema(readSchemaFileAsString("dao/schema/testDataSchema.json"));
                 notificationSchema.setCreatedUsername("Test User");
-                notificationSchema.setMajorVersion(i + 1);
+                notificationSchema.setVersion(i + 1);
                 notificationSchema.setName("Test Name");
                 notificationSchema.setType(type == null ? NotificationTypeDto.SYSTEM : type);
                 notificationSchema = notificationSchemaDao.save(notificationSchema);
@@ -262,12 +286,20 @@ public abstract class HibernateAbstractTest extends AbstractTest {
         return schemas;
     }
 
-    protected List<ProfileFilter> generateFilter(ProfileSchema schema, EndpointGroup group, int count, UpdateStatus status) {
+    protected List<ProfileFilter> generateFilter(EndpointProfileSchema schema, ServerProfileSchema srvSchema, EndpointGroup group, int count, UpdateStatus status) {
+        return generateFilter(generateApplication(null), schema, srvSchema, group, count, status);
+    }
+
+    protected List<ProfileFilter> generateFilter(Application app, EndpointProfileSchema schema, ServerProfileSchema srvSchema, EndpointGroup group, int count, UpdateStatus status) {
         if (schema == null) {
-            schema = generateProfSchema(null, 1).get(0);
+            schema = generateProfSchema(app, 1).get(0);
+        }
+
+        if (srvSchema == null) {
+            srvSchema = new ServerProfileSchema(generateServerProfileSchema(app.getStringId(), app.getTenant().getStringId()));
         }
         if (group == null) {
-            group = generateEndpointGroup(schema.getApplication(), null);
+            group = generateEndpointGroup(app, null);
         }
         List<ProfileFilter> filters = new ArrayList<>();
         for (int i = 0; i < count; i++) {
@@ -275,16 +307,44 @@ public abstract class HibernateAbstractTest extends AbstractTest {
             dto.setId(null);
             dto.setStatus(status != null ? status : UpdateStatus.INACTIVE);
             dto.setEndpointGroup(group);
-            dto.setProfileSchema(schema);
+            dto.setEndpointProfileSchema(schema);
+            dto.setServerProfileSchema(srvSchema);
             dto.setSequenceNumber(i);
-            dto.setMajorVersion(i + 1);
-            dto.setApplication(schema.getApplication());
+            dto.setApplication(app);
             ProfileFilter saved = profileFilterDao.save(dto);
             Assert.assertNotNull(saved);
             filters.add(saved);
         }
         return filters;
     }
+
+    protected List<ProfileFilter> generateFilterWithoutSchemaGeneration(EndpointProfileSchema schema, ServerProfileSchema srvSchema, EndpointGroup group, int count, UpdateStatus status) {
+        Application app = null;
+        if (schema != null) {
+            app = schema.getApplication();
+        } else if (srvSchema != null) {
+            app = srvSchema.getApplication();
+        }
+        if (group == null) {
+            group = generateEndpointGroup(app, null);
+        }
+        List<ProfileFilter> filters = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            ProfileFilter dto = new ProfileFilter();
+            dto.setId(null);
+            dto.setStatus(status != null ? status : UpdateStatus.INACTIVE);
+            dto.setEndpointGroup(group);
+            dto.setEndpointProfileSchema(schema);
+            dto.setServerProfileSchema(srvSchema);
+            dto.setSequenceNumber(i);
+            dto.setApplication(app);
+            ProfileFilter saved = profileFilterDao.save(dto);
+            Assert.assertNotNull(saved);
+            filters.add(saved);
+        }
+        return filters;
+    }
+
 
     protected Topic generateTopic(Application app, TopicTypeDto type, String topicName) {
         Topic topic = new Topic();
@@ -483,17 +543,4 @@ public abstract class HibernateAbstractTest extends AbstractTest {
         return sdkProfileDao.save(entity);
     }
 
-    protected CTLSchema generateCTLSchema(String fqn, Tenant tenant, int version, String body) {
-        CTLSchema ctlSchema = new CTLSchema();
-        ctlSchema.setMetaInfo(new CTLSchemaMetaInfo(fqn, version));
-        if (isBlank(body)) {
-            body = UUID.randomUUID().toString();
-        }
-        ctlSchema.setBody(body);
-        if (tenant == null) {
-            tenant = generateTenant();
-        }
-        ctlSchema.setTenant(tenant);
-        return ctlSchema;
-    }
 }

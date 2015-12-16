@@ -104,7 +104,7 @@ public class DefaultOperationsServerListServiceTest {
         DefaultOperationsServerListService.Memorizer memorizer = Mockito.mock(DefaultOperationsServerListService.Memorizer.class);
         Mockito.doThrow(new InterruptedException()).when(memorizer).compute(Mockito.any(Object.class));
         ReflectionTestUtils.setField(service, "cache", memorizer);
-        service.filter(Collections.EMPTY_LIST);
+        service.filter(Collections.<ProtocolVersionId>emptyList());
     }
 
     @Test

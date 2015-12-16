@@ -57,9 +57,14 @@ public class CTLSchemaParser {
         this.controlService = controlService;
         this.tenantId = tenantId;
     }
-
-    public CTLSchemaInfoDto parse(String body) throws JsonParseException, JsonMappingException, IOException {
+    
+    public CTLSchemaInfoDto parse(String body, CTLSchemaScopeDto scope, String applicationId) throws JsonParseException, JsonMappingException, IOException {
         CTLSchemaInfoDto schema = new CTLSchemaInfoDto();
+
+        schema.setTenantId(tenantId);
+        schema.setApplicationId(applicationId);
+        schema.setScope(detectScope(scope, applicationId));
+        
         ObjectNode object = new ObjectMapper().readValue(body, ObjectNode.class);
 
         if (!object.has("type") || !object.get("type").isTextual() || !object.get("type").getTextValue().equals("record")) {
@@ -75,30 +80,9 @@ public class CTLSchemaParser {
         }
 
         if (!object.has("version") || !object.get("version").isInt()) {
-            throw new IllegalArgumentException("No version specified!");
-        } else {
-            schema.setVersion(object.get("version").asInt());
-        }
-
-        schema.setTenantId(tenantId);
-
-        if (object.has("application") && object.get("application").isTextual()) {
-            schema.setApplicationId(object.get("application").asText());
-        }
-
-        if (tenantId != null && schema.getApplicationId() != null) {
-            schema.setScope(CTLSchemaScopeDto.APPLICATION);
-        } else if (tenantId != null && schema.getApplicationId() == null) {
-            schema.setScope(CTLSchemaScopeDto.TENANT);
-        } else if (tenantId == null && schema.getApplicationId() == null) {
-            schema.setScope(CTLSchemaScopeDto.SYSTEM);
-        } else {
-            /*
-             * The Kaa administrator is trying to save an application CTL
-             * schema.
-             */
-            throw new IllegalArgumentException("You do not have permission to perform this operation!");
-        }
+            object.put("version", 1);
+        } 
+        schema.setVersion(object.get("version").asInt());
 
         Set<CTLSchemaMetaInfoDto> dependencies = new HashSet<>();
         if (!object.has("dependencies")) {
@@ -116,9 +100,37 @@ public class CTLSchemaParser {
                 schema.setDependencies(dependencies);
             }
         }
-
+        body = new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(object);
         schema.setBody(body);
         return schema;
+    }
+    
+    private CTLSchemaScopeDto detectScope(CTLSchemaScopeDto scope, String applicationId) {
+        if (scope != null) {
+            if (scope.getLevel() >= CTLSchemaScopeDto.APPLICATION.getLevel() && applicationId == null) {
+                throw new IllegalArgumentException("Missing application identifier for provided scope " + scope.name() + "!");
+            } else if (scope.getLevel() < CTLSchemaScopeDto.APPLICATION.getLevel() && applicationId != null) {
+                throw new IllegalArgumentException("Application identifier can't be specified for provided scope " + scope.name() + "!");
+            }
+            if (scope == CTLSchemaScopeDto.SYSTEM && tenantId != null) {
+                throw new IllegalArgumentException("You do not have permission to perform this operation!");
+            }
+            return scope;
+        } else {
+            if (tenantId != null && applicationId != null) {
+                return CTLSchemaScopeDto.APPLICATION;
+            } else if (tenantId != null && applicationId == null) {
+                return CTLSchemaScopeDto.TENANT;
+            } else if (tenantId == null && applicationId == null) {
+                return CTLSchemaScopeDto.SYSTEM;
+            } else {
+                /*
+                 * The Kaa administrator is trying to save an application CTL
+                 * schema.
+                 */
+                throw new IllegalArgumentException("You do not have permission to perform this operation!");
+            }
+        }
     }
 
     public Set<CTLSchemaDto> fetchDependencies(CTLSchemaInfoDto schema) throws ControlServiceException {

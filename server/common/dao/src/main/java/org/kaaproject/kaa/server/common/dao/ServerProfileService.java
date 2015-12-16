@@ -16,10 +16,10 @@
 
 package org.kaaproject.kaa.server.common.dao;
 
+import java.util.List;
+
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
-
-import java.util.List;
 
 /**
  * Server profile service
@@ -45,10 +45,10 @@ public interface ServerProfileService {
     /**
      * Find server profile schema with given identifier.
      *
-     * @param profileId the server profile schema identifier.
+     * @param schemaId the server profile schema identifier.
      * @return the server profile schema.
      */
-    ServerProfileSchemaDto findServerProfileSchema(String profileId);
+    ServerProfileSchemaDto findServerProfileSchema(String schemaId);
 
     /**
      * Find server profile schemas with given application identifier.
@@ -57,12 +57,15 @@ public interface ServerProfileService {
      * @return the list of server profile schemas for corresponding application.
      */
     List<ServerProfileSchemaDto> findServerProfileSchemasByAppId(String appId);
-
+    
     /**
-     * @param keyHash
-     * @return
+     * Find server profile schema by application id and version.
+     *
+     * @param appId the application id
+     * @param schemaVersion the schema version
+     * @return the server profile schema dto
      */
-    ServerProfileSchemaDto findServerProfileSchemaByKeyHash(byte[] keyHash);
+    ServerProfileSchemaDto findServerProfileSchemaByAppIdAndVersion(String appId, int schemaVersion);
 
     /**
      * Remove server profile schema with given identifier.
@@ -81,10 +84,11 @@ public interface ServerProfileService {
     /**
      * Save server profile data to endpoint profile.
      *
-     * @param keyHash       the endpoint key hash identifier.
+     * @param keyHash the endpoint key hash identifier.
+     * @param version the server profile schema version
      * @param serverProfile server profile data in string representation.
      * @return the saved endpoint profile.
      */
-    EndpointProfileDto saveServerProfile(byte[] keyHash, String serverProfile);
+    EndpointProfileDto saveServerProfile(byte[] keyHash, int version, String serverProfile);
 
 }

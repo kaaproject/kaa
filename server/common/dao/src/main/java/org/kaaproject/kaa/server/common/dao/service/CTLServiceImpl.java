@@ -21,29 +21,41 @@ import static org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto.SYSTEM;
 import static org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto.TENANT;
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getDto;
+import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getStringFromFile;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateObject;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateSqlId;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateString;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.avro.Schema;
+import org.apache.avro.generic.GenericRecord;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 import org.hibernate.LockMode;
 import org.hibernate.LockOptions;
+import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaInfoDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
 import org.kaaproject.kaa.common.dto.file.FileData;
+import org.kaaproject.kaa.server.common.core.algorithms.generation.ConfigurationGenerationException;
+import org.kaaproject.kaa.server.common.core.algorithms.generation.DefaultRecordGenerationAlgorithm;
+import org.kaaproject.kaa.server.common.core.algorithms.generation.DefaultRecordGenerationAlgorithmImpl;
+import org.kaaproject.kaa.server.common.core.configuration.RawData;
+import org.kaaproject.kaa.server.common.core.configuration.RawDataFactory;
+import org.kaaproject.kaa.server.common.core.schema.RawSchema;
 import org.kaaproject.kaa.server.common.dao.CTLService;
 import org.kaaproject.kaa.server.common.dao.exception.DatabaseProcessingException;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
@@ -70,6 +82,7 @@ public class CTLServiceImpl implements CTLService {
     private static final Logger LOG = LoggerFactory.getLogger(CTLServiceImpl.class);
     private static final String DEPENDENCIES = "dependencies";
     private static final String GENERATED = "Generated";
+    private static final String DEFAULT_SYSTEM_EMPTY_SCHEMA_FILE = "/default_system_empty_schema.avsc";
 
     private final LockOptions lockOptions = new LockOptions(LockMode.PESSIMISTIC_WRITE);
 
@@ -99,12 +112,40 @@ public class CTLServiceImpl implements CTLService {
     private CTLSchemaMetaInfoDao<CTLSchemaMetaInfo> schemaMetaInfoDao;
 
     @Override
+    public CTLSchemaDto getOrCreateEmptySystemSchema(String createdUsername) {
+        CTLSchemaDto ctlSchema = findCTLSchemaByFqnAndVerAndTenantId(DEFAULT_SYSTEM_EMPTY_SCHEMA_FQN, DEFAULT_SYSTEM_EMPTY_SCHEMA_VERSION,
+                null);
+        if (ctlSchema == null) {
+            CTLSchemaInfoDto schema = new CTLSchemaInfoDto();
+            schema.setName(GENERATED);
+            schema.setCreatedUsername(createdUsername);
+            schema.setScope(CTLSchemaScopeDto.SYSTEM);
+            schema.setFqn(DEFAULT_SYSTEM_EMPTY_SCHEMA_FQN);
+            schema.setVersion(DEFAULT_SYSTEM_EMPTY_SCHEMA_VERSION);
+            schema.setDependencies(new HashSet<CTLSchemaMetaInfoDto>());
+            String body = getStringFromFile(DEFAULT_SYSTEM_EMPTY_SCHEMA_FILE, CTLServiceImpl.class);
+            if (!body.isEmpty()) {
+                schema.setBody(body);
+            } else {
+                throw new RuntimeException("Can't read default system schema."); // NOSONAR
+            }
+            ctlSchema = new CTLSchemaDto(schema, new HashSet<CTLSchemaDto>());
+            ctlSchema = saveCTLSchema(ctlSchema);
+        }
+        return ctlSchema;
+    }
+
+    @Override
     public CTLSchemaDto saveCTLSchema(CTLSchemaDto unSavedSchema) {
         validateCTLSchemaObject(unSavedSchema);
+        if (unSavedSchema.getDefaultRecord() == null) {
+            unSavedSchema = generateDefaultRecord(unSavedSchema);
+        } else {
+            validateDefaultRecord(unSavedSchema);
+        }
         if (isBlank(unSavedSchema.getId())) {
             CTLSchemaMetaInfoDto metaInfo = unSavedSchema.getMetaInfo();
             CTLSchemaScopeDto currentScope = metaInfo.getScope();
-
             CTLSchemaDto dto;
             synchronized (this) {
                 boolean existing = false;
@@ -156,6 +197,32 @@ public class CTLServiceImpl implements CTLService {
             return dto;
         } else {
             return updateCTLSchema(unSavedSchema);
+        }
+    }
+
+    private void validateDefaultRecord(CTLSchemaDto unSavedSchema) {
+        try {
+            String schemaBody = flatExportAsString(unSavedSchema);
+            GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<GenericRecord>(schemaBody);
+            converter.decodeJson(unSavedSchema.getDefaultRecord());
+        } catch (IOException | RuntimeException e) {
+            LOG.error("Invalid default record for CTL schema with body: {}", unSavedSchema.getBody(), e);
+            throw new RuntimeException("An unexpected exception occured: " + e.toString());
+        }
+    }
+
+    private CTLSchemaDto generateDefaultRecord(CTLSchemaDto unSavedSchema) {
+        try {
+            String schemaBody = flatExportAsString(unSavedSchema);
+            LOG.debug("Generating default record for flat schema: {}", schemaBody);
+            RawSchema dataSchema = new RawSchema(schemaBody);
+            DefaultRecordGenerationAlgorithm<RawData> dataProcessor = new DefaultRecordGenerationAlgorithmImpl<RawSchema, RawData>(
+                    dataSchema, new RawDataFactory());
+            unSavedSchema.setDefaultRecord(dataProcessor.getRootData().getRawData());
+            return unSavedSchema;
+        } catch (ConfigurationGenerationException | IOException | RuntimeException e) {
+            LOG.error("Failed to generate default record for CTL schema with body: {}", unSavedSchema.getBody(), e);
+            throw new RuntimeException("An unexpected exception occured: " + e.toString());
         }
     }
 
@@ -228,31 +295,6 @@ public class CTLServiceImpl implements CTLService {
         LOG.debug("Find ctl schema by fqn {} version {} and tenant id {}", fqn, version, tenantId);
         return DaoUtil.getDto(ctlSchemaDao.findByFqnAndVerAndTenantId(fqn, version, tenantId));
     }
-    
-    @Override
-    public List<CTLSchemaDto> findCTLSchemasByFqnAndTenantId(String fqn,
-            String tenantId) {
-        if (isBlank(fqn)) {
-            throw new IncorrectParameterException("Incorrect parameters for ctl schema request.");
-        }
-        validateSqlId(tenantId, "Incorrect tenant id for ctl schema request.");
-        LOG.debug("Find ctl schema by fqn {} and tenant id {}", fqn, tenantId);
-        return convertDtoList(ctlSchemaDao.findByFqnAndTenantId(fqn, tenantId)); 
-    }
-
-    @Override
-    public List<CTLSchemaDto> findCTLSchemasByApplicationId(String appId) {
-        validateSqlId(appId, "Incorrect application id for ctl schema request.");
-        LOG.debug("Find ctl schemas by application id {}", appId);
-        return convertDtoList(ctlSchemaDao.findByApplicationId(appId));
-    }
-
-    @Override
-    public List<CTLSchemaDto> findCTLSchemasByTenantId(String tenantId) {
-        validateSqlId(tenantId, "Incorrect tenant id for ctl schema request.");
-        LOG.debug("Find ctl schemas by tenant id {}", tenantId);
-        return convertDtoList(ctlSchemaDao.findByTenantId(tenantId));
-    }
 
     @Override
     public List<CTLSchemaDto> findSystemCTLSchemas() {
@@ -287,16 +329,10 @@ public class CTLServiceImpl implements CTLService {
     }
 
     @Override
-    public List<CTLSchemaMetaInfoDto> findCTLSchemasMetaInfoByTenantId(String tenantId) {
+    public List<CTLSchemaMetaInfoDto> findTenantCTLSchemasMetaInfoByTenantId(String tenantId) {
         validateSqlId(tenantId, "Incorrect tenant id for ctl schema request.");
         LOG.debug("Find meta info for ctl schemas by tenant id {}", tenantId);
-        return getMetaInfoFromCTLSchema(ctlSchemaDao.findByTenantId(tenantId));
-    }
-
-    @Override
-    public List<CTLSchemaDto> findAvailableCTLSchemas(String tenantId) {
-        LOG.debug("Find system and tenant scopes ctl schemas by tenant id {}", tenantId);
-        return convertDtoList(ctlSchemaDao.findAvailableSchemas(tenantId));
+        return getMetaInfoFromCTLSchema(ctlSchemaDao.findTenantSchemasByTenantId(tenantId));
     }
 
     @Override
@@ -469,4 +505,5 @@ public class CTLServiceImpl implements CTLService {
         }
         return files;
     }
+
 }

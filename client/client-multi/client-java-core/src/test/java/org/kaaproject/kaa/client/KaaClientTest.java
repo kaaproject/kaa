@@ -45,15 +45,15 @@ import org.kaaproject.kaa.client.logging.AbstractLogCollector;
 import org.kaaproject.kaa.client.persistence.KaaClientPropertiesState;
 import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.client.persistence.PersistentStorage;
+import org.kaaproject.kaa.client.profile.ProfileContainer;
 import org.kaaproject.kaa.client.profile.ProfileRuntimeException;
 import org.kaaproject.kaa.client.schema.SchemaRuntimeException;
-import org.kaaproject.kaa.client.profile.ProfileContainer;
 import org.kaaproject.kaa.client.transport.TransportException;
 import org.kaaproject.kaa.client.util.CommonsBase64;
 import org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData;
 import org.kaaproject.kaa.common.endpoint.gen.ProtocolVersionPair;
 import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
-import org.kaaproject.kaa.schema.base.Profile;
+import org.kaaproject.kaa.schema.system.EmptyData;
 import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -95,8 +95,8 @@ public class KaaClientTest {
 
         client.setProfileContainer(new ProfileContainer() {
             @Override
-            public Profile getProfile() {
-                return new Profile();
+            public EmptyData getProfile() {
+                return new EmptyData();
             }
         });
     }

@@ -16,31 +16,23 @@
 
 package org.kaaproject.kaa.common.dto.admin;
 
-import java.io.Serializable;
 import java.util.List;
 
 import org.kaaproject.kaa.common.dto.HasId;
 
-public class SdkProfileDto implements HasId, Serializable {
+public class SdkProfileDto extends SdkTokenDto implements HasId {
 
     private static final long serialVersionUID = 2433663439327120870L;
 
     private String id;
     private String applicationId;
-    private Integer configurationSchemaVersion;
-    private Integer profileSchemaVersion;
-    private Integer notificationSchemaVersion;
-    private Integer logSchemaVersion;
-    private List<String> aefMapIds;
-    private String defaultVerifierToken;
-    private String applicationToken;
-    private String name;
     private String token;
     private String createdUsername;
     private Long createdTime;
     private Integer endpointCount = 0;
 
     public SdkProfileDto() {
+        super();
     }
 
     public SdkProfileDto(String applicationId, Integer configurationSchemaVersion,
@@ -49,18 +41,16 @@ public class SdkProfileDto implements HasId, Serializable {
                             List<String> aefMapIds,
                             String defaultVerifierToken, String applicationToken,
                             String createdUsername, Long createdTime, String name) {
-        super();
+        super(configurationSchemaVersion, 
+                profileSchemaVersion, 
+                notificationSchemaVersion, 
+                logSchemaVersion,
+                aefMapIds,
+                defaultVerifierToken,
+                applicationToken, name);
         this.applicationId = applicationId;
-        this.configurationSchemaVersion = configurationSchemaVersion;
-        this.profileSchemaVersion = profileSchemaVersion;
-        this.notificationSchemaVersion = notificationSchemaVersion;
-        this.logSchemaVersion = logSchemaVersion;
-        this.aefMapIds = aefMapIds;
-        this.defaultVerifierToken = defaultVerifierToken;
-        this.applicationToken = applicationToken;
         this.createdUsername = createdUsername;
         this.createdTime = createdTime;
-        this.name = name;
     }
 
     public String getApplicationId() {
@@ -69,70 +59,6 @@ public class SdkProfileDto implements HasId, Serializable {
 
     public void setApplicationId(String applicationId) {
         this.applicationId = applicationId;
-    }
-
-    public Integer getConfigurationSchemaVersion() {
-        return configurationSchemaVersion;
-    }
-
-    public void setConfigurationSchemaVersion(Integer configurationSchemaVersion) {
-        this.configurationSchemaVersion = configurationSchemaVersion;
-    }
-
-    public Integer getProfileSchemaVersion() {
-        return profileSchemaVersion;
-    }
-
-    public void setProfileSchemaVersion(Integer profileSchemaVersion) {
-        this.profileSchemaVersion = profileSchemaVersion;
-    }
-
-    public Integer getNotificationSchemaVersion() {
-        return notificationSchemaVersion;
-    }
-
-    public void setNotificationSchemaVersion(Integer notificationSchemaVersion) {
-        this.notificationSchemaVersion = notificationSchemaVersion;
-    }
-
-    public List<String> getAefMapIds() {
-        return aefMapIds;
-    }
-
-    public void setAefMapIds(List<String> aefMapIds) {
-        this.aefMapIds = aefMapIds;
-    }
-
-    public Integer getLogSchemaVersion() {
-        return logSchemaVersion;
-    }
-
-    public void setLogSchemaVersion(Integer logSchemaVersion) {
-        this.logSchemaVersion = logSchemaVersion;
-    }
-
-    public String getDefaultVerifierToken() {
-        return defaultVerifierToken;
-    }
-
-    public void setDefaultVerifierToken(String defaultVerifierToken) {
-        this.defaultVerifierToken = defaultVerifierToken;
-    }
-
-    public String getApplicationToken() {
-        return applicationToken;
-    }
-
-    public void setApplicationToken(String applicationToken) {
-        this.applicationToken = applicationToken;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getToken() {
@@ -166,95 +92,7 @@ public class SdkProfileDto implements HasId, Serializable {
     public void setEndpointCount(Integer endpointCount) {
         this.endpointCount = endpointCount;
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        SdkProfileDto that = (SdkProfileDto) o;
-
-        if (aefMapIds != null ? !aefMapIds.equals(that.aefMapIds) : that.aefMapIds != null) {
-            return false;
-        }
-        if (applicationId != null ? !applicationId.equals(that.applicationId) : that.applicationId != null)  {
-            return false;
-        }
-        if (applicationToken != null ? !applicationToken.equals(that.applicationToken) : that.applicationToken != null) {
-            return false;
-        }
-        if (configurationSchemaVersion != null ? !configurationSchemaVersion.equals(that.configurationSchemaVersion) : that.configurationSchemaVersion != null) {
-            return false;
-        }
-        if (defaultVerifierToken != null ? !defaultVerifierToken.equals(that.defaultVerifierToken) : that.defaultVerifierToken != null) {
-            return false;
-        }
-        if (logSchemaVersion != null ? !logSchemaVersion.equals(that.logSchemaVersion) : that.logSchemaVersion != null) {
-            return false;
-        }
-        if (notificationSchemaVersion != null ? !notificationSchemaVersion.equals(that.notificationSchemaVersion) : that.notificationSchemaVersion != null) {
-            return false;
-        }
-        if (profileSchemaVersion != null ? !profileSchemaVersion.equals(that.profileSchemaVersion) : that.profileSchemaVersion != null) {
-            return false;
-        }
-        if (name != null ? !name.equals(that.name) : that.name != null) {
-            return false;
-        }
-        if (token != null ? !token.equals(that.token) : that.token != null) {
-            return false;
-        }
-        if (createdUsername != null ? !createdUsername.equals(that.createdUsername) : that.createdUsername != null) {
-            return false;
-        }
-        if (createdTime != null ? !createdTime.equals(that.createdTime) : that.createdTime != null) {
-            return false;
-        }
-        if (endpointCount != null ? !endpointCount.equals(that.endpointCount) : that.endpointCount != null) {
-            return false;
-        }
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = applicationId != null ? applicationId.hashCode() : 0;
-        result = 31 * result + (configurationSchemaVersion != null ? configurationSchemaVersion.hashCode() : 0);
-        result = 31 * result + (profileSchemaVersion != null ? profileSchemaVersion.hashCode() : 0);
-        result = 31 * result + (notificationSchemaVersion != null ? notificationSchemaVersion.hashCode() : 0);
-        result = 31 * result + (logSchemaVersion != null ? logSchemaVersion.hashCode() : 0);
-        result = 31 * result + (aefMapIds != null ? aefMapIds.hashCode() : 0);
-        result = 31 * result + (defaultVerifierToken != null ? defaultVerifierToken.hashCode() : 0);
-        result = 31 * result + (applicationToken != null ? applicationToken.hashCode() : 0);
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (token != null ? token.hashCode() : 0);
-        result = 31 * result + (createdUsername != null ? createdUsername.hashCode() : 0);
-        result = 31 * result + (createdTime != null ? createdTime.hashCode() : 0);
-        result = 31 * result + (endpointCount != null ? endpointCount.hashCode() : 0);
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        return "SdkPropertiesDto{" +
-                "id='" + id + '\'' +
-                ", applicationId='" + applicationId + '\'' +
-                ", configurationSchemaVersion=" + configurationSchemaVersion +
-                ", profileSchemaVersion=" + profileSchemaVersion +
-                ", notificationSchemaVersion=" + notificationSchemaVersion +
-                ", logSchemaVersion=" + logSchemaVersion +
-                ", aefMapIds=" + aefMapIds +
-                ", defaultVerifierToken='" + defaultVerifierToken + '\'' +
-                ", applicationToken='" + applicationToken + '\'' +
-                ", name='" + name + '\'' +
-                ", token='" + token + '\'' +
-                ", createdUsername='" + createdUsername + '\'' +
-                ", createdTime='" + createdTime + '\'' +
-                ", endpointCount='" + endpointCount + '\'' +
-                '}';
-    }
-
+    
     @Override
     public String getId() {
         return id;
@@ -263,6 +101,110 @@ public class SdkProfileDto implements HasId, Serializable {
     @Override
     public void setId(String id) {
         this.id = id;
+    }
+    
+    public SdkTokenDto toSdkTokenDto() {
+        return new SdkTokenDto(configurationSchemaVersion, 
+                profileSchemaVersion, 
+                notificationSchemaVersion, 
+                logSchemaVersion, 
+                aefMapIds, 
+                defaultVerifierToken, 
+                applicationToken, 
+                name);
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result
+                + ((applicationId == null) ? 0 : applicationId.hashCode());
+        result = prime * result
+                + ((createdTime == null) ? 0 : createdTime.hashCode());
+        result = prime * result
+                + ((createdUsername == null) ? 0 : createdUsername.hashCode());
+        result = prime * result
+                + ((endpointCount == null) ? 0 : endpointCount.hashCode());
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((token == null) ? 0 : token.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!super.equals(obj)) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        SdkProfileDto other = (SdkProfileDto) obj;
+        if (applicationId == null) {
+            if (other.applicationId != null) {
+                return false;
+            }
+        } else if (!applicationId.equals(other.applicationId)) {
+            return false;
+        }
+        if (createdTime == null) {
+            if (other.createdTime != null) {
+                return false;
+            }
+        } else if (!createdTime.equals(other.createdTime)) {
+            return false;
+        }
+        if (createdUsername == null) {
+            if (other.createdUsername != null) {
+                return false;
+            }
+        } else if (!createdUsername.equals(other.createdUsername)) {
+            return false;
+        }
+        if (endpointCount == null) {
+            if (other.endpointCount != null) {
+                return false;
+            }
+        } else if (!endpointCount.equals(other.endpointCount)) {
+            return false;
+        }
+        if (id == null) {
+            if (other.id != null) {
+                return false;
+            }
+        } else if (!id.equals(other.id)) {
+            return false;
+        }
+        if (token == null) {
+            if (other.token != null) {
+                return false;
+            }
+        } else if (!token.equals(other.token)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("SdkProfileDto [id=");
+        builder.append(id);
+        builder.append(", applicationId=");
+        builder.append(applicationId);
+        builder.append(", token=");
+        builder.append(token);
+        builder.append(", createdUsername=");
+        builder.append(createdUsername);
+        builder.append(", createdTime=");
+        builder.append(createdTime);
+        builder.append(", endpointCount=");
+        builder.append(endpointCount);
+        builder.append("]");
+        return builder.toString();
     }
 
 }

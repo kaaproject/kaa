@@ -1,0 +1,11 @@
+{
+    "type" : "record",
+    "name" : "ServerProfileTest",
+    "namespace" : "org.kaaproject.kaa",
+    "fields" : [
+        {
+            "name" : "serverField",
+            "type" : "int"
+        }
+    ]
+}

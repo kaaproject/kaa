@@ -99,7 +99,7 @@ public class FlumeLogAppenderTest {
 
         FlumeConfig flumeConfig = FlumeConfig.newBuilder().setFlumeEventFormat(FlumeEventFormat.RECORDS_CONTAINER)
                 .setHostsBalancing(nodes).setExecutorThreadPoolSize(2).setCallbackThreadPoolSize(2)
-                .setClientsThreadPoolSize(2).build();
+                .setClientsThreadPoolSize(2).setIncludeClientProfile(false).setIncludeServerProfile(false).build();
 
         AvroByteArrayConverter<FlumeConfig> converter = new AvroByteArrayConverter<>(FlumeConfig.class);
         byte[] rawConfiguration = converter.toByteArray(flumeConfig);
@@ -189,7 +189,7 @@ public class FlumeLogAppenderTest {
     }
     
     private BaseLogEventPack generateLogEventPack(){
-        EndpointProfileDataDto profileDto = new EndpointProfileDataDto("1", UUID.randomUUID().toString(), 1, "", "1", "");
+        EndpointProfileDataDto profileDto = new EndpointProfileDataDto("1", UUID.randomUUID().toString(), 1, "", 1, "");
         List<LogEvent> events = Collections.emptyList();
         return new BaseLogEventPack(profileDto, System.currentTimeMillis(), 2, events);
     }

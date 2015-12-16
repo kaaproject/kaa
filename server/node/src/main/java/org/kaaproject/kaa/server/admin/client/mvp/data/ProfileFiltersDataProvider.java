@@ -19,20 +19,19 @@ package org.kaaproject.kaa.server.admin.client.mvp.data;
 import java.util.List;
 
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
-import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.common.dto.StructureRecordDto;
+import org.kaaproject.kaa.common.dto.ProfileFilterRecordDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
 import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class ProfileFiltersDataProvider extends AbstractDataProvider<StructureRecordDto<ProfileFilterDto>>{
+public class ProfileFiltersDataProvider extends AbstractDataProvider<ProfileFilterRecordDto>{
 
     private String endpointGroupId;
     private boolean includeDeprecated = false;
 
-    public ProfileFiltersDataProvider(AbstractGrid<StructureRecordDto<ProfileFilterDto>,?> dataGrid,
+    public ProfileFiltersDataProvider(AbstractGrid<ProfileFilterRecordDto,?> dataGrid,
                                       HasErrorMessage hasErrorMessage,
                                       String endpointGroupId, boolean includeDeprecated) {
         super(dataGrid, hasErrorMessage, false);
@@ -47,14 +46,14 @@ public class ProfileFiltersDataProvider extends AbstractDataProvider<StructureRe
 
     @Override
     protected void loadData(final LoadCallback callback) {
-        KaaAdmin.getDataSource().loadProfileFilterRecords(endpointGroupId, includeDeprecated, new AsyncCallback<List<StructureRecordDto<ProfileFilterDto>>>() {
+        KaaAdmin.getDataSource().loadProfileFilterRecords(endpointGroupId, includeDeprecated, new AsyncCallback<List<ProfileFilterRecordDto>>() {
             @Override
             public void onFailure(Throwable caught) {
                 callback.onFailure(caught);
 
             }
             @Override
-            public void onSuccess(List<StructureRecordDto<ProfileFilterDto>> result) {
+            public void onSuccess(List<ProfileFilterRecordDto> result) {
                 callback.onSuccess(result);
             }
         });

@@ -129,6 +129,7 @@ public class ControlNode extends WorkerNodeTracker {
         try {
             nodePath = client.create().withMode(CreateMode.EPHEMERAL)
                     .forPath(ControlNodeTracker.CONTROL_SERVER_NODE_PATH, controlNodeAvroConverter.get().toByteArray(currentNodeInfo));
+            LOG.info("Created node with path: " + nodePath);
         } catch (NodeExistsException e) {
             LOG.info("master already exists");
         } catch (Exception e) {

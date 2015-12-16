@@ -64,7 +64,7 @@ public class ConfigSchemaGrid extends BaseSchemasGrid<ConfigurationSchemaDto> {
                 new ActionButtonCell.ActionListener<ConfigurationSchemaDto>() {
                     @Override
                     public void onItemAction(ConfigurationSchemaDto value) {
-                        Integer schemaVersion = value.getMajorVersion();
+                        Integer schemaVersion = value.getVersion();
                         RowActionEvent<String> rowDownloadBaseSchemaEvent = new RowActionEvent<>(String.valueOf(schemaVersion), KaaRowAction.DOWNLOAD_BASE_SCHEMA);
                         fireEvent(rowDownloadBaseSchemaEvent);
                     }
@@ -89,7 +89,7 @@ public class ConfigSchemaGrid extends BaseSchemasGrid<ConfigurationSchemaDto> {
                 new ActionButtonCell.ActionListener<ConfigurationSchemaDto>() {
                     @Override
                     public void onItemAction(ConfigurationSchemaDto value) {
-                        Integer schemaVersion = value.getMajorVersion();
+                        Integer schemaVersion = value.getVersion();
                         RowActionEvent<String> rowDownloadOverrideSchemaEvent = new RowActionEvent<>(String.valueOf(schemaVersion), KaaRowAction.DOWNLOAD_OVERRIDE_SCHEMA);
                         fireEvent(rowDownloadOverrideSchemaEvent);
                     }

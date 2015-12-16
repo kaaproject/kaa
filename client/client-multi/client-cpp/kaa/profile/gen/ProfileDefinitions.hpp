@@ -27,7 +27,7 @@
 
 namespace kaa {
 
-#define KAA_PROFILE_SCHEMA_VERSION    1
+#define KAA_PROFILE_SCHEMA_VERSION    0
 
 /**
  * @typedef The user-defined profile structure.

@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-import org.kaaproject.kaa.common.dto.plugin.PluginInfoDto;
+import org.kaaproject.kaa.server.admin.shared.plugin.PluginInfoDto;
 
 import com.google.gwt.text.shared.Renderer;
 import com.google.gwt.user.client.ui.ValueListBox;

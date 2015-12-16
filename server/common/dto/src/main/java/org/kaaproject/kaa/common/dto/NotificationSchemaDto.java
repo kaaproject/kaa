@@ -43,7 +43,7 @@ public class NotificationSchemaDto extends AbstractSchemaDto {
 
         NotificationSchemaDto that = (NotificationSchemaDto) o;
 
-        if (majorVersion != that.majorVersion) {
+        if (version != that.version) {
             return false;
         }
         if (applicationId != null ? !applicationId.equals(that.applicationId) : that.applicationId != null) {
@@ -62,7 +62,7 @@ public class NotificationSchemaDto extends AbstractSchemaDto {
     @Override
     public int hashCode() {
         int result = applicationId != null ? applicationId.hashCode() : 0;
-        result = 31 * result + majorVersion;
+        result = 31 * result + version;
         result = 31 * result + (type != null ? type.hashCode() : 0);
         result = 31 * result + (schema != null ? schema.hashCode() : 0);
         return result;
@@ -73,13 +73,13 @@ public class NotificationSchemaDto extends AbstractSchemaDto {
         return "NotificationSchemaDto{" +
                 "id='" + id + '\'' +
                 ", applicationId='" + applicationId + '\'' +
-                ", majorVersion=" + majorVersion +
+                ", majorVersion=" + version +
                 ", type=" + type +
                 ", schema='" + schema + '\'' +
                 '}';
     }
 
     public int incrementVersion() {
-        return ++majorVersion;
+        return ++version;
     }
 }

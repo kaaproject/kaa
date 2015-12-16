@@ -16,13 +16,13 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.ctl;
 
+import org.kaaproject.avro.ui.gwt.client.widget.ActionsButton;
 import org.kaaproject.avro.ui.gwt.client.widget.AvroWidgetsConfig;
 import org.kaaproject.avro.ui.gwt.client.widget.SizedTextArea;
 import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
 import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.server.admin.client.mvp.view.CtlSchemaView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
-import org.kaaproject.kaa.server.admin.client.mvp.view.widget.ActionsButton;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.IntegerListBox;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.RecordPanel;
@@ -45,7 +45,6 @@ public class CtlSchemaViewImpl extends BaseDetailsViewImpl implements CtlSchemaV
     private IntegerListBox version;
     private Button createNewSchemaVersionButton;
     private Button deleteSchemaVersionButton;
-    private Button exportButton;
     private ActionsButton exportActionsButton;
     private SizedTextBox name;
     private SizedTextArea description;
@@ -83,8 +82,7 @@ public class CtlSchemaViewImpl extends BaseDetailsViewImpl implements CtlSchemaV
         version.getElement().getStyle().setMarginLeft(5, Unit.PX);
         
         createNewSchemaVersionButton = new Button(Utils.constants.createNewVersion());        
-        exportButton = new Button(Utils.constants.export());
-        exportActionsButton = new ActionsButton(Utils.constants.export());
+        exportActionsButton = new ActionsButton(Utils.resources.export(), Utils.constants.export());
         deleteSchemaVersionButton = new Button(Utils.constants.delete());
         
         HorizontalPanel versionPanel = new HorizontalPanel();
@@ -94,15 +92,13 @@ public class CtlSchemaViewImpl extends BaseDetailsViewImpl implements CtlSchemaV
         
         prependToolbarWidget(versionPanel);
         appendToolbarWidget(createNewSchemaVersionButton);
-        appendToolbarWidget(exportButton);
         appendToolbarWidget(exportActionsButton);
         appendToolbarWidget(deleteSchemaVersionButton);
         
         versionPanel.setVisible(!create);
         createNewSchemaVersionButton.setVisible(!create);
         deleteSchemaVersionButton.setVisible(!create);
-        exportButton.setVisible(false);
-        exportActionsButton.setVisible(false);
+        exportActionsButton.setVisible(!create);
 
         Label authorLabel = new Label(Utils.constants.author());
         createdUsername = new KaaAdminSizedTextBox(-1, false);
@@ -158,8 +154,6 @@ public class CtlSchemaViewImpl extends BaseDetailsViewImpl implements CtlSchemaV
     @Override
     protected void resetImpl() {
         version.reset();
-        exportButton.setVisible(false);
-        exportActionsButton.setVisible(false);
         name.setValue("");
         description.setValue("");
         createdUsername.setValue("");
@@ -221,17 +215,6 @@ public class CtlSchemaViewImpl extends BaseDetailsViewImpl implements CtlSchemaV
     @Override
     public ActionsButton getExportActionsButton() {
         return exportActionsButton;
-    }
-
-    @Override
-    public HasClickHandlers getExportButton() {
-        return exportButton;
-    }
-
-    @Override
-    public void enableSingleExportMode(boolean enable) {
-        exportButton.setVisible(enable);
-        exportActionsButton.setVisible(!enable);
     }
 
 }

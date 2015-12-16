@@ -1,5 +1,3 @@
-package org.kaaproject.kaa.server.admin.client.mvp.view;
-
 /*
  * Copyright 2014 CyberVision, Inc.
  *
@@ -16,7 +14,9 @@ package org.kaaproject.kaa.server.admin.client.mvp.view;
  * limitations under the License.
  */
 
-import org.kaaproject.kaa.server.admin.client.mvp.view.widget.ActionsButton;
+package org.kaaproject.kaa.server.admin.client.mvp.view;
+
+import org.kaaproject.avro.ui.gwt.client.widget.ActionsButton;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.RecordPanel;
 
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -27,11 +27,7 @@ public interface CtlSchemaView extends BaseDetailsView {
 
     public HasClickHandlers getCreateNewSchemaVersionButton();
     
-    public HasClickHandlers getExportButton();
-    
     public ActionsButton getExportActionsButton();
-    
-    public void enableSingleExportMode(boolean enable);
 
     public HasClickHandlers getDeleteSchemaVersionButton();
 

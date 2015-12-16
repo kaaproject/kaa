@@ -20,11 +20,11 @@ import java.util.List;
 
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.server.operations.service.cache.AppVersionKey;
+import org.kaaproject.kaa.server.operations.service.cache.AppProfileVersionsKey;
 
 
 /**
- * Service that is responsible for creation and house-keeping of various profile {@link Filter filters}.
+ * Service that is responsible for creation and house-keeping of various profile {@link FilterEvaluator filters}.
  *
  * @author ashvayka
  */
@@ -33,11 +33,11 @@ public interface FilterService {
     /**
      * Gets all matching filters by key and body.
      *
-     * @param appProfileVersionKey the key that is build from AppToken and profile version. 
+     * @param appProfileVersionsKey the key that is build from AppToken, endpoint profile version and server profile version.  
      * @param profile the profile
      * @return the all matching filters
      */
-    List<ProfileFilterDto> getAllMatchingFilters(AppVersionKey appProfileVersionKey, EndpointProfileDto profile);
+    List<ProfileFilterDto> getAllMatchingFilters(AppProfileVersionsKey appProfileVersionsKey, EndpointProfileDto profile);
 
     /**
      * Check if profileBody matches filter that is represented by filter id.

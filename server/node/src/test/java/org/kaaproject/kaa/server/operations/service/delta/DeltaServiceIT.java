@@ -36,8 +36,11 @@ import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TenantDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
 import org.kaaproject.kaa.common.endpoint.gen.BasicEndpointProfile;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.core.algorithms.delta.DeltaCalculatorException;
@@ -57,11 +60,13 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.transaction.Transactional;
+
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -103,7 +108,7 @@ public class DeltaServiceIT extends AbstractTest {
 
     private TenantDto tenant;
     private ApplicationDto application;
-    private ProfileSchemaDto profileSchema;
+    private EndpointProfileSchemaDto profileSchema;
     private ProfileFilterDto profileFilter;
     private EndpointProfileDto endpointProfile;
     private EndpointConfigurationDto endpointConfiguration;
@@ -150,12 +155,25 @@ public class DeltaServiceIT extends AbstractTest {
 
         EndpointGroupDto groupAll = endpointService.findEndpointGroupsByAppId(application.getId()).get(0);
 
-        ProfileSchemaDto profileSchemaObj = new ProfileSchemaDto();
-        profileSchemaObj.setMajorVersion(PROFILE_SCHEMA_VERSION);
-        profileSchemaObj.setMinorVersion(0);
-        profileSchemaObj.setSchema(BasicEndpointProfile.SCHEMA$.toString());
+        CTLSchemaDto profileCtlSchema = new CTLSchemaDto();
+        profileCtlSchema.setTenantId(application.getTenantId());
+        profileCtlSchema.setApplicationId(application.getId());
+        profileCtlSchema.setBody(BasicEndpointProfile.SCHEMA$.toString());
+        
+        profileCtlSchema.setDependencySet(new HashSet<CTLSchemaDto>());
+        CTLSchemaMetaInfoDto metaInfo = new CTLSchemaMetaInfoDto();
+        metaInfo.setVersion(1);
+        metaInfo.setFqn(BasicEndpointProfile.SCHEMA$.getFullName());
+        metaInfo.setScope(CTLSchemaScopeDto.SERVER_PROFILE_SCHEMA);       
+        profileCtlSchema.setMetaInfo(metaInfo);
+        
+        profileCtlSchema = ctlService.saveCTLSchema(profileCtlSchema);
+        
+        EndpointProfileSchemaDto profileSchemaObj = new EndpointProfileSchemaDto();
+        profileSchemaObj.setVersion(PROFILE_SCHEMA_VERSION);
+        profileSchemaObj.setCtlSchemaId(profileCtlSchema.getId());
         profileSchemaObj.setApplicationId(application.getId());
-        ProfileSchemaDto profileSchemaDto = profileService.saveProfileSchema(profileSchemaObj);
+        EndpointProfileSchemaDto profileSchemaDto = profileService.saveProfileSchema(profileSchemaObj);
 
         profileSchema = profileService.findProfileSchemaById(profileSchemaDto.getId());
 
@@ -170,13 +188,13 @@ public class DeltaServiceIT extends AbstractTest {
         profileFilterObj.setApplicationId(application.getId());
         profileFilterObj.setEndpointGroupId(endpointGroup.getId());
         profileFilterObj.setBody("profileBody.contains(\"dummy\")");
-        profileFilterObj.setSchemaId(profileSchema.getId());
+        profileFilterObj.setEndpointProfileSchemaId(profileSchema.getId());
         profileFilter = profileService.saveProfileFilter(profileFilterObj);
         profileService.activateProfileFilter(profileFilter.getId(), null);
 
         confSchema = new ConfigurationSchemaDto();
         confSchema.setApplicationId(application.getId());
-        confSchema.setMajorVersion(CONF_SCHEMA_VERSION);
+        confSchema.setVersion(CONF_SCHEMA_VERSION);
         confSchema.setSchema(dataSchema);
         try {
             confSchema = configurationService.saveConfSchema(confSchema);
@@ -203,12 +221,13 @@ public class DeltaServiceIT extends AbstractTest {
         egs.setProfileFilterId(pfAllId);
 
         endpointProfile = new EndpointProfileDto();
+        endpointProfile.setApplicationId(application.getId());
         endpointProfile.setEndpointKeyHash(UUID.randomUUID().toString().getBytes());
         endpointProfile.setClientProfileBody(PROFILE_JSON);
         endpointProfile.setProfileHash(EndpointObjectHash.fromSHA1(PROFILE_BYTES).getData());
         endpointProfile.setConfigurationHash(endpointConfiguration.getConfigurationHash());
         endpointProfile.setConfigurationVersion(CONF_SCHEMA_VERSION);
-        endpointProfile.setProfileVersion(PROFILE_VERSION);
+        endpointProfile.setClientProfileVersion(PROFILE_VERSION);
         endpointProfile.setCfGroupStates(Collections.singletonList(egs));
         endpointProfile.setNfGroupStates(Collections.singletonList(egs));
         endpointProfile = endpointService.saveEndpointProfile(endpointProfile);

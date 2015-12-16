@@ -19,14 +19,11 @@ package org.kaaproject.kaa.server.admin.client.mvp.view.endpoint;
 import org.kaaproject.avro.ui.gwt.client.widget.SizedTextArea;
 import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
-import org.kaaproject.kaa.common.dto.ConfigurationDto;
-import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.common.dto.StructureRecordDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
-import org.kaaproject.kaa.common.dto.admin.StructureRecordKey;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointGroupView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
-import org.kaaproject.kaa.server.admin.client.mvp.view.struct.BaseStructGrid;
+import org.kaaproject.kaa.server.admin.client.mvp.view.config.ConfigurationStructGrid;
+import org.kaaproject.kaa.server.admin.client.mvp.view.profile.ProfileFilterStructGrid;
 import org.kaaproject.kaa.server.admin.client.mvp.view.topic.TopicGrid;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
@@ -56,10 +53,11 @@ public class EndpointGroupViewImpl extends BaseDetailsViewImpl implements Endpoi
     private SizedTextBox createdDateTime;
     private SizedTextBox endpointCount;
 
+    private Label profileFiltersLabel;
     private CheckBox includeDeprecatedProfileFilters;
-    private BaseStructGrid<ProfileFilterDto> profileFiltersGrid;
+    private ProfileFilterStructGrid profileFiltersGrid;
     private CheckBox includeDeprecatedConfigurations;
-    private BaseStructGrid<ConfigurationDto> configurationsGrid;
+    private ConfigurationStructGrid configurationsGrid;
     private TopicGrid topicsGrid;
 
     private Button addProfileFilterButton;
@@ -142,9 +140,9 @@ public class EndpointGroupViewImpl extends BaseDetailsViewImpl implements Endpoi
         description.addInputHandler(this);
         detailsTable.getCellFormatter().setVerticalAlignment(5, 0, HasVerticalAlignment.ALIGN_TOP);
 
-        profileFiltersGrid = new BaseStructGrid<ProfileFilterDto>();
+        profileFiltersGrid = new ProfileFilterStructGrid();
         profileFiltersGrid.setSize("700px", "200px");
-        Label profileFiltersLabel = new Label(Utils.constants.profileFilters());
+        profileFiltersLabel = new Label(Utils.constants.profileFilters());
         profileFiltersLabel.addStyleName(Utils.kaaAdminStyle.bAppContentTitleLabel());
         includeDeprecatedProfileFilters = new CheckBox(Utils.constants.includeDeprecated());
         setCheckBoxStyle(includeDeprecatedProfileFilters);
@@ -169,7 +167,7 @@ public class EndpointGroupViewImpl extends BaseDetailsViewImpl implements Endpoi
         includeDeprecatedProfileFilters.setVisible(!create);
         profileFiltersGrid.setVisible(!create);
 
-        configurationsGrid = new BaseStructGrid<ConfigurationDto>();
+        configurationsGrid = new ConfigurationStructGrid();
         configurationsGrid.setSize("700px", "200px");
         Label configurationsLabel = new Label(Utils.constants.configurations());
         configurationsLabel.addStyleName(Utils.kaaAdminStyle.bAppContentTitleLabel());
@@ -305,12 +303,12 @@ public class EndpointGroupViewImpl extends BaseDetailsViewImpl implements Endpoi
     }
 
     @Override
-    public AbstractGrid<StructureRecordDto<ProfileFilterDto>, StructureRecordKey> getProfileFiltersGrid() {
+    public ProfileFilterStructGrid getProfileFiltersGrid() {
         return profileFiltersGrid;
     }
 
     @Override
-    public AbstractGrid<StructureRecordDto<ConfigurationDto>, StructureRecordKey> getConfigurationsGrid() {
+    public ConfigurationStructGrid getConfigurationsGrid() {
         return configurationsGrid;
     }
 
@@ -343,6 +341,14 @@ public class EndpointGroupViewImpl extends BaseDetailsViewImpl implements Endpoi
     @Override
     public HasValue<Boolean> getIncludeDeprecatedConfigurations() {
         return includeDeprecatedConfigurations;
+    }
+
+    @Override
+    public void setProfileFiltersVisible(boolean visible) {
+        profileFiltersLabel.setVisible(visible);
+        includeDeprecatedProfileFilters.setVisible(visible);
+        profileFiltersGrid.setVisible(visible);
+        addProfileFilterButton.setVisible(visible);
     }
 
 }

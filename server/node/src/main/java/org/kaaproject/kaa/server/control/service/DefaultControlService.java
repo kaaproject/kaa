@@ -16,21 +16,21 @@
 
 package org.kaaproject.kaa.server.control.service;
 
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.avro.Schema;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.thrift.TException;
 import org.kaaproject.avro.ui.shared.Fqn;
-import org.kaaproject.avro.ui.gwt.client.util.Utils;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.common.dto.AbstractSchemaDto;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
@@ -39,13 +39,13 @@ import org.kaaproject.kaa.common.dto.ChangeNotificationDto;
 import org.kaaproject.kaa.common.dto.ChangeProfileFilterNotification;
 import org.kaaproject.kaa.common.dto.ChangeType;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
+import org.kaaproject.kaa.common.dto.ConfigurationRecordDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
-import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileViewDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
@@ -56,16 +56,17 @@ import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.common.dto.PageLinkDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.SchemaDto;
+import org.kaaproject.kaa.common.dto.ProfileFilterRecordDto;
+import org.kaaproject.kaa.common.dto.ProfileVersionPairDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.ProfileVersionPairDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.ServerProfileSchemaViewDto;
-import org.kaaproject.kaa.common.dto.StructureRecordDto;
 import org.kaaproject.kaa.common.dto.TenantAdminDto;
 import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.UpdateNotificationDto;
 import org.kaaproject.kaa.common.dto.UserDto;
+import org.kaaproject.kaa.common.dto.VersionDto;
 import org.kaaproject.kaa.common.dto.admin.RecordKey;
 import org.kaaproject.kaa.common.dto.admin.RecordKey.RecordFiles;
 import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
@@ -105,7 +106,6 @@ import org.kaaproject.kaa.server.common.dao.UserService;
 import org.kaaproject.kaa.server.common.dao.UserVerifierService;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
 import org.kaaproject.kaa.server.common.dao.exception.NotFoundException;
-import org.kaaproject.kaa.server.common.dao.model.sql.SdkProfile;
 import org.kaaproject.kaa.server.common.log.shared.RecordWrapperSchemaGenerator;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Operation;
@@ -115,7 +115,7 @@ import org.kaaproject.kaa.server.common.zk.control.ControlNode;
 import org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo;
 import org.kaaproject.kaa.server.common.zk.operations.OperationsNodeListener;
 import org.kaaproject.kaa.server.control.service.exception.ControlServiceException;
-import org.kaaproject.kaa.server.control.service.log.RecordLibraryGenerator;
+import org.kaaproject.kaa.server.control.service.schema.SchemaLibraryGenerator;
 import org.kaaproject.kaa.server.control.service.sdk.SdkGenerator;
 import org.kaaproject.kaa.server.control.service.sdk.SdkGeneratorFactory;
 import org.kaaproject.kaa.server.control.service.sdk.event.EventFamilyMetadata;
@@ -151,6 +151,15 @@ public class DefaultControlService implements ControlService {
 
     /** The Constant DATA_NAME_PATTERN. */
     private static final String DATA_NAME_PATTERN = "kaa-{}-schema-v{}.avsc";
+    
+    /** The Constant LOG_SCHEMA_LIBRARY_NAME_PATTERN. */
+    private static final String LOG_SCHEMA_LIBRARY_NAME_PATTERN = "kaa-record-lib-l{}";
+    
+    /**
+     * A template for naming exported CTL library schemas.
+     * @see #exportCTLSchemaFlatAsLibrary(CTLSchemaDto)
+     */
+    private static final String CTL_LIBRARY_EXPORT_TEMPLATE = "{0}.v{1}";
 
     /** The user service. */
     @Autowired
@@ -507,7 +516,7 @@ public class DefaultControlService implements ControlService {
      * getProfileSchemasByApplicationId(java.lang.String)
      */
     @Override
-    public List<ProfileSchemaDto> getProfileSchemasByApplicationId(String applicationId) throws ControlServiceException {
+    public List<EndpointProfileSchemaDto> getProfileSchemasByApplicationId(String applicationId) throws ControlServiceException {
         return profileService.findProfileSchemasByAppId(applicationId);
     }
 
@@ -519,8 +528,20 @@ public class DefaultControlService implements ControlService {
      * (java.lang.String)
      */
     @Override
-    public ProfileSchemaDto getProfileSchema(String profileSchemaId) throws ControlServiceException {
+    public EndpointProfileSchemaDto getProfileSchema(String profileSchemaId) throws ControlServiceException {
         return profileService.findProfileSchemaById(profileSchemaId);
+    }
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.kaaproject.kaa.server.control.service.ControlService#getProfileSchemaByApplicationIdAndVersion
+     * (java.lang.String, int)
+     */
+    @Override
+    public EndpointProfileSchemaDto getProfileSchemaByApplicationIdAndVersion(String applicationId, int version) throws ControlServiceException {
+        return profileService.findProfileSchemaByAppIdAndVersion(applicationId, version);
     }
 
     /*
@@ -531,7 +552,7 @@ public class DefaultControlService implements ControlService {
      * (org.kaaproject.kaa.common.dto.ProfileSchemaDto)
      */
     @Override
-    public ProfileSchemaDto editProfileSchema(ProfileSchemaDto profileSchema) throws ControlServiceException {
+    public EndpointProfileSchemaDto editProfileSchema(EndpointProfileSchemaDto profileSchema) throws ControlServiceException {
         return profileService.saveProfileSchema(profileSchema);
     }
 
@@ -561,21 +582,27 @@ public class DefaultControlService implements ControlService {
      * (non-Javadoc)
      * 
      * @see org.kaaproject.kaa.server.control.service.ControlService#
+     * getServerProfileSchemaByApplicationIdAndVersion(java.lang.String, int)
+     */
+    @Override
+    public ServerProfileSchemaDto getServerProfileSchemaByApplicationIdAndVersion(String applicationId, int version) throws ControlServiceException {
+        return serverProfileService.findServerProfileSchemaByAppIdAndVersion(applicationId, version);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.kaaproject.kaa.server.control.service.ControlService#
      * editServerProfileSchema
      * (org.kaaproject.kaa.common.dto.ServerProfileSchemaDto)
      */
     @Override
     public ServerProfileSchemaDto saveServerProfileSchema(ServerProfileSchemaDto serverProfileSchema) throws ControlServiceException {
-        if(Utils.isBlank(serverProfileSchema.getId())){
-            if(Utils.isNotBlank(serverProfileSchema.getCtlSchemaId())){
-                return serverProfileService.saveServerProfileSchema(serverProfileSchema);
-            }else{
-                LOG.error("Server profile schema has no CTL schema ID");
-                throw new ControlServiceException("Server profile schema has no CTL schema ID");
-            }
-        }else{
-            LOG.error("Can't edit existing server profile schema with id: {}", serverProfileSchema.getId());
-            throw new ControlServiceException("Can't edit existing server profile schema"); 
+        if (isNotBlank(serverProfileSchema.getCtlSchemaId())) {
+            return serverProfileService.saveServerProfileSchema(serverProfileSchema);
+        } else {
+            LOG.error("Server profile schema has no CTL schema ID");
+            throw new ControlServiceException("Server profile schema has no CTL schema ID");
         }
     }
 
@@ -681,7 +708,7 @@ public class DefaultControlService implements ControlService {
      * getProfileFilterRecordsByEndpointGroupId(java.lang.String, boolean)
      */
     @Override
-    public List<StructureRecordDto<ProfileFilterDto>> getProfileFilterRecordsByEndpointGroupId(String endpointGroupId,
+    public List<ProfileFilterRecordDto> getProfileFilterRecordsByEndpointGroupId(String endpointGroupId,
             boolean includeDeprecated) throws ControlServiceException {
         return new ArrayList<>(profileService.findAllProfileFilterRecordsByEndpointGroupId(endpointGroupId, includeDeprecated));
     }
@@ -693,9 +720,9 @@ public class DefaultControlService implements ControlService {
      * getProfileFilterRecord(java.lang.String, java.lang.String)
      */
     @Override
-    public StructureRecordDto<ProfileFilterDto> getProfileFilterRecord(String schemaId, String endpointGroupId)
+    public ProfileFilterRecordDto getProfileFilterRecord(String endpointProfileSchemaId, String serverProfileSchemaId,  String endpointGroupId)
             throws ControlServiceException {
-        return profileService.findProfileFilterRecordBySchemaIdAndEndpointGroupId(schemaId, endpointGroupId);
+        return profileService.findProfileFilterRecordBySchemaIdAndEndpointGroupId(endpointProfileSchemaId, serverProfileSchemaId, endpointGroupId);
     }
 
     /*
@@ -705,7 +732,7 @@ public class DefaultControlService implements ControlService {
      * getVacantProfileSchemasByEndpointGroupId(java.lang.String)
      */
     @Override
-    public List<SchemaDto> getVacantProfileSchemasByEndpointGroupId(String endpointGroupId) throws ControlServiceException {
+    public List<ProfileVersionPairDto> getVacantProfileSchemasByEndpointGroupId(String endpointGroupId) throws ControlServiceException {
         return profileService.findVacantSchemasByEndpointGroupId(endpointGroupId);
     }
 
@@ -728,7 +755,7 @@ public class DefaultControlService implements ControlService {
      * getConfigurationRecordsByEndpointGroupId(java.lang.String, boolean)
      */
     @Override
-    public List<StructureRecordDto<ConfigurationDto>> getConfigurationRecordsByEndpointGroupId(String endpointGroupId,
+    public List<ConfigurationRecordDto> getConfigurationRecordsByEndpointGroupId(String endpointGroupId,
             boolean includeDeprecated) throws ControlServiceException {
         return new ArrayList<>(configurationService.findAllConfigurationRecordsByEndpointGroupId(endpointGroupId, includeDeprecated));
     }
@@ -740,7 +767,7 @@ public class DefaultControlService implements ControlService {
      * getConfigurationRecord(java.lang.String, java.lang.String)
      */
     @Override
-    public StructureRecordDto<ConfigurationDto> getConfigurationRecord(String schemaId, String endpointGroupId)
+    public ConfigurationRecordDto getConfigurationRecord(String schemaId, String endpointGroupId)
             throws ControlServiceException {
         return configurationService.findConfigurationRecordBySchemaIdAndEndpointGroupId(schemaId, endpointGroupId);
     }
@@ -752,7 +779,7 @@ public class DefaultControlService implements ControlService {
      * getVacantConfigurationSchemasByEndpointGroupId(java.lang.String)
      */
     @Override
-    public List<SchemaDto> getVacantConfigurationSchemasByEndpointGroupId(String endpointGroupId) throws ControlServiceException {
+    public List<VersionDto> getVacantConfigurationSchemasByEndpointGroupId(String endpointGroupId) throws ControlServiceException {
         return configurationService.findVacantSchemasByEndpointGroupId(endpointGroupId);
     }
 
@@ -971,9 +998,9 @@ public class DefaultControlService implements ControlService {
      * java.lang.String)
      */
     @Override
-    public void deleteProfileFilterRecord(String schemaId, String endpointGroupId, String deactivatedUsername)
+    public void deleteProfileFilterRecord(String endpointProfileSchemaId, String serverProfileSchemaId,  String endpointGroupId, String deactivatedUsername)
             throws ControlServiceException {
-        ChangeProfileFilterNotification cpfNotification = profileService.deleteProfileFilterRecord(schemaId, endpointGroupId,
+        ChangeProfileFilterNotification cpfNotification = profileService.deleteProfileFilterRecord(endpointProfileSchemaId, serverProfileSchemaId, endpointGroupId,
                 deactivatedUsername);
         if (cpfNotification != null) {
             ChangeNotificationDto notification = cpfNotification.getChangeNotificationDto();
@@ -991,18 +1018,14 @@ public class DefaultControlService implements ControlService {
      * org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto)
      */
     @Override
-    public FileData generateSdk(SdkProfileDto sdkProperties, SdkPlatform platform) throws ControlServiceException {
-        ApplicationDto application = applicationService.findAppById(sdkProperties.getApplicationId());
-        if (application == null) {
-            throw new NotFoundException("Application not found!");
-        }
-        ProfileSchemaDto profileSchema = profileService.findProfileSchemaByAppIdAndVersion(sdkProperties.getApplicationId(),
-                sdkProperties.getProfileSchemaVersion());
+    public FileData generateSdk(SdkProfileDto sdkProfile, SdkPlatform platform) throws ControlServiceException {
+        EndpointProfileSchemaDto profileSchema = profileService.findProfileSchemaByAppIdAndVersion(sdkProfile.getApplicationId(),
+                sdkProfile.getProfileSchemaVersion());
         if (profileSchema == null) {
             throw new NotFoundException("Profile schema not found!");
         }
-        ConfigurationSchemaDto configurationSchema = configurationService.findConfSchemaByAppIdAndVersion(sdkProperties.getApplicationId(),
-                sdkProperties.getConfigurationSchemaVersion());
+        ConfigurationSchemaDto configurationSchema = configurationService.findConfSchemaByAppIdAndVersion(sdkProfile.getApplicationId(),
+                sdkProfile.getConfigurationSchemaVersion());
         if (configurationSchema == null) {
             throw new NotFoundException("Configuration schema not found!");
         }
@@ -1011,31 +1034,36 @@ public class DefaultControlService implements ControlService {
             throw new NotFoundException("Default configuration not found!");
         }
         NotificationSchemaDto notificationSchema = notificationService.findNotificationSchemaByAppIdAndTypeAndVersion(
-                sdkProperties.getApplicationId(), NotificationTypeDto.USER, sdkProperties.getNotificationSchemaVersion());
+                sdkProfile.getApplicationId(), NotificationTypeDto.USER, sdkProfile.getNotificationSchemaVersion());
         if (notificationSchema == null) {
             throw new NotFoundException("Notification schema not found!");
         }
 
-        LogSchemaDto logSchema = logSchemaService.findLogSchemaByAppIdAndVersion(sdkProperties.getApplicationId(),
-                sdkProperties.getLogSchemaVersion());
+        LogSchemaDto logSchema = logSchemaService.findLogSchemaByAppIdAndVersion(sdkProfile.getApplicationId(),
+                sdkProfile.getLogSchemaVersion());
         if (logSchema == null) {
             throw new NotFoundException("Log schema not found!");
         }
+        
+        CTLSchemaDto profileCtlSchema = ctlService.findCTLSchemaById(profileSchema.getCtlSchemaId());
+        if (profileCtlSchema == null) {
+            throw new NotFoundException("Profile CTL schema not found!");
+        }
+        String profileSchemaBodyString = ctlService.flatExportAsString(profileCtlSchema);
 
-        DataSchema profileDataSchema = new DataSchema(profileSchema.getSchema());
+        DataSchema profileDataSchema = new DataSchema(profileSchemaBodyString);
         DataSchema notificationDataSchema = new DataSchema(notificationSchema.getSchema());
         ProtocolSchema protocolSchema = new ProtocolSchema(configurationSchema.getProtocolSchema());
         DataSchema logDataSchema = new DataSchema(logSchema.getSchema());
 
-        String appToken = application.getApplicationToken();
         String profileSchemaBody = profileDataSchema.getRawSchema();
 
         byte[] defaultConfigurationData = GenericAvroConverter.toRawData(defaultConfiguration.getBody(),
                 configurationSchema.getBaseSchema());
 
         List<EventFamilyMetadata> eventFamilies = new ArrayList<>();
-        if (sdkProperties.getAefMapIds() != null) {
-            List<ApplicationEventFamilyMapDto> aefMaps = applicationEventMapService.findApplicationEventFamilyMapsByIds(sdkProperties
+        if (sdkProfile.getAefMapIds() != null) {
+            List<ApplicationEventFamilyMapDto> aefMaps = applicationEventMapService.findApplicationEventFamilyMapsByIds(sdkProfile
                     .getAefMapIds());
             for (ApplicationEventFamilyMapDto aefMap : aefMaps) {
                 EventFamilyMetadata efm = new EventFamilyMetadata();
@@ -1056,15 +1084,12 @@ public class DefaultControlService implements ControlService {
             }
         }
 
-        sdkProperties.setApplicationToken(appToken);
-        sdkProperties = sdkProfileService.saveSdkProfile(sdkProperties);
-        String sdkToken = new SdkProfile(sdkProperties).getToken();
-        LOG.debug("Sdk properties for sdk generation: {}", sdkProperties);
+        LOG.debug("Sdk profile for sdk generation: {}", sdkProfile);
 
         SdkGenerator generator = SdkGeneratorFactory.createSdkGenerator(platform);
         FileData sdkFile = null;
         try {
-            sdkFile = generator.generateSdk(Version.PROJECT_VERSION, controlZKService.getCurrentBootstrapNodes(), sdkToken, sdkProperties,
+            sdkFile = generator.generateSdk(Version.PROJECT_VERSION, controlZKService.getCurrentBootstrapNodes(), sdkProfile,
                     profileSchemaBody, notificationDataSchema.getRawSchema(), protocolSchema.getRawSchema(),
                     configurationSchema.getBaseSchema(), defaultConfigurationData, eventFamilies, logDataSchema.getRawSchema());
         } catch (Exception e) {
@@ -1092,7 +1117,10 @@ public class DefaultControlService implements ControlService {
             throw new NotFoundException("Log schema not found!");
         }
         try {
-            return RecordLibraryGenerator.generateRecordLibrary(logSchemaVersion, logSchema.getSchema());
+            Schema recordWrapperSchema = RecordWrapperSchemaGenerator.generateRecordWrapperSchema(logSchema.getSchema());
+            String fileName = MessageFormatter.arrayFormat(LOG_SCHEMA_LIBRARY_NAME_PATTERN,
+                    new Object[]{logSchemaVersion}).getMessage();
+            return SchemaLibraryGenerator.generateSchemaLibrary(recordWrapperSchema, fileName);
         } catch (Exception e) {
             LOG.error("Unable to generate Record Structure Library", e);
             throw new ControlServiceException(e);
@@ -1140,7 +1168,7 @@ public class DefaultControlService implements ControlService {
      * getUserNotificationSchemasByAppId(java.lang.String)
      */
     @Override
-    public List<SchemaDto> getUserNotificationSchemasByAppId(String applicationId) throws ControlServiceException {
+    public List<VersionDto> getUserNotificationSchemasByAppId(String applicationId) throws ControlServiceException {
         return notificationService.findUserNotificationSchemasByAppId(applicationId);
     }
 
@@ -1355,7 +1383,7 @@ public class DefaultControlService implements ControlService {
      * getConfigurationSchemaVersionsByApplicationId(java.lang.String)
      */
     @Override
-    public List<SchemaDto> getConfigurationSchemaVersionsByApplicationId(String applicationId) throws ControlServiceException {
+    public List<VersionDto> getConfigurationSchemaVersionsByApplicationId(String applicationId) throws ControlServiceException {
         return configurationService.findConfigurationSchemaVersionsByAppId(applicationId);
     }
 
@@ -1366,7 +1394,7 @@ public class DefaultControlService implements ControlService {
      * getProfileSchemaVersionsByApplicationId(java.lang.String)
      */
     @Override
-    public List<SchemaDto> getProfileSchemaVersionsByApplicationId(String applicationId) throws ControlServiceException {
+    public List<VersionDto> getProfileSchemaVersionsByApplicationId(String applicationId) throws ControlServiceException {
         return profileService.findProfileSchemaVersionsByAppId(applicationId);
     }
 
@@ -1377,7 +1405,7 @@ public class DefaultControlService implements ControlService {
      * getNotificationSchemaVersionsByApplicationId(java.lang.String)
      */
     @Override
-    public List<SchemaDto> getNotificationSchemaVersionsByApplicationId(String applicationId) throws ControlServiceException {
+    public List<VersionDto> getNotificationSchemaVersionsByApplicationId(String applicationId) throws ControlServiceException {
         return notificationService.findNotificationSchemaVersionsByAppId(applicationId);
     }
 
@@ -1388,7 +1416,7 @@ public class DefaultControlService implements ControlService {
      * getLogSchemaVersionsByApplicationId(java.lang.String)
      */
     @Override
-    public List<SchemaDto> getLogSchemaVersionsByApplicationId(String applicationId) throws ControlServiceException {
+    public List<VersionDto> getLogSchemaVersionsByApplicationId(String applicationId) throws ControlServiceException {
         return logSchemaService.findLogSchemaVersionsByApplicationId(applicationId);
     }
 
@@ -1909,11 +1937,7 @@ public class DefaultControlService implements ControlService {
                         .getMessage();
                 break;
             case PROFILE_SCHEMA:
-                schemaDto = profileService.findProfileSchemaByAppIdAndVersion(key.getApplicationId(), key.getSchemaVersion());
-                checkSchema(schemaDto, RecordFiles.PROFILE_SCHEMA);
-                schema = schemaDto.getSchema();
-                fileName = MessageFormatter.arrayFormat(DATA_NAME_PATTERN, new Object[] { "profile", key.getSchemaVersion() }).getMessage();
-                break;
+                throw new RuntimeException("Not implemented!");
             case SERVER_PROFILE_SCHEMA:
                 throw new RuntimeException("Not implemented!");
             default:
@@ -1947,17 +1971,15 @@ public class DefaultControlService implements ControlService {
     }
 
     @Override
-    public EndpointProfileDto updateEndpointProfile(EndpointProfileDto endpointProfileDto) throws ControlServiceException {
-        EndpointProfileDto profileDto = serverProfileService.saveServerProfile(endpointProfileDto.getEndpointKeyHash(),
-                endpointProfileDto.getServerProfileBody());
-
+    public EndpointProfileDto updateServerProfile(String endpointKeyHash, int version, String serverProfile) throws ControlServiceException {
+        EndpointProfileDto endpointProfileDto = serverProfileService.saveServerProfile(Base64.decodeBase64(endpointKeyHash), version,
+                serverProfile); 
         Notification thriftNotification = new Notification();
         thriftNotification.setAppId(endpointProfileDto.getApplicationId());
         thriftNotification.setKeyHash(endpointProfileDto.getEndpointKeyHash());
         thriftNotification.setOp(Operation.UPDATE_SERVER_PROFILE);
         controlZKService.sendEndpointNotification(thriftNotification);
-
-        return profileDto;
+        return endpointProfileDto;
     }
 
     @Override
@@ -1983,79 +2005,6 @@ public class DefaultControlService implements ControlService {
     @Override
     public SdkProfileDto saveSdkProfile(SdkProfileDto sdkProfile) throws ControlServiceException {
         return sdkProfileService.saveSdkProfile(sdkProfile);
-    }
-
-    @Override
-    public EndpointProfileViewDto getEndpointProfileViewDtoByEndpointKeyHash(String endpointProfileKeyHash) throws ControlServiceException {
-        EndpointProfileViewDto viewDto = new EndpointProfileViewDto();
-
-        /* Getting endpoint profile */
-        EndpointProfileDto endpointProfileDto = endpointService.findEndpointProfileByKeyHash(Base64.decodeBase64(endpointProfileKeyHash));
-        viewDto.setEndpointProfileDto(endpointProfileDto);
-
-        /* Getting endpoint user */
-        String externalId = endpointProfileDto.getEndpointUserId();
-        EndpointUserDto userDto = null;
-        if (externalId != null) {
-            userDto = endpointService.findEndpointUserById(externalId);
-        }
-        viewDto.setEndpointUserDto(userDto);
-
-        /* Getting endpoint profile RecordForm */
-        String applicationId = endpointProfileDto.getApplicationId();
-        int profileVersion = endpointProfileDto.getProfileVersion();
-        ProfileSchemaDto schemaDto =
-                profileService.findProfileSchemaByAppIdAndVersion(applicationId, profileVersion);
-        viewDto.setProfileSchemaDto(schemaDto);
-
-        /* Getting server profile RecordForm */
-        String serverProfileSchemaId = endpointProfileDto.getServerProfileCtlSchemaId();
-        if (serverProfileSchemaId != null && !serverProfileSchemaId.isEmpty()) {
-            CTLSchemaDto ctlSchemaDto = ctlService.findCTLSchemaById(serverProfileSchemaId);
-            ServerProfileSchemaDto serverProfileSchema = null;
-//            ServerProfileSchemaDto serverProfileSchema = serverProfileService.findServerProfileSchema(serverProfileSchemaId);
-            List<ServerProfileSchemaDto> serverProfileSchemas =
-                    serverProfileService.findServerProfileSchemasByAppId(applicationId);
-            for (ServerProfileSchemaDto dto : serverProfileSchemas) {
-                if (dto.getCtlSchemaId().equals(serverProfileSchemaId)) {
-                    serverProfileSchema = dto;
-                }
-            }
-
-            viewDto.setServerProfileSchemaDto(new ServerProfileSchemaViewDto(serverProfileSchema, ctlSchemaDto));
-        }
-
-        /* Getting notification topics */
-        List<TopicDto> topicsByApplicationId = topicService.findTopicsByAppId(applicationId);
-        List<String> endpointTopicsIDs = endpointProfileDto.getSubscriptions();
-        List<TopicDto> endpointTopics = null;
-        if (topicsByApplicationId != null && endpointTopicsIDs != null) {
-            endpointTopics = new ArrayList<>();
-            for (TopicDto topicDto : topicsByApplicationId) {
-                if (endpointTopicsIDs.contains(topicDto.getId()))
-                    endpointTopics.add(topicDto);
-            }
-            viewDto.setEndpointNotificationTopics(endpointTopics);
-        }
-
-        /* Getting endpoint groups */
-        Set<EndpointGroupDto> endpointGroups = new HashSet<>();
-        List<EndpointGroupStateDto> groupStateList = endpointProfileDto.getCfGroupStates();
-        if (groupStateList != null && !groupStateList.isEmpty()) {
-            for (EndpointGroupStateDto dto : groupStateList) {
-                endpointGroups.add(endpointService.findEndpointGroupById(dto.getEndpointGroupId()));
-            }
-        }
-        groupStateList = endpointProfileDto.getNfGroupStates();
-        if (groupStateList != null && !groupStateList.isEmpty()) {
-            for (EndpointGroupStateDto dto : groupStateList) {
-                endpointGroups.add(endpointService.findEndpointGroupById(dto.getEndpointGroupId()));
-            }
-        }
-        List<EndpointGroupDto> groupDtoList = new ArrayList<>();
-        groupDtoList.addAll(endpointGroups);
-        viewDto.setGroupDtoList(groupDtoList);
-        return viewDto;
     }
 
     /**
@@ -2103,12 +2052,12 @@ public class DefaultControlService implements ControlService {
     public List<CTLSchemaMetaInfoDto> getAvailableCTLSchemasMetaInfoByTenantId(String tenantId) throws ControlServiceException {
         return ctlService.findAvailableCTLSchemasMetaInfo(tenantId);
     }
-
+    
     @Override
-    public List<CTLSchemaMetaInfoDto> getCTLSchemasMetaInfoByTenantId(String tenantId) throws ControlServiceException {
-        return ctlService.findCTLSchemasMetaInfoByTenantId(tenantId);
+    public List<CTLSchemaMetaInfoDto> getTenantCTLSchemasMetaInfoByTenantId(String tenantId) throws ControlServiceException {
+        return ctlService.findTenantCTLSchemasMetaInfoByTenantId(tenantId);
     }
-
+    
     @Override
     public List<CTLSchemaMetaInfoDto> getCTLSchemasMetaInfoByApplicationId(String applicationId) throws ControlServiceException {
         return ctlService.findCTLSchemasMetaInfoByApplicationId(applicationId);
@@ -2130,8 +2079,8 @@ public class DefaultControlService implements ControlService {
     }
 
     @Override
-    public List<CTLSchemaDto> getCTLSchemasByFqnAndTenantId(String fqn, String tenantId) throws ControlServiceException {
-        return ctlService.findCTLSchemasByFqnAndTenantId(fqn, tenantId);
+    public CTLSchemaDto getLatestCTLSchemaByFqn(String fqn) throws ControlServiceException {
+        return ctlService.findLatestCTLSchemaByFqn(fqn);
     }
 
     @Override
@@ -2161,13 +2110,33 @@ public class DefaultControlService implements ControlService {
     }
     
     @Override
+    public FileData exportCTLSchemaFlatAsLibrary(CTLSchemaDto schema) throws ControlServiceException {
+        try {
+            Schema avroSchema = ctlService.flatExportAsSchema(schema);
+            String fileName = MessageFormat.format(CTL_LIBRARY_EXPORT_TEMPLATE, 
+                    schema.getMetaInfo().getFqn(), schema.getMetaInfo().getVersion());
+            return SchemaLibraryGenerator.generateSchemaLibrary(avroSchema, fileName);
+        } catch (Exception e) {
+            LOG.error("Unable to export flat CTL schema as library", e);
+            throw new ControlServiceException(e);
+        }
+    }
+    
+    @Override
     public String exportCTLSchemaFlatAsString(CTLSchemaDto schema) throws ControlServiceException {
         return ctlService.flatExportAsString(schema);
+    }
+    
+    @Override
+    public Schema exportCTLSchemaFlatAsSchema(CTLSchemaDto schema) throws ControlServiceException {
+        return ctlService.flatExportAsSchema(schema);
     }
 
     @Override
     public FileData exportCTLSchemaDeep(CTLSchemaDto schema) throws ControlServiceException {
         return ctlService.deepExport(schema);
     }
+
+
 
 }

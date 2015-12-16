@@ -23,6 +23,7 @@ import org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeConfig;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogSchema;
+import org.kaaproject.kaa.server.common.log.shared.appender.data.ProfileInfo;
 import org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,15 +37,16 @@ public abstract class FlumeEventBuilder {
     
     public abstract void init(FlumeConfig configuration);
 
-    public abstract List<Event> generateEvents(String appToken, LogSchema schema, List<LogEvent> logEvents, RecordHeader header);
+    public abstract List<Event> generateEvents(String appToken, LogSchema schema, List<LogEvent> logEvents,
+                                               ProfileInfo clientProfile, ProfileInfo serverProfile, RecordHeader header);
 
     /**
      * This method generate flume events from own data structure <code>LogEventPack</code>
      *
-     * @param eventPack the event pack
-     * @param header the record header
-     * @param appToken the application token
-     * @return the list of build flume events
+     * @param   eventPack   the event pack
+     * @param   header      the record header
+     * @param   appToken    the application token
+     * @return  the list of build flume events
      */
     public List<Event> generateEvents(LogEventPack eventPack, RecordHeader header, String appToken) {
         LOG.debug("Build flume event object from LogEventPack object {}", eventPack);
@@ -52,8 +54,10 @@ public abstract class FlumeEventBuilder {
         LogSchema schema = eventPack.getLogSchema();
         if (schema != null) {
             List<LogEvent> logEvents = eventPack.getEvents();
+            ProfileInfo clientProfile = eventPack.getClientProfile();
+            ProfileInfo serverProfile = eventPack.getServerProfile();
             if (logEvents != null && !logEvents.isEmpty()) {
-                events = generateEvents(appToken, schema, logEvents, header);
+                events = generateEvents(appToken, schema, logEvents, clientProfile, serverProfile, header);
             } else {
                 LOG.warn("Can't build flume events. Empty Log events.");
             }

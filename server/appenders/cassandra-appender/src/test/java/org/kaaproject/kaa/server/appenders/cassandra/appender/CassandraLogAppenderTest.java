@@ -189,7 +189,7 @@ public class CassandraLogAppenderTest {
 
     private void initLogAppender(boolean addServerField) throws IOException {
         endpointKeyHash = UUID.randomUUID().toString();
-        profileDto = new EndpointProfileDataDto("1", endpointKeyHash, 1, "", "1", "");
+        profileDto = new EndpointProfileDataDto("1", endpointKeyHash, 1, "", 1, "");
         appToken = String.valueOf(RANDOM.nextInt(Integer.MAX_VALUE));
 
         appenderDto = new LogAppenderDto();
@@ -217,10 +217,11 @@ public class CassandraLogAppenderTest {
         configuration.setExecutorThreadPoolSize(3);
 
         List<ColumnMappingElement> columnMapping = new ArrayList<ColumnMappingElement>();
-        columnMapping.add(new ColumnMappingElement(ColumnMappingElementType.HEADER_FIELD, "endpointKeyHash", "endpointKeyHash", ColumnType.TEXT, true, false));
+        columnMapping.add(new ColumnMappingElement(ColumnMappingElementType.HEADER_FIELD, "endpointKeyHash", "endpointKeyHash",
+                ColumnType.TEXT, true, false));
         columnMapping.add(new ColumnMappingElement(ColumnMappingElementType.EVENT_JSON, "", "event_json", ColumnType.TEXT, false, false));
         columnMapping.add(new ColumnMappingElement(ColumnMappingElementType.UUID, "", "binid", ColumnType.UUID, false, true));
-
+        
         if (addServerField) {
             // Do NOT change the column name of the following element!
             columnMapping.add(new ColumnMappingElement(ColumnMappingElementType.SERVER_FIELD, "", "server_field", ColumnType.TEXT, false, false));

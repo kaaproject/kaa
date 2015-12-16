@@ -18,7 +18,6 @@ package org.kaaproject.kaa.server.operations.service;
 
 import java.util.List;
 
-import org.kaaproject.kaa.common.dto.CTLDataDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
@@ -89,8 +88,9 @@ public interface OperationsService extends PublicKeyAware {
     /**
      * Fetch server endpoint profile and CTL schema id based on endpoint key hash
      * 
-     * @param key - endpoint key hash
-     * @return server endpoint profile and CTL schema id
+     * @param hash - endpoint key hash
+     * @return endpoint profile
      */
-    CTLDataDto getServerEndpointProfile(EndpointObjectHash key);
+    public EndpointProfileDto refreshServerEndpointProfile(EndpointObjectHash hash);
+
 }

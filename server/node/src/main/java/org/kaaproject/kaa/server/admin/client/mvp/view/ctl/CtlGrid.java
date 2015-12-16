@@ -27,7 +27,7 @@ import com.google.gwt.user.cellview.client.DataGrid;
 
 public class CtlGrid extends AbstractKaaGrid<SchemaFqnDto, String> {
 
-    private static final int DEFAULT_PAGE_SIZE = 13;
+    private static final int DEFAULT_PAGE_SIZE = 12;
     
     public CtlGrid(Unit unit) {
         super(unit, false, DEFAULT_PAGE_SIZE);

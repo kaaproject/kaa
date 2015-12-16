@@ -28,6 +28,7 @@ public abstract class AbstractCTLSchemaDto implements Serializable, HasId {
     protected String tenantId;
     protected String applicationId;
     protected String body;
+    protected String defaultRecord;
     protected String name;
     protected String description;
     protected String createdUsername;
@@ -65,6 +66,14 @@ public abstract class AbstractCTLSchemaDto implements Serializable, HasId {
 
     public void setBody(String body) {
         this.body = body;
+    }
+
+    public String getDefaultRecord() {
+        return defaultRecord;
+    }
+
+    public void setDefaultRecord(String defaultRecord) {
+        this.defaultRecord = defaultRecord;
     }
 
     public String getName() {

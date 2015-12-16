@@ -56,11 +56,12 @@ import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.SchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
 import org.kaaproject.kaa.common.dto.UpdateStatus;
+import org.kaaproject.kaa.common.dto.VersionDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaInfoDto;
@@ -206,7 +207,13 @@ public abstract class AbstractTestControlServer extends AbstractTest {
 
     /** The Constant TEST_LOG_SCHEMA. */
     protected static final String TEST_LOG_SCHEMA = "control/data/testLogSchema.json";
-
+    
+    protected static final String CTL_DEFAULT_NAME = "name";
+    
+    protected static final String CTL_DEFAULT_NAMESPACE = "org.kaaproject.kaa";
+    
+    protected static final String CTL_DEFAULT_TYPE = "Type";
+    
     /** The kaa admin user. */
     protected static String kaaAdminUser = DEFAULT_KAA_ADMIN_USER;
 
@@ -476,6 +483,23 @@ public abstract class AbstractTestControlServer extends AbstractTest {
         Assert.assertNotNull(errorStatus);
         Assert.assertEquals(HttpStatus.BAD_REQUEST, errorStatus);
     }
+    
+    /**
+     * Check forbidden.
+     *
+     * @param restCall the rest call
+     * @throws Exception the exception
+     */
+    protected void checkForbidden(TestRestCall restCall) throws Exception {
+        HttpStatus errorStatus = null;
+        try {
+            restCall.executeRestCall();
+        } catch (HttpClientErrorException e) {
+            errorStatus = e.getStatusCode();
+        }
+        Assert.assertNotNull(errorStatus);
+        Assert.assertEquals(HttpStatus.FORBIDDEN, errorStatus);
+    }
 
     /**
      * The Class IdComparator.
@@ -657,8 +681,8 @@ public abstract class AbstractTestControlServer extends AbstractTest {
      * @return the profile schema dto
      * @throws Exception the exception
      */
-    protected ProfileSchemaDto createProfileSchema() throws Exception {
-        return createProfileSchema(null);
+    protected EndpointProfileSchemaDto createProfileSchema() throws Exception {
+        return createEndpointProfileSchema(null, null);
     }
 
     /**
@@ -668,8 +692,8 @@ public abstract class AbstractTestControlServer extends AbstractTest {
      * @return the profile schema dto
      * @throws Exception the exception
      */
-    protected ProfileSchemaDto createProfileSchema(String applicationId) throws Exception {
-        ProfileSchemaDto profileSchema = new ProfileSchemaDto();
+    protected EndpointProfileSchemaDto createEndpointProfileSchema(String applicationId, String ctlSchemaId) throws Exception {
+        EndpointProfileSchemaDto profileSchema = new EndpointProfileSchemaDto();
         profileSchema.setName(generateString("Test Schema"));
         profileSchema.setDescription(generateString("Test Desc"));
         if (strIsEmpty(applicationId)) {
@@ -679,11 +703,44 @@ public abstract class AbstractTestControlServer extends AbstractTest {
         else {
             profileSchema.setApplicationId(applicationId);
         }
+        if (strIsEmpty(ctlSchemaId)) {
+            CTLSchemaInfoDto ctlSchema = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, CTLSchemaScopeDto.TENANT, null, null, null);
+            profileSchema.setCtlSchemaId(ctlSchema.getId());
+        }
         loginTenantDeveloper(tenantDeveloperDto.getUsername());
-        ProfileSchemaDto savedProfileSchema = client
-                .createProfileSchema(profileSchema, TEST_PROFILE_SCHEMA);
+        EndpointProfileSchemaDto savedProfileSchema = client
+                .saveProfileSchema(profileSchema);
         return savedProfileSchema;
     }
+    
+    /**
+     * Creates the profile schema.
+     *
+     * @param applicationId the application id
+     * @return the profile schema dto
+     * @throws Exception the exception
+     */
+    protected ServerProfileSchemaDto createServerProfileSchema(String applicationId, String ctlSchemaId) throws Exception {
+        ServerProfileSchemaDto profileSchema = new ServerProfileSchemaDto();
+        profileSchema.setName(generateString("Test Schema"));
+        profileSchema.setDescription(generateString("Test Desc"));
+        if (strIsEmpty(applicationId)) {
+            ApplicationDto application = createApplication(tenantAdminDto);
+            profileSchema.setApplicationId(application.getId());
+        }
+        else {
+            profileSchema.setApplicationId(applicationId);
+        }
+        if (strIsEmpty(ctlSchemaId)) {
+            CTLSchemaInfoDto ctlSchema = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, CTLSchemaScopeDto.TENANT, null, null, null);
+            profileSchema.setCtlSchemaId(ctlSchema.getId());
+        }
+        loginTenantDeveloper(tenantDeveloperDto.getUsername());
+        ServerProfileSchemaDto savedProfileSchema = client
+                .saveServerProfileSchema(profileSchema);
+        return savedProfileSchema;
+    }
+
 
     /**
      * Creates the endpoint group.
@@ -726,32 +783,33 @@ public abstract class AbstractTestControlServer extends AbstractTest {
      * @throws Exception the exception
      */
     protected ProfileFilterDto createProfileFilter() throws Exception {
-        return createProfileFilter(null, null);
+        return createProfileFilter(null, null, null);
     }
 
     /**
      * Creates the profile filter.
      *
-     * @param profileSchemaId the profile schema id
+     * @param endpointPfSchemaId the profile schema id
      * @param endpointGroupId the endpoint group id
      * @return the profile filter dto
      * @throws Exception the exception
      */
-    protected ProfileFilterDto createProfileFilter(String profileSchemaId, String endpointGroupId) throws Exception {
+    protected ProfileFilterDto createProfileFilter(String endpointPfSchemaId, String serverPfSchemaId, String endpointGroupId) throws Exception {
         ApplicationDto application = createApplication(tenantAdminDto);
-        return createProfileFilter(profileSchemaId, endpointGroupId, application.getId());
+        return createProfileFilter(endpointPfSchemaId, serverPfSchemaId, endpointGroupId, application.getId());
     }
 
     /**
      * Creates the profile filter.
      *
-     * @param profileSchemaId the profile schema id
+     * @param endpointPfSchemaId the profile schema id
+     * @param serverPfSchemaId the profile schema id
      * @param endpointGroupId the endpoint group id
      * @param applicationId the application id
      * @return the profile filter dto
      * @throws Exception the exception
      */
-    protected ProfileFilterDto createProfileFilter(String profileSchemaId, String endpointGroupId, String applicationId) throws Exception {
+    protected ProfileFilterDto createProfileFilter(String endpointPfSchemaId, String serverPfSchemaId, String endpointGroupId, String applicationId) throws Exception {
         ProfileFilterDto profileFilter = new ProfileFilterDto();
         String filter = getResourceAsString(TEST_PROFILE_FILTER);
         profileFilter.setBody(filter);
@@ -764,12 +822,19 @@ public abstract class AbstractTestControlServer extends AbstractTest {
             profileFilter.setApplicationId(applicationId);
         }
 
-        if (strIsEmpty(profileSchemaId)) {
-            ProfileSchemaDto profileSchema = createProfileSchema(applicationId);
-            profileFilter.setSchemaId(profileSchema.getId());
+        if (strIsEmpty(endpointPfSchemaId)) {
+            EndpointProfileSchemaDto profileSchema = createEndpointProfileSchema(applicationId, null);
+            profileFilter.setEndpointProfileSchemaId(profileSchema.getId());
         }
         else {
-            profileFilter.setSchemaId(profileSchemaId);
+            profileFilter.setEndpointProfileSchemaId(endpointPfSchemaId);
+        }
+        if (strIsEmpty(serverPfSchemaId)) {
+            ServerProfileSchemaDto profileSchema = createServerProfileSchema(applicationId, null);
+            profileFilter.setEndpointProfileSchemaId(profileSchema.getId());
+        }
+        else {
+            profileFilter.setEndpointProfileSchemaId(serverPfSchemaId);
         }
         if (strIsEmpty(endpointGroupId)) {
             EndpointGroupDto endpointGroup = createEndpointGroup(applicationId);
@@ -990,8 +1055,8 @@ public abstract class AbstractTestControlServer extends AbstractTest {
         if (schema == null) {
             schema = createLogSchema(application.getId());
         }
-        appender.setMinLogSchemaVersion(schema.getMajorVersion());
-        appender.setMaxLogSchemaVersion(schema.getMajorVersion());
+        appender.setMinLogSchemaVersion(schema.getVersion());
+        appender.setMaxLogSchemaVersion(schema.getVersion());
 
         loginTenantDeveloper(tenantDeveloperDto.getUsername());
 
@@ -1186,8 +1251,17 @@ public abstract class AbstractTestControlServer extends AbstractTest {
 
     protected static final String TEST_CTL_SCHEMA_ALPHA = "control/data/ctl/alpha.json";
     protected static final String TEST_CTL_SCHEMA_BETA = "control/data/ctl/beta.json";
+    
+    protected String ctlRandomFieldName() {
+        return CTL_DEFAULT_NAME + random.nextInt(100000);
+    }
 
-    protected CTLSchemaInfoDto createCTLSchema(String name, String namespace, int version, CTLSchemaScopeDto scope, Set<CTLSchemaMetaInfoDto> dependencies,
+    protected String ctlRandomFieldType() {
+        return CTL_DEFAULT_TYPE + random.nextInt(100000);
+    }
+
+    protected CTLSchemaInfoDto createCTLSchema(String name, String namespace, int version, 
+            CTLSchemaScopeDto scope, String applicationId, Set<CTLSchemaMetaInfoDto> dependencies,
             Map<String, String> fields) throws Exception {
 
         LOG.debug("Generating CTL schema...");
@@ -1202,8 +1276,10 @@ public abstract class AbstractTestControlServer extends AbstractTest {
 
         // The argument is left for readability only
         if (scope == CTLSchemaScopeDto.APPLICATION) {
-            ApplicationDto application = this.createApplication();
-            body.put("application", application.getId());
+            if (strIsEmpty(applicationId)) {
+                ApplicationDto application = this.createApplication();
+                applicationId = application.getId();
+            }
         }
 
         if (dependencies != null && !dependencies.isEmpty()) {
@@ -1230,7 +1306,7 @@ public abstract class AbstractTestControlServer extends AbstractTest {
 
         LOG.debug("CTL schema generated: " + body);
 
-        return client.saveCTLSchema(body.toString());
+        return client.saveCTLSchema(body.toString(), scope, scope == CTLSchemaScopeDto.APPLICATION ? applicationId : null);
     }
 
     /**
@@ -1239,10 +1315,9 @@ public abstract class AbstractTestControlServer extends AbstractTest {
      * @param schema the schema
      * @param storedSchema the stored schema
      */
-    protected void assertSchemasEquals(SchemaDto schema, SchemaDto storedSchema) {
+    protected void assertSchemasEquals(VersionDto schema, VersionDto storedSchema) {
         Assert.assertEquals(schema.getId(), storedSchema.getId());
-        Assert.assertEquals(schema.getMajorVersion(), storedSchema.getMajorVersion());
-        Assert.assertEquals(schema.getMinorVersion(), storedSchema.getMinorVersion());
+        Assert.assertEquals(schema.getVersion(), storedSchema.getVersion());
     }
 
 }

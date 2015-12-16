@@ -16,47 +16,6 @@
 
 package org.kaaproject.kaa.server.common.nosql.cassandra.dao;
 
-import com.datastax.driver.core.ConsistencyLevel;
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.Row;
-import com.datastax.driver.core.Statement;
-import com.datastax.driver.core.querybuilder.QueryBuilder;
-import com.google.common.base.Predicates;
-import com.google.common.collect.Sets;
-import org.apache.commons.codec.binary.Base64;
-import org.kaaproject.kaa.common.dto.CTLDataDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileDto;
-import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
-import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
-import org.kaaproject.kaa.common.dto.PageLinkDto;
-import org.kaaproject.kaa.server.common.dao.DaoConstants;
-import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
-import org.kaaproject.kaa.server.common.nosql.cassandra.dao.filter.CassandraEPByAccessTokenDao;
-import org.kaaproject.kaa.server.common.nosql.cassandra.dao.filter.CassandraEPByAppIdDao;
-import org.kaaproject.kaa.server.common.nosql.cassandra.dao.filter.CassandraEPByEndpointGroupIdDao;
-import org.kaaproject.kaa.server.common.nosql.cassandra.dao.filter.CassandraEPBySdkTokenDao;
-import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEPByAccessToken;
-import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEPByAppId;
-import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEPByEndpointGroupId;
-import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEPBySdkToken;
-import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointProfile;
-import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointUser;
-import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.type.CassandraEndpointGroupState;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-
 import static com.datastax.driver.core.querybuilder.QueryBuilder.delete;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.eq;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.in;
@@ -80,8 +39,49 @@ import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.Cassand
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_COLUMN_FAMILY_NAME;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_EP_KEY_HASH_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_PROFILE_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_SERVER_PROFILE_ID_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_SERVER_PROFILE_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_SERVER_PROFILE_VERSION_PROPERTY;
+
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.commons.codec.binary.Base64;
+import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
+import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
+import org.kaaproject.kaa.common.dto.PageLinkDto;
+import org.kaaproject.kaa.server.common.dao.DaoConstants;
+import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.filter.CassandraEPByAccessTokenDao;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.filter.CassandraEPByAppIdDao;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.filter.CassandraEPByEndpointGroupIdDao;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.filter.CassandraEPBySdkTokenDao;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEPByAccessToken;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEPByAppId;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEPByEndpointGroupId;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEPBySdkToken;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointProfile;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointUser;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.type.CassandraEndpointGroupState;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import com.datastax.driver.core.ConsistencyLevel;
+import com.datastax.driver.core.ResultSet;
+import com.datastax.driver.core.Row;
+import com.datastax.driver.core.Statement;
+import com.datastax.driver.core.querybuilder.QueryBuilder;
+import com.google.common.base.Predicates;
+import com.google.common.collect.Sets;
 
 @Repository(value = "endpointProfileDao")
 public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraEndpointProfile, ByteBuffer> implements EndpointProfileDao<CassandraEndpointProfile> {
@@ -409,27 +409,12 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
     }
 
     @Override
-    public CTLDataDto findCtlDataByKeyHash(byte[] keyHash) {
-        CTLDataDto ctlData = null;
-        LOG.debug("Trying to find ctl data by endpoint key hash {}", keyHash);
-        Statement query = select(EP_SERVER_PROFILE_ID_PROPERTY, EP_SERVER_PROFILE_PROPERTY).from(EP_COLUMN_FAMILY_NAME)
-                .where(eq(EP_EP_KEY_HASH_PROPERTY, ByteBuffer.wrap(keyHash)));
-        ResultSet resultSet = execute(query);
-        Row row = resultSet.one();
-        if (row != null) {
-            ctlData = new CTLDataDto(row.getString(EP_SERVER_PROFILE_ID_PROPERTY), row.getString(EP_SERVER_PROFILE_PROPERTY));
-        }
-        LOG.debug("[{}] Found ctl data {}", keyHash, ctlData);
-        return ctlData;
-    }
-
-    @Override
-    public CassandraEndpointProfile updateServerProfile(byte[] keyHash, String schemaId, String serverProfile) {
-        LOG.debug("Updating server profile for endpoint profile with key hash [{}] with schema id [{}]", keyHash, schemaId);
+    public CassandraEndpointProfile updateServerProfile(byte[] keyHash, int version, String serverProfile) {
+        LOG.debug("Updating server profile for endpoint profile with key hash [{}] with schema version [{}]", keyHash, version);
         ByteBuffer key = ByteBuffer.wrap(keyHash);
         Statement update = QueryBuilder.update(EP_COLUMN_FAMILY_NAME)
                 .with(set(EP_SERVER_PROFILE_PROPERTY, serverProfile))
-                .and(set(EP_SERVER_PROFILE_ID_PROPERTY, schemaId))
+                .and(set(EP_SERVER_PROFILE_VERSION_PROPERTY, version))
                 .where(eq(EP_EP_KEY_HASH_PROPERTY, key));
         execute(update, ConsistencyLevel.ALL);
         return findById(key);

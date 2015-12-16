@@ -58,7 +58,7 @@ public class LogEventPackMessageTest {
 
     @Test
     public void logEventPackDataTest() {
-        EndpointProfileDataDto profileDto = new EndpointProfileDataDto("1", ENDPOINT_KEY, 1, "", null, null);
+        EndpointProfileDataDto profileDto = new EndpointProfileDataDto("1", ENDPOINT_KEY, 1, "", 0, "");
         BaseLogEventPack logEventPack = new BaseLogEventPack(profileDto, DATE_CREATED, LOG_SCHEMA_VERSION, EVENTS);
         logEventPack.setLogSchema(LOG_SCHEMA);
 

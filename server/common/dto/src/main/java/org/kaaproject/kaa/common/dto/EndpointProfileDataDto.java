@@ -22,17 +22,17 @@ public class EndpointProfileDataDto {
     private final String clientProfileBody;
     private final String serverProfileBody;
 
-    private final int clientProfileSchemaVersion;
-    private final String serverProfileCtlSchemaId;
+    private final int clientProfileVersion;
+    private final int serverProfileVersion;
 
-    public EndpointProfileDataDto(String id, String endpointKey, int clientProfileSchemaVersion, String clientProfileBody,
-            String serverProfileCtlSchemaId, String serverProfileBody) {
+    public EndpointProfileDataDto(String id, String endpointKey, int clientProfileVersion, String clientProfileBody,
+            int serverProfileVersion, String serverProfileBody) {
         super();
         this.id = id;
         this.endpointKey = endpointKey;
-        this.clientProfileSchemaVersion = clientProfileSchemaVersion;
+        this.clientProfileVersion = clientProfileVersion;
         this.clientProfileBody = clientProfileBody;
-        this.serverProfileCtlSchemaId = serverProfileCtlSchemaId;
+        this.serverProfileVersion = serverProfileVersion;
         this.serverProfileBody = serverProfileBody;
     }
 
@@ -52,19 +52,31 @@ public class EndpointProfileDataDto {
         return serverProfileBody;
     }
 
-    public int getClientProfileSchemaVersion() {
-        return clientProfileSchemaVersion;
+    public int getClientProfileVersion() {
+        return clientProfileVersion;
     }
 
-    public String getServerProfileCtlSchemaId() {
-        return serverProfileCtlSchemaId;
+    public int getServerProfileVersion() {
+        return serverProfileVersion;
     }
 
     @Override
     public String toString() {
-        return "EndpointProfileDataDto [id=" + id + ", endpointKey=" + endpointKey + ", clientProfileBody=" + clientProfileBody
-                + ", serverProfileBody=" + serverProfileBody + ", clientProfileSchemaVersion=" + clientProfileSchemaVersion
-                + ", serverProfileCtlSchemaId=" + serverProfileCtlSchemaId + "]";
+        StringBuilder builder = new StringBuilder();
+        builder.append("EndpointProfileDataDto [id=");
+        builder.append(id);
+        builder.append(", endpointKey=");
+        builder.append(endpointKey);
+        builder.append(", clientProfileBody=");
+        builder.append(clientProfileBody);
+        builder.append(", serverProfileBody=");
+        builder.append(serverProfileBody);
+        builder.append(", clientProfileVersion=");
+        builder.append(clientProfileVersion);
+        builder.append(", serverProfileVersion=");
+        builder.append(serverProfileVersion);
+        builder.append("]");
+        return builder.toString();
     }
 
 }

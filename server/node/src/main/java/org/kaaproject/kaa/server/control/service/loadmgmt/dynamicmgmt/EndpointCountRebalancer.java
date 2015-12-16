@@ -18,6 +18,7 @@ package org.kaaproject.kaa.server.control.service.loadmgmt.dynamicmgmt;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -127,7 +128,7 @@ public class EndpointCountRebalancer implements Rebalancer {
     }
 
     private Map<Integer, Double> calculateWeights(Map<Integer, OperationsServerLoadHistory> opsServerLoadHistory, int targetLoad) {
-        Map<Integer, Double> weights = new HashMap<Integer, Double>();
+        Map<Integer, Double> weights = new LinkedHashMap<>();
 
         double totalPosWeight = 0;
         double totalNegWeight = 0;

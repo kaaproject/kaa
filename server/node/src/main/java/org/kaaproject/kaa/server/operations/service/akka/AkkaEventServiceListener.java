@@ -18,7 +18,7 @@ package org.kaaproject.kaa.server.operations.service.akka;
 
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.lb.ClusterUpdateMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointRouteUpdateMessage;
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointStateUpdateMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserConfigurationUpdateMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserConfigurationUpdate;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.RemoteEndpointEventMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.RouteInfoMessage;
@@ -67,7 +67,7 @@ final class AkkaEventServiceListener implements EventServiceListener {
 
     @Override
     public void onEndpointStateUpdate(EndpointUserConfigurationUpdate notification) {
-        opsActor.tell(new EndpointStateUpdateMessage(notification), ActorRef.noSender());
+        opsActor.tell(new EndpointUserConfigurationUpdateMessage(notification), ActorRef.noSender());
     }
 
     @Override

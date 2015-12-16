@@ -23,7 +23,7 @@ import java.util.List;
 import org.kaaproject.avro.ui.gwt.client.AvroUiResources;
 import org.kaaproject.avro.ui.gwt.client.AvroUiResources.AvroUiStyle;
 import org.kaaproject.avro.ui.gwt.client.widget.AlertPanel;
-import org.kaaproject.kaa.common.dto.SchemaDto;
+import org.kaaproject.kaa.common.dto.VersionDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdminResources;
 import org.kaaproject.kaa.server.admin.client.KaaAdminResources.KaaAdminStyle;
 import org.kaaproject.kaa.server.admin.client.KaaAdminResources.KaaTheme;
@@ -179,13 +179,12 @@ public class Utils {
         return result;
     }
 
-    public static SchemaDto getMaxSchemaVersions(List<SchemaDto> schemas) {
-        SchemaDto maxLogSchema = null;
+    public static <T extends VersionDto> T getMaxSchemaVersions(List<T> schemas) {
         if (schemas != null && !schemas.isEmpty()) {
-            Collections.sort(schemas, Collections.reverseOrder());
-            maxLogSchema = schemas.get(0);
+            return Collections.max(schemas);
+        } else {
+            return null;
         }
-        return maxLogSchema;
     }
 
     public static boolean isNotBlank(String string) {

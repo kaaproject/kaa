@@ -24,12 +24,13 @@ import java.util.Map.Entry;
 
 import org.kaaproject.kaa.common.dto.ChangeDto;
 import org.kaaproject.kaa.common.dto.ChangeType;
+import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.HistoryDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.server.common.Base64Util;
-import org.kaaproject.kaa.server.operations.service.cache.AppVersionKey;
+import org.kaaproject.kaa.server.operations.service.cache.AppProfileVersionsKey;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
 import org.kaaproject.kaa.server.operations.service.cache.ConfigurationIdKey;
 import org.kaaproject.kaa.server.operations.service.cache.HistoryKey;
@@ -70,10 +71,19 @@ public class DefaultHistoryDeltaService implements HistoryDeltaService {
     public HistoryDelta getDelta(EndpointProfileDto profile, String applicationToken, int curAppSeqNumber) {
         String endpointId = Base64Util.encode(profile);
         ConfigurationIdKey confIdKey = new ConfigurationIdKey(applicationToken, curAppSeqNumber, profile.getConfigurationVersion());
-        AppVersionKey appProfileVersionKey = new AppVersionKey(confIdKey.getApplicationToken(), profile.getProfileVersion());
-        List<ProfileFilterDto> filters = filterService.getAllMatchingFilters(appProfileVersionKey, profile);
+        AppProfileVersionsKey appVersionsKey = new AppProfileVersionsKey(applicationToken, profile.getClientProfileVersion(),
+                profile.getServerProfileVersion());
+        List<ProfileFilterDto> filters = filterService.getAllMatchingFilters(appVersionsKey, profile);
         LOG.debug("[{}] Found {} matching filters", endpointId, filters.size());
-        List<EndpointGroupStateDto> result = new ArrayList<>(filters.size());
+        List<EndpointGroupStateDto> result = new ArrayList<>(1 + filters.size());
+
+        EndpointGroupDto groupDto = cacheService.getDefaultGroup(applicationToken);
+
+        EndpointGroupStateDto groupAllState = new EndpointGroupStateDto();
+        groupAllState.setEndpointGroupId(groupDto.getId());
+        groupAllState.setConfigurationId(cacheService.getConfIdByKey(confIdKey.copyWithNewEGId(groupDto.getId())));
+        result.add(groupAllState);
+
         for (ProfileFilterDto filter : filters) {
             String confId = cacheService.getConfIdByKey(confIdKey.copyWithNewEGId(filter.getEndpointGroupId()));
             EndpointGroupStateDto endpointGroupState = new EndpointGroupStateDto();
@@ -117,7 +127,7 @@ public class DefaultHistoryDeltaService implements HistoryDeltaService {
         }
 
         HistoryKey historyKey = new HistoryKey(applicationToken, subject, oldAppSeqNumber, curAppSeqNumber,
-                profile.getConfigurationVersion(), profile.getProfileVersion());
+                profile.getConfigurationVersion(), profile.getClientProfileVersion(), profile.getServerProfileVersion());
         ConfigurationIdKey confIdKey = new ConfigurationIdKey(applicationToken, curAppSeqNumber, profile.getConfigurationVersion());
 
         List<EndpointGroupStateDto> endpointGroups;

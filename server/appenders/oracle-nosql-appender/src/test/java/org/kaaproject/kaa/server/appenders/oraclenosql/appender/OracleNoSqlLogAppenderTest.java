@@ -180,9 +180,15 @@ public class OracleNoSqlLogAppenderTest {
 
         logAppender.close();
         TestLogDeliveryCallback callback = new TestLogDeliveryCallback();
-        EndpointProfileDataDto profileDto = new EndpointProfileDataDto("1", ENDPOINT_KEY, 1, "test", null, null);
-        BaseLogEventPack logEventPack = new BaseLogEventPack(profileDto, DATE_CREATED, 1, null);
-
+        
+        LogSchemaDto schemaDto = new LogSchemaDto();
+        schemaDto.setSchema(BasicEndpointProfile.SCHEMA$.toString());
+        LogSchema schema = new LogSchema(schemaDto);
+        
+        EndpointProfileDataDto profileDto = new EndpointProfileDataDto("1", ENDPOINT_KEY, 1, "test", 0, null);
+        BaseLogEventPack logEventPack = new BaseLogEventPack(profileDto, DATE_CREATED, schema.getVersion(), null);
+        logEventPack.setLogSchema(schema);
+        
         logAppender.doAppend(logEventPack, callback);
         Assert.assertTrue(callback.internallError);
     }
@@ -207,8 +213,10 @@ public class OracleNoSqlLogAppenderTest {
         schemaDto.setSchema(BasicEndpointProfile.SCHEMA$.toString());
         LogSchema schema = new LogSchema(schemaDto);
 
-        EndpointProfileDataDto profileDto = new EndpointProfileDataDto("1", ENDPOINT_KEY, 1, "test", null, null);
+        
+        EndpointProfileDataDto profileDto = new EndpointProfileDataDto("1", ENDPOINT_KEY, 1, "test", 0, null);
         BaseLogEventPack logEventPack = new BaseLogEventPack(profileDto, DATE_CREATED, schema.getVersion(), events);
+        logEventPack.setLogSchema(schema);
 
         TestLogDeliveryCallback callback = new TestLogDeliveryCallback();
         logAppender.doAppend(logEventPack, callback);
@@ -231,11 +239,11 @@ public class OracleNoSqlLogAppenderTest {
 
         LogSchemaDto dto = new LogSchemaDto();
         dto.setSchema(EMPTY_SCHEMA);
-        dto.setMajorVersion(1);
+        dto.setVersion(1);
         LogSchema schema = new LogSchema(dto);
-        int version = dto.getMajorVersion();
+        int version = dto.getVersion();
 
-        EndpointProfileDataDto profileDto = new EndpointProfileDataDto("1", ENDPOINT_KEY, 1, "test", null, null);
+        EndpointProfileDataDto profileDto = new EndpointProfileDataDto("1", ENDPOINT_KEY, 1, "test", 0, null);
         BaseLogEventPack logEventPack = new BaseLogEventPack(profileDto, DATE_CREATED, version, events);
         logEventPack.setLogSchema(schema);
         Map<String, GenericAvroConverter<GenericRecord>> converters = new HashMap<>();

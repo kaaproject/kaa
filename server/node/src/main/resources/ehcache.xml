@@ -55,7 +55,14 @@
         <persistence strategy="localTempSwap" />
     </cache>
 
-    <cache name="profileSchemas" maxEntriesLocalHeap="10000"
+    <cache name="endpointProfileSchemas" maxEntriesLocalHeap="10000"
+        eternal="false" diskSpoolBufferSizeMB="20" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU"
+        transactionalMode="off" statistics="true">
+        <persistence strategy="localTempSwap" />
+    </cache>
+    
+    <cache name="serverProfileSchemas" maxEntriesLocalHeap="10000"
         eternal="false" diskSpoolBufferSizeMB="20" timeToIdleSeconds="300"
         timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU"
         transactionalMode="off" statistics="true">
@@ -203,6 +210,20 @@
         diskSpoolBufferSizeMB="30" maxEntriesLocalDisk="1000"
         diskExpiryThreadIntervalSeconds="120" memoryStoreEvictionPolicy="LRU"
         statistics="false">
+        <persistence strategy="localTempSwap" />
+    </cache>
+    
+    <cache name="ctlSchemaBodies" maxEntriesLocalHeap="10000"
+        eternal="false" diskSpoolBufferSizeMB="20" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU"
+        transactionalMode="off" statistics="true">
+        <persistence strategy="localTempSwap" />
+    </cache>
+
+    <cache name="defaultGroups" maxEntriesLocalHeap="10000"
+        eternal="false" diskSpoolBufferSizeMB="20" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU"
+        transactionalMode="off" statistics="true">
         <persistence strategy="localTempSwap" />
     </cache>
 

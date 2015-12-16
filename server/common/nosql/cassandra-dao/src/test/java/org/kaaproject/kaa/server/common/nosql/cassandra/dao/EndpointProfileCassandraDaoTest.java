@@ -243,12 +243,5 @@ public class EndpointProfileCassandraDaoTest extends AbstractCassandraTest {
         Assert.assertTrue(endpointProfileDao.checkSdkToken("alpha"));
         Assert.assertFalse(endpointProfileDao.checkSdkToken("beta"));
     }
-
-    @Test
-    public void testFindCtlDataByKeyHash() {
-        CTLDataDto dataDto = new CTLDataDto(String.valueOf(RANDOM.nextInt()), UUID.randomUUID().toString());
-        EndpointProfileDto ep = generateEndpointProfile(dataDto);
-        CTLDataDto found = endpointProfileDao.findCtlDataByKeyHash(ep.getEndpointKeyHash());
-        Assert.assertEquals(dataDto, found);
-    }
+ 
 }

@@ -65,7 +65,7 @@ public class KafkaLogAppenderTest {
     private AvroByteArrayConverter<LogData> logDataConverter = new AvroByteArrayConverter<>(LogData.class);
 
     private BaseLogEventPack generateLogEventPack(int count) throws IOException {
-        EndpointProfileDataDto profileDto = new EndpointProfileDataDto("1", endpointKeyHash, 1, "", "1", "");
+        EndpointProfileDataDto profileDto = new EndpointProfileDataDto("1", endpointKeyHash, 1, "", 1, "");
         List<LogEvent> events = new ArrayList<>(count);
         BaseLogEventPack logEventPack = new BaseLogEventPack(profileDto, System.currentTimeMillis(), 2, events);
         for (int i = 0; i < count; i++) {

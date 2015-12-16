@@ -16,8 +16,6 @@
 
 package org.kaaproject.kaa.server.admin.services;
 
-import static org.kaaproject.kaa.server.admin.services.util.Utils.getCurrentUser;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -122,8 +120,7 @@ public class CacheServiceImpl implements CacheService {
     public FileData getExportedCtlSchema(CtlSchemaExportKey key)
             throws KaaAdminServiceException {
         try {
-            String tenantId = getCurrentUser().getTenantId();
-            CTLSchemaDto schemaFound = controlService.getCTLSchemaByFqnVersionAndTenantId(key.getFqn(), key.getVersion(), tenantId);
+            CTLSchemaDto schemaFound = controlService.getCTLSchemaById(key.getCtlSchemaId());
             Utils.checkNotNull(schemaFound);
             switch (key.getExportMethod()) {
             case SHALLOW:
@@ -132,6 +129,8 @@ public class CacheServiceImpl implements CacheService {
                 return controlService.exportCTLSchemaFlat(schemaFound);
             case DEEP:
                 return controlService.exportCTLSchemaDeep(schemaFound);
+            case LIBRARY:
+                return controlService.exportCTLSchemaFlatAsLibrary(schemaFound);
             default:
                 throw new IllegalArgumentException("The export method " + key.getExportMethod().name() + " is not currently supported!");
             }
