@@ -21,11 +21,11 @@
 extern "C" {
 # endif
 
-typedef kaa_plugin_t* (*kaa_plugin_create)(kaa_context_t *context);
+typedef kaa_plugin_t* (*kaa_plugin_create_fn)(kaa_context_t *context);
 
 typedef struct {
     uint16_t type;
-    kaa_plugin_create create_fn;
+    kaa_plugin_create_fn create;
 } kaa_plugin_info_t;
 
 extern kaa_plugin_info_t kaa_available_plugins[];

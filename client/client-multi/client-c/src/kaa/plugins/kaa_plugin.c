@@ -49,7 +49,7 @@ kaa_error_t kaa_create_plugins(kaa_context_t *context)
     context->kaa_plugins      = KAA_CALLOC(context->kaa_plugin_count, sizeof(kaa_plugin_info_t*));
 
     for (int i = 0; i < context->kaa_plugin_count; ++i) {
-        context->kaa_plugins[i] = kaa_available_plugins[i].create_fn(context);
+        context->kaa_plugins[i] = kaa_available_plugins[i].create(context);
         if (context->kaa_plugins[i]) {
             fprintf(stderr, "[PLUGIN] %s created \n", context->kaa_plugins[i]->plugin_name);
             error_code = context->kaa_plugins[i]->init_fn(context->kaa_plugins[i]);
