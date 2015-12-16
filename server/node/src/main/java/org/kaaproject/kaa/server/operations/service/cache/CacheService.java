@@ -41,6 +41,7 @@ import org.kaaproject.kaa.server.common.dao.HistoryService;
 import org.kaaproject.kaa.server.common.dao.ProfileService;
 import org.kaaproject.kaa.server.common.dao.SdkProfileService;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.plugin.SdkExtensionKey;
 import org.kaaproject.kaa.server.operations.service.event.EventClassFqnVersion;
 import org.kaaproject.kaa.server.operations.service.event.RouteTableKey;
 
@@ -380,4 +381,6 @@ public interface CacheService {
     TopicDto putTopic(String key, TopicDto value);
 
     void resetGroup(String key);
+
+    String getPluginInstanceId(SdkExtensionKey pluginKey);
 }

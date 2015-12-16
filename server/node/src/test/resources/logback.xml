@@ -46,7 +46,7 @@
     <logger name="org.kaaproject.kaa.server.admin" level="INFO"/>
     <logger name="org.kaaproject.kaa.server.control" level="INFO"/>
     <logger name="org.kaaproject.kaa.server.bootstrap" level="INFO"/>
-    <logger name="org.kaaproject.kaa.server.operations" level="INFO"/>
+    <logger name="org.kaaproject.kaa.server.operations" level="TRACE"/>
     <logger name="org.kaaproject.kaa.server.operations.service.statistics" level="WARN"/>
     <logger name="org.kaaproject.kaa.server.operations.service.event" level="WARN"/>
     <logger name="org.kaaproject.kaa.server.thrift" level="WARN"/>

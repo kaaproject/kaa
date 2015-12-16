@@ -53,6 +53,7 @@
                 <configuration>
                     <descriptors>
                         <descriptor>assembly/client-c-sdk.xml</descriptor>
+                        <descriptor>assembly/client-c-sdk-templates.xml</descriptor>
                     </descriptors>
                 </configuration>
                 <executions>

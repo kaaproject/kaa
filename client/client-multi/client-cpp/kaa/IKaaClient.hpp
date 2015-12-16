@@ -51,9 +51,28 @@ class KeyPair;
  */
 class IKaaClient {
 public:
+    /**
+     * @brief Starts Kaa's workflow.
+     */
+    virtual void start() = 0;
 
     /**
-     * Sets profile container implemented by the user.
+     * @brief Stops Kaa's workflow.
+     */
+    virtual void stop() = 0;
+
+    /**
+     * @brief Pauses Kaa's workflow.
+     */
+    virtual void pause() = 0;
+
+    /**
+     * @brief Resumes Kaa's workflow.
+     */
+    virtual void resume() = 0;
+
+    /**
+     * @brief Sets profile container implemented by the user.
      *
      * @param container User-defined container
      * @see AbstractProfileContainer
@@ -62,7 +81,7 @@ public:
     virtual void setProfileContainer(IProfileContainerPtr container) = 0;
 
     /**
-     *  Notyfies server about profile changes
+     * @brief Notifies server about profile changes.
      */
     virtual void updateProfile() = 0;
 

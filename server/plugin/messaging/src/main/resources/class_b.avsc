@@ -1,0 +1,7 @@
+{
+    "type":"record",
+    "name":"ClassB",
+    "namespace":"org.kaaproject.kaa.server.plugin.messaging.gen.test",
+    "fields":[
+    ]
+}

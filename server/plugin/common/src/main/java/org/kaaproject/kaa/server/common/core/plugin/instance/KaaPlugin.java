@@ -20,8 +20,10 @@ import org.kaaproject.kaa.server.common.core.plugin.def.PluginInitContext;
 
 public interface KaaPlugin {
 
-    void init(PluginInitContext context);
+    void init(PluginInitContext context) throws PluginLifecycleException;
 
     void onPluginMessage(KaaPluginMessage msg, PluginExecutionContext ctx);
+    
+    void stop() throws PluginLifecycleException;
 
 }

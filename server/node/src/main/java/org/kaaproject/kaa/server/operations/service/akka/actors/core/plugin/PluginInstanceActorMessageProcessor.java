@@ -26,15 +26,14 @@ import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PluginActorMessageProcessor {
-    /** The Constant LOG. */
-    private static final Logger LOG = LoggerFactory.getLogger(PluginActorMessageProcessor.class);
+public class PluginInstanceActorMessageProcessor {
+    private static final Logger LOG = LoggerFactory.getLogger(PluginInstanceActorMessageProcessor.class);
 
     private final PluginService pluginService;
     private final PluginInstanceDto pluginInstanceDto;
-    private KaaPlugin plugin;
+    private final KaaPlugin plugin;
 
-    public PluginActorMessageProcessor(AkkaContext context, String pluginInstanceId) throws PluginLifecycleException,
+    public PluginInstanceActorMessageProcessor(AkkaContext context, String pluginInstanceId) throws PluginLifecycleException,
             PluginInitializationException {
         this.pluginService = context.getPluginService();
         this.pluginInstanceDto = pluginService.getInstanceById(pluginInstanceId);
@@ -42,7 +41,7 @@ public class PluginActorMessageProcessor {
         initPluginInstance(plugin, pluginInstanceDto);
     }
 
-    private static void initPluginInstance(KaaPlugin plugin, PluginInstanceDto pluginInstanceDto) throws PluginInitializationException {
+    private static void initPluginInstance(KaaPlugin plugin, PluginInstanceDto pluginInstanceDto) throws PluginLifecycleException {
         LOG.info("[{}] Initializing new plugin instance using definition {}", pluginInstanceDto.getId(), pluginInstanceDto);
         plugin.init(new BasePluginInitContext(pluginInstanceDto));
         LOG.info("[{}] Initialized new plugin instance", pluginInstanceDto.getId());
@@ -66,8 +65,10 @@ public class PluginActorMessageProcessor {
         }
     }
 
-    public void stop() {
-        // TODO Auto-generated method stub
+    public void stop() throws PluginLifecycleException {
+        LOG.info("[{}] Stopping new plugin instance", pluginInstanceDto.getId());
+        plugin.stop();
+        LOG.info("[{}] Stopped new plugin instance", pluginInstanceDto.getId());
     }
 
 }

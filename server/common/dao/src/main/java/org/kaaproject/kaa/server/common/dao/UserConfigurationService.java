@@ -26,32 +26,32 @@ public interface UserConfigurationService {
 
     /**
      *
-     * @param dto
-     * @return
+     * @param   dto the dto
+     * @return  the endpoint user configuration dto
      */
     EndpointUserConfigurationDto saveUserConfiguration(EndpointUserConfigurationDto dto);
 
     /**
      *
-     * @param userId
-     * @param appToken
-     * @param schemaVersion
-     * @return
+     * @param   userId          the user id
+     * @param   appToken        the app token
+     * @param   schemaVersion   the schema version
+     * @return  the endpoint user configuration dto
      */
     EndpointUserConfigurationDto findUserConfigurationByUserIdAndAppTokenAndSchemaVersion(String userId, String appToken, Integer schemaVersion);
 
     /**
      *
-     * @param userId
-     * @return
+     * @param   userId  the user id
+     * @return  the list endpoint user configuration dto
      */
     List<EndpointUserConfigurationDto> findUserConfigurationByUserId(String userId);
 
     /**
      *
-     * @param userId
-     * @param appToken
-     * @param schemaVersion
+     * @param userId        the user id
+     * @param appToken      the app token
+     * @param schemaVersion the schema version
      */
     void removeByUserIdAndAppTokenAndSchemaVersion(String userId, String appToken, Integer schemaVersion);
 }

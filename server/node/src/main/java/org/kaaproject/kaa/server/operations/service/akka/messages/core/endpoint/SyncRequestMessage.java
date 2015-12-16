@@ -138,10 +138,12 @@ public class SyncRequestMessage extends EndpointAwareMessage implements ChannelA
         ClientSync other = syncRequest.getRequest();
         LOG.trace("[{}] Merging original request {} with new request {}", channelUuid, request, other);
         request.setRequestId(other.getRequestId());
+        request.setEventSync(other.getEventSync());
         request.getClientSyncMetaData().setProfileHash(other.getClientSyncMetaData().getProfileHash());
         LOG.debug("[{}] Updated request id and profile hash", channelUuid);
         ClientSync diff = new ClientSync();
         diff.setRequestId(other.getRequestId());
+        diff.setEventSync(other.getEventSync());
         diff.setClientSyncMetaData(other.getClientSyncMetaData());
         if (request.getClientSyncMetaData().getApplicationToken() != null) {
             LOG.debug("Setting application token, as it was null: {}", request.getClientSyncMetaData().getApplicationToken());

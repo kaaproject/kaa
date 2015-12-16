@@ -24,32 +24,32 @@ import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 public interface UserVerifierService {
 
     /**
-     * @param appId
-     * @return
+     * @param   appId the app id
+     * @return  the list user verifier dto
      */
     List<UserVerifierDto> findUserVerifiersByAppId(String appId);
     
     /**
-     * @param appId
-     * @param verifierToken
-     * @return
+     * @param   appId           the app id
+     * @param   verifierToken   the verifier token
+     * @return  the user verifier dto
      */
     UserVerifierDto findUserVerifiersByAppIdAndVerifierToken(String appId, String verifierToken);
 
     /**
-     * @param id
-     * @return
+     * @param   id the id
+     * @return  the user verifier dto
      */
     UserVerifierDto findUserVerifierById(String id);
 
     /**
-     * @param logAppenderDto
-     * @return
+     * @param   logAppenderDto the log appender dto
+     * @return  the user verifier dto
      */
     UserVerifierDto saveUserVerifier(UserVerifierDto logAppenderDto);
     
     /**
-     * @param id
+     * @param id the id
      */
     void removeUserVerifierById(String id);
 

@@ -17,6 +17,8 @@
 #ifndef IEXECUTORCONTEXT_HPP_
 #define IEXECUTORCONTEXT_HPP_
 
+#include <memory>
+
 namespace kaa {
 
 class IThreadPool;
@@ -55,8 +57,10 @@ public:
      */
     virtual IThreadPool& getCallbackExecutor() = 0;
 
-    virtual ~IExecutorContext() {}
+    virtual ~IExecutorContext() = default;
 };
+
+typedef std::shared_ptr<IExecutorContext> IExecutorContextPtr;
 
 } /* namespace kaa */
 

@@ -92,7 +92,7 @@ private:
 
 };
 
-BOOST_AUTO_TEST_SUITE(PinConnectivityTestSuite)
+BOOST_AUTO_TEST_SUITE(IPConnectivityTestSuite)
 
 BOOST_AUTO_TEST_CASE(UnreachableServerTest)
 {

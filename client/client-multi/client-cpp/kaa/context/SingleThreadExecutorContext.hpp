@@ -23,12 +23,16 @@ namespace kaa {
 
 class SingleThreadExecutorContext: public AbstractExecutorContext {
 public:
-    virtual void init() { executor_ = createExecutor(1); }
-    virtual void stop() { shutdownExecutor(executor_); }
+    SingleThreadExecutorContext()
+        : AbstractExecutorContext() {}
 
     virtual IThreadPool& getLifeCycleExecutor() { return *executor_; }
     virtual IThreadPool& getApiExecutor() { return *executor_; }
     virtual IThreadPool& getCallbackExecutor() { return *executor_; }
+
+protected:
+    virtual void doInit() { executor_ = createExecutor(1); }
+    virtual void doStop() { shutdownExecutor(executor_); }
 
 private:
     IThreadPoolPtr    executor_;

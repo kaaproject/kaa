@@ -72,10 +72,9 @@ public abstract class AbstractLogAppender<T extends SpecificRecordBase> implemen
     /**
      * Log in <code>LogAppender</code> specific way.
      * 
-     * @param logEventPack
-     *            the pack of Log Events
-     * @param header
-     *            the header
+     * @param logEventPack  the pack of Log Events
+     * @param header        the header
+     * @param listener      the listener
      */
     public abstract void doAppend(LogEventPack logEventPack, RecordHeader header, LogDeliveryCallback listener);
 

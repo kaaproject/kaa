@@ -14,28 +14,21 @@
  * limitations under the License.
  */
 
-#ifndef I_CONFIGURATION_PROCESSED_OBSERVER_HPP_
-#define I_CONFIGURATION_PROCESSED_OBSERVER_HPP_
+package org.kaaproject.kaa.client.profile;
 
-#include "kaa/KaaDefaults.hpp"
-
-namespace kaa {
+import ${profile_class_package}.${profile_class};
 
 /**
- * Interface for configuration processing is finished observers.
- *
- * Receiver can be subscribed/unsubscribed via @link IConfigurationProcessedObservable @endlink
+ * Interface for the profile container.
  */
-class IConfigurationProcessedObserver {
-public:
+public interface ProfileContainer {
+
     /**
-     * Notify about configuration processing is finished.
+     * Retrieves serialized profile
+     *
+     * @return byte array with serialized profile
+     *
      */
-    virtual void onConfigurationProcessed() = 0;
+    ${profile_class} getProfile();
 
-    virtual ~IConfigurationProcessedObserver() {}
-};
-
-} /* namespace kaa */
-
-#endif /* I_CONFIGURATION_PROCESSED_OBSERVER_HPP_ */
+}

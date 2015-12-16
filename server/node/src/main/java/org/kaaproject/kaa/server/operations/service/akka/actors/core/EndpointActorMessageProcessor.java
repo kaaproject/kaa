@@ -45,6 +45,7 @@ import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.logs.LogDeliveryMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.logs.LogEventPackMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.notification.ThriftNotificationMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.plugin.EndpointExtMsg;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.ActorTimeoutMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.ChannelTimeoutMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.RequestTimeoutMessage;
@@ -76,6 +77,7 @@ import org.kaaproject.kaa.server.sync.Event;
 import org.kaaproject.kaa.server.sync.EventClientSync;
 import org.kaaproject.kaa.server.sync.EventSequenceNumberResponse;
 import org.kaaproject.kaa.server.sync.EventServerSync;
+import org.kaaproject.kaa.server.sync.ExtensionSync;
 import org.kaaproject.kaa.server.sync.LogClientSync;
 import org.kaaproject.kaa.server.sync.LogEntry;
 import org.kaaproject.kaa.server.sync.NotificationClientSync;
@@ -238,6 +240,7 @@ public class EndpointActorMessageProcessor {
             state.setProfile(responseHolder.getEndpointProfile());
 
             if (state.getProfile() != null) {
+                processPluginSync(context, request);
                 processLogUpload(context, request, responseHolder);
                 processUserAttachRequest(context, request, responseHolder);
                 updateUserConnection(context);
@@ -269,6 +272,20 @@ public class EndpointActorMessageProcessor {
         } catch (Exception e) {
             LOG.error("[{}][{}] processEndpointRequest", endpointKey, actorKey, e);
             sendReply(context, requestMessage, e);
+        }
+    }
+
+    private void processPluginSync(ActorContext context, ClientSync request) {
+        EndpointProfileDto profile = state.getProfile();
+        for (ExtensionSync ext : request.getExtSyncList()) {
+            EndpointExtMsg msg = new EndpointExtMsg(profile.getSdkToken(), ext.getExtensionId(), key, ext.getData());
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("[{}][{}] Forwarding {} message with payload {} to application actor", endpointKey, actorKey, msg,
+                        Arrays.toString(msg.getData()));
+            } else {
+                LOG.debug("[{}][{}] Forwarding {} message to application actor", endpointKey, actorKey, msg);
+            }
+            context.parent().tell(msg, context.self());
         }
     }
 

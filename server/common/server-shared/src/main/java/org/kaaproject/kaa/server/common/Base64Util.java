@@ -38,6 +38,4 @@ public abstract class Base64Util {
     public static byte[] decode(String base64String) {
         return Base64.decodeBase64(base64String);
     }
-
-
 }

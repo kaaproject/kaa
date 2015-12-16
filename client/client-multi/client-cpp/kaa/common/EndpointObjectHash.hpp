@@ -21,8 +21,6 @@
 #include <cstring>
 #include <vector>
 
-#include <botan/sha160.h>
-
 #include <cstdint>
 #include <boost/shared_array.hpp>
 

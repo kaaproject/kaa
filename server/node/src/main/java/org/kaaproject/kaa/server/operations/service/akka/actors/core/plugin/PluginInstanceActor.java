@@ -23,23 +23,31 @@ import org.slf4j.LoggerFactory;
 import akka.actor.UntypedActor;
 import akka.japi.Creator;
 
-public class PluginActor extends UntypedActor {
+/**
+ * Actor responsible for creation and initialization of plugin instance. Once
+ * initialized, this actor is a main routing point of all plugin instance
+ * messages.
+ * 
+ * @author Andrew Shvayka
+ *
+ */
+public class PluginInstanceActor extends UntypedActor {
 
     /** The Constant LOG. */
-    private static final Logger LOG = LoggerFactory.getLogger(PluginActor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PluginInstanceActor.class);
 
     private final String pluginInstanceId;
-    private final PluginActorMessageProcessor processor;
+    private final PluginInstanceActorMessageProcessor processor;
 
-    private PluginActor(AkkaContext context, String pluginInstanceId) throws PluginLifecycleException {
+    private PluginInstanceActor(AkkaContext context, String pluginInstanceId) throws PluginLifecycleException {
         this.pluginInstanceId = pluginInstanceId;
-        this.processor = new PluginActorMessageProcessor(context, pluginInstanceId);
+        this.processor = new PluginInstanceActorMessageProcessor(context, pluginInstanceId);
     }
 
     /**
      * The Class ActorCreator.
      */
-    public static class ActorCreator implements Creator<PluginActor> {
+    public static class ActorCreator implements Creator<PluginInstanceActor> {
 
         /** The Constant serialVersionUID. */
         private static final long serialVersionUID = 1L;
@@ -52,8 +60,10 @@ public class PluginActor extends UntypedActor {
         /**
          * Instantiates a new actor creator.
          *
-         * @param context the akka context
-         * @param context the plugin instance id
+         * @param context
+         *            the akka context
+         * @param context
+         *            the plugin instance id
          */
         public ActorCreator(AkkaContext context, String pluginInstanceId) {
             super();
@@ -67,15 +77,14 @@ public class PluginActor extends UntypedActor {
          * @see akka.japi.Creator#create()
          */
         @Override
-        public PluginActor create() throws Exception {
-            return new PluginActor(context, pluginInstanceId);
+        public PluginInstanceActor create() throws Exception {
+            return new PluginInstanceActor(context, pluginInstanceId);
         }
     }
 
     @Override
     public void onReceive(Object arg0) throws Exception {
         // TODO Auto-generated method stub
-
     }
 
     /*
@@ -95,7 +104,11 @@ public class PluginActor extends UntypedActor {
      */
     @Override
     public void postStop() {
-        processor.stop();
+        try {
+            processor.stop();
+        } catch (PluginLifecycleException e) {
+            LOG.error("Failed to stop plugin instance", e);
+        }
         LOG.info("[{}] Stoped ", pluginInstanceId);
     }
 

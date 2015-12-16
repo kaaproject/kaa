@@ -80,4 +80,5 @@ public interface KaaClientPlatformContext {
      * @return SDK thread execution context
      */
     ExecutorContext getExecutorContext();
+
 }
