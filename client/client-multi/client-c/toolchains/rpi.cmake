@@ -14,8 +14,6 @@
 # limitations under the License.
 #
 
-include(CMakeForceCompiler)
-
 set(CMAKE_SYSTEM_NAME Linux)
 
 set(CMAKE_C_COMPILER ${RPI_ROOT}/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/bin/arm-linux-gnueabihf-gcc)
