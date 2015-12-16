@@ -19,7 +19,6 @@ package org.kaaproject.kaa.server.common.nosql.cassandra.dao;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kaaproject.kaa.common.dto.CTLDataDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
@@ -28,8 +27,11 @@ import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.PageLinkDto;
+import org.kaaproject.kaa.server.common.dao.lock.KaaOptimisticLockingFailureException;
 import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointProfile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -38,7 +40,10 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/cassandra-client-test-context.xml")
@@ -49,6 +54,10 @@ public class EndpointProfileCassandraDaoTest extends AbstractCassandraTest {
     private static final String TEST_LIMIT = "3";
     private static final String TEST_OFFSET = "0";
     private static final int GENERATED_PROFILES_COUNT = 5;
+
+    private static final Logger LOG = LoggerFactory.getLogger(EndpointProfileCassandraDaoTest.class);
+
+    private static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(10);
 
     @Test
     public void testFindByEndpointGroupId() throws Exception {
@@ -132,8 +141,8 @@ public class EndpointProfileCassandraDaoTest extends AbstractCassandraTest {
 
     @Test
     public void testUpdate() throws Exception {
-        List<EndpointGroupStateDto> cfGroupStateSave = new ArrayList<EndpointGroupStateDto>();
-        List<EndpointGroupStateDto> cfGroupStateUpdate = new ArrayList<EndpointGroupStateDto>();
+        List<EndpointGroupStateDto> cfGroupStateSave = new ArrayList<>();
+        List<EndpointGroupStateDto> cfGroupStateUpdate = new ArrayList<>();
         PageLinkDto pageLink;
         EndpointProfilesPageDto found;
         String endpointProfileId = "11";
@@ -178,10 +187,52 @@ public class EndpointProfileCassandraDaoTest extends AbstractCassandraTest {
     }
 
     @Test
-    public void testGetCountByKeyHash() throws Exception {
+    public void testFindEndpointIdByKeyHash() throws Exception {
         EndpointProfileDto endpointProfile = generateEndpointProfile(null, null, null, null);
-        long count = endpointProfileDao.getCountByKeyHash(endpointProfile.getEndpointKeyHash());
-        Assert.assertEquals(1L, count);
+        EndpointProfile ep = endpointProfileDao.findEndpointIdByKeyHash(endpointProfile.getEndpointKeyHash());
+        Assert.assertEquals(endpointProfile.getId(), ep.getId());
+        Assert.assertNull(endpointProfile.getEndpointKey());
+        Assert.assertNull(ep.getEndpointKey());
+        Assert.assertNull(ep.getEndpointUserId());
+        Assert.assertNull(ep.getServerProfile());
+        Assert.assertNull(ep.getSubscriptions());
+    }
+
+    @Test
+    public void testOptimisticLock() throws Exception {
+        EndpointProfileDto endpointProfile = generateEndpointProfile(null, null, null, null);
+        endpointProfile.setAccessToken("Ololo");
+        endpointProfileDao.save(endpointProfile);
+        long version = endpointProfileDao.findVersionByKey(endpointProfile.getEndpointKeyHash());
+        Assert.assertEquals(1L, version);
+    }
+
+    @Test(expected = KaaOptimisticLockingFailureException.class)
+    public void testOptimisticLockWithConcurrency() throws Exception {
+        final EndpointProfileDto endpointProfile = generateEndpointProfile(null, null, null, null);
+        final AtomicInteger errorCount = new AtomicInteger();
+        List<Future<?>> tasks = new ArrayList<>();
+        for (int i = 0; i < 100; i++) {
+            final int id = i;
+            tasks.add(EXECUTOR.submit(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        CassandraEndpointProfile ep = new CassandraEndpointProfile(endpointProfile);
+                        ep.setEndpointUserId("Ololo " + id);
+                        endpointProfileDao.save(ep.toDto());
+                    } catch (KaaOptimisticLockingFailureException ex) {
+                        errorCount.incrementAndGet();
+                        LOG.error("Catch optimistic exception.");
+                        throw ex;
+                    }
+                }
+            }));
+        }
+        for (Future future : tasks) {
+            future.get();
+        }
+        Assert.assertTrue(errorCount.get() > 0);
     }
 
     @Test

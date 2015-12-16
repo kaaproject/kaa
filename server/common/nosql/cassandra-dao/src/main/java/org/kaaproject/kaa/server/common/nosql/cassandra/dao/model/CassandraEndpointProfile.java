@@ -24,15 +24,18 @@ import com.datastax.driver.mapping.annotations.Transient;
 import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EventClassFamilyVersionStateDto;
+import org.kaaproject.kaa.server.common.dao.DaoConstants;
 import org.kaaproject.kaa.server.common.dao.impl.DaoUtil;
 import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.type.CassandraEndpointGroupState;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.type.CassandraEventClassFamilyVersionState;
 
+import javax.persistence.Version;
 import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.util.List;
 
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.OPT_LOCK;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.convertDtoToModelList;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.convertECFVersionDtoToModelList;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getByteBuffer;
@@ -130,6 +133,8 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
     private String sdkToken;
     @Column(name = EP_SERVER_PROFILE_PROPERTY)
     private String serverProfile;
+    @Column(name = OPT_LOCK)
+    private long version;
 
     public CassandraEndpointProfile() {
     }
@@ -386,6 +391,14 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
 
     public void setApplicationId(String applicationId) {
         this.applicationId = applicationId;
+    }
+
+    public long getVersion() {
+        return version;
+    }
+
+    public void setVersion(long version) {
+        this.version = version;
     }
 
     @Override

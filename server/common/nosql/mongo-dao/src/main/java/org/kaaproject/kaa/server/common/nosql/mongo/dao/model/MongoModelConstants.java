@@ -115,7 +115,4 @@ public class MongoModelConstants {
     public static final String USER_CONF_SCHEMA_VERSION = "schema_version";
     public static final String USER_CONF_BODY = BODY;
 
-    /**
-     *
-     */
 }

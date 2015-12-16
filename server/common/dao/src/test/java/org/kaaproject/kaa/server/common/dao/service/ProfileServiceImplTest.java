@@ -284,6 +284,10 @@ public class ProfileServiceImplTest extends AbstractTest {
     }
 
     @Test
+    public void tempTest() {
+        EndpointGroupDto defaultGroup = endpointService.findDefaultGroup("11");
+    }
+    @Test
     public void findProfileSchemaVersionsByAppIdTest() {
         String applicationId = generateApplicationDto(null).getId();
         List<VersionDto> versions = profileService.findProfileSchemaVersionsByAppId(applicationId);

@@ -415,6 +415,8 @@ public class DaoConstants {
 
     public static final String LAST_PAGE_MESSAGE = "It is the last page";
     public static final String PROFILE = "profile";
+    public static final String OPT_LOCK = "opt_lock";
+    public static final String APPLIED = "[applied]";
 
     private DaoConstants() {
         throw new UnsupportedOperationException("Not supported");

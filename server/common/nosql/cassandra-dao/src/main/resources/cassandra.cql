@@ -84,7 +84,8 @@ CREATE TABLE IF NOT EXISTS kaa.ep_profile (
     ecf_ver_state list < frozen < ecf_ver_state > >,
     server_hash text,
     sdk_token text,
-    srv_pf text
+    srv_pf text,
+    opt_lock bigint
 );
 
 CREATE TABLE IF NOT EXISTS kaa.app_eps (

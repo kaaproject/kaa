@@ -30,6 +30,7 @@ import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.PageLinkDto;
+import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoEndpointProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -168,17 +169,24 @@ public class EndpointProfileMongoDaoTest extends AbstractMongoTest {
     @Test
     public void convertToDtoTest() {
         EndpointProfileDto endpointProfile = generateEndpointProfileDto(null, null);
+        endpointProfile.setAccessToken("Trololo");
+        endpointProfileDao.save(endpointProfile);
         Assert.assertNotNull(endpointProfile);
         MongoEndpointProfile converted = new MongoEndpointProfile(endpointProfile);
         Assert.assertEquals(endpointProfile, converted.toDto());
     }
 
     @Test
-    public void getCountByKeyHash() {
+    public void testFindEndpointIdByKeyHash() {
         EndpointProfileDto endpointProfile = generateEndpointProfileDto(null, null);
         Assert.assertNotNull(endpointProfile);
-        long count = endpointProfileDao.getCountByKeyHash(endpointProfile.getEndpointKeyHash());
-        Assert.assertEquals(1, count);
+        EndpointProfile ep = endpointProfileDao.findEndpointIdByKeyHash(endpointProfile.getEndpointKeyHash());
+        Assert.assertEquals(endpointProfile.getId(), ep.getId());
+        Assert.assertNull(endpointProfile.getEndpointKey());
+        Assert.assertNull(ep.getEndpointKey());
+        Assert.assertNull(ep.getEndpointUserId());
+        Assert.assertNull(ep.getServerProfile());
+        Assert.assertNull(ep.getSubscriptions());
     }
 
     @Test
