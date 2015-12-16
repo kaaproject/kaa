@@ -1,7 +1,7 @@
 package org.kaaproject.kaa.server.common.core.plugin.generator;
 
 /**
- * An object that generates method signatures for plugin API source file.
+ * An object that generates method signatures for plugin API source files.
  * 
  * @author Bohdan Khablenko
  */

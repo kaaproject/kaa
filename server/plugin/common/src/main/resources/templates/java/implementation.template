@@ -1,0 +1,26 @@
+package ${namespace};
+
+${importStatements}
+import org.kaaproject.kaa.client.plugin.PluginAdapter;
+import org.kaaproject.kaa.client.plugin.PluginInstance;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public interface ${} extends ${} implements PluginInstance<${}>, ${}  {
+
+    private static final Logger LOG = LoggerFactory.getLogger(Messaging1Plugin.class);
+    
+    @Override
+    public PluginAdapter getPluginAdapter() {
+        return this;
+    }
+
+    @Override
+    public ${} getPluginAPI() {
+        return this;
+    }
+
+${constants}
+${fields}
+${methods}
+}

@@ -33,10 +33,11 @@ import org.kaaproject.kaa.server.common.core.plugin.def.PluginContractDef;
 import org.kaaproject.kaa.server.common.core.plugin.def.PluginContractItemDef;
 import org.kaaproject.kaa.server.common.core.plugin.def.SdkApiFile;
 import org.kaaproject.kaa.server.common.core.plugin.generator.AbstractSdkApiGenerator;
+import org.kaaproject.kaa.server.common.core.plugin.generator.Entity;
 import org.kaaproject.kaa.server.common.core.plugin.generator.MethodSignature;
 import org.kaaproject.kaa.server.common.core.plugin.generator.PluginSdkApiGenerationContext;
 import org.kaaproject.kaa.server.common.core.plugin.generator.SpecificPluginSdkApiGenerationContext;
-import org.kaaproject.kaa.server.common.core.plugin.generator.api.MethodSignatureGenerator;
+import org.kaaproject.kaa.server.common.core.plugin.generator.MethodSignatureGenerator;
 import org.kaaproject.kaa.server.common.core.plugin.instance.PluginContractInstance;
 import org.kaaproject.kaa.server.common.core.plugin.instance.PluginContractItemInfo;
 import org.kaaproject.kaa.server.plugin.messaging.gen.Configuration;
@@ -66,18 +67,15 @@ public class EndpointMessagePluginGenerator extends AbstractSdkApiGenerator<Conf
         @Override
         public MethodSignature generateMethodSignature(String methodName, String paramType, String returnType) {
 
-            // Insert the arguments into corresponding templates
-            if (paramType == null && returnType == null) {
+            if (paramType == null) {
                 paramType = MessageFormat.format(NULL_PARAM_TYPE_TEMPLATE, paramType);
-                returnType = MessageFormat.format(NULL_RETURN_TYPE_TEMPLATE, returnType);
-            } else if (paramType != null && returnType == null) {
+            } else {
                 paramType = MessageFormat.format(NON_NULL_PARAM_TYPE_TEMPLATE, paramType);
+            }
+
+            if (returnType == null) {
                 returnType = MessageFormat.format(NULL_RETURN_TYPE_TEMPLATE, returnType);
-            } else if (paramType != null && returnType != null) {
-                paramType = MessageFormat.format(NON_NULL_PARAM_TYPE_TEMPLATE, paramType);
-                returnType = MessageFormat.format(NON_NULL_RETURN_TYPE_TEMPLATE, returnType);
-            } else if (paramType == null && returnType != null) {
-                paramType = MessageFormat.format(NULL_PARAM_TYPE_TEMPLATE, paramType);
+            } else {
                 returnType = MessageFormat.format(NON_NULL_RETURN_TYPE_TEMPLATE, returnType);
             }
 
@@ -153,6 +151,7 @@ public class EndpointMessagePluginGenerator extends AbstractSdkApiGenerator<Conf
 
             return new MethodSignature(methodName, paramName, paramType, returnType);
         }
+        
     }
 
     private static final PluginContractItemDef SEND_MSG_DEF = MessagingSDKContract.buildSendMsgDef();
@@ -183,7 +182,11 @@ public class EndpointMessagePluginGenerator extends AbstractSdkApiGenerator<Conf
         return sources;
     }
 
-    // @Override
+    @Override
+    protected String getMethodName(PluginContractItemInfo item, PluginContractItemDef def) {
+        return null;
+    }
+    
     protected List<SdkApiFile> generatePluginAPI(SpecificPluginSdkApiGenerationContext<Configuration> context) {
 
         // This method might produce more than a single source file
@@ -211,18 +214,38 @@ public class EndpointMessagePluginGenerator extends AbstractSdkApiGenerator<Conf
                     String in = null;
                     if (item.getInMessageSchema() != null) {
                         in = parser.parse(item.getInMessageSchema()).getFullName();
+                        try {
+                            this.entities.add(new Entity(this.entities.size() + 1, Class.forName(in)));
+                        } catch (ClassNotFoundException cause) {
+                            // TODO: Process the exception
+                        }
                     }
 
                     // Get return type FQN
                     String out = null;
                     if (item.getOutMessageSchema() != null) {
                         out = parser.parse(item.getOutMessageSchema()).getFullName();
+                        try {
+                            this.entities.add(new Entity(this.entities.size() + 1, Class.forName(out)));
+                        } catch (ClassNotFoundException cause) {
+                            // TODO: Process the exception
+                        }
                     }
 
                     MethodSignature signature = this.signatureGenerators.get(def).generateMethodSignature(name, in, out);
                     signature.setId(this.signatures.size() + 1);
                     this.signatures.add(signature);
                     signatureBuffer.append(signature.toString()).append(";\n");
+
+                    Entity entity;
+                    try {
+                        entity = new Entity(this.entities.size() + 1, Class.forName(signature.getParamType()));
+                        this.entities.add(entity);
+                        entity = new Entity(this.entities.size() + 1, Class.forName(signature.getReturnType()));
+                        this.entities.add(entity);
+                    } catch (ClassNotFoundException cause) {
+                        // TODO: Process the exception
+                    }
                 }
             }
         }
@@ -235,14 +258,13 @@ public class EndpointMessagePluginGenerator extends AbstractSdkApiGenerator<Conf
         return sources;
     }
 
-    // @Override
     protected List<SdkApiFile> generatePluginImplementation(SpecificPluginSdkApiGenerationContext<Configuration> context) {
 
         // This method might produce more than a single source file
         List<SdkApiFile> sources = new ArrayList<>();
 
         String fileName = MessageFormat.format(SOURCE_FILE_NAME_TEMPLATE, MessageFormat.format(PLUGIN_IMPLEMENTATION_CLASS_NAME_TEMPLATE, this.prefix));
-        byte[] fileData = this.getPluginImplementationFileData(this.prefix, this.namespace, null);
+        byte[] fileData = this.getPluginImplementationFileData(this.prefix, this.namespace, new Object[] {});
         sources.add(new SdkApiFile(fileName, fileData));
 
         return sources;
@@ -266,7 +288,8 @@ public class EndpointMessagePluginGenerator extends AbstractSdkApiGenerator<Conf
         String content = this.readFileAsString(PLUGIN_IMPLEMENTATION_TEMPLATE_FILE);
         content = content.replace(PACKAGE_NAME, packageName);
         content = content.replace(CLASS_NAME, MessageFormat.format(PLUGIN_IMPLEMENTATION_CLASS_NAME_TEMPLATE, className));
-        content = content.replace("${methodIdentifiers}", this.generateMethodConstants());
+        content = content.replace(CONSTANTS, this.generateMethodConstants());
+        content = content.replace(CONVERTERS, this.generateEntityConverters());
         // TODO: Finish the implementation
         return content.getBytes();
     }
@@ -276,10 +299,8 @@ public class EndpointMessagePluginGenerator extends AbstractSdkApiGenerator<Conf
         EndpointMessagePluginGenerator subject = new EndpointMessagePluginGenerator();
         SpecificPluginSdkApiGenerationContext<Configuration> context = EndpointMessagePluginGenerator.getHardcodedContext();
         List<SdkApiFile> sources = subject.generatePluginSdkApi(context);
-        for (SdkApiFile source : sources) {
-            System.out.println("// " + source.getFileName());
-            System.out.println(new String(source.getFileData()));
-        }
+        System.out.println("// " + sources.get(sources.size() - 1).getFileName());
+        System.out.println(new String(sources.get(sources.size() - 1).getFileData()));
     }
 
     private static SpecificPluginSdkApiGenerationContext<Configuration> getHardcodedContext() throws IOException {

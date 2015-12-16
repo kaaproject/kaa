@@ -24,13 +24,16 @@ import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.avro.specific.SpecificRecordBase;
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
 import org.kaaproject.kaa.server.common.core.plugin.def.PluginContractItemDef;
 import org.kaaproject.kaa.server.common.core.plugin.def.SdkApiFile;
+import org.kaaproject.kaa.server.common.core.plugin.instance.PluginContractItemInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,6 +54,8 @@ public abstract class AbstractSdkApiGenerator<T extends SpecificRecordBase> impl
     protected Map<PluginContractItemDef, MethodSignatureGenerator> signatureGenerators = new HashMap<>();
 
     protected List<MethodSignature> signatures = new ArrayList<>();
+
+    protected Set<Entity> entities = new HashSet<>();
 
     @Override
     public List<SdkApiFile> generatePluginSdkApi(PluginSdkApiGenerationContext context) throws SdkApiGenerationException {
@@ -90,6 +95,8 @@ public abstract class AbstractSdkApiGenerator<T extends SpecificRecordBase> impl
         return fileContent;
     }
 
+    protected static final String CONSTANT = "${constant}";
+
     protected static final String METHOD_NAME = "${methodName}";
     protected static final String RETURN_TYPE = "${returnType}";
     protected static final String PARAM_TYPE = "${paramType}";
@@ -105,14 +112,26 @@ public abstract class AbstractSdkApiGenerator<T extends SpecificRecordBase> impl
 
     protected static final String METHOD_SIGNATURES = "${methodSignatures}";
 
-    // protected abstract List<SdkApiFile> generatePluginAPI(SpecificPluginSdkApiGenerationContext<T> context);
+    protected static final String METHOD_CONSTANT_TEMPLATE_FILE = "templates/constant.template";
+    protected static final String ENTITY_CONVERTER_TEMPLATE_FILE = "templates/converter.template";
 
-    // protected abstract List<SdkApiFile> generatePluginImplementation(SpecificPluginSdkApiGenerationContext<T> context);
+    protected static final String CONSTANTS = "${constants}";
+    protected static final String CONVERTERS = "${converters}";
+
+    protected String generateMethodConstant(MethodSignature signature) {
+        String template = this.readFileAsString(METHOD_CONSTANT_TEMPLATE_FILE);
+        template = template.replace(PACKAGE_NAME, this.namespace);
+        template = template.replace(CLASS_NAME, MessageFormat.format(PLUGIN_API_CLASS_NAME_TEMPLATE, this.prefix));
+        template = template.replace(METHOD_NAME, signature.getMethodName());
+        template = template.replace(PARAM_TYPE, signature.getParamType());
+        template = template.replace(CONSTANT, Integer.toString(signature.getId()));
+        return template;
+    }
 
     protected String generateMethodConstants() {
 
         StringBuilder buffer = new StringBuilder();
-        String template = this.readFileAsString("templates/constant.template");
+        String template = this.readFileAsString(METHOD_CONSTANT_TEMPLATE_FILE);
 
         for (MethodSignature signature : signatures) {
             String source = template;
@@ -120,11 +139,42 @@ public abstract class AbstractSdkApiGenerator<T extends SpecificRecordBase> impl
             source = source.replace(CLASS_NAME, MessageFormat.format(PLUGIN_API_CLASS_NAME_TEMPLATE, this.prefix));
             source = source.replace(METHOD_NAME, signature.getMethodName());
             source = source.replace(PARAM_TYPE, signature.getParamType());
-            source = source.replace("${constant}", Integer.toString(signature.getId()));
+            source = source.replace(CONSTANT, Integer.toString(signature.getId()));
 
             buffer.append(source).append("\n");
         }
 
         return buffer.toString();
     }
+
+    protected String generateEntityConverters() {
+
+        StringBuilder buffer = new StringBuilder();
+        String template = this.readFileAsString(ENTITY_CONVERTER_TEMPLATE_FILE);
+
+        for (Entity entity : entities) {
+            String source = template;
+            source = source.replace(PARAM_TYPE, entity.getEntityClass().getName());
+            source = source.replace(CONSTANT, Integer.toString(entity.getId()));
+
+            buffer.append(source).append("\n");
+        }
+
+        return buffer.toString();
+    }
+
+    protected void includeMethod(MethodSignature signature) {
+        signature.setId(this.signatures.size() + 1);
+        this.signatures.add(signature);
+        try {
+            Entity paramType = new Entity(this.entities.size() + 1, Class.forName(signature.getParamType()));
+            this.entities.add(paramType);
+            Entity returnType = new Entity(this.entities.size() + 1, Class.forName(signature.getReturnType()));
+            this.entities.add(returnType);
+        } catch (ClassNotFoundException cause) {
+            throw new RuntimeException(cause);
+        }
+    }
+    
+    protected abstract String getMethodName(PluginContractItemInfo item, PluginContractItemDef def);
 }

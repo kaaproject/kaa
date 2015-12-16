@@ -3,13 +3,31 @@ package ${packageName};
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-// TODO: Work in progress
+public class ${className} extends Abstract${className} implements PluginInstance<${packageName}.${className}API>, ${packageName}.${className}API {
 
-public class ${className} extends ${parentClassName} implements PluginInstance<${packageName}.${classNamePrefix}PluginAPI>, ${packageName}.${classNamePrefix}PluginAPI {
+    private static final Logger LOG = LoggerFactory.getLogger(${packageName}.${className}.class);
 
-    private static final Logger LOG = LoggerFactory.getLogger(${packageName}.${classNamePrefix}Plugin.class);
+    /* Auto-generated method constants */
 
-${methodIdentifiers}
+${constants}
 
-${entityConverters}
+    /* Auto-generated entity converters */
+
+${converters}
+
+    public ${className}() {
+        super();
+    }
+    
+    @Override
+    public PluginAdapter getPluginAdapter() {
+        return this;
+    }
+
+    @Override
+    public ${className} getPluginAPI() {
+        return this;
+    }
+    
+ ${customSource}
 }
