@@ -19,40 +19,34 @@
 
 #include "gen/kaa_configuration_definitions.h"
 #include "platform/ext_configuration_receiver.h"
+#include "plugins/kaa_plugin.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 
-#ifndef KAA_CONFIGURATION_MANAGER_T
-#define KAA_CONFIGURATION_MANAGER_T
-    typedef struct kaa_configuration_manager kaa_configuration_manager_t;
-#endif
-
-
-
 /**
  * @brief Retrieves the current configuration data.
  *
- * @param[in] self      The valid pointer to @link kaa_configuration_manager_t @endlink instance.
+ * @param[in] plugin      The valid pointer to configuration plugin instance.
  *
  * @return  The current configuration data (NOTE: don't modify this instance), or NULL if something went wrong.
  *          Don't cache this pointer, it could become invalid after the next configuration update.
  */
-const kaa_root_configuration_t *kaa_configuration_manager_get_configuration(kaa_configuration_manager_t *self);
+const kaa_root_configuration_t *kaa_configuration_plugin_get_configuration(kaa_plugin_t *plugin);
 
 
 
 /**
  * @brief Sets the new receiver of updated configuration data. See @link kaa_configuration_root_receiver_t @endlink .
  *
- * @param[in] self      The valid pointer to @link kaa_configuration_manager_t @endlink instance.
+ * @param[in] plugin    The valid pointer to configuration plugin instance.
  * @param[in] receiver  The new receiver instance. This callback will be called each time when the new configuration arrives.
  *
  * @return  Error code.
  */
-kaa_error_t kaa_configuration_manager_set_root_receiver(kaa_configuration_manager_t *self, const kaa_configuration_root_receiver_t *receiver);
+kaa_error_t kaa_configuration_plugin_set_root_receiver(kaa_plugin_t *plugin, const kaa_configuration_root_receiver_t *receiver);
 
 
 

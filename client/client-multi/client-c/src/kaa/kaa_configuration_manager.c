@@ -23,13 +23,13 @@
 #include <sys/types.h>
 #include "platform/stdio.h"
 #include "platform/sock.h"
+#include "kaa_status.h"
 #include "kaa_configuration_manager.h"
 
 #include "platform/ext_sha.h"
 #include "platform/ext_configuration_persistence.h"
 #include "collections/kaa_list.h"
 #include "kaa_common.h"
-#include "kaa_status.h"
 #include "kaa_defaults.h"
 #include "kaa_platform_utils.h"
 #include "kaa_platform_common.h"
@@ -46,11 +46,13 @@
 
 #define KAA_CONFIGURATION_BODY_PRESENT           0x02
 
-extern kaa_transport_channel_interface_t *kaa_channel_manager_get_transport_channel(kaa_channel_manager_t *self, kaa_service_t service_type);
+extern kaa_transport_channel_interface_t *kaa_channel_manager_get_transport_channel(kaa_channel_manager_t *self, uint16_t plugin_type);
 
-static kaa_service_t configuration_sync_services[1] = { KAA_SERVICE_CONFIGURATION };
+extern kaa_status_t *kaa_get_status(kaa_context_t *kaa_context);
 
-struct kaa_configuration_manager {
+static uint16_t configuration_sync_plugins[] = { KAA_PLUGIN_CONFIGURATION };
+
+struct kaa_configuration_manager_t {
     kaa_digest                           configuration_hash;
     kaa_configuration_root_receiver_t    root_receiver;
     kaa_root_configuration_t            *root_record;
@@ -71,17 +73,23 @@ static kaa_root_configuration_t *kaa_configuration_manager_deserialize(const cha
     return result;
 }
 
+typedef struct {
+    COMMON_PLUGIN_FIELDS
+    kaa_configuration_manager_t *manager;
+} kaa_configuration_plugin_t;
+
 
 kaa_error_t kaa_configuration_manager_create(kaa_configuration_manager_t **configuration_manager_p, kaa_channel_manager_t *channel_manager, kaa_status_t *status, kaa_logger_t *logger)
 {
     KAA_RETURN_IF_NIL3(configuration_manager_p, status, logger, KAA_ERR_BADPARAM);
-    kaa_configuration_manager_t *manager = (kaa_configuration_manager_t *) KAA_MALLOC(sizeof(kaa_configuration_manager_t));
-    KAA_RETURN_IF_NIL(manager, KAA_ERR_NOMEM);
 
-    manager->channel_manager = channel_manager;
-    manager->status = status;
-    manager->logger = logger;
-    manager->root_receiver = (kaa_configuration_root_receiver_t) { NULL, NULL };
+    *configuration_manager_p = (kaa_configuration_manager_t *) KAA_CALLOC(1, sizeof(kaa_configuration_manager_t));
+    KAA_RETURN_IF_NIL((*configuration_manager_p), KAA_ERR_NOMEM);
+
+    (*configuration_manager_p)->channel_manager = channel_manager;
+    (*configuration_manager_p)->status = status;
+    (*configuration_manager_p)->logger = logger;
+    (*configuration_manager_p)->root_receiver = (kaa_configuration_root_receiver_t) { NULL, NULL };
 
     char *buffer = NULL;
     size_t buffer_size = 0;
@@ -90,6 +98,7 @@ kaa_error_t kaa_configuration_manager_create(kaa_configuration_manager_t **confi
         ext_configuration_read(&buffer, &buffer_size, &need_deallocation);
     else
         ext_configuration_delete();
+
     if (!buffer || !buffer_size) {
         need_deallocation = false;
 #if KAA_CONFIGURATION_DATA_LENGTH > 0
@@ -99,11 +108,11 @@ kaa_error_t kaa_configuration_manager_create(kaa_configuration_manager_t **confi
     }
 
     if (buffer && buffer_size > 0) {
-        ext_calculate_sha_hash(buffer, buffer_size, manager->configuration_hash);
-        manager->root_record = kaa_configuration_manager_deserialize(buffer, buffer_size);
+        ext_calculate_sha_hash(buffer, buffer_size, (*configuration_manager_p)->configuration_hash);
+        (*configuration_manager_p)->root_record = kaa_configuration_manager_deserialize(buffer, buffer_size);
 
-        if (!manager->root_record) {
-            KAA_FREE(manager);
+        if (!(*configuration_manager_p)->root_record) {
+            KAA_FREE((*configuration_manager_p));
             if (need_deallocation && buffer)
                 KAA_FREE(buffer);
             return KAA_ERR_NOMEM;
@@ -113,7 +122,6 @@ kaa_error_t kaa_configuration_manager_create(kaa_configuration_manager_t **confi
             KAA_FREE(buffer);
     }
 
-    *configuration_manager_p = manager;
     return KAA_ERR_NONE;
 }
 
@@ -144,11 +152,9 @@ kaa_error_t kaa_configuration_manager_get_size(kaa_configuration_manager_t *self
 kaa_error_t kaa_configuration_manager_request_serialize(kaa_configuration_manager_t *self, kaa_platform_message_writer_t *writer)
 {
     KAA_RETURN_IF_NIL2(self, writer, KAA_ERR_BADPARAM);
-
     KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to serialize client configuration sync");
 
     uint32_t payload_size = sizeof(uint32_t) + SHA_1_DIGEST_LENGTH;
-
     kaa_platform_message_writer_t tmp_writer = *writer;
     kaa_error_t error_code = kaa_platform_message_write_extension_header(&tmp_writer, KAA_CONFIGURATION_EXTENSION_TYPE, KAA_CONFIGURATION_ALL_FLAGS, payload_size);
     if (error_code) {
@@ -193,6 +199,7 @@ kaa_error_t kaa_configuration_manager_handle_server_sync(kaa_configuration_manag
             KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Received configuration body, size '%u' ", body_size);
             const char* body = reader->current;
             kaa_error_t error = kaa_platform_message_skip(reader, kaa_aligned_size_get(body_size));
+
             if (error) {
                  KAA_LOG_ERROR(self->logger, error, "Failed to read configuration body, size %u", body_size);
                  return error;
@@ -221,9 +228,9 @@ kaa_error_t kaa_configuration_manager_handle_server_sync(kaa_configuration_manag
                 self->root_receiver.on_configuration_updated(self->root_receiver.context, self->root_record);
 
             kaa_transport_channel_interface_t *channel =
-                    kaa_channel_manager_get_transport_channel(self->channel_manager, configuration_sync_services[0]);
+                    kaa_channel_manager_get_transport_channel(self->channel_manager, configuration_sync_plugins[0]);
             if (channel)
-                channel->sync_handler(channel->context, configuration_sync_services, 1);
+                channel->sync_handler(channel->context, configuration_sync_plugins, 1);
         }
     }
     return KAA_ERR_NONE;
@@ -231,20 +238,76 @@ kaa_error_t kaa_configuration_manager_handle_server_sync(kaa_configuration_manag
 
 
 
-const kaa_root_configuration_t *kaa_configuration_manager_get_configuration(kaa_configuration_manager_t *self)
+const kaa_root_configuration_t *kaa_configuration_plugin_get_configuration(kaa_plugin_t *plugin)
 {
-    return self ? self->root_record : NULL;
+
+    if (plugin->extension_type != KAA_PLUGIN_CONFIGURATION)
+        return NULL;
+    return ((kaa_configuration_plugin_t*)plugin)->manager->root_record;
 }
 
 
 
-kaa_error_t kaa_configuration_manager_set_root_receiver(kaa_configuration_manager_t *self, const kaa_configuration_root_receiver_t *receiver)
+kaa_error_t kaa_configuration_plugin_set_root_receiver(kaa_plugin_t *plugin, const kaa_configuration_root_receiver_t *receiver)
 {
-    KAA_RETURN_IF_NIL2(self, receiver, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL2(plugin, receiver, KAA_ERR_BADPARAM);
 
-    self->root_receiver = *receiver;
+    if (plugin->extension_type != KAA_PLUGIN_CONFIGURATION)
+        return KAA_ERR_NOT_INITIALIZED;
+
+    ((kaa_configuration_plugin_t*)plugin)->manager->root_receiver = *receiver;
 
     return KAA_ERR_NONE;
+}
+
+kaa_error_t kaa_configuration_plugin_request_get_size(kaa_plugin_t *self, size_t *expected_size)
+{
+    return kaa_configuration_manager_get_size(((kaa_configuration_plugin_t*)self)->manager, expected_size);
+}
+
+kaa_error_t kaa_configuration_plugin_request_serialize(kaa_plugin_t *self, kaa_platform_message_writer_t *writer)
+{
+    return kaa_configuration_manager_request_serialize(((kaa_configuration_plugin_t*)self)->manager, writer);
+}
+
+kaa_error_t kaa_configuration_plugin_request_handle_server_sync(kaa_plugin_t *self, kaa_platform_message_reader_t *reader,
+                                                         uint32_t request_id, uint16_t options, uint32_t length)
+{
+    return kaa_configuration_manager_handle_server_sync(((kaa_configuration_plugin_t*)self)->manager
+                                                            , reader
+                                                            , options
+                                                            , length);
+}
+
+kaa_error_t kaa_configuration_plugin_init(kaa_plugin_t *self)
+{
+    return kaa_configuration_manager_create(&((kaa_configuration_plugin_t*)self)->manager,
+                                            self->context->channel_manager, kaa_get_status(self->context), self->context->logger);
+}
+
+kaa_error_t kaa_configuration_plugin_deinit(kaa_plugin_t *self)
+{
+    fprintf(stderr, "SELF PLUGIN %p\n", self);
+    kaa_configuration_manager_destroy(((kaa_configuration_plugin_t*)self)->manager);
+    ((kaa_configuration_plugin_t*)self)->manager = NULL;
+    return KAA_ERR_NONE;
+}
+
+kaa_plugin_t *kaa_configuration_plugin_create(kaa_context_t *context)
+{
+    kaa_configuration_plugin_t *plugin = KAA_CALLOC(1, sizeof(kaa_configuration_plugin_t));
+
+    plugin->init_fn = kaa_configuration_plugin_init;
+    plugin->deinit_fn = kaa_configuration_plugin_deinit;
+    plugin->request_get_size_fn = kaa_configuration_plugin_request_get_size;
+    plugin->request_serialize_fn = kaa_configuration_plugin_request_serialize;
+    plugin->request_handle_server_sync_fn = kaa_configuration_plugin_request_handle_server_sync;
+
+    plugin->plugin_name = "configuration";
+    plugin->extension_type = KAA_PLUGIN_CONFIGURATION;
+    plugin->context = context;
+
+    return (kaa_plugin_t*)plugin;
 }
 
 

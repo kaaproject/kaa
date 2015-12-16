@@ -55,10 +55,10 @@ extern kaa_error_t ext_unlimited_log_storage_create(void **log_storage_context_p
 
 void test_empty_log_collector_extension_count(void)
 {
-    kaa_service_t service = KAA_SERVICE_LOGGING;
+    uint16_t service[] = { KAA_PLUGIN_META_DATA, KAA_PLUGIN_LOGGING };
     info = (kaa_serialize_info_t *) KAA_MALLOC(sizeof(kaa_serialize_info_t));
-    info->services = &service;
-    info->services_count = 1;
+    info->plugins = service;
+    info->plugin_count = 2;
     info->allocator = &allocator;
     info->allocator_context = mock;
 
@@ -71,9 +71,6 @@ void test_empty_log_collector_extension_count(void)
     error_code = ext_log_upload_strategy_create(kaa_context
                                               , &log_upload_strategy_context
                                               , KAA_LOG_UPLOAD_VOLUME_STRATEGY);
-    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
-
-    error_code = kaa_logging_init(kaa_context->log_collector, log_storage_context, log_upload_strategy_context);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     error_code = kaa_platform_protocol_serialize_client_sync(kaa_context->platform_protocol, info, &buffer, &buffer_size);

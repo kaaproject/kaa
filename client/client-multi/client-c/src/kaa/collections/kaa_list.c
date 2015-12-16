@@ -16,6 +16,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include <stdio.h>
 
 #include "kaa_list.h"
 #include "../kaa_common.h"
@@ -243,6 +244,7 @@ void kaa_list_set_data_at(kaa_list_node_t *it, void *data, deallocate_list_data 
 kaa_list_node_t *kaa_list_find_next(kaa_list_node_t *from, match_predicate pred, void *context)
 {
     KAA_RETURN_IF_NIL2(from, pred, NULL);
+
     while (from) {
         if (pred(from->data, context)) {
             return from;

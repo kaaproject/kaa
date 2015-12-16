@@ -52,17 +52,27 @@ extern "C" {
 
 
 /**
- * @brief Types of Kaa platform services
+ * @brief Types of Kaa platform plugin
  */
-typedef enum {
-    KAA_SERVICE_BOOTSTRAP = 0,
-    KAA_SERVICE_PROFILE = 1,
-    KAA_SERVICE_USER = 2,
-    KAA_SERVICE_EVENT = 3,
-    KAA_SERVICE_LOGGING = 4,
-    KAA_SERVICE_CONFIGURATION = 5,
-    KAA_SERVICE_NOTIFICATION = 6
-} kaa_service_t;
+//typedef enum {
+//    KAA_SERVICE_BOOTSTRAP = 0,
+//    KAA_SERVICE_PROFILE = 1,
+//    KAA_SERVICE_USER = 2,
+//    KAA_SERVICE_EVENT = 3,
+//    KAA_SERVICE_LOGGING = 4,
+//    KAA_SERVICE_CONFIGURATION = 5,
+//    KAA_SERVICE_NOTIFICATION = 6
+//} kaa_service_t;
+
+#define KAA_PLUGIN_BOOTSTRAP 0
+#define KAA_PLUGIN_META_DATA 1
+#define KAA_PLUGIN_PROFILE 2
+#define KAA_PLUGIN_USER 3
+#define KAA_PLUGIN_LOGGING 4
+#define KAA_PLUGIN_CONFIGURATION 5
+#define KAA_PLUGIN_NOTIFICATION 6
+#define KAA_PLUGIN_EVENT 7
+
 
 /**
  * @brief Identifier used to uniquely represent transport protocol.
