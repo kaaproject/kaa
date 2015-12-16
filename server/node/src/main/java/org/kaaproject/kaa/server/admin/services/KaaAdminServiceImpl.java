@@ -27,9 +27,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import com.google.common.base.Charsets;
+
 import net.iharder.Base64;
+
 import org.apache.avro.Schema;
 import org.apache.avro.SchemaParseException;
 import org.apache.avro.generic.GenericDatumReader;
@@ -83,6 +86,9 @@ import org.kaaproject.kaa.common.dto.event.EventSchemaVersionDto;
 import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
+import org.kaaproject.kaa.common.dto.plugin.PluginContractDto;
+import org.kaaproject.kaa.common.dto.plugin.PluginInstanceDto;
+import org.kaaproject.kaa.common.dto.plugin.PluginInstanceState;
 import org.kaaproject.kaa.common.dto.plugin.legacy.PluginDto;
 import org.kaaproject.kaa.common.dto.plugin.legacy.PluginInfoDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
@@ -2640,6 +2646,154 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             SdkProfileDto sdkProfile = controlService.getSdkProfile(sdkProfileId);
             Utils.checkNotNull(sdkProfile);
             return sdkProfile;
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
+
+    @Override
+    public List<org.kaaproject.kaa.common.dto.plugin.PluginDto> getPlugins() throws KaaAdminServiceException {
+        this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            return controlService.getPlugins();
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
+
+    @Override
+    public org.kaaproject.kaa.common.dto.plugin.PluginDto getPluginById(String pluginId) throws KaaAdminServiceException {
+        this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            return controlService.getPluginById(pluginId);
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
+
+    @Override
+    public List<PluginInstanceDto> getPluginInstances(String applicationId) throws KaaAdminServiceException {
+        this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            this.checkApplicationId(applicationId);
+            return controlService.getPluginInstances(applicationId);
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
+
+    @Override
+    public PluginInstanceDto getPluginInstanceById(String pluginInstanceId) throws KaaAdminServiceException {
+        this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            // TODO: Check plugin instance ID
+            return controlService.getPluginInstanceById(pluginInstanceId);
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
+
+    @Override
+    public PluginInstanceDto createPluginInstance(String pluginId, String applicationId, String name, String configuration) throws KaaAdminServiceException {
+        this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            this.checkApplicationId(applicationId);
+            org.kaaproject.kaa.common.dto.plugin.PluginDto plugin = controlService.getPluginById(pluginId);
+
+            // Validate plugin configuration
+            GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(plugin.getConfSchema());
+            converter.decodeJson(configuration);
+
+            PluginInstanceDto pluginInstance = new PluginInstanceDto();
+            pluginInstance.setName(name == null || name.isEmpty() ? UUID.randomUUID().toString() : name);
+            pluginInstance.setPluginDefinition(plugin);
+            pluginInstance.setState(PluginInstanceState.ACTIVE);
+
+            return controlService.createPluginInstance(pluginInstance);
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
+
+    @Override
+    public void deletePluginInstanceById(String pluginInstanceId) throws KaaAdminServiceException {
+        this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            // TODO: Check plugin instance ID
+            controlService.deletePluginInstance(pluginInstanceId);
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
+
+    @Override
+    public void setPluginInstanceState(String pluginInstanceId, String state) throws KaaAdminServiceException {
+        this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            // TODO: Check plugin instance ID
+            state = state.toUpperCase();
+            if (state.equals(PluginInstanceState.ACTIVE)) {
+                controlService.setPluginInstanceState(pluginInstanceId, PluginInstanceState.ACTIVE);
+            } else if (state.equals(PluginInstanceState.INACTIVE)) {
+                controlService.setPluginInstanceState(pluginInstanceId, PluginInstanceState.INACTIVE);
+            } else {
+                throw new IllegalArgumentException("Invalid plugin instance state!");
+            }
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
+
+    @Override
+    public List<PluginContractDto> getPluginContracts(String pluginInstanceId) throws KaaAdminServiceException {
+        this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            // TODO: Check plugin instance ID
+            return controlService.getPluginContracts(pluginInstanceId);
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
+
+    @Override
+    public PluginContractDto getPluginContractById(String pluginContractId) throws KaaAdminServiceException {
+        this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            // TODO: Check plugin instance ID
+            return controlService.getPluginContractById(pluginContractId);
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
+
+    @Override
+    public PluginContractDto editPluginContract(PluginContractDto pluginContract) throws KaaAdminServiceException {
+        this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            // TODO: Check plugin contract
+            return controlService.editPluginContract(pluginContract);
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
+
+    @Override
+    public void addPluginContractToPluginInstance(String pluginInstanceId, PluginContractDto pluginContract) throws KaaAdminServiceException {
+        this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            // TODO: Check plugin instance ID
+            controlService.addPluginContractToPluginInstance(pluginInstanceId, pluginContract);
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
+
+    @Override
+    public void removePluginContractFromPluginInstance(String pluginInstanceId, String pluginContractId) throws KaaAdminServiceException {
+        this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            // TODO: Check plugin instance ID
+            controlService.removePluginContractFromPluginInstance(pluginInstanceId, pluginContractId);
         } catch (Exception cause) {
             throw Utils.handleException(cause);
         }

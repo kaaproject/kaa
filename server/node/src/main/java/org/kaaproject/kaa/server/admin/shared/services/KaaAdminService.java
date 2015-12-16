@@ -18,6 +18,7 @@ package org.kaaproject.kaa.server.admin.shared.services;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
+
 import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
@@ -53,6 +54,8 @@ import org.kaaproject.kaa.common.dto.event.EventClassType;
 import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
+import org.kaaproject.kaa.common.dto.plugin.PluginContractDto;
+import org.kaaproject.kaa.common.dto.plugin.PluginInstanceDto;
 import org.kaaproject.kaa.common.dto.plugin.legacy.PluginInfoDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.admin.shared.config.ConfigurationRecordFormDto;
@@ -335,5 +338,29 @@ public interface KaaAdminService extends RemoteService {
     public List<SchemaInfoDto> getUserConfigurationSchemaInfosByApplicationId(String applicationId) throws KaaAdminServiceException;
 
     public void editUserConfiguration(EndpointUserConfigurationDto endpointUserConfiguration, String applicationId, RecordField configurationData) throws KaaAdminServiceException;
+
+    public List<org.kaaproject.kaa.common.dto.plugin.PluginDto> getPlugins() throws KaaAdminServiceException;
+
+    public org.kaaproject.kaa.common.dto.plugin.PluginDto getPluginById(String pluginId) throws KaaAdminServiceException;
+
+    public List<PluginInstanceDto> getPluginInstances(String applicationId) throws KaaAdminServiceException;
+
+    public PluginInstanceDto getPluginInstanceById(String pluginInstanceId) throws KaaAdminServiceException;
+
+    public PluginInstanceDto createPluginInstance(String pluginId, String applicationId, String name, String configuration) throws KaaAdminServiceException;
+
+    public void deletePluginInstanceById(String pluginInstanceId) throws KaaAdminServiceException;
+
+    public void setPluginInstanceState(String pluginInstanceId, String state) throws KaaAdminServiceException;
+
+    public List<PluginContractDto> getPluginContracts(String pluginInstanceId) throws KaaAdminServiceException;
+
+    public PluginContractDto getPluginContractById(String pluginContractId) throws KaaAdminServiceException;
+
+    public PluginContractDto editPluginContract(PluginContractDto pluginContract) throws KaaAdminServiceException;
+
+    public void addPluginContractToPluginInstance(String pluginInstanceId, PluginContractDto pluginContract) throws KaaAdminServiceException;
+
+    public void removePluginContractFromPluginInstance(String pluginInstanceId, String pluginContractId) throws KaaAdminServiceException;
 
 }
