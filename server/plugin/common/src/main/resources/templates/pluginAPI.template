@@ -1,8 +1,0 @@
-package ${packageName};
-
-import org.kaaproject.kaa.client.plugin.PluginInstanceAPI;
-
-public interface ${className} extends PluginInstanceAPI {
-
-${methodSignatures}
-}

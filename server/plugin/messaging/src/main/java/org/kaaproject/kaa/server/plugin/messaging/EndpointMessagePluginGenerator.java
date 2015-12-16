@@ -151,16 +151,11 @@ public class EndpointMessagePluginGenerator extends AbstractSdkApiGenerator<Conf
 
             return new MethodSignature(methodName, paramName, paramType, returnType);
         }
-        
+
     }
 
     private static final PluginContractItemDef SEND_MSG_DEF = MessagingSDKContract.buildSendMsgDef();
     private static final PluginContractItemDef RECEIVE_MSG_DEF = MessagingSDKContract.buildReceiveMsgDef();
-
-    public EndpointMessagePluginGenerator() {
-        // MessaingPluginAPI, MessagingPlugin
-        this.prefix = "Messaging";
-    }
 
     @Override
     public Class<Configuration> getConfigurationClass() {
@@ -168,25 +163,10 @@ public class EndpointMessagePluginGenerator extends AbstractSdkApiGenerator<Conf
     }
 
     @Override
-    protected List<SdkApiFile> generatePluginSdkApi(SpecificPluginSdkApiGenerationContext<Configuration> context) {
-
-        this.namespace = MessageFormat.format(PACKAGE_NAME_TEMPLATE, context.getConfiguration().getMessageFamilyFqn(), context.getExtensionId());
-
-        List<SdkApiFile> sources = new ArrayList<>();
-        this.signatureGenerators.put(SEND_MSG_DEF, new SendMsgMethodSignatureGenerator());
-        this.signatureGenerators.put(RECEIVE_MSG_DEF, new ReceiveMsgMethodSignatureGenerator(sources));
-
-        sources.addAll(this.generatePluginAPI(context));
-        sources.addAll(this.generatePluginImplementation(context));
-
-        return sources;
-    }
-
-    @Override
     protected String getMethodName(PluginContractItemInfo item, PluginContractItemDef def) {
         return null;
     }
-    
+
     protected List<SdkApiFile> generatePluginAPI(SpecificPluginSdkApiGenerationContext<Configuration> context) {
 
         // This method might produce more than a single source file
@@ -258,49 +238,8 @@ public class EndpointMessagePluginGenerator extends AbstractSdkApiGenerator<Conf
         return sources;
     }
 
-    protected List<SdkApiFile> generatePluginImplementation(SpecificPluginSdkApiGenerationContext<Configuration> context) {
-
-        // This method might produce more than a single source file
-        List<SdkApiFile> sources = new ArrayList<>();
-
-        String fileName = MessageFormat.format(SOURCE_FILE_NAME_TEMPLATE, MessageFormat.format(PLUGIN_IMPLEMENTATION_CLASS_NAME_TEMPLATE, this.prefix));
-        byte[] fileData = this.getPluginImplementationFileData(this.prefix, this.namespace, new Object[] {});
-        sources.add(new SdkApiFile(fileName, fileData));
-
-        return sources;
-    }
-
-    /**
-     * Generates the body of a plugin API source file.
-     */
-    private byte[] getPluginAPIFileData(String className, String packageName, String methodSignatures) {
-        String content = this.readFileAsString(PLUGIN_API_TEMPLATE_FILE);
-        content = content.replace(PACKAGE_NAME, packageName);
-        content = content.replace(CLASS_NAME, MessageFormat.format(PLUGIN_API_CLASS_NAME_TEMPLATE, className));
-        content = content.replace(METHOD_SIGNATURES, methodSignatures);
-        return content.getBytes();
-    }
-
-    /**
-     * Generates the body of a plugin API implementation source file.
-     */
-    private byte[] getPluginImplementationFileData(String className, String packageName, Object... objects) {
-        String content = this.readFileAsString(PLUGIN_IMPLEMENTATION_TEMPLATE_FILE);
-        content = content.replace(PACKAGE_NAME, packageName);
-        content = content.replace(CLASS_NAME, MessageFormat.format(PLUGIN_IMPLEMENTATION_CLASS_NAME_TEMPLATE, className));
-        content = content.replace(CONSTANTS, this.generateMethodConstants());
-        content = content.replace(CONVERTERS, this.generateEntityConverters());
-        // TODO: Finish the implementation
-        return content.getBytes();
-    }
-
     // TODO: Used for testing purposes, remove when unnecessary
     public static void main(String[] args) throws IOException {
-        EndpointMessagePluginGenerator subject = new EndpointMessagePluginGenerator();
-        SpecificPluginSdkApiGenerationContext<Configuration> context = EndpointMessagePluginGenerator.getHardcodedContext();
-        List<SdkApiFile> sources = subject.generatePluginSdkApi(context);
-        System.out.println("// " + sources.get(sources.size() - 1).getFileName());
-        System.out.println(new String(sources.get(sources.size() - 1).getFileData()));
     }
 
     private static SpecificPluginSdkApiGenerationContext<Configuration> getHardcodedContext() throws IOException {

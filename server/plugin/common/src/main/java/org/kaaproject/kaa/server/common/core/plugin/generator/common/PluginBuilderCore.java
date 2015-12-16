@@ -1,4 +1,4 @@
-package org.kaaproject.kaa.server.common.core.plugin.generator.java;
+package org.kaaproject.kaa.server.common.core.plugin.generator.common;
 
 import java.net.URL;
 import java.nio.file.Files;
@@ -9,16 +9,16 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.kaaproject.kaa.server.common.core.plugin.generator.common.Constant;
-import org.kaaproject.kaa.server.common.core.plugin.generator.common.ImportStatement;
 import org.kaaproject.kaa.server.common.core.plugin.generator.common.PluginBuilder.TemplateVariable;
+import org.kaaproject.kaa.server.common.core.plugin.generator.common.entity.Constant;
+import org.kaaproject.kaa.server.common.core.plugin.generator.common.entity.ImportStatement;
 
-public abstract class PluginBuilderBasis {
+public abstract class PluginBuilderCore {
 
     protected String name;
     protected String namespace;
 
-    public PluginBuilderBasis(String name, String namespace) {
+    public PluginBuilderCore(String name, String namespace) {
         this.name = name;
         this.namespace = namespace;
     }
@@ -32,32 +32,28 @@ public abstract class PluginBuilderBasis {
     protected Set<ImportStatement> importStatements = new HashSet<>();
     protected Set<Constant> constants = new HashSet<>();
 
-    protected String insertValues(String template, Map<TemplateVariable, String> values) {
+    protected String insertValues(String template, Map<TemplateVariable, Object> values) {
         if (values != null) {
-            for (TemplateVariable parameter : values.keySet()) {
-                template = template.replace(parameter.toString(), values.get(parameter));
+            for (TemplateVariable variable : values.keySet()) {
+                Object value = values.get(variable);
+                if (value != null) {
+                    if (value instanceof Collection<?>) {
+                        StringBuilder buffer = new StringBuilder();
+                        for (Object element : (Collection<?>) value) {
+                            if (element != null) {
+                                buffer.append(element.toString()).append(";\n");
+                            }
+                        }
+                        value = buffer;
+                    }
+                    template = template.replace(variable.toString(), value.toString());
+                }
             }
         }
         return template;
     }
 
-    protected <T> StringBuilder accumulateStatements(StringBuilder buffer, Collection<T> collection) {
-        return this.accumulateStatements(buffer, collection, 0);
-    }
-
-    protected <T> StringBuilder accumulateStatements(StringBuilder buffer, Collection<T> collection, int indents) {
-        if (collection != null) {
-            for (T element : collection) {
-                for (int i = 0; i < indents; i++) {
-                    buffer.append("    ");
-                }
-                buffer.append(element.toString()).append(";\n");
-            }
-        }
-        return buffer;
-    }
-
-    protected String readFileAsString(String fileName) {
+    public String readFileAsString(String fileName) {
         String fileContent = null;
         URL url = this.getClass().getClassLoader().getResource(fileName);
         if (url != null) {

@@ -1,18 +1,15 @@
-package org.kaaproject.kaa.server.common.core.plugin.generator.common;
+package org.kaaproject.kaa.server.common.core.plugin.generator.common.entity;
 
-public class ImportStatement {
+import java.util.List;
 
+public class Method {
+
+    private MethodSignature signature;
     private String body;
 
-    public ImportStatement(String body) {
+    public Method(String name, String returnType, List<String> paramTypes, String body) {
+        this.signature = new MethodSignature(name, returnType, paramTypes.toArray(new String[paramTypes.size()]));
         this.body = body;
-    }
-
-    private static final String TEMPLATE = "import %s";
-
-    @Override
-    public String toString() {
-        return String.format(TEMPLATE, this.body);
     }
 
     @Override
@@ -20,6 +17,7 @@ public class ImportStatement {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((body == null) ? 0 : body.hashCode());
+        result = prime * result + ((signature == null) ? 0 : signature.hashCode());
         return result;
     }
 
@@ -34,12 +32,19 @@ public class ImportStatement {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        ImportStatement other = (ImportStatement) obj;
+        Method other = (Method) obj;
         if (body == null) {
             if (other.body != null) {
                 return false;
             }
         } else if (!body.equals(other.body)) {
+            return false;
+        }
+        if (signature == null) {
+            if (other.signature != null) {
+                return false;
+            }
+        } else if (!signature.equals(other.signature)) {
             return false;
         }
         return true;

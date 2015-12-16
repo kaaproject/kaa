@@ -1,4 +1,4 @@
-package org.kaaproject.kaa.server.common.core.plugin.generator.common;
+package org.kaaproject.kaa.server.common.core.plugin.generator.common.entity;
 
 public class Field {
 
