@@ -13,13 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.kaaproject.kaa.server.plugin.messaging;
 
 import java.io.IOException;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.avro.Schema;
+import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.server.common.core.plugin.base.BasePluginContractInstance;
 import org.kaaproject.kaa.server.common.core.plugin.base.BasePluginContractItemInfo;
@@ -27,8 +33,11 @@ import org.kaaproject.kaa.server.common.core.plugin.def.PluginContractDef;
 import org.kaaproject.kaa.server.common.core.plugin.def.PluginContractItemDef;
 import org.kaaproject.kaa.server.common.core.plugin.def.SdkApiFile;
 import org.kaaproject.kaa.server.common.core.plugin.generator.AbstractSdkApiGenerator;
+import org.kaaproject.kaa.server.common.core.plugin.generator.Entity;
+import org.kaaproject.kaa.server.common.core.plugin.generator.MethodSignature;
 import org.kaaproject.kaa.server.common.core.plugin.generator.PluginSdkApiGenerationContext;
 import org.kaaproject.kaa.server.common.core.plugin.generator.SpecificPluginSdkApiGenerationContext;
+import org.kaaproject.kaa.server.common.core.plugin.generator.MethodSignatureGenerator;
 import org.kaaproject.kaa.server.common.core.plugin.instance.PluginContractInstance;
 import org.kaaproject.kaa.server.common.core.plugin.instance.PluginContractItemInfo;
 import org.kaaproject.kaa.server.plugin.messaging.gen.Configuration;
@@ -39,22 +48,198 @@ import org.kaaproject.kaa.server.plugin.messaging.gen.test.ClassC;
 
 public class EndpointMessagePluginGenerator extends AbstractSdkApiGenerator<Configuration> {
 
-    @Override
-    protected List<SdkApiFile> generatePluginSdkApi(SpecificPluginSdkApiGenerationContext<Configuration> context) {
-        Configuration configuration = context.getConfiguration();
-        Set<PluginContractInstance> contractInstances = context.getPluginContracts();
+    /**
+     * Generates method signatures for
+     * {@link MessagingSDKContract#buildSendMsgDef()}.
+     *
+     * @author Bohdan Khablenko
+     */
+    private class SendMsgMethodSignatureGenerator implements MethodSignatureGenerator {
 
-        configuration.getMessageFamilyFqn();
-        return null;
+        private static final String PARAM_NAME = "param";
+
+        private static final String NULL_PARAM_TYPE_TEMPLATE = "";
+        private static final String NULL_RETURN_TYPE_TEMPLATE = "java.util.concurrent.Future<Void>";
+
+        private static final String NON_NULL_PARAM_TYPE_TEMPLATE = "{0}";
+        private static final String NON_NULL_RETURN_TYPE_TEMPLATE = "java.util.concurrent.Future<{0}>";
+
+        @Override
+        public MethodSignature generateMethodSignature(String methodName, String paramType, String returnType) {
+
+            if (paramType == null) {
+                paramType = MessageFormat.format(NULL_PARAM_TYPE_TEMPLATE, paramType);
+            } else {
+                paramType = MessageFormat.format(NON_NULL_PARAM_TYPE_TEMPLATE, paramType);
+            }
+
+            if (returnType == null) {
+                returnType = MessageFormat.format(NULL_RETURN_TYPE_TEMPLATE, returnType);
+            } else {
+                returnType = MessageFormat.format(NON_NULL_RETURN_TYPE_TEMPLATE, returnType);
+            }
+
+            String paramName = (paramType != null && !paramType.isEmpty()) ? PARAM_NAME : "";
+
+            return new MethodSignature(methodName, paramName, paramType, returnType);
+        }
     }
+
+    /**
+     * Generates method signatures for
+     * {@link MessagingSDKContract#buildReceiveMsgDef()}.
+     *
+     * @author Bohdan Khablenko
+     */
+    private class ReceiveMsgMethodSignatureGenerator implements MethodSignatureGenerator {
+
+        private static final String PARAM_NAME = "listener";
+
+        private static final String PARAM_TYPE_TEMPLATE = "{0}_MethodListener";
+        private static final String RETURN_TYPE_TEMPLATE = "void";
+
+        private static final String METHOD_LISTENER_NULL_PARAM_TYPE_TEMPLATE = "";
+        private static final String METHOD_LISTENER_NULL_RETURN_TYPE_TEMPLATE = "void";
+
+        private static final String METHOD_LISTENER_NON_NULL_PARAM_TYPE_TEMPLATE = "{0}";
+        private static final String METHOD_LISTENER_NON_NULL_RETURN_TYPE_TEMPLATE = "{0}";
+
+        private static final String METHOD_LISTENER_TEMPLATE_FILE = "templates/listener.template";
+        private static final String METHOD_LISTENER_CLASS_NAME_TEMPLATE = "{0}_MethodListener";
+        private static final String METHOD_LISTENER_FILE_NAME_TEMPLATE = METHOD_LISTENER_CLASS_NAME_TEMPLATE + ".java";
+
+        private final Collection<SdkApiFile> sources;
+
+        public ReceiveMsgMethodSignatureGenerator(Collection<SdkApiFile> sources) {
+            this.sources = sources;
+        }
+
+        @Override
+        public MethodSignature generateMethodSignature(String methodName, String paramType, String returnType) {
+
+            // Pick a parameter type template for the method listener class
+            String listenerParamTypeTemplate;
+            if (paramType == null) {
+                listenerParamTypeTemplate = METHOD_LISTENER_NULL_PARAM_TYPE_TEMPLATE;
+            } else {
+                listenerParamTypeTemplate = METHOD_LISTENER_NON_NULL_PARAM_TYPE_TEMPLATE;
+            }
+
+            // Pick a return type template for the method listener class
+            String listenerReturnTypeTemplate;
+            if (returnType == null) {
+                listenerReturnTypeTemplate = METHOD_LISTENER_NULL_RETURN_TYPE_TEMPLATE;
+            } else {
+                listenerReturnTypeTemplate = METHOD_LISTENER_NON_NULL_RETURN_TYPE_TEMPLATE;
+            }
+
+            // Generate the method listener class body
+            String content = EndpointMessagePluginGenerator.this.readFileAsString(METHOD_LISTENER_TEMPLATE_FILE);
+            content = content.replace(PACKAGE_NAME, EndpointMessagePluginGenerator.this.namespace);
+            content = content.replace(CLASS_NAME, MessageFormat.format(METHOD_LISTENER_CLASS_NAME_TEMPLATE, methodName));
+            content = content.replace(PARAM_TYPE, MessageFormat.format(listenerParamTypeTemplate, paramType));
+            content = content.replace(RETURN_TYPE, MessageFormat.format(listenerReturnTypeTemplate, returnType));
+
+            // Add the method listener class as a source file
+            String fileName = MessageFormat.format(METHOD_LISTENER_FILE_NAME_TEMPLATE, methodName);
+            byte[] fileData = content.getBytes();
+            sources.add(new SdkApiFile(fileName, fileData));
+
+            paramType = MessageFormat.format(PARAM_TYPE_TEMPLATE, methodName);
+            returnType = MessageFormat.format(RETURN_TYPE_TEMPLATE, returnType);
+            String paramName = (paramType != null && !paramType.isEmpty()) ? PARAM_NAME : "";
+
+            return new MethodSignature(methodName, paramName, paramType, returnType);
+        }
+
+    }
+
+    private static final PluginContractItemDef SEND_MSG_DEF = MessagingSDKContract.buildSendMsgDef();
+    private static final PluginContractItemDef RECEIVE_MSG_DEF = MessagingSDKContract.buildReceiveMsgDef();
 
     @Override
     public Class<Configuration> getConfigurationClass() {
         return Configuration.class;
     }
-    
-    public static void main(String[] args) throws IOException{
-        System.out.println(getHardcodedContext());
+
+    @Override
+    protected String getMethodName(PluginContractItemInfo item, PluginContractItemDef def) {
+        return null;
+    }
+
+    protected List<SdkApiFile> generatePluginAPI(SpecificPluginSdkApiGenerationContext<Configuration> context) {
+
+        // This method might produce more than a single source file
+        List<SdkApiFile> sources = new ArrayList<>();
+
+        // A buffer for plugin API method signatures
+        StringBuilder signatureBuffer = new StringBuilder();
+
+        for (PluginContractInstance contract : context.getPluginContracts()) {
+            for (PluginContractItemDef def : contract.getDef().getPluginContractItems()) {
+                for (PluginContractItemInfo item : contract.getContractItemInfo(def)) {
+
+                    // Get method name
+                    String name = null;
+                    try {
+                        AvroByteArrayConverter<ItemConfiguration> converter = new AvroByteArrayConverter<>(ItemConfiguration.class);
+                        name = converter.fromByteArray(item.getConfigurationData()).getMethodName();
+                    } catch (IOException cause) {
+                        // TODO: Process the exception
+                    }
+
+                    Schema.Parser parser = new Schema.Parser();
+
+                    // Get parameter type FQN
+                    String in = null;
+                    if (item.getInMessageSchema() != null) {
+                        in = parser.parse(item.getInMessageSchema()).getFullName();
+                        try {
+                            this.entities.add(new Entity(this.entities.size() + 1, Class.forName(in)));
+                        } catch (ClassNotFoundException cause) {
+                            // TODO: Process the exception
+                        }
+                    }
+
+                    // Get return type FQN
+                    String out = null;
+                    if (item.getOutMessageSchema() != null) {
+                        out = parser.parse(item.getOutMessageSchema()).getFullName();
+                        try {
+                            this.entities.add(new Entity(this.entities.size() + 1, Class.forName(out)));
+                        } catch (ClassNotFoundException cause) {
+                            // TODO: Process the exception
+                        }
+                    }
+
+                    MethodSignature signature = this.signatureGenerators.get(def).generateMethodSignature(name, in, out);
+                    signature.setId(this.signatures.size() + 1);
+                    this.signatures.add(signature);
+                    signatureBuffer.append(signature.toString()).append(";\n");
+
+                    Entity entity;
+                    try {
+                        entity = new Entity(this.entities.size() + 1, Class.forName(signature.getParamType()));
+                        this.entities.add(entity);
+                        entity = new Entity(this.entities.size() + 1, Class.forName(signature.getReturnType()));
+                        this.entities.add(entity);
+                    } catch (ClassNotFoundException cause) {
+                        // TODO: Process the exception
+                    }
+                }
+            }
+        }
+
+        // Add the plugin API source file to the output
+        String fileName = MessageFormat.format(SOURCE_FILE_NAME_TEMPLATE, MessageFormat.format(PLUGIN_API_CLASS_NAME_TEMPLATE, this.prefix));
+        byte[] fileData = this.getPluginAPIFileData(this.prefix, this.namespace, signatureBuffer.toString());
+        sources.add(new SdkApiFile(fileName, fileData));
+
+        return sources;
+    }
+
+    // TODO: Used for testing purposes, remove when unnecessary
+    public static void main(String[] args) throws IOException {
     }
 
     private static SpecificPluginSdkApiGenerationContext<Configuration> getHardcodedContext() throws IOException {
@@ -67,8 +252,8 @@ public class EndpointMessagePluginGenerator extends AbstractSdkApiGenerator<Conf
         PluginContractItemDef receiveMsgDef = MessagingSDKContract.buildReceiveMsgDef();
 
         // Future<Void> sendA(ClassA msg);
-        PluginContractItemInfo info = BasePluginContractItemInfo.builder()
-                .withData(methodNameConverter.encode(new ItemConfiguration("sendA"))).withInMsgSchema(ClassA.SCHEMA$.toString()).build();
+        PluginContractItemInfo info = BasePluginContractItemInfo.builder().withData(methodNameConverter.encode(new ItemConfiguration("sendA")))
+                .withInMsgSchema(ClassA.SCHEMA$.toString()).build();
         instance.addContractItemInfo(sendMsgDef, info);
 
         // Future<ClassA> getA()
@@ -85,11 +270,6 @@ public class EndpointMessagePluginGenerator extends AbstractSdkApiGenerator<Conf
         info = BasePluginContractItemInfo.builder().withData(methodNameConverter.encode(new ItemConfiguration("getC")))
                 .withInMsgSchema(ClassA.SCHEMA$.toString()).withOutMsgSchema(ClassC.SCHEMA$.toString()).build();
         instance.addContractItemInfo(sendMsgDef, info);
-
-        // Future<Void> sendA(ClassA msg);
-        info = BasePluginContractItemInfo.builder().withData(methodNameConverter.encode(new ItemConfiguration("setMethodAListener")))
-                .withInMsgSchema(ClassC.SCHEMA$.toString()).withOutMsgSchema(ClassA.SCHEMA$.toString()).build();
-        instance.addContractItemInfo(receiveMsgDef, info);
 
         // void setMethodAListener(MethodAListener listener);
         info = BasePluginContractItemInfo.builder().withData(methodNameConverter.encode(new ItemConfiguration("setMethodAListener")))

@@ -13,29 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kaaproject.kaa.server.common.core.plugin.def;
+package org.kaaproject.kaa.client.plugin.messaging.gen.test;
 
-import java.io.Serializable;
+import org.apache.avro.Schema;
+import org.apache.avro.specific.SpecificRecordBase;
 
-public final class SdkApiFile implements Serializable {
+public class ClassC extends SpecificRecordBase {
 
-    private static final long serialVersionUID = 9004353147181958230L;
-
-    private final String fileName;
-    private final byte[] fileData;
-
-    public SdkApiFile(String fileName, byte[] fileData) {
-        super();
-        this.fileName = fileName;
-        this.fileData = fileData;
+    @Override
+    public Schema getSchema() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
-    public String getFileName() {
-        return fileName;
+    @Override
+    public Object get(int field) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
-    public byte[] getFileData() {
-        return fileData;
-    }
+    @Override
+    public void put(int field, Object value) {
+        // TODO Auto-generated method stub
 
+    } 
 }

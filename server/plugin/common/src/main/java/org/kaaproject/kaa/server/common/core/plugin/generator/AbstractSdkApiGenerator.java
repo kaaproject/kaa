@@ -13,9 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.kaaproject.kaa.server.common.core.plugin.generator;
 
 import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.List;
 
@@ -26,30 +31,42 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class AbstractSdkApiGenerator<T extends SpecificRecordBase> implements PluginSdkApiGenerator {
+
     private static final Logger LOG = LoggerFactory.getLogger(AbstractSdkApiGenerator.class);
+
+    public abstract Class<T> getConfigurationClass();
 
     @Override
     public List<SdkApiFile> generatePluginSdkApi(PluginSdkApiGenerationContext context) throws SdkApiGenerationException {
-        AvroByteArrayConverter<T> converter = new AvroByteArrayConverter<>(getConfigurationClass());
+        AvroByteArrayConverter<T> converter = new AvroByteArrayConverter<>(this.getConfigurationClass());
         try {
             T config = converter.fromByteArray(context.getPluginConfigurationData());
-            LOG.info("Initializing transport {} with {}", getClassName(), config);
-            return generatePluginSdkApi(new SpecificPluginSdkApiGenerationContext<T>(context, config));
-        } catch (IOException e) {
-            LOG.error(MessageFormat.format("Failed to initialize transport {0}", getClassName()), e);
-            throw new SdkApiGenerationException(e);
+            LOG.info("Initializing transport {} with {}", this.getClassName(), config);
+            return this.generatePluginSdkApi(new SpecificPluginSdkApiGenerationContext<T>(context, config));
+        } catch (IOException cause) {
+            LOG.error(MessageFormat.format("Failed to initialize transport {0}", this.getClassName()), cause);
+            throw new SdkApiGenerationException(cause);
         }
-
     }
 
     protected abstract List<SdkApiFile> generatePluginSdkApi(SpecificPluginSdkApiGenerationContext<T> context);
 
-    /**
-     * Gets the configuration class.
-     *
-     * @return the configuration class
-     */
-    public abstract Class<T> getConfigurationClass();
+    protected String readFileAsString(String fileName) {
+        String fileContent = null;
+        URL url = this.getClass().getClassLoader().getResource(fileName);
+        if (url != null) {
+            try {
+                Path path = Paths.get(url.toURI());
+                byte[] bytes = Files.readAllBytes(path);
+                if (bytes != null) {
+                    fileContent = new String(bytes);
+                }
+            } catch (Exception cause) {
+                cause.printStackTrace();
+            }
+        }
+        return fileContent;
+    }
 
     private String getClassName() {
         return this.getClass().getName();

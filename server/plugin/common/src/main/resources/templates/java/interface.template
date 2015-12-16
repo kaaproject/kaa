@@ -1,0 +1,10 @@
+package ${namespace};
+
+${importStatements}
+import org.kaaproject.kaa.client.plugin.PluginInstanceAPI;
+
+public interface ${name} extends PluginInstanceAPI {
+
+${constants}
+${methodSignatures}
+}
