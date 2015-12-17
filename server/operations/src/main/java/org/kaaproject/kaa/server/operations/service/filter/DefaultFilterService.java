@@ -96,12 +96,19 @@ public class DefaultFilterService implements FilterService {
      */
     @Override
     public boolean matches(String appToken, String profileFilterId, String profileBody) {
-        ProfileFilterDto filterDto = cacheService.getFilter(profileFilterId);
-        AppVersionKey appProfileVersionKey = new AppVersionKey(appToken, filterDto.getMajorVersion());
-        ProfileSchemaDto profileSchema = cacheService.getProfileSchemaByAppAndVersion(appProfileVersionKey);
-        Filter filter = new DefaultFilter(filterDto.getBody(), profileSchema.getSchema());
-        LOG.trace("matching profile body with filter {}", filter);
-        return filter.matches(profileBody);
+        try {
+            ProfileFilterDto filterDto = cacheService.getFilter(profileFilterId);
+            AppVersionKey appProfileVersionKey = new AppVersionKey(appToken, filterDto.getMajorVersion());
+            ProfileSchemaDto profileSchema = cacheService.getProfileSchemaByAppAndVersion(appProfileVersionKey);
+            Filter filter = new DefaultFilter(filterDto.getBody(), profileSchema.getSchema());
+            LOG.trace("matching profile body with filter {}", filter);
+            return filter.matches(profileBody);
+        } catch (EvaluationException ee) {
+            LOG.warn("Failed to process filter {} due to evaluate exception. Please check your filter body", profileFilterId, ee);
+        } catch (Exception e) {
+            LOG.error("Failed to process filter {} due to exception", profileFilterId, e);
+        }
+        return false;
     }
 
 }
