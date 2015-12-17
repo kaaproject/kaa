@@ -16,9 +16,9 @@
 
 package org.kaaproject.kaa.common.dto.user;
 
-import org.kaaproject.kaa.common.dto.plugin.legacy.PluginDto;
+import org.kaaproject.kaa.common.dto.plugin.legacy.AbstractPluginDto;
 
-public class UserVerifierDto extends PluginDto {
+public class UserVerifierDto extends AbstractPluginDto {
 
     private static final long serialVersionUID = -6910185820548884149L;
 

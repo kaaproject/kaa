@@ -18,9 +18,9 @@ package org.kaaproject.kaa.common.dto.logs;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.kaaproject.kaa.common.dto.plugin.legacy.PluginDto;
+import org.kaaproject.kaa.common.dto.plugin.legacy.AbstractPluginDto;
 
-public class LogAppenderDto extends PluginDto {
+public class LogAppenderDto extends AbstractPluginDto {
 
     private static final long serialVersionUID = 8035147059931231619L;
 

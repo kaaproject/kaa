@@ -88,6 +88,11 @@ public class DaoConstants {
     public static final String EVENT_CLASS_FAMILY_ID = "event_class_family_id";
     public static final String FQN = "fqn";
     public static final String VERSION = "version";
+    public static final String PLUGIN_ID = "plugin_id";
+    public static final String CONTRACT_ID = "contract_id";
+    public static final String PLUGIN_CONTRACT_ID = "plugin_contract_id";
+    public static final String CONF_SCHEMA = "conf_schema";
+    public static final String CONF_DATA = "conf_data";
 
     /**
      * Tenant constants.
@@ -280,17 +285,17 @@ public class DaoConstants {
 
 
     /**
-     * Plugin constants.
+     * Abstract plugin constants (parent for user verifiers and log appenders).
      */
-    public static final String PLUGIN_TABLE_NAME = "plugin";
-    public static final String PLUGIN_NAME = "name";
-    public static final String PLUGIN_DESCRIPTION = DESCRIPTION;
-    public static final String PLUGIN_CREATED_USERNAME = CREATED_USERNAME;
-    public static final String PLUGIN_CREATED_TIME = CREATED_TIME;
-    public static final String PLUGIN_APPLICATION_ID = "application_id";
-    public static final String PLUGIN_TYPE_NAME = "plugin_type_name";
-    public static final String PLUGIN_CLASS_NAME = "plugin_class_name";
-    public static final String PLUGIN_RAW_CONFIGURATION = "raw_configuration";
+    public static final String ABSTRACT_PLUGIN_TABLE_NAME = "abstract_plugin";
+    public static final String ABSTRACT_PLUGIN_NAME = "name";
+    public static final String ABSTRACT_PLUGIN_DESCRIPTION = DESCRIPTION;
+    public static final String ABSTRACT_PLUGIN_CREATED_USERNAME = CREATED_USERNAME;
+    public static final String ABSTRACT_PLUGIN_CREATED_TIME = CREATED_TIME;
+    public static final String ABSTRACT_PLUGIN_APPLICATION_ID = "application_id";
+    public static final String ABSTRACT_PLUGIN_TYPE_NAME = "plugin_type_name";
+    public static final String ABSTRACT_PLUGIN_CLASS_NAME = "plugin_class_name";
+    public static final String ABSTRACT_PLUGIN_RAW_CONFIGURATION = "raw_configuration";
 
     /**
      * User verifier constants.
@@ -333,6 +338,75 @@ public class DaoConstants {
     public static final String SDK_PROFILE_PROFILE_SCHEMA_VERSION = "profile_schema_version";
     public static final String SDK_PROFILE_TABLE_NAME = "sdk_token";
     public static final String SDK_PROFILE_TOKEN = "token";
+
+    /**
+     * Plugin constants
+     */
+    public static final String PLUGIN_TABLE_NAME = "plugin";
+    public static final String PLUGIN_NAME = NAME;
+    public static final String PLUGIN_CLASS_NAME = "class_name";
+    public static final String PLUGIN_VERSION = VERSION;
+    public static final String PLUGIN_CONF_SCHEMA = CONF_SCHEMA;
+    public static final String PLUGIN_TYPE = "type";
+    public static final String PLUGIN_SCOPE = "scope";
+
+    public static final String PLUGIN_NAME_AND_VERSION_CONSTRAINT_NAME = "plugin_name_version_constraint";
+    public static final String PLUGIN_CLASS_NAME_CONSTRAINT = "plugin_class_name_constraint";
+
+    /**
+     * Contract constants
+     */
+    public static final String CONTRACT_TABLE_NAME = "contract";
+    public static final String CONTRACT_NAME = NAME;
+    public static final String CONTRACT_VERSION = VERSION;
+    public static final String CONTRACT_TYPE = "type";
+
+    /**
+     * Contract message constants
+     */
+    public static final String CONTRACT_MESSAGE_TABLE_NAME = "contract_message";
+    public static final String CONTRACT_MESSAGE_FQN = FQN;
+    public static final String CONTRACT_MESSAGE_VERSION = VERSION;
+
+    /**
+     * Contract item constants
+     */
+    public static final String CONTRACT_ITEM_TABLE_NAME = "contract_item";
+    public static final String CONTRACT_ITEM_NAME = "name";
+    public static final String CONTRACT_ITEM_CONTRACT_ID = CONTRACT_ID;
+    public static final String CONTRACT_ITEM_IN_MESSAGE = "param_message";
+    public static final String CONTRACT_ITEM_OUT_MESSAGE = "result_message";
+
+    /**
+     * Plugin contract constants
+     */
+    public static final String PLUGIN_CONTRACT_TABLE_NAME = "plugin_contract";
+    public static final String PLUGIN_CONTRACT_DIRECTION = "direction";
+    public static final String PLUGIN_CONTRACT_PLUGIN_ID = PLUGIN_ID;
+    public static final String PLUGIN_CONTRACT_CONTRACT_ID = CONTRACT_ID;
+
+    /**
+     * Plugin contract item constants
+     */
+    public static final String PLUGIN_CONTRACT_ITEM_TABLE_NAME = "plugin_contract_item";
+    public static final String PLUGIN_CONTRACT_ITEM_CONF_SCHEMA = CONF_SCHEMA;
+    public static final String PLUGIN_CONTRACT_ITEM_PLUGIN_CONTRACT_ID = PLUGIN_CONTRACT_ID;
+    public static final String PLUGIN_CONTRACT_ITEM_CONTRACT_ITEM_ID = "contract_item_id";
+
+    /**
+     * Plugin instance constants
+     */
+    public static final String PLUGIN_INSTANCE_TABLE_NAME = "plugin_instance";
+    public static final String PLUGIN_INSTANCE_CONF_DATA = CONF_DATA;
+    public static final String PLUGIN_INSTANCE_STATE = "state";
+    public static final String PLUGIN_INSTANCE_PLUGIN_ID = PLUGIN_ID;
+
+    /**
+     * Plugin contract instance constants
+     */
+    public static final String PLUGIN_CONTRACT_INSTANCE_TABLE_NAME = "plugin_contract_instance";
+    public static final String PLUGIN_CONTRACT_INSTANCE_PLUGIN_INSTANCE_ID = "plugin_instance_id";
+    public static final String PLUGIN_CONTRACT_INSTANCE_PLUGIN_CONTRACT_ID = "plugin_contract_id";
 
     public static final String LAST_PAGE_MESSAGE = "It is the last page";
     public static final String PROFILE = "profile";

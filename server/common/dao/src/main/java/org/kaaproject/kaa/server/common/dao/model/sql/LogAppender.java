@@ -40,7 +40,7 @@ import static org.kaaproject.kaa.server.common.dao.DaoConstants.LOG_APPENDER_TAB
 @Entity
 @Table(name = LOG_APPENDER_TABLE_NAME)
 @Inheritance(strategy = InheritanceType.JOINED)
-public final class LogAppender extends Plugin<LogAppenderDto> implements Serializable {
+public final class LogAppender extends AbstractPlugin<LogAppenderDto> implements Serializable {
 
     private static final long serialVersionUID = 8884800929390746097L;
 

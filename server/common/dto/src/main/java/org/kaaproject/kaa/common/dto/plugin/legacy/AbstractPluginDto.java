@@ -26,7 +26,7 @@ import org.kaaproject.kaa.common.dto.HasId;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties({"rawConfiguration","fieldConfiguration"})
-public abstract class PluginDto extends AbstractDetailDto implements HasId, Serializable {
+public abstract class AbstractPluginDto extends AbstractDetailDto implements HasId, Serializable {
 
     private static final long serialVersionUID = -5156203569187681620L;
     
@@ -39,20 +39,20 @@ public abstract class PluginDto extends AbstractDetailDto implements HasId, Seri
     private String jsonConfiguration;
     private RecordField fieldConfiguration;
     
-    public PluginDto() {
+    public AbstractPluginDto() {
         super();
     }
 
-    public PluginDto(PluginDto pluginDto) {
-        super(pluginDto);
-        this.id = pluginDto.getId();
-        this.applicationId = pluginDto.getApplicationId();
-        this.pluginTypeName = pluginDto.getPluginTypeName();
-        this.pluginClassName = pluginDto.getPluginClassName();
+    public AbstractPluginDto(AbstractPluginDto abstractPluginDto) {
+        super(abstractPluginDto);
+        this.id = abstractPluginDto.getId();
+        this.applicationId = abstractPluginDto.getApplicationId();
+        this.pluginTypeName = abstractPluginDto.getPluginTypeName();
+        this.pluginClassName = abstractPluginDto.getPluginClassName();
         
-        this.rawConfiguration = pluginDto.getRawConfiguration();
-        this.jsonConfiguration = pluginDto.getJsonConfiguration();
-        this.fieldConfiguration = pluginDto.getFieldConfiguration();
+        this.rawConfiguration = abstractPluginDto.getRawConfiguration();
+        this.jsonConfiguration = abstractPluginDto.getJsonConfiguration();
+        this.fieldConfiguration = abstractPluginDto.getFieldConfiguration();
     }
     
     public String getId() {
@@ -145,7 +145,7 @@ public abstract class PluginDto extends AbstractDetailDto implements HasId, Seri
         if (getClass() != obj.getClass()) {
             return false;
         }
-        PluginDto other = (PluginDto) obj;
+        AbstractPluginDto other = (AbstractPluginDto) obj;
         if (applicationId == null) {
             if (other.applicationId != null) {
                 return false;

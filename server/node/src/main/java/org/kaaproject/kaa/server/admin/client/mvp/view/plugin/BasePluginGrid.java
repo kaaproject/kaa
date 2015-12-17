@@ -23,7 +23,7 @@ import com.google.gwt.user.cellview.client.SafeHtmlHeader;
 
 import org.kaaproject.avro.ui.gwt.client.widget.grid.cell.ActionButtonCell;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEvent;
-import org.kaaproject.kaa.common.dto.plugin.legacy.PluginDto;
+import org.kaaproject.kaa.common.dto.plugin.legacy.AbstractPluginDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.grid.AbstractKaaGrid;
 import org.kaaproject.kaa.server.admin.client.mvp.view.grid.KaaRowAction;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
@@ -31,7 +31,7 @@ import org.kaaproject.kaa.server.admin.client.util.Utils;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.cellview.client.DataGrid;
 
-public class BasePluginGrid<T extends PluginDto> extends AbstractKaaGrid<T, String> {
+public class BasePluginGrid<T extends AbstractPluginDto> extends AbstractKaaGrid<T, String> {
     private Column<T, T> downloadPropsColumn;
 
     public BasePluginGrid(boolean embedded) {

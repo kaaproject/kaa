@@ -20,15 +20,25 @@ import org.kaaproject.kaa.common.dto.plugin.ContractMessageDto;
 import org.kaaproject.kaa.server.common.dao.model.sql.GenericModel;
 import org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.io.Serializable;
 
-@Entity
-@Table(name = "contract_message")
-public class ContractMessage extends GenericModel implements Serializable {
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONTRACT_MESSAGE_FQN;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONTRACT_MESSAGE_TABLE_NAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONTRACT_MESSAGE_VERSION;
 
+@Entity
+@Table(name = CONTRACT_MESSAGE_TABLE_NAME)
+public final class ContractMessage extends GenericModel<ContractMessageDto> implements Serializable {
+
+    private static final long serialVersionUID = 6289737796672768471L;
+
+    @Column(name = CONTRACT_MESSAGE_FQN)
     private String fqn;
+
+    @Column(name = CONTRACT_MESSAGE_VERSION)
     private Integer version;
 
     public ContractMessage() {
@@ -57,12 +67,53 @@ public class ContractMessage extends GenericModel implements Serializable {
     }
 
     @Override
-    public Object toDto() {
-        return null;
+    public ContractMessageDto toDto() {
+        ContractMessageDto dto = createDto();
+        dto.setId(getStringId());
+        dto.setFqn(fqn);
+        dto.setVersion(version);
+        return dto;
     }
 
     @Override
-    protected Object createDto() {
-        return null;
+    protected ContractMessageDto createDto() {
+        return new ContractMessageDto();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ContractMessage)) {
+            return false;
+        }
+
+        ContractMessage that = (ContractMessage) o;
+
+        if (fqn != null ? !fqn.equals(that.fqn) : that.fqn != null) {
+            return false;
+        }
+        if (version != null ? !version.equals(that.version) : that.version != null) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = fqn != null ? fqn.hashCode() : 0;
+        result = 31 * result + (version != null ? version.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("ContractMessage{");
+        sb.append("fqn='").append(fqn).append('\'');
+        sb.append(", version=").append(version);
+        sb.append('}');
+        return sb.toString();
     }
 }

@@ -83,7 +83,7 @@ import org.kaaproject.kaa.common.dto.event.EventSchemaVersionDto;
 import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
-import org.kaaproject.kaa.common.dto.plugin.legacy.PluginDto;
+import org.kaaproject.kaa.common.dto.plugin.legacy.AbstractPluginDto;
 import org.kaaproject.kaa.common.dto.plugin.legacy.PluginInfoDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.admin.services.cache.CacheService;
@@ -1820,7 +1820,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         }
     }
 
-    private void setPluginRawConfigurationFromForm(PluginDto plugin) throws IOException {
+    private void setPluginRawConfigurationFromForm(AbstractPluginDto plugin) throws IOException {
         RecordField fieldConfiguration = plugin.getFieldConfiguration();
         GenericRecord record = FormAvroConverter.
                 createGenericRecordFromRecordField(fieldConfiguration);
@@ -1829,7 +1829,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         plugin.setRawConfiguration(rawConfiguration);
     }
 
-    private void setPluginRawConfigurationFromJson(PluginDto plugin, PluginType type) {
+    private void setPluginRawConfigurationFromJson(AbstractPluginDto plugin, PluginType type) {
         LOG.trace("Updating plugin {} configuration using info {}", plugin, pluginsInfo.get(type));
         PluginInfoDto pluginInfo = pluginsInfo.get(type).get(plugin.getPluginClassName());
         if(pluginInfo == null){
@@ -1841,7 +1841,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         plugin.setRawConfiguration(rawConfiguration);
     }
 
-    private void setPluginFormConfigurationFromRaw(PluginDto plugin, PluginType type) throws IOException {
+    private void setPluginFormConfigurationFromRaw(AbstractPluginDto plugin, PluginType type) throws IOException {
         LOG.trace("Updating plugin {} configuration", plugin);
         PluginInfoDto pluginInfo = pluginsInfo.get(type).get(plugin.getPluginClassName());
         byte[] rawConfiguration = plugin.getRawConfiguration();
@@ -1852,7 +1852,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         plugin.setFieldConfiguration(formData);
     }
 
-    private void setPluginJsonConfigurationFromRaw(PluginDto plugin, PluginType type) {
+    private void setPluginJsonConfigurationFromRaw(AbstractPluginDto plugin, PluginType type) {
         PluginInfoDto pluginInfo = pluginsInfo.get(type).get(plugin.getPluginClassName());
         byte[] rawConfiguration = plugin.getRawConfiguration();
         String jsonConfiguration = GenericAvroConverter.toJson(rawConfiguration,

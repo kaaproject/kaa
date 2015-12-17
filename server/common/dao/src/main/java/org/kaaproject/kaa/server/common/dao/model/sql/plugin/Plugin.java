@@ -21,26 +21,60 @@ import org.kaaproject.kaa.common.dto.plugin.PluginInstanceDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginScope;
 import org.kaaproject.kaa.server.common.dao.model.sql.GenericModel;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-@Entity
-@Table(name = "plugin", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"name", "version"}, name = "plugin_name_version_constraint"),
-        @UniqueConstraint(columnNames = {"class_name"}, name = "plugin_class_name_constraint")})
-public class Plugin extends GenericModel<PluginDto> implements Serializable {
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CLASS_NAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CLASS_NAME_CONSTRAINT;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONF_SCHEMA;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_NAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_NAME_AND_VERSION_CONSTRAINT_NAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_SCOPE;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_TABLE_NAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_VERSION;
 
+@Entity
+@Table(name = PLUGIN_TABLE_NAME, uniqueConstraints = {
+        @UniqueConstraint(columnNames = {PLUGIN_NAME, PLUGIN_VERSION}, name = PLUGIN_NAME_AND_VERSION_CONSTRAINT_NAME),
+        @UniqueConstraint(columnNames = {PLUGIN_CLASS_NAME}, name = PLUGIN_CLASS_NAME_CONSTRAINT)})
+public final class Plugin extends GenericModel<PluginDto> implements Serializable {
+
+    private static final long serialVersionUID = -5433666234252357399L;
+
+    @Column(name = PLUGIN_NAME)
     private String name;
+
+    @Column(name = PLUGIN_CLASS_NAME)
     private String className;
+
+    @Column(name = PLUGIN_VERSION)
     private Integer version;
+
+    @Column(name = PLUGIN_CONF_SCHEMA)
     private String configSchema;
+
+    @Column(name = PLUGIN_SCOPE)
+    @Enumerated(EnumType.STRING)
     private PluginScope scope;
-    private Set<PluginInstance> pluginInstances = new HashSet<>();
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "plugin")
     private Set<PluginContract> pluginContracts = new HashSet<>();
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "plugin")
+    private Set<PluginInstance> pluginInstances = new HashSet<>();
+
+    public Plugin() {
+    }
 
     public Plugin(PluginDto dto) {
         this.name = dto.getName();
@@ -62,6 +96,94 @@ public class Plugin extends GenericModel<PluginDto> implements Serializable {
         }
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getClassName() {
+        return className;
+    }
+
+    public void setClassName(String className) {
+        this.className = className;
+    }
+
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
+    }
+
+    public String getConfigSchema() {
+        return configSchema;
+    }
+
+    public void setConfigSchema(String configSchema) {
+        this.configSchema = configSchema;
+    }
+
+    public PluginScope getScope() {
+        return scope;
+    }
+
+    public void setScope(PluginScope scope) {
+        this.scope = scope;
+    }
+
+    public Set<PluginContract> getPluginContracts() {
+        return pluginContracts;
+    }
+
+    public void setPluginContracts(Set<PluginContract> pluginContracts) {
+        this.pluginContracts = pluginContracts;
+    }
+
+    public Set<PluginInstance> getPluginInstances() {
+        return pluginInstances;
+    }
+
+    public void setPluginInstances(Set<PluginInstance> pluginInstances) {
+        this.pluginInstances = pluginInstances;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Plugin)) {
+            return false;
+        }
+
+        Plugin plugin = (Plugin) o;
+
+        if (className != null ? !className.equals(plugin.className) : plugin.className != null) {
+            return false;
+        }
+        if (name != null ? !name.equals(plugin.name) : plugin.name != null) {
+            return false;
+        }
+        if (version != null ? !version.equals(plugin.version) : plugin.version != null) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (className != null ? className.hashCode() : 0);
+        result = 31 * result + (version != null ? version.hashCode() : 0);
+        return result;
+    }
+
     @Override
     protected PluginDto createDto() {
         return new PluginDto();
@@ -70,6 +192,39 @@ public class Plugin extends GenericModel<PluginDto> implements Serializable {
     @Override
     public PluginDto toDto() {
         PluginDto dto = createDto();
+        dto.setId(getStringId());
+        dto.setName(name);
+        dto.setClassName(className);
+        dto.setVersion(version);
+        dto.setConfSchema(configSchema);
+        dto.setScope(scope);
+        Set<PluginContractDto> pluginContractDtos = new HashSet<>();
+        if (!pluginContracts.isEmpty()) {
+            for (PluginContract contract : pluginContracts) {
+                pluginContractDtos.add(contract.toDto());
+            }
+            dto.setPluginContracts(pluginContractDtos);
+        }
+
+        if (!pluginInstances.isEmpty()) {
+            Set<PluginInstanceDto> pluginInstanceDtos = new HashSet<>();
+            for (PluginInstance pluginInstance : pluginInstances) {
+                pluginInstanceDtos.add(pluginInstance.toDto());
+            }
+            dto.setPluginInstances(pluginInstanceDtos);
+        }
         return dto;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("Plugin{");
+        sb.append("name='").append(name).append('\'');
+        sb.append(", className='").append(className).append('\'');
+        sb.append(", version=").append(version);
+        sb.append(", configSchema='").append(configSchema).append('\'');
+        sb.append(", scope=").append(scope);
+        sb.append('}');
+        return sb.toString();
     }
 }

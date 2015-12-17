@@ -18,7 +18,7 @@ package org.kaaproject.kaa.server.admin.client.mvp.activity;
 import java.util.List;
 
 import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
-import org.kaaproject.kaa.common.dto.plugin.legacy.PluginDto;
+import org.kaaproject.kaa.common.dto.plugin.legacy.AbstractPluginDto;
 import org.kaaproject.kaa.common.dto.plugin.legacy.PluginInfoDto;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.place.AbstractPluginPlace;
@@ -29,7 +29,7 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 
-public abstract class AbstractPluginActivity<T extends PluginDto, V extends BasePluginView, P extends AbstractPluginPlace> extends AbstractDetailsActivity<T, V, P> {
+public abstract class AbstractPluginActivity<T extends AbstractPluginDto, V extends BasePluginView, P extends AbstractPluginPlace> extends AbstractDetailsActivity<T, V, P> {
 
     protected String applicationId;
 

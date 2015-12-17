@@ -18,7 +18,7 @@ package org.kaaproject.kaa.server.common.dao.model.sql;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import org.kaaproject.kaa.common.dto.plugin.legacy.PluginDto;
+import org.kaaproject.kaa.common.dto.plugin.legacy.AbstractPluginDto;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -32,59 +32,59 @@ import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Arrays;
 
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_APPLICATION_ID;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CLASS_NAME;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CREATED_TIME;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CREATED_USERNAME;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_DESCRIPTION;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_NAME;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_RAW_CONFIGURATION;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_TABLE_NAME;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_TYPE_NAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_PLUGIN_APPLICATION_ID;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_PLUGIN_CLASS_NAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_PLUGIN_CREATED_TIME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_PLUGIN_CREATED_USERNAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_PLUGIN_DESCRIPTION;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_PLUGIN_NAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_PLUGIN_RAW_CONFIGURATION;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_PLUGIN_TABLE_NAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_PLUGIN_TYPE_NAME;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
 
 @Entity
-@Table(name = PLUGIN_TABLE_NAME)
+@Table(name = ABSTRACT_PLUGIN_TABLE_NAME)
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class Plugin<T extends PluginDto> extends GenericModel<T> implements Serializable {
+public abstract class AbstractPlugin<T extends AbstractPluginDto> extends GenericModel<T> implements Serializable {
 
     private static final long serialVersionUID = 7054619253518648721L; 
 
-    @Column(name = PLUGIN_NAME)
+    @Column(name = ABSTRACT_PLUGIN_NAME)
     private String name;
 
-    @Column(name = PLUGIN_DESCRIPTION, length = 1000)
+    @Column(name = ABSTRACT_PLUGIN_DESCRIPTION, length = 1000)
     private String description;
 
-    @Column(name = PLUGIN_CREATED_USERNAME)
+    @Column(name = ABSTRACT_PLUGIN_CREATED_USERNAME)
     private String createdUsername;
 
-    @Column(name = PLUGIN_CREATED_TIME)
+    @Column(name = ABSTRACT_PLUGIN_CREATED_TIME)
     private long createdTime;
 
     @ManyToOne
-    @JoinColumn(name = PLUGIN_APPLICATION_ID, nullable = false)
+    @JoinColumn(name = ABSTRACT_PLUGIN_APPLICATION_ID, nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     protected Application application;
 
-    @Column(name = PLUGIN_TYPE_NAME)
+    @Column(name = ABSTRACT_PLUGIN_TYPE_NAME)
     private String pluginTypeName;
 
-    @Column(name = PLUGIN_CLASS_NAME)
+    @Column(name = ABSTRACT_PLUGIN_CLASS_NAME)
     private String pluginClassName;
 
     @Lob
-    @Column(name = PLUGIN_RAW_CONFIGURATION)
+    @Column(name = ABSTRACT_PLUGIN_RAW_CONFIGURATION)
     private byte[] rawConfiguration;
     
-    public Plugin() {
+    public AbstractPlugin() {
     }
 
-    public Plugin(Long id) {
+    public AbstractPlugin(Long id) {
         this.id = id;
     }
 
-    public Plugin(PluginDto dto) {
+    public AbstractPlugin(AbstractPluginDto dto) {
         if (dto != null) {
             this.id = getLongId(dto);
             this.name = dto.getName();
@@ -212,7 +212,7 @@ public abstract class Plugin<T extends PluginDto> extends GenericModel<T> implem
         if (getClass() != obj.getClass()) {
             return false;
         }
-        Plugin<T> other = (Plugin<T>) obj;
+        AbstractPlugin<T> other = (AbstractPlugin<T>) obj;
         if (application == null) {
             if (other.application != null) {
                 return false;

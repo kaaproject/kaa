@@ -23,20 +23,44 @@ import org.kaaproject.kaa.common.dto.plugin.PluginContractItemDto;
 import org.kaaproject.kaa.server.common.dao.model.sql.GenericModel;
 import org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-@Entity
-@Table(name = "plugin_contract")
-public class PluginContract extends GenericModel implements Serializable {
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_CONTRACT_ID;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_DIRECTION;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_PLUGIN_ID;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_TABLE_NAME;
 
+@Entity
+@Table(name = PLUGIN_CONTRACT_TABLE_NAME)
+public final class PluginContract extends GenericModel implements Serializable {
+
+    private static final long serialVersionUID = -1106273682367746704L;
+
+    @Column(name = PLUGIN_CONTRACT_DIRECTION)
     private PluginContractDirection direction;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = PLUGIN_CONTRACT_CONTRACT_ID)
     private Contract contract;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = PLUGIN_CONTRACT_PLUGIN_ID)
     private Plugin plugin;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "pluginContract")
     private Set<PluginContractItem> pluginContractItems = new HashSet<>();
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "pluginContract")
     private Set<PluginContractInstance> pluginContractInstances = new HashSet<>();
 
     public PluginContract() {
@@ -112,6 +136,68 @@ public class PluginContract extends GenericModel implements Serializable {
 
     @Override
     public PluginContractDto toDto() {
-        return createDto();
+        PluginContractDto dto = createDto();
+        dto.setId(getStringId());
+        dto.setDirection(direction);
+        dto.setContract(contract != null ? contract.toDto() : null);
+        Set<PluginContractItemDto> pluginContractItemDtos = new HashSet<>();
+
+        if (!pluginContractItems.isEmpty()) {
+            for (PluginContractItem pluginContractItem : pluginContractItems) {
+                pluginContractItemDtos.add(pluginContractItem.toDto());
+            }
+            dto.setPluginContractItems(pluginContractItemDtos);
+        }
+
+        if (!pluginContractInstances.isEmpty()) {
+            Set<PluginContractInstanceDto> pluginContractInstanceDtos = new HashSet<>();
+            for (PluginContractInstance pluginContractInstance : pluginContractInstances) {
+                pluginContractInstanceDtos.add(pluginContractInstance.toDto());
+            }
+            dto.setPluginContractInstances(pluginContractInstanceDtos);
+        }
+        return dto;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof PluginContract)) {
+            return false;
+        }
+
+        PluginContract that = (PluginContract) o;
+
+        if (contract != null ? !contract.equals(that.contract) : that.contract != null) {
+            return false;
+        }
+        if (direction != that.direction) {
+            return false;
+        }
+        if (plugin != null ? !plugin.equals(that.plugin) : that.plugin != null) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = direction != null ? direction.hashCode() : 0;
+        result = 31 * result + (contract != null ? contract.hashCode() : 0);
+        result = 31 * result + (plugin != null ? plugin.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("PluginContract{");
+        sb.append("direction=").append(direction);
+        sb.append(", contract=").append(contract);
+        sb.append(", plugin=").append(plugin);
+        sb.append('}');
+        return sb.toString();
     }
 }

@@ -71,4 +71,52 @@ public class PluginContractDto implements HasId, Serializable {
     public void setPluginContractInstances(Set<PluginContractInstanceDto> pluginContractInstances) {
         this.pluginContractInstances = pluginContractInstances;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof PluginContractDto)) {
+            return false;
+        }
+
+        PluginContractDto that = (PluginContractDto) o;
+
+        if (contract != null ? !contract.equals(that.contract) : that.contract != null) {
+            return false;
+        }
+        if (direction != that.direction) {
+            return false;
+        }
+        if (pluginContractInstances != null ? !pluginContractInstances.equals(that.pluginContractInstances) : that.pluginContractInstances != null) {
+            return false;
+        }
+        if (pluginContractItems != null ? !pluginContractItems.equals(that.pluginContractItems) : that.pluginContractItems != null) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = direction != null ? direction.hashCode() : 0;
+        result = 31 * result + (contract != null ? contract.hashCode() : 0);
+        result = 31 * result + (pluginContractItems != null ? pluginContractItems.hashCode() : 0);
+        result = 31 * result + (pluginContractInstances != null ? pluginContractInstances.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("PluginContractDto{");
+        sb.append("id='").append(id).append('\'');
+        sb.append(", direction=").append(direction);
+        sb.append(", contract=").append(contract);
+        sb.append(", pluginContractItems=").append(pluginContractItems);
+        sb.append(", pluginContractInstances=").append(pluginContractInstances);
+        sb.append('}');
+        return sb.toString();
+    }
 }

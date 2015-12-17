@@ -20,16 +20,35 @@ import org.kaaproject.kaa.common.dto.plugin.PluginContractItemDto;
 import org.kaaproject.kaa.server.common.dao.model.sql.GenericModel;
 import org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.io.Serializable;
 
-@Entity
-@Table(name = "plugin_contract_item")
-public class PluginContractItem extends GenericModel implements Serializable {
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_ITEM_CONF_SCHEMA;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_ITEM_CONTRACT_ITEM_ID;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_ITEM_PLUGIN_CONTRACT_ID;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_ITEM_TABLE_NAME;
 
+@Entity
+@Table(name = PLUGIN_CONTRACT_ITEM_TABLE_NAME)
+public final class PluginContractItem extends GenericModel<PluginContractItemDto> implements Serializable {
+
+    private static final long serialVersionUID = -7515388614790241386L;
+
+    @Column(name = PLUGIN_CONTRACT_ITEM_CONF_SCHEMA)
     private String configSchema;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = PLUGIN_CONTRACT_ITEM_CONTRACT_ITEM_ID)
     private ContractItem contractItem;
+
+    @ManyToOne
+    @JoinColumn(name = PLUGIN_CONTRACT_ITEM_PLUGIN_CONTRACT_ID)
+    private PluginContract pluginContract;
 
     public PluginContractItem() {
     }
@@ -43,13 +62,22 @@ public class PluginContractItem extends GenericModel implements Serializable {
         }
     }
 
-    @Override
-    protected Object createDto() {
-        return null;
+    public PluginContractItem(ContractItem contractItem, String configSchema) {
+        this.contractItem = contractItem;
+        this.configSchema = configSchema;
     }
 
     @Override
-    public Object toDto() {
-        return null;
+    protected PluginContractItemDto createDto() {
+        return new PluginContractItemDto();
+    }
+
+    @Override
+    public PluginContractItemDto toDto() {
+        PluginContractItemDto dto = createDto();
+        dto.setId(getStringId());
+        dto.setConfigSchema(configSchema);
+        dto.setContractItem(contractItem != null ? contractItem.toDto() : null);
+        return dto;
     }
 }
