@@ -16,6 +16,19 @@
 
 package org.kaaproject.kaa.server.appenders.kafka.appender;
 
+import org.apache.avro.generic.GenericRecord;
+import org.apache.kafka.clients.producer.Callback;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
+import org.kaaproject.kaa.common.avro.GenericAvroConverter;
+import org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaConfig;
+import org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaServer;
+import org.kaaproject.kaa.server.common.log.shared.RecordWrapperSchemaGenerator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,18 +36,6 @@ import java.util.Properties;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.Future;
-
-import org.apache.avro.generic.GenericRecord;
-import org.apache.kafka.clients.producer.Callback;
-import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.clients.producer.RecordMetadata;
-import org.apache.kafka.clients.producer.ProducerConfig;
-import org.kaaproject.kaa.common.avro.GenericAvroConverter;
-import org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaConfig;
-import org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaServer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class KafkaLogEventDao implements LogEventDao {
 
@@ -140,9 +141,9 @@ public class KafkaLogEventDao implements LogEventDao {
         String headerJSON = headerConverter.encodeToJson(dto.getHeader());
         StringBuilder result = new StringBuilder("{");
         if (headerJSON != null && !headerJSON.isEmpty()) {
-            result.append("\"header\":" + headerJSON + ",");
+            result.append("\"" + RecordWrapperSchemaGenerator.RECORD_HEADER_FIELD + "\":" + headerJSON + ",");
         }
-        result.append("\"event\":" + eventJSON + "}");
+        result.append("\"" + RecordWrapperSchemaGenerator.RECORD_DATA_FIELD + "\":" + eventJSON + "}");
         return result.toString();
     }
 
