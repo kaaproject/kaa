@@ -1,3 +1,18 @@
+/*
+ * Copyright 2015 CyberVision, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.kaaproject.kaa.server.common.log.shared;
 
 
@@ -40,7 +55,6 @@ public class RecordDataConverter<T extends SpecificRecordBase> {
         this.recordSchema = getSchema(clazz);
         initByteArrayConverter(recordSchema.toString(), (Class<SpecificRecordBase>) clazz);
         initJsonConverter(recordSchema, (Class<SpecificRecordBase>) clazz);
-
     }
 
     public T decode(String recordStringJson, String fieldName) throws IOException {
@@ -75,19 +89,18 @@ public class RecordDataConverter<T extends SpecificRecordBase> {
     private void initByteArrayConverter(String schema, Class<SpecificRecordBase> clazz) {
         Map<String, AvroByteArrayConverter<SpecificRecordBase>> converterMap = bytaArrayConverters.get();
         AvroByteArrayConverter<SpecificRecordBase> genAvroConverter = new AvroByteArrayConverter<SpecificRecordBase>(clazz);
-            converterMap.put(schema, genAvroConverter);
-            bytaArrayConverters.set(converterMap);
+        converterMap.put(schema, genAvroConverter);
+        bytaArrayConverters.set(converterMap);
     }
 
     private void initJsonConverter(Schema schema, Class<SpecificRecordBase> clazz) {
         Map<String, AvroJsonConverter<SpecificRecordBase>> converterMap = jsonConverters.get();
         AvroJsonConverter<SpecificRecordBase> genAvroConverter = new AvroJsonConverter<SpecificRecordBase>(schema, clazz);
-            converterMap.put(schema.toString(), genAvroConverter);
+        converterMap.put(schema.toString(), genAvroConverter);
         jsonConverters.set(converterMap);
     }
 
     private static Schema getSchema(Class<?> c) {
-
         Schema result = null;
         try {
             Field f = c.getDeclaredField(SCHEMA_FIELD);
@@ -101,9 +114,6 @@ public class RecordDataConverter<T extends SpecificRecordBase> {
         } catch (Exception e) {
             LOG.error("Error parsing schema: ", e);
         }
-
         return result;
-
     }
-
 }
