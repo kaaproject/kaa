@@ -13,11 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kaaproject.kaa.server.common.core.plugin.generator.common;
+package org.kaaproject.kaa.server.common.core.plugin.generator.common.entity;
 
+public enum TemplateVariableType {
 
-public interface PluginImplementationBuilder extends PluginFileBuilder<PluginImplementationBuilder> {
+    CONSTANTS("${constants}"),
+    FIELDS("${fields}"),
+    IMPORT_STATEMENTS("${importStatements}"),
+    METHODS("${methods}"),
+    METHOD_SIGNATURES("${methodSignatures}"),
+    NAME("${name}"),
+    NAMESPACE("${namespace}");
 
-    PluginImplementationBuilder withProperty(String name, String type);
+    private String body;
 
+    private TemplateVariableType(String body) {
+        this.body = body;
+    }
+
+    public String getBody(){
+        return body;
+    }
+    
+    @Override
+    public String toString() {
+        return getBody();
+    }
 }

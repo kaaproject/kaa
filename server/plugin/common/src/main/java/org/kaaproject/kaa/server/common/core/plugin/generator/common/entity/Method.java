@@ -1,52 +1,25 @@
+/*
+ * Copyright 2014-2015 CyberVision, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.kaaproject.kaa.server.common.core.plugin.generator.common.entity;
 
-import java.util.List;
 
-public class Method {
+public interface Method extends GeneratorEntity {
 
-    private MethodSignature signature;
-    private String body;
-
-    public Method(String name, String returnType, List<String> paramTypes, String body) {
-        this.signature = new MethodSignature(name, returnType, paramTypes.toArray(new String[paramTypes.size()]));
-        this.body = body;
+    default TemplateVariableType getType() {
+        return TemplateVariableType.METHODS;
     }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((body == null) ? 0 : body.hashCode());
-        result = prime * result + ((signature == null) ? 0 : signature.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        Method other = (Method) obj;
-        if (body == null) {
-            if (other.body != null) {
-                return false;
-            }
-        } else if (!body.equals(other.body)) {
-            return false;
-        }
-        if (signature == null) {
-            if (other.signature != null) {
-                return false;
-            }
-        } else if (!signature.equals(other.signature)) {
-            return false;
-        }
-        return true;
-    }
 }

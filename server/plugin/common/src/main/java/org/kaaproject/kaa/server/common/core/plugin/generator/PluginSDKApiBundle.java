@@ -13,11 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kaaproject.kaa.server.common.core.plugin.generator.common;
+package org.kaaproject.kaa.server.common.core.plugin.generator;
 
+import java.util.List;
 
-public interface PluginImplementationBuilder extends PluginFileBuilder<PluginImplementationBuilder> {
+import org.kaaproject.kaa.server.common.core.plugin.def.SdkApiFile;
 
-    PluginImplementationBuilder withProperty(String name, String type);
+public class PluginSDKApiBundle {
+
+    private final List<SdkApiFile> files;
+
+    private PluginSDKApiBundle(List<SdkApiFile> files) {
+        super();
+        this.files = files;
+    }
+
+    public List<SdkApiFile> getFiles() {
+        return files;
+    }
 
 }

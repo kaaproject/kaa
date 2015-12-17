@@ -15,9 +15,16 @@
  */
 package org.kaaproject.kaa.server.common.core.plugin.generator.common;
 
+import org.kaaproject.kaa.server.common.core.plugin.def.SdkApiFile;
+import org.kaaproject.kaa.server.common.core.plugin.generator.common.entity.GeneratorEntity;
 
-public interface PluginImplementationBuilder extends PluginFileBuilder<PluginImplementationBuilder> {
+public interface PluginFileBuilder<T> {
 
-    PluginImplementationBuilder withProperty(String name, String type);
+    T withEntity(GeneratorEntity entity);
 
+    T withImportStatement(String body);
+
+    T withConstant(String name, String type, String value);
+
+    SdkApiFile build();
 }

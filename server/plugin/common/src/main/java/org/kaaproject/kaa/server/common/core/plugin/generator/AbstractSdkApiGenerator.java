@@ -22,11 +22,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
-import java.util.List;
 
 import org.apache.avro.specific.SpecificRecordBase;
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
-import org.kaaproject.kaa.server.common.core.plugin.def.SdkApiFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +35,7 @@ public abstract class AbstractSdkApiGenerator<T extends SpecificRecordBase> impl
     public abstract Class<T> getConfigurationClass();
 
     @Override
-    public List<SdkApiFile> generatePluginSdkApi(PluginSdkApiGenerationContext context) throws SdkApiGenerationException {
+    public PluginSDKApiBundle generatePluginSdkApi(PluginSdkApiGenerationContext context) throws SdkApiGenerationException {
         AvroByteArrayConverter<T> converter = new AvroByteArrayConverter<>(this.getConfigurationClass());
         try {
             T config = converter.fromByteArray(context.getPluginConfigurationData());
@@ -49,7 +47,7 @@ public abstract class AbstractSdkApiGenerator<T extends SpecificRecordBase> impl
         }
     }
 
-    protected abstract List<SdkApiFile> generatePluginSdkApi(SpecificPluginSdkApiGenerationContext<T> context);
+    protected abstract PluginSDKApiBundle generatePluginSdkApi(SpecificPluginSdkApiGenerationContext<T> context);
 
     protected String readFileAsString(String fileName) {
         String fileContent = null;

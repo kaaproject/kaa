@@ -13,11 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kaaproject.kaa.server.common.core.plugin.generator.common;
+package org.kaaproject.kaa.server.common.core.plugin.generator.common.entity;
 
 
-public interface PluginImplementationBuilder extends PluginFileBuilder<PluginImplementationBuilder> {
+public interface GeneratorEntity {
 
-    PluginImplementationBuilder withProperty(String name, String type);
+    String getBody();
+
+    TemplateVariableType getType();
+    
+    default boolean requireNewLineAtEnd() {
+        return true;
+    }
 
 }

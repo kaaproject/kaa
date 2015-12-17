@@ -15,12 +15,9 @@
  */
 package org.kaaproject.kaa.server.common.core.plugin.generator;
 
-import java.util.List;
-
-import org.kaaproject.kaa.server.common.core.plugin.def.SdkApiFile;
 
 public interface PluginSdkApiGenerator {
 
-    List<SdkApiFile> generatePluginSdkApi(PluginSdkApiGenerationContext context) throws SdkApiGenerationException;
+    PluginSDKApiBundle generatePluginSdkApi(PluginSdkApiGenerationContext context) throws SdkApiGenerationException;
 
 }

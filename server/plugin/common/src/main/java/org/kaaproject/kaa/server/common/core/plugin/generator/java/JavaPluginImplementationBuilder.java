@@ -1,70 +1,58 @@
 package org.kaaproject.kaa.server.common.core.plugin.generator.java;
 
-import static org.kaaproject.kaa.server.common.core.plugin.generator.common.PluginBuilder.TemplateVariable.CONSTANTS;
-import static org.kaaproject.kaa.server.common.core.plugin.generator.common.PluginBuilder.TemplateVariable.FIELDS;
-import static org.kaaproject.kaa.server.common.core.plugin.generator.common.PluginBuilder.TemplateVariable.IMPORT_STATEMENTS;
-import static org.kaaproject.kaa.server.common.core.plugin.generator.common.PluginBuilder.TemplateVariable.METHODS;
-import static org.kaaproject.kaa.server.common.core.plugin.generator.common.PluginBuilder.TemplateVariable.NAME;
-import static org.kaaproject.kaa.server.common.core.plugin.generator.common.PluginBuilder.TemplateVariable.NAMESPACE;
-
 import java.util.Arrays;
-import java.util.EnumMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 import org.kaaproject.kaa.server.common.core.plugin.def.SdkApiFile;
-import org.kaaproject.kaa.server.common.core.plugin.generator.common.PluginBuilder.TemplateVariable;
-import org.kaaproject.kaa.server.common.core.plugin.generator.common.entity.Constant;
-import org.kaaproject.kaa.server.common.core.plugin.generator.common.entity.Field;
-import org.kaaproject.kaa.server.common.core.plugin.generator.common.entity.ImportStatement;
-import org.kaaproject.kaa.server.common.core.plugin.generator.common.entity.Method;
 import org.kaaproject.kaa.server.common.core.plugin.generator.common.PluginBuilderCore;
 import org.kaaproject.kaa.server.common.core.plugin.generator.common.PluginImplementationBuilder;
+import org.kaaproject.kaa.server.common.core.plugin.generator.common.entity.GeneratorEntity;
+import org.kaaproject.kaa.server.common.core.plugin.generator.java.entity.JavaConstant;
+import org.kaaproject.kaa.server.common.core.plugin.generator.java.entity.JavaField;
+import org.kaaproject.kaa.server.common.core.plugin.generator.java.entity.JavaImportStatement;
+import org.kaaproject.kaa.server.common.core.plugin.generator.java.entity.JavaMethod;
 
 public class JavaPluginImplementationBuilder extends PluginBuilderCore implements PluginImplementationBuilder {
 
-    private Set<Field> fields = new HashSet<>();
-    private Set<Method> methods = new HashSet<>();
-
     public JavaPluginImplementationBuilder(String name, String namespace) {
-        super(name, namespace);
+        this(readFileAsString("templates/java/implementation.template"), name, namespace);
+    }
+    
+    public JavaPluginImplementationBuilder(String template, String name, String namespace) {
+        super(template, name, namespace);
+    }
+
+    @Override
+    public PluginImplementationBuilder withEntity(GeneratorEntity entity) {
+        addEntity(entity);
+        return this;
     }
 
     @Override
     public PluginImplementationBuilder withImportStatement(String body) {
-        this.importStatements.add(new ImportStatement(body));
+        this.addEntity(new JavaImportStatement(body));
         return this;
     }
 
     @Override
     public PluginImplementationBuilder withConstant(String name, String type, String value) {
-        this.constants.add(new Constant(name, type, value));
+        this.addEntity(new JavaConstant(name, type, value));
         return this;
     }
 
     @Override
     public PluginImplementationBuilder withProperty(String name, String type) {
-        this.fields.add(new Field(name, type));
-        this.methods.add(new Method(this.asGetterName(name), type, Arrays.asList(new String[] {}), null));
-        this.methods.add(new Method(this.asSetterName(name), null, Arrays.asList(new String[] { type }), null));
+        this.addEntity(new JavaField(name, type));
+        this.addEntity(new JavaMethod(this.asGetterName(name), type, Arrays.asList(new String[] {}), null));
+        this.addEntity(new JavaMethod(this.asSetterName(name), null, Arrays.asList(new String[] { type }), null));
         return this;
     }
 
     @Override
-    public SdkApiFile generateFile() {
-
-        Map<TemplateVariable, Object> values = new EnumMap<>(TemplateVariable.class);
-
-        values.put(NAME, this.name);
-        values.put(NAMESPACE, this.namespace);
-        values.put(IMPORT_STATEMENTS, this.importStatements);
-        values.put(CONSTANTS, this.constants);
-        values.put(FIELDS, this.fields);
-        values.put(METHODS, this.methods);
-
-        String fileName = this.name + "Plugin.java";
-        byte[] fileData = this.insertValues(this.template, values).getBytes();
+    public SdkApiFile build() {
+        // TODO: why do we need to add PluginAPI? This is wrong. Class name
+        // should match file name. Maybe replace with ".java"?
+        String fileName = this.getName() + "Plugin.java";
+        byte[] fileData = this.substituteAllEntities().getBytes();
 
         return new SdkApiFile(fileName, fileData);
     }
@@ -78,12 +66,8 @@ public class JavaPluginImplementationBuilder extends PluginBuilderCore implement
     }
 
     public static void main(String[] args) {
-        PluginImplementationBuilder o = new JavaPluginBuilder().fromTemplate(read()).createImplementation("Messaging", "org.kaaproject.kaa.plugin.messaging");
-        o = o.withProperty("t", "int");
-        System.out.println(new String(o.generateFile().getFileData()));
+        PluginImplementationBuilder o = new JavaPluginImplementationBuilder("Messaging", "org.kaaproject.kaa.plugin.messaging");
+        System.out.println(new String(o.withProperty("t", "int").build().getFileData()));
     }
 
-    public static String read() {
-        return new JavaPluginImplementationBuilder("test", "test").readFileAsString("templates/java/implementation.template");
-    }
 }
