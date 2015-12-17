@@ -18,5 +18,5 @@ package org.kaaproject.kaa.server.common.core.plugin.generator.common;
 
 public interface PluginInterfaceBuilder extends PluginFileBuilder<PluginInterfaceBuilder> {
 
-    PluginInterfaceBuilder withMethodSignature(String name, String returnType, String... paramTypes);
+    PluginInterfaceBuilder withMethodSignature(String name, String returnType, String[] paramTypes, String[] modifiers);
 }

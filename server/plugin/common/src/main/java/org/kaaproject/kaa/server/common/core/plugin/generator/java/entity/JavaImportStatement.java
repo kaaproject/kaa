@@ -20,7 +20,7 @@ public class JavaImportStatement implements ImportStatement {
 
     @Override
     public String getBody() {
-        return String.format(this.template, this.body);
+        return String.format(this.template, this.body).trim();
     }
 
     @Override

@@ -25,7 +25,7 @@ public interface PluginFileBuilder<T> {
 
     T withImportStatement(String body);
 
-    T withConstant(String name, String type, String value);
+    T withConstant(String name, String type, String value, String... modifiers);
 
     SdkApiFile build();
 }

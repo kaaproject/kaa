@@ -43,7 +43,7 @@ public class SimpleGeneratorEntity implements GeneratorEntity {
     }
 
     @Override
-    public boolean requiresLineFeed() {
+    public boolean includeLineSeparator() {
         return false;
     }
 }

@@ -1,5 +1,8 @@
 package org.kaaproject.kaa.server.common.core.plugin.generator.java.entity;
 
+import java.util.Map;
+import java.util.Set;
+
 import org.kaaproject.kaa.server.common.core.plugin.generator.common.entity.Method;
 
 public class JavaMethod implements Method {
@@ -7,24 +10,36 @@ public class JavaMethod implements Method {
     private JavaMethodSignature signature;
     private String body;
 
-    public JavaMethod(String name, String returnType, String[] paramTypes, String body) {
-        this.signature = new JavaMethodSignature(name, returnType, paramTypes) {
+    public JavaMethod(String name, String returnType, String[] paramTypes, String[] modifiers, String body, Map<String, String> values) {
+
+        this.signature = new JavaMethodSignature(name, returnType, paramTypes, modifiers) {
             @Override
             public boolean requiresTermination() {
                 return false;
             }
         };
-        this.body = body;
+
+        this.body = this.insertValues(body, values);
     }
 
     @Override
     public String getBody() {
-        return this.signature.toString() + " {\n" + this.body + "\n}\n";
+        return this.signature.toString() + " {\n" + this.body + "\n}\n".trim();
+    }
+
+    @Override
+    public boolean requiresTermination() {
+        return false;
     }
 
     @Override
     public String toString() {
         return this.getBody();
+    }
+
+    @Override
+    public Set<String> getModifiers() {
+        return this.signature.getModifiers();
     }
 
     @Override

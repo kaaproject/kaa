@@ -16,7 +16,7 @@
 
 package org.kaaproject.kaa.server.common.core.plugin.generator.common.entity;
 
-public interface Constant extends GeneratorEntity {
+public interface Constant extends ModifiableGeneratorEntity {
 
     @Override
     default TemplateVariable getTemplateVariable() {

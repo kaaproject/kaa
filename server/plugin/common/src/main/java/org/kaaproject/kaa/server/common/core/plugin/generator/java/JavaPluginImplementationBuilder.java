@@ -1,5 +1,8 @@
 package org.kaaproject.kaa.server.common.core.plugin.generator.java;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.kaaproject.kaa.server.common.core.plugin.def.SdkApiFile;
 import org.kaaproject.kaa.server.common.core.plugin.generator.common.PluginBuilderCore;
 import org.kaaproject.kaa.server.common.core.plugin.generator.common.PluginImplementationBuilder;
@@ -13,6 +16,9 @@ public class JavaPluginImplementationBuilder extends PluginBuilderCore implement
 
     private static final String DEFAULT_TEMPLATE_FILE = "templates/java/implementation.template";
 
+    private static final String GETTER_BODY_TEMPLATE_FILE = "templates/java/getter.template";
+    private static final String SETTER_BODY_TEMPLATE_FILE = "templates/java/setter.template";
+
     public JavaPluginImplementationBuilder(String name, String namespace) {
         this(name, namespace, PluginBuilderCore.readFileAsString(DEFAULT_TEMPLATE_FILE));
     }
@@ -22,28 +28,36 @@ public class JavaPluginImplementationBuilder extends PluginBuilderCore implement
     }
 
     @Override
-    public PluginImplementationBuilder withEntity(GeneratorEntity entity) {
+    public JavaPluginImplementationBuilder withEntity(GeneratorEntity entity) {
         this.addEntity(entity);
         return this;
     }
 
     @Override
-    public PluginImplementationBuilder withImportStatement(String body) {
+    public JavaPluginImplementationBuilder withImportStatement(String body) {
         this.addEntity(new JavaImportStatement(body));
         return this;
     }
 
     @Override
-    public PluginImplementationBuilder withConstant(String name, String type, String value) {
-        this.addEntity(new JavaConstant(name, type, value));
+    public JavaPluginImplementationBuilder withConstant(String name, String type, String value, String... modifiers) {
+        this.addEntity(new JavaConstant(name, type, value, modifiers));
         return this;
     }
 
     @Override
-    public PluginImplementationBuilder withProperty(String name, String type) {
-        this.addEntity(new JavaField(name, type));
-        this.addEntity(new JavaMethod(this.asGetterName(name), type, new String[] {}, null));
-        this.addEntity(new JavaMethod(this.asSetterName(name), null, new String[] { type }, null));
+    public JavaPluginImplementationBuilder withProperty(String name, String type, String... modifiers) {
+
+        String getterBody = PluginBuilderCore.readFileAsString(GETTER_BODY_TEMPLATE_FILE);
+        String setterBody = PluginBuilderCore.readFileAsString(SETTER_BODY_TEMPLATE_FILE);
+
+        Map<String, String> values = new HashMap<>();
+        values.put("${propertyName}", name);
+        values.put("${propertyType}", type);
+
+        this.addEntity(new JavaField(name, type, modifiers));
+        this.addEntity(new JavaMethod(this.asGetterName(name), type, new String[] {}, new String[] { "public" }, getterBody, values));
+        this.addEntity(new JavaMethod(this.asSetterName(name), null, new String[] { type }, new String[] { "public" }, setterBody, values));
         return this;
     }
 
@@ -61,8 +75,8 @@ public class JavaPluginImplementationBuilder extends PluginBuilderCore implement
     }
 
     public static void main(String[] args) {
-        PluginImplementationBuilder o = new JavaPluginImplementationBuilder("MessagingPlugin", "org.kaaproject.kaa.plugin.messaging");
+        PluginImplementationBuilder o = new JavaPluginImplementationBuilder("MessagingPlugin", "org.kaaproject.kaa.plugin.messaging").withConstant("CONSTANT",
+                "Integer", null).withImportStatement("java.util.Map");
         System.out.println(new String(o.withProperty("t", "int").build().getFileData()));
     }
-
 }

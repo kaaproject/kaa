@@ -33,14 +33,14 @@ public class JavaPluginInterfaceBuilder extends PluginBuilderCore implements Plu
     }
 
     @Override
-    public PluginInterfaceBuilder withConstant(String name, String type, String value) {
-        this.addEntity(new JavaConstant(name, type, value));
+    public PluginInterfaceBuilder withConstant(String name, String type, String value, String... modifiers) {
+        this.addEntity(new JavaConstant(name, type, value, modifiers));
         return this;
     }
 
     @Override
-    public PluginInterfaceBuilder withMethodSignature(String name, String returnType, String... paramTypes) {
-        this.addEntity(new JavaMethodSignature(name, returnType, paramTypes));
+    public PluginInterfaceBuilder withMethodSignature(String name, String returnType, String[] paramTypes, String[] modifiers) {
+        this.addEntity(new JavaMethodSignature(name, returnType, paramTypes, modifiers));
         return this;
     }
 
@@ -53,7 +53,7 @@ public class JavaPluginInterfaceBuilder extends PluginBuilderCore implements Plu
         PluginInterfaceBuilder o = new JavaPluginInterfaceBuilder("MessagingPluginAPI", "org.kaaproject.kaa.plugin.messaging")
                 .withImportStatement("java.util.Map").withImportStatement("java.lang.*").withConstant("ANOTHER_TEST", "String", "\"Hello, World\"")
                 .withConstant("TEST", "String", "\"Hello, World\"").withConstant("TEST_x", "String", "\"Hello, World\"")
-                .withMethodSignature("foo", "void", new String[] {}).withMethodSignature("bar", "Double", "String", "Future<Void>");
+                .withMethodSignature("foo", "void", null, null);
         System.out.println(new String(o.build().getFileData()));
     }
 }

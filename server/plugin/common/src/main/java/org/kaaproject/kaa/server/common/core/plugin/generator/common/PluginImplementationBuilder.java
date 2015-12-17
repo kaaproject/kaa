@@ -18,5 +18,5 @@ package org.kaaproject.kaa.server.common.core.plugin.generator.common;
 
 public interface PluginImplementationBuilder extends PluginFileBuilder<PluginImplementationBuilder> {
 
-    PluginImplementationBuilder withProperty(String name, String type);
+    PluginImplementationBuilder withProperty(String name, String type, String... modifiers);
 }

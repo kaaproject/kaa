@@ -26,7 +26,7 @@ public interface GeneratorEntity {
         return true;
     }
 
-    default boolean requiresLineFeed() {
+    default boolean includeLineSeparator() {
         return true;
     }
 }
