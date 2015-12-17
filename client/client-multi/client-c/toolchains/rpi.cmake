@@ -16,8 +16,8 @@
 
 set(CMAKE_SYSTEM_NAME Linux)
 
-set(CMAKE_C_COMPILER ${RPI_ROOT}/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/bin/arm-linux-gnueabihf-gcc)
-set(CMAKE_CXX_COMPILER ${RPI_ROOT}/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/bin/arm-linux-gnueabihf-g++)
+set(CMAKE_C_COMPILER arm-linux-gnueabihf-gcc)
+set(CMAKE_CXX_COMPILER arm-linux-gnueabihf-g++)
 
 #Set target environment directory
 set(CMAKE_FIND_ROOT_PATH "${RPI_ROOT}/openssl/build")
