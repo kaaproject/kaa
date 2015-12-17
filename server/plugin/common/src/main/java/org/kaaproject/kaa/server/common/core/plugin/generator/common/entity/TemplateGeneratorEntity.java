@@ -13,25 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.kaaproject.kaa.server.common.core.plugin.generator.common.entity;
 
 public class TemplateGeneratorEntity extends SimpleGeneratorEntity {
 
     private final String template;
 
-    public TemplateGeneratorEntity(TemplateVariableType type, String template, String value) {
-        this(type, template, value, true);
-    }
-
-    
-    public TemplateGeneratorEntity(TemplateVariableType type, String template, String value, boolean newLine) {
-        super(type, value, newLine);
+    public TemplateGeneratorEntity(TemplateVariable templateVariable, String value, String template) {
+        super(templateVariable, value);
         this.template = template;
     }
 
     @Override
     public String getBody() {
-        return template.replace("$VALUE", super.getBody());
+        return this.template.replace("${value}", super.getBody());
     }
-    
 }

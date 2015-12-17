@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kaaproject.kaa.server.common.core.plugin.generator.common.entity;
 
+package org.kaaproject.kaa.server.common.core.plugin.generator.common.entity;
 
 public interface MethodSignature extends GeneratorEntity {
 
-    default TemplateVariableType getType() {
-        return TemplateVariableType.METHOD_SIGNATURES;
+    @Override
+    default TemplateVariable getTemplateVariable() {
+        return TemplateVariable.METHOD_SIGNATURES;
     }
-
 }

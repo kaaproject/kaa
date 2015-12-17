@@ -4,30 +4,30 @@ import org.kaaproject.kaa.server.common.core.plugin.generator.common.entity.Fiel
 
 public class JavaField implements Field {
 
-    private static final String DEFAULT = "private %s %s;";
+    private static final String DEFAULT_TEMPLATE = "    private %s %s";
 
-    private final String template;
     private final String name;
     private final String type;
+    private final String template;
 
     public JavaField(String name, String type) {
-        this(DEFAULT, name, type);
+        this(name, type, DEFAULT_TEMPLATE);
     }
 
-    public JavaField(String template, String name, String type) {
-        this.template = template;
+    public JavaField(String name, String type, String template) {
         this.name = name;
         this.type = type;
+        this.template = template;
     }
 
     @Override
     public String getBody() {
-        return String.format(template, type, name);
+        return String.format(this.template, this.type, this.name);
     }
 
     @Override
     public String toString() {
-        return getBody();
+        return this.getBody();
     }
 
     @Override

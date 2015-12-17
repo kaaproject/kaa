@@ -2,35 +2,34 @@ package org.kaaproject.kaa.server.common.core.plugin.generator.java.entity;
 
 import org.kaaproject.kaa.server.common.core.plugin.generator.common.entity.Constant;
 
-
 public class JavaConstant implements Constant {
-    
-    private static final String DEFAULT = "    static final %s %s = %s;";
 
-    private final String template;
+    private static final String DEFAULT_TEMPLATE = "    static final %s %s = %s";
+
     private final String name;
     private final String type;
     private final String value;
-    
+    private final String template;
+
     public JavaConstant(String name, String type, String value) {
-        this(DEFAULT, name, type, value);
+        this(name, type, value, DEFAULT_TEMPLATE);
     }
 
-    public JavaConstant(String template, String name, String type, String value) {
-        this.template = template;
+    public JavaConstant(String name, String type, String value, String template) {
         this.name = name;
         this.type = type;
         this.value = value;
-    }
-    
-    @Override
-    public String getBody() {
-        return String.format(template, this.type, this.name, this.value);
+        this.template = template;
     }
 
     @Override
+    public String getBody() {
+        return String.format(this.template, this.type, this.name, this.value);
+    }
+    
+    @Override
     public String toString() {
-        return getBody();
+        return this.getBody();
     }
 
     @Override

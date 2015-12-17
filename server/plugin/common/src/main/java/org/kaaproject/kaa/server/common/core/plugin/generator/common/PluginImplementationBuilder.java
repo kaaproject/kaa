@@ -13,11 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kaaproject.kaa.server.common.core.plugin.generator.common;
 
+package org.kaaproject.kaa.server.common.core.plugin.generator.common;
 
 public interface PluginImplementationBuilder extends PluginFileBuilder<PluginImplementationBuilder> {
 
     PluginImplementationBuilder withProperty(String name, String type);
-
 }

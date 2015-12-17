@@ -1,7 +1,5 @@
 package org.kaaproject.kaa.server.common.core.plugin.generator.java;
 
-import java.util.Arrays;
-
 import org.kaaproject.kaa.server.common.core.plugin.def.SdkApiFile;
 import org.kaaproject.kaa.server.common.core.plugin.generator.common.PluginBuilderCore;
 import org.kaaproject.kaa.server.common.core.plugin.generator.common.PluginImplementationBuilder;
@@ -13,17 +11,19 @@ import org.kaaproject.kaa.server.common.core.plugin.generator.java.entity.JavaMe
 
 public class JavaPluginImplementationBuilder extends PluginBuilderCore implements PluginImplementationBuilder {
 
+    private static final String DEFAULT_TEMPLATE_FILE = "templates/java/implementation.template";
+
     public JavaPluginImplementationBuilder(String name, String namespace) {
-        this(readFileAsString("templates/java/implementation.template"), name, namespace);
+        this(name, namespace, PluginBuilderCore.readFileAsString(DEFAULT_TEMPLATE_FILE));
     }
-    
-    public JavaPluginImplementationBuilder(String template, String name, String namespace) {
-        super(template, name, namespace);
+
+    public JavaPluginImplementationBuilder(String name, String namespace, String template) {
+        super(name, namespace, template);
     }
 
     @Override
     public PluginImplementationBuilder withEntity(GeneratorEntity entity) {
-        addEntity(entity);
+        this.addEntity(entity);
         return this;
     }
 
@@ -42,19 +42,14 @@ public class JavaPluginImplementationBuilder extends PluginBuilderCore implement
     @Override
     public PluginImplementationBuilder withProperty(String name, String type) {
         this.addEntity(new JavaField(name, type));
-        this.addEntity(new JavaMethod(this.asGetterName(name), type, Arrays.asList(new String[] {}), null));
-        this.addEntity(new JavaMethod(this.asSetterName(name), null, Arrays.asList(new String[] { type }), null));
+        this.addEntity(new JavaMethod(this.asGetterName(name), type, new String[] {}, null));
+        this.addEntity(new JavaMethod(this.asSetterName(name), null, new String[] { type }, null));
         return this;
     }
 
     @Override
     public SdkApiFile build() {
-        // TODO: why do we need to add PluginAPI? This is wrong. Class name
-        // should match file name. Maybe replace with ".java"?
-        String fileName = this.getName() + "Plugin.java";
-        byte[] fileData = this.substituteAllEntities().getBytes();
-
-        return new SdkApiFile(fileName, fileData);
+        return super.build();
     }
 
     private String asGetterName(String s) {
@@ -66,7 +61,7 @@ public class JavaPluginImplementationBuilder extends PluginBuilderCore implement
     }
 
     public static void main(String[] args) {
-        PluginImplementationBuilder o = new JavaPluginImplementationBuilder("Messaging", "org.kaaproject.kaa.plugin.messaging");
+        PluginImplementationBuilder o = new JavaPluginImplementationBuilder("MessagingPlugin", "org.kaaproject.kaa.plugin.messaging");
         System.out.println(new String(o.withProperty("t", "int").build().getFileData()));
     }
 

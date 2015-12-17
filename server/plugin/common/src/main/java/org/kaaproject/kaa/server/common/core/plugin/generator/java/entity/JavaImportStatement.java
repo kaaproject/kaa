@@ -4,28 +4,28 @@ import org.kaaproject.kaa.server.common.core.plugin.generator.common.entity.Impo
 
 public class JavaImportStatement implements ImportStatement {
 
-    private static final String DEFAULT = "import %s;";
+    private static final String DEFAULT_TEMPLATE = "import %s";
 
-    private final String template;
     private final String body;
+    private final String template;
 
     public JavaImportStatement(String body) {
-        this(DEFAULT, body);
+        this(body, DEFAULT_TEMPLATE);
     }
 
-    public JavaImportStatement(String template, String body) {
-        this.template = template;
+    public JavaImportStatement(String body, String template) {
         this.body = body;
+        this.template = template;
     }
 
     @Override
     public String getBody() {
-        return String.format(template, this.body);
+        return String.format(this.template, this.body);
     }
 
     @Override
     public String toString() {
-        return getBody();
+        return this.getBody();
     }
 
     @Override

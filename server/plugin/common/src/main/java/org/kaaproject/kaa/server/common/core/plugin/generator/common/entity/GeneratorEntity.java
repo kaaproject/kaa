@@ -13,17 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kaaproject.kaa.server.common.core.plugin.generator.common.entity;
 
+package org.kaaproject.kaa.server.common.core.plugin.generator.common.entity;
 
 public interface GeneratorEntity {
 
+    TemplateVariable getTemplateVariable();
+
     String getBody();
 
-    TemplateVariableType getType();
-    
-    default boolean requireNewLineAtEnd() {
+    default boolean requiresTermination() {
         return true;
     }
 
+    default boolean requiresLineFeed() {
+        return true;
+    }
 }

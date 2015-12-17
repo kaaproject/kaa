@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.kaaproject.kaa.server.common.core.plugin.generator.java;
 
 import org.kaaproject.kaa.server.common.core.plugin.generator.common.PluginBuilder;
@@ -24,5 +25,4 @@ public interface JavaPluginBuilder extends PluginBuilder {
     PluginBuilder withInterface(PluginInterfaceBuilder interfaceBuilder);
 
     PluginBuilder withImplementation(PluginImplementationBuilder implementationBuilder);
-
 }

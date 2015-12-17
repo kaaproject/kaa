@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.kaaproject.kaa.server.common.core.plugin.generator.common.entity;
 
-public enum TemplateVariableType {
+public enum TemplateVariable {
 
     CONSTANTS("${constants}"),
     FIELDS("${fields}"),
@@ -27,14 +28,14 @@ public enum TemplateVariableType {
 
     private String body;
 
-    private TemplateVariableType(String body) {
+    private TemplateVariable(String body) {
         this.body = body;
     }
 
-    public String getBody(){
-        return body;
+    public String getBody() {
+        return this.body;
     }
-    
+
     @Override
     public String toString() {
         return getBody();

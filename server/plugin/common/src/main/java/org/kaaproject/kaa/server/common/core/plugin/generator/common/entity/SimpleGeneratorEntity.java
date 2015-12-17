@@ -13,38 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.kaaproject.kaa.server.common.core.plugin.generator.common.entity;
 
 public class SimpleGeneratorEntity implements GeneratorEntity {
 
-    private final TemplateVariableType type;
+    private final TemplateVariable templateVariable;
     private final String body;
-    private final boolean newLine;
 
-    public SimpleGeneratorEntity(TemplateVariableType type, String body) {
-        this(type, body, true);
-    }
-    
-    public SimpleGeneratorEntity(TemplateVariableType type, String body, boolean newLine) {
+    public SimpleGeneratorEntity(TemplateVariable templateVariable, String body) {
         super();
-        this.type = type;
+        this.templateVariable = templateVariable;
         this.body = body;
-        this.newLine = newLine;
+    }
+
+    @Override
+    public TemplateVariable getTemplateVariable() {
+        return templateVariable;
     }
 
     @Override
     public String getBody() {
-        return body;
+        return this.body;
     }
 
     @Override
-    public TemplateVariableType getType() {
-        return type;
-    }
-    
-    @Override 
-    public boolean requireNewLineAtEnd() {
-        return newLine;
+    public boolean requiresTermination() {
+        return false;
     }
 
+    @Override
+    public boolean requiresLineFeed() {
+        return false;
+    }
 }

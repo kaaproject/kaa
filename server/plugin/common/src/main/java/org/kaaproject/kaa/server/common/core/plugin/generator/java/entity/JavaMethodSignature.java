@@ -8,43 +8,53 @@ import org.kaaproject.kaa.server.common.core.plugin.generator.common.entity.Meth
 
 public class JavaMethodSignature implements MethodSignature {
 
-    private static final String DEFAULT = "    %s %s(%s);";
+    private static final String DEFAULT_TEMPLATE = "    %s %s(%s)";
 
-    private final String template;
     private String name;
     private String returnType;
     private List<String> paramTypes = new ArrayList<>();
+    private final String template;
 
     public JavaMethodSignature(String name, String returnType, String... paramTypes) {
-        this(DEFAULT, name, returnType, paramTypes);
+        this(name, returnType, paramTypes, DEFAULT_TEMPLATE);
     }
 
-    public JavaMethodSignature(String template, String name, String returnType, String... paramTypes) {
-        this.template = template;
+    public JavaMethodSignature(String name, String returnType, String[] paramTypes, String template) {
         this.name = name;
         this.returnType = (returnType == null || returnType.isEmpty()) ? "void" : returnType;
-        if (paramTypes != null) {
+        if (this.paramTypes != null) {
             this.paramTypes.addAll(Arrays.asList(paramTypes));
         }
+        this.template = template;
     }
 
     @Override
     public String getBody() {
         StringBuilder buffer = new StringBuilder();
         String delim = "";
-        for (int i = 0; i < paramTypes.size(); i++) {
-            String paramType = paramTypes.get(i);
+        for (int i = 0; i < this.paramTypes.size(); i++) {
+            String paramType = this.paramTypes.get(i);
             if (paramType != null && !paramType.isEmpty()) {
                 buffer.append(delim).append(paramType).append(" p").append(i + 1);
                 delim = ", ";
             }
         }
-        return String.format(template, returnType, name, buffer.toString());
+        return String.format(this.template, this.returnType, this.name, buffer.toString());
+    }
+
+    @Override
+    public boolean requiresTermination() {
+        return true;
+    }
+
+    @Override
+    public boolean requiresLineFeed() {
+        return true;
     }
 
     @Override
     public String toString() {
-        return getBody();
+        return this.getBody();
     }
 
     @Override

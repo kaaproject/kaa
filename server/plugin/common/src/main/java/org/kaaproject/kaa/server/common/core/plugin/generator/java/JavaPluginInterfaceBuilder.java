@@ -10,51 +10,48 @@ import org.kaaproject.kaa.server.common.core.plugin.generator.java.entity.JavaMe
 
 public class JavaPluginInterfaceBuilder extends PluginBuilderCore implements PluginInterfaceBuilder {
 
+    private static final String DEFAULT_TEMPLATE_FILE = "templates/java/interface.template";
+
     public JavaPluginInterfaceBuilder(String name, String namespace) {
-        super(readFileAsString("templates/java/interface.template"), name, namespace);
+        super(name, namespace, PluginBuilderCore.readFileAsString(DEFAULT_TEMPLATE_FILE));
     }
 
-    public JavaPluginInterfaceBuilder(String template, String name, String namespace) {
-        super(template, name, namespace);
+    public JavaPluginInterfaceBuilder(String name, String namespace, String template) {
+        super(name, namespace, template);
     }
 
     @Override
     public PluginInterfaceBuilder withEntity(GeneratorEntity entity) {
-        addEntity(entity);
+        this.addEntity(entity);
         return this;
     }
 
     @Override
     public PluginInterfaceBuilder withImportStatement(String body) {
-        addEntity(new JavaImportStatement(body));
+        this.addEntity(new JavaImportStatement(body));
         return this;
     }
 
     @Override
     public PluginInterfaceBuilder withConstant(String name, String type, String value) {
-        addEntity(new JavaConstant(name, type, value));
+        this.addEntity(new JavaConstant(name, type, value));
         return this;
     }
 
     @Override
     public PluginInterfaceBuilder withMethodSignature(String name, String returnType, String... paramTypes) {
-        addEntity(new JavaMethodSignature(name, returnType, paramTypes));
+        this.addEntity(new JavaMethodSignature(name, returnType, paramTypes));
         return this;
     }
 
     @Override
     public SdkApiFile build() {
-        // TODO: why do we need to add PluginAPI? This is wrong. Class name
-        // should match file name. Maybe replace with ".java"?
-        String fileName = this.getName() + "PluginAPI.java";
-        byte[] fileData = this.substituteAllEntities().getBytes();
-
-        return new SdkApiFile(fileName, fileData);
+        return super.build();
     }
 
     public static void main(String[] args) {
-        PluginInterfaceBuilder o = new JavaPluginInterfaceBuilder("Messaging", "org.kaaproject.kaa.plugin.messaging")
-                .withImportStatement("java.util.Map").withConstant("ANOTHER_TEST", "String", "\"Hello, World\"")
+        PluginInterfaceBuilder o = new JavaPluginInterfaceBuilder("MessagingPluginAPI", "org.kaaproject.kaa.plugin.messaging")
+                .withImportStatement("java.util.Map").withImportStatement("java.lang.*").withConstant("ANOTHER_TEST", "String", "\"Hello, World\"")
                 .withConstant("TEST", "String", "\"Hello, World\"").withConstant("TEST_x", "String", "\"Hello, World\"")
                 .withMethodSignature("foo", "void", new String[] {}).withMethodSignature("bar", "Double", "String", "Future<Void>");
         System.out.println(new String(o.build().getFileData()));

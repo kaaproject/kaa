@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.kaaproject.kaa.server.common.core.plugin.generator.common;
 
 import org.kaaproject.kaa.server.common.core.plugin.generator.PluginSDKApiBundle;
@@ -20,5 +21,4 @@ import org.kaaproject.kaa.server.common.core.plugin.generator.PluginSDKApiBundle
 public interface PluginBuilder {
 
     PluginSDKApiBundle build();
-
 }

@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.kaaproject.kaa.server.common.core.plugin.generator.common;
 
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -24,68 +24,76 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
+import org.kaaproject.kaa.server.common.core.plugin.def.SdkApiFile;
 import org.kaaproject.kaa.server.common.core.plugin.generator.common.entity.GeneratorEntity;
 import org.kaaproject.kaa.server.common.core.plugin.generator.common.entity.SimpleGeneratorEntity;
-import org.kaaproject.kaa.server.common.core.plugin.generator.common.entity.TemplateVariableType;
+import org.kaaproject.kaa.server.common.core.plugin.generator.common.entity.TemplateVariable;
 
 public abstract class PluginBuilderCore {
-
-    public static final Charset UTF8 = Charset.forName("UTF-8"); 
 
     private final String name;
     private final String namespace;
     private final String template;
-    private Map<TemplateVariableType, List<GeneratorEntity>> entities;
+    private final Map<TemplateVariable, List<GeneratorEntity>> values = new HashMap<>();
 
-    public PluginBuilderCore(String template, String name, String namespace) {
-        this.template = template;
+    public PluginBuilderCore(String name, String namespace, String template) {
         this.name = name;
         this.namespace = namespace;
-        this.entities = new HashMap<>();
-        addEntity(new SimpleGeneratorEntity(TemplateVariableType.NAME, name, false));
-        addEntity(new SimpleGeneratorEntity(TemplateVariableType.NAMESPACE, namespace, false));
+        this.template = template;
+        this.addEntity(new SimpleGeneratorEntity(TemplateVariable.NAME, name));
+        this.addEntity(new SimpleGeneratorEntity(TemplateVariable.NAMESPACE, namespace));
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public String getNamespace() {
-        return namespace;
+        return this.namespace;
     }
 
     public void addEntity(GeneratorEntity entity) {
-        List<GeneratorEntity> entityList = entities.get(entity.getType());
+        List<GeneratorEntity> entityList = this.values.get(entity.getTemplateVariable());
         if (entityList == null) {
             entityList = new ArrayList<>();
-            entities.put(entity.getType(), entityList);
+            this.values.put(entity.getTemplateVariable(), entityList);
         }
         entityList.add(entity);
     }
 
-    protected String substituteAllEntities() {
+    protected String insertValues() {
+
         String template = this.template;
-        for (Entry<TemplateVariableType, List<GeneratorEntity>> entry : entities.entrySet()) {
-            TemplateVariableType type = entry.getKey();
+        for (TemplateVariable templateVariable : this.values.keySet()) {
             StringBuilder buffer = new StringBuilder();
-            for (GeneratorEntity entity : entry.getValue()) {
-                buffer = buffer.append(entity.getBody());
-                if (entity.requireNewLineAtEnd()) {
-                    buffer = buffer.append(System.lineSeparator());
+            for (GeneratorEntity entity : this.values.get(templateVariable)) {
+                buffer.append(entity.getBody());
+                if (entity.requiresTermination()) {
+                    buffer.append(";");
+                }
+                if (entity.requiresLineFeed()) {
+                    buffer.append(System.lineSeparator());
                 }
             }
-            template = template.replace(type.getBody(), buffer.toString());
+            template = template.replace(templateVariable.getBody(), buffer.toString());
         }
-        // cleanup unused templates;
-        for (TemplateVariableType type : TemplateVariableType.values()) {
-            template = template.replace(type.getBody(), "");
+
+        // Remove unused template variable placeholders
+        for (TemplateVariable templateVariable : TemplateVariable.values()) {
+            template = template.replace(templateVariable.getBody(), "");
         }
+
         return template;
     }
 
-    public static String readFileAsString(String fileName) {
+    protected SdkApiFile build() {
+        String fileName = this.getName() + ".java";
+        byte[] fileData = this.insertValues().getBytes();
+        return new SdkApiFile(fileName, fileData);
+    }
+
+    protected static String readFileAsString(String fileName) {
         String fileContent = null;
         URL url = PluginBuilderCore.class.getClassLoader().getResource(fileName);
         if (url != null) {

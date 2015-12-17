@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kaaproject.kaa.server.common.core.plugin.generator.common.entity;
 
+package org.kaaproject.kaa.server.common.core.plugin.generator.common.entity;
 
 public interface ImportStatement extends GeneratorEntity {
 
-    default TemplateVariableType getType() {
-        return TemplateVariableType.IMPORT_STATEMENTS;
+    @Override
+    default TemplateVariable getTemplateVariable() {
+        return TemplateVariable.IMPORT_STATEMENTS;
     }
-
 }
