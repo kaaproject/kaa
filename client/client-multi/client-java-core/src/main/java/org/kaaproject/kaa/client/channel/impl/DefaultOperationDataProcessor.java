@@ -132,6 +132,15 @@ public class DefaultOperationDataProcessor implements KaaDataMultiplexer, KaaDat
             if (syncResponse.getLogSyncResponse() != null && logTransport != null) {
                 logTransport.onLogResponse(syncResponse.getLogSyncResponse());
             }
+
+            List <ExtensionSync> extensionSyncs = syncResponse.getExtensionSyncResponses();
+            if (extensionSyncs != null) {
+                for (ExtensionSync extensionSync : extensionSyncs) {
+                    ExtensionId extensionId = new ExtensionId(extensionSync.getExtensionId());
+                    PluginInstance<? extends PluginInstanceAPI> pluginInstance = transportContext.getPluginInstance(extensionId);
+                    pluginInstance.getPluginAdapter().processData(extensionSync.getPayload().array());
+                }
+            }
         }
     }
 

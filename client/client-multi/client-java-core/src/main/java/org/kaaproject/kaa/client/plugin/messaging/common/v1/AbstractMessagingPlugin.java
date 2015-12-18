@@ -33,14 +33,13 @@ import org.kaaproject.kaa.client.plugin.messaging.common.v1.msg.Message;
 import org.kaaproject.kaa.client.plugin.messaging.common.v1.msg.MessageDecoder;
 import org.kaaproject.kaa.client.plugin.messaging.common.v1.msg.MessageType;
 import org.kaaproject.kaa.client.plugin.messaging.common.v1.msg.PayloadMessage;
-import org.kaaproject.kaa.client.plugin.messaging.ext1.Messaging1Plugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class AbstractMessagingPlugin implements PluginAdapter, MessageFutureCancelListener {
 
     protected static final int MESSAGE_COUNT_SIZE = 4;
-    private static final Logger LOG = LoggerFactory.getLogger(Messaging1Plugin.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractMessagingPlugin.class);
 
     protected PluginContext context;
 
