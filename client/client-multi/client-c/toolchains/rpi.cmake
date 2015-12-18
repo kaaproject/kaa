@@ -20,6 +20,4 @@ set(CMAKE_C_COMPILER arm-linux-gnueabihf-gcc)
 set(CMAKE_CXX_COMPILER arm-linux-gnueabihf-g++)
 
 #Set target environment directory
-set(CMAKE_FIND_ROOT_PATH "${RPI_ROOT}/openssl/build")
-
-message(${CMAKE_FIND_ROOT_PATH})
+set(CMAKE_FIND_ROOT_PATH  ${OPENSSL_ROOT_DIR})
