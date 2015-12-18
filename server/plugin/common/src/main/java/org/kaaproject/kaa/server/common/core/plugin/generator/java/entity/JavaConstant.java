@@ -8,12 +8,12 @@ import org.kaaproject.kaa.server.common.core.plugin.generator.common.entity.Cons
 
 public class JavaConstant implements Constant {
 
-    private static final String DEFAULT_TEMPLATE = "%s %s %s = %s";
+    protected static final String DEFAULT_TEMPLATE = "%s %s %s = %s";
 
-    private final String name;
-    private final String type;
-    private final String value;
-    private final Set<String> modifiers = new LinkedHashSet<>();
+    protected final String name;
+    protected final String type;
+    protected final String value;
+    protected final Set<String> modifiers = new LinkedHashSet<>();
 
     public JavaConstant(String name, String type, String value, String... modifiers) {
         this.name = name;

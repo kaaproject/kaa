@@ -1,5 +1,6 @@
 package org.kaaproject.kaa.server.common.core.plugin.generator.java.entity;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -7,10 +8,28 @@ import org.kaaproject.kaa.server.common.core.plugin.generator.common.entity.Meth
 
 public class JavaMethod implements Method {
 
-    private static final String DEFAULT_TEMPLATE = "%s { %s }";
+    protected static final String DEFAULT_TEMPLATE = "%s { %s }";
 
-    private JavaMethodSignature signature;
-    private String body;
+    protected JavaMethodSignature signature;
+    protected String body;
+
+    public static JavaMethod getter(String propertyName, String propertyType) {
+        String name = "get" + propertyName.substring(0, 1).toUpperCase() + propertyName.substring(1);
+        String body = "return this.${propertyName};";
+        Map<String, String> values = new HashMap<>();
+        values.put("${propertyName}", propertyName);
+        return new JavaMethod(name, propertyType, new String[] {}, new String[] { "public" }, body, values);
+    }
+
+    public static JavaMethod setter(String propertyName, String propertyType) {
+        String name = "set" + propertyName.substring(0, 1).toUpperCase() + propertyName.substring(1);
+        String body = "this.${propertyName} = ${propertyName};";
+        Map<String, String> values = new HashMap<>();
+        values.put("${propertyName}", propertyName);
+        Map<String, String> params = new HashMap<>();
+        params.put(propertyName, propertyType);
+        return new JavaMethod(name, null, params, new String[] { "public" }, body, values);
+    }
 
     public JavaMethod(String name, String returnType, Map<String, String> params, String[] modifiers, String body, Map<String, String> values) {
 

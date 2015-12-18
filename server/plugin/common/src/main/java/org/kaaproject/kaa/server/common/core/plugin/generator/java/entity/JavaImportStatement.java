@@ -4,10 +4,10 @@ import org.kaaproject.kaa.server.common.core.plugin.generator.common.entity.Impo
 
 public class JavaImportStatement implements ImportStatement {
 
-    private static final String DEFAULT_TEMPLATE = "import %s";
+    protected static final String DEFAULT_TEMPLATE = "import %s";
 
-    private final String body;
-    private final String template;
+    protected final String body;
+    protected final String template;
 
     // TODO: Leave the template variable in case of a static import statement
 

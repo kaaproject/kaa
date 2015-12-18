@@ -18,7 +18,7 @@ package org.kaaproject.kaa.server.common.core.plugin.generator.common.entity;
 
 public interface GeneratorEntity {
 
-    TemplateVariable getTemplateVariable();
+    String getTemplateVariable();
 
     String getBody();
 
@@ -26,7 +26,7 @@ public interface GeneratorEntity {
         return true;
     }
 
-    default boolean insertLineSeparator() {
-        return true;
+    default int emptyLines() {
+        return 0;
     }
 }

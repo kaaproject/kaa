@@ -1,5 +1,7 @@
 package org.kaaproject.kaa.server.common.core.plugin.generator.java;
 
+import java.util.Map;
+
 import org.kaaproject.kaa.server.common.core.plugin.def.SdkApiFile;
 import org.kaaproject.kaa.server.common.core.plugin.generator.common.PluginBuilderCore;
 import org.kaaproject.kaa.server.common.core.plugin.generator.common.PluginInterfaceBuilder;
@@ -49,6 +51,12 @@ public class JavaPluginInterfaceBuilder extends PluginBuilderCore implements Plu
         this.addEntity(new JavaMethodSignature(name, returnType, paramTypes, modifiers));
         return this;
     }
+    
+    @Override
+    public PluginInterfaceBuilder withMethodSignature(String name, String returnType, Map<String, String> params, String[] modifiers) {
+        this.addEntity(new JavaMethodSignature(name, returnType, params, modifiers));
+        return this;
+    }
 
     @Override
     public SdkApiFile build() {
@@ -58,8 +66,7 @@ public class JavaPluginInterfaceBuilder extends PluginBuilderCore implements Plu
     public static void main(String[] args) {
         PluginInterfaceBuilder o = new JavaPluginInterfaceBuilder("MessagingPluginAPI", "org.kaaproject.kaa.plugin.messaging")
                 .withImportStatement("java.util.Map").withImportStatement("java.lang.*").withConstant("ANOTHER_TEST", "String", "\"Hello, World\"")
-                .withConstant("TEST", "String", "\"Hello, World\"").withConstant("TEST_x", "String", "\"Hello, World\"")
-                .withMethodSignature("foo", "void", null, null);
+                .withConstant("TEST", "String", "\"Hello, World\"").withConstant("TEST_x", "String", "\"Hello, World\"");
         System.out.println(new String(o.build().getFileData()));
     }
 }

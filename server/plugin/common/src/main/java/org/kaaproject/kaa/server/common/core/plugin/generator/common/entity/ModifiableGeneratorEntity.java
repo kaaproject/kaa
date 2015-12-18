@@ -8,7 +8,7 @@ public interface ModifiableGeneratorEntity extends GeneratorEntity {
 
     default String formatModifiers(Set<String> modifiers) {
         StringBuilder buffer = new StringBuilder();
-        modifiers.forEach(modifier -> buffer.append(buffer.length() == 0 ? "" : " ").append(modifier));
-        return buffer.toString();
+        modifiers.forEach(modifier -> buffer.append(modifier).append(" "));
+        return buffer.toString().trim();
     }
 }

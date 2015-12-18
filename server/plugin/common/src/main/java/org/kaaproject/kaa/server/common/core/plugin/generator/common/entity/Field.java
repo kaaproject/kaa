@@ -19,7 +19,7 @@ package org.kaaproject.kaa.server.common.core.plugin.generator.common.entity;
 public interface Field extends ModifiableGeneratorEntity {
 
     @Override
-    default TemplateVariable getTemplateVariable() {
+    default String getTemplateVariable() {
         return TemplateVariable.FIELDS;
     }
 }

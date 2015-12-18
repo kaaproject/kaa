@@ -1,6 +1,0 @@
-package ${packageName}
-
-public interface ${className} {
-
-    ${returnType} onEvent(${paramType});
-}

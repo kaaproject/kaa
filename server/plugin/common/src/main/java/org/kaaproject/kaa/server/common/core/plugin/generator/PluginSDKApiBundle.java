@@ -23,7 +23,7 @@ public class PluginSDKApiBundle {
 
     private final List<SdkApiFile> files;
 
-    private PluginSDKApiBundle(List<SdkApiFile> files) {
+    public PluginSDKApiBundle(List<SdkApiFile> files) {
         super();
         this.files = files;
     }

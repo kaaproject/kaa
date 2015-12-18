@@ -1,9 +1,5 @@
 package org.kaaproject.kaa.server.common.core.plugin.generator.java;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import org.kaaproject.kaa.server.common.core.plugin.def.SdkApiFile;
 import org.kaaproject.kaa.server.common.core.plugin.generator.common.PluginBuilderCore;
 import org.kaaproject.kaa.server.common.core.plugin.generator.common.PluginImplementationBuilder;
@@ -15,10 +11,7 @@ import org.kaaproject.kaa.server.common.core.plugin.generator.java.entity.JavaMe
 
 public class JavaPluginImplementationBuilder extends PluginBuilderCore implements PluginImplementationBuilder {
 
-    private static final String DEFAULT_TEMPLATE_FILE = "templates/java/implementation.template";
-
-    private static final String GETTER_BODY_TEMPLATE_FILE = "templates/java/getter.template";
-    private static final String SETTER_BODY_TEMPLATE_FILE = "templates/java/setter.template";
+    protected static final String DEFAULT_TEMPLATE_FILE = "templates/java/implementation.template";
 
     public JavaPluginImplementationBuilder(String name, String namespace) {
         this(name, namespace, PluginBuilderCore.readFileAsString(DEFAULT_TEMPLATE_FILE));
@@ -53,34 +46,15 @@ public class JavaPluginImplementationBuilder extends PluginBuilderCore implement
 
     @Override
     public JavaPluginImplementationBuilder withProperty(String name, String type, String... modifiers) {
-
-        String getterBody = PluginBuilderCore.readFileAsString(GETTER_BODY_TEMPLATE_FILE);
-        String setterBody = PluginBuilderCore.readFileAsString(SETTER_BODY_TEMPLATE_FILE);
-
-        Map<String, String> values = new HashMap<>();
-        values.put("${propertyName}", name);
-        values.put("${propertyType}", type);
-
-        Map<String, String> setterParams = new LinkedHashMap<>();
-        setterParams.put(name, type);
-
         this.addEntity(new JavaField(name, type, modifiers));
-        this.addEntity(new JavaMethod(this.asGetterName(name), type, new String[] {}, new String[] { "public" }, getterBody, values));
-        this.addEntity(new JavaMethod(this.asSetterName(name), null, setterParams, new String[] { "public" }, setterBody, values));
+        this.addEntity(JavaMethod.getter(name, type));
+        this.addEntity(JavaMethod.setter(name, type));
         return this;
     }
 
     @Override
     public SdkApiFile build() {
         return super.build();
-    }
-
-    private String asGetterName(String s) {
-        return "get" + s.substring(0, 1).toUpperCase() + s.substring(1);
-    }
-
-    private String asSetterName(String s) {
-        return "set" + s.substring(0, 1).toUpperCase() + s.substring(1);
     }
 
     public static void main(String[] args) {

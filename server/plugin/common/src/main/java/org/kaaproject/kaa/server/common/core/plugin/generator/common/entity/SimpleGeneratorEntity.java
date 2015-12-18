@@ -21,24 +21,37 @@ import java.util.Map;
 
 public class SimpleGeneratorEntity implements TemplatableGeneratorEntity {
 
-    private final TemplateVariable templateVariable;
+    private final String templateVariable;
     private final String body;
-    private Map<String, String> values;
+    private Map<String, String> values = new LinkedHashMap<>();
 
-    public SimpleGeneratorEntity(TemplateVariable templateVariable, String body) {
-        this(templateVariable, body, new LinkedHashMap<>());
+    private boolean requiresTermination;
+    private int emptyLines;
+
+    public SimpleGeneratorEntity(String templateVariable, String body) {
+        this(templateVariable, body, new LinkedHashMap<>(), false, 0);
     }
 
-    public SimpleGeneratorEntity(TemplateVariable templateVariable, String body, Map<String, String> values) {
+    public SimpleGeneratorEntity(String templateVariable, String body, boolean requiresTermination, int emptyLines) {
+        this(templateVariable, body, new LinkedHashMap<>(), requiresTermination, emptyLines);
+    }
+
+    public SimpleGeneratorEntity(String templateVariable, String body, Map<String, String> values) {
+        this(templateVariable, body, values, false, 0);
+    }
+
+    public SimpleGeneratorEntity(String templateVariable, String body, Map<String, String> values, boolean requiresTermination, int emptyLines) {
         this.templateVariable = templateVariable;
         this.body = body;
         if (values != null) {
             values.forEach((key, value) -> this.values.put(key, value));
         }
+        this.requiresTermination = requiresTermination;
+        this.emptyLines = emptyLines;
     }
 
     @Override
-    public TemplateVariable getTemplateVariable() {
+    public String getTemplateVariable() {
         return this.templateVariable;
     }
 
@@ -50,6 +63,16 @@ public class SimpleGeneratorEntity implements TemplatableGeneratorEntity {
     @Override
     public String toString() {
         return this.getBody();
+    }
+
+    @Override
+    public boolean requiresTermination() {
+        return this.requiresTermination;
+    }
+
+    @Override
+    public int emptyLines() {
+        return this.emptyLines;
     }
 
     @Override

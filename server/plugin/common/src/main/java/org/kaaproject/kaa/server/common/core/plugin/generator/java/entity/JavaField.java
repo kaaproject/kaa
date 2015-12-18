@@ -8,11 +8,11 @@ import org.kaaproject.kaa.server.common.core.plugin.generator.common.entity.Fiel
 
 public class JavaField implements Field {
 
-    private static final String DEFAULT_TEMPLATE = "%s %s %s";
+    protected static final String DEFAULT_TEMPLATE = "%s %s %s";
 
-    private final String name;
-    private final String type;
-    private final Set<String> modifiers = new LinkedHashSet<>();
+    protected final String name;
+    protected final String type;
+    protected final Set<String> modifiers = new LinkedHashSet<>();
 
     public JavaField(String name, String type) {
         this(name, type, DEFAULT_TEMPLATE);

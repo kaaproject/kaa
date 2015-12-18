@@ -35,7 +35,7 @@ public abstract class PluginBuilderCore {
     private final String name;
     private final String namespace;
     private final String template;
-    private final Map<TemplateVariable, List<GeneratorEntity>> values = new HashMap<>();
+    private final Map<String, List<GeneratorEntity>> values = new HashMap<>();
 
     public PluginBuilderCore(String name, String namespace, String template) {
         this.name = name;
@@ -65,26 +65,29 @@ public abstract class PluginBuilderCore {
     protected String insertValues() {
 
         String template = this.template;
-        for (TemplateVariable templateVariable : this.values.keySet()) {
+
+        for (String templateVariable : this.values.keySet()) {
             StringBuilder buffer = new StringBuilder();
-            for (GeneratorEntity entity : this.values.get(templateVariable)) {
+            this.values.get(templateVariable).forEach(entity -> {
                 buffer.append(entity.getBody());
                 if (entity.requiresTermination()) {
-                    buffer.append(";");
+                    buffer.append(";\n");
                 }
-                if (entity.insertLineSeparator()) {
-                    buffer.append(System.lineSeparator());
+                for (int i = 0; i < entity.emptyLines(); i++) {
+                    buffer.append("\n\n");
                 }
-            }
-            template = template.replace(templateVariable.getBody(), buffer.toString());
+            });
+
+            template = template.replace(templateVariable, buffer.toString());
         }
 
         // Remove unused template variable placeholders
-        for (TemplateVariable templateVariable : TemplateVariable.values()) {
-            template = template.replace(templateVariable.getBody(), "");
+        for (String templateVariable : TemplateVariable.values()) {
+            template = template.replace(templateVariable, "");
         }
 
-        return template;
+        // Shrink excess blank lines
+        return template.replaceAll("\n{3,}+", "\n\n");
     }
 
     protected SdkApiFile build() {

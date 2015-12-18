@@ -11,12 +11,12 @@ import org.kaaproject.kaa.server.common.core.plugin.generator.common.entity.Meth
 
 public class JavaMethodSignature implements MethodSignature {
 
-    private static final String DEFAULT_TEMPLATE = "%s %s %s(%s)";
+    protected static final String DEFAULT_TEMPLATE = "%s %s %s(%s)";
 
-    private final String name;
-    private final String returnType;
-    private final Map<String, String> params = new LinkedHashMap<>();
-    private final Set<String> modifiers = new LinkedHashSet<>();
+    protected final String name;
+    protected final String returnType;
+    protected final Map<String, String> params = new LinkedHashMap<>();
+    protected final Set<String> modifiers = new LinkedHashSet<>();
 
     /**
      * This object is used to generate parameter names.
@@ -58,7 +58,6 @@ public class JavaMethodSignature implements MethodSignature {
 
         StringBuilder buffer = new StringBuilder();
         this.params.forEach((paramName, paramType) -> {
-            buffer.append(buffer.length() == 0 ? "" : ", ");
             buffer.append(paramType).append(" ").append(paramName);
         });
 
@@ -76,8 +75,8 @@ public class JavaMethodSignature implements MethodSignature {
     }
 
     @Override
-    public boolean insertLineSeparator() {
-        return true;
+    public int emptyLines() {
+        return 1;
     }
 
     @Override

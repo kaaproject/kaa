@@ -16,28 +16,58 @@
 
 package org.kaaproject.kaa.server.common.core.plugin.generator.common.entity;
 
-public enum TemplateVariable {
+import java.util.HashSet;
+import java.util.Set;
 
-    CONSTANTS("${constants}"),
-    FIELDS("${fields}"),
-    IMPORT_STATEMENTS("${importStatements}"),
-    METHODS("${methods}"),
-    METHOD_SIGNATURES("${methodSignatures}"),
-    NAME("${name}"),
-    NAMESPACE("${namespace}");
+//public enum TemplateVariable {
+//
+//    CONSTANTS("${constants}"),
+//    FIELDS("${fields}"),
+//    IMPORT_STATEMENTS("${importStatements}"),
+//    METHODS("${methods}"),
+//    METHOD_SIGNATURES("${methodSignatures}"),
+//    NAME("${name}"),
+//    NAMESPACE("${namespace}");
+//
+//    private String body;
+//
+//    private TemplateVariable(String body) {
+//        this.body = body;
+//    }
+//
+//    public String getBody() {
+//        return this.body;
+//    }
+//
+//    @Override
+//    public String toString() {
+//        return getBody();
+//    }
+//}
 
-    private String body;
+public class TemplateVariable {
 
-    private TemplateVariable(String body) {
-        this.body = body;
+    private static final Set<String> values = new HashSet<>();
+
+    public static Set<String> values() {
+        return values;
     }
 
-    public String getBody() {
-        return this.body;
-    }
+    public static final String CONSTANTS = "${constants}";
+    public static final String FIELDS = "${fields}";
+    public static final String IMPORT_STATEMENTS = "${importStatements}";
+    public static final String METHODS = "${methods}";
+    public static final String METHOD_SIGNATURES = "${methodSignatures}";
+    public static final String NAME = "${name}";
+    public static final String NAMESPACE = "${namespace}";
 
-    @Override
-    public String toString() {
-        return getBody();
+    static {
+        values.add(CONSTANTS);
+        values.add(FIELDS);
+        values.add(IMPORT_STATEMENTS);
+        values.add(METHODS);
+        values.add(METHOD_SIGNATURES);
+        values.add(NAME);
+        values.add(NAMESPACE);
     }
 }
