@@ -57,6 +57,17 @@ public class HibernatePluginDaoTest extends HibernateAbstractTest {
         Assert.assertEquals(pluginDto, found.toDto());
     }
 
+    @Test
+    public void testDeletePlugin() {
+        PluginDto pluginDto = generatePlugin();
+        Plugin p = new Plugin(pluginDto);
+        p = pluginDao.save(p);
+        Assert.assertNotNull(p.getStringId());
+        pluginDao.removeById(p.getStringId());
+        Plugin found = pluginDao.findByClassName(CLASS_NAME);
+        Assert.assertNull(found);
+    }
+
     private PluginDto generatePlugin() {
         PluginDto pluginDto = new PluginDto();
         pluginDto.setClassName(CLASS_NAME);
