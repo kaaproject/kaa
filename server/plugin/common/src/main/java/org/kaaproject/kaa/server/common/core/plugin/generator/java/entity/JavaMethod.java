@@ -7,8 +7,22 @@ import org.kaaproject.kaa.server.common.core.plugin.generator.common.entity.Meth
 
 public class JavaMethod implements Method {
 
+    private static final String DEFAULT_TEMPLATE = "%s { %s }";
+
     private JavaMethodSignature signature;
     private String body;
+
+    public JavaMethod(String name, String returnType, Map<String, String> params, String[] modifiers, String body, Map<String, String> values) {
+
+        this.signature = new JavaMethodSignature(name, returnType, params, modifiers) {
+            @Override
+            public boolean requiresTermination() {
+                return false;
+            }
+        };
+
+        this.body = this.insertValues(body, values);
+    }
 
     public JavaMethod(String name, String returnType, String[] paramTypes, String[] modifiers, String body, Map<String, String> values) {
 
@@ -24,7 +38,7 @@ public class JavaMethod implements Method {
 
     @Override
     public String getBody() {
-        return this.signature.toString() + " {\n" + this.body + "\n}\n".trim();
+        return String.format(DEFAULT_TEMPLATE, this.signature.toString(), this.body).trim();
     }
 
     @Override

@@ -33,6 +33,12 @@ public class JavaPluginInterfaceBuilder extends PluginBuilderCore implements Plu
     }
 
     @Override
+    public PluginInterfaceBuilder withConstant(String name, String type, String value) {
+        this.addEntity(new JavaConstant(name, type, value, new String[] {}));
+        return this;
+    }
+
+    @Override
     public PluginInterfaceBuilder withConstant(String name, String type, String value, String... modifiers) {
         this.addEntity(new JavaConstant(name, type, value, modifiers));
         return this;

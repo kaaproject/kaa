@@ -1,6 +1,7 @@
 package org.kaaproject.kaa.server.common.core.plugin.generator.java;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.kaaproject.kaa.server.common.core.plugin.def.SdkApiFile;
@@ -40,6 +41,11 @@ public class JavaPluginImplementationBuilder extends PluginBuilderCore implement
     }
 
     @Override
+    public JavaPluginImplementationBuilder withConstant(String name, String type, String value) {
+        return this.withConstant(name, type, value, new String[] {});
+    }
+
+    @Override
     public JavaPluginImplementationBuilder withConstant(String name, String type, String value, String... modifiers) {
         this.addEntity(new JavaConstant(name, type, value, modifiers));
         return this;
@@ -55,9 +61,12 @@ public class JavaPluginImplementationBuilder extends PluginBuilderCore implement
         values.put("${propertyName}", name);
         values.put("${propertyType}", type);
 
+        Map<String, String> setterParams = new LinkedHashMap<>();
+        setterParams.put(name, type);
+
         this.addEntity(new JavaField(name, type, modifiers));
         this.addEntity(new JavaMethod(this.asGetterName(name), type, new String[] {}, new String[] { "public" }, getterBody, values));
-        this.addEntity(new JavaMethod(this.asSetterName(name), null, new String[] { type }, new String[] { "public" }, setterBody, values));
+        this.addEntity(new JavaMethod(this.asSetterName(name), null, setterParams, new String[] { "public" }, setterBody, values));
         return this;
     }
 
@@ -76,7 +85,7 @@ public class JavaPluginImplementationBuilder extends PluginBuilderCore implement
 
     public static void main(String[] args) {
         PluginImplementationBuilder o = new JavaPluginImplementationBuilder("MessagingPlugin", "org.kaaproject.kaa.plugin.messaging").withConstant("CONSTANT",
-                "Integer", null).withImportStatement("java.util.Map");
+                "Integer", null, new String[] { "volatile", "private" }).withImportStatement("java.util.Map");
         System.out.println(new String(o.withProperty("t", "int").build().getFileData()));
     }
 }

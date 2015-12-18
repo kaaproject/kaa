@@ -21,7 +21,9 @@ public class JavaField implements Field {
     public JavaField(String name, String type, String... modifiers) {
         this.name = name;
         this.type = type;
-        if (modifiers != null) {
+        if (modifiers == null || modifiers.length == 0) {
+            this.modifiers.add("private");
+        } else {
             this.modifiers.addAll(Arrays.asList(modifiers));
         }
     }

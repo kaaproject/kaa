@@ -72,7 +72,7 @@ public abstract class PluginBuilderCore {
                 if (entity.requiresTermination()) {
                     buffer.append(";");
                 }
-                if (entity.includeLineSeparator()) {
+                if (entity.insertLineSeparator()) {
                     buffer.append(System.lineSeparator());
                 }
             }

@@ -1,51 +1,68 @@
 package org.kaaproject.kaa.server.common.core.plugin.generator.java.entity;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import org.kaaproject.kaa.server.common.core.plugin.generator.common.entity.MethodSignature;
 
 public class JavaMethodSignature implements MethodSignature {
 
-    private static final String DEFAULT_TEMPLATE = "public %s %s(%s)";
+    private static final String DEFAULT_TEMPLATE = "%s %s %s(%s)";
 
     private final String name;
     private final String returnType;
-    private final List<String> paramTypes = new ArrayList<>();
+    private final Map<String, String> params = new LinkedHashMap<>();
     private final Set<String> modifiers = new LinkedHashSet<>();
-    private final String template;
 
-    public JavaMethodSignature(String name, String returnType, String[] paramTypes, String[] modifiers) {
-        this(name, returnType, paramTypes, modifiers, DEFAULT_TEMPLATE);
-    }
+    /**
+     * This object is used to generate parameter names.
+     */
+    private final Supplier<String> generator = new Supplier<String>() {
 
-    public JavaMethodSignature(String name, String returnType, String[] paramTypes, String[] modifiers, String template) {
+        private int index = 0;
+
+        @Override
+        public String get() {
+            return "p" + Integer.toString(++index);
+        }
+    };
+
+    public JavaMethodSignature(String name, String returnType, Map<String, String> params, String[] modifiers) {
         this.name = name;
         this.returnType = (returnType == null || returnType.isEmpty()) ? "void" : returnType;
-        if (paramTypes != null) {
-            this.paramTypes.addAll(Arrays.asList(paramTypes));
+        if (params != null) {
+            params.forEach((paramName, paramType) -> {
+                if (paramType != null) {
+                    this.params.put(paramName, paramType);
+                }
+            });
         }
         if (modifiers != null) {
             this.modifiers.addAll(Arrays.asList(modifiers));
         }
-        this.template = template;
+    }
+
+    public JavaMethodSignature(String name, String returnType, String[] paramTypes, String[] modifiers) {
+        this(name, returnType, new LinkedHashMap<>(), modifiers);
+        if (paramTypes != null) {
+            Arrays.asList(paramTypes).forEach(paramType -> this.params.put(this.generator.get(), paramType));
+        }
     }
 
     @Override
     public String getBody() {
+
         StringBuilder buffer = new StringBuilder();
-        String delim = "";
-        for (int i = 0; i < this.paramTypes.size(); i++) {
-            String paramType = this.paramTypes.get(i);
-            if (paramType != null && !paramType.isEmpty()) {
-                buffer.append(delim).append(paramType).append(" p").append(i + 1);
-                delim = ", ";
-            }
-        }
-        return String.format(this.template, this.returnType, this.name, buffer.toString()).trim();
+        this.params.forEach((paramName, paramType) -> {
+            buffer.append(buffer.length() == 0 ? "" : ", ");
+            buffer.append(paramType).append(" ").append(paramName);
+        });
+
+        return String.format(DEFAULT_TEMPLATE, this.formatModifiers(modifiers), this.returnType, this.name, buffer.toString()).trim();
     }
 
     @Override
@@ -59,7 +76,7 @@ public class JavaMethodSignature implements MethodSignature {
     }
 
     @Override
-    public boolean includeLineSeparator() {
+    public boolean insertLineSeparator() {
         return true;
     }
 
@@ -74,9 +91,8 @@ public class JavaMethodSignature implements MethodSignature {
         int result = 1;
         result = prime * result + ((modifiers == null) ? 0 : modifiers.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((paramTypes == null) ? 0 : paramTypes.hashCode());
+        result = prime * result + ((params == null) ? 0 : params.hashCode());
         result = prime * result + ((returnType == null) ? 0 : returnType.hashCode());
-        result = prime * result + ((template == null) ? 0 : template.hashCode());
         return result;
     }
 
@@ -106,11 +122,11 @@ public class JavaMethodSignature implements MethodSignature {
         } else if (!name.equals(other.name)) {
             return false;
         }
-        if (paramTypes == null) {
-            if (other.paramTypes != null) {
+        if (params == null) {
+            if (other.params != null) {
                 return false;
             }
-        } else if (!paramTypes.equals(other.paramTypes)) {
+        } else if (!params.equals(other.params)) {
             return false;
         }
         if (returnType == null) {
@@ -118,13 +134,6 @@ public class JavaMethodSignature implements MethodSignature {
                 return false;
             }
         } else if (!returnType.equals(other.returnType)) {
-            return false;
-        }
-        if (template == null) {
-            if (other.template != null) {
-                return false;
-            }
-        } else if (!template.equals(other.template)) {
             return false;
         }
         return true;

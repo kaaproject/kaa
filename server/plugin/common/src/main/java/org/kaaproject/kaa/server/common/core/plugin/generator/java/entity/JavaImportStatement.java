@@ -9,6 +9,8 @@ public class JavaImportStatement implements ImportStatement {
     private final String body;
     private final String template;
 
+    // TODO: Leave the template variable in case of a static import statement
+
     public JavaImportStatement(String body) {
         this(body, DEFAULT_TEMPLATE);
     }
