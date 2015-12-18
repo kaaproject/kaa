@@ -55,8 +55,6 @@ import java.util.Properties;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.kaaproject.kaa.client.util.Utils.isBlank;
-
 public class KaaClientPropertiesState implements KaaClientState {
 
     private static final String APP_STATE_SEQ_NUMBER = "APP_STATE_SEQ_NUMBER";
@@ -73,12 +71,6 @@ public class KaaClientPropertiesState implements KaaClientState {
     private static final String IS_REGISTERED = "is_registered";
     private static final String IS_ATTACHED = "is_attached";
 
-    public static final String FILE_SEPARATOR = File.separator;
-    public static final String WORKING_DIR_DEFAULT = "." + FILE_SEPARATOR;
-    public static final String STATE_FILE_NAME_DEFAULT = "state.properties";
-    public static final String CLIENT_PRIVATE_KEY_NAME_DEFAULT = "key.private";
-    public static final String CLIENT_PUBLIC_KEY_NAME_DEFAULT = "key.public";
-
     private static final String EVENT_SEQ_NUM = "event.seq.num";
 
     private static final String PROPERTIES_HASH = "properties.hash";
@@ -86,7 +78,6 @@ public class KaaClientPropertiesState implements KaaClientState {
     private final PersistentStorage storage;
     private final Base64 base64;
     private final Properties state;
-    private final String workDirLocation;
     private final String stateFileLocation;
     private final String clientPrivateKeyFileLocation;
     private final String clientPublicKeyFileLocation;
@@ -105,27 +96,11 @@ public class KaaClientPropertiesState implements KaaClientState {
 
         properties.setBase64(base64);
 
-        String workingDir = properties.getWorkingDirectory();
-        if (isBlank(workingDir)) {
-            workDirLocation = WORKING_DIR_DEFAULT;
-        } else {
-            workDirLocation = workingDir.endsWith(FILE_SEPARATOR) ? workingDir : workingDir + FILE_SEPARATOR;
-        }
+        stateFileLocation = properties.getStateFileFullName();
 
-        String stateFileName = properties.getStateFileName();
-        stateFileLocation = isBlank(stateFileName)
-                ? workDirLocation + STATE_FILE_NAME_DEFAULT
-                : workDirLocation + stateFileName;
+        clientPrivateKeyFileLocation = properties.getPrivateKeyFileFullName();
 
-        String privateKeyName = properties.getPrivateKeyFileName();
-        clientPrivateKeyFileLocation = isBlank(privateKeyName)
-                ? workDirLocation + CLIENT_PRIVATE_KEY_NAME_DEFAULT
-                : workDirLocation + privateKeyName;
-
-        String publicKeyName = properties.getPublicKeyFileName();
-        clientPublicKeyFileLocation = isBlank(publicKeyName)
-                ? workDirLocation + CLIENT_PUBLIC_KEY_NAME_DEFAULT
-                : workDirLocation + publicKeyName;
+        clientPublicKeyFileLocation = properties.getPublicKeyFileFullName();
 
         LOG.info("Version: '{}', commit hash: '{}'", properties.getBuildVersion(), properties.getCommitHash());
 

@@ -64,6 +64,10 @@ public class KaaClientProperties extends Properties {
     public static final String SDK_TOKEN = "sdk_token";
     public static final String WORKING_DIR_PROPERTY = "kaa.work_dir";
     public static final String FILE_SEPARATOR = File.separator;
+    public static final String WORKING_DIR_DEFAULT = "." + FILE_SEPARATOR;
+    public static final String STATE_FILE_NAME_DEFAULT = "state.properties";
+    public static final String CLIENT_PRIVATE_KEY_NAME_DEFAULT = "key.private";
+    public static final String CLIENT_PUBLIC_KEY_NAME_DEFAULT = "key.public";
     public static final String STATE_FILE_NAME_PROPERTY = "state.file_name";
     public static final String CLIENT_PRIVATE_KEY_FILE_NAME_PROPERTY = "keys.private_name";
     public static final String CLIENT_PUBLIC_KEY_FILE_NAME_PROPERTY = "keys.public_name";
@@ -201,7 +205,8 @@ public class KaaClientProperties extends Properties {
     }
 
     public String getWorkingDirectory() {
-        return getProperty(WORKING_DIR_PROPERTY);
+        String workingDir = getProperty(WORKING_DIR_PROPERTY);
+        return isBlank(workingDir) ? WORKING_DIR_DEFAULT : checkDir(workingDir);
     }
 
     public void setWorkingDirectory(String workDir) {
@@ -213,9 +218,13 @@ public class KaaClientProperties extends Properties {
         return workDir.endsWith(FILE_SEPARATOR) ? workDir : workDir + FILE_SEPARATOR;
     }
 
-
     public String getStateFileName() {
-        return getProperty(STATE_FILE_NAME_PROPERTY);
+        String stateFileName = getProperty(STATE_FILE_NAME_PROPERTY);
+        return isBlank(stateFileName) ? STATE_FILE_NAME_DEFAULT : stateFileName;
+    }
+
+    public String getStateFileFullName() {
+        return getWorkingDirectory() + getStateFileName();
     }
 
     public void setStateFileName(String fileName) {
@@ -224,7 +233,12 @@ public class KaaClientProperties extends Properties {
     }
 
     public String getPublicKeyFileName() {
-        return getProperty(CLIENT_PUBLIC_KEY_FILE_NAME_PROPERTY);
+        String privateKeyName = getProperty(CLIENT_PUBLIC_KEY_FILE_NAME_PROPERTY);
+        return isBlank(privateKeyName) ? CLIENT_PRIVATE_KEY_NAME_DEFAULT : privateKeyName;
+    }
+
+    public String getPublicKeyFileFullName() {
+        return getWorkingDirectory() + getPublicKeyFileName();
     }
 
     public void setPublicKeyFileName(String fileName) {
@@ -233,7 +247,12 @@ public class KaaClientProperties extends Properties {
     }
 
     public String getPrivateKeyFileName() {
-        return getProperty(CLIENT_PRIVATE_KEY_FILE_NAME_PROPERTY);
+        String publicKeyName = getProperty(CLIENT_PRIVATE_KEY_FILE_NAME_PROPERTY);
+        return isBlank(publicKeyName) ? CLIENT_PUBLIC_KEY_NAME_DEFAULT : publicKeyName;
+    }
+
+    public String getPrivateKeyFileFullName() {
+        return getWorkingDirectory() + getPrivateKeyFileName();
     }
 
     public void setPrivateKeyFileName(String fileName) {
