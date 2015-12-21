@@ -31,9 +31,9 @@ import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONTRACT_MESSAGE
 
 @Entity
 @Table(name = CONTRACT_MESSAGE_TABLE_NAME)
-public final class ContractMessage extends GenericModel<ContractMessageDto> implements Serializable {
+public class ContractMessage extends GenericModel<ContractMessageDto> implements Serializable {
 
-    private static final long serialVersionUID = 6289737796672768471L;
+    private static final long serialVersionUID = 2122224444729382739L;
 
     @Column(name = CONTRACT_MESSAGE_FQN)
     private String fqn;

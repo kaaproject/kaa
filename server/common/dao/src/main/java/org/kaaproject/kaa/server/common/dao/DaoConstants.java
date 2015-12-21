@@ -43,6 +43,11 @@ public class DaoConstants {
     public static final String FQN_PROPERTY = "fqn";
     public static final String CLASS_NAME_PROPERTY = "className";
     public static final String SDK_TOKEN_PROPERTY = "token";
+    public static final String PLUGIN_PROPERTY = "plugin";
+    public static final String CONTRACT_PROPERTY = "contract";
+    public static final String PLUGIN_CONTRACT_PROPERTY = "pluginContract";
+    public static final String PLUGIN_INSTANCE_PROPERTY = "pluginInstance";
+    public static final String PLUGIN_CONTRACT_INSTANCE_PROPERTY = "pluginContractInstance";
 
     public static final String TENANT_ALIAS = "tenant";
     public static final String PROFILE_SCHEMA_ALIAS = "profileSchema";
@@ -377,6 +382,8 @@ public class DaoConstants {
     public static final String CONTRACT_ITEM_IN_MESSAGE = "param_message";
     public static final String CONTRACT_ITEM_OUT_MESSAGE = "result_message";
 
+    public static final String CONTRACT_ITEM_CONSTRAINT_NAME = "contract_item_name_id_in_out_message_id_constraint";
+
     /**
      * Plugin contract constants
      */
@@ -407,6 +414,21 @@ public class DaoConstants {
     public static final String PLUGIN_CONTRACT_INSTANCE_TABLE_NAME = "plugin_contract_instance";
     public static final String PLUGIN_CONTRACT_INSTANCE_PLUGIN_INSTANCE_ID = "plugin_instance_id";
     public static final String PLUGIN_CONTRACT_INSTANCE_PLUGIN_CONTRACT_ID = "plugin_contract_id";
+
+    /**
+     * Plugin contract instance item constants
+     */
+    public static final String PLUGIN_CONTRACT_INSTANCE_ITEM_TABLE_NAME = "plugin_instance_contract_item";
+    public static final String PLUGIN_CONTRACT_INSTANCE_ITEM_CONF_DATA = CONF_DATA;
+    public static final String PLUGIN_CONTRACT_INSTANCE_ITEM_PLUGIN_CONTRACT_INSTANCE_ID = "plugin_contract_instance_id";
+    public static final String PLUGIN_CONTRACT_INSTANCE_ITEM_PLUGIN_CONTRACT_ITEM_ID = "plugin_contract_item_id";
+    public static final String PLUGIN_CONTRACT_INSTANCE_ITEM_PLUGIN_CONTRACT_ITEM_PARENT_ID = "plugin_contract_item_parent_id";
+    public static final String PLUGIN_CONTRACT_INSTANCE_ITEM_JOIN_TABLE_NAME = "contract_item_route";
+    public static final String PLUGIN_CONTRACT_INSTANCE_ITEM_JOIN_TABLE_IN_PLUGIN_INSTANCE_CONTRACT_ITEM_ID = "in_plugin_instance_contract_item_id";
+    public static final String PLUGIN_CONTRACT_INSTANCE_ITEM_JOIN_TABLE_OUT_PLUGIN_INSTANCE_CONTRACT_ITEM_ID = "out_plugin_instance_contract_item_id";
+
+    public static final String PLUGIN_CONTRACT_INSTANCE_ITEM_JOIN_TABLE_IN_PLUGIN_INSTANCE_CONTRACT_ITEM_FK = "in_plugin_instance_item_constraint";
+    public static final String PLUGIN_CONTRACT_INSTANCE_ITEM_JOIN_TABLE_OUT_PLUGIN_INSTANCE_CONTRACT_ITEM_FK = "out_plugin_instance_item_constraint";
 
     public static final String LAST_PAGE_MESSAGE = "It is the last page";
     public static final String PROFILE = "profile";

@@ -16,37 +16,41 @@
 package org.kaaproject.kaa.server.common.dao.model.sql.plugin;
 
 import org.kaaproject.kaa.common.dto.plugin.PluginContractInstanceDto;
+import org.kaaproject.kaa.common.dto.plugin.PluginContractInstanceItemDto;
 import org.kaaproject.kaa.server.common.dao.model.sql.GenericModel;
+import org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_INSTANCE_PLUGIN_CONTRACT_ID;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_INSTANCE_PLUGIN_INSTANCE_ID;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_INSTANCE_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_INSTANCE_TABLE_NAME;
 
 @Entity
 @Table(name = PLUGIN_CONTRACT_INSTANCE_TABLE_NAME)
-public final class PluginContractInstance extends GenericModel implements Serializable {
+public class PluginContractInstance extends GenericModel implements Serializable {
 
-    private static final long serialVersionUID = 2161008833999163889L;
+    private static final long serialVersionUID = -6714384962255683537L;
 
     @ManyToOne
-    @JoinColumn(name = PLUGIN_CONTRACT_INSTANCE_PLUGIN_INSTANCE_ID)
+    @JoinColumn(name = PLUGIN_CONTRACT_INSTANCE_PLUGIN_INSTANCE_ID, nullable = false)
     private PluginInstance pluginInstance;
 
     @ManyToOne
-    @JoinColumn(name = PLUGIN_CONTRACT_INSTANCE_PLUGIN_CONTRACT_ID)
+    @JoinColumn(name = PLUGIN_CONTRACT_INSTANCE_PLUGIN_CONTRACT_ID, nullable = false)
     private PluginContract pluginContract;
 
-    // TODO: change
-    @Transient
-    private Set<PluginContractInstanceItem> pluginContractInstanceItems;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = PLUGIN_CONTRACT_INSTANCE_PROPERTY)
+    private Set<PluginContractInstanceItem> pluginContractInstanceItems = new HashSet<>();
 
     public PluginInstance getPluginInstance() {
         return pluginInstance;
@@ -76,6 +80,19 @@ public final class PluginContractInstance extends GenericModel implements Serial
     }
 
     public PluginContractInstance(PluginContractInstanceDto dto) {
+        this.id = ModelUtils.getLongId(dto.getId());
+        if (dto.getContract() != null) {
+            this.pluginContract = new PluginContract(dto.getContract());
+        }
+        if (dto.getInstance() != null) {
+            this.pluginInstance = new PluginInstance(dto.getInstance());
+        }
+        Set<PluginContractInstanceItemDto> instanceItemDtos = dto.getItems();
+        if (instanceItemDtos != null && !instanceItemDtos.isEmpty()) {
+            for (PluginContractInstanceItemDto instanceItemDto : instanceItemDtos) {
+                pluginContractInstanceItems.add(new PluginContractInstanceItem(instanceItemDto));
+            }
+        }
     }
 
     @Override
@@ -89,8 +106,12 @@ public final class PluginContractInstance extends GenericModel implements Serial
         dto.setId(getStringId());
         dto.setInstance(pluginInstance != null ? pluginInstance.toDto() : null);
         dto.setContract(pluginContract != null ? pluginContract.toDto() : null);
-        // TODO: populate items
-        return new PluginContractInstanceDto();
+        Set<PluginContractInstanceItemDto> instanceItemDtos = new HashSet<>();
+        for (PluginContractInstanceItem pluginContractInstanceItem : pluginContractInstanceItems) {
+            instanceItemDtos.add(pluginContractInstanceItem.toDto());
+        }
+        dto.setItems(instanceItemDtos);
+        return dto;
     }
 
     @Override

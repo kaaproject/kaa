@@ -23,15 +23,13 @@ import org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
 
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONTRACT_ITEM_CONSTRAINT_NAME;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONTRACT_ITEM_CONTRACT_ID;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONTRACT_ITEM_IN_MESSAGE;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONTRACT_ITEM_NAME;
@@ -39,10 +37,12 @@ import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONTRACT_ITEM_OU
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONTRACT_ITEM_TABLE_NAME;
 
 @Entity
-@Table(name = CONTRACT_ITEM_TABLE_NAME)
-public final class ContractItem extends GenericModel<ContractItemDto> implements Serializable {
+@Table(name = CONTRACT_ITEM_TABLE_NAME, uniqueConstraints = {
+        @UniqueConstraint(columnNames = {CONTRACT_ITEM_NAME, CONTRACT_ITEM_CONTRACT_ID,
+                CONTRACT_ITEM_IN_MESSAGE, CONTRACT_ITEM_OUT_MESSAGE}, name = CONTRACT_ITEM_CONSTRAINT_NAME)})
+public class ContractItem extends GenericModel<ContractItemDto> implements Serializable {
 
-    private static final long serialVersionUID = 5710163046228962807L;
+    private static final long serialVersionUID = 2062055405562778911L;
 
     @Column(name = CONTRACT_ITEM_NAME)
     private String name;
@@ -58,9 +58,6 @@ public final class ContractItem extends GenericModel<ContractItemDto> implements
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = CONTRACT_ITEM_OUT_MESSAGE)
     private ContractMessage outMessage;
-
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "contractItem")
-    private Set<PluginContractItem> pluginContractItems = new HashSet<>();
 
     public ContractItem() {
     }
@@ -108,14 +105,6 @@ public final class ContractItem extends GenericModel<ContractItemDto> implements
 
     public void setOutMessage(ContractMessage outMessage) {
         this.outMessage = outMessage;
-    }
-
-    public Set<PluginContractItem> getPluginContractItems() {
-        return pluginContractItems;
-    }
-
-    public void setPluginContractItems(Set<PluginContractItem> pluginContractItems) {
-        this.pluginContractItems = pluginContractItems;
     }
 
     @Override

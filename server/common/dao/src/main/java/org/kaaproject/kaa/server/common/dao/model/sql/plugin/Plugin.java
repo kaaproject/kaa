@@ -20,6 +20,7 @@ import org.kaaproject.kaa.common.dto.plugin.PluginDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginInstanceDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginScope;
 import org.kaaproject.kaa.server.common.dao.model.sql.GenericModel;
+import org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -39,6 +40,7 @@ import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CLASS_NAM
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONF_SCHEMA;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_NAME;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_NAME_AND_VERSION_CONSTRAINT_NAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_SCOPE;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_TABLE_NAME;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_VERSION;
@@ -47,9 +49,9 @@ import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_VERSION;
 @Table(name = PLUGIN_TABLE_NAME, uniqueConstraints = {
         @UniqueConstraint(columnNames = {PLUGIN_NAME, PLUGIN_VERSION}, name = PLUGIN_NAME_AND_VERSION_CONSTRAINT_NAME),
         @UniqueConstraint(columnNames = {PLUGIN_CLASS_NAME}, name = PLUGIN_CLASS_NAME_CONSTRAINT)})
-public final class Plugin extends GenericModel<PluginDto> implements Serializable {
+public class Plugin extends GenericModel<PluginDto> implements Serializable {
 
-    private static final long serialVersionUID = -5433666234252357399L;
+    private static final long serialVersionUID = -2739834403973192215L;
 
     @Column(name = PLUGIN_NAME)
     private String name;
@@ -67,16 +69,17 @@ public final class Plugin extends GenericModel<PluginDto> implements Serializabl
     @Enumerated(EnumType.STRING)
     private PluginScope scope;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "plugin")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = PLUGIN_PROPERTY)
     private Set<PluginContract> pluginContracts = new HashSet<>();
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "plugin")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = PLUGIN_PROPERTY)
     private Set<PluginInstance> pluginInstances = new HashSet<>();
 
     public Plugin() {
     }
 
     public Plugin(PluginDto dto) {
+        this.id = ModelUtils.getLongId(dto.getId());
         this.name = dto.getName();
         this.className = dto.getClassName();
         this.version = dto.getVersion();
@@ -198,8 +201,8 @@ public final class Plugin extends GenericModel<PluginDto> implements Serializabl
         dto.setVersion(version);
         dto.setConfSchema(configSchema);
         dto.setScope(scope);
-        Set<PluginContractDto> pluginContractDtos = new HashSet<>();
         if (!pluginContracts.isEmpty()) {
+            Set<PluginContractDto> pluginContractDtos = new HashSet<>();
             for (PluginContract contract : pluginContracts) {
                 pluginContractDtos.add(contract.toDto());
             }

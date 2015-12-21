@@ -10,6 +10,7 @@ import org.kaaproject.kaa.common.dto.plugin.PluginContractDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginContractItemDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginInstanceDto;
+import org.kaaproject.kaa.common.dto.plugin.PluginInstanceState;
 import org.kaaproject.kaa.common.dto.plugin.PluginScope;
 import org.kaaproject.kaa.server.common.dao.impl.sql.HibernateAbstractTest;
 import org.kaaproject.kaa.server.common.dao.model.sql.plugin.Plugin;
@@ -115,6 +116,8 @@ public class HibernatePluginDaoTest extends HibernateAbstractTest {
     private Set<PluginInstanceDto> generatePluginInstances() {
         Set<PluginInstanceDto> pluginInstances = new HashSet<>();
         PluginInstanceDto pluginInstance = new PluginInstanceDto();
+        pluginInstance.setState(PluginInstanceState.ACTIVE);
+        pluginInstance.setConfigurationData("ConfigData".getBytes());
         pluginInstances.add(pluginInstance);
         return pluginInstances;
     }

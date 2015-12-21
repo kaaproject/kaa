@@ -37,14 +37,16 @@ import java.util.Set;
 
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_CONTRACT_ID;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_DIRECTION;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_ITEM_PLUGIN_CONTRACT_ID;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_PLUGIN_ID;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_TABLE_NAME;
 
 @Entity
 @Table(name = PLUGIN_CONTRACT_TABLE_NAME)
-public final class PluginContract extends GenericModel implements Serializable {
+public class PluginContract extends GenericModel implements Serializable {
 
-    private static final long serialVersionUID = -1106273682367746704L;
+    private static final long serialVersionUID = 3561690611845570639L;
 
     @Column(name = PLUGIN_CONTRACT_DIRECTION)
     private PluginContractDirection direction;
@@ -57,10 +59,11 @@ public final class PluginContract extends GenericModel implements Serializable {
     @JoinColumn(name = PLUGIN_CONTRACT_PLUGIN_ID)
     private Plugin plugin;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "pluginContract")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = PLUGIN_CONTRACT_ITEM_PLUGIN_CONTRACT_ID)
     private Set<PluginContractItem> pluginContractItems = new HashSet<>();
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "pluginContract")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = PLUGIN_CONTRACT_PROPERTY)
     private Set<PluginContractInstance> pluginContractInstances = new HashSet<>();
 
     public PluginContract() {

@@ -30,25 +30,20 @@ import java.io.Serializable;
 
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_ITEM_CONF_SCHEMA;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_ITEM_CONTRACT_ITEM_ID;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_ITEM_PLUGIN_CONTRACT_ID;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_ITEM_TABLE_NAME;
 
 @Entity
 @Table(name = PLUGIN_CONTRACT_ITEM_TABLE_NAME)
-public final class PluginContractItem extends GenericModel<PluginContractItemDto> implements Serializable {
+public class PluginContractItem extends GenericModel<PluginContractItemDto> implements Serializable {
 
-    private static final long serialVersionUID = -7515388614790241386L;
+    private static final long serialVersionUID = 3955110212698259558L;
 
     @Column(name = PLUGIN_CONTRACT_ITEM_CONF_SCHEMA)
     private String configSchema;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = PLUGIN_CONTRACT_ITEM_CONTRACT_ITEM_ID)
+    @JoinColumn(name = PLUGIN_CONTRACT_ITEM_CONTRACT_ITEM_ID, nullable = false)
     private ContractItem contractItem;
-
-    @ManyToOne
-    @JoinColumn(name = PLUGIN_CONTRACT_ITEM_PLUGIN_CONTRACT_ID)
-    private PluginContract pluginContract;
 
     public PluginContractItem() {
     }

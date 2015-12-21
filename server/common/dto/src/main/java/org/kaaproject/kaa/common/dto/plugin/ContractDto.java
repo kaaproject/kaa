@@ -22,14 +22,13 @@ import java.util.Set;
 
 public class ContractDto implements HasId, Serializable {
 
-    private static final long serialVersionUID = 7031333692518444219L;
+    private static final long serialVersionUID = -670587352752347857L;
 
     private String id;
     private String name;
     private Integer version;
     private ContractType type;
     private Set<ContractItemDto> contractItems;
-    private Set<PluginContractDto> pluginContracts;
 
     @Override
     public String getId() {
@@ -71,13 +70,5 @@ public class ContractDto implements HasId, Serializable {
 
     public void setContractItems(Set<ContractItemDto> contractItems) {
         this.contractItems = contractItems;
-    }
-
-    public Set<PluginContractDto> getPluginContracts() {
-        return pluginContracts;
-    }
-
-    public void setPluginContracts(Set<PluginContractDto> pluginContracts) {
-        this.pluginContracts = pluginContracts;
     }
 }

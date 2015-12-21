@@ -18,7 +18,6 @@ package org.kaaproject.kaa.server.common.dao.model.sql.plugin;
 import org.kaaproject.kaa.common.dto.plugin.ContractDto;
 import org.kaaproject.kaa.common.dto.plugin.ContractItemDto;
 import org.kaaproject.kaa.common.dto.plugin.ContractType;
-import org.kaaproject.kaa.common.dto.plugin.PluginContractDto;
 import org.kaaproject.kaa.server.common.dao.model.sql.GenericModel;
 import org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils;
 
@@ -34,15 +33,16 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONTRACT_NAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONTRACT_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONTRACT_TABLE_NAME;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONTRACT_TYPE;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONTRACT_VERSION;
 
 @Entity
 @Table(name = CONTRACT_TABLE_NAME)
-public final class Contract extends GenericModel<ContractDto> implements Serializable {
+public class Contract extends GenericModel<ContractDto> implements Serializable {
 
-    private static final long serialVersionUID = 4244237138705713321L;
+    private static final long serialVersionUID = -7299427635532151968L;
 
     @Column(name = CONTRACT_NAME)
     private String name;
@@ -55,12 +55,8 @@ public final class Contract extends GenericModel<ContractDto> implements Seriali
     private ContractType type;
 
     @Column
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "contract")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = CONTRACT_PROPERTY)
     private Set<ContractItem> contractItems = new HashSet<>();
-
-    @Column
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "contract")
-    private Set<PluginContract> pluginContracts = new HashSet<>();
 
     public Contract() {
     }
@@ -73,11 +69,6 @@ public final class Contract extends GenericModel<ContractDto> implements Seriali
         if (dto.getContractItems() != null) {
             for (ContractItemDto contractItem : dto.getContractItems()) {
                 contractItems.add(new ContractItem(contractItem));
-            }
-        }
-        if (dto.getPluginContracts() != null) {
-            for (PluginContractDto pluginContract : dto.getPluginContracts()) {
-                pluginContracts.add(new PluginContract(pluginContract));
             }
         }
     }
@@ -114,14 +105,6 @@ public final class Contract extends GenericModel<ContractDto> implements Seriali
         this.contractItems = contractItems;
     }
 
-    public Set<PluginContract> getPluginContracts() {
-        return pluginContracts;
-    }
-
-    public void setPluginContracts(Set<PluginContract> pluginContracts) {
-        this.pluginContracts = pluginContracts;
-    }
-
     @Override
     protected ContractDto createDto() {
         return new ContractDto();
@@ -139,12 +122,6 @@ public final class Contract extends GenericModel<ContractDto> implements Seriali
             contractItemDtos.add(contractItem.toDto());
         }
         dto.setContractItems(contractItemDtos);
-
-        Set<PluginContractDto> pluginContractDtos = new HashSet<>();
-        for (PluginContract pluginContract : pluginContracts) {
-            pluginContractDtos.add(pluginContract.toDto());
-        }
-        dto.setPluginContracts(pluginContractDtos);
         return dto;
     }
 

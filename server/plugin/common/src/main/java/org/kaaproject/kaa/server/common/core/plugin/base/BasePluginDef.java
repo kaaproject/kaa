@@ -75,6 +75,10 @@ public class BasePluginDef implements PluginDef {
         return Collections.unmodifiableSet(contracts);
     }
 
+    public static Builder builder(String name, int version) {
+        return new Builder(name, version);
+    }
+
     public static class Builder {
         private String name;
         private int version;
