@@ -16,25 +16,6 @@
 
 package org.kaaproject.kaa.client.persistence;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.charset.Charset;
-import java.security.KeyPair;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import org.apache.avro.io.BinaryDecoder;
 import org.apache.avro.io.BinaryEncoder;
 import org.apache.avro.io.DecoderFactory;
@@ -55,6 +36,25 @@ import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.charset.Charset;
+import java.security.KeyPair;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class KaaClientPropertiesState implements KaaClientState {
 
     private static final String APP_STATE_SEQ_NUMBER = "APP_STATE_SEQ_NUMBER";
@@ -70,14 +70,6 @@ public class KaaClientPropertiesState implements KaaClientState {
     private static final String NF_SUBSCRIPTIONS = "nf_subscriptions";
     private static final String IS_REGISTERED = "is_registered";
     private static final String IS_ATTACHED = "is_attached";
-
-    public static final String STATE_FILE_LOCATION = "state.file_location";
-    public static final String CLIENT_PRIVATE_KEY_FILE_LOCATION = "keys.private";
-    public static final String CLIENT_PUBLIC_KEY_FILE_LOCATION = "keys.public";
-
-    public static final String STATE_FILE_DEFAULT = "state.properties";
-    public static final String CLIENT_PRIVATE_KEY_DEFAULT = "key.private";
-    public static final String CLIENT_PUBLIC_KEY_DEFAULT = "key.public";
 
     private static final String EVENT_SEQ_NUM = "event.seq.num";
 
@@ -101,13 +93,14 @@ public class KaaClientPropertiesState implements KaaClientState {
         super();
         this.storage = storage;
         this.base64 = base64;
-        stateFileLocation = properties.containsKey(STATE_FILE_LOCATION) ? properties.getProperty(STATE_FILE_LOCATION) : STATE_FILE_DEFAULT;
 
-        clientPrivateKeyFileLocation = properties.containsKey(CLIENT_PRIVATE_KEY_FILE_LOCATION) ? properties
-                .getProperty(CLIENT_PRIVATE_KEY_FILE_LOCATION) : CLIENT_PRIVATE_KEY_DEFAULT;
+        properties.setBase64(base64);
 
-        clientPublicKeyFileLocation = properties.containsKey(CLIENT_PUBLIC_KEY_FILE_LOCATION) ? properties
-                .getProperty(CLIENT_PUBLIC_KEY_FILE_LOCATION) : CLIENT_PUBLIC_KEY_DEFAULT;
+        stateFileLocation = properties.getStateFileFullName();
+
+        clientPrivateKeyFileLocation = properties.getPrivateKeyFileFullName();
+
+        clientPublicKeyFileLocation = properties.getPublicKeyFileFullName();
 
         LOG.info("Version: '{}', commit hash: '{}'", properties.getBuildVersion(), properties.getCommitHash());
 
@@ -131,7 +124,7 @@ public class KaaClientPropertiesState implements KaaClientState {
                 parseNfSubscriptions();
 
                 String attachedEndpointsString = state.getProperty(ATTACHED_ENDPOINTS);
-                if(attachedEndpointsString != null){
+                if (attachedEndpointsString != null) {
                     String[] splittedEndpointsList = attachedEndpointsString.split(",");
                     for (String attachedEndpoint : splittedEndpointsList) {
                         if (!attachedEndpoint.isEmpty()) {
@@ -142,7 +135,7 @@ public class KaaClientPropertiesState implements KaaClientState {
                 }
 
                 String eventSeqNumStr = state.getProperty(EVENT_SEQ_NUM);
-                if(eventSeqNumStr != null){
+                if (eventSeqNumStr != null) {
                     Integer eventSeqNum = 0;
                     try { // NOSONAR
                         eventSeqNum = Integer.parseInt(eventSeqNumStr);
@@ -164,15 +157,15 @@ public class KaaClientPropertiesState implements KaaClientState {
     }
 
     private void parseNfSubscriptions() {
-        if(state.getProperty(NF_SUBSCRIPTIONS) != null){
+        if (state.getProperty(NF_SUBSCRIPTIONS) != null) {
             byte[] data = base64.decodeBase64(state.getProperty(NF_SUBSCRIPTIONS));
             BinaryDecoder decoder = DecoderFactory.get().binaryDecoder(data, null);
             SpecificDatumReader<TopicSubscriptionInfo> avroReader = new SpecificDatumReader<TopicSubscriptionInfo>(
                     TopicSubscriptionInfo.class);
-    
+
             try { // NOSONAR
                 TopicSubscriptionInfo decodedInfo = null;
-    
+
                 while (!decoder.isEnd()) {
                     decodedInfo = avroReader.read(null, decoder);
                     LOG.debug("Loaded {}", decodedInfo);
@@ -181,7 +174,7 @@ public class KaaClientPropertiesState implements KaaClientState {
             } catch (Exception e) {
                 LOG.error("Unexpected exception occurred while reading information from decoder", e);
             }
-        }else{
+        } else {
             LOG.info("No subscription info found in state");
         }
     }
@@ -262,7 +255,7 @@ public class KaaClientPropertiesState implements KaaClientState {
     public PublicKey getPublicKey() {
         return getOrInitKeyPair().getPublic();
     }
-    
+
     @Override
     public PrivateKey getPrivateKey() {
         return getOrInitKeyPair().getPrivate();
@@ -270,7 +263,7 @@ public class KaaClientPropertiesState implements KaaClientState {
 
     private KeyPair getOrInitKeyPair() {
         LOG.debug("Check if key pair exists {}, {}", clientPublicKeyFileLocation, clientPrivateKeyFileLocation);
-        if(kp != null){
+        if (kp != null) {
             return kp;
         }
         if (storage.exists(clientPublicKeyFileLocation) && storage.exists(clientPrivateKeyFileLocation)) {
@@ -306,13 +299,13 @@ public class KaaClientPropertiesState implements KaaClientState {
         }
         return kp;
     }
-    
+
     @Override
     public EndpointKeyHash getEndpointKeyHash() {
-        if(keyHash == null){
+        if (keyHash == null) {
             EndpointObjectHash publicKeyHash = EndpointObjectHash.fromSHA1(getOrInitKeyPair().getPublic().getEncoded());
             keyHash = new EndpointKeyHash(new String(base64.encodeBase64(publicKeyHash.getData())));
-        } 
+        }
         return keyHash;
     }
 

@@ -15,16 +15,6 @@
  */
 package org.kaaproject.kaa.client;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.security.KeyPair;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.kaaproject.kaa.client.bootstrap.DefaultBootstrapManager;
@@ -42,12 +32,11 @@ import org.kaaproject.kaa.client.exceptions.KaaInvalidConfigurationException;
 import org.kaaproject.kaa.client.exceptions.KaaRuntimeException;
 import org.kaaproject.kaa.client.exceptions.KaaUnsupportedPlatformException;
 import org.kaaproject.kaa.client.logging.AbstractLogCollector;
-import org.kaaproject.kaa.client.persistence.KaaClientPropertiesState;
 import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.client.persistence.PersistentStorage;
+import org.kaaproject.kaa.client.profile.ProfileContainer;
 import org.kaaproject.kaa.client.profile.ProfileRuntimeException;
 import org.kaaproject.kaa.client.schema.SchemaRuntimeException;
-import org.kaaproject.kaa.client.profile.ProfileContainer;
 import org.kaaproject.kaa.client.transport.TransportException;
 import org.kaaproject.kaa.client.util.CommonsBase64;
 import org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData;
@@ -56,6 +45,16 @@ import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
 import org.kaaproject.kaa.schema.base.Profile;
 import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class KaaClientTest {
 
@@ -69,6 +68,7 @@ public class KaaClientTest {
     @Before
     public void beforeTest() throws Exception {
         platformContext = Mockito.mock(KaaClientPlatformContext.class);
+        clientProperties = Mockito.mock(KaaClientProperties.class);
         clientProperties = Mockito.mock(KaaClientProperties.class);
         stateListener = Mockito.mock(KaaClientStateListener.class);
         storage = Mockito.mock(PersistentStorage.class);
@@ -137,11 +137,11 @@ public class KaaClientTest {
 
     protected void initStorageMock(PersistentStorage storage) throws NoSuchAlgorithmException, IOException {
         KeyPair kp = KeyUtil.generateKeyPair();
-        Mockito.when(storage.exists(KaaClientPropertiesState.CLIENT_PUBLIC_KEY_DEFAULT)).thenReturn(true);
-        Mockito.when(storage.exists(KaaClientPropertiesState.CLIENT_PRIVATE_KEY_DEFAULT)).thenReturn(true);
-        Mockito.when(storage.openForRead(KaaClientPropertiesState.CLIENT_PUBLIC_KEY_DEFAULT)).thenReturn(
+        Mockito.when(storage.exists(KaaClientProperties.CLIENT_PUBLIC_KEY_NAME_DEFAULT)).thenReturn(true);
+        Mockito.when(storage.exists(KaaClientProperties.CLIENT_PRIVATE_KEY_NAME_DEFAULT)).thenReturn(true);
+        Mockito.when(storage.openForRead(KaaClientProperties.CLIENT_PUBLIC_KEY_NAME_DEFAULT)).thenReturn(
                 new ByteArrayInputStream(kp.getPublic().getEncoded()));
-        Mockito.when(storage.openForRead(KaaClientPropertiesState.CLIENT_PRIVATE_KEY_DEFAULT)).thenReturn(
+        Mockito.when(storage.openForRead(KaaClientProperties.CLIENT_PRIVATE_KEY_NAME_DEFAULT)).thenReturn(
                 new ByteArrayInputStream(kp.getPrivate().getEncoded()));
         Mockito.when(storage.openForWrite(Mockito.anyString())).thenReturn(Mockito.mock(OutputStream.class));
     }
