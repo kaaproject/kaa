@@ -40,6 +40,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -208,9 +209,8 @@ public class EndpointProfileCassandraDaoTest extends AbstractCassandraTest {
     }
 
     @Test(expected = KaaOptimisticLockingFailureException.class)
-    public void testOptimisticLockWithConcurrency() throws Exception {
+    public void testOptimisticLockWithConcurrency() throws Throwable {
         final EndpointProfileDto endpointProfile = generateEndpointProfile(null, null, null, null);
-        final AtomicInteger errorCount = new AtomicInteger();
         List<Future<?>> tasks = new ArrayList<>();
         for (int i = 0; i < 100; i++) {
             final int id = i;
@@ -222,7 +222,6 @@ public class EndpointProfileCassandraDaoTest extends AbstractCassandraTest {
                         ep.setEndpointUserId("Ololo " + id);
                         endpointProfileDao.save(ep.toDto());
                     } catch (KaaOptimisticLockingFailureException ex) {
-                        errorCount.incrementAndGet();
                         LOG.error("Catch optimistic exception.");
                         throw ex;
                     }
@@ -230,9 +229,12 @@ public class EndpointProfileCassandraDaoTest extends AbstractCassandraTest {
             }));
         }
         for (Future future : tasks) {
-            future.get();
+            try {
+                future.get();
+            } catch (ExecutionException ex) {
+                throw ex.getCause();
+            }
         }
-        Assert.assertTrue(errorCount.get() > 0);
     }
 
     @Test

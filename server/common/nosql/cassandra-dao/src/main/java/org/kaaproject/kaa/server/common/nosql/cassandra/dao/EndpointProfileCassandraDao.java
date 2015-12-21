@@ -124,6 +124,7 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
             "nf_group_state=?, pf=?, srv_pf=?, subscs=? WHERE ep_key_hash=? ";
 
     private static final String IF_CONDITION = "IF opt_lock = ";
+    public static final String SEMICOLON = ";";
 
     private ConcurrentHashMap<String, PreparedStatement> statements = new ConcurrentHashMap();
 
@@ -163,9 +164,11 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
         CassandraEndpointProfile endpointProfile = findByKeyHash(endpointKeyHash);
         if (endpointProfile != null) {
             Long newVersion = endpointProfile.getVersion() + 1;
+            LOG.debug("Try to increment version for endpoint {}", convertKeyHashToString(endpointKeyHash));
             ResultSet resultSet = execute(QueryBuilder.update(getColumnFamilyName()).with(set(OPT_LOCK, newVersion))
                     .where(eq(EP_EP_KEY_HASH_PROPERTY, getByteBuffer(endpointKeyHash))).onlyIf(eq(OPT_LOCK, endpointProfile.getVersion())));
             if (wasApplied(resultSet)) {
+                LOG.debug("Increment version to {} for endpoint {}", newVersion,convertKeyHashToString(endpointKeyHash));
                 version = newVersion;
             } else {
                 LOG.error("[{}] Can't update version of endpoint profile.", convertKeyHashToString(endpointKeyHash));
@@ -194,8 +197,7 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
         statementList.add(saveBySdkTokenId);
         Set<String> groupIdSet = getEndpointProfilesGroupIdSet(profile);
         for (String groupId : groupIdSet) {
-            statementList.add(cassandraEPByEndpointGroupIdDao.getSaveQuery(
-                    new CassandraEPByEndpointGroupId(groupId, epKeyHash)));
+            statementList.add(cassandraEPByEndpointGroupIdDao.getSaveQuery(new CassandraEPByEndpointGroupId(groupId, epKeyHash)));
         }
         executeBatch(statementList.toArray(new Statement[statementList.size()]));
         LOG.debug("[{}] Endpoint profile saved", profile.getId());
@@ -205,7 +207,7 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
     private BoundStatement prepareStatement(String q, CassandraEndpointProfile pf) {
         StringBuilder sb = new StringBuilder(q);
         if (pf.getVersion() == 0L) {
-            sb.append(";");
+            sb.append(SEMICOLON);
         } else {
             sb.append(IF_CONDITION).append(pf.getVersion()).append(";");
         }

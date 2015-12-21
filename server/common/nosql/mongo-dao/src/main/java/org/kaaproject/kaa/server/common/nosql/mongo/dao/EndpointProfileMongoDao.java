@@ -24,9 +24,11 @@ import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.PageLinkDto;
 import org.kaaproject.kaa.server.common.dao.DaoConstants;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
+import org.kaaproject.kaa.server.common.dao.lock.KaaOptimisticLockingFailureException;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoEndpointProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
@@ -122,10 +124,14 @@ public class EndpointProfileMongoDao extends AbstractMongoDao<MongoEndpointProfi
     @Override
     public Long findVersionByKey(byte[] endpointKeyHash) {
         LOG.debug("Find endpoint profile version by key hash [{}] ", endpointKeyHash);
+        Long version = null;
         Query query = query(where(EP_ENDPOINT_KEY_HASH).is(endpointKeyHash));
         query.fields().include(OPT_LOCK);
         DBObject result = mongoTemplate.getDb().getCollection(getCollectionName()).findOne(query.getQueryObject());
-        return (Long) result.get(OPT_LOCK);
+        if (result != null) {
+            version = (Long) result.get(OPT_LOCK);
+        }
+        return version;
     }
 
     @Override
@@ -201,7 +207,13 @@ public class EndpointProfileMongoDao extends AbstractMongoDao<MongoEndpointProfi
 
     @Override
     public MongoEndpointProfile save(EndpointProfileDto dto) {
-        return save(new MongoEndpointProfile(dto));
+        try {
+            MongoEndpointProfile profile = new MongoEndpointProfile(dto);
+            profile.setOptVersion(findVersionByKey(dto.getEndpointKeyHash()));
+            return save(profile);
+        } catch (OptimisticLockingFailureException exception) {
+            throw new KaaOptimisticLockingFailureException("Can't update endpoint profile. Endpoint profile already changed!", exception);
+        }
     }
 
     @Override
@@ -216,7 +228,7 @@ public class EndpointProfileMongoDao extends AbstractMongoDao<MongoEndpointProfi
         updateFirst(
                 query(where(EP_ENDPOINT_KEY_HASH).is(keyHash)),
                 update(EP_SERVER_PROFILE_PROPERTY, serverProfile)
-                .set(EP_SERVER_PROFILE_VERSION_PROPERTY, version));
+                        .set(EP_SERVER_PROFILE_VERSION_PROPERTY, version));
         return findById(ByteBuffer.wrap(keyHash));
     }
 }

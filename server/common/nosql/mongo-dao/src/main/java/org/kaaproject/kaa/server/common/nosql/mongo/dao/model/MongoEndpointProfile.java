@@ -392,6 +392,14 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         this.sdkToken = sdkToken;
     }
 
+    public Long getOptVersion() {
+        return optVersion;
+    }
+
+    public void setOptVersion(Long optVersion) {
+        this.optVersion = optVersion;
+    }
+
     @Override
     public String getServerProfile() {
         return serverProfile;
