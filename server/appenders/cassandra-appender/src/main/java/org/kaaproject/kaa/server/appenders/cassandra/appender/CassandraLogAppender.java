@@ -39,6 +39,7 @@ import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryCallback;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
 import org.kaaproject.kaa.server.common.log.shared.appender.data.BaseLogEventPack;
+import org.kaaproject.kaa.server.common.log.shared.appender.data.ProfileInfo;
 import org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,6 +101,25 @@ public class CassandraLogAppender extends AbstractLogAppender<CassandraConfig> {
                         LOG.debug("[{}] appending {} logs to cassandra collection", tableName, logEventPack.getEvents().size());
                         GenericAvroConverter<GenericRecord> eventConverter = getConverter(logEventPack.getLogSchema().getSchema());
                         GenericAvroConverter<GenericRecord> headerConverter = getConverter(header.getSchema().toString());
+                        
+                        // Get client profile data
+                        GenericAvroConverter<GenericRecord> clientProfileConverter = null;
+                        String clientProfileJson = null;
+                        ProfileInfo clientProfile = logEventPack.getClientProfile();
+                        if (clientProfile != null) {
+                            clientProfileConverter = getConverter(clientProfile.getSchema());
+                            clientProfileJson = clientProfile.getBody();
+                        }
+
+                        // Get server profile data
+                        GenericAvroConverter<GenericRecord> serverProfileConverter = null;
+                        String serverProfileJson = null;
+                        ProfileInfo serverProfile = logEventPack.getServerProfile();
+                        if (serverProfile != null) {
+                            serverProfileConverter = getConverter(serverProfile.getSchema());
+                            serverProfileJson = serverProfile.getBody();
+                        }
+
                         List<CassandraLogEventDto> dtoList = generateCassandraLogEvent(logEventPack, header, eventConverter);
                         LOG.debug("[{}] saving {} objects", tableName, dtoList.size());
                         if (!dtoList.isEmpty()) {
@@ -108,11 +128,12 @@ public class CassandraLogAppender extends AbstractLogAppender<CassandraConfig> {
                             switch (executeRequestType) {
                                 case ASYNC:
                                     ListenableFuture<ResultSet> result = logEventDao.saveAsync(dtoList, tableName, eventConverter,
-                                            headerConverter);
+                                            headerConverter, clientProfileConverter, serverProfileConverter, clientProfileJson, serverProfileJson);
                                     Futures.addCallback(result, new Callback(listener, cassandraSuccessLogCount, cassandraFailureLogCount, logCount), callbackExecutor);
                                     break;
                                 case SYNC:
-                                    logEventDao.save(dtoList, tableName, eventConverter, headerConverter);
+                                    logEventDao.save(dtoList, tableName, eventConverter, headerConverter,
+                                            clientProfileConverter, serverProfileConverter, clientProfileJson, serverProfileJson);
                                     listener.onSuccess();
                                     cassandraSuccessLogCount.getAndAdd(logCount);
                                     break;

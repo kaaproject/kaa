@@ -30,10 +30,14 @@ public interface LogEventDao {
     String createTable(String collectionName);
 
     List<CassandraLogEventDto> save(List<CassandraLogEventDto> logEventDtoList, String collectionName,
-            GenericAvroConverter<GenericRecord> eventConverter, GenericAvroConverter<GenericRecord> headerConverter) throws IOException;
+            GenericAvroConverter<GenericRecord> eventConverter, GenericAvroConverter<GenericRecord> headerConverter,
+            GenericAvroConverter<GenericRecord> clientProfileConverter, GenericAvroConverter<GenericRecord> serverProfileConverter,
+            String clientProfileJson, String serverProfileJson) throws IOException;
 
     ListenableFuture<ResultSet> saveAsync(List<CassandraLogEventDto> logEventDtoList, String collectionName,
-            GenericAvroConverter<GenericRecord> eventConverter, GenericAvroConverter<GenericRecord> headerConverter) throws IOException;
+            GenericAvroConverter<GenericRecord> eventConverter, GenericAvroConverter<GenericRecord> headerConverter,
+            GenericAvroConverter<GenericRecord> clientProfileConverter, GenericAvroConverter<GenericRecord> serverProfileConverter,
+            String clientProfileJson, String serverProfileJson) throws IOException;
 
     void removeAll(String collectionName);
 

@@ -53,6 +53,7 @@ public class EndpointGroupViewImpl extends BaseDetailsViewImpl implements Endpoi
     private SizedTextBox createdDateTime;
     private SizedTextBox endpointCount;
 
+    private Label profileFiltersLabel;
     private CheckBox includeDeprecatedProfileFilters;
     private ProfileFilterStructGrid profileFiltersGrid;
     private CheckBox includeDeprecatedConfigurations;
@@ -141,7 +142,7 @@ public class EndpointGroupViewImpl extends BaseDetailsViewImpl implements Endpoi
 
         profileFiltersGrid = new ProfileFilterStructGrid();
         profileFiltersGrid.setSize("700px", "200px");
-        Label profileFiltersLabel = new Label(Utils.constants.profileFilters());
+        profileFiltersLabel = new Label(Utils.constants.profileFilters());
         profileFiltersLabel.addStyleName(Utils.kaaAdminStyle.bAppContentTitleLabel());
         includeDeprecatedProfileFilters = new CheckBox(Utils.constants.includeDeprecated());
         setCheckBoxStyle(includeDeprecatedProfileFilters);
@@ -340,6 +341,14 @@ public class EndpointGroupViewImpl extends BaseDetailsViewImpl implements Endpoi
     @Override
     public HasValue<Boolean> getIncludeDeprecatedConfigurations() {
         return includeDeprecatedConfigurations;
+    }
+
+    @Override
+    public void setProfileFiltersVisible(boolean visible) {
+        profileFiltersLabel.setVisible(visible);
+        includeDeprecatedProfileFilters.setVisible(visible);
+        profileFiltersGrid.setVisible(visible);
+        addProfileFilterButton.setVisible(visible);
     }
 
 }

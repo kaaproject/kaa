@@ -41,6 +41,8 @@ public interface EndpointGroupView extends BaseDetailsView {
     public HasValue<String> getEndpointCount();
 
     public ProfileFilterStructGrid getProfileFiltersGrid();
+    
+    public void setProfileFiltersVisible(boolean visible);
 
     public ConfigurationStructGrid getConfigurationsGrid();
 

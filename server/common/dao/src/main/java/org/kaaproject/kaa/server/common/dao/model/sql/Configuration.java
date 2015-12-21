@@ -154,6 +154,7 @@ public final class Configuration extends AbstractStructure<ConfigurationDto> imp
         ConfigurationDto dto = super.toDto();
         dto.setBody(binaryToString(configurationBody));
         dto.setSchemaId(ModelUtils.getStringId(configurationSchema.getId()));
+        dto.setSchemaVersion(schemaVersion);
         dto.setProtocolSchema(configurationSchema != null ? configurationSchema.getProtocolSchema() : null);
         return dto;
     }

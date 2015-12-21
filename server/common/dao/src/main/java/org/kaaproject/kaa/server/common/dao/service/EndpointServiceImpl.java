@@ -283,7 +283,7 @@ public class EndpointServiceImpl implements EndpointService {
             CTLSchemaDto schemaDto = ctlService.findCTLSchemaById(serverProfileSchemaDto.getCtlSchemaId());
             LOG.debug("Set latest server profile schema [{}] and default record {} for endpoint with key [{}]", serverProfileSchemaDto.getVersion(), schemaDto.getBody(), keyHash);
             endpointProfileDto.setServerProfileVersion(serverProfileSchemaDto.getVersion());
-            endpointProfileDto.setServerProfileBody(schemaDto.getBody());
+            endpointProfileDto.setServerProfileBody(schemaDto.getDefaultRecord());
         }
         if (isBlank(endpointProfileDto.getId())) {
             EndpointProfile storedProfile = endpointProfileDao.findEndpointIdByKeyHash(keyHash);

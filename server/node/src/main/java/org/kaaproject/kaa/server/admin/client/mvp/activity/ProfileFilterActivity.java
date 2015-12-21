@@ -18,7 +18,9 @@ package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
@@ -110,7 +112,7 @@ public class ProfileFilterActivity extends AbstractRecordActivity<ProfileFilterD
     }
     
     private List<VersionDto> extractEndpointProfileVersions(VersionDto serverProfileVersion) {
-        List<VersionDto> endpointProfileVersions = new ArrayList<>();
+        Set<VersionDto> endpointProfileVersions = new HashSet<>();
         if (profileVersionPairs != null) {
             for (ProfileVersionPairDto profileVersionPair : profileVersionPairs) {
                 if (serverProfileVersion == null || 
@@ -124,12 +126,13 @@ public class ProfileFilterActivity extends AbstractRecordActivity<ProfileFilterD
                 }
             }
         }
-        Collections.sort(endpointProfileVersions);
-        return endpointProfileVersions;
+        List<VersionDto> endpointProfileVersionsList = new ArrayList<>(endpointProfileVersions);
+        Collections.sort(endpointProfileVersionsList);
+        return endpointProfileVersionsList;
     }
     
     private List<VersionDto> extractServerProfileVersions(VersionDto endpointProfileVersion) {
-        List<VersionDto> serverProfileVersions = new ArrayList<>();
+        Set<VersionDto> serverProfileVersions = new HashSet<>();
         if (profileVersionPairs != null) {
             for (ProfileVersionPairDto profileVersionPair : profileVersionPairs) {
                 if (endpointProfileVersion == null || 
@@ -143,8 +146,9 @@ public class ProfileFilterActivity extends AbstractRecordActivity<ProfileFilterD
                 }
             }
         }
-        Collections.sort(serverProfileVersions);
-        return serverProfileVersions;
+        List<VersionDto> serverProfileVersionsList = new ArrayList<>(serverProfileVersions);
+        Collections.sort(serverProfileVersionsList);
+        return serverProfileVersionsList;
     }
     
     @Override

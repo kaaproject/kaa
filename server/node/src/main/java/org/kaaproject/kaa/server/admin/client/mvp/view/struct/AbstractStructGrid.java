@@ -42,16 +42,7 @@ public abstract class AbstractStructGrid<R extends AbstractStructureDto, T exten
                         return item.getDescription();
                     }
                 }, 160);
-
-        prefWidth += constructStringColumn(table,
-                Utils.constants.numberOfEps(),
-                new StringValueProvider<T>() {
-                    @Override
-                    public String getValue(T item) {
-                        return item.getEndpointCount() + "";
-                    }
-                }, 80);
-
+        
         prefWidth += constructBooleanColumn(table,
                 Utils.constants.active(),
                 new BooleanValueProvider<T>() {
