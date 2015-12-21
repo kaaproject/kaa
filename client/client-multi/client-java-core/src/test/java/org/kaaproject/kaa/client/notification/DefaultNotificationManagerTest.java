@@ -49,8 +49,6 @@ public class DefaultNotificationManagerTest {
     
     private static ExecutorContext executorContext;
     private static ExecutorService executor;
-
-    private static final String workDir = "work_dir" + System.getProperty("file.separator");
     
     @BeforeClass
     public static void beforeSuite(){
@@ -117,7 +115,7 @@ public class DefaultNotificationManagerTest {
 
         Assert.assertTrue(newNotificationManager.getTopics().size() == topics.size());
 
-        boolean deleted = new File(workDir + props.getProperty("state.file_name")).delete();
+        boolean deleted = new File(props.getProperty("state.file_location")).delete();
         Assert.assertTrue(deleted);
     }
 
