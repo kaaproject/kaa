@@ -162,8 +162,9 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
         if (context.getProperties() != null) {
             this.properties = context.getProperties();
         } else {
-            this.properties = new KaaClientProperties(context.getBase64());
+            this.properties = new KaaClientProperties();
         }
+        this.properties.setBase64(context.getBase64());
 
         Map<TransportProtocolId, List<TransportConnectionInfo>> bootstrapServers = this.properties.getBootstrapServers();
         if (bootstrapServers == null || bootstrapServers.isEmpty()) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.client;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.security.MessageDigest;
@@ -39,6 +40,8 @@ import org.kaaproject.kaa.common.endpoint.gen.ProtocolVersionPair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.kaaproject.kaa.client.util.Utils.isBlank;
+
 /**
  * Service class to store base endpoint configuration
  */
@@ -59,26 +62,37 @@ public class KaaClientProperties extends Properties {
     public static final String CONFIG_DATA_DEFAULT = "config.data.default";
     public static final String CONFIG_SCHEMA_DEFAULT = "config.schema.default";
     public static final String SDK_TOKEN = "sdk_token";
+    public static final String WORKING_DIR_PROPERTY = "kaa.work_dir";
+    public static final String FILE_SEPARATOR = File.separator;
+    public static final String WORKING_DIR_DEFAULT = "." + FILE_SEPARATOR;
+    public static final String STATE_FILE_NAME_DEFAULT = "state.properties";
+    public static final String CLIENT_PRIVATE_KEY_NAME_DEFAULT = "key.private";
+    public static final String CLIENT_PUBLIC_KEY_NAME_DEFAULT = "key.public";
+    public static final String STATE_FILE_NAME_PROPERTY = "state.file_name";
+    public static final String CLIENT_PRIVATE_KEY_FILE_NAME_PROPERTY = "keys.private_name";
+    public static final String CLIENT_PUBLIC_KEY_FILE_NAME_PROPERTY = "keys.public_name";
 
     private static final String PROPERTIES_HASH_ALGORITHM = "SHA";
 
-    private final Base64 base64;  
+    private Base64 base64;
 
     private byte[] propertiesHash;
-    
-    public KaaClientProperties(Base64 base64, Properties properties) {
+
+    public KaaClientProperties() throws IOException {
+        super(loadProperties(null));
+    }
+
+    public KaaClientProperties(String propertiesLocation) throws IOException {
+        super(loadProperties(propertiesLocation));
+    }
+
+    public KaaClientProperties(Properties properties) {
         super(properties);
-        this.base64 = base64;
     }
 
-    public KaaClientProperties(Base64 base64) throws IOException {
-        super(loadProperties());
-        this.base64 = base64;
-    }
-
-    private static Properties loadProperties() throws IOException {
+    private static Properties loadProperties(String propsLocation) throws IOException {
         Properties properties = null;
-        String propertiesLocation = DEFAULT_CLIENT_PROPERTIES;
+        String propertiesLocation =  isBlank(propsLocation) ? DEFAULT_CLIENT_PROPERTIES : propsLocation;
         if (System.getProperty(KAA_CLIENT_PROPERTIES_FILE) != null) {
             propertiesLocation = System.getProperty(KAA_CLIENT_PROPERTIES_FILE);
         }
@@ -157,7 +171,7 @@ public class KaaClientProperties extends Properties {
                 ProtocolMetaData md = new ProtocolMetaData();
                 md.setAccessPointId(Integer.valueOf(tokens[0]));
                 md.setProtocolVersionInfo(new ProtocolVersionPair(Integer.valueOf(tokens[1]), Integer.valueOf(tokens[2])));
-                md.setConnectionInfo(ByteBuffer.wrap(base64.decodeBase64(tokens[3])));
+                md.setConnectionInfo(ByteBuffer.wrap(getBase64().decodeBase64(tokens[3])));
                 TransportProtocolId key = new TransportProtocolId(md.getProtocolVersionInfo().getId(), md.getProtocolVersionInfo()
                         .getVersion());
                 List<TransportConnectionInfo> serverList = servers.get(key);
@@ -173,12 +187,82 @@ public class KaaClientProperties extends Properties {
 
     public byte[] getDefaultConfigData() {
         String config = getProperty(KaaClientProperties.CONFIG_DATA_DEFAULT);
-        return (config != null) ? base64.decodeBase64(config.getBytes(Charsets.UTF_8)) : null;
+        return (config != null) ? getBase64().decodeBase64(config.getBytes(Charsets.UTF_8)) : null;
     }
 
     public byte[] getDefaultConfigSchema() {
         String schema = getProperty(KaaClientProperties.CONFIG_SCHEMA_DEFAULT);
         return (schema != null) ? schema.getBytes(Charsets.UTF_8) : null;
+    }
+
+    public Base64 getBase64() {
+        return base64;
+    }
+
+    public void setBase64(Base64 base64) {
+        this.base64 = base64;
+    }
+
+    public String getWorkingDirectory() {
+        String workingDir = getProperty(WORKING_DIR_PROPERTY);
+        return isBlank(workingDir) ? WORKING_DIR_DEFAULT : checkDir(workingDir);
+    }
+
+    public void setWorkingDirectory(String workDir) {
+        checkNotBlankProperty(workDir, "Working directory folder name couldn't be blank");
+        setProperty(WORKING_DIR_PROPERTY, checkDir(workDir));
+    }
+
+    private String checkDir(String workDir) {
+        return workDir.endsWith(FILE_SEPARATOR) ? workDir : workDir + FILE_SEPARATOR;
+    }
+
+    public String getStateFileName() {
+        String stateFileName = getProperty(STATE_FILE_NAME_PROPERTY);
+        return isBlank(stateFileName) ? STATE_FILE_NAME_DEFAULT : stateFileName;
+    }
+
+    public String getStateFileFullName() {
+        return getWorkingDirectory() + getStateFileName();
+    }
+
+    public void setStateFileName(String fileName) {
+        checkNotBlankProperty(fileName, "State file name couldn't be blank");
+        setProperty(STATE_FILE_NAME_PROPERTY, fileName);
+    }
+
+    public String getPublicKeyFileName() {
+        String privateKeyName = getProperty(CLIENT_PUBLIC_KEY_FILE_NAME_PROPERTY);
+        return isBlank(privateKeyName) ? CLIENT_PRIVATE_KEY_NAME_DEFAULT : privateKeyName;
+    }
+
+    public String getPublicKeyFileFullName() {
+        return getWorkingDirectory() + getPublicKeyFileName();
+    }
+
+    public void setPublicKeyFileName(String fileName) {
+        checkNotBlankProperty(fileName, "Public key file name couldn't be blank");
+        setProperty(CLIENT_PUBLIC_KEY_FILE_NAME_PROPERTY, fileName);
+    }
+
+    public String getPrivateKeyFileName() {
+        String publicKeyName = getProperty(CLIENT_PRIVATE_KEY_FILE_NAME_PROPERTY);
+        return isBlank(publicKeyName) ? CLIENT_PUBLIC_KEY_NAME_DEFAULT : publicKeyName;
+    }
+
+    public String getPrivateKeyFileFullName() {
+        return getWorkingDirectory() + getPrivateKeyFileName();
+    }
+
+    public void setPrivateKeyFileName(String fileName) {
+        checkNotBlankProperty(fileName, "Private key file name couldn't be blank");
+        setProperty(CLIENT_PRIVATE_KEY_FILE_NAME_PROPERTY, fileName);
+    }
+
+    private static void checkNotBlankProperty(String fileName, String errorMessage) {
+        if (isBlank(fileName)) {
+            throw new IllegalArgumentException(errorMessage);
+        }
     }
 
 }

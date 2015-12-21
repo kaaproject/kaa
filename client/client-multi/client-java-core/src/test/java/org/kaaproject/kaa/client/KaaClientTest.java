@@ -128,11 +128,11 @@ public class KaaClientTest {
 
     protected void initStorageMock(PersistentStorage storage) throws NoSuchAlgorithmException, IOException {
         KeyPair kp = KeyUtil.generateKeyPair();
-        Mockito.when(storage.exists(KaaClientPropertiesState.CLIENT_PUBLIC_KEY_DEFAULT)).thenReturn(true);
-        Mockito.when(storage.exists(KaaClientPropertiesState.CLIENT_PRIVATE_KEY_DEFAULT)).thenReturn(true);
-        Mockito.when(storage.openForRead(KaaClientPropertiesState.CLIENT_PUBLIC_KEY_DEFAULT)).thenReturn(
+        Mockito.when(storage.exists(KaaClientProperties.CLIENT_PUBLIC_KEY_NAME_DEFAULT)).thenReturn(true);
+        Mockito.when(storage.exists(KaaClientProperties.CLIENT_PRIVATE_KEY_NAME_DEFAULT)).thenReturn(true);
+        Mockito.when(storage.openForRead(KaaClientProperties.CLIENT_PUBLIC_KEY_NAME_DEFAULT)).thenReturn(
                 new ByteArrayInputStream(kp.getPublic().getEncoded()));
-        Mockito.when(storage.openForRead(KaaClientPropertiesState.CLIENT_PRIVATE_KEY_DEFAULT)).thenReturn(
+        Mockito.when(storage.openForRead(KaaClientProperties.CLIENT_PRIVATE_KEY_NAME_DEFAULT)).thenReturn(
                 new ByteArrayInputStream(kp.getPrivate().getEncoded()));
         Mockito.when(storage.openForWrite(Mockito.anyString())).thenReturn(Mockito.mock(OutputStream.class));
     }
