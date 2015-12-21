@@ -71,14 +71,6 @@ public class KaaClientPropertiesState implements KaaClientState {
     private static final String IS_REGISTERED = "is_registered";
     private static final String IS_ATTACHED = "is_attached";
 
-    public static final String STATE_FILE_LOCATION = "state.file_location";
-    public static final String CLIENT_PRIVATE_KEY_FILE_LOCATION = "keys.private";
-    public static final String CLIENT_PUBLIC_KEY_FILE_LOCATION = "keys.public";
-
-    public static final String STATE_FILE_DEFAULT = "state.properties";
-    public static final String CLIENT_PRIVATE_KEY_DEFAULT = "key.private";
-    public static final String CLIENT_PUBLIC_KEY_DEFAULT = "key.public";
-
     private static final String EVENT_SEQ_NUM = "event.seq.num";
 
     private static final String PROPERTIES_HASH = "properties.hash";
@@ -101,13 +93,14 @@ public class KaaClientPropertiesState implements KaaClientState {
         super();
         this.storage = storage;
         this.base64 = base64;
-        stateFileLocation = properties.containsKey(STATE_FILE_LOCATION) ? properties.getProperty(STATE_FILE_LOCATION) : STATE_FILE_DEFAULT;
 
-        clientPrivateKeyFileLocation = properties.containsKey(CLIENT_PRIVATE_KEY_FILE_LOCATION) ? properties
-                .getProperty(CLIENT_PRIVATE_KEY_FILE_LOCATION) : CLIENT_PRIVATE_KEY_DEFAULT;
+        properties.setBase64(base64);
 
-        clientPublicKeyFileLocation = properties.containsKey(CLIENT_PUBLIC_KEY_FILE_LOCATION) ? properties
-                .getProperty(CLIENT_PUBLIC_KEY_FILE_LOCATION) : CLIENT_PUBLIC_KEY_DEFAULT;
+        stateFileLocation = properties.getStateFileFullName();
+
+        clientPrivateKeyFileLocation = properties.getPrivateKeyFileFullName();
+
+        clientPublicKeyFileLocation = properties.getPublicKeyFileFullName();
 
         LOG.info("Version: '{}', commit hash: '{}'", properties.getBuildVersion(), properties.getCommitHash());
 
