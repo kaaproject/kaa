@@ -6,7 +6,7 @@ import org.kaaproject.kaa.server.common.core.plugin.generator.common.PluginImple
 
 public interface MessagingPluginImplementationBuilder extends PluginImplementationBuilder {
 
-    MessagingPluginImplementationBuilder withMethodConstant(String method, int id);
+    MessagingPluginImplementationBuilder withMethodConstant(String method, String[] paramTypes, int id);
 
     MessagingPluginImplementationBuilder withMethodListener(String name, String type);
 

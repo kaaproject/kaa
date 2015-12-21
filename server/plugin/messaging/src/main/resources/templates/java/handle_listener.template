@@ -1,0 +1,28 @@
+
+    context.getCallbackExecutor().execute(new Runnable() {
+        @Override
+        public void run() {
+            try {
+                ${rawInputType} requestEntity = ${inputTypeConverter}.get().fromByteArray(msg.getPayload());
+                LOG.debug("Processing {}", requestEntity);
+                if (${outputTypeConverter} != null) {
+                    ${rawOutputType} responseEntity = ${listener}.onEvent(requestEntity);
+                    if (responseEntity != null) {
+                        try {
+                            byte[] payload = ${outputTypeConverter}.get().toByteArray(responseEntity);
+                            pushMsg(new EntityMessage(msg.getUid(), payload, METHOD_${id}_ID));
+                        } catch (IOException e) {
+                            pushMsg(new ErrorMessage(msg.getUid(), METHOD_${id}_ID, ErrorCode.SERIALIZATION_ERROR, e.getMessage()));
+                        }
+                    } else {
+                        pushMsg(new ErrorMessage(msg.getUid(), METHOD_${id}_ID, ErrorCode.NULL_RESPONSE_ERROR));
+                    }
+                } else {
+                    pushMsg(new ErrorMessage(msg.getUid(), METHOD_${id}_ID, ErrorCode.NO_LISTENER_ASSIGNED));
+                }
+            } catch (Exception e) {
+                LOG.error("Failed to process call from server", e);
+                pushMsg(new ErrorMessage(msg.getUid(), METHOD_${id}_ID, ErrorCode.EXECUTION_ERROR, e.getMessage()));
+            }
+        }
+    });

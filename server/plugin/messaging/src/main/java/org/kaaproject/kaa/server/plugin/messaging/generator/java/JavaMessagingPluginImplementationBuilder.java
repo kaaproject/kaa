@@ -24,12 +24,19 @@ public class JavaMessagingPluginImplementationBuilder extends JavaPluginImplemen
     }
 
     @Override
-    public MessagingPluginImplementationBuilder withMethodConstant(String method, int id) {
+    public MessagingPluginImplementationBuilder withMethodConstant(String method, String[] paramTypes, int id) {
 
-        String body = "/** Auto-generated constant for method {@link #" + null + "} */" + System.lineSeparator();
-        body += new JavaConstant("METHOD_" + Integer.toString(id) + "_ID", "short", Integer.toString(id), new String[] { "private", "final" });
+        StringBuilder body = new StringBuilder();
+        body.append("/** Auto-generated constant for method {@link #").append(method).append("(");
+        for (int i = 0; i < paramTypes.length; i++) {
+            if (paramTypes[i] != null && !paramTypes[i].isEmpty()) {
+                body.append(i > 0 ? ", " : "").append(paramTypes[i]);
+            }
+        }
+        body.append(")}\n");
+        body.append(new JavaConstant("METHOD_" + Integer.toString(id) + "_ID", "short", Integer.toString(id), new String[] { "private", "final" }));
 
-        this.addEntity(new SimpleGeneratorEntity(TemplateVariable.CONSTANTS, body, true, 5));
+        this.addEntity(new SimpleGeneratorEntity(TemplateVariable.CONSTANTS, body.toString(), true, 1));
         return this;
     }
 
@@ -48,7 +55,6 @@ public class JavaMessagingPluginImplementationBuilder extends JavaPluginImplemen
         body = body.replace("${type}", type);
 
         this.addEntity(new SimpleGeneratorEntity(TemplateVariable.FIELDS, body, false, 1));
-
         return this;
     }
 
@@ -58,10 +64,10 @@ public class JavaMessagingPluginImplementationBuilder extends JavaPluginImplemen
         Map<String, String> params = new LinkedHashMap<>();
         params.put("msg", "PayloadMessage");
 
-        String template = "if (msg.getMethodId() == METHOD_%d_ID) { %s(msg); }";
+        String template = "\nif (msg.getMethodId() == METHOD_%d_ID) { handleMethod%dMsg(msg); }";
 
         StringBuilder buffer = new StringBuilder();
-        handlersMapping.forEach((method, id) -> buffer.append(String.format(template, id, method)));
+        handlersMapping.forEach((method, id) -> buffer.append(String.format(template, id, id)));
 
         this.addEntity(new JavaMethod("handleEntityMsg", null, params, new String[] { "protected" }, buffer.toString(), null));
         return this;
@@ -73,10 +79,10 @@ public class JavaMessagingPluginImplementationBuilder extends JavaPluginImplemen
         Map<String, String> params = new LinkedHashMap<>();
         params.put("msg", "PayloadMessage");
 
-        String template = "if (msg.getMethodId() == METHOD_%d_ID) { %s(msg.getUid()); }";
+        String template = "\nif (msg.getMethodId() == METHOD_%d_ID) { handleMethod%dVoid(msg.getUid()); }";
 
         StringBuilder buffer = new StringBuilder();
-        handlersMapping.forEach((method, id) -> buffer.append(String.format(template, id, method)));
+        handlersMapping.forEach((method, id) -> buffer.append(String.format(template, id, id)));
 
         this.addEntity(new JavaMethod("handleVoidMsg", null, params, new String[] { "protected" }, buffer.toString(), null));
         return this;
@@ -90,7 +96,7 @@ public class JavaMessagingPluginImplementationBuilder extends JavaPluginImplemen
 
     public static void main(String[] args) {
         Object builder = new JavaMessagingPluginImplementationBuilder("MessagingPlugin", "org.kaaproject.kaa.plugin.messaging");
-        builder = ((JavaMessagingPluginImplementationBuilder) builder).withMethodConstant("setMethodListener", 1);
+        builder = ((JavaMessagingPluginImplementationBuilder) builder).withMethodConstant("setMethodListener", new String[] {}, 1);
         builder = ((JavaMessagingPluginImplementationBuilder) builder).withMethodListener("listener", "MethodListener");
         builder = ((JavaMessagingPluginImplementationBuilder) builder).withEntityConverter("entity3Converter", "ClassB");
 

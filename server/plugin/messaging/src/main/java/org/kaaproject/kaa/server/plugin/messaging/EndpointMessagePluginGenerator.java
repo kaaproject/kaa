@@ -58,6 +58,7 @@ public class EndpointMessagePluginGenerator extends AbstractSdkApiGenerator<Conf
     private Map<String, Integer> entityMethodConstants = new LinkedHashMap<>();
     private Map<String, Integer> voidMethodConstants = new LinkedHashMap<>();
     private Map<String, String> entityConverters = new HashMap<>();
+    private Map<String, String> methodListeners = new LinkedHashMap<>();
 
     @Override
     public Class<Configuration> getConfigurationClass() {
@@ -161,53 +162,131 @@ public class EndpointMessagePluginGenerator extends AbstractSdkApiGenerator<Conf
                         AvroByteArrayConverter<ItemConfiguration> converter = new AvroByteArrayConverter<>(ItemConfiguration.class);
                         name = converter.fromByteArray(item.getConfigurationData()).getMethodName();
                     } catch (IOException cause) {
-                        throw new RuntimeException(cause);
                     }
 
-                    String inputType = null;
+                    String rawInputType = null;
                     try {
-                        inputType = new Schema.Parser().parse(item.getInMessageSchema()).getFullName();
-                        if (!this.entityConverters.containsKey(inputType)) {
-                            String entityConverterName = "entity" + Integer.toString(this.entityConverters.size() + 1) + "Converter";
-                            this.entityConverters.put(inputType, entityConverterName);
-                            this.implementationBuilder.withEntityConverter(entityConverterName, inputType);
+                        rawInputType = new Schema.Parser().parse(item.getInMessageSchema()).getFullName();
+                        if (!this.entityConverters.containsKey(rawInputType)) {
+                            String entityConverter = "entity" + Integer.toString(this.entityConverters.size() + 1) + "Converter";
+                            this.entityConverters.put(rawInputType, entityConverter);
+                            this.implementationBuilder.withEntityConverter(entityConverter, rawInputType);
                         }
                     } catch (Exception cause) {
                     }
 
-                    String outputType = null;
+                    String rawOutputType = null;
                     try {
-                        outputType = new Schema.Parser().parse(item.getOutMessageSchema()).getFullName();
-                        if (!this.entityConverters.containsKey(outputType)) {
-                            String entityConverterName = "entity" + Integer.toString(this.entityConverters.size() + 1) + "Converter";
-                            this.entityConverters.put(outputType, entityConverterName);
-                            this.implementationBuilder.withEntityConverter(entityConverterName, outputType);
+                        rawOutputType = new Schema.Parser().parse(item.getOutMessageSchema()).getFullName();
+                        if (!this.entityConverters.containsKey(rawOutputType)) {
+                            String entityConverter = "entity" + Integer.toString(this.entityConverters.size() + 1) + "Converter";
+                            this.entityConverters.put(rawOutputType, entityConverter);
+                            this.implementationBuilder.withEntityConverter(entityConverter, rawOutputType);
                         }
                     } catch (Exception cause) {
                     }
 
                     if (def.equals(SEND_MESSAGE_CONTRACT)) {
 
-                        inputType = (inputType != null) ? inputType : "";
-                        outputType = String.format(outputType != null ? "Future<%s>" : "Future<Void>", outputType);
+                        String wrappedInputType = (rawInputType != null) ? rawInputType : "";
+                        String wrappedOutputType;
+                        Map<String, Integer> constants;
+                        if (rawOutputType != null) {
+                            wrappedOutputType = String.format("Future<%s>", rawOutputType);
+                            constants = this.entityMethodConstants;
+                        } else {
+                            wrappedOutputType = "Future<Void>";
+                            constants = this.voidMethodConstants;
+                        }
 
-                        this.interfaceBuilder.withMethodSignature(name, outputType, new String[] {}, null);
+                        this.interfaceBuilder.withMethodSignature(name, wrappedOutputType, new String[] { wrappedInputType }, null);
+                        constants.put(name, this.entityMethodConstants.size() + this.voidMethodConstants.size() + 1);
+                        this.implementationBuilder.withMethodConstant(name, new String[] { rawInputType }, constants.get(name));
 
-                        // use either handleEntityMsg or handleVoidMsg
+                        Map<String, String> parameters = new LinkedHashMap<>();
+                        parameters.put("param", rawInputType);
+                        Map<String, String> values = new HashMap<>();
+                        values.put("${name}", name);
+                        values.put("${rawInputType}", rawInputType);
+                        values.put("${rawOutputType}", rawOutputType);
+                        values.put("${wrappedInputType}", wrappedInputType);
+                        values.put("${wrappedOutputType}", wrappedOutputType);
+                        values.put("${inputTypeConverter}", this.entityConverters.get(rawInputType));
+                        values.put("${outputTypeConverter}", this.entityConverters.get(rawOutputType));
+                        values.put("${id}", this.entityMethodConstants.getOrDefault(name, this.voidMethodConstants.get(name)).toString());
 
-                        this.entityMethodConstants.put(name, this.entityMethodConstants.size() + 1);
-                        this.implementationBuilder.withMethodConstant(name, this.entityMethodConstants.get(name));
+                        String body;
+                        if (rawOutputType == null || rawOutputType.isEmpty()) {
+                            body = this.readFileAsString("templates/java/send.template");
+                        } else {
+                            if (rawInputType != null && !rawInputType.isEmpty()) {
+                                body = this.readFileAsString("templates/java/receive.template");
+                            } else {
+                                body = this.readFileAsString("templates/java/receive_void.template");
+                            }
+                        }
+
+                        this.implementationBuilder.withMethod(name, wrappedOutputType, parameters, new String[] { "public" }, body, values);
+
+                        if (rawOutputType == null || rawOutputType.isEmpty()) {
+                            parameters = new LinkedHashMap<>();
+                            parameters.put("uid", "final UUID");
+                            body = this.readFileAsString("templates/java/handle_send.template");
+                            this.implementationBuilder.withMethod("handleMethod" + values.get("${id}") + "Void", "void", parameters,
+                                    new String[] { "private" }, body, values);
+                        } else {
+                            parameters = new LinkedHashMap<>();
+                            parameters.put("msg", "final PayloadMessage");
+                            body = this.readFileAsString("templates/java/handle_receive.template");
+                            this.implementationBuilder.withMethod("handleMethod" + values.get("${id}") + "Msg", "void", parameters, new String[] { "private" },
+                                    body, values);
+                        }
 
                     } else if (def.equals(RECEIVE_MESSAGE_CONTRACT)) {
-                        Map<String, String> parameters = new LinkedHashMap<>();
-                        parameters.put("listener", "PLACEHOLDER");
-                        this.interfaceBuilder.withMethodSignature(name, "void", parameters, null);
-                        this.voidMethodConstants.put(name, this.voidMethodConstants.size() + 1);
-                        this.implementationBuilder.withMethodConstant(name, this.voidMethodConstants.get(name));
+
+                        Map<String, Integer> constants = (rawInputType != null) ? this.entityMethodConstants : this.voidMethodConstants;
+
+                        String propertyName = "method" + (this.methodListeners.size() + 1) + "Listener";
+                        String propertyType = "Method" + (this.methodListeners.size() + 1) + "Listener";
+                        this.methodListeners.put(propertyType, propertyName);
+                        this.implementationBuilder.withMethodListener(propertyName, propertyType);
+
+                        this.interfaceBuilder.withMethodSignature(name, "void", new String[] { propertyType }, null);
+                        constants.put(name, this.entityMethodConstants.size() + this.voidMethodConstants.size() + 1);
+                        this.implementationBuilder.withMethodConstant(name, new String[] { propertyType }, constants.get(name));
+
+                        JavaPluginInterfaceBuilder listenerInterface = new JavaPluginInterfaceBuilder(propertyType, namespace,
+                                this.readFileAsString("templates/java/listenerClass.template"));
+                        listenerInterface.withMethodSignature("onEvent", rawOutputType, new String[] { rawInputType }, null);
+                        files.add(listenerInterface.build());
+
+                        Map<String, String> values = new HashMap<>();
+                        values.put("${name}", name);
+                        values.put("${rawInputType}", rawInputType);
+                        values.put("${rawOutputType}", rawOutputType);
+                        values.put("${inputTypeConverter}", this.entityConverters.get(rawInputType));
+                        values.put("${outputTypeConverter}", this.entityConverters.get(rawOutputType));
+                        values.put("${id}", this.entityMethodConstants.getOrDefault(name, this.voidMethodConstants.get(name)).toString());
+                        values.put("${listener}", propertyName);
+
+                        if (rawInputType == null || rawInputType.isEmpty()) {
+                            Map<String, String> parameters = new LinkedHashMap<>();
+                            parameters.put("uid", "final UUID");
+                            String body = this.readFileAsString("templates/java/handle_listener_void.template");
+                            this.implementationBuilder.withMethod("handleMethod" + values.get("${id}") + "Void", "void", parameters,
+                                    new String[] { "private" }, body, values);
+                        } else {
+                            Map<String, String> parameters = new LinkedHashMap<>();
+                            parameters.put("msg", "final PayloadMessage");
+                            String body = this.readFileAsString("templates/java/handle_listener.template");
+                            this.implementationBuilder.withMethod("handleMethod" + values.get("${id}") + "Msg", "void", parameters, new String[] { "private" },
+                                    body, values);
+                        }
 
                     } else {
                         throw new RuntimeException();
                     }
+
                 }
             }
         }
@@ -217,6 +296,7 @@ public class EndpointMessagePluginGenerator extends AbstractSdkApiGenerator<Conf
 
         files.add(this.interfaceBuilder.build());
         files.add(this.implementationBuilder.build());
+
         return new PluginSDKApiBundle(files);
     }
 }

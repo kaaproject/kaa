@@ -36,7 +36,7 @@ public class JavaMethodSignature implements MethodSignature {
         this.returnType = (returnType == null || returnType.isEmpty()) ? "void" : returnType;
         if (params != null) {
             params.forEach((paramName, paramType) -> {
-                if (paramType != null) {
+                if (paramType != null && !paramType.isEmpty()) {
                     this.params.put(paramName, paramType);
                 }
             });
@@ -49,7 +49,11 @@ public class JavaMethodSignature implements MethodSignature {
     public JavaMethodSignature(String name, String returnType, String[] paramTypes, String[] modifiers) {
         this(name, returnType, new LinkedHashMap<>(), modifiers);
         if (paramTypes != null) {
-            Arrays.asList(paramTypes).forEach(paramType -> this.params.put(this.generator.get(), paramType));
+            Arrays.asList(paramTypes).forEach(paramType -> {
+                if (paramType != null && !paramType.isEmpty()) {
+                    this.params.put(this.generator.get(), paramType);
+                }
+            });
         }
     }
 

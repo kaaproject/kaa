@@ -16,7 +16,12 @@
 
 package org.kaaproject.kaa.server.common.core.plugin.generator.common;
 
+import java.util.Map;
+
 public interface PluginImplementationBuilder extends PluginFileBuilder<PluginImplementationBuilder> {
 
     PluginImplementationBuilder withProperty(String name, String type, String... modifiers);
+
+    PluginImplementationBuilder withMethod(String name, String returnType, Map<String, String> params, String[] modifiers, String body,
+            Map<String, String> values);
 }

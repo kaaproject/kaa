@@ -1,5 +1,7 @@
 package org.kaaproject.kaa.server.common.core.plugin.generator.java;
 
+import java.util.Map;
+
 import org.kaaproject.kaa.server.common.core.plugin.def.SdkApiFile;
 import org.kaaproject.kaa.server.common.core.plugin.generator.common.PluginBuilderCore;
 import org.kaaproject.kaa.server.common.core.plugin.generator.common.PluginImplementationBuilder;
@@ -49,6 +51,14 @@ public class JavaPluginImplementationBuilder extends PluginBuilderCore implement
         this.addEntity(new JavaField(name, type, modifiers));
         this.addEntity(JavaMethod.getter(name, type));
         this.addEntity(JavaMethod.setter(name, type));
+        return this;
+    }
+
+    @Override
+    public JavaPluginImplementationBuilder withMethod(String name, String returnType, Map<String, String> params, String[] modifiers, String body,
+            Map<String, String> values) {
+
+        this.addEntity(new JavaMethod(name, returnType, params, modifiers, body, values));
         return this;
     }
 

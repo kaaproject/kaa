@@ -66,6 +66,11 @@ public class JavaMethod implements Method {
     }
 
     @Override
+    public int emptyLines() {
+        return 1;
+    }
+
+    @Override
     public String toString() {
         return this.getBody();
     }

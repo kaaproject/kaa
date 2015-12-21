@@ -7,7 +7,8 @@ public interface TemplatableGeneratorEntity extends GeneratorEntity {
     default String insertValues(String template, Map<String, String> values) {
         if (values != null) {
             for (String key : values.keySet()) {
-                template = template.replace(key, values.get(key));
+                String replacement = (values.get(key) != null) ? values.get(key) : "<UNDEFINED>";
+                template = template.replace(key, replacement);
             }
         }
         return template;
