@@ -23,9 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
-import java.security.KeyPair;
-import java.security.PrivateKey;
-import java.security.PublicKey;
+import java.security.*;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -279,9 +277,21 @@ public class KaaClientPropertiesState implements KaaClientState {
             try {
                 publicKeyInput = storage.openForRead(clientPublicKeyFileLocation);
                 privateKeyInput = storage.openForRead(clientPrivateKeyFileLocation);
-                kp = new KeyPair(KeyUtil.getPublic(publicKeyInput), KeyUtil.getPrivate(privateKeyInput));
+
+                PublicKey publicKey = KeyUtil.getPublic(publicKeyInput);
+                PrivateKey privateKey = KeyUtil.getPrivate(privateKeyInput);
+
+                if (publicKey != null && privateKey != null) {
+                    kp = new KeyPair(publicKey, privateKey);
+                    if (!KeyUtil.validateKeyPair(kp)) {
+                        throw new InvalidKeyException();
+                    }
+                }
+            } catch (InvalidKeyException e) {
+                kp = null;
+                LOG.error("Unable to parse client RSA keypair. Generating new keys.. Reason {}", e);
             } catch (Exception e) {
-                LOG.error("Error loading Client Private Key", e);
+                LOG.error("Error loading client RSA keypair. Reason {}", e);
                 throw new RuntimeException(e); // NOSONAR
             } finally {
                 IOUtils.closeQuietly(publicKeyInput);
