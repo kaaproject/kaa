@@ -23,6 +23,7 @@ import org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -32,8 +33,10 @@ import java.io.Serializable;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONTRACT_ITEM_CONSTRAINT_NAME;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONTRACT_ITEM_CONTRACT_ID;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONTRACT_ITEM_IN_MESSAGE;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONTRACT_ITEM_IN_MESSAGE_FK;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONTRACT_ITEM_NAME;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONTRACT_ITEM_OUT_MESSAGE;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONTRACT_ITEM_OUT_MESSAGE_FK;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONTRACT_ITEM_TABLE_NAME;
 
 @Entity
@@ -47,16 +50,12 @@ public class ContractItem extends GenericModel<ContractItemDto> implements Seria
     @Column(name = CONTRACT_ITEM_NAME)
     private String name;
 
-    @ManyToOne
-    @JoinColumn(name = CONTRACT_ITEM_CONTRACT_ID)
-    private Contract contract;
-
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = CONTRACT_ITEM_IN_MESSAGE)
+    @JoinColumn(name = CONTRACT_ITEM_IN_MESSAGE, foreignKey = @ForeignKey(name = CONTRACT_ITEM_IN_MESSAGE_FK))
     private ContractMessage inMessage;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = CONTRACT_ITEM_OUT_MESSAGE)
+    @JoinColumn(name = CONTRACT_ITEM_OUT_MESSAGE, foreignKey = @ForeignKey(name = CONTRACT_ITEM_OUT_MESSAGE_FK))
     private ContractMessage outMessage;
 
     public ContractItem() {
@@ -81,14 +80,6 @@ public class ContractItem extends GenericModel<ContractItemDto> implements Seria
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Contract getContract() {
-        return contract;
-    }
-
-    public void setContract(Contract contract) {
-        this.contract = contract;
     }
 
     public ContractMessage getInMessage() {
@@ -133,9 +124,6 @@ public class ContractItem extends GenericModel<ContractItemDto> implements Seria
 
         ContractItem that = (ContractItem) o;
 
-        if (contract != null ? !contract.equals(that.contract) : that.contract != null) {
-            return false;
-        }
         if (inMessage != null ? !inMessage.equals(that.inMessage) : that.inMessage != null) {
             return false;
         }
@@ -152,7 +140,6 @@ public class ContractItem extends GenericModel<ContractItemDto> implements Seria
     @Override
     public int hashCode() {
         int result = name != null ? name.hashCode() : 0;
-        result = 31 * result + (contract != null ? contract.hashCode() : 0);
         result = 31 * result + (inMessage != null ? inMessage.hashCode() : 0);
         result = 31 * result + (outMessage != null ? outMessage.hashCode() : 0);
         return result;

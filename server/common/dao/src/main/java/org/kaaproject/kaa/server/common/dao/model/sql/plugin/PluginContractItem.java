@@ -23,12 +23,14 @@ import org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.io.Serializable;
 
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_ITEM_CONF_SCHEMA;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_ITEM_CONTRACT_ITEM_FK;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_ITEM_CONTRACT_ITEM_ID;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_ITEM_TABLE_NAME;
 
@@ -42,7 +44,8 @@ public class PluginContractItem extends GenericModel<PluginContractItemDto> impl
     private String configSchema;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = PLUGIN_CONTRACT_ITEM_CONTRACT_ITEM_ID, nullable = false)
+    @JoinColumn(name = PLUGIN_CONTRACT_ITEM_CONTRACT_ITEM_ID, nullable = false,
+            foreignKey = @ForeignKey(name = PLUGIN_CONTRACT_ITEM_CONTRACT_ITEM_FK))
     private ContractItem contractItem;
 
     public PluginContractItem() {

@@ -27,6 +27,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -36,9 +37,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_CONTRACT_ID;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_CONTRACT_ID_FK;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_DIRECTION;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_ITEM_PLUGIN_CONTRACT_ID;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_PLUGIN_CONTRACT_ITEM_FK;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_PLUGIN_ID;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_PLUGIN_ID_FK;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_TABLE_NAME;
 
@@ -52,15 +56,15 @@ public class PluginContract extends GenericModel implements Serializable {
     private PluginContractDirection direction;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = PLUGIN_CONTRACT_CONTRACT_ID)
+    @JoinColumn(name = PLUGIN_CONTRACT_CONTRACT_ID, foreignKey = @ForeignKey(name = PLUGIN_CONTRACT_CONTRACT_ID_FK))
     private Contract contract;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = PLUGIN_CONTRACT_PLUGIN_ID)
+    @JoinColumn(name = PLUGIN_CONTRACT_PLUGIN_ID, foreignKey = @ForeignKey(name = PLUGIN_CONTRACT_PLUGIN_ID_FK))
     private Plugin plugin;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = PLUGIN_CONTRACT_ITEM_PLUGIN_CONTRACT_ID)
+    @JoinColumn(name = PLUGIN_CONTRACT_ITEM_PLUGIN_CONTRACT_ID, foreignKey = @ForeignKey(name = PLUGIN_CONTRACT_PLUGIN_CONTRACT_ITEM_FK))
     private Set<PluginContractItem> pluginContractItems = new HashSet<>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = PLUGIN_CONTRACT_PROPERTY)

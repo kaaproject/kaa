@@ -21,19 +21,23 @@ import org.kaaproject.kaa.common.dto.plugin.ContractType;
 import org.kaaproject.kaa.server.common.dao.model.sql.GenericModel;
 import org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONTRACT_CONTRACT_ITEM_FK;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONTRACT_ITEM_CONTRACT_ID;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONTRACT_NAME;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONTRACT_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONTRACT_TABLE_NAME;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONTRACT_TYPE;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONTRACT_VERSION;
@@ -54,8 +58,8 @@ public class Contract extends GenericModel<ContractDto> implements Serializable 
     @Enumerated(value = EnumType.STRING)
     private ContractType type;
 
-    @Column
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = CONTRACT_PROPERTY)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = CONTRACT_ITEM_CONTRACT_ID,  foreignKey = @ForeignKey(name = CONTRACT_CONTRACT_ITEM_FK))
     private Set<ContractItem> contractItems = new HashSet<>();
 
     public Contract() {
