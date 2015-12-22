@@ -25,6 +25,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.io.Serializable;
@@ -40,6 +41,7 @@ public class PluginContractItem extends GenericModel<PluginContractItemDto> impl
 
     private static final long serialVersionUID = 3955110212698259558L;
 
+    @Lob
     @Column(name = PLUGIN_CONTRACT_ITEM_CONF_SCHEMA)
     private String configSchema;
 

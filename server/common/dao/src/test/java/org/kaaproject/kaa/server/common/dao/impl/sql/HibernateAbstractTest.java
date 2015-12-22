@@ -41,6 +41,7 @@ import org.kaaproject.kaa.server.common.dao.impl.ApplicationDao;
 import org.kaaproject.kaa.server.common.dao.impl.ApplicationEventFamilyMapDao;
 import org.kaaproject.kaa.server.common.dao.impl.ConfigurationDao;
 import org.kaaproject.kaa.server.common.dao.impl.ConfigurationSchemaDao;
+import org.kaaproject.kaa.server.common.dao.impl.ContractMessageDao;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointGroupDao;
 import org.kaaproject.kaa.server.common.dao.impl.EventClassDao;
 import org.kaaproject.kaa.server.common.dao.impl.EventClassFamilyDao;
@@ -77,6 +78,7 @@ import org.kaaproject.kaa.server.common.dao.model.sql.Topic;
 import org.kaaproject.kaa.server.common.dao.model.sql.User;
 import org.kaaproject.kaa.server.common.dao.model.sql.UserVerifier;
 import org.kaaproject.kaa.server.common.dao.model.sql.LogAppender;
+import org.kaaproject.kaa.server.common.dao.model.sql.plugin.ContractMessage;
 import org.kaaproject.kaa.server.common.dao.model.sql.plugin.Plugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -127,6 +129,8 @@ public abstract class HibernateAbstractTest {
 
     @Autowired
     protected PluginDao<Plugin> pluginDao;
+    @Autowired
+    protected ContractMessageDao<ContractMessage> contractMessageDao;
 
     protected Tenant generateTenant() {
         LOG.debug("Generate tenant...");

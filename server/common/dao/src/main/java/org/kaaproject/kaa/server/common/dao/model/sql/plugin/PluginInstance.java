@@ -30,6 +30,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -50,6 +51,7 @@ public class PluginInstance extends GenericModel implements Serializable {
 
     private static final long serialVersionUID = 1508341006838633974L;
 
+    @Lob
     @Column(name = PLUGIN_INSTANCE_CONF_DATA)
     private String configData;              // TODO: mb change to byte[] as in the corresponding dto?
 

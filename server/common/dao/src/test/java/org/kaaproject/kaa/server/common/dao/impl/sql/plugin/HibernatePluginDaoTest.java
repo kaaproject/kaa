@@ -53,6 +53,7 @@ public class HibernatePluginDaoTest extends HibernateAbstractTest {
     public void testFindPluginByClassName() {
         PluginDto pluginDto = generatePlugin();
         Plugin p = new Plugin(pluginDto);
+        System.out.println(pluginDto.toString());
         p = pluginDao.save(p);
         Plugin found = pluginDao.findByClassName(CLASS_NAME);
         Assert.assertEquals(pluginDto, found.toDto());
@@ -109,7 +110,7 @@ public class HibernatePluginDaoTest extends HibernateAbstractTest {
         outMessage.setVersion(2);
         outMessage.setFqn("c.d.e");
         contractItemDto.setInMessage(inMessage);
-        contractItemDto.setOutMessage(inMessage);
+        contractItemDto.setOutMessage(outMessage);
         return contractItemDto;
     }
 

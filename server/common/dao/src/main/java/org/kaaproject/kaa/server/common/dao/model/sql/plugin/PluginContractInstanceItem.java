@@ -25,6 +25,7 @@ import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -49,6 +50,7 @@ public class PluginContractInstanceItem extends GenericModel<PluginContractInsta
 
     private static final long serialVersionUID = -9145339406077995951L;
 
+    @Lob
     @Column(name = PLUGIN_CONTRACT_INSTANCE_ITEM_CONF_DATA)
     private String confData;
 

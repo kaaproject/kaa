@@ -23,14 +23,18 @@ import org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import java.io.Serializable;
 
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONTRACT_MESSAGE_FQN;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONTRACT_MESSAGE_FQN_VERSION_CONSTRAINT_NAME;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONTRACT_MESSAGE_TABLE_NAME;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONTRACT_MESSAGE_VERSION;
 
 @Entity
-@Table(name = CONTRACT_MESSAGE_TABLE_NAME)
+@Table(name = CONTRACT_MESSAGE_TABLE_NAME, uniqueConstraints = {
+        @UniqueConstraint(columnNames = {CONTRACT_MESSAGE_FQN, CONTRACT_MESSAGE_VERSION},
+                name = CONTRACT_MESSAGE_FQN_VERSION_CONSTRAINT_NAME)})
 public class ContractMessage extends GenericModel<ContractMessageDto> implements Serializable {
 
     private static final long serialVersionUID = 2122224444729382739L;

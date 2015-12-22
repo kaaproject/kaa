@@ -373,6 +373,8 @@ public class DaoConstants {
     public static final String CONTRACT_MESSAGE_FQN = FQN;
     public static final String CONTRACT_MESSAGE_VERSION = VERSION;
 
+    public static final String CONTRACT_MESSAGE_FQN_VERSION_CONSTRAINT_NAME = "contract_message_fqn_version_constraint";
+
     public static final String CONTRACT_CONTRACT_ITEM_FK = "fk_contract_contract_item";
 
     /**

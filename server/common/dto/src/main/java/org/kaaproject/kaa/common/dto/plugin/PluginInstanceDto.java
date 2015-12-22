@@ -129,7 +129,8 @@ public class PluginInstanceDto implements HasId, Serializable {
         sb.append(", name='").append(name).append('\'');
         sb.append(", state=").append(state);
         sb.append(", configurationData=").append(Arrays.toString(configurationData));
-        sb.append(", pluginDefinition=").append(pluginDefinition.getClassName() != null ? pluginDefinition.getClassName() : null);
+        sb.append(", pluginDefinition=").append((pluginDefinition != null && pluginDefinition.getClassName() != null)
+                ? pluginDefinition.getClassName() : null);
         sb.append(", contracts=").append(contracts);
         sb.append('}');
         return sb.toString();

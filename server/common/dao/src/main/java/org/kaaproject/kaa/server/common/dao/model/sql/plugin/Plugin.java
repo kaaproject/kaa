@@ -28,6 +28,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
+import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -62,6 +63,7 @@ public class Plugin extends GenericModel<PluginDto> implements Serializable {
     @Column(name = PLUGIN_VERSION)
     private Integer version;
 
+    @Lob
     @Column(name = PLUGIN_CONF_SCHEMA)
     private String configSchema;
 
