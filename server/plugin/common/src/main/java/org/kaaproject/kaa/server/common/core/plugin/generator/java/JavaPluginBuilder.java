@@ -20,9 +20,31 @@ import org.kaaproject.kaa.server.common.core.plugin.generator.common.PluginBuild
 import org.kaaproject.kaa.server.common.core.plugin.generator.common.PluginImplementationBuilder;
 import org.kaaproject.kaa.server.common.core.plugin.generator.common.PluginInterfaceBuilder;
 
+/**
+ * A master Java plugin API builder.
+ *
+ * @author Andrew Shvayka
+ * @author Bohdan Khablenko
+ *
+ * @since v1.0.0
+ */
 public interface JavaPluginBuilder extends PluginBuilder {
 
+    /**
+     * Tells the builder to use the given plugin API interface.
+     *
+     * @param interfaceBuilder A plugin API interface builder
+     *
+     * @return A reference to this builder
+     */
     PluginBuilder withInterface(PluginInterfaceBuilder interfaceBuilder);
 
+    /**
+     * Tells the builder to use the given plugin API implementation.
+     *
+     * @param implementationBuilder A plugin API implementation builder
+     *
+     * @return A reference to this builder
+     */
     PluginBuilder withImplementation(PluginImplementationBuilder implementationBuilder);
 }

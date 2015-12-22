@@ -16,10 +16,18 @@
 
 package org.kaaproject.kaa.server.common.core.plugin.generator.common.entity;
 
+/**
+ * A source code constant. A <code>private static final</code> field by default.
+ *
+ * @author Andrew Shvayka
+ * @author Bohdan Khablenko
+ *
+ * @since v1.0.0
+ */
 public interface Constant extends ModifiableGeneratorEntity {
 
     @Override
-    default String getTemplateVariable() {
+    default TemplateVariable getTemplateVariable() {
         return TemplateVariable.CONSTANTS;
     }
 }

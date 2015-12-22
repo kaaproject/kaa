@@ -16,10 +16,18 @@
 
 package org.kaaproject.kaa.server.common.core.plugin.generator.common.entity;
 
+/**
+ * A class method signature.
+ *
+ * @author Andrew Shvayka
+ * @author Bohdan Khablenko
+ *
+ * @since v1.0.0
+ */
 public interface MethodSignature extends ModifiableGeneratorEntity {
 
     @Override
-    default String getTemplateVariable() {
+    default TemplateVariable getTemplateVariable() {
         return TemplateVariable.METHOD_SIGNATURES;
     }
 }

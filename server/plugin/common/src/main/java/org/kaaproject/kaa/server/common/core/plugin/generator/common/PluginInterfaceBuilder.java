@@ -18,9 +18,36 @@ package org.kaaproject.kaa.server.common.core.plugin.generator.common;
 
 import java.util.Map;
 
+/**
+ * A builder that produces plugin API interface.
+ *
+ * @author Bohdan Khablenko
+ *
+ * @since v1.0.0
+ */
 public interface PluginInterfaceBuilder extends PluginFileBuilder<PluginInterfaceBuilder> {
 
+    /**
+     * Adds a method signature to this builder.
+     *
+     * @param name The name of a method signature to add
+     * @param returnType The return type of a method signature to add
+     * @param paramTypes The parameter types of a signature to add
+     * @param modifiers The modifiers of a signature to add
+     *
+     * @return A reference to this builder
+     */
     PluginInterfaceBuilder withMethodSignature(String name, String returnType, String[] paramTypes, String[] modifiers);
 
+    /**
+     * Adds a method signature to this builder.
+     *
+     * @param name The name of a method signature to add
+     * @param returnType The return type of a method signature to add
+     * @param params The parameters of a method signature to add
+     * @param modifiers The modifiers of a signature to add
+     *
+     * @return A reference to this builder
+     */
     PluginInterfaceBuilder withMethodSignature(String name, String returnType, Map<String, String> params, String[] modifiers);
 }

@@ -23,9 +23,9 @@ import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public interface ${} extends ${} implements PluginInstance<${}>, ${}  {
+public interface ${name} extends ${parentClass} implements PluginInstance<${interfaceClass}>, ${interfaceClass}  {
 
-    private static final Logger LOG = LoggerFactory.getLogger(${}.class);
+    private static final Logger LOG = LoggerFactory.getLogger(${name}.class);
     
     @Override
     public PluginAdapter getPluginAdapter() {
@@ -33,7 +33,7 @@ public interface ${} extends ${} implements PluginInstance<${}>, ${}  {
     }
 
     @Override
-    public ${} getPluginAPI() {
+    public ${interfaceClass} getPluginAPI() {
         return this;
     }
 

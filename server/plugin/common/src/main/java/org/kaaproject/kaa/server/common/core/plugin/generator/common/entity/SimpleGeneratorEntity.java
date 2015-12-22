@@ -19,28 +19,47 @@ package org.kaaproject.kaa.server.common.core.plugin.generator.common.entity;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * A custom source code entity.
+ *
+ * @author Andrew Shvayka
+ * @author Bohdan Khablenko
+ *
+ * @since v1.0.0
+ */
 public class SimpleGeneratorEntity implements TemplatableGeneratorEntity {
 
-    private final String templateVariable;
+    /**
+     * The template variable this entity is a part of.
+     */
+    private final TemplateVariable templateVariable;
+
+    /**
+     * The body of this entity.
+     */
     private final String body;
+
+    /**
+     * The values to replace placeholders in the entitity body.
+     */
     private Map<String, String> values = new LinkedHashMap<>();
 
     private boolean requiresTermination;
     private int emptyLines;
 
-    public SimpleGeneratorEntity(String templateVariable, String body) {
+    public SimpleGeneratorEntity(TemplateVariable templateVariable, String body) {
         this(templateVariable, body, new LinkedHashMap<>(), false, 0);
     }
 
-    public SimpleGeneratorEntity(String templateVariable, String body, boolean requiresTermination, int emptyLines) {
+    public SimpleGeneratorEntity(TemplateVariable templateVariable, String body, boolean requiresTermination, int emptyLines) {
         this(templateVariable, body, new LinkedHashMap<>(), requiresTermination, emptyLines);
     }
 
-    public SimpleGeneratorEntity(String templateVariable, String body, Map<String, String> values) {
+    public SimpleGeneratorEntity(TemplateVariable templateVariable, String body, Map<String, String> values) {
         this(templateVariable, body, values, false, 0);
     }
 
-    public SimpleGeneratorEntity(String templateVariable, String body, Map<String, String> values, boolean requiresTermination, int emptyLines) {
+    public SimpleGeneratorEntity(TemplateVariable templateVariable, String body, Map<String, String> values, boolean requiresTermination, int emptyLines) {
         this.templateVariable = templateVariable;
         this.body = body;
         if (values != null) {
@@ -51,7 +70,7 @@ public class SimpleGeneratorEntity implements TemplatableGeneratorEntity {
     }
 
     @Override
-    public String getTemplateVariable() {
+    public TemplateVariable getTemplateVariable() {
         return this.templateVariable;
     }
 
@@ -80,6 +99,8 @@ public class SimpleGeneratorEntity implements TemplatableGeneratorEntity {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((body == null) ? 0 : body.hashCode());
+        result = prime * result + emptyLines;
+        result = prime * result + (requiresTermination ? 1231 : 1237);
         result = prime * result + ((templateVariable == null) ? 0 : templateVariable.hashCode());
         result = prime * result + ((values == null) ? 0 : values.hashCode());
         return result;
@@ -102,6 +123,12 @@ public class SimpleGeneratorEntity implements TemplatableGeneratorEntity {
                 return false;
             }
         } else if (!body.equals(other.body)) {
+            return false;
+        }
+        if (emptyLines != other.emptyLines) {
+            return false;
+        }
+        if (requiresTermination != other.requiresTermination) {
             return false;
         }
         if (templateVariable != other.templateVariable) {

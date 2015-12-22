@@ -16,10 +16,20 @@
 
 package org.kaaproject.kaa.server.common.core.plugin.generator.common.entity;
 
-public interface ImportStatement extends GeneratorEntity {
+/**
+ * A statement like <code>import</code> in Java or <code>include</code>
+ * preprocessor directive in C/C++ to indicates that a source code file depends
+ * on something external.
+ *
+ * @author Andrew Shvayka
+ * @author Bohdan Khablenko
+ *
+ * @since v1.0.0
+ */
+public interface ImportStatement extends GenericEntity {
 
     @Override
-    default String getTemplateVariable() {
+    default TemplateVariable getTemplateVariable() {
         return TemplateVariable.IMPORT_STATEMENTS;
     }
 }

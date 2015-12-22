@@ -1,3 +1,19 @@
+/*
+ * Copyright 2014-2015 CyberVision, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.kaaproject.kaa.server.common.core.plugin.generator.java;
 
 import java.util.Map;
@@ -5,12 +21,18 @@ import java.util.Map;
 import org.kaaproject.kaa.server.common.core.plugin.def.SdkApiFile;
 import org.kaaproject.kaa.server.common.core.plugin.generator.common.PluginBuilderCore;
 import org.kaaproject.kaa.server.common.core.plugin.generator.common.PluginImplementationBuilder;
-import org.kaaproject.kaa.server.common.core.plugin.generator.common.entity.GeneratorEntity;
+import org.kaaproject.kaa.server.common.core.plugin.generator.common.entity.GenericEntity;
 import org.kaaproject.kaa.server.common.core.plugin.generator.java.entity.JavaConstant;
 import org.kaaproject.kaa.server.common.core.plugin.generator.java.entity.JavaField;
 import org.kaaproject.kaa.server.common.core.plugin.generator.java.entity.JavaImportStatement;
 import org.kaaproject.kaa.server.common.core.plugin.generator.java.entity.JavaMethod;
 
+/**
+ * @author Andrew Shvayka
+ * @author Bohdan Khablenko
+ *
+ * @since v1.0.0
+ */
 public class JavaPluginImplementationBuilder extends PluginBuilderCore implements PluginImplementationBuilder {
 
     protected static final String DEFAULT_TEMPLATE_FILE = "templates/java/implementation.template";
@@ -24,7 +46,7 @@ public class JavaPluginImplementationBuilder extends PluginBuilderCore implement
     }
 
     @Override
-    public JavaPluginImplementationBuilder withEntity(GeneratorEntity entity) {
+    public JavaPluginImplementationBuilder withEntity(GenericEntity entity) {
         this.addEntity(entity);
         return this;
     }
@@ -67,6 +89,7 @@ public class JavaPluginImplementationBuilder extends PluginBuilderCore implement
         return super.build();
     }
 
+    // TODO: Used for testing purposes, remove when unnecessary
     public static void main(String[] args) {
         PluginImplementationBuilder o = new JavaPluginImplementationBuilder("MessagingPlugin", "org.kaaproject.kaa.plugin.messaging").withConstant("CONSTANT",
                 "Integer", null, new String[] { "volatile", "private" }).withImportStatement("java.util.Map");

@@ -13,23 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.kaaproject.kaa.server.common.core.plugin.generator;
 
 import java.util.List;
 
 import org.kaaproject.kaa.server.common.core.plugin.def.SdkApiFile;
 
+/**
+ * A wrapper class for a source code file list.
+ *
+ * @author Andrew Shvayka
+ * @author Bohdan Khablenko
+ *
+ * @since v1.0.0
+ */
 public class PluginSDKApiBundle {
 
     private final List<SdkApiFile> files;
 
     public PluginSDKApiBundle(List<SdkApiFile> files) {
-        super();
         this.files = files;
     }
 
     public List<SdkApiFile> getFiles() {
         return files;
     }
-
 }

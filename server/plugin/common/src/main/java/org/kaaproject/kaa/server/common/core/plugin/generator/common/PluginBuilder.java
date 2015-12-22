@@ -18,7 +18,20 @@ package org.kaaproject.kaa.server.common.core.plugin.generator.common;
 
 import org.kaaproject.kaa.server.common.core.plugin.generator.PluginSDKApiBundle;
 
+/**
+ * A builder for plugin API.
+ *
+ * @author Andrew Shvayka
+ * @author Bohdan Khablenko
+ *
+ * @since v1.0.0
+ */
 public interface PluginBuilder {
 
+    /**
+     * Generates a list of source code files.
+     *
+     * @return A wrapped list of source code files
+     */
     PluginSDKApiBundle build();
 }
