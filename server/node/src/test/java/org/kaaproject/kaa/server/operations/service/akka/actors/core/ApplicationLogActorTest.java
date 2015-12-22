@@ -26,15 +26,25 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileDataDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
+import org.kaaproject.kaa.server.common.dao.CTLService;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogAppender;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryCallback;
+import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogSchema;
+import org.kaaproject.kaa.server.common.log.shared.appender.data.BaseLogEventPack;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Operation;
+import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.logs.LogEventPackMessage;
+import org.kaaproject.kaa.server.operations.service.cache.AppVersionKey;
+import org.kaaproject.kaa.server.operations.service.cache.CacheService;
 import org.kaaproject.kaa.server.operations.service.logs.LogAppenderService;
 import org.mockito.Mockito;
 
@@ -43,14 +53,25 @@ import akka.actor.ActorRef;
 
 public class ApplicationLogActorTest {
 
+    private static final String CLIENT_PROFILE_CTL_SCHEMA_ID = "144";
+    
+    private static final String SERVER_PROFILE_CTL_SCHEMA_ID = "173";
+
+    private static final int CLIENT_SCHEMA_VERSION = 42;
+    
+    private static final int SERVER_SCHEMA_VERSION = 33;
+
     private static final int REQUEST_ID = 42;
 
     private static final int TEST_SCHEMA_VERSION = 1;
 
     private ApplicationLogActorMessageProcessor applicationLogActorMessageProcessor;
 
+    private AkkaContext context;
     private LogAppenderService logAppenderService;
     private ApplicationService applicationService;
+    private CacheService cacheService;
+    private CTLService ctlService;
     private ApplicationDto applicationDto;
 
     private List<LogAppender> logAppenders;
@@ -66,12 +87,20 @@ public class ApplicationLogActorTest {
 
     @Before
     public void before() throws Exception {
+        context = mock(AkkaContext.class);
         logAppenderService = mock(LogAppenderService.class);
         applicationService = mock(ApplicationService.class);
+        cacheService = mock(CacheService.class);
         applicationDto = mock(ApplicationDto.class);
+        ctlService = mock(CTLService.class);
+
+        when(context.getCacheService()).thenReturn(cacheService);
+        when(context.getApplicationService()).thenReturn(applicationService);
+        when(context.getLogAppenderService()).thenReturn(logAppenderService);
+        when(context.getCtlService()).thenReturn(ctlService);
 
         LogSchemaDto logSchemaDto = new LogSchemaDto();
-        logSchemaDto.setMajorVersion(TEST_SCHEMA_VERSION);
+        logSchemaDto.setVersion(TEST_SCHEMA_VERSION);
         logSchema = new LogSchema(logSchemaDto);
 
         logAppenders = new ArrayList<>();
@@ -83,15 +112,38 @@ public class ApplicationLogActorTest {
         when(applicationDto.getId()).thenReturn(APPLICATION_ID);
         when(logAppenderService.getApplicationAppenders(APPLICATION_ID)).thenReturn(logAppenders);
         when(logAppender.isSchemaVersionSupported(Mockito.anyInt())).thenReturn(Boolean.TRUE);
+
+        EndpointProfileSchemaDto profileSchemaDto = new EndpointProfileSchemaDto();
+        profileSchemaDto.setId("" + CLIENT_SCHEMA_VERSION);
+        profileSchemaDto.setCtlSchemaId(CLIENT_PROFILE_CTL_SCHEMA_ID);
+        
+        ServerProfileSchemaDto serverProfileSchemaDto = new ServerProfileSchemaDto();
+        serverProfileSchemaDto.setId("" + SERVER_SCHEMA_VERSION);
+        serverProfileSchemaDto.setCtlSchemaId(SERVER_PROFILE_CTL_SCHEMA_ID);
+        
+        when(cacheService.getProfileSchemaByAppAndVersion(new AppVersionKey(APP_TOKEN, CLIENT_SCHEMA_VERSION)))
+                .thenReturn(profileSchemaDto);
+        when(cacheService.getServerProfileSchemaByAppAndVersion(new AppVersionKey(APP_TOKEN, SERVER_SCHEMA_VERSION)))
+        .thenReturn(serverProfileSchemaDto);
+        
+        CTLSchemaDto profileCtlSchemaDto = new CTLSchemaDto();
+        profileCtlSchemaDto.setId(CLIENT_PROFILE_CTL_SCHEMA_ID);
+
+        CTLSchemaDto serverProfileCtlSchemaDto = new CTLSchemaDto();
+        serverProfileCtlSchemaDto.setId(SERVER_PROFILE_CTL_SCHEMA_ID);
+
+        when(cacheService.getCtlSchemaById(CLIENT_PROFILE_CTL_SCHEMA_ID)).thenReturn(profileCtlSchemaDto);
+        when(cacheService.getCtlSchemaById(SERVER_PROFILE_CTL_SCHEMA_ID)).thenReturn(serverProfileCtlSchemaDto);
+        
+        when(ctlService.flatExportAsString(profileCtlSchemaDto)).thenReturn("ClientProfileSchema");
+        when(ctlService.flatExportAsString(serverProfileCtlSchemaDto)).thenReturn("ServerProfileSchema");
     }
 
     @Test
     public void proccessLogSchemaVersionMessageHaveLogSchemaTest() throws Exception {
-        applicationLogActorMessageProcessor = new ApplicationLogActorMessageProcessor(logAppenderService, applicationService, APP_TOKEN);
+        applicationLogActorMessageProcessor = new ApplicationLogActorMessageProcessor(context, APP_TOKEN);
 
-        LogEventPackMessage logEventPackMessage = mock(LogEventPackMessage.class);
-        when(logEventPackMessage.getLogSchema()).thenReturn(logSchema);
-        when(logEventPackMessage.getLogEventPack()).thenReturn(new LogEventPack());
+        LogEventPackMessage logEventPackMessage = buildTestMessage(LOG_SCHEMA_VERSION);
 
         applicationLogActorMessageProcessor.processLogEventPack(Mockito.mock(ActorContext.class), logEventPackMessage);
 
@@ -100,14 +152,10 @@ public class ApplicationLogActorTest {
 
     @Test
     public void proccessLogSchemaVersionNotSupported() throws Exception {
-        applicationLogActorMessageProcessor = new ApplicationLogActorMessageProcessor(logAppenderService, applicationService, APP_TOKEN);
+        applicationLogActorMessageProcessor = new ApplicationLogActorMessageProcessor(context, APP_TOKEN);
 
-        LogEventPackMessage logEventPackMessage = mock(LogEventPackMessage.class);
+        LogEventPackMessage logEventPackMessage = buildTestMessage(LOG_SCHEMA_VERSION, logSchema);
         when(logAppender.isSchemaVersionSupported(1)).thenReturn(Boolean.FALSE);
-        when(logEventPackMessage.getLogSchema()).thenReturn(logSchema);
-        when(logEventPackMessage.getLogEventPack()).thenReturn(new LogEventPack());
-        when(logEventPackMessage.getOriginator()).thenReturn(ActorRef.noSender());
-        when(logEventPackMessage.getRequestId()).thenReturn(REQUEST_ID);
 
         applicationLogActorMessageProcessor.processLogEventPack(Mockito.mock(ActorContext.class), logEventPackMessage);
 
@@ -115,15 +163,14 @@ public class ApplicationLogActorTest {
     }
 
     @Test
-    public void proccessLogSchemaVersionLogShemasNoSchemaTest() throws Exception {
-        applicationLogActorMessageProcessor = new ApplicationLogActorMessageProcessor(logAppenderService, applicationService, APP_TOKEN);
+    public void proccessLogSchemaVersionLogShemasNoSchemasTest() throws Exception {
+        applicationLogActorMessageProcessor = new ApplicationLogActorMessageProcessor(context, APP_TOKEN);
 
-        LogEventPackMessage logEventPackMessage = mock(LogEventPackMessage.class);
-        when(logEventPackMessage.getLogSchemaVersion()).thenReturn(LOG_SCHEMA_VERSION);
-        when(logEventPackMessage.getLogEventPack()).thenReturn(new LogEventPack());
+        LogEventPackMessage logEventPackMessage = buildTestMessage(LOG_SCHEMA_VERSION);
 
         applicationLogActorMessageProcessor.processLogEventPack(Mockito.mock(ActorContext.class), logEventPackMessage);
 
+        verify(cacheService).getProfileSchemaByAppAndVersion(new AppVersionKey(APP_TOKEN, CLIENT_SCHEMA_VERSION));
         verify(logAppenderService).getLogSchema(APPLICATION_ID, LOG_SCHEMA_VERSION);
         verify(logAppender).doAppend(Mockito.any(LogEventPack.class), Mockito.any(LogDeliveryCallback.class));
     }
@@ -141,14 +188,12 @@ public class ApplicationLogActorTest {
         notification.setOp(Operation.ADD_LOG_APPENDER);
 
         logAppenders.clear();
-        applicationLogActorMessageProcessor = new ApplicationLogActorMessageProcessor(logAppenderService, applicationService, APP_TOKEN);
+        applicationLogActorMessageProcessor = new ApplicationLogActorMessageProcessor(context, APP_TOKEN);
 
         when(logAppenderService.getApplicationAppender(APPENDER_ID)).thenReturn(mockAppender);
         applicationLogActorMessageProcessor.processLogAppenderNotification(notification);
 
-        LogEventPackMessage logEventPackMessage = mock(LogEventPackMessage.class);
-        when(logEventPackMessage.getLogSchema()).thenReturn(logSchema);
-        when(logEventPackMessage.getLogEventPack()).thenReturn(new LogEventPack());
+        LogEventPackMessage logEventPackMessage = buildTestMessage(LOG_SCHEMA_VERSION, logSchema);
 
         applicationLogActorMessageProcessor.processLogEventPack(Mockito.mock(ActorContext.class), logEventPackMessage);
 
@@ -157,11 +202,7 @@ public class ApplicationLogActorTest {
 
     @Test
     public void processUpdateLogAppenderNotificationTest() {
-        LogEventPackMessage logEventPackMessage = mock(LogEventPackMessage.class);
-        when(logEventPackMessage.getLogSchema()).thenReturn(logSchema);
-        when(logEventPackMessage.getLogEventPack()).thenReturn(new LogEventPack());
-        when(logEventPackMessage.getOriginator()).thenReturn(ActorRef.noSender());
-        when(logEventPackMessage.getRequestId()).thenReturn(REQUEST_ID);
+        LogEventPackMessage logEventPackMessage = buildTestMessage(LOG_SCHEMA_VERSION, logSchema);
 
         LogAppender mockAppender = mock(LogAppender.class);
         when(mockAppender.getName()).thenReturn("flume");
@@ -171,11 +212,11 @@ public class ApplicationLogActorTest {
         // old appender does not support current log schema
         when(logAppender.isSchemaVersionSupported(Mockito.anyInt())).thenReturn(Boolean.FALSE);
 
-        applicationLogActorMessageProcessor = new ApplicationLogActorMessageProcessor(logAppenderService, applicationService, APP_TOKEN);
+        applicationLogActorMessageProcessor = new ApplicationLogActorMessageProcessor(context, APP_TOKEN);
 
         applicationLogActorMessageProcessor.processLogEventPack(Mockito.mock(ActorContext.class), logEventPackMessage);
         // check that log pack is not processed
-        verify(logAppender, Mockito.never()).doAppend(Mockito.any(LogEventPack.class), Mockito.any(LogDeliveryCallback.class));
+        verify(logAppender, Mockito.never()).doAppend(Mockito.any(BaseLogEventPack.class), Mockito.any(LogDeliveryCallback.class));
 
         Notification notification = new Notification();
         notification.setAppenderId(APPENDER_ID);
@@ -192,9 +233,7 @@ public class ApplicationLogActorTest {
 
     @Test
     public void processRemoveLogAppenderNotificationTest() {
-        LogEventPackMessage logEventPackMessage = mock(LogEventPackMessage.class);
-        when(logEventPackMessage.getLogSchema()).thenReturn(logSchema);
-        when(logEventPackMessage.getLogEventPack()).thenReturn(new LogEventPack());
+        LogEventPackMessage logEventPackMessage = buildTestMessage(LOG_SCHEMA_VERSION, logSchema);
 
         LogAppender mockAppender = mock(LogAppender.class);
         when(mockAppender.getName()).thenReturn("flume");
@@ -202,7 +241,7 @@ public class ApplicationLogActorTest {
         // new appender supports current log schema
         when(logAppender.isSchemaVersionSupported(Mockito.anyInt())).thenReturn(Boolean.TRUE);
 
-        applicationLogActorMessageProcessor = new ApplicationLogActorMessageProcessor(logAppenderService, applicationService, APP_TOKEN);
+        applicationLogActorMessageProcessor = new ApplicationLogActorMessageProcessor(context, APP_TOKEN);
 
         applicationLogActorMessageProcessor.processLogEventPack(Mockito.mock(ActorContext.class), logEventPackMessage);
         // check that log pack is not processed
@@ -221,4 +260,20 @@ public class ApplicationLogActorTest {
         verify(mockAppender, Mockito.never()).doAppend(Mockito.any(LogEventPack.class), Mockito.any(LogDeliveryCallback.class));
     }
 
+    public LogEventPackMessage buildTestMessage(int logSchemaVersion) {
+        return buildTestMessage(logSchemaVersion, null);
+    }
+
+    public LogEventPackMessage buildTestMessage(int logSchemaVersion, LogSchema logSchema) {
+        return new LogEventPackMessage(REQUEST_ID, ActorRef.noSender(), getTestPack(logSchemaVersion, logSchema));
+    }
+
+    public BaseLogEventPack getTestPack(int logSchemaVersion, LogSchema logSchema) {
+        EndpointProfileDataDto profileDto = new EndpointProfileDataDto("1", "EndpointKey", CLIENT_SCHEMA_VERSION, "",
+                SERVER_SCHEMA_VERSION, "");
+        BaseLogEventPack logEventPack = new BaseLogEventPack(profileDto, System.currentTimeMillis(), logSchemaVersion,
+                new ArrayList<LogEvent>());
+        logEventPack.setLogSchema(logSchema);
+        return logEventPack;
+    }
 }

@@ -53,4 +53,9 @@ public final class LogSchema extends Schema<LogSchemaDto> {
         return new LogSchemaDto();
     }
 
+    @Override
+    protected GenericModel<LogSchemaDto> newInstance(Long id) {
+        return new LogSchema(id);
+    }
+
 }

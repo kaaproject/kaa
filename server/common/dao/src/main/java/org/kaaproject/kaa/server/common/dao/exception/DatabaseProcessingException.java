@@ -23,4 +23,8 @@ public class DatabaseProcessingException extends RuntimeException {
     public DatabaseProcessingException(String message) {
         super(message);
     }
+
+    public DatabaseProcessingException(Exception ex) {
+        super(ex);
+    }
 }

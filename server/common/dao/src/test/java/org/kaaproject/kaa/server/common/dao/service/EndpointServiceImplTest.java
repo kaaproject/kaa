@@ -43,7 +43,7 @@ public class EndpointServiceImplTest extends AbstractTest {
 
     @Test
     public void findEndpointGroupsByAppIdTest() {
-        EndpointGroupDto group = generateEndpointGroup(null);
+        EndpointGroupDto group = generateEndpointGroupDto(null);
         List<EndpointGroupDto> groups = endpointService.findEndpointGroupsByAppId(group.getApplicationId());
         Assert.assertNotNull(groups);
         Assert.assertFalse(groups.isEmpty());
@@ -52,7 +52,7 @@ public class EndpointServiceImplTest extends AbstractTest {
 
     @Test(expected = IncorrectParameterException.class)
     public void findEndpointGroupByIdTest() {
-        EndpointGroupDto group = generateEndpointGroup(null);
+        EndpointGroupDto group = generateEndpointGroupDto(null);
         EndpointGroupDto foundGroup = endpointService.findEndpointGroupById(group.getId());
         Assert.assertNotNull(foundGroup);
         group = endpointService.findEndpointGroupById(INCORRECT_ID);
@@ -60,10 +60,10 @@ public class EndpointServiceImplTest extends AbstractTest {
 
     @Test
     public void findEndpointProfileByEndpointGroupIdTest() {
-        EndpointGroupDto group = generateEndpointGroup(null);
+        EndpointGroupDto group = generateEndpointGroupDto(null);
         String endpointGroupId = group.getId();
         PageLinkDto pageLinkDto = new PageLinkDto(endpointGroupId, DEFAULT_LIMIT, DEFAULT_OFFSET);
-        EndpointProfileDto savedEndpointProfileDto = generateEndpointProfileWithGroupId(endpointGroupId, false);
+        EndpointProfileDto savedEndpointProfileDto = generateEndpointProfileWithGroupIdDto(endpointGroupId, false);
         EndpointProfilesPageDto endpointProfilesPage = endpointService.findEndpointProfileByEndpointGroupId(pageLinkDto);
         EndpointProfileDto endpointProfileDto = endpointProfilesPage.getEndpointProfiles().get(0);
         Assert.assertEquals(savedEndpointProfileDto, endpointProfileDto);
@@ -71,19 +71,19 @@ public class EndpointServiceImplTest extends AbstractTest {
 
     @Test
     public void findEndpointProfileBodyByEndpointGroupIdTest() {
-        EndpointGroupDto group = generateEndpointGroup(null);
+        EndpointGroupDto group = generateEndpointGroupDto(null);
         String endpointGroupId = group.getId();
         PageLinkDto pageLinkDto = new PageLinkDto(endpointGroupId, DEFAULT_LIMIT, DEFAULT_OFFSET);
-        EndpointProfileDto savedEndpointProfileDto = generateEndpointProfileWithGroupId(endpointGroupId, false);
+        EndpointProfileDto savedEndpointProfileDto = generateEndpointProfileWithGroupIdDto(endpointGroupId, false);
         EndpointProfilesBodyDto endpointProfilesPage = endpointService.findEndpointProfileBodyByEndpointGroupId(pageLinkDto);
         EndpointProfileBodyDto endpointProfileBodyDto = endpointProfilesPage.getEndpointProfilesBody().get(0);
-        Assert.assertEquals(savedEndpointProfileDto.getProfile(), endpointProfileBodyDto.getProfile());
+        Assert.assertEquals(savedEndpointProfileDto.getClientProfileBody(), endpointProfileBodyDto.getProfile());
     }
 
     @Test
     public void findEndpointProfileByKeyHashTest() {
         String endpointGroupId = "124";
-        EndpointProfileDto savedEndpointProfileDto = generateEndpointProfileWithGroupId(endpointGroupId, false);
+        EndpointProfileDto savedEndpointProfileDto = generateEndpointProfileWithGroupIdDto(endpointGroupId, false);
         EndpointProfileDto endpointProfileDto = endpointService.findEndpointProfileByKeyHash(savedEndpointProfileDto.getEndpointKeyHash());
         Assert.assertEquals(savedEndpointProfileDto, endpointProfileDto);
     }
@@ -91,14 +91,14 @@ public class EndpointServiceImplTest extends AbstractTest {
     @Test
     public void findEndpointProfileBodyByKeyHashTest() {
         String endpointGroupId = "124";
-        EndpointProfileDto savedEndpointProfileDto = generateEndpointProfileWithGroupId(endpointGroupId, false);
+        EndpointProfileDto savedEndpointProfileDto = generateEndpointProfileWithGroupIdDto(endpointGroupId, false);
         EndpointProfileBodyDto endpointProfileBodyDto = endpointService.findEndpointProfileBodyByKeyHash(savedEndpointProfileDto.getEndpointKeyHash());
-        Assert.assertEquals(savedEndpointProfileDto.getProfile(), endpointProfileBodyDto.getProfile());
+        Assert.assertEquals(savedEndpointProfileDto.getClientProfileBody(), endpointProfileBodyDto.getProfile());
     }
 
     @Test(expected = IncorrectParameterException.class)
     public void saveEndpointGroupWithSameWeightTest() {
-        EndpointGroupDto group = generateEndpointGroup(null);
+        EndpointGroupDto group = generateEndpointGroupDto(null);
         EndpointGroupDto found = endpointService.findEndpointGroupById(group.getId());
         found.setId(null);
         endpointService.saveEndpointGroup(found);
@@ -106,7 +106,7 @@ public class EndpointServiceImplTest extends AbstractTest {
 
     @Test
     public void removeEndpointGroupByAppIdTest() {
-        String appId = generateApplication().getId();
+        String appId = generateApplicationDto().getId();
         List<EndpointGroupDto> groupDtoList = endpointService.findEndpointGroupsByAppId(appId);
         Assert.assertNotNull(groupDtoList);
         Assert.assertFalse(groupDtoList.isEmpty());
@@ -123,7 +123,7 @@ public class EndpointServiceImplTest extends AbstractTest {
 
     @Test(expected = IncorrectParameterException.class)
     public void invalidUpdateEndpointGroupTest() {
-        ApplicationDto app = generateApplication();
+        ApplicationDto app = generateApplicationDto();
         List<EndpointGroupDto> groups = endpointService.findEndpointGroupsByAppId(app.getId());
         Assert.assertFalse(groups.isEmpty());
         EndpointGroupDto group = groups.get(0);
@@ -133,7 +133,7 @@ public class EndpointServiceImplTest extends AbstractTest {
 
     @Test(expected = IncorrectParameterException.class)
     public void saveEndpointGroupWithExistingWeightTest() {
-        ApplicationDto app = generateApplication();
+        ApplicationDto app = generateApplicationDto();
         List<EndpointGroupDto> groups = endpointService.findEndpointGroupsByAppId(app.getId());
         Assert.assertFalse(groups.isEmpty());
         EndpointGroupDto group = groups.get(0);
@@ -145,8 +145,8 @@ public class EndpointServiceImplTest extends AbstractTest {
     @Test
     public void findAllEndpointUsersTest() {
         removeAllEndpointUsers();
-        TenantDto tenantDto = generateTenant();
-        EndpointUserDto endpointUserDto = generateEndpointUser(tenantDto.getId());
+        TenantDto tenantDto = generateTenantDto();
+        EndpointUserDto endpointUserDto = generateEndpointUserDto(tenantDto.getId());
         List<EndpointUserDto> saved = new ArrayList<>(1);
         saved.add(endpointUserDto);
         List<EndpointUserDto> endpointUsers = endpointService.findAllEndpointUsers();
@@ -162,24 +162,24 @@ public class EndpointServiceImplTest extends AbstractTest {
 
     @Test
     public void findEndpointUserByIdTest() {
-        TenantDto tenantDto = generateTenant();
-        EndpointUserDto savedEndpointUserDto = generateEndpointUser(tenantDto.getId());
+        TenantDto tenantDto = generateTenantDto();
+        EndpointUserDto savedEndpointUserDto = generateEndpointUserDto(tenantDto.getId());
         EndpointUserDto endpointUser = endpointService.findEndpointUserById(savedEndpointUserDto.getId());
         Assert.assertEquals(savedEndpointUserDto, endpointUser);
     }
 
     @Test
     public void saveEndpointUserTest() {
-        TenantDto tenantDto = generateTenant();
-        EndpointUserDto savedEndpointUserDto = generateEndpointUser(tenantDto.getId());
+        TenantDto tenantDto = generateTenantDto();
+        EndpointUserDto savedEndpointUserDto = generateEndpointUserDto(tenantDto.getId());
         EndpointUserDto endpointUser = endpointService.findEndpointUserById(savedEndpointUserDto.getId());
         Assert.assertEquals(savedEndpointUserDto, endpointUser);
     }
 
     @Test
     public void removeEndpointUserByIdTest() {
-        TenantDto tenantDto = generateTenant();
-        EndpointUserDto savedEndpointUserDto = generateEndpointUser(tenantDto.getId());
+        TenantDto tenantDto = generateTenantDto();
+        EndpointUserDto savedEndpointUserDto = generateEndpointUserDto(tenantDto.getId());
         endpointService.removeEndpointUserById(savedEndpointUserDto.getId());
         EndpointUserDto endpointUser = endpointService.findEndpointUserById(savedEndpointUserDto.getId());
         Assert.assertNull(endpointUser);
@@ -187,8 +187,8 @@ public class EndpointServiceImplTest extends AbstractTest {
 
     @Test
     public void generateEndpointUserAccessTokenTest() {
-        TenantDto tenantDto = generateTenant();
-        EndpointUserDto savedEndpointUserDto = generateEndpointUser(tenantDto.getId());
+        TenantDto tenantDto = generateTenantDto();
+        EndpointUserDto savedEndpointUserDto = generateEndpointUserDto(tenantDto.getId());
         Assert.assertNull(savedEndpointUserDto.getAccessToken());
         String generatedAccessToken = endpointService.generateEndpointUserAccessToken(savedEndpointUserDto.getExternalId(), savedEndpointUserDto.getTenantId());
         EndpointUserDto endpointUser = endpointService.findEndpointUserById(savedEndpointUserDto.getId());

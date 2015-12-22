@@ -35,6 +35,7 @@ import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.JsonNodeFactory;
 import org.codehaus.jackson.node.TextNode;
 import org.kaaproject.avro.ui.shared.ArrayField;
+import org.kaaproject.avro.ui.shared.FormContext;
 import org.kaaproject.avro.ui.shared.FormField;
 import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.avro.ui.shared.UnionField;
@@ -185,14 +186,15 @@ public class EcfSchemaFormAvroConverter extends SimpleSchemaFormAvroConverter {
             }
         }       
         
-        RecordField rootRecord = field.getRootRecord();
-        RecordField rec = rootRecord.getRecordMetadata(BASE_SCHEMA_FORM_NAMESPACE + "." + FIELD);
+        //RecordField rootRecord = field.getRootRecord();
+        FormContext context = field.getContext();
+        RecordField rec = context.getRecordMetadata(BASE_SCHEMA_FORM_NAMESPACE, FIELD);
         UnionField typeField = (UnionField)rec.getFieldByName(FIELD_TYPE);
         updatePossibleEventClasses(typeField, false);
-        rec = rootRecord.getRecordMetadata(BASE_SCHEMA_FORM_NAMESPACE + "." + ARRAY_FIELD_TYPE);
+        rec = context.getRecordMetadata(BASE_SCHEMA_FORM_NAMESPACE, ARRAY_FIELD_TYPE);
         typeField = (UnionField)rec.getFieldByName(ARRAY_ITEM);
         updatePossibleEventClasses(typeField, false);
-        rec = rootRecord.getRecordMetadata(BASE_SCHEMA_FORM_NAMESPACE + "." + UNION_FIELD_TYPE);
+        rec = context.getRecordMetadata(BASE_SCHEMA_FORM_NAMESPACE, UNION_FIELD_TYPE);
         acceptableValuesField = (ArrayField)rec.getFieldByName(ACCEPTABLE_VALUES);
         typeField = (UnionField)acceptableValuesField.getElementMetadata();
         updatePossibleEventClasses(typeField, false);
@@ -211,9 +213,9 @@ public class EcfSchemaFormAvroConverter extends SimpleSchemaFormAvroConverter {
         for (FormField acceptableValue : acceptableValues) {
             if (acceptableValue != null && acceptableValue instanceof RecordField) {
                 RecordField recordValue = (RecordField)acceptableValue;
-                if ((include && eventClassTypes.contains(recordValue.getTypeName()))) {
+                if ((include && eventClassTypes.contains(recordValue.getFqn().getName()))) {
                     filteredAcceptableValues.add(acceptableValue);
-                } else if (!include && !eventClassTypes.contains(recordValue.getTypeName())) {
+                } else if (!include && !eventClassTypes.contains(recordValue.getFqn().getName())) {
                     filteredAcceptableValues.add(acceptableValue);
                 }
             }

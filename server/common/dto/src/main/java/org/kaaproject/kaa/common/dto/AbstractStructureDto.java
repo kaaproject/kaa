@@ -24,11 +24,8 @@ public abstract class AbstractStructureDto implements HasId, Serializable {
 
     protected String id;
     protected String applicationId;
-    protected String schemaId;
     protected String endpointGroupId;
     protected int sequenceNumber;
-    protected int majorVersion;
-    protected int minorVersion;
     protected String description;
     protected long createdTime;
     protected long lastModifyTime;
@@ -43,16 +40,14 @@ public abstract class AbstractStructureDto implements HasId, Serializable {
     protected long endpointCount;
     protected Long version;
 
-    public AbstractStructureDto() {}
-    
+    public AbstractStructureDto() {
+    }
+
     public AbstractStructureDto(AbstractStructureDto other) {
         this.id = other.id;
         this.applicationId = other.applicationId;
-        this.schemaId = other.schemaId;
         this.endpointGroupId = other.endpointGroupId;
         this.sequenceNumber = other.sequenceNumber;
-        this.majorVersion = other.majorVersion;
-        this.minorVersion = other.minorVersion;
         this.description = other.description;
         this.createdTime = other.createdTime;
         this.lastModifyTime = other.lastModifyTime;
@@ -86,14 +81,6 @@ public abstract class AbstractStructureDto implements HasId, Serializable {
         this.applicationId = applicationId;
     }
 
-    public String getSchemaId() {
-        return schemaId;
-    }
-
-    public void setSchemaId(String schemaId) {
-        this.schemaId = schemaId;
-    }
-
     public String getEndpointGroupId() {
         return endpointGroupId;
     }
@@ -108,22 +95,6 @@ public abstract class AbstractStructureDto implements HasId, Serializable {
 
     public void setSequenceNumber(int sequenceNumber) {
         this.sequenceNumber = sequenceNumber;
-    }
-
-    public int getMajorVersion() {
-        return majorVersion;
-    }
-
-    public void setMajorVersion(int majorVersion) {
-        this.majorVersion = majorVersion;
-    }
-
-    public int getMinorVersion() {
-        return minorVersion;
-    }
-
-    public void setMinorVersion(int minorVersion) {
-        this.minorVersion = minorVersion;
     }
 
     public String getDescription() {
@@ -244,12 +215,6 @@ public abstract class AbstractStructureDto implements HasId, Serializable {
         if (lastModifyTime != that.lastModifyTime) {
             return false;
         }
-        if (majorVersion != that.majorVersion) {
-            return false;
-        }
-        if (minorVersion != that.minorVersion) {
-            return false;
-        }
         if (sequenceNumber != that.sequenceNumber) {
             return false;
         }
@@ -262,9 +227,6 @@ public abstract class AbstractStructureDto implements HasId, Serializable {
         if (endpointGroupId != null ? !endpointGroupId.equals(that.endpointGroupId) : that.endpointGroupId != null) {
             return false;
         }
-        if (schemaId != null ? !schemaId.equals(that.schemaId) : that.schemaId != null) {
-            return false;
-        }
         if (status != that.status) {
             return false;
         }
@@ -275,11 +237,8 @@ public abstract class AbstractStructureDto implements HasId, Serializable {
     @Override
     public int hashCode() {
         int result = applicationId != null ? applicationId.hashCode() : 0;
-        result = 31 * result + (schemaId != null ? schemaId.hashCode() : 0);
         result = 31 * result + (endpointGroupId != null ? endpointGroupId.hashCode() : 0);
         result = 31 * result + sequenceNumber;
-        result = 31 * result + majorVersion;
-        result = 31 * result + minorVersion;
         result = 31 * result + (int) (lastModifyTime ^ (lastModifyTime >>> 32));
         result = 31 * result + (body != null ? body.hashCode() : 0);
         result = 31 * result + (status != null ? status.hashCode() : 0);
@@ -291,11 +250,8 @@ public abstract class AbstractStructureDto implements HasId, Serializable {
         return "AbstractStructureDto{" +
                 "id='" + id + '\'' +
                 ", applicationId='" + applicationId + '\'' +
-                ", profileSchemaId='" + schemaId + '\'' +
                 ", endpointGroupId='" + endpointGroupId + '\'' +
                 ", sequenceNumber=" + sequenceNumber +
-                ", majorVersion=" + majorVersion +
-                ", minorVersion=" + minorVersion +
                 ", lastModifyTime=" + lastModifyTime +
                 ", status=" + status +
                 ", version=" + version +

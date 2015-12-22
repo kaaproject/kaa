@@ -22,9 +22,11 @@ import java.util.List;
 import net.sf.ehcache.Ehcache;
 
 import org.kaaproject.kaa.common.dto.admin.RecordKey;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.server.admin.services.cache.CacheService;
 import org.kaaproject.kaa.server.admin.services.util.Utils;
+import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaExportKey;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.kaaproject.kaa.server.control.service.ControlService;
 import org.kaaproject.kaa.server.control.service.exception.ControlServiceException;
@@ -42,6 +44,7 @@ public class CacheServiceImpl implements CacheService {
     private static final String RECORD_LIBRARY_CACHE = "recordLibraryCache";
     private static final String RECORD_SCHEMA_CACHE = "recordSchemaCache";
     private static final String RECORD_DATA_CACHE = "recordDataCache";
+    private static final String CTL_CACHE = "ctlCache";
     private static final String FILE_UPLOAD_CACHE = "fileUploadCache";
 
     @Autowired
@@ -111,6 +114,30 @@ public class CacheServiceImpl implements CacheService {
             throw Utils.handleException(e);
         }
     }
+    
+    @Override
+    @Cacheable(CTL_CACHE)
+    public FileData getExportedCtlSchema(CtlSchemaExportKey key)
+            throws KaaAdminServiceException {
+        try {
+            CTLSchemaDto schemaFound = controlService.getCTLSchemaById(key.getCtlSchemaId());
+            Utils.checkNotNull(schemaFound);
+            switch (key.getExportMethod()) {
+            case SHALLOW:
+                return controlService.exportCTLSchemaShallow(schemaFound);
+            case FLAT:
+                return controlService.exportCTLSchemaFlat(schemaFound);
+            case DEEP:
+                return controlService.exportCTLSchemaDeep(schemaFound);
+            case LIBRARY:
+                return controlService.exportCTLSchemaFlatAsLibrary(schemaFound);
+            default:
+                throw new IllegalArgumentException("The export method " + key.getExportMethod().name() + " is not currently supported!");
+            }
+        } catch (ControlServiceException e) {
+            throw Utils.handleException(e);
+        }
+    }
 
     @Override
     @Cacheable(value = FILE_UPLOAD_CACHE, key = "#key")
@@ -122,5 +149,7 @@ public class CacheServiceImpl implements CacheService {
     @CacheEvict(value = FILE_UPLOAD_CACHE, key = "#key")
     public void removeUploadedFile(String key) {
     }
+
+
 
 }

@@ -19,20 +19,19 @@ package org.kaaproject.kaa.server.admin.client.mvp.data;
 import java.util.List;
 
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
-import org.kaaproject.kaa.common.dto.ConfigurationDto;
-import org.kaaproject.kaa.common.dto.StructureRecordDto;
+import org.kaaproject.kaa.common.dto.ConfigurationRecordDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
 import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class ConfigurationsDataProvider extends AbstractDataProvider<StructureRecordDto<ConfigurationDto>>{
+public class ConfigurationsDataProvider extends AbstractDataProvider<ConfigurationRecordDto>{
 
     private String endpointGroupId;
     private boolean includeDeprecated = false;
 
-    public ConfigurationsDataProvider(AbstractGrid<StructureRecordDto<ConfigurationDto>,?> dataGrid,
+    public ConfigurationsDataProvider(AbstractGrid<ConfigurationRecordDto,?> dataGrid,
                                       HasErrorMessage hasErrorMessage,
                                       String endpointGroupId, boolean includeDeprecated) {
         super(dataGrid, hasErrorMessage, false);
@@ -47,14 +46,14 @@ public class ConfigurationsDataProvider extends AbstractDataProvider<StructureRe
 
     @Override
     protected void loadData(final LoadCallback callback) {
-        KaaAdmin.getDataSource().loadConfigurationRecords(endpointGroupId, includeDeprecated, new AsyncCallback<List<StructureRecordDto<ConfigurationDto>>>() {
+        KaaAdmin.getDataSource().loadConfigurationRecords(endpointGroupId, includeDeprecated, new AsyncCallback<List<ConfigurationRecordDto>>() {
             @Override
             public void onFailure(Throwable caught) {
                 callback.onFailure(caught);
 
             }
             @Override
-            public void onSuccess(List<StructureRecordDto<ConfigurationDto>> result) {
+            public void onSuccess(List<ConfigurationRecordDto> result) {
                 callback.onSuccess(result);
             }
         });

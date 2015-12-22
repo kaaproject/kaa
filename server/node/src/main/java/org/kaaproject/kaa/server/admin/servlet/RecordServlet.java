@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServletResponse;
 import net.iharder.Base64;
 
 import org.kaaproject.kaa.common.dto.admin.RecordKey;
-import org.kaaproject.kaa.common.dto.admin.RecordKey.RecordFiles;
 import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.server.admin.services.cache.CacheService;
 import org.slf4j.Logger;

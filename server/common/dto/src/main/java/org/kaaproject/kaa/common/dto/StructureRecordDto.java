@@ -17,30 +17,22 @@
 package org.kaaproject.kaa.common.dto;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-public class StructureRecordDto<T extends AbstractStructureDto> implements Serializable, Comparable<StructureRecordDto<T>> {
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+public abstract class StructureRecordDto<T extends AbstractStructureDto> implements Serializable {
 
     private static final long serialVersionUID = -1326052725635723124L;
 
-    private T activeStructureDto;
-    private T inactiveStructureDto;
+    protected T activeStructureDto;
+    protected T inactiveStructureDto;
 
     public StructureRecordDto() {
-
     }
 
     public StructureRecordDto(T activeStructureDto, T inactiveStructureDto) {
         this.activeStructureDto = activeStructureDto;
         this.inactiveStructureDto = inactiveStructureDto;
-    }
-
-    public boolean isEmpty() {
-        return activeStructureDto == null && inactiveStructureDto == null;
     }
 
     public T getActiveStructureDto() {
@@ -55,66 +47,40 @@ public class StructureRecordDto<T extends AbstractStructureDto> implements Seria
     public void setInactiveStructureDto(T inactiveStructureDto) {
         this.inactiveStructureDto = inactiveStructureDto;
     }
-
-    public int getMajorVersion() {
-        return activeStructureDto != null ? activeStructureDto.getMajorVersion() : inactiveStructureDto.getMajorVersion();
+    
+    @JsonIgnore
+    public boolean isEmpty() {
+        return activeStructureDto == null && inactiveStructureDto == null;
     }
 
-    public int getMinorVersion() {
-        return activeStructureDto != null ? activeStructureDto.getMinorVersion() : inactiveStructureDto.getMinorVersion();
-    }
-
+    @JsonIgnore
     public String getDescription() {
         return activeStructureDto != null ? activeStructureDto.getDescription() : inactiveStructureDto.getDescription();
     }
 
+    @JsonIgnore
     public long getEndpointCount() {
         return activeStructureDto != null ? activeStructureDto.getEndpointCount() : 0;
     }
 
+    @JsonIgnore
     public boolean hasActive() {
         return activeStructureDto != null;
     }
 
+    @JsonIgnore
     public boolean hasDeprecated() {
         return activeStructureDto != null && activeStructureDto.getStatus()==UpdateStatus.DEPRECATED;
     }
 
+    @JsonIgnore
     public boolean hasDraft() {
         return inactiveStructureDto != null;
     }
 
-    public String getSchemaId() {
-        return activeStructureDto != null ? activeStructureDto.getSchemaId() : inactiveStructureDto.getSchemaId();
-    }
-
+    @JsonIgnore
     public String getEndpointGroupId() {
         return activeStructureDto != null ? activeStructureDto.getEndpointGroupId() : inactiveStructureDto.getEndpointGroupId();
     }
-
-    public static <T extends AbstractStructureDto> List<StructureRecordDto<T>> convertToRecords(Collection<T> structures) {
-        Map<String, StructureRecordDto<T>> recordsMap = new HashMap<>();
-        for (T structure : structures) {
-            StructureRecordDto<T> record = recordsMap.get(structure.getSchemaId());
-            if (record == null) {
-                record = new StructureRecordDto<T>();
-                recordsMap.put(structure.getSchemaId(), record);
-            }
-            if (structure.getStatus()==UpdateStatus.ACTIVE) {
-                record.setActiveStructureDto(structure);
-            } else if (structure.getStatus()==UpdateStatus.INACTIVE) {
-                record.setInactiveStructureDto(structure);
-            }
-        }
-        return new ArrayList<>(recordsMap.values());
-    }
-
-    @Override
-    public int compareTo(StructureRecordDto<T> o) { //NOSONAR
-        int result = this.getMajorVersion() - o.getMajorVersion();
-        if (result == 0) {
-            result = this.getMinorVersion() - o.getMinorVersion();
-        }
-        return result;
-    }
+   
 }

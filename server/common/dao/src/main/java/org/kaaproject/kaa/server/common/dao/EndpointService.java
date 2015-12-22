@@ -245,4 +245,11 @@ public interface EndpointService {
      * @return the list
      */
     List<EndpointProfileDto> findEndpointProfilesByUserId(String endpointUserId);
+    
+    /**
+     * 
+     * @param applicationId
+     * @return
+     */
+    EndpointGroupDto findDefaultGroup(String applicationId);
 }

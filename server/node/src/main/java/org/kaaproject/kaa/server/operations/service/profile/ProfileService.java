@@ -44,7 +44,7 @@ public interface ProfileService {
      * @param profile the profile
      * @return the updated endpoint profile dto
      */
-    EndpointProfileDto updateProfile(EndpointProfileDto profile);    
+    EndpointProfileDto updateProfile(EndpointProfileDto profile);
 
     /**
      * Register profile.
@@ -61,4 +61,12 @@ public interface ProfileService {
      * @return the endpoint profile dto
      */
     EndpointProfileDto updateProfile(UpdateProfileRequest requst);
+    
+    /**
+     * Update profile.
+     *
+     * @param profile the profile
+     * @return the endpoint profile dto
+     */
+    EndpointProfileDto clearProfileGroupStates(EndpointProfileDto profile);
 }

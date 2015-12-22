@@ -29,12 +29,13 @@ import java.util.concurrent.TimeUnit;
 
 import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.PingResponse;
+import org.kaaproject.kaa.common.dto.EndpointProfileDataDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.Base64Util;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
-import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
+import org.kaaproject.kaa.server.common.log.shared.appender.data.BaseLogEventPack;
 import org.kaaproject.kaa.server.operations.pojo.SyncContext;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
 import org.kaaproject.kaa.server.operations.service.OperationsService;
@@ -44,7 +45,6 @@ import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.SyncRequestMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.logs.LogDeliveryMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.logs.LogEventPackMessage;
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.notification.ThriftNotificationMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.ActorTimeoutMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.ChannelTimeoutMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.RequestTimeoutMessage;
@@ -56,9 +56,9 @@ import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.Endp
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventDeliveryMessage.EventDeliveryStatus;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventReceiveMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventSendMessage;
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointStateUpdateMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserActionMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserAttachMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserConfigurationUpdateMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserConnectMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserDetachMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserDisconnectMessage;
@@ -156,17 +156,28 @@ public class EndpointActorMessageProcessor {
         tellParent(context, response);
     }
 
-    public void processThriftNotification(ActorContext context, ThriftNotificationMessage message) {
+    public void processServerProfileUpdate(ActorContext context) {
+        EndpointProfileDto endpointProfile = state.getProfile();
+        if (endpointProfile != null) {
+            endpointProfile = operationsService.refreshServerEndpointProfile(key);
+            state.setProfile(endpointProfile);
+            Set<ChannelMetaData> channels = state.getChannelsByTypes(TransportType.CONFIGURATION, TransportType.NOTIFICATION);
+            LOG.debug("[{}][{}] Processing profile update for {} channels", endpointKey, actorKey, channels.size());
+            syncChannels(context, channels, true, true);
+        } else {
+            LOG.warn("[{}][{}] Can't update server profile for an empty state", endpointKey, actorKey);
+        }
+    }
+
+    public void processThriftNotification(ActorContext context) {
         Set<ChannelMetaData> channels = state.getChannelsByTypes(TransportType.CONFIGURATION, TransportType.NOTIFICATION);
-
         LOG.debug("[{}][{}] Processing thrift norification for {} channels", endpointKey, actorKey, channels.size());
-
         syncChannels(context, channels, true, true);
     }
 
-    public void processStateUpdate(ActorContext context, EndpointStateUpdateMessage message) {
-        if (message.getUpdate() != null) {
-            state.setUcfHash(message.getUpdate().getHash());
+    public void processUserConfigurationUpdate(ActorContext context, EndpointUserConfigurationUpdateMessage message) {
+        if (message.getUserConfigurationUpdate() != null) {
+            state.setUcfHash(message.getUserConfigurationUpdate().getHash());
             syncChannels(context, state.getChannelsByTypes(TransportType.CONFIGURATION), true, false);
         }
     }
@@ -317,13 +328,14 @@ public class EndpointActorMessageProcessor {
         context = operationsService.syncNotification(context, request.getNotificationSync());
 
         state.setProfile(operationsService.updateProfile(context));
+        state.setServerProfileChanged(false);
 
         LOG.trace("[{}][{}] processed sync. Response is {}", endpointKey, request.hashCode(), context.getResponse());
 
         return context;
     }
 
-    private void syncChannels(ActorContext context, Set<ChannelMetaData> channels, boolean configuration, boolean notification) {
+    private void syncChannels(ActorContext context, Set<ChannelMetaData> channels, boolean cfUpdate, boolean nfUpdate) {
         for (ChannelMetaData channel : channels) {
             ClientSync originalRequest = channel.getRequestMessage().getRequest();
             ServerSync syncResponse = channel.getResponseHolder().getResponse();
@@ -331,7 +343,7 @@ public class EndpointActorMessageProcessor {
             ClientSync newRequest = new ClientSync();
             newRequest.setRequestId(originalRequest.getRequestId());
             newRequest.setClientSyncMetaData(originalRequest.getClientSyncMetaData());
-            if (configuration && originalRequest.getConfigurationSync() != null) {
+            if (cfUpdate && originalRequest.getConfigurationSync() != null) {
                 ConfigurationClientSync configurationSyncRequest = originalRequest.getConfigurationSync();
                 if (syncResponse.getConfigurationSync() != null) {
                     int newSeqNumber = syncResponse.getConfigurationSync().getAppStateSeqNumber();
@@ -342,7 +354,7 @@ public class EndpointActorMessageProcessor {
                 newRequest.setConfigurationSync(configurationSyncRequest);
                 originalRequest.setConfigurationSync(null);
             }
-            if (notification && originalRequest.getNotificationSync() != null) {
+            if (nfUpdate && originalRequest.getNotificationSync() != null) {
                 NotificationClientSync notificationSyncRequest = originalRequest.getNotificationSync();
                 if (syncResponse.getNotificationSync() != null) {
                     int newSeqNumber = syncResponse.getNotificationSync().getAppStateSeqNumber();
@@ -448,17 +460,15 @@ public class EndpointActorMessageProcessor {
         if (request != null) {
             if (request.getLogEntries() != null && request.getLogEntries().size() > 0) {
                 LOG.debug("[{}][{}] Processing log upload request {}", endpointKey, actorKey, request.getLogEntries().size());
-                LogEventPack logPack = new LogEventPack();
-                logPack.setDateCreated(System.currentTimeMillis());
-                logPack.setEndpointKey(Base64Util.encode(key.getData()));
+                EndpointProfileDataDto profileDto = convert(responseHolder.getEndpointProfile());
                 List<LogEvent> logEvents = new ArrayList<>(request.getLogEntries().size());
                 for (LogEntry logEntry : request.getLogEntries()) {
                     LogEvent logEvent = new LogEvent();
                     logEvent.setLogData(logEntry.getData().array());
                     logEvents.add(logEvent);
                 }
-                logPack.setEvents(logEvents);
-                logPack.setLogSchemaVersion(responseHolder.getEndpointProfile().getLogSchemaVersion());
+                BaseLogEventPack logPack = new BaseLogEventPack(profileDto, System.currentTimeMillis(), responseHolder.getEndpointProfile()
+                        .getLogSchemaVersion(), logEvents);
                 logPack.setUserId(state.getUserId());
                 context.parent().tell(new LogEventPackMessage(request.getRequestId(), context.self(), logPack), context.self());
             }
@@ -467,6 +477,11 @@ public class EndpointActorMessageProcessor {
                 logUploadResponseMap.clear();
             }
         }
+    }
+
+    private EndpointProfileDataDto convert(EndpointProfileDto profileDto) {
+        return new EndpointProfileDataDto(profileDto.getId(), endpointKey, profileDto.getClientProfileVersion(),
+                profileDto.getClientProfileBody(), profileDto.getServerProfileVersion(), profileDto.getServerProfileBody());
     }
 
     private void sendConnectToNewUser(ActorContext context, EndpointProfileDto endpointProfile) {

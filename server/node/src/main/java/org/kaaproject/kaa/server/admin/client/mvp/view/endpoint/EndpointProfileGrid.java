@@ -49,10 +49,17 @@ public class EndpointProfileGrid extends AbstractGrid<EndpointProfileDto, String
                 new StringValueProvider<EndpointProfileDto>() {
                     @Override
                     public String getValue(EndpointProfileDto item) {
-                        return item.getProfileVersion() + "";
+                        return item.getClientProfileVersion() + "";
                     }
                 }, 80);
-
+        prefWidth += constructStringColumn(table,
+                Utils.constants.serverProfileSchemaVersion(),
+                new StringValueProvider<EndpointProfileDto>() {
+                    @Override
+                    public String getValue(EndpointProfileDto item) {
+                        return item.getServerProfileVersion() + "";
+                    }
+                }, 80);
         prefWidth += constructStringColumn(table,
                 Utils.constants.configurationSchemaVersion(),
                 new StringValueProvider<EndpointProfileDto>() {

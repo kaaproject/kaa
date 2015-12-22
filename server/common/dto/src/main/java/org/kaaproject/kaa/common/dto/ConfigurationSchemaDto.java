@@ -111,10 +111,7 @@ public class ConfigurationSchemaDto extends AbstractSchemaDto {
 
         ConfigurationSchemaDto that = (ConfigurationSchemaDto) o;
 
-        if (majorVersion != that.majorVersion) {
-            return false;
-        }
-        if (minorVersion != that.minorVersion) {
+        if (version != that.version) {
             return false;
         }
         if (applicationId != null ? !applicationId.equals(that.applicationId) : that.applicationId != null) {
@@ -146,8 +143,7 @@ public class ConfigurationSchemaDto extends AbstractSchemaDto {
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (applicationId != null ? applicationId.hashCode() : 0);
-        result = 31 * result + majorVersion;
-        result = 31 * result + minorVersion;
+        result = 31 * result + version;
         result = 31 * result + (schema != null ? schema.hashCode() : 0);
         result = 31 * result + (protocolSchema != null ? protocolSchema.hashCode() : 0);
         result = 31 * result + (baseSchema != null ? baseSchema.hashCode() : 0);
@@ -161,8 +157,7 @@ public class ConfigurationSchemaDto extends AbstractSchemaDto {
         return "ConfigurationSchemaDto{" +
                 "id='" + id + '\'' +
                 ", applicationId='" + applicationId + '\'' +
-                ", majorVersion=" + majorVersion +
-                ", minorVersion=" + minorVersion +
+                ", version=" + version +
                 ", status=" + status +
                 '}';
     }

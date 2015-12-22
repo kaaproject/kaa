@@ -24,7 +24,7 @@ import org.junit.Test;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
-import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
@@ -44,14 +44,14 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
     @Test
     public void testGenerateJavaSdk() throws Exception {
         ApplicationDto application = createApplication(tenantAdminDto);
-        ProfileSchemaDto profileSchema = createProfileSchema(application.getId());
+        EndpointProfileSchemaDto profileSchema = createEndpointProfileSchema(application.getId(), null);
         ConfigurationSchemaDto configSchema = createConfigurationSchema(application.getId());
         NotificationSchemaDto notificationSchema = createUserNotificationSchema(application.getId());
         LogSchemaDto logSchema = createLogSchema(application.getId());
 
-        FileData sdk = client.downloadSdk(getSdkProfile(application.getId(), profileSchema.getMajorVersion(),
-                configSchema.getMajorVersion(), notificationSchema.getMajorVersion(), null,
-                logSchema.getMajorVersion(), null).getId(), SdkPlatform.JAVA);
+        FileData sdk = client.downloadSdk(getSdkProfile(application.getId(), profileSchema.getVersion(),
+                configSchema.getVersion(), notificationSchema.getVersion(), null,
+                logSchema.getVersion(), null).getId(), SdkPlatform.JAVA);
         Assert.assertNotNull(sdk);
         Assert.assertFalse(strIsEmpty(sdk.getFileName()));
         Assert.assertNotNull(sdk.getFileData());
@@ -66,7 +66,7 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
     @Test
     public void testGenerateJavaSdkWithEventSupport() throws Exception {
         ApplicationDto application = createApplication(tenantAdminDto);
-        ProfileSchemaDto profileSchema = createProfileSchema(application.getId());
+        EndpointProfileSchemaDto profileSchema = createEndpointProfileSchema(application.getId(), null);
         ConfigurationSchemaDto configSchema = createConfigurationSchema(application.getId());
         NotificationSchemaDto notificationSchema = createUserNotificationSchema(application.getId());
 
@@ -74,9 +74,9 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
         ApplicationEventFamilyMapDto aefMap = createApplicationEventFamilyMap(application.getId(), null, 1);
         List<String> aefMapIds = Collections.singletonList(aefMap.getId());
 
-        FileData sdk = client.downloadSdk(getSdkProfile(application.getId(), profileSchema.getMajorVersion(),
-                configSchema.getMajorVersion(), notificationSchema.getMajorVersion(), aefMapIds,
-                logSchema.getMajorVersion(), null).getId(), SdkPlatform.JAVA);
+        FileData sdk = client.downloadSdk(getSdkProfile(application.getId(), profileSchema.getVersion(),
+                configSchema.getVersion(), notificationSchema.getVersion(), aefMapIds,
+                logSchema.getVersion(), null).getId(), SdkPlatform.JAVA);
 
         Assert.assertNotNull(sdk);
         Assert.assertFalse(strIsEmpty(sdk.getFileName()));
@@ -92,7 +92,7 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
     @Test
     public void testGenerateAndroidSdkWithEventSupport() throws Exception {
         ApplicationDto application = createApplication(tenantAdminDto);
-        ProfileSchemaDto profileSchema = createProfileSchema(application.getId());
+        EndpointProfileSchemaDto profileSchema = createEndpointProfileSchema(application.getId(), null);
         ConfigurationSchemaDto configSchema = createConfigurationSchema(application.getId());
         NotificationSchemaDto notificationSchema = createUserNotificationSchema(application.getId());
         LogSchemaDto logSchema = createLogSchema(application.getId());
@@ -100,9 +100,9 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
         ApplicationEventFamilyMapDto aefMap = createApplicationEventFamilyMap(application.getId(), null, 1);
         List<String> aefMapIds = Collections.singletonList(aefMap.getId());
 
-        FileData sdk = client.downloadSdk(getSdkProfile(application.getId(), profileSchema.getMajorVersion(),
-                configSchema.getMajorVersion(), notificationSchema.getMajorVersion(), aefMapIds,
-                logSchema.getMajorVersion(), null).getId(), SdkPlatform.ANDROID);
+        FileData sdk = client.downloadSdk(getSdkProfile(application.getId(), profileSchema.getVersion(),
+                configSchema.getVersion(), notificationSchema.getVersion(), aefMapIds,
+                logSchema.getVersion(), null).getId(), SdkPlatform.ANDROID);
 
         Assert.assertNotNull(sdk);
         Assert.assertFalse(strIsEmpty(sdk.getFileName()));
@@ -118,14 +118,14 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
     @Test
     public void testGenerateCppSdk() throws Exception {
         ApplicationDto application = createApplication(tenantAdminDto);
-        ProfileSchemaDto profileSchema = createProfileSchema(application.getId());
+        EndpointProfileSchemaDto profileSchema = createEndpointProfileSchema(application.getId(), null);
         ConfigurationSchemaDto configSchema = createConfigurationSchema(application.getId());
         NotificationSchemaDto notificationSchema = createUserNotificationSchema(application.getId());
         LogSchemaDto logSchema = createLogSchema(application.getId());
 
-        FileData sdk = client.downloadSdk(getSdkProfile(application.getId(), profileSchema.getMajorVersion(),
-                configSchema.getMajorVersion(), notificationSchema.getMajorVersion(), null,
-                logSchema.getMajorVersion(), null).getId(), SdkPlatform.CPP);
+        FileData sdk = client.downloadSdk(getSdkProfile(application.getId(), profileSchema.getVersion(),
+                configSchema.getVersion(), notificationSchema.getVersion(), null,
+                logSchema.getVersion(), null).getId(), SdkPlatform.CPP);
         Assert.assertNotNull(sdk);
         Assert.assertFalse(strIsEmpty(sdk.getFileName()));
         Assert.assertNotNull(sdk.getFileData());
@@ -140,7 +140,7 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
     @Test
     public void testGenerateCppSdkWithEventSupport() throws Exception {
         ApplicationDto application = createApplication(tenantAdminDto);
-        ProfileSchemaDto profileSchema = createProfileSchema(application.getId());
+        EndpointProfileSchemaDto profileSchema = createEndpointProfileSchema(application.getId(), null);
         ConfigurationSchemaDto configSchema = createConfigurationSchema(application.getId());
         NotificationSchemaDto notificationSchema = createUserNotificationSchema(application.getId());
         LogSchemaDto logSchema = createLogSchema(application.getId());
@@ -148,9 +148,9 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
         ApplicationEventFamilyMapDto aefMap = createApplicationEventFamilyMap(application.getId(), null, 1);
         List<String> aefMapIds = Collections.singletonList(aefMap.getId());
 
-        FileData sdk = client.downloadSdk(getSdkProfile(application.getId(), profileSchema.getMajorVersion(),
-                configSchema.getMajorVersion(), notificationSchema.getMajorVersion(), aefMapIds,
-                logSchema.getMajorVersion(), null).getId(), SdkPlatform.CPP);
+        FileData sdk = client.downloadSdk(getSdkProfile(application.getId(), profileSchema.getVersion(),
+                configSchema.getVersion(), notificationSchema.getVersion(), aefMapIds,
+                logSchema.getVersion(), null).getId(), SdkPlatform.CPP);
 
         Assert.assertNotNull(sdk);
         Assert.assertFalse(strIsEmpty(sdk.getFileName()));
@@ -166,16 +166,16 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
     @Test
     public void testGenerateCSdk() throws Exception {
         ApplicationDto application = createApplication(tenantAdminDto);
-        ProfileSchemaDto profileSchema = createProfileSchema(application.getId());
+        EndpointProfileSchemaDto profileSchema = createEndpointProfileSchema(application.getId(), null);
         ConfigurationSchemaDto configSchema = createConfigurationSchema(application.getId());
         NotificationSchemaDto notificationSchema = createUserNotificationSchema(application.getId());
         LogSchemaDto logSchema = createLogSchema(application.getId());
 
         FileData sdk = client.downloadSdk(getSdkProfile(application.getId(),
-                profileSchema.getMajorVersion(),
-                configSchema.getMajorVersion(),
-                notificationSchema.getMajorVersion(),
-                null, logSchema.getMajorVersion(), null).getId(),
+                profileSchema.getVersion(),
+                configSchema.getVersion(),
+                notificationSchema.getVersion(),
+                null, logSchema.getVersion(), null).getId(),
                 SdkPlatform.C);
         Assert.assertNotNull(sdk);
         Assert.assertFalse(strIsEmpty(sdk.getFileName()));
@@ -191,7 +191,7 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
     @Test
     public void testGenerateCSdkWithEventSupport() throws Exception {
         ApplicationDto application = createApplication(tenantAdminDto);
-        ProfileSchemaDto profileSchema = createProfileSchema(application.getId());
+        EndpointProfileSchemaDto profileSchema = createEndpointProfileSchema(application.getId(), null);
         ConfigurationSchemaDto configSchema = createConfigurationSchema(application.getId());
         NotificationSchemaDto notificationSchema = createUserNotificationSchema(application.getId());
         LogSchemaDto logSchema = createLogSchema(application.getId());
@@ -199,9 +199,9 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
         ApplicationEventFamilyMapDto aefMap = createApplicationEventFamilyMap(application.getId(), null, 1);
         List<String> aefMapIds = Collections.singletonList(aefMap.getId());
 
-        FileData sdk = client.downloadSdk(getSdkProfile(application.getId(), profileSchema.getMajorVersion(),
-                configSchema.getMajorVersion(), notificationSchema.getMajorVersion(), aefMapIds,
-                logSchema.getMajorVersion(), null).getId(), SdkPlatform.C);
+        FileData sdk = client.downloadSdk(getSdkProfile(application.getId(), profileSchema.getVersion(),
+                configSchema.getVersion(), notificationSchema.getVersion(), aefMapIds,
+                logSchema.getVersion(), null).getId(), SdkPlatform.C);
 
         Assert.assertNotNull(sdk);
         Assert.assertFalse(strIsEmpty(sdk.getFileName()));
@@ -250,12 +250,12 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
     public void testGenerateJavaSdkWithInvalidConfigurationSchema() throws Exception {
         final ApplicationDto application = createApplication(tenantAdminDto);
         loginTenantDeveloper(tenantDeveloperUser);
-        final ProfileSchemaDto profileSchema = createProfileSchema(application.getId());
+        final EndpointProfileSchemaDto profileSchema = createEndpointProfileSchema(application.getId(), null);
         checkNotFound(new TestRestCall() {
             @Override
             public void executeRestCall() throws Exception {
                 client.downloadSdk(getSdkProfile(application.getId(),
-                        profileSchema.getMajorVersion(), 2, 2, null, 0, null).getId(), SdkPlatform.JAVA);
+                        profileSchema.getVersion(), 2, 2, null, 0, null).getId(), SdkPlatform.JAVA);
             }
         });
     }
@@ -269,13 +269,13 @@ public class ControlServerSdkIT extends AbstractTestControlServer {
     public void testGenerateJavaSdkWithInvalidNotificationSchema() throws Exception {
         final ApplicationDto application = createApplication(tenantAdminDto);
         loginTenantDeveloper(tenantDeveloperUser);
-        final ProfileSchemaDto profileSchema = createProfileSchema(application.getId());
+        final EndpointProfileSchemaDto profileSchema = createEndpointProfileSchema(application.getId(), null);
         final ConfigurationSchemaDto configSchema = createConfigurationSchema(application.getId());
         checkNotFound(new TestRestCall() {
             @Override
             public void executeRestCall() throws Exception {
-                client.downloadSdk(getSdkProfile(application.getId(), profileSchema.getMajorVersion(),
-                        configSchema.getMajorVersion(), 2, null, 0, null).getId(), SdkPlatform.JAVA);
+                client.downloadSdk(getSdkProfile(application.getId(), profileSchema.getVersion(),
+                        configSchema.getVersion(), 2, null, 0, null).getId(), SdkPlatform.JAVA);
             }
         });
     }

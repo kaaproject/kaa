@@ -21,13 +21,18 @@ import java.util.List;
 import org.apache.thrift.TException;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
+import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.VersionDto;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
+import org.kaaproject.kaa.server.common.dao.ProfileService;
+import org.kaaproject.kaa.server.common.dao.ServerProfileService;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Message;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.OperationsThriftService;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.UserConfigurationUpdate;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaService;
+import org.kaaproject.kaa.server.operations.service.cache.AppProfileVersionsKey;
 import org.kaaproject.kaa.server.operations.service.cache.AppSeqNumber;
 import org.kaaproject.kaa.server.operations.service.cache.AppVersionKey;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
@@ -41,8 +46,9 @@ import org.springframework.stereotype.Service;
 /**
  * The implementation of {#link
  * org.kaaproject.kaa.server.common.thrift.gen.operations
- * .OperationsThriftService.Iface OperationsThriftService}. The only one specific method 
- * to Operations Service is {#link #onNotification(Notification notification) onNotification}
+ * .OperationsThriftService.Iface OperationsThriftService}. The only one
+ * specific method to Operations Service is {#link #onNotification(Notification
+ * notification) onNotification}
  *
  * @author Andrew Shvayka
  */
@@ -71,6 +77,12 @@ public class OperationsThriftServiceImpl implements OperationsThriftService.Ifac
     /** The event service */
     @Autowired
     EventService eventService;
+
+    @Autowired
+    ProfileService profileService;
+
+    @Autowired
+    ServerProfileService serverProfileService;
 
     @Override
     public void onNotification(Notification notification) throws TException {
@@ -127,8 +139,20 @@ public class OperationsThriftServiceImpl implements OperationsThriftService.Ifac
         if (appDto != null) {
             if (notification.getProfileFilterId() != null) {
                 ProfileFilterDto filterDto = cacheService.getFilter(notification.getProfileFilterId());
-                int version = filterDto.getMajorVersion();
-                cacheService.resetFilters(new AppVersionKey(appDto.getApplicationToken(), version));
+                if (filterDto.getEndpointProfileSchemaId() != null && filterDto.getServerProfileSchemaId() != null) {
+                    cacheService.resetFilters(new AppProfileVersionsKey(appDto.getApplicationToken(), filterDto
+                            .getEndpointProfileSchemaVersion(), filterDto.getServerProfileSchemaVersion()));
+                } else if (filterDto.getServerProfileSchemaVersion() == null) {
+                    for (VersionDto version : profileService.findProfileSchemaVersionsByAppId(appDto.getId())) {
+                        cacheService.resetFilters(new AppProfileVersionsKey(appDto.getApplicationToken(), version.getVersion(), filterDto
+                                .getServerProfileSchemaVersion()));
+                    }
+                } else {
+                    for (ServerProfileSchemaDto version : serverProfileService.findServerProfileSchemasByAppId(appDto.getId())) {
+                        cacheService.resetFilters(new AppProfileVersionsKey(appDto.getApplicationToken(), version.getVersion(), filterDto
+                                .getServerProfileSchemaVersion()));
+                    }
+                }
             }
             if (notification.getGroupId() != null) {
                 cacheService.resetGroup(notification.getGroupId());

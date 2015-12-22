@@ -30,6 +30,7 @@ import java.security.NoSuchProviderException;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 import org.apache.avro.generic.GenericRecord;
@@ -49,44 +50,28 @@ import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
-import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
 import org.kaaproject.kaa.common.endpoint.gen.BasicEndpointProfile;
 import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.Base64Util;
 import org.kaaproject.kaa.server.common.dao.AbstractTest;
-import org.kaaproject.kaa.server.common.dao.ApplicationService;
-import org.kaaproject.kaa.server.common.dao.ConfigurationService;
-import org.kaaproject.kaa.server.common.dao.EndpointService;
-import org.kaaproject.kaa.server.common.dao.NotificationService;
-import org.kaaproject.kaa.server.common.dao.ProfileService;
 import org.kaaproject.kaa.server.common.dao.SdkProfileService;
-import org.kaaproject.kaa.server.common.dao.TopicService;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
-import org.kaaproject.kaa.server.common.dao.impl.ApplicationDao;
-import org.kaaproject.kaa.server.common.dao.impl.ConfigurationDao;
-import org.kaaproject.kaa.server.common.dao.impl.ConfigurationSchemaDao;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointConfigurationDao;
-import org.kaaproject.kaa.server.common.dao.impl.EndpointGroupDao;
-import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
-import org.kaaproject.kaa.server.common.dao.impl.EndpointUserDao;
-import org.kaaproject.kaa.server.common.dao.impl.ProfileFilterDao;
-import org.kaaproject.kaa.server.common.dao.impl.ProfileSchemaDao;
 import org.kaaproject.kaa.server.common.dao.impl.TenantDao;
 import org.kaaproject.kaa.server.common.dao.model.EndpointConfiguration;
-import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
-import org.kaaproject.kaa.server.common.dao.model.EndpointUser;
 import org.kaaproject.kaa.server.common.dao.model.sql.Application;
-import org.kaaproject.kaa.server.common.dao.model.sql.Configuration;
+import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchema;
+import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchemaMetaInfo;
 import org.kaaproject.kaa.server.common.dao.model.sql.ConfigurationSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.EndpointGroup;
+import org.kaaproject.kaa.server.common.dao.model.sql.EndpointProfileSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.ProfileFilter;
-import org.kaaproject.kaa.server.common.dao.model.sql.ProfileSchema;
-import org.kaaproject.kaa.server.common.dao.model.sql.SdkProfile;
 import org.kaaproject.kaa.server.common.dao.model.sql.Tenant;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.MongoDBTestRunner;
 import org.kaaproject.kaa.server.operations.pojo.SyncContext;
@@ -118,7 +103,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/operations/common-test-context.xml")
-@DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
+@DirtiesContext(classMode = ClassMode.AFTER_CLASS)
 @Transactional
 public class OperationsServiceIT extends AbstractTest {
     private static final Charset UTF_8 = Charset.forName("UTF-8");
@@ -134,8 +119,8 @@ public class OperationsServiceIT extends AbstractTest {
     private static final String INVALID_USER_ACCESS_TOKEN = "invalidUserAccessToken";
 
     private static final int CONF_SCHEMA_VERSION = 2;
-    private static final int PROFILE_SCHEMA_VERSION = 2;
-    private static final int APPLICATION_SEQ_NUMBER = 9;
+    private static final int PROFILE_SCHEMA_VERSION = 1;
+    private static final int APPLICATION_SEQ_NUMBER = 7;
 
     private static final String CUSTOMER_ID = "CustomerId";
     private static final String APPLICATION_NAME = "ApplicationName";
@@ -160,7 +145,7 @@ public class OperationsServiceIT extends AbstractTest {
     private ConfigurationSchema confSchema;
     private Application application;
     private Tenant customer;
-    private ProfileSchema profileSchema;
+    private EndpointProfileSchema endpointProfileSchema;
     private ProfileFilterDto profileFilter;
     private TopicDto mandatoryTopicDto;
     private TopicDto optionalTopicDto;
@@ -171,52 +156,10 @@ public class OperationsServiceIT extends AbstractTest {
     protected OperationsService operationsService;
 
     @Autowired
-    protected ConfigurationService configurationService;
-
-    @Autowired
-    protected NotificationService notificationService;
-
-    @Autowired
-    protected TopicService topicService;
-
-    @Autowired
-    protected ApplicationService applicationService;
-
-    @Autowired
-    protected ProfileService profileService;
-
-    @Autowired
-    protected EndpointService endpointService;
-
-    @Autowired
-    protected EndpointUserDao<EndpointUser> endpointUserDao;
-
-    @Autowired
     protected TenantDao<Tenant> customerDao;
 
     @Autowired
-    protected ApplicationDao<Application> applicationDao;
-
-    @Autowired
-    protected ConfigurationSchemaDao<ConfigurationSchema> configurationSchemaDao;
-
-    @Autowired
-    protected ConfigurationDao<Configuration> configurationDao;
-
-    @Autowired
     protected EndpointConfigurationDao<EndpointConfiguration> endpointConfigurationDao;
-
-    @Autowired
-    protected EndpointProfileDao<EndpointProfile> endpointProfileDao;
-
-    @Autowired
-    protected ProfileSchemaDao<ProfileSchema> profileSchemaDao;
-
-    @Autowired
-    protected EndpointGroupDao<EndpointGroup> endpointGroupDao;
-
-    @Autowired
-    protected ProfileFilterDao<ProfileFilter> profileFilterDao;
 
     @Autowired
     protected SdkProfileService sdkProfileService;
@@ -233,6 +176,11 @@ public class OperationsServiceIT extends AbstractTest {
     @AfterClass
     public static void after() throws Exception {
         MongoDBTestRunner.tearDown();
+    }
+
+    @After
+    public void afterTest() {
+        endpointConfigurationDao.removeAll();
     }
 
     @Before
@@ -262,19 +210,34 @@ public class OperationsServiceIT extends AbstractTest {
         application = applicationDao.findById(applicationDto.getId());
 
         SDK_PROFILE.setApplicationId(applicationDto.getId());
-        SDK_TOKEN = new SdkProfile(SDK_PROFILE).getToken();
-        sdkProfileService.saveSdkProfile(SDK_PROFILE);
+        SDK_TOKEN = sdkProfileService.saveSdkProfile(SDK_PROFILE).getToken();
 
         EndpointGroup groupAll = endpointGroupDao.findByAppIdAndWeight(application.getStringId(), 0);
 
-        ProfileSchema profileSchemaObj = new ProfileSchema();
-        profileSchemaObj.setMajorVersion(PROFILE_SCHEMA_VERSION);
-        profileSchemaObj.setMinorVersion(0);
-        profileSchemaObj.setSchema(BasicEndpointProfile.SCHEMA$.toString());
-        profileSchemaObj.setApplication(application);
-        ProfileSchemaDto profileSchemaDto = profileService.saveProfileSchema(profileSchemaObj.toDto());
+        
+        CTLSchemaMetaInfo metaInfo = new CTLSchemaMetaInfo();
+        metaInfo.setVersion(1);
+        metaInfo.setFqn(BasicEndpointProfile.SCHEMA$.getFullName());
+        metaInfo.setScope(CTLSchemaScopeDto.PROFILE_SCHEMA);
+        
+        metaInfo = ctlSchemaMetaInfoDao.save(metaInfo);
 
-        profileSchema = profileSchemaDao.findById(profileSchemaDto.getId());
+        CTLSchema ctlSchema = new CTLSchema();
+        ctlSchema.setTenant(customer);
+        ctlSchema.setApplication(application);
+        ctlSchema.setBody(BasicEndpointProfile.SCHEMA$.toString());
+        ctlSchema.setDependencySet(new HashSet<CTLSchema>());
+        ctlSchema.setMetaInfo(metaInfo);
+        
+        ctlSchema = ctlSchemaDao.save(ctlSchema);
+        
+        EndpointProfileSchema endpointProfileSchemaObj = new EndpointProfileSchema();
+        endpointProfileSchemaObj.setVersion(PROFILE_SCHEMA_VERSION);
+        endpointProfileSchemaObj.setCtlSchema(ctlSchema);
+        endpointProfileSchemaObj.setApplication(application);
+        EndpointProfileSchemaDto profileSchemaDto = profileService.saveProfileSchema(endpointProfileSchemaObj.toDto());
+
+        endpointProfileSchema = profileSchemaDao.findById(profileSchemaDto.getId());
 
         EndpointGroup endpointGroup = new EndpointGroup();
         endpointGroup.setApplication(application);
@@ -287,14 +250,13 @@ public class OperationsServiceIT extends AbstractTest {
         profileFilterObj.setApplication(application);
         profileFilterObj.setEndpointGroup(endpointGroup);
         profileFilterObj.setBody("profileBody.contains(\"dummy\")");
-        profileFilterObj.setProfileSchema(profileSchema);
+        profileFilterObj.setEndpointProfileSchema(endpointProfileSchema);
         profileFilter = profileService.saveProfileFilter(profileFilterObj.toDto());
         profileService.activateProfileFilter(profileFilter.getId(), null);
 
         confSchema = new ConfigurationSchema();
         confSchema.setApplication(application);
-        confSchema.setMajorVersion(CONF_SCHEMA_VERSION);
-        confSchema.setMinorVersion(CONF_SCHEMA_VERSION);
+        confSchema.setVersion(CONF_SCHEMA_VERSION);
         confSchema.setSchema(dataSchema);
         try {
             confSchema = new ConfigurationSchema(configurationService.saveConfSchema(confSchema.toDto()));
@@ -837,12 +799,6 @@ public class OperationsServiceIT extends AbstractTest {
         Assert.assertNotNull(response.getEventSync().getEventListenersResponses());
         Assert.assertEquals(1, response.getEventSync().getEventListenersResponses().size());
         Assert.assertEquals(SyncStatus.FAILURE, response.getEventSync().getEventListenersResponses().get(0).getResult());
-    }
-
-
-    @After
-    public void afterTest() {
-        endpointConfigurationDao.removeAll();
     }
 
     public static String getResourceAsString(String path) throws IOException {

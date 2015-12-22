@@ -143,7 +143,7 @@ public class DefaultDeltaService implements DeltaService {
 
         AppVersionKey appConfigVersionKey = new AppVersionKey(request.getApplicationToken(), profile.getConfigurationVersion());
         List<EndpointGroupStateDto> endpointGroups = historyDelta.getEndpointGroupStates();
-        if (historyDelta.isConfigurationChanged() || request.isUserConfigurationChanged() || hashMismatch) {
+        if (isChangePossible(request, historyDelta, hashMismatch)) {
             boolean resync = request.isFirstRequest() || request.isResyncOnly();
             if (hashMismatch) {
                 resync = true;
@@ -198,6 +198,10 @@ public class DefaultDeltaService implements DeltaService {
 
         LOG.debug("[{}] Response: {}", endpointId, response);
         return response;
+    }
+
+    private boolean isChangePossible(GetDeltaRequest request, HistoryDelta historyDelta, boolean hashMismatch) {
+        return historyDelta.isConfigurationChanged() || request.isUserConfigurationChanged() || hashMismatch;
     }
 
     private boolean isFirstRequestWithUpToDateConfiguration(GetDeltaRequest request, EndpointProfileDto profile, byte[] configurationHash) {

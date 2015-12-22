@@ -33,7 +33,7 @@
     <aop:aspectj-autoproxy />
     <context:component-scan base-package="org.kaaproject.kaa.server.node, org.kaaproject.kaa.server.control" />
 
-    <import resource="classpath:mongo-dao-test-context.xml" />
+    <import resource="classpath:/dao/mongo-dao-test-context.xml" />
 
     <util:properties id="properties"
         location="classpath:/control/control-server-test.properties" />

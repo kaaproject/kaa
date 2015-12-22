@@ -97,6 +97,7 @@ public class CassandraModelConstants {
     public static final String EP_PROFILE_PROPERTY = "pf";
     public static final String EP_PROFILE_HASH_PROPERTY = "pf_hash";
     public static final String EP_PROFILE_VERSION_PROPERTY = "pf_ver";
+    public static final String EP_SERVER_PROFILE_VERSION_PROPERTY = "srv_pf_ver";
     public static final String EP_CONFIGURATION_VERSION_PROPERTY = "cf_ver";
     public static final String EP_NOTIFICATION_VERSION_PROPERTY = "nf_ver";
     public static final String EP_NOTIFICATION_HASH_PROPERTY = "nf_hash";
@@ -107,6 +108,7 @@ public class CassandraModelConstants {
     public static final String EP_ECF_VERSION_STATE_PROPERTY = "ecf_ver_state";
     public static final String EP_SERVER_HASH_PROPERTY = "server_hash";
     public static final String EP_SDK_TOKEN_PROPERTY = SDK_TOKEN_PROPERTY;
+    public static final String EP_SERVER_PROFILE_PROPERTY = "srv_pf";    
 
     /**
      * Cassandra endpoint user constants.

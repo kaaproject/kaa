@@ -22,22 +22,56 @@ import com.google.gwt.place.shared.Prefix;
 
 public class ConfigurationPlace extends AbstractRecordPlace {
 
+    private String schemaId;
+    
     public ConfigurationPlace(String applicationId, String schemaId, String endpointGroupId, boolean create, boolean showActive, double random) {
-        super(applicationId, schemaId, endpointGroupId, create, showActive, random);
+        super(applicationId, endpointGroupId, create, showActive, random);
+        this.schemaId = schemaId;
+    }
+    
+    public String getSchemaId() {
+        return schemaId;
     }
 
     @Prefix(value = "config")
     public static class Tokenizer extends AbstractRecordPlace.Tokenizer<ConfigurationPlace> {
 
         @Override
-        protected ConfigurationPlace getPlaceImpl(String applicationId, String schemaId, String endpointGroupId, boolean create, boolean showActive, double random) {
-            return new ConfigurationPlace(applicationId, schemaId, endpointGroupId, create, showActive, random);
+        protected ConfigurationPlace getPlaceImpl(String applicationId, String endpointGroupId, boolean create, boolean showActive, double random) {
+            return new ConfigurationPlace(applicationId, PlaceParams.getParam(SCHEMA_ID), endpointGroupId, create, showActive, random);
+        }
+
+        @Override
+        protected void updateTokenImpl(ConfigurationPlace place) {
+            PlaceParams.putParam(SCHEMA_ID, place.getSchemaId());
         }
     }
 
     @Override
     public String getName() {
         return Utils.constants.configuration();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!super.equals(obj)) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        ConfigurationPlace other = (ConfigurationPlace) obj;
+        if (schemaId == null) {
+            if (other.schemaId != null) {
+                return false;
+            }
+        } else if (!schemaId.equals(other.schemaId)) {
+            return false;
+        }
+        return true;
     }
 
 }

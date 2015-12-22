@@ -24,7 +24,6 @@ import java.sql.SQLException;
 import java.util.Arrays;
 
 import org.apache.avro.generic.GenericRecord;
-import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
@@ -32,22 +31,23 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
+import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
 import org.kaaproject.kaa.common.endpoint.gen.BasicEndpointProfile;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
-import org.kaaproject.kaa.schema.base.Profile;
-import org.kaaproject.kaa.server.common.dao.SdkProfileService;
-import org.kaaproject.kaa.server.common.dao.impl.ApplicationDao;
-import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
-import org.kaaproject.kaa.server.common.dao.impl.ProfileSchemaDao;
-import org.kaaproject.kaa.server.common.dao.impl.TenantDao;
+import org.kaaproject.kaa.schema.system.EmptyData;
 import org.kaaproject.kaa.server.common.dao.AbstractTest;
-import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
-import org.kaaproject.kaa.server.common.dao.model.sql.Application;
-import org.kaaproject.kaa.server.common.dao.model.sql.ProfileSchema;
+import org.kaaproject.kaa.server.common.dao.ApplicationService;
+import org.kaaproject.kaa.server.common.dao.CTLService;
+import org.kaaproject.kaa.server.common.dao.SdkProfileService;
+import org.kaaproject.kaa.server.common.dao.UserService;
 import org.kaaproject.kaa.server.common.dao.model.sql.SdkProfile;
-import org.kaaproject.kaa.server.common.dao.model.sql.Tenant;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.MongoDBTestRunner;
 import org.kaaproject.kaa.server.operations.pojo.RegisterProfileRequest;
 import org.kaaproject.kaa.server.operations.pojo.UpdateProfileRequest;
@@ -72,17 +72,17 @@ public class ProfileServiceIT extends AbstractTest {
     private static final byte[] ENDPOINT_KEY = getRandEndpointKey();
     private static final String CUSTOMER_NAME = "CUSTOMER_NAME";
     private static final String APP_NAME = "APP_NAME";
-    private static final String APP_TOKEN = "APP_TOKEN";
     private String sdkToken;
     private String newSdkToken;
 
-    private static final Profile ENDPOINT_PROFILE = new Profile();
+    private static final EmptyData ENDPOINT_PROFILE = new EmptyData();
     private static final BasicEndpointProfile NEW_ENDPOINT_PROFILE = new BasicEndpointProfile("newprofile");
 
     protected static final Logger LOG = LoggerFactory.getLogger(ProfileServiceIT.class);
 
-    private final GenericAvroConverter<GenericRecord> baseAvroConverter = new GenericAvroConverter<GenericRecord>(Profile.SCHEMA$);
-    private final GenericAvroConverter<GenericRecord> newAvroConverter = new GenericAvroConverter<GenericRecord>(BasicEndpointProfile.SCHEMA$);
+    private final GenericAvroConverter<GenericRecord> baseAvroConverter = new GenericAvroConverter<GenericRecord>(EmptyData.SCHEMA$);
+    private final GenericAvroConverter<GenericRecord> newAvroConverter = new GenericAvroConverter<GenericRecord>(
+            BasicEndpointProfile.SCHEMA$);
 
     @Autowired
     protected ProfileService profileService;
@@ -91,21 +91,21 @@ public class ProfileServiceIT extends AbstractTest {
     protected SdkProfileService sdkProfileService;
 
     @Autowired
-    protected EndpointProfileDao<EndpointProfile> endpointProfileDao;
+    protected UserService userService;
 
     @Autowired
-    protected TenantDao<Tenant> customerDao;
+    protected ApplicationService applicationService;
 
     @Autowired
-    protected ApplicationDao<Application> applicationDao;
+    protected org.kaaproject.kaa.server.common.dao.ProfileService daoProfileService;
 
     @Autowired
-    protected ProfileSchemaDao<ProfileSchema> profileSchemaDao;
+    protected CTLService ctlService;
 
-    private Tenant tenant;
-    private Application application;
-    private ProfileSchema profileSchema;
-    private ProfileSchema profileSchema2;
+    private TenantDto tenant;
+    private ApplicationDto application;
+    private EndpointProfileSchemaDto schema1Dto;
+    private EndpointProfileSchemaDto schema2Dto;
 
     @BeforeClass
     public static void init() throws Exception {
@@ -120,94 +120,102 @@ public class ProfileServiceIT extends AbstractTest {
     @Before
     public void beforeTest() throws IOException, SQLException {
         clearDBData();
-        tenant = new Tenant();
+        tenant = new TenantDto();
         tenant.setName(CUSTOMER_NAME);
-        tenant = customerDao.save(tenant);
+        tenant = userService.saveTenant(tenant);
 
-        application = new Application();
+        application = new ApplicationDto();
         application.setName(APP_NAME);
-        application.setApplicationToken(APP_TOKEN);
-        application.setTenant(tenant);
-        application = applicationDao.save(application);
+        application.setTenantId(tenant.getId());
+        application = applicationService.saveApp(application);
 
-        profileSchema = new ProfileSchema();
-        profileSchema.setMajorVersion(PROFILE_SCHEMA_VERSION);
-        profileSchema.setMinorVersion(0);
-        profileSchema.setSchema(Profile.SCHEMA$.toString());
-        profileSchema.setApplication(application);
-        profileSchema = profileSchemaDao.save(profileSchema);
+        CTLSchemaMetaInfoDto ctl1MetaDataDto = new CTLSchemaMetaInfoDto();
+        ctl1MetaDataDto.setVersion(2);
+        ctl1MetaDataDto.setFqn(EmptyData.SCHEMA$.getFullName());
+        ctl1MetaDataDto.setScope(CTLSchemaScopeDto.PROFILE_SCHEMA);
+
+        CTLSchemaDto ctl1SchemaDto = new CTLSchemaDto();
+        ctl1SchemaDto.setApplicationId(application.getId());
+        ctl1SchemaDto.setBody(EmptyData.SCHEMA$.toString());
+        ctl1SchemaDto.setMetaInfo(ctl1MetaDataDto);
+        ctl1SchemaDto = ctlService.saveCTLSchema(ctl1SchemaDto);
+
+        schema1Dto = new EndpointProfileSchemaDto();
+        schema1Dto.setVersion(PROFILE_SCHEMA_VERSION);
+        schema1Dto.setCtlSchemaId(ctl1SchemaDto.getId());
+        schema1Dto.setApplicationId(application.getId());
+        schema1Dto = daoProfileService.saveProfileSchema(schema1Dto);
         
-        profileSchema2 = new ProfileSchema();
-        profileSchema2.setMajorVersion(NEW_PROFILE_SCHEMA_VERSION);
-        profileSchema2.setMinorVersion(0);
-        profileSchema2.setSchema(BasicEndpointProfile.SCHEMA$.toString());
-        profileSchema2.setApplication(application);
-        profileSchema2 = profileSchemaDao.save(profileSchema2);
+        CTLSchemaMetaInfoDto ctl2MetaDataDto = new CTLSchemaMetaInfoDto();
+        ctl2MetaDataDto.setVersion(2);
+        ctl2MetaDataDto.setFqn(BasicEndpointProfile.SCHEMA$.getFullName());
+        ctl2MetaDataDto.setScope(CTLSchemaScopeDto.PROFILE_SCHEMA);
+
+        CTLSchemaDto ctl2SchemaDto = new CTLSchemaDto();
+        ctl2SchemaDto.setApplicationId(application.getId());
+        ctl2SchemaDto.setBody(BasicEndpointProfile.SCHEMA$.toString());
+        ctl2SchemaDto.setMetaInfo(ctl2MetaDataDto);
+        ctl2SchemaDto = ctlService.saveCTLSchema(ctl2SchemaDto);
+        
+        schema2Dto = new EndpointProfileSchemaDto();
+        schema2Dto.setVersion(NEW_PROFILE_SCHEMA_VERSION);
+        schema2Dto.setCtlSchemaId(ctl2SchemaDto.getId());
+        schema2Dto.setApplicationId(application.getId());
+        schema2Dto = daoProfileService.saveProfileSchema(schema2Dto);
 
         SdkProfileDto sdkPropertiesDto = new SdkProfileDto();
-        sdkPropertiesDto.setApplicationId(application.getStringId());
-        sdkPropertiesDto.setProfileSchemaVersion(profileSchema.getMajorVersion());
+        sdkPropertiesDto.setApplicationId(application.getId());
+        sdkPropertiesDto.setProfileSchemaVersion(PROFILE_SCHEMA_VERSION);
         sdkPropertiesDto.setConfigurationSchemaVersion(1);
         sdkPropertiesDto.setNotificationSchemaVersion(1);
         sdkPropertiesDto.setLogSchemaVersion(1);
-        sdkPropertiesDto.setApplicationToken(APP_TOKEN);
+        sdkPropertiesDto.setApplicationToken(application.getApplicationToken());
         sdkPropertiesDto = sdkProfileService.saveSdkProfile(sdkPropertiesDto);
         sdkToken = new SdkProfile(sdkPropertiesDto).getToken();
 
         SdkProfileDto newSdkProfileDto = new SdkProfileDto();
-        newSdkProfileDto.setApplicationId(application.getStringId());
-        newSdkProfileDto.setProfileSchemaVersion(profileSchema2.getMajorVersion());
+        newSdkProfileDto.setApplicationId(application.getId());
+        newSdkProfileDto.setProfileSchemaVersion(NEW_PROFILE_SCHEMA_VERSION);
         newSdkProfileDto.setConfigurationSchemaVersion(1);
         newSdkProfileDto.setNotificationSchemaVersion(1);
         newSdkProfileDto.setLogSchemaVersion(1);
-        newSdkProfileDto.setApplicationToken(APP_TOKEN);
+        newSdkProfileDto.setApplicationToken(application.getApplicationToken());
         newSdkProfileDto = sdkProfileService.saveSdkProfile(newSdkProfileDto);
         newSdkToken = new SdkProfile(newSdkProfileDto).getToken();
-    }
-
-    @After
-    public void afterTest() throws IOException {
-        endpointProfileDao.removeAll();
     }
 
     @Test
     public void registerProfileServiceTest() throws IOException {
         byte[] profile = baseAvroConverter.encode(ENDPOINT_PROFILE);
-        RegisterProfileRequest request = new RegisterProfileRequest(APP_TOKEN,
-                ENDPOINT_KEY, sdkToken, profile);
+        RegisterProfileRequest request = new RegisterProfileRequest(application.getApplicationToken(), ENDPOINT_KEY, sdkToken, profile);
         EndpointProfileDto dto = profileService.registerProfile(request);
         Assert.assertNotNull(dto);
         Assert.assertNotNull(dto.getId());
         Assert.assertTrue(Arrays.equals(ENDPOINT_KEY, dto.getEndpointKey()));
-        Assert.assertTrue(Arrays.equals(EndpointObjectHash.fromSHA1(ENDPOINT_KEY).getData(),
-                dto.getEndpointKeyHash()));
-        Assert.assertEquals(baseAvroConverter.encodeToJson(ENDPOINT_PROFILE), dto.getProfile().replaceAll(" ", ""));
+        Assert.assertTrue(Arrays.equals(EndpointObjectHash.fromSHA1(ENDPOINT_KEY).getData(), dto.getEndpointKeyHash()));
+        Assert.assertEquals(baseAvroConverter.encodeToJson(ENDPOINT_PROFILE), dto.getClientProfileBody().replaceAll(" ", ""));
         Assert.assertTrue(Arrays.equals(EndpointObjectHash.fromSHA1(profile).getData(), dto.getProfileHash()));
     }
 
     @Test
     public void updateProfileServiceTest() throws IOException {
         byte[] profile = baseAvroConverter.encode(ENDPOINT_PROFILE);
-        RegisterProfileRequest request = new RegisterProfileRequest(APP_TOKEN, ENDPOINT_KEY, sdkToken, profile);
+        RegisterProfileRequest request = new RegisterProfileRequest(application.getApplicationToken(), ENDPOINT_KEY, sdkToken, profile);
 
         EndpointProfileDto oldDto = profileService.registerProfile(request);
 
-        Assert.assertEquals(baseAvroConverter.encodeToJson(ENDPOINT_PROFILE), oldDto.getProfile().replaceAll(" ", ""));
+        Assert.assertEquals(baseAvroConverter.encodeToJson(ENDPOINT_PROFILE), oldDto.getClientProfileBody().replaceAll(" ", ""));
 
         byte[] newProfile = newAvroConverter.encode(NEW_ENDPOINT_PROFILE);
-        UpdateProfileRequest updateRequest = new UpdateProfileRequest(APP_TOKEN,
-                EndpointObjectHash.fromSHA1(ENDPOINT_KEY),
-                null,
-                newProfile,
-                newSdkToken);
+        UpdateProfileRequest updateRequest = new UpdateProfileRequest(application.getApplicationToken(), EndpointObjectHash.fromSHA1(ENDPOINT_KEY), null,
+                newProfile, newSdkToken);
         EndpointProfileDto newDto = profileService.updateProfile(updateRequest);
 
         Assert.assertNotNull(newDto);
         Assert.assertNotNull(newDto.getId());
         Assert.assertEquals(oldDto.getId(), newDto.getId());
-        Assert.assertEquals(newAvroConverter.encodeToJson(NEW_ENDPOINT_PROFILE), newDto.getProfile().replaceAll(" ", ""));
-        Assert.assertTrue(Arrays.equals(EndpointObjectHash.fromSHA1(newProfile).getData(),
-                newDto.getProfileHash()));
+        Assert.assertEquals(newAvroConverter.encodeToJson(NEW_ENDPOINT_PROFILE), newDto.getClientProfileBody().replaceAll(" ", ""));
+        Assert.assertTrue(Arrays.equals(EndpointObjectHash.fromSHA1(newProfile).getData(), newDto.getProfileHash()));
     }
 
     private static byte[] getRandEndpointKey() {

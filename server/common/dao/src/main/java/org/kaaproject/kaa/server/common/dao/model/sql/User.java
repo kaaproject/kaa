@@ -120,6 +120,11 @@ public final class User extends GenericModel<UserDto> implements Serializable {
     }
 
     @Override
+    protected GenericModel<UserDto> newInstance(Long id) {
+        return new User(id);
+    }
+
+    @Override
     public UserDto toDto() {
         UserDto dto = createDto();
         dto.setId(getStringId());

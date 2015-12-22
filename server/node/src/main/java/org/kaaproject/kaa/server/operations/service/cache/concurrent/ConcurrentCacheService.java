@@ -39,9 +39,11 @@ import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.HistoryDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventAction;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventMapDto;
@@ -51,14 +53,17 @@ import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.core.configuration.BaseData;
 import org.kaaproject.kaa.server.common.dao.ApplicationEventMapService;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
+import org.kaaproject.kaa.server.common.dao.CTLService;
 import org.kaaproject.kaa.server.common.dao.ConfigurationService;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
 import org.kaaproject.kaa.server.common.dao.EventClassService;
 import org.kaaproject.kaa.server.common.dao.HistoryService;
 import org.kaaproject.kaa.server.common.dao.ProfileService;
 import org.kaaproject.kaa.server.common.dao.SdkProfileService;
+import org.kaaproject.kaa.server.common.dao.ServerProfileService;
 import org.kaaproject.kaa.server.common.dao.TopicService;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
+import org.kaaproject.kaa.server.operations.service.cache.AppProfileVersionsKey;
 import org.kaaproject.kaa.server.operations.service.cache.AppSeqNumber;
 import org.kaaproject.kaa.server.operations.service.cache.AppVersionKey;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
@@ -111,6 +116,13 @@ public class ConcurrentCacheService implements CacheService {
     @Autowired
     private ProfileService profileService;
 
+    /** The server profile service. */
+    @Autowired
+    private ServerProfileService serverProfileService;
+
+    @Autowired
+    private CTLService ctlService;
+
     /** The history service. */
     @Autowired
     private HistoryService historyService;
@@ -134,7 +146,7 @@ public class ConcurrentCacheService implements CacheService {
     private final CacheTemporaryMemorizer<HistoryKey, List<HistoryDto>> historyMemorizer = new CacheTemporaryMemorizer<>();
 
     /** The filter lists memorizer. */
-    private final CacheTemporaryMemorizer<AppVersionKey, List<ProfileFilterDto>> filterListsMemorizer = new CacheTemporaryMemorizer<>();
+    private final CacheTemporaryMemorizer<AppProfileVersionsKey, List<ProfileFilterDto>> filterListsMemorizer = new CacheTemporaryMemorizer<>();
 
     /** The application event family maps memorizer. */
     private final CacheTemporaryMemorizer<List<String>, List<ApplicationEventFamilyMapDto>> aefmMemorizer = new CacheTemporaryMemorizer<>();
@@ -149,7 +161,16 @@ public class ConcurrentCacheService implements CacheService {
     private final CacheTemporaryMemorizer<AppVersionKey, ConfigurationSchemaDto> cfSchemaMemorizer = new CacheTemporaryMemorizer<>();
 
     /** The pf schema memorizer. */
-    private final CacheTemporaryMemorizer<AppVersionKey, ProfileSchemaDto> pfSchemaMemorizer = new CacheTemporaryMemorizer<>();
+    private final CacheTemporaryMemorizer<AppVersionKey, EndpointProfileSchemaDto> pfSchemaMemorizer = new CacheTemporaryMemorizer<>();
+
+    /** The spf schema memorizer. */
+    private final CacheTemporaryMemorizer<AppVersionKey, ServerProfileSchemaDto> spfSchemaMemorizer = new CacheTemporaryMemorizer<>();
+
+    /** The ctl schema memorizer. */
+    private final CacheTemporaryMemorizer<String, CTLSchemaDto> ctlSchemaMemorizer = new CacheTemporaryMemorizer<>();
+
+    /** The ctl schema body memorizer. */
+    private final CacheTemporaryMemorizer<String, String> ctlSchemaBodyMemorizer = new CacheTemporaryMemorizer<>();
 
     /** The sdk properties memorized. */
     private final CacheTemporaryMemorizer<String, SdkProfileDto> sdkProfileMemorizer = new CacheTemporaryMemorizer<>();
@@ -178,6 +199,9 @@ public class ConcurrentCacheService implements CacheService {
     /** The topics memorizer. */
     private final CacheTemporaryMemorizer<String, TopicDto> topicsMemorizer = new CacheTemporaryMemorizer<String, TopicDto>();
 
+    /** The default group memorizer. */
+    private final CacheTemporaryMemorizer<String, EndpointGroupDto> defaultGroupMemorizer = new CacheTemporaryMemorizer<String, EndpointGroupDto>();
+
     /** The history seq number comparator. */
     public static final Comparator<HistoryDto> HISTORY_SEQ_NUMBER_COMPARATOR = new Comparator<HistoryDto>() {
         @Override
@@ -192,7 +216,7 @@ public class ConcurrentCacheService implements CacheService {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.kaaproject.kaa.server.operations.service.cache.CacheService#
      * getAppSeqNumber(java.lang.String)
      */
@@ -204,7 +228,8 @@ public class ConcurrentCacheService implements CacheService {
             public AppSeqNumber compute(String key) {
                 LOG.debug("Fetching result for getAppSeqNumber");
                 ApplicationDto appDto = applicationService.findAppByApplicationToken(key);
-                AppSeqNumber appSeqNumber = new AppSeqNumber(appDto.getTenantId(), appDto.getId(), appDto.getApplicationToken(), appDto.getSequenceNumber());
+                AppSeqNumber appSeqNumber = new AppSeqNumber(appDto.getTenantId(), appDto.getId(), appDto.getApplicationToken(), appDto
+                        .getSequenceNumber());
                 return appSeqNumber;
             }
         });
@@ -212,7 +237,7 @@ public class ConcurrentCacheService implements CacheService {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.kaaproject.kaa.server.operations.service.cache.CacheService#
      * putAppSeqNumber(java.lang.String, java.lang.Integer)
      */
@@ -224,7 +249,7 @@ public class ConcurrentCacheService implements CacheService {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.kaaproject.kaa.server.operations.service.cache.CacheService#
      * getConfIdByKey
      * (org.kaaproject.kaa.server.operations.service.cache.ConfigurationIdKey)
@@ -239,7 +264,7 @@ public class ConcurrentCacheService implements CacheService {
                 String confId = null;
                 List<ConfigurationDto> configurations = configurationService.findConfigurationsByEndpointGroupId(key.getEndpointGroupId());
                 for (ConfigurationDto confDto : configurations) {
-                    if (confDto.getMajorVersion() == key.getConfigSchemaVersion()) {
+                    if (confDto.getSchemaVersion() == key.getConfigSchemaVersion()) {
                         confId = confDto.getId();
                         break;
                     }
@@ -251,7 +276,7 @@ public class ConcurrentCacheService implements CacheService {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * org.kaaproject.kaa.server.operations.service.cache.CacheService#putConfId
      * (org.kaaproject.kaa.server.operations.service.cache.ConfigurationIdKey,
@@ -265,7 +290,7 @@ public class ConcurrentCacheService implements CacheService {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * org.kaaproject.kaa.server.operations.service.cache.CacheService#getHistory
      * (org.kaaproject.kaa.server.operations.service.cache.HistoryKey)
@@ -280,7 +305,8 @@ public class ConcurrentCacheService implements CacheService {
                 List<HistoryDto> relatedChanges = new ArrayList<HistoryDto>();
 
                 ApplicationDto appDto = applicationService.findAppByApplicationToken(key.getAppToken());
-                List<HistoryDto> fullHistoryList = historyService.findHistoriesBySeqNumberRange(appDto.getId(), key.getOldSeqNumber(), key.getNewSeqNumber());
+                List<HistoryDto> fullHistoryList = historyService.findHistoriesBySeqNumberRange(appDto.getId(), key.getOldSeqNumber(),
+                        key.getNewSeqNumber());
                 Collections.sort(fullHistoryList, ConcurrentCacheService.HISTORY_SEQ_NUMBER_COMPARATOR);
 
                 for (HistoryDto historyDto : fullHistoryList) {
@@ -294,11 +320,12 @@ public class ConcurrentCacheService implements CacheService {
                     } else if (changeType == ChangeType.ADD_TOPIC || changeType == ChangeType.REMOVE_TOPIC) {
                         relatedChanges.add(historyDto);
                     } else if (changeType == ChangeType.ADD_PROF || changeType == ChangeType.REMOVE_PROF) {
-                        if (changeDto.getPfMajorVersion() == key.getProfileSchemaVersion()) {
+                        ProfileFilterDto profileFilter = profileService.findProfileFilterById(changeDto.getProfileFilterId());
+                        if (supports(profileFilter, key.getEndpointProfileSchemaVersion(), key.getServerProfileSchemaVersion())) {
                             relatedChanges.add(historyDto);
                         }
                     } else if (changeType == ChangeType.ADD_CONF || changeType == ChangeType.REMOVE_CONF) {
-                        if (changeDto.getCfMajorVersion() == key.getConfSchemaVersion()) { // NOSONAR
+                        if (changeDto.getCfVersion() == key.getConfSchemaVersion()) { // NOSONAR
                             relatedChanges.add(historyDto);
                         }
                     }
@@ -306,12 +333,17 @@ public class ConcurrentCacheService implements CacheService {
 
                 return relatedChanges;
             }
+
+            private boolean supports(ProfileFilterDto profileFilter, Integer endpointProfileSchemaVersion, Integer serverProfileSchemaVersion) {
+                return (profileFilter.getEndpointProfileSchemaVersion() == null || profileFilter.getEndpointProfileSchemaVersion() == endpointProfileSchemaVersion)
+                        && (profileFilter.getServerProfileSchemaVersion() == null || profileFilter.getServerProfileSchemaVersion() == serverProfileSchemaVersion);
+            }
         });
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * org.kaaproject.kaa.server.operations.service.cache.CacheService#putHistory
      * (org.kaaproject.kaa.server.operations.service.cache.HistoryKey,
@@ -345,21 +377,22 @@ public class ConcurrentCacheService implements CacheService {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * org.kaaproject.kaa.server.operations.service.cache.CacheService#getFilters
      * (org.kaaproject.kaa.server.operations.service.cache.AppVersionKey)
      */
     @Override
     @Cacheable("filterLists")
-    public List<ProfileFilterDto> getFilters(AppVersionKey key) {
-        return filterListsMemorizer.compute(key, new Computable<AppVersionKey, List<ProfileFilterDto>>() {
+    public List<ProfileFilterDto> getFilters(AppProfileVersionsKey key) {
+        return filterListsMemorizer.compute(key, new Computable<AppProfileVersionsKey, List<ProfileFilterDto>>() {
 
             @Override
-            public List<ProfileFilterDto> compute(AppVersionKey key) {
+            public List<ProfileFilterDto> compute(AppProfileVersionsKey key) {
                 LOG.debug("Fetching result for getFilters");
                 ApplicationDto appDto = applicationService.findAppByApplicationToken(key.getApplicationToken());
-                List<ProfileFilterDto> value = profileService.findProfileFilterByAppIdAndVersion(appDto.getId(), key.getVersion());
+                List<ProfileFilterDto> value = profileService.findProfileFiltersByAppIdAndVersionsCombination(appDto.getId(),
+                        key.getEndpointProfileSchemaVersion(), key.getServerProfileSchemaVersion());
                 return value;
             }
         });
@@ -367,19 +400,19 @@ public class ConcurrentCacheService implements CacheService {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * org.kaaproject.kaa.server.operations.service.cache.CacheService#resetFilters
      * (org.kaaproject.kaa.server.operations.service.cache.AppVersionKey)
      */
     @Override
     @CacheEvict(value = "filterLists", key = "#key")
-    public void resetFilters(AppVersionKey key) {
+    public void resetFilters(AppProfileVersionsKey key) {
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * org.kaaproject.kaa.server.operations.service.cache.CacheService#putFilterList
      * (org.kaaproject.kaa.server.operations.service.cache.AppVersionKey,
@@ -387,13 +420,13 @@ public class ConcurrentCacheService implements CacheService {
      */
     @Override
     @CachePut(value = "filterLists", key = "#key")
-    public List<ProfileFilterDto> putFilterList(AppVersionKey key, List<ProfileFilterDto> value) {
+    public List<ProfileFilterDto> putFilterList(AppProfileVersionsKey key, List<ProfileFilterDto> value) {
         return value;
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * org.kaaproject.kaa.server.operations.service.cache.CacheService#getFilter
      * (java.lang.String)
@@ -414,7 +447,7 @@ public class ConcurrentCacheService implements CacheService {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * org.kaaproject.kaa.server.operations.service.cache.CacheService#putFilter
      * (java.lang.String, org.kaaproject.kaa.common.dto.ProfileFilterDto)
@@ -427,7 +460,7 @@ public class ConcurrentCacheService implements CacheService {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * org.kaaproject.kaa.server.operations.service.cache.CacheService#getConfByHash
      * (org.kaaproject.kaa.common.hash.EndpointObjectHash)
@@ -448,7 +481,7 @@ public class ConcurrentCacheService implements CacheService {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.kaaproject.kaa.server.operations.service.cache.CacheService#
      * putConfiguration(org.kaaproject.kaa.common.hash.EndpointObjectHash,
      * org.kaaproject.kaa.common.dto.EndpointConfigurationDto)
@@ -465,7 +498,7 @@ public class ConcurrentCacheService implements CacheService {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.kaaproject.kaa.server.operations.service.cache.CacheService#
      * getConfSchemaByAppAndVersion
      * (org.kaaproject.kaa.server.operations.service.cache.AppVersionKey)
@@ -487,7 +520,7 @@ public class ConcurrentCacheService implements CacheService {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.kaaproject.kaa.server.operations.service.cache.CacheService#
      * putConfigurationSchema
      * (org.kaaproject.kaa.server.operations.service.cache.AppVersionKey,
@@ -501,40 +534,80 @@ public class ConcurrentCacheService implements CacheService {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.kaaproject.kaa.server.operations.service.cache.CacheService#
      * getProfileSchemaByAppAndVersion
      * (org.kaaproject.kaa.server.operations.service.cache.AppVersionKey)
      */
     @Override
-    @Cacheable("profileSchemas")
-    public ProfileSchemaDto getProfileSchemaByAppAndVersion(AppVersionKey key) {
-        return pfSchemaMemorizer.compute(key, new Computable<AppVersionKey, ProfileSchemaDto>() {
+    @Cacheable("endpointProfileSchemas")
+    public EndpointProfileSchemaDto getProfileSchemaByAppAndVersion(AppVersionKey key) {
+        return pfSchemaMemorizer.compute(key, new Computable<AppVersionKey, EndpointProfileSchemaDto>() {
 
             @Override
-            public ProfileSchemaDto compute(AppVersionKey key) {
+            public EndpointProfileSchemaDto compute(AppVersionKey key) {
                 LOG.debug("Fetching result for getProfileSchemaByAppAndVersion");
                 ApplicationDto appDto = applicationService.findAppByApplicationToken(key.getApplicationToken());
-                ProfileSchemaDto value = profileService.findProfileSchemaByAppIdAndVersion(appDto.getId(), key.getVersion());
+                EndpointProfileSchemaDto value = profileService.findProfileSchemaByAppIdAndVersion(appDto.getId(), key.getVersion());
                 return value;
+            }
+        });
+    }
+
+    @Override
+    @Cacheable("serverProfileSchemas")
+    public ServerProfileSchemaDto getServerProfileSchemaByAppAndVersion(AppVersionKey key) {
+        return spfSchemaMemorizer.compute(key, new Computable<AppVersionKey, ServerProfileSchemaDto>() {
+
+            @Override
+            public ServerProfileSchemaDto compute(AppVersionKey key) {
+                LOG.debug("Fetching result for getServerProfileSchemaByAppAndVersion");
+                ApplicationDto appDto = applicationService.findAppByApplicationToken(key.getApplicationToken());
+                ServerProfileSchemaDto value = serverProfileService.findServerProfileSchemaByAppIdAndVersion(appDto.getId(),
+                        key.getVersion());
+                return value;
+            }
+        });
+    }
+
+    @Override
+    @Cacheable("ctlSchemas")
+    public CTLSchemaDto getCtlSchemaById(String key) {
+        return ctlSchemaMemorizer.compute(key, new Computable<String, CTLSchemaDto>() {
+            @Override
+            public CTLSchemaDto compute(String key) {
+                LOG.debug("Fetching result for ctl schemas");
+                return ctlService.findCTLSchemaById(key);
+            }
+        });
+    }
+
+    @Override
+    @Cacheable("ctlSchemaBodies")
+    public String getFlatCtlSchemaById(String key) {
+        return ctlSchemaBodyMemorizer.compute(key, new Computable<String, String>() {
+            @Override
+            public String compute(String key) {
+                LOG.debug("Fetching result for ctl schemas");
+                CTLSchemaDto ctlSchema = ctlService.findCTLSchemaById(key);
+                return ctlService.flatExportAsString(ctlSchema);
             }
         });
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.kaaproject.kaa.server.operations.service.cache.CacheService#
      * putProfileSchema
      * (org.kaaproject.kaa.server.operations.service.cache.AppVersionKey,
      * org.kaaproject.kaa.common.dto.ProfileSchemaDto)
      */
     @Override
-    @CachePut(value = "profileSchemas", key = "#key")
-    public ProfileSchemaDto putProfileSchema(AppVersionKey key, ProfileSchemaDto value) {
+    @CachePut(value = "endpointProfileSchemas", key = "#key")
+    public EndpointProfileSchemaDto putProfileSchema(AppVersionKey key, EndpointProfileSchemaDto value) {
         return value;
     }
-
 
     @Override
     @Cacheable("sdkProperties")
@@ -549,11 +622,11 @@ public class ConcurrentCacheService implements CacheService {
     }
 
     /*
-             * (non-Javadoc)
-             *
-             * @see org.kaaproject.kaa.server.operations.service.cache.CacheService#
-             * getEndpointKey(org.kaaproject.kaa.common.hash.EndpointObjectHash)
-             */
+     * (non-Javadoc)
+     * 
+     * @see org.kaaproject.kaa.server.operations.service.cache.CacheService#
+     * getEndpointKey(org.kaaproject.kaa.common.hash.EndpointObjectHash)
+     */
     @Override
     @Cacheable("endpointKeys")
     public PublicKey getEndpointKey(EndpointObjectHash key) {
@@ -634,20 +707,23 @@ public class ConcurrentCacheService implements CacheService {
             public Set<RouteTableKey> compute(EventClassFqnVersion key) {
                 LOG.debug("Fetching result for getRouteKeys using key {}", key);
                 Set<RouteTableKey> routeKeys = new HashSet<>();
-                EventClassDto eventClass = eventClassService.findEventClassByTenantIdAndFQNAndVersion(key.getTenantId(), key.getFqn(), key.getVersion());
+                EventClassDto eventClass = eventClassService.findEventClassByTenantIdAndFQNAndVersion(key.getTenantId(), key.getFqn(),
+                        key.getVersion());
 
                 String eventClassFamilyId = eventClass.getEcfId();
 
-                List<ApplicationEventFamilyMapDto> mappingList = applicationEventMapService.findByEcfIdAndVersion(eventClassFamilyId, key.getVersion());
+                List<ApplicationEventFamilyMapDto> mappingList = applicationEventMapService.findByEcfIdAndVersion(eventClassFamilyId,
+                        key.getVersion());
                 for (ApplicationEventFamilyMapDto mapping : mappingList) {
                     String applicationId = mapping.getApplicationId();
                     ApplicationDto appDto = applicationService.findAppById(applicationId);
-                    RouteTableKey routeTableKey = new RouteTableKey(appDto.getApplicationToken(), new EventClassFamilyVersion(eventClassFamilyId, key
-                            .getVersion()));
+                    RouteTableKey routeTableKey = new RouteTableKey(appDto.getApplicationToken(), new EventClassFamilyVersion(
+                            eventClassFamilyId, key.getVersion()));
                     if (!routeKeys.contains(routeTableKey)) {
                         for (ApplicationEventMapDto eventMap : mapping.getEventMaps()) {
-                            if (eventMap.getEventClassId().equals(eventClass.getId()) && 
-                                    (ApplicationEventAction.SINK == eventMap.getAction() || ApplicationEventAction.BOTH == eventMap.getAction())) {
+                            if (eventMap.getEventClassId().equals(eventClass.getId())
+                                    && (ApplicationEventAction.SINK == eventMap.getAction() || ApplicationEventAction.BOTH == eventMap
+                                            .getAction())) {
                                 routeKeys.add(routeTableKey);
                                 break;
                             }
@@ -685,7 +761,7 @@ public class ConcurrentCacheService implements CacheService {
             public String compute(String key) {
                 LOG.debug("Fetching result for sdk token: {} to retrieve application token", key);
                 SdkProfileDto sdkProfileDto = sdkProfileService.findSdkProfileByToken(key);
-                String appToken = sdkProfileDto != null? sdkProfileDto.getApplicationToken() : null;
+                String appToken = sdkProfileDto != null ? sdkProfileDto.getApplicationToken() : null;
                 LOG.trace("Resolved application token: {}", appToken);
                 return appToken;
             }
@@ -710,14 +786,15 @@ public class ConcurrentCacheService implements CacheService {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.kaaproject.kaa.server.operations.service.cache.CacheService#
      * getMergedConfiguration(java.util.List,
      * org.kaaproject.kaa.server.operations.service.cache.Computable)
      */
     @Override
     @Cacheable(value = "mergedConfigurations", key = "#key")
-    public BaseData getMergedConfiguration(final List<EndpointGroupStateDto> key, final Computable<List<EndpointGroupStateDto>, BaseData> worker) {
+    public BaseData getMergedConfiguration(final List<EndpointGroupStateDto> key,
+            final Computable<List<EndpointGroupStateDto>, BaseData> worker) {
         return mergedConfigurationMemorizer.compute(key, new Computable<List<EndpointGroupStateDto>, BaseData>() {
 
             @Override
@@ -731,7 +808,7 @@ public class ConcurrentCacheService implements CacheService {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.kaaproject.kaa.server.operations.service.cache.CacheService#
      * setMergedConfiguration(java.util.List, java.lang.String)
      */
@@ -743,7 +820,7 @@ public class ConcurrentCacheService implements CacheService {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * org.kaaproject.kaa.server.operations.service.cache.CacheService#getDelta
      * (org.kaaproject.kaa.server.operations.service.cache.DeltaCacheKey,
@@ -751,22 +828,23 @@ public class ConcurrentCacheService implements CacheService {
      */
     @Override
     @Cacheable(value = "deltas", key = "#key")
-    public DeltaCacheEntry getDelta(final DeltaCacheKey key, final Computable<DeltaCacheKey, DeltaCacheEntry> worker) throws GetDeltaException {
-        DeltaCacheEntry deltaCacheEntry = deltaMemorizer.compute(key, new Computable<DeltaCacheKey, DeltaCacheEntry>() { //NOSONAR
-            @Override
-            public DeltaCacheEntry compute(DeltaCacheKey key) {
-                LOG.debug("Fetching result for getMergedConfiguration");
-                DeltaCacheEntry result = worker.compute(key);
-                return result;
-            }
-        });
+    public DeltaCacheEntry getDelta(final DeltaCacheKey key, final Computable<DeltaCacheKey, DeltaCacheEntry> worker)
+            throws GetDeltaException {
+        DeltaCacheEntry deltaCacheEntry = deltaMemorizer.compute(key, new Computable<DeltaCacheKey, DeltaCacheEntry>() { // NOSONAR
+                    @Override
+                    public DeltaCacheEntry compute(DeltaCacheKey key) {
+                        LOG.debug("Fetching result for getMergedConfiguration");
+                        DeltaCacheEntry result = worker.compute(key);
+                        return result;
+                    }
+                });
 
         return deltaCacheEntry;
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * org.kaaproject.kaa.server.operations.service.cache.CacheService#setDelta
      * (org.kaaproject.kaa.server.operations.service.cache.DeltaCacheKey,
@@ -780,15 +858,15 @@ public class ConcurrentCacheService implements CacheService {
 
     @Override
     @CacheEvict(value = "endpointGroups", key = "#key")
-    public void resetGroup (String key) {
+    public void resetGroup(String key) {
     }
-    
+
     @Override
     @CachePut(value = "endpointGroups", key = "#key")
-    public EndpointGroupDto putEndpointGroup (String key, EndpointGroupDto value) {
+    public EndpointGroupDto putEndpointGroup(String key, EndpointGroupDto value) {
         return value;
     }
-    
+
     @Override
     @Cacheable("endpointGroups")
     public EndpointGroupDto getEndpointGroupById(String endpointGroupId) {
@@ -805,10 +883,10 @@ public class ConcurrentCacheService implements CacheService {
 
     @Override
     @CachePut(value = "topics", key = "#key")
-    public TopicDto putTopic (String key, TopicDto value) {
+    public TopicDto putTopic(String key, TopicDto value) {
         return value;
     }
-    
+
     @Override
     @Cacheable("topics")
     public TopicDto getTopicById(String topicId) {
@@ -821,10 +899,23 @@ public class ConcurrentCacheService implements CacheService {
             }
         });
     }
-    
+
+    @Override
+    @Cacheable("defaultGroups")
+    public EndpointGroupDto getDefaultGroup(String applicationToken) {
+        return defaultGroupMemorizer.compute(applicationToken, new Computable<String, EndpointGroupDto>() {
+            @Override
+            public EndpointGroupDto compute(String applicationToken) {
+                LOG.debug("Fetching result for token id");
+                ApplicationDto appDto = applicationService.findAppByApplicationToken(applicationToken);
+                return endpointService.findDefaultGroup(appDto.getId());
+            }
+        });
+    }
+
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.kaaproject.kaa.server.operations.service.cache.CacheService#
      * setApplicationService
      * (org.kaaproject.kaa.server.common.dao.ApplicationService)
@@ -836,7 +927,7 @@ public class ConcurrentCacheService implements CacheService {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.kaaproject.kaa.server.operations.service.cache.CacheService#
      * setConfigurationService
      * (org.kaaproject.kaa.server.common.dao.ConfigurationService)
@@ -848,7 +939,7 @@ public class ConcurrentCacheService implements CacheService {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.kaaproject.kaa.server.operations.service.cache.CacheService#
      * setHistoryService(org.kaaproject.kaa.server.common.dao.HistoryService)
      */
@@ -859,7 +950,7 @@ public class ConcurrentCacheService implements CacheService {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.kaaproject.kaa.server.operations.service.cache.CacheService#
      * setProfileService(org.kaaproject.kaa.server.common.dao.ProfileService)
      */
@@ -870,7 +961,7 @@ public class ConcurrentCacheService implements CacheService {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.kaaproject.kaa.server.operations.service.cache.CacheService#
      * setEndpointService(org.kaaproject.kaa.server.common.dao.EndpointService)
      */
@@ -915,4 +1006,5 @@ public class ConcurrentCacheService implements CacheService {
             return false;
         }
     }
+
 }

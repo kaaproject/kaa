@@ -16,18 +16,15 @@
 
 package org.kaaproject.kaa.server.common.dao.service;
 
-import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getDto;
-import static org.kaaproject.kaa.server.common.dao.service.Validator.isValidId;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateId;
-import static org.kaaproject.kaa.server.common.dao.service.Validator.validateObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.kaaproject.kaa.common.dto.SchemaDto;
+import org.kaaproject.kaa.common.dto.VersionDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.common.dao.LogSchemaService;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
@@ -55,12 +52,12 @@ public class LogSchemaServiceImpl implements LogSchemaService {
     }
 
     @Override
-    public List<SchemaDto> findLogSchemaVersionsByApplicationId(String applicationId) {
+    public List<VersionDto> findLogSchemaVersionsByApplicationId(String applicationId) {
         validateId(applicationId, "Can't find log schemas. Invalid application id: " + applicationId);
         List<LogSchema> logSchemas = logSchemaDao.findByApplicationId(applicationId);
-        List<SchemaDto> schemas = new ArrayList<>();
+        List<VersionDto> schemas = new ArrayList<>();
         for (LogSchema logSchema : logSchemas) {
-            schemas.add(logSchema.toSchemaDto());
+            schemas.add(logSchema.toVersionDto());
         }
         return schemas;
     }
@@ -84,13 +81,12 @@ public class LogSchemaServiceImpl implements LogSchemaService {
         String id = logSchemaDto.getId();
         if (StringUtils.isBlank(id)) {
             LogSchema logSchema = logSchemaDao.findLatestLogSchemaByAppId(logSchemaDto.getApplicationId());
-            int majorVersion = 0;
+            int version = 0;
             if (logSchema != null) {
-                majorVersion = logSchema.getMajorVersion();
+                version = logSchema.getVersion();
             }
-            logSchemaDto.setMinorVersion(0);
             logSchemaDto.setId(null);
-            logSchemaDto.setMajorVersion(++majorVersion);
+            logSchemaDto.setVersion(++version);
             logSchemaDto.setCreatedTime(System.currentTimeMillis());
         } else {
             LogSchemaDto oldLogSchemaDto = getDto(logSchemaDao.findById(id));

@@ -34,9 +34,9 @@
     <context:annotation-config/>
     <context:component-scan base-package="org.kaaproject.kaa.server.common.dao"/>
 
-    <util:properties id="dao" location="classpath:cassandra-test.properties"/>
+    <util:properties id="dao" location="classpath:dao_test.properties"/>
 
-    <import resource="classpath:cassandra-dao-sql-test-context.xml" />
+    <import resource="classpath:common-dao-test-context.xml" />
     <import resource="classpath:cassandra-client-test-context.xml" />
 
     <bean id="schemaGenerationFactory" class="org.kaaproject.kaa.server.common.core.algorithms.schema.SchemaGenerationAlgorithmFactoryImpl"/>
@@ -65,6 +65,10 @@
 
     <bean id="userConfigurationService" class="org.kaaproject.kaa.server.common.dao.service.UserConfigurationServiceImpl">
         <property name="endpointUserConfigurationDao" ref="endpointUserConfigurationDao"/>
+    </bean>
+
+    <bean id="serverProfileService" class="org.kaaproject.kaa.server.common.dao.service.ServerProfileServiceImpl">
+        <property name="endpointProfileDao" ref="endpointProfileDao"/>
     </bean>
 
 </beans>

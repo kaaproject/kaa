@@ -18,15 +18,15 @@ package org.kaaproject.kaa.server.admin.client.mvp.view;
 
 import org.kaaproject.kaa.common.dto.AbstractStructureDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.struct.AbstractRecordPanel;
-import org.kaaproject.kaa.server.admin.client.mvp.view.widget.SchemaListBox;
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.VersionListBox;
 
 import com.google.gwt.user.client.ui.HasValue;
 
 public interface BaseRecordView<T extends AbstractStructureDto,V> extends BaseDetailsView {
 
-    public SchemaListBox getSchema();
+    //public VersionListBox getSchema();
 
-    public HasValue<String> getSchemaVersion();
+    //public HasValue<String> getSchemaVersion();
 
     public AbstractRecordPanel<T,V> getRecordPanel();
 
