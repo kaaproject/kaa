@@ -18,36 +18,36 @@ package org.kaaproject.kaa.server.common.dao.impl.sql.plugin;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.criterion.Restrictions;
-import org.kaaproject.kaa.server.common.dao.impl.ContractMessageDao;
+import org.kaaproject.kaa.server.common.dao.impl.ContractDao;
 import org.kaaproject.kaa.server.common.dao.impl.sql.HibernateAbstractDao;
-import org.kaaproject.kaa.server.common.dao.model.sql.plugin.ContractMessage;
+import org.kaaproject.kaa.server.common.dao.model.sql.plugin.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.FQN_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.NAME_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.VERSION_PROPERTY;
 
 @Repository
-public class HibernateContractMessageDao extends HibernateAbstractDao<ContractMessage> implements ContractMessageDao<ContractMessage> {
+public class HibernateContractDao extends HibernateAbstractDao<Contract> implements ContractDao<Contract> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(HibernateContractMessageDao.class);
+    private static final Logger LOG = LoggerFactory.getLogger(HibernateContractDao.class);
 
     @Override
-    public ContractMessage findByFqnAndVersion(String fqn, Integer version) {
-        LOG.debug("Searching for a contract message by fqn and version [{}, {}]", fqn, version);
-        ContractMessage contractMessage = null;
-        if (StringUtils.isNotBlank(fqn) && (version != null)) {
-            contractMessage = findOneByCriterion(Restrictions.and(
-                    Restrictions.eq(FQN_PROPERTY, fqn),
+    public Contract findByNameAndVersion(String name, Integer version) {
+        LOG.debug("Searching for a contract by name and version [{}, {}]", name, version);
+        Contract contract = null;
+        if (StringUtils.isNotBlank(name) && version != null) {
+            contract = findOneByCriterion(Restrictions.and(
+                    Restrictions.eq(NAME_PROPERTY, name),
                     Restrictions.eq(VERSION_PROPERTY, version)));
         }
-        LOG.debug("Found contract message: {}", contractMessage);
-        return contractMessage;
+        LOG.debug("Found contract: {}", contract);
+        return contract;
     }
 
     @Override
-    protected Class<ContractMessage> getEntityClass() {
-        return ContractMessage.class;
+    protected Class<Contract> getEntityClass() {
+        return Contract.class;
     }
 }

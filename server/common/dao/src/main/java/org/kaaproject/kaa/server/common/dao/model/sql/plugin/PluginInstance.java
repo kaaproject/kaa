@@ -47,7 +47,7 @@ import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_INSTANCE_
 // TODO: review, corresponding dto has name field, but the model doesn't have any
 @Entity
 @Table(name = PLUGIN_INSTANCE_TABLE_NAME)
-public class PluginInstance extends GenericModel implements Serializable {
+public class PluginInstance extends GenericModel<PluginInstanceDto> implements Serializable {
 
     private static final long serialVersionUID = 1508341006838633974L;
 
@@ -115,7 +115,7 @@ public class PluginInstance extends GenericModel implements Serializable {
         dto.setName(plugin != null ? plugin.getName() : null);
         dto.setState(state);
         dto.setConfigurationData(configData.getBytes());
-        dto.setPluginDefinition(plugin != null ? plugin.toDto() : null);
+        dto.setPluginDefinition(plugin != null ? plugin.toDtoNoPluginInstances() : null);
         if (!pluginContractInstances.isEmpty()) {
             Set<PluginContractInstanceDto> pluginContractDtos = new HashSet<>();
             for (PluginContractInstance instance : pluginContractInstances) {

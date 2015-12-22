@@ -196,6 +196,19 @@ public class Plugin extends GenericModel<PluginDto> implements Serializable {
 
     @Override
     public PluginDto toDto() {
+        PluginDto dto = toDtoNoPluginInstances();
+
+        if (!pluginInstances.isEmpty()) {
+            Set<PluginInstanceDto> pluginInstanceDtos = new HashSet<>();
+            for (PluginInstance pluginInstance : pluginInstances) {
+                pluginInstanceDtos.add(pluginInstance.toDto());
+            }
+            dto.setPluginInstances(pluginInstanceDtos);
+        }
+        return dto;
+    }
+
+    PluginDto toDtoNoPluginInstances() {
         PluginDto dto = createDto();
         dto.setId(getStringId());
         dto.setName(name);
@@ -209,14 +222,6 @@ public class Plugin extends GenericModel<PluginDto> implements Serializable {
                 pluginContractDtos.add(contract.toDto());
             }
             dto.setPluginContracts(pluginContractDtos);
-        }
-
-        if (!pluginInstances.isEmpty()) {
-            Set<PluginInstanceDto> pluginInstanceDtos = new HashSet<>();
-            for (PluginInstance pluginInstance : pluginInstances) {
-                pluginInstanceDtos.add(pluginInstance.toDto());
-            }
-            dto.setPluginInstances(pluginInstanceDtos);
         }
         return dto;
     }
