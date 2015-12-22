@@ -21,6 +21,7 @@
 #import "KaaChannelManager.h"
 #import "FailoverManager.h"
 #import "KaaLogging.h"
+#import "LogCollector.h"
 
 #define TAG @"AbstractLogCollector >>>"
 
@@ -52,7 +53,6 @@
 @end
 
 @implementation AbstractLogCollector
-
 - (instancetype)initWith:(id<LogTransport>)transport
          executorContext:(id<ExecutorContext>)executorContext
           channelManager:(id<KaaChannelManager>)channelManager
@@ -96,7 +96,7 @@
         DDLogDebug(@"%@ Log storage is empty", TAG);
         return;
     }
-    group = [self.storage getRecordBlock:[self.strategy getBatchSize] batchCount:[self.strategy getBatchCount]];
+    group = [self.storage getRecordBlock];
     if (group) {
         NSArray *recordList = group.logRecords;
         if ([recordList count] > 0) {
@@ -132,6 +132,9 @@
             for (LogDeliveryStatus *status in deliveryStatuses) {
                 if (status.result == SYNC_RESPONSE_RESULT_TYPE_SUCCESS) {
                     [self.storage removeRecordBlock:status.requestId];
+                    [[self.executorContext getCallbackExecutor] addOperationWithBlock:^{
+                        [self.strategy onSuccessLogUpload:status.requestId];
+                    }];
                 } else {
                     [self.storage notifyUploadFailed:status.requestId];
                     __weak typeof(self) weakSelf = self;

@@ -91,6 +91,11 @@ typedef enum {
  */
 - (void)onFailure:(id<LogFailoverCommand>)controller errorCode:(LogDeliveryErrorCode)code;
 
+/**
+ * Handles success log upload
+ */
+- (void)onSuccessLogUpload:(int32_t)blockId;
+
 @end
 
 #endif

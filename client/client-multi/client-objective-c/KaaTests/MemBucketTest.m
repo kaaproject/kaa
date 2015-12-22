@@ -31,25 +31,6 @@
     [self addLogRecordTestHelper:10 :1];
 }
 
-- (void)testShrinkToSizeRecord {
-    MemBucket *bucket = [[MemBucket alloc] initWithId:1 maxSize:100 maxRecordCount:100];
-    [self addN:10 recordsToBucket:bucket];
-    NSArray *overSizedRecords = [bucket shrinkToSize:10 newCount:4];
-    XCTAssertEqual(3, bucket.getCount);
-    XCTAssertEqual(9, bucket.getSize);
-    XCTAssertEqual(7, [overSizedRecords count]);
-    
-    bucket = [[MemBucket alloc] initWithId:1 maxSize:100 maxRecordCount:100];
-    [self addN:10 recordsToBucket:bucket];
-    overSizedRecords = [bucket shrinkToSize:10 newCount:2];
-    XCTAssertEqual(2, bucket.getCount);
-    XCTAssertEqual(6, bucket.getSize);
-    XCTAssertEqual(8, [overSizedRecords count]);
-    
-    overSizedRecords = [bucket shrinkToSize:400 newCount:400];
-    XCTAssertEqual(0, [overSizedRecords count]);
-}
-
 - (void)addLogRecordTestHelper:(int32_t)maxSize :(int32_t)maxRecordCount {
     MemBucket *bucket = [[MemBucket alloc] initWithId:1 maxSize:maxSize maxRecordCount:maxRecordCount];
     

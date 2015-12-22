@@ -115,12 +115,8 @@
     DDLogVerbose(@"%@ Added a new log record to bucket with id [%li]", TAG, (long)[self.currentBucket bucketId]);
 }
 
-- (LogBlock *)getRecordBlock:(int64_t)blockSize batchCount:(int32_t)batchCount {
-    DDLogVerbose(@"%@ Getting new record block with block size: %li and count: %li", TAG, (long)blockSize, (long)batchCount);
-    if (blockSize > self.maxBucketSize || batchCount > self.maxBucketRecordCount) {
-        //TODO add support of block resize
-        DDLogWarn(@"%@ Resize of record block is not supported yet", TAG);
-    }
+- (LogBlock *)getRecordBlock {
+    DDLogVerbose(@"%@ Getting new record block with block size: %li and count: %li", TAG, (long)self.maxBucketSize, (long)self.maxBucketRecordCount);
     LogBlock *result = nil;
     MemBucket *bucketCandidate = nil;
     @synchronized(self.buckets) {
@@ -142,17 +138,8 @@
                              TAG, (long)bucketCandidate.bucketId);
                 bucketCandidate.state = MEM_BUCKET_STATE_PENDING;
             }
-            if ([bucketCandidate getSize] <= blockSize && [bucketCandidate getCount] <= batchCount) {
-                result = [[LogBlock alloc] initWithBlockId:bucketCandidate.bucketId andRecords:bucketCandidate.records];
-                DDLogDebug(@"%@ Return record block with records count: [%li]", TAG, (long)[bucketCandidate getCount]);
-            } else {
-                DDLogDebug(@"%@ Shrinking bucket %@ to new size: [%li] and count: [%li]", TAG, bucketCandidate, (long)blockSize, (long)batchCount);
-                NSArray *overSized = [bucketCandidate shrinkToSize:blockSize newCount:batchCount];
-                result = [[LogBlock alloc] initWithBlockId:bucketCandidate.bucketId andRecords:bucketCandidate.records];
-                for (LogRecord *logRecord in overSized) {
-                    [self addLogRecord:logRecord];
-                }
-            }
+            result = [[LogBlock alloc] initWithBlockId:bucketCandidate.bucketId andRecords:bucketCandidate.records];
+            DDLogDebug(@"%@ Return record block with records count: [%li]", TAG, (long)[bucketCandidate getCount]);
         }
     }
     return result;

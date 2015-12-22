@@ -14,9 +14,20 @@
  * limitations under the License.
  */
 
+#define HC_SHORTHAND
+#import <OCHamcrest/OCHamcrest.h>
+
+#define MOCKITO_SHORTHAND
+#import <OCMockito/OCMockito.h>
+
 #import <XCTest/XCTest.h>
 #import "LogStorage.h"
 #import "DefaultLogUploadStrategy.h"
+#import "AbstractLogCollector.h"
+#import "EndpointGen.h"
+#import "LogCollector.h"
+#import "ExecutorContext.h"
+#import "MemLogStorage.h"
 
 @interface TestLogStorageStatus : NSObject <LogStorageStatus>
 
@@ -74,6 +85,54 @@
     
     status = [[TestLogStorageStatus alloc] initWithConsumedVolume:70 andRecordCount:3];
     XCTAssertEqual(LOG_UPLOAD_STRATEGY_DECISION_UPLOAD, [strategy isUploadNeeded:status]);
+}
+
+- (void)testSuccessLogUploadCallback {
+    id<ExecutorContext> executorContext = mockProtocol(@protocol(ExecutorContext));
+    id<LogTransport> logTransport = mockProtocol(@protocol(LogTransport));
+    id<KaaChannelManager> channelManager = mockProtocol(@protocol(KaaChannelManager));
+    id<FailoverManager> failoverManager = mockProtocol(@protocol(FailoverManager));
+    id<LogUploadStrategy> strategy = mockProtocol(@protocol(LogUploadStrategy));
+    
+    AbstractLogCollector *logCollector = [[AbstractLogCollector alloc] initWith:logTransport executorContext:executorContext channelManager:channelManager failoverManager:failoverManager];
+    [logCollector setValue:strategy forKey:@"strategy"];
+    
+    NSOperationQueue *executor = [[NSOperationQueue alloc] init];
+    [given([executorContext getCallbackExecutor]) willReturn:executor];
+    
+    LogDeliveryStatus *status = [[LogDeliveryStatus alloc] init];
+    status.requestId = 42;
+    status.result = SYNC_RESPONSE_RESULT_TYPE_SUCCESS;
+    LogSyncResponse *response = [[LogSyncResponse alloc] initWithDeliveryStatuses:[KAAUnion unionWithBranch:KAA_UNION_ARRAY_LOG_DELIVERY_STATUS_OR_NULL_BRANCH_0 andData:[NSArray arrayWithObject:status]]];
+    
+    [logCollector onLogResponse:response];
+    
+    [NSThread sleepForTimeInterval:0.001];
+    [verifyCount(strategy, times(1)) onSuccessLogUpload:status.requestId];
+}
+
+- (void)testFailureLogUploadCallback {
+    id<ExecutorContext> executorContext = mockProtocol(@protocol(ExecutorContext));
+    id<LogTransport> logTransport = mockProtocol(@protocol(LogTransport));
+    id<KaaChannelManager> channelManager = mockProtocol(@protocol(KaaChannelManager));
+    id<FailoverManager> failoverManager = mockProtocol(@protocol(FailoverManager));
+    id<LogUploadStrategy> strategy = mockProtocol(@protocol(LogUploadStrategy));
+    
+    AbstractLogCollector *logCollector = [[AbstractLogCollector alloc] initWith:logTransport executorContext:executorContext channelManager:channelManager failoverManager:failoverManager];
+    [logCollector setValue:strategy forKey:@"strategy"];
+    
+    NSOperationQueue *executor = [[NSOperationQueue alloc] init];
+    [given([executorContext getCallbackExecutor]) willReturn:executor];
+    
+    LogDeliveryStatus *status = [[LogDeliveryStatus alloc] init];
+    status.requestId = 42;
+    status.result = SYNC_RESPONSE_RESULT_TYPE_FAILURE;
+    LogSyncResponse *response = [[LogSyncResponse alloc] initWithDeliveryStatuses:[KAAUnion unionWithBranch:KAA_UNION_ARRAY_LOG_DELIVERY_STATUS_OR_NULL_BRANCH_0 andData:[NSArray arrayWithObject:status]]];
+    
+    [logCollector onLogResponse:response];
+    
+    [NSThread sleepForTimeInterval:0.001];
+    [verifyCount(strategy, times(1)) onFailure:anything() errorCode:[((NSNumber *)status.errorCode.data) intValue]];
 }
 
 @end

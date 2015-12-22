@@ -37,11 +37,4 @@ typedef enum {
 
 - (BOOL)addRecord:(LogRecord *)record;
 
-/**
- * Shrinks current bucket to the newSize
- * @param newSize expected max size of a bucket inclusively
- * @return records removed from the bucket
- */
-- (NSArray *)shrinkToSize:(int64_t)newSize newCount:(int32_t)newCount;
-
 @end

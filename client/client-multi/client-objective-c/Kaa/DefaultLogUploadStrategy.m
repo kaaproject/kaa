@@ -105,6 +105,10 @@
     }
 }
 
+- (void)onSuccessLogUpload:(int32_t)blockId {
+    DDLogInfo(@"%@ Log record with blockId [%i] has been successfully uploaded", TAG, blockId);
+}
+
 - (void)lockUpload {
     _isUploadLocked = YES;
 }

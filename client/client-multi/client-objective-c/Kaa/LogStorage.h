@@ -68,15 +68,9 @@
 - (id<LogStorageStatus>)getStatus;
 
 /**
- * Retrieves new log block of specified size or nil if there is no logs.
- *
- * The size of retrieved log records should NOT be greater than specified
- * block size.
- *
- * blockSize - maximum size of sending log block
- * Returns new log block
+ * Retrieves new log block or nil if there are no logs.
  */
-- (LogBlock *)getRecordBlock:(int64_t)blockSize batchCount:(int32_t)batchCount;
+- (LogBlock *)getRecordBlock;
 
 /**
  * Removes already sent log records by its block id.
