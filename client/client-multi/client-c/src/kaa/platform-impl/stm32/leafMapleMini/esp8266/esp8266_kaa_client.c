@@ -268,11 +268,6 @@ void kaa_client_destroy(kaa_client_t *self)
         self->channel.context = NULL;
     }
 
-    if (self->channel.context) {
-        self->channel.destroy(self->channel.context);
-        self->channel.context = NULL;
-    }
-
     if (self->log_storage_context) {
         ext_log_storage_destroy(self->log_storage_context);
         self->log_storage_context = NULL;
