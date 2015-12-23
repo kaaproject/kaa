@@ -85,6 +85,13 @@ public:
     virtual std::size_t getLogUploadCheckPeriod() = 0;
 
     /**
+     * @brief Max amount of log batches allowed to be uploaded parallel.
+     *
+     * @return Amount of batches.
+     */
+    virtual std::size_t getMaxParallelUploads() = 0;
+
+    /**
      * @brief Callback is used when the log delivery timeout detected.
      *
      * More information about the detection of the log delivery timeout read in the documentation for @c ILogCollector.

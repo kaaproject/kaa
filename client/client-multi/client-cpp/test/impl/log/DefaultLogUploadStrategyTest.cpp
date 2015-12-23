@@ -55,6 +55,19 @@ BOOST_AUTO_TEST_CASE(GetSetUplaodTimeoutTest)
     BOOST_CHECK_EQUAL(strategy.getTimeout(), uploadTimeout);
 }
 
+BOOST_AUTO_TEST_CASE(GetSetMaxParallelUploads)
+{
+    MockLogFailoverCommand failoverCommand;
+    DefaultLogUploadStrategy strategy;
+
+    BOOST_CHECK_EQUAL(strategy.getMaxParallelUploads(), DefaultLogUploadStrategy::DEFAULT_MAX_PARALLEL_UPLOADS);
+
+    std::size_t count = std::rand();
+    strategy.setMaxParallelUploads(count);
+
+    BOOST_CHECK_EQUAL(strategy.getMaxParallelUploads(), count);
+}
+
 BOOST_AUTO_TEST_CASE(UploadByOccupiedSizeTest)
 {
     const std::size_t THRESHOLD_SIZE = 35;
