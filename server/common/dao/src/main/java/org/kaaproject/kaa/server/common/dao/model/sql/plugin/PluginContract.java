@@ -64,7 +64,7 @@ public class PluginContract extends GenericModel implements Serializable {
     @JoinColumn(name = PLUGIN_CONTRACT_CONTRACT_ID, foreignKey = @ForeignKey(name = PLUGIN_CONTRACT_CONTRACT_ID_FK), nullable = false)
     private Contract contract;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = PLUGIN_CONTRACT_PLUGIN_ID, foreignKey = @ForeignKey(name = PLUGIN_CONTRACT_PLUGIN_ID_FK))
     private Plugin plugin;
 

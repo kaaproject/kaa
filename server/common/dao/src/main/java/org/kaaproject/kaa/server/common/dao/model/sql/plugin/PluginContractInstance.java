@@ -20,6 +20,7 @@ import org.kaaproject.kaa.common.dto.plugin.PluginContractInstanceItemDto;
 import org.kaaproject.kaa.server.common.dao.model.sql.GenericModel;
 import org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -44,12 +45,12 @@ public class PluginContractInstance extends GenericModel implements Serializable
 
     private static final long serialVersionUID = -6714384962255683537L;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = PLUGIN_CONTRACT_INSTANCE_PLUGIN_INSTANCE_ID, nullable = false,
             foreignKey = @ForeignKey(name = PLUGIN_CONTRACT_INSTANCE_PLUGIN_INSTANCE_FK))
     private PluginInstance pluginInstance;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = PLUGIN_CONTRACT_INSTANCE_PLUGIN_CONTRACT_ID, nullable = false,
             foreignKey = @ForeignKey(name = PLUGIN_CONTRACT_INSTANCE_PLUGIN_CONTRACT_FK))
     private PluginContract pluginContract;
