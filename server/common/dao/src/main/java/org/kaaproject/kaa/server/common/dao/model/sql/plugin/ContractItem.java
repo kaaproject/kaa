@@ -47,7 +47,7 @@ public class ContractItem extends GenericModel<ContractItemDto> implements Seria
 
     private static final long serialVersionUID = 2062055405562778911L;
 
-    @Column(name = CONTRACT_ITEM_NAME)
+    @Column(name = CONTRACT_ITEM_NAME, nullable = false)
     private String name;
 
     @ManyToOne(cascade = CascadeType.ALL)

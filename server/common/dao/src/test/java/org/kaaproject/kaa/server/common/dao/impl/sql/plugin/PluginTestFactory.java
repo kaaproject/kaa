@@ -87,6 +87,7 @@ public class PluginTestFactory {
         PluginInstanceDto pluginInstance = new PluginInstanceDto();
         pluginInstance.setState(PluginInstanceState.ACTIVE);
         pluginInstance.setConfigurationData("ConfigData");
+        pluginInstance.setName("InstanceName");
         pluginInstances.add(pluginInstance);
         return pluginInstances;
     }

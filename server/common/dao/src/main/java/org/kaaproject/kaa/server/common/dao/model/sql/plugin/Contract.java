@@ -31,6 +31,7 @@ import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -38,23 +39,26 @@ import java.util.Set;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONTRACT_CONTRACT_ITEM_FK;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONTRACT_ITEM_CONTRACT_ID;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONTRACT_NAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONTRACT_NAME_VERSION_CONSTRAINT_NAME;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONTRACT_TABLE_NAME;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONTRACT_TYPE;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONTRACT_VERSION;
 
 @Entity
-@Table(name = CONTRACT_TABLE_NAME)
+@Table(name = CONTRACT_TABLE_NAME, uniqueConstraints = {
+        @UniqueConstraint(columnNames = {CONTRACT_NAME, CONTRACT_VERSION}, name = CONTRACT_NAME_VERSION_CONSTRAINT_NAME)
+})
 public class Contract extends GenericModel<ContractDto> implements Serializable {
 
     private static final long serialVersionUID = -7299427635532151968L;
 
-    @Column(name = CONTRACT_NAME)
+    @Column(name = CONTRACT_NAME, nullable = false)
     private String name;
 
-    @Column(name = CONTRACT_VERSION)
+    @Column(name = CONTRACT_VERSION, nullable = false)
     private Integer version;
 
-    @Column(name = CONTRACT_TYPE)
+    @Column(name = CONTRACT_TYPE, nullable = false)
     @Enumerated(value = EnumType.STRING)
     private ContractType type;
 

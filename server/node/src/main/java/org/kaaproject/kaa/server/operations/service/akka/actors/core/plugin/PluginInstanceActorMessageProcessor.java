@@ -36,7 +36,7 @@ public class PluginInstanceActorMessageProcessor {
     public PluginInstanceActorMessageProcessor(AkkaContext context, String pluginInstanceId) throws PluginLifecycleException,
             PluginInitializationException {
         this.pluginService = context.getPluginService();
-        this.pluginInstanceDto = pluginService.getInstanceById(pluginInstanceId);
+        this.pluginInstanceDto = pluginService.findInstanceById(pluginInstanceId);
         this.plugin = newPluginInstance(pluginInstanceDto);
         initPluginInstance(plugin, pluginInstanceDto);
     }

@@ -34,7 +34,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 
-
 @Service
 @Transactional
 public class BasePluginService implements PluginService {
@@ -67,6 +66,22 @@ public class BasePluginService implements PluginService {
     }
 
     @Override
+    public PluginDto findPluginByNameAndVersion(String name, Integer version) {
+        LOG.debug("Looking for a plugin by its name and version: [{}, {}]", name, version);
+        Plugin plugin = pluginDao.findByNameAndVersion(name, version);
+        LOG.debug("Found plugin: {}", plugin);
+        return plugin != null ? plugin.toDto() : null;
+    }
+
+    @Override
+    public PluginDto findPluginByClassName(String className) {
+        LOG.debug("Looking for a plugin by its class name: {}", className);
+        Plugin plugin = pluginDao.findByClassName(className);
+        LOG.debug("Found plugin: {}", plugin);
+        return plugin != null ? plugin.toDto() : null;
+    }
+
+    @Override
     public PluginInstanceDto saveInstance(PluginInstanceDto pluginInstanceDto) {
         LOG.debug("Saving instance: {}", pluginInstanceDto);
         if (pluginInstanceDto.getPluginDefinition() == null) {
@@ -78,10 +93,16 @@ public class BasePluginService implements PluginService {
     }
 
     @Override
-    public PluginInstanceDto getInstanceById(String id) {
+    public PluginInstanceDto findInstanceById(String id) {
         LOG.debug("Looking for a plugin instance by id: {}", id);
         PluginInstance pluginInstance = pluginInstanceDao.findById(id);
         LOG.debug("Found plugin instance: {}", pluginInstance);
         return pluginInstance != null ? pluginInstance.toDto() : null;
+    }
+
+    @Override
+    public void removeInstanceById(String id) {
+        LOG.debug("Removing plugin instance by id: {}", id);
+        pluginInstanceDao.removeById(id);
     }
 }

@@ -34,20 +34,25 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_INSTANCE_CONF_DATA;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_INSTANCE_NAME;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_INSTANCE_PLUGIN_FK;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_INSTANCE_PLUGIN_ID;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_INSTANCE_PLUGIN_ID_NAME_CONSTRAINT_NAME;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_INSTANCE_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_INSTANCE_STATE;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_INSTANCE_TABLE_NAME;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_NAME;
 
 @Entity
-@Table(name = PLUGIN_INSTANCE_TABLE_NAME)
+@Table(name = PLUGIN_INSTANCE_TABLE_NAME, uniqueConstraints = {
+        @UniqueConstraint(columnNames = {PLUGIN_INSTANCE_PLUGIN_ID, PLUGIN_INSTANCE_NAME},
+                name = PLUGIN_INSTANCE_PLUGIN_ID_NAME_CONSTRAINT_NAME)
+})
 public class PluginInstance extends GenericModel<PluginInstanceDto> implements Serializable {
 
     private static final long serialVersionUID = 1508341006838633974L;
@@ -56,10 +61,10 @@ public class PluginInstance extends GenericModel<PluginInstanceDto> implements S
     @Column(name = PLUGIN_INSTANCE_CONF_DATA)
     private String configData;
 
-    @Column(name = PLUGIN_NAME)
+    @Column(name = PLUGIN_INSTANCE_NAME, nullable = false)
     private String name;
 
-    @Column(name = PLUGIN_INSTANCE_STATE)
+    @Column(name = PLUGIN_INSTANCE_STATE, nullable = false)
     @Enumerated(EnumType.STRING)
     private PluginInstanceState state;
 

@@ -44,7 +44,7 @@ public class BasePluginInitContext implements PluginInitContext {
 
     public BasePluginInitContext(PluginInstanceDto dto) {
         this.configurationData = dto.getConfigurationData();
-        this.contracts = new LinkedHashSet<PluginContractInstance>();
+        this.contracts = new LinkedHashSet<>();
         for (PluginContractInstanceDto contractInstanceDto : dto.getContracts()) {
             PluginContractDto pluginContractDto = contractInstanceDto.getContract();
             ContractDto contractDto = pluginContractDto.getContract();

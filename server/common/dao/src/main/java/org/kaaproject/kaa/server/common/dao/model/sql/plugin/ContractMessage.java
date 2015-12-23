@@ -39,10 +39,10 @@ public class ContractMessage extends GenericModel<ContractMessageDto> implements
 
     private static final long serialVersionUID = 2122224444729382739L;
 
-    @Column(name = CONTRACT_MESSAGE_FQN)
+    @Column(name = CONTRACT_MESSAGE_FQN, nullable = false)
     private String fqn;
 
-    @Column(name = CONTRACT_MESSAGE_VERSION)
+    @Column(name = CONTRACT_MESSAGE_VERSION, nullable = false)
     private Integer version;
 
     public ContractMessage() {

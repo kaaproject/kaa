@@ -21,13 +21,12 @@ import org.junit.Test;
 import org.kaaproject.kaa.common.dto.plugin.PluginContractDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginInstanceDto;
-import org.kaaproject.kaa.common.dto.plugin.PluginInstanceState;
 import org.kaaproject.kaa.server.common.dao.AbstractTest;
+import org.kaaproject.kaa.server.common.dao.impl.sql.plugin.PluginInstanceTestFactory;
 import org.kaaproject.kaa.server.common.dao.impl.sql.plugin.PluginTestFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 
-
-public class BasePluginServiceTest extends AbstractTest {
+public abstract class BasePluginServiceTest extends AbstractTest {
 
     @Test
     public void registerPluginUseExistentContractTest() {
@@ -58,17 +57,44 @@ public class BasePluginServiceTest extends AbstractTest {
     }
 
     @Test
-    public void getInstanceByIdTest() {
+    public void findPluginByNameAndVersionTest() {
+        PluginDto foundPluginDto = pluginService.findPluginByNameAndVersion("Incorrect name", 14);
+        Assert.assertNull(foundPluginDto);
         PluginDto pluginDto = PluginTestFactory.create();
         pluginDto = pluginService.registerPlugin(pluginDto);
-        PluginInstanceDto pluginInstanceDto = new PluginInstanceDto();
-        pluginInstanceDto.setPluginDefinition(pluginDto);
-        pluginInstanceDto.setName("Instance 1");
-        pluginInstanceDto.setConfigurationData("ConfData");
-        pluginInstanceDto.setState(PluginInstanceState.ACTIVE);
+        foundPluginDto = pluginService.findPluginByNameAndVersion(pluginDto.getName(), pluginDto.getVersion());
+        Assert.assertEquals(pluginDto, foundPluginDto);
+    }
+
+    @Test
+    public void findPluginByClassName() {
+        PluginDto foundPluginDto = pluginService.findPluginByClassName("Incorrect class name");
+        Assert.assertNull(foundPluginDto);
+        PluginDto pluginDto = PluginTestFactory.create();
+        pluginDto = pluginService.registerPlugin(pluginDto);
+        foundPluginDto = pluginService.findPluginByClassName(pluginDto.getClassName());
+        Assert.assertEquals(pluginDto, foundPluginDto);
+    }
+
+    @Test
+    public void findInstanceByIdTest() {
+        PluginDto pluginDto = PluginTestFactory.create();
+        pluginDto = pluginService.registerPlugin(pluginDto);
+        PluginInstanceDto pluginInstanceDto = PluginInstanceTestFactory.create(pluginDto);
         PluginInstanceDto savedInstance = pluginService.saveInstance(pluginInstanceDto);
         Assert.assertNotNull(savedInstance.getId());
-        PluginInstanceDto foundInstance = pluginService.getInstanceById(savedInstance.getId());
+        PluginInstanceDto foundInstance = pluginService.findInstanceById(savedInstance.getId());
         Assert.assertEquals(savedInstance, foundInstance);
     }
+
+    @Test
+    public void removeInstanceById() {
+        PluginDto pluginDto = PluginTestFactory.create();
+        pluginDto = pluginService.registerPlugin(pluginDto);
+        PluginInstanceDto pluginInstanceDto = PluginInstanceTestFactory.create(pluginDto);
+        pluginService.removeInstanceById(pluginInstanceDto.getId());
+        PluginInstanceDto foundInstance = pluginService.findInstanceById(pluginInstanceDto.getId());
+        Assert.assertNull(foundInstance);
+    }
+
 }

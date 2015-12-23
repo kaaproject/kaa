@@ -366,6 +366,8 @@ public class DaoConstants {
     public static final String CONTRACT_VERSION = VERSION;
     public static final String CONTRACT_TYPE = "type";
 
+    public static final String CONTRACT_NAME_VERSION_CONSTRAINT_NAME = "contract_name_version_constraint";
+
     /**
      * Contract message constants
      */
@@ -421,6 +423,8 @@ public class DaoConstants {
     public static final String PLUGIN_INSTANCE_NAME = NAME;
     public static final String PLUGIN_INSTANCE_STATE = "state";
     public static final String PLUGIN_INSTANCE_PLUGIN_ID = PLUGIN_ID;
+
+    public static final String PLUGIN_INSTANCE_PLUGIN_ID_NAME_CONSTRAINT_NAME = "plugin_instance_plugin_id_name_constraint";
 
     public static final String PLUGIN_INSTANCE_PLUGIN_FK = "fk_plugin_instance_plugin";
 
