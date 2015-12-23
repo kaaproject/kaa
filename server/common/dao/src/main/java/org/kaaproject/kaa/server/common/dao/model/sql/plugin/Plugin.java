@@ -54,20 +54,20 @@ public class Plugin extends GenericModel<PluginDto> implements Serializable {
 
     private static final long serialVersionUID = -2739834403973192215L;
 
-    @Column(name = PLUGIN_NAME)
+    @Column(name = PLUGIN_NAME, nullable = false)
     private String name;
 
-    @Column(name = PLUGIN_CLASS_NAME)
+    @Column(name = PLUGIN_CLASS_NAME, nullable = false)
     private String className;
 
-    @Column(name = PLUGIN_VERSION)
+    @Column(name = PLUGIN_VERSION, nullable = false)
     private Integer version;
 
     @Lob
     @Column(name = PLUGIN_CONF_SCHEMA)
     private String configSchema;
 
-    @Column(name = PLUGIN_SCOPE)
+    @Column(name = PLUGIN_SCOPE, nullable = false)
     @Enumerated(EnumType.STRING)
     private PluginScope scope;
 

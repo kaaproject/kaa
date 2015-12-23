@@ -426,7 +426,7 @@ public class DaoConstants {
      */
     public static final String PLUGIN_CONTRACT_INSTANCE_TABLE_NAME = "plugin_contract_instance";
     public static final String PLUGIN_CONTRACT_INSTANCE_PLUGIN_INSTANCE_ID = "plugin_instance_id";
-    public static final String PLUGIN_CONTRACT_INSTANCE_PLUGIN_CONTRACT_ID = "plugin_contract_id";
+    public static final String PLUGIN_CONTRACT_INSTANCE_PLUGIN_CONTRACT_ID = PLUGIN_CONTRACT_ID;
 
     public static final String PLUGIN_CONTRACT_INSTANCE_PLUGIN_INSTANCE_FK = "fk_plugin_contract_instance_plugin_instance";
     public static final String PLUGIN_CONTRACT_INSTANCE_PLUGIN_CONTRACT_FK = "fk_plugin_contract_instance_plugin_contract";
