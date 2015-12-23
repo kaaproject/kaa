@@ -16,8 +16,7 @@
 
 package org.kaaproject.kaa.server.operations.service.profile;
 
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
+import java.security.InvalidKeyException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -129,7 +128,7 @@ public class DefaultProfileService implements ProfileService {
 
             try {
                 cacheService.putEndpointKey(keyHash, KeyUtil.getPublic(dto.getEndpointKey()));
-            } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            } catch (InvalidKeyException e) {
                 LOG.error("Can't generate public key for endpoint key: {}. Reason: {}", dto.getEndpointKey(), e);
                 throw new RuntimeException(e);
             }
