@@ -158,6 +158,8 @@ public class AbstractTest {
     protected LogAppendersService logAppendersService;
     @Autowired
     protected EndpointUserConfigurationDao<EndpointUserConfiguration> endpointUserConfigurationDao;
+    @Autowired
+    protected PluginService pluginService;
 
     protected Application application;
 

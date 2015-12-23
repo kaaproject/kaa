@@ -13,16 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kaaproject.kaa.server.common.dao;
+package org.kaaproject.kaa.server.common.dao.impl;
 
-import org.kaaproject.kaa.common.dto.plugin.PluginDto;
-import org.kaaproject.kaa.common.dto.plugin.PluginInstanceDto;
+/**
+ * Provides methods to retrieve contracts
+ * @param <T> the generic contract parameter
+ */
+public interface ContractDao<T> extends SqlDao<T> {
 
-public interface PluginService {
-
-    PluginInstanceDto saveInstance(PluginInstanceDto pluginInstanceDto);
-
-    PluginInstanceDto getInstanceById(String id);
-
-    PluginDto registerPlugin(PluginDto pluginDef);
+    /**
+     * Find contract by its name and version
+     * @param name the contract name
+     * @param version the contract version
+     * @return the found contract
+     */
+    T findByNameAndVersion(String name, Integer version);
 }
