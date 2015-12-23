@@ -73,7 +73,6 @@ public class PluginContract extends GenericModel implements Serializable {
     private Set<PluginContractItem> pluginContractItems = new HashSet<>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = PLUGIN_CONTRACT_PROPERTY)
-    @JoinColumn(name = PLUGIN_CONTRACT_INSTANCE_PLUGIN_CONTRACT_ID, foreignKey = @ForeignKey(name = PLUGIN_CONTRACT_INSTANCE_PLUGIN_CONTRACT_FK))
     private Set<PluginContractInstance> pluginContractInstances = new HashSet<>();
 
     public PluginContract() {

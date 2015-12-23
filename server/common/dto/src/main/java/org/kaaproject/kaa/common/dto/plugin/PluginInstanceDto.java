@@ -28,7 +28,7 @@ public class PluginInstanceDto implements HasId, Serializable {
     private String id;
     private String name;
     private PluginInstanceState state;
-    private byte[] configurationData;
+    private String configurationData;
     private PluginDto pluginDefinition;
     private Set<PluginContractInstanceDto> contracts;
 
@@ -58,11 +58,11 @@ public class PluginInstanceDto implements HasId, Serializable {
         this.state = state;
     }
 
-    public byte[] getConfigurationData() {
+    public String getConfigurationData() {
         return configurationData;
     }
 
-    public void setConfigurationData(byte[] configurationData) {
+    public void setConfigurationData(String configurationData) {
         this.configurationData = configurationData;
     }
 
@@ -93,7 +93,7 @@ public class PluginInstanceDto implements HasId, Serializable {
 
         PluginInstanceDto that = (PluginInstanceDto) o;
 
-        if (!Arrays.equals(configurationData, that.configurationData)) {
+        if (configurationData != null ? !configurationData.equals(that.configurationData) : that.configurationData != null) {
             return false;
         }
         if (contracts != null ? !contracts.equals(that.contracts) : that.contracts != null) {
@@ -116,7 +116,7 @@ public class PluginInstanceDto implements HasId, Serializable {
     public int hashCode() {
         int result = name != null ? name.hashCode() : 0;
         result = 31 * result + (state != null ? state.hashCode() : 0);
-        result = 31 * result + (configurationData != null ? Arrays.hashCode(configurationData) : 0);
+        result = 31 * result + (configurationData != null ? configurationData.hashCode() : 0);
         result = 31 * result + (pluginDefinition != null ? pluginDefinition.hashCode() : 0);
         result = 31 * result + (contracts != null ? contracts.hashCode() : 0);
         return result;
@@ -128,7 +128,7 @@ public class PluginInstanceDto implements HasId, Serializable {
         sb.append("id='").append(id).append('\'');
         sb.append(", name='").append(name).append('\'');
         sb.append(", state=").append(state);
-        sb.append(", configurationData=").append(Arrays.toString(configurationData));
+        sb.append(", configurationData=").append(configurationData);
         sb.append(", pluginDefinition=").append((pluginDefinition != null && pluginDefinition.getClassName() != null)
                 ? pluginDefinition.getClassName() : null);
         sb.append(", contracts=").append(contracts);

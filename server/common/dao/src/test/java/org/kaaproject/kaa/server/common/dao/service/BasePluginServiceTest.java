@@ -33,14 +33,21 @@ public class BasePluginServiceTest extends AbstractTest {
     public void registerPluginUseExistentContractTest() {
         PluginDto pluginDto = PluginTestFactory.create();
         PluginDto registeredPlugin = pluginService.registerPlugin(pluginDto);
+
+        // pretend to register yet another plugin
         registeredPlugin.setId(null);
         registeredPlugin.setName("anotherName");
+        registeredPlugin.setClassName("anotherClassName");
         registeredPlugin.setVersion(2);
 
-        // reset plugin contract ids, so the same plugin contract is fetched from db
-        for (PluginContractDto pluginContract : registeredPlugin.getPluginContracts()) {
-            pluginContract.setId(null);
-        }
+        // reset plugin contract id, so the same plugin contract is fetched from db
+        PluginContractDto pluginContract = registeredPlugin.getPluginContracts().iterator().next();
+        String contractId = pluginContract.getContract().getId();
+        pluginContract.getContract().setId(null);
+
+        PluginDto newlyRegisteredPlugin = pluginService.registerPlugin(registeredPlugin);
+        PluginContractDto newlyRegisteredPluginContract = newlyRegisteredPlugin.getPluginContracts().iterator().next();
+        Assert.assertEquals(contractId, newlyRegisteredPluginContract.getContract().getId());
     }
 
     @Test(expected = DataIntegrityViolationException.class)
@@ -57,7 +64,7 @@ public class BasePluginServiceTest extends AbstractTest {
         PluginInstanceDto pluginInstanceDto = new PluginInstanceDto();
         pluginInstanceDto.setPluginDefinition(pluginDto);
         pluginInstanceDto.setName("Instance 1");
-        pluginInstanceDto.setConfigurationData("ConfData".getBytes());
+        pluginInstanceDto.setConfigurationData("ConfData");
         pluginInstanceDto.setState(PluginInstanceState.ACTIVE);
         PluginInstanceDto savedInstance = pluginService.saveInstance(pluginInstanceDto);
         Assert.assertNotNull(savedInstance.getId());

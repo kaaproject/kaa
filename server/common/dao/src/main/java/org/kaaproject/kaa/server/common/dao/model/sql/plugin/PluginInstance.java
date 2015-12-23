@@ -39,12 +39,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_INSTANCE_CONF_DATA;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_INSTANCE_PLUGIN_FK;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_INSTANCE_PLUGIN_ID;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_INSTANCE_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_INSTANCE_STATE;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_INSTANCE_TABLE_NAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_NAME;
 
-// TODO: review, corresponding dto has name field, but the model doesn't have any
 @Entity
 @Table(name = PLUGIN_INSTANCE_TABLE_NAME)
 public class PluginInstance extends GenericModel<PluginInstanceDto> implements Serializable {
@@ -53,14 +54,17 @@ public class PluginInstance extends GenericModel<PluginInstanceDto> implements S
 
     @Lob
     @Column(name = PLUGIN_INSTANCE_CONF_DATA)
-    private String configData;              // TODO: mb change to byte[] as in the corresponding dto?
+    private String configData;
+
+    @Column(name = PLUGIN_NAME)
+    private String name;
 
     @Column(name = PLUGIN_INSTANCE_STATE)
     @Enumerated(EnumType.STRING)
     private PluginInstanceState state;
 
     @ManyToOne
-    @JoinColumn(name = PLUGIN_INSTANCE_PLUGIN_ID, foreignKey = @ForeignKey(name = "fk_plugin_instance_plugin"))
+    @JoinColumn(name = PLUGIN_INSTANCE_PLUGIN_ID, foreignKey = @ForeignKey(name = PLUGIN_INSTANCE_PLUGIN_FK))
     private Plugin plugin;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = PLUGIN_INSTANCE_PROPERTY)
@@ -71,8 +75,9 @@ public class PluginInstance extends GenericModel<PluginInstanceDto> implements S
 
     public PluginInstance(PluginInstanceDto dto) {
         this.id = ModelUtils.getLongId(dto.getId());
-        this.configData = new String(dto.getConfigurationData());
+        this.configData = dto.getConfigurationData();
         this.state = dto.getState();
+        this.name = dto.getName();
         PluginDto pluginDto = dto.getPluginDefinition();
         if (pluginDto != null) {
             this.plugin = new Plugin();
@@ -103,6 +108,46 @@ public class PluginInstance extends GenericModel<PluginInstanceDto> implements S
         this.pluginContractInstances = pluginContractInstances;
     }
 
+    public String getConfigData() {
+        return configData;
+    }
+
+    public void setConfigData(String configData) {
+        this.configData = configData;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public PluginInstanceState getState() {
+        return state;
+    }
+
+    public void setState(PluginInstanceState state) {
+        this.state = state;
+    }
+
+    public Plugin getPlugin() {
+        return plugin;
+    }
+
+    public void setPlugin(Plugin plugin) {
+        this.plugin = plugin;
+    }
+
+    public Set<PluginContractInstance> getPluginContractInstances() {
+        return pluginContractInstances;
+    }
+
+    public void setPluginContractInstances(Set<PluginContractInstance> pluginContractInstances) {
+        this.pluginContractInstances = pluginContractInstances;
+    }
+
     @Override
     protected PluginInstanceDto createDto() {
         return new PluginInstanceDto();
@@ -112,9 +157,9 @@ public class PluginInstance extends GenericModel<PluginInstanceDto> implements S
     public PluginInstanceDto toDto() {
         PluginInstanceDto dto = createDto();
         dto.setId(getStringId());
-        dto.setName(plugin != null ? plugin.getName() : null);
+        dto.setName(name);
         dto.setState(state);
-        dto.setConfigurationData(configData.getBytes());
+        dto.setConfigurationData(configData);
         dto.setPluginDefinition(plugin != null ? plugin.toDtoNoPluginInstances() : null);
         if (!pluginContractInstances.isEmpty()) {
             Set<PluginContractInstanceDto> pluginContractDtos = new HashSet<>();
@@ -140,6 +185,9 @@ public class PluginInstance extends GenericModel<PluginInstanceDto> implements S
         if (configData != null ? !configData.equals(that.configData) : that.configData != null) {
             return false;
         }
+        if (name != null ? !name.equals(that.name) : that.name != null) {
+            return false;
+        }
         if (plugin != null ? !plugin.equals(that.plugin) : that.plugin != null) {
             return false;
         }
@@ -154,6 +202,7 @@ public class PluginInstance extends GenericModel<PluginInstanceDto> implements S
     public int hashCode() {
         int result = configData != null ? configData.hashCode() : 0;
         result = 31 * result + (state != null ? state.hashCode() : 0);
+        result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (plugin != null ? plugin.hashCode() : 0);
         return result;
     }
@@ -163,6 +212,7 @@ public class PluginInstance extends GenericModel<PluginInstanceDto> implements S
         final StringBuilder sb = new StringBuilder("PluginInstance{");
         sb.append("configData='").append(configData).append('\'');
         sb.append(", state=").append(state);
+        sb.append(", name=").append(name);
         sb.append(", plugin=").append(plugin != null ? plugin.getClassName() : null);
         sb.append(", pluginContractInstances=").append(pluginContractInstances);
         sb.append('}');

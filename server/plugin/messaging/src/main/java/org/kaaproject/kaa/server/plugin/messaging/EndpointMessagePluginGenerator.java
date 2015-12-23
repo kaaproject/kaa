@@ -114,7 +114,7 @@ public class EndpointMessagePluginGenerator extends AbstractSdkApiGenerator<Conf
             }
 
             @Override
-            public byte[] getPluginConfigurationData() {
+            public String getPluginConfigurationData() {
                 // Not used here
                 return null;
             }

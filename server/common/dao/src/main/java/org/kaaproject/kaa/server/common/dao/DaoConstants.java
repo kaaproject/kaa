@@ -418,8 +418,11 @@ public class DaoConstants {
      */
     public static final String PLUGIN_INSTANCE_TABLE_NAME = "plugin_instance";
     public static final String PLUGIN_INSTANCE_CONF_DATA = CONF_DATA;
+    public static final String PLUGIN_INSTANCE_NAME = NAME;
     public static final String PLUGIN_INSTANCE_STATE = "state";
     public static final String PLUGIN_INSTANCE_PLUGIN_ID = PLUGIN_ID;
+
+    public static final String PLUGIN_INSTANCE_PLUGIN_FK = "fk_plugin_instance_plugin";
 
     /**
      * Plugin contract instance constants

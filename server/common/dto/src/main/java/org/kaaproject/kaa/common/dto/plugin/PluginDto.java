@@ -131,12 +131,6 @@ public class PluginDto implements HasId, Serializable {
         if (name != null ? !name.equals(pluginDto.name) : pluginDto.name != null) {
             return false;
         }
-        if (pluginContracts != null ? !pluginContracts.equals(pluginDto.pluginContracts) : pluginDto.pluginContracts != null) {
-            return false;
-        }
-        if (pluginInstances != null ? !pluginInstances.equals(pluginDto.pluginInstances) : pluginDto.pluginInstances != null) {
-            return false;
-        }
         if (scope != pluginDto.scope) {
             return false;
         }
@@ -158,8 +152,6 @@ public class PluginDto implements HasId, Serializable {
         result = 31 * result + (version != null ? version.hashCode() : 0);
         result = 31 * result + (scope != null ? scope.hashCode() : 0);
         result = 31 * result + (confSchema != null ? confSchema.hashCode() : 0);
-        result = 31 * result + (pluginContracts != null ? pluginContracts.hashCode() : 0);
-        result = 31 * result + (pluginInstances != null ? pluginInstances.hashCode() : 0);
         return result;
     }
 

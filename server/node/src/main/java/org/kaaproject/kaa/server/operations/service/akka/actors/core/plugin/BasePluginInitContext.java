@@ -39,7 +39,7 @@ import org.kaaproject.kaa.server.common.core.plugin.instance.PluginContractItemI
 
 public class BasePluginInitContext implements PluginInitContext {
 
-    private final byte[] configurationData;
+    private final String configurationData;
     private final Set<PluginContractInstance> contracts;
 
     public BasePluginInitContext(PluginInstanceDto dto) {
@@ -87,7 +87,7 @@ public class BasePluginInitContext implements PluginInitContext {
     }
 
     @Override
-    public byte[] getPluginConfigurationData() {
+    public String getPluginConfigurationData() {
         return configurationData;
     }
 

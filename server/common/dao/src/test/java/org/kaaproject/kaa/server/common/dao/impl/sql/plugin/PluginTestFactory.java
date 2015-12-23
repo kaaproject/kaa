@@ -86,7 +86,7 @@ public class PluginTestFactory {
         Set<PluginInstanceDto> pluginInstances = new HashSet<>();
         PluginInstanceDto pluginInstance = new PluginInstanceDto();
         pluginInstance.setState(PluginInstanceState.ACTIVE);
-        pluginInstance.setConfigurationData("ConfigData".getBytes());
+        pluginInstance.setConfigurationData("ConfigData");
         pluginInstances.add(pluginInstance);
         return pluginInstances;
     }
