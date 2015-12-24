@@ -317,44 +317,6 @@ void test_upload_decision_on_failure(void)
     KAA_TRACE_OUT(logger);
 }
 
-
-
-static kaa_error_t test_init_channel(void *channel_context
-                                   , kaa_transport_context_t *transport_context)
-{
-    return KAA_ERR_NONE;
-}
-
-static kaa_error_t test_set_access_point(void *context
-                                       , kaa_access_point_t *access_point)
-{
-    return KAA_ERR_NONE;
-}
-
-static kaa_error_t test_get_protocol_id(void *context, kaa_transport_protocol_id_t *protocol_info)
-{
-    return KAA_ERR_NONE;
-}
-
-static kaa_error_t test_get_supported_services(void *context
-                                             , kaa_service_t **supported_services
-                                             , size_t *service_count)
-{
-    static kaa_service_t services[] = { KAA_SERVICE_LOGGING };
-    *supported_services = services;
-    *service_count = sizeof(services) / sizeof(kaa_service_t);
-
-    return KAA_ERR_NONE;
-}
-
-static kaa_error_t test_sync_handler(void *context
-                                   , const kaa_service_t services[]
-                                   , size_t service_count)
-{
-    KAA_RETURN_IF_NIL3(context, services, service_count, KAA_ERR_BADPARAM);
-    return KAA_ERR_NONE;
-}
-
 int test_init(void)
 {
     kaa_error_t error = kaa_log_create(&logger, KAA_MAX_LOG_MESSAGE_LENGTH, KAA_MAX_LOG_LEVEL, NULL);

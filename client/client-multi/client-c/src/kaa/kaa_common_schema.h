@@ -38,7 +38,7 @@ extern "C" {
 
 
 typedef void (*serialize_fn)(avro_writer_t writer, void *data);
-typedef void *(*deserialize_fn)(void);
+typedef void *(*deserialize_fn)(); // NOTE: Do not add void in the parameter list.
 typedef void *(*deserialize_wo_ctx_fn)(avro_reader_t reader);
 typedef void *(*deserialize_w_ctx_fn)(avro_reader_t reader, void *context);
 typedef size_t (*get_size_fn)(void *data);

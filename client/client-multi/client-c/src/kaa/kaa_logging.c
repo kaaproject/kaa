@@ -216,19 +216,48 @@ kaa_error_t kaa_logging_init(kaa_log_collector_t *self, void *log_storage_contex
 
 
 
+static bool is_upload_allowed(kaa_log_collector_t *self)
+{
+    size_t pendingCount = kaa_list_get_size(self->timeouts);
+    size_t allowedCount = ext_log_upload_strategy_get_max_parallel_uploads(self->log_upload_strategy_context);
+
+    if (pendingCount >= allowedCount) {
+        KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Ignore log upload: too much pending requests %zu, max allowed %zu"
+                                                                                    , pendingCount,  allowedCount);
+        return false;
+    }
+
+    return true;
+}
+
+
+
+static void do_sync(kaa_log_collector_t *self)
+{
+    KAA_RETURN_IF_NIL(self, );
+
+    KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Initiating log upload...");
+    kaa_transport_channel_interface_t *channel =
+            kaa_channel_manager_get_transport_channel(self->channel_manager, logging_sync_services[0]);
+    if (channel)
+        channel->sync_handler(channel->context, logging_sync_services, 1);
+}
+
+
+
 static void update_storage(kaa_log_collector_t *self)
 {
+    KAA_RETURN_IF_NIL(self, );
+
     switch (ext_log_upload_strategy_decide(self->log_upload_strategy_context, self->log_storage_context)) {
-        case UPLOAD:
-            KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Initiating log upload...");
-            kaa_transport_channel_interface_t *channel =
-                    kaa_channel_manager_get_transport_channel(self->channel_manager, logging_sync_services[0]);
-            if (channel)
-                channel->sync_handler(channel->context, logging_sync_services, 1);
-            break;
-        default:
-            KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Upload will not be triggered now.");
-            break;
+    case UPLOAD:
+        if (is_upload_allowed(self)) {
+            do_sync(self);
+        }
+        break;
+    default:
+        KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Upload will not be triggered now.");
+        break;
      }
 }
 

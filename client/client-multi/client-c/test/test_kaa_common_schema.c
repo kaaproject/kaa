@@ -1000,7 +1000,7 @@ static void test_array_get_size(void)
 
     srand(time(NULL));
     ASSERT_EQUAL(kaa_array_get_size(NULL, NULL), 0);
-    ASSERT_EQUAL(kaa_array_get_size(NULL, kaa_null_get_size), avro_long_get_size(0));
+    ASSERT_EQUAL(kaa_array_get_size(NULL, (get_size_fn)kaa_null_get_size), avro_long_get_size(0));
 
     const char *plain_str = "data";
     kaa_string_t *reference_kaa_str = kaa_string_copy_create(plain_str);
