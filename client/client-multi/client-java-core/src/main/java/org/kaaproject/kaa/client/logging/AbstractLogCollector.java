@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Reference implementation of @see LogCollector
- * 
+ *
  * @author Andrew Shvayka
  */
 public abstract class AbstractLogCollector implements LogCollector, LogProcessor {
@@ -96,11 +96,17 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
 
     @Override
     public void fillSyncRequest(LogSyncRequest request) {
-        LogBlock group = null;
+        LogBlock group;
         if (storage.getStatus().getRecordCount() == 0) {
             LOG.debug("Log storage is empty");
             return;
         }
+
+        if (timeouts.size() >= strategy.getMaxParallelUploads()) {
+            LOG.debug("Ignore log upload: too much pending requests. Max allowed {}", strategy.getMaxParallelUploads());
+            return;
+        }
+
         group = storage.getRecordBlock(strategy.getBatchSize(), strategy.getBatchCount());
 
         if (group != null) {
@@ -138,7 +144,7 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
     }
 
     @Override
-    public synchronized void onLogResponse(LogSyncResponse logSyncResponse) throws IOException {
+    public void onLogResponse(LogSyncResponse logSyncResponse) throws IOException {
         if (logSyncResponse.getDeliveryStatuses() != null) {
             boolean isAlreadyScheduled = false;
             for (LogDeliveryStatus response : logSyncResponse.getDeliveryStatuses()) {
