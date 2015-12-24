@@ -158,6 +158,22 @@ static bool is_timeout(kaa_log_collector_t *self)
 
 
 
+static bool is_upload_allowed(kaa_log_collector_t *self)
+{
+    size_t pendingCount = kaa_list_get_size(self->timeouts);
+    size_t allowedCount = ext_log_upload_strategy_get_max_parallel_uploads(self->log_upload_strategy_context);
+
+    if (pendingCount >= allowedCount) {
+        KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Ignore log upload: too much pending requests %zu, max allowed %zu"
+                                                                                    , pendingCount,  allowedCount);
+        return false;
+    }
+
+    return true;
+}
+
+
+
 void kaa_log_collector_destroy(kaa_log_collector_t *self)
 {
     KAA_RETURN_IF_NIL(self, );
@@ -212,22 +228,6 @@ kaa_error_t kaa_logging_init(kaa_log_collector_t *self, void *log_storage_contex
             , log_storage_context, log_upload_strategy_context);
 
     return KAA_ERR_NONE;
-}
-
-
-
-static bool is_upload_allowed(kaa_log_collector_t *self)
-{
-    size_t pendingCount = kaa_list_get_size(self->timeouts);
-    size_t allowedCount = ext_log_upload_strategy_get_max_parallel_uploads(self->log_upload_strategy_context);
-
-    if (pendingCount >= allowedCount) {
-        KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Ignore log upload: too much pending requests %zu, max allowed %zu"
-                                                                                    , pendingCount,  allowedCount);
-        return false;
-    }
-
-    return true;
 }
 
 
@@ -311,6 +311,13 @@ kaa_error_t kaa_logging_request_get_size(kaa_log_collector_t *self, size_t *expe
     KAA_RETURN_IF_NIL2(self, expected_size, KAA_ERR_BADPARAM);
     KAA_RETURN_IF_NIL(self->log_storage_context, KAA_ERR_NOT_INITIALIZED);
 
+    *expected_size = 0;
+
+    if (!is_upload_allowed(self)) {
+        self->is_sync_ignored = true;
+        return KAA_ERR_NONE;
+    }
+
     size_t records_count = ext_log_storage_get_records_count(self->log_storage_context);
     size_t total_size = ext_log_storage_get_total_size(self->log_storage_context);
 
@@ -324,8 +331,6 @@ kaa_error_t kaa_logging_request_get_size(kaa_log_collector_t *self, size_t *expe
         size_t bucket_size = ext_log_upload_strategy_get_bucket_size(self->log_upload_strategy_context);
 
         *expected_size += ((actual_size > bucket_size) ? bucket_size : actual_size);
-    } else {
-        *expected_size = 0;
     }
 
     return KAA_ERR_NONE;
@@ -337,6 +342,7 @@ kaa_error_t kaa_logging_request_serialize(kaa_log_collector_t *self, kaa_platfor
 {
     KAA_RETURN_IF_NIL2(self, writer, KAA_ERR_BADPARAM);
     KAA_RETURN_IF_NIL(self->log_storage_context, KAA_ERR_NOT_INITIALIZED);
+
     if (self->is_sync_ignored) {
         return KAA_ERR_NONE;
     }

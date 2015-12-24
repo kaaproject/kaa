@@ -329,7 +329,7 @@ void test_create_request(void)
     memset(&strategy, 0, sizeof(mock_strategy_context_t));
     strategy.decision = NOOP;
     strategy.batch_size = 2 * test_log_record_size;
-    strategy.max_parallel_uploads = SIZE_MAX;
+    strategy.max_parallel_uploads = UINT32_MAX;
 
     error_code = kaa_logging_init(log_collector, create_mock_storage(), &strategy);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
@@ -468,7 +468,7 @@ void test_timeout(void)
     strategy.timeout = TEST_TIMEOUT;
     strategy.decision = NOOP;
     strategy.batch_size = 2 * test_log_record_size;
-    strategy.max_parallel_uploads = SIZE_MAX;
+    strategy.max_parallel_uploads = UINT32_MAX;
 
     error_code = kaa_logging_init(log_collector, create_mock_storage(), &strategy);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
@@ -520,7 +520,7 @@ void test_decline_timeout(void)
     strategy.timeout = TEST_TIMEOUT;
     strategy.decision = NOOP;
     strategy.batch_size = 2 * test_log_record_size;
-    strategy.max_parallel_uploads = SIZE_MAX;
+    strategy.max_parallel_uploads = UINT32_MAX;
 
     mock_storage_context_t *storage = create_mock_storage();
     ASSERT_NOT_NULL(storage);
@@ -583,7 +583,7 @@ void test_decline_timeout(void)
     KAA_TRACE_OUT(logger);
 }
 
-void test_max_parallel_uploads(void)
+void test_max_parallel_uploads_with_log_sync(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -605,7 +605,7 @@ void test_max_parallel_uploads(void)
 
     mock_strategy_context_t strategy;
     memset(&strategy, 0, sizeof(mock_strategy_context_t));
-    strategy.timeout = SIZE_MAX;
+    strategy.timeout = UINT32_MAX;
     strategy.batch_size = 2 * test_log_size;
     strategy.decision = UPLOAD;
 
@@ -625,13 +625,12 @@ void test_max_parallel_uploads(void)
 
     ASSERT_EQUAL(((mock_transport_channel_context_t *)transport_context.context)->on_sync_count, 0);
 
-    strategy.max_parallel_uploads = 1;
-    error_code = kaa_logging_add_record(log_collector, test_log_record);
-    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
-
     /*
      * Ensure the first request is allowed.
      */
+    strategy.max_parallel_uploads = 1;
+    error_code = kaa_logging_add_record(log_collector, test_log_record);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
     ASSERT_EQUAL(((mock_transport_channel_context_t *)transport_context.context)->on_sync_count, 1);
 
     /*
@@ -653,6 +652,91 @@ void test_max_parallel_uploads(void)
      * Ensure the second request is forbidden.
      */
     ASSERT_EQUAL(((mock_transport_channel_context_t *)transport_context.context)->on_sync_count, 1);
+
+    /*
+     * Clean up.
+     */
+    error_code = kaa_channel_manager_remove_transport_channel(channel_manager, channel_id);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    test_log_record->destroy(test_log_record);
+    kaa_log_collector_destroy(log_collector);
+
+    KAA_TRACE_OUT(logger);
+}
+
+void test_max_parallel_uploads_with_sync_all(void)
+{
+    KAA_TRACE_IN(logger);
+
+    kaa_error_t error_code = KAA_ERR_NONE;
+
+    uint32_t channel_id = 0;
+    kaa_transport_channel_interface_t transport_context;
+    test_kaa_channel_create(&transport_context);
+
+    error_code = kaa_channel_manager_add_transport_channel(channel_manager, &transport_context, &channel_id);
+
+    kaa_log_collector_t *log_collector = NULL;
+    error_code = kaa_log_collector_create(&log_collector, status, channel_manager, logger);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    kaa_user_log_record_t *test_log_record = kaa_test_log_record_create();
+    test_log_record->data = kaa_string_copy_create(TEST_LOG_BUFFER);
+    size_t test_log_size = test_log_record->get_size(test_log_record);
+
+    mock_strategy_context_t strategy;
+    memset(&strategy, 0, sizeof(mock_strategy_context_t));
+    strategy.timeout = UINT32_MAX;
+    strategy.batch_size = 2 * test_log_size;
+    strategy.decision = UPLOAD;
+
+    mock_storage_context_t *storage = create_mock_storage();
+    ASSERT_NOT_NULL(storage);
+
+    error_code = kaa_logging_init(log_collector, storage, &strategy);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    /*
+     * Ensure the log delivery is forbidden at all.
+     */
+    strategy.max_parallel_uploads = 0;
+    error_code = kaa_logging_add_record(log_collector, test_log_record);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    size_t expected_size = 0;
+    error_code = kaa_logging_request_get_size(log_collector, &expected_size);
+    ASSERT_NULL(expected_size);
+
+    /*
+     * Ensure the first request is allowed.
+     */
+    strategy.max_parallel_uploads = 1;
+    error_code = kaa_logging_add_record(log_collector, test_log_record);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    /*
+     * Do the first request to remember the delivery timeout of the log batch.
+     */
+    error_code = kaa_logging_request_get_size(log_collector, &expected_size);
+    ASSERT_NOT_NULL(expected_size);
+    size_t request_buffer_size = 256;
+    char request_buffer[request_buffer_size];
+    kaa_platform_message_writer_t *writer = NULL;
+    error_code = kaa_platform_message_writer_create(&writer, request_buffer, request_buffer_size);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    error_code = kaa_logging_request_serialize(log_collector, writer);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    error_code = kaa_logging_add_record(log_collector, test_log_record);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    /*
+     * Ensure the second request is forbidden.
+     */
+    error_code = kaa_logging_request_get_size(log_collector, &expected_size);
+    ASSERT_NULL(expected_size);
 
     /*
      * Clean up.
@@ -712,6 +796,7 @@ KAA_SUITE_MAIN(Log, test_init, test_deinit
        KAA_TEST_CASE(process_response, test_response)
        KAA_TEST_CASE(process_timeout, test_timeout)
        KAA_TEST_CASE(decline_timeout, test_decline_timeout)
-       KAA_TEST_CASE(max_parallel_uploads, test_max_parallel_uploads)
+       KAA_TEST_CASE(max_parallel_uploads_with_log_sync, test_max_parallel_uploads_with_log_sync)
+       KAA_TEST_CASE(max_parallel_uploads_with_sync_all, test_max_parallel_uploads_with_sync_all)
 #endif
         )
