@@ -132,6 +132,7 @@ public abstract class WorkerNodeTracker extends ControlNodeTracker {
         bootstrapCache.getListenable().addListener(new PathChildrenCacheListener() {
             @Override
             public void childEvent(CuratorFramework client, PathChildrenCacheEvent event) throws Exception {
+                LOG.info("Bootstrap node event: " + event.getType());
                 switch (event.getType()) {
                 case CHILD_ADDED:
                     bootstrapAdded(event.getData());

@@ -39,10 +39,10 @@ public class UserServiceImplTest extends AbstractTest {
 
     @Test
     public void findAllTenantUsersTest() {
-        TenantDto tenant = generateTenant();
+        TenantDto tenant = generateTenantDto();
         List<UserDto> expectedUsers = new ArrayList<>();
-        List<UserDto> devUsers = generateUsers(tenant.getId(), KaaAuthorityDto.TENANT_DEVELOPER, 2);
-        List<UserDto> users = generateUsers(tenant.getId(), KaaAuthorityDto.TENANT_USER, 3);
+        List<UserDto> devUsers = generateUsersDto(tenant.getId(), KaaAuthorityDto.TENANT_DEVELOPER, 2);
+        List<UserDto> users = generateUsersDto(tenant.getId(), KaaAuthorityDto.TENANT_USER, 3);
         expectedUsers.addAll(devUsers);
         expectedUsers.addAll(users);
         List<UserDto> foundUsers = userService.findAllTenantUsers(tenant.getId());
@@ -70,7 +70,7 @@ public class UserServiceImplTest extends AbstractTest {
 
     @Test
     public void saveTenantTest() {
-        TenantDto tenant = generateTenant();
+        TenantDto tenant = generateTenantDto();
         TenantDto savedTenant = userService.findTenantById(tenant.getId());
         Assert.assertEquals(tenant, savedTenant);
     }
@@ -82,15 +82,15 @@ public class UserServiceImplTest extends AbstractTest {
 
     @Test
     public void findTenantByNameTest() {
-        TenantDto tenantDto = generateTenant();
+        TenantDto tenantDto = generateTenantDto();
         TenantDto foundTenant = userService.findTenantByName(tenantDto.getName());
         Assert.assertEquals(tenantDto, foundTenant);
     }
 
     @Test
     public void saveUserTest() {
-        TenantDto tenantDto = generateTenant();
-        List<UserDto> users = generateUsers(tenantDto.getId(), KaaAuthorityDto.TENANT_DEVELOPER, 1);
+        TenantDto tenantDto = generateTenantDto();
+        List<UserDto> users = generateUsersDto(tenantDto.getId(), KaaAuthorityDto.TENANT_DEVELOPER, 1);
         Assert.assertFalse(users.isEmpty());
         UserDto user = users.get(0);
         UserDto foundUser = userService.findUserById(user.getId());
@@ -99,8 +99,8 @@ public class UserServiceImplTest extends AbstractTest {
 
     @Test
     public void removeUserByIdTest() {
-        TenantDto tenantDto = generateTenant();
-        List<UserDto> users = generateUsers(tenantDto.getId(), KaaAuthorityDto.TENANT_DEVELOPER, 1);
+        TenantDto tenantDto = generateTenantDto();
+        List<UserDto> users = generateUsersDto(tenantDto.getId(), KaaAuthorityDto.TENANT_DEVELOPER, 1);
         Assert.assertFalse(users.isEmpty());
         UserDto user = users.get(0);
         userService.removeUserById(user.getId());
@@ -110,8 +110,8 @@ public class UserServiceImplTest extends AbstractTest {
 
     @Test
     public void findUserByExternalUidTest() {
-        TenantDto tenantDto = generateTenant();
-        List<UserDto> users = generateUsers(tenantDto.getId(), KaaAuthorityDto.TENANT_DEVELOPER, 1);
+        TenantDto tenantDto = generateTenantDto();
+        List<UserDto> users = generateUsersDto(tenantDto.getId(), KaaAuthorityDto.TENANT_DEVELOPER, 1);
         Assert.assertFalse(users.isEmpty());
         UserDto user = users.get(0);
         UserDto foundUser = userService.findUserByExternalUid(user.getExternalUid());
@@ -120,7 +120,7 @@ public class UserServiceImplTest extends AbstractTest {
 
     @Test
     public void findAllTenantsTest() {
-        TenantDto tenantDto = generateTenant();
+        TenantDto tenantDto = generateTenantDto();
         List<TenantDto> saved = new ArrayList<>(1);
         saved.add(tenantDto);
         List<TenantDto> tenants = userService.findAllTenants();
@@ -129,8 +129,8 @@ public class UserServiceImplTest extends AbstractTest {
 
     @Test
     public void findAllUsersTest() {
-        TenantDto tenantDto = generateTenant();
-        List<UserDto> users = generateUsers(tenantDto.getId(), KaaAuthorityDto.TENANT_DEVELOPER, 7);
+        TenantDto tenantDto = generateTenantDto();
+        List<UserDto> users = generateUsersDto(tenantDto.getId(), KaaAuthorityDto.TENANT_DEVELOPER, 7);
         List<UserDto> foundUsers = userService.findAllUsers();
         assertUsersListsEqual(users, foundUsers);
     }
@@ -138,7 +138,7 @@ public class UserServiceImplTest extends AbstractTest {
 
     @Test
     public void findAllTenantAdminsTest() {
-        TenantAdminDto tenantAdminDto = generateTenantAdmin(null, null);
+        TenantAdminDto tenantAdminDto = generateTenantAdminDto(null, null);
         List<TenantAdminDto> admins = userService.findAllTenantAdmins();
         Assert.assertEquals(1, admins.size());
         Assert.assertEquals(tenantAdminDto, admins.get(0));
@@ -146,7 +146,7 @@ public class UserServiceImplTest extends AbstractTest {
 
     @Test
     public void removeTenantAdminByIdTest() {
-        TenantAdminDto tenantAdminDto = generateTenantAdmin(null, null);
+        TenantAdminDto tenantAdminDto = generateTenantAdminDto(null, null);
         userService.removeTenantAdminById(tenantAdminDto.getId());
         TenantAdminDto found = userService.findTenantAdminById(tenantAdminDto.getId());
         Assert.assertNull(found);
@@ -154,7 +154,7 @@ public class UserServiceImplTest extends AbstractTest {
 
     @Test
     public void findTenantAdminByIdTest() {
-        TenantAdminDto tenantAdminDto = generateTenantAdmin(null, null);
+        TenantAdminDto tenantAdminDto = generateTenantAdminDto(null, null);
         TenantAdminDto found = userService.findTenantAdminById(tenantAdminDto.getId());
         Assert.assertEquals(tenantAdminDto, found);
     }

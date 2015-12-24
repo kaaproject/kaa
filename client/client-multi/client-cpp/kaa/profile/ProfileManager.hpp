@@ -59,7 +59,7 @@ public:
         if (profileContainer_) {
             return avroConverter.toByteArray(profileContainer_->getProfile());
         }
-#if KAA_PROFILE_SCHEMA_VERSION > 1
+#if KAA_PROFILE_SCHEMA_VERSION > 0
         else {
             throw KaaException("Profile container is not set!");
         }
@@ -81,7 +81,7 @@ public:
 
     virtual bool isInitialized()
     {
-#if KAA_PROFILE_SCHEMA_VERSION > 1
+#if KAA_PROFILE_SCHEMA_VERSION > 0
         return profileContainer_.operator bool();
 #else
         return true;

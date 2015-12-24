@@ -23,7 +23,7 @@ import java.io.IOException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.client.channel.ProfileTransport;
-import org.kaaproject.kaa.schema.base.Profile;
+import org.kaaproject.kaa.schema.system.EmptyData;
 import org.mockito.Mockito;
 
 public class DefaultProfileManagerTest {
@@ -42,8 +42,8 @@ public class DefaultProfileManagerTest {
 
             profileManager.setProfileContainer(new ProfileContainer() {
                 @Override
-                public Profile getProfile() {
-                    return new Profile();
+                public EmptyData getProfile() {
+                    return new EmptyData();
                 }
             });
 
@@ -59,8 +59,8 @@ public class DefaultProfileManagerTest {
         profileManager.setProfileContainer(new ProfileContainer() {
 
             @Override
-            public Profile getProfile() {
-                return new Profile();
+            public EmptyData getProfile() {
+                return new EmptyData();
             }
         });
         Assert.assertNotNull(profileManager.getSerializedProfile());

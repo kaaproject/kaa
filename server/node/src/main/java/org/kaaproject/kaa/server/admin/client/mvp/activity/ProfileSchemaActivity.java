@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,17 +17,20 @@
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
 import org.kaaproject.avro.ui.shared.RecordField;
-import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ProfileSchemaPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.view.BaseSchemaView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.BaseCtlSchemaView;
+import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaFormDto;
+import org.kaaproject.kaa.server.admin.shared.schema.ProfileSchemaViewDto;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class ProfileSchemaActivity
         extends
-        AbstractSchemaActivity<ProfileSchemaDto, BaseSchemaView, ProfileSchemaPlace> {
+        AbstractBaseCtlSchemaActivity<EndpointProfileSchemaDto, ProfileSchemaViewDto, BaseCtlSchemaView, ProfileSchemaPlace> {
 
     public ProfileSchemaActivity(ProfileSchemaPlace place,
             ClientFactory clientFactory) {
@@ -35,12 +38,12 @@ public class ProfileSchemaActivity
     }
 
     @Override
-    protected ProfileSchemaDto newSchema() {
-        return new ProfileSchemaDto();
+    protected ProfileSchemaViewDto newSchema() {
+        return new ProfileSchemaViewDto();
     }
 
     @Override
-    protected BaseSchemaView getView(boolean create) {
+    protected BaseCtlSchemaView getView(boolean create) {
         if (create) {
             return clientFactory.getCreateProfileSchemaView();
         } else {
@@ -50,25 +53,35 @@ public class ProfileSchemaActivity
 
     @Override
     protected void getEntity(String id,
-            AsyncCallback<ProfileSchemaDto> callback) {
-        KaaAdmin.getDataSource().getProfileSchemaForm(id, callback);
+            AsyncCallback<ProfileSchemaViewDto> callback) {
+        KaaAdmin.getDataSource().getProfileSchemaView(id, callback);
     }
 
     @Override
-    protected void editEntity(ProfileSchemaDto entity,
-            AsyncCallback<ProfileSchemaDto> callback) {
-        KaaAdmin.getDataSource().editProfileSchemaForm(entity, callback);
+    protected void editEntity(ProfileSchemaViewDto entity,
+            AsyncCallback<ProfileSchemaViewDto> callback) {
+        KaaAdmin.getDataSource().saveProfileSchemaView(entity, callback);
     }
 
     @Override
-    protected void createEmptySchemaForm(AsyncCallback<RecordField> callback) {
-        KaaAdmin.getDataSource().createSimpleEmptySchemaForm(callback);
+    protected void createEmptyCtlSchemaForm(AsyncCallback<CtlSchemaFormDto> callback) {
+        KaaAdmin.getDataSource().createNewCTLSchemaFormInstance(null, 
+                null, 
+                CTLSchemaScopeDto.PROFILE_SCHEMA, 
+                applicationId, 
+                callback);
     }
 
     @Override
     public void loadFormData(String fileItemName,
             AsyncCallback<RecordField> callback) {
-        KaaAdmin.getDataSource().generateSimpleSchemaForm(fileItemName, callback);
+        KaaAdmin.getDataSource().generateCommonSchemaForm(fileItemName, callback);
+    }
+
+    @Override
+    protected ProfileSchemaPlace existingSchemaPlace(
+            String applicationId, String schemaId) {
+        return new ProfileSchemaPlace(applicationId, schemaId);
     }
 
 }

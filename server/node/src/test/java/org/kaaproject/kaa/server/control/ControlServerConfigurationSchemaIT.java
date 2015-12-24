@@ -24,8 +24,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
-import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.common.dto.UpdateStatus;
+import org.kaaproject.kaa.common.dto.VersionDto;
 import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
 
 /**
@@ -143,14 +143,14 @@ public class ControlServerConfigurationSchemaIT extends AbstractTestControlServe
 
         SchemaVersions schemaVersions = client.getSchemaVersionsByApplicationId(application.getId());
         
-        List<SchemaDto> storedConfigurationSchemas = schemaVersions.getConfigurationSchemaVersions();
+        List<VersionDto> storedConfigurationSchemas = schemaVersions.getConfigurationSchemaVersions();
 
         Collections.sort(storedConfigurationSchemas, new IdComparator());
 
         Assert.assertEquals(configurationSchemas.size(), storedConfigurationSchemas.size());
         for (int i=0;i<configurationSchemas.size();i++) {
             ConfigurationSchemaDto configurationSchema = configurationSchemas.get(i);
-            SchemaDto storedConfigurationSchema = storedConfigurationSchemas.get(i);
+            VersionDto storedConfigurationSchema = storedConfigurationSchemas.get(i);
             assertSchemasEquals(configurationSchema, storedConfigurationSchema);
         }
     }

@@ -79,6 +79,7 @@
                         <exclude>**/.cproject</exclude>
                         <exclude>**/kaa_status.file</exclude>
                         <exclude>**/FindSqlite3.cmake</exclude>
+                        <exclude>**/artik.cmake</exclude>
                     </excludes>
                 </configuration>
             </plugin>

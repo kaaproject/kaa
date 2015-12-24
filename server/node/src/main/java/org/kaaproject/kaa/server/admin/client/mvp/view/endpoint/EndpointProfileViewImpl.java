@@ -16,12 +16,9 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.endpoint;
 
-import com.google.gwt.dom.client.Style;
-import com.google.gwt.user.client.ui.Anchor;
-import com.google.gwt.user.client.ui.CaptionPanel;
-import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Widget;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.kaaproject.avro.ui.gwt.client.widget.AvroWidgetsConfig;
 import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
@@ -33,8 +30,19 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextB
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.RecordPanel;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.SpanElement;
+import com.google.gwt.dom.client.Style;
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CaptionPanel;
+import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Widget;
 
 public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements EndpointProfileView {
 
@@ -43,16 +51,19 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
     private SizedTextBox userExternalID;
     private List<Widget> userInfoList;
 
-    private SizedTextBox schemaName;
-    private SizedTextBox description;
-    private RecordPanel schemaForm;
-
     private Anchor sdkAnchor;
     private AbstractGrid<EndpointGroupDto, String> groupsGrid;
     private TopicGrid topicsGrid;
 
+    private Anchor endpointProfSchemaName;
+    private RecordPanel endpointProfForm;
+
+    private Anchor serverProfSchemaName;
+    private RecordPanel serverProfForm;
+    private Button editServerProfileButton;
+
     public EndpointProfileViewImpl() {
-        super(true);
+        super(false, false);
     }
 
     @Override
@@ -72,6 +83,11 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
 
     @Override
     protected void initDetailsTable() {
+
+        detailsTable.getColumnFormatter().setWidth(0, "200px");
+        detailsTable.getColumnFormatter().setWidth(1, "550px");
+        detailsTable.getColumnFormatter().setWidth(2, "0px");
+
         saveButton.removeFromParent();
         cancelButton.removeFromParent();
         requiredFieldsNoteLabel.setVisible(false);
@@ -108,52 +124,93 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
         detailsTable.setWidget(row, 0, sdkLabel);
         detailsTable.setWidget(row++, 1, sdkAnchor);
 
-        CaptionPanel formPanel = new CaptionPanel(Utils.constants.profileSchema());
+        SpanElement span = Document.get().createSpanElement();
+        span.appendChild(Document.get().createTextNode(Utils.constants.endpointProfile()));
+        span.addClassName("gwt-Label");
+
+        CaptionPanel formPanel = new CaptionPanel(span.getString(), true);
         FlexTable recordTable = new FlexTable();
 
-        int recordTableRow = 0;
-        Label schemaNameLabel = new Label(Utils.constants.schemaName());
-        schemaName = new KaaAdminSizedTextBox(-1, false);
-        schemaName.setWidth("100%");
-        recordTable.setWidget(recordTableRow, 0, schemaNameLabel);
-        recordTable.setWidget(recordTableRow++, 1, schemaName);
+        Label endpointProfSchemaLabel = new Label(Utils.constants.schemaName());
+        endpointProfSchemaName = new Anchor();
+        endpointProfSchemaName.getElement().getStyle().setCursor(Style.Cursor.POINTER);
+        endpointProfSchemaName.getElement().getStyle().setMarginLeft(10, Unit.PX);
+        endpointProfSchemaName.setWidth("100%");
 
-        Label descriptionLabel = new Label(Utils.constants.schemaDescription());
-        description = new KaaAdminSizedTextBox(-1, false);
-        description.setWidth("100%");
-        recordTable.setWidget(recordTableRow, 0, descriptionLabel);
-        recordTable.setWidget(recordTableRow++, 1, description);
+        HorizontalPanel schemaNamePanel = new HorizontalPanel();
+        schemaNamePanel.setHeight("40px");
+        schemaNamePanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+        schemaNamePanel.add(endpointProfSchemaLabel);
+        schemaNamePanel.add(endpointProfSchemaName);
+        recordTable.setWidget(0, 0, schemaNamePanel);
 
-        schemaForm = new RecordPanel(new AvroWidgetsConfig.Builder().
-                recordPanelWidth(700).createConfig(),
-                Utils.constants.schema(), this, false, true);
-        recordTable.setWidget(recordTableRow, 0, schemaForm);
-        recordTable.getFlexCellFormatter().setColSpan(recordTableRow, 0, 3);
+        endpointProfForm = new RecordPanel(new AvroWidgetsConfig.Builder().recordPanelWidth(700).createConfig(), Utils.constants.profile(),
+                this, true, true);
+        endpointProfForm.setWidth("100%");
+        recordTable.setWidget(1, 0, endpointProfForm);
+        recordTable.getFlexCellFormatter().setColSpan(1, 0, 2);
 
         formPanel.add(recordTable);
+
         detailsTable.setWidget(++row, 0, formPanel);
-        detailsTable.getFlexCellFormatter().setColSpan(row, 0, 3);
-        formPanel.getElement().getParentElement().getStyle().setPropertyPx("paddingBottom", 10);
+        detailsTable.getFlexCellFormatter().setColSpan(row, 0, 2);
+
+        formPanel.getElement().getParentElement().getStyle().setPaddingBottom(10, Unit.PX);
+
+        span = Document.get().createSpanElement();
+        span.appendChild(Document.get().createTextNode(Utils.constants.serverProfile()));
+        span.addClassName("gwt-Label");
+
+        CaptionPanel serverFormPanel = new CaptionPanel(span.getString(), true);
+        FlexTable serverRecordTable = new FlexTable();
+
+        Label serverProfSchemaLabel = new Label(Utils.constants.schemaName());
+        serverProfSchemaName = new Anchor();
+        serverProfSchemaName.getElement().getStyle().setCursor(Style.Cursor.POINTER);
+        serverProfSchemaName.getElement().getStyle().setMarginLeft(10, Unit.PX);
+        serverProfSchemaName.setWidth("100%");
+        editServerProfileButton = new Button(Utils.constants.edit());
+        editServerProfileButton.getElement().getStyle().setMarginLeft(15, Unit.PX);
+
+        schemaNamePanel = new HorizontalPanel();
+        schemaNamePanel.setHeight("40px");
+        schemaNamePanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+        schemaNamePanel.add(serverProfSchemaLabel);
+        schemaNamePanel.add(serverProfSchemaName);
+        schemaNamePanel.add(editServerProfileButton);
+
+        serverRecordTable.setWidget(0, 0, schemaNamePanel);
+        serverProfForm = new RecordPanel(new AvroWidgetsConfig.Builder().recordPanelWidth(700).createConfig(), Utils.constants.profile(),
+                this, true, true);
+        serverProfForm.setWidth("100%");
+        serverRecordTable.setWidget(1, 0, serverProfForm);
+        serverRecordTable.getFlexCellFormatter().setColSpan(1, 0, 2);
+
+        serverFormPanel.add(serverRecordTable);
+
+        detailsTable.setWidget(++row, 0, serverFormPanel);
+        detailsTable.getFlexCellFormatter().setColSpan(row, 0, 2);
+        serverFormPanel.getElement().getParentElement().getStyle().setPaddingBottom(10, Unit.PX);
 
         groupsGrid = new EndpointGroupGrid(true);
-        groupsGrid.setSize("700px", "200px");
+        groupsGrid.setSize("100%", "200px");
         Label groupsLabel = new Label(Utils.constants.endpointGroups());
         detailsTable.setWidget(++row, 0, groupsLabel);
-        groupsLabel.getElement().getParentElement().getStyle().setPropertyPx("paddingBottom", 10);
+        groupsLabel.getElement().getParentElement().getStyle().setPaddingBottom(10, Unit.PX);
         detailsTable.setWidget(++row, 0, groupsGrid);
-        groupsGrid.getElement().getParentElement().getStyle().setPropertyPx("paddingBottom", 10);
-        detailsTable.getFlexCellFormatter().setColSpan(row, 0, 3);
+        groupsGrid.getElement().getParentElement().getStyle().setPaddingBottom(10, Unit.PX);
+        detailsTable.getFlexCellFormatter().setColSpan(row, 0, 2);
 
         topicsGrid = new TopicGrid(false, true);
-        topicsGrid.setSize("700px", "200px");
+        topicsGrid.setSize("100%", "200px");
         Label topicLabel = new Label(Utils.constants.subscribedOnNfTopics());
         topicLabel.addStyleName(Utils.kaaAdminStyle.bAppContentTitleLabel());
         detailsTable.setWidget(++row, 0, topicLabel);
-        detailsTable.getFlexCellFormatter().setColSpan(row, 0, 3);
-        topicLabel.getElement().getParentElement().getStyle().setPropertyPx("paddingBottom", 10);
+        detailsTable.getFlexCellFormatter().setColSpan(row, 0, 2);
+        topicLabel.getElement().getParentElement().getStyle().setPaddingBottom(10, Unit.PX);
         detailsTable.setWidget(++row, 0, topicsGrid);
-        detailsTable.getFlexCellFormatter().setColSpan(row, 0, 3);
-        topicsGrid.getElement().getParentElement().getStyle().setPropertyPx("paddingBottom", 10);
+        detailsTable.getFlexCellFormatter().setColSpan(row, 0, 2);
+        topicsGrid.getElement().getParentElement().getStyle().setPaddingBottom(10, Unit.PX);
     }
 
     protected AbstractGrid<EndpointGroupDto, String> createGrid() {
@@ -166,10 +223,10 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
         userID.setValue("");
         userExternalID.setValue("");
         sdkAnchor.setText("");
-        schemaName.setValue("");
-        description.setValue("");
-
-        schemaForm.getRecordWidget().clear();
+        endpointProfSchemaName.setText("");
+        serverProfSchemaName.setText("");
+        endpointProfForm.reset();
+        serverProfForm.reset();
     }
 
     @Override
@@ -197,19 +254,27 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
         return userInfoList;
     }
 
-    @Override
-    public SizedTextBox getSchemaName() {
-        return schemaName;
+    public Anchor getEndpointProfSchemaName() {
+        return endpointProfSchemaName;
+    }
+
+    public RecordPanel getEndpointProfForm() {
+        return endpointProfForm;
     }
 
     @Override
-    public SizedTextBox getDescription() {
-        return description;
+    public Anchor getServerProfSchemaName() {
+        return serverProfSchemaName;
     }
 
     @Override
-    public RecordPanel getSchemaForm() {
-        return schemaForm;
+    public RecordPanel getServerProfForm() {
+        return serverProfForm;
+    }
+
+    @Override
+    public HasClickHandlers getEditServerProfileButton() {
+        return editServerProfileButton;
     }
 
     @Override
@@ -226,4 +291,5 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
     public TopicGrid getTopicsGrid() {
         return topicsGrid;
     }
+
 }

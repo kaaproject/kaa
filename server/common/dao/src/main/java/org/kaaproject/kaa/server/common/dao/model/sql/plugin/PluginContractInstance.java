@@ -58,6 +58,10 @@ public class PluginContractInstance extends GenericModel implements Serializable
     @OneToMany(fetch = FetchType.LAZY, mappedBy = PLUGIN_CONTRACT_INSTANCE_PROPERTY)
     private Set<PluginContractInstanceItem> pluginContractInstanceItems = new HashSet<>();
 
+    public PluginContractInstance(Long id) {
+        this.id = id;
+    }
+
     public PluginInstance getPluginInstance() {
         return pluginInstance;
     }
@@ -104,6 +108,11 @@ public class PluginContractInstance extends GenericModel implements Serializable
     @Override
     protected PluginContractInstanceDto createDto() {
         return new PluginContractInstanceDto();
+    }
+
+    @Override
+    protected PluginContractInstance newInstance(Long id) {
+        return new PluginContractInstance(id);
     }
 
     @Override

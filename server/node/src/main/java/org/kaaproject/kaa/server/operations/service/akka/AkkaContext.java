@@ -16,6 +16,7 @@
 package org.kaaproject.kaa.server.operations.service.akka;
 
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
+import org.kaaproject.kaa.server.common.dao.CTLService;
 import org.kaaproject.kaa.server.common.dao.PluginService;
 import org.kaaproject.kaa.server.operations.service.OperationsService;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
@@ -77,6 +78,9 @@ public class AkkaContext {
     @Autowired
     private PluginService pluginService;
 
+    @Autowired
+    private CTLService ctlService;
+
     @Value("#{properties[support_unencrypted_connection]}")
     private Boolean supportUnencryptedConnection;
 
@@ -136,6 +140,10 @@ public class AkkaContext {
 
     public EndpointUserService getEndpointUserService() {
         return endpointUserService;
+    }
+
+    public CTLService getCtlService() {
+        return ctlService;
     }
 
     public PluginService getPluginService() {

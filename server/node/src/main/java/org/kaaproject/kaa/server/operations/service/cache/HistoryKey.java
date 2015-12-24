@@ -19,17 +19,17 @@ package org.kaaproject.kaa.server.operations.service.cache;
 import java.io.Serializable;
 
 /**
- * The Class HistoryKey is used to model key of cache entry for history of application changes.
- * Application change is a change of active profile or configuration for particular application endpoint group.
- * Contains appToken, old and new app seq numbers, profile and conf versions
+ * The Class HistoryKey is used to model key of cache entry for history of
+ * application changes. Application change is a change of active profile or
+ * configuration for particular application endpoint group. Contains appToken,
+ * old and new app seq numbers, profile and conf versions
  *
  * @author ashvayka
  */
-public final class HistoryKey implements Serializable{
+public final class HistoryKey implements Serializable {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 8365579177309710618L;
-
 
     /** The app token. */
     private final String appToken;
@@ -44,7 +44,10 @@ public final class HistoryKey implements Serializable{
     private final int confSchemaVersion;
 
     /** The profile schema version. */
-    private final int profileSchemaVersion;
+    private final int endpointProfileSchemaVersion;
+
+    /** The profile schema version. */
+    private final int serverProfileSchemaVersion;
 
     private final HistorySubject historySubject;
 
@@ -56,16 +59,19 @@ public final class HistoryKey implements Serializable{
      * @param oldSeqNumber the old seq number
      * @param newSeqNumber the new seq number
      * @param confSchemaVersion the conf schema version
-     * @param profileSchemaVersion the profile schema version
+     * @param endpointProfileSchemaVersion the profile schema version
+     * @param serverProfileSchemaVersion the profile schema version
      */
-    public HistoryKey(String appToken, HistorySubject historySubject, int oldSeqNumber, int newSeqNumber, int confSchemaVersion, int profileSchemaVersion) {
+    public HistoryKey(String appToken, HistorySubject historySubject, int oldSeqNumber, int newSeqNumber, int confSchemaVersion,
+            int endpointProfileSchemaVersion, int serverProfileSchemaVersion) {
         super();
         this.appToken = appToken;
         this.historySubject = historySubject;
         this.oldSeqNumber = oldSeqNumber;
         this.newSeqNumber = newSeqNumber;
         this.confSchemaVersion = confSchemaVersion;
-        this.profileSchemaVersion = profileSchemaVersion;
+        this.endpointProfileSchemaVersion = endpointProfileSchemaVersion;
+        this.serverProfileSchemaVersion = serverProfileSchemaVersion;
     }
 
     /**
@@ -109,8 +115,12 @@ public final class HistoryKey implements Serializable{
      *
      * @return the profile schema version
      */
-    public int getProfileSchemaVersion() {
-        return profileSchemaVersion;
+    public int getEndpointProfileSchemaVersion() {
+        return endpointProfileSchemaVersion;
+    }
+
+    public int getServerProfileSchemaVersion() {
+        return serverProfileSchemaVersion;
     }
 
     @Override
@@ -122,7 +132,8 @@ public final class HistoryKey implements Serializable{
         result = prime * result + ((historySubject == null) ? 0 : historySubject.hashCode());
         result = prime * result + newSeqNumber;
         result = prime * result + oldSeqNumber;
-        result = prime * result + profileSchemaVersion;
+        result = prime * result + endpointProfileSchemaVersion;
+        result = prime * result + serverProfileSchemaVersion;
         return result;
     }
 
@@ -157,11 +168,13 @@ public final class HistoryKey implements Serializable{
         if (oldSeqNumber != other.oldSeqNumber) {
             return false;
         }
-        if (profileSchemaVersion != other.profileSchemaVersion) {
+        if (endpointProfileSchemaVersion != other.endpointProfileSchemaVersion) {
+            return false;
+        }
+        if (serverProfileSchemaVersion != other.serverProfileSchemaVersion) {
             return false;
         }
         return true;
     }
-
 
 }

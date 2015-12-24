@@ -114,6 +114,11 @@ public final class History extends GenericModel<HistoryDto> implements Serializa
     }
 
     @Override
+    protected History newInstance(Long id) {
+        return new History(id);
+    }
+
+    @Override
     public HistoryDto toDto() {
         HistoryDto dto = createDto();
         dto.setId(getStringId());

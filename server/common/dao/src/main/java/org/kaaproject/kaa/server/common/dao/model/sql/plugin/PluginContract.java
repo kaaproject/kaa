@@ -101,6 +101,10 @@ public class PluginContract extends GenericModel implements Serializable {
         }
     }
 
+    public PluginContract(Long id) {
+        this.id = id;
+    }
+
     public PluginContractDirection getDirection() {
         return direction;
     }
@@ -144,6 +148,11 @@ public class PluginContract extends GenericModel implements Serializable {
     @Override
     protected PluginContractDto createDto() {
         return new PluginContractDto();
+    }
+
+    @Override
+    protected PluginContract newInstance(Long id) {
+        return new PluginContract(id);
     }
 
     @Override

@@ -57,4 +57,6 @@
 
     <bean id="userConfigurationService" class="org.kaaproject.kaa.server.common.dao.service.UserConfigurationServiceImpl"/>
 
+    <bean id="serverProfileService" class="org.kaaproject.kaa.server.common.dao.service.ServerProfileServiceImpl" />
+
 </beans>

@@ -36,10 +36,10 @@ import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
-import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
 import org.kaaproject.kaa.common.dto.UpdateNotificationDto;
+import org.kaaproject.kaa.common.dto.VersionDto;
 import org.kaaproject.kaa.server.common.core.schema.KaaSchemaFactoryImpl;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
 import org.slf4j.Logger;
@@ -74,7 +74,7 @@ public class NotificationServiceImplTest extends AbstractMongoTest {
     @Ignore
     @Test
     public void findNotificationsByIdWithExpiredTimeTest() {
-        String appId = generateApplication().getId();
+        String appId = generateApplicationDto().getId();
 
         NotificationSchemaDto schema = new NotificationSchemaDto();
         schema.setApplicationId(appId);
@@ -113,16 +113,16 @@ public class NotificationServiceImplTest extends AbstractMongoTest {
 
     @Test
     public void testSaveNotificationSchema() {
-        NotificationSchemaDto schema = generateNotificationSchema(null, null);
+        NotificationSchemaDto schema = generateNotificationSchemaDto(null, null);
         Assert.assertNotNull(schema);
         Assert.assertTrue(isNotBlank(schema.getId()));
-        Assert.assertEquals(2, schema.getMajorVersion());
+        Assert.assertEquals(2, schema.getVersion());
         Assert.assertEquals(NotificationTypeDto.USER, schema.getType());
     }
 
     @Test
     public void testSaveNotification() {
-        NotificationDto notification = generateNotifications(null, null, 1, null).get(0);
+        NotificationDto notification = generateNotificationsDto(null, null, 1, null).get(0);
         Assert.assertNotNull(notification);
         Assert.assertTrue(isNotBlank(notification.getId()));
         Assert.assertEquals(NotificationTypeDto.USER, notification.getType());
@@ -130,7 +130,7 @@ public class NotificationServiceImplTest extends AbstractMongoTest {
 
     @Test
     public void testFindNotificationById() {
-        NotificationDto notification = generateNotifications(null, null, 1, null).get(0);
+        NotificationDto notification = generateNotificationsDto(null, null, 1, null).get(0);
         Assert.assertNotNull(notification);
         Assert.assertTrue(isNotBlank(notification.getId()));
         NotificationDto found = notificationService.findNotificationById(notification.getId());
@@ -139,7 +139,7 @@ public class NotificationServiceImplTest extends AbstractMongoTest {
 
     @Test
     public void testFindNotificationsByTopicId() {
-        NotificationDto notification = generateNotifications(null, null, 1, null).get(0);
+        NotificationDto notification = generateNotificationsDto(null, null, 1, null).get(0);
         Assert.assertNotNull(notification);
         NotificationDto found = notificationService.findNotificationsByTopicId(notification.getTopicId()).get(0);
         Assert.assertEquals(notification, found);
@@ -147,7 +147,7 @@ public class NotificationServiceImplTest extends AbstractMongoTest {
 
     @Test
     public void testFindNotificationSchemaById() {
-        NotificationSchemaDto schema = generateNotificationSchema(null, null);
+        NotificationSchemaDto schema = generateNotificationSchemaDto(null, null);
         Assert.assertNotNull(schema);
         NotificationSchemaDto found = notificationService.findNotificationSchemaById(schema.getId());
         Assert.assertEquals(schema, found);
@@ -155,7 +155,7 @@ public class NotificationServiceImplTest extends AbstractMongoTest {
 
     @Test
     public void testFindNotificationSchemasByAppId() {
-        NotificationSchemaDto schema = generateNotificationSchema(null, null);
+        NotificationSchemaDto schema = generateNotificationSchemaDto(null, null);
         Assert.assertNotNull(schema);
         NotificationSchemaDto found = notificationService.findNotificationSchemasByAppId(schema.getApplicationId()).get(1);
         Assert.assertEquals(schema, found);
@@ -163,23 +163,23 @@ public class NotificationServiceImplTest extends AbstractMongoTest {
 
     @Test
     public void testFindUserNotificationSchemasByAppId() {
-        NotificationDto dto = generateNotifications(null, null, 1, null).get(0);
-        List<SchemaDto> schemas = notificationService.findUserNotificationSchemasByAppId(dto.getApplicationId());
-        generateNotificationSchema(dto.getApplicationId(), NotificationTypeDto.SYSTEM);
+        NotificationDto dto = generateNotificationsDto(null, null, 1, null).get(0);
+        List<VersionDto> schemas = notificationService.findUserNotificationSchemasByAppId(dto.getApplicationId());
+        generateNotificationSchemaDto(dto.getApplicationId(), NotificationTypeDto.SYSTEM);
         Assert.assertEquals(2, schemas.size());
     }
 
     @Test
     public void testFindNotificationSchemaVersionsByAppId() {
-        NotificationDto dto = generateNotifications(null, null, 1, null).get(0);
-        generateNotificationSchema(dto.getApplicationId(), NotificationTypeDto.SYSTEM);
-        List<SchemaDto> schemas = notificationService.findNotificationSchemaVersionsByAppId(dto.getApplicationId());
+        NotificationDto dto = generateNotificationsDto(null, null, 1, null).get(0);
+        generateNotificationSchemaDto(dto.getApplicationId(), NotificationTypeDto.SYSTEM);
+        List<VersionDto> schemas = notificationService.findNotificationSchemaVersionsByAppId(dto.getApplicationId());
         Assert.assertEquals(3, schemas.size());
     }
 
     @Test
     public void testRemoveNotificationSchemasByAppId() {
-        NotificationDto dto = generateNotifications(null, null, 3, null).get(0);
+        NotificationDto dto = generateNotificationsDto(null, null, 3, null).get(0);
         String appId = dto.getApplicationId();
         notificationService.removeNotificationSchemasByAppId(appId);
         List<NotificationSchemaDto> schemas = notificationService.findNotificationSchemasByAppId(appId);
@@ -188,7 +188,7 @@ public class NotificationServiceImplTest extends AbstractMongoTest {
 
     @Test
     public void testFindNotificationsByTopicIdAndVersionAndStartSecNum() {
-        NotificationDto dto = generateNotifications(null, null, 3, NotificationTypeDto.USER).get(0);
+        NotificationDto dto = generateNotificationsDto(null, null, 3, NotificationTypeDto.USER).get(0);
         String topicId = dto.getTopicId();
         List<NotificationDto> notifications = notificationService.findNotificationsByTopicIdAndVersionAndStartSecNum(topicId, 0, 1, dto.getVersion());
         Assert.assertFalse(notifications.isEmpty());
@@ -197,8 +197,8 @@ public class NotificationServiceImplTest extends AbstractMongoTest {
 
     @Test
     public void testFindNotificationSchemasByAppIdAndType() {
-        NotificationDto dto = generateNotifications(null, null, 1, null).get(0);
-        generateNotificationSchema(dto.getApplicationId(), NotificationTypeDto.SYSTEM);
+        NotificationDto dto = generateNotificationsDto(null, null, 1, null).get(0);
+        generateNotificationSchemaDto(dto.getApplicationId(), NotificationTypeDto.SYSTEM);
         List<NotificationSchemaDto> schemas = notificationService.findNotificationSchemasByAppIdAndType(dto.getApplicationId(), NotificationTypeDto.SYSTEM);
         Assert.assertEquals(1, schemas.size());
         schemas = notificationService.findNotificationSchemasByAppIdAndType(dto.getApplicationId(), NotificationTypeDto.USER);
@@ -207,18 +207,18 @@ public class NotificationServiceImplTest extends AbstractMongoTest {
 
     @Test
     public void testFindNotificationSchemaByAppIdAndTypeAndVersion() {
-        NotificationDto dto = generateNotifications(null, null, 1, null).get(0);
-        generateNotificationSchema(dto.getApplicationId(), NotificationTypeDto.SYSTEM);
+        NotificationDto dto = generateNotificationsDto(null, null, 1, null).get(0);
+        generateNotificationSchemaDto(dto.getApplicationId(), NotificationTypeDto.SYSTEM);
         NotificationSchemaDto schema = notificationService.findNotificationSchemaByAppIdAndTypeAndVersion(dto.getApplicationId(), NotificationTypeDto.SYSTEM, 1);
         Assert.assertNotNull(schema);
     }
 
     @Test
     public void testFindUnicastNotificationById() {
-        TopicDto topicDto = generateTopic(null, null);
-        EndpointProfileDto profile = generateEndpointProfile(topicDto.getApplicationId(), Arrays.asList(topicDto.getId()));
+        TopicDto topicDto = generateTopicDto(null, null);
+        EndpointProfileDto profile = generateEndpointProfileDto(topicDto.getApplicationId(), Arrays.asList(topicDto.getId()));
         byte[] keyHash = profile.getEndpointKeyHash();
-        EndpointNotificationDto notification = generateUnicastNotification(null, topicDto.getId(), keyHash);
+        EndpointNotificationDto notification = generateUnicastNotificationDto(null, topicDto.getId(), keyHash);
         Assert.assertTrue(isNotBlank(notification.getId()));
         EndpointNotificationDto found = notificationService.findUnicastNotificationById(notification.getId());
         Assert.assertEquals(notification, found);
@@ -226,10 +226,10 @@ public class NotificationServiceImplTest extends AbstractMongoTest {
 
     @Test
     public void testRemoveUnicastNotificationsByKeyHash() {
-        TopicDto topicDto = generateTopic(null, null);
-        EndpointProfileDto profile = generateEndpointProfile(topicDto.getApplicationId(), Arrays.asList(topicDto.getId()));
+        TopicDto topicDto = generateTopicDto(null, null);
+        EndpointProfileDto profile = generateEndpointProfileDto(topicDto.getApplicationId(), Arrays.asList(topicDto.getId()));
         byte[] keyHash = profile.getEndpointKeyHash();
-        EndpointNotificationDto notification = generateUnicastNotification(null, topicDto.getId(), keyHash);
+        EndpointNotificationDto notification = generateUnicastNotificationDto(null, topicDto.getId(), keyHash);
         Assert.assertTrue(isNotBlank(notification.getId()));
         notificationService.removeUnicastNotificationsByKeyHash(keyHash);
         List<EndpointNotificationDto> notifications = notificationService.findUnicastNotificationsByKeyHash(keyHash);
@@ -257,10 +257,10 @@ public class NotificationServiceImplTest extends AbstractMongoTest {
 
     @Test
     public void testRemoveUnicastNotificationById() {
-        TopicDto topicDto = generateTopic(null, null);
-        EndpointProfileDto profile = generateEndpointProfile(topicDto.getApplicationId(), Arrays.asList(topicDto.getId()));
+        TopicDto topicDto = generateTopicDto(null, null);
+        EndpointProfileDto profile = generateEndpointProfileDto(topicDto.getApplicationId(), Arrays.asList(topicDto.getId()));
         byte[] keyHash = profile.getEndpointKeyHash();
-        EndpointNotificationDto notification = generateUnicastNotification(null, topicDto.getId(), keyHash);
+        EndpointNotificationDto notification = generateUnicastNotificationDto(null, topicDto.getId(), keyHash);
         Assert.assertTrue(isNotBlank(notification.getId()));
         notificationService.removeUnicastNotificationById(notification.getId());
         EndpointNotificationDto notif = notificationService.findUnicastNotificationById(notification.getId());

@@ -17,7 +17,6 @@
 package org.kaaproject.kaa.server.control;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import org.junit.Assert;
@@ -27,8 +26,8 @@ import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationRecordDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
-import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.common.dto.UpdateStatus;
+import org.kaaproject.kaa.common.dto.VersionDto;
 
 /**
  * The Class ControlServerConfigurationIT.
@@ -60,8 +59,8 @@ public class ControlServerConfigurationIT extends AbstractTestControlServer {
         ConfigurationRecordDto configurationRecord = client.getConfigurationRecord(configuration.getSchemaId(), configuration.getEndpointGroupId());
 
         Assert.assertNotNull(configurationRecord);
-        Assert.assertNotNull(configurationRecord.getInactiveConfiguration());
-        assertConfigurationsEquals(configuration, configurationRecord.getInactiveConfiguration());
+        Assert.assertNotNull(configurationRecord.getInactiveStructureDto());
+        assertConfigurationsEquals(configuration, configurationRecord.getInactiveStructureDto());
     }
 
     /**
@@ -85,8 +84,8 @@ public class ControlServerConfigurationIT extends AbstractTestControlServer {
 
         Assert.assertNotNull(configurationRecords);
         Assert.assertEquals(2, configurationRecords.size());
-        assertConfigurationsEquals(configuration1, configurationRecords.get(0).getInactiveConfiguration());
-        assertConfigurationsEquals(configuration2, configurationRecords.get(1).getInactiveConfiguration());
+        assertConfigurationsEquals(configuration1, configurationRecords.get(0).getInactiveStructureDto());
+        assertConfigurationsEquals(configuration2, configurationRecords.get(1).getInactiveStructureDto());
     }
 
     /**
@@ -109,7 +108,7 @@ public class ControlServerConfigurationIT extends AbstractTestControlServer {
 
         Assert.assertNotNull(configurationRecords);
         Assert.assertEquals(1, configurationRecords.size());
-        assertConfigurationsEquals(configuration1, configurationRecords.get(0).getInactiveConfiguration());
+        assertConfigurationsEquals(configuration1, configurationRecords.get(0).getInactiveStructureDto());
 
         client.deleteConfigurationRecord(configuration1.getSchemaId(), endpointGroup.getId());
         configurationRecords = client.getConfigurationRecords(endpointGroup.getId(), false);
@@ -134,25 +133,15 @@ public class ControlServerConfigurationIT extends AbstractTestControlServer {
         createConfiguration(configurationSchema1.getId(), endpointGroup.getId());
         createConfiguration(configurationSchema2.getId(), endpointGroup.getId());
 
-        List<SchemaDto> schemas = client.getVacantConfigurationSchemasByEndpointGroupId(endpointGroup.getId());
+        List<VersionDto> schemas = client.getVacantConfigurationSchemasByEndpointGroupId(endpointGroup.getId());
 
         Assert.assertNotNull(schemas);
         Assert.assertEquals(2, schemas.size());
-        Collections.sort(schemas, new Comparator<SchemaDto>() {
-            @Override
-            public int compare(SchemaDto o1, SchemaDto o2) {
-                int result = o1.getMajorVersion() - o2.getMajorVersion();
-                if (result == 0) {
-                    result = o1.getMinorVersion() - o2.getMinorVersion();
-                }
-                return result;
-            }
-        });
-        SchemaDto schema = schemas.get(1);
+        Collections.sort(schemas);
+        VersionDto schema = schemas.get(1);
         Assert.assertNotNull(schema);
         Assert.assertEquals(configurationSchema3.getId(), schema.getId());
-        Assert.assertEquals(configurationSchema3.getMajorVersion(), schema.getMajorVersion());
-        Assert.assertEquals(configurationSchema3.getMinorVersion(), schema.getMinorVersion());
+        Assert.assertEquals(configurationSchema3.getVersion(), schema.getVersion());
     }
 
     /**

@@ -17,17 +17,19 @@
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
 import org.kaaproject.avro.ui.shared.RecordField;
-import org.kaaproject.kaa.common.dto.SchemaDto;
-import org.kaaproject.kaa.common.dto.StructureRecordDto;
+import org.kaaproject.kaa.common.dto.VersionDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ConfigurationPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.view.BaseRecordView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.ConfigurationView;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.config.ConfigurationRecordFormDto;
+import org.kaaproject.kaa.server.admin.shared.config.ConfigurationRecordViewDto;
 import org.kaaproject.kaa.server.admin.shared.schema.SchemaInfoDto;
 
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -35,15 +37,20 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class ConfigurationActivity extends AbstractRecordActivity<ConfigurationRecordFormDto, RecordField, BaseRecordView<ConfigurationRecordFormDto, RecordField>, ConfigurationPlace> {
+public class ConfigurationActivity extends AbstractRecordActivity<ConfigurationRecordFormDto, 
+                                                        ConfigurationRecordViewDto, RecordField, 
+                                                        ConfigurationView, ConfigurationPlace> {
 
+    private String schemaId;
+    
     public ConfigurationActivity(ConfigurationPlace place,
             ClientFactory clientFactory) {
         super(place, clientFactory);
+        this.schemaId = place.getSchemaId();
     }
 
     @Override
-    protected BaseRecordView<ConfigurationRecordFormDto, RecordField> getRecordView(boolean create) {
+    protected ConfigurationView getRecordView(boolean create) {
         if (create) {
             return clientFactory.getCreateConfigurationView();
         } else {
@@ -57,55 +64,110 @@ public class ConfigurationActivity extends AbstractRecordActivity<ConfigurationR
     }
 
     @Override
-    protected void getRecord(String schemaId, String endpointGroupId,
-            AsyncCallback<StructureRecordDto<ConfigurationRecordFormDto>> callback) {
-        KaaAdmin.getDataSource().getConfigurationRecordForm(schemaId, endpointGroupId, callback);
-    }
-    
-    
-    
-    @Override
-    protected void schemaSelected(SchemaDto schema) {
-        RecordField configurationRecord = ((SchemaInfoDto)schema).getSchemaForm();
-        ConfigurationRecordFormDto inactiveStruct = record.getInactiveStructureDto();
-        inactiveStruct.setConfigurationRecord(configurationRecord);
-        recordView.getRecordPanel().setInactiveBodyValue(inactiveStruct);
+    protected ConfigurationRecordViewDto newRecord() {
+        return new ConfigurationRecordViewDto();
     }
 
+    @Override
+    protected void getRecord(String endpointGroupId,
+            AsyncCallback<ConfigurationRecordViewDto> callback) {
+        KaaAdmin.getDataSource().getConfigurationRecordView(schemaId, endpointGroupId, callback);
+    }
+    
     @Override
     protected void bind(final EventBus eventBus) {
         super.bind(eventBus);
         if (create) {
-            registrations.add(recordView.getSchema().addValueChangeHandler(new ValueChangeHandler<SchemaDto>() {
+            registrations.add(recordView.getSchema().addValueChangeHandler(new ValueChangeHandler<VersionDto>() {
                 @Override
-                public void onValueChange(ValueChangeEvent<SchemaDto> event) {
+                public void onValueChange(ValueChangeEvent<VersionDto> event) {
                     schemaSelected(event.getValue());
                 }
             }));
         }
     }
-
+    
+    private void schemaSelected(VersionDto schema) {
+        RecordField configurationRecord = ((SchemaInfoDto)schema).getSchemaForm();
+        ConfigurationRecordFormDto inactiveStruct = record.getInactiveStructureDto();
+        inactiveStruct.setConfigurationRecord(configurationRecord);
+        recordView.getRecordPanel().setInactiveBodyValue(inactiveStruct);
+    }
+    
     @Override
-    protected void getVacantSchemas(String endpointGroupId,
-            final AsyncCallback<List<SchemaDto>> callback) {
-        AsyncCallback<List<SchemaInfoDto>> schemaInfosCallback = new AsyncCallback<List<SchemaInfoDto>>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                callback.onFailure(caught);
-            }
+    protected void onRecordRetrieved() {
+        if (create) {
+            getVacantSchemas(endpointGroupId, new BusyAsyncCallback<List<SchemaInfoDto>>() {
+                @Override
+                public void onFailureImpl(Throwable caught) {
+                    Utils.handleException(caught, recordView);
+                }
 
-            @Override
-            public void onSuccess(List<SchemaInfoDto> result) {
-                List<SchemaDto> schemas = new ArrayList<>();
-                schemas.addAll(result);
-                callback.onSuccess(schemas);
+                @Override
+                public void onSuccessImpl(List<SchemaInfoDto> result) {
+                    VersionDto schema = Utils.getMaxSchemaVersions(result);
+                    recordView.getSchema().setValue(schema);
+                    List<VersionDto> values = new ArrayList<>();
+                    values.addAll(result);
+                    Collections.sort(values);
+                    recordView.getSchema().setAcceptableValues(values);
+                    recordView.getRecordPanel().setData(record);
+                    schemaSelected(schema);
+                    recordView.getRecordPanel().openDraft();
+                }
+            });
+        } else {
+            String version = record.getSchemaVersion() + "";
+            recordView.getSchemaVersion().setValue(version);
+            if (record.hasActive() && !record.hasDraft()) {
+                ConfigurationRecordFormDto inactiveStruct = createInactiveStruct();
+                inactiveStruct.setSchemaId(record.getSchemaId());
+                inactiveStruct.setSchemaVersion(record.getSchemaVersion());
+                inactiveStruct.setDescription(record.getDescription());
+                inactiveStruct.setConfigurationRecord(record.getActiveStructureDto().getConfigurationRecord());
+                record.setInactiveStructureDto(inactiveStruct);
             }
-        };
-        KaaAdmin.getDataSource().getVacantConfigurationSchemaInfos(endpointGroupId, schemaInfosCallback);
+            recordView.getRecordPanel().setData(record);
+            if (endpointGroup.getWeight()==0) {
+                recordView.getRecordPanel().setReadOnly();
+            }
+            if (showActive && record.hasActive()) {
+                recordView.getRecordPanel().openActive();
+            }
+            else {
+                recordView.getRecordPanel().openDraft();
+            }
+        }
+    }
+    
+    @Override
+    protected void doSave(final EventBus eventBus) {
+        ConfigurationRecordFormDto inactiveStruct = record.getInactiveStructureDto();
+        if (create) {
+            schemaId = recordView.getSchema().getValue().getId();
+            inactiveStruct.setSchemaId(schemaId);
+            inactiveStruct.setSchemaVersion(recordView.getSchema().getValue().getVersion());
+        }
+        inactiveStruct.setDescription(recordView.getRecordPanel().getDescription().getValue());
+        inactiveStruct.setConfigurationRecord(recordView.getRecordPanel().getBody().getValue());
+        editConfiguration(inactiveStruct,
+                new BusyAsyncCallback<ConfigurationRecordFormDto>() {
+                    public void onSuccessImpl(ConfigurationRecordFormDto result) {
+                        goTo(getRecordPlace(applicationId, endpointGroupId, false, false, Math.random()));
+                    }
+
+                    public void onFailureImpl(Throwable caught) {
+                        Utils.handleException(caught, recordView, ConfigurationActivity.this);
+                    }
+        });
     }
 
-    @Override
-    protected void editStruct(ConfigurationRecordFormDto entity,
+    private void getVacantSchemas(String endpointGroupId,
+            final AsyncCallback<List<SchemaInfoDto>> callback) {
+        KaaAdmin.getDataSource().getVacantConfigurationSchemaInfos(endpointGroupId, callback);
+    }
+
+    private void editConfiguration(ConfigurationRecordFormDto entity,
             AsyncCallback<ConfigurationRecordFormDto> callback) {
         KaaAdmin.getDataSource().editConfigurationRecordForm(entity, callback);
     }
@@ -124,8 +186,8 @@ public class ConfigurationActivity extends AbstractRecordActivity<ConfigurationR
 
     @Override
     protected ConfigurationPlace getRecordPlaceImpl(String applicationId,
-            String schemaId, String endpointGroupId, boolean create,
-            boolean showActive, double random) {
+            String endpointGroupId, boolean create, boolean showActive,
+            double random) {
         return new ConfigurationPlace(applicationId, schemaId, endpointGroupId, create, showActive, random);
     }
 
@@ -136,18 +198,6 @@ public class ConfigurationActivity extends AbstractRecordActivity<ConfigurationR
             return Utils.messages.incorrectConfiguration();
         }
         return message;
-    }
-
-    @Override
-    protected void updateBody(ConfigurationRecordFormDto struct,
-            RecordField value) {
-        struct.setConfigurationRecord(value);
-    }
-
-    @Override
-    protected void copyBody(ConfigurationRecordFormDto activeStruct,
-            ConfigurationRecordFormDto inactiveStruct) {
-        inactiveStruct.setConfigurationRecord(activeStruct.getConfigurationRecord());
     }
 
 }

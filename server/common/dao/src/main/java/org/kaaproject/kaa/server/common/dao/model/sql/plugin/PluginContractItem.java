@@ -67,9 +67,18 @@ public class PluginContractItem extends GenericModel<PluginContractItemDto> impl
         this.configSchema = configSchema;
     }
 
+    public PluginContractItem(Long id) {
+        this.id = id;
+    }
+
     @Override
     protected PluginContractItemDto createDto() {
         return new PluginContractItemDto();
+    }
+
+    @Override
+    protected PluginContractItem newInstance(Long id) {
+        return new PluginContractItem(id);
     }
 
     @Override

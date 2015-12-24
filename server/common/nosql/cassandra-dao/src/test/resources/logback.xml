@@ -21,9 +21,9 @@
         </encoder>
     </appender>
 
-    <logger name="org.kaaproject.kaa.server.common.dao.cassandra" level="DEBUG"/>
+    <logger name="org.kaaproject.kaa.server.common.dao.cassandra" level="INFO"/>
     <logger name="org.apache.cassandra" level="WARN"/>
-    <logger name="org.cassandraunit" level="DEBUG" />
+    <logger name="org.cassandraunit" level="INFO" />
 
     <root level="WARN">
         <appender-ref ref="console"/>

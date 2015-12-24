@@ -32,17 +32,4 @@ public class PostgreDBTestRunner extends DBTestRunner {
     protected String getTrancateSql() {
         return new StringBuilder("TRUNCATE TABLE ").append(FORMATER).append(" CASCADE").toString();
     }
-
-//    @Override
-//    protected PreparedStatement prepareGetSequencesStatement(
-//            Connection connection) throws SQLException {
-//        // TODO Auto-generated method stub
-//        return null;
-//    }
-//
-//    @Override
-//    protected String getTrancateSequenceSql() {
-//        // TODO Auto-generated method stub
-//        return null;
-//    }
 }

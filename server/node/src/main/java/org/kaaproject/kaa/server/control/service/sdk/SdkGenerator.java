@@ -46,7 +46,6 @@ public abstract class SdkGenerator {
      *
      * @param buildVersion the build version
      * @param bootstrapNodes the bootstrap nodes
-     * @param sdkToken the sdk token
      * @param sdkProfile the sdk profile
      * @param profileSchemaBody the profile schema body
      * @param notificationSchemaBody the notification schema body
@@ -61,7 +60,6 @@ public abstract class SdkGenerator {
      */
     public abstract FileData generateSdk(String buildVersion,
             List<BootstrapNodeInfo> bootstrapNodes,
-            String sdkToken,
             SdkProfileDto sdkProfile,
             String profileSchemaBody,
             String notificationSchemaBody,

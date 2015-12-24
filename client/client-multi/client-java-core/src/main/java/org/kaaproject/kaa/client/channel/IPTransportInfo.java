@@ -18,9 +18,8 @@ package org.kaaproject.kaa.client.channel;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
-import java.security.NoSuchAlgorithmException;
+import java.security.InvalidKeyException;
 import java.security.PublicKey;
-import java.security.spec.InvalidKeySpecException;
 
 import org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData;
 import org.kaaproject.kaa.common.endpoint.gen.ProtocolVersionPair;
@@ -45,10 +44,7 @@ public class IPTransportInfo extends GenericTransportInfo {
         buf.get(publicKeyData);
         try {
             this.publicKey = KeyUtil.getPublic(publicKeyData);
-        } catch (NoSuchAlgorithmException e) {
-            LOG.error("Can't initialize public key", e);
-            throw new RuntimeException(e);
-        } catch (InvalidKeySpecException e) {
+        } catch (InvalidKeyException e) {
             LOG.error("Can't initialize public key", e);
             throw new RuntimeException(e);
         }

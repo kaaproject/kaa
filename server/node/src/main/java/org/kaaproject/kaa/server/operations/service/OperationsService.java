@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
+import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.operations.pojo.SyncContext;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
 import org.kaaproject.kaa.server.operations.service.security.PublicKeyAware;
@@ -83,4 +84,13 @@ public interface OperationsService extends PublicKeyAware {
      * @return user configuration hash, or null if not found;
      */
     byte[] fetchUcfHash(String appToken, EndpointProfileDto profile);
+
+    /**
+     * Fetch server endpoint profile and CTL schema id based on endpoint key hash
+     * 
+     * @param hash - endpoint key hash
+     * @return endpoint profile
+     */
+    public EndpointProfileDto refreshServerEndpointProfile(EndpointObjectHash hash);
+
 }

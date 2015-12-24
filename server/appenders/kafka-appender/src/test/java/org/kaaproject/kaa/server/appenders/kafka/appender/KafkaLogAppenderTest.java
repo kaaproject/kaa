@@ -19,20 +19,19 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
+import org.kaaproject.kaa.common.dto.EndpointProfileDataDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
@@ -45,8 +44,8 @@ import org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaServer;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogAppender;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryCallback;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
-import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogSchema;
+import org.kaaproject.kaa.server.common.log.shared.appender.data.BaseLogEventPack;
 import org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader;
 
 public class KafkaLogAppenderTest {
@@ -58,7 +57,6 @@ public class KafkaLogAppenderTest {
     private LogAppenderDto appenderDto;
     private KafkaConfig configuration;
 
-    private LogEventPack logEventPack;
     private RecordHeader header;
 
     private String appToken;
@@ -66,19 +64,15 @@ public class KafkaLogAppenderTest {
 
     private AvroByteArrayConverter<LogData> logDataConverter = new AvroByteArrayConverter<>(LogData.class);
 
-    private LogEventPack generateLogEventPack(int count) throws IOException {
-        LogEventPack logEventPack = new LogEventPack();
+    private BaseLogEventPack generateLogEventPack(int count) throws IOException {
+        EndpointProfileDataDto profileDto = new EndpointProfileDataDto("1", endpointKeyHash, 1, "", 1, "");
         List<LogEvent> events = new ArrayList<>(count);
+        BaseLogEventPack logEventPack = new BaseLogEventPack(profileDto, System.currentTimeMillis(), 2, events);
         for (int i = 0; i < count; i++) {
             LogEvent event = new LogEvent();
             event.setLogData(logDataConverter.toByteArray(new LogData(Level.DEBUG, UUID.randomUUID().toString())));
             events.add(event);
         }
-        logEventPack.setDateCreated(System.currentTimeMillis());
-        logEventPack.setEndpointKey(endpointKeyHash);
-
-        logEventPack.setLogSchemaVersion(2);
-        logEventPack.setEvents(events);
         LogSchemaDto logSchemaDto = new LogSchemaDto();
         logSchemaDto.setApplicationId(String.valueOf(RANDOM.nextInt()));
         logSchemaDto.setId(String.valueOf(RANDOM.nextInt()));
@@ -108,10 +102,6 @@ public class KafkaLogAppenderTest {
         header.setHeaderVersion(1);
         header.setTimestamp(System.currentTimeMillis());
 
-        logEventPack = new LogEventPack();
-        logEventPack.setDateCreated(System.currentTimeMillis());
-        logEventPack.setEndpointKey(endpointKeyHash);
-
         configuration = new KafkaConfig();
         List<KafkaServer> servers = new ArrayList<KafkaServer>();
         servers.add(new KafkaServer("localhost", 9092));
@@ -134,8 +124,9 @@ public class KafkaLogAppenderTest {
         logAppender.setApplicationToken(appToken);
     }
 
-    @Ignore
+
     @Test
+    @Ignore
     public void doAppendTest() throws IOException, InterruptedException {
         DeliveryCallback callback = new DeliveryCallback();
         logAppender.doAppend(generateLogEventPack(20), callback);
@@ -153,7 +144,8 @@ public class KafkaLogAppenderTest {
 
         KafkaConsumer<String, byte[]> consumer = new KafkaConsumer<String, byte[]>(props);
         consumer.subscribe(TOPIC_NAME);
-        Map<String, ConsumerRecords<String, byte[]>> records = consumer.poll(100);
+        consumer.poll(100);
+        consumer.close();
         Assert.assertEquals(20, callback.getSuccessCount());
     }
 

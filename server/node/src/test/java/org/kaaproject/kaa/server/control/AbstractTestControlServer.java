@@ -26,14 +26,18 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
-import java.util.UUID;
+import java.util.Set;
 
 import javax.sql.DataSource;
 
 import org.apache.avro.Schema;
 import org.apache.commons.lang.StringUtils;
 import org.apache.xerces.impl.dv.util.Base64;
+import org.codehaus.jackson.node.ArrayNode;
+import org.codehaus.jackson.node.JsonNodeFactory;
+import org.codehaus.jackson.node.ObjectNode;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -52,13 +56,17 @@ import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.SchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
 import org.kaaproject.kaa.common.dto.UpdateStatus;
+import org.kaaproject.kaa.common.dto.VersionDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaInfoDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventAction;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventMapDto;
@@ -75,6 +83,7 @@ import org.kaaproject.kaa.server.common.core.algorithms.generation.DefaultRecord
 import org.kaaproject.kaa.server.common.core.configuration.RawData;
 import org.kaaproject.kaa.server.common.core.configuration.RawDataFactory;
 import org.kaaproject.kaa.server.common.core.schema.RawSchema;
+import org.kaaproject.kaa.server.common.dao.AbstractTest;
 import org.kaaproject.kaa.server.common.dao.impl.sql.H2DBTestRunner;
 import org.kaaproject.kaa.server.common.dao.impl.sql.PostgreDBTestRunner;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.MongoDBTestRunner;
@@ -97,7 +106,7 @@ import com.mongodb.DB;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/common-test-context.xml")
 @DirtiesContext(classMode = ClassMode.AFTER_CLASS)
-public abstract class AbstractTestControlServer {
+public abstract class AbstractTestControlServer extends AbstractTest {
 
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory
@@ -108,31 +117,31 @@ public abstract class AbstractTestControlServer {
 
     /** The Constant PORT. */
     private static final int PORT = 9080;
-    
+
     /** The Constant DEFAULT_KAA_ADMIN_USER. */
     private static final String DEFAULT_KAA_ADMIN_USER = "kaa";
-    
+
     /** The Constant DEFAULT_KAA_ADMIN_PASSWORD. */
     private static final String DEFAULT_KAA_ADMIN_PASSWORD = "kaa123";
 
     /** The Constant DEFAULT_TENANT_ADMIN_USER. */
     private static final String DEFAULT_TENANT_ADMIN_USER = "admin";
-    
+
     /** The Constant DEFAULT_TENANT_ADMIN_PASSWORD. */
     private static final String DEFAULT_TENANT_ADMIN_PASSWORD = "admin123";
 
     /** The Constant DEFAULT_TENANT_DEVELOPER_USER. */
     private static final String DEFAULT_TENANT_DEVELOPER_USER = "devuser";
-    
+
     /** The Constant DEFAULT_TENANT_DEVELOPER_PASSWORD. */
     private static final String DEFAULT_TENANT_DEVELOPER_PASSWORD = "devuser123";
 
     /** The Constant TENANT. */
     protected static final String TENANT = "Tenant";
-    
+
     /** The Constant TENANT_ADMIN_USERNAME. */
     protected static final String TENANT_ADMIN_USERNAME = "TenantUsername";
-    
+
     /** The Constant USERNAME. */
     protected static final String USERNAME = "Username";
 
@@ -199,30 +208,36 @@ public abstract class AbstractTestControlServer {
     /** The Constant TEST_LOG_SCHEMA. */
     protected static final String TEST_LOG_SCHEMA = "control/data/testLogSchema.json";
     
+    protected static final String CTL_DEFAULT_NAME = "name";
+    
+    protected static final String CTL_DEFAULT_NAMESPACE = "org.kaaproject.kaa";
+    
+    protected static final String CTL_DEFAULT_TYPE = "Type";
+    
     /** The kaa admin user. */
     protected static String kaaAdminUser = DEFAULT_KAA_ADMIN_USER;
-    
+
     /** The kaa admin password. */
     protected static String kaaAdminPassword = DEFAULT_KAA_ADMIN_PASSWORD;
-    
+
     /** The tenant admin user. */
     protected static String tenantAdminUser = DEFAULT_TENANT_ADMIN_USER;
-    
+
     /** The tenant admin password. */
     protected static String tenantAdminPassword = DEFAULT_TENANT_ADMIN_PASSWORD;
-    
+
     /** The tenant developer user. */
     protected static String tenantDeveloperUser = DEFAULT_TENANT_DEVELOPER_USER;
-    
+
     /** The tenant developer password. */
     protected static String tenantDeveloperPassword = DEFAULT_TENANT_DEVELOPER_PASSWORD;
-    
+
     /** The tenant admin dto. */
     protected TenantUserDto tenantAdminDto;
-    
+
     /** The tenant developer dto. */
     protected UserDto tenantDeveloperDto;
-    
+
     /** The kaa node initialization service. */
     @Autowired
     private KaaNodeInitializationService kaaNodeInitializationService;
@@ -236,7 +251,7 @@ public abstract class AbstractTestControlServer {
     /** The data source. */
     @Autowired
     private DataSource dataSource;
-    
+
     /**
      * Inits the.
      *
@@ -269,7 +284,7 @@ public abstract class AbstractTestControlServer {
         client = new AdminClient(HOST, PORT);
         createUsers();
     }
-    
+
     /**
      * After test.
      *
@@ -306,7 +321,7 @@ public abstract class AbstractTestControlServer {
             LOG.error("Can't delete data from databases.", ex);
         }
     }
-    
+
     /**
      * Login kaa admin.
      *
@@ -315,7 +330,7 @@ public abstract class AbstractTestControlServer {
     protected void loginKaaAdmin() throws Exception {
         client.login(kaaAdminUser, kaaAdminPassword);
     }
-    
+
     /**
      * Login tenant admin.
      *
@@ -325,7 +340,7 @@ public abstract class AbstractTestControlServer {
     protected void loginTenantAdmin(String username) throws Exception {
         client.login(username, tenantAdminPassword);
     }
-    
+
     /**
      * Login tenant developer.
      *
@@ -335,7 +350,7 @@ public abstract class AbstractTestControlServer {
     protected void loginTenantDeveloper(String username) throws Exception {
         client.login(username, tenantDeveloperPassword);
     }
-    
+
     /**
      * Creates the tenant admin needed.
      *
@@ -344,7 +359,7 @@ public abstract class AbstractTestControlServer {
     protected boolean createTenantAdminNeeded() {
         return true;
     }
-    
+
     /**
      * Creates the tenant developer needed.
      *
@@ -353,7 +368,7 @@ public abstract class AbstractTestControlServer {
     protected boolean createTenantDeveloperNeeded() {
         return true;
     }
-    
+
     /**
      * Creates the users.
      *
@@ -364,7 +379,7 @@ public abstract class AbstractTestControlServer {
         client.createKaaAdmin(kaaAdminUser, kaaAdminPassword);
         loginKaaAdmin();
         if (createTenantAdminNeeded()) {
-            tenantAdminDto = createTenant(tenantAdminUser);            
+            tenantAdminDto = createTenant(tenantAdminUser);
             loginTenantAdmin(tenantAdminUser);
             if (createTenantDeveloperNeeded()) {
                 tenantDeveloperDto = createTenantDeveloper(tenantDeveloperUser);
@@ -373,15 +388,15 @@ public abstract class AbstractTestControlServer {
         }
     }
 
-    /**
-     * Generate string.
-     *
-     * @param string the string
-     * @return the string
-     */
-    protected static String generateString(String string) {
-        return string + "_" + UUID.randomUUID().toString();
-    }
+//    /**
+//     * Generate string.
+//     *
+//     * @param string the string
+//     * @return the string
+//     */
+//    protected static String generateString(String string) {
+//        return string + "_" + UUID.randomUUID().toString();
+//    }
 
     /**
      * Str is empty.
@@ -420,21 +435,21 @@ public abstract class AbstractTestControlServer {
         }
         return result;
     }
-    
+
     /**
      * The Interface TestRestCall.
      */
     protected interface TestRestCall {
-        
+
         /**
          * Execute rest call.
          *
          * @throws Exception the exception
          */
         void executeRestCall() throws Exception;
-        
+
     }
-    
+
     /**
      * Check not found.
      *
@@ -451,7 +466,7 @@ public abstract class AbstractTestControlServer {
         Assert.assertNotNull(errorStatus);
         Assert.assertEquals(HttpStatus.NOT_FOUND, errorStatus);
     }
-    
+
     /**
      * Check bad request.
      *
@@ -468,6 +483,23 @@ public abstract class AbstractTestControlServer {
         Assert.assertNotNull(errorStatus);
         Assert.assertEquals(HttpStatus.BAD_REQUEST, errorStatus);
     }
+    
+    /**
+     * Check forbidden.
+     *
+     * @param restCall the rest call
+     * @throws Exception the exception
+     */
+    protected void checkForbidden(TestRestCall restCall) throws Exception {
+        HttpStatus errorStatus = null;
+        try {
+            restCall.executeRestCall();
+        } catch (HttpClientErrorException e) {
+            errorStatus = e.getStatusCode();
+        }
+        Assert.assertNotNull(errorStatus);
+        Assert.assertEquals(HttpStatus.FORBIDDEN, errorStatus);
+    }
 
     /**
      * The Class IdComparator.
@@ -482,7 +514,7 @@ public abstract class AbstractTestControlServer {
             return o1.getId().compareTo(o2.getId());
         }
     }
-    
+
     /**
      * Creates the tenant.
      *
@@ -492,7 +524,7 @@ public abstract class AbstractTestControlServer {
     protected TenantUserDto createTenant() throws Exception {
         return createTenant(null);
     }
-    
+
     /**
      * Creates the tenant.
      *
@@ -513,14 +545,14 @@ public abstract class AbstractTestControlServer {
         tenantUser.setFirstName(username);
         tenantUser.setLastName("Admin");
         tenantUser = client.editTenant(tenantUser);
-        
+
         if (StringUtils.isNotBlank(tenantUser.getTempPassword())) {
             client.clearCredentials();
             client.changePassword(tenantUser.getUsername(), tenantUser.getTempPassword(), tenantAdminPassword);
         }
         return tenantUser;
     }
-    
+
     /**
      * Creates the tenant developer.
      *
@@ -536,7 +568,7 @@ public abstract class AbstractTestControlServer {
         tenantDeveloper.setFirstName("Tenant");
         tenantDeveloper.setLastName("Developer");
         tenantDeveloper = client.editUser(tenantDeveloper);
-        
+
         if (StringUtils.isNotBlank(tenantDeveloper.getTempPassword())) {
             client.clearCredentials();
             client.changePassword(tenantDeveloper.getUsername(), tenantDeveloper.getTempPassword(), tenantDeveloperPassword);
@@ -649,8 +681,8 @@ public abstract class AbstractTestControlServer {
      * @return the profile schema dto
      * @throws Exception the exception
      */
-    protected ProfileSchemaDto createProfileSchema() throws Exception {
-        return createProfileSchema(null);
+    protected EndpointProfileSchemaDto createProfileSchema() throws Exception {
+        return createEndpointProfileSchema(null, null);
     }
 
     /**
@@ -660,8 +692,8 @@ public abstract class AbstractTestControlServer {
      * @return the profile schema dto
      * @throws Exception the exception
      */
-    protected ProfileSchemaDto createProfileSchema(String applicationId) throws Exception {
-        ProfileSchemaDto profileSchema = new ProfileSchemaDto();
+    protected EndpointProfileSchemaDto createEndpointProfileSchema(String applicationId, String ctlSchemaId) throws Exception {
+        EndpointProfileSchemaDto profileSchema = new EndpointProfileSchemaDto();
         profileSchema.setName(generateString("Test Schema"));
         profileSchema.setDescription(generateString("Test Desc"));
         if (strIsEmpty(applicationId)) {
@@ -671,11 +703,46 @@ public abstract class AbstractTestControlServer {
         else {
             profileSchema.setApplicationId(applicationId);
         }
+        if (strIsEmpty(ctlSchemaId)) {
+            CTLSchemaInfoDto ctlSchema = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, CTLSchemaScopeDto.TENANT, null, null, null);
+            profileSchema.setCtlSchemaId(ctlSchema.getId());
+        } else {
+            profileSchema.setCtlSchemaId(ctlSchemaId);
+        }
         loginTenantDeveloper(tenantDeveloperDto.getUsername());
-        ProfileSchemaDto savedProfileSchema = client
-                .createProfileSchema(profileSchema, TEST_PROFILE_SCHEMA);
+        EndpointProfileSchemaDto savedProfileSchema = client
+                .saveProfileSchema(profileSchema);
         return savedProfileSchema;
     }
+    
+    /**
+     * Creates the profile schema.
+     *
+     * @param applicationId the application id
+     * @return the profile schema dto
+     * @throws Exception the exception
+     */
+    protected ServerProfileSchemaDto createServerProfileSchema(String applicationId, String ctlSchemaId) throws Exception {
+        ServerProfileSchemaDto profileSchema = new ServerProfileSchemaDto();
+        profileSchema.setName(generateString("Test Schema"));
+        profileSchema.setDescription(generateString("Test Desc"));
+        if (strIsEmpty(applicationId)) {
+            ApplicationDto application = createApplication(tenantAdminDto);
+            profileSchema.setApplicationId(application.getId());
+        }
+        else {
+            profileSchema.setApplicationId(applicationId);
+        }
+        if (strIsEmpty(ctlSchemaId)) {
+            CTLSchemaInfoDto ctlSchema = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, CTLSchemaScopeDto.TENANT, null, null, null);
+            profileSchema.setCtlSchemaId(ctlSchema.getId());
+        }
+        loginTenantDeveloper(tenantDeveloperDto.getUsername());
+        ServerProfileSchemaDto savedProfileSchema = client
+                .saveServerProfileSchema(profileSchema);
+        return savedProfileSchema;
+    }
+
 
     /**
      * Creates the endpoint group.
@@ -718,32 +785,33 @@ public abstract class AbstractTestControlServer {
      * @throws Exception the exception
      */
     protected ProfileFilterDto createProfileFilter() throws Exception {
-        return createProfileFilter(null, null);
+        return createProfileFilter(null, null, null);
     }
 
     /**
      * Creates the profile filter.
      *
-     * @param profileSchemaId the profile schema id
+     * @param endpointPfSchemaId the profile schema id
      * @param endpointGroupId the endpoint group id
      * @return the profile filter dto
      * @throws Exception the exception
      */
-    protected ProfileFilterDto createProfileFilter(String profileSchemaId, String endpointGroupId) throws Exception {
+    protected ProfileFilterDto createProfileFilter(String endpointPfSchemaId, String serverPfSchemaId, String endpointGroupId) throws Exception {
         ApplicationDto application = createApplication(tenantAdminDto);
-        return createProfileFilter(profileSchemaId, endpointGroupId, application.getId());
+        return createProfileFilter(endpointPfSchemaId, serverPfSchemaId, endpointGroupId, application.getId());
     }
 
     /**
      * Creates the profile filter.
      *
-     * @param profileSchemaId the profile schema id
+     * @param endpointPfSchemaId the profile schema id
+     * @param serverPfSchemaId the profile schema id
      * @param endpointGroupId the endpoint group id
      * @param applicationId the application id
      * @return the profile filter dto
      * @throws Exception the exception
      */
-    protected ProfileFilterDto createProfileFilter(String profileSchemaId, String endpointGroupId, String applicationId) throws Exception {
+    protected ProfileFilterDto createProfileFilter(String endpointPfSchemaId, String serverPfSchemaId, String endpointGroupId, String applicationId) throws Exception {
         ProfileFilterDto profileFilter = new ProfileFilterDto();
         String filter = getResourceAsString(TEST_PROFILE_FILTER);
         profileFilter.setBody(filter);
@@ -756,12 +824,19 @@ public abstract class AbstractTestControlServer {
             profileFilter.setApplicationId(applicationId);
         }
 
-        if (strIsEmpty(profileSchemaId)) {
-            ProfileSchemaDto profileSchema = createProfileSchema(applicationId);
-            profileFilter.setSchemaId(profileSchema.getId());
+        if (strIsEmpty(endpointPfSchemaId)) {
+            EndpointProfileSchemaDto profileSchema = createEndpointProfileSchema(applicationId, null);
+            profileFilter.setEndpointProfileSchemaId(profileSchema.getId());
         }
         else {
-            profileFilter.setSchemaId(profileSchemaId);
+            profileFilter.setEndpointProfileSchemaId(endpointPfSchemaId);
+        }
+        if (strIsEmpty(serverPfSchemaId)) {
+            ServerProfileSchemaDto profileSchema = createServerProfileSchema(applicationId, null);
+            profileFilter.setServerProfileSchemaId(profileSchema.getId());
+        }
+        else {
+            profileFilter.setServerProfileSchemaId(serverPfSchemaId);
         }
         if (strIsEmpty(endpointGroupId)) {
             EndpointGroupDto endpointGroup = createEndpointGroup(applicationId);
@@ -890,7 +965,7 @@ public abstract class AbstractTestControlServer {
         }
         loginTenantDeveloper(tenantDeveloperDto.getUsername());
         NotificationSchemaDto savedSchema = client
-                .createNotificationSchema(notificationSchema, 
+                .createNotificationSchema(notificationSchema,
                         AdminClient.getStringResource("BasicSystemNotification", BasicSystemNotification.SCHEMA$.toString()));
         return savedSchema;
     }
@@ -972,21 +1047,21 @@ public abstract class AbstractTestControlServer {
         appender.setTenantId(application.getTenantId());
         FileSystemAppenderConfig config = new FileSystemAppenderConfig();
         appender.setPluginClassName(config.getPluginClassName());
-        Schema pluginSchema = config.getPluginConfigSchema();         
+        Schema pluginSchema = config.getPluginConfigSchema();
         RawSchema rawSchema = new RawSchema(pluginSchema.toString());
-        DefaultRecordGenerationAlgorithm<RawData> algotithm = 
+        DefaultRecordGenerationAlgorithm<RawData> algotithm =
                 new DefaultRecordGenerationAlgorithmImpl<>(rawSchema, new RawDataFactory());
         RawData rawData = algotithm.getRootData();
         appender.setJsonConfiguration(rawData.getRawData());
-        
+
         if (schema == null) {
             schema = createLogSchema(application.getId());
         }
-        appender.setMinLogSchemaVersion(schema.getMajorVersion());
-        appender.setMaxLogSchemaVersion(schema.getMajorVersion());
+        appender.setMinLogSchemaVersion(schema.getVersion());
+        appender.setMaxLogSchemaVersion(schema.getVersion());
 
         loginTenantDeveloper(tenantDeveloperDto.getUsername());
-        
+
         LogAppenderDto savedLogAppender = client.editLogAppenderDto(appender);
         return savedLogAppender;
     }
@@ -1019,7 +1094,7 @@ public abstract class AbstractTestControlServer {
         notification.setTopicId(topic.getId());
         loginTenantDeveloper(tenantDeveloperDto.getUsername());
         NotificationDto savedNotification = client
-                .sendNotification(notification, "body", 
+                .sendNotification(notification, "body",
                         "{\"notificationBody\":\"dummy\", \"systemNotificationParam1\":42, \"systemNotificationParam2\":43}");
         return savedNotification;
     }
@@ -1034,9 +1109,9 @@ public abstract class AbstractTestControlServer {
      * @return the endpoint notification dto
      * @throws Exception the exception
      */
-    protected EndpointNotificationDto sendUnicastNotification(byte[] keyHash, String appId, 
+    protected EndpointNotificationDto sendUnicastNotification(byte[] keyHash, String appId,
             String schemaId, NotificationTypeDto type) throws Exception {
-        NotificationDto notification = new NotificationDto();        
+        NotificationDto notification = new NotificationDto();
         if (strIsEmpty(appId)) {
             ApplicationDto applicationDto = createApplication(tenantAdminDto);
             notification.setApplicationId(applicationDto.getId());
@@ -1053,7 +1128,7 @@ public abstract class AbstractTestControlServer {
         notification.setTopicId(topic.getId());
         loginTenantDeveloper(tenantDeveloperDto.getUsername());
         EndpointNotificationDto savedUnicast = client
-                .sendUnicastNotification(notification, Base64.encode(keyHash), "body", 
+                .sendUnicastNotification(notification, Base64.encode(keyHash), "body",
                         "{\"notificationBody\":\"dummy\", \"systemNotificationParam1\":42, \"systemNotificationParam2\":43}");
         return savedUnicast;
     }
@@ -1176,16 +1251,75 @@ public abstract class AbstractTestControlServer {
         return savedApplicationEventFamilyMap;
     }
 
+    protected static final String TEST_CTL_SCHEMA_ALPHA = "control/data/ctl/alpha.json";
+    protected static final String TEST_CTL_SCHEMA_BETA = "control/data/ctl/beta.json";
+    
+    protected String ctlRandomFieldName() {
+        return CTL_DEFAULT_NAME + random.nextInt(100000);
+    }
+
+    protected String ctlRandomFieldType() {
+        return CTL_DEFAULT_TYPE + random.nextInt(100000);
+    }
+
+    protected CTLSchemaInfoDto createCTLSchema(String name, String namespace, int version, 
+            CTLSchemaScopeDto scope, String applicationId, Set<CTLSchemaMetaInfoDto> dependencies,
+            Map<String, String> fields) throws Exception {
+
+        LOG.debug("Generating CTL schema...");
+
+        JsonNodeFactory factory = JsonNodeFactory.instance;
+
+        ObjectNode body = factory.objectNode();
+        body.put("type", "record");
+        body.put("name", name);
+        body.put("namespace", namespace);
+        body.put("version", version);
+
+        // The argument is left for readability only
+        if (scope == CTLSchemaScopeDto.APPLICATION) {
+            if (strIsEmpty(applicationId)) {
+                ApplicationDto application = this.createApplication();
+                applicationId = application.getId();
+            }
+        }
+
+        if (dependencies != null && !dependencies.isEmpty()) {
+            ArrayNode array = factory.arrayNode();
+            for (CTLSchemaMetaInfoDto dependency : dependencies) {
+                ObjectNode object = factory.objectNode();
+                object.put("fqn", dependency.getFqn());
+                object.put("version", dependency.getVersion());
+                array.add(object);
+            }
+            body.put("dependencies", array);
+        }
+
+        ArrayNode array = factory.arrayNode();
+        if (fields != null) {
+            for (Map.Entry<String, String> field : fields.entrySet()) {
+                ObjectNode object = factory.objectNode();
+                object.put("name", field.getKey());
+                object.put("type", field.getValue());
+                array.add(object);
+            }
+        }
+        body.put("fields", array);
+
+        LOG.debug("CTL schema generated: " + body);
+
+        return client.saveCTLSchema(body.toString(), scope, scope == CTLSchemaScopeDto.APPLICATION ? applicationId : null);
+    }
+
     /**
      * Assert schemas equals.
      *
      * @param schema the schema
      * @param storedSchema the stored schema
      */
-    protected void assertSchemasEquals(SchemaDto schema, SchemaDto storedSchema) {
+    protected void assertSchemasEquals(VersionDto schema, VersionDto storedSchema) {
         Assert.assertEquals(schema.getId(), storedSchema.getId());
-        Assert.assertEquals(schema.getMajorVersion(), storedSchema.getMajorVersion());
-        Assert.assertEquals(schema.getMinorVersion(), storedSchema.getMinorVersion());
+        Assert.assertEquals(schema.getVersion(), storedSchema.getVersion());
     }
- 
+
 }

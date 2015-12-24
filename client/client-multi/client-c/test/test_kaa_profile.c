@@ -93,7 +93,7 @@ void test_profile_is_set()
 {
     KAA_TRACE_IN(logger);
 
-#if KAA_PROFILE_SCHEMA_VERSION > 1
+#if KAA_PROFILE_SCHEMA_VERSION > 0
     ASSERT_FALSE(kaa_profile_manager_is_profile_set(profile_manager));
     kaa_profile_t *profile = kaa_profile_basic_endpoint_profile_test_create();
     profile->profile_body = kaa_string_copy_create("test");

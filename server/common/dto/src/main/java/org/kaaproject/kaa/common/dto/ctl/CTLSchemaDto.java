@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 CyberVision, Inc.
+ * Copyright 2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,76 +16,155 @@
 
 package org.kaaproject.kaa.common.dto.ctl;
 
-import java.io.Serializable;
-
 import org.kaaproject.kaa.common.dto.HasId;
 
-public class CTLSchemaDto implements HasId, Serializable {
+import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
-    private static final long serialVersionUID = 6967757225688280884L;
-    
-    private String id;
-    private String fqn;
-    private int version;
-    private CTLSchemaScope scope;
-    private String tenantId;
-    private String applicationId;
-    private String body;
+/**
+ * A Common Type Library schema.
+ *
+ * @since v0.8.0
+ */
+public class CTLSchemaDto extends AbstractCTLSchemaDto implements HasId, Serializable {
 
+    private static final long serialVersionUID = -7601241323233814152L;
+
+    private CTLSchemaMetaInfoDto metaInfo;
+    private Set<CTLSchemaDto> dependencySet;
+
+    public CTLSchemaDto() {
+    }
+
+    public CTLSchemaDto(CTLSchemaInfoDto infoDto, Set<CTLSchemaDto> dependencySet) {
+        Objects.requireNonNull(infoDto);
+        if (infoDto != null) {
+            this.dependencySet = dependencySet;
+            this.metaInfo = new CTLSchemaMetaInfoDto(infoDto.getFqn(), infoDto.getVersion(), infoDto.getScope());
+            this.metaInfo.setId(infoDto.getMetaInfoId());
+            id = infoDto.getId();
+            applicationId = infoDto.getApplicationId();
+            tenantId = infoDto.getTenantId();
+            body = infoDto.getBody();
+            createdTime = infoDto.getCreatedTime();
+            createdUsername = infoDto.getCreatedUsername();
+            name = infoDto.getName();
+            description = infoDto.getDescription();
+        }
+    }
+
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }
 
-    public String getFqn() {
-        return fqn;
+    public CTLSchemaMetaInfoDto getMetaInfo() {
+        return metaInfo;
     }
 
-    public void setFqn(String fqn) {
-        this.fqn = fqn;
+    public void setMetaInfo(CTLSchemaMetaInfoDto metaInfo) {
+        this.metaInfo = metaInfo;
     }
 
-    public int getVersion() {
-        return version;
+    public Set<CTLSchemaDto> getDependencySet() {
+        return dependencySet;
     }
 
-    public void setVersion(int version) {
-        this.version = version;
+    public void setDependencySet(Set<CTLSchemaDto> dependencySet) {
+        this.dependencySet = dependencySet;
     }
 
-    public CTLSchemaScope getScope() {
-        return scope;
+    public CTLSchemaInfoDto toCTLSchemaInfoDto() {
+        CTLSchemaInfoDto infoDto = new CTLSchemaInfoDto();
+        infoDto.setId(id);
+        infoDto.setFqn(metaInfo.getFqn());
+        infoDto.setVersion(metaInfo.getVersion());
+        infoDto.setScope(metaInfo.getScope());
+        infoDto.setMetaInfoId(metaInfo.getId());
+        infoDto.setApplicationId(applicationId);
+        infoDto.setTenantId(tenantId);
+        infoDto.setBody(body);
+        infoDto.setCreatedTime(createdTime);
+        infoDto.setCreatedUsername(createdUsername);
+        infoDto.setName(name);
+        infoDto.setDescription(description);
+        if (dependencySet != null && !dependencySet.isEmpty()) {
+            Set<CTLSchemaMetaInfoDto> dependencies = new HashSet<>();
+            for (CTLSchemaDto dep : dependencySet) {
+                CTLSchemaMetaInfoDto mi = dep.getMetaInfo();
+                dependencies.add(new CTLSchemaMetaInfoDto(mi.getFqn(), mi.getVersion()));
+            }
+            infoDto.setDependencies(dependencies);
+        }
+        return infoDto;
     }
 
-    public void setScope(CTLSchemaScope scope) {
-        this.scope = scope;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+
+        CTLSchemaDto that = (CTLSchemaDto) o;
+
+        if (createdTime != that.createdTime)
+            return false;
+        if (id != null ? !id.equals(that.id) : that.id != null)
+            return false;
+        if (metaInfo != null ? !metaInfo.equals(that.metaInfo) : that.metaInfo != null)
+            return false;
+        if (tenantId != null ? !tenantId.equals(that.tenantId) : that.tenantId != null)
+            return false;
+        if (applicationId != null ? !applicationId.equals(that.applicationId) : that.applicationId != null)
+            return false;
+        if (body != null ? !body.equals(that.body) : that.body != null)
+            return false;
+        if (name != null ? !name.equals(that.name) : that.name != null)
+            return false;
+        if (description != null ? !description.equals(that.description) : that.description != null)
+            return false;
+        if (createdUsername != null ? !createdUsername.equals(that.createdUsername) : that.createdUsername != null)
+            return false;
+        return !(dependencySet != null ? !dependencySet.equals(that.dependencySet) : that.dependencySet != null);
+
     }
 
-    public String getTenantId() {
-        return tenantId;
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (metaInfo != null ? metaInfo.hashCode() : 0);
+        result = 31 * result + (tenantId != null ? tenantId.hashCode() : 0);
+        result = 31 * result + (applicationId != null ? applicationId.hashCode() : 0);
+        result = 31 * result + (body != null ? body.hashCode() : 0);
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (description != null ? description.hashCode() : 0);
+        result = 31 * result + (createdUsername != null ? createdUsername.hashCode() : 0);
+        result = 31 * result + (int) (createdTime ^ (createdTime >>> 32));
+        result = 31 * result + (dependencySet != null ? dependencySet.hashCode() : 0);
+        return result;
     }
 
-    public void setTenantId(String tenantId) {
-        this.tenantId = tenantId;
+    @Override
+    public String toString() {
+        return "CTLSchemaDto{" +
+                "id='" + id + '\'' +
+                ", metaInfo=" + metaInfo +
+                ", tenantId='" + tenantId + '\'' +
+                ", appId='" + applicationId + '\'' +
+                ", body='" + body + '\'' +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", createdUsername='" + createdUsername + '\'' +
+                ", createdTime=" + createdTime +
+                ", dependencySet=" + dependencySet +
+                '}';
     }
-
-    public String getApplicationId() {
-        return applicationId;
-    }
-
-    public void setApplicationId(String applicationId) {
-        this.applicationId = applicationId;
-    }
-
-    public String getBody() {
-        return body;
-    }
-
-    public void setBody(String body) {
-        this.body = body;
-    }
-
 }

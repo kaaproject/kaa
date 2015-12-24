@@ -44,23 +44,23 @@ public class TopicServiceImplTest extends AbstractTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void saveTopicTest(){
-        ApplicationDto app = generateApplication();
-        TopicDto topic1 = generateTopic(app.getId(), TopicTypeDto.MANDATORY);
+        ApplicationDto app = generateApplicationDto();
+        TopicDto topic1 = generateTopicDto(app.getId(), TopicTypeDto.MANDATORY);
         topicService.saveTopic(topic1);
-        TopicDto topic2 = generateTopic(app.getId(), TopicTypeDto.OPTIONAL);
+        TopicDto topic2 = generateTopicDto(app.getId(), TopicTypeDto.OPTIONAL);
         topicService.saveTopic(topic2);
     }
 
     @Test
     public void findTopicByIdTest() {
-        TopicDto topic = generateTopic(null, null);
+        TopicDto topic = generateTopicDto(null, null);
         TopicDto found = topicService.findTopicById(topic.getId());
         Assert.assertEquals(topic, found);
     }
 
     @Test
     public void findTopicsByAppIdTest() {
-        TopicDto topic = generateTopic(null, null);
+        TopicDto topic = generateTopicDto(null, null);
         List<TopicDto> found = topicService.findTopicsByAppId(topic.getApplicationId());
         Assert.assertEquals(1, found.size());
         Assert.assertEquals(topic, found.get(0));
@@ -68,7 +68,7 @@ public class TopicServiceImplTest extends AbstractTest {
 
     @Test
     public void findTopicsByAppIdAndTypeTest() {
-        TopicDto topic = generateTopic(null, TopicTypeDto.OPTIONAL);
+        TopicDto topic = generateTopicDto(null, TopicTypeDto.OPTIONAL);
         List<TopicDto> found = topicService.findTopicsByAppIdAndType(topic.getApplicationId(), TopicTypeDto.OPTIONAL);
         Assert.assertEquals(1, found.size());
         Assert.assertEquals(topic, found.get(0));
@@ -76,7 +76,7 @@ public class TopicServiceImplTest extends AbstractTest {
 
     @Test
     public void removeTopicByIdTest() {
-        TopicDto topic = generateTopic(null, null);
+        TopicDto topic = generateTopicDto(null, null);
         topicService.removeTopicById(topic.getId());
         TopicDto found = topicService.findTopicById(topic.getId());
         Assert.assertNull(found);
@@ -86,8 +86,8 @@ public class TopicServiceImplTest extends AbstractTest {
 
     @Test
     public void removeTopicByIdAddedToGroupTest() {
-        TopicDto topic = generateTopic(null, null);
-        EndpointGroupDto groupDto = generateEndpointGroup(topic.getApplicationId());
+        TopicDto topic = generateTopicDto(null, null);
+        EndpointGroupDto groupDto = generateEndpointGroupDto(topic.getApplicationId());
         endpointService.addTopicToEndpointGroup(groupDto.getId(), topic.getId());
         topicService.removeTopicById(topic.getId());
         TopicDto found = topicService.findTopicById(topic.getId());
@@ -96,7 +96,7 @@ public class TopicServiceImplTest extends AbstractTest {
 
     @Test
     public void removeTopicsByAppIdTest() {
-        TopicDto topic = generateTopic(null, null);
+        TopicDto topic = generateTopicDto(null, null);
         topicService.removeTopicsByAppId(topic.getApplicationId());
         List<TopicDto> found = topicService.findTopicsByAppId(topic.getApplicationId());
         Assert.assertNotNull(found);
@@ -105,18 +105,18 @@ public class TopicServiceImplTest extends AbstractTest {
 
     @Test
     public void testFindVacantTopicsByEndpointGroupId() {
-        ApplicationDto app = generateApplication();
-        EndpointGroupDto group = generateEndpointGroup(app.getId());
-        TopicDto topic = generateTopic(app.getId(), null);
+        ApplicationDto app = generateApplicationDto();
+        EndpointGroupDto group = generateEndpointGroupDto(app.getId());
+        TopicDto topic = generateTopicDto(app.getId(), null);
         List<TopicDto> found = topicService.findVacantTopicsByEndpointGroupId(group.getId());
         Assert.assertEquals(topic, found.get(0));
     }
 
     @Test
     public void testFindTopicsByEndpointGroupId() {
-        ApplicationDto app = generateApplication();
-        EndpointGroupDto group = generateEndpointGroup(app.getId());
-        TopicDto topic = generateTopic(app.getId(), null);
+        ApplicationDto app = generateApplicationDto();
+        EndpointGroupDto group = generateEndpointGroupDto(app.getId());
+        TopicDto topic = generateTopicDto(app.getId(), null);
         endpointService.addTopicToEndpointGroup(group.getId(), topic.getId());
         List<TopicDto> found = topicService.findTopicsByEndpointGroupId(group.getId());
         Assert.assertEquals(topic, found.get(0));

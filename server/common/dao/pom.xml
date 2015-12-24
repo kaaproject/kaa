@@ -128,13 +128,8 @@
             <artifactId>hibernate-entitymanager</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <scope>test</scope>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
         </dependency>
         <dependency>
             <groupId>commons-dbcp</groupId>
@@ -145,25 +140,34 @@
             <artifactId>commons-pool</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.apache.avro</groupId>
             <artifactId>avro</artifactId>
         </dependency>
     </dependencies>
 
     <build>
-         <resources>
-             <resource>
+        <resources>
+            <resource>
                 <directory>src/main/resources</directory>
-             </resource>
-             <resource>
-                 <directory>../../../common/endpoint-shared/src/main/avro</directory>
-                 <includes>
-                     <include>default_profile_schema.avsc</include>
-                     <include>default_notification_schema.avsc</include>
-                     <include>default_configuration_schema.avsc</include>
-                     <include>default_log_schema.avsc</include>
-                 </includes>
-             </resource>
+            </resource>
+            <resource>
+                <directory>../../../common/endpoint-shared/src/main/avro</directory>
+                <includes>
+                    <include>default_system_empty_schema.avsc</include>
+                    <include>default_notification_schema.avsc</include>
+                    <include>default_configuration_schema.avsc</include>
+                    <include>default_log_schema.avsc</include>
+                </includes>
+            </resource>
         </resources>
         <plugins>
             <plugin>
@@ -234,7 +238,7 @@
                                         <copy file="src/main/resources/dao.properties.template"
                                               tofile="src/main/resources/dao.properties" overwrite="true"/>
                                         <replace file="src/main/resources/dao.properties"
-                                                 token="#nosql_provider_name#" value="mongodb" />
+                                                 token="#nosql_provider_name#" value="mongodb"/>
                                     </tasks>
                                 </configuration>
                             </execution>
@@ -262,7 +266,7 @@
                                         <copy file="src/main/resources/dao.properties.template"
                                               tofile="src/main/resources/dao.properties" overwrite="true"/>
                                         <replace file="src/main/resources/dao.properties"
-                                                 token="#nosql_provider_name#" value="cassandra" />
+                                                 token="#nosql_provider_name#" value="cassandra"/>
                                     </tasks>
                                 </configuration>
                             </execution>

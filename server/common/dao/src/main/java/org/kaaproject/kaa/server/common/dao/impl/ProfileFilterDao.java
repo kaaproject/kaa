@@ -26,14 +26,6 @@ import java.util.List;
 public interface ProfileFilterDao<T> extends SqlDao<T> {
 
     /**
-     * Find all profile filters by profile schema id
-     *
-     * @param profileSchemaId the profile schema id
-     * @return the list of profile schemas
-     */
-    List<T> findAllByProfileSchemaId(String profileSchemaId);
-
-    /**
      * Find actual profile filters by endpoint group id.
      *
      * @param endpointGroupId the endpoint group id
@@ -44,59 +36,57 @@ public interface ProfileFilterDao<T> extends SqlDao<T> {
     /**
      * Find actual profile filters by group id and schema id.
      *
-     * @param schemaId the schema id
-     * @param groupId the group id
+     * @param endpointProfileSchemaId the endpoint profile schema id
+     * @param serverProfileSchemaId   the server profile schema id
+     * @param groupId                 the group id
      * @return the list of profile filters
      */
-    List<T> findActualBySchemaIdAndGroupId(String schemaId, String groupId);
+    List<T> findActualBySchemaIdAndGroupId(String endpointProfileSchemaId, String serverProfileSchemaId, String groupId);
 
     /**
      * Find latest deprecated filter for endpoint group and profile schema.
      *
-     * @param schemaId the schema id
-     * @param groupId  the group id
+     * @param endpointProfileSchemaId the endpoint profile schema id
+     * @param serverProfileSchemaId   the server profile schema id
+     * @param groupId                 the group id
      * @return the profile filter
      */
-    T findLatestDeprecated(String schemaId, String groupId);
-
-    /**
-     * Remove profile filters by endpoint group id
-     *
-     * @param endpointGroupId the endpoint group id
-     */
-    void removeByEndpointGroupId(String endpointGroupId);
+    T findLatestDeprecated(String endpointProfileSchemaId, String serverProfileSchemaId, String groupId);
 
     /**
      * Find profile filters by application and schema version.
      *
-     * @param appId the application id
-     * @param schemaVersion the schema version
+     * @param appId                 the application id
+     * @param endpointSchemaVersion the endpoint schema version
+     * @param serverSchemaVersion the server schema version
      * @return the list of profile filters
      */
-    List<T> findByAppIdAndSchemaVersion(String appId, int schemaVersion);
+    List<T> findByAppIdAndSchemaVersionsCombination(String appId, int endpointSchemaVersion, int serverSchemaVersion);
 
     /**
      * Find inactive profile filters.
      *
-     * @param schemaId the schema id
-     * @param groupId  the group id
+     * @param endpointProfileSchemaId the endpoint profile schema id
+     * @param serverProfileSchemaId   the server profile schema id
+     * @param groupId                 the group id
      * @return the profile filter
      */
-    T findInactiveFilter(String schemaId, String groupId);
+    T findInactiveFilter(String endpointProfileSchemaId, String serverProfileSchemaId, String groupId);
 
     /**
      * Find latest filter for endpoint group and profile schema.
      *
-     * @param schemaId the schema id
-     * @param groupId  the group id
+     * @param endpointProfileSchemaId the endpoint profile schema id
+     * @param serverProfileSchemaId   the server profile schema id
+     * @param groupId                 the group id
      * @return the profile filter
      */
-    T findLatestFilter(String schemaId, String groupId);
+    T findLatestFilter(String endpointProfileSchemaId, String serverProfileSchemaId, String groupId);
 
     /**
      * Activate profile filter by profile filter id.
      *
-     * @param id the id
+     * @param id                the id
      * @param activatedUsername the name of user that activated profile filter
      * @return the profile filter
      */
@@ -105,7 +95,7 @@ public interface ProfileFilterDao<T> extends SqlDao<T> {
     /**
      * Deactivate profile filter by id.
      *
-     * @param id the id
+     * @param id                  the id
      * @param deactivatedUsername the name of user that deactivated profile filter
      * @return the profile filter
      */
@@ -114,18 +104,21 @@ public interface ProfileFilterDao<T> extends SqlDao<T> {
     /**
      * Deactivate old profile filters by profile schema and endpoint group ids.
      *
-     * @param schemaId the schema id
-     * @param groupId  the group id
-     * @param deactivatedUsername the name of user that deactivated profile filter
+     * @param endpointProfileSchemaId the endpoint profile schema id
+     * @param serverProfileSchemaId   the server profile schema id
+     * @param groupId                 the group id
+     * @param deactivatedUsername     the name of user that deactivated profile filter
      * @return deactivated profile filter
      */
-    T deactivateOldFilter(String schemaId, String groupId, String deactivatedUsername);
+    T deactivateOldFilter(String endpointProfileSchemaId, String serverProfileSchemaId, String groupId, String deactivatedUsername);
 
     /**
      * This method get count of active filters by schema id and group id.
-     * @param schemaId the profile schema id
-     * @param groupId the endpoint group id
+     *
+     * @param endpointProfileSchemaId the endpoint profile schema id
+     * @param serverProfileSchemaId   the server profile schema id
+     * @param groupId                 the endpoint group id
      * @return count of filter
      */
-    long findActiveFilterCount(String schemaId, String groupId);
+    long findActiveFilterCount(String endpointProfileSchemaId, String serverProfileSchemaId, String groupId);
 }

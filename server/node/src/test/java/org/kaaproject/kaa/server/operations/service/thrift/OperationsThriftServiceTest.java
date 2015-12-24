@@ -29,8 +29,8 @@ import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.OperationsThriftService;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaService;
+import org.kaaproject.kaa.server.operations.service.cache.AppProfileVersionsKey;
 import org.kaaproject.kaa.server.operations.service.cache.AppSeqNumber;
-import org.kaaproject.kaa.server.operations.service.cache.AppVersionKey;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
 import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -48,6 +48,10 @@ public class OperationsThriftServiceTest {
     private static final String TEST_APP_ID = "testAppId";
     private static final String TEST_APP_TOKEN = "testApp";
     private static final String TEST_PF_ID = "pfID";
+    private static final String TEST_PF_ENDPOINT_SCHEMA_ID = "epPfSchemaId";
+    private static final String TEST_PF_SERVER_SCHEMA_ID = "serverPfSchemaId";
+    private static final Integer TEST_PF_ENDPOINT_SCHEMA_VERSION = 42;
+    private static final Integer TEST_PF_SERVER_SCHEMA_VERSION = 73;
     private static final int TEST_APP_SEQ_NUMBER = 42;
 
 
@@ -75,14 +79,17 @@ public class OperationsThriftServiceTest {
         appDto.setApplicationToken(TEST_APP_TOKEN);
 
         ProfileFilterDto pfDto = new ProfileFilterDto();
-        pfDto.setMajorVersion(PF_VERSION);
+        pfDto.setEndpointProfileSchemaId(TEST_PF_ENDPOINT_SCHEMA_ID);
+        pfDto.setEndpointProfileSchemaVersion(TEST_PF_ENDPOINT_SCHEMA_VERSION);
+        pfDto.setServerProfileSchemaId(TEST_PF_SERVER_SCHEMA_ID);
+        pfDto.setServerProfileSchemaVersion(TEST_PF_SERVER_SCHEMA_VERSION);
 
         Mockito.when(applicationService.findAppById(TEST_APP_ID)).thenReturn(appDto);
         Mockito.when(cacheService.getFilter(TEST_PF_ID)).thenReturn(pfDto);
         operationsThriftService.onNotification(notification);
         Mockito.verify(applicationService).findAppById(TEST_APP_ID);
         Mockito.verify(cacheService).getFilter(TEST_PF_ID);
-        Mockito.verify(cacheService).resetFilters(new AppVersionKey(TEST_APP_TOKEN, PF_VERSION));
+        Mockito.verify(cacheService).resetFilters(new AppProfileVersionsKey(TEST_APP_TOKEN, TEST_PF_ENDPOINT_SCHEMA_VERSION, TEST_PF_SERVER_SCHEMA_VERSION));
         //Due to notification.setAppSeqNumber(0);
         Mockito.verify(cacheService, Mockito.times(0)).putAppSeqNumber(Mockito.anyString(), Mockito.any(AppSeqNumber.class));
 
@@ -101,7 +108,10 @@ public class OperationsThriftServiceTest {
         appDto.setApplicationToken(TEST_APP_TOKEN);
 
         ProfileFilterDto pfDto = new ProfileFilterDto();
-        pfDto.setMajorVersion(PF_VERSION);
+        pfDto.setEndpointProfileSchemaId(TEST_PF_ENDPOINT_SCHEMA_ID);
+        pfDto.setEndpointProfileSchemaVersion(TEST_PF_ENDPOINT_SCHEMA_VERSION);
+        pfDto.setServerProfileSchemaId(TEST_PF_SERVER_SCHEMA_ID);
+        pfDto.setServerProfileSchemaVersion(TEST_PF_SERVER_SCHEMA_VERSION);
 
         Mockito.when(applicationService.findAppById(TEST_APP_ID)).thenReturn(appDto);
         Mockito.when(cacheService.getAppSeqNumber(TEST_APP_TOKEN)).thenReturn(new AppSeqNumber(TEST_TENANT_ID, TEST_APP_ID, TEST_APP_TOKEN, 0));
@@ -109,7 +119,7 @@ public class OperationsThriftServiceTest {
         operationsThriftService.onNotification(notification);
         Mockito.verify(applicationService).findAppById(TEST_APP_ID);
         Mockito.verify(cacheService).getFilter(TEST_PF_ID);
-        Mockito.verify(cacheService).resetFilters(new AppVersionKey(TEST_APP_TOKEN, PF_VERSION));
+        Mockito.verify(cacheService).resetFilters(new AppProfileVersionsKey(TEST_APP_TOKEN, TEST_PF_ENDPOINT_SCHEMA_VERSION, TEST_PF_SERVER_SCHEMA_VERSION));
         //Due to notification.setAppSeqNumber(TEST_APP_SEQ_NUMBER);
         Mockito.verify(cacheService, Mockito.times(1)).putAppSeqNumber(TEST_APP_TOKEN, new AppSeqNumber(TEST_TENANT_ID, TEST_APP_ID, TEST_APP_TOKEN, TEST_APP_SEQ_NUMBER));
         Mockito.verify(akkaService).onNotification(notification);
@@ -123,13 +133,16 @@ public class OperationsThriftServiceTest {
         notification.setAppSeqNumber(TEST_APP_SEQ_NUMBER);
 
         ProfileFilterDto pfDto = new ProfileFilterDto();
-        pfDto.setMajorVersion(PF_VERSION);
+        pfDto.setEndpointProfileSchemaId(TEST_PF_ENDPOINT_SCHEMA_ID);
+        pfDto.setEndpointProfileSchemaVersion(TEST_PF_ENDPOINT_SCHEMA_VERSION);
+        pfDto.setServerProfileSchemaId(TEST_PF_SERVER_SCHEMA_ID);
+        pfDto.setServerProfileSchemaVersion(TEST_PF_SERVER_SCHEMA_VERSION);
 
         Mockito.when(applicationService.findAppById(TEST_APP_ID)).thenReturn(null);
         operationsThriftService.onNotification(notification);
         Mockito.verify(applicationService).findAppById(TEST_APP_ID);
         Mockito.verify(cacheService, Mockito.times(0)).getFilter(Mockito.anyString());
-        Mockito.verify(cacheService, Mockito.times(0)).resetFilters(Mockito.any(AppVersionKey.class));
+        Mockito.verify(cacheService, Mockito.times(0)).resetFilters(Mockito.any(AppProfileVersionsKey.class));
         Mockito.verify(cacheService, Mockito.times(0)).putAppSeqNumber(Mockito.anyString(), Mockito.any(AppSeqNumber.class));
         Mockito.verify(akkaService).onNotification(notification);
     }

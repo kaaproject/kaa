@@ -80,4 +80,9 @@ public class DesktopKaaPlatformContext implements KaaClientPlatformContext {
     public ExecutorContext getExecutorContext() {
         return executorContext;
     }
+
+    @Override
+    public boolean needToCheckClientState() {
+        return true;
+    }
 }

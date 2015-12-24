@@ -22,6 +22,8 @@ import static org.mockito.Mockito.mock;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -32,6 +34,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
+import org.kaaproject.kaa.common.dto.EndpointProfileDataDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.server.appenders.flume.appender.client.FlumeClientManager;
 import org.kaaproject.kaa.server.appenders.flume.appender.client.async.AppendBatchAsyncResultPojo;
@@ -40,7 +43,8 @@ import org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeEventFormat;
 import org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNode;
 import org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNodes;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryCallback;
-import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
+import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
+import org.kaaproject.kaa.server.common.log.shared.appender.data.BaseLogEventPack;
 import org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
@@ -95,7 +99,7 @@ public class FlumeLogAppenderTest {
 
         FlumeConfig flumeConfig = FlumeConfig.newBuilder().setFlumeEventFormat(FlumeEventFormat.RECORDS_CONTAINER)
                 .setHostsBalancing(nodes).setExecutorThreadPoolSize(2).setCallbackThreadPoolSize(2)
-                .setClientsThreadPoolSize(2).build();
+                .setClientsThreadPoolSize(2).setIncludeClientProfile(false).setIncludeServerProfile(false).build();
 
         AvroByteArrayConverter<FlumeConfig> converter = new AvroByteArrayConverter<>(FlumeConfig.class);
         byte[] rawConfiguration = converter.toByteArray(flumeConfig);
@@ -107,9 +111,9 @@ public class FlumeLogAppenderTest {
 
     @Test
     public void appendWithExceptionTest() throws EventDeliveryException, InterruptedException {
-        LogEventPack eventPack = new LogEventPack();
+        BaseLogEventPack eventPack = generateLogEventPack();
         Mockito.when(
-                flumeEventBuilder.generateEvents(Mockito.any(LogEventPack.class), Mockito.any(RecordHeader.class),
+                flumeEventBuilder.generateEvents(Mockito.any(BaseLogEventPack.class), Mockito.any(RecordHeader.class),
                         Mockito.anyString())).thenReturn(Collections.singletonList(Mockito.mock(Event.class)));
         doThrow(new EventDeliveryException()).when(flumeClientManager).sendEventsToFlumeAsync(Mockito.anyList());
         TestLogDeliveryCallback callback = new TestLogDeliveryCallback();
@@ -120,10 +124,10 @@ public class FlumeLogAppenderTest {
 
     @Test
     public void appendTest() throws EventDeliveryException, InterruptedException {
-        LogEventPack eventPack = new LogEventPack();
+        BaseLogEventPack eventPack = generateLogEventPack();
         ListeningExecutorService rpcES = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(1));
         Mockito.when(
-                flumeEventBuilder.generateEvents(Mockito.any(LogEventPack.class), Mockito.any(RecordHeader.class),
+                flumeEventBuilder.generateEvents(Mockito.any(BaseLogEventPack.class), Mockito.any(RecordHeader.class),
                         Mockito.anyString())).thenReturn(Collections.singletonList(Mockito.mock(Event.class)));
         Mockito.when(flumeClientManager.sendEventsToFlumeAsync(Mockito.anyList()))
                 .thenReturn(rpcES.submit(new Callable<AppendBatchAsyncResultPojo>() {
@@ -141,7 +145,7 @@ public class FlumeLogAppenderTest {
     @Test
     public void appendWhenClosedTest() {
         appender.close();
-        LogEventPack eventPack = new LogEventPack();
+        BaseLogEventPack eventPack = generateLogEventPack();
         TestLogDeliveryCallback callback = new TestLogDeliveryCallback();
         appender.doAppend(eventPack, callback);
         Assert.assertTrue(callback.internallError);
@@ -149,7 +153,7 @@ public class FlumeLogAppenderTest {
 
     @Test
     public void appendWithEmptyClientManagerTest() throws EventDeliveryException {
-        LogEventPack eventPack = new LogEventPack();
+        BaseLogEventPack eventPack = generateLogEventPack();
         ReflectionTestUtils.setField(appender, "flumeClientManager", null);
         TestLogDeliveryCallback callback = new TestLogDeliveryCallback();
         appender.doAppend(eventPack, callback);
@@ -182,5 +186,11 @@ public class FlumeLogAppenderTest {
         public void onRemoteError() {
             remoteError = true;
         }
+    }
+    
+    private BaseLogEventPack generateLogEventPack(){
+        EndpointProfileDataDto profileDto = new EndpointProfileDataDto("1", UUID.randomUUID().toString(), 1, "", 1, "");
+        List<LogEvent> events = Collections.emptyList();
+        return new BaseLogEventPack(profileDto, System.currentTimeMillis(), 2, events);
     }
 }

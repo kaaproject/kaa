@@ -16,11 +16,17 @@
 
 package org.kaaproject.kaa.server.appenders.cassandra.appender;
 
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.exceptions.UnsupportedFeatureException;
-import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.apache.avro.generic.GenericRecord;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
@@ -32,20 +38,17 @@ import org.kaaproject.kaa.server.common.log.shared.appender.AbstractLogAppender;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryCallback;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
+import org.kaaproject.kaa.server.common.log.shared.appender.data.BaseLogEventPack;
+import org.kaaproject.kaa.server.common.log.shared.appender.data.ProfileInfo;
 import org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
+import com.datastax.driver.core.ResultSet;
+import com.datastax.driver.core.exceptions.UnsupportedFeatureException;
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 
 public class CassandraLogAppender extends AbstractLogAppender<CassandraConfig> {
 
@@ -98,6 +101,25 @@ public class CassandraLogAppender extends AbstractLogAppender<CassandraConfig> {
                         LOG.debug("[{}] appending {} logs to cassandra collection", tableName, logEventPack.getEvents().size());
                         GenericAvroConverter<GenericRecord> eventConverter = getConverter(logEventPack.getLogSchema().getSchema());
                         GenericAvroConverter<GenericRecord> headerConverter = getConverter(header.getSchema().toString());
+                        
+                        // Get client profile data
+                        GenericAvroConverter<GenericRecord> clientProfileConverter = null;
+                        String clientProfileJson = null;
+                        ProfileInfo clientProfile = logEventPack.getClientProfile();
+                        if (clientProfile != null) {
+                            clientProfileConverter = getConverter(clientProfile.getSchema());
+                            clientProfileJson = clientProfile.getBody();
+                        }
+
+                        // Get server profile data
+                        GenericAvroConverter<GenericRecord> serverProfileConverter = null;
+                        String serverProfileJson = null;
+                        ProfileInfo serverProfile = logEventPack.getServerProfile();
+                        if (serverProfile != null) {
+                            serverProfileConverter = getConverter(serverProfile.getSchema());
+                            serverProfileJson = serverProfile.getBody();
+                        }
+
                         List<CassandraLogEventDto> dtoList = generateCassandraLogEvent(logEventPack, header, eventConverter);
                         LOG.debug("[{}] saving {} objects", tableName, dtoList.size());
                         if (!dtoList.isEmpty()) {
@@ -106,11 +128,12 @@ public class CassandraLogAppender extends AbstractLogAppender<CassandraConfig> {
                             switch (executeRequestType) {
                                 case ASYNC:
                                     ListenableFuture<ResultSet> result = logEventDao.saveAsync(dtoList, tableName, eventConverter,
-                                            headerConverter);
+                                            headerConverter, clientProfileConverter, serverProfileConverter, clientProfileJson, serverProfileJson);
                                     Futures.addCallback(result, new Callback(listener, cassandraSuccessLogCount, cassandraFailureLogCount, logCount), callbackExecutor);
                                     break;
                                 case SYNC:
-                                    logEventDao.save(dtoList, tableName, eventConverter, headerConverter);
+                                    logEventDao.save(dtoList, tableName, eventConverter, headerConverter,
+                                            clientProfileConverter, serverProfileConverter, clientProfileJson, serverProfileJson);
                                     listener.onSuccess();
                                     cassandraSuccessLogCount.getAndAdd(logCount);
                                     break;

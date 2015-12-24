@@ -29,6 +29,7 @@ import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONFIGURATION_CONFIGURATION_SCHEMA_VERSION;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONFIGURATION_CONFIGURATION_BODY;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONFIGURATION_CONFIGURATION_SCHEMA_ID;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONFIGURATION_TABLE_NAME;
@@ -44,6 +45,9 @@ public final class Configuration extends AbstractStructure<ConfigurationDto> imp
     private static final long serialVersionUID = -216908432141461265L;
 
     private static final Charset UTF8 = Charset.forName("UTF-8");
+
+    @Column(name = CONFIGURATION_CONFIGURATION_SCHEMA_VERSION)
+    protected int schemaVersion;
 
     @Lob
     @Column(name = CONFIGURATION_CONFIGURATION_BODY)
@@ -67,6 +71,7 @@ public final class Configuration extends AbstractStructure<ConfigurationDto> imp
             Long schemaId = getLongId(dto.getSchemaId());
             this.configurationSchema = schemaId != null ? new ConfigurationSchema(schemaId) : null;
             this.configurationBody = stringToBinary(dto.getBody());
+            this.schemaVersion = dto.getSchemaVersion();
         }
     }
 
@@ -96,6 +101,14 @@ public final class Configuration extends AbstractStructure<ConfigurationDto> imp
 
     public String getEndpointGroupId() {
         return endpointGroup != null ? endpointGroup.getStringId() : null;
+    }
+
+    public int getSchemaVersion() {
+        return schemaVersion;
+    }
+
+    public void setSchemaVersion(int schemaVersion) {
+        this.schemaVersion = schemaVersion;
     }
 
     @Override
@@ -141,6 +154,7 @@ public final class Configuration extends AbstractStructure<ConfigurationDto> imp
         ConfigurationDto dto = super.toDto();
         dto.setBody(binaryToString(configurationBody));
         dto.setSchemaId(ModelUtils.getStringId(configurationSchema.getId()));
+        dto.setSchemaVersion(schemaVersion);
         dto.setProtocolSchema(configurationSchema != null ? configurationSchema.getProtocolSchema() : null);
         return dto;
     }
@@ -148,6 +162,11 @@ public final class Configuration extends AbstractStructure<ConfigurationDto> imp
     @Override
     protected ConfigurationDto createDto() {
         return new ConfigurationDto();
+    }
+
+    @Override
+    protected Configuration newInstance(Long id) {
+        return new Configuration(id);
     }
 
     @Override
@@ -169,8 +188,8 @@ public final class Configuration extends AbstractStructure<ConfigurationDto> imp
 
     @Override
     public String toString() {
-        return "Configuration [sequenceNumber=" + sequenceNumber + ", majorVersion="
-                + majorVersion + ", minorVersion=" + minorVersion + ", description=" + description + ", createdTime=" + createdTime + ", lastModifyTime="
+        return "Configuration [sequenceNumber=" + sequenceNumber + ", schemaVersion="
+                + schemaVersion + ", description=" + description + ", createdTime=" + createdTime + ", lastModifyTime="
                 + lastModifyTime + ", activatedTime=" + activatedTime + ", deactivatedTime=" + deactivatedTime + ", createdUsername=" + createdUsername
                 + ", modifiedUsername=" + modifiedUsername + ", activatedUsername=" + activatedUsername + ", deactivatedUsername=" + deactivatedUsername
                 + ", endpointCount=" + endpointCount + ", status=" + status + ", id=" + id + ", version=" + getVersion() + "]";

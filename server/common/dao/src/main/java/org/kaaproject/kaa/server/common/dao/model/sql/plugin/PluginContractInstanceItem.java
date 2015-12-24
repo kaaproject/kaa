@@ -17,6 +17,7 @@ package org.kaaproject.kaa.server.common.dao.model.sql.plugin;
 
 import org.kaaproject.kaa.common.dto.plugin.PluginContractInstanceItemDto;
 import org.kaaproject.kaa.server.common.dao.DaoConstants;
+import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.GenericModel;
 
 import javax.persistence.Column;
@@ -29,7 +30,6 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.Set;
 
@@ -77,18 +77,21 @@ public class PluginContractInstanceItem extends GenericModel<PluginContractInsta
                     foreignKey = @ForeignKey(name = DaoConstants.PLUGIN_CONTRACT_INSTANCE_ITEM_JOIN_TABLE_OUT_PLUGIN_INSTANCE_CONTRACT_ITEM_FK))})
     private Set<PluginContractInstanceItem> pluginContractItems;
 
-    // TODO: reference schema model
-    @Transient
-    private String inMessageSchema;
+    @ManyToOne
+    private CTLSchema inMessageSchema;
 
-    // TODO: reference schema model
-    @Transient
-    private String outMessageSchema;
+    @ManyToOne
+    private CTLSchema outMessageSchema;
 
     public PluginContractInstanceItem() {
     }
 
+    // TODO: implement
     public PluginContractInstanceItem(PluginContractInstanceItemDto dto) {
+    }
+
+    public PluginContractInstanceItem(Long id) {
+        this.id = id;
     }
 
     public String getConfData() {
@@ -134,6 +137,11 @@ public class PluginContractInstanceItem extends GenericModel<PluginContractInsta
     @Override
     protected PluginContractInstanceItemDto createDto() {
         return new PluginContractInstanceItemDto();
+    }
+
+    @Override
+    protected PluginContractInstanceItem newInstance(Long id) {
+        return new PluginContractInstanceItem(id);
     }
 
     // TODO: implement

@@ -30,7 +30,6 @@ import java.security.PublicKey;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kaaproject.kaa.server.common.Environment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;

@@ -113,6 +113,10 @@ public class PluginInstance extends GenericModel<PluginInstanceDto> implements S
         this.pluginContractInstances = pluginContractInstances;
     }
 
+    public PluginInstance(Long id) {
+        this.id = id;
+    }
+
     public String getConfigData() {
         return configData;
     }
@@ -156,6 +160,11 @@ public class PluginInstance extends GenericModel<PluginInstanceDto> implements S
     @Override
     protected PluginInstanceDto createDto() {
         return new PluginInstanceDto();
+    }
+
+    @Override
+    protected PluginInstance newInstance(Long id) {
+        return new PluginInstance(id);
     }
 
     @Override

@@ -16,6 +16,26 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.sdk;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
+import org.kaaproject.kaa.common.dto.VersionDto;
+import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
+import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
+import org.kaaproject.kaa.server.admin.client.mvp.view.AddSdkProfileView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.MultiAefMapListBox;
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.MultiValueListBox;
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.VersionListBox;
+import org.kaaproject.kaa.server.admin.client.util.Utils;
+
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -31,36 +51,17 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ValueListBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
-import org.kaaproject.kaa.common.dto.SchemaDto;
-import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
-import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
-import org.kaaproject.kaa.server.admin.client.mvp.view.AddSdkProfileView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
-import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
-import org.kaaproject.kaa.server.admin.client.mvp.view.widget.MultiAefMapListBox;
-import org.kaaproject.kaa.server.admin.client.mvp.view.widget.MultiValueListBox;
-import org.kaaproject.kaa.server.admin.client.mvp.view.widget.SchemaListBox;
-import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-public class AddSdkProfileViewImpl extends BaseDetailsViewImpl implements AddSdkProfileView, ValueChangeHandler<SchemaDto>  {
+public class AddSdkProfileViewImpl extends BaseDetailsViewImpl implements AddSdkProfileView, ValueChangeHandler<VersionDto>  {
 
     private static final String REQUIRED = Utils.avroUiStyle.requiredField();
 
     private SizedTextBox name;
 
-    private SchemaListBox configurationSchemaVersion;
-    private SchemaListBox profileSchemaVersion;
-    private SchemaListBox notificationSchemaVersion;
-    private SchemaListBox logSchemaVersion;
+    private VersionListBox configurationSchemaVersion;
+    private VersionListBox profileSchemaVersion;
+    private VersionListBox notificationSchemaVersion;
+    private VersionListBox logSchemaVersion;
 
     private List<AefMapInfoDto> aefMaps;
     private AefMapInfoDtoComparator aefMapComparator = new AefMapInfoDtoComparator();
@@ -95,7 +96,7 @@ public class AddSdkProfileViewImpl extends BaseDetailsViewImpl implements AddSdk
         row++;
         label = new Label(Utils.constants.configurationSchemaVersion());
         label.addStyleName(REQUIRED);
-        configurationSchemaVersion = new SchemaListBox();
+        configurationSchemaVersion = new VersionListBox();
         configurationSchemaVersion.setWidth("80px");
         configurationSchemaVersion.addValueChangeHandler(this);
         detailsTable.setWidget(row, 0, label);
@@ -104,7 +105,7 @@ public class AddSdkProfileViewImpl extends BaseDetailsViewImpl implements AddSdk
         row++;
         label = new Label(Utils.constants.profileSchemaVersion());
         label.addStyleName(REQUIRED);
-        profileSchemaVersion = new SchemaListBox();
+        profileSchemaVersion = new VersionListBox();
         profileSchemaVersion.setWidth("80px");
         profileSchemaVersion.addValueChangeHandler(this);
         detailsTable.setWidget(row, 0, label);
@@ -113,7 +114,7 @@ public class AddSdkProfileViewImpl extends BaseDetailsViewImpl implements AddSdk
         row++;
         label = new Label(Utils.constants.notificationSchemaVersion());
         label.addStyleName(REQUIRED);
-        notificationSchemaVersion = new SchemaListBox();
+        notificationSchemaVersion = new VersionListBox();
         notificationSchemaVersion.setWidth("80px");
         notificationSchemaVersion.addValueChangeHandler(this);
         detailsTable.setWidget(row, 0, label);
@@ -122,7 +123,7 @@ public class AddSdkProfileViewImpl extends BaseDetailsViewImpl implements AddSdk
         row++;
         label = new Label(Utils.constants.logSchemaVersion());
         label.addStyleName(REQUIRED);
-        logSchemaVersion = new SchemaListBox();
+        logSchemaVersion = new VersionListBox();
         logSchemaVersion.setWidth("80px");
         logSchemaVersion.addValueChangeHandler(this);
         detailsTable.setWidget(row, 0, label);
@@ -232,7 +233,7 @@ public class AddSdkProfileViewImpl extends BaseDetailsViewImpl implements AddSdk
     }
 
     @Override
-    public void onValueChange(ValueChangeEvent<SchemaDto> event) {
+    public void onValueChange(ValueChangeEvent<VersionDto> event) {
         fireChanged();
     }
 
@@ -257,22 +258,22 @@ public class AddSdkProfileViewImpl extends BaseDetailsViewImpl implements AddSdk
     }
 
     @Override
-    public ValueListBox<SchemaDto> getConfigurationSchemaVersion() {
+    public ValueListBox<VersionDto> getConfigurationSchemaVersion() {
         return configurationSchemaVersion;
     }
 
     @Override
-    public ValueListBox<SchemaDto> getProfileSchemaVersion() {
+    public ValueListBox<VersionDto> getProfileSchemaVersion() {
         return profileSchemaVersion;
     }
 
     @Override
-    public ValueListBox<SchemaDto> getNotificationSchemaVersion() {
+    public ValueListBox<VersionDto> getNotificationSchemaVersion() {
         return notificationSchemaVersion;
     }
 
     @Override
-    public ValueListBox<SchemaDto> getLogSchemaVersion() {
+    public ValueListBox<VersionDto> getLogSchemaVersion() {
         return logSchemaVersion;
     }
 

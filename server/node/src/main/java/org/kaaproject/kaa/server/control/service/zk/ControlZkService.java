@@ -47,8 +47,7 @@ import org.springframework.stereotype.Service;
 public class ControlZkService {
 
     /** The Constant logger. */
-    private static final Logger LOG = LoggerFactory
-            .getLogger(ControlZkService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ControlZkService.class);
 
     @Autowired
     private KaaNodeServerConfig kaaNodeServerConfig;
@@ -64,17 +63,18 @@ public class ControlZkService {
     private KaaNodeServerConfig getNodeConfig() {
         return kaaNodeServerConfig;
     }
-    
+
     /**
      * Start Zookeeper Service.
      */
     public void start() {
         if (getNodeConfig().isZkEnabled()) {
+            LOG.info("Control service starting ZooKepper connection to {}", getNodeConfig().getZkHostPortList());
             ControlNodeInfo nodeInfo = new ControlNodeInfo();
             ConnectionInfo connectionInfo = new ConnectionInfo(getNodeConfig().getThriftHost(), getNodeConfig().getThriftPort(), null);
             nodeInfo.setConnectionInfo(connectionInfo);
-            controlZKNode = new ControlNode(nodeInfo, getNodeConfig().getZkHostPortList(), 60 * 1000, 3 * 1000,
-                    new RetryUntilElapsed(getNodeConfig().getZkMaxRetryTime(), getNodeConfig().getZkSleepTime()));
+            controlZKNode = new ControlNode(nodeInfo, getNodeConfig().getZkHostPortList(), 60 * 1000, 3 * 1000, new RetryUntilElapsed(
+                    getNodeConfig().getZkMaxRetryTime(), getNodeConfig().getZkSleepTime()));
             try {
                 controlZKNode.start();
             } catch (Exception e) {
@@ -82,7 +82,7 @@ public class ControlZkService {
                     LOG.info("Failed to register control in ZooKeeper", e);
                 } else {
                     LOG.error("Failed to register control in ZooKeeper", e);
-                    throw new RuntimeException(e); //NOSONAR
+                    throw new RuntimeException(e); // NOSONAR
                 }
             }
         }
@@ -109,40 +109,34 @@ public class ControlZkService {
      */
     public void sendEndpointNotification(final Notification thriftNotification) {
         if (getNodeConfig().isZkEnabled()) {
-            List<OperationsNodeInfo> endpoints = controlZKNode
-                    .getCurrentOperationServerNodes();
+            List<OperationsNodeInfo> endpoints = controlZKNode.getCurrentOperationServerNodes();
             for (OperationsNodeInfo endpoint : endpoints) {
                 String host = endpoint.getConnectionInfo().getThriftHost().toString();
                 int port = endpoint.getConnectionInfo().getThriftPort();
                 try {
-                    ThriftClient<OperationsThriftService.Client> client = new ThriftClient<>(host, port, KaaThriftService.OPERATIONS_SERVICE, OperationsThriftService.Client.class);
+                    ThriftClient<OperationsThriftService.Client> client = new ThriftClient<>(host, port,
+                            KaaThriftService.OPERATIONS_SERVICE, OperationsThriftService.Client.class);
                     client.setThriftActivity(new ThriftActivity<OperationsThriftService.Client>() {
                         @Override
                         public void isSuccess(boolean activitySuccess) {
-                            if(!activitySuccess) {
-                                LOG.error(
-                                        "Sending notification to endpoint server failed.");
+                            if (!activitySuccess) {
+                                LOG.error("Sending notification to endpoint server failed.");
                             }
                         }
-                        
+
                         @Override
                         public void doInTemplate(Client t) {
-                            try { //NOSONAR
+                            try { // NOSONAR
                                 t.onNotification(thriftNotification);
                             } catch (TException e) {
-                                LOG.error(
-                                        "Unexpected error occurred while send notification to endpoint server",
-                                        e);
+                                LOG.error("Unexpected error occurred while send notification to endpoint server", e);
                             }
                         }
                     });
                     ThriftExecutor.execute(client);
-                } catch (NoSuchMethodException | SecurityException
-                        | InstantiationException | IllegalAccessException
+                } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException
                         | IllegalArgumentException | InvocationTargetException e) {
-                    LOG.error(
-                            "Unexpected error occurred while creating thrift connection to send notification to endpoint server",
-                            e);
+                    LOG.error("Unexpected error occurred while creating thrift connection to send notification to endpoint server", e);
                 }
             }
         }
@@ -156,18 +150,17 @@ public class ControlZkService {
     public ControlNode getControlZKNode() {
         return controlZKNode;
     }
-    
-    
+
     /**
      * Gets the current bootstrap nodes.
      *
      * @return the current bootstrap nodes
      */
-    public List<BootstrapNodeInfo> getCurrentBootstrapNodes(){
+    public List<BootstrapNodeInfo> getCurrentBootstrapNodes() {
         if (getNodeConfig().isZkEnabled()) {
             return controlZKNode.getCurrentBootstrapNodes();
         } else {
-            return null; //NOSONAR
+            return null; // NOSONAR
         }
     }
 

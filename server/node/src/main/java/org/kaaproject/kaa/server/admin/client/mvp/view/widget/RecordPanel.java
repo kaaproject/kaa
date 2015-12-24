@@ -57,26 +57,20 @@ public class RecordPanel extends SimplePanel implements HasValue<RecordField>, C
     private boolean readOnly;
     private HasErrorMessage hasErrorMessage;
     private FormDataLoader formDataLoader;
+    private boolean optional;
     
     public RecordPanel(String title, HasErrorMessage hasErrorMessage, boolean optional, boolean readOnly) {
         this(null, title, hasErrorMessage, optional, readOnly);
     }
     
     public RecordPanel(AvroWidgetsConfig config, String title, HasErrorMessage hasErrorMessage, boolean optional, boolean readOnly) {
+        this.optional = optional;
         this.readOnly = readOnly;
         this.hasErrorMessage = hasErrorMessage;
         FlexTable table = new FlexTable();
         table.setWidth("100%");
         recordCaption = new CaptionPanel();
-        if (optional) {
-            recordCaption.setCaptionText(title);
-        } else {
-            SpanElement span = Document.get().createSpanElement();
-            span.appendChild(Document.get().createTextNode(title));
-            span.addClassName("gwt-Label");
-            span.addClassName(REQUIRED);
-            recordCaption.setCaptionHTML(span.getString());
-        }        
+        setTitle(title);
         if (config == null) {
             config = new AvroWidgetsConfig.Builder().createConfig();
         }
@@ -127,6 +121,18 @@ public class RecordPanel extends SimplePanel implements HasValue<RecordField>, C
             recordFieldWidget.setReadOnly(readOnly);
             setUploadVisible(!readOnly);
         }
+    }
+    
+    public void setTitle(String title) {
+        if (optional) {
+            recordCaption.setCaptionText(title);
+        } else {
+            SpanElement span = Document.get().createSpanElement();
+            span.appendChild(Document.get().createTextNode(title));
+            span.addClassName("gwt-Label");
+            span.addClassName(REQUIRED);
+            recordCaption.setCaptionHTML(span.getString());
+        }      
     }
     
     private void setUploadVisible(boolean visible) {

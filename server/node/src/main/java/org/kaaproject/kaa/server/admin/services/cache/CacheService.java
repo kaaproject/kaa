@@ -23,6 +23,7 @@ import org.kaaproject.kaa.common.dto.admin.RecordKey;
 import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.file.FileData;
+import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaExportKey;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 
 public interface CacheService {
@@ -117,5 +118,7 @@ public interface CacheService {
     FileData getRecordSchema(RecordKey key) throws KaaAdminServiceException;
 
     FileData getRecordData(RecordKey key) throws KaaAdminServiceException;
+    
+    FileData getExportedCtlSchema(CtlSchemaExportKey key) throws KaaAdminServiceException;
 
 }

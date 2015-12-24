@@ -33,6 +33,10 @@ public abstract class AbstractKaaGrid<T,K> extends AbstractGrid<T,K> {
     public AbstractKaaGrid(Style.Unit unit, boolean enableActions) {
         super(unit, enableActions, false, DEFAULT_PAGE_SIZE);
     }
+    
+    public AbstractKaaGrid(Style.Unit unit, boolean enableActions, int defaultPageSize) {
+        super(unit, enableActions, defaultPageSize);
+    }
 
     public AbstractKaaGrid(Style.Unit unit, boolean enableActions, boolean embedded) {
         super(unit, enableActions, embedded, DEFAULT_PAGE_SIZE, true);

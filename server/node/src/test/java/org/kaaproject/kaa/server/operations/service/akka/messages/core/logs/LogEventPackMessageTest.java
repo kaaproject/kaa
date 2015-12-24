@@ -21,10 +21,10 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileDataDto;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
-import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogSchema;
+import org.kaaproject.kaa.server.common.log.shared.appender.data.BaseLogEventPack;
 
 import akka.actor.ActorRef;
 
@@ -46,9 +46,9 @@ public class LogEventPackMessageTest {
 
     @Test
     public void logEventPackTest() {
-        LogEventPack logEventPack1 = new LogEventPack();
+        BaseLogEventPack logEventPack1 = new BaseLogEventPack(null, System.currentTimeMillis(), 1, new ArrayList<LogEvent>());
 
-        LogEventPack logEventPack2 = new LogEventPack();
+        BaseLogEventPack logEventPack2 = new BaseLogEventPack(null, System.currentTimeMillis(), 2, new ArrayList<LogEvent>());
 
         LogEventPackMessage logEvent = new LogEventPackMessage(REQUEST_ID, ActorRef.noSender(), logEventPack1);
 
@@ -58,8 +58,9 @@ public class LogEventPackMessageTest {
 
     @Test
     public void logEventPackDataTest() {
-        LogEventPack logEventPack = new LogEventPack(ENDPOINT_KEY, DATE_CREATED, LOG_SCHEMA, EVENTS);
-        logEventPack.setLogSchemaVersion(LOG_SCHEMA_VERSION);
+        EndpointProfileDataDto profileDto = new EndpointProfileDataDto("1", ENDPOINT_KEY, 1, "", 0, "");
+        BaseLogEventPack logEventPack = new BaseLogEventPack(profileDto, DATE_CREATED, LOG_SCHEMA_VERSION, EVENTS);
+        logEventPack.setLogSchema(LOG_SCHEMA);
 
         LogEventPackMessage logEvent = new LogEventPackMessage(REQUEST_ID, ActorRef.noSender(), logEventPack);
 
@@ -68,12 +69,5 @@ public class LogEventPackMessageTest {
         Assert.assertEquals(LOG_SCHEMA_VERSION, logEvent.getLogSchemaVersion());
         Assert.assertEquals(LOG_SCHEMA, logEvent.getLogSchema());
         Assert.assertEquals(EVENTS, logEvent.getEvents());
-
-        LogSchema logSchema = new LogSchema(new LogSchemaDto());
-
-        logEvent.setLogSchema(logSchema);
-
-        Assert.assertEquals(logSchema, logEvent.getLogSchema());
-        Assert.assertNotEquals(LOG_SCHEMA, logEvent.getLogSchema());
     }
 }
