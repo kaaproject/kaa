@@ -11,6 +11,7 @@ import org.kaaproject.kaa.server.common.core.plugin.def.ContractItemDef;
 import org.kaaproject.kaa.server.common.core.plugin.def.ContractMessageDef;
 import org.kaaproject.kaa.server.common.core.plugin.def.PluginContractDef;
 import org.kaaproject.kaa.server.common.core.plugin.def.PluginContractItemDef;
+import org.kaaproject.kaa.server.common.core.plugin.def.PluginDef;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -21,7 +22,7 @@ public abstract class BasePluginDefDtoConverter {
         throw new Exception();
     }
 
-    public static PluginDto convertBasePluginDef(BasePluginDef pluginDef, String className) {
+    public static PluginDto convertBasePluginDef(PluginDef pluginDef, String className) {
         PluginDto pluginDto = new PluginDto();
         pluginDto.setName(pluginDef.getName());
         pluginDto.setVersion(pluginDef.getVersion());

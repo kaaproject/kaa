@@ -15,6 +15,8 @@
  */
 package org.kaaproject.kaa.server.common.dao.model.sql.plugin;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.kaaproject.kaa.common.dto.plugin.PluginContractDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginInstanceDto;
@@ -71,10 +73,11 @@ public class Plugin extends GenericModel<PluginDto> implements Serializable {
     @Enumerated(EnumType.STRING)
     private PluginScope scope;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = PLUGIN_PROPERTY)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = PLUGIN_PROPERTY, orphanRemoval = true)
     private Set<PluginContract> pluginContracts = new HashSet<>();
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = PLUGIN_PROPERTY)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = PLUGIN_PROPERTY, orphanRemoval = true)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<PluginInstance> pluginInstances = new HashSet<>();
 
     public Plugin() {
@@ -153,6 +156,10 @@ public class Plugin extends GenericModel<PluginDto> implements Serializable {
         return pluginInstances;
     }
 
+    public void addPluginInstance(PluginInstance pluginInstance) {
+        this.pluginInstances.add(pluginInstance);
+    }
+
     public void setPluginInstances(Set<PluginInstance> pluginInstances) {
         this.pluginInstances = pluginInstances;
     }
@@ -229,7 +236,8 @@ public class Plugin extends GenericModel<PluginDto> implements Serializable {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("Plugin{");
-        sb.append("name='").append(name).append('\'');
+        sb.append("id=").append(id == null ? null : id);
+        sb.append(", name='").append(name).append('\'');
         sb.append(", className='").append(className).append('\'');
         sb.append(", version=").append(version);
         sb.append(", configSchema='").append(configSchema).append('\'');

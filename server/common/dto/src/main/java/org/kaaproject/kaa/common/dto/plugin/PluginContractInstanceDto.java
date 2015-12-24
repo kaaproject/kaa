@@ -25,7 +25,6 @@ public class PluginContractInstanceDto implements HasId, Serializable {
     private static final long serialVersionUID = -7860833310132734432L;
 
     private String id;
-    private PluginInstanceDto instance;
     private PluginContractDto contract;
     private Set<PluginContractInstanceItemDto> items;
 
@@ -53,14 +52,6 @@ public class PluginContractInstanceDto implements HasId, Serializable {
         this.items = items;
     }
 
-    public PluginInstanceDto getInstance() {
-        return instance;
-    }
-
-    public void setInstance(PluginInstanceDto instance) {
-        this.instance = instance;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -75,9 +66,6 @@ public class PluginContractInstanceDto implements HasId, Serializable {
         if (contract != null ? !contract.equals(that.contract) : that.contract != null) {
             return false;
         }
-        if (instance != null ? !instance.equals(that.instance) : that.instance != null) {
-            return false;
-        }
         if (items != null ? !items.equals(that.items) : that.items != null) {
             return false;
         }
@@ -87,8 +75,7 @@ public class PluginContractInstanceDto implements HasId, Serializable {
 
     @Override
     public int hashCode() {
-        int result = instance != null ? instance.hashCode() : 0;
-        result = 31 * result + (contract != null ? contract.hashCode() : 0);
+        int result = contract != null ? contract.hashCode() : 0;
         result = 31 * result + (items != null ? items.hashCode() : 0);
         return result;
     }

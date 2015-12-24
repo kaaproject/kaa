@@ -45,7 +45,6 @@ public class PluginTestFactory {
         pluginDto.setScope(PluginScope.ENDPOINT);
         pluginDto.setConfSchema("{Schema}");
         pluginDto.setPluginContracts(generatePluginContracts());
-        pluginDto.setPluginInstances(generatePluginInstances());
         return pluginDto;
     }
 
@@ -80,16 +79,6 @@ public class PluginTestFactory {
         contractItemDto.setInMessage(inMessage);
         contractItemDto.setOutMessage(outMessage);
         return contractItemDto;
-    }
-
-    private static Set<PluginInstanceDto> generatePluginInstances() {
-        Set<PluginInstanceDto> pluginInstances = new HashSet<>();
-        PluginInstanceDto pluginInstance = new PluginInstanceDto();
-        pluginInstance.setState(PluginInstanceState.ACTIVE);
-        pluginInstance.setConfigurationData("ConfigData");
-        pluginInstance.setName("InstanceName");
-        pluginInstances.add(pluginInstance);
-        return pluginInstances;
     }
 
     private static ContractDto generateContract() {

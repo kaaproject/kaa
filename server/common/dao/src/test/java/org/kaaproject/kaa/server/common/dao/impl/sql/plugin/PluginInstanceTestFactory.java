@@ -25,12 +25,16 @@ public class PluginInstanceTestFactory {
     public static final String NAME = "Instance 1";
     public static final String CONF_DATA = "ConfData";
 
-    public static PluginInstanceDto create(PluginDto pluginDto) {
+    public static PluginInstanceDto create(PluginDto pluginDto, String name) {
         PluginInstanceDto pluginInstanceDto = new PluginInstanceDto();
         pluginInstanceDto.setPluginDefinition(pluginDto);
-        pluginInstanceDto.setName(NAME);
+        pluginInstanceDto.setName(name);
         pluginInstanceDto.setConfigurationData(CONF_DATA);
         pluginInstanceDto.setState(PluginInstanceState.ACTIVE);
         return pluginInstanceDto;
+    }
+
+    public static PluginInstanceDto create(PluginDto pluginDto) {
+        return create(pluginDto, NAME);
     }
 }

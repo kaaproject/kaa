@@ -54,7 +54,6 @@ public class HibernatePluginDaoTest extends HibernateAbstractTest {
     public void testFindPluginByClassName() {
         PluginDto pluginDto = PluginTestFactory.create();
         Plugin p = new Plugin(pluginDto);
-        System.out.println(pluginDto.toString());
         p = pluginDao.save(p);
         Plugin found = pluginDao.findByClassName(PluginTestFactory.CLASS_NAME);
         Assert.assertEquals(pluginDto, found.toDto());

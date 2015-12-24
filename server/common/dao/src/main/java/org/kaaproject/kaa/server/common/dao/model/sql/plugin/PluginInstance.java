@@ -15,6 +15,9 @@
  */
 package org.kaaproject.kaa.server.common.dao.model.sql.plugin;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.kaaproject.kaa.common.dto.plugin.PluginContractDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginContractInstanceDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginDto;
@@ -23,6 +26,7 @@ import org.kaaproject.kaa.common.dto.plugin.PluginInstanceState;
 import org.kaaproject.kaa.server.common.dao.model.sql.GenericModel;
 import org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -41,6 +45,7 @@ import java.util.Set;
 
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_INSTANCE_CONF_DATA;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_INSTANCE_NAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_INSTANCE_PLUGIN_CONTRACT_INSTANCE_FK;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_INSTANCE_PLUGIN_FK;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_INSTANCE_PLUGIN_ID;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_INSTANCE_PLUGIN_ID_NAME_CONSTRAINT_NAME;
@@ -68,11 +73,12 @@ public class PluginInstance extends GenericModel<PluginInstanceDto> implements S
     @Enumerated(EnumType.STRING)
     private PluginInstanceState state;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = PLUGIN_INSTANCE_PLUGIN_ID, foreignKey = @ForeignKey(name = PLUGIN_INSTANCE_PLUGIN_FK))
     private Plugin plugin;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = PLUGIN_INSTANCE_PROPERTY)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = PLUGIN_INSTANCE_PROPERTY, foreignKey = @ForeignKey(name = PLUGIN_INSTANCE_PLUGIN_CONTRACT_INSTANCE_FK))
     private Set<PluginContractInstance> pluginContractInstances = new HashSet<>();
 
     public PluginInstance() {
@@ -215,7 +221,8 @@ public class PluginInstance extends GenericModel<PluginInstanceDto> implements S
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("PluginInstance{");
-        sb.append("configData='").append(configData).append('\'');
+        sb.append("id=").append(id == null ? null : id);
+        sb.append(", configData='").append(configData).append('\'');
         sb.append(", state=").append(state);
         sb.append(", name=").append(name);
         sb.append(", plugin=").append(plugin != null ? plugin.getClassName() : null);

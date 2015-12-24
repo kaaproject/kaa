@@ -18,6 +18,9 @@ package org.kaaproject.kaa.server.common.dao;
 import org.kaaproject.kaa.common.dto.plugin.PluginDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginInstanceDto;
 
+import java.util.List;
+import java.util.Set;
+
 /**
  * Enables plugin and plugin instance manipulation
  */
@@ -46,6 +49,18 @@ public interface PluginService {
     PluginDto findPluginByClassName(String className);
 
     /**
+     * Finds all plugins
+     * @return all of existent plugins
+     */
+    List<PluginDto> findAllPlugins();
+
+    /**
+     * Unregister plugin by plugin id
+     * @param id the plugin id
+     */
+    void unregisterPluginById(String id);
+
+    /**
      * Save plugin instance
      * @param pluginInstanceDto the plugin instance
      * @return the saved plugin instance
@@ -58,6 +73,13 @@ public interface PluginService {
      * @return the found plugin instance
      */
     PluginInstanceDto findInstanceById(String id);
+
+    /**
+     * Find plugin instances by their plugin id
+     * @param pluginId the plugin id
+     * @return the list of plugin instances
+     */
+    Set<PluginInstanceDto> findInstancesByPluginId(String pluginId);
 
     /**
      * Remove plugin instance by its id
