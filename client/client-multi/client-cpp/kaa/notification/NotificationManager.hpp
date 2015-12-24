@@ -33,6 +33,7 @@
 #include "kaa/notification/INotificationListener.hpp"
 #include "kaa/notification/INotificationProcessor.hpp"
 #include "kaa/notification/INotificationTopicListListener.hpp"
+#include "kaa/IKaaClientContext.hpp"
 
 #include "kaa/observer/KaaObservable.hpp"
 
@@ -42,7 +43,7 @@ class IExecutorContext;
 
 class NotificationManager : public INotificationManager, public INotificationProcessor {
 public:
-    NotificationManager(IKaaClientStateStoragePtr status, IExecutorContext& executorContext);
+    NotificationManager(IKaaClientContext &context);
 
     virtual void addTopicListListener(INotificationTopicListListener& listener);
     virtual void removeTopicListListener(INotificationTopicListListener& listener);
@@ -78,7 +79,7 @@ private:
     bool notifyOptionalNotificationSubscribers(const std::string& id, KaaNotificationPtr notification);
 
 private:
-    IExecutorContext& executorContext_;
+    IKaaClientContext &context_;
 
     std::shared_ptr<NotificationTransport>    transport_;
     IKaaClientStateStoragePtr                 clientStatus_;

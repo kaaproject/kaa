@@ -294,6 +294,7 @@ set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
         impl/context/AbstractExecutorContext.cpp
         impl/context/SimpleExecutorContext.cpp
         impl/KaaClientProperties.cpp
+        impl/KaaClientContext.cpp
     )
 
 # Builds Kaa libraries.

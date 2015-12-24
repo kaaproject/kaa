@@ -18,19 +18,34 @@
 
 #include "kaa/ClientStatus.hpp"
 #include "kaa/notification/NotificationTransport.hpp"
+#include "kaa/KaaClientContext.hpp"
+#include "kaa/KaaClientProperties.hpp"
+#include "kaa/logging/DefaultLogger.hpp"
+#include "kaa/context/SimpleExecutorContext.hpp"
 
 #include "headers/channel/MockChannelManager.hpp"
+#include "headers/MockKaaClientStateStorage.hpp"
 
 namespace kaa {
+
+static KaaClientProperties properties;
+static DefaultLogger tmp_logger;
+static SimpleExecutorContext context;
+static MockKaaClientStateStorage tmp_state;
 
 BOOST_AUTO_TEST_SUITE(NotificationTransportTestSuite)
 
 BOOST_AUTO_TEST_CASE(EmptyRequestTest)
 {
-    IKaaClientStateStoragePtr status(new ClientStatus("fakePath"));
+    KaaClientContext clientContext(properties, tmp_logger, tmp_state, context);
+    clientContext.getProperties().setStateFileName("fakePath");
+
+    IKaaClientStateStoragePtr status(new ClientStatus(clientContext));
     MockChannelManager channelManager;
 
-    NotificationTransport transport(status, channelManager);
+    clientContext.setStatus(*status);
+
+    NotificationTransport transport(channelManager, clientContext);
 
     auto request = transport.createNotificationRequest();
 
@@ -43,10 +58,15 @@ BOOST_AUTO_TEST_CASE(EmptyRequestTest)
 
 BOOST_AUTO_TEST_CASE(SubscriptionInfoTest)
 {
-    IKaaClientStateStoragePtr status(new ClientStatus("fakePath"));
+    KaaClientContext clientContext(properties, tmp_logger, tmp_state, context);
+    clientContext.getProperties().setStateFileName("fakePath");
+
+    IKaaClientStateStoragePtr status(new ClientStatus(clientContext));
     MockChannelManager channelManager;
 
-    NotificationTransport transport(status, channelManager);
+    clientContext.setStatus(*status);
+
+    NotificationTransport transport(channelManager, clientContext);
 
     SubscriptionCommand cmd1;
     cmd1.topicId = "id1";
@@ -87,9 +107,15 @@ BOOST_AUTO_TEST_CASE(SubscriptionInfoTest)
 
 BOOST_AUTO_TEST_CASE(AcceptedUnicastNotificationsTest)
 {
-    IKaaClientStateStoragePtr status(new ClientStatus("fakePath"));
+    KaaClientContext clientContext(properties, tmp_logger, tmp_state, context);
+    clientContext.getProperties().setStateFileName("fakePath");
+
+    IKaaClientStateStoragePtr status(new ClientStatus(clientContext));
     MockChannelManager channelManager;
-    NotificationTransport transport(status, channelManager);
+
+    clientContext.setStatus(*status);
+
+    NotificationTransport transport(channelManager, clientContext);
 
     std::string unicastNfUid("uid1");
     Notification nf1;
@@ -122,9 +148,14 @@ BOOST_AUTO_TEST_CASE(AcceptedUnicastNotificationsTest)
 
 BOOST_AUTO_TEST_CASE(DetailedTopicStateTest)
 {
-    IKaaClientStateStoragePtr status(new ClientStatus("fakePath"));
+    KaaClientContext clientContext(properties, tmp_logger, tmp_state, context);
+    clientContext.getProperties().setStateFileName("fakePath");
+
+    ClientStatus status(clientContext);
     MockChannelManager channelManager;
-    NotificationTransport transport(status, channelManager);
+
+    clientContext.setStatus(status);
+    NotificationTransport transport(channelManager, clientContext);
 
     const std::string topicId1("id1");
     const std::string topicId2("id2");
@@ -151,9 +182,14 @@ BOOST_AUTO_TEST_CASE(DetailedTopicStateTest)
 
     NotificationSyncResponse response1;
     response1.availableTopics.set_array(topics);
-    transport.onNotificationResponse(response1);
 
-    auto detailedTopicState = status->getTopicStates();
+    clientContext.getLogger().log(LogLevel::KAA_DEBUG, "Step 1");
+
+    transport.onNotificationResponse(response1);        
+
+    clientContext.getLogger().log(LogLevel::KAA_DEBUG, "Step 2");
+
+    auto detailedTopicState = clientContext.getStatus().getTopicStates();
 
     BOOST_CHECK(detailedTopicState.size() == topics.size());
 
@@ -187,7 +223,7 @@ BOOST_AUTO_TEST_CASE(DetailedTopicStateTest)
     response2.notifications.set_array(std::vector<Notification>({nf2, nf1, nf3, nf4}));
     transport.onNotificationResponse(response2);
 
-    detailedTopicState = status->getTopicStates();
+    detailedTopicState = clientContext.getStatus().getTopicStates();
 
     for (const auto& topicInfo : detailedTopicState) {
         if (topicInfo.first == topicId1) {

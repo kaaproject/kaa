@@ -41,6 +41,7 @@
 #include "kaa/IKaaClientStateListener.hpp"
 #include "kaa/IKaaClientPlatformContext.hpp"
 #include "kaa/KaaClientProperties.hpp"
+#include "kaa/KaaClientContext.hpp"
 
 namespace kaa {
 
@@ -111,6 +112,10 @@ private:
     void initClientKeys();
 
 private:
+    KaaClientContext context_;
+    IKaaClientStateStoragePtr status_;
+    LoggerPtr        logger_;
+
 #ifdef KAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL
     std::unique_ptr<DefaultBootstrapChannel>         bootstrapChannel_;
 #endif
@@ -125,11 +130,8 @@ private:
 #endif
 
     IKaaClientPlatformContextPtr                     platformContext_;
-    IExecutorContext&                                executorContext_;
-    KaaClientProperties                              clientProperties_;
     IKaaClientStateListenerPtr                       stateListener_;
 
-    IKaaClientStateStoragePtr                        status_;
     std::unique_ptr<IBootstrapManager>               bootstrapManager_;
     std::unique_ptr<IKaaChannelManager>              channelManager_;
     std::unique_ptr<SyncDataProcessor>               syncProcessor_;

@@ -17,6 +17,13 @@
 #include <boost/test/unit_test.hpp>
 
 #include "kaa/http/MultipartPostHttpRequest.hpp"
+#include "kaa/KaaClientContext.hpp"
+#include "kaa/KaaClientProperties.hpp"
+#include "kaa/logging/DefaultLogger.hpp"
+
+#include "headers/context/MockExecutorContext.hpp"
+#include "headers/MockKaaClientStateStorage.hpp"
+
 
 #include <vector>
 
@@ -71,8 +78,14 @@ BOOST_AUTO_TEST_SUITE(HttpRequestSuite)
 
 BOOST_AUTO_TEST_CASE(httpMultipartRequestTest)
 {
+    auto stateMock = std::make_shared<MockKaaClientStateStorage>();
+    MockExecutorContext context;
+    KaaClientProperties properties;
+    DefaultLogger tmp_logger;
+    KaaClientContext clientContext(properties, tmp_logger, *stateMock, context);
+
     HttpUrl url(test_url0);
-    MultipartPostHttpRequest req(url);
+    MultipartPostHttpRequest req(url, clientContext);
 
     BOOST_CHECK_EQUAL(req.getHost(), "test.com");
     BOOST_CHECK_EQUAL(req.getPort(), 1234);

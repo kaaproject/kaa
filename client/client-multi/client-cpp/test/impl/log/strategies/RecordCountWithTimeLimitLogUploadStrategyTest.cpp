@@ -21,6 +21,13 @@
 #include <cstdlib>
 
 #include "kaa/log/strategies/RecordCountWithTimeLimitLogUploadStrategy.hpp"
+#include "kaa/KaaClientContext.hpp"
+#include "kaa/logging/DefaultLogger.hpp"
+#include "kaa/KaaClientProperties.hpp"
+#include "kaa/context/SimpleExecutorContext.hpp"
+
+#include "headers/MockKaaClientStateStorage.hpp"
+#include "headers/context/MockExecutorContext.hpp"
 
 #include "headers/log/MockLogStorage.hpp"
 
@@ -36,6 +43,12 @@ static std::size_t getRand()
     return std::rand() + 1;
 }
 
+static KaaClientProperties properties;
+static DefaultLogger tmp_logger;
+static MockKaaClientStateStorage tmp_state;
+static MockExecutorContext tmpExecContext;
+static KaaClientContext clientContext(properties, tmp_logger, tmp_state, tmpExecContext);
+
 BOOST_AUTO_TEST_SUITE(RecordCountWithTimeLimitLogUploadStrategySuite)
 
 BOOST_AUTO_TEST_CASE(TriggerByRecordCountTest)
@@ -43,7 +56,7 @@ BOOST_AUTO_TEST_CASE(TriggerByRecordCountTest)
     std::size_t logUploadPeriod = 2;
     std::size_t thresholdRecordCount = getRand();
 
-    RecordCountWithTimeLimitLogUploadStrategy strategy(thresholdRecordCount, logUploadPeriod);
+    RecordCountWithTimeLimitLogUploadStrategy strategy(thresholdRecordCount, logUploadPeriod, clientContext);
 
     MockLogStorageStatus storageStatus1;
     storageStatus1.recordsCount_ = thresholdRecordCount - 1;
@@ -66,7 +79,7 @@ BOOST_AUTO_TEST_CASE(TriggerByTimeTest)
     std::size_t logUploadPeriod = 2;
     std::size_t thresholdRecordCount = getRand();
 
-    RecordCountWithTimeLimitLogUploadStrategy strategy(thresholdRecordCount, logUploadPeriod);
+    RecordCountWithTimeLimitLogUploadStrategy strategy(thresholdRecordCount, logUploadPeriod, clientContext);
 
     MockLogStorageStatus storageStatus;
     storageStatus.consumedVolume_ = 0;

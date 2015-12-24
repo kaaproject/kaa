@@ -18,12 +18,21 @@
 
 #include "kaa/ClientStatus.hpp"
 #include "kaa/KaaDefaults.hpp"
+#include "kaa/KaaClientContext.hpp"
+#include "kaa/KaaClientProperties.hpp"
+#include "kaa/logging/DefaultLogger.hpp"
+
+#include "headers/context/MockExecutorContext.hpp"
+#include "headers/MockKaaClientStateStorage.hpp"
+
 
 #include <map>
 #include <cstdlib>
 #include <fstream>
 #include <sstream>
 #include <utility>
+#include <memory>
+
 
 #ifdef RESOURCE_DIR
 const char * const filename = RESOURCE_DIR"/kaa_status.file";
@@ -31,11 +40,16 @@ const char * const filename = RESOURCE_DIR"/kaa_status.file";
 const char * const filename = "kaa_status.file";
 #endif
 
+
 void cleanfile() {
     std::remove(filename);
 }
 
 namespace kaa {
+
+static MockExecutorContext context;
+static KaaClientProperties properties;
+static DefaultLogger tmp_logger;
 
 BOOST_AUTO_TEST_SUITE(ClientStatusSuite);
 
@@ -43,7 +57,11 @@ BOOST_AUTO_TEST_CASE(checkDefaults)
 {
     cleanfile();
 
-    ClientStatus cs(filename);
+    auto stateMock = std::make_shared<MockKaaClientStateStorage>();
+    properties.setStateFileName(filename);
+    KaaClientContext clientContext(properties, tmp_logger, *stateMock, context);
+
+    ClientStatus cs(clientContext);
     BOOST_CHECK_EQUAL(cs.getAppSeqNumber().configurationSequenceNumber, 0);
     BOOST_CHECK_EQUAL(cs.getAppSeqNumber().notificationSequenceNumber, 0);
     BOOST_CHECK_EQUAL(cs.isRegistered(), false);
@@ -57,7 +75,10 @@ BOOST_AUTO_TEST_CASE(checkDefaults)
 
 BOOST_AUTO_TEST_CASE(checkSetAndSaveParameters)
 {
-    ClientStatus cs(filename);
+    auto stateMock = std::make_shared<MockKaaClientStateStorage>();
+    properties.setStateFileName(filename);
+    KaaClientContext clientContext(properties, tmp_logger, *stateMock, context);
+    ClientStatus cs(clientContext);
     cs.setAppSeqNumber({1,2,3});
     BOOST_CHECK_EQUAL(cs.getAppSeqNumber().configurationSequenceNumber, 1);
     BOOST_CHECK_EQUAL(cs.getAppSeqNumber().notificationSequenceNumber, 2);
@@ -121,7 +142,7 @@ BOOST_AUTO_TEST_CASE(checkSetAndSaveParameters)
     cs.setEndpointKeyHash(endpointKeyHash);
 
     cs.save();
-    ClientStatus cs_restored(filename);
+    ClientStatus cs_restored(clientContext);
 
     DetailedTopicStates act_ts1 = cs_restored.getTopicStates();
     BOOST_CHECK_EQUAL(act_ts1.size(), 2);

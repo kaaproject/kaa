@@ -18,11 +18,19 @@
 
 #include <kaa/event/EventTransport.hpp>
 #include <kaa/event/IEventDataProcessor.hpp>
+#include "kaa/KaaClientContext.hpp"
+#include "kaa/KaaClientProperties.hpp"
+#include "kaa/logging/DefaultLogger.hpp"
+#include "kaa/context/SimpleExecutorContext.hpp"
 
 #include "headers/channel/MockChannelManager.hpp"
 #include "headers/MockKaaClientStateStorage.hpp"
 
 namespace kaa {
+
+static KaaClientProperties properties;
+static DefaultLogger tmp_logger;
+static SimpleExecutorContext context;
 
 class TestKaaClientStateStorage: public MockKaaClientStateStorage {
 public:
@@ -85,10 +93,12 @@ BOOST_AUTO_TEST_SUITE(EventTransportTestSuite)
 
 BOOST_AUTO_TEST_CASE(EventTransportSequenceNumberRequestTest)
 {
-    IKaaClientStateStoragePtr clientState;
+    IKaaClientStateStoragePtr clientState(new TestKaaClientStateStorage);
     MockChannelManager channelManager;
     TestEventDataProcessor processor;
-    EventTransport transport(processor, channelManager, clientState);
+
+    KaaClientContext clientContext(properties, tmp_logger, *clientState, context);
+    EventTransport transport(processor, channelManager, clientContext);
 
     std::map<std::int32_t, Event> pevents;
     pevents[1] = Event();
@@ -125,7 +135,8 @@ BOOST_AUTO_TEST_CASE(SychronizedEventSequenceNumberTest)
 
     MockChannelManager channelManager;
     TestEventDataProcessor processor;
-    EventTransport transport(processor, channelManager, clientState);
+    KaaClientContext clientContext(properties, tmp_logger, *clientState, context);
+    EventTransport transport(processor, channelManager, clientContext);
 
     std::map<std::int32_t, Event> pevents;
     pevents[1] = createEvent(sn + 1);
@@ -166,7 +177,8 @@ BOOST_AUTO_TEST_CASE(UnsychronizedEventSequenceNumberTest)
 
     MockChannelManager channelManager;
     TestEventDataProcessor processor;
-    EventTransport transport(processor, channelManager, clientState);
+    KaaClientContext clientContext(properties, tmp_logger, *clientState, context);
+    EventTransport transport(processor, channelManager, clientContext);
 
     std::map<std::int32_t, Event> pevents;
     pevents[1] = createEvent(restored_sn + 12);

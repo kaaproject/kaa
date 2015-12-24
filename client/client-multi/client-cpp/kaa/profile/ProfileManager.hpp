@@ -24,6 +24,7 @@
 #include "kaa/profile/DefaultProfileContainer.hpp"
 #include "kaa/common/AvroByteArrayConverter.hpp"
 #include "kaa/channel/transport/IProfileTransport.hpp"
+#include "kaa/IKaaClientContext.hpp"
 
 namespace kaa {
 
@@ -33,7 +34,7 @@ namespace kaa {
  */
 class ProfileManager : public IProfileManager {
 public:
-    ProfileManager() : profileContainer_(std::make_shared<DefaultProfileContainer>()) { }
+    ProfileManager(IKaaClientContext &context) : profileContainer_(std::make_shared<DefaultProfileContainer>()), context_(context) { }
 
     /**
      * Sets profile container implemented by the user
@@ -78,6 +79,7 @@ public:
 private:
     IProfileTransportPtr            transport_;
     IProfileContainerPtr     profileContainer_;
+    IKaaClientContext       &context_;
 };
 
 inline void ProfileManager::setProfileContainer(IProfileContainerPtr container)

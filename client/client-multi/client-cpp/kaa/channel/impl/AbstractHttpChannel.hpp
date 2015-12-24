@@ -41,12 +41,13 @@
 #include "kaa/channel/ITransportConnectionInfo.hpp"
 #include "kaa/channel/TransportProtocolIdConstants.hpp"
 #include "kaa/IKaaClientStateStorage.hpp"
+#include "kaa/IKaaClientContext.hpp"
 
 namespace kaa {
 
 class AbstractHttpChannel : public ImpermanentDataChannel {
 public:
-    AbstractHttpChannel(IKaaChannelManager *channelManager, const KeyPair& clientKeys, IKaaClientStateStoragePtr clientState);
+    AbstractHttpChannel(IKaaChannelManager *channelManager, const KeyPair& clientKeys, IKaaClientContext &context);
     virtual ~AbstractHttpChannel() { }
 
     virtual void sync(TransportType type);
@@ -99,7 +100,7 @@ private:
     HttpClient httpClient_;
     KAA_MUTEX_DECLARE(channelGuard_);
 
-    IKaaClientStateStoragePtr clientState_;
+    IKaaClientContext &context_;
 };
 
 }

@@ -23,12 +23,26 @@
 #include "kaa/log/SQLiteDBLogStorage.hpp"
 #include "kaa/log/LogRecord.hpp"
 #include "kaa/common/exception/KaaException.hpp"
+#include "kaa/KaaClientContext.hpp"
+#include "kaa/logging/DefaultLogger.hpp"
+#include "kaa/KaaClientProperties.hpp"
+#include "kaa/context/SimpleExecutorContext.hpp"
+
+#include "headers/MockKaaClientStateStorage.hpp"
+#include "headers/context/MockExecutorContext.hpp"
 
 namespace kaa {
 
 static std::string testLogData("very big test data");
 static std::string testLogStorageName("logs.db");
 static std::int32_t mockBlocksCount = 10000;
+
+static KaaClientProperties properties;
+static DefaultLogger tmp_logger;
+static MockKaaClientStateStorage tmp_state;
+static MockExecutorContext tmpExecContext;
+static KaaClientContext clientContext(properties, tmp_logger, tmp_state, tmpExecContext);
+
 
 void removeDatabase(const std::string& dbName)
 {
@@ -41,7 +55,7 @@ BOOST_AUTO_TEST_CASE(CreateLogDataBaseTest)
 {
     removeDatabase(testLogStorageName);
 
-    SQLiteDBLogStorage logStorage(testLogStorageName);
+    SQLiteDBLogStorage logStorage(clientContext, testLogStorageName);
 
     std::ofstream dbFile(testLogStorageName);
     if (dbFile) {
@@ -53,7 +67,7 @@ BOOST_AUTO_TEST_CASE(CreateLogDataBaseTest)
 
 BOOST_AUTO_TEST_CASE(AddLogRecordTest)
 {
-    SQLiteDBLogStorage logStorage(testLogStorageName);
+    SQLiteDBLogStorage logStorage(clientContext, testLogStorageName);
 
     KaaUserLogRecord record;
     record.logdata = testLogData;
@@ -78,13 +92,13 @@ BOOST_AUTO_TEST_CASE(RestoreAfterRestartTest)
     LogRecordPtr serializedRecord(new LogRecord(record));
 
     {
-        SQLiteDBLogStorage logStorage1(testLogStorageName);
+        SQLiteDBLogStorage logStorage1(clientContext, testLogStorageName);
         for (std::size_t i = 0; i < recordCount; ++i) {
             logStorage1.addLogRecord(serializedRecord);
         }
     }
 
-    SQLiteDBLogStorage logStorage2(testLogStorageName);
+    SQLiteDBLogStorage logStorage2(clientContext, testLogStorageName);
 
     BOOST_CHECK_EQUAL(logStorage2.getStatus().getRecordsCount(), recordCount);
     BOOST_CHECK_EQUAL(logStorage2.getStatus().getConsumedVolume(), recordCount * serializedRecord->getSize());
@@ -104,7 +118,7 @@ BOOST_AUTO_TEST_CASE(RestoreAfterRestartTest)
 
 BOOST_AUTO_TEST_CASE(GetAllRecordsTest)
 {
-    SQLiteDBLogStorage logStorage(testLogStorageName);
+    SQLiteDBLogStorage logStorage(clientContext, testLogStorageName);
 
     KaaUserLogRecord record;
     record.logdata = testLogData;
@@ -131,7 +145,7 @@ BOOST_AUTO_TEST_CASE(GetAllRecordsTest)
 
 BOOST_AUTO_TEST_CASE(GetPartOfRecordsTest)
 {
-    SQLiteDBLogStorage logStorage(testLogStorageName);
+    SQLiteDBLogStorage logStorage(clientContext, testLogStorageName);
 
     KaaUserLogRecord record;
     record.logdata = testLogData;
@@ -160,7 +174,7 @@ BOOST_AUTO_TEST_CASE(GetPartOfRecordsTest)
 BOOST_AUTO_TEST_CASE(RemoveLogRecordsTest)
 {
     {
-        SQLiteDBLogStorage logStorage1(testLogStorageName);
+        SQLiteDBLogStorage logStorage1(clientContext, testLogStorageName);
 
         KaaUserLogRecord record;
         record.logdata = testLogData;
@@ -189,7 +203,7 @@ BOOST_AUTO_TEST_CASE(RemoveLogRecordsTest)
         BOOST_CHECK_EQUAL(logStorage1.getStatus().getConsumedVolume(), 0);
     }
 
-    SQLiteDBLogStorage logStorage2(testLogStorageName);
+    SQLiteDBLogStorage logStorage2(clientContext, testLogStorageName);
 
     BOOST_CHECK_EQUAL(logStorage2.getStatus().getRecordsCount(), 0);
     BOOST_CHECK_EQUAL(logStorage2.getStatus().getConsumedVolume(), 0);
@@ -199,7 +213,7 @@ BOOST_AUTO_TEST_CASE(RemoveLogRecordsTest)
 
 BOOST_AUTO_TEST_CASE(DeliveyFailedTest)
 {
-    SQLiteDBLogStorage logStorage(testLogStorageName);
+    SQLiteDBLogStorage logStorage(clientContext, testLogStorageName);
 
     KaaUserLogRecord record;
     record.logdata = testLogData;
@@ -233,7 +247,7 @@ BOOST_AUTO_TEST_CASE(DeliveyFailedWithRestartTest)
     std::size_t recordCount = 10;
 
     {
-        SQLiteDBLogStorage logStorage1(testLogStorageName);
+        SQLiteDBLogStorage logStorage1(clientContext, testLogStorageName);
 
         for (std::size_t i = 0; i < recordCount; ++i) {
             logStorage1.addLogRecord(serializedRecord);
@@ -246,7 +260,7 @@ BOOST_AUTO_TEST_CASE(DeliveyFailedWithRestartTest)
         BOOST_CHECK_EQUAL(logStorage1.getStatus().getConsumedVolume(), (recordCount - count) * serializedRecord->getSize());
     }
 
-    SQLiteDBLogStorage logStorage2(testLogStorageName);
+    SQLiteDBLogStorage logStorage2(clientContext, testLogStorageName);
 
     BOOST_CHECK_EQUAL(logStorage2.getStatus().getRecordsCount(), recordCount);
     BOOST_CHECK_EQUAL(logStorage2.getStatus().getConsumedVolume(), recordCount * serializedRecord->getSize());

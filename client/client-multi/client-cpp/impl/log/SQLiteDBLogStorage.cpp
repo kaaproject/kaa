@@ -98,7 +98,6 @@ public:
     SQLiteStatement(sqlite3 *db, const char* sql) : stmt_(nullptr)
     {
         if (!db || !sql) {
-            KAA_LOG_ERROR("Failed to create sqlite3 statement: bad data");
             throw KaaException("Failed to create sqlite3 statement: bad data");
         }
 
@@ -120,8 +119,8 @@ private:
     sqlite3_stmt *stmt_;
 };
 
-SQLiteDBLogStorage::SQLiteDBLogStorage(const std::string& dbName, int optimizationMask)
-    : dbName_(dbName), db_(nullptr), unmarkedRecordCount_(0), totalRecordCount_(0), consumedMemory_(0)
+SQLiteDBLogStorage::SQLiteDBLogStorage(IKaaClientContext &context, const std::string& dbName, int optimizationMask)
+    : dbName_(dbName), db_(nullptr), unmarkedRecordCount_(0), totalRecordCount_(0), consumedMemory_(0), context_(context)
 {
     openDBConnection();
     initLogTable();

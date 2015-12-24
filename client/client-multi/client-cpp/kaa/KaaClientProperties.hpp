@@ -38,7 +38,7 @@ public:
     void setStateFileName(const std::string& fileName);
     std::string getStateFileName() const
     {
-        return getWorkingDirectoryPath() + getProperty(PROP_STATE_FILE, DEFAULT_STATE_FILE);
+        return getProperty(PROP_STATE_FILE, DEFAULT_STATE_FILE);
     }
 
     void setPublicKeyFileName(const std::string& fileName);

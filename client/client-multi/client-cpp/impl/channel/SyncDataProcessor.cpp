@@ -20,8 +20,7 @@
 
 namespace kaa {
 
-SyncDataProcessor::SyncDataProcessor(
-                      IMetaDataTransportPtr       metaDataTransport
+SyncDataProcessor::SyncDataProcessor(IMetaDataTransportPtr       metaDataTransport
                     , IBootstrapTransportPtr      bootstrapTransport
                     , IProfileTransportPtr        profileTransport
                     , IConfigurationTransportPtr  configurationTransport
@@ -30,7 +29,7 @@ SyncDataProcessor::SyncDataProcessor(
                     , IEventTransportPtr          eventTransport
                     , ILoggingTransportPtr        loggingTransport
                     , IRedirectionTransportPtr    redirectionTransport
-                    , IKaaClientStateStoragePtr   clientStatus)
+                    , IKaaClientContext &context)
         : metaDataTransport_(metaDataTransport)
         , bootstrapTransport_(bootstrapTransport)
         , profileTransport_(profileTransport)
@@ -40,8 +39,8 @@ SyncDataProcessor::SyncDataProcessor(
         , eventTransport_(eventTransport)
         , loggingTransport_(loggingTransport)
         , redirectionTransport_(redirectionTransport)
-        , clientStatus_(clientStatus)
         , requestId(0)
+        , context_(context)
 {
 
 }
@@ -334,7 +333,7 @@ DemultiplexerReturnCode SyncDataProcessor::processResponse(const std::vector<std
         }
 
         KAA_LOG_DEBUG("Processed SyncResponse");
-        clientStatus_->save();
+        context_.getStatus().save();
     } catch (const std::exception& e) {
         KAA_LOG_ERROR(boost::format("Unable to process response: %s") % e.what());
         returnCode = DemultiplexerReturnCode::FAILURE;

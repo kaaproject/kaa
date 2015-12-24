@@ -22,6 +22,7 @@
 
 #include "kaa/log/ILogUploadStrategy.hpp"
 #include "kaa/channel/IKaaChannelManager.hpp"
+#include "kaa/IKaaClientContext.hpp"
 
 namespace kaa {
 
@@ -51,6 +52,8 @@ namespace kaa {
  */
 class DefaultLogUploadStrategy: public ILogUploadStrategy {
 public:
+    DefaultLogUploadStrategy(IKaaClientContext &context): context_(context) {}
+
     virtual LogUploadStrategyDecision isUploadNeeded(ILogStorageStatus& status);
 
     virtual void onTimeout(ILogFailoverCommand& controller);
@@ -117,6 +120,8 @@ protected:
 
     std::size_t uploadVolumeThreshold_ = DEFAULT_UPLOAD_VOLUME_THRESHOLD;
     std::size_t uploadCountThreshold_ = DEFAULT_UPLOAD_COUNT_THRESHOLD;
+
+    IKaaClientContext &context_;
 
 private:
     typedef std::chrono::system_clock Clock;

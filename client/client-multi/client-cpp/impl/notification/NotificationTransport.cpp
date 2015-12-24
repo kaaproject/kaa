@@ -28,12 +28,10 @@
 
 namespace kaa {
 
-NotificationTransport::NotificationTransport(IKaaClientStateStoragePtr status, IKaaChannelManager& manager)
-    : AbstractKaaTransport(manager), notificationProcessor_(nullptr)
+NotificationTransport::NotificationTransport(IKaaChannelManager& manager, IKaaClientContext &context)
+    : AbstractKaaTransport(manager, context), notificationProcessor_(nullptr)
 {
-    setClientState(status);
-
-    const DetailedTopicStates& detailedStatesContainer = clientStatus_->getTopicStates();
+    const DetailedTopicStates& detailedStatesContainer = context_.getStatus().getTopicStates();
     for (const auto& state : detailedStatesContainer) {
         notificationSubscriptions_.insert(std::make_pair(state.second.topicId, state.second.sequenceNumber));
     }
@@ -43,12 +41,12 @@ NotificationSyncRequestPtr NotificationTransport::createEmptyNotificationRequest
 {
     NotificationSyncRequestPtr request(new NotificationSyncRequest);
 
-    request->appStateSeqNumber = clientStatus_->getNotificationSequenceNumber();
+    request->appStateSeqNumber = context_.getStatus().getNotificationSequenceNumber();
 
     /*TODO: topic list hash is a future feature */
     request->topicListHash.set_null();
 
-    const DetailedTopicStates& detailedStatesContainer = clientStatus_->getTopicStates();
+    const DetailedTopicStates& detailedStatesContainer = context_.getStatus().getTopicStates();
     if (!detailedStatesContainer.empty()) {
         std::vector<TopicState> container(detailedStatesContainer.size());
         auto it = detailedStatesContainer.begin();
@@ -74,7 +72,7 @@ NotificationSyncRequestPtr NotificationTransport::createNotificationRequest()
 {
     NotificationSyncRequestPtr request(new NotificationSyncRequest);
 
-    request->appStateSeqNumber = clientStatus_->getNotificationSequenceNumber();
+    request->appStateSeqNumber = context_.getStatus().getNotificationSequenceNumber();
 
     /*TODO: topic list hash is a future feature */
     request->topicListHash.set_null();
@@ -86,7 +84,7 @@ NotificationSyncRequestPtr NotificationTransport::createNotificationRequest()
         request->acceptedUnicastNotifications.set_null();
     }
 
-    const DetailedTopicStates& detailedStatesContainer = clientStatus_->getTopicStates();
+    const DetailedTopicStates& detailedStatesContainer = context_.getStatus().getTopicStates();
     if (!detailedStatesContainer.empty()) {
         std::vector<TopicState> container(detailedStatesContainer.size());
         auto it = detailedStatesContainer.begin();
@@ -120,9 +118,11 @@ void NotificationTransport::onNotificationResponse(const NotificationSyncRespons
         acceptedUnicastNotificationIds_.clear();
     }
 
-    clientStatus_->setNotificationSequenceNumber(response.appStateSeqNumber);
+    context_.getStatus().setNotificationSequenceNumber(response.appStateSeqNumber);
 
-    DetailedTopicStates detailedStatesContainer = clientStatus_->getTopicStates();
+    DetailedTopicStates detailedStatesContainer = context_.getStatus().getTopicStates();
+
+    KAA_LOG_INFO(boost::format("====================================== %1%") % detailedStatesContainer.size());
 
     if (!response.availableTopics.is_null()) {
         const auto& topics = response.availableTopics.get_array();
@@ -190,7 +190,8 @@ void NotificationTransport::onNotificationResponse(const NotificationSyncRespons
         }
     }
 
-    clientStatus_->setTopicStates(detailedStatesContainer);
+    KAA_LOG_INFO(boost::format("---------------------------------------- %1%    %2%") % detailedStatesContainer.size() % &context_.getStatus());
+    context_.getStatus().setTopicStates(detailedStatesContainer);
     if (response.responseStatus != SyncResponseStatus::NO_DELTA) {
         syncAck();
     }

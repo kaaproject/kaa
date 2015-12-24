@@ -34,7 +34,7 @@
 
 namespace kaa {
 
-class EventFamilyFactory;;
+class EventFamilyFactory;
 class IKaaChannelManager;
 class IKaaDataMultiplexer;
 class IKaaDataDemultiplexer;
