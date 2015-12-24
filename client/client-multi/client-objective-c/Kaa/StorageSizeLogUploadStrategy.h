@@ -21,4 +21,6 @@
 
 @interface StorageSizeLogUploadStrategy : DefaultLogUploadStrategy
 
+- (instancetype)initWithVolumeThreshold:(int32_t)volumeThreshold;
+
 @end

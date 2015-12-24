@@ -36,23 +36,23 @@
     self = [self init];
     if (self) {
         [self setCountThreshold:countThreshold];
-        [self setUploadCheckPeriod:[TimeUtils convert:timeLimit from:timeUnit to:TIME_UNIT_SECONDS]];
+        [self setUploadCheckPeriod:(int32_t)[TimeUtils convert:timeLimit from:timeUnit to:TIME_UNIT_SECONDS]];
     }
     return self;
 }
 
 - (LogUploadStrategyDecision)checkUploadNeeded:(id<LogStorageStatus>)status {
     LogUploadStrategyDecision decision = LOG_UPLOAD_STRATEGY_DECISION_NOOP;
-    long currentTime = [[NSDate date] timeIntervalSince1970] * 1000;
-    long currentRecordCount = [status getRecordCount];
+    int64_t currentTime = [[NSDate date] timeIntervalSince1970] * 1000;
+    int64_t currentRecordCount = [status getRecordCount];
 
-    if (currentRecordCount == self.countThreshold) {
-        DDLogInfo(@"%@ Need to upload logs - current count: %li, threshold: %i",
+    if (currentRecordCount >= self.countThreshold) {
+        DDLogInfo(@"%@ Need to upload logs - current count: %lli, threshold: %i",
                   TAG, currentRecordCount, self.countThreshold);
         decision = LOG_UPLOAD_STRATEGY_DECISION_UPLOAD;
         self.lastUploadTime = currentTime;
     } else if (((currentTime - self.lastUploadTime) / 1000) >= self.uploadCheckPeriod) {
-        DDLogInfo(@"%@ Need to upload logs - current count: %li, lastUploadedTime: %lli, timeLimit: %lli",
+        DDLogInfo(@"%@ Need to upload logs - current count: %lli, lastUploadedTime: %lli, timeLimit: %lli",
                   TAG, currentRecordCount, self.lastUploadTime, self.timeLimit);
         decision = LOG_UPLOAD_STRATEGY_DECISION_UPLOAD;
         self.lastUploadTime = currentTime;

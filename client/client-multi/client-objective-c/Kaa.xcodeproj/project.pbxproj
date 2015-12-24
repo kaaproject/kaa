@@ -209,6 +209,11 @@
 		B803FD381B9EF52300187E61 /* TransportProtocolIdHolder.h in Headers */ = {isa = PBXBuildFile; fileRef = B803FD361B9EF52300187E61 /* TransportProtocolIdHolder.h */; };
 		B803FD391B9EF52300187E61 /* TransportProtocolIdHolder.m in Sources */ = {isa = PBXBuildFile; fileRef = B803FD371B9EF52300187E61 /* TransportProtocolIdHolder.m */; };
 		B803FD3B1B9EF65600187E61 /* RedirectionTransport.h in Headers */ = {isa = PBXBuildFile; fileRef = B803FD3A1B9EF65600187E61 /* RedirectionTransport.h */; };
+		B8074E8D1C456445000CBAE3 /* PeriodicLogUploadStrategyTest.m in Sources */ = {isa = PBXBuildFile; fileRef = B8074E881C456445000CBAE3 /* PeriodicLogUploadStrategyTest.m */; };
+		B8074E8E1C456445000CBAE3 /* RecordCountLogUploadStrategyTest.m in Sources */ = {isa = PBXBuildFile; fileRef = B8074E891C456445000CBAE3 /* RecordCountLogUploadStrategyTest.m */; };
+		B8074E8F1C456445000CBAE3 /* RecordCountWithTimeLimitLogUploadStrategyTest.m in Sources */ = {isa = PBXBuildFile; fileRef = B8074E8A1C456445000CBAE3 /* RecordCountWithTimeLimitLogUploadStrategyTest.m */; };
+		B8074E901C456445000CBAE3 /* StorageSizeLogUploadStrategyTest.m in Sources */ = {isa = PBXBuildFile; fileRef = B8074E8B1C456445000CBAE3 /* StorageSizeLogUploadStrategyTest.m */; };
+		B8074E911C456445000CBAE3 /* StorageSizeWithTimeLimitLogUploadStrategyTest.m in Sources */ = {isa = PBXBuildFile; fileRef = B8074E8C1C456445000CBAE3 /* StorageSizeWithTimeLimitLogUploadStrategyTest.m */; };
 		B81161131B4BBB3D00C4E0C6 /* ConfigurationStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = B81161121B4BBB3D00C4E0C6 /* ConfigurationStorage.h */; };
 		B81161161B4BC23A00C4E0C6 /* NotificationTopicListDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = B81161151B4BC23A00C4E0C6 /* NotificationTopicListDelegate.h */; };
 		B811611A1B4BC5B700C4E0C6 /* LogStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = B81161191B4BC5B700C4E0C6 /* LogStorage.h */; };
@@ -720,6 +725,11 @@
 		B803FD361B9EF52300187E61 /* TransportProtocolIdHolder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TransportProtocolIdHolder.h; sourceTree = "<group>"; };
 		B803FD371B9EF52300187E61 /* TransportProtocolIdHolder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TransportProtocolIdHolder.m; sourceTree = "<group>"; };
 		B803FD3A1B9EF65600187E61 /* RedirectionTransport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RedirectionTransport.h; sourceTree = "<group>"; };
+		B8074E881C456445000CBAE3 /* PeriodicLogUploadStrategyTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PeriodicLogUploadStrategyTest.m; sourceTree = "<group>"; };
+		B8074E891C456445000CBAE3 /* RecordCountLogUploadStrategyTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RecordCountLogUploadStrategyTest.m; sourceTree = "<group>"; };
+		B8074E8A1C456445000CBAE3 /* RecordCountWithTimeLimitLogUploadStrategyTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RecordCountWithTimeLimitLogUploadStrategyTest.m; sourceTree = "<group>"; };
+		B8074E8B1C456445000CBAE3 /* StorageSizeLogUploadStrategyTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StorageSizeLogUploadStrategyTest.m; sourceTree = "<group>"; };
+		B8074E8C1C456445000CBAE3 /* StorageSizeWithTimeLimitLogUploadStrategyTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StorageSizeWithTimeLimitLogUploadStrategyTest.m; sourceTree = "<group>"; };
 		B81161121B4BBB3D00C4E0C6 /* ConfigurationStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ConfigurationStorage.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		B81161151B4BC23A00C4E0C6 /* NotificationTopicListDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotificationTopicListDelegate.h; sourceTree = "<group>"; };
 		B81161191B4BC5B700C4E0C6 /* LogStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = LogStorage.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -1079,6 +1089,18 @@
 				39FF8B0F1BCD49DF00666D1F /* AbstractHttpClientTest.m */,
 			);
 			name = transport;
+			sourceTree = "<group>";
+		};
+		B8074E871C456437000CBAE3 /* strategies */ = {
+			isa = PBXGroup;
+			children = (
+				B8074E881C456445000CBAE3 /* PeriodicLogUploadStrategyTest.m */,
+				B8074E891C456445000CBAE3 /* RecordCountLogUploadStrategyTest.m */,
+				B8074E8A1C456445000CBAE3 /* RecordCountWithTimeLimitLogUploadStrategyTest.m */,
+				B8074E8B1C456445000CBAE3 /* StorageSizeLogUploadStrategyTest.m */,
+				B8074E8C1C456445000CBAE3 /* StorageSizeWithTimeLimitLogUploadStrategyTest.m */,
+			);
+			name = strategies;
 			sourceTree = "<group>";
 		};
 		B81161101B4BBB1400C4E0C6 /* configuration */ = {
@@ -1711,6 +1733,7 @@
 		E88FF13B1BCE78F5005076FC /* logging */ = {
 			isa = PBXGroup;
 			children = (
+				B8074E871C456437000CBAE3 /* strategies */,
 				E88FF13E1BCE7915005076FC /* memory */,
 				E88FF1411BCEDA7A005076FC /* MemLogStorageTest.m */,
 				392D3ED01BCFC88D007CC7DA /* DefaultLogUploadStrategyTest.m */,
@@ -2185,6 +2208,7 @@
 				B843B49E1BE67F950060519D /* TestsHelper.m in Sources */,
 				39AEB2871BBA79790045FB32 /* AvroBytesConverterTests.m in Sources */,
 				B8785E721BDE32BA00306A38 /* KAASocketTest.m in Sources */,
+				B8074E8E1C456445000CBAE3 /* RecordCountLogUploadStrategyTest.m in Sources */,
 				B824AB231BE0E42500436BEA /* MessageFactoryTest.m in Sources */,
 				B8EC91BC1BC3E77500D3723B /* KaaClientPropertiesStateTest.m in Sources */,
 				B8C10A151BC2BBBF001A2236 /* KaaClientPropertiesTest.m in Sources */,
@@ -2204,12 +2228,16 @@
 				39F626891BD9149B0039BDE9 /* DefaultProfileTransportTest.m in Sources */,
 				391F258B1BD4F31A0031ED84 /* DefaultNotificationManagerTest.m in Sources */,
 				39F6268B1BD91F350039BDE9 /* DefaultRedirectionTransportTest.m in Sources */,
+				B8074E8D1C456445000CBAE3 /* PeriodicLogUploadStrategyTest.m in Sources */,
 				39AEB2881BBA79790045FB32 /* AvroUtilsTests.m in Sources */,
+				B8074E901C456445000CBAE3 /* StorageSizeLogUploadStrategyTest.m in Sources */,
+				B8074E8F1C456445000CBAE3 /* RecordCountWithTimeLimitLogUploadStrategyTest.m in Sources */,
 				3933313B1BD7DFF6003BCC45 /* DefaultOperationDataProcessorTest.m in Sources */,
 				B8C10A1C1BC2DE14001A2236 /* SyncTaskTest.m in Sources */,
 				E8C9EC621BD3AB3F00462794 /* DefaultEndpointRegistrationManagerTest.m in Sources */,
 				393331371BD7B6BC003BCC45 /* DefaultMetaDataTransportTest.m in Sources */,
 				3933312B1BD61F36003BCC45 /* DefaultBootstrapChannelTest.m in Sources */,
+				B8074E911C456445000CBAE3 /* StorageSizeWithTimeLimitLogUploadStrategyTest.m in Sources */,
 				398CDBEB1BE0FAEE00D31E34 /* DefaultOperationTcpChannelTest.m in Sources */,
 				3933312D1BD652D7003BCC45 /* DefaultBootstrapDataProcessorTest.m in Sources */,
 			);

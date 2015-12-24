@@ -21,8 +21,8 @@
 
 @interface PeriodicLogUploadStrategy : DefaultLogUploadStrategy
 
-@property (nonatomic) long lastUploadTime;
+@property (nonatomic) int64_t lastUploadTime;
 
-- (instancetype) initWithTimeLimit:(long)timeLimit andTimeunit:(TimeUnit) timeUnit;
+- (instancetype) initWithTimeLimit:(int64_t)timeLimit andTimeunit:(TimeUnit) timeUnit;
 
 @end

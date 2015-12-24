@@ -33,22 +33,22 @@
     return self;
 }
 
-- (instancetype) initWithCountThreshold:(int32_t)volumeThreshold TimeLimit:(int64_t)timeLimit andTimeUnit:(TimeUnit)timeUnit {
+- (instancetype) initWithThresholdVolume:(int32_t)volumeThreshold TimeLimit:(int64_t)timeLimit andTimeUnit:(TimeUnit)timeUnit {
     self = [self init];
     if (self) {
         [self setVolumeThreshold:volumeThreshold];
-        [self setUploadCheckPeriod:[TimeUtils convert:timeLimit from:timeUnit to:TIME_UNIT_SECONDS]];
+        [self setUploadCheckPeriod:(int32_t)[TimeUtils convert:timeLimit from:timeUnit to:TIME_UNIT_SECONDS]];
     }
     return self;
 }
 
 - (LogUploadStrategyDecision) checkUploadNeeded:(id<LogStorageStatus>)status {
     LogUploadStrategyDecision decision = LOG_UPLOAD_STRATEGY_DECISION_NOOP;
-    long currentTime = [[NSDate date] timeIntervalSince1970] * 1000;
-    long currentConsumedVolume = [status getConsumedVolume];
+    int64_t currentTime = [[NSDate date] timeIntervalSince1970] * 1000;
+    int64_t currentConsumedVolume = [status getConsumedVolume];
     
     if (currentConsumedVolume >= self.volumeThreshold) {
-        DDLogInfo(@"%@ Need to upload logs - current size: %li, threshold: %i",
+        DDLogInfo(@"%@ Need to upload logs - current size: %lli, threshold: %i",
                   TAG, currentConsumedVolume, self.volumeThreshold);
         decision = LOG_UPLOAD_STRATEGY_DECISION_UPLOAD;
         self.lastUploadTime = currentTime;

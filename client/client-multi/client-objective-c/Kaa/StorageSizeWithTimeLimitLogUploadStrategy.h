@@ -23,4 +23,6 @@
 
 @property (nonatomic) int64_t lastUploadTime;
 
+- (instancetype) initWithThresholdVolume:(int32_t)volumeThreshold TimeLimit:(int64_t)timeLimit andTimeUnit:(TimeUnit)timeUnit;
+
 @end

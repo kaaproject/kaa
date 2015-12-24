@@ -34,11 +34,11 @@
 
 - (LogUploadStrategyDecision)checkUploadNeeded:(id<LogStorageStatus>)status {
     LogUploadStrategyDecision decision = LOG_UPLOAD_STRATEGY_DECISION_NOOP;
-    long currentRecordCount = [status getRecordCount];
+    int64_t currentRecordCount = [status getRecordCount];
     
-    if (currentRecordCount == self.countThreshold) {
-        DDLogInfo(@"%@ Need to upload logs - current count: %li, threshold: %li",
-                  TAG, currentRecordCount, (long)self.countThreshold);
+    if (currentRecordCount >= self.countThreshold) {
+        DDLogInfo(@"%@ Need to upload logs - current count: %lli, threshold: %i",
+                  TAG, currentRecordCount, self.countThreshold);
         decision = LOG_UPLOAD_STRATEGY_DECISION_UPLOAD;
     }
     return decision;
