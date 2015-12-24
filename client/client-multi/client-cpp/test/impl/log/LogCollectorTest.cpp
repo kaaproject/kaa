@@ -429,7 +429,7 @@ BOOST_AUTO_TEST_CASE(RetryUploadTest)
     BOOST_CHECK_EQUAL(transport.onSync_, 1);
 }
 
-BOOST_AUTO_TEST_CASE(MaxLogUploadLimit)
+BOOST_AUTO_TEST_CASE(MaxLogUploadLimitWithSyncAll)
 {
     KaaClientProperties properties;
     MockChannelManager channelManager;
@@ -491,10 +491,67 @@ BOOST_AUTO_TEST_CASE(MaxLogUploadLimit)
                     LogDeliveryStatus status;
                     status.requestId = requestId;
                     status.result = SyncResponseResultType::SUCCESS;
+                    statuses.push_back(status);
                 }
 
                 response.deliveryStatuses.set_array(statuses);
                 logCollector.onLogUploadResponse(response);
+            };
+
+    testMaxParallelUpload(0);
+
+    testMaxParallelUpload(3);
+
+    testMaxParallelUpload(5);
+}
+
+BOOST_AUTO_TEST_CASE(MaxLogUploadLimitWithSyncLogging)
+{
+    KaaClientProperties properties;
+    MockChannelManager channelManager;
+    SimpleExecutorContext executor;
+    executor.init();
+    LogCollector logCollector(&channelManager, executor, properties);
+    CustomLoggingTransport transport(channelManager, logCollector);
+
+    logCollector.setTransport(&transport);
+
+    ILogStorage::RecordBlock block{ createSerializedLogRecord(),
+                                    createSerializedLogRecord(),
+                                    createSerializedLogRecord(),
+                                    createSerializedLogRecord()
+                                  };
+
+    ILogStorage::RecordPack recordPack(1, block);
+
+    std::shared_ptr<MockLogStorage> logStorage(new MockLogStorage);
+    logStorage->recordPack_ = recordPack;
+
+    std::shared_ptr<MockLogUploadStrategy> uploadStrategy(new MockLogUploadStrategy);
+    uploadStrategy->batchSize_ = 100500;
+    uploadStrategy->timeout_ = 100500;
+    uploadStrategy->logUploadCheckPeriod_ = 100500;
+    uploadStrategy->timeoutCheckPeriod_ = 100500;
+    uploadStrategy->recordsBatchCount_ = 100500;
+    uploadStrategy->decision_ = LogUploadStrategyDecision::UPLOAD;
+
+    logCollector.setStorage(logStorage);
+    logCollector.setUploadStrategy(uploadStrategy);
+
+    auto testMaxParallelUpload =
+        [&] (int maxParallelUpload)
+            {
+                transport.onSync_ = 0;
+                uploadStrategy->maxParallelUploads_ = maxParallelUpload;
+
+                std::list<std::int32_t> requestIds;
+                for (std::int32_t i = 0; i < maxParallelUpload; ++i) {
+                    logStorage->recordPack_.first = i;
+                    logCollector.addLogRecord(createLogRecord());
+                }
+
+                testSleep(1);
+                BOOST_CHECK_EQUAL(transport.onSync_, maxParallelUpload);
             };
 
     testMaxParallelUpload(0);

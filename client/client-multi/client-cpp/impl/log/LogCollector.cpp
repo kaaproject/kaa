@@ -122,8 +122,10 @@ void LogCollector::processLogUploadDecision(LogUploadStrategyDecision decision)
 {
     switch (decision) {
     case LogUploadStrategyDecision::UPLOAD: {
-        KAA_LOG_DEBUG("Going to upload logs");
-        doSync();
+        if (isUploadAllowed()) {
+            KAA_LOG_DEBUG("Going to upload logs");
+            doSync();
+        }
         break;
     }
     case LogUploadStrategyDecision::NOOP:
