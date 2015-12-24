@@ -35,14 +35,9 @@ void test_create_context()
     kaa_error_t err_code = kaa_context_create(&context, logger);
     ASSERT_EQUAL(err_code, KAA_ERR_NONE);
     ASSERT_NOT_NULL(context);
-    ASSERT_NOT_NULL(context->bootstrap_manager);
+    ASSERT_NOT_NULL(context->kaa_plugins);
     ASSERT_NOT_NULL(context->channel_manager);
-#ifndef KAA_DISABLE_FEATURE_EVENTS
-    ASSERT_NOT_NULL(context->event_manager);
-#endif
-    ASSERT_NOT_NULL(context->profile_manager);
     ASSERT_NOT_NULL(context->status);
-    ASSERT_NOT_NULL(context->user_manager);
 
     kaa_context_destroy(context);
 }

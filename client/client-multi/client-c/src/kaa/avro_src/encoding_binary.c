@@ -18,6 +18,7 @@
 #include "encoding.h"
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <limits.h>
 #include <errno.h>
 #include <string.h>

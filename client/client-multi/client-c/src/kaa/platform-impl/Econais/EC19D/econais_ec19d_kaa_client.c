@@ -43,6 +43,7 @@ typedef long long int64_t;
 #include "econais_ec19d_file_utils.h"
 
 #include "../../../kaa_context.h"
+#include "../../../plugins/kaa_plugin.h"
 
 #define KAA_CLIENT_T
 
@@ -78,7 +79,6 @@ struct kaa_client_t {
 
 //Forward declaration of internal functions
 kaa_error_t kaa_init_security_stuff();
-kaa_error_t kaa_log_collector_init(kaa_client_t *kaa_client);
 
 /* forward declarations */
 
@@ -107,19 +107,19 @@ static size_t kaa_public_key_length;
 static char *kaa_public_key;
 static kaa_digest kaa_public_key_hash;
 
-static kaa_service_t BOOTSTRAP_SERVICE[] = { KAA_SERVICE_BOOTSTRAP };
-static const int BOOTSTRAP_SERVICE_COUNT = sizeof(BOOTSTRAP_SERVICE) / sizeof(kaa_service_t);
+static uint16_t BOOTSTRAP_PLUGIN[] = { KAA_PLUGIN_BOOTSTRAP };
+static const int BOOTSTRAP_PLUGIN_COUNT = sizeof(BOOTSTRAP_PLUGIN) / sizeof(uint16_t);
 
 /*
  * Define services which should be used.
  * Don't define unused services, it may cause an error.
  */
-static kaa_service_t OPERATIONS_SERVICES[] = { KAA_SERVICE_PROFILE
-                                             , KAA_SERVICE_CONFIGURATION
-                                             , KAA_SERVICE_USER
-                                             , KAA_SERVICE_EVENT
-                                             , KAA_SERVICE_LOGGING};
-static const int OPERATIONS_SERVICES_COUNT = sizeof(OPERATIONS_SERVICES) / sizeof(kaa_service_t);
+static uint16_t OPERATIONS_PLUGINS[] = {  KAA_PLUGIN_PROFILE
+                                        , KAA_PLUGIN_CONFIGURATION
+                                        , KAA_PLUGIN_USER
+                                        , KAA_PLUGIN_EVENT
+                                        , KAA_PLUGIN_LOGGING };
+static const int OPERATIONS_PLUGIN_COUNT = sizeof(OPERATIONS_PLUGINS) / sizeof(uint16_t);
 
 void thread_run_fn(uintptr_t arg);
 
@@ -153,7 +153,9 @@ kaa_error_t kaa_client_create(kaa_client_t **kaa_client, kaa_client_props_t *pro
     KAA_LOG_INFO(self->kaa_context->logger, KAA_ERR_NONE, "Kaa framework initialized.");
 
     print_mem_stat(self);
-    error_code = kaa_log_collector_init(self);
+    kaa_plugin_t *plugin;
+    kaa_plugin_find_by_type(self->kaa_context, KAA_PLUGIN_LOGGING, &plugin);
+    error_code = plugin->last_error;
     if (error_code) {
         sndc_printf("Failed to init Kaa log collector %d\n", error_code);
         sndc_thrd_delay(TRACE_DELAY * SNDC_MILLISECOND);
@@ -260,11 +262,20 @@ kaa_error_t kaa_client_init_operations_channel(kaa_client_t *kaa_client)
     KAA_RETURN_IF_NIL(kaa_client, KAA_ERR_BADPARAM);
     kaa_error_t error_code = KAA_ERR_NONE;
     KAA_LOG_TRACE(kaa_client->kaa_context->logger, KAA_ERR_NONE, "Start operations channel initialization");
-    error_code = kaa_tcp_channel_create(&kaa_client->operations_channel
-                                      , kaa_client->kaa_context->logger
-                                      , OPERATIONS_SERVICES
-                                      , OPERATIONS_SERVICES_COUNT);
+
+    int *supported_plugins = NULL;
+    int  supported_plugins_size = 0;
+
+    error_code = kaa_get_operation_authorized_array(&supported_plugins, &supported_plugins_size);
+
+    if(!error_code)
+        error_code = kaa_tcp_channel_create(&kaa_client->channel
+                                          , kaa_client->kaa_context->logger
+                                          , supported_plugins
+                                          , supported_plugins_size);
+
     if (error_code) {
+        kaa_free_supported_plugins_array(supported_plugins);
         KAA_LOG_ERROR(kaa_client->kaa_context->logger, error_code, "Operations channel initialization failed");
         return error_code;
     }
@@ -329,7 +340,7 @@ kaa_error_t kaa_client_deinit_bootstrap_channel(kaa_client_t *kaa_client)
     kaa_client->bootstrap_channel.context = NULL;
     kaa_client->bootstrap_channel.destroy = NULL;
     kaa_client->bootstrap_channel.get_protocol_id = NULL;
-    kaa_client->bootstrap_channel.get_supported_services = NULL;
+    kaa_client->bootstrap_channel.get_supported_plugins = NULL;
     kaa_client->bootstrap_channel.init = NULL;
     kaa_client->bootstrap_channel.set_access_point = NULL;
     kaa_client->bootstrap_channel.sync_handler = NULL;
@@ -356,10 +367,12 @@ kaa_error_t kaa_client_start(kaa_client_t *kaa_client
         return error_code;
     }
 
-    error_code = kaa_tcp_channel_create(&kaa_client->bootstrap_channel
+    uint16_t *tmp_supported_plugins = (uint16_t*)KAA_CALLOC(BOOTSTRAP_PLUGIN_COUNT, sizeof(uint16_t));
+    memmove(tmp_supported_plugins, BOOTSTRAP_PLUGIN, BOOTSTRAP_PLUGIN_COUNT * sizeof(uint16_t));
+    error_code = kaa_tcp_channel_create(&kaa_client->channel
                                       , kaa_client->kaa_context->logger
-                                      , BOOTSTRAP_SERVICE
-                                      , BOOTSTRAP_SERVICE_COUNT);
+                                      , tmp_supported_plugins
+                                      , BOOTSTRAP_PLUGIN_COUNT);
     if (error_code) {
         KAA_LOG_ERROR(kaa_client->kaa_context->logger, error_code, "Error during Kaa bootstrap channel creation");
         return error_code;
@@ -698,115 +711,6 @@ kaa_error_t kaa_init_security_stuff()
     sndc_printf("SHA calculated\n");
     return KAA_ERR_NONE;
 }
-
-/*
- * Initializes Kaa log collector.
- */
-kaa_error_t kaa_log_collector_init(kaa_client_t *kaa_client)
-{
-    KAA_RETURN_IF_NIL(kaa_client, KAA_ERR_BADPARAM)
-
-        kaa_error_t error_code = ext_unlimited_log_storage_create(
-                &kaa_client->log_storage_context,
-                kaa_client->kaa_context->logger);
-        if (error_code) {
-            KAA_LOG_ERROR(kaa_client->kaa_context->logger,
-                    error_code,
-                    "Failed to create log storage");
-            return error_code;
-        }
-
-        error_code = ext_log_upload_strategy_create(kaa_client->kaa_context
-                                                  ,&kaa_client->log_upload_strategy_context
-                                                  , KAA_LOG_UPLOAD_VOLUME_STRATEGY);
-
-        if (error_code) {
-            KAA_LOG_ERROR(kaa_client->kaa_context->logger,
-                    error_code,
-                    "Failed to create log upload strategy");
-            return error_code;
-        }
-
-        error_code = ext_log_upload_strategy_set_threshold_count(kaa_client->log_upload_strategy_context
-                                                                         , KAA_DEMO_UPLOAD_COUNT_THRESHOLD);
-        if (error_code) {
-            KAA_LOG_ERROR(kaa_client->kaa_context->logger,
-                    error_code,
-                    "Failed to create log upload strategy by volume set threshold count to %d",
-                    KAA_DEMO_UPLOAD_COUNT_THRESHOLD);
-            return error_code;
-        }
-
-        error_code = kaa_logging_init(kaa_client->kaa_context->log_collector
-                                    , kaa_client->log_storage_context
-                                    , kaa_client->log_upload_strategy_context);
-
-        if (error_code) {
-            KAA_LOG_ERROR(kaa_client->kaa_context->logger,
-                    error_code,
-                    "Failed to logging init");
-            return error_code;
-        }
-        KAA_LOG_INFO(kaa_client->kaa_context->logger,
-                KAA_ERR_NONE,
-                "Log collector init complete");
-        return error_code;
-
-}
-
-///*
-// * Example code for logging
-// */
-//kaa_error_t kaa_client_log_record(kaa_client_t *kaa_client, const char *record)
-//{
-//    if (!kaa_client || !record) {
-//        return KAA_ERR_BADPARAM;
-//    }
-//
-//    kaa_logging_record_t * kaa_record = kaa_logging_record_create();
-//    if (!kaa_record) {
-//        KAA_LOG_ERROR(kaa_client->kaa_context->logger,
-//                KAA_ERR_NOT_INITIALIZED,
-//                "Failed to allocate log record");
-//        return KAA_ERR_NOT_INITIALIZED;
-//    }
-//
-//    kaa_record->body = kaa_string_move_create(record, NULL);
-//
-//    //Wait until thread sleep in select()
-//    sndc_sem_wait(&kaa_client->logging_semophore);
-//
-//    kaa_error_t error_code = kaa_logging_add_record(kaa_client->kaa_context->log_collector, kaa_record);
-//    if (error_code) {
-//        KAA_LOG_ERROR(kaa_client->kaa_context->logger,
-//                error_code,
-//                "Failed to add log record");
-//    }
-//
-//    KAA_LOG_DEBUG(kaa_client->kaa_context->logger,
-//                    KAA_ERR_NONE,
-//                    "Kaa record %s logged", record);
-//
-//    kaa_record->destroy(kaa_record);
-//
-//    return KAA_ERR_NONE;
-//}
-
-/**
- * Example code for configuration update
- */
-//kaa_error_t kaa_client_configuration_update(kaa_client_t *kaa_client, const kaa_root_configuration_t *configuration)
-//{
-//    if (!kaa_client || !configuration) {
-//        return KAA_ERR_BADPARAM;
-//    }
-//    sndc_printf("New configuration update.... timeout %d\n", configuration->timeout);
-//
-//    KAA_LOG_DEBUG(kaa_client->kaa_context->logger,
-//                    KAA_ERR_NONE,
-//                    "New configuration update.... timeout %d", configuration->timeout);
-//    return KAA_ERR_NONE;
-//}
 
 void ext_write_log(FILE * sink, const char * buffer, size_t message_size)
 {

@@ -32,17 +32,13 @@ extern "C" {
 # include "kaa_error.h"
 # include "kaa_common.h"
 # include "gen/kaa_profile_definitions.h"
+#include "plugins/kaa_plugin.h"
 
 
 
 /**
  * Private profile manager data structure
  */
-# ifndef KAA_PROFILE_MANAGER_T
-# define KAA_PROFILE_MANAGER_T
-    typedef struct kaa_profile_manager_t    kaa_profile_manager_t;
-# endif
-
 
 
 /**
@@ -51,36 +47,36 @@ extern "C" {
  * After a new profile is set a sync request to Operations server will be sent.
  * The profile must be set prior to the endpoint registration.
  *
- * @param[in] self      Profile manager instance.
+ * @param[in] plugin    Kaa profile plugin.
  * @param[in] profile   Filled in user-defined profile data structure.
  *
  * @return      Error code.
  */
-kaa_error_t kaa_profile_manager_update_profile(kaa_profile_manager_t *self, kaa_profile_t *profile);
+kaa_error_t kaa_profile_plugin_update_profile(kaa_plugin_t *plugin, kaa_profile_t *profile);
 
 
 
 /**
  * @brief Updates user's access token.
  *
- * @param[in] self      Profile manager instance.
+ * @param[in] plugin    Kaa profile plugin.
  * @param[in] token     New user access token.
  *
  * @return      Error code.
  */
-kaa_error_t kaa_profile_manager_set_endpoint_access_token(kaa_profile_manager_t *self, const char *token);
+kaa_error_t kaa_profile_plugin_set_endpoint_access_token(kaa_plugin_t *plugin, const char *token);
 
 
 
 /**
  * @brief Retrieves the endpoint ID.
  *
- * @param[in]  self           Profile manager instance.
- * @param[out] result_id      The buffer of size @link KAA_ENDPOINT_ID_LENGTH @endlink where the result will be stored.
+ * @param[in]  plugin      Kaa profile plugin.
+ * @param[out] result_id   The buffer of size @link KAA_ENDPOINT_ID_LENGTH @endlink where the result will be stored.
  *
  * @return      Error code.
  */
-kaa_error_t kaa_profile_manager_get_endpoint_id(kaa_profile_manager_t *self, kaa_endpoint_id_p result_id);
+kaa_error_t kaa_profile_plugin_get_endpoint_id(kaa_plugin_t *plugin, kaa_endpoint_id_p result_id);
 
 
 

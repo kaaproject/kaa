@@ -31,17 +31,21 @@
 
 #include "platform-impl/common/ext_log_upload_strategies.h"
 
+#include "plugins/kaa_plugin.h"
+#include "utilities/kaa_mem.h"
 
 
 extern kaa_error_t kaa_channel_manager_create(kaa_channel_manager_t **channel_manager_p
                                             , kaa_context_t *context);
 extern void kaa_channel_manager_destroy(kaa_channel_manager_t *self);
 
-extern kaa_error_t kaa_bootstrap_manager_create(kaa_bootstrap_manager_t **bootstrap_manager_p
-                                              , kaa_channel_manager_t *channel_manager
-                                              , kaa_logger_t *logger);
+//extern kaa_error_t kaa_bootstrap_manager_create(kaa_bootstrap_manager_t **bootstrap_manager_p
+//                                              , kaa_channel_manager_t *channel_manager
+//                                              , kaa_logger_t *logger);
 
-extern void kaa_bootstrap_manager_destroy(kaa_bootstrap_manager_t *self);
+//extern void kaa_bootstrap_manager_destroy(kaa_bootstrap_manager_t *self);
+
+extern kaa_plugin_t *kaa_bootstrap_plugin_create(kaa_context_t *context);
 
 
 
@@ -57,7 +61,7 @@ typedef struct {
 static kaa_context_t kaa_context;
 static kaa_logger_t *logger = NULL;
 static kaa_channel_manager_t *channel_manager = NULL;
-static kaa_bootstrap_manager_t *bootstrap_manager = NULL;
+//static kaa_bootstrap_manager_t *bootstrap_manager = NULL;
 static void *strategy = NULL;
 
 
@@ -337,18 +341,18 @@ static kaa_error_t test_get_protocol_id(void *context, kaa_transport_protocol_id
 }
 
 static kaa_error_t test_get_supported_services(void *context
-                                             , kaa_service_t **supported_services
+                                             , uint16_t **supported_services
                                              , size_t *service_count)
 {
-    static kaa_service_t services[] = { KAA_SERVICE_LOGGING };
+    static uint16_t services[] = { KAA_PLUGIN_LOGGING };
     *supported_services = services;
-    *service_count = sizeof(services) / sizeof(kaa_service_t);
+    *service_count = sizeof(services) / sizeof(uint16_t);
 
     return KAA_ERR_NONE;
 }
 
 static kaa_error_t test_sync_handler(void *context
-                                   , const kaa_service_t services[]
+                                   , const uint16_t services[]
                                    , size_t service_count)
 {
     KAA_RETURN_IF_NIL3(context, services, service_count, KAA_ERR_BADPARAM);
@@ -370,11 +374,19 @@ int test_init()
     }
     kaa_context.channel_manager = channel_manager;
 
-    error = kaa_bootstrap_manager_create(&bootstrap_manager, channel_manager, logger);
-    if (error || !bootstrap_manager) {
-        return error;
+//    error = kaa_bootstrap_manager_create(&bootstrap_manager, channel_manager, logger);
+//    if (error || !bootstrap_manager) {
+//        return error;
+//    }
+//    kaa_context.bootstrap_manager = bootstrap_manager;
+
+    kaa_context.kaa_plugins = KAA_CALLOC(1, sizeof(kaa_plugin_t));
+    kaa_context.kaa_plugins[0] = (kaa_plugin_t*)kaa_bootstrap_plugin_create(&kaa_context);
+    kaa_context.kaa_plugin_count = 1;
+    if (!kaa_context.kaa_plugins[0]) {
+        return KAA_ERR_NOT_INITIALIZED;
     }
-    kaa_context.bootstrap_manager = bootstrap_manager;
+
 
     error = ext_log_upload_strategy_create(&kaa_context, &strategy, KAA_LOG_UPLOAD_VOLUME_STRATEGY);
     if(error)
@@ -385,7 +397,11 @@ int test_init()
 
 int test_deinit()
 {
-    kaa_bootstrap_manager_destroy(bootstrap_manager);
+    //kaa_bootstrap_manager_destroy(bootstrap_manager);
+    kaa_context.kaa_plugins[0]->deinit_fn(kaa_context.kaa_plugins[0]);
+    KAA_FREE(kaa_context.kaa_plugins[0]);
+    KAA_FREE(kaa_context.kaa_plugins);
+
     kaa_channel_manager_destroy(channel_manager);
     kaa_log_destroy(logger);
     ext_log_upload_strategy_destroy(strategy);

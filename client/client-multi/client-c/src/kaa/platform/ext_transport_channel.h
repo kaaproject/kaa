@@ -90,9 +90,9 @@ typedef kaa_error_t (*kaa_get_protocol_id_fn)(void *context
  *
  * @see kaa_service_t
  */
-typedef kaa_error_t (*kaa_get_supported_services_fn)(void *context
-                                                   , kaa_service_t **supported_services
-                                                   , size_t *service_count);
+typedef kaa_error_t (*kaa_get_supported_plugins_fn)(void *context
+                                                   , uint16_t **supported_plugins
+                                                   , size_t *plugin_count);
 
 
 
@@ -107,7 +107,7 @@ typedef kaa_error_t (*kaa_get_supported_services_fn)(void *context
  * @see kaa_service_t
  */
 typedef kaa_error_t (*kaa_sync_handler_fn)(void *context
-                                         , const kaa_service_t services[]
+                                         , const uint16_t plugins[]
                                          , size_t service_count);
 
 
@@ -135,7 +135,7 @@ typedef struct {
     kaa_init_channel_fn               init;
     kaa_set_access_point_fn           set_access_point;
     kaa_get_protocol_id_fn            get_protocol_id;
-    kaa_get_supported_services_fn     get_supported_services;
+    kaa_get_supported_plugins_fn     get_supported_plugins;
 } kaa_transport_channel_interface_t;
 
 

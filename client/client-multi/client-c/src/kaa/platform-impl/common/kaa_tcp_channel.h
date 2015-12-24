@@ -63,7 +63,7 @@ typedef kaa_error_t (*on_kaa_tcp_channel_event_fn)(void *context
  * @brief Creates a Kaa TCP channel instance.
  *
  * @param[in]   channel                    The pointer to the channel instance.
-t* @param[in]   logger                     The pointer to the Kaa logger instance.
+ * @param[in]   logger                     The pointer to the Kaa logger instance.
  * @param[in]   supported_services         A list of supported services for this channel.
  * @param[in]   supported_service_count    The number of services in the list.
  *
@@ -71,8 +71,11 @@ t* @param[in]   logger                     The pointer to the Kaa logger instanc
  */
 kaa_error_t kaa_tcp_channel_create(kaa_transport_channel_interface_t *self
                                  , kaa_logger_t *logger
-                                 , kaa_service_t *supported_services
-                                 , size_t supported_service_count);
+                                 , uint16_t *supported_plugins
+                                 , size_t supported_plugin_count);
+//kaa_error_t kaa_tcp_channel_create(kaa_transport_channel_interface_t *self
+//                                 , kaa_logger_t *logger
+//                                 , bool bootstrap_found);
 
 
 /**

@@ -16,6 +16,7 @@
 
 #include <stdint.h>
 #include <stddef.h>
+#include <stdio.h>
 #include "kaa_buffer.h"
 #include "kaa_mem.h"
 #include "../kaa_common.h"

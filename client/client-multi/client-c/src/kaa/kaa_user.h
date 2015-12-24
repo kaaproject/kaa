@@ -29,19 +29,10 @@
 #include "kaa_error.h"
 #include "kaa_defaults.h"
 #include "platform/ext_user_callback.h"
+#include "plugins/kaa_plugin.h"
 
 #ifdef __cplusplus
 extern "C" {
-#endif
-
-
-
-/**
- * @brief Kaa user manager structure.
- */
-#ifndef KAA_USER_MANAGER_T
-# define KAA_USER_MANAGER_T
-    typedef struct kaa_user_manager_t       kaa_user_manager_t;
 #endif
 
 
@@ -52,14 +43,14 @@ extern "C" {
  * Use this function to request attachment of the endpoint to a user entity using the specified external authentication
  * credentials. Only endpoints associated with the same user entity can exchange events.
  *
- * @param[in]   self                 The user manager instance.
+ * @param[in]   plugin               The Kaa user plugin.
  * @param[in]   user_external_id     Null-terminated string representing external user ID.
  * @param[in]   user_access_token    Null-terminated string representing external access token.
  *
  * @return      Error code.
  */
 #ifdef DEFAULT_USER_VERIFIER_TOKEN
-kaa_error_t kaa_user_manager_default_attach_to_user(kaa_user_manager_t *self
+kaa_error_t kaa_user_plugin_default_attach_to_user(kaa_context_t *context
                                                   , const char *user_external_id
                                                   , const char *access_token);
 #endif
@@ -72,14 +63,14 @@ kaa_error_t kaa_user_manager_default_attach_to_user(kaa_user_manager_t *self
  * Use this function to request attachment of the endpoint to a user entity using the specified external authentication
  * credentials. Only endpoints associated with the same user entity can exchange events.
  *
- * @param[in]   self                   The user manager instance.
+ * @param[in]   plugin                 The Kaa user plugin.
  * @param[in]   user_external_id       Null-terminated string representing external user ID.
  * @param[in]   user_access_token      Null-terminated string representing external access token.
  * @param[in]   user_verifier_token    Null-terminated string representing user verifier token.
  *
  * @return      Error code.
  */
-kaa_error_t kaa_user_manager_attach_to_user(kaa_user_manager_t *self
+kaa_error_t kaa_user_plugin_attach_to_user(kaa_plugin_t *plugin
                                           , const char *user_external_id
                                           , const char *access_token
                                           , const char *user_verifier_token);
@@ -89,43 +80,43 @@ kaa_error_t kaa_user_manager_attach_to_user(kaa_user_manager_t *self
 /**
  * @brief Checks if current endpoint is attached to user.
  *
- * @param[in]   self    The user manager instance.
+ * @param[in]   plugin The Kaa user plugin.
  * @return      TRUE if the endpoint is attached to user, FALSE otherwise.
  */
-bool kaa_user_manager_is_attached_to_user(kaa_user_manager_t *self);
+bool kaa_user_plugin_is_attached_to_user(kaa_plugin_t *plugin);
 
 
 /**
  * @brief Sets callback functions to receive notifications when the endpoint gets attached or detached to (from) user.
  *
- * @param[in]   self         The user manager instance.
+ * @param[in]   plugin       The Kaa user plugin.
  * @param[in]   listeners    A filled in @link kaa_attachment_status_listeners_t @endlink structure.
  *
  * @return      Error code.
  */
-kaa_error_t kaa_user_manager_set_attachment_listeners(kaa_user_manager_t *self
+kaa_error_t kaa_user_plugin_set_attachment_listeners(kaa_plugin_t *plugin
                                                     , const kaa_attachment_status_listeners_t *listeners);
 
 /**
  * @brief .
  *
- * @param[in]   self                     The user manager instance.
+ * @param[in]   plugin                   The Kaa user plugin.
  * @param[in]   endpoint_access_token    Null-terminated string representing endpoint access token.
  *
  * @return      Error code.
  */
-kaa_error_t kaa_user_manager_attach_endpoint(kaa_user_manager_t *self, const char *endpoint_access_token, kaa_endpoint_status_listener_t *listener);
+kaa_error_t kaa_user_plugin_attach_endpoint(kaa_plugin_t *plugin, const char *endpoint_access_token, kaa_endpoint_status_listener_t *listener);
 
 
 /**
  * @brief .
  *
- * @param[in]   self                 The user manager instance.
+ * @param[in]   plugin               The Kaa user plugin.
  * @param[in]   endpoint_hash_key    Unique endpoint id.
  *
  * @return      Error code.
  */
-kaa_error_t kaa_user_manager_detach_endpoint(kaa_user_manager_t *self, const kaa_endpoint_id_p endpoint_hash_key, kaa_endpoint_status_listener_t *listener);
+kaa_error_t kaa_user_plugin_detach_endpoint(kaa_plugin_t *plugin, const kaa_endpoint_id_p endpoint_hash_key, kaa_endpoint_status_listener_t *listener);
 
 #ifdef __cplusplus
 }      /* extern "C" */

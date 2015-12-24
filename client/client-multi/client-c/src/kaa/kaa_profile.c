@@ -33,18 +33,18 @@
 #include "kaa_platform_utils.h"
 
 
-
 #define KAA_PROFILE_RESYNC_OPTION 0x1
 
 extern kaa_error_t kaa_status_set_endpoint_access_token(kaa_status_t *self, const char *token);
 
 
 extern kaa_transport_channel_interface_t *kaa_channel_manager_get_transport_channel(kaa_channel_manager_t *self
-                                                                                  , kaa_service_t service_type);
+                                                                                  , uint16_t plugin_type);
+
+extern kaa_status_t *kaa_get_status(kaa_context_t *kaa_context);
 
 
-
-static kaa_service_t profile_sync_services[1] = { KAA_SERVICE_PROFILE };
+static uint16_t profile_sync_plugins[] = { KAA_PLUGIN_PROFILE };
 
 
 
@@ -64,7 +64,10 @@ struct kaa_profile_manager_t {
     kaa_profile_extension_data_t *extension_data;
 };
 
-
+typedef struct {
+    COMMON_PLUGIN_FIELDS
+    struct kaa_profile_manager_t *manager;
+} kaa_profile_plugin_t;
 
 /**
  * PUBLIC FUNCTIONS
@@ -101,10 +104,13 @@ kaa_error_t kaa_profile_manager_create(kaa_profile_manager_t **profile_manager_p
 
 
 
-bool kaa_profile_manager_is_profile_set(kaa_profile_manager_t *self)
+bool kaa_profile_manager_is_profile_set(kaa_context_t *context)
 {
+    kaa_profile_plugin_t *plugin;
+    if (kaa_plugin_find_by_type(context, KAA_PLUGIN_PROFILE, (kaa_plugin_t**)&plugin))
+        return false;
 #if KAA_PROFILE_SCHEMA_VERSION > 1
-    return self->profile_body.buffer != NULL && self->profile_body.size != 0;
+    return plugin->manager->profile_body.buffer != NULL && plugin->manager->profile_body.size != 0;
 #else
     return true;
 #endif
@@ -281,9 +287,9 @@ kaa_error_t kaa_profile_handle_server_sync(kaa_profile_manager_t *self
         self->need_resync = true;
         KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Going to resync profile...");
         kaa_transport_channel_interface_t *channel =
-                kaa_channel_manager_get_transport_channel(self->channel_manager, profile_sync_services[0]);
+                kaa_channel_manager_get_transport_channel(self->channel_manager, profile_sync_plugins[0]);
         if (channel)
-            channel->sync_handler(channel->context, profile_sync_services, 1);
+            channel->sync_handler(channel->context, profile_sync_plugins, 1);
     }
 
 
@@ -295,14 +301,19 @@ kaa_error_t kaa_profile_handle_server_sync(kaa_profile_manager_t *self
     return error_code;
 }
 
-kaa_error_t kaa_profile_manager_update_profile(kaa_profile_manager_t *self, kaa_profile_t *profile_body)
+kaa_error_t kaa_profile_plugin_update_profile(kaa_plugin_t *plugin, kaa_profile_t *profile_body)
 {
 #if KAA_PROFILE_SCHEMA_VERSION > 1
-    KAA_RETURN_IF_NIL2(self, profile_body, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL2(plugin, profile_body, KAA_ERR_BADPARAM);
+
+    kaa_profile_plugin_t *profile_plugin;
+    if (plugin->extension_type != KAA_PLUGIN_PROFILE)
+        return KAA_ERR_NOT_INITIALIZED;
+    profile_plugin = (kaa_profile_plugin_t*)plugin;
 
     size_t serialized_profile_size = profile_body->get_size(profile_body);
     if (!serialized_profile_size) {
-        KAA_LOG_ERROR(self->logger, KAA_ERR_BADDATA, "Failed to update profile: serialize profile size is null."
+        KAA_LOG_ERROR(profile_plugin->manager->logger, KAA_ERR_BADDATA, "Failed to update profile: serialize profile size is null."
                                                                                 "Maybe profile schema is empty")
         return KAA_ERR_BADDATA;
     }
@@ -321,46 +332,133 @@ kaa_error_t kaa_profile_manager_update_profile(kaa_profile_manager_t *self, kaa_
     kaa_digest new_hash;
     ext_calculate_sha_hash(serialized_profile, serialized_profile_size, new_hash);
 
-    if (!memcmp(new_hash, self->status->profile_hash, SHA_1_DIGEST_LENGTH)) {
-        self->need_resync = false;
+    if (!memcmp(new_hash, profile_plugin->manager->status->profile_hash, SHA_1_DIGEST_LENGTH)) {
+        profile_plugin->manager->need_resync = false;
         KAA_FREE(serialized_profile);
         return KAA_ERR_NONE;
     }
 
-    KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Endpoint profile is updated")
+    KAA_LOG_INFO(profile_plugin->manager->logger, KAA_ERR_NONE, "Endpoint profile is updated")
 
-    if (ext_copy_sha_hash(self->status->profile_hash, new_hash)) {
+    if (ext_copy_sha_hash(profile_plugin->manager->status->profile_hash, new_hash)) {
         KAA_FREE(serialized_profile);
         return KAA_ERR_BAD_STATE;
     }
 
-    if (self->profile_body.size > 0) {
-        KAA_FREE(self->profile_body.buffer);
-        self->profile_body.buffer = NULL;
+    if (profile_plugin->manager->profile_body.size > 0) {
+        KAA_FREE(profile_plugin->manager->profile_body.buffer);
+        profile_plugin->manager->profile_body.buffer = NULL;
     }
 
-    self->profile_body.buffer = (uint8_t*)serialized_profile;
-    self->profile_body.size = serialized_profile_size;
+    profile_plugin->manager->profile_body.buffer = (uint8_t*)serialized_profile;
+    profile_plugin->manager->profile_body.size = serialized_profile_size;
 
-    self->need_resync = true;
+    profile_plugin->manager->need_resync = true;
 
     kaa_transport_channel_interface_t *channel =
-            kaa_channel_manager_get_transport_channel(self->channel_manager, profile_sync_services[0]);
+            kaa_channel_manager_get_transport_channel(profile_plugin->manager->channel_manager, profile_sync_plugins[0]);
     if (channel)
-        channel->sync_handler(channel->context, profile_sync_services, 1);
+        channel->sync_handler(channel->context, profile_sync_plugins, 1);
 
 #endif
     return KAA_ERR_NONE;
 }
 
-kaa_error_t kaa_profile_manager_set_endpoint_access_token(kaa_profile_manager_t *self, const char *token)
+kaa_error_t kaa_profile_plugin_set_endpoint_access_token(kaa_plugin_t *plugin, const char *token)
 {
-    KAA_RETURN_IF_NIL2(self, token, KAA_ERR_BADPARAM);
-    return kaa_status_set_endpoint_access_token(self->status, token);
+    KAA_RETURN_IF_NIL2(plugin, token, KAA_ERR_BADPARAM);
+
+    kaa_profile_plugin_t *profile_plugin;
+    if (plugin->extension_type != KAA_PLUGIN_PROFILE)
+        return KAA_ERR_NOT_INITIALIZED;
+    profile_plugin = (kaa_profile_plugin_t*)plugin;
+
+    return kaa_status_set_endpoint_access_token(profile_plugin->manager->status, token);
 }
 
-kaa_error_t kaa_profile_manager_get_endpoint_id(kaa_profile_manager_t *self, kaa_endpoint_id_p result_id)
+kaa_error_t kaa_profile_plugin_get_endpoint_id(kaa_plugin_t *plugin, kaa_endpoint_id_p result_id)
 {
-    KAA_RETURN_IF_NIL2(self, result_id, KAA_ERR_BADPARAM);
-    return ext_copy_sha_hash((kaa_digest_p) result_id, self->status->endpoint_public_key_hash);
+    KAA_RETURN_IF_NIL2(plugin, result_id, KAA_ERR_BADPARAM);
+
+    kaa_profile_plugin_t *profile_plugin;
+    if (plugin->extension_type != KAA_PLUGIN_PROFILE)
+        return KAA_ERR_NOT_INITIALIZED;
+    profile_plugin = (kaa_profile_plugin_t*)plugin;
+
+    return ext_copy_sha_hash((kaa_digest_p) result_id, profile_plugin->manager->status->endpoint_public_key_hash);
+}
+
+kaa_error_t kaa_profile_plugin_request_get_size(kaa_plugin_t *self, size_t *expected_size)
+{
+    kaa_error_t err_code;
+    bool need_resync = false;
+    err_code = kaa_profile_need_profile_resync(((kaa_profile_plugin_t*)self)->manager, &need_resync);
+    if (err_code) {
+        KAA_LOG_ERROR(self->context->logger, err_code, "Failed to read 'need_resync' flag");
+    }
+
+    if (!err_code && need_resync) {
+        err_code = kaa_profile_request_get_size(((kaa_profile_plugin_t*)self)->manager
+                                                , expected_size);
+        KAA_LOG_TRACE(self->context->logger, KAA_ERR_NONE, "Calculated profile extension size %u", expected_size);
+    }
+    return err_code;
+}
+
+kaa_error_t kaa_profile_plugin_request_serialize(kaa_plugin_t *self, kaa_platform_message_writer_t *writer)
+{
+    kaa_error_t err_code;
+    bool need_resync = false;
+    err_code = kaa_profile_need_profile_resync(((kaa_profile_plugin_t*)self)->manager, &need_resync);
+    if (!err_code) {
+        if (need_resync) {
+            err_code = kaa_profile_request_serialize(((kaa_profile_plugin_t*)self)->manager, writer);
+            if (err_code)
+                KAA_LOG_ERROR(self->context->logger, err_code, "Failed to serialize the profile extension");
+        }
+        else
+            return KAA_ERR_NOTHING_TODO;
+    } else
+        KAA_LOG_ERROR(self->context->logger, err_code, "Failed to read profile's 'need_resync' flag");
+    return err_code;
+}
+
+kaa_error_t kaa_profile_plugin_request_handle_server_sync(kaa_plugin_t *self, kaa_platform_message_reader_t *reader,
+                                                         uint32_t request_id, uint16_t options, uint32_t length)
+{
+    return kaa_profile_handle_server_sync( ((kaa_profile_plugin_t*)self)->manager
+                                              , reader
+                                              , options
+                                              , length);
+}
+
+kaa_error_t kaa_profile_plugin_init(kaa_plugin_t *self)
+{
+    return kaa_profile_manager_create(&((kaa_profile_plugin_t*)self)->manager,
+                                   kaa_get_status(self->context), self->context->channel_manager, self->context->logger);
+}
+
+kaa_error_t kaa_profile_plugin_deinit(kaa_plugin_t *self)
+{
+    kaa_profile_plugin_t *plugin = (kaa_profile_plugin_t*)self;
+    kaa_profile_manager_destroy(plugin->manager);
+    plugin->manager = NULL;
+    return KAA_ERR_NONE;
+}
+
+kaa_plugin_t *kaa_profile_plugin_create(kaa_context_t *context)
+{
+    kaa_profile_plugin_t *plugin = KAA_CALLOC(1, sizeof(kaa_profile_manager_t));
+
+    plugin->init_fn = kaa_profile_plugin_init;
+    plugin->deinit_fn = kaa_profile_plugin_deinit;
+    plugin->request_get_size_fn = kaa_profile_plugin_request_get_size;
+    plugin->request_serialize_fn = kaa_profile_plugin_request_serialize;
+    plugin->request_handle_server_sync_fn = kaa_profile_plugin_request_handle_server_sync;
+
+    plugin->plugin_name = "profile";
+    plugin->extension_type = KAA_PLUGIN_PROFILE;
+    plugin->context = context;
+
+    return (kaa_plugin_t*)plugin;
 }
