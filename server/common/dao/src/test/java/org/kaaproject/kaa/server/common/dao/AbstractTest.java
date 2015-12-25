@@ -224,7 +224,7 @@ public class AbstractTest {
     protected UserVerifierDao<UserVerifier> verifierDao;
     @Autowired
     protected SdkProfileDao<SdkProfile> sdkProfileDao;
-    @Autowired
+    @Autowired(required = false)
     protected EndpointUserConfigurationDao<EndpointUserConfiguration> endpointUserConfigurationDao;
     @Autowired
     protected PluginService pluginService;
