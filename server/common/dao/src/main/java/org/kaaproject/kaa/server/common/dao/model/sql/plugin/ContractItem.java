@@ -23,6 +23,7 @@ import org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -50,11 +51,11 @@ public class ContractItem extends GenericModel<ContractItemDto> implements Seria
     @Column(name = CONTRACT_ITEM_NAME, nullable = false)
     private String name;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = CONTRACT_ITEM_IN_MESSAGE, foreignKey = @ForeignKey(name = CONTRACT_ITEM_IN_MESSAGE_FK))
     private ContractMessage inMessage;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = CONTRACT_ITEM_OUT_MESSAGE, foreignKey = @ForeignKey(name = CONTRACT_ITEM_OUT_MESSAGE_FK))
     private ContractMessage outMessage;
 

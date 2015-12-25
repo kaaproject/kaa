@@ -506,6 +506,7 @@ public class DaoConstants {
     public static final String PLUGIN_INSTANCE_PLUGIN_ID_NAME_CONSTRAINT_NAME = "plugin_instance_plugin_id_name_constraint";
 
     public static final String PLUGIN_INSTANCE_PLUGIN_FK = "fk_plugin_instance_plugin";
+    public static final String PLUGIN_INSTANCE_PLUGIN_CONTRACT_INSTANCE_FK = "fk_plugin_instance_plugin_contract_instance";
 
     /**
      * Plugin contract instance constants
@@ -514,7 +515,6 @@ public class DaoConstants {
     public static final String PLUGIN_CONTRACT_INSTANCE_PLUGIN_INSTANCE_ID = "plugin_instance_id";
     public static final String PLUGIN_CONTRACT_INSTANCE_PLUGIN_CONTRACT_ID = PLUGIN_CONTRACT_ID;
 
-    public static final String PLUGIN_CONTRACT_INSTANCE_PLUGIN_INSTANCE_FK = "fk_plugin_contract_instance_plugin_instance";
     public static final String PLUGIN_CONTRACT_INSTANCE_PLUGIN_CONTRACT_FK = "fk_plugin_contract_instance_plugin_contract";
 
     /**

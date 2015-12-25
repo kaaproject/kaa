@@ -94,11 +94,12 @@ public abstract class DaoUtil {
     }
 
     /**
-     * This method  convert list of model objects to dto objects.
+     * This method converts set of model objects to dto objects.
+     * Each element of input set has to have hashCode() and equals() redefined
      *
      * @param <T>       Type of model object
-     * @param toDtoSet List of model objects.
-     * @return List of converted objects.
+     * @param toDtoSet  Set of model objects.
+     * @return Set of converted objects.
      */
     public static <T> Set<T> convertDtoSet(Collection<? extends ToDto<T>> toDtoSet) {
         Set<T> set = Collections.emptySet();

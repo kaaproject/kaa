@@ -23,6 +23,7 @@ import org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
@@ -45,7 +46,7 @@ public class PluginContractItem extends GenericModel<PluginContractItemDto> impl
     @Column(name = PLUGIN_CONTRACT_ITEM_CONF_SCHEMA)
     private String configSchema;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = PLUGIN_CONTRACT_ITEM_CONTRACT_ITEM_ID, nullable = false,
             foreignKey = @ForeignKey(name = PLUGIN_CONTRACT_ITEM_CONTRACT_ITEM_FK))
     private ContractItem contractItem;

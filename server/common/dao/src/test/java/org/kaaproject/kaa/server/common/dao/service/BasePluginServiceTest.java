@@ -26,6 +26,8 @@ import org.kaaproject.kaa.server.common.dao.impl.sql.plugin.PluginInstanceTestFa
 import org.kaaproject.kaa.server.common.dao.impl.sql.plugin.PluginTestFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 
+import java.util.Set;
+
 public abstract class BasePluginServiceTest extends AbstractTest {
 
     @Test
@@ -33,7 +35,7 @@ public abstract class BasePluginServiceTest extends AbstractTest {
         PluginDto pluginDto = PluginTestFactory.create();
         PluginDto registeredPlugin = pluginService.registerPlugin(pluginDto);
 
-        // pretend to register yet another plugin
+        // pretend to register another plugin
         registeredPlugin.setId(null);
         registeredPlugin.setName("anotherName");
         registeredPlugin.setClassName("anotherClassName");
@@ -88,6 +90,20 @@ public abstract class BasePluginServiceTest extends AbstractTest {
     }
 
     @Test
+    public void findInstancesByPluginIdTest() {
+        PluginDto pluginDto = PluginTestFactory.create();
+        pluginDto = pluginService.registerPlugin(pluginDto);
+        PluginInstanceDto pluginInstanceDto1 = PluginInstanceTestFactory.create(pluginDto, "instanceName1");
+        pluginInstanceDto1 = pluginService.saveInstance(pluginInstanceDto1);
+        PluginInstanceDto pluginInstanceDto2 = PluginInstanceTestFactory.create(pluginDto, "instanceName2");
+        pluginInstanceDto2 = pluginService.saveInstance(pluginInstanceDto2);
+        Set<PluginInstanceDto> pluginInstances = pluginService.findInstancesByPluginId(pluginDto.getId());
+        Assert.assertEquals(2, pluginInstances.size());
+        Assert.assertTrue(pluginInstances.contains(pluginInstanceDto1));
+        Assert.assertTrue(pluginInstances.contains(pluginInstanceDto2));
+    }
+
+    @Test
     public void removeInstanceById() {
         PluginDto pluginDto = PluginTestFactory.create();
         pluginDto = pluginService.registerPlugin(pluginDto);
@@ -97,4 +113,18 @@ public abstract class BasePluginServiceTest extends AbstractTest {
         Assert.assertNull(foundInstance);
     }
 
+    @Test
+    public void unregisterPluginByIdTest() {
+        PluginDto pluginDto = PluginTestFactory.create();
+        pluginDto = pluginService.registerPlugin(pluginDto);
+        PluginInstanceDto pluginInstanceDto1 = PluginInstanceTestFactory.create(pluginDto, "instanceName1");
+        pluginInstanceDto1 = pluginService.saveInstance(pluginInstanceDto1);
+        PluginInstanceDto pluginInstanceDto2 = PluginInstanceTestFactory.create(pluginDto, "instanceName2");
+        pluginInstanceDto2 = pluginService.saveInstance(pluginInstanceDto2);
+        pluginService.unregisterPluginById(pluginDto.getId());
+        Set<PluginInstanceDto> pluginInstances = pluginService.findInstancesByPluginId(pluginDto.getId());
+        Assert.assertTrue(pluginInstances.isEmpty());
+        Assert.assertNull(pluginService.findInstanceById(pluginInstanceDto1.getId()));
+        Assert.assertNull(pluginService.findInstanceById(pluginInstanceDto2.getId()));
+    }
 }
