@@ -126,4 +126,17 @@ public class BasePluginDef implements PluginDef {
         }
 
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("BasePluginDef{");
+        sb.append("name='").append(name).append('\'');
+        sb.append(", version=").append(version);
+        sb.append(", type='").append(type).append('\'');
+        sb.append(", scope=").append(scope);
+        sb.append(", confSchema='").append(confSchema).append('\'');
+        sb.append(", contracts=").append(contracts);
+        sb.append('}');
+        return sb.toString();
+    }
 }
