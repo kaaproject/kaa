@@ -67,13 +67,13 @@ static kaa_logger_t *logger = NULL;
 static kaa_status_t *status = NULL;
 static kaa_channel_manager_t *channel_manager = NULL;
 
-static kaa_service_t OPERATIONS_SERVICES[] = { KAA_SERVICE_PROFILE
-                                             , KAA_SERVICE_USER
-                                             , KAA_SERVICE_CONFIGURATION
-                                             , KAA_SERVICE_EVENT
-                                             , KAA_SERVICE_LOGGING
-                                             , KAA_SERVICE_NOTIFICATION
-                                             };
+static const kaa_service_t OPERATIONS_SERVICES[] = { KAA_SERVICE_PROFILE
+                                                   , KAA_SERVICE_USER
+                                                   , KAA_SERVICE_CONFIGURATION
+                                                   , KAA_SERVICE_EVENT
+                                                   , KAA_SERVICE_LOGGING
+                                                   , KAA_SERVICE_NOTIFICATION
+                                                    };
 static const int OPERATIONS_SERVICES_COUNT = sizeof(OPERATIONS_SERVICES) / sizeof(kaa_service_t);
 
 #define TEST_LOG_BUFFER  "log_record"
@@ -130,7 +130,7 @@ static kaa_error_t test_kaa_get_supported_services(void *context
                                                     , kaa_service_t **supported_services
                                                     , size_t *service_count)
 {
-    *supported_services = OPERATIONS_SERVICES;
+    *supported_services = (kaa_service_t *)OPERATIONS_SERVICES;
     *service_count = OPERATIONS_SERVICES_COUNT;
     return KAA_ERR_NONE;
 }
