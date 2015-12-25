@@ -27,7 +27,7 @@
 namespace kaa {
 
 static LoggerPtr getDefaultLogger() {
-    return LoggerPtr(new DefaultLogger());
+    return LoggerPtr(new DefaultLogger("global_client", false));
 }
 
 LoggerPtr LoggerFactory::logger_ = getDefaultLogger();

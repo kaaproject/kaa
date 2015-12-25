@@ -27,7 +27,6 @@
 #include "kaa/gen/EndpointGen.hpp"
 #include "kaa/common/EndpointObjectHash.hpp"
 #include "kaa/IKaaClientStateStorage.hpp"
-#include "kaa/IKaaClientContext.hpp"
 
 namespace kaa {
 
@@ -43,7 +42,7 @@ typedef boost::bimaps::bimap<
 
 class ClientStatus : public IKaaClientStateStorage {
 public:
-    ClientStatus(IKaaClientContext &context);
+    ClientStatus(std::string filename);
     ~ClientStatus() { }
 
     std::int32_t getEventSequenceNumber() const;
@@ -104,8 +103,6 @@ private:
     static const AttachedEndpoints          attachedEndpoints_;
     static const bool                       endpointDefaultAttachStatus_;
     static const std::string                endpointKeyHashDefault_;
-
-    IKaaClientContext &context_;
 };
 
 }

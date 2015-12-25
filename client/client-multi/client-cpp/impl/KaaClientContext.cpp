@@ -30,26 +30,6 @@ KaaClientContext::KaaClientContext(const KaaClientProperties &properties,
     properties_((KaaClientProperties&)properties), logger_((ILogger&)logger), state_((IKaaClientStateStorage&)state), executorContext_((IExecutorContext&)executorContext)
 {}
 
-void KaaClientContext::setProperties(const KaaClientProperties &properties)
-{
-    properties_ = properties;
-}
-
-void KaaClientContext::setLogger(const ILogger &logger)
-{
-    logger_ = logger;
-}
-
-void KaaClientContext::setStatus(const IKaaClientStateStorage &state)
-{
-    state_ = state;
-}
-
-void KaaClientContext::setExecutorContext(const IExecutorContext &executorContext)
-{
-    executorContext_ = executorContext;
-}
-
 KaaClientProperties &KaaClientContext::getProperties()
 {
     return properties_;

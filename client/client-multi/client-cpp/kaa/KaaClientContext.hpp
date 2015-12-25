@@ -29,11 +29,6 @@ public:
                      const IKaaClientStateStorage &state,
                      const IExecutorContext &executorContext);
 
-    void setProperties(const KaaClientProperties &properties);
-    void setLogger(const ILogger &logger);
-    void setStatus(const IKaaClientStateStorage &state);
-    void setExecutorContext(const IExecutorContext &executorContext);
-
     KaaClientProperties &getProperties();
     ILogger &getLogger();
     IKaaClientStateStorage &getStatus();

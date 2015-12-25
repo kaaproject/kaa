@@ -28,11 +28,6 @@ class IExecutorContext;
 
 class IKaaClientContext {
 public:
-    virtual void setProperties(const KaaClientProperties &properties) = 0;
-    virtual void setLogger(const ILogger &logger) = 0;
-    virtual void setStatus(const IKaaClientStateStorage &state) = 0;
-    virtual void setExecutorContext(const IExecutorContext &executorContext) = 0;
-
     virtual KaaClientProperties &getProperties() = 0;
     virtual ILogger &getLogger() = 0;
     virtual IKaaClientStateStorage &getStatus() = 0;

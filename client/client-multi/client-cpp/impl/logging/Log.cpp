@@ -22,11 +22,11 @@
 
 namespace kaa {
 
-static const char * const KAA_LOG_FMT = "[%1%:%2%]:\t%3%";
+static const char * const KAA_LOG_FMT = "[%1%] [%2%:%3%]:\t%4%";
 
 void kaa_log_message(const ILogger & logger, LogLevel level, const char *message, const char *file, size_t lineno)
 {
-    boost::format logline = boost::format(KAA_LOG_FMT) % file % lineno % message;
+    boost::format logline = boost::format(KAA_LOG_FMT) % logger.getClientID().c_str() % file % lineno % message;
     logger.log(level, logline.str().c_str());
 }
 

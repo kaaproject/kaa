@@ -36,7 +36,7 @@
 namespace kaa {
 
 static KaaClientProperties properties;
-static DefaultLogger tmp_logger;
+static DefaultLogger tmp_logger(properties.getClientId(), false);
 static MockKaaClientStateStorage tmp_state;
 static MockExecutorContext tmpExecContext;
 static KaaClientContext clientContext(properties, tmp_logger, tmp_state, tmpExecContext);

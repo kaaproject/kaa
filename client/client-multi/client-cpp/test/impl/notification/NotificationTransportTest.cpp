@@ -29,21 +29,18 @@
 namespace kaa {
 
 static KaaClientProperties properties;
-static DefaultLogger tmp_logger;
+static DefaultLogger tmp_logger(properties.getClientId(), false);
 static SimpleExecutorContext context;
 static MockKaaClientStateStorage tmp_state;
+//static KaaClientContext clientContext(properties, tmp_logger, tmp_state, context);
 
 BOOST_AUTO_TEST_SUITE(NotificationTransportTestSuite)
 
 BOOST_AUTO_TEST_CASE(EmptyRequestTest)
 {
-    KaaClientContext clientContext(properties, tmp_logger, tmp_state, context);
-    clientContext.getProperties().setStateFileName("fakePath");
-
-    IKaaClientStateStoragePtr status(new ClientStatus(clientContext));
+    IKaaClientStateStoragePtr status(new ClientStatus("fakePath"));
     MockChannelManager channelManager;
-
-    clientContext.setStatus(*status);
+    KaaClientContext clientContext(properties, tmp_logger, *status, context);
 
     NotificationTransport transport(channelManager, clientContext);
 
@@ -58,13 +55,9 @@ BOOST_AUTO_TEST_CASE(EmptyRequestTest)
 
 BOOST_AUTO_TEST_CASE(SubscriptionInfoTest)
 {
-    KaaClientContext clientContext(properties, tmp_logger, tmp_state, context);
-    clientContext.getProperties().setStateFileName("fakePath");
-
-    IKaaClientStateStoragePtr status(new ClientStatus(clientContext));
+    IKaaClientStateStoragePtr status(new ClientStatus("fakePath"));
     MockChannelManager channelManager;
-
-    clientContext.setStatus(*status);
+    KaaClientContext clientContext(properties, tmp_logger, *status, context);
 
     NotificationTransport transport(channelManager, clientContext);
 
@@ -107,13 +100,9 @@ BOOST_AUTO_TEST_CASE(SubscriptionInfoTest)
 
 BOOST_AUTO_TEST_CASE(AcceptedUnicastNotificationsTest)
 {
-    KaaClientContext clientContext(properties, tmp_logger, tmp_state, context);
-    clientContext.getProperties().setStateFileName("fakePath");
-
-    IKaaClientStateStoragePtr status(new ClientStatus(clientContext));
+    IKaaClientStateStoragePtr status(new ClientStatus("fakePath"));
     MockChannelManager channelManager;
-
-    clientContext.setStatus(*status);
+    KaaClientContext clientContext(properties, tmp_logger, *status, context);
 
     NotificationTransport transport(channelManager, clientContext);
 
@@ -148,13 +137,9 @@ BOOST_AUTO_TEST_CASE(AcceptedUnicastNotificationsTest)
 
 BOOST_AUTO_TEST_CASE(DetailedTopicStateTest)
 {
-    KaaClientContext clientContext(properties, tmp_logger, tmp_state, context);
-    clientContext.getProperties().setStateFileName("fakePath");
-
-    ClientStatus status(clientContext);
+    ClientStatus status("fakePath");
+    KaaClientContext clientContext(properties, tmp_logger, status, context);
     MockChannelManager channelManager;
-
-    clientContext.setStatus(status);
     NotificationTransport transport(channelManager, clientContext);
 
     const std::string topicId1("id1");
@@ -182,13 +167,7 @@ BOOST_AUTO_TEST_CASE(DetailedTopicStateTest)
 
     NotificationSyncResponse response1;
     response1.availableTopics.set_array(topics);
-
-    clientContext.getLogger().log(LogLevel::KAA_DEBUG, "Step 1");
-
-    transport.onNotificationResponse(response1);        
-
-    clientContext.getLogger().log(LogLevel::KAA_DEBUG, "Step 2");
-
+    transport.onNotificationResponse(response1);
     auto detailedTopicState = clientContext.getStatus().getTopicStates();
 
     BOOST_CHECK(detailedTopicState.size() == topics.size());

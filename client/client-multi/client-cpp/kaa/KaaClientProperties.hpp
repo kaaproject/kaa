@@ -29,6 +29,12 @@ public:
         initByDefaults();
     }
 
+    void setClientId(const std::string& clientId);
+    std::string getClientId() const
+    {
+        return getProperty(PROP_CLIENT_ID, DEFAULT_CLIENT_ID);
+    }
+
     void setWorkingDirectoryPath(const std::string& path);
     std::string getWorkingDirectoryPath() const
     {
@@ -38,7 +44,7 @@ public:
     void setStateFileName(const std::string& fileName);
     std::string getStateFileName() const
     {
-        return getProperty(PROP_STATE_FILE, DEFAULT_STATE_FILE);
+        return getWorkingDirectoryPath() + getProperty(PROP_STATE_FILE, DEFAULT_STATE_FILE);
     }
 
     void setPublicKeyFileName(const std::string& fileName);
@@ -75,6 +81,7 @@ public:
     static const std::string PROP_PRIV_KEY_FILE;
     static const std::string PROP_LOGS_DB;
     static const std::string PROP_CONF_FILE;
+    static const std::string PROP_CLIENT_ID;
 
     static const std::string DEFAULT_WORKING_DIR;
     static const std::string DEFAULT_STATE_FILE;
@@ -82,6 +89,7 @@ public:
     static const std::string DEFAULT_PRIV_KEY_FILE;
     static const std::string DEFAULT_LOGS_DB;
     static const std::string DEFAULT_CONF_FILE;
+    static const std::string DEFAULT_CLIENT_ID;
 
 private:
     void initByDefaults();

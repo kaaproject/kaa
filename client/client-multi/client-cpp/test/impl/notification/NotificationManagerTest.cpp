@@ -43,7 +43,7 @@
 namespace kaa {
 
 static KaaClientProperties properties;
-static DefaultLogger tmp_logger;
+static DefaultLogger tmp_logger(properties.getClientId(), false);
 static MockKaaClientStateStorage tmp_state;
 static MockExecutorContext tmpExecContext;
 
@@ -110,12 +110,9 @@ BOOST_AUTO_TEST_CASE(GetEmptyTopicListTest)
 BOOST_AUTO_TEST_CASE(GetTopicsTest)
 {
     const std::string STATUS_FILE_PATH = "test_status.txt";
-    KaaClientContext clientContext(properties, tmp_logger, tmp_state, tmpExecContext);
-
-    clientContext.getProperties().setStateFileName(STATUS_FILE_PATH);
 
     std::srand(std::time(NULL));
-    IKaaClientStateStoragePtr clientStatus1(new ClientStatus(clientContext));
+    IKaaClientStateStoragePtr clientStatus1(new ClientStatus(STATUS_FILE_PATH));
 
     DetailedTopicStates states;
     std::size_t topicCount = 1 + rand() % 10;
@@ -143,8 +140,8 @@ BOOST_AUTO_TEST_CASE(GetTopicsTest)
     clientStatus1->save();
     clientStatus1.reset();
 
-    ClientStatus clientStatus2(clientContext);
-    clientContext.setStatus(clientStatus2);
+    ClientStatus clientStatus2(STATUS_FILE_PATH);
+    KaaClientContext clientContext(properties, tmp_logger, clientStatus2, tmpExecContext);
     NotificationManager notificationManager(clientContext);
 
     auto topics = notificationManager.getTopics();

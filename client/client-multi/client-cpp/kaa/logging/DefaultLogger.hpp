@@ -23,15 +23,45 @@
 
 #include "kaa/logging/ILogger.hpp"
 #include <boost/log/trivial.hpp>
+#include <boost/log/utility/setup/file.hpp>
+
+#include <boost/log/core.hpp>
+#include <boost/log/expressions.hpp>
+#include <boost/log/sinks/text_file_backend.hpp>
+#include <boost/log/utility/setup/file.hpp>
+#include <boost/log/utility/setup/common_attributes.hpp>
+#include <boost/log/sources/severity_logger.hpp>
+#include <boost/log/sources/record_ostream.hpp>
+
+
+#include <string>
 
 namespace kaa {
 
 class DefaultLogger : public ILogger {
 public:
+    DefaultLogger(std::string clientId, bool toFile): clientId_(clientId), fileFlag(toFile) {
+        if (fileFlag) {
+            boost::log::aux::add_file_log(clientId.c_str());
+        }
+    }
+
     void log(LogLevel level, const char *message) const {
         BOOST_LOG_STREAM_WITH_PARAMS(boost::log::trivial::logger::get(),
-                (boost::log::keywords::severity = (boost::log::trivial::severity_level)level)) << message;
+                                     (boost::log::keywords::severity = (boost::log::trivial::severity_level)level)) << message;
     }
+
+    void setClientID(std::string &clientID) {
+        clientId_ = clientID;
+    }
+
+    std::string getClientID() const {
+        return clientId_;
+    }
+
+protected:
+    std::string clientId_;
+    bool fileFlag;
 };
 
 }  // namespace kaa

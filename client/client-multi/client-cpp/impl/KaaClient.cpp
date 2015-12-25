@@ -45,13 +45,11 @@
 namespace kaa {
 
 KaaClient::KaaClient(IKaaClientPlatformContextPtr context, IKaaClientStateListenerPtr listener)
-    : context_(context->getProperties(), *logger_, *status_, context->getExecutorContext()),
-      logger_(new DefaultLogger()),  platformContext_(context), stateListener_(listener)
+    : logger_(new DefaultLogger(context->getProperties().getClientId(), false)),
+      status_(new ClientStatus(context->getProperties().getStateFileName())),
+      context_(context->getProperties(), *logger_, *status_, context->getExecutorContext()),
+      platformContext_(context), stateListener_(listener)
 {
-    context_.setLogger(*logger_);
-    status_ = std::shared_ptr<IKaaClientStateStorage>(new ClientStatus(context_));
-    context_.setStatus(*status_);
-
     if (!stateListener_) {
         stateListener_ = std::make_shared<DummyKaaClientStateListener>();
     }

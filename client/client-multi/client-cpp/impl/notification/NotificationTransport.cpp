@@ -122,8 +122,6 @@ void NotificationTransport::onNotificationResponse(const NotificationSyncRespons
 
     DetailedTopicStates detailedStatesContainer = context_.getStatus().getTopicStates();
 
-    KAA_LOG_INFO(boost::format("====================================== %1%") % detailedStatesContainer.size());
-
     if (!response.availableTopics.is_null()) {
         const auto& topics = response.availableTopics.get_array();
 
@@ -188,9 +186,7 @@ void NotificationTransport::onNotificationResponse(const NotificationSyncRespons
         if (notificationProcessor_) {
             notificationProcessor_->notificationReceived(newNotifications);
         }
-    }
-
-    KAA_LOG_INFO(boost::format("---------------------------------------- %1%    %2%") % detailedStatesContainer.size() % &context_.getStatus());
+    }    
     context_.getStatus().setTopicStates(detailedStatesContainer);
     if (response.responseStatus != SyncResponseStatus::NO_DELTA) {
         syncAck();

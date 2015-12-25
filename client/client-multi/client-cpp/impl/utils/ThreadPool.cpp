@@ -49,7 +49,9 @@ void Worker::operator ()()
 
         KAA_UNLOCK(tasksLock);
 
-        task();
+        try {
+            task();
+        } catch (...) {}
 
         KAA_LOCK(tasksLock);
     }
@@ -72,7 +74,6 @@ void ThreadPool::add(const ThreadPoolTask& task)
     if (!task) {
         throw KaaException("Failed to add task to thread pool: empty callback");
     }
-
     KAA_MUTEX_UNIQUE_DECLARE(tasksLock, threadPoolGuard_);
 
     if (isPendingShutdown_) {

@@ -49,7 +49,7 @@ namespace kaa {
 
 static MockExecutorContext context;
 static KaaClientProperties properties;
-static DefaultLogger tmp_logger;
+static DefaultLogger tmp_logger(properties.getClientId(), false);
 
 BOOST_AUTO_TEST_SUITE(ClientStatusSuite);
 
@@ -57,11 +57,11 @@ BOOST_AUTO_TEST_CASE(checkDefaults)
 {
     cleanfile();
 
-    auto stateMock = std::make_shared<MockKaaClientStateStorage>();
-    properties.setStateFileName(filename);
-    KaaClientContext clientContext(properties, tmp_logger, *stateMock, context);
+//    auto stateMock = std::make_shared<MockKaaClientStateStorage>();
+//    properties.setStateFileName(filename);
+//    KaaClientContext clientContext(properties, tmp_logger, *stateMock, context);
 
-    ClientStatus cs(clientContext);
+    ClientStatus cs(filename);
     BOOST_CHECK_EQUAL(cs.getAppSeqNumber().configurationSequenceNumber, 0);
     BOOST_CHECK_EQUAL(cs.getAppSeqNumber().notificationSequenceNumber, 0);
     BOOST_CHECK_EQUAL(cs.isRegistered(), false);
@@ -75,10 +75,9 @@ BOOST_AUTO_TEST_CASE(checkDefaults)
 
 BOOST_AUTO_TEST_CASE(checkSetAndSaveParameters)
 {
-    auto stateMock = std::make_shared<MockKaaClientStateStorage>();
-    properties.setStateFileName(filename);
-    KaaClientContext clientContext(properties, tmp_logger, *stateMock, context);
-    ClientStatus cs(clientContext);
+//    auto stateMock = std::make_shared<MockKaaClientStateStorage>();
+//    KaaClientContext clientContext(properties, tmp_logger, *stateMock, context);
+    ClientStatus cs(filename);
     cs.setAppSeqNumber({1,2,3});
     BOOST_CHECK_EQUAL(cs.getAppSeqNumber().configurationSequenceNumber, 1);
     BOOST_CHECK_EQUAL(cs.getAppSeqNumber().notificationSequenceNumber, 2);
@@ -142,7 +141,7 @@ BOOST_AUTO_TEST_CASE(checkSetAndSaveParameters)
     cs.setEndpointKeyHash(endpointKeyHash);
 
     cs.save();
-    ClientStatus cs_restored(clientContext);
+    ClientStatus cs_restored(filename);
 
     DetailedTopicStates act_ts1 = cs_restored.getTopicStates();
     BOOST_CHECK_EQUAL(act_ts1.size(), 2);

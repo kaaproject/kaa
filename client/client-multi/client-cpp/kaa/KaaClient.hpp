@@ -112,9 +112,9 @@ private:
     void initClientKeys();
 
 private:
-    KaaClientContext context_;
-    IKaaClientStateStoragePtr status_;
     LoggerPtr        logger_;
+    IKaaClientStateStoragePtr status_;
+    KaaClientContext context_;
 
 #ifdef KAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL
     std::unique_ptr<DefaultBootstrapChannel>         bootstrapChannel_;
