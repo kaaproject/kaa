@@ -30,10 +30,28 @@ import org.kaaproject.kaa.server.common.core.plugin.def.SdkApiFile;
  */
 public class PluginSDKApiBundle {
 
+    private final int extensionId;
+    private final String pluginInterfaceFQN;
+    private final String pluginImplementationFQN;
     private final List<SdkApiFile> files;
 
-    public PluginSDKApiBundle(List<SdkApiFile> files) {
+    public PluginSDKApiBundle(int extensionId, String pluginInterfaceFQN, String pluginImplementationFQN, List<SdkApiFile> files) {
+        this.extensionId = extensionId;
+        this.pluginInterfaceFQN = pluginInterfaceFQN;
+        this.pluginImplementationFQN = pluginImplementationFQN;
         this.files = files;
+    }
+
+    public int getExtensionId() {
+        return extensionId;
+    }
+
+    public String getPluginInterfaceFQN() {
+        return pluginInterfaceFQN;
+    }
+
+    public String getPluginImplementationFQN() {
+        return pluginImplementationFQN;
     }
 
     public List<SdkApiFile> getFiles() {

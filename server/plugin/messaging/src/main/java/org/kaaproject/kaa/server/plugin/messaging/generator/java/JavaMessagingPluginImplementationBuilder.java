@@ -20,7 +20,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.kaaproject.kaa.server.common.core.plugin.generator.common.PluginBuilderCore;
-import org.kaaproject.kaa.server.common.core.plugin.generator.common.PluginImplementationBuilder;
 import org.kaaproject.kaa.server.common.core.plugin.generator.common.entity.SimpleGeneratorEntity;
 import org.kaaproject.kaa.server.common.core.plugin.generator.common.entity.TemplateVariable;
 import org.kaaproject.kaa.server.common.core.plugin.generator.java.JavaPluginImplementationBuilder;
@@ -55,7 +54,7 @@ public class JavaMessagingPluginImplementationBuilder extends JavaPluginImplemen
                 body.append(i > 0 ? ", " : "").append(paramTypes[i]);
             }
         }
-        body.append(")}\n");
+        body.append(")} */\n");
 
         // The constant itself
         body.append(new JavaConstant("METHOD_" + Integer.toString(id) + "_ID", "short", Integer.toString(id), new String[] { "private", "final" }));
@@ -65,9 +64,13 @@ public class JavaMessagingPluginImplementationBuilder extends JavaPluginImplemen
     }
 
     @Override
-    public MessagingPluginImplementationBuilder withMethodListener(String name, String type) {
-        this.addEntity(new JavaField(name, type, new String[] { "private", "volatile" }));
-        this.addEntity(JavaMethod.setter(name, type));
+    public MessagingPluginImplementationBuilder withMethodListener(String methodName, String fieldName, String fieldType) {
+
+        String template = "public void %s(%s %s) { this.%s = %s; }";
+        String body = String.format(template, methodName, fieldType, fieldName, fieldName, fieldName);
+
+        this.addEntity(new JavaField(fieldName, fieldType, new String[] { "private", "volatile" }));
+        this.addEntity(new SimpleGeneratorEntity(TemplateVariable.METHODS, body, false, 1));
         return this;
     }
 
@@ -104,7 +107,7 @@ public class JavaMessagingPluginImplementationBuilder extends JavaPluginImplemen
 
         // Method parameters
         Map<String, String> params = new LinkedHashMap<>();
-        params.put("msg", "PayloadMessage");
+        params.put("msg", "Message");
 
         String controlStatement = "\nif (msg.getMethodId() == METHOD_%d_ID) { handleMethod%dVoid(msg.getUid()); }";
 
@@ -114,23 +117,5 @@ public class JavaMessagingPluginImplementationBuilder extends JavaPluginImplemen
 
         this.addEntity(new JavaMethod("handleVoidMsg", null, params, new String[] { "protected" }, buffer.toString(), null));
         return this;
-    }
-
-    // TODO: Used for testing purposes, remove when unnecessary
-    public static void main(String[] args) {
-        Object builder = new JavaMessagingPluginImplementationBuilder("MessagingPlugin", "org.kaaproject.kaa.plugin.messaging", "AbstractMessagingPlugin",
-                "MessagingPluginAPI");
-        builder = ((JavaMessagingPluginImplementationBuilder) builder).withMethodConstant("setMethodListener", new String[] {}, 1);
-        builder = ((JavaMessagingPluginImplementationBuilder) builder).withMethodListener("listener", "MethodListener");
-        builder = ((JavaMessagingPluginImplementationBuilder) builder).withEntityConverter("entity3Converter", "ClassB");
-
-        Map<String, Integer> handlersMapping = new LinkedHashMap<>();
-        handlersMapping.put("handleMethod1", 1);
-        handlersMapping.put("handleMethod2", 2);
-
-        builder = ((JavaMessagingPluginImplementationBuilder) builder).withEntityMessageHandlersMapping(handlersMapping);
-        builder = ((JavaMessagingPluginImplementationBuilder) builder).withVoidMessageHandlersMapping(handlersMapping);
-
-        System.out.println(new String(((PluginImplementationBuilder) builder).build().getFileData()));
     }
 }

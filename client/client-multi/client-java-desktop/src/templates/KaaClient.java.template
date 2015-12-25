@@ -63,4 +63,6 @@ public interface KaaClient extends GenericKaaClient {
      * @return configuration
      */
     ${configuration_class} getConfiguration();
+
+${plugin_getter_declarations}
 }

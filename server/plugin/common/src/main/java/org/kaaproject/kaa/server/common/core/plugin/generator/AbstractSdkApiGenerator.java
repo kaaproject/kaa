@@ -16,11 +16,10 @@
 
 package org.kaaproject.kaa.server.common.core.plugin.generator;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.text.MessageFormat;
 
 import org.apache.avro.specific.SpecificRecordBase;
@@ -30,7 +29,7 @@ import org.slf4j.LoggerFactory;
 
 public abstract class AbstractSdkApiGenerator<T extends SpecificRecordBase> implements PluginSdkApiGenerator {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractSdkApiGenerator.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(AbstractSdkApiGenerator.class);
 
     public abstract Class<T> getConfigurationClass();
 
@@ -50,20 +49,23 @@ public abstract class AbstractSdkApiGenerator<T extends SpecificRecordBase> impl
     protected abstract PluginSDKApiBundle generatePluginSdkApi(SpecificPluginSdkApiGenerationContext<T> context);
 
     protected String readFileAsString(String fileName) {
-        String fileContent = null;
-        URL url = this.getClass().getClassLoader().getResource(fileName);
-        if (url != null) {
-            try {
-                Path path = Paths.get(url.toURI());
-                byte[] bytes = Files.readAllBytes(path);
-                if (bytes != null) {
-                    fileContent = new String(bytes);
-                }
-            } catch (Exception cause) {
-                cause.printStackTrace();
+        String result = null;
+        try {
+            StringBuffer fileData = new StringBuffer();
+            InputStream input = Thread.currentThread().getContextClassLoader().getResourceAsStream(fileName);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+            char[] buf = new char[1024];
+            int numRead = 0;
+            while ((numRead = reader.read(buf)) != -1) {
+                String readData = String.valueOf(buf, 0, numRead);
+                fileData.append(readData);
             }
+            reader.close();
+            result = fileData.toString();
+        } catch (IOException e) {
+            LOG.error("Unable to read from specified resource '" + fileName + "'! Error: " + e.getMessage(), e);
         }
-        return fileContent;
+        return result;
     }
 
     private String getClassName() {

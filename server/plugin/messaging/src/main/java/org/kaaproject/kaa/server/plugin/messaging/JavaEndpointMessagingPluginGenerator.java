@@ -47,20 +47,20 @@ import org.kaaproject.kaa.server.plugin.messaging.gen.test.ClassB;
 import org.kaaproject.kaa.server.plugin.messaging.gen.test.ClassC;
 import org.kaaproject.kaa.server.plugin.messaging.generator.java.JavaMessagingPluginImplementationBuilder;
 
-public class EndpointMessagePluginGenerator extends AbstractSdkApiGenerator<Configuration> {
+public class JavaEndpointMessagingPluginGenerator extends AbstractSdkApiGenerator<Configuration> {
 
     private static final PluginContractItemDef SEND_MESSAGE_CONTRACT = MessagingSDKContract.buildSendMsgDef();
     private static final PluginContractItemDef RECEIVE_MESSAGE_CONTRACT = MessagingSDKContract.buildReceiveMsgDef();
 
     /**
-     * The plugin API interface.
+     * The plugin API interface builder.
      */
-    private JavaPluginInterfaceBuilder interfaceBuilder;
+    private JavaPluginInterfaceBuilder pluginInterface;
 
     /**
-     * The plugin API implementation.
+     * The plugin API implementation builder.
      */
-    private JavaMessagingPluginImplementationBuilder implementationBuilder;
+    private JavaMessagingPluginImplementationBuilder pluginImplementation;
 
     /**
      * Maps an entity message handler to its method constant.
@@ -89,14 +89,14 @@ public class EndpointMessagePluginGenerator extends AbstractSdkApiGenerator<Conf
 
     // TODO: Used for testing purposes, remove when unnecessary
     public static void main(String[] args) throws IOException {
-        EndpointMessagePluginGenerator object = new EndpointMessagePluginGenerator();
-        object.generatePluginSdkApi(EndpointMessagePluginGenerator.getHardcodedContext()).getFiles().forEach(file -> {
-            System.out.println(new String(file.getFileData()));
+        JavaEndpointMessagingPluginGenerator object = new JavaEndpointMessagingPluginGenerator();
+        object.generatePluginSdkApi(JavaEndpointMessagingPluginGenerator.getHardcodedContext()).getFiles().forEach(file -> {
+            System.out.println(new String(file.getFileName()));
         });
     }
 
     // TODO: Used for testing purposes, remove when unnecessary
-    private static SpecificPluginSdkApiGenerationContext<Configuration> getHardcodedContext() throws IOException {
+    public static SpecificPluginSdkApiGenerationContext<Configuration> getHardcodedContext() throws IOException {
         PluginContractDef def = MessagingSDKContract.buildMessagingSDKContract();
         final BasePluginContractInstance instance = new BasePluginContractInstance(def);
 
@@ -149,8 +149,12 @@ public class EndpointMessagePluginGenerator extends AbstractSdkApiGenerator<Conf
 
             @Override
             public byte[] getPluginConfigurationData() {
-                // Not used here
-                return null;
+                Configuration config = new Configuration("org.kaaproject.kaa.client.plugin.messaging");
+                try {
+                    return new AvroByteArrayConverter<Configuration>(Configuration.class).toByteArray(config);
+                } catch (IOException cause) {
+                    return null;
+                }
             }
 
             @Override
@@ -170,19 +174,20 @@ public class EndpointMessagePluginGenerator extends AbstractSdkApiGenerator<Conf
         List<SdkApiFile> files = new ArrayList<>();
 
         String namespace = context.getConfiguration().getMessageFamilyFqn() + ".ext" + context.getExtensionId();
-        this.interfaceBuilder = new JavaPluginInterfaceBuilder("MessagingPluginAPI", namespace);
-        this.implementationBuilder = new JavaMessagingPluginImplementationBuilder("MessagingPlugin", namespace, "AbstractMessagingPlugin",
-                this.interfaceBuilder.getName());
+        this.pluginInterface = new JavaPluginInterfaceBuilder("MessagingPluginAPI", namespace);
+        this.pluginImplementation = new JavaMessagingPluginImplementationBuilder("MessagingPlugin", namespace, "AbstractMessagingPlugin",
+                this.pluginInterface.getName());
 
         // Plugin API interface imports
-        this.interfaceBuilder.withImportStatement("java.util.concurrent.Future");
+        this.pluginInterface.withImportStatement("java.util.concurrent.Future");
 
         // Plugin API implementation imports
-        this.implementationBuilder.withImportStatement("java.io.IOException");
-        this.implementationBuilder.withImportStatement("java.util.concurrent.Future");
-        this.implementationBuilder.withImportStatement("java.util.UUID");
-        this.implementationBuilder.withImportStatement("org.kaaproject.kaa.client.plugin.messaging.common.v1.*");
-        this.implementationBuilder.withImportStatement(namespace + ".*");
+        this.pluginImplementation.withImportStatement("java.io.IOException");
+        this.pluginImplementation.withImportStatement("java.util.concurrent.Future");
+        this.pluginImplementation.withImportStatement("java.util.UUID");
+        this.pluginImplementation.withImportStatement("org.kaaproject.kaa.client.plugin.messaging.common.v1.*");
+        this.pluginImplementation.withImportStatement("org.kaaproject.kaa.client.plugin.messaging.common.v1.future.*");
+        this.pluginImplementation.withImportStatement("org.kaaproject.kaa.client.plugin.messaging.common.v1.msg.*");
 
         // Iterate over contract items provided
         for (PluginContractInstance contract : context.getPluginContracts()) {
@@ -211,7 +216,7 @@ public class EndpointMessagePluginGenerator extends AbstractSdkApiGenerator<Conf
                         if (!this.entityConverters.containsKey(rawInputType)) {
                             String entityConverter = "entity" + Integer.toString(this.entityConverters.size() + 1) + "Converter";
                             this.entityConverters.put(rawInputType, entityConverter);
-                            this.implementationBuilder.withEntityConverter(entityConverter, rawInputType);
+                            this.pluginImplementation.withEntityConverter(entityConverter, rawInputType);
                         }
                     } catch (Exception ignored) {
                         // The method lacks any formal parameters, do nothing.
@@ -231,7 +236,7 @@ public class EndpointMessagePluginGenerator extends AbstractSdkApiGenerator<Conf
                         if (!this.entityConverters.containsKey(rawOutputType)) {
                             String entityConverter = "entity" + Integer.toString(this.entityConverters.size() + 1) + "Converter";
                             this.entityConverters.put(rawOutputType, entityConverter);
-                            this.implementationBuilder.withEntityConverter(entityConverter, rawOutputType);
+                            this.pluginImplementation.withEntityConverter(entityConverter, rawOutputType);
                         }
                     } catch (Exception ignored) {
                         // The method does not return a value, do nothing.
@@ -261,12 +266,12 @@ public class EndpointMessagePluginGenerator extends AbstractSdkApiGenerator<Conf
 
                         // Add an appropriate method signature to the API
                         // interface
-                        this.interfaceBuilder.withMethodSignature(name, wrappedOutputType, new String[] { wrappedInputType }, null);
+                        this.pluginInterface.withMethodSignature(name, wrappedOutputType, new String[] { wrappedInputType }, null);
 
                         // Add an appropriate method constant to the API
                         // implementation
                         constants.put(name, this.entityMethodConstants.size() + this.voidMethodConstants.size() + 1);
-                        this.implementationBuilder.withMethodConstant(name, new String[] { rawInputType }, constants.get(name));
+                        this.pluginImplementation.withMethodConstant(name, new String[] { rawInputType }, constants.get(name));
 
                         // The method parameters
                         Map<String, String> parameters = new LinkedHashMap<>();
@@ -296,20 +301,20 @@ public class EndpointMessagePluginGenerator extends AbstractSdkApiGenerator<Conf
                         }
 
                         // Add the method to the API implementation
-                        this.implementationBuilder.withMethod(name, wrappedOutputType, parameters, new String[] { "public" }, body, values);
+                        this.pluginImplementation.withMethod(name, wrappedOutputType, parameters, new String[] { "public" }, body, values);
 
                         // Add a method handler
                         if (rawOutputType == null || rawOutputType.isEmpty()) {
                             parameters = new LinkedHashMap<>();
                             parameters.put("uid", "final UUID");
                             body = this.readFileAsString("templates/java/handle_send.template");
-                            this.implementationBuilder.withMethod("handleMethod" + values.get("${id}") + "Void", "void", parameters,
-                                    new String[] { "private" }, body, values);
+                            this.pluginImplementation.withMethod("handleMethod" + values.get("${id}") + "Void", "void", parameters, new String[] { "private" },
+                                    body, values);
                         } else {
                             parameters = new LinkedHashMap<>();
                             parameters.put("msg", "final PayloadMessage");
                             body = this.readFileAsString("templates/java/handle_receive.template");
-                            this.implementationBuilder.withMethod("handleMethod" + values.get("${id}") + "Msg", "void", parameters, new String[] { "private" },
+                            this.pluginImplementation.withMethod("handleMethod" + values.get("${id}") + "Msg", "void", parameters, new String[] { "private" },
                                     body, values);
                         }
 
@@ -320,23 +325,24 @@ public class EndpointMessagePluginGenerator extends AbstractSdkApiGenerator<Conf
                         Map<String, Integer> constants = (rawInputType != null) ? this.entityMethodConstants : this.voidMethodConstants;
 
                         // Add a method listener field
-                        String propertyName = "method" + (this.methodListeners.size() + 1) + "Listener";
-                        String propertyType = "Method" + (this.methodListeners.size() + 1) + "Listener";
-                        this.methodListeners.put(propertyType, propertyName);
-                        this.implementationBuilder.withMethodListener(propertyName, propertyType);
+                        String methodName = name;
+                        String fieldName = "method" + (this.methodListeners.size() + 1) + "Listener";
+                        String fieldType = Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1);
+                        this.methodListeners.put(fieldType, fieldName);
+                        this.pluginImplementation.withMethodListener(methodName, fieldName, fieldType);
 
                         // Add an appropriate method signature to the API
                         // interface
-                        this.interfaceBuilder.withMethodSignature(name, "void", new String[] { propertyType }, null);
+                        this.pluginInterface.withMethodSignature(name, "void", new String[] { fieldType }, null);
                         constants.put(name, this.entityMethodConstants.size() + this.voidMethodConstants.size() + 1);
 
                         // Add an appropriate method constant to the API
                         // implementation
-                        this.implementationBuilder.withMethodConstant(name, new String[] { propertyType }, constants.get(name));
+                        this.pluginImplementation.withMethodConstant(name, new String[] { fieldType }, constants.get(name));
 
                         // Generates an interface for the method listener field
                         // class
-                        JavaPluginInterfaceBuilder listenerInterface = new JavaPluginInterfaceBuilder(propertyType, namespace,
+                        JavaPluginInterfaceBuilder listenerInterface = new JavaPluginInterfaceBuilder(fieldType, namespace,
                                 this.readFileAsString("templates/java/listenerClass.template"));
                         listenerInterface.withMethodSignature("onEvent", rawOutputType, new String[] { rawInputType }, null);
                         files.add(listenerInterface.build());
@@ -349,20 +355,20 @@ public class EndpointMessagePluginGenerator extends AbstractSdkApiGenerator<Conf
                         values.put("${inputTypeConverter}", this.entityConverters.get(rawInputType));
                         values.put("${outputTypeConverter}", this.entityConverters.get(rawOutputType));
                         values.put("${id}", this.entityMethodConstants.getOrDefault(name, this.voidMethodConstants.get(name)).toString());
-                        values.put("${listener}", propertyName);
+                        values.put("${listener}", fieldName);
 
                         // Add a method handler
                         if (rawInputType == null || rawInputType.isEmpty()) {
                             Map<String, String> parameters = new LinkedHashMap<>();
                             parameters.put("uid", "final UUID");
                             String body = this.readFileAsString("templates/java/handle_listener_void.template");
-                            this.implementationBuilder.withMethod("handleMethod" + values.get("${id}") + "Void", "void", parameters,
-                                    new String[] { "private" }, body, values);
+                            this.pluginImplementation.withMethod("handleMethod" + values.get("${id}") + "Void", "void", parameters, new String[] { "private" },
+                                    body, values);
                         } else {
                             Map<String, String> parameters = new LinkedHashMap<>();
                             parameters.put("msg", "final PayloadMessage");
                             String body = this.readFileAsString("templates/java/handle_listener.template");
-                            this.implementationBuilder.withMethod("handleMethod" + values.get("${id}") + "Msg", "void", parameters, new String[] { "private" },
+                            this.pluginImplementation.withMethod("handleMethod" + values.get("${id}") + "Msg", "void", parameters, new String[] { "private" },
                                     body, values);
                         }
 
@@ -377,15 +383,15 @@ public class EndpointMessagePluginGenerator extends AbstractSdkApiGenerator<Conf
 
         // Generate a method that delegates entity messages to appropriate
         // handlers.
-        this.implementationBuilder.withEntityMessageHandlersMapping(this.entityMethodConstants);
+        this.pluginImplementation.withEntityMessageHandlersMapping(this.entityMethodConstants);
 
         // Generate a method that delegates void messages to appropriate
         // handlers.
-        this.implementationBuilder.withVoidMessageHandlersMapping(this.voidMethodConstants);
+        this.pluginImplementation.withVoidMessageHandlersMapping(this.voidMethodConstants);
 
-        files.add(this.interfaceBuilder.build());
-        files.add(this.implementationBuilder.build());
+        files.add(this.pluginInterface.build());
+        files.add(this.pluginImplementation.build());
 
-        return new PluginSDKApiBundle(files);
+        return new PluginSDKApiBundle(context.getExtensionId(), this.pluginInterface.getFqn(), this.pluginImplementation.getFqn(), files);
     }
 }

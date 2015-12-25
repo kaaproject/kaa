@@ -23,7 +23,7 @@ import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public interface ${name} extends ${parentClass} implements PluginInstance<${interfaceClass}>, ${interfaceClass}  {
+public class ${name} extends ${parentClass} implements PluginInstance<${interfaceClass}>, ${interfaceClass}  {
 
     private static final Logger LOG = LoggerFactory.getLogger(${name}.class);
     

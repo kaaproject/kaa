@@ -21,7 +21,7 @@ import java.util.Map;
 import org.kaaproject.kaa.server.common.core.plugin.generator.common.PluginImplementationBuilder;
 
 /**
- * A specific endpoint messaging builder that produces plugin API
+ * A specific endpoint messaging plugin builder that produces plugin API
  * implementation.
  *
  * @author Bohdan Khablenko
@@ -44,12 +44,13 @@ public interface MessagingPluginImplementationBuilder extends PluginImplementati
     /**
      * Adds a method listener field.
      *
-     * @param name The name of a field to add
-     * @param type The type of a method listener add
+     * @param methodName The name of a method to listen
+     * @param fieldName The listener field name
+     * @param fieldType The listener field type
      *
      * @return A reference to this builder
      */
-    MessagingPluginImplementationBuilder withMethodListener(String name, String type);
+    MessagingPluginImplementationBuilder withMethodListener(String methodName, String fieldName, String fieldType);
 
     /**
      * Adds an entity class converter.
