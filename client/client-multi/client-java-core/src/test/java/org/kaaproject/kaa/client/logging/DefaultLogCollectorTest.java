@@ -381,4 +381,42 @@ public class DefaultLogCollectorTest {
         logCollector.fillSyncRequest(request);
         Mockito.verify(request, Mockito.times(1)).setRequestId(Mockito.any(Integer.class));
     }
+
+    @Test
+    public void testMaxParallelUploadWithSyncAll() throws Exception {
+        testMaxParallelUploadSyncHelper(0);
+        testMaxParallelUploadSyncHelper(3);
+        testMaxParallelUploadSyncHelper(5);
+    }
+
+    private void testMaxParallelUploadSyncHelper(int maxParallelUpload) throws Exception {
+        KaaChannelManager channelManager = Mockito.mock(KaaChannelManager.class);
+        FailoverManager failoverManager = Mockito.mock(FailoverManager.class);
+        LogTransport transport = Mockito.mock(LogTransport.class);
+
+        AbstractLogCollector logCollector = new DefaultLogCollector(transport, executorContext, channelManager, failoverManager);
+        DefaultLogUploadStrategy strategy = new DefaultLogUploadStrategy() {
+            @Override
+            public LogUploadStrategyDecision isUploadNeeded(LogStorageStatus status) {
+                return LogUploadStrategyDecision.UPLOAD;
+            }
+        };
+
+        strategy.setMaxParallelUploads(maxParallelUpload);
+
+        logCollector.setStrategy(strategy);
+
+        LogSyncRequest request = new LogSyncRequest();
+        List<LogDeliveryStatus> statuses = new ArrayList<>();
+
+        for (int i = 0; i < maxParallelUpload; i++) {
+            logCollector.addLogRecord(new Log());
+            logCollector.fillSyncRequest(request);
+        }
+
+        LogSyncResponse response = new LogSyncResponse(statuses);
+        logCollector.onLogResponse(response);
+
+        Mockito.verify(transport, Mockito.times(maxParallelUpload)).sync();
+    }
 }

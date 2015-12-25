@@ -102,8 +102,7 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
             return;
         }
 
-        if (timeouts.size() >= strategy.getMaxParallelUploads()) {
-            LOG.debug("Ignore log upload: too much pending requests. Max allowed {}", strategy.getMaxParallelUploads());
+        if (!isUploadAllowed()) {
             return;
         }
 
@@ -187,7 +186,10 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
     private void processUploadDecision(LogUploadStrategyDecision decision) {
         switch (decision) {
         case UPLOAD:
-            transport.sync();
+            if (isUploadAllowed()) {
+                LOG.debug("Going to upload logs");
+                transport.sync();
+            }
             break;
         case NOOP:
             if (strategy.getUploadCheckPeriod() > 0 && storage.getStatus().getRecordCount() > 0) {
@@ -238,6 +240,14 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
         } else {
             LOG.trace("No log delivery timeout for the bucket with id [{}] was detected", bucketId);
         }
+    }
+
+    private boolean isUploadAllowed() {
+        if (timeouts.size() >= strategy.getMaxParallelUploads()) {
+            LOG.debug("Ignore log upload: too much pending requests. Max allowed {}", strategy.getMaxParallelUploads());
+            return false;
+        }
+        return true;
     }
 
     protected void uploadIfNeeded() {
