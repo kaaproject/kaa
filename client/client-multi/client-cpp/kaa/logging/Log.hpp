@@ -46,39 +46,53 @@ void kaa_log_message(const ILogger & logger, LogLevel level, const boost::format
 #endif
 
 #if KAA_LOG_LEVEL >= KAA_LOG_LEVEL_FINE_TRACE
+    #define KAA_GLOBAL_LOG_FTRACE(message) kaa_log_message(LoggerFactory::getLogger(), LogLevel::KAA_TRACE,      (message), __LOGFILE, __LINE__);
     #define KAA_LOG_FTRACE(message) kaa_log_message(context_.getLogger(), LogLevel::KAA_TRACE,      (message), __LOGFILE, __LINE__);
 #else
     #define KAA_LOG_FTRACE(message)
+    #define KAA_GLOBAL_LOG_FTRACE(message)
 #endif
 #if KAA_LOG_LEVEL >= KAA_LOG_LEVEL_TRACE
+    #define KAA_GLOBAL_LOG_TRACE(message)  kaa_log_message(LoggerFactory::getLogger(), LogLevel::KAA_TRACE,      (message), __LOGFILE, __LINE__);
     #define KAA_LOG_TRACE(message)  kaa_log_message(context_.getLogger(), LogLevel::KAA_TRACE,      (message), __LOGFILE, __LINE__);
 #else
     #define KAA_LOG_TRACE(message)
+    #define KAA_GLOBAL_LOG_TRACE(message)
 #endif
 #if KAA_LOG_LEVEL >= KAA_LOG_LEVEL_DEBUG
+    #define KAA_GLOBAL_LOG_DEBUG(message)  kaa_log_message(LoggerFactory::getLogger(), LogLevel::KAA_DEBUG,      (message), __LOGFILE, __LINE__);
     #define KAA_LOG_DEBUG(message)  kaa_log_message(context_.getLogger(), LogLevel::KAA_DEBUG,      (message), __LOGFILE, __LINE__);
 #else
     #define KAA_LOG_DEBUG(message)
+    #define KAA_GLOBAL_LOG_DEBUG(message)
 #endif
 #if KAA_LOG_LEVEL >= KAA_LOG_LEVEL_INFO
+    #define KAA_GLOBAL_LOG_INFO(message)   kaa_log_message(LoggerFactory::getLogger(), LogLevel::KAA_INFO,       (message), __LOGFILE, __LINE__);
     #define KAA_LOG_INFO(message)   kaa_log_message(context_.getLogger(), LogLevel::KAA_INFO,       (message), __LOGFILE, __LINE__);
 #else
     #define KAA_LOG_INFO(message)
+    #define KAA_GLOBAL_LOG_INFO(message)
 #endif
 #if KAA_LOG_LEVEL >= KAA_LOG_LEVEL_WARNING
+    #define KAA_GLOBAL_LOG_WARN(message)   kaa_log_message(LoggerFactory::getLogger(), LogLevel::KAA_WARNING,    (message), __LOGFILE, __LINE__);
     #define KAA_LOG_WARN(message)   kaa_log_message(context_.getLogger(), LogLevel::KAA_WARNING,    (message), __LOGFILE, __LINE__);
 #else
     #define KAA_LOG_WARN(message)
+    #define KAA_GLOBAL_LOG_WARN(message)
 #endif
 #if KAA_LOG_LEVEL >= KAA_LOG_LEVEL_ERROR
+    #define KAA_GLOBAL_LOG_ERROR(message)  kaa_log_message(LoggerFactory::getLogger(), LogLevel::KAA_ERROR,      (message), __LOGFILE, __LINE__);
     #define KAA_LOG_ERROR(message)  kaa_log_message(context_.getLogger(), LogLevel::KAA_ERROR,      (message), __LOGFILE, __LINE__);
 #else
     #define KAA_LOG_ERROR(message)
+    #define KAA_GLOBAL_LOG_ERROR(message)
 #endif
 #if KAA_LOG_LEVEL >= KAA_LOG_LEVEL_FATAL
+    #define KAA_GLOBAL_LOG_FATAL(message)  kaa_log_message(LoggerFactory::getLogger(), LogLevel::KAA_FATAL,      (message), __LOGFILE, __LINE__);
     #define KAA_LOG_FATAL(message)  kaa_log_message(context_.getLogger(), LogLevel::KAA_FATAL,      (message), __LOGFILE, __LINE__);
 #else
     #define KAA_LOG_FATAL(message)
+    #define KAA_GLOBAL_LOG_FATAL(message)
 #endif
 
 #if defined(KAA_THREADSAFE) && defined(KAA_MUTEX_LOGGING_ENABLED) && KAA_LOG_LEVEL > 4

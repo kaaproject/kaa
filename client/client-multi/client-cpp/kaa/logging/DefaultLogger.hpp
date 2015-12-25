@@ -25,13 +25,12 @@
 #include <boost/log/trivial.hpp>
 #include <boost/log/utility/setup/file.hpp>
 
-#include <boost/log/core.hpp>
-#include <boost/log/expressions.hpp>
-#include <boost/log/sinks/text_file_backend.hpp>
+#include <boost/move/utility.hpp>
+#include <boost/log/sources/logger.hpp>
+#include <boost/log/sources/record_ostream.hpp>
+#include <boost/log/sources/global_logger_storage.hpp>
 #include <boost/log/utility/setup/file.hpp>
 #include <boost/log/utility/setup/common_attributes.hpp>
-#include <boost/log/sources/severity_logger.hpp>
-#include <boost/log/sources/record_ostream.hpp>
 
 
 #include <string>
@@ -40,9 +39,8 @@ namespace kaa {
 
 class DefaultLogger : public ILogger {
 public:
-    DefaultLogger(std::string clientId, bool toFile): clientId_(clientId), fileFlag(toFile) {
-        if (fileFlag) {
-            boost::log::aux::add_file_log(clientId.c_str());
+    DefaultLogger(std::string clientId, bool toFile): clientId_(clientId) {
+        if (toFile) {
         }
     }
 
@@ -61,7 +59,6 @@ public:
 
 protected:
     std::string clientId_;
-    bool fileFlag;
 };
 
 }  // namespace kaa

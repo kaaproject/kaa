@@ -24,6 +24,7 @@
 #include "kaa/logging/Log.hpp"
 #include "kaa/common/UuidGenerator.hpp"
 #include "kaa/KaaClientProperties.hpp"
+#include "kaa/logging/Log.hpp"
 
 namespace kaa {
 
@@ -406,9 +407,9 @@ void ClientStatus::checkSDKPropertiesForUpdates()
         }
 
         isSDKPropertiesForUpdated_ = true;
-       // KAA_LOG_INFO("SDK properties were updated");
+        KAA_GLOBAL_LOG_INFO("SDK properties were updated");
     } else {
-       // KAA_LOG_INFO("SDK properties are up to date");
+        KAA_GLOBAL_LOG_INFO("SDK properties are up to date");
     }
 }
 
