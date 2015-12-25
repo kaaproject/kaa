@@ -17,7 +17,7 @@ package org.kaaproject.kaa.client;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.util.LinkedHashMap;
+import java.util.Collections;
 import java.util.Map;
 
 import javax.annotation.Generated;
@@ -25,8 +25,6 @@ import javax.annotation.Generated;
 import org.kaaproject.kaa.client.plugin.ExtensionId;
 import org.kaaproject.kaa.client.plugin.PluginInstance;
 import org.kaaproject.kaa.client.plugin.PluginInstanceAPI;
-import org.kaaproject.kaa.client.plugin.messaging.ext1.Messaging1Plugin;
-import org.kaaproject.kaa.client.plugin.messaging.ext1.Messaging1PluginAPI;
 import org.kaaproject.kaa.schema.base.Configuration;
 import org.kaaproject.kaa.schema.base.Log;
 
@@ -62,15 +60,6 @@ public class BaseKaaClient extends AbstractKaaClient implements KaaClient {
 
     @Override
     protected Map<ExtensionId, Class<? extends PluginInstance<? extends PluginInstanceAPI>>> getExtensionMapping() {
-        Map<ExtensionId, Class<? extends PluginInstance<? extends PluginInstanceAPI>>> map = new LinkedHashMap<>();
-        map.put(new ExtensionId(42), Messaging1Plugin.class);
-        return map;
-    }
-
-    /**
-     * Auto-generated based on plugin metadata;
-     */
-    public Messaging1PluginAPI getMessaging1PluginAPI() {
-        return (Messaging1PluginAPI) getPluginInstanceAPI(42);
+        return Collections.emptyMap();
     }
 }

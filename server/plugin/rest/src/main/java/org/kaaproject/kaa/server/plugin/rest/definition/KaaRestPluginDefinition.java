@@ -15,6 +15,12 @@
  */
 package org.kaaproject.kaa.server.plugin.rest.definition;
 
+import org.kaaproject.kaa.common.dto.plugin.PluginContractDirection;
+import org.kaaproject.kaa.common.dto.plugin.PluginScope;
+import org.kaaproject.kaa.server.common.core.plugin.def.PluginContractDef;
+import org.kaaproject.kaa.server.common.core.plugin.def.PluginDef;
+import org.kaaproject.kaa.server.plugin.contracts.messaging.MessagingPluginContract;
+
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -24,29 +30,25 @@ import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.kaaproject.kaa.server.common.core.plugin.def.PluginContractDef;
-import org.kaaproject.kaa.server.common.core.plugin.def.PluginContractDirection;
-import org.kaaproject.kaa.server.common.core.plugin.def.PluginDef;
-import org.kaaproject.kaa.server.common.core.plugin.def.PluginScope;
-import org.kaaproject.kaa.server.plugin.contracts.messaging.MessagingPluginContract;
-
 public class KaaRestPluginDefinition implements PluginDef {
 
     private static final long serialVersionUID = 3242496999565136016L;
-    
+
     private static final String REST_PLUGIN_TYPE = "REST";
+    public static final String DEFAULT_NAME = "Rest";
+    public static final Integer VERSION = 1;
 
     public KaaRestPluginDefinition() {
     }
 
     @Override
     public String getName() {
-        return "Rest";
+        return DEFAULT_NAME;
     }
 
     @Override
     public int getVersion() {
-        return 1;
+        return VERSION;
     }
 
     @Override

@@ -19,13 +19,9 @@ package org.kaaproject.kaa.server.common.dao;
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystemAlreadyExistsException;
@@ -55,20 +51,25 @@ import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
+import org.kaaproject.kaa.common.dto.HasId;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TenantAdminDto;
 import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
 import org.kaaproject.kaa.common.dto.UpdateNotificationDto;
 import org.kaaproject.kaa.common.dto.UserDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
@@ -80,34 +81,71 @@ import org.kaaproject.kaa.server.common.core.schema.BaseSchema;
 import org.kaaproject.kaa.server.common.core.schema.KaaSchema;
 import org.kaaproject.kaa.server.common.core.schema.KaaSchemaFactoryImpl;
 import org.kaaproject.kaa.server.common.core.schema.OverrideSchema;
+import org.kaaproject.kaa.server.common.dao.impl.ApplicationDao;
+import org.kaaproject.kaa.server.common.dao.impl.ApplicationEventFamilyMapDao;
+import org.kaaproject.kaa.server.common.dao.impl.CTLSchemaDao;
+import org.kaaproject.kaa.server.common.dao.impl.CTLSchemaMetaInfoDao;
 import org.kaaproject.kaa.server.common.dao.impl.ConfigurationDao;
 import org.kaaproject.kaa.server.common.dao.impl.ConfigurationSchemaDao;
+import org.kaaproject.kaa.server.common.dao.impl.ContractMessageDao;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointGroupDao;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointUserConfigurationDao;
+import org.kaaproject.kaa.server.common.dao.impl.EventClassDao;
+import org.kaaproject.kaa.server.common.dao.impl.EventClassFamilyDao;
 import org.kaaproject.kaa.server.common.dao.impl.HistoryDao;
+import org.kaaproject.kaa.server.common.dao.impl.LogAppenderDao;
 import org.kaaproject.kaa.server.common.dao.impl.LogSchemaDao;
+import org.kaaproject.kaa.server.common.dao.impl.NotificationDao;
+import org.kaaproject.kaa.server.common.dao.impl.NotificationSchemaDao;
+import org.kaaproject.kaa.server.common.dao.impl.PluginDao;
 import org.kaaproject.kaa.server.common.dao.impl.ProfileFilterDao;
 import org.kaaproject.kaa.server.common.dao.impl.ProfileSchemaDao;
+import org.kaaproject.kaa.server.common.dao.impl.SdkProfileDao;
+import org.kaaproject.kaa.server.common.dao.impl.ServerProfileSchemaDao;
+import org.kaaproject.kaa.server.common.dao.impl.TenantDao;
+import org.kaaproject.kaa.server.common.dao.impl.TopicDao;
+import org.kaaproject.kaa.server.common.dao.impl.UserDao;
+import org.kaaproject.kaa.server.common.dao.impl.UserVerifierDao;
 import org.kaaproject.kaa.server.common.dao.impl.sql.H2DBTestRunner;
 import org.kaaproject.kaa.server.common.dao.impl.sql.PostgreDBTestRunner;
 import org.kaaproject.kaa.server.common.dao.model.EndpointUserConfiguration;
+import org.kaaproject.kaa.server.common.dao.model.Notification;
 import org.kaaproject.kaa.server.common.dao.model.sql.Application;
+import org.kaaproject.kaa.server.common.dao.model.sql.ApplicationEventFamilyMap;
+import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchema;
+import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchemaMetaInfo;
 import org.kaaproject.kaa.server.common.dao.model.sql.Configuration;
 import org.kaaproject.kaa.server.common.dao.model.sql.ConfigurationSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.EndpointGroup;
+import org.kaaproject.kaa.server.common.dao.model.sql.EndpointProfileSchema;
+import org.kaaproject.kaa.server.common.dao.model.sql.EventClass;
+import org.kaaproject.kaa.server.common.dao.model.sql.EventClassFamily;
+import org.kaaproject.kaa.server.common.dao.model.sql.GenericModel;
 import org.kaaproject.kaa.server.common.dao.model.sql.History;
+import org.kaaproject.kaa.server.common.dao.model.sql.LogAppender;
 import org.kaaproject.kaa.server.common.dao.model.sql.LogSchema;
+import org.kaaproject.kaa.server.common.dao.model.sql.NotificationSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.ProfileFilter;
-import org.kaaproject.kaa.server.common.dao.model.sql.ProfileSchema;
+import org.kaaproject.kaa.server.common.dao.model.sql.SdkProfile;
+import org.kaaproject.kaa.server.common.dao.model.sql.ServerProfileSchema;
+import org.kaaproject.kaa.server.common.dao.model.sql.Tenant;
+import org.kaaproject.kaa.server.common.dao.model.sql.Topic;
+import org.kaaproject.kaa.server.common.dao.model.sql.User;
+import org.kaaproject.kaa.server.common.dao.model.sql.UserVerifier;
+import org.kaaproject.kaa.server.common.dao.model.sql.plugin.ContractMessage;
+import org.kaaproject.kaa.server.common.dao.model.sql.plugin.Plugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
 
+@ActiveProfiles({"h2"})
 public class AbstractTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractTest.class);
 
-    protected static final Random random = new Random(0);
+    protected static final Random RANDOM = new Random(0);
+    protected static final String SUPER_TENANT = "SuperTenant";
 
     protected static final String TENANT_NAME = "Generated Test Tenant";
     protected static final String USER_NAME = "Generated Test Username";
@@ -115,11 +153,10 @@ public class AbstractTest {
     protected static final String NOTIFICATION_SCHEMA_NAME = "Generated Notification Schema Name";
     protected static final String ENDPOINT_USER_EXTERNAL_ID = "Generated Test Endpoint User External Id";
     protected static final String ENDPOINT_USER_NAME = "Generated Test Endpoint User Name";
+    public static final String DEFAULT_FQN = "org.kaaproject.kaa.ctl.TestSchema";
 
     @Autowired
-    private DataSource dataSource;
-    @Autowired
-    protected LogSchemaDao<LogSchema> logSchemaDao;
+    protected DataSource dataSource;
     @Autowired
     protected LogSchemaService logSchemaService;
     @Autowired
@@ -133,21 +170,9 @@ public class AbstractTest {
     @Autowired
     protected UserConfigurationService userConfigurationService;
     @Autowired
-    protected ConfigurationDao<Configuration> configurationDao;
-    @Autowired
-    protected ConfigurationSchemaDao<ConfigurationSchema> configurationSchemaDao;
-    @Autowired
-    protected EndpointGroupDao<EndpointGroup> endpointGroupDao;
-    @Autowired
     protected EndpointService endpointService;
     @Autowired
-    protected HistoryDao<History> historyDao;
-    @Autowired
     protected HistoryService historyService;
-    @Autowired
-    protected ProfileSchemaDao<ProfileSchema> profileSchemaDao;
-    @Autowired
-    protected ProfileFilterDao<ProfileFilter> profileFilterDao;
     @Autowired
     protected ProfileService profileService;
     @Autowired
@@ -157,7 +182,62 @@ public class AbstractTest {
     @Autowired
     protected LogAppendersService logAppendersService;
     @Autowired
+    protected CTLService ctlService;
+    @Autowired
+    protected ServerProfileService serverProfileService;
+
+    @Autowired
+    protected LogAppenderDao<LogAppender> appenderDao;
+    @Autowired
+    protected UserDao<User> userDao;
+    @Autowired
+    protected TenantDao<Tenant> tenantDao;
+    @Autowired
+    protected ApplicationDao<Application> applicationDao;
+    @Autowired
+    protected EndpointGroupDao<EndpointGroup> endpointGroupDao;
+    @Autowired
+    protected ConfigurationSchemaDao<ConfigurationSchema> configurationSchemaDao;
+    @Autowired
+    protected ConfigurationDao<Configuration> configurationDao;
+    @Autowired
+    protected ProfileSchemaDao<EndpointProfileSchema> profileSchemaDao;
+    @Autowired
+    protected ProfileFilterDao<ProfileFilter> profileFilterDao;
+    @Autowired
+    protected TopicDao<Topic> topicDao;
+    @Autowired
+    protected HistoryDao<History> historyDao;
+    @Autowired
+    protected EventClassFamilyDao<EventClassFamily> eventClassFamilyDao;
+    @Autowired
+    protected EventClassDao<EventClass> eventClassDao;
+    @Autowired
+    protected ApplicationEventFamilyMapDao<ApplicationEventFamilyMap> applicationEventFamilyMapDao;
+    @Autowired
+    protected LogSchemaDao<LogSchema> logSchemaDao;
+    @Autowired
+    protected NotificationSchemaDao<NotificationSchema> notificationSchemaDao;
+    @Autowired(required = false)
+    protected NotificationDao<Notification> notificationDao;
+    @Autowired
+    protected UserVerifierDao<UserVerifier> verifierDao;
+    @Autowired
+    protected SdkProfileDao<SdkProfile> sdkProfileDao;
+    @Autowired(required = false)
     protected EndpointUserConfigurationDao<EndpointUserConfiguration> endpointUserConfigurationDao;
+    @Autowired
+    protected PluginService pluginService;
+    @Autowired
+    protected CTLSchemaDao<CTLSchema> ctlSchemaDao;
+    @Autowired
+    protected CTLSchemaMetaInfoDao<CTLSchemaMetaInfo> ctlSchemaMetaInfoDao;
+    @Autowired
+    protected ServerProfileSchemaDao<ServerProfileSchema> serverProfileSchemaDao;
+    @Autowired
+    protected PluginDao<Plugin> pluginDao;
+    @Autowired
+    protected ContractMessageDao<ContractMessage> contractMessageDao;
 
     protected Application application;
 
@@ -186,34 +266,6 @@ public class AbstractTest {
         }
     }
 
-    /**
-     * Gets the resource as string.
-     *
-     * @param path the path
-     * @return the resource as string
-     * @throws java.io.IOException Signals that an I/O exception has occurred.
-     */
-    protected static String getResourceAsString(String path) throws IOException {
-        URL url = Thread.currentThread().getContextClassLoader().getResource(path);
-        File file = new File(url.getPath());
-        String result;
-        BufferedReader br = new BufferedReader(new FileReader(file));
-        try {
-            StringBuilder sb = new StringBuilder();
-            String line = br.readLine();
-
-            while (line != null) {
-                sb.append(line);
-                sb.append(System.lineSeparator());
-                line = br.readLine();
-            }
-            result = sb.toString();
-        } finally {
-            br.close();
-        }
-        return result;
-    }
-
     protected String readSchemaFileAsString(String filePath) throws IOException {
         try {
             URI uri = this.getClass().getClassLoader().getResource(filePath).toURI();
@@ -238,14 +290,14 @@ public class AbstractTest {
         return null;
     }
 
-    protected ApplicationDto generateApplication() {
-        return generateApplication(null);
+    protected ApplicationDto generateApplicationDto() {
+        return generateApplicationDto(null);
     }
 
-    protected ApplicationDto generateApplication(String tenantId) {
+    protected ApplicationDto generateApplicationDto(String tenantId) {
         ApplicationDto app = new ApplicationDto();
         if (isBlank(tenantId)) {
-            app.setTenantId(generateTenant().getId());
+            app.setTenantId(generateTenantDto().getId());
         } else {
             app.setTenantId(tenantId);
         }
@@ -253,30 +305,30 @@ public class AbstractTest {
         return applicationService.saveApp(app);
     }
 
-    protected EndpointGroupDto generateEndpointGroup(String appId) {
-        return generateEndpointGroup(appId, generateString("GROUP_ALL"));
+    protected EndpointGroupDto generateEndpointGroupDto(String appId) {
+        return generateEndpointGroupDto(appId, generateString("GROUP_ALL"));
     }
 
-    protected EndpointGroupDto generateEndpointGroup(String appId, String endpointGroupName) {
+    protected EndpointGroupDto generateEndpointGroupDto(String appId, String endpointGroupName) {
         EndpointGroupDto group = new EndpointGroupDto();
         if (isBlank(appId)) {
-            appId = generateApplication(null).getId();
+            appId = generateApplicationDto(null).getId();
         }
         group.setApplicationId(appId);
         group.setName(endpointGroupName);
-        group.setWeight(random.nextInt());
+        group.setWeight(RANDOM.nextInt());
         return endpointService.saveEndpointGroup(group);
     }
 
-    protected List<ConfigurationSchemaDto> generateConfSchema(String appId, int count) {
-        return generateConfSchema(appId, count, "dao/schema/testDataSchema.json");
+    protected List<ConfigurationSchemaDto> generateConfSchemaDto(String appId, int count) {
+        return generateConfSchemaDto(appId, count, "dao/schema/testDataSchema.json");
     }
 
-    protected List<ConfigurationSchemaDto> generateConfSchema(String appId, int count, String path) {
+    protected List<ConfigurationSchemaDto> generateConfSchemaDto(String appId, int count, String path) {
         List<ConfigurationSchemaDto> schemas = Collections.emptyList();
         try {
             if (isBlank(appId)) {
-                appId = generateApplication().getId();
+                appId = generateApplicationDto().getId();
             }
             ConfigurationSchemaDto schemaDto;
             schemas = new ArrayList<>(count);
@@ -295,15 +347,15 @@ public class AbstractTest {
         return schemas;
     }
 
-    protected List<ConfigurationDto> generateConfiguration(String schemaId, String groupId, int count, boolean activate,
-                                                           boolean useBaseSchema) {
+    protected List<ConfigurationDto> generateConfigurationDto(String schemaId, String groupId, int count, boolean activate,
+                                                              boolean useBaseSchema) {
         List<ConfigurationDto> ids = Collections.emptyList();
         try {
             ConfigurationSchemaDto schemaDto;
             if (isNotBlank(schemaId)) {
                 schemaDto = configurationService.findConfSchemaById(schemaId);
             } else {
-                schemaDto = generateConfSchema(null, 1).get(0);
+                schemaDto = generateConfSchemaDto(null, 1).get(0);
             }
             Assert.assertNotNull(schemaDto);
             KaaSchema kaaSchema = useBaseSchema ? new BaseSchema(schemaDto.getBaseSchema()) : new OverrideSchema(
@@ -318,7 +370,7 @@ public class AbstractTest {
                 dto.setBody(configurationProcessor.getRootData().getRawData());
                 dto.setSchemaId(schemaDto.getId());
                 if (isBlank(groupId)) {
-                    groupId = generateEndpointGroup(schemaDto.getApplicationId()).getId();
+                    groupId = generateEndpointGroupDto(schemaDto.getApplicationId()).getId();
                 }
                 dto.setEndpointGroupId(groupId);
                 ConfigurationDto saved = configurationService.saveConfiguration(dto);
@@ -337,19 +389,22 @@ public class AbstractTest {
         return ids;
     }
 
-    protected List<ProfileSchemaDto> generateProfSchema(String appId, int count) {
-        List<ProfileSchemaDto> schemas = Collections.emptyList();
+    protected List<EndpointProfileSchemaDto> generateProfSchemaDto(String tenantId, String appId, int count) {
+        List<EndpointProfileSchemaDto> schemas = Collections.emptyList();
         try {
-            if (isBlank(appId)) {
-                appId = generateApplication().getId();
+            if (isBlank(tenantId)) {
+                tenantId = generateTenantDto().getId();
             }
-            ProfileSchemaDto schemaDto;
+            if (isBlank(appId)) {
+                appId = generateApplicationDto(tenantId).getId();
+            }
+            EndpointProfileSchemaDto schemaDto;
+            CTLSchemaDto ctlSchemaDto = ctlService.saveCTLSchema(generateCTLSchemaDto(tenantId));
             schemas = new ArrayList<>(count);
             for (int i = 0; i < count; i++) {
-                schemaDto = new ProfileSchemaDto();
+                schemaDto = new EndpointProfileSchemaDto();
                 schemaDto.setApplicationId(appId);
-                schemaDto.setSchema(new KaaSchemaFactoryImpl().createDataSchema(readSchemaFileAsString("dao/schema/testDataSchema.json"))
-                        .getRawSchema());
+                schemaDto.setCtlSchemaId(ctlSchemaDto.getId());
                 schemaDto.setCreatedUsername("Test User");
                 schemaDto.setName("Test Name");
                 schemaDto = profileService.saveProfileSchema(schemaDto);
@@ -363,15 +418,22 @@ public class AbstractTest {
         return schemas;
     }
 
-    protected List<ProfileFilterDto> generateFilter(String schemaId, String groupId, int count, boolean activate) {
+    protected List<ProfileFilterDto> generateFilterDto(String schemaId, String serverSchemaId, String groupId, int count, boolean activate) {
         List<ProfileFilterDto> filters = Collections.emptyList();
         try {
-            ProfileSchemaDto schemaDto = null;
+            EndpointProfileSchemaDto schemaDto;
             if (isBlank(schemaId)) {
-                schemaDto = generateProfSchema(null, 1).get(0);
-                schemaId = schemaDto.getId();
+                schemaDto = generateProfSchemaDto(null, null, 1).get(0);
             } else {
                 schemaDto = profileService.findProfileSchemaById(schemaId);
+            }
+            ApplicationDto app = applicationService.findAppById(schemaDto.getApplicationId());
+
+            ServerProfileSchemaDto serverProfileSchemaDto;
+            if (isBlank(serverSchemaId)) {
+                serverProfileSchemaDto = generateServerProfileSchema(app.getId(), app.getTenantId());
+            } else {
+                serverProfileSchemaDto = serverProfileService.findServerProfileSchema(serverSchemaId);
             }
 
             filters = new ArrayList<>();
@@ -380,10 +442,13 @@ public class AbstractTest {
                 dto.setId(null);
                 dto.setStatus(null);
                 if (isBlank(groupId)) {
-                    groupId = generateEndpointGroup(schemaDto.getApplicationId()).getId();
+                    groupId = generateEndpointGroupDto(schemaDto.getApplicationId()).getId();
                 }
                 dto.setEndpointGroupId(groupId);
-                dto.setSchemaId(schemaId);
+                dto.setEndpointProfileSchemaId(schemaDto.getId());
+                dto.setEndpointProfileSchemaVersion(schemaDto.getVersion());
+                dto.setServerProfileSchemaId(serverProfileSchemaDto.getId());
+                dto.setServerProfileSchemaVersion(serverProfileSchemaDto.getVersion());
                 dto.setApplicationId(schemaDto.getApplicationId());
                 ProfileFilterDto saved = profileService.saveProfileFilter(dto);
                 Assert.assertNotNull(saved);
@@ -401,18 +466,21 @@ public class AbstractTest {
         return filters;
     }
 
-    protected TenantDto generateTenant() {
-        TenantDto tenant = new TenantDto();
-        tenant.setName(generateString(TENANT_NAME));
-        tenant = userService.saveTenant(tenant);
-        return tenant;
+    protected TenantDto generateTenantDto() {
+        return generateTenantDto(generateString(TENANT_NAME));
     }
 
-    protected List<LogSchemaDto> generateLogSchema(String appId, int count) {
+    protected TenantDto generateTenantDto(String name) {
+        TenantDto tn = new TenantDto();
+        tn.setName(name);
+        return userService.saveTenant(tn);
+    }
+
+    protected List<LogSchemaDto> generateLogSchemaDto(String appId, int count) {
         List<LogSchemaDto> schemas = Collections.emptyList();
         try {
             if (isBlank(appId)) {
-                appId = generateApplication().getId();
+                appId = generateApplicationDto().getId();
             }
             LogSchemaDto schemaDto;
             schemas = new ArrayList<>(count);
@@ -434,15 +502,15 @@ public class AbstractTest {
         return schemas;
     }
 
-    protected TenantAdminDto generateTenantAdmin(TenantDto tenantDto, String userId) {
+    protected TenantAdminDto generateTenantAdminDto(TenantDto tenantDto, String userId) {
         TenantAdminDto tenant = new TenantAdminDto();
         tenant.setName(generateString(TENANT_NAME));
         if (tenantDto == null) {
-            tenantDto = generateTenant();
+            tenantDto = generateTenantDto();
         }
         tenant.setTenant(tenantDto);
         if (isBlank(userId)) {
-            List<UserDto> users = generateUsers(tenantDto.getId(), KaaAuthorityDto.TENANT_ADMIN, 1);
+            List<UserDto> users = generateUsersDto(tenantDto.getId(), KaaAuthorityDto.TENANT_ADMIN, 1);
             tenant.setUserId(users.get(0).getId());
         } else {
             tenant.setUserId(userId);
@@ -453,11 +521,11 @@ public class AbstractTest {
     }
 
 
-    protected UserVerifierDto generateUserVerifier(String appId, String verifierToken) {
+    protected UserVerifierDto generateUserVerifierDto(String appId, String verifierToken) {
         UserVerifierDto verifier = new UserVerifierDto();
         verifier.setName("GENERATED test Verifier");
         if (isBlank(appId)) {
-            appId = generateApplication().getId();
+            appId = generateApplicationDto().getId();
         }
         verifier.setApplicationId(appId);
         if (verifierToken == null) {
@@ -467,7 +535,7 @@ public class AbstractTest {
         return verifierService.saveUserVerifier(verifier);
     }
 
-    protected List<UserDto> generateUsers(String tenantId, KaaAuthorityDto authority, int count) {
+    protected List<UserDto> generateUsersDto(String tenantId, KaaAuthorityDto authority, int count) {
         List<UserDto> users = new ArrayList<>(count);
         UserDto userDto = null;
         for (int i = 0; i < count; i++) {
@@ -482,11 +550,11 @@ public class AbstractTest {
         return users;
     }
 
-    protected TopicDto generateTopic(String appId, TopicTypeDto type) {
+    protected TopicDto generateTopicDto(String appId, TopicTypeDto type) {
         TopicDto topic = new TopicDto();
         topic.setName(TOPIC_NAME);
         if (isBlank(appId)) {
-            appId = generateApplication().getId();
+            appId = generateApplicationDto().getId();
         }
         topic.setApplicationId(appId);
         if (type == null) {
@@ -496,10 +564,10 @@ public class AbstractTest {
         return topicService.saveTopic(topic);
     }
 
-    protected NotificationSchemaDto generateNotificationSchema(String appId, NotificationTypeDto type) {
+    protected NotificationSchemaDto generateNotificationSchemaDto(String appId, NotificationTypeDto type) {
         NotificationSchemaDto schema = new NotificationSchemaDto();
         if (isBlank(appId)) {
-            appId = generateApplication().getId();
+            appId = generateApplicationDto().getId();
         }
         schema.setApplicationId(appId);
         schema.setName(NOTIFICATION_SCHEMA_NAME);
@@ -515,21 +583,21 @@ public class AbstractTest {
         return notificationService.saveNotificationSchema(schema);
     }
 
-    protected List<NotificationDto> generateNotifications(String schemaId, String topicId, int count, NotificationTypeDto type) {
+    protected List<NotificationDto> generateNotificationsDto(String schemaId, String topicId, int count, NotificationTypeDto type) {
         List<NotificationDto> notifications = new ArrayList<>(count);
         NotificationDto notification = null;
         NotificationSchemaDto schema;
         for (int i = 0; i < count; i++) {
             notification = new NotificationDto();
             if (isBlank(schemaId)) {
-                schema = generateNotificationSchema(null, NotificationTypeDto.USER);
+                schema = generateNotificationSchemaDto(null, NotificationTypeDto.USER);
             } else {
                 schema = notificationService.findNotificationSchemaById(schemaId);
             }
             notification.setApplicationId(schema.getApplicationId());
             notification.setSchemaId(schema.getId());
             if (isBlank(topicId)) {
-                topicId = generateTopic(schema.getApplicationId(), null).getId();
+                topicId = generateTopicDto(schema.getApplicationId(), null).getId();
             }
             notification.setTopicId(topicId);
             notification.setType(type != null ? type : NotificationTypeDto.USER);
@@ -547,18 +615,18 @@ public class AbstractTest {
         return notifications;
     }
 
-    protected EndpointNotificationDto generateUnicastNotification(String schemaId, String topicId, byte[] keyHash) {
+    protected EndpointNotificationDto generateUnicastNotificationDto(String schemaId, String topicId, byte[] keyHash) {
         EndpointNotificationDto endpointNotification = new EndpointNotificationDto();
         endpointNotification.setEndpointKeyHash(keyHash);
         NotificationDto notification = new NotificationDto();
         NotificationSchemaDto schema;
         if (isBlank(schemaId)) {
-            schema = generateNotificationSchema(null, NotificationTypeDto.USER);
+            schema = generateNotificationSchemaDto(null, NotificationTypeDto.USER);
         } else {
             schema = notificationService.findNotificationSchemaById(schemaId);
         }
         if (isBlank(topicId)) {
-            topicId = generateTopic(schema.getApplicationId(), null).getId();
+            topicId = generateTopicDto(schema.getApplicationId(), null).getId();
         }
         notification.setTopicId(topicId);
         notification.setApplicationId(schema.getApplicationId());
@@ -577,7 +645,7 @@ public class AbstractTest {
         return update.getPayload();
     }
 
-    protected EndpointUserDto generateEndpointUser(String tenantId) {
+    protected EndpointUserDto generateEndpointUserDto(String tenantId) {
         EndpointUserDto endpointUser = new EndpointUserDto();
         endpointUser.setExternalId(ENDPOINT_USER_EXTERNAL_ID + UUID.randomUUID().toString());
         endpointUser.setUsername(ENDPOINT_USER_NAME + UUID.randomUUID().toString());
@@ -589,23 +657,23 @@ public class AbstractTest {
         return endpointUser;
     }
 
-    protected LogAppenderDto generateLogAppender(String appId, String schemaId) {
+    protected LogAppenderDto generateLogAppenderDto(String appId, String schemaId) {
         LogAppenderDto logAppender = null;
         ApplicationDto app = null;
         LogSchemaDto schema = null;
         if (isBlank(appId)) {
-            app = generateApplication();
+            app = generateApplicationDto();
             appId = app.getId();
         } else {
             app = applicationService.findAppById(appId);
         }
         if (isBlank(schemaId)) {
-            schema = generateLogSchema(appId, 1).get(0);
+            schema = generateLogSchemaDto(appId, 1).get(0);
         }
         logAppender = new LogAppenderDto();
         logAppender.setApplicationId(appId);
         logAppender.setName("Generated Appender");
-        int version = schema.getMajorVersion();
+        int version = schema.getVersion();
         logAppender.setMinLogSchemaVersion(version);
         logAppender.setMaxLogSchemaVersion(version);
         logAppender.setTenantId(app.getTenantId());
@@ -613,27 +681,27 @@ public class AbstractTest {
         return logAppendersService.saveLogAppender(logAppender);
     }
 
-    protected EndpointUserConfigurationDto generateEndpointUserConfiguration(EndpointUserDto endpointUser, ApplicationDto applicationDto,
-                                                                             ConfigurationSchemaDto configurationSchema) {
-        return generateEndpointUserConfiguration(endpointUser, applicationDto, configurationSchema, UUID.randomUUID().toString());
+    protected EndpointUserConfigurationDto generateEndpointUserConfigurationDto(EndpointUserDto endpointUser, ApplicationDto applicationDto,
+                                                                                ConfigurationSchemaDto configurationSchema) {
+        return generateEndpointUserConfigurationDto(endpointUser, applicationDto, configurationSchema, UUID.randomUUID().toString());
     }
 
-    protected EndpointUserConfigurationDto generateEndpointUserConfiguration(EndpointUserDto endpointUser, ApplicationDto applicationDto,
-                                                                             ConfigurationSchemaDto configurationSchema, String body) {
-        return generateEndpointUserConfiguration(endpointUser, applicationDto, configurationSchema, body, false);
+    protected EndpointUserConfigurationDto generateEndpointUserConfigurationDto(EndpointUserDto endpointUser, ApplicationDto applicationDto,
+                                                                                ConfigurationSchemaDto configurationSchema, String body) {
+        return generateEndpointUserConfigurationDto(endpointUser, applicationDto, configurationSchema, body, false);
     }
 
-    protected EndpointUserConfigurationDto generateEndpointUserConfiguration(EndpointUserDto endpointUser, ApplicationDto applicationDto,
-                                                                             ConfigurationSchemaDto configurationSchema, String body, boolean isNullAppDto) {
+    protected EndpointUserConfigurationDto generateEndpointUserConfigurationDto(EndpointUserDto endpointUser, ApplicationDto applicationDto,
+                                                                                ConfigurationSchemaDto configurationSchema, String body, boolean isNullAppDto) {
         EndpointUserConfigurationDto configurationDto = new EndpointUserConfigurationDto();
         configurationDto.setBody(body);
 
         if (endpointUser == null) {
-            endpointUser = generateEndpointUser(null);
+            endpointUser = generateEndpointUserDto(null);
         }
         if (!isNullAppDto) {
             if (applicationDto == null) {
-                applicationDto = generateApplication();
+                applicationDto = generateApplicationDto();
             }
             configurationDto.setAppToken(applicationDto.getApplicationToken());
         } else {
@@ -642,32 +710,46 @@ public class AbstractTest {
         configurationDto.setUserId(endpointUser.getId());
 
         if (configurationSchema == null) {
-            configurationSchema = generateConfSchema(applicationDto.getId(), 1).get(0);
+            configurationSchema = generateConfSchemaDto(applicationDto.getId(), 1).get(0);
         }
-        configurationDto.setSchemaVersion(configurationSchema.getMajorVersion());
+        configurationDto.setSchemaVersion(configurationSchema.getVersion());
 
         return userConfigurationService.saveUserConfiguration(configurationDto);
     }
 
-    protected EndpointProfileDto generateEndpointProfile(String appId, List<String> topicIds) {
+    protected EndpointProfileDto generateEndpointProfileDto(String appId, List<String> topicIds) {
+        if (isBlank(appId)) {
+            appId = generateApplicationDto().getId();
+        }
         EndpointProfileDto profileDto = new EndpointProfileDto();
         profileDto.setApplicationId(appId);
         profileDto.setSubscriptions(topicIds);
         profileDto.setEndpointKeyHash("TEST_KEY_HASH".getBytes());
-        profileDto.setProfile("{\"title\": \"TEST\"}");
+        profileDto.setClientProfileBody("{\"title\": \"TEST\"}");
         profileDto.setSdkToken(UUID.randomUUID().toString());
         return endpointService.saveEndpointProfile(profileDto);
     }
 
-    protected EndpointProfileDto generateEndpointProfileWithGroupId(String endpointGroupId, boolean nfGroupStateOnly) {
+    protected EndpointProfileDto generateEndpointProfileDtoWithSchemaVersion(String appId, int schemaVersion, String srvProfileBody) {
+        EndpointProfileDto profileDto = new EndpointProfileDto();
+        profileDto.setApplicationId(appId);
+        profileDto.setServerProfileVersion(schemaVersion);
+        profileDto.setEndpointKeyHash("TEST_KEY_HASH".getBytes());
+        profileDto.setClientProfileBody("{\"title\": \"TEST\"}");
+        profileDto.setSdkToken(UUID.randomUUID().toString());
+        profileDto.setServerProfileBody(srvProfileBody);
+        return endpointService.saveEndpointProfile(profileDto);
+    }
+
+    protected EndpointProfileDto generateEndpointProfileWithGroupIdDto(String endpointGroupId, boolean nfGroupStateOnly) {
         EndpointProfileDto profileDto = new EndpointProfileDto();
         profileDto.setEndpointKeyHash(generateString("TEST_KEY_HASH").getBytes());
-        String appId = generateApplication().getId();
+        String appId = generateApplicationDto().getId();
         profileDto.setApplicationId(appId);
         List<EndpointGroupStateDto> groupState = new ArrayList<>();
         groupState.add(new EndpointGroupStateDto(endpointGroupId, null, null));
         profileDto.setCfGroupStates(groupState);
-        profileDto.setProfile("{\"title\": \"TEST\"}");
+        profileDto.setClientProfileBody("{\"title\": \"TEST\"}");
         if (nfGroupStateOnly) {
             profileDto.setNfGroupStates(groupState);
             profileDto.setCfGroupStates(null);
@@ -676,5 +758,68 @@ public class AbstractTest {
         }
         profileDto.setSdkToken(UUID.randomUUID().toString());
         return endpointService.saveEndpointProfile(profileDto);
+    }
+
+    protected CTLSchemaDto generateCTLSchemaDto(String tenantId) {
+        return generateCTLSchemaDto(DEFAULT_FQN, tenantId, 100, CTLSchemaScopeDto.TENANT);
+    }
+
+    protected CTLSchemaDto generateCTLSchemaDto(String fqn, String tenantId, int version, CTLSchemaScopeDto scopeDto) {
+        CTLSchemaDto ctlSchema = new CTLSchemaDto();
+        CTLSchemaMetaInfoDto metaInfoDto = new CTLSchemaMetaInfoDto(fqn, version);
+        if (scopeDto == null) {
+            if (isBlank(tenantId)) {
+                scopeDto = CTLSchemaScopeDto.SYSTEM;
+            } else {
+                scopeDto = CTLSchemaScopeDto.TENANT;
+            }
+        }
+        metaInfoDto.setScope(scopeDto);
+        ctlSchema.setMetaInfo(metaInfoDto);
+        String name = fqn.substring(fqn.lastIndexOf(".") + 1);
+        String namespace = fqn.substring(0, fqn.lastIndexOf("."));
+        StringBuilder body = new StringBuilder("{\"type\": \"record\",");
+        body = body.append("\"name\": \"").append(name).append("\",");
+        body = body.append("\"namespace\": \"").append(namespace).append("\",");
+        body = body.append("\"version\": ").append(version).append(",");
+        body = body.append("\"dependencies\": [], \"fields\": []}");
+        ctlSchema.setBody(body.toString());
+        ctlSchema.setTenantId(tenantId);
+        return ctlSchema;
+    }
+
+    protected ServerProfileSchemaDto generateServerProfileSchema(String appId, String tenantId) {
+        return generateServerProfileSchema(appId, tenantId, RANDOM.nextInt());
+    }
+
+    protected ServerProfileSchemaDto generateServerProfileSchema(String appId, String tenantId, int version) {
+        ServerProfileSchemaDto schemaDto = new ServerProfileSchemaDto();
+        if(isBlank(tenantId)) {
+            ApplicationDto applicationDto = generateApplicationDto();
+            appId = applicationDto.getId();
+            tenantId = applicationDto.getTenantId();
+        }
+        schemaDto.setApplicationId(appId);
+        schemaDto.setCreatedTime(System.currentTimeMillis());
+        schemaDto.setCtlSchemaId(ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN, tenantId, version, CTLSchemaScopeDto.SERVER_PROFILE_SCHEMA)).getId());
+        return serverProfileService.saveServerProfileSchema(schemaDto);
+    }
+
+    protected List<String> getIds(List<? extends GenericModel> modelList) {
+        List<String> ids = new ArrayList<>();
+        for (GenericModel gm : modelList) {
+            ids.add(gm.getStringId());
+        }
+        Collections.sort(ids);
+        return ids;
+    }
+
+    protected List<String> getIdsDto(List<? extends HasId> hId) {
+        List<String> ids = new ArrayList<>();
+        for (HasId id : hId) {
+            ids.add(id.getId());
+        }
+        Collections.sort(ids);
+        return ids;
     }
 }

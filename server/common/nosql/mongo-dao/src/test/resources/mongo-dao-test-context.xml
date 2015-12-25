@@ -35,10 +35,10 @@
 
     <context:annotation-config/>
     <context:component-scan base-package="org.kaaproject.kaa.server.common.dao"/>
-    <util:properties id="dao" location="classpath:mongo_test.properties"/>
+    <util:properties id="dao" location="classpath:dao_test.properties"/>
     <util:properties id="mongo" location="classpath:mongo_test.properties"/>
 
-    <import resource="classpath:mongo-dao-sql-test-context.xml" />
+    <import resource="classpath:common-dao-sql-test-context.xml" />
     <import resource="classpath:mongo-dao-nosql-test-context.xml" />
 
     <bean id="schemaGenerationFactory" class="org.kaaproject.kaa.server.common.core.algorithms.schema.SchemaGenerationAlgorithmFactoryImpl"/>
@@ -68,4 +68,9 @@
     <bean id="userConfigurationService" class="org.kaaproject.kaa.server.common.dao.service.UserConfigurationServiceImpl">
         <property name="endpointUserConfigurationDao" ref="endpointUserConfigurationDao"/>
     </bean>
+
+    <bean id="serverProfileService" class="org.kaaproject.kaa.server.common.dao.service.ServerProfileServiceImpl">
+        <property name="endpointProfileDao" ref="endpointProfileDao"/>
+    </bean>
+
 </beans>

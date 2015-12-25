@@ -15,11 +15,10 @@
  */
 package org.kaaproject.kaa.server.plugin.contracts.messaging;
 
+import org.kaaproject.kaa.common.dto.plugin.ContractType;
+import org.kaaproject.kaa.common.dto.plugin.PluginContractDirection;
 import org.kaaproject.kaa.server.common.core.plugin.base.BasePluginContractDef;
 import org.kaaproject.kaa.server.common.core.plugin.base.BasePluginContractItemDef;
-import org.kaaproject.kaa.server.common.core.plugin.def.ContractType;
-import org.kaaproject.kaa.server.common.core.plugin.def.PluginContractDirection;
-import org.kaaproject.kaa.server.plugin.contracts.messaging.EndpointMessage;
 
 public class MessagingPluginContract {
 

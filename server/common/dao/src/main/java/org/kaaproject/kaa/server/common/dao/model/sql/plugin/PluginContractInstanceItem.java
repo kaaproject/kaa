@@ -15,28 +15,138 @@
  */
 package org.kaaproject.kaa.server.common.dao.model.sql.plugin;
 
+import org.kaaproject.kaa.common.dto.plugin.PluginContractInstanceItemDto;
+import org.kaaproject.kaa.server.common.dao.DaoConstants;
+import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.GenericModel;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Set;
 
-public class PluginContractInstanceItem extends GenericModel implements Serializable {
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_INSTANCE_ITEM_CONF_DATA;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_INSTANCE_ITEM_JOIN_TABLE_IN_PLUGIN_INSTANCE_CONTRACT_ITEM_ID;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_INSTANCE_ITEM_JOIN_TABLE_OUT_PLUGIN_INSTANCE_CONTRACT_ITEM_ID;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_INSTANCE_ITEM_PARENT_PLUGIN_CONTRACT_ITEM_FK;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_INSTANCE_ITEM_PLUGIN_CONTRACT_INSTANCE_FK;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_INSTANCE_ITEM_PLUGIN_CONTRACT_INSTANCE_ID;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_INSTANCE_ITEM_PLUGIN_CONTRACT_ITEM_FK;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_INSTANCE_ITEM_PLUGIN_CONTRACT_ITEM_ID;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_INSTANCE_ITEM_PLUGIN_CONTRACT_ITEM_PARENT_ID;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_INSTANCE_ITEM_TABLE_NAME;
 
+@Entity
+@Table(name = PLUGIN_CONTRACT_INSTANCE_ITEM_TABLE_NAME)
+public class PluginContractInstanceItem extends GenericModel<PluginContractInstanceItemDto> implements Serializable {
+
+    private static final long serialVersionUID = -9145339406077995951L;
+
+    @Lob
+    @Column(name = PLUGIN_CONTRACT_INSTANCE_ITEM_CONF_DATA)
     private String confData;
-    private PluginContractInstance pluginContractInstance;
-    private PluginContractItem pluginContractItem;
-    private PluginContractItem parentPluginContractItem;
-    private String inMessageSchema;
-    private String outMessageSchema;
-    private Set<ContractItemRoute> contractItemRoutes;
 
-    @Override
-    protected Object createDto() {
-        return null;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = PLUGIN_CONTRACT_INSTANCE_ITEM_PLUGIN_CONTRACT_INSTANCE_ID,
+            foreignKey = @ForeignKey(name = PLUGIN_CONTRACT_INSTANCE_ITEM_PLUGIN_CONTRACT_INSTANCE_FK))
+    private PluginContractInstance pluginContractInstance;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = PLUGIN_CONTRACT_INSTANCE_ITEM_PLUGIN_CONTRACT_ITEM_ID,
+            foreignKey = @ForeignKey(name = PLUGIN_CONTRACT_INSTANCE_ITEM_PLUGIN_CONTRACT_ITEM_FK))
+    private PluginContractItem pluginContractItem;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = PLUGIN_CONTRACT_INSTANCE_ITEM_PLUGIN_CONTRACT_ITEM_PARENT_ID,
+            foreignKey = @ForeignKey(name = PLUGIN_CONTRACT_INSTANCE_ITEM_PARENT_PLUGIN_CONTRACT_ITEM_FK))
+    private PluginContractItem parentPluginContractItem;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = DaoConstants.PLUGIN_CONTRACT_INSTANCE_ITEM_JOIN_TABLE_NAME,
+            joinColumns = {@JoinColumn(name = PLUGIN_CONTRACT_INSTANCE_ITEM_JOIN_TABLE_IN_PLUGIN_INSTANCE_CONTRACT_ITEM_ID,
+                    foreignKey = @ForeignKey(name = DaoConstants.PLUGIN_CONTRACT_INSTANCE_ITEM_JOIN_TABLE_IN_PLUGIN_INSTANCE_CONTRACT_ITEM_FK))},
+            inverseJoinColumns = {@JoinColumn(name = PLUGIN_CONTRACT_INSTANCE_ITEM_JOIN_TABLE_OUT_PLUGIN_INSTANCE_CONTRACT_ITEM_ID,
+                    foreignKey = @ForeignKey(name = DaoConstants.PLUGIN_CONTRACT_INSTANCE_ITEM_JOIN_TABLE_OUT_PLUGIN_INSTANCE_CONTRACT_ITEM_FK))})
+    private Set<PluginContractInstanceItem> pluginContractItems;
+
+    @ManyToOne
+    private CTLSchema inMessageSchema;
+
+    @ManyToOne
+    private CTLSchema outMessageSchema;
+
+    public PluginContractInstanceItem() {
+    }
+
+    // TODO: implement
+    public PluginContractInstanceItem(PluginContractInstanceItemDto dto) {
+    }
+
+    public PluginContractInstanceItem(Long id) {
+        this.id = id;
+    }
+
+    public String getConfData() {
+        return confData;
+    }
+
+    public void setConfData(String confData) {
+        this.confData = confData;
+    }
+
+    public PluginContractInstance getPluginContractInstance() {
+        return pluginContractInstance;
+    }
+
+    public void setPluginContractInstance(PluginContractInstance pluginContractInstance) {
+        this.pluginContractInstance = pluginContractInstance;
+    }
+
+    public PluginContractItem getPluginContractItem() {
+        return pluginContractItem;
+    }
+
+    public void setPluginContractItem(PluginContractItem pluginContractItem) {
+        this.pluginContractItem = pluginContractItem;
+    }
+
+    public PluginContractItem getParentPluginContractItem() {
+        return parentPluginContractItem;
+    }
+
+    public void setParentPluginContractItem(PluginContractItem parentPluginContractItem) {
+        this.parentPluginContractItem = parentPluginContractItem;
+    }
+
+    public Set<PluginContractInstanceItem> getPluginContractItems() {
+        return pluginContractItems;
+    }
+
+    public void setPluginContractItems(Set<PluginContractInstanceItem> pluginContractItems) {
+        this.pluginContractItems = pluginContractItems;
     }
 
     @Override
-    public Object toDto() {
+    protected PluginContractInstanceItemDto createDto() {
+        return new PluginContractInstanceItemDto();
+    }
+
+    @Override
+    protected PluginContractInstanceItem newInstance(Long id) {
+        return new PluginContractInstanceItem(id);
+    }
+
+    // TODO: implement
+    @Override
+    public PluginContractInstanceItemDto toDto() {
         return null;
     }
 }

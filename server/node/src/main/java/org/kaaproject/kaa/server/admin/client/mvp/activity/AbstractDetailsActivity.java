@@ -92,6 +92,14 @@ public abstract class AbstractDetailsActivity<T, V extends BaseDetailsView, P ex
     public void goTo(Place place) {
         clientFactory.getPlaceController().goTo(place);
     }
+    
+    protected void reload() {
+        for (HandlerRegistration registration : registrations) {
+            registration.removeHandler();
+          }
+          registrations.clear();
+          bind(null);
+    }
 
     protected void bind(final EventBus eventBus) {
         registrations.add(detailsView.getSaveButton().addClickHandler(new ClickHandler() {

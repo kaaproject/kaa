@@ -26,7 +26,6 @@ import org.kaaproject.kaa.client.channel.KaaDataChannel;
 import org.kaaproject.kaa.client.event.EventFamilyFactory;
 import org.kaaproject.kaa.client.event.EventListenersResolver;
 import org.kaaproject.kaa.client.event.registration.EndpointRegistrationManager;
-import org.kaaproject.kaa.client.plugin.messaging.ext1.Messaging1PluginAPI;
 import org.kaaproject.kaa.schema.base.Configuration;
 import org.kaaproject.kaa.schema.base.Log;
 
@@ -64,9 +63,4 @@ public interface KaaClient extends GenericKaaClient {
      * @return configuration
      */
     Configuration getConfiguration();
-
-    /**
-     * Auto-generated based on plugin metadata;
-     */
-    Messaging1PluginAPI getMessaging1PluginAPI();
 }

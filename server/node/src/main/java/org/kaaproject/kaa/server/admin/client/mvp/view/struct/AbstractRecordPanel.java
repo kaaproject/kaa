@@ -74,8 +74,8 @@ public abstract class AbstractRecordPanel<T extends AbstractStructureDto, V> ext
         this.selectTab(1);
     }
 
-    public void setSchemaSelected(boolean selected) {
-        inactivePanel.setSchemaSelected(selected);
+    public void fireSchemaSelected() {
+        inactivePanel.fireSchemaSelected();
     }
 
     public HasValue<String> getDescription() {

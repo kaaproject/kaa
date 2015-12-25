@@ -19,31 +19,25 @@ package org.kaaproject.kaa.client.channel;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.nio.ByteBuffer;
+import java.util.*;
 
 import org.junit.Test;
 import org.kaaproject.kaa.client.channel.impl.DefaultOperationDataProcessor;
+import org.kaaproject.kaa.client.context.TransportContext;
+import org.kaaproject.kaa.client.plugin.ExtensionId;
+import org.kaaproject.kaa.client.plugin.PluginAdapter;
+import org.kaaproject.kaa.client.plugin.PluginInstance;
+import org.kaaproject.kaa.client.plugin.PluginInstanceAPI;
 import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
-import org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncResponse;
-import org.kaaproject.kaa.common.endpoint.gen.EventSyncResponse;
-import org.kaaproject.kaa.common.endpoint.gen.LogDeliveryStatus;
-import org.kaaproject.kaa.common.endpoint.gen.LogSyncResponse;
-import org.kaaproject.kaa.common.endpoint.gen.NotificationSyncResponse;
-import org.kaaproject.kaa.common.endpoint.gen.ProfileSyncResponse;
-import org.kaaproject.kaa.common.endpoint.gen.RedirectSyncResponse;
-import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
-import org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType;
-import org.kaaproject.kaa.common.endpoint.gen.SyncResponseStatus;
-import org.kaaproject.kaa.common.endpoint.gen.UserSyncResponse;
+import org.kaaproject.kaa.common.endpoint.gen.*;
 import org.mockito.Mockito;
 
 public class DefaultOperationDataProcessorTest {
 
-    private static final int REQUEST_ID = 42;
-    
+    private static final int DEFAULT_ID = 42;
+
     @Test
     public void testUpRequestCreationWithUnknownType() throws Exception {
         DefaultOperationDataProcessor operationsDataProcessor = new DefaultOperationDataProcessor();
@@ -172,7 +166,7 @@ public class DefaultOperationDataProcessorTest {
         response.setRedirectSyncResponse(new RedirectSyncResponse(1));
         response.setUserSyncResponse(new UserSyncResponse());
 
-        LogDeliveryStatus status = new LogDeliveryStatus(REQUEST_ID, SyncResponseResultType.SUCCESS, null);
+        LogDeliveryStatus status = new LogDeliveryStatus(DEFAULT_ID, SyncResponseResultType.SUCCESS, null);
         response.setLogSyncResponse(new LogSyncResponse(Collections.singletonList(status)));
 
         AvroByteArrayConverter<SyncResponse> converter = new AvroByteArrayConverter<>(SyncResponse.class);
@@ -188,6 +182,33 @@ public class DefaultOperationDataProcessorTest {
     }
 
     @Test
+    public void testExtensionResponse() throws Exception {
+        DefaultOperationDataProcessor operationsDataProcessor = new DefaultOperationDataProcessor();
+
+        PluginInstance pluginInstance = Mockito.mock(PluginInstance.class);
+        PluginAdapter pluginAdapter = Mockito.mock(PluginAdapter.class);
+
+        Mockito.when(pluginInstance.getPluginAdapter()).thenReturn(pluginAdapter);
+
+        Map<ExtensionId, PluginInstance<? extends PluginInstanceAPI>> plugins = new HashMap<>();
+        plugins.put(new ExtensionId(DEFAULT_ID), pluginInstance);
+        operationsDataProcessor.setTransportContext(new TransportContext(Collections.unmodifiableMap(plugins), null, null, null,
+                null, null, null, null, null, null));
+
+        List<ExtensionSync> extensionSyncs = new ArrayList<>();
+        extensionSyncs.add(new ExtensionSync(DEFAULT_ID, ByteBuffer.allocate(0)));
+
+        SyncResponse response = new SyncResponse();
+        response.setStatus(SyncResponseResultType.SUCCESS);
+        response.setExtensionSyncResponses(extensionSyncs);
+
+        AvroByteArrayConverter<SyncResponse> converter = new AvroByteArrayConverter<>(SyncResponse.class);
+        operationsDataProcessor.processResponse(converter.toByteArray(response));
+
+        Mockito.verify(pluginAdapter, Mockito.times(1)).processData(Mockito.any(byte[].class));
+    }
+
+    @Test
     public void testResponseWithNullTransports() throws Exception {
         DefaultOperationDataProcessor operationsDataProcessor = new DefaultOperationDataProcessor();
 
@@ -200,7 +221,7 @@ public class DefaultOperationDataProcessorTest {
         response.setRedirectSyncResponse(new RedirectSyncResponse(1));
         response.setUserSyncResponse(new UserSyncResponse());
 
-        LogDeliveryStatus status = new LogDeliveryStatus(REQUEST_ID, SyncResponseResultType.SUCCESS, null);
+        LogDeliveryStatus status = new LogDeliveryStatus(DEFAULT_ID, SyncResponseResultType.SUCCESS, null);
         response.setLogSyncResponse(new LogSyncResponse(Collections.singletonList(status)));
 
         AvroByteArrayConverter<SyncResponse> converter = new AvroByteArrayConverter<>(SyncResponse.class);

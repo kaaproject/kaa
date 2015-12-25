@@ -4,7 +4,7 @@
     "name": "FlumeConfig",
     "fields": 
     [
-    	{
+        {
             "name":"executorThreadPoolSize",
             "displayName":"Executor thread pool size",
             "by_default":1,
@@ -21,6 +21,18 @@
             "displayName":"RPC client max thread pool size",
             "by_default":2,
             "type":"int"
+        },
+        {
+            "name":"includeClientProfile",
+            "displayName":"Include client profile data",
+            "by_default":false,
+            "type": ["boolean", "null"]
+        },
+        {
+            "name":"includeServerProfile",
+            "displayName":"Include server profile data",
+            "by_default":false,
+            "type":["boolean", "null"]
         },
         {"name": "flumeEventFormat",
          "displayName": "Flume event format",

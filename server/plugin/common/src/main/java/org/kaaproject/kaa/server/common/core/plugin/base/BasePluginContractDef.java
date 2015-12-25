@@ -15,15 +15,15 @@
  */
 package org.kaaproject.kaa.server.common.core.plugin.base;
 
+import org.kaaproject.kaa.common.dto.plugin.ContractType;
+import org.kaaproject.kaa.common.dto.plugin.PluginContractDirection;
+import org.kaaproject.kaa.server.common.core.plugin.def.ContractDef;
+import org.kaaproject.kaa.server.common.core.plugin.def.PluginContractDef;
+import org.kaaproject.kaa.server.common.core.plugin.def.PluginContractItemDef;
+
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
-
-import org.kaaproject.kaa.server.common.core.plugin.def.ContractDef;
-import org.kaaproject.kaa.server.common.core.plugin.def.ContractType;
-import org.kaaproject.kaa.server.common.core.plugin.def.PluginContractDef;
-import org.kaaproject.kaa.server.common.core.plugin.def.PluginContractDirection;
-import org.kaaproject.kaa.server.common.core.plugin.def.PluginContractItemDef;
 
 public class BasePluginContractDef implements PluginContractDef {
 
@@ -55,10 +55,10 @@ public class BasePluginContractDef implements PluginContractDef {
         return Collections.unmodifiableSet(contractItems);
     }
 
-    public static Builder builder(String name, int version){
+    public static Builder builder(String name, int version) {
         return new Builder(name, version);
     }
-    
+
     public static class Builder {
         private final String name;
         private final int version;

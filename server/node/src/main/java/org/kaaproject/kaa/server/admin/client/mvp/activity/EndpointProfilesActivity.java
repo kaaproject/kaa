@@ -45,6 +45,8 @@ import org.kaaproject.kaa.server.admin.shared.services.ServiceErrorCode;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.kaaproject.kaa.server.admin.client.util.Utils.isNotBlank;
+
 public class EndpointProfilesActivity extends AbstractActivity implements BaseListView.Presenter {
 
     protected final ClientFactory clientFactory;
@@ -141,10 +143,10 @@ public class EndpointProfilesActivity extends AbstractActivity implements BaseLi
             public void onClick(ClickEvent clickEvent) {
                 listView.clearError();
                 String value = listView.getEndpointKeyHashTextBox().getValue();
-                if (value != null && !value.isEmpty()) {
+                if (isNotBlank(value)) {
                     findEndpointFromThisApplication(value);
                 } else {
-                    Utils.handleException(new IllegalArgumentException(Utils.messages.emptyEndpointKeyHash()), listView);
+                    listView.getListWidget().getDataGrid().setRowData(new ArrayList<EndpointProfileDto>());
                 }
             }
         }));

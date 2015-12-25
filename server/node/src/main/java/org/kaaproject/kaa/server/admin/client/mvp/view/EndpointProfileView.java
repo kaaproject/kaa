@@ -16,15 +16,18 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view;
 
-import com.google.gwt.user.client.ui.Anchor;
-import com.google.gwt.user.client.ui.Widget;
+
+import java.util.List;
+
 import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.topic.TopicGrid;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.RecordPanel;
 
-import java.util.List;
+import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.user.client.ui.Widget;
 
 public interface EndpointProfileView extends BaseDetailsView {
 
@@ -34,9 +37,12 @@ public interface EndpointProfileView extends BaseDetailsView {
     SizedTextBox getUserExternalID();
     List<Widget> getUserInfoList();
 
-    SizedTextBox getSchemaName();
-    SizedTextBox getDescription();
-    RecordPanel getSchemaForm();
+    Anchor getEndpointProfSchemaName();
+    RecordPanel getEndpointProfForm();
+
+    Anchor getServerProfSchemaName();
+    RecordPanel getServerProfForm();
+    HasClickHandlers getEditServerProfileButton();
 
     Anchor getSdkAnchor();
     AbstractGrid<EndpointGroupDto, String> getGroupsGrid();

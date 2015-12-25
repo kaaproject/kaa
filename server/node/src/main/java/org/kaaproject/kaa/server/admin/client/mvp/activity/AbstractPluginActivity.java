@@ -15,21 +15,20 @@
  */
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
-import java.util.List;
-
+import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
-import org.kaaproject.kaa.common.dto.plugin.legacy.PluginDto;
+import org.kaaproject.kaa.common.dto.plugin.legacy.AbstractPluginDto;
 import org.kaaproject.kaa.common.dto.plugin.legacy.PluginInfoDto;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.place.AbstractPluginPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BasePluginView;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.AcceptsOneWidget;
+import java.util.List;
 
-public abstract class AbstractPluginActivity<T extends PluginDto, V extends BasePluginView, P extends AbstractPluginPlace> extends AbstractDetailsActivity<T, V, P> {
+public abstract class AbstractPluginActivity<T extends AbstractPluginDto, V extends BasePluginView, P extends AbstractPluginPlace> extends AbstractDetailsActivity<T, V, P> {
 
     protected String applicationId;
 
@@ -47,7 +46,7 @@ public abstract class AbstractPluginActivity<T extends PluginDto, V extends Base
     protected String getEntityId(P place) {
         return place.getPluginId();
     }
-    
+
     protected abstract void loadPluginInfos(AsyncCallback<List<PluginInfoDto>> callback);
 
     @Override
@@ -57,19 +56,20 @@ public abstract class AbstractPluginActivity<T extends PluginDto, V extends Base
             public void onSuccessImpl(List<PluginInfoDto> result) {
                 detailsView.getPluginInfo().setAcceptableValues(result);
             }
+
             @Override
             public void onFailureImpl(Throwable caught) {
                 Utils.handleException(caught, detailsView);
             }
         });
-        
+
         if (!create) {
             detailsView.getName().setValue(entity.getName());
             detailsView.getDescription().setValue(entity.getDescription());
             detailsView.getCreatedUsername().setValue(entity.getCreatedUsername());
             detailsView.getCreatedDateTime().setValue(Utils.millisecondsToDateTimeString(entity.getCreatedTime()));
             detailsView.getConfiguration().setValue(entity.getFieldConfiguration());
-            PluginInfoDto appenderInfo = 
+            PluginInfoDto appenderInfo =
                     new PluginInfoDto(entity.getPluginTypeName(), entity.getFieldConfiguration(), entity.getPluginClassName());
             detailsView.getPluginInfo().setValue(appenderInfo);
         }

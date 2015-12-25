@@ -22,7 +22,6 @@ import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.server.sync.SubscriptionCommand;
 import org.kaaproject.kaa.server.sync.TopicState;
 
-
 /**
  * The Class for modeling of delta response. It is used to communicate with
  * {@link org.kaaproject.kaa.server.operations.service.delta.DeltaService
@@ -57,8 +56,8 @@ public class GetNotificationRequest {
      * @param topicStates
      *            the topic states
      */
-    public GetNotificationRequest(EndpointProfileDto profile, List<SubscriptionCommand> subscriptionCommands, List<String> acceptedUnicastNotifications,
-            List<TopicState> topicStates) {
+    public GetNotificationRequest(EndpointProfileDto profile, List<SubscriptionCommand> subscriptionCommands,
+            List<String> acceptedUnicastNotifications, List<TopicState> topicStates) {
         super();
         this.profile = profile;
         this.subscriptionCommands = subscriptionCommands;

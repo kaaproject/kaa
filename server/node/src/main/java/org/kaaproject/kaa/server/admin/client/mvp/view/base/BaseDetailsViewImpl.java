@@ -39,6 +39,8 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
@@ -55,6 +57,7 @@ public abstract class BaseDetailsViewImpl extends Composite implements InputEven
     @UiField public Label subTitleLabel;
     @UiField public FlexTable detailsTable;
     @UiField public HorizontalPanel backButtonPanel;
+    @UiField public HorizontalPanel buttonsPanel;
     @UiField public Button backButton;
     @UiField public Button saveButton;
     @UiField public Button cancelButton;
@@ -123,6 +126,20 @@ public abstract class BaseDetailsViewImpl extends Composite implements InputEven
         
         clearError();
     }
+    
+    protected void appendToolbarWidget(Widget widget) {
+        buttonsPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
+        buttonsPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+        buttonsPanel.add(widget);
+        buttonsPanel.setCellHeight(widget, "100%");
+    }
+    
+    protected void prependToolbarWidget(Widget widget) {
+        buttonsPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
+        buttonsPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+        buttonsPanel.insert(widget, 0);
+        buttonsPanel.setCellHeight(widget, "100%");
+    }
 
     @Override
     public void reset() {
@@ -139,12 +156,12 @@ public abstract class BaseDetailsViewImpl extends Composite implements InputEven
 
     @Override
     public void setBackEnabled(boolean enabled) {
-        backButtonPanel.setVisible(enabled);
+        backButtonPanel.setVisible(!create && enabled);
     }
 
     @Override
     public void setCancelEnabled(boolean enabled) {
-        cancelButton.setVisible(enabled);
+        cancelButton.setVisible(create && enabled);
     }
 
     @Override

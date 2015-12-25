@@ -16,16 +16,18 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
+import java.util.List;
+
 import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
+import org.kaaproject.avro.ui.gwt.client.widget.AlertPanel;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEvent;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEventHandler;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.common.dto.StructureRecordDto;
+import org.kaaproject.kaa.common.dto.ProfileVersionPairDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
-import org.kaaproject.kaa.common.dto.admin.StructureRecordKey;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.data.ConfigurationsDataProvider;
@@ -37,8 +39,14 @@ import org.kaaproject.kaa.server.admin.client.mvp.place.ConfigurationPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EndpointGroupPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ProfileFilterPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointGroupView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.config.ConfigurationStructGrid;
 import org.kaaproject.kaa.server.admin.client.mvp.view.dialog.AddTopicDialog;
+import org.kaaproject.kaa.server.admin.client.mvp.view.dialog.MessageDialog;
+import org.kaaproject.kaa.server.admin.client.mvp.view.profile.ProfileFilterStructGrid;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
+import org.kaaproject.kaa.server.admin.shared.config.ConfigRecordKey;
+import org.kaaproject.kaa.server.admin.shared.profile.ProfileFilterRecordKey;
+import org.kaaproject.kaa.server.admin.shared.schema.SchemaInfoDto;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -68,11 +76,11 @@ public class EndpointGroupActivity
     public void start(AcceptsOneWidget containerWidget, EventBus eventBus) {
         super.start(containerWidget, eventBus);
         if (!create) {
-            AbstractGrid<StructureRecordDto<ProfileFilterDto>, StructureRecordKey> profileFiltersGrid = detailsView.getProfileFiltersGrid();
+            ProfileFilterStructGrid profileFiltersGrid = detailsView.getProfileFiltersGrid();
             profileFiltersDataProvider = new ProfileFiltersDataProvider(profileFiltersGrid,
                     detailsView, entityId, place.isIncludeDeprecatedProfileFilters());
 
-            AbstractGrid<StructureRecordDto<ConfigurationDto>, StructureRecordKey> configurationsGrid = detailsView.getConfigurationsGrid();
+            ConfigurationStructGrid configurationsGrid = detailsView.getConfigurationsGrid();
             configurationsDataProvider = new ConfigurationsDataProvider(configurationsGrid,
                     detailsView, entityId, place.isIncludeDeprecatedConfigurations());
 
@@ -87,23 +95,40 @@ public class EndpointGroupActivity
 
         registrations.add(detailsView.getAddProfileFilterButton().addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-                ProfileFilterPlace profileFilterPlace = new ProfileFilterPlace(applicationId, "", entityId, true, false, 0);
-                profileFilterPlace.setPreviousPlace(place);
-                goTo(profileFilterPlace);
+                KaaAdmin.getDataSource().getVacantProfileSchemas(entityId, new BusyAsyncCallback<List<ProfileVersionPairDto>>() {
+                    @Override
+                    public void onFailureImpl(Throwable caught) {
+                          Utils.handleException(caught, detailsView);
+                    }
+
+                    @Override
+                    public void onSuccessImpl(List<ProfileVersionPairDto> result) {
+                        if (!result.isEmpty()) {
+                            ProfileFilterPlace profileFilterPlace = new ProfileFilterPlace(applicationId, "", "", entityId, true, false, 0);
+                            profileFilterPlace.setPreviousPlace(place);
+                            goTo(profileFilterPlace);
+                        } else {
+                            MessageDialog.showMessageDialog(AlertPanel.Type.WARNING, 
+                                    Utils.constants.noVacantProfileSchemas(), 
+                                    Utils.messages.noVacantProfileSchemasMessage());
+                        }
+                    }
+                });
             }
           }));
 
-        registrations.add(detailsView.getProfileFiltersGrid().addRowActionHandler(new RowActionEventHandler<StructureRecordKey>() {
+        registrations.add(detailsView.getProfileFiltersGrid().addRowActionHandler(new RowActionEventHandler<ProfileFilterRecordKey>() {
               @Override
-              public void onRowAction(RowActionEvent<StructureRecordKey> event) {
-                  StructureRecordKey id = event.getClickedId();
+              public void onRowAction(RowActionEvent<ProfileFilterRecordKey> event) {
+                  ProfileFilterRecordKey id = event.getClickedId();
                   if (event.getAction()==RowActionEvent.CLICK) {
-                      ProfileFilterPlace profileFilterPlace = new ProfileFilterPlace(applicationId, id.getSchemaId(), id.getEndpointGroupId(), false, true, 0);
+                      ProfileFilterPlace profileFilterPlace = new ProfileFilterPlace(applicationId, id.getEndpointProfileSchemaId(), 
+                              id.getServerProfileSchemaId(), id.getEndpointGroupId(), false, true, 0);
                       profileFilterPlace.setPreviousPlace(place);
                       goTo(profileFilterPlace);
                   }
                   else if (event.getAction()==RowActionEvent.DELETE) {
-                        KaaAdmin.getDataSource().deleteProfileFilterRecord(id.getSchemaId(), id.getEndpointGroupId(),
+                        KaaAdmin.getDataSource().deleteProfileFilterRecord(id.getEndpointProfileSchemaId(), id.getServerProfileSchemaId(), id.getEndpointGroupId(),
                                 new BusyAsyncCallback<Void>() {
                                       @Override
                                       public void onFailureImpl(Throwable caught) {
@@ -130,16 +155,33 @@ public class EndpointGroupActivity
 
         registrations.add(detailsView.getAddConfigurationButton().addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-                ConfigurationPlace configurationPlace = new ConfigurationPlace(applicationId, "", entityId, true, false, 0);
-                configurationPlace.setPreviousPlace(place);
-                goTo(configurationPlace);
+                KaaAdmin.getDataSource().getVacantConfigurationSchemaInfos(entityId, new BusyAsyncCallback<List<SchemaInfoDto>>() {
+                    @Override
+                    public void onFailureImpl(Throwable caught) {
+                        Utils.handleException(caught, detailsView);
+                    }
+
+                    @Override
+                    public void onSuccessImpl(List<SchemaInfoDto> result) {
+                        if (!result.isEmpty()) {
+                            ConfigurationPlace configurationPlace = new ConfigurationPlace(applicationId, "", entityId, true, false, 0);
+                            configurationPlace.setPreviousPlace(place);
+                            goTo(configurationPlace);
+                        } else {
+                            MessageDialog.showMessageDialog(AlertPanel.Type.WARNING, 
+                                    Utils.constants.noVacantConfigurationSchemas(),
+                                    Utils.messages.noVacantConfigurationSchemasMessage());
+                        }
+                    }
+                });
+                
             }
           }));
 
-        registrations.add(detailsView.getConfigurationsGrid().addRowActionHandler(new RowActionEventHandler<StructureRecordKey>() {
+        registrations.add(detailsView.getConfigurationsGrid().addRowActionHandler(new RowActionEventHandler<ConfigRecordKey>() {
               @Override
-              public void onRowAction(RowActionEvent<StructureRecordKey> event) {
-                  StructureRecordKey id = event.getClickedId();
+              public void onRowAction(RowActionEvent<ConfigRecordKey> event) {
+                  ConfigRecordKey id = event.getClickedId();
                   if (event.getAction()==RowActionEvent.CLICK) {
                       ConfigurationPlace configurationPlace = new ConfigurationPlace(applicationId, id.getSchemaId(), id.getEndpointGroupId(), false, true, 0);
                       configurationPlace.setPreviousPlace(place);
@@ -243,6 +285,7 @@ public class EndpointGroupActivity
         detailsView.getName().setValue(entity.getName());
         if (!create) {
             detailsView.getWeight().setValue(entity.getWeight());
+            detailsView.setProfileFiltersVisible(entity.getWeight() > 0);
         }
         detailsView.getDescription().setValue(entity.getDescription());
         detailsView.getCreatedUsername().setValue(entity.getCreatedUsername());

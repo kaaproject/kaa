@@ -15,8 +15,7 @@
  */
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
-import java.util.List;
-
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.kaaproject.kaa.common.dto.plugin.legacy.PluginInfoDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
@@ -24,7 +23,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.place.UserVerifierPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.UserVerifierView;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
+import java.util.List;
 
 public class UserVerifierActivity extends AbstractPluginActivity<UserVerifierDto, UserVerifierView, UserVerifierPlace> {
 

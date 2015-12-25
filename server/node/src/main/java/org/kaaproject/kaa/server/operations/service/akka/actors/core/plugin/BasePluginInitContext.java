@@ -22,6 +22,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.kaaproject.kaa.common.dto.plugin.ContractDto;
+import org.kaaproject.kaa.common.dto.plugin.ContractType;
+import org.kaaproject.kaa.common.dto.plugin.PluginContractDirection;
 import org.kaaproject.kaa.common.dto.plugin.PluginContractDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginContractInstanceDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginContractInstanceItemDto;
@@ -30,8 +32,6 @@ import org.kaaproject.kaa.server.common.core.plugin.base.BasePluginContractDef;
 import org.kaaproject.kaa.server.common.core.plugin.base.BasePluginContractInstance;
 import org.kaaproject.kaa.server.common.core.plugin.base.BasePluginContractItemDef;
 import org.kaaproject.kaa.server.common.core.plugin.base.BasePluginContractItemInfo;
-import org.kaaproject.kaa.server.common.core.plugin.def.ContractType;
-import org.kaaproject.kaa.server.common.core.plugin.def.PluginContractDirection;
 import org.kaaproject.kaa.server.common.core.plugin.def.PluginContractItemDef;
 import org.kaaproject.kaa.server.common.core.plugin.def.PluginInitContext;
 import org.kaaproject.kaa.server.common.core.plugin.instance.PluginContractInstance;
@@ -39,12 +39,12 @@ import org.kaaproject.kaa.server.common.core.plugin.instance.PluginContractItemI
 
 public class BasePluginInitContext implements PluginInitContext {
 
-    private final byte[] configurationData;
+    private final String configurationData;
     private final Set<PluginContractInstance> contracts;
 
     public BasePluginInitContext(PluginInstanceDto dto) {
         this.configurationData = dto.getConfigurationData();
-        this.contracts = new LinkedHashSet<PluginContractInstance>();
+        this.contracts = new LinkedHashSet<>();
         for (PluginContractInstanceDto contractInstanceDto : dto.getContracts()) {
             PluginContractDto pluginContractDto = contractInstanceDto.getContract();
             ContractDto contractDto = pluginContractDto.getContract();
@@ -87,7 +87,7 @@ public class BasePluginInitContext implements PluginInitContext {
     }
 
     @Override
-    public byte[] getPluginConfigurationData() {
+    public String getPluginConfigurationData() {
         return configurationData;
     }
 

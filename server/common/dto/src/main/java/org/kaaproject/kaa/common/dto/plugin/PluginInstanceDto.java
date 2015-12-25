@@ -16,6 +16,7 @@
 package org.kaaproject.kaa.common.dto.plugin;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Set;
 
 import org.kaaproject.kaa.common.dto.HasId;
@@ -27,7 +28,7 @@ public class PluginInstanceDto implements HasId, Serializable {
     private String id;
     private String name;
     private PluginInstanceState state;
-    private byte[] configurationData;
+    private String configurationData;
     private PluginDto pluginDefinition;
     private Set<PluginContractInstanceDto> contracts;
 
@@ -57,11 +58,11 @@ public class PluginInstanceDto implements HasId, Serializable {
         this.state = state;
     }
 
-    public byte[] getConfigurationData() {
+    public String getConfigurationData() {
         return configurationData;
     }
 
-    public void setConfigurationData(byte[] configurationData) {
+    public void setConfigurationData(String configurationData) {
         this.configurationData = configurationData;
     }
 
@@ -81,4 +82,57 @@ public class PluginInstanceDto implements HasId, Serializable {
         this.contracts = contracts;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof PluginInstanceDto)) {
+            return false;
+        }
+
+        PluginInstanceDto that = (PluginInstanceDto) o;
+
+        if (configurationData != null ? !configurationData.equals(that.configurationData) : that.configurationData != null) {
+            return false;
+        }
+        if (contracts != null ? !contracts.equals(that.contracts) : that.contracts != null) {
+            return false;
+        }
+        if (name != null ? !name.equals(that.name) : that.name != null) {
+            return false;
+        }
+        if (pluginDefinition != null ? !pluginDefinition.equals(that.pluginDefinition) : that.pluginDefinition != null) {
+            return false;
+        }
+        if (state != that.state) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (state != null ? state.hashCode() : 0);
+        result = 31 * result + (configurationData != null ? configurationData.hashCode() : 0);
+        result = 31 * result + (pluginDefinition != null ? pluginDefinition.hashCode() : 0);
+        result = 31 * result + (contracts != null ? contracts.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("PluginInstanceDto{");
+        sb.append("id='").append(id).append('\'');
+        sb.append(", name='").append(name).append('\'');
+        sb.append(", state=").append(state);
+        sb.append(", configurationData=").append(configurationData);
+        sb.append(", pluginDefinition=").append((pluginDefinition != null && pluginDefinition.getClassName() != null)
+                ? pluginDefinition.getClassName() : null);
+        sb.append(", contracts=").append(contracts);
+        sb.append('}');
+        return sb.toString();
+    }
 }

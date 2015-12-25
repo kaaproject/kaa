@@ -52,7 +52,7 @@ public class HibernateLogSchemaDaoTest extends HibernateAbstractTest {
     public void findByAppIdAndVersionTest() {
         LogSchema logSchema = generateLogSchema(null, null, 1).get(0);
         Assert.assertNotNull(logSchema);
-        LogSchema found = logSchemaDao.findByApplicationIdAndVersion(logSchema.getApplication().getStringId(), logSchema.getMajorVersion());
+        LogSchema found = logSchemaDao.findByApplicationIdAndVersion(logSchema.getApplication().getStringId(), logSchema.getVersion());
         Assert.assertEquals(logSchema, found);
     }
 

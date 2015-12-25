@@ -17,53 +17,53 @@
 package org.kaaproject.kaa.common.dto.admin;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.List;
 
-import org.kaaproject.kaa.common.dto.SchemaDto;
+import org.kaaproject.kaa.common.dto.VersionDto;
 
 public class SchemaVersions implements Serializable {
 
     private static final long serialVersionUID = 2648014748733736078L;
 
-    private List<SchemaDto> configurationSchemaVersions;
-    private List<SchemaDto> profileSchemaVersions;
-    private List<SchemaDto> notificationSchemaVersions;
-    private List<SchemaDto> logSchemaVersions;
+    private List<VersionDto> configurationSchemaVersions;
+    private List<VersionDto> profileSchemaVersions;
+    private List<VersionDto> notificationSchemaVersions;
+    private List<VersionDto> logSchemaVersions;
 
     public SchemaVersions() {
     }
 
-    public List<SchemaDto> getConfigurationSchemaVersions() {
+    public List<VersionDto> getConfigurationSchemaVersions() {
         return configurationSchemaVersions;
     }
 
     public void setConfigurationSchemaVersions(
-            List<SchemaDto> configurationSchemaVersions) {
+            List<VersionDto> configurationSchemaVersions) {
         this.configurationSchemaVersions = configurationSchemaVersions;
     }
 
-    public List<SchemaDto> getProfileSchemaVersions() {
+    public List<VersionDto> getProfileSchemaVersions() {
         return profileSchemaVersions;
     }
 
-    public void setProfileSchemaVersions(List<SchemaDto> profileSchemaVersions) {
+    public void setProfileSchemaVersions(List<VersionDto> profileSchemaVersions) {
         this.profileSchemaVersions = profileSchemaVersions;
     }
 
-    public List<SchemaDto> getNotificationSchemaVersions() {
+    public List<VersionDto> getNotificationSchemaVersions() {
         return notificationSchemaVersions;
     }
 
     public void setNotificationSchemaVersions(
-            List<SchemaDto> notificationSchemaVersions) {
+            List<VersionDto> notificationSchemaVersions) {
         this.notificationSchemaVersions = notificationSchemaVersions;
     }
 
-    public List<SchemaDto> getLogSchemaVersions() {
+    public List<VersionDto> getLogSchemaVersions() {
         return logSchemaVersions;
     }
 
-    public void setLogSchemaVersions(List<SchemaDto> logSchemaVersions) {
+    public void setLogSchemaVersions(List<VersionDto> logSchemaVersions) {
         this.logSchemaVersions = logSchemaVersions;
     }
 

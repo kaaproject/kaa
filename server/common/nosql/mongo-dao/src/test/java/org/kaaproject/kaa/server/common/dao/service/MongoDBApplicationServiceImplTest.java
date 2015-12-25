@@ -40,11 +40,6 @@ public class MongoDBApplicationServiceImplTest extends ApplicationServiceImplTes
         MongoDBTestRunner.tearDown();
     }
 
-    @Before
-    public void beforeTest() throws Exception {
-        MongoDataLoader.loadData();
-    }
-
     @After
     public void afterTest() {
         MongoDataLoader.clearDBData();

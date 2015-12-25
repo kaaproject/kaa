@@ -15,12 +15,75 @@
  */
 package org.kaaproject.kaa.server.common.dao;
 
+import org.kaaproject.kaa.common.dto.plugin.PluginDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginInstanceDto;
 
+import java.util.List;
+import java.util.Set;
+
+/**
+ * Enables plugin and plugin instance manipulation
+ */
 public interface PluginService {
 
-    PluginInstanceDto getInstanceById(String id);
-    
-    
-    
+    /**
+     * Register plugin by its definition
+     * @param pluginDef the plugin definition
+     * @return the registered plugin
+     */
+    PluginDto registerPlugin(PluginDto pluginDef);
+
+    /**
+     * Find plugin by its name and version
+     * @param name the plugin name
+     * @param version the plugin version
+     * @return the found plugin
+     */
+    PluginDto findPluginByNameAndVersion(String name, Integer version);
+
+    /**
+     * Find plugin by its class name
+     * @param className the plugin class name
+     * @return the found plugin
+     */
+    PluginDto findPluginByClassName(String className);
+
+    /**
+     * Finds all plugins
+     * @return all of existent plugins
+     */
+    List<PluginDto> findAllPlugins();
+
+    /**
+     * Unregister plugin by plugin id
+     * @param id the plugin id
+     */
+    void unregisterPluginById(String id);
+
+    /**
+     * Save plugin instance
+     * @param pluginInstanceDto the plugin instance
+     * @return the saved plugin instance
+     */
+    PluginInstanceDto saveInstance(PluginInstanceDto pluginInstanceDto);
+
+    /**
+     * Find plugin instance by its id
+     * @param id the plugin instance id
+     * @return the found plugin instance
+     */
+    PluginInstanceDto findInstanceById(String id);
+
+    /**
+     * Find plugin instances by their plugin id
+     * @param pluginId the plugin id
+     * @return the list of plugin instances
+     */
+    Set<PluginInstanceDto> findInstancesByPluginId(String pluginId);
+
+    /**
+     * Remove plugin instance by its id
+     * @param id the plugin instance id
+     */
+    void removeInstanceById(String id);
 }

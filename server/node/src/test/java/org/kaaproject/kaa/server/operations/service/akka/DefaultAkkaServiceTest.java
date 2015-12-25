@@ -42,6 +42,10 @@ import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EventClassFamilyVersionStateDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
+import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.EndpointAttachRequest;
@@ -72,15 +76,18 @@ import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.common.hash.SHA1HashUtils;
 import org.kaaproject.kaa.server.common.Base64Util;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
+import org.kaaproject.kaa.server.common.dao.CTLService;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogAppender;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryCallback;
-import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogSchema;
+import org.kaaproject.kaa.server.common.log.shared.appender.data.BaseLogEventPack;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
+import org.kaaproject.kaa.server.common.thrift.gen.operations.Operation;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
 import org.kaaproject.kaa.server.operations.pojo.SyncContext;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
 import org.kaaproject.kaa.server.operations.service.OperationsService;
+import org.kaaproject.kaa.server.operations.service.cache.AppVersionKey;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
 import org.kaaproject.kaa.server.operations.service.cache.EventClassFqnKey;
 import org.kaaproject.kaa.server.operations.service.event.EndpointEvent;
@@ -159,10 +166,12 @@ public class DefaultAkkaServiceTest {
     private SyncContext simpleResponse;
     private SyncContext noDeltaResponse;
     private SyncContext deltaResponse;
+    private SyncContext deltaResponseWithProfile;
     private SyncContext noDeltaResponseWithTopicState;
     private NotificationDto topicNotification;
     private LogAppenderService logAppenderService;
     private EndpointUserService endpointUserService;
+    private CTLService ctlService;
 
     private KeyPair clientPair;
     private KeyPair targetPair;
@@ -172,6 +181,8 @@ public class DefaultAkkaServiceTest {
     private ByteBuffer clientPublicKeyHash;
 
     private ByteBuffer targetPublicKeyHash;
+    
+    private EndpointProfileDto mockProfile;
 
     @Before
     public void before() throws GeneralSecurityException {
@@ -188,6 +199,7 @@ public class DefaultAkkaServiceTest {
         eventService = mock(EventService.class);
         logAppenderService = mock(LogAppenderService.class);
         endpointUserService = mock(EndpointUserService.class);
+        ctlService = mock(CTLService.class);
 
         ReflectionTestUtils.setField(context, "cacheService", cacheService);
         ReflectionTestUtils.setField(context, "metricsService", metricsService);
@@ -198,6 +210,7 @@ public class DefaultAkkaServiceTest {
         ReflectionTestUtils.setField(context, "eventService", eventService);
         ReflectionTestUtils.setField(context, "logAppenderService", logAppenderService);
         ReflectionTestUtils.setField(context, "endpointUserService", endpointUserService);
+        ReflectionTestUtils.setField(context, "ctlService", ctlService);
 
         clientPair = KeyUtil.generateKeyPair();
         targetPair = KeyUtil.generateKeyPair();
@@ -254,7 +267,16 @@ public class DefaultAkkaServiceTest {
         confSyncResponse.setResponseStatus(org.kaaproject.kaa.server.sync.SyncResponseStatus.DELTA);
         response.setConfigurationSync(confSyncResponse);
         deltaResponse = new SyncContext(response);
-
+        
+        response = new ServerSync();
+        response.setStatus(org.kaaproject.kaa.server.sync.SyncStatus.SUCCESS);
+        confSyncResponse = new ConfigurationServerSync();
+        confSyncResponse.setResponseStatus(org.kaaproject.kaa.server.sync.SyncResponseStatus.DELTA);
+        response.setConfigurationSync(confSyncResponse);
+        deltaResponseWithProfile = new SyncContext(response);
+        mockProfile = mock(EndpointProfileDto.class);
+        deltaResponseWithProfile.setEndpointProfile(mockProfile);
+        
         response = new ServerSync();
         response.setRequestId(REQUEST_ID);
         response.setStatus(org.kaaproject.kaa.server.sync.SyncStatus.SUCCESS);
@@ -1258,7 +1280,29 @@ public class DefaultAkkaServiceTest {
 
         LogAppender mockAppender = Mockito.mock(LogAppender.class);
         Mockito.when(logAppenderService.getApplicationAppenders(APP_ID)).thenReturn(Collections.singletonList(mockAppender));
-        Mockito.when(logAppenderService.getLogSchema(Mockito.anyString(), Mockito.anyInt())).thenReturn(Mockito.mock(LogSchema.class));
+        Mockito.when(logAppenderService.getLogSchema(Mockito.anyString(), Mockito.anyInt())).thenReturn(new LogSchema(new LogSchemaDto()));
+        EndpointProfileSchemaDto profileSchemaDto = new EndpointProfileSchemaDto();
+        profileSchemaDto.setId("1");
+        profileSchemaDto.setCtlSchemaId("22");
+        
+        CTLSchemaDto ctlSchema = new CTLSchemaDto();
+        ctlSchema.setId("22");
+        
+        when(cacheService.getProfileSchemaByAppAndVersion(new AppVersionKey(APP_TOKEN, 0))).thenReturn(profileSchemaDto);
+        when(cacheService.getCtlSchemaById("22")).thenReturn(ctlSchema);
+        when(ctlService.flatExportAsString(ctlSchema)).thenReturn("ClientProfileSchema");
+        
+        ServerProfileSchemaDto serverProfileSchemaDto = new ServerProfileSchemaDto();
+        serverProfileSchemaDto.setId("1");
+        serverProfileSchemaDto.setCtlSchemaId("23");
+        
+        CTLSchemaDto serverCtlSchema = new CTLSchemaDto();
+        serverCtlSchema.setId("23");
+        
+        when(cacheService.getServerProfileSchemaByAppAndVersion(new AppVersionKey(APP_TOKEN, 0))).thenReturn(serverProfileSchemaDto);
+        when(cacheService.getCtlSchemaById("23")).thenReturn(serverCtlSchema);
+        when(ctlService.flatExportAsString(serverCtlSchema)).thenReturn("ServerProfileSchema");
+        
         Mockito.when(mockAppender.isSchemaVersionSupported(Mockito.anyInt())).thenReturn(true);
 
         MessageBuilder responseBuilder = Mockito.mock(MessageBuilder.class);
@@ -1274,7 +1318,7 @@ public class DefaultAkkaServiceTest {
                 Mockito.any(ProfileClientSync.class));
         Mockito.verify(logAppenderService, Mockito.timeout(TIMEOUT).atLeastOnce()).getLogSchema(APP_ID, 44);
 
-        Mockito.verify(mockAppender, Mockito.timeout(TIMEOUT).atLeastOnce()).doAppend(Mockito.any(LogEventPack.class),
+        Mockito.verify(mockAppender, Mockito.timeout(TIMEOUT).atLeastOnce()).doAppend(Mockito.any(BaseLogEventPack.class),
                 Mockito.any(LogDeliveryCallback.class));
 
         Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce())
@@ -1571,6 +1615,43 @@ public class DefaultAkkaServiceTest {
         byte[] response = responseConverter.toByteArray(targetSyncResponse);
         byte[] encodedData = targetCrypt.encodeData(response);
         Mockito.verify(targetResponseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(encodedData, true);
+    }
+
+    @Test
+    public void testServerProfileUpdate() throws Exception {
+        ChannelContext channelContextMock = Mockito.mock(ChannelContext.class);
+
+        SyncRequest request = new SyncRequest();
+        request.setRequestId(REQUEST_ID);
+        SyncRequestMetaData md = buildSyncRequestMetaData();
+        request.setSyncRequestMetaData(md);
+
+        ConfigurationSyncRequest csRequest = new ConfigurationSyncRequest();
+        request.setConfigurationSyncRequest(csRequest);
+
+        Mockito.when(cacheService.getEndpointKey(EndpointObjectHash.fromBytes(clientPublicKeyHash.array()))).thenReturn(
+                clientPair.getPublic());
+        whenSync(deltaResponseWithProfile);
+
+        MessageBuilder responseBuilder = Mockito.mock(MessageBuilder.class);
+        ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
+
+        SessionInitMessage message = toSignedRequest(UUID.randomUUID(), ChannelType.SYNC_WITH_TIMEOUT, channelContextMock, request,
+                responseBuilder, errorBuilder);
+        Assert.assertNotNull(akkaService.getActorSystem());
+        akkaService.process(message);
+
+        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).syncProfile(Mockito.any(SyncContext.class),
+                Mockito.any(ProfileClientSync.class));
+
+        Notification thriftNotification = new Notification();
+        thriftNotification.setAppId(APP_ID);
+        thriftNotification.setOp(Operation.UPDATE_SERVER_PROFILE);
+        thriftNotification.setKeyHash(clientPublicKeyHash);
+        akkaService.onNotification(thriftNotification);
+
+        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT*100).atLeastOnce())
+                .refreshServerEndpointProfile(EndpointObjectHash.fromBytes(clientPublicKeyHash.array()));
     }
 
     private SyncRequestMetaData buildSyncRequestMetaData() {

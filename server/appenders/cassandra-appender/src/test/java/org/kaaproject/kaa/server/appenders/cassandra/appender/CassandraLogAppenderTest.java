@@ -16,7 +16,11 @@
 
 package org.kaaproject.kaa.server.appenders.cassandra.appender;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -31,6 +35,7 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
+import org.kaaproject.kaa.common.dto.EndpointProfileDataDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
@@ -48,8 +53,10 @@ import org.kaaproject.kaa.server.appenders.cassandra.config.gen.OrderType;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogAppender;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryCallback;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
-import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogSchema;
+import org.kaaproject.kaa.server.common.log.shared.appender.data.BaseLogEventPack;
+import org.kaaproject.kaa.server.common.log.shared.appender.data.BaseProfileInfo;
+import org.kaaproject.kaa.server.common.log.shared.appender.data.BaseSchemaInfo;
 import org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -62,6 +69,9 @@ public class CassandraLogAppenderTest {
 
     public static final String KEY_SPACE_NAME = "kaa_test";
 
+    private static final String SERVER_PROFILE_SCHEMA_FILE = "server_profile_schema.avsc";
+    private static final String SERVER_PROFILE_CONTENT_FILE = "server_profile_content.json";
+
     @ClassRule
     public static CassandraCQLUnit cassandraUnit = new CassandraCQLUnit(new ClassPathCQLDataSet("appender_test.cql", KEY_SPACE_NAME));
 
@@ -71,72 +81,23 @@ public class CassandraLogAppenderTest {
     private LogAppenderDto appenderDto;
     private CassandraConfig configuration;
 
-    private LogEventPack logEventPack;
     private RecordHeader header;
 
     private String appToken;
     private String endpointKeyHash;
+    private EndpointProfileDataDto profileDto;
 
     private AvroByteArrayConverter<LogData> logDataConverter = new AvroByteArrayConverter<>(LogData.class);
 
     @Before
     public void beforeTest() throws IOException {
-        endpointKeyHash = UUID.randomUUID().toString();
-        appToken = String.valueOf(RANDOM.nextInt(Integer.MAX_VALUE));
-
-        appenderDto = new LogAppenderDto();
-        appenderDto.setId("Test_id");
-        appenderDto.setApplicationToken(appToken);
-        appenderDto.setName("Test Name");
-        appenderDto.setTenantId(String.valueOf(RANDOM.nextInt()));
-        appenderDto.setHeaderStructure(Arrays.asList(LogHeaderStructureDto.values()));
-        appenderDto.setApplicationToken(appToken);
-
-        header = new RecordHeader();
-        header.setApplicationToken(appToken);
-        header.setEndpointKeyHash(endpointKeyHash);
-        header.setHeaderVersion(1);
-        header.setTimestamp(System.currentTimeMillis());
-
-        logEventPack = new LogEventPack();
-        logEventPack.setDateCreated(System.currentTimeMillis());
-        logEventPack.setEndpointKey(endpointKeyHash);
-
-        CassandraServer server = new CassandraServer("127.0.0.1", 9142);
-        configuration = new CassandraConfig();
-        configuration.setCassandraBatchType(CassandraBatchType.UNLOGGED);
-        configuration.setKeySpace(KEY_SPACE_NAME);
-        configuration.setTableNamePattern("logs_$app_token_$config_hash");
-        configuration.setCassandraExecuteRequestType(CassandraExecuteRequestType.ASYNC);
-        configuration.setCassandraServers(Arrays.asList(server));
-        configuration.setCallbackThreadPoolSize(3);
-        configuration.setExecutorThreadPoolSize(3);
-
-        List<ColumnMappingElement> columnMapping = new ArrayList<ColumnMappingElement>();
-        columnMapping.add(new ColumnMappingElement(ColumnMappingElementType.HEADER_FIELD, "endpointKeyHash", "endpointKeyHash",
-                ColumnType.TEXT, true, false));
-        columnMapping.add(new ColumnMappingElement(ColumnMappingElementType.EVENT_JSON, "", "event_json", ColumnType.TEXT, false, false));
-        columnMapping.add(new ColumnMappingElement(ColumnMappingElementType.UUID, "", "binid", ColumnType.UUID, false, true));
-
-        configuration.setColumnMapping(columnMapping);
-
-        List<ClusteringElement> clusteringMapping = new ArrayList<ClusteringElement>();
-        clusteringMapping.add(new ClusteringElement("binid", OrderType.DESC));
-        configuration.setClusteringMapping(clusteringMapping);
-
-        AvroByteArrayConverter<CassandraConfig> converter = new AvroByteArrayConverter<>(CassandraConfig.class);
-        byte[] rawConfiguration = converter.toByteArray(configuration);
-        appenderDto.setRawConfiguration(rawConfiguration);
-
-        logAppender = new CassandraLogAppender();
-        logAppender.init(appenderDto);
-        logAppender.setApplicationToken(appToken);
+        this.initLogAppender(false);
     }
 
     @Test
     public void doAppendTest() throws IOException, InterruptedException {
         DeliveryCallback callback = new DeliveryCallback();
-        logAppender.doAppend(generateLogEventPack(20), callback);
+        logAppender.doAppend(generateLogEventPack(20, true), callback);
         Thread.sleep(3000);
         CassandraLogEventDao logEventDao = (CassandraLogEventDao) ReflectionTestUtils.getField(logAppender, "logEventDao");
         Session session = (Session) ReflectionTestUtils.getField(logEventDao, "session");
@@ -147,24 +108,51 @@ public class CassandraLogAppenderTest {
         Assert.assertEquals(1, callback.getSuccessCount());
     }
 
-    private LogEventPack generateLogEventPack(int count) throws IOException {
-        LogEventPack logEventPack = new LogEventPack();
+    /**
+     * Tests that log records cannot be appended if they lack a server field
+     * mapped by the appender.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void doAppendNegativeTest() throws Exception {
+        this.initLogAppender(true);
+        this.logAppender.doAppend(this.generateLogEventPack(5, false), new DeliveryCallback());
+        /*
+         * Check that a server error has occured because no server profile is
+         * specified for this log pack.
+         */
+        Thread.sleep(3000);
+        CassandraLogEventDao logEventDao = (CassandraLogEventDao) ReflectionTestUtils.getField(this.logAppender, "logEventDao");
+        Session session = (Session) ReflectionTestUtils.getField(logEventDao, "session");
+        String table = "logs_" + this.appToken + "_" + Math.abs(this.configuration.hashCode());
+        /*
+         * Nothing has been saved because of the error.
+         */
+        Row count = session.execute(QueryBuilder.select().countAll().from(KEY_SPACE_NAME, table)).one();
+        Assert.assertEquals(0L, count.getLong(0));
+    }
+
+    private BaseLogEventPack generateLogEventPack(int count, boolean includeServerProfile) throws IOException {
         List<LogEvent> events = new ArrayList<>(count);
         for (int i = 0; i < count; i++) {
             LogEvent event = new LogEvent();
             event.setLogData(logDataConverter.toByteArray(new LogData(Level.DEBUG, UUID.randomUUID().toString())));
             events.add(event);
         }
-        logEventPack.setDateCreated(System.currentTimeMillis());
-        logEventPack.setEndpointKey(endpointKeyHash);
-
-        logEventPack.setLogSchemaVersion(2);
-        logEventPack.setEvents(events);
+        BaseLogEventPack logEventPack = new BaseLogEventPack(profileDto, System.currentTimeMillis(), 2, events);
+        
         LogSchemaDto logSchemaDto = new LogSchemaDto();
         logSchemaDto.setApplicationId(String.valueOf(RANDOM.nextInt()));
         logSchemaDto.setId(String.valueOf(RANDOM.nextInt()));
         logSchemaDto.setCreatedTime(System.currentTimeMillis());
         logSchemaDto.setSchema(LogData.getClassSchema().toString());
+
+        if (includeServerProfile) {
+            BaseSchemaInfo schemaInfo = new BaseSchemaInfo(Integer.toString(RANDOM.nextInt()), this.getResourceAsString(SERVER_PROFILE_SCHEMA_FILE));
+            String body = this.getResourceAsString(SERVER_PROFILE_CONTENT_FILE);
+            logEventPack.setServerProfile(new BaseProfileInfo(schemaInfo, body));
+        }
 
         logEventPack.setLogSchema(new LogSchema(logSchemaDto));
         return logEventPack;
@@ -197,5 +185,81 @@ public class CassandraLogAppenderTest {
         public int getSuccessCount() {
             return successCount.get();
         }
+    }
+
+    private void initLogAppender(boolean addServerField) throws IOException {
+        endpointKeyHash = UUID.randomUUID().toString();
+        profileDto = new EndpointProfileDataDto("1", endpointKeyHash, 1, "", 1, "");
+        appToken = String.valueOf(RANDOM.nextInt(Integer.MAX_VALUE));
+
+        appenderDto = new LogAppenderDto();
+        appenderDto.setId("Test_id");
+        appenderDto.setApplicationToken(appToken);
+        appenderDto.setName("Test Name");
+        appenderDto.setTenantId(String.valueOf(RANDOM.nextInt()));
+        appenderDto.setHeaderStructure(Arrays.asList(LogHeaderStructureDto.values()));
+        appenderDto.setApplicationToken(appToken);
+
+        header = new RecordHeader();
+        header.setApplicationToken(appToken);
+        header.setEndpointKeyHash(endpointKeyHash);
+        header.setHeaderVersion(1);
+        header.setTimestamp(System.currentTimeMillis());
+
+        CassandraServer server = new CassandraServer("127.0.0.1", 9142);
+        configuration = new CassandraConfig();
+        configuration.setCassandraBatchType(CassandraBatchType.UNLOGGED);
+        configuration.setKeySpace(KEY_SPACE_NAME);
+        configuration.setTableNamePattern("logs_$app_token_$config_hash");
+        configuration.setCassandraExecuteRequestType(CassandraExecuteRequestType.ASYNC);
+        configuration.setCassandraServers(Arrays.asList(server));
+        configuration.setCallbackThreadPoolSize(3);
+        configuration.setExecutorThreadPoolSize(3);
+
+        List<ColumnMappingElement> columnMapping = new ArrayList<ColumnMappingElement>();
+        columnMapping.add(new ColumnMappingElement(ColumnMappingElementType.HEADER_FIELD, "endpointKeyHash", "endpointKeyHash",
+                ColumnType.TEXT, true, false));
+        columnMapping.add(new ColumnMappingElement(ColumnMappingElementType.EVENT_JSON, "", "event_json", ColumnType.TEXT, false, false));
+        columnMapping.add(new ColumnMappingElement(ColumnMappingElementType.UUID, "", "binid", ColumnType.UUID, false, true));
+        
+        if (addServerField) {
+            // Do NOT change the column name of the following element!
+            columnMapping.add(new ColumnMappingElement(ColumnMappingElementType.SERVER_FIELD, "", "server_field", ColumnType.TEXT, false, false));
+        }
+
+        configuration.setColumnMapping(columnMapping);
+
+        List<ClusteringElement> clusteringMapping = new ArrayList<ClusteringElement>();
+        clusteringMapping.add(new ClusteringElement("binid", OrderType.DESC));
+        configuration.setClusteringMapping(clusteringMapping);
+
+        AvroByteArrayConverter<CassandraConfig> converter = new AvroByteArrayConverter<>(CassandraConfig.class);
+        byte[] rawConfiguration = converter.toByteArray(configuration);
+        appenderDto.setRawConfiguration(rawConfiguration);
+
+        logAppender = new CassandraLogAppender();
+        logAppender.init(appenderDto);
+        logAppender.setApplicationToken(appToken);
+    }
+
+    protected String getResourceAsString(String path) throws IOException {
+        URL url = Thread.currentThread().getContextClassLoader().getResource(path);
+        File file = new File(url.getPath());
+        String result;
+        BufferedReader br = new BufferedReader(new FileReader(file));
+        try {
+            StringBuilder sb = new StringBuilder();
+            String line = br.readLine();
+
+            while (line != null) {
+                sb.append(line);
+                sb.append(System.lineSeparator());
+                line = br.readLine();
+            }
+            result = sb.toString();
+        } finally {
+            br.close();
+        }
+        return result;
     }
 }

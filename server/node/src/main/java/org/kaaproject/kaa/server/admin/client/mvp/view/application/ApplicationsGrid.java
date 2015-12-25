@@ -50,6 +50,7 @@ public class ApplicationsGrid extends AbstractKaaGrid<ApplicationDto, String> {
                     }
                 },
                 Boolean.TRUE,
+                true,
                 160);
 
         return prefWidth;

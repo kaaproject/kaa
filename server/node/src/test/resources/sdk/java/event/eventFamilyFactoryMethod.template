@@ -1,0 +1,11 @@
+
+    ${event_family_class_name} ${event_family_var_name};
+
+    public ${event_family_class_name} get${event_family_class_name}(){
+        if(${event_family_var_name} == null){
+            ${event_family_var_name} = new ${event_family_class_name}(eventManager, executorContext);
+            eventManager.registerEventFamily(${event_family_var_name});
+        }
+        return ${event_family_var_name};
+    }
+

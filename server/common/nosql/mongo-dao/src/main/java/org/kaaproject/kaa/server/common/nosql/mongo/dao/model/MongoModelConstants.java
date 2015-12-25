@@ -91,6 +91,7 @@ public class MongoModelConstants {
     public static final String EP_CHANGED_FLAG = "changed_flag";
     public static final String EP_PROFILE_HASH = "profile_hash";
     public static final String EP_PROFILE_VERSION = "profile_version";
+    public static final String EP_SERVER_PROFILE_VERSION_PROPERTY = "srv_profile_version";
     public static final String EP_CONFIGURATION_HASH = "configuration_hash";
     public static final String EP_USER_CONFIGURATION_HASH = "user_configuration_hash";
     public static final String EP_CONFIGURATION_VERSION = "configuration_version";
@@ -102,6 +103,8 @@ public class MongoModelConstants {
     public static final String EP_ECF_VERSION_STATE = "ecf_version_state";
     public static final String EP_SERVER_HASH = "server_hash";
     public static final String EP_SDK_TOKEN = "sdk_token";
+    
+    public static final String EP_SERVER_PROFILE_PROPERTY = "srv_profile";
 
     /**
      * MongoEndpointUserConfiguration constants.

@@ -103,7 +103,7 @@ kaa_error_t kaa_profile_manager_create(kaa_profile_manager_t **profile_manager_p
 
 bool kaa_profile_manager_is_profile_set(kaa_profile_manager_t *self)
 {
-#if KAA_PROFILE_SCHEMA_VERSION > 1
+#if KAA_PROFILE_SCHEMA_VERSION > 0
     return self->profile_body.buffer != NULL && self->profile_body.size != 0;
 #else
     return true;
@@ -143,7 +143,7 @@ kaa_error_t kaa_profile_request_get_size(kaa_profile_manager_t *self, size_t *ex
 
     *expected_size = KAA_EXTENSION_HEADER_SIZE;
     *expected_size += sizeof(uint32_t); // profile body size
-#if KAA_PROFILE_SCHEMA_VERSION > 1
+#if KAA_PROFILE_SCHEMA_VERSION > 0
     if (self->need_resync)
         *expected_size += kaa_aligned_size_get(self->profile_body.size); // profile data
 #endif
@@ -193,7 +193,7 @@ kaa_error_t kaa_profile_request_serialize(kaa_profile_manager_t *self, kaa_platf
     KAA_RETURN_IF_ERR(error_code);
 
     uint32_t network_order_32 = KAA_HTONL(0);
-#if KAA_PROFILE_SCHEMA_VERSION > 1
+#if KAA_PROFILE_SCHEMA_VERSION > 0
     if (self->need_resync) {
         network_order_32 = KAA_HTONL(self->profile_body.size);
         error_code = kaa_platform_message_write(writer, &network_order_32, sizeof(uint32_t));
@@ -297,7 +297,7 @@ kaa_error_t kaa_profile_handle_server_sync(kaa_profile_manager_t *self
 
 kaa_error_t kaa_profile_manager_update_profile(kaa_profile_manager_t *self, kaa_profile_t *profile_body)
 {
-#if KAA_PROFILE_SCHEMA_VERSION > 1
+#if KAA_PROFILE_SCHEMA_VERSION > 0
     KAA_RETURN_IF_NIL2(self, profile_body, KAA_ERR_BADPARAM);
 
     size_t serialized_profile_size = profile_body->get_size(profile_body);

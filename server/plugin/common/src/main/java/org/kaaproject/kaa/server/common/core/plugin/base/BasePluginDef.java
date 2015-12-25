@@ -20,9 +20,9 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.kaaproject.kaa.common.dto.plugin.PluginScope;
 import org.kaaproject.kaa.server.common.core.plugin.def.PluginContractDef;
 import org.kaaproject.kaa.server.common.core.plugin.def.PluginDef;
-import org.kaaproject.kaa.server.common.core.plugin.def.PluginScope;
 
 public class BasePluginDef implements PluginDef {
 
@@ -73,6 +73,10 @@ public class BasePluginDef implements PluginDef {
     @Override
     public Set<PluginContractDef> getPluginContracts() {
         return Collections.unmodifiableSet(contracts);
+    }
+
+    public static Builder builder(String name, int version) {
+        return new Builder(name, version);
     }
 
     public static class Builder {

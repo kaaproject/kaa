@@ -15,14 +15,13 @@
  */
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
-import java.io.Serializable;
+import org.kaaproject.kaa.server.common.dao.model.ToDto;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
-
-import org.kaaproject.kaa.server.common.dao.model.ToDto;
+import java.io.Serializable;
 
 @MappedSuperclass
 public abstract class GenericModel<T> implements Serializable, ToDto<T> {
@@ -45,5 +44,11 @@ public abstract class GenericModel<T> implements Serializable, ToDto<T> {
         return id != null ? id.toString() : null;
     }
 
+    public <K extends GenericModel> K newInstance(String id) {
+        return newInstance(ModelUtils.getLongId(id));
+    }
+
     protected abstract T createDto();
+
+    protected abstract <K extends GenericModel> K newInstance(Long id);
 }

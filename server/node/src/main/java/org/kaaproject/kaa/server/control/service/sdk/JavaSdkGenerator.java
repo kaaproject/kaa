@@ -124,31 +124,6 @@ public class JavaSdkGenerator extends SdkGenerator {
     private static final String BOOTSTRAP_SERVERS_PROPERTY = "transport.bootstrap.servers";
 
     /**
-     * The Constant APP_TOKEN_PROPERTY.
-     */
-    private static final String APP_TOKEN_PROPERTY = "application_token";
-
-    /**
-     * The Constant CONFIG_VERSION_PROPERTY.
-     */
-    private static final String CONFIG_VERSION_PROPERTY = "config_version";
-
-    /**
-     * The Constant PROFILE_VERSION_PROPERTY.
-     */
-    private static final String PROFILE_VERSION_PROPERTY = "profile_version";
-
-    /**
-     * The Constant NOTIFICATION_VERSION_PROPERTY.
-     */
-    private static final String NOTIFICATION_VERSION_PROPERTY = "user_nt_version";
-
-    /**
-     * The Constant LOGS_VERSION_PROPERTY.
-     */
-    private static final String LOGS_VERSION_PROPERTY = "logs_version";
-
-    /**
      * The Constant SDK_TOKEN_PROPERTY
      */
     private static final String SDK_TOKEN_PROPERTY = "sdk_token";
@@ -287,6 +262,11 @@ public class JavaSdkGenerator extends SdkGenerator {
      * The Constant DEFAULT_SCHEMA_VERSION.
      */
     private static final int DEFAULT_SCHEMA_VERSION = 1;
+    
+    /**
+     * The Constant DEFAULT_PROFILE_SCHEMA_VERSION.
+     */
+    private static final int DEFAULT_PROFILE_SCHEMA_VERSION = 0;
 
     /**
      * The Constant KAA_CLIENT.
@@ -393,12 +373,13 @@ public class JavaSdkGenerator extends SdkGenerator {
      * java.util.List)
      */
     @Override
-    public FileData generateSdk(String buildVersion, List<BootstrapNodeInfo> bootstrapNodes, String sdkToken, SdkProfileDto sdkProfile,
+    public FileData generateSdk(String buildVersion, List<BootstrapNodeInfo> bootstrapNodes, SdkProfileDto sdkProfile,
                            String profileSchemaBody, String notificationSchemaBody, String configurationProtocolSchemaBody,
                            String configurationSchemaBody, byte[] defaultConfigurationData, List<EventFamilyMetadata> eventFamilies,
                            String logSchemaBody)
             throws Exception {
 
+        String sdkToken = sdkProfile.getToken();
         Integer configurationSchemaVersion = sdkProfile.getConfigurationSchemaVersion();
         Integer profileSchemaVersion = sdkProfile.getProfileSchemaVersion();
         Integer notificationSchemaVersion = sdkProfile.getNotificationSchemaVersion();
@@ -489,7 +470,7 @@ public class JavaSdkGenerator extends SdkGenerator {
         String profileClassName = profileSchema.getName();
         String profileClassPackage = profileSchema.getNamespace();
 
-        if (profileSchemaVersion != DEFAULT_SCHEMA_VERSION) {
+        if (profileSchemaVersion != DEFAULT_PROFILE_SCHEMA_VERSION) {
             javaSources.addAll(generateSchemaSources(profileSchema, uniqueSchemasMap));
         }
 
@@ -500,7 +481,7 @@ public class JavaSdkGenerator extends SdkGenerator {
         javaSources.add(profileContainerClassBean);
 
         String profileSerializerTemplate;
-        if (profileSchemaVersion == DEFAULT_SCHEMA_VERSION) {
+        if (profileSchemaVersion == DEFAULT_PROFILE_SCHEMA_VERSION) {
             profileSerializerTemplate = readResource(DEFAULT_PROFILE_SERIALIZER_SOURCE_TEMPLATE);
         } else {
             profileSerializerTemplate = readResource(PROFILE_SERIALIZER_SOURCE_TEMPLATE);

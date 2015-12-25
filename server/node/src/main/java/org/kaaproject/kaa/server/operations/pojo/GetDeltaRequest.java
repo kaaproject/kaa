@@ -45,9 +45,9 @@ public class GetDeltaRequest {
 
     /** The fetch schema. */
     private boolean fetchSchema;
-    
+
     private boolean userConfigurationChanged;
-    
+
     private byte[] userConfigurationHash;
 
     /**
@@ -60,7 +60,7 @@ public class GetDeltaRequest {
     public GetDeltaRequest(String applicationToken, int sequenceNumber, boolean resyncOnly) {
         this(applicationToken, null, sequenceNumber, resyncOnly);
     }
-    
+
     /**
      * Instantiates a new delta request.
      *
@@ -72,7 +72,7 @@ public class GetDeltaRequest {
     public GetDeltaRequest(String applicationToken, int sequenceNumber) {
         this(applicationToken, null, sequenceNumber, false);
     }
-    
+
     /**
      * Instantiates a new delta request.
      *

@@ -23,7 +23,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
-import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
 import org.kaaproject.kaa.server.common.dao.AbstractTest;
@@ -39,15 +39,15 @@ public class ApplicationServiceImplTest extends AbstractTest {
 
     @Test
     public void testRemoveAppsByTenantId() {
-        TenantDto tenant = generateTenant();
-        ApplicationDto application = generateApplication(tenant.getId());
+        TenantDto tenant = generateTenantDto();
+        ApplicationDto application = generateApplicationDto(tenant.getId());
         applicationService.removeAppsByTenantId(tenant.getId());
         List<ApplicationDto> foundApplications = applicationService.findAppsByTenantId(tenant.getId());
         Assert.assertTrue(foundApplications.isEmpty());
         Assert.assertEquals(0, foundApplications.size());
         TenantDto foundTenant = userService.findTenantById(tenant.getId());
         Assert.assertNotNull(foundTenant);
-        List<ProfileSchemaDto> foundProfileSchemas = profileService.findProfileSchemasByAppId(application.getId());
+        List<EndpointProfileSchemaDto> foundProfileSchemas = profileService.findProfileSchemasByAppId(application.getId());
         Assert.assertEquals(0, foundProfileSchemas.size());
         List<ConfigurationSchemaDto> foundConfigSchemas = configurationService.findConfSchemasByAppId(application.getId());
         Assert.assertEquals(0, foundConfigSchemas.size());
@@ -55,9 +55,9 @@ public class ApplicationServiceImplTest extends AbstractTest {
 
     @Test
     public void findAppsByTenantIdTest() {
-        TenantDto tenant = generateTenant();
+        TenantDto tenant = generateTenantDto();
         String tenantId = tenant.getId();
-        ApplicationDto application = generateApplication(tenantId);
+        ApplicationDto application = generateApplicationDto(tenantId);
         List<ApplicationDto> applications = applicationService.findAppsByTenantId(tenantId);
         Assert.assertEquals(1, applications.size());
         Assert.assertEquals(application.getId(), applications.get(0).getId());
@@ -65,7 +65,7 @@ public class ApplicationServiceImplTest extends AbstractTest {
 
     @Test
     public void findAppByIdTest(){
-        ApplicationDto application = generateApplication();
+        ApplicationDto application = generateApplicationDto();
         ApplicationDto foundApp = applicationService.findAppById(application.getId());
         Assert.assertNotNull(foundApp);
         Assert.assertEquals(application.getId(), foundApp.getId());
@@ -73,7 +73,7 @@ public class ApplicationServiceImplTest extends AbstractTest {
 
     @Test
     public void removeAppByIdTest(){
-        ApplicationDto application = generateApplication();
+        ApplicationDto application = generateApplicationDto();
         ApplicationDto foundApp = applicationService.findAppById(application.getId());
         Assert.assertNotNull(foundApp);
         Assert.assertEquals(application.getId(), foundApp.getId());
@@ -85,7 +85,7 @@ public class ApplicationServiceImplTest extends AbstractTest {
 
     @Test
     public void findAppByApplicationTokenTest(){
-        ApplicationDto application = generateApplication();
+        ApplicationDto application = generateApplicationDto();
         ApplicationDto foundApp = applicationService.findAppByApplicationToken(application.getApplicationToken());
         Assert.assertNotNull(foundApp);
         Assert.assertEquals(application.getId(), foundApp.getId());
@@ -93,7 +93,7 @@ public class ApplicationServiceImplTest extends AbstractTest {
 
     @Test(expected = IncorrectParameterException.class)
     public void saveAppTest() {
-        ApplicationDto app = generateApplication();
+        ApplicationDto app = generateApplicationDto();
         applicationService.saveApp(app);
     }
 }

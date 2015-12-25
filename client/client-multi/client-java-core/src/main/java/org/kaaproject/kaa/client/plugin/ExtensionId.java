@@ -40,6 +40,28 @@ public class ExtensionId {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj instanceof ExtensionId) {
+            ExtensionId extensionId = (ExtensionId)obj;
+            return this.id == extensionId.id;
+        }
+
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + id;
+        return result;
+    }
+
+    @Override
     public String toString() {
         return "ExtensionId [id=" + id + "]";
     }

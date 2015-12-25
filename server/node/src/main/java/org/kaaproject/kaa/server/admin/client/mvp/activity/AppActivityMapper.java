@@ -24,6 +24,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.place.ApplicationsPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ConfigurationPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ConfigurationSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ConfigurationSchemasPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.CtlSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EcfPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EcfSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EcfsPlace;
@@ -46,6 +47,9 @@ import org.kaaproject.kaa.server.admin.client.mvp.place.ProfileSchemasPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.SdkProfilePlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.SdkProfilesPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.SendNotificationPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.ServerProfileSchemaPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.ServerProfileSchemasPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.TenantCtlSchemasPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.TenantPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.TenantsPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.TopicPlace;
@@ -107,8 +111,12 @@ public class AppActivityMapper implements ActivityMapper {
                 return new EcfSchemaActivity((EcfSchemaPlace) place, clientFactory);
             } else if (clazz == ProfileSchemasPlace.class) {
                 return new ProfileSchemasActivity((ProfileSchemasPlace) place, clientFactory);
+            } else if (clazz == ServerProfileSchemasPlace.class) {
+                return new ServerProfileSchemasActivity((ServerProfileSchemasPlace) place, clientFactory);
             } else if (clazz == ProfileSchemaPlace.class) {
                 return new ProfileSchemaActivity((ProfileSchemaPlace) place, clientFactory);
+            } else if (clazz == ServerProfileSchemaPlace.class) {
+                return new ServerProfileSchemaActivity((ServerProfileSchemaPlace) place, clientFactory);
             } else if (clazz == ConfigurationSchemasPlace.class) {
                 return new ConfigurationSchemasActivity((ConfigurationSchemasPlace) place, clientFactory);
             } else if (clazz == ConfigurationSchemaPlace.class) {
@@ -153,6 +161,10 @@ public class AppActivityMapper implements ActivityMapper {
                 return new UserVerifierActivity((UserVerifierPlace) place, clientFactory);
             } else if (clazz ==  UpdateUserConfigPlace.class) {
                 return new UpdateUserConfigActivity((UpdateUserConfigPlace) place, clientFactory);
+            } else if (clazz == TenantCtlSchemasPlace.class) {
+                return new TenantCtlSchemasActivity((TenantCtlSchemasPlace) place, clientFactory);
+            } else if (clazz == CtlSchemaPlace.class) {
+                return new CtlSchemaActivity((CtlSchemaPlace) place, clientFactory);
             }
         }
 

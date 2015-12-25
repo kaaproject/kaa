@@ -20,7 +20,7 @@ import java.io.IOException;
 import javax.annotation.Generated;
 
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
-import org.kaaproject.kaa.schema.base.Profile;
+import org.kaaproject.kaa.schema.system.EmptyData;
 
 /**
  * This class serialize entity defined in profile schema and returned by profile container.
@@ -33,10 +33,10 @@ import org.kaaproject.kaa.schema.base.Profile;
  */
 @Generated("ProfileSerializer.java.template")
 class ProfileSerializer {
-    private final AvroByteArrayConverter<Profile> converter = new AvroByteArrayConverter<Profile>(Profile.class);
+    private final AvroByteArrayConverter<EmptyData> converter = new AvroByteArrayConverter<EmptyData>(EmptyData.class);
 
     byte[] toByteArray(ProfileContainer container) throws IOException {
-        Profile profile;
+        EmptyData profile;
         if (container == null) {
             throw new RuntimeException("Profile container is not set!");
         } else {

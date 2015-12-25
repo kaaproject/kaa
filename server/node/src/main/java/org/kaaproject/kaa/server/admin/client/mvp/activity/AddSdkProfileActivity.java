@@ -16,12 +16,14 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
-import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.AcceptsOneWidget;
+import static org.kaaproject.kaa.server.admin.client.util.Utils.getMaxSchemaVersions;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
 import org.kaaproject.avro.ui.gwt.client.widget.BusyPopup;
-import org.kaaproject.kaa.common.dto.SchemaDto;
+import org.kaaproject.kaa.common.dto.VersionDto;
 import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
@@ -33,10 +35,9 @@ import org.kaaproject.kaa.server.admin.client.mvp.place.SdkProfilesPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.AddSdkProfileView;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.kaaproject.kaa.server.admin.client.util.Utils.getMaxSchemaVersions;
+import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.AcceptsOneWidget;
 
 public class AddSdkProfileActivity extends AbstractDetailsActivity<SdkProfileDto, AddSdkProfileView, AddSdkProfilePlace> {
 
@@ -115,19 +116,19 @@ public class AddSdkProfileActivity extends AbstractDetailsActivity<SdkProfileDto
             List<AefMapInfoDto> aefMaps,
             List<UserVerifierDto> userVerifiers) {
 
-        List<SchemaDto> confSchemaVersions = schemaVersions.getConfigurationSchemaVersions();
+        List<VersionDto> confSchemaVersions = schemaVersions.getConfigurationSchemaVersions();
         detailsView.getConfigurationSchemaVersion().setValue(getMaxSchemaVersions(confSchemaVersions));
         detailsView.getConfigurationSchemaVersion().setAcceptableValues(confSchemaVersions);
 
-        List<SchemaDto> pfSchemaVersions = schemaVersions.getProfileSchemaVersions();
+        List<VersionDto> pfSchemaVersions = schemaVersions.getProfileSchemaVersions();
         detailsView.getProfileSchemaVersion().setValue(getMaxSchemaVersions(pfSchemaVersions));
         detailsView.getProfileSchemaVersion().setAcceptableValues(pfSchemaVersions);
 
-        List<SchemaDto> notSchemaVersions = schemaVersions.getNotificationSchemaVersions();
+        List<VersionDto> notSchemaVersions = schemaVersions.getNotificationSchemaVersions();
         detailsView.getNotificationSchemaVersion().setValue(getMaxSchemaVersions(notSchemaVersions));
         detailsView.getNotificationSchemaVersion().setAcceptableValues(notSchemaVersions);
 
-        List<SchemaDto> logSchemaVersions = schemaVersions.getLogSchemaVersions();
+        List<VersionDto> logSchemaVersions = schemaVersions.getLogSchemaVersions();
         detailsView.getLogSchemaVersion().setValue(getMaxSchemaVersions(logSchemaVersions));
         detailsView.getLogSchemaVersion().setAcceptableValues(logSchemaVersions);
 
@@ -141,13 +142,13 @@ public class AddSdkProfileActivity extends AbstractDetailsActivity<SdkProfileDto
         entity.setName(detailsView.getName().getValue());
 
         entity.setConfigurationSchemaVersion(detailsView.getConfigurationSchemaVersion().
-                getValue().getMajorVersion());
+                getValue().getVersion());
         entity.setProfileSchemaVersion(detailsView.getProfileSchemaVersion().
-                getValue().getMajorVersion());
+                getValue().getVersion());
         entity.setNotificationSchemaVersion(detailsView.getNotificationSchemaVersion().
-                getValue().getMajorVersion());
+                getValue().getVersion());
         entity.setLogSchemaVersion(detailsView.getLogSchemaVersion().
-                getValue().getMajorVersion());
+                getValue().getVersion());
 
         List<String> aefMapIds = new ArrayList<>();
         List<AefMapInfoDto> aefMaps = detailsView.getSelectedAefMaps().getValues();

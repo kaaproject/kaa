@@ -71,6 +71,10 @@ public final class ApplicationEventFamilyMap extends GenericModel<ApplicationEve
     public ApplicationEventFamilyMap() {
     }
 
+    public ApplicationEventFamilyMap(Long id) {
+        this.id = id;
+    }
+
     public ApplicationEventFamilyMap(ApplicationEventFamilyMapDto dto) {
         this.id = getLongId(dto.getId());
         Long applicationId = getLongId(dto.getApplicationId());
@@ -203,6 +207,11 @@ public final class ApplicationEventFamilyMap extends GenericModel<ApplicationEve
     @Override
     protected ApplicationEventFamilyMapDto createDto() {
         return new ApplicationEventFamilyMapDto();
+    }
+
+    @Override
+    protected ApplicationEventFamilyMap newInstance(Long id) {
+        return new ApplicationEventFamilyMap(id);
     }
 
     @Override

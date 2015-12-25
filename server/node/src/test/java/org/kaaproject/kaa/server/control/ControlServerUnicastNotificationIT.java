@@ -42,7 +42,7 @@ public class ControlServerUnicastNotificationIT extends AbstractTestControlServe
      */
     @Before
     public void beforeTest() throws Exception {
-        MongoDataLoader.loadData();
+//        MongoDataLoader.loadData();
         super.beforeTest();
     }
     

@@ -31,7 +31,7 @@ import static org.kaaproject.kaa.server.common.dao.DaoConstants.USER_VERIFIER_TO
 @Entity
 @Table(name = USER_VERIFIER_TABLE_NAME)
 @Inheritance(strategy = InheritanceType.JOINED)
-public class UserVerifier extends Plugin<UserVerifierDto> implements Serializable {
+public class UserVerifier extends AbstractPlugin<UserVerifierDto> implements Serializable {
 
     private static final long serialVersionUID = -6822520685170109625L;
 
@@ -71,6 +71,11 @@ public class UserVerifier extends Plugin<UserVerifierDto> implements Serializabl
     @Override
     protected UserVerifierDto createDto() {
         return new UserVerifierDto();
+    }
+
+    @Override
+    protected UserVerifier newInstance(Long id) {
+        return new UserVerifier(id);
     }
 
     @Override

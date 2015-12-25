@@ -19,8 +19,10 @@ package org.kaaproject.kaa.server.operations.service.event;
 import java.security.PublicKey;
 import java.util.List;
 
+import org.kaaproject.kaa.common.dto.CTLDataDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
+import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.operations.pojo.SyncContext;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
 import org.kaaproject.kaa.server.operations.service.OperationsService;
@@ -93,6 +95,12 @@ public class ESTestOperationsService implements OperationsService {
 
     @Override
     public byte[] fetchUcfHash(String appToken, EndpointProfileDto profile) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public EndpointProfileDto refreshServerEndpointProfile(EndpointObjectHash hash) {
         // TODO Auto-generated method stub
         return null;
     }

@@ -54,7 +54,7 @@ public class HibernateConfigurationSchemaDaoTest extends HibernateAbstractTest {
         Application app = schema.getApplication();
         ConfigurationSchema found = configurationSchemaDao.findLatestByApplicationId(app.getId().toString());
         Assert.assertNotNull(found);
-        Assert.assertEquals(4, found.getMajorVersion());
+        Assert.assertEquals(4, found.getVersion());
     }
 
     @Test
@@ -63,9 +63,9 @@ public class HibernateConfigurationSchemaDaoTest extends HibernateAbstractTest {
         Assert.assertEquals(4, schemas.size());
         ConfigurationSchema schema = schemas.get(2);
         Application app = schema.getApplication();
-        ConfigurationSchema found = configurationSchemaDao.findByAppIdAndVersion(app.getId().toString(), schema.getMajorVersion());
+        ConfigurationSchema found = configurationSchemaDao.findByAppIdAndVersion(app.getId().toString(), schema.getVersion());
         Assert.assertNotNull(found);
-        Assert.assertEquals(3, found.getMajorVersion());
+        Assert.assertEquals(3, found.getVersion());
     }
 
     @Test

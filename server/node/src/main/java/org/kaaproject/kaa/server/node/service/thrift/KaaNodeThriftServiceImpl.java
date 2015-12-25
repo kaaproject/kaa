@@ -19,7 +19,6 @@ package org.kaaproject.kaa.server.node.service.thrift;
 import org.apache.thrift.TException;
 import org.kaaproject.kaa.server.common.thrift.cli.server.BaseCliThriftService;
 import org.kaaproject.kaa.server.common.thrift.gen.node.KaaNodeThriftService;
-import org.kaaproject.kaa.server.common.thrift.util.ThriftExecutor;
 import org.kaaproject.kaa.server.node.service.initialization.InitializationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

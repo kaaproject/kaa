@@ -15,6 +15,8 @@
  */
 package org.kaaproject.kaa.server.common.core.plugin.def;
 
+import org.kaaproject.kaa.common.dto.plugin.PluginContractDirection;
+
 import java.io.Serializable;
 import java.util.Set;
 

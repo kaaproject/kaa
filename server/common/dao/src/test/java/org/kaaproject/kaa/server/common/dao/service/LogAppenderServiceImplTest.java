@@ -35,7 +35,7 @@ public class LogAppenderServiceImplTest extends AbstractTest {
 
     @Before
     public void beforeTest() {
-        application = generateApplication();
+        application = generateApplicationDto();
     }
 
     @After
@@ -45,9 +45,9 @@ public class LogAppenderServiceImplTest extends AbstractTest {
 
     @Test
     public void findAllAppendersByAppIdTest() {
-        LogAppenderDto logAppender1 = generateLogAppender(application.getId(), null);
+        LogAppenderDto logAppender1 = generateLogAppenderDto(application.getId(), null);
         Assert.assertNotNull(logAppender1);
-        LogAppenderDto logAppender2 = generateLogAppender(application.getId(), null);
+        LogAppenderDto logAppender2 = generateLogAppenderDto(application.getId(), null);
         Assert.assertNotNull(logAppender2);
         List<LogAppenderDto> appenders = logAppendersService.findAllAppendersByAppId(application.getId());
         Assert.assertNotNull(appenders);
@@ -56,7 +56,7 @@ public class LogAppenderServiceImplTest extends AbstractTest {
 
     @Test
     public void findLogAppenderByIdTest() {
-        LogAppenderDto appender = generateLogAppender(application.getId(), null);
+        LogAppenderDto appender = generateLogAppenderDto(application.getId(), null);
         LogAppenderDto found = logAppendersService.findLogAppenderById(appender.getId());
         Assert.assertNotNull(found);
         Assert.assertEquals(appender, found);
@@ -65,7 +65,7 @@ public class LogAppenderServiceImplTest extends AbstractTest {
 
     @Test
     public void removeLogAppenderByIdTest() {
-        LogAppenderDto appender = generateLogAppender(application.getId(), null);
+        LogAppenderDto appender = generateLogAppenderDto(application.getId(), null);
         LogAppenderDto found = logAppendersService.findLogAppenderById(appender.getId());
         Assert.assertNotNull(found);
         Assert.assertEquals(appender, found);

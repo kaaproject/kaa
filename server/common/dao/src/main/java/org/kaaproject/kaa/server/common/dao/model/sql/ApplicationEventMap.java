@@ -55,6 +55,10 @@ public final class ApplicationEventMap extends GenericModel<ApplicationEventMapD
     public ApplicationEventMap() {
     }
 
+    public ApplicationEventMap(Long id) {
+        this.id = id;
+    }
+
     public ApplicationEventMap(ApplicationEventMapDto dto) {
         this.id = getLongId(dto.getId());
         Long eventClassId = getLongId(dto.getEventClassId());
@@ -146,6 +150,11 @@ public final class ApplicationEventMap extends GenericModel<ApplicationEventMapD
     @Override
     protected ApplicationEventMapDto createDto() {
         return new ApplicationEventMapDto();
+    }
+
+    @Override
+    protected ApplicationEventMap newInstance(Long id) {
+        return new ApplicationEventMap(id);
     }
 
     @Override

@@ -27,14 +27,17 @@ import java.util.UUID;
 
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
+import org.kaaproject.kaa.server.common.thrift.gen.operations.Operation;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
 import org.kaaproject.kaa.server.operations.service.akka.actors.supervision.SupervisionStrategyFactory;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointAwareMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointStopMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.ServerProfileUpdateMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.logs.LogEventPackMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.notification.ThriftNotificationMessage;
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.plugin.EndpointExtensionMessage;
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.plugin.PluginMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.plugin.EndpointExtMsg;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.plugin.PluginExtMsg;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.plugin.PluginMsg;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.plugin.SdkExtensionKey;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.stats.ApplicationActorStatusResponse;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.stats.StatusRequestMessage;
@@ -172,8 +175,8 @@ public class ApplicationActor extends UntypedActor {
         }
         if (message instanceof EndpointAwareMessage) {
             processEndpointAwareMessage((EndpointAwareMessage) message);
-        } else if (message instanceof EndpointExtensionMessage) {
-            processExtensionMessage((EndpointExtensionMessage) message);
+        } else if (message instanceof PluginMsg) {
+            processPluginMsg((PluginMsg) message);
         } else if (message instanceof SessionAware) {
             processSessionAwareMessage((SessionAware) message);
         } else if (message instanceof EndpointEventDeliveryMessage) {
@@ -197,16 +200,28 @@ public class ApplicationActor extends UntypedActor {
         }
     }
 
-    private void processExtensionMessage(EndpointExtensionMessage message) {
-        LOG.debug("[{}] Processing extension message {}", applicationToken, message);
-        SdkExtensionKey pluginKey = message.getExtKey();
+    private void processPluginMsg(PluginMsg msg) {
+        if (msg instanceof PluginExtMsg) {
+            processPluginExtMsg((PluginExtMsg) msg);
+        } else {
+            processEndpointExtMsg((EndpointExtMsg) msg);
+        }
+    }
+
+    private void processPluginExtMsg(PluginExtMsg msg) {
+        LOG.debug("[{}] Processing plugin message {}", applicationToken, msg);
+    }
+
+    private void processEndpointExtMsg(EndpointExtMsg msg) {
+        LOG.debug("[{}] Processing extension message {}", applicationToken, msg);
+        SdkExtensionKey pluginKey = msg.getExtKey();
         String pluginId = pluginIdMap.get(pluginKey);
         if (pluginId == null) {
             pluginId = context.getCacheService().getPluginInstanceId(pluginKey);
             pluginIdMap.put(pluginKey, pluginId);
         }
         LOG.debug("[{}] Going to forward this message to plugin with id [{}]", applicationToken, pluginId);
-        context().parent().tell(new PluginMessage(pluginId, message), context().self());
+        context().parent().tell(new PluginExtMsg(pluginId, msg), context().self());
     }
 
     /**
@@ -255,15 +270,17 @@ public class ApplicationActor extends UntypedActor {
         if (notification.isSetNotificationId()) {
             LOG.debug("[{}] Forwarding message to specific topic", applicationToken);
             sendToSpecificTopic(message);
-        } else if (notification.isSetUnicastNotificationId()) {
+        } else if (notification.isSetKeyHash()) {
             LOG.debug("[{}] Forwarding message to specific endpoint", applicationToken);
             sendToSpecificEndpoint(message);
         } else if (notification.isSetAppenderId()) {
             LOG.debug("[{}] Forwarding message to application log actor", applicationToken);
             processLogNotificationMessage(message);
         } else if (notification.isSetUserVerifierToken()) {
-            LOG.debug("[{}] Forwarding message to application log actor", applicationToken);
+            LOG.debug("[{}] Forwarding message to application user verifier actor", applicationToken);
             processUserVerifierNotificationMessage(message);
+        } else if (notification.getKeyHash() != null) {
+
         } else {
             LOG.debug("[{}] Broadcasting message to all endpoints", applicationToken);
             broadcastToAllEndpoints(message);
@@ -311,7 +328,12 @@ public class ApplicationActor extends UntypedActor {
         EndpointObjectHash keyHash = EndpointObjectHash.fromBytes(message.getNotification().getKeyHash());
         ActorMetaData endpointActor = endpointSessions.get(keyHash);
         if (endpointActor != null) {
-            endpointActor.actorRef.tell(NotificationMessage.fromUnicastId(message.getNotification().getUnicastNotificationId()), self());
+            if (message.getNotification().getOp() == Operation.UPDATE_SERVER_PROFILE) {
+                endpointActor.actorRef.tell(new ServerProfileUpdateMessage(), self());
+            } else {
+                endpointActor.actorRef
+                        .tell(NotificationMessage.fromUnicastId(message.getNotification().getUnicastNotificationId()), self());
+            }
         } else {
             LOG.debug("[{}] Can't find endpoint actor that corresponds to {} ", applicationToken, keyHash);
         }

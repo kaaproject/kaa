@@ -7,11 +7,13 @@ package org.kaaproject.kaa.server.appenders.flume.config.gen;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class FlumeConfig extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"FlumeConfig\",\"namespace\":\"org.kaaproject.kaa.server.appenders.flume.config.gen\",\"fields\":[{\"name\":\"executorThreadPoolSize\",\"type\":\"int\",\"displayName\":\"Executor thread pool size\",\"by_default\":1},{\"name\":\"callbackThreadPoolSize\",\"type\":\"int\",\"displayName\":\"Callback thread pool size\",\"by_default\":2},{\"name\":\"clientsThreadPoolSize\",\"type\":\"int\",\"displayName\":\"RPC client max thread pool size\",\"by_default\":2},{\"name\":\"flumeEventFormat\",\"type\":{\"type\":\"enum\",\"name\":\"FlumeEventFormat\",\"symbols\":[\"RECORDS_CONTAINER\",\"GENERIC\"]},\"displayName\":\"Flume event format\",\"by_default\":\"RECORDS_CONTAINER\",\"displayNames\":[\"Records container\",\"Generic\"]},{\"name\":\"hostsBalancing\",\"type\":[{\"type\":\"record\",\"name\":\"PrioritizedFlumeNodes\",\"fields\":[{\"name\":\"flumeNodes\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"PrioritizedFlumeNode\",\"fields\":[{\"name\":\"host\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"Host\",\"weight\":0.8,\"by_default\":\"localhost\"},{\"name\":\"port\",\"type\":\"int\",\"displayName\":\"Port\",\"weight\":0.1,\"by_default\":7070},{\"name\":\"priority\",\"type\":\"int\",\"displayName\":\"Priority\",\"weight\":0.1,\"by_default\":1}]}},\"displayName\":\"Flume nodes\",\"minRowCount\":1}],\"displayName\":\"Prioritized\"},{\"type\":\"record\",\"name\":\"FlumeNodes\",\"fields\":[{\"name\":\"flumeNodes\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"FlumeNode\",\"fields\":[{\"name\":\"host\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"Host\",\"weight\":0.75,\"by_default\":\"localhost\"},{\"name\":\"port\",\"type\":\"int\",\"displayName\":\"Port\",\"weight\":0.25,\"by_default\":7070}]}},\"displayName\":\"Flume nodes\",\"minRowCount\":2}],\"displayName\":\"Round Robin\"}],\"displayName\":\"Hosts balancing\"}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"FlumeConfig\",\"namespace\":\"org.kaaproject.kaa.server.appenders.flume.config.gen\",\"fields\":[{\"name\":\"executorThreadPoolSize\",\"type\":\"int\",\"displayName\":\"Executor thread pool size\",\"by_default\":1},{\"name\":\"callbackThreadPoolSize\",\"type\":\"int\",\"displayName\":\"Callback thread pool size\",\"by_default\":2},{\"name\":\"clientsThreadPoolSize\",\"type\":\"int\",\"displayName\":\"RPC client max thread pool size\",\"by_default\":2},{\"name\":\"includeClientProfile\",\"type\":[\"boolean\",\"null\"],\"displayName\":\"Include client profile data\",\"by_default\":false},{\"name\":\"includeServerProfile\",\"type\":[\"boolean\",\"null\"],\"displayName\":\"Include server profile data\",\"by_default\":false},{\"name\":\"flumeEventFormat\",\"type\":{\"type\":\"enum\",\"name\":\"FlumeEventFormat\",\"symbols\":[\"RECORDS_CONTAINER\",\"GENERIC\"]},\"displayName\":\"Flume event format\",\"by_default\":\"RECORDS_CONTAINER\",\"displayNames\":[\"Records container\",\"Generic\"]},{\"name\":\"hostsBalancing\",\"type\":[{\"type\":\"record\",\"name\":\"PrioritizedFlumeNodes\",\"fields\":[{\"name\":\"flumeNodes\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"PrioritizedFlumeNode\",\"fields\":[{\"name\":\"host\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"Host\",\"weight\":0.8,\"by_default\":\"localhost\"},{\"name\":\"port\",\"type\":\"int\",\"displayName\":\"Port\",\"weight\":0.1,\"by_default\":7070},{\"name\":\"priority\",\"type\":\"int\",\"displayName\":\"Priority\",\"weight\":0.1,\"by_default\":1}]}},\"displayName\":\"Flume nodes\",\"minRowCount\":1}],\"displayName\":\"Prioritized\"},{\"type\":\"record\",\"name\":\"FlumeNodes\",\"fields\":[{\"name\":\"flumeNodes\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"FlumeNode\",\"fields\":[{\"name\":\"host\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"Host\",\"weight\":0.75,\"by_default\":\"localhost\"},{\"name\":\"port\",\"type\":\"int\",\"displayName\":\"Port\",\"weight\":0.25,\"by_default\":7070}]}},\"displayName\":\"Flume nodes\",\"minRowCount\":2}],\"displayName\":\"Round Robin\"}],\"displayName\":\"Hosts balancing\"}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
    private int executorThreadPoolSize;
    private int callbackThreadPoolSize;
    private int clientsThreadPoolSize;
+   private java.lang.Boolean includeClientProfile;
+   private java.lang.Boolean includeServerProfile;
    private org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeEventFormat flumeEventFormat;
    private java.lang.Object hostsBalancing;
 
@@ -25,10 +27,12 @@ public class FlumeConfig extends org.apache.avro.specific.SpecificRecordBase imp
   /**
    * All-args constructor.
    */
-  public FlumeConfig(java.lang.Integer executorThreadPoolSize, java.lang.Integer callbackThreadPoolSize, java.lang.Integer clientsThreadPoolSize, org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeEventFormat flumeEventFormat, java.lang.Object hostsBalancing) {
+  public FlumeConfig(java.lang.Integer executorThreadPoolSize, java.lang.Integer callbackThreadPoolSize, java.lang.Integer clientsThreadPoolSize, java.lang.Boolean includeClientProfile, java.lang.Boolean includeServerProfile, org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeEventFormat flumeEventFormat, java.lang.Object hostsBalancing) {
     this.executorThreadPoolSize = executorThreadPoolSize;
     this.callbackThreadPoolSize = callbackThreadPoolSize;
     this.clientsThreadPoolSize = clientsThreadPoolSize;
+    this.includeClientProfile = includeClientProfile;
+    this.includeServerProfile = includeServerProfile;
     this.flumeEventFormat = flumeEventFormat;
     this.hostsBalancing = hostsBalancing;
   }
@@ -40,8 +44,10 @@ public class FlumeConfig extends org.apache.avro.specific.SpecificRecordBase imp
     case 0: return executorThreadPoolSize;
     case 1: return callbackThreadPoolSize;
     case 2: return clientsThreadPoolSize;
-    case 3: return flumeEventFormat;
-    case 4: return hostsBalancing;
+    case 3: return includeClientProfile;
+    case 4: return includeServerProfile;
+    case 5: return flumeEventFormat;
+    case 6: return hostsBalancing;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -52,8 +58,10 @@ public class FlumeConfig extends org.apache.avro.specific.SpecificRecordBase imp
     case 0: executorThreadPoolSize = (java.lang.Integer)value$; break;
     case 1: callbackThreadPoolSize = (java.lang.Integer)value$; break;
     case 2: clientsThreadPoolSize = (java.lang.Integer)value$; break;
-    case 3: flumeEventFormat = (org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeEventFormat)value$; break;
-    case 4: hostsBalancing = (java.lang.Object)value$; break;
+    case 3: includeClientProfile = (java.lang.Boolean)value$; break;
+    case 4: includeServerProfile = (java.lang.Boolean)value$; break;
+    case 5: flumeEventFormat = (org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeEventFormat)value$; break;
+    case 6: hostsBalancing = (java.lang.Object)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -101,6 +109,36 @@ public class FlumeConfig extends org.apache.avro.specific.SpecificRecordBase imp
    */
   public void setClientsThreadPoolSize(java.lang.Integer value) {
     this.clientsThreadPoolSize = value;
+  }
+
+  /**
+   * Gets the value of the 'includeClientProfile' field.
+   */
+  public java.lang.Boolean getIncludeClientProfile() {
+    return includeClientProfile;
+  }
+
+  /**
+   * Sets the value of the 'includeClientProfile' field.
+   * @param value the value to set.
+   */
+  public void setIncludeClientProfile(java.lang.Boolean value) {
+    this.includeClientProfile = value;
+  }
+
+  /**
+   * Gets the value of the 'includeServerProfile' field.
+   */
+  public java.lang.Boolean getIncludeServerProfile() {
+    return includeServerProfile;
+  }
+
+  /**
+   * Sets the value of the 'includeServerProfile' field.
+   * @param value the value to set.
+   */
+  public void setIncludeServerProfile(java.lang.Boolean value) {
+    this.includeServerProfile = value;
   }
 
   /**
@@ -157,6 +195,8 @@ public class FlumeConfig extends org.apache.avro.specific.SpecificRecordBase imp
     private int executorThreadPoolSize;
     private int callbackThreadPoolSize;
     private int clientsThreadPoolSize;
+    private java.lang.Boolean includeClientProfile;
+    private java.lang.Boolean includeServerProfile;
     private org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeEventFormat flumeEventFormat;
     private java.lang.Object hostsBalancing;
 
@@ -180,13 +220,21 @@ public class FlumeConfig extends org.apache.avro.specific.SpecificRecordBase imp
         this.clientsThreadPoolSize = data().deepCopy(fields()[2].schema(), other.clientsThreadPoolSize);
         fieldSetFlags()[2] = true;
       }
-      if (isValidValue(fields()[3], other.flumeEventFormat)) {
-        this.flumeEventFormat = data().deepCopy(fields()[3].schema(), other.flumeEventFormat);
+      if (isValidValue(fields()[3], other.includeClientProfile)) {
+        this.includeClientProfile = data().deepCopy(fields()[3].schema(), other.includeClientProfile);
         fieldSetFlags()[3] = true;
       }
-      if (isValidValue(fields()[4], other.hostsBalancing)) {
-        this.hostsBalancing = data().deepCopy(fields()[4].schema(), other.hostsBalancing);
+      if (isValidValue(fields()[4], other.includeServerProfile)) {
+        this.includeServerProfile = data().deepCopy(fields()[4].schema(), other.includeServerProfile);
         fieldSetFlags()[4] = true;
+      }
+      if (isValidValue(fields()[5], other.flumeEventFormat)) {
+        this.flumeEventFormat = data().deepCopy(fields()[5].schema(), other.flumeEventFormat);
+        fieldSetFlags()[5] = true;
+      }
+      if (isValidValue(fields()[6], other.hostsBalancing)) {
+        this.hostsBalancing = data().deepCopy(fields()[6].schema(), other.hostsBalancing);
+        fieldSetFlags()[6] = true;
       }
     }
     
@@ -205,13 +253,21 @@ public class FlumeConfig extends org.apache.avro.specific.SpecificRecordBase imp
         this.clientsThreadPoolSize = data().deepCopy(fields()[2].schema(), other.clientsThreadPoolSize);
         fieldSetFlags()[2] = true;
       }
-      if (isValidValue(fields()[3], other.flumeEventFormat)) {
-        this.flumeEventFormat = data().deepCopy(fields()[3].schema(), other.flumeEventFormat);
+      if (isValidValue(fields()[3], other.includeClientProfile)) {
+        this.includeClientProfile = data().deepCopy(fields()[3].schema(), other.includeClientProfile);
         fieldSetFlags()[3] = true;
       }
-      if (isValidValue(fields()[4], other.hostsBalancing)) {
-        this.hostsBalancing = data().deepCopy(fields()[4].schema(), other.hostsBalancing);
+      if (isValidValue(fields()[4], other.includeServerProfile)) {
+        this.includeServerProfile = data().deepCopy(fields()[4].schema(), other.includeServerProfile);
         fieldSetFlags()[4] = true;
+      }
+      if (isValidValue(fields()[5], other.flumeEventFormat)) {
+        this.flumeEventFormat = data().deepCopy(fields()[5].schema(), other.flumeEventFormat);
+        fieldSetFlags()[5] = true;
+      }
+      if (isValidValue(fields()[6], other.hostsBalancing)) {
+        this.hostsBalancing = data().deepCopy(fields()[6].schema(), other.hostsBalancing);
+        fieldSetFlags()[6] = true;
       }
     }
 
@@ -287,6 +343,56 @@ public class FlumeConfig extends org.apache.avro.specific.SpecificRecordBase imp
       return this;
     }
 
+    /** Gets the value of the 'includeClientProfile' field */
+    public java.lang.Boolean getIncludeClientProfile() {
+      return includeClientProfile;
+    }
+    
+    /** Sets the value of the 'includeClientProfile' field */
+    public org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeConfig.Builder setIncludeClientProfile(java.lang.Boolean value) {
+      validate(fields()[3], value);
+      this.includeClientProfile = value;
+      fieldSetFlags()[3] = true;
+      return this; 
+    }
+    
+    /** Checks whether the 'includeClientProfile' field has been set */
+    public boolean hasIncludeClientProfile() {
+      return fieldSetFlags()[3];
+    }
+    
+    /** Clears the value of the 'includeClientProfile' field */
+    public org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeConfig.Builder clearIncludeClientProfile() {
+      includeClientProfile = null;
+      fieldSetFlags()[3] = false;
+      return this;
+    }
+
+    /** Gets the value of the 'includeServerProfile' field */
+    public java.lang.Boolean getIncludeServerProfile() {
+      return includeServerProfile;
+    }
+    
+    /** Sets the value of the 'includeServerProfile' field */
+    public org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeConfig.Builder setIncludeServerProfile(java.lang.Boolean value) {
+      validate(fields()[4], value);
+      this.includeServerProfile = value;
+      fieldSetFlags()[4] = true;
+      return this; 
+    }
+    
+    /** Checks whether the 'includeServerProfile' field has been set */
+    public boolean hasIncludeServerProfile() {
+      return fieldSetFlags()[4];
+    }
+    
+    /** Clears the value of the 'includeServerProfile' field */
+    public org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeConfig.Builder clearIncludeServerProfile() {
+      includeServerProfile = null;
+      fieldSetFlags()[4] = false;
+      return this;
+    }
+
     /** Gets the value of the 'flumeEventFormat' field */
     public org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeEventFormat getFlumeEventFormat() {
       return flumeEventFormat;
@@ -294,21 +400,21 @@ public class FlumeConfig extends org.apache.avro.specific.SpecificRecordBase imp
     
     /** Sets the value of the 'flumeEventFormat' field */
     public org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeConfig.Builder setFlumeEventFormat(org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeEventFormat value) {
-      validate(fields()[3], value);
+      validate(fields()[5], value);
       this.flumeEventFormat = value;
-      fieldSetFlags()[3] = true;
+      fieldSetFlags()[5] = true;
       return this; 
     }
     
     /** Checks whether the 'flumeEventFormat' field has been set */
     public boolean hasFlumeEventFormat() {
-      return fieldSetFlags()[3];
+      return fieldSetFlags()[5];
     }
     
     /** Clears the value of the 'flumeEventFormat' field */
     public org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeConfig.Builder clearFlumeEventFormat() {
       flumeEventFormat = null;
-      fieldSetFlags()[3] = false;
+      fieldSetFlags()[5] = false;
       return this;
     }
 
@@ -319,21 +425,21 @@ public class FlumeConfig extends org.apache.avro.specific.SpecificRecordBase imp
     
     /** Sets the value of the 'hostsBalancing' field */
     public org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeConfig.Builder setHostsBalancing(java.lang.Object value) {
-      validate(fields()[4], value);
+      validate(fields()[6], value);
       this.hostsBalancing = value;
-      fieldSetFlags()[4] = true;
+      fieldSetFlags()[6] = true;
       return this; 
     }
     
     /** Checks whether the 'hostsBalancing' field has been set */
     public boolean hasHostsBalancing() {
-      return fieldSetFlags()[4];
+      return fieldSetFlags()[6];
     }
     
     /** Clears the value of the 'hostsBalancing' field */
     public org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeConfig.Builder clearHostsBalancing() {
       hostsBalancing = null;
-      fieldSetFlags()[4] = false;
+      fieldSetFlags()[6] = false;
       return this;
     }
 
@@ -344,8 +450,10 @@ public class FlumeConfig extends org.apache.avro.specific.SpecificRecordBase imp
         record.executorThreadPoolSize = fieldSetFlags()[0] ? this.executorThreadPoolSize : (java.lang.Integer) defaultValue(fields()[0]);
         record.callbackThreadPoolSize = fieldSetFlags()[1] ? this.callbackThreadPoolSize : (java.lang.Integer) defaultValue(fields()[1]);
         record.clientsThreadPoolSize = fieldSetFlags()[2] ? this.clientsThreadPoolSize : (java.lang.Integer) defaultValue(fields()[2]);
-        record.flumeEventFormat = fieldSetFlags()[3] ? this.flumeEventFormat : (org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeEventFormat) defaultValue(fields()[3]);
-        record.hostsBalancing = fieldSetFlags()[4] ? this.hostsBalancing : (java.lang.Object) defaultValue(fields()[4]);
+        record.includeClientProfile = fieldSetFlags()[3] ? this.includeClientProfile : (java.lang.Boolean) defaultValue(fields()[3]);
+        record.includeServerProfile = fieldSetFlags()[4] ? this.includeServerProfile : (java.lang.Boolean) defaultValue(fields()[4]);
+        record.flumeEventFormat = fieldSetFlags()[5] ? this.flumeEventFormat : (org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeEventFormat) defaultValue(fields()[5]);
+        record.hostsBalancing = fieldSetFlags()[6] ? this.hostsBalancing : (java.lang.Object) defaultValue(fields()[6]);
         return record;
       } catch (Exception e) {
         throw new org.apache.avro.AvroRuntimeException(e);

@@ -15,18 +15,20 @@
  */
 package org.kaaproject.kaa.common.dto.plugin;
 
-import java.io.Serializable;
-
 import org.kaaproject.kaa.common.dto.HasId;
+
+import java.io.Serializable;
+import java.util.Set;
 
 public class ContractDto implements HasId, Serializable {
 
-    private static final long serialVersionUID = -3635444368421499582L;
+    private static final long serialVersionUID = -670587352752347857L;
 
     private String id;
     private String name;
     private Integer version;
     private ContractType type;
+    private Set<ContractItemDto> contractItems;
 
     @Override
     public String getId() {
@@ -62,4 +64,58 @@ public class ContractDto implements HasId, Serializable {
         this.type = type;
     }
 
+    public Set<ContractItemDto> getContractItems() {
+        return contractItems;
+    }
+
+    public void setContractItems(Set<ContractItemDto> contractItems) {
+        this.contractItems = contractItems;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ContractDto))
+            return false;
+
+        ContractDto that = (ContractDto) o;
+
+        if (contractItems != null ? !contractItems.equals(that.contractItems) : that.contractItems != null) {
+            return false;
+        }
+        if (name != null ? !name.equals(that.name) : that.name != null) {
+            return false;
+        }
+        if (type != that.type) {
+            return false;
+        }
+        if (version != null ? !version.equals(that.version) : that.version != null) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (version != null ? version.hashCode() : 0);
+        result = 31 * result + (type != null ? type.hashCode() : 0);
+        result = 31 * result + (contractItems != null ? contractItems.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("ContractDto{");
+        sb.append("id='").append(id).append('\'');
+        sb.append(", name='").append(name).append('\'');
+        sb.append(", version=").append(version);
+        sb.append(", type=").append(type);
+        sb.append(", contractItems=").append(contractItems);
+        sb.append('}');
+        return sb.toString();
+    }
 }

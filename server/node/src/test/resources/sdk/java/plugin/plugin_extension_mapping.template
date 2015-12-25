@@ -1,0 +1,1 @@
+        map.put(new ExtensionId(${plugin_extension_id}), ${plugin_implementation_fqn}.class);

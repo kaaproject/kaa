@@ -32,6 +32,7 @@ import org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeConfig;
 import org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeEventFormat;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogSchema;
+import org.kaaproject.kaa.server.common.log.shared.appender.data.ProfileInfo;
 import org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordData;
 import org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader;
 import org.slf4j.Logger;
@@ -43,20 +44,28 @@ public class FlumeAvroEventBuilder extends FlumeEventBuilder {
 
     private static final String AVRO_SCHEMA_HEADER_LITERAL = "flume.avro.schema.literal";
 
+    private static final String CLIENT_PROFILE_NOT_SET = "Client profile is not set!";
+    private static final String SERVER_PROFILE_NOT_SET = "Server profile is not set!";
+
     private FlumeEventFormat flumeEventFormat;
-    
+    private boolean includeClientProfile;
+    private boolean includeServerProfile;
+
     @Override
     public void init(FlumeConfig configuration) {
         flumeEventFormat = configuration.getFlumeEventFormat();
+        includeClientProfile = configuration.getIncludeClientProfile();
+        includeServerProfile = configuration.getIncludeServerProfile();
     }
 
     @Override
-    public List<Event> generateEvents(String appToken, LogSchema schema, List<LogEvent> logEvents, RecordHeader header) {
+    public List<Event> generateEvents(String appToken, LogSchema schema, List<LogEvent> logEvents,
+                                      ProfileInfo clientProfile, ProfileInfo serverProfile, RecordHeader header) {
         LOG.debug("Build flume events with appToken [{}], schema version [{}], events: [{}] and header [{}].", appToken, schema.getVersion(), logEvents, header);
         List<Event> events = null;
         switch (flumeEventFormat) {
         case RECORDS_CONTAINER:
-            Event event = generateRecordsContainerEvent(appToken, schema, logEvents, header);
+            Event event = generateRecordsContainerEvent(appToken, schema, logEvents, clientProfile, serverProfile, header);
             if (event != null) {
                 events = Collections.singletonList(event);
             }
@@ -68,12 +77,37 @@ public class FlumeAvroEventBuilder extends FlumeEventBuilder {
         return events;
     }
 
-    private Event generateRecordsContainerEvent(String appToken, LogSchema schema, List<LogEvent> logEvents, RecordHeader header) {
+    private Event generateRecordsContainerEvent(String appToken, LogSchema schema, List<LogEvent> logEvents,
+                                                ProfileInfo clientProfile, ProfileInfo serverProfile, RecordHeader header) {
+        if (clientProfile == null && includeClientProfile) {
+            LOG.error("Can't  generate records container event. " + CLIENT_PROFILE_NOT_SET);
+            throw new RuntimeException(CLIENT_PROFILE_NOT_SET);
+        }
+
+        if (serverProfile == null && includeServerProfile) {
+            LOG.error("Can't  generate records container event. " + SERVER_PROFILE_NOT_SET);
+            throw new RuntimeException(SERVER_PROFILE_NOT_SET);
+        }
+
         Event event = null;
         RecordData logData = new RecordData();
         logData.setSchemaVersion(schema.getVersion());
         logData.setApplicationToken(appToken);
         logData.setRecordHeader(header);
+
+        if (includeClientProfile) {
+            if (clientProfile != null) {
+                logData.setClientProfileBody(clientProfile.getBody());
+                logData.setClientSchemaId(clientProfile.getSchemaId());
+            }
+        }
+
+        if (includeServerProfile) {
+            if (serverProfile != null) {
+                logData.setServerProfileBody(serverProfile.getBody());
+                logData.setServerSchemaId(serverProfile.getSchemaId());
+            }
+        }
 
         List<ByteBuffer> bytes = new ArrayList<>(logEvents.size());
 
@@ -100,9 +134,9 @@ public class FlumeAvroEventBuilder extends FlumeEventBuilder {
         LOG.trace("Build flume event with array body [{}]", baos);
         return event;
     }
-    
+
     private List<Event> generateGenericEvent(LogSchema schema, List<LogEvent> logEvents) {
-        List<Event> events = new ArrayList<Event>();
+        List<Event> events = new ArrayList<>();
         for (LogEvent logEvent : logEvents) {
             Event event = EventBuilder.withBody(logEvent.getLogData());
             event.getHeaders().put(AVRO_SCHEMA_HEADER_LITERAL, schema.getSchema());

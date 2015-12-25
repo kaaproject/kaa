@@ -25,7 +25,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -41,6 +43,7 @@ import org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraSocketO
 import org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraWriteConsistencyLevel;
 import org.kaaproject.kaa.server.appenders.cassandra.config.gen.ClusteringElement;
 import org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnMappingElement;
+import org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnMappingElementType;
 import org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,7 +77,10 @@ public class CassandraLogEventDao implements LogEventDao {
     private static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS $keyspace_name.$table_name ("
             + "$columns_definition PRIMARY KEY ( $primary_key_definition )) $clustering_definition;";
 
-    private final ConcurrentMap<String, ThreadLocal<SimpleDateFormat>> dateFormatMap = new ConcurrentHashMap<String, ThreadLocal<SimpleDateFormat>>();
+    private static final String ABSENT_CLIENT_PROFILE_ERROR = "Client profile is not set!";
+    private static final String ABSENT_SERVER_PROFILE_ERROR = "Server profile is not set!";
+
+    private final ConcurrentMap<String, ThreadLocal<SimpleDateFormat>> dateFormatMap = new ConcurrentHashMap<>();
 
     private Cluster cluster;
     private Session session;
@@ -232,19 +238,25 @@ public class CassandraLogEventDao implements LogEventDao {
 
     @Override
     public List<CassandraLogEventDto> save(List<CassandraLogEventDto> logEventDtoList, String tableName,
-            GenericAvroConverter<GenericRecord> eventConverter, GenericAvroConverter<GenericRecord> headerConverter)
+            GenericAvroConverter<GenericRecord> eventConverter, GenericAvroConverter<GenericRecord> headerConverter,
+            GenericAvroConverter<GenericRecord> clientProfileConverter, GenericAvroConverter<GenericRecord> serverProfileConverter,
+            String clientProfileJson, String serverProfileJson)
             throws IOException {
         LOG.debug("Execute bath request for cassandra table {}", tableName);
-        executeBatch(prepareQuery(logEventDtoList, tableName, eventConverter, headerConverter));
+        executeBatch(prepareQuery(logEventDtoList, tableName, eventConverter, headerConverter,
+                clientProfileConverter, serverProfileConverter, clientProfileJson, serverProfileJson));
         return logEventDtoList;
     }
 
     @Override
     public ListenableFuture<ResultSet> saveAsync(List<CassandraLogEventDto> logEventDtoList, String tableName,
-            GenericAvroConverter<GenericRecord> eventConverter, GenericAvroConverter<GenericRecord> headerConverter)
+            GenericAvroConverter<GenericRecord> eventConverter, GenericAvroConverter<GenericRecord> headerConverter,
+            GenericAvroConverter<GenericRecord> clientProfileConverter, GenericAvroConverter<GenericRecord> serverProfileConverter,
+            String clientProfileJson, String serverProfileJson)
             throws IOException {
         LOG.debug("Execute async bath request for cassandra table {}", tableName);
-        return executeBatchAsync(prepareQuery(logEventDtoList, tableName, eventConverter, headerConverter));
+        return executeBatchAsync(prepareQuery(logEventDtoList, tableName, eventConverter, headerConverter,
+                clientProfileConverter, serverProfileConverter, clientProfileJson, serverProfileJson));
     }
 
     @Override
@@ -295,10 +307,29 @@ public class CassandraLogEventDao implements LogEventDao {
     }
 
     private Insert[] prepareQuery(List<CassandraLogEventDto> logEventDtoList, String collectionName,
-            GenericAvroConverter<GenericRecord> eventConverter, GenericAvroConverter<GenericRecord> headerConverter)
+            GenericAvroConverter<GenericRecord> eventConverter, GenericAvroConverter<GenericRecord> headerConverter,
+            GenericAvroConverter<GenericRecord> clientProfileConverter, GenericAvroConverter<GenericRecord> serverProfileConverter,
+            String clientProfileJson, String serverProfileJson)
             throws IOException {
         String reuseTsValue = null;
         Insert[] insertArray = new Insert[logEventDtoList.size()];
+
+        // Process client profile data
+        GenericRecord clientProfile = null;
+        ByteBuffer clientProfileBinary = null;
+        if (clientProfileConverter != null) {
+            clientProfile = clientProfileConverter.decodeJson(clientProfileJson);
+            clientProfileBinary = ByteBuffer.wrap(clientProfileConverter.encode(clientProfile));
+        }
+
+        // Process server profile data
+        GenericRecord serverProfile = null;
+        ByteBuffer serverProfileBinary = null;
+        if (serverProfileConverter != null) {
+            serverProfile = serverProfileConverter.decodeJson(serverProfileJson);
+            serverProfileBinary = ByteBuffer.wrap(serverProfileConverter.encode(serverProfile));
+        }
+
         for (int i = 0; i < logEventDtoList.size(); i++) {
             CassandraLogEventDto dto = logEventDtoList.get(i);
             Insert insert = QueryBuilder.insertInto(keyspaceName, collectionName);
@@ -312,6 +343,20 @@ public class CassandraLogEventDao implements LogEventDao {
                     insert.value(element.getColumnName(),
                             formatField(element.getColumnType(), dto.getEvent().get(element.getValue())));
                     break;
+                case CLIENT_FIELD:
+                    if (clientProfile != null) {
+                        insert.value(element.getColumnName(), formatField(element.getColumnType(), clientProfile.get(element.getValue())));
+                    } else {
+                        throw new RuntimeException(ABSENT_CLIENT_PROFILE_ERROR);
+                    }
+                    break;
+                case SERVER_FIELD:
+                    if (serverProfile != null) {
+                        insert.value(element.getColumnName(), formatField(element.getColumnType(), serverProfile.get(element.getValue())));
+                    } else {
+                        throw new RuntimeException(ABSENT_SERVER_PROFILE_ERROR);
+                    }
+                    break;
                 case HEADER_JSON:
                     insert.value(element.getColumnName(), headerConverter.encodeToJson(dto.getHeader()));
                     break;
@@ -323,6 +368,35 @@ public class CassandraLogEventDao implements LogEventDao {
                     break;
                 case EVENT_BINARY:
                     insert.value(element.getColumnName(), ByteBuffer.wrap(eventConverter.encode(dto.getEvent())));
+                    break;
+                case CLIENT_JSON:
+                    if (clientProfileJson != null) {
+                        insert.value(element.getColumnName(), clientProfileJson);
+                    }
+                    else {
+                        throw new RuntimeException(ABSENT_CLIENT_PROFILE_ERROR);
+                    }
+                    break;
+                case CLIENT_BINARY:
+                    if (clientProfileBinary != null) {
+                        insert.value(element.getColumnName(), clientProfileBinary);
+                    } else {
+                        throw new RuntimeException(ABSENT_CLIENT_PROFILE_ERROR);
+                    }
+                    break;
+                case SERVER_JSON:
+                    if (serverProfileJson != null) {
+                        insert.value(element.getColumnName(), serverProfileJson);
+                    }
+                    else {
+                        throw new RuntimeException(ABSENT_SERVER_PROFILE_ERROR);
+                    }
+                case SERVER_BINARY:
+                    if (serverProfileBinary != null) {
+                        insert.value(element.getColumnName(), clientProfileBinary);
+                    } else {
+                        throw new RuntimeException(ABSENT_SERVER_PROFILE_ERROR);
+                    }
                     break;
                 case UUID:
                     insert.value(element.getColumnName(), UUID.randomUUID());

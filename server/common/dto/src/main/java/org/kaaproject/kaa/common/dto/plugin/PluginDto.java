@@ -26,11 +26,13 @@ public class PluginDto implements HasId, Serializable {
 
     private String id;
     private String className;
-    private String type;
-    private String scope;
+    private PluginState state;
+    private String name;
+    private Integer version;
+    private PluginScope scope;
     private String confSchema;
-    private Set<PluginContractDto> pluginContractSet;
-    private Set<PluginInstanceDto> pluginInstanceSet;
+    private Set<PluginContractDto> pluginContracts;
+    private Set<PluginInstanceDto> pluginInstances;
 
     public PluginDto() {
     }
@@ -53,19 +55,35 @@ public class PluginDto implements HasId, Serializable {
         this.className = className;
     }
 
-    public String getType() {
-        return type;
+    public PluginState getState() {
+        return state;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setState(PluginState state) {
+        this.state = state;
     }
 
-    public String getScope() {
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
+    }
+
+    public PluginScope getScope() {
         return scope;
     }
 
-    public void setScope(String scope) {
+    public void setScope(PluginScope scope) {
         this.scope = scope;
     }
 
@@ -77,4 +95,79 @@ public class PluginDto implements HasId, Serializable {
         this.confSchema = confSchema;
     }
 
+    public Set<PluginContractDto> getPluginContracts() {
+        return pluginContracts;
+    }
+
+    public void setPluginContracts(Set<PluginContractDto> pluginContracts) {
+        this.pluginContracts = pluginContracts;
+    }
+
+    public Set<PluginInstanceDto> getPluginInstances() {
+        return pluginInstances;
+    }
+
+    public void setPluginInstances(Set<PluginInstanceDto> pluginInstances) {
+        this.pluginInstances = pluginInstances;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof PluginDto)) {
+            return false;
+        }
+
+        PluginDto pluginDto = (PluginDto) o;
+
+        if (className != null ? !className.equals(pluginDto.className) : pluginDto.className != null) {
+            return false;
+        }
+        if (confSchema != null ? !confSchema.equals(pluginDto.confSchema) : pluginDto.confSchema != null) {
+            return false;
+        }
+        if (name != null ? !name.equals(pluginDto.name) : pluginDto.name != null) {
+            return false;
+        }
+        if (scope != pluginDto.scope) {
+            return false;
+        }
+        if (state != pluginDto.state) {
+            return false;
+        }
+        if (version != null ? !version.equals(pluginDto.version) : pluginDto.version != null) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = className != null ? className.hashCode() : 0;
+        result = 31 * result + (state != null ? state.hashCode() : 0);
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (version != null ? version.hashCode() : 0);
+        result = 31 * result + (scope != null ? scope.hashCode() : 0);
+        result = 31 * result + (confSchema != null ? confSchema.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("PluginDto{");
+        sb.append("id='").append(id).append('\'');
+        sb.append(", className='").append(className).append('\'');
+        sb.append(", state=").append(state);
+        sb.append(", name='").append(name).append('\'');
+        sb.append(", version=").append(version);
+        sb.append(", scope=").append(scope);
+        sb.append(", confSchema='").append(confSchema).append('\'');
+        sb.append(", pluginContracts=").append(pluginContracts);
+        sb.append(", pluginInstances=").append(pluginInstances);
+        sb.append('}');
+        return sb.toString();
+    }
 }

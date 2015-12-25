@@ -26,9 +26,11 @@ import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.HistoryDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.core.configuration.BaseData;
@@ -41,6 +43,7 @@ import org.kaaproject.kaa.server.common.dao.HistoryService;
 import org.kaaproject.kaa.server.common.dao.ProfileService;
 import org.kaaproject.kaa.server.common.dao.SdkProfileService;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
+import org.kaaproject.kaa.server.operations.service.cache.AppProfileVersionsKey;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.plugin.SdkExtensionKey;
 import org.kaaproject.kaa.server.operations.service.cache.AppSeqNumber;
 import org.kaaproject.kaa.server.operations.service.cache.AppVersionKey;
@@ -87,15 +90,6 @@ public class ESTestCacheService implements CacheService {
     }
 
     /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.operations.service.cache.CacheService#getFilters(org.kaaproject.kaa.server.operations.service.cache.AppVersionKey)
-     */
-    @Override
-    public List<ProfileFilterDto> getFilters(AppVersionKey key) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /* (non-Javadoc)
      * @see org.kaaproject.kaa.server.operations.service.cache.CacheService#getFilter(java.lang.String)
      */
     @Override
@@ -126,7 +120,7 @@ public class ESTestCacheService implements CacheService {
      * @see org.kaaproject.kaa.server.operations.service.cache.CacheService#getProfileSchemaByAppAndVersion(org.kaaproject.kaa.server.operations.service.cache.AppVersionKey)
      */
     @Override
-    public ProfileSchemaDto getProfileSchemaByAppAndVersion(AppVersionKey key) {
+    public EndpointProfileSchemaDto getProfileSchemaByAppAndVersion(AppVersionKey key) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -246,21 +240,12 @@ public class ESTestCacheService implements CacheService {
 
     }
 
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.operations.service.cache.CacheService#resetFilters(org.kaaproject.kaa.server.operations.service.cache.AppVersionKey)
-     */
-    @Override
-    public void resetFilters(AppVersionKey key) {
-        // TODO Auto-generated method stub
-
-    }
-
 
     /* (non-Javadoc)
      * @see org.kaaproject.kaa.server.operations.service.cache.CacheService#putProfileSchema(org.kaaproject.kaa.server.operations.service.cache.AppVersionKey, org.kaaproject.kaa.common.dto.ProfileSchemaDto)
      */
     @Override
-    public ProfileSchemaDto putProfileSchema(AppVersionKey key, ProfileSchemaDto value) {
+    public EndpointProfileSchemaDto putProfileSchema(AppVersionKey key, EndpointProfileSchemaDto value) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -288,15 +273,6 @@ public class ESTestCacheService implements CacheService {
      */
     @Override
     public ProfileFilterDto putFilter(String key, ProfileFilterDto value) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.operations.service.cache.CacheService#putFilterList(org.kaaproject.kaa.server.operations.service.cache.AppVersionKey, java.util.List)
-     */
-    @Override
-    public List<ProfileFilterDto> putFilterList(AppVersionKey key, List<ProfileFilterDto> value) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -425,4 +401,48 @@ public class ESTestCacheService implements CacheService {
         // TODO Auto-generated method stub
         return null;
     }
+
+    @Override
+    public CTLSchemaDto getCtlSchemaById(String key) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public ServerProfileSchemaDto getServerProfileSchemaByAppAndVersion(
+            AppVersionKey key) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public String getFlatCtlSchemaById(String id) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public List<ProfileFilterDto> getFilters(AppProfileVersionsKey key) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void resetFilters(AppProfileVersionsKey key) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public List<ProfileFilterDto> putFilterList(AppProfileVersionsKey key, List<ProfileFilterDto> value) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public EndpointGroupDto getDefaultGroup(String applicationToken) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

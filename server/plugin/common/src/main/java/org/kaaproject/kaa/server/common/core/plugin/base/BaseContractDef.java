@@ -15,8 +15,8 @@
  */
 package org.kaaproject.kaa.server.common.core.plugin.base;
 
+import org.kaaproject.kaa.common.dto.plugin.ContractType;
 import org.kaaproject.kaa.server.common.core.plugin.def.ContractDef;
-import org.kaaproject.kaa.server.common.core.plugin.def.ContractType;
 
 public class BaseContractDef implements ContractDef {
 

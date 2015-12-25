@@ -21,10 +21,11 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.kaaproject.kaa.common.dto.EndpointProfileDataDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
-import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogSchema;
+import org.kaaproject.kaa.server.common.log.shared.appender.data.BaseLogEventPack;
 
 public class LogEventPackTest { 
     
@@ -36,10 +37,10 @@ public class LogEventPackTest {
     private static final String userId = "123454567878";
 
     @Test
-    public void basicLogEventPackTest() {        
-        LogEventPack logEventPack1 = new LogEventPack(ENDPOINT_KEY, DATE_CREATED, LOG_SCHEMA, EVENTS);
-        logEventPack1.setLogSchemaVersion(VERSION);
-        LogEventPack logEventPack2 = new LogEventPack();
+    public void basicLogEventPackTest() {
+        EndpointProfileDataDto profileDto = new EndpointProfileDataDto("1", ENDPOINT_KEY, 1, "", 0, "");
+        BaseLogEventPack logEventPack1 = new BaseLogEventPack(profileDto, DATE_CREATED, VERSION, EVENTS);
+        logEventPack1.setLogSchema(LOG_SCHEMA);
         logEventPack1.setUserId(userId);
 
         Assert.assertEquals(ENDPOINT_KEY, logEventPack1.getEndpointKey());
@@ -47,25 +48,5 @@ public class LogEventPackTest {
         Assert.assertEquals(LOG_SCHEMA, logEventPack1.getLogSchema());
         Assert.assertEquals(VERSION, logEventPack1.getLogSchemaVersion());
         Assert.assertEquals(EVENTS, logEventPack1.getEvents());
-        
-        Assert.assertNull(logEventPack2.getEndpointKey());
-        Assert.assertEquals(0L, logEventPack2.getDateCreated());
-        Assert.assertNull(logEventPack2.getLogSchema());
-        Assert.assertEquals(0, logEventPack2.getLogSchemaVersion());
-        Assert.assertNull(logEventPack2.getEvents());
-        
-        logEventPack2.setEndpointKey(ENDPOINT_KEY);
-        logEventPack2.setDateCreated(DATE_CREATED);
-        logEventPack2.setLogSchema(LOG_SCHEMA);
-        logEventPack2.setLogSchemaVersion(VERSION);
-        logEventPack2.setEvents(EVENTS);  
-        logEventPack2.setUserId(userId);
-
-        Assert.assertEquals(logEventPack1.getEndpointKey(), logEventPack2.getEndpointKey());
-        Assert.assertEquals(logEventPack1.getDateCreated(), logEventPack2.getDateCreated());
-        Assert.assertEquals(logEventPack1.getLogSchema(), logEventPack2.getLogSchema());
-        Assert.assertEquals(logEventPack1.getLogSchemaVersion(), logEventPack2.getLogSchemaVersion());
-        Assert.assertEquals(logEventPack1.getEvents(), logEventPack2.getEvents());
-        Assert.assertEquals(logEventPack1.getUserId(), logEventPack2.getUserId());
     }
 }

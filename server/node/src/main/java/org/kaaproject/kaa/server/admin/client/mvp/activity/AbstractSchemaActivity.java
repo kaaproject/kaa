@@ -24,6 +24,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.place.AbstractSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseSchemaView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.RecordPanel.FormDataLoader;
 import org.kaaproject.kaa.server.admin.client.util.ErrorMessageCustomizer;
+import org.kaaproject.kaa.server.admin.client.util.SchemaErrorMessageCustomizer;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.event.shared.EventBus;
@@ -32,9 +33,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public abstract class AbstractSchemaActivity<T extends AbstractSchemaDto, V extends BaseSchemaView, P extends AbstractSchemaPlace> extends
     AbstractDetailsActivity<T, V, P> implements ErrorMessageCustomizer, FormDataLoader {
 
-    private static final String  LEFT_SQUARE_BRACKET = "[";
-    private static final String  RIGHT_SQUARE_BRACKET = "]";
-    private static final String  SEMICOLON = ";";
+    private static final ErrorMessageCustomizer schemaErrorMessageCustomizer = new SchemaErrorMessageCustomizer();
     
     protected String applicationId;
 
@@ -67,7 +66,7 @@ public abstract class AbstractSchemaActivity<T extends AbstractSchemaDto, V exte
 
     @Override
     protected void onEntityRetrieved() {
-        String version = entity.getMajorVersion() + "." + entity.getMinorVersion();
+        String version = entity.getVersion() + "";
         detailsView.getVersion().setValue(version);
         detailsView.getName().setValue(entity.getName());
         detailsView.getDescription().setValue(entity.getDescription());
@@ -101,22 +100,9 @@ public abstract class AbstractSchemaActivity<T extends AbstractSchemaDto, V exte
 
     @Override
     public String customizeErrorMessage(Throwable caught) {
-        String errorMessage = caught.getLocalizedMessage();        
-        int leftSquareBracketIndex = errorMessage.indexOf(LEFT_SQUARE_BRACKET);
-        int rightSquareBracketIndex = -1;
-        if (leftSquareBracketIndex != -1) {
-            rightSquareBracketIndex = errorMessage.indexOf(RIGHT_SQUARE_BRACKET, leftSquareBracketIndex);
-        }        
-        if (rightSquareBracketIndex != -1) {
-            StringBuilder builder = new StringBuilder();
-            builder.append("Incorrect json schema: Please check your schema at");
-            String[] array = errorMessage.substring(leftSquareBracketIndex, rightSquareBracketIndex).split(SEMICOLON);
-            if (array != null && array.length == 2) {
-                builder.append(array[1]);
-                errorMessage = builder.toString();
-            }
-        } else {
-            return "Incorrect schema: Please validate your schema.";
+        String errorMessage = schemaErrorMessageCustomizer.customizeErrorMessage(caught);
+        if (errorMessage == null) {
+            errorMessage = "Incorrect schema: Please validate your schema.";
         }
         return errorMessage;
     }

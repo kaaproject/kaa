@@ -135,10 +135,10 @@ public class BootstrapInitializationService extends AbstractInitializationServic
      */
     private void startZK() throws Exception { // NOSONAR
         if (getNodeConfig().isZkEnabled()) {
-            LOG.info("Bootstrap Server starting ZooKepper connection to {}", getNodeConfig().getZkHostPortList());
+            LOG.info("Bootstrap service starting ZooKepper connection to {}", getNodeConfig().getZkHostPortList());
             BootstrapNodeInfo nodeInfo = new BootstrapNodeInfo();
             ByteBuffer keyData = ByteBuffer.wrap(bootstrapKeyStoreService.getPublicKey().getEncoded());
-            LOG.trace("Bootstrap server: registering in ZK: thriftHost {}; thriftPort {}; nettyHost {}; nettyPort {}", getNodeConfig().getThriftHost(),
+            LOG.trace("Bootstrap service: registering in ZK: thriftHost {}; thriftPort {}; nettyHost {}; nettyPort {}", getNodeConfig().getThriftHost(),
                     getNodeConfig().getThriftPort());
             nodeInfo.setConnectionInfo(new ConnectionInfo(getNodeConfig().getThriftHost(), getNodeConfig().getThriftPort(), keyData));
             nodeInfo.setTransports(new ArrayList<TransportMetaData>());

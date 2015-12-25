@@ -101,6 +101,11 @@ public final class Tenant extends GenericModel<TenantDto> implements Serializabl
     }
 
     @Override
+    protected Tenant newInstance(Long id) {
+        return new Tenant(id);
+    }
+
+    @Override
     public TenantDto toDto() {
         TenantDto dto = createDto();
         dto.setId(getStringId());
