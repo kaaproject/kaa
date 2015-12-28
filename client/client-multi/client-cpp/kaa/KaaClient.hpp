@@ -117,12 +117,6 @@ private:
 #ifdef KAA_DEFAULT_TCP_CHANNEL
     std::unique_ptr<DefaultOperationTcpChannel>      opsTcpChannel_;
 #endif
-#ifdef KAA_DEFAULT_OPERATION_HTTP_CHANNEL
-    std::unique_ptr<DefaultOperationHttpChannel>     opsHttpChannel_;
-#endif
-#ifdef KAA_DEFAULT_LONG_POLL_CHANNEL
-    std::unique_ptr<DefaultOperationLongPollChannel> opsLongPollChannel_;
-#endif
 
     IKaaClientPlatformContextPtr                     platformContext_;
     IExecutorContext&                                executorContext_;
