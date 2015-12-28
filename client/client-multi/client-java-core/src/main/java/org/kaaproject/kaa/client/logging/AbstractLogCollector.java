@@ -244,7 +244,7 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
 
     private boolean isUploadAllowed() {
         if (timeouts.size() >= strategy.getMaxParallelUploads()) {
-            LOG.debug("Ignore log upload: too much pending requests. Max allowed {}", strategy.getMaxParallelUploads());
+            LOG.debug("Ignore log upload: too much pending requests {}, max allowed {}", timeouts.size(), strategy.getMaxParallelUploads());
             return false;
         }
         return true;
