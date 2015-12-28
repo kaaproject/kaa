@@ -305,6 +305,7 @@ Copyright 2014-2015 CyberVision, Inc.
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <version>2.9.1</version>
                     <configuration>
+                        <javadocExecutable>${JAVA_7_HOME}/bin/javadoc</javadocExecutable>
                         <detectOfflineLinks>false</detectOfflineLinks>
                     </configuration>
                     <executions>
@@ -481,10 +482,10 @@ Copyright 2014-2015 CyberVision, Inc.
                         <exclude>**/*xcodeproj/**</exclude>
                         <exclude>**/*.plist</exclude>
                         <exclude>**/*.cproject</exclude>
-			<exclude>**/source/esp8266/ld/*.ld</exclude>
-			<exclude>**/source/esp8266/driver/uart.c</exclude>
-			<exclude>**/source/esp8266/include/driver/uart*.h</exclude>
-			<exclude>**/source/cc32xx/platform/cc32xx/app.ld</exclude>
+                        <exclude>**/source/esp8266/ld/*.ld</exclude>
+                        <exclude>**/source/esp8266/driver/uart.c</exclude>
+                        <exclude>**/source/esp8266/include/driver/uart*.h</exclude>
+                        <exclude>**/source/cc32xx/platform/cc32xx/app.ld</exclude>
                     </excludes>
                 </configuration>
             </plugin>
