@@ -28,6 +28,7 @@
 @property (nonatomic) int32_t batchCount;
 @property (nonatomic) BOOL    isUploadLocked;
 @property (nonatomic) int64_t timeLimit;
+@property (nonatomic) int64_t maxParallelUploads;
 
 - (instancetype)initWithDefaults;
 

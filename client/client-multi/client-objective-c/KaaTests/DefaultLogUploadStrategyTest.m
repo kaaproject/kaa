@@ -28,6 +28,7 @@
 #import "LogCollector.h"
 #import "ExecutorContext.h"
 #import "MemLogStorage.h"
+#import "DefaultLogCollector.h"
 
 @interface TestLogStorageStatus : NSObject <LogStorageStatus>
 
@@ -134,5 +135,92 @@
     [NSThread sleepForTimeInterval:0.001];
     [verifyCount(strategy, times(1)) onFailure:anything() errorCode:[((NSNumber *)status.errorCode.data) intValue]];
 }
+
+- (void)testMaxParallelLogUploadCountInSyncRequest {
+    [self maxParallelUploadCountInSyncRequestHelper:0];
+    [self maxParallelUploadCountInSyncRequestHelper:3];
+    [self maxParallelUploadCountInSyncRequestHelper:5];
+}
+
+- (void)testMaxParallelLogUploadCountInDecision {
+    [self maxParallelUploadCountInDecisionHelper:0];
+    [self maxParallelUploadCountInDecisionHelper:3];
+    [self maxParallelUploadCountInDecisionHelper:5];
+}
+
+- (void)maxParallelUploadCountInSyncRequestHelper:(int64_t)maxParallelUploads {
+    id<KaaChannelManager> channelManager = mockProtocol(@protocol(KaaChannelManager));
+    id<FailoverManager> failoverManager = mockProtocol(@protocol(FailoverManager));
+    id<LogTransport> logTransport = mockProtocol(@protocol(LogTransport));
+    id<ExecutorContext> executorContext = mockProtocol(@protocol(ExecutorContext));
+    
+    NSOperationQueue *executor = [[NSOperationQueue alloc] init];
+    NSOperationQueue *apiExecutor = [[NSOperationQueue alloc] init];
+    [given([executorContext getCallbackExecutor]) willReturn:executor];
+    [given([executorContext getApiExecutor]) willReturn:apiExecutor];
+    
+    AbstractLogCollector *logCollector = [[DefaultLogCollector alloc] initWith:logTransport executorContext:executorContext channelManager:channelManager failoverManager:failoverManager];
+    DefaultLogUploadStrategy *strategy = mock([DefaultLogUploadStrategy class]);
+    [given([strategy getMaxParallelUploads]) willReturnLong:maxParallelUploads];
+    [logCollector setValue:strategy forKey:@"strategy"];
+    
+    LogSyncRequest *request = mock([LogSyncRequest class]);
+    
+    NSMutableArray *statuses = [NSMutableArray array];
+    
+    for (int i = 0; i < maxParallelUploads; i++) {
+        [logCollector addLogRecord:[[KAADummyLog alloc] init]];
+        [NSThread sleepForTimeInterval:0.1];
+        [logCollector fillSyncRequest:request];
+        [statuses addObject:[[LogDeliveryStatus alloc] initWithRequestId:[request requestId] result:SYNC_RESPONSE_RESULT_TYPE_SUCCESS errorCode:[KAAUnion unionWithBranch:1]]];
+    }
+    
+    [logCollector addLogRecord:[[KAADummyLog alloc] init]];
+    [NSThread sleepForTimeInterval:0.1];
+    [logCollector fillSyncRequest:request];
+    [verifyCount(request, times(maxParallelUploads)) setLogEntries:anything()];
+    
+    if (statuses.count == 0 && maxParallelUploads == 0)
+        return;
+    
+    LogSyncResponse *response = [[LogSyncResponse alloc] initWithDeliveryStatuses:[KAAUnion unionWithBranch:KAA_UNION_ARRAY_LOG_DELIVERY_STATUS_OR_NULL_BRANCH_0 andData:statuses]];
+    [logCollector onLogResponse:response];
+    
+    [logCollector fillSyncRequest:request];
+    [verifyCount(request, times(maxParallelUploads + 1)) setLogEntries:anything()];
+}
+
+- (void)maxParallelUploadCountInDecisionHelper:(int64_t)maxParallelUploads {
+    id<KaaChannelManager> channelManager = mockProtocol(@protocol(KaaChannelManager));
+    id<FailoverManager> failoverManager = mockProtocol(@protocol(FailoverManager));
+    id<LogTransport> logTransport = mockProtocol(@protocol(LogTransport));
+    id<ExecutorContext> executorContext = mockProtocol(@protocol(ExecutorContext));
+    
+    NSOperationQueue *executor = [[NSOperationQueue alloc] init];
+    NSOperationQueue *apiExecutor = [[NSOperationQueue alloc] init];
+    [given([executorContext getCallbackExecutor]) willReturn:executor];
+    [given([executorContext getApiExecutor]) willReturn:apiExecutor];
+    
+    AbstractLogCollector *logCollector = [[DefaultLogCollector alloc] initWith:logTransport executorContext:executorContext channelManager:channelManager failoverManager:failoverManager];
+    DefaultLogUploadStrategy *strategy = mock([DefaultLogUploadStrategy class]);
+    [given([strategy isUploadNeeded:anything()]) willReturnInt:LOG_UPLOAD_STRATEGY_DECISION_UPLOAD];
+    [given([strategy getMaxParallelUploads]) willReturnLong:maxParallelUploads];
+    [logCollector setValue:strategy forKey:@"strategy"];
+    
+    LogSyncRequest *request = mock([LogSyncRequest class]);
+    
+    NSMutableArray *statuses = [NSMutableArray array];
+    
+    for (int i = 0; i < maxParallelUploads; i++) {
+        [logCollector addLogRecord:[[KAADummyLog alloc] init]];
+        [NSThread sleepForTimeInterval:0.1];
+        [logCollector fillSyncRequest:request];
+    }
+    
+    LogSyncResponse *response = [[LogSyncResponse alloc] initWithDeliveryStatuses:[KAAUnion unionWithBranch:KAA_UNION_ARRAY_LOG_DELIVERY_STATUS_OR_NULL_BRANCH_0 andData:statuses]];
+    [logCollector onLogResponse:response];
+    [verifyCount(logTransport, times(maxParallelUploads)) sync];
+}
+
 
 @end

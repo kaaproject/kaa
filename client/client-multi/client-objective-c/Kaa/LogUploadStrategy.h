@@ -82,6 +82,11 @@ typedef enum {
 - (int32_t)getUploadCheckPeriod;
 
 /**
+ * Returns number of maximum parallel uploads.
+ */
+- (int64_t)getMaxParallelUploads;
+
+/**
  * Handles timeout of log delivery
  */
 - (void)onTimeout:(id<LogFailoverCommand>)controller;

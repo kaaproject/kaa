@@ -96,6 +96,9 @@
         DDLogDebug(@"%@ Log storage is empty", TAG);
         return;
     }
+    if (![self isUploadAllowed]) {
+        return;
+    }
     group = [self.storage getRecordBlock];
     if (group) {
         NSArray *recordList = group.logRecords;
@@ -173,8 +176,9 @@
 - (void)processUploadDecision:(LogUploadStrategyDecision)decision {
     switch (decision) {
         case LOG_UPLOAD_STRATEGY_DECISION_UPLOAD:
-            [self.transport sync];
-            break;
+            if ([self isUploadAllowed]) {
+                [self.transport sync];
+            }            break;
         case LOG_UPLOAD_STRATEGY_DECISION_NOOP:
             if ([self.strategy getUploadCheckPeriod] > 0 && [[self.storage getStatus] getRecordCount] > 0) {
                 [self scheduleUploadCheck];
@@ -251,6 +255,14 @@
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), [self.executorContext getSheduledExecutor], ^{
         [weakSelf uploadIfNeeded];
     });
+}
+
+- (BOOL)isUploadAllowed {
+    if (self.timeouts.count >= [self.strategy getMaxParallelUploads]) {
+        DDLogDebug(@"%@ Ignore log upload: too much pending requests. Max allowed: %lld", TAG, [self.strategy getMaxParallelUploads]);
+        return NO;
+    }
+    return YES;
 }
 
 @end

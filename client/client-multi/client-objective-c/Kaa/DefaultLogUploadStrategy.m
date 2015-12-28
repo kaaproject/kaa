@@ -44,6 +44,7 @@
         self.batchCount = DEFAULT_BATCH_COUNT;
         self.timeLimit = DEFAULT_TIME_LIMIT;
         self.isUploadLocked = DEFAULT_UPLOAD_LOCKED;
+        self.maxParallelUploads = INTMAX_MAX;
     }
     return self;
 }
@@ -86,6 +87,10 @@
 
 - (int32_t)getUploadCheckPeriod {
     return _uploadCheckPeriod;
+}
+
+- (int64_t)getMaxParallelUploads {
+    return _maxParallelUploads;
 }
 
 - (void)onTimeout:(id<LogFailoverCommand>)controller {
