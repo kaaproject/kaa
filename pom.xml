@@ -120,6 +120,8 @@ Copyright 2014-2015 CyberVision, Inc.
         <hibernate-jpa-2.1-api.version>1.0.0.Final</hibernate-jpa-2.1-api.version>
         <cdap-stream-client.version>1.0.1</cdap-stream-client.version>
         <jetty.version>9.2.2.v20140723</jetty.version>
+        <jdk.version>1.7</jdk.version>
+        <JAVA_7_HOME>/usr/lib/jvm/java-7-oracle</JAVA_7_HOME>
     </properties>
 
     <modules>
@@ -278,8 +280,11 @@ Copyright 2014-2015 CyberVision, Inc.
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>2.5.1</version>
                     <configuration>
-                        <source>1.7</source>
-                        <target>1.7</target>
+                        <source>${jdk.version}</source>
+                        <target>${jdk.version}</target>
+                        <fork>true</fork>
+                        <executable>${JAVA_7_HOME}/bin/javac</executable>
+                        <compilerVersion>${jdk.version}</compilerVersion>
                     </configuration>
                 </plugin>
                 <plugin>
