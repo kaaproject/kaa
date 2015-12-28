@@ -122,8 +122,10 @@ void LogCollector::processLogUploadDecision(LogUploadStrategyDecision decision)
 {
     switch (decision) {
     case LogUploadStrategyDecision::UPLOAD: {
-        KAA_LOG_DEBUG("Going to upload logs");
-        doSync();
+        if (isUploadAllowed()) {
+            KAA_LOG_DEBUG("Going to upload logs");
+            doSync();
+        }
         break;
     }
     case LogUploadStrategyDecision::NOOP:
@@ -239,10 +241,30 @@ bool LogCollector::removeDeliveryTimeout(std::int32_t requestId)
     return timeouts_.erase(requestId);
 }
 
+bool LogCollector::isUploadAllowed()
+{
+    KAA_MUTEX_LOCKING("timeoutsGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(timeoutsGuardLock, timeoutsGuard_);
+    KAA_MUTEX_LOCKED("timeoutsGuard_");
+
+    if (timeouts_.size() >= uploadStrategy_->getMaxParallelUploads()) {
+        KAA_LOG_INFO(boost::format("Ignore log upload: too much pending requests %u, max allowed %u"  )
+                                                       % timeouts_.size() % uploadStrategy_->getMaxParallelUploads());
+        return false;
+    }
+
+    return true;
+}
+
 std::shared_ptr<LogSyncRequest> LogCollector::getLogUploadRequest()
 {
-    ILogStorage::RecordPack recordPack;
     std::shared_ptr<LogSyncRequest> request;
+
+    if (!isUploadAllowed()) {
+        return request;
+    }
+
+    ILogStorage::RecordPack recordPack;
 
     {
         KAA_MUTEX_LOCKING("storageGuard_");

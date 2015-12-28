@@ -121,6 +121,7 @@ BOOST_AUTO_TEST_CASE(AddLogRecordAndCheckStorageAndStrategyTest)
     uploadStrategy->recordsBatchCount_ = 10;
     uploadStrategy->timeoutCheckPeriod_ = 10;
     uploadStrategy->logUploadCheckPeriod_ = 10;
+    uploadStrategy->maxParallelUploads_ = INT32_MAX;
 
     logCollector.setStorage(logStorage);
     logCollector.setUploadStrategy(uploadStrategy);
@@ -158,6 +159,7 @@ BOOST_AUTO_TEST_CASE(CreateRequestTest)
     uploadStrategy->recordsBatchCount_ = 10;
     uploadStrategy->timeoutCheckPeriod_ = 10;
     uploadStrategy->logUploadCheckPeriod_ = 10;
+    uploadStrategy->maxParallelUploads_ = INT32_MAX;
 
     logCollector.setStorage(logStorage);
     logCollector.setUploadStrategy(uploadStrategy);
@@ -171,7 +173,7 @@ BOOST_AUTO_TEST_CASE(CreateRequestTest)
 BOOST_AUTO_TEST_CASE(CreateRequestWithLogsTest)
 {
     KaaClientProperties properties;
-    const size_t BATCH_SIZE = 100500;
+    const size_t BATCH_SIZE = INT32_MAX;
     MockChannelManager channelManager;
     MockExecutorContext executor;
     LogCollector logCollector(&channelManager, executor, properties);
@@ -195,6 +197,7 @@ BOOST_AUTO_TEST_CASE(CreateRequestWithLogsTest)
     uploadStrategy->recordsBatchCount_ = 10;
     uploadStrategy->timeoutCheckPeriod_ = 10;
     uploadStrategy->logUploadCheckPeriod_ = 10;
+    uploadStrategy->maxParallelUploads_ = INT32_MAX;
 
     logCollector.setStorage(logStorage);
     logCollector.setUploadStrategy(uploadStrategy);
@@ -209,7 +212,7 @@ BOOST_AUTO_TEST_CASE(CreateRequestWithLogsTest)
 BOOST_AUTO_TEST_CASE(SuccessDeliveryTest)
 {
     KaaClientProperties properties;
-    const size_t BATCH_SIZE = 100500;
+    const size_t BATCH_SIZE = INT32_MAX;
     MockChannelManager channelManager;
     SimpleExecutorContext executor;
     executor.init();
@@ -235,6 +238,7 @@ BOOST_AUTO_TEST_CASE(SuccessDeliveryTest)
     uploadStrategy->recordsBatchCount_ = 10;
     uploadStrategy->timeoutCheckPeriod_ = 10;
     uploadStrategy->logUploadCheckPeriod_ = 10;
+    uploadStrategy->maxParallelUploads_ = INT32_MAX;
 
     logCollector.setStorage(logStorage);
     logCollector.setUploadStrategy(uploadStrategy);
@@ -258,7 +262,7 @@ BOOST_AUTO_TEST_CASE(SuccessDeliveryTest)
 BOOST_AUTO_TEST_CASE(FailedDeliveryTest)
 {
     KaaClientProperties properties;
-    const size_t BATCH_SIZE = 100500;
+    const size_t BATCH_SIZE = INT32_MAX;
     MockChannelManager channelManager;
     SimpleExecutorContext executor;
     executor.init();
@@ -284,6 +288,7 @@ BOOST_AUTO_TEST_CASE(FailedDeliveryTest)
     uploadStrategy->recordsBatchCount_ = 10;
     uploadStrategy->timeoutCheckPeriod_ = 10;
     uploadStrategy->logUploadCheckPeriod_ = 10;
+    uploadStrategy->maxParallelUploads_ = INT32_MAX;
 
     logCollector.setStorage(logStorage);
     logCollector.setUploadStrategy(uploadStrategy);
@@ -308,7 +313,7 @@ BOOST_AUTO_TEST_CASE(FailedDeliveryTest)
 BOOST_AUTO_TEST_CASE(TimeoutDetectionTest)
 {
     KaaClientProperties properties;
-    const size_t BATCH_SIZE = 100500;
+    const size_t BATCH_SIZE = INT32_MAX;
     const size_t DELIVERY_TIMEOUT = 2;
 
     MockChannelManager channelManager;
@@ -337,6 +342,7 @@ BOOST_AUTO_TEST_CASE(TimeoutDetectionTest)
     uploadStrategy->timeoutCheckPeriod_ = 1;
     uploadStrategy->recordsBatchCount_ = 10;
     uploadStrategy->decision_ = LogUploadStrategyDecision::NOOP;
+    uploadStrategy->maxParallelUploads_ = INT32_MAX;
 
     logCollector.setStorage(logStorage);
     logCollector.setUploadStrategy(uploadStrategy);
@@ -363,7 +369,7 @@ public:
 
 BOOST_AUTO_TEST_CASE(RetryUploadTest)
 {
-    const size_t BATCH_SIZE = 100500;
+    const size_t BATCH_SIZE = INT32_MAX;
     const size_t RETRY_TIMEOUT = 3;
 
     KaaClientProperties properties;
@@ -393,6 +399,7 @@ BOOST_AUTO_TEST_CASE(RetryUploadTest)
     uploadStrategy->recordsBatchCount_ = 10;
     uploadStrategy->timeoutCheckPeriod_ = 10;
     uploadStrategy->logUploadCheckPeriod_ = 10;
+    uploadStrategy->maxParallelUploads_ = INT32_MAX;
 
     logCollector.setStorage(logStorage);
     logCollector.setUploadStrategy(uploadStrategy);
@@ -420,6 +427,138 @@ BOOST_AUTO_TEST_CASE(RetryUploadTest)
     std::this_thread::sleep_for(std::chrono::seconds(RETRY_TIMEOUT + 1));
 
     BOOST_CHECK_EQUAL(transport.onSync_, 1);
+}
+
+BOOST_AUTO_TEST_CASE(MaxLogUploadLimitWithSyncAll)
+{
+    KaaClientProperties properties;
+    MockChannelManager channelManager;
+    SimpleExecutorContext executor;
+    executor.init();
+    LogCollector logCollector(&channelManager, executor, properties);
+    CustomLoggingTransport transport(channelManager, logCollector);
+
+    logCollector.setTransport(&transport);
+
+    ILogStorage::RecordBlock block{ createSerializedLogRecord(),
+                                    createSerializedLogRecord(),
+                                    createSerializedLogRecord(),
+                                    createSerializedLogRecord()
+                                  };
+
+    ILogStorage::RecordPack recordPack(1, block);
+
+    std::shared_ptr<MockLogStorage> logStorage(new MockLogStorage);
+    logStorage->recordPack_ = recordPack;
+
+    std::shared_ptr<MockLogUploadStrategy> uploadStrategy(new MockLogUploadStrategy);
+    uploadStrategy->batchSize_ = INT32_MAX;
+    uploadStrategy->timeout_ = INT32_MAX;
+    uploadStrategy->logUploadCheckPeriod_ = INT32_MAX;
+    uploadStrategy->timeoutCheckPeriod_ = INT32_MAX;
+    uploadStrategy->recordsBatchCount_ = INT32_MAX;
+    uploadStrategy->decision_ = LogUploadStrategyDecision::NOOP;
+
+    logCollector.setStorage(logStorage);
+    logCollector.setUploadStrategy(uploadStrategy);
+
+    auto testMaxParallelUpload =
+        [&] (int maxParallelUpload)
+            {
+                std::int32_t disallowedRequestId = maxParallelUpload;
+                uploadStrategy->maxParallelUploads_ = maxParallelUpload;
+
+                std::list<std::int32_t> requestIds;
+                for (std::int32_t i = 0; i < maxParallelUpload; ++i) {
+                    logStorage->recordPack_.first = i;
+                    auto request = logCollector.getLogUploadRequest();
+                    BOOST_CHECK(request);
+                    requestIds.push_back(request->requestId);
+                }
+
+                logStorage->recordPack_.first = disallowedRequestId;
+                BOOST_CHECK(!logCollector.getLogUploadRequest());
+
+                if (requestIds.empty() && !maxParallelUpload) {
+                    return;
+                }
+
+                LogSyncResponse response;
+                std::vector<LogDeliveryStatus > statuses;
+                statuses.reserve(requestIds.size());
+
+                for (const auto& requestId : requestIds) {
+                    LogDeliveryStatus status;
+                    status.requestId = requestId;
+                    status.result = SyncResponseResultType::SUCCESS;
+                    statuses.push_back(status);
+                }
+
+                response.deliveryStatuses.set_array(statuses);
+                logCollector.onLogUploadResponse(response);
+            };
+
+    testMaxParallelUpload(0);
+
+    testMaxParallelUpload(3);
+
+    testMaxParallelUpload(5);
+}
+
+BOOST_AUTO_TEST_CASE(MaxLogUploadLimitWithSyncLogging)
+{
+    KaaClientProperties properties;
+    MockChannelManager channelManager;
+    SimpleExecutorContext executor;
+    executor.init();
+    LogCollector logCollector(&channelManager, executor, properties);
+    CustomLoggingTransport transport(channelManager, logCollector);
+
+    logCollector.setTransport(&transport);
+
+    ILogStorage::RecordBlock block{ createSerializedLogRecord(),
+                                    createSerializedLogRecord(),
+                                    createSerializedLogRecord(),
+                                    createSerializedLogRecord()
+                                  };
+
+    ILogStorage::RecordPack recordPack(1, block);
+
+    std::shared_ptr<MockLogStorage> logStorage(new MockLogStorage);
+    logStorage->recordPack_ = recordPack;
+
+    std::shared_ptr<MockLogUploadStrategy> uploadStrategy(new MockLogUploadStrategy);
+    uploadStrategy->batchSize_ = INT32_MAX;
+    uploadStrategy->timeout_ = INT32_MAX;
+    uploadStrategy->logUploadCheckPeriod_ = INT32_MAX;
+    uploadStrategy->timeoutCheckPeriod_ = INT32_MAX;
+    uploadStrategy->recordsBatchCount_ = INT32_MAX;
+    uploadStrategy->decision_ = LogUploadStrategyDecision::UPLOAD;
+
+    logCollector.setStorage(logStorage);
+    logCollector.setUploadStrategy(uploadStrategy);
+
+    auto testMaxParallelUpload =
+        [&] (int maxParallelUpload)
+            {
+                transport.onSync_ = 0;
+                uploadStrategy->maxParallelUploads_ = maxParallelUpload;
+
+                std::list<std::int32_t> requestIds;
+                for (std::int32_t i = 0; i < maxParallelUpload; ++i) {
+                    logStorage->recordPack_.first = i;
+                    logCollector.addLogRecord(createLogRecord());
+                }
+
+                testSleep(1);
+                BOOST_CHECK_EQUAL(transport.onSync_, maxParallelUpload);
+            };
+
+    testMaxParallelUpload(0);
+
+    testMaxParallelUpload(3);
+
+    testMaxParallelUpload(5);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
