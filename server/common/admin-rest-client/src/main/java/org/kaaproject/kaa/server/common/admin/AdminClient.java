@@ -28,10 +28,24 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpHost;
-import org.kaaproject.kaa.common.dto.*;
+import org.kaaproject.kaa.common.dto.ApplicationDto;
+import org.kaaproject.kaa.common.dto.ConfigurationDto;
+import org.kaaproject.kaa.common.dto.ConfigurationRecordDto;
+import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointGroupDto;
+import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
+import org.kaaproject.kaa.common.dto.NotificationDto;
+import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
+import org.kaaproject.kaa.common.dto.NotificationTypeDto;
+import org.kaaproject.kaa.common.dto.ProfileFilterDto;
+import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.admin.AuthResultDto;
 import org.kaaproject.kaa.common.dto.admin.ResultCode;
 import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
@@ -179,6 +193,15 @@ public class AdminClient {
         return restTemplate.postForObject(url + "sendUnicastNotification", params, EndpointNotificationDto.class);
     }
 
+    public EndpointNotificationDto sendUnicastNotificationSimplified(NotificationDto notification, String clientKeyHash,
+            String notificationMessage) throws Exception {
+        MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
+        params.add("notification", notification);
+        params.add("clientKeyHash", clientKeyHash);
+        params.add("file", getStringResource("notification", notificationMessage));
+        return restTemplate.postForObject(url + "sendUnicastNotification", params, EndpointNotificationDto.class);
+    }
+
     public ConfigurationSchemaDto getConfigurationSchema(String configurationSchemaId) throws Exception {
         return restTemplate.getForObject(url + "configurationSchema/" + configurationSchemaId, ConfigurationSchemaDto.class);
     }
@@ -195,17 +218,29 @@ public class AdminClient {
         ResponseEntity<List<NotificationSchemaDto>> entity = restTemplate.exchange(url + "notificationSchemas/"+applicationId, HttpMethod.GET, null, typeRef);
         return entity.getBody();
     }
-    
+
+    public List<ProfileSchemaDto> getProfileSchemas(String applicationId) throws Exception {
+        ParameterizedTypeReference<List<ProfileSchemaDto>> typeRef = new ParameterizedTypeReference<List<ProfileSchemaDto>>() {};
+        ResponseEntity<List<ProfileSchemaDto>> entity = restTemplate.exchange(url + "profileSchemas/"+applicationId, HttpMethod.GET, null, typeRef);
+        return entity.getBody();
+    }
+
     public List<TopicDto> getTopics(String applicationId) throws Exception {
         ParameterizedTypeReference<List<TopicDto>> typeRef = new ParameterizedTypeReference<List<TopicDto>>() {};
         ResponseEntity<List<TopicDto>> entity = restTemplate.exchange(url + "topics/"+applicationId, HttpMethod.GET, null, typeRef);
         return entity.getBody();
     }
 
-    public void deleteTopic(TopicDto ropic) throws Exception {
+    public void deleteTopic(TopicDto topic) throws Exception {
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
-        params.add("topicId", ropic.getId());
+        params.add("topicId", topic.getId());
         restTemplate.postForLocation(url + "delTopic", params);
+    }
+
+    public void deleteEndpointGroup(String endpointGroupId) throws Exception {
+        MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
+        params.add("endpointGroupId", endpointGroupId);
+        restTemplate.postForLocation(url + "delEndpointGroup", params);
     }
 
     public ProfileSchemaDto createProfileSchema(ProfileSchemaDto profileSchema, String schemaResource) throws Exception {
@@ -273,6 +308,13 @@ public class AdminClient {
     public LogSchemaDto getLogSchemaByApplicationTokenAndSchemaVersion(String applicationToken, int schemaVersion) throws Exception {
         ParameterizedTypeReference<LogSchemaDto> typeRef = new ParameterizedTypeReference<LogSchemaDto>() {};
         ResponseEntity<LogSchemaDto> entity = restTemplate.exchange(url + "logSchema/"+applicationToken+"/"+schemaVersion, HttpMethod.GET, null, typeRef);
+        return entity.getBody();
+    }
+
+    public EndpointProfileDto getEndpointProfile(String endpointKey) throws Exception {
+        ParameterizedTypeReference<EndpointProfileDto> typeRef = new ParameterizedTypeReference<EndpointProfileDto>() {};
+        endpointKey = Base64.encodeBase64URLSafeString(Base64.decodeBase64(endpointKey));
+        ResponseEntity<EndpointProfileDto> entity = restTemplate.exchange(url + "endpoint/" + endpointKey, HttpMethod.GET, null, typeRef);
         return entity.getBody();
     }
 
