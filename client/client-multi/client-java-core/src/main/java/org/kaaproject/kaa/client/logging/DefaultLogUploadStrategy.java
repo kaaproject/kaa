@@ -33,6 +33,7 @@ public class DefaultLogUploadStrategy implements LogUploadStrategy {
     private static final int DEFAULT_UPLOAD_COUNT_THRESHOLD = 64;
     private static final int DEFAULT_BATCH_SIZE = 8 * 1024;
     private static final int DEFAULT_BATCH_COUNT = 256;
+    private static final int MAX_PARALLEL_UPLOADS = Integer.MAX_VALUE;
     private static final boolean DEFAULT_UPLOAD_LOCKED = false;
 
 
@@ -43,6 +44,7 @@ public class DefaultLogUploadStrategy implements LogUploadStrategy {
     protected int countThreshold = DEFAULT_UPLOAD_COUNT_THRESHOLD;
     protected int batchSize = DEFAULT_BATCH_SIZE;
     protected int batchCount = DEFAULT_BATCH_COUNT;
+    protected int maxParallelUploads = MAX_PARALLEL_UPLOADS;
     protected volatile boolean isUploadLocked = DEFAULT_UPLOAD_LOCKED;
 
 
@@ -156,5 +158,14 @@ public class DefaultLogUploadStrategy implements LogUploadStrategy {
 
     public boolean isUploadLocked(){
         return isUploadLocked;
+    }
+
+    @Override
+    public int getMaxParallelUploads() {
+        return maxParallelUploads;
+    }
+
+    public void setMaxParallelUploads(int maxParallelUploads) {
+        this.maxParallelUploads = maxParallelUploads;
     }
 }

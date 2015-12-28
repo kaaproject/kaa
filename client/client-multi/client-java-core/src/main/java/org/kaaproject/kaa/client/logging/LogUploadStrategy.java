@@ -74,6 +74,13 @@ public interface LogUploadStrategy {
     int getUploadCheckPeriod();
 
     /**
+     * Returns max parallel upload count
+     *
+     * @return Max parallel upload count
+     */
+    int getMaxParallelUploads();
+
+    /**
      * Handles timeout of log delivery
      * @param controller
      */

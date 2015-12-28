@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Reference implementation of @see LogCollector
- * 
+ *
  * @author Andrew Shvayka
  */
 public abstract class AbstractLogCollector implements LogCollector, LogProcessor {
@@ -96,11 +96,16 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
 
     @Override
     public void fillSyncRequest(LogSyncRequest request) {
-        LogBlock group = null;
+        LogBlock group;
         if (storage.getStatus().getRecordCount() == 0) {
             LOG.debug("Log storage is empty");
             return;
         }
+
+        if (!isUploadAllowed()) {
+            return;
+        }
+
         group = storage.getRecordBlock(strategy.getBatchSize(), strategy.getBatchCount());
 
         if (group != null) {
@@ -138,7 +143,7 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
     }
 
     @Override
-    public synchronized void onLogResponse(LogSyncResponse logSyncResponse) throws IOException {
+    public void onLogResponse(LogSyncResponse logSyncResponse) throws IOException {
         if (logSyncResponse.getDeliveryStatuses() != null) {
             boolean isAlreadyScheduled = false;
             for (LogDeliveryStatus response : logSyncResponse.getDeliveryStatuses()) {
@@ -181,7 +186,10 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
     private void processUploadDecision(LogUploadStrategyDecision decision) {
         switch (decision) {
         case UPLOAD:
-            transport.sync();
+            if (isUploadAllowed()) {
+                LOG.debug("Going to upload logs");
+                transport.sync();
+            }
             break;
         case NOOP:
             if (strategy.getUploadCheckPeriod() > 0 && storage.getStatus().getRecordCount() > 0) {
@@ -232,6 +240,14 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
         } else {
             LOG.trace("No log delivery timeout for the bucket with id [{}] was detected", bucketId);
         }
+    }
+
+    private boolean isUploadAllowed() {
+        if (timeouts.size() >= strategy.getMaxParallelUploads()) {
+            LOG.debug("Ignore log upload: too much pending requests {}, max allowed {}", timeouts.size(), strategy.getMaxParallelUploads());
+            return false;
+        }
+        return true;
     }
 
     protected void uploadIfNeeded() {
