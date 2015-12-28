@@ -89,8 +89,8 @@ public class ControlServerProfileFilterIT extends AbstractTestControlServer {
 
         Assert.assertNotNull(profileFilterRecords);
         Assert.assertEquals(2, profileFilterRecords.size());
-        assertProfileFiltersEquals(profileFilter1, profileFilterRecords.get(0).getInactiveStructureDto());
-        assertProfileFiltersEquals(profileFilter2, profileFilterRecords.get(1).getInactiveStructureDto());
+        assertProfileFiltersEquals(profileFilter1, profileFilterRecords.get(1).getInactiveStructureDto());
+        assertProfileFiltersEquals(profileFilter2, profileFilterRecords.get(0).getInactiveStructureDto());
     }
 
     /**

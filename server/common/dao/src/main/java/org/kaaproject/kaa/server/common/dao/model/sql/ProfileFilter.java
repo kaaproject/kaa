@@ -36,7 +36,7 @@ import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongI
 @Entity
 @Table(name = PROFILE_FILTER_TABLE_NAME)
 @OnDelete(action = OnDeleteAction.CASCADE)
-public final class ProfileFilter extends AbstractStructure<ProfileFilterDto> implements Serializable {
+public class ProfileFilter extends AbstractStructure<ProfileFilterDto> implements Serializable {
 
     private static final long serialVersionUID = 8815798602241305612L;
 
