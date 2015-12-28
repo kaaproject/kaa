@@ -83,6 +83,17 @@ kaa_error_t ext_log_upload_strategy_set_upload_timeout(void *strategy, size_t up
 
 
 /**
+ * @brief Sets the max amount of log batches allowed to be uploaded parallel.
+ *
+ * @param   strategy    The strategy instance.
+ * @param   count       The new max amount.
+ * @return Error code.
+ */
+kaa_error_t ext_log_upload_strategy_set_max_parallel_uploads(void *strategy, size_t count);
+
+
+
+/**
  * @brief Sets the new upload retry period to the strategy.
  *
  * @param   strategy               The strategy instance.

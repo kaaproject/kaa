@@ -60,14 +60,21 @@ extern kaa_error_t kaa_logging_handle_server_sync(kaa_log_collector_t *self
                                                 , size_t extension_length);
 extern kaa_error_t kaa_logging_request_get_size(kaa_log_collector_t *self, size_t *expected_size);
 
-extern kaa_error_t ext_unlimited_log_storage_create(void **log_storage_context_p, kaa_logger_t *logger);
-
 
 
 static kaa_context_t kaa_context;
 static kaa_logger_t *logger = NULL;
 static kaa_status_t *status = NULL;
 static kaa_channel_manager_t *channel_manager = NULL;
+
+static const kaa_service_t OPERATIONS_SERVICES[] = { KAA_SERVICE_PROFILE
+                                                   , KAA_SERVICE_USER
+                                                   , KAA_SERVICE_CONFIGURATION
+                                                   , KAA_SERVICE_EVENT
+                                                   , KAA_SERVICE_LOGGING
+                                                   , KAA_SERVICE_NOTIFICATION
+                                                    };
+static const int OPERATIONS_SERVICES_COUNT = sizeof(OPERATIONS_SERVICES) / sizeof(kaa_service_t);
 
 #define TEST_LOG_BUFFER  "log_record"
 
@@ -76,8 +83,10 @@ static kaa_channel_manager_t *channel_manager = NULL;
 typedef struct {
     size_t timeout;
     size_t batch_size;
+    size_t max_parallel_uploads;
     bool on_timeout_count;
     bool on_failure_count;
+    ext_log_upload_decision_t decision;
 } mock_strategy_context_t;
 
 typedef struct {
@@ -88,6 +97,70 @@ typedef struct {
     bool on_unmark_by_id_count;
 } mock_storage_context_t;
 
+typedef struct {
+    size_t on_sync_count;
+} mock_transport_channel_context_t;
+
+
+
+/*
+ * TRANSPORT_CHANNEL INTERFACE
+ */
+static kaa_error_t test_kaa_init_channel(void *channel_context
+                                          , kaa_transport_context_t *transport_context)
+{
+    return KAA_ERR_NONE;
+}
+
+static kaa_error_t test_kaa_set_access_point(void *channel_context
+                                              , kaa_access_point_t *access_point)
+{
+    return KAA_ERR_NONE;
+}
+
+static kaa_error_t test_kaa_get_protocol_id(void *context
+                                             , kaa_transport_protocol_id_t *protocol_info)
+{
+    protocol_info->id = 1;
+    protocol_info->version = 1;
+    return KAA_ERR_NONE;
+}
+
+static kaa_error_t test_kaa_get_supported_services(void *context
+                                                    , kaa_service_t **supported_services
+                                                    , size_t *service_count)
+{
+    *supported_services = (kaa_service_t *)OPERATIONS_SERVICES;
+    *service_count = OPERATIONS_SERVICES_COUNT;
+    return KAA_ERR_NONE;
+}
+
+static kaa_error_t test_kaa_sync_handler(void *context
+                                          , const kaa_service_t services[]
+                                          , size_t service_count)
+{
+    ((mock_transport_channel_context_t *)context)->on_sync_count++;
+    return KAA_ERR_NONE;
+}
+
+static kaa_error_t test_kaa_channel_destroy(void *context)
+{
+    KAA_FREE(context);
+    return KAA_ERR_NONE;
+}
+
+static void test_kaa_channel_create(kaa_transport_channel_interface_t *self)
+{
+    self->context = KAA_CALLOC(1, sizeof(mock_transport_channel_context_t));
+
+    self->get_protocol_id = test_kaa_get_protocol_id;
+    self->get_supported_services = test_kaa_get_supported_services;
+    self->destroy = test_kaa_channel_destroy;
+    self->sync_handler = test_kaa_sync_handler;
+    self->init = test_kaa_init_channel;
+    self->set_access_point = test_kaa_set_access_point;
+}
+
 
 
 /*
@@ -95,7 +168,7 @@ typedef struct {
  */
 ext_log_upload_decision_t ext_log_upload_strategy_decide(void *context, const void *log_storage_context)
 {
-    return NOOP;
+    return ((mock_strategy_context_t *)context)->decision;
 }
 
 size_t ext_log_upload_strategy_get_bucket_size(void *context)
@@ -118,6 +191,11 @@ kaa_error_t ext_log_upload_strategy_on_failure(void *context, logging_delivery_e
 {
     ((mock_strategy_context_t *)context)->on_failure_count++;
     return KAA_ERR_NONE;
+}
+
+size_t ext_log_upload_strategy_get_max_parallel_uploads(void *context)
+{
+    return ((mock_strategy_context_t *)context)->max_parallel_uploads;
 }
 
 void ext_log_upload_strategy_destroy(void *context)
@@ -237,7 +315,7 @@ void test_create_request(void)
 {
     KAA_TRACE_IN(logger);
 
-    kaa_error_t error_code;
+    kaa_error_t error_code = KAA_ERR_NONE;
 
     kaa_user_log_record_t *test_log_record = kaa_test_log_record_create();
     test_log_record->data = kaa_string_copy_create(TEST_LOG_BUFFER);
@@ -249,7 +327,9 @@ void test_create_request(void)
 
     mock_strategy_context_t strategy;
     memset(&strategy, 0, sizeof(mock_strategy_context_t));
+    strategy.decision = NOOP;
     strategy.batch_size = 2 * test_log_record_size;
+    strategy.max_parallel_uploads = UINT32_MAX;
 
     error_code = kaa_logging_init(log_collector, create_mock_storage(), &strategy);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
@@ -310,7 +390,7 @@ void test_response(void)
 
     srand(time(NULL));
 
-    kaa_error_t error_code;
+    kaa_error_t error_code = KAA_ERR_NONE;
 
     kaa_log_collector_t *log_collector = NULL;
     error_code = kaa_log_collector_create(&log_collector, status, channel_manager, logger);
@@ -371,7 +451,7 @@ void test_timeout(void)
 {
     KAA_TRACE_IN(logger);
 
-    kaa_error_t error_code;
+    kaa_error_t error_code = KAA_ERR_NONE;
 
     size_t TEST_TIMEOUT = 2;
 
@@ -386,7 +466,9 @@ void test_timeout(void)
     mock_strategy_context_t strategy;
     memset(&strategy, 0, sizeof(mock_strategy_context_t));
     strategy.timeout = TEST_TIMEOUT;
+    strategy.decision = NOOP;
     strategy.batch_size = 2 * test_log_record_size;
+    strategy.max_parallel_uploads = UINT32_MAX;
 
     error_code = kaa_logging_init(log_collector, create_mock_storage(), &strategy);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
@@ -421,7 +503,7 @@ void test_decline_timeout(void)
 {
     KAA_TRACE_IN(logger);
 
-    kaa_error_t error_code;
+    kaa_error_t error_code = KAA_ERR_NONE;
 
     size_t TEST_TIMEOUT = 2;
 
@@ -436,7 +518,9 @@ void test_decline_timeout(void)
     mock_strategy_context_t strategy;
     memset(&strategy, 0, sizeof(mock_strategy_context_t));
     strategy.timeout = TEST_TIMEOUT;
+    strategy.decision = NOOP;
     strategy.batch_size = 2 * test_log_record_size;
+    strategy.max_parallel_uploads = UINT32_MAX;
 
     mock_storage_context_t *storage = create_mock_storage();
     ASSERT_NOT_NULL(storage);
@@ -499,6 +583,173 @@ void test_decline_timeout(void)
     KAA_TRACE_OUT(logger);
 }
 
+void test_max_parallel_uploads_with_log_sync(void)
+{
+    KAA_TRACE_IN(logger);
+
+    kaa_error_t error_code = KAA_ERR_NONE;
+
+    uint32_t channel_id = 0;
+    kaa_transport_channel_interface_t transport_context;
+    test_kaa_channel_create(&transport_context);
+
+    error_code = kaa_channel_manager_add_transport_channel(channel_manager, &transport_context, &channel_id);
+
+    kaa_log_collector_t *log_collector = NULL;
+    error_code = kaa_log_collector_create(&log_collector, status, channel_manager, logger);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    kaa_user_log_record_t *test_log_record = kaa_test_log_record_create();
+    test_log_record->data = kaa_string_copy_create(TEST_LOG_BUFFER);
+    size_t test_log_size = test_log_record->get_size(test_log_record);
+
+    mock_strategy_context_t strategy;
+    memset(&strategy, 0, sizeof(mock_strategy_context_t));
+    strategy.timeout = UINT32_MAX;
+    strategy.batch_size = 2 * test_log_size;
+    strategy.decision = UPLOAD;
+
+
+    mock_storage_context_t *storage = create_mock_storage();
+    ASSERT_NOT_NULL(storage);
+
+    error_code = kaa_logging_init(log_collector, storage, &strategy);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    /*
+     * Ensure the log delivery is forbidden at all.
+     */
+    strategy.max_parallel_uploads = 0;
+    error_code = kaa_logging_add_record(log_collector, test_log_record);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    ASSERT_EQUAL(((mock_transport_channel_context_t *)transport_context.context)->on_sync_count, 0);
+
+    /*
+     * Ensure the first request is allowed.
+     */
+    strategy.max_parallel_uploads = 1;
+    error_code = kaa_logging_add_record(log_collector, test_log_record);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+    ASSERT_EQUAL(((mock_transport_channel_context_t *)transport_context.context)->on_sync_count, 1);
+
+    /*
+     * Do the first request to remember the delivery timeout of the log batch.
+     */
+    size_t request_buffer_size = 256;
+    char request_buffer[request_buffer_size];
+    kaa_platform_message_writer_t *writer = NULL;
+    error_code = kaa_platform_message_writer_create(&writer, request_buffer, request_buffer_size);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    error_code = kaa_logging_request_serialize(log_collector, writer);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    error_code = kaa_logging_add_record(log_collector, test_log_record);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    /*
+     * Ensure the second request is forbidden.
+     */
+    ASSERT_EQUAL(((mock_transport_channel_context_t *)transport_context.context)->on_sync_count, 1);
+
+    /*
+     * Clean up.
+     */
+    error_code = kaa_channel_manager_remove_transport_channel(channel_manager, channel_id);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    test_log_record->destroy(test_log_record);
+    kaa_log_collector_destroy(log_collector);
+
+    KAA_TRACE_OUT(logger);
+}
+
+void test_max_parallel_uploads_with_sync_all(void)
+{
+    KAA_TRACE_IN(logger);
+
+    kaa_error_t error_code = KAA_ERR_NONE;
+
+    uint32_t channel_id = 0;
+    kaa_transport_channel_interface_t transport_context;
+    test_kaa_channel_create(&transport_context);
+
+    error_code = kaa_channel_manager_add_transport_channel(channel_manager, &transport_context, &channel_id);
+
+    kaa_log_collector_t *log_collector = NULL;
+    error_code = kaa_log_collector_create(&log_collector, status, channel_manager, logger);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    kaa_user_log_record_t *test_log_record = kaa_test_log_record_create();
+    test_log_record->data = kaa_string_copy_create(TEST_LOG_BUFFER);
+    size_t test_log_size = test_log_record->get_size(test_log_record);
+
+    mock_strategy_context_t strategy;
+    memset(&strategy, 0, sizeof(mock_strategy_context_t));
+    strategy.timeout = UINT32_MAX;
+    strategy.batch_size = 2 * test_log_size;
+    strategy.decision = UPLOAD;
+
+    mock_storage_context_t *storage = create_mock_storage();
+    ASSERT_NOT_NULL(storage);
+
+    error_code = kaa_logging_init(log_collector, storage, &strategy);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    /*
+     * Ensure the log delivery is forbidden at all.
+     */
+    strategy.max_parallel_uploads = 0;
+    error_code = kaa_logging_add_record(log_collector, test_log_record);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    size_t expected_size = 0;
+    error_code = kaa_logging_request_get_size(log_collector, &expected_size);
+    ASSERT_NULL(expected_size);
+
+    /*
+     * Ensure the first request is allowed.
+     */
+    strategy.max_parallel_uploads = 1;
+    error_code = kaa_logging_add_record(log_collector, test_log_record);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    /*
+     * Do the first request to remember the delivery timeout of the log batch.
+     */
+    error_code = kaa_logging_request_get_size(log_collector, &expected_size);
+    ASSERT_NOT_NULL(expected_size);
+    size_t request_buffer_size = 256;
+    char request_buffer[request_buffer_size];
+    kaa_platform_message_writer_t *writer = NULL;
+    error_code = kaa_platform_message_writer_create(&writer, request_buffer, request_buffer_size);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    error_code = kaa_logging_request_serialize(log_collector, writer);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    error_code = kaa_logging_add_record(log_collector, test_log_record);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    /*
+     * Ensure the second request is forbidden.
+     */
+    error_code = kaa_logging_request_get_size(log_collector, &expected_size);
+    ASSERT_NULL(expected_size);
+
+    /*
+     * Clean up.
+     */
+    error_code = kaa_channel_manager_remove_transport_channel(channel_manager, channel_id);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    test_log_record->destroy(test_log_record);
+    kaa_log_collector_destroy(log_collector);
+
+    KAA_TRACE_OUT(logger);
+}
+
 #endif
 
 
@@ -545,5 +796,7 @@ KAA_SUITE_MAIN(Log, test_init, test_deinit
        KAA_TEST_CASE(process_response, test_response)
        KAA_TEST_CASE(process_timeout, test_timeout)
        KAA_TEST_CASE(decline_timeout, test_decline_timeout)
+       KAA_TEST_CASE(max_parallel_uploads_with_log_sync, test_max_parallel_uploads_with_log_sync)
+       KAA_TEST_CASE(max_parallel_uploads_with_sync_all, test_max_parallel_uploads_with_sync_all)
 #endif
         )
