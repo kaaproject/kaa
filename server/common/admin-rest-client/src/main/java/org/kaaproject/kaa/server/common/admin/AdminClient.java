@@ -311,13 +311,6 @@ public class AdminClient {
         return entity.getBody();
     }
 
-    public EndpointProfileDto getEndpointProfile(String endpointKey) throws Exception {
-        ParameterizedTypeReference<EndpointProfileDto> typeRef = new ParameterizedTypeReference<EndpointProfileDto>() {};
-        endpointKey = Base64.encodeBase64URLSafeString(Base64.decodeBase64(endpointKey));
-        ResponseEntity<EndpointProfileDto> entity = restTemplate.exchange(url + "endpoint/" + endpointKey, HttpMethod.GET, null, typeRef);
-        return entity.getBody();
-    }
-
     public EventClassFamilyDto editEventClassFamily(EventClassFamilyDto eventClassFamily) throws Exception {
         return restTemplate.postForObject(url + "eventClassFamily", eventClassFamily, EventClassFamilyDto.class);
     }
