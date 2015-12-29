@@ -21,13 +21,12 @@
 #import "KaaChannelManager.h"
 #import "LogCollector.h"
 
-//Framework limitation
-#define MAX_BATCH_VOLUME (512 * 1024)
-
 @interface AbstractLogCollector : NSObject <LogProcessor,LogCollector>
 
 @property (nonatomic,strong,readonly) id<ExecutorContext> executorContext;
 @property (nonatomic,strong,readonly) id<LogStorage> storage;
+@property (nonatomic,strong) NSMutableDictionary *bucketInfoDictionary;
+@property (nonatomic,strong) NSMutableDictionary *bucketRunnerDictionary;
 
 - (instancetype)initWith:(id<LogTransport>)transport
          executorContext:(id<ExecutorContext>)executorContext

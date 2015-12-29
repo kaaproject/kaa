@@ -20,6 +20,8 @@
 #import <Foundation/Foundation.h>
 #import "GenericLogCollector.h"
 #import "KAADummyLog.h"
+#import "BucketRunner.h"
+#import "LogDeliveryDelegate.h"
 
 /**
  * Interface for a log collector.
@@ -46,7 +48,9 @@
  *
  * @param record new log record object
  */
-- (void)addLogRecord:(KAADummyLog *)record;
+- (BucketRunner *)addLogRecord:(KAADummyLog *)record;
+
+- (void)setLogDeliveryDelegate:(id<LogDeliveryDelegate>)delegate;
 
 @end
 

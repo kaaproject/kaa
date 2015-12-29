@@ -34,18 +34,23 @@
     return self;
 }
 
-- (void)addLogRecord:(KAADummyLog *)record {
-    __weak typeof(self) weakSelf = self;
-    [[self.executorContext getApiExecutor] addOperationWithBlock:^{
-        @try {
-            [weakSelf.storage addLogRecord:[[LogRecord alloc] initWithRecord:record]];
-        }
-        @catch (NSException *exception) {
-            DDLogWarn(@"%@ Can't serialize log record: %@", TAG, record);
-        }
-        
-        [weakSelf uploadIfNeeded];
-    }];
+- (BucketRunner *)addLogRecord:(KAADummyLog *)record {
+    @synchronized(self) {
+        BucketRunner *runner = [[BucketRunner alloc] init];
+        __weak typeof(self) weakSelf = self;
+        [[self.executorContext getApiExecutor] addOperationWithBlock:^{
+            @try {
+                BucketInfo *bucketInfo = [weakSelf.storage addLogRecord:[[LogRecord alloc] initWithRecord:record]];
+                [self.bucketInfoDictionary setObject:bucketInfo forKey:[NSNumber numberWithInt:bucketInfo.bucketId]];
+                [self.bucketRunnerDictionary setObject:runner forKey:[NSNumber numberWithInt:bucketInfo.bucketId]];
+            }
+            @catch (NSException *exception) {
+                DDLogWarn(@"%@ Can't serialize log record: %@", TAG, record);
+            }
+            [weakSelf uploadIfNeeded];
+        }];
+        return runner;
+    }
 }
 
 @end

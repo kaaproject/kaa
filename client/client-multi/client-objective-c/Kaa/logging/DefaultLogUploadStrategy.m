@@ -27,7 +27,7 @@
 #define DEFAULT_BATCH_SIZE              (8 * 1024)
 #define DEFAULT_BATCH_COUNT             (256)
 #define DEFAULT_TIME_LIMIT              (5 * 60)
-#define DEFAULT_UPLOAD_LOCKED           NO;
+#define DEFAULT_UPLOAD_LOCKED           NO
 
 
 @implementation DefaultLogUploadStrategy
@@ -108,10 +108,6 @@
         default:
             break;
     }
-}
-
-- (void)onSuccessLogUpload:(int32_t)blockId {
-    DDLogInfo(@"%@ Log record with blockId [%i] has been successfully uploaded", TAG, blockId);
 }
 
 - (void)lockUpload {

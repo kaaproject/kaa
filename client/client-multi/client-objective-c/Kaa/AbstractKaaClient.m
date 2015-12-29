@@ -228,6 +228,10 @@
     }];
 }
 
+- (void)setLogDeliveryDelegate:(id<LogDeliveryDelegate>)delegate {
+    [self.logCollector setLogDeliveryDelegate:delegate];
+}
+
 - (void)setProfileContainer:(id<ProfileContainer>)container {
     [self.profileManager setProfileContainer:container];
 }

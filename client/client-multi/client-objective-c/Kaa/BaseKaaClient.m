@@ -24,9 +24,9 @@
     return [super initWithPlatformContext:context andDelegate:delegate];
 }
 
-- (void)addLogRecord:(KAADummyLog *)record {
+- (BucketRunner *)addLogRecord:(KAADummyLog *)record {
     [self checkLifecycleState:CLIENT_LIFECYCLE_STATE_STARTED withError:@"Kaa client isn't started"];
-    [self.logCollector addLogRecord:record];
+    return [self.logCollector addLogRecord:record];
 }
 
 - (KAADummyConfiguration *)getConfiguration {

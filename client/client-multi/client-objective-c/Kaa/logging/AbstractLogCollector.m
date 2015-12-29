@@ -36,6 +36,7 @@
 @property (atomic) BOOL uploadCheckInProgress;
 @property (nonatomic,strong) NSLock *uploadCheckLock;
 @property (nonatomic,strong) NSObject *uploadCheckGuard;   //variable to sync
+@property (nonatomic,weak) id<LogDeliveryDelegate> logDeliveryDelegate;
 
 - (void)checkDeliveryTimeout:(int32_t)bucketId;
 - (void)processUploadDecision:(LogUploadStrategyDecision)decision;
@@ -53,6 +54,7 @@
 @end
 
 @implementation AbstractLogCollector
+
 - (instancetype)initWith:(id<LogTransport>)transport
          executorContext:(id<ExecutorContext>)executorContext
           channelManager:(id<KaaChannelManager>)channelManager
@@ -70,8 +72,15 @@
         self.uploadCheckInProgress = NO;
         self.uploadCheckLock = [[NSLock alloc] init];
         self.uploadCheckGuard = [[NSObject alloc] init];
+        self.logDeliveryDelegate = nil;
+        self.bucketInfoDictionary = [NSMutableDictionary dictionary];
+        self.bucketRunnerDictionary = [NSMutableDictionary dictionary];
     }
     return self;
+}
+
+- (void)setLogDeliveryDelegate:(id<LogDeliveryDelegate>)logDeliveryDelegate {
+    _logDeliveryDelegate = logDeliveryDelegate;
 }
 
 - (void)setStrategy:(id<LogUploadStrategy>)strategy {
@@ -132,17 +141,26 @@
         if (response.deliveryStatuses && response.deliveryStatuses.branch == KAA_UNION_ARRAY_LOG_DELIVERY_STATUS_OR_NULL_BRANCH_0) {
             BOOL isAlreadyScheduled = NO;
             NSArray *deliveryStatuses = response.deliveryStatuses.data;
+            __weak typeof(self) weakSelf = self;
             for (LogDeliveryStatus *status in deliveryStatuses) {
                 if (status.result == SYNC_RESPONSE_RESULT_TYPE_SUCCESS) {
                     [self.storage removeRecordBlock:status.requestId];
-                    [[self.executorContext getCallbackExecutor] addOperationWithBlock:^{
-                        [self.strategy onSuccessLogUpload:status.requestId];
-                    }];
+                    BucketInfo *bucketInfo = [self.bucketInfoDictionary objectForKey:[NSNumber numberWithInt:status.requestId]];
+                    BucketRunner *currentRunner = [self.bucketRunnerDictionary objectForKey:[NSNumber numberWithInt:status.requestId]];
+                    [currentRunner setValue:bucketInfo];
+                    if (self.logDeliveryDelegate) {
+                        [[self.executorContext getCallbackExecutor] addOperationWithBlock:^{
+                            [weakSelf.logDeliveryDelegate onLogDeliverySuccess:bucketInfo];
+                        }];
+                    }
+                    [self.bucketInfoDictionary removeObjectForKey:[NSNumber numberWithInt:status.requestId]];
                 } else {
                     [self.storage notifyUploadFailed:status.requestId];
-                    __weak typeof(self) weakSelf = self;
                     [[self.executorContext getCallbackExecutor] addOperationWithBlock:^{
                         [weakSelf.strategy onFailure:weakSelf errorCode:[((NSNumber *)status.errorCode.data) intValue]];
+                        if (weakSelf.logDeliveryDelegate) {
+                            [weakSelf.logDeliveryDelegate onLogDeliveryFailure:[weakSelf.bucketInfoDictionary objectForKey:[NSNumber numberWithInt:status.requestId]]];
+                        }
                     }];
                     isAlreadyScheduled = YES;
                 }
@@ -226,6 +244,9 @@
         __weak typeof(self)weakSelf = self;
         [[self.executorContext getCallbackExecutor] addOperationWithBlock:^{
             [weakSelf.strategy onTimeout:weakSelf];
+            if (weakSelf.logDeliveryDelegate) {
+                [weakSelf.logDeliveryDelegate onLogDeliveryTimeout:[self.bucketInfoDictionary objectForKey:[NSNumber numberWithInt:bucketId]]];
+            }
         }];
         [timeout cancel];
     } else {
@@ -289,6 +310,7 @@
     
     if (!self.isFinished && !self.isCancelled) {
         [self.logCollector checkDeliveryTimeout:[self.timeoutGroup blockId]];
+        
     } else {
         DDLogDebug(@"%@ Timeout check worker for block: %i was interrupted after delay", TAG, [self.timeoutGroup blockId]);
     }

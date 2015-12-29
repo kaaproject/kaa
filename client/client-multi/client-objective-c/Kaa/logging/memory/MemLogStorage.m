@@ -87,7 +87,7 @@
     return _recordCount;
 }
 
-- (void)addLogRecord:(LogRecord *)record {
+- (BucketInfo *)addLogRecord:(LogRecord *)record {
     DDLogVerbose(@"%@ Adding new log record with size %li", TAG, (long)[record getSize]);
     if ([record getSize] > self.maxBucketSize) {
         [NSException raise:NSInvalidArgumentException format:@"Record size(%li) is bigger than max bucket size(%li)!",
@@ -111,6 +111,7 @@
         self.recordCount++;
         self.consumedVolume += [record getSize];
     }
+    return [[BucketInfo alloc] initWithBucketId:self.currentBucket.bucketId logCount:[self.currentBucket getCount]];
     
     DDLogVerbose(@"%@ Added a new log record to bucket with id [%li]", TAG, (long)[self.currentBucket bucketId]);
 }

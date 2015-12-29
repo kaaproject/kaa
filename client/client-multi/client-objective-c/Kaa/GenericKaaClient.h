@@ -29,6 +29,7 @@
 #import "ProfileCommon.h"
 #import "ConfigurationCommon.h"
 #import "NotificationCommon.h"
+#import "LogDeliveryDelegate.h"
 
 /**
  * Root interface for the Kaa client.
@@ -221,6 +222,14 @@
  * Set user implementation of a log upload strategy.
  */
 - (void)setLogUploadStrategy:(id<LogUploadStrategy>)strategy;
+
+/**
+ * Sets callback for receiving log events
+ *
+ * @param   listener the listener
+ *
+ */
+- (void)setLogDeliveryDelegate:(id<LogDeliveryDelegate>)delegate;
 
 /**
  * Retrieves Kaa event family factory.

@@ -20,6 +20,7 @@
 #import <Foundation/Foundation.h>
 #import "LogBlock.h"
 #import "LogRecord.h"
+#import "BucketInfo.h"
 
 /**
  * Interface for a log storage status.
@@ -60,7 +61,7 @@
 /**
  * Persists new log record.
  */
-- (void)addLogRecord:(LogRecord *)record;
+- (BucketInfo *)addLogRecord:(LogRecord *)record;
 
 /**
  * Returns log storage status.

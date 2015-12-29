@@ -37,6 +37,14 @@
 		B88836201BA0930600ACAB4F /* AbstractKaaClient.h in Headers */ = {isa = PBXBuildFile; fileRef = B888361E1BA0930600ACAB4F /* AbstractKaaClient.h */; };
 		B88836211BA0930600ACAB4F /* AbstractKaaClient.m in Sources */ = {isa = PBXBuildFile; fileRef = B888361F1BA0930600ACAB4F /* AbstractKaaClient.m */; };
 		B88836251BA0981C00ACAB4F /* KaaClientStateDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = B88836241BA0981C00ACAB4F /* KaaClientStateDelegate.h */; };
+		B8A38ED71C46F5FA00EE6EBF /* BucketInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = B8A38ED11C46F5FA00EE6EBF /* BucketInfo.h */; };
+		B8A38ED81C46F5FA00EE6EBF /* BucketInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = B8A38ED21C46F5FA00EE6EBF /* BucketInfo.m */; };
+		B8A38ED91C46F5FA00EE6EBF /* BucketRunner.h in Headers */ = {isa = PBXBuildFile; fileRef = B8A38ED31C46F5FA00EE6EBF /* BucketRunner.h */; };
+		B8A38EDA1C46F5FA00EE6EBF /* BucketRunner.m in Sources */ = {isa = PBXBuildFile; fileRef = B8A38ED41C46F5FA00EE6EBF /* BucketRunner.m */; };
+		B8A38EDD1C4795E700EE6EBF /* BucketInfo.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B8A38ED11C46F5FA00EE6EBF /* BucketInfo.h */; };
+		B8A38EDE1C4795E700EE6EBF /* BucketRunner.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B8A38ED31C46F5FA00EE6EBF /* BucketRunner.h */; };
+		B8A38EE11C47962F00EE6EBF /* LogDeliveryDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = B8A38EE01C47962F00EE6EBF /* LogDeliveryDelegate.h */; };
+		B8A38EE21C47964700EE6EBF /* LogDeliveryDelegate.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B8A38EE01C47962F00EE6EBF /* LogDeliveryDelegate.h */; };
 		B8B4CDC11B8213C0007FE20D /* KaaClientProperties.h in Headers */ = {isa = PBXBuildFile; fileRef = B8B4CDBF1B8213C0007FE20D /* KaaClientProperties.h */; };
 		B8B4CDC21B8213C0007FE20D /* KaaClientProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = B8B4CDC01B8213C0007FE20D /* KaaClientProperties.m */; };
 		B8C10A151BC2BBBF001A2236 /* KaaClientPropertiesTest.m in Sources */ = {isa = PBXBuildFile; fileRef = B8C10A131BC2BBBF001A2236 /* KaaClientPropertiesTest.m */; };
@@ -508,6 +516,9 @@
 			dstPath = "include/$(PRODUCT_NAME)";
 			dstSubfolderSpec = 16;
 			files = (
+				B8A38EE21C47964700EE6EBF /* LogDeliveryDelegate.h in Copy Files */,
+				B8A38EDD1C4795E700EE6EBF /* BucketInfo.h in Copy Files */,
+				B8A38EDE1C4795E700EE6EBF /* BucketRunner.h in Copy Files */,
 				B8CCBF7F1C467C0D00C26F0B /* io.h in Copy Files */,
 				B8CCBF801C467C0D00C26F0B /* platform.h in Copy Files */,
 				B8CCBF811C467C0D00C26F0B /* avro_private.h in Copy Files */,
@@ -702,6 +713,11 @@
 		B888361F1BA0930600ACAB4F /* AbstractKaaClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AbstractKaaClient.m; sourceTree = "<group>"; };
 		B88836241BA0981C00ACAB4F /* KaaClientStateDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KaaClientStateDelegate.h; sourceTree = "<group>"; };
 		B8A0B5111BEF65FA00105DFE /* KaaDefaults.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KaaDefaults.h; sourceTree = "<group>"; };
+		B8A38ED11C46F5FA00EE6EBF /* BucketInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BucketInfo.h; sourceTree = "<group>"; };
+		B8A38ED21C46F5FA00EE6EBF /* BucketInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BucketInfo.m; sourceTree = "<group>"; };
+		B8A38ED31C46F5FA00EE6EBF /* BucketRunner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BucketRunner.h; sourceTree = "<group>"; };
+		B8A38ED41C46F5FA00EE6EBF /* BucketRunner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BucketRunner.m; sourceTree = "<group>"; };
+		B8A38EE01C47962F00EE6EBF /* LogDeliveryDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogDeliveryDelegate.h; sourceTree = "<group>"; };
 		B8B4CDBF1B8213C0007FE20D /* KaaClientProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KaaClientProperties.h; sourceTree = "<group>"; };
 		B8B4CDC01B8213C0007FE20D /* KaaClientProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KaaClientProperties.m; sourceTree = "<group>"; };
 		B8C10A131BC2BBBF001A2236 /* KaaClientPropertiesTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KaaClientPropertiesTest.m; sourceTree = "<group>"; };
@@ -1457,6 +1473,10 @@
 				B8CCBED61C4677DD00C26F0B /* AbstractLogCollector.h */,
 				B8CCBED71C4677DD00C26F0B /* AbstractLogCollector.m */,
 				B8CCBED81C4677DD00C26F0B /* AccessPointCommand.h */,
+				B8A38ED11C46F5FA00EE6EBF /* BucketInfo.h */,
+				B8A38ED21C46F5FA00EE6EBF /* BucketInfo.m */,
+				B8A38ED31C46F5FA00EE6EBF /* BucketRunner.h */,
+				B8A38ED41C46F5FA00EE6EBF /* BucketRunner.m */,
 				B8CCBED91C4677DD00C26F0B /* DefaultLogCollector.h */,
 				B8CCBEDA1C4677DD00C26F0B /* DefaultLogCollector.m */,
 				B8CCBEDB1C4677DD00C26F0B /* DefaultLogUploadStrategy.h */,
@@ -1465,6 +1485,7 @@
 				B8CCBEDE1C4677DD00C26F0B /* LogBlock.h */,
 				B8CCBEDF1C4677DD00C26F0B /* LogBlock.m */,
 				B8CCBEE01C4677DD00C26F0B /* LogCollector.h */,
+				B8A38EE01C47962F00EE6EBF /* LogDeliveryDelegate.h */,
 				B8CCBEE11C4677DD00C26F0B /* LogFailoverCommand.h */,
 				B8CCBEE21C4677DD00C26F0B /* LogRecord.h */,
 				B8CCBEE31C4677DD00C26F0B /* LogRecord.m */,
@@ -1783,6 +1804,7 @@
 				B8CCBF101C4677DD00C26F0B /* StorageSizeLogUploadStrategy.h in Headers */,
 				B8CCBE761C4673B500C26F0B /* DefaultRedirectionTransport.h in Headers */,
 				B8CCBE2F1C4673B500C26F0B /* EventTransport.h in Headers */,
+				B8A38EE11C47962F00EE6EBF /* LogDeliveryDelegate.h in Headers */,
 				B8CCBE9A1C46745600C26F0B /* AbstractConfigurationManager.h in Headers */,
 				B8CCBE391C4673B500C26F0B /* DefaultOperationHttpChannel.h in Headers */,
 				B8CCBE661C4673B500C26F0B /* AbstractKaaTransport.h in Headers */,
@@ -1826,6 +1848,7 @@
 				B8CCBDAF1C46673000C26F0B /* BootstrapManager.h in Headers */,
 				B8CCBEF81C4677DD00C26F0B /* AccessPointCommand.h in Headers */,
 				B8CCBED01C4676FD00C26F0B /* NotificationCommon.h in Headers */,
+				B8A38ED91C46F5FA00EE6EBF /* BucketRunner.h in Headers */,
 				B8CCBDBC1C46679A00C26F0B /* AbstractExecutorContext.h in Headers */,
 				B8CCBE8D1C4673B500C26F0B /* UserTransport.h in Headers */,
 				B8CCBEC51C46762A00C26F0B /* UserVerifierConstants.h in Headers */,
@@ -1915,6 +1938,7 @@
 				B844623C1BB5C377009826FC /* KaaLogging.h in Headers */,
 				B8CCBE841C4673B500C26F0B /* NotificationTransport.h in Headers */,
 				B8CCBF0E1C4677DD00C26F0B /* RecordCountWithTimeLimitLogUploadStrategy.h in Headers */,
+				B8A38ED71C46F5FA00EE6EBF /* BucketInfo.h in Headers */,
 				B8CCBE301C4673B500C26F0B /* FailoverDecision.h in Headers */,
 				B8CCBF5B1C4679BE00C26F0B /* TransactionId.h in Headers */,
 				B8CCBDBF1C46679A00C26F0B /* SimpleExecutorContext.h in Headers */,
@@ -2108,6 +2132,7 @@
 				B8CCBD911C4664D800C26F0B /* AvroUtils.m in Sources */,
 				B8CCBDBD1C46679A00C26F0B /* AbstractExecutorContext.m in Sources */,
 				B8CCBD8D1C4664D800C26F0B /* AvroBased.m in Sources */,
+				B8A38EDA1C46F5FA00EE6EBF /* BucketRunner.m in Sources */,
 				B88836211BA0930600ACAB4F /* AbstractKaaClient.m in Sources */,
 				B8CCBE531C4673B500C26F0B /* KAATcpConnAck.m in Sources */,
 				B8CCBF201C46783D00C26F0B /* TimeCommons.m in Sources */,
@@ -2154,6 +2179,7 @@
 				B8CCBE461C4673B500C26F0B /* DefaultChannelManager.m in Sources */,
 				B8CCBE4C1C4673B500C26F0B /* KAAFramer.m in Sources */,
 				B8CCBE731C4673B500C26F0B /* DefaultNotificationTransport.m in Sources */,
+				B8A38ED81C46F5FA00EE6EBF /* BucketInfo.m in Sources */,
 				B8CCBF551C46799D00C26F0B /* NSData+Conversion.m in Sources */,
 				B8CCBE9B1C46745600C26F0B /* AbstractConfigurationManager.m in Sources */,
 				B8CCBD9B1C4664D800C26F0B /* KAADummyProfile.m in Sources */,

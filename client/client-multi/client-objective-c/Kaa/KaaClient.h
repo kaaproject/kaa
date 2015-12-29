@@ -21,6 +21,7 @@
 #import "GenericKaaClient.h"
 #import "KAADummyLog.h"
 #import "KAADummyConfiguration.h"
+#import "BucketRunner.h"
 
 /**
  * Base interface to operate with Kaa library.
@@ -40,7 +41,7 @@
  *
  * @param record - new log record object
  */
-- (void)addLogRecord:(KAADummyLog *)record;
+- (BucketRunner *)addLogRecord:(KAADummyLog *)record;
 
 /**
  * Returns latest configuration.
