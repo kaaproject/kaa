@@ -50,7 +50,7 @@
         if(SCNetworkReachabilityGetFlags(reachabilityRef, &flags)) {
             BOOL isReachable = ((flags & kSCNetworkFlagsReachable) != 0);
             BOOL connectionRequired = ((flags & kSCNetworkFlagsConnectionRequired) != 0);
-            returnValue = (isReachable && !connectionRequired) ? YES : NO;
+            returnValue = isReachable && !connectionRequired;
         }
         
         CFRelease(reachabilityRef);
