@@ -165,7 +165,7 @@ size_t kaa_array_get_size(kaa_list_t *array, get_size_fn get_size);
 void kaa_null_serialize(avro_writer_t writer, void *data);
 void *kaa_null_deserialize(avro_reader_t reader);
 void kaa_null_destroy(void *data);
-size_t kaa_null_get_size(void);
+size_t kaa_null_get_size(void* data);
 
 void kaa_data_destroy(void *data);
 

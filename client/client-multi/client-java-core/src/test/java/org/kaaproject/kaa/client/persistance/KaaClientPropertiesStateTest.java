@@ -16,11 +16,6 @@
 
 package org.kaaproject.kaa.client.persistance;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -33,6 +28,11 @@ import org.kaaproject.kaa.common.endpoint.gen.SubscriptionType;
 import org.kaaproject.kaa.common.endpoint.gen.Topic;
 import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -49,6 +49,8 @@ public class KaaClientPropertiesStateTest {
         props.setProperty(KaaClientProperties.WORKING_DIR_PROPERTY, WORK_DIR);
         props.setProperty(KaaClientProperties.STATE_FILE_NAME_PROPERTY, STATE_PROPERTIES);
         props.setProperty(KaaClientProperties.CLIENT_PUBLIC_KEY_FILE_NAME_PROPERTY, KEY_PUBLIC);
+        File dir = new File(WORK_DIR);
+        dir.deleteOnExit();
         File pub = new File(WORK_DIR + KEY_PUBLIC);
         pub.deleteOnExit();
         props.setProperty(KaaClientProperties.CLIENT_PRIVATE_KEY_FILE_NAME_PROPERTY, KEY_PRIVATE);
@@ -170,6 +172,7 @@ public class KaaClientPropertiesStateTest {
         KaaClientState state = new KaaClientPropertiesState(new FilePersistentStorage(), CommonsBase64.getInstance(), getProperties());
         File stateProps = new File(WORK_DIR + STATE_PROPERTIES);
         File statePropsBckp = new File(WORK_DIR + STATE_PROPERTIES_BCKP);
+        statePropsBckp.deleteOnExit();
         state.persist();
         state.persist();
         assertTrue(stateProps.exists());

@@ -379,7 +379,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
                 break;
                 case STOP_APP:
                     LOG.warn("Stopping application according to failover strategy decision!");
-                    System.exit(EXIT_FAILURE);
+                    System.exit(EXIT_FAILURE); //NOSONAR
             }
         } else {
             failoverManager.onServerFailed(currentServer);
