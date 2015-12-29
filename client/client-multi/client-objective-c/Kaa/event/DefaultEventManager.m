@@ -34,6 +34,7 @@
 @property (nonatomic,strong) NSMutableDictionary *transactions;             //<TransactionId, NSArray<Event>>
 
 @property (nonatomic) BOOL isEngaged;
+@property (nonatomic) int requestId;
 
 @property (nonatomic,strong) NSObject *eventGuard;
 @property (nonatomic,strong) NSObject *trxGuard;
@@ -58,6 +59,7 @@
         self.eventListenersRequests = [NSMutableDictionary dictionary];
         self.transactions = [NSMutableDictionary dictionary];
         
+        self.requestId = 0;
         self.isEngaged = NO;
         self.eventGuard = [[NSObject alloc] init];
         self.trxGuard = [[NSObject alloc] init];
@@ -145,7 +147,7 @@
 }
 
 - (NSInteger)findEventListeners:(NSArray *)eventFQNs delegate:(id<FindEventListenersDelegate>)delegate {
-    int requestId = arc4random();
+    int requestId = self.requestId++;
     EventListenersRequest *request = [[EventListenersRequest alloc] init];
     request.requestId = requestId;
     request.eventClassFQNs = eventFQNs;
