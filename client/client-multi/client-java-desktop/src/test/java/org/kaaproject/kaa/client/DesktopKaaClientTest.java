@@ -16,18 +16,27 @@
 
 package org.kaaproject.kaa.client;
 
-import java.io.File;
-
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.kaaproject.kaa.client.profile.ProfileContainer;
 import org.kaaproject.kaa.schema.base.Profile;
 import org.mockito.Mockito;
 
+import java.io.File;
+
 public class DesktopKaaClientTest {
 
     @Before
     public void cleanup() {
+        File stateFile = new File("state.properties");
+        if (stateFile.exists()) {
+            stateFile.delete();
+        }
+    }
+
+    @After
+    public void cleanupBkpFile() {
         File stateFile = new File("state.properties");
         if (stateFile.exists()) {
             stateFile.delete();
