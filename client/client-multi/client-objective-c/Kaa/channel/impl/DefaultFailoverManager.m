@@ -97,15 +97,15 @@
 }
 
 - (void)onServerFailed:(id<TransportConnectionInfo>)connectionInfo {
+    
+    if (!connectionInfo) {
+        DDLogWarn(@"%@ Server failed, but connection info is nil, can't resolve", TAG);
+        return;
+    } else {
+        DDLogInfo(@"%@ Server [%i, %i] failed", TAG, [connectionInfo serverType], [connectionInfo accessPointId]);
+    }
+    
     @synchronized(self) {
-        
-        if (!connectionInfo) {
-            DDLogWarn(@"%@ Server failed, but connection info is nil, can't resolve", TAG);
-            return;
-        } else {
-            DDLogInfo(@"%@ Server [%i, %i] failed", TAG, [connectionInfo serverType], [connectionInfo accessPointId]);
-        }
-        
         long currentResolutionTime = -1;
         NSNumber *serverTypeKey = [NSNumber numberWithInt:[connectionInfo serverType]];
         AccessPointIdResolution *pointResolution = [self.resolutionProgressMap objectForKey:serverTypeKey];
@@ -149,14 +149,15 @@
 }
 
 - (void)onServerChanged:(id<TransportConnectionInfo>)connectionInfo {
+    
+    if (!connectionInfo) {
+        DDLogWarn(@"%@ Server has changed, but its connection info is nil, can't resolve", TAG);
+        return;
+    } else {
+        DDLogVerbose(@"%@ Server [%i, %i] has changed", TAG, [connectionInfo serverType], [connectionInfo accessPointId]);
+    }
+    
     @synchronized(self) {
-        if (!connectionInfo) {
-            DDLogWarn(@"%@ Server has changed, but its connection info is nil, can't resolve", TAG);
-            return;
-        } else {
-            DDLogVerbose(@"%@ Server [%i, %i] has changed", TAG, [connectionInfo serverType], [connectionInfo accessPointId]);
-        }
-        
         NSNumber *serverTypeKey = [NSNumber numberWithInt:[connectionInfo serverType]];
         AccessPointIdResolution *pointResolution = [self.resolutionProgressMap objectForKey:serverTypeKey];
         if (!pointResolution) {
@@ -178,13 +179,14 @@
 }
 
 - (void)onServerConnected:(id<TransportConnectionInfo>)connectionInfo {
+    
+    DDLogVerbose(@"%@ Server %@ has connected", TAG, connectionInfo);
+    if (!connectionInfo) {
+        DDLogWarn(@"%@ Server connection info is nil, can't resolve", TAG);
+        return;
+    }
+    
     @synchronized(self) {
-        DDLogVerbose(@"%@ Server %@ has connected", TAG, connectionInfo);
-        if (!connectionInfo) {
-            DDLogWarn(@"%@ Server connection info is nil, can't resolve", TAG);
-            return;
-        }
-        
         NSNumber *serverTypeKey = [NSNumber numberWithInt:[connectionInfo serverType]];
         AccessPointIdResolution *pointResolution = [self.resolutionProgressMap objectForKey:serverTypeKey];
         if (!pointResolution) {
@@ -205,8 +207,10 @@
 }
 
 - (FailoverDecision *)onFailover:(FailoverStatus)status {
+    
+    DDLogInfo(@"%@ Applying failover strategy for status: %i", TAG, status);
+
     @synchronized(self) {
-        DDLogInfo(@"%@ Applying failover strategy for status: %i", TAG, status);
         NSNumber *serverTypeKey = nil;
         switch (status) {
             case FAILOVER_STATUS_BOOTSTRAP_SERVERS_NA:
