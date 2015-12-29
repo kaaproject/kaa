@@ -3,26 +3,26 @@
         @Override
         public void run() {
             try {
-                ${rawInputType} requestEntity = ${inputTypeConverter}.get().fromByteArray(msg.getPayload());
+                ${messageInputType} requestEntity = ${messageInputTypeConverter}.get().fromByteArray(msg.getPayload());
                 LOG.debug("Processing {}", requestEntity);
-                if (${outputTypeConverter} != null) {
-                    ${rawOutputType} responseEntity = ${listener}.onEvent(requestEntity);
+                if (${messageOutputTypeConverter} != null) {
+                    ${messageOutputType} responseEntity = ${listener}.onEvent(requestEntity);
                     if (responseEntity != null) {
                         try {
-                            byte[] payload = ${outputTypeConverter}.get().toByteArray(responseEntity);
-                            pushMsg(new EntityMessage(msg.getUid(), payload, METHOD_${id}_ID));
+                            byte[] payload = ${messageOutputTypeConverter}.get().toByteArray(responseEntity);
+                            pushMsg(new EntityMessage(msg.getUid(), payload, METHOD_${methodId}_ID));
                         } catch (IOException e) {
-                            pushMsg(new ErrorMessage(msg.getUid(), METHOD_${id}_ID, ErrorCode.SERIALIZATION_ERROR, e.getMessage()));
+                            pushMsg(new ErrorMessage(msg.getUid(), METHOD_${methodId}_ID, ErrorCode.SERIALIZATION_ERROR, e.getMessage()));
                         }
                     } else {
-                        pushMsg(new ErrorMessage(msg.getUid(), METHOD_${id}_ID, ErrorCode.NULL_RESPONSE_ERROR));
+                        pushMsg(new ErrorMessage(msg.getUid(), METHOD_${methodId}_ID, ErrorCode.NULL_RESPONSE_ERROR));
                     }
                 } else {
-                    pushMsg(new ErrorMessage(msg.getUid(), METHOD_${id}_ID, ErrorCode.NO_LISTENER_ASSIGNED));
+                    pushMsg(new ErrorMessage(msg.getUid(), METHOD_${methodId}_ID, ErrorCode.NO_LISTENER_ASSIGNED));
                 }
             } catch (Exception e) {
                 LOG.error("Failed to process call from server", e);
-                pushMsg(new ErrorMessage(msg.getUid(), METHOD_${id}_ID, ErrorCode.EXECUTION_ERROR, e.getMessage()));
+                pushMsg(new ErrorMessage(msg.getUid(), METHOD_${methodId}_ID, ErrorCode.EXECUTION_ERROR, e.getMessage()));
             }
         }
     });

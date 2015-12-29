@@ -25,6 +25,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.Future;
 
 import org.apache.avro.Schema;
@@ -51,9 +52,19 @@ import org.kaaproject.kaa.server.plugin.messaging.generator.java.JavaMessagingPl
 
 public class JavaEndpointMessagingPluginGenerator extends AbstractSdkApiGenerator<Configuration> {
 
-    private static final String FUTURE_CLASS_NAME = Future.class.getSimpleName();
     private static final PluginContractItemDef SEND_MESSAGE_CONTRACT = MessagingSDKContract.buildSendMsgDef();
     private static final PluginContractItemDef RECEIVE_MESSAGE_CONTRACT = MessagingSDKContract.buildReceiveMsgDef();
+
+    // Template variables
+    private static final String NAME_VAR = "${name}";
+    private static final String METHOD_ID_VAR = "${methodId}";
+    private static final String INPUT_TYPE_VAR = "${inputType}";
+    private static final String OUTPUT_TYPE_VAR = "${outputType}";
+    private static final String MESSAGE_INPUT_TYPE_VAR = "${messageInputType}";
+    private static final String MESSAGE_OUTPUT_TYPE_VAR = "${messageOutputType}";
+    private static final String MESSAGE_INPUT_TYPE_CONVERTER_VAR = "${messageInputTypeConverter}";
+    private static final String MESSAGE_OUTPUT_TYPE_CONVERTER_VAR = "${messageOutputTypeConverter}";
+    private static final String LISTENER_VAR = "${listener}";
 
     /**
      * The plugin API interface builder.
@@ -66,7 +77,7 @@ public class JavaEndpointMessagingPluginGenerator extends AbstractSdkApiGenerato
     private JavaMessagingPluginImplementationBuilder pluginImplementation;
 
     /**
-     * Maps an input type to its entity class converter.
+     * Maps a type to its entity class converter.
      */
     private Map<String, String> entityConverters = new HashMap<>();
 
@@ -74,6 +85,16 @@ public class JavaEndpointMessagingPluginGenerator extends AbstractSdkApiGenerato
      * Maps a method listener interface to an appropriate field.
      */
     private Map<String, String> methodListeners = new LinkedHashMap<>();
+
+    /**
+     * Entity method handler constants
+     */
+    private Set<Integer> entityMethodConstants = new HashSet<Integer>();
+
+    /**
+     * Void method handler constants
+     */
+    private Set<Integer> voidMethodConstants = new HashSet<Integer>();
 
     @Override
     public Class<Configuration> getConfigurationClass() {
@@ -85,6 +106,7 @@ public class JavaEndpointMessagingPluginGenerator extends AbstractSdkApiGenerato
         JavaEndpointMessagingPluginGenerator object = new JavaEndpointMessagingPluginGenerator();
         object.generatePluginSdkApi(JavaEndpointMessagingPluginGenerator.getHardcodedContext()).getFiles().forEach(file -> {
             System.out.println(new String(file.getFileName()));
+            System.out.println(new String(file.getFileData()));
         });
     }
 
@@ -99,8 +121,8 @@ public class JavaEndpointMessagingPluginGenerator extends AbstractSdkApiGenerato
         PluginContractItemDef receiveMsgDef = MessagingSDKContract.buildReceiveMsgDef();
 
         // Future<Void> sendA(ClassA msg);
-        PluginContractItemInfo info = BasePluginContractItemInfo.builder()
-                .withData(methodNameConverter.encode(new ItemConfiguration("sendA"))).withInMsgSchema(ClassA.SCHEMA$.toString()).build();
+        PluginContractItemInfo info = BasePluginContractItemInfo.builder().withData(methodNameConverter.encode(new ItemConfiguration("sendA")))
+                .withInMsgSchema(ClassA.SCHEMA$.toString()).build();
         instance.addContractItemInfo(sendMsgDef, info);
 
         // Future<ClassA> getA()
@@ -172,37 +194,36 @@ public class JavaEndpointMessagingPluginGenerator extends AbstractSdkApiGenerato
                 this.pluginInterface.getName());
 
         // Plugin API interface imports
-        this.pluginInterface.withImportStatement(FUTURE_CLASS_NAME);
+        this.pluginInterface.withImportStatement(Future.class.getName());
 
         // Plugin API implementation imports
-        this.pluginImplementation.withImportStatement("java.io.IOException");
-        this.pluginImplementation.withImportStatement(FUTURE_CLASS_NAME);
-        this.pluginImplementation.withImportStatement("java.util.UUID");
+        this.pluginImplementation.withImportStatement(IOException.class.getName());
+        this.pluginImplementation.withImportStatement(Future.class.getName());
+        this.pluginImplementation.withImportStatement(UUID.class.getName());
         this.pluginImplementation.withImportStatement("org.kaaproject.kaa.client.plugin.messaging.common.v1.*");
         this.pluginImplementation.withImportStatement("org.kaaproject.kaa.client.plugin.messaging.common.v1.future.*");
         this.pluginImplementation.withImportStatement("org.kaaproject.kaa.client.plugin.messaging.common.v1.msg.*");
 
-        
-        Set<Integer> entityMethodConstantsSet = new HashSet<Integer>();
-        Set<Integer> voidMethodConstantsSet = new HashSet<Integer>();
         // Iterate over contract items provided
         for (PluginContractInstance contract : context.getPluginContracts()) {
             for (PluginContractItemDef def : contract.getDef().getPluginContractItems()) {
                 for (PluginContractItemInfo item : contract.getContractItemInfo(def)) {
+
+                    // Assign an ID to this method
+                    int methodId = entityMethodConstants.size() + voidMethodConstants.size() + 1;
+
                     // Get the name of this method
-                    String name = getMethodName(item);
-                    
-                    int methodConstant = entityMethodConstantsSet.size() + voidMethodConstantsSet.size() + 1;
+                    String name = this.getMethodName(item);
 
-                    // Get the input type of this method
-                    String messageInputType = parseMessageType(item.getInMessageSchema());
+                    // Get the input type of this method and add an appropriate
+                    // entity converter
+                    String messageInputType = this.parseMessageType(item.getInMessageSchema());
+                    this.addEntityConverter(messageInputType);
 
-                    addEntityConverter(messageInputType);
-
-                    // Get the output type of this method
+                    // Get the input type of this method and add an appropriate
+                    // entity converter
                     String messageOutputType = parseMessageType(item.getOutMessageSchema());
-
-                    addEntityConverter(messageOutputType);
+                    this.addEntityConverter(messageOutputType);
 
                     // Process the data gathered based on the item contract
                     if (def.equals(SEND_MESSAGE_CONTRACT)) {
@@ -214,16 +235,12 @@ public class JavaEndpointMessagingPluginGenerator extends AbstractSdkApiGenerato
                         // The value to insert into the template as the output
                         // type
                         String outputType;
-
-                        
-                        // Whether the item denotes an entity message handler or
-                        // a void message one
                         if (messageOutputType != null) {
                             outputType = String.format("Future<%s>", messageOutputType);
-                            entityMethodConstantsSet.add(methodConstant);
+                            this.entityMethodConstants.add(methodId);
                         } else {
                             outputType = "Future<Void>";
-                            voidMethodConstantsSet.add(methodConstant);
+                            this.voidMethodConstants.add(methodId);
                         }
 
                         // Add an appropriate method signature to the API
@@ -232,7 +249,7 @@ public class JavaEndpointMessagingPluginGenerator extends AbstractSdkApiGenerato
 
                         // Add an appropriate method constant to the API
                         // implementation
-                        this.pluginImplementation.withMethodConstant(name, new String[] { messageInputType }, methodConstant);
+                        this.pluginImplementation.withMethodConstant(name, new String[] { messageInputType }, methodId);
 
                         // The method parameters
                         Map<String, String> parameters = new LinkedHashMap<>();
@@ -240,14 +257,14 @@ public class JavaEndpointMessagingPluginGenerator extends AbstractSdkApiGenerato
 
                         // The values to insert into the method body
                         Map<String, String> values = new HashMap<>();
-                        values.put("${name}", name);
-                        values.put("${rawInputType}", messageInputType);
-                        values.put("${rawOutputType}", messageOutputType);
-                        values.put("${wrappedInputType}", inputType);
-                        values.put("${wrappedOutputType}", outputType);
-                        values.put("${inputTypeConverter}", this.entityConverters.get(messageInputType));
-                        values.put("${outputTypeConverter}", this.entityConverters.get(messageOutputType));
-                        values.put("${id}", Integer.toString(methodConstant));
+                        values.put(NAME_VAR, name);
+                        values.put(MESSAGE_INPUT_TYPE_VAR, messageInputType);
+                        values.put(MESSAGE_OUTPUT_TYPE_VAR, messageOutputType);
+                        values.put(INPUT_TYPE_VAR, inputType);
+                        values.put(OUTPUT_TYPE_VAR, outputType);
+                        values.put(MESSAGE_INPUT_TYPE_CONVERTER_VAR, this.entityConverters.get(messageInputType));
+                        values.put(MESSAGE_OUTPUT_TYPE_CONVERTER_VAR, this.entityConverters.get(messageOutputType));
+                        values.put(METHOD_ID_VAR, Integer.toString(methodId));
 
                         // Get the method body
                         String body;
@@ -269,24 +286,22 @@ public class JavaEndpointMessagingPluginGenerator extends AbstractSdkApiGenerato
                             parameters = new LinkedHashMap<>();
                             parameters.put("uid", "final UUID");
                             body = this.readFileAsString("templates/java/handle_send.template");
-                            this.pluginImplementation.withMethod("handleMethod" + values.get("${id}") + "Void", "void", parameters,
+                            this.pluginImplementation.withMethod("handleMethod" + values.get(METHOD_ID_VAR) + "Void", "void", parameters,
                                     new String[] { "private" }, body, values);
                         } else {
                             parameters = new LinkedHashMap<>();
                             parameters.put("msg", "final PayloadMessage");
                             body = this.readFileAsString("templates/java/handle_receive.template");
-                            this.pluginImplementation.withMethod("handleMethod" + values.get("${id}") + "Msg", "void", parameters,
+                            this.pluginImplementation.withMethod("handleMethod" + values.get(METHOD_ID_VAR) + "Msg", "void", parameters,
                                     new String[] { "private" }, body, values);
                         }
 
                     } else if (def.equals(RECEIVE_MESSAGE_CONTRACT)) {
 
-                        // Whether the item denotes an entity message handler or
-                        // a void message one
-                        if(messageInputType != null){
-                            entityMethodConstantsSet.add(methodConstant);
-                        } else{
-                            voidMethodConstantsSet.add(methodConstant);
+                        if (messageInputType != null) {
+                            this.entityMethodConstants.add(methodId);
+                        } else {
+                            this.voidMethodConstants.add(methodId);
                         }
 
                         // Add a method listener field
@@ -302,7 +317,7 @@ public class JavaEndpointMessagingPluginGenerator extends AbstractSdkApiGenerato
 
                         // Add an appropriate method constant to the API
                         // implementation
-                        this.pluginImplementation.withMethodConstant(name, new String[] { fieldType }, methodConstant);
+                        this.pluginImplementation.withMethodConstant(name, new String[] { fieldType }, methodId);
 
                         // Generates an interface for the method listener field
                         // class
@@ -313,45 +328,43 @@ public class JavaEndpointMessagingPluginGenerator extends AbstractSdkApiGenerato
 
                         // The values to insert into the method body
                         Map<String, String> values = new HashMap<>();
-                        values.put("${name}", name);
-                        values.put("${rawInputType}", messageInputType);
-                        values.put("${rawOutputType}", messageOutputType);
-                        values.put("${inputTypeConverter}", this.entityConverters.get(messageInputType));
-                        values.put("${outputTypeConverter}", this.entityConverters.get(messageOutputType));
-                        values.put("${id}", Integer.toString(methodConstant));
-                        values.put("${listener}", fieldName);
+                        values.put(NAME_VAR, name);
+                        values.put(MESSAGE_INPUT_TYPE_VAR, messageInputType);
+                        values.put(MESSAGE_OUTPUT_TYPE_VAR, messageOutputType);
+                        values.put(MESSAGE_INPUT_TYPE_CONVERTER_VAR, this.entityConverters.get(messageInputType));
+                        values.put(MESSAGE_OUTPUT_TYPE_CONVERTER_VAR, this.entityConverters.get(messageOutputType));
+                        values.put(METHOD_ID_VAR, Integer.toString(methodId));
+                        values.put(LISTENER_VAR, fieldName);
 
                         // Add a method handler
                         if (messageInputType == null || messageInputType.isEmpty()) {
                             Map<String, String> parameters = new LinkedHashMap<>();
                             parameters.put("uid", "final UUID");
                             String body = this.readFileAsString("templates/java/handle_listener_void.template");
-                            this.pluginImplementation.withMethod("handleMethod" + values.get("${id}") + "Void", "void", parameters,
+                            this.pluginImplementation.withMethod("handleMethod" + values.get(METHOD_ID_VAR) + "Void", "void", parameters,
                                     new String[] { "private" }, body, values);
                         } else {
                             Map<String, String> parameters = new LinkedHashMap<>();
                             parameters.put("msg", "final PayloadMessage");
                             String body = this.readFileAsString("templates/java/handle_listener.template");
-                            this.pluginImplementation.withMethod("handleMethod" + values.get("${id}") + "Msg", "void", parameters,
+                            this.pluginImplementation.withMethod("handleMethod" + values.get(METHOD_ID_VAR) + "Msg", "void", parameters,
                                     new String[] { "private" }, body, values);
                         }
-
                     } else {
-                        // Unknown contract item definition
+                        LOG.error("Unknown plugin item definition [{}]", def);
                         throw new RuntimeException();
                     }
-
                 }
             }
         }
 
         // Generate a method that delegates entity messages to appropriate
         // handlers.
-        this.pluginImplementation.withEntityMessageHandlersMapping(entityMethodConstantsSet);
+        this.pluginImplementation.withEntityMessageHandlersMapping(entityMethodConstants);
 
         // Generate a method that delegates void messages to appropriate
         // handlers.
-        this.pluginImplementation.withVoidMessageHandlersMapping(voidMethodConstantsSet);
+        this.pluginImplementation.withVoidMessageHandlersMapping(voidMethodConstants);
 
         files.add(this.pluginInterface.build());
         files.add(this.pluginImplementation.build());
@@ -359,28 +372,44 @@ public class JavaEndpointMessagingPluginGenerator extends AbstractSdkApiGenerato
         return new PluginSDKApiBundle(context.getExtensionId(), this.pluginInterface.getFqn(), this.pluginImplementation.getFqn(), files);
     }
 
-    private void addEntityConverter(String messageType) {
-        if (messageType != null && !this.entityConverters.containsKey(messageType)) {
+    /**
+     * Adds an entity converter for the type specified.
+     *
+     * @param typeName A fully qualified type name
+     */
+    private void addEntityConverter(String typeName) {
+        if (typeName != null && !this.entityConverters.containsKey(typeName)) {
             String entityConverter = "entity" + Integer.toString(this.entityConverters.size() + 1) + "Converter";
-            this.entityConverters.put(messageType, entityConverter);
-            this.pluginImplementation.withEntityConverter(entityConverter, messageType);
+            this.entityConverters.put(typeName, entityConverter);
+            this.pluginImplementation.withEntityConverter(entityConverter, typeName);
         }
     }
 
-    private String parseMessageType(String messageTypeSchema) {
-        if (messageTypeSchema == null) {
-            return null;
-        } else {
-            return new Schema.Parser().parse(messageTypeSchema).getFullName();
-        }
+    /**
+     * Parses the given Avro schema and returns the name of the type parsed.
+     *
+     * @param typeSchema An Avro schema
+     *
+     * @return The name of the type parsed
+     */
+    private String parseMessageType(String typeSchema) {
+        return (typeSchema != null) ? new Schema.Parser().parse(typeSchema).getFullName() : null;
     }
 
+    /**
+     * Figures out the method name of the given item.
+     *
+     * @param item An item to process
+     *
+     * @return The name of the item processed. If
+     */
     private String getMethodName(PluginContractItemInfo item) {
         String name = null;
         try {
             AvroByteArrayConverter<ItemConfiguration> converter = new AvroByteArrayConverter<>(ItemConfiguration.class);
             name = converter.fromByteArray(item.getConfigurationData()).getMethodName();
         } catch (IOException cause) {
+            LOG.debug("Unable to parse the item [{}]", item);
         }
         return name;
     }
