@@ -16,15 +16,11 @@
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
-import nl.jqno.equalsverifier.Warning;
-
 import org.junit.Test;
 
 public class EndpointGroupTest {
-
     @Test
-    public void hashCodeEqualsTest(){
-        EqualsVerifier.forClass(EndpointGroup.class).suppress(Warning.NONFINAL_FIELDS).verify();
+    public void hashCodeEqualsTest() {
+        EqualsVerifier.forClass(EndpointGroup.class).usingGetClass().verify();
     }
-
 }

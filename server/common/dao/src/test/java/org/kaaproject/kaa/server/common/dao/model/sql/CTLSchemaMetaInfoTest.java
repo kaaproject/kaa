@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-package org.kaaproject.kaa.server.common.dao.schema;
+package org.kaaproject.kaa.server.common.dao.model.sql;
+
 
 import nl.jqno.equalsverifier.EqualsVerifier;
-import nl.jqno.equalsverifier.Warning;
-
 import org.junit.Test;
 
-public class EventSchemaMetadataTest {
+public class CTLSchemaMetaInfoTest {
     @Test
     public void hashCodeEqualsTest() {
-        EqualsVerifier.forClass(EventSchemaMetadata.class).usingGetClass().suppress(Warning.NONFINAL_FIELDS).verify();
+        EqualsVerifier.forClass(CTLSchemaMetaInfo.class).usingGetClass().verify();
     }
 }
