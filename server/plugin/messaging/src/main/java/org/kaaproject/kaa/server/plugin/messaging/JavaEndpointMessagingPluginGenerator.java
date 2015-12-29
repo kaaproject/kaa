@@ -151,7 +151,7 @@ public class JavaEndpointMessagingPluginGenerator extends AbstractSdkApiGenerato
             public String getPluginConfigurationData() {
                 Configuration config = new Configuration("org.kaaproject.kaa.client.plugin.messaging");
                 try {
-                    return new String(new AvroByteArrayConverter<>(Configuration.class).toByteArray(config));
+                    return new GenericAvroConverter<Configuration>(Configuration.SCHEMA$).encodeToJson(config);
                 } catch (IOException cause) {
                     return null;
                 }
@@ -165,7 +165,7 @@ public class JavaEndpointMessagingPluginGenerator extends AbstractSdkApiGenerato
             }
         };
         Configuration configuration = new Configuration("org.kaaproject.kaa.client.plugin.messaging");
-        return new SpecificPluginSdkApiGenerationContext<Configuration>(base, configuration);
+        return new SpecificPluginSdkApiGenerationContext<>(base, configuration);
     }
 
     @Override
