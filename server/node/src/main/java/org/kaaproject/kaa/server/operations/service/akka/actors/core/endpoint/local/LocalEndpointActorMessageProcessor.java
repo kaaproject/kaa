@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kaaproject.kaa.server.operations.service.akka.actors.core;
+package org.kaaproject.kaa.server.operations.service.akka.actors.core.endpoint.local;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,10 +38,9 @@ import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
 import org.kaaproject.kaa.server.common.log.shared.appender.data.BaseLogEventPack;
 import org.kaaproject.kaa.server.operations.pojo.SyncContext;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
-import org.kaaproject.kaa.server.operations.service.OperationsService;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
-import org.kaaproject.kaa.server.operations.service.akka.actors.core.ChannelMap.ChannelMetaData;
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointStopMessage;
+import org.kaaproject.kaa.server.operations.service.akka.actors.core.endpoint.AbstractEndpointActorMessageProcessor;
+import org.kaaproject.kaa.server.operations.service.akka.actors.core.endpoint.local.ChannelMap.ChannelMetaData;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.SyncRequestMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.logs.LogDeliveryMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.logs.LogEventPackMessage;
@@ -93,45 +92,19 @@ import org.slf4j.LoggerFactory;
 
 import scala.concurrent.duration.Duration;
 import akka.actor.ActorContext;
-import akka.actor.ActorRef;
 
-public class EndpointActorMessageProcessor {
+public class LocalEndpointActorMessageProcessor extends AbstractEndpointActorMessageProcessor<LocalEndpointActorState> {
 
     /** The Constant LOG. */
-    private static final Logger LOG = LoggerFactory.getLogger(EndpointActorMessageProcessor.class);
-
-    private final EndpointActorState state;
-
-    /** The operations service. */
-    private final OperationsService operationsService;
-
-    /** The app token. */
-    private final String appToken;
-
-    /** The key. */
-    private final EndpointObjectHash key;
-
-    /** The actor key. */
-    private final String actorKey;
-
-    /** The actor key. */
-    private final String endpointKey;
+    private static final Logger LOG = LoggerFactory.getLogger(LocalEndpointActorMessageProcessor.class);
 
     private final Map<Integer, LogDeliveryMessage> logUploadResponseMap;
 
     private final Map<UUID, UserVerificationResponseMessage> userAttachResponseMap;
 
-    private final long inactivityTimeout;
-
-    protected EndpointActorMessageProcessor(AkkaContext context, String appToken, EndpointObjectHash key, String actorKey) {
-        super();
-        this.operationsService = context.getOperationsService();
-        this.inactivityTimeout = context.getInactivityTimeout();
-        this.appToken = appToken;
-        this.key = key;
-        this.actorKey = actorKey;
-        this.endpointKey = Base64Util.encode(key.getData());
-        this.state = new EndpointActorState(endpointKey, actorKey);
+    public LocalEndpointActorMessageProcessor(AkkaContext context, String appToken, EndpointObjectHash key, String actorKey) {
+        super(new LocalEndpointActorState(Base64Util.encode(key.getData()), actorKey), context.getOperationsService(), appToken, key,
+                actorKey, Base64Util.encode(key.getData()), context.getLocalEndpointTimeout());
         this.logUploadResponseMap = new HashMap<>();
         this.userAttachResponseMap = new LinkedHashMap<>();
     }
@@ -221,13 +194,6 @@ public class EndpointActorMessageProcessor {
             }
         } else {
             LOG.debug("[{}][{}] Failed to find request by id [{}].", endpointKey, actorKey, message.getRequestId());
-        }
-    }
-
-    public void processActorTimeoutMessage(ActorContext context, ActorTimeoutMessage message) {
-        if (state.getLastActivityTime() <= message.getLastActivityTime()) {
-            LOG.debug("[{}][{}] Request stop of endpoint actor due to inactivity timeout", endpointKey, actorKey);
-            tellParent(context, new EndpointStopMessage(key, actorKey, context.self()));
         }
     }
 
@@ -585,7 +551,7 @@ public class EndpointActorMessageProcessor {
 
     protected void scheduleActorTimeout(ActorContext context) {
         if (state.isNoChannels()) {
-            scheduleTimeoutMessage(context, new ActorTimeoutMessage(state.getLastActivityTime()), inactivityTimeout);
+            scheduleTimeoutMessage(context, new ActorTimeoutMessage(state.getLastActivityTime()), getInactivityTimeout());
         }
     }
 
@@ -841,13 +807,5 @@ public class EndpointActorMessageProcessor {
             operationsService.attachEndpointToUser(state.getProfile(), appToken, message.getUserId());
             updateUserConnection(context);
         }
-    }
-
-    protected void tellParent(ActorContext context, Object response) {
-        context.parent().tell(response, context.self());
-    }
-
-    protected void tellActor(ActorContext context, ActorRef target, Object message) {
-        target.tell(message, context.self());
     }
 }

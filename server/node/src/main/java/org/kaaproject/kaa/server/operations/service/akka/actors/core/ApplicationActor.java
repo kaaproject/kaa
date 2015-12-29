@@ -23,12 +23,12 @@ import static org.kaaproject.kaa.server.operations.service.akka.DefaultAkkaServi
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Operation;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
+import org.kaaproject.kaa.server.operations.service.akka.actors.core.endpoint.local.LocalEndpointActorCreator;
 import org.kaaproject.kaa.server.operations.service.akka.actors.supervision.SupervisionStrategyFactory;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointAwareMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointStopMessage;
@@ -410,11 +410,10 @@ public class ApplicationActor extends UntypedActor {
     private void processEndpointRequest(EndpointAwareMessage message) {
         ActorMetaData endpointMetaData = endpointSessions.get(message.getKey());
         if (endpointMetaData == null) {
-            UUID uuid = UUID.randomUUID();
-            String endpointActorId = uuid.toString().replaceAll("-", "");
+            String endpointActorId = LocalEndpointActorCreator.generateActorKey();
             LOG.debug("[{}] Creating actor with endpointKey: {}", applicationToken, endpointActorId);
             endpointMetaData = new ActorMetaData(context().actorOf(
-                    Props.create(new EndpointActor.ActorCreator(context, endpointActorId, message.getAppToken(), message.getKey()))
+                    Props.create(new LocalEndpointActorCreator(context, endpointActorId, message.getAppToken(), message.getKey()))
                             .withDispatcher(ENDPOINT_DISPATCHER_NAME), endpointActorId), endpointActorId);
             endpointSessions.put(message.getKey(), endpointMetaData);
             endpointActorMap.put(endpointActorId, message.getKey());

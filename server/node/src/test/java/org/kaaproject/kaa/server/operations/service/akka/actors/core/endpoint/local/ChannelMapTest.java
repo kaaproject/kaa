@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package org.kaaproject.kaa.server.operations.service.akka.actors.core;
+package org.kaaproject.kaa.server.operations.service.akka.actors.core.endpoint.local;
 
 import java.util.UUID;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.Constants;
-import org.kaaproject.kaa.server.operations.service.akka.actors.core.ChannelMap.ChannelMetaData;
+import org.kaaproject.kaa.server.operations.service.akka.actors.core.endpoint.local.ChannelMap;
+import org.kaaproject.kaa.server.operations.service.akka.actors.core.endpoint.local.ChannelMap.ChannelMetaData;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.SyncRequestMessage;
 import org.kaaproject.kaa.server.sync.ClientSync;
 import org.kaaproject.kaa.server.sync.ClientSyncMetaData;
