@@ -134,6 +134,8 @@
         if (self.profileTransport && syncResponse.profileSyncResponse
             && syncResponse.profileSyncResponse.branch == KAA_UNION_PROFILE_SYNC_RESPONSE_OR_NULL_BRANCH_0) {
             [self.profileTransport onProfileResponse:syncResponse.profileSyncResponse.data];
+        } else if (syncResponse.status == SYNC_RESPONSE_RESULT_TYPE_PROFILE_RESYNC) {
+            [self.profileTransport sync];
         }
         if (self.logTransport && syncResponse.logSyncResponse
             && syncResponse.logSyncResponse.branch == KAA_UNION_LOG_SYNC_RESPONSE_OR_NULL_BRANCH_0) {
