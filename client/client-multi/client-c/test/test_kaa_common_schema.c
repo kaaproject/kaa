@@ -939,9 +939,9 @@ static void test_null_get_size(void)
     KAA_TRACE_IN(logger);
 
     srand(time(NULL));
-    ASSERT_EQUAL(kaa_null_get_size(), 0);
+    ASSERT_EQUAL(kaa_null_get_size(NULL), 0);
 
-    ASSERT_EQUAL(kaa_null_get_size(), AVRO_NULL_SIZE);
+    ASSERT_EQUAL(kaa_null_get_size(NULL), AVRO_NULL_SIZE);
 
     KAA_TRACE_OUT(logger);
 }
