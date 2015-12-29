@@ -450,6 +450,10 @@ public class AdminClient {
         return entity.getBody();
     }
 
+    public TopicDto editTopic(TopicDto topic) throws Exception {
+        return restTemplate.postForObject(url + "topic", topic, TopicDto.class);
+    }
+
     public void deleteTopic(TopicDto topic) throws Exception {
         deleteTopic(topic.getId());
     }
@@ -710,12 +714,29 @@ public class AdminClient {
         restTemplate.postForLocation(url + "delLogAppender", params);
     }
 
+    public UserVerifierDto getUserVerifier(String userVerifierId) throws Exception {
+        return restTemplate.getForObject(url + "userVerifier/" + userVerifierId, UserVerifierDto.class);
+    }
+
+    public List<UserVerifierDto> getUserVerifiersByApplicationId(String applicationId) {
+        ParameterizedTypeReference<List<UserVerifierDto>> typeRef = new ParameterizedTypeReference<List<UserVerifierDto>>() {
+        };
+        ResponseEntity<List<UserVerifierDto>> entity = restTemplate.exchange(url + "userVerifiers/" + applicationId, HttpMethod.GET, null, typeRef);
+        return entity.getBody();
+    }
+
     public UserVerifierDto editUserVerifierDto(UserVerifierDto userVerifierDto) throws Exception {
         return restTemplate.postForObject(url + "userVerifier", userVerifierDto, UserVerifierDto.class);
     }
 
+    public void deleteUserVerifier(String userVerifierId) throws Exception {
+        MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
+        params.add("userVerifierId", userVerifierId);
+        restTemplate.postForLocation(url + "delUserVerifier", params);
+    }
+
     public SdkProfileDto createSdkProfile(SdkProfileDto sdkProfile) throws Exception {
-        return restTemplate.postForObject(url + "addSdkProfile", sdkProfile, SdkProfileDto.class);
+        return restTemplate.postForObject(url + "createSdkProfile", sdkProfile, SdkProfileDto.class);
     }
 
     public void deleteSdkProfile(SdkProfileDto sdkProfile) throws Exception {
@@ -966,6 +987,14 @@ public class AdminClient {
         ResponseEntity<List<CTLSchemaMetaInfoDto>> entity = restTemplate.exchange(url + "CTL/getSchemas?applicationId=" + applicationId,
                 HttpMethod.GET, null, typeRef);
         return entity.getBody();
+    }
+
+    public UserDto getUserProfile() throws Exception {
+        return restTemplate.getForObject(url + "userProfile", UserDto.class);
+    }
+
+    public UserDto editUserProfile(UserDto userDto) {
+        return restTemplate.postForObject(url + "userProfile", userDto, UserDto.class);
     }
 
 }
