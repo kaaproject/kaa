@@ -52,6 +52,7 @@
                        keyHash:(EndpointKeyHash *)keyHash;
 - (void)notifyDetachedDelegate:(SyncResponseResultType)result
                       delegate:(id<OnDetachEndpointOperationDelegate>)delegate;
+- (void)addDelegate:(id)delegate forRequestId:(NSNumber *)requestId;
 
 @end
 
@@ -85,6 +86,7 @@
 
 - (void)updateEndpointAccessToken:(NSString *)token {
     [self.state setEndpointAccessToken:token];
+    [self onEndpointAccessTokenChanged];
 }
 
 - (NSString *)refreshEndpointAccessToken {
@@ -104,14 +106,7 @@
     @synchronized (self.attachEndpointRequests) {
         [self.attachEndpointRequests setObject:accessToken forKey:requestId];
     }
-    if (delegate) {
-        @synchronized (self.endpointAttachDelegates) {
-            [self.endpointAttachDelegates setObject:delegate forKey:requestId];
-        }
-    }
-    if (self.userTransport) {
-        [self.userTransport sync];
-    }
+    [self addDelegate:delegate forRequestId:requestId];
 }
 
 - (void)detachEndpoint:(EndpointKeyHash *)keyHash delegate:(id<OnDetachEndpointOperationDelegate>)delegate {
@@ -120,7 +115,15 @@
     @synchronized (self.detachEndpointRequests) {
         [self.detachEndpointRequests setObject:keyHash forKey:requestId];
     }
-    if (delegate) {
+    [self addDelegate:delegate forRequestId:requestId];
+}
+
+- (void)addDelegate:(id)delegate forRequestId:(NSNumber *)requestId  {
+    if (delegate && [delegate conformsToProtocol:@protocol(OnAttachEndpointOperationDelegate)]) {
+        @synchronized (self.endpointAttachDelegates) {
+            [self.endpointAttachDelegates setObject:delegate forKey:requestId];
+        }
+    } else if (delegate && [delegate conformsToProtocol:@protocol(OnDetachEndpointOperationDelegate)]) {
         @synchronized (self.endpointDetachDelegates) {
             [self.endpointDetachDelegates setObject:delegate forKey:requestId];
         }
