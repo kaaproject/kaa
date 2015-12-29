@@ -25,8 +25,8 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
-import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.common.dto.TenantDto;
+import org.kaaproject.kaa.common.dto.VersionDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.common.dao.AbstractTest;
 
@@ -101,7 +101,7 @@ public class LogSchemaServiceImplTest extends AbstractTest {
     
     @Test
     public void findLogSchemaVersionsByApplicationIdTest() {
-        List<SchemaDto> schemas = logSchemaService.findLogSchemaVersionsByApplicationId(applicationDto.getId());
+        List<VersionDto> schemas = logSchemaService.findLogSchemaVersionsByApplicationId(applicationDto.getId());
         
         Assert.assertEquals(1, schemas.size());
     }

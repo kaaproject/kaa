@@ -1,0 +1,3 @@
+            efcNames_.insert("${event_family_class_name}");
+            FQNList ${event_family_class_name}Events = ${add_supported_event_class_fqns};
+            supportedFQNLists_.insert(std::make_pair("${event_family_class_name}", ${event_family_class_name}Events));

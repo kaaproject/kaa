@@ -82,4 +82,9 @@ public class AndroidKaaPlatformContext implements KaaClientPlatformContext {
     public ExecutorContext getExecutorContext() {
         return executorContext;
     }
+
+    @Override
+    public boolean needToCheckClientState() {
+        return false;
+    }
 }

@@ -21,7 +21,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
-import org.kaaproject.kaa.common.dto.SchemaDto;
+import org.kaaproject.kaa.common.dto.VersionDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.plugin.legacy.PluginInfoDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
@@ -62,23 +62,23 @@ public class LogAppenderActivity extends AbstractPluginActivity<LogAppenderDto, 
     @Override
     protected void onEntityRetrieved() {
         super.onEntityRetrieved();
-        KaaAdmin.getDataSource().loadLogSchemasVersion(applicationId, new BusyAsyncCallback<List<SchemaDto>>() {
+        KaaAdmin.getDataSource().loadLogSchemasVersion(applicationId, new BusyAsyncCallback<List<VersionDto>>() {
             @Override
             public void onFailureImpl(Throwable caught) {
                 Utils.handleException(caught, detailsView);
             }
             @Override
-            public void onSuccessImpl(List<SchemaDto> result) {
+            public void onSuccessImpl(List<VersionDto> result) {
                 onSchemaVersionsRetrieved(result);
             }
         });
     }
     
-    private void onSchemaVersionsRetrieved(List<SchemaDto> result) {
+    private void onSchemaVersionsRetrieved(List<VersionDto> result) {
         Collections.sort(result);
         List<Integer> versions = new ArrayList<>(result.size());
-        for (SchemaDto schema : result) {
-            versions.add(schema.getMajorVersion());
+        for (VersionDto schema : result) {
+            versions.add(schema.getVersion());
         }
         if (!create) {
             detailsView.getMinSchemaVersion().setValue(entity.getMinLogSchemaVersion());

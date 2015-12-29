@@ -50,6 +50,16 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.kaaproject.kaa.server.plugin</groupId>
+            <artifactId>common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.plugin</groupId>
+            <artifactId>messaging</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>
             <artifactId>server-shared</artifactId>
         </dependency>
@@ -663,14 +673,59 @@
                                     <directory>../../common/endpoint-shared/src/main/avro</directory>
                                     <filtering>false</filtering>
                                     <includes>
-                                        <include>default_profile_schema.avsc</include>
+                                        <include>default_system_empty_schema.avsc</include>
                                         <include>default_configuration_schema.avsc</include>
                                         <include>default_notification_schema.avsc</include>
                                     </includes>
                                 </resource>                                                               
                             </resources>      
                         </configuration>
-                    </execution>                                   
+                    </execution>
+                    <execution>
+                        <id>copy-c-templates</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.basedir}/src/test/resources/sdk/c/</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.basedir}/../../client/client-multi/client-c/templates/</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-cpp-templates</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.basedir}/src/test/resources/sdk/cpp/</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.basedir}/../../client/client-multi/client-cpp/templates/</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-java-templates</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.basedir}/src/test/resources/sdk/java</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.basedir}/../../client/client-multi/client-java-desktop/src/templates/</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
             <plugin>
@@ -936,6 +991,18 @@
                                 <replace
                                     file="${project.build.directory}/tmp_sh/init.d/rpm/${script.server.name}.init.d"
                                     token="#javaopts#" value="${script.java.options}"  />
+                            </tasks>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>remove</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <delete dir="${project.basedir}/src/test/resources/sdk/"/>
                             </tasks>
                         </configuration>
                     </execution>

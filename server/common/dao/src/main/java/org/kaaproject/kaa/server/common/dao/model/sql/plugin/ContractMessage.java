@@ -54,6 +54,10 @@ public class ContractMessage extends GenericModel<ContractMessageDto> implements
         this.version = dto.getVersion();
     }
 
+    public ContractMessage(Long id) {
+        this.id = id;
+    }
+
     public String getFqn() {
         return fqn;
     }
@@ -82,6 +86,11 @@ public class ContractMessage extends GenericModel<ContractMessageDto> implements
     @Override
     protected ContractMessageDto createDto() {
         return new ContractMessageDto();
+    }
+
+    @Override
+    protected ContractMessage newInstance(Long id) {
+        return new ContractMessage(id);
     }
 
     @Override

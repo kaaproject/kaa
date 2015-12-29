@@ -55,6 +55,11 @@ public class NotificationSchema extends Schema<NotificationSchemaDto> implements
     }
 
     @Override
+    protected NotificationSchema newInstance(Long id) {
+        return new NotificationSchema(id);
+    }
+
+    @Override
     public NotificationSchemaDto toDto() {
         NotificationSchemaDto dto = super.toDto();
         dto.setType(type);
@@ -90,6 +95,6 @@ public class NotificationSchema extends Schema<NotificationSchemaDto> implements
     }
 
     public int incrementVersion() {
-        return ++majorVersion;
+        return ++version;
     }
 }

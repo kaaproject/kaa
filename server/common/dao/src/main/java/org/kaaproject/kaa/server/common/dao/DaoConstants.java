@@ -25,13 +25,12 @@ public class DaoConstants {
     public static final String EXTERNAL_UID_PROPERTY = "externalUid";
     public static final String NAME_PROPERTY = "name";
     public static final String AUTHORITY_PROPERTY = "authority";
-    public static final String PROFILE_SCHEMA_PROPERTY = "profileSchema";
+    public static final String ENDPOINT_PROFILE_SCHEMA_PROPERTY = "endpointProfileSchema";
+    public static final String SERVER_PROFILE_SCHEMA_PROPERTY = "serverProfileSchema";
     public static final String ENDPOINT_GROUP_PROPERTY = "endpointGroup";
     public static final String ENDPOINT_GROUPS_PROPERTY = "endpointGroups";
     public static final String STATUS_PROPERTY = "status";
     public static final String SEQUENCE_NUMBER_PROPERTY = "sequenceNumber";
-    public static final String MAJOR_VERSION_PROPERTY = "majorVersion";
-    public static final String MINOR_VERSION_PROPERTY = "minorVersion";
     public static final String APPLICATION_PROPERTY = "application";
     public static final String TOPIC_TYPE_PROPERTY = "type";
     public static final String WEIGHT_PROPERTY = "weight";
@@ -39,6 +38,7 @@ public class DaoConstants {
     public static final String CONFIGURATION_SCHEMA_PROPERTY = "configurationSchema";
     public static final String ECF_PROPERTY = "ecf";
     public static final String VERSION_PROPERTY = "version";
+    public static final String SCHEMA_VERSION_PROPERTY = "schemaVersion";
     public static final String EVENT_CLASS_TYPE_PROPERTY = "type";
     public static final String FQN_PROPERTY = "fqn";
     public static final String CLASS_NAME_PROPERTY = "className";
@@ -48,9 +48,11 @@ public class DaoConstants {
     public static final String PLUGIN_CONTRACT_PROPERTY = "pluginContract";
     public static final String PLUGIN_INSTANCE_PROPERTY = "pluginInstance";
     public static final String PLUGIN_CONTRACT_INSTANCE_PROPERTY = "pluginContractInstance";
+    public static final String CREATED_TIME_PROPERTY = "createdTime";
 
     public static final String TENANT_ALIAS = "tenant";
-    public static final String PROFILE_SCHEMA_ALIAS = "profileSchema";
+    public static final String ENDPOINT_PROFILE_SCHEMA_ALIAS = "endpointProfileSchema";
+    public static final String SERVER_PROFILE_SCHEMA_ALIAS = "serverProfileSchema";
     public static final String ENDPOINT_GROUP_ALIAS = "endpointGroup";
     public static final String APPLICATION_ALIAS = "application";
     public static final String TOPIC_ALIAS = "topic";
@@ -58,7 +60,10 @@ public class DaoConstants {
     public static final String ECF_ALIAS = "ecf";
 
     public static final String TENANT_REFERENCE = TENANT_ALIAS + "." + ID_PROPERTY;
-    public static final String PROFILE_SCHEMA_REFERENCE = PROFILE_SCHEMA_ALIAS + "." + ID_PROPERTY;
+    public static final String ENDPOINT_PROFILE_SCHEMA_REFERENCE = ENDPOINT_PROFILE_SCHEMA_ALIAS + "." + ID_PROPERTY;
+    public static final String SERVER_PROFILE_SCHEMA_REFERENCE = SERVER_PROFILE_SCHEMA_ALIAS + "." + ID_PROPERTY;
+    public static final String ENDPOINT_PROFILE_SCHEMA_VERSION_REFERENCE = ENDPOINT_PROFILE_SCHEMA_ALIAS + "." + VERSION_PROPERTY;
+    public static final String SERVER_PROFILE_SCHEMA_VERSION_REFERENCE = SERVER_PROFILE_SCHEMA_ALIAS + "." + VERSION_PROPERTY;
     public static final String ENDPOINT_GROUP_REFERENCE = ENDPOINT_GROUP_ALIAS + "." + ID_PROPERTY;
     public static final String APPLICATION_REFERENCE = APPLICATION_ALIAS + "." + ID_PROPERTY;
     public static final String TOPIC_REFERENCE = TOPIC_ALIAS + "." + ID_PROPERTY;
@@ -74,8 +79,6 @@ public class DaoConstants {
     public static final String NAME = "name";
     public static final String SEQUENCE_NUMBER = "sequence_number";
     public static final String TENANT_ID = "tenant_id";
-    public static final String MAJOR_VERSION = "major_version";
-    public static final String MINOR_VERSION = "minor_version";
     public static final String DESCRIPTION = "description";
     public static final String CREATED_TIME = "created_time";
     public static final String LAST_MODIFY_TIME = "last_modify_time";
@@ -129,8 +132,7 @@ public class DaoConstants {
      */
     public static final String ABSTRACT_STRUCTURE_TABLE_NAME = "abstract_structure";
     public static final String ABSTRACT_STRUCTURE_SEQUENCE_NUMBER = SEQUENCE_NUMBER;
-    public static final String ABSTRACT_STRUCTURE_MAJOR_VERSION = MAJOR_VERSION;
-    public static final String ABSTRACT_STRUCTURE_MINOR_VERSION = MINOR_VERSION;
+    public static final String ABSTRACT_STRUCTURE_SCHEMA_VERSION = "schema_version";
     public static final String ABSTRACT_STRUCTURE_DESCRIPTION = DESCRIPTION;
     public static final String ABSTRACT_STRUCTURE_CREATED_TIME = CREATED_TIME;
     public static final String ABSTRACT_STRUCTURE_LAST_MODIFY_TIME = LAST_MODIFY_TIME;
@@ -146,17 +148,46 @@ public class DaoConstants {
     public static final String ABSTRACT_STRUCTURE_ENDPOINT_GROUP_ID = ENDPOINT_GROUP_ID;
     public static final String ABSTRACT_STRUCTURE_OPTIMISTIC_LOCK = "optimistic_lock";
 
+
+    /**
+     * Base schema constants.
+     */
+    public static final String BASE_SCHEMA_TABLE_NAME = "base_schema";
+    public static final String BASE_SCHEMA_VERSION = VERSION;
+    public static final String BASE_SCHEMA_NAME = NAME;
+    public static final String BASE_SCHEMA_DESCRIPTION = DESCRIPTION;
+    public static final String BASE_SCHEMA_CREATED_USERNAME = CREATED_USERNAME;
+    public static final String BASE_SCHEMA_CREATED_TIME = CREATED_TIME;
+    public static final String BASE_SCHEMA_APPLICATION_ID = APPLICATION_ID;
+    public static final String BASE_SCHEMA_CTL_SCHEMA_ID = "ctl_id";
+    // Foreign keys constants.
+    public static final String BASE_SCHEMA_FK_APP_ID = "fk_server_pf_schema_app_id";
+    public static final String BASE_SCHEMA_FK_CTL_SCHEMA_ID = "fk_server_pf_schema_ctl_id";
+
     /**
      * Profile schema constants.
      */
     public static final String PROFILE_SCHEMA_TABLE_NAME = "profile_schema";
 
     /**
+     * Server profile schema constants.
+     */
+    public static final String SERVER_PROFILE_SCHEMA_TABLE_NAME = "server_profile_schema";
+    public static final String SERVER_PROFILE_SCHEMA_APP_ID = APPLICATION_ID;
+    public static final String SERVER_PROFILE_SCHEMA_CTL_SCHEMA_ID = "ctl_id";
+    public static final String SERVER_PROFILE_SCHEMA_CREATED_TIME = CREATED_TIME;
+    // Foreign keys constants.
+    public static final String SERVER_PROFILE_SCHEMA_FK_APP_ID = "fk_server_pf_schema_app_id";
+    public static final String SERVER_PROFILE_SCHEMA_FK_CTL_SCHEMA_ID = "fk_server_pf_schema_ctl_id";
+
+
+    /**
      * Profile filter constants.
      */
     public static final String PROFILE_FILTER_TABLE_NAME = "profile_filter";
     public static final String PROFILE_FILTER_BODY = "profile_filter_body";
-    public static final String PROFILE_FILTER_SCHEMA_ID = SCHEMA_ID;
+    public static final String PROFILE_FILTER_ENDPOINT_SCHEMA_ID = "endpoint_schema_id";
+    public static final String PROFILE_FILTER_SERVER_SCHEMA_ID = "server_schema_id";
 
     /**
      * Endpoint group constants.
@@ -178,8 +209,7 @@ public class DaoConstants {
      * Schema constants.
      */
     public static final String SCHEMA_TABLE_NAME = "schema";
-    public static final String SCHEMA_MAJOR_VERSION = MAJOR_VERSION;
-    public static final String SCHEMA_MINOR_VERSION = MINOR_VERSION;
+    public static final String SCHEMA_VERSION = VERSION;
     public static final String SCHEMA_SCHEMA = "schema";
     public static final String SCHEMA_NAME = NAME;
     public static final String SCHEMA_DESCRIPTION = DESCRIPTION;
@@ -202,6 +232,7 @@ public class DaoConstants {
     public static final String CONFIGURATION_TABLE_NAME = "configuration";
     public static final String CONFIGURATION_CONFIGURATION_BODY = "configuration_body";
     public static final String CONFIGURATION_CONFIGURATION_SCHEMA_ID = "configuration_schema_id";
+    public static final String CONFIGURATION_CONFIGURATION_SCHEMA_VERSION = "configuration_schema_version";
 
     /**
      * Topic constants.
@@ -343,6 +374,54 @@ public class DaoConstants {
     public static final String SDK_PROFILE_PROFILE_SCHEMA_VERSION = "profile_schema_version";
     public static final String SDK_PROFILE_TABLE_NAME = "sdk_token";
     public static final String SDK_PROFILE_TOKEN = "token";
+
+    /**
+     * CTL schema constants
+     */
+    public static final String CTL_SCHEMA_TABLE_NAME = "ctl";
+    public static final String CTL_SCHEMA_APPLICATION_ID = APPLICATION_ID;
+    public static final String CTL_SCHEMA_TENANT_ID = TENANT_ID;
+    public static final String CTL_SCHEMA_META_INFO_ID = "metainfo_id";
+    public static final String CTL_SCHEMA_BODY = "body";
+    public static final String CTL_SCHEMA_DEFAULT_RECORD = "default_record";
+    public static final String CTL_SCHEMA_NAME = NAME;
+    public static final String CTL_SCHEMA_DESCRIPTION = DESCRIPTION;
+    public static final String CTL_SCHEMA_CREATED_USERNAME = CREATED_USERNAME;
+    public static final String CTL_SCHEMA_CREATED_TIME = CREATED_TIME;
+    // CTL schema foreign keys
+    public static final String CTL_SCHEMA_APPLICATION_FK = "fk_ctl_app_id";
+    public static final String CTL_SCHEMA_TENANT_FK = "fk_ctl_tenant_id";
+    public static final String CTL_SCHEMA_META_INFO_FK = "fk_ctl_metainfo_id";
+    public static final String CTL_SCHEMA_JOIN_TABLE_PARENT_FK = "fk_ctl_pr_id";
+    public static final String CTL_SCHEMA_JOIN_TABLE_CHILD_FK = "fk_ctl_ch_id";
+    // CTL schema constraints
+    public static final String CTL_SCHEMA_UNIQUE_CONSTRAINT = "ctl_unique_constraint";
+    public static final String CTL_SCHEMA_JOIN_TABLE_NAME = "ctl_dependency";
+    public static final String CTL_SCHEMA_JOIN_TABLE_PARENT_ID = "parent_id";
+    public static final String CTL_SCHEMA_JOIN_TABLE_CHILD_ID = "child_id";
+    // Properties and alias constants
+    public static final String CTL_SCHEMA_TENANT_ID_ALIAS = "tenant.id";
+    public static final String CTL_SCHEMA_APPLICATION_ID_ALIAS = "application.id";
+    public static final String CTL_SCHEMA_DEPENDENCY_PROP = "dependencySet";
+    public static final String CTL_SCHEMA_DEPENDENCY_ALIAS = "dep";
+    public static final String CTL_SCHEMA_DEPENDENCY_ID_ALIAS = CTL_SCHEMA_DEPENDENCY_ALIAS + "." + ID;
+
+
+    /**
+     * CTL schema meta info constants
+     */
+    public static final String CTL_SCHEMA_META_INFO_TABLE_NAME = "ctl_metainfo";
+    public static final String CTL_SCHEMA_META_INFO_FQN = FQN;
+    public static final String CTL_SCHEMA_META_INFO_VERSION = VERSION;
+    public static final String CTL_SCHEMA_META_INFO_SCOPE = "scope";
+    public static final String CTL_SCHEMA_META_INFO_UNIQUE_CONSTRAINT = "ctl_metainfo_unique_constraint";
+    // Properties and alias constants
+    public static final String CTL_SCHEMA_META_INFO_PROPERTY = "metaInfo";
+    public static final String CTL_SCHEMA_META_INFO_ALIAS = "mi";
+    public static final String CTL_SCHEMA_META_INFO_ALIAS_VERSION = CTL_SCHEMA_META_INFO_ALIAS + "." + CTL_SCHEMA_META_INFO_VERSION;
+    public static final String CTL_SCHEMA_META_INFO_ALIAS_FQN = CTL_SCHEMA_META_INFO_ALIAS + "." + CTL_SCHEMA_META_INFO_FQN;
+    public static final String CTL_SCHEMA_META_INFO_ALIAS_SCOPE = CTL_SCHEMA_META_INFO_ALIAS + "." + CTL_SCHEMA_META_INFO_SCOPE;
+
 
     /**
      * Plugin constants

@@ -113,6 +113,11 @@ public final class ConfigurationSchema extends Schema<ConfigurationSchemaDto> im
     }
 
     @Override
+    protected ConfigurationSchema newInstance(Long id) {
+        return new ConfigurationSchema(id);
+    }
+
+    @Override
     public int hashCode() {
         final int prime = 37;
         int result = 1;
@@ -164,7 +169,7 @@ public final class ConfigurationSchema extends Schema<ConfigurationSchemaDto> im
 
     @Override
     public String toString() {
-        return "ConfigurationSchema [majorVersion=" + majorVersion + ", minorVersion=" + minorVersion + ", name=" + name + ", description="
+        return "ConfigurationSchema [version=" + version + ", name=" + name + ", description="
                 + description + ", createdUsername=" + createdUsername + ", createdTime=" + createdTime + ", endpointCount=" + endpointCount + ", id=" + id
                 + "]";
     }

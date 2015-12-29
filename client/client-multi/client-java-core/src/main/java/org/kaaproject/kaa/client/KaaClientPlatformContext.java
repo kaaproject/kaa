@@ -81,4 +81,11 @@ public interface KaaClientPlatformContext {
      */
     ExecutorContext getExecutorContext();
 
+    /**
+     * Determines if client state should be checked
+     *
+     * @return true if client state should be checked
+     */
+    boolean needToCheckClientState();
+
 }

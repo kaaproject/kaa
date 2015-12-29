@@ -48,7 +48,7 @@ public class HibernateTenantDao extends HibernateAbstractDao<Tenant> implements 
     public void removeByName(String tenantName) {
         Query query = getQuery(DELETE_BY_NAME_HQL);
         int number = query.setString(NAME_PROPERTY, tenantName).executeUpdate();
-        LOG.debug("Removed {} tenant by name [{}]", number, tenantName);
+        LOG.debug("Removed [{}] tenant by name [{}]", number, tenantName);
     }
 
     @Override

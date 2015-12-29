@@ -216,6 +216,11 @@ public final class EventClass extends GenericModel<EventClassDto> {
     }
 
     @Override
+    protected EventClass newInstance(Long id) {
+        return new EventClass(id);
+    }
+
+    @Override
     public EventClassDto toDto() {
         EventClassDto dto = createDto();
         dto.setId(getStringId());

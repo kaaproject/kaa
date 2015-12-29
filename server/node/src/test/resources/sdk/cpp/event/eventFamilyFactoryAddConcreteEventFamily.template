@@ -1,0 +1,1 @@
+    std::shared_ptr<${event_family_class_name}> ${event_family_class_name}Inst_;

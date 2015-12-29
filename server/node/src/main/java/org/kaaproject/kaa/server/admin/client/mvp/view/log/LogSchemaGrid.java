@@ -69,7 +69,7 @@ public class LogSchemaGrid extends BaseSchemasGrid<LogSchemaDto>{
                 new ActionListener<LogSchemaDto>() {
                     @Override
                     public void onItemAction(LogSchemaDto value) {
-                        Integer logSchemaVersion = value.getMajorVersion();
+                        Integer logSchemaVersion = value.getVersion();
                         RowActionEvent<String> rowDownloadLibraryEvent = new RowActionEvent<>(String.valueOf(logSchemaVersion), KaaRowAction.DOWNLOAD_LOG_SCHEMA_LIBRARY);
                         fireEvent(rowDownloadLibraryEvent);
                     }

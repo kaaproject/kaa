@@ -38,12 +38,13 @@ public class EndpointProfileDto implements HasId, Serializable {
     private int nfSequenceNumber;
     private List<String> subscriptions;
     private byte[] ntHash;
-    private Boolean changedFlag;
-    private String profile;
+    private String clientProfileBody;
+    private String serverProfileBody;
     private byte[] profileHash;
-    private int profileVersion;
     private byte[] configurationHash;
     private byte[] userConfigurationHash;
+    private int clientProfileVersion;
+    private int serverProfileVersion;
     private int configurationVersion;
     private int notificationVersion;
     private int systemNfVersion;
@@ -119,20 +120,20 @@ public class EndpointProfileDto implements HasId, Serializable {
         this.nfGroupState = nfGroupState;
     }
 
-    public Boolean getChangedFlag() {
-        return changedFlag;
+    public String getClientProfileBody() {
+        return clientProfileBody;
     }
 
-    public void setChangedFlag(Boolean changedFlag) {
-        this.changedFlag = changedFlag;
+    public void setClientProfileBody(String clientProfileBody) {
+        this.clientProfileBody = clientProfileBody;
     }
 
-    public String getProfile() {
-        return profile;
+    public String getServerProfileBody() {
+        return serverProfileBody;
     }
 
-    public void setProfile(String profile) {
-        this.profile = profile;
+    public void setServerProfileBody(String serverProfileBody) {
+        this.serverProfileBody = serverProfileBody;
     }
 
     public byte[] getProfileHash() {
@@ -141,14 +142,6 @@ public class EndpointProfileDto implements HasId, Serializable {
 
     public void setProfileHash(byte[] profileHash) {
         this.profileHash = getArrayCopy(profileHash);
-    }
-
-    public int getProfileVersion() {
-        return profileVersion;
-    }
-
-    public void setProfileVersion(int profileVersion) {
-        this.profileVersion = profileVersion;
     }
 
     public byte[] getConfigurationHash() {
@@ -213,6 +206,22 @@ public class EndpointProfileDto implements HasId, Serializable {
 
     public void setNtHash(byte[] ntHash) {
         this.ntHash = getArrayCopy(ntHash);
+    }
+    
+    public int getClientProfileVersion() {
+        return clientProfileVersion;
+    }
+
+    public void setClientProfileVersion(int clientProfileVersion) {
+        this.clientProfileVersion = clientProfileVersion;
+    }
+
+    public int getServerProfileVersion() {
+        return serverProfileVersion;
+    }
+
+    public void setServerProfileVersion(int serverProfileVersion) {
+        this.serverProfileVersion = serverProfileVersion;
     }
 
     public int getSystemNfVersion() {
@@ -280,7 +289,7 @@ public class EndpointProfileDto implements HasId, Serializable {
         if (notificationVersion != that.notificationVersion) {
             return false;
         }
-        if (profileVersion != that.profileVersion) {
+        if (clientProfileVersion != that.clientProfileVersion) {
             return false;
         }
         if (cfSequenceNumber != that.cfSequenceNumber) {
@@ -296,9 +305,6 @@ public class EndpointProfileDto implements HasId, Serializable {
             return false;
         }
         if (applicationId != null ? !applicationId.equals(that.applicationId) : that.applicationId != null) {
-            return false;
-        }
-        if (changedFlag != null ? !changedFlag.equals(that.changedFlag) : that.changedFlag != null) {
             return false;
         }
         if (!Arrays.equals(configurationHash, that.configurationHash)) {
@@ -322,7 +328,7 @@ public class EndpointProfileDto implements HasId, Serializable {
         if (!Arrays.equals(ntHash, that.ntHash)) {
             return false;
         }
-        if (profile != null ? !profile.equals(that.profile) : that.profile != null) {
+        if (clientProfileBody != null ? !clientProfileBody.equals(that.clientProfileBody) : that.clientProfileBody != null) {
             return false;
         }
         if (!Arrays.equals(profileHash, that.profileHash)) {
@@ -349,12 +355,11 @@ public class EndpointProfileDto implements HasId, Serializable {
         result = 31 * result + (ntHash != null ? Arrays.hashCode(ntHash) : 0);
         result = 31 * result + nfSequenceNumber;
         result = 31 * result + cfSequenceNumber;
-        result = 31 * result + (changedFlag != null ? changedFlag.hashCode() : 0);
-        result = 31 * result + (profile != null ? profile.hashCode() : 0);
+        result = 31 * result + (clientProfileBody != null ? clientProfileBody.hashCode() : 0);
         result = 31 * result + (profileHash != null ? Arrays.hashCode(profileHash) : 0);
-        result = 31 * result + profileVersion;
         result = 31 * result + (configurationHash != null ? Arrays.hashCode(configurationHash) : 0);
         result = 31 * result + (userConfigurationHash != null ? Arrays.hashCode(userConfigurationHash) : 0);
+        result = 31 * result + clientProfileVersion;
         result = 31 * result + configurationVersion;
         result = 31 * result + notificationVersion;
         result = 31 * result + systemNfVersion;
@@ -390,18 +395,16 @@ public class EndpointProfileDto implements HasId, Serializable {
         builder.append(cfSequenceNumber);
         builder.append(", nfSequenceNumber=");
         builder.append(nfSequenceNumber);
-        builder.append(", changedFlag=");
-        builder.append(changedFlag);
-        builder.append(", profile=");
-        builder.append(profile);
+        builder.append(", clientProfileBody=");
+        builder.append(clientProfileBody);
         builder.append(", profileHash=");
         builder.append(Arrays.toString(profileHash));
-        builder.append(", profileVersion=");
-        builder.append(profileVersion);
         builder.append(", configurationHash=");
         builder.append(Arrays.toString(configurationHash));
         builder.append(", userConfigurationHash=");
         builder.append(Arrays.toString(userConfigurationHash));
+        builder.append(", clientProfileVersion=");
+        builder.append(clientProfileVersion);
         builder.append(", configurationVersion=");
         builder.append(configurationVersion);
         builder.append(", notificationVersion=");

@@ -128,7 +128,12 @@ public final class LogAppender extends AbstractPlugin<LogAppenderDto> implements
     protected LogAppenderDto createDto() {
         return new LogAppenderDto();
     }
-    
+
+    @Override
+    protected LogAppender newInstance(Long id) {
+        return new LogAppender(id);
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;

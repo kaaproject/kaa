@@ -16,8 +16,7 @@
 
 package org.kaaproject.kaa.server.operations.service.profile;
 
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
+import java.security.InvalidKeyException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +24,7 @@ import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EventClassFamilyVersionStateDto;
-import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
@@ -73,7 +72,7 @@ public class DefaultProfileService implements ProfileService {
      * (non-Javadoc)
      *
      * @see org.kaaproject.kaa.server.operations.service.profile.ProfileService#
-     * getProfile (org.kaaproject.kaa.common.hash.EndpointObjectHash)
+     * getClientProfileBody (org.kaaproject.kaa.common.hash.EndpointObjectHash)
      */
     @Override
     public EndpointProfileDto getProfile(EndpointObjectHash endpointKey) {
@@ -115,7 +114,7 @@ public class DefaultProfileService implements ProfileService {
             dto.setApplicationId(appSeqNumber.getAppId());
             dto.setEndpointKey(request.getEndpointKey());
             dto.setEndpointKeyHash(keyHash.getData());
-            dto.setProfile(profileJson);
+            dto.setClientProfileBody(profileJson);
             dto.setProfileHash(EndpointObjectHash.fromSHA1(request.getProfile()).getData());
 
             populateVersionStates(appSeqNumber.getTenantId(), dto, sdkProfile);
@@ -126,11 +125,10 @@ public class DefaultProfileService implements ProfileService {
 
             dto.setCfSequenceNumber(0);
             dto.setNfSequenceNumber(0);
-            dto.setChangedFlag(Boolean.FALSE);
 
             try {
                 cacheService.putEndpointKey(keyHash, KeyUtil.getPublic(dto.getEndpointKey()));
-            } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            } catch (InvalidKeyException e) {
                 LOG.error("Can't generate public key for endpoint key: {}. Reason: {}", dto.getEndpointKey(), e);
                 throw new RuntimeException(e);
             }
@@ -163,21 +161,31 @@ public class DefaultProfileService implements ProfileService {
         if (request.getAccessToken() != null) {
             dto.setAccessToken(request.getAccessToken());
         }
-        dto.setProfile(profileJson);
+        dto.setClientProfileBody(profileJson);
         dto.setProfileHash(EndpointObjectHash.fromSHA1(request.getProfile()).getData());
 
         populateVersionStates(appSeqNumber.getTenantId(), dto, sdkProfile);
 
+        doClearProfileGroupStates(dto);
+        return endpointService.saveEndpointProfile(dto);
+    }
+
+    @Override
+    public EndpointProfileDto clearProfileGroupStates(EndpointProfileDto dto) {
+        doClearProfileGroupStates(dto);
+        return endpointService.saveEndpointProfile(dto);
+    }
+
+    private void doClearProfileGroupStates(EndpointProfileDto dto) {
         List<EndpointGroupStateDto> egsList = new ArrayList<>();
         dto.setCfGroupStates(egsList);
         dto.setCfSequenceNumber(0);
         dto.setNfGroupStates(egsList);
         dto.setNfSequenceNumber(0);
-        return endpointService.saveEndpointProfile(dto);
     }
 
     protected void populateVersionStates(String tenantId, EndpointProfileDto dto, SdkProfileDto sdkProfile) {
-        dto.setProfileVersion(sdkProfile.getProfileSchemaVersion());
+        dto.setClientProfileVersion(sdkProfile.getProfileSchemaVersion());
         dto.setConfigurationVersion(sdkProfile.getConfigurationSchemaVersion());
         dto.setUserNfVersion(sdkProfile.getNotificationSchemaVersion());
         dto.setLogSchemaVersion(sdkProfile.getLogSchemaVersion());
@@ -214,10 +222,10 @@ public class DefaultProfileService implements ProfileService {
     private String decodeProfile(byte[] profileRaw, String appToken, int schemaVersion) {
         LOG.trace("Lookup profileSchema by appToken: {} and version: {}", appToken, schemaVersion);
 
-        ProfileSchemaDto profileSchemaDto = cacheService.getProfileSchemaByAppAndVersion(new AppVersionKey(appToken, schemaVersion));
-        String profileSchema = profileSchemaDto.getSchema();
+        EndpointProfileSchemaDto profileSchemaDto = cacheService.getProfileSchemaByAppAndVersion(new AppVersionKey(appToken, schemaVersion));
+        String profileSchema = cacheService.getFlatCtlSchemaById(profileSchemaDto.getCtlSchemaId());
 
-        LOG.trace("ProfileSchema by appToken: {} and version: {} found: {}", appToken, schemaVersion, profileSchema);
+        LOG.trace("EndpointProfileSchema by appToken: {} and version: {} found: {}", appToken, schemaVersion, profileSchema);
 
         String profileJson = GenericAvroConverter.toJson(profileRaw, profileSchema);
         LOG.trace("Profile json : {} ", profileJson);

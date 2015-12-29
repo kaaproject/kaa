@@ -27,14 +27,15 @@ import java.util.concurrent.TimeoutException;
 import org.junit.Before;
 import org.junit.Test;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
+import org.kaaproject.kaa.common.dto.EndpointProfileDataDto;
 import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.common.endpoint.gen.BasicEndpointProfile;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogAppender;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryCallback;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
-import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogSchema;
+import org.kaaproject.kaa.server.common.log.shared.appender.data.BaseLogEventPack;
 import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -58,7 +59,7 @@ public class CdapLogAppenderTest {
 
     @Test
     public void testAppend() throws IOException {
-        LogEventPack logEventPack = getLogEventPack();
+        BaseLogEventPack logEventPack = getLogEventPack();
 
         Mockito.when(writer.write(Mockito.anyString(), Mockito.any(Charset.class))).thenReturn(new DummyFuture());
 
@@ -69,7 +70,7 @@ public class CdapLogAppenderTest {
 
     @Test
     public void testAppendWithServerFailure() throws IOException {
-        LogEventPack logEventPack = getLogEventPack();
+        BaseLogEventPack logEventPack = getLogEventPack();
 
         Mockito.when(writer.write(Mockito.anyString(), Mockito.any(Charset.class))).thenReturn(new DummyFuture() {
             @Override
@@ -85,14 +86,14 @@ public class CdapLogAppenderTest {
 
     @Test
     public void testAppendToClosed() throws IOException {
-        LogEventPack logEventPack = getLogEventPack();
+        BaseLogEventPack logEventPack = getLogEventPack();
         appender.close();
         LogDeliveryCallback callback = Mockito.mock(LogDeliveryCallback.class);
         appender.doAppend(logEventPack, callback);
         Mockito.verify(callback, Mockito.timeout(10000)).onInternalError();
     }
 
-    private LogEventPack getLogEventPack() throws IOException {
+    private BaseLogEventPack getLogEventPack() throws IOException {
         GenericAvroConverter<BasicEndpointProfile> converter = new GenericAvroConverter<BasicEndpointProfile>(BasicEndpointProfile.SCHEMA$);
         BasicEndpointProfile theLog = new BasicEndpointProfile("test");
 
@@ -102,7 +103,9 @@ public class CdapLogAppenderTest {
         LogEvent logEvent = new LogEvent();
 
         logEvent.setLogData(converter.encode(theLog));
-        LogEventPack logEventPack = new LogEventPack("endpointKey", 1234567l, schema, Collections.singletonList(logEvent));
+        EndpointProfileDataDto profileDto = new EndpointProfileDataDto("1", "endpointKey", 1, "", null, null);
+        BaseLogEventPack logEventPack = new BaseLogEventPack(profileDto, 1234567l, schema.getVersion(), Collections.singletonList(logEvent));
+        logEventPack.setLogSchema(schema);
         return logEventPack;
     }
 

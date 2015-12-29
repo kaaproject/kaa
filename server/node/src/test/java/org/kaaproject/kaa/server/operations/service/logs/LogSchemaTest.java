@@ -35,19 +35,12 @@ public class LogSchemaTest {
         dto.setId(ID);
         dto.setApplicationId(APPLICATION_ID);
         dto.setSchema(SCHEMA);
-        dto.setMajorVersion(VERSION);
+        dto.setVersion(VERSION);
         LogSchema logSchema = new LogSchema(dto);
         
         Assert.assertEquals(ID, logSchema.getId());
         Assert.assertEquals(APPLICATION_ID, logSchema.getApplicationId());
         Assert.assertEquals(SCHEMA, logSchema.getSchema());
         Assert.assertEquals(VERSION, logSchema.getVersion());
-        
-        logSchema.setLogSchemaDto(new LogSchemaDto());
-        
-        Assert.assertNull(logSchema.getId());
-        Assert.assertNull(logSchema.getApplicationId());
-        Assert.assertNull(logSchema.getSchema());
-        Assert.assertEquals(0, logSchema.getVersion());
     }
 }

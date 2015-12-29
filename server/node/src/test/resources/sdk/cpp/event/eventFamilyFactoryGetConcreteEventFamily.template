@@ -1,0 +1,9 @@
+    ${event_family_class_name}& get${event_family_class_name}()
+    {
+        if(!${event_family_class_name}Inst_){
+            ${event_family_class_name}Inst_.reset(new ${event_family_class_name}(eventManager_, executorContext_));
+            addEventFamilyByName("${event_family_class_name}", ${event_family_class_name}Inst_);
+        }
+
+        return *${event_family_class_name}Inst_;
+    }

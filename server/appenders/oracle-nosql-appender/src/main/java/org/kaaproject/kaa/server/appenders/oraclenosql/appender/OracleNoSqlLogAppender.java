@@ -124,7 +124,7 @@ public class OracleNoSqlLogAppender extends AbstractLogAppender<OracleNoSqlConfi
         OperationFactory of = kvStore.getOperationFactory();
         ArrayList<Operation> opList = new ArrayList<Operation>();
 
-        List<String> majorPath = Arrays.asList(getApplicationToken(), logEventPack.getLogSchemaVersion() + "",
+        List<String> majorPath = Arrays.asList(getApplicationToken(), logEventPack.getLogSchema().getVersion() + "",
                 logEventPack.getEndpointKey(), System.currentTimeMillis() + "");
 
         int counter = 0;

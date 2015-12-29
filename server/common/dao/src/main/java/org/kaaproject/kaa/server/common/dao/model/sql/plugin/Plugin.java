@@ -83,6 +83,10 @@ public class Plugin extends GenericModel<PluginDto> implements Serializable {
     public Plugin() {
     }
 
+    public Plugin(Long id) {
+        this.id = id;
+    }
+
     public Plugin(PluginDto dto) {
         this.id = ModelUtils.getLongId(dto.getId());
         this.name = dto.getName();
@@ -199,6 +203,11 @@ public class Plugin extends GenericModel<PluginDto> implements Serializable {
     @Override
     protected PluginDto createDto() {
         return new PluginDto();
+    }
+
+    @Override
+    protected Plugin newInstance(Long id) {
+        return new Plugin(id);
     }
 
     @Override

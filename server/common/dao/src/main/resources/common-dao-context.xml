@@ -30,22 +30,23 @@
 
     <context:annotation-config/>
 
-    <context:component-scan base-package="org.kaaproject.kaa.server.common.dao" />
+    <context:component-scan base-package="org.kaaproject.kaa.server.common.dao"/>
 
-    <util:properties id="dao" location="classpath:dao.properties" />
+    <util:properties id="dao" location="classpath:dao.properties"/>
 
-    <import resource="classpath:common-dao-sql-context.xml" />
-    <import resource="classpath:common-dao-${nosql_db_provider_name}-context.xml" />
+    <import resource="classpath:common-dao-sql-context.xml"/>
+    <import resource="classpath:common-dao-${nosql_db_provider_name}-context.xml"/>
 
     <tx:annotation-driven transaction-manager="transactionManager"/>
 
-    <bean id="schemaGenerationFactory" class="org.kaaproject.kaa.server.common.core.algorithms.schema.SchemaGenerationAlgorithmFactoryImpl"/>
+    <bean id="schemaGenerationFactory"
+          class="org.kaaproject.kaa.server.common.core.algorithms.schema.SchemaGenerationAlgorithmFactoryImpl"/>
 
     <bean id="overrideAlgorithmFactory"
-        class="org.kaaproject.kaa.server.common.core.algorithms.override.DefaultOverrideAlgorithmFactory" />
+          class="org.kaaproject.kaa.server.common.core.algorithms.override.DefaultOverrideAlgorithmFactory"/>
 
     <bean id="eventSchemaProcessor"
-        class="org.kaaproject.kaa.server.common.dao.schema.EventSchemaProcessorImpl" />
+          class="org.kaaproject.kaa.server.common.dao.schema.EventSchemaProcessorImpl"/>
 
     <bean id="endpointService" class="org.kaaproject.kaa.server.common.dao.service.EndpointServiceImpl">
         <property name="endpointProfileDao" ref="endpointProfileDao"/>
@@ -56,7 +57,7 @@
     <bean id="sdkProfileService" class="org.kaaproject.kaa.server.common.dao.service.SdkProfileServiceImpl">
         <property name="endpointProfileDao" ref="endpointProfileDao"/>
     </bean>
-    
+
     <bean id="notificationService" class="org.kaaproject.kaa.server.common.dao.service.NotificationServiceImpl">
         <property name="notificationDao" ref="notificationDao"/>
         <property name="unicastNotificationDao" ref="unicastNotificationDao"/>
@@ -69,6 +70,10 @@
 
     <bean id="userConfigurationService" class="org.kaaproject.kaa.server.common.dao.service.UserConfigurationServiceImpl">
         <property name="endpointUserConfigurationDao" ref="endpointUserConfigurationDao"/>
+    </bean>
+
+    <bean id="serverProfileService" class="org.kaaproject.kaa.server.common.dao.service.ServerProfileServiceImpl">
+        <property name="endpointProfileDao" ref="endpointProfileDao"/>
     </bean>
 
 </beans>

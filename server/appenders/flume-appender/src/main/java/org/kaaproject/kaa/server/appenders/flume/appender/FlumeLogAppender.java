@@ -85,7 +85,7 @@ public class FlumeLogAppender extends AbstractLogAppender<FlumeConfig> {
                 LOG.warn("Some of components haven't been initialized. Skipping append method");
                 listener.onInternalError();
                 return;
-            }                
+            }
             executor.submit(new Runnable() {
                 @Override
                 public void run() {

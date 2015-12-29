@@ -19,8 +19,8 @@ package org.kaaproject.kaa.server.operations.service.akka.messages.core.logs;
 import java.util.List;
 
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
-import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogSchema;
+import org.kaaproject.kaa.server.common.log.shared.appender.data.BaseLogEventPack;
 
 import akka.actor.ActorRef;
 
@@ -34,7 +34,7 @@ public class LogEventPackMessage {
     private final ActorRef originator;
 
     /** Log Event Pack. */
-    private final LogEventPack logEventPack;
+    private final BaseLogEventPack logEventPack;
 
     /**
      * Instantiates a new log event pack message.
@@ -43,7 +43,7 @@ public class LogEventPackMessage {
      * @param originator    the originator
      * @param logEventPack  the log event pack
      */
-    public LogEventPackMessage(int requestId, ActorRef originator, LogEventPack logEventPack) {
+    public LogEventPackMessage(int requestId, ActorRef originator, BaseLogEventPack logEventPack) {
         this.requestId = requestId;
         this.originator = originator;
         this.logEventPack = logEventPack;
@@ -57,7 +57,7 @@ public class LogEventPackMessage {
         return originator;
     }
 
-    public LogEventPack getLogEventPack() {
+    public BaseLogEventPack getLogEventPack() {
         return logEventPack;
     }
 
@@ -69,10 +69,6 @@ public class LogEventPackMessage {
         return logEventPack.getDateCreated();
     }
 
-    public LogSchema getLogSchema() {
-        return logEventPack.getLogSchema();
-    }
-
     public int getLogSchemaVersion() {
         return logEventPack.getLogSchemaVersion();
     }
@@ -81,7 +77,7 @@ public class LogEventPackMessage {
         return logEventPack.getEvents();
     }
 
-    public void setLogSchema(LogSchema logSchema) {
-        logEventPack.setLogSchema(logSchema);
+    public LogSchema getLogSchema() {
+        return logEventPack.getLogSchema();
     }
 }

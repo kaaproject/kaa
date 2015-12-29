@@ -71,7 +71,7 @@ public class EndpointMessagingPluginDefinition implements CommunicationPluginDef
 
     @Override
     public Class<? extends PluginSdkApiGenerator> getSdkGeneratorClass() {
-        return EndpointMessagePluginGenerator.class;
+        return JavaEndpointMessagingPluginGenerator.class;
     }
 
     @Override

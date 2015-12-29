@@ -119,6 +119,11 @@ public class Contract extends GenericModel<ContractDto> implements Serializable 
     }
 
     @Override
+    protected GenericModel<ContractDto> newInstance(Long id) {
+        return new Contract();
+    }
+
+    @Override
     public ContractDto toDto() {
         ContractDto dto = createDto();
         dto.setId(getStringId());

@@ -16,11 +16,11 @@
 
 package org.kaaproject.kaa.server.common.dao.impl.sql;
 
+import org.kaaproject.kaa.server.common.dao.DBTestRunner;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-
-import org.kaaproject.kaa.server.common.dao.DBTestRunner;
 
 public class H2DBTestRunner extends DBTestRunner {
 
@@ -33,16 +33,4 @@ public class H2DBTestRunner extends DBTestRunner {
     protected String getTrancateSql() {
         return new StringBuilder("SET REFERENTIAL_INTEGRITY FALSE; TRUNCATE TABLE ").append(FORMATER).append("; SET REFERENTIAL_INTEGRITY TRUE;").toString();
     }
-
-//    @Override
-//    protected PreparedStatement prepareGetSequencesStatement(
-//            Connection connection) throws SQLException {
-//        return connection.prepareStatement("SELECT SEQUENCE_NAME FROM INFORMATION_SCHEMA.SEQUENCES WHERE SEQUENCE_SCHEMA = 'PUBLIC'");
-//    }
-//
-//    @Override
-//    protected String getTrancateSequenceSql() {
-//        return new StringBuilder("ALTER SEQUENCE ").append(FORMATER).append(" RESTART WITH 1").toString();
-//    }
-
 }

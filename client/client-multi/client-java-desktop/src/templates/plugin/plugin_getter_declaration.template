@@ -1,0 +1,4 @@
+    /**
+     * Auto-generated based on plugin metadata
+     */
+    ${plugin_interface_fqn} get${plugin_interface_name}();

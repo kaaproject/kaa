@@ -191,6 +191,11 @@ public final class EndpointGroup extends GenericModel<EndpointGroupDto> implemen
     }
 
     @Override
+    protected EndpointGroup newInstance(Long id) {
+        return new EndpointGroup(id);
+    }
+
+    @Override
     public EndpointGroupDto toDto() {
         EndpointGroupDto dto = createDto();
         dto.setId(getStringId());

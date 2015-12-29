@@ -43,6 +43,8 @@
         {"name": "maxWaitTime", "displayName": "Max wait time (ms)", "by_default": 120000, "type": ["int", "null"]},
         {"name": "connectionTimeout", "displayName": "Connection timeout (ms)", "by_default": 5000, "type": ["int", "null"]},
         {"name": "socketTimeout", "displayName": "Socket timeout (ms)", "by_default": 0, "type": ["int", "null"]},
-        {"name": "socketKeepalive", "displayName": "Turn on socket keepalive", "by_default": false, "type": ["boolean", "null"]}
+        {"name": "socketKeepalive", "displayName": "Turn on socket keepalive", "by_default": false, "type": ["boolean", "null"]},
+        {"name": "includeClientProfile", "displayName": "Include client profile data", "by_default": false, "type": ["boolean", "null"]},
+        {"name": "includeServerProfile", "displayName": "Include server profile data", "by_default": false, "type": ["boolean", "null"]}
     ]
 }

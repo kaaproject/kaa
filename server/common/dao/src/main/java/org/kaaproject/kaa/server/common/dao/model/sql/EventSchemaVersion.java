@@ -59,6 +59,10 @@ public final class EventSchemaVersion extends GenericModel<EventSchemaVersionDto
         this.createdTime = dto.getCreatedTime();
     }
 
+    public EventSchemaVersion(Long id) {
+        this.id = id;
+    }
+
     public String getSchema() {
         return schema;
     }
@@ -146,6 +150,11 @@ public final class EventSchemaVersion extends GenericModel<EventSchemaVersionDto
     @Override
     protected EventSchemaVersionDto createDto() {
         return new EventSchemaVersionDto();
+    }
+
+    @Override
+    protected EventSchemaVersion newInstance(Long id) {
+        return new EventSchemaVersion(id);
     }
 
     @Override

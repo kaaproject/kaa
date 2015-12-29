@@ -19,6 +19,7 @@ package org.kaaproject.kaa.server.appenders.mongo.appender;
 import java.io.Serializable;
 
 import org.kaaproject.kaa.common.dto.logs.LogEventDto;
+import org.kaaproject.kaa.server.common.log.shared.appender.data.ProfileInfo;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -29,20 +30,24 @@ import com.mongodb.util.JSON;
 public final class LogEvent implements Serializable {
 
     private static final long serialVersionUID = -2738374699172219071L;
-    
+
     @Id
     private String id;
     private DBObject header;
     private DBObject event;
+    private DBObject clientProfile;
+    private DBObject serverProfile;
 
     public LogEvent() {
 
     }
 
-    public LogEvent(LogEventDto dto) {
+    public LogEvent(LogEventDto dto, ProfileInfo clientProfile, ProfileInfo serverProfile) {
         this.id = dto.getId();
         this.header = (DBObject) JSON.parse(dto.getHeader());
         this.event = (DBObject) JSON.parse(dto.getEvent());
+        this.clientProfile = (clientProfile != null) ? (DBObject) JSON.parse(clientProfile.getBody()) : null;
+        this.serverProfile = (serverProfile != null) ? (DBObject) JSON.parse(serverProfile.getBody()) : null;
     }
 
     public String getId() {
@@ -69,9 +74,25 @@ public final class LogEvent implements Serializable {
         this.header = header;
     }
 
+    public DBObject getClientProfile() {
+        return clientProfile;
+    }
+
+    public void setClientProfile(DBObject clientProfile) {
+        this.clientProfile = clientProfile;
+    }
+
+    public DBObject getServerProfile() {
+        return serverProfile;
+    }
+
+    public void setServerProfile(DBObject serverProfile) {
+        this.serverProfile = serverProfile;
+    }
+
     @Override
     public String toString() {
-        return "LogEvent [id=" + id + ", header=" + header + ", event=" + event + "]";
+        return "LogEvent [id=" + id + ", header=" + header + ", event=" + event + ", clientProfile=" + clientProfile + ", serverProfile=" + serverProfile + "]";
     }
 
 }

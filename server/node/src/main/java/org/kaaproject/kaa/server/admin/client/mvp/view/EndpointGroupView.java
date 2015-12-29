@@ -17,11 +17,9 @@
 package org.kaaproject.kaa.server.admin.client.mvp.view;
 
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
-import org.kaaproject.kaa.common.dto.ConfigurationDto;
-import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.common.dto.StructureRecordDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
-import org.kaaproject.kaa.common.dto.admin.StructureRecordKey;
+import org.kaaproject.kaa.server.admin.client.mvp.view.config.ConfigurationStructGrid;
+import org.kaaproject.kaa.server.admin.client.mvp.view.profile.ProfileFilterStructGrid;
 
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.HasValue;
@@ -42,9 +40,11 @@ public interface EndpointGroupView extends BaseDetailsView {
 
     public HasValue<String> getEndpointCount();
 
-    public AbstractGrid<StructureRecordDto<ProfileFilterDto>, StructureRecordKey> getProfileFiltersGrid();
+    public ProfileFilterStructGrid getProfileFiltersGrid();
+    
+    public void setProfileFiltersVisible(boolean visible);
 
-    public AbstractGrid<StructureRecordDto<ConfigurationDto>, StructureRecordKey> getConfigurationsGrid();
+    public ConfigurationStructGrid getConfigurationsGrid();
 
     public AbstractGrid<TopicDto, String> getTopicsGrid();
 

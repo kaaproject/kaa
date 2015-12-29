@@ -84,6 +84,7 @@ public interface EndpointProfileDao<T extends EndpointProfile> extends Dao<T, By
 
     /**
      * This method remove endpoint profile by application id.
+     *
      * @param appId application id
      */
     void removeByAppId(String appId);
@@ -121,4 +122,14 @@ public interface EndpointProfileDao<T extends EndpointProfile> extends Dao<T, By
      *          the given SDK token, <code>false</code> otherwise
      */
     boolean checkSdkToken(String sdkToken);
+
+    /**
+     * Update endpoint profile with given keyHash, server profile schema version and given server profile.
+     *
+     * @param keyHash       the endpoint profile key hash.
+     * @param version      the given server profile schema version.
+     * @param serverProfile the given server profile data.
+     * @return the updated endpoint profile with.
+     */
+    T updateServerProfile(byte[] keyHash, int version, String serverProfile);
 }

@@ -23,6 +23,7 @@ import org.kaaproject.kaa.common.dto.logs.LogEventDto;
 import org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDBCredential;
 import org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbConfig;
 import org.kaaproject.kaa.server.appenders.mongo.config.gen.MongoDbServer;
+import org.kaaproject.kaa.server.common.log.shared.appender.data.ProfileInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.MongoDbFactory;
@@ -103,10 +104,10 @@ public class LogEventMongoDao implements LogEventDao {
     }
 
     @Override
-    public List<LogEvent> save(List<LogEventDto> logEventDtos, String collectionName) {
+    public List<LogEvent> save(List<LogEventDto> logEventDtos, ProfileInfo clientProfile, ProfileInfo serverProfile, String collectionName) {
         List<LogEvent> logEvents = new ArrayList<>(logEventDtos.size());
         for (LogEventDto logEventDto : logEventDtos) {
-            logEvents.add(new LogEvent(logEventDto));
+            logEvents.add(new LogEvent(logEventDto, clientProfile, serverProfile));
         }
         LOG.debug("Saving {} log events", logEvents.size());
         mongoTemplate.insert(logEvents, collectionName);

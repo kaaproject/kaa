@@ -75,6 +75,10 @@ public class ContractItem extends GenericModel<ContractItemDto> implements Seria
         }
     }
 
+    public ContractItem(Long id) {
+        this.id = id;
+    }
+
     public String getName() {
         return name;
     }
@@ -102,6 +106,11 @@ public class ContractItem extends GenericModel<ContractItemDto> implements Seria
     @Override
     protected ContractItemDto createDto() {
         return new ContractItemDto();
+    }
+
+    @Override
+    protected ContractItem newInstance(Long id) {
+        return new ContractItem(id);
     }
 
     @Override

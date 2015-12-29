@@ -74,7 +74,7 @@ public class HibernateNotificationSchemaDaoTest extends HibernateAbstractTest {
         generateNotificationSchema(application, 1, NotificationTypeDto.SYSTEM);
         List<NotificationSchema> userSchemas = generateNotificationSchema(application, 3, NotificationTypeDto.USER);
         NotificationSchema expected = userSchemas.get(2);
-        NotificationSchema found = notificationSchemaDao.findNotificationSchemasByAppIdAndTypeAndVersion(application.getStringId(), NotificationTypeDto.USER, expected.getMajorVersion());
+        NotificationSchema found = notificationSchemaDao.findNotificationSchemasByAppIdAndTypeAndVersion(application.getStringId(), NotificationTypeDto.USER, expected.getVersion());
         Assert.assertEquals(expected, found);
     }
 

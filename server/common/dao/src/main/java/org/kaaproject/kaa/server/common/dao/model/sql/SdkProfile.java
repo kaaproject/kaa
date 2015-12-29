@@ -30,8 +30,6 @@ import static org.kaaproject.kaa.server.common.dao.DaoConstants.SDK_PROFILE_TABL
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.SDK_PROFILE_TOKEN;
 
 import java.io.Serializable;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -43,10 +41,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.apache.commons.codec.binary.Base64;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import org.kaaproject.kaa.common.dto.DtoByteMarshaller;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 
 @Entity
@@ -54,7 +50,6 @@ import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 public final class SdkProfile extends GenericModel<SdkProfileDto> implements Serializable {
 
     private static final long serialVersionUID = -5963289882951330950L;
-    private static final String HASH_ALGORITHM = "SHA1";
 
     @Column(name = SDK_PROFILE_TOKEN)
     private String token;
@@ -103,62 +98,42 @@ public final class SdkProfile extends GenericModel<SdkProfileDto> implements Ser
 
     public SdkProfile(SdkProfileDto dto) {
         if (dto != null) {
-            try {
-                this.id = ModelUtils.getLongId(dto.getId());
+            this.id = ModelUtils.getLongId(dto.getId());
 
-                this.name = dto.getName();
-                this.configurationSchemaVersion = dto.getConfigurationSchemaVersion();
-                this.profileSchemaVersion = dto.getProfileSchemaVersion();
-                this.notificationSchemaVersion = dto.getNotificationSchemaVersion();
-                this.logSchemaVersion = dto.getLogSchemaVersion();
+            this.name = dto.getName();
+            this.configurationSchemaVersion = dto.getConfigurationSchemaVersion();
+            this.profileSchemaVersion = dto.getProfileSchemaVersion();
+            this.notificationSchemaVersion = dto.getNotificationSchemaVersion();
+            this.logSchemaVersion = dto.getLogSchemaVersion();
 
-                if (dto.getAefMapIds() != null) {
-                    this.aefMapIds = new ArrayList<>(dto.getAefMapIds().size());
-                    for (String id : dto.getAefMapIds()) {
-                        this.aefMapIds.add(id);
-                    }
+            if (dto.getAefMapIds() != null) {
+                this.aefMapIds = new ArrayList<>(dto.getAefMapIds().size());
+                for (String id : dto.getAefMapIds()) {
+                    this.aefMapIds.add(id);
                 }
+            }
 
-                this.defaultVerifierToken = dto.getDefaultVerifierToken();
+            this.defaultVerifierToken = dto.getDefaultVerifierToken();
 
-                this.createdUsername = dto.getCreatedUsername();
-                this.createdTime = dto.getCreatedTime();
-                this.endpointCount = dto.getEndpointCount();
+            this.createdUsername = dto.getCreatedUsername();
+            this.createdTime = dto.getCreatedTime();
+            this.endpointCount = dto.getEndpointCount();
 
-                Long applicationId = ModelUtils.getLongId(dto.getApplicationId());
-                this.application = (applicationId != null) ? new Application(applicationId) : null;
+            Long applicationId = ModelUtils.getLongId(dto.getApplicationId());
+            this.application = (applicationId != null) ? new Application(applicationId) : null;
 
-                // An empty list is no different from a null field
-                if (this.aefMapIds != null && this.aefMapIds.isEmpty()) {
-                    dto.setAefMapIds(null);
+            // An empty list is no different from a null field
+            if (this.aefMapIds != null && this.aefMapIds.isEmpty()) {
+                dto.setAefMapIds(null);
+            }
+
+            this.token = dto.getToken();
+
+            if (this.aefMapIds != null) {
+                dto.setAefMapIds(new ArrayList<String>(this.aefMapIds.size()));
+                for (String id : this.aefMapIds) {
+                    dto.getAefMapIds().add(id);
                 }
-
-                // Must not use these fields for token generation
-                dto.setId(null);
-                dto.setCreatedUsername(null);
-                dto.setCreatedTime(null);
-                dto.setEndpointCount(null);
-                dto.setToken(null);
-
-                // TODO: Update logic for profile token generation.
-                MessageDigest messageDigest = MessageDigest.getInstance(HASH_ALGORITHM);
-                messageDigest.update(DtoByteMarshaller.toBytes(dto));
-                this.token = Base64.encodeBase64String(messageDigest.digest());
-
-                dto.setId(this.getStringId());
-                dto.setCreatedUsername(this.createdUsername);
-                dto.setCreatedTime(this.createdTime);
-                dto.setEndpointCount(this.endpointCount);
-                dto.setToken(this.token);
-
-                if (this.aefMapIds != null) {
-                    dto.setAefMapIds(new ArrayList<String>(this.aefMapIds.size()));
-                    for (String id : this.aefMapIds) {
-                        dto.getAefMapIds().add(id);
-                    }
-                }
-            } catch (NoSuchAlgorithmException e) {
-                throw new RuntimeException(e);
             }
         }
     }
@@ -262,6 +237,11 @@ public final class SdkProfile extends GenericModel<SdkProfileDto> implements Ser
     @Override
     protected SdkProfileDto createDto() {
         return new SdkProfileDto();
+    }
+
+    @Override
+    protected SdkProfile newInstance(Long id) {
+        return new SdkProfile(id);
     }
 
     @Override

@@ -1,0 +1,122 @@
+/*
+ * Copyright 2014 CyberVision, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+#ifndef ${event_family_class_name}_HPP_
+#define ${event_family_class_name}_HPP_
+
+
+#include <list>
+#include <string>
+#include <vector>
+#include <sstream>
+
+#include <cstdint>
+#include <boost/any.hpp>
+
+#include "kaa/logging/Log.hpp"
+#include "kaa/gen/EndpointGen.hpp"
+#include "kaa/event/IEventFamily.hpp"
+#include "kaa/event/IEventManager.hpp"
+#include "kaa/common/AvroByteArrayConverter.hpp"
+#include "kaa/transact/TransactionId.hpp"
+#include "kaa/observer/KaaObservable.hpp"
+#include "kaa/context/IExecutorContext.hpp"
+#include "kaa/utils/IThreadPool.hpp"
+
+#include "kaa/event/gen/${event_family_class_name}Gen.hpp"
+
+namespace kaa {
+
+class ${event_family_class_name} : public IEventFamily
+{
+public:
+    class ${event_family_class_name}Listener
+    {
+    public:
+
+        ${event_family_listener_methods}
+
+        virtual ~${event_family_class_name}Listener() {}
+    };
+
+public:
+    ${event_family_class_name}(IEventManager& manager, IExecutorContext& executorContext)
+        : eventManager_(manager), executorContext_(executorContext)
+    {
+        eventFQNs_ = ${add_supported_event_class_fqns};
+    }
+
+    virtual void onGenericEvent(const std::string& fqn
+                              , const std::vector<std::uint8_t>& data
+                              , const std::string& source)
+    {
+        if (fqn.empty()) {
+            KAA_LOG_WARN("Failed to process incoming event: bad data");
+            return;
+        }
+
+        if (listeners_.isEmpty()) {
+            KAA_LOG_WARN(boost::format("Ignoring '%s' event: listener is not set") % fqn);
+            return;
+        }
+
+        ${event_family_listeners_on_generic_event}
+
+    }
+
+    ${event_family_send_event_methods}
+
+    virtual const FQNList& getSupportedEventClassFQNs()
+    {
+        return eventFQNs_;
+    }
+
+    void addEventFamilyListener(${event_family_class_name}Listener& listener)
+    {
+        ${event_family_class_name}Listener *listenerPtr = &listener;
+        listeners_.addCallback(listenerPtr, [listenerPtr](const boost::any& value, const std::string& source, const std::string& fqn) {
+            ${event_family_listeners_notify_listener}
+        });
+    }
+
+    void removeEventFamilyListener(${event_family_class_name}Listener& listener)
+    {
+        listeners_.removeCallback(&listener);
+    }
+
+private:
+    template<typename EventType>
+    void onEvent(const EventType& event, const std::string& source, const std::string& fqn)
+    {
+        if (!listeners_.isEmpty()) {
+            executorContext_.getCallbackExecutor().add([=]
+                                                    {
+                                                        boost::any anyEvent(event);
+                                                        listeners_(anyEvent, source, fqn); 
+                                                    });
+        }
+    }
+
+private:
+    IEventManager&                           eventManager_;
+    std::list<std::string>                   eventFQNs_;
+    KaaObservable<void (const boost::any& value, const std::string& source, const std::string& fqn), ${event_family_class_name}Listener*> listeners_;
+    IExecutorContext& executorContext_;
+};
+
+}
+
+#endif /* ${event_family_class_name}_HPP_ */

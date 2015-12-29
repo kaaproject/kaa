@@ -17,9 +17,11 @@
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
+import org.kaaproject.kaa.server.common.dao.service.SdkTokenGenerator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,9 +37,9 @@ public class SdkProfileTest {
 
     @Test
     public void constructorTest() {
-        SdkProfileDto sdkProfileDto1 = generateSdkProfileDto("1234");
-        SdkProfileDto sdkProfileDto2 = generateSdkProfileDto("1234");
-        SdkProfileDto sdkProfileDto3 = generateSdkProfileDto("1235");
+        SdkProfileDto sdkProfileDto1 = generateSdkProfileDto("1234", "token1234");
+        SdkProfileDto sdkProfileDto2 = generateSdkProfileDto("1234", "token1234");
+        SdkProfileDto sdkProfileDto3 = generateSdkProfileDto("1235", "token1235");
         SdkProfile sdkProfile1 = new SdkProfile(sdkProfileDto1);
         SdkProfile sdkProfile2 = new SdkProfile(sdkProfileDto2);
         SdkProfile sdkProfile3 = new SdkProfile(sdkProfileDto3);
@@ -48,9 +50,11 @@ public class SdkProfileTest {
         Assert.assertEquals(SDK_TOKEN_LENGTH, sdkProfile1.getToken().length());
     }
 
-    private SdkProfileDto generateSdkProfileDto(String appId) {
+    private SdkProfileDto generateSdkProfileDto(String appId, String appToken) {
         List<String> aefMapIdsList = new ArrayList<>(Arrays.asList("firstId", "secondId", "thirdId"));
-        return new SdkProfileDto(appId, 2, 3, 4, 5, aefMapIdsList, "someVerifierToken", "someApplicationToken",
+        SdkProfileDto sdkProfileDto = new SdkProfileDto(appId, 2, 3, 4, 5, aefMapIdsList, "someVerifierToken", appToken,
                 "devuser", 100000L, "someName");
+        SdkTokenGenerator.generateSdkToken(sdkProfileDto);
+        return sdkProfileDto;
     }
 }

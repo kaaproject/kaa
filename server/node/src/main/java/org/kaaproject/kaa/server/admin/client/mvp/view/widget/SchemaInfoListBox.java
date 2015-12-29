@@ -41,7 +41,7 @@ public class SchemaInfoListBox extends ValueListBox<SchemaInfoDto> {
 
         @Override
         public String render(SchemaInfoDto object) {
-            return object != null ? (object.getMajorVersion() + "." + object.getMinorVersion()) : "";
+            return object != null ? object.getVersion() + "" : "";
         }
 
         @Override

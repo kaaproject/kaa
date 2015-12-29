@@ -24,15 +24,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.security.KeyFactory;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
+import java.security.*;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.Arrays;
+import java.util.Random;
 
 import org.apache.commons.compress.utils.IOUtils;
 import org.slf4j.Logger;
@@ -155,9 +154,10 @@ public abstract class KeyUtil {
      *
      * @param f the f
      * @return the public
-     * @throws Exception the exception
+     * @throws IOException the i/o exception
+     * @throws InvalidKeyException invalid key exception
      */
-    public static PublicKey getPublic(File f) throws Exception { //NOSONAR
+    public static PublicKey getPublic(File f) throws IOException, InvalidKeyException {
         DataInputStream dis = null;
         try {
             FileInputStream fis = new FileInputStream(f);
@@ -176,9 +176,10 @@ public abstract class KeyUtil {
      *
      * @param input the input stream
      * @return the public
-     * @throws Exception the exception
+     * @throws IOException the i/o exception
+     * @throws InvalidKeyException invalid key exception
      */
-    public static PublicKey getPublic(InputStream input) throws Exception {
+    public static PublicKey getPublic(InputStream input) throws IOException, InvalidKeyException {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         byte[] buffer = new byte[4096];
         int n = 0;
@@ -195,13 +196,16 @@ public abstract class KeyUtil {
      *
      * @param keyBytes the key bytes
      * @return the public
-     * @throws NoSuchAlgorithmException the no such algorithm exception
-     * @throws InvalidKeySpecException the invalid key spec exception
+     * @throws InvalidKeyException invalid key exception
      */
-    public static PublicKey getPublic(byte[] keyBytes) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        X509EncodedKeySpec spec = new X509EncodedKeySpec(keyBytes);
-        KeyFactory kf = KeyFactory.getInstance(RSA);
-        return kf.generatePublic(spec);
+    public static PublicKey getPublic(byte[] keyBytes) throws InvalidKeyException {
+        try {
+            X509EncodedKeySpec spec = new X509EncodedKeySpec(keyBytes);
+            KeyFactory kf = KeyFactory.getInstance(RSA);
+            return kf.generatePublic(spec);
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            throw new InvalidKeyException(e);
+        }
     }
 
     /**
@@ -209,9 +213,10 @@ public abstract class KeyUtil {
      *
      * @param f the f
      * @return the private
-     * @throws Exception the exception
+     * @throws IOException the i/o exception
+     * @throws InvalidKeyException invalid key exception
      */
-    public static PrivateKey getPrivate(File f) throws Exception { //NOSONAR
+    public static PrivateKey getPrivate(File f) throws IOException, InvalidKeyException {
         DataInputStream dis = null;
         try {
             FileInputStream fis = new FileInputStream(f);
@@ -230,9 +235,10 @@ public abstract class KeyUtil {
      *
      * @param input the input stream
      * @return the private
-     * @throws Exception the exception
+     * @throws IOException the i/o exception
+     * @throws InvalidKeyException invalid key exception
      */
-    public static PrivateKey getPrivate(InputStream input) throws Exception {
+    public static PrivateKey getPrivate(InputStream input) throws IOException, InvalidKeyException {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         byte[] buffer = new byte[4096];
         int n = 0;
@@ -249,13 +255,47 @@ public abstract class KeyUtil {
      *
      * @param keyBytes the key bytes
      * @return the private
-     * @throws NoSuchAlgorithmException the no such algorithm exception
-     * @throws InvalidKeySpecException the invalid key spec exception
+     * @throws InvalidKeyException invalid key exception
      */
-    public static PrivateKey getPrivate(byte[] keyBytes) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(keyBytes);
-        KeyFactory kf = KeyFactory.getInstance(RSA);
-        return kf.generatePrivate(spec);
+    public static PrivateKey getPrivate(byte[] keyBytes) throws InvalidKeyException {
+        try {
+            PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(keyBytes);
+            KeyFactory kf = KeyFactory.getInstance(RSA);
+            return kf.generatePrivate(spec);
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            throw new InvalidKeyException(e);
+        }
+    }
+
+    /**
+     * Validates RSA public and private key
+     *
+     * @param keyPair the keypair
+     * @return true if keys matches
+     */
+    public static boolean validateKeyPair(KeyPair keyPair) {
+        RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
+        RSAPrivateKey privateKey = (RSAPrivateKey) keyPair.getPrivate();
+
+        if (publicKey.getModulus().bitLength() != privateKey.getModulus().bitLength()) {
+            LOG.error("Keypair length matching error");
+            return false;
+        }
+
+        byte[] rawPayload = new byte[64];
+        new Random().nextBytes(rawPayload);
+
+        MessageEncoderDecoder encDec = new MessageEncoderDecoder(privateKey, publicKey);
+        byte[] encodedPayload;
+        byte[] decodedPayload;
+        try {
+            encodedPayload = encDec.encodeData(rawPayload);
+            decodedPayload = encDec.decodeData(encodedPayload);
+        } catch (GeneralSecurityException e) {
+            LOG.error("Validation keypair error ", e);
+            return false;
+        }
+        return Arrays.equals(rawPayload, decodedPayload);
     }
 
 }

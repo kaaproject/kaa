@@ -74,6 +74,11 @@ public class UserVerifier extends AbstractPlugin<UserVerifierDto> implements Ser
     }
 
     @Override
+    protected UserVerifier newInstance(Long id) {
+        return new UserVerifier(id);
+    }
+
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();

@@ -44,9 +44,13 @@ import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.HistoryDto;
 import org.kaaproject.kaa.common.dto.PageLinkDto;
+import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.UpdateNotificationDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
+import org.kaaproject.kaa.server.common.dao.CTLService;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
 import org.kaaproject.kaa.server.common.dao.HistoryService;
+import org.kaaproject.kaa.server.common.dao.ServerProfileService;
 import org.kaaproject.kaa.server.common.dao.exception.DatabaseProcessingException;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
 import org.kaaproject.kaa.server.common.dao.impl.ConfigurationDao;
@@ -83,6 +87,10 @@ public class EndpointServiceImpl implements EndpointService {
     private ProfileFilterDao<ProfileFilter> verifierDao;
     @Autowired
     private HistoryService historyService;
+    @Autowired
+    private ServerProfileService serverProfileService;
+    @Autowired
+    private CTLService ctlService;
 
     private EndpointProfileDao<EndpointProfile> endpointProfileDao;
     private EndpointConfigurationDao<EndpointConfiguration> endpointConfigurationDao;
@@ -263,13 +271,22 @@ public class EndpointServiceImpl implements EndpointService {
     }
 
     @Override
+    @Transactional
     public EndpointProfileDto saveEndpointProfile(EndpointProfileDto endpointProfileDto) {
         validateObject(endpointProfileDto, "Can't find endpoint profile object. Invalid endpoint profile object"
                 + endpointProfileDto);
         byte[] keyHash = endpointProfileDto.getEndpointKeyHash();
         EndpointProfileDto dto;
         validateHash(keyHash, "Incorrect key hash for endpoint profile.");
+        if(endpointProfileDto.getServerProfileBody() == null){
+            ServerProfileSchemaDto serverProfileSchemaDto = serverProfileService.findLatestServerProfileSchema(endpointProfileDto.getApplicationId());
+            CTLSchemaDto schemaDto = ctlService.findCTLSchemaById(serverProfileSchemaDto.getCtlSchemaId());
+            LOG.debug("Set latest server profile schema [{}] and default record {} for endpoint with key [{}]", serverProfileSchemaDto.getVersion(), schemaDto.getBody(), keyHash);
+            endpointProfileDto.setServerProfileVersion(serverProfileSchemaDto.getVersion());
+            endpointProfileDto.setServerProfileBody(schemaDto.getDefaultRecord());
+        }
         if (isBlank(endpointProfileDto.getId())) {
+            //TODO: Improve this to avoid redundant requests to DB and invalid logic.
             if (endpointProfileDao.getCountByKeyHash(keyHash) == 0) {
                 LOG.debug("Register new endpoint profile.");
                 dto = getDto(endpointProfileDao.save(endpointProfileDto));
@@ -405,6 +422,13 @@ public class EndpointServiceImpl implements EndpointService {
             }
         }
         return endpointUser;
+    }
+
+    @Override
+    @Transactional
+    public EndpointGroupDto findDefaultGroup(String appId) {
+        validateSqlId(appId, "Can't find default endpoint group by app id. Incorrect app id " + appId);
+        return getDto(endpointGroupDao.findByAppIdAndWeight(appId, DEFAULT_GROUP_WEIGHT));
     }
 
     @Override

@@ -84,7 +84,7 @@ public class UpdateUserConfigActivity extends AbstractDetailsActivity<EndpointUs
     @Override
     protected void onSave() {
         entity.setUserId(detailsView.getUserId().getValue());
-        entity.setSchemaVersion(detailsView.getConfigurationSchemaInfo().getValue().getMajorVersion());
+        entity.setSchemaVersion(detailsView.getConfigurationSchemaInfo().getValue().getVersion());
     }
 
     @Override

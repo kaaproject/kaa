@@ -42,40 +42,40 @@ public class UserConfigurationServiceImplTest extends AbstractTest {
 
     @Test
     public void findUserConfigurationByUserIdAndAppTokenAndSchemaVersionTest() throws IOException {
-        EndpointUserDto userDto = generateEndpointUser(null);
-        ApplicationDto appDto = generateApplication();
-        ConfigurationSchemaDto schema = generateConfSchema(appDto.getId(), 1).get(0);
-        EndpointUserConfigurationDto firstUserConfigurationDto = generateEndpointUserConfiguration(userDto, appDto, schema, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON));
-        generateEndpointUserConfiguration(userDto, appDto, null, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON));
-        generateEndpointUserConfiguration(null, null, null, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON));
-        EndpointUserConfigurationDto found = userConfigurationService.findUserConfigurationByUserIdAndAppTokenAndSchemaVersion(userDto.getId(), appDto.getApplicationToken(), schema.getMajorVersion());
+        EndpointUserDto userDto = generateEndpointUserDto(null);
+        ApplicationDto appDto = generateApplicationDto();
+        ConfigurationSchemaDto schema = generateConfSchemaDto(appDto.getId(), 1).get(0);
+        EndpointUserConfigurationDto firstUserConfigurationDto = generateEndpointUserConfigurationDto(userDto, appDto, schema, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON));
+        generateEndpointUserConfigurationDto(userDto, appDto, null, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON));
+        generateEndpointUserConfigurationDto(null, null, null, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON));
+        EndpointUserConfigurationDto found = userConfigurationService.findUserConfigurationByUserIdAndAppTokenAndSchemaVersion(userDto.getId(), appDto.getApplicationToken(), schema.getVersion());
         Assert.assertEquals(firstUserConfigurationDto, found);
     }
 
     @Test
     public void findUserConfigurationByUserIdTest() throws IOException {
-        EndpointUserDto userDto = generateEndpointUser(null);
-        ApplicationDto appDto = generateApplication();
-        EndpointUserConfigurationDto firstUserConfigurationDto = generateEndpointUserConfiguration(userDto, appDto, null, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON));
-        EndpointUserConfigurationDto secondUserConfigurationDto = generateEndpointUserConfiguration(userDto, appDto, null, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON));
+        EndpointUserDto userDto = generateEndpointUserDto(null);
+        ApplicationDto appDto = generateApplicationDto();
+        EndpointUserConfigurationDto firstUserConfigurationDto = generateEndpointUserConfigurationDto(userDto, appDto, null, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON));
+        EndpointUserConfigurationDto secondUserConfigurationDto = generateEndpointUserConfigurationDto(userDto, appDto, null, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON));
         List<EndpointUserConfigurationDto> expectedList = new ArrayList<>();
         expectedList.add(firstUserConfigurationDto);
         expectedList.add(secondUserConfigurationDto);
-        generateEndpointUserConfiguration(null, null, null, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON));
+        generateEndpointUserConfigurationDto(null, null, null, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON));
         List<EndpointUserConfigurationDto> foundList = userConfigurationService.findUserConfigurationByUserId(userDto.getId());
         Assert.assertEquals(expectedList.size(), foundList.size());
     }
 
     @Test
     public void removeByUserIdAndAppTokenAndSchemaVersionTest() throws IOException {
-        EndpointUserDto userDto = generateEndpointUser(null);
-        ApplicationDto appDto = generateApplication();
-        ConfigurationSchemaDto schema = generateConfSchema(appDto.getId(), 1).get(0);
-        generateEndpointUserConfiguration(userDto, appDto, schema, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON));
-        generateEndpointUserConfiguration(userDto, appDto, null, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON));
-        generateEndpointUserConfiguration(userDto, appDto, null, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON));
-        userConfigurationService.removeByUserIdAndAppTokenAndSchemaVersion(userDto.getId(), appDto.getApplicationToken(), schema.getMajorVersion());
-        EndpointUserConfigurationDto removed = userConfigurationService.findUserConfigurationByUserIdAndAppTokenAndSchemaVersion(userDto.getId(), appDto.getApplicationToken(), schema.getMajorVersion());
+        EndpointUserDto userDto = generateEndpointUserDto(null);
+        ApplicationDto appDto = generateApplicationDto();
+        ConfigurationSchemaDto schema = generateConfSchemaDto(appDto.getId(), 1).get(0);
+        generateEndpointUserConfigurationDto(userDto, appDto, schema, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON));
+        generateEndpointUserConfigurationDto(userDto, appDto, null, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON));
+        generateEndpointUserConfigurationDto(userDto, appDto, null, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON));
+        userConfigurationService.removeByUserIdAndAppTokenAndSchemaVersion(userDto.getId(), appDto.getApplicationToken(), schema.getVersion());
+        EndpointUserConfigurationDto removed = userConfigurationService.findUserConfigurationByUserIdAndAppTokenAndSchemaVersion(userDto.getId(), appDto.getApplicationToken(), schema.getVersion());
         Assert.assertNull(removed);
         List<EndpointUserConfigurationDto> foundList = userConfigurationService.findUserConfigurationByUserId(userDto.getId());
         Assert.assertEquals(2, foundList.size());
@@ -83,7 +83,7 @@ public class UserConfigurationServiceImplTest extends AbstractTest {
 
     @Test
     public void saveUserConfigurationTest() throws IOException {
-        EndpointUserConfigurationDto configurationDto = generateEndpointUserConfiguration(null, null, null, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON));
+        EndpointUserConfigurationDto configurationDto = generateEndpointUserConfigurationDto(null, null, null, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON));
         Assert.assertNotNull(configurationDto);
     }
 
@@ -96,20 +96,20 @@ public class UserConfigurationServiceImplTest extends AbstractTest {
 
     @Test
     public void userConfigNotNullTest() throws IOException {
-        EndpointUserConfigurationDto configurationDto = generateEndpointUserConfiguration(null, null, null, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON));
+        EndpointUserConfigurationDto configurationDto = generateEndpointUserConfigurationDto(null, null, null, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON));
         EndpointUserConfigurationDto result = userConfigurationService.saveUserConfiguration(configurationDto);
         Assert.assertEquals(configurationDto, result);
     }
 
     @Test(expected = IncorrectParameterException.class)
     public void saveUserConfigBlankTest() {
-        EndpointUserConfigurationDto configurationDto = generateEndpointUserConfiguration(null, null, null, "");
+        EndpointUserConfigurationDto configurationDto = generateEndpointUserConfigurationDto(null, null, null, "");
         userConfigurationService.saveUserConfiguration(configurationDto);
     }
 
     @Test(expected = IncorrectParameterException.class)
     public void appDtoNullTest() throws IOException {
-        EndpointUserConfigurationDto configurationDto = generateEndpointUserConfiguration(null, null, null, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON),true);
+        EndpointUserConfigurationDto configurationDto = generateEndpointUserConfigurationDto(null, null, null, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON),true);
         EndpointUserConfigurationDto result = userConfigurationService.saveUserConfiguration(configurationDto);
         Assert.assertEquals(configurationDto, result);
     }

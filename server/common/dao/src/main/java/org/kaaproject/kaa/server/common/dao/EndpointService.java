@@ -17,8 +17,6 @@
 package org.kaaproject.kaa.server.common.dao;
 
 
-import java.util.List;
-
 import org.kaaproject.kaa.common.dto.ChangeNotificationDto;
 import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
@@ -29,6 +27,8 @@ import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.PageLinkDto;
 import org.kaaproject.kaa.common.dto.UpdateNotificationDto;
+
+import java.util.List;
 
 /**
  * The interface Endpoint service.
@@ -95,7 +95,7 @@ public interface EndpointService {
     /**
      * Removes the topic id from endpoint group.
      *
-     * @param id the id
+     * @param id      the id
      * @param topicId the topic id
      * @return the update notification dto
      */
@@ -104,7 +104,7 @@ public interface EndpointService {
     /**
      * Subscribe existing topic to existing group.
      *
-     * @param id the endpoint group id
+     * @param id      the endpoint group id
      * @param topicId the topic id
      * @return the update notification dto
      */
@@ -151,6 +151,7 @@ public interface EndpointService {
 
     /**
      * Remove endpoint profile by application id.
+     *
      * @param appId application id
      */
     void removeEndpointProfileByAppId(String appId);
@@ -167,8 +168,8 @@ public interface EndpointService {
      * Attach endpoint profile to user.
      *
      * @param userExternalId the user external id
-     * @param tenantId the tenant id
-     * @param profile the profile
+     * @param tenantId       the tenant id
+     * @param profile        the profile
      * @return the endpoint profile dto
      */
     EndpointProfileDto attachEndpointToUser(String userExternalId, String tenantId, EndpointProfileDto profile);
@@ -176,7 +177,7 @@ public interface EndpointService {
     /**
      * Attach endpoint profile to user.
      *
-     * @param endpointUserId the endpoint user id
+     * @param endpointUserId      the endpoint user id
      * @param endpointAccessToken the endpoint access token
      * @return the endpoint profile dto
      */
@@ -203,13 +204,13 @@ public interface EndpointService {
      * @return the endpoint user dto
      */
     EndpointUserDto findEndpointUserById(String id);
-    
+
     /**
      * Find endpoint user by id.
      *
-     * @param   externalId  the external id
-     * @param   tenantId    the tenant id
-     * @return  the endpoint user dto
+     * @param externalId the external id
+     * @param tenantId   the tenant id
+     * @return the endpoint user dto
      */
     EndpointUserDto findEndpointUserByExternalIdAndTenantId(String externalId, String tenantId);
 
@@ -232,7 +233,7 @@ public interface EndpointService {
      * Generate endpoint user access token from external user id.
      *
      * @param externalUid the external user id
-     * @param tenantId the tenant id
+     * @param tenantId    the tenant id
      * @return generated access token
      */
     String generateEndpointUserAccessToken(String externalUid, String tenantId);
@@ -245,4 +246,13 @@ public interface EndpointService {
      * @return the list
      */
     List<EndpointProfileDto> findEndpointProfilesByUserId(String endpointUserId);
+
+
+    /**
+     * This method return group all for the given application identifier
+     *
+     * @param applicationId the application identifier
+     * @return the endpoint group object
+     */
+    EndpointGroupDto findDefaultGroup(String applicationId);
 }

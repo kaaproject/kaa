@@ -24,7 +24,7 @@ public final class SdkApiFile implements Serializable {
     private final String fileName;
     private final byte[] fileData;
 
-    private SdkApiFile(String fileName, byte[] fileData) {
+    public SdkApiFile(String fileName, byte[] fileData) {
         super();
         this.fileName = fileName;
         this.fileData = fileData;

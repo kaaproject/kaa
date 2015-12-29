@@ -28,6 +28,7 @@ import org.junit.Test;
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
 import org.kaaproject.kaa.common.avro.AvroJsonConverter;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
+import org.kaaproject.kaa.common.dto.EndpointProfileDataDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
@@ -40,8 +41,8 @@ import org.kaaproject.kaa.server.common.core.configuration.RawDataFactory;
 import org.kaaproject.kaa.server.common.core.schema.RawSchema;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryCallback;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
-import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogSchema;
+import org.kaaproject.kaa.server.common.log.shared.appender.data.BaseLogEventPack;
 import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -82,7 +83,9 @@ public class FileSystemLogAppenderTest {
             LogEvent logEvent = new LogEvent();
 
             logEvent.setLogData(converter.encode(theLog));
-            LogEventPack logEventPack = new LogEventPack("endpointKey", 1234567l, schema, Collections.singletonList(logEvent));
+            EndpointProfileDataDto profileDto = new EndpointProfileDataDto("1", "endpointKey", 1, "", 0, null);
+            BaseLogEventPack logEventPack = new BaseLogEventPack(profileDto, 1234567l, schema.getVersion(), Collections.singletonList(logEvent));
+            logEventPack.setLogSchema(schema);
             TestLogDeliveryCallback callback = new TestLogDeliveryCallback();
             appender.doAppend(logEventPack, callback);
             Assert.assertTrue(callback.success);
@@ -125,7 +128,9 @@ public class FileSystemLogAppenderTest {
             LogEvent logEvent = new LogEvent();
 
             logEvent.setLogData(new byte[0]);
-            LogEventPack logEventPack = new LogEventPack("endpointKey", 1234567l, schema, Collections.singletonList(logEvent));
+            EndpointProfileDataDto profileDto = new EndpointProfileDataDto("1", "endpointKey", 1, "", 0, null);
+            BaseLogEventPack logEventPack = new BaseLogEventPack(profileDto, 1234567l, schema.getVersion(), Collections.singletonList(logEvent));
+            logEventPack.setLogSchema(schema);
             TestLogDeliveryCallback callback = new TestLogDeliveryCallback();
             appender.doAppend(logEventPack, callback);
             Assert.assertTrue(callback.internallError);

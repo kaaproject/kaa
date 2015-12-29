@@ -40,5 +40,17 @@ public class KaaRowAction {
 
     /** The Constant GENERATE_SDK. */
     public static final int GENERATE_SDK = RowActionEvent.MAX_ACTION + 6;
+    
+    /** The Constant CTL_EXPORT_SHALLOW. */
+    public static final int CTL_EXPORT_SHALLOW = RowActionEvent.MAX_ACTION + 7;
+    
+    /** The Constant CTL_EXPORT_DEEP. */
+    public static final int CTL_EXPORT_DEEP = RowActionEvent.MAX_ACTION + 8;
+    
+    /** The Constant CTL_EXPORT_FLAT. */
+    public static final int CTL_EXPORT_FLAT = RowActionEvent.MAX_ACTION + 9;
+    
+    /** The Constant CTL_EXPORT_LIBRARY. */
+    public static final int CTL_EXPORT_LIBRARY = RowActionEvent.MAX_ACTION + 10;
 
 }

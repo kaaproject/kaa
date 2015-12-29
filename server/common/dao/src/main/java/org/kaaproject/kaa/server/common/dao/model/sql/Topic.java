@@ -236,6 +236,11 @@ public final class Topic extends GenericModel<TopicDto> implements Serializable 
     }
 
     @Override
+    protected Topic newInstance(Long id) {
+        return new Topic(id);
+    }
+
+    @Override
     public TopicDto toDto() {
         TopicDto dto = createDto();
         dto.setId(getStringId());

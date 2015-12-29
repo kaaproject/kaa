@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,7 +50,7 @@ public class BaseSchemasGrid<T extends AbstractSchemaDto> extends AbstractKaaGri
                 new StringValueProvider<T>() {
                     @Override
                     public String getValue(T item) {
-                        return item.getMajorVersion() + "." + item.getMinorVersion();
+                        return item.getVersion() + "";
                     }
                 }, 
                 new Comparator<T>() {
@@ -128,8 +128,9 @@ public class BaseSchemasGrid<T extends AbstractSchemaDto> extends AbstractKaaGri
                 new ActionButtonCell.ActionListener<T>() {
                     @Override
                     public void onItemAction(T value) {
-                        Integer schemaVersion = value.getMajorVersion();
-                        RowActionEvent<String> rowDownloadSchemaEvent = new RowActionEvent<>(String.valueOf(schemaVersion), KaaRowAction.DOWNLOAD_SCHEMA);
+                        Integer schemaVersion = getDownloadSchemaColumnClickedId(value);
+                        RowActionEvent<String> rowDownloadSchemaEvent =
+                                new RowActionEvent<>(String.valueOf(schemaVersion), KaaRowAction.DOWNLOAD_SCHEMA);
                         fireEvent(rowDownloadSchemaEvent);
                     }
                 }, new ActionButtonCell.ActionValidator<T>() {
@@ -147,5 +148,8 @@ public class BaseSchemasGrid<T extends AbstractSchemaDto> extends AbstractKaaGri
         return column;
     }
 
+    protected Integer getDownloadSchemaColumnClickedId(T value) {
+        return value.getVersion();
+    }
 }
 

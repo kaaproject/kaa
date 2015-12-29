@@ -19,6 +19,7 @@ package org.kaaproject.kaa.server.operations.service.akka.actors.core;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointStopMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.ServerProfileUpdateMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.SyncRequestMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.logs.LogDeliveryMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.notification.ThriftNotificationMessage;
@@ -27,7 +28,7 @@ import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.C
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.RequestTimeoutMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.topic.NotificationMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventReceiveMessage;
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointStateUpdateMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserConfigurationUpdateMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserActionMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.verification.UserVerificationResponseMessage;
 import org.kaaproject.kaa.server.transport.channel.ChannelAware;
@@ -128,14 +129,16 @@ public class EndpointActor extends UntypedActor {
             processEndpointEventReceiveMessage((EndpointEventReceiveMessage) message);
         } else if (message instanceof LogDeliveryMessage) {
             processLogDeliveryMessage((LogDeliveryMessage) message);
-        } else if (message instanceof EndpointStateUpdateMessage) {
-            processStateUpdateMessage((EndpointStateUpdateMessage) message);
+        } else if (message instanceof EndpointUserConfigurationUpdateMessage) {
+            processUserConfigurationUpdateMessage((EndpointUserConfigurationUpdateMessage) message);
         } else if (message instanceof UserVerificationResponseMessage) {
             processUserVerificationMessage((UserVerificationResponseMessage) message);
         } else if (message instanceof SessionDisconnectMessage) {
             processDisconnectMessage((ChannelAware) message);
         } else if (message instanceof SessionPingMessage) {
             processPingMessage((ChannelAware) message);
+        } else if (message instanceof ServerProfileUpdateMessage) {
+            processServerProfileUpdate((ServerProfileUpdateMessage) message);
         } else if (message instanceof ThriftNotificationMessage) {
             processThriftNotification((ThriftNotificationMessage) message);
         } else if (message instanceof NotificationMessage) {
@@ -156,8 +159,8 @@ public class EndpointActor extends UntypedActor {
         }
     }
 
-    private void processStateUpdateMessage(EndpointStateUpdateMessage message) {
-        messageProcessor.processStateUpdate(context(), message);
+    private void processUserConfigurationUpdateMessage(EndpointUserConfigurationUpdateMessage message) {
+        messageProcessor.processUserConfigurationUpdate(context(), message);
     }
 
     private void processUserVerificationMessage(UserVerificationResponseMessage message) {
@@ -184,8 +187,12 @@ public class EndpointActor extends UntypedActor {
         messageProcessor.processPingMessage(context(), message);
     }
 
+    private void processServerProfileUpdate(ServerProfileUpdateMessage message) {
+        messageProcessor.processServerProfileUpdate(context());
+    }
+    
     private void processThriftNotification(ThriftNotificationMessage message) {
-        messageProcessor.processThriftNotification(context(), message);
+        messageProcessor.processThriftNotification(context());
     }
 
     private void processNotification(NotificationMessage message) {

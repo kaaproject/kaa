@@ -16,9 +16,13 @@
 
 package org.kaaproject.kaa.server.common.dao.service;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
+import org.kaaproject.kaa.common.dto.DtoByteMarshaller;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.server.common.dao.SdkProfileService;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
@@ -38,6 +42,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class SdkProfileServiceImpl implements SdkProfileService {
 
     private static final Logger LOG = LoggerFactory.getLogger(SdkProfileServiceImpl.class);
+    
+    private static final String SDK_TOKEN_HASH_ALGORITHM = "SHA1";
 
     @Autowired
     private SdkProfileDao<SdkProfile> sdkProfileDao;
@@ -53,33 +59,22 @@ public class SdkProfileServiceImpl implements SdkProfileService {
     }
 
     @Override
-    public SdkProfileDto saveSdkProfile(SdkProfileDto sdkPropertiesDto) {
+    public SdkProfileDto saveSdkProfile(SdkProfileDto sdkProfileDto) {
         SdkProfileDto saved = null;
-
-        if (Validator.isValidSqlObject(sdkPropertiesDto)) {
-            if (StringUtils.isNotBlank(sdkPropertiesDto.getId())) {
-                SdkProfile entity = new SdkProfile(sdkPropertiesDto);
+        if (Validator.isValidSqlObject(sdkProfileDto)) {
+            if (StringUtils.isNotBlank(sdkProfileDto.getId())) {
+                throw new IncorrectParameterException("Update of existing SDK profile is prohibited.");
+            } else {
+                SdkTokenGenerator.generateSdkToken(sdkProfileDto);
+                SdkProfile entity = new SdkProfile(sdkProfileDto);
                 SdkProfile loaded = sdkProfileDao.findSdkProfileByToken(entity.getToken());
-
-                LOG.debug("Saving SDK profile [{}] for application [{}]", entity.getToken(), sdkPropertiesDto.getApplicationId());
-
-                if (loaded == null || loaded.getStringId().equals(entity.getStringId())) {
+                if (loaded == null) {
                     saved = DaoUtil.getDto(sdkProfileDao.save(entity));
                 } else {
                     throw new IncorrectParameterException("An SDK profile with token [" + entity.getToken() + "] already exists.");
                 }
-            } else {
-                SdkProfile entity = new SdkProfile(sdkPropertiesDto);
-                SdkProfile loaded = sdkProfileDao.findSdkProfileByToken(entity.getToken());
-
-                if (loaded == null) {
-                    saved = DaoUtil.getDto(sdkProfileDao.save(entity));
-                } else {
-                    saved = DaoUtil.getDto(loaded);
-                }
             }
         }
-
         return saved;
     }
 

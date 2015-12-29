@@ -257,6 +257,11 @@ public final class EventClassFamily extends GenericModel<EventClassFamilyDto> {
     }
 
     @Override
+    protected EventClassFamily newInstance(Long id) {
+        return new EventClassFamily(id);
+    }
+
+    @Override
     public EventClassFamilyDto toDto() {
         EventClassFamilyDto dto = createDto();
         dto.setId(getStringId());
