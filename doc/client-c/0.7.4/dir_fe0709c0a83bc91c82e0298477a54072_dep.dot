@@ -1,0 +1,10 @@
+digraph "/var/lib/jenkins/workspace/kaa_release_0_7_4/client/client-multi/client-c/src/kaa/avro_src/avro" {
+  bgcolor=transparent;
+  compound=true
+  node [ fontsize="10", fontname="FreeSans"];
+  edge [ labelfontsize="10", labelfontname="FreeSans"];
+  subgraph clusterdir_1628f815aee38f8c8d717937dc76e30a {
+    graph [ bgcolor="#ddddee", pencolor="black", label="avro_src" fontname="FreeSans", fontsize="10", URL="dir_1628f815aee38f8c8d717937dc76e30a.html"]
+  dir_fe0709c0a83bc91c82e0298477a54072 [shape=box, label="avro", style="filled", fillcolor="#eeeeff", pencolor="black", URL="dir_fe0709c0a83bc91c82e0298477a54072.html"];
+  }
+}

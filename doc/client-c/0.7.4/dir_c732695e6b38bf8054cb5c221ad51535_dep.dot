@@ -1,0 +1,30 @@
+digraph "/var/lib/jenkins/workspace/kaa_release_0_7_4/client/client-multi/client-c/src/kaa/platform-impl" {
+  bgcolor=transparent;
+  compound=true
+  node [ fontsize="10", fontname="FreeSans"];
+  edge [ labelfontsize="10", labelfontname="FreeSans"];
+  subgraph clusterdir_18b77f97ca845d4c248b741043d4fe43 {
+    graph [ bgcolor="#ddddee", pencolor="black", label="kaa" fontname="FreeSans", fontsize="10", URL="dir_18b77f97ca845d4c248b741043d4fe43.html"]
+  subgraph clusterdir_c732695e6b38bf8054cb5c221ad51535 {
+    graph [ bgcolor="#eeeeff", pencolor="black", label="" URL="dir_c732695e6b38bf8054cb5c221ad51535.html"];
+    dir_c732695e6b38bf8054cb5c221ad51535 [shape=plaintext label="platform-impl"];
+    dir_d29da9e6324b950fc402ad1cb22860cf [shape=box label="cc32xx" color="black" fillcolor="white" style="filled" URL="dir_d29da9e6324b950fc402ad1cb22860cf.html"];
+    dir_32cdc0257a6f97fb02473ad0763e4728 [shape=box label="common" color="black" fillcolor="white" style="filled" URL="dir_32cdc0257a6f97fb02473ad0763e4728.html"];
+    dir_b053e76f72e02bdd450b6bf73bc5fb11 [shape=box label="Econais" color="red" fillcolor="white" style="filled" URL="dir_b053e76f72e02bdd450b6bf73bc5fb11.html"];
+    dir_3004fa3bd47a51a7664f73bf087f3502 [shape=box label="esp8266" color="black" fillcolor="white" style="filled" URL="dir_3004fa3bd47a51a7664f73bf087f3502.html"];
+    dir_51a55b17ad8d0691aa488a1c5a4755e1 [shape=box label="posix" color="black" fillcolor="white" style="filled" URL="dir_51a55b17ad8d0691aa488a1c5a4755e1.html"];
+    dir_fa17ab73b73de4000e7662fa6ac5e387 [shape=box label="stm32" color="red" fillcolor="white" style="filled" URL="dir_fa17ab73b73de4000e7662fa6ac5e387.html"];
+  }
+  }
+  dir_96c267f880ea1f6e73fbb912a3e8b325 [shape=box label="platform" URL="dir_96c267f880ea1f6e73fbb912a3e8b325.html"];
+  dir_51a55b17ad8d0691aa488a1c5a4755e1->dir_96c267f880ea1f6e73fbb912a3e8b325 [headlabel="5", labeldistance=1.5 headhref="dir_000023_000012.html"];
+  dir_51a55b17ad8d0691aa488a1c5a4755e1->dir_32cdc0257a6f97fb02473ad0763e4728 [headlabel="1", labeldistance=1.5 headhref="dir_000023_000019.html"];
+  dir_d29da9e6324b950fc402ad1cb22860cf->dir_96c267f880ea1f6e73fbb912a3e8b325 [headlabel="4", labeldistance=1.5 headhref="dir_000018_000012.html"];
+  dir_d29da9e6324b950fc402ad1cb22860cf->dir_32cdc0257a6f97fb02473ad0763e4728 [headlabel="1", labeldistance=1.5 headhref="dir_000018_000019.html"];
+  dir_96c267f880ea1f6e73fbb912a3e8b325->dir_51a55b17ad8d0691aa488a1c5a4755e1 [headlabel="7", labeldistance=1.5 headhref="dir_000012_000023.html"];
+  dir_96c267f880ea1f6e73fbb912a3e8b325->dir_c732695e6b38bf8054cb5c221ad51535 [headlabel="7", labeldistance=1.5 headhref="dir_000012_000017.html"];
+  dir_fa17ab73b73de4000e7662fa6ac5e387->dir_96c267f880ea1f6e73fbb912a3e8b325 [headlabel="6", labeldistance=1.5 headhref="dir_000024_000012.html"];
+  dir_b053e76f72e02bdd450b6bf73bc5fb11->dir_96c267f880ea1f6e73fbb912a3e8b325 [headlabel="1", labeldistance=1.5 headhref="dir_000020_000012.html"];
+  dir_32cdc0257a6f97fb02473ad0763e4728->dir_96c267f880ea1f6e73fbb912a3e8b325 [headlabel="4", labeldistance=1.5 headhref="dir_000019_000012.html"];
+  dir_3004fa3bd47a51a7664f73bf087f3502->dir_96c267f880ea1f6e73fbb912a3e8b325 [headlabel="1", labeldistance=1.5 headhref="dir_000022_000012.html"];
+}
