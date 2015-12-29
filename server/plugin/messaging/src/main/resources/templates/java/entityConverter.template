@@ -1,0 +1,5 @@
+/** Auto-generated thread-safe entity converter for {@link ${type}} */
+private static final ThreadLocal<AvroByteArrayConverter<${type}>> ${name} = new ThreadLocal<AvroByteArrayConverter<${type}>>() {
+    @Override
+    protected AvroByteArrayConverter<${type}> initialValue() { return new AvroByteArrayConverter<${type}>(${type}.class); }
+};

@@ -46,6 +46,7 @@ import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.server.common.Environment;
 import org.kaaproject.kaa.server.common.Version;
+import org.kaaproject.kaa.server.common.core.plugin.generator.PluginSetup;
 import org.kaaproject.kaa.server.common.zk.ServerNameUtil;
 import org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo;
 import org.kaaproject.kaa.server.common.zk.gen.TransportMetaData;
@@ -55,6 +56,7 @@ import org.kaaproject.kaa.server.control.service.sdk.compiler.JavaDynamicCompile
 import org.kaaproject.kaa.server.control.service.sdk.compress.ZipEntryData;
 import org.kaaproject.kaa.server.control.service.sdk.event.EventFamilyMetadata;
 import org.kaaproject.kaa.server.control.service.sdk.event.JavaEventClassesGenerator;
+import org.kaaproject.kaa.server.plugin.messaging.JavaEndpointMessagingPluginGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.helpers.MessageFormatter;
@@ -336,6 +338,20 @@ public class JavaSdkGenerator extends SdkGenerator {
      */
     private static final String DEFAULT_USER_VERIFIER_TOKEN_VAR = "\\$\\{default_user_verifier_token\\}";
 
+    // Plugin API constants
+
+    private static final String PLUGIN_GETTER_DECLARATION_TEMPLATE = "sdk/java/plugin/plugin_getter_declaration.template";
+    private static final String PLUGIN_GETTER_IMPLEMENTATION_TEMPLATE = "sdk/java/plugin/plugin_getter_implementation.template";
+    private static final String PLUGIN_EXTENSION_MAPPING_TEMPLATE = "sdk/java/plugin/plugin_extension_mapping.template";
+
+    private static final String PLUGIN_INTERFACE_FQN_VAR = "${plugin_interface_fqn}";
+    private static final String PLUGIN_INTERFACE_NAME_VAR = "${plugin_interface_name}";
+    private static final String PLUGIN_IMPLEMENTATION_FQN_VAR = "${plugin_implementation_fqn}";
+    private static final String PLUGIN_EXTENSION_ID_VAR = "${plugin_extension_id}";
+    private static final String PLUGIN_GETTER_DECLARATIONS_VAR = "${plugin_getter_declarations}";
+    private static final String PLUGIN_GETTER_IMPLEMENTATIONS_VAR = "${plugin_getter_implementations}";
+    private static final String PLUGIN_EXTENSION_MAPPINGS_VAR = "${plugin_extension_mappings}";
+
     /**
      * The Constant random.
      */
@@ -539,11 +555,46 @@ public class JavaSdkGenerator extends SdkGenerator {
         JavaDynamicBean userVerifierConstantsClassBean = new JavaDynamicBean(USER_VERIFIER_CONSTANTS, userVerifierConstantsSource);
         javaSources.add(userVerifierConstantsClassBean);
 
+        List<PluginSetup> plugins = new ArrayList<>();
+        plugins.add(new PluginSetup(new JavaEndpointMessagingPluginGenerator(), JavaEndpointMessagingPluginGenerator.getHardcodedContext()));
+
+        // KaaClient.java.template
+        StringBuilder pluginGetterDeclarations = new StringBuilder();
+
+        // BaseKaaClient.java.template
+        StringBuilder pluginGetterImplementations = new StringBuilder();
+
+        // BaseKaaClient.java.template
+        StringBuilder pluginExtensionMappings = new StringBuilder();
+
+        String pluginGetterDeclarationTemplate = SdkGenerator.readResource(PLUGIN_GETTER_DECLARATION_TEMPLATE);
+        String pluginGetterImplementationTemplate = SdkGenerator.readResource(PLUGIN_GETTER_IMPLEMENTATION_TEMPLATE);
+        String extensionMappingTemplate = SdkGenerator.readResource(PLUGIN_EXTENSION_MAPPING_TEMPLATE);
+
+        plugins.stream().map(PluginSetup::generatePluginAPI).forEach(bundle -> {
+
+            bundle.getFiles().forEach(file -> javaSources.add(new JavaDynamicBean(file.getFileName(), new String(file.getFileData()))));
+
+            String pluginInterfaceFQN = bundle.getPluginInterfaceFQN();
+            String pluginInterfaceName = pluginInterfaceFQN.substring(pluginInterfaceFQN.lastIndexOf(".") + 1);
+
+            Map<String, String> arguments = new HashMap<>();
+            arguments.put(PLUGIN_INTERFACE_FQN_VAR, pluginInterfaceFQN);
+            arguments.put(PLUGIN_INTERFACE_NAME_VAR, pluginInterfaceName);
+            arguments.put(PLUGIN_IMPLEMENTATION_FQN_VAR, bundle.getPluginImplementationFQN());
+            arguments.put(PLUGIN_EXTENSION_ID_VAR, Integer.toString(bundle.getExtensionId()));
+
+            pluginGetterDeclarations.append(this.insertValues(pluginGetterDeclarationTemplate, arguments));
+            pluginGetterImplementations.append(this.insertValues(pluginGetterImplementationTemplate, arguments));
+            pluginExtensionMappings.append(this.insertValues(extensionMappingTemplate, arguments));
+        });
+
         String kaaClientTemplate = readResource(KAA_CLIENT_SOURCE_TEMPLATE);
         String kaaClientSource = kaaClientTemplate.replaceAll(LOG_RECORD_CLASS_PACKAGE_VAR, logSchema.getNamespace())
                 .replaceAll(LOG_RECORD_CLASS_VAR, logSchema.getName())
                 .replaceAll(CONFIGURATION_CLASS_PACKAGE_VAR, configurationClassPackage)
-                .replaceAll(CONFIGURATION_CLASS_VAR, configurationClassName);
+                .replaceAll(CONFIGURATION_CLASS_VAR, configurationClassName)
+                .replace(PLUGIN_GETTER_DECLARATIONS_VAR, pluginGetterDeclarations.toString());
         JavaDynamicBean kaaClientClassBean = new JavaDynamicBean(KAA_CLIENT, kaaClientSource);
         javaSources.add(kaaClientClassBean);
 
@@ -551,7 +602,9 @@ public class JavaSdkGenerator extends SdkGenerator {
         String baseKaaClientSource = baseKaaClientTemplate.replaceAll(LOG_RECORD_CLASS_PACKAGE_VAR, logSchema.getNamespace())
                 .replaceAll(LOG_RECORD_CLASS_VAR, logSchema.getName())
                 .replaceAll(CONFIGURATION_CLASS_PACKAGE_VAR, configurationClassPackage)
-                .replaceAll(CONFIGURATION_CLASS_VAR, configurationClassName);
+                .replaceAll(CONFIGURATION_CLASS_VAR, configurationClassName)
+                .replace(PLUGIN_GETTER_IMPLEMENTATIONS_VAR, pluginGetterImplementations.toString())
+                .replace(PLUGIN_EXTENSION_MAPPINGS_VAR, pluginExtensionMappings.toString());
         JavaDynamicBean baseKaaClientClassBean = new JavaDynamicBean(BASE_KAA_CLIENT, baseKaaClientSource);
         javaSources.add(baseKaaClientClassBean);
 
@@ -749,4 +802,10 @@ public class JavaSdkGenerator extends SdkGenerator {
         return baos.toByteArray();
     }
 
+    private String insertValues(String template, Map<String, String> values) {
+        for (String key : values.keySet()) {
+            template = template.replace(key, values.get(key));
+        }
+        return template;
+    }
 }

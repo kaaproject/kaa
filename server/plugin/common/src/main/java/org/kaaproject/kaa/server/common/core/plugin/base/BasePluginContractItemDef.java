@@ -132,6 +132,89 @@ public class BasePluginContractItemDef implements PluginContractItemDef {
         public ContractMessageDef getOutMessage() {
             return out;
         }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ((in == null) ? 0 : in.hashCode());
+            result = prime * result + ((name == null) ? 0 : name.hashCode());
+            result = prime * result + ((out == null) ? 0 : out.hashCode());
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            BaseContractItemDef other = (BaseContractItemDef) obj;
+            if (in == null) {
+                if (other.in != null) {
+                    return false;
+                }
+            } else if (!in.equals(other.in)) {
+                return false;
+            }
+            if (name == null) {
+                if (other.name != null) {
+                    return false;
+                }
+            } else if (!name.equals(other.name)) {
+                return false;
+            }
+            if (out == null) {
+                if (other.out != null) {
+                    return false;
+                }
+            } else if (!out.equals(other.out)) {
+                return false;
+            }
+            return true;
+        }
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((item == null) ? 0 : item.hashCode());
+        result = prime * result + ((schema == null) ? 0 : schema.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        BasePluginContractItemDef other = (BasePluginContractItemDef) obj;
+        if (item == null) {
+            if (other.item != null) {
+                return false;
+            }
+        } else if (!item.equals(other.item)) {
+            return false;
+        }
+        if (schema == null) {
+            if (other.schema != null) {
+                return false;
+            }
+        } else if (!schema.equals(other.schema)) {
+            return false;
+        }
+        return true;
+    }
 }

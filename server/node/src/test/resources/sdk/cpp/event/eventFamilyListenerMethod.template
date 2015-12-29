@@ -1,0 +1,1 @@
+        virtual void onEvent(const ns${event_family_class_name} :: ${event_class_name}& event, const std::string& source) = 0;

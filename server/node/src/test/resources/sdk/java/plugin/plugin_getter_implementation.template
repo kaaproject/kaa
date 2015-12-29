@@ -1,0 +1,7 @@
+    /**
+     * Auto-generated based on plugin metadata
+     */
+    @Override
+    public ${plugin_interface_fqn} get${plugin_interface_name}() {
+        return (${plugin_interface_fqn}) this.getPluginInstanceAPI(${plugin_extension_id});
+    }

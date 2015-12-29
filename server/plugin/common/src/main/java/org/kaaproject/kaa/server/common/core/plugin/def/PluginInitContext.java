@@ -21,7 +21,7 @@ import org.kaaproject.kaa.server.common.core.plugin.instance.PluginContractInsta
 
 public interface PluginInitContext {
 
-    String getPluginConfigurationData();
+    byte[] getPluginConfigurationData();
 
     Set<PluginContractInstance> getPluginContracts();
 

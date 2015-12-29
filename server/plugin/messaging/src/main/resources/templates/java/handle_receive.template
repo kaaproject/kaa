@@ -1,0 +1,12 @@
+
+    @SuppressWarnings("unchecked")
+    MessageFuture<${rawOutputType}> future = (MessageFuture<${rawOutputType}>) futureMap.remove(msg.getUid());
+    if (future != null) {
+        try {
+            future.setValue(${outputTypeConverter}.get().fromByteArray(msg.getPayload()));
+        } catch (Exception e) {
+            LOG.error("Failed to process response from server", e);
+        }
+    } else {
+        LOG.debug("[{}] Received duplicate response", msg.getUid());
+    }

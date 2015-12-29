@@ -1,0 +1,8 @@
+
+    @SuppressWarnings("unchecked")
+    MessageFuture<Void> future = (MessageFuture<Void>) futureMap.remove(uid);
+    if (future != null) {
+        future.setValue(null);
+    } else {
+        LOG.debug("[{}] Received duplicate response", uid);
+    }

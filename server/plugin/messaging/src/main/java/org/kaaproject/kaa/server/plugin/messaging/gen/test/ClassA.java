@@ -7,7 +7,7 @@ package org.kaaproject.kaa.server.plugin.messaging.gen.test;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class ClassA extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"ClassA\",\"namespace\":\"org.kaaproject.kaa.server.plugin.messaging.gen.test\",\"fields\":[]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"ClassA\",\"namespace\":\"org.kaaproject.kaa.client.plugin.messaging.gen.test\",\"fields\":[]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 
   public org.apache.avro.Schema getSchema() { return SCHEMA$; }

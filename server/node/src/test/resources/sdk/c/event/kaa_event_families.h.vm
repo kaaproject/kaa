@@ -1,0 +1,90 @@
+/*
+ * Copyright 2014 CyberVision, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+#set ($prefix = $StyleUtils.toLowerUnderScore($namespacePrefix))
+
+# ifndef KAA_${EVENT_FAMILY_NAME}_H
+# define KAA_${EVENT_FAMILY_NAME}_H
+
+# include "kaa_${event_family_name}_definitions.h" 
+# include "../kaa_event.h"
+# include "../kaa_error.h"
+
+# ifdef __cplusplus
+extern "C" {
+# endif
+
+#foreach ($event in $incomingEventFqns)
+#set($e_name = $StyleUtils.toLowerUnderScore($StyleUtils.removePackageName(${event})))
+
+/**
+ * @brief Listener of ${e_name} events.
+ */
+typedef void (* on_${prefix}_${e_name})(void *context, ${prefix}_${e_name}_t *event, kaa_endpoint_id_p source);
+#end
+
+#foreach ($event in $incomingEventFqns)
+#set($e_name = $StyleUtils.toLowerUnderScore($StyleUtils.removePackageName(${event})))
+
+/**
+ * @brief Set listener for ${e_name} events.
+ * 
+ * @param[in]       self        Valid pointer to event manager.
+ * @param[in]       listener    Listener callback.
+ * @param[in]       context     Listener's context.
+ * @return Error code.
+ */
+kaa_error_t kaa_event_manager_set_${prefix}_${e_name}_listener(kaa_event_manager_t *self, on_${prefix}_${e_name} listener, void *context);
+#end
+
+#foreach ($event in $outgoingEventFqns)
+#set($e_name = $StyleUtils.toLowerUnderScore($StyleUtils.removePackageName(${event})))
+
+/**
+ * @brief Send event of type ${e_name}.
+ * 
+ * @param[in]       self        Valid pointer to event manager.
+ * @param[in]       event       Pointer to the event object.
+ * @param[in]       target      The target endpoint of the event (null-terminated string). The size of
+ *                              the target parameter should be equal to @link KAA_ENDPOINT_ID_LENGTH @endlink .
+ *                              If @code NULL @endcode event will be broadcasted.
+ * 
+ * @return Error code.
+ */
+kaa_error_t kaa_event_manager_send_${prefix}_${e_name}(kaa_event_manager_t *self, ${prefix}_${e_name}_t *event, kaa_endpoint_id_p target);
+#end
+
+#foreach ($event in $outgoingEventFqns)
+#set($e_name = $StyleUtils.toLowerUnderScore($StyleUtils.removePackageName(${event})))
+
+/**
+ * @brief Add event of type ${e_name} to the events block.
+ * 
+ * @param[in]       self        Valid pointer to event manager.
+ * @param[in]       event       Pointer to the event object.
+ * @param[in]       target      Target of the event (null-terminated string). If NULL - event will be broadcasted.
+ * @param[in]       trx_id      Event block id.
+ *
+ * @return Error code.
+ */
+kaa_error_t kaa_event_manager_add_${prefix}_${e_name}_event_to_block(kaa_event_manager_t *self, ${prefix}_${e_name}_t *event, kaa_endpoint_id_p target, kaa_event_block_id trx_id);
+#end
+
+# ifdef __cplusplus
+}      /* extern "C" */
+# endif
+
+# endif // KAA_${EVENT_FAMILY_NAME}_H
