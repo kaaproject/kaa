@@ -15,6 +15,8 @@
  */
 package org.kaaproject.kaa.server.plugin.messaging;
 
+import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
 
 import org.kaaproject.kaa.common.dto.plugin.PluginContractDirection;
@@ -22,6 +24,7 @@ import org.kaaproject.kaa.common.dto.plugin.PluginScope;
 import org.kaaproject.kaa.server.common.core.plugin.base.BasePluginDef;
 import org.kaaproject.kaa.server.common.core.plugin.def.CommunicationPluginDef;
 import org.kaaproject.kaa.server.common.core.plugin.def.PluginContractDef;
+import org.kaaproject.kaa.server.common.core.plugin.def.SDKPlatform;
 import org.kaaproject.kaa.server.common.core.plugin.generator.PluginSdkApiGenerator;
 import org.kaaproject.kaa.server.plugin.contracts.messaging.MessagingPluginContract;
 import org.kaaproject.kaa.server.plugin.messaging.gen.Configuration;
@@ -70,7 +73,7 @@ public class EndpointMessagingPluginDefinition implements CommunicationPluginDef
     }
 
     @Override
-    public Class<? extends PluginSdkApiGenerator> getSdkGeneratorClass() {
-        return JavaEndpointMessagingPluginGenerator.class;
+    public Map<SDKPlatform, Class<? extends PluginSdkApiGenerator>> getSdkGeneratorClassMap() {
+        return Collections.singletonMap(SDKPlatform.JAVA, JavaEndpointMessagingPluginGenerator.class);
     }
 }

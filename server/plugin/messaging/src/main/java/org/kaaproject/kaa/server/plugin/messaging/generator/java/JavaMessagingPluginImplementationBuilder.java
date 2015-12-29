@@ -18,6 +18,7 @@ package org.kaaproject.kaa.server.plugin.messaging.generator.java;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.kaaproject.kaa.server.common.core.plugin.generator.common.PluginBuilderCore;
 import org.kaaproject.kaa.server.common.core.plugin.generator.common.entity.SimpleGeneratorEntity;
@@ -86,7 +87,7 @@ public class JavaMessagingPluginImplementationBuilder extends JavaPluginImplemen
     }
 
     @Override
-    public MessagingPluginImplementationBuilder withEntityMessageHandlersMapping(Map<String, Integer> handlersMapping) {
+    public MessagingPluginImplementationBuilder withEntityMessageHandlersMapping(Set<Integer> handlersMapping) {
 
         // Method parameters
         Map<String, String> params = new LinkedHashMap<>();
@@ -96,14 +97,14 @@ public class JavaMessagingPluginImplementationBuilder extends JavaPluginImplemen
 
         // The method body
         StringBuilder buffer = new StringBuilder();
-        handlersMapping.forEach((method, id) -> buffer.append(String.format(controlStatement, id, id)));
+        handlersMapping.forEach((id) -> buffer.append(String.format(controlStatement, id, id)));
 
         this.addEntity(new JavaMethod("handleEntityMsg", null, params, new String[] { "protected" }, buffer.toString(), null));
         return this;
     }
 
     @Override
-    public MessagingPluginImplementationBuilder withVoidMessageHandlersMapping(Map<String, Integer> handlersMapping) {
+    public MessagingPluginImplementationBuilder withVoidMessageHandlersMapping(Set<Integer> handlersMapping) {
 
         // Method parameters
         Map<String, String> params = new LinkedHashMap<>();
@@ -113,7 +114,7 @@ public class JavaMessagingPluginImplementationBuilder extends JavaPluginImplemen
 
         // The method body
         StringBuilder buffer = new StringBuilder();
-        handlersMapping.forEach((method, id) -> buffer.append(String.format(controlStatement, id, id)));
+        handlersMapping.forEach((id) -> buffer.append(String.format(controlStatement, id, id)));
 
         this.addEntity(new JavaMethod("handleVoidMsg", null, params, new String[] { "protected" }, buffer.toString(), null));
         return this;
