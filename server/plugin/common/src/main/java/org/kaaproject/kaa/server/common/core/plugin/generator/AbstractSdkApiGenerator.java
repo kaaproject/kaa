@@ -37,7 +37,7 @@ public abstract class AbstractSdkApiGenerator<T extends SpecificRecordBase> impl
     public PluginSDKApiBundle generatePluginSdkApi(PluginSdkApiGenerationContext context) throws SdkApiGenerationException {
         AvroByteArrayConverter<T> converter = new AvroByteArrayConverter<>(this.getConfigurationClass());
         try {
-            T config = converter.fromByteArray(context.getPluginConfigurationData());
+            T config = converter.fromByteArray(context.getPluginConfigurationData().getBytes());
             LOG.info("Initializing transport {} with {}", this.getClassName(), config);
             return this.generatePluginSdkApi(new SpecificPluginSdkApiGenerationContext<T>(context, config));
         } catch (IOException cause) {

@@ -17,6 +17,7 @@ package org.kaaproject.kaa.server.common.dao.model.sql.plugin;
 
 import org.kaaproject.kaa.common.dto.plugin.PluginContractInstanceDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginContractInstanceItemDto;
+import org.kaaproject.kaa.common.dto.plugin.PluginInstanceDto;
 import org.kaaproject.kaa.server.common.dao.model.sql.GenericModel;
 import org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils;
 
@@ -90,7 +91,9 @@ public class PluginContractInstance extends GenericModel implements Serializable
 
     @Override
     protected PluginContractInstance newInstance(Long id) {
-        return new PluginContractInstance(id);
+        PluginContractInstanceDto pluginContractInstanceDto = new PluginContractInstanceDto();
+        pluginContractInstanceDto.setId(ModelUtils.getStringId(id));
+        return new PluginContractInstance(pluginContractInstanceDto);
     }
 
     @Override
