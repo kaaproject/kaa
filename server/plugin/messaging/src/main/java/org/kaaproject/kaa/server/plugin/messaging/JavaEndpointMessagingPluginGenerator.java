@@ -220,14 +220,12 @@ public class JavaEndpointMessagingPluginGenerator extends AbstractSdkApiGenerato
                         String name = this.getMethodName(item);
 
                         // Get the input type of this method and add an
-                        // appropriate
-                        // entity converter
+                        // appropriate entity converter
                         String messageInputType = this.parseMessageType(item.getInMessageSchema());
                         this.addEntityConverter(messageInputType);
 
                         // Get the input type of this method and add an
-                        // appropriate
-                        // entity converter
+                        // appropriate entity converter
                         String messageOutputType = parseMessageType(item.getOutMessageSchema());
                         this.addEntityConverter(messageOutputType);
 
@@ -235,13 +233,11 @@ public class JavaEndpointMessagingPluginGenerator extends AbstractSdkApiGenerato
                         if (def.equals(SEND_MESSAGE_CONTRACT)) {
 
                             // The value to insert into the template as the
-                            // input
-                            // type
+                            // input type
                             String inputType = (messageInputType != null) ? messageInputType : "";
 
                             // The value to insert into the template as the
-                            // output
-                            // type
+                            // output type
                             String outputType;
                             if (messageOutputType != null) {
                                 outputType = String.format("Future<%s>", messageOutputType);
@@ -328,8 +324,7 @@ public class JavaEndpointMessagingPluginGenerator extends AbstractSdkApiGenerato
                             this.pluginImplementation.withMethodConstant(name, new String[] { fieldType }, methodId);
 
                             // Generates an interface for the method listener
-                            // field
-                            // class
+                            // field class
                             JavaPluginInterfaceBuilder listenerInterface = new JavaPluginInterfaceBuilder(fieldType, namespace,
                                     this.readFileAsString("templates/java/listenerClass.template"));
                             listenerInterface.withMethodSignature("onEvent", messageOutputType, new String[] { messageInputType }, null);
