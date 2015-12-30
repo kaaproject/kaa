@@ -102,7 +102,7 @@ public class JavaEndpointMessagingPluginGenerator extends AbstractSdkApiGenerato
     }
 
     // TODO: Used for testing purposes, remove when unnecessary
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
         JavaEndpointMessagingPluginGenerator object = new JavaEndpointMessagingPluginGenerator();
         object.generatePluginSdkApi(JavaEndpointMessagingPluginGenerator.getHardcodedContext()).getFiles().forEach(file -> {
             System.out.println(new String(file.getFileName()));
@@ -111,7 +111,7 @@ public class JavaEndpointMessagingPluginGenerator extends AbstractSdkApiGenerato
     }
 
     // TODO: Used for testing purposes, remove when unnecessary
-    public static SpecificPluginSdkApiGenerationContext<Configuration> getHardcodedContext() throws IOException {
+    public static PluginSdkApiGenerationContext getHardcodedContext() throws IOException {
         PluginContractDef def = MessagingSDKContract.buildMessagingSDKContract();
         final BasePluginContractInstance instance = new BasePluginContractInstance(def);
 
@@ -120,8 +120,10 @@ public class JavaEndpointMessagingPluginGenerator extends AbstractSdkApiGenerato
         PluginContractItemDef sendMsgDef = MessagingSDKContract.buildSendMsgDef();
         PluginContractItemDef receiveMsgDef = MessagingSDKContract.buildReceiveMsgDef();
 
+        PluginContractItemInfo info;
+
         // Future<Void> sendA(ClassA msg);
-        PluginContractItemInfo info = BasePluginContractItemInfo.builder().withData(methodNameConverter.encode(new ItemConfiguration("sendA")))
+        info = BasePluginContractItemInfo.builder().withData(methodNameConverter.encode(new ItemConfiguration("sendA")))
                 .withInMsgSchema(ClassA.SCHEMA$.toString()).build();
         instance.addContractItemInfo(sendMsgDef, info);
 
@@ -166,7 +168,7 @@ public class JavaEndpointMessagingPluginGenerator extends AbstractSdkApiGenerato
             public String getPluginConfigurationData() {
                 Configuration config = new Configuration("org.kaaproject.kaa.client.plugin.messaging");
                 try {
-                    return new GenericAvroConverter<Configuration>(Configuration.SCHEMA$).encodeToJson(config);
+                    return new String(new AvroByteArrayConverter<>(Configuration.class).toByteArray(config));
                 } catch (IOException cause) {
                     return null;
                 }
@@ -179,8 +181,8 @@ public class JavaEndpointMessagingPluginGenerator extends AbstractSdkApiGenerato
                 return 1;
             }
         };
-        Configuration configuration = new Configuration("org.kaaproject.kaa.client.plugin.messaging");
-        return new SpecificPluginSdkApiGenerationContext<>(base, configuration);
+
+        return base;
     }
 
     @Override
@@ -207,152 +209,160 @@ public class JavaEndpointMessagingPluginGenerator extends AbstractSdkApiGenerato
         // Iterate over contract items provided
         for (PluginContractInstance contract : context.getPluginContracts()) {
             for (PluginContractItemDef def : contract.getDef().getPluginContractItems()) {
-                for (PluginContractItemInfo item : contract.getContractItemInfo(def)) {
+                List<PluginContractItemInfo> items = contract.getContractItemInfo(def);
+                if (items != null) {
+                    for (PluginContractItemInfo item : items) {
 
-                    // Assign an ID to this method
-                    int methodId = entityMethodConstants.size() + voidMethodConstants.size() + 1;
+                        // Assign an ID to this method
+                        int methodId = entityMethodConstants.size() + voidMethodConstants.size() + 1;
 
-                    // Get the name of this method
-                    String name = this.getMethodName(item);
+                        // Get the name of this method
+                        String name = this.getMethodName(item);
 
-                    // Get the input type of this method and add an appropriate
-                    // entity converter
-                    String messageInputType = this.parseMessageType(item.getInMessageSchema());
-                    this.addEntityConverter(messageInputType);
+                        // Get the input type of this method and add an
+                        // appropriate
+                        // entity converter
+                        String messageInputType = this.parseMessageType(item.getInMessageSchema());
+                        this.addEntityConverter(messageInputType);
 
-                    // Get the input type of this method and add an appropriate
-                    // entity converter
-                    String messageOutputType = parseMessageType(item.getOutMessageSchema());
-                    this.addEntityConverter(messageOutputType);
+                        // Get the input type of this method and add an
+                        // appropriate
+                        // entity converter
+                        String messageOutputType = parseMessageType(item.getOutMessageSchema());
+                        this.addEntityConverter(messageOutputType);
 
-                    // Process the data gathered based on the item contract
-                    if (def.equals(SEND_MESSAGE_CONTRACT)) {
+                        // Process the data gathered based on the item contract
+                        if (def.equals(SEND_MESSAGE_CONTRACT)) {
 
-                        // The value to insert into the template as the input
-                        // type
-                        String inputType = (messageInputType != null) ? messageInputType : "";
+                            // The value to insert into the template as the
+                            // input
+                            // type
+                            String inputType = (messageInputType != null) ? messageInputType : "";
 
-                        // The value to insert into the template as the output
-                        // type
-                        String outputType;
-                        if (messageOutputType != null) {
-                            outputType = String.format("Future<%s>", messageOutputType);
-                            this.entityMethodConstants.add(methodId);
-                        } else {
-                            outputType = "Future<Void>";
-                            this.voidMethodConstants.add(methodId);
-                        }
-
-                        // Add an appropriate method signature to the API
-                        // interface
-                        this.pluginInterface.withMethodSignature(name, outputType, new String[] { inputType }, null);
-
-                        // Add an appropriate method constant to the API
-                        // implementation
-                        this.pluginImplementation.withMethodConstant(name, new String[] { messageInputType }, methodId);
-
-                        // The method parameters
-                        Map<String, String> parameters = new LinkedHashMap<>();
-                        parameters.put("param", messageInputType);
-
-                        // The values to insert into the method body
-                        Map<String, String> values = new HashMap<>();
-                        values.put(NAME_VAR, name);
-                        values.put(MESSAGE_INPUT_TYPE_VAR, messageInputType);
-                        values.put(MESSAGE_OUTPUT_TYPE_VAR, messageOutputType);
-                        values.put(INPUT_TYPE_VAR, inputType);
-                        values.put(OUTPUT_TYPE_VAR, outputType);
-                        values.put(MESSAGE_INPUT_TYPE_CONVERTER_VAR, this.entityConverters.get(messageInputType));
-                        values.put(MESSAGE_OUTPUT_TYPE_CONVERTER_VAR, this.entityConverters.get(messageOutputType));
-                        values.put(METHOD_ID_VAR, Integer.toString(methodId));
-
-                        // Get the method body
-                        String body;
-                        if (messageOutputType == null || messageOutputType.isEmpty()) {
-                            body = this.readFileAsString("templates/java/send.template");
-                        } else {
-                            if (messageInputType != null && !messageInputType.isEmpty()) {
-                                body = this.readFileAsString("templates/java/receive.template");
+                            // The value to insert into the template as the
+                            // output
+                            // type
+                            String outputType;
+                            if (messageOutputType != null) {
+                                outputType = String.format("Future<%s>", messageOutputType);
+                                this.entityMethodConstants.add(methodId);
                             } else {
-                                body = this.readFileAsString("templates/java/receive_void.template");
+                                outputType = "Future<Void>";
+                                this.voidMethodConstants.add(methodId);
                             }
-                        }
 
-                        // Add the method to the API implementation
-                        this.pluginImplementation.withMethod(name, outputType, parameters, new String[] { "public" }, body, values);
+                            // Add an appropriate method signature to the API
+                            // interface
+                            this.pluginInterface.withMethodSignature(name, outputType, new String[] { inputType }, null);
 
-                        // Add a method handler
-                        if (messageOutputType == null || messageOutputType.isEmpty()) {
-                            parameters = new LinkedHashMap<>();
-                            parameters.put("uid", "final UUID");
-                            body = this.readFileAsString("templates/java/handle_send.template");
-                            this.pluginImplementation.withMethod("handleMethod" + values.get(METHOD_ID_VAR) + "Void", "void", parameters,
-                                    new String[] { "private" }, body, values);
-                        } else {
-                            parameters = new LinkedHashMap<>();
-                            parameters.put("msg", "final PayloadMessage");
-                            body = this.readFileAsString("templates/java/handle_receive.template");
-                            this.pluginImplementation.withMethod("handleMethod" + values.get(METHOD_ID_VAR) + "Msg", "void", parameters,
-                                    new String[] { "private" }, body, values);
-                        }
+                            // Add an appropriate method constant to the API
+                            // implementation
+                            this.pluginImplementation.withMethodConstant(name, new String[] { messageInputType }, methodId);
 
-                    } else if (def.equals(RECEIVE_MESSAGE_CONTRACT)) {
-
-                        if (messageInputType != null) {
-                            this.entityMethodConstants.add(methodId);
-                        } else {
-                            this.voidMethodConstants.add(methodId);
-                        }
-
-                        // Add a method listener field
-                        String methodName = name;
-                        String fieldName = "method" + (this.methodListeners.size() + 1) + "Listener";
-                        String fieldType = Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1);
-                        this.methodListeners.put(fieldType, fieldName);
-                        this.pluginImplementation.withMethodListener(methodName, fieldName, fieldType);
-
-                        // Add an appropriate method signature to the API
-                        // interface
-                        this.pluginInterface.withMethodSignature(name, "void", new String[] { fieldType }, null);
-
-                        // Add an appropriate method constant to the API
-                        // implementation
-                        this.pluginImplementation.withMethodConstant(name, new String[] { fieldType }, methodId);
-
-                        // Generates an interface for the method listener field
-                        // class
-                        JavaPluginInterfaceBuilder listenerInterface = new JavaPluginInterfaceBuilder(fieldType, namespace,
-                                this.readFileAsString("templates/java/listenerClass.template"));
-                        listenerInterface.withMethodSignature("onEvent", messageOutputType, new String[] { messageInputType }, null);
-                        files.add(listenerInterface.build());
-
-                        // The values to insert into the method body
-                        Map<String, String> values = new HashMap<>();
-                        values.put(NAME_VAR, name);
-                        values.put(MESSAGE_INPUT_TYPE_VAR, messageInputType);
-                        values.put(MESSAGE_OUTPUT_TYPE_VAR, messageOutputType);
-                        values.put(MESSAGE_INPUT_TYPE_CONVERTER_VAR, this.entityConverters.get(messageInputType));
-                        values.put(MESSAGE_OUTPUT_TYPE_CONVERTER_VAR, this.entityConverters.get(messageOutputType));
-                        values.put(METHOD_ID_VAR, Integer.toString(methodId));
-                        values.put(LISTENER_VAR, fieldName);
-
-                        // Add a method handler
-                        if (messageInputType == null || messageInputType.isEmpty()) {
+                            // The method parameters
                             Map<String, String> parameters = new LinkedHashMap<>();
-                            parameters.put("uid", "final UUID");
-                            String body = this.readFileAsString("templates/java/handle_listener_void.template");
-                            this.pluginImplementation.withMethod("handleMethod" + values.get(METHOD_ID_VAR) + "Void", "void", parameters,
-                                    new String[] { "private" }, body, values);
+                            parameters.put("param", messageInputType);
+
+                            // The values to insert into the method body
+                            Map<String, String> values = new HashMap<>();
+                            values.put(NAME_VAR, name);
+                            values.put(MESSAGE_INPUT_TYPE_VAR, messageInputType);
+                            values.put(MESSAGE_OUTPUT_TYPE_VAR, messageOutputType);
+                            values.put(INPUT_TYPE_VAR, inputType);
+                            values.put(OUTPUT_TYPE_VAR, outputType);
+                            values.put(MESSAGE_INPUT_TYPE_CONVERTER_VAR, this.entityConverters.get(messageInputType));
+                            values.put(MESSAGE_OUTPUT_TYPE_CONVERTER_VAR, this.entityConverters.get(messageOutputType));
+                            values.put(METHOD_ID_VAR, Integer.toString(methodId));
+
+                            // Get the method body
+                            String body;
+                            if (messageOutputType == null || messageOutputType.isEmpty()) {
+                                body = this.readFileAsString("templates/java/send.template");
+                            } else {
+                                if (messageInputType != null && !messageInputType.isEmpty()) {
+                                    body = this.readFileAsString("templates/java/receive.template");
+                                } else {
+                                    body = this.readFileAsString("templates/java/receive_void.template");
+                                }
+                            }
+
+                            // Add the method to the API implementation
+                            this.pluginImplementation.withMethod(name, outputType, parameters, new String[] { "public" }, body, values);
+
+                            // Add a method handler
+                            if (messageOutputType == null || messageOutputType.isEmpty()) {
+                                parameters = new LinkedHashMap<>();
+                                parameters.put("uid", "final UUID");
+                                body = this.readFileAsString("templates/java/handle_send.template");
+                                this.pluginImplementation.withMethod("handleMethod" + values.get(METHOD_ID_VAR) + "Void", "void", parameters,
+                                        new String[] { "private" }, body, values);
+                            } else {
+                                parameters = new LinkedHashMap<>();
+                                parameters.put("msg", "final PayloadMessage");
+                                body = this.readFileAsString("templates/java/handle_receive.template");
+                                this.pluginImplementation.withMethod("handleMethod" + values.get(METHOD_ID_VAR) + "Msg", "void", parameters,
+                                        new String[] { "private" }, body, values);
+                            }
+
+                        } else if (def.equals(RECEIVE_MESSAGE_CONTRACT)) {
+
+                            if (messageInputType != null) {
+                                this.entityMethodConstants.add(methodId);
+                            } else {
+                                this.voidMethodConstants.add(methodId);
+                            }
+
+                            // Add a method listener field
+                            String methodName = name;
+                            String fieldName = "method" + (this.methodListeners.size() + 1) + "Listener";
+                            String fieldType = Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1);
+                            this.methodListeners.put(fieldType, fieldName);
+                            this.pluginImplementation.withMethodListener(methodName, fieldName, fieldType);
+
+                            // Add an appropriate method signature to the API
+                            // interface
+                            this.pluginInterface.withMethodSignature(name, "void", new String[] { fieldType }, null);
+
+                            // Add an appropriate method constant to the API
+                            // implementation
+                            this.pluginImplementation.withMethodConstant(name, new String[] { fieldType }, methodId);
+
+                            // Generates an interface for the method listener
+                            // field
+                            // class
+                            JavaPluginInterfaceBuilder listenerInterface = new JavaPluginInterfaceBuilder(fieldType, namespace,
+                                    this.readFileAsString("templates/java/listenerClass.template"));
+                            listenerInterface.withMethodSignature("onEvent", messageOutputType, new String[] { messageInputType }, null);
+                            files.add(listenerInterface.build());
+
+                            // The values to insert into the method body
+                            Map<String, String> values = new HashMap<>();
+                            values.put(NAME_VAR, name);
+                            values.put(MESSAGE_INPUT_TYPE_VAR, messageInputType);
+                            values.put(MESSAGE_OUTPUT_TYPE_VAR, messageOutputType);
+                            values.put(MESSAGE_INPUT_TYPE_CONVERTER_VAR, this.entityConverters.get(messageInputType));
+                            values.put(MESSAGE_OUTPUT_TYPE_CONVERTER_VAR, this.entityConverters.get(messageOutputType));
+                            values.put(METHOD_ID_VAR, Integer.toString(methodId));
+                            values.put(LISTENER_VAR, fieldName);
+
+                            // Add a method handler
+                            if (messageInputType == null || messageInputType.isEmpty()) {
+                                Map<String, String> parameters = new LinkedHashMap<>();
+                                parameters.put("uid", "final UUID");
+                                String body = this.readFileAsString("templates/java/handle_listener_void.template");
+                                this.pluginImplementation.withMethod("handleMethod" + values.get(METHOD_ID_VAR) + "Void", "void", parameters,
+                                        new String[] { "private" }, body, values);
+                            } else {
+                                Map<String, String> parameters = new LinkedHashMap<>();
+                                parameters.put("msg", "final PayloadMessage");
+                                String body = this.readFileAsString("templates/java/handle_listener.template");
+                                this.pluginImplementation.withMethod("handleMethod" + values.get(METHOD_ID_VAR) + "Msg", "void", parameters,
+                                        new String[] { "private" }, body, values);
+                            }
                         } else {
-                            Map<String, String> parameters = new LinkedHashMap<>();
-                            parameters.put("msg", "final PayloadMessage");
-                            String body = this.readFileAsString("templates/java/handle_listener.template");
-                            this.pluginImplementation.withMethod("handleMethod" + values.get(METHOD_ID_VAR) + "Msg", "void", parameters,
-                                    new String[] { "private" }, body, values);
+                            LOG.error("Unknown plugin item definition [{}]", def);
+                            throw new RuntimeException();
                         }
-                    } else {
-                        LOG.error("Unknown plugin item definition [{}]", def);
-                        throw new RuntimeException();
                     }
                 }
             }
