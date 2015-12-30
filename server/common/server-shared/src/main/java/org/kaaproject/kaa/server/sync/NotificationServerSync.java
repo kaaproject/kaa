@@ -103,17 +103,27 @@ public final class NotificationServerSync {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         NotificationServerSync that = (NotificationServerSync) o;
 
-        if (appStateSeqNumber != that.appStateSeqNumber) return false;
-        if (availableTopics != null ? !availableTopics.equals(that.availableTopics) : that.availableTopics != null)
+        if (appStateSeqNumber != that.appStateSeqNumber) {
             return false;
-        if (notifications != null ? !notifications.equals(that.notifications) : that.notifications != null)
+        }
+        if (availableTopics != null ? !availableTopics.equals(that.availableTopics) : that.availableTopics != null) {
             return false;
-        if (responseStatus != that.responseStatus) return false;
+        }
+        if (notifications != null ? !notifications.equals(that.notifications) : that.notifications != null) {
+            return false;
+        }
+        if (responseStatus != that.responseStatus) {
+            return false;
+        }
 
         return true;
     }

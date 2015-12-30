@@ -108,31 +108,42 @@ public class CTLSchemaDto extends AbstractCTLSchemaDto implements HasId, Seriali
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
-        if (o == null || getClass() != o.getClass())
+        }
+        if (o == null || getClass() != o.getClass()) {
             return false;
+        }
 
         CTLSchemaDto that = (CTLSchemaDto) o;
 
-        if (createdTime != that.createdTime)
+        if (createdTime != that.createdTime) {
             return false;
-        if (id != null ? !id.equals(that.id) : that.id != null)
+        }
+        if (id != null ? !id.equals(that.id) : that.id != null) {
             return false;
-        if (metaInfo != null ? !metaInfo.equals(that.metaInfo) : that.metaInfo != null)
+        }
+        if (metaInfo != null ? !metaInfo.equals(that.metaInfo) : that.metaInfo != null) {
             return false;
-        if (tenantId != null ? !tenantId.equals(that.tenantId) : that.tenantId != null)
+        }
+        if (tenantId != null ? !tenantId.equals(that.tenantId) : that.tenantId != null) {
             return false;
-        if (applicationId != null ? !applicationId.equals(that.applicationId) : that.applicationId != null)
+        }
+        if (applicationId != null ? !applicationId.equals(that.applicationId) : that.applicationId != null) {
             return false;
-        if (body != null ? !body.equals(that.body) : that.body != null)
+        }
+        if (body != null ? !body.equals(that.body) : that.body != null) {
             return false;
-        if (name != null ? !name.equals(that.name) : that.name != null)
+        }
+        if (name != null ? !name.equals(that.name) : that.name != null) {
             return false;
-        if (description != null ? !description.equals(that.description) : that.description != null)
+        }
+        if (description != null ? !description.equals(that.description) : that.description != null) {
             return false;
-        if (createdUsername != null ? !createdUsername.equals(that.createdUsername) : that.createdUsername != null)
+        }
+        if (createdUsername != null ? !createdUsername.equals(that.createdUsername) : that.createdUsername != null) {
             return false;
+        }
         return !(dependencySet != null ? !dependencySet.equals(that.dependencySet) : that.dependencySet != null);
 
     }

@@ -77,17 +77,24 @@ public final class CassandraEndpointGroupState implements ToDto<EndpointGroupSta
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         CassandraEndpointGroupState that = (CassandraEndpointGroupState) o;
 
-        if (configurationId != null ? !configurationId.equals(that.configurationId) : that.configurationId != null)
+        if (configurationId != null ? !configurationId.equals(that.configurationId) : that.configurationId != null) {
             return false;
-        if (endpointGroupId != null ? !endpointGroupId.equals(that.endpointGroupId) : that.endpointGroupId != null)
+        }
+        if (endpointGroupId != null ? !endpointGroupId.equals(that.endpointGroupId) : that.endpointGroupId != null) {
             return false;
-        if (profileFilterId != null ? !profileFilterId.equals(that.profileFilterId) : that.profileFilterId != null)
+        }
+        if (profileFilterId != null ? !profileFilterId.equals(that.profileFilterId) : that.profileFilterId != null) {
             return false;
+        }
 
         return true;
     }

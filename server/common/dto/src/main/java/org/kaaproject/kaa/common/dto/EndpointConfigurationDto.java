@@ -50,13 +50,21 @@ public class EndpointConfigurationDto implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         EndpointConfigurationDto that = (EndpointConfigurationDto) o;
 
-        if (!Arrays.equals(configuration, that.configuration)) return false;
-        if (!Arrays.equals(configurationHash, that.configurationHash)) return false;
+        if (!Arrays.equals(configuration, that.configuration)) {
+            return false;
+        }
+        if (!Arrays.equals(configurationHash, that.configurationHash)) {
+            return false;
+        }
 
         return true;
     }

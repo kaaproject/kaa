@@ -92,8 +92,11 @@ public class OAuthHeaderBuilder {
             if (i % 2 == 0) {
                 builder.append(pairs[i]);
             } else {
-                if (i != pairs.length - 1) builder.append("=").append(pairs[i]).append("&");
-                else builder.append("=").append(pairs[i]);
+                if (i != pairs.length - 1) {
+                    builder.append("=").append(pairs[i]).append("&");
+                } else {
+                    builder.append("=").append(pairs[i]);
+                }
             }
         }
     }
@@ -112,7 +115,9 @@ public class OAuthHeaderBuilder {
                 builder.append(vals[i]);
             } else {
                 builder.append("=").append("\"").append(vals[i]).append("\"");
-                if (i != vals.length - 1) builder.append(",");
+                if (i != vals.length - 1) {
+                    builder.append(",");
+                }
             }
         }
 

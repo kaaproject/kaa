@@ -93,33 +93,44 @@ public class ProfileVersionPairDto implements Serializable, Comparable<ProfileVe
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         ProfileVersionPairDto other = (ProfileVersionPairDto) obj;
         if (endpointProfileSchemaVersion == null) {
-            if (other.endpointProfileSchemaVersion != null)
+            if (other.endpointProfileSchemaVersion != null) {
                 return false;
-        } else if (!endpointProfileSchemaVersion.equals(other.endpointProfileSchemaVersion))
+            }
+        } else if (!endpointProfileSchemaVersion.equals(other.endpointProfileSchemaVersion)) {
             return false;
+        }
         if (endpointProfileSchemaid == null) {
-            if (other.endpointProfileSchemaid != null)
+            if (other.endpointProfileSchemaid != null) {
                 return false;
-        } else if (!endpointProfileSchemaid.equals(other.endpointProfileSchemaid))
+            }
+        } else if (!endpointProfileSchemaid.equals(other.endpointProfileSchemaid)) {
             return false;
+        }
         if (serverProfileSchemaVersion == null) {
-            if (other.serverProfileSchemaVersion != null)
+            if (other.serverProfileSchemaVersion != null) {
                 return false;
-        } else if (!serverProfileSchemaVersion.equals(other.serverProfileSchemaVersion))
+            }
+        } else if (!serverProfileSchemaVersion.equals(other.serverProfileSchemaVersion)) {
             return false;
+        }
         if (serverProfileSchemaid == null) {
-            if (other.serverProfileSchemaid != null)
+            if (other.serverProfileSchemaid != null) {
                 return false;
-        } else if (!serverProfileSchemaid.equals(other.serverProfileSchemaid))
+            }
+        } else if (!serverProfileSchemaid.equals(other.serverProfileSchemaid)) {
             return false;
+        }
         return true;
     }
 

@@ -19,7 +19,6 @@ package org.kaaproject.kaa.server.common.dao;
 
 import java.util.List;
 
-import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.TenantAdminDto;
 import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.common.dto.UserDto;

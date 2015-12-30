@@ -72,7 +72,9 @@ public class EndpointProfileDataProvider extends AbstractDataProvider<EndpointPr
                                 endpointProfilesList.clear();
                                 callback.onSuccess(endpointProfilesList);
                             }
-                        } else callback.onFailure(caught);
+                        } else {
+                            callback.onFailure(caught);
+                        }
                     }
 
                     @Override

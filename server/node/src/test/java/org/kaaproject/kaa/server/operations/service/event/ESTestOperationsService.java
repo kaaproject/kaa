@@ -19,7 +19,6 @@ package org.kaaproject.kaa.server.operations.service.event;
 import java.security.PublicKey;
 import java.util.List;
 
-import org.kaaproject.kaa.common.dto.CTLDataDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;

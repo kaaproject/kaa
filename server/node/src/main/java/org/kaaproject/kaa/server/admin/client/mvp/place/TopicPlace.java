@@ -59,18 +59,23 @@ public class TopicPlace extends TopicsPlace {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         TopicPlace other = (TopicPlace) obj;
         if (topicId == null) {
-            if (other.topicId != null)
+            if (other.topicId != null) {
                 return false;
-        } else if (!topicId.equals(other.topicId))
+            }
+        } else if (!topicId.equals(other.topicId)) {
             return false;
+        }
         return true;
     }
 

@@ -130,14 +130,24 @@ public class CTLSchemaMetaInfo extends GenericModel<CTLSchemaMetaInfoDto> implem
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         CTLSchemaMetaInfo metaInfo = (CTLSchemaMetaInfo) o;
 
-        if (fqn != null ? !fqn.equals(metaInfo.fqn) : metaInfo.fqn != null) return false;
-        if (version != null ? !version.equals(metaInfo.version) : metaInfo.version != null) return false;
-        if (scope != metaInfo.scope) return false;
+        if (fqn != null ? !fqn.equals(metaInfo.fqn) : metaInfo.fqn != null) {
+            return false;
+        }
+        if (version != null ? !version.equals(metaInfo.version) : metaInfo.version != null) {
+            return false;
+        }
+        if (scope != metaInfo.scope) {
+            return false;
+        }
         return count != null ? count.equals(metaInfo.count) : metaInfo.count == null;
 
     }

@@ -30,7 +30,9 @@ public class ServletUtils {
         try {
             byte[] fileNameBytes = fileName.getBytes((isInternetExplorer) ? ("windows-1250") : ("utf-8"));
             String dispositionFileName = "";
-            for (byte b: fileNameBytes) dispositionFileName += (char)(b & 0xff);
+            for (byte b: fileNameBytes) {
+                dispositionFileName += (char)(b & 0xff);
+            }
 
             String disposition = "attachment; filename=\"" + dispositionFileName + "\"";
             response.setHeader("Content-Disposition", disposition);

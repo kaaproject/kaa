@@ -18,9 +18,6 @@ package org.kaaproject.kaa.server.admin.client.mvp.view;
 
 import org.kaaproject.kaa.common.dto.AbstractStructureDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.struct.AbstractRecordPanel;
-import org.kaaproject.kaa.server.admin.client.mvp.view.widget.VersionListBox;
-
-import com.google.gwt.user.client.ui.HasValue;
 
 public interface BaseRecordView<T extends AbstractStructureDto,V> extends BaseDetailsView {
 

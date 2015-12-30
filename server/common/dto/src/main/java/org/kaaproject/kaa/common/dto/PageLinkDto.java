@@ -110,38 +110,51 @@ public class PageLinkDto implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         PageLinkDto other = (PageLinkDto) obj;
         if (applicationId == null) {
-            if (other.applicationId != null)
+            if (other.applicationId != null) {
                 return false;
-        } else if (!applicationId.equals(other.applicationId))
+            }
+        } else if (!applicationId.equals(other.applicationId)) {
             return false;
+        }
         if (endpointGroupId == null) {
-            if (other.endpointGroupId != null)
+            if (other.endpointGroupId != null) {
                 return false;
-        } else if (!endpointGroupId.equals(other.endpointGroupId))
+            }
+        } else if (!endpointGroupId.equals(other.endpointGroupId)) {
             return false;
+        }
         if (limit == null) {
-            if (other.limit != null)
+            if (other.limit != null) {
                 return false;
-        } else if (!limit.equals(other.limit))
+            }
+        } else if (!limit.equals(other.limit)) {
             return false;
+        }
         if (next == null) {
-            if (other.next != null)
+            if (other.next != null) {
                 return false;
-        } else if (!next.equals(other.next))
+            }
+        } else if (!next.equals(other.next)) {
             return false;
+        }
         if (offset == null) {
-            if (other.offset != null)
+            if (other.offset != null) {
                 return false;
-        } else if (!offset.equals(other.offset))
+            }
+        } else if (!offset.equals(other.offset)) {
             return false;
+        }
         return true;
     }
 }

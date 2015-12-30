@@ -33,8 +33,9 @@ public class ImageTextButton extends Button {
 
          public ImageTextButton(ImageResource imageResource, String text, ClickHandler clickHandler){
           super();
-          if (clickHandler != null)
-                  addClickHandler(clickHandler);
+          if (clickHandler != null) {
+            addClickHandler(clickHandler);
+        }
           String definedStyles = getElement().getAttribute("style");
           getElement().setAttribute("style", definedStyles + "; vertical-align:middle;");
           this.text = text;

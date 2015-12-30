@@ -199,23 +199,45 @@ public final class CassandraNotification implements Notification, Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         CassandraNotification that = (CassandraNotification) o;
 
-        if (seqNum != that.seqNum) return false;
-        if (version != that.version) return false;
-        if (applicationId != null ? !applicationId.equals(that.applicationId) : that.applicationId != null)
+        if (seqNum != that.seqNum) {
             return false;
-        if (body != null ? !body.equals(that.body) : that.body != null) return false;
-        if (expiredAt != null ? !expiredAt.equals(that.expiredAt) : that.expiredAt != null) return false;
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (lastModifyTime != null ? !lastModifyTime.equals(that.lastModifyTime) : that.lastModifyTime != null)
+        }
+        if (version != that.version) {
             return false;
-        if (schemaId != null ? !schemaId.equals(that.schemaId) : that.schemaId != null) return false;
-        if (topicId != null ? !topicId.equals(that.topicId) : that.topicId != null) return false;
-        if (type != that.type) return false;
+        }
+        if (applicationId != null ? !applicationId.equals(that.applicationId) : that.applicationId != null) {
+            return false;
+        }
+        if (body != null ? !body.equals(that.body) : that.body != null) {
+            return false;
+        }
+        if (expiredAt != null ? !expiredAt.equals(that.expiredAt) : that.expiredAt != null) {
+            return false;
+        }
+        if (id != null ? !id.equals(that.id) : that.id != null) {
+            return false;
+        }
+        if (lastModifyTime != null ? !lastModifyTime.equals(that.lastModifyTime) : that.lastModifyTime != null) {
+            return false;
+        }
+        if (schemaId != null ? !schemaId.equals(that.schemaId) : that.schemaId != null) {
+            return false;
+        }
+        if (topicId != null ? !topicId.equals(that.topicId) : that.topicId != null) {
+            return false;
+        }
+        if (type != that.type) {
+            return false;
+        }
 
         return true;
     }

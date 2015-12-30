@@ -240,20 +240,39 @@ public class CTLSchema extends GenericModel<CTLSchemaDto> implements Serializabl
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         CTLSchema schema = (CTLSchema) o;
 
-        if (createdTime != schema.createdTime) return false;
-        if (metaInfo != null ? !metaInfo.equals(schema.metaInfo) : schema.metaInfo != null) return false;
-        if (tenant != null ? !tenant.equals(schema.tenant) : schema.tenant != null) return false;
-        if (application != null ? !application.equals(schema.application) : schema.application != null) return false;
-        if (body != null ? !body.equals(schema.body) : schema.body != null) return false;
-        if (name != null ? !name.equals(schema.name) : schema.name != null) return false;
-        if (description != null ? !description.equals(schema.description) : schema.description != null) return false;
-        if (createdUsername != null ? !createdUsername.equals(schema.createdUsername) : schema.createdUsername != null)
+        if (createdTime != schema.createdTime) {
             return false;
+        }
+        if (metaInfo != null ? !metaInfo.equals(schema.metaInfo) : schema.metaInfo != null) {
+            return false;
+        }
+        if (tenant != null ? !tenant.equals(schema.tenant) : schema.tenant != null) {
+            return false;
+        }
+        if (application != null ? !application.equals(schema.application) : schema.application != null) {
+            return false;
+        }
+        if (body != null ? !body.equals(schema.body) : schema.body != null) {
+            return false;
+        }
+        if (name != null ? !name.equals(schema.name) : schema.name != null) {
+            return false;
+        }
+        if (description != null ? !description.equals(schema.description) : schema.description != null) {
+            return false;
+        }
+        if (createdUsername != null ? !createdUsername.equals(schema.createdUsername) : schema.createdUsername != null) {
+            return false;
+        }
         return dependencySet != null ? dependencySet.equals(schema.dependencySet) : schema.dependencySet == null;
 
     }

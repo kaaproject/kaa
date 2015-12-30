@@ -87,8 +87,9 @@ public class CassandraLogEventDao implements LogEventDao {
     private CassandraConfig configuration;
 
     public CassandraLogEventDao(CassandraConfig configuration) throws UnknownHostException {
-        if (configuration == null)
+        if (configuration == null) {
             throw new IllegalArgumentException("Configuration shouldn't be null");
+        }
         LOG.info("Init cassandra log event dao...");
         this.configuration = configuration;
         keyspaceName = configuration.getKeySpace();

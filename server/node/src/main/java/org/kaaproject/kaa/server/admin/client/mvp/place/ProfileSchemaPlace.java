@@ -38,18 +38,23 @@ public class ProfileSchemaPlace extends AbstractSchemaPlace {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         ProfileSchemaPlace other = (ProfileSchemaPlace) obj;
         if (schemaId == null) {
-            if (other.schemaId != null)
+            if (other.schemaId != null) {
                 return false;
-        } else if (!schemaId.equals(other.schemaId))
+            }
+        } else if (!schemaId.equals(other.schemaId)) {
             return false;
+        }
         return true;
     }
 

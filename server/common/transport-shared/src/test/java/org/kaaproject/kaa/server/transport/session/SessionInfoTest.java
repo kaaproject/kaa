@@ -26,7 +26,6 @@ import org.kaaproject.kaa.server.transport.channel.ChannelContext;
 import org.kaaproject.kaa.server.transport.channel.ChannelType;
 import org.kaaproject.kaa.server.transport.session.SessionInfo;
 
-import static org.mockito.Matchers.endsWith;
 import static org.mockito.Mockito.mock;
 
 /**

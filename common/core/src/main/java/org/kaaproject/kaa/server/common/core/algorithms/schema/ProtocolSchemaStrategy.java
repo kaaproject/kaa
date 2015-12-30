@@ -16,21 +16,10 @@
 
 package org.kaaproject.kaa.server.common.core.algorithms.schema;
 
-import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.ARRAY_FIELD_VALUE;
 import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.DELTA;
-import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.FIELDS_FIELD;
-import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.ITEMS_FIELD;
 import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.KAA_NAMESPACE;
-import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.NAMESPACE_FIELD;
-import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.NAME_FIELD;
-import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.NULL_FIELD_VALUE;
-import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.RECORD_FIELD_VALUE;
-import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.TYPE_FIELD;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.avro.Schema;

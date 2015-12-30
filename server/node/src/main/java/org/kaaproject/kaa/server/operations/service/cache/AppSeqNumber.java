@@ -65,20 +65,26 @@ public final class AppSeqNumber implements Serializable{
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         AppSeqNumber other = (AppSeqNumber) obj;
         if (appToken == null) {
-            if (other.appToken != null)
+            if (other.appToken != null) {
                 return false;
-        } else if (!appToken.equals(other.appToken))
+            }
+        } else if (!appToken.equals(other.appToken)) {
             return false;
-        if (seqNumber != other.seqNumber)
+        }
+        if (seqNumber != other.seqNumber) {
             return false;
+        }
         return true;
     }
 

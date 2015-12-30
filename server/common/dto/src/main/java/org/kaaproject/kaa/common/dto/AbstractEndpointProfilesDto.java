@@ -55,23 +55,30 @@ public class AbstractEndpointProfilesDto implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         AbstractEndpointProfilesDto other = (AbstractEndpointProfilesDto) obj;
         if (next == null) {
-            if (other.next != null)
+            if (other.next != null) {
                 return false;
-        } else if (!next.equals(other.next))
+            }
+        } else if (!next.equals(other.next)) {
             return false;
+        }
         if (pageLinkDto == null) {
-            if (other.pageLinkDto != null)
+            if (other.pageLinkDto != null) {
                 return false;
-        } else if (!pageLinkDto.equals(other.pageLinkDto))
+            }
+        } else if (!pageLinkDto.equals(other.pageLinkDto)) {
             return false;
+        }
         return true;
     }
 }

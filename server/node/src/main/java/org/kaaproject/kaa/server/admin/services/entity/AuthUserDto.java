@@ -77,18 +77,23 @@ public class AuthUserDto extends UserDto implements UserDetails {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (!super.equals(obj))
+        }
+        if (!super.equals(obj)) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         AuthUserDto other = (AuthUserDto) obj;
         if (getExternalUid() == null) {
-            if (other.getExternalUid() != null)
+            if (other.getExternalUid() != null) {
                 return false;
-        } else if (!getExternalUid().equals(other.getExternalUid()))
+            }
+        } else if (!getExternalUid().equals(other.getExternalUid())) {
             return false;
+        }
         return true;
     }
 

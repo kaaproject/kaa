@@ -39,18 +39,23 @@ public class UpdateUserConfigPlace extends EndpointUsersPlace {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         UpdateUserConfigPlace other = (UpdateUserConfigPlace) obj;
         if (applicationId == null) {
-            if (other.applicationId != null)
+            if (other.applicationId != null) {
                 return false;
-        } else if (!applicationId.equals(other.applicationId))
+            }
+        } else if (!applicationId.equals(other.applicationId)) {
             return false;
+        }
         return true;
     }
 

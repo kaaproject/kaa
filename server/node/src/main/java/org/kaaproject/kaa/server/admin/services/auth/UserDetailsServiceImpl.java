@@ -42,8 +42,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String username)
             throws UsernameNotFoundException {
         User user = userFacade.findByUserName(username);
-        if (user == null)
+        if (user == null) {
             throw new UsernameNotFoundException("user not found");
+        }
         AuthUserDto authUser = new AuthUserDto(user);
         if (authUser.getAuthority() != KaaAuthorityDto.KAA_ADMIN) {
             UserDto userDto;

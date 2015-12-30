@@ -69,20 +69,26 @@ public class EndpointProfileBodyDto implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         EndpointProfileBodyDto other = (EndpointProfileBodyDto) obj;
-        if (!Arrays.equals(endpointKeyHash, other.endpointKeyHash))
+        if (!Arrays.equals(endpointKeyHash, other.endpointKeyHash)) {
             return false;
+        }
         if (profile == null) {
-            if (other.profile != null)
+            if (other.profile != null) {
                 return false;
-        } else if (!profile.equals(other.profile))
+            }
+        } else if (!profile.equals(other.profile)) {
             return false;
+        }
         return true;
     }
 }

@@ -25,7 +25,6 @@ import java.util.Map;
 import org.apache.avro.Schema;
 import org.apache.avro.Schema.Field;
 import org.apache.avro.Schema.Type;
-import org.kaaproject.kaa.server.common.core.algorithms.AvroUtils;
 
 
 /**

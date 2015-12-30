@@ -141,7 +141,9 @@ public class AvroAsyncRpcClientTest {
             e.printStackTrace();
           } finally {
             stopServer(server);
-            if (client != null) client.close();
+            if (client != null) {
+                client.close();
+            }
           }
         }
 
@@ -186,7 +188,9 @@ public class AvroAsyncRpcClientTest {
             e.printStackTrace();
           } finally {
             stopServer(server);
-            if (client != null) client.close();
+            if (client != null) {
+                client.close();
+            }
           }
         }
 

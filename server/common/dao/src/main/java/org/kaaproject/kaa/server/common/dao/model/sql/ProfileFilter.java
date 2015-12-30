@@ -159,15 +159,24 @@ public class ProfileFilter extends AbstractStructure<ProfileFilterDto> implement
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
 
         ProfileFilter that = (ProfileFilter) o;
 
-        if (body != null ? !body.equals(that.body) : that.body != null) return false;
-        if (endpointProfileSchema != null ? !endpointProfileSchema.equals(that.endpointProfileSchema) : that.endpointProfileSchema != null)
+        if (body != null ? !body.equals(that.body) : that.body != null) {
             return false;
+        }
+        if (endpointProfileSchema != null ? !endpointProfileSchema.equals(that.endpointProfileSchema) : that.endpointProfileSchema != null) {
+            return false;
+        }
         return serverProfileSchema != null ? serverProfileSchema.equals(that.serverProfileSchema) : that.serverProfileSchema == null;
 
     }

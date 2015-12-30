@@ -48,12 +48,18 @@ public final class ProfileServerSync {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         ProfileServerSync that = (ProfileServerSync) o;
 
-        if (responseStatus != that.responseStatus) return false;
+        if (responseStatus != that.responseStatus) {
+            return false;
+        }
 
         return true;
     }

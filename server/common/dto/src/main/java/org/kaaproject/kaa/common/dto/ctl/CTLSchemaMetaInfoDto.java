@@ -100,13 +100,21 @@ public class CTLSchemaMetaInfoDto implements HasId, Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         CTLSchemaMetaInfoDto that = (CTLSchemaMetaInfoDto) o;
 
-        if (fqn != null ? !fqn.equals(that.fqn) : that.fqn != null) return false;
-        if (version != null ? !version.equals(that.version) : that.version != null) return false;
+        if (fqn != null ? !fqn.equals(that.fqn) : that.fqn != null) {
+            return false;
+        }
+        if (version != null ? !version.equals(that.version) : that.version != null) {
+            return false;
+        }
         return scope == that.scope;
 
     }

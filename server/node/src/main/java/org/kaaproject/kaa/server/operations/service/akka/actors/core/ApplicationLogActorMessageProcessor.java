@@ -278,17 +278,22 @@ public class ApplicationLogActorMessageProcessor {
 
         @Override
         public boolean equals(Object obj) {
-            if (this == obj)
+            if (this == obj) {
                 return true;
-            if (obj == null)
+            }
+            if (obj == null) {
                 return false;
-            if (getClass() != obj.getClass())
+            }
+            if (getClass() != obj.getClass()) {
                 return false;
+            }
             LogAppenderFilterKey other = (LogAppenderFilterKey) obj;
-            if (confirmDelivery != other.confirmDelivery)
+            if (confirmDelivery != other.confirmDelivery) {
                 return false;
-            if (schemaVersion != other.schemaVersion)
+            }
+            if (schemaVersion != other.schemaVersion) {
                 return false;
+            }
             return true;
         }
     }

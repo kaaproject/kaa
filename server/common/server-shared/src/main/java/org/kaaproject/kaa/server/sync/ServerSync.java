@@ -337,24 +337,45 @@ public final class ServerSync {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         ServerSync that = (ServerSync) o;
 
-        if (requestId != that.requestId) return false;
-        if (bootstrapSync != null ? !bootstrapSync.equals(that.bootstrapSync) : that.bootstrapSync != null)
+        if (requestId != that.requestId) {
             return false;
-        if (configurationSync != null ? !configurationSync.equals(that.configurationSync) : that.configurationSync != null)
+        }
+        if (bootstrapSync != null ? !bootstrapSync.equals(that.bootstrapSync) : that.bootstrapSync != null) {
             return false;
-        if (eventSync != null ? !eventSync.equals(that.eventSync) : that.eventSync != null) return false;
-        if (logSync != null ? !logSync.equals(that.logSync) : that.logSync != null) return false;
-        if (notificationSync != null ? !notificationSync.equals(that.notificationSync) : that.notificationSync != null)
+        }
+        if (configurationSync != null ? !configurationSync.equals(that.configurationSync) : that.configurationSync != null) {
             return false;
-        if (profileSync != null ? !profileSync.equals(that.profileSync) : that.profileSync != null) return false;
-        if (redirectSync != null ? !redirectSync.equals(that.redirectSync) : that.redirectSync != null) return false;
-        if (status != that.status) return false;
-        if (userSync != null ? !userSync.equals(that.userSync) : that.userSync != null) return false;
+        }
+        if (eventSync != null ? !eventSync.equals(that.eventSync) : that.eventSync != null) {
+            return false;
+        }
+        if (logSync != null ? !logSync.equals(that.logSync) : that.logSync != null) {
+            return false;
+        }
+        if (notificationSync != null ? !notificationSync.equals(that.notificationSync) : that.notificationSync != null) {
+            return false;
+        }
+        if (profileSync != null ? !profileSync.equals(that.profileSync) : that.profileSync != null) {
+            return false;
+        }
+        if (redirectSync != null ? !redirectSync.equals(that.redirectSync) : that.redirectSync != null) {
+            return false;
+        }
+        if (status != that.status) {
+            return false;
+        }
+        if (userSync != null ? !userSync.equals(that.userSync) : that.userSync != null) {
+            return false;
+        }
 
         return true;
     }

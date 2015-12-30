@@ -151,8 +151,9 @@ public class ActionsLabel extends Label {
 
             @Override
             public void execute() {
-                if (actionsPopup != null && actionsPopup.isVisible())
+                if (actionsPopup != null && actionsPopup.isVisible()) {
                     actionsPopup.hide();
+                }
                 listener.onMenuItemSelected();
             }
 

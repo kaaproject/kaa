@@ -16,10 +16,7 @@
 
 package org.kaaproject.kaa.server.common.core.algorithms.schema;
 
-import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.NULL_FIELD_VALUE;
-
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.avro.Schema;

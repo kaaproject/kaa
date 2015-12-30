@@ -71,33 +71,44 @@ public class ProfileFilterDto extends AbstractStructureDto {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (!super.equals(obj))
+        }
+        if (!super.equals(obj)) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         ProfileFilterDto other = (ProfileFilterDto) obj;
         if (endpointProfileSchemaId == null) {
-            if (other.endpointProfileSchemaId != null)
+            if (other.endpointProfileSchemaId != null) {
                 return false;
-        } else if (!endpointProfileSchemaId.equals(other.endpointProfileSchemaId))
+            }
+        } else if (!endpointProfileSchemaId.equals(other.endpointProfileSchemaId)) {
             return false;
+        }
         if (endpointProfileSchemaVersion == null) {
-            if (other.endpointProfileSchemaVersion != null)
+            if (other.endpointProfileSchemaVersion != null) {
                 return false;
-        } else if (!endpointProfileSchemaVersion.equals(other.endpointProfileSchemaVersion))
+            }
+        } else if (!endpointProfileSchemaVersion.equals(other.endpointProfileSchemaVersion)) {
             return false;
+        }
         if (serverProfileSchemaId == null) {
-            if (other.serverProfileSchemaId != null)
+            if (other.serverProfileSchemaId != null) {
                 return false;
-        } else if (!serverProfileSchemaId.equals(other.serverProfileSchemaId))
+            }
+        } else if (!serverProfileSchemaId.equals(other.serverProfileSchemaId)) {
             return false;
+        }
         if (serverProfileSchemaVersion == null) {
-            if (other.serverProfileSchemaVersion != null)
+            if (other.serverProfileSchemaVersion != null) {
                 return false;
-        } else if (!serverProfileSchemaVersion.equals(other.serverProfileSchemaVersion))
+            }
+        } else if (!serverProfileSchemaVersion.equals(other.serverProfileSchemaVersion)) {
             return false;
+        }
         return true;
     }
 

@@ -17,7 +17,6 @@
 package org.kaaproject.kaa.server.common.dao.service;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.List;
 
 import org.apache.avro.generic.GenericContainer;

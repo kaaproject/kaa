@@ -121,28 +121,42 @@ public class SdkProfileViewDto implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         SdkProfileViewDto that = (SdkProfileViewDto) o;
 
-        if (sdkProfile != null ? !sdkProfile.equals(that.sdkProfile) : that.sdkProfile != null) return false;
-        if (aefMapDtoList != null ? !aefMapDtoList.equals(that.aefMapDtoList) : that.aefMapDtoList != null)
+        if (sdkProfile != null ? !sdkProfile.equals(that.sdkProfile) : that.sdkProfile != null) {
             return false;
-        if (configurationSchemaName != null ? !configurationSchemaName.equals(that.configurationSchemaName) : that.configurationSchemaName != null)
+        }
+        if (aefMapDtoList != null ? !aefMapDtoList.equals(that.aefMapDtoList) : that.aefMapDtoList != null) {
             return false;
-        if (configurationSchemaId != null ? !configurationSchemaId.equals(that.configurationSchemaId) : that.configurationSchemaId != null)
+        }
+        if (configurationSchemaName != null ? !configurationSchemaName.equals(that.configurationSchemaName) : that.configurationSchemaName != null) {
             return false;
-        if (profileSchemaName != null ? !profileSchemaName.equals(that.profileSchemaName) : that.profileSchemaName != null)
+        }
+        if (configurationSchemaId != null ? !configurationSchemaId.equals(that.configurationSchemaId) : that.configurationSchemaId != null) {
             return false;
-        if (profileSchemaId != null ? !profileSchemaId.equals(that.profileSchemaId) : that.profileSchemaId != null)
+        }
+        if (profileSchemaName != null ? !profileSchemaName.equals(that.profileSchemaName) : that.profileSchemaName != null) {
             return false;
-        if (notificationSchemaName != null ? !notificationSchemaName.equals(that.notificationSchemaName) : that.notificationSchemaName != null)
+        }
+        if (profileSchemaId != null ? !profileSchemaId.equals(that.profileSchemaId) : that.profileSchemaId != null) {
             return false;
-        if (notificationSchemaId != null ? !notificationSchemaId.equals(that.notificationSchemaId) : that.notificationSchemaId != null)
+        }
+        if (notificationSchemaName != null ? !notificationSchemaName.equals(that.notificationSchemaName) : that.notificationSchemaName != null) {
             return false;
-        if (logSchemaName != null ? !logSchemaName.equals(that.logSchemaName) : that.logSchemaName != null)
+        }
+        if (notificationSchemaId != null ? !notificationSchemaId.equals(that.notificationSchemaId) : that.notificationSchemaId != null) {
             return false;
+        }
+        if (logSchemaName != null ? !logSchemaName.equals(that.logSchemaName) : that.logSchemaName != null) {
+            return false;
+        }
         return !(logSchemaId != null ? !logSchemaId.equals(that.logSchemaId) : that.logSchemaId != null);
 
     }
