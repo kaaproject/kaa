@@ -40,7 +40,7 @@ import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_
 
 @Entity
 @Table(name = PLUGIN_CONTRACT_INSTANCE_TABLE_NAME)
-public class PluginContractInstance extends GenericModel implements Serializable {
+public class PluginContractInstance extends GenericModel<PluginContractInstanceDto> implements Serializable {
 
     private static final long serialVersionUID = -6714384962255683537L;
 

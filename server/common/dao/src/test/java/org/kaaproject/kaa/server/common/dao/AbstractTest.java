@@ -97,7 +97,9 @@ import org.kaaproject.kaa.server.common.dao.impl.LogAppenderDao;
 import org.kaaproject.kaa.server.common.dao.impl.LogSchemaDao;
 import org.kaaproject.kaa.server.common.dao.impl.NotificationDao;
 import org.kaaproject.kaa.server.common.dao.impl.NotificationSchemaDao;
+import org.kaaproject.kaa.server.common.dao.impl.PluginContractDao;
 import org.kaaproject.kaa.server.common.dao.impl.PluginDao;
+import org.kaaproject.kaa.server.common.dao.impl.PluginInstanceDao;
 import org.kaaproject.kaa.server.common.dao.impl.ProfileFilterDao;
 import org.kaaproject.kaa.server.common.dao.impl.ProfileSchemaDao;
 import org.kaaproject.kaa.server.common.dao.impl.SdkProfileDao;
@@ -134,12 +136,14 @@ import org.kaaproject.kaa.server.common.dao.model.sql.User;
 import org.kaaproject.kaa.server.common.dao.model.sql.UserVerifier;
 import org.kaaproject.kaa.server.common.dao.model.sql.plugin.ContractMessage;
 import org.kaaproject.kaa.server.common.dao.model.sql.plugin.Plugin;
+import org.kaaproject.kaa.server.common.dao.model.sql.plugin.PluginContract;
+import org.kaaproject.kaa.server.common.dao.model.sql.plugin.PluginInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
-@ActiveProfiles({"h2"})
+@ActiveProfiles({"postgres"})
 public class AbstractTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractTest.class);
@@ -238,6 +242,8 @@ public class AbstractTest {
     protected PluginDao<Plugin> pluginDao;
     @Autowired
     protected ContractMessageDao<ContractMessage> contractMessageDao;
+    @Autowired
+    protected PluginContractDao<PluginContract> pluginContractDao;
 
     protected Application application;
 

@@ -21,10 +21,13 @@ import org.kaaproject.kaa.common.dto.plugin.PluginInstanceDto;
 import org.kaaproject.kaa.server.common.dao.PluginService;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
 import org.kaaproject.kaa.server.common.dao.impl.ContractDao;
+import org.kaaproject.kaa.server.common.dao.impl.ContractMessageDao;
 import org.kaaproject.kaa.server.common.dao.impl.DaoUtil;
 import org.kaaproject.kaa.server.common.dao.impl.PluginDao;
 import org.kaaproject.kaa.server.common.dao.impl.PluginInstanceDao;
 import org.kaaproject.kaa.server.common.dao.model.sql.plugin.Contract;
+import org.kaaproject.kaa.server.common.dao.model.sql.plugin.ContractItem;
+import org.kaaproject.kaa.server.common.dao.model.sql.plugin.ContractMessage;
 import org.kaaproject.kaa.server.common.dao.model.sql.plugin.Plugin;
 import org.kaaproject.kaa.server.common.dao.model.sql.plugin.PluginContract;
 import org.kaaproject.kaa.server.common.dao.model.sql.plugin.PluginInstance;
@@ -52,6 +55,9 @@ public class BasePluginService implements PluginService {
     @Autowired
     private PluginInstanceDao<PluginInstance> pluginInstanceDao;
 
+    @Autowired
+    private ContractMessageDao<ContractMessage> contractMessageDao;
+
     @Override
     public PluginDto registerPlugin(PluginDto pluginDto) {
         LOG.debug("Registering plugin: {}", pluginDto);
@@ -59,13 +65,28 @@ public class BasePluginService implements PluginService {
         for (PluginContract pluginContract : plugin.getPluginContracts()) {
             Contract receivedContract = pluginContract.getContract();
             Contract foundContract = contractDao.findByNameAndVersion(receivedContract.getName(), receivedContract.getVersion());
+            for (ContractItem item : receivedContract.getContractItems()) {
+                item.setInMessage(mergeContractMessage(item.getInMessage()));
+                item.setOutMessage(mergeContractMessage(item.getOutMessage()));
+            }
             if (foundContract != null) {
                 receivedContract.setId(foundContract.getId());
             }
         }
+
         Plugin savedPlugin = pluginDao.save(plugin);
-        LOG.debug("Registered plugin: {}", plugin);
         return DaoUtil.getDto(savedPlugin);
+    }
+
+    private ContractMessage mergeContractMessage(ContractMessage contractMessage) {
+        if (contractMessage == null) {
+            return null;
+        }
+        ContractMessage found = contractMessageDao.findByFqnAndVersion(contractMessage.getFqn(), contractMessage.getVersion());
+        if (found == null) {
+            found = pluginDao.save(contractMessage, ContractMessage.class);
+        }
+        return found;
     }
 
     @Override

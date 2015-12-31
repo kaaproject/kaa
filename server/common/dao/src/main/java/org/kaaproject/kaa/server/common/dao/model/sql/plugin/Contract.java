@@ -63,7 +63,7 @@ public class Contract extends GenericModel<ContractDto> implements Serializable 
     private ContractType type;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = CONTRACT_ITEM_CONTRACT_ID,  foreignKey = @ForeignKey(name = CONTRACT_CONTRACT_ITEM_FK))
+    @JoinColumn(name = CONTRACT_ITEM_CONTRACT_ID, foreignKey = @ForeignKey(name = CONTRACT_CONTRACT_ITEM_FK))
     private Set<ContractItem> contractItems = new HashSet<>();
 
     public Contract() {
@@ -176,6 +176,7 @@ public class Contract extends GenericModel<ContractDto> implements Serializable 
         sb.append("name='").append(name).append('\'');
         sb.append(", version=").append(version);
         sb.append(", type=").append(type);
+        sb.append(", contractItems=").append(contractItems);
         sb.append('}');
         return sb.toString();
     }

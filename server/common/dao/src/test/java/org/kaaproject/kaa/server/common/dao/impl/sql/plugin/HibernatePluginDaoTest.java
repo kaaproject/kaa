@@ -22,10 +22,13 @@ import org.junit.runner.RunWith;
 import org.kaaproject.kaa.common.dto.plugin.PluginDto;
 import org.kaaproject.kaa.server.common.dao.impl.sql.HibernateAbstractTest;
 import org.kaaproject.kaa.server.common.dao.model.sql.plugin.Plugin;
+import org.kaaproject.kaa.server.common.dao.model.sql.plugin.PluginContract;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/common-dao-test-context.xml")
@@ -39,6 +42,11 @@ public class HibernatePluginDaoTest extends HibernateAbstractTest {
         Plugin p = new Plugin(pluginDto);
         p = pluginDao.save(p);
         Assert.assertEquals(pluginDto, p.toDto());
+
+        List<Plugin> plugins = pluginDao.find();
+        List<PluginContract> pluginContracts = pluginContractDao.find();
+        Assert.assertTrue(!pluginContracts.isEmpty());
+        Assert.assertTrue(!plugins.get(0).getPluginContracts().isEmpty());
     }
 
     @Test

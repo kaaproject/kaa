@@ -90,4 +90,32 @@ public class PluginContractItem extends GenericModel<PluginContractItemDto> impl
         dto.setContractItem(contractItem != null ? contractItem.toDto() : null);
         return dto;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof PluginContractItem)) {
+            return false;
+        }
+
+        PluginContractItem that = (PluginContractItem) o;
+
+        if (configSchema != null ? !configSchema.equals(that.configSchema) : that.configSchema != null) {
+            return false;
+        }
+        if (contractItem != null ? !contractItem.equals(that.contractItem) : that.contractItem != null) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = configSchema != null ? configSchema.hashCode() : 0;
+        result = 31 * result + (contractItem != null ? contractItem.hashCode() : 0);
+        return result;
+    }
 }
