@@ -16,6 +16,7 @@
 package org.kaaproject.kaa.server.plugin.messaging;
 
 import org.kaaproject.kaa.common.dto.plugin.ContractType;
+import org.kaaproject.kaa.common.dto.plugin.PluginContractDirection;
 import org.kaaproject.kaa.server.common.core.plugin.base.BasePluginContractDef;
 import org.kaaproject.kaa.server.common.core.plugin.base.BasePluginContractItemDef;
 import org.kaaproject.kaa.server.plugin.messaging.gen.ItemConfiguration;
@@ -27,6 +28,7 @@ public class MessagingSDKContract {
                 .withType(ContractType.SDK)
                 .withItem(buildSendMsgDef())
                 .withItem(buildReceiveMsgDef())
+                .withDirection(PluginContractDirection.IN)
                 .build();
     }
 

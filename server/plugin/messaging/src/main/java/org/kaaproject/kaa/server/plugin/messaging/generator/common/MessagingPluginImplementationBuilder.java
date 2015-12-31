@@ -16,7 +16,7 @@
 
 package org.kaaproject.kaa.server.plugin.messaging.generator.common;
 
-import java.util.Map;
+import java.util.Set;
 
 import org.kaaproject.kaa.server.common.core.plugin.generator.common.PluginImplementationBuilder;
 
@@ -65,18 +65,18 @@ public interface MessagingPluginImplementationBuilder extends PluginImplementati
     /**
      * Adds a method that delegates entity messages to appropriate handlers.
      *
-     * @param handlersMapping Maps a method name to its method constant
+     * @param handlerConstants Maps a method name to its method constant
      *
      * @return A reference to this builder
      */
-    MessagingPluginImplementationBuilder withEntityMessageHandlersMapping(Map<String, Integer> handlersMapping);
+    MessagingPluginImplementationBuilder withEntityMessageHandlersMapping(Set<Integer> handlerConstants);
 
     /**
      * Adds a method that delegates void messages to appropriate handlers.
      *
-     * @param handlersMapping Maps a method name to its method constant
+     * @param handlerConstants Maps a method name to its method constant
      *
      * @return A reference to this builder
      */
-    MessagingPluginImplementationBuilder withVoidMessageHandlersMapping(Map<String, Integer> handlersMapping);
+    MessagingPluginImplementationBuilder withVoidMessageHandlersMapping(Set<Integer> handlerConstants);
 }

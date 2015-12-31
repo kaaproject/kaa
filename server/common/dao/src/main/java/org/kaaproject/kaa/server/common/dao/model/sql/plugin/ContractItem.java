@@ -51,11 +51,11 @@ public class ContractItem extends GenericModel<ContractItemDto> implements Seria
     @Column(name = CONTRACT_ITEM_NAME, nullable = false)
     private String name;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.PERSIST})
     @JoinColumn(name = CONTRACT_ITEM_IN_MESSAGE, foreignKey = @ForeignKey(name = CONTRACT_ITEM_IN_MESSAGE_FK))
     private ContractMessage inMessage;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.PERSIST})
     @JoinColumn(name = CONTRACT_ITEM_OUT_MESSAGE, foreignKey = @ForeignKey(name = CONTRACT_ITEM_OUT_MESSAGE_FK))
     private ContractMessage outMessage;
 
@@ -134,10 +134,10 @@ public class ContractItem extends GenericModel<ContractItemDto> implements Seria
 
         ContractItem that = (ContractItem) o;
 
-        if (inMessage != null ? !inMessage.equals(that.inMessage) : that.inMessage != null) {
+        if (name != null ? !name.equals(that.name) : that.name != null) {
             return false;
         }
-        if (name != null ? !name.equals(that.name) : that.name != null) {
+        if (inMessage != null ? !inMessage.equals(that.inMessage) : that.inMessage != null) {
             return false;
         }
         if (outMessage != null ? !outMessage.equals(that.outMessage) : that.outMessage != null) {
@@ -153,5 +153,16 @@ public class ContractItem extends GenericModel<ContractItemDto> implements Seria
         result = 31 * result + (inMessage != null ? inMessage.hashCode() : 0);
         result = 31 * result + (outMessage != null ? outMessage.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("ContractItem{");
+        sb.append("id=").append(id);
+        sb.append(", name='").append(name).append('\'');
+        sb.append(", inMessage=").append(inMessage);
+        sb.append(", outMessage=").append(outMessage);
+        sb.append('}');
+        return sb.toString();
     }
 }

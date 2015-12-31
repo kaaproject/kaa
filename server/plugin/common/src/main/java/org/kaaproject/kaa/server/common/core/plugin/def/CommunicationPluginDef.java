@@ -15,10 +15,12 @@
  */
 package org.kaaproject.kaa.server.common.core.plugin.def;
 
+import java.util.Map;
+
 import org.kaaproject.kaa.server.common.core.plugin.generator.PluginSdkApiGenerator;
 
 public interface CommunicationPluginDef extends PluginDef {
 
-    Class<? extends PluginSdkApiGenerator> getSdkGeneratorClass();
+    Map<SDKPlatform, Class<? extends PluginSdkApiGenerator>> getSdkGeneratorClassMap();
 
 }
