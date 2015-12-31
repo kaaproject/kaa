@@ -22,18 +22,6 @@ public class EndpointProfileSchemaDto extends BaseSchemaDto {
     private static final long serialVersionUID = 6374536574939098298L;
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof EndpointProfileSchemaDto)) {
-            return false;
-        }
-        
-        return super.equals(o);
-    }
-
-    @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("EndpointProfileSchemaDto [");

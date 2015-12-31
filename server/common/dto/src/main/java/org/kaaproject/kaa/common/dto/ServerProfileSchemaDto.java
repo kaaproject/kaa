@@ -21,18 +21,6 @@ public class ServerProfileSchemaDto extends BaseSchemaDto {
     private static final long serialVersionUID = -4059563981228353624L;
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof ServerProfileSchemaDto)) {
-            return false;
-        }
-        
-        return super.equals(o);
-    }
-
-    @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("ServerProfileSchemaDto [");
