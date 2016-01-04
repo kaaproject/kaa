@@ -91,6 +91,14 @@ void KaaClient::init()
     initKaaTransport();
 }
 
+void KaaClient::checkReadiness()
+{
+    if (!profileManager_ || !profileManager_->isInitialized()) {
+        KAA_LOG_ERROR("Profile manager isn't initialized: maybe profile container isn't set");
+        throw KaaException("Profile manager isn't initialized: maybe profile container isn't set");
+    }
+}
+
 void KaaClient::start()
 {
     checkClientStateNot(State::STARTED, "Kaa client is already started");
