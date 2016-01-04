@@ -1,6 +1,7 @@
 package org.kaaproject.kaa.server.control.service.modularization;
 
 import org.kaaproject.kaa.common.dto.plugin.PluginDto;
+import org.kaaproject.kaa.common.dto.plugin.PluginInstanceDto;
 import org.kaaproject.kaa.server.common.core.plugin.base.BasePluginDefDtoConverter;
 import org.kaaproject.kaa.server.common.core.plugin.def.Plugin;
 import org.kaaproject.kaa.server.common.core.plugin.def.PluginDef;
@@ -69,9 +70,16 @@ public class KaaPluginLoadServiceImpl implements KaaPluginLoadService {
         for (PluginDto pluginDto : pluginDefinitions) {
             PluginDto found = pluginService.findPluginByClassName(pluginDto.getClassName());
             if (found == null) {
-                pluginService.registerPlugin(pluginDto);
+                PluginDto registeredPluginDto = pluginService.registerPlugin(pluginDto);
+                saveHardCodedInstances(registeredPluginDto);
             }
         }
+    }
+
+    private void saveHardCodedInstances(PluginDto pluginDto) {
+        PluginInstanceDto pluginInstanceDto =
+                HarcodedInstanceFactory.create(HarcodedInstanceFactory.Type.MESSAGING, pluginDto);
+        pluginService.saveInstance(pluginInstanceDto);
     }
 
     private List<Class<? extends KaaPlugin>> scan() throws KaaPluginLoadException {

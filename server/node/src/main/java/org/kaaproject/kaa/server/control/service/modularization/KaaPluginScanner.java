@@ -38,20 +38,24 @@ public class KaaPluginScanner extends SimpleFileVisitor<Path> {
             LOG.error("Malformed url for: {}", file, e);
             return FileVisitResult.CONTINUE;
         }
-        ClassLoader classLoader = new URLClassLoader(new URL[] {url});
-        if (attr.isRegularFile() && file.toString().toLowerCase().endsWith(".jar")) {
-            LOG.debug("Scanning jar: {}", file.toAbsolutePath());
-            try {
-                JarFile jarFile = new JarFile(file.toString());
-                Enumeration<JarEntry> e = jarFile.entries();
-                while (e.hasMoreElements()) {
-                    JarEntry entry = e.nextElement();
-                    addIfKaaPlugin(classLoader, entry.getName());
+        try (URLClassLoader classLoader = new URLClassLoader(new URL[] {url})) {
+            if (attr.isRegularFile() && file.toString().toLowerCase().endsWith(".jar")) {
+                LOG.debug("Scanning jar: {}", file.toAbsolutePath());
+                try {
+                    JarFile jarFile = new JarFile(file.toString());
+                    Enumeration<JarEntry> e = jarFile.entries();
+                    while (e.hasMoreElements()) {
+                        JarEntry entry = e.nextElement();
+                        addIfKaaPlugin(classLoader, entry.getName());
+                    }
+                } catch (IOException e) {
+                    LOG.warn("Unable to read jar file: {}", file, e);
                 }
-            } catch (IOException e) {
-                LOG.warn("Unable to read jar file: {}", file, e);
             }
+        } catch (IOException e) {
+            LOG.warn("Unable to close URLClassLoader", e);
         }
+
         return FileVisitResult.CONTINUE;
     }
 
