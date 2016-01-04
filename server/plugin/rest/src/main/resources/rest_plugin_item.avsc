@@ -1,0 +1,64 @@
+{
+    "type": "record",
+    "name": "KaaRestPluginItemConfig",
+    "namespace": "org.kaaproject.kaa.server.plugin.rest.gen",
+    "fields": [
+        {
+            "name": "mapping",
+            "type": {
+                "type": "string",
+                "avro.java.string": "String"
+            }
+        },
+        {
+            "name": "requestMethod",
+            "type": {
+                "type": "enum",
+                "name": "RequestMethod",
+                "symbols": [
+                    "GET",
+                    "POST",
+                    "PUT",
+                    "DELETE"
+                ]
+            },
+            "by_default": "GET"
+        },
+        {
+            "name": "requestParams",
+            "type": [
+                {
+                    "type": "array",
+                    "items": {
+                        "type": "record",
+                        "name": "RequestParam",
+                        "fields": [
+                            {
+                                "name": "key",
+                                "type": {
+                                    "type": "string",
+                                    "avro.java.string": "String"
+                                }
+                            },
+                            {
+                                "name": "value",
+                                "type": {
+                                    "type": "string",
+                                    "avro.java.string": "String"
+                                }
+                            },
+                            {
+                                "name": "mapping",
+                                "type": {
+                                    "type": "string",
+                                    "avro.java.string": "String"
+                                }
+                            }
+                        ]
+                    }
+                },
+                "null"
+            ]
+        }
+    ]
+}

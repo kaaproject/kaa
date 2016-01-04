@@ -22,8 +22,8 @@ import org.kaaproject.kaa.server.common.core.plugin.instance.KaaMessage;
 
 public interface PluginExecutionContext {
 
-    void tellToEndpoint(EndpointObjectHash endpointKey, KaaMessage sdkMessage);
+    void tellEndpoint(EndpointObjectHash endpointKey, KaaMessage sdkMessage);
     
-    void tellToPlugin(UUID uid, KaaMessage sdkMessage);
+    void tellPlugin(UUID uid, KaaMessage sdkMessage);
 
 }
