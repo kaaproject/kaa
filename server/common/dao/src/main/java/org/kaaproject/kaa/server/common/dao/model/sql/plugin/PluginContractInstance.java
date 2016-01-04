@@ -17,7 +17,6 @@ package org.kaaproject.kaa.server.common.dao.model.sql.plugin;
 
 import org.kaaproject.kaa.common.dto.plugin.PluginContractInstanceDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginContractInstanceItemDto;
-import org.kaaproject.kaa.common.dto.plugin.PluginInstanceDto;
 import org.kaaproject.kaa.server.common.dao.model.sql.GenericModel;
 import org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils;
 
@@ -35,8 +34,10 @@ import java.util.Set;
 
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_INSTANCE_PLUGIN_CONTRACT_FK;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_INSTANCE_PLUGIN_CONTRACT_ID;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_INSTANCE_PLUGIN_INSTANCE_FK;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_INSTANCE_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_INSTANCE_TABLE_NAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_INSTANCE_PLUGIN_ID;
 
 @Entity
 @Table(name = PLUGIN_CONTRACT_INSTANCE_TABLE_NAME)
@@ -44,10 +45,15 @@ public class PluginContractInstance extends GenericModel<PluginContractInstanceD
 
     private static final long serialVersionUID = -6714384962255683537L;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = PLUGIN_CONTRACT_INSTANCE_PLUGIN_CONTRACT_ID, nullable = false,
             foreignKey = @ForeignKey(name = PLUGIN_CONTRACT_INSTANCE_PLUGIN_CONTRACT_FK))
     private PluginContract pluginContract;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = PLUGIN_INSTANCE_PLUGIN_ID,
+            foreignKey = @ForeignKey(name = PLUGIN_CONTRACT_INSTANCE_PLUGIN_INSTANCE_FK))
+    private PluginInstance pluginInstance;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = PLUGIN_CONTRACT_INSTANCE_PROPERTY)
     private Set<PluginContractInstanceItem> pluginContractInstanceItems = new HashSet<>();
@@ -84,6 +90,14 @@ public class PluginContractInstance extends GenericModel<PluginContractInstanceD
         }
     }
 
+    public PluginInstance getPluginInstance() {
+        return pluginInstance;
+    }
+
+    public void setPluginInstance(PluginInstance pluginInstance) {
+        this.pluginInstance = pluginInstance;
+    }
+
     @Override
     protected PluginContractInstanceDto createDto() {
         return new PluginContractInstanceDto();
@@ -98,9 +112,14 @@ public class PluginContractInstance extends GenericModel<PluginContractInstanceD
 
     @Override
     public PluginContractInstanceDto toDto() {
+        PluginContractInstanceDto dto = toDtoNoContract();
+        dto.setContract(ModelUtils.getDto(pluginContract));
+        return dto;
+    }
+
+    public PluginContractInstanceDto toDtoNoContract() {
         PluginContractInstanceDto dto = createDto();
         dto.setId(getStringId());
-        dto.setContract(pluginContract != null ? pluginContract.toDto() : null);
         Set<PluginContractInstanceItemDto> instanceItemDtos = new HashSet<>();
         for (PluginContractInstanceItem pluginContractInstanceItem : pluginContractInstanceItems) {
             instanceItemDtos.add(pluginContractInstanceItem.toDto());
@@ -123,12 +142,17 @@ public class PluginContractInstance extends GenericModel<PluginContractInstanceD
         if (pluginContract != null ? !pluginContract.equals(that.pluginContract) : that.pluginContract != null) {
             return false;
         }
+        if (pluginInstance != null ? !pluginInstance.equals(that.pluginInstance) : that.pluginInstance != null) {
+            return false;
+        }
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        return pluginContract != null ? pluginContract.hashCode() : 0;
+        int result = pluginContract != null ? pluginContract.hashCode() : 0;
+        result = 31 * result + (pluginInstance != null ? pluginInstance.hashCode() : 0);
+        return result;
     }
 }

@@ -32,9 +32,9 @@ import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONTRACT_MESSAGE
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONTRACT_MESSAGE_VERSION;
 
 @Entity
-@Table(name = CONTRACT_MESSAGE_TABLE_NAME, uniqueConstraints = {
+@Table(name = CONTRACT_MESSAGE_TABLE_NAME/*, uniqueConstraints = {  // TODO: apply this constraint
         @UniqueConstraint(columnNames = {CONTRACT_MESSAGE_FQN, CONTRACT_MESSAGE_VERSION},
-                name = CONTRACT_MESSAGE_FQN_VERSION_CONSTRAINT_NAME)})
+                name = CONTRACT_MESSAGE_FQN_VERSION_CONSTRAINT_NAME)}*/)
 public class ContractMessage extends GenericModel<ContractMessageDto> implements Serializable {
 
     private static final long serialVersionUID = 2122224444729382739L;
@@ -124,7 +124,8 @@ public class ContractMessage extends GenericModel<ContractMessageDto> implements
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("ContractMessage{");
-        sb.append("fqn='").append(fqn).append('\'');
+        sb.append("id=").append(getId());
+        sb.append(", fqn='").append(fqn).append('\'');
         sb.append(", version=").append(version);
         sb.append('}');
         return sb.toString();

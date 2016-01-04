@@ -18,7 +18,9 @@ package org.kaaproject.kaa.server.common.dao.service;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.kaaproject.kaa.common.dto.plugin.ContractDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginContractDto;
+import org.kaaproject.kaa.common.dto.plugin.PluginContractInstanceDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginInstanceDto;
 import org.kaaproject.kaa.server.common.dao.AbstractTest;
@@ -95,6 +97,8 @@ public abstract class BasePluginServiceTest extends AbstractTest {
         Assert.assertNotNull(savedInstance.getId());
         PluginInstanceDto foundInstance = pluginService.findInstanceById(savedInstance.getId());
         Assert.assertEquals(savedInstance, foundInstance);
+        PluginDto savedPlugin = pluginService.findPluginByClassName(PluginTestFactory.CLASS_NAME);
+        Assert.assertEquals(1, savedPlugin.getPluginInstances().size());
     }
 
     @Test

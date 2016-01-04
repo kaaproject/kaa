@@ -161,7 +161,7 @@ public class PluginContract extends GenericModel<PluginContractDto> implements S
         if (!pluginContractInstances.isEmpty()) {
             Set<PluginContractInstanceDto> pluginContractInstanceDtos = new HashSet<>();
             for (PluginContractInstance pluginContractInstance : pluginContractInstances) {
-                pluginContractInstanceDtos.add(pluginContractInstance.toDto());
+                pluginContractInstanceDtos.add(pluginContractInstance.toDtoNoContract());
             }
             dto.setPluginContractInstances(pluginContractInstanceDtos);
         }

@@ -30,6 +30,7 @@ import org.kaaproject.kaa.server.common.dao.model.sql.plugin.ContractItem;
 import org.kaaproject.kaa.server.common.dao.model.sql.plugin.ContractMessage;
 import org.kaaproject.kaa.server.common.dao.model.sql.plugin.Plugin;
 import org.kaaproject.kaa.server.common.dao.model.sql.plugin.PluginContract;
+import org.kaaproject.kaa.server.common.dao.model.sql.plugin.PluginContractInstance;
 import org.kaaproject.kaa.server.common.dao.model.sql.plugin.PluginInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -125,10 +126,21 @@ public class BasePluginService implements PluginService {
             throw new IncorrectParameterException("Plugin instance has no plugin, unable to save");
         }
         Plugin plugin = pluginDao.findByClassName(pluginDto.getClassName());
+        if (plugin == null) {
+            throw new IncorrectParameterException("Plugin with class name '" + pluginDto.getClassName() + "' doesn't exist");
+        }
         PluginInstance pluginInstance = new PluginInstance(pluginInstanceDto);
+        for (PluginContractInstance pluginContractInstance : pluginInstance.getPluginContractInstances()) {
+            PluginContract pluginContract = pluginContractInstance.getPluginContract();
+            Contract receivedContract = pluginContract.getContract();
+            Contract foundContract = contractDao.findByNameAndVersion(receivedContract.getName(), receivedContract.getVersion());
+            if (foundContract == null) {
+                throw new IncorrectParameterException("Invalid contract name and version: '" +
+                        receivedContract.getName() + "' and version: " + receivedContract.getVersion());
+            }
+            receivedContract.setId(foundContract.getId());
+        }
         pluginInstance.setPlugin(plugin);
-        plugin.addPluginInstance(pluginInstance);
-        pluginDao.persist(plugin);
         PluginInstance savedInstance = pluginInstanceDao.save(pluginInstance);
         LOG.debug("Saved instance: {}", savedInstance);
         return DaoUtil.getDto(savedInstance);

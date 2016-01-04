@@ -16,25 +16,22 @@
 package org.kaaproject.kaa.common.dto.plugin;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 import org.kaaproject.kaa.common.dto.HasId;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 
 public class PluginContractInstanceItemDto implements HasId, Serializable {
 
-    private static final long serialVersionUID = -6023668365684883106L;
+    private static final long serialVersionUID = 5369616154739139086L;
 
     private String id;
-    private String parentId;
-    private String name;
-    private String pluginInstanceId;
-    private String pluginContractInstanceId;
-    private String confSchema;
-    private byte[] confData;
-    private PluginContractMessageDto inMessage;
-    private PluginContractMessageDto outMessage;
+    private String confData;
+    private PluginContractItemDto pluginContractItem;
+    private PluginContractItemDto parentPluginContractItem;
     private CTLSchemaDto inMessageSchema;
     private CTLSchemaDto outMessageSchema;
+    private PluginContractInstanceDto pluginContractInstance;
 
     @Override
     public String getId() {
@@ -46,60 +43,28 @@ public class PluginContractInstanceItemDto implements HasId, Serializable {
         this.id = id;
     }
 
-    public String getConfSchema() {
-        return confSchema;
-    }
-
-    public void setConfSchema(String confSchema) {
-        this.confSchema = confSchema;
-    }
-
-    public String getPluginInstanceId() {
-        return pluginInstanceId;
-    }
-
-    public void setPluginInstanceId(String pluginInstanceId) {
-        this.pluginInstanceId = pluginInstanceId;
-    }
-
-    public String getPluginContractInstanceId() {
-        return pluginContractInstanceId;
-    }
-
-    public void setPluginContractInstanceId(String pluginContractInstanceId) {
-        this.pluginContractInstanceId = pluginContractInstanceId;
-    }
-
-    public String getParentId() {
-        return parentId;
-    }
-
-    public void setParentId(String parentId) {
-        this.parentId = parentId;
-    }
-
-    public byte[] getConfData() {
+    public String getConfData() {
         return confData;
     }
 
-    public void setConfData(byte[] confData) {
+    public void setConfData(String confData) {
         this.confData = confData;
     }
 
-    public PluginContractMessageDto getInMessage() {
-        return inMessage;
+    public PluginContractItemDto getPluginContractItem() {
+        return pluginContractItem;
     }
 
-    public void setInMessage(PluginContractMessageDto inMessage) {
-        this.inMessage = inMessage;
+    public void setPluginContractItem(PluginContractItemDto pluginContractItem) {
+        this.pluginContractItem = pluginContractItem;
     }
 
-    public PluginContractMessageDto getOutMessage() {
-        return outMessage;
+    public PluginContractItemDto getParentPluginContractItem() {
+        return parentPluginContractItem;
     }
 
-    public void setOutMessage(PluginContractMessageDto outMessage) {
-        this.outMessage = outMessage;
+    public void setParentPluginContractItem(PluginContractItemDto parentPluginContractItem) {
+        this.parentPluginContractItem = parentPluginContractItem;
     }
 
     public CTLSchemaDto getInMessageSchema() {
@@ -118,12 +83,55 @@ public class PluginContractInstanceItemDto implements HasId, Serializable {
         this.outMessageSchema = outMessageSchema;
     }
 
-    public String getName() {
-        return name;
+    public PluginContractInstanceDto getPluginContractInstance() {
+        return pluginContractInstance;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setPluginContractInstance(PluginContractInstanceDto pluginContractInstance) {
+        this.pluginContractInstance = pluginContractInstance;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof PluginContractInstanceItemDto)) {
+            return false;
+        }
+
+        PluginContractInstanceItemDto that = (PluginContractInstanceItemDto) o;
+
+        if (confData != null ? !confData.equals(that.confData) : that.confData != null) {
+            return false;
+        }
+        if (inMessageSchema != null ? !inMessageSchema.equals(that.inMessageSchema) : that.inMessageSchema != null) {
+            return false;
+        }
+        if (outMessageSchema != null ? !outMessageSchema.equals(that.outMessageSchema) : that.outMessageSchema != null) {
+            return false;
+        }
+        if (parentPluginContractItem != null ? !parentPluginContractItem.equals(that.parentPluginContractItem) : that.parentPluginContractItem != null) {
+            return false;
+        }
+        if (pluginContractInstance != null ? !pluginContractInstance.equals(that.pluginContractInstance) : that.pluginContractInstance != null) {
+            return false;
+        }
+        if (pluginContractItem != null ? !pluginContractItem.equals(that.pluginContractItem) : that.pluginContractItem != null) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = confData != null ? confData.hashCode() : 0;
+        result = 31 * result + (pluginContractItem != null ? pluginContractItem.hashCode() : 0);
+        result = 31 * result + (parentPluginContractItem != null ? parentPluginContractItem.hashCode() : 0);
+        result = 31 * result + (inMessageSchema != null ? inMessageSchema.hashCode() : 0);
+        result = 31 * result + (outMessageSchema != null ? outMessageSchema.hashCode() : 0);
+        result = 31 * result + (pluginContractInstance != null ? pluginContractInstance.hashCode() : 0);
+        return result;
+    }
 }
