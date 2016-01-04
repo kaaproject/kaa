@@ -91,14 +91,6 @@ void KaaClient::init()
     initKaaTransport();
 }
 
-void KaaClient::checkReadiness()
-{
-    if (!profileManager_ || !profileManager_->isInitialized()) {
-        KAA_LOG_ERROR("Profile manager isn't initialized: maybe profile container isn't set");
-        throw KaaException("Profile manager isn't initialized: maybe profile container isn't set");
-    }
-}
-
 void KaaClient::start()
 {
     checkClientStateNot(State::STARTED, "Kaa client is already started");
@@ -268,20 +260,6 @@ void KaaClient::initKaaTransport()
     KAA_LOG_INFO(boost::format("Going to set default bootstrap channel: %1%") % bootstrapChannel_.get());
     channelManager_->addChannel(bootstrapChannel_.get());
 #endif
-#ifdef KAA_DEFAULT_OPERATION_HTTP_CHANNEL
-    opsHttpChannel_.reset(new DefaultOperationHttpChannel(channelManager_.get(), *clientKeys_, status_));
-    opsHttpChannel_->setMultiplexer(syncProcessor_.get());
-    opsHttpChannel_->setDemultiplexer(syncProcessor_.get());
-    KAA_LOG_INFO(boost::format("Going to set default operations Kaa HTTP channel: %1%") % opsHttpChannel_.get());
-    channelManager_->addChannel(opsHttpChannel_.get());
-#endif
-#ifdef KAA_DEFAULT_LONG_POLL_CHANNEL
-    opsLongPollChannel_.reset(new DefaultOperationLongPollChannel(channelManager_.get(), *clientKeys_));
-    opsLongPollChannel_->setMultiplexer(syncProcessor_.get());
-    opsLongPollChannel_->setDemultiplexer(syncProcessor_.get());
-    KAA_LOG_INFO(boost::format("Going to set default operations Kaa HTTP Long Poll channel: %1%") % opsLongPollChannel_.get());
-    channelManager_->addChannel(opsLongPollChannel_.get());
-#endif
 #ifdef KAA_DEFAULT_TCP_CHANNEL
     opsTcpChannel_.reset(new DefaultOperationTcpChannel(channelManager_.get(), *clientKeys_, status_));
     opsTcpChannel_->setDemultiplexer(syncProcessor_.get());
@@ -374,7 +352,6 @@ void KaaClient::removeTopicListListener(INotificationTopicListListener& listener
 
 Topics KaaClient::getTopics() {
 #ifdef KAA_USE_NOTIFICATIONS
-    checkClientState(State::STARTED, "Kaa client isn't started");
     return notificationManager_->getTopics();
 #else
     throw KaaException("Failed to get topics. Notification subsystem is disabled");
@@ -554,7 +531,8 @@ std::string KaaClient::getEndpointAccessToken()
     return status_->getEndpointAccessToken();
 }
 
-void KaaClient::addLogRecord(const KaaUserLogRecord& record) {
+void KaaClient::addLogRecord(const KaaUserLogRecord& record) 
+{
 #ifdef KAA_USE_LOGGING
     checkClientState(State::STARTED, "Kaa client isn't started");
     return logCollector_->addLogRecord(record);
@@ -562,7 +540,9 @@ void KaaClient::addLogRecord(const KaaUserLogRecord& record) {
     throw KaaException("Failed to add log record. Logging subsystem is disabled");
 #endif
 }
-void KaaClient::setLogStorage(ILogStoragePtr storage) {
+
+void KaaClient::setLogStorage(ILogStoragePtr storage) 
+{
 #ifdef KAA_USE_LOGGING
     return logCollector_->setStorage(storage);
 #else
@@ -570,7 +550,8 @@ void KaaClient::setLogStorage(ILogStoragePtr storage) {
 #endif
 }
 
-void KaaClient::setLogUploadStrategy(ILogUploadStrategyPtr strategy) {
+void KaaClient::setLogUploadStrategy(ILogUploadStrategyPtr strategy) 
+{
 #ifdef KAA_USE_LOGGING
         return logCollector_->setUploadStrategy(strategy);
 #else

@@ -74,7 +74,7 @@ char *allocator (void *context, size_t size)
 char *buffer = NULL;
 size_t buffer_size = 0;
 
-int test_init()
+int test_init(void)
 {
     err = KAA_ERR_NONE;
 
@@ -98,7 +98,7 @@ int test_init()
     return 0;
 }
 
-int test_deinit()
+int test_deinit(void)
 {
     if (context) {
         kaa_deinit(context);
@@ -110,7 +110,7 @@ int test_deinit()
     return 0;
 }
 
-void test_deserializing()
+void test_deserializing(void)
 {
     KAA_TRACE_IN(context->logger);
     kaa_notification_t *notification = kaa_notification_notification_create();
@@ -191,7 +191,7 @@ void test_deserializing()
     KAA_TRACE_OUT(context->logger);
 }
 
-void test_notification_listeners_adding_and_removing()
+void test_notification_listeners_adding_and_removing(void)
 {
     KAA_TRACE_IN(context->logger);
     err = kaa_add_notification_listener(context->notification_manager, &listener, &id);
@@ -239,7 +239,7 @@ void test_notification_listeners_adding_and_removing()
     KAA_TRACE_OUT(context->logger);
 }
 
-void test_topic_list_listeners_adding_and_removing()
+void test_topic_list_listeners_adding_and_removing(void)
 {
     KAA_TRACE_IN(context->logger);
     err = kaa_get_topics(context->notification_manager, &topics);
@@ -266,7 +266,7 @@ void test_topic_list_listeners_adding_and_removing()
     KAA_TRACE_OUT(context->logger);
 }
 
-void test_retrieving_topic_list()
+void test_retrieving_topic_list(void)
 {
     KAA_TRACE_IN(context->logger);
     err = kaa_get_topics(context->notification_manager, &topics);
@@ -278,7 +278,7 @@ void test_retrieving_topic_list()
     KAA_TRACE_OUT(context->logger);
 }
 
-void test_serializing()
+void test_serializing(void)
 {
     KAA_TRACE_IN(context->logger);
 
@@ -299,7 +299,7 @@ void test_serializing()
     KAA_TRACE_OUT(context->logger);
 }
 
-void test_subscriptions()
+void test_subscriptions(void)
 {
     KAA_TRACE_IN(context->logger);
 

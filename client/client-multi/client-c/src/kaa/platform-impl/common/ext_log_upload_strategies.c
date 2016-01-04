@@ -49,11 +49,19 @@
  */
 #define KAA_DEFAULT_BATCH_SIZE                 8 * 1024
 
+/**
+ * @brief The default value for Max amount of log batches allowed to be uploaded parallel.
+ */
+#define KAA_DEFAULT_MAX_PARALLEL_UPLOADS       INT32_MAX
+
+
+
 typedef struct {
     uint8_t   type;
     size_t    threshold_volume;
     size_t    threshold_count;
     size_t    upload_timeout;
+    size_t    max_parallel_uploads;
     size_t    timeout;
 
     size_t    log_batch_size;
@@ -84,6 +92,7 @@ kaa_error_t ext_log_upload_strategy_create(struct kaa_context_s *context, void *
     KAA_RETURN_IF_ERR( ext_log_upload_strategy_set_upload_timeout(strategy, KAA_DEFAULT_UPLOAD_TIMEOUT) );
     KAA_RETURN_IF_ERR( ext_log_upload_strategy_set_upload_retry_period(strategy, KAA_DEFAULT_RETRY_PERIOD) );
     KAA_RETURN_IF_ERR( ext_log_upload_strategy_set_batch_size(strategy, KAA_DEFAULT_BATCH_SIZE) );
+    KAA_RETURN_IF_ERR( ext_log_upload_strategy_set_max_parallel_uploads(strategy, KAA_DEFAULT_MAX_PARALLEL_UPLOADS) );
 
     strategy->type = type;
     strategy->upload_retry_ts = 0;
@@ -123,12 +132,12 @@ ext_log_upload_decision_t ext_log_upload_strategy_decide(void *context, const vo
         return decision;
     }
 
-    if (self->type & 0x04 && KAA_TIME() >= self->timeout) {
+    if ((self->type & 0x04) && KAA_TIME() >= self->timeout) {
         decision = UPLOAD;
         self->timeout = KAA_TIME() + self->upload_timeout;
-    } else if (self->type & 0x01 && ext_log_storage_get_total_size(log_storage_context) >= self->threshold_volume) {
+    } else if ((self->type & 0x01) && ext_log_storage_get_total_size(log_storage_context) >= self->threshold_volume) {
         decision = UPLOAD;
-    } else if (self->type & 0x02 && ext_log_storage_get_records_count(log_storage_context) >= self->threshold_count) {
+    } else if ((self->type & 0x02) && ext_log_storage_get_records_count(log_storage_context) >= self->threshold_count) {
         decision = UPLOAD;
     }
 
@@ -149,6 +158,14 @@ size_t ext_log_upload_strategy_get_timeout(void *context)
 {
     KAA_RETURN_IF_NIL(context, 0);
     return ((ext_log_upload_strategy_t *)context)->upload_timeout;
+}
+
+
+
+size_t ext_log_upload_strategy_get_max_parallel_uploads(void *context)
+{
+    KAA_RETURN_IF_NIL(context, 0);
+    return ((ext_log_upload_strategy_t *)context)->max_parallel_uploads;
 }
 
 
@@ -245,6 +262,15 @@ kaa_error_t ext_log_upload_strategy_set_upload_timeout(void *strategy, size_t up
     KAA_RETURN_IF_NIL2(strategy, upload_timeout, KAA_ERR_BADPARAM);
     ((ext_log_upload_strategy_t *)strategy)->upload_timeout = upload_timeout;
     ((ext_log_upload_strategy_t *)strategy)->timeout = KAA_TIME() + upload_timeout;
+    return KAA_ERR_NONE;
+}
+
+
+
+kaa_error_t ext_log_upload_strategy_set_max_parallel_uploads(void *strategy, size_t count)
+{
+    KAA_RETURN_IF_NIL2(strategy, count, KAA_ERR_BADPARAM);
+    ((ext_log_upload_strategy_t *)strategy)->max_parallel_uploads = count;
     return KAA_ERR_NONE;
 }
 

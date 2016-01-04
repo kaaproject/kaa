@@ -198,7 +198,7 @@ static kaa_error_t kaa_client_sync_get_size(kaa_platform_protocol_t *self
                                           , size_t services_count
                                           , size_t *expected_size)
 {
-    KAA_RETURN_IF_NIL4(self, services, services_count, expected_size, KAA_ERR_BADPARAM)
+    KAA_RETURN_IF_NIL4(self, services, services_count, expected_size, KAA_ERR_BADPARAM);
 
     *expected_size = KAA_PROTOCOL_MESSAGE_HEADER_SIZE;
 
@@ -425,7 +425,7 @@ kaa_error_t kaa_platform_protocol_serialize_client_sync(kaa_platform_protocol_t 
 
     *buffer_size = 0;
     kaa_error_t error = kaa_client_sync_get_size(self, info->services, info->services_count, buffer_size);
-    KAA_RETURN_IF_ERR(error)
+    KAA_RETURN_IF_ERR(error);
 
     KAA_LOG_DEBUG(self->logger, KAA_ERR_NONE, "Going to request sync buffer (size %zu)", *buffer_size);
 

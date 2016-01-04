@@ -302,8 +302,8 @@ kaa_error_t kaa_profile_manager_update_profile(kaa_profile_manager_t *self, kaa_
 
     size_t serialized_profile_size = profile_body->get_size(profile_body);
     if (!serialized_profile_size) {
-        KAA_LOG_ERROR(self->logger, KAA_ERR_BADDATA, "Failed to update profile: serialize profile size is null."
-                                                                                "Maybe profile schema is empty")
+        KAA_LOG_ERROR(self->logger, KAA_ERR_BADDATA,
+                      "Failed to update profile: serialize profile size is null. Maybe profile schema is empty");
         return KAA_ERR_BADDATA;
     }
 
@@ -327,7 +327,7 @@ kaa_error_t kaa_profile_manager_update_profile(kaa_profile_manager_t *self, kaa_
         return KAA_ERR_NONE;
     }
 
-    KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Endpoint profile is updated")
+    KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Endpoint profile is updated");
 
     if (ext_copy_sha_hash(self->status->profile_hash, new_hash)) {
         KAA_FREE(serialized_profile);

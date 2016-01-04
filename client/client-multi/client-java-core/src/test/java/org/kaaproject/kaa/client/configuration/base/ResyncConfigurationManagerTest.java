@@ -21,6 +21,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.kaaproject.kaa.client.KaaClientProperties;
 import org.kaaproject.kaa.client.configuration.storage.ConfigurationStorage;
+import org.kaaproject.kaa.client.context.ExecutorContext;
 import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.schema.base.Configuration;
@@ -28,8 +29,11 @@ import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.concurrent.Executors;
 
 public class ResyncConfigurationManagerTest {
+
+    private ExecutorContext executorContext = Mockito.mock(ExecutorContext.class);
 
     private byte[] configurationData;
 
@@ -37,6 +41,7 @@ public class ResyncConfigurationManagerTest {
     public void init() throws IOException {
         GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<GenericRecord>(Configuration.SCHEMA$);
         configurationData = converter.encode(new Configuration());
+        Mockito.when(executorContext.getCallbackExecutor()).thenReturn(Executors.newFixedThreadPool(1));
     }
 
     @Test
@@ -45,7 +50,7 @@ public class ResyncConfigurationManagerTest {
         KaaClientState state = Mockito.mock(KaaClientState.class);
         ConfigurationStorage storage = Mockito.mock(ConfigurationStorage.class);
 
-        ResyncConfigurationManager manager = new ResyncConfigurationManager(properties, state);
+        ResyncConfigurationManager manager = new ResyncConfigurationManager(properties, state, executorContext);
         manager.setConfigurationStorage(storage);
 
         Mockito.when(properties.getDefaultConfigData()).thenReturn(configurationData);
@@ -62,7 +67,7 @@ public class ResyncConfigurationManagerTest {
         KaaClientState state = Mockito.mock(KaaClientState.class);
         ConfigurationStorage storage = Mockito.mock(ConfigurationStorage.class);
 
-        ResyncConfigurationManager manager = new ResyncConfigurationManager(properties, state);
+        ResyncConfigurationManager manager = new ResyncConfigurationManager(properties, state, executorContext);
         manager.setConfigurationStorage(storage);
 
         Mockito.when(properties.getDefaultConfigData()).thenReturn(configurationData);
@@ -81,7 +86,7 @@ public class ResyncConfigurationManagerTest {
         KaaClientState state = Mockito.mock(KaaClientState.class);
         ConfigurationStorage storage = Mockito.mock(ConfigurationStorage.class);
 
-        ResyncConfigurationManager manager = new ResyncConfigurationManager(properties, state);
+        ResyncConfigurationManager manager = new ResyncConfigurationManager(properties, state, executorContext);
         manager.setConfigurationStorage(storage);
 
         Mockito.when(storage.loadConfiguration()).thenReturn(ByteBuffer.wrap(configurationData));
@@ -97,7 +102,7 @@ public class ResyncConfigurationManagerTest {
         KaaClientState state = Mockito.mock(KaaClientState.class);
         ConfigurationStorage storage = Mockito.mock(ConfigurationStorage.class);
 
-        ResyncConfigurationManager manager = new ResyncConfigurationManager(properties, state);
+        ResyncConfigurationManager manager = new ResyncConfigurationManager(properties, state, executorContext);
         manager.setConfigurationStorage(storage);
 
         Mockito.when(storage.loadConfiguration()).thenReturn(ByteBuffer.wrap(configurationData));
@@ -106,7 +111,7 @@ public class ResyncConfigurationManagerTest {
         manager.addListener(listener);
         
         manager.getConfigurationProcessor().processConfigurationData(ByteBuffer.wrap(configurationData), true);
-        Mockito.verify(listener).onConfigurationUpdate(new Configuration());
+        Mockito.verify(listener, Mockito.timeout(1000)).onConfigurationUpdate(new Configuration());
         
         Mockito.reset(listener);
         manager.removeListener(listener);

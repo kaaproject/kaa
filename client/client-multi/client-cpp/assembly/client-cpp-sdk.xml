@@ -38,6 +38,10 @@
             <outputDirectory>tools</outputDirectory>
         </fileSet>
         <fileSet>
+            <directory>${project.basedir}/toolchains</directory>
+            <outputDirectory>toolchains</outputDirectory>
+        </fileSet>
+        <fileSet>
             <directory>${project.basedir}</directory>
             <outputDirectory>/</outputDirectory>
             <includes>

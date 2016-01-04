@@ -120,12 +120,6 @@ add_executable  (test_platform_protocol
                 )
 target_link_libraries(test_platform_protocol kaac ${OPENSSL_LIBRARIES} ${CUNIT_LIB_NAME})
 
-add_executable  (test_deque
-                    test/collections/test_kaa_deque.c
-                    test/kaa_test_external.c
-                )
-target_link_libraries(test_deque kaac ${OPENSSL_LIBRARIES} ${CUNIT_LIB_NAME})
-
 add_executable  (test_list
                     test/collections/test_kaa_list.c
                     test/kaa_test_external.c

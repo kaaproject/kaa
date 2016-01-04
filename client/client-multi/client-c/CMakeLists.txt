@@ -139,7 +139,6 @@ set (KAA_SOURCE_FILES
         ${KAA_SOURCE_FILES}
         ${KAA_SRC_FOLDER}/avro_src/io.c
         ${KAA_SRC_FOLDER}/avro_src/encoding_binary.c
-        ${KAA_SRC_FOLDER}/collections/kaa_deque.c
         ${KAA_SRC_FOLDER}/collections/kaa_list.c
         ${KAA_SRC_FOLDER}/utilities/kaa_log.c
         ${KAA_SRC_FOLDER}/utilities/kaa_mem.c
@@ -168,7 +167,7 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/listfiles/CMakeGen.cmake)
 set(KAA_BUILD_STATIC kaac_s)
 add_library(kaac_o OBJECT ${KAA_SOURCE_FILES})
 add_library(${KAA_BUILD_STATIC} STATIC ./${KAA_SRC_FOLDER} $<TARGET_OBJECTS:kaac_o>)
-if(NOT DEFINED KAA_BUILD_STAIC_ONLY)
+if(NOT DEFINED KAA_BUILD_STATIC_ONLY)
   set(KAA_BUILD_SHARED kaac)
   add_library(${KAA_BUILD_SHARED} SHARED ./${KAA_SRC_FOLDER} $<TARGET_OBJECTS:kaac_o>)
   target_link_libraries(${KAA_BUILD_SHARED} ${KAA_THIRDPARTY_LIBRARIES})

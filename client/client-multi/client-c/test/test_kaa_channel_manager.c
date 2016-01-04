@@ -156,7 +156,7 @@ static void compare_channels(kaa_transport_channel_interface_t *actual_channel
 /**
  * UNIT TESTS
  */
-void test_create_channel_manager()
+void test_create_channel_manager(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -176,7 +176,7 @@ void test_create_channel_manager()
     kaa_channel_manager_destroy(channel_manager);
 }
 
-void test_add_channel()
+void test_add_channel(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -220,7 +220,7 @@ void test_add_channel()
     kaa_channel_manager_destroy(channel_manager);
 }
 
-void test_get_service_specific_channel()
+void test_get_service_specific_channel(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -286,7 +286,7 @@ void test_get_service_specific_channel()
     kaa_channel_manager_destroy(channel_manager);
 }
 
-void test_get_bootstrap_client_sync_size()
+void test_get_bootstrap_client_sync_size(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -366,7 +366,7 @@ void test_get_bootstrap_client_sync_size()
     kaa_channel_manager_destroy(channel_manager);
 }
 
-void test_get_bootstrap_client_sync_serialize()
+void test_get_bootstrap_client_sync_serialize(void)
 {
     KAA_TRACE_IN(logger);
 

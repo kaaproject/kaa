@@ -68,7 +68,7 @@ add_definitions(-DCC32XX_PLATFORM)
 
 set(KAA_THIRDPARTY_LIBRARIES driver simplelink_nonos)
 
-set(KAA_BUILD_STAIC_ONLY 1)
+set(KAA_BUILD_STATIC_ONLY 1)
 
 set(CC32XX_RSA_KEY ../src/kaa/platform-impl/cc32xx/cc32xx_rsa_key.h)
 

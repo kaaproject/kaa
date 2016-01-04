@@ -20,7 +20,7 @@
 
 typedef uint32_t kaa_time_t;
 
-kaa_time_t ext_get_systime();
+kaa_time_t ext_get_systime(void);
 
 #define KAA_TIME() ext_get_systime()
 

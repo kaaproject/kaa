@@ -15,12 +15,6 @@
   limitations under the License.
 -->
 <configuration>
-    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>%d{ISO8601} [%thread] %-5level %logger{36} - %msg%n</pattern>
-        </encoder>
-    </appender>
-
     <appender name="fileLogAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <if condition='isDefined("server_log_sufix")'>
             <then>
@@ -31,7 +25,10 @@
             </else>    
         </if>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>logFile.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>${server_log_dir}/kaa-operations-server${server_log_sufix}-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
             <maxHistory>30</maxHistory>
         </rollingPolicy>
         <encoder>
@@ -56,7 +53,6 @@
     <logger name="org.hibernate" level="INFO"/>
 
     <root level="INFO">
-        <appender-ref ref="console"/>
         <appender-ref ref="fileLogAppender"/>
     </root>
 
