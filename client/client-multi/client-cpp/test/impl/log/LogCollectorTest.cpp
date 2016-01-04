@@ -121,6 +121,7 @@ BOOST_AUTO_TEST_CASE(AddLogRecordAndCheckStorageAndStrategyTest)
     uploadStrategy->recordsBatchCount_ = 10;
     uploadStrategy->timeoutCheckPeriod_ = 10;
     uploadStrategy->logUploadCheckPeriod_ = 10;
+    uploadStrategy->maxParallelUploads_ = INT32_MAX;
 
     logCollector.setStorage(logStorage);
     logCollector.setUploadStrategy(uploadStrategy);
@@ -172,7 +173,7 @@ BOOST_AUTO_TEST_CASE(CreateRequestTest)
 BOOST_AUTO_TEST_CASE(CreateRequestWithLogsTest)
 {
     KaaClientProperties properties;
-    const size_t BATCH_SIZE = INT32_MAX;
+    const size_t BATCH_SIZE = 100500;
     MockChannelManager channelManager;
     MockExecutorContext executor;
     LogCollector logCollector(&channelManager, executor, properties);
@@ -211,7 +212,7 @@ BOOST_AUTO_TEST_CASE(CreateRequestWithLogsTest)
 BOOST_AUTO_TEST_CASE(SuccessDeliveryTest)
 {
     KaaClientProperties properties;
-    const size_t BATCH_SIZE = INT32_MAX;
+    const size_t BATCH_SIZE = 100500;
     MockChannelManager channelManager;
     SimpleExecutorContext executor;
     executor.init();
@@ -237,6 +238,7 @@ BOOST_AUTO_TEST_CASE(SuccessDeliveryTest)
     uploadStrategy->recordsBatchCount_ = 10;
     uploadStrategy->timeoutCheckPeriod_ = 10;
     uploadStrategy->logUploadCheckPeriod_ = 10;
+    uploadStrategy->maxParallelUploads_ = INT32_MAX;
 
     logCollector.setStorage(logStorage);
     logCollector.setUploadStrategy(uploadStrategy);
@@ -260,7 +262,7 @@ BOOST_AUTO_TEST_CASE(SuccessDeliveryTest)
 BOOST_AUTO_TEST_CASE(FailedDeliveryTest)
 {
     KaaClientProperties properties;
-    const size_t BATCH_SIZE = INT32_MAX;
+    const size_t BATCH_SIZE = 100500;
     MockChannelManager channelManager;
     SimpleExecutorContext executor;
     executor.init();
@@ -311,7 +313,7 @@ BOOST_AUTO_TEST_CASE(FailedDeliveryTest)
 BOOST_AUTO_TEST_CASE(TimeoutDetectionTest)
 {
     KaaClientProperties properties;
-    const size_t BATCH_SIZE = INT32_MAX;
+    const size_t BATCH_SIZE = 100500;
     const size_t DELIVERY_TIMEOUT = 2;
 
     MockChannelManager channelManager;
@@ -367,7 +369,7 @@ public:
 
 BOOST_AUTO_TEST_CASE(RetryUploadTest)
 {
-    const size_t BATCH_SIZE = INT32_MAX;
+    const size_t BATCH_SIZE = 100500;
     const size_t RETRY_TIMEOUT = 3;
 
     KaaClientProperties properties;
