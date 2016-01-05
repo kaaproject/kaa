@@ -32,7 +32,7 @@ public interface LogStorage {
      *
      * @param record New record ({@link LogRecord})
      */
-    void addLogRecord(LogRecord record);
+    BucketInfo addLogRecord(LogRecord record);
 
     /**
      * Gets log storage status.
@@ -47,11 +47,9 @@ public interface LogStorage {
      * <p>The size of retrieved log records should NOT be greater than specified
      * block size.</p>
      *
-     * @param blockSize     Maximum size of sending log block
-     * @param batchCount    the batch ciunt
      * @return New log block ({@link  LogBlock})
      */
-    LogBlock getRecordBlock(long blockSize, int batchCount);
+    LogBlock getRecordBlock();
 
     /**
      * <p>Removes already sent log records by its block id.</p>

@@ -48,16 +48,21 @@ public class DesktopSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
     private long unmarkedConsumedSize;
     private int currentBucketId = 1;
 
+    private long blockSize;
+    private int batchCount;
+
     private Map<Integer, Long> consumedMemoryStorage = new HashMap<>();
 
     private final Connection connection;
 
-    public DesktopSQLiteDBLogStorage() {
-        this(PersistentLogStorageConstants.DEFAULT_DB_NAME);
+    public DesktopSQLiteDBLogStorage(long blockSize, int batchCount) {
+        this(PersistentLogStorageConstants.DEFAULT_DB_NAME, blockSize, batchCount);
     }
 
-    public DesktopSQLiteDBLogStorage(String dbName) {
+    public DesktopSQLiteDBLogStorage(String dbName, long blockSize, int batchCount) {
         try {
+            this.blockSize = blockSize;
+            this.batchCount = batchCount;
             Class.forName("org.sqlite.JDBC");
             String dbURL = SQLITE_URL_PREFIX + dbName;
             LOG.info("Connecting to db by url: {}", dbURL);
@@ -78,7 +83,7 @@ public class DesktopSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
     }
 
     @Override
-    public void addLogRecord(LogRecord record) {
+    public BucketInfo addLogRecord(LogRecord record) {
         synchronized (connection) {
             LOG.trace("Adding a new log record...");
             if (insertStatement == null) {
@@ -106,6 +111,7 @@ public class DesktopSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
                 LOG.error("Can't add a new record", e);
             }
         }
+        return new BucketInfo();
     }
 
     @Override
@@ -113,11 +119,8 @@ public class DesktopSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
         return this;
     }
 
-
-
-
     @Override
-    public LogBlock getRecordBlock(long blockSize, int batchCount) {
+    public LogBlock getRecordBlock() {
         synchronized (connection) {
             LOG.trace("Creating a new record block, needed size: {}, batch count: {}", blockSize, batchCount);
             if (selectUnmarkedStatement == null) {

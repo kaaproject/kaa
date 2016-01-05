@@ -18,6 +18,7 @@ package org.kaaproject.kaa.client.logging;
 
 import javax.annotation.Generated;
 
+import org.kaaproject.kaa.client.logging.future.BucketFuture;
 import org.kaaproject.kaa.schema.base.Log;
 
 /**
@@ -44,6 +45,10 @@ public interface LogCollector extends GenericLogCollector{
      * Adds new log record to local storage.
      *
      * @param record New log record object
+     *
+     * @return bucketinfo object for added record
      */
-    void addLogRecord(Log record);
+    BucketFuture<BucketInfo> addLogRecord(Log record);
+
+    void setLogDeliveryListener(LogDeliveryListener listener);
 }

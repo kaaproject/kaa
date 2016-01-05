@@ -26,6 +26,7 @@ import org.kaaproject.kaa.client.channel.KaaDataChannel;
 import org.kaaproject.kaa.client.event.EventFamilyFactory;
 import org.kaaproject.kaa.client.event.EventListenersResolver;
 import org.kaaproject.kaa.client.event.registration.EndpointRegistrationManager;
+import org.kaaproject.kaa.client.logging.future.BucketFuture;
 import org.kaaproject.kaa.schema.base.Configuration;
 import org.kaaproject.kaa.schema.base.Log;
 
@@ -55,7 +56,7 @@ public interface KaaClient extends GenericKaaClient {
      * @param record
      *            New log record object
      */
-    void addLogRecord(Log record);
+    BucketFuture addLogRecord(Log record);
 
     /**
      * Returns latest configuration.

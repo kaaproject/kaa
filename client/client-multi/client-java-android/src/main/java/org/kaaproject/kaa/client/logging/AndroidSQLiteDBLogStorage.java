@@ -46,6 +46,9 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
     private long unmarkedConsumedSize;
     private int currentBucketId = 1;
 
+    private int batchSize;
+    private long blockSize;
+
     private Map<Integer, Long> consumedMemoryStorage = new HashMap<>();
 
     private SQLiteStatement insertStatement;
@@ -53,14 +56,16 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
     private SQLiteStatement deleteByBucketIdStatement;
     private SQLiteStatement resetBucketIdStatement;
 
-    public AndroidSQLiteDBLogStorage(Context context) {
-        this(context, PersistentLogStorageConstants.DEFAULT_DB_NAME);
+    public AndroidSQLiteDBLogStorage(Context context, long blockSize, int batchSize) {
+        this(context, PersistentLogStorageConstants.DEFAULT_DB_NAME, blockSize, batchSize);
     }
 
-    public AndroidSQLiteDBLogStorage(Context context, String dbName) {
+    public AndroidSQLiteDBLogStorage(Context context, String dbName, long blockSize, int batchSize) {
         Log.i(TAG, "Connecting to db with name: " + dbName);
         dbHelper = new DataCollectionDBHelper(context, dbName);
         database = dbHelper.getWritableDatabase();
+        this.batchSize = batchSize;
+        this.blockSize = blockSize;
         retrieveConsumedSizeAndVolume();
         if (totalRecordCount > 0) {
             resetBucketIDs();
@@ -68,7 +73,7 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
     }
 
     @Override
-    public void addLogRecord(LogRecord record) {
+    public BucketInfo addLogRecord(LogRecord record) {
         synchronized (database) {
             Log.d(TAG, "Adding a new log record...");
             if (insertStatement == null) {
@@ -96,6 +101,7 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
                 Log.e(TAG, "Can't add a new record", e);
             }
         }
+        return new BucketInfo();
     }
 
     @Override
@@ -104,9 +110,9 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
     }
 
     @Override
-    public LogBlock getRecordBlock(long blockSize, int batchSize) {
+    public LogBlock getRecordBlock() {
         synchronized (database) {
-            Log.d(TAG, "Creating a new record block, needed size: " + blockSize + ", batchSize: " + batchSize);
+            Log.d(TAG, "Creating a new record block");
             LogBlock logBlock = null;
             Cursor cursor = null;
             List<String> unmarkedRecordIds = new LinkedList<>();

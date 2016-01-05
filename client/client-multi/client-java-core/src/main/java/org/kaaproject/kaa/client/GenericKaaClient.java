@@ -34,6 +34,7 @@ import org.kaaproject.kaa.client.event.registration.EndpointRegistrationManager;
 import org.kaaproject.kaa.client.event.registration.OnAttachEndpointOperationCallback;
 import org.kaaproject.kaa.client.event.registration.OnDetachEndpointOperationCallback;
 import org.kaaproject.kaa.client.event.registration.UserAttachCallback;
+import org.kaaproject.kaa.client.logging.LogDeliveryListener;
 import org.kaaproject.kaa.client.logging.LogStorage;
 import org.kaaproject.kaa.client.logging.LogUploadStrategy;
 import org.kaaproject.kaa.client.notification.NotificationListener;
@@ -587,4 +588,14 @@ public interface GenericKaaClient {
      * @see     org.kaaproject.kaa.client.event.registration.DetachEndpointFromUserCallback
      */
     void setDetachedListener(DetachEndpointFromUserCallback listener);
+
+
+    /**
+     * Sets callback for receiving log events
+     *
+     * @param   listener the listener
+     *
+     * @see     org.kaaproject.kaa.client.logging.LogDeliveryListener
+     */
+    void setLogDeliveryListener(LogDeliveryListener listener);
 }

@@ -17,14 +17,10 @@
 package org.kaaproject.kaa.client.logging.memory;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.kaaproject.kaa.client.logging.LogBlock;
-import org.kaaproject.kaa.client.logging.LogRecord;
-import org.kaaproject.kaa.client.logging.LogStorage;
-import org.kaaproject.kaa.client.logging.LogStorageStatus;
+import org.kaaproject.kaa.client.logging.*;
 import org.kaaproject.kaa.client.logging.memory.MemBucket.MemBucketState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +47,7 @@ public class MemLogStorage implements LogStorage, LogStorageStatus {
     public MemLogStorage() {
         this(DEFAULT_MAX_BUCKET_SIZE, DEFAULT_MAX_BUCKET_RECORD_COUNT);
     }
-    
+
     public MemLogStorage(long bucketSize, int bucketRecordCount) {
         this(DEFAULT_MAX_STORAGE_SIZE, bucketSize, bucketRecordCount);
     }
@@ -77,7 +73,7 @@ public class MemLogStorage implements LogStorage, LogStorageStatus {
     }
 
     @Override
-    public void addLogRecord(LogRecord record) {
+    public BucketInfo addLogRecord(LogRecord record) {
         LOG.trace("Adding new log record with size {}", record.getSize());
         if(record.getSize() > maxBucketSize) {
             throw new IllegalArgumentException("Record size(" + record.getSize() + ") is bigger than max bucket size (" + maxBucketSize + ")!");
@@ -101,15 +97,12 @@ public class MemLogStorage implements LogStorage, LogStorageStatus {
             consumedVolume += record.getSize();
         }
         LOG.trace("Added a new log record to bucket [{}]", currentBucket.getId());
+        return new BucketInfo(currentBucket.getId(), currentBucket.getCount());
     }
 
     @Override
-    public LogBlock getRecordBlock(long blockSize, int batchCount) {
-        LOG.trace("Getting new record block with block size = {} and count = {}", blockSize, batchCount);
-        if (blockSize > maxBucketSize || batchCount > maxBucketRecordCount) {
-            //TODO: add support of block resize
-            LOG.warn("Resize of record block is not supported yet");
-        }
+    public LogBlock getRecordBlock() {
+        LOG.trace("Getting new record block with block");
 
         LogBlock result = null;
         MemBucket bucketCandidate = null;
@@ -132,17 +125,8 @@ public class MemLogStorage implements LogStorage, LogStorageStatus {
                     LOG.trace("Only a bucket with state FREE found: [{}]. Changing its state to PENDING", bucketCandidate.getId());
                     bucketCandidate.setState(MemBucketState.PENDING);
                 }
-                if (bucketCandidate.getSize() <= blockSize && bucketCandidate.getCount() <= batchCount) {
-                    result = new LogBlock(bucketCandidate.getId(), bucketCandidate.getRecords());
-                    LOG.debug("Return record block with records count: [{}]", bucketCandidate.getCount());
-                } else {
-                    LOG.debug("Shrinking bucket {} to new size: [{}] and count: [{}]", bucketCandidate, blockSize, batchCount);
-                    List<LogRecord> overSized = bucketCandidate.shrinkToSize(blockSize, batchCount);
-                    result = new LogBlock(bucketCandidate.getId(), bucketCandidate.getRecords());
-                    for (LogRecord record : overSized) {
-                        addLogRecord(record);
-                    }
-                }
+                result = new LogBlock(bucketCandidate.getId(), bucketCandidate.getRecords());
+                LOG.debug("Return record block with records count: [{}]", bucketCandidate.getCount());
             }
         }
         return result;
