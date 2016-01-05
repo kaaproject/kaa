@@ -48,21 +48,21 @@ public class DesktopSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
     private long unmarkedConsumedSize;
     private int currentBucketId = 1;
 
-    private long blockSize;
-    private int batchCount;
+    private long bucketSize;
+    private int recordCount;
 
     private Map<Integer, Long> consumedMemoryStorage = new HashMap<>();
 
     private final Connection connection;
 
-    public DesktopSQLiteDBLogStorage(long blockSize, int batchCount) {
-        this(PersistentLogStorageConstants.DEFAULT_DB_NAME, blockSize, batchCount);
+    public DesktopSQLiteDBLogStorage(long bucketSize, int recordCount) {
+        this(PersistentLogStorageConstants.DEFAULT_DB_NAME, bucketSize, recordCount);
     }
 
-    public DesktopSQLiteDBLogStorage(String dbName, long blockSize, int batchCount) {
+    public DesktopSQLiteDBLogStorage(String dbName, long bucketSize, int recordCount) {
         try {
-            this.blockSize = blockSize;
-            this.batchCount = batchCount;
+            this.bucketSize = bucketSize;
+            this.recordCount = recordCount;
             Class.forName("org.sqlite.JDBC");
             String dbURL = SQLITE_URL_PREFIX + dbName;
             LOG.info("Connecting to db by url: {}", dbURL);
@@ -122,7 +122,7 @@ public class DesktopSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
     @Override
     public LogBlock getRecordBlock() {
         synchronized (connection) {
-            LOG.trace("Creating a new record block, needed size: {}, batch count: {}", blockSize, batchCount);
+            LOG.trace("Creating a new record block, needed size: {}, batch count: {}", bucketSize, recordCount);
             if (selectUnmarkedStatement == null) {
                 try {
                     selectUnmarkedStatement = connection.prepareStatement(PersistentLogStorageConstants.KAA_SELECT_UNMARKED_RECORDS);
@@ -137,8 +137,8 @@ public class DesktopSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
             List<String> unmarkedRecordIds = new LinkedList<>();
             List<LogRecord> logRecords = new LinkedList<>();
             try {
-                long leftBlockSize = blockSize;
-                selectUnmarkedStatement.setInt(1, batchCount);
+                long leftBlockSize = bucketSize;
+                selectUnmarkedStatement.setInt(1, recordCount);
                 rs = selectUnmarkedStatement.executeQuery();
                 while (rs.next()) {
                     int recordId = rs.getInt(1);
@@ -161,7 +161,7 @@ public class DesktopSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
                     updateBucketIdForRecords(currentBucketId, unmarkedRecordIds);
                     logBlock = new LogBlock(currentBucketId++, logRecords);
 
-                    long logBlockSize = blockSize - leftBlockSize;
+                    long logBlockSize = bucketSize - leftBlockSize;
                     unmarkedConsumedSize -= logBlockSize;
                     unmarkedRecordCount -= logRecords.size();
                     consumedMemoryStorage.put(logBlock.getBlockId(), logBlockSize);

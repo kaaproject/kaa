@@ -24,8 +24,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 public abstract class AbstractLogStorageTest {
-    private void testAddHelper(int addedN, int blockSize, int batchSize, int expectedN) {
-        LogStorage storage = (LogStorage) getStorage(blockSize, batchSize);
+    private void testAddHelper(int addedN, int bucketSize, int recordCount, int expectedN) {
+        LogStorage storage = (LogStorage) getStorage(bucketSize, recordCount);
         List<LogRecord> expectedList = new LinkedList<>();
         LogRecord record = new LogRecord();
 

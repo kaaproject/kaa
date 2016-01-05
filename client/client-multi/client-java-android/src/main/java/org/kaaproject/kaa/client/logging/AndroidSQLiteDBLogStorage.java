@@ -46,8 +46,8 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
     private long unmarkedConsumedSize;
     private int currentBucketId = 1;
 
-    private int batchSize;
-    private long blockSize;
+    private int recordCount;
+    private long bucketSize;
 
     private Map<Integer, Long> consumedMemoryStorage = new HashMap<>();
 
@@ -56,16 +56,16 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
     private SQLiteStatement deleteByBucketIdStatement;
     private SQLiteStatement resetBucketIdStatement;
 
-    public AndroidSQLiteDBLogStorage(Context context, long blockSize, int batchSize) {
-        this(context, PersistentLogStorageConstants.DEFAULT_DB_NAME, blockSize, batchSize);
+    public AndroidSQLiteDBLogStorage(Context context, long bucketSize, int recordCount) {
+        this(context, PersistentLogStorageConstants.DEFAULT_DB_NAME, bucketSize, recordCount);
     }
 
-    public AndroidSQLiteDBLogStorage(Context context, String dbName, long blockSize, int batchSize) {
+    public AndroidSQLiteDBLogStorage(Context context, String dbName, long bucketSize, int recordCount) {
         Log.i(TAG, "Connecting to db with name: " + dbName);
         dbHelper = new DataCollectionDBHelper(context, dbName);
         database = dbHelper.getWritableDatabase();
-        this.batchSize = batchSize;
-        this.blockSize = blockSize;
+        this.recordCount = recordCount;
+        this.bucketSize = bucketSize;
         retrieveConsumedSizeAndVolume();
         if (totalRecordCount > 0) {
             resetBucketIDs();
@@ -117,21 +117,21 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
             Cursor cursor = null;
             List<String> unmarkedRecordIds = new LinkedList<>();
             List<LogRecord> logRecords = new LinkedList<>();
-            long leftBlockSize = blockSize;
+            long leftBucketSize = bucketSize;
             try {
                 cursor = database.rawQuery(PersistentLogStorageConstants.KAA_SELECT_UNMARKED_RECORDS,
-                        new String[] {String.valueOf(batchSize)});
+                        new String[] {String.valueOf(recordCount)});
                 while (cursor.moveToNext()) {
                     int recordId = cursor.getInt(0);
                     byte[] recordData = cursor.getBlob(1);
 
                     if (recordData != null && recordData.length > 0) {
-                        if (leftBlockSize < recordData.length) {
+                        if (leftBucketSize < recordData.length) {
                             break;
                         }
                         logRecords.add(new LogRecord(recordData));
                         unmarkedRecordIds.add(String.valueOf(recordId));
-                        leftBlockSize -= recordData.length;
+                        leftBucketSize -= recordData.length;
                     } else {
                         Log.w(TAG, "Found unmarked record with no data. Deleting it...");
                         removeRecordById(recordId);
@@ -142,7 +142,7 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
                     updateBucketIdForRecords(currentBucketId, unmarkedRecordIds);
                     logBlock = new LogBlock(currentBucketId++, logRecords);
 
-                    long logBlockSize = blockSize - leftBlockSize;
+                    long logBlockSize = bucketSize - leftBucketSize;
                     unmarkedConsumedSize -= logBlockSize;
                     unmarkedRecordCount -= logRecords.size();
                     consumedMemoryStorage.put(logBlock.getBlockId(), logBlockSize);
