@@ -24,7 +24,7 @@ typedef long kaa_time_t;
 
 #define KAA_TIME() (kaa_time_t)cc32xx_time()
 
-long cc32xx_time();
-long long cc32xx_clock_getms();
+long cc32xx_time(void);
+long long cc32xx_clock_getms(void);
 
 #endif /* CC32XX_TIME_H_ */

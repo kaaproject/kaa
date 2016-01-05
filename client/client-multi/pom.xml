@@ -33,7 +33,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <main.dir>${basedir}/../..</main.dir>
     </properties>
-    
+
     <modules>
         <module>client-java-core</module>
         <module>client-java-desktop</module>
@@ -42,7 +42,7 @@
         <module>kaatcp-c</module>
         <module>client-c</module>
     </modules>
-    
+
     <dependencies>
     </dependencies>
     <dependencyManagement>

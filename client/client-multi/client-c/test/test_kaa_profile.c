@@ -87,9 +87,7 @@ void kaa_get_endpoint_public_key(char **buffer, size_t *buffer_size, bool *needs
     }
 }
 
-
-
-void test_profile_is_set()
+void test_profile_is_set(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -108,9 +106,7 @@ void test_profile_is_set()
     KAA_TRACE_OUT(logger);
 }
 
-
-
-void test_profile_update()
+void test_profile_update(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -147,7 +143,7 @@ void test_profile_update()
     KAA_TRACE_OUT(logger);
 }
 
-void test_profile_sync_get_size()
+void test_profile_sync_get_size(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -201,7 +197,7 @@ void test_profile_sync_get_size()
     KAA_TRACE_OUT(logger);
 }
 
-void test_profile_sync_serialize()
+void test_profile_sync_serialize(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -288,7 +284,7 @@ void test_profile_sync_serialize()
     KAA_TRACE_OUT(logger);
 }
 
-void test_profile_handle_sync()
+void test_profile_handle_sync(void)
 {
     KAA_TRACE_IN(logger);
 

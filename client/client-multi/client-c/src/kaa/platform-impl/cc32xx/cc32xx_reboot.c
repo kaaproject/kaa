@@ -18,7 +18,7 @@
 #include "device.h"
 #include "prcm.h"
 
-void cc32xx_reboot()
+void cc32xx_reboot(void)
 {
     sl_Stop(30);
     PRCMHibernateIntervalSet(330);

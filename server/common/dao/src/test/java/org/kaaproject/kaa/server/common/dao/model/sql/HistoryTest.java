@@ -16,15 +16,11 @@
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
-import nl.jqno.equalsverifier.Warning;
-
 import org.junit.Test;
 
 public class HistoryTest {
-
     @Test
     public void hashCodeEqualsTest(){
-        EqualsVerifier.forClass(History.class).suppress(Warning.NONFINAL_FIELDS).verify();
+        EqualsVerifier.forClass(History.class).usingGetClass().verify();
     }
-
 }

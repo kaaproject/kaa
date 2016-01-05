@@ -32,7 +32,7 @@ public class SdkProfileTest {
 
     @Test
     public void hashCodeEqualsTest() {
-        EqualsVerifier.forClass(SdkProfile.class).verify();
+        EqualsVerifier.forClass(SdkProfile.class).usingGetClass().verify();
     }
 
     @Test

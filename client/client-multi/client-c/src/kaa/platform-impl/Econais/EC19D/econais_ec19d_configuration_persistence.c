@@ -38,7 +38,7 @@ void ext_configuration_store(const char *buffer, size_t buffer_size)
     econais_ec19d_binary_file_store(KAA_CONFIGURATION_STORAGE, buffer, buffer_size);
 }
 
-void ext_configuration_delete() 
+void ext_configuration_delete(void)
 {
     econais_ec19d_binary_file_delete(KAA_CONFIGURATION_STORAGE);
 }

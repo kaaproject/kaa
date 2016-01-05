@@ -71,7 +71,7 @@ kaa_error_t kaa_event_create_transaction(kaa_event_manager_t *self, kaa_event_bl
 /**
  * @brief Send all the events from the event block at once.
  *
- * The event block is identified by the given trx_id.
+ * The event block is identified by the given @p trx_id.
  *
  * @param[in]       self                Valid pointer to the event manager instance.
  * @param[in]       trx_id              The ID of the event block to be sent.
@@ -96,7 +96,7 @@ kaa_error_t kaa_event_remove_transaction(kaa_event_manager_t *self, kaa_event_bl
  *
  * @param[in]       fqn                 Fully-qualified name of the event (null-terminated string).
  *
- * @return Null-terminated string if corresponding event class family was found, @code NULL @endcode otherwise.
+ * @return Null-terminated string if corresponding event class family was found, @c NULL otherwise.
  */
 
 const char *kaa_find_class_family_name(const char *fqn);

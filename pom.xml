@@ -75,7 +75,7 @@ Copyright 2014-2015 CyberVision, Inc.
         <embed.mongo.version>1.42</embed.mongo.version>
         <mongo-driver.version>3.0.1</mongo-driver.version>
         <mockito.version>1.9.5</mockito.version>
-        <equalsverifier.version>1.4.1</equalsverifier.version>
+        <equalsverifier.version>1.7.6</equalsverifier.version>
         <jackson-jaxrs.version>1.9.13</jackson-jaxrs.version>
         <jackson-mapper-asl.version>1.9.12</jackson-mapper-asl.version>
         <jackson-core-asl.version>1.9.13</jackson-core-asl.version>
@@ -761,6 +761,11 @@ Copyright 2014-2015 CyberVision, Inc.
             <dependency>
                 <groupId>com.typesafe.akka</groupId>
                 <artifactId>akka-actor_2.10</artifactId>
+                <version>${akka.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.typesafe.akka</groupId>
+                <artifactId>akka-slf4j_2.11</artifactId>
                 <version>${akka.version}</version>
             </dependency>
             <dependency>

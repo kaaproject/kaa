@@ -33,22 +33,22 @@ extern "C" {
  * Standard error handling macros
  */
 #define KAA_RETURN_IF_ERR(E) \
-    { if (E) return E; }
+    do { if (E) return E; } while (0)
 
 #define KAA_RETURN_IF_NIL(p, E) \
-    { if (!(p)) return E; }
+    do { if (!(p)) return E; } while (0)
 
 #define KAA_RETURN_IF_NIL2(p1, p2, E) \
-    { if (!(p1) || !(p2)) return E; }
+    do { if (!(p1) || !(p2)) return E; } while (0)
 
 #define KAA_RETURN_IF_NIL3(p1, p2, p3, E) \
-    { if (!(p1) || !(p2) || !(p3)) return E; }
+    do { if (!(p1) || !(p2) || !(p3)) return E; } while (0)
 
 #define KAA_RETURN_IF_NIL4(p1, p2, p3, p4, E) \
-    { if (!(p1) || !(p2) || !(p3) || !(p4)) return E; }
+    do { if (!(p1) || !(p2) || !(p3) || !(p4)) return E; } while (0)
 
 #define KAA_RETURN_IF_NIL5(p1, p2, p3, p4, p5,E) \
-    { if (!(p1) || !(p2) || !(p3) || !(p4) || !(p5)) return E; }
+    do { if (!(p1) || !(p2) || !(p3) || !(p4) || !(p5)) return E; } while (0)
 
 
 /**
@@ -74,8 +74,7 @@ typedef struct {
 
 static inline int kaa_transport_protocol_id_equals(const kaa_transport_protocol_id_t *first, const kaa_transport_protocol_id_t *second)
 {
-    KAA_RETURN_IF_NIL2(first, second, 0);
-    return first->id == second->id && first->version == second->version;
+    return first && second && first->id == second->id && first->version == second->version;
 }
 
 /**
@@ -93,7 +92,7 @@ typedef struct {
  */
 #define KAA_ENDPOINT_ID_LENGTH 20
 typedef uint8_t        kaa_endpoint_id[KAA_ENDPOINT_ID_LENGTH];
-typedef const uint8_t* kaa_endpoint_id_p;
+typedef const uint8_t *kaa_endpoint_id_p;
 
 
 

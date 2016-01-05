@@ -95,6 +95,8 @@ private:
 
     void rescheduleTimers();
 
+    bool isUploadAllowed();
+
 private:
     ILogStoragePtr    storage_;
     KAA_MUTEX_DECLARE(storageGuard_);

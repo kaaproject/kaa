@@ -221,7 +221,7 @@ static void ${union_name}_serialize(avro_writer_t writer, void *data)
     }
 }
 #end
-static kaa_union_t *${union_name}_create()
+static kaa_union_t *${union_name}_create(void)
 {
     kaa_union_t *kaa_union = KAA_CALLOC(1, sizeof(kaa_union_t));
 
@@ -239,7 +239,7 @@ static kaa_union_t *${union_name}_create()
 #set ($branch_number = 0)
 #foreach ($branch_schema in $schema.getTypes())
 
-kaa_union_t *${union_name}_branch_${branch_number}_create()
+kaa_union_t *${union_name}_branch_${branch_number}_create(void)
 {
     kaa_union_t *kaa_union = ${union_name}_create();
     if (kaa_union) {
