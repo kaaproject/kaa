@@ -78,7 +78,7 @@ public class KaaPluginLoadServiceImpl implements KaaPluginLoadService {
 
     private void saveHardCodedInstances(PluginDto pluginDto) {
         PluginInstanceDto pluginInstanceDto =
-                HarcodedInstanceFactory.create(HarcodedInstanceFactory.Type.MESSAGING, pluginDto);
+                HardCodedInstanceFactory.create(HardCodedInstanceFactory.Type.MESSAGING, pluginDto);
         pluginService.saveInstance(pluginInstanceDto);
     }
 
