@@ -15,8 +15,6 @@
  */
 package org.kaaproject.kaa.server.common.dao.model.sql.plugin;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 import org.kaaproject.kaa.common.dto.plugin.PluginContractDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginInstanceDto;
@@ -82,7 +80,6 @@ public class Plugin extends GenericModel<PluginDto> implements Serializable {
     private Set<PluginContract> pluginContracts = new HashSet<>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = PLUGIN_PROPERTY, orphanRemoval = true)
-    @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<PluginInstance> pluginInstances = new HashSet<>();
 
     public Plugin() {

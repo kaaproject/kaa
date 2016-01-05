@@ -502,11 +502,11 @@ public class DaoConstants {
     public static final String PLUGIN_INSTANCE_NAME = NAME;
     public static final String PLUGIN_INSTANCE_STATE = "state";
     public static final String PLUGIN_INSTANCE_PLUGIN_ID = PLUGIN_ID;
+    public static final String PLUGIN_INSTANCE_PLUGIN_CONTRACT_INSTANCE = "pluginInstance";
 
     public static final String PLUGIN_INSTANCE_PLUGIN_ID_NAME_CONSTRAINT_NAME = "plugin_instance_plugin_id_name_constraint";
 
     public static final String PLUGIN_INSTANCE_PLUGIN_FK = "fk_plugin_instance_plugin";
-    public static final String PLUGIN_INSTANCE_PLUGIN_CONTRACT_INSTANCE_FK = "fk_plugin_instance_plugin_contract_instance";
 
     /**
      * Plugin contract instance constants
@@ -516,6 +516,7 @@ public class DaoConstants {
     public static final String PLUGIN_CONTRACT_INSTANCE_PLUGIN_CONTRACT_ID = PLUGIN_CONTRACT_ID;
 
     public static final String PLUGIN_CONTRACT_INSTANCE_PLUGIN_CONTRACT_FK = "fk_plugin_contract_instance_plugin_contract";
+    public static final String PLUGIN_CONTRACT_INSTANCE_PLUGIN_INSTANCE_FK = "fk_plugin_contract_instance_plugin_instance";
 
     /**
      * Plugin contract instance item constants
@@ -528,12 +529,16 @@ public class DaoConstants {
     public static final String PLUGIN_CONTRACT_INSTANCE_ITEM_JOIN_TABLE_NAME = "contract_item_route";
     public static final String PLUGIN_CONTRACT_INSTANCE_ITEM_JOIN_TABLE_IN_PLUGIN_INSTANCE_CONTRACT_ITEM_ID = "in_plugin_instance_contract_item_id";
     public static final String PLUGIN_CONTRACT_INSTANCE_ITEM_JOIN_TABLE_OUT_PLUGIN_INSTANCE_CONTRACT_ITEM_ID = "out_plugin_instance_contract_item_id";
+    public static final String PLUGIN_CONTRACT_INSTANCE_ITEM_JOIN_TABLE_PARAM_MESSAGE_SCHEMA_ID = "param_message_schema_id";
+    public static final String PLUGIN_CONTRACT_INSTANCE_ITEM_JOIN_TABLE_RESULT_MESSAGE_SCHEMA_ID = "result_message_schema_id";
 
     public static final String PLUGIN_CONTRACT_INSTANCE_ITEM_JOIN_TABLE_IN_PLUGIN_INSTANCE_CONTRACT_ITEM_FK = "fk_in_plugin_instance_item";
     public static final String PLUGIN_CONTRACT_INSTANCE_ITEM_JOIN_TABLE_OUT_PLUGIN_INSTANCE_CONTRACT_ITEM_FK = "fk_out_plugin_instance_item";
     public static final String PLUGIN_CONTRACT_INSTANCE_ITEM_PLUGIN_CONTRACT_INSTANCE_FK = "fk_plugin_contract_instance_item_plugin_contract_instance";
     public static final String PLUGIN_CONTRACT_INSTANCE_ITEM_PLUGIN_CONTRACT_ITEM_FK = "fk_plugin_contract_instance_item_plugin_contract_item";
     public static final String PLUGIN_CONTRACT_INSTANCE_ITEM_PARENT_PLUGIN_CONTRACT_ITEM_FK = "fk_plugin_contract_instance_item_parent_plugin_contract_instance";
+    public static final String PLUGIN_CONTRACT_INSTANCE_ITEM_PARAM_MESSAGE_SCHEMA_FK = "fk_param_message_schema";
+    public static final String PLUGIN_CONTRACT_INSTANCE_ITEM_RESULT_MESSAGE_SCHEMA_FK = "fk_result_message_schema";
 
     public static final String LAST_PAGE_MESSAGE = "It is the last page";
     public static final String PROFILE = "profile";

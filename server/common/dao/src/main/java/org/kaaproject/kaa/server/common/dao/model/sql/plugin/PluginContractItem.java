@@ -91,6 +91,22 @@ public class PluginContractItem extends GenericModel<PluginContractItemDto> impl
         return dto;
     }
 
+    public String getConfigSchema() {
+        return configSchema;
+    }
+
+    public void setConfigSchema(String configSchema) {
+        this.configSchema = configSchema;
+    }
+
+    public ContractItem getContractItem() {
+        return contractItem;
+    }
+
+    public void setContractItem(ContractItem contractItem) {
+        this.contractItem = contractItem;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

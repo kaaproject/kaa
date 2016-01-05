@@ -100,36 +100,36 @@ public class JavaEndpointMessagingPluginGenerator extends AbstractSdkApiGenerato
 
         // Future<Void> sendA(ClassA msg);
         PluginContractItemInfo info = BasePluginContractItemInfo.builder()
-                .withData(methodNameConverter.encode(new ItemConfiguration("sendA"))).withInMsgSchema(ClassA.SCHEMA$.toString()).build();
+                .withData(methodNameConverter.encodeToJson(new ItemConfiguration("sendA"))).withInMsgSchema(ClassA.SCHEMA$.toString()).build();
         instance.addContractItemInfo(sendMsgDef, info);
 
         // Future<ClassA> getA()
-        info = BasePluginContractItemInfo.builder().withData(methodNameConverter.encode(new ItemConfiguration("getA")))
+        info = BasePluginContractItemInfo.builder().withData(methodNameConverter.encodeToJson(new ItemConfiguration("getA")))
                 .withOutMsgSchema(ClassA.SCHEMA$.toString()).build();
         instance.addContractItemInfo(sendMsgDef, info);
 
         // Future<ClassB> getB(ClassA msg);
-        info = BasePluginContractItemInfo.builder().withData(methodNameConverter.encode(new ItemConfiguration("getB")))
+        info = BasePluginContractItemInfo.builder().withData(methodNameConverter.encodeToJson(new ItemConfiguration("getB")))
                 .withInMsgSchema(ClassA.SCHEMA$.toString()).withOutMsgSchema(ClassB.SCHEMA$.toString()).build();
         instance.addContractItemInfo(sendMsgDef, info);
 
         // Future<ClassC> getC(ClassA msg);
-        info = BasePluginContractItemInfo.builder().withData(methodNameConverter.encode(new ItemConfiguration("getC")))
+        info = BasePluginContractItemInfo.builder().withData(methodNameConverter.encodeToJson(new ItemConfiguration("getC")))
                 .withInMsgSchema(ClassA.SCHEMA$.toString()).withOutMsgSchema(ClassC.SCHEMA$.toString()).build();
         instance.addContractItemInfo(sendMsgDef, info);
 
         // void setMethodAListener(MethodAListener listener);
-        info = BasePluginContractItemInfo.builder().withData(methodNameConverter.encode(new ItemConfiguration("setMethodAListener")))
+        info = BasePluginContractItemInfo.builder().withData(methodNameConverter.encodeToJson(new ItemConfiguration("setMethodAListener")))
                 .withInMsgSchema(ClassC.SCHEMA$.toString()).withOutMsgSchema(ClassA.SCHEMA$.toString()).build();
         instance.addContractItemInfo(receiveMsgDef, info);
 
         // void setMethodBListener(MethodBListener listener);
-        info = BasePluginContractItemInfo.builder().withData(methodNameConverter.encode(new ItemConfiguration("setMethodBListener")))
+        info = BasePluginContractItemInfo.builder().withData(methodNameConverter.encodeToJson(new ItemConfiguration("setMethodBListener")))
                 .withInMsgSchema(ClassC.SCHEMA$.toString()).withOutMsgSchema(ClassB.SCHEMA$.toString()).build();
         instance.addContractItemInfo(receiveMsgDef, info);
 
         // void setMethodCListener(MethodCListener listener);
-        info = BasePluginContractItemInfo.builder().withData(methodNameConverter.encode(new ItemConfiguration("setMethodCListener")))
+        info = BasePluginContractItemInfo.builder().withData(methodNameConverter.encodeToJson(new ItemConfiguration("setMethodCListener")))
                 .withOutMsgSchema(ClassC.SCHEMA$.toString()).build();
         instance.addContractItemInfo(receiveMsgDef, info);
 
@@ -379,7 +379,7 @@ public class JavaEndpointMessagingPluginGenerator extends AbstractSdkApiGenerato
         String name = null;
         try {
             AvroByteArrayConverter<ItemConfiguration> converter = new AvroByteArrayConverter<>(ItemConfiguration.class);
-            name = converter.fromByteArray(item.getConfigurationData()).getMethodName();
+            name = converter.fromByteArray(item.getConfigurationData().getBytes()).getMethodName();
         } catch (IOException cause) {
         }
         return name;
