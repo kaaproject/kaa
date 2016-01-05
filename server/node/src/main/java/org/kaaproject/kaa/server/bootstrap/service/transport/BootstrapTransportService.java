@@ -132,8 +132,8 @@ public class BootstrapTransportService extends AbstractTransportService implemen
         private final boolean supportUnencryptedConnection;
         private final OperationsServerListService opsListService;
 
-        private static final ThreadLocal<Map<Integer, PlatformEncDec>> platformEncDecMap = new ThreadLocal<Map<Integer, PlatformEncDec>>();
-        private static final ThreadLocal<MessageEncoderDecoder> crypt = new ThreadLocal<MessageEncoderDecoder>();
+        private static final ThreadLocal<Map<Integer, PlatformEncDec>> platformEncDecMap = new ThreadLocal<>(); //NOSONAR
+        private static final ThreadLocal<MessageEncoderDecoder> crypt = new ThreadLocal<>(); //NOSONAR
 
         public BootstrapMessageHandler(OperationsServerListService opsListService, ExecutorService executor, Set<String> platformProtocols,
                 KeyPair keyPair, boolean supportUnencryptedConnection) {
@@ -220,7 +220,7 @@ public class BootstrapTransportService extends AbstractTransportService implemen
                     if (message.isEncrypted()) {
                         syncRequest = decodeEncryptedRequest(message, crypt, platformEncDecMap);
                     } else if (supportUnencryptedConnection) {
-                        syncRequest = decodeUnencryptedRequest(message, crypt, platformEncDecMap);
+                        syncRequest = decodeUnencryptedRequest(message, platformEncDecMap);
                     } else {
                         LOG.warn("Received unencrypted init message, but unencrypted connection forbidden by configuration.");
                         throw new GeneralSecurityException("Unencrypted connection forbidden by configuration.");
@@ -240,8 +240,8 @@ public class BootstrapTransportService extends AbstractTransportService implemen
                     return request;
                 }
 
-                private ClientSync decodeUnencryptedRequest(SessionInitMessage message, MessageEncoderDecoder crypt,
-                        Map<Integer, PlatformEncDec> platformEncDecMap) throws GeneralSecurityException, PlatformEncDecException {
+                private ClientSync decodeUnencryptedRequest(SessionInitMessage message, Map<Integer, PlatformEncDec> platformEncDecMap)
+                        throws GeneralSecurityException, PlatformEncDecException {
                     byte[] requestRaw = message.getEncodedMessageData();
                     LOG.trace("Try to convert raw data to SynRequest object");
                     ClientSync request = decodePlatformLevelData(platformEncDecMap, message.getPlatformId(), requestRaw);

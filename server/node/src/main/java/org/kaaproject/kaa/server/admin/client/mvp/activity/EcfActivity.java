@@ -129,8 +129,7 @@ public class EcfActivity
                 public void onSuccessImpl(EventClassFamilyDto result) {
                     if (create) {
                         goTo(new EcfPlace(result.getId()));
-                    }
-                    else {
+                    } else {
                         goTo(place.getPreviousPlace());
                     }
                 }

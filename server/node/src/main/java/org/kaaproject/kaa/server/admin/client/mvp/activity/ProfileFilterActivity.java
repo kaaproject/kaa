@@ -200,8 +200,7 @@ public class ProfileFilterActivity extends AbstractRecordActivity<ProfileFilterD
             }
             if (showActive && record.hasActive()) {
                 recordView.getRecordPanel().openActive();
-            }
-            else {
+            } else {
                 recordView.getRecordPanel().openDraft();
             }
         }

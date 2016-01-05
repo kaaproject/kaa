@@ -45,8 +45,7 @@ public class LogAppenderGrid extends BasePluginGrid<LogAppenderDto> {
             public String getValue(LogAppenderDto item) {
                 if (item.getMaxLogSchemaVersion() == Integer.MAX_VALUE) {
                     return Utils.constants.infinite();
-                }
-                else {
+                } else {
                     return String.valueOf(item.getMaxLogSchemaVersion());
                 }
             }

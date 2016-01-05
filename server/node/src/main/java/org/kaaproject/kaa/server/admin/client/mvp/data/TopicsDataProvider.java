@@ -56,8 +56,7 @@ public class TopicsDataProvider extends AbstractDataProvider<TopicDto>{
                     callback.onSuccess(result);
                 }
             });
-        }
-        else if (!isEmpty(endpointGroupId)) {
+        } else if (!isEmpty(endpointGroupId)) {
             KaaAdmin.getDataSource().loadTopicsByEndpointGroupId(endpointGroupId, new AsyncCallback<List<TopicDto>>() {
                 @Override
                 public void onFailure(Throwable caught) {

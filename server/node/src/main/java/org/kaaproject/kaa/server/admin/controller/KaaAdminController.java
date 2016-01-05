@@ -106,7 +106,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class KaaAdminController {
 
     /** The Constant logger. */
-    private static final Logger logger = LoggerFactory.getLogger(KaaAdminController.class);
+    private static final Logger logger = LoggerFactory.getLogger(KaaAdminController.class); //NOSONAR
 
     /** The Constant BUFFER. */
     private static final int BUFFER = 1024 * 100;

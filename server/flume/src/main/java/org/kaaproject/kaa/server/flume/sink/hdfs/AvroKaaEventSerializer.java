@@ -49,8 +49,7 @@ import org.slf4j.LoggerFactory;
 public class AvroKaaEventSerializer implements EventSerializer, Configurable,
         EventConstants {
 
-    private static final Logger logger = LoggerFactory
-            .getLogger(AvroKaaEventSerializer.class);
+    private static final Logger logger = LoggerFactory.getLogger(AvroKaaEventSerializer.class); //NOSONAR
 
     private final OutputStream out;
     

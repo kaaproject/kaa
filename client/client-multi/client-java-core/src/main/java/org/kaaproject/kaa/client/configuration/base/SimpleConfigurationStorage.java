@@ -31,7 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class SimpleConfigurationStorage implements ConfigurationStorage {
-    private static final int _8KB = 1024 * 8;
+    private static final int _8KB = 1024 * 8; //NOSONAR
     private static final Logger LOG = LoggerFactory.getLogger(SimpleConfigurationStorage.class);
 
     private final KaaClientPlatformContext context;

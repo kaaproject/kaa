@@ -77,8 +77,7 @@ public class KaaAdmin implements EntryPoint {
                 if (result.getAuthResult()==Result.OK) {
                     authInfo = result;
                     init();
-                }
-                else {
+                } else {
                     showLogin();
                 }
             }
@@ -165,8 +164,7 @@ public class KaaAdmin implements EntryPoint {
         Place place;
         if (authInfo.getAuthority()==KaaAuthorityDto.KAA_ADMIN) {
             place = new TenantsPlace();
-        }
-        else {
+        } else {
             place = new ApplicationsPlace();
         }
 
@@ -204,8 +202,7 @@ public class KaaAdmin implements EntryPoint {
             if (path.endsWith(".html") || path.endsWith(".htm")) {
                 int index = path.lastIndexOf('/');
                 path = path.substring(0, index+1);
-            }
-            else {
+            } else {
                 path += "/";
             }
         }

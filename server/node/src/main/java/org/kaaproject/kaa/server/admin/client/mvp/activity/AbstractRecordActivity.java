@@ -139,8 +139,7 @@ T extends StructureRecordDto<R>, F, V extends BaseRecordView<R,F>, P extends Abs
             R inactiveStruct = createInactiveStruct();
             record.setInactiveStructureDto(inactiveStruct);
             onRecordRetrieved();
-        }
-        else {
+        } else {
             KaaAdmin.getDataSource().getEndpointGroup(endpointGroupId, new BusyAsyncCallback<EndpointGroupDto>() {
 
                 @Override

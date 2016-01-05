@@ -129,9 +129,9 @@ public class SyncEqualsHashCodeTest {
 
     @Test
     public void profileClientSyncEqualsHashCodeTest() {
-        ProfileClientSync profileClientSync1 = new ProfileClientSync(null, null, null, "token1");
-        ProfileClientSync profileClientSync2 = new ProfileClientSync(null, null, null, "token1");
-        ProfileClientSync profileClientSync3 = new ProfileClientSync(null, null, null, "token3");
+        ProfileClientSync profileClientSync1 = new ProfileClientSync(null, null, "token1");
+        ProfileClientSync profileClientSync2 = new ProfileClientSync(null, null, "token1");
+        ProfileClientSync profileClientSync3 = new ProfileClientSync(null, null, "token3");
         Assert.assertEquals(profileClientSync1, profileClientSync1);
         Assert.assertEquals(profileClientSync1, profileClientSync2);
         Assert.assertNotEquals(profileClientSync1, null);

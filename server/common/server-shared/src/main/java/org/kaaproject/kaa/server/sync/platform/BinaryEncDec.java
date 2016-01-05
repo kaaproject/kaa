@@ -211,7 +211,7 @@ public class BinaryEncDec implements PlatformEncDec {
         int extensionsCount = getIntFromUnsignedShort(buf);
         LOG.trace("received data for protocol id {} and version {} that contain {} extensions", protocolId, protocolVersion,
                 extensionsCount);
-        ClientSync sync = parseExtensions(buf, protocolVersion, extensionsCount);
+        ClientSync sync = parseExtensions(buf, extensionsCount);
         LOG.trace("Decoded binary data {}", sync);
         return sync;
     }
@@ -539,7 +539,7 @@ public class BinaryEncDec implements PlatformEncDec {
         }
     }
 
-    private ClientSync parseExtensions(ByteBuffer buf, int protocolVersion, int extensionsCount) throws PlatformEncDecException {
+    private ClientSync parseExtensions(ByteBuffer buf, int extensionsCount) throws PlatformEncDecException {
         ClientSync sync = new ClientSync();
         for (short extPos = 0; extPos < extensionsCount; extPos++) {
             if (buf.remaining() < MIN_SIZE_OF_EXTENSION_HEADER) {
@@ -556,22 +556,22 @@ public class BinaryEncDec implements PlatformEncDec {
             }
             switch (type) {
             case BOOTSTRAP_EXTENSION_ID:
-                parseBootstrapClientSync(sync, buf, options, payloadLength);
+                parseBootstrapClientSync(sync, buf);
                 break;
             case META_DATA_EXTENSION_ID:
-                parseClientSyncMetaData(sync, buf, options, payloadLength);
+                parseClientSyncMetaData(sync, buf, options);
                 break;
             case PROFILE_EXTENSION_ID:
-                parseProfileClientSync(sync, buf, options, payloadLength);
+                parseProfileClientSync(sync, buf, payloadLength);
                 break;
             case USER_EXTENSION_ID:
-                parseUserClientSync(sync, buf, options, payloadLength);
+                parseUserClientSync(sync, buf, payloadLength);
                 break;
             case LOGGING_EXTENSION_ID:
-                parseLogClientSync(sync, buf, options, payloadLength);
+                parseLogClientSync(sync, buf);
                 break;
             case CONFIGURATION_EXTENSION_ID:
-                parseConfigurationClientSync(sync, buf, options, payloadLength);
+                parseConfigurationClientSync(sync, buf, options);
                 break;
             case NOTIFICATION_EXTENSION_ID:
                 parseNotificationClientSync(sync, buf, options, payloadLength);
@@ -586,7 +586,7 @@ public class BinaryEncDec implements PlatformEncDec {
         return validate(sync);
     }
 
-    private void parseClientSyncMetaData(ClientSync sync, ByteBuffer buf, int options, int payloadLength) throws PlatformEncDecException {
+    private void parseClientSyncMetaData(ClientSync sync, ByteBuffer buf, int options) throws PlatformEncDecException {
         sync.setRequestId(buf.getInt());
         ClientSyncMetaData md = new ClientSyncMetaData();
         if (hasOption(options, CLIENT_META_SYNC_TIMEOUT_OPTION)) {
@@ -604,7 +604,7 @@ public class BinaryEncDec implements PlatformEncDec {
         sync.setClientSyncMetaData(md);
     }
 
-    private void parseBootstrapClientSync(ClientSync sync, ByteBuffer buf, int options, int payloadLength) {
+    private void parseBootstrapClientSync(ClientSync sync, ByteBuffer buf) {
         int requestId = buf.getShort();
         int protocolCount = buf.getShort();
         List<ProtocolVersionId> keys = new ArrayList<>(protocolCount);
@@ -616,7 +616,7 @@ public class BinaryEncDec implements PlatformEncDec {
         sync.setBootstrapSync(new BootstrapClientSync(requestId, keys));
     }
 
-    private void parseProfileClientSync(ClientSync sync, ByteBuffer buf, int options, int payloadLength) {
+    private void parseProfileClientSync(ClientSync sync, ByteBuffer buf, int payloadLength) {
         int payloadLimitPosition = buf.position() + payloadLength;
         ProfileClientSync profileSync = new ProfileClientSync();
         profileSync.setProfileBody(getNewByteBuffer(buf, buf.getInt()));
@@ -635,7 +635,7 @@ public class BinaryEncDec implements PlatformEncDec {
         sync.setProfileSync(profileSync);
     }
 
-    private void parseUserClientSync(ClientSync sync, ByteBuffer buf, int options, int payloadLength) {
+    private void parseUserClientSync(ClientSync sync, ByteBuffer buf, int payloadLength) {
         int payloadLimitPosition = buf.position() + payloadLength;
         UserClientSync userSync = new UserClientSync();
         while (buf.position() < payloadLimitPosition) {
@@ -655,7 +655,7 @@ public class BinaryEncDec implements PlatformEncDec {
         sync.setUserSync(userSync);
     }
 
-    private void parseLogClientSync(ClientSync sync, ByteBuffer buf, int options, int payloadLength) {
+    private void parseLogClientSync(ClientSync sync, ByteBuffer buf) {
         LogClientSync logSync = new LogClientSync();
         logSync.setRequestId(getIntFromUnsignedShort(buf));
         int size = getIntFromUnsignedShort(buf);
@@ -667,7 +667,7 @@ public class BinaryEncDec implements PlatformEncDec {
         sync.setLogSync(logSync);
     }
 
-    private void parseConfigurationClientSync(ClientSync sync, ByteBuffer buf, int options, int payloadLength) {
+    private void parseConfigurationClientSync(ClientSync sync, ByteBuffer buf, int options) {
         ConfigurationClientSync confSync = new ConfigurationClientSync();
         confSync.setAppStateSeqNumber(buf.getInt());
         if (hasOption(options, CONFIGURATION_HASH_OPTION)) {

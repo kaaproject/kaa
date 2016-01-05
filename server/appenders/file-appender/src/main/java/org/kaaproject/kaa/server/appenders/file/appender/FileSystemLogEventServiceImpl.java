@@ -89,8 +89,7 @@ public class FileSystemLogEventServiceImpl implements FileSystemLogEventService 
                     logsRootPath, DEFAULT_SYSTEM_USER);
         } catch (IOException e) {
             LOG.error("Can't create root log dir: " + logsRootPath, e);
-        }
-        finally {
+        } finally {
             if (createRootLogDirScript != null) {
                 createRootLogDirScript.delete();
             }

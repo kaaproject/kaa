@@ -55,7 +55,7 @@ public class CEventSourcesGenerator {
     private static final String EVENT_FQN_H_FILE = "kaa_event_fqn_definitions.h";
     private static final String EVENT_FQN_PATTERN = "sdk/c/event/kaa_event_fqn_definitions.h.vm";
     
-    private static final VelocityEngine velocityEngine;
+    private static final VelocityEngine velocityEngine; //NOSONAR
     static {
         velocityEngine = new VelocityEngine();
 

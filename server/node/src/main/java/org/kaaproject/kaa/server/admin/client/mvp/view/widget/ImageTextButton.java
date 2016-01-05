@@ -46,8 +46,7 @@ public class ImageTextButton extends Button {
           int spacing;
           if (this.text == null || this.text.trim().equals("")) {
                   spacing = 0;
-          }
-          else {
+          } else {
                   spacing = 16;
           }
 

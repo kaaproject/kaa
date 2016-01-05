@@ -72,11 +72,9 @@ public class EventMapDataProvider extends AbstractDataProvider<ApplicationEventM
                     callback.onSuccess(eventMaps);
                 }
             });
-        }
-        else if (this.eventMaps != null) {
+        } else if (this.eventMaps != null) {
             callback.onSuccess(this.eventMaps);
-        }
-        else {
+        } else {
             List<ApplicationEventMapDto> data = Collections.emptyList();
             callback.onSuccess(data);
         }

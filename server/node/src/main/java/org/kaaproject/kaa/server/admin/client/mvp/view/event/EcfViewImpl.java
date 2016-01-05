@@ -142,8 +142,7 @@ public class EcfViewImpl extends BaseDetailsViewImpl implements EcfView {
             namespace.addInputHandler(this);
             className = new KaaAdminSizedTextBox(DEFAULT_TEXTBOX_SIZE);
             className.addInputHandler(this);
-        }
-        else {
+        } else {
             namespace = new KaaAdminSizedTextBox(-1, false);
             className = new KaaAdminSizedTextBox(-1, false);
         }

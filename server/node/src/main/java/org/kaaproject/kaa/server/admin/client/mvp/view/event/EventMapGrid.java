@@ -98,8 +98,7 @@ public class EventMapGrid extends AbstractKaaGrid<ApplicationEventMapDto, String
               });
               table.setColumnWidth(actionColumn, 80, Unit.PX);
               prefWidth += 80;
-        }
-        else {
+        } else {
             prefWidth += constructStringColumn(table,
                     Utils.constants.action(),
                     new StringValueProvider<ApplicationEventMapDto>() {

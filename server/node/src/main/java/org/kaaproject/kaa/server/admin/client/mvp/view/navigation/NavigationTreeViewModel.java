@@ -79,8 +79,7 @@ public class NavigationTreeViewModel implements TreeViewModel {
                     nodes);
             PlaceCell cell = new PlaceCell();
             return new DefaultNodeInfo<TreePlace>(dataProvider, cell, selectionModel, null);
-        }
-        else if (value instanceof TreePlace) {
+        } else if (value instanceof TreePlace) {
             return ((TreePlace)value).getNodeInfo(selectionModel, eventBus);
         }
         return null;

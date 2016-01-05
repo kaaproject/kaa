@@ -180,7 +180,7 @@ public class DefaultOperationsService implements OperationsService {
         if (request != null) {
             ClientSyncMetaData metaData = context.getMetaData();
             LOG.trace("[{}][{}] procesing event sync request {}.", context.getEndpointKey(), context.getRequestHash(), request);
-            EventServerSync eventSyncResponse = processEventSyncResponse(context.getEndpointKey(), context.getRequestHash(),
+            EventServerSync eventSyncResponse = processEventSyncResponse(context.getEndpointKey(),
                     metaData.getApplicationToken(), request, context.getEndpointProfile());
             context.setEventSyncResponse(eventSyncResponse);
         }
@@ -314,8 +314,7 @@ public class DefaultOperationsService implements OperationsService {
         return endpointProfile;
     }
 
-    private EventServerSync processEventSyncResponse(String endpointId, int requestHash, String appToken, EventClientSync request,
-            EndpointProfileDto profile) {
+    private EventServerSync processEventSyncResponse(String endpointId, String appToken, EventClientSync request, EndpointProfileDto profile) {
         EventServerSync response = new EventServerSync();
         List<EventListenersRequest> requests = request.getEventListenersRequests();
         if (requests != null && !requests.isEmpty()) {
@@ -341,7 +340,7 @@ public class DefaultOperationsService implements OperationsService {
             response.setEndpointAttachResponses(processEndpointAttachRequests(endpointId, requestHash, request, profile));
         }
         if (request.getEndpointDetachRequests() != null) {
-            response.setEndpointDetachResponses(processEndpointDetachRequests(endpointId, requestHash, request, profile));
+            response.setEndpointDetachResponses(processEndpointDetachRequests(endpointId, request, profile));
         }
         return response;
     }
@@ -364,8 +363,7 @@ public class DefaultOperationsService implements OperationsService {
         }
     }
 
-    private List<EndpointDetachResponse> processEndpointDetachRequests(String endpointId, int requestHash, UserClientSync syncRequest,
-            EndpointProfileDto profile) {
+    private List<EndpointDetachResponse> processEndpointDetachRequests(String endpointId, UserClientSync syncRequest, EndpointProfileDto profile) {
         List<EndpointDetachRequest> requests = syncRequest.getEndpointDetachRequests();
         if (requests != null && !requests.isEmpty()) {
             LOG.debug("[{}] processing {} endpoint detach requests", endpointId, requests.size());
@@ -550,8 +548,7 @@ public class DefaultOperationsService implements OperationsService {
     /**
      * Fetch history.
      *
-     * @param endpointId        the endpoint id
-     * @param requesHash        the reques hash
+     * @param context           the context
      * @param applicationToken  the application token
      * @param profile           the profile
      * @param subject           the subject

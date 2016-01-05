@@ -158,7 +158,7 @@ public class DefaultRecordGenerationAlgorithmImpl<U extends KaaSchema, T extends
         switch (schemaToProcess.getType()) {
         case ARRAY:
             // if this an array type then return empty array instance
-            return processArray(schemaToProcess);
+            return processArray();
         case RECORD:
             return processRecord(schemaToProcess);
         case FIXED:
@@ -216,10 +216,9 @@ public class DefaultRecordGenerationAlgorithmImpl<U extends KaaSchema, T extends
     /**
      * Processes array type.
      *
-     * @param schemaNode schema for current type.
      * @return generated value for input array type.
      */
-    private Object processArray(Schema schemaNode) {
+    private Object processArray() {
         Schema elementTypeSchema = Schema.create(Type.NULL);
         return new GenericData.Array<>(0, Schema.createArray(elementTypeSchema));
     }

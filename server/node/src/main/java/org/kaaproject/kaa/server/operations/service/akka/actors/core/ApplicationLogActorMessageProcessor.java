@@ -90,7 +90,7 @@ public class ApplicationLogActorMessageProcessor {
         }
     }
 
-    protected void processLogEventPack(ActorContext context, LogEventPackMessage message) {
+    protected void processLogEventPack(LogEventPackMessage message) {
         LOG.debug("[{}] Processing log event pack with {} appenders", applicationToken, logAppenders.size());
         fetchSchemas(message);
         LogSchema logSchema = message.getLogSchema();

@@ -28,8 +28,8 @@ public class ProfileClientSync {
     /**
      * All-args constructor.
      */
-    public ProfileClientSync(ByteBuffer endpointPublicKey, ByteBuffer profileBody, String sdkToken,
-            String endpointAccessToken) {
+    public ProfileClientSync(ByteBuffer endpointPublicKey, ByteBuffer profileBody,
+                             String endpointAccessToken) {
         this.endpointPublicKey = endpointPublicKey;
         this.profileBody = profileBody;
         this.endpointAccessToken = endpointAccessToken;

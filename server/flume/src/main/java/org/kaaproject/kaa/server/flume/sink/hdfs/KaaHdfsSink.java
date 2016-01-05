@@ -65,7 +65,7 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 public class KaaHdfsSink extends AbstractSink implements Configurable, ConfigurationConstants,
                                                            RemovalListener<HdfsSinkKey, BucketWriter> {
 
-      private static final Logger logger = LoggerFactory.getLogger(KaaHdfsSink.class);
+      private static final Logger logger = LoggerFactory.getLogger(KaaHdfsSink.class); //NOSONAR
 
       private boolean started = false;
 
@@ -87,8 +87,7 @@ public class KaaHdfsSink extends AbstractSink implements Configurable, Configura
        * Singleton credential manager that manages static credentials for the
        * entire JVM
        */
-      private static final AtomicReference<KerberosUser> staticLogin
-          = new AtomicReference<KerberosUser>();
+      private static final AtomicReference<KerberosUser> staticLogin = new AtomicReference<>(); //NOSONAR
 
       private String kerbConfPrincipal;
       private String kerbKeytab;
@@ -151,7 +150,7 @@ public class KaaHdfsSink extends AbstractSink implements Configurable, Configura
         kerbKeytab = context.getString(CONFIG_HDFS_KERBEROS_KEYTAB, "");
         proxyUserName = context.getString(CONFIG_HDFS_PROXY_USER, "");
 
-        if (!authenticate(rootHdfsPath)) {
+        if (!authenticate()) {
             logger.error("Failed to authenticate!");
         }
 
@@ -424,7 +423,7 @@ public class KaaHdfsSink extends AbstractSink implements Configurable, Configura
             }
         }
 
-          private boolean authenticate(String hdfsPath) {
+          private boolean authenticate() {
 
                 // logic for kerberos login
                 boolean useSecurity = UserGroupInformation.isSecurityEnabled();

@@ -25,7 +25,7 @@ import org.springframework.security.authentication.event.AbstractAuthenticationF
 public class KaaAdminAuthListener implements
         ApplicationListener<AbstractAuthenticationEvent> {
 
-    private static final Logger logger = LoggerFactory.getLogger(KaaAdminAuthListener.class);
+    private static final Logger logger = LoggerFactory.getLogger(KaaAdminAuthListener.class); //NOSONAR
 
     @Override
     public void onApplicationEvent(AbstractAuthenticationEvent event) {

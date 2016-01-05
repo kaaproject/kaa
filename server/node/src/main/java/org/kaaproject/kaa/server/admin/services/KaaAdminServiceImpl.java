@@ -3115,8 +3115,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             Collections.sort(availableVersions);
             ctlSchemaForm.setAvailableVersions(availableVersions);
             return ctlSchemaForm;
-        }
-        catch (Exception cause) {
+        } catch (Exception cause) {
             throw Utils.handleException(cause);
         }
     }

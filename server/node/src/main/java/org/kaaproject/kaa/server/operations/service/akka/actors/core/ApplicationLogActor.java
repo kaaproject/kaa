@@ -94,7 +94,7 @@ public class ApplicationLogActor extends UntypedActor {
     public void onReceive(Object message) throws Exception {
         LOG.debug("[{}] Received: {}", applicationToken, message);
         if (message instanceof LogEventPackMessage) {
-            messageProcessor.processLogEventPack(getContext(), (LogEventPackMessage) message);
+            messageProcessor.processLogEventPack((LogEventPackMessage) message);
         } else if (message instanceof ThriftNotificationMessage) {
             LOG.debug("[{}] Received thrift notification message: {}", applicationToken, message);
             Notification notification = ((ThriftNotificationMessage) message).getNotification();

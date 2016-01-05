@@ -73,8 +73,7 @@ public class KaaAdminAuthFailureHandler implements AuthenticationFailureHandler 
                 response.addHeader("Error", exception.getLocalizedMessage());
                 if (exception instanceof TempCredentialsException) {
                     response.addHeader("ErrorType", "TempCredentials");
-                }
-                else {
+                } else {
                     response.addHeader("ErrorType", "GeneralError");
                 }
                 response.setStatus(HttpServletResponse.SC_OK);

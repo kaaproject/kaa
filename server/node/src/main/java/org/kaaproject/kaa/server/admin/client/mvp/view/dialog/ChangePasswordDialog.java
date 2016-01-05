@@ -154,8 +154,7 @@ public class ChangePasswordDialog extends AvroUiDialog {
         if (oldPasswordText.equals(newPasswordText)) {
             setError(Utils.messages.newPasswordShouldDifferent());
             return false;
-        }
-        else if (!newPasswordText.equals(newPasswordAgainText)) {
+        } else if (!newPasswordText.equals(newPasswordAgainText)) {
             setError(Utils.messages.newPasswordsNotMatch());
             return false;
         }
@@ -187,8 +186,7 @@ public class ChangePasswordDialog extends AvroUiDialog {
         if (error!= null) {
             errorPanel.setMessage(error);
             errorPanel.setVisible(true);
-        }
-        else {
+        } else {
             errorPanel.setMessage("");
             errorPanel.setVisible(false);
         }

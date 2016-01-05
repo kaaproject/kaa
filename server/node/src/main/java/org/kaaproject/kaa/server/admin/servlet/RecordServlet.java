@@ -40,7 +40,7 @@ public class RecordServlet extends HttpServlet implements Servlet {
     private static final long serialVersionUID = 1584721028492234643L;
 
     /** The Constant logger. */
-    private static final Logger logger = LoggerFactory.getLogger(RecordServlet.class);
+    private static final Logger logger = LoggerFactory.getLogger(RecordServlet.class); //NOSONAR
 
     private static final int BUFFER = 1024 * 100;
 

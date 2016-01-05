@@ -117,8 +117,7 @@ public abstract class AbstractListActivity<T extends HasId, P extends TreePlace>
                     String id = event.getClickedId();
                     if (event.getAction()==RowActionEvent.CLICK) {
                         goTo(existingEntityPlace(id));
-                    }
-                    else if (event.getAction()==RowActionEvent.DELETE) {
+                    } else if (event.getAction()==RowActionEvent.DELETE) {
                         deleteEntity(id, new BusyAsyncCallback<Void>() {
                             @Override
                             public void onFailureImpl(Throwable caught) {

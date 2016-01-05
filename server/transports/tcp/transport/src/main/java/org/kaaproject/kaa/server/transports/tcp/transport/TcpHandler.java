@@ -63,7 +63,7 @@ public class TcpHandler extends SimpleChannelInboundHandler<AbstractKaaTcpComman
     private volatile SessionInfo session;
     private volatile boolean sessionDisconnected;
 
-    private final static ErrorBuilder connectErrorConverter = new ErrorBuilder() {
+    private final static ErrorBuilder connectErrorConverter = new ErrorBuilder() { //NOSONAR
         @Override
         public Object[] build(Exception e) {
             Object[] responses = new Object[1];
@@ -77,7 +77,7 @@ public class TcpHandler extends SimpleChannelInboundHandler<AbstractKaaTcpComman
         }
     };
 
-    private final static MessageBuilder syncResponseConverter = new MessageBuilder() {
+    private final static MessageBuilder syncResponseConverter = new MessageBuilder() { //NOSONAR
         @Override
         public Object[] build(byte[] encriptedResponseData, byte[] encriptedResponseSignature, boolean isEncrypted) {
             Object[] responses = new Object[1];
@@ -93,7 +93,7 @@ public class TcpHandler extends SimpleChannelInboundHandler<AbstractKaaTcpComman
         }
     };
 
-    private final static ErrorBuilder syncErrorConverter = new ErrorBuilder() {
+    private final static ErrorBuilder syncErrorConverter = new ErrorBuilder() { //NOSONAR
         @Override
         public Object[] build(Exception e) {
             Object[] responses = new Object[1];

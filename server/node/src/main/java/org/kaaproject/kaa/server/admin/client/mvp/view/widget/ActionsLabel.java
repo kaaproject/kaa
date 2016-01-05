@@ -143,8 +143,7 @@ public class ActionsLabel extends Label {
                     .toSafeStyles().asString());
 
             html = template.menuImageItemContent(style, text);
-        }
-        else {
+        } else {
             html = template.menuItemContent(text);
         }
         MenuItem item = new MenuItem(html, new Command() {

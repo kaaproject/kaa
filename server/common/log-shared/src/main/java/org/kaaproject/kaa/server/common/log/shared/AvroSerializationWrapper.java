@@ -40,13 +40,15 @@ import org.apache.avro.specific.SpecificRecordBase;
  */
 public class AvroSerializationWrapper<T extends SpecificRecordBase> implements Externalizable {
 
-    private static final ThreadLocal<Map<String, AvroReader<? extends SpecificRecordBase>>> recordReaderMap = new ThreadLocal<Map<String, AvroReader<? extends SpecificRecordBase>>>() {
+    private static final ThreadLocal<Map<String, AvroReader<? extends SpecificRecordBase>>> recordReaderMap = //NOSONAR
+            new ThreadLocal<Map<String, AvroReader<? extends SpecificRecordBase>>>() {
         protected Map<String, AvroReader<? extends SpecificRecordBase>> initialValue() {
             return new HashMap<String, AvroReader<? extends SpecificRecordBase>>();
         }
     };
 
-    private static final ThreadLocal<Map<String, AvroWriter<? extends SpecificRecordBase>>> recordWriterMap = new ThreadLocal<Map<String, AvroWriter<? extends SpecificRecordBase>>>() {
+    private static final ThreadLocal<Map<String, AvroWriter<? extends SpecificRecordBase>>> recordWriterMap = //NOSONAR
+            new ThreadLocal<Map<String, AvroWriter<? extends SpecificRecordBase>>>() {
         protected Map<String, AvroWriter<? extends SpecificRecordBase>> initialValue() {
             return new HashMap<String, AvroWriter<? extends SpecificRecordBase>>();
         }

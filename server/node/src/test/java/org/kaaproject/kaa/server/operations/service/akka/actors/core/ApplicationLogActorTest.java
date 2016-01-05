@@ -48,7 +48,6 @@ import org.kaaproject.kaa.server.operations.service.cache.CacheService;
 import org.kaaproject.kaa.server.operations.service.logs.LogAppenderService;
 import org.mockito.Mockito;
 
-import akka.actor.ActorContext;
 import akka.actor.ActorRef;
 
 public class ApplicationLogActorTest {
@@ -145,7 +144,7 @@ public class ApplicationLogActorTest {
 
         LogEventPackMessage logEventPackMessage = buildTestMessage(LOG_SCHEMA_VERSION);
 
-        applicationLogActorMessageProcessor.processLogEventPack(Mockito.mock(ActorContext.class), logEventPackMessage);
+        applicationLogActorMessageProcessor.processLogEventPack(logEventPackMessage);
 
         verify(logAppender).doAppend(Mockito.any(LogEventPack.class), Mockito.any(LogDeliveryCallback.class));
     }
@@ -157,7 +156,7 @@ public class ApplicationLogActorTest {
         LogEventPackMessage logEventPackMessage = buildTestMessage(LOG_SCHEMA_VERSION, logSchema);
         when(logAppender.isSchemaVersionSupported(1)).thenReturn(Boolean.FALSE);
 
-        applicationLogActorMessageProcessor.processLogEventPack(Mockito.mock(ActorContext.class), logEventPackMessage);
+        applicationLogActorMessageProcessor.processLogEventPack(logEventPackMessage);
 
         verify(logAppender, Mockito.never()).doAppend(Mockito.any(LogEventPack.class), Mockito.any(LogDeliveryCallback.class));
     }
@@ -168,7 +167,7 @@ public class ApplicationLogActorTest {
 
         LogEventPackMessage logEventPackMessage = buildTestMessage(LOG_SCHEMA_VERSION);
 
-        applicationLogActorMessageProcessor.processLogEventPack(Mockito.mock(ActorContext.class), logEventPackMessage);
+        applicationLogActorMessageProcessor.processLogEventPack(logEventPackMessage);
 
         verify(cacheService).getProfileSchemaByAppAndVersion(new AppVersionKey(APP_TOKEN, CLIENT_SCHEMA_VERSION));
         verify(logAppenderService).getLogSchema(APPLICATION_ID, LOG_SCHEMA_VERSION);
@@ -195,7 +194,7 @@ public class ApplicationLogActorTest {
 
         LogEventPackMessage logEventPackMessage = buildTestMessage(LOG_SCHEMA_VERSION, logSchema);
 
-        applicationLogActorMessageProcessor.processLogEventPack(Mockito.mock(ActorContext.class), logEventPackMessage);
+        applicationLogActorMessageProcessor.processLogEventPack(logEventPackMessage);
 
         verify(mockAppender).doAppend(Mockito.any(LogEventPack.class), Mockito.any(LogDeliveryCallback.class));
     }
@@ -214,7 +213,7 @@ public class ApplicationLogActorTest {
 
         applicationLogActorMessageProcessor = new ApplicationLogActorMessageProcessor(context, APP_TOKEN);
 
-        applicationLogActorMessageProcessor.processLogEventPack(Mockito.mock(ActorContext.class), logEventPackMessage);
+        applicationLogActorMessageProcessor.processLogEventPack(logEventPackMessage);
         // check that log pack is not processed
         verify(logAppender, Mockito.never()).doAppend(Mockito.any(BaseLogEventPack.class), Mockito.any(LogDeliveryCallback.class));
 
@@ -226,7 +225,7 @@ public class ApplicationLogActorTest {
         when(logAppenderService.getApplicationAppender(APPENDER_ID)).thenReturn(mockAppender);
         applicationLogActorMessageProcessor.processLogAppenderNotification(notification);
 
-        applicationLogActorMessageProcessor.processLogEventPack(Mockito.mock(ActorContext.class), logEventPackMessage);
+        applicationLogActorMessageProcessor.processLogEventPack(logEventPackMessage);
         // check that log pack is processed
         verify(mockAppender).doAppend(Mockito.any(LogEventPack.class), Mockito.any(LogDeliveryCallback.class));
     }
@@ -243,7 +242,7 @@ public class ApplicationLogActorTest {
 
         applicationLogActorMessageProcessor = new ApplicationLogActorMessageProcessor(context, APP_TOKEN);
 
-        applicationLogActorMessageProcessor.processLogEventPack(Mockito.mock(ActorContext.class), logEventPackMessage);
+        applicationLogActorMessageProcessor.processLogEventPack(logEventPackMessage);
         // check that log pack is not processed
         verify(logAppender).doAppend(Mockito.any(LogEventPack.class), Mockito.any(LogDeliveryCallback.class));
 
@@ -255,7 +254,7 @@ public class ApplicationLogActorTest {
         when(logAppenderService.getApplicationAppender(APPENDER_ID)).thenReturn(mockAppender);
         applicationLogActorMessageProcessor.processLogAppenderNotification(notification);
 
-        applicationLogActorMessageProcessor.processLogEventPack(Mockito.mock(ActorContext.class), logEventPackMessage);
+        applicationLogActorMessageProcessor.processLogEventPack(logEventPackMessage);
         // check that log pack is processed
         verify(mockAppender, Mockito.never()).doAppend(Mockito.any(LogEventPack.class), Mockito.any(LogDeliveryCallback.class));
     }

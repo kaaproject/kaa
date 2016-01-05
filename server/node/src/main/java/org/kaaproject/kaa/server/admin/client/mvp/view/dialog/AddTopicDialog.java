@@ -151,8 +151,7 @@ public class AddTopicDialog extends AvroUiDialog implements ValueChangeHandler<L
                           addTopics(topicIds);
                       }
             });
-        }
-        else {
+        } else {
             hide();
         }
     }

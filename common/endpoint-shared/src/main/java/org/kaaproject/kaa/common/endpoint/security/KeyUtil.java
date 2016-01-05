@@ -63,8 +63,7 @@ public abstract class KeyUtil {
             privateKeyOutput = new FileOutputStream(privateFile);
             publicKeyOutput = new FileOutputStream(publicFile);
             saveKeyPair(keyPair, privateKeyOutput, publicKeyOutput);
-        }
-        finally {
+        } finally {
             IOUtils.closeQuietly(privateKeyOutput);
             IOUtils.closeQuietly(publicKeyOutput);
         }
@@ -165,8 +164,7 @@ public abstract class KeyUtil {
             byte[] keyBytes = new byte[(int) f.length()];
             dis.readFully(keyBytes);
             return getPublic(keyBytes);
-        }
-        finally {
+        } finally {
             IOUtils.closeQuietly(dis);
         }
     }
@@ -224,8 +222,7 @@ public abstract class KeyUtil {
             byte[] keyBytes = new byte[(int) f.length()];
             dis.readFully(keyBytes);
             return getPrivate(keyBytes);
-        }
-        finally {
+        } finally {
             IOUtils.closeQuietly(dis);
         }
     }

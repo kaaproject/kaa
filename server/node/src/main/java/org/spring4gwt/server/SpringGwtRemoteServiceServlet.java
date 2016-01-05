@@ -34,7 +34,7 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 public class SpringGwtRemoteServiceServlet extends RemoteServiceServlet {
 
     /** The Constant logger. */
-    private static final Logger logger = LoggerFactory.getLogger(SpringGwtRemoteServiceServlet.class);
+    private static final Logger logger = LoggerFactory.getLogger(SpringGwtRemoteServiceServlet.class); //NOSONAR
 
     static ThreadLocal<HttpServletRequest> perThreadRequest = 
             new ThreadLocal<HttpServletRequest>();
@@ -64,8 +64,7 @@ public class SpringGwtRemoteServiceServlet extends RemoteServiceServlet {
 		} catch (SerializationException ex) {
 		    logger.error("An SerializationException was thrown while processing this call.", ex);
         	throw ex;
-		} 
-        finally {
+		} finally {
             perThreadRequest.set(null);
         }
 	}

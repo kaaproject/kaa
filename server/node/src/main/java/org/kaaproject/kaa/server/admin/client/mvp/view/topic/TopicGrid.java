@@ -112,8 +112,7 @@ public class TopicGrid extends AbstractKaaGrid<TopicDto, String> {
             }
 
             return result;
-        }
-        else {
+        } else {
             return 0;
         }
     }
@@ -122,8 +121,7 @@ public class TopicGrid extends AbstractKaaGrid<TopicDto, String> {
     protected String deleteQuestion() {
         if (embedded) {
             return Utils.messages.removeTopicFromEndpointGroupQuestion();
-        }
-        else {
+        } else {
             return super.deleteQuestion();
         }
     }
@@ -132,8 +130,7 @@ public class TopicGrid extends AbstractKaaGrid<TopicDto, String> {
     protected String deleteTitle() {
         if (embedded) {
             return Utils.messages.removeTopicFromEndpointGroupTitle();
-        }
-        else {
+        } else {
             return super.deleteTitle();
         }
     }

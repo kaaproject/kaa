@@ -40,7 +40,7 @@ public class EndpointAwareMessage {
     /** The originator. */
     private final ActorRef originator;
     
-    private final static ThreadLocal<Random> state = new ThreadLocal<Random>() {
+    private final static ThreadLocal<Random> state = new ThreadLocal<Random>() { //NOSONAR
         protected Random initialValue() {
             return new Random();
         }

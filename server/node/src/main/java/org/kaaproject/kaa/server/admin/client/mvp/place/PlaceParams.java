@@ -68,8 +68,7 @@ public class PlaceParams {
         String val = paramsMap.get(key);
         try {
             return isEmptyVal(val) ? 0 : Integer.valueOf(val);
-        }
-        catch (NumberFormatException nfe) {
+        } catch (NumberFormatException nfe) {
             return 0;
         }
     }
@@ -82,8 +81,7 @@ public class PlaceParams {
         String val = paramsMap.get(key);
         try {
             return isEmptyVal(val) ? 0 : Double.valueOf(val);
-        }
-        catch (NumberFormatException nfe) {
+        } catch (NumberFormatException nfe) {
             return 0;
         }
     }

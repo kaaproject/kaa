@@ -79,8 +79,7 @@ public class DesktopHttpClient extends AbstractHttpClient {
                 response.close();
                 method = null;
             }
-        }
-        else {
+        } else {
             method = null;
             throw new InterruptedException();
         }

@@ -41,7 +41,7 @@ public class FileUpload extends HttpServlet{
     private static final long serialVersionUID = 2959115024959843564L;
 
     /** The Constant logger. */
-    private static final Logger logger = LoggerFactory.getLogger(FileUpload.class);
+    private static final Logger logger = LoggerFactory.getLogger(FileUpload.class); //NOSONAR
 
     @Autowired
     private CacheService cacheService;
@@ -73,13 +73,11 @@ public class FileUpload extends HttpServlet{
                 byte[] data = out.toByteArray();
 
                 cacheService.uploadedFile(name, data);
-            }
-            else {
+            } else {
                 logger.error("No file found in post request!");
                 throw new RuntimeException("No file found in post request!");
             }
-        }
-        catch(Exception e){
+        } catch(Exception e){
             logger.error("Unexpected error in FileUpload.doPost: ", e);
             throw new RuntimeException(e);
         }

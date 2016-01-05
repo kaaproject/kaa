@@ -133,8 +133,7 @@ public class ConfigurationActivity extends AbstractRecordActivity<ConfigurationR
             }
             if (showActive && record.hasActive()) {
                 recordView.getRecordPanel().openActive();
-            }
-            else {
+            } else {
                 recordView.getRecordPanel().openDraft();
             }
         }

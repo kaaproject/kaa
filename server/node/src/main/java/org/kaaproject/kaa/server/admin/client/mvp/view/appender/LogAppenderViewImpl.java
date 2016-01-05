@@ -213,8 +213,7 @@ public class LogAppenderViewImpl extends BasePluginViewImpl implements LogAppend
                if (maxVersionValue != null && maxVersionValue < minVersionValue) {
                    maxVersionValue = minVersionValue;
                }
-           }
-           else {
+           } else {
                maxSchemaVersions = new ArrayList<>(schemaVersions);
            }
            maxSchemaVersions.add(Integer.MAX_VALUE);

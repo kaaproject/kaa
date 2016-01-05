@@ -183,8 +183,7 @@ public class CSdkGenerator extends SdkGenerator {
                     // TODO: eliminate schema versions and substitute them for a single sdkToken
                     byte[] kaaDefaultsData = generateKaaDefaults(bootstrapNodes, sdkToken,
                                                                  profileSchemaVersion,
-                                                                 configurationProtocolSchemaBody,
-                                                                 defaultConfigurationData,
+                            defaultConfigurationData,
                                                                  defaultVerifierToken);
 
                     TarArchiveEntry kaaDefaultsEntry = new TarArchiveEntry(KAA_DEFAULTS_HEADER);
@@ -292,21 +291,17 @@ public class CSdkGenerator extends SdkGenerator {
     /**
      * Generate client properties.
      *
-     * @param bootstrapNodes the bootstrap nodes
-     * @param appToken the app token
-     * @param configurationSchemaVersion the configuration schema version
-     * @param profileSchemaVersion the profile schema version
-     * @param notificationSchemaVersion the notification schema version
-     * @param logSchemaVersion the log schema version
-     * @param configurationProtocolSchemaBody the configuration protocol schema body
-     * @param defaultConfigurationData the default configuration data
-     * @return the byte[]
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @param   bootstrapNodes              the bootstrap nodes
+     * @param   sdkToken                    the sdk token
+     * @param   profileSchemaVersion        the profile schema version
+     * @param   defaultConfigurationData    the default configuration data
+     * @param   defaultVerifierToken        the default verifier token
+     * @return  the byte[]
+     * @throws  IOException Signals that an I/O exception has occurred.
      */
     private byte[] generateKaaDefaults(List<BootstrapNodeInfo> bootstrapNodes,
                                        String sdkToken,
                                        int profileSchemaVersion,
-                                       String configurationProtocolSchemaBody,
                                        byte[] defaultConfigurationData,
                                        String defaultVerifierToken) throws IOException {
 

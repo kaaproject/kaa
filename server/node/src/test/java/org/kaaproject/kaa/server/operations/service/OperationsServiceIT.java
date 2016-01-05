@@ -327,7 +327,7 @@ public class OperationsServiceIT extends AbstractTest {
         request.setClientSyncMetaData(md);
 
         ProfileClientSync profileSync = new ProfileClientSync(ByteBuffer.wrap(ENDPOINT_KEY),
-                ByteBuffer.wrap(profile), SDK_TOKEN, null);
+                ByteBuffer.wrap(profile), null);
         request.setProfileSync(profileSync);
 
         request.setConfigurationSync(new ConfigurationClientSync());
@@ -362,7 +362,7 @@ public class OperationsServiceIT extends AbstractTest {
         request.setClientSyncMetaData(md);
 
         ProfileClientSync profileSync = new ProfileClientSync(ByteBuffer.wrap(ENDPOINT_KEY),
-                ByteBuffer.wrap(profile), SDK_TOKEN, null);
+                ByteBuffer.wrap(profile), null);
         request.setProfileSync(profileSync);
 
         request.setConfigurationSync(new ConfigurationClientSync());
@@ -410,7 +410,7 @@ public class OperationsServiceIT extends AbstractTest {
         request.setClientSyncMetaData(md);
 
         ProfileClientSync profileSync = new ProfileClientSync(null,
-                ByteBuffer.wrap(profile), SDK_TOKEN, null);
+                ByteBuffer.wrap(profile), null);
         request.setProfileSync(profileSync);
 
         ConfigurationClientSync confSyncRequest = new ConfigurationClientSync();
@@ -591,7 +591,7 @@ public class OperationsServiceIT extends AbstractTest {
         request.setClientSyncMetaData(md);
 
         ProfileClientSync profileSync = new ProfileClientSync(ByteBuffer.wrap(ENDPOINT_KEY2),
-                ByteBuffer.wrap(profile), SDK_TOKEN, ENDPOINT_ACCESS_TOKEN);
+                ByteBuffer.wrap(profile), ENDPOINT_ACCESS_TOKEN);
         request.setProfileSync(profileSync);
 
         request.setConfigurationSync(new ConfigurationClientSync());
