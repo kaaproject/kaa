@@ -15,13 +15,12 @@
  */
 package org.kaaproject.kaa.server.common.dao.model.sql.plugin;
 
-import org.kaaproject.kaa.common.dto.plugin.ContractItemDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginContractInstanceItemDto;
-import org.kaaproject.kaa.common.dto.plugin.PluginContractItemDto;
 import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.GenericModel;
 import org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -86,12 +85,12 @@ public class PluginContractInstanceItem extends GenericModel<PluginContractInsta
                     foreignKey = @ForeignKey(name = PLUGIN_CONTRACT_INSTANCE_ITEM_JOIN_TABLE_OUT_PLUGIN_INSTANCE_CONTRACT_ITEM_FK))})
     private Set<PluginContractInstanceItem> pluginContractItems;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.DETACH, CascadeType.REFRESH})
     @JoinColumn(name = PLUGIN_CONTRACT_INSTANCE_ITEM_JOIN_TABLE_PARAM_MESSAGE_SCHEMA_ID,
             foreignKey = @ForeignKey(name = PLUGIN_CONTRACT_INSTANCE_ITEM_PARAM_MESSAGE_SCHEMA_FK))
     private CTLSchema inMessageSchema;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.DETACH, CascadeType.REFRESH})
     @JoinColumn(name = PLUGIN_CONTRACT_INSTANCE_ITEM_JOIN_TABLE_RESULT_MESSAGE_SCHEMA_ID,
             foreignKey = @ForeignKey(name = PLUGIN_CONTRACT_INSTANCE_ITEM_RESULT_MESSAGE_SCHEMA_FK))
     private CTLSchema outMessageSchema;
@@ -102,11 +101,21 @@ public class PluginContractInstanceItem extends GenericModel<PluginContractInsta
     public PluginContractInstanceItem(PluginContractInstanceItemDto dto) {
         this.id = ModelUtils.getLongId(dto.getId());
         this.confData = dto.getConfData();
-        this.pluginContractItem = new PluginContractItem(dto.getPluginContractItem());
-        this.parentPluginContractItem = new PluginContractItem(dto.getParentPluginContractItem());
-        this.inMessageSchema = new CTLSchema(dto.getInMessageSchema());
-        this.outMessageSchema = new CTLSchema(dto.getOutMessageSchema());
-        this.pluginContractInstance = new PluginContractInstance(dto.getPluginContractInstance());
+        if (dto.getPluginContractItem() != null) {
+            this.pluginContractItem = new PluginContractItem(dto.getPluginContractItem());
+        }
+        if (dto.getParentPluginContractItem() != null) {
+            this.parentPluginContractItem = new PluginContractItem(dto.getParentPluginContractItem());
+        }
+        if (dto.getInMessageSchema() != null) {
+            this.inMessageSchema = new CTLSchema(dto.getInMessageSchema());
+        }
+        if (dto.getOutMessageSchema() != null) {
+            this.outMessageSchema = new CTLSchema(dto.getOutMessageSchema());
+        }
+        if (pluginContractInstance != null) {
+            this.pluginContractInstance = new PluginContractInstance(dto.getPluginContractInstance());
+        }
     }
 
     public PluginContractInstanceItem(Long id) {
