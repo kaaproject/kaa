@@ -26,10 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.AbstractExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -349,6 +346,64 @@ public class DefaultLogCollectorTest {
 
         verify(deliveryListener, Mockito.timeout(1000)).onLogDeliveryTimeout(Mockito.any(BucketInfo.class));
         Mockito.verify(strategy, Mockito.timeout(1000).times(1)).onTimeout(Mockito.any(LogFailoverCommand.class));
+    }
+
+    @Test
+    public void testBucketFuture() throws Exception {
+        int defaultId = 42;
+        int logCount = 1;
+
+        KaaChannelManager channelManager = Mockito.mock(KaaChannelManager.class);
+        FailoverManager failoverManager = Mockito.mock(FailoverManager.class);
+        LogTransport transport = Mockito.mock(LogTransport.class);
+        LogStorage storage = Mockito.mock(LogStorage.class);
+
+        AbstractLogCollector logCollector = new DefaultLogCollector(transport, executorContext, channelManager, failoverManager);
+        logCollector.setStorage(storage);
+
+        Mockito.when(storage.getStatus()).thenReturn(new LogStorageStatus() {
+
+            @Override
+            public long getRecordCount() {
+                return 1;
+            }
+
+            @Override
+            public long getConsumedVolume() {
+                return 1;
+            }
+        });
+
+        DefaultLogUploadStrategy strategy = new DefaultLogUploadStrategy() {
+            @Override
+            public LogUploadStrategyDecision isUploadNeeded(LogStorageStatus status) {
+                return LogUploadStrategyDecision.UPLOAD;
+            }
+        };
+
+        logCollector.setStrategy(strategy);
+
+        LogSyncResponse response = new LogSyncResponse();
+        List<LogDeliveryStatus> statuses = new ArrayList<>();
+        LogDeliveryStatus status = new LogDeliveryStatus(defaultId, SyncResponseResultType.SUCCESS, null);
+        statuses.add(status);
+        response.setDeliveryStatuses(statuses);
+
+        BucketInfo bucketInfo = new BucketInfo(status.getRequestId(), logCount);
+        Mockito.when(storage.addLogRecord(Mockito.any(LogRecord.class))).thenReturn(bucketInfo);
+
+        List<LogRecord> logRecords = new ArrayList<>();
+        logRecords.add(new LogRecord());
+        LogBlock logBlock = new LogBlock(defaultId, logRecords);
+        Mockito.when(storage.getRecordBlock()).thenReturn(logBlock);
+
+        Future<BucketInfo> future = logCollector.addLogRecord(new Log());
+
+        LogSyncRequest request = new LogSyncRequest();
+        logCollector.fillSyncRequest(request);
+
+        logCollector.onLogResponse(response);
+        Assert.assertEquals(defaultId, future.get().getBucketId());
     }
 
     @Test
