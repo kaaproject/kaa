@@ -64,7 +64,7 @@ public class ConfigurationRecordDto extends StructureRecordDto<ConfigurationDto>
     }
 
     @Override
-    public int compareTo(ConfigurationRecordDto o) {
+    public int compareTo(ConfigurationRecordDto o) { //NOSONAR
         return this.getSchemaVersion() - o.getSchemaVersion();
     }
 
