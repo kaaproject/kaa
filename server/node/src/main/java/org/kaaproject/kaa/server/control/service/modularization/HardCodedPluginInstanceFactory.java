@@ -3,6 +3,9 @@ package org.kaaproject.kaa.server.control.service.modularization;
 import org.apache.avro.Schema;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaInfoDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
+import org.kaaproject.kaa.common.dto.plugin.ContractDto;
 import org.kaaproject.kaa.common.dto.plugin.ContractItemDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginContractDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginContractInstanceDto;
@@ -22,12 +25,12 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-public class HardCodedInstanceFactory {
+public class HardCodedPluginInstanceFactory {
 
-    private static final Logger LOG = LoggerFactory.getLogger(HardCodedInstanceFactory.class);
+    private static final Logger LOG = LoggerFactory.getLogger(HardCodedPluginInstanceFactory.class);
 
     private static final GenericAvroConverter<ItemConfiguration>
-            METHOD_NAME_CONVERTER = new GenericAvroConverter<ItemConfiguration>(ItemConfiguration.SCHEMA$);
+            METHOD_NAME_CONVERTER = new GenericAvroConverter<>(ItemConfiguration.SCHEMA$);
 
     public static enum Type {
         MESSAGING, REST
@@ -52,13 +55,12 @@ public class HardCodedInstanceFactory {
 
         Set<PluginContractInstanceDto> pluginContractInstances = new HashSet<>();
         PluginContractInstanceDto pluginContractInstanceDto = new PluginContractInstanceDto();
-
         pluginContractInstances.add(pluginContractInstanceDto);
+        pluginInstanceDto.setContracts(pluginContractInstances);
 
         PluginContractDto endpointMessagingPluginContract = getPluginContractForContractName("Messaging SDK contract", pluginDto);
         addItemsToPluginContractInstance(pluginContractInstanceDto, endpointMessagingPluginContract);
         pluginContractInstanceDto.setContract(endpointMessagingPluginContract);
-        pluginInstanceDto.setContracts(pluginContractInstances);
 
         return pluginInstanceDto;
     }
@@ -76,17 +78,18 @@ public class HardCodedInstanceFactory {
     private static void addItemsToPluginContractInstance(PluginContractInstanceDto pluginContractInstanceDto,
                                                          PluginContractDto pluginContract) {
         Set<PluginContractInstanceItemDto> items = new HashSet<>();
+
+        ContractDto contract = pluginContract.getContract();
         PluginContractItemDto sendMessagePluginContractItem = getPluginContractItemByName(pluginContract, "sendMessage");
-        items.add(getPluginContractInstanceItem("sendA", ClassA.SCHEMA$, null, sendMessagePluginContractItem));
-        items.add(getPluginContractInstanceItem("getA", null, ClassA.SCHEMA$, sendMessagePluginContractItem));
-        items.add(getPluginContractInstanceItem("getB", ClassA.SCHEMA$, ClassB.SCHEMA$, sendMessagePluginContractItem));
-        items.add(getPluginContractInstanceItem("getC", ClassA.SCHEMA$, ClassC.SCHEMA$, sendMessagePluginContractItem));
-        items.add(getPluginContractInstanceItem("sendA", ClassA.SCHEMA$, null, sendMessagePluginContractItem));
+        items.add(getPluginContractInstanceItem("sendA", ClassA.SCHEMA$, null, sendMessagePluginContractItem, contract));
+        items.add(getPluginContractInstanceItem("getA", null, ClassA.SCHEMA$, sendMessagePluginContractItem, contract));
+        items.add(getPluginContractInstanceItem("getB", ClassA.SCHEMA$, ClassB.SCHEMA$, sendMessagePluginContractItem, contract));
+        items.add(getPluginContractInstanceItem("getC", ClassA.SCHEMA$, ClassC.SCHEMA$, sendMessagePluginContractItem, contract));
 
         PluginContractItemDto receiveMessagePluginContractItem = getPluginContractItemByName(pluginContract, "receiveMessage");
-        items.add(getPluginContractInstanceItem("setMethodAListener", ClassC.SCHEMA$, ClassA.SCHEMA$, receiveMessagePluginContractItem));
-        items.add(getPluginContractInstanceItem("setMethodBListener", ClassC.SCHEMA$, ClassB.SCHEMA$, receiveMessagePluginContractItem));
-        items.add(getPluginContractInstanceItem("setMethodCListener", null, ClassC.SCHEMA$, receiveMessagePluginContractItem));
+        items.add(getPluginContractInstanceItem("setMethodAListener", ClassC.SCHEMA$, ClassA.SCHEMA$, receiveMessagePluginContractItem, contract));
+        items.add(getPluginContractInstanceItem("setMethodBListener", ClassC.SCHEMA$, ClassB.SCHEMA$, receiveMessagePluginContractItem, contract));
+        items.add(getPluginContractInstanceItem("setMethodCListener", null, ClassC.SCHEMA$, receiveMessagePluginContractItem, contract));
 
         pluginContractInstanceDto.setItems(items);
     }
@@ -102,13 +105,13 @@ public class HardCodedInstanceFactory {
     }
 
     private static PluginContractInstanceItemDto getPluginContractInstanceItem(String methodName, Schema inSchema, Schema outSchema,
-                                                                               PluginContractItemDto pluginContractItem) {
+                                                                               PluginContractItemDto pluginContractItem, ContractDto contract) {
         PluginContractInstanceItemDto instanceItemDto = new PluginContractInstanceItemDto();
         try {
             String confData = METHOD_NAME_CONVERTER.encodeToJson(new ItemConfiguration(methodName));
             instanceItemDto.setConfData(confData);
-            instanceItemDto.setInMessageSchema(getSchema(inSchema));
-            instanceItemDto.setOutMessageSchema(getSchema(outSchema));
+            instanceItemDto.setInMessageSchema(getSchema(inSchema, contract));
+            instanceItemDto.setOutMessageSchema(getSchema(outSchema, contract));
             instanceItemDto.setPluginContractItem(pluginContractItem);
         } catch (IOException e) {
             LOG.error("Can't encode to json", e);
@@ -116,10 +119,15 @@ public class HardCodedInstanceFactory {
         return instanceItemDto;
     }
 
-    private static CTLSchemaDto getSchema(Schema schema) {
+    private static CTLSchemaDto getSchema(Schema schema, ContractDto contract) {
         if (schema == null) {
             return null;
         }
-        return new CTLSchemaDto();
+        CTLSchemaInfoDto ctlSchemaInfo = new CTLSchemaInfoDto();
+        ctlSchemaInfo.setFqn(schema.getFullName());
+        // CTL schema version is taken from the corresponding contract
+        ctlSchemaInfo.setVersion(contract.getVersion());
+        ctlSchemaInfo.setScope(CTLSchemaScopeDto.SYSTEM);
+        return new CTLSchemaDto(ctlSchemaInfo, null);
     }
 }

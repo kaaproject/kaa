@@ -56,7 +56,7 @@ public class KaaPluginLoadServiceImpl implements KaaPluginLoadService {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Created plugin instances: {}", pluginDefinitions);
         } else {
-            LOG.info("Created {} plugin instances", pluginDefinitions.size());
+            LOG.info("Created {} plugin instance(s)", pluginDefinitions.size());
         }
 
         List<PluginDto> savedPlugins = pluginService.findAllPlugins();
@@ -71,14 +71,16 @@ public class KaaPluginLoadServiceImpl implements KaaPluginLoadService {
             PluginDto found = pluginService.findPluginByClassName(pluginDto.getClassName());
             if (found == null) {
                 PluginDto registeredPluginDto = pluginService.registerPlugin(pluginDto);
+                // TODO: remove, is used for testing purposes
                 saveHardCodedInstances(registeredPluginDto);
             }
         }
     }
 
+    // TODO: remove, is used for testing purposes
     private void saveHardCodedInstances(PluginDto pluginDto) {
         PluginInstanceDto pluginInstanceDto =
-                HardCodedInstanceFactory.create(HardCodedInstanceFactory.Type.MESSAGING, pluginDto);
+                HardCodedPluginInstanceFactory.create(HardCodedPluginInstanceFactory.Type.MESSAGING, pluginDto);
         pluginService.saveInstance(pluginInstanceDto);
     }
 

@@ -16,7 +16,9 @@
 
 package org.kaaproject.kaa.server.control.service.initialization;
 
+import org.kaaproject.kaa.server.control.service.exception.KaaPluginLoadException;
 import org.kaaproject.kaa.server.control.service.loadmgmt.LoadDistributionService;
+import org.kaaproject.kaa.server.control.service.modularization.KaaPluginLoadService;
 import org.kaaproject.kaa.server.control.service.zk.ControlZkService;
 import org.kaaproject.kaa.server.node.service.initialization.AbstractInitializationService;
 import org.kaaproject.kaa.server.node.service.initialization.InitializationService;
@@ -45,7 +47,11 @@ public class ControlInitializationService extends AbstractInitializationService 
     /** The control zookeeper service. */
     @Autowired
     private InitializationService adminInitializationService;
-    
+
+    /** The plugin load service. */
+    @Autowired
+    private KaaPluginLoadService kaaPluginLoadService;
+
     /*
      * (non-Javadoc)
      *
@@ -60,6 +66,12 @@ public class ControlInitializationService extends AbstractInitializationService 
         }
         adminInitializationService.start();
         LOG.info("Control Service Started.");
+        try {
+            kaaPluginLoadService.load();
+            LOG.info("Plugins are loaded.");
+        } catch (KaaPluginLoadException e) {
+            LOG.error("Unable to load plugins", e);
+        }
     }
 
     /*

@@ -9,7 +9,7 @@ public interface KaaPluginLoadService {
 
     /**
      * Loads plugin metadata to the database by the following rules:
-     * 1. Only new plugin definitions should are loaded, old definitions remain in database.
+     * 1. Only new plugin definitions are loaded, old definitions remain in database.
      * 2. If there is a definition in database, but not present in classpath/folder the exception is thrown.
      */
     void load() throws KaaPluginLoadException;

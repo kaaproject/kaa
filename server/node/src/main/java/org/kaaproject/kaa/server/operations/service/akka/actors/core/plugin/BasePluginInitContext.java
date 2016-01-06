@@ -22,11 +22,13 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.kaaproject.kaa.common.dto.plugin.ContractDto;
+import org.kaaproject.kaa.common.dto.plugin.ContractItemDto;
 import org.kaaproject.kaa.common.dto.plugin.ContractType;
 import org.kaaproject.kaa.common.dto.plugin.PluginContractDirection;
 import org.kaaproject.kaa.common.dto.plugin.PluginContractDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginContractInstanceDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginContractInstanceItemDto;
+import org.kaaproject.kaa.common.dto.plugin.PluginContractItemDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginInstanceDto;
 import org.kaaproject.kaa.server.common.core.plugin.base.BasePluginContractDef;
 import org.kaaproject.kaa.server.common.core.plugin.base.BasePluginContractInstance;
@@ -55,13 +57,15 @@ public class BasePluginInitContext implements PluginInitContext {
             }
             Map<PluginContractItemDef, PluginContractItemInfo> infoMap = new HashMap<>();
             for (PluginContractInstanceItemDto itemDto : contractInstanceDto.getItems()) {
-/*                BasePluginContractItemDef.Builder itemDefBuilder = BasePluginContractItemDef.builder(itemDto.getName()).withSchema(
-                        itemDto.getConfSchema());
-                if (itemDto.getInMessage() != null) {
-                    itemDefBuilder = itemDefBuilder.withInMessage(itemDto.getInMessage().getFqn(), itemDto.getInMessage().getVersion());
+                PluginContractItemDto pluginContractItem = itemDto.getPluginContractItem();
+                ContractItemDto contractItemDto = pluginContractItem.getContractItem();
+                BasePluginContractItemDef.Builder itemDefBuilder = BasePluginContractItemDef.builder(contractItemDto.getName()).withSchema(
+                        pluginContractItem.getConfigSchema());
+                if (contractItemDto.getInMessage() != null) {
+                    itemDefBuilder = itemDefBuilder.withInMessage(contractItemDto.getInMessage().getFqn(), contractItemDto.getInMessage().getVersion());
                 }
-                if (itemDto.getOutMessage() != null) {
-                    itemDefBuilder = itemDefBuilder.withOutMessage(itemDto.getOutMessage().getFqn(), itemDto.getOutMessage().getVersion());
+                if (contractItemDto.getOutMessage() != null) {
+                    itemDefBuilder = itemDefBuilder.withOutMessage(contractItemDto.getOutMessage().getFqn(), contractItemDto.getOutMessage().getVersion());
                 }
                 BasePluginContractItemDef itemDef = itemDefBuilder.build();
                 BasePluginContractItemInfo.Builder itemInfoBuilder = BasePluginContractItemInfo.builder();
@@ -75,7 +79,7 @@ public class BasePluginInitContext implements PluginInitContext {
                     itemInfoBuilder.withOutMsgSchema(itemDto.getOutMessageSchema().getBody());
                 }
                 infoMap.put(itemDef, itemInfoBuilder.build());
-                builder.withItem(itemDef);*/
+                builder.withItem(itemDef);
             }
 
             BasePluginContractInstance contractInstance = new BasePluginContractInstance(builder.build());
