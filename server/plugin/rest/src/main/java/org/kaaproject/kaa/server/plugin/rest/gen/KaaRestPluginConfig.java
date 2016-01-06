@@ -7,11 +7,11 @@ package org.kaaproject.kaa.server.plugin.rest.gen;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class KaaRestPluginConfig extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"KaaRestPluginConfig\",\"namespace\":\"org.kaaproject.kaa.server.plugin.rest.gen\",\"fields\":[{\"name\":\"host\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"port\",\"type\":\"int\"},{\"name\":\"httpSchema\",\"type\":{\"type\":\"enum\",\"name\":\"HttpSchemaType\",\"symbols\":[\"HTTP\",\"HTTPS\"]},\"by_default\":\"HTTP\"}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"KaaRestPluginConfig\",\"namespace\":\"org.kaaproject.kaa.server.plugin.rest.gen\",\"fields\":[{\"name\":\"protocol\",\"type\":{\"type\":\"enum\",\"name\":\"Protocol\",\"symbols\":[\"HTTP\",\"HTTPS\"]},\"by_default\":\"HTTP\"},{\"name\":\"host\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"port\",\"type\":\"int\"}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
+   private org.kaaproject.kaa.server.plugin.rest.gen.Protocol protocol;
    private java.lang.String host;
    private int port;
-   private org.kaaproject.kaa.server.plugin.rest.gen.HttpSchemaType httpSchema;
 
   /**
    * Default constructor.  Note that this does not initialize fields
@@ -23,19 +23,19 @@ public class KaaRestPluginConfig extends org.apache.avro.specific.SpecificRecord
   /**
    * All-args constructor.
    */
-  public KaaRestPluginConfig(java.lang.String host, java.lang.Integer port, org.kaaproject.kaa.server.plugin.rest.gen.HttpSchemaType httpSchema) {
+  public KaaRestPluginConfig(org.kaaproject.kaa.server.plugin.rest.gen.Protocol protocol, java.lang.String host, java.lang.Integer port) {
+    this.protocol = protocol;
     this.host = host;
     this.port = port;
-    this.httpSchema = httpSchema;
   }
 
   public org.apache.avro.Schema getSchema() { return SCHEMA$; }
   // Used by DatumWriter.  Applications should not call. 
   public java.lang.Object get(int field$) {
     switch (field$) {
-    case 0: return host;
-    case 1: return port;
-    case 2: return httpSchema;
+    case 0: return protocol;
+    case 1: return host;
+    case 2: return port;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -43,11 +43,26 @@ public class KaaRestPluginConfig extends org.apache.avro.specific.SpecificRecord
   @SuppressWarnings(value="unchecked")
   public void put(int field$, java.lang.Object value$) {
     switch (field$) {
-    case 0: host = (java.lang.String)value$; break;
-    case 1: port = (java.lang.Integer)value$; break;
-    case 2: httpSchema = (org.kaaproject.kaa.server.plugin.rest.gen.HttpSchemaType)value$; break;
+    case 0: protocol = (org.kaaproject.kaa.server.plugin.rest.gen.Protocol)value$; break;
+    case 1: host = (java.lang.String)value$; break;
+    case 2: port = (java.lang.Integer)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
+  }
+
+  /**
+   * Gets the value of the 'protocol' field.
+   */
+  public org.kaaproject.kaa.server.plugin.rest.gen.Protocol getProtocol() {
+    return protocol;
+  }
+
+  /**
+   * Sets the value of the 'protocol' field.
+   * @param value the value to set.
+   */
+  public void setProtocol(org.kaaproject.kaa.server.plugin.rest.gen.Protocol value) {
+    this.protocol = value;
   }
 
   /**
@@ -80,21 +95,6 @@ public class KaaRestPluginConfig extends org.apache.avro.specific.SpecificRecord
     this.port = value;
   }
 
-  /**
-   * Gets the value of the 'httpSchema' field.
-   */
-  public org.kaaproject.kaa.server.plugin.rest.gen.HttpSchemaType getHttpSchema() {
-    return httpSchema;
-  }
-
-  /**
-   * Sets the value of the 'httpSchema' field.
-   * @param value the value to set.
-   */
-  public void setHttpSchema(org.kaaproject.kaa.server.plugin.rest.gen.HttpSchemaType value) {
-    this.httpSchema = value;
-  }
-
   /** Creates a new KaaRestPluginConfig RecordBuilder */
   public static org.kaaproject.kaa.server.plugin.rest.gen.KaaRestPluginConfig.Builder newBuilder() {
     return new org.kaaproject.kaa.server.plugin.rest.gen.KaaRestPluginConfig.Builder();
@@ -116,9 +116,9 @@ public class KaaRestPluginConfig extends org.apache.avro.specific.SpecificRecord
   public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<KaaRestPluginConfig>
     implements org.apache.avro.data.RecordBuilder<KaaRestPluginConfig> {
 
+    private org.kaaproject.kaa.server.plugin.rest.gen.Protocol protocol;
     private java.lang.String host;
     private int port;
-    private org.kaaproject.kaa.server.plugin.rest.gen.HttpSchemaType httpSchema;
 
     /** Creates a new Builder */
     private Builder() {
@@ -128,16 +128,16 @@ public class KaaRestPluginConfig extends org.apache.avro.specific.SpecificRecord
     /** Creates a Builder by copying an existing Builder */
     private Builder(org.kaaproject.kaa.server.plugin.rest.gen.KaaRestPluginConfig.Builder other) {
       super(other);
-      if (isValidValue(fields()[0], other.host)) {
-        this.host = data().deepCopy(fields()[0].schema(), other.host);
+      if (isValidValue(fields()[0], other.protocol)) {
+        this.protocol = data().deepCopy(fields()[0].schema(), other.protocol);
         fieldSetFlags()[0] = true;
       }
-      if (isValidValue(fields()[1], other.port)) {
-        this.port = data().deepCopy(fields()[1].schema(), other.port);
+      if (isValidValue(fields()[1], other.host)) {
+        this.host = data().deepCopy(fields()[1].schema(), other.host);
         fieldSetFlags()[1] = true;
       }
-      if (isValidValue(fields()[2], other.httpSchema)) {
-        this.httpSchema = data().deepCopy(fields()[2].schema(), other.httpSchema);
+      if (isValidValue(fields()[2], other.port)) {
+        this.port = data().deepCopy(fields()[2].schema(), other.port);
         fieldSetFlags()[2] = true;
       }
     }
@@ -145,18 +145,43 @@ public class KaaRestPluginConfig extends org.apache.avro.specific.SpecificRecord
     /** Creates a Builder by copying an existing KaaRestPluginConfig instance */
     private Builder(org.kaaproject.kaa.server.plugin.rest.gen.KaaRestPluginConfig other) {
             super(org.kaaproject.kaa.server.plugin.rest.gen.KaaRestPluginConfig.SCHEMA$);
-      if (isValidValue(fields()[0], other.host)) {
-        this.host = data().deepCopy(fields()[0].schema(), other.host);
+      if (isValidValue(fields()[0], other.protocol)) {
+        this.protocol = data().deepCopy(fields()[0].schema(), other.protocol);
         fieldSetFlags()[0] = true;
       }
-      if (isValidValue(fields()[1], other.port)) {
-        this.port = data().deepCopy(fields()[1].schema(), other.port);
+      if (isValidValue(fields()[1], other.host)) {
+        this.host = data().deepCopy(fields()[1].schema(), other.host);
         fieldSetFlags()[1] = true;
       }
-      if (isValidValue(fields()[2], other.httpSchema)) {
-        this.httpSchema = data().deepCopy(fields()[2].schema(), other.httpSchema);
+      if (isValidValue(fields()[2], other.port)) {
+        this.port = data().deepCopy(fields()[2].schema(), other.port);
         fieldSetFlags()[2] = true;
       }
+    }
+
+    /** Gets the value of the 'protocol' field */
+    public org.kaaproject.kaa.server.plugin.rest.gen.Protocol getProtocol() {
+      return protocol;
+    }
+    
+    /** Sets the value of the 'protocol' field */
+    public org.kaaproject.kaa.server.plugin.rest.gen.KaaRestPluginConfig.Builder setProtocol(org.kaaproject.kaa.server.plugin.rest.gen.Protocol value) {
+      validate(fields()[0], value);
+      this.protocol = value;
+      fieldSetFlags()[0] = true;
+      return this; 
+    }
+    
+    /** Checks whether the 'protocol' field has been set */
+    public boolean hasProtocol() {
+      return fieldSetFlags()[0];
+    }
+    
+    /** Clears the value of the 'protocol' field */
+    public org.kaaproject.kaa.server.plugin.rest.gen.KaaRestPluginConfig.Builder clearProtocol() {
+      protocol = null;
+      fieldSetFlags()[0] = false;
+      return this;
     }
 
     /** Gets the value of the 'host' field */
@@ -166,21 +191,21 @@ public class KaaRestPluginConfig extends org.apache.avro.specific.SpecificRecord
     
     /** Sets the value of the 'host' field */
     public org.kaaproject.kaa.server.plugin.rest.gen.KaaRestPluginConfig.Builder setHost(java.lang.String value) {
-      validate(fields()[0], value);
+      validate(fields()[1], value);
       this.host = value;
-      fieldSetFlags()[0] = true;
+      fieldSetFlags()[1] = true;
       return this; 
     }
     
     /** Checks whether the 'host' field has been set */
     public boolean hasHost() {
-      return fieldSetFlags()[0];
+      return fieldSetFlags()[1];
     }
     
     /** Clears the value of the 'host' field */
     public org.kaaproject.kaa.server.plugin.rest.gen.KaaRestPluginConfig.Builder clearHost() {
       host = null;
-      fieldSetFlags()[0] = false;
+      fieldSetFlags()[1] = false;
       return this;
     }
 
@@ -191,44 +216,19 @@ public class KaaRestPluginConfig extends org.apache.avro.specific.SpecificRecord
     
     /** Sets the value of the 'port' field */
     public org.kaaproject.kaa.server.plugin.rest.gen.KaaRestPluginConfig.Builder setPort(int value) {
-      validate(fields()[1], value);
+      validate(fields()[2], value);
       this.port = value;
-      fieldSetFlags()[1] = true;
+      fieldSetFlags()[2] = true;
       return this; 
     }
     
     /** Checks whether the 'port' field has been set */
     public boolean hasPort() {
-      return fieldSetFlags()[1];
+      return fieldSetFlags()[2];
     }
     
     /** Clears the value of the 'port' field */
     public org.kaaproject.kaa.server.plugin.rest.gen.KaaRestPluginConfig.Builder clearPort() {
-      fieldSetFlags()[1] = false;
-      return this;
-    }
-
-    /** Gets the value of the 'httpSchema' field */
-    public org.kaaproject.kaa.server.plugin.rest.gen.HttpSchemaType getHttpSchema() {
-      return httpSchema;
-    }
-    
-    /** Sets the value of the 'httpSchema' field */
-    public org.kaaproject.kaa.server.plugin.rest.gen.KaaRestPluginConfig.Builder setHttpSchema(org.kaaproject.kaa.server.plugin.rest.gen.HttpSchemaType value) {
-      validate(fields()[2], value);
-      this.httpSchema = value;
-      fieldSetFlags()[2] = true;
-      return this; 
-    }
-    
-    /** Checks whether the 'httpSchema' field has been set */
-    public boolean hasHttpSchema() {
-      return fieldSetFlags()[2];
-    }
-    
-    /** Clears the value of the 'httpSchema' field */
-    public org.kaaproject.kaa.server.plugin.rest.gen.KaaRestPluginConfig.Builder clearHttpSchema() {
-      httpSchema = null;
       fieldSetFlags()[2] = false;
       return this;
     }
@@ -237,9 +237,9 @@ public class KaaRestPluginConfig extends org.apache.avro.specific.SpecificRecord
     public KaaRestPluginConfig build() {
       try {
         KaaRestPluginConfig record = new KaaRestPluginConfig();
-        record.host = fieldSetFlags()[0] ? this.host : (java.lang.String) defaultValue(fields()[0]);
-        record.port = fieldSetFlags()[1] ? this.port : (java.lang.Integer) defaultValue(fields()[1]);
-        record.httpSchema = fieldSetFlags()[2] ? this.httpSchema : (org.kaaproject.kaa.server.plugin.rest.gen.HttpSchemaType) defaultValue(fields()[2]);
+        record.protocol = fieldSetFlags()[0] ? this.protocol : (org.kaaproject.kaa.server.plugin.rest.gen.Protocol) defaultValue(fields()[0]);
+        record.host = fieldSetFlags()[1] ? this.host : (java.lang.String) defaultValue(fields()[1]);
+        record.port = fieldSetFlags()[2] ? this.port : (java.lang.Integer) defaultValue(fields()[2]);
         return record;
       } catch (Exception e) {
         throw new org.apache.avro.AvroRuntimeException(e);

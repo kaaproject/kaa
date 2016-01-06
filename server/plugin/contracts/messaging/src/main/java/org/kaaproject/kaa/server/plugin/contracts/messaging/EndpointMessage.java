@@ -29,12 +29,22 @@ public class EndpointMessage implements KaaMessage {
         this.key = key;
     }
 
+    public EndpointMessage(EndpointObjectHash key, byte[] messageData) {
+        super();
+        this.key = key;
+
+    }
+
     public EndpointObjectHash getKey() {
         return key;
     }
 
     public byte[] getMessageData() {
         return null;
+    }
+
+    public void setMessageData(byte[] messageData) {
+
     }
 
 }

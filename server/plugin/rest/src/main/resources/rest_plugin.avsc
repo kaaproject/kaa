@@ -4,6 +4,18 @@
     "namespace": "org.kaaproject.kaa.server.plugin.rest.gen",
     "fields": [
         {
+            "name": "protocol",
+            "type": {
+                "type": "enum",
+                "name": "Protocol",
+                "symbols": [
+                    "HTTP",
+                    "HTTPS"
+                ]
+            },
+            "by_default": "HTTP"
+        },
+        {
             "name": "host",
             "type": {
                 "type": "string",
@@ -13,18 +25,6 @@
         {
             "name": "port",
             "type": "int"
-        },
-        {
-            "name": "httpSchema",
-            "type": {
-                "type": "enum",
-                "name": "HttpSchemaType",
-                "symbols": [
-                    "HTTP",
-                    "HTTPS"
-                ]
-            },
-            "by_default": "HTTP"
         }
     ]
 }

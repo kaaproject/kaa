@@ -4,17 +4,17 @@
     "namespace": "org.kaaproject.kaa.server.plugin.rest.gen",
     "fields": [
         {
-            "name": "mapping",
+            "name": "requestMapping",
             "type": {
                 "type": "string",
                 "avro.java.string": "String"
             }
         },
         {
-            "name": "requestMethod",
+            "name": "httpRequestMethod",
             "type": {
                 "type": "enum",
-                "name": "RequestMethod",
+                "name": "HttpRequestMethod",
                 "symbols": [
                     "GET",
                     "POST",
@@ -25,30 +25,52 @@
             "by_default": "GET"
         },
         {
-            "name": "requestParams",
+            "name": "httpRequestParams",
             "type": [
                 {
                     "type": "array",
                     "items": {
                         "type": "record",
-                        "name": "RequestParam",
+                        "name": "HttpRequestParam",
                         "fields": [
                             {
-                                "name": "key",
+                                "name": "name",
                                 "type": {
                                     "type": "string",
                                     "avro.java.string": "String"
                                 }
                             },
                             {
-                                "name": "value",
+                                "name": "avroSchemaField",
+                                "type": {
+                                    "type": "string",
+                                    "avro.java.string": "String"
+                                }
+                            }
+                        ]
+                    }
+                },
+                "null"
+            ]
+        },
+        {
+            "name": "responseMappings",
+            "type": [
+                {
+                    "type": "array",
+                    "items": {
+                        "type": "record",
+                        "name": "ResponseMapping",
+                        "fields": [
+                            {
+                                "name": "responseField",
                                 "type": {
                                     "type": "string",
                                     "avro.java.string": "String"
                                 }
                             },
                             {
-                                "name": "mapping",
+                                "name": "avroSchemaField",
                                 "type": {
                                     "type": "string",
                                     "avro.java.string": "String"

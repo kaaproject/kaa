@@ -16,6 +16,10 @@
 
 package org.kaaproject.kaa.server.plugin.rest;
 
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Set;
 
 import org.kaaproject.kaa.common.dto.plugin.PluginContractDirection;
@@ -30,14 +34,16 @@ public class KaaRestPluginDef implements PluginDef {
 
     private static final long serialVersionUID = -6539544242450109900L;
 
+    private static final String INPUT_SCHEMA = "rest_plugin_item.avsc";
+
     private final BasePluginDef pluginDef;
 
     public KaaRestPluginDef() {
         this.pluginDef = new BasePluginDef.Builder("Kaa REST Plugin", 1)
-                .withSchema(KaaRestPluginConfig.SCHEMA$.toString())
-                .withType("Not Yet Implemented")
+                .withType("rest")
                 .withScope(PluginScope.LOCAL_APPLICATION)
-                .withContract(MessagingPluginContract.buildMessagingContract(PluginContractDirection.IN))
+                .withSchema(KaaRestPluginConfig.SCHEMA$.toString())
+                .withContract(MessagingPluginContract.buildMessagingContract(PluginContractDirection.OUT, this.read(INPUT_SCHEMA), null))
                 .build();
     }
 
@@ -71,61 +77,20 @@ public class KaaRestPluginDef implements PluginDef {
         return this.pluginDef.getPluginContracts();
     }
 
-    // private static final long serialVersionUID = 3242496999565136016L;
-    //
-    // private static final String REST_PLUGIN_TYPE = "REST";
-    // private static final String DEFAULT_NAME = "Rest";
-    // private static final Integer VERSION = 1;
-    //
-    // @Override
-    // public String getName() {
-    // return DEFAULT_NAME;
-    // }
-    //
-    // @Override
-    // public int getVersion() {
-    // return VERSION;
-    // }
-    //
-    // @Override
-    // public String getType() {
-    // return REST_PLUGIN_TYPE;
-    // }
-    //
-    // @Override
-    // public PluginScope getScope() {
-    // return PluginScope.LOCAL_APPLICATION;
-    // }
-    //
-    // @Override
-    // public String getConfigurationSchema() {
-    // return readFileAsString("rest_plugin.avsc");
-    // }
-    //
-    // @Override
-    // public Set<PluginContractDef> getPluginContracts() {
-    // Set<PluginContractDef> contracts = new HashSet<>();
-    // contracts.add(MessagingPluginContract.buildMessagingContract(PluginContractDirection.OUT,
-    // readFileAsString("rest_plugin_read_item.avsc"),
-    // readFileAsString("rest_plugin_write_item.avsc")));
-    //
-    // return contracts;
-    // }
-    //
-    // private String readFileAsString(String fileName) {
-    // String fileBody = null;
-    // URL url = getClass().getResource(fileName);
-    // if (url != null) {
-    // try {
-    // Path path = Paths.get(url.toURI());
-    // byte[] bytes = Files.readAllBytes(path);
-    // if (bytes != null) {
-    // fileBody = new String(bytes);
-    // }
-    // } catch (IOException | URISyntaxException e) {
-    // e.printStackTrace();
-    // }
-    // }
-    // return fileBody;
-    // }
+    private String read(String resource) {
+        String fileBody = null;
+        URL url = this.getClass().getResource(resource);
+        if (url != null) {
+            try {
+                Path path = Paths.get(url.toURI());
+                byte[] bytes = Files.readAllBytes(path);
+                if (bytes != null) {
+                    fileBody = new String(bytes);
+                }
+            } catch (Exception cause) {
+                cause.printStackTrace();
+            }
+        }
+        return fileBody;
+    }
 }

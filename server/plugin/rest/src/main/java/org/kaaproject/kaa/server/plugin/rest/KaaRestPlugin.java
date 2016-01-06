@@ -17,21 +17,40 @@
 package org.kaaproject.kaa.server.plugin.rest;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import org.apache.avro.Schema;
+import org.apache.avro.generic.GenericData;
+import org.apache.avro.generic.GenericRecord;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
+import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.server.common.core.plugin.def.Plugin;
 import org.kaaproject.kaa.server.common.core.plugin.def.PluginExecutionContext;
 import org.kaaproject.kaa.server.common.core.plugin.def.PluginInitContext;
+import org.kaaproject.kaa.server.common.core.plugin.instance.KaaMessage;
 import org.kaaproject.kaa.server.common.core.plugin.instance.KaaPlugin;
 import org.kaaproject.kaa.server.common.core.plugin.instance.KaaPluginMessage;
 import org.kaaproject.kaa.server.common.core.plugin.instance.PluginLifecycleException;
-import org.kaaproject.kaa.server.plugin.rest.gen.HttpSchemaType;
+import org.kaaproject.kaa.server.plugin.contracts.messaging.EndpointMessage;
+import org.kaaproject.kaa.server.plugin.rest.gen.HttpRequestParam;
 import org.kaaproject.kaa.server.plugin.rest.gen.KaaRestPluginConfig;
 import org.kaaproject.kaa.server.plugin.rest.gen.KaaRestPluginItemConfig;
-import org.kaaproject.kaa.server.plugin.rest.gen.RequestParam;
+import org.kaaproject.kaa.server.plugin.rest.gen.Protocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 @Plugin(KaaRestPluginDef.class)
@@ -39,42 +58,116 @@ public class KaaRestPlugin implements KaaPlugin {
 
     private static final Logger LOG = LoggerFactory.getLogger(KaaRestPlugin.class);
 
-    private KaaRestPluginConfig config;
-    private RestTemplate restTemplate;
+    private KaaRestPluginConfig pluginConfig;
 
     @Override
     public void init(PluginInitContext context) throws PluginLifecycleException {
         AvroByteArrayConverter<KaaRestPluginConfig> converter = new AvroByteArrayConverter<KaaRestPluginConfig>(KaaRestPluginConfig.class);
         try {
             LOG.info("Initializing the plugin with {}", context.toString());
-            this.config = converter.fromByteArray(context.getPluginConfigurationData().getBytes());
-        } catch (IOException cause) {
-            LOG.error("Failed to initialize the plugin!", cause);
-            throw new RuntimeException();
+            this.pluginConfig = converter.fromByteArray(context.getPluginConfigurationData().getBytes());
+        } catch (Exception cause) {
+            String errorMessage = "Failed to initialize the plugin!";
+            LOG.error(errorMessage, cause);
+            throw new PluginLifecycleException(errorMessage, cause);
         }
     }
 
     @Override
     public void onPluginMessage(KaaPluginMessage message, PluginExecutionContext ctx) {
-        AvroByteArrayConverter<KaaRestPluginItemConfig> converter = new AvroByteArrayConverter<KaaRestPluginItemConfig>(KaaRestPluginItemConfig.class);
+        // do when ready : ctx.tellPlugin(uid, sdkMessage);
+
         try {
-            KaaRestPluginItemConfig itemConfig = converter.fromByteArray(message.getItemInfo().getConfigurationData());
-            switch (itemConfig.getRequestMethod()) {
+            KaaRestPluginItemConfig itemConfig = this.getItemConfig(message);
+            switch (itemConfig.getHttpRequestMethod()) {
                 case GET:
-                case POST:
-                case PUT:
-                case DELETE:
+                    GenericRecord messageData = this.getMessageData(message);
+                    String responseSchema = message.getItemInfo().getOutMessageSchema();
+
+                    this.doGet(itemConfig, messageData, responseSchema);
             }
-        } catch (IOException cause) {
+        } catch (Exception cause) {
+            throw new IllegalArgumentException(cause);
         }
     }
 
-    public void doGet(String mapping, List<RequestParam> requestParams, String inputSchema, String outputSchema) {
-        StringBuilder buffer = new StringBuilder(mapping);
+    private String doGet(KaaRestPluginItemConfig itemConfig, GenericRecord messageData, String responseSchema) {
+
+        MultiValueMap<String, String> httpRequestParams = new LinkedMultiValueMap<>();
+        Optional.ofNullable(itemConfig.getHttpRequestParams()).ifPresent(collection -> collection.forEach(httpRequestParam -> {
+            String key = httpRequestParam.getName();
+            String value = (String) messageData.get(httpRequestParam.getAvroSchemaField());
+            httpRequestParams.add(key, value);
+        }));
+
+        String response = new RestTemplate().getForObject(this.getURL() + itemConfig.getRequestMapping(), String.class, httpRequestParams);
+        try {
+            new GenericAvroConverter<GenericRecord>
+        }
+        
+        
+        
+        
+        
+        
+        try {
+            JsonNode response = new ObjectMapper().readTree(responseBody);
+        }
+        
+        
+        
+        JsonNode response = new ObjectMapper().readTree(responseBody);
+        try {
+            new GenericAvroConverter<GenericRecord>(responseSchema).decodeJson(responseBody);
+
+        } catch (Exception ignored) {
+            try {
+                GenericRecord r = new GenericData.Record(new Schema.Parser().parse(responseSchema));
+                Optional.ofNullable(itemConfig.getResponseMappings()).ifPresent(collection -> collection.forEach(responseMapping -> {
+                }));
+
+            } catch (Exception cause) {
+
+            }
+        }
+
+        return null;
+    }
+
+    private KaaRestPluginItemConfig getItemConfig(KaaPluginMessage message) {
+        try {
+            AvroByteArrayConverter<KaaRestPluginItemConfig> converter = new AvroByteArrayConverter<>(KaaRestPluginItemConfig.class);
+            byte[] configData = message.getItemInfo().getConfigurationData();
+            return converter.fromByteArray(configData);
+        } catch (Exception cause) {
+            throw new IllegalArgumentException(cause);
+        }
+    }
+
+    private GenericRecord getMessageData(KaaPluginMessage message) {
+        try {
+            GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(message.getItemInfo().getInMessageSchema());
+            byte[] messageData = ((EndpointMessage) message.getMsg()).getMessageData();
+            return converter.decodeBinary(messageData);
+        } catch (Exception cause) {
+            throw new IllegalArgumentException(cause);
+        }
     }
 
     @Override
     public void stop() throws PluginLifecycleException {
+    }
+
+    private String url = null;
+
+    private String getURL() {
+        if (this.url == null) {
+            String protocol = this.pluginConfig.getProtocol().toString();
+            String host = this.pluginConfig.getHost();
+            int port = this.pluginConfig.getPort();
+            this.url = protocol + "://" + host + ":" + port + "/";
+        }
+        return this.url;
     }
 
     // TODO: Used for testing purposes, remove when unnecessary
@@ -83,7 +176,7 @@ public class KaaRestPlugin implements KaaPlugin {
         KaaRestPluginConfig config = new KaaRestPluginConfig();
         config.setHost("localhost");
         config.setPort(9999);
-        config.setHttpSchema(HttpSchemaType.HTTP);
+        config.setProtocol(Protocol.HTTP);
         httpServer.initServer(config);
         httpServer.start();
         System.in.read();
