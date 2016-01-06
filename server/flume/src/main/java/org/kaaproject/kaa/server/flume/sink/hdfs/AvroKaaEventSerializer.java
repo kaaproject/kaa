@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
 public class AvroKaaEventSerializer implements EventSerializer, Configurable,
         EventConstants {
 
-    private static final Logger logger = LoggerFactory.getLogger(AvroKaaEventSerializer.class); //NOSONAR
+    private static final Logger LOG = LoggerFactory.getLogger(AvroKaaEventSerializer.class);
 
     private final OutputStream out;
     
@@ -120,8 +120,8 @@ public class AvroKaaEventSerializer implements EventSerializer, Configurable,
             try {
                 schema = schemaSource.loadByKey(key);
             } catch (Exception e) {
-                logger.error("Unable to load schema by key {}", key);
-                logger.error("Caused by: ", e);
+                LOG.error("Unable to load schema by key {}", key);
+                LOG.error("Caused by: ", e);
                 throw new FlumeException("Could not find schema for event "
                         + event);
             }
@@ -152,7 +152,7 @@ public class AvroKaaEventSerializer implements EventSerializer, Configurable,
                     .fromString(compressionCodec);
             dataFileWriter.setCodec(codecFactory);
         } catch (AvroRuntimeException e) {
-            logger.warn("Unable to instantiate avro codec with name ("
+            LOG.warn("Unable to instantiate avro codec with name ("
                     + compressionCodec
                     + "). Compression disabled. Exception follows.", e);
         }

@@ -63,7 +63,7 @@ import org.slf4j.LoggerFactory;
 public class TestDynamicLoadManagerIT {
     private static final int DEFAULT_PRIORITY = 10;
 
-    /** The Constant logger. */
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(TestDynamicLoadManagerIT.class);
 
     /** Thrift host for Bootstrap test service */

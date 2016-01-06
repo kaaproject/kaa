@@ -39,8 +39,8 @@ public class RecordServlet extends HttpServlet implements Servlet {
 
     private static final long serialVersionUID = 1584721028492234643L;
 
-    /** The Constant logger. */
-    private static final Logger logger = LoggerFactory.getLogger(RecordServlet.class); //NOSONAR
+    /** The Constant LOG. */
+    private static final Logger LOG = LoggerFactory.getLogger(RecordServlet.class);
 
     private static final int BUFFER = 1024 * 100;
 
@@ -65,7 +65,7 @@ public class RecordServlet extends HttpServlet implements Servlet {
             response.getOutputStream().write(recordLibrary.getFileData());
             response.flushBuffer();
         } catch (Exception e) {
-            logger.error("Unexpected error in RecordLibraryServlet.doGet: ", e);
+            LOG.error("Unexpected error in RecordLibraryServlet.doGet: ", e);
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Unable to get file: " + e.getMessage());
         }
     }

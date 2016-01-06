@@ -49,7 +49,7 @@ public class DefaultLogCollector extends AbstractLogCollector {
                 try {
                     storage.addLogRecord(new LogRecord(record));
                 } catch (IOException e) {
-                    LOG.warn("Can't serialize log record {}", record);
+                    LOG.warn("Can't serialize log record {}, exception catched: {}", record, e);
                 }
 
                 uploadIfNeeded();

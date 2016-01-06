@@ -111,7 +111,7 @@ public class FlumeLogAppender extends AbstractLogAppender<FlumeConfig> {
                                 listener.onInternalError();
                             }
                         } catch (EventDeliveryException e) {
-                            LOG.warn("Can't send flume event.");
+                            LOG.warn("Can't send flume event. ", e);
                             listener.onConnectionError();
                         }
                     } catch (Exception e) {

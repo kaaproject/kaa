@@ -24,6 +24,8 @@ import org.apache.avro.Schema;
 import org.kaaproject.kaa.client.schema.SchemaProcessor;
 import org.kaaproject.kaa.client.schema.SchemaRuntimeException;
 import org.kaaproject.kaa.client.schema.SchemaUpdatesReceiver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Default {@link SchemaPersistenceManager} implementation
@@ -33,6 +35,9 @@ import org.kaaproject.kaa.client.schema.SchemaUpdatesReceiver;
  */
 public class DefaultSchemaPersistenceManager implements
         SchemaPersistenceManager, SchemaUpdatesReceiver {
+
+    /** The Constant LOG. */
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultSchemaPersistenceManager.class);
 
     private SchemaProcessor processor;
     private SchemaStorage storage;
@@ -56,6 +61,7 @@ public class DefaultSchemaPersistenceManager implements
                     storage.saveSchema(buffer);
                 }
             } catch (UnsupportedEncodingException e) {
+                LOG.error("Failed to save schema: ", e);
                 throw new SchemaRuntimeException("Failed to save schema");
             }
         } else {

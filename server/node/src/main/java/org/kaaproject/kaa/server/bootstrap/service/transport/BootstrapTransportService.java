@@ -60,7 +60,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class BootstrapTransportService extends AbstractTransportService implements TransportService {
 
-    /** Constant logger. */
+    /** Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(BootstrapTransportService.class);
 
     private static final int DEFAULT_THREAD_POOL_SIZE = 1;

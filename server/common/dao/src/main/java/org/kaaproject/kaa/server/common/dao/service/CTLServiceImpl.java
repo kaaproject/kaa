@@ -153,6 +153,7 @@ public class CTLServiceImpl implements CTLService {
                 try {
                     uniqueMetaInfo = schemaMetaInfoDao.save(new CTLSchemaMetaInfo(metaInfo));
                 } catch (Exception e) {
+                    LOG.error("Exception catched: ", e);
                     existing = true;
                     uniqueMetaInfo = schemaMetaInfoDao.findByFqnAndVersion(metaInfo.getFqn(), metaInfo.getVersion());
                 }
@@ -189,6 +190,7 @@ public class CTLServiceImpl implements CTLService {
                 try {
                     dto = getDto(ctlSchemaDao.save(ctlSchema, true));
                 } catch (DataIntegrityViolationException ex) {
+                    LOG.error("Can't save cql schema with same fqn, version and tenant id. ", ex);
                     throw new DatabaseProcessingException("Can't save cql schema with same fqn, version and tenant id.");
                 } catch (Exception ex) {
                     throw new DatabaseProcessingException(ex);
@@ -424,6 +426,7 @@ public class CTLServiceImpl implements CTLService {
 
             return result;
         } catch (Exception cause) {
+            LOG.error("An unexpected exception occured: ", cause);
             throw new RuntimeException("An unexpected exception occured: " + cause.toString());
         }
     }
@@ -454,6 +457,7 @@ public class CTLServiceImpl implements CTLService {
 
             return result;
         } catch (Exception cause) {
+            LOG.error("An unexpected exception occured: ", cause);
             throw new RuntimeException("An unexpected exception occured: " + cause.toString());
         }
     }
@@ -477,6 +481,7 @@ public class CTLServiceImpl implements CTLService {
             result.setFileData(content.toByteArray());
             return result;
         } catch (Exception cause) {
+            LOG.error("An unexpected exception occured: ", cause);
             throw new RuntimeException("An unexpected exception occured: " + cause.toString());
         }
     }

@@ -58,7 +58,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class DefaultNotificationDeltaService implements NotificationDeltaService {
 
-    /** The Constant logger. */
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(DefaultNotificationDeltaService.class);
 
     /** The notification service. */

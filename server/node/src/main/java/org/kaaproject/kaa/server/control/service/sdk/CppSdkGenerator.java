@@ -58,7 +58,7 @@ import org.slf4j.helpers.MessageFormatter;
  */
 public class CppSdkGenerator extends SdkGenerator {
 
-    /** The Constant logger. */
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory
             .getLogger(CppSdkGenerator.class);
 

@@ -93,7 +93,7 @@ public class ConcurrentCacheService implements CacheService {
     /** The Constant ALGORITHM. */
     private static final String ALGORITHM = "RSA";
 
-    /** The Constant logger. */
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(ConcurrentCacheService.class);
 
     /** The application service. */

@@ -67,7 +67,7 @@ public class JavaSdkGenerator extends SdkGenerator {
     private static final String SEPARATOR = ":";
 
     /**
-     * The Constant logger.
+     * The Constant LOG.
      */
     private static final Logger LOG = LoggerFactory.getLogger(JavaSdkGenerator.class);
 

@@ -33,7 +33,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class DefaultLogAppenderService implements LogAppenderService {
 
-    /** The Constant logger. */
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(DefaultLogAppenderService.class);
 
     @Autowired
@@ -77,7 +77,7 @@ public class DefaultLogAppenderService implements LogAppenderService {
                 LogAppender logAppender = logAppenderResolver.getAppender(appender);
                 logAppenders.add(logAppender);
             } catch (Exception e) {
-                LOG.warn("Can't initialize log appender [{}]", appender);
+                LOG.warn("Can't initialize log appender [{}], exception catched: {}", appender, e);
                 continue;
             }
         }

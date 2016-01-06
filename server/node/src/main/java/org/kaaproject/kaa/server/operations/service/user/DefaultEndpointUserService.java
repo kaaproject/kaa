@@ -103,9 +103,9 @@ public class DefaultEndpointUserService implements EndpointUserService {
                 response.setResult(SyncStatus.SUCCESS);
                 response.setEndpointKeyHash(Base64Util.encode(attachedEndpoint.getEndpointKeyHash()));
             } catch (DatabaseProcessingException e) {
-                LOG.warn("[{}] failed to attach endpoint with access token {} and user {}",
+                LOG.warn("[{}] failed to attach endpoint with access token {} and user {}, exception catched: {}",
                         Base64Util.encode(profile.getEndpointKeyHash()), endpointAttachRequest.getEndpointAccessToken(),
-                        profile.getEndpointUserId());
+                        profile.getEndpointUserId(), e);
             }
         } else {
             LOG.warn("[{}] received attach endpoint request, but there is no user to attach.",
@@ -145,7 +145,7 @@ public class DefaultEndpointUserService implements EndpointUserService {
                     }
                 }
             } catch (DatabaseProcessingException e) {
-                LOG.warn("[{}] failed to detach endpoint {} ", profile);
+                LOG.warn("[{}] failed to detach endpoint {}, exception catched: ", profile, e);
             }
         } else {
             LOG.warn("[{}] detach endpoint request {} or profile {} is not valid", Base64Util.encode(profile.getEndpointKeyHash()),

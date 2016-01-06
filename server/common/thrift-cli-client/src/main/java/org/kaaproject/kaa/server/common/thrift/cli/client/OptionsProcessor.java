@@ -28,12 +28,17 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * CLI client OptionsProcessor.
  * 
  */
 public class OptionsProcessor {
+
+    /** The Constant LOG. */
+    private static final Logger LOG = LoggerFactory.getLogger(OptionsProcessor.class);
 
     /** The CLI options. */
     private final Options options = new Options();
@@ -115,6 +120,7 @@ public class OptionsProcessor {
             try {
                 fis = new FileInputStream(f);
             } catch (FileNotFoundException e) {
+                LOG.error("Exception catched: ", e);
                 ss.out.println("Thrift property file '" + propertyFile
                         + "' does not exists.");
                 return false;

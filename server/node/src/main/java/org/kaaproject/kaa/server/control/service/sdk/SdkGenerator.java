@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 public abstract class SdkGenerator {
 
     /**
-     * The Constant logger.
+     * The Constant LOG.
      */
     private static final Logger LOG = LoggerFactory.getLogger(SdkGenerator.class);
 

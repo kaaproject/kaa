@@ -113,7 +113,7 @@ public class TwitterUserVerifier extends AbstractKaaUserVerifier<TwitterAvroConf
                     try {
                         closeableHttpResponse.close();
                     } catch (IOException e) {
-                        LOG.debug("Connection error: can't close CloseableHttpResponse");
+                        LOG.debug("Connection error: can't close CloseableHttpResponse ", e);
                     }
                 }
             }
@@ -193,7 +193,7 @@ public class TwitterUserVerifier extends AbstractKaaUserVerifier<TwitterAvroConf
         try {
             httpClient.close();
         } catch (IOException e) {
-            LOG.debug("Unable to close HttpClient");
+            LOG.debug("Unable to close HttpClient ", e);
         }
         LOG.info("twitter user verifier stopped");
     }

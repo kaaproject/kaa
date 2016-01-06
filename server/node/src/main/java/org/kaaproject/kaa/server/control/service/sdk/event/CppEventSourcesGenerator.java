@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 
 public class CppEventSourcesGenerator {
 
-    /** The Constant logger. */
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory
             .getLogger(CppEventSourcesGenerator.class);
 

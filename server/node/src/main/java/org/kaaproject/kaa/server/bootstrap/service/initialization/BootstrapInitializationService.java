@@ -46,7 +46,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class BootstrapInitializationService extends AbstractInitializationService {
 
-    /** Constant logger. */
+    /** Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(BootstrapInitializationService.class);
 
     @Autowired

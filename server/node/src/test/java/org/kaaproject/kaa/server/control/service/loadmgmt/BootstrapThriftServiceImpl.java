@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
  */
 public class BootstrapThriftServiceImpl implements BootstrapThriftService.Iface {
 
-    /** The Constant logger. */
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(BootstrapThriftServiceImpl.class);
 
     private Map<String, ThriftOperationsServer> opServerMap;

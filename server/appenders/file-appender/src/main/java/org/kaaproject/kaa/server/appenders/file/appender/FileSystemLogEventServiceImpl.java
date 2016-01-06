@@ -104,7 +104,7 @@ public class FileSystemLogEventServiceImpl implements FileSystemLogEventService 
             FileUtils.deleteDirectory(directory);
             LOG.debug("Directory was successfully deleted");
         } catch (IOException e) {
-            LOG.error("Unable to delete directory with path: {}", path);
+            LOG.error("Unable to delete directory with path: {}, exception catched: {}", path, e);
         }
     }
     

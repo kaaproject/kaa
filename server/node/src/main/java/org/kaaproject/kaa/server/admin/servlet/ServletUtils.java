@@ -16,12 +16,18 @@
 
 package org.kaaproject.kaa.server.admin.servlet;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.UnsupportedEncodingException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public class ServletUtils {
+
+    /** The Constant LOG. */
+    private static final Logger LOG = LoggerFactory.getLogger(ServletUtils.class);
 
     public static void prepareDisposition(HttpServletRequest request, HttpServletResponse response, String fileName) {
         String userAgent = request.getHeader("user-agent");
@@ -37,7 +43,7 @@ public class ServletUtils {
             String disposition = "attachment; filename=\"" + dispositionFileName + "\"";
             response.setHeader("Content-Disposition", disposition);
         } catch(UnsupportedEncodingException ence) {
-           //
+           LOG.error("Exception catched: ", ence);
         }
   }
 }

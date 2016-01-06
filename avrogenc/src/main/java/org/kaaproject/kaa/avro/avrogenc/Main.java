@@ -17,7 +17,13 @@
 package org.kaaproject.kaa.avro.avrogenc;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class Main {
+    /** The Constant LOG. */
+    private static final Logger LOG = LoggerFactory.getLogger(Main.class);
+
     public static void main(String[] args) {
         try {
             if (args.length < 3) {
@@ -28,6 +34,7 @@ public class Main {
             Compiler compiler = new Compiler(args[0], args[1], args[2]);
             compiler.generate();
         } catch (Exception e) {
+            LOG.error("Compilation failure: ", e);
             System.err.println("Compilation failure: " + e.toString());
         }
     }

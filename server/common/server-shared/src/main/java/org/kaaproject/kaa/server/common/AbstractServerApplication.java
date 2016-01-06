@@ -103,7 +103,7 @@ public abstract class AbstractServerApplication {
                     sources.addLast(new ResourcePropertySource(propertyFile, AbstractServerApplication.class
                             .getClassLoader()));
                 } catch (IOException e) {
-                    LOG.error("Can't load properties file {} from classpath", propertyFile);
+                    LOG.error("Can't load properties file {} from classpath, exception catched {}", propertyFile, e);
                     return;
                 }
             }

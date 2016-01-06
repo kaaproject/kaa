@@ -36,6 +36,8 @@ import org.kaaproject.kaa.server.admin.services.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.kaaproject.kaa.server.control.service.ControlService;
 import org.kaaproject.kaa.server.control.service.exception.ControlServiceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class is used to parse and validate CTL schemas on save.
@@ -48,6 +50,9 @@ import org.kaaproject.kaa.server.control.service.exception.ControlServiceExcepti
  * @see #validate(CTLSchemaInfoDto)
  */
 public class CTLSchemaParser {
+
+    /** The Constant LOG. */
+    private static final Logger LOG = LoggerFactory.getLogger(CTLSchemaParser.class);
 
     private final Schema.Parser parser = new Schema.Parser();
 
@@ -193,6 +198,7 @@ public class CTLSchemaParser {
              */
             return parser.parse(schema.getBody());
         } catch (Exception cause) {
+            LOG.error("Unable to parse CTL schema \"" + schema.getFqn() + "\" (version " + schema.getVersion() + "): ", cause);
             throw new IllegalArgumentException("Unable to parse CTL schema \"" + schema.getFqn() + "\" (version " + schema.getVersion() + "): " + cause.getMessage());
         }
     }

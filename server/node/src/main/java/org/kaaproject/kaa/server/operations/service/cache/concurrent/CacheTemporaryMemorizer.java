@@ -26,6 +26,8 @@ import java.util.concurrent.FutureTask;
 
 import org.jboss.netty.util.internal.ConcurrentHashMap;
 import org.kaaproject.kaa.server.operations.service.cache.Computable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -35,6 +37,9 @@ import org.kaaproject.kaa.server.operations.service.cache.Computable;
  * @param <V> the value type
  */
 public class CacheTemporaryMemorizer<K, V> {
+
+    /** The Constant LOG. */
+    private static final Logger LOG = LoggerFactory.getLogger(CacheTemporaryMemorizer.class);
 
     /** The cache. */
     private final ConcurrentMap<K, Future<V>> cache = new ConcurrentHashMap<K, Future<V>>();
@@ -74,6 +79,7 @@ public class CacheTemporaryMemorizer<K, V> {
             try {
                 return f.get();
             } catch (CancellationException e) {
+                LOG.error("Exception catched: ", e);
                 cache.remove(key, f);
             } catch (ExecutionException|InterruptedException e) {
                 throw launderThrowable(e);

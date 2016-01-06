@@ -77,7 +77,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class DefaultDeltaService implements DeltaService {
 
-    /** The Constant logger. */
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(DefaultDeltaService.class);
 
     /** The cache service. */

@@ -31,7 +31,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class ControlInitializationService extends AbstractInitializationService {
 
-    /** The Constant logger. */
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(ControlInitializationService.class);
 
     /** The control zookeeper service. */

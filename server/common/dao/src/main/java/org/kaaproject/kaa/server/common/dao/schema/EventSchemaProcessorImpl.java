@@ -55,7 +55,7 @@ public class EventSchemaProcessorImpl implements EventSchemaProcessor {
                 try { //NOSONAR
                     classType = EventClassType.valueOf(strClassType.toUpperCase());
                 } catch (Exception e) {
-                    LOG.error("Can't process provided event class family schema. Invalid classType [{}]", strClassType);
+                    LOG.error("Can't process provided event class family schema. Invalid classType [{}]. Exception catched: {}", strClassType, e);
                     throw new EventSchemaException("Can't process provided event class family schema. Invalid classType: " + strClassType);
                 }
                 eventClassSchema.setType(classType);

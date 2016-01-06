@@ -46,7 +46,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class ControlZkService {
 
-    /** The Constant logger. */
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(ControlZkService.class);
 
     @Autowired

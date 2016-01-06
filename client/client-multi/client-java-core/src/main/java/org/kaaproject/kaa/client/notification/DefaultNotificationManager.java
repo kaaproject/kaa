@@ -308,7 +308,7 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
                     }
                 }
             } catch (UnavailableTopicException e) {
-                LOG.warn("Received notification for an unknown topic (id={})", notification.getTopicId());
+                LOG.warn("Received notification for an unknown topic (id={}), exception catched: {}", notification.getTopicId(), e);
             }
         }
     }

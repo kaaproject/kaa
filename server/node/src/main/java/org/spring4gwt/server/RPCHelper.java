@@ -69,7 +69,7 @@ public class RPCHelper {
 		      Throwable cause = e.getCause();
 		      
 		      LOG.error("Unexpected exception occured while invoking service method - " 
-		      + (serviceMethod != null ? serviceMethod.getName() : "null"), cause);
+		      + (serviceMethod != null ? serviceMethod.getName() : "null"), e);
 
 		      responsePayload = RPC.encodeResponseForFailure(serviceMethod, cause, serializationPolicy, flags);
 		    }

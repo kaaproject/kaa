@@ -229,6 +229,7 @@ public class MessagingService {
                 throw new RuntimeException(e1);
             }
         } catch (CancellationException ce) {
+            LOG.error("Blocked callable interrupted by rotation event", ce);
             throw new InterruptedException(
                     "Blocked callable interrupted by rotation event");
         } catch (InterruptedException ex) {

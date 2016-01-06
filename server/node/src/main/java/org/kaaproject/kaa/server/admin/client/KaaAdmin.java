@@ -35,8 +35,6 @@ import org.kaaproject.kaa.server.admin.client.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminService;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceAsync;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAuthServiceAsync;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.gwt.activity.shared.ActivityManager;
 import com.google.gwt.activity.shared.ActivityMapper;
@@ -65,8 +63,6 @@ public class KaaAdmin implements EntryPoint {
     private static KaaAuthServiceAsync authService = KaaAuthServiceAsync.Util.getInstance();
 
     private AppLayout appWidget = new AppLayout();
-
-    private static final Logger Logger = LoggerFactory.getLogger(KaaAdmin.class);
 
     @Override
     public void onModuleLoad() {
@@ -196,7 +192,6 @@ public class KaaAdmin implements EntryPoint {
                 }
             });
         } catch (RequestException e) {
-            Logger.error("Request Exception catched: ", e);
         }
     }
 

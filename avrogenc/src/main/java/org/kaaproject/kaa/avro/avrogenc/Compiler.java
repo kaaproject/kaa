@@ -34,9 +34,14 @@ import org.apache.avro.Schema.Field;
 import org.apache.avro.Schema.Type;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Compiler {
     private static final String DIRECTION_PROP = "direction";
+
+    /** The Constant LOG. */
+    private static final Logger LOG = LoggerFactory.getLogger(Compiler.class);
 
     private final String generatedSourceName;
 
@@ -104,6 +109,7 @@ public class Compiler {
             this.headerWriter = new PrintWriter(new BufferedWriter(new FileWriter(headerPath, true)));
             this.sourceWriter = new PrintWriter(new BufferedWriter(new FileWriter(sourcePath, true)));
         } catch (Exception e) {
+            LOG.error("Failed to create ouput path: ", e);
             throw new KaaCGeneratorException("Failed to create ouput path: " + e.toString());
         }
     }
@@ -125,6 +131,7 @@ public class Compiler {
                 writeToStream(hdrWriter, srcWriter);
             }
         } catch (Exception e) {
+            LOG.error("Failed to prepare source templates: ", e);
             throw new KaaCGeneratorException("Failed to prepare source templates: " + e.toString());
         }
     }
@@ -161,6 +168,7 @@ public class Compiler {
 
             System.out.println("C sources were successfully generated");
         } catch (Exception e) {
+            LOG.error("Failed to generate C sources: ", e);
             throw new KaaCGeneratorException("Failed to generate C sources: " + e.toString());
         } finally {
             headerWriter.close();

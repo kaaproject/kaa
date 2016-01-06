@@ -81,7 +81,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 @ContextConfiguration(locations = "/operations/operations-server-eventService-test-IT.xml")
 @DirtiesContext(classMode = ClassMode.AFTER_CLASS)
 public class EventServiceThriftTestIT {
-    /** The Constant logger. */
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(EventServiceThriftTestIT.class);
 
     /** ZooKeeper port constant */
