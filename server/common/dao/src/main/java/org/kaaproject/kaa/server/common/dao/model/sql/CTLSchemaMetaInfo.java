@@ -154,7 +154,8 @@ public class CTLSchemaMetaInfo extends GenericModel<CTLSchemaMetaInfoDto> implem
     @Override
     public String toString() {
         return "CTLSchemaMetaInfo{" +
-                "fqn='" + fqn + '\'' +
+                "id=" + id +
+                ", fqn='" + fqn + '\'' +
                 ", version=" + version +
                 ", scope=" + scope +
                 ", count=" + count +

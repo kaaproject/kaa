@@ -134,4 +134,18 @@ public class PluginContractInstanceItemDto implements HasId, Serializable {
         result = 31 * result + (pluginContractInstance != null ? pluginContractInstance.hashCode() : 0);
         return result;
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("PluginContractInstanceItemDto{");
+        sb.append("id='").append(id).append('\'');
+        sb.append(", confData='").append(confData).append('\'');
+        sb.append(", pluginContractItem=").append(pluginContractItem);
+        sb.append(", parentPluginContractItem=").append(parentPluginContractItem);
+        sb.append(", inMessageSchema=").append(inMessageSchema);
+        sb.append(", outMessageSchema=").append(outMessageSchema);
+        sb.append(", pluginContractInstance=").append(pluginContractInstance);
+        sb.append('}');
+        return sb.toString();
+    }
 }

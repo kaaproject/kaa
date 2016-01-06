@@ -247,12 +247,13 @@ public class Plugin extends GenericModel<PluginDto> implements Serializable {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("Plugin{");
-        sb.append("id=").append(id == null ? null : id);
-        sb.append(", name='").append(name).append('\'');
+        sb.append("name='").append(name).append('\'');
         sb.append(", className='").append(className).append('\'');
         sb.append(", version=").append(version);
         sb.append(", configSchema='").append(configSchema).append('\'');
         sb.append(", scope=").append(scope);
+        sb.append(", pluginContracts=").append(pluginContracts);
+        sb.append(", pluginInstances=").append(pluginInstances);
         sb.append('}');
         return sb.toString();
     }

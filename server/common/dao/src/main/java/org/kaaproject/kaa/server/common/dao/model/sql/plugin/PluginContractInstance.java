@@ -55,7 +55,7 @@ public class PluginContractInstance extends GenericModel<PluginContractInstanceD
             foreignKey = @ForeignKey(name = PLUGIN_CONTRACT_INSTANCE_PLUGIN_INSTANCE_FK))
     private PluginInstance pluginInstance;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = PLUGIN_CONTRACT_INSTANCE_PROPERTY)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = PLUGIN_CONTRACT_INSTANCE_PROPERTY, cascade = CascadeType.ALL)
     private Set<PluginContractInstanceItem> pluginContractInstanceItems = new HashSet<>();
 
     public PluginContract getPluginContract() {
