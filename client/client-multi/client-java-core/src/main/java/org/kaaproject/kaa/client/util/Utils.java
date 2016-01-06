@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,11 @@
  * limitations under the License.
  */
 
-#include <stddef.h>
-#include <stdbool.h>
-#include "../../platform/ext_configuration_persistence.h"
+package org.kaaproject.kaa.client.util;
 
-#define KAA_CONFIGURATION_STORAGE "" /* there is no filesystem on esp8266 */
+public class Utils {
 
-void ext_configuration_read(char **buffer, size_t *buffer_size, bool *needs_deallocation) {
-
-}
-
-void ext_configuration_store(const char *buffer, size_t buffer_size) {
-
-}
-
-void ext_configuration_delete(void)
-{
-
+    public static boolean isBlank(String str) {
+        return str == null || str.isEmpty();
+    }
 }

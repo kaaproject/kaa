@@ -84,7 +84,7 @@ void test_empty_log_collector_extension_count(void)
     KAA_LOG_DEBUG(kaa_context->logger, KAA_ERR_NONE, "count of extensions is %d, expected 1", count_of_extensions);
     ASSERT_EQUAL(count_of_extensions, 1);
 }
-int test_init()
+int test_init(void)
 {
     kaa_error_t error_code = kaa_init(&kaa_context);
     if (error_code) {
@@ -93,7 +93,7 @@ int test_init()
 	return KAA_ERR_NONE;
 }
 
-int test_deinit()
+int test_deinit(void)
 {
     kaa_deinit(kaa_context);
     KAA_FREE(buffer);

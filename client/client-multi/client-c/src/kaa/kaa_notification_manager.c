@@ -88,7 +88,7 @@ typedef struct {
 typedef struct {
     uint64_t topic_id;
     kaa_list_t *listeners;
-} kaa_optional_notification_listeners_wrapper_t ;
+} kaa_optional_notification_listeners_wrapper_t;
 
 typedef struct {
     uint32_t id;
@@ -108,7 +108,7 @@ static void shift_and_sub_extension(kaa_platform_message_reader_t *reader, uint3
 }
 
 typedef struct {
-    kaa_notification_t* notification;
+    kaa_notification_t *notification;
     uint32_t sqn;
 } kaa_notification_wrapper_t;
 
@@ -120,13 +120,13 @@ typedef struct {
 static bool find_notifications_by_topic(void *data, void *context)
 {
     kaa_topic_notifications_node_t *node = (kaa_topic_notifications_node_t *)data;
-    return node->topic_id ==  *((uint64_t *) context);
+    return node->topic_id == *((uint64_t *) context);
 }
 
 static void kaa_destroy_notification_wrapper(void *data)
 {
     KAA_RETURN_IF_NIL(data, );
-    kaa_notification_wrapper_t* wrapper = (kaa_notification_wrapper_t *)data;
+    kaa_notification_wrapper_t *wrapper = (kaa_notification_wrapper_t *)data;
     if (wrapper->notification) {
         wrapper->notification->destroy(wrapper->notification);
     }
@@ -136,7 +136,7 @@ static void kaa_destroy_notification_wrapper(void *data)
 static void kaa_destroy_notification_node(void *data)
 {
     KAA_RETURN_IF_NIL(data, );
-    kaa_topic_notifications_node_t * node = (kaa_topic_notifications_node_t *)data;
+    kaa_topic_notifications_node_t *node = (kaa_topic_notifications_node_t *)data;
     if (node->notifications) {
         kaa_list_destroy(node->notifications, kaa_destroy_notification_wrapper);
     }
@@ -147,7 +147,7 @@ static kaa_error_t kaa_create_topic_notification_node(kaa_topic_notifications_no
 {
     KAA_RETURN_IF_NIL(node, KAA_ERR_BADPARAM);
 
-    kaa_topic_notifications_node_t * new_node = (kaa_topic_notifications_node_t *) KAA_MALLOC(sizeof(kaa_topic_notifications_node_t));
+    kaa_topic_notifications_node_t *new_node = (kaa_topic_notifications_node_t *) KAA_MALLOC(sizeof(kaa_topic_notifications_node_t));
     KAA_RETURN_IF_NIL(new_node, KAA_ERR_NOMEM);
 
     new_node->notifications = kaa_list_create();
@@ -156,13 +156,13 @@ static kaa_error_t kaa_create_topic_notification_node(kaa_topic_notifications_no
         return KAA_ERR_NOMEM;
     }
 
-    kaa_notification_wrapper_t * wrapper = (kaa_notification_wrapper_t *) KAA_MALLOC(sizeof(kaa_notification_wrapper_t));
+    kaa_notification_wrapper_t *wrapper = (kaa_notification_wrapper_t *) KAA_MALLOC(sizeof(kaa_notification_wrapper_t));
     if (!wrapper) {
         kaa_destroy_notification_node(new_node);
         return KAA_ERR_NOMEM;
     }
 
-    if(!kaa_list_push_back(new_node->notifications, wrapper)) {
+    if (!kaa_list_push_back(new_node->notifications, wrapper)) {
         kaa_destroy_notification_node(new_node);
         KAA_FREE(wrapper);
         return KAA_ERR_NOMEM;
@@ -208,9 +208,10 @@ static kaa_error_t kaa_add_notification_to_map(kaa_list_t *notifications, kaa_no
            KAA_FREE(new_wrapper);
            return KAA_ERR_NOMEM;
        }
-           new_wrapper->notification = item;
-           new_wrapper->sqn = *sqn;
-  }
+
+       new_wrapper->notification = item;
+       new_wrapper->sqn = *sqn;
+   }
 
     return KAA_ERR_NONE;
 }
@@ -292,7 +293,7 @@ static bool kaa_find_topic_state_by_id(void *topic_state, void *id)
     return state->topic_id == *(uint64_t *)id;
 }
 
-kaa_error_t kaa_calculate_topic_listener_id(kaa_topic_listener_t *listener, uint32_t *listener_id)
+kaa_error_t kaa_calculate_topic_listener_id(const kaa_topic_listener_t *listener, uint32_t *listener_id)
 {
     KAA_RETURN_IF_NIL2(listener, listener_id, KAA_ERR_BADPARAM);
 
@@ -304,7 +305,7 @@ kaa_error_t kaa_calculate_topic_listener_id(kaa_topic_listener_t *listener, uint
      return KAA_ERR_NONE;
 }
 
-kaa_error_t kaa_calculate_notification_listener_id(kaa_notification_listener_t *listener, uint32_t *listener_id)
+kaa_error_t kaa_calculate_notification_listener_id(const kaa_notification_listener_t *listener, uint32_t *listener_id)
 {
     KAA_RETURN_IF_NIL2(listener, listener_id, KAA_ERR_BADPARAM);
 
@@ -980,7 +981,7 @@ kaa_error_t kaa_unsubscribe_from_topics(kaa_notification_manager_t *self, uint64
 
 static kaa_error_t do_sync(kaa_notification_manager_t *self)
 {
-    KAA_RETURN_IF_NIL(self, KAA_ERR_BADPARAM)
+    KAA_RETURN_IF_NIL(self, KAA_ERR_BADPARAM);
     kaa_transport_channel_interface_t *channel =
                  kaa_channel_manager_get_transport_channel(self->channel_manager, notification_sync_services[0]);
     if (channel) {

@@ -31,11 +31,11 @@
 extern "C" {
 #endif
 
-/**
- * @brief Kaa notification manager structure.
- */
 #ifndef KAA_NOTIFICATION_MANAGER_T
 # define KAA_NOTIFICATION_MANAGER_T
+    /**
+     * @brief Kaa notification manager structure.
+     */
     typedef struct kaa_notification_manager_t       kaa_notification_manager_t;
 #endif
 
@@ -49,7 +49,7 @@ extern "C" {
 *
 * @return The error code.
 */
-kaa_error_t kaa_calculate_topic_listener_id(kaa_topic_listener_t *listener, uint32_t *listener_id);
+kaa_error_t kaa_calculate_topic_listener_id(const kaa_topic_listener_t *listener, uint32_t *listener_id);
 
 /**
 * @brief Calculates the notification listener id to manage this notification listener.
@@ -59,7 +59,7 @@ kaa_error_t kaa_calculate_topic_listener_id(kaa_topic_listener_t *listener, uint
 *
 * @return The error code.
 */
-kaa_error_t kaa_calculate_notification_listener_id(kaa_notification_listener_t *listener, uint32_t *listener_id);
+kaa_error_t kaa_calculate_notification_listener_id(const kaa_notification_listener_t *listener, uint32_t *listener_id);
 
 /**
 * @brief Adds a mandatory notification listener to receive notifications on mandatory topics.
@@ -78,7 +78,7 @@ kaa_error_t kaa_add_notification_listener(kaa_notification_manager_t *self, kaa_
 * @param[in]  self        The pointer to the notification manager instance.
 * @param[in]  listener    The pointer to the listener whose callback is called as soon as a notification is received.
 * @param[in]  topic_id    The pointer to the id of the topic about which the listener is notified.
-* @param[out] listener_id The pointer to the variable which is initialized with the calculated id. If NULL, listener_id is not initialized.
+* @param[out] listener_id The pointer to the variable which is initialized with the calculated id. If @c NULL, @p listener_id is not initialized.
 *
 * @return The error code.
 */
@@ -89,7 +89,7 @@ kaa_error_t kaa_add_optional_notification_listener(kaa_notification_manager_t *s
 * @brief Removes the mandatory notification listener.
 *
 * @param[in]  self         The pointer to the notification manager instance.
-* @param[in]  listener_id  The pointer to the listener id which is used to find the listener that should be removed from the notification listeners list. If NULL, listener_id is not initialized
+* @param[in]  listener_id  The pointer to the listener id which is used to find the listener that should be removed from the notification listeners list. If @c NULL, @p listener_id is not initialized
 *
 * @return The error code.
 */
@@ -121,7 +121,7 @@ kaa_error_t kaa_add_topic_list_listener(kaa_notification_manager_t *self, kaa_to
 * @brief Removes the topic list listener.
 *
 * @param[in]  self         The pointer to the notification manager instance.
-* @param[in]  topic_listener_id  The pointer to the variable which is used to find the listener that should be removed from the topic listeners list. If NULL, topic_listener_id is not initialized.
+* @param[in]  topic_listener_id  The pointer to the variable which is used to find the listener that should be removed from the topic listeners list. If @c NULL, @p topic_listener_id is not initialized.
 *
 * @return The error code.
 */
@@ -131,7 +131,7 @@ kaa_error_t kaa_remove_topic_list_listener(kaa_notification_manager_t *self, uin
 * @brief Retrieves the topic list.
 *
 * @param[in]  self         The pointer to the notification manager instance.
-* @param[in]  topics       The pointer to the pointer that is initialized with the topic list.
+* @param[out] topics       The pointer to the pointer that is initialized with the topic list.
 *
 * @return The error code.
 */
@@ -165,7 +165,6 @@ kaa_error_t kaa_subscribe_to_topics(kaa_notification_manager_t *self, uint64_t *
 *
 * @param[in]  self         The pointer to the notification manager instance.
 * @param[in]  topic_id     The pointer to the id of the topic from which the endpoint should be unsubscribed.
-
 *
 * @return The error code.
 */

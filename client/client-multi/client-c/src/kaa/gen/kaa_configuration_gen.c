@@ -93,7 +93,7 @@ static void kaa_union_null_or_fixed_serialize(avro_writer_t writer, void *data)
         }
     }
 }
-static kaa_union_t *kaa_union_null_or_fixed_create()
+static kaa_union_t *kaa_union_null_or_fixed_create(void)
 {
     kaa_union_t *kaa_union = KAA_CALLOC(1, sizeof(kaa_union_t));
 
@@ -106,7 +106,7 @@ static kaa_union_t *kaa_union_null_or_fixed_create()
     return kaa_union; 
 }
 
-kaa_union_t *kaa_union_null_or_fixed_branch_0_create()
+kaa_union_t *kaa_union_null_or_fixed_branch_0_create(void)
 {
     kaa_union_t *kaa_union = kaa_union_null_or_fixed_create();
     if (kaa_union) {
@@ -115,7 +115,7 @@ kaa_union_t *kaa_union_null_or_fixed_branch_0_create()
     return kaa_union;
 }
 
-kaa_union_t *kaa_union_null_or_fixed_branch_1_create()
+kaa_union_t *kaa_union_null_or_fixed_branch_1_create(void)
 {
     kaa_union_t *kaa_union = kaa_union_null_or_fixed_create();
     if (kaa_union) {
@@ -187,7 +187,7 @@ static size_t kaa_configuration_root_record_get_size(void *data)
     return 0;
 }
 
-kaa_configuration_root_record_t *kaa_configuration_root_record_create()
+kaa_configuration_root_record_t *kaa_configuration_root_record_create(void)
 {
     kaa_configuration_root_record_t *record = 
             (kaa_configuration_root_record_t *)KAA_CALLOC(1, sizeof(kaa_configuration_root_record_t));

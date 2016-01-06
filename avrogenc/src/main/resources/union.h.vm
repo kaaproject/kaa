@@ -30,7 +30,7 @@
 #set ($branch_number = 0)
 #if ($generationContext.isTypeOut())
 #foreach ($branch_schema in $schema.getTypes())
-kaa_union_t *${union_name}_branch_${branch_number}_create();
+kaa_union_t *${union_name}_branch_${branch_number}_create(void);
 #set ($branch_number = $branch_number + 1)
 #end
 

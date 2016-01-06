@@ -50,7 +50,6 @@ cSRCS_$(d) :=  utilities/kaa_log.c \
                kaa_protocols/kaa_tcp/kaatcp_request.c \
                avro_src/encoding_binary.c \
                avro_src/io.c \
-               collections/kaa_deque.c \
                collections/kaa_list.c \
                gen/kaa_configuration_gen.c \
                gen/kaa_logging_gen.c \

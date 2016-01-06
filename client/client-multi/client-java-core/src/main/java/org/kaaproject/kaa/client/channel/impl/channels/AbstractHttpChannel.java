@@ -271,4 +271,7 @@ public abstract class AbstractHttpChannel implements KaaDataChannel {
 
     protected abstract Runnable createChannelRunnable(Map<TransportType, ChannelDirection> typeMap);
 
+    public boolean isShutdown() {
+        return isShutdown;
+    }
 }

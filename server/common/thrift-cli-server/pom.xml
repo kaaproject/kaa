@@ -52,5 +52,5 @@
             <artifactId>libthrift</artifactId>
         </dependency>
     </dependencies>
-	
+
 </project>
