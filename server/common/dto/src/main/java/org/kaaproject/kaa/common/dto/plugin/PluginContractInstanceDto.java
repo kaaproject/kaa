@@ -79,4 +79,14 @@ public class PluginContractInstanceDto implements HasId, Serializable {
         result = 31 * result + (items != null ? items.hashCode() : 0);
         return result;
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("PluginContractInstanceDto{");
+        sb.append("id='").append(id).append('\'');
+        sb.append(", contract=").append(contract);
+        sb.append(", items=").append(items);
+        sb.append('}');
+        return sb.toString();
+    }
 }

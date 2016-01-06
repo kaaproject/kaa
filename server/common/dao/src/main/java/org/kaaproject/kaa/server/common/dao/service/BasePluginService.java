@@ -20,17 +20,21 @@ import org.kaaproject.kaa.common.dto.plugin.PluginDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginInstanceDto;
 import org.kaaproject.kaa.server.common.dao.PluginService;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
+import org.kaaproject.kaa.server.common.dao.impl.CTLSchemaMetaInfoDao;
 import org.kaaproject.kaa.server.common.dao.impl.ContractDao;
 import org.kaaproject.kaa.server.common.dao.impl.ContractMessageDao;
 import org.kaaproject.kaa.server.common.dao.impl.DaoUtil;
 import org.kaaproject.kaa.server.common.dao.impl.PluginDao;
 import org.kaaproject.kaa.server.common.dao.impl.PluginInstanceDao;
+import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchema;
+import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchemaMetaInfo;
 import org.kaaproject.kaa.server.common.dao.model.sql.plugin.Contract;
 import org.kaaproject.kaa.server.common.dao.model.sql.plugin.ContractItem;
 import org.kaaproject.kaa.server.common.dao.model.sql.plugin.ContractMessage;
 import org.kaaproject.kaa.server.common.dao.model.sql.plugin.Plugin;
 import org.kaaproject.kaa.server.common.dao.model.sql.plugin.PluginContract;
 import org.kaaproject.kaa.server.common.dao.model.sql.plugin.PluginContractInstance;
+import org.kaaproject.kaa.server.common.dao.model.sql.plugin.PluginContractInstanceItem;
 import org.kaaproject.kaa.server.common.dao.model.sql.plugin.PluginInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,6 +62,9 @@ public class BasePluginService implements PluginService {
 
     @Autowired
     private ContractMessageDao<ContractMessage> contractMessageDao;
+
+    @Autowired
+    private CTLSchemaMetaInfoDao<CTLSchemaMetaInfo> ctlSchemaMetaInfoDao;
 
     @Override
     public PluginDto registerPlugin(PluginDto pluginDto) {
@@ -131,6 +138,10 @@ public class BasePluginService implements PluginService {
         }
         PluginInstance pluginInstance = new PluginInstance(pluginInstanceDto);
         for (PluginContractInstance pluginContractInstance : pluginInstance.getPluginContractInstances()) {
+            for (PluginContractInstanceItem pluginContractInstanceItem : pluginContractInstance.getPluginContractInstanceItems()) {
+                mergeCTLSchemaMetaInfos(pluginContractInstanceItem.getInMessageSchema());
+                mergeCTLSchemaMetaInfos(pluginContractInstanceItem.getOutMessageSchema());
+            }
             PluginContract pluginContract = pluginContractInstance.getPluginContract();
             Contract receivedContract = pluginContract.getContract();
             Contract foundContract = contractDao.findByNameAndVersion(receivedContract.getName(), receivedContract.getVersion());
@@ -144,6 +155,19 @@ public class BasePluginService implements PluginService {
         PluginInstance savedInstance = pluginInstanceDao.save(pluginInstance);
         LOG.debug("Saved instance: {}", savedInstance);
         return DaoUtil.getDto(savedInstance);
+    }
+
+    private void mergeCTLSchemaMetaInfos(CTLSchema schema) {
+        if (schema == null) {
+            return;
+        }
+        CTLSchemaMetaInfo ctlSchemaMetaInfo = schema.getMetaInfo();
+        CTLSchemaMetaInfo foundMetaInfo =
+                ctlSchemaMetaInfoDao.findByFqnAndVersion(ctlSchemaMetaInfo.getFqn(), ctlSchemaMetaInfo.getVersion());
+        if (foundMetaInfo == null) {
+            foundMetaInfo = ctlSchemaMetaInfoDao.save(ctlSchemaMetaInfo);
+        }
+        schema.setMetaInfo(foundMetaInfo);
     }
 
     @Override
