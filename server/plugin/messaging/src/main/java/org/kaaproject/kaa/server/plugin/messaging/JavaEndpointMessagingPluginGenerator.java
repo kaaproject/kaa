@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 CyberVision, Inc.
+ * Copyright 2014-2016 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,6 @@ import java.util.Set;
 import java.util.concurrent.Future;
 
 import org.apache.avro.Schema;
-import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
 import org.kaaproject.kaa.common.avro.AvroJsonConverter;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.server.common.core.plugin.base.BasePluginContractInstance;
@@ -85,7 +84,7 @@ public class JavaEndpointMessagingPluginGenerator extends AbstractSdkApiGenerato
     public static void main(String[] args) throws IOException {
         JavaEndpointMessagingPluginGenerator object = new JavaEndpointMessagingPluginGenerator();
         object.generatePluginSdkApi(JavaEndpointMessagingPluginGenerator.getHardcodedContext()).getFiles().forEach(file -> {
-            System.out.println(new String(file.getFileName()));
+            System.out.println(file.getFileName());
         });
     }
 

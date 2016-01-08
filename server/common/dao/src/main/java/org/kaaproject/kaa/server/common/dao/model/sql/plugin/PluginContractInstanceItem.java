@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 CyberVision, Inc.
+ * Copyright 2015-2016 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,8 +44,6 @@ import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_INSTANCE_ITEM_JOIN_TABLE_RESULT_MESSAGE_SCHEMA_ID;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_INSTANCE_ITEM_PARAM_MESSAGE_SCHEMA_FK;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_INSTANCE_ITEM_PARENT_PLUGIN_CONTRACT_ITEM_FK;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_INSTANCE_ITEM_PLUGIN_CONTRACT_INSTANCE_FK;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_INSTANCE_ITEM_PLUGIN_CONTRACT_INSTANCE_ID;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_INSTANCE_ITEM_PLUGIN_CONTRACT_ITEM_FK;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_INSTANCE_ITEM_PLUGIN_CONTRACT_ITEM_ID;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_INSTANCE_ITEM_PLUGIN_CONTRACT_ITEM_PARENT_ID;
@@ -61,11 +59,6 @@ public class PluginContractInstanceItem extends GenericModel<PluginContractInsta
     @Lob
     @Column(name = PLUGIN_CONTRACT_INSTANCE_ITEM_CONF_DATA)
     private String confData;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = PLUGIN_CONTRACT_INSTANCE_ITEM_PLUGIN_CONTRACT_INSTANCE_ID,
-            foreignKey = @ForeignKey(name = PLUGIN_CONTRACT_INSTANCE_ITEM_PLUGIN_CONTRACT_INSTANCE_FK))
-    private PluginContractInstance pluginContractInstance;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = PLUGIN_CONTRACT_INSTANCE_ITEM_PLUGIN_CONTRACT_ITEM_ID,
@@ -113,9 +106,6 @@ public class PluginContractInstanceItem extends GenericModel<PluginContractInsta
         if (dto.getOutMessageSchema() != null) {
             this.outMessageSchema = new CTLSchema(dto.getOutMessageSchema());
         }
-        if (pluginContractInstance != null) {
-            this.pluginContractInstance = new PluginContractInstance(dto.getPluginContractInstance());
-        }
     }
 
     public PluginContractInstanceItem(Long id) {
@@ -128,14 +118,6 @@ public class PluginContractInstanceItem extends GenericModel<PluginContractInsta
 
     public void setConfData(String confData) {
         this.confData = confData;
-    }
-
-    public PluginContractInstance getPluginContractInstance() {
-        return pluginContractInstance;
-    }
-
-    public void setPluginContractInstance(PluginContractInstance pluginContractInstance) {
-        this.pluginContractInstance = pluginContractInstance;
     }
 
     public PluginContractItem getPluginContractItem() {
@@ -220,9 +202,6 @@ public class PluginContractInstanceItem extends GenericModel<PluginContractInsta
         if (parentPluginContractItem != null ? !parentPluginContractItem.equals(that.parentPluginContractItem) : that.parentPluginContractItem != null) {
             return false;
         }
-        if (pluginContractInstance != null ? !pluginContractInstance.equals(that.pluginContractInstance) : that.pluginContractInstance != null) {
-            return false;
-        }
         if (pluginContractItem != null ? !pluginContractItem.equals(that.pluginContractItem) : that.pluginContractItem != null) {
             return false;
         }
@@ -232,8 +211,7 @@ public class PluginContractInstanceItem extends GenericModel<PluginContractInsta
 
     @Override
     public int hashCode() {
-        int result = pluginContractInstance != null ? pluginContractInstance.hashCode() : 0;
-        result = 31 * result + (pluginContractItem != null ? pluginContractItem.hashCode() : 0);
+        int result = pluginContractItem != null ? pluginContractItem.hashCode() : 0;
         result = 31 * result + (parentPluginContractItem != null ? parentPluginContractItem.hashCode() : 0);
         result = 31 * result + (inMessageSchema != null ? inMessageSchema.hashCode() : 0);
         result = 31 * result + (outMessageSchema != null ? outMessageSchema.hashCode() : 0);
@@ -244,7 +222,6 @@ public class PluginContractInstanceItem extends GenericModel<PluginContractInsta
     public String toString() {
         final StringBuilder sb = new StringBuilder("PluginContractInstanceItem{");
         sb.append("id=").append(id);
-        sb.append(", pluginContractInstance=").append(pluginContractInstance);
         sb.append(", pluginContractItem=").append(pluginContractItem);
         sb.append(", parentPluginContractItem=").append(parentPluginContractItem);
         sb.append(", pluginContractItems=").append(pluginContractItems);

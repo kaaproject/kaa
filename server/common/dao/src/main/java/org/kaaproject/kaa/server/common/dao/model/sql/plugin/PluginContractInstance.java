@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 CyberVision, Inc.
+ * Copyright 2015-2016 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,12 +32,11 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_INSTANCE_ITEM_PLUGIN_CONTRACT_INSTANCE_FK;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_INSTANCE_ITEM_PLUGIN_CONTRACT_INSTANCE_ID;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_INSTANCE_PLUGIN_CONTRACT_FK;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_INSTANCE_PLUGIN_CONTRACT_ID;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_INSTANCE_PLUGIN_INSTANCE_FK;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_INSTANCE_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_INSTANCE_TABLE_NAME;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_INSTANCE_PLUGIN_ID;
 
 @Entity
 @Table(name = PLUGIN_CONTRACT_INSTANCE_TABLE_NAME)
@@ -50,12 +49,9 @@ public class PluginContractInstance extends GenericModel<PluginContractInstanceD
             foreignKey = @ForeignKey(name = PLUGIN_CONTRACT_INSTANCE_PLUGIN_CONTRACT_FK))
     private PluginContract pluginContract;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = PLUGIN_INSTANCE_PLUGIN_ID,
-            foreignKey = @ForeignKey(name = PLUGIN_CONTRACT_INSTANCE_PLUGIN_INSTANCE_FK))
-    private PluginInstance pluginInstance;
-
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = PLUGIN_CONTRACT_INSTANCE_PROPERTY, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = PLUGIN_CONTRACT_INSTANCE_ITEM_PLUGIN_CONTRACT_INSTANCE_ID,
+            foreignKey = @ForeignKey(name = PLUGIN_CONTRACT_INSTANCE_ITEM_PLUGIN_CONTRACT_INSTANCE_FK))
     private Set<PluginContractInstanceItem> pluginContractInstanceItems = new HashSet<>();
 
     public PluginContract getPluginContract() {
@@ -88,14 +84,6 @@ public class PluginContractInstance extends GenericModel<PluginContractInstanceD
                 pluginContractInstanceItems.add(new PluginContractInstanceItem(instanceItemDto));
             }
         }
-    }
-
-    public PluginInstance getPluginInstance() {
-        return pluginInstance;
-    }
-
-    public void setPluginInstance(PluginInstance pluginInstance) {
-        this.pluginInstance = pluginInstance;
     }
 
     @Override
@@ -142,9 +130,6 @@ public class PluginContractInstance extends GenericModel<PluginContractInstanceD
         if (pluginContract != null ? !pluginContract.equals(that.pluginContract) : that.pluginContract != null) {
             return false;
         }
-        if (pluginInstance != null ? !pluginInstance.equals(that.pluginInstance) : that.pluginInstance != null) {
-            return false;
-        }
 
         return true;
     }
@@ -152,7 +137,6 @@ public class PluginContractInstance extends GenericModel<PluginContractInstanceD
     @Override
     public int hashCode() {
         int result = pluginContract != null ? pluginContract.hashCode() : 0;
-        result = 31 * result + (pluginInstance != null ? pluginInstance.hashCode() : 0);
         return result;
     }
 }

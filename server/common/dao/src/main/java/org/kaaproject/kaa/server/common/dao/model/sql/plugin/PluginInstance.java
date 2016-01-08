@@ -20,6 +20,7 @@ import org.kaaproject.kaa.common.dto.plugin.PluginContractInstanceDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginInstanceDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginInstanceState;
+import org.kaaproject.kaa.server.common.dao.DaoConstants;
 import org.kaaproject.kaa.server.common.dao.model.sql.GenericModel;
 import org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils;
 
@@ -40,9 +41,10 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_INSTANCE_PLUGIN_INSTANCE_FK;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_INSTANCE_PLUGIN_INSTANCE_ID;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_INSTANCE_CONF_DATA;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_INSTANCE_NAME;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_INSTANCE_PLUGIN_CONTRACT_INSTANCE;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_INSTANCE_PLUGIN_FK;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_INSTANCE_PLUGIN_ID;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_INSTANCE_PLUGIN_ID_NAME_CONSTRAINT_NAME;
@@ -73,7 +75,8 @@ public class PluginInstance extends GenericModel<PluginInstanceDto> implements S
     @JoinColumn(name = PLUGIN_INSTANCE_PLUGIN_ID, foreignKey = @ForeignKey(name = PLUGIN_INSTANCE_PLUGIN_FK))
     private Plugin plugin;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = PLUGIN_INSTANCE_PLUGIN_CONTRACT_INSTANCE)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = PLUGIN_CONTRACT_INSTANCE_PLUGIN_INSTANCE_ID, foreignKey = @ForeignKey(name = PLUGIN_CONTRACT_INSTANCE_PLUGIN_INSTANCE_FK))
     private Set<PluginContractInstance> pluginContractInstances = new HashSet<>();
 
     public PluginInstance() {

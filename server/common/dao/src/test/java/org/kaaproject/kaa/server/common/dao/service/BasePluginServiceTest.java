@@ -18,16 +18,12 @@ package org.kaaproject.kaa.server.common.dao.service;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.kaaproject.kaa.common.dto.plugin.ContractDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginContractDto;
-import org.kaaproject.kaa.common.dto.plugin.PluginContractInstanceDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginInstanceDto;
 import org.kaaproject.kaa.server.common.dao.AbstractTest;
 import org.kaaproject.kaa.server.common.dao.impl.sql.plugin.PluginInstanceTestFactory;
 import org.kaaproject.kaa.server.common.dao.impl.sql.plugin.PluginTestFactory;
-import org.kaaproject.kaa.server.common.dao.model.sql.plugin.PluginContract;
-import org.kaaproject.kaa.server.common.dao.model.sql.plugin.PluginInstance;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.List;

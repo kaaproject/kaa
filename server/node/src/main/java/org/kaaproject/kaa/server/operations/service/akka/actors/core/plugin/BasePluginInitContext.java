@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2015-2016 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,10 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.kaaproject.kaa.server.operations.service.akka.actors.core.plugin;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -55,7 +58,7 @@ public class BasePluginInitContext implements PluginInitContext {
             if (pluginContractDto.getDirection() != null) {
                 builder = builder.withDirection(PluginContractDirection.valueOf(pluginContractDto.getDirection().name()));
             }
-            Map<PluginContractItemDef, PluginContractItemInfo> infoMap = new HashMap<>();
+            Map<PluginContractItemDef, List<PluginContractItemInfo>> infoMap = new HashMap<>();
             for (PluginContractInstanceItemDto itemDto : contractInstanceDto.getItems()) {
                 PluginContractItemDto pluginContractItem = itemDto.getPluginContractItem();
                 ContractItemDto contractItemDto = pluginContractItem.getContractItem();
@@ -78,13 +81,20 @@ public class BasePluginInitContext implements PluginInitContext {
                     // TODO: convert to plain body with all dependencies inline;
                     itemInfoBuilder.withOutMsgSchema(itemDto.getOutMessageSchema().getBody());
                 }
-                infoMap.put(itemDef, itemInfoBuilder.build());
+                List<PluginContractItemInfo> contractItems = infoMap.get(itemDef);
+                if (contractItems == null) {
+                    contractItems = new ArrayList<>();
+                    infoMap.put(itemDef, contractItems);
+                }
+                contractItems.add(itemInfoBuilder.build());
                 builder.withItem(itemDef);
             }
 
             BasePluginContractInstance contractInstance = new BasePluginContractInstance(builder.build());
-            for (Entry<PluginContractItemDef, PluginContractItemInfo> entry : infoMap.entrySet()) {
-                contractInstance.addContractItemInfo(entry.getKey(), entry.getValue());
+            for (Entry<PluginContractItemDef, List<PluginContractItemInfo>> entry : infoMap.entrySet()) {
+                for (PluginContractItemInfo contractItemInfo : entry.getValue()) {
+                    contractInstance.addContractItemInfo(entry.getKey(), contractItemInfo);
+                }
             }
             contracts.add(contractInstance);
         }

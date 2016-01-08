@@ -1,3 +1,19 @@
+/*
+ * Copyright 2015-2016 CyberVision, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.kaaproject.kaa.server.control.service.modularization;
 
 import org.apache.avro.Schema;
@@ -14,6 +30,7 @@ import org.kaaproject.kaa.common.dto.plugin.PluginContractItemDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginInstanceDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginInstanceState;
+import org.kaaproject.kaa.server.plugin.messaging.gen.Configuration;
 import org.kaaproject.kaa.server.plugin.messaging.gen.ItemConfiguration;
 import org.kaaproject.kaa.server.plugin.messaging.gen.test.ClassA;
 import org.kaaproject.kaa.server.plugin.messaging.gen.test.ClassB;
@@ -28,6 +45,8 @@ import java.util.Set;
 public class HardCodedPluginInstanceFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(HardCodedPluginInstanceFactory.class);
+
+    public static final String ENDPOINT_MESSAGING_PLUGIN_INSTANCE_NAME = "Endpoint messaging plugin instance";
 
     private static final GenericAvroConverter<ItemConfiguration>
             METHOD_NAME_CONVERTER = new GenericAvroConverter<>(ItemConfiguration.SCHEMA$);
@@ -49,9 +68,14 @@ public class HardCodedPluginInstanceFactory {
     private static PluginInstanceDto createEndpointMessagingInstance(PluginDto pluginDto) {
         PluginInstanceDto pluginInstanceDto = new PluginInstanceDto();
         pluginInstanceDto.setPluginDefinition(pluginDto);
-        pluginInstanceDto.setName("Endpoint messaging plugin instance");
+        pluginInstanceDto.setName(ENDPOINT_MESSAGING_PLUGIN_INSTANCE_NAME);
         pluginInstanceDto.setState(PluginInstanceState.ACTIVE);
-        pluginInstanceDto.setConfigurationData("Configuration data for endpoint messaging plugin instance");
+        try {
+            Configuration config = new Configuration("org.kaaproject.kaa.client.plugin.messaging");
+            pluginInstanceDto.setConfigurationData(new GenericAvroConverter<Configuration>(Configuration.SCHEMA$).encodeToJson(config));
+        } catch (IOException e) {
+            LOG.error("Unable to set configuration data", e);
+        }
 
         Set<PluginContractInstanceDto> pluginContractInstances = new HashSet<>();
         PluginContractInstanceDto pluginContractInstanceDto = new PluginContractInstanceDto();
@@ -128,6 +152,8 @@ public class HardCodedPluginInstanceFactory {
         // CTL schema version is taken from the corresponding contract
         ctlSchemaInfo.setVersion(contract.getVersion());
         ctlSchemaInfo.setScope(CTLSchemaScopeDto.SYSTEM);
-        return new CTLSchemaDto(ctlSchemaInfo, null);
+        CTLSchemaDto schemaDto = new CTLSchemaDto(ctlSchemaInfo, null);
+        schemaDto.setBody(schema.toString());
+        return schemaDto;
     }
 }
