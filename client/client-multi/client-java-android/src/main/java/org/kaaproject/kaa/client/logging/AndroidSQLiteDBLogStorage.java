@@ -137,7 +137,7 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
                     bucketId = cursor.getInt(0);
                 }
             } catch (SQLiteException e) {
-                Log.e(TAG, "Can't retrieve max bucket ID", e);
+                Log.e(TAG, "Can't retrieve min bucket ID", e);
             } finally {
                 try {
                     tryCloseCursor(cursor);

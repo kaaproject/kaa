@@ -16,6 +16,9 @@
 
 package org.kaaproject.kaa.client.logging;
 
+import org.kaaproject.kaa.client.logging.future.BucketFuture;
+import org.kaaproject.kaa.client.logging.BucketInfo;
+
 /**
  * <p>Interface for a log collector.</p>
  *
@@ -41,5 +44,5 @@ public interface LogCollector extends GenericLogCollector{
      *
      * @param record New log record object
      */
-    void addLogRecord(${log_record_class_package}.${log_record_class} record);
+    BucketFuture<BucketInfo>  addLogRecord(${log_record_class_package}.${log_record_class} record);
 }

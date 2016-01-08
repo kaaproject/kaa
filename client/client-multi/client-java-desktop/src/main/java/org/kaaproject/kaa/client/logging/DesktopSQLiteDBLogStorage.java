@@ -140,20 +140,21 @@ public class DesktopSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
 
             ResultSet resultSet = null;
             LogBlock logBlock = null;
-            PreparedStatement selectBucketWithMaxIdStatement;
+            PreparedStatement selectBucketWithMinIdStatement = null;
             List<LogRecord> logRecords = new LinkedList<>();
             int bucketId = 0;
 
             try {
-                selectBucketWithMaxIdStatement = connection.prepareStatement(PersistentLogStorageConstants.KAA_SELECT_MIN_BUCKET_ID);
-                resultSet = selectBucketWithMaxIdStatement.executeQuery();
+                selectBucketWithMinIdStatement = connection.prepareStatement(PersistentLogStorageConstants.KAA_SELECT_MIN_BUCKET_ID);
+                resultSet = selectBucketWithMinIdStatement.executeQuery();
                 if (resultSet.next()) {
                     bucketId = resultSet.getInt(1);
                 }
             } catch (SQLException e) {
-                LOG.error("Can't retrieve unmarked records from storage", e);
+                LOG.error("Can't retrieve min bucket ID", e);
             } finally {
                 try {
+                    tryCloseStatement(selectBucketWithMinIdStatement);
                     tryCloseResultSet(resultSet);
                 } catch (SQLException e) {
                     LOG.error("Can't close result set", e);
