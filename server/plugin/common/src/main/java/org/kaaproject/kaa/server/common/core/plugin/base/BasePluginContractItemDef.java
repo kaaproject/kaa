@@ -217,4 +217,13 @@ public class BasePluginContractItemDef implements PluginContractItemDef {
         }
         return true;
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("BasePluginContractItemDef{");
+        sb.append("item=").append(item);
+        sb.append(", schema='").append(schema).append('\'');
+        sb.append('}');
+        return sb.toString();
+    }
 }

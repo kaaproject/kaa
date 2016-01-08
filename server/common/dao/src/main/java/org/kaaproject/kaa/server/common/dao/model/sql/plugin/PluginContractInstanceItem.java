@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 CyberVision, Inc.
+ * Copyright 2015-2016 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,9 +15,7 @@
  */
 package org.kaaproject.kaa.server.common.dao.model.sql.plugin;
 
-import org.kaaproject.kaa.common.dto.plugin.ContractItemDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginContractInstanceItemDto;
-import org.kaaproject.kaa.common.dto.plugin.PluginContractItemDto;
 import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.GenericModel;
 import org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils;
@@ -106,7 +104,6 @@ public class PluginContractInstanceItem extends GenericModel<PluginContractInsta
         this.parentPluginContractItem = new PluginContractItem(dto.getParentPluginContractItem());
         this.inMessageSchema = new CTLSchema(dto.getInMessageSchema());
         this.outMessageSchema = new CTLSchema(dto.getOutMessageSchema());
-        this.pluginContractInstance = new PluginContractInstance(dto.getPluginContractInstance());
     }
 
     public PluginContractInstanceItem(Long id) {

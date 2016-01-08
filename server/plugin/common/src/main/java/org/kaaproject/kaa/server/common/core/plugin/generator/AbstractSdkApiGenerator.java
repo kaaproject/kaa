@@ -20,10 +20,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Field;
 import java.text.MessageFormat;
 
+import org.apache.avro.Schema;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
+import org.kaaproject.kaa.common.avro.AvroJsonConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,11 +38,21 @@ public abstract class AbstractSdkApiGenerator<T extends SpecificRecordBase> impl
 
     @Override
     public PluginSDKApiBundle generatePluginSdkApi(PluginSdkApiGenerationContext context) throws SdkApiGenerationException {
-        AvroByteArrayConverter<T> converter = new AvroByteArrayConverter<>(this.getConfigurationClass());
+        AvroJsonConverter<T> converter = null;
         try {
-            T config = converter.fromByteArray(context.getPluginConfigurationData().getBytes());
+            Field schemaField = this.getConfigurationClass().getField("SCHEMA$");
+            converter = new AvroJsonConverter<>((Schema) schemaField.get(null), this.getConfigurationClass());
+        } catch (NoSuchFieldException e) {
+            LOG.error("No SCHEMA$ field present");
+            throw new SdkApiGenerationException("No schema field present", e);
+        } catch (IllegalAccessException e) {
+            LOG.error("Can't access schema field");
+            throw new SdkApiGenerationException(e);
+        }
+        try {
+            T config = converter.decodeJson(context.getPluginConfigurationData());
             LOG.info("Initializing transport {} with {}", this.getClassName(), config);
-            return this.generatePluginSdkApi(new SpecificPluginSdkApiGenerationContext<T>(context, config));
+            return this.generatePluginSdkApi(new SpecificPluginSdkApiGenerationContext<>(context, config));
         } catch (IOException cause) {
             LOG.error(MessageFormat.format("Failed to initialize transport {0}", this.getClassName()), cause);
             throw new SdkApiGenerationException(cause);
