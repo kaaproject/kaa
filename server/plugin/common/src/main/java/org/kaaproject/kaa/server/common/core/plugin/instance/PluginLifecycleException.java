@@ -27,4 +27,8 @@ public class PluginLifecycleException extends Exception {
         super(message);
     }
 
+    public PluginLifecycleException(Throwable cause) {
+        super(cause);
+    }
+
 }

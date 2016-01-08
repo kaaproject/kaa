@@ -4,7 +4,7 @@
     "namespace": "org.kaaproject.kaa.server.plugin.rest.gen",
     "fields": [
         {
-            "name": "requestMapping",
+            "name": "path",
             "type": {
                 "type": "string",
                 "avro.java.string": "String"
@@ -22,6 +22,7 @@
                     "DELETE"
                 ]
             },
+            "default": "GET",
             "by_default": "GET"
         },
         {
@@ -41,7 +42,7 @@
                                 }
                             },
                             {
-                                "name": "avroSchemaField",
+                                "name": "avroSchemaMapping",
                                 "type": {
                                     "type": "string",
                                     "avro.java.string": "String"
@@ -54,13 +55,13 @@
             ]
         },
         {
-            "name": "responseMappings",
+            "name": "httpResponseMappings",
             "type": [
                 {
                     "type": "array",
                     "items": {
                         "type": "record",
-                        "name": "ResponseMapping",
+                        "name": "HttpResponseMapping",
                         "fields": [
                             {
                                 "name": "responseField",

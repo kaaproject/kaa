@@ -21,7 +21,6 @@ import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.server.NetworkListener;
 import org.glassfish.grizzly.http.server.Request;
 import org.glassfish.grizzly.http.server.Response;
-import org.kaaproject.kaa.server.plugin.rest.gen.HttpSchemaType;
 import org.kaaproject.kaa.server.plugin.rest.gen.KaaRestPluginConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,12 +33,6 @@ public class PluginHttpServer {
 
     public void initServer(KaaRestPluginConfig config) {
         try {
-
-            if (HttpSchemaType.HTTPS.equals(config.getHttpSchema())) {
-
-            } else {
-
-            }
 
             httpServer = new HttpServer();
             httpServer.addListener(new NetworkListener("rest", config.getHost(), config.getPort()));

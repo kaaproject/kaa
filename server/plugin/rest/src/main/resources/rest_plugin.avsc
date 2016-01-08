@@ -13,6 +13,7 @@
                     "HTTPS"
                 ]
             },
+            "default": "HTTP",
             "by_default": "HTTP"
         },
         {

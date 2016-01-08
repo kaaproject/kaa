@@ -6,8 +6,8 @@
 package org.kaaproject.kaa.server.plugin.rest.gen;  
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
-public class ResponseMapping extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"ResponseMapping\",\"namespace\":\"org.kaaproject.kaa.server.plugin.rest.gen\",\"fields\":[{\"name\":\"responseField\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"avroSchemaField\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}]}");
+public class HttpResponseMapping extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"HttpResponseMapping\",\"namespace\":\"org.kaaproject.kaa.server.plugin.rest.gen\",\"fields\":[{\"name\":\"responseField\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"avroSchemaField\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
    private java.lang.String responseField;
    private java.lang.String avroSchemaField;
@@ -17,12 +17,12 @@ public class ResponseMapping extends org.apache.avro.specific.SpecificRecordBase
    * to their default values from the schema.  If that is desired then
    * one should use {@link \#newBuilder()}. 
    */
-  public ResponseMapping() {}
+  public HttpResponseMapping() {}
 
   /**
    * All-args constructor.
    */
-  public ResponseMapping(java.lang.String responseField, java.lang.String avroSchemaField) {
+  public HttpResponseMapping(java.lang.String responseField, java.lang.String avroSchemaField) {
     this.responseField = responseField;
     this.avroSchemaField = avroSchemaField;
   }
@@ -76,37 +76,37 @@ public class ResponseMapping extends org.apache.avro.specific.SpecificRecordBase
     this.avroSchemaField = value;
   }
 
-  /** Creates a new ResponseMapping RecordBuilder */
-  public static org.kaaproject.kaa.server.plugin.rest.gen.ResponseMapping.Builder newBuilder() {
-    return new org.kaaproject.kaa.server.plugin.rest.gen.ResponseMapping.Builder();
+  /** Creates a new HttpResponseMapping RecordBuilder */
+  public static org.kaaproject.kaa.server.plugin.rest.gen.HttpResponseMapping.Builder newBuilder() {
+    return new org.kaaproject.kaa.server.plugin.rest.gen.HttpResponseMapping.Builder();
   }
   
-  /** Creates a new ResponseMapping RecordBuilder by copying an existing Builder */
-  public static org.kaaproject.kaa.server.plugin.rest.gen.ResponseMapping.Builder newBuilder(org.kaaproject.kaa.server.plugin.rest.gen.ResponseMapping.Builder other) {
-    return new org.kaaproject.kaa.server.plugin.rest.gen.ResponseMapping.Builder(other);
+  /** Creates a new HttpResponseMapping RecordBuilder by copying an existing Builder */
+  public static org.kaaproject.kaa.server.plugin.rest.gen.HttpResponseMapping.Builder newBuilder(org.kaaproject.kaa.server.plugin.rest.gen.HttpResponseMapping.Builder other) {
+    return new org.kaaproject.kaa.server.plugin.rest.gen.HttpResponseMapping.Builder(other);
   }
   
-  /** Creates a new ResponseMapping RecordBuilder by copying an existing ResponseMapping instance */
-  public static org.kaaproject.kaa.server.plugin.rest.gen.ResponseMapping.Builder newBuilder(org.kaaproject.kaa.server.plugin.rest.gen.ResponseMapping other) {
-    return new org.kaaproject.kaa.server.plugin.rest.gen.ResponseMapping.Builder(other);
+  /** Creates a new HttpResponseMapping RecordBuilder by copying an existing HttpResponseMapping instance */
+  public static org.kaaproject.kaa.server.plugin.rest.gen.HttpResponseMapping.Builder newBuilder(org.kaaproject.kaa.server.plugin.rest.gen.HttpResponseMapping other) {
+    return new org.kaaproject.kaa.server.plugin.rest.gen.HttpResponseMapping.Builder(other);
   }
   
   /**
-   * RecordBuilder for ResponseMapping instances.
+   * RecordBuilder for HttpResponseMapping instances.
    */
-  public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<ResponseMapping>
-    implements org.apache.avro.data.RecordBuilder<ResponseMapping> {
+  public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<HttpResponseMapping>
+    implements org.apache.avro.data.RecordBuilder<HttpResponseMapping> {
 
     private java.lang.String responseField;
     private java.lang.String avroSchemaField;
 
     /** Creates a new Builder */
     private Builder() {
-      super(org.kaaproject.kaa.server.plugin.rest.gen.ResponseMapping.SCHEMA$);
+      super(org.kaaproject.kaa.server.plugin.rest.gen.HttpResponseMapping.SCHEMA$);
     }
     
     /** Creates a Builder by copying an existing Builder */
-    private Builder(org.kaaproject.kaa.server.plugin.rest.gen.ResponseMapping.Builder other) {
+    private Builder(org.kaaproject.kaa.server.plugin.rest.gen.HttpResponseMapping.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.responseField)) {
         this.responseField = data().deepCopy(fields()[0].schema(), other.responseField);
@@ -118,9 +118,9 @@ public class ResponseMapping extends org.apache.avro.specific.SpecificRecordBase
       }
     }
     
-    /** Creates a Builder by copying an existing ResponseMapping instance */
-    private Builder(org.kaaproject.kaa.server.plugin.rest.gen.ResponseMapping other) {
-            super(org.kaaproject.kaa.server.plugin.rest.gen.ResponseMapping.SCHEMA$);
+    /** Creates a Builder by copying an existing HttpResponseMapping instance */
+    private Builder(org.kaaproject.kaa.server.plugin.rest.gen.HttpResponseMapping other) {
+            super(org.kaaproject.kaa.server.plugin.rest.gen.HttpResponseMapping.SCHEMA$);
       if (isValidValue(fields()[0], other.responseField)) {
         this.responseField = data().deepCopy(fields()[0].schema(), other.responseField);
         fieldSetFlags()[0] = true;
@@ -137,7 +137,7 @@ public class ResponseMapping extends org.apache.avro.specific.SpecificRecordBase
     }
     
     /** Sets the value of the 'responseField' field */
-    public org.kaaproject.kaa.server.plugin.rest.gen.ResponseMapping.Builder setResponseField(java.lang.String value) {
+    public org.kaaproject.kaa.server.plugin.rest.gen.HttpResponseMapping.Builder setResponseField(java.lang.String value) {
       validate(fields()[0], value);
       this.responseField = value;
       fieldSetFlags()[0] = true;
@@ -150,7 +150,7 @@ public class ResponseMapping extends org.apache.avro.specific.SpecificRecordBase
     }
     
     /** Clears the value of the 'responseField' field */
-    public org.kaaproject.kaa.server.plugin.rest.gen.ResponseMapping.Builder clearResponseField() {
+    public org.kaaproject.kaa.server.plugin.rest.gen.HttpResponseMapping.Builder clearResponseField() {
       responseField = null;
       fieldSetFlags()[0] = false;
       return this;
@@ -162,7 +162,7 @@ public class ResponseMapping extends org.apache.avro.specific.SpecificRecordBase
     }
     
     /** Sets the value of the 'avroSchemaField' field */
-    public org.kaaproject.kaa.server.plugin.rest.gen.ResponseMapping.Builder setAvroSchemaField(java.lang.String value) {
+    public org.kaaproject.kaa.server.plugin.rest.gen.HttpResponseMapping.Builder setAvroSchemaField(java.lang.String value) {
       validate(fields()[1], value);
       this.avroSchemaField = value;
       fieldSetFlags()[1] = true;
@@ -175,16 +175,16 @@ public class ResponseMapping extends org.apache.avro.specific.SpecificRecordBase
     }
     
     /** Clears the value of the 'avroSchemaField' field */
-    public org.kaaproject.kaa.server.plugin.rest.gen.ResponseMapping.Builder clearAvroSchemaField() {
+    public org.kaaproject.kaa.server.plugin.rest.gen.HttpResponseMapping.Builder clearAvroSchemaField() {
       avroSchemaField = null;
       fieldSetFlags()[1] = false;
       return this;
     }
 
     @Override
-    public ResponseMapping build() {
+    public HttpResponseMapping build() {
       try {
-        ResponseMapping record = new ResponseMapping();
+        HttpResponseMapping record = new HttpResponseMapping();
         record.responseField = fieldSetFlags()[0] ? this.responseField : (java.lang.String) defaultValue(fields()[0]);
         record.avroSchemaField = fieldSetFlags()[1] ? this.avroSchemaField : (java.lang.String) defaultValue(fields()[1]);
         return record;

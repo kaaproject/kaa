@@ -7,7 +7,7 @@ package org.kaaproject.kaa.server.plugin.rest.gen;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class KaaRestPluginConfig extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"KaaRestPluginConfig\",\"namespace\":\"org.kaaproject.kaa.server.plugin.rest.gen\",\"fields\":[{\"name\":\"protocol\",\"type\":{\"type\":\"enum\",\"name\":\"Protocol\",\"symbols\":[\"HTTP\",\"HTTPS\"]},\"by_default\":\"HTTP\"},{\"name\":\"host\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"port\",\"type\":\"int\"}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"KaaRestPluginConfig\",\"namespace\":\"org.kaaproject.kaa.server.plugin.rest.gen\",\"fields\":[{\"name\":\"protocol\",\"type\":{\"type\":\"enum\",\"name\":\"Protocol\",\"symbols\":[\"HTTP\",\"HTTPS\"]},\"default\":\"HTTP\",\"by_default\":\"HTTP\"},{\"name\":\"host\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"port\",\"type\":\"int\"}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
    private org.kaaproject.kaa.server.plugin.rest.gen.Protocol protocol;
    private java.lang.String host;

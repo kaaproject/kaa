@@ -7,12 +7,12 @@ package org.kaaproject.kaa.server.plugin.rest.gen;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class KaaRestPluginItemConfig extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"KaaRestPluginItemConfig\",\"namespace\":\"org.kaaproject.kaa.server.plugin.rest.gen\",\"fields\":[{\"name\":\"requestMapping\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"httpRequestMethod\",\"type\":{\"type\":\"enum\",\"name\":\"HttpRequestMethod\",\"symbols\":[\"GET\",\"POST\",\"PUT\",\"DELETE\"]},\"by_default\":\"GET\"},{\"name\":\"httpRequestParams\",\"type\":[{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"HttpRequestParam\",\"fields\":[{\"name\":\"name\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"avroSchemaField\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}]}},\"null\"]},{\"name\":\"responseMappings\",\"type\":[{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"ResponseMapping\",\"fields\":[{\"name\":\"responseField\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"avroSchemaField\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}]}},\"null\"]}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"KaaRestPluginItemConfig\",\"namespace\":\"org.kaaproject.kaa.server.plugin.rest.gen\",\"fields\":[{\"name\":\"path\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"httpRequestMethod\",\"type\":{\"type\":\"enum\",\"name\":\"HttpRequestMethod\",\"symbols\":[\"GET\",\"POST\",\"PUT\",\"DELETE\"]},\"default\":\"GET\",\"by_default\":\"GET\"},{\"name\":\"httpRequestParams\",\"type\":[{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"HttpRequestParam\",\"fields\":[{\"name\":\"name\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"avroSchemaMapping\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}]}},\"null\"]},{\"name\":\"httpResponseMappings\",\"type\":[{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"HttpResponseMapping\",\"fields\":[{\"name\":\"responseField\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"avroSchemaField\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}]}},\"null\"]}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
-   private java.lang.String requestMapping;
+   private java.lang.String path;
    private org.kaaproject.kaa.server.plugin.rest.gen.HttpRequestMethod httpRequestMethod;
    private java.util.List<org.kaaproject.kaa.server.plugin.rest.gen.HttpRequestParam> httpRequestParams;
-   private java.util.List<org.kaaproject.kaa.server.plugin.rest.gen.ResponseMapping> responseMappings;
+   private java.util.List<org.kaaproject.kaa.server.plugin.rest.gen.HttpResponseMapping> httpResponseMappings;
 
   /**
    * Default constructor.  Note that this does not initialize fields
@@ -24,21 +24,21 @@ public class KaaRestPluginItemConfig extends org.apache.avro.specific.SpecificRe
   /**
    * All-args constructor.
    */
-  public KaaRestPluginItemConfig(java.lang.String requestMapping, org.kaaproject.kaa.server.plugin.rest.gen.HttpRequestMethod httpRequestMethod, java.util.List<org.kaaproject.kaa.server.plugin.rest.gen.HttpRequestParam> httpRequestParams, java.util.List<org.kaaproject.kaa.server.plugin.rest.gen.ResponseMapping> responseMappings) {
-    this.requestMapping = requestMapping;
+  public KaaRestPluginItemConfig(java.lang.String path, org.kaaproject.kaa.server.plugin.rest.gen.HttpRequestMethod httpRequestMethod, java.util.List<org.kaaproject.kaa.server.plugin.rest.gen.HttpRequestParam> httpRequestParams, java.util.List<org.kaaproject.kaa.server.plugin.rest.gen.HttpResponseMapping> httpResponseMappings) {
+    this.path = path;
     this.httpRequestMethod = httpRequestMethod;
     this.httpRequestParams = httpRequestParams;
-    this.responseMappings = responseMappings;
+    this.httpResponseMappings = httpResponseMappings;
   }
 
   public org.apache.avro.Schema getSchema() { return SCHEMA$; }
   // Used by DatumWriter.  Applications should not call. 
   public java.lang.Object get(int field$) {
     switch (field$) {
-    case 0: return requestMapping;
+    case 0: return path;
     case 1: return httpRequestMethod;
     case 2: return httpRequestParams;
-    case 3: return responseMappings;
+    case 3: return httpResponseMappings;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -46,27 +46,27 @@ public class KaaRestPluginItemConfig extends org.apache.avro.specific.SpecificRe
   @SuppressWarnings(value="unchecked")
   public void put(int field$, java.lang.Object value$) {
     switch (field$) {
-    case 0: requestMapping = (java.lang.String)value$; break;
+    case 0: path = (java.lang.String)value$; break;
     case 1: httpRequestMethod = (org.kaaproject.kaa.server.plugin.rest.gen.HttpRequestMethod)value$; break;
     case 2: httpRequestParams = (java.util.List<org.kaaproject.kaa.server.plugin.rest.gen.HttpRequestParam>)value$; break;
-    case 3: responseMappings = (java.util.List<org.kaaproject.kaa.server.plugin.rest.gen.ResponseMapping>)value$; break;
+    case 3: httpResponseMappings = (java.util.List<org.kaaproject.kaa.server.plugin.rest.gen.HttpResponseMapping>)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
 
   /**
-   * Gets the value of the 'requestMapping' field.
+   * Gets the value of the 'path' field.
    */
-  public java.lang.String getRequestMapping() {
-    return requestMapping;
+  public java.lang.String getPath() {
+    return path;
   }
 
   /**
-   * Sets the value of the 'requestMapping' field.
+   * Sets the value of the 'path' field.
    * @param value the value to set.
    */
-  public void setRequestMapping(java.lang.String value) {
-    this.requestMapping = value;
+  public void setPath(java.lang.String value) {
+    this.path = value;
   }
 
   /**
@@ -100,18 +100,18 @@ public class KaaRestPluginItemConfig extends org.apache.avro.specific.SpecificRe
   }
 
   /**
-   * Gets the value of the 'responseMappings' field.
+   * Gets the value of the 'httpResponseMappings' field.
    */
-  public java.util.List<org.kaaproject.kaa.server.plugin.rest.gen.ResponseMapping> getResponseMappings() {
-    return responseMappings;
+  public java.util.List<org.kaaproject.kaa.server.plugin.rest.gen.HttpResponseMapping> getHttpResponseMappings() {
+    return httpResponseMappings;
   }
 
   /**
-   * Sets the value of the 'responseMappings' field.
+   * Sets the value of the 'httpResponseMappings' field.
    * @param value the value to set.
    */
-  public void setResponseMappings(java.util.List<org.kaaproject.kaa.server.plugin.rest.gen.ResponseMapping> value) {
-    this.responseMappings = value;
+  public void setHttpResponseMappings(java.util.List<org.kaaproject.kaa.server.plugin.rest.gen.HttpResponseMapping> value) {
+    this.httpResponseMappings = value;
   }
 
   /** Creates a new KaaRestPluginItemConfig RecordBuilder */
@@ -135,10 +135,10 @@ public class KaaRestPluginItemConfig extends org.apache.avro.specific.SpecificRe
   public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<KaaRestPluginItemConfig>
     implements org.apache.avro.data.RecordBuilder<KaaRestPluginItemConfig> {
 
-    private java.lang.String requestMapping;
+    private java.lang.String path;
     private org.kaaproject.kaa.server.plugin.rest.gen.HttpRequestMethod httpRequestMethod;
     private java.util.List<org.kaaproject.kaa.server.plugin.rest.gen.HttpRequestParam> httpRequestParams;
-    private java.util.List<org.kaaproject.kaa.server.plugin.rest.gen.ResponseMapping> responseMappings;
+    private java.util.List<org.kaaproject.kaa.server.plugin.rest.gen.HttpResponseMapping> httpResponseMappings;
 
     /** Creates a new Builder */
     private Builder() {
@@ -148,8 +148,8 @@ public class KaaRestPluginItemConfig extends org.apache.avro.specific.SpecificRe
     /** Creates a Builder by copying an existing Builder */
     private Builder(org.kaaproject.kaa.server.plugin.rest.gen.KaaRestPluginItemConfig.Builder other) {
       super(other);
-      if (isValidValue(fields()[0], other.requestMapping)) {
-        this.requestMapping = data().deepCopy(fields()[0].schema(), other.requestMapping);
+      if (isValidValue(fields()[0], other.path)) {
+        this.path = data().deepCopy(fields()[0].schema(), other.path);
         fieldSetFlags()[0] = true;
       }
       if (isValidValue(fields()[1], other.httpRequestMethod)) {
@@ -160,8 +160,8 @@ public class KaaRestPluginItemConfig extends org.apache.avro.specific.SpecificRe
         this.httpRequestParams = data().deepCopy(fields()[2].schema(), other.httpRequestParams);
         fieldSetFlags()[2] = true;
       }
-      if (isValidValue(fields()[3], other.responseMappings)) {
-        this.responseMappings = data().deepCopy(fields()[3].schema(), other.responseMappings);
+      if (isValidValue(fields()[3], other.httpResponseMappings)) {
+        this.httpResponseMappings = data().deepCopy(fields()[3].schema(), other.httpResponseMappings);
         fieldSetFlags()[3] = true;
       }
     }
@@ -169,8 +169,8 @@ public class KaaRestPluginItemConfig extends org.apache.avro.specific.SpecificRe
     /** Creates a Builder by copying an existing KaaRestPluginItemConfig instance */
     private Builder(org.kaaproject.kaa.server.plugin.rest.gen.KaaRestPluginItemConfig other) {
             super(org.kaaproject.kaa.server.plugin.rest.gen.KaaRestPluginItemConfig.SCHEMA$);
-      if (isValidValue(fields()[0], other.requestMapping)) {
-        this.requestMapping = data().deepCopy(fields()[0].schema(), other.requestMapping);
+      if (isValidValue(fields()[0], other.path)) {
+        this.path = data().deepCopy(fields()[0].schema(), other.path);
         fieldSetFlags()[0] = true;
       }
       if (isValidValue(fields()[1], other.httpRequestMethod)) {
@@ -181,33 +181,33 @@ public class KaaRestPluginItemConfig extends org.apache.avro.specific.SpecificRe
         this.httpRequestParams = data().deepCopy(fields()[2].schema(), other.httpRequestParams);
         fieldSetFlags()[2] = true;
       }
-      if (isValidValue(fields()[3], other.responseMappings)) {
-        this.responseMappings = data().deepCopy(fields()[3].schema(), other.responseMappings);
+      if (isValidValue(fields()[3], other.httpResponseMappings)) {
+        this.httpResponseMappings = data().deepCopy(fields()[3].schema(), other.httpResponseMappings);
         fieldSetFlags()[3] = true;
       }
     }
 
-    /** Gets the value of the 'requestMapping' field */
-    public java.lang.String getRequestMapping() {
-      return requestMapping;
+    /** Gets the value of the 'path' field */
+    public java.lang.String getPath() {
+      return path;
     }
     
-    /** Sets the value of the 'requestMapping' field */
-    public org.kaaproject.kaa.server.plugin.rest.gen.KaaRestPluginItemConfig.Builder setRequestMapping(java.lang.String value) {
+    /** Sets the value of the 'path' field */
+    public org.kaaproject.kaa.server.plugin.rest.gen.KaaRestPluginItemConfig.Builder setPath(java.lang.String value) {
       validate(fields()[0], value);
-      this.requestMapping = value;
+      this.path = value;
       fieldSetFlags()[0] = true;
       return this; 
     }
     
-    /** Checks whether the 'requestMapping' field has been set */
-    public boolean hasRequestMapping() {
+    /** Checks whether the 'path' field has been set */
+    public boolean hasPath() {
       return fieldSetFlags()[0];
     }
     
-    /** Clears the value of the 'requestMapping' field */
-    public org.kaaproject.kaa.server.plugin.rest.gen.KaaRestPluginItemConfig.Builder clearRequestMapping() {
-      requestMapping = null;
+    /** Clears the value of the 'path' field */
+    public org.kaaproject.kaa.server.plugin.rest.gen.KaaRestPluginItemConfig.Builder clearPath() {
+      path = null;
       fieldSetFlags()[0] = false;
       return this;
     }
@@ -262,27 +262,27 @@ public class KaaRestPluginItemConfig extends org.apache.avro.specific.SpecificRe
       return this;
     }
 
-    /** Gets the value of the 'responseMappings' field */
-    public java.util.List<org.kaaproject.kaa.server.plugin.rest.gen.ResponseMapping> getResponseMappings() {
-      return responseMappings;
+    /** Gets the value of the 'httpResponseMappings' field */
+    public java.util.List<org.kaaproject.kaa.server.plugin.rest.gen.HttpResponseMapping> getHttpResponseMappings() {
+      return httpResponseMappings;
     }
     
-    /** Sets the value of the 'responseMappings' field */
-    public org.kaaproject.kaa.server.plugin.rest.gen.KaaRestPluginItemConfig.Builder setResponseMappings(java.util.List<org.kaaproject.kaa.server.plugin.rest.gen.ResponseMapping> value) {
+    /** Sets the value of the 'httpResponseMappings' field */
+    public org.kaaproject.kaa.server.plugin.rest.gen.KaaRestPluginItemConfig.Builder setHttpResponseMappings(java.util.List<org.kaaproject.kaa.server.plugin.rest.gen.HttpResponseMapping> value) {
       validate(fields()[3], value);
-      this.responseMappings = value;
+      this.httpResponseMappings = value;
       fieldSetFlags()[3] = true;
       return this; 
     }
     
-    /** Checks whether the 'responseMappings' field has been set */
-    public boolean hasResponseMappings() {
+    /** Checks whether the 'httpResponseMappings' field has been set */
+    public boolean hasHttpResponseMappings() {
       return fieldSetFlags()[3];
     }
     
-    /** Clears the value of the 'responseMappings' field */
-    public org.kaaproject.kaa.server.plugin.rest.gen.KaaRestPluginItemConfig.Builder clearResponseMappings() {
-      responseMappings = null;
+    /** Clears the value of the 'httpResponseMappings' field */
+    public org.kaaproject.kaa.server.plugin.rest.gen.KaaRestPluginItemConfig.Builder clearHttpResponseMappings() {
+      httpResponseMappings = null;
       fieldSetFlags()[3] = false;
       return this;
     }
@@ -291,10 +291,10 @@ public class KaaRestPluginItemConfig extends org.apache.avro.specific.SpecificRe
     public KaaRestPluginItemConfig build() {
       try {
         KaaRestPluginItemConfig record = new KaaRestPluginItemConfig();
-        record.requestMapping = fieldSetFlags()[0] ? this.requestMapping : (java.lang.String) defaultValue(fields()[0]);
+        record.path = fieldSetFlags()[0] ? this.path : (java.lang.String) defaultValue(fields()[0]);
         record.httpRequestMethod = fieldSetFlags()[1] ? this.httpRequestMethod : (org.kaaproject.kaa.server.plugin.rest.gen.HttpRequestMethod) defaultValue(fields()[1]);
         record.httpRequestParams = fieldSetFlags()[2] ? this.httpRequestParams : (java.util.List<org.kaaproject.kaa.server.plugin.rest.gen.HttpRequestParam>) defaultValue(fields()[2]);
-        record.responseMappings = fieldSetFlags()[3] ? this.responseMappings : (java.util.List<org.kaaproject.kaa.server.plugin.rest.gen.ResponseMapping>) defaultValue(fields()[3]);
+        record.httpResponseMappings = fieldSetFlags()[3] ? this.httpResponseMappings : (java.util.List<org.kaaproject.kaa.server.plugin.rest.gen.HttpResponseMapping>) defaultValue(fields()[3]);
         return record;
       } catch (Exception e) {
         throw new org.apache.avro.AvroRuntimeException(e);

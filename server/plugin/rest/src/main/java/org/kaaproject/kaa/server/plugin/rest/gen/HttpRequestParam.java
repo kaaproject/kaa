@@ -7,10 +7,10 @@ package org.kaaproject.kaa.server.plugin.rest.gen;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class HttpRequestParam extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"HttpRequestParam\",\"namespace\":\"org.kaaproject.kaa.server.plugin.rest.gen\",\"fields\":[{\"name\":\"name\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"avroSchemaField\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"HttpRequestParam\",\"namespace\":\"org.kaaproject.kaa.server.plugin.rest.gen\",\"fields\":[{\"name\":\"name\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"avroSchemaMapping\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
    private java.lang.String name;
-   private java.lang.String avroSchemaField;
+   private java.lang.String avroSchemaMapping;
 
   /**
    * Default constructor.  Note that this does not initialize fields
@@ -22,9 +22,9 @@ public class HttpRequestParam extends org.apache.avro.specific.SpecificRecordBas
   /**
    * All-args constructor.
    */
-  public HttpRequestParam(java.lang.String name, java.lang.String avroSchemaField) {
+  public HttpRequestParam(java.lang.String name, java.lang.String avroSchemaMapping) {
     this.name = name;
-    this.avroSchemaField = avroSchemaField;
+    this.avroSchemaMapping = avroSchemaMapping;
   }
 
   public org.apache.avro.Schema getSchema() { return SCHEMA$; }
@@ -32,7 +32,7 @@ public class HttpRequestParam extends org.apache.avro.specific.SpecificRecordBas
   public java.lang.Object get(int field$) {
     switch (field$) {
     case 0: return name;
-    case 1: return avroSchemaField;
+    case 1: return avroSchemaMapping;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -41,7 +41,7 @@ public class HttpRequestParam extends org.apache.avro.specific.SpecificRecordBas
   public void put(int field$, java.lang.Object value$) {
     switch (field$) {
     case 0: name = (java.lang.String)value$; break;
-    case 1: avroSchemaField = (java.lang.String)value$; break;
+    case 1: avroSchemaMapping = (java.lang.String)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -62,18 +62,18 @@ public class HttpRequestParam extends org.apache.avro.specific.SpecificRecordBas
   }
 
   /**
-   * Gets the value of the 'avroSchemaField' field.
+   * Gets the value of the 'avroSchemaMapping' field.
    */
-  public java.lang.String getAvroSchemaField() {
-    return avroSchemaField;
+  public java.lang.String getAvroSchemaMapping() {
+    return avroSchemaMapping;
   }
 
   /**
-   * Sets the value of the 'avroSchemaField' field.
+   * Sets the value of the 'avroSchemaMapping' field.
    * @param value the value to set.
    */
-  public void setAvroSchemaField(java.lang.String value) {
-    this.avroSchemaField = value;
+  public void setAvroSchemaMapping(java.lang.String value) {
+    this.avroSchemaMapping = value;
   }
 
   /** Creates a new HttpRequestParam RecordBuilder */
@@ -98,7 +98,7 @@ public class HttpRequestParam extends org.apache.avro.specific.SpecificRecordBas
     implements org.apache.avro.data.RecordBuilder<HttpRequestParam> {
 
     private java.lang.String name;
-    private java.lang.String avroSchemaField;
+    private java.lang.String avroSchemaMapping;
 
     /** Creates a new Builder */
     private Builder() {
@@ -112,8 +112,8 @@ public class HttpRequestParam extends org.apache.avro.specific.SpecificRecordBas
         this.name = data().deepCopy(fields()[0].schema(), other.name);
         fieldSetFlags()[0] = true;
       }
-      if (isValidValue(fields()[1], other.avroSchemaField)) {
-        this.avroSchemaField = data().deepCopy(fields()[1].schema(), other.avroSchemaField);
+      if (isValidValue(fields()[1], other.avroSchemaMapping)) {
+        this.avroSchemaMapping = data().deepCopy(fields()[1].schema(), other.avroSchemaMapping);
         fieldSetFlags()[1] = true;
       }
     }
@@ -125,8 +125,8 @@ public class HttpRequestParam extends org.apache.avro.specific.SpecificRecordBas
         this.name = data().deepCopy(fields()[0].schema(), other.name);
         fieldSetFlags()[0] = true;
       }
-      if (isValidValue(fields()[1], other.avroSchemaField)) {
-        this.avroSchemaField = data().deepCopy(fields()[1].schema(), other.avroSchemaField);
+      if (isValidValue(fields()[1], other.avroSchemaMapping)) {
+        this.avroSchemaMapping = data().deepCopy(fields()[1].schema(), other.avroSchemaMapping);
         fieldSetFlags()[1] = true;
       }
     }
@@ -156,27 +156,27 @@ public class HttpRequestParam extends org.apache.avro.specific.SpecificRecordBas
       return this;
     }
 
-    /** Gets the value of the 'avroSchemaField' field */
-    public java.lang.String getAvroSchemaField() {
-      return avroSchemaField;
+    /** Gets the value of the 'avroSchemaMapping' field */
+    public java.lang.String getAvroSchemaMapping() {
+      return avroSchemaMapping;
     }
     
-    /** Sets the value of the 'avroSchemaField' field */
-    public org.kaaproject.kaa.server.plugin.rest.gen.HttpRequestParam.Builder setAvroSchemaField(java.lang.String value) {
+    /** Sets the value of the 'avroSchemaMapping' field */
+    public org.kaaproject.kaa.server.plugin.rest.gen.HttpRequestParam.Builder setAvroSchemaMapping(java.lang.String value) {
       validate(fields()[1], value);
-      this.avroSchemaField = value;
+      this.avroSchemaMapping = value;
       fieldSetFlags()[1] = true;
       return this; 
     }
     
-    /** Checks whether the 'avroSchemaField' field has been set */
-    public boolean hasAvroSchemaField() {
+    /** Checks whether the 'avroSchemaMapping' field has been set */
+    public boolean hasAvroSchemaMapping() {
       return fieldSetFlags()[1];
     }
     
-    /** Clears the value of the 'avroSchemaField' field */
-    public org.kaaproject.kaa.server.plugin.rest.gen.HttpRequestParam.Builder clearAvroSchemaField() {
-      avroSchemaField = null;
+    /** Clears the value of the 'avroSchemaMapping' field */
+    public org.kaaproject.kaa.server.plugin.rest.gen.HttpRequestParam.Builder clearAvroSchemaMapping() {
+      avroSchemaMapping = null;
       fieldSetFlags()[1] = false;
       return this;
     }
@@ -186,7 +186,7 @@ public class HttpRequestParam extends org.apache.avro.specific.SpecificRecordBas
       try {
         HttpRequestParam record = new HttpRequestParam();
         record.name = fieldSetFlags()[0] ? this.name : (java.lang.String) defaultValue(fields()[0]);
-        record.avroSchemaField = fieldSetFlags()[1] ? this.avroSchemaField : (java.lang.String) defaultValue(fields()[1]);
+        record.avroSchemaMapping = fieldSetFlags()[1] ? this.avroSchemaMapping : (java.lang.String) defaultValue(fields()[1]);
         return record;
       } catch (Exception e) {
         throw new org.apache.avro.AvroRuntimeException(e);
