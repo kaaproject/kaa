@@ -79,7 +79,7 @@ public class Validator {
      * @return <code>true</code> if the argument is not null, <code>false</code> otherwise
      */
     public static boolean isValidObject(HasId object) {
-        return (object != null);
+        return object != null;
     }
 
     /**

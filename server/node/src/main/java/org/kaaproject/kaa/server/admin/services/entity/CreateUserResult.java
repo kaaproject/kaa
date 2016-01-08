@@ -21,7 +21,8 @@ public class CreateUserResult {
     private Long userId;
     private String password;
 
-    public CreateUserResult() {}
+    public CreateUserResult() {
+    }
 
     public CreateUserResult(Long userId, String password) {
         this.userId = userId;

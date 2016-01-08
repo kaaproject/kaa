@@ -131,7 +131,7 @@ public class DefaultEventManager implements EventManager {
                 transport.sync();
             }
         } else {
-            LOG.info("Adding event [eventClassFQN: {}, target: {}] to transaction {}", eventFqn, (target != null ? target : "broadcast"),
+            LOG.info("Adding event [eventClassFQN: {}, target: {}] to transaction {}", eventFqn, target != null ? target : "broadcast",
                     trxId); // NOSONAR
             synchronized (trxGuard) {
                 List<Event> events = transactions.get(trxId);

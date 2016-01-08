@@ -56,6 +56,8 @@ public class SchemaFqnDto extends Fqn implements HasId {
     }
 
     @Override
-    public void setId(String id) {}
+    public void setId(String id) {
+        // Do nothing
+    }
 
 }

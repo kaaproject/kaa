@@ -63,9 +63,11 @@ public class DefaultBootstrapDataProcessor implements KaaDataMultiplexer, KaaDat
 
     @Override
     public void preProcess() {
+        // Do nothing
     }
 
     @Override
     public void postProcess() {
+        // Do nothing
     }
 }

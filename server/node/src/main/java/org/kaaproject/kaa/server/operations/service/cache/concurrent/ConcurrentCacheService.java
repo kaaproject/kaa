@@ -408,6 +408,7 @@ public class ConcurrentCacheService implements CacheService {
     @Override
     @CacheEvict(value = "filterLists", key = "#key")
     public void resetFilters(AppProfileVersionsKey key) {
+        // Do nothing
     }
 
     /*
@@ -859,6 +860,7 @@ public class ConcurrentCacheService implements CacheService {
     @Override
     @CacheEvict(value = "endpointGroups", key = "#key")
     public void resetGroup(String key) {
+        // Do nothing
     }
 
     @Override

@@ -236,13 +236,13 @@ public class Compiler {
         context.put("TypeConverter", TypeConverter.class);
         context.put("namespacePrefix", namespacePrefix);
 
-        StringWriter headerWriter = new StringWriter();
-        engine.getTemplate("union.h.vm").merge(context, headerWriter);
-        appendResult(headerWriter.toString(), true);
+        StringWriter hdrWriter = new StringWriter();
+        engine.getTemplate("union.h.vm").merge(context, hdrWriter);
+        appendResult(hdrWriter.toString(), true);
 
-        StringWriter sourceWriter = new StringWriter();
-        engine.getTemplate("union.c.vm").merge(context, sourceWriter);
-        appendResult(sourceWriter.toString(), false);
+        StringWriter srcWriter = new StringWriter();
+        engine.getTemplate("union.c.vm").merge(context, srcWriter);
+        appendResult(srcWriter.toString(), false);
     }
 
     private void processRecord(Schema schema) {
@@ -253,13 +253,13 @@ public class Compiler {
         context.put("TypeConverter", TypeConverter.class);
         context.put("namespacePrefix", namespacePrefix);
 
-        StringWriter headerWriter = new StringWriter();
-        engine.getTemplate("record.h.vm").merge(context, headerWriter);
-        appendResult(headerWriter.toString(), true);
+        StringWriter hdrWriter = new StringWriter();
+        engine.getTemplate("record.h.vm").merge(context, hdrWriter);
+        appendResult(hdrWriter.toString(), true);
 
-        StringWriter sourceWriter = new StringWriter();
-        engine.getTemplate("record.c.vm").merge(context, sourceWriter);
-        appendResult(sourceWriter.toString(), false);
+        StringWriter srcWriter = new StringWriter();
+        engine.getTemplate("record.c.vm").merge(context, srcWriter);
+        appendResult(srcWriter.toString(), false);
     }
 
     private void processEnum(Schema schema) {

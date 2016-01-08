@@ -46,6 +46,7 @@ public class KaaNodeThriftServiceImpl extends BaseCliThriftService implements Ka
 
     @Override
     protected void initServiceCommands() {
+        // Do nothing
     }
 
     /*

@@ -91,7 +91,7 @@ public class KaaAdminAuthFailureHandler implements AuthenticationFailureHandler 
      * @param exception the exception
      */
     protected final void saveException(HttpServletRequest request, AuthenticationException exception) {
-
+        // Do nothing
     }
 
     /**

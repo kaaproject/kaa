@@ -30,7 +30,8 @@ public class EndpointProfileBodyDto implements Serializable {
     @JsonIgnore
     private String appId;
 
-    public EndpointProfileBodyDto() {}
+    public EndpointProfileBodyDto() {
+    }
 
     public EndpointProfileBodyDto(byte[] endpointKeyHash, String profile, String appId) {
        this.endpointKeyHash = endpointKeyHash;

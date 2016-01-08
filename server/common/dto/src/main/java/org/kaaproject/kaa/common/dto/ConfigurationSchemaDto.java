@@ -57,49 +57,6 @@ public class ConfigurationSchemaDto extends AbstractSchemaDto {
         this.status = status;
     }
 
-//    private ProtocolSchema protocolSchema;
-//    private BaseSchema baseSchema;
-//    private OverrideSchema overrideSchema;
-
-
-//    public ProtocolSchema getProtocolSchema() {
-//        return protocolSchema;
-//    }
-//
-//    public void setProtocolSchema(String protocolSchema) {
-//        this.protocolSchema = new KaaSchemaFactoryImpl().createProtocolSchema(protocolSchema);
-//    }
-//
-//    public void setProtocolSchema(ProtocolSchema protocolSchema) {
-//        this.protocolSchema = protocolSchema;
-//    }
-
-
-
-//    public BaseSchema getBaseSchema() {
-//        return baseSchema;
-//    }
-//
-//    public void setBaseSchema(String baseSchema) {
-//        this.baseSchema = new KaaSchemaFactoryImpl().createBaseSchema(baseSchema);
-//    }
-//
-//    public void setBaseSchema(BaseSchema baseSchema) {
-//        this.baseSchema = baseSchema;
-//    }
-//
-//    public OverrideSchema getOverrideSchema() {
-//        return overrideSchema;
-//    }
-//
-//    public void setOverrideSchema(String overrideSchema) {
-//        this.overrideSchema = new KaaSchemaFactoryImpl().createOverrideSchema(overrideSchema);
-//    }
-//
-//    public void setOverrideSchema(OverrideSchema overrideSchema) {
-//        this.overrideSchema = overrideSchema;
-//    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {

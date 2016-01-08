@@ -28,7 +28,8 @@ public final class NotificationServerSync {
      * to their default values from the schema.  If that is desired then
      * one should use {@link \#newBuilder()}.
      */
-    public NotificationServerSync() {}
+    public NotificationServerSync() {
+    }
 
     /**
      * All-args constructor.

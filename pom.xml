@@ -98,13 +98,13 @@ Copyright 2014-2015 CyberVision, Inc.
         <cassandra.driver.version>2.1.4</cassandra.driver.version>
         <cassandra.driver.mapping>2.1.4</cassandra.driver.mapping>
         <cassandra-unit.version>2.0.2.2</cassandra-unit.version>
-        
+
         <couchbase.client.version>2.1.3</couchbase.client.version>
 
         <sonar.language>java</sonar.language>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
-        <sonar.exclusions>**/gen/**,**/verifiers/**/config/**,**/appenders/**/config/**,**/kaa/schema/base/**,**/kaa.server.admin.client/**</sonar.exclusions>
+        <sonar.exclusions>**/gen/**,**/verifiers/**/config/**,**/appenders/**/config/**,**/kaa/schema/base/**,**/kaa.server.admin.client/**/*.java</sonar.exclusions>
         <sonar.skippedModules>admin-rest-client,client-java-android</sonar.skippedModules>
         <sonar.jacoco.reportPath>${main.dir}/target/jacoco.exec</sonar.jacoco.reportPath>
         <sonar.jacoco.itReportPath>${main.dir}/target/jacoco-it.exec</sonar.jacoco.itReportPath>

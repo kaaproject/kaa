@@ -81,7 +81,8 @@ public class MessagingService {
         this.sendTimeout = sendTimeout;
     }
 
-    public MessagingService() {}
+    public MessagingService() {
+    }
 
     public void init() {
         String sendName = "send-message-call-runner-%d";

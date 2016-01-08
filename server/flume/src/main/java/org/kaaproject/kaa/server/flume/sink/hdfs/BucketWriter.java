@@ -420,7 +420,7 @@ class BucketWriter {
   }
 
   private boolean isBatchComplete() {
-    return (batchCounter == 0);
+    return batchCounter == 0;
   }
 
   private long generateSerial (Event event) {

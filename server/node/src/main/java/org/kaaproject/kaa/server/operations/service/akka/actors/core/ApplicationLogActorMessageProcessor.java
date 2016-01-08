@@ -242,18 +242,22 @@ public class ApplicationLogActorMessageProcessor {
     private static final class VoidCallback implements LogDeliveryCallback {
         @Override
         public void onSuccess() {
+            // Do nothing
         }
 
         @Override
         public void onRemoteError() {
+            // Do nothing
         }
 
         @Override
         public void onInternalError() {
+            // Do nothing
         }
 
         @Override
         public void onConnectionError() {
+            // Do nothing
         }
     }
 

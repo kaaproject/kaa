@@ -314,7 +314,7 @@ public class CSdkGenerator extends SdkGenerator {
         context.put("sdk_token", sdkToken);
         
         context.put("profile_version", profileSchemaVersion);
-        context.put("user_verifier_token", (defaultVerifierToken != null ? defaultVerifierToken : ""));
+        context.put("user_verifier_token", defaultVerifierToken != null ? defaultVerifierToken : "");
         
         context.put("bootstrapNodes", bootstrapNodes);
         context.put("configurationData", defaultConfigurationData);

@@ -102,7 +102,7 @@ public class DefaultEventTransport extends AbstractKaaTransport implements Event
         if (eventManager != null) {
             if (!isEventSNSynchronized && response.getEventSequenceNumberResponse() != null) {
                 int lastSN = response.getEventSequenceNumberResponse().getSeqNum();
-                int expectedSN = (lastSN > 0 ? lastSN + 1 : lastSN);
+                int expectedSN = lastSN > 0 ? lastSN + 1 : lastSN;
 
                 if (startEventSN.get() != expectedSN) {
                     startEventSN.set(expectedSN);

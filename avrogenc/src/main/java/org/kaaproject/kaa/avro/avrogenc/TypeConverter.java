@@ -126,57 +126,57 @@ public class TypeConverter {
 
     public static boolean isAvroPrimitive(Schema schema) {
         Type type = schema.getType();
-        return (type == Type.BOOLEAN || type == Type.INT || type == Type.LONG ||
-                type == Type.ENUM || type == Type.FLOAT || type == Type.DOUBLE);
+        return type == Type.BOOLEAN || type == Type.INT || type == Type.LONG ||
+                type == Type.ENUM || type == Type.FLOAT || type == Type.DOUBLE;
     }
 
     public static boolean isAvroNull(Schema schema) {
-        return (schema.getType() == Type.NULL);
+        return schema.getType() == Type.NULL;
     }
 
     public static boolean isAvroFixed(Schema schema) {
-        return (schema.getType() == Type.FIXED);
+        return schema.getType() == Type.FIXED;
     }
 
     public static boolean isAvroRecord(Schema schema) {
-        return (schema.getType() == Type.RECORD);
+        return schema.getType() == Type.RECORD;
     }
 
     public static boolean isAvroUnion(Schema schema) {
-        return (schema.getType() == Type.UNION);
+        return schema.getType() == Type.UNION;
     }
 
     public static boolean isAvroArray(Schema schema) {
-        return (schema.getType() == Type.ARRAY);
+        return schema.getType() == Type.ARRAY;
     }
 
     public static boolean isAvroEnum(Schema schema) {
-        return (schema.getType() == Type.ENUM);
+        return schema.getType() == Type.ENUM;
     }
 
     public static boolean isAvroString(Schema schema) {
-        return (schema.getType() == Type.STRING);
+        return schema.getType() == Type.STRING;
     }
 
     public static boolean isAvroBytes(Schema schema) {
-        return (schema.getType() == Type.BYTES);
+        return schema.getType() == Type.BYTES;
     }
 
     public static boolean isAvroFloat(Schema schema) {
-        return (schema.getType() == Type.FLOAT);
+        return schema.getType() == Type.FLOAT;
     }
 
     public static boolean isAvroDouble(Schema schema) {
-        return (schema.getType() == Type.DOUBLE);
+        return schema.getType() == Type.DOUBLE;
     }
 
     public static boolean isTypeOut(Schema schema) {
         String prop = schema.getProp(DIRECTION_FIELD);
-        return (prop == null || prop.equalsIgnoreCase("out"));
+        return prop == null || prop.equalsIgnoreCase("out");
     }
 
     public static boolean isTypeIn(Schema schema) {
         String prop = schema.getProp(DIRECTION_FIELD);
-        return (prop == null || prop.equalsIgnoreCase("in"));
+        return prop == null || prop.equalsIgnoreCase("in");
     }
 }

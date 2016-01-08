@@ -58,14 +58,14 @@ public class GenerationContext {
     }
 
     public boolean isTypeOut() {
-        return (direction != DirectionType.IN);
+        return direction != DirectionType.IN;
     }
 
     public boolean isTypeIn() {
-        return (direction != DirectionType.OUT);
+        return direction != DirectionType.OUT;
     }
 
     public boolean isTypeInOut() {
-        return (direction == DirectionType.INOUT);
+        return direction == DirectionType.INOUT;
     }
 }

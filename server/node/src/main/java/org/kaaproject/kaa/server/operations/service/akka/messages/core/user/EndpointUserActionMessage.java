@@ -1,6 +1,3 @@
-package org.kaaproject.kaa.server.operations.service.akka.messages.core.user;
-
-import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 /*
  * Copyright 2014 CyberVision, Inc.
  *
@@ -16,6 +13,11 @@ import org.kaaproject.kaa.common.hash.EndpointObjectHash;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package org.kaaproject.kaa.server.operations.service.akka.messages.core.user;
+
+import org.kaaproject.kaa.common.hash.EndpointObjectHash;
+
 public abstract class EndpointUserActionMessage implements UserAwareMessage {
 
     private final EndpointObjectHash key;

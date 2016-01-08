@@ -41,6 +41,7 @@ public class PingRequest extends MqttFrame {
      */
     @Override
     protected void pack() {
+        // Do nothing
     }
 
     /* (non-Javadoc)
@@ -48,7 +49,7 @@ public class PingRequest extends MqttFrame {
      */
     @Override
     protected void decode() throws KaaTcpProtocolException {
-
+        // Do nothing
     }
 
     /* (non-Javadoc)

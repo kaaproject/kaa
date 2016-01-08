@@ -1,12 +1,3 @@
-package org.kaaproject.kaa.server.transports.http.transport.commands;
-
-import io.netty.handler.codec.http.HttpRequest;
-import io.netty.handler.codec.http.HttpResponse;
-
-import org.kaaproject.kaa.common.endpoint.CommonEPConstans;
-import org.kaaproject.kaa.server.common.server.KaaCommandProcessor;
-import org.kaaproject.kaa.server.common.server.KaaCommandProcessorFactory;
-
 /*
  * Copyright 2014 CyberVision, Inc.
  *
@@ -22,6 +13,16 @@ import org.kaaproject.kaa.server.common.server.KaaCommandProcessorFactory;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package org.kaaproject.kaa.server.transports.http.transport.commands;
+
+import io.netty.handler.codec.http.HttpRequest;
+import io.netty.handler.codec.http.HttpResponse;
+
+import org.kaaproject.kaa.common.endpoint.CommonEPConstans;
+import org.kaaproject.kaa.server.common.server.KaaCommandProcessor;
+import org.kaaproject.kaa.server.common.server.KaaCommandProcessorFactory;
+
 public class SyncCommandFactory implements KaaCommandProcessorFactory<HttpRequest, HttpResponse>{
 
     @Override

@@ -62,6 +62,6 @@ public class StyleUtils {
 
     public static String removePackageName(String fullClassName) {
         int index = fullClassName.lastIndexOf('.');
-        return (index == -1 ? fullClassName : fullClassName.substring(index + 1));
+        return index == -1 ? fullClassName : fullClassName.substring(index + 1);
     }
 }

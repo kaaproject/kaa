@@ -87,14 +87,6 @@ public abstract class AbstractListActivity<T extends HasId, P extends TreePlace>
     }
 
     /**
-     * Ask user before stopping this activity
-     */
-//    @Override
-//    public String mayStop() {
-//        return "Please hold on. This activity is stopping.";
-//    }
-
-    /**
      * Navigate to a new Place in the browser
      */
     public void goTo(Place place) {

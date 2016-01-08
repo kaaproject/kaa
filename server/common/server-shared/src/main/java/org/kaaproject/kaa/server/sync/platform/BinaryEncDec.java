@@ -297,7 +297,7 @@ public class BinaryEncDec implements PlatformEncDec {
 
     private void encode(GrowingByteBuffer buf, ProfileServerSync profileSync) {
         buildExtensionHeader(buf, PROFILE_EXTENSION_ID, NOTHING,
-                             (profileSync.getResponseStatus() == SyncResponseStatus.RESYNC ? RESYNC : NOTHING), 0);
+                             profileSync.getResponseStatus() == SyncResponseStatus.RESYNC ? RESYNC : NOTHING, 0);
     }
 
     private void encode(GrowingByteBuffer buf, UserServerSync userSync) {

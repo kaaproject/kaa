@@ -80,8 +80,8 @@ public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto,
             registrations.add(detailsView.getCreateNewSchemaVersionButton().addClickHandler(new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent event) {
-                    Integer version = detailsView.getVersion().getValue();
-                    CtlSchemaPlace newPlace = new CtlSchemaPlace(place.getFqn(), version, true); 
+                    Integer CTLSchemaVersion = detailsView.getVersion().getValue();
+                    CtlSchemaPlace newPlace = new CtlSchemaPlace(place.getFqn(), CTLSchemaVersion, true);
                     newPlace.setPreviousPlace(place);
                     goTo(newPlace);
                 }
@@ -89,7 +89,7 @@ public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto,
             registrations.add(detailsView.getDeleteSchemaVersionButton().addClickHandler(new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent event) {
-                    final Integer version = detailsView.getVersion().getValue();
+                    final Integer CTLSchemaVersion = detailsView.getVersion().getValue();
                     final String fqn = place.getFqn();
                     ConfirmDialog.ConfirmListener listener = new ConfirmDialog.ConfirmListener() {
                         @Override
@@ -97,11 +97,11 @@ public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto,
 
                         @Override
                         public void onYes() {
-                            KaaAdmin.getDataSource().deleteCTLSchema(fqn, version, new BusyAsyncCallback<Void>() {
+                            KaaAdmin.getDataSource().deleteCTLSchema(fqn, CTLSchemaVersion, new BusyAsyncCallback<Void>() {
                                 @Override
                                 public void onSuccessImpl(Void result) {
                                     List<Integer> versions = entity.getAvailableVersions();
-                                    versions.remove(version);
+                                    versions.remove(CTLSchemaVersion);
                                     if (versions.isEmpty()) {
                                         goTo(place.getPreviousPlace());
                                     } else {
@@ -117,7 +117,7 @@ public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto,
                     };
                     
                     ConfirmDialog dialog = new ConfirmDialog(listener, Utils.messages.deleteCommonTypeVersionTitle(), 
-                            Utils.messages.deleteCommonTypeVersionQuestion(fqn, version.toString()));
+                            Utils.messages.deleteCommonTypeVersionQuestion(fqn, CTLSchemaVersion.toString()));
                     dialog.center();
                     dialog.show();
                 }
