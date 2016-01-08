@@ -35,6 +35,7 @@ import org.kaaproject.kaa.server.common.dao.model.sql.plugin.Plugin;
 import org.kaaproject.kaa.server.common.dao.model.sql.plugin.PluginContract;
 import org.kaaproject.kaa.server.common.dao.model.sql.plugin.PluginContractInstance;
 import org.kaaproject.kaa.server.common.dao.model.sql.plugin.PluginContractInstanceItem;
+import org.kaaproject.kaa.server.common.dao.model.sql.plugin.PluginContractItem;
 import org.kaaproject.kaa.server.common.dao.model.sql.plugin.PluginInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,8 +75,11 @@ public class BasePluginService implements PluginService {
             Contract receivedContract = pluginContract.getContract();
             Contract foundContract = contractDao.findByNameAndVersion(receivedContract.getName(), receivedContract.getVersion());
             for (ContractItem item : receivedContract.getContractItems()) {
-                item.setInMessage(mergeContractMessage(item.getInMessage()));
-                item.setOutMessage(mergeContractMessage(item.getOutMessage()));
+                mergeMessagesForContractItem(item);
+            }
+            for (PluginContractItem pluginContractItem : pluginContract.getPluginContractItems()) {
+                ContractItem item = pluginContractItem.getContractItem();
+                mergeMessagesForContractItem(item);
             }
             if (foundContract != null) {
                 receivedContract.setId(foundContract.getId());
@@ -84,6 +88,11 @@ public class BasePluginService implements PluginService {
 
         Plugin savedPlugin = pluginDao.save(plugin);
         return DaoUtil.getDto(savedPlugin);
+    }
+
+    private void mergeMessagesForContractItem(ContractItem item) {
+        item.setInMessage(mergeContractMessage(item.getInMessage()));
+        item.setOutMessage(mergeContractMessage(item.getOutMessage()));
     }
 
     private ContractMessage mergeContractMessage(ContractMessage contractMessage) {
