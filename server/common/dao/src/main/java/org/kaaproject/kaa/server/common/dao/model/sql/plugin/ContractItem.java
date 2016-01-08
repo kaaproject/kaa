@@ -118,8 +118,8 @@ public class ContractItem extends GenericModel<ContractItemDto> implements Seria
         ContractItemDto dto = createDto();
         dto.setId(getStringId());
         dto.setName(name);
-        dto.setInMessage(inMessage != null ? inMessage.toDto() : null);
-        dto.setOutMessage(outMessage != null ? outMessage.toDto() : null);
+        dto.setInMessage(ModelUtils.getDto(inMessage));
+        dto.setOutMessage(ModelUtils.getDto(outMessage));
         return dto;
     }
 
