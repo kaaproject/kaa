@@ -19,12 +19,16 @@ public class PluginLifecycleException extends Exception {
 
     private static final long serialVersionUID = -7243314540723895153L;
 
-    PluginLifecycleException(String message, Throwable cause) {
+    public PluginLifecycleException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    PluginLifecycleException(String message) {
+    public PluginLifecycleException(String message) {
         super(message);
+    }
+
+    public PluginLifecycleException(Throwable cause) {
+        super(cause);
     }
 
 }

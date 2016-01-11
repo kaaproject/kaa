@@ -54,11 +54,11 @@ public class EndpointMessagePlugin implements KaaCommunicationPlugin {
     }
     
     private void processEndpointMessage(KaaPluginMessage meta, EndpointMessage msg, PluginExecutionContext ctx) {
-        ctx.tellToEndpoint(msg.getKey(), new SdkMessage(meta.getUid(), msg.getMessageData()));
+        ctx.tellEndpoint(msg.getKey(), new SdkMessage(meta.getUid(), msg.getMessageData()));
     }
 
     private void processSDKMessage(KaaSdkMessage meta, SdkMessage msg, PluginExecutionContext ctx) {
-        ctx.tellToPlugin(msg.getUid(), new EndpointMessage(meta.getEndpointKey()));
+        ctx.tellPlugin(msg.getUid(), new EndpointMessage(meta.getEndpointKey()));
     }
 
     @Override

@@ -1,36 +1,31 @@
 {
-    "type":"record",
-    "name":"KaaRestPluginConfigSchema",
-    "namespace":"org.kaaproject.kaa.server.plugin.rest.gen",
-    "fields":[
+    "type": "record",
+    "name": "KaaRestPluginConfig",
+    "namespace": "org.kaaproject.kaa.server.plugin.rest.gen",
+    "fields": [
         {
-            "name":"host",
-            "type":"string"
-        },
-        {
-            "name":"port",
-            "type":"int"
-        },
-        {
-            "name":"httpSchema",
-            "displayName":"Http schema",
-            "by_default":"HTTP",
-            "type":{
-                "name":"HttpSchemaType",
-                "type":"enum",
-                "symbols":[
+            "name": "protocol",
+            "type": {
+                "type": "enum",
+                "name": "Protocol",
+                "symbols": [
                     "HTTP",
                     "HTTPS"
                 ]
+            },
+            "default": "HTTP",
+            "by_default": "HTTP"
+        },
+        {
+            "name": "host",
+            "type": {
+                "type": "string",
+                "avro.java.string": "String"
             }
         },
         {
-            "name":"keyStoreFileName",
-            "type":"string"
-        },
-        {
-            "name":"keyStorePass",
-            "type":"string"
+            "name": "port",
+            "type": "int"
         }
     ]
 }
