@@ -375,6 +375,13 @@ public class DaoConstants {
     public static final String SDK_PROFILE_TABLE_NAME = "sdk_token";
     public static final String SDK_PROFILE_TOKEN = "token";
 
+    public static final String SDK_PROFILE_PLUGIN_CONTRACT_INSTANCE_JOIN_TABLE_NAME = "plugin_contract_instance_has_sdk_profile";
+    public static final String SDK_PROFILE_PLUGIN_CONTRACT_INSTANCE_ID = "plugin_contract_instance_id";
+    public static final String SDK_PROFILE_SDK_PROFILE_ID = "sdk_profile_id";
+
+    public static final String SDK_PROFILE_PLUGIN_CONTRACT_INSTANCE_FK = "fk_plugin_contract_instance";
+    public static final String SDK_PROFILE_FK = "fk_sdk_profile";
+
     /**
      * CTL schema constants
      */
