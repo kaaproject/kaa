@@ -30,7 +30,7 @@ import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 @Entity
 @Table(name = SERVER_PROFILE_SCHEMA_TABLE_NAME)
 @OnDelete(action = OnDeleteAction.CASCADE)
-public final class ServerProfileSchema extends BaseSchema<ServerProfileSchemaDto> implements Serializable {
+public class ServerProfileSchema extends BaseSchema<ServerProfileSchemaDto> implements Serializable {
 
     private static final long serialVersionUID = -5685244135453079314L;
 

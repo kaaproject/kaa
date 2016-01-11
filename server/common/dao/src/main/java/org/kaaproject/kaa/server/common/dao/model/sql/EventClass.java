@@ -40,7 +40,7 @@ import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongI
 
 @Entity
 @Table(name = EVENT_CLASS_TABLE_NAME)
-public final class EventClass extends GenericModel<EventClassDto> {
+public class EventClass extends GenericModel<EventClassDto> {
 
     private static final long serialVersionUID = 3766947955702551264L;
 

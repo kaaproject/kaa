@@ -60,7 +60,7 @@ static size_t kaa_test_log_record_get_size(void *data)
     return 0;
 }
 
-kaa_test_log_record_t *kaa_test_log_record_create()
+kaa_test_log_record_t *kaa_test_log_record_create(void)
 {
     kaa_test_log_record_t *record = 
             (kaa_test_log_record_t *)KAA_CALLOC(1, sizeof(kaa_test_log_record_t));

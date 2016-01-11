@@ -48,6 +48,7 @@ import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_INSTANCE_
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_INSTANCE_PLUGIN_FK;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_INSTANCE_PLUGIN_ID;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_INSTANCE_PLUGIN_ID_NAME_CONSTRAINT_NAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_INSTANCE_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_INSTANCE_STATE;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_INSTANCE_TABLE_NAME;
 
@@ -75,8 +76,7 @@ public class PluginInstance extends GenericModel<PluginInstanceDto> implements S
     @JoinColumn(name = PLUGIN_INSTANCE_PLUGIN_ID, foreignKey = @ForeignKey(name = PLUGIN_INSTANCE_PLUGIN_FK))
     private Plugin plugin;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = PLUGIN_CONTRACT_INSTANCE_PLUGIN_INSTANCE_ID, foreignKey = @ForeignKey(name = PLUGIN_CONTRACT_INSTANCE_PLUGIN_INSTANCE_FK))
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = PLUGIN_INSTANCE_PROPERTY)
     private Set<PluginContractInstance> pluginContractInstances = new HashSet<>();
 
     public PluginInstance() {

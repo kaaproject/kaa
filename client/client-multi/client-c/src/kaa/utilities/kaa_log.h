@@ -147,37 +147,37 @@ void kaa_log_write(kaa_logger_t *self, const char* source_file, int lineno, kaa_
  * Shortcut macros for logging at various log levels
  */
 #if KAA_LOG_LEVEL_FATAL_ENABLED
-#define KAA_LOG_FATAL(logger, err, ...) kaa_log_write(logger, __FILE__, __LINE__, KAA_LOG_LEVEL_FATAL, err, __VA_ARGS__);
+#define KAA_LOG_FATAL(logger, err, ...) kaa_log_write(logger, __FILE__, __LINE__, KAA_LOG_LEVEL_FATAL, err, __VA_ARGS__)
 #else
 #define KAA_LOG_FATAL(...)
 #endif
 
 #if KAA_LOG_LEVEL_ERROR_ENABLED
-#define KAA_LOG_ERROR(logger, err, ...) kaa_log_write(logger, __FILE__, __LINE__, KAA_LOG_LEVEL_ERROR, err, __VA_ARGS__);
+#define KAA_LOG_ERROR(logger, err, ...) kaa_log_write(logger, __FILE__, __LINE__, KAA_LOG_LEVEL_ERROR, err, __VA_ARGS__)
 #else
 #define KAA_LOG_ERROR(...)
 #endif
 
 #if KAA_LOG_LEVEL_WARN_ENABLED
-#define KAA_LOG_WARN(logger, err, ...)  kaa_log_write(logger, __FILE__, __LINE__, KAA_LOG_LEVEL_WARN, err, __VA_ARGS__);
+#define KAA_LOG_WARN(logger, err, ...)  kaa_log_write(logger, __FILE__, __LINE__, KAA_LOG_LEVEL_WARN, err, __VA_ARGS__)
 #else
 #define KAA_LOG_WARN(...)
 #endif
 
 #if KAA_LOG_LEVEL_INFO_ENABLED
-#define KAA_LOG_INFO(logger, err, ...)  kaa_log_write(logger, __FILE__, __LINE__, KAA_LOG_LEVEL_INFO, err, __VA_ARGS__);
+#define KAA_LOG_INFO(logger, err, ...)  kaa_log_write(logger, __FILE__, __LINE__, KAA_LOG_LEVEL_INFO, err, __VA_ARGS__)
 #else
 #define KAA_LOG_INFO(...)
 #endif
 
 #if KAA_LOG_LEVEL_DEBUG_ENABLED
-#define KAA_LOG_DEBUG(logger, err, ...) kaa_log_write(logger, __FILE__, __LINE__, KAA_LOG_LEVEL_DEBUG, err, __VA_ARGS__);
+#define KAA_LOG_DEBUG(logger, err, ...) kaa_log_write(logger, __FILE__, __LINE__, KAA_LOG_LEVEL_DEBUG, err, __VA_ARGS__)
 #else
 #define KAA_LOG_DEBUG(...)
 #endif
 
 #if KAA_LOG_LEVEL_TRACE_ENABLED
-#define KAA_LOG_TRACE(logger, err, ...) kaa_log_write(logger, __FILE__, __LINE__, KAA_LOG_LEVEL_TRACE, err, __VA_ARGS__);
+#define KAA_LOG_TRACE(logger, err, ...) kaa_log_write(logger, __FILE__, __LINE__, KAA_LOG_LEVEL_TRACE, err, __VA_ARGS__)
 #else
 #define KAA_LOG_TRACE(...)
 #endif
@@ -191,8 +191,8 @@ void kaa_log_write(kaa_logger_t *self, const char* source_file, int lineno, kaa_
 /*
  * Shortcut macros for tracing through the program
  */
-#define KAA_TRACE_IN(logger)  KAA_LOG_TRACE(logger, KAA_ERR_NONE, "--> %s()", __FUNCTION__);
-#define KAA_TRACE_OUT(logger) KAA_LOG_TRACE(logger, KAA_ERR_NONE, "<-- %s()", __FUNCTION__);
+#define KAA_TRACE_IN(logger)  KAA_LOG_TRACE(logger, KAA_ERR_NONE, "--> %s()", __FUNCTION__)
+#define KAA_TRACE_OUT(logger) KAA_LOG_TRACE(logger, KAA_ERR_NONE, "<-- %s()", __FUNCTION__)
 
 #ifdef __cplusplus
 }      /* extern "C" */

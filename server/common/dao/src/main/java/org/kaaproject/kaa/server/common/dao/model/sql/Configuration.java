@@ -40,7 +40,7 @@ import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.stringTo
 @Entity
 @Table(name = CONFIGURATION_TABLE_NAME)
 @OnDelete(action = OnDeleteAction.CASCADE)
-public final class Configuration extends AbstractStructure<ConfigurationDto> implements Serializable {
+public class Configuration extends AbstractStructure<ConfigurationDto> implements Serializable {
 
     private static final long serialVersionUID = -216908432141461265L;
 

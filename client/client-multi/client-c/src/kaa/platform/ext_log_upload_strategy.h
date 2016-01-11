@@ -92,6 +92,16 @@ size_t ext_log_upload_strategy_get_timeout(void *context);
 
 
 /**
+ * @brief Max amount of log batches allowed to be uploaded parallel.
+ *
+ * @param[in]   context    Log upload strategy context.
+ * @return                 Amount of batches.
+ */
+size_t ext_log_upload_strategy_get_max_parallel_uploads(void *context);
+
+
+
+/**
  * @brief Handles timeout of a log delivery.
  *
  * @param[in]   context    Log upload strategy context.

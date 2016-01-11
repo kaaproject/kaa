@@ -35,7 +35,7 @@ import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONFIGURATION_SC
 @Entity
 @Table(name = CONFIGURATION_SCHEMA_TABLE_NAME)
 @OnDelete(action = OnDeleteAction.CASCADE)
-public final class ConfigurationSchema extends Schema<ConfigurationSchemaDto> implements Serializable {
+public class ConfigurationSchema extends Schema<ConfigurationSchemaDto> implements Serializable {
 
     private static final long serialVersionUID = -8854035430683210037L;
 

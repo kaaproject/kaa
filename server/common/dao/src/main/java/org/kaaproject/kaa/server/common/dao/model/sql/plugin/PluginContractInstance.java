@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.kaaproject.kaa.server.common.dao.model.sql.plugin;
 
 import org.kaaproject.kaa.common.dto.plugin.PluginContractInstanceDto;
@@ -36,6 +37,8 @@ import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_INSTANCE_ITEM_PLUGIN_CONTRACT_INSTANCE_ID;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_INSTANCE_PLUGIN_CONTRACT_FK;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_INSTANCE_PLUGIN_CONTRACT_ID;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_INSTANCE_PLUGIN_INSTANCE_FK;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_INSTANCE_PLUGIN_INSTANCE_ID;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_INSTANCE_TABLE_NAME;
 
 @Entity
@@ -48,6 +51,11 @@ public class PluginContractInstance extends GenericModel<PluginContractInstanceD
     @JoinColumn(name = PLUGIN_CONTRACT_INSTANCE_PLUGIN_CONTRACT_ID, nullable = false,
             foreignKey = @ForeignKey(name = PLUGIN_CONTRACT_INSTANCE_PLUGIN_CONTRACT_FK))
     private PluginContract pluginContract;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = PLUGIN_CONTRACT_INSTANCE_PLUGIN_INSTANCE_ID, nullable = false,
+            foreignKey = @ForeignKey(name = PLUGIN_CONTRACT_INSTANCE_PLUGIN_INSTANCE_FK))
+    private PluginInstance pluginInstance;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = PLUGIN_CONTRACT_INSTANCE_ITEM_PLUGIN_CONTRACT_INSTANCE_ID,
@@ -73,10 +81,17 @@ public class PluginContractInstance extends GenericModel<PluginContractInstanceD
     public PluginContractInstance() {
     }
 
+    public PluginContractInstance(String id) {
+        this.id = ModelUtils.getLongId(id);
+    }
+
     public PluginContractInstance(PluginContractInstanceDto dto) {
         this.id = ModelUtils.getLongId(dto.getId());
         if (dto.getContract() != null) {
             this.pluginContract = new PluginContract(dto.getContract());
+        }
+        if (dto.getInstance() != null) {
+            this.pluginInstance = new PluginInstance(dto.getInstance());
         }
         Set<PluginContractInstanceItemDto> instanceItemDtos = dto.getItems();
         if (instanceItemDtos != null && !instanceItemDtos.isEmpty()) {
@@ -84,6 +99,14 @@ public class PluginContractInstance extends GenericModel<PluginContractInstanceD
                 pluginContractInstanceItems.add(new PluginContractInstanceItem(instanceItemDto));
             }
         }
+    }
+
+    public PluginInstance getPluginInstance() {
+        return pluginInstance;
+    }
+
+    public void setPluginInstance(PluginInstance pluginInstance) {
+        this.pluginInstance = pluginInstance;
     }
 
     @Override
@@ -102,6 +125,7 @@ public class PluginContractInstance extends GenericModel<PluginContractInstanceD
     public PluginContractInstanceDto toDto() {
         PluginContractInstanceDto dto = toDtoNoContract();
         dto.setContract(ModelUtils.getDto(pluginContract));
+        dto.setInstance(ModelUtils.getDto(pluginInstance));
         return dto;
     }
 
@@ -130,6 +154,9 @@ public class PluginContractInstance extends GenericModel<PluginContractInstanceD
         if (pluginContract != null ? !pluginContract.equals(that.pluginContract) : that.pluginContract != null) {
             return false;
         }
+        if (pluginInstance != null ? !pluginInstance.equals(that.pluginInstance) : that.pluginInstance != null) {
+            return false;
+        }
 
         return true;
     }
@@ -137,6 +164,7 @@ public class PluginContractInstance extends GenericModel<PluginContractInstanceD
     @Override
     public int hashCode() {
         int result = pluginContract != null ? pluginContract.hashCode() : 0;
+        result = 31 * result + (pluginInstance != null ? pluginInstance.hashCode() : 0);
         return result;
     }
 }

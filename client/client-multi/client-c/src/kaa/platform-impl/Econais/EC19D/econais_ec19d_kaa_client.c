@@ -77,7 +77,7 @@ struct kaa_client_t {
 #include "../../../platform/kaa_client.h"
 
 //Forward declaration of internal functions
-kaa_error_t kaa_init_security_stuff();
+kaa_error_t kaa_init_security_stuff(void);
 kaa_error_t kaa_log_collector_init(kaa_client_t *kaa_client);
 
 /* forward declarations */
@@ -668,7 +668,7 @@ void ext_get_endpoint_public_key(char **buffer, size_t *buffer_size, bool *needs
 }
 
 
-kaa_error_t kaa_init_security_stuff()
+kaa_error_t kaa_init_security_stuff(void)
 {
     sndc_file_ref_t key_file = sndc_file_open(KAA_KEY_STORAGE, DE_FRDONLY);
 
@@ -704,7 +704,7 @@ kaa_error_t kaa_init_security_stuff()
  */
 kaa_error_t kaa_log_collector_init(kaa_client_t *kaa_client)
 {
-    KAA_RETURN_IF_NIL(kaa_client, KAA_ERR_BADPARAM)
+    KAA_RETURN_IF_NIL(kaa_client, KAA_ERR_BADPARAM);
 
         kaa_error_t error_code = ext_unlimited_log_storage_create(
                 &kaa_client->log_storage_context,
@@ -817,7 +817,7 @@ void ext_write_log(FILE * sink, const char * buffer, size_t message_size)
     sndc_thrd_delay(TRACE_DELAY * SNDC_MILLISECOND);
 }
 
-kaa_time_t ext_get_systime()
+kaa_time_t ext_get_systime(void)
 {
     return (time_t) sndc_sys_getTimestamp_msec() / 1000;
 }

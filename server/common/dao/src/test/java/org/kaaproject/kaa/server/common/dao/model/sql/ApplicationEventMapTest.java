@@ -17,13 +17,12 @@
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
-import nl.jqno.equalsverifier.Warning;
 
 import org.junit.Test;
 
 public class ApplicationEventMapTest {
     @Test
     public void hashCodeEqualsTest(){
-        EqualsVerifier.forClass(ApplicationEventMap.class).suppress(Warning.NONFINAL_FIELDS).verify();
+        EqualsVerifier.forClass(ApplicationEventMap.class).usingGetClass().verify();
     }
 }

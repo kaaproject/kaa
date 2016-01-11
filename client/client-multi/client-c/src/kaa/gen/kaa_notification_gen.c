@@ -60,7 +60,7 @@ static size_t kaa_notification_notification_get_size(void *data)
     return 0;
 }
 
-kaa_notification_notification_t *kaa_notification_notification_create()
+kaa_notification_notification_t *kaa_notification_notification_create(void)
 {
     kaa_notification_notification_t *record = 
             (kaa_notification_notification_t *)KAA_CALLOC(1, sizeof(kaa_notification_notification_t));

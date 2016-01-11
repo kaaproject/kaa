@@ -52,7 +52,7 @@ static kaa_logger_t *logger = NULL;
 static kaa_status_t *status = NULL;
 
 
-void test_meta_extension_get_size_failed()
+void test_meta_extension_get_size_failed(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -60,7 +60,7 @@ void test_meta_extension_get_size_failed()
     ASSERT_NOT_EQUAL(error_code, KAA_ERR_NONE);
 }
 
-void test_meta_extension_get_size()
+void test_meta_extension_get_size(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -77,7 +77,7 @@ void test_meta_extension_get_size()
     ASSERT_EQUAL(expected_meta_extension_size, meta_extension_size);
 }
 
-void test_meta_extension_serialize_failed()
+void test_meta_extension_serialize_failed(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -98,7 +98,7 @@ void test_meta_extension_serialize_failed()
     kaa_platform_message_writer_destroy(writer);
 }
 
-void test_meta_extension_serialize()
+void test_meta_extension_serialize(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -180,7 +180,7 @@ void test_meta_extension_serialize()
 
 
 
-int test_init()
+int test_init(void)
 {
     kaa_error_t error = kaa_log_create(&logger, KAA_MAX_LOG_MESSAGE_LENGTH, KAA_MAX_LOG_LEVEL, NULL);
     if (error || !logger) {
@@ -195,7 +195,7 @@ int test_init()
     return 0;
 }
 
-int test_deinit()
+int test_deinit(void)
 {
     kaa_status_destroy(status);
     kaa_log_destroy(logger);

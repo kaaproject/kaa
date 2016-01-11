@@ -18,7 +18,7 @@
 
 #include <esp_system.h>
 
-kaa_time_t kaa_esp8266_get_time()
+kaa_time_t kaa_esp8266_get_time(void)
 {
     return (system_get_time() / 1000000);
 }

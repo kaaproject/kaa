@@ -1367,7 +1367,7 @@ public class DataSource {
     }
 
     public void addSdkProfile(SdkProfileDto sdkProfile, final AsyncCallback<SdkProfileDto> callback) {
-        rpcService.addSdkProfile(sdkProfile, new DataCallback<SdkProfileDto>(callback) {
+        rpcService.createSdkProfile(sdkProfile, new DataCallback<SdkProfileDto>(callback) {
             @Override
             protected void onResult(SdkProfileDto callback) {
             }

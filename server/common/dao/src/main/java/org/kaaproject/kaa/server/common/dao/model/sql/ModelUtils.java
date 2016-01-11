@@ -36,7 +36,7 @@ import org.kaaproject.kaa.server.common.dao.model.ToDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class ModelUtils {
+public class ModelUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(ModelUtils.class);
     public static final String UTF8 = "UTF-8";

@@ -21,27 +21,27 @@
  * Supplies API to report endpoint profile to Operations server.
  */
 
-# ifndef KAA_PROFILE_H_
-# define KAA_PROFILE_H_
+#ifndef KAA_PROFILE_H_
+#define KAA_PROFILE_H_
 
-# ifdef __cplusplus
+#ifdef __cplusplus
 extern "C" {
-# endif
+#endif
 
-# include <stdbool.h>
-# include "kaa_error.h"
-# include "kaa_common.h"
-# include "gen/kaa_profile_definitions.h"
+#include <stdbool.h>
+#include "kaa_error.h"
+#include "kaa_common.h"
+#include "gen/kaa_profile_definitions.h"
 
 
 
-/**
- * Private profile manager data structure
- */
-# ifndef KAA_PROFILE_MANAGER_T
+#ifndef KAA_PROFILE_MANAGER_T
 # define KAA_PROFILE_MANAGER_T
+    /**
+     * Private profile manager data structure
+     */
     typedef struct kaa_profile_manager_t    kaa_profile_manager_t;
-# endif
+#endif
 
 
 
@@ -84,8 +84,8 @@ kaa_error_t kaa_profile_manager_get_endpoint_id(kaa_profile_manager_t *self, kaa
 
 
 
-# ifdef __cplusplus
+#ifdef __cplusplus
 }      /* extern "C" */
-# endif
+#endif
 
-# endif /* KAA_PROFILE_H_ */
+#endif /* KAA_PROFILE_H_ */

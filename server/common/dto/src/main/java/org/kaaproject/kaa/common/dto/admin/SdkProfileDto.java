@@ -30,6 +30,7 @@ public class SdkProfileDto extends SdkTokenDto implements HasId {
     private String createdUsername;
     private Long createdTime;
     private Integer endpointCount = 0;
+    private List<String> pluginContractInstanceIds;
 
     public SdkProfileDto() {
         super();
@@ -40,7 +41,8 @@ public class SdkProfileDto extends SdkTokenDto implements HasId {
                             Integer logSchemaVersion,
                             List<String> aefMapIds,
                             String defaultVerifierToken, String applicationToken,
-                            String createdUsername, Long createdTime, String name) {
+                            String createdUsername, Long createdTime, String name,
+                            List<String> pluginContractInstanceIds) {
         super(configurationSchemaVersion, 
                 profileSchemaVersion, 
                 notificationSchemaVersion, 
@@ -51,6 +53,7 @@ public class SdkProfileDto extends SdkTokenDto implements HasId {
         this.applicationId = applicationId;
         this.createdUsername = createdUsername;
         this.createdTime = createdTime;
+        this.pluginContractInstanceIds = pluginContractInstanceIds;
     }
 
     public String getApplicationId() {
@@ -92,7 +95,15 @@ public class SdkProfileDto extends SdkTokenDto implements HasId {
     public void setEndpointCount(Integer endpointCount) {
         this.endpointCount = endpointCount;
     }
-    
+
+    public List<String> getPluginContractInstanceIds() {
+        return pluginContractInstanceIds;
+    }
+
+    public void setPluginContractInstanceIds(List<String> pluginContractInstanceIds) {
+        this.pluginContractInstanceIds = pluginContractInstanceIds;
+    }
+
     @Override
     public String getId() {
         return id;

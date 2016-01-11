@@ -213,9 +213,14 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
                     }
 
                 } catch (IOException | KaaTcpProtocolException | RuntimeException e) {
-                    LOG.warn("Failed to read from the socket for channel [{}]. Stack trace: ", getId(), e);
                     if (Thread.currentThread().isInterrupted()) {
-                        LOG.warn("Socket connection for channel [{}] was interrupted: ", e);
+                        if (channelState != State.SHUTDOWN) {
+                            LOG.warn("Failed to read from the socket for channel [{}]. Stack trace: ", getId(), e);
+                            LOG.warn("Socket connection for channel [{}] was interrupted: ", e);
+                        } else {
+                            LOG.debug("Failed to read from the socket for channel [{}]. Stack trace: ", getId(), e);
+                            LOG.debug("Socket connection for channel [{}] was interrupted: ", e);
+                        }
                     }
 
                     if (readTaskSocket.equals(socket)) {
@@ -326,7 +331,9 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
                 }
                 socket = null;
                 messageFactory.getFramer().flush();
-                channelState = State.CLOSED;
+                if (channelState != State.SHUTDOWN) {
+                    channelState = State.CLOSED;
+                }
             }
         }
     }
@@ -361,19 +368,19 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
 
             FailoverDecision decision = failoverManager.onFailover(FailoverStatus.NO_CONNECTIVITY);
             switch (decision.getAction()) {
-            case NOOP:
-                LOG.warn("No operation is performed according to failover strategy decision");
-                break;
-            case RETRY:
-                long retryPeriod = decision.getRetryPeriod();
-                LOG.warn("Attempt to reconnect will be made in {} ms " + "according to failover strategy decision", retryPeriod);
-                scheduleOpenConnectionTask(retryPeriod);
-                break;
-            case STOP_APP:
-                LOG.warn("Stopping application according to failover strategy decision!");
-                System.exit(EXIT_FAILURE);
-            default:
-                break;
+                case NOOP:
+                    LOG.warn("No operation is performed according to failover strategy decision");
+                    break;
+                case RETRY:
+                    long retryPeriod = decision.getRetryPeriod();
+                    LOG.warn("Attempt to reconnect will be made in {} ms " + "according to failover strategy decision", retryPeriod);
+                    scheduleOpenConnectionTask(retryPeriod);
+                    break;
+                case STOP_APP:
+                    LOG.warn("Stopping application according to failover strategy decision!");
+                    System.exit(EXIT_FAILURE); //NOSONAR
+                default:
+                    break;
             }
         } else {
             failoverManager.onServerFailed(currentServer);

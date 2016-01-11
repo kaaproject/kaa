@@ -25,7 +25,6 @@
     <groupId>org.kaaproject.kaa</groupId>
     <artifactId>common</artifactId>
     <packaging>pom</packaging>
-
     <name>Kaa Common</name>
     <url>http://kaaproject.org</url>
 

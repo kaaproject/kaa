@@ -222,7 +222,7 @@ public class DefaultBootstrapManager implements BootstrapManager {
                 break;
             case STOP_APP:
                 LOG.warn("Stopping application according to failover strategy decision!");
-                System.exit(EXIT_FAILURE);
+                System.exit(EXIT_FAILURE); //NOSONAR
                 break;
         }
     }

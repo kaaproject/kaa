@@ -21,7 +21,7 @@
 
 #include "../../platform/ext_system_logger.h"
 
-kaa_time_t ext_get_systime()
+kaa_time_t ext_get_systime(void)
 {
     return system_get_rtc_time()*((system_rtc_clock_cali_proc()*1000)>>12)/1000;
 };
