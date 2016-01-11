@@ -45,10 +45,11 @@ public class KaaRestPlugin implements KaaPlugin {
     private static final Logger LOG = LoggerFactory.getLogger(KaaPlugin.class);
 
     private KaaRestPluginConfig pluginConfig;
+    private RestTemplate restTemplate = new RestTemplate();
 
     @Override
     public void init(PluginInitContext context) throws PluginLifecycleException {
-        AvroByteArrayConverter<KaaRestPluginConfig> converter = new AvroByteArrayConverter<KaaRestPluginConfig>(KaaRestPluginConfig.class);
+        AvroByteArrayConverter<KaaRestPluginConfig> converter = new AvroByteArrayConverter<>(KaaRestPluginConfig.class);
         try {
             LOG.info("Initializing the plugin with {}", context);
             this.pluginConfig = converter.fromByteArray(context.getPluginConfigurationData().getBytes());
@@ -61,22 +62,31 @@ public class KaaRestPlugin implements KaaPlugin {
     @Override
     public void onPluginMessage(KaaPluginMessage message, PluginExecutionContext ctx) {
         try {
-            HttpRequestDetails httpRequestDetails = new HttpRequestDetails(message);
+            HttpRequestDetails httpRequestDetails = new HttpRequestDetails(message, this.pluginConfig);
             EndpointMessage response = httpRequestDetails.getResponse();
 
             switch (httpRequestDetails.getHttpRequestMethod()) {
 
                 case GET:
-                    response.setMessageData(this.get(httpRequestDetails));
+                    LOG.info("Incoming GET request for {}: {}", httpRequestDetails.getURL(), httpRequestDetails.getHttpRequestBody());
+                    response.setMessageData(this.doGet(httpRequestDetails));
                     ctx.tellPlugin(message.getUid(), response);
                     break;
 
                 case POST:
+                    LOG.info("Incoming POST request for {}: {}", httpRequestDetails.getURL(), httpRequestDetails.getHttpRequestBody());
+                    this.doPost(httpRequestDetails);
+                    break;
 
                 case PUT:
+                    LOG.info("Incoming PUT request for {}: {}", httpRequestDetails.getURL(), httpRequestDetails.getHttpRequestBody());
+                    this.doPut(httpRequestDetails);
+                    break;
 
                 case DELETE:
-
+                    LOG.info("Incoming DELETE request for {}: {}", httpRequestDetails.getURL(), httpRequestDetails.getHttpRequestBody());
+                    this.doDelete(httpRequestDetails);
+                    break;
             }
         } catch (Exception cause) {
             throw new IllegalArgumentException(cause);
@@ -85,25 +95,43 @@ public class KaaRestPlugin implements KaaPlugin {
 
     @Override
     public void stop() throws PluginLifecycleException {
-        LOG.info("Stopping the plugin...");
+        try {
+            LOG.info("Stopping the plugin...");
+        } catch (Exception cause) {
+            LOG.error("Failed to stop the plugin!");
+            throw new PluginLifecycleException(cause);
+        }
     }
 
-    private byte[] get(HttpRequestDetails o) throws Exception {
+    private byte[] doGet(HttpRequestDetails request) throws Exception {
 
-        String response = new RestTemplate().getForObject(o.formatPath(this.pluginConfig), String.class, o.getHttpRequestParams());
+        String response = this.restTemplate.getForObject(request.getURL(), String.class, request.getHttpRequestParams());
 
         byte[] bytes = null;
-        if (KaaRestPlugin.validateContent(response, o.getResponseSchema())) {
+        if (KaaRestPlugin.validate(response, request.getResponseSchema())) {
             bytes = response.getBytes();
         } else {
-            GenericRecord buffer = KaaRestPlugin.mapResponseFields(response, o.getResponseSchema(), o.getHttpResponseMappings());
+            GenericRecord buffer = KaaRestPlugin.mapResponseFields(response, request.getResponseSchema(), request.getHttpResponseMappings());
             bytes = buffer.toString().getBytes();
         }
 
         return bytes;
     }
 
-    private static boolean validateContent(String content, Schema schema) {
+    // TODO: Possible response handling
+    private void doPost(HttpRequestDetails request) throws Exception {
+        this.restTemplate.postForObject(request.getURL(), request.getHttpRequestParams(), String.class);
+    }
+
+    private void doPut(HttpRequestDetails request) throws Exception {
+        this.restTemplate.put(request.getURL(), request.getHttpRequestParams());
+    }
+
+    private void doDelete(HttpRequestDetails request) throws Exception {
+        this.restTemplate.delete(request.getURL(), request.getHttpRequestParams());
+    }
+
+    private static boolean validate(String content, Schema schema) {
         boolean success = true;
         try {
             new GenericAvroConverter<GenericRecord>(schema).decodeJson(content);
@@ -116,17 +144,14 @@ public class KaaRestPlugin implements KaaPlugin {
     private static GenericRecord mapResponseFields(String content, Schema responseSchema, List<HttpResponseMapping> httpResponseMappings) throws Exception {
 
         JsonNode response = new ObjectMapper().readTree(content);
-        GenericRecordBuilder record = new GenericRecordBuilder(responseSchema);
+        GenericRecordBuilder buffer = new GenericRecordBuilder(responseSchema);
 
         Optional.ofNullable(httpResponseMappings).ifPresent(collection -> collection.forEach(mapping -> {
             String field = mapping.getAvroSchemaField();
             JsonNode value = response.get(mapping.getResponseField());
-            record.set(field, value);
+            buffer.set(field, value);
         }));
 
-        return record.build();
-    }
-
-    public static void main(String[] args) throws Exception {
+        return buffer.build();
     }
 }

@@ -53,13 +53,18 @@ public class HttpRequestDetails {
         return this.responseSchema;
     }
 
-    public HttpRequestDetails(KaaPluginMessage message) throws Exception {
-        this.message = message;
-        this.httpRequestMethod = this.getHttpRequestMethod();
-        this.httpRequestBody = this.getHttpRequestBody();
-        this.httpResponseMappings = this.getHttpResponseMappings();
-        this.requestSchema = new Schema.Parser().parse(message.getItemInfo().getInMessageSchema());
-        this.responseSchema = new Schema.Parser().parse(message.getItemInfo().getOutMessageSchema());
+    public HttpRequestDetails(KaaPluginMessage message, KaaRestPluginConfig pluginConfig) throws Exception {
+        try {
+            this.message = message;
+            this.pluginConfig = pluginConfig;
+            this.httpRequestMethod = this.getHttpRequestMethod();
+            this.httpRequestBody = this.getHttpRequestBody();
+            this.httpResponseMappings = this.getHttpResponseMappings();
+            this.requestSchema = new Schema.Parser().parse(message.getItemInfo().getInMessageSchema());
+            this.responseSchema = new Schema.Parser().parse(message.getItemInfo().getOutMessageSchema());
+        } catch (Exception cause) {
+            throw new ExceptionInInitializerError(cause);
+        }
     }
 
     public HttpRequestMethod getHttpRequestMethod() {
@@ -69,6 +74,10 @@ public class HttpRequestDetails {
         return this.httpRequestMethod;
     }
 
+    /*
+     * Parses the body to map request parameters as the input type schema
+     * suggests.
+     */
     public MultiValueMap<String, String> getHttpRequestParams() {
         if (this.httpRequestParams == null) {
             this.httpRequestParams = new LinkedMultiValueMap<>();
@@ -83,6 +92,9 @@ public class HttpRequestDetails {
         return this.httpRequestParams;
     }
 
+    /*
+     * The request body as is.
+     */
     public GenericRecord getHttpRequestBody() {
         if (this.httpRequestBody == null) {
             try {
@@ -104,6 +116,7 @@ public class HttpRequestDetails {
     }
 
     private KaaRestPluginItemConfig itemConfig;
+    private KaaRestPluginConfig pluginConfig;
 
     private KaaRestPluginItemConfig getItemConfig() {
         if (this.itemConfig == null && this.message != null) {
@@ -128,14 +141,15 @@ public class HttpRequestDetails {
         return this.response;
     }
 
-    public String formatPath(KaaRestPluginConfig pluginConfig) {
+    private String url = null;
 
-        String protocol = pluginConfig.getProtocol().toString();
-        String host = pluginConfig.getHost();
-        int port = pluginConfig.getPort();
-        String path = this.getItemConfig().getPath();
-
-        return protocol + "://" + host + ":" + port + (path != null ? path : "");
+    public String getURL() {
+        if (this.url == null && this.pluginConfig != null) {
+            String protocol = this.pluginConfig.getProtocol().toString();
+            String host = this.pluginConfig.getHost();
+            int port = this.pluginConfig.getPort();
+            this.url = protocol + "://" + host + ":" + port + (url != null ? url : "");
+        }
+        return this.url;
     }
-
 }
