@@ -19,9 +19,12 @@ package org.kaaproject.kaa.server.common;
 import org.apache.commons.codec.binary.Base64;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 
-public abstract class Base64Util {
+public class Base64Util {
 
     private static final String UNKNOWN = "Unknown";
+
+    private Base64Util() {
+    }
 
     public static String encode(byte[] data){
         return Base64.encodeBase64String(data);

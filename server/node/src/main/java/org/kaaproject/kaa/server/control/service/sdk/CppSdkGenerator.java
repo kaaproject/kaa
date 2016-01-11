@@ -256,7 +256,7 @@ public class CppSdkGenerator extends SdkGenerator {
             entry = new TarArchiveEntry(outputPath);
 
             String templateStr = replaceVar(definitionsHpp, RECORD_CLASS_NAME_VAR, schema.getName());
-            if (vars != null && vars.size() > 0) {
+            if (vars != null && !vars.isEmpty()) {
                 for (Entry<String, String> var : vars.entrySet()) {
                     templateStr = replaceVar(templateStr, var.getKey(), var.getValue());
                 }

@@ -19,4 +19,6 @@ public class UserVerifierConstants {
 
     static final String DEFAULT_USER_VERIFIER_TOKEN = null;
 
+    private UserVerifierConstants() {
+    }
 }

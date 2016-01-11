@@ -32,7 +32,10 @@ public class RPCHelper {
 	
 	private static final Log LOG = LogFactory.getLog(RPCHelper.class);
 
-	  public static String invokeAndEncodeResponse(Object target, Method serviceMethod, Object[] args,
+	private RPCHelper() {
+	}
+
+	public static String invokeAndEncodeResponse(Object target, Method serviceMethod, Object[] args,
 		      SerializationPolicy serializationPolicy) throws SerializationException {
 		    return invokeAndEncodeResponse(target, serviceMethod, args, serializationPolicy,
 		        AbstractSerializationStream.DEFAULT_FLAGS);

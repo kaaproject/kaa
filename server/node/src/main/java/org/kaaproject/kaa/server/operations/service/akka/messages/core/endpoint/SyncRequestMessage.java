@@ -202,9 +202,9 @@ public class SyncRequestMessage extends EndpointAwareMessage implements ChannelA
             return newRequest;
         } else {
             if (oldRequest.getAppStateSeqNumber() < newRequest.getAppStateSeqNumber()
-                    || (newRequest.getAcceptedUnicastNotifications() != null && newRequest
-                            .getAcceptedUnicastNotifications().size() > 0)
-                    || (newRequest.getSubscriptionCommands() != null && newRequest.getSubscriptionCommands().size() > 0)
+                    || (newRequest.getAcceptedUnicastNotifications() != null && !newRequest
+                            .getAcceptedUnicastNotifications().isEmpty())
+                    || (newRequest.getSubscriptionCommands() != null && !newRequest.getSubscriptionCommands().isEmpty())
             // TODO: Add topicListHash comparison
             ) {
                 return newRequest;

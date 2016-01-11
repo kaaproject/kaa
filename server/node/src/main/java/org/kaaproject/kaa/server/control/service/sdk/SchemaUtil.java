@@ -34,6 +34,9 @@ public class SchemaUtil {
 
     private static final Logger LOG = LoggerFactory.getLogger(SchemaUtil.class);
 
+    private SchemaUtil() {
+    }
+
     public static boolean isEqualSchemas(Schema s1, Schema s2) {
 
         if (!(s1.getType().equals(s2.getType()) && s1.getFullName().equals(s2.getFullName()))) {

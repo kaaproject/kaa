@@ -89,6 +89,9 @@ public class JavaEventClassesGenerator {
         }
     }
 
+    private JavaEventClassesGenerator() {
+    }
+
     public static List<JavaDynamicBean> generateEventClasses(List<EventFamilyMetadata> eventFamilies) {
         List<JavaDynamicBean> javaSources = new ArrayList<>();
 

@@ -29,6 +29,9 @@ public class ServletUtils {
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(ServletUtils.class);
 
+    private ServletUtils() {
+    }
+
     public static void prepareDisposition(HttpServletRequest request, HttpServletResponse response, String fileName) {
         String userAgent = request.getHeader("user-agent");
         boolean isInternetExplorer = userAgent.indexOf("MSIE") > -1;

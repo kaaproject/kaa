@@ -31,6 +31,9 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 public class CassandraDaoUtil {
 
+    private CassandraDaoUtil() {
+    }
+
     /**
      * Specific method for converting list of <code>EndpointGroupStateDto</code> objects
      * to list of model objects <code>CassandraEndpointGroupState</code>.

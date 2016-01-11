@@ -577,9 +577,9 @@ public class DefaultOperationsService implements OperationsService {
      */
     public static boolean isFirstRequest(EndpointProfileDto profile, HistorySubject subject) {
         if (subject == HistorySubject.CONFIGURATION) {
-            return profile.getCfGroupStates() == null || profile.getCfGroupStates().size() == 0;
+            return profile.getCfGroupStates() == null || profile.getCfGroupStates().isEmpty();
         } else {
-            return profile.getNfGroupStates() == null || profile.getNfGroupStates().size() == 0;
+            return profile.getNfGroupStates() == null || profile.getNfGroupStates().isEmpty();
         }
     }
 

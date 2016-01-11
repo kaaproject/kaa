@@ -42,6 +42,9 @@ public class SchemaLibraryGenerator {
     
     private static final String LIBRARY_NAME_PATTERN = "{}.jar";
 
+    private SchemaLibraryGenerator() {
+    }
+
     /**
      * Generate schema java library.
      *

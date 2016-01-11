@@ -96,7 +96,7 @@ public class ApplicationLogActorMessageProcessor {
         LogSchema logSchema = message.getLogSchema();
         List<LogAppender> required = filterAppenders(logSchema.getVersion(), true);
         List<LogAppender> optional = filterAppenders(logSchema.getVersion(), false);
-        if (required.size() > 0 || optional.size() > 0) {
+        if (!required.isEmpty() || !optional.isEmpty()) {
             for (LogAppender logAppender : optional) {
                 logAppender.doAppend(message.getLogEventPack(), voidCallback);
             }

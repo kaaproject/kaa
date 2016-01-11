@@ -43,6 +43,9 @@ public abstract class DaoUtil {
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(DaoUtil.class);
 
+    private DaoUtil() {
+    }
+
     /**
      * This method take string id from <code>GenericModel</code> object
      *

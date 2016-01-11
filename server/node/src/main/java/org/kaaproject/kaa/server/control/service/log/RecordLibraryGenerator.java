@@ -58,6 +58,9 @@ public class RecordLibraryGenerator {
     private static final Logger LOG = LoggerFactory
             .getLogger(RecordLibraryGenerator.class);
 
+    private RecordLibraryGenerator() {
+    }
+
     /**
      * Generate record library.
      *

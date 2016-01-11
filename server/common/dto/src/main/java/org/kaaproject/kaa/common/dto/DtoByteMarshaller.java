@@ -31,6 +31,9 @@ public class DtoByteMarshaller {
     private static final Logger LOG = LoggerFactory
             .getLogger(DtoByteMarshaller.class);
 
+    private DtoByteMarshaller() {
+    }
+
     public static <T> byte[] toBytes(T object) {
         ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
         try {

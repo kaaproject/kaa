@@ -32,6 +32,9 @@ public abstract class SHA1HashUtils {
 
     protected static final Logger LOG = LoggerFactory.getLogger(SHA1HashUtils.class); //NOSONAR
 
+    private SHA1HashUtils() {
+    }
+
     /** The Constant digest. */
     private static final ThreadLocal<MessageDigest> DIGEST = new ThreadLocal<MessageDigest>() {
         @Override

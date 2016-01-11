@@ -24,6 +24,9 @@ public class Main {
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(Main.class);
 
+    private Main()  {
+    }
+
     public static void main(String[] args) {
         try {
             if (args.length < 3) {

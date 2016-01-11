@@ -26,6 +26,9 @@ import akka.japi.Function;
 
 public final class SupervisionStrategyFactory {
 
+    private SupervisionStrategyFactory() {
+    }
+
     public static SupervisorStrategy createIORouterStrategy(AkkaContext context) {
         return buildResumeOrEscalateStrategy();
     }

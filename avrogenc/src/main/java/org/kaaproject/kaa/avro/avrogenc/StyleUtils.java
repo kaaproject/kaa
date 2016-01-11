@@ -17,6 +17,10 @@
 package org.kaaproject.kaa.avro.avrogenc;
 
 public class StyleUtils {
+
+    private StyleUtils() {
+    }
+
     public static String toLowerUnderScore(String camelCaseName) {
         StringBuilder convertedName = new StringBuilder();
 

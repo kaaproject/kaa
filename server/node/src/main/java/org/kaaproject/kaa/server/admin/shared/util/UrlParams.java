@@ -23,7 +23,10 @@ public class UrlParams {
     public static final String RESET_PASSWORD = "resetPassword";
     public static final int PASSWORD_RESET_HASH_LENGTH = 128;
     public static final String PARAMS_SEPARATOR = "&";
-    
+
+    private UrlParams() {
+    }
+
     public static String generateParamsUrl(Map<String, String> paramsMap) {
         String paramsUrl = "";
         for (String key : paramsMap.keySet()) {

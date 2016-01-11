@@ -87,10 +87,10 @@ public abstract class AbstractServerApplication {
                     properties.add(arg);
                 }
             }
-            if (contexts.size() > 0) {
+            if (!contexts.isEmpty()) {
                 appContextXmls = contexts.toArray(new String[contexts.size()]);
             }
-            if (properties.size() > 0) {
+            if (!properties.isEmpty()) {
                 appPropertiesFiles = properties.toArray(new String[properties.size()]);
             }
         }

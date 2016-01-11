@@ -28,6 +28,9 @@ public class SdkTokenGenerator {
     
     private static final String SDK_TOKEN_HASH_ALGORITHM = "SHA1";
 
+    private SdkTokenGenerator() {
+    }
+
     public static void generateSdkToken(SdkProfileDto sdkProfileDto) {
         if (StringUtils.isEmpty(sdkProfileDto.getToken())) {
             try {

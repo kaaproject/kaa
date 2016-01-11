@@ -37,7 +37,10 @@ public class PlatformLookup {
     private static final Logger LOG = LoggerFactory.getLogger(PlatformLookup.class);
     
     public static final String DEFAULT_PROTOCOL_LOOKUP_PACKAGE_NAME = "org.kaaproject.kaa.server";
-    
+
+    private PlatformLookup() {
+    }
+
     public static Set<String> lookupPlatformProtocols(String... packageNames) {
         ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);
         scanner.addIncludeFilter(new AnnotationTypeFilter(KaaPlatformProtocol.class));

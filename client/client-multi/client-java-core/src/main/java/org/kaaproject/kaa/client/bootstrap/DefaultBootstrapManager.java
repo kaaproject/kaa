@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultBootstrapManager implements BootstrapManager {
 
-    /** The Constant logger. */
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(DefaultBootstrapManager.class);
 
     private static final int EXIT_FAILURE = 1;
@@ -60,7 +60,7 @@ public class DefaultBootstrapManager implements BootstrapManager {
     private FailoverManager failoverManager;
     private Integer serverToApply;
     private ExecutorContext executorContext;
-    private final Map<TransportProtocolId, List<ProtocolMetaData>> mappedOperationServerList = new HashMap<TransportProtocolId, List<ProtocolMetaData>>();
+    private final Map<TransportProtocolId, List<ProtocolMetaData>> mappedOperationServerList = new HashMap<>();
     private final Map<TransportProtocolId, Iterator<ProtocolMetaData>> mappedIterators = new HashMap<>();
 
     public DefaultBootstrapManager(BootstrapTransport transport, ExecutorContext executorContext) {
@@ -106,7 +106,7 @@ public class DefaultBootstrapManager implements BootstrapManager {
     @Override
     public synchronized void useNextOperationsServerByAccessPointId(int accessPointId) {
         List<ProtocolMetaData> servers = getTransportsByAccessPointId(accessPointId);
-        if (servers != null && servers.size() > 0) {
+        if (servers != null && !servers.isEmpty()) {
             notifyChannelManagerAboutServer(servers);
         } else {
             serverToApply = accessPointId;
@@ -125,7 +125,7 @@ public class DefaultBootstrapManager implements BootstrapManager {
         if (operationsServerList == null || operationsServerList.isEmpty()) {
             throw new BootstrapRuntimeException("Operations Server list is empty");
         }
-        List<ProtocolMetaData> result = new ArrayList<ProtocolMetaData>();
+        List<ProtocolMetaData> result = new ArrayList<>();
         for (ProtocolMetaData transport : operationsServerList) {
             if (transport.getAccessPointId().intValue() == accessPointId) {
                 result.add(transport);
@@ -173,7 +173,7 @@ public class DefaultBootstrapManager implements BootstrapManager {
         }
         if (serverToApply != null) {
             List<ProtocolMetaData> servers = getTransportsByAccessPointId(serverToApply);
-            if (servers != null && servers.size() > 0) {
+            if (servers != null && !servers.isEmpty()) {
                 notifyChannelManagerAboutServer(servers);
                 serverToApply = null;
             }

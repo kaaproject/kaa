@@ -27,8 +27,11 @@ import org.slf4j.LoggerFactory;
  * This is util class which uses for validate fields, object in service layer.
  */
 public class Validator {
-    /* The constant logger */
+    /* The constant LOG */
     private static final Logger LOG = LoggerFactory.getLogger(Validator.class);
+
+    private Validator() {
+    }
 
     /**
      * This method validate string id. Id is a string object which will be

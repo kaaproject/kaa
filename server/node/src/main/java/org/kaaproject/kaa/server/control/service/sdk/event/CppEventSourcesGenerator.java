@@ -136,6 +136,9 @@ public class CppEventSourcesGenerator {
         }
     }
 
+    private CppEventSourcesGenerator() {
+    }
+
     public static List<TarEntryData> generateEventSources(List<EventFamilyMetadata> eventFamilies) {
         List<TarEntryData> eventSources = new ArrayList<>();
 

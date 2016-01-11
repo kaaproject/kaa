@@ -18,6 +18,9 @@ package org.kaaproject.kaa.client.util;
 
 public class Utils {
 
+    private Utils() {
+    }
+
     public static boolean isBlank(String str) {
         return str == null || str.isEmpty();
     }

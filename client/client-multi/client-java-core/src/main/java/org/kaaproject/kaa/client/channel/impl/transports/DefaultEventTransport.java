@@ -172,7 +172,7 @@ public class DefaultEventTransport extends AbstractKaaTransport implements Event
             while (entrySetIterator.hasNext()) {
                 Entry<Integer, Set<Event>> entry = entrySetIterator.next();
                 entry.getValue().removeAll(acceptedEvents);
-                if (entry.getValue().size() == 0) {
+                if (entry.getValue().isEmpty()) {
                     LOG.debug("Remove entry for request {}.", requestId);
                     entrySetIterator.remove();
                 }

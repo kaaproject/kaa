@@ -25,6 +25,9 @@ import org.apache.avro.Schema.Type;
 public class TypeConverter {
     private static final String DIRECTION_FIELD = "direction";
 
+    private TypeConverter() {
+    }
+
     public static String convertToCType(Schema schema) {
         return convertToCType("kaa", schema);
     }

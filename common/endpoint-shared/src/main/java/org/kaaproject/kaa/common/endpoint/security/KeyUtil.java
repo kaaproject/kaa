@@ -46,6 +46,9 @@ public abstract class KeyUtil {
     private static final Logger LOG = LoggerFactory.getLogger(KeyUtil.class);
     private static final String RSA = "RSA";
 
+    private KeyUtil() {
+    }
+
     /**
      * Saves public and private keys to specified files.
      *

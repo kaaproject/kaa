@@ -54,7 +54,10 @@ public class CEventSourcesGenerator {
     private static final String EVENT_FAMILIES_C_FILE = "kaa_{name}.c";
     private static final String EVENT_FQN_H_FILE = "kaa_event_fqn_definitions.h";
     private static final String EVENT_FQN_PATTERN = "sdk/c/event/kaa_event_fqn_definitions.h.vm";
-    
+
+    private CEventSourcesGenerator() {
+    }
+
     private static final VelocityEngine velocityEngine; //NOSONAR
     static {
         velocityEngine = new VelocityEngine();
@@ -92,7 +95,7 @@ public class CEventSourcesGenerator {
             List<String> emptyRecords = new ArrayList<>();
             if (schemas != null) {
                 for (Schema recordS : schemas) {
-                    if (recordS.getType() == Type.RECORD && recordS.getFields() != null && recordS.getFields().size() == 0) {
+                    if (recordS.getType() == Type.RECORD && recordS.getFields() != null && recordS.getFields().isEmpty()) {
                         emptyRecords.add(recordS.getFullName());
                     }
                 }

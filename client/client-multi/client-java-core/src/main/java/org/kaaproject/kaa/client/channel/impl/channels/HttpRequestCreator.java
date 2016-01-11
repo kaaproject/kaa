@@ -29,6 +29,9 @@ public class HttpRequestCreator {
     public static final Logger LOG = LoggerFactory //NOSONAR
             .getLogger(HttpRequestCreator.class);
 
+    private HttpRequestCreator() {
+    }
+
     static LinkedHashMap<String, byte[]> createOperationHttpRequest(byte [] body, MessageEncoderDecoder messageEncDec) throws GeneralSecurityException {
         return createHttpRequest(body, messageEncDec, true);
     }
