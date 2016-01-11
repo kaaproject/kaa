@@ -47,7 +47,7 @@ import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 
 @Entity
 @Table(name = SDK_PROFILE_TABLE_NAME)
-public final class SdkProfile extends GenericModel<SdkProfileDto> implements Serializable {
+public class SdkProfile extends GenericModel<SdkProfileDto> implements Serializable {
 
     private static final long serialVersionUID = -5963289882951330950L;
 

@@ -116,7 +116,7 @@ size_t kaa_list_get_size(kaa_list_t *list)
     return list->size;
 }
 
-kaa_list_t *kaa_list_create()
+kaa_list_t *kaa_list_create(void)
 {
     return (kaa_list_t *) KAA_CALLOC(1, sizeof(kaa_list_t));
 }
@@ -211,29 +211,15 @@ kaa_error_t kaa_list_remove_first(kaa_list_t *list, match_predicate pred, void *
     KAA_RETURN_IF_NIL3(list, pred, list->size, KAA_ERR_BADPARAM);
 
     kaa_list_node_t *it = kaa_list_find_next(kaa_list_begin(list), pred, context);
-    if (it) {
-        if (it == list->head) {
-            list->head = it->next;
-        }
-        if (it == list->tail) {
-            list->tail = list->tail->prev;
-        }
-
-        set_next_neighbor(it->prev, it->next);
-        destroy_node(it, deallocator);
-        --list->size;
-
-        return KAA_ERR_NONE;
-    }
-
-    return KAA_ERR_NOT_FOUND;
+    kaa_list_remove_at(list, it, deallocator);
+    return it ? KAA_ERR_NONE : KAA_ERR_NOT_FOUND;
 }
 
 void kaa_list_set_data_at(kaa_list_node_t *it, void *data, deallocate_list_data deallocator)
 {
     KAA_RETURN_IF_NIL(it, );
     if (deallocator) {
-        (*deallocator)(it->data);
+        deallocator(it->data);
     } else {
         KAA_FREE(it->data);
     }
@@ -271,7 +257,7 @@ static kaa_list_node_t *kaa_split_util(kaa_list_node_t *head);
 static kaa_list_node_t *kaa_merge_util(kaa_list_node_t *first, kaa_list_node_t *second, match_predicate pred)
 {
     KAA_RETURN_IF_NIL(first, second);
-    KAA_RETURN_IF_NIL(second, first)
+    KAA_RETURN_IF_NIL(second, first);
 
     if (pred(first->data, second->data)) {
 

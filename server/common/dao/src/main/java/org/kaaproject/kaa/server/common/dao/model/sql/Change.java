@@ -37,7 +37,7 @@ import org.kaaproject.kaa.common.dto.ChangeType;
 
 @Entity
 @Table(name = CHANGE_TABLE_NAME)
-public final class Change extends GenericModel<ChangeDto> implements Serializable {
+public class Change extends GenericModel<ChangeDto> implements Serializable {
 
     private static final long serialVersionUID = 8527934746035638165L;
 

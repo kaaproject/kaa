@@ -35,7 +35,8 @@ public class KaaClientPropertiesTest {
     @Test
     public void testGetBootstrapServers() throws Exception {
         System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
-        KaaClientProperties properties = new KaaClientProperties(CommonsBase64.getInstance());
+        KaaClientProperties properties = new KaaClientProperties();
+        properties.setBase64(CommonsBase64.getInstance());
         Map<TransportProtocolId, List<TransportConnectionInfo>> bootstraps = properties.getBootstrapServers();
         assertEquals(1, bootstraps.size());
 
@@ -52,43 +53,166 @@ public class KaaClientPropertiesTest {
     @Test
     public void testGetSdkToken() throws IOException {
         System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
-        KaaClientProperties properties = new KaaClientProperties(CommonsBase64.getInstance());
+        KaaClientProperties properties = new KaaClientProperties();
         assertEquals("O7D+oECY1jhs6qIK8LA0zdaykmQ=", properties.getSdkToken());
     }
 
     @Test
     public void testGetPollDelay() throws IOException {
         System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
-        KaaClientProperties properties = new KaaClientProperties(CommonsBase64.getInstance());
+        KaaClientProperties properties = new KaaClientProperties();
         assertEquals(0, properties.getPollDelay().intValue());
     }
 
     @Test
     public void testGetPollPeriod() throws IOException {
         System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
-        KaaClientProperties properties = new KaaClientProperties(CommonsBase64.getInstance());
+        KaaClientProperties properties = new KaaClientProperties();
         assertEquals(10, properties.getPollPeriod().intValue());
     }
 
     @Test
     public void testGetPollUnit() throws IOException {
         System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
-        KaaClientProperties properties = new KaaClientProperties(CommonsBase64.getInstance());
+        KaaClientProperties properties = new KaaClientProperties();
         assertEquals(TimeUnit.SECONDS, properties.getPollUnit());
     }
 
     @Test
     public void testGetDefaultConfigData() throws IOException {
         System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
-        KaaClientProperties properties = new KaaClientProperties(CommonsBase64.getInstance());
+        KaaClientProperties properties = new KaaClientProperties();
         assertEquals(null, properties.getDefaultConfigData());
     }
 
     @Test
     public void testGetDefaultConfigSchema() throws IOException {
         System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
-        KaaClientProperties properties = new KaaClientProperties(CommonsBase64.getInstance());
+        KaaClientProperties properties = new KaaClientProperties();
         assertEquals(null, properties.getDefaultConfigSchema());
+    }
+
+    @Test
+    public void testGetWorkingDirectory() throws IOException {
+        System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
+        KaaClientProperties properties = new KaaClientProperties();
+        assertEquals("./", properties.getWorkingDirectory());
+    }
+
+    @Test
+    public void testSetWorkingDirectory() throws IOException {
+        String requestedWorkDir = "dir_";
+        String fileSeparator = System.getProperty("file.separator");
+        System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
+        KaaClientProperties properties = new KaaClientProperties();
+        properties.setWorkingDirectory(requestedWorkDir);
+        assertEquals(requestedWorkDir + fileSeparator, properties.getWorkingDirectory());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetBlankWorkingDirectory() throws IOException {
+        String requestedWorkDir = "";
+        System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
+        KaaClientProperties properties = new KaaClientProperties();
+        properties.setWorkingDirectory(requestedWorkDir);
+    }
+
+    @Test
+    public void testGetStateFileName() throws IOException {
+        System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
+        KaaClientProperties properties = new KaaClientProperties();
+        assertEquals("state.properties", properties.getStateFileName());
+    }
+
+    @Test
+    public void testGetStateFileFullName() throws IOException {
+        System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
+        KaaClientProperties properties = new KaaClientProperties();
+        assertEquals(properties.getWorkingDirectory() + "state.properties", properties.getStateFileFullName());
+    }
+
+    @Test
+    public void testSetStateFileName() throws IOException {
+        String requestedName = "test_state.properties";
+        System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
+        KaaClientProperties properties = new KaaClientProperties();
+        properties.setStateFileName(requestedName);
+        assertEquals(requestedName, properties.getStateFileName());
+        assertEquals(properties.getWorkingDirectory() + requestedName, properties.getStateFileFullName());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetBlankStateFileName() throws IOException {
+        String requestedName = "";
+        System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
+        KaaClientProperties properties = new KaaClientProperties();
+        properties.setStateFileName(requestedName);
+    }
+
+
+    @Test
+    public void testGetPublicKeyFileName() throws IOException {
+        System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
+        KaaClientProperties properties = new KaaClientProperties();
+        assertEquals("key.public", properties.getPublicKeyFileName());
+    }
+
+    @Test
+    public void testGetPublicKeyFileFullName() throws IOException {
+        System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
+        KaaClientProperties properties = new KaaClientProperties();
+        assertEquals(properties.getWorkingDirectory() + "key.public", properties.getPublicKeyFileFullName());
+    }
+
+    @Test
+    public void testSetPublicKeyFileName() throws IOException {
+        String requestedName = "test_key.public";
+        System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
+        KaaClientProperties properties = new KaaClientProperties();
+        properties.setPublicKeyFileName(requestedName);
+        assertEquals(requestedName, properties.getPublicKeyFileName());
+        assertEquals(properties.getWorkingDirectory() + requestedName, properties.getPublicKeyFileFullName());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetBlankPublicKeyFileName() throws IOException {
+        String requestedName = "";
+        System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
+        KaaClientProperties properties = new KaaClientProperties();
+        properties.setPublicKeyFileName(requestedName);
+    }
+
+
+    @Test
+    public void testGetPrivateKeyFileName() throws IOException {
+        System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
+        KaaClientProperties properties = new KaaClientProperties();
+        assertEquals("key.private", properties.getPrivateKeyFileName());
+    }
+
+    @Test
+    public void testGetPrivateKeyFileFullName() throws IOException {
+        System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
+        KaaClientProperties properties = new KaaClientProperties();
+        assertEquals(properties.getWorkingDirectory() + "key.private", properties.getPrivateKeyFileFullName());
+    }
+
+    @Test
+    public void testSetPrivateKeyFileName() throws IOException {
+        String requestedName = "test_key.private";
+        System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
+        KaaClientProperties properties = new KaaClientProperties();
+        properties.setPrivateKeyFileName(requestedName);
+        assertEquals(requestedName, properties.getPrivateKeyFileName());
+        assertEquals(properties.getWorkingDirectory() + requestedName, properties.getPrivateKeyFileFullName());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetBlankPrivateKeyFileName() throws IOException {
+        String requestedName = "";
+        System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
+        KaaClientProperties properties = new KaaClientProperties();
+        properties.setPrivateKeyFileName(requestedName);
     }
 
 }

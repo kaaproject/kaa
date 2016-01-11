@@ -17,7 +17,6 @@
     <groupId>org.kaaproject.kaa.server.common</groupId>
     <artifactId>dto</artifactId>
     <packaging>jar</packaging>
-
     <name>Kaa Data Transfer Objects</name>
     <url>http://kaaproject.org</url>
 

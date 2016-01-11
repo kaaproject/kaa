@@ -30,7 +30,7 @@ static void sysTickIntHandler(void)
     ++milliTimer;
 }
 
-void cc32xx_init_timer()
+void cc32xx_init_timer(void)
 {
     static int init = 0;
 
@@ -43,13 +43,13 @@ void cc32xx_init_timer()
     }
 }
 
-long long cc32xx_clock_getms()
+long long cc32xx_clock_getms(void)
 {
     cc32xx_init_timer();
     return milliTimer;
 }
 
-long cc32xx_time()
+long cc32xx_time(void)
 {
     cc32xx_init_timer();
     return secTimer;

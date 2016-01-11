@@ -27,7 +27,7 @@ import static org.kaaproject.kaa.server.common.dao.DaoConstants.LOG_SCHEMA_TABLE
 @Entity
 @Table(name = LOG_SCHEMA_TABLE_NAME)
 @OnDelete(action = OnDeleteAction.CASCADE)
-public final class LogSchema extends Schema<LogSchemaDto> {
+public class LogSchema extends Schema<LogSchemaDto> {
 
     private static final long serialVersionUID = 5801830095239766386L;
 

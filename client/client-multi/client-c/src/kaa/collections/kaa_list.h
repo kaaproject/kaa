@@ -48,7 +48,7 @@ typedef void (*process_data)(void *data, void *context);
  * @brief Creates empty list.
  * @return The list object.
  */
-kaa_list_t *kaa_list_create();
+kaa_list_t *kaa_list_create(void);
 
 /**
  * @brief Destroys list and all elements.
@@ -62,49 +62,57 @@ void kaa_list_clear(kaa_list_t *list, deallocate_list_data deallocator);
 
 /**
  * @brief Returns the number of elements in the list.
- * @return The number of elements or NULL if the list is NULL.
+ * @return The number of elements.
+ * @retval NULL the list is @c NULL
  */
 size_t kaa_list_get_size(kaa_list_t *list);
 
 /**
  * @brief Inserts a new element at the beginning of the list, right before its current first element.
- * @return An iterator to the inserted element or NULL if the list or data are NULL.
+ * @return An iterator to the inserted element.
+ * @retval NULL the list or data are @c NULL
  */
 kaa_list_node_t *kaa_list_push_front(kaa_list_t *list, void *data);
 
 /**
  * @brief Inserts a new element at the end of the list, after its current last element.
- * @return An iterator to the inserted element or NULL if the list or data are NULL.
+ * @return An iterator to the inserted element
+ * @retval NULL the list or data are @c NULL
  */
 kaa_list_node_t *kaa_list_push_back(kaa_list_t *list, void *data);
 
 /**
  * @brief Returns an iterator pointing to the first element in the list.
- * @return An iterator or NULL if the list is NULL.
+ * @return An iterator
+ * @retval NULL the list is @c NULL
  */
 kaa_list_node_t *kaa_list_begin(kaa_list_t *list);
 
 /**
  * @brief Returns an iterator pointing to the last element in the list.
- * @return An iterator or NULL if the list is NULL.
+ * @return An iterator
+ * @retval NULL the list is @c NULL
  */
 kaa_list_node_t *kaa_list_back(kaa_list_t *list);
 
 /**
  * @brief Gets iterator to the next element.
- * @return An iterator or NULL if the provided iterator is NULL.
+ * @return An iterator
+ * @retval NULL the provided iterator is @c NULL
  */
 kaa_list_node_t *kaa_list_next(kaa_list_node_t *it);
 
 /**
  * @brief Gets iterator to the previous element.
- * @return An iterator or NULL if the provided iterator is NULL.
+ * @return An iterator
+ * @retval NULL the provided iterator is @c NULL
  */
 kaa_list_node_t *kaa_list_prev(kaa_list_node_t *it);
 
 /**
  * @brief Gets data from the iterator.
- * @return Data or NULL if the iterator is NULL.
+ * @return Data
+ * @retval NULL the iterator is @c NULL
  */
 void *kaa_list_get_data(kaa_list_node_t *it);
 
@@ -115,7 +123,7 @@ void kaa_list_set_data_at(kaa_list_node_t *it, void *data, deallocate_list_data 
 
 /**
  * @brief Returns an iterator to the first element in the list that matches by the predicate.
- * If no such element is found, the function returns NULL.
+ * @retval NULL no such element is found
  */
 kaa_list_node_t *kaa_list_find_next(kaa_list_node_t *from, match_predicate pred, void *context);
 
@@ -134,7 +142,7 @@ kaa_list_node_t *kaa_list_remove_at(kaa_list_t *list, kaa_list_node_t *it, deall
 
 /**
  * @brief Removes from the list the first element for which the predicate returns true.
- * @return KAA_ERR_NONE if element was found.
+ * @retval KAA_ERR_NONE element was found
  */
 kaa_error_t kaa_list_remove_first(kaa_list_t *list, match_predicate pred, void *context, deallocate_list_data deallocator);
 

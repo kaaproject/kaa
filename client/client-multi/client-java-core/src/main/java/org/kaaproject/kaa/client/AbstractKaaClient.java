@@ -63,6 +63,7 @@ import org.kaaproject.kaa.client.configuration.base.ConfigurationListener;
 import org.kaaproject.kaa.client.configuration.base.ConfigurationManager;
 import org.kaaproject.kaa.client.configuration.base.ResyncConfigurationManager;
 import org.kaaproject.kaa.client.configuration.storage.ConfigurationStorage;
+import org.kaaproject.kaa.client.context.ExecutorContext;
 import org.kaaproject.kaa.client.context.TransportContext;
 import org.kaaproject.kaa.client.event.DefaultEventManager;
 import org.kaaproject.kaa.client.event.EndpointAccessToken;
@@ -186,8 +187,9 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
         if (context.getProperties() != null) {
             this.properties = context.getProperties();
         } else {
-            this.properties = new KaaClientProperties(context.getBase64());
+            this.properties = new KaaClientProperties();
         }
+        this.properties.setBase64(context.getBase64());
 
         Map<TransportProtocolId, List<TransportConnectionInfo>> bootstrapServers = this.properties.getBootstrapServers();
         if (bootstrapServers == null || bootstrapServers.isEmpty()) {
@@ -222,7 +224,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
         eventManager = buildEventManager(properties, kaaClientState, transportContext);
         endpointRegistrationManager = buildRegistrationManager(properties, kaaClientState, transportContext);
         logCollector = buildLogCollector(properties, kaaClientState, transportContext);
-        configurationManager = buildConfigurationManager(properties, kaaClientState, transportContext);
+        configurationManager = buildConfigurationManager(properties, kaaClientState, transportContext, context.getExecutorContext());
 
         transportContext.getRedirectionTransport().setBootstrapManager(bootstrapManager);
         transportContext.getBootstrapTransport().setBootstrapManager(bootstrapManager);
@@ -669,8 +671,8 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
     }
 
     protected ResyncConfigurationManager buildConfigurationManager(KaaClientProperties properties, KaaClientState kaaClientState,
-            TransportContext transportContext) {
-        return new ResyncConfigurationManager(properties, kaaClientState);
+                                                                   TransportContext transportContext, ExecutorContext executorContext) {
+        return new ResyncConfigurationManager(properties, kaaClientState, executorContext);
     }
 
     protected DefaultLogCollector buildLogCollector(KaaClientProperties properties, KaaClientState kaaClientState,

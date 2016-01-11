@@ -25,18 +25,28 @@ set(CMAKE_MODULE_PATH
 	 ${CMAKE_CURRENT_SOURCE_DIR}/Modules
     )
 
-#Checks whether avrogen.sh exists
-set (AVROGEN "avrogen.sh")
+#Checks whether avrogen script exists
 set (WORKDIR ${CMAKE_CURRENT_SOURCE_DIR})
 message("==================================")
-if (NOT EXISTS "${WORKDIR}/${AVROGEN}")
-   message("Error: avrogen.sh hasn't been found.")
+if (WIN32)
+    set (AVROGEN "avrogen.bat")
+    if (NOT EXISTS "${WORKDIR}/${AVROGEN}")
+       message("Error: avrogen.bat hasn't been found.")
+    else()
+       execute_process(COMMAND "${AVROGEN}"
+                   WORKING_DIRECTORY ${WORKDIR}
+                  )
+    endif()
 else()
-   message("avrogen.sh has been found")
-   execute_process(COMMAND chmod +x ./${AVROGEN}
+    set (AVROGEN "avrogen.sh")
+    if (NOT EXISTS "${WORKDIR}/${AVROGEN}")
+       message("Error: avrogen.sh hasn't been found.")
+    else()
+       execute_process(COMMAND chmod +x ./${AVROGEN}
                    COMMAND "./${AVROGEN}" 
                    WORKING_DIRECTORY ${WORKDIR}
                   )
+    endif()
 endif()
 
 #

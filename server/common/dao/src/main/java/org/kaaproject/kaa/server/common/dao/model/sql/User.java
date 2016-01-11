@@ -40,7 +40,7 @@ import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongI
 @Entity
 @Table(name = USER_TABLE_NAME,
         uniqueConstraints = @UniqueConstraint(columnNames = {USER_TENANT_ID, USER_EXTERNAL_UID}))
-public final class User extends GenericModel<UserDto> implements Serializable {
+public class User extends GenericModel<UserDto> implements Serializable {
 
     private static final long serialVersionUID = -6651349022301623429L;
 

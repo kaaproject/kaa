@@ -225,4 +225,7 @@ public abstract class AbstractHttpChannel implements KaaDataChannel {
 
     protected abstract Runnable createChannelRunnable(ChannelSyncTask task);
 
+    public boolean isShutdown() {
+        return isShutdown;
+    }
 }

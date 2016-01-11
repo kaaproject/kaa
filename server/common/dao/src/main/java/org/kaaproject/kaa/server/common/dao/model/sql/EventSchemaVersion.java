@@ -31,7 +31,7 @@ import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongI
 
 @Entity
 @Table(name = EVENT_SCHEMA_VERSION_TABLE_NAME)
-public final class EventSchemaVersion extends GenericModel<EventSchemaVersionDto> {
+public class EventSchemaVersion extends GenericModel<EventSchemaVersionDto> {
 
     private static final long serialVersionUID = -7490111487256831990L;
 

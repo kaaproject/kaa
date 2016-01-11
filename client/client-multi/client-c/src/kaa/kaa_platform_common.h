@@ -26,7 +26,7 @@ extern "C" {
 
 #define KAA_ALIGNMENT                        4
 
-/**
+/*
  * All definitions related to a field size specify in bytes.
  */
 #define KAA_PROTOCOL_ID_SIZE                 4
@@ -39,7 +39,7 @@ extern "C" {
 #define KAA_EXTENSION_PAYLOAD_LENGTH_SIZE    4
 #define KAA_EXTENSION_HEADER_SIZE            (KAA_EXTENSION_TYPE_SIZE + KAA_EXTENSION_OPTIONS_SIZE + KAA_EXTENSION_PAYLOAD_LENGTH_SIZE)
 
-/**
+/*
  * Extension ID description
  */
 #define KAA_BOOTSTRAP_EXTENSION_TYPE        0
