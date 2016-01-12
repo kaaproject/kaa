@@ -72,7 +72,7 @@ public class PluginInstance extends GenericModel<PluginInstanceDto> implements S
     @Enumerated(EnumType.STRING)
     private PluginInstanceState state;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = PLUGIN_INSTANCE_PLUGIN_ID, foreignKey = @ForeignKey(name = PLUGIN_INSTANCE_PLUGIN_FK))
     private Plugin plugin;
 
