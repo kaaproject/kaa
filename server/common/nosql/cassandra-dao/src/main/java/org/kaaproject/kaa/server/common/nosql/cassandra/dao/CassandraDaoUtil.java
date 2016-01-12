@@ -132,6 +132,14 @@ public class CassandraDaoUtil {
         return id;
     }
 
+    public static String convertKeyHashToString(byte[] endpointKeyHash) {
+        String id = null;
+        if (endpointKeyHash != null) {
+            id = Bytes.toHexString(endpointKeyHash);
+        }
+        return id;
+    }
+
     /**
      * This method convert string representation of endpoint key hash to ByteBuffer object
      * if id eq null, than return null

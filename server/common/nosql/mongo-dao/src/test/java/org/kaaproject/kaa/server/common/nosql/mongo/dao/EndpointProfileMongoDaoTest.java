@@ -16,9 +16,6 @@
 
 package org.kaaproject.kaa.server.common.nosql.mongo.dao;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
-
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -30,6 +27,8 @@ import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.PageLinkDto;
+import org.kaaproject.kaa.server.common.dao.lock.KaaOptimisticLockingFailureException;
+import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoEndpointProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,12 +36,22 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/mongo-dao-test-context.xml")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class EndpointProfileMongoDaoTest extends AbstractMongoTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(EndpointProfileMongoDaoTest.class);
+    private static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(10);
 
     private static final String TEST_ENDPOINT_GROUP_ID = "124";
     private static final String TEST_LIMIT = "3";
@@ -168,17 +177,24 @@ public class EndpointProfileMongoDaoTest extends AbstractMongoTest {
     @Test
     public void convertToDtoTest() {
         EndpointProfileDto endpointProfile = generateEndpointProfileDto(null, null);
+        endpointProfile.setAccessToken("Trololo");
+        endpointProfileDao.save(endpointProfile);
         Assert.assertNotNull(endpointProfile);
         MongoEndpointProfile converted = new MongoEndpointProfile(endpointProfile);
         Assert.assertEquals(endpointProfile, converted.toDto());
     }
 
     @Test
-    public void getCountByKeyHash() {
+    public void testFindEndpointIdByKeyHash() {
         EndpointProfileDto endpointProfile = generateEndpointProfileDto(null, null);
         Assert.assertNotNull(endpointProfile);
-        long count = endpointProfileDao.getCountByKeyHash(endpointProfile.getEndpointKeyHash());
-        Assert.assertEquals(1, count);
+        EndpointProfile ep = endpointProfileDao.findEndpointIdByKeyHash(endpointProfile.getEndpointKeyHash());
+        Assert.assertEquals(endpointProfile.getId(), ep.getId());
+        Assert.assertNull(endpointProfile.getEndpointKey());
+        Assert.assertNull(ep.getEndpointKey());
+        Assert.assertNull(ep.getEndpointUserId());
+        Assert.assertNull(ep.getServerProfile());
+        Assert.assertNull(ep.getSubscriptions());
     }
 
     @Test
@@ -191,4 +207,32 @@ public class EndpointProfileMongoDaoTest extends AbstractMongoTest {
         Assert.assertNull(found);
     }
 
+    @Test(expected = KaaOptimisticLockingFailureException.class)
+    public void testOptimisticLockWithConcurrency() throws Throwable {
+        final EndpointProfileDto endpointProfile = generateEndpointProfileDto(null, null);
+        List<Future<?>> tasks = new ArrayList<>();
+        for (int i = 0; i < 100; i++) {
+            final int id = i;
+            tasks.add(EXECUTOR.submit(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        MongoEndpointProfile ep = new MongoEndpointProfile(endpointProfile);
+                        ep.setEndpointUserId("Ololo " + id);
+                        endpointProfileDao.save(ep.toDto());
+                    } catch (KaaOptimisticLockingFailureException ex) {
+                        LOG.error("Catch optimistic exception.");
+                        throw ex;
+                    }
+                }
+            }));
+        }
+        for (Future future : tasks) {
+            try {
+                future.get();
+            } catch (ExecutionException ex) {
+                throw ex.getCause();
+            }
+        }
+    }
 }

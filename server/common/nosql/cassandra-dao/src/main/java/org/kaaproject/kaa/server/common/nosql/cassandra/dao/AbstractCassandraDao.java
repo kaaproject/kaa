@@ -21,6 +21,7 @@ import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.Statement;
+import com.datastax.driver.core.UserType;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
 import com.datastax.driver.mapping.Mapper;
 import com.datastax.driver.mapping.Result;
@@ -37,6 +38,7 @@ import java.util.List;
 public abstract class AbstractCassandraDao<T, K> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractCassandraDao.class);
+    private static final String KAA = "kaa";
 
     /**
      * Cassandra client classes.
@@ -57,7 +59,7 @@ public abstract class AbstractCassandraDao<T, K> {
 
     protected abstract String getColumnFamilyName();
 
-    private Session getSession() {
+    protected Session getSession() {
         if (session == null) {
             session = cassandraClient.getSession();
         }
@@ -83,6 +85,10 @@ public abstract class AbstractCassandraDao<T, K> {
             }
         }
         return list;
+    }
+
+    protected UserType getUserType(String userType) {
+        return getSession().getCluster().getMetadata().getKeyspace(KAA).getUserType(userType);
     }
 
     protected T findOneByStatement(Statement statement) {
@@ -114,6 +120,16 @@ public abstract class AbstractCassandraDao<T, K> {
         saveStatement.setConsistencyLevel(getWriteConsistencyLevel());
         execute(saveStatement);
         return dto;
+    }
+
+    protected boolean wasApplied(ResultSet resultSet) {
+        boolean result = false;
+        if (resultSet != null) {
+            if (resultSet.wasApplied()) {
+                result = true;
+            }
+        }
+        return result;
     }
 
     protected void executeBatch(BatchStatement batch) {

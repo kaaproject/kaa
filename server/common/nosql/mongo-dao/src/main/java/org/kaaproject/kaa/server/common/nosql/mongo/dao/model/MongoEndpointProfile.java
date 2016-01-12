@@ -24,6 +24,7 @@ import org.kaaproject.kaa.common.dto.EventClassFamilyVersionStateDto;
 import org.kaaproject.kaa.server.common.dao.impl.DaoUtil;
 import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Version;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -32,6 +33,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.OPT_LOCK;
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getArrayCopy;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.ENDPOINT_PROFILE;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_ACCESS_TOKEN;
@@ -53,8 +55,8 @@ import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelC
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_PROFILE_VERSION;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SDK_TOKEN;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SERVER_HASH;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SERVER_PROFILE_VERSION_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SERVER_PROFILE_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SERVER_PROFILE_VERSION_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SYSTEM_NF_VERSION;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_USER_CONFIGURATION_HASH;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_USER_ID;
@@ -123,12 +125,19 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
     private String sdkToken;
     @Field(EP_SERVER_PROFILE_PROPERTY)
     private String serverProfile;
+    @Version
+    @Field(OPT_LOCK)
+    private Long optVersion;
 
 
     public MongoEndpointProfile() {
     }
 
     public MongoEndpointProfile(EndpointProfileDto dto) {
+        this(dto, null);
+    }
+
+    public MongoEndpointProfile(EndpointProfileDto dto, Long version) {
         this.id = dto.getId();
         this.applicationId = dto.getApplicationId();
         this.endpointKey = dto.getEndpointKey();
@@ -156,6 +165,9 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         this.serverHash = dto.getServerHash();
         this.sdkToken = dto.getSdkToken();
         this.serverProfile = dto.getServerProfileBody();
+        if (version != null) {
+            this.optVersion = version;
+        }
     }
 
     @Override
@@ -274,7 +286,7 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
     public void setProfileVersion(int profileVersion) {
         this.profileVersion = profileVersion;
     }
-    
+
     public int getServerProfileVersion() {
         return serverProfileVersion;
     }
@@ -378,6 +390,14 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
 
     public void setSdkToken(String sdkToken) {
         this.sdkToken = sdkToken;
+    }
+
+    public Long getOptVersion() {
+        return optVersion;
+    }
+
+    public void setOptVersion(Long optVersion) {
+        this.optVersion = optVersion;
     }
 
     @Override

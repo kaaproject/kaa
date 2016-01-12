@@ -16,6 +16,28 @@
 
 package org.kaaproject.kaa.server.common.nosql.mongo.dao;
 
+import com.mongodb.DBObject;
+import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
+import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
+import org.kaaproject.kaa.common.dto.PageLinkDto;
+import org.kaaproject.kaa.server.common.dao.DaoConstants;
+import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
+import org.kaaproject.kaa.server.common.dao.lock.KaaOptimisticLockingFailureException;
+import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoEndpointProfile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.dao.OptimisticLockingFailureException;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.stereotype.Repository;
+
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.OPT_LOCK;
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.ENDPOINT_GROUP_ID;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.ENDPOINT_PROFILE;
@@ -28,29 +50,10 @@ import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelC
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SERVER_PROFILE_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SERVER_PROFILE_VERSION_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_USER_ID;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.ID;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 import static org.springframework.data.mongodb.core.query.Update.update;
-
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileDto;
-import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
-import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
-import org.kaaproject.kaa.common.dto.PageLinkDto;
-import org.kaaproject.kaa.server.common.dao.DaoConstants;
-import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
-import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoEndpointProfile;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.stereotype.Repository;
-
-import com.mongodb.DBObject;
 
 @Repository
 public class EndpointProfileMongoDao extends AbstractMongoDao<MongoEndpointProfile, ByteBuffer> implements EndpointProfileDao<MongoEndpointProfile> {
@@ -119,6 +122,19 @@ public class EndpointProfileMongoDao extends AbstractMongoDao<MongoEndpointProfi
     }
 
     @Override
+    public Long findVersionByKey(byte[] endpointKeyHash) {
+        LOG.debug("Find endpoint profile version by key hash [{}] ", endpointKeyHash);
+        Long version = null;
+        Query query = query(where(EP_ENDPOINT_KEY_HASH).is(endpointKeyHash));
+        query.fields().include(OPT_LOCK);
+        DBObject result = mongoTemplate.getDb().getCollection(getCollectionName()).findOne(query.getQueryObject());
+        if (result != null) {
+            version = (Long) result.get(OPT_LOCK);
+        }
+        return version;
+    }
+
+    @Override
     public MongoEndpointProfile findByKeyHash(byte[] endpointKeyHash) {
         LOG.debug("Find endpoint profile by endpoint key hash [{}] ", endpointKeyHash);
         DBObject dbObject = query(where(EP_ENDPOINT_KEY_HASH).is(endpointKeyHash)).getQueryObject();
@@ -140,10 +156,11 @@ public class EndpointProfileMongoDao extends AbstractMongoDao<MongoEndpointProfi
     }
 
     @Override
-    public long getCountByKeyHash(byte[] endpointKeyHash) {
+    public MongoEndpointProfile findEndpointIdByKeyHash(byte[] endpointKeyHash) {
         LOG.debug("Get count of endpoint profiles by endpoint key hash [{}] ", endpointKeyHash);
-        DBObject dbObject = query(where(EP_ENDPOINT_KEY_HASH).is(endpointKeyHash)).getQueryObject();
-        return mongoTemplate.getDb().getCollection(getCollectionName()).count(dbObject);
+        Query query = query(where(EP_ENDPOINT_KEY_HASH).is(endpointKeyHash));
+        query.fields().include(ID);
+        return findOne(query);
     }
 
     @Override
@@ -190,13 +207,13 @@ public class EndpointProfileMongoDao extends AbstractMongoDao<MongoEndpointProfi
 
     @Override
     public MongoEndpointProfile save(EndpointProfileDto dto) {
-        return save(new MongoEndpointProfile(dto));
-    }
-
-    @Override
-    public List<MongoEndpointProfile> findBySdkToken(String sdkToken) {
-        LOG.debug("Searching for endpoint profiles by SDK token {} ", sdkToken);
-        return find(query(where(EP_SDK_TOKEN).is(sdkToken)));
+        try {
+            MongoEndpointProfile profile = new MongoEndpointProfile(dto);
+            profile.setOptVersion(findVersionByKey(dto.getEndpointKeyHash()));
+            return save(profile);
+        } catch (OptimisticLockingFailureException exception) {
+            throw new KaaOptimisticLockingFailureException("Can't update endpoint profile. Endpoint profile already changed!", exception);
+        }
     }
 
     @Override
@@ -211,7 +228,7 @@ public class EndpointProfileMongoDao extends AbstractMongoDao<MongoEndpointProfi
         updateFirst(
                 query(where(EP_ENDPOINT_KEY_HASH).is(keyHash)),
                 update(EP_SERVER_PROFILE_PROPERTY, serverProfile)
-                .set(EP_SERVER_PROFILE_VERSION_PROPERTY, version));
+                        .set(EP_SERVER_PROFILE_VERSION_PROPERTY, version));
         return findById(ByteBuffer.wrap(keyHash));
     }
 }

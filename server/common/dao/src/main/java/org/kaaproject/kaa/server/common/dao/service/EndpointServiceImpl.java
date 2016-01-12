@@ -16,21 +16,6 @@
 
 package org.kaaproject.kaa.server.common.dao.service;
 
-import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
-import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getDto;
-import static org.kaaproject.kaa.server.common.dao.service.Validator.isValidId;
-import static org.kaaproject.kaa.server.common.dao.service.Validator.isValidObject;
-import static org.kaaproject.kaa.server.common.dao.service.Validator.validateHash;
-import static org.kaaproject.kaa.server.common.dao.service.Validator.validateObject;
-import static org.kaaproject.kaa.server.common.dao.service.Validator.validateSqlId;
-import static org.kaaproject.kaa.server.common.dao.service.Validator.validateSqlObject;
-import static org.kaaproject.kaa.server.common.dao.service.Validator.validateString;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
 import org.kaaproject.kaa.common.dto.ChangeDto;
 import org.kaaproject.kaa.common.dto.ChangeNotificationDto;
@@ -59,6 +44,8 @@ import org.kaaproject.kaa.server.common.dao.impl.EndpointGroupDao;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointUserDao;
 import org.kaaproject.kaa.server.common.dao.impl.ProfileFilterDao;
+import org.kaaproject.kaa.server.common.dao.lock.KaaOptimisticLockingFailureException;
+import org.kaaproject.kaa.server.common.dao.lock.Retry;
 import org.kaaproject.kaa.server.common.dao.model.EndpointConfiguration;
 import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
 import org.kaaproject.kaa.server.common.dao.model.EndpointUser;
@@ -70,6 +57,20 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
+import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getDto;
+import static org.kaaproject.kaa.server.common.dao.service.Validator.isValidId;
+import static org.kaaproject.kaa.server.common.dao.service.Validator.isValidObject;
+import static org.kaaproject.kaa.server.common.dao.service.Validator.validateHash;
+import static org.kaaproject.kaa.server.common.dao.service.Validator.validateObject;
+import static org.kaaproject.kaa.server.common.dao.service.Validator.validateSqlId;
+import static org.kaaproject.kaa.server.common.dao.service.Validator.validateSqlObject;
+import static org.kaaproject.kaa.server.common.dao.service.Validator.validateString;
 
 @Service
 public class EndpointServiceImpl implements EndpointService {
@@ -271,14 +272,13 @@ public class EndpointServiceImpl implements EndpointService {
     }
 
     @Override
-    @Transactional
-    public EndpointProfileDto saveEndpointProfile(EndpointProfileDto endpointProfileDto) {
-        validateObject(endpointProfileDto, "Can't find endpoint profile object. Invalid endpoint profile object"
-                + endpointProfileDto);
+    @Retry(times = 5, on = org.springframework.dao.OptimisticLockingFailureException.class)
+    public EndpointProfileDto saveEndpointProfile(EndpointProfileDto endpointProfileDto) throws KaaOptimisticLockingFailureException {
+        EndpointProfileDto profileDto = null;
+        validateObject(endpointProfileDto, "Can't find endpoint profile object. Invalid endpoint profile object" + endpointProfileDto);
         byte[] keyHash = endpointProfileDto.getEndpointKeyHash();
-        EndpointProfileDto dto;
         validateHash(keyHash, "Incorrect key hash for endpoint profile.");
-        if(endpointProfileDto.getServerProfileBody() == null){
+        if (endpointProfileDto.getServerProfileBody() == null) {
             ServerProfileSchemaDto serverProfileSchemaDto = serverProfileService.findLatestServerProfileSchema(endpointProfileDto.getApplicationId());
             CTLSchemaDto schemaDto = ctlService.findCTLSchemaById(serverProfileSchemaDto.getCtlSchemaId());
             LOG.debug("Set latest server profile schema [{}] and default record {} for endpoint with key [{}]", serverProfileSchemaDto.getVersion(), schemaDto.getBody(), keyHash);
@@ -286,26 +286,14 @@ public class EndpointServiceImpl implements EndpointService {
             endpointProfileDto.setServerProfileBody(schemaDto.getDefaultRecord());
         }
         if (isBlank(endpointProfileDto.getId())) {
-            //TODO: Improve this to avoid redundant requests to DB and invalid logic.
-            if (endpointProfileDao.getCountByKeyHash(keyHash) == 0) {
+            EndpointProfile storedProfile = endpointProfileDao.findEndpointIdByKeyHash(keyHash);
+            if (storedProfile != null) {
+                endpointProfileDto.setId(storedProfile.getId());
                 LOG.debug("Register new endpoint profile.");
-                dto = getDto(endpointProfileDao.save(endpointProfileDto));
-            } else {
-                EndpointProfile storedProfile = endpointProfileDao.findByKeyHash(keyHash);
-                if (Arrays.equals(storedProfile.getEndpointKey(), endpointProfileDto.getEndpointKey())) {
-                    LOG.debug("Got register profile for already existing profile {}. Will overwrite existing profile!", keyHash);
-                    endpointProfileDto.setId(storedProfile.getId());
-                    dto = getDto(endpointProfileDao.save(endpointProfileDto));
-                } else {
-                    LOG.warn("Endpoint profile with key hash {} already exists.", keyHash);
-                    throw new DatabaseProcessingException("Can't save endpoint profile with existing key hash.");
-                }
             }
-        } else {
-            LOG.debug("Update endpoint profile with id [{}]", endpointProfileDto.getId());
-            dto = getDto(endpointProfileDao.save(endpointProfileDto));
         }
-        return dto;
+        profileDto = getDto(endpointProfileDao.save(endpointProfileDto));
+        return profileDto;
     }
 
     @Override
