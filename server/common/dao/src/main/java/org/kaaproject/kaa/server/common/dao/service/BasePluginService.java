@@ -159,6 +159,7 @@ public class BasePluginService implements PluginService {
                         receivedContract.getName() + "' and version: " + receivedContract.getVersion());
             }
             receivedContract.setId(foundContract.getId());
+            pluginContractInstance.setPluginInstance(pluginInstance);
         }
         pluginInstance.setPlugin(plugin);
         PluginInstance savedInstance = pluginInstanceDao.save(pluginInstance);

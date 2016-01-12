@@ -199,7 +199,8 @@ public class PluginContract extends GenericModel<PluginContractDto> implements S
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("PluginContract{");
-        sb.append("direction=").append(direction);
+        sb.append("id=").append(id);
+        sb.append(", direction=").append(direction);
         sb.append(", contract=").append(contract);
         sb.append('}');
         return sb.toString();

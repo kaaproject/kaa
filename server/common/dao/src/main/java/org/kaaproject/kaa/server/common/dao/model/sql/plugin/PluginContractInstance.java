@@ -18,7 +18,7 @@ package org.kaaproject.kaa.server.common.dao.model.sql.plugin;
 
 import org.kaaproject.kaa.common.dto.plugin.PluginContractInstanceDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginContractInstanceItemDto;
-import org.kaaproject.kaa.server.common.dao.DaoConstants;
+import org.kaaproject.kaa.common.dto.plugin.PluginInstanceDto;
 import org.kaaproject.kaa.server.common.dao.model.sql.GenericModel;
 import org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils;
 
@@ -92,6 +92,7 @@ public class PluginContractInstance extends GenericModel<PluginContractInstanceD
             this.pluginContract = new PluginContract(dto.getContract());
         }
         if (dto.getInstance() != null) {
+            dto.getInstance().setContracts(null);
             this.pluginInstance = new PluginInstance(dto.getInstance());
         }
         Set<PluginContractInstanceItemDto> instanceItemDtos = dto.getItems();
@@ -126,11 +127,19 @@ public class PluginContractInstance extends GenericModel<PluginContractInstanceD
     public PluginContractInstanceDto toDto() {
         PluginContractInstanceDto dto = toDtoNoContract();
         dto.setContract(ModelUtils.getDto(pluginContract));
-        dto.setInstance(ModelUtils.getDto(pluginInstance));
+
+        PluginInstanceDto pluginInstanceDto = new PluginInstanceDto();
+        pluginInstanceDto.setId(getStringId());
+        pluginInstanceDto.setName(pluginInstance.getName());
+        pluginInstanceDto.setState(pluginInstance.getState());
+        pluginInstanceDto.setConfigurationData(pluginInstance.getConfigData());
+        pluginInstanceDto.setPluginDefinition(pluginInstance.getPlugin() != null ? pluginInstance.getPlugin().toDtoNoPluginInstances() : null);
+
+        dto.setInstance(pluginInstanceDto);
         return dto;
     }
 
-    public PluginContractInstanceDto toDtoNoContract() {
+    PluginContractInstanceDto toDtoNoContract() {
         PluginContractInstanceDto dto = createDto();
         dto.setId(getStringId());
         Set<PluginContractInstanceItemDto> instanceItemDtos = new HashSet<>();
