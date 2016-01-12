@@ -17,10 +17,11 @@ package org.kaaproject.kaa.client;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.concurrent.Future;
 
 import javax.annotation.Generated;
 
-import org.kaaproject.kaa.client.logging.future.BucketFuture;
+import org.kaaproject.kaa.client.logging.BucketInfo;
 import org.kaaproject.kaa.schema.base.Configuration;
 import org.kaaproject.kaa.schema.base.Log;
 
@@ -43,7 +44,7 @@ public class BaseKaaClient extends AbstractKaaClient implements KaaClient {
     }
 
     @Override
-    public BucketFuture addLogRecord(Log record) {
+    public Future<BucketInfo> addLogRecord(Log record) {
         checkClientState(State.STARTED, "Kaa client is not started");
         return logCollector.addLogRecord(record);
     }

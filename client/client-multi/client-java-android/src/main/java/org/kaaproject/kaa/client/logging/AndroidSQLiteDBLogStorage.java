@@ -124,10 +124,10 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
     }
 
     @Override
-    public LogBlock getRecordBlock() {
+    public LogBucket getNextBucket() {
         synchronized (database) {
             Log.d(TAG, "Creating a new record block");
-            LogBlock logBlock = null;
+            LogBucket logBlock = null;
             Cursor cursor = null;
             List<LogRecord> logRecords = new LinkedList<>();
             int bucketId = 0;
@@ -160,17 +160,17 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
 
                     if (!logRecords.isEmpty()) {
                         updateBucketState(bucketId);
-                        logBlock = new LogBlock(bucketId, logRecords);
+                        logBlock = new LogBucket(bucketId, logRecords);
 
                         long logBlockSize = maxBucketSize - leftBucketSize;
                         unmarkedConsumedSize -= logBlockSize;
                         unmarkedRecordCount -= logRecords.size();
-                        consumedMemoryStorage.put(logBlock.getBlockId(), logBlockSize);
+                        consumedMemoryStorage.put(logBlock.getBucketId(), logBlockSize);
 
                         if (currentBucketId == bucketId) {
                             moveToNextBucket();
                         }
-                        Log.i(TAG, "Created log block: id [" + logBlock.getBlockId() + "], size: " +
+                        Log.i(TAG, "Created log block: id [" + logBlock.getBucketId() + "], size: " +
                                 logBlockSize + ". Log block record count: " +
                                 logBlock.getRecords().size() + ", total record count: " + totalRecordCount +
                                 ", unmarked record count: " + unmarkedRecordCount);
@@ -217,7 +217,7 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
     }
 
     @Override
-    public void removeRecordBlock(int recordBlockId) {
+    public void removeBucket(int recordBlockId) {
         synchronized (database) {
             Log.d(TAG, "Removing record block with id [" + recordBlockId + "] from storage");
             if (deleteByBucketIdStatement == null) {
@@ -248,7 +248,7 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
     }
 
     @Override
-    public void notifyUploadFailed(int bucketId) {
+    public void rollbackBucket(int bucketId) {
         synchronized (database) {
             Log.d(TAG, "Notifying upload fail for bucket id: " + bucketId);
             if (resetBucketIdStatement == null) {

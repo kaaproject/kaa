@@ -18,6 +18,7 @@ package org.kaaproject.kaa.client;
 
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.util.concurrent.Future;
 
 import javax.annotation.Generated;
 
@@ -26,7 +27,7 @@ import org.kaaproject.kaa.client.channel.KaaDataChannel;
 import org.kaaproject.kaa.client.event.EventFamilyFactory;
 import org.kaaproject.kaa.client.event.EventListenersResolver;
 import org.kaaproject.kaa.client.event.registration.EndpointRegistrationManager;
-import org.kaaproject.kaa.client.logging.future.BucketFuture;
+import org.kaaproject.kaa.client.logging.BucketInfo;
 import org.kaaproject.kaa.schema.base.Configuration;
 import org.kaaproject.kaa.schema.base.Log;
 
@@ -53,10 +54,10 @@ public interface KaaClient extends GenericKaaClient {
     /**
      * Adds new log record to local storage.
      *
-     * @param record
-     *            New log record object
+     * @param record A log record object.
+     * @return The {@link Future} object which allows tracking a delivery status of a log record.
      */
-    BucketFuture addLogRecord(Log record);
+    Future<BucketInfo> addLogRecord(Log record);
 
     /**
      * Returns latest configuration.

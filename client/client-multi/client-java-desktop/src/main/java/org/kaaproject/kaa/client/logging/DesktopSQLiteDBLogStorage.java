@@ -134,12 +134,12 @@ public class DesktopSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
     }
 
     @Override
-    public LogBlock getRecordBlock() {
+    public LogBucket getNextBucket() {
         synchronized (connection) {
             LOG.trace("Creating a new record block, needed size: {}, batch count: {}", maxBucketSize, maxRecordCount);
 
             ResultSet resultSet = null;
-            LogBlock logBlock = null;
+            LogBucket logBlock = null;
             PreparedStatement selectBucketWithMinIdStatement = null;
             List<LogRecord> logRecords = new LinkedList<>();
             int bucketId = 0;
@@ -182,12 +182,12 @@ public class DesktopSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
 
                     if (!logRecords.isEmpty()) {
                         updateBucketState(bucketId);
-                        logBlock = new LogBlock(bucketId, logRecords);
+                        logBlock = new LogBucket(bucketId, logRecords);
 
                         long logBlockSize = maxBucketSize - leftBlockSize;
                         unmarkedConsumedSize -= logBlockSize;
                         unmarkedRecordCount -= logRecords.size();
-                        consumedMemoryStorage.put(logBlock.getBlockId(), logBlockSize);
+                        consumedMemoryStorage.put(logBlock.getBucketId(), logBlockSize);
 
                         if (currentBucketId == bucketId) {
                             moveToNextBucket();
@@ -195,7 +195,7 @@ public class DesktopSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
 
                         LOG.info("Created log block: id [{}], size {}. Log block record count: {}, total record count: {}," +
                                         " unmarked record count: {}",
-                                logBlock.getBlockId(), logBlockSize, logBlock.getRecords().size(), totalRecordCount, unmarkedRecordCount);
+                                logBlock.getBucketId(), logBlockSize, logBlock.getRecords().size(), totalRecordCount, unmarkedRecordCount);
                     } else {
                         LOG.info("No unmarked log records found");
                     }
@@ -246,7 +246,7 @@ public class DesktopSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
     }
 
     @Override
-    public void removeRecordBlock(int recordBlockId) {
+    public void removeBucket(int recordBlockId) {
         synchronized (connection) {
             LOG.trace("Removing record block with id [{}] from storage", recordBlockId);
             if (deleteByBucketIdStatement == null) {
@@ -274,7 +274,7 @@ public class DesktopSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
     }
 
     @Override
-    public void notifyUploadFailed(int bucketId) {
+    public void rollbackBucket(int bucketId) {
         synchronized (connection) {
             LOG.trace("Notifying upload fail for bucket id: {}", bucketId);
             if (resetBucketIdStatement == null) {

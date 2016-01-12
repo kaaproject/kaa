@@ -102,6 +102,6 @@ public interface PersistentLogStorageConstants {
     String KAA_SELECT_STORAGE_INFO =
                     "SELECT " + STORAGE_INFO_VALUE_COLUMN + " " +
                     "FROM " + STORAGE_INFO_TABLE_NAME + " " +
-                    "WHERE " + STORAGE_INFO_KEY_COLUMN + " = ?;";;
+                    "WHERE " + STORAGE_INFO_KEY_COLUMN + " = ?;";
 
 }

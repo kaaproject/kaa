@@ -16,8 +16,11 @@
 
 package org.kaaproject.kaa.client.logging;
 
-import org.kaaproject.kaa.client.logging.future.BucketFuture;
-import org.kaaproject.kaa.client.logging.BucketInfo;
+import java.util.concurrent.Future;
+
+import javax.annotation.Generated;
+
+import ${log_record_class_package}.${log_record_class};
 
 /**
  * <p>Interface for a log collector.</p>
@@ -29,20 +32,21 @@ import org.kaaproject.kaa.client.logging.BucketInfo;
  * Each of them may be set independently of others.</p>
  *
  * <p>Reference implementation of each module used by default.</p>
- * 
+ *
  * <p>This interface is auto-generated.</p>
  *
- * @see LogStorage
- * @see LogStorageStatus
- * @see LogUploadStrategy
- * @see LogUploadConfiguration
+ * @see GenericLogCollector
+ * @see BucketInfo
  */
-public interface LogCollector extends GenericLogCollector{
+@Generated("LogCollector.java.template")
+public interface LogCollector extends GenericLogCollector {
 
     /**
-     * Adds new log record to local storage.
+     * Adds a log record to a log storage.
      *
-     * @param record New log record object
+     * @param record A log record object.
+     *
+     * @return The {@link Future} object which allows tracking a delivery status of a log record.
      */
-    BucketFuture<BucketInfo> addLogRecord(${log_record_class_package}.${log_record_class} record);
+    Future<BucketInfo> addLogRecord(${log_record_class} record);
 }

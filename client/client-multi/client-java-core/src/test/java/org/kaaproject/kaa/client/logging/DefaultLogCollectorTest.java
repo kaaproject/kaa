@@ -25,8 +25,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.AbstractExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -136,7 +141,7 @@ public class DefaultLogCollectorTest {
         logCollector.setStorage(storage);
         Log record = new Log();
 
-        Mockito.when(storage.addLogRecord(Mockito.any(LogRecord.class))).thenReturn(new BucketInfo());
+        Mockito.when(storage.addLogRecord(Mockito.any(LogRecord.class))).thenReturn(new BucketInfo(1, 1));
         Mockito.when(storage.getStatus()).thenReturn(new LogStorageStatus() {
 
             @Override
@@ -186,7 +191,7 @@ public class DefaultLogCollectorTest {
         logCollector.setStorage(storage);
 
         Log record = new Log();
-        Mockito.when(storage.addLogRecord(Mockito.any(LogRecord.class))).thenReturn(new BucketInfo());
+        Mockito.when(storage.addLogRecord(Mockito.any(LogRecord.class))).thenReturn(new BucketInfo(1, 1));
         Mockito.when(storage.getStatus()).thenReturn(new LogStorageStatus() {
             @Override
             public long getRecordCount() {
@@ -218,8 +223,8 @@ public class DefaultLogCollectorTest {
         });
         logCollector.addLogRecord(record);
 
-        Mockito.when(storage.getRecordBlock()).thenReturn(
-                new LogBlock(0, Arrays.asList(new LogRecord(record), new LogRecord(record), new LogRecord(record))));
+        Mockito.when(storage.getNextBucket()).thenReturn(
+                new LogBucket(0, Arrays.asList(new LogRecord(record), new LogRecord(record), new LogRecord(record))));
 
         LogSyncRequest request1 = new LogSyncRequest();
         logCollector.fillSyncRequest(request1);
@@ -251,7 +256,7 @@ public class DefaultLogCollectorTest {
         logCollector.setStorage(storage);
 
         Log record = new Log();
-        Mockito.when(storage.addLogRecord(Mockito.any(LogRecord.class))).thenReturn(new BucketInfo());
+        Mockito.when(storage.addLogRecord(Mockito.any(LogRecord.class))).thenReturn(new BucketInfo(1, 1));
         Mockito.when(storage.getStatus()).thenReturn(new LogStorageStatus() {
             @Override
             public long getRecordCount() {
@@ -269,7 +274,7 @@ public class DefaultLogCollectorTest {
         logCollector.addLogRecord(record);
         logCollector.addLogRecord(record);
         logCollector.addLogRecord(record);
-        Mockito.when(storage.addLogRecord(Mockito.any(LogRecord.class))).thenReturn(new BucketInfo());
+        Mockito.when(storage.addLogRecord(Mockito.any(LogRecord.class))).thenReturn(new BucketInfo(1, 1));
         Mockito.when(storage.getStatus()).thenReturn(new LogStorageStatus() {
 
             @Override
@@ -284,8 +289,8 @@ public class DefaultLogCollectorTest {
         });
         logCollector.addLogRecord(record);
 
-        Mockito.when(storage.getRecordBlock()).thenReturn(
-                new LogBlock(1, Arrays.asList(new LogRecord(record), new LogRecord(record), new LogRecord(record))));
+        Mockito.when(storage.getNextBucket()).thenReturn(
+                new LogBucket(1, Arrays.asList(new LogRecord(record), new LogRecord(record), new LogRecord(record))));
 
         LogSyncRequest request1 = new LogSyncRequest();
         logCollector.fillSyncRequest(request1);
@@ -351,7 +356,7 @@ public class DefaultLogCollectorTest {
     @Test
     public void testBucketFuture() throws Exception {
         int defaultId = 42;
-        int logCount = 1;
+        int logCount = 5;
 
         KaaChannelManager channelManager = Mockito.mock(KaaChannelManager.class);
         FailoverManager failoverManager = Mockito.mock(FailoverManager.class);
@@ -394,16 +399,22 @@ public class DefaultLogCollectorTest {
 
         List<LogRecord> logRecords = new ArrayList<>();
         logRecords.add(new LogRecord());
-        LogBlock logBlock = new LogBlock(defaultId, logRecords);
-        Mockito.when(storage.getRecordBlock()).thenReturn(logBlock);
+        LogBucket logBlock = new LogBucket(defaultId, logRecords);
+        Mockito.when(storage.getNextBucket()).thenReturn(logBlock);
 
-        Future<BucketInfo> future = logCollector.addLogRecord(new Log());
+        List<Future<BucketInfo>> deliveryFutures = new LinkedList<Future<BucketInfo>>();
+        for (int i = 0; i < logCount; ++i) {
+            deliveryFutures.add(logCollector.addLogRecord(new Log()));
+        }
 
         LogSyncRequest request = new LogSyncRequest();
         logCollector.fillSyncRequest(request);
 
         logCollector.onLogResponse(response);
-        Assert.assertEquals(defaultId, future.get().getBucketId());
+
+        for (Future<BucketInfo> future : deliveryFutures) {
+            Assert.assertEquals(defaultId, future.get().getBucketId());
+        }
     }
 
     @Test

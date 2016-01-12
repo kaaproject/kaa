@@ -591,7 +591,7 @@ public interface GenericKaaClient {
 
 
     /**
-     * Sets callback for receiving log events
+     * Set a listener which receives a delivery status of each log bucket.
      *
      * @param   listener the listener
      *

@@ -19,46 +19,47 @@ package org.kaaproject.kaa.client.logging;
 import java.util.List;
 
 /**
- * <p>Wrapper class for a log block which is going to be sent.</p>
+ * <p>The helper class which is used to transfer logs from {@link LogStorage} to {@link LogCollector}.</p>
  *
- * <p>Each log block should have its unique id to be mapped in the log storage and
- * delivery stuff.</p>
+ * <p><b>Note:</b>The id should be unique across all available log buckets.</p>
  */
-public class LogBlock {
+public class LogBucket {
     /**
-     * Unique id for sending log block
+     * The unique id of a log bucket.
      */
     private final int id;
 
     /**
-     * A log block, which is going to be sent.
+     * Log records.
      */
     private final List<LogRecord> logRecords;
 
     /**
-     * Constructs wrapper for a log block.
+     * Constructs {@link LogBucket} object.
      *
-     * @param id Unique id used for mapping in a delivery stuff and local log storage
-     * @param records Sending log block
+     * @param id      The unique log bucket id.
+     * @param records Log records.
      */
-    public LogBlock(int id, List<LogRecord> records) {
+    public LogBucket(int id, List<LogRecord> records) {
         this.id = id;
         this.logRecords = records;
     }
 
     /**
-     * Retrieves log block id
+     * <p>Returns a log bucket id.</p>
      *
-     * @return Unique log block id
+     * <p>A log bucket id should be unique across all available buckets.</p>
+     *
+     * @return The log bucket id.
      */
-    public int getBlockId() {
+    public int getBucketId() {
         return id;
     }
 
     /**
-     * Retrieves sending log records.
+     * Retrieves log records of the bucket.
      *
-     * @return List of sending log records.
+     * @return The list of log records.
      */
     List<LogRecord> getRecords() {
         return logRecords;

@@ -101,10 +101,10 @@ public class MemLogStorage implements LogStorage, LogStorageStatus {
     }
 
     @Override
-    public LogBlock getRecordBlock() {
+    public LogBucket getNextBucket() {
         LOG.trace("Getting new record block with block");
 
-        LogBlock result = null;
+        LogBucket result = null;
         MemBucket bucketCandidate = null;
         synchronized (buckets) {
             for (MemBucket bucket : buckets.values()) {
@@ -125,7 +125,7 @@ public class MemLogStorage implements LogStorage, LogStorageStatus {
                     LOG.trace("Only a bucket with state FREE found: [{}]. Changing its state to PENDING", bucketCandidate.getId());
                     bucketCandidate.setState(MemBucketState.PENDING);
                 }
-                result = new LogBlock(bucketCandidate.getId(), bucketCandidate.getRecords());
+                result = new LogBucket(bucketCandidate.getId(), bucketCandidate.getRecords());
                 LOG.debug("Return record block with records count: [{}]", bucketCandidate.getCount());
             }
         }
@@ -133,7 +133,7 @@ public class MemLogStorage implements LogStorage, LogStorageStatus {
     }
 
     @Override
-    public void removeRecordBlock(int id) {
+    public void removeBucket(int id) {
         LOG.trace("Removing record block with id [{}]", id);
         synchronized (buckets) {
             if (buckets.remove(id) != null) {
@@ -145,7 +145,7 @@ public class MemLogStorage implements LogStorage, LogStorageStatus {
     }
 
     @Override
-    public void notifyUploadFailed(int id) {
+    public void rollbackBucket(int id) {
         LOG.trace("Upload of record block [{}] failed", id);
         synchronized (buckets) {
             buckets.get(id).setState(MemBucketState.FULL);

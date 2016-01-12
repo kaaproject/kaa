@@ -18,10 +18,12 @@ package org.kaaproject.kaa.client.logging;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
 import org.kaaproject.kaa.client.channel.FailoverManager;
@@ -52,14 +54,14 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
     protected final ExecutorContext executorContext;
     private final LogTransport transport;
     private final ConcurrentHashMap<Integer, Future<?>> timeouts = new ConcurrentHashMap<>();
-    protected final ConcurrentMap<Integer, BucketFuture<BucketInfo>> futureMap = new ConcurrentHashMap<>();
+    protected final Map<Integer, List<BucketFuture<BucketInfo>>> deliveryFuturesMap = new HashMap<>();
     protected final Map<Integer, BucketInfo> bucketInfoMap = new ConcurrentHashMap<>();
     private final KaaChannelManager channelManager;
     private final FailoverManager failoverManager;
 
     protected LogStorage storage;
     private LogUploadStrategy strategy;
-    private LogFailoverCommand controller;
+    private final LogFailoverCommand controller;
     private LogDeliveryListener logDeliveryListener;
 
     private final Object uploadCheckLock = new Object();
@@ -96,50 +98,43 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
 
     @Override
     public void fillSyncRequest(LogSyncRequest request) {
-        LogBlock group;
-        if (storage.getStatus().getRecordCount() == 0) {
-            LOG.debug("Log storage is empty");
-            return;
-        }
-
         if (!isUploadAllowed()) {
             return;
         }
 
-        group = storage.getRecordBlock();
+        LogBucket bucket = storage.getNextBucket();
 
-        if (group != null) {
-            List<LogRecord> recordList = group.getRecords();
-
-            if (!recordList.isEmpty()) {
-                LOG.trace("Sending {} log records", recordList.size());
-
-                List<LogEntry> logs = new LinkedList<>();
-                for (LogRecord record : recordList) {
-                    logs.add(new LogEntry(ByteBuffer.wrap(record.getData())));
-                }
-
-                request.setRequestId(group.getBlockId());
-                request.setLogEntries(logs);
-
-                final LogBlock timeoutGroup = group;
-                Future<?> timeoutFuture = executorContext.getScheduledExecutor().schedule(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (!Thread.currentThread().isInterrupted()) {
-                            checkDeliveryTimeout(timeoutGroup.getBlockId());
-                        } else {
-                            LOG.debug("Timeout check worker for block: {} was interrupted", timeoutGroup.getBlockId());
-                        }
-                    }
-                }, strategy.getTimeout(), TimeUnit.SECONDS);
-
-                LOG.info("Adding following bucket id [{}] for timeout tracking", group.getBlockId());
-                timeouts.put(group.getBlockId(), timeoutFuture);
-            }
-        } else {
-            LOG.warn("Log group is null: log group size is too small");
+        if (bucket == null || bucket.getRecords().isEmpty()) {
+            LOG.warn("No logs to send");
+            return;
         }
+
+        List<LogRecord> recordList = bucket.getRecords();
+
+        LOG.trace("Sending {} log records", recordList.size());
+
+        List<LogEntry> logs = new LinkedList<>();
+        for (LogRecord record : recordList) {
+            logs.add(new LogEntry(ByteBuffer.wrap(record.getData())));
+        }
+
+        request.setRequestId(bucket.getBucketId());
+        request.setLogEntries(logs);
+
+        final int bucketId = bucket.getBucketId();
+        Future<?> timeoutFuture = executorContext.getScheduledExecutor().schedule(new Runnable() {
+            @Override
+            public void run() {
+                if (!Thread.currentThread().isInterrupted()) {
+                    checkDeliveryTimeout(bucketId);
+                } else {
+                    LOG.debug("Timeout check worker for log bucket: {} was interrupted", bucketId);
+                }
+            }
+        }, strategy.getTimeout(), TimeUnit.SECONDS);
+
+        LOG.info("Adding following bucket id [{}] for timeout tracking", bucket.getBucketId());
+        timeouts.put(bucket.getBucketId(), timeoutFuture);
     }
 
     @Override
@@ -150,30 +145,47 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
                 final int requestId = response.getRequestId();
                 final BucketInfo bucketInfo = bucketInfoMap.get(requestId);
                 bucketInfoMap.remove(requestId);
+
                 if (response.getResult() == SyncResponseResultType.SUCCESS) {
-                    storage.removeRecordBlock(response.getRequestId());
+                    storage.removeBucket(response.getRequestId());
+
+                    if (logDeliveryListener != null) {
+                        executorContext.getCallbackExecutor().execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                logDeliveryListener.onLogDeliverySuccess(bucketInfo);
+                            }
+                        });
+                    }
+
                     executorContext.getCallbackExecutor().execute(new Runnable() {
                         @Override
                         public void run() {
-                            if (logDeliveryListener != null) {
-                                logDeliveryListener.onLogDeliverySuccess(bucketInfo);
-                            }
-                            futureMap.get(requestId).setValue(bucketInfo);
+                            notifyDeliveryFuturesOnSuccess(bucketInfo);
                         }
                     });
                 } else {
-                    storage.notifyUploadFailed(response.getRequestId());
+                    storage.rollbackBucket(response.getRequestId());
+
                     final LogDeliveryErrorCode errorCode = response.getErrorCode();
                     final LogFailoverCommand controller = this.controller;
+
                     executorContext.getCallbackExecutor().execute(new Runnable() {
                         @Override
                         public void run() {
                             strategy.onFailure(controller, errorCode);
-                            if (logDeliveryListener != null) {
-                                logDeliveryListener.onLogDeliveryFailure(bucketInfo);
-                            }
                         }
                     });
+
+                    if (logDeliveryListener != null) {
+                        executorContext.getCallbackExecutor().execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                logDeliveryListener.onLogDeliveryFailure(bucketInfo);
+                            }
+                        });
+                    }
+
                     isAlreadyScheduled = true;
                 }
                 LOG.info("Removing bucket id from timeouts: {}", response.getRequestId());
@@ -243,17 +255,26 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
 
         if (timeoutFuture != null) {
             LOG.info("Log delivery timeout detected for the bucket with id: [{}]", bucketId);
-            storage.notifyUploadFailed(bucketId);
+
+            storage.rollbackBucket(bucketId);
+
             final LogFailoverCommand controller = this.controller;
             executorContext.getCallbackExecutor().execute(new Runnable() {
                 @Override
                 public void run() {
                     strategy.onTimeout(controller);
-                    if (logDeliveryListener != null) {
-                        logDeliveryListener.onLogDeliveryTimeout(bucketInfoMap.get(bucketId));
-                    }
                 }
             });
+
+            if (logDeliveryListener != null) {
+                executorContext.getCallbackExecutor().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        logDeliveryListener.onLogDeliveryTimeout(bucketInfoMap.get(bucketId));
+                    }
+                });
+            }
+
             timeoutFuture.cancel(true);
         } else {
             LOG.trace("No log delivery timeout for the bucket with id [{}] was detected", bucketId);
@@ -302,5 +323,30 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
     @Override
     public void setLogDeliveryListener(LogDeliveryListener logDeliveryListener) {
         this.logDeliveryListener = logDeliveryListener;
+    }
+
+    protected void addDeliveryFuture(BucketInfo info, BucketFuture<BucketInfo> future) {
+        synchronized (deliveryFuturesMap) {
+            List<BucketFuture<BucketInfo>> deliveryFutures = deliveryFuturesMap.get(info.getBucketId());
+            if (deliveryFutures == null) {
+                deliveryFutures = new LinkedList<BucketFuture<BucketInfo>>();
+                deliveryFuturesMap.put(info.getBucketId(), deliveryFutures);
+            }
+
+            deliveryFutures.add(future);
+        }
+    }
+
+    protected void notifyDeliveryFuturesOnSuccess(BucketInfo info) {
+        synchronized (deliveryFuturesMap) {
+            List<BucketFuture<BucketInfo>> deliveryFutures = deliveryFuturesMap.get(info.getBucketId());
+            if (deliveryFutures != null) {
+                for (BucketFuture<BucketInfo> future : deliveryFutures) {
+                    future.setValue(info);
+                }
+
+                deliveryFuturesMap.remove(info.getBucketId());
+            }
+        }
     }
 }
