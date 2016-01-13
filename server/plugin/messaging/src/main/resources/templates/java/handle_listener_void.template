@@ -4,15 +4,15 @@
         public void run() {
             try {
                 if (${listener} != null) {
-                    ${rawOutputType} responseEntity = ${listener}.onEvent();
-                    byte[] payload = ${outputTypeConverter}.get().toByteArray(responseEntity);
-                    pushMsg(new EntityMessage(uid, payload, METHOD_${id}_ID));
+                    ${messageOutputType} responseEntity = ${listener}.onEvent();
+                    byte[] payload = ${messageOutputTypeConverter}.get().toByteArray(responseEntity);
+                    pushMsg(new EntityMessage(uid, payload, METHOD_${methodId}_ID));
                 } else {
-                    pushMsg(new ErrorMessage(uid, METHOD_${id}_ID, ErrorCode.NO_LISTENER_ASSIGNED));
+                    pushMsg(new ErrorMessage(uid, METHOD_${methodId}_ID, ErrorCode.NO_LISTENER_ASSIGNED));
                 }
             } catch (Exception e) {
                 LOG.error("Failed to process call from server", e);
-                pushMsg(new ErrorMessage(uid, METHOD_${id}_ID, ErrorCode.EXECUTION_ERROR, e.getMessage()));
+                pushMsg(new ErrorMessage(uid, METHOD_${methodId}_ID, ErrorCode.EXECUTION_ERROR, e.getMessage()));
             }
         }
     });
