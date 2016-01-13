@@ -43,8 +43,6 @@
 
 @interface AbstractKaaClient ()
 
-@property (nonatomic) volatile BOOL isInitialized;
-
 @property (nonatomic,strong) DefaultNotificationManager *notificationManager;
 @property (nonatomic,strong) id<ProfileManager> profileManager;
 
@@ -69,7 +67,6 @@
     if (self) {
         self.context = context;
         self.stateDelegate = delegate;
-        self.isInitialized = NO;
         self.lifecycleState = CLIENT_LIFECYCLE_STATE_CREATED;
         self.properties = [self.context getProperties];
         if (![self.context getProperties]) {
@@ -141,29 +138,22 @@
     [[self getLifeCycleExecutor] addOperationWithBlock:^{
         DDLogDebug(@"%@ Client startup initiated", TAG);
         @try {
-            if (!weakSelf.isInitialized) {
-                weakSelf.isInitialized = YES;
-            } else {
-                DDLogWarn(@"%@ Client is already initialized!", TAG);
-                return;
-            }
+            [weakSelf setLifecycleState:CLIENT_LIFECYCLE_STATE_STARTED];
             
             //load configuration
-            [self.configurationManager initiate];
-            [self.bootstrapManager receiveOperationsServerList];
-            if (self.stateDelegate) {
-                [self.stateDelegate onStarted];
+            [weakSelf.configurationManager initiate];
+            [weakSelf.bootstrapManager receiveOperationsServerList];
+            if (weakSelf.stateDelegate) {
+                [weakSelf.stateDelegate onStarted];
             }
         }
         @catch (NSException *exception) {
             DDLogError(@"%@ Start failed: %@. Reason: %@", TAG, exception.name, exception.reason);
-            if (self.stateDelegate) {
-                [self.stateDelegate onStartFailure:exception];
+            if (weakSelf.stateDelegate) {
+                [weakSelf.stateDelegate onStartFailure:exception];
             }
         }
     }];
-    
-    [self setLifecycleState:CLIENT_LIFECYCLE_STATE_STARTED];
 }
 
 - (void)stop {
@@ -173,10 +163,10 @@
     __weak typeof(self) weakSelf = self;
     [[self getLifeCycleExecutor] addOperationWithBlock:^{
         @try {
+            [weakSelf setLifecycleState:CLIENT_LIFECYCLE_STATE_STOPPED];
             [weakSelf.logCollector stop];
             [weakSelf.clientState persist];
             [weakSelf.channelManager shutdown];
-            weakSelf.isInitialized = NO;
             if (weakSelf.stateDelegate) {
                 [weakSelf.stateDelegate onStopped];
             }
@@ -192,7 +182,6 @@
         }
     }];
     
-    [self setLifecycleState:CLIENT_LIFECYCLE_STATE_STOPPED];
 }
 
 - (void)pause {
@@ -203,6 +192,7 @@
     [[self getLifeCycleExecutor] addOperationWithBlock:^{
         @try {
             [weakSelf.clientState persist];
+            [weakSelf setLifecycleState:CLIENT_LIFECYCLE_STATE_PAUSED];
             [weakSelf.channelManager pause];
             if (weakSelf.stateDelegate) {
                 [weakSelf.stateDelegate onPaused];
@@ -215,8 +205,6 @@
             }
         }
     }];
-    
-    [self setLifecycleState:CLIENT_LIFECYCLE_STATE_PAUSED];
 }
 
 - (void)resume {
@@ -226,6 +214,7 @@
     [[self getLifeCycleExecutor] addOperationWithBlock:^{
         @try {
             [weakSelf.channelManager resume];
+            [weakSelf setLifecycleState:CLIENT_LIFECYCLE_STATE_STARTED];
             if (weakSelf.stateDelegate) {
                 [weakSelf.stateDelegate onResume];
             }
@@ -237,8 +226,6 @@
             }
         }
     }];
-    
-    [self setLifecycleState:CLIENT_LIFECYCLE_STATE_STARTED];
 }
 
 - (void)setProfileContainer:(id<ProfileContainer>)container {
