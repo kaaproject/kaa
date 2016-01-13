@@ -644,6 +644,10 @@ public class JavaSdkGenerator extends SdkGenerator {
         dynamicCompiler.init();
         for (JavaDynamicBean bean : javaSources) {
             LOG.debug("Compiling bean {} with source: {}", bean.getName(), bean.getCharContent(true));
+            java.util.stream.Stream<String> sourceLines = java.util.Arrays.stream(bean.getCharContent(true).split("\n"));
+            String packageLine = sourceLines.filter(line -> line.startsWith("package")).findFirst().get();
+            String sourceFileName = packageLine.replaceAll("package", "").replaceAll("\\.|;", "/").trim() + bean.getName();
+            data.put(sourceFileName, new ZipEntryData(new ZipEntry(sourceFileName), bean.getCharContent(true).getBytes()));
         }
         Collection<JavaDynamicBean> compiledObjects = dynamicCompiler.compile(javaSources);
         for (JavaDynamicBean compiledObject : compiledObjects) {
