@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 CyberVision, Inc.
+ * Copyright 2014-2016 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,41 +22,28 @@ import static org.kaaproject.kaa.server.common.dao.DaoConstants.SDK_PROFILE_CREA
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.SDK_PROFILE_CREATED_USERNAME;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.SDK_PROFILE_DEFAULT_VERIFIER_TOKEN;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.SDK_PROFILE_ENDPOINT_COUNT;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.SDK_PROFILE_FK;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.SDK_PROFILE_LOG_SCHEMA_VERSION;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.SDK_PROFILE_NAME;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.SDK_PROFILE_NOTIFICATION_SCHEMA_VERSION;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.SDK_PROFILE_PLUGIN_CONTRACT_INSTANCE_FK;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.SDK_PROFILE_PLUGIN_CONTRACT_INSTANCE_ID;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.SDK_PROFILE_PLUGIN_CONTRACT_INSTANCE_JOIN_TABLE_NAME;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.SDK_PROFILE_PROFILE_SCHEMA_VERSION;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.SDK_PROFILE_SDK_PROFILE_ID;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.SDK_PROFILE_TABLE_NAME;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.SDK_PROFILE_TOKEN;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
-import org.kaaproject.kaa.server.common.dao.model.sql.plugin.PluginContractInstance;
 
 @Entity
 @Table(name = SDK_PROFILE_TABLE_NAME)
@@ -102,13 +89,8 @@ public class SdkProfile extends GenericModel<SdkProfileDto> implements Serializa
     @Column(name = SDK_PROFILE_ENDPOINT_COUNT)
     private Integer endpointCount = 0;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.DETACH, CascadeType.REFRESH})
-    @JoinTable(name = SDK_PROFILE_PLUGIN_CONTRACT_INSTANCE_JOIN_TABLE_NAME,
-            joinColumns = {@JoinColumn(name = SDK_PROFILE_PLUGIN_CONTRACT_INSTANCE_ID,
-                foreignKey = @ForeignKey(name = SDK_PROFILE_PLUGIN_CONTRACT_INSTANCE_FK), nullable = false)},
-            inverseJoinColumns = {@JoinColumn(name = SDK_PROFILE_SDK_PROFILE_ID,
-                    foreignKey = @ForeignKey(name = SDK_PROFILE_FK), nullable = false)})
-    private Set<PluginContractInstance> pluginContractInstances = new HashSet<>();
+    @ElementCollection
+    private List<String> pluginContractInstanceIds;
 
     public SdkProfile() {
     }
@@ -158,8 +140,9 @@ public class SdkProfile extends GenericModel<SdkProfileDto> implements Serializa
             }
 
             if (dto.getPluginContractInstanceIds() != null) {
+                this.pluginContractInstanceIds = new ArrayList<>(dto.getPluginContractInstanceIds().size());
                 for (String pluginContractInstanceId : dto.getPluginContractInstanceIds()) {
-                    pluginContractInstances.add(new PluginContractInstance(pluginContractInstanceId));
+                    this.pluginContractInstanceIds.add(pluginContractInstanceId);
                 }
             }
         }
@@ -261,12 +244,12 @@ public class SdkProfile extends GenericModel<SdkProfileDto> implements Serializa
         this.endpointCount = endpointCount;
     }
 
-    public Set<PluginContractInstance> getPluginContractInstances() {
-        return pluginContractInstances;
+    public List<String> getPluginContractInstanceIds() {
+        return pluginContractInstanceIds;
     }
 
-    public void setPluginContractInstances(Set<PluginContractInstance> pluginContractInstances) {
-        this.pluginContractInstances = pluginContractInstances;
+    public void setPluginContractInstanceIds(List<String> pluginContractInstanceIds) {
+        this.pluginContractInstanceIds = pluginContractInstanceIds;
     }
 
     @Override
@@ -308,6 +291,14 @@ public class SdkProfile extends GenericModel<SdkProfileDto> implements Serializa
         dto.setCreatedUsername(this.createdUsername);
         dto.setCreatedTime(this.createdTime);
         dto.setEndpointCount(this.endpointCount);
+
+        if (pluginContractInstanceIds != null && !pluginContractInstanceIds.isEmpty()) {
+            List<String> pluginContractInstanceIds = new ArrayList<>(this.pluginContractInstanceIds.size());
+            for (String pluginContractInstanceId : this.pluginContractInstanceIds) {
+                pluginContractInstanceIds.add(pluginContractInstanceId);
+            }
+            dto.setPluginContractInstanceIds(pluginContractInstanceIds);
+        }
 
         return dto;
     }
