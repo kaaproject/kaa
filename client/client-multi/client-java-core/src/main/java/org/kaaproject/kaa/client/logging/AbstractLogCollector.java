@@ -105,7 +105,7 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
         LogBucket bucket = storage.getNextBucket();
 
         if (bucket == null || bucket.getRecords().isEmpty()) {
-            LOG.warn("No logs to send");
+            LOG.trace("No logs to send");
             return;
         }
 
