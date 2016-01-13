@@ -1,11 +1,11 @@
 
     byte[] payload;
     try {
-        payload = ${inputTypeConverter}.get().toByteArray(param);
+        payload = ${messageInputTypeConverter}.get().toByteArray(param);
     } catch (IOException cause) {
         throw new RuntimeException("Failed to encode request parameter", cause);
     }
-    short methodId = METHOD_${id}_ID;
+    short methodId = METHOD_${methodId}_ID;
     MessageFuture<Void> future = new MessageFuture<Void>(new EntityMessage(payload, methodId), this);
     pushFuture(future);
     return future;

@@ -1,5 +1,5 @@
 
-    short methodId = METHOD_${id}_ID;
-    MessageFuture<${rawOutputType}> future = new MessageFuture<${rawOutputType}>(new VoidMessage(methodId), this);
+    short methodId = METHOD_${methodId}_ID;
+    MessageFuture<${messageOutputType}> future = new MessageFuture<${messageOutputType}>(new VoidMessage(methodId), this);
     pushFuture(future);
     return future;

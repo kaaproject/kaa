@@ -31,6 +31,9 @@ import org.kaaproject.kaa.server.plugin.messaging.generator.common.MessagingPlug
 
 public class JavaMessagingPluginImplementationBuilder extends JavaPluginImplementationBuilder implements MessagingPluginImplementationBuilder {
 
+    private static final String NAME_VAR = "${name}";
+    private static final String TYPE_VAR = "${type}";
+
     public JavaMessagingPluginImplementationBuilder(String name, String namespace, String parentClass, String interfaceClass) {
         super(name, namespace);
         this.addEntity(new SimpleGeneratorEntity(TemplateVariable.PARENT_CLASS, parentClass));
@@ -79,15 +82,15 @@ public class JavaMessagingPluginImplementationBuilder extends JavaPluginImplemen
     public MessagingPluginImplementationBuilder withEntityConverter(String name, String type) {
 
         String body = PluginBuilderCore.readFileAsString("templates/java/entityConverter.template");
-        body = body.replace("${name}", name);
-        body = body.replace("${type}", type);
+        body = body.replace(NAME_VAR, name);
+        body = body.replace(TYPE_VAR, type);
 
         this.addEntity(new SimpleGeneratorEntity(TemplateVariable.FIELDS, body, false, 1));
         return this;
     }
 
     @Override
-    public MessagingPluginImplementationBuilder withEntityMessageHandlersMapping(Set<Integer> handlersMapping) {
+    public MessagingPluginImplementationBuilder withEntityMessageHandlersMapping(Set<Integer> handlerConstants) {
 
         // Method parameters
         Map<String, String> params = new LinkedHashMap<>();
@@ -97,14 +100,14 @@ public class JavaMessagingPluginImplementationBuilder extends JavaPluginImplemen
 
         // The method body
         StringBuilder buffer = new StringBuilder();
-        handlersMapping.forEach((id) -> buffer.append(String.format(controlStatement, id, id)));
+        handlerConstants.forEach(methodId -> buffer.append(String.format(controlStatement, methodId, methodId)));
 
         this.addEntity(new JavaMethod("handleEntityMsg", null, params, new String[] { "protected" }, buffer.toString(), null));
         return this;
     }
 
     @Override
-    public MessagingPluginImplementationBuilder withVoidMessageHandlersMapping(Set<Integer> handlersMapping) {
+    public MessagingPluginImplementationBuilder withVoidMessageHandlersMapping(Set<Integer> handlerConstants) {
 
         // Method parameters
         Map<String, String> params = new LinkedHashMap<>();
@@ -114,7 +117,7 @@ public class JavaMessagingPluginImplementationBuilder extends JavaPluginImplemen
 
         // The method body
         StringBuilder buffer = new StringBuilder();
-        handlersMapping.forEach((id) -> buffer.append(String.format(controlStatement, id, id)));
+        handlerConstants.forEach(methodId -> buffer.append(String.format(controlStatement, methodId, methodId)));
 
         this.addEntity(new JavaMethod("handleVoidMsg", null, params, new String[] { "protected" }, buffer.toString(), null));
         return this;
