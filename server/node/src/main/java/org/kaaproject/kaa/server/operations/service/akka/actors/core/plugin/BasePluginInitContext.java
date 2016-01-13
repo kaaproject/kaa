@@ -55,13 +55,13 @@ public class BasePluginInitContext implements PluginInitContext {
             }
             Map<PluginContractItemDef, PluginContractItemInfo> infoMap = new HashMap<>();
             for (PluginContractInstanceItemDto itemDto : contractInstanceDto.getItems()) {
-                BasePluginContractItemDef.Builder itemDefBuilder = BasePluginContractItemDef.builder(itemDto.getName()).withSchema(
+/*                BasePluginContractItemDef.Builder itemDefBuilder = BasePluginContractItemDef.builder(itemDto.getName()).withSchema(
                         itemDto.getConfSchema());
                 if (itemDto.getInMessage() != null) {
                     itemDefBuilder = itemDefBuilder.withInMessage(itemDto.getInMessage().getFqn(), itemDto.getInMessage().getVersion());
                 }
                 if (itemDto.getOutMessage() != null) {
-                    itemDefBuilder = itemDefBuilder.withInMessage(itemDto.getOutMessage().getFqn(), itemDto.getOutMessage().getVersion());
+                    itemDefBuilder = itemDefBuilder.withOutMessage(itemDto.getOutMessage().getFqn(), itemDto.getOutMessage().getVersion());
                 }
                 BasePluginContractItemDef itemDef = itemDefBuilder.build();
                 BasePluginContractItemInfo.Builder itemInfoBuilder = BasePluginContractItemInfo.builder();
@@ -75,7 +75,7 @@ public class BasePluginInitContext implements PluginInitContext {
                     itemInfoBuilder.withOutMsgSchema(itemDto.getOutMessageSchema().getBody());
                 }
                 infoMap.put(itemDef, itemInfoBuilder.build());
-                builder.withItem(itemDef);
+                builder.withItem(itemDef);*/
             }
 
             BasePluginContractInstance contractInstance = new BasePluginContractInstance(builder.build());

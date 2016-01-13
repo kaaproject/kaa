@@ -19,11 +19,11 @@ import org.kaaproject.kaa.server.common.core.plugin.instance.PluginContractItemI
 
 public class BasePluginContractItemInfo implements PluginContractItemInfo {
 
-    private final byte[] data;
+    private final String data;
     private final String inMsgSchema;
     private final String outMsgSchema;
 
-    private BasePluginContractItemInfo(byte[] data, String inMsgSchema, String outMsgSchema) {
+    private BasePluginContractItemInfo(String data, String inMsgSchema, String outMsgSchema) {
         super();
         this.data = data;
         this.inMsgSchema = inMsgSchema;
@@ -35,7 +35,7 @@ public class BasePluginContractItemInfo implements PluginContractItemInfo {
     }
 
     public static class Builder {
-        private byte[] data;
+        private String data;
         private String inMsgSchema;
         private String outMsgSchema;
 
@@ -43,7 +43,7 @@ public class BasePluginContractItemInfo implements PluginContractItemInfo {
             super();
         }
 
-        public Builder withData(byte[] data) {
+        public Builder withData(String data) {
             this.data = data;
             return this;
         }
@@ -70,7 +70,7 @@ public class BasePluginContractItemInfo implements PluginContractItemInfo {
     }
 
     @Override
-    public byte[] getConfigurationData() {
+    public String getConfigurationData() {
         return data;
     }
 

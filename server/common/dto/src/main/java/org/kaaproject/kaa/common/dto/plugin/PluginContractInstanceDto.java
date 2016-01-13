@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 CyberVision, Inc.
+ * Copyright 2014-2016 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ public class PluginContractInstanceDto implements HasId, Serializable {
 
     private String id;
     private PluginContractDto contract;
+    private PluginInstanceDto instance;
     private Set<PluginContractInstanceItemDto> items;
 
     public String getId() {
@@ -42,6 +43,14 @@ public class PluginContractInstanceDto implements HasId, Serializable {
 
     public void setContract(PluginContractDto contract) {
         this.contract = contract;
+    }
+
+    public PluginInstanceDto getInstance() {
+        return instance;
+    }
+
+    public void setInstance(PluginInstanceDto instance) {
+        this.instance = instance;
     }
 
     public Set<PluginContractInstanceItemDto> getItems() {
@@ -66,7 +75,7 @@ public class PluginContractInstanceDto implements HasId, Serializable {
         if (contract != null ? !contract.equals(that.contract) : that.contract != null) {
             return false;
         }
-        if (items != null ? !items.equals(that.items) : that.items != null) {
+        if (instance != null ? !instance.equals(that.instance) : that.instance != null) {
             return false;
         }
 
@@ -76,7 +85,17 @@ public class PluginContractInstanceDto implements HasId, Serializable {
     @Override
     public int hashCode() {
         int result = contract != null ? contract.hashCode() : 0;
-        result = 31 * result + (items != null ? items.hashCode() : 0);
+        result = 31 * result + (instance != null ? instance.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("PluginContractInstanceDto{");
+        sb.append("id='").append(id).append('\'');
+        sb.append(", contract=").append(contract);
+        sb.append(", items=").append(items);
+        sb.append('}');
+        return sb.toString();
     }
 }

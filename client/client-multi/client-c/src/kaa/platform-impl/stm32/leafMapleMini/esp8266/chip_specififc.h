@@ -30,18 +30,18 @@ extern "C" {
 
 uint32_t get_sys_max(uint32_t s1, uint32_t s2);
 
-time_t get_sys_milis();
+time_t get_sys_milis(void);
 
 void debug(const char* format, ...);
 
-void ledOn();
+void ledOn(void);
 
-void ledOff();
+void ledOff(void);
 
 void lightOn(bool left, bool right);
 void lightOff(bool left, bool right);
 
-void esp8266_reset();
+void esp8266_reset(void);
 
 #ifdef __cplusplus
 }      /* extern "C" */

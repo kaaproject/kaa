@@ -18,14 +18,19 @@ package org.kaaproject.kaa.server.common.dao.service;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.kaaproject.kaa.common.dto.plugin.ContractDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginContractDto;
+import org.kaaproject.kaa.common.dto.plugin.PluginContractInstanceDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginInstanceDto;
 import org.kaaproject.kaa.server.common.dao.AbstractTest;
 import org.kaaproject.kaa.server.common.dao.impl.sql.plugin.PluginInstanceTestFactory;
 import org.kaaproject.kaa.server.common.dao.impl.sql.plugin.PluginTestFactory;
+import org.kaaproject.kaa.server.common.dao.model.sql.plugin.PluginContract;
+import org.kaaproject.kaa.server.common.dao.model.sql.plugin.PluginInstance;
 import org.springframework.dao.DataIntegrityViolationException;
 
+import java.util.List;
 import java.util.Set;
 
 public abstract class BasePluginServiceTest extends AbstractTest {
@@ -34,6 +39,8 @@ public abstract class BasePluginServiceTest extends AbstractTest {
     public void registerPluginUseExistentContractTest() {
         PluginDto pluginDto = PluginTestFactory.create();
         PluginDto registeredPlugin = pluginService.registerPlugin(pluginDto);
+        List<PluginDto> pluginDtos = pluginService.findAllPlugins();
+        Assert.assertNotNull(pluginDtos.get(0).getPluginContracts());
 
         // pretend to register another plugin
         registeredPlugin.setId(null);
@@ -49,6 +56,9 @@ public abstract class BasePluginServiceTest extends AbstractTest {
         PluginDto newlyRegisteredPlugin = pluginService.registerPlugin(registeredPlugin);
         PluginContractDto newlyRegisteredPluginContract = newlyRegisteredPlugin.getPluginContracts().iterator().next();
         Assert.assertEquals(contractId, newlyRegisteredPluginContract.getContract().getId());
+        Assert.assertEquals(2, pluginService.findAllPlugins().size());
+        PluginDto p123 = pluginService.findPluginByClassName(newlyRegisteredPlugin.getClassName());
+        Assert.assertNotNull(p123.getPluginContracts());
     }
 
     @Test(expected = DataIntegrityViolationException.class)
@@ -87,6 +97,8 @@ public abstract class BasePluginServiceTest extends AbstractTest {
         Assert.assertNotNull(savedInstance.getId());
         PluginInstanceDto foundInstance = pluginService.findInstanceById(savedInstance.getId());
         Assert.assertEquals(savedInstance, foundInstance);
+        PluginDto savedPlugin = pluginService.findPluginByClassName(PluginTestFactory.CLASS_NAME);
+        Assert.assertEquals(1, savedPlugin.getPluginInstances().size());
     }
 
     @Test

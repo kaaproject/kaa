@@ -27,7 +27,7 @@
 static kaa_logger_t *logger = NULL;
 
 
-void test_reallocation()
+void test_reallocation(void)
 {
     KAA_TRACE_IN(logger);
 

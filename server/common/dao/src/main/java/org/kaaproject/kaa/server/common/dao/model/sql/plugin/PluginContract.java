@@ -52,7 +52,7 @@ import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_
 
 @Entity
 @Table(name = PLUGIN_CONTRACT_TABLE_NAME)
-public class PluginContract extends GenericModel implements Serializable {
+public class PluginContract extends GenericModel<PluginContractDto> implements Serializable {
 
     private static final long serialVersionUID = 3561690611845570639L;
 
@@ -63,10 +63,6 @@ public class PluginContract extends GenericModel implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = PLUGIN_CONTRACT_CONTRACT_ID, foreignKey = @ForeignKey(name = PLUGIN_CONTRACT_CONTRACT_ID_FK), nullable = false)
     private Contract contract;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = PLUGIN_CONTRACT_PLUGIN_ID, foreignKey = @ForeignKey(name = PLUGIN_CONTRACT_PLUGIN_ID_FK))
-    private Plugin plugin;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = PLUGIN_CONTRACT_ITEM_PLUGIN_CONTRACT_ID, foreignKey = @ForeignKey(name = PLUGIN_CONTRACT_PLUGIN_CONTRACT_ITEM_FK), nullable = false)
@@ -121,14 +117,6 @@ public class PluginContract extends GenericModel implements Serializable {
         this.contract = contract;
     }
 
-    public Plugin getPlugin() {
-        return plugin;
-    }
-
-    public void setPlugin(Plugin plugin) {
-        this.plugin = plugin;
-    }
-
     public Set<PluginContractItem> getPluginContractItems() {
         return pluginContractItems;
     }
@@ -173,7 +161,7 @@ public class PluginContract extends GenericModel implements Serializable {
         if (!pluginContractInstances.isEmpty()) {
             Set<PluginContractInstanceDto> pluginContractInstanceDtos = new HashSet<>();
             for (PluginContractInstance pluginContractInstance : pluginContractInstances) {
-                pluginContractInstanceDtos.add(pluginContractInstance.toDto());
+                pluginContractInstanceDtos.add(pluginContractInstance.toDtoNoContract());
             }
             dto.setPluginContractInstances(pluginContractInstanceDtos);
         }
@@ -197,9 +185,6 @@ public class PluginContract extends GenericModel implements Serializable {
         if (direction != that.direction) {
             return false;
         }
-        if (plugin != null ? !plugin.equals(that.plugin) : that.plugin != null) {
-            return false;
-        }
 
         return true;
     }
@@ -208,16 +193,15 @@ public class PluginContract extends GenericModel implements Serializable {
     public int hashCode() {
         int result = direction != null ? direction.hashCode() : 0;
         result = 31 * result + (contract != null ? contract.hashCode() : 0);
-        result = 31 * result + (plugin != null ? plugin.hashCode() : 0);
         return result;
     }
 
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("PluginContract{");
-        sb.append("direction=").append(direction);
+        sb.append("id=").append(id);
+        sb.append(", direction=").append(direction);
         sb.append(", contract=").append(contract);
-        sb.append(", plugin=").append(plugin);
         sb.append('}');
         return sb.toString();
     }

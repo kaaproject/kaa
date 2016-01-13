@@ -178,7 +178,7 @@ kaa_error_t kaa_tcp_channel_create(kaa_transport_channel_interface_t *self
     if (bootstrap_found && supported_service_count > 1) {
         //unsupported configuration
         KAA_LOG_ERROR(logger,KAA_ERR_BADPARAM,"Kaa TCP channel creating, error unsupported configuration,  "
-                                "supports: one Bootstrap service or all other in any combination")
+                      "supports: one Bootstrap service or all other in any combination");
         KAA_RETURN_IF_ERR(KAA_ERR_BADPARAM);
     }
 

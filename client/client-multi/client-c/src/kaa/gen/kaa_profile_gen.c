@@ -60,7 +60,7 @@ static size_t kaa_profile_basic_endpoint_profile_test_get_size(void *data)
     return 0;
 }
 
-kaa_profile_basic_endpoint_profile_test_t *kaa_profile_basic_endpoint_profile_test_create()
+kaa_profile_basic_endpoint_profile_test_t *kaa_profile_basic_endpoint_profile_test_create(void)
 {
     kaa_profile_basic_endpoint_profile_test_t *record = 
             (kaa_profile_basic_endpoint_profile_test_t *)KAA_CALLOC(1, sizeof(kaa_profile_basic_endpoint_profile_test_t));

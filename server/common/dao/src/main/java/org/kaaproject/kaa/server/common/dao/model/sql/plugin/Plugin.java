@@ -15,8 +15,6 @@
  */
 package org.kaaproject.kaa.server.common.dao.model.sql.plugin;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 import org.kaaproject.kaa.common.dto.plugin.PluginContractDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginInstanceDto;
@@ -30,6 +28,8 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -41,6 +41,8 @@ import java.util.Set;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CLASS_NAME;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CLASS_NAME_CONSTRAINT;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONF_SCHEMA;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_PLUGIN_ID;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_PLUGIN_ID_FK;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_NAME;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_NAME_AND_VERSION_CONSTRAINT_NAME;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_PROPERTY;
@@ -73,11 +75,11 @@ public class Plugin extends GenericModel<PluginDto> implements Serializable {
     @Enumerated(EnumType.STRING)
     private PluginScope scope;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = PLUGIN_PROPERTY, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = PLUGIN_CONTRACT_PLUGIN_ID, foreignKey = @ForeignKey(name = PLUGIN_CONTRACT_PLUGIN_ID_FK))
     private Set<PluginContract> pluginContracts = new HashSet<>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = PLUGIN_PROPERTY, orphanRemoval = true)
-    @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<PluginInstance> pluginInstances = new HashSet<>();
 
     public Plugin() {
@@ -245,12 +247,13 @@ public class Plugin extends GenericModel<PluginDto> implements Serializable {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("Plugin{");
-        sb.append("id=").append(id == null ? null : id);
-        sb.append(", name='").append(name).append('\'');
+        sb.append("name='").append(name).append('\'');
         sb.append(", className='").append(className).append('\'');
         sb.append(", version=").append(version);
         sb.append(", configSchema='").append(configSchema).append('\'');
         sb.append(", scope=").append(scope);
+        sb.append(", pluginContracts=").append(pluginContracts);
+        sb.append(", pluginInstances=").append(pluginInstances);
         sb.append('}');
         return sb.toString();
     }

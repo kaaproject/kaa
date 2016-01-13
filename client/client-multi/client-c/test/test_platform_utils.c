@@ -25,14 +25,14 @@
 #include "kaa_platform_utils.h"
 #include "utilities/kaa_mem.h"
 
-void test_get_aligned_size()
+void test_get_aligned_size(void)
 {
     ASSERT_EQUAL(KAA_ALIGNMENT, kaa_aligned_size_get(KAA_ALIGNMENT));
     ASSERT_EQUAL(KAA_ALIGNMENT, kaa_aligned_size_get(KAA_ALIGNMENT - 1));
     ASSERT_EQUAL(2 * KAA_ALIGNMENT, kaa_aligned_size_get(KAA_ALIGNMENT + 1));
 }
 
-void test_create_destroy_writer()
+void test_create_destroy_writer(void)
 {
     kaa_platform_message_writer_t *writer = NULL;
     char buffer[16];
@@ -60,7 +60,7 @@ void test_create_destroy_writer()
     kaa_platform_message_writer_destroy(writer);
 }
 
-void test_write()
+void test_write(void)
 {
     kaa_error_t error_code = KAA_ERR_NONE;
     char buffer[16];
@@ -83,7 +83,7 @@ void test_write()
     kaa_platform_message_writer_destroy(writer);
 }
 
-void test_aligned_write()
+void test_aligned_write(void)
 {
     kaa_error_t error_code = KAA_ERR_NONE;
     char buffer[3 * KAA_ALIGNMENT];
@@ -124,7 +124,7 @@ void test_aligned_write()
     kaa_platform_message_writer_destroy(writer);
 }
 
-void test_write_buffer_overflow()
+void test_write_buffer_overflow(void)
 {
     kaa_error_t error_code = KAA_ERR_NONE;
     char buffer[2 * KAA_ALIGNMENT];
@@ -147,7 +147,7 @@ void test_write_buffer_overflow()
     kaa_platform_message_writer_destroy(writer);
 }
 
-void test_write_protocol_message_header()
+void test_write_protocol_message_header(void)
 {
     kaa_error_t error_code = KAA_ERR_NONE;
     char buffer[KAA_PROTOCOL_ID_SIZE + KAA_PROTOCOL_VERSION_SIZE];
@@ -170,7 +170,7 @@ void test_write_protocol_message_header()
     kaa_platform_message_writer_destroy(writer);
 }
 
-void test_write_extension_header()
+void test_write_extension_header(void)
 {
     kaa_error_t error_code = KAA_ERR_NONE;
     char buffer[KAA_EXTENSION_HEADER_SIZE];
@@ -195,7 +195,7 @@ void test_write_extension_header()
     kaa_platform_message_writer_destroy(writer);
 }
 
-void test_create_destroy_reader()
+void test_create_destroy_reader(void)
 {
     kaa_platform_message_reader_t *reader = NULL;
     char buffer[16];
@@ -223,7 +223,7 @@ void test_create_destroy_reader()
     kaa_platform_message_reader_destroy(reader);
 }
 
-void test_read()
+void test_read(void)
 {
     kaa_platform_message_reader_t *reader = NULL;
     char write_buffer[16];
@@ -251,7 +251,7 @@ void test_read()
     kaa_platform_message_reader_destroy(reader);
 }
 
-void test_read_aligned()
+void test_read_aligned(void)
 {
     kaa_platform_message_reader_t *reader = NULL;
     char write_buffer[3 * KAA_ALIGNMENT];
@@ -274,7 +274,7 @@ void test_read_aligned()
     kaa_platform_message_reader_destroy(reader);
 }
 
-void test_read_eof()
+void test_read_eof(void)
 {
     kaa_platform_message_reader_t *reader = NULL;
     char write_buffer[2 * KAA_ALIGNMENT];
@@ -296,7 +296,7 @@ void test_read_eof()
     kaa_platform_message_reader_destroy(reader);
 }
 
-void test_read_protocol_message_header()
+void test_read_protocol_message_header(void)
 {
     kaa_platform_message_reader_t *reader = NULL;
 
@@ -324,7 +324,7 @@ void test_read_protocol_message_header()
     kaa_platform_message_reader_destroy(reader);
 }
 
-void test_read_extension_header()
+void test_read_extension_header(void)
 {
     kaa_platform_message_reader_t *reader = NULL;
 

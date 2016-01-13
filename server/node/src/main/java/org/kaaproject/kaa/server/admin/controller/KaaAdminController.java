@@ -667,10 +667,10 @@ public class KaaAdminController {
      * @throws KaaAdminServiceException
      *             the kaa admin service exception
      */
-    @RequestMapping(value = "addSdkProfile", method = RequestMethod.POST)
+    @RequestMapping(value = "createSdkProfile", method = RequestMethod.POST)
     @ResponseBody
-    public SdkProfileDto addSdkProfile(@RequestBody SdkProfileDto sdkProfile) throws KaaAdminServiceException {
-        return kaaAdminService.addSdkProfile(sdkProfile);
+    public SdkProfileDto createSdkProfile(@RequestBody SdkProfileDto sdkProfile) throws KaaAdminServiceException {
+        return kaaAdminService.createSdkProfile(sdkProfile);
     }
 
     /**

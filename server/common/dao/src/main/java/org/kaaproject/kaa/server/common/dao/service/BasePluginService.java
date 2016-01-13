@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 CyberVision, Inc.
+ * Copyright 2015-2016 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,13 +20,22 @@ import org.kaaproject.kaa.common.dto.plugin.PluginDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginInstanceDto;
 import org.kaaproject.kaa.server.common.dao.PluginService;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
+import org.kaaproject.kaa.server.common.dao.impl.CTLSchemaMetaInfoDao;
 import org.kaaproject.kaa.server.common.dao.impl.ContractDao;
+import org.kaaproject.kaa.server.common.dao.impl.ContractMessageDao;
 import org.kaaproject.kaa.server.common.dao.impl.DaoUtil;
 import org.kaaproject.kaa.server.common.dao.impl.PluginDao;
 import org.kaaproject.kaa.server.common.dao.impl.PluginInstanceDao;
+import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchema;
+import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchemaMetaInfo;
 import org.kaaproject.kaa.server.common.dao.model.sql.plugin.Contract;
+import org.kaaproject.kaa.server.common.dao.model.sql.plugin.ContractItem;
+import org.kaaproject.kaa.server.common.dao.model.sql.plugin.ContractMessage;
 import org.kaaproject.kaa.server.common.dao.model.sql.plugin.Plugin;
 import org.kaaproject.kaa.server.common.dao.model.sql.plugin.PluginContract;
+import org.kaaproject.kaa.server.common.dao.model.sql.plugin.PluginContractInstance;
+import org.kaaproject.kaa.server.common.dao.model.sql.plugin.PluginContractInstanceItem;
+import org.kaaproject.kaa.server.common.dao.model.sql.plugin.PluginContractItem;
 import org.kaaproject.kaa.server.common.dao.model.sql.plugin.PluginInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,6 +61,12 @@ public class BasePluginService implements PluginService {
     @Autowired
     private PluginInstanceDao<PluginInstance> pluginInstanceDao;
 
+    @Autowired
+    private ContractMessageDao<ContractMessage> contractMessageDao;
+
+    @Autowired
+    private CTLSchemaMetaInfoDao<CTLSchemaMetaInfo> ctlSchemaMetaInfoDao;
+
     @Override
     public PluginDto registerPlugin(PluginDto pluginDto) {
         LOG.debug("Registering plugin: {}", pluginDto);
@@ -59,13 +74,36 @@ public class BasePluginService implements PluginService {
         for (PluginContract pluginContract : plugin.getPluginContracts()) {
             Contract receivedContract = pluginContract.getContract();
             Contract foundContract = contractDao.findByNameAndVersion(receivedContract.getName(), receivedContract.getVersion());
+            for (ContractItem item : receivedContract.getContractItems()) {
+                mergeMessagesForContractItem(item);
+            }
+            for (PluginContractItem pluginContractItem : pluginContract.getPluginContractItems()) {
+                ContractItem item = pluginContractItem.getContractItem();
+                mergeMessagesForContractItem(item);
+            }
             if (foundContract != null) {
                 receivedContract.setId(foundContract.getId());
             }
         }
+
         Plugin savedPlugin = pluginDao.save(plugin);
-        LOG.debug("Registered plugin: {}", plugin);
         return DaoUtil.getDto(savedPlugin);
+    }
+
+    private void mergeMessagesForContractItem(ContractItem item) {
+        item.setInMessage(mergeContractMessage(item.getInMessage()));
+        item.setOutMessage(mergeContractMessage(item.getOutMessage()));
+    }
+
+    private ContractMessage mergeContractMessage(ContractMessage contractMessage) {
+        if (contractMessage == null) {
+            return null;
+        }
+        ContractMessage found = contractMessageDao.findByFqnAndVersion(contractMessage.getFqn(), contractMessage.getVersion());
+        if (found == null) {
+            found = pluginDao.save(contractMessage, ContractMessage.class);
+        }
+        return found;
     }
 
     @Override
@@ -104,13 +142,42 @@ public class BasePluginService implements PluginService {
             throw new IncorrectParameterException("Plugin instance has no plugin, unable to save");
         }
         Plugin plugin = pluginDao.findByClassName(pluginDto.getClassName());
+        if (plugin == null) {
+            throw new IncorrectParameterException("Plugin with class name '" + pluginDto.getClassName() + "' doesn't exist");
+        }
         PluginInstance pluginInstance = new PluginInstance(pluginInstanceDto);
+        for (PluginContractInstance pluginContractInstance : pluginInstance.getPluginContractInstances()) {
+            for (PluginContractInstanceItem pluginContractInstanceItem : pluginContractInstance.getPluginContractInstanceItems()) {
+                mergeCTLSchemaMetaInfos(pluginContractInstanceItem.getInMessageSchema());
+                mergeCTLSchemaMetaInfos(pluginContractInstanceItem.getOutMessageSchema());
+            }
+            PluginContract pluginContract = pluginContractInstance.getPluginContract();
+            Contract receivedContract = pluginContract.getContract();
+            Contract foundContract = contractDao.findByNameAndVersion(receivedContract.getName(), receivedContract.getVersion());
+            if (foundContract == null) {
+                throw new IncorrectParameterException("Invalid contract name and version: '" +
+                        receivedContract.getName() + "' and version: " + receivedContract.getVersion());
+            }
+            receivedContract.setId(foundContract.getId());
+            pluginContractInstance.setPluginInstance(pluginInstance);
+        }
         pluginInstance.setPlugin(plugin);
-        plugin.addPluginInstance(pluginInstance);
-        pluginDao.persist(plugin);
         PluginInstance savedInstance = pluginInstanceDao.save(pluginInstance);
         LOG.debug("Saved instance: {}", savedInstance);
         return DaoUtil.getDto(savedInstance);
+    }
+
+    private void mergeCTLSchemaMetaInfos(CTLSchema schema) {
+        if (schema == null) {
+            return;
+        }
+        CTLSchemaMetaInfo ctlSchemaMetaInfo = schema.getMetaInfo();
+        CTLSchemaMetaInfo foundMetaInfo =
+                ctlSchemaMetaInfoDao.findByFqnAndVersion(ctlSchemaMetaInfo.getFqn(), ctlSchemaMetaInfo.getVersion());
+        if (foundMetaInfo == null) {
+            foundMetaInfo = ctlSchemaMetaInfoDao.save(ctlSchemaMetaInfo);
+        }
+        schema.setMetaInfo(foundMetaInfo);
     }
 
     @Override

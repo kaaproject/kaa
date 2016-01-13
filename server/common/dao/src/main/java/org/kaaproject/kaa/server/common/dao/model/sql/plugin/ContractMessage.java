@@ -124,7 +124,8 @@ public class ContractMessage extends GenericModel<ContractMessageDto> implements
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("ContractMessage{");
-        sb.append("fqn='").append(fqn).append('\'');
+        sb.append("id=").append(getId());
+        sb.append(", fqn='").append(fqn).append('\'');
         sb.append(", version=").append(version);
         sb.append('}');
         return sb.toString();

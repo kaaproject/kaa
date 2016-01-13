@@ -45,7 +45,7 @@ static kaa_logger_t *logger = NULL;
 
 
 
-void test_create_unlimited_storage()
+void test_create_unlimited_storage(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -71,7 +71,7 @@ void test_create_unlimited_storage()
 
 
 
-void test_create_limited_storage()
+void test_create_limited_storage(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -111,7 +111,7 @@ void test_create_limited_storage()
 
 
 
-void test_allocate_log_record_buffer()
+void test_allocate_log_record_buffer(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -158,7 +158,7 @@ static kaa_error_t add_log_record(void *storage, const char *data, size_t data_s
     return ext_log_storage_add_log_record(storage, &record);
 }
 
-void test_add_log_record()
+void test_add_log_record(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -192,7 +192,7 @@ void test_add_log_record()
 
 
 
-void test_write_next_log_record()
+void test_write_next_log_record(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -258,7 +258,7 @@ void test_write_next_log_record()
 
 
 
-void test_remove_by_bucket_id()
+void test_remove_by_bucket_id(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -322,7 +322,7 @@ void test_remove_by_bucket_id()
 
 
 
-void test_unmark_by_bucket_id()
+void test_unmark_by_bucket_id(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -395,7 +395,7 @@ void test_unmark_by_bucket_id()
 
 
 
-void test_shrink_to_size()
+void test_shrink_to_size(void)
 {
     KAA_TRACE_IN(logger);
 
@@ -438,7 +438,7 @@ void test_shrink_to_size()
 
 
 
-int test_init()
+int test_init(void)
 {
     kaa_error_t error = kaa_log_create(&logger, KAA_MAX_LOG_MESSAGE_LENGTH, KAA_MAX_LOG_LEVEL, NULL);
     if (error || !logger) {
@@ -448,7 +448,7 @@ int test_init()
     return 0;
 }
 
-int test_deinit()
+int test_deinit(void)
 {
     kaa_log_destroy(logger);
     return 0;

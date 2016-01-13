@@ -36,6 +36,8 @@ public:
     virtual std::size_t getRecordsBatchCount() { ++onGetRecordBatchCount_; return recordsBatchCount_;}
     virtual std::size_t getTimeoutCheckPeriod() { ++onGetTimeoutCheckPeriod_ ; return timeoutCheckPeriod_; }
     virtual std::size_t getLogUploadCheckPeriod() { ++onGetUploadCheckPeriod_; return logUploadCheckPeriod_; }
+    virtual std::size_t getMaxParallelUploads()  { ++onGetMaxParallelUploads_; return maxParallelUploads_; }
+
 public:
     LogUploadStrategyDecision decision_ = LogUploadStrategyDecision::NOOP;
     std::size_t batchSize_ = 0;
@@ -44,6 +46,7 @@ public:
     std::size_t timeoutCheckPeriod_ = 0;
     std::size_t logUploadCheckPeriod_ = 0;
     std::size_t retryTimeout_ = 0;
+    std::size_t maxParallelUploads_ = 0;
 
     std::size_t onIsUploadNeeded_ = 0;
     std::size_t onGetBatchSize_ = 0;
@@ -53,6 +56,7 @@ public:
     std::size_t onGetRecordBatchCount_ = 0;
     std::size_t onGetTimeoutCheckPeriod_ = 0;
     std::size_t onGetUploadCheckPeriod_ = 0;
+    std::size_t onGetMaxParallelUploads_ = 0;
 };
 
 } /* namespace kaa */

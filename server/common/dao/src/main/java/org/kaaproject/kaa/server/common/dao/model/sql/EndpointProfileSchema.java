@@ -28,7 +28,7 @@ import static org.kaaproject.kaa.server.common.dao.DaoConstants.PROFILE_SCHEMA_T
 @Entity
 @Table(name = PROFILE_SCHEMA_TABLE_NAME)
 @OnDelete(action = OnDeleteAction.CASCADE)
-public final class EndpointProfileSchema extends BaseSchema<EndpointProfileSchemaDto> implements Serializable {
+public class EndpointProfileSchema extends BaseSchema<EndpointProfileSchemaDto> implements Serializable {
 
     private static final long serialVersionUID = 953188575107921799L;
 

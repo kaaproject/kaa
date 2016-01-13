@@ -102,7 +102,7 @@ public class AvroJsonConverter<T extends SpecificRecordBase> {
      * @return the string
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public String endcodeToJson(T record) throws IOException{
+    public String encodeToJson(T record) throws IOException{
         return new String(encodeToJsonBytes(record), UTF8);
     }
 

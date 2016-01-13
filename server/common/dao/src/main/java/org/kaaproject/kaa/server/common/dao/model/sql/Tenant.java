@@ -28,7 +28,7 @@ import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongI
 
 @Entity
 @Table(name = TENANT_TABLE_NAME)
-public final class Tenant extends GenericModel<TenantDto> implements Serializable {
+public class Tenant extends GenericModel<TenantDto> implements Serializable {
 
     private static final long serialVersionUID = 4800104335859412180L;
 
