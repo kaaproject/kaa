@@ -632,6 +632,7 @@ public class BinaryEncDec implements PlatformEncDec {
                 break;
             case ACCESS_TOKEN_FIELD_ID:
                 profileSync.setEndpointAccessToken(getUTF8String(buf));
+                break;
             default:
                 break;
             }
