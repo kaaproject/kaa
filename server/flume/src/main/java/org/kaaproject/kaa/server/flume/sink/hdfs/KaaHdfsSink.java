@@ -658,8 +658,7 @@ public class KaaHdfsSink extends AbstractSink implements Configurable, Configura
             });
           }
 
-      static class BucketWriterLoader extends CacheLoader<HdfsSinkKey, BucketWriter>
-      {
+      static class BucketWriterLoader extends CacheLoader<HdfsSinkKey, BucketWriter> {
 
           private final long rollInterval;
           private final long rollSize;

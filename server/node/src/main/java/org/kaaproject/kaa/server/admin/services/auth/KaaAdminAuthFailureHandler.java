@@ -33,7 +33,7 @@ import org.springframework.util.Assert;
 
 public class KaaAdminAuthFailureHandler implements AuthenticationFailureHandler {
 
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    private static final Logger LOG = LoggerFactory.getLogger(KaaAdminAuthFailureHandler.class);
 
     private String defaultFailureUrl;
     private boolean forwardToDestination = false;
@@ -57,7 +57,7 @@ public class KaaAdminAuthFailureHandler implements AuthenticationFailureHandler 
             AuthenticationException exception) throws IOException, ServletException {
 
         if (defaultFailureUrl == null) {
-            logger.debug("No failure URL set, sending 401 Unauthorized error");
+            LOG.debug("No failure URL set, sending 401 Unauthorized error");
 
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Authentication Failed: " + exception.getLocalizedMessage());
         } else {
@@ -66,7 +66,7 @@ public class KaaAdminAuthFailureHandler implements AuthenticationFailureHandler 
             String targetUrl = defaultFailureUrl;
 
             if (forwardToDestination) {
-                logger.debug("Forwarding to " + targetUrl);
+                LOG.debug("Forwarding to " + targetUrl);
 
                 request.getRequestDispatcher(targetUrl).forward(request, response);
             } else {

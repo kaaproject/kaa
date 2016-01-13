@@ -568,6 +568,8 @@ public class AvroEncDec implements PlatformEncDec {
                 case REMOVE:
                     copy.setCommand(SubscriptionCommandType.REMOVE);
                     break;
+                default:
+                    break;
                 }
                 commands.add(copy);
             }

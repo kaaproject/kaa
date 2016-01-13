@@ -27,8 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.context.ContextLoader;
 
 @Service
-public final class AdminContextLoaderListener extends ContextLoader implements ApplicationContextAware, ServletContextListener
-{
+public final class AdminContextLoaderListener extends ContextLoader implements ApplicationContextAware, ServletContextListener {
     private ApplicationContext applicationContext;
 
     @Override

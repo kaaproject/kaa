@@ -429,6 +429,8 @@ public class BinaryEncDec implements PlatformEncDec {
         case RESYNC:
             buf.putInt(2);
             break;
+        default:
+            break;
         }
         if (notificationSync.getAvailableTopics() != null) {
             buf.put(NF_TOPICS_FIELD_ID);
@@ -452,7 +454,7 @@ public class BinaryEncDec implements PlatformEncDec {
                 buf.put(NOTHING);
                 buf.putShort(nf.getUid() != null ? (short) nf.getUid().length() : (short) 0);
                 buf.putInt(nf.getBody().array().length);
-                long topicId = nf.getTopicId() != null ? Long.valueOf(nf.getTopicId()) : 0l;
+                long topicId = nf.getTopicId() != null ? Long.valueOf(nf.getTopicId()) : 0L;
                 buf.putLong(topicId);
                 putUTF(buf, nf.getUid());
                 put(buf, nf.getBody().array());
@@ -630,6 +632,8 @@ public class BinaryEncDec implements PlatformEncDec {
                 break;
             case ACCESS_TOKEN_FIELD_ID:
                 profileSync.setEndpointAccessToken(getUTF8String(buf));
+            default:
+                break;
             }
         }
         sync.setProfileSync(profileSync);
@@ -649,6 +653,8 @@ public class BinaryEncDec implements PlatformEncDec {
                 break;
             case ENDPOINT_DETACH_FIELD_ID:
                 userSync.setEndpointDetachRequests(parseEndpointDetachRequests(buf));
+                break;
+            default:
                 break;
             }
         }
@@ -726,6 +732,8 @@ public class BinaryEncDec implements PlatformEncDec {
                 break;
             case NF_SUBSCRIPTION_REMOVE_FIELD_ID:
                 parseSubscriptionCommands(nfSync, buf, false);
+                break;
+            default:
                 break;
             }
         }

@@ -425,6 +425,8 @@ public class DefaultEventService implements EventService {
             return EventRouteUpdateType.DELETE;
         case UPDATE:
             return EventRouteUpdateType.UPDATE;
+        default:
+            break;
         }
         return EventRouteUpdateType.UPDATE;
     }

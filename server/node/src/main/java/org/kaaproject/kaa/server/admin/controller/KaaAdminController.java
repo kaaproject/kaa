@@ -173,6 +173,8 @@ public class KaaAdminController {
             case GENERAL_ERROR:
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ex.getMessage());
                 break;
+            default:
+                break;
             }
         } catch (IOException e) {
             LOG.error("Can't handle exception", e);

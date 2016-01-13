@@ -307,6 +307,8 @@ public class KaaSync extends MqttFrame {
             }
         case UNUSED:
             throw new KaaTcpProtocolException("KaaSync Message type is incorrect");
+        default:
+            break;
         }
         throw new KaaTcpProtocolException("KaaSync Message type is incorrect");
     }

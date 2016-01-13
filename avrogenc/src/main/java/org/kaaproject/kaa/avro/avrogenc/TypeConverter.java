@@ -118,8 +118,7 @@ public class TypeConverter {
             for (Field f : schema.getFields()) {
                 Type type = f.schema().getType();
                 if (type == Type.ARRAY || type == Type.BYTES || type == Type.STRING ||
-                    type == Type.FIXED || type == Type.RECORD || type == Type.UNION)
-                {
+                    type == Type.FIXED || type == Type.RECORD || type == Type.UNION) {
                     return true;
                 }
             }

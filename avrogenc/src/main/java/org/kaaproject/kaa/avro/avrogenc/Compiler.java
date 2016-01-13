@@ -77,8 +77,7 @@ public class Compiler {
     }
 
     public Compiler(Schema schema, String sourceName, OutputStream hdrS, OutputStream srcS)
-            throws KaaCGeneratorException
-    {
+            throws KaaCGeneratorException {
         this(sourceName);
 
         this.schema = schema;

@@ -73,6 +73,8 @@ public class FlumeAvroEventBuilder extends FlumeEventBuilder {
         case GENERIC:
             events = generateGenericEvent(schema, logEvents);
             break;
+        default:
+            break;
         }
         return events;
     }

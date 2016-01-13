@@ -240,8 +240,7 @@ public class CppSdkGenerator extends SdkGenerator {
 
     private List<TarEntryData> processFeatureSchema(String schemaBody, String schemaPath,
                                                     String templatePath, String outputPath,
-                                                    Map<String, String> vars) throws IOException
-    {
+                                                    Map<String, String> vars) throws IOException {
         List<TarEntryData> cppSources = new LinkedList<>();
 
         if (!StringUtils.isBlank(schemaBody)) {
@@ -283,8 +282,7 @@ public class CppSdkGenerator extends SdkGenerator {
     private byte[] generateKaaDefaults(List<BootstrapNodeInfo> bootstrapNodes,
                                        String sdkToken,
                                        byte[] defaultConfigurationData,
-                                       String defaultVerifierToken) throws IOException
-    {
+                                       String defaultVerifierToken) throws IOException {
         String kaaDefaultsString = SdkGenerator.readResource(SDK_DEFAULTS_TEMPLATE);
 
         LOG.debug("[sdk generateClientProperties] bootstrapNodes.size(): {}", bootstrapNodes.size());

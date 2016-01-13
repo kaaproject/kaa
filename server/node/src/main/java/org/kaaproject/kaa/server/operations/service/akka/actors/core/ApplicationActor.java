@@ -242,7 +242,7 @@ public class ApplicationActor extends UntypedActor {
             LOG.debug("[{}] Forwarding message to application user verifier actor", applicationToken);
             processUserVerifierNotificationMessage(message);
         } else if (notification.getKeyHash() != null) {
-
+            // Do nothing
         } else {
             LOG.debug("[{}] Broadcasting message to all endpoints", applicationToken);
             broadcastToAllEndpoints(message);

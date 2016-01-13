@@ -30,8 +30,7 @@ public class StyleUtils {
                 c = Character.toLowerCase(c);
                 if (convertedName.length() > 0 && ((i + 1) < camelCaseName.length())
                         && (Character.isLowerCase(camelCaseName.charAt(i + 1))
-                                || Character.isLowerCase(camelCaseName.charAt(i - 1))))
-                {
+                                || Character.isLowerCase(camelCaseName.charAt(i - 1)))) {
                     convertedName.append("_");
                 }
                 convertedName.append(c);
@@ -51,8 +50,7 @@ public class StyleUtils {
             if (Character.isUpperCase(c)) {
                 if (convertedName.length() > 0  && ((i + 1) < camelCaseName.length()) &&
                         (Character.isLowerCase(camelCaseName.charAt(i + 1))
-                                || Character.isLowerCase(camelCaseName.charAt(i - 1))))
-                {
+                                || Character.isLowerCase(camelCaseName.charAt(i - 1)))) {
                     convertedName.append("_");
                 }
                 convertedName.append(c);

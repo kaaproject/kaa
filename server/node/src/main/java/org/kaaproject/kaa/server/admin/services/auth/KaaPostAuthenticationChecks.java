@@ -27,13 +27,13 @@ import org.springframework.security.core.userdetails.UserDetailsChecker;
 
 public class KaaPostAuthenticationChecks implements UserDetailsChecker {
 
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    private static final Logger LOG = LoggerFactory.getLogger(KaaPostAuthenticationChecks.class);
     protected MessageSourceAccessor messages = SpringSecurityMessageSource.getAccessor();
 
     @Override
     public void check(UserDetails user) {
         if (!user.isCredentialsNonExpired()) {
-            logger.debug("User account credentials have expired");
+            LOG.debug("User account credentials have expired");
 
             throw new CredentialsExpiredException(messages.getMessage(
                     "AbstractUserDetailsAuthenticationProvider.credentialsExpired",
