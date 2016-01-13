@@ -138,7 +138,6 @@
                 <configuration>
                     <descriptors>
                         <descriptor>src/main/assembly/client-java-android-sdk.xml</descriptor>
-                        <descriptor>src/main/assembly/client-java-android-sdk-templates.xml</descriptor>
                     </descriptors>
                 </configuration>
                 <executions>
