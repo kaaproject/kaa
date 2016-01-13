@@ -196,12 +196,12 @@ public class JavaEndpointMessagingPluginGenerator extends AbstractSdkApiGenerato
                 this.pluginInterface.getName());
 
         // Plugin API interface imports
-        this.pluginInterface.withImportStatement(Future.class.getName());
+        this.pluginInterface.withImportStatement(Future.class.getCanonicalName());
 
         // Plugin API implementation imports
-        this.pluginImplementation.withImportStatement(IOException.class.getName());
-        this.pluginImplementation.withImportStatement(Future.class.getName());
-        this.pluginImplementation.withImportStatement(UUID.class.getName());
+        this.pluginImplementation.withImportStatement(IOException.class.getCanonicalName());
+        this.pluginImplementation.withImportStatement(Future.class.getCanonicalName());
+        this.pluginImplementation.withImportStatement(UUID.class.getCanonicalName());
         this.pluginImplementation.withImportStatement("org.kaaproject.kaa.client.plugin.messaging.common.v1.*");
         this.pluginImplementation.withImportStatement("org.kaaproject.kaa.client.plugin.messaging.common.v1.future.*");
         this.pluginImplementation.withImportStatement("org.kaaproject.kaa.client.plugin.messaging.common.v1.msg.*");
