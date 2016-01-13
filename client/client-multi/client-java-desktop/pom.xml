@@ -130,7 +130,6 @@
                 <configuration>
                     <descriptors>
                         <descriptor>src/main/assembly/client-java-sdk.xml</descriptor>
-                        <descriptor>src/main/assembly/client-java-sdk-templates.xml</descriptor>
                     </descriptors>
                 </configuration>
                 <executions>
