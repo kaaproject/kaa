@@ -63,9 +63,9 @@ public abstract class AbstractKaaTransport<T extends SpecificRecordBase> impleme
         AvroByteArrayConverter<T> converter = new AvroByteArrayConverter<>(getConfigurationClass());
         try {
             T config = converter.fromByteArray(context.getConfiguration());
-            LOG.info("Initializing transport {} with {}", getClassName(), config);
             this.context = new SpecificTransportContext<T>(context, config);
             init(this.context);
+            LOG.info("Transport {} initialized with {}", getClassName(), this.context.getConfiguration());
         } catch (IOException e) {
             LOG.error(MessageFormat.format("Failed to initialize transport {0}", getClassName()), e);
             throw new TransportLifecycleException(e);
