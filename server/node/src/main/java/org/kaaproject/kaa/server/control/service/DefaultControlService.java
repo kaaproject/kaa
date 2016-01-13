@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.avro.Schema;
 import org.apache.commons.codec.binary.Base64;
@@ -81,6 +82,7 @@ import org.kaaproject.kaa.common.dto.event.EventSchemaVersionDto;
 import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
+import org.kaaproject.kaa.common.dto.plugin.PluginInstanceDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.Version;
@@ -95,6 +97,7 @@ import org.kaaproject.kaa.server.common.dao.EventClassService;
 import org.kaaproject.kaa.server.common.dao.LogAppendersService;
 import org.kaaproject.kaa.server.common.dao.LogSchemaService;
 import org.kaaproject.kaa.server.common.dao.NotificationService;
+import org.kaaproject.kaa.server.common.dao.PluginContractInstanceService;
 import org.kaaproject.kaa.server.common.dao.ProfileService;
 import org.kaaproject.kaa.server.common.dao.SdkProfileService;
 import org.kaaproject.kaa.server.common.dao.ServerProfileService;
@@ -225,6 +228,9 @@ public class DefaultControlService implements ControlService {
 
     @Autowired
     private CTLService ctlService;
+
+    @Autowired
+    private PluginContractInstanceService pluginContractInstanceService;
 
     /** The neighbor connections size. */
     @Value("#{properties[max_number_neighbor_connections]}")
@@ -1082,6 +1088,9 @@ public class DefaultControlService implements ControlService {
             }
         }
 
+        Set<PluginInstanceDto> pluginInstanceDtos =
+                pluginContractInstanceService.findPluginInstancesByPluginContractInstanceIds(sdkProfile.getPluginContractInstanceIds());
+
         LOG.debug("Sdk profile for sdk generation: {}", sdkProfile);
 
         SdkGenerator generator = SdkGeneratorFactory.createSdkGenerator(platform);
@@ -1089,7 +1098,8 @@ public class DefaultControlService implements ControlService {
         try {
             sdkFile = generator.generateSdk(Version.PROJECT_VERSION, controlZKService.getCurrentBootstrapNodes(), sdkProfile,
                     profileSchemaBody, notificationDataSchema.getRawSchema(), protocolSchema.getRawSchema(),
-                    configurationSchema.getBaseSchema(), defaultConfigurationData, eventFamilies, logDataSchema.getRawSchema());
+                    configurationSchema.getBaseSchema(), defaultConfigurationData, eventFamilies, logDataSchema.getRawSchema(),
+                    pluginInstanceDtos);
         } catch (Exception e) {
             LOG.error("Unable to generate SDK", e);
             throw new ControlServiceException(e);

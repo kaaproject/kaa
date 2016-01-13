@@ -31,6 +31,7 @@ import java.util.concurrent.Future;
 import org.apache.avro.Schema;
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
 import org.kaaproject.kaa.common.avro.AvroJsonConverter;
+import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.server.common.core.plugin.base.BasePluginContractInstance;
 import org.kaaproject.kaa.server.common.core.plugin.base.BasePluginContractItemInfo;
 import org.kaaproject.kaa.server.common.core.plugin.def.PluginContractDef;
@@ -167,7 +168,7 @@ public class JavaEndpointMessagingPluginGenerator extends AbstractSdkApiGenerato
             public String getPluginConfigurationData() {
                 Configuration config = new Configuration("org.kaaproject.kaa.client.plugin.messaging");
                 try {
-                    return new String(new AvroByteArrayConverter<>(Configuration.class).toByteArray(config));
+                    return new GenericAvroConverter<Configuration>(Configuration.SCHEMA$).encodeToJson(config);
                 } catch (IOException cause) {
                     return null;
                 }

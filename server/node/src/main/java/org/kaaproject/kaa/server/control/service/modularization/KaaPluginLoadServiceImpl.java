@@ -16,13 +16,18 @@
 
 package org.kaaproject.kaa.server.control.service.modularization;
 
+import org.kaaproject.kaa.common.dto.ApplicationDto;
+import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
+import org.kaaproject.kaa.common.dto.plugin.PluginContractInstanceDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginInstanceDto;
 import org.kaaproject.kaa.server.common.core.plugin.base.BasePluginDefDtoConverter;
 import org.kaaproject.kaa.server.common.core.plugin.def.Plugin;
 import org.kaaproject.kaa.server.common.core.plugin.def.PluginDef;
 import org.kaaproject.kaa.server.common.core.plugin.instance.KaaPlugin;
+import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.dao.PluginService;
+import org.kaaproject.kaa.server.common.dao.SdkProfileService;
 import org.kaaproject.kaa.server.control.service.exception.KaaPluginLoadException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +39,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -48,6 +54,12 @@ public class KaaPluginLoadServiceImpl implements KaaPluginLoadService {
 
     @Autowired
     private PluginService pluginService;
+
+    @Autowired
+    private ApplicationService applicationService;
+
+    @Autowired
+    private SdkProfileService sdkProfileService;
 
     @Override
     public void load() throws KaaPluginLoadException {
@@ -97,7 +109,24 @@ public class KaaPluginLoadServiceImpl implements KaaPluginLoadService {
     private void saveHardCodedInstances(PluginDto pluginDto) {
         PluginInstanceDto pluginInstanceDto =
                 HardCodedPluginInstanceFactory.create(HardCodedPluginInstanceFactory.Type.MESSAGING, pluginDto);
-        pluginInstanceDto = pluginService.saveInstance(pluginInstanceDto);
+        pluginService.saveInstance(pluginInstanceDto);
+        pluginInstanceDto = pluginService.findAllPlugins().get(0).getPluginInstances().iterator().next();
+        Set<PluginContractInstanceDto> pluginContractInstanceDtos = pluginInstanceDto.getContracts();
+        PluginContractInstanceDto saved = pluginContractInstanceDtos.iterator().next();
+
+        // hard-coded id of a tenant, supposedly correct for the sandbox
+        // create sdk profile per each application of the tenant
+        for (ApplicationDto applicationDto : applicationService.findAppsByTenantId("70")) {
+            SdkProfileDto sdkProfileDto = new SdkProfileDto();
+            sdkProfileDto.setApplicationId(applicationDto.getId());
+            sdkProfileDto.setPluginContractInstanceIds(Arrays.asList(saved.getId()));
+            sdkProfileDto.setProfileSchemaVersion(0);
+            sdkProfileDto.setNotificationSchemaVersion(1);
+            sdkProfileDto.setConfigurationSchemaVersion(1);
+            sdkProfileDto.setLogSchemaVersion(1);
+            sdkProfileService.saveSdkProfile(sdkProfileDto);
+        }
+
         LOG.info("Hard-coded plugin instance is saved: {}", pluginInstanceDto);
     }
 
