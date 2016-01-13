@@ -16,11 +16,15 @@
 
 package org.kaaproject.kaa.client.logging.memory;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.kaaproject.kaa.client.logging.*;
+import org.kaaproject.kaa.client.logging.BucketInfo;
+import org.kaaproject.kaa.client.logging.LogBucket;
+import org.kaaproject.kaa.client.logging.LogRecord;
+import org.kaaproject.kaa.client.logging.LogStorage;
+import org.kaaproject.kaa.client.logging.LogStorageStatus;
 import org.kaaproject.kaa.client.logging.memory.MemBucket.MemBucketState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,8 +38,8 @@ public class MemLogStorage implements LogStorage, LogStorageStatus {
     private static final int DEFAULT_MAX_BUCKET_RECORD_COUNT = 256;
 
     private final long maxStorageSize;
-    private long maxBucketSize;
-    private int maxBucketRecordCount;
+    private final long maxBucketSize;
+    private final int maxBucketRecordCount;
 
     private volatile long consumedVolume;
     private volatile long recordCount;
@@ -43,7 +47,7 @@ public class MemLogStorage implements LogStorage, LogStorageStatus {
     private final AtomicInteger bucketIdSeq = new AtomicInteger();
     private MemBucket currentBucket;
     private final Map<Integer, MemBucket> buckets;
-    
+
     public MemLogStorage() {
         this(DEFAULT_MAX_BUCKET_SIZE, DEFAULT_MAX_BUCKET_RECORD_COUNT);
     }
@@ -57,7 +61,7 @@ public class MemLogStorage implements LogStorage, LogStorageStatus {
         this.maxStorageSize = maxStorageSize;
         this.maxBucketSize = bucketSize;
         this.maxBucketRecordCount = bucketRecordCount;
-        this.buckets = new HashMap<Integer, MemBucket>();
+        this.buckets = new LinkedHashMap<Integer, MemBucket>();
     }
 
     @Override
