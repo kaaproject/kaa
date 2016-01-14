@@ -60,6 +60,7 @@
     height: 100%;
     float: left;
     display: inline-block;
+    word-wrap: break-word;
 }
 
 .b-nav-label {
