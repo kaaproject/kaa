@@ -55,9 +55,9 @@ typedef enum {
 
 typedef struct
 {
-    uint16_t log_bucket_id;     /**< ID of bucket present in storage. */
-    kaa_time_t   timeout;
-    size_t   log_cnt;       /**< Current logs count. */
+    uint16_t     log_bucket_id;     /**< ID of bucket present in storage. */
+    kaa_time_t   timeout;           /**< bucket timeout */
+    uint16_t     log_cnt;           /**< Current logs count. */
 } timeout_info_t;
 
 
@@ -89,7 +89,7 @@ kaa_error_t kaa_logging_need_logging_resync(kaa_log_collector_t *self, bool *res
     return KAA_ERR_NONE;
 }
 
-static kaa_error_t remember_request(kaa_log_collector_t *self, uint16_t bucket_id)
+static kaa_error_t remember_request(kaa_log_collector_t *self, uint16_t bucket_id, uint16_t cnt)
 {
     KAA_RETURN_IF_NIL(self, KAA_ERR_BADPARAM);
 
@@ -98,6 +98,7 @@ static kaa_error_t remember_request(kaa_log_collector_t *self, uint16_t bucket_i
 
     info->log_bucket_id = bucket_id;
     info->timeout = KAA_TIME() + (kaa_time_t)ext_log_upload_strategy_get_timeout(self->log_upload_strategy_context);
+    info->log_cnt = cnt;
 
     kaa_list_node_t *it = kaa_list_push_back(self->timeouts, info);
     if (!it) {
@@ -422,7 +423,7 @@ kaa_error_t kaa_logging_request_serialize(kaa_log_collector_t *self, kaa_platfor
     *((uint16_t *) records_count_p) = KAA_HTONS(records_count);
     *writer = tmp_writer;
 
-    error = remember_request(self, self->log_bucket_id);
+    error = remember_request(self, self->log_bucket_id, records_count);
     if (error) {
         KAA_LOG_WARN(self->logger, error, "Failed to remember request time stamp");
     }
