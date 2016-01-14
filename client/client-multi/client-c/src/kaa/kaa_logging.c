@@ -306,6 +306,13 @@ kaa_error_t kaa_logging_add_record(kaa_log_collector_t *self, kaa_user_log_recor
     if (!is_timeout(self))
         update_storage(self);
 
+    if (!self->log_bucket_id) {
+      self->log_bucket_id = self->status->log_bucket_id;
+    }
+    // TODO Check that we doesn't have policy that avoid log record from sending in next bucket
+    *bucket_id = self->log_bucket_id;
+    ++*bucket_id;
+
     return KAA_ERR_NONE;
 }
 
