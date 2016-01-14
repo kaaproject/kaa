@@ -31,9 +31,12 @@ import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ProfileFilterPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.ProfileFilterView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.dialog.TestProfileFilterDialog;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.VersionListBox;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventBus;
@@ -100,6 +103,30 @@ public class ProfileFilterActivity extends AbstractRecordActivity<ProfileFilterD
                 }
             }));
         }
+        
+        registrations.add(recordView.getTestFilterButton().addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event) {
+                String profileSchemaId;
+                String serverProfileSchemaId;
+                if (create) {
+                    profileSchemaId =  recordView.getEndpointProfileSchema().getValue().getId();
+                    serverProfileSchemaId = recordView.getServerProfileSchema().getValue().getId();
+                } else {
+                    profileSchemaId = record.getEndpointProfileSchemaId();
+                    serverProfileSchemaId = record.getServerProfileSchemaId();
+                }
+                String filterBody = recordView.getRecordPanel().getBody().getValue();
+                
+                TestProfileFilterDialog.showTestProfileFilterDialog(
+                        new TestProfileFilterDialog.TestProfileFilterDialogListener() {
+                            @Override
+                            public void onClose(String filterBody) {
+                                recordView.getRecordPanel().getBody().setValue(filterBody, true);
+                            }
+                        },                        
+                        profileSchemaId, serverProfileSchemaId, filterBody);
+            }
+        }));
     }
     
     private void updateValues(VersionListBox box, List<VersionDto> newValues) {

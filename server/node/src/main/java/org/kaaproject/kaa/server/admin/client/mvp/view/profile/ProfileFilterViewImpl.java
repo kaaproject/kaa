@@ -25,6 +25,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextB
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.VersionListBox;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.Label;
@@ -143,5 +144,9 @@ public class ProfileFilterViewImpl extends BaseRecordViewImpl<ProfileFilterDto, 
         return serverProfileSchemaVersion;
     }
 
+    @Override
+    public HasClickHandlers getTestFilterButton() {
+        return ((ProfileFilterPanel)recordPanel).getTestFilterButton();
+    }
 
 }

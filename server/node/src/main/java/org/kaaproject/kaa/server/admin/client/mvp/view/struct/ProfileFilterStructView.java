@@ -14,41 +14,39 @@
  * limitations under the License.
  */
 
-package org.kaaproject.kaa.server.admin.client.mvp.view.profile;
+package org.kaaproject.kaa.server.admin.client.mvp.view.struct;
 
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.server.admin.client.mvp.view.struct.AbstractRecordPanel;
-import org.kaaproject.kaa.server.admin.client.mvp.view.struct.BaseStructView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.struct.ProfileFilterStructView;
+import org.kaaproject.kaa.common.dto.UpdateStatus;
 import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.user.client.ui.Button;
 
-public class ProfileFilterPanel extends AbstractRecordPanel<ProfileFilterDto, String>{
+public class ProfileFilterStructView extends TextAreaStructView<ProfileFilterDto> {
+    
+    private Button testFilterButton;
 
-    public ProfileFilterPanel(HasErrorMessage hasErrorMessage) {
+    public ProfileFilterStructView(HasErrorMessage hasErrorMessage) {
         super(hasErrorMessage);
+        testFilterButton = new Button(Utils.constants.testFilter());
+        prependButton(testFilterButton);
     }
-
-    @Override
-    protected String bodyLabelText() {
-        return Utils.constants.filterBody();
+    
+    public void reset() {
+        super.reset();
+        testFilterButton.setVisible(false);
     }
-
+    
     @Override
-    public void setReadOnly() {
-        setActiveReadOnly();
-        setInactiveReadOnly();
-    }
-
-    @Override
-    protected BaseStructView<ProfileFilterDto, String> createStructView(HasErrorMessage hasErrorMessage) {
-        return new ProfileFilterStructView(hasErrorMessage);
+    public void setData(ProfileFilterDto struct) {
+        super.setData(struct);
+        testFilterButton.setVisible(struct.getStatus() == UpdateStatus.INACTIVE);
     }
     
     public HasClickHandlers getTestFilterButton() {
-        return ((ProfileFilterStructView)inactivePanel).getTestFilterButton();
+        return testFilterButton;
     }
 
 }

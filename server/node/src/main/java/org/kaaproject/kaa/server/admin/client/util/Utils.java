@@ -125,7 +125,9 @@ public class Utils {
 
     private static String parseErrorMessage(Throwable caught,
             ErrorMessageCustomizer errorMessageCustomizer) {
-        if (caught instanceof KaaAdminServiceException) {
+        if (errorMessageCustomizer != null) {
+            return errorMessageCustomizer.customizeErrorMessage(caught);
+        } else if (caught instanceof KaaAdminServiceException) {
             ServiceErrorCode errorCode = ((KaaAdminServiceException) caught)
                     .getErrorCode();
             String message = constants.getString(errorCode.getResKey());
@@ -133,8 +135,6 @@ public class Utils {
                 message += caught.getLocalizedMessage();
             }
             return message;
-        } else if (errorMessageCustomizer != null) {
-            return errorMessageCustomizer.customizeErrorMessage(caught);
         } else {
             return caught.getLocalizedMessage();
         }
