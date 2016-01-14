@@ -53,10 +53,13 @@ typedef enum {
     LOGGING_RESULT_FAILURE = 0x01
 } logging_sync_result_t;
 
-typedef struct {
-    uint16_t     log_bucket_id;
+typedef struct
+{
+    uint16_t log_bucket_id;     /**< ID of bucket present in storage. */
     kaa_time_t   timeout;
+    size_t   log_cnt;       /**< Current logs count. */
 } timeout_info_t;
+
 
 struct kaa_log_collector {
     uint16_t                    log_bucket_id;
@@ -66,6 +69,7 @@ struct kaa_log_collector {
     kaa_channel_manager_t      *channel_manager;
     kaa_logger_t               *logger;
     kaa_list_t                 *timeouts;
+    kaa_log_listeners_t        log_delivery_listeners;
     bool                        is_sync_ignored;
 };
 
@@ -263,7 +267,7 @@ static void update_storage(kaa_log_collector_t *self)
 
 
 
-kaa_error_t kaa_logging_add_record(kaa_log_collector_t *self, kaa_user_log_record_t *entry, kaa_log_bucket_info_t *bucket)
+kaa_error_t kaa_logging_add_record(kaa_log_collector_t *self, kaa_user_log_record_t *entry, uint16_t *bucket_id)
 {
     KAA_RETURN_IF_NIL2(self, entry, KAA_ERR_BADPARAM);
     KAA_RETURN_IF_NIL(self->log_storage_context, KAA_ERR_NOT_INITIALIZED);
@@ -306,8 +310,8 @@ kaa_error_t kaa_logging_add_record(kaa_log_collector_t *self, kaa_user_log_recor
 
 kaa_error_t kaa_logging_set_listeners(kaa_log_collector_t *self, const kaa_log_listeners_t *listeners)
 {
-    /* TODO */
-    return KAA_ERR_UNSUPPORTED;
+    self->log_delivery_listeners = *listeners;
+    return KAA_ERR_NONE;
 }
 
 kaa_error_t kaa_logging_request_get_size(kaa_log_collector_t *self, size_t *expected_size)
