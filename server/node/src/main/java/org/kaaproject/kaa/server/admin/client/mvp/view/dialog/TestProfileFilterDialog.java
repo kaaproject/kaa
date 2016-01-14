@@ -48,7 +48,7 @@ public class TestProfileFilterDialog extends FormPopup implements HasErrorMessag
                                                                      ErrorMessageCustomizer {
 
     private AlertPanel matchedPanel;
-    private AlertPanel unmatchedPanel;
+    private AlertPanel notMatchedPanel;
     private AlertPanel errorPanel;
 
     private RecordPanel endpointProfileRecordPanel;
@@ -95,11 +95,11 @@ public class TestProfileFilterDialog extends FormPopup implements HasErrorMessag
         matchedPanel.setMessage(Utils.constants.filterMatched());
         infoPanel.add(matchedPanel);
         
-        unmatchedPanel = new AlertPanel(AlertPanel.Type.WARNING);
-        unmatchedPanel.setVisible(false);
-        unmatchedPanel.setWidth("720px");
-        unmatchedPanel.setMessage(Utils.constants.filterUnmatched());
-        infoPanel.add(unmatchedPanel);
+        notMatchedPanel = new AlertPanel(AlertPanel.Type.WARNING);
+        notMatchedPanel.setVisible(false);
+        notMatchedPanel.setWidth("720px");
+        notMatchedPanel.setMessage(Utils.constants.filterNotMatched());
+        infoPanel.add(notMatchedPanel);
         
         errorPanel = new AlertPanel(AlertPanel.Type.ERROR);
         errorPanel.setVisible(false);
@@ -287,7 +287,7 @@ public class TestProfileFilterDialog extends FormPopup implements HasErrorMessag
             @Override
             public void onSuccessImpl(Boolean result) {
                 matchedPanel.setVisible(result);
-                unmatchedPanel.setVisible(!result);
+                notMatchedPanel.setVisible(!result);
             }
         });
     }
@@ -295,7 +295,7 @@ public class TestProfileFilterDialog extends FormPopup implements HasErrorMessag
     private void clearMessages() {
         clearError();
         matchedPanel.setVisible(false);
-        unmatchedPanel.setVisible(false);
+        notMatchedPanel.setVisible(false);
     }
 
     @Override
