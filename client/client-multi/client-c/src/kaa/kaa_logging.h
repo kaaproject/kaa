@@ -60,10 +60,10 @@ typedef void (*kaa_log_event_fn)(void *ctx, const kaa_log_bucket_info_t *bucket)
 /** Listeners aggreate */
 typedef struct
 {
-    kaa_log_event_fn success; /**< Handler called upon successfull log delivery. */
-    kaa_log_event_fn failed;  /**< Handler called upon  failed delivery. */
-    kaa_log_event_fn timeout; /**< Handler called upon  timeouted delivery. */
-    void *ctx;                /**< User-defined context. */
+    kaa_log_event_fn on_success; /**< Handler called upon successfull log delivery. */
+    kaa_log_event_fn on_failed;  /**< Handler called upon  failed delivery. */
+    kaa_log_event_fn on_timeout; /**< Handler called upon  timeouted delivery. */
+    void *ctx;                   /**< User-defined context. */
 } kaa_log_listeners_t;
 
 /** Special macro that can be used to disable event handling. */

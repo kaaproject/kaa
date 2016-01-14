@@ -334,7 +334,7 @@ void test_create_request(void)
     error_code = kaa_logging_init(log_collector, create_mock_storage(), &strategy);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    error_code = kaa_logging_add_record(log_collector, test_log_record);
+    error_code = kaa_logging_add_record(log_collector, test_log_record, NULL);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     size_t expected_size = 0;
@@ -473,7 +473,7 @@ void test_timeout(void)
     error_code = kaa_logging_init(log_collector, create_mock_storage(), &strategy);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    error_code = kaa_logging_add_record(log_collector, test_log_record);
+    error_code = kaa_logging_add_record(log_collector, test_log_record, NULL);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     size_t request_buffer_size = 256;
@@ -487,7 +487,7 @@ void test_timeout(void)
 
     sleep(TEST_TIMEOUT + 1);
 
-    error_code = kaa_logging_add_record(log_collector, test_log_record);
+    error_code = kaa_logging_add_record(log_collector, test_log_record, NULL);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     ASSERT_NOT_NULL(strategy.on_timeout_count);
@@ -528,7 +528,7 @@ void test_decline_timeout(void)
     error_code = kaa_logging_init(log_collector, storage, &strategy);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    error_code = kaa_logging_add_record(log_collector, test_log_record);
+    error_code = kaa_logging_add_record(log_collector, test_log_record, NULL);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     size_t request_buffer_size = 256;
@@ -570,7 +570,7 @@ void test_decline_timeout(void)
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
     ASSERT_NOT_NULL(storage->on_remove_by_id_count);
 
-    error_code = kaa_logging_add_record(log_collector, test_log_record);
+    error_code = kaa_logging_add_record(log_collector, test_log_record, NULL);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     ASSERT_NULL(strategy.on_timeout_count);
@@ -620,7 +620,7 @@ void test_max_parallel_uploads_with_log_sync(void)
      * Ensure the log delivery is forbidden at all.
      */
     strategy.max_parallel_uploads = 0;
-    error_code = kaa_logging_add_record(log_collector, test_log_record);
+    error_code = kaa_logging_add_record(log_collector, test_log_record, NULL);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     ASSERT_EQUAL(((mock_transport_channel_context_t *)transport_context.context)->on_sync_count, 0);
@@ -629,7 +629,7 @@ void test_max_parallel_uploads_with_log_sync(void)
      * Ensure the first request is allowed.
      */
     strategy.max_parallel_uploads = 1;
-    error_code = kaa_logging_add_record(log_collector, test_log_record);
+    error_code = kaa_logging_add_record(log_collector, test_log_record, NULL);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
     ASSERT_EQUAL(((mock_transport_channel_context_t *)transport_context.context)->on_sync_count, 1);
 
@@ -645,7 +645,7 @@ void test_max_parallel_uploads_with_log_sync(void)
     error_code = kaa_logging_request_serialize(log_collector, writer);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    error_code = kaa_logging_add_record(log_collector, test_log_record);
+    error_code = kaa_logging_add_record(log_collector, test_log_record, NULL);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     /*
@@ -701,7 +701,7 @@ void test_max_parallel_uploads_with_sync_all(void)
      * Ensure the log delivery is forbidden at all.
      */
     strategy.max_parallel_uploads = 0;
-    error_code = kaa_logging_add_record(log_collector, test_log_record);
+    error_code = kaa_logging_add_record(log_collector, test_log_record, NULL);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     size_t expected_size = 0;
@@ -712,7 +712,7 @@ void test_max_parallel_uploads_with_sync_all(void)
      * Ensure the first request is allowed.
      */
     strategy.max_parallel_uploads = 1;
-    error_code = kaa_logging_add_record(log_collector, test_log_record);
+    error_code = kaa_logging_add_record(log_collector, test_log_record, NULL);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     /*
@@ -729,7 +729,7 @@ void test_max_parallel_uploads_with_sync_all(void)
     error_code = kaa_logging_request_serialize(log_collector, writer);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    error_code = kaa_logging_add_record(log_collector, test_log_record);
+    error_code = kaa_logging_add_record(log_collector, test_log_record, NULL);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     /*
@@ -788,15 +788,14 @@ int test_deinit(void)
 }
 
 
-
 KAA_SUITE_MAIN(Log, test_init, test_deinit
 #ifndef KAA_DISABLE_FEATURE_LOGGING
-       ,
-       KAA_TEST_CASE(create_request, test_create_request)
-       KAA_TEST_CASE(process_response, test_response)
-       KAA_TEST_CASE(process_timeout, test_timeout)
-       KAA_TEST_CASE(decline_timeout, test_decline_timeout)
-       KAA_TEST_CASE(max_parallel_uploads_with_log_sync, test_max_parallel_uploads_with_log_sync)
-       KAA_TEST_CASE(max_parallel_uploads_with_sync_all, test_max_parallel_uploads_with_sync_all)
+        ,
+        KAA_TEST_CASE(create_request, test_create_request)
+        KAA_TEST_CASE(process_response, test_response)
+        KAA_TEST_CASE(process_timeout, test_timeout)
+        KAA_TEST_CASE(decline_timeout, test_decline_timeout)
+        KAA_TEST_CASE(max_parallel_uploads_with_log_sync, test_max_parallel_uploads_with_log_sync)
+        KAA_TEST_CASE(max_parallel_uploads_with_sync_all, test_max_parallel_uploads_with_sync_all)
 #endif
         )
