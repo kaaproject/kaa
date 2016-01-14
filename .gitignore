@@ -52,7 +52,6 @@ Pods/
 !default.xcworkspace
 xcuserdata
 *.xccheckout
-profile
 !scripts/profile
 *.moved-aside
 *.hmap
