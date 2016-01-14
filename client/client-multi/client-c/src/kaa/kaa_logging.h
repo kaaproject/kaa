@@ -89,7 +89,7 @@ kaa_error_t kaa_logging_init(kaa_log_collector_t *self, void *log_storage_contex
  *
  * @return  Error code.
  */
-kaa_error_t kaa_logging_add_record(kaa_log_collector_t *self, kaa_user_log_record_t *entry, kaa_log_bucket_info_t *bucket);
+kaa_error_t kaa_logging_add_record(kaa_log_collector_t *self, kaa_user_log_record_t *entry, uint16_t *bucket_id);
 
 /**
  * @brief Sets listeners of log events.
