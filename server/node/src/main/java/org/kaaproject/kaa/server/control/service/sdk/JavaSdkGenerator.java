@@ -722,7 +722,7 @@ public class JavaSdkGenerator extends SdkGenerator {
         JavaDynamicCompiler dynamicCompiler = new JavaDynamicCompiler();
         dynamicCompiler.init();
         for (JavaDynamicBean bean : javaSources) {
-            LOG.warn("Compiling bean {} with source: {}", bean.getName(), bean.getCharContent(true));
+            LOG.debug("Compiling bean {} with source: {}", bean.getName(), bean.getCharContent(true));
         }
         Collection<JavaDynamicBean> compiledObjects = dynamicCompiler.compile(javaSources);
         for (JavaDynamicBean compiledObject : compiledObjects) {

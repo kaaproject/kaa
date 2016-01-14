@@ -82,9 +82,9 @@ public class KaaPluginLoadServiceImpl implements KaaPluginLoadService {
         }
 
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Created plugin instances: {}", pluginDefinitions);
+            LOG.trace("Created plugin definitions: {}", pluginDefinitions);
         } else {
-            LOG.info("Created {} plugin instance(s)", pluginDefinitions.size());
+            LOG.info("Created {} plugin definitions(s)", pluginDefinitions.size());
         }
 
         List<PluginDto> savedPlugins = pluginService.findAllPlugins();
