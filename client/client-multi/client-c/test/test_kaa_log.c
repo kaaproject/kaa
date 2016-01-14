@@ -752,6 +752,83 @@ void test_max_parallel_uploads_with_sync_all(void)
 
 #endif
 
+/* Log delivery callback basic test group */
+
+static mock_strategy_context_t     strategy;
+static kaa_log_collector_t         *log_collector         = NULL;
+static size_t                      test_log_record_size   = 1024;
+
+/* Values to be checked inside mock event function */
+static void     *expected_ctx;
+static uint16_t expected_bucked_id;
+static int      call_is_expected; /* Required to trace mock function call */
+
+/* Mock event function */
+static void mock_log_event_fn(void *ctx, const kaa_log_bucket_info_t *bucket)
+{
+    ASSERT_TRUE(call_is_expected);
+    ASSERT_NOT_NULL(bucket);
+    ASSERT_EQUAL(expected_ctx, ctx);
+    ASSERT_EQUAL(expected_bucked_id, bucket->bucket_id);
+}
+
+KAA_GROUP_SETUP(log_callback_basic)
+{
+    kaa_error_t error_code;
+
+    KAA_TRACE_IN(logger);
+    error_code = kaa_log_collector_create(&log_collector,
+                                          status,
+                                          channel_manager,
+                                          logger);
+
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    memset(&strategy, 0, sizeof(mock_strategy_context_t));
+    error_code = kaa_logging_init(log_collector, create_mock_storage(), &strategy);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    KAA_TRACE_IN(logger);
+    return 0;
+}
+
+KAA_GROUP_TEARDOWN(log_callback_basic)
+{
+    KAA_TRACE_IN(logger);
+    /* Destroys mock storage as well */
+    kaa_log_collector_destroy(log_collector);
+    KAA_TRACE_IN(logger);
+    return 0;
+}
+
+KAA_TEST_CASE_EX(log_callback_basic, invalid_parameters)
+{
+    KAA_TRACE_IN(logger);
+    kaa_log_listeners_t listeners;
+
+    /* NULL parameters case */
+
+    kaa_error_t rc = kaa_logging_set_listeners(log_collector, NULL);
+    ASSERT_EQUAL(KAA_ERR_BADPARAM, rc);
+    rc = kaa_logging_set_listeners(NULL, &listeners);
+    ASSERT_EQUAL(KAA_ERR_BADPARAM, rc);
+
+    KAA_TRACE_OUT(logger);
+    return;
+}
+
+KAA_TEST_CASE_EX(log_callback_basic, valid_parameters)
+{
+    KAA_TRACE_IN(logger);
+    kaa_log_listeners_t listeners = {
+
+    };
+
+    KAA_TRACE_OUT(logger);
+    return;
+}
+
+
 
 int test_init(void)
 {
@@ -797,5 +874,6 @@ KAA_SUITE_MAIN(Log, test_init, test_deinit
         KAA_TEST_CASE(decline_timeout, test_decline_timeout)
         KAA_TEST_CASE(max_parallel_uploads_with_log_sync, test_max_parallel_uploads_with_log_sync)
         KAA_TEST_CASE(max_parallel_uploads_with_sync_all, test_max_parallel_uploads_with_sync_all)
+        KAA_RUN_TEST(log_callback_basic, invalid_parameters);
 #endif
         )
