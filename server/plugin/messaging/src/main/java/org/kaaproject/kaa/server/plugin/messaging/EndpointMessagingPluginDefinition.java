@@ -76,4 +76,12 @@ public class EndpointMessagingPluginDefinition implements CommunicationPluginDef
     public Map<SDKPlatform, Class<? extends PluginSdkApiGenerator>> getSdkGeneratorClassMap() {
         return Collections.singletonMap(SDKPlatform.JAVA, JavaEndpointMessagingPluginGenerator.class);
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("EndpointMessagingPluginDefinition{");
+        sb.append("pluginDef=").append(pluginDef);
+        sb.append('}');
+        return sb.toString();
+    }
 }

@@ -19,6 +19,9 @@ package org.kaaproject.kaa.server.control.service.initialization;
 import org.junit.Test;
 import org.kaaproject.kaa.server.control.service.admin.AdminInitializationService;
 import org.kaaproject.kaa.server.control.service.loadmgmt.LoadDistributionService;
+import org.kaaproject.kaa.server.control.service.modularization.KaaPluginLoadService;
+import org.kaaproject.kaa.server.control.service.modularization.KaaPluginLoadServiceImpl;
+import org.kaaproject.kaa.server.control.service.modularization.KaaPluginLoadServiceImplTest;
 import org.kaaproject.kaa.server.control.service.zk.ControlZkService;
 import org.kaaproject.kaa.server.node.service.config.KaaNodeServerConfig;
 import org.kaaproject.kaa.server.node.service.initialization.InitializationService;
@@ -33,6 +36,7 @@ public class ControlInitializationServiceTest {
     private ControlZkService zkService;
     private LoadDistributionService loadMgmtService;
     private InitializationService adminInitializationService;
+    private KaaPluginLoadService kaaPluginLoadService;
     
     /**
      * Test control initialization service start.
@@ -47,6 +51,7 @@ public class ControlInitializationServiceTest {
         Mockito.verify(zkService).start();
         Mockito.verify(loadMgmtService).start();
         Mockito.verify(adminInitializationService).start();
+        Mockito.verify(kaaPluginLoadService).load();
     }
 
     /**
@@ -63,6 +68,7 @@ public class ControlInitializationServiceTest {
         Mockito.verify(zkService).start();
         Mockito.verify(loadMgmtService).start();
         Mockito.verify(adminInitializationService).start();
+        Mockito.verify(kaaPluginLoadService).load();
 
         Mockito.verify(zkService).stop();
         Mockito.verify(loadMgmtService).shutdown();
@@ -86,13 +92,16 @@ public class ControlInitializationServiceTest {
         zkService = Mockito.mock(ControlZkService.class);
         loadMgmtService = Mockito.mock(LoadDistributionService.class);
         adminInitializationService = Mockito.mock(AdminInitializationService.class);
-        
+        kaaPluginLoadService = Mockito.mock(KaaPluginLoadServiceImpl.class);
+
         ReflectionTestUtils.setField(controlInitializationService, "controlZkService", zkService);
         
         ReflectionTestUtils.setField(controlInitializationService, "loadMgmtService", loadMgmtService);
         
         ReflectionTestUtils.setField(controlInitializationService, "adminInitializationService", adminInitializationService);
-        
+
+        ReflectionTestUtils.setField(controlInitializationService, "kaaPluginLoadService", kaaPluginLoadService);
+
         return controlInitializationService;
     }
 }

@@ -25,6 +25,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.avro.Schema;
 import org.apache.commons.codec.binary.Base64;
@@ -40,6 +41,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.file.FileData;
+import org.kaaproject.kaa.common.dto.plugin.PluginInstanceDto;
 import org.kaaproject.kaa.server.common.Environment;
 import org.kaaproject.kaa.server.common.Version;
 import org.kaaproject.kaa.server.common.zk.ServerNameUtil;
@@ -138,7 +140,8 @@ public class CppSdkGenerator extends SdkGenerator {
             String configurationBaseSchema,
             byte[] defaultConfigurationData,
             List<EventFamilyMetadata> eventFamilies,
-            String logSchemaBody) throws Exception {
+            String logSchemaBody,
+            Set<PluginInstanceDto> pluginInstanceDtos) throws Exception {
 
         String sdkToken = sdkProfile.getToken();
         Integer configurationSchemaVersion = sdkProfile.getConfigurationSchemaVersion();
