@@ -47,7 +47,7 @@
     return self;
 }
 
-- (EventSyncRequest *)createEventRequest:(NSInteger)requestId {
+- (EventSyncRequest *)createEventRequest:(int32_t)requestId {
     if (!self.kaaEventManager) {
         DDLogError(@"%@ Can't create EventSyncRequest because event manager is nil", TAG);
         return nil;
@@ -75,7 +75,7 @@
             NSArray *sortedEvents = [[eventsSet allObjects] sortedArrayUsingComparator:self.eventSNComparator];
             DDLogDebug(@"%@ Going to send events bundle with size: %li", TAG, (long)[sortedEvents count]);
             request.events = [KAAUnion unionWithBranch:KAA_UNION_ARRAY_EVENT_OR_NULL_BRANCH_0 andData:sortedEvents];
-            [self.pendingEvents setObject:eventsSet forKey:[NSNumber numberWithInt:(int)requestId]];
+            [self.pendingEvents setObject:eventsSet forKey:[NSNumber numberWithInt:requestId]];
         }
         
         request.eventSequenceNumberRequest = [KAAUnion unionWithBranch:KAA_UNION_EVENT_SEQUENCE_NUMBER_REQUEST_OR_NULL_BRANCH_1];
@@ -158,7 +158,7 @@
 }
 
 //TODO revisit for performance improvement (inner cycles)
-- (void)onSyncResposeIdReceived:(NSInteger)requestId {
+- (void)onSyncResposeIdReceived:(int32_t)requestId {
     DDLogDebug(@"%@ Events sent with request id %li were accepted", TAG, (long)requestId);
     NSNumber *key = [NSNumber numberWithInt:(int)requestId];
     NSMutableSet *acceptedEvents = [self.pendingEvents objectForKey:key];

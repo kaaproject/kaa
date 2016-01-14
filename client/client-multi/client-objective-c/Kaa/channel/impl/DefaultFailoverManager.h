@@ -26,10 +26,10 @@
 
 - (instancetype)initWithChannelManager:(id<KaaChannelManager>)channelMgr
                                context:(id<ExecutorContext>)context
-              failureResolutionTimeout:(NSInteger)frTimeout
-           bootstrapServersRetryPeriod:(NSInteger)btRetryPeriod
-          operationsServersRetryPeriod:(NSInteger)opRetryPeriod
-             noConnectivityRetryPeriod:(NSInteger)noConnRetryPeriod
+              failureResolutionTimeout:(int64_t)frTimeout
+           bootstrapServersRetryPeriod:(int64_t)btRetryPeriod
+          operationsServersRetryPeriod:(int64_t)opRetryPeriod
+             noConnectivityRetryPeriod:(int64_t)noConnRetryPeriod
                               timeUnit:(TimeUnit)timeUnit;
 
 @end

@@ -41,7 +41,7 @@
 - (void)addTopic:(Topic *)topic;
 - (void)removeTopic:(NSString *)topicId;
 - (BOOL)updateTopicSubscriptionInfo:(NSString *)topicId sequence:(int32_t)sequenceNumber;
-- (NSDictionary *)getNfSubscriptions; //<NSString, NSInteger> as key-value.
+- (NSDictionary *)getNfSubscriptions; //<NSString, int32_t> as key-value.
 - (NSArray *)getTopics; //<Topic>
 - (int32_t)getAndIncrementEventSequenceNumber;
 - (BOOL)isConfigurationVersionUpdated;

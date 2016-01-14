@@ -185,8 +185,8 @@
             break;
         case FAILOVER_ACTION_RETRY:
         {
-            DDLogWarn(@"%@ Will try to receive operation servers in %li ms as to failover strategy decision",
-                      TAG, (long)(decision.retryPeriod));
+            DDLogWarn(@"%@ Will try to receive operation servers in %lli ms as to failover strategy decision",
+                      TAG, decision.retryPeriod);
             __weak typeof(self)weakSelf = self;
             dispatch_time_t delay = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(decision.retryPeriod * NSEC_PER_MSEC));
             dispatch_after(delay, [self.context getSheduledExecutor], ^{

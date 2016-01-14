@@ -24,7 +24,7 @@
 @property (nonatomic,strong) KaaClientProperties *properties;
 @property (nonatomic,strong) id<KaaClientState> state;
 @property (nonatomic,strong) EndpointObjectHash *publicKeyHash;
-@property (nonatomic) NSInteger timeout;
+@property (nonatomic) int64_t timeout;
 
 @end
 
@@ -65,7 +65,7 @@
     _publicKeyHash = hash;
 }
 
-- (void)setTimeout:(NSInteger)timeout {
+- (void)setTimeout:(int64_t)timeout {
     _timeout = timeout;
 }
 

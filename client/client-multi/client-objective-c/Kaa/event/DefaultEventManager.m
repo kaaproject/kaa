@@ -146,8 +146,8 @@
     }
 }
 
-- (NSInteger)findEventListeners:(NSArray *)eventFQNs delegate:(id<FindEventListenersDelegate>)delegate {
-    int requestId = self.requestId++;
+- (int32_t)findEventListeners:(NSArray *)eventFQNs delegate:(id<FindEventListenersDelegate>)delegate {
+    int32_t requestId = self.requestId++;
     EventListenersRequest *request = [[EventListenersRequest alloc] init];
     request.requestId = requestId;
     request.eventClassFQNs = eventFQNs;

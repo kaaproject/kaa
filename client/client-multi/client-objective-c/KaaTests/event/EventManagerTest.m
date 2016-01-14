@@ -225,8 +225,8 @@
     NSArray *eventFQNs = [NSArray arrayWithObject:@"eventFQN1"];
     
     id <FindEventListenersDelegate> fetchListener = mockProtocol(@protocol(FindEventListenersDelegate));
-    NSInteger requestIdOk = [eventManager findEventListeners:eventFQNs delegate:fetchListener];
-    NSInteger requestIdBad = [eventManager findEventListeners:eventFQNs delegate:fetchListener];
+    int32_t requestIdOk = [eventManager findEventListeners:eventFQNs delegate:fetchListener];
+    int32_t requestIdBad = [eventManager findEventListeners:eventFQNs delegate:fetchListener];
     
     [verifyCount(transport, atLeastOnce()) sync];
     

@@ -134,7 +134,7 @@
     id <EventTransport> transport = [[DefaultEventTransport alloc] initWithState:clientState];
     [transport setEventManager:manager];
     
-    NSInteger requestId = 1;
+    int32_t requestId = 1;
     EventSyncRequest *eventRequest1 = [transport createEventRequest:requestId++];
     
     XCTAssertTrue(eventRequest1.eventSequenceNumberRequest.data != nil);
@@ -170,7 +170,7 @@
     id <EventTransport> transport = [[DefaultEventTransport alloc] initWithState:clientState];
     [transport setEventManager:manager];
     
-    NSInteger requestId = 1;
+    int32_t requestId = 1;
     [transport createEventRequest:requestId++];
     
     EventSyncResponse *eventResponse = [[EventSyncResponse alloc] init];
@@ -187,7 +187,7 @@
     XCTAssertTrue(eventRequest.eventSequenceNumberRequest.data == nil);
     XCTAssertTrue([eventRequest.events.data count] == [events count]);
     
-    NSInteger expectedSN = lastEventSN + 1;
+    int32_t expectedSN = lastEventSN + 1;
     for (Event *ev in eventRequest.events.data) {
         XCTAssertEqual(expectedSN++, ev.seqNum);
     }

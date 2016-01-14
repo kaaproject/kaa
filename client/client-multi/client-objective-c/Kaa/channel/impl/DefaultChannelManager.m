@@ -240,8 +240,8 @@
                         break;
                     case FAILOVER_ACTION_RETRY:
                     {
-                        NSInteger period = [decision retryPeriod];
-                        DDLogWarn(@"%@ Reconnect to current bootstrap server will be made in %li ms", TAG, (long)period);
+                        int64_t period = [decision retryPeriod];
+                        DDLogWarn(@"%@ Reconnect to current bootstrap server will be made in %lli ms", TAG, period);
                         __weak typeof(self)weakSelf = self;
                         dispatch_time_t delay = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(period * NSEC_PER_MSEC));
                         dispatch_after(delay, [self.executorContext getSheduledExecutor], ^{
@@ -251,8 +251,8 @@
                         break;
                     case FAILOVER_ACTION_USE_NEXT_BOOTSTRAP:
                     {
-                        NSInteger period = [decision retryPeriod];
-                        DDLogWarn(@"%@ Connection to next bootstrap server will be made in %li ms", TAG, (long)period);
+                        int64_t period = [decision retryPeriod];
+                        DDLogWarn(@"%@ Connection to next bootstrap server will be made in %lli ms", TAG, period);
                         __weak typeof(self)weakSelf = self;
                         dispatch_time_t delay = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(period * NSEC_PER_MSEC));
                         dispatch_after(delay, [self.executorContext getSheduledExecutor], ^{
@@ -277,8 +277,8 @@
                         break;
                     case FAILOVER_ACTION_RETRY:
                     {
-                        NSInteger period = [decision retryPeriod];
-                        DDLogWarn(@"%@ Reconnect to first bootstrap server will be made in %li ms", TAG, (long)period);
+                        int64_t period = [decision retryPeriod];
+                        DDLogWarn(@"%@ Reconnect to first bootstrap server will be made in %lli ms", TAG, period);
                         __weak typeof(self)weakSelf = self;
                         dispatch_time_t delay = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(period * NSEC_PER_MSEC));
                         dispatch_after(delay, [self.executorContext getSheduledExecutor], ^{

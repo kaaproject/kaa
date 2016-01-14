@@ -128,11 +128,11 @@
     return [self.properties stringForKey:SDK_TOKEN_KEY];
 }
 
-- (NSInteger)pollDelay {
+- (int32_t)pollDelay {
     return [[self.properties stringForKey:TRANSPORT_POLL_DELAY_KEY] intValue];
 }
 
-- (NSInteger)pollPeriod {
+- (int32_t)pollPeriod {
     return [[self.properties stringForKey:TRANSPORT_POLL_PERIOD_KEY] intValue];
 }
 

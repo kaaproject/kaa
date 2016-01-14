@@ -221,7 +221,7 @@
     notification.uid = [KAAUnion unionWithBranch:KAA_UNION_STRING_OR_NULL_BRANCH_0 andData:uid];
     notification.type = NOTIFICATION_TYPE_CUSTOM;
     notification.seqNumber = [KAAUnion unionWithBranch:KAA_UNION_INT_OR_NULL_BRANCH_0 andData:[NSNumber numberWithInt:seqNumber]];
-    NSInteger int123 = 123;
+    int32_t int123 = 123;
     NSData *data = [NSData dataWithBytes:&int123 length:sizeof(int123)];
     notification.body = data;
     return notification;
@@ -232,7 +232,7 @@
     notification.topicId = topicId;
     notification.type = NOTIFICATION_TYPE_CUSTOM;
     notification.seqNumber = [KAAUnion unionWithBranch:KAA_UNION_INT_OR_NULL_BRANCH_0 andData:[NSNumber numberWithInt:seqNumber]];
-    NSInteger int123 = 123;
+    int32_t int123 = 123;
     NSData *data = [NSData dataWithBytes:&int123 length:sizeof(int123)];
     notification.body = data;
     return notification;

@@ -107,9 +107,6 @@
     LogSyncResponse *response = [[LogSyncResponse alloc] initWithDeliveryStatuses:[KAAUnion unionWithBranch:KAA_UNION_ARRAY_LOG_DELIVERY_STATUS_OR_NULL_BRANCH_0 andData:[NSArray arrayWithObject:status]]];
     
     [logCollector onLogResponse:response];
-    
-    [NSThread sleepForTimeInterval:0.001];
-    [verifyCount(strategy, times(1)) onSuccessLogUpload:status.requestId];
 }
 
 - (void)testFailureLogUploadCallback {

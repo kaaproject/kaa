@@ -24,7 +24,7 @@
 
 @implementation MemLogStorageTest
 
-- (void) testRemoval {
+- (void)testRemoval {
     int64_t maxBucketSize = 10;
     int32_t maxRecordCount = 4;
     id <LogStorage> storage = [self getStorageWithBucketSize:maxBucketSize andRecordCount:maxRecordCount];
@@ -41,10 +41,10 @@
         [storage addLogRecord:record];
     }
     
-    LogBlock *logBlock = [storage getRecordBlock];
-    XCTAssertTrue([[logBlock logRecords] count] <= maxRecordCount);
-    XCTAssertTrue([self getLogBlockSize:logBlock] <= maxBucketSize);
-    XCTAssertEqual(insertionCount - [[logBlock logRecords] count], [[storage getStatus] getRecordCount]);
+    LogBucket *logBucket = [storage getNextBucket];
+    XCTAssertTrue([[logBucket logRecords] count] <= maxRecordCount);
+    XCTAssertTrue([self getLogBucketSize:logBucket] <= maxBucketSize);
+    XCTAssertEqual(insertionCount - [[logBucket logRecords] count], [[storage getStatus] getRecordCount]);
     [storage close];
 }
 
@@ -53,7 +53,7 @@
     int32_t recordCount = 3;
     
     id <LogStorage> storage = [self getStorageWithBucketSize:bucketSize andRecordCount:recordCount];
-    LogBlock *group = [storage getRecordBlock];
+    LogBucket *group = [storage getNextBucket];
     XCTAssertNil(group);
     [storage close];
 }
@@ -93,13 +93,13 @@
         [storage addLogRecord:record];
     }
     
-    LogBlock *group1 = [storage getRecordBlock];
-    LogBlock *group2 = [storage getRecordBlock];
-    XCTAssertNotEqual([group1 blockId], [group2 blockId]);
+    LogBucket *group1 = [storage getNextBucket];
+    LogBucket *group2 = [storage getNextBucket];
+    XCTAssertNotEqual([group1 bucketId], [group2 bucketId]);
     [storage close];
 }
 
-- (void) testLogRecordAdding {
+- (void)testLogRecordAdding {
     //size of each record is 3B
     [self testAddHelper:1 :3 :1 :1];
     [self testAddHelper:4 :3 :2 :1];
@@ -107,7 +107,7 @@
     [self testAddHelper:5 :5 :2 :1];
 }
 
-- (void) testGetSameLogBlock {
+- (void)testGetSameLogBucket {
     int64_t maxBucketSize = 3;
     int32_t maxRecordCount = 3;
     
@@ -120,9 +120,9 @@
         [storage addLogRecord:record];
     }
     
-    LogBlock *group1 = [storage getRecordBlock];
-    [storage notifyUploadFailed:[group1 blockId]];
-    LogBlock *group2 = [storage getRecordBlock];
+    LogBucket *group1 = [storage getNextBucket];
+    [storage rollbackBucket:[group1 bucketId]];
+    LogBucket *group2 = [storage getNextBucket];
     
     XCTAssertTrue([[group1 logRecords] count] == [[group2 logRecords] count]);
     
@@ -139,35 +139,35 @@
     [storage close];
 }
 
-- (void) testRecordRemoval {
+- (void)testRecordRemoval {
     int64_t bucketSize = 9;
     int32_t recordCount = 3;
     
     id <LogStorage> storage = [self getStorageWithBucketSize:bucketSize andRecordCount:recordCount];
     LogRecord *record = [self getLogRecord];
     
-    NSInteger insertionCount = 7;
-    NSInteger iter = insertionCount;
+    int32_t insertionCount = 7;
+    int32_t iter = insertionCount;
     
     while (iter-- > 0) {
         [storage addLogRecord:record];
     }
     
-    LogBlock *removingBlock = [storage getRecordBlock];
+    LogBucket *removingBucket = [storage getNextBucket];
     
-    insertionCount -= [[removingBlock logRecords] count];
-    [storage removeRecordBlock:[removingBlock blockId]];
-    removingBlock = [storage getRecordBlock];
+    insertionCount -= [[removingBucket logRecords] count];
+    [storage removeBucket:[removingBucket bucketId]];
+    removingBucket = [storage getNextBucket];
     
-    insertionCount -= [[removingBlock logRecords] count];
-    [storage removeRecordBlock:[removingBlock blockId]];
+    insertionCount -= [[removingBucket logRecords] count];
+    [storage removeBucket:[removingBucket bucketId]];
     
-    LogBlock *leftBlock = [storage getRecordBlock];
-    XCTAssertTrue([[leftBlock logRecords] count] == insertionCount);
+    LogBucket *leftBucket = [storage getNextBucket];
+    XCTAssertTrue([[leftBucket logRecords] count] == insertionCount);
     [storage close];
 }
 
-- (void) testComplexRemoval {
+- (void)testComplexRemoval {
     int64_t bucketSize = 9;
     int32_t recordCount = 3;
     
@@ -175,38 +175,38 @@
     LogRecord *record = [self getLogRecord];
     
     int32_t insertionCount = 8;
-    NSInteger iter = insertionCount;
+    int32_t iter = insertionCount;
     
     while (iter-- > 0) {
         [storage addLogRecord:record];
     }
     
-    LogBlock *removingBlock1 = [storage getRecordBlock];
-    insertionCount -= [[removingBlock1 logRecords] count];
+    LogBucket *removingBucket1 = [storage getNextBucket];
+    insertionCount -= [[removingBucket1 logRecords] count];
     
-    LogBlock *removingBlock2 = [storage getRecordBlock];
-    insertionCount -= [[removingBlock2 logRecords] count];
+    LogBucket *removingBucket2 = [storage getNextBucket];
+    insertionCount -= [[removingBucket2 logRecords] count];
     
-    LogBlock *removingBlock3 = [storage getRecordBlock];
-    insertionCount -= [[removingBlock3 logRecords] count];
+    LogBucket *removingBucket3 = [storage getNextBucket];
+    insertionCount -= [[removingBucket3 logRecords] count];
     
-    [storage removeRecordBlock:[removingBlock2 blockId]];
-    [storage notifyUploadFailed:[removingBlock1 blockId]];
-    insertionCount += [[removingBlock1 logRecords] count];
+    [storage removeBucket:[removingBucket2 bucketId]];
+    [storage rollbackBucket:[removingBucket1 bucketId]];
+    insertionCount += [[removingBucket1 logRecords] count];
     
-    LogBlock *leftBlock1 = [storage getRecordBlock];
-    LogBlock *leftBlock2 = [storage getRecordBlock];
-    NSInteger leftSize = [[leftBlock1 logRecords] count];
+    LogBucket *leftBucket1 = [storage getNextBucket];
+    LogBucket *leftBucket2 = [storage getNextBucket];
+    NSInteger leftSize = [[leftBucket1 logRecords] count];
     
-    if (leftBlock2)
-        leftSize += [[leftBlock2 logRecords] count];
+    if (leftBucket2)
+        leftSize += [[leftBucket2 logRecords] count];
     
     XCTAssertEqual(leftSize, insertionCount);
     
     [storage close];
 }
 
-- (void) testLogStorageCountAndVolume {
+- (void)testLogStorageCountAndVolume {
     int64_t bucketSize = 9;
     int32_t recordCount = 3;
     
@@ -221,30 +221,30 @@
         [storage addLogRecord:record];
     }
     
-    LogBlock *logBlock = [storage getRecordBlock];
-    receivedCount = [self addIfNotEmpty:receivedCount :logBlock];
+    LogBucket *logBucket = [storage getNextBucket];
+    receivedCount = [self addIfNotEmpty:receivedCount :logBucket];
     XCTAssertEqual(insertionCount - receivedCount, [[storage getStatus] getRecordCount]);
     XCTAssertEqual((insertionCount - receivedCount) * 3, [[storage getStatus] getConsumedVolume]);
     
-    logBlock = [storage getRecordBlock];
-    receivedCount = [self addIfNotEmpty:receivedCount :logBlock];
+    logBucket = [storage getNextBucket];
+    receivedCount = [self addIfNotEmpty:receivedCount :logBucket];
     XCTAssertEqual(insertionCount - receivedCount, [[storage getStatus] getRecordCount]);
     XCTAssertEqual((insertionCount - receivedCount) * 3, [[storage getStatus] getConsumedVolume]);
     
-    logBlock = [storage getRecordBlock];
-    receivedCount = [self addIfNotEmpty:receivedCount :logBlock];
+    logBucket = [storage getNextBucket];
+    receivedCount = [self addIfNotEmpty:receivedCount :logBucket];
     XCTAssertEqual(insertionCount - receivedCount, [[storage getStatus] getRecordCount]);
     XCTAssertEqual((insertionCount - receivedCount) * 3, [[storage getStatus] getConsumedVolume]);
     
-    [storage notifyUploadFailed:[logBlock blockId]];
-    receivedCount -= [[logBlock logRecords] count];
+    [storage rollbackBucket:[logBucket bucketId]];
+    receivedCount -= [[logBucket logRecords] count];
     XCTAssertEqual(insertionCount - receivedCount, [[storage getStatus] getRecordCount]);
     XCTAssertEqual((insertionCount - receivedCount) * 3, [[storage getStatus] getConsumedVolume]);
     
 }
 
-- (void)testAddHelper:(int32_t)addedN :(int32_t)blockSize :(int32_t)batchSize :(int32_t)expectedN {
-    id <LogStorage> storage = [self getStorageWithBucketSize:blockSize andRecordCount:batchSize];
+- (void)testAddHelper:(int32_t)addedN :(int32_t)bucketSize :(int32_t)batchSize :(int32_t)expectedN {
+    id <LogStorage> storage = [self getStorageWithBucketSize:bucketSize andRecordCount:batchSize];
     LogRecord *record = [self getLogRecord];
     NSMutableArray *expectedArray = [NSMutableArray array];
     
@@ -256,7 +256,7 @@
         [expectedArray addObject:record];
     }
     
-    LogBlock *group = [storage getRecordBlock];
+    LogBucket *group = [storage getNextBucket];
     NSArray *actualArray = [group logRecords];
     
     XCTAssertTrue([expectedArray count] == [actualArray count]);
@@ -271,9 +271,9 @@
     [storage close];
 }
 
-- (int32_t)addIfNotEmpty:(int32_t)count :(LogBlock *)logBlock {
-    if (logBlock && [[logBlock logRecords] count] > 0) {
-        count += [[logBlock logRecords] count];
+- (int32_t)addIfNotEmpty:(int32_t)count :(LogBucket *)logBucket {
+    if (logBucket && [[logBucket logRecords] count] > 0) {
+        count += [[logBucket logRecords] count];
     }
     return count;
 }
@@ -282,9 +282,9 @@
     return [[MemLogStorage alloc]initWithBucketSize:bucketSize bucketRecordCount:recordCount];
 }
 
-- (int64_t) getLogBlockSize:(LogBlock *)logBlock {
+- (int64_t)getLogBucketSize:(LogBucket *)logBucket {
     int64_t size = 0;
-    for (LogRecord *record in [logBlock logRecords]) {
+    for (LogRecord *record in [logBucket logRecords]) {
         size += [record getSize];
     }
     return size;

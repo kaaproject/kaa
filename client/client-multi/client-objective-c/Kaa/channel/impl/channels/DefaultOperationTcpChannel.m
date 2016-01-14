@@ -47,9 +47,9 @@ typedef enum {
 @interface OpenConnectionTask : NSOperation
 
 @property (nonatomic,weak) DefaultOperationTcpChannel *channel;
-@property (nonatomic) NSInteger delay;
+@property (nonatomic) int64_t delay;
 
-- (instancetype)initWithChannel:(DefaultOperationTcpChannel *)channel andDelay:(NSInteger)delay; //delay in milliseconds
+- (instancetype)initWithChannel:(DefaultOperationTcpChannel *)channel andDelay:(int64_t)delay; //delay in milliseconds
 
 @end
 
@@ -78,7 +78,7 @@ typedef enum {
 - (void)sendKaaSyncRequest:(NSDictionary *)types; //<TransportType, ChannelDirection> as key-value
 - (void)sendConnect;
 - (void)openConnection;
-- (void)scheduleOpenConnectionTask:(NSInteger)retryPeriod;
+- (void)scheduleOpenConnectionTask:(int64_t)retryPeriod;
 - (void)schedulePingTask;
 - (void)destroyExecutor;
 
@@ -328,8 +328,8 @@ typedef enum {
                 break;
             case FAILOVER_ACTION_RETRY:
             {
-                NSInteger retryPeriod = decision.retryPeriod;
-                DDLogWarn(@"%@ Attempt to reconnect will be made in %li ms according to failover strategy decision", TAG, retryPeriod);
+                int64_t retryPeriod = decision.retryPeriod;
+                DDLogWarn(@"%@ Attempt to reconnect will be made in %lli ms according to failover strategy decision", TAG, retryPeriod);
                 [self scheduleOpenConnectionTask:retryPeriod];
             }
                 break;
@@ -347,7 +347,7 @@ typedef enum {
     }
 }
 
-- (void)scheduleOpenConnectionTask:(NSInteger)retryPeriod {
+- (void)scheduleOpenConnectionTask:(int64_t)retryPeriod {
     @synchronized(self) {
         if (!self.isOpenConnectionScheduled) {
             if (self.executor) {
@@ -662,7 +662,7 @@ typedef enum {
 
 @implementation OpenConnectionTask
 
-- (instancetype)initWithChannel:(DefaultOperationTcpChannel *)channel andDelay:(NSInteger)delay {
+- (instancetype)initWithChannel:(DefaultOperationTcpChannel *)channel andDelay:(int64_t)delay {
     self = [super init];
     if (self) {
         _channel = channel;

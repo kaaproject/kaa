@@ -18,7 +18,7 @@
 #define Kaa_LogStorage_h
 
 #import <Foundation/Foundation.h>
-#import "LogBlock.h"
+#import "LogBucket.h"
 #import "LogRecord.h"
 #import "BucketInfo.h"
 
@@ -50,7 +50,7 @@
 /**
  * Interface for log storage.
  *
- * Persists each new log record, forms on demand new log block for sending
+ * Persists each new log record, forms on demand new log bucket for sending
  * it to the Operation server, removes already sent records, cleans up elder
  * records in case if there is some limitation on a size of log storage.
  *
@@ -59,7 +59,7 @@
 @protocol LogStorage
 
 /**
- * Persists new log record.
+ * Persists a log record.
  */
 - (BucketInfo *)addLogRecord:(LogRecord *)record;
 
@@ -69,25 +69,25 @@
 - (id<LogStorageStatus>)getStatus;
 
 /**
- * Retrieves new log block or nil if there are no logs.
+ * Returns a log bucket or nil if there are no logs.
  */
-- (LogBlock *)getRecordBlock;
+- (LogBucket *)getNextBucket;
 
 /**
- * Removes already sent log records by its block id.
+ * Removes already sent log records by its bucket id.
  *
  * Use in case of a successful upload.
  *
- * blockId - unique id of sent log block
+ * bucketId - unique id of sent bucket
  */
-- (void)removeRecordBlock:(int32_t)blockId;
+- (void)removeBucket:(int32_t)bucketId;
 
 /**
- * Notifies if sending of a log block with a specified id was failed.
+ * Notifies if sending of a log bucket with a specified id was failed.
  *
- * blockId - unique id of log block.
+ * bucketId - unique id of log bucket.
  */
-- (void)notifyUploadFailed:(int32_t)blockId;
+- (void)rollbackBucket:(int32_t)bucketId;
 
 /**
  * Closes log storage and releases all used resources (if any)

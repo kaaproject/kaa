@@ -17,18 +17,18 @@
 #import <Foundation/Foundation.h>
 
 /**
- * Wrapper class for a log block which is going to be sent.
+ * Wrapper class for a log bucket which is going to be sent.
  *
- * Each log block should have its unique id to be mapped in the log storage and
+ * Each log bucket should have its unique id to be mapped in the log storage and
  * delivery stuff.
  */
-@interface LogBlock : NSObject
+@interface LogBucket : NSObject
 
-//Unique id for sending log block
-@property(nonatomic,readonly) int32_t blockId;
+//Unique id for sending log bucket
+@property(nonatomic,readonly) int32_t bucketId;
 //List of sending log records <LogRecord>
 @property(nonatomic,strong,readonly) NSArray* logRecords;
 
-- (instancetype)initWithBlockId:(int32_t)blockId andRecords:(NSArray*)logRecords;
+- (instancetype)initWithBucketId:(int32_t)bucketId andRecords:(NSArray *)logRecords;
 
 @end

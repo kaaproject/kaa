@@ -88,7 +88,7 @@ static NSDictionary *SUPPORTED_TYPES;
     AbstractHttpClient *httpClient = mock([AbstractHttpClient class]);
     id <FailoverManager> failoverManager = mockProtocol(@protocol(FailoverManager));
     
-    NSInteger five = 5;
+    int32_t five = 5;
     NSMutableData *data = [NSMutableData dataWithBytes:&five length:sizeof(five)];
     [data appendBytes:&five length:sizeof(five)];
     [data appendBytes:&five length:sizeof(five)];
@@ -147,7 +147,7 @@ static NSDictionary *SUPPORTED_TYPES;
     [channel sync:TRANSPORT_TYPE_BOOTSTRAP];
     [channel syncAll];
     
-    NSInteger five = 5;
+    int32_t five = 5;
     NSMutableData *data = [NSMutableData dataWithBytes:&five length:sizeof(five)];
     [data appendBytes:&five length:sizeof(five)];
     [data appendBytes:&five length:sizeof(five)];

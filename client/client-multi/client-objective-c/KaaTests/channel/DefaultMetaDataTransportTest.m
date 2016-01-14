@@ -56,13 +56,13 @@
 #pragma mark - Supporting methods
 
 - (NSData *) getNewDataWith123 {
-    NSInteger integer = 123;
+    int32_t integer = 123;
     NSData *data = [NSData dataWithBytes:&integer length:sizeof(integer)];
     return data;
 }
 
 - (NSData *) getNewDataWith567 {
-    NSInteger integer = 567;
+    int32_t integer = 567;
     NSData *data = [NSData dataWithBytes:&integer length:sizeof(integer)];
     return data;
 }

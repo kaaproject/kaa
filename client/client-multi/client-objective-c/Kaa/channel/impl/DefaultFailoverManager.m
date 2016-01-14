@@ -47,10 +47,10 @@
 
 @interface DefaultFailoverManager ()
 
-@property (nonatomic) NSInteger failureResolutionTimeout;
-@property (nonatomic) NSInteger bootstrapServersRetryPeriod;
-@property (nonatomic) NSInteger operationsServersRetryPeriod;
-@property (nonatomic) NSInteger noConnectivityRetryPeriod;
+@property (nonatomic) int64_t failureResolutionTimeout;
+@property (nonatomic) int64_t bootstrapServersRetryPeriod;
+@property (nonatomic) int64_t operationsServersRetryPeriod;
+@property (nonatomic) int64_t noConnectivityRetryPeriod;
 @property (nonatomic) TimeUnit  timeUnit;
 
 @property (nonatomic,strong) id<KaaChannelManager> kaaChannelMgr;
@@ -76,10 +76,10 @@
 
 - (instancetype)initWithChannelManager:(id<KaaChannelManager>)channelMgr
                                context:(id<ExecutorContext>)context
-              failureResolutionTimeout:(NSInteger)frTimeout
-           bootstrapServersRetryPeriod:(NSInteger)btRetryPeriod
-          operationsServersRetryPeriod:(NSInteger)opRetryPeriod
-             noConnectivityRetryPeriod:(NSInteger)noConnRetryPeriod
+              failureResolutionTimeout:(int64_t)frTimeout
+           bootstrapServersRetryPeriod:(int64_t)btRetryPeriod
+          operationsServersRetryPeriod:(int64_t)opRetryPeriod
+             noConnectivityRetryPeriod:(int64_t)noConnRetryPeriod
                               timeUnit:(TimeUnit)timeUnit {
     self = [super init];
     if (self) {
@@ -122,8 +122,8 @@
             }
         }
         
-        DDLogVerbose(@"%@ Next fail resolution will be available in [delay:%li timeunit:%i]",
-                     TAG, (long)self.failureResolutionTimeout, self.timeUnit);
+        DDLogVerbose(@"%@ Next fail resolution will be available in [delay:%lli timeunit:%i]",
+                     TAG, self.failureResolutionTimeout, self.timeUnit);
         
         Resolution *resolution = [[Resolution alloc] initWithManager:self andInfo:connectionInfo];
         

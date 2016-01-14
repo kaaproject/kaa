@@ -166,10 +166,10 @@
 
 #pragma mark - Supporting methods
 
-- (NSData *) getDataWith123 {
-    NSInteger one = 1;
-    NSInteger two = 2;
-    NSInteger three = 3;
+- (NSData *)getDataWith123 {
+    int32_t one = 1;
+    int32_t two = 2;
+    int32_t three = 3;
     NSMutableData *data = [NSMutableData dataWithBytes:&one length:sizeof(one)];
     [data appendBytes:&two length:sizeof(two)];
     [data appendBytes:&three length:sizeof(three)];

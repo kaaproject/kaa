@@ -62,12 +62,12 @@
 - (LogUploadStrategyDecision)checkUploadNeeded:(id<LogStorageStatus>)status {
     LogUploadStrategyDecision decision = LOG_UPLOAD_STRATEGY_DECISION_NOOP;
     if ([status getConsumedVolume] >= self.volumeThreshold) {
-        DDLogInfo(@"%@ Need to upload logs - current size: %li, threshold: %li",
-                  TAG, (long)[status getConsumedVolume], (long)self.volumeThreshold);
+        DDLogInfo(@"%@ Need to upload logs - current size: %lli, threshold: %i",
+                  TAG, [status getConsumedVolume], self.volumeThreshold);
         decision = LOG_UPLOAD_STRATEGY_DECISION_UPLOAD;
     } else if ([status getRecordCount] >= self.countThreshold) {
-        DDLogInfo(@"%@ Need to upload logs - current count: %li, threshold: %li",
-                  TAG, (long)[status getRecordCount], (long)self.countThreshold);
+        DDLogInfo(@"%@ Need to upload logs - current count: %lli, threshold: %i",
+                  TAG, [status getRecordCount], self.countThreshold);
         decision = LOG_UPLOAD_STRATEGY_DECISION_UPLOAD;
     }
     return decision;

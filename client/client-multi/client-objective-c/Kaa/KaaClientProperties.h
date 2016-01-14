@@ -43,9 +43,9 @@
 
 - (NSString *)sdkToken;
 
-- (NSInteger)pollDelay;
+- (int32_t)pollDelay;
 
-- (NSInteger)pollPeriod;
+- (int32_t)pollPeriod;
 
 - (TimeUnit)pollUnit;
 

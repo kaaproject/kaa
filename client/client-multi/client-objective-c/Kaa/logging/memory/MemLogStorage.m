@@ -78,20 +78,20 @@
 }
 
 - (int64_t)getConsumedVolume {
-    DDLogDebug(@"%@ Consumed volume: %li", TAG, (long)_consumedVolume);
+    DDLogDebug(@"%@ Consumed volume: %lli", TAG, _consumedVolume);
     return _consumedVolume;
 }
 
 - (int64_t)getRecordCount {
-    DDLogDebug(@"%@ Record count: %li", TAG, (long)_recordCount);
+    DDLogDebug(@"%@ Record count: %lli", TAG, _recordCount);
     return _recordCount;
 }
 
 - (BucketInfo *)addLogRecord:(LogRecord *)record {
-    DDLogVerbose(@"%@ Adding new log record with size %li", TAG, (long)[record getSize]);
+    DDLogVerbose(@"%@ Adding new log record with size %lli", TAG, [record getSize]);
     if ([record getSize] > self.maxBucketSize) {
-        [NSException raise:NSInvalidArgumentException format:@"Record size(%li) is bigger than max bucket size(%li)!",
-         (long)[record getSize], (long)self.maxBucketSize];
+        [NSException raise:NSInvalidArgumentException format:@"Record size(%lli) is bigger than max bucket size(%lli)!",
+         [record getSize], self.maxBucketSize];
     }
     @synchronized(self.buckets) {
         if (self.consumedVolume + [record getSize] > self.maxStorageSize) {
@@ -113,12 +113,12 @@
     }
     return [[BucketInfo alloc] initWithBucketId:self.currentBucket.bucketId logCount:[self.currentBucket getCount]];
     
-    DDLogVerbose(@"%@ Added a new log record to bucket with id [%li]", TAG, (long)[self.currentBucket bucketId]);
+    DDLogVerbose(@"%@ Added a new log record to bucket with id [%i]", TAG, [self.currentBucket bucketId]);
 }
 
-- (LogBlock *)getRecordBlock {
-    DDLogVerbose(@"%@ Getting new record block with block size: %li and count: %li", TAG, (long)self.maxBucketSize, (long)self.maxBucketRecordCount);
-    LogBlock *result = nil;
+- (LogBucket *)getNextBucket {
+    DDLogVerbose(@"%@ Getting new record bucket with bucket size: %lli and count: %i", TAG, self.maxBucketSize, self.maxBucketRecordCount);
+    LogBucket *result = nil;
     MemBucket *bucketCandidate = nil;
     @synchronized(self.buckets) {
         for (MemBucket *bucket in self.buckets.allValues) {
@@ -135,28 +135,28 @@
             self.consumedVolume -= [bucketCandidate getSize];
             self.recordCount -= [bucketCandidate getCount];
             if (bucketCandidate.state == MEM_BUCKET_STATE_FREE) {
-                DDLogVerbose(@"%@ Only a bucket with state FREE found: [%li]. Changing its state to PENDING",
-                             TAG, (long)bucketCandidate.bucketId);
+                DDLogVerbose(@"%@ Only a bucket with state FREE found: [%i]. Changing its state to PENDING",
+                             TAG, bucketCandidate.bucketId);
                 bucketCandidate.state = MEM_BUCKET_STATE_PENDING;
             }
-            result = [[LogBlock alloc] initWithBlockId:bucketCandidate.bucketId andRecords:bucketCandidate.records];
-            DDLogDebug(@"%@ Return record block with records count: [%li]", TAG, (long)[bucketCandidate getCount]);
+            result = [[LogBucket alloc] initWithBucketId:bucketCandidate.bucketId andRecords:bucketCandidate.records];
+            DDLogDebug(@"%@ Return record bucket with records count: [%i]", TAG, [bucketCandidate getCount]);
         }
     }
     return result;
 }
 
-- (void)removeRecordBlock:(int32_t)blockId {
-    DDLogVerbose(@"%@ Removing record block with id [%li]", TAG, (long)blockId);
+- (void)removeBucket:(int32_t)bucketId {
+    DDLogVerbose(@"%@ Removing bucket with id [%i]", TAG, bucketId);
     @synchronized(self.buckets) {
-        [self.buckets removeObjectForKey:[NSNumber numberWithLong:blockId]];
+        [self.buckets removeObjectForKey:[NSNumber numberWithLong:bucketId]];
     }
 }
 
-- (void)notifyUploadFailed:(int32_t)blockId {
-    DDLogVerbose(@"%@ Upload of record block [%li] failed", TAG, (long)blockId);
+- (void)rollbackBucket:(int32_t)bucketId {
+    DDLogVerbose(@"%@ Upload of bucket [%i] failed", TAG, bucketId);
     @synchronized(self.buckets) {
-        MemBucket * bucket = [self.buckets objectForKey:[NSNumber numberWithLong:blockId]];
+        MemBucket * bucket = [self.buckets objectForKey:[NSNumber numberWithLong:bucketId]];
         bucket.state = MEM_BUCKET_STATE_FULL;
         self.consumedVolume += [bucket getSize];
         self.recordCount += [bucket getCount];

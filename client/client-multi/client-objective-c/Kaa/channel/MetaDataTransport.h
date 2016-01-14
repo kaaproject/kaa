@@ -51,7 +51,7 @@
 /**
  * Sets the response timeout.
  */
-- (void)setTimeout:(NSInteger)timeout;
+- (void)setTimeout:(int64_t)timeout;
 
 @end
 

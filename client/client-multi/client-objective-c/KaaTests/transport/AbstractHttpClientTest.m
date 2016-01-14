@@ -37,10 +37,10 @@
     @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:[NSString stringWithFormat:@"%@ NSException raised in close method.", NSStringFromClass([self class])] userInfo:nil];
 }
 
-- (void) abort {
+- (void)abort {
 }
 
-- (BOOL) canAbort {
+- (BOOL)canAbort {
     return FALSE;
 }
 
@@ -59,7 +59,7 @@
 
 @implementation AbstractHttpClientTest
 
-- (void) setUp {
+- (void)setUp {
     [super setUp];
     self.clientPair = [KeyUtils generateKeyPair];
     
@@ -68,14 +68,14 @@
     self.serverPair = [KeyUtils generateKeyPairWithPrivateTag:self.serverPrivateTag andPublicTag:self.serverPublicTag];
 }
 
-- (void) tearDown {
+- (void)tearDown {
     [super tearDown];
     [KeyUtils deleteExistingKeyPair];
     [KeyUtils removeKeyByTag:self.serverPrivateTag];
     [KeyUtils removeKeyByTag:self.serverPublicTag];
 }
 
-- (void) testDisableVerification {
+- (void)testDisableVerification {
     TestHttpClient *client = [[TestHttpClient alloc] initWith:@"test_url" privateKey:nil publicKey:nil remoteKeyRef:nil];
     [client disableVerification];
     int a = 1; int b = 2; int c = 3;
@@ -88,7 +88,7 @@
     XCTAssertEqualObjects(body, [client verifyResponse:body signature:signature]);
 }
 
-- (void) testSignature {
+- (void)testSignature {
     TestHttpClient *client = [[TestHttpClient alloc] initWith:@"test_url" privateKey:[self.clientPair getPrivateKeyRef] publicKey:[self.clientPair getPublicKeyRef] remoteKeyRef:[self.serverPair getPublicKeyRef]];
     
     MessageEncoderDecoder *serverEncoder = [[MessageEncoderDecoder alloc] initWithKeyPair:self.serverPair andRemotePublicKeyRef:[self.clientPair getPublicKeyRef]];
@@ -103,7 +103,7 @@
     XCTAssertEqualObjects(message, [client verifyResponse:message signature:signature]);
 }
 
-- (void) testVerifyResponseFailure {
+- (void)testVerifyResponseFailure {
     
     @try {
         TestHttpClient *client = [[TestHttpClient alloc] initWith:@"test_url" privateKey:[self.clientPair getPrivateKeyRef] publicKey:[self.clientPair getPublicKeyRef] remoteKeyRef:[self.serverPair getPublicKeyRef]];

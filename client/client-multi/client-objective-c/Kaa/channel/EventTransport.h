@@ -35,7 +35,7 @@
  * @return new Event request.
  * @see EventSyncRequest
  */
-- (EventSyncRequest *)createEventRequest:(NSInteger)requestId;
+- (EventSyncRequest *)createEventRequest:(int32_t)requestId;
 
 /**
  * Updates the state of the Event manager according to the given response.
@@ -50,7 +50,7 @@
  *
  * @param requestId - request id of the corresponding SyncRequest
  */
-- (void)onSyncResposeIdReceived:(NSInteger)requestId;
+- (void)onSyncResposeIdReceived:(int32_t)requestId;
 
 /**
  * Sets the given Event manager.

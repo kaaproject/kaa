@@ -21,7 +21,7 @@
 
 #define TAG @"AbstractExecutorContext >>>"
 
-#define DEFAULT_TIMEOUT     (5)
+#define DEFAULT_TIMEOUT     5
 #define DEFAULT_TIMEUNIT    TIME_UNIT_SECONDS
 
 @implementation AbstractExecutorContext
@@ -31,7 +31,7 @@
     return [self initWithTimeOut:DEFAULT_TIMEOUT andTimeUnit:DEFAULT_TIMEUNIT];
 }
 
-- (instancetype) initWithTimeOut:(NSInteger)timeOut andTimeUnit:(TimeUnit)timeUnit {
+- (instancetype) initWithTimeOut:(int64_t)timeOut andTimeUnit:(TimeUnit)timeUnit {
     self = [super init];
     if (self) {
         self.timeOut = timeOut;
@@ -49,7 +49,7 @@
     
     DDLogDebug(@"%@ Shutdown executor service", TAG);
     [queue cancelAllOperations];
-    DDLogDebug(@"%@ Waiting for executor service to shutdown for %ld %u", TAG, (long)self.timeOut, self.timeUnit);
+    DDLogDebug(@"%@ Waiting for executor service to shutdown for %lli %u", TAG, self.timeOut, self.timeUnit);
     @try {
         double fixedTime = CACurrentMediaTime();
         while ([queue operationCount] && (CACurrentMediaTime() < (fixedTime + self.timeOut))) {

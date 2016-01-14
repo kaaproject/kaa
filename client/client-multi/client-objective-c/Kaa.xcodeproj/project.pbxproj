@@ -234,8 +234,8 @@
 		B8CCBEFB1C4677DD00C26F0B /* DefaultLogUploadStrategy.h in Headers */ = {isa = PBXBuildFile; fileRef = B8CCBEDB1C4677DD00C26F0B /* DefaultLogUploadStrategy.h */; };
 		B8CCBEFC1C4677DD00C26F0B /* DefaultLogUploadStrategy.m in Sources */ = {isa = PBXBuildFile; fileRef = B8CCBEDC1C4677DD00C26F0B /* DefaultLogUploadStrategy.m */; };
 		B8CCBEFD1C4677DD00C26F0B /* GenericLogCollector.h in Headers */ = {isa = PBXBuildFile; fileRef = B8CCBEDD1C4677DD00C26F0B /* GenericLogCollector.h */; };
-		B8CCBEFE1C4677DD00C26F0B /* LogBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = B8CCBEDE1C4677DD00C26F0B /* LogBlock.h */; };
-		B8CCBEFF1C4677DD00C26F0B /* LogBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = B8CCBEDF1C4677DD00C26F0B /* LogBlock.m */; };
+		B8CCBEFE1C4677DD00C26F0B /* LogBucket.h in Headers */ = {isa = PBXBuildFile; fileRef = B8CCBEDE1C4677DD00C26F0B /* LogBucket.h */; };
+		B8CCBEFF1C4677DD00C26F0B /* LogBucket.m in Sources */ = {isa = PBXBuildFile; fileRef = B8CCBEDF1C4677DD00C26F0B /* LogBucket.m */; };
 		B8CCBF001C4677DD00C26F0B /* LogCollector.h in Headers */ = {isa = PBXBuildFile; fileRef = B8CCBEE01C4677DD00C26F0B /* LogCollector.h */; };
 		B8CCBF011C4677DD00C26F0B /* LogFailoverCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = B8CCBEE11C4677DD00C26F0B /* LogFailoverCommand.h */; };
 		B8CCBF021C4677DD00C26F0B /* LogRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = B8CCBEE21C4677DD00C26F0B /* LogRecord.h */; };
@@ -410,7 +410,7 @@
 		B8CCBFEA1C467C0D00C26F0B /* DefaultLogCollector.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B8CCBED91C4677DD00C26F0B /* DefaultLogCollector.h */; };
 		B8CCBFEB1C467C0D00C26F0B /* DefaultLogUploadStrategy.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B8CCBEDB1C4677DD00C26F0B /* DefaultLogUploadStrategy.h */; };
 		B8CCBFEC1C467C0D00C26F0B /* GenericLogCollector.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B8CCBEDD1C4677DD00C26F0B /* GenericLogCollector.h */; };
-		B8CCBFED1C467C0D00C26F0B /* LogBlock.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B8CCBEDE1C4677DD00C26F0B /* LogBlock.h */; };
+		B8CCBFED1C467C0D00C26F0B /* LogBucket.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B8CCBEDE1C4677DD00C26F0B /* LogBucket.h */; };
 		B8CCBFEE1C467C0D00C26F0B /* LogCollector.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B8CCBEE01C4677DD00C26F0B /* LogCollector.h */; };
 		B8CCBFEF1C467C0D00C26F0B /* LogFailoverCommand.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B8CCBEE11C4677DD00C26F0B /* LogFailoverCommand.h */; };
 		B8CCBFF01C467C0D00C26F0B /* LogRecord.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B8CCBEE21C4677DD00C26F0B /* LogRecord.h */; };
@@ -629,7 +629,7 @@
 				B8CCBFEA1C467C0D00C26F0B /* DefaultLogCollector.h in Copy Files */,
 				B8CCBFEB1C467C0D00C26F0B /* DefaultLogUploadStrategy.h in Copy Files */,
 				B8CCBFEC1C467C0D00C26F0B /* GenericLogCollector.h in Copy Files */,
-				B8CCBFED1C467C0D00C26F0B /* LogBlock.h in Copy Files */,
+				B8CCBFED1C467C0D00C26F0B /* LogBucket.h in Copy Files */,
 				B8CCBFEE1C467C0D00C26F0B /* LogCollector.h in Copy Files */,
 				B8CCBFEF1C467C0D00C26F0B /* LogFailoverCommand.h in Copy Files */,
 				B8CCBFF01C467C0D00C26F0B /* LogRecord.h in Copy Files */,
@@ -907,8 +907,8 @@
 		B8CCBEDB1C4677DD00C26F0B /* DefaultLogUploadStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DefaultLogUploadStrategy.h; sourceTree = "<group>"; };
 		B8CCBEDC1C4677DD00C26F0B /* DefaultLogUploadStrategy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DefaultLogUploadStrategy.m; sourceTree = "<group>"; };
 		B8CCBEDD1C4677DD00C26F0B /* GenericLogCollector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GenericLogCollector.h; sourceTree = "<group>"; };
-		B8CCBEDE1C4677DD00C26F0B /* LogBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogBlock.h; sourceTree = "<group>"; };
-		B8CCBEDF1C4677DD00C26F0B /* LogBlock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LogBlock.m; sourceTree = "<group>"; };
+		B8CCBEDE1C4677DD00C26F0B /* LogBucket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogBucket.h; sourceTree = "<group>"; };
+		B8CCBEDF1C4677DD00C26F0B /* LogBucket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LogBucket.m; sourceTree = "<group>"; };
 		B8CCBEE01C4677DD00C26F0B /* LogCollector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogCollector.h; sourceTree = "<group>"; };
 		B8CCBEE11C4677DD00C26F0B /* LogFailoverCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogFailoverCommand.h; sourceTree = "<group>"; };
 		B8CCBEE21C4677DD00C26F0B /* LogRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogRecord.h; sourceTree = "<group>"; };
@@ -1482,8 +1482,8 @@
 				B8CCBEDB1C4677DD00C26F0B /* DefaultLogUploadStrategy.h */,
 				B8CCBEDC1C4677DD00C26F0B /* DefaultLogUploadStrategy.m */,
 				B8CCBEDD1C4677DD00C26F0B /* GenericLogCollector.h */,
-				B8CCBEDE1C4677DD00C26F0B /* LogBlock.h */,
-				B8CCBEDF1C4677DD00C26F0B /* LogBlock.m */,
+				B8CCBEDE1C4677DD00C26F0B /* LogBucket.h */,
+				B8CCBEDF1C4677DD00C26F0B /* LogBucket.m */,
 				B8CCBEE01C4677DD00C26F0B /* LogCollector.h */,
 				B8A38EE01C47962F00EE6EBF /* LogDeliveryDelegate.h */,
 				B8CCBEE11C4677DD00C26F0B /* LogFailoverCommand.h */,
@@ -1837,7 +1837,7 @@
 				B8CCBE3D1C4673B500C26F0B /* HttpRequestCreator.h in Headers */,
 				B8CCBD9C1C4664D800C26F0B /* EndpointGen.h in Headers */,
 				B8CCBEBD1C46762A00C26F0B /* EventListenersRequestBinding.h in Headers */,
-				B8CCBEFE1C4677DD00C26F0B /* LogBlock.h in Headers */,
+				B8CCBEFE1C4677DD00C26F0B /* LogBucket.h in Headers */,
 				B8CCBE3F1C4673B500C26F0B /* KAASocket.h in Headers */,
 				B8CCBE861C4673B500C26F0B /* RedirectionTransport.h in Headers */,
 				B8CCBE431C4673B500C26F0B /* DefaultBootstrapDataProcessor.h in Headers */,
@@ -2197,7 +2197,7 @@
 				B8CCBEBE1C46762A00C26F0B /* EventListenersRequestBinding.m in Sources */,
 				B8CCBDC41C46679A00C26F0B /* TransportContext.m in Sources */,
 				B8CCBF511C46799D00C26F0B /* MessageEncoderDecoder.m in Sources */,
-				B8CCBEFF1C4677DD00C26F0B /* LogBlock.m in Sources */,
+				B8CCBEFF1C4677DD00C26F0B /* LogBucket.m in Sources */,
 				B8CCBE691C4673B500C26F0B /* DefaultBootstrapTransport.m in Sources */,
 				B8CCBF3C1C46791B00C26F0B /* KaaClientPropertiesState.m in Sources */,
 				B8CCBF131C4677DD00C26F0B /* StorageSizeWithTimeLimitLogUploadStrategy.m in Sources */,

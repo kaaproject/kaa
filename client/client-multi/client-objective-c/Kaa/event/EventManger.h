@@ -42,7 +42,7 @@
  *
  * @return Request ID of submitted request
  */
-- (NSInteger)findEventListeners:(NSArray *)eventFQNs delegate:(id<FindEventListenersDelegate>)delegate;
+- (int32_t)findEventListeners:(NSArray *)eventFQNs delegate:(id<FindEventListenersDelegate>)delegate;
 
 @end
 

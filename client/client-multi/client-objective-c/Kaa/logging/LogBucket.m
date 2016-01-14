@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-#import "LogBlock.h"
+#import "LogBucket.h"
 
-@implementation LogBlock
+@implementation LogBucket
 
-- (instancetype)initWithBlockId:(int32_t)blockId andRecords:(NSArray *)logRecords {
+- (instancetype)initWithBucketId:(int32_t)bucketId andRecords:(NSArray *)logRecords {
     self = [super init];
     if (self) {
-        _blockId = blockId;
+        _bucketId = bucketId;
         _logRecords = logRecords;
     }
     return self;

@@ -51,12 +51,11 @@
 
 - (BOOL)addRecord:(LogRecord *)record {
     if (self.size + [record getSize] > self.maxSize) {
-        DDLogVerbose(@"%@ No space left in bucket. Current size: %li, record size: %li, max size: %li", TAG,
-                     (long)self.size, (long)[record getSize], (long)self.maxSize);
+        DDLogVerbose(@"%@ No space left in bucket. Current size: %lli, record size: %lli, max size: %lli", TAG,
+                     self.size, [record getSize], self.maxSize);
         return NO;
     } else if ([self getCount] + 1 > self.maxRecordCount) {
-        DDLogVerbose(@"%@ No space left in bucket. Current count: %li, max count: %li", TAG,
-                     (long)[self getCount], (long)self.maxRecordCount);
+        DDLogVerbose(@"%@ No space left in bucket. Current count: %i, max count: %i", TAG, [self getCount], self.maxRecordCount);
         return NO;
     }
     [self.records addObject:record];
@@ -65,8 +64,8 @@
 }
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"MemBucket id:%li maxSize:%li maxRecordCount:%li records count:%li size:%li state:%i", (long)self.bucketId, (long)self.maxSize, (long)self.maxRecordCount,
-            (long)[self.records count], (long)self.size, self.state];
+    return [NSString stringWithFormat:@"MemBucket id:%i maxSize:%lli maxRecordCount:%i records count:%li size:%lli state:%i",
+            self.bucketId, self.maxSize, self.maxRecordCount, (long)[self.records count], self.size, self.state];
 }
 
 @end
