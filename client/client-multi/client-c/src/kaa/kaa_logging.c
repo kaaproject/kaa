@@ -71,7 +71,7 @@ struct kaa_log_collector {
 
 
 
-static const kaa_service_t logging_sync_services[1] = {KAA_SERVICE_LOGGING};
+static const kaa_service_t logging_sync_services[] = {KAA_SERVICE_LOGGING};
 
 
 kaa_error_t kaa_logging_need_logging_resync(kaa_log_collector_t *self, bool *result)
@@ -263,7 +263,7 @@ static void update_storage(kaa_log_collector_t *self)
 
 
 
-kaa_error_t kaa_logging_add_record(kaa_log_collector_t *self, kaa_user_log_record_t *entry)
+kaa_error_t kaa_logging_add_record(kaa_log_collector_t *self, kaa_user_log_record_t *entry, kaa_log_bucket_info_t *bucket)
 {
     KAA_RETURN_IF_NIL2(self, entry, KAA_ERR_BADPARAM);
     KAA_RETURN_IF_NIL(self->log_storage_context, KAA_ERR_NOT_INITIALIZED);
@@ -304,7 +304,11 @@ kaa_error_t kaa_logging_add_record(kaa_log_collector_t *self, kaa_user_log_recor
     return KAA_ERR_NONE;
 }
 
-
+kaa_error_t kaa_logging_set_listeners(kaa_log_collector_t *self, const kaa_log_listeners_t *listeners)
+{
+    /* TODO */
+    return KAA_ERR_UNSUPPORTED;
+}
 
 kaa_error_t kaa_logging_request_get_size(kaa_log_collector_t *self, size_t *expected_size)
 {
