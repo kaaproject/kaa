@@ -67,7 +67,7 @@ typedef struct
 } kaa_log_listeners_t;
 
 /** Special macro that can be used to disable event handling. */
-#define KAA_LOG_EMPTY_LISTENERS ((kaa_log_listener_t){NULL, NULL, NULL, NULL})
+#define KAA_LOG_EMPTY_LISTENERS ((kaa_log_listeners_t){NULL, NULL, NULL, NULL})
 
 /**
  * @brief Initializes data collection module with the storage interface, upload strategy, and other settings.

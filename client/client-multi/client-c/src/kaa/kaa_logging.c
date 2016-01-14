@@ -151,6 +151,10 @@ static bool is_timeout(kaa_log_collector_t *self)
         while (it) {
             timeout_info_t *info = (timeout_info_t *)kaa_list_get_data(it);
             ext_log_storage_unmark_by_bucket_id(self->log_storage_context, info->log_bucket_id);
+            if (self->log_delivery_listeners.on_timeout){
+                kaa_log_bucket_info_t log_bucket_info = {info->log_bucket_id, info->log_cnt};
+                (*self->log_delivery_listeners.on_timeout)(self->log_delivery_listeners.ctx, &log_bucket_info);
+            }
             it = kaa_list_next(it);
         }
 
@@ -228,6 +232,7 @@ kaa_error_t kaa_logging_init(kaa_log_collector_t *self, void *log_storage_contex
 
     self->log_storage_context = log_storage_context;
     self->log_upload_strategy_context = log_upload_strategy_context;
+    self->log_delivery_listeners = KAA_LOG_EMPTY_LISTENERS;
 
     KAA_LOG_DEBUG(self->logger, KAA_ERR_NONE, "Initialized log collector with log storage {%p}, log upload strategy {%p}"
             , log_storage_context, log_upload_strategy_context);
@@ -473,8 +478,18 @@ kaa_error_t kaa_logging_handle_server_sync(kaa_log_collector_t *self
 
         if (delivery_result == LOGGING_RESULT_SUCCESS) {
             KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Log bucket uploaded successfully, id '%u'", bucket_id);
+            if (self->log_delivery_listeners.on_success){
+                // TODO load log count from timeouts
+                kaa_log_bucket_info_t log_bucket_info = {bucket_id, 0};
+                (*self->log_delivery_listeners.on_success)(self->log_delivery_listeners.ctx,&log_bucket_info);
+            }
         } else {
             KAA_LOG_WARN(self->logger, KAA_ERR_WRITE_FAILED, "Failed to upload log bucket, id '%u' (delivery error code '%u')", bucket_id, delivery_error_code);
+            if (self->log_delivery_listeners.on_failed){
+                // TODO load log count from timeouts
+                kaa_log_bucket_info_t log_bucket_info = {bucket_id, 0};
+                (*self->log_delivery_listeners.on_failed)(self->log_delivery_listeners.ctx, &log_bucket_info);
+            }
         }
 
         remove_request(self, bucket_id);
