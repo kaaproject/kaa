@@ -25,8 +25,7 @@
 
 @property (nonatomic,strong,readonly) id<ExecutorContext> executorContext;
 @property (nonatomic,strong,readonly) id<LogStorage> storage;
-@property (nonatomic,strong) NSMutableDictionary *bucketInfoDictionary;
-@property (nonatomic,strong) NSMutableDictionary *bucketRunnerDictionary;
+@property (nonatomic,strong) NSMutableDictionary *bucketInfoDictionary; // <NSNumber<int32_t>, BucketInfo> as Key-Value
 
 - (instancetype)initWith:(id<LogTransport>)transport
          executorContext:(id<ExecutorContext>)executorContext
@@ -36,5 +35,9 @@
 - (void)scheduleUploadCheck;
 
 - (void)uploadIfNeeded;
+
+- (void)addDeliveryRunner:(BucketRunner *)runner bucketInfo:(BucketInfo *)bucketInfo;
+
+- (void)notifyDeliveryRunnerOnSuccess:(BucketInfo *)bucketInfo;
 
 @end

@@ -224,10 +224,7 @@
 - (void)setLogUploadStrategy:(id<LogUploadStrategy>)strategy;
 
 /**
- * Sets callback for receiving log events
- *
- * @param   listener the listener
- *
+ * Set a delegate which receives a delivery status of each log bucket.
  */
 - (void)setLogDeliveryDelegate:(id<LogDeliveryDelegate>)delegate;
 

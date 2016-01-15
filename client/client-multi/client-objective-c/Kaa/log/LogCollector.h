@@ -47,6 +47,7 @@
  * Adds new log record to local storage.
  *
  * @param record new log record object
+ * @return The BucketRunnber object which allows tracking a delivery status of a log record.
  */
 - (BucketRunner *)addLogRecord:(KAADummyLog *)record;
 

@@ -31,12 +31,13 @@
 @property (nonatomic,strong) id<KaaChannelManager> channelManager;
 @property (nonatomic,strong) id<LogTransport> transport;
 @property (nonatomic,strong) id<FailoverManager> failoverManager;
-@property (nonatomic,strong) NSMutableDictionary *timeouts;
+@property (nonatomic,strong) NSMutableDictionary *timeouts; //<NSNumber<int32_t>, NSOperation> as key-value
 @property (nonatomic,strong) NSLock *timeoutsLock;
 @property (atomic) BOOL uploadCheckInProgress;
 @property (nonatomic,strong) NSLock *uploadCheckLock;
 @property (nonatomic,strong) NSObject *uploadCheckGuard;   //variable to sync
 @property (nonatomic,weak) id<LogDeliveryDelegate> logDeliveryDelegate;
+@property (nonatomic,strong) NSMutableDictionary *deliveryRunnerDictionary; //<NSNumber<int32_t>, NSArray<BucketRunner>> as key-value
 
 - (void)checkDeliveryTimeout:(int32_t)bucketId;
 - (void)processUploadDecision:(LogUploadStrategyDecision)decision;
@@ -47,9 +48,9 @@
 
 @property (nonatomic) int64_t timeout;
 @property (nonatomic,weak) AbstractLogCollector *logCollector;
-@property (nonatomic,strong) LogBucket *timeoutGroup;
+@property (nonatomic,strong) LogBucket *timeoutBucket;
 
-- (instancetype)initWithLogCollector:(AbstractLogCollector *)logCollector timeout:(int64_t)timeout andGroup:(LogBucket *)group;
+- (instancetype)initWithLogCollector:(AbstractLogCollector *)logCollector timeout:(int64_t)timeout andBucket:(LogBucket *)bucket;
 
 @end
 
@@ -74,7 +75,7 @@
         self.uploadCheckGuard = [[NSObject alloc] init];
         self.logDeliveryDelegate = nil;
         self.bucketInfoDictionary = [NSMutableDictionary dictionary];
-        self.bucketRunnerDictionary = [NSMutableDictionary dictionary];
+        self.deliveryRunnerDictionary = [NSMutableDictionary dictionary];
     }
     return self;
 }
@@ -100,40 +101,32 @@
 }
 
 - (void)fillSyncRequest:(LogSyncRequest *)request {
-    LogBucket *group = nil;
-    if ([[self.storage getStatus] getRecordCount] == 0) {
-        DDLogDebug(@"%@ Log storage is empty", TAG);
-        return;
-    }
     if (![self isUploadAllowed]) {
         return;
     }
-    group = [self.storage getNextBucket];
-    if (group) {
-        NSArray *recordList = group.logRecords;
-        if ([recordList count] > 0) {
-            DDLogVerbose(@"%@ Sending %li log records", TAG, (long)[recordList count]);
-            NSMutableArray *logs = [NSMutableArray array];
-            for (LogRecord *record in recordList) {
-                LogEntry *logEntry = [[LogEntry alloc] init];
-                logEntry.data = [NSData dataWithData:record.data];
-                [logs addObject:logEntry];
-            }
-            request.requestId = group.bucketId;
-            request.logEntries = [KAAUnion unionWithBranch:KAA_UNION_ARRAY_LOG_ENTRY_OR_NULL_BRANCH_0 andData:logs];
-            
-            DDLogInfo(@"%@ Adding following bucket id [%i] for timeout tracking", TAG, group.bucketId);
-            NSOperation *timeoutOperation = [[TimeoutOperation alloc] initWithLogCollector:self
-                                                                                   timeout:[self.strategy getTimeout]
-                                                                                  andGroup:group];
 
-            [self.timeoutsLock lock];
-            [self.timeouts setObject:timeoutOperation forKey:[NSNumber numberWithLong:group.bucketId]];
-            [self.timeoutsLock unlock];
-        }
-    } else {
+    LogBucket *bucket = [self.storage getNextBucket];
+    if (!bucket || [bucket.logRecords count] == 0) {
         DDLogVerbose(@"%@ No logs to send", TAG);
+        return;
     }
+    
+    DDLogVerbose(@"%@ Sending %li log records", TAG, (long)[bucket.logRecords count]);
+    NSMutableArray *logs = [NSMutableArray array];
+    for (LogRecord *record in bucket.logRecords) {
+        [logs addObject:[[LogEntry alloc] initWithData:[NSData dataWithData:record.data]]];
+    }
+    request.requestId = bucket.bucketId;
+    request.logEntries = [KAAUnion unionWithBranch:KAA_UNION_ARRAY_LOG_ENTRY_OR_NULL_BRANCH_0 andData:logs];
+    
+    DDLogInfo(@"%@ Adding following bucket id [%i] for timeout tracking", TAG, bucket.bucketId);
+    NSOperation *timeoutOperation = [[TimeoutOperation alloc] initWithLogCollector:self
+                                                                           timeout:[self.strategy getTimeout]
+                                                                          andBucket:bucket];
+    
+    [self.timeoutsLock lock];
+    [self.timeouts setObject:timeoutOperation forKey:[NSNumber numberWithInt:bucket.bucketId]];
+    [self.timeoutsLock unlock];
 }
 
 - (void)onLogResponse:(LogSyncResponse *)response {
@@ -143,30 +136,42 @@
             NSArray *deliveryStatuses = response.deliveryStatuses.data;
             __weak typeof(self) weakSelf = self;
             for (LogDeliveryStatus *status in deliveryStatuses) {
+                __block BucketInfo *bucketInfo = [self.bucketInfoDictionary objectForKey:[NSNumber numberWithInt:status.requestId]];
+                
                 if (status.result == SYNC_RESPONSE_RESULT_TYPE_SUCCESS) {
                     [self.storage removeBucket:status.requestId];
-                    BucketInfo *bucketInfo = [self.bucketInfoDictionary objectForKey:[NSNumber numberWithInt:status.requestId]];
-                    BucketRunner *currentRunner = [self.bucketRunnerDictionary objectForKey:[NSNumber numberWithInt:status.requestId]];
-                    [currentRunner setValue:bucketInfo];
+                    
+                    __weak typeof(self) weakSelf = self;
                     if (self.logDeliveryDelegate) {
                         [[self.executorContext getCallbackExecutor] addOperationWithBlock:^{
                             [weakSelf.logDeliveryDelegate onLogDeliverySuccess:bucketInfo];
                         }];
                     }
-                    [self.bucketInfoDictionary removeObjectForKey:[NSNumber numberWithInt:status.requestId]];
+                    
+                    [[self.executorContext getCallbackExecutor] addOperationWithBlock:^{
+                        [self notifyDeliveryRunnerOnSuccess:bucketInfo];
+                    }];
+                    
                 } else {
                     [self.storage rollbackBucket:status.requestId];
+                    
                     [[self.executorContext getCallbackExecutor] addOperationWithBlock:^{
-                        [weakSelf.strategy onFailure:weakSelf errorCode:[((NSNumber *)status.errorCode.data) intValue]];
-                        if (weakSelf.logDeliveryDelegate) {
-                            [weakSelf.logDeliveryDelegate onLogDeliveryFailure:[weakSelf.bucketInfoDictionary objectForKey:[NSNumber numberWithInt:status.requestId]]];
-                        }
+                        LogDeliveryErrorCode errorCode = [((NSNumber *)status.errorCode.data) intValue];
+                        [weakSelf.strategy onFailure:weakSelf errorCode:errorCode];
                     }];
+                    
+                    if (self.logDeliveryDelegate) {
+                        [[self.executorContext getCallbackExecutor] addOperationWithBlock:^{
+                            [weakSelf.logDeliveryDelegate onLogDeliveryFailure:bucketInfo];
+                        }];
+                    }
+                    
                     isAlreadyScheduled = YES;
                 }
+                
                 DDLogInfo(@"%@ Removing bucket id from timeouts: %i", TAG, status.requestId);
                 [self.timeoutsLock lock];
-                NSNumber *key = [NSNumber numberWithLong:status.requestId];
+                NSNumber *key = [NSNumber numberWithInt:status.requestId];
                 NSOperation *timeout = [self.timeouts objectForKey:key];
                 if (timeout) {
                     [self.timeouts removeObjectForKey:key];
@@ -174,6 +179,7 @@
                 }
                 [self.timeoutsLock unlock];
             }
+            
             if (!isAlreadyScheduled) {
                 [self processUploadDecision:[self.strategy isUploadNeeded:[self.storage getStatus]]];
             }
@@ -232,22 +238,26 @@
 - (void)checkDeliveryTimeout:(int32_t)bucketId {
     DDLogDebug(@"%@ Checking for a delivery timeout of the bucket with id: [%i]", TAG, bucketId);
     [self.timeoutsLock lock];
-    NSOperation *timeout = [self.timeouts objectForKey:[NSNumber numberWithLong:bucketId]];
+    NSOperation *timeout = [self.timeouts objectForKey:[NSNumber numberWithInt:bucketId]];
     if (timeout) {
-        [self.timeouts removeObjectForKey:[NSNumber numberWithLong:bucketId]];
+        [self.timeouts removeObjectForKey:[NSNumber numberWithInt:bucketId]];
     }
     [self.timeoutsLock unlock];
     
     if (timeout) {
         DDLogInfo(@"%@ Log delivery timeout detected for the bucket with id: [%i]", TAG, bucketId);
         [self.storage rollbackBucket:bucketId];
+        
         __weak typeof(self)weakSelf = self;
         [[self.executorContext getCallbackExecutor] addOperationWithBlock:^{
             [weakSelf.strategy onTimeout:weakSelf];
-            if (weakSelf.logDeliveryDelegate) {
-                [weakSelf.logDeliveryDelegate onLogDeliveryTimeout:[self.bucketInfoDictionary objectForKey:[NSNumber numberWithInt:bucketId]]];
-            }
         }];
+        if (self.logDeliveryDelegate) {
+            [[self.executorContext getCallbackExecutor] addOperationWithBlock:^{
+                BucketInfo *bucket = [weakSelf.bucketInfoDictionary objectForKey:[NSNumber numberWithInt:bucketId]];
+                [weakSelf.logDeliveryDelegate onLogDeliveryTimeout:bucket];
+            }];
+        }
         [timeout cancel];
     } else {
         DDLogVerbose(@"%@ No log delivery timeout for the bucket with id [%i] was detected", TAG, bucketId);
@@ -256,6 +266,34 @@
 
 - (void)uploadIfNeeded {
     [self processUploadDecision:[self.strategy isUploadNeeded:[self.storage getStatus]]];
+}
+
+- (void)addDeliveryRunner:(BucketRunner *)runner bucketInfo:(BucketInfo *)bucketInfo {
+    @synchronized(self.deliveryRunnerDictionary) {
+        NSNumber *bucketKey = [NSNumber numberWithInt:bucketInfo.bucketId];
+        
+        NSMutableArray *deliveryRunners = [self.deliveryRunnerDictionary objectForKey:bucketKey];
+        if (!deliveryRunners) {
+            deliveryRunners = [NSMutableArray array];
+            [self.deliveryRunnerDictionary setObject:deliveryRunners forKey:bucketKey];
+        }
+        
+        [deliveryRunners addObject:runner];
+    }
+}
+
+- (void)notifyDeliveryRunnerOnSuccess:(BucketInfo *)bucketInfo {
+    @synchronized(self.deliveryRunnerDictionary) {
+        NSNumber *bucketKey = [NSNumber numberWithInt:bucketInfo.bucketId];
+        
+        NSMutableArray *deliveryRunners = [self.deliveryRunnerDictionary objectForKey:bucketKey];
+        if (deliveryRunners) {
+            for (BucketRunner *runner in deliveryRunners) {
+                [runner setValue:bucketInfo];
+            }
+            [self.deliveryRunnerDictionary removeObjectForKey:bucketKey];
+        }
+    }
 }
 
 - (void)switchAccessPoint {
@@ -290,29 +328,29 @@
 
 @implementation TimeoutOperation
 
-- (instancetype)initWithLogCollector:(AbstractLogCollector *)logCollector timeout:(int64_t)timeout andGroup:(LogBucket *)group {
+- (instancetype)initWithLogCollector:(AbstractLogCollector *)logCollector timeout:(int64_t)timeout andBucket:(LogBucket *)bucket {
     self = [super init];
     if (self) {
         self.logCollector = logCollector;
         self.timeout = timeout;
-        self.timeoutGroup = group;
+        self.timeoutBucket = bucket;
     }
     return self;
 }
 
 - (void)main {
     if (self.isFinished && self.isCancelled) {
-        DDLogDebug(@"%@ Timeout check worker for bucket: %i was interrupted before start", TAG, [self.timeoutGroup bucketId]);
+        DDLogDebug(@"%@ Timeout check worker for bucket: %i was interrupted before start", TAG, self.timeoutBucket.bucketId);
         return;
     }
     
     [NSThread sleepForTimeInterval:self.timeout];
     
     if (!self.isFinished && !self.isCancelled) {
-        [self.logCollector checkDeliveryTimeout:[self.timeoutGroup bucketId]];
+        [self.logCollector checkDeliveryTimeout:self.timeoutBucket.bucketId];
         
     } else {
-        DDLogDebug(@"%@ Timeout check worker for bucket: %i was interrupted after delay", TAG, [self.timeoutGroup bucketId]);
+        DDLogDebug(@"%@ Timeout check worker for bucket: %i was interrupted after delay", TAG, self.timeoutBucket.bucketId);
     }
 }
 

@@ -20,6 +20,7 @@
 #import <Foundation/Foundation.h>
 #import "LogStorage.h"
 #import "LogUploadStrategy.h"
+#import "LogDeliveryDelegate.h"
 
 /**
  * Root interface for a log collector.
@@ -51,6 +52,11 @@
  * strategy - user-defined log upload strategy object.
  */
 - (void)setStrategy:(id<LogUploadStrategy>)strategy;
+
+/**
+ * Set a delegate which receives a delivery status of each log bucket.
+ */
+- (void)setLogDeliveryDelegate:(id<LogDeliveryDelegate>)delegate;
 
 /**
  * Stops and/or cleanup resources.

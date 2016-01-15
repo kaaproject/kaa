@@ -17,16 +17,20 @@
 #import <Foundation/Foundation.h>
 
 /**
- * Wrapper class for a log bucket which is going to be sent.
+ * The helper class which is used to transfer logs from LogStorage to LogCollector.
  *
- * Each log bucket should have its unique id to be mapped in the log storage and
- * delivery stuff.
+ * NOTE: the bucket id should be unique across all available log buckets.
  */
 @interface LogBucket : NSObject
 
-//Unique id for sending log bucket
+/**
+ * The unique id of a log bucket
+ */
 @property(nonatomic,readonly) int32_t bucketId;
-//List of sending log records <LogRecord>
+
+/**
+ * Log records as <LogRecord>
+ */
 @property(nonatomic,strong,readonly) NSArray* logRecords;
 
 - (instancetype)initWithBucketId:(int32_t)bucketId andRecords:(NSArray *)logRecords;
