@@ -337,6 +337,16 @@ public class JavaSdkGenerator extends SdkGenerator {
      * The Constant DEFAULT_USER_VERIFIER_TOKEN_VAR.
      */
     private static final String DEFAULT_USER_VERIFIER_TOKEN_VAR = "\\$\\{default_user_verifier_token\\}";
+    
+    /**
+     * The Constant JAVA_SOURCE_COMPILER_RELEASE.
+     */
+    private static final String JAVA_SOURCE_COMPILER_RELEASE = "7";
+    
+    /**
+     * The Constant JAVA_TARGET_COMPILER_RELEASE.
+     */
+    private static final String JAVA_TARGET_COMPILER_RELEASE = "7";
 
     /**
      * The Constant random.
@@ -651,7 +661,9 @@ public class JavaSdkGenerator extends SdkGenerator {
             String sourceFileName = packageLine.replaceAll("package", "").replaceAll("\\.|;", "/").trim() + bean.getName();
             data.put(sourceFileName, new ZipEntryData(new ZipEntry(sourceFileName), bean.getCharContent(true).getBytes()));
         }
-        Collection<JavaDynamicBean> compiledObjects = dynamicCompiler.compile(javaSources);
+        Collection<JavaDynamicBean> compiledObjects = dynamicCompiler.compile(javaSources, 
+                "-source", JAVA_SOURCE_COMPILER_RELEASE,
+                "-target", JAVA_TARGET_COMPILER_RELEASE);
         for (JavaDynamicBean compiledObject : compiledObjects) {
             String className = compiledObject.getName();
             String classFileName = className.replace('.', '/') + Kind.CLASS.extension;
