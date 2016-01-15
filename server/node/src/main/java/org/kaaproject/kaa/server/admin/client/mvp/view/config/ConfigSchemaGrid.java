@@ -60,7 +60,7 @@ public class ConfigSchemaGrid extends BaseSchemasGrid<ConfigurationSchemaDto> {
     }
 
     private Column<ConfigurationSchemaDto, ConfigurationSchemaDto> constructDownloadBaseSchemaColumnColumn(String text) {
-        ActionButtonCell<ConfigurationSchemaDto> cell = new ActionButtonCell<>(Utils.resources.download(), text, embedded,
+        ActionButtonCell<ConfigurationSchemaDto> cell = new ActionButtonCell<>(Utils.resources.download_grey(), text, embedded,
                 new ActionButtonCell.ActionListener<ConfigurationSchemaDto>() {
                     @Override
                     public void onItemAction(ConfigurationSchemaDto value) {
@@ -85,7 +85,7 @@ public class ConfigSchemaGrid extends BaseSchemasGrid<ConfigurationSchemaDto> {
 
 
     private Column<ConfigurationSchemaDto, ConfigurationSchemaDto> constructDownloadOverrideSchemaColumnColumn(String text) {
-        ActionButtonCell<ConfigurationSchemaDto> cell = new ActionButtonCell<>(Utils.resources.download(), text, embedded,
+        ActionButtonCell<ConfigurationSchemaDto> cell = new ActionButtonCell<>(Utils.resources.download_grey(), text, embedded,
                 new ActionButtonCell.ActionListener<ConfigurationSchemaDto>() {
                     @Override
                     public void onItemAction(ConfigurationSchemaDto value) {

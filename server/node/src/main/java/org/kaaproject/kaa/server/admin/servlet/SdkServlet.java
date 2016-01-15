@@ -17,6 +17,7 @@
 package org.kaaproject.kaa.server.admin.servlet;
 
 import java.io.IOException;
+import java.net.URLDecoder;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletConfig;
@@ -29,12 +30,13 @@ import net.iharder.Base64;
 
 import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.server.admin.services.cache.CacheService;
+import org.kaaproject.kaa.server.admin.shared.servlet.ServletParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
-public class SdkServlet extends HttpServlet implements Servlet {
+public class SdkServlet extends HttpServlet implements Servlet, ServletParams {
 
     /** The Constant logger. */
     private static final Logger logger = LoggerFactory.getLogger(SdkServlet.class);
@@ -55,7 +57,7 @@ public class SdkServlet extends HttpServlet implements Servlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String sdkKeyBase64 = request.getParameter(CacheService.SdkKey.SDK_KEY_PARAMETER);
+        String sdkKeyBase64 = URLDecoder.decode(request.getParameter(SDK_KEY_PARAMETER), "UTF-8");
         try {
             CacheService.SdkKey key = (CacheService.SdkKey)Base64.decodeToObject(sdkKeyBase64, Base64.URL_SAFE, null);
             FileData sdkFile = cacheService.getSdk(key);

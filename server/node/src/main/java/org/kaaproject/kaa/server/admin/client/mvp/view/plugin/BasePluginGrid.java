@@ -78,7 +78,7 @@ public class BasePluginGrid<T extends PluginDto> extends AbstractKaaGrid<T, Stri
     }
 
     protected Column<T, T> constructDownloadSchemaColumn(String text) {
-        ActionButtonCell<T> cell = new ActionButtonCell<T>(Utils.resources.download(), text, embedded,
+        ActionButtonCell<T> cell = new ActionButtonCell<T>(Utils.resources.download_grey(), text, embedded,
                 new ActionButtonCell.ActionListener<T>() {
                     @Override
                     public void onItemAction(T value) {

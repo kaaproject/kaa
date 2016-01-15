@@ -65,7 +65,11 @@ public interface KaaAdminResources extends ClientBundle {
     ImageResource drop_down();
 
     @ImageOptions(width = 14, height = 14)
-    @Source("images/download_icon_grey.png")
+    @Source("images/download_grey.png")
+    ImageResource download_grey();
+    
+    @ImageOptions(width = 14, height = 14)
+    @Source("images/download.png")
     ImageResource download();
     
     @ImageOptions(width = 16, height = 16)
