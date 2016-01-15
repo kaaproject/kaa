@@ -17,6 +17,7 @@
 package org.kaaproject.kaa.server.control.service.sdk.compiler;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -84,10 +85,17 @@ public class JavaDynamicCompiler {
      * @param sources the sources
      * @return the class
      */
-    public synchronized Collection<JavaDynamicBean> compile(List<JavaDynamicBean> sources) {
+    public synchronized Collection<JavaDynamicBean> compile(List<JavaDynamicBean> sources, String... additionalOptions) {
         try {
+            List<String> options = optionList;
+            if (additionalOptions.length > 0) {
+                List<String> newOptions = new ArrayList<>();
+                newOptions.addAll(optionList);
+                newOptions.addAll(Arrays.asList(additionalOptions));
+                options = newOptions;
+            }
             CompilationTask task = compiler.getTask(null, javaDynamicManager,
-                    diagnostics, optionList, null, sources);
+                    diagnostics, options, null, sources);
             boolean result = task.call();
             if (!result) {
                 throw new JavaDynamicException("The compilation failed",
