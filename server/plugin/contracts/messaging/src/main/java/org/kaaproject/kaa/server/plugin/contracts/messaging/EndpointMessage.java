@@ -15,6 +15,8 @@
  */
 package org.kaaproject.kaa.server.plugin.contracts.messaging;
 
+import java.util.Arrays;
+
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.core.plugin.instance.KaaMessage;
 
@@ -23,6 +25,7 @@ public class EndpointMessage implements KaaMessage {
     private static final long serialVersionUID = -7358355594071995237L;
 
     private final EndpointObjectHash key;
+    private byte[] messageData;
 
     public EndpointMessage(EndpointObjectHash key) {
         super();
@@ -32,7 +35,7 @@ public class EndpointMessage implements KaaMessage {
     public EndpointMessage(EndpointObjectHash key, byte[] messageData) {
         super();
         this.key = key;
-
+        this.messageData = messageData;
     }
 
     public EndpointObjectHash getKey() {
@@ -40,11 +43,11 @@ public class EndpointMessage implements KaaMessage {
     }
 
     public byte[] getMessageData() {
-        return null;
+        return this.messageData;
     }
 
     public void setMessageData(byte[] messageData) {
-
+        this.messageData = Arrays.copyOf(messageData, messageData.length);
     }
 
 }

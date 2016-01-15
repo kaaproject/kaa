@@ -1,0 +1,20 @@
+{
+    "path": "/test/get",
+    "httpRequestMethod": "GET",
+    "httpRequestParams": {
+        "array": [
+            {
+                "name": "parameter",
+                "avroSchemaMapping": "body"
+            }
+        ]
+    },
+    "httpResponseMappings": {
+        "array": [
+            {
+                "responseField": "response",
+                "avroSchemaField": "body"
+            }
+        ]
+    }
+}

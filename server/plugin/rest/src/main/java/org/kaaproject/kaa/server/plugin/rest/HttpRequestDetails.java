@@ -16,12 +16,13 @@
 
 package org.kaaproject.kaa.server.plugin.rest;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
-import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
+import org.kaaproject.kaa.common.avro.AvroJsonConverter;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.core.plugin.instance.KaaPluginMessage;
@@ -30,10 +31,14 @@ import org.kaaproject.kaa.server.plugin.rest.gen.HttpRequestMethod;
 import org.kaaproject.kaa.server.plugin.rest.gen.HttpResponseMapping;
 import org.kaaproject.kaa.server.plugin.rest.gen.KaaRestPluginConfig;
 import org.kaaproject.kaa.server.plugin.rest.gen.KaaRestPluginItemConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 public class HttpRequestDetails {
+
+    private static final Logger LOG = LoggerFactory.getLogger(HttpRequestDetails.class);
 
     private final KaaPluginMessage message;
 
@@ -63,6 +68,7 @@ public class HttpRequestDetails {
             this.requestSchema = new Schema.Parser().parse(message.getItemInfo().getInMessageSchema());
             this.responseSchema = new Schema.Parser().parse(message.getItemInfo().getOutMessageSchema());
         } catch (Exception cause) {
+            LOG.error("Failed to process the message!", cause);
             throw new ExceptionInInitializerError(cause);
         }
     }
@@ -100,8 +106,10 @@ public class HttpRequestDetails {
             try {
                 GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(this.message.getItemInfo().getInMessageSchema());
                 byte[] messageData = ((EndpointMessage) this.message.getMsg()).getMessageData();
-                this.httpRequestBody = converter.decodeBinary(messageData);
+                LOG.debug("Message data: {}", Arrays.toString(messageData));
+                this.httpRequestBody = converter.decodeJson(messageData);
             } catch (Exception cause) {
+                LOG.error("Failed to decode message data!", cause);
                 throw new IllegalArgumentException(cause);
             }
         }
@@ -121,9 +129,9 @@ public class HttpRequestDetails {
     private KaaRestPluginItemConfig getItemConfig() {
         if (this.itemConfig == null && this.message != null) {
             try {
-                AvroByteArrayConverter<KaaRestPluginItemConfig> converter = new AvroByteArrayConverter<>(KaaRestPluginItemConfig.class);
-                byte[] configData = message.getItemInfo().getConfigurationData();
-                this.itemConfig = converter.fromByteArray(configData);
+                AvroJsonConverter<KaaRestPluginItemConfig> converter = new AvroJsonConverter<>(KaaRestPluginItemConfig.SCHEMA$, KaaRestPluginItemConfig.class);
+                String configData = this.message.getItemInfo().getConfigurationData();
+                this.itemConfig = converter.decodeJson(configData);
             } catch (Exception cause) {
                 throw new IllegalArgumentException(cause);
             }
@@ -135,7 +143,7 @@ public class HttpRequestDetails {
 
     public EndpointMessage getResponse() {
         if (this.response == null) {
-            EndpointObjectHash key = ((EndpointMessage) this.message).getKey();
+            EndpointObjectHash key = ((EndpointMessage) this.message.getMsg()).getKey();
             this.response = new EndpointMessage(key);
         }
         return this.response;
@@ -148,7 +156,7 @@ public class HttpRequestDetails {
             String protocol = this.pluginConfig.getProtocol().toString();
             String host = this.pluginConfig.getHost();
             int port = this.pluginConfig.getPort();
-            this.url = protocol + "://" + host + ":" + port + (url != null ? url : "");
+            this.url = protocol.toLowerCase() + "://" + host + ":" + port + (this.itemConfig != null ? this.itemConfig.getPath() : "");
         }
         return this.url;
     }

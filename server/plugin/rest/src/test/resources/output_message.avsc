@@ -1,0 +1,14 @@
+{
+    "type": "record",
+    "name": "OutputMessage",
+    "namespace": "org.kaaproject.kaa.server.plugin.rest.test.gen",
+    "fields": [
+        {
+            "name": "body",
+            "type": {
+                "type": "string",
+                "avro.java.string": "String"
+            }
+        }
+    ]
+}

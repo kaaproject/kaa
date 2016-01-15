@@ -100,36 +100,36 @@ public class JavaEndpointMessagingPluginGenerator extends AbstractSdkApiGenerato
 
         // Future<Void> sendA(ClassA msg);
         PluginContractItemInfo info = BasePluginContractItemInfo.builder()
-                .withData(methodNameConverter.endcodeToJson(new ItemConfiguration("sendA"))).withInMsgSchema(ClassA.SCHEMA$.toString()).build();
+                .withData(methodNameConverter.encodeToJson(new ItemConfiguration("sendA"))).withInMsgSchema(ClassA.SCHEMA$.toString()).build();
         instance.addContractItemInfo(sendMsgDef, info);
 
         // Future<ClassA> getA()
-        info = BasePluginContractItemInfo.builder().withData(methodNameConverter.endcodeToJson(new ItemConfiguration("getA")))
+        info = BasePluginContractItemInfo.builder().withData(methodNameConverter.encodeToJson(new ItemConfiguration("getA")))
                 .withOutMsgSchema(ClassA.SCHEMA$.toString()).build();
         instance.addContractItemInfo(sendMsgDef, info);
 
         // Future<ClassB> getB(ClassA msg);
-        info = BasePluginContractItemInfo.builder().withData(methodNameConverter.endcodeToJson(new ItemConfiguration("getB")))
+        info = BasePluginContractItemInfo.builder().withData(methodNameConverter.encodeToJson(new ItemConfiguration("getB")))
                 .withInMsgSchema(ClassA.SCHEMA$.toString()).withOutMsgSchema(ClassB.SCHEMA$.toString()).build();
         instance.addContractItemInfo(sendMsgDef, info);
 
         // Future<ClassC> getC(ClassA msg);
-        info = BasePluginContractItemInfo.builder().withData(methodNameConverter.endcodeToJson(new ItemConfiguration("getC")))
+        info = BasePluginContractItemInfo.builder().withData(methodNameConverter.encodeToJson(new ItemConfiguration("getC")))
                 .withInMsgSchema(ClassA.SCHEMA$.toString()).withOutMsgSchema(ClassC.SCHEMA$.toString()).build();
         instance.addContractItemInfo(sendMsgDef, info);
 
         // void setMethodAListener(MethodAListener listener);
-        info = BasePluginContractItemInfo.builder().withData(methodNameConverter.endcodeToJson(new ItemConfiguration("setMethodAListener")))
+        info = BasePluginContractItemInfo.builder().withData(methodNameConverter.encodeToJson(new ItemConfiguration("setMethodAListener")))
                 .withInMsgSchema(ClassC.SCHEMA$.toString()).withOutMsgSchema(ClassA.SCHEMA$.toString()).build();
         instance.addContractItemInfo(receiveMsgDef, info);
 
         // void setMethodBListener(MethodBListener listener);
-        info = BasePluginContractItemInfo.builder().withData(methodNameConverter.endcodeToJson(new ItemConfiguration("setMethodBListener")))
+        info = BasePluginContractItemInfo.builder().withData(methodNameConverter.encodeToJson(new ItemConfiguration("setMethodBListener")))
                 .withInMsgSchema(ClassC.SCHEMA$.toString()).withOutMsgSchema(ClassB.SCHEMA$.toString()).build();
         instance.addContractItemInfo(receiveMsgDef, info);
 
         // void setMethodCListener(MethodCListener listener);
-        info = BasePluginContractItemInfo.builder().withData(methodNameConverter.endcodeToJson(new ItemConfiguration("setMethodCListener")))
+        info = BasePluginContractItemInfo.builder().withData(methodNameConverter.encodeToJson(new ItemConfiguration("setMethodCListener")))
                 .withOutMsgSchema(ClassC.SCHEMA$.toString()).build();
         instance.addContractItemInfo(receiveMsgDef, info);
 

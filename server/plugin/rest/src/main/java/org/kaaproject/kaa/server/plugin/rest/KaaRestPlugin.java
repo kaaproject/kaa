@@ -24,7 +24,7 @@ import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.generic.GenericRecordBuilder;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
+import org.kaaproject.kaa.common.avro.AvroJsonConverter;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.server.common.core.plugin.def.Plugin;
 import org.kaaproject.kaa.server.common.core.plugin.def.PluginExecutionContext;
@@ -49,12 +49,13 @@ public class KaaRestPlugin implements KaaPlugin {
 
     @Override
     public void init(PluginInitContext context) throws PluginLifecycleException {
-        AvroByteArrayConverter<KaaRestPluginConfig> converter = new AvroByteArrayConverter<>(KaaRestPluginConfig.class);
+        AvroJsonConverter<KaaRestPluginConfig> converter = new AvroJsonConverter<>(KaaRestPluginConfig.SCHEMA$, KaaRestPluginConfig.class);
         try {
-            LOG.info("Initializing the plugin with {}", context);
-            this.pluginConfig = converter.fromByteArray(context.getPluginConfigurationData().getBytes());
+            String pluginConfig = context.getPluginConfigurationData();
+            LOG.info("Initializing the plugin with {}", pluginConfig.replaceAll("\\s+", " "));
+            this.pluginConfig = converter.decodeJson(pluginConfig);
         } catch (Exception cause) {
-            LOG.error("Failed to initialize the plugin!");
+            LOG.error("Failed to initialize the plugin!", cause);
             throw new PluginLifecycleException(cause);
         }
     }
@@ -89,6 +90,7 @@ public class KaaRestPlugin implements KaaPlugin {
                     break;
             }
         } catch (Exception cause) {
+            cause.printStackTrace();
             throw new IllegalArgumentException(cause);
         }
     }
@@ -98,7 +100,7 @@ public class KaaRestPlugin implements KaaPlugin {
         try {
             LOG.info("Stopping the plugin...");
         } catch (Exception cause) {
-            LOG.error("Failed to stop the plugin!");
+            LOG.error("Failed to stop the plugin!", cause);
             throw new PluginLifecycleException(cause);
         }
     }
@@ -106,16 +108,21 @@ public class KaaRestPlugin implements KaaPlugin {
     private byte[] doGet(HttpRequestDetails request) throws Exception {
 
         String response = this.restTemplate.getForObject(request.getURL(), String.class, request.getHttpRequestParams());
+        LOG.debug("Got response {} from {}", response.replaceAll("\\s+", " "), request.getURL());
 
-        byte[] bytes = null;
-        if (KaaRestPlugin.validate(response, request.getResponseSchema())) {
-            bytes = response.getBytes();
+        Schema typeExpected = request.getResponseSchema();
+        if (KaaRestPlugin.validate(response, typeExpected)) {
+            LOG.debug("{} matches the expected response type schema {}", response.replaceAll("\\s+", " "), typeExpected.toString().replaceAll("\\s+", " "));
+            return response.getBytes();
         } else {
             GenericRecord buffer = KaaRestPlugin.mapResponseFields(response, request.getResponseSchema(), request.getHttpResponseMappings());
-            bytes = buffer.toString().getBytes();
+            return buffer.toString().getBytes();
         }
+    }
 
-        return bytes;
+    // Used for testing
+    public RestTemplate getRestTemplate() {
+        return this.restTemplate;
     }
 
     // TODO: Possible response handling
@@ -153,5 +160,13 @@ public class KaaRestPlugin implements KaaPlugin {
         }));
 
         return buffer.build();
+    }
+
+    private static String press(String content) {
+        return KaaRestPlugin.press(content, true);
+    }
+
+    private static String press(String content, boolean flag) {
+        return flag ? content.replaceAll("\\s+", " ") : content;
     }
 }

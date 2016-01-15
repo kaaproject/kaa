@@ -16,10 +16,6 @@
 
 package org.kaaproject.kaa.server.plugin.rest;
 
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Set;
 
 import org.kaaproject.kaa.common.dto.plugin.PluginContractDirection;
@@ -34,8 +30,6 @@ public class KaaRestPluginDef implements PluginDef {
 
     private static final long serialVersionUID = -6539544242450109900L;
 
-    private static final String INPUT_SCHEMA = "rest_plugin_item.avsc";
-
     private final BasePluginDef pluginDef;
 
     public KaaRestPluginDef() {
@@ -43,7 +37,7 @@ public class KaaRestPluginDef implements PluginDef {
                 .withType("rest")
                 .withScope(PluginScope.LOCAL_APPLICATION)
                 .withSchema(KaaRestPluginConfig.SCHEMA$.toString())
-                .withContract(MessagingPluginContract.buildMessagingContract(PluginContractDirection.OUT, this.read(INPUT_SCHEMA), null))
+                .withContract(MessagingPluginContract.buildMessagingContract(PluginContractDirection.OUT))
                 .build();
     }
 
@@ -75,22 +69,5 @@ public class KaaRestPluginDef implements PluginDef {
     @Override
     public Set<PluginContractDef> getPluginContracts() {
         return this.pluginDef.getPluginContracts();
-    }
-
-    private String read(String resource) {
-        String fileBody = null;
-        URL url = this.getClass().getResource(resource);
-        if (url != null) {
-            try {
-                Path path = Paths.get(url.toURI());
-                byte[] bytes = Files.readAllBytes(path);
-                if (bytes != null) {
-                    fileBody = new String(bytes);
-                }
-            } catch (Exception cause) {
-                cause.printStackTrace();
-            }
-        }
-        return fileBody;
     }
 }
