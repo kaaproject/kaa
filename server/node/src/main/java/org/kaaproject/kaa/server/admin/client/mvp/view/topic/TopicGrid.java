@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2016 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.topic;
+
+import java.util.Comparator;
 
 import org.kaaproject.avro.ui.gwt.client.widget.grid.cell.ActionButtonCell;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.cell.ActionButtonCell.ActionListener;
@@ -57,7 +59,15 @@ public class TopicGrid extends AbstractKaaGrid<TopicDto, String> {
                     public String getValue(TopicDto item) {
                         return item.getName();
                     }
-                }, 80);
+                }, 
+                new Comparator<TopicDto>() {
+                    @Override
+                    public int compare(TopicDto o1, TopicDto o2) {
+                        return o1.getName().compareToIgnoreCase(o2.getName());
+                    }
+                },
+                Boolean.TRUE,
+                !embedded, 80);
         prefWidth += constructBooleanColumn(table,
                 Utils.constants.mandatory(),
                 new BooleanValueProvider<TopicDto>() {

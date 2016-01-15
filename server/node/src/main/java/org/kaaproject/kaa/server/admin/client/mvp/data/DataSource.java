@@ -591,6 +591,37 @@ public class DataSource {
                 });
     }
     
+    public void getEndpointProfileSchemaInfo(String endpointProfileSchemaId,
+            final AsyncCallback<SchemaInfoDto> callback) {
+        rpcService.getEndpointProfileSchemaInfo(endpointProfileSchemaId,
+                new DataCallback<SchemaInfoDto>(callback) {
+                    @Override
+                    protected void onResult(SchemaInfoDto result) {
+                    }
+                });
+    }
+    
+    public void getServerProfileSchemaInfo(String serverProfileSchemaId,
+            final AsyncCallback<SchemaInfoDto> callback) {
+        rpcService.getServerProfileSchemaInfo(serverProfileSchemaId,
+                new DataCallback<SchemaInfoDto>(callback) {
+                    @Override
+                    protected void onResult(SchemaInfoDto result) {
+                    }
+                });
+    }
+    
+    public void testProfileFilter(RecordField endpointProfile, RecordField serverProfile, 
+            String filterBody,
+            final AsyncCallback<Boolean> callback) {
+        rpcService.testProfileFilter(endpointProfile, serverProfile, filterBody, 
+                new DataCallback<Boolean>(callback) {
+                    @Override
+                    protected void onResult(Boolean result) {
+                    }
+                });
+    }
+    
     public void getAvailableCtlSchemaReferences(final AsyncCallback<List<CTLSchemaMetaInfoDto>> callback) {
         rpcService.getAvailableTenantCTLSchemaReferences( 
                 new DataCallback<List<CTLSchemaMetaInfoDto>>(callback) {
@@ -1367,7 +1398,7 @@ public class DataSource {
     }
 
     public void addSdkProfile(SdkProfileDto sdkProfile, final AsyncCallback<SdkProfileDto> callback) {
-        rpcService.addSdkProfile(sdkProfile, new DataCallback<SdkProfileDto>(callback) {
+        rpcService.createSdkProfile(sdkProfile, new DataCallback<SdkProfileDto>(callback) {
             @Override
             protected void onResult(SdkProfileDto callback) {
             }

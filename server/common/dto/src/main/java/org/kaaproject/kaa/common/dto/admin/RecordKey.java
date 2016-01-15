@@ -22,8 +22,6 @@ public class RecordKey implements Serializable {
 
     private static final long serialVersionUID = -5453653699078782999L;
 
-    public static final String RECORD_KEY_PARAMETER = "recordKey";
-
     private String applicationId;
     private int schemaVersion;
     private RecordFiles recordFiles;
