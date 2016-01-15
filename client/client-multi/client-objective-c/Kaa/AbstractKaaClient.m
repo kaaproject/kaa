@@ -577,13 +577,13 @@
 
 - (void)checkLifecycleState:(ClientLifecycleState)expected withError:(NSString *)message {
     if (self.lifecycleState != expected) {
-        [NSException raise:KaaRuntimeException format:message];
+        [NSException raise:KaaRuntimeException format:@"%@", message];
     }
 }
 
 - (void)checkLifecycleStateNot:(ClientLifecycleState)expected withError:(NSString *)message {
     if (self.lifecycleState == expected) {
-        [NSException raise:KaaRuntimeException format:message];
+        [NSException raise:KaaRuntimeException format:@"%@", message];
     }
 }
 

@@ -2652,7 +2652,7 @@
 
 - (void)deserialize:(avro_reader_t)reader {
     self.accessPointId = [[self.utils deserializeInt:reader] intValue];
-    self.protocolVersionInfo = [self.utils deserializeRecord:reader as:[ProtocolVersionPair class]];
+    self.protocolVersionInfo = (ProtocolVersionPair *)[self.utils deserializeRecord:reader as:[ProtocolVersionPair class]];
     self.connectionInfo = [self.utils deserializeBytes:reader];
 }
 
@@ -5126,7 +5126,7 @@
 }
 
 - (void)deserialize:(avro_reader_t)reader {
-    self.topicInfo = [self.utils deserializeRecord:reader as:[Topic class]];
+    self.topicInfo = (Topic *)[self.utils deserializeRecord:reader as:[Topic class]];
     self.seqNumber = [[self.utils deserializeInt:reader] intValue];
 }
 
