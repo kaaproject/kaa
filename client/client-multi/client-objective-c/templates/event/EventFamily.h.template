@@ -1,0 +1,21 @@
+#import "BaseEventFamily.h"
+#import "EventManger.h"
+#import "ExecutorContext.h"
+
+@protocol {event_family_class_name}Delegate
+
+{event_family_listener_methods}
+
+@end
+
+@interface {event_family_class_name} : NSObject <BaseEventFamily>
+
+- (instancetype)initWith:(id<EventManager>)eventManager andContext:(id<ExecutorContext>)executorContext;
+
+- (void)addDelegate:(id<{event_family_class_name}Delegate>)delegate;
+
+- (void)removeDelegate:(id<{event_family_class_name}Delegate>)delegate;
+
+{event_family_send_event_methods}
+
+@end

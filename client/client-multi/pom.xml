@@ -41,6 +41,7 @@
         <module>client-cpp</module>
         <module>kaatcp-c</module>
         <module>client-c</module>
+	<module>client-objective-c</module>
     </modules>
 
     <dependencies>
