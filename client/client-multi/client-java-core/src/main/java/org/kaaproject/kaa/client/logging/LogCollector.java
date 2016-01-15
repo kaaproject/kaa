@@ -16,10 +16,9 @@
 
 package org.kaaproject.kaa.client.logging;
 
-import java.util.concurrent.Future;
-
 import javax.annotation.Generated;
 
+import org.kaaproject.kaa.client.logging.future.RecordFuture;
 import org.kaaproject.kaa.schema.base.Log;
 
 /**
@@ -46,7 +45,7 @@ public interface LogCollector extends GenericLogCollector {
      *
      * @param record A log record object.
      *
-     * @return The {@link Future} object which allows tracking a delivery status of a log record.
+     * @return The {@link RecordFuture} object which allows tracking a delivery status of a log record.
      */
-    Future<BucketInfo> addLogRecord(Log record);
+    RecordFuture addLogRecord(Log record);
 }

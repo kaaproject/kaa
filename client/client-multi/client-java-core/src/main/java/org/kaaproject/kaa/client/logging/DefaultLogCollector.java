@@ -16,7 +16,6 @@
 package org.kaaproject.kaa.client.logging;
 
 import java.io.IOException;
-import java.util.concurrent.Future;
 
 import javax.annotation.Generated;
 
@@ -24,7 +23,7 @@ import org.kaaproject.kaa.client.channel.FailoverManager;
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.LogTransport;
 import org.kaaproject.kaa.client.context.ExecutorContext;
-import org.kaaproject.kaa.client.logging.future.BucketFuture;
+import org.kaaproject.kaa.client.logging.future.RecordFuture;
 import org.kaaproject.kaa.schema.base.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,8 +43,8 @@ public class DefaultLogCollector extends AbstractLogCollector {
     }
 
     @Override
-    public Future<BucketInfo> addLogRecord(final Log record) {
-        final BucketFuture<BucketInfo> future = new BucketFuture<>();
+    public RecordFuture addLogRecord(final Log record) {
+        final RecordFuture future = new RecordFuture();
         executorContext.getApiExecutor().execute(new Runnable() {
             @Override
             public void run() {

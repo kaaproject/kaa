@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2016 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package org.kaaproject.kaa.client.logging;
 
-import java.util.concurrent.Future;
+import org.kaaproject.kaa.client.logging.future.RecordFuture;
 
 import javax.annotation.Generated;
 
@@ -46,7 +46,7 @@ public interface LogCollector extends GenericLogCollector {
      *
      * @param record A log record object.
      *
-     * @return The {@link Future} object which allows tracking a delivery status of a log record.
+     * @return The {@link RecordFuture} object which allows tracking a delivery status of a log record.
      */
-    Future<BucketInfo> addLogRecord(${log_record_class} record);
+    RecordFuture addLogRecord(${log_record_class} record);
 }

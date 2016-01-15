@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2016 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,10 @@ package org.kaaproject.kaa.client;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.util.concurrent.Future;
 
 import javax.annotation.Generated;
 
-import org.kaaproject.kaa.client.logging.BucketInfo;
+import org.kaaproject.kaa.client.logging.future.RecordFuture;
 import org.kaaproject.kaa.schema.base.Configuration;
 import org.kaaproject.kaa.schema.base.Log;
 
@@ -44,7 +43,7 @@ public class BaseKaaClient extends AbstractKaaClient implements KaaClient {
     }
 
     @Override
-    public Future<BucketInfo> addLogRecord(Log record) {
+    public RecordFuture addLogRecord(Log record) {
         checkClientState(State.STARTED, "Kaa client is not started");
         return logCollector.addLogRecord(record);
     }

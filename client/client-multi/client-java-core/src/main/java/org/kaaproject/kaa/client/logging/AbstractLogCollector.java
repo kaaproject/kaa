@@ -31,7 +31,7 @@ import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.LogTransport;
 import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
 import org.kaaproject.kaa.client.context.ExecutorContext;
-import org.kaaproject.kaa.client.logging.future.BucketFuture;
+import org.kaaproject.kaa.client.logging.future.RecordFuture;
 import org.kaaproject.kaa.client.logging.memory.MemLogStorage;
 import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.endpoint.gen.LogDeliveryErrorCode;
@@ -54,7 +54,7 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
     protected final ExecutorContext executorContext;
     private final LogTransport transport;
     private final ConcurrentHashMap<Integer, Future<?>> timeouts = new ConcurrentHashMap<>();
-    protected final Map<Integer, List<BucketFuture<BucketInfo>>> deliveryFuturesMap = new HashMap<>();
+    protected final Map<Integer, List<RecordFuture>> deliveryFuturesMap = new HashMap<>();
     protected final Map<Integer, BucketInfo> bucketInfoMap = new ConcurrentHashMap<>();
     private final KaaChannelManager channelManager;
     private final FailoverManager failoverManager;
@@ -325,11 +325,11 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
         this.logDeliveryListener = logDeliveryListener;
     }
 
-    protected void addDeliveryFuture(BucketInfo info, BucketFuture<BucketInfo> future) {
+    protected void addDeliveryFuture(BucketInfo info, RecordFuture future) {
         synchronized (deliveryFuturesMap) {
-            List<BucketFuture<BucketInfo>> deliveryFutures = deliveryFuturesMap.get(info.getBucketId());
+            List<RecordFuture> deliveryFutures = deliveryFuturesMap.get(info.getBucketId());
             if (deliveryFutures == null) {
-                deliveryFutures = new LinkedList<BucketFuture<BucketInfo>>();
+                deliveryFutures = new LinkedList<RecordFuture>();
                 deliveryFuturesMap.put(info.getBucketId(), deliveryFutures);
             }
 
@@ -339,10 +339,11 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
 
     protected void notifyDeliveryFuturesOnSuccess(BucketInfo info) {
         synchronized (deliveryFuturesMap) {
-            List<BucketFuture<BucketInfo>> deliveryFutures = deliveryFuturesMap.get(info.getBucketId());
+            List<RecordFuture> deliveryFutures = deliveryFuturesMap.get(info.getBucketId());
             if (deliveryFutures != null) {
-                for (BucketFuture<BucketInfo> future : deliveryFutures) {
-                    future.setValue(info);
+                for (RecordFuture future : deliveryFutures) {
+                    RecordInfo recordInfo = new RecordInfo(info);
+                    future.setValue(recordInfo);
                 }
 
                 deliveryFuturesMap.remove(info.getBucketId());

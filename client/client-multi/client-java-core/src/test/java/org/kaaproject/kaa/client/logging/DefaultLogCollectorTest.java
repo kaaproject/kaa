@@ -29,7 +29,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.AbstractExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -41,6 +40,7 @@ import org.kaaproject.kaa.client.channel.FailoverManager;
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.LogTransport;
 import org.kaaproject.kaa.client.context.ExecutorContext;
+import org.kaaproject.kaa.client.logging.future.RecordFuture;
 import org.kaaproject.kaa.common.endpoint.gen.LogDeliveryErrorCode;
 import org.kaaproject.kaa.common.endpoint.gen.LogDeliveryStatus;
 import org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest;
@@ -402,7 +402,7 @@ public class DefaultLogCollectorTest {
         LogBucket logBlock = new LogBucket(defaultId, logRecords);
         Mockito.when(storage.getNextBucket()).thenReturn(logBlock);
 
-        List<Future<BucketInfo>> deliveryFutures = new LinkedList<Future<BucketInfo>>();
+        List<RecordFuture> deliveryFutures = new LinkedList<RecordFuture>();
         for (int i = 0; i < logCount; ++i) {
             deliveryFutures.add(logCollector.addLogRecord(new Log()));
         }
@@ -412,8 +412,8 @@ public class DefaultLogCollectorTest {
 
         logCollector.onLogResponse(response);
 
-        for (Future<BucketInfo> future : deliveryFutures) {
-            Assert.assertEquals(defaultId, future.get().getBucketId());
+        for (RecordFuture future : deliveryFutures) {
+            Assert.assertEquals(defaultId, future.get().getBucketInfo().getBucketId());
         }
     }
 
