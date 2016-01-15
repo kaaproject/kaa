@@ -34,6 +34,6 @@ public class AndroidSQLiteDBLogStorageTest extends AbstractPersistentLogStorageT
 
     @Override
     protected Object getStorage(long bucketSize, int recordCount) {
-        return new AndroidSQLiteDBLogStorage(Robolectric.application);
+        return new AndroidSQLiteDBLogStorage(Robolectric.application, bucketSize, recordCount);
     }
 }

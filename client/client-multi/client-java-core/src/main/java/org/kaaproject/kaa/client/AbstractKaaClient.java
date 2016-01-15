@@ -78,10 +78,7 @@ import org.kaaproject.kaa.client.event.registration.UserAttachCallback;
 import org.kaaproject.kaa.client.exceptions.KaaClusterConnectionException;
 import org.kaaproject.kaa.client.exceptions.KaaException;
 import org.kaaproject.kaa.client.exceptions.KaaRuntimeException;
-import org.kaaproject.kaa.client.logging.AbstractLogCollector;
-import org.kaaproject.kaa.client.logging.DefaultLogCollector;
-import org.kaaproject.kaa.client.logging.LogStorage;
-import org.kaaproject.kaa.client.logging.LogUploadStrategy;
+import org.kaaproject.kaa.client.logging.*;
 import org.kaaproject.kaa.client.notification.DefaultNotificationManager;
 import org.kaaproject.kaa.client.notification.NotificationListener;
 import org.kaaproject.kaa.client.notification.NotificationTopicListListener;
@@ -579,6 +576,11 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
     @Override
     public void setDetachedListener(DetachEndpointFromUserCallback listener) {
         endpointRegistrationManager.setDetachedCallback(listener);
+    }
+
+    @Override
+    public void setLogDeliveryListener(LogDeliveryListener listener) {
+        logCollector.setLogDeliveryListener(listener);
     }
 
     protected TransportContext buildTransportContext(KaaClientProperties properties, KaaClientState kaaClientState) {

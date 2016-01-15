@@ -23,13 +23,14 @@ import org.kaaproject.kaa.client.channel.FailoverManager;
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.LogTransport;
 import org.kaaproject.kaa.client.context.ExecutorContext;
+import org.kaaproject.kaa.client.logging.future.RecordFuture;
 import org.kaaproject.kaa.schema.base.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Reference implementation of @see LogCollector
- * 
+ *
  * @author Andrew Shvayka
  */
 @Generated("DefaultLogCollector.java.template")
@@ -42,12 +43,15 @@ public class DefaultLogCollector extends AbstractLogCollector {
     }
 
     @Override
-    public void addLogRecord(final Log record) {
+    public RecordFuture addLogRecord(final Log record) {
+        final RecordFuture future = new RecordFuture();
         executorContext.getApiExecutor().execute(new Runnable() {
             @Override
             public void run() {
                 try {
-                    storage.addLogRecord(new LogRecord(record));
+                    BucketInfo bucketInfo = storage.addLogRecord(new LogRecord(record));
+                    bucketInfoMap.put(bucketInfo.getBucketId(), bucketInfo);
+                    addDeliveryFuture(bucketInfo, future);
                 } catch (IOException e) {
                     LOG.warn("Can't serialize log record {}", record);
                 }
@@ -55,6 +59,7 @@ public class DefaultLogCollector extends AbstractLogCollector {
                 uploadIfNeeded();
             }
         });
-    }
 
+        return future;
+    }
 }

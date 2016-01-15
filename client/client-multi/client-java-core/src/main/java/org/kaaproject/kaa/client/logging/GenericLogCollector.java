@@ -34,8 +34,8 @@ package org.kaaproject.kaa.client.logging;
  * </p>
  *
  * @see LogStorage
- * @see LogStorageStatus
  * @see LogUploadStrategy
+ * @see LogDeliveryListener
  */
 public interface GenericLogCollector {
     /**
@@ -53,9 +53,17 @@ public interface GenericLogCollector {
      *            User-defined log upload strategy object.
      */
     void setStrategy(LogUploadStrategy strategy);
-    
+
     /**
-     * Stops and/or cleanup resources. 
+     * Set a listener which receives a delivery status of each log bucket.
+     *
+     * @param listener
+     *            User-defined listener object.
+     */
+    void setLogDeliveryListener(LogDeliveryListener listener);
+
+    /**
+     * Stops and/or cleanup resources.
      */
     void stop();
 }

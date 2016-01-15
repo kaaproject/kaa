@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,15 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.kaaproject.kaa.client.logging.future;
 
-package org.kaaproject.kaa.client.logging;
+public class ExecutionResult<T> {
 
-import org.kaaproject.kaa.client.logging.memory.MemLogStorage;
+    private final T t;
+    private final Exception e;
 
-public class MemLogStorageTest extends AbstractLogStorageTest {
-    @Override
-    protected Object getStorage(long bucketSize, int recordCount) {
-        return new MemLogStorage(bucketSize, recordCount);
+    public ExecutionResult(T t, Exception e) {
+        super();
+        this.t = t;
+        this.e = e;
+    }
+
+    public T get() {
+        return t;
+    }
+
+    public Exception getE() {
+        return e;
     }
 
 }
