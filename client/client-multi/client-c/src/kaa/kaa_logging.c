@@ -280,8 +280,10 @@ kaa_error_t kaa_logging_add_record(kaa_log_collector_t *self, kaa_user_log_recor
 
     kaa_log_record_t record = { NULL, entry->get_size(entry) };
     if (!record.size) {
-        KAA_LOG_ERROR(self->logger, KAA_ERR_BADDATA, "Failed to add log record: serialized record size is null."
-                                                                                "Maybe log record schema is empty");
+        KAA_LOG_ERROR(self->logger,
+                      KAA_ERR_BADDATA, "Failed to add log record: "
+                                       "serialized record size is null. "
+                                       "Maybe log record schema is empty");
         return KAA_ERR_BADDATA;
     }
 
@@ -307,22 +309,27 @@ kaa_error_t kaa_logging_add_record(kaa_log_collector_t *self, kaa_user_log_recor
         ext_log_storage_deallocate_log_record_buffer(self->log_storage_context, &record);
         return error;
     }
+
     KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Added log record, size %zu", record.size);
     if (!is_timeout(self))
         update_storage(self);
 
     if (!self->log_bucket_id) {
-      self->log_bucket_id = self->status->log_bucket_id;
+        self->log_bucket_id = self->status->log_bucket_id;
     }
+
     // TODO Check that we doesn't have policy that avoid log record from sending in next bucket
-    *bucket_id = self->log_bucket_id;
-    ++*bucket_id;
+    if (bucket_id) {
+        *bucket_id = self->log_bucket_id;
+        ++*bucket_id;
+    }
 
     return KAA_ERR_NONE;
 }
 
 kaa_error_t kaa_logging_set_listeners(kaa_log_collector_t *self, const kaa_log_listeners_t *listeners)
 {
+    KAA_RETURN_IF_NIL2(self, listeners, KAA_ERR_BADPARAM);
     self->log_delivery_listeners = *listeners;
     return KAA_ERR_NONE;
 }
