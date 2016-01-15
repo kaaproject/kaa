@@ -16,6 +16,8 @@
 
 #import "TestsHelper.h"
 #import "KaaClientPropertiesState.h"
+#import <objc/objc-runtime.h>
+#import "KaaLogging.h"
 
 @implementation TestsHelper
 
@@ -53,6 +55,44 @@
     [properties setString:@"123456" forKey:SDK_TOKEN_KEY];
     [properties setString:STATE_FILE_DEFAULT forKey:STATE_FILE_LOCATION_KEY];
     return properties;
+}
+
+@end
+
+/** 
+ * Implementation for XCTestLog category. 
+ * Although it is deprecated, XCTest still uses it implicitly.
+ */
+@implementation XCTestLog (NoLog)
+
+/** 
+ * This method is called when application starts. 
+ * In this case it replaces XCTestLog implementation of method testLogWithFormat:arguments: with our custom method.
+ */
++ (void)load {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        Class class = [self class];
+        SEL originalSelector = @selector(testLogWithFormat:arguments:);
+        SEL replaceSelector = @selector(testNoLogWithFormat:arguments:);
+        Method originalMethod = class_getInstanceMethod(class, originalSelector);
+        Method replaceMethod = class_getInstanceMethod(class, replaceSelector);
+        BOOL didAddMethod = class_addMethod(class, originalSelector, method_getImplementation(replaceMethod), method_getTypeEncoding(replaceMethod));
+        if (didAddMethod) {
+            class_replaceMethod(class, replaceSelector, method_getImplementation(originalMethod), method_getTypeEncoding(originalMethod));
+        } else {
+            method_exchangeImplementations(originalMethod, replaceMethod);
+        }
+    });
+}
+
+/**
+ * Method to replace original testLogWithFormat:arguments: method of XCTestLog. It passes logging routine to CocoaLumberjack.
+ */
+- (void)testNoLogWithFormat:(NSString *)format arguments:(va_list)arguments NS_FORMAT_FUNCTION(1,0) {
+    if (format) {
+        DDLogDebug(format, arguments);
+    }
 }
 
 @end
