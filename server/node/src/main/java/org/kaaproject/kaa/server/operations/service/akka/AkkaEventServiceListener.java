@@ -16,10 +16,9 @@
 
 package org.kaaproject.kaa.server.operations.service.akka;
 
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.lb.ClusterUpdateMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointRouteUpdateMessage;
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserConfigurationUpdateMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserConfigurationUpdate;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserConfigurationUpdateMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.RemoteEndpointEventMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.RouteInfoMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.UserRouteInfoMessage;
@@ -47,21 +46,21 @@ final class AkkaEventServiceListener implements EventServiceListener {
     @Override
     public void onRouteInfo(RouteInfo routeInfo) {
         RouteInfoMessage message = new RouteInfoMessage(routeInfo);
-        LOG.debug("Sending message {} to EPS actor", message);
+        LOG.debug("Sending message {} to OPS actor", message);
         opsActor.tell(message, ActorRef.noSender());
     }
 
     @Override
     public void onUserRouteInfo(UserRouteInfo routeInfo) {
         UserRouteInfoMessage message = new UserRouteInfoMessage(routeInfo);
-        LOG.debug("Sending message {} to EPS actor", message);
+        LOG.debug("Sending message {} to OPS actor", message);
         opsActor.tell(message, ActorRef.noSender());
     }
 
     @Override
     public void onEvent(RemoteEndpointEvent event) {
         RemoteEndpointEventMessage message = new RemoteEndpointEventMessage(event);
-        LOG.debug("Sending message {} to EPS actor", message);
+        LOG.debug("Sending message {} to OPS actor", message);
         opsActor.tell(message, ActorRef.noSender());
     }
 
@@ -74,13 +73,6 @@ final class AkkaEventServiceListener implements EventServiceListener {
     public void onEndpointRouteUpdate(GlobalRouteInfo message) {
         opsActor.tell(new EndpointRouteUpdateMessage(message), ActorRef.noSender());
     }
-    
-    @Override
-    public void onClusterUpdated() {
-        LOG.trace("Detected cluster topology update");
-        opsActor.tell(new ClusterUpdateMessage(), ActorRef.noSender());
-    }
-
 
     @Override
     public void onServerError(String serverId) {

@@ -23,6 +23,7 @@ import org.kaaproject.kaa.server.operations.service.event.EventService;
 import org.kaaproject.kaa.server.operations.service.logs.LogAppenderService;
 import org.kaaproject.kaa.server.operations.service.metrics.MetricsService;
 import org.kaaproject.kaa.server.operations.service.notification.NotificationDeltaService;
+import org.kaaproject.kaa.server.operations.service.route.ClusterService;
 import org.kaaproject.kaa.server.operations.service.security.KeyStoreService;
 import org.kaaproject.kaa.server.operations.service.user.EndpointUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +46,9 @@ public class AkkaContext {
 
     private static final String AKKA_CONF_FILE_NAME = "akka.conf";
 
+    @Autowired
+    private ClusterService clusterService;
+    
     /** The cache service. */
     @Autowired
     private CacheService cacheService;
@@ -106,6 +110,10 @@ public class AkkaContext {
 
     public long getEventTimeout() {
         return config.getLong(ENDPOINT_EVENT_TIMEOUT);
+    }
+    
+    public ClusterService getClusterService() {
+        return clusterService;
     }
 
     public CacheService getCacheService() {

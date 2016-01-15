@@ -31,6 +31,7 @@ import org.kaaproject.kaa.server.operations.service.akka.actors.supervision.Supe
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointAwareMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.lb.ClusterUpdateMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.notification.ThriftNotificationMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.RouteMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.stats.ApplicationActorStatusResponse;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.stats.StatusRequestMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.stats.StatusRequestState;
@@ -145,6 +146,8 @@ public class TenantActor extends UntypedActor {
             processGlobalUserAwareMessage((GlobalUserAwareMessage) message);
         } else if (message instanceof SessionControlMessage) {
             processSessionControlMessage((SessionControlMessage) message);
+        } else if (message instanceof RouteMessage) {
+            processRouteMessage((RouteMessage<?>)message);
         } else if (message instanceof UserAwareMessage) {
             processUserAwareMessage((UserAwareMessage) message);
         } else if (message instanceof Terminated) {
@@ -162,12 +165,22 @@ public class TenantActor extends UntypedActor {
         }
     }
 
+    private void processRouteMessage(RouteMessage<?> msg) {
+        if(msg.getAppToken() != null){
+            ActorRef applicationActor = getOrCreateApplicationActor(msg.getAppToken());
+            applicationActor.tell(msg, self());
+        }
+    }
+
     private void processClusterUpdate(ClusterUpdateMessage message) {
         for (ActorRef userActor : globalUsers.values()) {
             userActor.tell(message, ActorRef.noSender());
         }
         for (ActorRef userActor : localUsers.values()) {
             userActor.tell(message, ActorRef.noSender());
+        }
+        for (ActorRef appActor : applications.values()) {
+            appActor.tell(message, ActorRef.noSender());
         }
     }
 
@@ -293,7 +306,7 @@ public class TenantActor extends UntypedActor {
         ActorRef applicationActor = applications.get(appToken);
         if (applicationActor == null) {
             applicationActor = context().actorOf(
-                    Props.create(new ApplicationActor.ActorCreator(context, appToken)).withDispatcher(CORE_DISPATCHER_NAME), appToken);
+                    Props.create(new ApplicationActor.ActorCreator(context, tenantId, appToken)).withDispatcher(CORE_DISPATCHER_NAME), appToken);
             applications.put(appToken, applicationActor);
         }
         return applicationActor;

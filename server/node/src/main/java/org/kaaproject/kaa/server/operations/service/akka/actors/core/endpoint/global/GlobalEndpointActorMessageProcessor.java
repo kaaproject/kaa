@@ -11,6 +11,8 @@ public class GlobalEndpointActorMessageProcessor extends AbstractEndpointActorMe
 
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(GlobalEndpointActorMessageProcessor.class);
+    
+    
 
     public GlobalEndpointActorMessageProcessor(AkkaContext context, String appToken, EndpointObjectHash key, String actorKey) {
         super(new GlobalEndpointActorState(Base64Util.encode(key.getData()), actorKey), context.getOperationsService(), appToken, key,

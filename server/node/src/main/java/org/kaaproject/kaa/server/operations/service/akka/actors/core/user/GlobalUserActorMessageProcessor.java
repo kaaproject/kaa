@@ -24,12 +24,12 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.RouteOperation;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserConfigurationUpdateMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserConfigurationUpdate;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.UserConfigurationUpdate;
 import org.kaaproject.kaa.server.operations.service.event.EventService;
 import org.kaaproject.kaa.server.operations.service.event.GlobalRouteInfo;
-import org.kaaproject.kaa.server.operations.service.event.RouteOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

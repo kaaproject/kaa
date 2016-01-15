@@ -126,7 +126,7 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
     private static final String IF_CONDITION = "IF opt_lock = ";
     public static final String SEMICOLON = ";";
 
-    private ConcurrentHashMap<String, PreparedStatement> statements = new ConcurrentHashMap();
+    private ConcurrentHashMap<String, PreparedStatement> statements = new ConcurrentHashMap<>();
 
     @Autowired
     private CassandraEPByAppIdDao cassandraEPByAppIdDao;

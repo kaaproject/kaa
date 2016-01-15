@@ -47,6 +47,7 @@ import org.kaaproject.kaa.server.common.thrift.gen.operations.UserRouteInfo;
 import org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo;
 import org.kaaproject.kaa.server.common.zk.operations.OperationsNode;
 import org.kaaproject.kaa.server.common.zk.operations.OperationsNodeListener;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.RouteOperation;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserConfigurationUpdate;
 import org.kaaproject.kaa.server.operations.service.config.OperationsServerConfig;
 import org.kaaproject.kaa.server.resolve.OperationsServerResolver;
@@ -602,20 +603,12 @@ public class DefaultEventService implements EventService {
             public void onNodeRemoved(OperationsNodeInfo node) {
                 LOG.debug("Remove of node {} is pushed to resolver {}", node, resolver);
                 resolver.onNodeRemoved(node);
-                notifyListeners();
             }
 
             @Override
             public void onNodeAdded(OperationsNodeInfo node) {
                 LOG.debug("Add of node {} is pushed to resolver {}", node, resolver);
                 resolver.onNodeAdded(node);
-                notifyListeners();
-            }
-
-            private void notifyListeners() {
-                for (EventServiceListener listener : listeners) {
-                    listener.onClusterUpdated();
-                }
             }
         });
 

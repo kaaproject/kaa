@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kaaproject.kaa.server.operations.service.event;
+package org.kaaproject.kaa.server.operations.service.akka.messages.core.route;
 
 public enum RouteOperation {
     ADD, 

@@ -80,7 +80,9 @@ public class DefaultAkkaService implements AkkaService {
     @Autowired
     private AkkaContext context;
 
-    private AkkaEventServiceListener listener;
+    private AkkaEventServiceListener eventListener;
+    
+    private AkkaClusterServiceListener clusterListener;
 
     private StatusListenerThread statusListenerThread;
 
@@ -102,8 +104,10 @@ public class DefaultAkkaService implements AkkaService {
                         .props(Props.create(new EncDecActor.ActorCreator(opsActor, context, platformProtocols))
                                 .withDispatcher(IO_DISPATCHER_NAME)), IO_ROUTER_ACTOR_NAME);
         LOG.info("Initializing Akka event service listener...");
-        listener = new AkkaEventServiceListener(opsActor);
-        context.getEventService().addListener(listener);
+        eventListener = new AkkaEventServiceListener(opsActor);
+        context.getEventService().addListener(eventListener);
+        clusterListener = new AkkaClusterServiceListener(opsActor);
+        context.getClusterService().setListener(clusterListener);
         LOG.info("Initializing Akka system done");
     }
 
@@ -120,7 +124,7 @@ public class DefaultAkkaService implements AkkaService {
     }
 
     AkkaEventServiceListener getListener() {
-        return listener;
+        return eventListener;
     }
 
     /*
@@ -155,7 +159,7 @@ public class DefaultAkkaService implements AkkaService {
 
     @PreDestroy
     public void preDestroy() {
-        context.getEventService().removeListener(listener);
+        context.getEventService().removeListener(eventListener);
     }
 
     @Override

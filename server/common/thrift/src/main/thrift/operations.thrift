@@ -188,6 +188,36 @@ struct UserConfigurationUpdate {
   5: binary ucfHash
 }
 
+/**
+* Enum defines route operation type
+*/
+enum ThriftRouteOperation {
+      ADD = 1;
+      DELETE = 2;
+      UPDATE = 3
+}
+
+/**
+* Enum defines cluster entity type
+*/
+enum ThriftClusterEntityType {
+      ENDPOINT = 1;
+}
+
+struct ThriftEntityClusterAddress {
+  1: string nodeId
+  2: tenant_id tenantId
+  3: application_token applicationToken
+  4: ThriftClusterEntityType entityType
+  5: binary entityId
+}
+
+struct ThriftEntityRouteMessage {
+  1: ThriftEntityClusterAddress address
+  2: ThriftRouteOperation operation
+}
+
+
 service OperationsThriftService {
 
 /**
@@ -209,5 +239,10 @@ service OperationsThriftService {
 *   Report user configuration update from control to operation servers
 */
   void sendUserConfigurationUpdates(1: list<UserConfigurationUpdate> updates);
+  
+/**
+*  Interface to send unified entity route messages
+*/
+  void onEntityRouteMessages(1: list<ThriftEntityRouteMessage> messages);  
 
 }

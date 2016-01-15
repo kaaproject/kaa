@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,17 +18,12 @@ package org.kaaproject.kaa.server.operations.service.akka.actors.core;
 
 import akka.actor.ActorRef;
 
-public class ActorMetaData{
-    final ActorRef actorRef;
-    private final String endpointActorId;
+public class LocalEndpointActorMD extends EndpointActorMD {
+    String globalActorNodeId;
 
-    ActorMetaData(ActorRef actorRef, String endpointActorId) {
-        super();
-        this.actorRef = actorRef;
-        this.endpointActorId = endpointActorId;
+    LocalEndpointActorMD(ActorRef actorRef, String actorId, String globalActorNodeId) {
+        super(actorRef, actorId);
+        this.globalActorNodeId = globalActorNodeId;
     }
-
-    public String getEndpointActorId() {
-        return endpointActorId;
-    }
+    
 }
