@@ -28,10 +28,10 @@
     @catch (NSException *exception) {
         DDLogError(@"%@ Failed to decode configuration data: %@", TAG, [super getConfigurationData]);
         @try {
-            return [self.deserializer fromBytes:[super getDefaultConfiguratioData]];
+            return [self.deserializer fromBytes:[super getDefaultConfigurationData]];
         }
         @catch (NSException *exception) {
-            DDLogError(@"%@ Failed to decode configuration data: %@", TAG, [super getConfigurationData]);
+            DDLogError(@"%@ Failed to decode configuration data: %@", TAG, [super getDefaultConfigurationData]);
             return nil;
         }
     }

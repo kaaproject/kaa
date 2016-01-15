@@ -27,22 +27,22 @@ public class ObjCEventClassesGenerator {
     private static final String EVENT_GEN = "EventGen";
     private static final String EVENT_FACTORY_PATH = GEN_ROOT + "EventFamilyFactory.";
 
-    private static final String EVENT_FAMILY_TEMPLATE = "sdk/objc/event/EventFamily.%s.template";
+    private static final String EVENT_FAMILY_TEMPLATE = "templates/event/EventFamily.%s.template";
 
-    private static final String EVENT_FAMILY_ADD_SUPPORTED_FQN_TEMPLATE = "sdk/objc/event/eventFamilyAddSupportedFqn.template";
+    private static final String EVENT_FAMILY_ADD_SUPPORTED_FQN_TEMPLATE = "templates/event/eventFamilyAddSupportedFqn.template";
 
-    private static final String EVENT_FAMILY_ON_GENERIC_EVENT_TEMPLATE = "sdk/objc/event/eventFamilyOnGenericEvent.template";
+    private static final String EVENT_FAMILY_ON_GENERIC_EVENT_TEMPLATE = "templates/event/eventFamilyOnGenericEvent.template";
 
-    private static final String EVENT_FAMILY_SEND_EVENT_H_METHODS_TEMPLATE = "sdk/objc/event/eventFamilySendEventHeaderMethods.template";
-    private static final String EVENT_FAMILY_SEND_EVENT_M_METHODS_TEMPLATE = "sdk/objc/event/eventFamilySendEventSourceMethods.template";
+    private static final String EVENT_FAMILY_SEND_EVENT_H_METHODS_TEMPLATE = "templates/event/eventFamilySendEventHeaderMethods.template";
+    private static final String EVENT_FAMILY_SEND_EVENT_M_METHODS_TEMPLATE = "templates/event/eventFamilySendEventSourceMethods.template";
 
-    private static final String EVENT_FAMILY_LISTENER_METHOD_TEMPLATE = "sdk/objc/event/eventFamilyListenerMethod.template";
+    private static final String EVENT_FAMILY_LISTENER_METHOD_TEMPLATE = "templates/event/eventFamilyListenerMethod.template";
 
-    private static final String EVENT_FAMILY_FACTORY_TEMPLATE = "sdk/objc/event/EventFamilyFactory.%s.template";
+    private static final String EVENT_FAMILY_FACTORY_TEMPLATE = "templates/event/EventFamilyFactory.%s.template";
 
-    private static final String EVENT_FAMILY_FACTORY_METHOD_H_TEMPLATE = "sdk/objc/event/eventFamilyFactoryMethodHeader.template";
-    private static final String EVENT_FAMILY_FACTORY_METHOD_M_TEMPLATE = "sdk/objc/event/eventFamilyFactoryMethodSource.template";
-    private static final String EVENT_FAMILY_FACTORY_PROPERTY_TEMPLATE = "sdk/objc/event/eventFamilyFactoryProperty.template";
+    private static final String EVENT_FAMILY_FACTORY_METHOD_H_TEMPLATE = "templates/event/eventFamilyFactoryMethodHeader.template";
+    private static final String EVENT_FAMILY_FACTORY_METHOD_M_TEMPLATE = "templates/event/eventFamilyFactoryMethodSource.template";
+    private static final String EVENT_FAMILY_FACTORY_PROPERTY_TEMPLATE = "templates/event/eventFamilyFactoryProperty.template";
 
     private static final String EVENT_FAMILY_NAMESPACE_VAR = "\\{event_family_namespace\\}";
     private static final String EVENT_FAMILY_CLASS_NAME_VAR = "\\{event_family_class_name\\}";

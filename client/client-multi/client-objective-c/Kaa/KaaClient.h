@@ -25,14 +25,6 @@
 
 /**
  * Base interface to operate with Kaa library.
- *
- * @see EventFamilyFactory
- * @see EndpointRegistrationManager
- * @see EventListenersResolver
- * @see KaaChannelManager
- * @see PublicKey
- * @see PrivateKey
- * @see KaaDataChannel
  */
 @protocol KaaClient <GenericKaaClient>
 

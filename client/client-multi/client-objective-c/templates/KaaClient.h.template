@@ -14,39 +14,33 @@
  * limitations under the License.
  */
 
-#ifndef Kaa_LogCollector_h
-#define Kaa_LogCollector_h
+#ifndef Kaa_KaaClient_h
+#define Kaa_KaaClient_h
 
 #import <Foundation/Foundation.h>
-#import "GenericLogCollector.h"
+#import "GenericKaaClient.h"
 #import "LogGen.h"
+#import "ConfigurationGen.h"
+#import "BucketRunner.h"
 
 /**
- * Interface for a log collector.
- *
- * Adds new log record to a local storage.
- *
- * May be configured by setting user defined log record storage,
- * storage status, upload configuration and log upload strategy.
- * Each of them may be set independently of others.
- *
- * Reference implementation of each module used by default.
- *
- * This interface is auto-generated.
- *
- * @see LogStorage
- * @see LogStorageStatus
- * @see LogUploadStrategy
- * @see LogUploadConfiguration
+ * Base interface to operate with Kaa library.
  */
-@protocol LogCollector <GenericLogCollector>
+@protocol KaaClient <GenericKaaClient>
 
 /**
  * Adds new log record to local storage.
  *
- * @param record new log record object
+ * @param record - new log record object
  */
-- (void)addLogRecord:(${log_record_class} *)record;
+- (BucketRunner *)addLogRecord:(${log_record_class} *)record;
+
+/**
+ * Returns latest configuration.
+ *
+ * @return configuration
+ */
+- (${configuration_class} *)getConfiguration;
 
 @end
 

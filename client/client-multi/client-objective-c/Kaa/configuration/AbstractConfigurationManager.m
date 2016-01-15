@@ -123,7 +123,7 @@
     }
     if (!self.configurationData) {
         DDLogDebug(@"%@ Loading configuration data from defaults: %@", TAG, self.storage);
-        self.configurationData = [self getDefaultConfiguratioData];
+        self.configurationData = [self getDefaultConfigurationData];
     }
     DDLogVerbose(@"%@ Loaded configuration data: %@", TAG, self.configurationData);
     return self.configurationData;
@@ -136,7 +136,7 @@
     return self.configurationData;
 }
 
-- (NSData *)getDefaultConfiguratioData {
+- (NSData *)getDefaultConfigurationData {
     return [self.properties defaultConfigData];
 }
 

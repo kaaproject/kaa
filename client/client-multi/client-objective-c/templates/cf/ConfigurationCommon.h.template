@@ -89,8 +89,6 @@
  */
 - (void)setConfigurationStorage:(id<ConfigurationStorage>)storage;
 
-- (id<ConfigurationProcessor>)getConfigurationProcessor;
-
 @end
 
 

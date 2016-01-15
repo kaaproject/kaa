@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 CyberVision, Inc.
+ * Copyright 2014 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@
 
 #import <Foundation/Foundation.h>
 #import "GenericLogCollector.h"
-#import "KAADummyLog.h"
+#import "LogGen.h"
 #import "BucketRunner.h"
 #import "LogDeliveryDelegate.h"
 
@@ -49,7 +49,7 @@
  * @param record new log record object
  * @return The BucketRunner object which allows tracking a delivery status of a log record.
  */
-- (BucketRunner *)addLogRecord:(KAADummyLog *)record;
+- (BucketRunner *)addLogRecord:(${log_record_class} *)record;
 
 - (void)setLogDeliveryDelegate:(id<LogDeliveryDelegate>)delegate;
 

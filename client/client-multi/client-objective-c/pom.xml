@@ -39,6 +39,7 @@
                 <configuration>
                     <descriptors>
                         <descriptor>assembly/client-objc-sdk.xml</descriptor>
+                        <descriptor>assembly/client-objc-sdk-templates.xml</descriptor>
                     </descriptors>
                 </configuration>
                 <executions>

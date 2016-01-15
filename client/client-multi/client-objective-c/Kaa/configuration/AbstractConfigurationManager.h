@@ -29,6 +29,6 @@
 
 - (NSData *)getConfigurationData;
 
-- (NSData *)getDefaultConfiguratioData;
+- (NSData *)getDefaultConfigurationData;
 
 @end

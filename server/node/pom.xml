@@ -812,6 +812,15 @@
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${templates.path}/c</outputDirectory>
                                 </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.client</groupId>
+                                    <artifactId>client-objective-c</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>objc-sdk-templates</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${templates.path}/objc</outputDirectory>
+                                </artifactItem>
                             </artifactItems>
                         </configuration>
                     </execution>
