@@ -656,8 +656,8 @@ public class JavaSdkGenerator extends SdkGenerator {
             LOG.debug("Compiling bean {} with source: {}", bean.getName(), bean.getCharContent(true));
         }
         Collection<JavaDynamicBean> compiledObjects = dynamicCompiler.compile(javaSources, 
-                "-source " + JAVA_SOURCE_COMPILER_RELEASE, 
-                "-target " + JAVA_TARGET_COMPILER_RELEASE);
+                "-source", JAVA_SOURCE_COMPILER_RELEASE,
+                "-target", JAVA_TARGET_COMPILER_RELEASE);
         for (JavaDynamicBean compiledObject : compiledObjects) {
             String className = compiledObject.getName();
             String classFileName = className.replace('.', '/') + Kind.CLASS.extension;
