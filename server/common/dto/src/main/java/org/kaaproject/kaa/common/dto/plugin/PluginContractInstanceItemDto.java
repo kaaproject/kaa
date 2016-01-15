@@ -17,13 +17,14 @@ package org.kaaproject.kaa.common.dto.plugin;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Set;
 
 import org.kaaproject.kaa.common.dto.HasId;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 
 public class PluginContractInstanceItemDto implements HasId, Serializable {
 
-    private static final long serialVersionUID = 5369616154739139086L;
+    private static final long serialVersionUID = -9152246152435074153L;
 
     private String id;
     private String confData;
@@ -31,6 +32,7 @@ public class PluginContractInstanceItemDto implements HasId, Serializable {
     private PluginContractItemDto parentPluginContractItem;
     private CTLSchemaDto inMessageSchema;
     private CTLSchemaDto outMessageSchema;
+    private Set<PluginContractInstanceItemDto> pluginContractInstanceItems;
 
     @Override
     public String getId() {
@@ -80,6 +82,14 @@ public class PluginContractInstanceItemDto implements HasId, Serializable {
 
     public void setOutMessageSchema(CTLSchemaDto outMessageSchema) {
         this.outMessageSchema = outMessageSchema;
+    }
+
+    public Set<PluginContractInstanceItemDto> getPluginContractInstanceItems() {
+        return pluginContractInstanceItems;
+    }
+
+    public void setPluginContractInstanceItems(Set<PluginContractInstanceItemDto> pluginContractInstanceItems) {
+        this.pluginContractInstanceItems = pluginContractInstanceItems;
     }
 
     @Override

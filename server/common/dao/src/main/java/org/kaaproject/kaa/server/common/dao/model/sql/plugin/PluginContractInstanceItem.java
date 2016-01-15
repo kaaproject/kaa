@@ -32,6 +32,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_INSTANCE_ITEM_CONF_DATA;
@@ -78,12 +79,12 @@ public class PluginContractInstanceItem extends GenericModel<PluginContractInsta
                     foreignKey = @ForeignKey(name = PLUGIN_CONTRACT_INSTANCE_ITEM_JOIN_TABLE_OUT_PLUGIN_INSTANCE_CONTRACT_ITEM_FK))})
     private Set<PluginContractInstanceItem> pluginContractItems;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.DETACH, CascadeType.REFRESH})
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = PLUGIN_CONTRACT_INSTANCE_ITEM_JOIN_TABLE_PARAM_MESSAGE_SCHEMA_ID,
             foreignKey = @ForeignKey(name = PLUGIN_CONTRACT_INSTANCE_ITEM_PARAM_MESSAGE_SCHEMA_FK))
     private CTLSchema inMessageSchema;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.DETACH, CascadeType.REFRESH})
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = PLUGIN_CONTRACT_INSTANCE_ITEM_JOIN_TABLE_RESULT_MESSAGE_SCHEMA_ID,
             foreignKey = @ForeignKey(name = PLUGIN_CONTRACT_INSTANCE_ITEM_RESULT_MESSAGE_SCHEMA_FK))
     private CTLSchema outMessageSchema;
@@ -105,6 +106,13 @@ public class PluginContractInstanceItem extends GenericModel<PluginContractInsta
         }
         if (dto.getOutMessageSchema() != null) {
             this.outMessageSchema = new CTLSchema(dto.getOutMessageSchema());
+        }
+        if (dto.getPluginContractInstanceItems() != null) {
+            Set<PluginContractInstanceItem> pluginContractInstanceItems = new HashSet<>();
+            for (PluginContractInstanceItemDto pluginContractInstanceItem : dto.getPluginContractInstanceItems()) {
+                pluginContractInstanceItems.add(new PluginContractInstanceItem(pluginContractInstanceItem));
+            }
+            this.pluginContractItems = pluginContractInstanceItems;
         }
     }
 
@@ -179,6 +187,7 @@ public class PluginContractInstanceItem extends GenericModel<PluginContractInsta
         pluginContractInstanceItemDto.setParentPluginContractItem(ModelUtils.getDto(parentPluginContractItem));
         pluginContractInstanceItemDto.setInMessageSchema(ModelUtils.getDto(inMessageSchema));
         pluginContractInstanceItemDto.setOutMessageSchema(ModelUtils.getDto(outMessageSchema));
+        pluginContractInstanceItemDto.setPluginContractInstanceItems(ModelUtils.convertDtoSet(pluginContractItems));
         return pluginContractInstanceItemDto;
     }
 
@@ -192,6 +201,10 @@ public class PluginContractInstanceItem extends GenericModel<PluginContractInsta
         }
 
         PluginContractInstanceItem that = (PluginContractInstanceItem) o;
+
+        if (confData != null ? !confData.equals(that.confData) : that.confData != null) {
+            return false;
+        }
 
         if (inMessageSchema != null ? !inMessageSchema.equals(that.inMessageSchema) : that.inMessageSchema != null) {
             return false;
@@ -211,7 +224,8 @@ public class PluginContractInstanceItem extends GenericModel<PluginContractInsta
 
     @Override
     public int hashCode() {
-        int result = pluginContractItem != null ? pluginContractItem.hashCode() : 0;
+        int result = confData != null ? confData.hashCode() : 0;
+        result = 31 * result + (pluginContractItem != null ? pluginContractItem.hashCode() : 0);
         result = 31 * result + (parentPluginContractItem != null ? parentPluginContractItem.hashCode() : 0);
         result = 31 * result + (inMessageSchema != null ? inMessageSchema.hashCode() : 0);
         result = 31 * result + (outMessageSchema != null ? outMessageSchema.hashCode() : 0);

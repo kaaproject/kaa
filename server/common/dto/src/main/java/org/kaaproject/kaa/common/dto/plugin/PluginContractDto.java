@@ -89,9 +89,6 @@ public class PluginContractDto implements HasId, Serializable {
         if (direction != that.direction) {
             return false;
         }
-        if (pluginContractInstances != null ? !pluginContractInstances.equals(that.pluginContractInstances) : that.pluginContractInstances != null) {
-            return false;
-        }
         if (pluginContractItems != null ? !pluginContractItems.equals(that.pluginContractItems) : that.pluginContractItems != null) {
             return false;
         }
@@ -104,7 +101,6 @@ public class PluginContractDto implements HasId, Serializable {
         int result = direction != null ? direction.hashCode() : 0;
         result = 31 * result + (contract != null ? contract.hashCode() : 0);
         result = 31 * result + (pluginContractItems != null ? pluginContractItems.hashCode() : 0);
-        result = 31 * result + (pluginContractInstances != null ? pluginContractInstances.hashCode() : 0);
         return result;
     }
 
