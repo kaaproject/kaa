@@ -37,7 +37,7 @@
 
 @implementation DefaultChannelManagerTest
 
-- (void) setUp {
+- (void)setUp {
     self.SUPPORTED_TYPES =
     [NSDictionary dictionaryWithObjects:@[[NSNumber numberWithInt:CHANNEL_DIRECTION_BIDIRECTIONAL],
                                           [NSNumber numberWithInt:CHANNEL_DIRECTION_UP],

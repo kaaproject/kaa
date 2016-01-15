@@ -38,7 +38,7 @@
 /**
  * Define routines to be executed after response is processed.
  */
--(void) postProcess;
+-(void)postProcess;
 
 @end
 

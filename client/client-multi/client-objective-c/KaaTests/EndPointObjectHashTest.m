@@ -25,7 +25,7 @@
 
 @implementation EndPointObjectHashTest
 
-- (void) testDeltaSameEndpointObjectHash {
+- (void)testDeltaSameEndpointObjectHash {
     
     EndpointObjectHash *hash1 = [EndpointObjectHash fromString:@"ttt"];
     EndpointObjectHash *hash2 = [EndpointObjectHash fromString:@"ttt"];
@@ -37,7 +37,7 @@
 
 }
 
-- (void) testDeltaDifferentEndpointObjectHash {
+- (void)testDeltaDifferentEndpointObjectHash {
     
     EndpointObjectHash *hash1 = [EndpointObjectHash fromString:@"test1"];
     EndpointObjectHash *hash2 = [EndpointObjectHash fromString:@"test2"];
@@ -48,7 +48,7 @@
     XCTAssertNotEqualObjects(hash1, hash2);
 }
 
-- (void) testNullEndpointObjectHash {
+- (void)testNullEndpointObjectHash {
     
     EndpointObjectHash *hash1 = [EndpointObjectHash fromSHA1:nil];
     XCTAssertNil(hash1);
@@ -60,7 +60,7 @@
     XCTAssertNil(hash1);
 }
 
-- (void) testToStringEndpointObjectHash {
+- (void)testToStringEndpointObjectHash {
     NSData *dat = [@"test" dataUsingEncoding:NSUTF8StringEncoding];
     
     EndpointObjectHash *hash1 = [EndpointObjectHash fromBytes:[@"test" dataUsingEncoding:NSUTF8StringEncoding]];

@@ -36,7 +36,7 @@
 
 @implementation ConcreteUserAttachDelegate
 
-- (void) onAttachResult:(UserAttachResponse *)response {
+- (void)onAttachResult:(UserAttachResponse *)response {
 }
 
 @end
@@ -61,7 +61,7 @@
     [given([self.executorContext getCallbackExecutor]) willReturn:self.executor];
 }
 
-- (void) testCheckUserAttachWithNoDefaultVerifier {
+- (void)testCheckUserAttachWithNoDefaultVerifier {
     @try {
         id <KaaClientState> state = mockProtocol(@protocol(KaaClientState));
         [given([state endpointAccessToken]) willReturn:@""];
@@ -77,7 +77,7 @@
     }
 }
 
-- (void) testCheckUserAttachWithCustomVerifier {
+- (void)testCheckUserAttachWithCustomVerifier {
     id <KaaClientState> state = mockProtocol(@protocol(KaaClientState));
     [given([state endpointAccessToken]) willReturn:@""];
     
@@ -88,7 +88,7 @@
     [verifyCount(transport, times(1)) sync];
 }
 
-- (void) testCheckAttachEndpoint {
+- (void)testCheckAttachEndpoint {
     id <KaaClientState> state = mockProtocol(@protocol(KaaClientState));
     [given([state endpointAccessToken]) willReturn:@""];
     id <UserTransport> transport = mockProtocol(@protocol(UserTransport));
@@ -106,7 +106,7 @@
     [verifyCount(transport, times(2)) sync];
 }
 
-- (void) testcheckDetachEndpoint {
+- (void)testcheckDetachEndpoint {
     id <KaaClientState> state = mockProtocol(@protocol(KaaClientState));
     [given([state endpointAccessToken]) willReturn:@""];
     id <UserTransport> transport = mockProtocol(@protocol(UserTransport));
@@ -121,7 +121,7 @@
     [verifyCount(transport, times(2)) sync];
 }
 
-- (void) testCheckAttachUser {
+- (void)testCheckAttachUser {
     id <KaaClientState> state = mockProtocol(@protocol(KaaClientState));
     [given([state endpointAccessToken]) willReturn:@""];
     
@@ -133,7 +133,7 @@
     [verifyCount(transport, times(1)) sync];
 }
 
-- (void) testCheckWrappers {
+- (void)testCheckWrappers {
     NSString *token1 = @"token1";
     NSString *token2 = @"token2";
     
@@ -189,7 +189,7 @@
     XCTAssertNotNil(ekh1);
 }
 
-- (void) testCheckOnAttachedDelegate {
+- (void)testCheckOnAttachedDelegate {
     id <KaaClientState> state = mockProtocol(@protocol(KaaClientState));
     [given([state endpointAccessToken]) willReturn:@""];
     UserAttachNotification *attachNotification = [[UserAttachNotification alloc] init];
@@ -221,7 +221,7 @@
     [verifyCount(state, times(4)) setIsAttachedToUser:YES];
 }
 
-- (void) testCheckOnDetachedDelegate {
+- (void)testCheckOnDetachedDelegate {
     id <KaaClientState> state = mockProtocol(@protocol(KaaClientState));
     [given([state endpointAccessToken]) willReturn:@""];
     UserDetachNotification *detachedNotification = [[UserDetachNotification alloc] init];

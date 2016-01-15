@@ -65,7 +65,7 @@
 
 @implementation DefaultLogUploadStrategyTest
 
-- (void) testNOOPDecision {
+- (void)testNOOPDecision {
     DefaultLogUploadStrategy *strategy = [[DefaultLogUploadStrategy alloc] initWithDefaults];
     [strategy setBatchSize:20];
     [strategy setVolumeThreshold:60];
@@ -75,7 +75,7 @@
     XCTAssertEqual(LOG_UPLOAD_STRATEGY_DECISION_NOOP, [strategy isUploadNeeded:status]);
 }
 
-- (void) testUpdateDecision {
+- (void)testUpdateDecision {
     DefaultLogUploadStrategy *strategy = [[DefaultLogUploadStrategy alloc] initWithDefaults];
     [strategy setBatchSize:20];
     [strategy setVolumeThreshold:60];

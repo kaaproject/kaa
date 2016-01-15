@@ -66,7 +66,7 @@ static NSDictionary *SUPPORTED_TYPES;
 
 @implementation DefaultOperationHttpChannelTest
 
-- (void) setUp {
+- (void)setUp {
     SUPPORTED_TYPES =
     [NSDictionary dictionaryWithObjects:@[[NSNumber numberWithInt:CHANNEL_DIRECTION_UP], [NSNumber numberWithInt:CHANNEL_DIRECTION_UP]] forKeys:@[[NSNumber numberWithInt:TRANSPORT_TYPE_EVENT], [NSNumber numberWithInt:TRANSPORT_TYPE_LOGGING]]];
 }

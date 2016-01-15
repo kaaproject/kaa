@@ -40,7 +40,7 @@
     return self;
 }
 
-- (void) shutDownExecutor:(NSOperationQueue*)queue {
+- (void)shutDownExecutor:(NSOperationQueue*)queue {
     
     if (!queue) {
         DDLogWarn(@"%@ Can't shutdown empty executor", TAG);
@@ -81,11 +81,11 @@
     return nil;
 }
 
-- (void) stop {
+- (void)stop {
     [NSException raise:NSInternalInconsistencyException format:@"Not implemented in abstract class"];
 }
 
-- (void) initiate {
+- (void)initiate {
     [NSException raise:NSInternalInconsistencyException format:@"Not implemented in abstract class"];
 }
 
