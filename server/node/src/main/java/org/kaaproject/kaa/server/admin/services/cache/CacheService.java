@@ -37,8 +37,6 @@ public interface CacheService {
 
         private static final long serialVersionUID = 8594934041188059060L;
 
-        public static final String SDK_KEY_PARAMETER = "sdkKey";
-
         private final SdkProfileDto sdkProfile;
         private final SdkPlatform targetPlatform;
 

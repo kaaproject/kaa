@@ -174,7 +174,7 @@ public class SdkProfilesGrid extends AbstractKaaGrid<SdkProfileDto, String> {
         };
 
         ActionButtonCell<SdkProfileDto> cell;
-        cell = new ActionButtonCell<SdkProfileDto>(Utils.resources.download(), label, embedded, actionListener, actionValidator);
+        cell = new ActionButtonCell<SdkProfileDto>(Utils.resources.download_grey(), label, embedded, actionListener, actionValidator);
 
         return new Column<SdkProfileDto, SdkProfileDto>(cell) {
             @Override

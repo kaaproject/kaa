@@ -36,9 +36,11 @@ import org.kaaproject.kaa.server.admin.client.mvp.place.ServerProfileSchemaPlace
 import org.kaaproject.kaa.server.admin.client.mvp.place.TopicPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointProfileView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.dialog.EditSchemaRecordDialog;
+import org.kaaproject.kaa.server.admin.client.servlet.ServletHelper;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.endpoint.EndpointProfileViewDto;
 import org.kaaproject.kaa.server.admin.shared.schema.SchemaInfoDto;
+import org.kaaproject.kaa.server.admin.shared.servlet.ServletParams.ProfileType;
 
 import com.google.common.io.BaseEncoding;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -152,6 +154,14 @@ public class EndpointProfileActivity extends AbstractDetailsActivity<EndpointPro
                 goTo(endpointProfSchemaPlace);
             }
         }));
+        
+        registrations.add(detailsView.getDownloadEndpointProfileJsonButton().addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                ServletHelper.downloadEndpointProfile(BaseEncoding.base64().encode(entity.getEndpointKeyHash()), ProfileType.CLIENT);
+            }
+        }));
+        
         detailsView.getEndpointProfForm().setValue(entity.getProfileRecord());
         detailsView.getServerProfForm().setValue(entity.getServerProfileRecord());
         detailsView.getServerProfForm().setReadOnly(true);
@@ -164,6 +174,13 @@ public class EndpointProfileActivity extends AbstractDetailsActivity<EndpointPro
                         .getServerProfileSchemaVersion().getId());
                 serverProfSchemaPlace.setPreviousPlace(place);
                 goTo(serverProfSchemaPlace);
+            }
+        }));
+        
+        registrations.add(detailsView.getDownloadServerProfileJsonButton().addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                ServletHelper.downloadEndpointProfile(BaseEncoding.base64().encode(entity.getEndpointKeyHash()), ProfileType.SERVER);
             }
         }));
 

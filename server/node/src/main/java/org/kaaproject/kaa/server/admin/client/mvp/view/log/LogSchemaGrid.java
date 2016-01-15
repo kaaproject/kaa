@@ -65,7 +65,7 @@ public class LogSchemaGrid extends BaseSchemasGrid<LogSchemaDto>{
     }
 
     private Column<LogSchemaDto, LogSchemaDto> constructDownloadLibraryColumn(String text) {
-        ActionButtonCell<LogSchemaDto> cell = new ActionButtonCell<>(Utils.resources.download(), text, embedded,
+        ActionButtonCell<LogSchemaDto> cell = new ActionButtonCell<>(Utils.resources.download_grey(), text, embedded,
                 new ActionListener<LogSchemaDto>() {
                     @Override
                     public void onItemAction(LogSchemaDto value) {

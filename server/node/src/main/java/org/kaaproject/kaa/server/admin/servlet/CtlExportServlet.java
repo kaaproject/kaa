@@ -17,6 +17,7 @@
 package org.kaaproject.kaa.server.admin.servlet;
 
 import java.io.IOException;
+import java.net.URLDecoder;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletConfig;
@@ -30,12 +31,13 @@ import net.iharder.Base64;
 import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.server.admin.services.cache.CacheService;
 import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaExportKey;
+import org.kaaproject.kaa.server.admin.shared.servlet.ServletParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
-public class CtlExportServlet extends HttpServlet implements Servlet {
+public class CtlExportServlet extends HttpServlet implements Servlet, ServletParams {
 
     private static final long serialVersionUID = 1584721028492234643L;
 
@@ -55,7 +57,7 @@ public class CtlExportServlet extends HttpServlet implements Servlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String ctlExportKeyBase64 = request.getParameter(CtlSchemaExportKey.CTL_EXPORT_KEY_PARAMETER);
+        String ctlExportKeyBase64 = URLDecoder.decode(request.getParameter(CTL_EXPORT_KEY_PARAMETER), "UTF-8");
         try {
             CtlSchemaExportKey key = (CtlSchemaExportKey) Base64.decodeToObject(ctlExportKeyBase64, Base64.URL_SAFE, null);
             FileData ctlExportData = cacheService.getExportedCtlSchema(key);

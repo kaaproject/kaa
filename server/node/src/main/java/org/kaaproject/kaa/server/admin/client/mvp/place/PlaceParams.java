@@ -19,6 +19,8 @@ package org.kaaproject.kaa.server.admin.client.mvp.place;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.gwt.http.client.URL;
+
 public class PlaceParams {
 
     public static final String PARAMS_SEPARATOR = "&";
@@ -32,7 +34,7 @@ public class PlaceParams {
             if (paramsUrl.length() > 0) {
                 paramsUrl.append(PARAMS_SEPARATOR);
             }
-            paramsUrl.append(key).append("=").append(val);
+            paramsUrl.append(key).append("=").append(URL.encodeQueryString(val));
         }
         return paramsUrl.toString();
     }
@@ -44,7 +46,7 @@ public class PlaceParams {
             for (String param : params) {
                 String[] keyVal = param.split("=");
                 if (keyVal != null && keyVal.length == 2) {
-                    paramsMap.put(keyVal[0], keyVal[1]);
+                    paramsMap.put(keyVal[0], URL.decodeQueryString(keyVal[1]));
                 }
             }
         }

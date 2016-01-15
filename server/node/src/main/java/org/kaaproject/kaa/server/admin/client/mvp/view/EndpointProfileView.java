@@ -39,9 +39,11 @@ public interface EndpointProfileView extends BaseDetailsView {
 
     Anchor getEndpointProfSchemaName();
     RecordPanel getEndpointProfForm();
+    HasClickHandlers getDownloadEndpointProfileJsonButton();
 
     Anchor getServerProfSchemaName();
     RecordPanel getServerProfForm();
+    HasClickHandlers getDownloadServerProfileJsonButton();
     HasClickHandlers getEditServerProfileButton();
 
     Anchor getSdkAnchor();
