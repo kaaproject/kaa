@@ -61,7 +61,7 @@ public class KaaClientPropertiesState implements KaaClientState {
     private static final String PROFILE_HASH = "PROFILE_HASH";
     private static final String ENDPOINT_ACCESS_TOKEN = "ENDPOINT_TOKEN";
 
-    /** The Constant logger. */
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(KaaClientPropertiesState.class);
 
     private static final String ATTACHED_ENDPOINTS = "attached_eps";

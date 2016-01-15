@@ -78,7 +78,7 @@ public class ProfileFilterRecordDto extends StructureRecordDto<ProfileFilterDto>
     }
 
     @Override
-    public int compareTo(ProfileFilterRecordDto o) { //NOSONAR
+    public int compareTo(ProfileFilterRecordDto o) {
         int endpointProfileShemaVersion = getEndpointProfileSchemaVersion() != null ? 
                                                 getEndpointProfileSchemaVersion() : -1;
         int otherEndpointProfileShemaVersion = o.getEndpointProfileSchemaVersion() != null ? 
@@ -94,4 +94,13 @@ public class ProfileFilterRecordDto extends StructureRecordDto<ProfileFilterDto>
         return result;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 }

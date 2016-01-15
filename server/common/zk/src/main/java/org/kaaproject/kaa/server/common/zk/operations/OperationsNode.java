@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
  */
 public class OperationsNode extends WorkerNodeTracker {
 
-    /** The Constant logger. */
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(BootstrapNode.class);
 
     /** The node info. */

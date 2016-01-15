@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
  * Main class to start CLI Client session.
  */
 public class BaseCliThriftClient {
-    /** The Constant logger. */
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory
             .getLogger(BaseCliThriftClient.class);
 

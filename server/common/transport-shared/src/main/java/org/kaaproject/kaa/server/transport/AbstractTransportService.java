@@ -52,7 +52,7 @@ import org.springframework.core.type.filter.AnnotationTypeFilter;
 public abstract class AbstractTransportService implements TransportService {
     protected static final String TRANSPORT_CONFIGURATION_SCAN_PACKAGE = "org.kaaproject.kaa.server.transport";
 
-    /** The Constant logger. */
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(AbstractTransportService.class);
 
     private final Map<Integer, TransportConfig> configs;

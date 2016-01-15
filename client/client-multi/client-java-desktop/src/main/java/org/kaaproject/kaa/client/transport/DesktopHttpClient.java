@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 
 public class DesktopHttpClient extends AbstractHttpClient {
 
-    /** The Constant logger. */
+    /** The Constant LOG. */
     public static final Logger LOG = LoggerFactory // NOSONAR
             .getLogger(DesktopHttpClient.class);
 

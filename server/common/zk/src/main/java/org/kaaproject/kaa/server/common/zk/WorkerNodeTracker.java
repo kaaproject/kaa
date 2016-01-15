@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class WorkerNodeTracker extends ControlNodeTracker {
 
-    /** The Constant logger. */
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(WorkerNodeTracker.class);
 
     /** The endpoint cache. */

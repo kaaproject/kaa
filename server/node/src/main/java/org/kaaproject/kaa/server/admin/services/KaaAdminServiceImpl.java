@@ -154,7 +154,7 @@ import com.google.common.base.Charsets;
 public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
 
     /**
-     * The Constant logger.
+     * The Constant LOG.
      */
     private static final Logger LOG = LoggerFactory.getLogger(KaaAdminServiceImpl.class);
 

@@ -27,7 +27,7 @@ import java.io.ObjectOutputStream;
 
 public class DtoByteMarshaller {
 
-    /** The Constant logger. */
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory
             .getLogger(DtoByteMarshaller.class);
 

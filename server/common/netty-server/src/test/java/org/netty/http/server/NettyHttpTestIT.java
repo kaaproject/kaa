@@ -107,7 +107,7 @@ import org.slf4j.LoggerFactory;
  */
 public class NettyHttpTestIT {
 
-    /** The Constant logger. */
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(NettyHttpTestIT.class);
     
     private static String[] hex = new String[] {"0","1","2","3","4","5","6", "7","8","9","A","B","C","D","E","F"};
