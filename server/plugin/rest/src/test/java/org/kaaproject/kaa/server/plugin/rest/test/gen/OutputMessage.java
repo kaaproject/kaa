@@ -7,9 +7,10 @@ package org.kaaproject.kaa.server.plugin.rest.test.gen;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class OutputMessage extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"OutputMessage\",\"namespace\":\"org.kaaproject.kaa.server.plugin.rest.test.gen\",\"fields\":[{\"name\":\"body\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"OutputMessage\",\"namespace\":\"org.kaaproject.kaa.server.plugin.rest.test.gen\",\"fields\":[{\"name\":\"x\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":\"null\"},{\"name\":\"y\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":\"null\"}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
-   private java.lang.String body;
+   private java.lang.String x;
+   private java.lang.String y;
 
   /**
    * Default constructor.  Note that this does not initialize fields
@@ -21,15 +22,17 @@ public class OutputMessage extends org.apache.avro.specific.SpecificRecordBase i
   /**
    * All-args constructor.
    */
-  public OutputMessage(java.lang.String body) {
-    this.body = body;
+  public OutputMessage(java.lang.String x, java.lang.String y) {
+    this.x = x;
+    this.y = y;
   }
 
   public org.apache.avro.Schema getSchema() { return SCHEMA$; }
   // Used by DatumWriter.  Applications should not call. 
   public java.lang.Object get(int field$) {
     switch (field$) {
-    case 0: return body;
+    case 0: return x;
+    case 1: return y;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -37,24 +40,40 @@ public class OutputMessage extends org.apache.avro.specific.SpecificRecordBase i
   @SuppressWarnings(value="unchecked")
   public void put(int field$, java.lang.Object value$) {
     switch (field$) {
-    case 0: body = (java.lang.String)value$; break;
+    case 0: x = (java.lang.String)value$; break;
+    case 1: y = (java.lang.String)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
 
   /**
-   * Gets the value of the 'body' field.
+   * Gets the value of the 'x' field.
    */
-  public java.lang.String getBody() {
-    return body;
+  public java.lang.String getX() {
+    return x;
   }
 
   /**
-   * Sets the value of the 'body' field.
+   * Sets the value of the 'x' field.
    * @param value the value to set.
    */
-  public void setBody(java.lang.String value) {
-    this.body = value;
+  public void setX(java.lang.String value) {
+    this.x = value;
+  }
+
+  /**
+   * Gets the value of the 'y' field.
+   */
+  public java.lang.String getY() {
+    return y;
+  }
+
+  /**
+   * Sets the value of the 'y' field.
+   * @param value the value to set.
+   */
+  public void setY(java.lang.String value) {
+    this.y = value;
   }
 
   /** Creates a new OutputMessage RecordBuilder */
@@ -78,7 +97,8 @@ public class OutputMessage extends org.apache.avro.specific.SpecificRecordBase i
   public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<OutputMessage>
     implements org.apache.avro.data.RecordBuilder<OutputMessage> {
 
-    private java.lang.String body;
+    private java.lang.String x;
+    private java.lang.String y;
 
     /** Creates a new Builder */
     private Builder() {
@@ -88,43 +108,76 @@ public class OutputMessage extends org.apache.avro.specific.SpecificRecordBase i
     /** Creates a Builder by copying an existing Builder */
     private Builder(org.kaaproject.kaa.server.plugin.rest.test.gen.OutputMessage.Builder other) {
       super(other);
-      if (isValidValue(fields()[0], other.body)) {
-        this.body = data().deepCopy(fields()[0].schema(), other.body);
+      if (isValidValue(fields()[0], other.x)) {
+        this.x = data().deepCopy(fields()[0].schema(), other.x);
         fieldSetFlags()[0] = true;
+      }
+      if (isValidValue(fields()[1], other.y)) {
+        this.y = data().deepCopy(fields()[1].schema(), other.y);
+        fieldSetFlags()[1] = true;
       }
     }
     
     /** Creates a Builder by copying an existing OutputMessage instance */
     private Builder(org.kaaproject.kaa.server.plugin.rest.test.gen.OutputMessage other) {
             super(org.kaaproject.kaa.server.plugin.rest.test.gen.OutputMessage.SCHEMA$);
-      if (isValidValue(fields()[0], other.body)) {
-        this.body = data().deepCopy(fields()[0].schema(), other.body);
+      if (isValidValue(fields()[0], other.x)) {
+        this.x = data().deepCopy(fields()[0].schema(), other.x);
         fieldSetFlags()[0] = true;
+      }
+      if (isValidValue(fields()[1], other.y)) {
+        this.y = data().deepCopy(fields()[1].schema(), other.y);
+        fieldSetFlags()[1] = true;
       }
     }
 
-    /** Gets the value of the 'body' field */
-    public java.lang.String getBody() {
-      return body;
+    /** Gets the value of the 'x' field */
+    public java.lang.String getX() {
+      return x;
     }
     
-    /** Sets the value of the 'body' field */
-    public org.kaaproject.kaa.server.plugin.rest.test.gen.OutputMessage.Builder setBody(java.lang.String value) {
+    /** Sets the value of the 'x' field */
+    public org.kaaproject.kaa.server.plugin.rest.test.gen.OutputMessage.Builder setX(java.lang.String value) {
       validate(fields()[0], value);
-      this.body = value;
+      this.x = value;
       fieldSetFlags()[0] = true;
       return this; 
     }
     
-    /** Checks whether the 'body' field has been set */
-    public boolean hasBody() {
+    /** Checks whether the 'x' field has been set */
+    public boolean hasX() {
       return fieldSetFlags()[0];
     }
     
-    /** Clears the value of the 'body' field */
-    public org.kaaproject.kaa.server.plugin.rest.test.gen.OutputMessage.Builder clearBody() {
-      body = null;
+    /** Clears the value of the 'x' field */
+    public org.kaaproject.kaa.server.plugin.rest.test.gen.OutputMessage.Builder clearX() {
+      x = null;
       fieldSetFlags()[0] = false;
+      return this;
+    }
+
+    /** Gets the value of the 'y' field */
+    public java.lang.String getY() {
+      return y;
+    }
+    
+    /** Sets the value of the 'y' field */
+    public org.kaaproject.kaa.server.plugin.rest.test.gen.OutputMessage.Builder setY(java.lang.String value) {
+      validate(fields()[1], value);
+      this.y = value;
+      fieldSetFlags()[1] = true;
+      return this; 
+    }
+    
+    /** Checks whether the 'y' field has been set */
+    public boolean hasY() {
+      return fieldSetFlags()[1];
+    }
+    
+    /** Clears the value of the 'y' field */
+    public org.kaaproject.kaa.server.plugin.rest.test.gen.OutputMessage.Builder clearY() {
+      y = null;
+      fieldSetFlags()[1] = false;
       return this;
     }
 
@@ -132,7 +185,8 @@ public class OutputMessage extends org.apache.avro.specific.SpecificRecordBase i
     public OutputMessage build() {
       try {
         OutputMessage record = new OutputMessage();
-        record.body = fieldSetFlags()[0] ? this.body : (java.lang.String) defaultValue(fields()[0]);
+        record.x = fieldSetFlags()[0] ? this.x : (java.lang.String) defaultValue(fields()[0]);
+        record.y = fieldSetFlags()[1] ? this.y : (java.lang.String) defaultValue(fields()[1]);
         return record;
       } catch (Exception e) {
         throw new org.apache.avro.AvroRuntimeException(e);

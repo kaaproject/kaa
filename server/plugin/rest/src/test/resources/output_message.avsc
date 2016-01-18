@@ -4,11 +4,20 @@
     "namespace": "org.kaaproject.kaa.server.plugin.rest.test.gen",
     "fields": [
         {
-            "name": "body",
+            "name": "x",
             "type": {
                 "type": "string",
                 "avro.java.string": "String"
-            }
+            },
+            "default": "null"
+        },
+        {
+            "name": "y",
+            "type": {
+                "type": "string",
+                "avro.java.string": "String"
+            },
+            "default": "null"
         }
     ]
 }

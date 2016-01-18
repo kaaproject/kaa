@@ -16,12 +16,15 @@
 
 package org.kaaproject.kaa.server.plugin.rest;
 
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
+import org.apache.avro.generic.GenericRecordBuilder;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.kaaproject.kaa.common.avro.AvroJsonConverter;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
@@ -90,10 +93,11 @@ public class HttpRequestDetails {
             Optional.ofNullable(itemConfig.getHttpRequestParams()).ifPresent(collection -> {
                 collection.forEach(p -> {
                     String key = p.getName();
-                    String value = (String) this.getHttpRequestBody().get(p.getAvroSchemaMapping());
+                    String value = this.getHttpRequestBody().get(p.getAvroSchemaMapping()).toString();
                     this.httpRequestParams.add(key, value);
                 });
             });
+            LOG.debug("Request parameters: {}", this.httpRequestParams.toString());
         }
         return this.httpRequestParams;
     }
@@ -106,7 +110,6 @@ public class HttpRequestDetails {
             try {
                 GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(this.message.getItemInfo().getInMessageSchema());
                 byte[] messageData = ((EndpointMessage) this.message.getMsg()).getMessageData();
-                LOG.debug("Message data: {}", Arrays.toString(messageData));
                 this.httpRequestBody = converter.decodeJson(messageData);
             } catch (Exception cause) {
                 LOG.error("Failed to decode message data!", cause);

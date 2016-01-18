@@ -7,9 +7,11 @@ package org.kaaproject.kaa.server.plugin.rest.test.gen;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class InputMessage extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"InputMessage\",\"namespace\":\"org.kaaproject.kaa.server.plugin.rest.test.gen\",\"fields\":[{\"name\":\"body\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"InputMessage\",\"namespace\":\"org.kaaproject.kaa.server.plugin.rest.test.gen\",\"fields\":[{\"name\":\"a\",\"type\":\"int\",\"default\":0},{\"name\":\"b\",\"type\":\"int\",\"default\":0},{\"name\":\"c\",\"type\":\"int\",\"default\":0}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
-   private java.lang.String body;
+   private int a;
+   private int b;
+   private int c;
 
   /**
    * Default constructor.  Note that this does not initialize fields
@@ -21,15 +23,19 @@ public class InputMessage extends org.apache.avro.specific.SpecificRecordBase im
   /**
    * All-args constructor.
    */
-  public InputMessage(java.lang.String body) {
-    this.body = body;
+  public InputMessage(java.lang.Integer a, java.lang.Integer b, java.lang.Integer c) {
+    this.a = a;
+    this.b = b;
+    this.c = c;
   }
 
   public org.apache.avro.Schema getSchema() { return SCHEMA$; }
   // Used by DatumWriter.  Applications should not call. 
   public java.lang.Object get(int field$) {
     switch (field$) {
-    case 0: return body;
+    case 0: return a;
+    case 1: return b;
+    case 2: return c;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -37,24 +43,56 @@ public class InputMessage extends org.apache.avro.specific.SpecificRecordBase im
   @SuppressWarnings(value="unchecked")
   public void put(int field$, java.lang.Object value$) {
     switch (field$) {
-    case 0: body = (java.lang.String)value$; break;
+    case 0: a = (java.lang.Integer)value$; break;
+    case 1: b = (java.lang.Integer)value$; break;
+    case 2: c = (java.lang.Integer)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
 
   /**
-   * Gets the value of the 'body' field.
+   * Gets the value of the 'a' field.
    */
-  public java.lang.String getBody() {
-    return body;
+  public java.lang.Integer getA() {
+    return a;
   }
 
   /**
-   * Sets the value of the 'body' field.
+   * Sets the value of the 'a' field.
    * @param value the value to set.
    */
-  public void setBody(java.lang.String value) {
-    this.body = value;
+  public void setA(java.lang.Integer value) {
+    this.a = value;
+  }
+
+  /**
+   * Gets the value of the 'b' field.
+   */
+  public java.lang.Integer getB() {
+    return b;
+  }
+
+  /**
+   * Sets the value of the 'b' field.
+   * @param value the value to set.
+   */
+  public void setB(java.lang.Integer value) {
+    this.b = value;
+  }
+
+  /**
+   * Gets the value of the 'c' field.
+   */
+  public java.lang.Integer getC() {
+    return c;
+  }
+
+  /**
+   * Sets the value of the 'c' field.
+   * @param value the value to set.
+   */
+  public void setC(java.lang.Integer value) {
+    this.c = value;
   }
 
   /** Creates a new InputMessage RecordBuilder */
@@ -78,7 +116,9 @@ public class InputMessage extends org.apache.avro.specific.SpecificRecordBase im
   public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<InputMessage>
     implements org.apache.avro.data.RecordBuilder<InputMessage> {
 
-    private java.lang.String body;
+    private int a;
+    private int b;
+    private int c;
 
     /** Creates a new Builder */
     private Builder() {
@@ -88,43 +128,106 @@ public class InputMessage extends org.apache.avro.specific.SpecificRecordBase im
     /** Creates a Builder by copying an existing Builder */
     private Builder(org.kaaproject.kaa.server.plugin.rest.test.gen.InputMessage.Builder other) {
       super(other);
-      if (isValidValue(fields()[0], other.body)) {
-        this.body = data().deepCopy(fields()[0].schema(), other.body);
+      if (isValidValue(fields()[0], other.a)) {
+        this.a = data().deepCopy(fields()[0].schema(), other.a);
         fieldSetFlags()[0] = true;
+      }
+      if (isValidValue(fields()[1], other.b)) {
+        this.b = data().deepCopy(fields()[1].schema(), other.b);
+        fieldSetFlags()[1] = true;
+      }
+      if (isValidValue(fields()[2], other.c)) {
+        this.c = data().deepCopy(fields()[2].schema(), other.c);
+        fieldSetFlags()[2] = true;
       }
     }
     
     /** Creates a Builder by copying an existing InputMessage instance */
     private Builder(org.kaaproject.kaa.server.plugin.rest.test.gen.InputMessage other) {
             super(org.kaaproject.kaa.server.plugin.rest.test.gen.InputMessage.SCHEMA$);
-      if (isValidValue(fields()[0], other.body)) {
-        this.body = data().deepCopy(fields()[0].schema(), other.body);
+      if (isValidValue(fields()[0], other.a)) {
+        this.a = data().deepCopy(fields()[0].schema(), other.a);
         fieldSetFlags()[0] = true;
+      }
+      if (isValidValue(fields()[1], other.b)) {
+        this.b = data().deepCopy(fields()[1].schema(), other.b);
+        fieldSetFlags()[1] = true;
+      }
+      if (isValidValue(fields()[2], other.c)) {
+        this.c = data().deepCopy(fields()[2].schema(), other.c);
+        fieldSetFlags()[2] = true;
       }
     }
 
-    /** Gets the value of the 'body' field */
-    public java.lang.String getBody() {
-      return body;
+    /** Gets the value of the 'a' field */
+    public java.lang.Integer getA() {
+      return a;
     }
     
-    /** Sets the value of the 'body' field */
-    public org.kaaproject.kaa.server.plugin.rest.test.gen.InputMessage.Builder setBody(java.lang.String value) {
+    /** Sets the value of the 'a' field */
+    public org.kaaproject.kaa.server.plugin.rest.test.gen.InputMessage.Builder setA(int value) {
       validate(fields()[0], value);
-      this.body = value;
+      this.a = value;
       fieldSetFlags()[0] = true;
       return this; 
     }
     
-    /** Checks whether the 'body' field has been set */
-    public boolean hasBody() {
+    /** Checks whether the 'a' field has been set */
+    public boolean hasA() {
       return fieldSetFlags()[0];
     }
     
-    /** Clears the value of the 'body' field */
-    public org.kaaproject.kaa.server.plugin.rest.test.gen.InputMessage.Builder clearBody() {
-      body = null;
+    /** Clears the value of the 'a' field */
+    public org.kaaproject.kaa.server.plugin.rest.test.gen.InputMessage.Builder clearA() {
       fieldSetFlags()[0] = false;
+      return this;
+    }
+
+    /** Gets the value of the 'b' field */
+    public java.lang.Integer getB() {
+      return b;
+    }
+    
+    /** Sets the value of the 'b' field */
+    public org.kaaproject.kaa.server.plugin.rest.test.gen.InputMessage.Builder setB(int value) {
+      validate(fields()[1], value);
+      this.b = value;
+      fieldSetFlags()[1] = true;
+      return this; 
+    }
+    
+    /** Checks whether the 'b' field has been set */
+    public boolean hasB() {
+      return fieldSetFlags()[1];
+    }
+    
+    /** Clears the value of the 'b' field */
+    public org.kaaproject.kaa.server.plugin.rest.test.gen.InputMessage.Builder clearB() {
+      fieldSetFlags()[1] = false;
+      return this;
+    }
+
+    /** Gets the value of the 'c' field */
+    public java.lang.Integer getC() {
+      return c;
+    }
+    
+    /** Sets the value of the 'c' field */
+    public org.kaaproject.kaa.server.plugin.rest.test.gen.InputMessage.Builder setC(int value) {
+      validate(fields()[2], value);
+      this.c = value;
+      fieldSetFlags()[2] = true;
+      return this; 
+    }
+    
+    /** Checks whether the 'c' field has been set */
+    public boolean hasC() {
+      return fieldSetFlags()[2];
+    }
+    
+    /** Clears the value of the 'c' field */
+    public org.kaaproject.kaa.server.plugin.rest.test.gen.InputMessage.Builder clearC() {
+      fieldSetFlags()[2] = false;
       return this;
     }
 
@@ -132,7 +235,9 @@ public class InputMessage extends org.apache.avro.specific.SpecificRecordBase im
     public InputMessage build() {
       try {
         InputMessage record = new InputMessage();
-        record.body = fieldSetFlags()[0] ? this.body : (java.lang.String) defaultValue(fields()[0]);
+        record.a = fieldSetFlags()[0] ? this.a : (java.lang.Integer) defaultValue(fields()[0]);
+        record.b = fieldSetFlags()[1] ? this.b : (java.lang.Integer) defaultValue(fields()[1]);
+        record.c = fieldSetFlags()[2] ? this.c : (java.lang.Integer) defaultValue(fields()[2]);
         return record;
       } catch (Exception e) {
         throw new org.apache.avro.AvroRuntimeException(e);

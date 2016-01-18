@@ -26,6 +26,9 @@ import org.kaaproject.kaa.server.common.core.plugin.def.PluginDef;
 import org.kaaproject.kaa.server.plugin.contracts.messaging.MessagingPluginContract;
 import org.kaaproject.kaa.server.plugin.rest.gen.KaaRestPluginConfig;
 
+/**
+ * @author Bohdan Khablenko
+ */
 public class KaaRestPluginDef implements PluginDef {
 
     private static final long serialVersionUID = -6539544242450109900L;

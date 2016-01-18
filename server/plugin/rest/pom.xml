@@ -67,7 +67,7 @@
                             <stringType>String</stringType>
                             <sourceDirectory>${project.basedir}/src/main/resources/</sourceDirectory>
                             <outputDirectory>${project.basedir}/src/main/java/</outputDirectory>
-                            <fieldVisibility>PRIVATE</fieldVisibility>
+                            <fieldVisibility>private</fieldVisibility>
                             <includes>
                                 <include>rest_plugin.avsc</include>
                                 <include>rest_plugin_item.avsc</include>
@@ -84,7 +84,7 @@
                             <stringType>String</stringType>
                             <sourceDirectory>${project.basedir}/src/test/resources/</sourceDirectory>
                             <outputDirectory>${project.basedir}/src/test/java/</outputDirectory>
-                            <fieldVisibility>PRIVATE</fieldVisibility>
+                            <fieldVisibility>private</fieldVisibility>
                             <includes>
                                 <include>input_message.avsc</include>
                                 <include>output_message.avsc</include>

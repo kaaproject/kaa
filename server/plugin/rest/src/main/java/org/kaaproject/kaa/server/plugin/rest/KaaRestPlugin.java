@@ -18,11 +18,14 @@ package org.kaaproject.kaa.server.plugin.rest;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.apache.avro.Schema;
+import org.apache.avro.Schema.Field;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.generic.GenericRecordBuilder;
 import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.kaaproject.kaa.common.avro.AvroJsonConverter;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
@@ -47,6 +50,10 @@ public class KaaRestPlugin implements KaaPlugin {
     private KaaRestPluginConfig pluginConfig;
     private RestTemplate restTemplate = new RestTemplate();
 
+    public RestTemplate getRestTemplate() {
+        return this.restTemplate;
+    }
+
     @Override
     public void init(PluginInitContext context) throws PluginLifecycleException {
         AvroJsonConverter<KaaRestPluginConfig> converter = new AvroJsonConverter<>(KaaRestPluginConfig.SCHEMA$, KaaRestPluginConfig.class);
@@ -62,35 +69,46 @@ public class KaaRestPlugin implements KaaPlugin {
 
     @Override
     public void onPluginMessage(KaaPluginMessage message, PluginExecutionContext ctx) {
-        try {
-            HttpRequestDetails httpRequestDetails = new HttpRequestDetails(message, this.pluginConfig);
-            EndpointMessage response = httpRequestDetails.getResponse();
 
-            switch (httpRequestDetails.getHttpRequestMethod()) {
+        LOG.info("Received message [{}]", message.getUid());
+
+        try {
+            HttpRequestDetails details = new HttpRequestDetails(message, this.pluginConfig);
+            EndpointMessage response = details.getResponse();
+
+            switch (details.getHttpRequestMethod()) {
 
                 case GET:
-                    LOG.info("Incoming GET request for {}: {}", httpRequestDetails.getURL(), httpRequestDetails.getHttpRequestBody());
-                    response.setMessageData(this.doGet(httpRequestDetails));
+                    LOG.info("Processing GET for [{}] with {}", details.getURL(), details.getHttpRequestBody());
+                    response.setMessageData(this.getForObject(details));
+                    LOG.info("Responding to message [{}] with {}", message.getUid(), new String(response.getMessageData()));
                     ctx.tellPlugin(message.getUid(), response);
                     break;
 
                 case POST:
-                    LOG.info("Incoming POST request for {}: {}", httpRequestDetails.getURL(), httpRequestDetails.getHttpRequestBody());
-                    this.doPost(httpRequestDetails);
+                    LOG.info("Processing POST for [{}] with {}", details.getURL(), details.getHttpRequestBody());
+                    List<HttpResponseMapping> mappings = details.getHttpResponseMappings();
+                    if (mappings != null & !mappings.isEmpty()) {
+                        response.setMessageData(this.postForObject(details));
+                        LOG.info("Responding to message [{}] with {}", message.getUid(), new String(response.getMessageData()));
+                        ctx.tellPlugin(message.getUid(), response);
+                    } else {
+                        this.postForLocation(details);
+                    }
                     break;
 
                 case PUT:
-                    LOG.info("Incoming PUT request for {}: {}", httpRequestDetails.getURL(), httpRequestDetails.getHttpRequestBody());
-                    this.doPut(httpRequestDetails);
+                    LOG.info("Processing PUT for [{}] with {}", details.getURL(), details.getHttpRequestBody());
+                    this.doPut(details);
                     break;
 
                 case DELETE:
-                    LOG.info("Incoming DELETE request for {}: {}", httpRequestDetails.getURL(), httpRequestDetails.getHttpRequestBody());
-                    this.doDelete(httpRequestDetails);
+                    LOG.info("Processing DELETE for [{}] with {}", details.getURL(), details.getHttpRequestBody());
+                    this.doDelete(details);
                     break;
             }
         } catch (Exception cause) {
-            cause.printStackTrace();
+            LOG.error("Failed to process the message!", cause);
             throw new IllegalArgumentException(cause);
         }
     }
@@ -105,29 +123,38 @@ public class KaaRestPlugin implements KaaPlugin {
         }
     }
 
-    private byte[] doGet(HttpRequestDetails request) throws Exception {
+    private byte[] getForObject(HttpRequestDetails request) throws Exception {
 
         String response = this.restTemplate.getForObject(request.getURL(), String.class, request.getHttpRequestParams());
-        LOG.debug("Got response {} from {}", response.replaceAll("\\s+", " "), request.getURL());
+        LOG.info("The host responded with {}", response.replaceAll("\\s+", " "));
 
         Schema typeExpected = request.getResponseSchema();
         if (KaaRestPlugin.validate(response, typeExpected)) {
-            LOG.debug("{} matches the expected response type schema {}", response.replaceAll("\\s+", " "), typeExpected.toString().replaceAll("\\s+", " "));
             return response.getBytes();
         } else {
+            LOG.debug("Converting the response to the expected type {}", typeExpected.toString().replaceAll("\\s+", " "));
             GenericRecord buffer = KaaRestPlugin.mapResponseFields(response, request.getResponseSchema(), request.getHttpResponseMappings());
             return buffer.toString().getBytes();
         }
     }
 
-    // Used for testing
-    public RestTemplate getRestTemplate() {
-        return this.restTemplate;
+    private byte[] postForObject(HttpRequestDetails request) throws Exception {
+
+        String response = this.restTemplate.postForObject(request.getURL(), request.getHttpRequestParams(), String.class);
+        LOG.debug("The host responded with {}", response.replaceAll("\\s+", " "));
+
+        Schema typeExpected = request.getResponseSchema();
+        if (KaaRestPlugin.validate(response, typeExpected)) {
+            return response.getBytes();
+        } else {
+            LOG.debug("Converting the response to the expected type {}", typeExpected.toString().replaceAll("\\s+", " "));
+            GenericRecord buffer = KaaRestPlugin.mapResponseFields(response, request.getResponseSchema(), request.getHttpResponseMappings());
+            return buffer.toString().getBytes();
+        }
     }
 
-    // TODO: Possible response handling
-    private void doPost(HttpRequestDetails request) throws Exception {
-        this.restTemplate.postForObject(request.getURL(), request.getHttpRequestParams(), String.class);
+    private void postForLocation(HttpRequestDetails request) throws Exception {
+        this.restTemplate.postForLocation(request.getURL(), request.getHttpRequestParams());
     }
 
     private void doPut(HttpRequestDetails request) throws Exception {
@@ -138,35 +165,57 @@ public class KaaRestPlugin implements KaaPlugin {
         this.restTemplate.delete(request.getURL(), request.getHttpRequestParams());
     }
 
-    private static boolean validate(String content, Schema schema) {
+    private static boolean validate(String data, Schema schema) {
         boolean success = true;
         try {
-            new GenericAvroConverter<GenericRecord>(schema).decodeJson(content);
+            GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<GenericRecord>(schema);
+            converter.decodeJson(data);
         } catch (Exception ignored) {
             success = false;
         }
         return success;
     }
 
-    private static GenericRecord mapResponseFields(String content, Schema responseSchema, List<HttpResponseMapping> httpResponseMappings) throws Exception {
+    private static GenericRecord mapResponseFields(String responseBody, Schema responseType, List<HttpResponseMapping> responseMappings) throws Exception {
 
-        JsonNode response = new ObjectMapper().readTree(content);
-        GenericRecordBuilder buffer = new GenericRecordBuilder(responseSchema);
+        // Used to track response type fields that are missing a value
+        List<String> missingFields = responseType.getFields().stream().map(Field::name).collect(Collectors.toList());
 
-        Optional.ofNullable(httpResponseMappings).ifPresent(collection -> collection.forEach(mapping -> {
+        JsonNode response;
+        try {
+            response = new ObjectMapper().readTree(responseBody);
+        } catch (JsonParseException cause) {
+            LOG.error("{} is not a valid JSON!", responseBody);
+            throw new IllegalArgumentException(cause);
+        }
+
+        GenericRecordBuilder buffer = new GenericRecordBuilder(responseType);
+
+        Optional.ofNullable(responseMappings).ifPresent(collection -> collection.forEach(mapping -> {
             String field = mapping.getAvroSchemaField();
             JsonNode value = response.get(mapping.getResponseField());
-            buffer.set(field, value);
+            if (value != null) {
+                LOG.debug("Setting the field [{}] to {}", field, value.toString());
+                try {
+                    buffer.set(field, value);
+                    missingFields.remove(field);
+                } catch (Exception cause) {
+                    LOG.debug("Failed to set the field [{}]", field, cause);
+                    throw new IllegalArgumentException(cause);
+                }
+            }
         }));
 
+        missingFields.forEach(name -> {
+            Field field = responseType.getField(name);
+            JsonNode defaultValue = field.defaultValue();
+            if (defaultValue != null) {
+                LOG.debug("Using the default value {} for the field [{}]", defaultValue.toString(), name);
+            } else {
+                LOG.debug("The field [{}] is missing a value!", name);
+            }
+        });
+
         return buffer.build();
-    }
-
-    private static String press(String content) {
-        return KaaRestPlugin.press(content, true);
-    }
-
-    private static String press(String content, boolean flag) {
-        return flag ? content.replaceAll("\\s+", " ") : content;
     }
 }

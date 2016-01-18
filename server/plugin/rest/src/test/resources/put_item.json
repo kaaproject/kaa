@@ -1,0 +1,20 @@
+{
+    "path": "/test/put",
+    "httpRequestMethod": "put",
+    "httpRequestParams": {
+        "array": [
+            {
+                "name": "body",
+                "avroSchemaMapping": "body"
+            }
+        ]
+    },
+    "httpResponseMappings": {
+        "array": [
+            {
+                "responseField": "response",
+                "avroSchemaField": "body"
+            }
+        ]
+    }
+}
