@@ -602,7 +602,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
         DefaultBootstrapDataProcessor bootstrapDataProcessor = new DefaultBootstrapDataProcessor();
         bootstrapDataProcessor.setBootstrapTransport(transportContext.getBootstrapTransport());
 
-        DefaultOperationDataProcessor operationsDataProcessor = new DefaultOperationDataProcessor();
+        DefaultOperationDataProcessor operationsDataProcessor = new DefaultOperationDataProcessor(kaaClientState);
         operationsDataProcessor.setConfigurationTransport(transportContext.getConfigurationTransport());
         operationsDataProcessor.setEventTransport(transportContext.getEventTransport());
         operationsDataProcessor.setMetaDataTransport(transportContext.getMdTransport());
