@@ -22,10 +22,10 @@
 
 @interface DefaultProfileTransport ()
 
-@property (nonatomic,strong) id<ProfileManager> profileMgr;
-@property (nonatomic,strong) KaaClientProperties *properties;
+@property (nonatomic, strong) id<ProfileManager> profileMgr;
+@property (nonatomic, strong) KaaClientProperties *properties;
 
-- (BOOL)isProfileOutDated:(EndpointObjectHash *)currentProfileHash;
+- (BOOL)isProfileOutdated:(EndpointObjectHash *)currentProfileHash;
 
 @end
 
@@ -39,17 +39,17 @@
     if (self.clientState && self.profileMgr && self.properties) {
         NSData *serializedProfile = [self.profileMgr getSerializedProfile];
         EndpointObjectHash *currentProfileHash = [EndpointObjectHash fromSHA1:serializedProfile];
-        if ([self isProfileOutDated:currentProfileHash] || ![self.clientState isRegistred]) {
+        if ([self isProfileOutdated:currentProfileHash] || ![self.clientState isRegistred]) {
             [self.clientState setProfileHash:currentProfileHash];
             ProfileSyncRequest *request = [[ProfileSyncRequest alloc] init];
             request.endpointAccessToken = [KAAUnion unionWithBranch:KAA_UNION_STRING_OR_NULL_BRANCH_0
-                                                            andData:[self.clientState endpointAccessToken]];
+                                                               data:[self.clientState endpointAccessToken]];
             if (![self.clientState isRegistred]) {
                 [self.clientState publicKey]; //ensures that key pair is created
                 NSData *publicKey = [KeyUtils getPublicKey];
                 assert(publicKey != nil);
                 request.endpointPublicKey = [KAAUnion unionWithBranch:KAA_UNION_BYTES_OR_NULL_BRANCH_0
-                                                              andData:publicKey];
+                                                                 data:publicKey];
             }
             request.profileBody = serializedProfile;
             return request;
@@ -85,7 +85,7 @@
     return TRANSPORT_TYPE_PROFILE;
 }
 
-- (BOOL)isProfileOutDated:(EndpointObjectHash *)currentProfileHash {
+- (BOOL)isProfileOutdated:(EndpointObjectHash *)currentProfileHash {
     EndpointObjectHash *currentHash = [self.clientState profileHash];
     return !currentHash || ![currentProfileHash isEqual:currentHash];
 }

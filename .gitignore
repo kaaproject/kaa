@@ -33,7 +33,7 @@ build/
 DerivedData
 Pods/
 
-!Podfile.lock
+**/Podfile.lock
 !Manifest.lock
 
 .DS_Store
@@ -57,4 +57,3 @@ xcuserdata
 *.hmap
 *.ipa
 Tests/Pods
-Tests/Podfile.lock

@@ -21,10 +21,10 @@
 
 @interface DefaultNotificationTransport ()
 
-@property (nonatomic,strong) id<NotificationProcessor> nfProcessor;
-@property (copy) NSComparisonResult (^nfComparator)(Notification *first, Notification *second);
-@property (nonatomic,strong) NSMutableSet *acceptedUnicastNotificationIds;  //<NSString>
-@property (nonatomic,strong) NSMutableArray *sentNotificationCommands;      //<SubscriptionCommand>
+@property (nonatomic, strong) id<NotificationProcessor> notificationProcessor;
+@property (nonatomic, copy) NSComparisonResult (^notificationComparator)(Notification *first, Notification *second);
+@property (nonatomic, strong) NSMutableSet *acceptedUnicastNotificationIds;  //<NSString>
+@property (nonatomic, strong) NSMutableArray *sentNotificationCommands;      //<SubscriptionCommand>
 
 - (NSArray *)getTopicStates;
 - (NSArray *)getUnicastNotifications:(NSArray *)notifications;
@@ -40,7 +40,7 @@
         self.acceptedUnicastNotificationIds = [NSMutableSet set];
         self.sentNotificationCommands = [NSMutableArray array];
         
-        self.nfComparator = ^NSComparisonResult (Notification *first, Notification *second) {
+        self.notificationComparator = ^NSComparisonResult (Notification *first, Notification *second) {
             return [first.seqNumber.data intValue] - [second.seqNumber.data intValue];
         };
     }
@@ -56,7 +56,7 @@
     request.appStateSeqNumber = [self.clientState notificationSequenceNumber];
     NSArray *states = [self getTopicStates];
     if (states) {
-        request.topicStates = [KAAUnion unionWithBranch:KAA_UNION_ARRAY_TOPIC_STATE_OR_NULL_BRANCH_0 andData:states];
+        request.topicStates = [KAAUnion unionWithBranch:KAA_UNION_ARRAY_TOPIC_STATE_OR_NULL_BRANCH_0 data:states];
     }
     return request;
 }
@@ -72,19 +72,19 @@
         DDLogInfo(@"%@ Accepted unicast Notifications: %li", TAG,
                   (long)[self.acceptedUnicastNotificationIds count]);
         request.acceptedUnicastNotifications = [KAAUnion unionWithBranch:KAA_UNION_ARRAY_STRING_OR_NULL_BRANCH_0
-                                                                 andData:[self.acceptedUnicastNotificationIds allObjects]];
+                                                                 data:[self.acceptedUnicastNotificationIds allObjects]];
     }
     NSArray *states = [self getTopicStates];
     if (states) {
-         request.topicStates = [KAAUnion unionWithBranch:KAA_UNION_ARRAY_TOPIC_STATE_OR_NULL_BRANCH_0 andData:states];   
+         request.topicStates = [KAAUnion unionWithBranch:KAA_UNION_ARRAY_TOPIC_STATE_OR_NULL_BRANCH_0 data:states];   
     }
     request.subscriptionCommands = [KAAUnion unionWithBranch:KAA_UNION_ARRAY_SUBSCRIPTION_COMMAND_OR_NULL_BRANCH_0
-                                                     andData:self.sentNotificationCommands];
+                                                     data:self.sentNotificationCommands];
     return request;
 }
 
 - (void)onNotificationResponse:(NotificationSyncResponse *)response {
-    if (!self.nfProcessor || !self.clientState) {
+    if (!self.notificationProcessor || !self.clientState) {
         DDLogWarn(@"%@ Unable to process NotificationSyncResponse: invalid params", TAG);
         return;
     }
@@ -98,7 +98,7 @@
         for (Topic *topic in topics) {
             [self.clientState addTopic:topic];
         }
-        [self.nfProcessor topicsListUpdated:topics];
+        [self.notificationProcessor topicsListUpdated:topics];
     }
     
     if (response.notifications && response.notifications.branch == KAA_UNION_ARRAY_NOTIFICATION_OR_NULL_BRANCH_0) {
@@ -136,7 +136,7 @@
             }
         }
         
-        [self.nfProcessor notificationReceived:newNotifications];
+        [self.notificationProcessor notificationReceived:newNotifications];
     }
     
     @synchronized(self.sentNotificationCommands) {
@@ -155,9 +155,9 @@
     }
 }
 
-- (void)setNotificationProcessor:(id<NotificationProcessor>)processor {
-    self.nfProcessor = processor;
-}
+//- (void)setNotificationProcessor:(id<NotificationProcessor>)processor {
+//    self.notificationProcessor = processor;
+//}
 
 - (TransportType)getTransportType {
     return TRANSPORT_TYPE_NOTIFICATION;
@@ -180,12 +180,12 @@
             [result addObject:notification];
         }
     }
-    return [result sortedArrayUsingComparator:self.nfComparator];
+    return [result sortedArrayUsingComparator:self.notificationComparator];
 }
 
 - (NSMutableArray *)getTopicStates {
     NSMutableArray *states = nil;
-    NSDictionary *nfSubscriptions = [self.clientState getNfSubscriptions];
+    NSDictionary *nfSubscriptions = [self.clientState getNotificationSubscriptions];
     if ([nfSubscriptions count] > 0) {
         states = [NSMutableArray array];
         DDLogInfo(@"%@ Topic States:", TAG);

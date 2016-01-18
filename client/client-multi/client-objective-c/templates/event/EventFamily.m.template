@@ -14,7 +14,7 @@
 
 @implementation {event_family_class_name}
 
-- (instancetype)initWith:(id<EventManager>)eventManager andContext:(id<ExecutorContext>)executorContext {
+- (instancetype)initWithManager:(id<EventManager>)eventManager context:(id<ExecutorContext>)executorContext {
     self = [super init];
     if (self) {
         self.manager = eventManager;
@@ -33,7 +33,7 @@
     return result;
 }
 
-- (void)onGenericEvent:(NSString *)eventFQN withData:(NSData *)data from:(NSString *)source {
+- (void)onGenericEvent:(NSString *)eventFQN withData:(NSData *)data fromSource:(NSString *)source {
 
     {event_family_listeners_on_generic_event}
 

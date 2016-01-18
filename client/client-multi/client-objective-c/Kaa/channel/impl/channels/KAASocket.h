@@ -21,7 +21,7 @@
 @property (nonatomic,strong) NSInputStream *input;
 @property (nonatomic,strong) NSOutputStream *output;
 
-+ (instancetype)socketWithHost:(NSString *)host andPort:(int)port;
++ (instancetype)socketWithHost:(NSString *)host port:(int)port;
 - (void)open;
 - (void)close;
 

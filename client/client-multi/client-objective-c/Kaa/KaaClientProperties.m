@@ -100,13 +100,13 @@
             versionInfo.version = [[tokens objectAtIndex:2] intValue];
             [metaData setProtocolVersionInfo:versionInfo];
             [metaData setConnectionInfo:[self.base64 decodeString:[tokens objectAtIndex:3]]];
-            TransportProtocolId *key = [[TransportProtocolId alloc] initWithId:versionInfo.id andVersion:versionInfo.version];
+            TransportProtocolId *key = [[TransportProtocolId alloc] initWithId:versionInfo.id version:versionInfo.version];
             NSMutableArray *serverList = [servers objectForKey:key];
             if (!serverList) {
                 serverList = [NSMutableArray array];
                 [servers setObject:serverList forKey:key];
             }
-            [serverList addObject:[[GenericTransportInfo alloc] initWithServerType:SERVER_BOOTSTRAP andMeta:metaData]];
+            [serverList addObject:[[GenericTransportInfo alloc] initWithServerType:SERVER_BOOTSTRAP meta:metaData]];
         }
     }
     return servers;

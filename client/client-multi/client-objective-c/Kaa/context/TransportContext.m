@@ -18,7 +18,7 @@
 
 @interface TransportContext ()
 
-@property (nonatomic,strong) id<MetaDataTransport> mdTransport;
+@property (nonatomic,strong) id<MetaDataTransport> metadataTransport;
 @property (nonatomic,strong) id<BootstrapTransport> bootstrapTransport;
 @property (nonatomic,strong) id<ProfileTransport> profileTransport;
 @property (nonatomic,strong) id<EventTransport> eventTransport;
@@ -43,7 +43,7 @@
                              logTransport:(id<LogTransport>)log {
     self = [super init];
     if (self) {
-        self.mdTransport = metaData;
+        self.metadataTransport = metaData;
         self.bootstrapTransport = bootstrap;
         self.profileTransport = profile;
         self.eventTransport = event;
@@ -57,7 +57,7 @@
 }
 
 - (id<MetaDataTransport>)getMetaDataTransport {
-    return self.mdTransport;
+    return self.metadataTransport;
 }
 
 - (id<BootstrapTransport>)getBootstrapTransport {
@@ -92,7 +92,7 @@
     return self.logTransport;
 }
 
-- (void)initTransportsWithChannelManager:(id<KaaChannelManager>)manager andState:(id<KaaClientState>)state {
+- (void)initTransportsWithChannelManager:(id<KaaChannelManager>)manager state:(id<KaaClientState>)state {
     NSArray *kaaTransports = [NSArray arrayWithObjects:
                       self.bootstrapTransport, self.profileTransport,
                       self.eventTransport, self.notificationTransport,

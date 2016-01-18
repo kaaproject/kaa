@@ -38,7 +38,7 @@ static NSDictionary *SUPPORTED_TYPES;
 - (instancetype)initWithClient:(AbstractKaaClient *)client
                          state:(id<KaaClientState>)state
                failoverManager:(id<FailoverManager>)manager
-  andWantedNumberOfInvocations:(NSInteger)wantedNumberOfInvocations;
+  wantedNumberOfInvocations:(NSInteger)wantedNumberOfInvocations;
 @end
 
 @implementation DefaultOperationHttpChannelFake
@@ -46,7 +46,7 @@ static NSDictionary *SUPPORTED_TYPES;
 - (instancetype)initWithClient:(AbstractKaaClient *)client
                          state:(id<KaaClientState>)state
                failoverManager:(id<FailoverManager>)manager
-  andWantedNumberOfInvocations:(NSInteger)wantedNumberOfInvocations {
+  wantedNumberOfInvocations:(NSInteger)wantedNumberOfInvocations {
     self = [super initWithClient:client state:state failoverManager:manager];
     self.wantedNumberOfInvocations = wantedNumberOfInvocations;
     return self;
@@ -97,15 +97,15 @@ static NSDictionary *SUPPORTED_TYPES;
     
     [KeyUtils generateKeyPair];
     AbstractKaaClient *client = mock([AbstractKaaClient class]);
-    [given([client createHttpClientWithURL:anything() privateKey:[KeyUtils getPrivateKeyRef] publicKey:[KeyUtils getPublicKeyRef] remoteKey:anything()]) willReturn:httpClient];
+    [given([client createHttpClientWithURLString:anything() privateKeyRef:[KeyUtils getPrivateKeyRef] publicKeyRef:[KeyUtils getPublicKeyRef] remoteKey:anything()]) willReturn:httpClient];
     [given([client getChannelManager]) willReturn:manager];
     
     id <KaaClientState> state = mockProtocol(@protocol(KaaClientState));
     id <KaaDataMultiplexer> multiplexer = mockProtocol(@protocol(KaaDataMultiplexer));
     id <KaaDataDemultiplexer> demultiplexer = mockProtocol(@protocol(KaaDataDemultiplexer));
-    DefaultOperationHttpChannelFake *channel = [[DefaultOperationHttpChannelFake alloc] initWithClient:client state:state failoverManager:failoverManager andWantedNumberOfInvocations:2];
+    DefaultOperationHttpChannelFake *channel = [[DefaultOperationHttpChannelFake alloc] initWithClient:client state:state failoverManager:failoverManager wantedNumberOfInvocations:2];
     
-    id <TransportConnectionInfo> server = [self createTestServerInfoWithServerType:SERVER_BOOTSTRAP transportProtocolId:[TransportProtocolIdHolder TCPTransportID] host:@"localhost" port:9889 andPublicKey:[KeyUtils getPublicKey]];
+    id <TransportConnectionInfo> server = [self createTestServerInfoWithServerType:SERVER_BOOTSTRAP transportProtocolId:[TransportProtocolIdHolder TCPTransportID] host:@"localhost" port:9889 publicKey:[KeyUtils getPublicKey]];
     [channel setServer:server];
     
     [channel sync:TRANSPORT_TYPE_EVENT];
@@ -130,18 +130,18 @@ static NSDictionary *SUPPORTED_TYPES;
     [given([httpClient executeHttpRequest:anything() entity:anything() verifyResponse:anything()]) willThrow:excption];
     
     AbstractKaaClient *client = mock([AbstractKaaClient class]);
-    [given([client createHttpClientWithURL:anything() privateKey:[KeyUtils getPrivateKeyRef] publicKey:[KeyUtils getPublicKeyRef] remoteKey:anything()]) willReturn:httpClient];
+    [given([client createHttpClientWithURLString:anything() privateKeyRef:[KeyUtils getPrivateKeyRef] publicKeyRef:[KeyUtils getPublicKeyRef] remoteKey:anything()]) willReturn:httpClient];
     [given([client getChannelManager]) willReturn:manager];
     
     id <KaaClientState> state = mockProtocol(@protocol(KaaClientState));
     id <KaaDataMultiplexer> multiplexer = mockProtocol(@protocol(KaaDataMultiplexer));
     id <KaaDataDemultiplexer> demultiplexer = mockProtocol(@protocol(KaaDataDemultiplexer));
-    DefaultOperationHttpChannelFake *channel = [[DefaultOperationHttpChannelFake alloc] initWithClient:client state:state failoverManager:failoverManager andWantedNumberOfInvocations:0];
+    DefaultOperationHttpChannelFake *channel = [[DefaultOperationHttpChannelFake alloc] initWithClient:client state:state failoverManager:failoverManager wantedNumberOfInvocations:0];
     [channel setMultiplexer:multiplexer];
     [channel setDemultiplexer:demultiplexer];
     [channel shutdown];
     
-    id <TransportConnectionInfo> server = [self createTestServerInfoWithServerType:SERVER_BOOTSTRAP transportProtocolId:[TransportProtocolIdHolder TCPTransportID] host:@"localhost" port:9889 andPublicKey:[KeyUtils getPublicKey]];
+    id <TransportConnectionInfo> server = [self createTestServerInfoWithServerType:SERVER_BOOTSTRAP transportProtocolId:[TransportProtocolIdHolder TCPTransportID] host:@"localhost" port:9889 publicKey:[KeyUtils getPublicKey]];
     [channel setServer:server];
     
     [channel sync:TRANSPORT_TYPE_BOOTSTRAP];
@@ -160,10 +160,10 @@ static NSDictionary *SUPPORTED_TYPES;
 
 #pragma mark - Supporting methods 
 
-- (id<TransportConnectionInfo>) createTestServerInfoWithServerType:(ServerType)serverType transportProtocolId:(TransportProtocolId *)TPid host:(NSString *)host port:(uint32_t)port andPublicKey:(NSData *)publicKey {
+- (id<TransportConnectionInfo>)createTestServerInfoWithServerType:(ServerType)serverType transportProtocolId:(TransportProtocolId *)TPid host:(NSString *)host port:(uint32_t)port publicKey:(NSData *)publicKey {
     ProtocolMetaData *md = [[ProtocolMetaData alloc] init];
-    md = [TestsHelper buildMetaDataWithTPid:TPid host:host port:port andPublicKey:publicKey];
-    return  [[GenericTransportInfo alloc] initWithServerType:serverType andMeta:md];
+    md = [TestsHelper buildMetaDataWithTransportProtocolId:TPid host:host port:port publicKey:publicKey];
+    return  [[GenericTransportInfo alloc] initWithServerType:serverType meta:md];
 }
 
 @end

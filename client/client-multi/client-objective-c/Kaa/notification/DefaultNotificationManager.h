@@ -23,7 +23,7 @@
 
 @interface DefaultNotificationManager : NSObject <NotificationManager,NotificationProcessor>
 
-- (instancetype)initWith:(id<KaaClientState>)state
+- (instancetype)initWithState:(id<KaaClientState>)state
          executorContext:(id<ExecutorContext>)context
    notificationTransport:(id<NotificationTransport>)transport;
 

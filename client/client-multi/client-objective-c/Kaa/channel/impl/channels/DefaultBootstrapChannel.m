@@ -24,7 +24,7 @@
 
 @interface BootstrapRunner : NSOperation
 
-@property (nonatomic,weak) DefaultBootstrapChannel *btChannel;
+@property (nonatomic, weak) DefaultBootstrapChannel *bootstrapChannel;
 
 - (instancetype)initWithChannel:(DefaultBootstrapChannel *)channel;
 
@@ -32,7 +32,7 @@
 
 @interface DefaultBootstrapChannel ()
 
-@property (nonatomic,strong) NSDictionary *SUPPORTED_TYPES; //<TransportType,ChannelDirection> as key-value
+@property (nonatomic, strong) NSDictionary *supportedTypes; //<TransportType,ChannelDirection> as key-value
 
 - (void)processTypes:(NSDictionary *)types;
 
@@ -40,11 +40,12 @@
 
 @implementation DefaultBootstrapChannel
 
-- (instancetype)initWithClient:(AbstractKaaClient *)client state:(id<KaaClientState>)state
+- (instancetype)initWithClient:(AbstractKaaClient *)client
+                         state:(id<KaaClientState>)state
                failoverManager:(id<FailoverManager>)manager {
     self = [super initWithClient:client state:state failoverManager:manager];
     if (self) {
-        self.SUPPORTED_TYPES = [[NSDictionary alloc] initWithObjectsAndKeys:
+        self.supportedTypes = [[NSDictionary alloc] initWithObjectsAndKeys:
                                 [NSNumber numberWithInt:CHANNEL_DIRECTION_BIDIRECTIONAL],
                                 [NSNumber numberWithInt:TRANSPORT_TYPE_BOOTSTRAP], nil];
     }
@@ -75,14 +76,14 @@
 }
 
 - (NSDictionary *)getSupportedTransportTypes {
-    return self.SUPPORTED_TYPES;
+    return self.supportedTypes;
 }
 
 - (NSString *)getURLSuffix {
     return URL_SUFFIX;
 }
 
-- (NSOperation *)createChannelRunner:(NSDictionary *)types {
+- (NSOperation *)createChannelRunnerWithTypes:(NSDictionary *)types {
     return [[BootstrapRunner alloc] initWithChannel:self];
 }
 
@@ -93,7 +94,7 @@
 - (instancetype)initWithChannel:(DefaultBootstrapChannel *)channel {
     self = [super init];
     if (self) {
-        self.btChannel = channel;
+        self.bootstrapChannel = channel;
     }
     return self;
 }
@@ -103,13 +104,13 @@
         return;
     }
     @try {
-        [self.btChannel processTypes:[self.btChannel getSupportedTransportTypes]];
-        [self.btChannel connectionStateChanged:NO];
+        [self.bootstrapChannel processTypes:[self.bootstrapChannel getSupportedTransportTypes]];
+        [self.bootstrapChannel connectionEstablished];
     }
     @catch (NSException *ex) {
-        if ([self.btChannel isShutdown]) {
+        if ([self.bootstrapChannel isShutdown]) {
             DDLogError(@"%@ Failed to receive operation servers list: %@, reason: %@", TAG, ex.name, ex.reason);
-            [self.btChannel connectionStateChanged:YES];
+            [self.bootstrapChannel connectionFailedWithStatus:UNKNOWN_HTTP_STATUS];
         } else {
             DDLogDebug(@"%@ Failed to receive operation servers list: %@, reason: %@", TAG, ex.name, ex.reason);
         }

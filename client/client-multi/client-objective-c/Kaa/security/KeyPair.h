@@ -21,7 +21,7 @@
  */
 @interface KeyPair : NSObject
 
-- (instancetype)initWithPrivate:(SecKeyRef)privateKey andPublic:(SecKeyRef)publicKey;
+- (instancetype)initWithPrivateKeyRef:(SecKeyRef)privateKey publicKeyRef:(SecKeyRef)publicKey;
 
 - (SecKeyRef)getPrivateKeyRef;
 - (SecKeyRef)getPublicKeyRef;

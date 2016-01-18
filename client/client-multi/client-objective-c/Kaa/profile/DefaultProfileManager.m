@@ -28,7 +28,7 @@
 
 @implementation DefaultProfileManager
 
-- (instancetype)initWith:(id<ProfileTransport>)transport {
+- (instancetype)initWithTransport:(id<ProfileTransport>)transport {
     self = [super init];
     if (self) {
         self.transport = transport;

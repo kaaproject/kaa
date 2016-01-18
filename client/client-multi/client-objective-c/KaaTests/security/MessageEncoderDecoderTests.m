@@ -26,9 +26,9 @@
 @property (nonatomic,strong) NSData *serverPublicTag;
 @property (nonatomic,strong) KeyPair *serverPair;
 
-@property (nonatomic,strong) NSData *theifPrivateTag;
-@property (nonatomic,strong) NSData *theifPublicTag;
-@property (nonatomic,strong) KeyPair *theifPair;
+@property (nonatomic,strong) NSData *thiefPrivateTag;
+@property (nonatomic,strong) NSData *thiefPublicTag;
+@property (nonatomic,strong) KeyPair *thiefPair;
 
 @end
 
@@ -40,11 +40,11 @@
     
     self.serverPrivateTag = [self generateTag];
     self.serverPublicTag = [self generateTag];
-    self.serverPair = [KeyUtils generateKeyPairWithPrivateTag:self.serverPrivateTag andPublicTag:self.serverPublicTag];
+    self.serverPair = [KeyUtils generateKeyPairWithPrivateTag:self.serverPrivateTag publicTag:self.serverPublicTag];
     
-    self.theifPrivateTag = [self generateTag];
-    self.theifPublicTag = [self generateTag];
-    self.theifPair = [KeyUtils generateKeyPairWithPrivateTag:self.theifPrivateTag andPublicTag:self.theifPublicTag];
+    self.thiefPrivateTag = [self generateTag];
+    self.thiefPublicTag = [self generateTag];
+    self.thiefPair = [KeyUtils generateKeyPairWithPrivateTag:self.thiefPrivateTag publicTag:self.thiefPublicTag];
 }
 
 - (void)tearDown {
@@ -52,19 +52,19 @@
     [KeyUtils deleteExistingKeyPair];
     [KeyUtils removeKeyByTag:self.serverPrivateTag];
     [KeyUtils removeKeyByTag:self.serverPublicTag];
-    [KeyUtils removeKeyByTag:self.theifPrivateTag];
-    [KeyUtils removeKeyByTag:self.theifPublicTag];
+    [KeyUtils removeKeyByTag:self.thiefPrivateTag];
+    [KeyUtils removeKeyByTag:self.thiefPublicTag];
 }
 
 - (void)testBasic {
     NSString *message = [NSString stringWithFormat:@"secret%i", arc4random()];
     NSData *messageData = [message dataUsingEncoding:NSUTF8StringEncoding];
     MessageEncoderDecoder *client = [[MessageEncoderDecoder alloc] initWithKeyPair:self.clientPair
-                                                             andRemotePublicKeyRef:[self.serverPair getPublicKeyRef]];
+                                                             remotePublicKeyRef:[self.serverPair getPublicKeyRef]];
     MessageEncoderDecoder *server = [[MessageEncoderDecoder alloc] initWithKeyPair:self.serverPair
-                                                             andRemotePublicKeyRef:[self.clientPair getPublicKeyRef]];
-    MessageEncoderDecoder *theif = [[MessageEncoderDecoder alloc] initWithKeyPair:self.theifPair
-                                                            andRemotePublicKeyRef:[self.clientPair getPublicKeyRef]];
+                                                             remotePublicKeyRef:[self.clientPair getPublicKeyRef]];
+    MessageEncoderDecoder *theif = [[MessageEncoderDecoder alloc] initWithKeyPair:self.thiefPair
+                                                            remotePublicKeyRef:[self.clientPair getPublicKeyRef]];
     NSData *secretData = [client encodeData:messageData];
     NSData *signature = [client sign:secretData];
     NSData *encodedSessionKey = [client getEncodedSessionKey];
@@ -85,11 +85,11 @@
     NSData *messageData = [message dataUsingEncoding:NSUTF8StringEncoding];
     
     MessageEncoderDecoder *client = [[MessageEncoderDecoder alloc] initWithKeyPair:self.clientPair
-                                                             andRemotePublicKeyRef:[self.serverPair getPublicKeyRef]];
-    MessageEncoderDecoder *client2 = [[MessageEncoderDecoder alloc] initWithKeyPair:self.theifPair
-                                                             andRemotePublicKeyRef:[self.serverPair getPublicKeyRef]];
+                                                             remotePublicKeyRef:[self.serverPair getPublicKeyRef]];
+    MessageEncoderDecoder *client2 = [[MessageEncoderDecoder alloc] initWithKeyPair:self.thiefPair
+                                                             remotePublicKeyRef:[self.serverPair getPublicKeyRef]];
     MessageEncoderDecoder *server = [[MessageEncoderDecoder alloc] initWithKeyPair:self.serverPair
-                                                             andRemotePublicKeyRef:[self.clientPair getPublicKeyRef]];
+                                                             remotePublicKeyRef:[self.clientPair getPublicKeyRef]];
     
     NSData *secretData = [client encodeData:messageData];
     NSData *signature = [client sign:secretData];
@@ -100,7 +100,7 @@
     NSString *decodedSecret = [[NSString alloc] initWithData:decodedData encoding:NSUTF8StringEncoding];
     XCTAssertTrue([message isEqualToString:decodedSecret]);
     
-    [server setRemotePublicKeyRef:[self.theifPair getPublicKeyRef]];
+    [server setRemotePublicKeyRef:[self.thiefPair getPublicKeyRef]];
 
     NSData *secretData2 = [client2 encodeData:messageData];
     NSData *signature2 = [client2 sign:secretData2];
@@ -114,7 +114,7 @@
 
 - (void)testBasicUpdate {
     MessageEncoderDecoder *client = [[MessageEncoderDecoder alloc] initWithKeyPair:self.clientPair
-                                                             andRemotePublicKeyRef:[self.serverPair getPublicKeyRef]];
+                                                             remotePublicKeyRef:[self.serverPair getPublicKeyRef]];
     
     BOOL test = [client getPrivateKey] != nil;
     XCTAssertTrue(test);

@@ -32,7 +32,7 @@
     TransportProtocolId *TPid = [TransportProtocolIdHolder TCPTransportID];
     uint32_t port = 80;
     
-    IPTransportInfo *info = [[IPTransportInfo alloc] initWithTransportInfo:[self createTestServerInfoWithServerType:SERVER_OPERATIONS transportProtocolId:TPid host:@"localhost" port:port andPublicKey:publicKey]];
+    IPTransportInfo *info = [[IPTransportInfo alloc] initWithTransportInfo:[self createTestServerInfoWithServerType:SERVER_OPERATIONS transportProtocolId:TPid host:@"localhost" port:port publicKey:publicKey]];
     
     XCTAssertEqual(SERVER_OPERATIONS, [info serverType]);
     XCTAssertEqualObjects(TPid, [info transportId]);
@@ -44,9 +44,9 @@
                                                transportProtocolId:(TransportProtocolId *)TPid
                                                               host:(NSString *)host
                                                               port:(uint32_t)port
-                                                      andPublicKey:(NSData *)publicKey {
-    ProtocolMetaData *md = [TestsHelper buildMetaDataWithTPid:TPid host:host port:port andPublicKey:publicKey];
-    return  [[GenericTransportInfo alloc] initWithServerType:serverType andMeta:md];
+                                                      publicKey:(NSData *)publicKey {
+    ProtocolMetaData *md = [TestsHelper buildMetaDataWithTransportProtocolId:TPid host:host port:port publicKey:publicKey];
+    return  [[GenericTransportInfo alloc] initWithServerType:serverType meta:md];
 }
 
 @end

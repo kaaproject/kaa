@@ -48,8 +48,8 @@
     XCTAssertFalse([bucket addRecord:record]);
 }
 
-- (void)addN:(NSInteger)n recordsToBucket:(MemBucket *)bucket {
-    while (n-- > 0) {
+- (void)addRecordsCount:(NSInteger)recordCount toBucket:(MemBucket *)bucket {
+    while (recordCount-- > 0) {
         [bucket addRecord:[self getLogRecord]];
     }
 }

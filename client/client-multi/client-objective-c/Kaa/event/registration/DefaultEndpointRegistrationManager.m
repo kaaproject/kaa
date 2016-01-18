@@ -47,10 +47,10 @@
 @property (nonatomic) int detachRequestId;
 
 - (void)onEndpointAccessTokenChanged;
-- (void)notifyAttachedDelegate:(SyncResponseResultType)result
+- (void)notifyAttachedDelegateWithResult:(SyncResponseResultType)result
                       delegate:(id<OnAttachEndpointOperationDelegate>)delegate
                        keyHash:(EndpointKeyHash *)keyHash;
-- (void)notifyDetachedDelegate:(SyncResponseResultType)result
+- (void)notifyDetachedDelegateWithResult:(SyncResponseResultType)result
                       delegate:(id<OnDetachEndpointOperationDelegate>)delegate;
 - (void)addDelegate:(id)delegate forRequestId:(NSNumber *)requestId;
 
@@ -58,7 +58,7 @@
 
 @implementation DefaultEndpointRegistrationManager
 
-- (instancetype)initWith:(id<KaaClientState>)state
+- (instancetype)initWithState:(id<KaaClientState>)state
          executorContext:(id<ExecutorContext>)context
            userTransport:(id<UserTransport>)userTransport
         profileTransport:(id<ProfileTransport>)profileTransport {
@@ -189,7 +189,7 @@ userDetachNotification:(UserDetachNotification *)detachNotification {
                 id<OnAttachEndpointOperationDelegate> delegate = [self.endpointAttachDelegates objectForKey: [NSNumber numberWithInt:attached.requestId]];
                 [self.endpointAttachDelegates removeObjectForKey:[NSNumber numberWithInt:attached.requestId]];
                 EndpointKeyHash *keyHash = [[EndpointKeyHash alloc] initWithKeyHash:attached.endpointKeyHash.data];
-                [self notifyAttachedDelegate:attached.result delegate:delegate keyHash:keyHash];
+                [self notifyAttachedDelegateWithResult:attached.result delegate:delegate keyHash:keyHash];
             }
             @synchronized (self.attachEndpointRequests) {
                 [self.attachEndpointRequests removeObjectForKey:[NSNumber numberWithInt:attached.requestId]];
@@ -203,7 +203,7 @@ userDetachNotification:(UserDetachNotification *)detachNotification {
                 NSNumber *requestId = [NSNumber numberWithInt:detached.requestId];
                 id<OnDetachEndpointOperationDelegate> delegate = [self.endpointDetachDelegates objectForKey: requestId];
                 [self.endpointDetachDelegates removeObjectForKey:[NSNumber numberWithInt:detached.requestId]];
-                [self notifyDetachedDelegate:detached.result delegate:delegate];
+                [self notifyDetachedDelegateWithResult:detached.result delegate:delegate];
             }
             EndpointKeyHash *keyHash = nil;
             @synchronized (self.detachEndpointRequests) {
@@ -266,7 +266,7 @@ userDetachNotification:(UserDetachNotification *)detachNotification {
     self.detachEndpointFromUserDelegate = delegate;
 }
 
-- (void)notifyAttachedDelegate:(SyncResponseResultType)result
+- (void)notifyAttachedDelegateWithResult:(SyncResponseResultType)result
                       delegate:(id<OnAttachEndpointOperationDelegate>)delegate
                        keyHash:(EndpointKeyHash *)keyHash {
     if (delegate) {
@@ -276,7 +276,7 @@ userDetachNotification:(UserDetachNotification *)detachNotification {
     }
 }
 
-- (void)notifyDetachedDelegate:(SyncResponseResultType)result delegate:(id<OnDetachEndpointOperationDelegate>)delegate {
+- (void)notifyDetachedDelegateWithResult:(SyncResponseResultType)result delegate:(id<OnDetachEndpointOperationDelegate>)delegate {
     if (delegate) {
         [[self.context getCallbackExecutor] addOperationWithBlock:^{
             [delegate onDetach:result];

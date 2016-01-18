@@ -29,7 +29,7 @@
 
 - (instancetype)initWithExecutorContext:(id<ExecutorContext>)context;
 
-- (void)notify:(NSSet *)configurationDelegates withData:(NSData *)configurationData;
+- (void)notifyDelegates:(NSSet *)configurationDelegates withData:(NSData *)configurationData;
 
 - (KAADummyConfiguration *)fromBytes:(NSData *)bytes;
 

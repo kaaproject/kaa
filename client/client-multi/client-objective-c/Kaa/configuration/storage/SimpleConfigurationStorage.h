@@ -20,6 +20,6 @@
 
 @interface SimpleConfigurationStorage : NSObject <ConfigurationStorage>
 
-- (instancetype)initWithPlatformContext:(id<KaaClientPlatformContext>)context andPath:(NSString *)path;
+- (instancetype)initWithPlatformContext:(id<KaaClientPlatformContext>)context path:(NSString *)path;
 
 @end

@@ -23,7 +23,7 @@
 
 @property (nonatomic,strong) ProtocolMetaData *meta;
 
-- (instancetype)initWithServerType:(ServerType)serverType andMeta:(ProtocolMetaData *)meta;
+- (instancetype)initWithServerType:(ServerType)serverType meta:(ProtocolMetaData *)meta;
 
 - (int)accessPointId;
 

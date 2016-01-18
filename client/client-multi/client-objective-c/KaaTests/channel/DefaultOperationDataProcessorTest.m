@@ -301,44 +301,44 @@
     
     LogSyncResponse *response = [[LogSyncResponse alloc] init];
     NSArray *array = [NSArray arrayWithObject:status];
-    response.deliveryStatuses = [KAAUnion unionWithBranch:KAA_UNION_ARRAY_LOG_DELIVERY_STATUS_OR_NULL_BRANCH_0 andData:array];
+    response.deliveryStatuses = [KAAUnion unionWithBranch:KAA_UNION_ARRAY_LOG_DELIVERY_STATUS_OR_NULL_BRANCH_0 data:array];
     return response;
 }
 
 - (KAAUnion *) getProfileSyncResponseUnion {
-    KAAUnion *profileUnion = [KAAUnion unionWithBranch:KAA_UNION_PROFILE_SYNC_RESPONSE_OR_NULL_BRANCH_0 andData:[self getProfileSyncResponse]];
+    KAAUnion *profileUnion = [KAAUnion unionWithBranch:KAA_UNION_PROFILE_SYNC_RESPONSE_OR_NULL_BRANCH_0 data:[self getProfileSyncResponse]];
     return profileUnion;
 }
 
 - (KAAUnion *) getConfigurationUnion {
-    KAAUnion *confUnion = [KAAUnion unionWithBranch:KAA_UNION_CONFIGURATION_SYNC_RESPONSE_OR_NULL_BRANCH_0 andData:[self getConfigurationResponse]];
+    KAAUnion *confUnion = [KAAUnion unionWithBranch:KAA_UNION_CONFIGURATION_SYNC_RESPONSE_OR_NULL_BRANCH_0 data:[self getConfigurationResponse]];
     return confUnion;
 }
 
 - (KAAUnion *) getNotificationUnion {
-    KAAUnion *notifUnion = [KAAUnion unionWithBranch:KAA_UNION_NOTIFICATION_SYNC_RESPONSE_OR_NULL_BRANCH_0 andData:[self getNotificationSyncReponse]];
+    KAAUnion *notifUnion = [KAAUnion unionWithBranch:KAA_UNION_NOTIFICATION_SYNC_RESPONSE_OR_NULL_BRANCH_0 data:[self getNotificationSyncReponse]];
     return notifUnion;
 }
 
 - (KAAUnion *) getUserUnion {
     KAAUnion *userUnion = [KAAUnion unionWithBranch:KAA_UNION_USER_SYNC_RESPONSE_OR_NULL_BRANCH_0
-                                            andData:[[UserSyncResponse alloc] init]];
+                                            data:[[UserSyncResponse alloc] init]];
     return userUnion;
 }
 
 - (KAAUnion *) getEventUnion {
     KAAUnion *eventUnion = [KAAUnion unionWithBranch:KAA_UNION_EVENT_SYNC_RESPONSE_OR_NULL_BRANCH_0
-                                             andData:[[EventSyncResponse alloc] init]];
+                                             data:[[EventSyncResponse alloc] init]];
     return eventUnion;
 }
 
 - (KAAUnion *) getRedirectUnion {
-    KAAUnion *redirectUnion = [KAAUnion unionWithBranch:KAA_UNION_REDIRECT_SYNC_RESPONSE_OR_NULL_BRANCH_0 andData:[self getRedirectSyncReponse]];
+    KAAUnion *redirectUnion = [KAAUnion unionWithBranch:KAA_UNION_REDIRECT_SYNC_RESPONSE_OR_NULL_BRANCH_0 data:[self getRedirectSyncReponse]];
     return redirectUnion;
 }
 
 - (KAAUnion *) getLogUnion {
-    KAAUnion *logUnion = [KAAUnion unionWithBranch:KAA_UNION_LOG_SYNC_RESPONSE_OR_NULL_BRANCH_0 andData:[self getLogSyncResponse]];
+    KAAUnion *logUnion = [KAAUnion unionWithBranch:KAA_UNION_LOG_SYNC_RESPONSE_OR_NULL_BRANCH_0 data:[self getLogSyncResponse]];
     return logUnion;
 }
 

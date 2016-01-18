@@ -49,11 +49,11 @@
         EndpointObjectHash *hash = [self.hashContainer getConfigurationHash];
         ConfigurationSyncRequest *request = [[ConfigurationSyncRequest alloc] init];
         if (hash.data) {
-            request.configurationHash = [KAAUnion unionWithBranch:KAA_UNION_BYTES_OR_NULL_BRANCH_0 andData:hash.data];
+            request.configurationHash = [KAAUnion unionWithBranch:KAA_UNION_BYTES_OR_NULL_BRANCH_0 data:hash.data];
         }
         request.appStateSeqNumber = [self.clientState configSequenceNumber];
         request.resyncOnly = [KAAUnion unionWithBranch:KAA_UNION_BOOLEAN_OR_NULL_BRANCH_0
-                                               andData:[NSNumber numberWithBool:self.resyncOnly]];
+                                               data:[NSNumber numberWithBool:self.resyncOnly]];
         return request;
     } else {
         DDLogError(@"%@ Can't create config request due to invalid params: %@, %@", TAG, self.clientState, self.hashContainer);

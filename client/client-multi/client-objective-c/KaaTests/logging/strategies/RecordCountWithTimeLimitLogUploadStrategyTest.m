@@ -36,7 +36,7 @@
     id<LogStorageStatus> logStorageStatus = mockProtocol(@protocol(LogStorageStatus));
     [given([logStorageStatus getRecordCount]) willReturnLong:(int64_t)(thresholdCount - 1)];
     
-    RecordCountWithTimeLimitLogUploadStrategy *strategy = [[RecordCountWithTimeLimitLogUploadStrategy alloc] initWithCountThreshold:thresholdCount TimeLimit:uploadCheckPeriod andTimeUnit:TIME_UNIT_SECONDS];
+    RecordCountWithTimeLimitLogUploadStrategy *strategy = [[RecordCountWithTimeLimitLogUploadStrategy alloc] initWithCountThreshold:thresholdCount timeLimit:uploadCheckPeriod timeUnit:TIME_UNIT_SECONDS];
     
     XCTAssertEqual([strategy isUploadNeeded:logStorageStatus], LOG_UPLOAD_STRATEGY_DECISION_NOOP);
 }
@@ -48,7 +48,7 @@
     id<LogStorageStatus> logStorageStatus = mockProtocol(@protocol(LogStorageStatus));
     [given([logStorageStatus getRecordCount]) willReturnLong:(int64_t)(thresholdCount)];
     
-    RecordCountWithTimeLimitLogUploadStrategy *strategy = [[RecordCountWithTimeLimitLogUploadStrategy alloc] initWithCountThreshold:thresholdCount TimeLimit:uploadCheckPeriod andTimeUnit:TIME_UNIT_SECONDS];
+    RecordCountWithTimeLimitLogUploadStrategy *strategy = [[RecordCountWithTimeLimitLogUploadStrategy alloc] initWithCountThreshold:thresholdCount timeLimit:uploadCheckPeriod timeUnit:TIME_UNIT_SECONDS];
     
     XCTAssertEqual([strategy isUploadNeeded:logStorageStatus], LOG_UPLOAD_STRATEGY_DECISION_UPLOAD);
 }
@@ -60,7 +60,7 @@
     id<LogStorageStatus> logStorageStatus = mockProtocol(@protocol(LogStorageStatus));
     [given([logStorageStatus getRecordCount]) willReturnLong:(int64_t)(thresholdCount + 1)];
     
-    RecordCountWithTimeLimitLogUploadStrategy *strategy = [[RecordCountWithTimeLimitLogUploadStrategy alloc] initWithCountThreshold:thresholdCount TimeLimit:uploadCheckPeriod andTimeUnit:TIME_UNIT_SECONDS];
+    RecordCountWithTimeLimitLogUploadStrategy *strategy = [[RecordCountWithTimeLimitLogUploadStrategy alloc] initWithCountThreshold:thresholdCount timeLimit:uploadCheckPeriod timeUnit:TIME_UNIT_SECONDS];
     
     XCTAssertEqual([strategy isUploadNeeded:logStorageStatus], LOG_UPLOAD_STRATEGY_DECISION_UPLOAD);
 }
@@ -72,7 +72,7 @@
     id<LogStorageStatus> logStorageStatus = mockProtocol(@protocol(LogStorageStatus));
     [given([logStorageStatus getRecordCount]) willReturnLong:(int64_t)0];
     
-    RecordCountWithTimeLimitLogUploadStrategy *strategy = [[RecordCountWithTimeLimitLogUploadStrategy alloc] initWithCountThreshold:thresholdCount TimeLimit:uploadCheckPeriod andTimeUnit:TIME_UNIT_SECONDS];
+    RecordCountWithTimeLimitLogUploadStrategy *strategy = [[RecordCountWithTimeLimitLogUploadStrategy alloc] initWithCountThreshold:thresholdCount timeLimit:uploadCheckPeriod timeUnit:TIME_UNIT_SECONDS];
     XCTAssertEqual([strategy isUploadNeeded:logStorageStatus], LOG_UPLOAD_STRATEGY_DECISION_NOOP);
     
     [NSThread sleepForTimeInterval:uploadCheckPeriod/2];

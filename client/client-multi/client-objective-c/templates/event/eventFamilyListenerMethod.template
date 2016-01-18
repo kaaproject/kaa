@@ -1,1 +1,1 @@
-- (void)on{event_class_name}:({event_class_name} *)event from:(NSString *)source;
+- (void)on{event_class_name}:({event_class_name} *)event fromSource:(NSString *)source;

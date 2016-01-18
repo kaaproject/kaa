@@ -23,11 +23,11 @@
 
 @implementation DefaultLogCollector
 
-- (instancetype)initWith:(id<LogTransport>)transport
+- (instancetype)initWithTransport:(id<LogTransport>)transport
          executorContext:(id<ExecutorContext>)executorContext
           channelManager:(id<KaaChannelManager>)channelManager
          failoverManager:(id<FailoverManager>)failoverManager {
-    self = [super initWith:transport
+    self = [super initWithTransport:transport
            executorContext:executorContext
             channelManager:channelManager
            failoverManager:failoverManager];

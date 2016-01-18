@@ -27,8 +27,8 @@
 
 @interface DefaultHttpClient ()
 
-@property (nonatomic,strong) AFHTTPClient *client;
-@property (nonatomic,strong) AFHTTPRequestOperation *operation;
+@property (nonatomic, strong) AFHTTPClient *client;
+@property (nonatomic, strong) AFHTTPRequestOperation *operation;
 @property (nonatomic) volatile BOOL isShutDown;
 
 - (NSData *)getResponseBody:(AFHTTPRequestOperation *)response verify:(BOOL)verify;
@@ -37,9 +37,11 @@
 
 @implementation DefaultHttpClient
 
-- (instancetype)initWith:(NSString *)url privateKey:(SecKeyRef)privateK publicKey:(SecKeyRef)publicK
-               remoteKey:(NSData *)remoteK {
-    self = [super initWith:url privateKey:privateK publicKey:publicK remoteKey:remoteK];
+- (instancetype)initWithURLString:(NSString *)url
+                    privateKeyRef:(SecKeyRef)privateK
+                     publicKeyRef:(SecKeyRef)publicK
+                        remoteKey:(NSData *)remoteK {
+    self = [super initWithURLString:url privateKeyRef:privateK publicKeyRef:publicK remoteKey:remoteK];
     if (self) {
         self.client = [[AFHTTPClient alloc] initWithBaseURL:[NSURL URLWithString:url]];
         self.isShutDown = NO;

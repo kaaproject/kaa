@@ -46,7 +46,7 @@
 /**
  * Sets the given public key hash.
  */
-- (void)setEndpointPublicKeyhash:(EndpointObjectHash *)hash;
+- (void)setEndpointPublicKeyHash:(EndpointObjectHash *)hash;
 
 /**
  * Sets the response timeout.

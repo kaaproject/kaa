@@ -25,7 +25,7 @@
 @property (nonatomic,strong) AvroBytesConverter *requestConverter;
 @property (nonatomic,strong) AvroBytesConverter *responseConverter;
 
-@property (nonatomic,strong) id<BootstrapTransport> btTransport;
+@property (nonatomic,strong) id<BootstrapTransport> transport;
 
 @end
 
@@ -41,17 +41,17 @@
 }
 
 - (void)setBootstrapTransport:(id<BootstrapTransport>)transport {
-    self.btTransport = transport;
+    self.transport = transport;
 }
 
 - (NSData *)compileRequest:(NSDictionary *)types {
     @synchronized(self) {
-        if (!self.btTransport) {
+        if (!self.transport) {
             DDLogError(@"%@ Unable to compile request: Bootstrap transport is nil", TAG);
             return nil;
         }
         
-        SyncRequest *request = [self.btTransport createResolveRequest];
+        SyncRequest *request = [self.transport createResolveRequest];
         DDLogVerbose(@"%@ Created Resolve request: %@", TAG, request);
         return [self.requestConverter toBytes:request];
     }
@@ -59,14 +59,14 @@
 
 - (void)processResponse:(NSData *)data {
     @synchronized(self) {
-        if (!self.btTransport || !data) {
-            DDLogError(@"%@ Unable to process response: %@:%@", TAG, self.btTransport, data);
+        if (!self.transport || !data) {
+            DDLogError(@"%@ Unable to process response: %@:%@", TAG, self.transport, data);
             return;
         }
         
         SyncResponse *list = (SyncResponse *)[self.responseConverter fromBytes:data object:[[SyncResponse alloc] init]];
         DDLogVerbose(@"%@ Received OperationsServerList response: %@", TAG, list);
-        [self.btTransport onResolveResponse:list];
+        [self.transport onResolveResponse:list];
     }
 }
 

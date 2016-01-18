@@ -27,7 +27,7 @@
 
 @implementation TimeUtils
 
-+ (long)convert:(long)value from:(TimeUnit)fromUnit to:(TimeUnit)toUnit {
++ (long)convertValue:(long)value fromTimeUnit:(TimeUnit)fromUnit toTimeUnit:(TimeUnit)toUnit {
     long result = -1;
     if (value < 0) {
         return -1;

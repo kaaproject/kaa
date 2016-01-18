@@ -45,14 +45,14 @@
 @property (nonatomic,strong) id<KAABase64> base64;
 @property (nonatomic,strong) NSMutableDictionary *state;
 @property (nonatomic,strong) NSString *stateFileLocation;
-@property (nonatomic,strong) NSMutableDictionary *nfSubscriptions;  //<NSString, TopicSubscriptionInfo> as key-value
+@property (nonatomic,strong) NSMutableDictionary *notificationSubscriptions;  //<NSString, TopicSubscriptionInfo> as key-value
 @property (nonatomic,strong) KeyPair *keyPair;
 @property (nonatomic) BOOL isConfigVersionUpdated;
 @property (nonatomic) BOOL hasUpdate;
 
 - (void)setPropertiesHash:(NSData *)hash;
 - (BOOL)isSDKProperyListUpdated:(KaaClientProperties *)sdkProperties;
-- (void)parseNfSubscriptions;
+- (void)parseNotificationSubscriptions;
 - (KeyPair *)getOrGenerateKeyPair;
 - (void)deleteFileAtPath:(NSString *)path;
 
@@ -76,11 +76,11 @@
 @synthesize eventSequenceNumber = _eventSequenceNumber;
 @synthesize isAttachedToUser = _isAttachedToUser;
 
-- (instancetype)initWith:(id<KAABase64>)base64 andClientProperties:(KaaClientProperties *)properties {
+- (instancetype)initWithBase64:(id<KAABase64>)base64 clientProperties:(KaaClientProperties *)properties {
     self = [super init];
     if (self) {
         self.base64 = base64;
-        self.nfSubscriptions = [NSMutableDictionary dictionary];
+        self.notificationSubscriptions = [NSMutableDictionary dictionary];
         self.attachedEndpoints = [NSMutableDictionary dictionary];
         self.isConfigVersionUpdated = NO;
         
@@ -105,7 +105,7 @@
                 } else {
                     DDLogInfo(@"%@ SDK properties are up to date", TAG);
                 }
-                [self parseNfSubscriptions];
+                [self parseNotificationSubscriptions];
                 
                 NSString *attachedEndpointsString = [self.state objectForKey:ATTACHED_ENDPOINTS];
                 if (attachedEndpointsString) {
@@ -162,7 +162,7 @@
     }
     
     NSMutableData *encodedData = [NSMutableData data];
-    NSArray *subcscriptions = self.nfSubscriptions.allValues;
+    NSArray *subcscriptions = self.notificationSubscriptions.allValues;
     @try {
         for (TopicSubscriptionInfo *info in subcscriptions) {
             size_t infoSize = [info getSize];
@@ -260,40 +260,40 @@
 }
 
 - (void)addTopic:(Topic *)topic {
-    TopicSubscriptionInfo *info = [self.nfSubscriptions objectForKey:topic.id];
+    TopicSubscriptionInfo *info = [self.notificationSubscriptions objectForKey:topic.id];
     if (!info) {
         info = [[TopicSubscriptionInfo alloc] init];
         info.topicInfo = topic;
         info.seqNumber = 0;
-        [self.nfSubscriptions setObject:info forKey:topic.id];
+        [self.notificationSubscriptions setObject:info forKey:topic.id];
         self.hasUpdate = YES;
         DDLogInfo(@"%@ Adding new seqNumber 0 for %@ subscription", TAG, topic.id);
     }
 }
 
 - (void)removeTopic:(NSString *)topicId {
-    [self.nfSubscriptions removeObjectForKey:topicId];
+    [self.notificationSubscriptions removeObjectForKey:topicId];
     self.hasUpdate = YES;
     DDLogDebug(@"%@ Removed subscription info for %@", TAG, topicId);
 }
 
 - (BOOL)updateTopicSubscriptionInfo:(NSString *)topicId sequence:(int)sequenceNumber {
-    TopicSubscriptionInfo *info = [self.nfSubscriptions objectForKey:topicId];
+    TopicSubscriptionInfo *info = [self.notificationSubscriptions objectForKey:topicId];
     BOOL updated = NO;
     if (info && sequenceNumber > info.seqNumber) {
         updated = YES;
         info.seqNumber = sequenceNumber;
-        [self.nfSubscriptions setObject:info forKey:topicId];
+        [self.notificationSubscriptions setObject:info forKey:topicId];
         self.hasUpdate = YES;
         DDLogDebug(@"%@ Updated seqNumber to %i for %@ subscription", TAG, sequenceNumber, topicId);
     }
     return updated;
 }
 
-- (NSDictionary *)getNfSubscriptions {
+- (NSDictionary *)getNotificationSubscriptions {
     NSMutableDictionary *subscriptions = [NSMutableDictionary dictionary];
-    for (NSString *key in self.nfSubscriptions.allKeys) {
-        TopicSubscriptionInfo *value = [self.nfSubscriptions objectForKey:key];
+    for (NSString *key in self.notificationSubscriptions.allKeys) {
+        TopicSubscriptionInfo *value = [self.notificationSubscriptions objectForKey:key];
         [subscriptions setObject:[NSNumber numberWithInt:value.seqNumber] forKey:key];
     }
     return subscriptions;
@@ -301,7 +301,7 @@
 
 - (NSArray *)getTopics {
     NSMutableArray *topics = [NSMutableArray array];
-    for (TopicSubscriptionInfo *info in self.nfSubscriptions.allValues) {
+    for (TopicSubscriptionInfo *info in self.notificationSubscriptions.allValues) {
         [topics addObject:info.topicInfo];
     }
     return topics;
@@ -384,7 +384,7 @@
     return ![hashFromSDK isEqualToData:hashFromStateFile];
 }
 
-- (void)parseNfSubscriptions {
+- (void)parseNotificationSubscriptions {
     NSString *subscriptionInfo = [self.state objectForKey:NF_SUBSCRIPTIONS];
     if (subscriptionInfo) {
         NSData *data = [self.base64 decodeString:subscriptionInfo];
@@ -396,7 +396,7 @@
                 [decodedInfo deserialize:reader];
                 DDLogDebug(@"%@ Loaded %@", TAG, decodedInfo);
                 if (decodedInfo) {
-                    [self.nfSubscriptions setObject:decodedInfo forKey:decodedInfo.topicInfo.id];
+                    [self.notificationSubscriptions setObject:decodedInfo forKey:decodedInfo.topicInfo.id];
                 }
             }
         }
@@ -418,7 +418,7 @@
     SecKeyRef public = [KeyUtils getPublicKeyRef];
     if (private != NULL && public != NULL) {
         DDLogDebug(@"%@ Found existing key pair", TAG);
-        self.keyPair = [[KeyPair alloc] initWithPrivate:private andPublic:public];
+        self.keyPair = [[KeyPair alloc] initWithPrivateKeyRef:private publicKeyRef:public];
         return self.keyPair;
     }
     

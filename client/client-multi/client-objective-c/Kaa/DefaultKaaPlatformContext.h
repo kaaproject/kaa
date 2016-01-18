@@ -19,6 +19,6 @@
 
 @interface DefaultKaaPlatformContext : NSObject <KaaClientPlatformContext>
 
-- (instancetype)initWith:(KaaClientProperties *)properties andExecutor:(id<ExecutorContext>)executor;
+- (instancetype)initWithProperties:(KaaClientProperties *)properties executor:(id<ExecutorContext>)executor;
 
 @end

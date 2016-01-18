@@ -23,8 +23,8 @@
 
 @interface DefaultUserTransport ()
 
-@property (nonatomic,strong) id<EndpointRegistrationProcessor> processor;
-@property (nonatomic,strong) NSMutableDictionary *attachedEndpoints;
+@property (nonatomic, strong) id<EndpointRegistrationProcessor> processor;
+@property (nonatomic, strong) NSMutableDictionary *attachedEndpoints;
 
 @end
 
@@ -65,12 +65,12 @@
     UserSyncRequest *request = [[UserSyncRequest alloc] init];
     if ([self.processor getUserAttachRequest]) {
         request.userAttachRequest = [KAAUnion unionWithBranch:KAA_UNION_USER_ATTACH_REQUEST_OR_NULL_BRANCH_0
-                                                      andData:[self.processor getUserAttachRequest]];
+                                                         data:[self.processor getUserAttachRequest]];
     }
     request.endpointAttachRequests = [KAAUnion unionWithBranch:KAA_UNION_ARRAY_ENDPOINT_ATTACH_REQUEST_OR_NULL_BRANCH_0
-                                                       andData:attachEPRequestList];
+                                                          data:attachEPRequestList];
     request.endpointDetachRequests = [KAAUnion unionWithBranch:KAA_UNION_ARRAY_ENDPOINT_DETACH_REQUEST_OR_NULL_BRANCH_0
-                                                       andData:detachEPRequestList];
+                                                          data:detachEPRequestList];
     return request;
 }
 
@@ -79,11 +79,11 @@
         return;
     }
     BOOL hasChanges = NO;
-    NSDictionary *attachEndpointRequests = [self.processor getAttachEndpointRequests];
     if (response.endpointAttachResponses
         && response.endpointAttachResponses.branch == KAA_UNION_ARRAY_ENDPOINT_ATTACH_RESPONSE_OR_NULL_BRANCH_0) {
-        NSArray *attachResponces = response.endpointAttachResponses.data;
-        for (EndpointAttachResponse *attached in attachResponces) {
+        NSDictionary *attachEndpointRequests = [self.processor getAttachEndpointRequests];
+        NSArray *attachResponses = response.endpointAttachResponses.data;
+        for (EndpointAttachResponse *attached in attachResponses) {
             EndpointAccessToken *attachedToken =
             [attachEndpointRequests objectForKey:[NSNumber numberWithInt:attached.requestId]];
             if (attached.result == SYNC_RESPONSE_RESULT_TYPE_SUCCESS && attachedToken) {
@@ -102,11 +102,11 @@
         }
     }
     
-    NSDictionary *detachEndpointRequests = [self.processor getDetachEndpointRequests];
     if (response.endpointDetachResponses
         && response.endpointDetachResponses.branch == KAA_UNION_ARRAY_ENDPOINT_DETACH_RESPONSE_OR_NULL_BRANCH_0) {
-        NSArray *detachResponces = response.endpointDetachResponses.data;
-        for (EndpointDetachResponse *detached in detachResponces) {
+        NSDictionary *detachEndpointRequests = [self.processor getDetachEndpointRequests];
+        NSArray *detachResponses = response.endpointDetachResponses.data;
+        for (EndpointDetachResponse *detached in detachResponses) {
             EndpointKeyHash *detachedEndpointKeyHash =
             [detachEndpointRequests objectForKey:[NSNumber numberWithInt:detached.requestId]];
             if (detached.result == SYNC_RESPONSE_RESULT_TYPE_SUCCESS && detachedEndpointKeyHash) {

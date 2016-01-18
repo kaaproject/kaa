@@ -60,13 +60,13 @@
     resolveRequest.requestId = self.increment;
     
     request.bootstrapSyncRequest =
-    [KAAUnion unionWithBranch:KAA_UNION_BOOTSTRAP_SYNC_REQUEST_OR_NULL_BRANCH_0 andData:resolveRequest];
+    [KAAUnion unionWithBranch:KAA_UNION_BOOTSTRAP_SYNC_REQUEST_OR_NULL_BRANCH_0 data:resolveRequest];
     
     SyncRequestMetaData *meta = [[SyncRequestMetaData alloc] init];
     meta.sdkToken = self.sdkToken;
     
     request.syncRequestMetaData =
-    [KAAUnion unionWithBranch:KAA_UNION_SYNC_REQUEST_META_DATA_OR_NULL_BRANCH_0 andData:meta];
+    [KAAUnion unionWithBranch:KAA_UNION_SYNC_REQUEST_META_DATA_OR_NULL_BRANCH_0 data:meta];
     return request;
 }
 

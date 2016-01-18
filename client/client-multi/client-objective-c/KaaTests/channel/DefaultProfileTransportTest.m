@@ -156,7 +156,7 @@
 
 - (void)testProfileDelegate {
     id <ProfileTransport> transport = mockProtocol(@protocol(ProfileTransport));
-    id <ProfileManager> manager = [[DefaultProfileManager alloc] initWith:transport];
+    id <ProfileManager> manager = [[DefaultProfileManager alloc] initWithTransport:transport];
     
     [manager setProfileContainer:[[ConcreteProfileContainer alloc] init]];
     [manager updateProfile];

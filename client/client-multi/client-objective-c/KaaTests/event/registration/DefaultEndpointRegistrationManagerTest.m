@@ -67,7 +67,7 @@
         [given([state endpointAccessToken]) willReturn:@""];
         
         id <UserTransport> transport = mockProtocol(@protocol(UserTransport));
-        DefaultEndpointRegistrationManager *manager = [[DefaultEndpointRegistrationManager alloc] initWith:state executorContext:self.executorContext userTransport:transport profileTransport:nil];
+        DefaultEndpointRegistrationManager *manager = [[DefaultEndpointRegistrationManager alloc] initWithState:state executorContext:self.executorContext userTransport:transport profileTransport:nil];
         
         [manager attachUser:@"verifierToken" userAccessToken:@"externalId" delegate:nil];
         XCTFail();
@@ -82,7 +82,7 @@
     [given([state endpointAccessToken]) willReturn:@""];
     
     id <UserTransport> transport = mockProtocol(@protocol(UserTransport));
-    DefaultEndpointRegistrationManager *manager = [[DefaultEndpointRegistrationManager alloc] initWith:state executorContext:self.executorContext userTransport:transport profileTransport:nil];
+    DefaultEndpointRegistrationManager *manager = [[DefaultEndpointRegistrationManager alloc] initWithState:state executorContext:self.executorContext userTransport:transport profileTransport:nil];
     
     [manager attachUser:@"verificationToken" userExternalId:@"externalId" userAccessToken:@"token" delegate:nil];
     [verifyCount(transport, times(1)) sync];
@@ -92,7 +92,7 @@
     id <KaaClientState> state = mockProtocol(@protocol(KaaClientState));
     [given([state endpointAccessToken]) willReturn:@""];
     id <UserTransport> transport = mockProtocol(@protocol(UserTransport));
-    DefaultEndpointRegistrationManager *manager = [[DefaultEndpointRegistrationManager alloc] initWith:state executorContext:self.executorContext userTransport:transport profileTransport:nil];
+    DefaultEndpointRegistrationManager *manager = [[DefaultEndpointRegistrationManager alloc] initWithState:state executorContext:self.executorContext userTransport:transport profileTransport:nil];
     id <OnAttachEndpointOperationDelegate> delegate = mockProtocol(@protocol(OnAttachEndpointOperationDelegate));
     
     EndpointAccessToken *token1 = [[EndpointAccessToken alloc] initWithToken:@"accessToken1"];
@@ -101,7 +101,7 @@
     [manager attachEndpoint:token1 delegate:delegate];
     [manager attachEndpoint:token2 delegate:delegate];
     
-    manager = [[DefaultEndpointRegistrationManager alloc] initWith:state executorContext:self.executorContext userTransport:nil profileTransport:nil];
+    manager = [[DefaultEndpointRegistrationManager alloc] initWithState:state executorContext:self.executorContext userTransport:nil profileTransport:nil];
     [manager attachEndpoint:[[EndpointAccessToken alloc] initWithToken:@"accessToken3"] delegate:nil];
     [verifyCount(transport, times(2)) sync];
 }
@@ -112,11 +112,11 @@
     id <UserTransport> transport = mockProtocol(@protocol(UserTransport));
     id <OnDetachEndpointOperationDelegate> delegate = mockProtocol(@protocol(OnDetachEndpointOperationDelegate));
     
-    DefaultEndpointRegistrationManager *manager = [[DefaultEndpointRegistrationManager alloc] initWith:state executorContext:self.executorContext userTransport:transport profileTransport:nil];
+    DefaultEndpointRegistrationManager *manager = [[DefaultEndpointRegistrationManager alloc] initWithState:state executorContext:self.executorContext userTransport:transport profileTransport:nil];
     [manager detachEndpoint:[[EndpointKeyHash alloc] initWithKeyHash:@"keyHash1"] delegate:delegate];
     [manager detachEndpoint:[[EndpointKeyHash alloc] initWithKeyHash:@"keyHash2"] delegate:delegate];
     
-    manager = [[DefaultEndpointRegistrationManager alloc] initWith:state executorContext:self.executorContext userTransport:nil profileTransport:nil];
+    manager = [[DefaultEndpointRegistrationManager alloc] initWithState:state executorContext:self.executorContext userTransport:nil profileTransport:nil];
     [manager detachEndpoint:[[EndpointKeyHash alloc] initWithKeyHash:@"keyHash3"] delegate:nil];
     [verifyCount(transport, times(2)) sync];
 }
@@ -126,7 +126,7 @@
     [given([state endpointAccessToken]) willReturn:@""];
     
     id <UserTransport> transport = mockProtocol(@protocol(UserTransport));
-    DefaultEndpointRegistrationManager *manager = [[DefaultEndpointRegistrationManager alloc] initWith:state executorContext:self.executorContext userTransport:transport profileTransport:nil];
+    DefaultEndpointRegistrationManager *manager = [[DefaultEndpointRegistrationManager alloc] initWithState:state executorContext:self.executorContext userTransport:transport profileTransport:nil];
     ConcreteUserAttachDelegate *delegate = [[ConcreteUserAttachDelegate alloc] init];
     [manager attachUser:@"externalId" userExternalId:@"userExternalId" userAccessToken:@"userAccessToke" delegate:delegate];
     
@@ -198,7 +198,7 @@
     
     id <AttachEndpointToUserDelegate> delegate = mockProtocol(@protocol(AttachEndpointToUserDelegate));
     
-    DefaultEndpointRegistrationManager *manager = [[DefaultEndpointRegistrationManager alloc] initWith:state executorContext:self.executorContext userTransport:nil profileTransport:nil];
+    DefaultEndpointRegistrationManager *manager = [[DefaultEndpointRegistrationManager alloc] initWithState:state executorContext:self.executorContext userTransport:nil profileTransport:nil];
     [manager setAttachedDelegate:nil];
     [manager onUpdate:nil detachResponses:nil userResponse:nil userAttachNotification:attachNotification userDetachNotification:nil];
     [manager setAttachedDelegate:delegate];
@@ -229,7 +229,7 @@
 
     id <DetachEndpointFromUserDelegate> delegate = mockProtocol(@protocol(DetachEndpointFromUserDelegate));
     
-    DefaultEndpointRegistrationManager *manager = [[DefaultEndpointRegistrationManager alloc] initWith:state executorContext:self.executorContext userTransport:nil profileTransport:nil];
+    DefaultEndpointRegistrationManager *manager = [[DefaultEndpointRegistrationManager alloc] initWithState:state executorContext:self.executorContext userTransport:nil profileTransport:nil];
     [manager setDetachedDelegate:nil];
     [manager onUpdate:nil detachResponses:nil userResponse:nil userAttachNotification:nil userDetachNotification:detachedNotification];
     

@@ -33,11 +33,11 @@
     return self;
 }
 
-- (instancetype) initWithTimeLimit:(int64_t)timeLimit andTimeunit:(TimeUnit) timeUnit {
+- (instancetype)initWithTimeLimit:(int64_t)timeLimit timeUnit:(TimeUnit)timeUnit {
     self = [super init];
     if (self) {
         [self setLastUploadTime:[[NSDate date] timeIntervalSince1970] * 1000];
-        [self setUploadCheckPeriod:(int32_t)[TimeUtils convert:timeLimit from:timeUnit to:TIME_UNIT_SECONDS]];
+        [self setUploadCheckPeriod:(int32_t)[TimeUtils convertValue:timeLimit fromTimeUnit:timeUnit toTimeUnit:TIME_UNIT_SECONDS]];
     }
     return self;
 }

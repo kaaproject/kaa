@@ -21,10 +21,10 @@
 @property(nonatomic) int branch;
 @property(nonatomic, strong) id data;
 
-- (instancetype)initWithBranch:(int)branch andData:(id)data;
+- (instancetype)initWithBranch:(int)branch data:(id)data;
 - (instancetype)initWithBranch:(int)branch;
 
-+ (instancetype)unionWithBranch:(int)branch andData:(id)data;
++ (instancetype)unionWithBranch:(int)branch data:(id)data;
 + (instancetype)unionWithBranch:(int)branch;
 
 @end

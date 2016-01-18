@@ -20,9 +20,9 @@
 
 @interface SimpleExecutorContext : AbstractExecutorContext <ExecutorContext>
 
-- (instancetype)initWithlifeCycleThreadCount:(int32_t)lifeCycleThreadCount
-                           andApiThreadCount:(int32_t)apiThreadCount
-                      andCallbackThreadCount:(int32_t)callbackThreadCount
-                     andScheduledThreadCount:(int32_t)scheduledThreadCount;
+- (instancetype)initWithLifeCycleThreadCount:(int32_t)lifeCycleThreadCount
+                           apiThreadCount:(int32_t)apiThreadCount
+                      callbackThreadCount:(int32_t)callbackThreadCount
+                     scheduledThreadCount:(int32_t)scheduledThreadCount;
 
 @end

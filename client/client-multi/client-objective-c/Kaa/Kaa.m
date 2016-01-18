@@ -23,13 +23,13 @@
 
 @implementation Kaa
 
-+ (id<KaaClient>)clientWithContext:(id<KaaClientPlatformContext>)context andStateDelegate:(id<KaaClientStateDelegate>)delegate {
++ (id<KaaClient>)clientWithContext:(id<KaaClientPlatformContext>)context stateDelegate:(id<KaaClientStateDelegate>)delegate {
     
     [DDLog addLogger:[DDTTYLogger sharedInstance]]; // TTY = Xcode console
     [DDLog addLogger:[DDASLLogger sharedInstance]]; // ASL = Apple System Logs
     
     @try {
-        return [[BaseKaaClient alloc] initWithPlatformContext:context andDelegate:delegate];
+        return [[BaseKaaClient alloc] initWithPlatformContext:context delegate:delegate];
     }
     @catch (NSException *exception) {
         DDLogError(@"%@ Failed to create Kaa client: %@. Reason: %@", TAG, exception.name, exception.reason);
@@ -38,7 +38,7 @@
 }
 
 + (id<KaaClient>)clientWithContext:(id<KaaClientPlatformContext>)context {
-    return [self clientWithContext:context andStateDelegate:nil];
+    return [self clientWithContext:context stateDelegate:nil];
 }
 
 @end

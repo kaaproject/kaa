@@ -53,7 +53,7 @@
     }
     
     if (ack) {
-        [self.channelManager syncAck:type];
+        [self.channelManager syncAckForTransportType:type];
     } else if (all) {
         [self.channelManager syncAll:type];
     } else {

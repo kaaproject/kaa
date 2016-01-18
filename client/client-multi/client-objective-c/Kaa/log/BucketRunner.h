@@ -42,7 +42,6 @@
  *
  * @return the computed result
  */
-- (BucketInfo *)getValueWithTimeout:(int64_t)timeout andTimeUnit:(TimeUnit)timeUnit;
-
+- (BucketInfo *)getValueWithTimeout:(int64_t)timeout timeUnit:(TimeUnit)timeUnit;
 
 @end

@@ -5,5 +5,5 @@
 
 - (void)add{event_class_name}ToBlock:({event_class_name} *)event withTransactionId:(TransactionId *)trxId;
 
-- (void)add{event_class_name}ToBlock:({event_class_name} *)event withTransactionId:(TransactionId *)trxId andTarget:(NSString *)target;
+- (void)add{event_class_name}ToBlock:({event_class_name} *)event withTransactionId:(TransactionId *)trxId target:(NSString *)target;
 

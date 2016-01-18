@@ -45,9 +45,9 @@
 /**
  * Notifies channel about successful acknowledgment of the sync only in case if smth change.
  */
-- (void)syncAck:(TransportType)type;
+- (void)syncAckForTransportType:(TransportType)type;
 
-- (void)syncAckTransportTypes:(NSSet *)types;
+- (void)syncAckForTransportTypes:(NSSet *)types;
 
 /**
  * Retrieves the channel's id. It should be unique in existing channels scope.

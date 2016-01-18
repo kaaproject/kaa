@@ -45,7 +45,7 @@
 
 @implementation DefaultNotificationManager
 
-- (instancetype)initWith:(id<KaaClientState>)state
+- (instancetype)initWithState:(id<KaaClientState>)state
          executorContext:(id<ExecutorContext>)context
    notificationTransport:(id<NotificationTransport>)transport {
     self = [super init];
@@ -296,7 +296,7 @@
         __block NSArray *blockDelegates = [delegates copy];
         [[self.context getCallbackExecutor] addOperationWithBlock:^{
             @try {
-                [weakSelf.deserializer notify:blockDelegates topic:topic data:notification.body];
+                [weakSelf.deserializer notifyDelegates:blockDelegates topic:topic data:notification.body];
             }
             @catch (NSException *exception) {
                 DDLogError(@"%@ Failed to process notification for topic %@. Error: %@ reason: %@",

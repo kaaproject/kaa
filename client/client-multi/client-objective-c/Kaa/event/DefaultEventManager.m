@@ -37,7 +37,7 @@
 @property (nonatomic) int requestId;
 
 @property (nonatomic,strong) NSObject *eventGuard;
-@property (nonatomic,strong) NSObject *trxGuard;
+@property (nonatomic,strong) NSObject *transactionsGuard;
 
 - (NSMutableArray *)getPendingEvents:(BOOL)clear;
 
@@ -45,7 +45,7 @@
 
 @implementation DefaultEventManager
 
-- (instancetype)initWith:(id<KaaClientState>)state
+- (instancetype)initWithState:(id<KaaClientState>)state
          executorContext:(id<ExecutorContext>)executorContext
           eventTransport:(id<EventTransport>)transport {
     self = [super init];
@@ -62,7 +62,7 @@
         self.requestId = 0;
         self.isEngaged = NO;
         self.eventGuard = [[NSObject alloc] init];
-        self.trxGuard = [[NSObject alloc] init];
+        self.transactionsGuard = [[NSObject alloc] init];
     }
     return self;
 }
@@ -78,7 +78,7 @@
                 bind.isSent = YES;
             }
         }
-        request.eventListenersRequests = [KAAUnion unionWithBranch:KAA_UNION_ARRAY_EVENT_LISTENERS_REQUEST_OR_NULL_BRANCH_0 andData:requests];
+        request.eventListenersRequests = [KAAUnion unionWithBranch:KAA_UNION_ARRAY_EVENT_LISTENERS_REQUEST_OR_NULL_BRANCH_0 data:requests];
     }
 }
 
@@ -95,7 +95,7 @@
 - (void)produceEvent:(NSString *)eventFQN data:(NSData *)data target:(NSString *)target transactionId:(TransactionId *)transactionId {
     if (transactionId) {
         DDLogInfo(@"%@ Adding event [eventClassFQN: %@, target: %@] to transaction %@", TAG, eventFQN, (target ? target : @"broadcast"), transactionId);
-        @synchronized(self.trxGuard) {
+        @synchronized(self.transactionsGuard) {
             NSMutableArray *events = [self.transactions objectForKey:transactionId];
             if (events) {
                 Event *event = [[Event alloc] init];
@@ -103,7 +103,7 @@
                 event.eventClassFQN = eventFQN;
                 event.eventData = [NSData dataWithData:data];
                 if (target) {
-                    event.target = [KAAUnion unionWithBranch:KAA_UNION_STRING_OR_NULL_BRANCH_0 andData:target];
+                    event.target = [KAAUnion unionWithBranch:KAA_UNION_STRING_OR_NULL_BRANCH_0 data:target];
                 }
                 [events addObject:event];
             } else {
@@ -118,7 +118,7 @@
             event.eventClassFQN = eventFQN;
             event.eventData = [NSData dataWithData:data];
             if (target) {
-                event.target = [KAAUnion unionWithBranch:KAA_UNION_STRING_OR_NULL_BRANCH_0 andData:target];
+                event.target = [KAAUnion unionWithBranch:KAA_UNION_STRING_OR_NULL_BRANCH_0 data:target];
             }
             [self.currentEvents addObject:event];
         }
@@ -133,14 +133,14 @@
     [self.registeredEventFamilies addObject:eventFamily];
 }
 
-- (void)onGenericEvent:(NSString *)eventFQN data:(NSData *)data source:(NSString *)source {
+- (void)onGenericEvent:(NSString *)eventFQN withData:(NSData *)data fromSource:(NSString *)source {
     DDLogInfo(@"%@ Received event [eventClassFQN: %@]", TAG, eventFQN);
     for (id<BaseEventFamily> family in self.registeredEventFamilies) {
         DDLogInfo(@"%@ Lookup event fqn %@ in family %@", TAG, eventFQN, family);
         if ([[family getSupportedEventFQNs] containsObject:eventFQN]) {
             DDLogInfo(@"%@ Event fqn [%@] found in family [%@]", TAG, eventFQN, family);
             [[self.executorContext getCallbackExecutor] addOperationWithBlock:^{
-                [family onGenericEvent:eventFQN withData:data from:source];
+                [family onGenericEvent:eventFQN withData:data fromSource:source];
             }];
         }
     }
@@ -198,7 +198,7 @@
 
 - (TransactionId *)beginTransaction {
     TransactionId *trxId = [[TransactionId alloc] init];
-    @synchronized(self.trxGuard) {
+    @synchronized(self.transactionsGuard) {
         if (![self.transactions objectForKey:trxId]) {
             DDLogDebug(@"%@ Creating events transaction with id [%@]", TAG, trxId);
             [self.transactions setObject:[NSMutableArray array] forKey:trxId];
@@ -209,7 +209,7 @@
 
 - (void)commit:(TransactionId *)trxId {
     DDLogDebug(@"%@ Committing events transaction with id [%@]", TAG, trxId);
-    @synchronized(self.trxGuard) {
+    @synchronized(self.transactionsGuard) {
         NSArray *eventsToCommit = [self.transactions objectForKey:trxId];
         if (eventsToCommit) {
             [self.transactions removeObjectForKey:trxId];
@@ -229,7 +229,7 @@
 
 - (void)rollback:(TransactionId *)trxId {
     DDLogDebug(@"%@ Rolling back events transaction with id %@", TAG, trxId);
-    @synchronized(self.trxGuard) {
+    @synchronized(self.transactionsGuard) {
         NSMutableArray *eventsToRemove = [self.transactions objectForKey:trxId];
         if (eventsToRemove) {
             [self.transactions removeObjectForKey:trxId];

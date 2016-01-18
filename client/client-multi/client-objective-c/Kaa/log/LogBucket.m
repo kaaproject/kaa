@@ -18,7 +18,7 @@
 
 @implementation LogBucket
 
-- (instancetype)initWithBucketId:(int32_t)bucketId andRecords:(NSArray *)logRecords {
+- (instancetype)initWithBucketId:(int32_t)bucketId records:(NSArray *)logRecords {
     self = [super init];
     if (self) {
         _bucketId = bucketId;

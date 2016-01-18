@@ -39,7 +39,7 @@
 * @param data     - event data
 * @param source   - event source
 */
-- (void)onGenericEvent:(NSString *)eventFQN withData:(NSData *)data from:(NSString *)source;
+- (void)onGenericEvent:(NSString *)eventFQN withData:(NSData *)data fromSource:(NSString *)source;
 
 @end
 

@@ -88,19 +88,19 @@
     [transport onEventResponse:response];
     
     NSMutableArray *events = [NSMutableArray array];
-    [response setEvents:[KAAUnion unionWithBranch:KAA_UNION_ARRAY_EVENT_OR_NULL_BRANCH_0 andData:events]];
+    [response setEvents:[KAAUnion unionWithBranch:KAA_UNION_ARRAY_EVENT_OR_NULL_BRANCH_0 data:events]];
     [transport onEventResponse:response];
     [events addObject:[self getNewEvent]];
     [transport onEventResponse:response];
     
     NSMutableArray *delegates = [NSMutableArray array];
-    [response setEventListenersResponses:[KAAUnion unionWithBranch:KAA_UNION_ARRAY_EVENT_LISTENERS_RESPONSE_OR_NULL_BRANCH_0 andData:delegates]];
+    [response setEventListenersResponses:[KAAUnion unionWithBranch:KAA_UNION_ARRAY_EVENT_LISTENERS_RESPONSE_OR_NULL_BRANCH_0 data:delegates]];
     [transport onEventResponse:response];
     [delegates addObject:[self getNewEventListenerResponse]];
     [transport onEventResponse:response];
     
     
-    [verifyCount(manager, times(3)) onGenericEvent:@"eventClassFQN" data:[self getPlainData] source:@"source"];
+    [verifyCount(manager, times(3)) onGenericEvent:@"eventClassFQN" withData:[self getPlainData] fromSource:@"source"];
     [verifyCount(manager, times(1)) eventListenersResponseReceived:delegates];
 }
 
@@ -178,7 +178,7 @@
     seqNumResponse.seqNum = lastEventSN;
     eventResponse.eventSequenceNumberResponse =
     [KAAUnion unionWithBranch:KAA_UNION_EVENT_SEQUENCE_NUMBER_RESPONSE_OR_NULL_BRANCH_0
-                      andData:seqNumResponse];
+                      data:seqNumResponse];
     
     [transport onEventResponse:eventResponse];
     
@@ -226,7 +226,7 @@
     seqNumResponse.seqNum = lastReceivedSN;
     eventResponse.eventSequenceNumberResponse =
     [KAAUnion unionWithBranch:KAA_UNION_EVENT_SEQUENCE_NUMBER_RESPONSE_OR_NULL_BRANCH_0
-                      andData:seqNumResponse];
+                      data:seqNumResponse];
     
     [transport onEventResponse:eventResponse];
     
@@ -263,7 +263,7 @@
     seqNumResponse.seqNum = 0;
     response.eventSequenceNumberResponse =
     [KAAUnion unionWithBranch:KAA_UNION_EVENT_SEQUENCE_NUMBER_RESPONSE_OR_NULL_BRANCH_0
-                      andData:seqNumResponse];
+                      data:seqNumResponse];
     
     return response;
 }
@@ -283,8 +283,8 @@
     event.seqNum = 5;
     event.eventClassFQN = @"eventClassFQN";
     event.eventData = [self getPlainData];
-    event.source = [KAAUnion unionWithBranch:KAA_UNION_STRING_OR_NULL_BRANCH_0 andData:@"source"];
-    event.target = [KAAUnion unionWithBranch:KAA_UNION_STRING_OR_NULL_BRANCH_0 andData:@"target"];
+    event.source = [KAAUnion unionWithBranch:KAA_UNION_STRING_OR_NULL_BRANCH_0 data:@"source"];
+    event.target = [KAAUnion unionWithBranch:KAA_UNION_STRING_OR_NULL_BRANCH_0 data:@"target"];
     return event;
 }
 

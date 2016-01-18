@@ -44,7 +44,7 @@
 
 @implementation DefaultBootstrapManager
 
-- (instancetype)initWith:(id<BootstrapTransport>)transport executorContext:(id<ExecutorContext>)context {
+- (instancetype)initWithTransport:(id<BootstrapTransport>)transport executorContext:(id<ExecutorContext>)context {
     self = [super init];
     if (self) {
         self.transport = transport;
@@ -66,7 +66,7 @@
         if (nextOperServer) {
             DDLogDebug(@"%@ New server [%i] will be user for %@", TAG, nextOperServer.accessPointId, transportId);
             if (self.channelManager) {
-                GenericTransportInfo *info = [[GenericTransportInfo alloc] initWithServerType:SERVER_OPERATIONS andMeta:nextOperServer];
+                GenericTransportInfo *info = [[GenericTransportInfo alloc] initWithServerType:SERVER_OPERATIONS meta:nextOperServer];
                 [self.channelManager onTransportConnectionInfoUpdated:info];
             } else {
                 DDLogError(@"%@ Can not process server change. Channel manager was not specified", TAG);
@@ -127,7 +127,7 @@
         
         for (ProtocolMetaData *server in self.operationsServerList) {
             TransportProtocolId *transportId =
-            [[TransportProtocolId alloc] initWithId:server.protocolVersionInfo.id andVersion:server.protocolVersionInfo.version];
+            [[TransportProtocolId alloc] initWithId:server.protocolVersionInfo.id version:server.protocolVersionInfo.version];
             NSMutableArray *servers = [self.mappedOperationServerList objectForKey:transportId];
             if (!servers) {
                 servers = [NSMutableArray array];
@@ -148,7 +148,7 @@
             }
         } else {
             for (NSEnumerator *value in self.mappedIterators.allValues) {
-                id<TransportConnectionInfo> info = [[GenericTransportInfo alloc] initWithServerType:SERVER_OPERATIONS andMeta:[value nextObject]];
+                id<TransportConnectionInfo> info = [[GenericTransportInfo alloc] initWithServerType:SERVER_OPERATIONS meta:[value nextObject]];
                 [self.channelManager onTransportConnectionInfoUpdated:info];
             }
         }
@@ -158,7 +158,7 @@
 - (void)notifyChannelManagerAboutServers:(NSMutableArray *)servers {
     for (ProtocolMetaData *meta in servers) {
         DDLogDebug(@"%@ Applying new transport %@", TAG, meta);
-        GenericTransportInfo *info = [[GenericTransportInfo alloc] initWithServerType:SERVER_OPERATIONS andMeta:meta];
+        GenericTransportInfo *info = [[GenericTransportInfo alloc] initWithServerType:SERVER_OPERATIONS meta:meta];
         [self.channelManager onTransportConnectionInfoUpdated:info];
     }
 }

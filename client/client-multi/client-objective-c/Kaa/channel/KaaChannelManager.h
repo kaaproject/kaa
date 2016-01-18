@@ -66,7 +66,7 @@
  * Invoke sync acknowledgement on active channel by specified transport type;
  *
  */
-- (void)syncAck:(TransportType)type;
+- (void)syncAckForTransportType:(TransportType)type;
 
 /**
  * Invoke sync acknowledgement on active channel;

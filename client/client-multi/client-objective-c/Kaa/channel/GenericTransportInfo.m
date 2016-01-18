@@ -21,13 +21,13 @@
 @synthesize serverType = _serverType;
 @synthesize transportId = _transportId;
 
-- (instancetype)initWithServerType:(ServerType)serverType andMeta:(ProtocolMetaData *)meta {
+- (instancetype)initWithServerType:(ServerType)serverType meta:(ProtocolMetaData *)meta {
     self = [super init];
     if (self) {
         _serverType = serverType;
         self.meta = meta;
         _transportId = [[TransportProtocolId alloc] initWithId:meta.protocolVersionInfo.id
-                                                        andVersion:meta.protocolVersionInfo.version];
+                                                        version:meta.protocolVersionInfo.version];
     }
     return self;
 }

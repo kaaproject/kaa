@@ -26,7 +26,7 @@
  * Used to generate key pair with custom tag or default one.
  */
 + (KeyPair *)generateKeyPair;
-+ (KeyPair *)generateKeyPairWithPrivateTag:(NSData *)privateTag andPublicTag:(NSData *)publicTag;
++ (KeyPair *)generateKeyPairWithPrivateTag:(NSData *)privateTag publicTag:(NSData *)publicTag;
 
 /**
  * Gets reference to default public key from keychain.

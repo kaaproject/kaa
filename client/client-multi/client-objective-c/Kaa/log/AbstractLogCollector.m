@@ -50,13 +50,13 @@
 @property (nonatomic,weak) AbstractLogCollector *logCollector;
 @property (nonatomic,strong) LogBucket *timeoutBucket;
 
-- (instancetype)initWithLogCollector:(AbstractLogCollector *)logCollector timeout:(int64_t)timeout andBucket:(LogBucket *)bucket;
+- (instancetype)initWithLogCollector:(AbstractLogCollector *)logCollector timeout:(int64_t)timeout bucket:(LogBucket *)bucket;
 
 @end
 
 @implementation AbstractLogCollector
 
-- (instancetype)initWith:(id<LogTransport>)transport
+- (instancetype)initWithTransport:(id<LogTransport>)transport
          executorContext:(id<ExecutorContext>)executorContext
           channelManager:(id<KaaChannelManager>)channelManager
          failoverManager:(id<FailoverManager>)failoverManager {
@@ -117,12 +117,12 @@
         [logs addObject:[[LogEntry alloc] initWithData:[NSData dataWithData:record.data]]];
     }
     request.requestId = bucket.bucketId;
-    request.logEntries = [KAAUnion unionWithBranch:KAA_UNION_ARRAY_LOG_ENTRY_OR_NULL_BRANCH_0 andData:logs];
+    request.logEntries = [KAAUnion unionWithBranch:KAA_UNION_ARRAY_LOG_ENTRY_OR_NULL_BRANCH_0 data:logs];
     
     DDLogInfo(@"%@ Adding following bucket id [%i] for timeout tracking", TAG, bucket.bucketId);
     NSOperation *timeoutOperation = [[TimeoutOperation alloc] initWithLogCollector:self
                                                                            timeout:[self.strategy getTimeout]
-                                                                          andBucket:bucket];
+                                                                          bucket:bucket];
     
     [self.timeoutsLock lock];
     [self.timeouts setObject:timeoutOperation forKey:[NSNumber numberWithInt:bucket.bucketId]];
@@ -309,7 +309,7 @@
     [self uploadIfNeeded];
 }
 
-- (void)retryLogUpload:(int32_t)delay {
+- (void)retryLogUploadWithDelay:(int32_t)delay {
     __weak typeof(self)weakSelf = self;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), [self.executorContext getSheduledExecutor], ^{
         [weakSelf uploadIfNeeded];
@@ -328,7 +328,7 @@
 
 @implementation TimeoutOperation
 
-- (instancetype)initWithLogCollector:(AbstractLogCollector *)logCollector timeout:(int64_t)timeout andBucket:(LogBucket *)bucket {
+- (instancetype)initWithLogCollector:(AbstractLogCollector *)logCollector timeout:(int64_t)timeout bucket:(LogBucket *)bucket {
     self = [super init];
     if (self) {
         self.logCollector = logCollector;

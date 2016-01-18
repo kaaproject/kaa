@@ -114,7 +114,7 @@
     }
 }
 
-- (int)push:(NSData *)bytes to:(int)position {
+- (int)pushBytes:(NSData *)bytes toPosition:(int)position {
     int pos = position;
     const char *rawBytes = [bytes bytes];
     if (self.currentState == FRAME_PARSING_STATE_NONE) {

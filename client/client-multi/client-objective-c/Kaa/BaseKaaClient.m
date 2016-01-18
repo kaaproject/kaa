@@ -20,17 +20,17 @@
 
 @implementation BaseKaaClient
 
-- (instancetype)initWithPlatformContext:(id<KaaClientPlatformContext>)context andDelegate:(id<KaaClientStateDelegate>)delegate {
-    return [super initWithPlatformContext:context andDelegate:delegate];
+- (instancetype)initWithPlatformContext:(id<KaaClientPlatformContext>)context delegate:(id<KaaClientStateDelegate>)delegate {
+    return [super initWithPlatformContext:context delegate:delegate];
 }
 
 - (BucketRunner *)addLogRecord:(KAADummyLog *)record {
-    [self checkLifecycleState:CLIENT_LIFECYCLE_STATE_STARTED withError:@"Kaa client isn't started"];
+    [self checkLifecycleState:CLIENT_LIFECYCLE_STATE_STARTED withErrorMessage:@"Kaa client isn't started"];
     return [self.logCollector addLogRecord:record];
 }
 
 - (KAADummyConfiguration *)getConfiguration {
-    [self checkLifecycleState:CLIENT_LIFECYCLE_STATE_STARTED withError:@"Kaa client isn't started"];
+    [self checkLifecycleState:CLIENT_LIFECYCLE_STATE_STARTED withErrorMessage:@"Kaa client isn't started"];
     return [self.configurationManager getConfiguration];
 }
 

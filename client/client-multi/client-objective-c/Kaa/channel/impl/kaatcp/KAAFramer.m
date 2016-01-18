@@ -69,7 +69,7 @@
                 break;
             }
         }
-        used += [self.currentFrame push:data to:used];
+        used += [self.currentFrame pushBytes:data toPosition:used];
         if (self.currentFrame.frameDecodeComplete) {
             [self notifyDelegates:[self.currentFrame upgradeFrame]];
             self.currentFrame = nil;

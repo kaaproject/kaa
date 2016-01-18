@@ -32,10 +32,10 @@ if (![(a) isEqual:(b)]) {\
 
 @interface TestsHelper : NSObject
 
-+ (ProtocolMetaData *)buildMetaDataWithTPid:(TransportProtocolId *)TPid
++ (ProtocolMetaData *)buildMetaDataWithTransportProtocolId:(TransportProtocolId *)TPid
                                        host:(NSString *)host
                                        port:(int32_t)port
-                               andPublicKey:(NSData *)publicKey;
+                                publicKey:(NSData *)publicKey;
 
 + (KaaClientProperties *)getProperties;
 

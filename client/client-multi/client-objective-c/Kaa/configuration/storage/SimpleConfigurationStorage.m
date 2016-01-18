@@ -32,7 +32,7 @@
 
 @implementation SimpleConfigurationStorage
 
-- (instancetype)initWithPlatformContext:(id<KaaClientPlatformContext>)context andPath:(NSString *)path {
+- (instancetype)initWithPlatformContext:(id<KaaClientPlatformContext>)context path:(NSString *)path {
     self = [super init];
     if (self) {
         self.context = context;

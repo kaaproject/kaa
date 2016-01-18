@@ -21,11 +21,11 @@
 
 @interface AbstractConfigurationManager ()
 
-@property(nonatomic,strong) KaaClientProperties *properties;
-@property(nonatomic,strong) id<KaaClientState> state;
-@property(nonatomic,strong) id<ConfigurationStorage> storage;
-@property(nonatomic,strong) NSData *configurationData;
-@property(nonatomic,strong) id<ExecutorContext> executorContext;
+@property(nonatomic, strong) KaaClientProperties *properties;
+@property(nonatomic, strong) id<KaaClientState> state;
+@property(nonatomic, strong) id<ConfigurationStorage> storage;
+@property(nonatomic, strong) NSData *configurationData;
+@property(nonatomic, strong) id<ExecutorContext> executorContext;
 
 @property(strong) NSMutableSet *delegates;
 @property(strong) NSLock *delegatesLock;
@@ -36,7 +36,7 @@
 
 @implementation AbstractConfigurationManager
 
-- (instancetype)initWithClientProperties:(KaaClientProperties *)properties state:(id<KaaClientState>)state andExecutorContext:(id<ExecutorContext>)context {
+- (instancetype)initWithClientProperties:(KaaClientProperties *)properties state:(id<KaaClientState>)state executorContext:(id<ExecutorContext>)context {
     self = [super init];
     if (self) {
         self.delegates = [NSMutableSet set];
@@ -86,7 +86,7 @@
             DDLogDebug(@"%@ Persisted configuration data from storage: %@", TAG, self.storage);
         }
         [self.delegatesLock lock];
-        [_deserializer notify:self.delegates withData:self.configurationData];
+        [_deserializer notifyDelegates:self.delegates withData:self.configurationData];
         [self.delegatesLock unlock];
     } else {
         DDLogWarn(@"%@ Only full resync delta is supported!", TAG);

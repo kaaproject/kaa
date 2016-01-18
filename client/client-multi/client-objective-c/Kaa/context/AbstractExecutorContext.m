@@ -28,10 +28,10 @@
 
 
 - (instancetype)init {
-    return [self initWithTimeOut:DEFAULT_TIMEOUT andTimeUnit:DEFAULT_TIMEUNIT];
+    return [self initWithTimeOut:DEFAULT_TIMEOUT timeUnit:DEFAULT_TIMEUNIT];
 }
 
-- (instancetype) initWithTimeOut:(int64_t)timeOut andTimeUnit:(TimeUnit)timeUnit {
+- (instancetype)initWithTimeOut:(int64_t)timeOut timeUnit:(TimeUnit)timeUnit {
     self = [super init];
     if (self) {
         self.timeOut = timeOut;
@@ -40,7 +40,7 @@
     return self;
 }
 
-- (void)shutDownExecutor:(NSOperationQueue*)queue {
+- (void)shutDownExecutor:(NSOperationQueue *)queue {
     
     if (!queue) {
         DDLogWarn(@"%@ Can't shutdown empty executor", TAG);

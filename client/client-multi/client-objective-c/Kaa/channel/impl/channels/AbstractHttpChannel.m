@@ -25,19 +25,19 @@
 
 @interface AbstractHttpChannel ()
 
-@property (nonatomic,strong) IPTransportInfo *currentServer;
-@property (nonatomic,weak) AbstractKaaClient *kaaClient;
-@property (nonatomic,strong) id<KaaClientState> kaaState;
-@property (nonatomic,strong) id<FailoverManager> failoverMgr;
+@property (nonatomic, strong) IPTransportInfo *currentServer;
+@property (nonatomic, weak) AbstractKaaClient *kaaClient;
+@property (nonatomic, strong) id<KaaClientState> kaaState;
+@property (nonatomic, strong) id<FailoverManager> failoverMgr;
 
-@property (nonatomic,strong) volatile NSOperationQueue *executor;
+@property (nonatomic, strong) volatile NSOperationQueue *executor;
 
 @property (nonatomic) volatile BOOL lastConnectionFailed;
 @property (nonatomic) volatile BOOL isPaused;
 
-@property (nonatomic,strong) AbstractHttpClient *kaaHttpClient;
-@property (nonatomic,strong) id<KaaDataDemultiplexer> chDemultiplexer;
-@property (nonatomic,strong) id<KaaDataMultiplexer> chMultiplexer;
+@property (nonatomic, strong) AbstractHttpClient *kaaHttpClient;
+@property (nonatomic, strong) id<KaaDataDemultiplexer> chDemultiplexer;
+@property (nonatomic, strong) id<KaaDataMultiplexer> chMultiplexer;
 
 @end
 
@@ -98,7 +98,7 @@
             }
         }
         if (self.executor) {
-            [self.executor addOperation:[self createChannelRunner:typeMap]];
+            [self.executor addOperation:[self createChannelRunnerWithTypes:typeMap]];
         } else {
             DDLogError(@"%@ No executor found for channel with id: %@", TAG, [self getId]);
         }
@@ -121,7 +121,7 @@
             return;
         }
         if (self.currentServer) {
-            [self.executor addOperation:[self createChannelRunner:[self getSupportedTransportTypes]]];
+            [self.executor addOperation:[self createChannelRunnerWithTypes:[self getSupportedTransportTypes]]];
         } else {
             self.lastConnectionFailed = YES;
             DDLogWarn(@"%@ Can't sync. Server is nil", TAG);
@@ -129,11 +129,11 @@
     }
 }
 
-- (void)syncAck:(TransportType)type {
-    [self syncAckTransportTypes:[NSSet setWithObject:[NSNumber numberWithInt:type]]];
+- (void)syncAckForTransportType:(TransportType)type {
+    [self syncAckForTransportTypes:[NSSet setWithObject:[NSNumber numberWithInt:type]]];
 }
 
-- (void)syncAckTransportTypes:(NSSet *)types {
+- (void)syncAckForTransportTypes:(NSSet *)types {
     DDLogInfo(@"%@ Sync ack message is ignored for Channel with id: %@", TAG, [self getId]);
 }
 
@@ -165,9 +165,9 @@
         if (server) {
             self.currentServer = [[IPTransportInfo alloc] initWithTransportInfo:server];
             NSString *url = [NSString stringWithFormat:@"%@%@", [self.currentServer getUrl], [self getURLSuffix]];
-            self.kaaHttpClient = [self.kaaClient createHttpClientWithURL:url
-                                                              privateKey:[self.kaaState privateKey]
-                                                               publicKey:[self.kaaState publicKey]
+            self.kaaHttpClient = [self.kaaClient createHttpClientWithURLString:url
+                                                              privateKeyRef:[self.kaaState privateKey]
+                                                               publicKeyRef:[self.kaaState publicKey]
                                                                remoteKey:[self.currentServer getPublicKey]];
             if (self.lastConnectionFailed && !self.isPaused) {
                 self.lastConnectionFailed = NO;
@@ -241,11 +241,12 @@
     return nil;
 }
 
-- (void)connectionStateChanged:(BOOL)failed {
-    [self connectionStateChanged:failed withStatus:-1];
+- (void)connectionEstablished {
+    self.lastConnectionFailed = NO;
+    [self.failoverMgr onServerConnected:self.currentServer];
 }
 
-- (void)connectionStateChanged:(BOOL)failed withStatus:(int)status {
+- (void)connectionFailedWithStatus:(int)status {
     switch (status) {
         case UNATHORIZED_HTTP_STATUS:
             [self.kaaState clean];
@@ -253,12 +254,8 @@
         default:
             break;
     }
-    self.lastConnectionFailed = failed;
-    if (failed) {
-        [self.failoverMgr onServerFailed:self.currentServer];
-    } else {
-        [self.failoverMgr onServerConnected:self.currentServer];
-    }
+    self.lastConnectionFailed = YES;
+    [self.failoverMgr onServerFailed:self.currentServer];
 }
 
 - (id<KaaDataMultiplexer>)getMultiplexer {
@@ -273,7 +270,7 @@
     return self.kaaHttpClient;
 }
 
-- (NSOperation *)createChannelRunner:(NSDictionary *)types {
+- (NSOperation *)createChannelRunnerWithTypes:(NSDictionary *)types {
     [NSException raise:NSInternalInconsistencyException format:@"Not implemented in abstract class"];
     return nil;
 }

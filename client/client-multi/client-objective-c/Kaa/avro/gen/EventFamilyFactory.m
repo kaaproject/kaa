@@ -25,7 +25,7 @@
 
 @implementation EventFamilyFactory
 
-- (instancetype)initWith:(id<EventManager>)manager executorContext:(id<ExecutorContext>)context {
+- (instancetype)initWithManager:(id<EventManager>)manager executorContext:(id<ExecutorContext>)context {
     self = [super init];
     if (self) {
         self.eventManger = manager;

@@ -39,7 +39,7 @@
 
 @implementation TestLogStorageStatus
 
-- (instancetype)initWithConsumedVolume:(int64_t)consumedVolume andRecordCount:(int64_t)recordCount {
+- (instancetype)initWithConsumedVolume:(int64_t)consumedVolume recordCount:(int64_t)recordCount {
     self = [super init];
     if (self) {
         self.consumedVolume = consumedVolume;
@@ -70,7 +70,7 @@
     [strategy setBatchSize:20];
     [strategy setVolumeThreshold:60];
     [strategy setTimeout:300];
-    TestLogStorageStatus *status = [[TestLogStorageStatus alloc] initWithConsumedVolume:30 andRecordCount:3];
+    TestLogStorageStatus *status = [[TestLogStorageStatus alloc] initWithConsumedVolume:30 recordCount:3];
     
     XCTAssertEqual(LOG_UPLOAD_STRATEGY_DECISION_NOOP, [strategy isUploadNeeded:status]);
 }
@@ -80,11 +80,11 @@
     [strategy setBatchSize:20];
     [strategy setVolumeThreshold:60];
     [strategy setTimeout:300];
-    TestLogStorageStatus *status = [[TestLogStorageStatus alloc] initWithConsumedVolume:60 andRecordCount:3];
+    TestLogStorageStatus *status = [[TestLogStorageStatus alloc] initWithConsumedVolume:60 recordCount:3];
     
     XCTAssertEqual(LOG_UPLOAD_STRATEGY_DECISION_UPLOAD, [strategy isUploadNeeded:status]);
     
-    status = [[TestLogStorageStatus alloc] initWithConsumedVolume:70 andRecordCount:3];
+    status = [[TestLogStorageStatus alloc] initWithConsumedVolume:70 recordCount:3];
     XCTAssertEqual(LOG_UPLOAD_STRATEGY_DECISION_UPLOAD, [strategy isUploadNeeded:status]);
 }
 
@@ -95,7 +95,7 @@
     id<FailoverManager> failoverManager = mockProtocol(@protocol(FailoverManager));
     id<LogUploadStrategy> strategy = mockProtocol(@protocol(LogUploadStrategy));
     
-    AbstractLogCollector *logCollector = [[AbstractLogCollector alloc] initWith:logTransport executorContext:executorContext channelManager:channelManager failoverManager:failoverManager];
+    AbstractLogCollector *logCollector = [[AbstractLogCollector alloc] initWithTransport:logTransport executorContext:executorContext channelManager:channelManager failoverManager:failoverManager];
     [logCollector setValue:strategy forKey:@"strategy"];
     
     NSOperationQueue *executor = [[NSOperationQueue alloc] init];
@@ -104,7 +104,7 @@
     LogDeliveryStatus *status = [[LogDeliveryStatus alloc] init];
     status.requestId = 42;
     status.result = SYNC_RESPONSE_RESULT_TYPE_SUCCESS;
-    LogSyncResponse *response = [[LogSyncResponse alloc] initWithDeliveryStatuses:[KAAUnion unionWithBranch:KAA_UNION_ARRAY_LOG_DELIVERY_STATUS_OR_NULL_BRANCH_0 andData:[NSArray arrayWithObject:status]]];
+    LogSyncResponse *response = [[LogSyncResponse alloc] initWithDeliveryStatuses:[KAAUnion unionWithBranch:KAA_UNION_ARRAY_LOG_DELIVERY_STATUS_OR_NULL_BRANCH_0 data:[NSArray arrayWithObject:status]]];
     
     [logCollector onLogResponse:response];
 }
@@ -116,7 +116,7 @@
     id<FailoverManager> failoverManager = mockProtocol(@protocol(FailoverManager));
     id<LogUploadStrategy> strategy = mockProtocol(@protocol(LogUploadStrategy));
     
-    AbstractLogCollector *logCollector = [[AbstractLogCollector alloc] initWith:logTransport executorContext:executorContext channelManager:channelManager failoverManager:failoverManager];
+    AbstractLogCollector *logCollector = [[AbstractLogCollector alloc] initWithTransport:logTransport executorContext:executorContext channelManager:channelManager failoverManager:failoverManager];
     [logCollector setValue:strategy forKey:@"strategy"];
     
     NSOperationQueue *executor = [[NSOperationQueue alloc] init];
@@ -125,7 +125,7 @@
     LogDeliveryStatus *status = [[LogDeliveryStatus alloc] init];
     status.requestId = 42;
     status.result = SYNC_RESPONSE_RESULT_TYPE_FAILURE;
-    LogSyncResponse *response = [[LogSyncResponse alloc] initWithDeliveryStatuses:[KAAUnion unionWithBranch:KAA_UNION_ARRAY_LOG_DELIVERY_STATUS_OR_NULL_BRANCH_0 andData:[NSArray arrayWithObject:status]]];
+    LogSyncResponse *response = [[LogSyncResponse alloc] initWithDeliveryStatuses:[KAAUnion unionWithBranch:KAA_UNION_ARRAY_LOG_DELIVERY_STATUS_OR_NULL_BRANCH_0 data:[NSArray arrayWithObject:status]]];
     
     [logCollector onLogResponse:response];
     
@@ -156,7 +156,7 @@
     [given([executorContext getCallbackExecutor]) willReturn:executor];
     [given([executorContext getApiExecutor]) willReturn:apiExecutor];
     
-    AbstractLogCollector *logCollector = [[DefaultLogCollector alloc] initWith:logTransport executorContext:executorContext channelManager:channelManager failoverManager:failoverManager];
+    AbstractLogCollector *logCollector = [[DefaultLogCollector alloc] initWithTransport:logTransport executorContext:executorContext channelManager:channelManager failoverManager:failoverManager];
     DefaultLogUploadStrategy *strategy = mock([DefaultLogUploadStrategy class]);
     [given([strategy getMaxParallelUploads]) willReturnLong:maxParallelUploads];
     [logCollector setValue:strategy forKey:@"strategy"];
@@ -180,7 +180,7 @@
     if (statuses.count == 0 && maxParallelUploads == 0)
         return;
     
-    LogSyncResponse *response = [[LogSyncResponse alloc] initWithDeliveryStatuses:[KAAUnion unionWithBranch:KAA_UNION_ARRAY_LOG_DELIVERY_STATUS_OR_NULL_BRANCH_0 andData:statuses]];
+    LogSyncResponse *response = [[LogSyncResponse alloc] initWithDeliveryStatuses:[KAAUnion unionWithBranch:KAA_UNION_ARRAY_LOG_DELIVERY_STATUS_OR_NULL_BRANCH_0 data:statuses]];
     [logCollector onLogResponse:response];
     
     [logCollector fillSyncRequest:request];
@@ -198,7 +198,7 @@
     [given([executorContext getCallbackExecutor]) willReturn:executor];
     [given([executorContext getApiExecutor]) willReturn:apiExecutor];
     
-    AbstractLogCollector *logCollector = [[DefaultLogCollector alloc] initWith:logTransport executorContext:executorContext channelManager:channelManager failoverManager:failoverManager];
+    AbstractLogCollector *logCollector = [[DefaultLogCollector alloc] initWithTransport:logTransport executorContext:executorContext channelManager:channelManager failoverManager:failoverManager];
     DefaultLogUploadStrategy *strategy = mock([DefaultLogUploadStrategy class]);
     [given([strategy isUploadNeeded:anything()]) willReturnInt:LOG_UPLOAD_STRATEGY_DECISION_UPLOAD];
     [given([strategy getMaxParallelUploads]) willReturnLong:maxParallelUploads];
@@ -214,7 +214,7 @@
         [logCollector fillSyncRequest:request];
     }
     
-    LogSyncResponse *response = [[LogSyncResponse alloc] initWithDeliveryStatuses:[KAAUnion unionWithBranch:KAA_UNION_ARRAY_LOG_DELIVERY_STATUS_OR_NULL_BRANCH_0 andData:statuses]];
+    LogSyncResponse *response = [[LogSyncResponse alloc] initWithDeliveryStatuses:[KAAUnion unionWithBranch:KAA_UNION_ARRAY_LOG_DELIVERY_STATUS_OR_NULL_BRANCH_0 data:statuses]];
     [logCollector onLogResponse:response];
     [verifyCount(logTransport, times(maxParallelUploads)) sync];
 }

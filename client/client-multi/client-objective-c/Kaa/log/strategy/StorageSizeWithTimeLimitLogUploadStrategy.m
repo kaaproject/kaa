@@ -33,11 +33,11 @@
     return self;
 }
 
-- (instancetype) initWithThresholdVolume:(int32_t)volumeThreshold TimeLimit:(int64_t)timeLimit andTimeUnit:(TimeUnit)timeUnit {
+- (instancetype) initWithThresholdVolume:(int32_t)volumeThreshold timeLimit:(int64_t)timeLimit timeUnit:(TimeUnit)timeUnit {
     self = [self init];
     if (self) {
         [self setVolumeThreshold:volumeThreshold];
-        [self setUploadCheckPeriod:(int32_t)[TimeUtils convert:timeLimit from:timeUnit to:TIME_UNIT_SECONDS]];
+        [self setUploadCheckPeriod:(int32_t)[TimeUtils convertValue:timeLimit fromTimeUnit:timeUnit toTimeUnit:TIME_UNIT_SECONDS]];
     }
     return self;
 }

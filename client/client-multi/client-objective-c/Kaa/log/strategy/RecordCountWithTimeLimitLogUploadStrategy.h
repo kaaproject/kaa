@@ -23,6 +23,6 @@
 
 @property (nonatomic) int64_t lastUploadTime;
 
-- (instancetype)initWithCountThreshold:(int32_t)countThreshold TimeLimit:(int64_t)timeLimit andTimeUnit:(TimeUnit)timeUnit;
+- (instancetype)initWithCountThreshold:(int32_t)countThreshold timeLimit:(int64_t)timeLimit timeUnit:(TimeUnit)timeUnit;
 
 @end

@@ -40,7 +40,7 @@
 - (instancetype)initWithClient:(AbstractKaaClient *)client
                          state:(id<KaaClientState>)state
                failoverManager:(id<FailoverManager>)manager
-  andWantedNumberOfInvocations:(NSInteger)wantedNumberOfInvocations;
+  wantedNumberOfInvocations:(NSInteger)wantedNumberOfInvocations;
 
 @end
 
@@ -49,7 +49,7 @@
 - (instancetype)initWithClient:(AbstractKaaClient *)client
                          state:(id<KaaClientState>)state
                failoverManager:(id<FailoverManager>)manager
-  andWantedNumberOfInvocations:(NSInteger)wantedNumberOfInvocations {
+  wantedNumberOfInvocations:(NSInteger)wantedNumberOfInvocations {
     self = [super initWithClient:client state:state failoverManager:manager];
     self.wantedNumberOfInvocations = wantedNumberOfInvocations;
     return self;
@@ -69,8 +69,8 @@
 
 @implementation DefaultBootStrapChannelMock
 
-- (instancetype) initWithClient:(AbstractKaaClient *)client state:(id<KaaClientState>)state failoverManager:(id<FailoverManager>)manager andWantedNumberOfInvocations:(NSInteger)wantedNumberOfInvocations {
-    self = [super initWithClient:client state:state failoverManager:manager andWantedNumberOfInvocations:wantedNumberOfInvocations];
+- (instancetype) initWithClient:(AbstractKaaClient *)client state:(id<KaaClientState>)state failoverManager:(id<FailoverManager>)manager wantedNumberOfInvocations:(NSInteger)wantedNumberOfInvocations {
+    self = [super initWithClient:client state:state failoverManager:manager wantedNumberOfInvocations:wantedNumberOfInvocations];
     return self;
 }
 
@@ -123,15 +123,15 @@
     
     [KeyUtils generateKeyPair];
     AbstractKaaClient *client = mock([AbstractKaaClient class]);
-    [given([client createHttpClientWithURL:anything() privateKey:[KeyUtils getPrivateKeyRef] publicKey:[KeyUtils getPublicKeyRef] remoteKey:anything()]) willReturn:httpClient];
+    [given([client createHttpClientWithURLString:anything() privateKeyRef:[KeyUtils getPrivateKeyRef] publicKeyRef:[KeyUtils getPublicKeyRef] remoteKey:anything()]) willReturn:httpClient];
     [given([client getChannelManager]) willReturn:manager];
     
     id <KaaClientState> state = mockProtocol(@protocol(KaaClientState));
     id <KaaDataMultiplexer> multiplexer = mockProtocol(@protocol(KaaDataMultiplexer));
     id <KaaDataDemultiplexer> demultiplexer = mockProtocol(@protocol(KaaDataDemultiplexer));
-    DefaultBootStrapChannelMock *channel = [[DefaultBootStrapChannelMock alloc] initWithClient:client state:state failoverManager:failoverManager andWantedNumberOfInvocations:2];
+    DefaultBootStrapChannelMock *channel = [[DefaultBootStrapChannelMock alloc] initWithClient:client state:state failoverManager:failoverManager wantedNumberOfInvocations:2];
     
-    id <TransportConnectionInfo> server = [self createTestServerInfoWithServerType:SERVER_BOOTSTRAP transportProtocolId:[TransportProtocolIdHolder TCPTransportID] host:@"localhost" port:9889 andPublicKey:[KeyUtils getPublicKey]];
+    id <TransportConnectionInfo> server = [self createTestServerInfoWithServerType:SERVER_BOOTSTRAP transportProtocolId:[TransportProtocolIdHolder TCPTransportID] host:@"localhost" port:9889 publicKey:[KeyUtils getPublicKey]];
     [channel setServer:server];
 
     [channel sync:TRANSPORT_TYPE_BOOTSTRAP];
@@ -156,18 +156,18 @@
     [given([httpClient executeHttpRequest:anything() entity:anything() verifyResponse:anything()]) willThrow:excption];
     
     AbstractKaaClient *client = mock([AbstractKaaClient class]);
-    [given([client createHttpClientWithURL:anything() privateKey:[KeyUtils getPrivateKeyRef] publicKey:[KeyUtils getPublicKeyRef] remoteKey:anything()]) willReturn:httpClient];
+    [given([client createHttpClientWithURLString:anything() privateKeyRef:[KeyUtils getPrivateKeyRef] publicKeyRef:[KeyUtils getPublicKeyRef] remoteKey:anything()]) willReturn:httpClient];
     [given([client getChannelManager]) willReturn:manager];
     
     id <KaaClientState> state = mockProtocol(@protocol(KaaClientState));
     id <KaaDataMultiplexer> multiplexer = mockProtocol(@protocol(KaaDataMultiplexer));
     id <KaaDataDemultiplexer> demultiplexer = mockProtocol(@protocol(KaaDataDemultiplexer));
-    DefaultBootStrapChannelFake *channel = [[DefaultBootStrapChannelFake alloc] initWithClient:client state:state failoverManager:failoverManager andWantedNumberOfInvocations:0];
+    DefaultBootStrapChannelFake *channel = [[DefaultBootStrapChannelFake alloc] initWithClient:client state:state failoverManager:failoverManager wantedNumberOfInvocations:0];
     [channel setMultiplexer:multiplexer];
     [channel setDemultiplexer:demultiplexer];
     [channel shutdown];
     
-    id <TransportConnectionInfo> server = [self createTestServerInfoWithServerType:SERVER_BOOTSTRAP transportProtocolId:[TransportProtocolIdHolder TCPTransportID] host:@"localhost" port:9889 andPublicKey:[KeyUtils getPublicKey]];
+    id <TransportConnectionInfo> server = [self createTestServerInfoWithServerType:SERVER_BOOTSTRAP transportProtocolId:[TransportProtocolIdHolder TCPTransportID] host:@"localhost" port:9889 publicKey:[KeyUtils getPublicKey]];
     [channel setServer:server];
     
     [channel sync:TRANSPORT_TYPE_BOOTSTRAP];
@@ -189,9 +189,9 @@
     return data;
 }
 
-- (id<TransportConnectionInfo>) createTestServerInfoWithServerType:(ServerType)serverType transportProtocolId:(TransportProtocolId *)TPid host:(NSString *)host port:(uint32_t)port andPublicKey:(NSData *)publicKey {
-    ProtocolMetaData *md = [TestsHelper buildMetaDataWithTPid:TPid host:host port:port andPublicKey:publicKey];
-    return  [[GenericTransportInfo alloc] initWithServerType:serverType andMeta:md];
+- (id<TransportConnectionInfo>) createTestServerInfoWithServerType:(ServerType)serverType transportProtocolId:(TransportProtocolId *)TPid host:(NSString *)host port:(uint32_t)port publicKey:(NSData *)publicKey {
+    ProtocolMetaData *md = [TestsHelper buildMetaDataWithTransportProtocolId:TPid host:host port:port publicKey:publicKey];
+    return  [[GenericTransportInfo alloc] initWithServerType:serverType meta:md];
 }
 
 @end

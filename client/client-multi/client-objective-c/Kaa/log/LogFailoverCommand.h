@@ -23,7 +23,7 @@
 @protocol LogFailoverCommand <AccessPointCommand>
 
 - (void)retryLogUpload;
-- (void)retryLogUpload:(int32_t)delay;
+- (void)retryLogUploadWithDelay:(int32_t)delay;
 
 @end
 

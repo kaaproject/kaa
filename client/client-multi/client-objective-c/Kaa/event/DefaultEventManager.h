@@ -25,7 +25,7 @@
  */
 @interface DefaultEventManager : NSObject <EventManager>
 
-- (instancetype)initWith:(id<KaaClientState>)state
+- (instancetype)initWithState:(id<KaaClientState>)state
          executorContext:(id<ExecutorContext>)executorContext
           eventTransport:(id<EventTransport>)transport;
 

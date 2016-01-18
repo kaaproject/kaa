@@ -57,6 +57,6 @@
 
 - (id<LogTransport>)getLogTransport;
 
-- (void)initTransportsWithChannelManager:(id<KaaChannelManager>)manager andState:(id<KaaClientState>)state;
+- (void)initTransportsWithChannelManager:(id<KaaChannelManager>)manager state:(id<KaaClientState>)state;
 
 @end

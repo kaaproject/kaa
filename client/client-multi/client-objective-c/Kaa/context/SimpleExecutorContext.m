@@ -28,26 +28,26 @@
 @property (nonatomic) int32_t callbackThreadCount;
 @property (nonatomic) int32_t scheduledThreadCount;
 
-@property (strong,nonatomic) NSOperationQueue *lifeCycleExecutor;
-@property (strong,nonatomic) NSOperationQueue *apiExecutor;
-@property (strong,nonatomic) NSOperationQueue *callBackExecutor;
-@property (strong,nonatomic) NSOperationQueue *scheduledExecutor;
+@property (nonatomic, strong) NSOperationQueue *lifeCycleExecutor;
+@property (nonatomic, strong) NSOperationQueue *apiExecutor;
+@property (nonatomic, strong) NSOperationQueue *callBackExecutor;
+@property (nonatomic, strong) NSOperationQueue *scheduledExecutor;
 
 @end
 
 @implementation SimpleExecutorContext
 
 - (instancetype)init {
-    return [self initWithlifeCycleThreadCount:SINGLE_THREAD
-                            andApiThreadCount:SINGLE_THREAD
-                       andCallbackThreadCount:SINGLE_THREAD
-                      andScheduledThreadCount:SINGLE_THREAD];
+    return [self initWithLifeCycleThreadCount:SINGLE_THREAD
+                            apiThreadCount:SINGLE_THREAD
+                       callbackThreadCount:SINGLE_THREAD
+                      scheduledThreadCount:SINGLE_THREAD];
 }
 
-- (instancetype)initWithlifeCycleThreadCount:(int32_t)lifeCycleThreadCount
-                           andApiThreadCount:(int32_t)apiThreadCount
-                      andCallbackThreadCount:(int32_t)callbackThreadCount
-                     andScheduledThreadCount:(int32_t)scheduledThreadCount {
+- (instancetype)initWithLifeCycleThreadCount:(int32_t)lifeCycleThreadCount
+                           apiThreadCount:(int32_t)apiThreadCount
+                      callbackThreadCount:(int32_t)callbackThreadCount
+                     scheduledThreadCount:(int32_t)scheduledThreadCount {
     self = [super init];
     if (self) {
         self.lifeCycleThreadCount   = lifeCycleThreadCount;

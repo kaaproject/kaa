@@ -21,7 +21,7 @@
 
 @interface DefaultChannelManager : NSObject <KaaInternalChannelManager>
 
-- (instancetype)initWith:(id<BootstrapManager>)bootstrapMgr
+- (instancetype)initWithBootstrapManager:(id<BootstrapManager>)bootstrapMgr
         bootstrapServers:(NSDictionary *)servers
                  context:(id<ExecutorContext>)context;
 
@@ -33,6 +33,6 @@
 @property (nonatomic,weak) DefaultChannelManager *manager;
 @property (nonatomic) volatile BOOL isStopped;
 
-- (instancetype)initWith:(id<KaaDataChannel>)channel andManager:(DefaultChannelManager *)manager;
+- (instancetype)initWithChannel:(id<KaaDataChannel>)channel manager:(DefaultChannelManager *)manager;
 
 @end

@@ -139,7 +139,7 @@
                              TAG, bucketCandidate.bucketId);
                 bucketCandidate.state = MEM_BUCKET_STATE_PENDING;
             }
-            result = [[LogBucket alloc] initWithBucketId:bucketCandidate.bucketId andRecords:bucketCandidate.records];
+            result = [[LogBucket alloc] initWithBucketId:bucketCandidate.bucketId records:bucketCandidate.records];
             DDLogDebug(@"%@ Return record bucket with records count: [%i]", TAG, [bucketCandidate getCount]);
         }
     }

@@ -34,7 +34,7 @@
     int32_t uploadCheckPeriod = 2;//2 sec
     id<LogStorageStatus> logStorageStatus = mockProtocol(@protocol(LogStorageStatus));
     
-    PeriodicLogUploadStrategy *strategy = [[PeriodicLogUploadStrategy alloc] initWithTimeLimit:uploadCheckPeriod andTimeunit:TIME_UNIT_SECONDS];
+    PeriodicLogUploadStrategy *strategy = [[PeriodicLogUploadStrategy alloc] initWithTimeLimit:uploadCheckPeriod timeUnit:TIME_UNIT_SECONDS];
     XCTAssertEqual([strategy isUploadNeeded:logStorageStatus], LOG_UPLOAD_STRATEGY_DECISION_NOOP);
     
     [NSThread sleepForTimeInterval:uploadCheckPeriod/2];

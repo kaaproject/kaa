@@ -20,8 +20,8 @@
 
 @interface DefaultKaaPlatformContext ()
 
-@property (nonatomic,strong) KaaClientProperties *props;
-@property (nonatomic,strong) id<ExecutorContext> exContext;
+@property (nonatomic,strong) KaaClientProperties *properties;
+@property (nonatomic,strong) id<ExecutorContext> executorContext;
 
 @end
 
@@ -30,26 +30,26 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        _props = nil;
-        _exContext = [[SimpleExecutorContext alloc] init];
+        _properties = nil;
+        _executorContext = [[SimpleExecutorContext alloc] init];
     }
     return self;
 }
 
-- (instancetype)initWith:(KaaClientProperties *)properties andExecutor:(id<ExecutorContext>)executor {
+- (instancetype)initWithProperties:(KaaClientProperties *)properties executor:(id<ExecutorContext>)executor {
     self = [super init];
     if (self) {
-        _props = properties;
-        _exContext = executor;
+        _properties = properties;
+        _executorContext = executor;
     }
     return self;
 }
 
-- (AbstractHttpClient *)createHttpClient:(NSString *)url
-                              privateKey:(SecKeyRef)privateK
-                               publicKey:(SecKeyRef)publicK
-                               remoteKey:(NSData *)remoteK {
-    return [[DefaultHttpClient alloc] initWith:url privateKey:privateK publicKey:publicK remoteKey:remoteK];
+- (AbstractHttpClient *)createHttpClientWithURLString:(NSString *)url
+                                        privateKeyRef:(SecKeyRef)privateK
+                                         publicKeyRef:(SecKeyRef)publicK
+                                            remoteKey:(NSData *)remoteK {
+    return [[DefaultHttpClient alloc] initWithURLString:url privateKeyRef:privateK publicKeyRef:publicK remoteKey:remoteK];
 }
 
 - (id<KAABase64>)getBase64 {
@@ -61,11 +61,11 @@
 }
 
 - (id<ExecutorContext>)getExecutorContext {
-    return _exContext;
+    return _executorContext;
 }
 
 - (KaaClientProperties *)getProperties {
-    return _props;
+    return _properties;
 }
 
 @end

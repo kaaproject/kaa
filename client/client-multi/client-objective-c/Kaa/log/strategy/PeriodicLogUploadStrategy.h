@@ -23,6 +23,6 @@
 
 @property (nonatomic) int64_t lastUploadTime;
 
-- (instancetype) initWithTimeLimit:(int64_t)timeLimit andTimeunit:(TimeUnit) timeUnit;
+- (instancetype) initWithTimeLimit:(int64_t)timeLimit timeUnit:(TimeUnit) timeUnit;
 
 @end

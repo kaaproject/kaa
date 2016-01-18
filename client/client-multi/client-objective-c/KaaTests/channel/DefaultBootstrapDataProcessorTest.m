@@ -54,7 +54,7 @@
     BootstrapSyncResponse *bootstrapSyncResponse = [[BootstrapSyncResponse alloc] init];
     bootstrapSyncResponse.requestId = 1;
     bootstrapSyncResponse.supportedProtocols = mdArray;
-    [response setBootstrapSyncResponse:[KAAUnion unionWithBranch:KAA_UNION_BOOTSTRAP_SYNC_RESPONSE_OR_NULL_BRANCH_0 andData:bootstrapSyncResponse]];
+    [response setBootstrapSyncResponse:[KAAUnion unionWithBranch:KAA_UNION_BOOTSTRAP_SYNC_RESPONSE_OR_NULL_BRANCH_0 data:bootstrapSyncResponse]];
     AvroBytesConverter *converter = [[AvroBytesConverter alloc] init];
     NSData *data = [converter toBytes:response];
     [processor processResponse:data];

@@ -22,7 +22,7 @@
 
 @interface DefaultLogCollector : AbstractLogCollector
 
-- (instancetype)initWith:(id<LogTransport>)transport
+- (instancetype)initWithTransport:(id<LogTransport>)transport
          executorContext:(id<ExecutorContext>)executorContext
           channelManager:(id<KaaChannelManager>)channelManager
          failoverManager:(id<FailoverManager>)failoverManager;

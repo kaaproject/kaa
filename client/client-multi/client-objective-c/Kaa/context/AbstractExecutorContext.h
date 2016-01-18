@@ -23,7 +23,7 @@
 @property (nonatomic) int64_t timeOut;
 @property (nonatomic) TimeUnit timeUnit;
 
-- (instancetype)initWithTimeOut:(int64_t)timeOut andTimeUnit:(TimeUnit)timeUnit;
-- (void)shutDownExecutor:(NSOperationQueue*)queue;
+- (instancetype)initWithTimeOut:(int64_t)timeOut timeUnit:(TimeUnit)timeUnit;
+- (void)shutDownExecutor:(NSOperationQueue *)queue;
 
 @end

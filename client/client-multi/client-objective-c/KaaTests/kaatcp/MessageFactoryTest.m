@@ -63,11 +63,11 @@
     
     self.serverPrivateTag = [self generateTag];
     self.serverPublicTag = [self generateTag];
-    self.serverPair = [KeyUtils generateKeyPairWithPrivateTag:self.serverPrivateTag andPublicTag:self.serverPublicTag];
+    self.serverPair = [KeyUtils generateKeyPairWithPrivateTag:self.serverPrivateTag publicTag:self.serverPublicTag];
     
     self.clientPrivateTag = [self generateTag];
     self.clientPublicTag = [self generateTag];
-    self.clientPair = [KeyUtils generateKeyPairWithPrivateTag:self.clientPrivateTag andPublicTag:self.clientPublicTag];
+    self.clientPair = [KeyUtils generateKeyPairWithPrivateTag:self.clientPrivateTag publicTag:self.clientPublicTag];
     
     self.signature = nil;
     self.sessionKey = nil;
@@ -159,7 +159,7 @@
     self.testWithKey = YES;
     
     MessageEncoderDecoder *crypt = [[MessageEncoderDecoder alloc] initWithKeyPair:self.clientPair
-                                                            andRemotePublicKeyRef:[self.serverPair getPublicKeyRef]];
+                                                            remotePublicKeyRef:[self.serverPair getPublicKeyRef]];
     self.payload = [crypt encodeData:[self getRawData]];
     self.sessionKey = [crypt getEncodedSessionKey];
     self.signature = [crypt sign:self.sessionKey];
@@ -394,9 +394,9 @@
     md.sdkToken = @"sdkToken";
     md.endpointPublicKeyHash =
     [KAAUnion unionWithBranch:KAA_UNION_BYTES_OR_NULL_BRANCH_0
-                      andData:publicKeyHash.data];
+                      data:publicKeyHash.data];
     request.syncRequestMetaData =
-    [KAAUnion unionWithBranch:KAA_UNION_SYNC_REQUEST_META_DATA_OR_NULL_BRANCH_0 andData:md];
+    [KAAUnion unionWithBranch:KAA_UNION_SYNC_REQUEST_META_DATA_OR_NULL_BRANCH_0 data:md];
     
     return [requestConverter toBytes:request];
 }

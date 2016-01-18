@@ -103,7 +103,7 @@
         case LOG_DELIVERY_ERROR_CODE_APPENDER_INTERNAL_ERROR:
         case LOG_DELIVERY_ERROR_CODE_REMOTE_CONNECTION_ERROR:
         case LOG_DELIVERY_ERROR_CODE_REMOTE_INTERNAL_ERROR:
-            [controller retryLogUpload:self.retryPeriod];
+            [controller retryLogUploadWithDelay:self.retryPeriod];
             break;
         default:
             break;

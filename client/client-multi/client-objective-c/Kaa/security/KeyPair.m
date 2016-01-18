@@ -25,7 +25,7 @@
 
 @implementation KeyPair
 
-- (instancetype)initWithPrivate:(SecKeyRef)privateKey andPublic:(SecKeyRef)publicKey {
+- (instancetype)initWithPrivateKeyRef:(SecKeyRef)privateKey publicKeyRef:(SecKeyRef)publicKey {
     self = [super init];
     if (self) {
         self.privateKey = privateKey;

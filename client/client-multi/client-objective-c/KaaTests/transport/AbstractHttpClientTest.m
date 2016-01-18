@@ -49,11 +49,11 @@
 
 @interface AbstractHttpClientTest : XCTestCase
 
-@property (nonatomic,strong) KeyPair *clientPair;
+@property (nonatomic, strong) KeyPair *clientPair;
 
-@property (nonatomic,strong) NSData *serverPrivateTag;
-@property (nonatomic,strong) NSData *serverPublicTag;
-@property (nonatomic,strong) KeyPair *serverPair;
+@property (nonatomic, strong) NSData *serverPrivateTag;
+@property (nonatomic, strong) NSData *serverPublicTag;
+@property (nonatomic, strong) KeyPair *serverPair;
 
 @end
 
@@ -65,7 +65,7 @@
     
     self.serverPrivateTag = [self generateTag];
     self.serverPublicTag = [self generateTag];
-    self.serverPair = [KeyUtils generateKeyPairWithPrivateTag:self.serverPrivateTag andPublicTag:self.serverPublicTag];
+    self.serverPair = [KeyUtils generateKeyPairWithPrivateTag:self.serverPrivateTag publicTag:self.serverPublicTag];
 }
 
 - (void)tearDown {
@@ -76,7 +76,7 @@
 }
 
 - (void)testDisableVerification {
-    TestHttpClient *client = [[TestHttpClient alloc] initWith:@"test_url" privateKey:nil publicKey:nil remoteKeyRef:nil];
+    TestHttpClient *client = [[TestHttpClient alloc] initWithURLString:@"test_url" privateKeyRef:nil publicKeyRef:nil remoteKeyRef:nil];
     [client disableVerification];
     int a = 1; int b = 2; int c = 3;
     NSMutableData *body = [NSMutableData data];
@@ -89,9 +89,9 @@
 }
 
 - (void)testSignature {
-    TestHttpClient *client = [[TestHttpClient alloc] initWith:@"test_url" privateKey:[self.clientPair getPrivateKeyRef] publicKey:[self.clientPair getPublicKeyRef] remoteKeyRef:[self.serverPair getPublicKeyRef]];
+    TestHttpClient *client = [[TestHttpClient alloc] initWithURLString:@"test_url" privateKeyRef:[self.clientPair getPrivateKeyRef] publicKeyRef:[self.clientPair getPublicKeyRef] remoteKeyRef:[self.serverPair getPublicKeyRef]];
     
-    MessageEncoderDecoder *serverEncoder = [[MessageEncoderDecoder alloc] initWithKeyPair:self.serverPair andRemotePublicKeyRef:[self.clientPair getPublicKeyRef]];
+    MessageEncoderDecoder *serverEncoder = [[MessageEncoderDecoder alloc] initWithKeyPair:self.serverPair remotePublicKeyRef:[self.clientPair getPublicKeyRef]];
     
     int a = 1; int b = 2; int c = 3;
     NSMutableData *message = [NSMutableData data];
@@ -106,7 +106,7 @@
 - (void)testVerifyResponseFailure {
     
     @try {
-        TestHttpClient *client = [[TestHttpClient alloc] initWith:@"test_url" privateKey:[self.clientPair getPrivateKeyRef] publicKey:[self.clientPair getPublicKeyRef] remoteKeyRef:[self.serverPair getPublicKeyRef]];
+        TestHttpClient *client = [[TestHttpClient alloc] initWithURLString:@"test_url" privateKeyRef:[self.clientPair getPrivateKeyRef] publicKeyRef:[self.clientPair getPublicKeyRef] remoteKeyRef:[self.serverPair getPublicKeyRef]];
         
         int a = 1; int b = 2; int c = 3;
         NSMutableData *body = [NSMutableData data];

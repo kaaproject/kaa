@@ -43,16 +43,16 @@
 
 @end
 
-@interface AbstractKaaClient (WithBsManager)
+@interface AbstractKaaClient (BootstrapManager)
 
-- (instancetype)initWithPlatformContext:(id<KaaClientPlatformContext>)context delegate:(id<KaaClientStateDelegate>)delegate andBsManager:(id<BootstrapManager>)bsManager;
+- (instancetype)initWithPlatformContext:(id<KaaClientPlatformContext>)context delegate:(id<KaaClientStateDelegate>)delegate bootstrapManager:(id<BootstrapManager>)bsManager;
 
 @end
 
-@implementation AbstractKaaClient (WithBsManager)
+@implementation AbstractKaaClient (BootstrapManager)
 
-- (instancetype)initWithPlatformContext:(id<KaaClientPlatformContext>)context delegate:(id<KaaClientStateDelegate>)delegate andBsManager:(id<BootstrapManager>)bsManager {
-    self = [self initWithPlatformContext:context andDelegate:delegate];
+- (instancetype)initWithPlatformContext:(id<KaaClientPlatformContext>)context delegate:(id<KaaClientStateDelegate>)delegate bootstrapManager:(id<BootstrapManager>)bsManager {
+    self = [self initWithPlatformContext:context delegate:delegate];
     [self setValue:bsManager forKey:@"bootstrapManager"];
     return self;
 }
@@ -63,7 +63,7 @@
 
 @property (nonatomic, strong) id<KaaClientPlatformContext> context;
 @property (nonatomic, strong) KaaClientProperties *properties;
-@property (nonatomic, strong) DefaultBootstrapManager *bsManagerMock;
+@property (nonatomic, strong) DefaultBootstrapManager *bootstrapManagerMock;
 @property (nonatomic, strong) AbstractKaaClient *client;
 @property (nonatomic, strong) id<KaaClientStateDelegate> delegate;
 
@@ -84,8 +84,8 @@
     [given([self.properties bootstrapServers]) willReturn:[self buildDummyConnectionInfo]];
     [given([self.properties propertiesHash]) willReturn:[@"test" dataUsingEncoding:NSUTF8StringEncoding]];
     
-    self.bsManagerMock = mock([DefaultBootstrapManager class]);
-    self.client = [[AbstractKaaClient alloc] initWithPlatformContext:self.context delegate:self.delegate andBsManager:self.bsManagerMock];
+    self.bootstrapManagerMock = mock([DefaultBootstrapManager class]);
+    self.client = [[AbstractKaaClient alloc] initWithPlatformContext:self.context delegate:self.delegate bootstrapManager:self.bootstrapManagerMock];
     [self.client setProfileContainer:[[TestClientProfileContainer alloc] init]];
 }
 
@@ -94,7 +94,7 @@
     
     [NSThread sleepForTimeInterval:1];
     [verifyCount(self.delegate, times(1)) onStarted];
-    [verifyCount(self.bsManagerMock, times(1)) receiveOperationsServerList];
+    [verifyCount(self.bootstrapManagerMock, times(1)) receiveOperationsServerList];
     
     [self.client pause];
     [NSThread sleepForTimeInterval:1];
@@ -109,14 +109,14 @@
     [verifyCount(self.delegate, times(1)) onStopped];
 }
 
-- (void)testBasicStartBSFailure {
+- (void)testBasicStartBootstrapFailure {
     NSException *exception = [NSException exceptionWithName:@"TransportException" reason:@"cause" userInfo:nil];
-    [givenVoid([self.bsManagerMock receiveOperationsServerList]) willThrow:exception];
+    [givenVoid([self.bootstrapManagerMock receiveOperationsServerList]) willThrow:exception];
     [self.client start];
     
     [NSThread sleepForTimeInterval:1];
     [verifyCount(self.delegate, times(1)) onStartFailure:anything()];
-    [verifyCount(self.bsManagerMock, times(1)) receiveOperationsServerList];
+    [verifyCount(self.bootstrapManagerMock, times(1)) receiveOperationsServerList];
     
     [self.client stop];
     
@@ -124,9 +124,9 @@
     [verifyCount(self.delegate, times(1)) onStopped];
 }
 
-- (void)testFailureOnstart {
+- (void)testFailureOnStart {
     NSException *exception = [NSException exceptionWithName:@"Exception" reason:@"cause" userInfo:nil];
-    [givenVoid([self.bsManagerMock receiveOperationsServerList]) willThrow:exception];
+    [givenVoid([self.bootstrapManagerMock receiveOperationsServerList]) willThrow:exception];
     
     [self.client start];
     
@@ -188,8 +188,8 @@
     protMetadata.accessPointId = 1;
     protMetadata.protocolVersionInfo = protVersInfo;
     protMetadata.connectionInfo = nil;
-    NSMutableArray *connectionInfoArray = [NSMutableArray arrayWithObject:[[GenericTransportInfo alloc] initWithServerType:SERVER_BOOTSTRAP andMeta:protMetadata]];
-    TransportProtocolId *tpId = [[TransportProtocolId alloc] initWithId:1 andVersion:1];
+    NSMutableArray *connectionInfoArray = [NSMutableArray arrayWithObject:[[GenericTransportInfo alloc] initWithServerType:SERVER_BOOTSTRAP meta:protMetadata]];
+    TransportProtocolId *tpId = [[TransportProtocolId alloc] initWithId:1 version:1];
     NSDictionary *dictionary = [NSDictionary dictionaryWithObject:connectionInfoArray forKey:tpId];
     return dictionary;
 }

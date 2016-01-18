@@ -25,11 +25,11 @@
 @implementation TransportProtocolIdHolder
 
 + (TransportProtocolId *)HTTPTransportID {
-    return [[TransportProtocolId alloc] initWithId:HTTP_TRANSPORT_PROTOCOL_ID andVersion:HTTP_TRANSPORT_PROTOCOL_VERSION];
+    return [[TransportProtocolId alloc] initWithId:HTTP_TRANSPORT_PROTOCOL_ID version:HTTP_TRANSPORT_PROTOCOL_VERSION];
 }
 
 + (TransportProtocolId *)TCPTransportID {
-    return [[TransportProtocolId alloc] initWithId:TCP_TRANSPORT_PROTOCOL_ID andVersion:TCP_TRANSPORT_PROTOCOL_VERSION];
+    return [[TransportProtocolId alloc] initWithId:TCP_TRANSPORT_PROTOCOL_ID version:TCP_TRANSPORT_PROTOCOL_VERSION];
 }
 
 @end

@@ -46,8 +46,8 @@
 
 @implementation MockedOperationTcpChannel
 
-- (instancetype)initWithClientState:(id<KaaClientState>)state andFailoverMgr:(id<FailoverManager>)failoverMgr {
-    self = [super initWithClientState:state andFailoverMgr:failoverMgr];
+- (instancetype)initWithClientState:(id<KaaClientState>)state failoverManager:(id<FailoverManager>)failoverMgr {
+    self = [super initWithClientState:state failoverManager:failoverMgr];
     if (self) {
         CFReadStreamRef readStream = NULL;
         CFWriteStreamRef writeStream = NULL;
@@ -85,7 +85,7 @@
 - (void)testDefaultOperationTcpChannel {
     id <KaaClientState> state = mockProtocol(@protocol(KaaClientState));
     id <FailoverManager> failoverManager = mockProtocol(@protocol(FailoverManager));
-    id <KaaDataChannel> tcpchannel = [[DefaultOperationTcpChannel alloc] initWithClientState:state andFailoverMgr:failoverManager];
+    id <KaaDataChannel> tcpchannel = [[DefaultOperationTcpChannel alloc] initWithClientState:state failoverManager:failoverManager];
     XCTAssertNotNil([tcpchannel getId]);
     XCTAssertNotNil([tcpchannel getSupportedTransportTypes]);
     XCTAssertNotEqual(0, [[tcpchannel getSupportedTransportTypes] count]);
@@ -101,7 +101,7 @@
     [given([clientState publicKey]) willReturnStruct:[clientKeys getPublicKeyRef] objCType:@encode(SecKeyRef)];
     
     id <FailoverManager> failoverManager = mockProtocol(@protocol(FailoverManager));
-    MockedOperationTcpChannel *tcpChannel = [[MockedOperationTcpChannel alloc] initWithClientState:clientState andFailoverMgr:failoverManager];
+    MockedOperationTcpChannel *tcpChannel = [[MockedOperationTcpChannel alloc] initWithClientState:clientState failoverManager:failoverManager];
     
     AvroBytesConverter *requestCreator = [[AvroBytesConverter alloc] init];
     id <KaaDataMultiplexer> multiplexer = mockProtocol(@protocol(KaaDataMultiplexer));
@@ -114,7 +114,7 @@
     [tcpChannel sync:TRANSPORT_TYPE_PROFILE];
     
     [KeyUtils generateKeyPair];
-    id <TransportConnectionInfo> server = [self createTestServerInfoWithServerType:SERVER_OPERATIONS transportProtocolId:[TransportProtocolIdHolder TCPTransportID] host:@"localhost" port:9009 andPublicKey:[KeyUtils getPublicKey]];
+    id <TransportConnectionInfo> server = [self createTestServerInfoWithServerType:SERVER_OPERATIONS transportProtocolId:[TransportProtocolIdHolder TCPTransportID] host:@"localhost" port:9009 publicKey:[KeyUtils getPublicKey]];
     
     [tcpChannel setServer:server withKeyPair:clientKeys];
     uint8_t rawConnackChar[] = {0x20, 0x02, 0x00, 0x01};
@@ -153,9 +153,9 @@
     [given([clientState publicKey]) willReturnStruct:[clientKeys getPublicKeyRef] objCType:@encode(SecKeyRef)];
     
     id <FailoverManager> failoverManager = mockProtocol(@protocol(FailoverManager));
-    DefaultOperationTcpChannel *channel = [[DefaultOperationTcpChannel alloc] initWithClientState:clientState andFailoverMgr:failoverManager];
+    DefaultOperationTcpChannel *channel = [[DefaultOperationTcpChannel alloc] initWithClientState:clientState failoverManager:failoverManager];
     
-    id <TransportConnectionInfo> server = [self createTestServerInfoWithServerType:SERVER_OPERATIONS transportProtocolId:[TransportProtocolIdHolder TCPTransportID] host:@"www.test.fake" port:999 andPublicKey:[KeyUtils getPublicKey]];
+    id <TransportConnectionInfo> server = [self createTestServerInfoWithServerType:SERVER_OPERATIONS transportProtocolId:[TransportProtocolIdHolder TCPTransportID] host:@"www.test.fake" port:999 publicKey:[KeyUtils getPublicKey]];
     XCTAssertNotNil(server);
     
     ConnectivityChecker *checker = mock([ConnectivityChecker class]);
@@ -169,9 +169,9 @@
                                               transportProtocolId:(TransportProtocolId *)TPid
                                                              host:(NSString *)host
                                                              port:(uint32_t)port
-                                                     andPublicKey:(NSData *)publicKey {
-    ProtocolMetaData *md = [TestsHelper buildMetaDataWithTPid:TPid host:host port:port andPublicKey:publicKey];
-    return  [[GenericTransportInfo alloc] initWithServerType:serverType andMeta:md];
+                                                     publicKey:(NSData *)publicKey {
+    ProtocolMetaData *md = [TestsHelper buildMetaDataWithTransportProtocolId:TPid host:host port:port publicKey:publicKey];
+    return  [[GenericTransportInfo alloc] initWithServerType:serverType meta:md];
 }
 
 - (NSData *)getNewKAATcpSyncResponse:(SyncResponse *)syncResponse {

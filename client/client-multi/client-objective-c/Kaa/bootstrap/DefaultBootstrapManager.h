@@ -23,6 +23,6 @@
  */
 @interface DefaultBootstrapManager : NSObject <BootstrapManager>
 
-- (instancetype)initWith:(id<BootstrapTransport>)transport executorContext:(id<ExecutorContext>)context;
+- (instancetype)initWithTransport:(id<BootstrapTransport>)transport executorContext:(id<ExecutorContext>)context;
 
 @end

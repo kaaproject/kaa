@@ -48,7 +48,7 @@
  */
 @interface Kaa : NSObject
 
-+ (id<KaaClient>)clientWithContext:(id<KaaClientPlatformContext>)context andStateDelegate:(id<KaaClientStateDelegate>)delegate;
++ (id<KaaClient>)clientWithContext:(id<KaaClientPlatformContext>)context stateDelegate:(id<KaaClientStateDelegate>)delegate;
 
 + (id<KaaClient>)clientWithContext:(id<KaaClientPlatformContext>)context;
 

@@ -24,6 +24,6 @@
  */
 @interface BaseKaaClient : AbstractKaaClient <KaaClient>
 
-- (instancetype)initWithPlatformContext:(id<KaaClientPlatformContext>)context andDelegate:(id<KaaClientStateDelegate>)delegate;
+- (instancetype)initWithPlatformContext:(id<KaaClientPlatformContext>)context delegate:(id<KaaClientStateDelegate>)delegate;
 
 @end

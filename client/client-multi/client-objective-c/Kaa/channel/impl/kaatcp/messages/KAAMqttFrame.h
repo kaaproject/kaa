@@ -93,7 +93,7 @@ typedef enum {
  * @return int used bytes from buffer
  * @throws KaaTcpProtocolException
  */
-- (int)push:(NSData *)bytes to:(int)position;
+- (int)pushBytes:(NSData *)bytes toPosition:(int)position;
 
 /**
  * Used in case if Frame Class should be changed during frame decode,

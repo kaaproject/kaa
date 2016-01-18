@@ -138,7 +138,7 @@
 
 - (void)testReceiveOperationsServerList {
     id <BootstrapTransport> transport = mockProtocol(@protocol(BootstrapTransport));
-    DefaultBootstrapManager *manager = [[DefaultBootstrapManager alloc] initWith:transport executorContext:nil];
+    DefaultBootstrapManager *manager = [[DefaultBootstrapManager alloc] initWithTransport:transport executorContext:nil];
     
     self.exception = NO;
     @try {
@@ -156,7 +156,7 @@
 
 - (void)testOperationsServerInfoRetrieving {
     id <ExecutorContext> executorContext = mockProtocol(@protocol(ExecutorContext));
-    DefaultBootstrapManager *manager = [[DefaultBootstrapManager alloc] initWith:nil executorContext:executorContext];
+    DefaultBootstrapManager *manager = [[DefaultBootstrapManager alloc] initWithTransport:nil executorContext:executorContext];
     
     self.exception = NO;
     
@@ -172,7 +172,7 @@
     
     //Generating pseudo bootstrap key
     [KeyUtils generateKeyPair];
-    ProtocolMetaData *md = [TestsHelper buildMetaDataWithTPid:[TransportProtocolIdHolder HTTPTransportID] host:@"localhost" port:9889 andPublicKey:[KeyUtils getPublicKey]];
+    ProtocolMetaData *md = [TestsHelper buildMetaDataWithTransportProtocolId:[TransportProtocolIdHolder HTTPTransportID] host:@"localhost" port:9889 publicKey:[KeyUtils getPublicKey]];
     NSArray *array = [NSArray arrayWithObject:md];
     
     NSOperationQueue *opQue = [[NSOperationQueue alloc] init];
@@ -195,7 +195,7 @@
 }
 
 - (void)testUseServerByDNSName {
-    DefaultBootstrapManager *manager = [[DefaultBootstrapManager alloc] initWith:nil executorContext:nil];
+    DefaultBootstrapManager *manager = [[DefaultBootstrapManager alloc] initWithTransport:nil executorContext:nil];
     
     ChannelManagerMock *channelManager = [[ChannelManagerMock alloc] init];
     [manager setChannelManager:channelManager];
@@ -205,7 +205,7 @@
     
     //Generating pseudo bootstrap key
     [KeyUtils generateKeyPair];
-    ProtocolMetaData *md = [TestsHelper buildMetaDataWithTPid:[TransportProtocolIdHolder HTTPTransportID] host:@"localhost" port:9889 andPublicKey:[KeyUtils getPublicKey]];
+    ProtocolMetaData *md = [TestsHelper buildMetaDataWithTransportProtocolId:[TransportProtocolIdHolder HTTPTransportID] host:@"localhost" port:9889 publicKey:[KeyUtils getPublicKey]];
     NSArray *array = [NSArray arrayWithObject:md];
     
     [manager onProtocolListUpdated:array];
@@ -214,7 +214,7 @@
     [manager useNextOperationsServerByAccessPointId:[@"localhost2:9889" hash]];
     [verifyCount(transport, times(1)) sync];
     
-    md = [TestsHelper buildMetaDataWithTPid:[TransportProtocolIdHolder HTTPTransportID] host:@"localhost2" port:9889 andPublicKey:[KeyUtils getPublicKey]];
+    md = [TestsHelper buildMetaDataWithTransportProtocolId:[TransportProtocolIdHolder HTTPTransportID] host:@"localhost2" port:9889 publicKey:[KeyUtils getPublicKey]];
     array = [NSArray arrayWithObject:md];
     
     [manager onProtocolListUpdated:array];

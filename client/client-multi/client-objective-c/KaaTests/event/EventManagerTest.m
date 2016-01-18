@@ -69,7 +69,7 @@
     return self.supportedEventFQNs;
 }
 
-- (void)onGenericEvent:(NSString *)eventFQN withData:(NSData *)data from:(NSString *)source {
+- (void)onGenericEvent:(NSString *)eventFQN withData:(NSData *)data fromSource:(NSString *)source {
     self.eventsCount++;
 }
 
@@ -85,12 +85,12 @@
 @implementation EventManagerTest
 
 - (void)testNoHandler {
-    KaaClientPropertiesState *state = [[KaaClientPropertiesState alloc] initWith:[CommonBase64 new] andClientProperties:[TestsHelper getProperties]];
+    KaaClientPropertiesState *state = [[KaaClientPropertiesState alloc] initWithBase64:[CommonBase64 new] clientProperties:[TestsHelper getProperties]];
     id <EventTransport> transport = mockProtocol(@protocol(EventTransport));
     id <BaseEventFamily> eventFamily = mockProtocol(@protocol(BaseEventFamily));
     id <ExecutorContext> executorContext = mockProtocol(@protocol(ExecutorContext));
     
-    id <EventManager> eventManager = [[DefaultEventManager alloc] initWith:state executorContext:executorContext eventTransport:transport];
+    id <EventManager> eventManager = [[DefaultEventManager alloc] initWithState:state executorContext:executorContext eventTransport:transport];
     [eventManager registerEventFamily:eventFamily];
     
     [eventManager produceEvent:@"kaa.test.event.PlayEvent" data:[NSData data] target:nil];
@@ -100,12 +100,12 @@
 }
 
 - (void)testEngageRelease {
-    KaaClientPropertiesState *state = [[KaaClientPropertiesState alloc] initWith:[CommonBase64 new] andClientProperties:[TestsHelper getProperties]];
+    KaaClientPropertiesState *state = [[KaaClientPropertiesState alloc] initWithBase64:[CommonBase64 new] clientProperties:[TestsHelper getProperties]];
     id <EventTransport> transport = mockProtocol(@protocol(EventTransport));
     id <BaseEventFamily> eventFamily = mockProtocol(@protocol(BaseEventFamily));
     id <ExecutorContext> executorContext = mockProtocol(@protocol(ExecutorContext));
     
-    id <EventManager> eventManager = [[DefaultEventManager alloc] initWith:state executorContext:executorContext eventTransport:transport];
+    id <EventManager> eventManager = [[DefaultEventManager alloc] initWithState:state executorContext:executorContext eventTransport:transport];
     [eventManager registerEventFamily:eventFamily];
     
     [eventManager produceEvent:@"kaa.test.event.PlayEvent" data:[NSData data] target:nil];
@@ -117,12 +117,12 @@
 }
 
 - (void)testTransaction {
-    KaaClientPropertiesState *state = [[KaaClientPropertiesState alloc] initWith:[CommonBase64 new] andClientProperties:[TestsHelper getProperties]];
+    KaaClientPropertiesState *state = [[KaaClientPropertiesState alloc] initWithBase64:[CommonBase64 new] clientProperties:[TestsHelper getProperties]];
     id <EventTransport> transport = mockProtocol(@protocol(EventTransport));
     id <BaseEventFamily> eventFamily = mockProtocol(@protocol(BaseEventFamily));
     id <ExecutorContext> executorContext = mockProtocol(@protocol(ExecutorContext));
     
-    id <EventManager> eventManager = [[DefaultEventManager alloc] initWith:state executorContext:executorContext eventTransport:transport];
+    id <EventManager> eventManager = [[DefaultEventManager alloc] initWithState:state executorContext:executorContext eventTransport:transport];
     [eventManager registerEventFamily:eventFamily];
     
     TransactionId *trxId = [eventManager beginTransaction];
@@ -144,7 +144,7 @@
 }
 
 - (void)testOneEventForTwoDifferentFamilies {
-    KaaClientPropertiesState *state = [[KaaClientPropertiesState alloc] initWith:[CommonBase64 new] andClientProperties:[TestsHelper getProperties]];
+    KaaClientPropertiesState *state = [[KaaClientPropertiesState alloc] initWithBase64:[CommonBase64 new] clientProperties:[TestsHelper getProperties]];
     
     id <EventTransport> transport = mockProtocol(@protocol(EventTransport));
     ConcreteEventFamily *eventFamily1 = [[ConcreteEventFamily alloc] initWithSupportedFQN:@"kaa.test.event.PlayEvent"];
@@ -155,28 +155,28 @@
     
     [given([executorContext getCallbackExecutor]) willReturn:executor];
     
-    id <EventManager> eventManager = [[DefaultEventManager alloc] initWith:state executorContext:executorContext eventTransport:transport];
+    id <EventManager> eventManager = [[DefaultEventManager alloc] initWithState:state executorContext:executorContext eventTransport:transport];
     [eventManager registerEventFamily:eventFamily1];
     [eventManager registerEventFamily:eventFamily2];
     
     XCTAssertEqual(0, [eventFamily1 eventsCount]);
     XCTAssertEqual(0, [eventFamily2 eventsCount]);
     
-    [eventManager onGenericEvent:@"kaa.test.event.PlayEvent" data:[NSData data] source:nil];
+    [eventManager onGenericEvent:@"kaa.test.event.PlayEvent" withData:[NSData data] fromSource:nil];
     
     [NSThread sleepForTimeInterval:0.5f];
     
     XCTAssertEqual(1, eventFamily1.eventsCount);
     XCTAssertEqual(0, eventFamily2.eventsCount);
     
-    [eventManager onGenericEvent:@"kaa.test.event.StopEvent" data:[NSData data] source:nil];
+    [eventManager onGenericEvent:@"kaa.test.event.StopEvent" withData:[NSData data] fromSource:nil];
     
     [NSThread sleepForTimeInterval:0.5f];
     
     XCTAssertEqual(1, eventFamily1.eventsCount);
     XCTAssertEqual(1, eventFamily2.eventsCount);
     
-    [eventManager onGenericEvent:@"kaa.test.event.NoSuchEvent" data:[NSData data] source:nil];
+    [eventManager onGenericEvent:@"kaa.test.event.NoSuchEvent" withData:[NSData data] fromSource:nil];
     
     [NSThread sleepForTimeInterval:0.5f];
     
@@ -185,17 +185,17 @@
 }
 
 - (void)testFillRequest {
-    KaaClientPropertiesState *state = [[KaaClientPropertiesState alloc] initWith:[CommonBase64 new] andClientProperties:[TestsHelper getProperties]];
+    KaaClientPropertiesState *state = [[KaaClientPropertiesState alloc] initWithBase64:[CommonBase64 new] clientProperties:[TestsHelper getProperties]];
     
     id <EventTransport> transport = mockProtocol(@protocol(EventTransport));
     id <ExecutorContext> executorContext = mockProtocol(@protocol(ExecutorContext));
-    id <EventManager> eventManager = [[DefaultEventManager alloc] initWith:state executorContext:executorContext eventTransport:transport];
+    id <EventManager> eventManager = [[DefaultEventManager alloc] initWithState:state executorContext:executorContext eventTransport:transport];
     
     EventSyncRequest *request = [[EventSyncRequest alloc] init];
 
     [eventManager produceEvent:@"kaa.test.event.SomeEvent" data:[NSData data] target:@"theTarget"];
     [eventManager fillEventListenersSyncRequest:request];
-    request.events = [KAAUnion unionWithBranch:KAA_UNION_ARRAY_EVENT_OR_NULL_BRANCH_0 andData:[eventManager pollPendingEvents]];
+    request.events = [KAAUnion unionWithBranch:KAA_UNION_ARRAY_EVENT_OR_NULL_BRANCH_0 data:[eventManager pollPendingEvents]];
     
     XCTAssertNotNil(request.events);
     XCTAssertEqual(1, [request.events.data count]);
@@ -215,12 +215,12 @@
 }
 
 - (void)testEventListenersSyncRequestResponse {
-    KaaClientPropertiesState *state = [[KaaClientPropertiesState alloc] initWith:[CommonBase64 new] andClientProperties:[TestsHelper getProperties]];
+    KaaClientPropertiesState *state = [[KaaClientPropertiesState alloc] initWithBase64:[CommonBase64 new] clientProperties:[TestsHelper getProperties]];
     
     id <EventTransport> transport = mockProtocol(@protocol(EventTransport));
     id <ExecutorContext> executorContext = mockProtocol(@protocol(ExecutorContext));
     [given([executorContext getCallbackExecutor]) willReturn:[[NSOperationQueue alloc] init]];
-    id <EventManager> eventManager = [[DefaultEventManager alloc] initWith:state executorContext:executorContext eventTransport:transport];
+    id <EventManager> eventManager = [[DefaultEventManager alloc] initWithState:state executorContext:executorContext eventTransport:transport];
     
     NSArray *eventFQNs = [NSArray arrayWithObject:@"eventFQN1"];
     
@@ -252,7 +252,7 @@
     EventListenersResponse *response = [[EventListenersResponse alloc] init];
     response.requestId = requestId;
     response.result = resultType;
-    response.listeners = [KAAUnion unionWithBranch:KAA_UNION_ARRAY_STRING_OR_NULL_BRANCH_0 andData:[NSArray array]];
+    response.listeners = [KAAUnion unionWithBranch:KAA_UNION_ARRAY_STRING_OR_NULL_BRANCH_0 data:[NSArray array]];
     return response;
 }
 

@@ -54,10 +54,10 @@ static const unsigned char _encodedRSAEncryptionOID[15] = {
 @implementation KeyUtils
 
 + (KeyPair *)generateKeyPair {
-    return [self generateKeyPairWithPrivateTag:[self defaultPrivateKeyTag] andPublicTag:[self defaultPublicKeyTag]];
+    return [self generateKeyPairWithPrivateTag:[self defaultPrivateKeyTag] publicTag:[self defaultPublicKeyTag]];
 }
 
-+ (KeyPair *)generateKeyPairWithPrivateTag:(NSData *)privateTag andPublicTag:(NSData *)publicTag {
++ (KeyPair *)generateKeyPairWithPrivateTag:(NSData *)privateTag publicTag:(NSData *)publicTag {
     OSStatus sanityCheck = noErr;
     SecKeyRef publicKeyRef = NULL;
     SecKeyRef privateKeyRef = NULL;
@@ -86,7 +86,7 @@ static const unsigned char _encodedRSAEncryptionOID[15] = {
     
     if (sanityCheck == noErr && publicKeyRef != NULL && privateKeyRef != NULL) {
         DDLogInfo(@"%@ Successfully generated new key pair", TAG);
-        return [[KeyPair alloc] initWithPrivate:privateKeyRef andPublic:publicKeyRef];
+        return [[KeyPair alloc] initWithPrivateKeyRef:privateKeyRef publicKeyRef:publicKeyRef];
     } else {
         DDLogError(@"%@ Failed to generate new key pair", TAG);
         [NSException raise:KaaKeyPairGenerationException format:@"Failed to generate new key pair!"];

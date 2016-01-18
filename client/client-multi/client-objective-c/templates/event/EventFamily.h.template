@@ -10,7 +10,7 @@
 
 @interface {event_family_class_name} : NSObject <BaseEventFamily>
 
-- (instancetype)initWith:(id<EventManager>)eventManager andContext:(id<ExecutorContext>)executorContext;
+- (instancetype)initWithManager:(id<EventManager>)eventManager context:(id<ExecutorContext>)executorContext;
 
 - (void)addDelegate:(id<{event_family_class_name}Delegate>)delegate;
 

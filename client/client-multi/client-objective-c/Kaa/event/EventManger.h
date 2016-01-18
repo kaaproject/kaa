@@ -80,7 +80,7 @@
  * @param data     - event data
  * @param source   - event source
  */
-- (void)onGenericEvent:(NSString *)eventFQN data:(NSData *)data source:(NSString *)source;
+- (void)onGenericEvent:(NSString *)eventFQN withData:(NSData *)data fromSource:(NSString *)source;
 
 /**
  * Called when SyncResponse contains resolved list of endpoints which

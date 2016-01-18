@@ -49,19 +49,19 @@ typedef enum {
 @property (nonatomic,weak) DefaultOperationTcpChannel *channel;
 @property (nonatomic) int64_t delay;
 
-- (instancetype)initWithChannel:(DefaultOperationTcpChannel *)channel andDelay:(int64_t)delay; //delay in milliseconds
+- (instancetype)initWithChannel:(DefaultOperationTcpChannel *)channel delay:(int64_t)delay; //delay in milliseconds
 
 @end
 
 @interface DefaultOperationTcpChannel () <ConnAckDelegate,PingResponseDelegate,SyncResponseDelegate,DisconnectDelegate,NSStreamDelegate>
 
-@property (nonatomic,strong) NSDictionary *SUPPORTED_TYPES; //<TransportType,ChannelDirection> as key-value
+@property (nonatomic,strong) NSDictionary *supportedTypes; //<TransportType,ChannelDirection> as key-value
 @property (nonatomic,strong) IPTransportInfo *currentServer;
 @property (nonatomic,strong) id<KaaClientState> state;
 @property (nonatomic) volatile ChannelState channelState;
 @property (nonatomic,strong) id<KaaDataDemultiplexer> demultiplexer;
 @property (nonatomic,strong) id<KaaDataMultiplexer> multiplexer;
-@property (nonatomic,strong) MessageEncoderDecoder *encDec;
+@property (nonatomic,strong) MessageEncoderDecoder *encoderDecoder;
 @property (nonatomic,strong) id<FailoverManager> failoverManager;
 @property (nonatomic,strong) volatile ConnectivityChecker *checker;
 @property (nonatomic,strong) KAAMessageFactory *messageFactory;
@@ -86,10 +86,10 @@ typedef enum {
 
 @implementation DefaultOperationTcpChannel
 
-- (instancetype)initWithClientState:(id<KaaClientState>)state andFailoverMgr:(id<FailoverManager>)failoverMgr {
+- (instancetype)initWithClientState:(id<KaaClientState>)state failoverManager:(id<FailoverManager>)failoverMgr {
     self = [super init];
     if (self) {
-        self.SUPPORTED_TYPES = @{
+        self.supportedTypes = @{
             [NSNumber numberWithInt:TRANSPORT_TYPE_PROFILE] : [NSNumber numberWithInt:CHANNEL_DIRECTION_BIDIRECTIONAL],
             [NSNumber numberWithInt:TRANSPORT_TYPE_CONFIGURATION] : [NSNumber numberWithInt:CHANNEL_DIRECTION_BIDIRECTIONAL],
             [NSNumber numberWithInt:TRANSPORT_TYPE_NOTIFICATION] : [NSNumber numberWithInt:CHANNEL_DIRECTION_BIDIRECTIONAL],
@@ -132,7 +132,7 @@ typedef enum {
     if (message.encrypted) {
         @synchronized(self) {
             @try {
-                resultBody = [self.encDec decodeData:[message avroObject]];
+                resultBody = [self.encoderDecoder decodeData:[message avroObject]];
             }
             @catch (NSException *ex) {
                 DDLogError(@"%@ Failed to decrypt message body for channel [%@]", TAG, [self getId]);
@@ -193,16 +193,16 @@ typedef enum {
 - (void)sendKaaSyncRequest:(NSDictionary *)types {
     DDLogDebug(@"%@ Sending KaaSync from channel: %@", TAG, [self getId]);
     NSData *body = [self.multiplexer compileRequest:types];
-    NSData *requestBodyEncoded = [self.encDec encodeData:body];
+    NSData *requestBodyEncoded = [self.encoderDecoder encodeData:body];
     [self sendFrame:[[KAATcpSyncRequest alloc] initWithAvro:requestBodyEncoded zipped:NO encypted:YES]];
 }
 
 - (void)sendConnect {
     DDLogDebug(@"%@ Sending Connect from channel: %@", TAG, [self getId]);
     NSData *body = [self.multiplexer compileRequest:[self getSupportedTransportTypes]];
-    NSData *requestBodyEncoded = [self.encDec encodeData:body];
-    NSData *sessionKey = [self.encDec getEncodedSessionKey];
-    NSData *signature = [self.encDec sign:sessionKey];
+    NSData *requestBodyEncoded = [self.encoderDecoder encodeData:body];
+    NSData *sessionKey = [self.encoderDecoder getEncodedSessionKey];
+    NSData *signature = [self.encoderDecoder sign:sessionKey];
     [self sendFrame:[[KAATcpConnect alloc] initWithAlivePeriod:CHANNEL_TIMEOUT
                                                  nextProtocolId:KAA_PLATFORM_PROTOCOL_AVRO_ID
                                                   aesSessionKey:sessionKey
@@ -313,7 +313,7 @@ typedef enum {
 
 
 - (KAASocket *)createSocket {
-    return [KAASocket socketWithHost:[self.currentServer getHost] andPort:[self.currentServer getPort]];
+    return [KAASocket socketWithHost:[self.currentServer getHost] port:[self.currentServer getPort]];
 }
 
 - (void)onServerFailed {
@@ -352,7 +352,7 @@ typedef enum {
         if (!self.isOpenConnectionScheduled) {
             if (self.executor) {
                 DDLogInfo(@"%@ Scheduling open connection task", TAG);
-                [self.executor addOperation:[[OpenConnectionTask alloc] initWithChannel:self andDelay:retryPeriod]];
+                [self.executor addOperation:[[OpenConnectionTask alloc] initWithChannel:self delay:retryPeriod]];
                 self.isOpenConnectionScheduled = YES;
             } else {
                 DDLogWarn(@"%@ Executor is nil, can't schedule open connection task", TAG);
@@ -471,12 +471,12 @@ typedef enum {
     }
 }
 
-- (void)syncAck:(TransportType)type {
+- (void)syncAckForTransportType:(TransportType)type {
     DDLogInfo(@"%@ Adding sync acknowledgement for type %i as a regular sync for channel [%@]", TAG, type, [self getId]);
-    [self syncAckTransportTypes:[NSSet setWithObject:[NSNumber numberWithInt:type]]];
+    [self syncAckForTransportTypes:[NSSet setWithObject:[NSNumber numberWithInt:type]]];
 }
 
-- (void)syncAckTransportTypes:(NSSet *)types {
+- (void)syncAckForTransportTypes:(NSSet *)types {
     @synchronized(self) {
         if (self.channelState != CHANNEL_STATE_OPENED) {
             DDLogInfo(@"%@ First KaaSync message received and processed for channel [%@]", TAG, [self getId]);
@@ -532,9 +532,9 @@ typedef enum {
         if (sendedKeyPair) {
             keyPair = sendedKeyPair;
         } else {
-            keyPair = [[KeyPair alloc] initWithPrivate:[self.state privateKey] andPublic:[self.state publicKey]];
+            keyPair = [[KeyPair alloc] initWithPrivateKeyRef:[self.state privateKey] publicKeyRef:[self.state publicKey]];
         }
-        self.encDec = [[MessageEncoderDecoder alloc] initWithKeyPair:keyPair andRemotePublicKey:[self.currentServer getPublicKey]];
+        self.encoderDecoder = [[MessageEncoderDecoder alloc] initWithKeyPair:keyPair remotePublicKey:[self.currentServer getPublicKey]];
         if (self.channelState != CHANNEL_STATE_PAUSE) {
             if (!self.executor) {
                 self.executor = [self createExecutor];
@@ -608,7 +608,7 @@ typedef enum {
 }
 
 - (NSDictionary *)getSupportedTransportTypes {
-    return self.SUPPORTED_TYPES;
+    return self.supportedTypes;
 }
 
 - (void)destroyExecutor {
@@ -662,7 +662,7 @@ typedef enum {
 
 @implementation OpenConnectionTask
 
-- (instancetype)initWithChannel:(DefaultOperationTcpChannel *)channel andDelay:(int64_t)delay {
+- (instancetype)initWithChannel:(DefaultOperationTcpChannel *)channel delay:(int64_t)delay {
     self = [super init];
     if (self) {
         _channel = channel;

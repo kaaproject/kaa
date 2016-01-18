@@ -42,7 +42,7 @@
     [transport createMetaDataRequest];
     [transport setClientState:clientState];
     [transport createMetaDataRequest];
-    [transport setEndpointPublicKeyhash:publicHash];
+    [transport setEndpointPublicKeyHash:publicHash];
     [transport setTimeout:5];
     
     SyncRequestMetaData *request = [transport createMetaDataRequest];

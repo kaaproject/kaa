@@ -22,7 +22,7 @@
  */
 @implementation TransportProtocolId
 
-- (instancetype)initWithId:(int)id andVersion:(int)version {
+- (instancetype)initWithId:(int)id version:(int)version {
     self = [super init];
     if (self) {
         _protocolId = id;
@@ -32,7 +32,7 @@
 }
 
 - (id)copyWithZone:(NSZone *)zone {
-    return [[[self class] allocWithZone:zone] initWithId:self.protocolId andVersion:self.protocolVersion];
+    return [[[self class] allocWithZone:zone] initWithId:self.protocolId version:self.protocolVersion];
 }
 
 - (NSUInteger)hash {

@@ -20,20 +20,23 @@
 #import "KaaClientState.h"
 #import "AbstractHttpClient.h"
 
+#define UNKNOWN_HTTP_STATUS -1
+
 @interface AbstractHttpChannel : NSObject <KaaDataChannel>
 
-@property (nonatomic,readonly) volatile BOOL isShutdown;
+@property (nonatomic, readonly) volatile BOOL isShutdown;
 
-- (instancetype)initWithClient:(AbstractKaaClient *)client state:(id<KaaClientState>)state
+- (instancetype)initWithClient:(AbstractKaaClient *)client
+                         state:(id<KaaClientState>)state
                failoverManager:(id<FailoverManager>)manager;
 
 - (NSOperationQueue *)createExecutor;
 
 - (NSString *)getURLSuffix;
 
-- (void)connectionStateChanged:(BOOL)failed;
+- (void)connectionEstablished;
 
-- (void)connectionStateChanged:(BOOL)failed withStatus:(int)status;
+- (void)connectionFailedWithStatus:(int)status;
 
 - (id<KaaDataMultiplexer>)getMultiplexer;
 
@@ -41,6 +44,6 @@
 
 - (AbstractHttpClient *)getHttpClient;
 
-- (NSOperation *)createChannelRunner:(NSDictionary *)types;
+- (NSOperation *)createChannelRunnerWithTypes:(NSDictionary *)types;
 
 @end

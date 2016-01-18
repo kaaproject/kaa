@@ -46,7 +46,7 @@
 
 - (void)testProfileManagerIsInitialized {
     id<ProfileTransport> transport = mockProtocol(@protocol(ProfileTransport));
-    DefaultProfileManager *manager = [[DefaultProfileManager alloc] initWith:transport];
+    DefaultProfileManager *manager = [[DefaultProfileManager alloc] initWithTransport:transport];
     
     ProfileSerializer *serializer = [[ProfileSerializer alloc] init];
     
@@ -64,7 +64,7 @@
     id <ProfileTransport> transport = mockProtocol(@protocol(ProfileTransport));
     TestProfileContainer *container = [[TestProfileContainer alloc] init];
     
-    DefaultProfileManager *profileManager =  [[DefaultProfileManager alloc] initWith:transport];
+    DefaultProfileManager *profileManager =  [[DefaultProfileManager alloc] initWithTransport:transport];
     [profileManager setProfileContainer:container];
     
     XCTAssertNotNil([profileManager getSerializedProfile]);

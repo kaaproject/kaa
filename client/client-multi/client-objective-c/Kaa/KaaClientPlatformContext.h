@@ -37,10 +37,10 @@
 /**
  * Returns platform dependent implementation of http client
  */
-- (AbstractHttpClient *)createHttpClient:(NSString *)url
-                              privateKey:(SecKeyRef)privateK
-                               publicKey:(SecKeyRef)publicK
-                               remoteKey:(NSData *)remoteK;
+- (AbstractHttpClient *)createHttpClientWithURLString:(NSString *)url
+                                        privateKeyRef:(SecKeyRef)privateK
+                                         publicKeyRef:(SecKeyRef)publicK
+                                            remoteKey:(NSData *)remoteK;
 
 /**
  * Returns platform dependent implementation of Base64 algorithm

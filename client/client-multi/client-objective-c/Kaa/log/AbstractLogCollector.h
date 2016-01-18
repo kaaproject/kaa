@@ -27,7 +27,7 @@
 @property (nonatomic,strong,readonly) id<LogStorage> storage;
 @property (nonatomic,strong) NSMutableDictionary *bucketInfoDictionary; // <NSNumber<int32_t>, BucketInfo> as Key-Value
 
-- (instancetype)initWith:(id<LogTransport>)transport
+- (instancetype)initWithTransport:(id<LogTransport>)transport
          executorContext:(id<ExecutorContext>)executorContext
           channelManager:(id<KaaChannelManager>)channelManager
          failoverManager:(id<FailoverManager>)failoverManager;

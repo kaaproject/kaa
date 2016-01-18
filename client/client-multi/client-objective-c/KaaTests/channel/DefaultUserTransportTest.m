@@ -106,15 +106,15 @@ static int REQUEST_ID_2 = 73;
     EndpointAttachResponse *attachResponse3 = [[EndpointAttachResponse alloc] init];
     attachResponse1.requestId = REQUEST_ID_1;
     attachResponse1.endpointKeyHash =
-    [KAAUnion unionWithBranch:KAA_UNION_STRING_OR_NULL_BRANCH_0 andData:@"keyHash1"];
+    [KAAUnion unionWithBranch:KAA_UNION_STRING_OR_NULL_BRANCH_0 data:@"keyHash1"];
     attachResponse1.result = SYNC_RESPONSE_RESULT_TYPE_SUCCESS;
     attachResponse2.requestId = REQUEST_ID_2;
     attachResponse2.endpointKeyHash =
-    [KAAUnion unionWithBranch:KAA_UNION_STRING_OR_NULL_BRANCH_0 andData:@"keyHash2"];
+    [KAAUnion unionWithBranch:KAA_UNION_STRING_OR_NULL_BRANCH_0 data:@"keyHash2"];
     attachResponse2.result = SYNC_RESPONSE_RESULT_TYPE_SUCCESS;
     attachResponse3.requestId = REQUEST_ID_1 + 1;
     attachResponse3.endpointKeyHash =
-    [KAAUnion unionWithBranch:KAA_UNION_STRING_OR_NULL_BRANCH_0 andData:@"keyHash2"];
+    [KAAUnion unionWithBranch:KAA_UNION_STRING_OR_NULL_BRANCH_0 data:@"keyHash2"];
     attachResponse3.result = SYNC_RESPONSE_RESULT_TYPE_FAILURE;
     
     EndpointDetachResponse *detachResponse1 = [[EndpointDetachResponse alloc] init];
@@ -127,10 +127,10 @@ static int REQUEST_ID_2 = 73;
     UserSyncResponse *response1 = [[UserSyncResponse alloc] init];
     response1.endpointAttachResponses =
     [KAAUnion unionWithBranch:KAA_UNION_ARRAY_ENDPOINT_ATTACH_RESPONSE_OR_NULL_BRANCH_0
-                      andData:@[attachResponse1, attachResponse2, attachResponse3]];
+                      data:@[attachResponse1, attachResponse2, attachResponse3]];
     response1.endpointDetachResponses =
     [KAAUnion unionWithBranch:KAA_UNION_ARRAY_ENDPOINT_DETACH_RESPONSE_OR_NULL_BRANCH_0
-                      andData:@[detachResponse1, detachResponse2]];
+                      data:@[detachResponse1, detachResponse2]];
     
     [transport onUserResponse:response1];
     [transport setEndpointRegistrationProcessor:processor];
@@ -149,7 +149,7 @@ static int REQUEST_ID_2 = 73;
     UserSyncResponse *response2 = [[UserSyncResponse alloc] init];
     response2.endpointDetachResponses =
     [KAAUnion unionWithBranch:KAA_UNION_ARRAY_ENDPOINT_DETACH_RESPONSE_OR_NULL_BRANCH_0
-                      andData:@[detachResponse3]];
+                      data:@[detachResponse3]];
     
     [transport onUserResponse:response2];
     

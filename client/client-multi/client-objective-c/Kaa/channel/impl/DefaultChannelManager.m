@@ -34,7 +34,7 @@
 @property (nonatomic,strong) NSMutableDictionary *lastServers;      //<TransportProtocolId,TransportConnectionInfo>
 
 @property (nonatomic,strong) NSDictionary *bootststrapServers;      //<TransportProtocolId,NSArray<TransportConnectionInfo>>
-@property (nonatomic,strong) NSMutableDictionary *lastBSServers;    //<TransportProtocolId,TransportConnectionInfo>
+@property (nonatomic,strong) NSMutableDictionary *lastBootstrapServers;    //<TransportProtocolId,TransportConnectionInfo>
 
 @property (nonatomic,strong) NSMutableDictionary *syncTaskQueueMap; //<NSString,BlockingQueue<SyncTask>> as key-value
 @property (nonatomic,strong) NSMutableDictionary *syncWorkers;      //<NSString,SyncWorker>
@@ -68,7 +68,7 @@
 
 @implementation DefaultChannelManager
 
-- (instancetype)initWith:(id<BootstrapManager>)bootstrapMgr
+- (instancetype)initWithBootstrapManager:(id<BootstrapManager>)bootstrapMgr
         bootstrapServers:(NSDictionary *)servers
                  context:(id<ExecutorContext>)context {
     self = [super init];
@@ -84,7 +84,7 @@
         self.channels = [NSMutableArray array];
         self.upChannels = [NSMutableDictionary dictionary];
         self.lastServers = [NSMutableDictionary dictionary];
-        self.lastBSServers = [NSMutableDictionary dictionary];
+        self.lastBootstrapServers = [NSMutableDictionary dictionary];
         self.syncTaskQueueMap = [NSMutableDictionary dictionary];
         self.syncWorkers = [NSMutableDictionary dictionary];
     }
@@ -405,7 +405,7 @@
 
 - (void)startWorker:(id<KaaDataChannel>)channel {
     [self stopWorker:channel];
-    SyncWorker *worker = [[SyncWorker alloc] initWith:channel andManager:self];
+    SyncWorker *worker = [[SyncWorker alloc] initWithChannel:channel manager:self];
     @synchronized(self.syncTaskQueueMap) {
         [self.syncTaskQueueMap setObject:[BlockingQueue new] forKey:[channel getId]];
     }
@@ -513,12 +513,12 @@
 }
 
 - (id<TransportConnectionInfo>)getCurrentBootstrapServer:(TransportProtocolId *)protocolId {
-    id<TransportConnectionInfo> bsi = [self.lastBSServers objectForKey:protocolId];
+    id<TransportConnectionInfo> bsi = [self.lastBootstrapServers objectForKey:protocolId];
     if (!bsi) {
         NSArray *serverList = [self.bootststrapServers objectForKey:protocolId];
         if (serverList && [serverList count] > 0) {
             bsi = [serverList objectAtIndex:0];
-            [self.lastBSServers setObject:bsi forKey:protocolId];
+            [self.lastBootstrapServers setObject:bsi forKey:protocolId];
         }
     }
     return bsi;
@@ -533,7 +533,7 @@
             serverIndex = 0;
         }
         bsi = [serverList objectAtIndex:serverIndex];
-        [self.lastBSServers setObject:bsi forKey:[currentServer transportId]];
+        [self.lastBootstrapServers setObject:bsi forKey:[currentServer transportId]];
     }
     return bsi;
 }
@@ -542,7 +542,7 @@
 
 @implementation SyncWorker
 
-- (instancetype)initWith:(id<KaaDataChannel>)channel andManager:(DefaultChannelManager *)manager {
+- (instancetype)initWithChannel:(id<KaaDataChannel>)channel manager:(DefaultChannelManager *)manager {
     self = [super init];
     if (self) {
         self.channel = channel;
@@ -578,7 +578,7 @@
             } else if (task.isAckOnly) {
                 DDLogDebug(@"%@ [%@] Going to invoke syncAck method for types %@",
                            TAG, [self.channel getId], [task getTransportTypes]);
-                [self.channel syncAckTransportTypes:[task getTransportTypes]];
+                [self.channel syncAckForTransportTypes:[task getTransportTypes]];
             } else {
                 DDLogDebug(@"%@ [%@] Going to invoke sync method", TAG, [self.channel getId]);
                 [self.channel syncTransportTypes:[task getTransportTypes]];

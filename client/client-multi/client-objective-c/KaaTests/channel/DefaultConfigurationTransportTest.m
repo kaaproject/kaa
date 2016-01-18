@@ -99,9 +99,9 @@
     
 
     NSData *data = [self getDataWith123];
-    [response setConfDeltaBody:[KAAUnion unionWithBranch:KAA_UNION_BYTES_OR_NULL_BRANCH_0 andData:data]];
+    [response setConfDeltaBody:[KAAUnion unionWithBranch:KAA_UNION_BYTES_OR_NULL_BRANCH_0 data:data]];
     [transport onConfigurationResponse:response];
-    [response setConfSchemaBody:[KAAUnion unionWithBranch:KAA_UNION_BYTES_OR_NULL_BRANCH_0 andData:data]];
+    [response setConfSchemaBody:[KAAUnion unionWithBranch:KAA_UNION_BYTES_OR_NULL_BRANCH_0 data:data]];
     [transport onConfigurationResponse:response];
     
     [verifyCount(clientState, times(4)) setConfigSequenceNumber:5];

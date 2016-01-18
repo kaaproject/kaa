@@ -25,7 +25,7 @@
 
 @implementation KAASocket
 
-+ (instancetype)socketWithHost:(NSString *)host andPort:(int)port {
++ (instancetype)socketWithHost:(NSString *)host port:(int)port {
     KAASocket *socket = [[KAASocket alloc] init];
     socket.host = host;
     socket.port = port;

@@ -25,16 +25,16 @@
 
 @interface OperationRunner : NSOperation
 
-@property (nonatomic,weak) DefaultOperationHttpChannel *opChannel;
-@property (nonatomic,strong) NSDictionary *opTypes;
+@property (nonatomic, weak) DefaultOperationHttpChannel *operationChannel;
+@property (nonatomic, strong) NSDictionary *operationTypes;
 
-- (instancetype)initWithChannel:(DefaultOperationHttpChannel *)channel andTypes:(NSDictionary *)types;
+- (instancetype)initWithChannel:(DefaultOperationHttpChannel *)channel types:(NSDictionary *)types;
 
 @end
 
 @interface DefaultOperationHttpChannel ()
 
-@property (nonatomic,strong) NSDictionary *SUPPORTED_TYPES; //<TransportType,ChannelDirection> as key-value
+@property (nonatomic, strong) NSDictionary *supportedTypes; //<TransportType,ChannelDirection> as key-value
 
 - (void)processTypes:(NSDictionary *)types;
 
@@ -42,11 +42,12 @@
 
 @implementation DefaultOperationHttpChannel
 
-- (instancetype)initWithClient:(AbstractKaaClient *)client state:(id<KaaClientState>)state
+- (instancetype)initWithClient:(AbstractKaaClient *)client
+                         state:(id<KaaClientState>)state
                failoverManager:(id<FailoverManager>)manager {
     self = [super initWithClient:client state:state failoverManager:manager];
     if (self) {
-        self.SUPPORTED_TYPES = [[NSDictionary alloc] initWithObjectsAndKeys:
+        self.supportedTypes = [[NSDictionary alloc] initWithObjectsAndKeys:
                                 [NSNumber numberWithInt:CHANNEL_DIRECTION_UP],
                                 [NSNumber numberWithInt:TRANSPORT_TYPE_EVENT],
                                 [NSNumber numberWithInt:CHANNEL_DIRECTION_UP],
@@ -79,11 +80,11 @@
 }
 
 - (NSDictionary *)getSupportedTransportTypes {
-    return self.SUPPORTED_TYPES;
+    return self.supportedTypes;
 }
 
-- (NSOperation *)createChannelRunner:(NSDictionary *)types {
-    return [[OperationRunner alloc] initWithChannel:self andTypes:types];
+- (NSOperation *)createChannelRunnerWithTypes:(NSDictionary *)types {
+    return [[OperationRunner alloc] initWithChannel:self types:types];
 }
 
 - (NSString *)getURLSuffix {
@@ -94,11 +95,11 @@
 
 @implementation OperationRunner
 
-- (instancetype)initWithChannel:(DefaultOperationHttpChannel *)channel andTypes:(NSDictionary *)types {
+- (instancetype)initWithChannel:(DefaultOperationHttpChannel *)channel types:(NSDictionary *)types {
     self = [super init];
     if (self) {
-        self.opChannel = channel;
-        self.opTypes = types;
+        self.operationChannel = channel;
+        self.operationTypes = types;
     }
     return self;
 }
@@ -109,15 +110,15 @@
     }
     
     @try {
-        [self.opChannel processTypes:self.opTypes];
-        [self.opChannel connectionStateChanged:NO];
+        [self.operationChannel processTypes:self.operationTypes];
+        [self.operationChannel connectionEstablished];
     }
     @catch (NSException *ex) {
         DDLogError(@"%@ Failed to receive response from the operation: %@, reason: %@", TAG, ex.name, ex.reason);
         if ([ex.name isEqualToString:KaaTransportException]) {
-            [self.opChannel connectionStateChanged:YES withStatus:[ex.reason intValue]];
+            [self.operationChannel connectionFailedWithStatus:[ex.reason intValue]];
         } else {
-            [self.opChannel connectionStateChanged:YES];
+            [self.operationChannel connectionFailedWithStatus:UNKNOWN_HTTP_STATUS];
         }
     }
 }

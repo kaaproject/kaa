@@ -19,17 +19,17 @@
 
 @interface AbstractHttpClient : NSObject
 
-@property (nonatomic,strong) NSString *url;
+@property (nonatomic, strong) NSString *url;
 
-- (instancetype)initWith:(NSString *)url
-              privateKey:(SecKeyRef)privateK
-               publicKey:(SecKeyRef)publicK
-               remoteKey:(NSData *)remoteK;
+- (instancetype)initWithURLString:(NSString *)url
+                    privateKeyRef:(SecKeyRef)privateK
+                     publicKeyRef:(SecKeyRef)publicK
+                        remoteKey:(NSData *)remoteK;
 
-- (instancetype)initWith:(NSString *)url
-              privateKey:(SecKeyRef)privateK
-               publicKey:(SecKeyRef)publicK
-               remoteKeyRef:(SecKeyRef)remoteK;
+- (instancetype)initWithURLString:(NSString *)url
+                    privateKeyRef:(SecKeyRef)privateK
+                     publicKeyRef:(SecKeyRef)publicK
+                     remoteKeyRef:(SecKeyRef)remoteK;
 
 - (void)disableVerification;
 - (NSData *)verifyResponse:(NSData *)body signature:(NSData *)signature;

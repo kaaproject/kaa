@@ -27,7 +27,7 @@
 
 @interface EventFamilyFactory : NSObject
 
-- (instancetype)initWith:(id<EventManager>)manager executorContext:(id<ExecutorContext>)context;
+- (instancetype)initWithManager:(id<EventManager>)manager executorContext:(id<ExecutorContext>)context;
 
 - (TransactionId *)startEventsBlock;
 - (void)submitEventsBlock:(TransactionId *)trxId;

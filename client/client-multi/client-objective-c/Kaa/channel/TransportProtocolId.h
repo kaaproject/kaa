@@ -21,6 +21,6 @@
 @property(nonatomic,readonly) int protocolId;
 @property(nonatomic,readonly) int protocolVersion;
 
-- (instancetype)initWithId:(int)id andVersion:(int)version;
+- (instancetype)initWithId:(int)id version:(int)version;
 
 @end

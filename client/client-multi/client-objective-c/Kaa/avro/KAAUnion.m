@@ -18,7 +18,7 @@
 
 @implementation KAAUnion
 
-- (instancetype)initWithBranch:(int)branch andData:(id)data {
+- (instancetype)initWithBranch:(int)branch data:(id)data {
     self = [super init];
     if (self) {
         self.branch = branch;
@@ -36,8 +36,8 @@
     return self;
 }
 
-+ (instancetype)unionWithBranch:(int)branch andData:(id)data {
-    return [[KAAUnion alloc] initWithBranch:branch andData:data];
++ (instancetype)unionWithBranch:(int)branch data:(id)data {
+    return [[KAAUnion alloc] initWithBranch:branch data:data];
 }
 
 + (instancetype)unionWithBranch:(int)branch {

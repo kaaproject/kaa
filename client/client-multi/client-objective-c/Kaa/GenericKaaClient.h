@@ -110,7 +110,7 @@
  *
  * @throws UnavailableTopicException if unknown topic id is provided.
  */
-- (void)addNotificationDelegate:(id<NotificationDelegate>)delegate for:(NSString *)topicId;
+- (void)addNotificationDelegate:(id<NotificationDelegate>)delegate forTopic:(NSString *)topicId;
 
 /**
  * Remove delegate receiving all notifications (both for mandatory and optional topics).
@@ -126,7 +126,7 @@
  *
  * @throws UnavailableTopicException if unknown topic id is provided.
  */
-- (void)removeNotificationDelegate:(id<NotificationDelegate>)delegate for:(NSString *) topicId;
+- (void)removeNotificationDelegate:(id<NotificationDelegate>)delegate forTopic:(NSString *) topicId;
 
 /**
  * Subscribe to notifications relating to the specified optional topic.

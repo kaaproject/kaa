@@ -29,7 +29,7 @@
 
 - (void)setUp {
     [super setUp];
-    self.state = [[KaaClientPropertiesState alloc] initWith:[CommonBase64 new] andClientProperties:[TestsHelper getProperties]];
+    self.state = [[KaaClientPropertiesState alloc] initWithBase64:[CommonBase64 new] clientProperties:[TestsHelper getProperties]];
     NSLog(@"New state created!");
 }
 
@@ -71,21 +71,21 @@
     [expected setObject:[NSNumber numberWithInt:5] forKey:topic1.id];
     [expected setObject:[NSNumber numberWithInt:1] forKey:topic2.id];
     
-    XCTAssertTrue([expected isEqualToDictionary:[self.state getNfSubscriptions]]);
+    XCTAssertTrue([expected isEqualToDictionary:[self.state getNotificationSubscriptions]]);
     
     [self.state persist];
-    self.state = [[KaaClientPropertiesState alloc] initWith:[CommonBase64 new] andClientProperties:[TestsHelper getProperties]];
+    self.state = [[KaaClientPropertiesState alloc] initWithBase64:[CommonBase64 new] clientProperties:[TestsHelper getProperties]];
     
-    XCTAssertTrue([expected isEqualToDictionary:[self.state getNfSubscriptions]]);
+    XCTAssertTrue([expected isEqualToDictionary:[self.state getNotificationSubscriptions]]);
 
     [self.state removeTopic:topic1.id];
     [self.state persist];
     
-    self.state = [[KaaClientPropertiesState alloc] initWith:[CommonBase64 new] andClientProperties:[TestsHelper getProperties]];
+    self.state = [[KaaClientPropertiesState alloc] initWithBase64:[CommonBase64 new] clientProperties:[TestsHelper getProperties]];
     
     [expected removeObjectForKey:topic1.id];
     
-    XCTAssertTrue([expected isEqualToDictionary:[self.state getNfSubscriptions]]);
+    XCTAssertTrue([expected isEqualToDictionary:[self.state getNotificationSubscriptions]]);
 }
 
 - (void)testSDKPropertiesUpdate {
@@ -99,7 +99,7 @@
     KaaClientProperties *properties = [TestsHelper getProperties];
     [properties setString:@"SDK_TOKEN_100500" forKey:SDK_TOKEN_KEY];
     
-    KaaClientPropertiesState *newState = [[KaaClientPropertiesState alloc] initWith:[CommonBase64 new] andClientProperties:properties];
+    KaaClientPropertiesState *newState = [[KaaClientPropertiesState alloc] initWithBase64:[CommonBase64 new] clientProperties:properties];
     
     XCTAssertFalse([newState isRegistred]);
 }

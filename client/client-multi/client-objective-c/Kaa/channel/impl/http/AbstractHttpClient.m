@@ -18,36 +18,36 @@
 #import "KaaExceptions.h"
 @interface AbstractHttpClient ()
 
-@property (nonatomic,strong) MessageEncoderDecoder *encoderDecoder;
+@property (nonatomic, strong) MessageEncoderDecoder *encoderDecoder;
 @property (nonatomic) BOOL verificationEnabled;
 
 @end
 
 @implementation AbstractHttpClient
 
-- (instancetype)initWith:(NSString *)url
-              privateKey:(SecKeyRef)privateK
-               publicKey:(SecKeyRef)publicK
+- (instancetype)initWithURLString:(NSString *)url
+              privateKeyRef:(SecKeyRef)privateK
+               publicKeyRef:(SecKeyRef)publicK
                remoteKey:(NSData *)remoteK {
     self = [super init];
     if (self) {
         self.url = url;
-        KeyPair *keys = [[KeyPair alloc] initWithPrivate:privateK andPublic:publicK];
-        self.encoderDecoder = [[MessageEncoderDecoder alloc] initWithKeyPair:keys andRemotePublicKey:remoteK];
+        KeyPair *keys = [[KeyPair alloc] initWithPrivateKeyRef:privateK publicKeyRef:publicK];
+        self.encoderDecoder = [[MessageEncoderDecoder alloc] initWithKeyPair:keys remotePublicKey:remoteK];
         self.verificationEnabled = YES;
     }
     return self;
 }
 
-- (instancetype)initWith:(NSString *)url
-              privateKey:(SecKeyRef)privateK
-               publicKey:(SecKeyRef)publicK
+- (instancetype)initWithURLString:(NSString *)url
+              privateKeyRef:(SecKeyRef)privateK
+               publicKeyRef:(SecKeyRef)publicK
                remoteKeyRef:(SecKeyRef)remoteK {
     self = [super init];
     if (self) {
         self.url = url;
-        KeyPair *keys = [[KeyPair alloc] initWithPrivate:privateK andPublic:publicK];
-        self.encoderDecoder = [[MessageEncoderDecoder alloc] initWithKeyPair:keys andRemotePublicKeyRef:remoteK];
+        KeyPair *keys = [[KeyPair alloc] initWithPrivateKeyRef:privateK publicKeyRef:publicK];
+        self.encoderDecoder = [[MessageEncoderDecoder alloc] initWithKeyPair:keys remotePublicKeyRef:remoteK];
         self.verificationEnabled = YES;
     }
     return self;

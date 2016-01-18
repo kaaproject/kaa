@@ -18,9 +18,4 @@
 
 @interface DefaultHttpClient : AbstractHttpClient
 
-- (instancetype)initWith:(NSString *)url
-              privateKey:(SecKeyRef)privateK
-               publicKey:(SecKeyRef)publicK
-               remoteKey:(NSData *)remoteK;
-
 @end

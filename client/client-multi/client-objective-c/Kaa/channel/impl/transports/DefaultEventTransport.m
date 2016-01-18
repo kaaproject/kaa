@@ -22,12 +22,12 @@
 @interface DefaultEventTransport ()
 
 @property (nonatomic,strong) NSMutableDictionary *pendingEvents;    //<NSNumber(int), NSMutableSet<Event>> as key-value
-@property (copy) NSComparisonResult (^eventSNComparator)(Event *first, Event *second);
+@property (copy) NSComparisonResult (^eventSequenceNumberComparator)(Event *first, Event *second);
 @property (nonatomic,strong) id<KaaClientState> kaaClientState;
 @property (nonatomic,strong) id<EventManager> kaaEventManager;
 
-@property (nonatomic) BOOL isEventSNSynchronized;
-@property (atomic) int startEventSN;
+@property (nonatomic) BOOL isEventSequenceNumberSynchronized;
+@property (atomic) int startEventSequenceNumber;
 
 @end
 
@@ -37,10 +37,10 @@
     self = [super init];
     if (self) {
         self.kaaClientState = state;
-        self.startEventSN = [self.kaaClientState eventSequenceNumber];
+        self.startEventSequenceNumber = [self.kaaClientState eventSequenceNumber];
         self.pendingEvents = [NSMutableDictionary dictionary];
         
-        self.eventSNComparator = ^NSComparisonResult (Event *first, Event *second) {
+        self.eventSequenceNumberComparator = ^NSComparisonResult (Event *first, Event *second) {
             return first.seqNum - second.seqNum;
         };
     }
@@ -56,7 +56,7 @@
     EventSyncRequest *request = [[EventSyncRequest alloc] init];
     [self.kaaEventManager fillEventListenersSyncRequest:request];
     
-    if (self.isEventSNSynchronized) {
+    if (self.isEventSequenceNumberSynchronized) {
         NSMutableSet *eventsSet = [NSMutableSet set];
         
         if ([self.pendingEvents count] > 0) {
@@ -72,17 +72,17 @@
         [eventsSet addObjectsFromArray:[self.kaaEventManager pollPendingEvents]];
         
         if ([eventsSet count] > 0) {
-            NSArray *sortedEvents = [[eventsSet allObjects] sortedArrayUsingComparator:self.eventSNComparator];
+            NSArray *sortedEvents = [[eventsSet allObjects] sortedArrayUsingComparator:self.eventSequenceNumberComparator];
             DDLogDebug(@"%@ Going to send events bundle with size: %li", TAG, (long)[sortedEvents count]);
-            request.events = [KAAUnion unionWithBranch:KAA_UNION_ARRAY_EVENT_OR_NULL_BRANCH_0 andData:sortedEvents];
+            request.events = [KAAUnion unionWithBranch:KAA_UNION_ARRAY_EVENT_OR_NULL_BRANCH_0 data:sortedEvents];
             [self.pendingEvents setObject:eventsSet forKey:[NSNumber numberWithInt:requestId]];
         }
         
         request.eventSequenceNumberRequest = [KAAUnion unionWithBranch:KAA_UNION_EVENT_SEQUENCE_NUMBER_REQUEST_OR_NULL_BRANCH_1];
     } else {
         request.eventSequenceNumberRequest = [KAAUnion unionWithBranch:KAA_UNION_EVENT_SEQUENCE_NUMBER_REQUEST_OR_NULL_BRANCH_0
-                                                               andData:[[EventSequenceNumberRequest alloc] init]];
-        DDLogVerbose(@"%@ Sending event sequence number request: restored SN = %i", TAG, self.startEventSN);
+                                                               data:[[EventSequenceNumberRequest alloc] init]];
+        DDLogVerbose(@"%@ Sending event sequence number request: restored SN = %i", TAG, self.startEventSequenceNumber);
     }
     return request;
 }
@@ -93,14 +93,14 @@
         return;
     }
     
-    if (!self.isEventSNSynchronized && response.eventSequenceNumberResponse
+    if (!self.isEventSequenceNumberSynchronized && response.eventSequenceNumberResponse
         && response.eventSequenceNumberResponse.branch == KAA_UNION_EVENT_SEQUENCE_NUMBER_RESPONSE_OR_NULL_BRANCH_0) {
         EventSequenceNumberResponse *seqNumResponse = response.eventSequenceNumberResponse.data;
         int expectedSN = seqNumResponse.seqNum > 0 ? seqNumResponse.seqNum + 1 : seqNumResponse.seqNum;
         
-        if (self.startEventSN != expectedSN) {
-            self.startEventSN = expectedSN;
-            [self.kaaClientState setEventSequenceNumber:self.startEventSN];
+        if (self.startEventSequenceNumber != expectedSN) {
+            self.startEventSequenceNumber = expectedSN;
+            [self.kaaClientState setEventSequenceNumber:self.startEventSequenceNumber];
             
             NSMutableSet *eventsSet = [NSMutableSet set];
             for (NSMutableSet *events in self.pendingEvents.allValues) {
@@ -109,38 +109,38 @@
             
             [eventsSet addObjectsFromArray:[self.kaaEventManager peekPendingEvents]];
             
-            NSArray *sortedEvents = [[eventsSet allObjects] sortedArrayUsingComparator:self.eventSNComparator];
+            NSArray *sortedEvents = [[eventsSet allObjects] sortedArrayUsingComparator:self.eventSequenceNumberComparator];
             
-            [self.kaaClientState setEventSequenceNumber:(self.startEventSN + [sortedEvents count])];
-            if ([sortedEvents count] > 0 && ((Event *)[sortedEvents objectAtIndex:0]).seqNum != self.startEventSN) {
+            [self.kaaClientState setEventSequenceNumber:(self.startEventSequenceNumber + [sortedEvents count])];
+            if ([sortedEvents count] > 0 && ((Event *)[sortedEvents objectAtIndex:0]).seqNum != self.startEventSequenceNumber) {
                 DDLogInfo(@"%@ Put in order event sequence numbers (expected: %i, actual: %i)",
-                          TAG, self.startEventSN, ((Event *)[sortedEvents objectAtIndex:0]).seqNum);
+                          TAG, self.startEventSequenceNumber, ((Event *)[sortedEvents objectAtIndex:0]).seqNum);
                 for (Event *event in sortedEvents) {
-                    event.seqNum = self.startEventSN++;
+                    event.seqNum = self.startEventSequenceNumber++;
                 }
             } else {
-                self.startEventSN += [sortedEvents count];
+                self.startEventSequenceNumber += [sortedEvents count];
             }
             
-            DDLogInfo(@"%@ Event sequence number isn't synchronized. Set to %i", TAG, self.startEventSN);
+            DDLogInfo(@"%@ Event sequence number isn't synchronized. Set to %i", TAG, self.startEventSequenceNumber);
         } else {
-            DDLogInfo(@"%@ Event sequence number is up to date: %i", TAG, self.startEventSN);
+            DDLogInfo(@"%@ Event sequence number is up to date: %i", TAG, self.startEventSequenceNumber);
         }
         
-        self.isEventSNSynchronized = YES;
+        self.isEventSequenceNumberSynchronized = YES;
     }
     
     if (response.events && response.events.branch == KAA_UNION_ARRAY_EVENT_OR_NULL_BRANCH_0
         && [response.events.data count] > 0) {
         NSArray *events = response.events.data;
-        NSArray *sortedEvents = [events sortedArrayUsingComparator:self.eventSNComparator];
+        NSArray *sortedEvents = [events sortedArrayUsingComparator:self.eventSequenceNumberComparator];
         for (Event *event in sortedEvents) {
             if (!event.source && event.source.branch != KAA_UNION_STRING_OR_NULL_BRANCH_0) {
                 DDLogWarn(@"%@ Can't process event with source nil. Sequence number: %i", TAG, event.seqNum);
                 continue;
             }
             NSString *eventSource = event.source.data;
-            [self.kaaEventManager onGenericEvent:event.eventClassFQN data:event.eventData source:eventSource];
+            [self.kaaEventManager onGenericEvent:event.eventClassFQN withData:event.eventData fromSource:eventSource];
         }
     }
     

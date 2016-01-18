@@ -33,6 +33,6 @@
  */
 @property(nonatomic,strong,readonly) NSArray* logRecords;
 
-- (instancetype)initWithBucketId:(int32_t)bucketId andRecords:(NSArray *)logRecords;
+- (instancetype)initWithBucketId:(int32_t)bucketId records:(NSArray *)logRecords;
 
 @end

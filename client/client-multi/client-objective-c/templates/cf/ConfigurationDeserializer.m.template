@@ -32,7 +32,7 @@
     return self;
 }
 
-- (void)notify:(NSSet *)configurationDelegates withData:(NSData *)configurationData {
+- (void)notifyDelegates:(NSSet *)configurationDelegates withData:(NSData *)configurationData {
     __block ${configuration_class} *configuration = [self fromBytes:configurationData];
     for (id<ConfigurationDelegate> delegate in configurationDelegates) {
         [[executorContext getCallbackExecutor] addOperationWithBlock:^{

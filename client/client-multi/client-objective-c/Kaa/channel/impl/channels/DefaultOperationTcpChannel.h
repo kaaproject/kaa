@@ -25,7 +25,7 @@
 
 - (KAASocket *)createSocket;
 - (void)setServer:(id<TransportConnectionInfo>)server withKeyPair:(KeyPair *) sendedKeyPair;
-- (instancetype)initWithClientState:(id<KaaClientState>)state andFailoverMgr:(id<FailoverManager>)failoverMgr;
+- (instancetype)initWithClientState:(id<KaaClientState>)state failoverManager:(id<FailoverManager>)failoverMgr;
 - (NSOperationQueue *)createExecutor;
 
 @end

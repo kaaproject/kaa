@@ -27,7 +27,7 @@
 - (void)testRemoval {
     int64_t maxBucketSize = 10;
     int32_t maxRecordCount = 4;
-    id <LogStorage> storage = [self getStorageWithBucketSize:maxBucketSize andRecordCount:maxRecordCount];
+    id <LogStorage> storage = [self getStorageWithBucketSize:maxBucketSize recordCount:maxRecordCount];
     LogRecord *record = [self getLogRecord];
     
     int32_t insertionCount = 12;
@@ -52,7 +52,7 @@
     int64_t bucketSize = 3;
     int32_t recordCount = 3;
     
-    id <LogStorage> storage = [self getStorageWithBucketSize:bucketSize andRecordCount:recordCount];
+    id <LogStorage> storage = [self getStorageWithBucketSize:bucketSize recordCount:recordCount];
     LogBucket *group = [storage getNextBucket];
     XCTAssertNil(group);
     [storage close];
@@ -62,7 +62,7 @@
     int64_t maxBucketSize = 3;
     int32_t maxRecordCount = 3;
     
-    id <LogStorage> storage = [self getStorageWithBucketSize:maxBucketSize andRecordCount:maxRecordCount];
+    id <LogStorage> storage = [self getStorageWithBucketSize:maxBucketSize recordCount:maxRecordCount];
     LogRecord *record = [self getLogRecord];
     
     //size of each record is 3B
@@ -82,7 +82,7 @@
     int64_t maxBucketSize = 3;
     int32_t maxRecordCount = 3;
     
-    id <LogStorage> storage = [self getStorageWithBucketSize:maxBucketSize andRecordCount:maxRecordCount];
+    id <LogStorage> storage = [self getStorageWithBucketSize:maxBucketSize recordCount:maxRecordCount];
     LogRecord *record = [self getLogRecord];
     
     //size of each record is 3B
@@ -101,17 +101,17 @@
 
 - (void)testLogRecordAdding {
     //size of each record is 3B
-    [self testAddHelper:1 :3 :1 :1];
-    [self testAddHelper:4 :3 :2 :1];
-    [self testAddHelper:3 :9 :4 :3];
-    [self testAddHelper:5 :5 :2 :1];
+    [self testAddHelperWithRecordCount:1 bucketSize:3 batchSize:1 expectedCount:1];
+    [self testAddHelperWithRecordCount:4 bucketSize:3 batchSize:2 expectedCount:1];
+    [self testAddHelperWithRecordCount:3 bucketSize:9 batchSize:4 expectedCount:3];
+    [self testAddHelperWithRecordCount:5 bucketSize:5 batchSize:2 expectedCount:1];
 }
 
 - (void)testGetSameLogBucket {
     int64_t maxBucketSize = 3;
     int32_t maxRecordCount = 3;
     
-    id <LogStorage> storage = [self getStorageWithBucketSize:maxBucketSize andRecordCount:maxRecordCount];
+    id <LogStorage> storage = [self getStorageWithBucketSize:maxBucketSize recordCount:maxRecordCount];
     LogRecord *record = [self getLogRecord];
     
     int32_t iter = 3;
@@ -143,7 +143,7 @@
     int64_t bucketSize = 9;
     int32_t recordCount = 3;
     
-    id <LogStorage> storage = [self getStorageWithBucketSize:bucketSize andRecordCount:recordCount];
+    id <LogStorage> storage = [self getStorageWithBucketSize:bucketSize recordCount:recordCount];
     LogRecord *record = [self getLogRecord];
     
     int32_t insertionCount = 7;
@@ -171,7 +171,7 @@
     int64_t bucketSize = 9;
     int32_t recordCount = 3;
     
-    id <LogStorage> storage = [self getStorageWithBucketSize:bucketSize andRecordCount:recordCount];
+    id <LogStorage> storage = [self getStorageWithBucketSize:bucketSize recordCount:recordCount];
     LogRecord *record = [self getLogRecord];
     
     int32_t insertionCount = 8;
@@ -210,7 +210,7 @@
     int64_t bucketSize = 9;
     int32_t recordCount = 3;
     
-    id <LogStorage> storage = [self getStorageWithBucketSize:bucketSize andRecordCount:recordCount];
+    id <LogStorage> storage = [self getStorageWithBucketSize:bucketSize recordCount:recordCount];
     LogRecord *record = [self getLogRecord];
     
     int32_t insertionCount = 9;
@@ -243,8 +243,8 @@
     
 }
 
-- (void)testAddHelper:(int32_t)addedN :(int32_t)bucketSize :(int32_t)batchSize :(int32_t)expectedN {
-    id <LogStorage> storage = [self getStorageWithBucketSize:bucketSize andRecordCount:batchSize];
+- (void)testAddHelperWithRecordCount:(int32_t)addedN bucketSize:(int32_t)bucketSize batchSize:(int32_t)batchSize expectedCount:(int32_t)expectedN {
+    id <LogStorage> storage = [self getStorageWithBucketSize:bucketSize recordCount:batchSize];
     LogRecord *record = [self getLogRecord];
     NSMutableArray *expectedArray = [NSMutableArray array];
     
@@ -278,7 +278,7 @@
     return count;
 }
 
-- (MemLogStorage *)getStorageWithBucketSize:(int64_t)bucketSize andRecordCount:(int32_t)recordCount {
+- (MemLogStorage *)getStorageWithBucketSize:(int64_t)bucketSize recordCount:(int32_t)recordCount {
     return [[MemLogStorage alloc]initWithBucketSize:bucketSize bucketRecordCount:recordCount];
 }
 

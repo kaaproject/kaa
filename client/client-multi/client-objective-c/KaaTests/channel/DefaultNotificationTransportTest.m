@@ -94,12 +94,12 @@
     [transport setNotificationProcessor:processor];
     [transport setClientState:clientState];
     
-    Notification *nf1 = [self getNotificationWithTopicId:@"u_id1" uid:@"uid1" andSeqNumber:5];
-    Notification *nf2 = [self getNotificationWithTopicId:@"m_id1" uid:@"uid2" andSeqNumber:3];
-    Notification *nf3 = [self getNotificationWithTopicId:@"u_id2" uid:@"uid2" andSeqNumber:5];
+    Notification *nf1 = [self getNotificationWithTopicId:@"u_id1" uid:@"uid1" sequenceNumber:5];
+    Notification *nf2 = [self getNotificationWithTopicId:@"m_id1" uid:@"uid2" sequenceNumber:3];
+    Notification *nf3 = [self getNotificationWithTopicId:@"u_id2" uid:@"uid2" sequenceNumber:5];
     
     [response1 setNotifications:
-     [KAAUnion unionWithBranch:KAA_UNION_ARRAY_NOTIFICATION_OR_NULL_BRANCH_0 andData:@[nf1, nf2, nf3]]];
+     [KAAUnion unionWithBranch:KAA_UNION_ARRAY_NOTIFICATION_OR_NULL_BRANCH_0 data:@[nf1, nf2, nf3]]];
     [transport onNotificationResponse:response1];
     
     NotificationSyncRequest *request1 = [transport createNotificationRequest];
@@ -144,14 +144,14 @@
     topic2.name = nil;
     topic2.subscriptionType = SUBSCRIPTION_TYPE_OPTIONAL_SUBSCRIPTION;
     NSArray *topics = [NSArray arrayWithObjects:topic1, topic2, nil];
-    [response setAvailableTopics:[KAAUnion unionWithBranch:KAA_UNION_ARRAY_TOPIC_OR_NULL_BRANCH_0 andData:topics]];
+    [response setAvailableTopics:[KAAUnion unionWithBranch:KAA_UNION_ARRAY_TOPIC_OR_NULL_BRANCH_0 data:topics]];
     
-    Notification *nf1 = [self getNotificationWithTopicId:topicId2 uid:@"uid" andSeqNumber:5];
-    Notification *nf2 = [self getNotificationWithTopicId:topicId1 andSeqNumber:3];
-    Notification *nf3 = [self getNotificationWithTopicId:topicId1 andSeqNumber:6];
+    Notification *nf1 = [self getNotificationWithTopicId:topicId2 uid:@"uid" sequenceNumber:5];
+    Notification *nf2 = [self getNotificationWithTopicId:topicId1 sequenceNumber:3];
+    Notification *nf3 = [self getNotificationWithTopicId:topicId1 sequenceNumber:6];
     
     NSArray *notificationsArray = @[nf1, nf2, nf3];
-    [response setNotifications:[KAAUnion unionWithBranch:KAA_UNION_ARRAY_NOTIFICATION_OR_NULL_BRANCH_0 andData:notificationsArray]];
+    [response setNotifications:[KAAUnion unionWithBranch:KAA_UNION_ARRAY_NOTIFICATION_OR_NULL_BRANCH_0 data:notificationsArray]];
     
     [transport onNotificationResponse:response];
     
@@ -177,11 +177,11 @@
     [transport setNotificationProcessor:processor];
     [transport setClientState:state];
     
-    Notification *nf1 = [self getNotificationWithTopicId:@"u_id1" andSeqNumber:3];
-    Notification *nf2 = [self getNotificationWithTopicId:@"u_id1" andSeqNumber:3];
+    Notification *nf1 = [self getNotificationWithTopicId:@"u_id1" sequenceNumber:3];
+    Notification *nf2 = [self getNotificationWithTopicId:@"u_id1" sequenceNumber:3];
     
     NSArray *array = @[nf1, nf2];
-    [response setNotifications:[KAAUnion unionWithBranch:KAA_UNION_ARRAY_NOTIFICATION_OR_NULL_BRANCH_0 andData:array]];
+    [response setNotifications:[KAAUnion unionWithBranch:KAA_UNION_ARRAY_NOTIFICATION_OR_NULL_BRANCH_0 data:array]];
     [transport onNotificationResponse:response];
     
     NSArray *expectedNotifications = [NSArray array];
@@ -193,7 +193,7 @@
     
     NSDictionary *nfSubscriptions = [NSDictionary dictionaryWithObjects:@[@"topic1", @"topic2"] forKeys:@[[NSNumber numberWithInt:10], [NSNumber numberWithInt:3]]];
     
-    [given([clientState getNfSubscriptions]) willReturn:nfSubscriptions];
+    [given([clientState getNotificationSubscriptions]) willReturn:nfSubscriptions];
     
     id <NotificationTransport> transport = [[DefaultNotificationTransport alloc] init];
     
@@ -215,23 +215,23 @@
     return response;
 }
 
-- (Notification *) getNotificationWithTopicId:(NSString *)topicId uid:(NSString *)uid andSeqNumber:(int)seqNumber {
+- (Notification *) getNotificationWithTopicId:(NSString *)topicId uid:(NSString *)uid sequenceNumber:(int)seqNumber {
     Notification *notification = [[Notification alloc]init];
     notification.topicId = topicId;
-    notification.uid = [KAAUnion unionWithBranch:KAA_UNION_STRING_OR_NULL_BRANCH_0 andData:uid];
+    notification.uid = [KAAUnion unionWithBranch:KAA_UNION_STRING_OR_NULL_BRANCH_0 data:uid];
     notification.type = NOTIFICATION_TYPE_CUSTOM;
-    notification.seqNumber = [KAAUnion unionWithBranch:KAA_UNION_INT_OR_NULL_BRANCH_0 andData:[NSNumber numberWithInt:seqNumber]];
+    notification.seqNumber = [KAAUnion unionWithBranch:KAA_UNION_INT_OR_NULL_BRANCH_0 data:[NSNumber numberWithInt:seqNumber]];
     int32_t int123 = 123;
     NSData *data = [NSData dataWithBytes:&int123 length:sizeof(int123)];
     notification.body = data;
     return notification;
 }
 
-- (Notification *) getNotificationWithTopicId:(NSString *)topicId andSeqNumber:(int)seqNumber {
+- (Notification *) getNotificationWithTopicId:(NSString *)topicId sequenceNumber:(int)seqNumber {
     Notification *notification = [[Notification alloc]init];
     notification.topicId = topicId;
     notification.type = NOTIFICATION_TYPE_CUSTOM;
-    notification.seqNumber = [KAAUnion unionWithBranch:KAA_UNION_INT_OR_NULL_BRANCH_0 andData:[NSNumber numberWithInt:seqNumber]];
+    notification.seqNumber = [KAAUnion unionWithBranch:KAA_UNION_INT_OR_NULL_BRANCH_0 data:[NSNumber numberWithInt:seqNumber]];
     int32_t int123 = 123;
     NSData *data = [NSData dataWithBytes:&int123 length:sizeof(int123)];
     notification.body = data;

@@ -31,7 +31,7 @@
     return self;
 }
 
-- (void)notify:(NSArray *)delegates topic:(Topic *)topic data:(NSData *)notificationData {
+- (void)notifyDelegates:(NSArray *)delegates topic:(Topic *)topic data:(NSData *)notificationData {
     __block ${notification_class} *notification = [converter fromBytes:notificationData object:[${notification_class} new]];
     for (id<NotificationDelegate> delegate in delegates) {
         [[executorContext getCallbackExecutor] addOperationWithBlock:^{

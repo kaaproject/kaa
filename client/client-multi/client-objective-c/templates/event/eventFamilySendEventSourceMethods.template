@@ -18,7 +18,7 @@
     [self add{event_class_name}ToBlock:event withTransactionId:trxId andTarget:nil];
 }
 
-- (void)add{event_class_name}ToBlock:({event_class_name} *)event withTransactionId:(TransactionId *)trxId andTarget:(NSString *)target {
+- (void)add{event_class_name}ToBlock:({event_class_name} *)event withTransactionId:(TransactionId *)trxId target:(NSString *)target {
     @try {
         NSData *data = [self.converter toBytes:event];
         [self.manager produceEvent:@"{event_class_fqn}" data:data target:target transactionId:trxId];

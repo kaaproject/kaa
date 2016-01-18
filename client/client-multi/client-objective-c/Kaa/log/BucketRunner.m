@@ -73,8 +73,8 @@ static int64_t gBucketIdCounter = 0;
     return [self.queue take];
 }
 
-- (BucketInfo *)getValueWithTimeout:(int64_t)timeout andTimeUnit:(TimeUnit)timeUnit {
-    double timeoutMillis = [TimeUtils convert:timeout from:timeUnit to:TIME_UNIT_MILLISECONDS];
+- (BucketInfo *)getValueWithTimeout:(int64_t)timeout timeUnit:(TimeUnit)timeUnit {
+    double timeoutMillis = [TimeUtils convertValue:timeout fromTimeUnit:timeUnit toTimeUnit:TIME_UNIT_MILLISECONDS];
     double endCheck = CACurrentMediaTime() * 1000 + timeoutMillis;
     
     while (CACurrentMediaTime() * 1000 < endCheck) {

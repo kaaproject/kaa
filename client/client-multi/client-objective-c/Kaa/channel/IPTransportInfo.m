@@ -34,7 +34,7 @@
     info.id = [parent transportId].protocolId;
     info.version = [parent transportId].protocolVersion;
     meta.protocolVersionInfo = info;
-    self = [super initWithServerType:[parent serverType] andMeta:meta];
+    self = [super initWithServerType:[parent serverType] meta:meta];
     if (self) {
         NSInputStream *input = [NSInputStream inputStreamWithData:super.meta.connectionInfo];
         [input open];

@@ -23,6 +23,6 @@
 
 @interface KaaClientPropertiesState : NSObject <KaaClientState>
 
-- (instancetype)initWith:(id<KAABase64>)base64 andClientProperties:(KaaClientProperties *)properties;
+- (instancetype)initWithBase64:(id<KAABase64>)base64 clientProperties:(KaaClientProperties *)properties;
 
 @end

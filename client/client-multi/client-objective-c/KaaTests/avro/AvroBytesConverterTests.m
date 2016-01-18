@@ -77,8 +77,8 @@
     response.result = SYNC_RESPONSE_RESULT_TYPE_REDIRECT;
     NSNumber *errorCode = [NSNumber numberWithInt:USER_ATTACH_ERROR_CODE_REMOTE_ERROR];
     NSString *errorReason = @"test errorReason";
-    response.errorCode = [KAAUnion unionWithBranch:KAA_UNION_USER_ATTACH_ERROR_CODE_OR_NULL_BRANCH_0 andData:errorCode];
-    response.errorReason = [KAAUnion unionWithBranch:KAA_UNION_STRING_OR_NULL_BRANCH_0 andData:errorReason];
+    response.errorCode = [KAAUnion unionWithBranch:KAA_UNION_USER_ATTACH_ERROR_CODE_OR_NULL_BRANCH_0 data:errorCode];
+    response.errorReason = [KAAUnion unionWithBranch:KAA_UNION_STRING_OR_NULL_BRANCH_0 data:errorReason];
     
     NSData *serialized = [self.converter toBytes:response];
     
@@ -110,7 +110,7 @@
 
     LogSyncRequest *request = [[LogSyncRequest alloc] init];
     request.requestId = 10;
-    request.logEntries = [KAAUnion unionWithBranch:KAA_UNION_ARRAY_LOG_ENTRY_OR_NULL_BRANCH_0 andData:entries];
+    request.logEntries = [KAAUnion unionWithBranch:KAA_UNION_ARRAY_LOG_ENTRY_OR_NULL_BRANCH_0 data:entries];
     
     NSData *serialized = [self.converter toBytes:request];
     

@@ -23,9 +23,9 @@
 
 @interface AbstractConfigurationManager : NSObject <ConfigurationManager>
 
-@property(nonatomic,strong,readonly) ConfigurationDeserializer *deserializer;
+@property(nonatomic, strong, readonly) ConfigurationDeserializer *deserializer;
 
-- (instancetype)initWithClientProperties:(KaaClientProperties *)properties state:(id<KaaClientState>)state andExecutorContext:(id<ExecutorContext>)context;
+- (instancetype)initWithClientProperties:(KaaClientProperties *)properties state:(id<KaaClientState>)state executorContext:(id<ExecutorContext>)context;
 
 - (NSData *)getConfigurationData;
 

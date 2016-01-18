@@ -21,7 +21,7 @@
 
 @interface SingleThreadExecutorContext ()
 
-@property (strong, nonatomic) NSOperationQueue *singleThreadExecutor;
+@property (nonatomic, strong) NSOperationQueue *singleThreadExecutor;
 
 @end
 
