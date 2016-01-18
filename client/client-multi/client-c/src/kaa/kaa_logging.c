@@ -183,7 +183,13 @@ static bool is_upload_allowed(kaa_log_collector_t *self)
     return true;
 }
 
-
+/* Sums log counters across all buckets */
+static void sum_log_records(void *data, void *context)
+{
+    uint16_t count = ((timeout_info_t *)data)->log_cnt;
+    uint32_t *sum = context;
+    *sum += count;
+}
 
 void kaa_log_collector_destroy(kaa_log_collector_t *self)
 {
@@ -486,29 +492,35 @@ kaa_error_t kaa_logging_handle_server_sync(kaa_log_collector_t *self
         error_code = kaa_platform_message_read(reader, &delivery_error_code, sizeof(int8_t));
         KAA_RETURN_IF_ERR(error_code);
 
-        kaa_log_bucket_info_t log_bucket_info = { bucket_id, 0 };
 
         if (delivery_result == LOGGING_RESULT_SUCCESS) {
             KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Log bucket uploaded successfully, id '%u'", bucket_id);
-            if (self->log_delivery_listeners.on_success) {
-                // TODO load log count from timeouts
-                self->log_delivery_listeners.on_success(self->log_delivery_listeners.ctx,
-                                                        &log_bucket_info);
-            }
         } else {
             KAA_LOG_WARN(self->logger, KAA_ERR_WRITE_FAILED, "Failed to upload log bucket, id '%u' (delivery error code '%u')", bucket_id, delivery_error_code);
-            if (self->log_delivery_listeners.on_failed) {
-                // TODO load log count from timeouts
-                self->log_delivery_listeners.on_failed(self->log_delivery_listeners.ctx,
-                                                       &log_bucket_info);
-            }
         }
 
         remove_request(self, bucket_id);
 
+        /* Count logs left to upload */
+
+        uint32_t total_logs = 0;
+        kaa_list_for_each(kaa_list_begin(self->timeouts),
+                          kaa_list_back(self->timeouts),
+                          sum_log_records, &total_logs);
+
+        kaa_log_bucket_info_t log_bucket_info = { bucket_id, total_logs };
+
         if (delivery_result == LOGGING_RESULT_SUCCESS) {
+            if (self->log_delivery_listeners.on_success) {
+                self->log_delivery_listeners.on_success(self->log_delivery_listeners.ctx,
+                                                        &log_bucket_info);
+            }
             ext_log_storage_remove_by_bucket_id(self->log_storage_context, bucket_id);
         } else {
+            if (self->log_delivery_listeners.on_failed) {
+                self->log_delivery_listeners.on_failed(self->log_delivery_listeners.ctx,
+                                                       &log_bucket_info);
+            }
             ext_log_storage_unmark_by_bucket_id(self->log_storage_context, bucket_id);
             ext_log_upload_strategy_on_failure(self->log_upload_strategy_context
                                              , (logging_delivery_error_code_t)delivery_error_code);
