@@ -97,7 +97,7 @@ public class ObjCSdkGenerator extends SdkGenerator {
     @Override
     public FileData generateSdk(String buildVersion,
                            List<BootstrapNodeInfo> bootstrapNodes,
-                           String sdkToken, SdkProfileDto sdkProperties,
+                           SdkProfileDto sdkProperties,
                            String profileSchemaBody,
                            String notificationSchemaBody,
                            String configurationProtocolSchemaBody,
@@ -106,6 +106,7 @@ public class ObjCSdkGenerator extends SdkGenerator {
                            List<EventFamilyMetadata> eventFamilies,
                            String logSchemaBody) throws Exception {
 
+        String sdkToken = sdkProperties.getToken();
         Integer configurationSchemaVersion = sdkProperties.getConfigurationSchemaVersion();
         Integer profileSchemaVersion = sdkProperties.getProfileSchemaVersion();
         Integer notificationSchemaVersion = sdkProperties.getNotificationSchemaVersion();
