@@ -62,7 +62,6 @@ typedef struct
 
 
 struct kaa_log_collector {
-    uint16_t                    log_bucket_id;
     void                       *log_storage_context;
     void                       *log_upload_strategy_context;
     kaa_status_t               *status;
@@ -70,7 +69,9 @@ struct kaa_log_collector {
     kaa_logger_t               *logger;
     kaa_list_t                 *timeouts;
     kaa_log_listeners_t        log_delivery_listeners;
-    bool                        is_sync_ignored;
+    bool                       is_sync_ignored;
+    uint32_t                   log_last_id;         /**< Last log record ID */
+    uint16_t                   log_bucket_id;
 };
 
 
@@ -153,7 +154,8 @@ static bool is_timeout(kaa_log_collector_t *self)
             ext_log_storage_unmark_by_bucket_id(self->log_storage_context, info->log_bucket_id);
             if (self->log_delivery_listeners.on_timeout){
                 kaa_log_bucket_info_t log_bucket_info = {info->log_bucket_id, info->log_cnt};
-                (*self->log_delivery_listeners.on_timeout)(self->log_delivery_listeners.ctx, &log_bucket_info);
+                self->log_delivery_listeners.on_timeout(self->log_delivery_listeners.ctx,
+                                                        &log_bucket_info);
             }
             it = kaa_list_next(it);
         }
@@ -204,6 +206,7 @@ kaa_error_t kaa_log_collector_create(kaa_log_collector_t **log_collector_p
     KAA_RETURN_IF_NIL(collector, KAA_ERR_NOMEM);
 
     collector->log_bucket_id               = 0;
+    collector->log_last_id                 = 0;
     collector->log_storage_context         = NULL;
     collector->log_upload_strategy_context = NULL;
     collector->status                      = status;
@@ -273,15 +276,17 @@ static void update_storage(kaa_log_collector_t *self)
 
 
 
-kaa_error_t kaa_logging_add_record(kaa_log_collector_t *self, kaa_user_log_record_t *entry, uint16_t *bucket_id)
+kaa_error_t kaa_logging_add_record(kaa_log_collector_t *self, kaa_user_log_record_t *entry, kaa_log_record_info_t *log_info)
 {
     KAA_RETURN_IF_NIL2(self, entry, KAA_ERR_BADPARAM);
     KAA_RETURN_IF_NIL(self->log_storage_context, KAA_ERR_NOT_INITIALIZED);
 
     kaa_log_record_t record = { NULL, entry->get_size(entry) };
     if (!record.size) {
-        KAA_LOG_ERROR(self->logger, KAA_ERR_BADDATA, "Failed to add log record: serialized record size is null."
-                                                                                "Maybe log record schema is empty");
+        KAA_LOG_ERROR(self->logger,
+                      KAA_ERR_BADDATA, "Failed to add log record: "
+                                       "serialized record size is null. "
+                                       "Maybe log record schema is empty");
         return KAA_ERR_BADDATA;
     }
 
@@ -307,22 +312,26 @@ kaa_error_t kaa_logging_add_record(kaa_log_collector_t *self, kaa_user_log_recor
         ext_log_storage_deallocate_log_record_buffer(self->log_storage_context, &record);
         return error;
     }
+
     KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Added log record, size %zu", record.size);
     if (!is_timeout(self))
         update_storage(self);
 
     if (!self->log_bucket_id) {
-      self->log_bucket_id = self->status->log_bucket_id;
+        self->log_bucket_id = self->status->log_bucket_id;
     }
-    // TODO Check that we doesn't have policy that avoid log record from sending in next bucket
-    *bucket_id = self->log_bucket_id;
-    ++*bucket_id;
+
+    if (log_info) {
+        log_info->bucket_id = self->log_bucket_id + 1;
+        log_info->log_id = self->log_last_id++;
+    }
 
     return KAA_ERR_NONE;
 }
 
 kaa_error_t kaa_logging_set_listeners(kaa_log_collector_t *self, const kaa_log_listeners_t *listeners)
 {
+    KAA_RETURN_IF_NIL2(self, listeners, KAA_ERR_BADPARAM);
     self->log_delivery_listeners = *listeners;
     return KAA_ERR_NONE;
 }
@@ -476,19 +485,21 @@ kaa_error_t kaa_logging_handle_server_sync(kaa_log_collector_t *self
         error_code = kaa_platform_message_read(reader, &delivery_error_code, sizeof(int8_t));
         KAA_RETURN_IF_ERR(error_code);
 
+        kaa_log_bucket_info_t log_bucket_info = { bucket_id, 0 };
+
         if (delivery_result == LOGGING_RESULT_SUCCESS) {
             KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Log bucket uploaded successfully, id '%u'", bucket_id);
-            if (self->log_delivery_listeners.on_success){
+            if (self->log_delivery_listeners.on_success) {
                 // TODO load log count from timeouts
-                kaa_log_bucket_info_t log_bucket_info = {bucket_id, 0};
-                (*self->log_delivery_listeners.on_success)(self->log_delivery_listeners.ctx,&log_bucket_info);
+                self->log_delivery_listeners.on_success(self->log_delivery_listeners.ctx,
+                                                        &log_bucket_info);
             }
         } else {
             KAA_LOG_WARN(self->logger, KAA_ERR_WRITE_FAILED, "Failed to upload log bucket, id '%u' (delivery error code '%u')", bucket_id, delivery_error_code);
-            if (self->log_delivery_listeners.on_failed){
+            if (self->log_delivery_listeners.on_failed) {
                 // TODO load log count from timeouts
-                kaa_log_bucket_info_t log_bucket_info = {bucket_id, 0};
-                (*self->log_delivery_listeners.on_failed)(self->log_delivery_listeners.ctx, &log_bucket_info);
+                self->log_delivery_listeners.on_failed(self->log_delivery_listeners.ctx,
+                                                       &log_bucket_info);
             }
         }
 
