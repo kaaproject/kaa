@@ -99,7 +99,6 @@ import org.kaaproject.kaa.server.common.dao.impl.NotificationDao;
 import org.kaaproject.kaa.server.common.dao.impl.NotificationSchemaDao;
 import org.kaaproject.kaa.server.common.dao.impl.PluginContractDao;
 import org.kaaproject.kaa.server.common.dao.impl.PluginDao;
-import org.kaaproject.kaa.server.common.dao.impl.PluginInstanceDao;
 import org.kaaproject.kaa.server.common.dao.impl.ProfileFilterDao;
 import org.kaaproject.kaa.server.common.dao.impl.ProfileSchemaDao;
 import org.kaaproject.kaa.server.common.dao.impl.SdkProfileDao;

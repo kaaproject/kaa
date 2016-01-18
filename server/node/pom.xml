@@ -878,7 +878,7 @@
                     </execution>
                     <execution>
                         <id>copy-test-plugin-jar</id>
-                        <phase>package</phase>
+                        <phase>compile</phase>
                         <goals>
                             <goal>copy</goal>
                         </goals>

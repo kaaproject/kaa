@@ -32,7 +32,6 @@ import org.kaaproject.kaa.server.common.dao.impl.ContractMessageDao;
 import org.kaaproject.kaa.server.common.dao.impl.DaoUtil;
 import org.kaaproject.kaa.server.common.dao.impl.PluginDao;
 import org.kaaproject.kaa.server.common.dao.impl.PluginInstanceDao;
-import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchemaMetaInfo;
 import org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils;
 import org.kaaproject.kaa.server.common.dao.model.sql.plugin.Contract;
@@ -159,10 +158,11 @@ public class BasePluginService implements PluginService {
                     mergeCTLSchemaMetaInfos(pluginContractInstanceItem.getInMessageSchema());
                     mergeCTLSchemaMetaInfos(pluginContractInstanceItem.getOutMessageSchema());
 
-                    PluginContractInstanceItem item = new PluginContractInstanceItem(pluginContractInstanceItem);
-                    item.setPluginContractItems(null);
-                    item = pluginInstanceDao.save(item, PluginContractInstanceItem.class);
-                    pluginContractInstanceItem.setId(item.getStringId());
+                    if (pluginContractInstanceItem.getId() == null) {
+                        PluginContractInstanceItem item = new PluginContractInstanceItem(pluginContractInstanceItem);
+                        item = pluginInstanceDao.save(item, PluginContractInstanceItem.class);
+                        pluginContractInstanceItem.setId(item.getStringId());
+                    }
                 }
                 PluginContractDto pluginContract = pluginContractInstance.getContract();
                 ContractDto receivedContract = pluginContract.getContract();
@@ -197,7 +197,6 @@ public class BasePluginService implements PluginService {
             foundMetaInfo = ctlSchemaMetaInfoDao.save(new CTLSchemaMetaInfo(ctlSchemaMetaInfo));
         }
         ctlSchemaMetaInfo.setId(foundMetaInfo.getStringId());
-//        schema.setMetaInfo(foundMetaInfo);
     }
 
     @Override

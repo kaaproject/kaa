@@ -21,6 +21,7 @@ public class KaaPluginLoadServiceImplTest {
 
     @Test
     public void loadTest() throws KaaPluginLoadException {
+        // plugins are discovered in the target/plugins dir
         kaaPluginLoadService.load();
         Assert.assertEquals(1, pluginService.findAllPlugins().size());
     }

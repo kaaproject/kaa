@@ -54,6 +54,7 @@ public class JavaEndpointMessagingPluginGeneratorIT {
         JavaEndpointMessagingPluginGenerator generator = new JavaEndpointMessagingPluginGenerator();
         kaaPluginLoadService.load();
 
+        // plugins are discovered in the target/plugins dir
         List<PluginDto> plugins = pluginService.findAllPlugins();
         PluginDto messagingPlugin = getPluginForClass(EndpointMessagingPluginDefinition.class, plugins);
         Set<PluginInstanceDto> pluginInstances = messagingPlugin.getPluginInstances();

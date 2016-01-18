@@ -19,11 +19,13 @@ package org.kaaproject.kaa.server.common.dao.service;
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.plugin.PluginContractDto;
+import org.kaaproject.kaa.common.dto.plugin.PluginContractInstanceItemDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginInstanceDto;
 import org.kaaproject.kaa.server.common.dao.AbstractTest;
 import org.kaaproject.kaa.server.common.dao.impl.sql.plugin.PluginInstanceTestFactory;
 import org.kaaproject.kaa.server.common.dao.impl.sql.plugin.PluginTestFactory;
+import org.kaaproject.kaa.server.common.dao.model.sql.plugin.PluginContractInstance;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.List;
@@ -51,6 +53,8 @@ public abstract class BasePluginServiceTest extends AbstractTest {
 
         PluginDto newlyRegisteredPlugin = pluginService.registerPlugin(registeredPlugin);
         PluginContractDto newlyRegisteredPluginContract = newlyRegisteredPlugin.getPluginContracts().iterator().next();
+
+        // check that the new id wasn't generated
         Assert.assertEquals(contractId, newlyRegisteredPluginContract.getContract().getId());
         Assert.assertEquals(2, pluginService.findAllPlugins().size());
         PluginDto p123 = pluginService.findPluginByClassName(newlyRegisteredPlugin.getClassName());
@@ -91,6 +95,11 @@ public abstract class BasePluginServiceTest extends AbstractTest {
         PluginInstanceDto pluginInstanceDto = PluginInstanceTestFactory.create(pluginDto);
         PluginInstanceDto savedInstance = pluginService.saveInstance(pluginInstanceDto);
         Assert.assertNotNull(savedInstance.getId());
+        Set<PluginContractInstanceItemDto> pluginContractInstanceItems = savedInstance.getContracts().iterator().next().getItems();
+        Assert.assertEquals(7, pluginContractInstanceItems.size());
+        PluginContractInstanceItemDto itemWithRoutes = getItemForConfig(pluginContractInstanceItems, "sendA");
+        Assert.assertNotNull(itemWithRoutes);
+        Assert.assertEquals(2, itemWithRoutes.getPluginContractInstanceItems().size());
         PluginInstanceDto foundInstance = pluginService.findInstanceById(savedInstance.getId());
         Assert.assertEquals(savedInstance, foundInstance);
         PluginDto savedPlugin = pluginService.findPluginByClassName(PluginTestFactory.CLASS_NAME);
@@ -116,8 +125,11 @@ public abstract class BasePluginServiceTest extends AbstractTest {
         PluginDto pluginDto = PluginTestFactory.create();
         pluginDto = pluginService.registerPlugin(pluginDto);
         PluginInstanceDto pluginInstanceDto = PluginInstanceTestFactory.create(pluginDto);
-        pluginService.removeInstanceById(pluginInstanceDto.getId());
+        pluginInstanceDto = pluginService.saveInstance(pluginInstanceDto);
         PluginInstanceDto foundInstance = pluginService.findInstanceById(pluginInstanceDto.getId());
+        Assert.assertNotNull(foundInstance);
+        pluginService.removeInstanceById(pluginInstanceDto.getId());
+        foundInstance = pluginService.findInstanceById(pluginInstanceDto.getId());
         Assert.assertNull(foundInstance);
     }
 
@@ -134,5 +146,14 @@ public abstract class BasePluginServiceTest extends AbstractTest {
         Assert.assertTrue(pluginInstances.isEmpty());
         Assert.assertNull(pluginService.findInstanceById(pluginInstanceDto1.getId()));
         Assert.assertNull(pluginService.findInstanceById(pluginInstanceDto2.getId()));
+    }
+
+    private PluginContractInstanceItemDto getItemForConfig(Set<PluginContractInstanceItemDto> pluginContractInstanceItems, String config) {
+        for (PluginContractInstanceItemDto pluginContractInstanceItemDto : pluginContractInstanceItems) {
+            if (pluginContractInstanceItemDto.getConfData().equals(config)) {
+                return pluginContractInstanceItemDto;
+            }
+        }
+        return null;
     }
 }
