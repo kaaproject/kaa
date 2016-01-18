@@ -125,8 +125,6 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
 
     protected static final boolean FORCE_SYNC = true;
 
-    private volatile boolean isInitialized = false;
-
     protected final ConfigurationManager configurationManager;
     protected final AbstractLogCollector logCollector;
 
@@ -154,7 +152,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
         STOPPED
     };
 
-    protected State clientState = State.CREATED;
+    protected volatile State clientState = State.CREATED;
 
     protected void checkClientState(State expected, String message) {
         if (clientState != expected) {
@@ -233,6 +231,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
             checkClientStateNot(State.STARTED, "Kaa client is already started");
             checkClientStateNot(State.PAUSED, "Kaa client is paused, need to be resumed");
         }
+        setClientState(State.STARTED);
 
         checkReadiness();
 
@@ -242,12 +241,6 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
             public void run() {
                 LOG.debug("Client startup initiated");
                 try {
-                    if (!isInitialized) {
-                        isInitialized = true;
-                    } else {
-                        LOG.warn("Client is already initialized!");
-                        return;
-                    }
                     // Load configuration
                     configurationManager.init();
                     bootstrapManager.receiveOperationsServerList();
@@ -267,8 +260,6 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
                 }
             }
         });
-
-        setClientState(State.STARTED);
     }
 
     private void checkReadiness() {
@@ -288,6 +279,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
             checkClientStateNot(State.CREATED, "Kaa client is not started");
             checkClientStateNot(State.STOPPED, "Kaa client is already stopped");
         }
+        setClientState(State.STOPPED);
 
         getLifeCycleExecutor().submit(new Runnable() {
             @Override
@@ -296,7 +288,6 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
                     logCollector.stop();
                     kaaClientState.persist();
                     channelManager.shutdown();
-                    isInitialized = false;
                     if (stateListener != null) {
                         stateListener.onStopped();
                     }
@@ -309,8 +300,6 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
             }
         });
         context.getExecutorContext().stop();
-
-        setClientState(State.STOPPED);
     }
 
     @Override
@@ -318,6 +307,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
         if (context.needToCheckClientState()) {
             checkClientState(State.STARTED, "Kaa client is not started (" + clientState.toString().toLowerCase() + " now)");
         }
+        setClientState(State.PAUSED);
 
         getLifeCycleExecutor().submit(new Runnable() {
             @Override
@@ -336,8 +326,6 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
                 }
             }
         });
-
-        setClientState(State.PAUSED);
     }
 
     @Override
@@ -345,6 +333,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
         if (context.needToCheckClientState()) {
             checkClientState(State.PAUSED, "Kaa client isn't paused");
         }
+        setClientState(State.STARTED);
 
         getLifeCycleExecutor().submit(new Runnable() {
             @Override
@@ -362,8 +351,6 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
                 }
             }
         });
-
-        setClientState(State.STARTED);
     }
 
     private ExecutorService getLifeCycleExecutor() {
