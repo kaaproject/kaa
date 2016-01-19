@@ -490,7 +490,7 @@ void test_timeout(void)
     error_code = kaa_logging_add_record(log_collector, test_log_record, NULL);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    ASSERT_NOT_NULL(strategy.on_timeout_count);
+    ASSERT_TRUE(strategy.on_timeout_count);
 
     test_log_record->destroy(test_log_record);
     kaa_platform_message_writer_destroy(writer);
@@ -756,17 +756,40 @@ void test_max_parallel_uploads_with_sync_all(void)
 /* Log delivery tests                                                         */
 /* ---------------------------------------------------------------------------*/
 
+/* Server chunk, managed by a corresponding reader object.
+ * Perfectly packed. Packed attribute is intentionally avoided. */
+struct response_chunk
+{
+    uint8_t bucket_id[2];  /* 16 bits for bucket ID */
+    uint8_t resp_code;     /* 8 bits for response code. 0 == SUCCESS, 1 == FAILURE */
+    uint8_t reserved;      /* Should be 0 */
+};
+
+struct response_packet
+{
+    uint8_t resp_cnt[4];           /* 32 bits for amount of responces in buffer */
+    struct response_chunk resps[]; /* Responses itself */
+};
+
+#define RESP_PACKETS               2 /* Amount of response packets */
+#define RESP_SUCCESS_IDX           0 /* Index of successfull response */
+#define RESP_FAILURE_IDX           1 /* Index of failed response */
 #define TEST_BUFFER_SIZE           1024
 #define TEST_EXT_OP                0 /* Simple stub */
+#define TEST_TIMEOUT               2
 
 static mock_strategy_context_t         strategy;
 static mock_storage_context_t          *storage;
 static kaa_log_collector_t             *log_collector;
 static size_t                          test_log_record_size = TEST_BUFFER_SIZE;
-static char                            test_buffer[TEST_BUFFER_SIZE];
+/* Will contain response_packet. Thus required to be aligned. */
+_Alignas(4) static char                test_reader_buffer[TEST_BUFFER_SIZE];
+_Alignas(4) static char                test_writer_buffer[TEST_BUFFER_SIZE];
 /* Portion of the test buffer filled with valid data */
 static size_t                          test_filled_size;
 static kaa_platform_message_reader_t   *test_reader;
+static kaa_platform_message_writer_t   *test_writer;
+static kaa_user_log_record_t           *test_log_record;
 
 /* Values to be checked inside mock event function */
 static void     *expected_ctx;
@@ -775,7 +798,7 @@ static uint16_t expected_bucked_id;
 
 /* Required to trace generic mock function calls */
 static int      call_is_expected;
-static int      call_is_completed;
+static int      call_completed;
 
 /* Required to trace on fail mock function calls */
 static int      failed_call_is_expected;
@@ -801,6 +824,8 @@ static void mock_log_event_generic_fn(void *ctx, const kaa_log_bucket_info_t *bu
     }
 
     ASSERT_EQUAL(expected_ctx, ctx);
+
+    call_completed++;
 }
 
 static void mock_log_event_failed_fn(void *ctx, const kaa_log_bucket_info_t *bucket)
@@ -810,7 +835,7 @@ static void mock_log_event_failed_fn(void *ctx, const kaa_log_bucket_info_t *buc
     call_is_expected = 1;
     mock_log_event_generic_fn(ctx, bucket);
 
-    failed_call_completed = 1;
+    failed_call_completed++;
 }
 
 static void mock_log_event_success_fn(void *ctx, const kaa_log_bucket_info_t *bucket)
@@ -820,7 +845,7 @@ static void mock_log_event_success_fn(void *ctx, const kaa_log_bucket_info_t *bu
     call_is_expected = 1;
     mock_log_event_generic_fn(ctx, bucket);
 
-    success_call_completed = 1;
+    success_call_completed++;
 }
 
 static void mock_log_event_timeout_fn(void *ctx, const kaa_log_bucket_info_t *bucket)
@@ -830,7 +855,7 @@ static void mock_log_event_timeout_fn(void *ctx, const kaa_log_bucket_info_t *bu
     call_is_expected = 1;
     mock_log_event_generic_fn(ctx, bucket);
 
-    timeout_call_completed = 1;
+    timeout_call_completed++;
 }
 
 
@@ -927,6 +952,11 @@ KAA_TEST_CASE_EX(log_callback_basic, valid_parameters)
     rc = kaa_logging_set_listeners(log_collector, &KAA_LOG_EMPTY_LISTENERS);
     ASSERT_EQUAL(KAA_ERR_NONE, rc);
 
+    /* Post conditions check */
+
+    /* No callbacks should be called */
+    ASSERT_FALSE(call_completed);
+
     KAA_TRACE_OUT(logger);
     return;
 }
@@ -948,6 +978,8 @@ KAA_GROUP_SETUP(log_callback_with_storage)
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     memset(&strategy, 0, sizeof(mock_strategy_context_t));
+    memset(test_reader_buffer, 0, sizeof(test_reader_buffer));
+    memset(test_writer_buffer, 0, sizeof(test_writer_buffer));
 
     error_code = kaa_logging_init(log_collector, create_mock_storage(), &strategy);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
@@ -955,7 +987,7 @@ KAA_GROUP_SETUP(log_callback_with_storage)
     expected_ctx             = NULL;
     expected_bucked_id       = 0;
     call_is_expected         = 0;
-    call_is_completed        = 0;
+    call_completed           = 0;
     failed_call_completed    = 0;
     failed_call_is_expected  = 0;
     success_call_completed   = 0;
@@ -967,31 +999,26 @@ KAA_GROUP_SETUP(log_callback_with_storage)
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     uint32_t response_count = 2;
-
-    char *response = test_buffer;
-    *((uint32_t *)response) = KAA_HTONL(response_count);
-    response += sizeof(uint32_t);
+    struct response_packet *response = (struct response_packet *) test_reader_buffer;
+    *(uint32_t *) response->resp_cnt = KAA_HTONL(response_count);
 
     /* First response */
-    *((uint16_t *)response) = KAA_HTONS(rand());
-    response += sizeof(uint16_t);
-    *((uint8_t *)response) = 0x0; // SUCCESS
-    response += sizeof(uint8_t);
-    *((uint8_t *)response) = 0;
-    response += sizeof(uint8_t);
+
+    /* Later on we'll override that */
+    *(uint16_t *) response->resps[RESP_SUCCESS_IDX].bucket_id = 0;
+    response->resps[RESP_SUCCESS_IDX].resp_code = 0; // SUCCESS
 
     /* Second response */
-    *((uint16_t *)response) = KAA_HTONS(rand());
-    response += sizeof(uint16_t);
-    *((uint8_t *)response) = 0x1; // FAILURE
-    response += sizeof(uint8_t);
-    *((uint8_t *)response) = rand() % 4;
-    response += sizeof(uint8_t);
 
-    test_filled_size = response - test_buffer;
+    /* Later on we'll override that */
+    *(uint16_t *) response->resps[RESP_FAILURE_IDX].bucket_id = 0;
+    response->resps[RESP_FAILURE_IDX].resp_code = 1; // FAILURE
+
+    test_filled_size = sizeof(struct response_packet)
+            + sizeof(struct response_chunk) * 2;
 
     error_code = kaa_platform_message_reader_create(&test_reader,
-                                                    test_buffer,
+                                                    test_reader_buffer,
                                                     test_filled_size);
 
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
@@ -1020,18 +1047,28 @@ KAA_TEST_CASE_EX(log_callback_with_storage, on_fail_called)
     KAA_TRACE_IN(logger);
 
     kaa_error_t rc;
+    int dummy_ctx;
 
     kaa_log_listeners_t listeners = {
         NULL,
         mock_log_event_failed_fn,
         NULL,
-        NULL,
+        &dummy_ctx,
     };
 
+    /* Notify mocks about test intentions */
     failed_call_is_expected = 1;
+    expected_ctx = &dummy_ctx;
+    check_bucket = 1;
+    expected_bucked_id = 42;
 
     rc = kaa_logging_set_listeners(log_collector, &listeners);
     ASSERT_EQUAL(KAA_ERR_NONE, rc);
+
+    /* Response packet is passed internally via test reader */
+    struct response_packet *response = (struct response_packet *) test_reader_buffer;
+    *(uint16_t *) response->resps[RESP_FAILURE_IDX].bucket_id
+            = KAA_HTONS(expected_bucked_id);
 
     /* Test itself */
     rc = kaa_logging_handle_server_sync(log_collector,
@@ -1041,6 +1078,8 @@ KAA_TEST_CASE_EX(log_callback_with_storage, on_fail_called)
                                         );
 
     ASSERT_EQUAL(rc, KAA_ERR_NONE);
+
+    /* Post-conditions check */
 
     ASSERT_FALSE(success_call_completed);
     ASSERT_TRUE(failed_call_completed);
@@ -1054,18 +1093,28 @@ KAA_TEST_CASE_EX(log_callback_with_storage, on_success_called)
     KAA_TRACE_IN(logger);
 
     kaa_error_t rc;
+    int dummy_ctx;
 
     kaa_log_listeners_t listeners = {
         mock_log_event_success_fn,
         NULL,
         NULL,
-        NULL,
+        &dummy_ctx,
     };
 
+    /* Notify mocks about test intentions */
+    check_bucket = 1;
+    expected_bucked_id = 42;
     success_call_is_expected = 1;
+    expected_ctx = &dummy_ctx;
 
     rc = kaa_logging_set_listeners(log_collector, &listeners);
     ASSERT_EQUAL(KAA_ERR_NONE, rc);
+
+    /* Response packet is passed internally via test reader */
+    struct response_packet *response = (struct response_packet *) test_reader_buffer;
+    *(uint16_t *) response->resps[RESP_SUCCESS_IDX].bucket_id
+            = KAA_HTONS(expected_bucked_id);
 
     /* Test itself */
     rc = kaa_logging_handle_server_sync(log_collector,
@@ -1075,6 +1124,8 @@ KAA_TEST_CASE_EX(log_callback_with_storage, on_success_called)
                                         );
 
     ASSERT_EQUAL(rc, KAA_ERR_NONE);
+
+    /* Post-conditions check */
 
     ASSERT_TRUE(success_call_completed);
     ASSERT_FALSE(failed_call_completed);
@@ -1083,25 +1134,36 @@ KAA_TEST_CASE_EX(log_callback_with_storage, on_success_called)
     KAA_TRACE_OUT(logger);
 }
 
-
 KAA_TEST_CASE_EX(log_callback_with_storage, on_fail_and_success_called)
 {
     KAA_TRACE_IN(logger);
 
     kaa_error_t rc;
+    int dummy_ctx;
 
     kaa_log_listeners_t listeners = {
         mock_log_event_success_fn,
         mock_log_event_failed_fn,
         NULL,
-        NULL,
+        &dummy_ctx,
     };
 
+    /* Notify mocks about test intentions */
+    check_bucket = 1;
+    expected_bucked_id = 42;
     failed_call_is_expected = 1;
     success_call_is_expected = 1;
+    expected_ctx = &dummy_ctx;
 
     rc = kaa_logging_set_listeners(log_collector, &listeners);
     ASSERT_EQUAL(KAA_ERR_NONE, rc);
+
+    /* Response packet is passed internally via test reader */
+    struct response_packet *response = (struct response_packet *) test_reader_buffer;
+    *(uint16_t *) response->resps[RESP_SUCCESS_IDX].bucket_id
+            = KAA_HTONS(expected_bucked_id);
+    *(uint16_t *) response->resps[RESP_FAILURE_IDX].bucket_id
+            = KAA_HTONS(expected_bucked_id);
 
     /* Test itself */
     rc = kaa_logging_handle_server_sync(log_collector,
@@ -1112,6 +1174,8 @@ KAA_TEST_CASE_EX(log_callback_with_storage, on_fail_and_success_called)
 
     ASSERT_EQUAL(rc, KAA_ERR_NONE);
 
+    /* Post-conditions check */
+
     ASSERT_TRUE(success_call_completed);
     ASSERT_TRUE(failed_call_completed);
     ASSERT_FALSE(timeout_call_completed);
@@ -1119,12 +1183,155 @@ KAA_TEST_CASE_EX(log_callback_with_storage, on_fail_and_success_called)
     KAA_TRACE_OUT(logger);
 }
 
+/* ---------------------------------------------------------------------------*/
+/* Log delivery callback group with valid mock strategy.                      */
+/* The initialized mock strategy is essential for timeouts                    */
+/* ---------------------------------------------------------------------------*/
+
+KAA_GROUP_SETUP(log_callback_with_storage_and_strategy)
+{
+    kaa_error_t error_code;
+    size_t test_log_record_size;
+
+    KAA_TRACE_IN(logger);
+    error_code = kaa_log_collector_create(&log_collector,
+                                          status,
+                                          channel_manager,
+                                          logger);
+
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    memset(&strategy, 0, sizeof(mock_strategy_context_t));
+    strategy.timeout = TEST_TIMEOUT;
+    strategy.decision = NOOP;
+    strategy.batch_size = TEST_BUFFER_SIZE;
+    strategy.max_parallel_uploads = UINT32_MAX;
+
+    error_code = kaa_logging_init(log_collector, create_mock_storage(), &strategy);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    expected_ctx             = NULL;
+    expected_bucked_id       = 0;
+    call_is_expected         = 0;
+    call_completed           = 0;
+    failed_call_completed    = 0;
+    failed_call_is_expected  = 0;
+    success_call_completed   = 0;
+    success_call_is_expected = 0;
+    check_bucket             = 0;
+
+    storage = create_mock_storage();
+    error_code = kaa_logging_init(log_collector, storage, &strategy);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    uint32_t response_count = 2;
+
+    struct response_packet *response = (struct response_packet *) test_reader_buffer;
+    *(uint32_t *) response->resp_cnt = KAA_HTONL(response_count);
+
+    /* First response */
+
+    /* Later on we'll override that */
+    *(uint16_t *) response->resps[RESP_SUCCESS_IDX].bucket_id = 0;
+    response->resps[RESP_SUCCESS_IDX].resp_code = 0; // SUCCESS
+
+    /* Second response */
+
+    /* Later on we'll override that */
+    *(uint16_t *) response->resps[RESP_FAILURE_IDX].bucket_id = 0;
+    response->resps[RESP_FAILURE_IDX].resp_code = 1; // FAILURE
+
+    test_filled_size = sizeof(struct response_packet)
+            + sizeof(struct response_chunk) * 2;
+
+    test_log_record = kaa_test_log_record_create();
+    test_log_record->data = kaa_string_copy_create(TEST_LOG_BUFFER);
+    test_log_record_size = test_log_record->get_size(test_log_record);
+
+    error_code = kaa_platform_message_reader_create(&test_reader,
+                                                    test_reader_buffer,
+                                                    test_filled_size);
+
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+    ASSERT_NOT_NULL(test_reader);
+
+    error_code = kaa_platform_message_writer_create(&test_writer,
+                                                    test_writer_buffer,
+                                                    test_log_record_size);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    KAA_TRACE_OUT(logger);
+    return 0;
+}
+
+KAA_GROUP_TEARDOWN(log_callback_with_storage_and_strategy)
+{
+    KAA_TRACE_IN(logger);
+    test_log_record->destroy(test_log_record);
+
+    kaa_platform_message_writer_destroy(test_writer);
+    test_writer = NULL;
+    kaa_platform_message_reader_destroy(test_reader);
+    test_reader = NULL;
+
+    /* Destroys mock storage as well */
+    kaa_log_collector_destroy(log_collector);
+    log_collector = NULL;
+
+    KAA_TRACE_OUT(logger);
+    return 0;
+}
+
+KAA_TEST_CASE_EX(log_callback_with_storage_and_strategy, on_timeout_called)
+{
+    KAA_TRACE_IN(logger);
+
+    kaa_error_t rc;
+    int dummy_ctx;
+
+    kaa_log_listeners_t listeners = {
+        NULL,
+        NULL,
+        mock_log_event_timeout_fn,
+        &dummy_ctx,
+    };
+
+    kaa_log_record_info_t bucket;
+
+    timeout_call_is_expected = 1;
+    expected_ctx = &dummy_ctx;
+
+    rc = kaa_logging_set_listeners(log_collector, &listeners);
+    ASSERT_EQUAL(KAA_ERR_NONE, rc);
+
+    rc = kaa_logging_add_record(log_collector, test_log_record, &bucket);
+    ASSERT_EQUAL(KAA_ERR_NONE, rc);
+
+    /* Notify mocks about bucket */
+    check_bucket = 1;
+    expected_bucked_id = bucket.bucket_id;
+
+    /* Test itself */
+
+    rc = kaa_logging_request_serialize(log_collector, test_writer);
+    ASSERT_EQUAL(KAA_ERR_NONE, rc);
+
+    sleep(TEST_TIMEOUT + 1);
+
+    rc = kaa_logging_add_record(log_collector, test_log_record, NULL);
+    ASSERT_EQUAL(KAA_ERR_NONE, rc);
+
+    /* Post-conditions check */
+
+    /* Timeout callback should be called once */
+    ASSERT_EQUAL(1, timeout_call_completed);
+
+    KAA_TRACE_OUT(logger);
+}
 
 /* ---------------------------------------------------------------------------*/
 /* End of log delivery test groups                                            */
 /* ---------------------------------------------------------------------------*/
-
-
 
 int test_init(void)
 {
@@ -1174,6 +1381,6 @@ KAA_SUITE_MAIN(Log, test_init, test_deinit
         KAA_RUN_TEST(log_callback_with_storage, on_success_called);
         KAA_RUN_TEST(log_callback_with_storage, on_fail_called);
         KAA_RUN_TEST(log_callback_with_storage, on_fail_and_success_called);
-
+        KAA_RUN_TEST(log_callback_with_storage_and_strategy, on_timeout_called);
 #endif
         )
