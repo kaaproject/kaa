@@ -42,6 +42,54 @@ extern "C" {
     typedef struct kaa_log_collector        kaa_log_collector_t;
 #endif
 
+/**
+ * @brief Log bucket information structure.
+ * One or more log records aggregated into the bucket.
+ */
+typedef struct
+{
+    uint16_t bucket_id;     /**< ID of bucket present in storage. */
+    size_t   log_count;     /**< Logs left to upload across all buckets. */
+} kaa_log_bucket_info_t;
+
+/**
+ * @brief Log record info.
+ *
+ * Each log is contained in the bucket. Bucket is used to agreggate
+ * multiple logs into one entity that will be atomically sent to the server.
+ * Bucket can either be entirely successfully sent or be entirely failed.
+ * Corresponding events are generated. User may subscribe to them.
+ * @sa kaa_log_event_fn
+ * @sa kaa_log_listeners_t
+ * @sa kaa_logging_set_listeners
+ */
+typedef struct
+{
+    uint32_t log_id;    /**< Id of a log record processed by kaa_logging_add_record() */
+    uint16_t bucket_id; /**< Id of a bucket where a log record contained */
+} kaa_log_record_info_t;
+
+/**
+ * @brief Event handler type.
+ *
+ * Bucket information can be used to retrieve a amount of logs that still
+ *
+ * @param[in,out]  ctx    User-definied context. @sa kaa_logging_add_record
+ * @param[in]      bucket Log bucket for which event was triggered.
+ */
+typedef void (*kaa_log_event_fn)(void *ctx, const kaa_log_bucket_info_t *bucket);
+
+/** Listeners aggreate */
+typedef struct
+{
+    kaa_log_event_fn on_success; /**< Handler called upon successfull log delivery. */
+    kaa_log_event_fn on_failed;  /**< Handler called upon failed delivery. */
+    kaa_log_event_fn on_timeout; /**< Handler called upon timeouted delivery. */
+    void *ctx;                   /**< User-defined context. */
+} kaa_log_listeners_t;
+
+/** Special macro that can be used to disable event handling. */
+#define KAA_LOG_EMPTY_LISTENERS ((kaa_log_listeners_t){NULL, NULL, NULL, NULL})
 
 /**
  * @brief Initializes data collection module with the storage interface, upload strategy, and other settings.
@@ -54,16 +102,27 @@ extern "C" {
  */
 kaa_error_t kaa_logging_init(kaa_log_collector_t *self, void *log_storage_context, void *log_upload_strategy_context);
 
-
 /**
  * @brief Serializes and adds a log record to the log storage.
  *
- * @param[in] self    Pointer to a @link kaa_log_collector_t @endlink instance.
- * @param[in] entry   Pointer to log entry to be added to the storage.
+ * @param[in]  self    Pointer to a @link kaa_log_collector_t @endlink instance.
+ * @param[in]  entry   Pointer to log entry to be added to the storage.
+ * @param[out] bucket  Pointer to log bucket info. May be NULL.
  *
  * @return  Error code.
  */
-kaa_error_t kaa_logging_add_record(kaa_log_collector_t *self, kaa_user_log_record_t *entry);
+kaa_error_t kaa_logging_add_record(kaa_log_collector_t *self, kaa_user_log_record_t *entry, kaa_log_record_info_t *log_info);
+
+/**
+ * @brief Sets listeners of log events.
+ *
+ * @param[in] self       Pointer to a @link kaa_log_collector_t @endlink instance.
+ * @param[in] listeners  Pointer to listeners that will be used to handle
+ *                       various log delivery events. @sa KAA_LOG_EMPTY_LISTENERS
+ *                       can be used to unsubscribe from log events.
+ * @return  Error code.
+ */
+kaa_error_t kaa_logging_set_listeners(kaa_log_collector_t *self, const kaa_log_listeners_t *listeners);
 
 #ifdef __cplusplus
 }      /* extern "C" */

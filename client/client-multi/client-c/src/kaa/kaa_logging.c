@@ -53,25 +53,30 @@ typedef enum {
     LOGGING_RESULT_FAILURE = 0x01
 } logging_sync_result_t;
 
-typedef struct {
-    uint16_t     log_bucket_id;
-    kaa_time_t   timeout;
+typedef struct
+{
+    uint16_t     log_bucket_id;     /**< ID of bucket present in storage. */
+    kaa_time_t   timeout;           /**< bucket timeout */
+    uint16_t     log_count;         /**< Current logs count. */
 } timeout_info_t;
 
+
 struct kaa_log_collector {
-    uint16_t                    log_bucket_id;
     void                       *log_storage_context;
     void                       *log_upload_strategy_context;
     kaa_status_t               *status;
     kaa_channel_manager_t      *channel_manager;
     kaa_logger_t               *logger;
     kaa_list_t                 *timeouts;
-    bool                        is_sync_ignored;
+    kaa_log_listeners_t        log_delivery_listeners;
+    bool                       is_sync_ignored;
+    uint32_t                   log_last_id;         /**< Last log record ID */
+    uint16_t                   log_bucket_id;
 };
 
 
 
-static const kaa_service_t logging_sync_services[1] = {KAA_SERVICE_LOGGING};
+static const kaa_service_t logging_sync_services[] = {KAA_SERVICE_LOGGING};
 
 
 kaa_error_t kaa_logging_need_logging_resync(kaa_log_collector_t *self, bool *result)
@@ -85,7 +90,7 @@ kaa_error_t kaa_logging_need_logging_resync(kaa_log_collector_t *self, bool *res
     return KAA_ERR_NONE;
 }
 
-static kaa_error_t remember_request(kaa_log_collector_t *self, uint16_t bucket_id)
+static kaa_error_t remember_request(kaa_log_collector_t *self, uint16_t bucket_id, uint16_t count)
 {
     KAA_RETURN_IF_NIL(self, KAA_ERR_BADPARAM);
 
@@ -94,6 +99,7 @@ static kaa_error_t remember_request(kaa_log_collector_t *self, uint16_t bucket_i
 
     info->log_bucket_id = bucket_id;
     info->timeout = KAA_TIME() + (kaa_time_t)ext_log_upload_strategy_get_timeout(self->log_upload_strategy_context);
+    info->log_count = count;
 
     kaa_list_node_t *it = kaa_list_push_back(self->timeouts, info);
     if (!it) {
@@ -146,6 +152,11 @@ static bool is_timeout(kaa_log_collector_t *self)
         while (it) {
             timeout_info_t *info = (timeout_info_t *)kaa_list_get_data(it);
             ext_log_storage_unmark_by_bucket_id(self->log_storage_context, info->log_bucket_id);
+            if (self->log_delivery_listeners.on_timeout) {
+                kaa_log_bucket_info_t log_bucket_info = { info->log_bucket_id, info->log_count };
+                self->log_delivery_listeners.on_timeout(self->log_delivery_listeners.ctx,
+                                                        &log_bucket_info);
+            }
             it = kaa_list_next(it);
         }
 
@@ -172,7 +183,13 @@ static bool is_upload_allowed(kaa_log_collector_t *self)
     return true;
 }
 
-
+/* Sums log counters across all buckets */
+static void sum_log_records(void *data, void *context)
+{
+    uint16_t count = ((timeout_info_t *)data)->log_count;
+    uint32_t *sum = context;
+    *sum += count;
+}
 
 void kaa_log_collector_destroy(kaa_log_collector_t *self)
 {
@@ -195,6 +212,7 @@ kaa_error_t kaa_log_collector_create(kaa_log_collector_t **log_collector_p
     KAA_RETURN_IF_NIL(collector, KAA_ERR_NOMEM);
 
     collector->log_bucket_id               = 0;
+    collector->log_last_id                 = 0;
     collector->log_storage_context         = NULL;
     collector->log_upload_strategy_context = NULL;
     collector->status                      = status;
@@ -223,6 +241,7 @@ kaa_error_t kaa_logging_init(kaa_log_collector_t *self, void *log_storage_contex
 
     self->log_storage_context = log_storage_context;
     self->log_upload_strategy_context = log_upload_strategy_context;
+    self->log_delivery_listeners = KAA_LOG_EMPTY_LISTENERS;
 
     KAA_LOG_DEBUG(self->logger, KAA_ERR_NONE, "Initialized log collector with log storage {%p}, log upload strategy {%p}"
             , log_storage_context, log_upload_strategy_context);
@@ -263,15 +282,17 @@ static void update_storage(kaa_log_collector_t *self)
 
 
 
-kaa_error_t kaa_logging_add_record(kaa_log_collector_t *self, kaa_user_log_record_t *entry)
+kaa_error_t kaa_logging_add_record(kaa_log_collector_t *self, kaa_user_log_record_t *entry, kaa_log_record_info_t *log_info)
 {
     KAA_RETURN_IF_NIL2(self, entry, KAA_ERR_BADPARAM);
     KAA_RETURN_IF_NIL(self->log_storage_context, KAA_ERR_NOT_INITIALIZED);
 
     kaa_log_record_t record = { NULL, entry->get_size(entry) };
     if (!record.size) {
-        KAA_LOG_ERROR(self->logger, KAA_ERR_BADDATA, "Failed to add log record: serialized record size is null."
-                                                                                "Maybe log record schema is empty");
+        KAA_LOG_ERROR(self->logger,
+                      KAA_ERR_BADDATA, "Failed to add log record: "
+                                       "serialized record size is null. "
+                                       "Maybe log record schema is empty");
         return KAA_ERR_BADDATA;
     }
 
@@ -297,14 +318,29 @@ kaa_error_t kaa_logging_add_record(kaa_log_collector_t *self, kaa_user_log_recor
         ext_log_storage_deallocate_log_record_buffer(self->log_storage_context, &record);
         return error;
     }
+
     KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Added log record, size %zu", record.size);
     if (!is_timeout(self))
         update_storage(self);
 
+    if (!self->log_bucket_id) {
+        self->log_bucket_id = self->status->log_bucket_id;
+    }
+
+    if (log_info) {
+        log_info->bucket_id = self->log_bucket_id + 1;
+        log_info->log_id = self->log_last_id++;
+    }
+
     return KAA_ERR_NONE;
 }
 
-
+kaa_error_t kaa_logging_set_listeners(kaa_log_collector_t *self, const kaa_log_listeners_t *listeners)
+{
+    KAA_RETURN_IF_NIL2(self, listeners, KAA_ERR_BADPARAM);
+    self->log_delivery_listeners = *listeners;
+    return KAA_ERR_NONE;
+}
 
 kaa_error_t kaa_logging_request_get_size(kaa_log_collector_t *self, size_t *expected_size)
 {
@@ -414,7 +450,7 @@ kaa_error_t kaa_logging_request_serialize(kaa_log_collector_t *self, kaa_platfor
     *((uint16_t *) records_count_p) = KAA_HTONS(records_count);
     *writer = tmp_writer;
 
-    error = remember_request(self, self->log_bucket_id);
+    error = remember_request(self, self->log_bucket_id, records_count);
     if (error) {
         KAA_LOG_WARN(self->logger, error, "Failed to remember request time stamp");
     }
@@ -455,6 +491,7 @@ kaa_error_t kaa_logging_handle_server_sync(kaa_log_collector_t *self
         error_code = kaa_platform_message_read(reader, &delivery_error_code, sizeof(int8_t));
         KAA_RETURN_IF_ERR(error_code);
 
+
         if (delivery_result == LOGGING_RESULT_SUCCESS) {
             KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Log bucket uploaded successfully, id '%u'", bucket_id);
         } else {
@@ -463,9 +500,26 @@ kaa_error_t kaa_logging_handle_server_sync(kaa_log_collector_t *self
 
         remove_request(self, bucket_id);
 
+        /* Count logs left to upload */
+
+        uint32_t total_logs = 0;
+        kaa_list_for_each(kaa_list_begin(self->timeouts),
+                          kaa_list_back(self->timeouts),
+                          sum_log_records, &total_logs);
+
+        kaa_log_bucket_info_t log_bucket_info = { bucket_id, total_logs };
+
         if (delivery_result == LOGGING_RESULT_SUCCESS) {
+            if (self->log_delivery_listeners.on_success) {
+                self->log_delivery_listeners.on_success(self->log_delivery_listeners.ctx,
+                                                        &log_bucket_info);
+            }
             ext_log_storage_remove_by_bucket_id(self->log_storage_context, bucket_id);
         } else {
+            if (self->log_delivery_listeners.on_failed) {
+                self->log_delivery_listeners.on_failed(self->log_delivery_listeners.ctx,
+                                                       &log_bucket_info);
+            }
             ext_log_storage_unmark_by_bucket_id(self->log_storage_context, bucket_id);
             ext_log_upload_strategy_on_failure(self->log_upload_strategy_context
                                              , (logging_delivery_error_code_t)delivery_error_code);
@@ -481,10 +535,10 @@ kaa_error_t kaa_logging_handle_server_sync(kaa_log_collector_t *self
 
 extern void ext_log_upload_timeout(kaa_log_collector_t *self)
 {
-    if (!is_timeout(self))
+    if (!is_timeout(self)
+            || ext_log_upload_strategy_is_timeout_strategy(self->log_upload_strategy_context)) {
         update_storage(self);
-    else if (ext_log_upload_strategy_is_timeout_strategy(self->log_upload_strategy_context))
-        update_storage(self);
+    }
 }
 
 #endif
