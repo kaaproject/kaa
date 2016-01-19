@@ -43,6 +43,14 @@
 #define KAA_RUN_TESTS \
         CU_automated_run_tests(); \
 
+/* Helper macro to control setup and teardown process per each test in group.
+ * Must be placed in the exact suite.
+ */
+#define KAA_RUN_TEST(GROUP, NAME) \
+        KAA_TEST_CASE(GROUP##_##NAME##_setup, GROUP##_group_setup); \
+        KAA_TEST_CASE(GROUP##_##NAME##_test, GROUP##_##NAME##_test) \
+        KAA_TEST_CASE(GROUP##_##NAME##_teardown, GROUP##_group_teardown)
+
 #define KAA_END_TEST_SUITE \
         unsigned int failed_tests = CU_get_number_of_failure_records(); \
         CU_cleanup_registry(); \
@@ -85,6 +93,20 @@ typedef int (*cleanup_fn)(void);
         if (!init_ret_code)  \
             TEST_FN();
 
+/* Helper macro to control setup and teardown process per each test in group.
+ * Must be placed in the exact suite.
+ */
+#define KAA_RUN_TEST(GROUP, NAME) \
+    do { \
+        if (!init_ret_code) { \
+            int rc = GROUP##_group_setup(); \
+            ASSERT_EQUAL(0, rc); \
+            GROUP##_##NAME##_test(); \
+            rc = GROUP##_group_teardown(); \
+            ASSERT_EQUAL(0, rc); \
+        } \
+    } while (0)
+
 #define KAA_RUN_TESTS
 
 #define KAA_END_TEST_SUITE \
@@ -93,14 +115,7 @@ typedef int (*cleanup_fn)(void);
         } \
         return (init_ret_code || cleanup_ret_code) ? -1 : 0; \
     }
-
 #endif
-
-#define KAA_SUITE_MAIN(SUITE_NAME, INIT_FN, CLEANUP_FN, ...) \
-    KAA_BEGIN_TEST_SUITE(SUITE_NAME, INIT_FN, CLEANUP_FN) \
-    __VA_ARGS__ \
-    KAA_RUN_TESTS \
-    KAA_END_TEST_SUITE \
 
 
 /* Bunch of macroses that required execute setup() (initialization)
@@ -118,20 +133,6 @@ typedef int (*cleanup_fn)(void);
 #define KAA_TEST_CASE_EX(GROUP, NAME) \
     void GROUP##_##NAME##_test(void)
 
-/* Helper macro to control setup and teardown process per each test in group.
- * Must be placed in the exact suite.
- */
-#define KAA_RUN_TEST(GROUP, NAME) \
-    do { \
-        if (!init_ret_code) { \
-            int rc = GROUP##_group_setup(); \
-            ASSERT_EQUAL(0, rc); \
-            GROUP##_##NAME##_test(); \
-            rc = GROUP##_group_teardown(); \
-            ASSERT_EQUAL(0, rc); \
-        } \
-    } while (0)
-
 /* Defines a setup process for given group.
  * It runs before each test to make sure sytem is in predictable state
  */
@@ -146,5 +147,10 @@ typedef int (*cleanup_fn)(void);
     int GROUP##_group_teardown()
 
 
+#define KAA_SUITE_MAIN(SUITE_NAME, INIT_FN, CLEANUP_FN, ...) \
+    KAA_BEGIN_TEST_SUITE(SUITE_NAME, INIT_FN, CLEANUP_FN) \
+    __VA_ARGS__ \
+    KAA_RUN_TESTS \
+    KAA_END_TEST_SUITE \
 
 #endif /* KAA_TEST_H_ */
