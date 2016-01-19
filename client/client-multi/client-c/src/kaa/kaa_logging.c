@@ -57,7 +57,7 @@ typedef struct
 {
     uint16_t     log_bucket_id;     /**< ID of bucket present in storage. */
     kaa_time_t   timeout;           /**< bucket timeout */
-    uint16_t     log_cnt;           /**< Current logs count. */
+    uint16_t     log_count;         /**< Current logs count. */
 } timeout_info_t;
 
 
@@ -90,7 +90,7 @@ kaa_error_t kaa_logging_need_logging_resync(kaa_log_collector_t *self, bool *res
     return KAA_ERR_NONE;
 }
 
-static kaa_error_t remember_request(kaa_log_collector_t *self, uint16_t bucket_id, uint16_t cnt)
+static kaa_error_t remember_request(kaa_log_collector_t *self, uint16_t bucket_id, uint16_t count)
 {
     KAA_RETURN_IF_NIL(self, KAA_ERR_BADPARAM);
 
@@ -99,7 +99,7 @@ static kaa_error_t remember_request(kaa_log_collector_t *self, uint16_t bucket_i
 
     info->log_bucket_id = bucket_id;
     info->timeout = KAA_TIME() + (kaa_time_t)ext_log_upload_strategy_get_timeout(self->log_upload_strategy_context);
-    info->log_cnt = cnt;
+    info->log_count = count;
 
     kaa_list_node_t *it = kaa_list_push_back(self->timeouts, info);
     if (!it) {
@@ -152,8 +152,8 @@ static bool is_timeout(kaa_log_collector_t *self)
         while (it) {
             timeout_info_t *info = (timeout_info_t *)kaa_list_get_data(it);
             ext_log_storage_unmark_by_bucket_id(self->log_storage_context, info->log_bucket_id);
-            if (self->log_delivery_listeners.on_timeout){
-                kaa_log_bucket_info_t log_bucket_info = {info->log_bucket_id, info->log_cnt};
+            if (self->log_delivery_listeners.on_timeout) {
+                kaa_log_bucket_info_t log_bucket_info = { info->log_bucket_id, info->log_count };
                 self->log_delivery_listeners.on_timeout(self->log_delivery_listeners.ctx,
                                                         &log_bucket_info);
             }
@@ -186,7 +186,7 @@ static bool is_upload_allowed(kaa_log_collector_t *self)
 /* Sums log counters across all buckets */
 static void sum_log_records(void *data, void *context)
 {
-    uint16_t count = ((timeout_info_t *)data)->log_cnt;
+    uint16_t count = ((timeout_info_t *)data)->log_count;
     uint32_t *sum = context;
     *sum += count;
 }
@@ -535,10 +535,10 @@ kaa_error_t kaa_logging_handle_server_sync(kaa_log_collector_t *self
 
 extern void ext_log_upload_timeout(kaa_log_collector_t *self)
 {
-    if (!is_timeout(self))
+    if (!is_timeout(self)
+            || ext_log_upload_strategy_is_timeout_strategy(self->log_upload_strategy_context)) {
         update_storage(self);
-    else if (ext_log_upload_strategy_is_timeout_strategy(self->log_upload_strategy_context))
-        update_storage(self);
+    }
 }
 
 #endif
