@@ -454,7 +454,7 @@
     DefaultBootstrapDataProcessor *btProcessor = [[DefaultBootstrapDataProcessor alloc] init];
     [btProcessor setBootstrapTransport:[context getBootstrapTransport]];
     
-    DefaultOperationDataProcessor *opProcessor = [[DefaultOperationDataProcessor alloc] init];
+    DefaultOperationDataProcessor *opProcessor = [[DefaultOperationDataProcessor alloc] initWithClientState:self.clientState];
     [opProcessor setConfigurationTransport:[context getConfigurationTransport]];
     [opProcessor setEventTransport:[context getEventTransport]];
     [opProcessor setMetaDataTransport:[context getMetaDataTransport]];

@@ -25,8 +25,11 @@
 #import "ProfileTransport.h"
 #import "UserTransport.h"
 #import "LogTransport.h"
+#import "KaaClientState.h"
 
 @interface DefaultOperationDataProcessor : NSObject <KaaDataDemultiplexer,KaaDataMultiplexer>
+
+- (instancetype)initWithClientState:(id<KaaClientState>)state;
 
 - (void)setRedirectionTransport:(id<RedirectionTransport>)transport;
 - (void)setMetaDataTransport:(id<MetaDataTransport>)transport;

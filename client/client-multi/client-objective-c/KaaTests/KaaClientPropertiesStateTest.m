@@ -106,6 +106,7 @@
 
 - (void)testClean {
     [self.state persist];
+    [self.state setIsRegistred:YES];
     [self.state persist];
     
     NSString *storage = [NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES) firstObject];

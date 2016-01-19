@@ -36,6 +36,8 @@
 @property (nonatomic,strong) id<RedirectionTransport> redirectionTransport;
 @property (nonatomic,strong) id<LogTransport> logTransport;
 
+@property (nonatomic, strong) id<KaaClientState> state;
+
 @end
 
 @implementation DefaultOperationDataProcessor
@@ -47,7 +49,14 @@
         self.responseConverter = [[AvroBytesConverter alloc] init];
     }
     return self;
-    
+}
+
+- (instancetype)initWithClientState:(id<KaaClientState>)state {
+    self = [self init];
+    if (self) {
+        _state = state;
+    }
+    return self;
 }
 
 - (void)setRedirectionTransport:(id<RedirectionTransport>)transport {
@@ -105,41 +114,46 @@
             return;
         }
         
-        SyncResponse *syncResponse = (SyncResponse *)[self.responseConverter fromBytes:data object:[[SyncResponse alloc] init]];
-        
-        DDLogInfo(@"%@ Received Sync response: %@", TAG, syncResponse);
-        if (self.configurationTransport && syncResponse.configurationSyncResponse
-            && syncResponse.configurationSyncResponse.branch == KAA_UNION_CONFIGURATION_SYNC_RESPONSE_OR_NULL_BRANCH_0) {
-            [self.configurationTransport onConfigurationResponse:syncResponse.configurationSyncResponse.data];
-        }
-        if (self.eventTransport) {
-            [self.eventTransport onSyncResposeIdReceived:syncResponse.requestId];
-            if (syncResponse.eventSyncResponse
-                && syncResponse.eventSyncResponse.branch == KAA_UNION_EVENT_SYNC_RESPONSE_OR_NULL_BRANCH_0) {
-                [self.eventTransport onEventResponse:syncResponse.eventSyncResponse.data];
+        @try {
+            SyncResponse *syncResponse = (SyncResponse *)[self.responseConverter fromBytes:data object:[[SyncResponse alloc] init]];
+            
+            DDLogInfo(@"%@ Received Sync response: %@", TAG, syncResponse);
+            if (self.configurationTransport && syncResponse.configurationSyncResponse
+                && syncResponse.configurationSyncResponse.branch == KAA_UNION_CONFIGURATION_SYNC_RESPONSE_OR_NULL_BRANCH_0) {
+                [self.configurationTransport onConfigurationResponse:syncResponse.configurationSyncResponse.data];
+            }
+            if (self.eventTransport) {
+                [self.eventTransport onSyncResposeIdReceived:syncResponse.requestId];
+                if (syncResponse.eventSyncResponse
+                    && syncResponse.eventSyncResponse.branch == KAA_UNION_EVENT_SYNC_RESPONSE_OR_NULL_BRANCH_0) {
+                    [self.eventTransport onEventResponse:syncResponse.eventSyncResponse.data];
+                }
+            }
+            if (self.notificationTransport && syncResponse.notificationSyncResponse
+                && syncResponse.notificationSyncResponse.branch == KAA_UNION_NOTIFICATION_SYNC_RESPONSE_OR_NULL_BRANCH_0) {
+                [self.notificationTransport onNotificationResponse:syncResponse.notificationSyncResponse.data];
+            }
+            if (self.userTransport && syncResponse.userSyncResponse
+                && syncResponse.userSyncResponse.branch == KAA_UNION_USER_SYNC_RESPONSE_OR_NULL_BRANCH_0) {
+                [self.userTransport onUserResponse:syncResponse.userSyncResponse.data];
+            }
+            if (self.redirectionTransport && syncResponse.redirectSyncResponse
+                && syncResponse.redirectSyncResponse.branch == KAA_UNION_REDIRECT_SYNC_RESPONSE_OR_NULL_BRANCH_0) {
+                [self.redirectionTransport onRedirectionResponse:syncResponse.redirectSyncResponse.data];
+            }
+            if (self.profileTransport && syncResponse.profileSyncResponse
+                && syncResponse.profileSyncResponse.branch == KAA_UNION_PROFILE_SYNC_RESPONSE_OR_NULL_BRANCH_0) {
+                [self.profileTransport onProfileResponse:syncResponse.profileSyncResponse.data];
+            } else if (syncResponse.status == SYNC_RESPONSE_RESULT_TYPE_PROFILE_RESYNC) {
+                [self.profileTransport sync];
+            }
+            if (self.logTransport && syncResponse.logSyncResponse
+                && syncResponse.logSyncResponse.branch == KAA_UNION_LOG_SYNC_RESPONSE_OR_NULL_BRANCH_0) {
+                [self.logTransport onLogResponse:syncResponse.logSyncResponse.data];
             }
         }
-        if (self.notificationTransport && syncResponse.notificationSyncResponse
-            && syncResponse.notificationSyncResponse.branch == KAA_UNION_NOTIFICATION_SYNC_RESPONSE_OR_NULL_BRANCH_0) {
-            [self.notificationTransport onNotificationResponse:syncResponse.notificationSyncResponse.data];
-        }
-        if (self.userTransport && syncResponse.userSyncResponse
-            && syncResponse.userSyncResponse.branch == KAA_UNION_USER_SYNC_RESPONSE_OR_NULL_BRANCH_0) {
-            [self.userTransport onUserResponse:syncResponse.userSyncResponse.data];
-        }
-        if (self.redirectionTransport && syncResponse.redirectSyncResponse
-            && syncResponse.redirectSyncResponse.branch == KAA_UNION_REDIRECT_SYNC_RESPONSE_OR_NULL_BRANCH_0) {
-            [self.redirectionTransport onRedirectionResponse:syncResponse.redirectSyncResponse.data];
-        }
-        if (self.profileTransport && syncResponse.profileSyncResponse
-            && syncResponse.profileSyncResponse.branch == KAA_UNION_PROFILE_SYNC_RESPONSE_OR_NULL_BRANCH_0) {
-            [self.profileTransport onProfileResponse:syncResponse.profileSyncResponse.data];
-        } else if (syncResponse.status == SYNC_RESPONSE_RESULT_TYPE_PROFILE_RESYNC) {
-            [self.profileTransport sync];
-        }
-        if (self.logTransport && syncResponse.logSyncResponse
-            && syncResponse.logSyncResponse.branch == KAA_UNION_LOG_SYNC_RESPONSE_OR_NULL_BRANCH_0) {
-            [self.logTransport onLogResponse:syncResponse.logSyncResponse.data];
+        @finally {
+            [self.state persist];
         }
     }
 }

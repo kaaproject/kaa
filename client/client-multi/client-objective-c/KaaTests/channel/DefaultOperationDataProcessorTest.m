@@ -24,6 +24,7 @@
 #import "DefaultOperationDataProcessor.h"
 #import "AvroBytesConverter.h"
 #import "EndpointGen.h"
+#import "KaaClientState.h"
 
 
 @interface DefaultOperationDataProcessorTest : XCTestCase
@@ -33,18 +34,21 @@
 @implementation DefaultOperationDataProcessorTest
 
 - (void)testUpRequestCreationWithNullTypes {
-    DefaultOperationDataProcessor *operationDataProcessor = [[DefaultOperationDataProcessor alloc] init];
+    id<KaaClientState> state = mockProtocol(@protocol(KaaClientState));
+    DefaultOperationDataProcessor *operationDataProcessor = [[DefaultOperationDataProcessor alloc] initWithClientState:state];
     XCTAssertNil([operationDataProcessor compileRequest:nil]);
 }
 
 - (void)testUpRequestCreationWithUnknownType {
-    DefaultOperationDataProcessor *operationDataProcessor = [[DefaultOperationDataProcessor alloc] init];
+    id<KaaClientState> state = mockProtocol(@protocol(KaaClientState));
+    DefaultOperationDataProcessor *operationDataProcessor = [[DefaultOperationDataProcessor alloc] initWithClientState:state];
     NSDictionary *types = [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:CHANNEL_DIRECTION_BIDIRECTIONAL] forKey:[NSNumber numberWithInt:TRANSPORT_TYPE_BOOTSTRAP]];
     XCTAssertNil([operationDataProcessor compileRequest:types]);
 }
 
 - (void)testUpRequestCreationWithNullTransports {
-    DefaultOperationDataProcessor *operationDataProcessor = [[DefaultOperationDataProcessor alloc] init];
+    id<KaaClientState> state = mockProtocol(@protocol(KaaClientState));
+    DefaultOperationDataProcessor *operationDataProcessor = [[DefaultOperationDataProcessor alloc] initWithClientState:state];
     
     NSDictionary *transportTypes = [self getDictionaryWithTransportTypesWithBidirectional];
     
@@ -52,7 +56,8 @@
 }
 
 - (void)testUpRequestCreation {
-    DefaultOperationDataProcessor *operationDataProcessor = [[DefaultOperationDataProcessor alloc] init];
+    id<KaaClientState> state = mockProtocol(@protocol(KaaClientState));
+    DefaultOperationDataProcessor *operationDataProcessor = [[DefaultOperationDataProcessor alloc] initWithClientState:state];
     
     id <ProfileTransport> profileTransport = mockProtocol(@protocol(ProfileTransport));
     id <EventTransport> eventTransport = mockProtocol(@protocol(EventTransport));
@@ -82,7 +87,8 @@
 }
 
 - (void)testDownRequestCreation {
-    DefaultOperationDataProcessor *operationDataProcessor = [[DefaultOperationDataProcessor alloc] init];
+    id<KaaClientState> state = mockProtocol(@protocol(KaaClientState));
+    DefaultOperationDataProcessor *operationDataProcessor = [[DefaultOperationDataProcessor alloc] initWithClientState:state];
     
     id <ProfileTransport> profileTransport = mockProtocol(@protocol(ProfileTransport));
     id <EventTransport> eventTransport = mockProtocol(@protocol(EventTransport));
@@ -112,7 +118,8 @@
 }
 
 - (void)testResponse {
-    DefaultOperationDataProcessor *operationDataProcessor = [[DefaultOperationDataProcessor alloc] init];
+    id<KaaClientState> state = mockProtocol(@protocol(KaaClientState));
+    DefaultOperationDataProcessor *operationDataProcessor = [[DefaultOperationDataProcessor alloc] initWithClientState:state];
     
     id <ProfileTransport> profileTransport = mockProtocol(@protocol(ProfileTransport));
     id <EventTransport> eventTransport = mockProtocol(@protocol(EventTransport));
@@ -155,7 +162,8 @@
 }
 
 - (void)testResponseWithNullTransport {
-    DefaultOperationDataProcessor *operationDataProcessor = [[DefaultOperationDataProcessor alloc] init];
+    id<KaaClientState> state = mockProtocol(@protocol(KaaClientState));
+    DefaultOperationDataProcessor *operationDataProcessor = [[DefaultOperationDataProcessor alloc] initWithClientState:state];
     
     SyncResponse *response = [[SyncResponse alloc] init];
     [response setStatus:SYNC_RESPONSE_RESULT_TYPE_SUCCESS];
@@ -173,7 +181,8 @@
 }
 
 - (void)testResponseWithNullTransportAndResponses {
-    DefaultOperationDataProcessor *operationDataProcessor = [[DefaultOperationDataProcessor alloc] init];
+    id<KaaClientState> state = mockProtocol(@protocol(KaaClientState));
+    DefaultOperationDataProcessor *operationDataProcessor = [[DefaultOperationDataProcessor alloc] initWithClientState:state];
     
     SyncResponse *response = [[SyncResponse alloc] init];
     [response setStatus:SYNC_RESPONSE_RESULT_TYPE_SUCCESS];
@@ -184,7 +193,8 @@
 }
 
 - (void)testResponseWithNullResponses {
-    DefaultOperationDataProcessor *operationDataProcessor = [[DefaultOperationDataProcessor alloc] init];
+    id<KaaClientState> state = mockProtocol(@protocol(KaaClientState));
+    DefaultOperationDataProcessor *operationDataProcessor = [[DefaultOperationDataProcessor alloc] initWithClientState:state];
     
     id <ProfileTransport> profileTransport = mockProtocol(@protocol(ProfileTransport));
     id <EventTransport> eventTransport = mockProtocol(@protocol(EventTransport));

@@ -48,12 +48,16 @@
 @property (nonatomic,strong) NSMutableDictionary *nfSubscriptions;  //<NSString, TopicSubscriptionInfo> as key-value
 @property (nonatomic,strong) KeyPair *keyPair;
 @property (nonatomic) BOOL isConfigVersionUpdated;
+@property (nonatomic) BOOL hasUpdate;
 
 - (void)setPropertiesHash:(NSData *)hash;
 - (BOOL)isSDKProperyListUpdated:(KaaClientProperties *)sdkProperties;
 - (void)parseNfSubscriptions;
 - (KeyPair *)getOrGenerateKeyPair;
 - (void)deleteFileAtPath:(NSString *)path;
+
+- (void)setStateStringValue:(NSString *)value propertyKey:(NSString *)propertyKey;
+- (void)setStateBooleanValue:(BOOL)value propertyKey:(NSString *)propertyKey;
 
 @end
 
@@ -148,10 +152,15 @@
 }
 
 - (void)setIsRegistred:(BOOL)isRegistred {
-    [self.state setObject:(isRegistred ? @"Y" : @"N") forKey:IS_REGISTERED];
+    [self setStateBooleanValue:isRegistred propertyKey:IS_REGISTERED];
 }
 
 - (void)persist {
+    if (!self.hasUpdate) {
+        DDLogVerbose(@"%@ No updates: ignoring persist call", TAG);
+        return;
+    }
+    
     NSMutableData *encodedData = [NSMutableData data];
     NSArray *subcscriptions = self.nfSubscriptions.allValues;
     @try {
@@ -241,13 +250,13 @@
 }
 
 - (void)setAppStateSequenceNumber:(int32_t)appStateSequenceNumber {
-    [self.state setObject:[@(appStateSequenceNumber) stringValue] forKey:APP_STATE_SEQ_NUMBER];
+    [self setStateStringValue:[@(appStateSequenceNumber) stringValue] propertyKey:APP_STATE_SEQ_NUMBER];
 }
 
 - (void)setProfileHash:(EndpointObjectHash *)profileHash {
     NSData *base64Data = [self.base64 encodeBase64:profileHash.data];
     NSString *base64Str = [[NSString alloc] initWithData:base64Data encoding:NSUTF8StringEncoding];
-    [self.state setObject:base64Str forKey:PROFILE_HASH];
+    [self setStateStringValue:base64Str propertyKey:PROFILE_HASH];
 }
 
 - (void)addTopic:(Topic *)topic {
@@ -257,12 +266,14 @@
         info.topicInfo = topic;
         info.seqNumber = 0;
         [self.nfSubscriptions setObject:info forKey:topic.id];
+        self.hasUpdate = YES;
         DDLogInfo(@"%@ Adding new seqNumber 0 for %@ subscription", TAG, topic.id);
     }
 }
 
 - (void)removeTopic:(NSString *)topicId {
     [self.nfSubscriptions removeObjectForKey:topicId];
+    self.hasUpdate = YES;
     DDLogDebug(@"%@ Removed subscription info for %@", TAG, topicId);
 }
 
@@ -273,6 +284,7 @@
         updated = YES;
         info.seqNumber = sequenceNumber;
         [self.nfSubscriptions setObject:info forKey:topicId];
+        self.hasUpdate = YES;
         DDLogDebug(@"%@ Updated seqNumber to %i for %@ subscription", TAG, sequenceNumber, topicId);
     }
     return updated;
@@ -298,10 +310,11 @@
 - (void)setAttachedEndpoints:(NSMutableDictionary *)attachedEndpoints {
     [self.attachedEndpoints removeAllObjects];
     [self.attachedEndpoints addEntriesFromDictionary:attachedEndpoints];
+    self.hasUpdate = YES;
 }
 
 - (void)setEndpointAccessToken:(NSString *)endpointAccessToken {
-    [self.state setObject:endpointAccessToken forKey:ENDPOINT_ACCESS_TOKEN];
+    [self setStateStringValue:endpointAccessToken propertyKey:ENDPOINT_ACCESS_TOKEN];
 }
 
 - (NSString *)endpointAccessToken {
@@ -310,7 +323,7 @@
 }
 
 - (void)setConfigSequenceNumber:(int32_t)configSequenceNumber {
-    [self.state setObject:[@(configSequenceNumber) stringValue] forKey:CONFIG_SEQ_NUMBER];
+    [self setStateStringValue:[@(configSequenceNumber) stringValue] propertyKey:CONFIG_SEQ_NUMBER];
 }
 
 - (int32_t)configSequenceNumber {
@@ -319,7 +332,7 @@
 }
 
 - (void)setNotificationSequenceNumber:(int32_t)notificationSequenceNumber {
-    [self.state setObject:[@(notificationSequenceNumber) stringValue] forKey:NOTIFICATION_SEQ_NUMBER];
+    [self setStateStringValue:[@(notificationSequenceNumber) stringValue] propertyKey:NOTIFICATION_SEQ_NUMBER];
 }
 
 - (int32_t)notificationSequenceNumber {
@@ -328,7 +341,15 @@
 }
 
 - (int32_t)getAndIncrementEventSequenceNumber {
+    self.hasUpdate = YES;
     return self.eventSequenceNumber++;
+}
+
+- (void)setEventSequenceNumber:(int32_t)eventSequenceNumber {
+    if (eventSequenceNumber != _eventSequenceNumber) {
+        _eventSequenceNumber = eventSequenceNumber;
+        self.hasUpdate = YES;
+    }
 }
 
 - (BOOL)isAttachedToUser {
@@ -337,18 +358,19 @@
 }
 
 - (void)setIsAttachedToUser:(BOOL)isAttachedToUser {
-    [self.state setObject:(isAttachedToUser ? @"Y" : @"N") forKey:IS_ATTACHED];
+    [self setStateBooleanValue:isAttachedToUser propertyKey:IS_ATTACHED];
 }
 
 - (void)clean {
     [self setIsRegistred:NO];
     [self deleteFileAtPath:self.stateFileLocation];
     [self deleteFileAtPath:[NSString stringWithFormat:@"%@_bckp", self.stateFileLocation]];
+    self.hasUpdate = YES;
 }
 
 - (void)setPropertiesHash:(NSData *)hash {
     NSData *encodedHash = [self.base64 encodeBase64:hash];
-    [self.state setObject:[[NSString alloc] initWithData:encodedHash encoding:NSUTF8StringEncoding] forKey:PROPERTIES_HASH];
+    [self setStateStringValue:[[NSString alloc] initWithData:encodedHash encoding:NSUTF8StringEncoding] propertyKey:PROPERTIES_HASH];
 }
 
 - (BOOL)isSDKProperyListUpdated:(KaaClientProperties *)sdkProperties {
@@ -410,6 +432,22 @@
     if ([fileManager removeItemAtPath:path error:NULL] == NO) {
         DDLogWarn(@"%@ Unable to remove file at path: %@", TAG, path);
     }
+}
+
+- (void)setStateStringValue:(NSString *)value propertyKey:(NSString *)propertyKey {
+    NSString *previous = [self.state objectForKey:propertyKey];
+    [self.state setObject:value forKey:propertyKey];
+    self.hasUpdate |= ![value isEqualToString:previous];
+}
+
+- (void)setStateBooleanValue:(BOOL)value propertyKey:(NSString *)propertyKey {
+    NSString *previousRawValue = [self.state objectForKey:propertyKey];
+    BOOL previousValue = NO;
+    if (previousRawValue && previousRawValue.length > 0) {
+        previousValue = [previousRawValue boolValue];
+    }
+    [self.state setObject:(value ? @"Y" : @"N") forKey:propertyKey];
+    self.hasUpdate |= value != previousValue;
 }
 
 @end
