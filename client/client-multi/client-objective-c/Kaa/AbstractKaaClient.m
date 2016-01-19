@@ -139,6 +139,8 @@
     [self checkIfClientNotInLifecycleState:CLIENT_LIFECYCLE_STATE_STARTED withErrorMessage:@"Kaa client is already started"];
     [self checkIfClientNotInLifecycleState:CLIENT_LIFECYCLE_STATE_PAUSED withErrorMessage:@"Kaa client is paused, need to be resumed"];
     
+    [self setLifecycleState:CLIENT_LIFECYCLE_STATE_STARTED];
+    
     [self checkReadiness];
     
     [[self.context getExecutorContext] initiate];
@@ -146,8 +148,6 @@
     [[self getLifeCycleExecutor] addOperationWithBlock:^{
         DDLogDebug(@"%@ Client startup initiated", TAG);
         @try {
-            [weakSelf setLifecycleState:CLIENT_LIFECYCLE_STATE_STARTED];
-            
             //load configuration
             [weakSelf.configurationManager initiate];
             [weakSelf.bootstrapManager receiveOperationsServerList];
@@ -168,10 +168,11 @@
     [self checkIfClientNotInLifecycleState:CLIENT_LIFECYCLE_STATE_CREATED withErrorMessage:@"Kaa client is not started"];
     [self checkIfClientNotInLifecycleState:CLIENT_LIFECYCLE_STATE_STOPPED withErrorMessage:@"Kaa client is already stopped"];
     
+    [self setLifecycleState:CLIENT_LIFECYCLE_STATE_STOPPED];
+    
     __weak typeof(self) weakSelf = self;
     [[self getLifeCycleExecutor] addOperationWithBlock:^{
         @try {
-            [weakSelf setLifecycleState:CLIENT_LIFECYCLE_STATE_STOPPED];
             [weakSelf.logCollector stop];
             [weakSelf.clientState persist];
             [weakSelf.channelManager shutdown];
@@ -196,12 +197,15 @@
     [self checkLifecycleState:CLIENT_LIFECYCLE_STATE_STARTED
                     withErrorMessage:[NSString stringWithFormat:@"Kaa client is not started: %i is current state", self.lifecycleState]];
     
+    [self setLifecycleState:CLIENT_LIFECYCLE_STATE_PAUSED];
+    
     __weak typeof(self) weakSelf = self;
     [[self getLifeCycleExecutor] addOperationWithBlock:^{
         @try {
             [weakSelf.clientState persist];
-            [weakSelf setLifecycleState:CLIENT_LIFECYCLE_STATE_PAUSED];
+            
             [weakSelf.channelManager pause];
+            
             if (weakSelf.stateDelegate) {
                 [weakSelf.stateDelegate onPaused];
             }
@@ -218,11 +222,13 @@
 - (void)resume {
     [self checkLifecycleState:CLIENT_LIFECYCLE_STATE_PAUSED withErrorMessage:@"Kaa client isn't paused"];
     
+    [self setLifecycleState:CLIENT_LIFECYCLE_STATE_STARTED];
+    
     __weak typeof(self) weakSelf = self;
     [[self getLifeCycleExecutor] addOperationWithBlock:^{
         @try {
             [weakSelf.channelManager resume];
-            [weakSelf setLifecycleState:CLIENT_LIFECYCLE_STATE_STARTED];
+            
             if (weakSelf.stateDelegate) {
                 [weakSelf.stateDelegate onResume];
             }
