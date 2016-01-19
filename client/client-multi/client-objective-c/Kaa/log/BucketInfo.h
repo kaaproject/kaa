@@ -18,6 +18,17 @@
 
 @interface BucketInfo : NSObject
 
+/**
+ * Returns the timestamp in milliseconds indicating when log bucket was scheduled for delivery.
+ */
+@property (nonatomic) double scheduledBucketTimestamp;
+
+/**
+ * Returns the total time in milliseconds spent to deliver log bucket.
+ */
+@property (nonatomic) double bucketDeliveryDuration;
+
+
 @property (nonatomic,readonly) int32_t bucketId;
 @property (nonatomic,readonly) int32_t logCount;
 

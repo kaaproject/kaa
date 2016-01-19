@@ -23,106 +23,89 @@
 #define TAG @"BucketRunner >>>"
 
 typedef enum {
-    RUNNER_STATE_WAITING,
-    RUNNER_STATE_DONE
-} LogFutureTaskState;
-
-
-@interface ExecutionResult : NSObject
-
-@property (nonatomic,readonly) id data;
-@property (nonatomic,strong,readonly) NSException *exception;
-
-- (instancetype)initWithData:(id)data exception:(NSException *)exception;
-
-@end
-
-@implementation ExecutionResult
-
-- (instancetype)initWithData:(id)data exception:(NSException *)exception {
-    self = [super init];
-    if (self) {
-        _data = data;
-        _exception = exception;
-    }
-    return self;
-}
-
-@end
+    BUCKET_RUNNER_STATE_WAITING,
+    BUCKET_RUNNER_STATE_DONE
+} BucketRunnberTaskState;
 
 
 @interface BucketRunner ()
 
 @property (nonatomic,strong) BlockingQueue *queue;
-@property (nonatomic) volatile LogFutureTaskState state;
-
-- (id)processResult:(ExecutionResult *)result;
+@property (nonatomic) volatile BucketRunnberTaskState state;
+@property (nonatomic) double executionStartTimestamp;
 
 @end
 
 @implementation BucketRunner
 
+static int64_t gBucketIdCounter = 0;
+
 - (instancetype)init {
     self = [super init];
     if (self) {
-        self.queue = [[BlockingQueue alloc] init];
-        self.state = RUNNER_STATE_WAITING;
+        _queue = [[BlockingQueue alloc] init];
+        _state = BUCKET_RUNNER_STATE_WAITING;
+        _runnerId = gBucketIdCounter++;
+        _executionStartTimestamp = CACurrentMediaTime() * 1000;
     }
     return self;
 }
 
 - (BOOL)isRunnerDone {
-    return self.state == RUNNER_STATE_DONE;
+    return self.state == BUCKET_RUNNER_STATE_DONE;
 }
 
-- (void)setValue:(id)value {
+- (void)setValue:(BucketInfo *)value {
     @try {
-        [self.queue offer:[[ExecutionResult alloc] initWithData:value exception:nil]];
+        value.scheduledBucketTimestamp = self.executionStartTimestamp;
+        value.bucketDeliveryDuration = CACurrentMediaTime() * 1000 - self.executionStartTimestamp;
+        [self.queue offer:value];
     }
     @catch (NSException *ex) {
         DDLogError(@"%@ Failed to push value: %@, reason: %@", TAG, ex.name, ex.reason);
     }
     @finally {
-        self.state = RUNNER_STATE_DONE;
+        self.state = BUCKET_RUNNER_STATE_DONE;
     }
 }
 
-- (void)setFailure:(NSException *)failure {
-    @try {
-        [self.queue offer:[[ExecutionResult alloc] initWithData:nil exception:failure]];
-    }
-    @catch (NSException *ex) {
-        DDLogError(@"%@ Failed to push value: %@, reason: %@", TAG, ex.name, ex.reason);
-    }
-    @finally {
-        self.state = RUNNER_STATE_DONE;
-    }
-
+- (BucketInfo *)getValue {
+    return [self.queue take];
 }
 
-- (id)get {
-    ExecutionResult *result = [self.queue take];
-    return [self processResult:result];
-}
-
-- (id)getWithTimeout:(int64_t)timeout andTimeUnit:(TimeUnit)timeUnit {
+- (BucketInfo *)getValueWithTimeout:(int64_t)timeout andTimeUnit:(TimeUnit)timeUnit {
     double timeoutMillis = [TimeUtils convert:timeout from:timeUnit to:TIME_UNIT_MILLISECONDS];
     double endCheck = CACurrentMediaTime() * 1000 + timeoutMillis;
     
     while (CACurrentMediaTime() * 1000 < endCheck) {
         if ([self.queue size] > 0) {
-            return [self processResult:[self.queue take]];
+            return [self.queue take];
         }
     }
     [NSException raise:KaaInterruptedException format:@"Timeout waiting to poll value"];
     return nil;
 }
 
-- (id)processResult:(ExecutionResult *)result {
-    if ([result exception]) {
-        [result.exception raise];
+- (BOOL)isEqual:(id)object {
+    if (!object) {
+        return NO;
     }
-    return result.data;
+    
+    if ([object isKindOfClass:[BucketRunner class]]) {
+        BucketRunner *other = (BucketRunner *)object;
+        if (self.runnerId == other.runnerId) {
+            return YES;
+        }
+    }
+    
+    return NO;
+}
+
+- (NSUInteger)hash {
+    const int prime = 31;
+    NSUInteger result = 1;
+    result = prime * result + self.runnerId;
+    return result;
 }
 
 @end

@@ -16,20 +16,22 @@
 
 #import <Foundation/Foundation.h>
 #import "TimeCommons.h"
+#import "BucketInfo.h"
 
 @interface BucketRunner : NSOperation
 
+@property (nonatomic, readonly) int64_t runnerId;
+
 - (BOOL)isRunnerDone;
 
-- (void)setValue:(id)value;
-- (void)setFailure:(NSException *)failure;
+- (void)setValue:(BucketInfo *)value;
 
 /**
  * Waits if necessary for the computation to complete, and then retrieves its result.
  *
  * @return the computed result
  */
-- (id)get;
+- (BucketInfo *)getValue;
 
 /**
  * Waits if necessary for at most the given time for the computation
@@ -40,7 +42,7 @@
  *
  * @return the computed result
  */
-- (id)getWithTimeout:(int64_t)timeout andTimeUnit:(TimeUnit)timeUnit;
+- (BucketInfo *)getValueWithTimeout:(int64_t)timeout andTimeUnit:(TimeUnit)timeUnit;
 
 
 @end
