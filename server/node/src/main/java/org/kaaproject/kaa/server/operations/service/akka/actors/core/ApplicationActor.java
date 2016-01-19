@@ -38,6 +38,9 @@ import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.lb.ClusterUpdateMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.logs.LogEventPackMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.notification.ThriftNotificationMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.ActorClassifier;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.EndpointActorMsg;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.EndpointAddress;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.EndpointClusterAddress;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.EndpointRouteMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.RouteMessage;
@@ -185,7 +188,9 @@ public class ApplicationActor extends UntypedActor {
         if (message instanceof EndpointAwareMessage) {
             processEndpointAwareMessage((EndpointAwareMessage) message);
         }
-        if (message instanceof SessionAware) {
+        if (message instanceof EndpointActorMsg) {
+            processEndpointActorMsg((EndpointActorMsg) message);
+        } else if (message instanceof SessionAware) {
             processSessionAwareMessage((SessionAware) message);
         } else if (message instanceof EndpointEventDeliveryMessage) {
             processEndpointEventDeliveryMessage((EndpointEventDeliveryMessage) message);
@@ -212,6 +217,23 @@ public class ApplicationActor extends UntypedActor {
         }
     }
 
+    private void processEndpointActorMsg(EndpointActorMsg message) {
+        EndpointAddress address = message.getAddress();
+        EndpointObjectHash endpointId = EndpointObjectHash.fromBytes(address.getEntityId());
+        ActorClassifier classifier = message.getClassifier();
+        EndpointActorMD actorMD;
+        if (classifier.isGlobalActor()) {
+            actorMD = globalEndpointSessions.get(endpointId);
+        } else {
+            actorMD = localEndpointSessions.get(endpointId);
+        }
+        if (actorMD != null) {
+            actorMD.actorRef.tell(message, context().self());
+        } else {
+            LOG.warn("[{}] Failed to lookup {} actor for endpoint.", endpointId, classifier.isGlobalActor() ? "global" : "local");
+        }
+    }
+
     private void processClusterUpdate(ClusterUpdateMessage message) {
         for (Entry<EndpointObjectHash, LocalEndpointActorMD> entry : localEndpointSessions.entrySet()) {
             String globalActorNodeId = getGlobalEndpointActorNodeId(entry.getKey());
@@ -219,6 +241,9 @@ public class ApplicationActor extends UntypedActor {
                 entry.getValue().globalActorNodeId = globalActorNodeId;
                 notifyGlobalEndpointActor(entry.getKey(), globalActorNodeId);
             }
+        }
+        for (GlobalEndpointActorMD entry : globalEndpointSessions.values()) {
+            entry.actorRef.tell(message, context().self());
         }
     }
 
@@ -277,8 +302,6 @@ public class ApplicationActor extends UntypedActor {
         } else if (notification.isSetUserVerifierToken()) {
             LOG.debug("[{}] Forwarding message to application user verifier actor", appToken);
             processUserVerifierNotificationMessage(message);
-        } else if (notification.getKeyHash() != null) {
-
         } else {
             LOG.debug("[{}] Broadcasting message to all endpoints", appToken);
             broadcastToAllEndpoints(message);
@@ -462,7 +485,7 @@ public class ApplicationActor extends UntypedActor {
     }
 
     private String getGlobalEndpointActorNodeId(EndpointObjectHash endpointKey) {
-        return context.getClusterService().getEntityNode(endpointKey.toString());
+        return context.getClusterService().getEntityNode(endpointKey);
     }
 
     private void notifyGlobalEndpointActor(EndpointObjectHash endpointKey, String globalActorNodeId) {
@@ -477,9 +500,9 @@ public class ApplicationActor extends UntypedActor {
             context.getClusterService().sendRouteMessage(msg);
         }
     }
-    
+
     private void processRouteMessage(RouteMessage<?> msg) {
-        if(msg instanceof EndpointRouteMessage){
+        if (msg instanceof EndpointRouteMessage) {
             processEndpointRouteMessage((EndpointRouteMessage) msg);
         }
     }
@@ -487,12 +510,12 @@ public class ApplicationActor extends UntypedActor {
     private void processEndpointRouteMessage(EndpointRouteMessage msg) {
         EndpointObjectHash endpointKey = msg.getAddress().getEndpointKey();
         GlobalEndpointActorMD actorMD = globalEndpointSessions.get(endpointKey);
-        if(actorMD == null){
-            String endpointActorId = LocalEndpointActorCreator.generateActorKey();
+        if (actorMD == null) {
+            String endpointActorId = GlobalEndpointActorCreator.generateActorKey();
             LOG.debug("[{}] Creating global endpoint actor for endpointKey: {}", appToken, endpointKey);
             actorMD = new GlobalEndpointActorMD(context().actorOf(
-                    Props.create(new GlobalEndpointActorCreator(context, endpointActorId, appToken, endpointKey))
-                            .withDispatcher(ENDPOINT_DISPATCHER_NAME), endpointActorId), endpointActorId);
+                    Props.create(new GlobalEndpointActorCreator(context, endpointActorId, appToken, endpointKey)).withDispatcher(
+                            ENDPOINT_DISPATCHER_NAME), endpointActorId), endpointActorId);
             globalEndpointSessions.put(endpointKey, actorMD);
             context().watch(actorMD.actorRef);
         }

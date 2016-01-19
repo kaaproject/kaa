@@ -204,12 +204,20 @@ enum ThriftClusterEntityType {
       ENDPOINT = 1;
 }
 
+struct ThriftEntityAddress {
+  1: tenant_id tenantId
+  2: application_token applicationToken
+  3: ThriftClusterEntityType entityType
+  4: binary entityId
+}
+
+struct ThriftActorClassifier {
+  1: bool globalActor
+}
+
 struct ThriftEntityClusterAddress {
   1: string nodeId
-  2: tenant_id tenantId
-  3: application_token applicationToken
-  4: ThriftClusterEntityType entityType
-  5: binary entityId
+  2: ThriftEntityAddress address
 }
 
 struct ThriftEntityRouteMessage {
@@ -217,6 +225,16 @@ struct ThriftEntityRouteMessage {
   2: ThriftRouteOperation operation
 }
 
+struct ThriftUnicastNotificationMessage {
+  1: ThriftEntityAddress address
+  2: ThriftActorClassifier actorClassifier
+  3: string notificationId;
+}
+
+struct ThriftServerProfileUpdateMessage {
+  1: ThriftEntityAddress address
+  2: ThriftActorClassifier actorClassifier
+}
 
 service OperationsThriftService {
 
@@ -239,10 +257,20 @@ service OperationsThriftService {
 *   Report user configuration update from control to operation servers
 */
   void sendUserConfigurationUpdates(1: list<UserConfigurationUpdate> updates);
-  
+
 /**
 *  Interface to send unified entity route messages
 */
-  void onEntityRouteMessages(1: list<ThriftEntityRouteMessage> messages);  
-
+  void onEntityRouteMessages(1: list<ThriftEntityRouteMessage> messages);
+  
+/**
+*  Interface to send unicast notification message
+*/
+  void onUnicastNotification(1: ThriftUnicastNotificationMessage message);
+  
+/**
+*  Interface to send server profile update message
+*/
+  void onServerProfileUpdate(1: ThriftServerProfileUpdateMessage message);  
+    
 }

@@ -2,21 +2,13 @@ package org.kaaproject.kaa.server.operations.service.akka.messages.core.route;
 
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 
-public class EndpointClusterAddress extends EntityClusterAddress {
- 
+public class EndpointAddress extends EntityAddress {
+
     private final EndpointObjectHash endpointKey;
 
-    public EndpointClusterAddress(EntityClusterAddress parent, EndpointObjectHash endpointKey) {
-        this(parent.getNodeId(), parent.getTenantId(), parent.getAppToken(), endpointKey);
-    }
-
-    public EndpointClusterAddress(String nodeId, String tenantId, String appToken, EndpointObjectHash endpointKey) {
-        super(nodeId, tenantId, appToken);
+    public EndpointAddress(String tenantId, String appToken, EndpointObjectHash endpointKey) {
+        super(tenantId, appToken);
         this.endpointKey = endpointKey;
-    }
-
-    public EndpointObjectHash getEndpointKey() {
-        return endpointKey;
     }
 
     @Override
@@ -40,7 +32,7 @@ public class EndpointClusterAddress extends EntityClusterAddress {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        EndpointClusterAddress other = (EndpointClusterAddress) obj;
+        EndpointAddress other = (EndpointAddress) obj;
         if (endpointKey == null) {
             if (other.endpointKey != null)
                 return false;
@@ -51,8 +43,8 @@ public class EndpointClusterAddress extends EntityClusterAddress {
 
     @Override
     public String toString() {
-        return "EndpointClusterAddress [endpointKey=" + endpointKey + ", getNodeId()=" + getNodeId() + ", getTenantId()="
-                + getTenantId() + ", getAppToken()=" + getAppToken() + "]";
+        return "EndpointAddress [endpointKey=" + endpointKey + ", getTenantId()=" + getTenantId() + ", getAppToken()=" + getAppToken()
+                + "]";
     }
 
 }

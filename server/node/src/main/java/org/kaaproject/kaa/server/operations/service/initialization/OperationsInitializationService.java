@@ -32,10 +32,10 @@ import org.kaaproject.kaa.server.node.service.initialization.AbstractInitializat
 import org.kaaproject.kaa.server.operations.service.OperationsService;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaService;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
+import org.kaaproject.kaa.server.operations.service.cluster.ClusterService;
 import org.kaaproject.kaa.server.operations.service.config.OperationsServerConfig;
 import org.kaaproject.kaa.server.operations.service.event.EventService;
 import org.kaaproject.kaa.server.operations.service.loadbalance.LoadBalancingService;
-import org.kaaproject.kaa.server.operations.service.route.ClusterService;
 import org.kaaproject.kaa.server.operations.service.security.KeyStoreService;
 import org.kaaproject.kaa.server.operations.service.transport.OperationsTransportService;
 import org.kaaproject.kaa.server.transport.TransportUpdateListener;

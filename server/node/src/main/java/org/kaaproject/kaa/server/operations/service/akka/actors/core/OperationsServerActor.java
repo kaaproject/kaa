@@ -29,6 +29,7 @@ import org.kaaproject.kaa.server.operations.service.akka.actors.supervision.Supe
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointAwareMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.lb.ClusterUpdateMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.notification.ThriftNotificationMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.EndpointActorMsg;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.stats.StatusRequestMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.stats.StatusRequestState;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.stats.TenantActorStatusResponse;
@@ -118,7 +119,9 @@ public class OperationsServerActor extends UntypedActor {
     @Override
     public void onReceive(Object message) throws Exception {
         LOG.debug("Received: {}", message);
-        if (message instanceof EndpointAwareMessage) {
+        if (message instanceof EndpointActorMsg) {
+            processEndpointActorMsg((EndpointActorMsg) message);
+        } else if (message instanceof EndpointAwareMessage) {
             processEndpointAwareMessage((EndpointAwareMessage) message);
         } else if (message instanceof SessionControlMessage) {
             processSessionControlMessage((SessionControlMessage) message);
@@ -151,6 +154,11 @@ public class OperationsServerActor extends UntypedActor {
         tenantActor.tell(message, self());
     }
 
+    private void processEndpointActorMsg(EndpointActorMsg message) {
+        ActorRef tenantActor = getOrCreateTenantActorByTokenId(message.getAddress().getTenantId());
+        tenantActor.tell(message, self());
+    }
+    
     /**
      * Process endpoint aware message.
      *

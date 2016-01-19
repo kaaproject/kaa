@@ -31,6 +31,7 @@ import org.kaaproject.kaa.server.operations.service.akka.actors.supervision.Supe
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointAwareMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.lb.ClusterUpdateMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.notification.ThriftNotificationMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.EndpointActorMsg;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.RouteMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.stats.ApplicationActorStatusResponse;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.stats.StatusRequestMessage;
@@ -140,7 +141,9 @@ public class TenantActor extends UntypedActor {
         } else {
             LOG.debug("[{}] Received: {}", tenantId, message.getClass().getName());
         }
-        if (message instanceof EndpointAwareMessage) {
+        if (message instanceof EndpointActorMsg) {
+            processEndpointActorMsg((EndpointActorMsg) message);
+        }else if (message instanceof EndpointAwareMessage) {
             processEndpointAwareMessage((EndpointAwareMessage) message);
         } else if (message instanceof GlobalUserAwareMessage) {
             processGlobalUserAwareMessage((GlobalUserAwareMessage) message);
@@ -217,6 +220,11 @@ public class TenantActor extends UntypedActor {
      */
     private void processNotificationMessage(ThriftNotificationMessage message) {
         ActorRef applicationActor = getOrCreateApplicationActor(message.getAppToken());
+        applicationActor.tell(message, self());
+    }
+    
+    private void processEndpointActorMsg(EndpointActorMsg message) {
+        ActorRef applicationActor = getOrCreateApplicationActor(message.getAddress().getAppToken());
         applicationActor.tell(message, self());
     }
 

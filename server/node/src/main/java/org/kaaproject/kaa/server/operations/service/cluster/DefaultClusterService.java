@@ -1,4 +1,4 @@
-package org.kaaproject.kaa.server.operations.service.route;
+package org.kaaproject.kaa.server.operations.service.cluster;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -8,18 +8,26 @@ import javax.annotation.PostConstruct;
 
 import org.apache.thrift.TException;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
+import org.kaaproject.kaa.server.common.Base64Util;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.OperationsThriftService.Iface;
+import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftActorClassifier;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftClusterEntityType;
+import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEntityAddress;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEntityClusterAddress;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEntityRouteMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftRouteOperation;
+import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftServerProfileUpdateMessage;
+import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftUnicastNotificationMessage;
 import org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo;
 import org.kaaproject.kaa.server.common.zk.operations.OperationsNode;
 import org.kaaproject.kaa.server.common.zk.operations.OperationsNodeListener;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.ActorClassifier;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.EndpointAddress;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.EndpointClusterAddress;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.EndpointRouteMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.EntityClusterAddress;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.RouteOperation;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.ThriftEndpointActorMsg;
 import org.kaaproject.kaa.server.operations.service.config.OperationsServerConfig;
 import org.kaaproject.kaa.server.resolve.OperationsServerResolver;
 import org.kaaproject.kaa.server.thrift.NeighborConnection;
@@ -60,7 +68,7 @@ public class DefaultClusterService implements ClusterService {
         neighbors = new Neighbors<MessageTemplate, ThriftEntityRouteMessage>(new MessageTemplate(),
                 operationsServerConfig.getMaxNumberNeighborConnections());
     }
-    
+
     @Override
     public String getNodeId() {
         return id;
@@ -124,19 +132,31 @@ public class DefaultClusterService implements ClusterService {
     }
 
     @Override
-    public boolean isMainEntityNode(String entityId) {
-        OperationsNodeInfo info = resolver.getNode(entityId);
+    public boolean isMainEntityNode(EndpointObjectHash entityId) {
+        return isMainEntityNode(entityId.getData());
+    }
+
+    @Override
+    public boolean isMainEntityNode(byte[] entityId) {
+        String entityIdStr = Base64Util.encode(entityId);
+        OperationsNodeInfo info = resolver.getNode(entityIdStr);
         if (info == null) {
             return false;
         }
-        LOG.trace("comparing {} to {} for entity {}", id, info.getConnectionInfo(), entityId);
-        return id.equals(Neighbors.getServerID(info.getConnectionInfo()));
+        String nodeId = Neighbors.getServerID(info.getConnectionInfo());
+        LOG.trace("Comparing {} to {} for entity {}", id, nodeId, entityIdStr);
+        return id.equals(nodeId);
 
     }
 
     @Override
-    public String getEntityNode(String entityId) {
-        OperationsNodeInfo info = resolver.getNode(entityId);
+    public String getEntityNode(EndpointObjectHash entityId) {
+        return getEntityNode(entityId.getData());
+    }
+
+    @Override
+    public String getEntityNode(byte[] entityId) {
+        OperationsNodeInfo info = resolver.getNode(Base64Util.encode(entityId));
         if (info != null) {
             return Neighbors.getServerID(info.getConnectionInfo());
         }
@@ -145,8 +165,7 @@ public class DefaultClusterService implements ClusterService {
 
     @Override
     public String sendRouteMessage(EndpointRouteMessage msg) {
-        String entityId = msg.getAddress().getEndpointKey().toString();
-        String serverId = getEntityNode(entityId);
+        String serverId = getEntityNode(msg.getAddress().getEndpointKey());
         NeighborConnection<MessageTemplate, ThriftEntityRouteMessage> server = neighbors.getNeghborConnection(serverId);
         if (server == null) {
             LOG.warn("specified server {} not found in neighbors list", serverId);
@@ -159,12 +178,36 @@ public class DefaultClusterService implements ClusterService {
     @Override
     public void onEntityRouteMessages(List<ThriftEntityRouteMessage> msgs) {
         for (ThriftEntityRouteMessage msg : msgs) {
-            switch (msg.getAddress().getEntityType()) {
+            switch (msg.getAddress().getAddress().getEntityType()) {
             case ENDPOINT:
                 listener.onRouteMsg(fromThriftMsg(msg));
                 break;
+            default:
+                LOG.error("Unknown entity type: {}", msg.getAddress().getAddress().getEntityType());
             }
         }
+    }
+
+    @Override
+    public void onUnicastNotificationMessage(ThriftUnicastNotificationMessage msg) {
+        EndpointAddress address = fromThriftAddress(msg.getAddress());
+        ActorClassifier classifier = fromThriftActorClassifier(msg.getActorClassifier());
+        listener.onEndpointActorMsg(new ThriftEndpointActorMsg<ThriftUnicastNotificationMessage>(address, classifier, msg));
+    }
+
+    @Override
+    public void onServerProfileUpdateMessage(ThriftServerProfileUpdateMessage msg) {
+        EndpointAddress address = fromThriftAddress(msg.getAddress());
+        ActorClassifier classifier = fromThriftActorClassifier(msg.getActorClassifier());
+        listener.onEndpointActorMsg(new ThriftEndpointActorMsg<ThriftServerProfileUpdateMessage>(address, classifier, msg));
+    }
+
+    private EndpointAddress fromThriftAddress(ThriftEntityAddress source) {
+        return new EndpointAddress(source.getTenantId(), source.getApplicationToken(), EndpointObjectHash.fromBytes(source.getEntityId()));
+    }
+
+    private ActorClassifier fromThriftActorClassifier(ThriftActorClassifier actorClassifier) {
+        return new ActorClassifier(actorClassifier.isGlobalActor());
     }
 
     private EndpointRouteMessage fromThriftMsg(ThriftEntityRouteMessage source) {
@@ -185,8 +228,9 @@ public class DefaultClusterService implements ClusterService {
     }
 
     private EndpointClusterAddress fromThriftAddress(ThriftEntityClusterAddress source) {
-        EndpointObjectHash endpointKey = EndpointObjectHash.fromBytes(source.getEntityId());
-        return new EndpointClusterAddress(source.getNodeId(), source.getTenantId(), source.getApplicationToken(), endpointKey);
+        ThriftEntityAddress address = source.getAddress();
+        EndpointObjectHash endpointKey = EndpointObjectHash.fromBytes(address.getEntityId());
+        return new EndpointClusterAddress(source.getNodeId(), address.getTenantId(), address.getApplicationToken(), endpointKey);
     }
 
     private void sendMessagesToServer(NeighborConnection<MessageTemplate, ThriftEntityRouteMessage> server,
@@ -220,14 +264,20 @@ public class DefaultClusterService implements ClusterService {
     }
 
     private ThriftEntityClusterAddress toAddress(EndpointClusterAddress source) {
-        ThriftEntityClusterAddress address = toEntityAddress(source);
-        address.setEntityType(ThriftClusterEntityType.ENDPOINT);
+        ThriftEntityClusterAddress address = toEntityClusterAddress(source);
+        address.getAddress().setEntityType(ThriftClusterEntityType.ENDPOINT);
         return address;
     }
 
-    private ThriftEntityClusterAddress toEntityAddress(EntityClusterAddress source) {
+    private ThriftEntityClusterAddress toEntityClusterAddress(EntityClusterAddress source) {
         ThriftEntityClusterAddress address = new ThriftEntityClusterAddress();
         address.setNodeId(source.getNodeId());
+        address.setAddress(toEntityAddress(source));
+        return address;
+    }
+
+    private ThriftEntityAddress toEntityAddress(EntityClusterAddress source) {
+        ThriftEntityAddress address = new ThriftEntityAddress();
         address.setTenantId(source.getTenantId());
         address.setApplicationToken(source.getAppToken());
         address.setEntityId(source.getEntityId());

@@ -31,14 +31,16 @@ import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.OperationsThriftService;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEntityRouteMessage;
+import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftServerProfileUpdateMessage;
+import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftUnicastNotificationMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.UserConfigurationUpdate;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaService;
 import org.kaaproject.kaa.server.operations.service.cache.AppProfileVersionsKey;
 import org.kaaproject.kaa.server.operations.service.cache.AppSeqNumber;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
+import org.kaaproject.kaa.server.operations.service.cluster.ClusterService;
 import org.kaaproject.kaa.server.operations.service.event.EventService;
 import org.kaaproject.kaa.server.operations.service.initialization.OperationsInitializationService;
-import org.kaaproject.kaa.server.operations.service.route.ClusterService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -186,5 +188,15 @@ public class OperationsThriftServiceImpl implements OperationsThriftService.Ifac
     @Override
     public void onEntityRouteMessages(List<ThriftEntityRouteMessage> msgs) throws TException {
         clusterService.onEntityRouteMessages(msgs);
+    }
+
+    @Override
+    public void onUnicastNotification(ThriftUnicastNotificationMessage message) throws TException {
+        clusterService.onUnicastNotificationMessage(message);
+    }
+
+    @Override
+    public void onServerProfileUpdate(ThriftServerProfileUpdateMessage message) throws TException {
+        clusterService.onServerProfileUpdateMessage(message);
     }
 }
