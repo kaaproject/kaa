@@ -21,14 +21,14 @@
 
 @interface AvroUtils ()
 
-- (size_t)getPlainLongSize:(long long)data;
+- (size_t)getPlainLongSize:(int64_t)data;
 
 @end
 
 @implementation AvroUtils
 
-- (size_t)getPlainLongSize:(long long)data {
-    long long len = 0;
+- (size_t)getPlainLongSize:(int64_t)data {
+    int64_t len = 0;
     uint64_t n = (data << 1) ^ (data >> 63);
     while (n & ~0x7F) {
         len++;
@@ -39,7 +39,7 @@
 }
 
 - (size_t)getStringSize:(NSString *)data {
-    const char* raw = [data cStringUsingEncoding:NSUTF8StringEncoding];
+    const char *raw = [data cStringUsingEncoding:NSUTF8StringEncoding];
     size_t size = strlen(raw);
     return [self getPlainLongSize:size] + size;
 }
@@ -71,13 +71,13 @@
         avro_binary_encoding.write_bytes(writer, [data bytes], [data length]);
 }
 
-- (size_t)getFixedSize:(NSData*)data {
+- (size_t)getFixedSize:(NSData *)data {
     return [data length];
 }
 
 - (NSData *)deserializeFixed:(avro_reader_t)reader size:(NSNumber *)size {
-    NSUInteger plainSize = [size longValue];
-    uint8_t *buffer = (uint8_t*)malloc(plainSize * sizeof(uint8_t));
+    long plainSize = [size longValue];
+    uint8_t *buffer = (uint8_t *)malloc(plainSize * sizeof(uint8_t));
     avro_read(reader, buffer, plainSize);
     return [NSData dataWithBytes:buffer length:plainSize];
 }
@@ -92,7 +92,7 @@
 }
 
 - (NSNumber *)deserializeBoolean:(avro_reader_t)reader {
-    int8_t *data = (int8_t*)malloc(sizeof(int8_t));
+    int8_t *data = (int8_t *)malloc(sizeof(int8_t));
     avro_binary_encoding.read_boolean(reader, data);
     return [NSNumber numberWithBool:(data[0] > 0 ? YES : NO)];
 }
@@ -107,7 +107,7 @@
 }
 
 - (NSNumber *)deserializeInt:(avro_reader_t)reader {
-    int data;
+    int32_t data;
     avro_binary_encoding.read_int(reader, &data);
     return [NSNumber numberWithInt:data];
 }
@@ -122,7 +122,7 @@
 }
 
 - (NSNumber *)deserializeLong:(avro_reader_t)reader {
-    long long data;
+    int64_t data;
     avro_binary_encoding.read_long(reader, &data);
     return [NSNumber numberWithLongLong:data];
 }
@@ -167,9 +167,9 @@
 }
 
 - (NSNumber *)deserializeEnum:(avro_reader_t)reader {
-    long long data;
+    int64_t data;
     avro_binary_encoding.read_long(reader, &data);
-    return [NSNumber numberWithInt:(int)data];
+    return [NSNumber numberWithInt:(int32_t)data];
 }
 
 - (void)serializeEnum:(NSNumber *)data to:(avro_writer_t)writer {
