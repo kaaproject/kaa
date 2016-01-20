@@ -57,7 +57,7 @@
     } else if (all) {
         [self.channelManager syncAll:type];
     } else {
-        [self.channelManager sync:type];
+        [self.channelManager syncForTransportType:type];
     }
 }
 

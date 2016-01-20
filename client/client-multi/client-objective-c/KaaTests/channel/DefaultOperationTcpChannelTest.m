@@ -110,8 +110,8 @@
     
     [tcpChannel setMultiplexer:multiplexer];
     [tcpChannel setDemultiplexer:demultiplexer];
-    [tcpChannel sync:TRANSPORT_TYPE_USER];    // will cause call to KaaDataMultiplexer.compileRequest(...) after "CONNECT" messsage
-    [tcpChannel sync:TRANSPORT_TYPE_PROFILE];
+    [tcpChannel syncForTransportType:TRANSPORT_TYPE_USER];    // will cause call to KaaDataMultiplexer.compileRequest(...) after "CONNECT" messsage
+    [tcpChannel syncForTransportType:TRANSPORT_TYPE_PROFILE];
     
     [KeyUtils generateKeyPair];
     id <TransportConnectionInfo> server = [self createTestServerInfoWithServerType:SERVER_OPERATIONS transportProtocolId:[TransportProtocolIdHolder TCPTransportID] host:@"localhost" port:9009 publicKey:[KeyUtils getPublicKey]];
@@ -126,10 +126,10 @@
     [tcpChannel.outputStream write:[kaatcpsyncrespData bytes] maxLength:[kaatcpsyncrespData length]];
     
     [NSThread sleepForTimeInterval:1]; // sleep a bit to let the message to be received
-    [tcpChannel sync:TRANSPORT_TYPE_USER]; // causes call to KaaDataMultiplexer.compileRequest(...) for "KAA_SYNC" messsage
+    [tcpChannel syncForTransportType:TRANSPORT_TYPE_USER]; // causes call to KaaDataMultiplexer.compileRequest(...) for "KAA_SYNC" messsage
     [verifyCount(multiplexer, times(2)) compileRequest:anything()];
     
-    [tcpChannel sync:TRANSPORT_TYPE_EVENT];
+    [tcpChannel syncForTransportType:TRANSPORT_TYPE_EVENT];
     [verifyCount(multiplexer, times(3)) compileRequest:anything()];
     [verifyCount(tcpChannel.socketMock, times(3)) output];
     

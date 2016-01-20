@@ -60,7 +60,7 @@
 - (id<KaaDataChannel>)getChannel:(TransportType)type;
 - (id<TransportConnectionInfo>)getCurrentBootstrapServer:(TransportProtocolId *)protocolId;
 - (id<TransportConnectionInfo>)getNextBootstrapServer:(id<TransportConnectionInfo>)currentServer;
-- (void)sync:(TransportType)type ack:(BOOL)ack all:(BOOL)all;
+- (void)syncForTransportType:(TransportType)type ack:(BOOL)ack all:(BOOL)all;
 - (void)startWorker:(id<KaaDataChannel>)channel;
 - (void)stopWorker:(id<KaaDataChannel>)channel;
 
@@ -169,16 +169,16 @@
     return [channel getServer];
 }
 
-- (void)sync:(TransportType)type {
-    [self sync:type ack:NO all:NO];
+- (void)syncForTransportType:(TransportType)type {
+    [self syncForTransportType:type ack:NO all:NO];
 }
 
-- (void)syncAck:(TransportType)type {
-    [self sync:type ack:YES all:NO];
+- (void)syncAckForTransportType:(TransportType)type {
+    [self syncForTransportType:type ack:YES all:NO];
 }
 
 - (void)syncAll:(TransportType)type {
-    [self sync:type ack:NO all:YES];
+    [self syncForTransportType:type ack:NO all:YES];
 }
 
 - (id<KaaDataChannel>)getChannelById:(NSString *)channelId {
@@ -390,7 +390,7 @@
     _failoverManager = failoverManager;
 }
 
-- (void)sync:(TransportType)type ack:(BOOL)ack all:(BOOL)all {
+- (void)syncForTransportType:(TransportType)type ack:(BOOL)ack all:(BOOL)all {
     DDLogDebug(@"%@ Lookup channel by type [%i]", TAG, type);
     id<KaaDataChannel> channel = [self getChannel:type];
     @synchronized(self.syncTaskQueueMap) {

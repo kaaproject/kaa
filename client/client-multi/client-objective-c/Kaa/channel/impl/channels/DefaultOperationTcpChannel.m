@@ -380,7 +380,7 @@ typedef enum {
     return queue;
 }
 
-- (void)sync:(TransportType)type {
+- (void)syncForTransportType:(TransportType)type {
     @synchronized(self) {
         [self syncTransportTypes:[NSSet setWithObject:[NSNumber numberWithInt:type]]];
     }
@@ -487,7 +487,7 @@ typedef enum {
         } else {
             DDLogDebug(@"%@ Acknowledgment is pending for channel [%@] -> starting sync", TAG, [self getId]);
             if ([types count] == 1) {
-                [self sync:[types.allObjects[0] intValue]];
+                [self syncForTransportType:[types.allObjects[0] intValue]];
             } else {
                 [self syncAll];
             }

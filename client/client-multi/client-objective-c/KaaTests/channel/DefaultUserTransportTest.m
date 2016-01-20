@@ -55,7 +55,7 @@ static int REQUEST_ID_2 = 73;
     [transport setChannelManager:channelManager];
     [transport sync];
     
-    [verifyCount(channelManager, times(1)) sync:TRANSPORT_TYPE_USER];
+    [verifyCount(channelManager, times(1)) syncForTransportType:TRANSPORT_TYPE_USER];
 }
 
 - (void)testCreateRequest {

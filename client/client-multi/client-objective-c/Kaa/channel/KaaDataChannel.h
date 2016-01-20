@@ -33,7 +33,7 @@
 /**
  * Updates the channel's state of the specific service.
  */
-- (void)sync:(TransportType)type;
+- (void)syncForTransportType:(TransportType)type;
 
 - (void)syncTransportTypes:(NSSet *)types;
 

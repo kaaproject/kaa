@@ -108,14 +108,14 @@ static NSDictionary *SUPPORTED_TYPES;
     id <TransportConnectionInfo> server = [self createTestServerInfoWithServerType:SERVER_BOOTSTRAP transportProtocolId:[TransportProtocolIdHolder TCPTransportID] host:@"localhost" port:9889 publicKey:[KeyUtils getPublicKey]];
     [channel setServer:server];
     
-    [channel sync:TRANSPORT_TYPE_EVENT];
+    [channel syncForTransportType:TRANSPORT_TYPE_EVENT];
     [channel setDemultiplexer:demultiplexer];
     [channel setDemultiplexer:nil];
-    [channel sync:TRANSPORT_TYPE_EVENT];
+    [channel syncForTransportType:TRANSPORT_TYPE_EVENT];
     [channel setMultiplexer:multiplexer];
     [channel setMultiplexer:nil];
-    [channel sync:TRANSPORT_TYPE_BOOTSTRAP];
-    [channel sync:TRANSPORT_TYPE_EVENT];
+    [channel syncForTransportType:TRANSPORT_TYPE_BOOTSTRAP];
+    [channel syncForTransportType:TRANSPORT_TYPE_EVENT];
     
     [NSThread sleepForTimeInterval:1];
     [verifyCount([channel getMultiplexer], times(channel.wantedNumberOfInvocations)) compileRequest:anything()];
@@ -144,7 +144,7 @@ static NSDictionary *SUPPORTED_TYPES;
     id <TransportConnectionInfo> server = [self createTestServerInfoWithServerType:SERVER_BOOTSTRAP transportProtocolId:[TransportProtocolIdHolder TCPTransportID] host:@"localhost" port:9889 publicKey:[KeyUtils getPublicKey]];
     [channel setServer:server];
     
-    [channel sync:TRANSPORT_TYPE_BOOTSTRAP];
+    [channel syncForTransportType:TRANSPORT_TYPE_BOOTSTRAP];
     [channel syncAll];
     
     int32_t five = 5;

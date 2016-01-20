@@ -111,10 +111,10 @@
 - (void)setBootstrapDemultiplexer:(id<KaaDataDemultiplexer>)demultiplexer {
 }
 
-- (void)sync:(TransportType)type {
+- (void)syncForTransportType:(TransportType)type {
 }
 
-- (void)syncAck:(TransportType)type {
+- (void)syncAckForTransportType:(TransportType)type {
 }
 
 - (void)syncAll:(TransportType)type {

@@ -58,7 +58,7 @@
     return [TransportProtocolIdHolder HTTPTransportID];
 }
 
-- (void)sync:(TransportType)type {
+- (void)syncForTransportType:(TransportType)type {
     @synchronized(self) {
         [self syncTransportTypes:[NSSet setWithObject:[NSNumber numberWithInt:type]]];
     }

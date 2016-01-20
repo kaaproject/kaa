@@ -51,7 +51,7 @@
     [transport setChannelManager:channelManager];
     [transport sync];
     
-    [verifyCount(channelManager, times(1)) sync:TRANSPORT_TYPE_EVENT];
+    [verifyCount(channelManager, times(1)) syncForTransportType:TRANSPORT_TYPE_EVENT];
 }
 
 - (void)testCreateRequest {

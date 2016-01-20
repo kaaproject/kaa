@@ -54,7 +54,7 @@
     [transport setClientState:clientState];
     [transport sync];
     
-    [verifyCount(channelManager, times(1)) sync:TRANSPORT_TYPE_LOGGING];
+    [verifyCount(channelManager, times(1)) syncForTransportType:TRANSPORT_TYPE_LOGGING];
 }
 
 - (void)testCreateRequest {

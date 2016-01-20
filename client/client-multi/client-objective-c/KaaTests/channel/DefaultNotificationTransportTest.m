@@ -52,7 +52,7 @@
     [transport setChannelManager:channelManager];
     [transport sync];
     
-    [verifyCount(channelManager, times(1)) sync:TRANSPORT_TYPE_NOTIFICATION];
+    [verifyCount(channelManager, times(1)) syncForTransportType:TRANSPORT_TYPE_NOTIFICATION];
 }
 
 - (void)testCreateEmptyRequest {
