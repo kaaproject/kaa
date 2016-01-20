@@ -54,11 +54,16 @@ extern "C" {
  * @sa kaa_log_listeners_t
  * @sa kaa_logging_set_listeners
  */
-typedef struct
-{
+typedef struct {
     uint32_t log_id;    /**< Id of a log record processed by kaa_logging_add_record() */
     uint16_t bucket_id; /**< Id of a bucket where a log record contained */
 } kaa_log_record_info_t;
+
+/** Constraints applied to log buckets */
+typedef struct {
+    size_t max_bucket_size;         /**< The maximum bucket size in bytes */
+    size_t max_bucket_log_count;    /**< The maximum log count within a single bucket */
+} kaa_log_bucket_constraints_t;
 
 /**
  * @brief Initializes data collection module with the storage interface, upload strategy, and other settings.
@@ -66,10 +71,11 @@ typedef struct
  * @param[in] self                          Pointer to a @link kaa_log_collector_t @endlink instance.
  * @param[in] log_storage_context           Log storage context.
  * @param[in] log_upload_strategy_context   Log upload strategy context.
+ * @param[in] bucket_sizes                  Bucket size constraints.
  *
  * @return  Error code.
  */
-kaa_error_t kaa_logging_init(kaa_log_collector_t *self, void *log_storage_context, void *log_upload_strategy_context);
+kaa_error_t kaa_logging_init(kaa_log_collector_t *self, void *log_storage_context, void *log_upload_strategy_context, const kaa_log_bucket_constraints_t *bucket_sizes);
 
 /**
  * @brief Serializes and adds a log record to the log storage.

@@ -53,8 +53,8 @@ typedef struct {
     uint16_t     log_count;         /**< Current logs count. */
 } timeout_info_t;
 
-
 struct kaa_log_collector {
+    kaa_log_bucket_constraints_t   bucket_size;
     void                           *log_storage_context;
     void                           *log_upload_strategy_context;
     kaa_status_t                   *status;
@@ -64,6 +64,8 @@ struct kaa_log_collector {
     kaa_log_delivery_listener_t    log_delivery_listeners;
     bool                           is_sync_ignored;
     uint32_t                       log_last_id;         /**< Last log record ID */
+    uint32_t                       max_bucket_log_count;
+    uint32_t                       max_storage_size;
     uint16_t                       log_bucket_id;
 };
 
@@ -226,7 +228,7 @@ kaa_error_t kaa_log_collector_create(kaa_log_collector_t **log_collector_p
 
 
 
-kaa_error_t kaa_logging_init(kaa_log_collector_t *self, void *log_storage_context, void *log_upload_strategy_context)
+kaa_error_t kaa_logging_init(kaa_log_collector_t *self, void *log_storage_context, void *log_upload_strategy_context, const kaa_log_bucket_constraints_t *bucket_sizes)
 {
     KAA_RETURN_IF_NIL3(self, log_storage_context, log_upload_strategy_context, KAA_ERR_BADPARAM);
 
@@ -236,6 +238,7 @@ kaa_error_t kaa_logging_init(kaa_log_collector_t *self, void *log_storage_contex
     self->log_storage_context = log_storage_context;
     self->log_upload_strategy_context = log_upload_strategy_context;
     self->log_delivery_listeners = KAA_LOG_EMPTY_LISTENERS;
+    self->bucket_size = *bucket_sizes;
 
     KAA_LOG_DEBUG(self->logger, KAA_ERR_NONE, "Initialized log collector with log storage {%p}, log upload strategy {%p}"
             , log_storage_context, log_upload_strategy_context);
@@ -357,7 +360,7 @@ kaa_error_t kaa_logging_request_get_size(kaa_log_collector_t *self, size_t *expe
         *expected_size += sizeof(uint32_t); // request id + log records count
 
         size_t actual_size = records_count * sizeof(uint32_t) + records_count * KAA_MAX_PADDING_LENGTH + total_size;
-        size_t bucket_size = ext_log_upload_strategy_get_bucket_size(self->log_upload_strategy_context);
+        size_t bucket_size = self->bucket_size.max_bucket_size;
 
         *expected_size += ((actual_size > bucket_size) ? bucket_size : actual_size);
     }
@@ -398,7 +401,10 @@ kaa_error_t kaa_logging_request_serialize(kaa_log_collector_t *self, kaa_platfor
     char *records_count_p = tmp_writer.current; // Pointer to the records count. Will be filled in later.
     tmp_writer.current += sizeof(uint16_t);
 
-    size_t bucket_size = ext_log_upload_strategy_get_bucket_size(self->log_upload_strategy_context);
+    /* Bucket size constraints */
+
+    size_t bucket_size = self->bucket_size.max_bucket_size;
+    size_t max_log_count = self->bucket_size.max_bucket_log_count;
     size_t actual_size = (tmp_writer.end - tmp_writer.current);
 
     bucket_size = (actual_size > bucket_size ? bucket_size : actual_size);
@@ -407,7 +413,7 @@ kaa_error_t kaa_logging_request_serialize(kaa_log_collector_t *self, kaa_platfor
 
     uint16_t records_count = 0;
 
-    while (!error && bucket_size > sizeof(uint32_t)) {
+    while (!error && bucket_size > sizeof(uint32_t) && records_count < max_log_count) {
         size_t record_len = 0;
         error = ext_log_storage_write_next_record(self->log_storage_context
                                                 , tmp_writer.current + sizeof(uint32_t)

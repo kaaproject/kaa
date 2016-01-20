@@ -70,7 +70,9 @@ static kaa_service_t OPERATIONS_SERVICES[] = { KAA_SERVICE_PROFILE
                                              , KAA_SERVICE_LOGGING};
 static const int OPERATIONS_SERVICES_COUNT = sizeof(OPERATIONS_SERVICES) / sizeof(kaa_service_t);
 
-
+/* Logging constraints */
+#define MAX_LOG_COUNT           SIZE_MAX
+#define MAX_LOG_BUCKET_SIZE     (2 * 1024)
 
 typedef enum {
     KAA_CLIENT_ESP8266_STATE_UNINITED = 0,
@@ -681,9 +683,15 @@ kaa_error_t kaa_log_collector_init(kaa_client_t *kaa_client)
         return error_code;
     }
 
+    kaa_log_bucket_constraints_t bucket_sizes = {
+        .max_bucket_size = MAX_LOG_BUCKET_SIZE,
+        .max_bucket_log_count = MAX_LOG_COUNT,
+    };
+
     error_code = kaa_logging_init(kaa_client->kaa_context->log_collector
                                                 , kaa_client->log_storage_context
-                                                , kaa_client->log_upload_strategy_context);
+                                                , kaa_client->log_upload_strategy_context
+                                                , &bucket_sizes);
     if (error_code) {
         KAA_LOG_ERROR(kaa_client->kaa_context->logger, error_code,"Failed to logging init");
         return error_code;

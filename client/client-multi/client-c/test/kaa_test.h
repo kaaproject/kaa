@@ -140,7 +140,7 @@ typedef int (*cleanup_fn)(void);
     int GROUP##_group_setup()
 
 /* Defines a teardown process for given group
-/* Reverts any changes made by setup routine and makes sure no side effects
+ * Reverts any changes made by setup routine and makes sure no side effects
  * will stay after test
  */
 #define KAA_GROUP_TEARDOWN(GROUP) \

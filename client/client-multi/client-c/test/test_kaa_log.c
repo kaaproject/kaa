@@ -82,7 +82,6 @@ static const int OPERATIONS_SERVICES_COUNT = sizeof(OPERATIONS_SERVICES) / sizeo
 
 typedef struct {
     size_t timeout;
-    size_t batch_size;
     size_t max_parallel_uploads;
     bool on_timeout_count;
     bool on_failure_count;
@@ -169,11 +168,6 @@ static void test_kaa_channel_create(kaa_transport_channel_interface_t *self)
 ext_log_upload_decision_t ext_log_upload_strategy_decide(void *context, const void *log_storage_context)
 {
     return ((mock_strategy_context_t *)context)->decision;
-}
-
-size_t ext_log_upload_strategy_get_bucket_size(void *context)
-{
-    return ((mock_strategy_context_t *)context)->batch_size;
 }
 
 size_t ext_log_upload_strategy_get_timeout(void *context)
@@ -328,10 +322,14 @@ void test_create_request(void)
     mock_strategy_context_t strategy;
     memset(&strategy, 0, sizeof(mock_strategy_context_t));
     strategy.decision = NOOP;
-    strategy.batch_size = 2 * test_log_record_size;
     strategy.max_parallel_uploads = UINT32_MAX;
 
-    error_code = kaa_logging_init(log_collector, create_mock_storage(), &strategy);
+    kaa_log_bucket_constraints_t constraints = {
+        .max_bucket_size = 2 * test_log_record_size,
+        .max_bucket_log_count = UINT32_MAX,
+    };
+
+    error_code = kaa_logging_init(log_collector, create_mock_storage(), &strategy, &constraints);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     error_code = kaa_logging_add_record(log_collector, test_log_record, NULL);
@@ -400,7 +398,13 @@ void test_response(void)
     memset(&strategy, 0, sizeof(mock_strategy_context_t));
 
     mock_storage_context_t *storage = create_mock_storage();
-    error_code = kaa_logging_init(log_collector, storage, &strategy);
+
+    kaa_log_bucket_constraints_t constraints = {
+        .max_bucket_size = 1024,
+        .max_bucket_log_count = UINT32_MAX,
+    };
+
+    error_code = kaa_logging_init(log_collector, storage, &strategy, &constraints);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     uint32_t response_count = 2;
@@ -467,10 +471,14 @@ void test_timeout(void)
     memset(&strategy, 0, sizeof(mock_strategy_context_t));
     strategy.timeout = TEST_TIMEOUT;
     strategy.decision = NOOP;
-    strategy.batch_size = 2 * test_log_record_size;
     strategy.max_parallel_uploads = UINT32_MAX;
 
-    error_code = kaa_logging_init(log_collector, create_mock_storage(), &strategy);
+    kaa_log_bucket_constraints_t constraints = {
+        .max_bucket_size = 2 * test_log_record_size,
+        .max_bucket_log_count = UINT32_MAX,
+    };
+
+    error_code = kaa_logging_init(log_collector, create_mock_storage(), &strategy, &constraints);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     error_code = kaa_logging_add_record(log_collector, test_log_record, NULL);
@@ -519,13 +527,17 @@ void test_decline_timeout(void)
     memset(&strategy, 0, sizeof(mock_strategy_context_t));
     strategy.timeout = TEST_TIMEOUT;
     strategy.decision = NOOP;
-    strategy.batch_size = 2 * test_log_record_size;
     strategy.max_parallel_uploads = UINT32_MAX;
 
     mock_storage_context_t *storage = create_mock_storage();
     ASSERT_NOT_NULL(storage);
 
-    error_code = kaa_logging_init(log_collector, storage, &strategy);
+    kaa_log_bucket_constraints_t constraints = {
+        .max_bucket_size = 2 * test_log_record_size,
+        .max_bucket_log_count = UINT32_MAX,
+    };
+
+    error_code = kaa_logging_init(log_collector, storage, &strategy, &constraints);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     error_code = kaa_logging_add_record(log_collector, test_log_record, NULL);
@@ -568,12 +580,12 @@ void test_decline_timeout(void)
 
     error_code = kaa_logging_handle_server_sync(log_collector, reader, 0, response_buffer_size);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
-    ASSERT_NOT_NULL(storage->on_remove_by_id_count);
+    ASSERT_TRUE(storage->on_remove_by_id_count);
 
     error_code = kaa_logging_add_record(log_collector, test_log_record, NULL);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    ASSERT_NULL(strategy.on_timeout_count);
+    ASSERT_FALSE(strategy.on_timeout_count);
 
     test_log_record->destroy(test_log_record);
     kaa_platform_message_writer_destroy(writer);
@@ -606,14 +618,17 @@ void test_max_parallel_uploads_with_log_sync(void)
     mock_strategy_context_t strategy;
     memset(&strategy, 0, sizeof(mock_strategy_context_t));
     strategy.timeout = UINT32_MAX;
-    strategy.batch_size = 2 * test_log_size;
     strategy.decision = UPLOAD;
-
 
     mock_storage_context_t *storage = create_mock_storage();
     ASSERT_NOT_NULL(storage);
 
-    error_code = kaa_logging_init(log_collector, storage, &strategy);
+    kaa_log_bucket_constraints_t constraints = {
+        .max_bucket_size = 2 * test_log_size,
+        .max_bucket_log_count = UINT32_MAX,
+    };
+
+    error_code = kaa_logging_init(log_collector, storage, &strategy, &constraints);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     /*
@@ -688,13 +703,17 @@ void test_max_parallel_uploads_with_sync_all(void)
     mock_strategy_context_t strategy;
     memset(&strategy, 0, sizeof(mock_strategy_context_t));
     strategy.timeout = UINT32_MAX;
-    strategy.batch_size = 2 * test_log_size;
     strategy.decision = UPLOAD;
 
     mock_storage_context_t *storage = create_mock_storage();
     ASSERT_NOT_NULL(storage);
 
-    error_code = kaa_logging_init(log_collector, storage, &strategy);
+    kaa_log_bucket_constraints_t constraints = {
+        .max_bucket_size = 2 * test_log_size,
+        .max_bucket_log_count = UINT32_MAX,
+    };
+
+    error_code = kaa_logging_init(log_collector, storage, &strategy, &constraints);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     /*
@@ -706,7 +725,7 @@ void test_max_parallel_uploads_with_sync_all(void)
 
     size_t expected_size = 0;
     error_code = kaa_logging_request_get_size(log_collector, &expected_size);
-    ASSERT_NULL(expected_size);
+    ASSERT_FALSE(expected_size);
 
     /*
      * Ensure the first request is allowed.
@@ -719,7 +738,7 @@ void test_max_parallel_uploads_with_sync_all(void)
      * Do the first request to remember the delivery timeout of the log batch.
      */
     error_code = kaa_logging_request_get_size(log_collector, &expected_size);
-    ASSERT_NOT_NULL(expected_size);
+    ASSERT_TRUE(expected_size);
     size_t request_buffer_size = 256;
     char request_buffer[request_buffer_size];
     kaa_platform_message_writer_t *writer = NULL;
@@ -736,7 +755,7 @@ void test_max_parallel_uploads_with_sync_all(void)
      * Ensure the second request is forbidden.
      */
     error_code = kaa_logging_request_get_size(log_collector, &expected_size);
-    ASSERT_NULL(expected_size);
+    ASSERT_FALSE(expected_size);
 
     /*
      * Clean up.
@@ -879,7 +898,13 @@ KAA_GROUP_SETUP(log_callback_basic)
 
     memset(&strategy, 0, sizeof(strategy));
 
-    error_code = kaa_logging_init(log_collector, create_mock_storage(), &strategy);
+    kaa_log_bucket_constraints_t constraints = {
+        .max_bucket_size = 2 * test_log_record_size,
+        .max_bucket_log_count = UINT32_MAX,
+    };
+
+    error_code = kaa_logging_init(log_collector, create_mock_storage(),
+                                  &strategy, &constraints);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     expected_ctx        = NULL;
@@ -981,9 +1006,6 @@ KAA_GROUP_SETUP(log_callback_with_storage)
     memset(test_reader_buffer, 0, sizeof(test_reader_buffer));
     memset(test_writer_buffer, 0, sizeof(test_writer_buffer));
 
-    error_code = kaa_logging_init(log_collector, create_mock_storage(), &strategy);
-    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
-
     expected_ctx             = NULL;
     expected_bucked_id       = 0;
     call_is_expected         = 0;
@@ -995,8 +1017,15 @@ KAA_GROUP_SETUP(log_callback_with_storage)
     check_bucket             = 0;
 
     storage = create_mock_storage();
-    error_code = kaa_logging_init(log_collector, storage, &strategy);
+    kaa_log_bucket_constraints_t constraints = {
+        .max_bucket_size = 2 * test_log_record_size,
+        .max_bucket_log_count = UINT32_MAX,
+    };
+
+    error_code = kaa_logging_init(log_collector, storage,
+                                  &strategy, &constraints);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
 
     uint32_t response_count = 2;
     struct response_packet *response = (struct response_packet *) test_reader_buffer;
@@ -1204,11 +1233,12 @@ KAA_GROUP_SETUP(log_callback_with_storage_and_strategy)
     memset(&strategy, 0, sizeof(mock_strategy_context_t));
     strategy.timeout = TEST_TIMEOUT;
     strategy.decision = NOOP;
-    strategy.batch_size = TEST_BUFFER_SIZE;
     strategy.max_parallel_uploads = UINT32_MAX;
 
-    error_code = kaa_logging_init(log_collector, create_mock_storage(), &strategy);
-    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+    kaa_log_bucket_constraints_t constraints = {
+        .max_bucket_size = TEST_BUFFER_SIZE,
+        .max_bucket_log_count = UINT32_MAX,
+    };
 
     expected_ctx             = NULL;
     expected_bucked_id       = 0;
@@ -1221,7 +1251,9 @@ KAA_GROUP_SETUP(log_callback_with_storage_and_strategy)
     check_bucket             = 0;
 
     storage = create_mock_storage();
-    error_code = kaa_logging_init(log_collector, storage, &strategy);
+    error_code = kaa_logging_init(log_collector, create_mock_storage(),
+                                  &strategy, &constraints);
+
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     uint32_t response_count = 2;

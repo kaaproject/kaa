@@ -60,6 +60,10 @@ static kaa_service_t OPERATIONS_SERVICES[] = { KAA_SERVICE_PROFILE
                                              };
 static const int OPERATIONS_SERVICES_COUNT = sizeof(OPERATIONS_SERVICES) / sizeof(kaa_service_t);
 
+/* Logging constraints */
+#define MAX_LOG_COUNT           SIZE_MAX
+#define MAX_LOG_BUCKET_SIZE     (8 * 1024)
+
 struct kaa_client_t {
     kaa_context_t                       *context;
     bool                                operate;
@@ -443,9 +447,15 @@ kaa_error_t kaa_log_collector_init(kaa_client_t *kaa_client)
         return error_code;
     }
 
+    kaa_log_bucket_constraints_t bucket_sizes = {
+        .max_bucket_size = MAX_LOG_BUCKET_SIZE,
+        .max_bucket_log_count = MAX_LOG_COUNT,
+    };
+
     error_code = kaa_logging_init(kaa_client->context->log_collector
                                 , kaa_client->log_storage_context
-                                , kaa_client->log_upload_strategy_context);
+                                , kaa_client->log_upload_strategy_context
+                                , &bucket_sizes);
     if (error_code) {
         KAA_LOG_ERROR(kaa_client->context->logger, error_code,"Failed to init log collector");
         return error_code;
