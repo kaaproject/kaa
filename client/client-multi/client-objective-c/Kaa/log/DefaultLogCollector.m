@@ -41,7 +41,7 @@
         [[self.executorContext getApiExecutor] addOperationWithBlock:^{
             @try {
                 BucketInfo *bucketInfo = [weakSelf.storage addLogRecord:[[LogRecord alloc] initWithRecord:record]];
-                self.bucketInfoDictionary[[NSNumber numberWithInt:bucketInfo.bucketId]] = bucketInfo;
+                self.bucketInfoDictionary[@(bucketInfo.bucketId)] = bucketInfo;
                 [self addDeliveryRunner:runner bucketInfo:bucketInfo];
             }
             @catch (NSException *exception) {

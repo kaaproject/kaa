@@ -94,7 +94,7 @@
 - (NSNumber *)deserializeBoolean:(avro_reader_t)reader {
     int8_t *data = (int8_t *)malloc(sizeof(int8_t));
     avro_binary_encoding.read_boolean(reader, data);
-    return [NSNumber numberWithBool:(data[0] > 0 ? YES : NO)];
+    return @(data[0] > 0 ? YES : NO);
 }
 
 - (void)serializeBoolean:(NSNumber *)data to:(avro_writer_t)writer {
@@ -109,7 +109,7 @@
 - (NSNumber *)deserializeInt:(avro_reader_t)reader {
     int32_t data;
     avro_binary_encoding.read_int(reader, &data);
-    return [NSNumber numberWithInt:data];
+    return @(data);
 }
 
 - (void)serializeInt:(NSNumber *)data to:(avro_writer_t)writer {
@@ -124,7 +124,7 @@
 - (NSNumber *)deserializeLong:(avro_reader_t)reader {
     int64_t data;
     avro_binary_encoding.read_long(reader, &data);
-    return [NSNumber numberWithLongLong:data];
+    return @(data);
 }
 
 - (void)serializeLong:(NSNumber *)data to:(avro_writer_t)writer {
@@ -139,7 +139,7 @@
 - (NSNumber *)deserializeFloat:(avro_reader_t)reader {
     float data;
     avro_binary_encoding.read_float(reader, &data);
-    return [NSNumber numberWithFloat:data];
+    return @(data);
 }
 
 - (void)serializeFloat:(NSNumber *)data to:(avro_writer_t)writer {
@@ -154,7 +154,7 @@
 - (NSNumber *)deserializeDouble:(avro_reader_t)reader {
     double data;
     avro_binary_encoding.read_double(reader, &data);
-    return [NSNumber numberWithDouble:data];
+    return @(data);
 }
 
 - (void)serializeDouble:(NSNumber *)data to:(avro_writer_t)writer {
@@ -169,7 +169,7 @@
 - (NSNumber *)deserializeEnum:(avro_reader_t)reader {
     int64_t data;
     avro_binary_encoding.read_long(reader, &data);
-    return [NSNumber numberWithInt:(int32_t)data];
+    return @((int32_t)data);
 }
 
 - (void)serializeEnum:(NSNumber *)data to:(avro_writer_t)writer {

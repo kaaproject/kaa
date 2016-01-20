@@ -42,7 +42,8 @@
 - (void)testUpRequestCreationWithUnknownType {
     id<KaaClientState> state = mockProtocol(@protocol(KaaClientState));
     DefaultOperationDataProcessor *operationDataProcessor = [[DefaultOperationDataProcessor alloc] initWithClientState:state];
-    NSDictionary *types = [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:CHANNEL_DIRECTION_BIDIRECTIONAL] forKey:[NSNumber numberWithInt:TRANSPORT_TYPE_BOOTSTRAP]];
+    NSDictionary *types = [NSDictionary dictionaryWithObject:@(CHANNEL_DIRECTION_BIDIRECTIONAL)
+                                                      forKey:@(TRANSPORT_TYPE_BOOTSTRAP)];
     XCTAssertNil([operationDataProcessor compileRequest:types]);
 }
 
@@ -230,43 +231,43 @@
 
 #pragma mark - Supporting methods 
 
-- (NSDictionary *) getDictionaryWithTransportTypesWithBidirectional {
-    NSArray *keys = @[[NSNumber numberWithInt:TRANSPORT_TYPE_PROFILE],
-                      [NSNumber numberWithInt:TRANSPORT_TYPE_CONFIGURATION],
-                      [NSNumber numberWithInt:TRANSPORT_TYPE_NOTIFICATION],
-                      [NSNumber numberWithInt:TRANSPORT_TYPE_USER],
-                      [NSNumber numberWithInt:TRANSPORT_TYPE_EVENT],
-                      [NSNumber numberWithInt:TRANSPORT_TYPE_LOGGING]];
-    NSArray *objects = @[[NSNumber numberWithInt:CHANNEL_DIRECTION_BIDIRECTIONAL],
-                         [NSNumber numberWithInt:CHANNEL_DIRECTION_BIDIRECTIONAL],
-                         [NSNumber numberWithInt:CHANNEL_DIRECTION_BIDIRECTIONAL],
-                         [NSNumber numberWithInt:CHANNEL_DIRECTION_BIDIRECTIONAL],
-                         [NSNumber numberWithInt:CHANNEL_DIRECTION_BIDIRECTIONAL],
-                         [NSNumber numberWithInt:CHANNEL_DIRECTION_BIDIRECTIONAL],];
+- (NSDictionary *)getDictionaryWithTransportTypesWithBidirectional {
+    NSArray *keys = @[@(TRANSPORT_TYPE_PROFILE),
+                      @(TRANSPORT_TYPE_CONFIGURATION),
+                      @(TRANSPORT_TYPE_NOTIFICATION),
+                      @(TRANSPORT_TYPE_USER),
+                      @(TRANSPORT_TYPE_EVENT),
+                      @(TRANSPORT_TYPE_LOGGING)];
+    NSArray *objects = @[@(CHANNEL_DIRECTION_BIDIRECTIONAL),
+                         @(CHANNEL_DIRECTION_BIDIRECTIONAL),
+                         @(CHANNEL_DIRECTION_BIDIRECTIONAL),
+                         @(CHANNEL_DIRECTION_BIDIRECTIONAL),
+                         @(CHANNEL_DIRECTION_BIDIRECTIONAL),
+                         @(CHANNEL_DIRECTION_BIDIRECTIONAL)];
     NSDictionary *transportTypes = [NSDictionary dictionaryWithObjects:objects
                                                                forKeys:keys];
     return transportTypes;
 }
 
-- (NSDictionary *) getDictionaryWithTransportTypesWithDownDirection {
-    NSArray *keys = @[[NSNumber numberWithInt:TRANSPORT_TYPE_PROFILE],
-                      [NSNumber numberWithInt:TRANSPORT_TYPE_CONFIGURATION],
-                      [NSNumber numberWithInt:TRANSPORT_TYPE_NOTIFICATION],
-                      [NSNumber numberWithInt:TRANSPORT_TYPE_USER],
-                      [NSNumber numberWithInt:TRANSPORT_TYPE_EVENT],
-                      [NSNumber numberWithInt:TRANSPORT_TYPE_LOGGING]];
-    NSArray *objects = @[[NSNumber numberWithInt:CHANNEL_DIRECTION_DOWN],
-                         [NSNumber numberWithInt:CHANNEL_DIRECTION_DOWN],
-                         [NSNumber numberWithInt:CHANNEL_DIRECTION_DOWN],
-                         [NSNumber numberWithInt:CHANNEL_DIRECTION_DOWN],
-                         [NSNumber numberWithInt:CHANNEL_DIRECTION_DOWN],
-                         [NSNumber numberWithInt:CHANNEL_DIRECTION_DOWN],];
+- (NSDictionary *)getDictionaryWithTransportTypesWithDownDirection {
+    NSArray *keys = @[@(TRANSPORT_TYPE_PROFILE),
+                      @(TRANSPORT_TYPE_CONFIGURATION),
+                      @(TRANSPORT_TYPE_NOTIFICATION),
+                      @(TRANSPORT_TYPE_USER),
+                      @(TRANSPORT_TYPE_EVENT),
+                      @(TRANSPORT_TYPE_LOGGING)];
+    NSArray *objects = @[@(CHANNEL_DIRECTION_DOWN),
+                         @(CHANNEL_DIRECTION_DOWN),
+                         @(CHANNEL_DIRECTION_DOWN),
+                         @(CHANNEL_DIRECTION_DOWN),
+                         @(CHANNEL_DIRECTION_DOWN),
+                         @(CHANNEL_DIRECTION_DOWN)];
     NSDictionary *transportTypes = [NSDictionary dictionaryWithObjects:objects
                                                                forKeys:keys];
     return transportTypes;
 }
 
-- (ConfigurationSyncResponse *) getConfigurationResponse {
+- (ConfigurationSyncResponse *)getConfigurationResponse {
     ConfigurationSyncResponse *response = [[ConfigurationSyncResponse alloc] init];
     response.appStateSeqNumber = 1;
     response.responseStatus = SYNC_RESPONSE_STATUS_DELTA;
@@ -274,7 +275,7 @@
     return response;
 }
 
-- (NotificationSyncResponse *) getNotificationSyncReponse {
+- (NotificationSyncResponse *)getNotificationSyncReponse {
     NotificationSyncResponse *response = [[NotificationSyncResponse alloc]init];
     response.appStateSeqNumber = 1;
     response.responseStatus = SYNC_RESPONSE_STATUS_DELTA;
@@ -282,19 +283,19 @@
     return response;
 }
 
-- (ProfileSyncResponse *) getProfileSyncResponse {
+- (ProfileSyncResponse *)getProfileSyncResponse {
     ProfileSyncResponse *response = [[ProfileSyncResponse alloc] init];
     response.responseStatus = SYNC_RESPONSE_STATUS_DELTA;
     return response;
 }
 
-- (RedirectSyncResponse *) getRedirectSyncReponse {
+- (RedirectSyncResponse *)getRedirectSyncReponse {
     RedirectSyncResponse *response = [[RedirectSyncResponse alloc] init];
     response.accessPointId = 1;
     return response;
 }
 
-- (LogSyncResponse *) getLogSyncResponse {
+- (LogSyncResponse *)getLogSyncResponse {
     LogDeliveryStatus *status = [[LogDeliveryStatus alloc] init];
     status.requestId = 42;
     status.result = SYNC_RESPONSE_RESULT_TYPE_SUCCESS;
@@ -305,39 +306,39 @@
     return response;
 }
 
-- (KAAUnion *) getProfileSyncResponseUnion {
+- (KAAUnion *)getProfileSyncResponseUnion {
     KAAUnion *profileUnion = [KAAUnion unionWithBranch:KAA_UNION_PROFILE_SYNC_RESPONSE_OR_NULL_BRANCH_0 data:[self getProfileSyncResponse]];
     return profileUnion;
 }
 
-- (KAAUnion *) getConfigurationUnion {
+- (KAAUnion *)getConfigurationUnion {
     KAAUnion *confUnion = [KAAUnion unionWithBranch:KAA_UNION_CONFIGURATION_SYNC_RESPONSE_OR_NULL_BRANCH_0 data:[self getConfigurationResponse]];
     return confUnion;
 }
 
-- (KAAUnion *) getNotificationUnion {
+- (KAAUnion *)getNotificationUnion {
     KAAUnion *notifUnion = [KAAUnion unionWithBranch:KAA_UNION_NOTIFICATION_SYNC_RESPONSE_OR_NULL_BRANCH_0 data:[self getNotificationSyncReponse]];
     return notifUnion;
 }
 
-- (KAAUnion *) getUserUnion {
+- (KAAUnion *)getUserUnion {
     KAAUnion *userUnion = [KAAUnion unionWithBranch:KAA_UNION_USER_SYNC_RESPONSE_OR_NULL_BRANCH_0
                                             data:[[UserSyncResponse alloc] init]];
     return userUnion;
 }
 
-- (KAAUnion *) getEventUnion {
+- (KAAUnion *)getEventUnion {
     KAAUnion *eventUnion = [KAAUnion unionWithBranch:KAA_UNION_EVENT_SYNC_RESPONSE_OR_NULL_BRANCH_0
                                              data:[[EventSyncResponse alloc] init]];
     return eventUnion;
 }
 
-- (KAAUnion *) getRedirectUnion {
+- (KAAUnion *)getRedirectUnion {
     KAAUnion *redirectUnion = [KAAUnion unionWithBranch:KAA_UNION_REDIRECT_SYNC_RESPONSE_OR_NULL_BRANCH_0 data:[self getRedirectSyncReponse]];
     return redirectUnion;
 }
 
-- (KAAUnion *) getLogUnion {
+- (KAAUnion *)getLogUnion {
     KAAUnion *logUnion = [KAAUnion unionWithBranch:KAA_UNION_LOG_SYNC_RESPONSE_OR_NULL_BRANCH_0 data:[self getLogSyncResponse]];
     return logUnion;
 }

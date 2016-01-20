@@ -26,9 +26,9 @@
 #elseif ($TypeConverter.isAvroPrimitive($field.schema()))
 @property(nonatomic) ${field_type} ${field_name};
 #elseif ($TypeConverter.isAvroRecord($field.schema()))
-@property(nonatomic,strong) $namespacePrefix${field_type}${field_name};
+@property(nonatomic, strong) $namespacePrefix${field_type}${field_name};
 #else
-@property(nonatomic,strong) ${field_type}${field_name};
+@property(nonatomic, strong) ${field_type}${field_name};
 #end
 #end
 

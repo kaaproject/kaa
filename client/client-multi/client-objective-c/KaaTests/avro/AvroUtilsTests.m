@@ -41,13 +41,13 @@
         ADER
     } Snakes;
     
-    NSNumber *intOrigin = [NSNumber numberWithInt:23];
-    NSNumber *longOrigin = [NSNumber numberWithLong:234];
-    NSNumber *floatOrigin = [NSNumber numberWithFloat:394.3];
-    NSNumber *doubleOrigin = [NSNumber numberWithDouble:35235.54];
-    NSNumber *boolTrue = [NSNumber numberWithBool:YES];
-    NSNumber *boolFalse = [NSNumber numberWithBool:NO];
-    NSNumber *enumOrigin = [NSNumber numberWithInt:ADDER];
+    NSNumber *intOrigin = @(23);
+    NSNumber *longOrigin = @(234);
+    NSNumber *floatOrigin = @((float)394.3);
+    NSNumber *doubleOrigin = @(35235.54);
+    NSNumber *boolTrue = @(YES);
+    NSNumber *boolFalse = @(NO);
+    NSNumber *enumOrigin = @(ADDER);
     
     size_t bufSize = [self.utils getIntSize:intOrigin]
         + [self.utils getLongSize:longOrigin]
@@ -128,7 +128,7 @@
     }
     
     avro_reader_t reader = avro_reader_memory([serialized bytes], [serialized length]);
-    NSData *deserialized = [self.utils deserializeFixed:reader size:[NSNumber numberWithLong:[data length]]];
+    NSData *deserialized = [self.utils deserializeFixed:reader size:@((long)[data length])];
     avro_reader_free(reader);
     XCTAssertTrue([data isEqualToData:deserialized]);
 }

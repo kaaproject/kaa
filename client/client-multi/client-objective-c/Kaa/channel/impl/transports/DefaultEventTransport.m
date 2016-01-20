@@ -75,7 +75,7 @@
             NSArray *sortedEvents = [[eventsSet allObjects] sortedArrayUsingComparator:self.eventSequenceNumberComparator];
             DDLogDebug(@"%@ Going to send events bundle with size: %li", TAG, (long)[sortedEvents count]);
             request.events = [KAAUnion unionWithBranch:KAA_UNION_ARRAY_EVENT_OR_NULL_BRANCH_0 data:sortedEvents];
-            self.pendingEvents[[NSNumber numberWithInt:requestId]] = eventsSet;
+            self.pendingEvents[@(requestId)] = eventsSet;
         }
         
         request.eventSequenceNumberRequest = [KAAUnion unionWithBranch:KAA_UNION_EVENT_SEQUENCE_NUMBER_REQUEST_OR_NULL_BRANCH_1];
@@ -160,7 +160,7 @@
 //TODO revisit for performance improvement (inner cycles)
 - (void)onSyncResposeIdReceived:(int32_t)requestId {
     DDLogDebug(@"%@ Events sent with request id %li were accepted", TAG, (long)requestId);
-    NSNumber *key = [NSNumber numberWithInt:(int)requestId];
+    NSNumber *key = @(requestId);
     NSMutableSet *acceptedEvents = self.pendingEvents[key];
     if (acceptedEvents) {
         [self.pendingEvents removeObjectForKey:key];

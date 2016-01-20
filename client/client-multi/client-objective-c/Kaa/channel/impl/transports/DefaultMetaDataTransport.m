@@ -40,16 +40,16 @@
     request.sdkToken = [self.properties sdkToken];
     if (self.publicKeyHash.data) {
         request.endpointPublicKeyHash = [KAAUnion unionWithBranch:KAA_UNION_BYTES_OR_NULL_BRANCH_0
-                                                          data:self.publicKeyHash.data];
+                                                             data:self.publicKeyHash.data];
     }
     NSData *profileHashData = [self.state profileHash].data;
     if (profileHashData) {
         request.profileHash = [KAAUnion unionWithBranch:KAA_UNION_BYTES_OR_NULL_BRANCH_0
-                                                data:profileHashData];
+                                                   data:profileHashData];
     }
     
     request.timeout = [KAAUnion unionWithBranch:KAA_UNION_LONG_OR_NULL_BRANCH_0
-                                        data:[NSNumber numberWithLong:self.timeout]];
+                                           data:@(self.timeout)];
     return request;
 }
 

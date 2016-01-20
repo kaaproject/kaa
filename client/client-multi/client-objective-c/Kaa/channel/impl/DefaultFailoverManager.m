@@ -107,8 +107,7 @@
     
     @synchronized(self) {
         long currentResolutionTime = -1;
-        NSNumber *serverTypeKey = [NSNumber numberWithInt:[connectionInfo serverType]];
-        AccessPointIdResolution *pointResolution = self.resolutionProgressMap[serverTypeKey];
+        AccessPointIdResolution *pointResolution = self.resolutionProgressMap[@([connectionInfo serverType])];
         if (pointResolution) {
             currentResolutionTime = pointResolution.resolutionTime;
             if (pointResolution.accessPointId == [connectionInfo accessPointId]
@@ -143,7 +142,7 @@
             newPointResolution.resolutionTime = updatedResolutionTime;
         }
         
-        self.resolutionProgressMap[[NSNumber numberWithInt:[connectionInfo serverType]]] = newPointResolution;
+        self.resolutionProgressMap[@([connectionInfo serverType])] = newPointResolution;
     }
 }
 
@@ -157,7 +156,7 @@
     }
     
     @synchronized(self) {
-        NSNumber *serverTypeKey = [NSNumber numberWithInt:[connectionInfo serverType]];
+        NSNumber *serverTypeKey = @([connectionInfo serverType]);
         AccessPointIdResolution *pointResolution = self.resolutionProgressMap[serverTypeKey];
         if (!pointResolution) {
             AccessPointIdResolution *newPointResolution =
@@ -186,13 +185,11 @@
     }
     
     @synchronized(self) {
-        NSNumber *serverTypeKey = [NSNumber numberWithInt:[connectionInfo serverType]];
-        AccessPointIdResolution *pointResolution = self.resolutionProgressMap[serverTypeKey];
+        AccessPointIdResolution *pointResolution = self.resolutionProgressMap[@([connectionInfo serverType])];
         if (!pointResolution) {
             DDLogVerbose(@"%@ Server hasn't been set (failover resolution has happened), new server %@ can't be connected",
                          TAG, connectionInfo);
-        } else if (pointResolution.resolution
-                   && pointResolution.accessPointId == [connectionInfo accessPointId]) {
+        } else if (pointResolution.resolution && pointResolution.accessPointId == [connectionInfo accessPointId]) {
             DDLogVerbose(@"%@ Cancelling fail resolution: %@", TAG, pointResolution);
             [self cancelCurrentFailResolution:pointResolution];
         } else if (pointResolution.resolution) {
@@ -214,7 +211,7 @@
         switch (status) {
             case FAILOVER_STATUS_BOOTSTRAP_SERVERS_NA:
             {
-                serverTypeKey = [NSNumber numberWithInt:SERVER_BOOTSTRAP];
+                serverTypeKey = @(SERVER_BOOTSTRAP);
                 AccessPointIdResolution *btResolution = self.resolutionProgressMap[serverTypeKey];
                 long period = [TimeUtils convertValue:self.bootstrapServersRetryPeriod
                                             fromTimeUnit:self.timeUnit
@@ -228,7 +225,7 @@
                 break;
             case FAILOVER_STATUS_CURRENT_BOOTSTRAP_SERVER_NA:
             {
-                serverTypeKey = [NSNumber numberWithInt:SERVER_BOOTSTRAP];
+                serverTypeKey = @(SERVER_BOOTSTRAP);
                 AccessPointIdResolution *btResolution = self.resolutionProgressMap[serverTypeKey];
                 long period = [TimeUtils convertValue:self.bootstrapServersRetryPeriod
                                             fromTimeUnit:self.timeUnit
@@ -242,7 +239,7 @@
                 break;
             case FAILOVER_STATUS_NO_OPERATION_SERVERS_RECEIVED:
             {
-                serverTypeKey = [NSNumber numberWithInt:SERVER_BOOTSTRAP];
+                serverTypeKey = @(SERVER_BOOTSTRAP);
                 AccessPointIdResolution *btResolution = self.resolutionProgressMap[serverTypeKey];
                 if (btResolution) {
                     btResolution.resolutionTime = [[NSDate date] timeIntervalSince1970] * 1000;
@@ -256,7 +253,7 @@
                 break;
             case FAILOVER_STATUS_OPERATION_SERVERS_NA:
             {
-                serverTypeKey = [NSNumber numberWithInt:SERVER_OPERATIONS];
+                serverTypeKey = @(SERVER_OPERATIONS);
                 AccessPointIdResolution *opResolution = self.resolutionProgressMap[serverTypeKey];
                 long period = [TimeUtils convertValue:self.operationsServersRetryPeriod
                                             fromTimeUnit:self.timeUnit
@@ -311,7 +308,7 @@
 - (void)main {
     if (!self.isCancelled || !self.isFinished) {
         DDLogDebug(@"%@ Removing server %@ from resolution map for type: %i", TAG, self.info, [self.info serverType]);
-        [self.failoverManager.resolutionProgressMap removeObjectForKey:[NSNumber numberWithInt:[self.info serverType]]];
+        [self.failoverManager.resolutionProgressMap removeObjectForKey:@([self.info serverType])];
     }
 }
 

@@ -152,7 +152,7 @@
     request.requestId = requestId;
     request.eventClassFQNs = eventFQNs;
     EventListenersRequestBinding *bind = [[EventListenersRequestBinding alloc] initWithRequest:request delegate:delegate];
-    self.eventListenersRequests[[NSNumber numberWithInt:requestId]] = bind;
+    self.eventListenersRequests[@(requestId)] = bind;
     DDLogDebug(@"%@ Adding event listener resolution request. Request ID: %i", TAG, requestId);
     if (!self.isEngaged) {
         [self.transport sync];
@@ -163,10 +163,9 @@
 - (void)eventListenersResponseReceived:(NSArray *)response {
     for (EventListenersResponse *singleResponse in response) {
         DDLogDebug(@"%@ Received event listener resolution response: %@", TAG, singleResponse);
-        NSNumber *key = [NSNumber numberWithInt:singleResponse.requestId];
-        __block EventListenersRequestBinding *bind = self.eventListenersRequests[key];
+        __block EventListenersRequestBinding *bind = self.eventListenersRequests[@(singleResponse.requestId)];
         if (bind) {
-            [self.eventListenersRequests removeObjectForKey:[NSNumber numberWithInt:singleResponse.requestId]];
+            [self.eventListenersRequests removeObjectForKey:@(singleResponse.requestId)];
             [[self.executorContext getCallbackExecutor] addOperationWithBlock:^{
                 if (singleResponse.result == SYNC_RESPONSE_RESULT_TYPE_SUCCESS) {
                     [bind.delegate onEventListenersReceived:((NSArray *)singleResponse.listeners.data)];

@@ -99,13 +99,13 @@
         }
         if (!self.currentBucket || self.currentBucket.state != MEM_BUCKET_STATE_FREE) {
             self.currentBucket = [[MemBucket alloc] initWithId:self.bucketIdSeq++ maxSize:self.maxBucketSize maxRecordCount:self.maxBucketRecordCount];
-            self.buckets[[NSNumber numberWithInt:self.currentBucket.bucketId]] = self.currentBucket;
+            self.buckets[@(self.currentBucket.bucketId)] = self.currentBucket;
         }
         if (![self.currentBucket addRecord:record]) {
             DDLogVerbose(@"%@ Current bucket is full. Creating new one.", TAG);
             self.currentBucket.state = MEM_BUCKET_STATE_FULL;
             self.currentBucket = [[MemBucket alloc] initWithId:self.bucketIdSeq++ maxSize:self.maxBucketSize maxRecordCount:self.maxBucketRecordCount];
-            self.buckets[[NSNumber numberWithInt:self.currentBucket.bucketId]] = self.currentBucket;
+            self.buckets[@(self.currentBucket.bucketId)] = self.currentBucket;
             [self.currentBucket addRecord:record];
         }
         self.recordCount++;
@@ -149,14 +149,14 @@
 - (void)removeBucket:(int32_t)bucketId {
     DDLogVerbose(@"%@ Removing bucket with id [%i]", TAG, bucketId);
     @synchronized(self.buckets) {
-        [self.buckets removeObjectForKey:[NSNumber numberWithInt:bucketId]];
+        [self.buckets removeObjectForKey:@(bucketId)];
     }
 }
 
 - (void)rollbackBucket:(int32_t)bucketId {
     DDLogVerbose(@"%@ Upload of bucket [%i] failed", TAG, bucketId);
     @synchronized(self.buckets) {
-        MemBucket * bucket = self.buckets[[NSNumber numberWithInt:bucketId]];
+        MemBucket * bucket = self.buckets[@(bucketId)];
         bucket.state = MEM_BUCKET_STATE_FULL;
         self.consumedVolume += [bucket getSize];
         self.recordCount += [bucket getCount];

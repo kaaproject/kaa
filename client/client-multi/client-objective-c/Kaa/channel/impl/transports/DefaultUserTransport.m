@@ -84,7 +84,7 @@
         NSDictionary *attachEndpointRequests = [self.processor getAttachEndpointRequests];
         NSArray *attachResponses = response.endpointAttachResponses.data;
         for (EndpointAttachResponse *attached in attachResponses) {
-            EndpointAccessToken *attachedToken = attachEndpointRequests[[NSNumber numberWithInt:attached.requestId]];
+            EndpointAccessToken *attachedToken = attachEndpointRequests[@(attached.requestId)];
             if (attached.result == SYNC_RESPONSE_RESULT_TYPE_SUCCESS && attachedToken) {
                 DDLogInfo(@"%@ Token: %@", TAG, attachedToken);
                 if (attached.endpointKeyHash.branch == KAA_UNION_STRING_OR_NULL_BRANCH_0) {
@@ -106,7 +106,7 @@
         NSDictionary *detachEndpointRequests = [self.processor getDetachEndpointRequests];
         NSArray *detachResponses = response.endpointDetachResponses.data;
         for (EndpointDetachResponse *detached in detachResponses) {
-            EndpointKeyHash *detachedEndpointKeyHash = detachEndpointRequests[[NSNumber numberWithInt:detached.requestId]];
+            EndpointKeyHash *detachedEndpointKeyHash = detachEndpointRequests[@(detached.requestId)];
             if (detached.result == SYNC_RESPONSE_RESULT_TYPE_SUCCESS && detachedEndpointKeyHash) {
                 for (EndpointAccessToken *key in self.attachedEndpoints.allKeys) {
                     EndpointKeyHash *value = self.attachedEndpoints[key];

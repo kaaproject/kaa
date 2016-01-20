@@ -125,7 +125,7 @@
                                                                           bucket:bucket];
     
     [self.timeoutsLock lock];
-    self.timeouts[[NSNumber numberWithInt:bucket.bucketId]] = timeoutOperation;
+    self.timeouts[@(bucket.bucketId)] = timeoutOperation;
     [self.timeoutsLock unlock];
 }
 
@@ -136,7 +136,7 @@
             NSArray *deliveryStatuses = response.deliveryStatuses.data;
             __weak typeof(self) weakSelf = self;
             for (LogDeliveryStatus *status in deliveryStatuses) {
-                __block BucketInfo *bucketInfo = self.bucketInfoDictionary[[NSNumber numberWithInt:status.requestId]];
+                __block BucketInfo *bucketInfo = self.bucketInfoDictionary[@(status.requestId)];
                 
                 if (status.result == SYNC_RESPONSE_RESULT_TYPE_SUCCESS) {
                     [self.storage removeBucket:status.requestId];
@@ -171,7 +171,7 @@
                 
                 DDLogInfo(@"%@ Removing bucket id from timeouts: %i", TAG, status.requestId);
                 [self.timeoutsLock lock];
-                NSNumber *key = [NSNumber numberWithInt:status.requestId];
+                NSNumber *key = @(status.requestId);
                 NSOperation *timeout = self.timeouts[key];
                 if (timeout) {
                     [self.timeouts removeObjectForKey:key];
@@ -237,9 +237,9 @@
 - (void)checkDeliveryTimeout:(int32_t)bucketId {
     DDLogDebug(@"%@ Checking for a delivery timeout of the bucket with id: [%i]", TAG, bucketId);
     [self.timeoutsLock lock];
-    NSOperation *timeout = self.timeouts[[NSNumber numberWithInt:bucketId]];
+    NSOperation *timeout = self.timeouts[@(bucketId)];
     if (timeout) {
-        [self.timeouts removeObjectForKey:[NSNumber numberWithInt:bucketId]];
+        [self.timeouts removeObjectForKey:@(bucketId)];
     }
     [self.timeoutsLock unlock];
     
@@ -253,7 +253,7 @@
         }];
         if (self.logDeliveryDelegate) {
             [[self.executorContext getCallbackExecutor] addOperationWithBlock:^{
-                BucketInfo *bucket = weakSelf.bucketInfoDictionary[[NSNumber numberWithInt:bucketId]];
+                BucketInfo *bucket = weakSelf.bucketInfoDictionary[@(bucketId)];
                 [weakSelf.logDeliveryDelegate onLogDeliveryTimeout:bucket];
             }];
         }
@@ -269,7 +269,7 @@
 
 - (void)addDeliveryRunner:(BucketRunner *)runner bucketInfo:(BucketInfo *)bucketInfo {
     @synchronized(self.deliveryRunnerDictionary) {
-        NSNumber *bucketKey = [NSNumber numberWithInt:bucketInfo.bucketId];
+        NSNumber *bucketKey = @(bucketInfo.bucketId);
         
         NSMutableArray *deliveryRunners = self.deliveryRunnerDictionary[bucketKey];
         if (!deliveryRunners) {
@@ -283,7 +283,7 @@
 
 - (void)notifyDeliveryRunnerOnSuccess:(BucketInfo *)bucketInfo {
     @synchronized(self.deliveryRunnerDictionary) {
-        NSNumber *bucketKey = [NSNumber numberWithInt:bucketInfo.bucketId];
+        NSNumber *bucketKey = @(bucketInfo.bucketId);
         
         NSMutableArray *deliveryRunners = self.deliveryRunnerDictionary[bucketKey];
         if (deliveryRunners) {

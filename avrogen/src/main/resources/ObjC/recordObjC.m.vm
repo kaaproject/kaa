@@ -80,17 +80,17 @@ $initstring {
 #elseif ($TypeConverter.isAvroString($field_schema))
     [self.utils serializeString:self.${field_name} to:writer];
 #elseif ($TypeConverter.isAvroBoolean($field_schema))
-    [self.utils serializeBoolean:[NSNumber numberWithBool:self.${field_name}] to:writer];
+    [self.utils serializeBoolean:@(self.${field_name}) to:writer];
 #elseif ($TypeConverter.isAvroInt($field_schema))
-    [self.utils serializeInt:[NSNumber numberWithInt:self.${field_name}] to:writer];
+    [self.utils serializeInt:@(self.${field_name}) to:writer];
 #elseif ($TypeConverter.isAvroLong($field_schema))
-    [self.utils serializeLong:[NSNumber numberWithLongLong:self.${field_name}] to:writer];
+    [self.utils serializeLong:@(self.${field_name}) to:writer];
 #elseif ($TypeConverter.isAvroEnum($field_schema))
-    [self.utils serializeEnum:[NSNumber numberWithInt:self.${field_name}] to:writer];
+    [self.utils serializeEnum:@(self.${field_name}) to:writer];
 #elseif ($TypeConverter.isAvroFloat($field_schema))
-    [self.utils serializeFloat:[NSNumber numberWithFloat:self.${field_name}] to:writer];
+    [self.utils serializeFloat:@((float)self.${field_name}) to:writer];
 #elseif ($TypeConverter.isAvroDouble($field_schema))
-    [self.utils serializeDouble:[NSNumber numberWithDouble:self.${field_name}] to:writer];
+    [self.utils serializeDouble:@(self.${field_name}) to:writer];
 #elseif ($TypeConverter.isAvroArray($field_schema))
 #set ($array_element_schema = $field_schema.getElementType())
     #if ($TypeConverter.isAvroRecord($array_element_schema))
@@ -143,13 +143,13 @@ $initstring {
 #elseif ($TypeConverter.isAvroDouble($field_schema))
         recordSize += [self.utils getDoubleSize];
 #elseif ($TypeConverter.isAvroBoolean($field_schema))
-        recordSize += [self.utils getBooleanSize:[NSNumber numberWithBool:self.${field_name}]];
+        recordSize += [self.utils getBooleanSize:@(self.${field_name})];
 #elseif ($TypeConverter.isAvroInt($field_schema))
-        recordSize += [self.utils getIntSize:[NSNumber numberWithInt:self.${field_name}]];
+        recordSize += [self.utils getIntSize:@(self.${field_name})];
 #elseif ($TypeConverter.isAvroLong($field_schema))
-        recordSize += [self.utils getLongSize:[NSNumber numberWithLongLong:self.${field_name}]];
+        recordSize += [self.utils getLongSize:@(self.${field_name})];
 #elseif ($TypeConverter.isAvroEnum($field_schema))
-        recordSize += [self.utils getEnumSize:[NSNumber numberWithInt:self.${field_name}]];
+        recordSize += [self.utils getEnumSize:@(self.${field_name})];
 #elseif ($TypeConverter.isAvroArray($field_schema))
 #set ($array_element_schema = $field_schema.getElementType())
     #if ($TypeConverter.isAvroRecord($array_element_schema))
@@ -189,14 +189,14 @@ $initstring {
 #set ($field_schema = $field.schema())
 #if ($TypeConverter.isAvroRecord($field_schema))
 #set ($record_field_name = $field_schema.getName())
-    self.${field_name} = [self.utils deserializeRecord:reader as:[$namespacePrefix${record_field_name} class]];
+    self.${field_name} = ($namespacePrefix${record_field_name} *)[self.utils deserializeRecord:reader as:[$namespacePrefix${record_field_name} class]];
 #elseif ($TypeConverter.isAvroUnion($field_schema))
 #set ($union_element_name = $StyleUtils.fixCamelHumps($field_name))
     self.${field_name} = [self deserialize${union_element_name}:reader];
 #elseif ($TypeConverter.isAvroBytes($field_schema))
     self.${field_name} = [self.utils deserializeBytes:reader];
 #elseif ($TypeConverter.isAvroFixed($field_schema))
-    NSNumber *size = [NSNumber numberWithLong:$field_schema.getFixedSize()];
+    NSNumber *size = @($field_schema.getFixedSize());
     self.${field_name} = [self.utils deserializeFixed:reader size:size];
 #elseif ($TypeConverter.isAvroString($field_schema))
     self.${field_name} = [self.utils deserializeString:reader];
@@ -225,7 +225,7 @@ $initstring {
     #elseif ($TypeConverter.isAvroBytes($array_element_schema))
         self.${field_name} = [self.utils deserializeArray:reader withSelector:@selector(deserializeBytes:) andParam:nil target:nil];
     #elseif ($TypeConverter.isAvroFixed($array_element_schema))
-        NSNumber *size = [NSNumber numberWithLong:$field_schema.getFixedSize()];
+        NSNumber *size = @($field_schema.getFixedSize());
         self.${field_name} = [self.utils deserializeArray:reader withSelector:@selector(deserializeFixed:size:) andParam:size target:nil];
     #elseif ($TypeConverter.isAvroString($array_element_schema))
         self.${field_name} = [self.utils deserializeArray:reader withSelector:@selector(deserializeString:) andParam:nil target:nil];
@@ -331,7 +331,7 @@ $initstring {
 ###end
 
 - (size_t)get${field_name}Size:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:[NSNumber numberWithLong:kaaUnion.branch]];
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
     if (kaaUnion) {
         switch (kaaUnion.branch) {
 #set ($branch_number = 0)
@@ -425,7 +425,7 @@ $initstring {
 #elseif ($TypeConverter.isAvroBytes($branch_schema))
             kaaUnion.data = [self.utils deserializeBytes:reader];
 #elseif ($TypeConverter.isAvroFixed($branch_schema))
-            NSNumber *size = [NSNumber numberWithLong:$branch_schema.getFixedSize()];
+            NSNumber *size = @($branch_schema.getFixedSize());
             kaaUnion.data = [self.utils deserializeFixed:reader size:size];
 #elseif ($TypeConverter.isAvroString($branch_schema))
             kaaUnion.data = [self.utils deserializeString:reader];
@@ -452,7 +452,7 @@ $initstring {
     #elseif ($TypeConverter.isAvroBytes($array_element_schema))
             kaaUnion.data = [self.utils deserializeArray:reader withSelector:@selector(deserializeBytes:) andParam:nil target:nil];
     #elseif ($TypeConverter.isAvroFixed($array_element_schema))
-            NSNumber *size = [NSNumber numberWithLong:$branch_schema.getFixedSize()];
+            NSNumber *size = @($branch_schema.getFixedSize());
             kaaUnion.data = [self.utils deserializeArray:reader withSelector:@selector(deserializeFixed:size:) andParam:size target:nil];
     #elseif ($TypeConverter.isAvroString($array_element_schema))
             kaaUnion.data = [self.utils deserializeArray:reader withSelector:@selector(deserializeString:) andParam:nil target:nil];

@@ -61,8 +61,8 @@ static int REQUEST_ID_2 = 73;
 - (void)testCreateRequest {
     EndpointAccessToken *accTok1 = [[EndpointAccessToken alloc] initWithToken:@"accessToken1"];
     EndpointKeyHash *keyHash1 = [[EndpointKeyHash alloc] initWithKeyHash:@"keyHash1"];
-    NSDictionary *attachedEPs = [NSDictionary dictionaryWithObject:accTok1 forKey:[NSNumber numberWithInt:REQUEST_ID_1]];
-    NSDictionary *detachedEPs = [NSDictionary dictionaryWithObject:keyHash1 forKey:[NSNumber numberWithInt:REQUEST_ID_1]];
+    NSDictionary *attachedEPs = [NSDictionary dictionaryWithObject:accTok1 forKey:@(REQUEST_ID_1)];
+    NSDictionary *detachedEPs = [NSDictionary dictionaryWithObject:keyHash1 forKey:@(REQUEST_ID_1)];
     
     id <EndpointRegistrationProcessor> processor =
     mockProtocol(@protocol(EndpointRegistrationProcessor));
@@ -89,17 +89,19 @@ static int REQUEST_ID_2 = 73;
     EndpointAccessToken *accTok2 = [[EndpointAccessToken alloc] initWithToken:@"accessToken2"];
     EndpointKeyHash *keyHash1 = [[EndpointKeyHash alloc] initWithKeyHash:@"keyHash1"];
     EndpointKeyHash *keyHash2 = [[EndpointKeyHash alloc] initWithKeyHash:@"keyHash2"];
-    NSDictionary *attachedEPs = [NSDictionary dictionaryWithObjects:@[accTok1, accTok2] forKeys:@[[NSNumber numberWithInt:REQUEST_ID_1], [NSNumber numberWithInt:REQUEST_ID_2]]];
-    NSDictionary *detachedEPs = [NSDictionary dictionaryWithObjects:@[keyHash1, keyHash2] forKeys:@[[NSNumber numberWithInt:REQUEST_ID_1], [NSNumber numberWithInt:REQUEST_ID_2]]];
+    NSDictionary *attachedEPs = [NSDictionary dictionaryWithObjects:@[accTok1, accTok2]
+                                                            forKeys:@[@(REQUEST_ID_1), @(REQUEST_ID_2)]];
+    NSDictionary *detachedEPs = [NSDictionary dictionaryWithObjects:@[keyHash1, keyHash2]
+                                                            forKeys:@[@(REQUEST_ID_1), @(REQUEST_ID_2)]];
     
-    id <KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
-    id <EndpointRegistrationProcessor> processor = mockProtocol(@protocol(EndpointRegistrationProcessor));
+    id<KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
+    id<EndpointRegistrationProcessor> processor = mockProtocol(@protocol(EndpointRegistrationProcessor));
     
     
     [given([processor getAttachEndpointRequests]) willReturn:attachedEPs];
     [given([processor getDetachEndpointRequests]) willReturn:detachedEPs];
     
-    id <UserTransport> transport = [[DefaultUserTransport alloc] init];
+    id<UserTransport> transport = [[DefaultUserTransport alloc] init];
     
     EndpointAttachResponse *attachResponse1 = [[EndpointAttachResponse alloc] init];
     EndpointAttachResponse *attachResponse2 = [[EndpointAttachResponse alloc] init];

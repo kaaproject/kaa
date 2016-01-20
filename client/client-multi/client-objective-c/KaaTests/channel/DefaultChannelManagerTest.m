@@ -39,16 +39,16 @@
 
 - (void)setUp {
     self.supportedTypes =
-    [NSDictionary dictionaryWithObjects:@[[NSNumber numberWithInt:CHANNEL_DIRECTION_BIDIRECTIONAL],
-                                          [NSNumber numberWithInt:CHANNEL_DIRECTION_UP],
-                                          [NSNumber numberWithInt:CHANNEL_DIRECTION_BIDIRECTIONAL],
-                                          [NSNumber numberWithInt:CHANNEL_DIRECTION_BIDIRECTIONAL],
-                                          [NSNumber numberWithInt:CHANNEL_DIRECTION_DOWN]]
-                                forKeys:@[[NSNumber numberWithInt: TRANSPORT_TYPE_PROFILE],
-                                          [NSNumber numberWithInt:TRANSPORT_TYPE_CONFIGURATION],
-                                          [NSNumber numberWithInt:TRANSPORT_TYPE_NOTIFICATION],
-                                          [NSNumber numberWithInt:TRANSPORT_TYPE_USER],
-                                          [NSNumber numberWithInt:TRANSPORT_TYPE_EVENT]]];
+    [NSDictionary dictionaryWithObjects:@[@(CHANNEL_DIRECTION_BIDIRECTIONAL),
+                                          @(CHANNEL_DIRECTION_UP),
+                                          @(CHANNEL_DIRECTION_BIDIRECTIONAL),
+                                          @(CHANNEL_DIRECTION_BIDIRECTIONAL),
+                                          @(CHANNEL_DIRECTION_DOWN)]
+                                forKeys:@[@( TRANSPORT_TYPE_PROFILE),
+                                          @(TRANSPORT_TYPE_CONFIGURATION),
+                                          @(TRANSPORT_TYPE_NOTIFICATION),
+                                          @(TRANSPORT_TYPE_USER),
+                                          @(TRANSPORT_TYPE_EVENT)]];
     self.executorContext = mockProtocol(@protocol(ExecutorContext));
     NSOperationQueue *queue = [[NSOperationQueue alloc] init];
     [queue setMaxConcurrentOperationCount:1];
@@ -98,7 +98,7 @@
     id <KaaDataChannel> channel = mockProtocol(@protocol(KaaDataChannel));
     [given([channel getSupportedTransportTypes]) willReturn:self.supportedTypes];
     [given([channel getTransportProtocolId]) willReturn:[TransportProtocolIdHolder HTTPTransportID]];
-    [given([channel getServerType]) willReturn:[NSNumber numberWithInt:SERVER_OPERATIONS]];
+    [given([channel getServerType]) willReturn:@(SERVER_OPERATIONS)];
     [given([channel getId]) willReturn:@"mock_channel"];
     
     id <KaaInternalChannelManager> channelManager = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager bootstrapServers:bootstrapServers context:nil];
@@ -134,7 +134,7 @@
     id <KaaDataChannel> channel = mockProtocol(@protocol(KaaDataChannel));
     [given([channel getSupportedTransportTypes]) willReturn:self.supportedTypes];
     [given([channel getTransportProtocolId]) willReturn:[TransportProtocolIdHolder HTTPTransportID]];
-    [given([channel getServerType]) willReturn:[NSNumber numberWithInt:SERVER_BOOTSTRAP]];
+    [given([channel getServerType]) willReturn:@(SERVER_BOOTSTRAP)];
     [given([channel getId]) willReturn:@"mock_channel"];
     
     id <KaaChannelManager> channelManager = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager bootstrapServers:bootstrapServers context:nil];
@@ -182,7 +182,7 @@
     id <KaaDataChannel> channel = mockProtocol(@protocol(KaaDataChannel));
     [given([channel getSupportedTransportTypes]) willReturn:self.supportedTypes];
     [given([channel getTransportProtocolId]) willReturn:[TransportProtocolIdHolder HTTPTransportID]];
-    [given([channel getServerType]) willReturn:[NSNumber numberWithInt:SERVER_BOOTSTRAP]];
+    [given([channel getServerType]) willReturn:@(SERVER_BOOTSTRAP)];
     [given([channel getId]) willReturn:@"mock_channel"];
     
     id <ExecutorContext> executorContext = mockProtocol(@protocol(ExecutorContext));
@@ -216,7 +216,7 @@
     id <KaaDataChannel> channel = mockProtocol(@protocol(KaaDataChannel));
     [given([channel getSupportedTransportTypes]) willReturn:self.supportedTypes];
     [given([channel getTransportProtocolId]) willReturn:[TransportProtocolIdHolder HTTPTransportID]];
-    [given([channel getServerType]) willReturn:[NSNumber numberWithInt:SERVER_BOOTSTRAP]];
+    [given([channel getServerType]) willReturn:@(SERVER_BOOTSTRAP)];
     [given([channel getId]) willReturn:@"mock_channel"];
     
     id <KaaChannelManager> channelManager = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager bootstrapServers:bootstrapServers context:nil];
@@ -235,30 +235,30 @@
     id <BootstrapManager> bootstrapManager = mockProtocol(@protocol(BootstrapManager));
     
     NSDictionary *typesForChannel2 =
-    [NSDictionary dictionaryWithObjects:@[[NSNumber numberWithInt:CHANNEL_DIRECTION_BIDIRECTIONAL],
-                                          [NSNumber numberWithInt:CHANNEL_DIRECTION_UP],
-                                          [NSNumber numberWithInt:CHANNEL_DIRECTION_BIDIRECTIONAL],
-                                          [NSNumber numberWithInt:CHANNEL_DIRECTION_DOWN]]
-                                forKeys:@[[NSNumber numberWithInt: TRANSPORT_TYPE_PROFILE],
-                                          [NSNumber numberWithInt:TRANSPORT_TYPE_CONFIGURATION],
-                                          [NSNumber numberWithInt:TRANSPORT_TYPE_NOTIFICATION],
-                                          [NSNumber numberWithInt:TRANSPORT_TYPE_EVENT]]];
+    [NSDictionary dictionaryWithObjects:@[@(CHANNEL_DIRECTION_BIDIRECTIONAL),
+                                          @(CHANNEL_DIRECTION_UP),
+                                          @(CHANNEL_DIRECTION_BIDIRECTIONAL),
+                                          @(CHANNEL_DIRECTION_DOWN)]
+                                forKeys:@[@( TRANSPORT_TYPE_PROFILE),
+                                          @(TRANSPORT_TYPE_CONFIGURATION),
+                                          @(TRANSPORT_TYPE_NOTIFICATION),
+                                          @(TRANSPORT_TYPE_EVENT)]];
     id <KaaDataChannel> channel1 = mockProtocol(@protocol(KaaDataChannel));
     [given([channel1 getSupportedTransportTypes]) willReturn:typesForChannel2];
     [given([channel1 getTransportProtocolId]) willReturn:[TransportProtocolIdHolder HTTPTransportID]];
-    [given([channel1 getServerType]) willReturn:[NSNumber numberWithInt:SERVER_OPERATIONS]];
+    [given([channel1 getServerType]) willReturn:@(SERVER_OPERATIONS)];
     [given([channel1 getId]) willReturn:@"mock_channel1"];
     
     id <KaaDataChannel> channel2 = mockProtocol(@protocol(KaaDataChannel));
     [given([channel2 getSupportedTransportTypes]) willReturn:self.supportedTypes];
     [given([channel2 getTransportProtocolId]) willReturn:[TransportProtocolIdHolder HTTPTransportID]];
-    [given([channel2 getServerType]) willReturn:[NSNumber numberWithInt:SERVER_OPERATIONS]];
+    [given([channel2 getServerType]) willReturn:@(SERVER_OPERATIONS)];
     [given([channel2 getId]) willReturn:@"mock_channel2"];
     
     id <KaaDataChannel> channel3 = mockProtocol(@protocol(KaaDataChannel));
     [given([channel3 getSupportedTransportTypes]) willReturn:typesForChannel2];
     [given([channel3 getTransportProtocolId]) willReturn:[TransportProtocolIdHolder TCPTransportID]];
-    [given([channel3 getServerType]) willReturn:[NSNumber numberWithInt:SERVER_OPERATIONS]];
+    [given([channel3 getServerType]) willReturn:@(SERVER_OPERATIONS)];
     [given([channel3 getId]) willReturn:@"mock_channel3"];
     
     id <KaaInternalChannelManager> channelManager = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager bootstrapServers:bootstrapServers context:nil];
@@ -327,7 +327,10 @@
     id <BootstrapManager> bootstrapManager = mockProtocol(@protocol(BootstrapManager));
     DefaultChannelManager *channelManager = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager bootstrapServers:bootstrapServers context:nil];
     
-    NSDictionary *types = [NSDictionary dictionaryWithObjects:@[[NSNumber numberWithInt:CHANNEL_DIRECTION_BIDIRECTIONAL], [NSNumber numberWithInt:CHANNEL_DIRECTION_UP]] forKeys:@[[NSNumber numberWithInt:TRANSPORT_TYPE_CONFIGURATION], [NSNumber numberWithInt:TRANSPORT_TYPE_LOGGING]]];
+    NSDictionary *types = [NSDictionary dictionaryWithObjects:@[@(CHANNEL_DIRECTION_BIDIRECTIONAL),
+                                                                @(CHANNEL_DIRECTION_UP)]
+                                                      forKeys:@[@(TRANSPORT_TYPE_CONFIGURATION),
+                                                                @(TRANSPORT_TYPE_LOGGING)]];
     
     id <KaaDataChannel> channel = mockProtocol(@protocol(KaaDataChannel));
     [given([channel getTransportProtocolId]) willReturn:[TransportProtocolIdHolder TCPTransportID]];
@@ -352,10 +355,10 @@
     DefaultChannelManager *channelManager = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager bootstrapServers:bootstrapServers context:nil];
     
     NSDictionary *types =
-    [NSDictionary dictionaryWithObjects:@[[NSNumber numberWithInt:CHANNEL_DIRECTION_DOWN],
-                                          [NSNumber numberWithInt:CHANNEL_DIRECTION_UP]]
-                                forKeys:@[[NSNumber numberWithInt:TRANSPORT_TYPE_CONFIGURATION],
-                                          [NSNumber numberWithInt:TRANSPORT_TYPE_LOGGING]]];
+    [NSDictionary dictionaryWithObjects:@[@(CHANNEL_DIRECTION_DOWN),
+                                          @(CHANNEL_DIRECTION_UP)]
+                                forKeys:@[@(TRANSPORT_TYPE_CONFIGURATION),
+                                          @(TRANSPORT_TYPE_LOGGING)]];
     id <KaaDataChannel> channel = mockProtocol(@protocol(KaaDataChannel));
     [given([channel getTransportProtocolId]) willReturn:[TransportProtocolIdHolder TCPTransportID]];
     [given([channel getSupportedTransportTypes]) willReturn:types];
@@ -375,10 +378,10 @@
     DefaultChannelManager *channelManager = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager bootstrapServers:bootstrapServers context:nil];
     
     NSDictionary *types =
-    [NSDictionary dictionaryWithObjects:@[[NSNumber numberWithInt:CHANNEL_DIRECTION_BIDIRECTIONAL],
-                                          [NSNumber numberWithInt:CHANNEL_DIRECTION_UP]]
-                                forKeys:@[[NSNumber numberWithInt:TRANSPORT_TYPE_CONFIGURATION],
-                                          [NSNumber numberWithInt:TRANSPORT_TYPE_LOGGING]]];
+    [NSDictionary dictionaryWithObjects:@[@(CHANNEL_DIRECTION_BIDIRECTIONAL),
+                                          @(CHANNEL_DIRECTION_UP)]
+                                forKeys:@[@(TRANSPORT_TYPE_CONFIGURATION),
+                                          @(TRANSPORT_TYPE_LOGGING)]];
     id <KaaDataChannel> channel = mockProtocol(@protocol(KaaDataChannel));
     [given([channel getTransportProtocolId]) willReturn:[TransportProtocolIdHolder TCPTransportID]];
     [given([channel getSupportedTransportTypes]) willReturn:types];
@@ -402,8 +405,8 @@
     DefaultChannelManager *channelManager = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager bootstrapServers:bootstrapServers context:nil];
     
     NSDictionary *types =
-    [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:CHANNEL_DIRECTION_BIDIRECTIONAL]
-                                forKey:[NSNumber numberWithInt:TRANSPORT_TYPE_CONFIGURATION]];
+    [NSDictionary dictionaryWithObject:@(CHANNEL_DIRECTION_BIDIRECTIONAL)
+                                forKey:@(TRANSPORT_TYPE_CONFIGURATION)];
     id <KaaDataChannel> channel = mockProtocol(@protocol(KaaDataChannel));
     [given([channel getTransportProtocolId]) willReturn:[TransportProtocolIdHolder TCPTransportID]];
     [given([channel getSupportedTransportTypes]) willReturn:types];
@@ -421,8 +424,8 @@
     DefaultChannelManager *channelManager = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager bootstrapServers:bootstrapServers context:nil];
     
     NSDictionary *types =
-    [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:CHANNEL_DIRECTION_BIDIRECTIONAL]
-                                forKey:[NSNumber numberWithInt:TRANSPORT_TYPE_CONFIGURATION]];
+    [NSDictionary dictionaryWithObject:@(CHANNEL_DIRECTION_BIDIRECTIONAL)
+                                forKey:@(TRANSPORT_TYPE_CONFIGURATION)];
     id <KaaDataChannel> channel = mockProtocol(@protocol(KaaDataChannel));
     [given([channel getTransportProtocolId]) willReturn:[TransportProtocolIdHolder TCPTransportID]];
     [given([channel getSupportedTransportTypes]) willReturn:types];
@@ -440,8 +443,8 @@
     DefaultChannelManager *channelManager = [[DefaultChannelManager alloc] initWithBootstrapManager:bootstrapManager bootstrapServers:bootstrapServers context:nil];
     
     NSDictionary *types =
-    [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:CHANNEL_DIRECTION_BIDIRECTIONAL]
-                                forKey:[NSNumber numberWithInt:TRANSPORT_TYPE_CONFIGURATION]];
+    [NSDictionary dictionaryWithObject:@(CHANNEL_DIRECTION_BIDIRECTIONAL)
+                                forKey:@(TRANSPORT_TYPE_CONFIGURATION)];
     id <KaaDataChannel> channel = mockProtocol(@protocol(KaaDataChannel));
     [given([channel getTransportProtocolId]) willReturn:[TransportProtocolIdHolder TCPTransportID]];
     [given([channel getSupportedTransportTypes]) willReturn:types];

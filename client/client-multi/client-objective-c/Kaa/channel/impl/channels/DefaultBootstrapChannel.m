@@ -46,8 +46,7 @@
     self = [super initWithClient:client state:state failoverManager:manager];
     if (self) {
         self.supportedTypes = [[NSDictionary alloc] initWithObjectsAndKeys:
-                                [NSNumber numberWithInt:CHANNEL_DIRECTION_BIDIRECTIONAL],
-                                [NSNumber numberWithInt:TRANSPORT_TYPE_BOOTSTRAP], nil];
+                                @(CHANNEL_DIRECTION_BIDIRECTIONAL), @(TRANSPORT_TYPE_BOOTSTRAP), nil];
     }
     return self;
 }

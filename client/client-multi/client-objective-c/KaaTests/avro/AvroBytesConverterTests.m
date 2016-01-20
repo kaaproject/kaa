@@ -75,7 +75,7 @@
     
     UserAttachResponse *response = [[UserAttachResponse alloc] init];
     response.result = SYNC_RESPONSE_RESULT_TYPE_REDIRECT;
-    NSNumber *errorCode = [NSNumber numberWithInt:USER_ATTACH_ERROR_CODE_REMOTE_ERROR];
+    NSNumber *errorCode = @(USER_ATTACH_ERROR_CODE_REMOTE_ERROR);
     NSString *errorReason = @"test errorReason";
     response.errorCode = [KAAUnion unionWithBranch:KAA_UNION_USER_ATTACH_ERROR_CODE_OR_NULL_BRANCH_0 data:errorCode];
     response.errorReason = [KAAUnion unionWithBranch:KAA_UNION_STRING_OR_NULL_BRANCH_0 data:errorReason];

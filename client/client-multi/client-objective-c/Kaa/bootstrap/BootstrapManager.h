@@ -47,7 +47,7 @@
  *
  * @param accessPointId endpoint's DNS.
  */
-- (void)useNextOperationsServerByAccessPointId:(int)accessPointId;
+- (void)useNextOperationsServerByAccessPointId:(int32_t)accessPointId;
 
 /**
  * Sets bootstrap transport object.

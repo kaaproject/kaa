@@ -191,7 +191,8 @@
 - (void)testTopicState {
     id <KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
     
-    NSDictionary *nfSubscriptions = [NSDictionary dictionaryWithObjects:@[@"topic1", @"topic2"] forKeys:@[[NSNumber numberWithInt:10], [NSNumber numberWithInt:3]]];
+    NSDictionary *nfSubscriptions = [NSDictionary dictionaryWithObjects:@[@"topic1", @"topic2"]
+                                                                forKeys:@[@(10), @(3)]];
     
     [given([clientState getNotificationSubscriptions]) willReturn:nfSubscriptions];
     
@@ -208,30 +209,30 @@
 
 #pragma mark - Supporting methods
 
-- (NotificationSyncResponse *) getNewNotificationResponseWithResponseStatus:(SyncResponseStatus)responseStatus {
+- (NotificationSyncResponse *)getNewNotificationResponseWithResponseStatus:(SyncResponseStatus)responseStatus {
     NotificationSyncResponse *response = [[NotificationSyncResponse alloc] init];
     response.responseStatus = responseStatus;
     response.appStateSeqNumber = 3;
     return response;
 }
 
-- (Notification *) getNotificationWithTopicId:(NSString *)topicId uid:(NSString *)uid sequenceNumber:(int)seqNumber {
+- (Notification *)getNotificationWithTopicId:(NSString *)topicId uid:(NSString *)uid sequenceNumber:(int32_t)seqNumber {
     Notification *notification = [[Notification alloc]init];
     notification.topicId = topicId;
     notification.uid = [KAAUnion unionWithBranch:KAA_UNION_STRING_OR_NULL_BRANCH_0 data:uid];
     notification.type = NOTIFICATION_TYPE_CUSTOM;
-    notification.seqNumber = [KAAUnion unionWithBranch:KAA_UNION_INT_OR_NULL_BRANCH_0 data:[NSNumber numberWithInt:seqNumber]];
+    notification.seqNumber = [KAAUnion unionWithBranch:KAA_UNION_INT_OR_NULL_BRANCH_0 data:@(seqNumber)];
     int32_t int123 = 123;
     NSData *data = [NSData dataWithBytes:&int123 length:sizeof(int123)];
     notification.body = data;
     return notification;
 }
 
-- (Notification *) getNotificationWithTopicId:(NSString *)topicId sequenceNumber:(int)seqNumber {
+- (Notification *)getNotificationWithTopicId:(NSString *)topicId sequenceNumber:(int32_t)seqNumber {
     Notification *notification = [[Notification alloc]init];
     notification.topicId = topicId;
     notification.type = NOTIFICATION_TYPE_CUSTOM;
-    notification.seqNumber = [KAAUnion unionWithBranch:KAA_UNION_INT_OR_NULL_BRANCH_0 data:[NSNumber numberWithInt:seqNumber]];
+    notification.seqNumber = [KAAUnion unionWithBranch:KAA_UNION_INT_OR_NULL_BRANCH_0 data:@(seqNumber)];
     int32_t int123 = 123;
     NSData *data = [NSData dataWithBytes:&int123 length:sizeof(int123)];
     notification.body = data;

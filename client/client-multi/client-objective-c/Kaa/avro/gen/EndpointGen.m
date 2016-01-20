@@ -37,13 +37,13 @@
 
 - (void)serialize:(avro_writer_t)writer {
     [self.utils serializeString:self.topicId to:writer];
-    [self.utils serializeInt:[NSNumber numberWithInt:self.seqNumber] to:writer];
+    [self.utils serializeInt:@(self.seqNumber) to:writer];
 }
 
 - (size_t)getSize {
     size_t recordSize = 0;
         recordSize += [self.utils getStringSize:self.topicId];
-        recordSize += [self.utils getIntSize:[NSNumber numberWithInt:self.seqNumber]];
+        recordSize += [self.utils getIntSize:@(self.seqNumber)];
     return recordSize;
 }
 
@@ -73,13 +73,13 @@
 
 - (void)serialize:(avro_writer_t)writer {
     [self.utils serializeString:self.topicId to:writer];
-    [self.utils serializeEnum:[NSNumber numberWithInt:self.command] to:writer];
+    [self.utils serializeEnum:@(self.command) to:writer];
 }
 
 - (size_t)getSize {
     size_t recordSize = 0;
         recordSize += [self.utils getStringSize:self.topicId];
-        recordSize += [self.utils getEnumSize:[NSNumber numberWithInt:self.command]];
+        recordSize += [self.utils getEnumSize:@(self.command)];
     return recordSize;
 }
 
@@ -157,14 +157,14 @@
 }
 
 - (void)serialize:(avro_writer_t)writer {
-    [self.utils serializeEnum:[NSNumber numberWithInt:self.result] to:writer];
+    [self.utils serializeEnum:@(self.result) to:writer];
     [self serializeErrorCode:self.errorCode to:writer];
     [self serializeErrorReason:self.errorReason to:writer];
 }
 
 - (size_t)getSize {
     size_t recordSize = 0;
-        recordSize += [self.utils getEnumSize:[NSNumber numberWithInt:self.result]];
+        recordSize += [self.utils getEnumSize:@(self.result)];
         recordSize += [self getErrorCodeSize:self.errorCode];
         recordSize += [self getErrorReasonSize:self.errorReason];
     return recordSize;
@@ -197,7 +197,7 @@
 }
 
 - (size_t)getErrorCodeSize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:[NSNumber numberWithLong:kaaUnion.branch]];
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
     if (kaaUnion) {
         switch (kaaUnion.branch) {
         case KAA_UNION_USER_ATTACH_ERROR_CODE_OR_NULL_BRANCH_0:
@@ -254,7 +254,7 @@
 }
 
 - (size_t)getErrorReasonSize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:[NSNumber numberWithLong:kaaUnion.branch]];
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
     if (kaaUnion) {
         switch (kaaUnion.branch) {
         case KAA_UNION_STRING_OR_NULL_BRANCH_0:
@@ -378,13 +378,13 @@
 }
 
 - (void)serialize:(avro_writer_t)writer {
-    [self.utils serializeInt:[NSNumber numberWithInt:self.requestId] to:writer];
+    [self.utils serializeInt:@(self.requestId) to:writer];
     [self.utils serializeString:self.endpointAccessToken to:writer];
 }
 
 - (size_t)getSize {
     size_t recordSize = 0;
-        recordSize += [self.utils getIntSize:[NSNumber numberWithInt:self.requestId]];
+        recordSize += [self.utils getIntSize:@(self.requestId)];
         recordSize += [self.utils getStringSize:self.endpointAccessToken];
     return recordSize;
 }
@@ -422,16 +422,16 @@
 }
 
 - (void)serialize:(avro_writer_t)writer {
-    [self.utils serializeInt:[NSNumber numberWithInt:self.requestId] to:writer];
+    [self.utils serializeInt:@(self.requestId) to:writer];
     [self serializeEndpointKeyHash:self.endpointKeyHash to:writer];
-    [self.utils serializeEnum:[NSNumber numberWithInt:self.result] to:writer];
+    [self.utils serializeEnum:@(self.result) to:writer];
 }
 
 - (size_t)getSize {
     size_t recordSize = 0;
-        recordSize += [self.utils getIntSize:[NSNumber numberWithInt:self.requestId]];
+        recordSize += [self.utils getIntSize:@(self.requestId)];
         recordSize += [self getEndpointKeyHashSize:self.endpointKeyHash];
-        recordSize += [self.utils getEnumSize:[NSNumber numberWithInt:self.result]];
+        recordSize += [self.utils getEnumSize:@(self.result)];
     return recordSize;
 }
 
@@ -462,7 +462,7 @@
 }
 
 - (size_t)getEndpointKeyHashSize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:[NSNumber numberWithLong:kaaUnion.branch]];
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
     if (kaaUnion) {
         switch (kaaUnion.branch) {
         case KAA_UNION_STRING_OR_NULL_BRANCH_0:
@@ -518,13 +518,13 @@
 }
 
 - (void)serialize:(avro_writer_t)writer {
-    [self.utils serializeInt:[NSNumber numberWithInt:self.requestId] to:writer];
+    [self.utils serializeInt:@(self.requestId) to:writer];
     [self.utils serializeString:self.endpointKeyHash to:writer];
 }
 
 - (size_t)getSize {
     size_t recordSize = 0;
-        recordSize += [self.utils getIntSize:[NSNumber numberWithInt:self.requestId]];
+        recordSize += [self.utils getIntSize:@(self.requestId)];
         recordSize += [self.utils getStringSize:self.endpointKeyHash];
     return recordSize;
 }
@@ -554,14 +554,14 @@
 }
 
 - (void)serialize:(avro_writer_t)writer {
-    [self.utils serializeInt:[NSNumber numberWithInt:self.requestId] to:writer];
-    [self.utils serializeEnum:[NSNumber numberWithInt:self.result] to:writer];
+    [self.utils serializeInt:@(self.requestId) to:writer];
+    [self.utils serializeEnum:@(self.result) to:writer];
 }
 
 - (size_t)getSize {
     size_t recordSize = 0;
-        recordSize += [self.utils getIntSize:[NSNumber numberWithInt:self.requestId]];
-        recordSize += [self.utils getEnumSize:[NSNumber numberWithInt:self.result]];
+        recordSize += [self.utils getIntSize:@(self.requestId)];
+        recordSize += [self.utils getEnumSize:@(self.result)];
     return recordSize;
 }
 
@@ -601,7 +601,7 @@
 }
 
 - (void)serialize:(avro_writer_t)writer {
-    [self.utils serializeInt:[NSNumber numberWithInt:self.seqNum] to:writer];
+    [self.utils serializeInt:@(self.seqNum) to:writer];
     [self.utils serializeString:self.eventClassFQN to:writer];
     [self.utils serializeBytes:self.eventData to:writer];
     [self serializeSource:self.source to:writer];
@@ -610,7 +610,7 @@
 
 - (size_t)getSize {
     size_t recordSize = 0;
-        recordSize += [self.utils getIntSize:[NSNumber numberWithInt:self.seqNum]];
+        recordSize += [self.utils getIntSize:@(self.seqNum)];
         recordSize += [self.utils getStringSize:self.eventClassFQN];
         recordSize += [self.utils getBytesSize:self.eventData];
         recordSize += [self getSourceSize:self.source];
@@ -647,7 +647,7 @@
 }
 
 - (size_t)getSourceSize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:[NSNumber numberWithLong:kaaUnion.branch]];
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
     if (kaaUnion) {
         switch (kaaUnion.branch) {
         case KAA_UNION_STRING_OR_NULL_BRANCH_0:
@@ -704,7 +704,7 @@
 }
 
 - (size_t)getTargetSize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:[NSNumber numberWithLong:kaaUnion.branch]];
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
     if (kaaUnion) {
         switch (kaaUnion.branch) {
         case KAA_UNION_STRING_OR_NULL_BRANCH_0:
@@ -760,13 +760,13 @@
 }
 
 - (void)serialize:(avro_writer_t)writer {
-    [self.utils serializeInt:[NSNumber numberWithInt:self.requestId] to:writer];
+    [self.utils serializeInt:@(self.requestId) to:writer];
             [self.utils serializeArray:self.eventClassFQNs to:writer withSelector:@selector(serializeString:to:) target:nil];
     }
 
 - (size_t)getSize {
     size_t recordSize = 0;
-        recordSize += [self.utils getIntSize:[NSNumber numberWithInt:self.requestId]];
+        recordSize += [self.utils getIntSize:@(self.requestId)];
             recordSize += [self.utils getArraySize:self.eventClassFQNs withSelector:@selector(getStringSize:) parameterized:YES target:self.utils];
         return recordSize;
 }
@@ -804,16 +804,16 @@
 }
 
 - (void)serialize:(avro_writer_t)writer {
-    [self.utils serializeInt:[NSNumber numberWithInt:self.requestId] to:writer];
+    [self.utils serializeInt:@(self.requestId) to:writer];
     [self serializeListeners:self.listeners to:writer];
-    [self.utils serializeEnum:[NSNumber numberWithInt:self.result] to:writer];
+    [self.utils serializeEnum:@(self.result) to:writer];
 }
 
 - (size_t)getSize {
     size_t recordSize = 0;
-        recordSize += [self.utils getIntSize:[NSNumber numberWithInt:self.requestId]];
+        recordSize += [self.utils getIntSize:@(self.requestId)];
         recordSize += [self getListenersSize:self.listeners];
-        recordSize += [self.utils getEnumSize:[NSNumber numberWithInt:self.result]];
+        recordSize += [self.utils getEnumSize:@(self.result)];
     return recordSize;
 }
 
@@ -844,7 +844,7 @@
 }
 
 - (size_t)getListenersSize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:[NSNumber numberWithLong:kaaUnion.branch]];
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
     if (kaaUnion) {
         switch (kaaUnion.branch) {
         case KAA_UNION_ARRAY_STRING_OR_NULL_BRANCH_0:
@@ -921,12 +921,12 @@
 }
 
 - (void)serialize:(avro_writer_t)writer {
-    [self.utils serializeInt:[NSNumber numberWithInt:self.seqNum] to:writer];
+    [self.utils serializeInt:@(self.seqNum) to:writer];
 }
 
 - (size_t)getSize {
     size_t recordSize = 0;
-        recordSize += [self.utils getIntSize:[NSNumber numberWithInt:self.seqNum]];
+        recordSize += [self.utils getIntSize:@(self.seqNum)];
     return recordSize;
 }
 
@@ -966,7 +966,7 @@
 
 - (void)serialize:(avro_writer_t)writer {
     [self.utils serializeString:self.topicId to:writer];
-    [self.utils serializeEnum:[NSNumber numberWithInt:self.type] to:writer];
+    [self.utils serializeEnum:@(self.type) to:writer];
     [self serializeUid:self.uid to:writer];
     [self serializeSeqNumber:self.seqNumber to:writer];
     [self.utils serializeBytes:self.body to:writer];
@@ -975,7 +975,7 @@
 - (size_t)getSize {
     size_t recordSize = 0;
         recordSize += [self.utils getStringSize:self.topicId];
-        recordSize += [self.utils getEnumSize:[NSNumber numberWithInt:self.type]];
+        recordSize += [self.utils getEnumSize:@(self.type)];
         recordSize += [self getUidSize:self.uid];
         recordSize += [self getSeqNumberSize:self.seqNumber];
         recordSize += [self.utils getBytesSize:self.body];
@@ -1011,7 +1011,7 @@
 }
 
 - (size_t)getUidSize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:[NSNumber numberWithLong:kaaUnion.branch]];
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
     if (kaaUnion) {
         switch (kaaUnion.branch) {
         case KAA_UNION_STRING_OR_NULL_BRANCH_0:
@@ -1068,7 +1068,7 @@
 }
 
 - (size_t)getSeqNumberSize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:[NSNumber numberWithLong:kaaUnion.branch]];
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
     if (kaaUnion) {
         switch (kaaUnion.branch) {
         case KAA_UNION_INT_OR_NULL_BRANCH_0:
@@ -1127,14 +1127,14 @@
 - (void)serialize:(avro_writer_t)writer {
     [self.utils serializeString:self.id to:writer];
     [self.utils serializeString:self.name to:writer];
-    [self.utils serializeEnum:[NSNumber numberWithInt:self.subscriptionType] to:writer];
+    [self.utils serializeEnum:@(self.subscriptionType) to:writer];
 }
 
 - (size_t)getSize {
     size_t recordSize = 0;
         recordSize += [self.utils getStringSize:self.id];
         recordSize += [self.utils getStringSize:self.name];
-        recordSize += [self.utils getEnumSize:[NSNumber numberWithInt:self.subscriptionType]];
+        recordSize += [self.utils getEnumSize:@(self.subscriptionType)];
     return recordSize;
 }
 
@@ -1250,7 +1250,7 @@
 }
 
 - (size_t)getEndpointPublicKeyHashSize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:[NSNumber numberWithLong:kaaUnion.branch]];
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
     if (kaaUnion) {
         switch (kaaUnion.branch) {
         case KAA_UNION_BYTES_OR_NULL_BRANCH_0:
@@ -1307,7 +1307,7 @@
 }
 
 - (size_t)getProfileHashSize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:[NSNumber numberWithLong:kaaUnion.branch]];
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
     if (kaaUnion) {
         switch (kaaUnion.branch) {
         case KAA_UNION_BYTES_OR_NULL_BRANCH_0:
@@ -1364,7 +1364,7 @@
 }
 
 - (size_t)getTimeoutSize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:[NSNumber numberWithLong:kaaUnion.branch]];
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
     if (kaaUnion) {
         switch (kaaUnion.branch) {
         case KAA_UNION_LONG_OR_NULL_BRANCH_0:
@@ -1469,7 +1469,7 @@
 }
 
 - (size_t)getEndpointPublicKeySize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:[NSNumber numberWithLong:kaaUnion.branch]];
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
     if (kaaUnion) {
         switch (kaaUnion.branch) {
         case KAA_UNION_BYTES_OR_NULL_BRANCH_0:
@@ -1526,7 +1526,7 @@
 }
 
 - (size_t)getEndpointAccessTokenSize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:[NSNumber numberWithLong:kaaUnion.branch]];
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
     if (kaaUnion) {
         switch (kaaUnion.branch) {
         case KAA_UNION_STRING_OR_NULL_BRANCH_0:
@@ -1582,14 +1582,14 @@
 }
 
 - (void)serialize:(avro_writer_t)writer {
-    [self.utils serializeInt:[NSNumber numberWithInt:self.id] to:writer];
-    [self.utils serializeInt:[NSNumber numberWithInt:self.version] to:writer];
+    [self.utils serializeInt:@(self.id) to:writer];
+    [self.utils serializeInt:@(self.version) to:writer];
 }
 
 - (size_t)getSize {
     size_t recordSize = 0;
-        recordSize += [self.utils getIntSize:[NSNumber numberWithInt:self.id]];
-        recordSize += [self.utils getIntSize:[NSNumber numberWithInt:self.version]];
+        recordSize += [self.utils getIntSize:@(self.id)];
+        recordSize += [self.utils getIntSize:@(self.version)];
     return recordSize;
 }
 
@@ -1618,13 +1618,13 @@
 }
 
 - (void)serialize:(avro_writer_t)writer {
-    [self.utils serializeInt:[NSNumber numberWithInt:self.requestId] to:writer];
+    [self.utils serializeInt:@(self.requestId) to:writer];
             [self.utils serializeArray:self.supportedProtocols to:writer withSelector:@selector(serializeRecord:to:) target:nil];
     }
 
 - (size_t)getSize {
     size_t recordSize = 0;
-        recordSize += [self.utils getIntSize:[NSNumber numberWithInt:self.requestId]];
+        recordSize += [self.utils getIntSize:@(self.requestId)];
             recordSize += [self.utils getArraySize:self.supportedProtocols withSelector:@selector(getSize) parameterized:NO target:nil];
         return recordSize;
 }
@@ -1664,14 +1664,14 @@
 }
 
 - (void)serialize:(avro_writer_t)writer {
-    [self.utils serializeInt:[NSNumber numberWithInt:self.appStateSeqNumber] to:writer];
+    [self.utils serializeInt:@(self.appStateSeqNumber) to:writer];
     [self serializeConfigurationHash:self.configurationHash to:writer];
     [self serializeResyncOnly:self.resyncOnly to:writer];
 }
 
 - (size_t)getSize {
     size_t recordSize = 0;
-        recordSize += [self.utils getIntSize:[NSNumber numberWithInt:self.appStateSeqNumber]];
+        recordSize += [self.utils getIntSize:@(self.appStateSeqNumber)];
         recordSize += [self getConfigurationHashSize:self.configurationHash];
         recordSize += [self getResyncOnlySize:self.resyncOnly];
     return recordSize;
@@ -1704,7 +1704,7 @@
 }
 
 - (size_t)getConfigurationHashSize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:[NSNumber numberWithLong:kaaUnion.branch]];
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
     if (kaaUnion) {
         switch (kaaUnion.branch) {
         case KAA_UNION_BYTES_OR_NULL_BRANCH_0:
@@ -1761,7 +1761,7 @@
 }
 
 - (size_t)getResyncOnlySize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:[NSNumber numberWithLong:kaaUnion.branch]];
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
     if (kaaUnion) {
         switch (kaaUnion.branch) {
         case KAA_UNION_BOOLEAN_OR_NULL_BRANCH_0:
@@ -1830,7 +1830,7 @@
 }
 
 - (void)serialize:(avro_writer_t)writer {
-    [self.utils serializeInt:[NSNumber numberWithInt:self.appStateSeqNumber] to:writer];
+    [self.utils serializeInt:@(self.appStateSeqNumber) to:writer];
     [self serializeTopicListHash:self.topicListHash to:writer];
     [self serializeTopicStates:self.topicStates to:writer];
     [self serializeAcceptedUnicastNotifications:self.acceptedUnicastNotifications to:writer];
@@ -1839,7 +1839,7 @@
 
 - (size_t)getSize {
     size_t recordSize = 0;
-        recordSize += [self.utils getIntSize:[NSNumber numberWithInt:self.appStateSeqNumber]];
+        recordSize += [self.utils getIntSize:@(self.appStateSeqNumber)];
         recordSize += [self getTopicListHashSize:self.topicListHash];
         recordSize += [self getTopicStatesSize:self.topicStates];
         recordSize += [self getAcceptedUnicastNotificationsSize:self.acceptedUnicastNotifications];
@@ -1876,7 +1876,7 @@
 }
 
 - (size_t)getTopicListHashSize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:[NSNumber numberWithLong:kaaUnion.branch]];
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
     if (kaaUnion) {
         switch (kaaUnion.branch) {
         case KAA_UNION_BYTES_OR_NULL_BRANCH_0:
@@ -1933,7 +1933,7 @@
 }
 
 - (size_t)getTopicStatesSize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:[NSNumber numberWithLong:kaaUnion.branch]];
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
     if (kaaUnion) {
         switch (kaaUnion.branch) {
         case KAA_UNION_ARRAY_TOPIC_STATE_OR_NULL_BRANCH_0:
@@ -1991,7 +1991,7 @@
 }
 
 - (size_t)getAcceptedUnicastNotificationsSize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:[NSNumber numberWithLong:kaaUnion.branch]];
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
     if (kaaUnion) {
         switch (kaaUnion.branch) {
         case KAA_UNION_ARRAY_STRING_OR_NULL_BRANCH_0:
@@ -2048,7 +2048,7 @@
 }
 
 - (size_t)getSubscriptionCommandsSize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:[NSNumber numberWithLong:kaaUnion.branch]];
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
     if (kaaUnion) {
         switch (kaaUnion.branch) {
         case KAA_UNION_ARRAY_SUBSCRIPTION_COMMAND_OR_NULL_BRANCH_0:
@@ -2155,7 +2155,7 @@
 }
 
 - (size_t)getUserAttachRequestSize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:[NSNumber numberWithLong:kaaUnion.branch]];
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
     if (kaaUnion) {
         switch (kaaUnion.branch) {
         case KAA_UNION_USER_ATTACH_REQUEST_OR_NULL_BRANCH_0:
@@ -2212,7 +2212,7 @@
 }
 
 - (size_t)getEndpointAttachRequestsSize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:[NSNumber numberWithLong:kaaUnion.branch]];
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
     if (kaaUnion) {
         switch (kaaUnion.branch) {
         case KAA_UNION_ARRAY_ENDPOINT_ATTACH_REQUEST_OR_NULL_BRANCH_0:
@@ -2270,7 +2270,7 @@
 }
 
 - (size_t)getEndpointDetachRequestsSize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:[NSNumber numberWithLong:kaaUnion.branch]];
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
     if (kaaUnion) {
         switch (kaaUnion.branch) {
         case KAA_UNION_ARRAY_ENDPOINT_DETACH_REQUEST_OR_NULL_BRANCH_0:
@@ -2370,7 +2370,7 @@
 }
 
 - (size_t)getEventSequenceNumberRequestSize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:[NSNumber numberWithLong:kaaUnion.branch]];
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
     if (kaaUnion) {
         switch (kaaUnion.branch) {
         default:
@@ -2420,7 +2420,7 @@
 }
 
 - (size_t)getEventListenersRequestsSize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:[NSNumber numberWithLong:kaaUnion.branch]];
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
     if (kaaUnion) {
         switch (kaaUnion.branch) {
         case KAA_UNION_ARRAY_EVENT_LISTENERS_REQUEST_OR_NULL_BRANCH_0:
@@ -2478,7 +2478,7 @@
 }
 
 - (size_t)getEventsSize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:[NSNumber numberWithLong:kaaUnion.branch]];
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
     if (kaaUnion) {
         switch (kaaUnion.branch) {
         case KAA_UNION_ARRAY_EVENT_OR_NULL_BRANCH_0:
@@ -2542,13 +2542,13 @@
 }
 
 - (void)serialize:(avro_writer_t)writer {
-    [self.utils serializeInt:[NSNumber numberWithInt:self.requestId] to:writer];
+    [self.utils serializeInt:@(self.requestId) to:writer];
     [self serializeLogEntries:self.logEntries to:writer];
 }
 
 - (size_t)getSize {
     size_t recordSize = 0;
-        recordSize += [self.utils getIntSize:[NSNumber numberWithInt:self.requestId]];
+        recordSize += [self.utils getIntSize:@(self.requestId)];
         recordSize += [self getLogEntriesSize:self.logEntries];
     return recordSize;
 }
@@ -2579,7 +2579,7 @@
 }
 
 - (size_t)getLogEntriesSize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:[NSNumber numberWithLong:kaaUnion.branch]];
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
     if (kaaUnion) {
         switch (kaaUnion.branch) {
         case KAA_UNION_ARRAY_LOG_ENTRY_OR_NULL_BRANCH_0:
@@ -2637,14 +2637,14 @@
 }
 
 - (void)serialize:(avro_writer_t)writer {
-    [self.utils serializeInt:[NSNumber numberWithInt:self.accessPointId] to:writer];
+    [self.utils serializeInt:@(self.accessPointId) to:writer];
     [self.protocolVersionInfo serialize:writer];
     [self.utils serializeBytes:self.connectionInfo to:writer];
 }
 
 - (size_t)getSize {
     size_t recordSize = 0;
-        recordSize += [self.utils getIntSize:[NSNumber numberWithInt:self.accessPointId]];
+        recordSize += [self.utils getIntSize:@(self.accessPointId)];
         recordSize += [self.protocolVersionInfo getSize];
         recordSize += [self.utils getBytesSize:self.connectionInfo];
     return recordSize;
@@ -2676,13 +2676,13 @@
 }
 
 - (void)serialize:(avro_writer_t)writer {
-    [self.utils serializeInt:[NSNumber numberWithInt:self.requestId] to:writer];
+    [self.utils serializeInt:@(self.requestId) to:writer];
             [self.utils serializeArray:self.supportedProtocols to:writer withSelector:@selector(serializeRecord:to:) target:nil];
     }
 
 - (size_t)getSize {
     size_t recordSize = 0;
-        recordSize += [self.utils getIntSize:[NSNumber numberWithInt:self.requestId]];
+        recordSize += [self.utils getIntSize:@(self.requestId)];
             recordSize += [self.utils getArraySize:self.supportedProtocols withSelector:@selector(getSize) parameterized:NO target:nil];
         return recordSize;
 }
@@ -2712,12 +2712,12 @@
 }
 
 - (void)serialize:(avro_writer_t)writer {
-    [self.utils serializeEnum:[NSNumber numberWithInt:self.responseStatus] to:writer];
+    [self.utils serializeEnum:@(self.responseStatus) to:writer];
 }
 
 - (size_t)getSize {
     size_t recordSize = 0;
-        recordSize += [self.utils getEnumSize:[NSNumber numberWithInt:self.responseStatus]];
+        recordSize += [self.utils getEnumSize:@(self.responseStatus)];
     return recordSize;
 }
 
@@ -2755,16 +2755,16 @@
 }
 
 - (void)serialize:(avro_writer_t)writer {
-    [self.utils serializeInt:[NSNumber numberWithInt:self.appStateSeqNumber] to:writer];
-    [self.utils serializeEnum:[NSNumber numberWithInt:self.responseStatus] to:writer];
+    [self.utils serializeInt:@(self.appStateSeqNumber) to:writer];
+    [self.utils serializeEnum:@(self.responseStatus) to:writer];
     [self serializeConfSchemaBody:self.confSchemaBody to:writer];
     [self serializeConfDeltaBody:self.confDeltaBody to:writer];
 }
 
 - (size_t)getSize {
     size_t recordSize = 0;
-        recordSize += [self.utils getIntSize:[NSNumber numberWithInt:self.appStateSeqNumber]];
-        recordSize += [self.utils getEnumSize:[NSNumber numberWithInt:self.responseStatus]];
+        recordSize += [self.utils getIntSize:@(self.appStateSeqNumber)];
+        recordSize += [self.utils getEnumSize:@(self.responseStatus)];
         recordSize += [self getConfSchemaBodySize:self.confSchemaBody];
         recordSize += [self getConfDeltaBodySize:self.confDeltaBody];
     return recordSize;
@@ -2798,7 +2798,7 @@
 }
 
 - (size_t)getConfSchemaBodySize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:[NSNumber numberWithLong:kaaUnion.branch]];
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
     if (kaaUnion) {
         switch (kaaUnion.branch) {
         case KAA_UNION_BYTES_OR_NULL_BRANCH_0:
@@ -2855,7 +2855,7 @@
 }
 
 - (size_t)getConfDeltaBodySize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:[NSNumber numberWithLong:kaaUnion.branch]];
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
     if (kaaUnion) {
         switch (kaaUnion.branch) {
         case KAA_UNION_BYTES_OR_NULL_BRANCH_0:
@@ -2921,16 +2921,16 @@
 }
 
 - (void)serialize:(avro_writer_t)writer {
-    [self.utils serializeInt:[NSNumber numberWithInt:self.appStateSeqNumber] to:writer];
-    [self.utils serializeEnum:[NSNumber numberWithInt:self.responseStatus] to:writer];
+    [self.utils serializeInt:@(self.appStateSeqNumber) to:writer];
+    [self.utils serializeEnum:@(self.responseStatus) to:writer];
     [self serializeNotifications:self.notifications to:writer];
     [self serializeAvailableTopics:self.availableTopics to:writer];
 }
 
 - (size_t)getSize {
     size_t recordSize = 0;
-        recordSize += [self.utils getIntSize:[NSNumber numberWithInt:self.appStateSeqNumber]];
-        recordSize += [self.utils getEnumSize:[NSNumber numberWithInt:self.responseStatus]];
+        recordSize += [self.utils getIntSize:@(self.appStateSeqNumber)];
+        recordSize += [self.utils getEnumSize:@(self.responseStatus)];
         recordSize += [self getNotificationsSize:self.notifications];
         recordSize += [self getAvailableTopicsSize:self.availableTopics];
     return recordSize;
@@ -2964,7 +2964,7 @@
 }
 
 - (size_t)getNotificationsSize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:[NSNumber numberWithLong:kaaUnion.branch]];
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
     if (kaaUnion) {
         switch (kaaUnion.branch) {
         case KAA_UNION_ARRAY_NOTIFICATION_OR_NULL_BRANCH_0:
@@ -3022,7 +3022,7 @@
 }
 
 - (size_t)getAvailableTopicsSize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:[NSNumber numberWithLong:kaaUnion.branch]];
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
     if (kaaUnion) {
         switch (kaaUnion.branch) {
         case KAA_UNION_ARRAY_TOPIC_OR_NULL_BRANCH_0:
@@ -3139,7 +3139,7 @@
 }
 
 - (size_t)getUserAttachResponseSize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:[NSNumber numberWithLong:kaaUnion.branch]];
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
     if (kaaUnion) {
         switch (kaaUnion.branch) {
         case KAA_UNION_USER_ATTACH_RESPONSE_OR_NULL_BRANCH_0:
@@ -3196,7 +3196,7 @@
 }
 
 - (size_t)getUserAttachNotificationSize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:[NSNumber numberWithLong:kaaUnion.branch]];
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
     if (kaaUnion) {
         switch (kaaUnion.branch) {
         case KAA_UNION_USER_ATTACH_NOTIFICATION_OR_NULL_BRANCH_0:
@@ -3253,7 +3253,7 @@
 }
 
 - (size_t)getUserDetachNotificationSize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:[NSNumber numberWithLong:kaaUnion.branch]];
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
     if (kaaUnion) {
         switch (kaaUnion.branch) {
         case KAA_UNION_USER_DETACH_NOTIFICATION_OR_NULL_BRANCH_0:
@@ -3310,7 +3310,7 @@
 }
 
 - (size_t)getEndpointAttachResponsesSize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:[NSNumber numberWithLong:kaaUnion.branch]];
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
     if (kaaUnion) {
         switch (kaaUnion.branch) {
         case KAA_UNION_ARRAY_ENDPOINT_ATTACH_RESPONSE_OR_NULL_BRANCH_0:
@@ -3368,7 +3368,7 @@
 }
 
 - (size_t)getEndpointDetachResponsesSize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:[NSNumber numberWithLong:kaaUnion.branch]];
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
     if (kaaUnion) {
         switch (kaaUnion.branch) {
         case KAA_UNION_ARRAY_ENDPOINT_DETACH_RESPONSE_OR_NULL_BRANCH_0:
@@ -3475,7 +3475,7 @@
 }
 
 - (size_t)getEventSequenceNumberResponseSize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:[NSNumber numberWithLong:kaaUnion.branch]];
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
     if (kaaUnion) {
         switch (kaaUnion.branch) {
         case KAA_UNION_EVENT_SEQUENCE_NUMBER_RESPONSE_OR_NULL_BRANCH_0:
@@ -3532,7 +3532,7 @@
 }
 
 - (size_t)getEventListenersResponsesSize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:[NSNumber numberWithLong:kaaUnion.branch]];
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
     if (kaaUnion) {
         switch (kaaUnion.branch) {
         case KAA_UNION_ARRAY_EVENT_LISTENERS_RESPONSE_OR_NULL_BRANCH_0:
@@ -3590,7 +3590,7 @@
 }
 
 - (size_t)getEventsSize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:[NSNumber numberWithLong:kaaUnion.branch]];
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
     if (kaaUnion) {
         switch (kaaUnion.branch) {
         case KAA_UNION_ARRAY_EVENT_OR_NULL_BRANCH_0:
@@ -3655,15 +3655,15 @@
 }
 
 - (void)serialize:(avro_writer_t)writer {
-    [self.utils serializeInt:[NSNumber numberWithInt:self.requestId] to:writer];
-    [self.utils serializeEnum:[NSNumber numberWithInt:self.result] to:writer];
+    [self.utils serializeInt:@(self.requestId) to:writer];
+    [self.utils serializeEnum:@(self.result) to:writer];
     [self serializeErrorCode:self.errorCode to:writer];
 }
 
 - (size_t)getSize {
     size_t recordSize = 0;
-        recordSize += [self.utils getIntSize:[NSNumber numberWithInt:self.requestId]];
-        recordSize += [self.utils getEnumSize:[NSNumber numberWithInt:self.result]];
+        recordSize += [self.utils getIntSize:@(self.requestId)];
+        recordSize += [self.utils getEnumSize:@(self.result)];
         recordSize += [self getErrorCodeSize:self.errorCode];
     return recordSize;
 }
@@ -3695,7 +3695,7 @@
 }
 
 - (size_t)getErrorCodeSize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:[NSNumber numberWithLong:kaaUnion.branch]];
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
     if (kaaUnion) {
         switch (kaaUnion.branch) {
         case KAA_UNION_LOG_DELIVERY_ERROR_CODE_OR_NULL_BRANCH_0:
@@ -3791,7 +3791,7 @@
 }
 
 - (size_t)getDeliveryStatusesSize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:[NSNumber numberWithLong:kaaUnion.branch]];
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
     if (kaaUnion) {
         switch (kaaUnion.branch) {
         case KAA_UNION_ARRAY_LOG_DELIVERY_STATUS_OR_NULL_BRANCH_0:
@@ -3847,12 +3847,12 @@
 }
 
 - (void)serialize:(avro_writer_t)writer {
-    [self.utils serializeInt:[NSNumber numberWithInt:self.accessPointId] to:writer];
+    [self.utils serializeInt:@(self.accessPointId) to:writer];
 }
 
 - (size_t)getSize {
     size_t recordSize = 0;
-        recordSize += [self.utils getIntSize:[NSNumber numberWithInt:self.accessPointId]];
+        recordSize += [self.utils getIntSize:@(self.accessPointId)];
     return recordSize;
 }
 
@@ -3880,13 +3880,13 @@
 }
 
 - (void)serialize:(avro_writer_t)writer {
-    [self.utils serializeInt:[NSNumber numberWithInt:self.extensionId] to:writer];
+    [self.utils serializeInt:@(self.extensionId) to:writer];
     [self.utils serializeBytes:self.payload to:writer];
 }
 
 - (size_t)getSize {
     size_t recordSize = 0;
-        recordSize += [self.utils getIntSize:[NSNumber numberWithInt:self.extensionId]];
+        recordSize += [self.utils getIntSize:@(self.extensionId)];
         recordSize += [self.utils getBytesSize:self.payload];
     return recordSize;
 }
@@ -3939,7 +3939,7 @@
 }
 
 - (void)serialize:(avro_writer_t)writer {
-    [self.utils serializeInt:[NSNumber numberWithInt:self.requestId] to:writer];
+    [self.utils serializeInt:@(self.requestId) to:writer];
     [self serializeSyncRequestMetaData:self.syncRequestMetaData to:writer];
     [self serializeBootstrapSyncRequest:self.bootstrapSyncRequest to:writer];
     [self serializeProfileSyncRequest:self.profileSyncRequest to:writer];
@@ -3953,7 +3953,7 @@
 
 - (size_t)getSize {
     size_t recordSize = 0;
-        recordSize += [self.utils getIntSize:[NSNumber numberWithInt:self.requestId]];
+        recordSize += [self.utils getIntSize:@(self.requestId)];
         recordSize += [self getSyncRequestMetaDataSize:self.syncRequestMetaData];
         recordSize += [self getBootstrapSyncRequestSize:self.bootstrapSyncRequest];
         recordSize += [self getProfileSyncRequestSize:self.profileSyncRequest];
@@ -4000,7 +4000,7 @@
 }
 
 - (size_t)getSyncRequestMetaDataSize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:[NSNumber numberWithLong:kaaUnion.branch]];
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
     if (kaaUnion) {
         switch (kaaUnion.branch) {
         case KAA_UNION_SYNC_REQUEST_META_DATA_OR_NULL_BRANCH_0:
@@ -4057,7 +4057,7 @@
 }
 
 - (size_t)getBootstrapSyncRequestSize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:[NSNumber numberWithLong:kaaUnion.branch]];
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
     if (kaaUnion) {
         switch (kaaUnion.branch) {
         case KAA_UNION_BOOTSTRAP_SYNC_REQUEST_OR_NULL_BRANCH_0:
@@ -4114,7 +4114,7 @@
 }
 
 - (size_t)getProfileSyncRequestSize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:[NSNumber numberWithLong:kaaUnion.branch]];
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
     if (kaaUnion) {
         switch (kaaUnion.branch) {
         case KAA_UNION_PROFILE_SYNC_REQUEST_OR_NULL_BRANCH_0:
@@ -4171,7 +4171,7 @@
 }
 
 - (size_t)getConfigurationSyncRequestSize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:[NSNumber numberWithLong:kaaUnion.branch]];
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
     if (kaaUnion) {
         switch (kaaUnion.branch) {
         case KAA_UNION_CONFIGURATION_SYNC_REQUEST_OR_NULL_BRANCH_0:
@@ -4228,7 +4228,7 @@
 }
 
 - (size_t)getNotificationSyncRequestSize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:[NSNumber numberWithLong:kaaUnion.branch]];
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
     if (kaaUnion) {
         switch (kaaUnion.branch) {
         case KAA_UNION_NOTIFICATION_SYNC_REQUEST_OR_NULL_BRANCH_0:
@@ -4285,7 +4285,7 @@
 }
 
 - (size_t)getUserSyncRequestSize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:[NSNumber numberWithLong:kaaUnion.branch]];
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
     if (kaaUnion) {
         switch (kaaUnion.branch) {
         case KAA_UNION_USER_SYNC_REQUEST_OR_NULL_BRANCH_0:
@@ -4342,7 +4342,7 @@
 }
 
 - (size_t)getEventSyncRequestSize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:[NSNumber numberWithLong:kaaUnion.branch]];
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
     if (kaaUnion) {
         switch (kaaUnion.branch) {
         case KAA_UNION_EVENT_SYNC_REQUEST_OR_NULL_BRANCH_0:
@@ -4399,7 +4399,7 @@
 }
 
 - (size_t)getLogSyncRequestSize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:[NSNumber numberWithLong:kaaUnion.branch]];
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
     if (kaaUnion) {
         switch (kaaUnion.branch) {
         case KAA_UNION_LOG_SYNC_REQUEST_OR_NULL_BRANCH_0:
@@ -4456,7 +4456,7 @@
 }
 
 - (size_t)getExtensionSyncRequestsSize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:[NSNumber numberWithLong:kaaUnion.branch]];
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
     if (kaaUnion) {
         switch (kaaUnion.branch) {
         case KAA_UNION_ARRAY_EXTENSION_SYNC_OR_NULL_BRANCH_0:
@@ -4537,8 +4537,8 @@
 }
 
 - (void)serialize:(avro_writer_t)writer {
-    [self.utils serializeInt:[NSNumber numberWithInt:self.requestId] to:writer];
-    [self.utils serializeEnum:[NSNumber numberWithInt:self.status] to:writer];
+    [self.utils serializeInt:@(self.requestId) to:writer];
+    [self.utils serializeEnum:@(self.status) to:writer];
     [self serializeBootstrapSyncResponse:self.bootstrapSyncResponse to:writer];
     [self serializeProfileSyncResponse:self.profileSyncResponse to:writer];
     [self serializeConfigurationSyncResponse:self.configurationSyncResponse to:writer];
@@ -4552,8 +4552,8 @@
 
 - (size_t)getSize {
     size_t recordSize = 0;
-        recordSize += [self.utils getIntSize:[NSNumber numberWithInt:self.requestId]];
-        recordSize += [self.utils getEnumSize:[NSNumber numberWithInt:self.status]];
+        recordSize += [self.utils getIntSize:@(self.requestId)];
+        recordSize += [self.utils getEnumSize:@(self.status)];
         recordSize += [self getBootstrapSyncResponseSize:self.bootstrapSyncResponse];
         recordSize += [self getProfileSyncResponseSize:self.profileSyncResponse];
         recordSize += [self getConfigurationSyncResponseSize:self.configurationSyncResponse];
@@ -4601,7 +4601,7 @@
 }
 
 - (size_t)getBootstrapSyncResponseSize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:[NSNumber numberWithLong:kaaUnion.branch]];
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
     if (kaaUnion) {
         switch (kaaUnion.branch) {
         case KAA_UNION_BOOTSTRAP_SYNC_RESPONSE_OR_NULL_BRANCH_0:
@@ -4658,7 +4658,7 @@
 }
 
 - (size_t)getProfileSyncResponseSize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:[NSNumber numberWithLong:kaaUnion.branch]];
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
     if (kaaUnion) {
         switch (kaaUnion.branch) {
         case KAA_UNION_PROFILE_SYNC_RESPONSE_OR_NULL_BRANCH_0:
@@ -4715,7 +4715,7 @@
 }
 
 - (size_t)getConfigurationSyncResponseSize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:[NSNumber numberWithLong:kaaUnion.branch]];
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
     if (kaaUnion) {
         switch (kaaUnion.branch) {
         case KAA_UNION_CONFIGURATION_SYNC_RESPONSE_OR_NULL_BRANCH_0:
@@ -4772,7 +4772,7 @@
 }
 
 - (size_t)getNotificationSyncResponseSize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:[NSNumber numberWithLong:kaaUnion.branch]];
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
     if (kaaUnion) {
         switch (kaaUnion.branch) {
         case KAA_UNION_NOTIFICATION_SYNC_RESPONSE_OR_NULL_BRANCH_0:
@@ -4829,7 +4829,7 @@
 }
 
 - (size_t)getUserSyncResponseSize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:[NSNumber numberWithLong:kaaUnion.branch]];
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
     if (kaaUnion) {
         switch (kaaUnion.branch) {
         case KAA_UNION_USER_SYNC_RESPONSE_OR_NULL_BRANCH_0:
@@ -4886,7 +4886,7 @@
 }
 
 - (size_t)getEventSyncResponseSize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:[NSNumber numberWithLong:kaaUnion.branch]];
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
     if (kaaUnion) {
         switch (kaaUnion.branch) {
         case KAA_UNION_EVENT_SYNC_RESPONSE_OR_NULL_BRANCH_0:
@@ -4943,7 +4943,7 @@
 }
 
 - (size_t)getRedirectSyncResponseSize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:[NSNumber numberWithLong:kaaUnion.branch]];
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
     if (kaaUnion) {
         switch (kaaUnion.branch) {
         case KAA_UNION_REDIRECT_SYNC_RESPONSE_OR_NULL_BRANCH_0:
@@ -5000,7 +5000,7 @@
 }
 
 - (size_t)getLogSyncResponseSize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:[NSNumber numberWithLong:kaaUnion.branch]];
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
     if (kaaUnion) {
         switch (kaaUnion.branch) {
         case KAA_UNION_LOG_SYNC_RESPONSE_OR_NULL_BRANCH_0:
@@ -5057,7 +5057,7 @@
 }
 
 - (size_t)getExtensionSyncResponsesSize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:[NSNumber numberWithLong:kaaUnion.branch]];
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
     if (kaaUnion) {
         switch (kaaUnion.branch) {
         case KAA_UNION_ARRAY_EXTENSION_SYNC_OR_NULL_BRANCH_0:
@@ -5115,13 +5115,13 @@
 
 - (void)serialize:(avro_writer_t)writer {
     [self.topicInfo serialize:writer];
-    [self.utils serializeInt:[NSNumber numberWithInt:self.seqNumber] to:writer];
+    [self.utils serializeInt:@(self.seqNumber) to:writer];
 }
 
 - (size_t)getSize {
     size_t recordSize = 0;
         recordSize += [self.topicInfo getSize];
-        recordSize += [self.utils getIntSize:[NSNumber numberWithInt:self.seqNumber]];
+        recordSize += [self.utils getIntSize:@(self.seqNumber)];
     return recordSize;
 }
 

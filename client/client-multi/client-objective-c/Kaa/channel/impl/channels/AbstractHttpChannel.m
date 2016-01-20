@@ -60,7 +60,7 @@
 
 - (void)syncForTransportType:(TransportType)type {
     @synchronized(self) {
-        [self syncTransportTypes:[NSSet setWithObject:[NSNumber numberWithInt:type]]];
+        [self syncTransportTypes:[NSSet setWithObject:@(type)]];
     }
 }
 
@@ -130,7 +130,7 @@
 }
 
 - (void)syncAckForTransportType:(TransportType)type {
-    [self syncAckForTransportTypes:[NSSet setWithObject:[NSNumber numberWithInt:type]]];
+    [self syncAckForTransportTypes:[NSSet setWithObject:@(type)]];
 }
 
 - (void)syncAckForTransportTypes:(NSSet *)types {

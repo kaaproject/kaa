@@ -87,13 +87,13 @@
     }
 }
 
-- (void)useNextOperationsServerByAccessPointId:(int)accessPointId {
+- (void)useNextOperationsServerByAccessPointId:(int32_t)accessPointId {
     @synchronized (self) {
         NSMutableArray *servers = [self getTransportsByAccessPointId:accessPointId];
         if (servers && [servers count] > 0) {
             [self notifyChannelManagerAboutServers:servers];
         } else {
-            self.serverToApply = [NSNumber numberWithInt:accessPointId];
+            self.serverToApply = @(accessPointId);
             [self.transport sync];
         }
     }

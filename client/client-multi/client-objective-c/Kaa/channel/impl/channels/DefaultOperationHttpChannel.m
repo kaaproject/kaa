@@ -48,10 +48,10 @@
     self = [super initWithClient:client state:state failoverManager:manager];
     if (self) {
         self.supportedTypes = [[NSDictionary alloc] initWithObjectsAndKeys:
-                                [NSNumber numberWithInt:CHANNEL_DIRECTION_UP],
-                                [NSNumber numberWithInt:TRANSPORT_TYPE_EVENT],
-                                [NSNumber numberWithInt:CHANNEL_DIRECTION_UP],
-                                [NSNumber numberWithInt:TRANSPORT_TYPE_LOGGING], nil];
+                                @(CHANNEL_DIRECTION_UP),
+                                @(TRANSPORT_TYPE_EVENT),
+                                @(CHANNEL_DIRECTION_UP),
+                                @(TRANSPORT_TYPE_LOGGING), nil];
     }
     return self;
 }

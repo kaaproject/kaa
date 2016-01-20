@@ -52,7 +52,7 @@ static NSDictionary *SUPPORTED_TYPES;
     return self;
 }
 
-- (NSOperationQueue *) createExecutor {
+- (NSOperationQueue *)createExecutor {
     return [super createExecutor];
 }
 
@@ -67,8 +67,10 @@ static NSDictionary *SUPPORTED_TYPES;
 @implementation DefaultOperationHttpChannelTest
 
 - (void)setUp {
-    SUPPORTED_TYPES =
-    [NSDictionary dictionaryWithObjects:@[[NSNumber numberWithInt:CHANNEL_DIRECTION_UP], [NSNumber numberWithInt:CHANNEL_DIRECTION_UP]] forKeys:@[[NSNumber numberWithInt:TRANSPORT_TYPE_EVENT], [NSNumber numberWithInt:TRANSPORT_TYPE_LOGGING]]];
+    SUPPORTED_TYPES = [NSDictionary dictionaryWithObjects:@[@(CHANNEL_DIRECTION_UP),
+                                                            @(CHANNEL_DIRECTION_UP)]
+                                                  forKeys:@[@(TRANSPORT_TYPE_EVENT),
+                                                            @(TRANSPORT_TYPE_LOGGING)]];
 }
 
 

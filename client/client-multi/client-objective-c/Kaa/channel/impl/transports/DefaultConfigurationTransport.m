@@ -52,8 +52,7 @@
             request.configurationHash = [KAAUnion unionWithBranch:KAA_UNION_BYTES_OR_NULL_BRANCH_0 data:hash.data];
         }
         request.appStateSeqNumber = [self.clientState configSequenceNumber];
-        request.resyncOnly = [KAAUnion unionWithBranch:KAA_UNION_BOOLEAN_OR_NULL_BRANCH_0
-                                               data:[NSNumber numberWithBool:self.resyncOnly]];
+        request.resyncOnly = [KAAUnion unionWithBranch:KAA_UNION_BOOLEAN_OR_NULL_BRANCH_0 data:@(self.resyncOnly)];
         return request;
     } else {
         DDLogError(@"%@ Can't create config request due to invalid params: %@, %@", TAG, self.clientState, self.hashContainer);

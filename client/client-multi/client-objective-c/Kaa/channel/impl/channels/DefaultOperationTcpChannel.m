@@ -90,12 +90,12 @@ typedef enum {
     self = [super init];
     if (self) {
         self.supportedTypes = @{
-            [NSNumber numberWithInt:TRANSPORT_TYPE_PROFILE] : [NSNumber numberWithInt:CHANNEL_DIRECTION_BIDIRECTIONAL],
-            [NSNumber numberWithInt:TRANSPORT_TYPE_CONFIGURATION] : [NSNumber numberWithInt:CHANNEL_DIRECTION_BIDIRECTIONAL],
-            [NSNumber numberWithInt:TRANSPORT_TYPE_NOTIFICATION] : [NSNumber numberWithInt:CHANNEL_DIRECTION_BIDIRECTIONAL],
-            [NSNumber numberWithInt:TRANSPORT_TYPE_USER] : [NSNumber numberWithInt:CHANNEL_DIRECTION_BIDIRECTIONAL],
-            [NSNumber numberWithInt:TRANSPORT_TYPE_EVENT] : [NSNumber numberWithInt:CHANNEL_DIRECTION_BIDIRECTIONAL],
-            [NSNumber numberWithInt:TRANSPORT_TYPE_LOGGING] : [NSNumber numberWithInt:CHANNEL_DIRECTION_BIDIRECTIONAL]
+            @(TRANSPORT_TYPE_PROFILE)       : @(CHANNEL_DIRECTION_BIDIRECTIONAL),
+            @(TRANSPORT_TYPE_CONFIGURATION) : @(CHANNEL_DIRECTION_BIDIRECTIONAL),
+            @(TRANSPORT_TYPE_NOTIFICATION)  : @(CHANNEL_DIRECTION_BIDIRECTIONAL),
+            @(TRANSPORT_TYPE_USER)          : @(CHANNEL_DIRECTION_BIDIRECTIONAL),
+            @(TRANSPORT_TYPE_EVENT)         : @(CHANNEL_DIRECTION_BIDIRECTIONAL),
+            @(TRANSPORT_TYPE_LOGGING)       : @(CHANNEL_DIRECTION_BIDIRECTIONAL)
         };
         self.channelState = CHANNEL_STATE_CLOSED;
         self.messageFactory = [[KAAMessageFactory alloc] init];
@@ -382,7 +382,7 @@ typedef enum {
 
 - (void)syncForTransportType:(TransportType)type {
     @synchronized(self) {
-        [self syncTransportTypes:[NSSet setWithObject:[NSNumber numberWithInt:type]]];
+        [self syncTransportTypes:[NSSet setWithObject:@(type)]];
     }
 }
 
@@ -424,7 +424,7 @@ typedef enum {
             }
             for (NSNumber *transportType in [self getSupportedTransportTypes].allKeys) {
                 if (![transportType isEqualToNumber:typeNum]) {
-                    typeMap[transportType] = [NSNumber numberWithInt:CHANNEL_DIRECTION_DOWN];
+                    typeMap[transportType] = @(CHANNEL_DIRECTION_DOWN);
                 }
             }
         }
@@ -473,7 +473,7 @@ typedef enum {
 
 - (void)syncAckForTransportType:(TransportType)type {
     DDLogInfo(@"%@ Adding sync acknowledgement for type %i as a regular sync for channel [%@]", TAG, type, [self getId]);
-    [self syncAckForTransportTypes:[NSSet setWithObject:[NSNumber numberWithInt:type]]];
+    [self syncAckForTransportTypes:[NSSet setWithObject:@(type)]];
 }
 
 - (void)syncAckForTransportTypes:(NSSet *)types {

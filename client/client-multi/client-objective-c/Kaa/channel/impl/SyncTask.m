@@ -27,7 +27,7 @@
 @implementation SyncTask
 
 - (instancetype)initWithTransport:(TransportType)type ackOnly:(BOOL)ackOnly all:(BOOL)all {
-    return [self initWithTransports:[NSSet setWithObject:[NSNumber numberWithInt:type]] ackOnly:ackOnly all:all];
+    return [self initWithTransports:[NSSet setWithObject:@(type)] ackOnly:ackOnly all:all];
 }
 
 - (instancetype)initWithTransports:(NSSet *)types ackOnly:(BOOL)ackOnly all:(BOOL)all {

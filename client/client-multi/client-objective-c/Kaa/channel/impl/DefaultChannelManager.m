@@ -162,7 +162,7 @@
 }
 
 - (id<TransportConnectionInfo>)getActiveServer:(TransportType)type {
-    id<KaaDataChannel> channel = self.upChannels[[NSNumber numberWithInt:type]];
+    id<KaaDataChannel> channel = self.upChannels[@(type)];
     if (!channel || [[NSNull null] isEqual:channel]) {
         return nil;
     }
@@ -430,7 +430,7 @@
 }
 
 - (id<KaaDataChannel>)getChannel:(TransportType)type {
-    id<KaaDataChannel> result = self.upChannels[[NSNumber numberWithInt:type]];
+    id<KaaDataChannel> result = self.upChannels[@(type)];
     if (!result || [[NSNull null] isEqual:result]) {
         DDLogError(@"%@ Failed to find channel for transport: [%i]", TAG, type);
         [NSException raise:KaaChannelRuntimeException format:@"Failed to find channel for transport: [%i]", type];
@@ -439,11 +439,10 @@
 }
 
 - (BOOL)useChannel:(id<KaaDataChannel>)channel forType:(TransportType)type {
-    NSNumber *key = [NSNumber numberWithInt:type];
-    NSNumber *value = [channel getSupportedTransportTypes][key];
+    NSNumber *value = [channel getSupportedTransportTypes][@(type)];
     ChannelDirection direction = [value intValue];
     if (value && (direction == CHANNEL_DIRECTION_BIDIRECTIONAL || direction == CHANNEL_DIRECTION_UP)) {
-        self.upChannels[[NSNumber numberWithInt:type]] = channel;
+        self.upChannels[@(type)] = channel;
         return YES;
     }
     return NO;
@@ -456,7 +455,7 @@
         }
     }
     
-    self.upChannels[[NSNumber numberWithInt:type]] = [NSNull null];
+    self.upChannels[@(type)] = [NSNull null];
 }
 
 - (void)applyNewChannel:(id<KaaDataChannel>)channel {

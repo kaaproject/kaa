@@ -241,7 +241,7 @@
     [verifyCount(state, times(2)) setIsAttachedToUser:NO];
 }
 
-- (UserAttachResponse *) getUserAttachResponse {
+- (UserAttachResponse *)getUserAttachResponse {
     UserAttachResponse *response = [[UserAttachResponse alloc] init];
     response.result = SYNC_RESPONSE_RESULT_TYPE_SUCCESS;
     return response;

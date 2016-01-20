@@ -294,7 +294,7 @@
     NSMutableDictionary *subscriptions = [NSMutableDictionary dictionary];
     for (NSString *key in self.notificationSubscriptions.allKeys) {
         TopicSubscriptionInfo *value = self.notificationSubscriptions[key];
-        subscriptions[key] = [NSNumber numberWithInt:value.seqNumber];
+        subscriptions[key] = @(value.seqNumber);
     }
     return subscriptions;
 }

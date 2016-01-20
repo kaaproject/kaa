@@ -103,13 +103,13 @@
 
 - (void)testChannelGetters {
     AbstractKaaClient *client = mock([AbstractKaaClient class]);
-    id <KaaClientState> state = mockProtocol(@protocol(KaaClientState));
-    id <FailoverManager> failoverManager = mockProtocol(@protocol(FailoverManager));
-    id <KaaDataChannel> channel = [[DefaultBootstrapChannel alloc] initWithClient:client state:state failoverManager:failoverManager];
+    id<KaaClientState> state = mockProtocol(@protocol(KaaClientState));
+    id<FailoverManager> failoverManager = mockProtocol(@protocol(FailoverManager));
+    id<KaaDataChannel> channel = [[DefaultBootstrapChannel alloc] initWithClient:client state:state failoverManager:failoverManager];
     
-    NSDictionary *dict = [channel getSupportedTransportTypes];
+    NSDictionary *transportTypes = [channel getSupportedTransportTypes];
     
-    XCTAssertEqualObjects(dict[[NSNumber numberWithInt:TRANSPORT_TYPE_BOOTSTRAP]], [NSNumber numberWithInt:CHANNEL_DIRECTION_BIDIRECTIONAL]);
+    XCTAssertEqualObjects(transportTypes[@(TRANSPORT_TYPE_BOOTSTRAP)], @(CHANNEL_DIRECTION_BIDIRECTIONAL));
     XCTAssertTrue([[TransportProtocolIdHolder HTTPTransportID] isEqual:[channel getTransportProtocolId]]);
     XCTAssertTrue([@"default_bootstrap_channel" isEqualToString:[channel getId]]);
 }

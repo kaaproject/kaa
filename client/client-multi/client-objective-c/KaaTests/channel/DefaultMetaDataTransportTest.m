@@ -50,18 +50,18 @@
     [verifyCount(clientState, times(1)) profileHash];
     [verifyCount(properties, times(1)) sdkToken];
     
-    XCTAssertEqualObjects([NSNumber numberWithLong:5], request.timeout.data);
+    XCTAssertEqualObjects(@(5), request.timeout.data);
 }
 
 #pragma mark - Supporting methods
 
-- (NSData *) getNewDataWith123 {
+- (NSData *)getNewDataWith123 {
     int32_t integer = 123;
     NSData *data = [NSData dataWithBytes:&integer length:sizeof(integer)];
     return data;
 }
 
-- (NSData *) getNewDataWith567 {
+- (NSData *)getNewDataWith567 {
     int32_t integer = 567;
     NSData *data = [NSData dataWithBytes:&integer length:sizeof(integer)];
     return data;
