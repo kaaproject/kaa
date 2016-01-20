@@ -36,6 +36,8 @@
 
 #define KAA_LOGGING_RECEIVE_UPDATES_FLAG   0x01
 #define KAA_MAX_PADDING_LENGTH             (KAA_ALIGNMENT - 1)
+#define KAA_MAX_LOGS_IN_BUCKET             64
+#define KAA_MAX_BUCKET_SIZE                1024
 
 extern kaa_transport_channel_interface_t *kaa_channel_manager_get_transport_channel(kaa_channel_manager_t *self
                                                                                   , kaa_service_t service_type);
@@ -207,14 +209,18 @@ kaa_error_t kaa_log_collector_create(kaa_log_collector_t **log_collector_p
     kaa_log_collector_t * collector = (kaa_log_collector_t *) KAA_MALLOC(sizeof(kaa_log_collector_t));
     KAA_RETURN_IF_NIL(collector, KAA_ERR_NOMEM);
 
-    collector->log_bucket_id               = 0;
-    collector->log_last_id                 = 0;
-    collector->log_storage_context         = NULL;
-    collector->log_upload_strategy_context = NULL;
-    collector->status                      = status;
-    collector->channel_manager             = channel_manager;
-    collector->logger                      = logger;
-    collector->is_sync_ignored             = false;
+    collector->log_bucket_id                    = 0;
+    collector->log_last_id                      = 0;
+    collector->log_storage_context              = NULL;
+    collector->log_upload_strategy_context      = NULL;
+    collector->status                           = status;
+    collector->channel_manager                  = channel_manager;
+    collector->logger                           = logger;
+    collector->is_sync_ignored                  = false;
+
+    /* Default values */
+    collector->bucket_size.max_bucket_log_count = KAA_MAX_LOGS_IN_BUCKET;
+    collector->bucket_size.max_bucket_size      = KAA_MAX_BUCKET_SIZE;
 
     collector->timeouts = kaa_list_create();
     if (!collector->timeouts) {
@@ -225,7 +231,6 @@ kaa_error_t kaa_log_collector_create(kaa_log_collector_t **log_collector_p
     *log_collector_p = collector;
     return KAA_ERR_NONE;
 }
-
 
 
 kaa_error_t kaa_logging_init(kaa_log_collector_t *self, void *log_storage_context, void *log_upload_strategy_context, const kaa_log_bucket_constraints_t *bucket_sizes)
@@ -247,6 +252,29 @@ kaa_error_t kaa_logging_init(kaa_log_collector_t *self, void *log_storage_contex
 }
 
 
+kaa_error_t kaa_logging_set_strategy(kaa_log_collector_t *self, void *log_upload_strategy_context)
+{
+    KAA_RETURN_IF_NIL2(self, log_upload_strategy_context, KAA_ERR_BADPARAM);
+
+    if (self->log_upload_strategy_context)
+        ext_log_upload_strategy_destroy(self->log_upload_strategy_context);
+
+    self->log_upload_strategy_context = log_upload_strategy_context;
+
+    return KAA_ERR_NONE;
+}
+
+kaa_error_t kaa_logging_set_storage(kaa_log_collector_t *self, void *log_storage_context)
+{
+    KAA_RETURN_IF_NIL2(self, log_storage_context, KAA_ERR_BADPARAM);
+
+    if (self->log_storage_context)
+        ext_log_storage_destroy(self->log_storage_context);
+
+    self->log_storage_context = log_storage_context;
+
+    return KAA_ERR_NONE;
+}
 
 static void do_sync(kaa_log_collector_t *self)
 {

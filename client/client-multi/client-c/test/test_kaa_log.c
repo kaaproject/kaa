@@ -769,8 +769,6 @@ void test_max_parallel_uploads_with_sync_all(void)
     KAA_TRACE_OUT(logger);
 }
 
-#endif
-
 /* ---------------------------------------------------------------------------*/
 /* Log delivery tests                                                         */
 /* ---------------------------------------------------------------------------*/
@@ -797,8 +795,10 @@ struct response_packet
 #define TEST_EXT_OP                0 /* Simple stub */
 #define TEST_TIMEOUT               2
 
-static mock_strategy_context_t         strategy;
-static mock_storage_context_t          *storage;
+static mock_strategy_context_t         test_strategy1;
+static mock_strategy_context_t         test_strategy2;
+static mock_storage_context_t          *test_storage1;
+static mock_storage_context_t          *test_storage2;
 static kaa_log_collector_t             *log_collector;
 static size_t                          test_log_record_size = TEST_BUFFER_SIZE;
 /* Will contain response_packet. Thus required to be aligned. */
@@ -877,6 +877,135 @@ static void mock_log_event_timeout_fn(void *ctx, const kaa_log_bucket_info_t *bu
     timeout_call_completed++;
 }
 
+/* ---------------------------------------------------------------------------*/
+/* Log setters test group                                                     */
+/* ---------------------------------------------------------------------------*/
+
+KAA_GROUP_SETUP(log_setters)
+{
+    kaa_error_t rc;
+
+    KAA_TRACE_IN(logger);
+    rc = kaa_log_collector_create(&log_collector,
+                                  status,
+                                  channel_manager,
+                                  logger);
+
+    ASSERT_EQUAL(KAA_ERR_NONE, rc);
+
+    /* Test objects for strategy test */
+
+    memset(&test_strategy1, 0, sizeof(test_strategy1));
+    memset(&test_strategy2, 0, sizeof(test_strategy2));
+
+    kaa_log_bucket_constraints_t constraints = {
+        .max_bucket_size = 2 * test_log_record_size,
+        .max_bucket_log_count = UINT32_MAX,
+    };
+
+    /* Test objects for storage tests */
+
+    test_storage1 = create_mock_storage();
+    test_storage2 = create_mock_storage();
+
+    rc = kaa_logging_init(log_collector, test_storage1,
+                                  &test_strategy1, &constraints);
+    ASSERT_EQUAL(KAA_ERR_NONE, rc);
+
+    expected_ctx        = NULL;
+    expected_bucked_id  = 0;
+    call_is_expected    = 0;
+
+    KAA_TRACE_OUT(logger);
+    return 0;
+
+}
+
+KAA_GROUP_TEARDOWN(log_setters)
+{
+    KAA_TRACE_IN(logger);
+
+    /* If tests will pass, one of storages will be destroyed.
+     * Each test in this will decide which one should be deleted. */
+    kaa_log_collector_destroy(log_collector);
+    log_collector = NULL;
+
+    KAA_TRACE_OUT(logger);
+    return 0;
+
+}
+
+
+KAA_TEST_CASE_EX(log_setters, set_strategy_invalid_parameters)
+{
+    kaa_error_t rc;
+
+    KAA_TRACE_IN(logger);
+
+    rc = kaa_logging_set_strategy(log_collector, NULL);
+    ASSERT_EQUAL(KAA_ERR_BADPARAM, rc);
+
+    rc = kaa_logging_set_strategy(NULL, &test_strategy2);
+    ASSERT_EQUAL(KAA_ERR_BADPARAM, rc);
+
+    ext_log_storage_destroy(test_storage2);
+    ext_log_upload_strategy_destroy(&test_strategy2);
+
+    KAA_TRACE_OUT(logger);
+}
+
+
+KAA_TEST_CASE_EX(log_setters, set_storage_invalid_parameters)
+{
+    kaa_error_t rc;
+    KAA_TRACE_IN(logger);
+
+    rc = kaa_logging_set_storage(log_collector, NULL);
+    ASSERT_EQUAL(KAA_ERR_BADPARAM, rc);
+
+    rc = kaa_logging_set_storage(NULL, test_storage2);
+    ASSERT_EQUAL(KAA_ERR_BADPARAM, rc);
+
+    ext_log_storage_destroy(test_storage2);
+    ext_log_upload_strategy_destroy(&test_strategy2);
+
+    KAA_TRACE_OUT(logger);
+}
+
+KAA_TEST_CASE_EX(log_setters, set_strategy_valid_parameters)
+{
+    kaa_error_t rc;
+
+    KAA_TRACE_IN(logger);
+
+    /* First strategy will be internally deleted */
+    rc = kaa_logging_set_strategy(log_collector, &test_strategy2);
+    ASSERT_EQUAL(KAA_ERR_NONE, rc);
+
+    ext_log_storage_destroy(test_storage2);
+
+    /* Second strategy will be deleted on test teardown */
+
+    KAA_TRACE_OUT(logger);
+}
+
+
+KAA_TEST_CASE_EX(log_setters, set_storage_valid_parameters)
+{
+    kaa_error_t rc;
+
+    KAA_TRACE_IN(logger);
+
+    /* First storage will be internally deleted */
+    rc = kaa_logging_set_storage(log_collector, test_storage2);
+    ASSERT_EQUAL(KAA_ERR_NONE, rc);
+
+    ext_log_upload_strategy_destroy(&test_strategy2);
+
+    /* Second storage will be deleted on test teardown */
+
+    KAA_TRACE_OUT(logger);
+}
 
 
 /* ---------------------------------------------------------------------------*/
@@ -896,7 +1025,7 @@ KAA_GROUP_SETUP(log_callback_basic)
 
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    memset(&strategy, 0, sizeof(strategy));
+    memset(&test_strategy1, 0, sizeof(test_strategy1));
 
     kaa_log_bucket_constraints_t constraints = {
         .max_bucket_size = 2 * test_log_record_size,
@@ -904,14 +1033,14 @@ KAA_GROUP_SETUP(log_callback_basic)
     };
 
     error_code = kaa_logging_init(log_collector, create_mock_storage(),
-                                  &strategy, &constraints);
+                                  &test_strategy1, &constraints);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     expected_ctx        = NULL;
     expected_bucked_id  = 0;
     call_is_expected    = 0;
 
-    KAA_TRACE_IN(logger);
+    KAA_TRACE_OUT(logger);
     return 0;
 }
 
@@ -921,7 +1050,7 @@ KAA_GROUP_TEARDOWN(log_callback_basic)
     kaa_log_collector_destroy(log_collector);
     log_collector = NULL;
 
-    KAA_TRACE_IN(logger);
+    KAA_TRACE_OUT(logger);
     return 0;
 }
 
@@ -1002,7 +1131,7 @@ KAA_GROUP_SETUP(log_callback_with_storage)
 
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    memset(&strategy, 0, sizeof(mock_strategy_context_t));
+    memset(&test_strategy1, 0, sizeof(mock_strategy_context_t));
     memset(test_reader_buffer, 0, sizeof(test_reader_buffer));
     memset(test_writer_buffer, 0, sizeof(test_writer_buffer));
 
@@ -1016,14 +1145,14 @@ KAA_GROUP_SETUP(log_callback_with_storage)
     success_call_is_expected = 0;
     check_bucket             = 0;
 
-    storage = create_mock_storage();
+    test_storage1 = create_mock_storage();
     kaa_log_bucket_constraints_t constraints = {
         .max_bucket_size = 2 * test_log_record_size,
         .max_bucket_log_count = UINT32_MAX,
     };
 
-    error_code = kaa_logging_init(log_collector, storage,
-                                  &strategy, &constraints);
+    error_code = kaa_logging_init(log_collector, test_storage1,
+                                  &test_strategy1, &constraints);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
 
@@ -1230,10 +1359,10 @@ KAA_GROUP_SETUP(log_callback_with_storage_and_strategy)
 
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    memset(&strategy, 0, sizeof(mock_strategy_context_t));
-    strategy.timeout = TEST_TIMEOUT;
-    strategy.decision = NOOP;
-    strategy.max_parallel_uploads = UINT32_MAX;
+    memset(&test_strategy1, 0, sizeof(mock_strategy_context_t));
+    test_strategy1.timeout = TEST_TIMEOUT;
+    test_strategy1.decision = NOOP;
+    test_strategy1.max_parallel_uploads = UINT32_MAX;
 
     kaa_log_bucket_constraints_t constraints = {
         .max_bucket_size = TEST_BUFFER_SIZE,
@@ -1250,9 +1379,8 @@ KAA_GROUP_SETUP(log_callback_with_storage_and_strategy)
     success_call_is_expected = 0;
     check_bucket             = 0;
 
-    storage = create_mock_storage();
     error_code = kaa_logging_init(log_collector, create_mock_storage(),
-                                  &strategy, &constraints);
+                                  &test_strategy1, &constraints);
 
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
@@ -1365,6 +1493,8 @@ KAA_TEST_CASE_EX(log_callback_with_storage_and_strategy, on_timeout_called)
 /* End of log delivery test groups                                            */
 /* ---------------------------------------------------------------------------*/
 
+#endif
+
 int test_init(void)
 {
     kaa_error_t error = kaa_log_create(&logger, KAA_MAX_LOG_MESSAGE_LENGTH, KAA_MAX_LOG_LEVEL, NULL);
@@ -1408,6 +1538,11 @@ KAA_SUITE_MAIN(Log, test_init, test_deinit
         KAA_TEST_CASE(decline_timeout, test_decline_timeout)
         KAA_TEST_CASE(max_parallel_uploads_with_log_sync, test_max_parallel_uploads_with_log_sync)
         KAA_TEST_CASE(max_parallel_uploads_with_sync_all, test_max_parallel_uploads_with_sync_all)
+        KAA_RUN_TEST(log_setters, set_strategy_invalid_parameters);
+        KAA_RUN_TEST(log_setters, set_strategy_valid_parameters);
+        KAA_RUN_TEST(log_setters, set_storage_invalid_parameters);
+        KAA_RUN_TEST(log_setters, set_storage_valid_parameters);
+        KAA_RUN_TEST(log_callback_basic, valid_parameters);
         KAA_RUN_TEST(log_callback_basic, invalid_parameters);
         KAA_RUN_TEST(log_callback_basic, valid_parameters);
         KAA_RUN_TEST(log_callback_with_storage, on_success_called);

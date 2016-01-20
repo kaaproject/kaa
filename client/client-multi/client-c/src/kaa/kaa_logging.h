@@ -78,6 +78,33 @@ typedef struct {
 kaa_error_t kaa_logging_init(kaa_log_collector_t *self, void *log_storage_context, void *log_upload_strategy_context, const kaa_log_bucket_constraints_t *bucket_sizes);
 
 /**
+ * @brief Sets custom strategy for given collector.
+ *
+ * If a strategy has been assigned to collector previously then it will be
+ * destroyed and new strategy will be assigned.
+ *
+ * @param[in] self                          Pointer to a @link kaa_log_collector_t @endlink instance.
+ * @param[in] log_storage_context           Log storage context.
+ *
+ * @return  Error code.
+ */
+kaa_error_t kaa_logging_set_strategy(kaa_log_collector_t *self, void *log_upload_strategy_context);
+
+/**
+ * @brief Sets custom storage for given collector.
+ *
+ * If a storage has been assigned to collector previously then it will be
+ * destroyed and new storage will be assigned. Be aware that all items from
+ * previous storage will be deleted.
+ *
+ * @param[in] self                          Pointer to a @link kaa_log_collector_t @endlink instance.
+ * @param[in] log_storage_context           Log storage context.
+ *
+ * @return  Error code.
+ */
+kaa_error_t kaa_logging_set_storage(kaa_log_collector_t *self, void *log_storage_context);
+
+/**
  * @brief Serializes and adds a log record to the log storage.
  *
  * @param[in]  self    Pointer to a @link kaa_log_collector_t @endlink instance.
