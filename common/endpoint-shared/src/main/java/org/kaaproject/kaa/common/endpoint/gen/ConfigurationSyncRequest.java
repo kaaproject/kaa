@@ -7,9 +7,8 @@ package org.kaaproject.kaa.common.endpoint.gen;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class ConfigurationSyncRequest extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"ConfigurationSyncRequest\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"appStateSeqNumber\",\"type\":\"int\"},{\"name\":\"configurationHash\",\"type\":[\"bytes\",\"null\"]},{\"name\":\"resyncOnly\",\"type\":[\"boolean\",\"null\"]}],\"direction\":\"out\"}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"ConfigurationSyncRequest\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"configurationHash\",\"type\":\"bytes\"},{\"name\":\"resyncOnly\",\"type\":[\"boolean\",\"null\"]}],\"direction\":\"out\"}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
-   private int appStateSeqNumber;
    private java.nio.ByteBuffer configurationHash;
    private java.lang.Boolean resyncOnly;
 
@@ -23,8 +22,7 @@ public class ConfigurationSyncRequest extends org.apache.avro.specific.SpecificR
   /**
    * All-args constructor.
    */
-  public ConfigurationSyncRequest(java.lang.Integer appStateSeqNumber, java.nio.ByteBuffer configurationHash, java.lang.Boolean resyncOnly) {
-    this.appStateSeqNumber = appStateSeqNumber;
+  public ConfigurationSyncRequest(java.nio.ByteBuffer configurationHash, java.lang.Boolean resyncOnly) {
     this.configurationHash = configurationHash;
     this.resyncOnly = resyncOnly;
   }
@@ -33,9 +31,8 @@ public class ConfigurationSyncRequest extends org.apache.avro.specific.SpecificR
   // Used by DatumWriter.  Applications should not call. 
   public java.lang.Object get(int field$) {
     switch (field$) {
-    case 0: return appStateSeqNumber;
-    case 1: return configurationHash;
-    case 2: return resyncOnly;
+    case 0: return configurationHash;
+    case 1: return resyncOnly;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -43,26 +40,10 @@ public class ConfigurationSyncRequest extends org.apache.avro.specific.SpecificR
   @SuppressWarnings(value="unchecked")
   public void put(int field$, java.lang.Object value$) {
     switch (field$) {
-    case 0: appStateSeqNumber = (java.lang.Integer)value$; break;
-    case 1: configurationHash = (java.nio.ByteBuffer)value$; break;
-    case 2: resyncOnly = (java.lang.Boolean)value$; break;
+    case 0: configurationHash = (java.nio.ByteBuffer)value$; break;
+    case 1: resyncOnly = (java.lang.Boolean)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
-  }
-
-  /**
-   * Gets the value of the 'appStateSeqNumber' field.
-   */
-  public java.lang.Integer getAppStateSeqNumber() {
-    return appStateSeqNumber;
-  }
-
-  /**
-   * Sets the value of the 'appStateSeqNumber' field.
-   * @param value the value to set.
-   */
-  public void setAppStateSeqNumber(java.lang.Integer value) {
-    this.appStateSeqNumber = value;
   }
 
   /**
@@ -116,7 +97,6 @@ public class ConfigurationSyncRequest extends org.apache.avro.specific.SpecificR
   public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<ConfigurationSyncRequest>
     implements org.apache.avro.data.RecordBuilder<ConfigurationSyncRequest> {
 
-    private int appStateSeqNumber;
     private java.nio.ByteBuffer configurationHash;
     private java.lang.Boolean resyncOnly;
 
@@ -128,59 +108,27 @@ public class ConfigurationSyncRequest extends org.apache.avro.specific.SpecificR
     /** Creates a Builder by copying an existing Builder */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest.Builder other) {
       super(other);
-      if (isValidValue(fields()[0], other.appStateSeqNumber)) {
-        this.appStateSeqNumber = data().deepCopy(fields()[0].schema(), other.appStateSeqNumber);
+      if (isValidValue(fields()[0], other.configurationHash)) {
+        this.configurationHash = data().deepCopy(fields()[0].schema(), other.configurationHash);
         fieldSetFlags()[0] = true;
       }
-      if (isValidValue(fields()[1], other.configurationHash)) {
-        this.configurationHash = data().deepCopy(fields()[1].schema(), other.configurationHash);
+      if (isValidValue(fields()[1], other.resyncOnly)) {
+        this.resyncOnly = data().deepCopy(fields()[1].schema(), other.resyncOnly);
         fieldSetFlags()[1] = true;
-      }
-      if (isValidValue(fields()[2], other.resyncOnly)) {
-        this.resyncOnly = data().deepCopy(fields()[2].schema(), other.resyncOnly);
-        fieldSetFlags()[2] = true;
       }
     }
     
     /** Creates a Builder by copying an existing ConfigurationSyncRequest instance */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest other) {
             super(org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest.SCHEMA$);
-      if (isValidValue(fields()[0], other.appStateSeqNumber)) {
-        this.appStateSeqNumber = data().deepCopy(fields()[0].schema(), other.appStateSeqNumber);
+      if (isValidValue(fields()[0], other.configurationHash)) {
+        this.configurationHash = data().deepCopy(fields()[0].schema(), other.configurationHash);
         fieldSetFlags()[0] = true;
       }
-      if (isValidValue(fields()[1], other.configurationHash)) {
-        this.configurationHash = data().deepCopy(fields()[1].schema(), other.configurationHash);
+      if (isValidValue(fields()[1], other.resyncOnly)) {
+        this.resyncOnly = data().deepCopy(fields()[1].schema(), other.resyncOnly);
         fieldSetFlags()[1] = true;
       }
-      if (isValidValue(fields()[2], other.resyncOnly)) {
-        this.resyncOnly = data().deepCopy(fields()[2].schema(), other.resyncOnly);
-        fieldSetFlags()[2] = true;
-      }
-    }
-
-    /** Gets the value of the 'appStateSeqNumber' field */
-    public java.lang.Integer getAppStateSeqNumber() {
-      return appStateSeqNumber;
-    }
-    
-    /** Sets the value of the 'appStateSeqNumber' field */
-    public org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest.Builder setAppStateSeqNumber(int value) {
-      validate(fields()[0], value);
-      this.appStateSeqNumber = value;
-      fieldSetFlags()[0] = true;
-      return this; 
-    }
-    
-    /** Checks whether the 'appStateSeqNumber' field has been set */
-    public boolean hasAppStateSeqNumber() {
-      return fieldSetFlags()[0];
-    }
-    
-    /** Clears the value of the 'appStateSeqNumber' field */
-    public org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest.Builder clearAppStateSeqNumber() {
-      fieldSetFlags()[0] = false;
-      return this;
     }
 
     /** Gets the value of the 'configurationHash' field */
@@ -190,21 +138,21 @@ public class ConfigurationSyncRequest extends org.apache.avro.specific.SpecificR
     
     /** Sets the value of the 'configurationHash' field */
     public org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest.Builder setConfigurationHash(java.nio.ByteBuffer value) {
-      validate(fields()[1], value);
+      validate(fields()[0], value);
       this.configurationHash = value;
-      fieldSetFlags()[1] = true;
+      fieldSetFlags()[0] = true;
       return this; 
     }
     
     /** Checks whether the 'configurationHash' field has been set */
     public boolean hasConfigurationHash() {
-      return fieldSetFlags()[1];
+      return fieldSetFlags()[0];
     }
     
     /** Clears the value of the 'configurationHash' field */
     public org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest.Builder clearConfigurationHash() {
       configurationHash = null;
-      fieldSetFlags()[1] = false;
+      fieldSetFlags()[0] = false;
       return this;
     }
 
@@ -215,21 +163,21 @@ public class ConfigurationSyncRequest extends org.apache.avro.specific.SpecificR
     
     /** Sets the value of the 'resyncOnly' field */
     public org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest.Builder setResyncOnly(java.lang.Boolean value) {
-      validate(fields()[2], value);
+      validate(fields()[1], value);
       this.resyncOnly = value;
-      fieldSetFlags()[2] = true;
+      fieldSetFlags()[1] = true;
       return this; 
     }
     
     /** Checks whether the 'resyncOnly' field has been set */
     public boolean hasResyncOnly() {
-      return fieldSetFlags()[2];
+      return fieldSetFlags()[1];
     }
     
     /** Clears the value of the 'resyncOnly' field */
     public org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest.Builder clearResyncOnly() {
       resyncOnly = null;
-      fieldSetFlags()[2] = false;
+      fieldSetFlags()[1] = false;
       return this;
     }
 
@@ -237,9 +185,8 @@ public class ConfigurationSyncRequest extends org.apache.avro.specific.SpecificR
     public ConfigurationSyncRequest build() {
       try {
         ConfigurationSyncRequest record = new ConfigurationSyncRequest();
-        record.appStateSeqNumber = fieldSetFlags()[0] ? this.appStateSeqNumber : (java.lang.Integer) defaultValue(fields()[0]);
-        record.configurationHash = fieldSetFlags()[1] ? this.configurationHash : (java.nio.ByteBuffer) defaultValue(fields()[1]);
-        record.resyncOnly = fieldSetFlags()[2] ? this.resyncOnly : (java.lang.Boolean) defaultValue(fields()[2]);
+        record.configurationHash = fieldSetFlags()[0] ? this.configurationHash : (java.nio.ByteBuffer) defaultValue(fields()[0]);
+        record.resyncOnly = fieldSetFlags()[1] ? this.resyncOnly : (java.lang.Boolean) defaultValue(fields()[1]);
         return record;
       } catch (Exception e) {
         throw new org.apache.avro.AvroRuntimeException(e);

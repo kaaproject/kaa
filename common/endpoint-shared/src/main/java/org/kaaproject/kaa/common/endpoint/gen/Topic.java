@@ -7,9 +7,9 @@ package org.kaaproject.kaa.common.endpoint.gen;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class Topic extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Topic\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"id\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"name\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"subscriptionType\",\"type\":{\"type\":\"enum\",\"name\":\"SubscriptionType\",\"symbols\":[\"MANDATORY_SUBSCRIPTION\",\"OPTIONAL_SUBSCRIPTION\"]}}],\"direction\":\"in\"}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Topic\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"id\",\"type\":\"long\"},{\"name\":\"name\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"subscriptionType\",\"type\":{\"type\":\"enum\",\"name\":\"SubscriptionType\",\"symbols\":[\"MANDATORY_SUBSCRIPTION\",\"OPTIONAL_SUBSCRIPTION\"]}}],\"direction\":\"in\"}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
-   private java.lang.String id;
+   private long id;
    private java.lang.String name;
    private org.kaaproject.kaa.common.endpoint.gen.SubscriptionType subscriptionType;
 
@@ -23,7 +23,7 @@ public class Topic extends org.apache.avro.specific.SpecificRecordBase implement
   /**
    * All-args constructor.
    */
-  public Topic(java.lang.String id, java.lang.String name, org.kaaproject.kaa.common.endpoint.gen.SubscriptionType subscriptionType) {
+  public Topic(java.lang.Long id, java.lang.String name, org.kaaproject.kaa.common.endpoint.gen.SubscriptionType subscriptionType) {
     this.id = id;
     this.name = name;
     this.subscriptionType = subscriptionType;
@@ -43,7 +43,7 @@ public class Topic extends org.apache.avro.specific.SpecificRecordBase implement
   @SuppressWarnings(value="unchecked")
   public void put(int field$, java.lang.Object value$) {
     switch (field$) {
-    case 0: id = (java.lang.String)value$; break;
+    case 0: id = (java.lang.Long)value$; break;
     case 1: name = (java.lang.String)value$; break;
     case 2: subscriptionType = (org.kaaproject.kaa.common.endpoint.gen.SubscriptionType)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
@@ -53,7 +53,7 @@ public class Topic extends org.apache.avro.specific.SpecificRecordBase implement
   /**
    * Gets the value of the 'id' field.
    */
-  public java.lang.String getId() {
+  public java.lang.Long getId() {
     return id;
   }
 
@@ -61,7 +61,7 @@ public class Topic extends org.apache.avro.specific.SpecificRecordBase implement
    * Sets the value of the 'id' field.
    * @param value the value to set.
    */
-  public void setId(java.lang.String value) {
+  public void setId(java.lang.Long value) {
     this.id = value;
   }
 
@@ -116,7 +116,7 @@ public class Topic extends org.apache.avro.specific.SpecificRecordBase implement
   public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<Topic>
     implements org.apache.avro.data.RecordBuilder<Topic> {
 
-    private java.lang.String id;
+    private long id;
     private java.lang.String name;
     private org.kaaproject.kaa.common.endpoint.gen.SubscriptionType subscriptionType;
 
@@ -160,12 +160,12 @@ public class Topic extends org.apache.avro.specific.SpecificRecordBase implement
     }
 
     /** Gets the value of the 'id' field */
-    public java.lang.String getId() {
+    public java.lang.Long getId() {
       return id;
     }
     
     /** Sets the value of the 'id' field */
-    public org.kaaproject.kaa.common.endpoint.gen.Topic.Builder setId(java.lang.String value) {
+    public org.kaaproject.kaa.common.endpoint.gen.Topic.Builder setId(long value) {
       validate(fields()[0], value);
       this.id = value;
       fieldSetFlags()[0] = true;
@@ -179,7 +179,6 @@ public class Topic extends org.apache.avro.specific.SpecificRecordBase implement
     
     /** Clears the value of the 'id' field */
     public org.kaaproject.kaa.common.endpoint.gen.Topic.Builder clearId() {
-      id = null;
       fieldSetFlags()[0] = false;
       return this;
     }
@@ -238,7 +237,7 @@ public class Topic extends org.apache.avro.specific.SpecificRecordBase implement
     public Topic build() {
       try {
         Topic record = new Topic();
-        record.id = fieldSetFlags()[0] ? this.id : (java.lang.String) defaultValue(fields()[0]);
+        record.id = fieldSetFlags()[0] ? this.id : (java.lang.Long) defaultValue(fields()[0]);
         record.name = fieldSetFlags()[1] ? this.name : (java.lang.String) defaultValue(fields()[1]);
         record.subscriptionType = fieldSetFlags()[2] ? this.subscriptionType : (org.kaaproject.kaa.common.endpoint.gen.SubscriptionType) defaultValue(fields()[2]);
         return record;
