@@ -903,7 +903,7 @@ KAA_GROUP_TEARDOWN(log_callback_basic)
 KAA_TEST_CASE_EX(log_callback_basic, invalid_parameters)
 {
     KAA_TRACE_IN(logger);
-    kaa_log_listeners_t listeners;
+    kaa_log_delivery_listener_t listeners;
 
     /* NULL parameters case */
 
@@ -924,7 +924,7 @@ KAA_TEST_CASE_EX(log_callback_basic, valid_parameters)
 
     kaa_error_t rc;
 
-    kaa_log_listeners_t listeners = {
+    kaa_log_delivery_listener_t listeners = {
         mock_log_event_generic_fn,
         mock_log_event_generic_fn,
         mock_log_event_generic_fn,
@@ -1049,7 +1049,7 @@ KAA_TEST_CASE_EX(log_callback_with_storage, on_fail_called)
     kaa_error_t rc;
     int dummy_ctx;
 
-    kaa_log_listeners_t listeners = {
+    kaa_log_delivery_listener_t listeners = {
         NULL,
         mock_log_event_failed_fn,
         NULL,
@@ -1095,7 +1095,7 @@ KAA_TEST_CASE_EX(log_callback_with_storage, on_success_called)
     kaa_error_t rc;
     int dummy_ctx;
 
-    kaa_log_listeners_t listeners = {
+    kaa_log_delivery_listener_t listeners = {
         mock_log_event_success_fn,
         NULL,
         NULL,
@@ -1141,7 +1141,7 @@ KAA_TEST_CASE_EX(log_callback_with_storage, on_fail_and_success_called)
     kaa_error_t rc;
     int dummy_ctx;
 
-    kaa_log_listeners_t listeners = {
+    kaa_log_delivery_listener_t listeners = {
         mock_log_event_success_fn,
         mock_log_event_failed_fn,
         NULL,
@@ -1289,7 +1289,7 @@ KAA_TEST_CASE_EX(log_callback_with_storage_and_strategy, on_timeout_called)
     kaa_error_t rc;
     int dummy_ctx;
 
-    kaa_log_listeners_t listeners = {
+    kaa_log_delivery_listener_t listeners = {
         NULL,
         NULL,
         mock_log_event_timeout_fn,

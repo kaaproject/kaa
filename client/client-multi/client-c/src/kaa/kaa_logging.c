@@ -34,50 +34,40 @@
 #include "utilities/kaa_log.h"
 #include "avro_src/avro/io.h"
 
-
-
 #define KAA_LOGGING_RECEIVE_UPDATES_FLAG   0x01
 #define KAA_MAX_PADDING_LENGTH             (KAA_ALIGNMENT - 1)
-
-
 
 extern kaa_transport_channel_interface_t *kaa_channel_manager_get_transport_channel(kaa_channel_manager_t *self
                                                                                   , kaa_service_t service_type);
 
 extern bool ext_log_upload_strategy_is_timeout_strategy(void *strategy);
 
-
-
 typedef enum {
     LOGGING_RESULT_SUCCESS = 0x00,
     LOGGING_RESULT_FAILURE = 0x01
 } logging_sync_result_t;
 
-typedef struct
-{
+typedef struct {
+    kaa_time_t   timeout;           /**< Bucket timeout. */
     uint16_t     log_bucket_id;     /**< ID of bucket present in storage. */
-    kaa_time_t   timeout;           /**< bucket timeout */
     uint16_t     log_count;         /**< Current logs count. */
 } timeout_info_t;
 
 
 struct kaa_log_collector {
-    void                       *log_storage_context;
-    void                       *log_upload_strategy_context;
-    kaa_status_t               *status;
-    kaa_channel_manager_t      *channel_manager;
-    kaa_logger_t               *logger;
-    kaa_list_t                 *timeouts;
-    kaa_log_listeners_t        log_delivery_listeners;
-    bool                       is_sync_ignored;
-    uint32_t                   log_last_id;         /**< Last log record ID */
-    uint16_t                   log_bucket_id;
+    void                           *log_storage_context;
+    void                           *log_upload_strategy_context;
+    kaa_status_t                   *status;
+    kaa_channel_manager_t          *channel_manager;
+    kaa_logger_t                   *logger;
+    kaa_list_t                     *timeouts;
+    kaa_log_delivery_listener_t    log_delivery_listeners;
+    bool                           is_sync_ignored;
+    uint32_t                       log_last_id;         /**< Last log record ID */
+    uint16_t                       log_bucket_id;
 };
 
-
-
 static const kaa_service_t logging_sync_services[] = {KAA_SERVICE_LOGGING};
-
 
 kaa_error_t kaa_logging_need_logging_resync(kaa_log_collector_t *self, bool *result)
 {
@@ -153,7 +143,11 @@ static bool is_timeout(kaa_log_collector_t *self)
             timeout_info_t *info = (timeout_info_t *)kaa_list_get_data(it);
             ext_log_storage_unmark_by_bucket_id(self->log_storage_context, info->log_bucket_id);
             if (self->log_delivery_listeners.on_timeout) {
-                kaa_log_bucket_info_t log_bucket_info = { info->log_bucket_id, info->log_count };
+                kaa_log_bucket_info_t log_bucket_info = {
+                    .bucket_id = info->log_bucket_id,
+                    .log_count = info->log_count,
+                };
+
                 self->log_delivery_listeners.on_timeout(self->log_delivery_listeners.ctx,
                                                         &log_bucket_info);
             }
@@ -289,10 +283,9 @@ kaa_error_t kaa_logging_add_record(kaa_log_collector_t *self, kaa_user_log_recor
 
     kaa_log_record_t record = { NULL, entry->get_size(entry) };
     if (!record.size) {
-        KAA_LOG_ERROR(self->logger,
-                      KAA_ERR_BADDATA, "Failed to add log record: "
-                                       "serialized record size is null. "
-                                       "Maybe log record schema is empty");
+        KAA_LOG_ERROR(self->logger, KAA_ERR_BADDATA,
+                      "Failed to add log record: serialized record size is null. "
+                      "Maybe log record schema is empty");
         return KAA_ERR_BADDATA;
     }
 
@@ -335,7 +328,7 @@ kaa_error_t kaa_logging_add_record(kaa_log_collector_t *self, kaa_user_log_recor
     return KAA_ERR_NONE;
 }
 
-kaa_error_t kaa_logging_set_listeners(kaa_log_collector_t *self, const kaa_log_listeners_t *listeners)
+kaa_error_t kaa_logging_set_listeners(kaa_log_collector_t *self, const kaa_log_delivery_listener_t *listeners)
 {
     KAA_RETURN_IF_NIL2(self, listeners, KAA_ERR_BADPARAM);
     self->log_delivery_listeners = *listeners;
@@ -507,7 +500,10 @@ kaa_error_t kaa_logging_handle_server_sync(kaa_log_collector_t *self
                           kaa_list_back(self->timeouts),
                           sum_log_records, &total_logs);
 
-        kaa_log_bucket_info_t log_bucket_info = { bucket_id, total_logs };
+        kaa_log_bucket_info_t log_bucket_info = {
+            .log_count = total_logs,
+            .bucket_id = bucket_id,
+        };
 
         if (delivery_result == LOGGING_RESULT_SUCCESS) {
             if (self->log_delivery_listeners.on_success) {
