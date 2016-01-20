@@ -90,9 +90,9 @@
         NSMutableDictionary *typeMap = [NSMutableDictionary dictionary];
         for (NSNumber *type in types) {
             DDLogInfo(@"%@ Processing sync %i for channel %@", TAG, [type intValue], [self getId]);
-            NSNumber *channelDirection = [[self getSupportedTransportTypes] objectForKey:type];
+            NSNumber *channelDirection = [self getSupportedTransportTypes][type];
             if (channelDirection) {
-                [typeMap setObject:channelDirection forKey:type];
+                typeMap[type] = channelDirection;
             } else {
                 DDLogError(@"%@ Unsupported type %i for channel %@", TAG, [type intValue], [self getId]);
             }

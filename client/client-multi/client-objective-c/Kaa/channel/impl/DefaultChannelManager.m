@@ -162,7 +162,7 @@
 }
 
 - (id<TransportConnectionInfo>)getActiveServer:(TransportType)type {
-    id<KaaDataChannel> channel = [self.upChannels objectForKey:[NSNumber numberWithInt:type]];
+    id<KaaDataChannel> channel = self.upChannels[[NSNumber numberWithInt:type]];
     if (!channel || [[NSNull null] isEqual:channel]) {
         return nil;
     }
@@ -203,7 +203,7 @@
         
         if ([newServer serverType] == SERVER_OPERATIONS) {
             DDLogInfo(@"%@ Adding new operations server: %@", TAG, newServer);
-            [self.lastServers setObject:newServer forKey:[newServer transportId]];
+            self.lastServers[newServer.transportId] = newServer;
         }
         
         for (id<KaaDataChannel> channel in self.channels) {
@@ -344,8 +344,8 @@
         if (!self.isPaused) {
             self.isPaused = YES;
             for (NSNumber *key in self.upChannels.allKeys) {
-                if (![[NSNull null] isEqual:[self.upChannels objectForKey:key]]) {
-                    [[self.upChannels objectForKey:key] pause];
+                if (![[NSNull null] isEqual:self.upChannels[key]]) {
+                    [self.upChannels[key] pause];
                 }
             }
         }
@@ -362,8 +362,8 @@
         if (self.isPaused) {
             self.isPaused = NO;
             for (NSNumber *key in self.upChannels.allKeys) {
-                if (![[NSNull null] isEqual:[self.upChannels objectForKey:key]]) {
-                    [[self.upChannels objectForKey:key] resume];
+                if (![[NSNull null] isEqual:self.upChannels[key]]) {
+                    [self.upChannels[key] resume];
                 }
             }
         }
@@ -394,7 +394,7 @@
     DDLogDebug(@"%@ Lookup channel by type [%i]", TAG, type);
     id<KaaDataChannel> channel = [self getChannel:type];
     @synchronized(self.syncTaskQueueMap) {
-        BlockingQueue *queue = [self.syncTaskQueueMap objectForKey:[channel getId]];
+        BlockingQueue *queue = self.syncTaskQueueMap[[channel getId]];
         if (queue) {
             [queue offer:[[SyncTask alloc] initWithTransport:type ackOnly:ack all:all]];
         } else {
@@ -407,21 +407,21 @@
     [self stopWorker:channel];
     SyncWorker *worker = [[SyncWorker alloc] initWithChannel:channel manager:self];
     @synchronized(self.syncTaskQueueMap) {
-        [self.syncTaskQueueMap setObject:[BlockingQueue new] forKey:[channel getId]];
+        self.syncTaskQueueMap[[channel getId]] = [[BlockingQueue alloc] init];
     }
-    [self.syncWorkers setObject:worker forKey:[channel getId]];
+    self.syncWorkers[[channel getId]] = worker;
     [worker start];
 }
 
 - (void)stopWorker:(id<KaaDataChannel>)channel {
     @synchronized(self.syncTaskQueueMap) {
-        BlockingQueue *skippedTasks = [self.syncTaskQueueMap objectForKey:[channel getId]];
+        BlockingQueue *skippedTasks = self.syncTaskQueueMap[[channel getId]];
         if (skippedTasks) {
             [self.syncTaskQueueMap removeObjectForKey:[channel getId]];
             DDLogInfo(@"%@ Tasks skipped due to worker shutdown for channel id: %@", TAG, [channel getId]);
         }
     }
-    SyncWorker *worker = [self.syncWorkers objectForKey:[channel getId]];
+    SyncWorker *worker = self.syncWorkers[[channel getId]];
     if (worker) {
         [self.syncWorkers removeObjectForKey:[channel getId]];
         DDLogDebug(@"%@ Stopping worker for channel with id: %@", TAG, [channel getId]);
@@ -430,7 +430,7 @@
 }
 
 - (id<KaaDataChannel>)getChannel:(TransportType)type {
-    id<KaaDataChannel> result = [self.upChannels objectForKey:[NSNumber numberWithInt:type]];
+    id<KaaDataChannel> result = self.upChannels[[NSNumber numberWithInt:type]];
     if (!result || [[NSNull null] isEqual:result]) {
         DDLogError(@"%@ Failed to find channel for transport: [%i]", TAG, type);
         [NSException raise:KaaChannelRuntimeException format:@"Failed to find channel for transport: [%i]", type];
@@ -440,10 +440,10 @@
 
 - (BOOL)useChannel:(id<KaaDataChannel>)channel forType:(TransportType)type {
     NSNumber *key = [NSNumber numberWithInt:type];
-    NSNumber *value = [[channel getSupportedTransportTypes] objectForKey:key];
+    NSNumber *value = [channel getSupportedTransportTypes][key];
     ChannelDirection direction = [value intValue];
     if (value && (direction == CHANNEL_DIRECTION_BIDIRECTIONAL || direction == CHANNEL_DIRECTION_UP)) {
-        [self.upChannels setObject:channel forKey:[NSNumber numberWithInt:type]];
+        self.upChannels[[NSNumber numberWithInt:type]] = channel;
         return YES;
     }
     return NO;
@@ -456,7 +456,7 @@
         }
     }
     
-    [self.upChannels setObject:[NSNull null] forKey:[NSNumber numberWithInt:type]];
+    self.upChannels[[NSNumber numberWithInt:type]] = [NSNull null];
 }
 
 - (void)applyNewChannel:(id<KaaDataChannel>)channel {
@@ -468,7 +468,7 @@
 - (void)replaceAndRemoveChannel:(id<KaaDataChannel>)channel {
     [self.channels removeObject:channel];
     for (NSNumber *key in self.upChannels.allKeys) {
-        if ([[self.upChannels objectForKey:key] isEqual: channel]) {
+        if ([self.upChannels[key] isEqual: channel]) {
             [self useNewChannelForType:[key intValue]];
         }
     }
@@ -489,7 +489,7 @@
     if ([channel getServerType] == SERVER_BOOTSTRAP) {
         server = [self getCurrentBootstrapServer:[channel getTransportProtocolId]];
     } else {
-        server = [self.lastServers objectForKey:[channel getTransportProtocolId]];
+        server = self.lastServers[[channel getTransportProtocolId]];
     }
     if (server) {
         DDLogDebug(@"%@ Applying server %@ for channel %@ type %@", TAG, server, [channel getId], [channel getTransportProtocolId]);
@@ -513,12 +513,12 @@
 }
 
 - (id<TransportConnectionInfo>)getCurrentBootstrapServer:(TransportProtocolId *)protocolId {
-    id<TransportConnectionInfo> bsi = [self.lastBootstrapServers objectForKey:protocolId];
+    id<TransportConnectionInfo> bsi = self.lastBootstrapServers[protocolId];
     if (!bsi) {
-        NSArray *serverList = [self.bootststrapServers objectForKey:protocolId];
+        NSArray *serverList = self.bootststrapServers[protocolId];
         if (serverList && [serverList count] > 0) {
             bsi = [serverList objectAtIndex:0];
-            [self.lastBootstrapServers setObject:bsi forKey:protocolId];
+            self.lastBootstrapServers[protocolId] = bsi;
         }
     }
     return bsi;
@@ -526,14 +526,14 @@
 
 - (id<TransportConnectionInfo>)getNextBootstrapServer:(id<TransportConnectionInfo>)currentServer {
     id<TransportConnectionInfo> bsi;
-    NSArray *serverList = [self.bootststrapServers objectForKey:[currentServer transportId]];
+    NSArray *serverList = self.bootststrapServers[[currentServer transportId]];
     NSUInteger serverIndex = [serverList indexOfObject:currentServer];
     if (serverIndex != NSNotFound) {
         if (++serverIndex == [serverList count]) {
             serverIndex = 0;
         }
         bsi = [serverList objectAtIndex:serverIndex];
-        [self.lastBootstrapServers setObject:bsi forKey:[currentServer transportId]];
+        self.lastBootstrapServers[[currentServer transportId]] = bsi;
     }
     return bsi;
 }
@@ -562,7 +562,7 @@
         @try {
             BlockingQueue *taskQueue;
             @synchronized(self.manager.syncTaskQueueMap) {
-                taskQueue = [self.manager.syncTaskQueueMap objectForKey:[self.channel getId]];
+                taskQueue = self.manager.syncTaskQueueMap[[self.channel getId]];
             }
             SyncTask *task = [taskQueue take];
             NSMutableArray *additionalTasks = [NSMutableArray array];

@@ -68,8 +68,8 @@
     [self.state updateTopicSubscriptionInfo:topic1.id sequence:1];
     
     NSMutableDictionary *expected = [NSMutableDictionary dictionary];
-    [expected setObject:[NSNumber numberWithInt:5] forKey:topic1.id];
-    [expected setObject:[NSNumber numberWithInt:1] forKey:topic2.id];
+    expected[topic1.id] = [NSNumber numberWithInt:5];
+    expected[topic2.id] = [NSNumber numberWithInt:1];
     
     XCTAssertTrue([expected isEqualToDictionary:[self.state getNotificationSubscriptions]]);
     

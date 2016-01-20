@@ -54,10 +54,11 @@
     
     NSMutableDictionary *requestEntity = [NSMutableDictionary dictionary];
     if (sign) {
-        [requestEntity setObject:signature forKey:REQUEST_SIGNATURE_ATTR_NAME];
+        requestEntity[REQUEST_SIGNATURE_ATTR_NAME] = signature;
     }
-    [requestEntity setObject:requestKeyEncoded forKey:REQUEST_KEY_ATTR_NAME];
-    [requestEntity setObject:requestBodyEncoded forKey:REQUEST_DATA_ATTR_NAME];
+    requestEntity[REQUEST_KEY_ATTR_NAME] = requestKeyEncoded;
+    requestEntity[REQUEST_DATA_ATTR_NAME] = requestBodyEncoded;
+    
     return requestEntity;
 }
 

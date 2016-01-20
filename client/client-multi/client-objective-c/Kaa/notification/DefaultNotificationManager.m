@@ -64,7 +64,7 @@
         NSArray *topicList = [state getTopics];
         if (topicList) {
             for (Topic *topic in topicList) {
-                [self.topics setObject:topic forKey:topic.id];
+                self.topics[topic.id] = topic;
             }
         }
     }
@@ -203,10 +203,10 @@
     [self findTopicById:topicId];
     
     @synchronized (self.optionalListeners) {
-        NSMutableArray *delegates = [self.optionalListeners objectForKey:topicId];
+        NSMutableArray *delegates = self.optionalListeners[topicId];
         if (!delegates) {
             delegates = [NSMutableArray array];
-            [self.optionalListeners setObject:delegates forKey:topicId];
+            self.optionalListeners[topicId] = delegates;
         }
         
         [delegates addObject:delegate];
@@ -222,7 +222,7 @@
     [self findTopicById:topicId];
     
     @synchronized (self.optionalListeners) {
-        NSMutableArray *delegates = [self.optionalListeners objectForKey:topicId];
+        NSMutableArray *delegates = self.optionalListeners[topicId];
         if (delegates) {
             [delegates removeObject:delegate];
         }
@@ -238,8 +238,8 @@
     
     @synchronized (self.topics) {
         for (Topic *topic in topics) {
-            [newTopics setObject:topic forKey:topic.id];
-            if ([self.topics objectForKey:topic.id]) {
+            newTopics[topic.id] = topic;
+            if (self.topics[topic.id]) {
                 [self.topics removeObjectForKey:topic.id];
             } else {
                 [self.state addTopic:topic];
@@ -270,7 +270,7 @@
             BOOL hasOwner = NO;
             
             @synchronized (self.optionalListeners) {
-                NSArray *delegates = [self.optionalListeners objectForKey:topic.id];
+                NSArray *delegates = self.optionalListeners[topic.id];
                 if (delegates && [delegates count] > 0) {
                     hasOwner = YES;
                     [self notifyDelegates:delegates topic:topic notification:notification];
@@ -323,7 +323,7 @@
 
 - (Topic *)findTopicById:(NSString *)topicId {
     @synchronized (self.topics) {
-        Topic *topic = [self.topics objectForKey:topicId];
+        Topic *topic = self.topics[topicId];
         if (!topic) {
             DDLogWarn(@"%@ Failed to find topic: [id:%@] is unknown", TAG, topicId);
             [NSException raise:KaaUnavailableTopic format:@"Topic id [%@] is unknown", topicId];

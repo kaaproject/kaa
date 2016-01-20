@@ -108,7 +108,7 @@
     @synchronized(self) {
         long currentResolutionTime = -1;
         NSNumber *serverTypeKey = [NSNumber numberWithInt:[connectionInfo serverType]];
-        AccessPointIdResolution *pointResolution = [self.resolutionProgressMap objectForKey:serverTypeKey];
+        AccessPointIdResolution *pointResolution = self.resolutionProgressMap[serverTypeKey];
         if (pointResolution) {
             currentResolutionTime = pointResolution.resolutionTime;
             if (pointResolution.accessPointId == [connectionInfo accessPointId]
@@ -143,8 +143,7 @@
             newPointResolution.resolutionTime = updatedResolutionTime;
         }
         
-        [self.resolutionProgressMap setObject:newPointResolution
-                                       forKey:[NSNumber numberWithInt:[connectionInfo serverType]]];
+        self.resolutionProgressMap[[NSNumber numberWithInt:[connectionInfo serverType]]] = newPointResolution;
     }
 }
 
@@ -159,11 +158,11 @@
     
     @synchronized(self) {
         NSNumber *serverTypeKey = [NSNumber numberWithInt:[connectionInfo serverType]];
-        AccessPointIdResolution *pointResolution = [self.resolutionProgressMap objectForKey:serverTypeKey];
+        AccessPointIdResolution *pointResolution = self.resolutionProgressMap[serverTypeKey];
         if (!pointResolution) {
             AccessPointIdResolution *newPointResolution =
             [[AccessPointIdResolution alloc] initWithAccessId:[connectionInfo accessPointId] resolution:nil];
-            [self.resolutionProgressMap setObject:newPointResolution forKey:serverTypeKey];
+            self.resolutionProgressMap[serverTypeKey] = newPointResolution;
         } else if (pointResolution.accessPointId != [connectionInfo accessPointId]) {
             if (pointResolution.resolution) {
                 DDLogVerbose(@"%@ Cancelling fail resolution: %@", TAG, pointResolution);
@@ -171,7 +170,7 @@
             }
             AccessPointIdResolution *newPointResolution =
             [[AccessPointIdResolution alloc] initWithAccessId:[connectionInfo accessPointId] resolution:nil];
-            [self.resolutionProgressMap setObject:newPointResolution forKey:serverTypeKey];
+            self.resolutionProgressMap[serverTypeKey] = newPointResolution;
         } else {
             DDLogDebug(@"%@ Same server [%@] is used, nothing has changed", TAG, connectionInfo);
         }
@@ -188,7 +187,7 @@
     
     @synchronized(self) {
         NSNumber *serverTypeKey = [NSNumber numberWithInt:[connectionInfo serverType]];
-        AccessPointIdResolution *pointResolution = [self.resolutionProgressMap objectForKey:serverTypeKey];
+        AccessPointIdResolution *pointResolution = self.resolutionProgressMap[serverTypeKey];
         if (!pointResolution) {
             DDLogVerbose(@"%@ Server hasn't been set (failover resolution has happened), new server %@ can't be connected",
                          TAG, connectionInfo);
@@ -216,7 +215,7 @@
             case FAILOVER_STATUS_BOOTSTRAP_SERVERS_NA:
             {
                 serverTypeKey = [NSNumber numberWithInt:SERVER_BOOTSTRAP];
-                AccessPointIdResolution *btResolution = [self.resolutionProgressMap objectForKey:serverTypeKey];
+                AccessPointIdResolution *btResolution = self.resolutionProgressMap[serverTypeKey];
                 long period = [TimeUtils convertValue:self.bootstrapServersRetryPeriod
                                             fromTimeUnit:self.timeUnit
                                               toTimeUnit:TIME_UNIT_MILLISECONDS];
@@ -230,7 +229,7 @@
             case FAILOVER_STATUS_CURRENT_BOOTSTRAP_SERVER_NA:
             {
                 serverTypeKey = [NSNumber numberWithInt:SERVER_BOOTSTRAP];
-                AccessPointIdResolution *btResolution = [self.resolutionProgressMap objectForKey:serverTypeKey];
+                AccessPointIdResolution *btResolution = self.resolutionProgressMap[serverTypeKey];
                 long period = [TimeUtils convertValue:self.bootstrapServersRetryPeriod
                                             fromTimeUnit:self.timeUnit
                                               toTimeUnit:TIME_UNIT_MILLISECONDS];
@@ -244,7 +243,7 @@
             case FAILOVER_STATUS_NO_OPERATION_SERVERS_RECEIVED:
             {
                 serverTypeKey = [NSNumber numberWithInt:SERVER_BOOTSTRAP];
-                AccessPointIdResolution *btResolution = [self.resolutionProgressMap objectForKey:serverTypeKey];
+                AccessPointIdResolution *btResolution = self.resolutionProgressMap[serverTypeKey];
                 if (btResolution) {
                     btResolution.resolutionTime = [[NSDate date] timeIntervalSince1970] * 1000;
                 }
@@ -258,7 +257,7 @@
             case FAILOVER_STATUS_OPERATION_SERVERS_NA:
             {
                 serverTypeKey = [NSNumber numberWithInt:SERVER_OPERATIONS];
-                AccessPointIdResolution *opResolution = [self.resolutionProgressMap objectForKey:serverTypeKey];
+                AccessPointIdResolution *opResolution = self.resolutionProgressMap[serverTypeKey];
                 long period = [TimeUtils convertValue:self.operationsServersRetryPeriod
                                             fromTimeUnit:self.timeUnit
                                               toTimeUnit:TIME_UNIT_MILLISECONDS];

@@ -49,7 +49,7 @@
     for (NSNumber *key in attachEndpointRequests.allKeys) {
         EndpointAttachRequest *attachRequest = [[EndpointAttachRequest alloc] init];
         attachRequest.requestId = [key intValue];
-        attachRequest.endpointAccessToken = [[attachEndpointRequests objectForKey:key] token];
+        attachRequest.endpointAccessToken = [attachEndpointRequests[key] token];
         [attachEPRequestList addObject:attachRequest];
     }
     
@@ -58,7 +58,7 @@
     for (NSNumber *key in detachEndpointRequests.allKeys) {
         EndpointDetachRequest *detachRequest = [[EndpointDetachRequest alloc] init];
         detachRequest.requestId = [key intValue];
-        detachRequest.endpointKeyHash = [[detachEndpointRequests objectForKey:key] keyHash];
+        detachRequest.endpointKeyHash = [detachEndpointRequests[key] keyHash];
         [detachEPRequestList addObject:detachRequest];
     }
     
@@ -84,13 +84,12 @@
         NSDictionary *attachEndpointRequests = [self.processor getAttachEndpointRequests];
         NSArray *attachResponses = response.endpointAttachResponses.data;
         for (EndpointAttachResponse *attached in attachResponses) {
-            EndpointAccessToken *attachedToken =
-            [attachEndpointRequests objectForKey:[NSNumber numberWithInt:attached.requestId]];
+            EndpointAccessToken *attachedToken = attachEndpointRequests[[NSNumber numberWithInt:attached.requestId]];
             if (attached.result == SYNC_RESPONSE_RESULT_TYPE_SUCCESS && attachedToken) {
                 DDLogInfo(@"%@ Token: %@", TAG, attachedToken);
                 if (attached.endpointKeyHash.branch == KAA_UNION_STRING_OR_NULL_BRANCH_0) {
                     EndpointKeyHash *keyHash = [[EndpointKeyHash alloc] initWithKeyHash:attached.endpointKeyHash.data];
-                    [self.attachedEndpoints setObject:keyHash forKey:attachedToken];
+                    self.attachedEndpoints[attachedToken] = keyHash;
                     hasChanges = YES;
                 } else {
                     DDLogError(@"%@ No endpointKeyHash for request id: %i", TAG, attached.requestId);
@@ -107,11 +106,10 @@
         NSDictionary *detachEndpointRequests = [self.processor getDetachEndpointRequests];
         NSArray *detachResponses = response.endpointDetachResponses.data;
         for (EndpointDetachResponse *detached in detachResponses) {
-            EndpointKeyHash *detachedEndpointKeyHash =
-            [detachEndpointRequests objectForKey:[NSNumber numberWithInt:detached.requestId]];
+            EndpointKeyHash *detachedEndpointKeyHash = detachEndpointRequests[[NSNumber numberWithInt:detached.requestId]];
             if (detached.result == SYNC_RESPONSE_RESULT_TYPE_SUCCESS && detachedEndpointKeyHash) {
                 for (EndpointAccessToken *key in self.attachedEndpoints.allKeys) {
-                    EndpointKeyHash *value = [self.attachedEndpoints objectForKey:key];
+                    EndpointKeyHash *value = self.attachedEndpoints[key];
                     if ([value isEqual:detachedEndpointKeyHash]) {
                         [self.attachedEndpoints removeObjectForKey:key];
                         if (!hasChanges) {

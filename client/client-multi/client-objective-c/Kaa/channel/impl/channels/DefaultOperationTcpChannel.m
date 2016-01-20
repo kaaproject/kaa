@@ -416,15 +416,15 @@ typedef enum {
         NSMutableDictionary *typeMap = [NSMutableDictionary dictionaryWithCapacity:[[self getSupportedTransportTypes] count]];
         for (NSNumber *typeNum in types) {
             DDLogInfo(@"%@ Processing sync %i for channel [%@]", TAG, [typeNum intValue], [self getId]);
-            NSNumber *directionNum = [[self getSupportedTransportTypes] objectForKey:typeNum];
+            NSNumber *directionNum = [self getSupportedTransportTypes][typeNum];
             if (directionNum) {
-                [typeMap setObject:directionNum forKey:typeNum];
+                typeMap[typeNum] = directionNum;
             } else {
                 DDLogError(@"%@ Unsupported type %i for channel [%@]", TAG, [typeNum intValue], [self getId]);
             }
             for (NSNumber *transportType in [self getSupportedTransportTypes].allKeys) {
                 if (![transportType isEqualToNumber:typeNum]) {
-                    [typeMap setObject:[NSNumber numberWithInt:CHANNEL_DIRECTION_DOWN] forKey:transportType];
+                    typeMap[transportType] = [NSNumber numberWithInt:CHANNEL_DIRECTION_DOWN];
                 }
             }
         }

@@ -62,7 +62,7 @@
 
 - (void)useNextOperationsServer:(TransportProtocolId *)transportId {
     if (self.mappedOperationServerList && [self.mappedOperationServerList count] > 0) {
-        ProtocolMetaData *nextOperServer = [[self.mappedIterators objectForKey:transportId] nextObject];
+        ProtocolMetaData *nextOperServer = [self.mappedIterators[transportId] nextObject];
         if (nextOperServer) {
             DDLogDebug(@"%@ New server [%i] will be user for %@", TAG, nextOperServer.accessPointId, transportId);
             if (self.channelManager) {
@@ -128,17 +128,17 @@
         for (ProtocolMetaData *server in self.operationsServerList) {
             TransportProtocolId *transportId =
             [[TransportProtocolId alloc] initWithId:server.protocolVersionInfo.id version:server.protocolVersionInfo.version];
-            NSMutableArray *servers = [self.mappedOperationServerList objectForKey:transportId];
+            NSMutableArray *servers = self.mappedOperationServerList[transportId];
             if (!servers) {
                 servers = [NSMutableArray array];
-                [self.mappedOperationServerList setObject:servers forKey:transportId];
+                self.mappedOperationServerList[transportId] = servers;
             }
             [servers addObject:server];
         }
         for (TransportProtocolId *key in self.mappedOperationServerList.allKeys) {
-            NSMutableArray *servers = [self.mappedOperationServerList objectForKey:key];
+            NSMutableArray *servers = self.mappedOperationServerList[key];
             [servers shuffle];
-            [self.mappedIterators setObject:[servers objectEnumerator] forKey:key];
+            self.mappedIterators[key] = [servers objectEnumerator];
         }
         if (self.serverToApply) {
             NSMutableArray *servers = [self getTransportsByAccessPointId:[self.serverToApply intValue]];

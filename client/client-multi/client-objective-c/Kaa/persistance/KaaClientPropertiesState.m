@@ -107,7 +107,7 @@
                 }
                 [self parseNotificationSubscriptions];
                 
-                NSString *attachedEndpointsString = [self.state objectForKey:ATTACHED_ENDPOINTS];
+                NSString *attachedEndpointsString = self.state[ATTACHED_ENDPOINTS];
                 if (attachedEndpointsString) {
                     NSArray *endpointsList = [attachedEndpointsString componentsSeparatedByString:@","];
                     for (NSString *attachedEndpoint in endpointsList) {
@@ -117,11 +117,11 @@
                         NSArray *splittedValues = [attachedEndpoint componentsSeparatedByString:@":"];
                         EndpointKeyHash *keyHash = [[EndpointKeyHash alloc] initWithKeyHash:[splittedValues objectAtIndex:1]];
                         EndpointAccessToken *token = [[EndpointAccessToken alloc] initWithToken:[splittedValues objectAtIndex:0]];
-                        [self.attachedEndpoints setObject:keyHash forKey:token];
+                        self.attachedEndpoints[token] = keyHash;
                     }
                 }
                 
-                NSString *eventSeqNumStr = [self.state objectForKey:EVENT_SEQ_NUM];
+                NSString *eventSeqNumStr = self.state[EVENT_SEQ_NUM];
                 if (eventSeqNumStr) {
                     int eventSeqNum = [eventSeqNumStr intValue];
                     if (eventSeqNum == 0) {
@@ -147,7 +147,7 @@
 }
 
 - (BOOL)isRegistred {
-    NSString *value = [self.state objectForKey:IS_REGISTERED];
+    NSString *value = self.state[IS_REGISTERED];
     return value ? [value boolValue] : NO;
 }
 
@@ -179,7 +179,7 @@
         }
         NSData *base64Encoded = [self.base64 encodeBase64:encodedData];
         NSString *base64Str = [[NSString alloc] initWithData:base64Encoded encoding:NSUTF8StringEncoding];
-        [self.state setObject:base64Str forKey:NF_SUBSCRIPTIONS];
+        self.state[NF_SUBSCRIPTIONS] = base64Str;
     }
     @catch (NSException *ex) {
         DDLogError(@"%@ Can't persist notification subscription info. Encoded data: %@", TAG, [encodedData hexadecimalString]);
@@ -189,11 +189,11 @@
     NSMutableString *attachedEndpointsString = [NSMutableString string];
     NSArray *keys = self.attachedEndpoints.allKeys;
     for (EndpointAccessToken *key in keys) {
-        EndpointKeyHash *value = [self.attachedEndpoints objectForKey:key];
+        EndpointKeyHash *value = self.attachedEndpoints[key];
         [attachedEndpointsString appendString:[NSString stringWithFormat:@"%@:%@,", key.token, value.keyHash]];
     }
-    [self.state setObject:attachedEndpointsString forKey:ATTACHED_ENDPOINTS];
-    [self.state setObject:[NSString stringWithFormat:@"%i", self.eventSequenceNumber] forKey:EVENT_SEQ_NUM];
+    self.state[ATTACHED_ENDPOINTS] = attachedEndpointsString;
+    self.state[EVENT_SEQ_NUM] = [NSString stringWithFormat:@"%i", self.eventSequenceNumber];
     
     @try {
         NSFileManager *fileManager = [NSFileManager defaultManager];
@@ -237,12 +237,12 @@
 }
 
 - (int32_t)appStateSequenceNumber {
-    NSString *value = [self.state objectForKey:APP_STATE_SEQ_NUMBER];
-    return value ? (int32_t)[value integerValue] : 1;
+    NSString *value = self.state[APP_STATE_SEQ_NUMBER];
+    return value ? [value intValue] : 1;
 }
 
 - (EndpointObjectHash *)profileHash {
-    NSString *hash = [self.state objectForKey:PROFILE_HASH];
+    NSString *hash = self.state[PROFILE_HASH];
     if (!hash) {
         hash = [[NSString alloc] initWithData:[self.base64 encodeBase64:[NSData data]] encoding:NSUTF8StringEncoding];
     }
@@ -260,12 +260,12 @@
 }
 
 - (void)addTopic:(Topic *)topic {
-    TopicSubscriptionInfo *info = [self.notificationSubscriptions objectForKey:topic.id];
+    TopicSubscriptionInfo *info = self.notificationSubscriptions[topic.id];
     if (!info) {
         info = [[TopicSubscriptionInfo alloc] init];
         info.topicInfo = topic;
         info.seqNumber = 0;
-        [self.notificationSubscriptions setObject:info forKey:topic.id];
+        self.notificationSubscriptions[topic.id] = info;
         self.hasUpdate = YES;
         DDLogInfo(@"%@ Adding new seqNumber 0 for %@ subscription", TAG, topic.id);
     }
@@ -277,13 +277,13 @@
     DDLogDebug(@"%@ Removed subscription info for %@", TAG, topicId);
 }
 
-- (BOOL)updateTopicSubscriptionInfo:(NSString *)topicId sequence:(int)sequenceNumber {
-    TopicSubscriptionInfo *info = [self.notificationSubscriptions objectForKey:topicId];
+- (BOOL)updateTopicSubscriptionInfo:(NSString *)topicId sequence:(int32_t)sequenceNumber {
+    TopicSubscriptionInfo *info = self.notificationSubscriptions[topicId];
     BOOL updated = NO;
     if (info && sequenceNumber > info.seqNumber) {
         updated = YES;
         info.seqNumber = sequenceNumber;
-        [self.notificationSubscriptions setObject:info forKey:topicId];
+        self.notificationSubscriptions[topicId] = info;
         self.hasUpdate = YES;
         DDLogDebug(@"%@ Updated seqNumber to %i for %@ subscription", TAG, sequenceNumber, topicId);
     }
@@ -293,8 +293,8 @@
 - (NSDictionary *)getNotificationSubscriptions {
     NSMutableDictionary *subscriptions = [NSMutableDictionary dictionary];
     for (NSString *key in self.notificationSubscriptions.allKeys) {
-        TopicSubscriptionInfo *value = [self.notificationSubscriptions objectForKey:key];
-        [subscriptions setObject:[NSNumber numberWithInt:value.seqNumber] forKey:key];
+        TopicSubscriptionInfo *value = self.notificationSubscriptions[key];
+        subscriptions[key] = [NSNumber numberWithInt:value.seqNumber];
     }
     return subscriptions;
 }
@@ -318,7 +318,7 @@
 }
 
 - (NSString *)endpointAccessToken {
-    NSString *token = [self.state objectForKey:ENDPOINT_ACCESS_TOKEN];
+    NSString *token = self.state[ENDPOINT_ACCESS_TOKEN];
     return token ? token : @"";
 }
 
@@ -327,7 +327,7 @@
 }
 
 - (int32_t)configSequenceNumber {
-    NSString *number = [self.state objectForKey:CONFIG_SEQ_NUMBER];
+    NSString *number = self.state[CONFIG_SEQ_NUMBER];
     return (int32_t)[(number ? number : @"1") integerValue];
 }
 
@@ -336,7 +336,7 @@
 }
 
 - (int32_t)notificationSequenceNumber {
-    NSString *number = [self.state objectForKey:NOTIFICATION_SEQ_NUMBER];
+    NSString *number = self.state[NOTIFICATION_SEQ_NUMBER];
     return (int32_t)[(number ? number : @"1") integerValue];
 }
 
@@ -353,7 +353,7 @@
 }
 
 - (BOOL)isAttachedToUser {
-    NSString *value = [self.state objectForKey:IS_ATTACHED];
+    NSString *value = self.state[IS_ATTACHED];
     return value ? [value boolValue] : NO;
 }
 
@@ -375,7 +375,7 @@
 
 - (BOOL)isSDKProperyListUpdated:(KaaClientProperties *)sdkProperties {
     NSData *hashFromSDK = [sdkProperties propertiesHash];
-    NSString *stateHash = [self.state objectForKey:PROPERTIES_HASH];
+    NSString *stateHash = self.state[PROPERTIES_HASH];
     if (!stateHash) {
         NSData *emptyData = [self.base64 encodeBase64:[NSData data]];
         stateHash = [[NSString alloc] initWithData:emptyData encoding:NSUTF8StringEncoding];
@@ -385,7 +385,7 @@
 }
 
 - (void)parseNotificationSubscriptions {
-    NSString *subscriptionInfo = [self.state objectForKey:NF_SUBSCRIPTIONS];
+    NSString *subscriptionInfo = self.state[NF_SUBSCRIPTIONS];
     if (subscriptionInfo) {
         NSData *data = [self.base64 decodeString:subscriptionInfo];
         TopicSubscriptionInfo *decodedInfo = nil;
@@ -396,7 +396,7 @@
                 [decodedInfo deserialize:reader];
                 DDLogDebug(@"%@ Loaded %@", TAG, decodedInfo);
                 if (decodedInfo) {
-                    [self.notificationSubscriptions setObject:decodedInfo forKey:decodedInfo.topicInfo.id];
+                    self.notificationSubscriptions[decodedInfo.topicInfo.id] = decodedInfo;
                 }
             }
         }
@@ -435,18 +435,18 @@
 }
 
 - (void)setStateStringValue:(NSString *)value propertyKey:(NSString *)propertyKey {
-    NSString *previous = [self.state objectForKey:propertyKey];
-    [self.state setObject:value forKey:propertyKey];
+    NSString *previous = self.state[propertyKey];
+    self.state[propertyKey] = value;
     self.hasUpdate |= ![value isEqualToString:previous];
 }
 
 - (void)setStateBooleanValue:(BOOL)value propertyKey:(NSString *)propertyKey {
-    NSString *previousRawValue = [self.state objectForKey:propertyKey];
+    NSString *previousRawValue = self.state[propertyKey];
     BOOL previousValue = NO;
     if (previousRawValue && previousRawValue.length > 0) {
         previousValue = [previousRawValue boolValue];
     }
-    [self.state setObject:(value ? @"Y" : @"N") forKey:propertyKey];
+    self.state[propertyKey] = value ? @"Y" : @"N";
     self.hasUpdate |= value != previousValue;
 }
 

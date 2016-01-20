@@ -41,7 +41,7 @@
     if (self) {
         self.properties = [NSUserDefaults standardUserDefaults];
         for (NSString *key in defaults) {
-            [self.properties setObject:[defaults objectForKey:key] forKey:key];
+            [self.properties setObject:defaults[key] forKey:key];
         }
         self.base64 = base64;
     }
@@ -101,10 +101,10 @@
             [metaData setProtocolVersionInfo:versionInfo];
             [metaData setConnectionInfo:[self.base64 decodeString:[tokens objectAtIndex:3]]];
             TransportProtocolId *key = [[TransportProtocolId alloc] initWithId:versionInfo.id version:versionInfo.version];
-            NSMutableArray *serverList = [servers objectForKey:key];
+            NSMutableArray *serverList = servers[key];
             if (!serverList) {
                 serverList = [NSMutableArray array];
-                [servers setObject:serverList forKey:key];
+                servers[key] = serverList;
             }
             [serverList addObject:[[GenericTransportInfo alloc] initWithServerType:SERVER_BOOTSTRAP meta:metaData]];
         }

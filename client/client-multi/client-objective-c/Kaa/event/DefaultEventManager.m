@@ -96,7 +96,7 @@
     if (transactionId) {
         DDLogInfo(@"%@ Adding event [eventClassFQN: %@, target: %@] to transaction %@", TAG, eventFQN, (target ? target : @"broadcast"), transactionId);
         @synchronized(self.transactionsGuard) {
-            NSMutableArray *events = [self.transactions objectForKey:transactionId];
+            NSMutableArray *events = self.transactions[transactionId];
             if (events) {
                 Event *event = [[Event alloc] init];
                 event.seqNum = -1;
@@ -152,7 +152,7 @@
     request.requestId = requestId;
     request.eventClassFQNs = eventFQNs;
     EventListenersRequestBinding *bind = [[EventListenersRequestBinding alloc] initWithRequest:request delegate:delegate];
-    [self.eventListenersRequests setObject:bind forKey:[NSNumber numberWithInt:requestId]];
+    self.eventListenersRequests[[NSNumber numberWithInt:requestId]] = bind;
     DDLogDebug(@"%@ Adding event listener resolution request. Request ID: %i", TAG, requestId);
     if (!self.isEngaged) {
         [self.transport sync];
@@ -164,7 +164,7 @@
     for (EventListenersResponse *singleResponse in response) {
         DDLogDebug(@"%@ Received event listener resolution response: %@", TAG, singleResponse);
         NSNumber *key = [NSNumber numberWithInt:singleResponse.requestId];
-        __block EventListenersRequestBinding *bind = [self.eventListenersRequests objectForKey:key];
+        __block EventListenersRequestBinding *bind = self.eventListenersRequests[key];
         if (bind) {
             [self.eventListenersRequests removeObjectForKey:[NSNumber numberWithInt:singleResponse.requestId]];
             [[self.executorContext getCallbackExecutor] addOperationWithBlock:^{
@@ -199,9 +199,9 @@
 - (TransactionId *)beginTransaction {
     TransactionId *trxId = [[TransactionId alloc] init];
     @synchronized(self.transactionsGuard) {
-        if (![self.transactions objectForKey:trxId]) {
+        if (!self.transactions[trxId]) {
             DDLogDebug(@"%@ Creating events transaction with id [%@]", TAG, trxId);
-            [self.transactions setObject:[NSMutableArray array] forKey:trxId];
+            self.transactions[trxId] = [NSMutableArray array];
         }
     }
     return trxId;
@@ -210,7 +210,7 @@
 - (void)commit:(TransactionId *)trxId {
     DDLogDebug(@"%@ Committing events transaction with id [%@]", TAG, trxId);
     @synchronized(self.transactionsGuard) {
-        NSArray *eventsToCommit = [self.transactions objectForKey:trxId];
+        NSArray *eventsToCommit = self.transactions[trxId];
         if (eventsToCommit) {
             [self.transactions removeObjectForKey:trxId];
             
@@ -230,7 +230,7 @@
 - (void)rollback:(TransactionId *)trxId {
     DDLogDebug(@"%@ Rolling back events transaction with id %@", TAG, trxId);
     @synchronized(self.transactionsGuard) {
-        NSMutableArray *eventsToRemove = [self.transactions objectForKey:trxId];
+        NSMutableArray *eventsToRemove = self.transactions[trxId];
         if (eventsToRemove) {
             [self.transactions removeObjectForKey:trxId];
             for (Event *event in eventsToRemove) {

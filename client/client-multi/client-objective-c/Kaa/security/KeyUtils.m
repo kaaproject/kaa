@@ -70,17 +70,17 @@ static const unsigned char _encodedRSAEncryptionOID[15] = {
     NSMutableDictionary * publicKeyAttr = [[NSMutableDictionary alloc] init];
     NSMutableDictionary * keyPairAttr = [[NSMutableDictionary alloc] init];
     
-    [keyPairAttr setObject:(__bridge id)kSecAttrKeyTypeRSA forKey:(__bridge id)kSecAttrKeyType];
-    [keyPairAttr setObject:[NSNumber numberWithUnsignedInteger:KEY_PAIR_SIZE] forKey:(__bridge id)kSecAttrKeySizeInBits];
+    keyPairAttr[(__bridge id)kSecAttrKeyType] = (__bridge id)kSecAttrKeyTypeRSA;
+    keyPairAttr[(__bridge id)kSecAttrKeySizeInBits] = [NSNumber numberWithUnsignedInteger:KEY_PAIR_SIZE];
+
+    privateKeyAttr[(__bridge id)kSecAttrIsPermanent] = [NSNumber numberWithBool:YES];
+    privateKeyAttr[(__bridge id)kSecAttrApplicationTag] = privateTag;
     
-    [privateKeyAttr setObject:[NSNumber numberWithBool:YES] forKey:(__bridge id)kSecAttrIsPermanent];
-    [privateKeyAttr setObject:privateTag forKey:(__bridge id)kSecAttrApplicationTag];
+    publicKeyAttr[(__bridge id)kSecAttrIsPermanent] = [NSNumber numberWithBool:YES];
+    publicKeyAttr[(__bridge id)kSecAttrApplicationTag] = publicTag;
     
-    [publicKeyAttr setObject:[NSNumber numberWithBool:YES] forKey:(__bridge id)kSecAttrIsPermanent];
-    [publicKeyAttr setObject:publicTag forKey:(__bridge id)kSecAttrApplicationTag];
-    
-    [keyPairAttr setObject:privateKeyAttr forKey:(__bridge id)kSecPrivateKeyAttrs];
-    [keyPairAttr setObject:publicKeyAttr forKey:(__bridge id)kSecPublicKeyAttrs];
+    keyPairAttr[(__bridge id)kSecPrivateKeyAttrs] = privateKeyAttr;
+    keyPairAttr[(__bridge id)kSecPublicKeyAttrs] = publicKeyAttr;
     
     sanityCheck = SecKeyGeneratePair((__bridge CFDictionaryRef)keyPairAttr, &publicKeyRef, &privateKeyRef);
     
@@ -109,10 +109,10 @@ static const unsigned char _encodedRSAEncryptionOID[15] = {
     
     NSMutableDictionary * queryKey = [[NSMutableDictionary alloc] init];
     
-    [queryKey setObject:(__bridge id)kSecClassKey forKey:(__bridge id)kSecClass];
-    [queryKey setObject:tag forKey:(__bridge id)kSecAttrApplicationTag];
-    [queryKey setObject:(__bridge id)kSecAttrKeyTypeRSA forKey:(__bridge id)kSecAttrKeyType];
-    [queryKey setObject:[NSNumber numberWithBool:YES] forKey:(__bridge id)kSecReturnRef];
+    queryKey[(__bridge id)kSecClass] = (__bridge id)kSecClassKey;
+    queryKey[(__bridge id)kSecAttrApplicationTag] = tag;
+    queryKey[(__bridge id)kSecAttrKeyType] = (__bridge id)kSecAttrKeyTypeRSA;
+    queryKey[(__bridge id)kSecReturnRef] = [NSNumber numberWithBool:YES];
     
     sanityCheck = SecItemCopyMatching((__bridge CFDictionaryRef)queryKey, (CFTypeRef *)&keyReference);
     
@@ -133,13 +133,14 @@ static const unsigned char _encodedRSAEncryptionOID[15] = {
     
     NSMutableDictionary * queryPublicKey = [[NSMutableDictionary alloc] init];
     
-    [queryPublicKey setObject:(__bridge id)kSecClassKey forKey:(__bridge id)kSecClass];
-    [queryPublicKey setObject:tag forKey:(__bridge id)kSecAttrApplicationTag];
-    [queryPublicKey setObject:(__bridge id)kSecAttrKeyTypeRSA forKey:(__bridge id)kSecAttrKeyType];
-    [queryPublicKey setObject:[NSNumber numberWithBool:YES] forKey:(__bridge id)kSecReturnData];
+    queryPublicKey[(__bridge id)kSecClass] = (__bridge id)kSecClassKey;
+    queryPublicKey[(__bridge id)kSecAttrApplicationTag] = tag;
+    queryPublicKey[(__bridge id)kSecAttrKeyType] = (__bridge id)kSecAttrKeyTypeRSA;
+    queryPublicKey[(__bridge id)kSecReturnData] = [NSNumber numberWithBool:YES];
     
     CFTypeRef data = NULL;
     sanityCheck = SecItemCopyMatching((__bridge CFDictionaryRef)queryPublicKey, &data);
+    
     NSData * publicKeyBits = (__bridge NSData *)(data);
     
     if (sanityCheck != noErr) {
@@ -164,7 +165,6 @@ static const unsigned char _encodedRSAEncryptionOID[15] = {
     NSMutableData * encKey = [[NSMutableData alloc] init];
     int bitstringEncLength;
     
-    // When we get to the bitstring - how will we encode it?
     if  ([publicKey length] + 1  < 128 ) {
         bitstringEncLength = 1;
     } else {
@@ -215,11 +215,13 @@ static const unsigned char _encodedRSAEncryptionOID[15] = {
     SecKeyRef remoteKeyRef;
     
     NSMutableDictionary * peerPublicKeyAttr = [[NSMutableDictionary alloc] init];
-    [peerPublicKeyAttr setObject:(__bridge id)kSecClassKey forKey:(__bridge id)kSecClass];
-    [peerPublicKeyAttr setObject:(__bridge id)kSecAttrKeyTypeRSA forKey:(__bridge id)kSecAttrKeyType];
-    [peerPublicKeyAttr setObject:tag forKey:(__bridge id)kSecAttrApplicationTag];
-    [peerPublicKeyAttr setObject:processedKey forKey:(__bridge id)kSecValueData];
-    [peerPublicKeyAttr setObject:[NSNumber numberWithBool:YES] forKey:(__bridge id)kSecReturnData];
+    
+    peerPublicKeyAttr[(__bridge id)kSecClass] = (__bridge id)kSecClassKey;
+    peerPublicKeyAttr[(__bridge id)kSecAttrKeyType] = (__bridge id)kSecAttrKeyTypeRSA;
+    peerPublicKeyAttr[(__bridge id)kSecAttrApplicationTag] = tag;
+    peerPublicKeyAttr[(__bridge id)kSecValueData] = processedKey;
+    peerPublicKeyAttr[(__bridge id)kSecReturnData] = [NSNumber numberWithBool:YES];
+    
     sanityCheck = SecItemAdd((__bridge CFDictionaryRef) peerPublicKeyAttr, (CFTypeRef *)&persistPeer);
     
     if(sanityCheck != noErr){
@@ -240,12 +242,15 @@ static const unsigned char _encodedRSAEncryptionOID[15] = {
 
 + (void)removeKeyByTag:(NSData *)tag {
     NSMutableDictionary * queryKey = [[NSMutableDictionary alloc] init];
-    [queryKey setObject:(__bridge id)kSecClassKey forKey:(__bridge id)kSecClass];
-    [queryKey setObject:tag forKey:(__bridge id)kSecAttrApplicationTag];
-    [queryKey setObject:(__bridge id)kSecAttrKeyTypeRSA forKey:(__bridge id)kSecAttrKeyType];
+    
+    queryKey[(__bridge id)kSecClass] = (__bridge id)kSecClassKey;
+    queryKey[(__bridge id)kSecAttrApplicationTag] = tag;
+    queryKey[(__bridge id)kSecAttrKeyType] = (__bridge id)kSecAttrKeyTypeRSA;
     
     OSStatus sanityCheck = noErr;
+    
     sanityCheck = SecItemDelete((__bridge CFDictionaryRef)queryKey);
+    
     if (sanityCheck == noErr) {
         DDLogInfo(@"%@ Successfully removed key", TAG);
     } else {
@@ -269,12 +274,14 @@ static const unsigned char _encodedRSAEncryptionOID[15] = {
     
     NSMutableDictionary * queryKey = [[NSMutableDictionary alloc] init];
     
-    [queryKey setObject:(__bridge id)persistentRef forKey:(__bridge id)kSecValuePersistentRef];
-    [queryKey setObject:[NSNumber numberWithBool:YES] forKey:(__bridge id)kSecReturnRef];
+    queryKey[(__bridge id)kSecValuePersistentRef] = (__bridge id)persistentRef;
+    queryKey[(__bridge id)kSecReturnRef] = [NSNumber numberWithBool:YES];
     
     SecKeyRef keyRef = NULL;
     OSStatus sanityCheck = noErr;
+    
     sanityCheck = SecItemCopyMatching((__bridge CFDictionaryRef)queryKey, (CFTypeRef *)&keyRef);
+    
     if (sanityCheck != noErr) {
         DDLogWarn(@"%@ Can't get key ref with persistent key ref, status: %i", TAG, (int)sanityCheck);
     }

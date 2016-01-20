@@ -109,7 +109,7 @@
     
     NSDictionary *dict = [channel getSupportedTransportTypes];
     
-    XCTAssertEqualObjects([dict objectForKey:[NSNumber numberWithInt:TRANSPORT_TYPE_BOOTSTRAP]], [NSNumber numberWithInt:CHANNEL_DIRECTION_BIDIRECTIONAL]);
+    XCTAssertEqualObjects(dict[[NSNumber numberWithInt:TRANSPORT_TYPE_BOOTSTRAP]], [NSNumber numberWithInt:CHANNEL_DIRECTION_BIDIRECTIONAL]);
     XCTAssertTrue([[TransportProtocolIdHolder HTTPTransportID] isEqual:[channel getTransportProtocolId]]);
     XCTAssertTrue([@"default_bootstrap_channel" isEqualToString:[channel getId]]);
 }

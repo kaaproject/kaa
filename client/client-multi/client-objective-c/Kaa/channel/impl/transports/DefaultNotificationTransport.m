@@ -192,7 +192,7 @@
         for (NSString *key in nfSubscriptions.allKeys) {
             TopicState *state = [[TopicState alloc] init];
             state.topicId = key;
-            state.seqNumber = [[nfSubscriptions objectForKey:key] intValue];
+            state.seqNumber = [nfSubscriptions[key] intValue];
             [states addObject:state];
             DDLogInfo(@"%@ %@ : %i", TAG, state.topicId, state.seqNumber);
         }

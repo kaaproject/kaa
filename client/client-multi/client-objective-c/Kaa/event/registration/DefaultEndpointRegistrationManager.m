@@ -104,7 +104,7 @@
     NSNumber *requestId = [NSNumber numberWithInt:self.attachRequestId++];
     DDLogInfo(@"%@ Going to attach Endpoint by access token: %@", TAG, accessToken);
     @synchronized (self.attachEndpointRequests) {
-        [self.attachEndpointRequests setObject:accessToken forKey:requestId];
+        self.attachEndpointRequests[requestId] = accessToken;
     }
     [self addDelegate:delegate forRequestId:requestId];
 }
@@ -113,7 +113,7 @@
     NSNumber *requestId = [NSNumber numberWithInt:self.detachRequestId++];
     DDLogInfo(@"%@ Going to detach Endpoint by endpoint key hash: %@", TAG, keyHash);
     @synchronized (self.detachEndpointRequests) {
-        [self.detachEndpointRequests setObject:keyHash forKey:requestId];
+        self.detachEndpointRequests[requestId] = keyHash;
     }
     [self addDelegate:delegate forRequestId:requestId];
 }
@@ -121,11 +121,11 @@
 - (void)addDelegate:(id)delegate forRequestId:(NSNumber *)requestId  {
     if (delegate && [delegate conformsToProtocol:@protocol(OnAttachEndpointOperationDelegate)]) {
         @synchronized (self.endpointAttachDelegates) {
-            [self.endpointAttachDelegates setObject:delegate forKey:requestId];
+            self.endpointAttachDelegates[requestId] = delegate;
         }
     } else if (delegate && [delegate conformsToProtocol:@protocol(OnDetachEndpointOperationDelegate)]) {
         @synchronized (self.endpointDetachDelegates) {
-            [self.endpointDetachDelegates setObject:delegate forKey:requestId];
+            self.endpointDetachDelegates[requestId] = delegate;
         }
     }
     if (self.userTransport) {
@@ -186,7 +186,7 @@ userDetachNotification:(UserDetachNotification *)detachNotification {
     if (attachResponses && [attachResponses count] > 0) {
         for (EndpointAttachResponse *attached in attachResponses) {
             @synchronized (self.endpointAttachDelegates) {
-                id<OnAttachEndpointOperationDelegate> delegate = [self.endpointAttachDelegates objectForKey: [NSNumber numberWithInt:attached.requestId]];
+                id<OnAttachEndpointOperationDelegate> delegate = self.endpointAttachDelegates[[NSNumber numberWithInt:attached.requestId]];
                 [self.endpointAttachDelegates removeObjectForKey:[NSNumber numberWithInt:attached.requestId]];
                 EndpointKeyHash *keyHash = [[EndpointKeyHash alloc] initWithKeyHash:attached.endpointKeyHash.data];
                 [self notifyAttachedDelegateWithResult:attached.result delegate:delegate keyHash:keyHash];
@@ -201,13 +201,13 @@ userDetachNotification:(UserDetachNotification *)detachNotification {
         for (EndpointDetachResponse *detached in detachResponses) {
             @synchronized (self.endpointDetachDelegates) {
                 NSNumber *requestId = [NSNumber numberWithInt:detached.requestId];
-                id<OnDetachEndpointOperationDelegate> delegate = [self.endpointDetachDelegates objectForKey: requestId];
+                id<OnDetachEndpointOperationDelegate> delegate = self.endpointDetachDelegates[requestId];
                 [self.endpointDetachDelegates removeObjectForKey:[NSNumber numberWithInt:detached.requestId]];
                 [self notifyDetachedDelegateWithResult:detached.result delegate:delegate];
             }
             EndpointKeyHash *keyHash = nil;
             @synchronized (self.detachEndpointRequests) {
-                keyHash = [self.detachEndpointRequests objectForKey:[NSNumber numberWithInt:detached.requestId]];
+                keyHash = self.detachEndpointRequests[[NSNumber numberWithInt:detached.requestId]];
                 [self.detachEndpointRequests removeObjectForKey:[NSNumber numberWithInt:detached.requestId]];
             }
             if (keyHash && detached.result == SYNC_RESPONSE_RESULT_TYPE_SUCCESS) {

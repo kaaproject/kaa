@@ -62,7 +62,7 @@
                                      parameters:nil
                       constructingBodyWithBlock:^(id <AFMultipartFormData>formData) {
                           for (NSString *key in entity.allKeys) {
-                              [formData appendPartWithFormData:[entity objectForKey:key] name:key];
+                              [formData appendPartWithFormData:entity[key] name:key];
                           }
                       }];
     self.operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
@@ -112,7 +112,7 @@
     if (verify) {
         NSDictionary *headers = response.response.allHeaderFields;
         DDLogVerbose(@"%@ %@", TAG, [headers description]);
-        NSString *signatureHeader = [headers objectForKey:SIGNATURE_HEADER_NAME];
+        NSString *signatureHeader = headers[SIGNATURE_HEADER_NAME];
         if (!signatureHeader) {
             [NSException raise:KaaIOException format:@"Can't verify message"];
         }

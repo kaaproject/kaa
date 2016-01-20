@@ -178,7 +178,7 @@
         }
         
         for (NSNumber *key in types.allKeys) {
-            BOOL isDownDirection = [[types objectForKey:key] intValue] == CHANNEL_DIRECTION_DOWN;
+            BOOL isDownDirection = [types[key] intValue] == CHANNEL_DIRECTION_DOWN;
             switch ([key intValue]) {
                 case TRANSPORT_TYPE_CONFIGURATION:
                     if (self.configurationTransport) {

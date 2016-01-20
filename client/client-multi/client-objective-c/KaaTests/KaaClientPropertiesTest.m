@@ -37,7 +37,7 @@
     NSDictionary *bootstraps = [self.properties bootstrapServers];
     XCTAssertEqual(1, [bootstraps count]);
     
-    NSArray *serverInfoList = [bootstraps objectForKey:[TransportProtocolIdHolder TCPTransportID]];
+    NSArray *serverInfoList = bootstraps[[TransportProtocolIdHolder TCPTransportID]];
     XCTAssertNotNil(serverInfoList);
     XCTAssertEqual(1, [serverInfoList count]);
     

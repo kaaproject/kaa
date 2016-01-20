@@ -61,7 +61,7 @@
         
         if ([self.pendingEvents count] > 0) {
             for (NSNumber *key in self.pendingEvents.allKeys) {
-                NSMutableSet *value = [self.pendingEvents objectForKey:key];
+                NSMutableSet *value = self.pendingEvents[key];
                 DDLogDebug(@"%@ Have not received response for %li events sent with request id %i",
                            TAG, (long)[value count], [key intValue]);
                 [eventsSet unionSet:value];
@@ -75,7 +75,7 @@
             NSArray *sortedEvents = [[eventsSet allObjects] sortedArrayUsingComparator:self.eventSequenceNumberComparator];
             DDLogDebug(@"%@ Going to send events bundle with size: %li", TAG, (long)[sortedEvents count]);
             request.events = [KAAUnion unionWithBranch:KAA_UNION_ARRAY_EVENT_OR_NULL_BRANCH_0 data:sortedEvents];
-            [self.pendingEvents setObject:eventsSet forKey:[NSNumber numberWithInt:requestId]];
+            self.pendingEvents[[NSNumber numberWithInt:requestId]] = eventsSet;
         }
         
         request.eventSequenceNumberRequest = [KAAUnion unionWithBranch:KAA_UNION_EVENT_SEQUENCE_NUMBER_REQUEST_OR_NULL_BRANCH_1];
@@ -161,12 +161,12 @@
 - (void)onSyncResposeIdReceived:(int32_t)requestId {
     DDLogDebug(@"%@ Events sent with request id %li were accepted", TAG, (long)requestId);
     NSNumber *key = [NSNumber numberWithInt:(int)requestId];
-    NSMutableSet *acceptedEvents = [self.pendingEvents objectForKey:key];
+    NSMutableSet *acceptedEvents = self.pendingEvents[key];
     if (acceptedEvents) {
         [self.pendingEvents removeObjectForKey:key];
         NSMutableArray *discardedItems = [NSMutableArray array];
         for (NSNumber *key in self.pendingEvents.allKeys) {
-            NSMutableSet *value = [self.pendingEvents objectForKey:key];
+            NSMutableSet *value = self.pendingEvents[key];
             for (Event *acceptedEvent in acceptedEvents) {
                 [value removeObject:acceptedEvent];
             }
