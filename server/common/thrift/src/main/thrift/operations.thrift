@@ -57,7 +57,6 @@ enum Operation {
       ADD_USER_VERIFIER = 18
       REMOVE_USER_VERIFIER = 19
       UPDATE_USER_VERIFIER = 20
-      UPDATE_SERVER_PROFILE = 21
 }
 
 /**
@@ -90,12 +89,10 @@ struct Notification {
   7: id configurationId
   8: shared.Integer configurationSeqNumber
   9: id notificationId
-  10: id unicastNotificationId
-  11: id topicId
-  12: binary keyHash
-  13: Operation op
-  14: id appenderId
-  15: string userVerifierToken
+  10: id topicId
+  11: Operation op
+  12: id appenderId
+  13: string userVerifierToken
 }
 
 struct RedirectionRule {

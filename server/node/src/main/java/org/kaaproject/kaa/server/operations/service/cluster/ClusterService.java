@@ -91,6 +91,20 @@ public interface ClusterService {
      * @return id of the global entity actor node
      */
     String sendRouteMessage(EndpointRouteMessage msg);
+    
+    /**
+     * Send unicast notification message to specified node
+     * @param nodeId - id of the server node
+     * @param msg the unicast notification message
+     */
+    void sendUnicastNotificationMessage(String nodeId, ThriftUnicastNotificationMessage msg);
+
+    /**
+     * Send server profile update message to specified node
+     * @param nodeId - id of the server node
+     * @param msg the unicast notification message
+     */
+    void sendServerProfileUpdateMessage(String nodeId, ThriftServerProfileUpdateMessage msg);
 
     /**
      * Process entity route messages

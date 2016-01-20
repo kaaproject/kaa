@@ -6,8 +6,7 @@ import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftServerProfil
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftUnicastNotificationMessage;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
 import org.kaaproject.kaa.server.operations.service.akka.actors.core.endpoint.AbstractEndpointActorMessageProcessor;
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.EndpointActorMsg;
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.EndpointAddress;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.ActorClassifier;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.EndpointClusterAddress;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.EndpointRouteMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.RouteTable;
@@ -58,28 +57,33 @@ public class GlobalEndpointActorMessageProcessor extends AbstractEndpointActorMe
         }
     }
 
-    public void processEndpointActorMsg(EndpointActorMsg msg) {
-        if (msg instanceof ThriftEndpointActorMsg) {
-            processThriftMsg((ThriftEndpointActorMsg<?>) msg);
-        }
-    }
-
-    private void processThriftMsg(ThriftEndpointActorMsg<?> msg) {
+    @Override
+    protected void processThriftMsg(ActorContext context, ThriftEndpointActorMsg<?> msg) {
         Object thriftMsg = msg.getMsg();
         if (thriftMsg instanceof ThriftServerProfileUpdateMessage) {
-            processServerProfileUpdateMsg(msg.getAddress(), (ThriftServerProfileUpdateMessage) thriftMsg);
+            processServerProfileUpdateMsg(context, (ThriftServerProfileUpdateMessage) thriftMsg);
         } else if (thriftMsg instanceof ThriftUnicastNotificationMessage) {
-            processUnicastNotificationMsg(msg.getAddress(), (ThriftUnicastNotificationMessage) thriftMsg);
+            processUnicastNotificationMsg(context, (ThriftUnicastNotificationMessage) thriftMsg);
         }
     }
 
-    private void processServerProfileUpdateMsg(EndpointAddress address, ThriftServerProfileUpdateMessage thriftMsg) {
+    private void processServerProfileUpdateMsg(ActorContext context, ThriftServerProfileUpdateMessage thriftMsg) {
         // TODO Auto-generated method stub
     }
 
-    private void processUnicastNotificationMsg(EndpointAddress address, ThriftUnicastNotificationMessage thriftMsg) {
-        // TODO Auto-generated method stub
-
+    private void processUnicastNotificationMsg(ActorContext context, ThriftUnicastNotificationMessage thriftMsg) {
+        ThriftUnicastNotificationMessage localMsg = new ThriftUnicastNotificationMessage(thriftMsg);
+        localMsg.setActorClassifierIsSet(false);
+        for (EndpointClusterAddress address : routes.getLocalRoutes()) {
+            LOG.info("Forwarding {} to local endpoint actor {}", localMsg, address);
+            ThriftEndpointActorMsg<ThriftUnicastNotificationMessage> msg = new ThriftEndpointActorMsg<ThriftUnicastNotificationMessage>(
+                    address.toEndpointAddress(), new ActorClassifier(false), localMsg);
+            context.parent().tell(msg, context.self());
+        }
+        for (EndpointClusterAddress address : routes.getRemoteRoutes()) {
+            LOG.info("Forwarding {} to remote endpoint actor {}", localMsg, address);
+            clusterService.sendUnicastNotificationMessage(address.getNodeId(), localMsg);
+        }
     }
 
 }

@@ -27,14 +27,12 @@ import java.util.Map.Entry;
 
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
-import org.kaaproject.kaa.server.common.thrift.gen.operations.Operation;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
 import org.kaaproject.kaa.server.operations.service.akka.actors.core.endpoint.global.GlobalEndpointActorCreator;
 import org.kaaproject.kaa.server.operations.service.akka.actors.core.endpoint.local.LocalEndpointActorCreator;
 import org.kaaproject.kaa.server.operations.service.akka.actors.supervision.SupervisionStrategyFactory;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointAwareMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointStopMessage;
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.ServerProfileUpdateMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.lb.ClusterUpdateMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.logs.LogEventPackMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.notification.ThriftNotificationMessage;
@@ -47,7 +45,6 @@ import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.Rou
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.RouteOperation;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.stats.ApplicationActorStatusResponse;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.stats.StatusRequestMessage;
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.topic.NotificationMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.topic.TopicSubscriptionMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventDeliveryMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventDeliveryMessage.EventDeliveryStatus;
@@ -293,9 +290,6 @@ public class ApplicationActor extends UntypedActor {
         if (notification.isSetNotificationId()) {
             LOG.debug("[{}] Forwarding message to specific topic", appToken);
             sendToSpecificTopic(message);
-        } else if (notification.isSetKeyHash()) {
-            LOG.debug("[{}] Forwarding message to specific endpoint", appToken);
-            sendToSpecificEndpoint(message);
         } else if (notification.isSetAppenderId()) {
             LOG.debug("[{}] Forwarding message to application log actor", appToken);
             processLogNotificationMessage(message);
@@ -337,27 +331,6 @@ public class ApplicationActor extends UntypedActor {
             context().watch(topicActor);
         }
         return topicActor;
-    }
-
-    /**
-     * Send to specific endpoint.
-     *
-     * @param message
-     *            the message
-     */
-    private void sendToSpecificEndpoint(ThriftNotificationMessage message) {
-        EndpointObjectHash keyHash = EndpointObjectHash.fromBytes(message.getNotification().getKeyHash());
-        LocalEndpointActorMD endpointActor = localEndpointSessions.get(keyHash);
-        if (endpointActor != null) {
-            if (message.getNotification().getOp() == Operation.UPDATE_SERVER_PROFILE) {
-                endpointActor.actorRef.tell(new ServerProfileUpdateMessage(), self());
-            } else {
-                endpointActor.actorRef
-                        .tell(NotificationMessage.fromUnicastId(message.getNotification().getUnicastNotificationId()), self());
-            }
-        } else {
-            LOG.debug("[{}] Can't find endpoint actor that corresponds to {} ", appToken, keyHash);
-        }
     }
 
     /**

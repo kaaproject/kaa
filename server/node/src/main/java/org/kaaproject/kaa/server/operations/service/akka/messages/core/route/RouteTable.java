@@ -2,6 +2,7 @@ package org.kaaproject.kaa.server.operations.service.akka.messages.core.route;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class RouteTable<T extends EntityClusterAddress> {
@@ -33,16 +34,16 @@ public class RouteTable<T extends EntityClusterAddress> {
         }
     }
 
-    public Stream<T> getRoutes() {
-        return Stream.concat(localRoutes.stream(), remoteRoutes.stream());
+    public Set<T> getRoutes() {
+        return Stream.concat(localRoutes.stream(), remoteRoutes.stream()).collect(Collectors.toSet());
     }
 
-    public Stream<T> getLocalRoutes() {
-        return localRoutes.stream();
+    public Set<T> getLocalRoutes() {
+        return localRoutes;
     }
 
-    public Stream<T> getRemoteRoutes() {
-        return remoteRoutes.stream();
+    public Set<T> getRemoteRoutes() {
+        return remoteRoutes;
     }
 
     public void clear() {

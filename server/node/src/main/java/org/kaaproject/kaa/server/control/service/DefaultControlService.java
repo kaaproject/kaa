@@ -126,6 +126,7 @@ import org.kaaproject.kaa.server.control.service.sdk.SdkGeneratorFactory;
 import org.kaaproject.kaa.server.control.service.sdk.event.EventFamilyMetadata;
 import org.kaaproject.kaa.server.control.service.zk.ControlZkService;
 import org.kaaproject.kaa.server.hash.ConsistentHashResolver;
+import org.kaaproject.kaa.server.node.service.thrift.OperationsServiceMsg;
 import org.kaaproject.kaa.server.resolve.OperationsServerResolver;
 import org.kaaproject.kaa.server.thrift.NeighborTemplate;
 import org.kaaproject.kaa.server.thrift.Neighbors;
@@ -859,21 +860,7 @@ public class DefaultControlService implements ControlService {
                             new NeighborTemplate<OperationsServiceMsg>() {
                                 @Override
                                 public void process(Iface client, List<OperationsServiceMsg> messages) throws TException {
-                                    List<UserConfigurationUpdate> updates = new ArrayList<UserConfigurationUpdate>();
-                                    for (OperationsServiceMsg msg : messages) {
-                                        if (msg.getUnicastNotificationMsg() != null) {
-                                            client.onUnicastNotification(msg.getUnicastNotificationMsg());
-                                        }
-                                        if (msg.getServerProfileUpdateMsg() != null) {
-                                            client.onServerProfileUpdate(msg.getServerProfileUpdateMsg());
-                                        }
-                                        if (msg.getUserConfigurationUpdateMsg() != null) {
-                                            updates.add(msg.getUserConfigurationUpdateMsg());
-                                        }
-                                    }
-                                    if (updates.size() > 0) {
-                                        client.sendUserConfigurationUpdates(updates);
-                                    }
+                                    OperationsServiceMsg.dispatch(client, messages);
                                 }
 
                                 @Override
@@ -1656,10 +1643,6 @@ public class DefaultControlService implements ControlService {
             if (payload instanceof NotificationDto) {
                 NotificationDto dto = (NotificationDto) payload;
                 thriftNotification.setNotificationId(dto.getId());
-            } else if (payload instanceof EndpointNotificationDto) {
-                EndpointNotificationDto unicastDto = (EndpointNotificationDto) payload;
-                thriftNotification.setKeyHash(unicastDto.getEndpointKeyHash());
-                thriftNotification.setUnicastNotificationId(unicastDto.getId());
             }
         }
         return thriftNotification;
@@ -2203,44 +2186,5 @@ public class DefaultControlService implements ControlService {
         } else {
             throw new ControlServiceException("Can't find sdk profile by sdk token: " + sdkToken + "!");
         }
-    }
-
-    private static class OperationsServiceMsg {
-        private final ThriftUnicastNotificationMessage unicastNotificationMsg;
-        private final ThriftServerProfileUpdateMessage serverProfileUpdateMsg;
-        private final UserConfigurationUpdate userConfigurationUpdateMsg;
-
-        private OperationsServiceMsg(ThriftUnicastNotificationMessage unicastNotificationMsg,
-                ThriftServerProfileUpdateMessage serverProfileUpdateMsg, UserConfigurationUpdate userConfigurationUpdateMsg) {
-            super();
-            this.unicastNotificationMsg = unicastNotificationMsg;
-            this.serverProfileUpdateMsg = serverProfileUpdateMsg;
-            this.userConfigurationUpdateMsg = userConfigurationUpdateMsg;
-        }
-
-        public static OperationsServiceMsg fromServerProfileUpdateMessage(ThriftServerProfileUpdateMessage serverProfileUpdateMsg) {
-            return new OperationsServiceMsg(null, serverProfileUpdateMsg, null);
-        }
-
-        public static OperationsServiceMsg fromNotification(ThriftUnicastNotificationMessage unicastNotificationMsg) {
-            return new OperationsServiceMsg(unicastNotificationMsg, null, null);
-        }
-
-        public static OperationsServiceMsg fromUpdate(UserConfigurationUpdate userConfigurationUpdateMsg) {
-            return new OperationsServiceMsg(null, null, userConfigurationUpdateMsg);
-        }
-
-        public ThriftUnicastNotificationMessage getUnicastNotificationMsg() {
-            return unicastNotificationMsg;
-        }
-
-        public ThriftServerProfileUpdateMessage getServerProfileUpdateMsg() {
-            return serverProfileUpdateMsg;
-        }
-
-        public UserConfigurationUpdate getUserConfigurationUpdateMsg() {
-            return userConfigurationUpdateMsg;
-        }
-
     }
 }

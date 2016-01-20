@@ -21,6 +21,7 @@ import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftUnicastNotif
 import org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo;
 import org.kaaproject.kaa.server.common.zk.operations.OperationsNode;
 import org.kaaproject.kaa.server.common.zk.operations.OperationsNodeListener;
+import org.kaaproject.kaa.server.node.service.thrift.OperationsServiceMsg;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.ActorClassifier;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.EndpointAddress;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.EndpointClusterAddress;
@@ -50,7 +51,7 @@ public class DefaultClusterService implements ClusterService {
     /** ID is thriftHost:thriftPort */
     private volatile String id;
 
-    private volatile Neighbors<MessageTemplate, ThriftEntityRouteMessage> neighbors;
+    private volatile Neighbors<MessageTemplate, OperationsServiceMsg> neighbors;
 
     private volatile OperationsNode operationsNode;
 
@@ -65,7 +66,7 @@ public class DefaultClusterService implements ClusterService {
     @PostConstruct
     public void initBean() {
         LOG.info("Init default cluster service.");
-        neighbors = new Neighbors<MessageTemplate, ThriftEntityRouteMessage>(new MessageTemplate(),
+        neighbors = new Neighbors<MessageTemplate, OperationsServiceMsg>(new MessageTemplate(),
                 operationsServerConfig.getMaxNumberNeighborConnections());
     }
 
@@ -166,13 +167,27 @@ public class DefaultClusterService implements ClusterService {
     @Override
     public String sendRouteMessage(EndpointRouteMessage msg) {
         String serverId = getEntityNode(msg.getAddress().getEndpointKey());
-        NeighborConnection<MessageTemplate, ThriftEntityRouteMessage> server = neighbors.getNeghborConnection(serverId);
-        if (server == null) {
-            LOG.warn("specified server {} not found in neighbors list", serverId);
-        } else {
-            sendMessagesToServer(server, Collections.singleton(toThriftMsg(msg)));
-        }
+        sendServerProfileUpdateMessage(serverId, OperationsServiceMsg.fromRoute(toThriftMsg(msg)));
         return serverId;
+    }
+
+    @Override
+    public void sendUnicastNotificationMessage(String serverId, ThriftUnicastNotificationMessage msg) {
+        sendServerProfileUpdateMessage(serverId, OperationsServiceMsg.fromNotification(msg));
+    }
+
+    @Override
+    public void sendServerProfileUpdateMessage(String serverId, ThriftServerProfileUpdateMessage msg) {
+        sendServerProfileUpdateMessage(serverId, OperationsServiceMsg.fromServerProfileUpdateMessage(msg));
+    }
+
+    private void sendServerProfileUpdateMessage(String serverId, OperationsServiceMsg msg) {
+        NeighborConnection<MessageTemplate, OperationsServiceMsg> server = neighbors.getNeghborConnection(serverId);
+        if (server == null) {
+            LOG.warn("Specified server {} not found in neighbors list", serverId);
+        } else {
+            sendMessagesToServer(server, Collections.singleton(msg));
+        }
     }
 
     @Override
@@ -233,8 +248,8 @@ public class DefaultClusterService implements ClusterService {
         return new EndpointClusterAddress(source.getNodeId(), address.getTenantId(), address.getApplicationToken(), endpointKey);
     }
 
-    private void sendMessagesToServer(NeighborConnection<MessageTemplate, ThriftEntityRouteMessage> server,
-            Collection<ThriftEntityRouteMessage> messages) {
+    private void sendMessagesToServer(NeighborConnection<MessageTemplate, OperationsServiceMsg> server,
+            Collection<OperationsServiceMsg> messages) {
         try {
             LOG.trace("Sending to server {} messages: {}", server.getId(), messages);
             server.sendMessages(messages);
@@ -290,15 +305,15 @@ public class DefaultClusterService implements ClusterService {
         neighbors.shutdown();
     }
 
-    private static class MessageTemplate implements NeighborTemplate<ThriftEntityRouteMessage> {
+    private static class MessageTemplate implements NeighborTemplate<OperationsServiceMsg> {
 
         public MessageTemplate() {
             super();
         }
 
         @Override
-        public void process(Iface client, List<ThriftEntityRouteMessage> messages) throws TException {
-            client.onEntityRouteMessages(messages);
+        public void process(Iface client, List<OperationsServiceMsg> messages) throws TException {
+            OperationsServiceMsg.dispatch(client, messages);
         }
 
         @Override
@@ -306,4 +321,5 @@ public class DefaultClusterService implements ClusterService {
             LOG.warn("Failed to send data to [{}]", serverId);
         }
     }
+
 }

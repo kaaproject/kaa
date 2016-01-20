@@ -36,6 +36,8 @@ import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.Base64Util;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
 import org.kaaproject.kaa.server.common.log.shared.appender.data.BaseLogEventPack;
+import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftServerProfileUpdateMessage;
+import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftUnicastNotificationMessage;
 import org.kaaproject.kaa.server.operations.pojo.SyncContext;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
@@ -44,6 +46,7 @@ import org.kaaproject.kaa.server.operations.service.akka.actors.core.endpoint.lo
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.SyncRequestMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.logs.LogDeliveryMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.logs.LogEventPackMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.ThriftEndpointActorMsg;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.ActorTimeoutMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.ChannelTimeoutMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.RequestTimeoutMessage;
@@ -153,6 +156,24 @@ public class LocalEndpointActorMessageProcessor extends AbstractEndpointActorMes
             state.setUcfHash(message.getUserConfigurationUpdate().getHash());
             syncChannels(context, state.getChannelsByTypes(TransportType.CONFIGURATION), true, false);
         }
+    }
+
+    @Override
+    protected void processThriftMsg(ActorContext context, ThriftEndpointActorMsg<?> msg) {
+        Object thriftMsg = msg.getMsg();
+        if (thriftMsg instanceof ThriftServerProfileUpdateMessage) {
+            processServerProfileUpdateMsg(context, (ThriftServerProfileUpdateMessage) thriftMsg);
+        } else if (thriftMsg instanceof ThriftUnicastNotificationMessage) {
+            processUnicastNotificationMsg(context, (ThriftUnicastNotificationMessage) thriftMsg);
+        }
+    }
+
+    private void processServerProfileUpdateMsg(ActorContext context, ThriftServerProfileUpdateMessage thriftMsg) {
+        // TODO Auto-generated method stub
+    }
+
+    private void processUnicastNotificationMsg(ActorContext context, ThriftUnicastNotificationMessage thriftMsg) {
+        processNotification(context, NotificationMessage.fromUnicastId(thriftMsg.getNotificationId()));
     }
 
     public void processNotification(ActorContext context, NotificationMessage message) {

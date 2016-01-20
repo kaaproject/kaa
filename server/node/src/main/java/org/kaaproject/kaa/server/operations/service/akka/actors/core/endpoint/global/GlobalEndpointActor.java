@@ -33,9 +33,9 @@ public class GlobalEndpointActor extends UntypedActor {
         }
         if (msg instanceof EndpointRouteMessage) {
             processRouteMessage((EndpointRouteMessage) msg);
-        } else if(msg instanceof EndpointActorMsg){
+        } else if (msg instanceof EndpointActorMsg) {
             processEndpointActorMsg((EndpointActorMsg) msg);
-        }else if (msg instanceof ClusterUpdateMessage) {
+        } else if (msg instanceof ClusterUpdateMessage) {
             processClusterUpdateMessage();
         }
     }
@@ -43,9 +43,9 @@ public class GlobalEndpointActor extends UntypedActor {
     private void processRouteMessage(EndpointRouteMessage msg) {
         messageProcessor.processRouteMessage(msg);
     }
-    
+
     private void processEndpointActorMsg(EndpointActorMsg msg) {
-        messageProcessor.processEndpointActorMsg(msg);
+        messageProcessor.processEndpointActorMsg(context(), msg);
     }
 
     private void processClusterUpdateMessage() {

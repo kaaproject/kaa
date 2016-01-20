@@ -23,6 +23,7 @@ import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.SyncRequestMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.logs.LogDeliveryMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.notification.ThriftNotificationMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.EndpointActorMsg;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.ActorTimeoutMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.ChannelTimeoutMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.RequestTimeoutMessage;
@@ -78,6 +79,8 @@ public class LocalEndpointActor extends UntypedActor {
         }
         if (message instanceof SyncRequestMessage) {
             processEndpointSync((SyncRequestMessage) message);
+        } else if (message instanceof EndpointActorMsg) {
+            processEndpointActorMsg((EndpointActorMsg) message);
         } else if (message instanceof EndpointEventReceiveMessage) {
             processEndpointEventReceiveMessage((EndpointEventReceiveMessage) message);
         } else if (message instanceof LogDeliveryMessage) {
@@ -110,6 +113,10 @@ public class LocalEndpointActor extends UntypedActor {
         } else {
             LOG.warn("[{}] Received unknown message {}", actorKey, message);
         }
+    }
+    
+    private void processEndpointActorMsg(EndpointActorMsg msg) {
+        messageProcessor.processEndpointActorMsg(context(), msg);
     }
 
     private void processUserConfigurationUpdateMessage(EndpointUserConfigurationUpdateMessage message) {

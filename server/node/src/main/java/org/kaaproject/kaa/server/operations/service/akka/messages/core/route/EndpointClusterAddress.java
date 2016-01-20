@@ -18,6 +18,10 @@ public class EndpointClusterAddress extends EntityClusterAddress {
     public EndpointObjectHash getEndpointKey() {
         return endpointKey;
     }
+    
+    public EndpointAddress toEndpointAddress(){
+        return new EndpointAddress(getTenantId(), getAppToken(), endpointKey);
+    }
 
     @Override
     public byte[] getEntityId() {

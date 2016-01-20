@@ -3,6 +3,8 @@ package org.kaaproject.kaa.server.operations.service.akka.actors.core.endpoint;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.operations.service.OperationsService;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointStopMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.EndpointActorMsg;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.ThriftEndpointActorMsg;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.ActorTimeoutMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +18,7 @@ public abstract class AbstractEndpointActorMessageProcessor<T extends AbstractEn
     private static final Logger LOG = LoggerFactory.getLogger(AbstractEndpointActorMessageProcessor.class);
 
     protected final T state;
-    
+
     /** The operations service. */
     protected final OperationsService operationsService;
 
@@ -65,4 +67,11 @@ public abstract class AbstractEndpointActorMessageProcessor<T extends AbstractEn
         target.tell(message, context.self());
     }
 
+    public void processEndpointActorMsg(ActorContext context, EndpointActorMsg msg) {
+        if (msg instanceof ThriftEndpointActorMsg) {
+            processThriftMsg(context, (ThriftEndpointActorMsg<?>) msg);
+        }
+    }
+
+    abstract protected void processThriftMsg(ActorContext context, ThriftEndpointActorMsg<?> msg);
 }
