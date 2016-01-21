@@ -72,7 +72,9 @@ static const int OPERATIONS_SERVICES_COUNT = sizeof(OPERATIONS_SERVICES) / sizeo
 
 /* Logging constraints */
 #define MAX_LOG_COUNT           SIZE_MAX
-#define MAX_LOG_BUCKET_SIZE     (2 * 1024)
+#define MAX_LOG_BUCKET_SIZE     (KAA_TCP_CHANNEL_OUT_BUFFER_SIZE >> 3)
+
+_Static_assert(MAX_LOG_BUCKET_SIZE, "Maximum bucket size cannot be 0!");
 
 typedef enum {
     KAA_CLIENT_ESP8266_STATE_UNINITED = 0,

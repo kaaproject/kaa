@@ -91,12 +91,14 @@ void print_mem_stat(kaa_client_t *kaa_client);
  * Strategy-specific configuration parameters used by Kaa log collection feature.
  */
 #define KAA_DEMO_MAX_UPLOAD_THRESHOLD     15   /* Size of collected serialized logs needed to initiate log upload */
-#define KAA_DEMO_MAX_LOG_BUCKET_SIZE      512   /* Max size of a log batch has been sent by SDK during one upload. */
+/* Max size of a log batch has been sent by SDK during one upload. */
+#define KAA_DEMO_MAX_LOG_BUCKET_SIZE      (KAA_TCP_CHANNEL_OUT_BUFFER_SIZE >> 3)
 #define KAA_DEMO_MAX_LOGS_IN_BUCKET       16   /* Max count of logs in one bucket */
 #define KAA_DEMO_MAX_CLEANUP_THRESHOLD    100 /* Max size of an inner log storage. If size is exceeded, elder logs will be removed. */
 
 #define KAA_DEMO_LOG_GENERATION_FREQUENCY    3 /* seconds */
 
+_Static_assert(KAA_DEMO_MAX_LOG_BUCKET_SIZE, "Maximum bucket size cannot be 0!");
 
 /*
  * Kaa status and public key storage file names.

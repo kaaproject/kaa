@@ -99,11 +99,9 @@ typedef int (*cleanup_fn)(void);
 #define KAA_RUN_TEST(GROUP, NAME) \
     do { \
         if (!init_ret_code) { \
-            int rc = GROUP##_group_setup(); \
-            ASSERT_EQUAL(0, rc); \
+            GROUP##_group_setup(); \
             GROUP##_##NAME##_test(); \
-            rc = GROUP##_group_teardown(); \
-            ASSERT_EQUAL(0, rc); \
+            GROUP##_group_teardown(); \
         } \
     } while (0)
 
@@ -137,14 +135,14 @@ typedef int (*cleanup_fn)(void);
  * It runs before each test to make sure sytem is in predictable state
  */
 #define KAA_GROUP_SETUP(GROUP) \
-    int GROUP##_group_setup()
+    void GROUP##_group_setup()
 
 /* Defines a teardown process for given group
  * Reverts any changes made by setup routine and makes sure no side effects
  * will stay after test
  */
 #define KAA_GROUP_TEARDOWN(GROUP) \
-    int GROUP##_group_teardown()
+    void GROUP##_group_teardown()
 
 
 #define KAA_SUITE_MAIN(SUITE_NAME, INIT_FN, CLEANUP_FN, ...) \

@@ -917,8 +917,6 @@ KAA_GROUP_SETUP(log_setters)
     call_is_expected    = 0;
 
     KAA_TRACE_OUT(logger);
-    return 0;
-
 }
 
 KAA_GROUP_TEARDOWN(log_setters)
@@ -931,8 +929,6 @@ KAA_GROUP_TEARDOWN(log_setters)
     log_collector = NULL;
 
     KAA_TRACE_OUT(logger);
-    return 0;
-
 }
 
 
@@ -1041,7 +1037,6 @@ KAA_GROUP_SETUP(log_callback_basic)
     call_is_expected    = 0;
 
     KAA_TRACE_OUT(logger);
-    return 0;
 }
 
 KAA_GROUP_TEARDOWN(log_callback_basic)
@@ -1051,7 +1046,6 @@ KAA_GROUP_TEARDOWN(log_callback_basic)
     log_collector = NULL;
 
     KAA_TRACE_OUT(logger);
-    return 0;
 }
 
 KAA_TEST_CASE_EX(log_callback_basic, invalid_parameters)
@@ -1112,7 +1106,6 @@ KAA_TEST_CASE_EX(log_callback_basic, valid_parameters)
     ASSERT_FALSE(call_completed);
 
     KAA_TRACE_OUT(logger);
-    return;
 }
 
 /* ---------------------------------------------------------------------------*/
@@ -1183,7 +1176,6 @@ KAA_GROUP_SETUP(log_callback_with_storage)
     ASSERT_NOT_NULL(test_reader);
 
     KAA_TRACE_OUT(logger);
-    return 0;
 }
 
 KAA_GROUP_TEARDOWN(log_callback_with_storage)
@@ -1197,7 +1189,6 @@ KAA_GROUP_TEARDOWN(log_callback_with_storage)
     log_collector = NULL;
 
     KAA_TRACE_OUT(logger);
-    return 0;
 }
 
 KAA_TEST_CASE_EX(log_callback_with_storage, on_fail_called)
@@ -1421,7 +1412,6 @@ KAA_GROUP_SETUP(log_callback_with_storage_and_strategy)
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     KAA_TRACE_OUT(logger);
-    return 0;
 }
 
 KAA_GROUP_TEARDOWN(log_callback_with_storage_and_strategy)
@@ -1439,7 +1429,6 @@ KAA_GROUP_TEARDOWN(log_callback_with_storage_and_strategy)
     log_collector = NULL;
 
     KAA_TRACE_OUT(logger);
-    return 0;
 }
 
 KAA_TEST_CASE_EX(log_callback_with_storage_and_strategy, on_timeout_called)
