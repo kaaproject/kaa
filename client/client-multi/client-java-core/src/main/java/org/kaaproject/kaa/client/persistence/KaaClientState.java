@@ -39,20 +39,14 @@ public interface KaaClientState {
     void setAppStateSeqNumber(int appStateSeqNumber);
     int getAppStateSeqNumber();
 
-    void setConfigSeqNumber(int configSeqNumber);
-    int getConfigSeqNumber();
-
-    void setNotificationSeqNumber(int notificationSeqNumber);
-    int getNotificationSeqNumber();
-
     void setProfileHash(EndpointObjectHash hash);
     EndpointObjectHash getProfileHash();
 
     void addTopic(Topic topic);
-    void removeTopic(String topicId);
-    boolean updateTopicSubscriptionInfo(String topicId, Integer sequenceNumber);
+    void removeTopic(Long topicId);
+    boolean updateTopicSubscriptionInfo(Long topicId, Integer sequenceNumber);
 
-    Map<String, Integer> getNfSubscriptions();
+    Map<Long, Integer> getNfSubscriptions();
     List<Topic> getTopics();
 
     void setAttachedEndpointsList(Map<EndpointAccessToken, EndpointKeyHash> attachedEndpoints);

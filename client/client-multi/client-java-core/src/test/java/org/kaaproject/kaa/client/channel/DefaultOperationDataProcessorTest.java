@@ -44,7 +44,7 @@ import org.mockito.Mockito;
 public class DefaultOperationDataProcessorTest {
 
     private static final int REQUEST_ID = 42;
-    
+
     @Test
     public void testUpRequestCreationWithNullTypes() throws Exception {
         KaaClientState state = Mockito.mock(KaaClientState.class);
@@ -178,9 +178,9 @@ public class DefaultOperationDataProcessorTest {
 
         SyncResponse response = new SyncResponse();
         response.setStatus(SyncResponseResultType.SUCCESS);
-        response.setConfigurationSyncResponse(new ConfigurationSyncResponse(1, SyncResponseStatus.DELTA, null, null));
+        response.setConfigurationSyncResponse(new ConfigurationSyncResponse(SyncResponseStatus.DELTA, null, null));
         response.setEventSyncResponse(new EventSyncResponse());
-        response.setNotificationSyncResponse(new NotificationSyncResponse(1, SyncResponseStatus.DELTA, null, null));
+        response.setNotificationSyncResponse(new NotificationSyncResponse(SyncResponseStatus.DELTA, null, null));
         response.setProfileSyncResponse(new ProfileSyncResponse(SyncResponseStatus.DELTA));
         response.setRedirectSyncResponse(new RedirectSyncResponse(1));
         response.setUserSyncResponse(new UserSyncResponse());
@@ -207,9 +207,9 @@ public class DefaultOperationDataProcessorTest {
 
         SyncResponse response = new SyncResponse();
         response.setStatus(SyncResponseResultType.SUCCESS);
-        response.setConfigurationSyncResponse(new ConfigurationSyncResponse(1, SyncResponseStatus.DELTA, null, null));
+        response.setConfigurationSyncResponse(new ConfigurationSyncResponse(SyncResponseStatus.DELTA, null, null));
         response.setEventSyncResponse(new EventSyncResponse());
-        response.setNotificationSyncResponse(new NotificationSyncResponse(1, SyncResponseStatus.DELTA, null, null));
+        response.setNotificationSyncResponse(new NotificationSyncResponse(SyncResponseStatus.DELTA, null, null));
         response.setProfileSyncResponse(new ProfileSyncResponse(SyncResponseStatus.DELTA));
         response.setRedirectSyncResponse(new RedirectSyncResponse(1));
         response.setUserSyncResponse(new UserSyncResponse());
