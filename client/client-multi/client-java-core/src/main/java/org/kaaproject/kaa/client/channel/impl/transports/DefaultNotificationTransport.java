@@ -29,6 +29,7 @@ import java.util.Set;
 
 import org.kaaproject.kaa.client.channel.NotificationTransport;
 import org.kaaproject.kaa.client.notification.NotificationProcessor;
+import org.kaaproject.kaa.client.notification.TopicListHashCalculator;
 import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.endpoint.gen.Notification;
 import org.kaaproject.kaa.common.endpoint.gen.NotificationSyncRequest;
@@ -47,14 +48,15 @@ public class DefaultNotificationTransport extends AbstractKaaTransport implement
     private NotificationProcessor processor;
     private final Set<String> acceptedUnicastNotificationIds = new HashSet<>();
     private final List<SubscriptionCommand> sentNotificationCommands = new LinkedList<SubscriptionCommand>();
+    private Integer topicListHash = TopicListHashCalculator.calculateTopicListHash(null);
 
     private List<TopicState> getTopicStates() {
         List<TopicState> states = null;
-        Map<String, Integer> nfSubscriptions = clientState.getNfSubscriptions();
+        Map<Long, Integer> nfSubscriptions = clientState.getNfSubscriptions();
         if(!nfSubscriptions.isEmpty()){
             states = new ArrayList<>();
             LOG.info("Topic States:");
-            for(Entry<String, Integer> nfSubscription : nfSubscriptions.entrySet()){
+            for(Entry<Long, Integer> nfSubscription : nfSubscriptions.entrySet()){
                 TopicState state = new TopicState(nfSubscription.getKey(), nfSubscription.getValue());
                 states.add(state);
                 LOG.info("{} : {}", state.getTopicId(), state.getSeqNumber());
@@ -68,7 +70,7 @@ public class DefaultNotificationTransport extends AbstractKaaTransport implement
     public NotificationSyncRequest createEmptyNotificationRequest() {
         if (clientState != null) {
             NotificationSyncRequest request = new NotificationSyncRequest();
-            request.setAppStateSeqNumber(clientState.getNotificationSeqNumber());
+            request.setTopicListHash(topicListHash);
             request.setTopicStates(getTopicStates());
             return request;
         }
@@ -79,12 +81,13 @@ public class DefaultNotificationTransport extends AbstractKaaTransport implement
     public NotificationSyncRequest createNotificationRequest() {
         if (clientState != null) {
             NotificationSyncRequest request = new NotificationSyncRequest();
-            request.setAppStateSeqNumber(clientState.getNotificationSeqNumber());
+
             if(!acceptedUnicastNotificationIds.isEmpty()){
                 LOG.info("Accepted unicast Notifications: {}", acceptedUnicastNotificationIds.size());
                 request.setAcceptedUnicastNotifications(new ArrayList<>(acceptedUnicastNotificationIds));
             }
             request.setSubscriptionCommands(sentNotificationCommands);
+            request.setTopicListHash(topicListHash);
             request.setTopicStates(getTopicStates());
             return request;
         }
@@ -98,6 +101,8 @@ public class DefaultNotificationTransport extends AbstractKaaTransport implement
                 acceptedUnicastNotificationIds.clear();
             }
             List<Topic> topics = response.getAvailableTopics();
+            topicListHash = TopicListHashCalculator.calculateTopicListHash(topics);
+
             if (topics != null) {
                 for (Topic topic : topics) {
                     clientState.addTopic(topic);
@@ -131,7 +136,6 @@ public class DefaultNotificationTransport extends AbstractKaaTransport implement
                 processor.notificationReceived(newNotifications);
             }
             sentNotificationCommands.clear();
-            clientState.setNotificationSeqNumber(response.getAppStateSeqNumber());
 
             syncAck(response.getResponseStatus());
 

@@ -23,7 +23,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
-import java.security.*;
+import java.security.InvalidKeyException;
+import java.security.KeyPair;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -56,8 +59,6 @@ import org.slf4j.LoggerFactory;
 public class KaaClientPropertiesState implements KaaClientState {
 
     private static final String APP_STATE_SEQ_NUMBER = "APP_STATE_SEQ_NUMBER";
-    private static final String CONFIG_SEQ_NUMBER = "CONFIG_SEQ_NUMBER";
-    private static final String NOTIFICATION_SEQ_NUMBER = "NOTIFICATION_SEQ_NUMBER";
     private static final String PROFILE_HASH = "PROFILE_HASH";
     private static final String ENDPOINT_ACCESS_TOKEN = "ENDPOINT_TOKEN";
 
@@ -79,7 +80,7 @@ public class KaaClientPropertiesState implements KaaClientState {
     private final String stateFileLocation;
     private final String clientPrivateKeyFileLocation;
     private final String clientPublicKeyFileLocation;
-    private final Map<String, TopicSubscriptionInfo> nfSubscriptions = new HashMap<String, TopicSubscriptionInfo>();
+    private final Map<Long, TopicSubscriptionInfo> nfSubscriptions = new HashMap<>();
     private final Map<EndpointAccessToken, EndpointKeyHash> attachedEndpoints = new HashMap<EndpointAccessToken, EndpointKeyHash>();
     private final AtomicInteger eventSequence = new AtomicInteger();
 
@@ -161,10 +162,10 @@ public class KaaClientPropertiesState implements KaaClientState {
             BinaryDecoder decoder = DecoderFactory.get().binaryDecoder(data, null);
             SpecificDatumReader<TopicSubscriptionInfo> avroReader = new SpecificDatumReader<TopicSubscriptionInfo>(
                     TopicSubscriptionInfo.class);
-    
+
             try { // NOSONAR
                 TopicSubscriptionInfo decodedInfo = null;
-    
+
                 while (!decoder.isEnd()) {
                     decodedInfo = avroReader.read(null, decoder);
                     LOG.debug("Loaded {}", decodedInfo);
@@ -185,13 +186,13 @@ public class KaaClientPropertiesState implements KaaClientState {
 
         return !Arrays.equals(hashFromSDK, hashFromStateFile);
     }
-    
+
     private void setStateStringValue(String propertyKey, String value) {
         Object previous = state.setProperty(propertyKey, value);
         String previousString = previous == null ? null : previous.toString();
         hasUpdate |= !value.equals(previousString);
     }
-    
+
     private void setStateBooleanValue(String propertyKey, boolean value) {
         Object previous = state.setProperty(propertyKey, Boolean.toString(value));
         boolean previousBoolean = previous == null ? false : Boolean.valueOf(previous.toString());
@@ -223,27 +224,27 @@ public class KaaClientPropertiesState implements KaaClientState {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             BinaryEncoder encoder = EncoderFactory.get().binaryEncoder(baos, null);
             SpecificDatumWriter<TopicSubscriptionInfo> datumWriter = new SpecificDatumWriter<TopicSubscriptionInfo>(TopicSubscriptionInfo.class);
-    
+
             try {
-                for (Map.Entry<String, TopicSubscriptionInfo> cursor : nfSubscriptions.entrySet()) {
+                for (Map.Entry<Long, TopicSubscriptionInfo> cursor : nfSubscriptions.entrySet()) {
                     datumWriter.write(cursor.getValue(), encoder);
                     LOG.info("Persisted {}", cursor.getValue());
                 }
-    
+
                 encoder.flush();
                 String base64Str = new String(base64.encodeBase64(baos.toByteArray()), Charset.forName("UTF-8"));
                 state.setProperty(NF_SUBSCRIPTIONS, base64Str);
             } catch (IOException e) {
                 LOG.error("Can't persist notification subscription info", e);
             }
-    
+
             StringBuilder attachedEndpointsString = new StringBuilder();
             for (Map.Entry<EndpointAccessToken, EndpointKeyHash> attached : attachedEndpoints.entrySet()) {
                 attachedEndpointsString.append(attached.getKey().getToken()).append(":").append(attached.getValue().getKeyHash()).append(',');
             }
             state.setProperty(ATTACHED_ENDPOINTS, attachedEndpointsString.toString());
             state.setProperty(EVENT_SEQ_NUM, "" + eventSequence.get());
-    
+
             OutputStream os = null;
             try {
                 storage.renameTo(stateFileLocation, stateFileLocation + "_bckp");
@@ -269,7 +270,7 @@ public class KaaClientPropertiesState implements KaaClientState {
     public PublicKey getPublicKey() {
         return getOrInitKeyPair().getPublic();
     }
-    
+
     @Override
     public PrivateKey getPrivateKey() {
         return getOrInitKeyPair().getPrivate();
@@ -325,13 +326,13 @@ public class KaaClientPropertiesState implements KaaClientState {
         }
         return kp;
     }
-    
+
     @Override
     public EndpointKeyHash getEndpointKeyHash() {
         if(keyHash == null){
             EndpointObjectHash publicKeyHash = EndpointObjectHash.fromSHA1(getOrInitKeyPair().getPublic().getEncoded());
             keyHash = new EndpointKeyHash(new String(base64.encodeBase64(publicKeyHash.getData())));
-        } 
+        }
         return keyHash;
     }
 
@@ -367,7 +368,7 @@ public class KaaClientPropertiesState implements KaaClientState {
     }
 
     @Override
-    public void removeTopic(String topicId) {
+    public void removeTopic(Long topicId) {
         if (nfSubscriptions.remove(topicId) != null) {
             hasUpdate = true;
             LOG.debug("Removed subscription info for {}", topicId);
@@ -375,7 +376,7 @@ public class KaaClientPropertiesState implements KaaClientState {
     }
 
     @Override
-    public boolean updateTopicSubscriptionInfo(String topicId, Integer sequenceNumber) {
+    public boolean updateTopicSubscriptionInfo(Long topicId, Integer sequenceNumber) {
         TopicSubscriptionInfo subscriptionInfo = nfSubscriptions.get(topicId);
         boolean updated = false;
         if (subscriptionInfo != null) {
@@ -391,10 +392,10 @@ public class KaaClientPropertiesState implements KaaClientState {
     }
 
     @Override
-    public Map<String, Integer> getNfSubscriptions() {
-        HashMap<String, Integer> subscriptions = new HashMap<String, Integer>(); // NOSONAR
+    public Map<Long, Integer> getNfSubscriptions() {
+        HashMap<Long, Integer> subscriptions = new HashMap<>(); // NOSONAR
 
-        for (Map.Entry<String, TopicSubscriptionInfo> cursor : nfSubscriptions.entrySet()) {
+        for (Map.Entry<Long, TopicSubscriptionInfo> cursor : nfSubscriptions.entrySet()) {
             subscriptions.put(cursor.getKey(), cursor.getValue().getSeqNumber());
         }
 
@@ -405,7 +406,7 @@ public class KaaClientPropertiesState implements KaaClientState {
     public List<Topic> getTopics() {
         List<Topic> topics = new LinkedList<Topic>();
 
-        for (Map.Entry<String, TopicSubscriptionInfo> cursor : nfSubscriptions.entrySet()) {
+        for (Map.Entry<Long, TopicSubscriptionInfo> cursor : nfSubscriptions.entrySet()) {
             topics.add(cursor.getValue().getTopicInfo());
         }
 
@@ -432,26 +433,6 @@ public class KaaClientPropertiesState implements KaaClientState {
     @Override
     public String getEndpointAccessToken() {
         return state.getProperty(ENDPOINT_ACCESS_TOKEN, "");
-    }
-
-    @Override
-    public void setConfigSeqNumber(int configSeqNumber) {
-        setStateStringValue(CONFIG_SEQ_NUMBER, Integer.toString(configSeqNumber));
-    }
-
-    @Override
-    public int getConfigSeqNumber() {
-        return Integer.parseInt(state.getProperty(CONFIG_SEQ_NUMBER, "1"));
-    }
-
-    @Override
-    public void setNotificationSeqNumber(int notificationSeqNumber) {
-        setStateStringValue(NOTIFICATION_SEQ_NUMBER, Integer.toString(notificationSeqNumber));
-    }
-
-    @Override
-    public int getNotificationSeqNumber() {
-        return Integer.parseInt(state.getProperty(NOTIFICATION_SEQ_NUMBER, "1"));
     }
 
     @Override
