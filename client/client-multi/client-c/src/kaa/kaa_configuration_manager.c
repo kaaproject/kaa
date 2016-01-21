@@ -156,11 +156,6 @@ kaa_error_t kaa_configuration_manager_request_serialize(kaa_configuration_manage
         return KAA_ERR_WRITE_FAILED;
     }
 
-    *((uint32_t *) tmp_writer.current) = KAA_HTONL(self->status->config_seq_n);
-    tmp_writer.current += sizeof(uint32_t);
-
-    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Configuration state sequence number is '%d'", self->status->config_seq_n);
-
     error_code = kaa_platform_message_write_aligned(&tmp_writer, self->configuration_hash, SHA_1_DIGEST_LENGTH);
     if (error_code) {
         KAA_LOG_ERROR(self->logger, error_code, "Failed to write configuration hash");
@@ -184,9 +179,6 @@ kaa_error_t kaa_configuration_manager_handle_server_sync(kaa_configuration_manag
     KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Received configuration server sync: options %u, payload size %u", extension_options, extension_length);
 
     if (extension_length >= sizeof(uint32_t)) {
-        self->status->config_seq_n = KAA_NTOHL(*((uint32_t *) reader->current));
-        KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Configuration state sequence number is '%d'", self->status->config_seq_n);
-        reader->current += sizeof(uint32_t);
         if (extension_options & KAA_CONFIGURATION_BODY_PRESENT) {
             uint32_t body_size = KAA_NTOHL(*((uint32_t *) reader->current));
             reader->current += sizeof(uint32_t);

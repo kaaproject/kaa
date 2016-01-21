@@ -446,7 +446,7 @@ kaa_error_t kaa_notification_manager_request_serialize(kaa_notification_manager_
         return KAA_ERR_BADPARAM;
     }
 
-    *(uint32_t *)writer->current = KAA_HTONL((uint32_t)self->status->notification_seq_n);
+    *(uint32_t *)writer->current = KAA_HTONL((uint32_t)self->topic_list_hash);
     writer->current += sizeof(uint32_t);
 
     KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to serialize %zu topic states", kaa_list_get_size(self->status->topic_states));
@@ -1129,9 +1129,6 @@ kaa_error_t kaa_notification_manager_handle_server_sync(kaa_notification_manager
 
     kaa_error_t err = KAA_ERR_NONE;
     if (extension_length > 0) {
-        self->status->notification_seq_n = KAA_NTOHL(*((uint32_t *) reader->current)); // State SQN
-        shift_and_sub_extension(reader, &extension_length, sizeof(uint32_t));
-        KAA_LOG_TRACE(self->logger, err, "Notifications state sequence number is '%lu'", self->status->notification_seq_n);
         if (KAA_NTOHL(*((uint32_t *) reader->current)) == KAA_NO_DELTA) {
             KAA_LOG_TRACE(self->logger, err, "Received delta response: NO DELTA. Going to clear uids list...");
             kaa_list_clear(self->uids, &destroy_notifications_uid);
