@@ -174,6 +174,7 @@ public class KaaClientPropertiesStateTest {
         File statePropsBckp = new File(WORK_DIR + STATE_PROPERTIES_BCKP);
         statePropsBckp.deleteOnExit();
         state.persist();
+        state.setRegistered(true);
         state.persist();
         assertTrue(stateProps.exists());
         assertTrue(statePropsBckp.exists());

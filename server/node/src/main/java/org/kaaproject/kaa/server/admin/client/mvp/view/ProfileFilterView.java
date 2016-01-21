@@ -19,6 +19,7 @@ package org.kaaproject.kaa.server.admin.client.mvp.view;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.VersionListBox;
 
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.HasValue;
 
 public interface ProfileFilterView extends BaseRecordView<ProfileFilterDto, String> {
@@ -30,5 +31,7 @@ public interface ProfileFilterView extends BaseRecordView<ProfileFilterDto, Stri
     public VersionListBox getServerProfileSchema();
 
     public HasValue<String> getServerProfileSchemaVersion();
+    
+    public HasClickHandlers getTestFilterButton();
 
 }

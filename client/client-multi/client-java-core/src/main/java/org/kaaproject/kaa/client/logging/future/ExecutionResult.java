@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,22 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.kaaproject.kaa.client.logging.future;
 
-package org.kaaproject.kaa.client.profile;
+public class ExecutionResult<T> {
 
-import ${profile_class_package}.${profile_class};
+    private final T t;
+    private final Exception e;
 
-/**
- * Interface for the profile container.
- */
-public interface ProfileContainer {
+    public ExecutionResult(T t, Exception e) {
+        super();
+        this.t = t;
+        this.e = e;
+    }
 
-    /**
-     * Retrieves serialized profile
-     *
-     * @return byte array with serialized profile
-     *
-     */
-    ${profile_class} getProfile();
+    public T get() {
+        return t;
+    }
+
+    public Exception getE() {
+        return e;
+    }
 
 }

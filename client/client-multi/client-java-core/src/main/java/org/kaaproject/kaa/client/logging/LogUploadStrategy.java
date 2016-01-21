@@ -45,20 +45,6 @@ public interface LogUploadStrategy {
     LogUploadStrategyDecision isUploadNeeded(LogStorageStatus status);
 
     /**
-     * Retrieves maximum size of the report pack 
-     * that will be delivered in single request to server 
-     * @return size of the batch
-     */
-    long getBatchSize();
-
-    /**
-     * Retrieves maximum count of the records in report pack 
-     * that will be delivered in single request to server 
-     * @return size of the batch
-     */
-    int getBatchCount();
-
-    /**
      * Maximum time to wait log delivery response.
      *
      * @return Time in seconds.

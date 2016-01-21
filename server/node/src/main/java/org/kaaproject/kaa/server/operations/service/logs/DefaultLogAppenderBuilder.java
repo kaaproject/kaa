@@ -40,7 +40,7 @@ public class DefaultLogAppenderBuilder implements LogAppenderBuilder {
             Class<LogAppender> appenderClass = (Class<LogAppender>) Class
                     .forName(appenderConfig.getPluginClassName());
             LogAppender logAppender = appenderClass.newInstance();
-            LOG.debug("Init log appender [{}] with appender configuration {[]}.", logAppender, appenderConfig);
+            LOG.debug("Init log appender [{}] with appender configuration [{}].", logAppender, appenderConfig);
             logAppender.setName(appenderConfig.getName());
             logAppender.setAppenderId(appenderConfig.getId());
             logAppender.setApplicationToken(appenderConfig.getApplicationToken());

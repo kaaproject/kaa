@@ -673,7 +673,7 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${project.basedir}/src/test/resources/sdk/c/</outputDirectory>
+                            <outputDirectory>${project.build.testOutputDirectory}/sdk/c/</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>${project.basedir}/../../client/client-multi/client-c/templates/</directory>
@@ -688,7 +688,7 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${project.basedir}/src/test/resources/sdk/cpp/</outputDirectory>
+                            <outputDirectory>${project.build.testOutputDirectory}/sdk/cpp/</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>${project.basedir}/../../client/client-multi/client-cpp/templates/</directory>
@@ -703,10 +703,10 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${project.basedir}/src/test/resources/sdk/java</outputDirectory>
+                            <outputDirectory>${project.build.testOutputDirectory}/sdk/java</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>${project.basedir}/../../client/client-multi/client-java-desktop/src/templates/</directory>
+                                    <directory>${project.basedir}/../../client/client-multi/client-java-core/src/templates/</directory>
                                 </resource>
                             </resources>
                         </configuration>
@@ -817,18 +817,9 @@
                             <artifactItems>
                                 <artifactItem>
                                     <groupId>org.kaaproject.kaa.client</groupId>
-                                    <artifactId>client-java-desktop</artifactId>
+                                    <artifactId>client-java-core</artifactId>
                                     <version>${project.version}</version>
                                     <classifier>java-sdk-templates</classifier>
-                                    <type>tar.gz</type>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>${templates.path}/java</outputDirectory>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.kaaproject.kaa.client</groupId>
-                                    <artifactId>client-java-android</artifactId>
-                                    <version>${project.version}</version>
-                                    <classifier>java-android-sdk-templates</classifier>
                                     <type>tar.gz</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${templates.path}/java</outputDirectory>

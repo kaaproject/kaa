@@ -78,10 +78,7 @@ import org.kaaproject.kaa.client.event.registration.UserAttachCallback;
 import org.kaaproject.kaa.client.exceptions.KaaClusterConnectionException;
 import org.kaaproject.kaa.client.exceptions.KaaException;
 import org.kaaproject.kaa.client.exceptions.KaaRuntimeException;
-import org.kaaproject.kaa.client.logging.AbstractLogCollector;
-import org.kaaproject.kaa.client.logging.DefaultLogCollector;
-import org.kaaproject.kaa.client.logging.LogStorage;
-import org.kaaproject.kaa.client.logging.LogUploadStrategy;
+import org.kaaproject.kaa.client.logging.*;
 import org.kaaproject.kaa.client.notification.DefaultNotificationManager;
 import org.kaaproject.kaa.client.notification.NotificationListener;
 import org.kaaproject.kaa.client.notification.NotificationTopicListListener;
@@ -128,8 +125,6 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
 
     protected static final boolean FORCE_SYNC = true;
 
-    private volatile boolean isInitialized = false;
-
     protected final ConfigurationManager configurationManager;
     protected final AbstractLogCollector logCollector;
 
@@ -157,7 +152,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
         STOPPED
     };
 
-    protected State clientState = State.CREATED;
+    protected volatile State clientState = State.CREATED;
 
     protected void checkClientState(State expected, String message) {
         if (clientState != expected) {
@@ -236,6 +231,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
             checkClientStateNot(State.STARTED, "Kaa client is already started");
             checkClientStateNot(State.PAUSED, "Kaa client is paused, need to be resumed");
         }
+        setClientState(State.STARTED);
 
         checkReadiness();
 
@@ -245,12 +241,6 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
             public void run() {
                 LOG.debug("Client startup initiated");
                 try {
-                    if (!isInitialized) {
-                        isInitialized = true;
-                    } else {
-                        LOG.warn("Client is already initialized!");
-                        return;
-                    }
                     // Load configuration
                     configurationManager.init();
                     bootstrapManager.receiveOperationsServerList();
@@ -270,8 +260,6 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
                 }
             }
         });
-
-        setClientState(State.STARTED);
     }
 
     private void checkReadiness() {
@@ -291,6 +279,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
             checkClientStateNot(State.CREATED, "Kaa client is not started");
             checkClientStateNot(State.STOPPED, "Kaa client is already stopped");
         }
+        setClientState(State.STOPPED);
 
         getLifeCycleExecutor().submit(new Runnable() {
             @Override
@@ -299,7 +288,6 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
                     logCollector.stop();
                     kaaClientState.persist();
                     channelManager.shutdown();
-                    isInitialized = false;
                     if (stateListener != null) {
                         stateListener.onStopped();
                     }
@@ -312,8 +300,6 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
             }
         });
         context.getExecutorContext().stop();
-
-        setClientState(State.STOPPED);
     }
 
     @Override
@@ -321,6 +307,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
         if (context.needToCheckClientState()) {
             checkClientState(State.STARTED, "Kaa client is not started (" + clientState.toString().toLowerCase() + " now)");
         }
+        setClientState(State.PAUSED);
 
         getLifeCycleExecutor().submit(new Runnable() {
             @Override
@@ -339,8 +326,6 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
                 }
             }
         });
-
-        setClientState(State.PAUSED);
     }
 
     @Override
@@ -348,6 +333,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
         if (context.needToCheckClientState()) {
             checkClientState(State.PAUSED, "Kaa client isn't paused");
         }
+        setClientState(State.STARTED);
 
         getLifeCycleExecutor().submit(new Runnable() {
             @Override
@@ -365,8 +351,6 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
                 }
             }
         });
-
-        setClientState(State.STARTED);
     }
 
     private ExecutorService getLifeCycleExecutor() {
@@ -581,6 +565,11 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
         endpointRegistrationManager.setDetachedCallback(listener);
     }
 
+    @Override
+    public void setLogDeliveryListener(LogDeliveryListener listener) {
+        logCollector.setLogDeliveryListener(listener);
+    }
+
     protected TransportContext buildTransportContext(KaaClientProperties properties, KaaClientState kaaClientState) {
         BootstrapTransport bootstrapTransport = buildBootstrapTransport(properties, kaaClientState);
         ProfileTransport profileTransport = buildProfileTransport(properties, kaaClientState);
@@ -613,7 +602,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
         DefaultBootstrapDataProcessor bootstrapDataProcessor = new DefaultBootstrapDataProcessor();
         bootstrapDataProcessor.setBootstrapTransport(transportContext.getBootstrapTransport());
 
-        DefaultOperationDataProcessor operationsDataProcessor = new DefaultOperationDataProcessor();
+        DefaultOperationDataProcessor operationsDataProcessor = new DefaultOperationDataProcessor(kaaClientState);
         operationsDataProcessor.setConfigurationTransport(transportContext.getConfigurationTransport());
         operationsDataProcessor.setEventTransport(transportContext.getEventTransport());
         operationsDataProcessor.setMetaDataTransport(transportContext.getMdTransport());

@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.kaaproject.avro.ui.gwt.client.widget.AlertPanel;
 import org.kaaproject.avro.ui.gwt.client.widget.AvroWidgetsConfig;
+import org.kaaproject.avro.ui.gwt.client.widget.FormPopup;
 import org.kaaproject.avro.ui.gwt.client.widget.dialog.AvroUiDialog;
 import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.RecordPanel;
@@ -40,7 +41,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class EditSchemaRecordDialog extends AvroUiDialog implements ValueChangeHandler<SchemaInfoDto>, HasErrorMessage {
+public class EditSchemaRecordDialog extends FormPopup implements ValueChangeHandler<SchemaInfoDto>, HasErrorMessage {
 
     private AlertPanel errorPanel;
 
@@ -56,7 +57,6 @@ public class EditSchemaRecordDialog extends AvroUiDialog implements ValueChangeH
     }
 
     public EditSchemaRecordDialog(Listener listener, String title, List<SchemaInfoDto> schemas, int schemaVersion) {
-        super(false, true);
         setWidth("100%");
         setTitle(title);
         this.listener = listener;
@@ -102,7 +102,10 @@ public class EditSchemaRecordDialog extends AvroUiDialog implements ValueChangeH
                 recordPanelWidth(700).createConfig(),
                 Utils.constants.schema(), this, false, false);
         
-        schemaRecordPanel.setWidth("750px");
+        //schemaRecordPanel.setWidth("750px");
+        schemaRecordPanel.getElement().getStyle().setPropertyPx("minWidth", 750);
+        schemaRecordPanel.getRecordWidget().setForceNavigation(true);
+        schemaRecordPanel.setPreferredHeightPx(250);
         schemaRecordPanel.addValueChangeHandler(new ValueChangeHandler<RecordField>() {
             @Override
             public void onValueChange(ValueChangeEvent<RecordField> event) {

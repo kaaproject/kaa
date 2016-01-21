@@ -36,8 +36,6 @@ import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterRecordDto;
 import org.kaaproject.kaa.common.dto.ProfileVersionPairDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.ProfileVersionPairDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.VersionDto;
@@ -135,7 +133,7 @@ public interface KaaAdminService extends RemoteService {
 
     public SchemaVersions getSchemaVersionsByApplicationId(String applicationId) throws KaaAdminServiceException;
 
-    public SdkProfileDto addSdkProfile(SdkProfileDto sdkProfile) throws KaaAdminServiceException;
+    public SdkProfileDto createSdkProfile(SdkProfileDto sdkProfile) throws KaaAdminServiceException;
 
     public void deleteSdkProfile(String sdkProfileId) throws KaaAdminServiceException;
 
@@ -407,7 +405,12 @@ public interface KaaAdminService extends RemoteService {
     public ServerProfileSchemaViewDto getServerProfileSchemaView(String serverProfileSchemaId) throws KaaAdminServiceException;
 
     public ServerProfileSchemaViewDto saveServerProfileSchemaView(ServerProfileSchemaViewDto serverProfileSchema) throws KaaAdminServiceException;
-
+    
+    public SchemaInfoDto getEndpointProfileSchemaInfo(String endpointProfileSchemaId) throws KaaAdminServiceException;
+    
+    public SchemaInfoDto getServerProfileSchemaInfo(String serverProfileSchemaId) throws KaaAdminServiceException;
+    
+    public boolean testProfileFilter(RecordField endpointProfile, RecordField serverProfile, String filterBody) throws KaaAdminServiceException;
 
     
 }

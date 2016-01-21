@@ -744,7 +744,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
-    public SdkProfileDto addSdkProfile(SdkProfileDto sdkProfile) throws KaaAdminServiceException {
+    public SdkProfileDto createSdkProfile(SdkProfileDto sdkProfile) throws KaaAdminServiceException {
         this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
             this.checkApplicationId(sdkProfile.getApplicationId());
@@ -1103,6 +1103,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         }
     }
     
+    @Override
     public List<SchemaInfoDto> getServerProfileSchemaInfosByEndpointKey(String endpointKeyHash) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
@@ -1205,6 +1206,75 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         Schema schema = converter.createSchemaFromSchemaForm(dto.getSchemaForm());
         String schemaString = SchemaFormAvroConverter.createSchemaString(schema, true);
         dto.setSchema(schemaString);
+    }
+    
+    @Override
+    public SchemaInfoDto getEndpointProfileSchemaInfo(String endpointProfileSchemaId) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            EndpointProfileSchemaDto endpointProfileSchema = controlService.getProfileSchema(endpointProfileSchemaId);
+            SchemaInfoDto schemaInfo = new SchemaInfoDto(endpointProfileSchema);
+            RecordField schemaForm = createRecordFieldFromCtlSchemaAndBody(endpointProfileSchema.getCtlSchemaId(), null);
+            schemaInfo.setSchemaName(endpointProfileSchema.getName());
+            schemaInfo.setSchemaForm(schemaForm);
+            return schemaInfo;
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
+    public SchemaInfoDto getServerProfileSchemaInfo(String serverProfileSchemaId) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            ServerProfileSchemaDto serverProfileSchema = controlService.getServerProfileSchema(serverProfileSchemaId);
+            SchemaInfoDto schemaInfo = new SchemaInfoDto(serverProfileSchema);
+            RecordField schemaForm = createRecordFieldFromCtlSchemaAndBody(serverProfileSchema.getCtlSchemaId(), null);
+            schemaInfo.setSchemaName(serverProfileSchema.getName());
+            schemaInfo.setSchemaForm(schemaForm);
+            return schemaInfo;
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
+    public boolean testProfileFilter(RecordField endpointProfile, RecordField serverProfile, String filterBody) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            GenericRecord endpointProfileRecord = null;
+            GenericRecord serverProfileRecord = null;
+            try {
+                if (endpointProfile != null) {
+                    endpointProfileRecord = FormAvroConverter.createGenericRecordFromRecordField(endpointProfile);
+                }
+                if (serverProfile != null) {
+                    serverProfileRecord = FormAvroConverter.createGenericRecordFromRecordField(serverProfile);
+                }
+            } catch (Exception e) {
+                throw Utils.handleException(e);
+            }
+            try {
+                Expression expression = new SpelExpressionParser().parseExpression(filterBody);
+                StandardEvaluationContext evaluationContext;
+                if (endpointProfileRecord != null) {
+                    evaluationContext = new StandardEvaluationContext(endpointProfileRecord);
+                    evaluationContext.setVariable(DefaultFilterEvaluator.CLIENT_PROFILE_VARIABLE_NAME, endpointProfileRecord);
+                } else {
+                    evaluationContext = new StandardEvaluationContext();
+                }
+                evaluationContext.addPropertyAccessor(new GenericRecordPropertyAccessor());
+                evaluationContext.setVariable(DefaultFilterEvaluator.EP_KEYHASH_VARIABLE_NAME, "test");
+                if (serverProfileRecord != null) {
+                    evaluationContext.setVariable(DefaultFilterEvaluator.SERVER_PROFILE_VARIABLE_NAME, serverProfileRecord);
+                }
+                return expression.getValue(evaluationContext, Boolean.class);
+            } catch (Exception e) {
+                throw new KaaAdminServiceException("Invalid profile filter: " + e.getMessage(), e, ServiceErrorCode.BAD_REQUEST_PARAMS);
+            }
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
     }
 
     @Override
@@ -3336,5 +3406,6 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throw Utils.handleException(cause);
         }
     }
+
 
 }

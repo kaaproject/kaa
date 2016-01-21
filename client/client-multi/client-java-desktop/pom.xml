@@ -105,6 +105,14 @@
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>${project.basedir}/src/main/java</directory>
+            </resource>
+            <resource>
+                <directory>${project.basedir}/src/main/resources</directory>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -130,7 +138,6 @@
                 <configuration>
                     <descriptors>
                         <descriptor>src/main/assembly/client-java-sdk.xml</descriptor>
-                        <descriptor>src/main/assembly/client-java-sdk-templates.xml</descriptor>
                     </descriptors>
                 </configuration>
                 <executions>

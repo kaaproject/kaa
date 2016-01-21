@@ -74,16 +74,6 @@ public class DefaultLogUploadStrategy implements LogUploadStrategy {
     }
 
     @Override
-    public long getBatchSize() {
-        return batchSize;
-    }
-
-    @Override
-    public int getBatchCount() {
-        return batchCount;
-    }
-
-    @Override
     public int getTimeout() {
         return timeout;
     }
