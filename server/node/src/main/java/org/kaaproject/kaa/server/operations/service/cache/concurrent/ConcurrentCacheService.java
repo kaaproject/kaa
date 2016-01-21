@@ -69,7 +69,7 @@ import org.kaaproject.kaa.server.operations.service.cache.AppVersionKey;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
 import org.kaaproject.kaa.server.operations.service.cache.Computable;
 import org.kaaproject.kaa.server.operations.service.cache.ConfigurationIdKey;
-import org.kaaproject.kaa.server.operations.service.cache.DeltaCacheEntry;
+import org.kaaproject.kaa.server.operations.service.cache.ConfigurationCacheEntry;
 import org.kaaproject.kaa.server.operations.service.cache.DeltaCacheKey;
 import org.kaaproject.kaa.server.operations.service.cache.EventClassFamilyIdKey;
 import org.kaaproject.kaa.server.operations.service.cache.EventClassFqnKey;
@@ -182,7 +182,7 @@ public class ConcurrentCacheService implements CacheService {
     private final CacheTemporaryMemorizer<List<EndpointGroupStateDto>, BaseData> mergedConfigurationMemorizer = new CacheTemporaryMemorizer<List<EndpointGroupStateDto>, BaseData>();
 
     /** The delta memorizer. */
-    private final CacheTemporaryMemorizer<DeltaCacheKey, DeltaCacheEntry> deltaMemorizer = new CacheTemporaryMemorizer<>();
+    private final CacheTemporaryMemorizer<DeltaCacheKey, ConfigurationCacheEntry> deltaMemorizer = new CacheTemporaryMemorizer<>();
 
     /** The endpoint key memorizer. */
     private final CacheTemporaryMemorizer<EventClassFamilyIdKey, String> ecfIdKeyMemorizer = new CacheTemporaryMemorizer<>();
@@ -828,13 +828,13 @@ public class ConcurrentCacheService implements CacheService {
      */
     @Override
     @Cacheable(value = "deltas", key = "#key")
-    public DeltaCacheEntry getDelta(final DeltaCacheKey key, final Computable<DeltaCacheKey, DeltaCacheEntry> worker)
+    public ConfigurationCacheEntry getDelta(final DeltaCacheKey key, final Computable<DeltaCacheKey, ConfigurationCacheEntry> worker)
             throws GetDeltaException {
-        DeltaCacheEntry deltaCacheEntry = deltaMemorizer.compute(key, new Computable<DeltaCacheKey, DeltaCacheEntry>() { // NOSONAR
+        ConfigurationCacheEntry deltaCacheEntry = deltaMemorizer.compute(key, new Computable<DeltaCacheKey, ConfigurationCacheEntry>() { // NOSONAR
                     @Override
-                    public DeltaCacheEntry compute(DeltaCacheKey key) {
+                    public ConfigurationCacheEntry compute(DeltaCacheKey key) {
                         LOG.debug("Fetching result for getMergedConfiguration");
-                        DeltaCacheEntry result = worker.compute(key);
+                        ConfigurationCacheEntry result = worker.compute(key);
                         return result;
                     }
                 });
@@ -852,7 +852,7 @@ public class ConcurrentCacheService implements CacheService {
      */
     @Override
     @CachePut(value = "deltas", key = "#key")
-    public DeltaCacheEntry setDelta(DeltaCacheKey key, DeltaCacheEntry delta) {
+    public ConfigurationCacheEntry setDelta(DeltaCacheKey key, ConfigurationCacheEntry delta) {
         return delta;
     }
 

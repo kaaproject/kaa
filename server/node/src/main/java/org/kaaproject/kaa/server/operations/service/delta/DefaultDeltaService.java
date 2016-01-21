@@ -18,7 +18,6 @@ package org.kaaproject.kaa.server.operations.service.delta;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -59,7 +58,7 @@ import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
 import org.kaaproject.kaa.server.operations.service.cache.AppVersionKey;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
 import org.kaaproject.kaa.server.operations.service.cache.Computable;
-import org.kaaproject.kaa.server.operations.service.cache.DeltaCacheEntry;
+import org.kaaproject.kaa.server.operations.service.cache.ConfigurationCacheEntry;
 import org.kaaproject.kaa.server.operations.service.cache.DeltaCacheKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -122,6 +121,16 @@ public class DefaultDeltaService implements DeltaService {
         super();
     }
 
+    @Override
+    public ConfigurationCacheEntry getConfiguration(String appToken, String endpointId, EndpointProfileDto profile) throws GetDeltaException {
+        LOG.debug("[{}][{}] Calculating new configuration", appToken, endpointId);
+        AppVersionKey appConfigVersionKey = new AppVersionKey(appToken, profile.getConfigurationVersion());
+        DeltaCacheKey deltaKey = new DeltaCacheKey(appConfigVersionKey, profile.getGroupStates(), EndpointObjectHash.fromBytes(profile
+                .getUserConfigurationHash()), null, true);
+        LOG.debug("[{}][{}] Built resync delta key {}", appToken, endpointId, deltaKey);
+        return getDelta(endpointId, profile.getEndpointUserId(), deltaKey);
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -131,81 +140,30 @@ public class DefaultDeltaService implements DeltaService {
      * org.kaaproject.kaa.server.operations.service.delta.HistoryDelta, int)
      */
     @Override
-    public GetDeltaResponse getDelta(GetDeltaRequest request, HistoryDelta historyDelta, int curAppSeqNumber) throws GetDeltaException {
+    public GetDeltaResponse getDelta(GetDeltaRequest request) throws GetDeltaException {
         GetDeltaResponse response;
         EndpointProfileDto profile = request.getEndpointProfile();
         String endpointId = "N/A";
         if (LOG.isDebugEnabled() && profile != null && profile.getEndpointKeyHash() != null) {
             endpointId = Base64Util.encode(profile.getEndpointKeyHash());
         }
-
-        boolean hashMismatch = !request.isFirstRequest() && !request.getConfigurationHash().binaryEquals(profile.getConfigurationHash());
-
-        AppVersionKey appConfigVersionKey = new AppVersionKey(request.getApplicationToken(), profile.getConfigurationVersion());
-        List<EndpointGroupStateDto> endpointGroups = historyDelta.getEndpointGroupStates();
-        if (isChangePossible(request, historyDelta, hashMismatch)) {
-            boolean resync = request.isFirstRequest() || request.isResyncOnly();
-            if (hashMismatch) {
-                resync = true;
-                logHashMismatch(request, profile, endpointId);
-            }
-            DeltaCacheKey deltaKey;
-            if (resync) {
-                deltaKey = new DeltaCacheKey(appConfigVersionKey, endpointGroups, EndpointObjectHash.fromBytes(request
-                        .getUserConfigurationHash()), null, request.isResyncOnly());
-                LOG.debug("[{}] Building resync delta key {}", endpointId, deltaKey);
-            } else {
-                deltaKey = new DeltaCacheKey(appConfigVersionKey, endpointGroups, EndpointObjectHash.fromBytes(request
-                        .getUserConfigurationHash()), request.getConfigurationHash());
-                LOG.debug("[{}] Building regular delta key {}", endpointId, deltaKey);
-            }
-
-            DeltaCacheEntry deltaCacheEntry = getDelta(endpointId, profile.getEndpointUserId(), deltaKey);
-            byte[] configurationHash = deltaCacheEntry.getHash().getData();
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("[{}] Result configuration hash is {} for delta key {}", endpointId, Arrays.toString(configurationHash), deltaKey);
-            }
-
-            if (isFirstRequestWithUpToDateConfiguration(request, profile, configurationHash)) {
-                response = new GetDeltaResponse(GetDeltaResponseType.NO_DELTA, curAppSeqNumber);
-            } else {
-                if (resync) {
-                    if (isConfigurationUpToDate(request, configurationHash)) {
-                        response = new GetDeltaResponse(GetDeltaResponseType.NO_DELTA, curAppSeqNumber);
-                    } else {
-                        response = new GetDeltaResponse(GetDeltaResponseType.CONF_RESYNC, curAppSeqNumber, deltaCacheEntry.getDelta());
-                    }
-                } else {
-                    if (deltaCacheEntry.getDelta().hasChanges()) {
-                        response = new GetDeltaResponse(GetDeltaResponseType.DELTA, curAppSeqNumber, deltaCacheEntry.getDelta());
-                    } else {
-                        LOG.debug("[{}] Delta has no changes -> no delta", endpointId);
-                        response = new GetDeltaResponse(GetDeltaResponseType.NO_DELTA, curAppSeqNumber);
-                    }
-                }
-            }
-
-            profile.setConfigurationHash(configurationHash);
-            if (deltaCacheEntry.getUserConfigurationHash() != null) {
-                profile.setUserConfigurationHash(deltaCacheEntry.getUserConfigurationHash().getData());
-            } else {
-                profile.setUserConfigurationHash(null);
-            }
-        } else {
-            LOG.debug("[{}] No changes to current application group configurations was maid -> no delta", endpointId);
-            response = new GetDeltaResponse(GetDeltaResponseType.NO_DELTA, curAppSeqNumber);
+        LOG.debug("[{}][{}] Processing configuration request", request.getApplicationToken(), endpointId);
+        boolean resync = false;
+        if (request.isFirstRequest()) {
+            resync = !isConfigurationUpToDate(request, profile.getConfigurationHash());
+        } else if (!request.getConfigurationHash().binaryEquals(profile.getConfigurationHash())) {
+            logHashMismatch(request, profile, endpointId);
+            resync = true;
         }
-
-        LOG.debug("[{}] Response: {}", endpointId, response);
+        if (resync) {
+            EndpointConfigurationDto configurationDto = cacheService.getConfByHash(EndpointObjectHash.fromBytes(profile
+                    .getConfigurationHash()));
+            response = new GetDeltaResponse(GetDeltaResponseType.CONF_RESYNC, new BaseBinaryDelta(configurationDto.getConfiguration()));
+        } else {
+            response = new GetDeltaResponse(GetDeltaResponseType.NO_DELTA);
+        }
+        LOG.debug("[{}][{}] Processed configuration request {}", request.getApplicationToken(), endpointId, response.getResponseType());
         return response;
-    }
-
-    private boolean isChangePossible(GetDeltaRequest request, HistoryDelta historyDelta, boolean hashMismatch) {
-        return historyDelta.isConfigurationChanged() || request.isUserConfigurationChanged() || hashMismatch;
-    }
-
-    private boolean isFirstRequestWithUpToDateConfiguration(GetDeltaRequest request, EndpointProfileDto profile, byte[] configurationHash) {
-        return profile.getConfigurationHash() == null && isConfigurationUpToDate(request, configurationHash);
     }
 
     private boolean isConfigurationUpToDate(GetDeltaRequest request, byte[] configurationHash) {
@@ -235,7 +193,7 @@ public class DefaultDeltaService implements DeltaService {
      * @throws GetDeltaException
      *             the get delta exception
      */
-    private DeltaCacheEntry getDelta(final String endpointId, final String userId, DeltaCacheKey deltaKey) throws GetDeltaException {
+    private ConfigurationCacheEntry getDelta(final String endpointId, final String userId, DeltaCacheKey deltaKey) throws GetDeltaException {
         EndpointUserConfigurationDto userConfiguration = findLatestUserConfiguration(userId, deltaKey);
 
         final DeltaCacheKey newKey;
@@ -246,12 +204,12 @@ public class DefaultDeltaService implements DeltaService {
             newKey = deltaKey;
         }
 
-        DeltaCacheEntry deltaCacheEntry = cacheService.getDelta(newKey, new Computable<DeltaCacheKey, DeltaCacheEntry>() { // NOSONAR
+        ConfigurationCacheEntry deltaCacheEntry = cacheService.getDelta(newKey, new Computable<DeltaCacheKey, ConfigurationCacheEntry>() { // NOSONAR
                     @Override
-                    public DeltaCacheEntry compute(DeltaCacheKey deltaKey) {
+                    public ConfigurationCacheEntry compute(DeltaCacheKey deltaKey) {
                         try {
                             LOG.debug("[{}] Calculating delta for {}", endpointId, deltaKey);
-                            DeltaCacheEntry deltaCache;
+                            ConfigurationCacheEntry deltaCache;
                             ConfigurationSchemaDto latestConfigurationSchema = cacheService.getConfSchemaByAppAndVersion(deltaKey
                                     .getAppConfigVersionKey());
 
@@ -433,7 +391,7 @@ public class DefaultDeltaService implements DeltaService {
      * @throws GetDeltaException
      *             the get delta exception
      */
-    private DeltaCacheEntry calculateDelta(final String endpointId, DeltaCalculationAlgorithm deltaCalculator,
+    private ConfigurationCacheEntry calculateDelta(final String endpointId, DeltaCalculationAlgorithm deltaCalculator,
             EndpointConfigurationDto endpointConfiguration, BaseData latestConfiguration, EndpointObjectHash userConfigurationHash)
             throws GetDeltaException {
         try {
@@ -442,7 +400,7 @@ public class DefaultDeltaService implements DeltaService {
                     currentConfiguration.getRawData(), latestConfiguration.getRawData());
             RawBinaryDelta delta = deltaCalculator.calculate(currentConfiguration, latestConfiguration);
             RawBinaryDelta fullResyncDelta = deltaCalculator.calculate(latestConfiguration);
-            return new DeltaCacheEntry(latestConfiguration.getRawData().getBytes(), delta, EndpointObjectHash.fromSHA1(fullResyncDelta
+            return new ConfigurationCacheEntry(latestConfiguration.getRawData().getBytes(), delta, EndpointObjectHash.fromSHA1(fullResyncDelta
                     .getData()), userConfigurationHash);
         } catch (IOException | DeltaCalculatorException e) {
             throw new GetDeltaException(e);
@@ -460,22 +418,22 @@ public class DefaultDeltaService implements DeltaService {
      * @throws GetDeltaException
      *             the get delta exception
      */
-    private DeltaCacheEntry buildResyncDelta(final String endpointId, DeltaCalculationAlgorithm deltaCalculator,
+    private ConfigurationCacheEntry buildResyncDelta(final String endpointId, DeltaCalculationAlgorithm deltaCalculator,
             BaseData mergedConfiguration, EndpointObjectHash userConfigurationHash) throws GetDeltaException {
         try {
             LOG.debug("[{}] Calculating full resync delta from configuration: {}", endpointId, mergedConfiguration);
             RawBinaryDelta delta = deltaCalculator.calculate(mergedConfiguration);
-            return new DeltaCacheEntry(mergedConfiguration.getRawData().getBytes(), delta, EndpointObjectHash.fromSHA1(delta.getData()),
+            return new ConfigurationCacheEntry(mergedConfiguration.getRawData().getBytes(), delta, EndpointObjectHash.fromSHA1(delta.getData()),
                     userConfigurationHash);
         } catch (IOException | DeltaCalculatorException e) {
             throw new GetDeltaException(e);
         }
     }
 
-    private DeltaCacheEntry buildBaseResyncDelta(String endpointId, BaseData mergedConfiguration, EndpointObjectHash userConfigurationHash) {
+    private ConfigurationCacheEntry buildBaseResyncDelta(String endpointId, BaseData mergedConfiguration, EndpointObjectHash userConfigurationHash) {
         byte[] configuration = GenericAvroConverter.toRawData(mergedConfiguration.getRawData(), mergedConfiguration.getSchema()
                 .getRawSchema());
-        return new DeltaCacheEntry(configuration, new BaseBinaryDelta(configuration), EndpointObjectHash.fromSHA1(configuration),
+        return new ConfigurationCacheEntry(configuration, new BaseBinaryDelta(configuration), EndpointObjectHash.fromSHA1(configuration),
                 userConfigurationHash);
     }
 }

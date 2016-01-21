@@ -1624,7 +1624,8 @@ public class DefaultAkkaServiceTest {
         byte[] encodedData = targetCrypt.encodeData(response);
         Mockito.verify(targetResponseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(encodedData, true);
     }
-//
+    
+        //TODO: fix when server profile feature will be ready
 //    @Test
 //    public void testServerProfileUpdate() throws Exception {
 //        ChannelContext channelContextMock = Mockito.mock(ChannelContext.class);

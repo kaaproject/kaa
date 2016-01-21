@@ -20,7 +20,6 @@ import java.util.List;
 
 import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 
-
 /**
  * The Class HistoryDelta is used to model history of changes of particular
  * application. It also has configurationChanged property that is used to
@@ -42,12 +41,13 @@ public class HistoryDelta {
      * @param topicListChanged
      *            the topic list changed
      */
-    public HistoryDelta(List<EndpointGroupStateDto> endpointGroupStates,
-            boolean configurationChanged, boolean topicListChanged) {
+    public HistoryDelta(List<EndpointGroupStateDto> endpointGroupStates, boolean configurationChanged, boolean topicListChanged,
+            boolean seqNumberChanged) {
         super();
         this.endpointGroupStates = endpointGroupStates;
         this.configurationChanged = configurationChanged;
         this.topicListChanged = topicListChanged;
+        this.seqNumberChanged = seqNumberChanged;
     }
 
     /**
@@ -59,6 +59,9 @@ public class HistoryDelta {
 
     /** The endpoint group states. */
     private List<EndpointGroupStateDto> endpointGroupStates;
+
+    /** The seq number changed. */
+    boolean seqNumberChanged;
 
     /** The configuration changed. */
     boolean configurationChanged;
@@ -81,8 +84,7 @@ public class HistoryDelta {
      * @param endpointGroupStates
      *            the new endpoint group states
      */
-    public void setEndpointGroupStates(
-            List<EndpointGroupStateDto> endpointGroupStates) {
+    public void setEndpointGroupStates(List<EndpointGroupStateDto> endpointGroupStates) {
         this.endpointGroupStates = endpointGroupStates;
     }
 
@@ -125,19 +127,39 @@ public class HistoryDelta {
     }
 
     /**
+     * Checks if is seq number changed.
+     * 
+     * @return true if seq number changed, false otherwise
+     */
+    public boolean isSeqNumberChanged() {
+        return seqNumberChanged;
+    }
+
+    /**
+     * Sets the sequence number changed.
+     * 
+     * @param seqNumberChanged
+     *            the sequence number changed
+     */
+    public void setSeqNumberChanged(boolean seqNumberChanged) {
+        this.seqNumberChanged = seqNumberChanged;
+    }
+
+    /**
      * Sets the all changed.
      */
     public void setAllChanged() {
         this.configurationChanged = true;
         this.topicListChanged = true;
+        this.seqNumberChanged = true;
     }
-    
+
     /**
      * Checks if smth is changed.
      * 
      * @return true, if smth is changed
-     */   
-    public boolean isSmthChanged(){
-        return topicListChanged || configurationChanged;
+     */
+    public boolean isSmthChanged() {
+        return topicListChanged || configurationChanged || seqNumberChanged;
     }
 }
