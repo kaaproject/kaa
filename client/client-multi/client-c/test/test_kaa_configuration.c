@@ -125,7 +125,6 @@ void test_response(void)
     ASSERT_EQUAL(kaa_configuration_manager_handle_server_sync(config_manager, reader, CONFIG_RESPONSE_FLAGS, response_size), KAA_ERR_NONE);
 
     ASSERT_EQUAL(is_callback_invoked, true);
-    ASSERT_EQUAL(status->config_seq_n, CONFIG_NEW_SEQ_N);
 
     const kaa_root_configuration_t *root_config = kaa_configuration_manager_get_configuration(config_manager);
     ASSERT_EQUAL(strcmp(root_config->data->data, CONFIG_DATA_FIELD), 0);
@@ -152,8 +151,6 @@ int test_init(void)
     error = kaa_status_create(&status);
     if (error || !status)
         return error;
-
-    status->config_seq_n = CONFIG_START_SEQ_N;
 
     error = kaa_configuration_manager_create(&config_manager, NULL, status, logger);
     if (error || config_manager)

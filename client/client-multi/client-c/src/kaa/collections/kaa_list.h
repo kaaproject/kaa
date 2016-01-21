@@ -162,6 +162,10 @@ void kaa_list_for_each(kaa_list_node_t *first, kaa_list_node_t *last, process_da
  */
 void kaa_list_sort(kaa_list_t *list, match_predicate pred);
 
+/**
+ * @brief Estimate hash from sorted array.
+ * @param pred  Predicate that is used to get list node's hash, id or other unique uint64_t value.
+ */
 uint32_t kaa_list_hash(kaa_list_t *list, list_node_hash pred);
 
 #ifdef __cplusplus

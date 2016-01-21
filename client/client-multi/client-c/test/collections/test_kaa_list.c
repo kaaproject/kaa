@@ -161,7 +161,7 @@ void test_list_hash()
         node = (test_list_node_t *)KAA_MALLOC(sizeof(test_list_node_t));
         ASSERT_NOT_NULL(node);
         //node->id = (uint64_t) random();
-        node->id = (uint64_t) node_number + 1 - i;
+        node->id = (uint64_t) node_number - i;
         kaa_list_push_back(list, node);
     }
 
@@ -169,8 +169,7 @@ void test_list_hash()
 
     kaa_list_sort(list,&test_kaa_list_predicate);
 
-    //TODO compare with value estimated in Java
-    ASSERT_EQUAL(kaa_list_hash(list,&test_kaa_list_hash),1826710130);
+    ASSERT_EQUAL(kaa_list_hash(list,&test_kaa_list_hash),3320622579);
 
     kaa_list_destroy(list, NULL);
 

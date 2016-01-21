@@ -316,7 +316,7 @@ uint32_t kaa_list_hash(kaa_list_t *list, list_node_hash pred)
     uint32_t result = 1;
     kaa_list_node_t *node = kaa_list_begin(list);
     uint64_t element;
-    while (node->next) {
+    while (node) {
         element = pred(node->data);
         result = 31 * result + (uint32_t) (element ^ (element >> 32));
         node = node->next;
