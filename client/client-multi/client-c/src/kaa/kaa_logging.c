@@ -67,11 +67,6 @@ struct kaa_log_collector {
     uint16_t                       log_bucket_id;
 };
 
-struct find_bucket_context {
-    uint16_t bucket_id;
-    size_t   bucket_count;
-};
-
 static const kaa_service_t logging_sync_services[] = {KAA_SERVICE_LOGGING};
 
 kaa_error_t kaa_logging_need_logging_resync(kaa_log_collector_t *self, bool *result)
@@ -108,10 +103,11 @@ static kaa_error_t remember_request(kaa_log_collector_t *self, uint16_t bucket_i
 static bool find_by_bucket_id(void *data, void *context)
 {
     KAA_RETURN_IF_NIL2(data, context, false);
-    struct find_bucket_context *find_context = context;
+    timeout_info_t *timeout_to_find = context;
+    timeout_info_t *timeout_info = data;
 
-    if (((timeout_info_t *)data)->log_bucket_id == find_context->bucket_id) {
-        find_context->bucket_count++;
+    if (timeout_info->log_bucket_id == timeout_to_find->log_bucket_id) {
+        *timeout_to_find = *timeout_info;
         return true;
     }
 
@@ -119,21 +115,17 @@ static bool find_by_bucket_id(void *data, void *context)
 }
 
 
-/* Returns amount of items processed if positive.
- * Or error if negative */
-static ssize_t remove_request(kaa_log_collector_t *self, uint16_t bucket_id)
+/* Returns amount of logs in bucket */
+static size_t remove_request(kaa_log_collector_t *self, uint16_t bucket_id)
 {
     KAA_RETURN_IF_NIL(self, KAA_ERR_BADPARAM);
-    struct find_bucket_context context = {
-        .bucket_id = bucket_id,
-        .bucket_count = 0
+    timeout_info_t target_timeout = {
+        .log_bucket_id = bucket_id,
     };
 
-    kaa_list_remove_first(self->timeouts, &find_by_bucket_id, &context, NULL);
-    return context.bucket_count;
+    kaa_list_remove_first(self->timeouts, &find_by_bucket_id, &target_timeout, NULL);
+    return target_timeout.log_count;
 }
-
-
 
 static bool is_timeout(kaa_log_collector_t *self)
 {
@@ -523,17 +515,10 @@ kaa_error_t kaa_logging_handle_server_sync(kaa_log_collector_t *self
             KAA_LOG_WARN(self->logger, KAA_ERR_WRITE_FAILED, "Failed to upload log bucket, id '%u' (delivery error code '%u')", bucket_id, delivery_error_code);
         }
 
-
-        /* Count logs uploaded */
-
-        ssize_t count = remove_request(self, bucket_id);
-
-        if (count < 0) {
-            return count;
-        }
+        size_t uploaded_count = remove_request(self, bucket_id);
 
         kaa_log_bucket_info_t log_bucket_info = {
-            .log_count = count,
+            .log_count = uploaded_count,
             .bucket_id = bucket_id,
         };
 
