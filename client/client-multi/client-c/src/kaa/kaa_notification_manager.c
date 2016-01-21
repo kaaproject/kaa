@@ -549,6 +549,7 @@ kaa_error_t kaa_notification_manager_create(kaa_notification_manager_t **self, k
         kaa_notification_manager_destroy(*self);
         return KAA_ERR_NOMEM;
     }
+    (*self)->topic_list_hash = kaa_list_hash((*self)->topics, &get_topic_id);
 
     (*self)->extension_payload_size = 0;
 
