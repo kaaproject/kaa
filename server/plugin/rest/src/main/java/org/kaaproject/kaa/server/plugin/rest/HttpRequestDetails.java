@@ -16,15 +16,11 @@
 
 package org.kaaproject.kaa.server.plugin.rest;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
-import org.apache.avro.generic.GenericRecordBuilder;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.kaaproject.kaa.common.avro.AvroJsonConverter;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
@@ -39,107 +35,97 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+/**
+ * @author Bohdan Khablenko
+ */
 public class HttpRequestDetails {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpRequestDetails.class);
 
-    private final KaaPluginMessage message;
-
-    private HttpRequestMethod httpRequestMethod = null;
-    private MultiValueMap<String, String> httpRequestParams = null;
-    private GenericRecord httpRequestBody = null;
-    private List<HttpResponseMapping> httpResponseMappings = null;
-
-    private final Schema requestSchema;
-    private final Schema responseSchema;
-
-    public Schema getRequestSchema() {
-        return this.requestSchema;
-    }
-
-    public Schema getResponseSchema() {
-        return this.responseSchema;
-    }
-
-    public HttpRequestDetails(KaaPluginMessage message, KaaRestPluginConfig pluginConfig) throws Exception {
-        try {
-            this.message = message;
-            this.pluginConfig = pluginConfig;
-            this.httpRequestMethod = this.getHttpRequestMethod();
-            this.httpRequestBody = this.getHttpRequestBody();
-            this.httpResponseMappings = this.getHttpResponseMappings();
-            this.requestSchema = new Schema.Parser().parse(message.getItemInfo().getInMessageSchema());
-            this.responseSchema = new Schema.Parser().parse(message.getItemInfo().getOutMessageSchema());
-        } catch (Exception cause) {
-            LOG.error("Failed to process the message!", cause);
-            throw new ExceptionInInitializerError(cause);
-        }
-    }
-
-    public HttpRequestMethod getHttpRequestMethod() {
-        if (this.httpRequestMethod == null) {
-            this.httpRequestMethod = this.getItemConfig().getHttpRequestMethod();
-        }
-        return this.httpRequestMethod;
-    }
-
-    /*
-     * Parses the body to map request parameters as the input type schema
-     * suggests.
-     */
-    public MultiValueMap<String, String> getHttpRequestParams() {
-        if (this.httpRequestParams == null) {
-            this.httpRequestParams = new LinkedMultiValueMap<>();
-            Optional.ofNullable(itemConfig.getHttpRequestParams()).ifPresent(collection -> {
-                collection.forEach(p -> {
-                    String key = p.getName();
-                    String value = this.getHttpRequestBody().get(p.getAvroSchemaMapping()).toString();
-                    this.httpRequestParams.add(key, value);
-                });
-            });
-            LOG.debug("Request parameters: {}", this.httpRequestParams.toString());
-        }
-        return this.httpRequestParams;
-    }
-
-    /*
-     * The request body as is.
-     */
-    public GenericRecord getHttpRequestBody() {
-        if (this.httpRequestBody == null) {
-            try {
-                GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(this.message.getItemInfo().getInMessageSchema());
-                byte[] messageData = ((EndpointMessage) this.message.getMsg()).getMessageData();
-                this.httpRequestBody = converter.decodeJson(messageData);
-            } catch (Exception cause) {
-                LOG.error("Failed to decode message data!", cause);
-                throw new IllegalArgumentException(cause);
-            }
-        }
-        return this.httpRequestBody;
-    }
-
-    public List<HttpResponseMapping> getHttpResponseMappings() {
-        if (this.httpResponseMappings == null) {
-            this.httpResponseMappings = this.getItemConfig().getHttpResponseMappings();
-        }
-        return this.httpResponseMappings;
-    }
-
-    private KaaRestPluginItemConfig itemConfig;
+    private KaaPluginMessage message;
     private KaaRestPluginConfig pluginConfig;
+    private KaaRestPluginItemConfig itemConfig;
 
-    private KaaRestPluginItemConfig getItemConfig() {
-        if (this.itemConfig == null && this.message != null) {
-            try {
-                AvroJsonConverter<KaaRestPluginItemConfig> converter = new AvroJsonConverter<>(KaaRestPluginItemConfig.SCHEMA$, KaaRestPluginItemConfig.class);
-                String configData = this.message.getItemInfo().getConfigurationData();
-                this.itemConfig = converter.decodeJson(configData);
-            } catch (Exception cause) {
-                throw new IllegalArgumentException(cause);
-            }
-        }
-        return this.itemConfig;
+    private String url;
+    private HttpRequestMethod requestMethod;
+    private MultiValueMap<String, String> requestParams = new LinkedMultiValueMap<>();
+    private GenericRecord requestBody = null;
+
+    private Schema inputMessageType;
+    private Schema outputMessageType;
+
+    private List<HttpResponseMapping> responseMappings = null;
+
+    public HttpRequestDetails(KaaPluginMessage message, KaaRestPluginConfig pluginConfig) {
+
+        this.message = message;
+        this.pluginConfig = pluginConfig;
+
+        this.execute(() -> {
+            AvroJsonConverter<KaaRestPluginItemConfig> converter = new AvroJsonConverter<>(KaaRestPluginItemConfig.SCHEMA$, KaaRestPluginItemConfig.class);
+            String configData = this.message.getItemInfo().getConfigurationData();
+            this.itemConfig = converter.decodeJson(configData);
+        }, "Failed to decode the plugin item configuration!");
+
+        this.requestMethod = this.itemConfig.getRequestMethod();
+
+        this.execute(() -> {
+            GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(message.getItemInfo().getInMessageSchema());
+            byte[] messageData = ((EndpointMessage) message.getMsg()).getMessageData();
+            this.requestBody = converter.decodeJson(messageData);
+        }, "Failed to decode message data!");
+
+        Optional.ofNullable(this.itemConfig.getRequestParams()).ifPresent(collection -> {
+            collection.forEach(element -> {
+                String key = element.getParamName();
+                String value = this.requestBody.get(element.getInputMessageField()).toString();
+                this.requestParams.add(key, value);
+            });
+        });
+        LOG.debug("Request Parameters: {}", this.requestParams);
+
+        this.execute(() -> {
+            this.inputMessageType = new Schema.Parser().parse(message.getItemInfo().getInMessageSchema());
+        }, "Failed to parse the request type schema!");
+
+        this.execute(() -> {
+            this.outputMessageType = new Schema.Parser().parse(message.getItemInfo().getOutMessageSchema());
+        }, "Failed to parse the response type schema!");
+
+        this.responseMappings = this.itemConfig.getResponseMappings();
+
+        String protocol = this.pluginConfig.getProtocol().toString().toLowerCase();
+        String host = this.pluginConfig.getHost();
+        int port = this.pluginConfig.getPort();
+        this.url = protocol + "://" + host + ":" + port + this.itemConfig.getPath();
+    }
+
+    public String getURL() {
+        return this.url;
+    }
+
+    public HttpRequestMethod getRequestMethod() {
+        return this.requestMethod;
+    }
+
+    public MultiValueMap<String, String> getRequestParams() {
+        return this.requestParams;
+    }
+
+    public GenericRecord getRequestBody() {
+        return this.requestBody;
+    }
+
+    public Schema getInputMessageType() {
+        return this.inputMessageType;
+    }
+
+    public Schema getOutputMessageType() {
+        return this.outputMessageType;
+    }
+
+    public List<HttpResponseMapping> getResponseMappings() {
+        return this.responseMappings;
     }
 
     private EndpointMessage response = null;
@@ -152,15 +138,12 @@ public class HttpRequestDetails {
         return this.response;
     }
 
-    private String url = null;
-
-    public String getURL() {
-        if (this.url == null && this.pluginConfig != null) {
-            String protocol = this.pluginConfig.getProtocol().toString();
-            String host = this.pluginConfig.getHost();
-            int port = this.pluginConfig.getPort();
-            this.url = protocol.toLowerCase() + "://" + host + ":" + port + (this.itemConfig != null ? this.itemConfig.getPath() : "");
+    private void execute(Task task, String message) {
+        try {
+            task.complete();
+        } catch (Exception cause) {
+            LOG.error(message, cause);
+            throw new IllegalArgumentException(cause);
         }
-        return this.url;
     }
 }

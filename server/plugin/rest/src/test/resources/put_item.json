@@ -1,19 +1,23 @@
 {
-    "path": "/test/put",
-    "httpRequestMethod": "put",
-    "httpRequestParams": {
+    "path": "/test/get",
+    "requestMethod": "GET",
+    "requestParams": {
         "array": [
             {
-                "name": "body",
-                "avroSchemaMapping": "body"
+                "paramName": "first",
+                "inputMessageField": "a"
+            },
+            {
+                "paramName": "second",
+                "inputMessageField": "b"
             }
         ]
     },
-    "httpResponseMappings": {
+    "responseMappings": {
         "array": [
             {
                 "responseField": "response",
-                "avroSchemaField": "body"
+                "outputMessageField": "x"
             }
         ]
     }

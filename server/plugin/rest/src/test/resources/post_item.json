@@ -1,20 +1,24 @@
 {
-    "path": "/test/post",
-    "httpRequestMethod": "POST",
-    "httpRequestParams": {
+    "path": "/test/get",
+    "requestMethod": "GET",
+    "requestParams": {
         "array": [
             {
-                "name": "first",
-                "avroSchemaMapping": "a"
+                "paramName": "first",
+                "inputMessageField": "a"
             },
             {
-                "name": "second",
-                "avroSchemaMapping": "b"
+                "paramName": "second",
+                "inputMessageField": "b"
             }
         ]
     },
-    "httpResponseMappings": {
+    "responseMappings": {
         "array": [
+            {
+                "responseField": "response",
+                "outputMessageField": "x"
+            }
         ]
     }
 }

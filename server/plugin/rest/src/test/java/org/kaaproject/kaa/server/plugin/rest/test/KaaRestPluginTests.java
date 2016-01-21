@@ -18,29 +18,24 @@ package org.kaaproject.kaa.server.plugin.rest.test;
 
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withBadRequest;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
 
 import org.apache.commons.io.IOUtils;
+import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
+import org.kaaproject.kaa.common.avro.AvroJsonConverter;
 import org.kaaproject.kaa.common.dto.plugin.PluginContractDirection;
-import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.core.plugin.base.BasePluginContractInstance;
 import org.kaaproject.kaa.server.common.core.plugin.base.BasePluginContractItemDef;
 import org.kaaproject.kaa.server.common.core.plugin.base.BasePluginContractItemInfo;
 import org.kaaproject.kaa.server.common.core.plugin.def.PluginContractDef;
 import org.kaaproject.kaa.server.common.core.plugin.def.PluginContractItemDef;
-import org.kaaproject.kaa.server.common.core.plugin.def.PluginExecutionContext;
-import org.kaaproject.kaa.server.common.core.plugin.def.PluginInitContext;
-import org.kaaproject.kaa.server.common.core.plugin.instance.KaaMessage;
 import org.kaaproject.kaa.server.common.core.plugin.instance.KaaPluginMessage;
 import org.kaaproject.kaa.server.common.core.plugin.instance.PluginContractInstance;
 import org.kaaproject.kaa.server.common.core.plugin.instance.PluginContractItemInfo;
@@ -53,7 +48,6 @@ import org.kaaproject.kaa.server.plugin.rest.test.gen.OutputMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.test.web.client.ResponseCreator;
@@ -65,7 +59,7 @@ public class KaaRestPluginTests {
 
     private static final Logger LOG = LoggerFactory.getLogger(KaaRestPluginTests.class);
 
-    private static final String PLUGIN_CONFIG_DATA = "rest_plugin_config.json";
+    private static final String PLUGIN_CONFIG = "rest_plugin_config.json";
     private static final String PLUGIN_ITEM_SCHEMA = "rest_plugin_item.avsc";
 
     private enum Items {
@@ -98,25 +92,15 @@ public class KaaRestPluginTests {
     private final Map<HttpRequestMethod, PluginContractItemInfo> items = new EnumMap<>(HttpRequestMethod.class);
     private final PluginContractInstance contract;
 
-    private PluginInitContext initContext = new PluginInitContext() {
+    private final AvroJsonConverter<InputMessage> converter = new AvroJsonConverter<>(InputMessage.SCHEMA$, InputMessage.class);
 
-        private String pluginConfig = KaaRestPluginTests.this.read(PLUGIN_CONFIG_DATA);
-
-        @Override
-        public String getPluginConfigurationData() {
-            return this.pluginConfig;
-        }
-
-        @Override
-        public Set<PluginContractInstance> getPluginContracts() {
-            return Collections.singleton(KaaRestPluginTests.this.contract);
-        }
-    };
+    private PluginTestInitContext initContext = new PluginTestInitContext(this.read(PLUGIN_CONFIG), Collections.singleton(this.contract));
+    private PluginTestExecutionContext<OutputMessage> executionContext = new PluginTestExecutionContext<>(OutputMessage.class);
 
     public KaaRestPluginTests() throws Exception {
 
         String itemSchema = this.read(PLUGIN_ITEM_SCHEMA);
-        this.def = BasePluginContractItemDef.builder("Plugin Contract Item Definition")
+        this.def = BasePluginContractItemDef.builder(null)
                 .withSchema(itemSchema)
                 .withInMessage(EndpointMessage.class)
                 .withOutMessage(EndpointMessage.class)
@@ -152,29 +136,33 @@ public class KaaRestPluginTests {
     }
 
     @Test
-    @Ignore
-    public void testGetRequest() throws Exception {
+    public void getRequestPositiveTest() throws Exception {
+
+        InputMessage request = InputMessage.newBuilder().setA(100).setB(200).setC(300).build();
+        KaaPluginMessage message = new KaaPluginTestMessage(this.def, this.items.get(HttpRequestMethod.GET), this.converter.encodeToJson(request));
 
         ResponseCreator response = withSuccess("{ \"response\": \"success\" }", MediaType.APPLICATION_JSON);
         this.mockServer.expect(requestTo("http://127.0.0.1:8080/test/get")).andExpect(method(HttpMethod.GET)).andRespond(response);
 
-        KaaPluginMessage message = new KaaPluginTestMessage(this.def, this.items.get(HttpRequestMethod.GET), "{ \"a\": 1, \"b\": 2, \"c\": 3 }");
-        this.restPlugin.onPluginMessage(message, new PluginTestExecutionContext());
-
+        this.restPlugin.onPluginMessage(message, this.executionContext);
         this.mockServer.verify();
+
+        OutputMessage expected = OutputMessage.newBuilder().setX("success").build();
+        Assert.assertEquals(expected, this.executionContext.getMessageContent());
     }
 
     @Test
-    public void testPostRequest() throws Exception {
+    public void getRequestNegativeTest() throws Exception {
 
-        ResponseCreator response = withStatus(HttpStatus.OK);
-//        ResponseCreator response = withSuccess("{ \"response\": \"success\" }", MediaType.APPLICATION_JSON);
-        this.mockServer.expect(requestTo("http://127.0.0.1:8080/test/post")).andExpect(method(HttpMethod.POST)).andRespond(response);
+        InputMessage request = InputMessage.newBuilder().setA(100).setB(200).setC(300).build();
+        KaaPluginMessage message = new KaaPluginTestMessage(this.def, this.items.get(HttpRequestMethod.GET), this.converter.encodeToJson(request));
 
-        KaaPluginMessage message = new KaaPluginTestMessage(this.def, this.items.get(HttpRequestMethod.POST), "{ \"a\": 1, \"b\": 2, \"c\": 3 }");
-        this.restPlugin.onPluginMessage(message, new PluginTestExecutionContext());
+        ResponseCreator response = withBadRequest();
+        this.mockServer.expect(requestTo("http://127.0.0.1:8080/test/get")).andExpect(method(HttpMethod.GET)).andRespond(response);
 
+        this.restPlugin.onPluginMessage(message, this.executionContext);
         this.mockServer.verify();
+        Assert.assertEquals(400, this.executionContext.getEndpointMessage().getErrorCode());
     }
 
     private String read(String resource) throws Exception {
@@ -183,71 +171,6 @@ public class KaaRestPluginTests {
         } catch (Exception cause) {
             LOG.error("Failed to read from {}", resource);
             throw new RuntimeException(cause);
-        }
-    }
-
-    protected class KaaPluginTestMessage implements KaaPluginMessage {
-
-        private static final long serialVersionUID = 100L;
-
-        private UUID id;
-        private KaaMessage message;
-        private PluginContractItemDef itemDef;
-        private PluginContractItemInfo itemInfo;
-
-        public KaaPluginTestMessage(PluginContractItemDef itemDef, PluginContractItemInfo itemInfo, String body) {
-
-            this.id = UUID.randomUUID();
-
-            try {
-                // AvroJsonConverter<InputMessage> converter = new
-                // AvroJsonConverter<InputMessage>(InputMessage.SCHEMA$,
-                // InputMessage.class);
-                // converter.decodeJson(body);
-                this.message = new EndpointMessage(EndpointObjectHash.fromString("remote_endpoint"), body.getBytes());
-            } catch (Exception cause) {
-                LOG.error("Failed to create the message!", cause);
-                throw new IllegalArgumentException(cause);
-            }
-
-            this.itemDef = itemDef;
-            this.itemInfo = itemInfo;
-        }
-
-        @Override
-        public UUID getUid() {
-            return this.id;
-        }
-
-        @Override
-        public KaaMessage getMsg() {
-            return this.message;
-        }
-
-        @Override
-        public void setMsg(KaaMessage message) {
-            this.message = message;
-        }
-
-        @Override
-        public PluginContractItemDef getItemDef() {
-            return this.itemDef;
-        }
-
-        @Override
-        public PluginContractItemInfo getItemInfo() {
-            return this.itemInfo;
-        }
-    }
-
-    protected class PluginTestExecutionContext implements PluginExecutionContext {
-
-        @Override
-        public void tellEndpoint(EndpointObjectHash endpointKey, KaaMessage message) {
-        }
-
-        @Override
-        public void tellPlugin(UUID id, KaaMessage message) {
         }
     }
 }

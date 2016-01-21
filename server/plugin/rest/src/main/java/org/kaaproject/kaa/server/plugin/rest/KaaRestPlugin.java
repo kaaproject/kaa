@@ -25,7 +25,6 @@ import org.apache.avro.Schema.Field;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.generic.GenericRecordBuilder;
 import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.kaaproject.kaa.common.avro.AvroJsonConverter;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
@@ -40,8 +39,12 @@ import org.kaaproject.kaa.server.plugin.rest.gen.HttpResponseMapping;
 import org.kaaproject.kaa.server.plugin.rest.gen.KaaRestPluginConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+/**
+ * @author Bohdan Khablenko
+ */
 @Plugin(KaaRestPluginDef.class)
 public class KaaRestPlugin implements KaaPlugin {
 
@@ -73,38 +76,42 @@ public class KaaRestPlugin implements KaaPlugin {
         LOG.info("Received message [{}]", message.getUid());
 
         try {
-            HttpRequestDetails details = new HttpRequestDetails(message, this.pluginConfig);
-            EndpointMessage response = details.getResponse();
+            HttpRequestDetails request = new HttpRequestDetails(message, this.pluginConfig);
+            EndpointMessage response = request.getResponse();
 
-            switch (details.getHttpRequestMethod()) {
+            switch (request.getRequestMethod()) {
 
                 case GET:
-                    LOG.info("Processing GET for [{}] with {}", details.getURL(), details.getHttpRequestBody());
-                    response.setMessageData(this.getForObject(details));
-                    LOG.info("Responding to message [{}] with {}", message.getUid(), new String(response.getMessageData()));
+                    LOG.info("Processing GET for [{}] with {}", request.getURL(), request.getRequestBody());
+                    KaaRestPlugin.processRequest(request, this::getForObject);
+                    if (response.getErrorCode() == 0) {
+                        LOG.info("Responding to message [{}] with {}", message.getUid(), new String(response.getMessageData()));
+                    } else {
+                        LOG.info("The request resulted in {} {}", response.getErrorCode(), response.getErrorMessage());
+                    }
                     ctx.tellPlugin(message.getUid(), response);
                     break;
 
                 case POST:
-                    LOG.info("Processing POST for [{}] with {}", details.getURL(), details.getHttpRequestBody());
-                    List<HttpResponseMapping> mappings = details.getHttpResponseMappings();
+                    LOG.info("Processing POST for [{}] with {}", request.getURL(), request.getRequestBody());
+                    List<HttpResponseMapping> mappings = request.getResponseMappings();
                     if (mappings != null & !mappings.isEmpty()) {
-                        response.setMessageData(this.postForObject(details));
+                        KaaRestPlugin.processRequest(request, this::postForObject);
                         LOG.info("Responding to message [{}] with {}", message.getUid(), new String(response.getMessageData()));
                         ctx.tellPlugin(message.getUid(), response);
                     } else {
-                        this.postForLocation(details);
+                        KaaRestPlugin.processRequest(request, this::postForLocation);
                     }
                     break;
 
                 case PUT:
-                    LOG.info("Processing PUT for [{}] with {}", details.getURL(), details.getHttpRequestBody());
-                    this.doPut(details);
+                    LOG.info("Processing PUT for [{}] with {}", request.getURL(), request.getRequestBody());
+                    KaaRestPlugin.processRequest(request, this::put);
                     break;
 
                 case DELETE:
-                    LOG.info("Processing DELETE for [{}] with {}", details.getURL(), details.getHttpRequestBody());
-                    this.doDelete(details);
+                    LOG.info("Processing DELETE for [{}] with {}", request.getURL(), request.getRequestBody());
+                    KaaRestPlugin.processRequest(request, this::delete);
                     break;
             }
         } catch (Exception cause) {
@@ -123,76 +130,79 @@ public class KaaRestPlugin implements KaaPlugin {
         }
     }
 
-    private byte[] getForObject(HttpRequestDetails request) throws Exception {
+    private byte[] getForObject(HttpRequestDetails request) throws HttpClientErrorException {
 
-        String response = this.restTemplate.getForObject(request.getURL(), String.class, request.getHttpRequestParams());
+        String response = this.restTemplate.getForObject(request.getURL(), String.class, request.getRequestParams());
         LOG.info("The host responded with {}", response.replaceAll("\\s+", " "));
 
-        Schema typeExpected = request.getResponseSchema();
+        Schema typeExpected = request.getOutputMessageType();
         if (KaaRestPlugin.validate(response, typeExpected)) {
             return response.getBytes();
         } else {
             LOG.debug("Converting the response to the expected type {}", typeExpected.toString().replaceAll("\\s+", " "));
-            GenericRecord buffer = KaaRestPlugin.mapResponseFields(response, request.getResponseSchema(), request.getHttpResponseMappings());
+            GenericRecord buffer = KaaRestPlugin.convert(response, request.getOutputMessageType(), request.getResponseMappings());
             return buffer.toString().getBytes();
         }
     }
 
-    private byte[] postForObject(HttpRequestDetails request) throws Exception {
+    private byte[] postForObject(HttpRequestDetails request) throws HttpClientErrorException {
 
-        String response = this.restTemplate.postForObject(request.getURL(), request.getHttpRequestParams(), String.class);
+        String response = this.restTemplate.postForObject(request.getURL(), request.getRequestParams(), String.class);
         LOG.debug("The host responded with {}", response.replaceAll("\\s+", " "));
 
-        Schema typeExpected = request.getResponseSchema();
+        Schema typeExpected = request.getOutputMessageType();
         if (KaaRestPlugin.validate(response, typeExpected)) {
             return response.getBytes();
         } else {
             LOG.debug("Converting the response to the expected type {}", typeExpected.toString().replaceAll("\\s+", " "));
-            GenericRecord buffer = KaaRestPlugin.mapResponseFields(response, request.getResponseSchema(), request.getHttpResponseMappings());
+            GenericRecord buffer = KaaRestPlugin.convert(response, request.getOutputMessageType(), request.getResponseMappings());
             return buffer.toString().getBytes();
         }
     }
 
-    private void postForLocation(HttpRequestDetails request) throws Exception {
-        this.restTemplate.postForLocation(request.getURL(), request.getHttpRequestParams());
+    private Void postForLocation(HttpRequestDetails request) throws HttpClientErrorException {
+        this.restTemplate.postForLocation(request.getURL(), request.getRequestParams());
+        return null;
     }
 
-    private void doPut(HttpRequestDetails request) throws Exception {
-        this.restTemplate.put(request.getURL(), request.getHttpRequestParams());
+    private Void put(HttpRequestDetails request) throws HttpClientErrorException {
+        this.restTemplate.put(request.getURL(), request.getRequestParams());
+        return null;
     }
 
-    private void doDelete(HttpRequestDetails request) throws Exception {
-        this.restTemplate.delete(request.getURL(), request.getHttpRequestParams());
+    private Void delete(HttpRequestDetails request) throws HttpClientErrorException {
+        this.restTemplate.delete(request.getURL(), request.getRequestParams());
+        return null;
     }
 
-    private static boolean validate(String data, Schema schema) {
+    private static boolean validate(String body, Schema type) {
         boolean success = true;
         try {
-            GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<GenericRecord>(schema);
-            converter.decodeJson(data);
+            GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<GenericRecord>(type);
+            converter.decodeJson(body);
         } catch (Exception ignored) {
             success = false;
         }
         return success;
     }
 
-    private static GenericRecord mapResponseFields(String responseBody, Schema responseType, List<HttpResponseMapping> responseMappings) throws Exception {
+    private static GenericRecord convert(String body, Schema type, List<HttpResponseMapping> mappings) {
 
         // Used to track response type fields that are missing a value
-        List<String> missingFields = responseType.getFields().stream().map(Field::name).collect(Collectors.toList());
+        List<String> missingFields = type.getFields().stream().map(Field::name).collect(Collectors.toList());
 
         JsonNode response;
         try {
-            response = new ObjectMapper().readTree(responseBody);
-        } catch (JsonParseException cause) {
-            LOG.error("{} is not a valid JSON!", responseBody);
+            response = new ObjectMapper().readTree(body);
+        } catch (Exception cause) {
+            LOG.error("{} is not a valid JSON!", body);
             throw new IllegalArgumentException(cause);
         }
 
-        GenericRecordBuilder buffer = new GenericRecordBuilder(responseType);
+        GenericRecordBuilder buffer = new GenericRecordBuilder(type);
 
-        Optional.ofNullable(responseMappings).ifPresent(collection -> collection.forEach(mapping -> {
-            String field = mapping.getAvroSchemaField();
+        Optional.ofNullable(mappings).ifPresent(collection -> collection.forEach(mapping -> {
+            String field = mapping.getOutputMessageField();
             JsonNode value = response.get(mapping.getResponseField());
             if (value != null) {
                 LOG.debug("Setting the field [{}] to {}", field, value.toString());
@@ -207,7 +217,7 @@ public class KaaRestPlugin implements KaaPlugin {
         }));
 
         missingFields.forEach(name -> {
-            Field field = responseType.getField(name);
+            Field field = type.getField(name);
             JsonNode defaultValue = field.defaultValue();
             if (defaultValue != null) {
                 LOG.debug("Using the default value {} for the field [{}]", defaultValue.toString(), name);
@@ -217,5 +227,18 @@ public class KaaRestPlugin implements KaaPlugin {
         });
 
         return buffer.build();
+    }
+
+    private static <T> void processRequest(HttpRequestDetails request, RequestProcessor<T> processor) {
+        EndpointMessage response = request.getResponse();
+        try {
+            T bytes = processor.send(request);
+            if (bytes instanceof byte[]) {
+                response.setMessageData((byte[]) bytes);
+            }
+        } catch (HttpClientErrorException cause) {
+            response.setErrorCode(cause.getStatusCode().value());
+            response.setErrorMessage(cause.getStatusCode().name());
+        }
     }
 }

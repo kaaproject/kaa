@@ -11,7 +11,7 @@
             }
         },
         {
-            "name": "httpRequestMethod",
+            "name": "requestMethod",
             "type": {
                 "type": "enum",
                 "name": "HttpRequestMethod",
@@ -26,7 +26,7 @@
             "by_default": "GET"
         },
         {
-            "name": "httpRequestParams",
+            "name": "requestParams",
             "type": [
                 {
                     "type": "array",
@@ -35,14 +35,14 @@
                         "name": "HttpRequestParam",
                         "fields": [
                             {
-                                "name": "name",
+                                "name": "paramName",
                                 "type": {
                                     "type": "string",
                                     "avro.java.string": "String"
                                 }
                             },
                             {
-                                "name": "avroSchemaMapping",
+                                "name": "inputMessageField",
                                 "type": {
                                     "type": "string",
                                     "avro.java.string": "String"
@@ -55,7 +55,7 @@
             ]
         },
         {
-            "name": "httpResponseMappings",
+            "name": "responseMappings",
             "type": [
                 {
                     "type": "array",
@@ -71,7 +71,7 @@
                                 }
                             },
                             {
-                                "name": "avroSchemaField",
+                                "name": "outputMessageField",
                                 "type": {
                                     "type": "string",
                                     "avro.java.string": "String"

@@ -7,10 +7,10 @@ package org.kaaproject.kaa.server.plugin.rest.gen;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class HttpResponseMapping extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"HttpResponseMapping\",\"namespace\":\"org.kaaproject.kaa.server.plugin.rest.gen\",\"fields\":[{\"name\":\"responseField\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"avroSchemaField\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"HttpResponseMapping\",\"namespace\":\"org.kaaproject.kaa.server.plugin.rest.gen\",\"fields\":[{\"name\":\"responseField\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"outputMessageField\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
    private java.lang.String responseField;
-   private java.lang.String avroSchemaField;
+   private java.lang.String outputMessageField;
 
   /**
    * Default constructor.  Note that this does not initialize fields
@@ -22,9 +22,9 @@ public class HttpResponseMapping extends org.apache.avro.specific.SpecificRecord
   /**
    * All-args constructor.
    */
-  public HttpResponseMapping(java.lang.String responseField, java.lang.String avroSchemaField) {
+  public HttpResponseMapping(java.lang.String responseField, java.lang.String outputMessageField) {
     this.responseField = responseField;
-    this.avroSchemaField = avroSchemaField;
+    this.outputMessageField = outputMessageField;
   }
 
   public org.apache.avro.Schema getSchema() { return SCHEMA$; }
@@ -32,7 +32,7 @@ public class HttpResponseMapping extends org.apache.avro.specific.SpecificRecord
   public java.lang.Object get(int field$) {
     switch (field$) {
     case 0: return responseField;
-    case 1: return avroSchemaField;
+    case 1: return outputMessageField;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -41,7 +41,7 @@ public class HttpResponseMapping extends org.apache.avro.specific.SpecificRecord
   public void put(int field$, java.lang.Object value$) {
     switch (field$) {
     case 0: responseField = (java.lang.String)value$; break;
-    case 1: avroSchemaField = (java.lang.String)value$; break;
+    case 1: outputMessageField = (java.lang.String)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -62,18 +62,18 @@ public class HttpResponseMapping extends org.apache.avro.specific.SpecificRecord
   }
 
   /**
-   * Gets the value of the 'avroSchemaField' field.
+   * Gets the value of the 'outputMessageField' field.
    */
-  public java.lang.String getAvroSchemaField() {
-    return avroSchemaField;
+  public java.lang.String getOutputMessageField() {
+    return outputMessageField;
   }
 
   /**
-   * Sets the value of the 'avroSchemaField' field.
+   * Sets the value of the 'outputMessageField' field.
    * @param value the value to set.
    */
-  public void setAvroSchemaField(java.lang.String value) {
-    this.avroSchemaField = value;
+  public void setOutputMessageField(java.lang.String value) {
+    this.outputMessageField = value;
   }
 
   /** Creates a new HttpResponseMapping RecordBuilder */
@@ -98,7 +98,7 @@ public class HttpResponseMapping extends org.apache.avro.specific.SpecificRecord
     implements org.apache.avro.data.RecordBuilder<HttpResponseMapping> {
 
     private java.lang.String responseField;
-    private java.lang.String avroSchemaField;
+    private java.lang.String outputMessageField;
 
     /** Creates a new Builder */
     private Builder() {
@@ -112,8 +112,8 @@ public class HttpResponseMapping extends org.apache.avro.specific.SpecificRecord
         this.responseField = data().deepCopy(fields()[0].schema(), other.responseField);
         fieldSetFlags()[0] = true;
       }
-      if (isValidValue(fields()[1], other.avroSchemaField)) {
-        this.avroSchemaField = data().deepCopy(fields()[1].schema(), other.avroSchemaField);
+      if (isValidValue(fields()[1], other.outputMessageField)) {
+        this.outputMessageField = data().deepCopy(fields()[1].schema(), other.outputMessageField);
         fieldSetFlags()[1] = true;
       }
     }
@@ -125,8 +125,8 @@ public class HttpResponseMapping extends org.apache.avro.specific.SpecificRecord
         this.responseField = data().deepCopy(fields()[0].schema(), other.responseField);
         fieldSetFlags()[0] = true;
       }
-      if (isValidValue(fields()[1], other.avroSchemaField)) {
-        this.avroSchemaField = data().deepCopy(fields()[1].schema(), other.avroSchemaField);
+      if (isValidValue(fields()[1], other.outputMessageField)) {
+        this.outputMessageField = data().deepCopy(fields()[1].schema(), other.outputMessageField);
         fieldSetFlags()[1] = true;
       }
     }
@@ -156,27 +156,27 @@ public class HttpResponseMapping extends org.apache.avro.specific.SpecificRecord
       return this;
     }
 
-    /** Gets the value of the 'avroSchemaField' field */
-    public java.lang.String getAvroSchemaField() {
-      return avroSchemaField;
+    /** Gets the value of the 'outputMessageField' field */
+    public java.lang.String getOutputMessageField() {
+      return outputMessageField;
     }
     
-    /** Sets the value of the 'avroSchemaField' field */
-    public org.kaaproject.kaa.server.plugin.rest.gen.HttpResponseMapping.Builder setAvroSchemaField(java.lang.String value) {
+    /** Sets the value of the 'outputMessageField' field */
+    public org.kaaproject.kaa.server.plugin.rest.gen.HttpResponseMapping.Builder setOutputMessageField(java.lang.String value) {
       validate(fields()[1], value);
-      this.avroSchemaField = value;
+      this.outputMessageField = value;
       fieldSetFlags()[1] = true;
       return this; 
     }
     
-    /** Checks whether the 'avroSchemaField' field has been set */
-    public boolean hasAvroSchemaField() {
+    /** Checks whether the 'outputMessageField' field has been set */
+    public boolean hasOutputMessageField() {
       return fieldSetFlags()[1];
     }
     
-    /** Clears the value of the 'avroSchemaField' field */
-    public org.kaaproject.kaa.server.plugin.rest.gen.HttpResponseMapping.Builder clearAvroSchemaField() {
-      avroSchemaField = null;
+    /** Clears the value of the 'outputMessageField' field */
+    public org.kaaproject.kaa.server.plugin.rest.gen.HttpResponseMapping.Builder clearOutputMessageField() {
+      outputMessageField = null;
       fieldSetFlags()[1] = false;
       return this;
     }
@@ -186,7 +186,7 @@ public class HttpResponseMapping extends org.apache.avro.specific.SpecificRecord
       try {
         HttpResponseMapping record = new HttpResponseMapping();
         record.responseField = fieldSetFlags()[0] ? this.responseField : (java.lang.String) defaultValue(fields()[0]);
-        record.avroSchemaField = fieldSetFlags()[1] ? this.avroSchemaField : (java.lang.String) defaultValue(fields()[1]);
+        record.outputMessageField = fieldSetFlags()[1] ? this.outputMessageField : (java.lang.String) defaultValue(fields()[1]);
         return record;
       } catch (Exception e) {
         throw new org.apache.avro.AvroRuntimeException(e);

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.kaaproject.kaa.server.plugin.contracts.messaging;
 
 import java.util.Arrays;
@@ -20,6 +21,10 @@ import java.util.Arrays;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.core.plugin.instance.KaaMessage;
 
+/**
+ * @author Andrew Shvayka
+ * @author Bohdan Khablenko
+ */
 public class EndpointMessage implements KaaMessage {
 
     private static final long serialVersionUID = -7358355594071995237L;
@@ -27,13 +32,14 @@ public class EndpointMessage implements KaaMessage {
     private final EndpointObjectHash key;
     private byte[] messageData;
 
+    private int errorCode;
+    private String errorMessage;
+
     public EndpointMessage(EndpointObjectHash key) {
-        super();
         this.key = key;
     }
 
     public EndpointMessage(EndpointObjectHash key, byte[] messageData) {
-        super();
         this.key = key;
         this.messageData = messageData;
     }
@@ -50,4 +56,19 @@ public class EndpointMessage implements KaaMessage {
         this.messageData = Arrays.copyOf(messageData, messageData.length);
     }
 
+    public int getErrorCode() {
+        return errorCode;
+    }
+
+    public void setErrorCode(int errorCode) {
+        this.errorCode = errorCode;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
 }
