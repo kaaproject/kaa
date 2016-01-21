@@ -31,6 +31,14 @@ public final class TopicState {
     }
 
     /**
+     * All-args constructor.
+     */
+    public TopicState(Long topicId, int seqNumber) {
+        this.topicId = Long.toString(topicId);
+        this.seqNumber = seqNumber;
+    }
+
+    /**
      * Gets the value of the 'topicId' field.
      */
     public String getTopicId() {

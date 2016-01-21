@@ -19,7 +19,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.kaaproject.kaa.client</groupId>
-        <version>0.7.4-SNAPSHOT</version>
+        <version>0.8.0-SNAPSHOT</version>
         <artifactId>client-multi</artifactId>
     </parent>
     <artifactId>client-cpp</artifactId>
@@ -49,6 +49,7 @@
                 <configuration>
                     <descriptors>
                         <descriptor>assembly/client-cpp-sdk.xml</descriptor>
+                        <descriptor>assembly/client-cpp-sdk-templates.xml</descriptor>
                     </descriptors>
                 </configuration>
                 <executions>
@@ -67,6 +68,7 @@
                 <version>${rat.version}</version>
                 <configuration>
                     <excludes>
+                        <exclude>**/*.template</exclude>
                         <exclude>**/gcovr.log</exclude>
                         <exclude>**/gcovr-report.xml</exclude>
                         <exclude>**/unittest_result.xml</exclude>
@@ -77,6 +79,7 @@
                         <exclude>**/.cproject</exclude>
                         <exclude>**/kaa_status.file</exclude>
                         <exclude>**/FindSqlite3.cmake</exclude>
+                        <exclude>**/artik.cmake</exclude>
                     </excludes>
                 </configuration>
             </plugin>

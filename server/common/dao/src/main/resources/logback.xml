@@ -32,7 +32,7 @@
         </encoder>
     </appender>
 
-    <logger name="org.kaaproject.kaa.server.common.dao.service.test" level="DEBUG"/>
+    <logger name="org.kaaproject.kaa.server.common.dao" level="INFO"/>
     <logger name="org.springframework" level="INFO"/>
 
     <root level="INFO">

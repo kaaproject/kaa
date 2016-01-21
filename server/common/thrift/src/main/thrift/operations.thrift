@@ -57,6 +57,7 @@ enum Operation {
       ADD_USER_VERIFIER = 18
       REMOVE_USER_VERIFIER = 19
       UPDATE_USER_VERIFIER = 20
+      UPDATE_SERVER_PROFILE = 21
 }
 
 /**
@@ -187,7 +188,7 @@ struct UserConfigurationUpdate {
   5: binary ucfHash
 }
 
-service OperationsThriftService extends cli.CliThriftService{
+service OperationsThriftService {
 
 /**
 *   Application Sequence Numbers

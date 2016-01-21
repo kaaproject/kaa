@@ -48,7 +48,7 @@ import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getTopic
 @Table(name = ENDPOINT_GROUP_TABLE_NAME, uniqueConstraints = {
         @UniqueConstraint(columnNames = {ENDPOINT_GROUP_WEIGHT, ENDPOINT_GROUP_APPLICATION_ID}),
         @UniqueConstraint(columnNames = {ENDPOINT_GROUP_NAME, ENDPOINT_GROUP_APPLICATION_ID})})
-public final class EndpointGroup extends GenericModel<EndpointGroupDto> implements Serializable {
+public class EndpointGroup extends GenericModel<EndpointGroupDto> implements Serializable {
 
     private static final long serialVersionUID = -2160369956685033697L;
 
@@ -188,6 +188,11 @@ public final class EndpointGroup extends GenericModel<EndpointGroupDto> implemen
 
     protected EndpointGroupDto createDto() {
         return new EndpointGroupDto();
+    }
+
+    @Override
+    protected GenericModel<EndpointGroupDto> newInstance(Long id) {
+        return new EndpointGroup(id);
     }
 
     @Override

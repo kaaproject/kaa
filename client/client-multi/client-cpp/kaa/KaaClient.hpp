@@ -110,12 +110,34 @@ private:
     void initKaaTransport();
     void initClientKeys();
 
+    void checkReadiness();
+
 private:
+    enum class State {
+        CREATED,
+        STARTED,
+        PAUSED,
+        STOPPED
+    };
+
+    void setClientState(State state);
+    void checkClientState(State expected, const std::string& message);
+    void checkClientStateNot(State unexpected, const std::string& message);
+
+private:
+    State                                           clientState_ = State::CREATED;
+
 #ifdef KAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL
     std::unique_ptr<DefaultBootstrapChannel>         bootstrapChannel_;
 #endif
 #ifdef KAA_DEFAULT_TCP_CHANNEL
     std::unique_ptr<DefaultOperationTcpChannel>      opsTcpChannel_;
+#endif
+#ifdef KAA_DEFAULT_OPERATION_HTTP_CHANNEL
+    std::unique_ptr<DefaultOperationHttpChannel>     opsHttpChannel_;
+#endif
+#ifdef KAA_DEFAULT_LONG_POLL_CHANNEL
+    std::unique_ptr<DefaultOperationLongPollChannel> opsLongPollChannel_;
 #endif
 
     IKaaClientPlatformContextPtr                     platformContext_;
@@ -128,7 +150,6 @@ private:
     std::unique_ptr<IKaaChannelManager>              channelManager_;
     std::unique_ptr<SyncDataProcessor>               syncProcessor_;
     IFailoverStrategyPtr                             failoverStrategy_;
-    IProfileTransportPtr                             profileTransport_;
 
     std::unique_ptr<KeyPair>                         clientKeys_;
     std::string                                      publicKeyHash_;

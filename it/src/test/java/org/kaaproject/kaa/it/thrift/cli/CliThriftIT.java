@@ -22,6 +22,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
 
 import org.apache.thrift.TException;
+import org.apache.thrift.TMultiplexedProcessor;
 import org.apache.thrift.server.TServer;
 import org.apache.thrift.server.TThreadPoolServer;
 import org.apache.thrift.server.TThreadPoolServer.Args;
@@ -33,6 +34,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.kaaproject.kaa.server.common.thrift.KaaThriftService;
 import org.kaaproject.kaa.server.common.thrift.cli.client.BaseCliThriftClient;
 import org.kaaproject.kaa.server.common.thrift.cli.client.CliSessionState;
 import org.kaaproject.kaa.server.common.thrift.cli.client.OptionsProcessor;
@@ -108,8 +110,10 @@ public class CliThriftIT {
     @Before
     public void beforeTest() throws Exception {
         if (!thriftServerStarted) {
-            CliThriftService.Processor<CliThriftService.Iface> processor = new CliThriftService.Processor<CliThriftService.Iface>(
+            CliThriftService.Processor<CliThriftService.Iface> cliProcessor = new CliThriftService.Processor<CliThriftService.Iface>(
                     new TestCliThriftService(THRIFT_SERVER_SHORT_NAME));
+            TMultiplexedProcessor processor = new TMultiplexedProcessor();
+            processor.registerProcessor(KaaThriftService.KAA_NODE_SERVICE.getServiceName(), cliProcessor);
             TServerTransport serverTransport = new TServerSocket(
                     new InetSocketAddress(HOST, PORT));
             server = new TThreadPoolServer(

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,83 +18,22 @@ package org.kaaproject.kaa.server.common.log.shared.appender;
 
 import java.util.List;
 
-public class LogEventPack {
+import org.kaaproject.kaa.server.common.log.shared.appender.data.ProfileInfo;
 
-    private String endpointKey;
+public interface LogEventPack {
 
-    private long dateCreated;
+    String getEndpointKey();
 
-    private int logSchemaVersion;
+    String getUserId();
 
-    private LogSchema logSchema;
+    long getDateCreated();
 
-    private List<LogEvent> events;
+    LogSchema getLogSchema();
 
-    private String userId;
+    List<LogEvent> getEvents();
 
-    public LogEventPack() {
+    ProfileInfo getClientProfile();
 
-    }
-
-    public LogEventPack(String endpointKey, long dateCreated, LogSchema logSchema, List<LogEvent> events) {
-        this.endpointKey = endpointKey;
-        this.dateCreated = dateCreated;
-        this.logSchema = logSchema;
-        this.events = events;
-    }
-
-    public String getEndpointKey() {
-        return endpointKey;
-    }
-
-    public void setEndpointKey(String endpointKey) {
-        this.endpointKey = endpointKey;
-    }
-
-    public long getDateCreated() {
-        return dateCreated;
-    }
-
-    public void setDateCreated(long dateCreated) {
-        this.dateCreated = dateCreated;
-    }
-
-    public LogSchema getLogSchema() {
-        return logSchema;
-    }
-
-    public void setLogSchema(LogSchema logSchema) {
-        this.logSchema = logSchema;
-    }
-
-    public int getLogSchemaVersion() {
-        return logSchemaVersion;
-    }
-
-    public void setLogSchemaVersion(int logSchemaVersion) {
-        this.logSchemaVersion = logSchemaVersion;
-    }
-
-    public List<LogEvent> getEvents() {
-        return events;
-    }
-
-    public void setEvents(List<LogEvent> events) {
-        this.events = events;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    @Override
-    public String toString() {
-        return "LogEventPack [endpointKey=" + endpointKey + ", dateCreated=" + dateCreated + ", logSchemaVersion=" + logSchemaVersion + ", logSchema="
-                + logSchema + ", events=" + events + "]";
-    }
+    ProfileInfo getServerProfile();
 
 }

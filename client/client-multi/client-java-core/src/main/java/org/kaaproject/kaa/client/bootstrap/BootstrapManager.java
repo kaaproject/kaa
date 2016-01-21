@@ -35,7 +35,7 @@ public interface BootstrapManager {
 
     /**
      * Receives the latest list of servers from the bootstrap server.
-     *
+     * @throws TransportException the transport exception
      */
     void receiveOperationsServerList() throws TransportException;
 

@@ -24,6 +24,7 @@
 #include "kaa/profile/DefaultProfileContainer.hpp"
 #include "kaa/common/AvroByteArrayConverter.hpp"
 #include "kaa/channel/transport/IProfileTransport.hpp"
+#include "kaa/profile/gen/ProfileDefinitions.hpp"
 
 namespace kaa {
 
@@ -33,13 +34,17 @@ namespace kaa {
  */
 class ProfileManager : public IProfileManager {
 public:
-    ProfileManager() : profileContainer_(std::make_shared<DefaultProfileContainer>()) { }
 
     /**
      * Sets profile container implemented by the user
      * @param container user-defined container
      */
-    virtual void setProfileContainer(IProfileContainerPtr container);
+    virtual void setProfileContainer(IProfileContainerPtr container)
+    {
+        if (container) {
+            profileContainer_ = container;
+        }
+    }
 
     /**
      * Retrieves serialized profile
@@ -49,8 +54,18 @@ public:
      */
     SharedDataBuffer getSerializedProfile()
     {
-        AvroByteArrayConverter<KaaProfile> avroConverter;
-        return avroConverter.toByteArray(profileContainer_->getProfile());
+        static AvroByteArrayConverter<KaaProfile> avroConverter;
+
+        if (profileContainer_) {
+            return avroConverter.toByteArray(profileContainer_->getProfile());
+        }
+#if KAA_PROFILE_SCHEMA_VERSION > 0
+        else {
+            throw KaaException("Profile container is not set!");
+        }
+#endif
+
+        return avroConverter.toByteArray(KaaProfile());
     }
 
     /**
@@ -62,6 +77,15 @@ public:
         if (serializedProfile.first.get() && serializedProfile.second > 0) {
             transport_->sync();
         }
+    }
+
+    virtual bool isInitialized()
+    {
+#if KAA_PROFILE_SCHEMA_VERSION > 0
+        return profileContainer_.operator bool();
+#else
+        return true;
+#endif
     }
 
     /**
@@ -79,13 +103,6 @@ private:
     IProfileTransportPtr            transport_;
     IProfileContainerPtr     profileContainer_;
 };
-
-inline void ProfileManager::setProfileContainer(IProfileContainerPtr container)
-{
-    if (container) {
-        profileContainer_ = container;
-    }
-}
 
 } /* namespace kaa */
 

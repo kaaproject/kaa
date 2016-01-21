@@ -84,7 +84,6 @@ public class MongoModelConstants {
     public static final String EP_ENDPOINT_KEY_HASH = ENDPOINT_KEY_HASH;
     public static final String EP_USER_ID = "endpoint_user_id";
     public static final String EP_ACCESS_TOKEN = ACCESS_TOKEN;
-    public static final String EP_PROFILE_SCHEMA_ID = "profile_schema_id";
     public static final String EP_CF_GROUP_STATE = "cf_group_state";
     public static final String EP_NF_GROUP_STATE = "nf_group_state";
     public static final String EP_CF_SEQ_NUM = "cf_seq_num";
@@ -92,6 +91,7 @@ public class MongoModelConstants {
     public static final String EP_CHANGED_FLAG = "changed_flag";
     public static final String EP_PROFILE_HASH = "profile_hash";
     public static final String EP_PROFILE_VERSION = "profile_version";
+    public static final String EP_SERVER_PROFILE_VERSION_PROPERTY = "srv_profile_version";
     public static final String EP_CONFIGURATION_HASH = "configuration_hash";
     public static final String EP_USER_CONFIGURATION_HASH = "user_configuration_hash";
     public static final String EP_CONFIGURATION_VERSION = "configuration_version";
@@ -102,6 +102,9 @@ public class MongoModelConstants {
     public static final String EP_LOG_SCHEMA_VERSION = "log_schema_version";
     public static final String EP_ECF_VERSION_STATE = "ecf_version_state";
     public static final String EP_SERVER_HASH = "server_hash";
+    public static final String EP_SDK_TOKEN = "sdk_token";
+    
+    public static final String EP_SERVER_PROFILE_PROPERTY = "srv_profile";
 
     /**
      * MongoEndpointUserConfiguration constants.

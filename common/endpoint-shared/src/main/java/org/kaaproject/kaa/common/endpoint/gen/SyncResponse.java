@@ -7,7 +7,7 @@ package org.kaaproject.kaa.common.endpoint.gen;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class SyncResponse extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"SyncResponse\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"requestId\",\"type\":\"int\"},{\"name\":\"status\",\"type\":{\"type\":\"enum\",\"name\":\"SyncResponseResultType\",\"symbols\":[\"SUCCESS\",\"FAILURE\",\"PROFILE_RESYNC\",\"REDIRECT\"]}},{\"name\":\"bootstrapSyncResponse\",\"type\":[{\"type\":\"record\",\"name\":\"BootstrapSyncResponse\",\"fields\":[{\"name\":\"requestId\",\"type\":\"int\"},{\"name\":\"supportedProtocols\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"ProtocolMetaData\",\"fields\":[{\"name\":\"accessPointId\",\"type\":\"int\"},{\"name\":\"protocolVersionInfo\",\"type\":{\"type\":\"record\",\"name\":\"ProtocolVersionPair\",\"fields\":[{\"name\":\"id\",\"type\":\"int\"},{\"name\":\"version\",\"type\":\"int\"}]}},{\"name\":\"connectionInfo\",\"type\":\"bytes\"}],\"direction\":\"in\"}}}],\"direction\":\"in\"},\"null\"]},{\"name\":\"profileSyncResponse\",\"type\":[{\"type\":\"record\",\"name\":\"ProfileSyncResponse\",\"fields\":[{\"name\":\"responseStatus\",\"type\":{\"type\":\"enum\",\"name\":\"SyncResponseStatus\",\"symbols\":[\"NO_DELTA\",\"DELTA\",\"RESYNC\"]}}],\"direction\":\"in\"},\"null\"]},{\"name\":\"configurationSyncResponse\",\"type\":[{\"type\":\"record\",\"name\":\"ConfigurationSyncResponse\",\"fields\":[{\"name\":\"appStateSeqNumber\",\"type\":\"int\"},{\"name\":\"responseStatus\",\"type\":\"SyncResponseStatus\"},{\"name\":\"confSchemaBody\",\"type\":[\"bytes\",\"null\"]},{\"name\":\"confDeltaBody\",\"type\":[\"bytes\",\"null\"]}],\"direction\":\"in\"},\"null\"]},{\"name\":\"notificationSyncResponse\",\"type\":[{\"type\":\"record\",\"name\":\"NotificationSyncResponse\",\"fields\":[{\"name\":\"appStateSeqNumber\",\"type\":\"int\"},{\"name\":\"responseStatus\",\"type\":\"SyncResponseStatus\"},{\"name\":\"notifications\",\"type\":[{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"Notification\",\"fields\":[{\"name\":\"topicId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"type\",\"type\":{\"type\":\"enum\",\"name\":\"NotificationType\",\"symbols\":[\"SYSTEM\",\"CUSTOM\"]}},{\"name\":\"uid\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"]},{\"name\":\"seqNumber\",\"type\":[\"int\",\"null\"]},{\"name\":\"body\",\"type\":\"bytes\"}],\"direction\":\"in\"}},\"null\"]},{\"name\":\"availableTopics\",\"type\":[{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"Topic\",\"fields\":[{\"name\":\"id\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"name\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"subscriptionType\",\"type\":{\"type\":\"enum\",\"name\":\"SubscriptionType\",\"symbols\":[\"MANDATORY_SUBSCRIPTION\",\"OPTIONAL_SUBSCRIPTION\"]}}],\"direction\":\"in\"}},\"null\"]}],\"direction\":\"in\"},\"null\"]},{\"name\":\"userSyncResponse\",\"type\":[{\"type\":\"record\",\"name\":\"UserSyncResponse\",\"fields\":[{\"name\":\"userAttachResponse\",\"type\":[{\"type\":\"record\",\"name\":\"UserAttachResponse\",\"fields\":[{\"name\":\"result\",\"type\":\"SyncResponseResultType\"},{\"name\":\"errorCode\",\"type\":[{\"type\":\"enum\",\"name\":\"UserAttachErrorCode\",\"symbols\":[\"NO_VERIFIER_CONFIGURED\",\"TOKEN_INVALID\",\"TOKEN_EXPIRED\",\"INTERNAL_ERROR\",\"CONNECTION_ERROR\",\"REMOTE_ERROR\",\"OTHER\"]},\"null\"]},{\"name\":\"errorReason\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"]}],\"direction\":\"in\"},\"null\"]},{\"name\":\"userAttachNotification\",\"type\":[{\"type\":\"record\",\"name\":\"UserAttachNotification\",\"fields\":[{\"name\":\"userExternalId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"endpointAccessToken\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}],\"direction\":\"in\"},\"null\"]},{\"name\":\"userDetachNotification\",\"type\":[{\"type\":\"record\",\"name\":\"UserDetachNotification\",\"fields\":[{\"name\":\"endpointAccessToken\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}],\"direction\":\"in\"},\"null\"]},{\"name\":\"endpointAttachResponses\",\"type\":[{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"EndpointAttachResponse\",\"fields\":[{\"name\":\"requestId\",\"type\":\"int\"},{\"name\":\"endpointKeyHash\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"]},{\"name\":\"result\",\"type\":\"SyncResponseResultType\"}],\"direction\":\"in\"}},\"null\"]},{\"name\":\"endpointDetachResponses\",\"type\":[{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"EndpointDetachResponse\",\"fields\":[{\"name\":\"requestId\",\"type\":\"int\"},{\"name\":\"result\",\"type\":\"SyncResponseResultType\"}],\"direction\":\"in\"}},\"null\"]}],\"direction\":\"in\"},\"null\"]},{\"name\":\"eventSyncResponse\",\"type\":[{\"type\":\"record\",\"name\":\"EventSyncResponse\",\"fields\":[{\"name\":\"eventSequenceNumberResponse\",\"type\":[{\"type\":\"record\",\"name\":\"EventSequenceNumberResponse\",\"fields\":[{\"name\":\"seqNum\",\"type\":\"int\"}],\"direction\":\"in\"},\"null\"]},{\"name\":\"eventListenersResponses\",\"type\":[{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"EventListenersResponse\",\"fields\":[{\"name\":\"requestId\",\"type\":\"int\"},{\"name\":\"listeners\",\"type\":[{\"type\":\"array\",\"items\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},\"null\"]},{\"name\":\"result\",\"type\":\"SyncResponseResultType\"}],\"direction\":\"in\"}},\"null\"]},{\"name\":\"events\",\"type\":[{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"Event\",\"fields\":[{\"name\":\"seqNum\",\"type\":\"int\"},{\"name\":\"eventClassFQN\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"eventData\",\"type\":\"bytes\"},{\"name\":\"source\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"]},{\"name\":\"target\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"]}]}},\"null\"]}],\"direction\":\"in\"},\"null\"]},{\"name\":\"redirectSyncResponse\",\"type\":[{\"type\":\"record\",\"name\":\"RedirectSyncResponse\",\"fields\":[{\"name\":\"accessPointId\",\"type\":\"int\"}],\"direction\":\"in\"},\"null\"]},{\"name\":\"logSyncResponse\",\"type\":[{\"type\":\"record\",\"name\":\"LogSyncResponse\",\"fields\":[{\"name\":\"deliveryStatuses\",\"type\":[{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"LogDeliveryStatus\",\"fields\":[{\"name\":\"requestId\",\"type\":\"int\"},{\"name\":\"result\",\"type\":\"SyncResponseResultType\"},{\"name\":\"errorCode\",\"type\":[{\"type\":\"enum\",\"name\":\"LogDeliveryErrorCode\",\"symbols\":[\"NO_APPENDERS_CONFIGURED\",\"APPENDER_INTERNAL_ERROR\",\"REMOTE_CONNECTION_ERROR\",\"REMOTE_INTERNAL_ERROR\"],\"direction\":\"in\"},\"null\"]}],\"direction\":\"in\"}},\"null\"]}],\"direction\":\"in\"},\"null\"]}],\"direction\":\"in\"}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"SyncResponse\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"requestId\",\"type\":\"int\"},{\"name\":\"status\",\"type\":{\"type\":\"enum\",\"name\":\"SyncResponseResultType\",\"symbols\":[\"SUCCESS\",\"FAILURE\",\"PROFILE_RESYNC\",\"REDIRECT\"]}},{\"name\":\"bootstrapSyncResponse\",\"type\":[{\"type\":\"record\",\"name\":\"BootstrapSyncResponse\",\"fields\":[{\"name\":\"requestId\",\"type\":\"int\"},{\"name\":\"supportedProtocols\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"ProtocolMetaData\",\"fields\":[{\"name\":\"accessPointId\",\"type\":\"int\"},{\"name\":\"protocolVersionInfo\",\"type\":{\"type\":\"record\",\"name\":\"ProtocolVersionPair\",\"fields\":[{\"name\":\"id\",\"type\":\"int\"},{\"name\":\"version\",\"type\":\"int\"}]}},{\"name\":\"connectionInfo\",\"type\":\"bytes\"}],\"direction\":\"in\"}}}],\"direction\":\"in\"},\"null\"]},{\"name\":\"profileSyncResponse\",\"type\":[{\"type\":\"record\",\"name\":\"ProfileSyncResponse\",\"fields\":[{\"name\":\"responseStatus\",\"type\":{\"type\":\"enum\",\"name\":\"SyncResponseStatus\",\"symbols\":[\"NO_DELTA\",\"DELTA\",\"RESYNC\"]}}],\"direction\":\"in\"},\"null\"]},{\"name\":\"configurationSyncResponse\",\"type\":[{\"type\":\"record\",\"name\":\"ConfigurationSyncResponse\",\"fields\":[{\"name\":\"responseStatus\",\"type\":\"SyncResponseStatus\"},{\"name\":\"confSchemaBody\",\"type\":[\"bytes\",\"null\"]},{\"name\":\"confDeltaBody\",\"type\":[\"bytes\",\"null\"]}],\"direction\":\"in\"},\"null\"]},{\"name\":\"notificationSyncResponse\",\"type\":[{\"type\":\"record\",\"name\":\"NotificationSyncResponse\",\"fields\":[{\"name\":\"responseStatus\",\"type\":\"SyncResponseStatus\"},{\"name\":\"notifications\",\"type\":[{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"Notification\",\"fields\":[{\"name\":\"topicId\",\"type\":\"long\"},{\"name\":\"type\",\"type\":{\"type\":\"enum\",\"name\":\"NotificationType\",\"symbols\":[\"SYSTEM\",\"CUSTOM\"]}},{\"name\":\"uid\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"]},{\"name\":\"seqNumber\",\"type\":[\"int\",\"null\"]},{\"name\":\"body\",\"type\":\"bytes\"}],\"direction\":\"in\"}},\"null\"]},{\"name\":\"availableTopics\",\"type\":[{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"Topic\",\"fields\":[{\"name\":\"id\",\"type\":\"long\"},{\"name\":\"name\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"subscriptionType\",\"type\":{\"type\":\"enum\",\"name\":\"SubscriptionType\",\"symbols\":[\"MANDATORY_SUBSCRIPTION\",\"OPTIONAL_SUBSCRIPTION\"]}}],\"direction\":\"in\"}},\"null\"]}],\"direction\":\"in\"},\"null\"]},{\"name\":\"userSyncResponse\",\"type\":[{\"type\":\"record\",\"name\":\"UserSyncResponse\",\"fields\":[{\"name\":\"userAttachResponse\",\"type\":[{\"type\":\"record\",\"name\":\"UserAttachResponse\",\"fields\":[{\"name\":\"result\",\"type\":\"SyncResponseResultType\"},{\"name\":\"errorCode\",\"type\":[{\"type\":\"enum\",\"name\":\"UserAttachErrorCode\",\"symbols\":[\"NO_VERIFIER_CONFIGURED\",\"TOKEN_INVALID\",\"TOKEN_EXPIRED\",\"INTERNAL_ERROR\",\"CONNECTION_ERROR\",\"REMOTE_ERROR\",\"OTHER\"]},\"null\"]},{\"name\":\"errorReason\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"]}],\"direction\":\"in\"},\"null\"]},{\"name\":\"userAttachNotification\",\"type\":[{\"type\":\"record\",\"name\":\"UserAttachNotification\",\"fields\":[{\"name\":\"userExternalId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"endpointAccessToken\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}],\"direction\":\"in\"},\"null\"]},{\"name\":\"userDetachNotification\",\"type\":[{\"type\":\"record\",\"name\":\"UserDetachNotification\",\"fields\":[{\"name\":\"endpointAccessToken\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}],\"direction\":\"in\"},\"null\"]},{\"name\":\"endpointAttachResponses\",\"type\":[{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"EndpointAttachResponse\",\"fields\":[{\"name\":\"requestId\",\"type\":\"int\"},{\"name\":\"endpointKeyHash\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"]},{\"name\":\"result\",\"type\":\"SyncResponseResultType\"}],\"direction\":\"in\"}},\"null\"]},{\"name\":\"endpointDetachResponses\",\"type\":[{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"EndpointDetachResponse\",\"fields\":[{\"name\":\"requestId\",\"type\":\"int\"},{\"name\":\"result\",\"type\":\"SyncResponseResultType\"}],\"direction\":\"in\"}},\"null\"]}],\"direction\":\"in\"},\"null\"]},{\"name\":\"eventSyncResponse\",\"type\":[{\"type\":\"record\",\"name\":\"EventSyncResponse\",\"fields\":[{\"name\":\"eventSequenceNumberResponse\",\"type\":[{\"type\":\"record\",\"name\":\"EventSequenceNumberResponse\",\"fields\":[{\"name\":\"seqNum\",\"type\":\"int\"}],\"direction\":\"in\"},\"null\"]},{\"name\":\"eventListenersResponses\",\"type\":[{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"EventListenersResponse\",\"fields\":[{\"name\":\"requestId\",\"type\":\"int\"},{\"name\":\"listeners\",\"type\":[{\"type\":\"array\",\"items\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},\"null\"]},{\"name\":\"result\",\"type\":\"SyncResponseResultType\"}],\"direction\":\"in\"}},\"null\"]},{\"name\":\"events\",\"type\":[{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"Event\",\"fields\":[{\"name\":\"seqNum\",\"type\":\"int\"},{\"name\":\"eventClassFQN\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"eventData\",\"type\":\"bytes\"},{\"name\":\"source\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"]},{\"name\":\"target\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"]}]}},\"null\"]}],\"direction\":\"in\"},\"null\"]},{\"name\":\"redirectSyncResponse\",\"type\":[{\"type\":\"record\",\"name\":\"RedirectSyncResponse\",\"fields\":[{\"name\":\"accessPointId\",\"type\":\"int\"}],\"direction\":\"in\"},\"null\"]},{\"name\":\"logSyncResponse\",\"type\":[{\"type\":\"record\",\"name\":\"LogSyncResponse\",\"fields\":[{\"name\":\"deliveryStatuses\",\"type\":[{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"LogDeliveryStatus\",\"fields\":[{\"name\":\"requestId\",\"type\":\"int\"},{\"name\":\"result\",\"type\":\"SyncResponseResultType\"},{\"name\":\"errorCode\",\"type\":[{\"type\":\"enum\",\"name\":\"LogDeliveryErrorCode\",\"symbols\":[\"NO_APPENDERS_CONFIGURED\",\"APPENDER_INTERNAL_ERROR\",\"REMOTE_CONNECTION_ERROR\",\"REMOTE_INTERNAL_ERROR\"],\"direction\":\"in\"},\"null\"]}],\"direction\":\"in\"}},\"null\"]}],\"direction\":\"in\"},\"null\"]},{\"name\":\"extensionSyncResponses\",\"type\":[{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"ExtensionSync\",\"fields\":[{\"name\":\"extensionId\",\"type\":\"int\"},{\"name\":\"payload\",\"type\":\"bytes\"}]}},\"null\"]}],\"direction\":\"in\"}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
    private int requestId;
    private org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType status;
@@ -19,6 +19,7 @@ public class SyncResponse extends org.apache.avro.specific.SpecificRecordBase im
    private org.kaaproject.kaa.common.endpoint.gen.EventSyncResponse eventSyncResponse;
    private org.kaaproject.kaa.common.endpoint.gen.RedirectSyncResponse redirectSyncResponse;
    private org.kaaproject.kaa.common.endpoint.gen.LogSyncResponse logSyncResponse;
+   private java.util.List<org.kaaproject.kaa.common.endpoint.gen.ExtensionSync> extensionSyncResponses;
 
   /**
    * Default constructor.  Note that this does not initialize fields
@@ -30,7 +31,7 @@ public class SyncResponse extends org.apache.avro.specific.SpecificRecordBase im
   /**
    * All-args constructor.
    */
-  public SyncResponse(java.lang.Integer requestId, org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType status, org.kaaproject.kaa.common.endpoint.gen.BootstrapSyncResponse bootstrapSyncResponse, org.kaaproject.kaa.common.endpoint.gen.ProfileSyncResponse profileSyncResponse, org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncResponse configurationSyncResponse, org.kaaproject.kaa.common.endpoint.gen.NotificationSyncResponse notificationSyncResponse, org.kaaproject.kaa.common.endpoint.gen.UserSyncResponse userSyncResponse, org.kaaproject.kaa.common.endpoint.gen.EventSyncResponse eventSyncResponse, org.kaaproject.kaa.common.endpoint.gen.RedirectSyncResponse redirectSyncResponse, org.kaaproject.kaa.common.endpoint.gen.LogSyncResponse logSyncResponse) {
+  public SyncResponse(java.lang.Integer requestId, org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType status, org.kaaproject.kaa.common.endpoint.gen.BootstrapSyncResponse bootstrapSyncResponse, org.kaaproject.kaa.common.endpoint.gen.ProfileSyncResponse profileSyncResponse, org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncResponse configurationSyncResponse, org.kaaproject.kaa.common.endpoint.gen.NotificationSyncResponse notificationSyncResponse, org.kaaproject.kaa.common.endpoint.gen.UserSyncResponse userSyncResponse, org.kaaproject.kaa.common.endpoint.gen.EventSyncResponse eventSyncResponse, org.kaaproject.kaa.common.endpoint.gen.RedirectSyncResponse redirectSyncResponse, org.kaaproject.kaa.common.endpoint.gen.LogSyncResponse logSyncResponse, java.util.List<org.kaaproject.kaa.common.endpoint.gen.ExtensionSync> extensionSyncResponses) {
     this.requestId = requestId;
     this.status = status;
     this.bootstrapSyncResponse = bootstrapSyncResponse;
@@ -41,6 +42,7 @@ public class SyncResponse extends org.apache.avro.specific.SpecificRecordBase im
     this.eventSyncResponse = eventSyncResponse;
     this.redirectSyncResponse = redirectSyncResponse;
     this.logSyncResponse = logSyncResponse;
+    this.extensionSyncResponses = extensionSyncResponses;
   }
 
   public org.apache.avro.Schema getSchema() { return SCHEMA$; }
@@ -57,6 +59,7 @@ public class SyncResponse extends org.apache.avro.specific.SpecificRecordBase im
     case 7: return eventSyncResponse;
     case 8: return redirectSyncResponse;
     case 9: return logSyncResponse;
+    case 10: return extensionSyncResponses;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -74,6 +77,7 @@ public class SyncResponse extends org.apache.avro.specific.SpecificRecordBase im
     case 7: eventSyncResponse = (org.kaaproject.kaa.common.endpoint.gen.EventSyncResponse)value$; break;
     case 8: redirectSyncResponse = (org.kaaproject.kaa.common.endpoint.gen.RedirectSyncResponse)value$; break;
     case 9: logSyncResponse = (org.kaaproject.kaa.common.endpoint.gen.LogSyncResponse)value$; break;
+    case 10: extensionSyncResponses = (java.util.List<org.kaaproject.kaa.common.endpoint.gen.ExtensionSync>)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -228,6 +232,21 @@ public class SyncResponse extends org.apache.avro.specific.SpecificRecordBase im
     this.logSyncResponse = value;
   }
 
+  /**
+   * Gets the value of the 'extensionSyncResponses' field.
+   */
+  public java.util.List<org.kaaproject.kaa.common.endpoint.gen.ExtensionSync> getExtensionSyncResponses() {
+    return extensionSyncResponses;
+  }
+
+  /**
+   * Sets the value of the 'extensionSyncResponses' field.
+   * @param value the value to set.
+   */
+  public void setExtensionSyncResponses(java.util.List<org.kaaproject.kaa.common.endpoint.gen.ExtensionSync> value) {
+    this.extensionSyncResponses = value;
+  }
+
   /** Creates a new SyncResponse RecordBuilder */
   public static org.kaaproject.kaa.common.endpoint.gen.SyncResponse.Builder newBuilder() {
     return new org.kaaproject.kaa.common.endpoint.gen.SyncResponse.Builder();
@@ -259,6 +278,7 @@ public class SyncResponse extends org.apache.avro.specific.SpecificRecordBase im
     private org.kaaproject.kaa.common.endpoint.gen.EventSyncResponse eventSyncResponse;
     private org.kaaproject.kaa.common.endpoint.gen.RedirectSyncResponse redirectSyncResponse;
     private org.kaaproject.kaa.common.endpoint.gen.LogSyncResponse logSyncResponse;
+    private java.util.List<org.kaaproject.kaa.common.endpoint.gen.ExtensionSync> extensionSyncResponses;
 
     /** Creates a new Builder */
     private Builder() {
@@ -308,6 +328,10 @@ public class SyncResponse extends org.apache.avro.specific.SpecificRecordBase im
         this.logSyncResponse = data().deepCopy(fields()[9].schema(), other.logSyncResponse);
         fieldSetFlags()[9] = true;
       }
+      if (isValidValue(fields()[10], other.extensionSyncResponses)) {
+        this.extensionSyncResponses = data().deepCopy(fields()[10].schema(), other.extensionSyncResponses);
+        fieldSetFlags()[10] = true;
+      }
     }
     
     /** Creates a Builder by copying an existing SyncResponse instance */
@@ -352,6 +376,10 @@ public class SyncResponse extends org.apache.avro.specific.SpecificRecordBase im
       if (isValidValue(fields()[9], other.logSyncResponse)) {
         this.logSyncResponse = data().deepCopy(fields()[9].schema(), other.logSyncResponse);
         fieldSetFlags()[9] = true;
+      }
+      if (isValidValue(fields()[10], other.extensionSyncResponses)) {
+        this.extensionSyncResponses = data().deepCopy(fields()[10].schema(), other.extensionSyncResponses);
+        fieldSetFlags()[10] = true;
       }
     }
 
@@ -604,6 +632,31 @@ public class SyncResponse extends org.apache.avro.specific.SpecificRecordBase im
       return this;
     }
 
+    /** Gets the value of the 'extensionSyncResponses' field */
+    public java.util.List<org.kaaproject.kaa.common.endpoint.gen.ExtensionSync> getExtensionSyncResponses() {
+      return extensionSyncResponses;
+    }
+    
+    /** Sets the value of the 'extensionSyncResponses' field */
+    public org.kaaproject.kaa.common.endpoint.gen.SyncResponse.Builder setExtensionSyncResponses(java.util.List<org.kaaproject.kaa.common.endpoint.gen.ExtensionSync> value) {
+      validate(fields()[10], value);
+      this.extensionSyncResponses = value;
+      fieldSetFlags()[10] = true;
+      return this; 
+    }
+    
+    /** Checks whether the 'extensionSyncResponses' field has been set */
+    public boolean hasExtensionSyncResponses() {
+      return fieldSetFlags()[10];
+    }
+    
+    /** Clears the value of the 'extensionSyncResponses' field */
+    public org.kaaproject.kaa.common.endpoint.gen.SyncResponse.Builder clearExtensionSyncResponses() {
+      extensionSyncResponses = null;
+      fieldSetFlags()[10] = false;
+      return this;
+    }
+
     @Override
     public SyncResponse build() {
       try {
@@ -618,6 +671,7 @@ public class SyncResponse extends org.apache.avro.specific.SpecificRecordBase im
         record.eventSyncResponse = fieldSetFlags()[7] ? this.eventSyncResponse : (org.kaaproject.kaa.common.endpoint.gen.EventSyncResponse) defaultValue(fields()[7]);
         record.redirectSyncResponse = fieldSetFlags()[8] ? this.redirectSyncResponse : (org.kaaproject.kaa.common.endpoint.gen.RedirectSyncResponse) defaultValue(fields()[8]);
         record.logSyncResponse = fieldSetFlags()[9] ? this.logSyncResponse : (org.kaaproject.kaa.common.endpoint.gen.LogSyncResponse) defaultValue(fields()[9]);
+        record.extensionSyncResponses = fieldSetFlags()[10] ? this.extensionSyncResponses : (java.util.List<org.kaaproject.kaa.common.endpoint.gen.ExtensionSync>) defaultValue(fields()[10]);
         return record;
       } catch (Exception e) {
         throw new org.apache.avro.AvroRuntimeException(e);

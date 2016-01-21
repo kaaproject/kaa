@@ -19,7 +19,7 @@ package org.kaaproject.kaa.server.common.dao;
 
 import java.util.List;
 
-import org.kaaproject.kaa.common.dto.SchemaDto;
+import org.kaaproject.kaa.common.dto.VersionDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 
 /**
@@ -42,7 +42,7 @@ public interface LogSchemaService {
      * @param applicationId the id of Application
      * @return List of Log Schema versions
      */
-    List<SchemaDto> findLogSchemaVersionsByApplicationId(String applicationId);
+    List<VersionDto> findLogSchemaVersionsByApplicationId(String applicationId);
 
     /**
      * Find log schema by id.

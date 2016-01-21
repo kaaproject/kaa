@@ -426,7 +426,7 @@ kaa_error_t kaa_logging_request_serialize(kaa_log_collector_t *self, kaa_platfor
 
 kaa_error_t kaa_logging_handle_server_sync(kaa_log_collector_t *self
                                          , kaa_platform_message_reader_t *reader
-                                         , uint32_t extension_options
+                                         , uint16_t extension_options
                                          , size_t extension_length)
 {
     KAA_RETURN_IF_NIL2(self, reader, KAA_ERR_BADPARAM);

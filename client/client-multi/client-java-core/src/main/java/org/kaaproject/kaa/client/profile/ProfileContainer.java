@@ -18,7 +18,7 @@ package org.kaaproject.kaa.client.profile;
 
 import javax.annotation.Generated;
 
-import org.kaaproject.kaa.schema.base.Profile;
+import org.kaaproject.kaa.schema.system.EmptyData;
 
 /**
  * Interface for the profile container.
@@ -32,6 +32,6 @@ public interface ProfileContainer {
      * @return byte array with serialized profile
      *
      */
-    Profile getProfile();
+    EmptyData getProfile();
 
 }

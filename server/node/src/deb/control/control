@@ -1,0 +1,9 @@
+Package: [[artifactId]]
+Version: [[version]]
+Section: misc
+Priority: optional
+Architecture: all
+Depends: 
+Maintainer: kaaproject
+Description: #serverdesc#
+Distribution: development

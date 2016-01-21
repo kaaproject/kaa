@@ -44,7 +44,7 @@ public class HibernateConfigurationDaoTest extends HibernateAbstractTest {
         Assert.assertEquals(1, configs.size());
         Configuration first = configs.get(0);
         Application app = first.getApplication();
-        Configuration found = configurationDao.findConfigurationByAppIdAndVersion(app.getId().toString(), first.getMajorVersion());
+        Configuration found = configurationDao.findConfigurationByAppIdAndVersion(app.getId().toString(), first.getSchemaVersion());
         Assert.assertEquals(first, found);
     }
 
@@ -54,7 +54,7 @@ public class HibernateConfigurationDaoTest extends HibernateAbstractTest {
         Assert.assertEquals(1, configs.size());
         Configuration first = configs.get(0);
         EndpointGroup group = first.getEndpointGroup();
-        Configuration found = configurationDao.findConfigurationByEndpointGroupIdAndVersion(group.getId().toString(), first.getMajorVersion());
+        Configuration found = configurationDao.findConfigurationByEndpointGroupIdAndVersion(group.getId().toString(), first.getSchemaVersion());
         Assert.assertEquals(first, found);
     }
 

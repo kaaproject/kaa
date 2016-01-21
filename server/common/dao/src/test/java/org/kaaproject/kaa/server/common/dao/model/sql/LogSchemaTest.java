@@ -26,8 +26,8 @@ public class LogSchemaTest {
     private static final long TEST_ID = 1L;
 
     @Test
-    public void hashCodeEqualsTest(){
-        EqualsVerifier.forClass(LogSchema.class).suppress(Warning.NONFINAL_FIELDS).withRedefinedSuperclass().verify();
+    public void hashCodeEqualsTest() {
+        EqualsVerifier.forClass(LogSchema.class).usingGetClass().verify();
         }
 
     @Test

@@ -30,6 +30,7 @@ import org.kaaproject.kaa.client.channel.NotificationTransport;
 import org.kaaproject.kaa.client.channel.ProfileTransport;
 import org.kaaproject.kaa.client.channel.RedirectionTransport;
 import org.kaaproject.kaa.client.channel.UserTransport;
+import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
 import org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest;
@@ -55,6 +56,13 @@ public class DefaultOperationDataProcessor implements KaaDataMultiplexer, KaaDat
     private UserTransport userTransport;
     private RedirectionTransport redirectionTransport;
     private LogTransport logTransport;
+    
+    private final KaaClientState state;
+    
+    public DefaultOperationDataProcessor(KaaClientState state) {
+        super();
+        this.state = state;
+    }
 
     public synchronized void setRedirectionTransport(RedirectionTransport redirectionTransport) {
         this.redirectionTransport = redirectionTransport;
@@ -91,32 +99,36 @@ public class DefaultOperationDataProcessor implements KaaDataMultiplexer, KaaDat
     @Override
     public synchronized void processResponse(byte[] response) throws Exception {
         if (response != null) {
-            SyncResponse syncResponse = responseConverter.fromByteArray(response);
-
-            LOG.info("Received Sync response: {}", syncResponse);
-            if (syncResponse.getConfigurationSyncResponse() != null && configurationTransport != null) {
-                configurationTransport.onConfigurationResponse(syncResponse.getConfigurationSyncResponse());
-            }
-            if (eventTransport != null) {
-                eventTransport.onSyncResposeIdReceived(syncResponse.getRequestId());
-                if (syncResponse.getEventSyncResponse() != null) {
-                    eventTransport.onEventResponse(syncResponse.getEventSyncResponse());
+            try {
+                SyncResponse syncResponse = responseConverter.fromByteArray(response);
+    
+                LOG.info("Received Sync response: {}", syncResponse);
+                if (syncResponse.getConfigurationSyncResponse() != null && configurationTransport != null) {
+                    configurationTransport.onConfigurationResponse(syncResponse.getConfigurationSyncResponse());
                 }
-            }
-            if (syncResponse.getNotificationSyncResponse() != null && notificationTransport != null) {
-                notificationTransport.onNotificationResponse(syncResponse.getNotificationSyncResponse());
-            }
-            if (syncResponse.getUserSyncResponse() != null && userTransport != null) {
-                userTransport.onUserResponse(syncResponse.getUserSyncResponse());
-            }
-            if (syncResponse.getRedirectSyncResponse() != null && redirectionTransport != null) {
-                redirectionTransport.onRedirectionResponse(syncResponse.getRedirectSyncResponse());
-            }
-            if (syncResponse.getProfileSyncResponse() != null && profileTransport != null) {
-                profileTransport.onProfileResponse(syncResponse.getProfileSyncResponse());
-            }
-            if (syncResponse.getLogSyncResponse() != null && logTransport != null) {
-                logTransport.onLogResponse(syncResponse.getLogSyncResponse());
+                if (eventTransport != null) {
+                    eventTransport.onSyncResposeIdReceived(syncResponse.getRequestId());
+                    if (syncResponse.getEventSyncResponse() != null) {
+                        eventTransport.onEventResponse(syncResponse.getEventSyncResponse());
+                    }
+                }
+                if (syncResponse.getNotificationSyncResponse() != null && notificationTransport != null) {
+                    notificationTransport.onNotificationResponse(syncResponse.getNotificationSyncResponse());
+                }
+                if (syncResponse.getUserSyncResponse() != null && userTransport != null) {
+                    userTransport.onUserResponse(syncResponse.getUserSyncResponse());
+                }
+                if (syncResponse.getRedirectSyncResponse() != null && redirectionTransport != null) {
+                    redirectionTransport.onRedirectionResponse(syncResponse.getRedirectSyncResponse());
+                }
+                if (syncResponse.getProfileSyncResponse() != null && profileTransport != null) {
+                    profileTransport.onProfileResponse(syncResponse.getProfileSyncResponse());
+                }
+                if (syncResponse.getLogSyncResponse() != null && logTransport != null) {
+                    logTransport.onLogResponse(syncResponse.getLogSyncResponse());
+                }
+            } finally {
+                state.persist();
             }
         }
     }

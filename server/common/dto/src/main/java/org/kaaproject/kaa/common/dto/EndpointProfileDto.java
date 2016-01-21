@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,19 +32,19 @@ public class EndpointProfileDto implements HasId, Serializable {
     private byte[] endpointKeyHash;
     private String endpointUserId;
     private String accessToken;
-    private String profileSchemaId;
     private List<EndpointGroupStateDto> cfGroupState;
     private List<EndpointGroupStateDto> nfGroupState;
     private int cfSequenceNumber;
     private int nfSequenceNumber;
     private List<String> subscriptions;
     private byte[] ntHash;
-    private Boolean changedFlag;
-    private String profile;
+    private String clientProfileBody;
+    private String serverProfileBody;
     private byte[] profileHash;
-    private int profileVersion;
     private byte[] configurationHash;
     private byte[] userConfigurationHash;
+    private int clientProfileVersion;
+    private int serverProfileVersion;
     private int configurationVersion;
     private int notificationVersion;
     private int systemNfVersion;
@@ -52,6 +52,7 @@ public class EndpointProfileDto implements HasId, Serializable {
     private int logSchemaVersion;
     private List<EventClassFamilyVersionStateDto> ecfVersionStates;
     private String serverHash;
+    private String sdkToken;
 
     @Override
     public String getId() {
@@ -103,14 +104,6 @@ public class EndpointProfileDto implements HasId, Serializable {
         this.accessToken = accessToken;
     }
 
-    public String getProfileSchemaId() {
-        return profileSchemaId;
-    }
-
-    public void setProfileSchemaId(String profileSchemaId) {
-        this.profileSchemaId = profileSchemaId;
-    }
-
     public List<EndpointGroupStateDto> getCfGroupStates() {
         return cfGroupState;
     }
@@ -127,20 +120,20 @@ public class EndpointProfileDto implements HasId, Serializable {
         this.nfGroupState = nfGroupState;
     }
 
-    public Boolean getChangedFlag() {
-        return changedFlag;
+    public String getClientProfileBody() {
+        return clientProfileBody;
     }
 
-    public void setChangedFlag(Boolean changedFlag) {
-        this.changedFlag = changedFlag;
+    public void setClientProfileBody(String clientProfileBody) {
+        this.clientProfileBody = clientProfileBody;
     }
 
-    public String getProfile() {
-        return profile;
+    public String getServerProfileBody() {
+        return serverProfileBody;
     }
 
-    public void setProfile(String profile) {
-        this.profile = profile;
+    public void setServerProfileBody(String serverProfileBody) {
+        this.serverProfileBody = serverProfileBody;
     }
 
     public byte[] getProfileHash() {
@@ -149,14 +142,6 @@ public class EndpointProfileDto implements HasId, Serializable {
 
     public void setProfileHash(byte[] profileHash) {
         this.profileHash = getArrayCopy(profileHash);
-    }
-
-    public int getProfileVersion() {
-        return profileVersion;
-    }
-
-    public void setProfileVersion(int profileVersion) {
-        this.profileVersion = profileVersion;
     }
 
     public byte[] getConfigurationHash() {
@@ -222,6 +207,22 @@ public class EndpointProfileDto implements HasId, Serializable {
     public void setNtHash(byte[] ntHash) {
         this.ntHash = getArrayCopy(ntHash);
     }
+    
+    public int getClientProfileVersion() {
+        return clientProfileVersion;
+    }
+
+    public void setClientProfileVersion(int clientProfileVersion) {
+        this.clientProfileVersion = clientProfileVersion;
+    }
+
+    public int getServerProfileVersion() {
+        return serverProfileVersion;
+    }
+
+    public void setServerProfileVersion(int serverProfileVersion) {
+        this.serverProfileVersion = serverProfileVersion;
+    }
 
     public int getSystemNfVersion() {
         return systemNfVersion;
@@ -263,6 +264,14 @@ public class EndpointProfileDto implements HasId, Serializable {
         this.serverHash = serverHash;
     }
 
+    public String getSdkToken() {
+        return sdkToken;
+    }
+
+    public void setSdkToken(String sdkToken) {
+        this.sdkToken = sdkToken;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -280,7 +289,7 @@ public class EndpointProfileDto implements HasId, Serializable {
         if (notificationVersion != that.notificationVersion) {
             return false;
         }
-        if (profileVersion != that.profileVersion) {
+        if (clientProfileVersion != that.clientProfileVersion) {
             return false;
         }
         if (cfSequenceNumber != that.cfSequenceNumber) {
@@ -296,9 +305,6 @@ public class EndpointProfileDto implements HasId, Serializable {
             return false;
         }
         if (applicationId != null ? !applicationId.equals(that.applicationId) : that.applicationId != null) {
-            return false;
-        }
-        if (changedFlag != null ? !changedFlag.equals(that.changedFlag) : that.changedFlag != null) {
             return false;
         }
         if (!Arrays.equals(configurationHash, that.configurationHash)) {
@@ -322,16 +328,16 @@ public class EndpointProfileDto implements HasId, Serializable {
         if (!Arrays.equals(ntHash, that.ntHash)) {
             return false;
         }
-        if (profile != null ? !profile.equals(that.profile) : that.profile != null) {
+        if (clientProfileBody != null ? !clientProfileBody.equals(that.clientProfileBody) : that.clientProfileBody != null) {
             return false;
         }
         if (!Arrays.equals(profileHash, that.profileHash)) {
             return false;
         }
-        if (profileSchemaId != null ? !profileSchemaId.equals(that.profileSchemaId) : that.profileSchemaId != null) {
+        if (subscriptions != null ? !subscriptions.equals(that.subscriptions) : that.subscriptions != null) {
             return false;
         }
-        if (subscriptions != null ? !subscriptions.equals(that.subscriptions) : that.subscriptions != null) {
+        if (sdkToken != null ? !sdkToken.equals(that.sdkToken) : that.sdkToken != null) {
             return false;
         }
 
@@ -343,23 +349,22 @@ public class EndpointProfileDto implements HasId, Serializable {
         int result = applicationId != null ? applicationId.hashCode() : 0;
         result = 31 * result + (endpointKey != null ? Arrays.hashCode(endpointKey) : 0);
         result = 31 * result + (endpointKeyHash != null ? Arrays.hashCode(endpointKeyHash) : 0);
-        result = 31 * result + (profileSchemaId != null ? profileSchemaId.hashCode() : 0);
         result = 31 * result + (cfGroupState != null ? cfGroupState.hashCode() : 0);
         result = 31 * result + (nfGroupState != null ? nfGroupState.hashCode() : 0);
         result = 31 * result + (subscriptions != null ? subscriptions.hashCode() : 0);
         result = 31 * result + (ntHash != null ? Arrays.hashCode(ntHash) : 0);
         result = 31 * result + nfSequenceNumber;
         result = 31 * result + cfSequenceNumber;
-        result = 31 * result + (changedFlag != null ? changedFlag.hashCode() : 0);
-        result = 31 * result + (profile != null ? profile.hashCode() : 0);
+        result = 31 * result + (clientProfileBody != null ? clientProfileBody.hashCode() : 0);
         result = 31 * result + (profileHash != null ? Arrays.hashCode(profileHash) : 0);
-        result = 31 * result + profileVersion;
         result = 31 * result + (configurationHash != null ? Arrays.hashCode(configurationHash) : 0);
         result = 31 * result + (userConfigurationHash != null ? Arrays.hashCode(userConfigurationHash) : 0);
+        result = 31 * result + clientProfileVersion;
         result = 31 * result + configurationVersion;
         result = 31 * result + notificationVersion;
         result = 31 * result + systemNfVersion;
         result = 31 * result + userNfVersion;
+        result = 31 * result + (sdkToken != null ? sdkToken.hashCode() : 0);
         return result;
     }
 
@@ -378,8 +383,6 @@ public class EndpointProfileDto implements HasId, Serializable {
         builder.append(endpointUserId);
         builder.append(", accessToken=");
         builder.append(accessToken);
-        builder.append(", profileSchemaId=");
-        builder.append(profileSchemaId);
         builder.append(", cfGroupState=");
         builder.append(cfGroupState);
         builder.append(", nfGroupState=");
@@ -392,18 +395,16 @@ public class EndpointProfileDto implements HasId, Serializable {
         builder.append(cfSequenceNumber);
         builder.append(", nfSequenceNumber=");
         builder.append(nfSequenceNumber);
-        builder.append(", changedFlag=");
-        builder.append(changedFlag);
-        builder.append(", profile=");
-        builder.append(profile);
+        builder.append(", clientProfileBody=");
+        builder.append(clientProfileBody);
         builder.append(", profileHash=");
         builder.append(Arrays.toString(profileHash));
-        builder.append(", profileVersion=");
-        builder.append(profileVersion);
         builder.append(", configurationHash=");
         builder.append(Arrays.toString(configurationHash));
         builder.append(", userConfigurationHash=");
         builder.append(Arrays.toString(userConfigurationHash));
+        builder.append(", clientProfileVersion=");
+        builder.append(clientProfileVersion);
         builder.append(", configurationVersion=");
         builder.append(configurationVersion);
         builder.append(", notificationVersion=");
@@ -416,6 +417,8 @@ public class EndpointProfileDto implements HasId, Serializable {
         builder.append(ecfVersionStates);
         builder.append(", serverHash=");
         builder.append(serverHash);
+        builder.append(", sdkToken=");
+        builder.append(sdkToken);
         builder.append("]");
         return builder.toString();
     }

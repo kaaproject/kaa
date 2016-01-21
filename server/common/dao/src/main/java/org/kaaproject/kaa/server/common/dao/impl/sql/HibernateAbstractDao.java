@@ -16,6 +16,9 @@
 package org.kaaproject.kaa.server.common.dao.impl.sql;
 
 import org.hibernate.Criteria;
+import org.hibernate.FlushMode;
+import org.hibernate.LockMode;
+import org.hibernate.LockOptions;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -40,14 +43,28 @@ public abstract class HibernateAbstractDao<T extends GenericModel<?>> implements
     private static final Logger LOG = LoggerFactory.getLogger(HibernateAbstractDao.class);
 
     public static final int FIRST = 1;
+    private static final int MAX_TIMEOUT = 30000;
 
     @Autowired
     private SessionFactory sessionFactory;
 
     protected abstract Class<T> getEntityClass();
 
-    protected Session getSession() {
-        return sessionFactory.getCurrentSession();
+    @Override
+    public Session getSession(FlushMode flushMode) {
+        Session session = sessionFactory.getCurrentSession();
+        session.setFlushMode(flushMode);
+        return session;
+    }
+
+    @Override
+    public Session getSession() {
+        return getSession(FlushMode.AUTO);
+    }
+
+    @Override
+    public void refresh(Object object) {
+        getSession().refresh(object);
     }
 
     protected Criteria getCriteria() {
@@ -126,6 +143,15 @@ public abstract class HibernateAbstractDao<T extends GenericModel<?>> implements
         return (T) criteria.uniqueResult();
     }
 
+    protected T findOneByCriterionWithLock(Criterion criterion, LockMode lockMode) {
+        String className = getSimpleClassName();
+        LOG.trace("Searching {} entity by criterion [{}] ", className, criterion);
+        Criteria criteria = getCriteria();
+        criteria.setLockMode(lockMode);
+        criteria.add(criterion);
+        return (T) criteria.uniqueResult();
+    }
+
     protected T findOneByCriterionWithAlias(String path, String alias, Criterion criterion) {
         String className = getSimpleClassName();
         LOG.trace("Searching {} entity by criterion [{}] ", className, criterion);
@@ -142,15 +168,24 @@ public abstract class HibernateAbstractDao<T extends GenericModel<?>> implements
     }
 
     @Override
-    public T save(T o) {
+    public T save(T o, boolean flush) {
         LOG.debug("Saving {} entity {}", getEntityClass(), o);
-        o = (T) getSession().merge(o);
+        Session session = getSession();
+        o = (T) session.merge(o);
+        if (flush) {
+            session.flush();
+        }
         if (LOG.isTraceEnabled()) {
             LOG.trace("Saving result: {}", o);
         } else {
             LOG.debug("Saving result: {}", o != null);
         }
         return o;
+    }
+
+    @Override
+    public T save(T o) {
+        return save(o, false);
     }
 
     public T update(T o) {
@@ -240,6 +275,16 @@ public abstract class HibernateAbstractDao<T extends GenericModel<?>> implements
             session.delete(findById(id, true));
             LOG.debug("Removed {} entity by id [{}]", getSimpleClassName(), id);
         }
+    }
+
+    @Override
+    public Session.LockRequest lockRequest(LockOptions lockOptions) {
+        int timeout = lockOptions.getTimeOut();
+        if (timeout > MAX_TIMEOUT) {
+            lockOptions.setTimeOut(MAX_TIMEOUT);
+        }
+        LOG.debug("Build lock request with options {}", lockOptions);
+        return getSession().buildLockRequest(lockOptions);
     }
 
     protected void remove(T o) {

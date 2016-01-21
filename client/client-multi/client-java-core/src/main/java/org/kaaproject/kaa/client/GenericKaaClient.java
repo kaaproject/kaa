@@ -15,6 +15,10 @@
  */
 package org.kaaproject.kaa.client;
 
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.util.List;
+
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.KaaDataChannel;
 import org.kaaproject.kaa.client.configuration.base.ConfigurationListener;
@@ -30,6 +34,7 @@ import org.kaaproject.kaa.client.event.registration.EndpointRegistrationManager;
 import org.kaaproject.kaa.client.event.registration.OnAttachEndpointOperationCallback;
 import org.kaaproject.kaa.client.event.registration.OnDetachEndpointOperationCallback;
 import org.kaaproject.kaa.client.event.registration.UserAttachCallback;
+import org.kaaproject.kaa.client.logging.LogDeliveryListener;
 import org.kaaproject.kaa.client.logging.LogStorage;
 import org.kaaproject.kaa.client.logging.LogUploadStrategy;
 import org.kaaproject.kaa.client.notification.NotificationListener;
@@ -39,14 +44,10 @@ import org.kaaproject.kaa.client.notification.UnavailableTopicException;
 import org.kaaproject.kaa.client.profile.ProfileContainer;
 import org.kaaproject.kaa.common.endpoint.gen.Topic;
 
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.util.List;
-
 /**
  * <p>
  * Root interface for the Kaa client.
- * This interface contain methods that are predefined and does not contain any auto-generated code. 
+ * This interface contain methods that are predefined and does not contain any auto-generated code.
  * </p>
  *
  *
@@ -103,17 +104,17 @@ public interface GenericKaaClient {
      * Sync of updated profile with server
      */
     void updateProfile();
-    
+
     /**
      * Sets the configuration storage that will be used to persist configuration.
-     * 
+     *
      * @param storage to use for configuration persistence
      */
     void setConfigurationStorage(ConfigurationStorage storage);
 
     /**
      * Register configuration update listener
-     * 
+     *
      * @param listener to register
      * @return true if listener is registered, false if already registered
      */
@@ -121,7 +122,7 @@ public interface GenericKaaClient {
 
     /**
      * Removes configuration update listener
-     * 
+     *
      * @param listener to register
      * @return true if listener is removed, false if not found
      */
@@ -194,7 +195,7 @@ public interface GenericKaaClient {
      *
      * @see NotificationListener
      */
-    void addNotificationListener(String topicId, NotificationListener listener) throws UnavailableTopicException;
+    void addNotificationListener(Long topicId, NotificationListener listener) throws UnavailableTopicException;
 
     /**
      * <p>
@@ -229,7 +230,7 @@ public interface GenericKaaClient {
      *
      * @see NotificationListener
      */
-    void removeNotificationListener(String topicId, NotificationListener listener) throws UnavailableTopicException;
+    void removeNotificationListener(Long topicId, NotificationListener listener) throws UnavailableTopicException;
 
     /**
      * <p>
@@ -243,8 +244,8 @@ public interface GenericKaaClient {
      *             Throw if unknown topic id is provided or topic isn't
      *             optional.
      */
-    void subscribeToTopic(String topicId) throws UnavailableTopicException;
-    
+    void subscribeToTopic(Long topicId) throws UnavailableTopicException;
+
     /**
      * <p>
      * Subscribe to notifications relating to the specified optional topic.
@@ -254,7 +255,7 @@ public interface GenericKaaClient {
      *            Id of a optional topic.
      * @param forceSync
      *            Define whether current subscription update should be accepted
-     *            immediately (see {@link #sync()}).
+     *            immediately.
      *
      * @throws UnavailableTopicException
      *             Throw if unknown topic id is provided or topic isn't
@@ -262,7 +263,7 @@ public interface GenericKaaClient {
      *
      * @see #syncTopicsList()
      */
-    void subscribeToTopic(String topicId, boolean forceSync) throws UnavailableTopicException;
+    void subscribeToTopic(Long topicId, boolean forceSync) throws UnavailableTopicException;
 
     /**
      * <p>
@@ -277,7 +278,7 @@ public interface GenericKaaClient {
      *             Throw if unknown topic id is provided or topic isn't
      *             optional.
      */
-    void subscribeToTopics(List<String> topicIds) throws UnavailableTopicException;
+    void subscribeToTopics(List<Long> topicIds) throws UnavailableTopicException;
 
     /**
      * <p>
@@ -289,7 +290,7 @@ public interface GenericKaaClient {
      *            List of optional topic id.
      * @param forceSync
      *            Define whether current subscription update should be accepted
-     *            immediately (see {@link #sync()}).
+     *            immediately.
      *
      * @throws UnavailableTopicException
      *             Throw if unknown topic id is provided or topic isn't
@@ -297,8 +298,8 @@ public interface GenericKaaClient {
      *
      * @see #syncTopicsList()
      */
-    void subscribeToTopics(List<String> topicIds, boolean forceSync) throws UnavailableTopicException;
-    
+    void subscribeToTopics(List<Long> topicIds, boolean forceSync) throws UnavailableTopicException;
+
     /**
      * <p>
      * Unsubscribe from notifications relating to the specified optional topic.
@@ -315,7 +316,7 @@ public interface GenericKaaClient {
      *             Throw if unknown topic id is provided or topic isn't
      *             optional.
      */
-    void unsubscribeFromTopic(String topicId) throws UnavailableTopicException;
+    void unsubscribeFromTopic(Long topicId) throws UnavailableTopicException;
 
     /**
      * <p>
@@ -330,7 +331,7 @@ public interface GenericKaaClient {
      *            Id of a optional topic.
      * @param forceSync
      *            Define whether current subscription update should be accepted
-     *            immediately (see {@link #sync()}).
+     *            immediately.
      *
      * @throws UnavailableTopicException
      *             Throw if unknown topic id is provided or topic isn't
@@ -338,8 +339,8 @@ public interface GenericKaaClient {
      *
      * @see #syncTopicsList()
      */
-    void unsubscribeFromTopic(String topicId, boolean forceSync) throws UnavailableTopicException;
-    
+    void unsubscribeFromTopic(Long topicId, boolean forceSync) throws UnavailableTopicException;
+
     /**
      * <p>
      * Unsubscribe from notifications relating to the specified list of optional
@@ -357,7 +358,7 @@ public interface GenericKaaClient {
      *             Throw if unknown topic id is provided or topic isn't
      *             optional.
      */
-    void unsubscribeFromTopics(List<String> topicIds) throws UnavailableTopicException;
+    void unsubscribeFromTopics(List<Long> topicIds) throws UnavailableTopicException;
 
     /**
      * <p>
@@ -373,7 +374,7 @@ public interface GenericKaaClient {
      *            List of optional topic id.
      * @param forceSync
      *            Define whether current subscription update should be accepted
-     *            immediately (see {@link #sync()}).
+     *            immediately.
      *
      * @throws UnavailableTopicException
      *             Throw if unknown topic id is provided or topic isn't
@@ -381,7 +382,7 @@ public interface GenericKaaClient {
      *
      * @see #syncTopicsList()
      */
-    void unsubscribeFromTopics(List<String> topicIds, boolean forceSync) throws UnavailableTopicException;
+    void unsubscribeFromTopics(List<Long> topicIds, boolean forceSync) throws UnavailableTopicException;
 
     /**
      * <p>
@@ -389,9 +390,9 @@ public interface GenericKaaClient {
      * </p>
      *
      * <p>
-     * Should be used after all {@link #subscribeToTopic(String, boolean)},
+     * Should be used after all {@link #subscribeToTopic(Long, boolean)},
      * {@link #subscribeToTopics(List, boolean)},
-     * {@link #unsubscribeFromTopic(String, boolean)},
+     * {@link #unsubscribeFromTopic(Long, boolean)},
      * {@link #unsubscribeFromTopics(List, boolean)} calls with parameter
      * {@code forceSync} set to {@code false}.
      * </p>
@@ -400,15 +401,15 @@ public interface GenericKaaClient {
      * Use it as a convenient way to make different consequent changes in the
      * optional subscription:
      * </p>
-     * 
+     *
      * <pre>
      * {
      *     // Make subscription changes
      *     kaaClient.subscribeOnTopics(Arrays.asList(&quot;optional_topic1&quot;, &quot;optional_topic2&quot;, &quot;optional_topic3&quot;), false);
      *     kaaClient.unsubscribeFromTopic(&quot;optional_topic4&quot;, false);
-     * 
+     *
      *     // Add listeners for topics here
-     * 
+     *
      *     // Commit changes
      *     kaaClient.syncTopicsList();
      * }
@@ -443,8 +444,6 @@ public interface GenericKaaClient {
      *
      * @param eventFQNs     List of event class FQNs which have to be supported by endpoint.
      * @param listener      Result listener {@link FindEventListenersCallback}}
-     *
-     * @return Request ID of submitted request
      */
     void findEventListeners(List<String> eventFQNs, FindEventListenersCallback listener);
 
@@ -472,20 +471,6 @@ public interface GenericKaaClient {
 
     /**
      * <p>
-     * Retrieves endpoint public key hash.
-     * </p>
-     *
-     * <p>
-     * Required in {@link EndpointRegistrationManager} implementation to react
-     * on detach response from Operations server.
-     * </p>
-     *
-     * @return String containing current endpoint's public key hash.
-     */
-    String getEndpointKeyHash();
-
-    /**
-     * <p>
      * Retrieves the client's private key.
      * </p>
      *
@@ -499,42 +484,59 @@ public interface GenericKaaClient {
     PrivateKey getClientPrivateKey();
 
     /**
+     * <p>
+     * Retrieves endpoint public key hash.
+     * </p>
+     *
+     * <p>
+     * Required in {@link EndpointRegistrationManager} implementation to react
+     * on detach response from Operations server.
+     * </p>
+     *
+     * @return String containing current endpoint's public key hash.
+     */
+    String getEndpointKeyHash();
+
+    /**
      * Set new access token for a current endpoint
+     * @param token the token
      */
     void setEndpointAccessToken(String token);
 
     /**
      * Generate new access token for a current endpoint
+     * @return String containing new endpoint access token
      */
     String refreshEndpointAccessToken();
 
     /**
      * Retrieve an access token for a current endpoint
+     * @return String containing current endpoint access token
      */
     String getEndpointAccessToken();
 
     /**
      * Updates with new endpoint attach request<br>
      * <br>
-     * {@link org.kaaproject.kaa.client.event.registration.OnAttachEndpointOperationCallback} is populated with {@link org.kaaproject.kaa.client.event.EndpointKeyHash} of an
-     * attached endpoint.
+     * {@link   org.kaaproject.kaa.client.event.registration.OnAttachEndpointOperationCallback} is populated with
+     * {@link   org.kaaproject.kaa.client.event.EndpointKeyHash} of an attached endpoint.
      *
-     * @param endpointAccessToken Access token of the attaching endpoint
-     * @param resultListener Listener to notify about result of the endpoint attaching
+     * @param   endpointAccessToken Access token of the attaching endpoint
+     * @param   resultListener      Listener to notify about result of the endpoint attaching
      *
-     * @see org.kaaproject.kaa.client.event.EndpointAccessToken
-     * @see org.kaaproject.kaa.client.event.registration.OnAttachEndpointOperationCallback
+     * @see     org.kaaproject.kaa.client.event.EndpointAccessToken
+     * @see     org.kaaproject.kaa.client.event.registration.OnAttachEndpointOperationCallback
      */
     void attachEndpoint(EndpointAccessToken endpointAccessToken, OnAttachEndpointOperationCallback resultListener);
 
     /**
      * Updates with new endpoint detach request
      *
-     * @param endpointKeyHash Key hash of the detaching endpoint
-     * @param resultListener Listener to notify about result of the enpoint attaching
+     * @param   endpointKeyHash Key hash of the detaching endpoint
+     * @param   resultListener Listener to notify about result of the enpoint attaching
      *
-     * @see org.kaaproject.kaa.client.event.EndpointKeyHash
-     * @see OnDetachEndpointOperationCallback
+     * @see     org.kaaproject.kaa.client.event.EndpointKeyHash
+     * @see     OnDetachEndpointOperationCallback
      */
     void detachEndpoint(EndpointKeyHash endpointKeyHash, OnDetachEndpointOperationCallback resultListener);
 
@@ -542,9 +544,9 @@ public interface GenericKaaClient {
      * Creates user attach request using default verifier. Default verifier is selected during SDK generation.
      * If there was no default verifier selected this method will throw runtime exception.
      *
-     * @param userExternalId
-     * @param userAccessToken
-     * @param callback called when authentication result received
+     * @param userExternalId    the user external id
+     * @param userAccessToken   the user access token
+     * @param callback          called when authentication result received
      *
      * @see UserAttachCallback
      */
@@ -553,10 +555,10 @@ public interface GenericKaaClient {
     /**
      * Creates user attach request using specified verifier.
      *
-     * @param userVerifierToken
-     * @param userExternalId
-     * @param userAccessToken
-     * @param callback called when authentication result received
+     * @param userVerifierToken the user verifier token
+     * @param userExternalId    the user external id
+     * @param userAccessToken   the user access token
+     * @param callback          called when authentication result received
      *
      * @see UserAttachCallback
      */
@@ -572,18 +574,28 @@ public interface GenericKaaClient {
     /**
      * Sets callback for notifications when current endpoint is attached to user
      *
-     * @param listener
+     * @param   listener the listener
      *
-     * @see org.kaaproject.kaa.client.event.registration.AttachEndpointToUserCallback
+     * @see     org.kaaproject.kaa.client.event.registration.AttachEndpointToUserCallback
      */
     void setAttachedListener(AttachEndpointToUserCallback listener);
 
     /**
      * Sets callback for notifications when current endpoint is detached from user
      *
-     * @param listener
+     * @param   listener the listener
      *
-     * @see org.kaaproject.kaa.client.event.registration.DetachEndpointFromUserCallback
+     * @see     org.kaaproject.kaa.client.event.registration.DetachEndpointFromUserCallback
      */
     void setDetachedListener(DetachEndpointFromUserCallback listener);
+
+
+    /**
+     * Set a listener which receives a delivery status of each log bucket.
+     *
+     * @param   listener the listener
+     *
+     * @see     org.kaaproject.kaa.client.logging.LogDeliveryListener
+     */
+    void setLogDeliveryListener(LogDeliveryListener listener);
 }

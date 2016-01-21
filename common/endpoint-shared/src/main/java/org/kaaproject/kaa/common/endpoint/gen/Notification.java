@@ -7,9 +7,9 @@ package org.kaaproject.kaa.common.endpoint.gen;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class Notification extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Notification\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"topicId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"type\",\"type\":{\"type\":\"enum\",\"name\":\"NotificationType\",\"symbols\":[\"SYSTEM\",\"CUSTOM\"]}},{\"name\":\"uid\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"]},{\"name\":\"seqNumber\",\"type\":[\"int\",\"null\"]},{\"name\":\"body\",\"type\":\"bytes\"}],\"direction\":\"in\"}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Notification\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"topicId\",\"type\":\"long\"},{\"name\":\"type\",\"type\":{\"type\":\"enum\",\"name\":\"NotificationType\",\"symbols\":[\"SYSTEM\",\"CUSTOM\"]}},{\"name\":\"uid\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"]},{\"name\":\"seqNumber\",\"type\":[\"int\",\"null\"]},{\"name\":\"body\",\"type\":\"bytes\"}],\"direction\":\"in\"}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
-   private java.lang.String topicId;
+   private long topicId;
    private org.kaaproject.kaa.common.endpoint.gen.NotificationType type;
    private java.lang.String uid;
    private java.lang.Integer seqNumber;
@@ -25,7 +25,7 @@ public class Notification extends org.apache.avro.specific.SpecificRecordBase im
   /**
    * All-args constructor.
    */
-  public Notification(java.lang.String topicId, org.kaaproject.kaa.common.endpoint.gen.NotificationType type, java.lang.String uid, java.lang.Integer seqNumber, java.nio.ByteBuffer body) {
+  public Notification(java.lang.Long topicId, org.kaaproject.kaa.common.endpoint.gen.NotificationType type, java.lang.String uid, java.lang.Integer seqNumber, java.nio.ByteBuffer body) {
     this.topicId = topicId;
     this.type = type;
     this.uid = uid;
@@ -49,7 +49,7 @@ public class Notification extends org.apache.avro.specific.SpecificRecordBase im
   @SuppressWarnings(value="unchecked")
   public void put(int field$, java.lang.Object value$) {
     switch (field$) {
-    case 0: topicId = (java.lang.String)value$; break;
+    case 0: topicId = (java.lang.Long)value$; break;
     case 1: type = (org.kaaproject.kaa.common.endpoint.gen.NotificationType)value$; break;
     case 2: uid = (java.lang.String)value$; break;
     case 3: seqNumber = (java.lang.Integer)value$; break;
@@ -61,7 +61,7 @@ public class Notification extends org.apache.avro.specific.SpecificRecordBase im
   /**
    * Gets the value of the 'topicId' field.
    */
-  public java.lang.String getTopicId() {
+  public java.lang.Long getTopicId() {
     return topicId;
   }
 
@@ -69,7 +69,7 @@ public class Notification extends org.apache.avro.specific.SpecificRecordBase im
    * Sets the value of the 'topicId' field.
    * @param value the value to set.
    */
-  public void setTopicId(java.lang.String value) {
+  public void setTopicId(java.lang.Long value) {
     this.topicId = value;
   }
 
@@ -154,7 +154,7 @@ public class Notification extends org.apache.avro.specific.SpecificRecordBase im
   public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<Notification>
     implements org.apache.avro.data.RecordBuilder<Notification> {
 
-    private java.lang.String topicId;
+    private long topicId;
     private org.kaaproject.kaa.common.endpoint.gen.NotificationType type;
     private java.lang.String uid;
     private java.lang.Integer seqNumber;
@@ -216,12 +216,12 @@ public class Notification extends org.apache.avro.specific.SpecificRecordBase im
     }
 
     /** Gets the value of the 'topicId' field */
-    public java.lang.String getTopicId() {
+    public java.lang.Long getTopicId() {
       return topicId;
     }
     
     /** Sets the value of the 'topicId' field */
-    public org.kaaproject.kaa.common.endpoint.gen.Notification.Builder setTopicId(java.lang.String value) {
+    public org.kaaproject.kaa.common.endpoint.gen.Notification.Builder setTopicId(long value) {
       validate(fields()[0], value);
       this.topicId = value;
       fieldSetFlags()[0] = true;
@@ -235,7 +235,6 @@ public class Notification extends org.apache.avro.specific.SpecificRecordBase im
     
     /** Clears the value of the 'topicId' field */
     public org.kaaproject.kaa.common.endpoint.gen.Notification.Builder clearTopicId() {
-      topicId = null;
       fieldSetFlags()[0] = false;
       return this;
     }
@@ -344,7 +343,7 @@ public class Notification extends org.apache.avro.specific.SpecificRecordBase im
     public Notification build() {
       try {
         Notification record = new Notification();
-        record.topicId = fieldSetFlags()[0] ? this.topicId : (java.lang.String) defaultValue(fields()[0]);
+        record.topicId = fieldSetFlags()[0] ? this.topicId : (java.lang.Long) defaultValue(fields()[0]);
         record.type = fieldSetFlags()[1] ? this.type : (org.kaaproject.kaa.common.endpoint.gen.NotificationType) defaultValue(fields()[1]);
         record.uid = fieldSetFlags()[2] ? this.uid : (java.lang.String) defaultValue(fields()[2]);
         record.seqNumber = fieldSetFlags()[3] ? this.seqNumber : (java.lang.Integer) defaultValue(fields()[3]);

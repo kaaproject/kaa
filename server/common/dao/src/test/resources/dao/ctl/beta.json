@@ -1,0 +1,18 @@
+{
+    "type": "record",
+    "name": "Beta",
+    "namespace": "org.kaaproject.kaa",
+    "version": 1,
+    "dependencies": [
+        {
+            "fqn": "org.kaaproject.kaa.Gamma",
+            "version": 1
+        }
+    ],
+    "fields": [
+        {
+            "type": "org.kaaproject.kaa.Gamma",
+            "name": "test"
+        }
+    ]
+}

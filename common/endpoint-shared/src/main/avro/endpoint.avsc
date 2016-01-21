@@ -6,7 +6,7 @@
  "name": "TopicState",
  "direction": "out",
  "fields": [
-     {"name": "topicId", "type": "string"},
+     {"name": "topicId", "type": "long"},
      {"name": "seqNumber", "type": "int"}
  ]
 },
@@ -59,7 +59,7 @@
  "direction": "out",
  "name": "SubscriptionCommand",
  "fields": [
-     {"name": "topicId", "type": "string"},
+     {"name": "topicId", "type": "long"},
      {"name": "command", "type": "org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommandType"}
  ]
 },
@@ -200,7 +200,7 @@
  "name": "Notification",
  "direction": "in",
   "fields": [
-     {"name": "topicId", "type": "string"},
+     {"name": "topicId", "type": "long"},
      {"name": "type", "type": "org.kaaproject.kaa.common.endpoint.gen.NotificationType"},
      {"name": "uid", "type": ["string", "null"]},
      {"name": "seqNumber", "type": ["int", "null"]},
@@ -213,7 +213,7 @@
  "name": "Topic",
  "direction": "in",
   "fields": [
-     {"name": "id", "type": "string"},
+     {"name": "id", "type": "long"},
      {"name": "name", "type": "string"},
      {"name": "subscriptionType", "type": "org.kaaproject.kaa.common.endpoint.gen.SubscriptionType"}
  ]
@@ -275,8 +275,7 @@
  "name": "ConfigurationSyncRequest",
  "direction": "out",
  "fields": [
-     {"name": "appStateSeqNumber", "type": "int"},
-     {"name": "configurationHash",  "type": ["bytes", "null"]},
+     {"name": "configurationHash",  "type": "bytes"},
      {"name": "resyncOnly", "type": ["boolean", "null"]}
  ]
 },
@@ -287,8 +286,7 @@
  "name": "NotificationSyncRequest",
  "direction": "out",
  "fields": [
-     {"name": "appStateSeqNumber", "type": "int"},
-     {"name": "topicListHash",  "type": ["bytes", "null"]},
+     {"name": "topicListHash", "type": "int"},
      {"name": "topicStates", "type": [{"type": "array", "items":"org.kaaproject.kaa.common.endpoint.gen.TopicState"}, "null"]},
      {"name": "acceptedUnicastNotifications", "type": [{"type": "array", "items":"string"}, "null"]},
      {"name": "subscriptionCommands", "type": [{"type": "array", "items":"org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommand"}, "null"]}
@@ -362,7 +360,6 @@
  "name": "ConfigurationSyncResponse",
  "direction": "in",
  "fields": [
-     {"name": "appStateSeqNumber", "type": "int"},
      {"name": "responseStatus", "type": "org.kaaproject.kaa.common.endpoint.gen.SyncResponseStatus"},
      {"name": "confSchemaBody", "type": ["bytes", "null"]},
      {"name": "confDeltaBody", "type": ["bytes", "null"]}
@@ -374,7 +371,6 @@
  "name": "NotificationSyncResponse",
  "direction": "in",
  "fields": [
-     {"name": "appStateSeqNumber", "type": "int"},
      {"name": "responseStatus", "type": "org.kaaproject.kaa.common.endpoint.gen.SyncResponseStatus"},
      {"name": "notifications", "type": [{"type": "array", "items":"org.kaaproject.kaa.common.endpoint.gen.Notification"}, "null"]},
      {"name": "availableTopics", "type": [{"type": "array", "items":"org.kaaproject.kaa.common.endpoint.gen.Topic"}, "null"]}
@@ -434,6 +430,15 @@
  ]
 },
 {
+    "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+    "type": "record",
+    "name": "ExtensionSync",
+    "fields": [
+        {"name": "extensionId", "type": "int"},
+        {"name": "payload", "type": "bytes"}
+    ]
+},
+{
  "namespace": "org.kaaproject.kaa.common.endpoint.gen",
  "type": "record",
  "name": "SyncRequest",
@@ -447,7 +452,8 @@
      {"name": "notificationSyncRequest", "type": ["org.kaaproject.kaa.common.endpoint.gen.NotificationSyncRequest", "null"]},
      {"name": "userSyncRequest", "type": ["org.kaaproject.kaa.common.endpoint.gen.UserSyncRequest", "null"]},
      {"name": "eventSyncRequest", "type": ["org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest", "null"]},
-     {"name": "logSyncRequest", "type": ["org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest", "null"]}
+     {"name": "logSyncRequest", "type": ["org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest", "null"]},
+     {"name": "extensionSyncRequests", "type": [{"type": "array", "items":"org.kaaproject.kaa.common.endpoint.gen.ExtensionSync"}, "null"]}
  ]
 },
 {
@@ -465,7 +471,8 @@
      {"name": "userSyncResponse", "type": ["org.kaaproject.kaa.common.endpoint.gen.UserSyncResponse", "null"]},
      {"name": "eventSyncResponse", "type": ["org.kaaproject.kaa.common.endpoint.gen.EventSyncResponse", "null"]},
      {"name": "redirectSyncResponse", "type": ["org.kaaproject.kaa.common.endpoint.gen.RedirectSyncResponse", "null"]},
-     {"name": "logSyncResponse", "type": ["org.kaaproject.kaa.common.endpoint.gen.LogSyncResponse", "null"]}
+     {"name": "logSyncResponse", "type": ["org.kaaproject.kaa.common.endpoint.gen.LogSyncResponse", "null"]},
+     {"name": "extensionSyncResponses", "type": [{"type": "array", "items":"org.kaaproject.kaa.common.endpoint.gen.ExtensionSync"}, "null"]}
  ]
 },
 {

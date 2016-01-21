@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,6 @@ import java.io.Serializable;
 public class RecordKey implements Serializable {
 
     private static final long serialVersionUID = -5453653699078782999L;
-
-    public static final String RECORD_KEY_PARAMETER = "recordKey";
 
     private String applicationId;
     private int schemaVersion;
@@ -47,6 +45,7 @@ public class RecordKey implements Serializable {
         CONFIGURATION_SCHEMA,
         NOTIFICATION_SCHEMA,
         PROFILE_SCHEMA,
+        SERVER_PROFILE_SCHEMA,
         LOG_SCHEMA,
         LOG_LIBRARY,
     }

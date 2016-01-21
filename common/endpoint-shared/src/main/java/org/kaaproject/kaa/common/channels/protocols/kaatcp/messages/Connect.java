@@ -95,10 +95,11 @@ public class Connect extends MqttFrame {
 
     /**
      * Default Constructor
-     * @param keepAlive - in seconds, max value 65535 seconds.
-     * @param aesSessionKey - byte[] of AES session key, length 16 byte.
-     * @param syncRequest - byte[] of Avro SyncRequest object
-     * @param signature - byte[] of Signature of aesSessionKey and endpointPublicKeyHash, length 32 byte.
+     * @param keepAlive         the keep alive in seconds, max value 65535 seconds.
+     * @param nextProtocolId    the next protocol id
+     * @param aesSessionKey     the byte[] of AES session key, length 16 byte.
+     * @param syncRequest       the byte[] of Avro SyncRequest object
+     * @param signature         the byte[] of Signature of aesSessionKey and endpointPublicKeyHash, length 32 byte.
      */
     public Connect(int keepAlive, int nextProtocolId, byte[] aesSessionKey, byte[] syncRequest, byte[] signature) {
         setMessageType(MessageType.CONNECT);

@@ -22,8 +22,8 @@ public interface LogAppenderDao<T> extends SqlDao<T> {
 
     /**
      *
-     * @param appId
-     * @return
+     * @param   appId the app id
+     * @return  the list of log appenders
      */
     List<T> findByAppId(String appId);
 

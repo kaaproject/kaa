@@ -49,9 +49,9 @@ extern void        kaa_profile_manager_destroy(kaa_profile_manager_t *self);
 
 extern kaa_error_t kaa_profile_need_profile_resync(kaa_profile_manager_t *kaa_context, bool *result);
 extern kaa_error_t kaa_profile_request_get_size(kaa_profile_manager_t *self, size_t *expected_size);
-extern kaa_error_t kaa_profile_handle_server_sync(kaa_profile_manager_t *self, kaa_platform_message_reader_t *reader, uint32_t extension_options, size_t extension_length);
+extern kaa_error_t kaa_profile_handle_server_sync(kaa_profile_manager_t *self, kaa_platform_message_reader_t *reader, uint16_t extension_options, size_t extension_length);
 extern kaa_error_t kaa_profile_request_serialize(kaa_profile_manager_t *self, kaa_platform_message_writer_t* writer);
-
+extern bool kaa_profile_manager_is_profile_set(kaa_profile_manager_t *self);
 
 
 static kaa_context_t kaa_context;
@@ -87,7 +87,24 @@ void kaa_get_endpoint_public_key(char **buffer, size_t *buffer_size, bool *needs
     }
 }
 
+void test_profile_is_set(void)
+{
+    KAA_TRACE_IN(logger);
 
+#if KAA_PROFILE_SCHEMA_VERSION > 0
+    ASSERT_FALSE(kaa_profile_manager_is_profile_set(profile_manager));
+    kaa_profile_t *profile = kaa_profile_basic_endpoint_profile_test_create();
+    profile->profile_body = kaa_string_copy_create("test");
+    kaa_error_t error = kaa_profile_manager_update_profile(profile_manager, profile);
+    profile->destroy(profile);
+    ASSERT_EQUAL(error, KAA_ERR_NONE);
+    ASSERT_TRUE(kaa_profile_manager_is_profile_set(profile_manager));
+#else
+    ASSERT_TRUE(kaa_profile_manager_is_profile_set(profile_manager));
+#endif
+
+    KAA_TRACE_OUT(logger);
+}
 
 void test_profile_update(void)
 {
@@ -122,6 +139,8 @@ void test_profile_update(void)
     ASSERT_TRUE(need_resync);
 
     profile2->destroy(profile2);
+
+    KAA_TRACE_OUT(logger);
 }
 
 void test_profile_sync_get_size(void)
@@ -174,6 +193,8 @@ void test_profile_sync_get_size(void)
     avro_writer_free(writer);
     KAA_FREE(serialized_profile);
     profile->destroy(profile);
+
+    KAA_TRACE_OUT(logger);
 }
 
 void test_profile_sync_serialize(void)
@@ -259,6 +280,8 @@ void test_profile_sync_serialize(void)
     profile->destroy(profile);
     kaa_platform_message_writer_destroy(auto_writer);
     kaa_platform_message_writer_destroy(manual_writer);
+
+    KAA_TRACE_OUT(logger);
 }
 
 void test_profile_handle_sync(void)
@@ -267,7 +290,7 @@ void test_profile_handle_sync(void)
 
     bool need_resync = false;
     kaa_error_t error_code = KAA_ERR_NONE;
-    uint32_t extension_options = 0x1; /* Need resync */
+    uint16_t extension_options = 0x1; /* Need resync */
 
     const size_t buffer_size = 6;
     char buffer[buffer_size];
@@ -289,6 +312,8 @@ void test_profile_handle_sync(void)
     ASSERT_FALSE(need_resync);
 
     kaa_platform_message_reader_destroy(reader);
+
+    KAA_TRACE_OUT(logger);
 }
 
 int test_init(void)
@@ -332,6 +357,7 @@ int test_deinit(void)
 
 
 KAA_SUITE_MAIN(Profile, test_init, test_deinit,
+        KAA_TEST_CASE(profile_is_set, test_profile_is_set)
         KAA_TEST_CASE(profile_update, test_profile_update)
         KAA_TEST_CASE(profile_request, test_profile_sync_get_size)
         KAA_TEST_CASE(profile_sync_serialize, test_profile_sync_serialize)

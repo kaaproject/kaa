@@ -16,6 +16,17 @@
 
 package org.kaaproject.kaa.client.persistance;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -28,13 +39,6 @@ import org.kaaproject.kaa.common.endpoint.gen.SubscriptionType;
 import org.kaaproject.kaa.common.endpoint.gen.Topic;
 import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.junit.Assert.*;
 
 public class KaaClientPropertiesStateTest {
 
@@ -94,10 +98,10 @@ public class KaaClientPropertiesStateTest {
     public void testNfSubscription() throws IOException  {
         KaaClientState state = new KaaClientPropertiesState(new FilePersistentStorage(), CommonsBase64.getInstance(), getProperties());
 
-        Topic topic1 = Topic.newBuilder().setId("1234").setName("testName")
+        Topic topic1 = Topic.newBuilder().setId(1234).setName("testName")
                 .setSubscriptionType(SubscriptionType.OPTIONAL_SUBSCRIPTION).build();
 
-        Topic topic2 = Topic.newBuilder().setId("4321").setName("testName")
+        Topic topic2 = Topic.newBuilder().setId(4321).setName("testName")
                 .setSubscriptionType(SubscriptionType.MANDATORY_SUBSCRIPTION).build();
 
         state.addTopic(topic1);
@@ -109,7 +113,7 @@ public class KaaClientPropertiesStateTest {
         state.updateTopicSubscriptionInfo(topic1.getId(), 5);
         state.updateTopicSubscriptionInfo(topic1.getId(), 1);
 
-        Map<String, Integer> expected = new HashMap<String, Integer>();
+        Map<Long, Integer> expected = new HashMap<>();
         expected.put(topic1.getId(), 5);
         expected.put(topic2.getId(), 1);
 
@@ -174,6 +178,7 @@ public class KaaClientPropertiesStateTest {
         File statePropsBckp = new File(WORK_DIR + STATE_PROPERTIES_BCKP);
         statePropsBckp.deleteOnExit();
         state.persist();
+        state.setRegistered(true);
         state.persist();
         assertTrue(stateProps.exists());
         assertTrue(statePropsBckp.exists());

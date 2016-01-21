@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2016 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import java.security.GeneralSecurityException;
 
 import javax.annotation.Generated;
 
+import org.kaaproject.kaa.client.logging.future.RecordFuture;
 import org.kaaproject.kaa.schema.base.Configuration;
 import org.kaaproject.kaa.schema.base.Log;
 
@@ -42,12 +43,14 @@ public class BaseKaaClient extends AbstractKaaClient implements KaaClient {
     }
 
     @Override
-    public void addLogRecord(Log record) {
-        logCollector.addLogRecord(record);
+    public RecordFuture addLogRecord(Log record) {
+        checkClientState(State.STARTED, "Kaa client is not started");
+        return logCollector.addLogRecord(record);
     }
 
     @Override
     public Configuration getConfiguration() {
+        checkClientState(State.STARTED, "Kaa client is not started");
         return configurationManager.getConfiguration();
     }
 }

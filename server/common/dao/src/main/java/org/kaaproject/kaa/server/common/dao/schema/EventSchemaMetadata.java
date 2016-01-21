@@ -18,7 +18,7 @@ package org.kaaproject.kaa.server.common.dao.schema;
 
 import org.kaaproject.kaa.common.dto.event.EventClassType;
 
-public final class EventSchemaMetadata {
+public class EventSchemaMetadata {
 
     private String fqn;
     private EventClassType type;

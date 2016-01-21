@@ -1,0 +1,7 @@
+{
+    "type": "record",
+    "name": "Beta",
+    "namespace": "org.kaaproject.kaa",
+    "version": 1,
+    "fields": []
+}

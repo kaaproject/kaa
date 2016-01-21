@@ -95,11 +95,12 @@ public abstract class AbstractTransportService implements TransportService {
             try {
                 Class<?> clazz = Class.forName(config.getTransportClass());
                 Transport transport = (Transport) clazz.newInstance();
-                LOG.info("Lookup of transport configuration file {}", config.getConfigFileName());
-                URL configFileURL = this.getClass().getClassLoader().getResource(config.getConfigFileName());
+                String transportConfigFile = getTransportConfigPrefix() + "-" + config.getConfigFileName();
+                LOG.info("Lookup of transport configuration file {}", transportConfigFile);
+                URL configFileURL = this.getClass().getClassLoader().getResource(transportConfigFile);
                 GenericAvroConverter<GenericRecord> configConverter = new GenericAvroConverter<GenericRecord>(config.getConfigSchema());
                 GenericRecord configRecord = configConverter.decodeJson(Files.readAllBytes(Paths.get(configFileURL.toURI())));
-                LOG.info("Lookup of transport configuration file {}", config.getConfigFileName());
+                LOG.info("Lookup of transport configuration file {}", transportConfigFile);
                 TransportContext context = new TransportContext(transportProperties, getPublicKey(), getMessageHandler());
                 transport.init(new GenericTransportContext(context, configConverter.encode(configRecord)));
                 transports.put(config.getId(), transport);
@@ -139,6 +140,8 @@ public abstract class AbstractTransportService implements TransportService {
         LOG.info("Removing transport update listener {}.", listener);
         return listeners.remove(listener);
     }
+    
+    protected abstract String getTransportConfigPrefix();
 
     protected abstract Properties getServiceProperties();
 

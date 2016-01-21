@@ -22,7 +22,6 @@
  *  See {@link org.kaaproject.kaa.client.event.registration.EndpointRegistrationManager}<br>
  *
  *  <h2>Usage</h2>
- *  <p>
  *  For the example, we have one event class family named "ExampleClassFamily":
  *  <pre>
  *  {@code
@@ -36,15 +35,13 @@
  *  ]
  *  }
  *  </pre>
- *  <h4>Getting ExampleClassFamily instance</h4>
+ *  <h3>Getting ExampleClassFamily instance</h3>
  *  <pre>
  *  {@code
  *      EventFamilyFactory factory = Kaa.getClient().getEventFamilyFactory();
  *      ExampleClassFamily classFamily = factory.getExampleClassFamily();
  *  }
  *  </pre>
- *  </p>
- *  <p>
  *  <h3>Sending an event</h3>
  *  <h4>Sending event to all available recipients</h4>
  *  <pre>
@@ -96,9 +93,6 @@
  *       Kaa.getClient().getEventFamilyFactory().removeEventsBlock(blockId);
  *  }
  *  </pre>
- *  </p>
- *  
- *  <p>
  *  <h3>Receiving an event</h3>
  *  <h4>Register event listener</h4>
  *  <pre>
@@ -111,8 +105,6 @@
  *      });
  *  }
  *  </pre>
- *  </p>
- *  <p>
  *  <h3>Searching for event recipients</h3>
  *  <pre>
  *  {@code
@@ -131,7 +123,6 @@
  *  </pre>
  *  <b>NOTE:</b> Passing multiple events fqns means that recipient MUST support
  *  receiving ALL mentioned events.
- *  </p>
  *  
  */
 package org.kaaproject.kaa.client.event;

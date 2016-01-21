@@ -37,12 +37,20 @@ import org.kaaproject.kaa.common.dto.ChangeNotificationDto;
 import org.kaaproject.kaa.common.dto.ChangeType;
 import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
+import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.HistoryDto;
+import org.kaaproject.kaa.common.dto.PageLinkDto;
+import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.UpdateNotificationDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
+import org.kaaproject.kaa.server.common.dao.CTLService;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
 import org.kaaproject.kaa.server.common.dao.HistoryService;
+import org.kaaproject.kaa.server.common.dao.ServerProfileService;
 import org.kaaproject.kaa.server.common.dao.exception.DatabaseProcessingException;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
 import org.kaaproject.kaa.server.common.dao.impl.ConfigurationDao;
@@ -79,7 +87,11 @@ public class EndpointServiceImpl implements EndpointService {
     private ProfileFilterDao<ProfileFilter> verifierDao;
     @Autowired
     private HistoryService historyService;
-    
+    @Autowired
+    private ServerProfileService serverProfileService;
+    @Autowired
+    private CTLService ctlService;
+
     private EndpointProfileDao<EndpointProfile> endpointProfileDao;
     private EndpointConfigurationDao<EndpointConfiguration> endpointConfigurationDao;
     private EndpointUserDao<EndpointUser> endpointUserDao;
@@ -165,7 +177,7 @@ public class EndpointServiceImpl implements EndpointService {
         UpdateNotificationDto<EndpointGroupDto> dto = null;
         EndpointGroup endpointGroup = endpointGroupDao.removeTopicFromEndpointGroup(id, topicId);
         if (endpointGroup != null) {
-            dto = new UpdateNotificationDto<EndpointGroupDto>();
+            dto = new UpdateNotificationDto<>();
             HistoryDto history = addHistory(endpointGroup.toDto(), ChangeType.REMOVE_TOPIC, topicId);
             if (history != null) {
                 dto.setAppId(history.getApplicationId());
@@ -188,7 +200,7 @@ public class EndpointServiceImpl implements EndpointService {
         UpdateNotificationDto<EndpointGroupDto> dto = null;
         EndpointGroup endpointGroup = endpointGroupDao.addTopicToEndpointGroup(id, topicId);
         if (endpointGroup != null) {
-            dto = new UpdateNotificationDto<EndpointGroupDto>();
+            dto = new UpdateNotificationDto<>();
             HistoryDto history = addHistory(endpointGroup.toDto(), ChangeType.ADD_TOPIC, topicId);
             if (history != null) {
                 dto.setAppId(history.getApplicationId());
@@ -205,10 +217,25 @@ public class EndpointServiceImpl implements EndpointService {
     }
 
     @Override
+    @Transactional
+    public EndpointProfilesPageDto findEndpointProfileByEndpointGroupId(PageLinkDto pageLink) {
+        validateSqlId(pageLink.getLimit(), "Can't find endpoint group by id. Incorrect limit parameter " + pageLink.getLimit());
+        validateString(pageLink.getOffset(), "Can't find endpoint group by id. Incorrect offset parameter " + pageLink.getOffset());
+        return endpointProfileDao.findByEndpointGroupId(pageLink);
+    }
+
+    @Override
+    @Transactional
+    public EndpointProfilesBodyDto findEndpointProfileBodyByEndpointGroupId(PageLinkDto pageLink) {
+        validateSqlId(pageLink.getLimit(), "Can't find endpoint group by id. Incorrect limit parameter " + pageLink.getLimit());
+        validateString(pageLink.getOffset(), "Can't find endpoint group by id. Incorrect offset parameter " + pageLink.getOffset());
+        return endpointProfileDao.findBodyByEndpointGroupId(pageLink);
+    }
+
+    @Override
     public EndpointConfigurationDto findEndpointConfigurationByHash(byte[] hash) {
         validateHash(hash, "Can't find endpoint configuration by hash. Invalid configuration hash " + hash);
         return getDto(endpointConfigurationDao.findByHash(hash));
-
     }
 
     @Override
@@ -221,6 +248,13 @@ public class EndpointServiceImpl implements EndpointService {
         validateHash(endpointProfileKeyHash, "Can't find endpoint profile by key hash. Invalid key hash "
                 + endpointProfileKeyHash);
         return getDto(endpointProfileDao.findByKeyHash(endpointProfileKeyHash));
+    }
+
+    @Override
+    public EndpointProfileBodyDto findEndpointProfileBodyByKeyHash(byte[] endpointProfileKeyHash) {
+        validateHash(endpointProfileKeyHash, "Can't find endpoint profile by key hash. Invalid key hash "
+                + endpointProfileKeyHash);
+        return endpointProfileDao.findBodyByKeyHash(endpointProfileKeyHash);
     }
 
     @Override
@@ -237,13 +271,22 @@ public class EndpointServiceImpl implements EndpointService {
     }
 
     @Override
+    @Transactional
     public EndpointProfileDto saveEndpointProfile(EndpointProfileDto endpointProfileDto) {
         validateObject(endpointProfileDto, "Can't find endpoint profile object. Invalid endpoint profile object"
                 + endpointProfileDto);
         byte[] keyHash = endpointProfileDto.getEndpointKeyHash();
         EndpointProfileDto dto;
         validateHash(keyHash, "Incorrect key hash for endpoint profile.");
+        if(endpointProfileDto.getServerProfileBody() == null){
+            ServerProfileSchemaDto serverProfileSchemaDto = serverProfileService.findLatestServerProfileSchema(endpointProfileDto.getApplicationId());
+            CTLSchemaDto schemaDto = ctlService.findCTLSchemaById(serverProfileSchemaDto.getCtlSchemaId());
+            LOG.debug("Set latest server profile schema [{}] and default record {} for endpoint with key [{}]", serverProfileSchemaDto.getVersion(), schemaDto.getBody(), keyHash);
+            endpointProfileDto.setServerProfileVersion(serverProfileSchemaDto.getVersion());
+            endpointProfileDto.setServerProfileBody(schemaDto.getDefaultRecord());
+        }
         if (isBlank(endpointProfileDto.getId())) {
+            //TODO: Improve this to avoid redundant requests to DB and invalid logic.
             if (endpointProfileDao.getCountByKeyHash(keyHash) == 0) {
                 LOG.debug("Register new endpoint profile.");
                 dto = getDto(endpointProfileDao.save(endpointProfileDto));
@@ -379,6 +422,13 @@ public class EndpointServiceImpl implements EndpointService {
             }
         }
         return endpointUser;
+    }
+
+    @Override
+    @Transactional
+    public EndpointGroupDto findDefaultGroup(String appId) {
+        validateSqlId(appId, "Can't find default endpoint group by app id. Incorrect app id " + appId);
+        return getDto(endpointGroupDao.findByAppIdAndWeight(appId, DEFAULT_GROUP_WEIGHT));
     }
 
     @Override

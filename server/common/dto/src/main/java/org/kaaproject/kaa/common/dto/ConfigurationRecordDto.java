@@ -17,49 +17,55 @@ package org.kaaproject.kaa.common.dto;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class ConfigurationRecordDto implements Serializable {
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+public class ConfigurationRecordDto extends StructureRecordDto<ConfigurationDto> implements Serializable, Comparable<ConfigurationRecordDto> {
 
     private static final long serialVersionUID = 5838762122987694212L;
     
-    private ConfigurationDto activeConfiguration; 
-    private ConfigurationDto inactiveConfiguration;
-    
     public ConfigurationRecordDto() {
+        super();
     }
 
     public ConfigurationRecordDto(ConfigurationDto activeConfiguration, ConfigurationDto inactiveConfiguration) {
-        this.activeConfiguration = activeConfiguration;
-        this.inactiveConfiguration = inactiveConfiguration;
+        super(activeConfiguration, inactiveConfiguration);
+    }
+
+    @JsonIgnore
+    public int getSchemaVersion() {
+      return activeStructureDto != null ? activeStructureDto.getSchemaVersion() : inactiveStructureDto.getSchemaVersion();
+    }
+
+    @JsonIgnore
+    public String getSchemaId() {
+        return activeStructureDto != null ? activeStructureDto.getSchemaId() : inactiveStructureDto.getSchemaId();
     }
     
-    public ConfigurationDto getActiveConfiguration() {
-        return activeConfiguration;
-    }
-
-    public void setActiveConfiguration(ConfigurationDto activeConfiguration) {
-        this.activeConfiguration = activeConfiguration;
-    }
-
-    public ConfigurationDto getInactiveConfiguration() {
-        return inactiveConfiguration;
-    }
-
-    public void setInactiveConfiguration(ConfigurationDto inactiveConfiguration) {
-        this.inactiveConfiguration = inactiveConfiguration;
-    }
-
-    public static List<ConfigurationRecordDto> formStructureRecords(List<StructureRecordDto<ConfigurationDto>> records) {
-        List<ConfigurationRecordDto> result = new ArrayList<>();
-        for (StructureRecordDto<ConfigurationDto> record : records) {
-            ConfigurationRecordDto configurationRecord = new ConfigurationRecordDto(record.getActiveStructureDto(), record.getInactiveStructureDto());
-            result.add(configurationRecord);
+    public static List<ConfigurationRecordDto> convertToConfigurationRecords(Collection<ConfigurationDto> configurations) {
+        Map<String, ConfigurationRecordDto> configurationRecordsMap = new HashMap<>();
+        for (ConfigurationDto configuration : configurations) {
+            ConfigurationRecordDto configurationRecord = configurationRecordsMap.get(configuration.getSchemaId());
+            if (configurationRecord == null) {
+                configurationRecord = new ConfigurationRecordDto();
+                configurationRecordsMap.put(configuration.getSchemaId(), configurationRecord);
+            }
+            if (configuration.getStatus()==UpdateStatus.ACTIVE) {
+                configurationRecord.setActiveStructureDto(configuration);
+            } else if (configuration.getStatus()==UpdateStatus.INACTIVE) {
+                configurationRecord.setInactiveStructureDto(configuration);
+            }
         }
-        return result;
+        return new ArrayList<>(configurationRecordsMap.values());
     }
-    
-    public static ConfigurationRecordDto fromStructureRecord(StructureRecordDto<ConfigurationDto> record) {
-        return new ConfigurationRecordDto(record.getActiveStructureDto(), record.getInactiveStructureDto());
+
+    @Override
+    public int compareTo(ConfigurationRecordDto o) {
+        return this.getSchemaVersion() - o.getSchemaVersion();
     }
+
 }

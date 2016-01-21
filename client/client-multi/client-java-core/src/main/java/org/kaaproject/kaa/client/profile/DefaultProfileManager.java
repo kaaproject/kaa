@@ -50,4 +50,9 @@ public class DefaultProfileManager implements ProfileManager {
     public void updateProfile() {
         transport.sync();
     }
+
+    @Override
+    public boolean isInitialized() {
+        return container != null || serializer.isDefault();
+    }
 }

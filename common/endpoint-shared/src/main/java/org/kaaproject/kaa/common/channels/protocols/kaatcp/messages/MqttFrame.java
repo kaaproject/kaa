@@ -61,6 +61,7 @@ abstract public class MqttFrame {
     public MessageType getMessageType() {
         return messageType;
     }
+
     /**
      * @param messageType the messageType to set
      */
@@ -77,7 +78,7 @@ abstract public class MqttFrame {
 
 
     /**
-     * @param old
+     * @param old te old
      */
     protected MqttFrame(MqttFrame old) {
         this.messageType = old.getMessageType();
@@ -87,6 +88,7 @@ abstract public class MqttFrame {
         this.multiplier = old.multiplier;
         this.currentState = old.currentState;
     }
+
     /**
      * Return mqtt Frame.
      * @return ByteBuffer mqtt frame
@@ -121,7 +123,7 @@ abstract public class MqttFrame {
 
     /**
      * Decode message from mqttFrame ByteBuffer
-     * @throws KaaTcpProtocolException
+     * @throws KaaTcpProtocolException the kaa tcp protocol exception
      */
     abstract protected void decode() throws KaaTcpProtocolException;
     
@@ -133,8 +135,9 @@ abstract public class MqttFrame {
 
     /**
      * Fill mqtt frame fixed header
-     * @param remainingLegth
-     * @return number of packet bytes
+     * @param   remainingLegth  the remaining legth
+     * @param   dst             the dst
+     * @return  number of packet bytes
      */
     private int fillFixedHeader(int remainingLegth, byte [] dst) {
         int size = 1;
@@ -187,10 +190,10 @@ abstract public class MqttFrame {
 
     /**
      * Push bytes of frame
-     * @param bytes - bytes array
-     * @param position in buffer
-     * @return int used bytes from buffer
-     * @throws KaaTcpProtocolException
+     * @param   bytes       the bytes array
+     * @param   position    the position in buffer
+     * @return  int used bytes from buffer
+     * @throws  KaaTcpProtocolException the kaa tcp protocol exception
      */
     public int push(byte[] bytes, int position) throws KaaTcpProtocolException {
         int pos = position;
@@ -229,7 +232,7 @@ abstract public class MqttFrame {
      * Used for migrate from KaaSync() general frame to specific classes like Sync, Bootstrap.
      * Default implementation is to return this. 
      * @return new MqttFrame as specific class.
-     * @throws KaatcpProtocolException 
+     * @throws KaaTcpProtocolException the kaa tcp protocol exception
      */
     public MqttFrame upgradeFrame() throws KaaTcpProtocolException {
         return this;

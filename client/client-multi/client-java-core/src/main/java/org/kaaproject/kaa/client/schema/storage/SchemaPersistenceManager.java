@@ -35,8 +35,9 @@ public interface SchemaPersistenceManager {
     /**
      * Provide storage object which is able to persist configuration schema.
      *
-     * @param storage object that saves and loads schema data
-     * @see SchemaStorage
+     * @param   storage object that saves and loads schema data
+     * @throws  IOException the io exception
+     * @see     SchemaStorage
      */
     void setSchemaStorage(SchemaStorage storage) throws IOException;
 

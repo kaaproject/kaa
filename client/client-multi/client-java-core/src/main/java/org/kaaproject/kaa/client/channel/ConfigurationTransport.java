@@ -42,7 +42,8 @@ public interface ConfigurationTransport extends KaaTransport {
     /**
      * Updates the state of the Configuration manager according to the given response.
      *
-     * @param response the configuration response.
+     * @param   response the configuration response.
+     * @throws  Exception the exception
      * @see ConfigurationSyncResponse
      */
     void onConfigurationResponse(ConfigurationSyncResponse response) throws Exception;

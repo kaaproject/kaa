@@ -279,7 +279,11 @@ kaa_error_t kaa_client_start(kaa_client_t *kaa_client
 {
     KAA_RETURN_IF_NIL(kaa_client, KAA_ERR_BADPARAM);
 
-    kaa_error_t error_code = KAA_ERR_NONE;
+    kaa_error_t error_code = kaa_check_readiness(kaa_client->kaa_context);
+    if (error_code != KAA_ERR_NONE) {
+        KAA_LOG_ERROR(kaa_client->kaa_context->logger, error_code, "Cannot start Kaa client: Kaa context is not fully initialized");
+        return error_code;
+    }
 
     kaa_client->external_process_fn = external_process;
     kaa_client->external_process_context = external_process_context;

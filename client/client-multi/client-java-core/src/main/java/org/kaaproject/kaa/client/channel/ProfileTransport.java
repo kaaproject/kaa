@@ -35,8 +35,9 @@ public interface ProfileTransport extends KaaTransport {
     /**
      * Creates a new Profile update request.
      *
-     * @return new Profile update request.
-     * @see ProfileSyncRequest
+     * @return  new Profile update request.
+     * @throws  IOException the io exception
+     * @see     ProfileSyncRequest
      *
      */
     ProfileSyncRequest createProfileRequest() throws IOException;
@@ -45,6 +46,7 @@ public interface ProfileTransport extends KaaTransport {
      * Updates the state of the Profile manager from the given response.
      *
      * @param response the response from the server.
+     * @throws Exception the exception
      * @see ProfileSyncResponse
      *
      */
@@ -53,8 +55,8 @@ public interface ProfileTransport extends KaaTransport {
     /**
      * Sets the given Profile manager.
      *
-     * @param manager the Profile manager to be set.
-     * @see ProfileManager
+     * @param   manager the Profile manager to be set.
+     * @see     ProfileManager
      *
      */
     void setProfileManager(ProfileManager manager);

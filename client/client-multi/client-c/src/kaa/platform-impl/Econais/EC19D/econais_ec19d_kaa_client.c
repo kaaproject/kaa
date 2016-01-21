@@ -349,7 +349,12 @@ kaa_error_t kaa_client_start(kaa_client_t *kaa_client
     KAA_RETURN_IF_NIL(kaa_client, KAA_ERR_BADPARAM);
     KAA_LOG_TRACE(kaa_client->kaa_context->logger, KAA_ERR_NONE, "Kaa client starting ...");
     print_mem_stat(kaa_client);
-    kaa_error_t error_code = KAA_ERR_NONE;
+
+    kaa_error_t error_code = kaa_check_readiness(kaa_client->kaa_context);
+    if (error_code != KAA_ERR_NONE) {
+        KAA_LOG_ERROR(kaa_client->kaa_context->logger, error_code, "Cannot start Kaa client: Kaa context is not fully initialized");
+        return error_code;
+    }
 
     error_code = kaa_tcp_channel_create(&kaa_client->bootstrap_channel
                                       , kaa_client->kaa_context->logger

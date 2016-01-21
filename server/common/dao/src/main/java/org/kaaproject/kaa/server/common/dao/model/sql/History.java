@@ -37,7 +37,7 @@ import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongI
 
 @Entity
 @Table(name = HISTORY_TABLE_NAME)
-public final class History extends GenericModel<HistoryDto> implements Serializable {
+public class History extends GenericModel<HistoryDto> implements Serializable {
 
     private static final long serialVersionUID = 2061028534480732230L;
 
@@ -111,6 +111,11 @@ public final class History extends GenericModel<HistoryDto> implements Serializa
     @Override
     protected HistoryDto createDto() {
         return new HistoryDto();
+    }
+
+    @Override
+    protected GenericModel<HistoryDto> newInstance(Long id) {
+        return new History(id);
     }
 
     @Override

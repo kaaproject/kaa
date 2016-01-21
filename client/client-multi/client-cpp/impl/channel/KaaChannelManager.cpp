@@ -154,7 +154,7 @@ bool KaaChannelManager::addChannelToList(IDataChannelPtr channel)
     auto res = channels_.insert(channel);
 
     if (res.second) {
-    	channel->setFailoverStrategy(failoverStrategy_);
+        channel->setFailoverStrategy(failoverStrategy_);
         channel->setConnectivityChecker(connectivityChecker_);
 
         ITransportConnectionInfoPtr connectionInfo;
