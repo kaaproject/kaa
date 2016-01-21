@@ -86,9 +86,7 @@
         
         TransportContext *transportContext = [self buildTransportContextWithProperties:self.properties clientState:self.clientState];
         
-        self.bootstrapManager = [self buildBootstrapManagerWithProperties:self.properties
-                                                              clientState:self.clientState
-                                                         transportContext:transportContext];
+        self.bootstrapManager = [self buildBootstrapManagerWithTransportContext:transportContext];
         self.channelManager = [self buildChannelManagerWithBootstrapManager:self.bootstrapManager servers:bootstrapServers];
         self.failoverManager = [self buildFailoverManagerWithChannelManager:self.channelManager];
         [self.channelManager setFailoverManager:self.failoverManager];
@@ -98,24 +96,16 @@
         [self.bootstrapManager setChannelManager:self.channelManager];
         [self.bootstrapManager setFailoverManager:self.failoverManager];
         
-        self.profileManager = [self buildProfileManagerWithProperties:self.properties
-                                                          clientState:self.clientState
-                                                     transportContext:transportContext];
-        self.notificationManager = [self buildNotificationManagerWithProperties:self.properties
-                                                                    clientState:self.clientState
+        self.profileManager = [self buildProfileManagerWithTransportContext:transportContext];
+        self.notificationManager = [self buildNotificationManagerWithClientState:self.clientState
                                                                transportContext:transportContext];
-        self.eventManager = [self buildEventManagerWithProperties:self.properties
-                                                      clientState:self.clientState
+        self.eventManager = [self buildEventManagerWithClientState:self.clientState
                                                  transportContext:transportContext];
-        self.endpointRegistrationManager = [self buildRegistrationManagerWithProperties:self.properties
-                                                                            clientState:self.clientState
+        self.endpointRegistrationManager = [self buildRegistrationManagerWithClientState:self.clientState
                                                                        transportContext:transportContext];
-        self.logCollector = [self buildLogCollectorWithProperties:self.properties
-                                                      clientState:self.clientState
-                                                 transportContext:transportContext];
+        self.logCollector = [self buildLogCollectorWithTransportContext:transportContext];
         self.configurationManager = [self buildConfigurationManagerWithProperties:self.properties
-                                                                      clientState:self.clientState
-                                                                 transportContext:transportContext];
+                                                                      clientState:self.clientState];
         
         [[transportContext getRedirectionTransport] setBootstrapManager:self.bootstrapManager];
         [[transportContext getBootstrapTransport] setBootstrapManager:self.bootstrapManager];
@@ -427,14 +417,14 @@
 }
 
 - (TransportContext *)buildTransportContextWithProperties:(KaaClientProperties *)properties clientState:(id<KaaClientState>)state {
-    id<BootstrapTransport> bsTransport = [self buildBootstrapTransportWithProperties:properties clientState:state];
-    id<ProfileTransport> pfTransport = [self buildProfileTransportWithProperties:properties clientState:state];
-    id<EventTransport> evTransport = [self buildEventTransportWithProperties:properties clientState:state];
-    id<NotificationTransport> nfTransport = [self buildNotificationTransportWithProperties:properties clientState:state];
-    id<ConfigurationTransport> cfTransport = [self buildConfigurationTransportWithProperties:properties clientState:state];
-    id<UserTransport> usrTransport = [self buildUserTransportWithProperties:properties clientState:state];
-    id<RedirectionTransport> redTransport = [self buildRedirectionTransportWithProperties:properties clientState:state];
-    id<LogTransport> logTransport = [self buildLogTransportWithProperties:properties clientState:state];
+    id<BootstrapTransport> bsTransport = [self buildBootstrapTransportWithProperties:properties];
+    id<ProfileTransport> pfTransport = [self buildProfileTransportWithProperties:properties];
+    id<EventTransport> evTransport = [self buildEventTransportWithClientState:state];
+    id<NotificationTransport> nfTransport = [self buildNotificationTransport];
+    id<ConfigurationTransport> cfTransport = [self buildConfigurationTransport];
+    id<UserTransport> usrTransport = [self buildUserTransport];
+    id<RedirectionTransport> redTransport = [self buildRedirectionTransport];
+    id<LogTransport> logTransport = [self buildLogTransport];
     
     EndpointObjectHash *publicKeyHash = [EndpointObjectHash hashWithSHA1:[KeyUtils getPublicKey]];
     
@@ -497,53 +487,43 @@
 }
 
 - (ResyncConfigurationManager *)buildConfigurationManagerWithProperties:(KaaClientProperties *)properties
-                                                            clientState:(id<KaaClientState>)state
-                                                       transportContext:(TransportContext *)context {
+                                                            clientState:(id<KaaClientState>)state {
     return [[ResyncConfigurationManager alloc] initWithClientProperties:properties state:state executorContext:[self.context getExecutorContext]];
 }
 
-- (DefaultLogCollector *)buildLogCollectorWithProperties:(KaaClientProperties *)properties
-                                             clientState:(id<KaaClientState>)state
-                                        transportContext:(TransportContext *)context {
+- (DefaultLogCollector *)buildLogCollectorWithTransportContext:(TransportContext *)context {
     return [[DefaultLogCollector alloc] initWithTransport:[context getLogTransport]
                                           executorContext:[self.context getExecutorContext]
                                            channelManager:self.channelManager
                                           failoverManager:self.failoverManager];
 }
 
-- (DefaultEndpointRegistrationManager *)buildRegistrationManagerWithProperties:(KaaClientProperties *)properties
-                                                                   clientState:(id<KaaClientState>)state
+- (DefaultEndpointRegistrationManager *)buildRegistrationManagerWithClientState:(id<KaaClientState>)state
                                                               transportContext:(TransportContext *)context {
     return [[DefaultEndpointRegistrationManager alloc] initWithState:state executorContext:[self.context getExecutorContext]
                                                        userTransport:[context getUserTransport]
                                                     profileTransport:[context getProfileTransport]];
 }
 
-- (DefaultEventManager *)buildEventManagerWithProperties:(KaaClientProperties *)properties
-                                             clientState:(id<KaaClientState>)state
+- (DefaultEventManager *)buildEventManagerWithClientState:(id<KaaClientState>)state
                                         transportContext:(TransportContext *)context {
     return [[DefaultEventManager alloc] initWithState:state
                                       executorContext:[self.context getExecutorContext]
                                        eventTransport:[context getEventTransport]];
 }
 
-- (DefaultNotificationManager *)buildNotificationManagerWithProperties:(KaaClientProperties *)properties
-                                                           clientState:(id<KaaClientState>)state
+- (DefaultNotificationManager *)buildNotificationManagerWithClientState:(id<KaaClientState>)state
                                                       transportContext:(TransportContext *)context {
     return [[DefaultNotificationManager alloc] initWithState:state
                                              executorContext:[self.context getExecutorContext]
                                        notificationTransport:[context getNotificationTransport]];
 }
 
-- (id<ProfileManager>)buildProfileManagerWithProperties:(KaaClientProperties *)properties
-                                            clientState:(id<KaaClientState>)state
-                                       transportContext:(TransportContext *)context {
+- (id<ProfileManager>)buildProfileManagerWithTransportContext:(TransportContext *)context {
     return [[DefaultProfileManager alloc] initWithTransport:[context getProfileTransport]];
 }
 
-- (id<BootstrapManager>)buildBootstrapManagerWithProperties:(KaaClientProperties *)properties
-                                                clientState:(id<KaaClientState>)state
-                                           transportContext:(TransportContext *)context {
+- (id<BootstrapManager>)buildBootstrapManagerWithTransportContext:(TransportContext *)context {
     return [[DefaultBootstrapManager alloc] initWithTransport:[context getBootstrapTransport]
                                               executorContext:[self.context getExecutorContext]];
 }
@@ -555,18 +535,17 @@
     return [self.context createHttpClientWithURLString:url privateKeyRef:privateK publicKeyRef:publicK remoteKey:remoteK];
 }
 
-- (id<BootstrapTransport>)buildBootstrapTransportWithProperties:(KaaClientProperties *)properties clientState:(id<KaaClientState>)state {
+- (id<BootstrapTransport>)buildBootstrapTransportWithProperties:(KaaClientProperties *)properties {
     return [[DefaultBootstrapTransport alloc] initWithToken:properties.sdkToken];
 }
 
-- (id<ProfileTransport>)buildProfileTransportWithProperties:(KaaClientProperties *)properties clientState:(id<KaaClientState>)state {
+- (id<ProfileTransport>)buildProfileTransportWithProperties:(KaaClientProperties *)properties {
     id<ProfileTransport> transport = [[DefaultProfileTransport alloc] init];
     [transport setClientProperties:properties];
     return transport;
 }
 
-- (id<ConfigurationTransport>)buildConfigurationTransportWithProperties:(KaaClientProperties *)properties
-                                                            clientState:(id<KaaClientState>)state {
+- (id<ConfigurationTransport>)buildConfigurationTransport {
     id<ConfigurationTransport> transport = [[DefaultConfigurationTransport alloc] init];
     
     //TODO this should be part of properties and provided by user during SDK generation
@@ -575,25 +554,23 @@
     return transport;
 }
 
-- (id<NotificationTransport>)buildNotificationTransportWithProperties:(KaaClientProperties *)properties
-                                                          clientState:(id<KaaClientState>)state {
+- (id<NotificationTransport>)buildNotificationTransport {
     return [[DefaultNotificationTransport alloc] init];
 }
 
-- (DefaultUserTransport *)buildUserTransportWithProperties:(KaaClientProperties *)properties clientState:(id<KaaClientState>)state {
+- (DefaultUserTransport *)buildUserTransport {
     return [[DefaultUserTransport alloc] init];
 }
 
-- (id<EventTransport>)buildEventTransportWithProperties:(KaaClientProperties *)properties clientState:(id<KaaClientState>)state {
+- (id<EventTransport>)buildEventTransportWithClientState:(id<KaaClientState>)state {
     return [[DefaultEventTransport alloc] initWithState:state];
 }
 
-- (id<LogTransport>)buildLogTransportWithProperties:(KaaClientProperties *)properties clientState:(id<KaaClientState>)state {
+- (id<LogTransport>)buildLogTransport {
     return [[DefaultLogTransport alloc] init];
 }
 
-- (id<RedirectionTransport>)buildRedirectionTransportWithProperties:(KaaClientProperties *)properties
-                                                        clientState:(id<KaaClientState>)state {
+- (id<RedirectionTransport>)buildRedirectionTransport {
     return [[DefaultRedirectionTransport alloc] init];
 }
 

@@ -82,61 +82,43 @@ typedef enum {
 - (id<FailoverManager>)buildFailoverManagerWithChannelManager:(id<KaaChannelManager>)manager;
 
 - (ResyncConfigurationManager *)buildConfigurationManagerWithProperties:(KaaClientProperties *)properties
-                                                            clientState:(id<KaaClientState>)state
-                                                       transportContext:(TransportContext *)context;
+                                                            clientState:(id<KaaClientState>)state;
 
-- (DefaultLogCollector *)buildLogCollectorWithProperties:(KaaClientProperties *)properties
-                                             clientState:(id<KaaClientState>)state
-                                        transportContext:(TransportContext *)context;
+- (DefaultLogCollector *)buildLogCollectorWithTransportContext:(TransportContext *)context;
 
-- (DefaultEndpointRegistrationManager *)buildRegistrationManagerWithProperties:(KaaClientProperties *)properties
-                                                                   clientState:(id<KaaClientState>)state
+- (DefaultEndpointRegistrationManager *)buildRegistrationManagerWithClientState:(id<KaaClientState>)state
                                                               transportContext:(TransportContext *)context;
 
-- (DefaultEventManager *)buildEventManagerWithProperties:(KaaClientProperties *)properties
-                                             clientState:(id<KaaClientState>)state
+- (DefaultEventManager *)buildEventManagerWithClientState:(id<KaaClientState>)state
                                         transportContext:(TransportContext *)context;
 
-- (DefaultNotificationManager *)buildNotificationManagerWithProperties:(KaaClientProperties *)properties
-                                                           clientState:(id<KaaClientState>)state
+- (DefaultNotificationManager *)buildNotificationManagerWithClientState:(id<KaaClientState>)state
                                                       transportContext:(TransportContext *)context;
 
-- (id<ProfileManager>)buildProfileManagerWithProperties:(KaaClientProperties *)properties
-                                            clientState:(id<KaaClientState>)state
-                                       transportContext:(TransportContext *)context;
+- (id<ProfileManager>)buildProfileManagerWithTransportContext:(TransportContext *)context;
 
-- (id<BootstrapManager>)buildBootstrapManagerWithProperties:(KaaClientProperties *)properties
-                                                clientState:(id<KaaClientState>)state
-                                           transportContext:(TransportContext *)context;
+- (id<BootstrapManager>)buildBootstrapManagerWithTransportContext:(TransportContext *)context;
 
 - (AbstractHttpClient *)createHttpClientWithURLString:(NSString *)url
                                         privateKeyRef:(SecKeyRef)privateK
                                          publicKeyRef:(SecKeyRef)publicK
                                             remoteKey:(NSData *)remoteK;
 
-- (id<BootstrapTransport>)buildBootstrapTransportWithProperties:(KaaClientProperties *)properties
-                                                    clientState:(id<KaaClientState>)state;
+- (id<BootstrapTransport>)buildBootstrapTransportWithProperties:(KaaClientProperties *)properties;
 
-- (id<ProfileTransport>)buildProfileTransportWithProperties:(KaaClientProperties *)properties
-                                                clientState:(id<KaaClientState>)state;
+- (id<ProfileTransport>)buildProfileTransportWithProperties:(KaaClientProperties *)properties;
 
-- (id<ConfigurationTransport>)buildConfigurationTransportWithProperties:(KaaClientProperties *)properties
-                                                            clientState:(id<KaaClientState>)state;
+- (id<ConfigurationTransport>)buildConfigurationTransport;
 
-- (id<NotificationTransport>)buildNotificationTransportWithProperties:(KaaClientProperties *)properties
-                                                          clientState:(id<KaaClientState>)state;
+- (id<NotificationTransport>)buildNotificationTransport;
 
-- (DefaultUserTransport *)buildUserTransportWithProperties:(KaaClientProperties *)properties
-                                               clientState:(id<KaaClientState>)state;
+- (DefaultUserTransport *)buildUserTransport;
 
-- (id<EventTransport>)buildEventTransportWithProperties:(KaaClientProperties *)properties
-                                            clientState:(id<KaaClientState>)state;
+- (id<EventTransport>)buildEventTransportWithClientState:(id<KaaClientState>)state;
 
-- (id<LogTransport>)buildLogTransportWithProperties:(KaaClientProperties *)properties
-                                        clientState:(id<KaaClientState>)state;
+- (id<LogTransport>)buildLogTransport;
 
-- (id<RedirectionTransport>)buildRedirectionTransportWithProperties:(KaaClientProperties *)properties
-                                                        clientState:(id<KaaClientState>)state;
+- (id<RedirectionTransport>)buildRedirectionTransport;
 
 - (void)checkLifecycleState:(ClientLifecycleState)expected withErrorMessage:(NSString *)message;
 

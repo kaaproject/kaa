@@ -2317,6 +2317,7 @@
 			baseConfigurationReference = 4CAC4D1133C2E2FBC990B5AC /* Pods-libKaa.a.debug.xcconfig */;
 			buildSettings = {
 				GCC_PREFIX_HEADER = "";
+				GCC_WARN_UNUSED_PARAMETER = YES;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/build/Debug-iphoneos",
@@ -2333,6 +2334,7 @@
 			baseConfigurationReference = 34B3F556DC3121F3AFA8ECC3 /* Pods-libKaa.a.release.xcconfig */;
 			buildSettings = {
 				GCC_PREFIX_HEADER = "";
+				GCC_WARN_UNUSED_PARAMETER = YES;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/build/Debug-iphoneos",
