@@ -21,13 +21,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
-import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
-import org.kaaproject.kaa.common.dto.EventClassFamilyVersionStateDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
-import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
+import org.kaaproject.kaa.common.dto.EventClassFamilyVersionStateDto;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
+import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
@@ -123,8 +122,7 @@ public class DefaultProfileService implements ProfileService {
                 dto.setAccessToken(request.getAccessToken());
             }
 
-            dto.setCfSequenceNumber(0);
-            dto.setNfSequenceNumber(0);
+            dto.setSequenceNumber(0);
 
             try {
                 cacheService.putEndpointKey(keyHash, KeyUtil.getPublic(dto.getEndpointKey()));
@@ -166,22 +164,9 @@ public class DefaultProfileService implements ProfileService {
 
         populateVersionStates(appSeqNumber.getTenantId(), dto, sdkProfile);
 
-        doClearProfileGroupStates(dto);
+        dto.setGroupStates(new ArrayList<>());
+        dto.setSequenceNumber(0);
         return endpointService.saveEndpointProfile(dto);
-    }
-
-    @Override
-    public EndpointProfileDto clearProfileGroupStates(EndpointProfileDto dto) {
-        doClearProfileGroupStates(dto);
-        return endpointService.saveEndpointProfile(dto);
-    }
-
-    private void doClearProfileGroupStates(EndpointProfileDto dto) {
-        List<EndpointGroupStateDto> egsList = new ArrayList<>();
-        dto.setCfGroupStates(egsList);
-        dto.setCfSequenceNumber(0);
-        dto.setNfGroupStates(egsList);
-        dto.setNfSequenceNumber(0);
     }
 
     protected void populateVersionStates(String tenantId, EndpointProfileDto dto, SdkProfileDto sdkProfile) {

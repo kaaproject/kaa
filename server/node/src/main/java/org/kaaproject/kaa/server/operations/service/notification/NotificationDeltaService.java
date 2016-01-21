@@ -21,7 +21,6 @@ import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.server.operations.pojo.GetNotificationRequest;
 import org.kaaproject.kaa.server.operations.pojo.GetNotificationResponse;
 import org.kaaproject.kaa.server.operations.service.cache.TopicListCacheEntry;
-import org.kaaproject.kaa.server.operations.service.delta.HistoryDelta;
 
 
 /**
@@ -33,10 +32,9 @@ public interface NotificationDeltaService {
      * Gets the notification delta.
      *
      * @param request the request
-     * @param historyDelta the history delta
      * @return the notification delta
      */
-    GetNotificationResponse getNotificationDelta(GetNotificationRequest request, HistoryDelta historyDelta);
+    GetNotificationResponse getNotificationDelta(GetNotificationRequest request);
 
     /**
      * Find notification by id.

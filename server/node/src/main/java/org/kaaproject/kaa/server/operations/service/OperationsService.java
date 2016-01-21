@@ -39,6 +39,8 @@ import org.kaaproject.kaa.server.sync.UserClientSync;
  */
 public interface OperationsService extends PublicKeyAware {
 
+    EndpointProfileDto syncProfileState(String appToken, String endpointId, EndpointProfileDto profile, boolean userConfigurationChanged);
+
     SyncContext syncProfile(SyncContext context, ProfileClientSync request);
 
     SyncContext processEndpointAttachDetachRequests(SyncContext context, UserClientSync request);
@@ -48,7 +50,7 @@ public interface OperationsService extends PublicKeyAware {
     SyncContext syncConfiguration(SyncContext context, ConfigurationClientSync request) throws GetDeltaException;
 
     SyncContext syncNotification(SyncContext context, NotificationClientSync request);
-    
+
     EndpointProfileDto updateProfile(SyncContext context);
 
     /**
@@ -79,16 +81,21 @@ public interface OperationsService extends PublicKeyAware {
 
     /**
      * Lookup user configuration and return it's hash
-     * @param appToken application token
-     * @param profile endpoint profile
+     * 
+     * @param appToken
+     *            application token
+     * @param profile
+     *            endpoint profile
      * @return user configuration hash, or null if not found;
      */
     byte[] fetchUcfHash(String appToken, EndpointProfileDto profile);
 
     /**
-     * Fetch server endpoint profile and CTL schema id based on endpoint key hash
+     * Fetch server endpoint profile and CTL schema id based on endpoint key
+     * hash
      * 
-     * @param hash - endpoint key hash
+     * @param hash
+     *            - endpoint key hash
      * @return endpoint profile
      */
     public EndpointProfileDto refreshServerEndpointProfile(EndpointObjectHash hash);

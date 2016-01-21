@@ -171,7 +171,6 @@ public class LocalEndpointActorState extends AbstractEndpointActorState {
         if (!isValidForUser() || isUcfHashRequiresIntialization()) {
             return false;
         }
-        ;
         return !Arrays.equals(ucfHash, endpointProfile.getUserConfigurationHash());
     }
 
@@ -195,13 +194,4 @@ public class LocalEndpointActorState extends AbstractEndpointActorState {
         }
         return list;
     }
-
-    public boolean isServerProfileChanged() {
-        return serverProfileChanged;
-    }
-
-    public void setServerProfileChanged(boolean serverProfileChanged) {
-        this.serverProfileChanged = serverProfileChanged;
-    }
-
 }

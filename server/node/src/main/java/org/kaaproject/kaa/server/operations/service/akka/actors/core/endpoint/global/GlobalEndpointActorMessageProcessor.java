@@ -1,9 +1,14 @@
 package org.kaaproject.kaa.server.operations.service.akka.actors.core.endpoint.global;
 
+import java.util.function.BiConsumer;
+
+import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.Base64Util;
+import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftActorClassifier;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftServerProfileUpdateMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftUnicastNotificationMessage;
+import org.kaaproject.kaa.server.operations.service.OperationsService;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
 import org.kaaproject.kaa.server.operations.service.akka.actors.core.endpoint.AbstractEndpointActorMessageProcessor;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.ActorClassifier;
@@ -25,11 +30,13 @@ public class GlobalEndpointActorMessageProcessor extends AbstractEndpointActorMe
     private final String nodeId;
     private final RouteTable<EndpointClusterAddress> routes;
     private final ClusterService clusterService;
+    private final OperationsService operationsService;
 
     public GlobalEndpointActorMessageProcessor(AkkaContext context, String appToken, EndpointObjectHash key, String actorKey) {
         super(new GlobalEndpointActorState(Base64Util.encode(key.getData()), actorKey), context.getOperationsService(), appToken, key,
                 actorKey, Base64Util.encode(key.getData()), context.getGlobalEndpointTimeout());
         clusterService = context.getClusterService();
+        operationsService = context.getOperationsService();
         nodeId = context.getClusterService().getNodeId();
         routes = new RouteTable<>(nodeId);
     }
@@ -68,22 +75,32 @@ public class GlobalEndpointActorMessageProcessor extends AbstractEndpointActorMe
     }
 
     private void processServerProfileUpdateMsg(ActorContext context, ThriftServerProfileUpdateMessage thriftMsg) {
-        // TODO Auto-generated method stub
+        EndpointProfileDto endpointProfile = operationsService.refreshServerEndpointProfile(key);
+        operationsService.syncProfileState(appToken, endpointKey, endpointProfile, false);
+        ThriftServerProfileUpdateMessage localMsg = new ThriftServerProfileUpdateMessage(thriftMsg);
+        localMsg.setActorClassifier(new ThriftActorClassifier(false));
+        dispatchMsg(context, localMsg, (nodeId, msg) -> {
+            clusterService.sendServerProfileUpdateMessage(nodeId, msg);
+        });
     }
 
     private void processUnicastNotificationMsg(ActorContext context, ThriftUnicastNotificationMessage thriftMsg) {
         ThriftUnicastNotificationMessage localMsg = new ThriftUnicastNotificationMessage(thriftMsg);
-        localMsg.setActorClassifierIsSet(false);
+        localMsg.setActorClassifier(new ThriftActorClassifier(false));
+        dispatchMsg(context, localMsg, (nodeId, msg) -> {
+            clusterService.sendUnicastNotificationMessage(nodeId, msg);
+        });
+    }
+
+    private <T> void dispatchMsg(ActorContext context, T localMsg, BiConsumer<String, T> f) {
         for (EndpointClusterAddress address : routes.getLocalRoutes()) {
             LOG.info("Forwarding {} to local endpoint actor {}", localMsg, address);
-            ThriftEndpointActorMsg<ThriftUnicastNotificationMessage> msg = new ThriftEndpointActorMsg<ThriftUnicastNotificationMessage>(
-                    address.toEndpointAddress(), new ActorClassifier(false), localMsg);
+            ThriftEndpointActorMsg<T> msg = new ThriftEndpointActorMsg<T>(address.toEndpointAddress(), new ActorClassifier(false), localMsg);
             context.parent().tell(msg, context.self());
         }
         for (EndpointClusterAddress address : routes.getRemoteRoutes()) {
             LOG.info("Forwarding {} to remote endpoint actor {}", localMsg, address);
-            clusterService.sendUnicastNotificationMessage(address.getNodeId(), localMsg);
+            f.accept(address.getNodeId(), localMsg);
         }
     }
-
 }

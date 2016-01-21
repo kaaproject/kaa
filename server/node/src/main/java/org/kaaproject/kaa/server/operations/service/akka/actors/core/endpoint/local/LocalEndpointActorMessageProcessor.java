@@ -70,7 +70,6 @@ import org.kaaproject.kaa.server.operations.service.akka.messages.io.response.Ne
 import org.kaaproject.kaa.server.operations.service.akka.utils.EntityConvertUtils;
 import org.kaaproject.kaa.server.operations.service.event.EventClassFamilyVersion;
 import org.kaaproject.kaa.server.sync.ClientSync;
-import org.kaaproject.kaa.server.sync.ConfigurationClientSync;
 import org.kaaproject.kaa.server.sync.EndpointAttachResponse;
 import org.kaaproject.kaa.server.sync.EndpointDetachRequest;
 import org.kaaproject.kaa.server.sync.EndpointDetachResponse;
@@ -80,7 +79,6 @@ import org.kaaproject.kaa.server.sync.EventSequenceNumberResponse;
 import org.kaaproject.kaa.server.sync.EventServerSync;
 import org.kaaproject.kaa.server.sync.LogClientSync;
 import org.kaaproject.kaa.server.sync.LogEntry;
-import org.kaaproject.kaa.server.sync.NotificationClientSync;
 import org.kaaproject.kaa.server.sync.ServerSync;
 import org.kaaproject.kaa.server.sync.SyncStatus;
 import org.kaaproject.kaa.server.sync.UserAttachNotification;
@@ -132,19 +130,6 @@ public class LocalEndpointActorMessageProcessor extends AbstractEndpointActorMes
         tellParent(context, response);
     }
 
-    public void processServerProfileUpdate(ActorContext context) {
-        EndpointProfileDto endpointProfile = state.getProfile();
-        if (endpointProfile != null) {
-            endpointProfile = operationsService.refreshServerEndpointProfile(key);
-            state.setProfile(endpointProfile);
-            Set<ChannelMetaData> channels = state.getChannelsByTypes(TransportType.CONFIGURATION, TransportType.NOTIFICATION);
-            LOG.debug("[{}][{}] Processing profile update for {} channels", endpointKey, actorKey, channels.size());
-            syncChannels(context, channels, true, true);
-        } else {
-            LOG.warn("[{}][{}] Can't update server profile for an empty state", endpointKey, actorKey);
-        }
-    }
-
     public void processThriftNotification(ActorContext context) {
         Set<ChannelMetaData> channels = state.getChannelsByTypes(TransportType.CONFIGURATION, TransportType.NOTIFICATION);
         LOG.debug("[{}][{}] Processing thrift norification for {} channels", endpointKey, actorKey, channels.size());
@@ -169,7 +154,16 @@ public class LocalEndpointActorMessageProcessor extends AbstractEndpointActorMes
     }
 
     private void processServerProfileUpdateMsg(ActorContext context, ThriftServerProfileUpdateMessage thriftMsg) {
-        // TODO Auto-generated method stub
+        EndpointProfileDto endpointProfile = state.getProfile();
+        if (endpointProfile != null) {
+            endpointProfile = operationsService.refreshServerEndpointProfile(key);
+            state.setProfile(endpointProfile);
+            Set<ChannelMetaData> channels = state.getChannelsByTypes(TransportType.CONFIGURATION, TransportType.NOTIFICATION);
+            LOG.debug("[{}][{}] Processing profile update for {} channels", endpointKey, actorKey, channels.size());
+            syncChannels(context, channels, true, true);
+        } else {
+            LOG.warn("[{}][{}] Can't update server profile for an empty state", endpointKey, actorKey);
+        }
     }
 
     private void processUnicastNotificationMsg(ActorContext context, ThriftUnicastNotificationMessage thriftMsg) {
@@ -225,7 +219,7 @@ public class LocalEndpointActorMessageProcessor extends AbstractEndpointActorMes
 
             ChannelMetaData channel = initChannel(context, requestMessage);
 
-            ClientSync request = buildRequestForChannel(requestMessage, channel);
+            ClientSync request = mergeRequestForChannel(channel, requestMessage);
 
             ChannelType channelType = channel.getType();
             LOG.debug("[{}][{}] Processing sync request {} from {} channel [{}]", endpointKey, actorKey, request, channelType,
@@ -287,14 +281,13 @@ public class LocalEndpointActorMessageProcessor extends AbstractEndpointActorMes
 
         context = operationsService.syncProfile(context, request.getProfileSync());
 
-        state.setProfile(context.getEndpointProfile());
-
         if (context.getStatus() != SyncStatus.SUCCESS) {
             return context;
         }
         if (state.isUcfHashRequiresIntialization()) {
             byte[] hash = operationsService.fetchUcfHash(appToken, state.getProfile());
-            LOG.debug("[{}][{}] Initialized endpoint object hash {}", endpointKey, context.getRequestHash(), Arrays.toString(hash));
+            LOG.debug("[{}][{}] Initialized endpoint user configuration hash {}", endpointKey, context.getRequestHash(),
+                    Arrays.toString(hash));
             state.setUcfHash(hash);
         }
 
@@ -302,20 +295,16 @@ public class LocalEndpointActorMessageProcessor extends AbstractEndpointActorMes
         context = operationsService.processEventListenerRequests(context, request.getEventSync());
 
         if (state.isUserConfigurationUpdatePending()) {
-            context.setUserConfigurationChanged(true);
-            context.setUserConfigurationHash(state.getUcfHash());
+            EndpointProfileDto profile = context.getEndpointProfile();
+            profile.setUserConfigurationHash(state.getUcfHash());
+            profile = operationsService.syncProfileState(appToken, context.getEndpointKey(), profile, true);
         }
 
-        // TODO: do this only if there were some updates missed from control
-        // server or this is a first request for this actor
         context = operationsService.syncConfiguration(context, request.getConfigurationSync());
 
-        // TODO: do this only if there were some updates missed from control
-        // server or this is a first request for this actor
         context = operationsService.syncNotification(context, request.getNotificationSync());
 
         state.setProfile(operationsService.updateProfile(context));
-        state.setServerProfileChanged(false);
 
         LOG.trace("[{}][{}] processed sync. Response is {}", endpointKey, request.hashCode(), context.getResponse());
 
@@ -325,40 +314,24 @@ public class LocalEndpointActorMessageProcessor extends AbstractEndpointActorMes
     private void syncChannels(ActorContext context, Set<ChannelMetaData> channels, boolean cfUpdate, boolean nfUpdate) {
         for (ChannelMetaData channel : channels) {
             ClientSync originalRequest = channel.getRequestMessage().getRequest();
-            ServerSync syncResponse = channel.getResponseHolder().getResponse();
-
             ClientSync newRequest = new ClientSync();
             newRequest.setRequestId(originalRequest.getRequestId());
             newRequest.setClientSyncMetaData(originalRequest.getClientSyncMetaData());
             if (cfUpdate && originalRequest.getConfigurationSync() != null) {
-                ConfigurationClientSync configurationSyncRequest = originalRequest.getConfigurationSync();
-                if (syncResponse.getConfigurationSync() != null) {
-                    int newSeqNumber = syncResponse.getConfigurationSync().getAppStateSeqNumber();
-                    LOG.debug("[{}][{}] Change original configuration request {} appSeqNumber from {} to {}", endpointKey, actorKey,
-                            originalRequest, configurationSyncRequest.getAppStateSeqNumber(), newSeqNumber);
-                    configurationSyncRequest.setAppStateSeqNumber(newSeqNumber);
-                }
-                newRequest.setConfigurationSync(configurationSyncRequest);
-                originalRequest.setConfigurationSync(null);
+                newRequest.setForceConfigurationSync(true);
+                newRequest.setConfigurationSync(originalRequest.getConfigurationSync());
             }
             if (nfUpdate && originalRequest.getNotificationSync() != null) {
-                NotificationClientSync notificationSyncRequest = originalRequest.getNotificationSync();
-                if (syncResponse.getNotificationSync() != null) {
-                    int newSeqNumber = syncResponse.getNotificationSync().getAppStateSeqNumber();
-                    LOG.debug("[{}][{}] Change original notification request {} appSeqNumber from {} to {}", endpointKey, actorKey,
-                            originalRequest, notificationSyncRequest.getAppStateSeqNumber(), newSeqNumber);
-                    notificationSyncRequest.setAppStateSeqNumber(newSeqNumber);
-                }
-                newRequest.setNotificationSync(notificationSyncRequest);
-                originalRequest.setNotificationSync(null);
+                newRequest.setForceNotificationSync(true);
+                newRequest.setNotificationSync(originalRequest.getNotificationSync());
             }
-            LOG.debug("[{}][{}] Processing request {}", endpointKey, actorKey, originalRequest);
+            LOG.debug("[{}][{}] Processing request {}", endpointKey, actorKey, newRequest);
             sync(context, new SyncRequestMessage(channel.getRequestMessage().getSession(), newRequest, channel.getRequestMessage()
                     .getCommand(), channel.getRequestMessage().getOriginator()));
         }
     }
 
-    private ClientSync buildRequestForChannel(SyncRequestMessage requestMessage, ChannelMetaData channel) {
+    private ClientSync mergeRequestForChannel(ChannelMetaData channel, SyncRequestMessage requestMessage) {
         ClientSync request;
         if (channel.getType().isAsync()) {
             if (channel.isFirstRequest()) {

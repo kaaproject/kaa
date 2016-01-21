@@ -92,7 +92,6 @@ public class DefaultNotificationDeltaService implements NotificationDeltaService
             ids[i] = id.longValue();
             joiner.add(id.toString());
         }
-
         int simpleHash = Arrays.hashCode(ids);
         EndpointObjectHash complexHash = EndpointObjectHash.fromBytes(SHA1HashUtils.hashToBytes(joiner.toString()));
         TopicListCacheEntry entry = new TopicListCacheEntry(simpleHash, complexHash, topics);
@@ -120,11 +119,9 @@ public class DefaultNotificationDeltaService implements NotificationDeltaService
         boolean subscriptionSetChanged = false;
 
         if (request.getTopicHash() != profile.getSimpleTopicHash()) {
-            LOG.debug("[{}] Topic list changed. recalculating topic list", endpointId);
+            LOG.debug("[{}] Topic list changed. Geting current topic list", endpointId);
             TopicListCacheEntry topicListCache = cacheService.getTopicList(EndpointObjectHash.fromBytes(profile.getTopicHash()));
             List<TopicDto> topicList = topicListCache.getTopics();
-            // TODO: validate change based on topic list hash that is stored in
-            // profile
             LOG.debug("[{}] New topic list contains {} topics", endpointId, topicList.size());
             List<String> allPossibleTopics = new ArrayList<>(topicList.size());
 
@@ -218,8 +215,7 @@ public class DefaultNotificationDeltaService implements NotificationDeltaService
         if (subscriptionSetChanged) {
             LOG.debug("[{}] Updating profile with subscription set. Size {}", endpointId, subscriptionSet.size());
             response.setSubscriptionSetChanged(true);
-            //TODO: move this set to response. Analyze response on an upper level
-            profile.setSubscriptions(new ArrayList<>(subscriptionSet));
+            response.setSubscriptionSet(subscriptionSet);
         }
 
         return response;

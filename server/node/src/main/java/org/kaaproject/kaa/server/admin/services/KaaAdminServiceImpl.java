@@ -243,13 +243,8 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             }
             endpointProfileView.setTopics(topics);
             Set<EndpointGroupDto> endpointGroupsSet = new HashSet<>();
-            if (endpointProfile.getCfGroupStates() != null) {
-                for (EndpointGroupStateDto endpointGroupState : endpointProfile.getCfGroupStates()) {
-                    endpointGroupsSet.add(controlService.getEndpointGroup(endpointGroupState.getEndpointGroupId()));
-                }
-            }
-            if (endpointProfile.getNfGroupStates() != null) {
-                for (EndpointGroupStateDto endpointGroupState : endpointProfile.getNfGroupStates()) {
+            if (endpointProfile.getGroupStates() != null) {
+                for (EndpointGroupStateDto endpointGroupState : endpointProfile.getGroupStates()) {
                     endpointGroupsSet.add(controlService.getEndpointGroup(endpointGroupState.getEndpointGroupId()));
                 }
             }

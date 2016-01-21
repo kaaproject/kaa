@@ -19,7 +19,6 @@ package org.kaaproject.kaa.server.operations.service.akka.actors.core.endpoint.l
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointStopMessage;
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.ServerProfileUpdateMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.SyncRequestMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.logs.LogDeliveryMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.notification.ThriftNotificationMessage;
@@ -29,8 +28,8 @@ import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.C
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.RequestTimeoutMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.topic.NotificationMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventReceiveMessage;
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserConfigurationUpdateMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserActionMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserConfigurationUpdateMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.verification.UserVerificationResponseMessage;
 import org.kaaproject.kaa.server.transport.channel.ChannelAware;
 import org.kaaproject.kaa.server.transport.message.SessionDisconnectMessage;
@@ -93,8 +92,6 @@ public class LocalEndpointActor extends UntypedActor {
             processDisconnectMessage((ChannelAware) message);
         } else if (message instanceof SessionPingMessage) {
             processPingMessage((ChannelAware) message);
-        } else if (message instanceof ServerProfileUpdateMessage) {
-            processServerProfileUpdate((ServerProfileUpdateMessage) message);
         } else if (message instanceof ThriftNotificationMessage) {
             processThriftNotification((ThriftNotificationMessage) message);
         } else if (message instanceof NotificationMessage) {
@@ -145,10 +142,6 @@ public class LocalEndpointActor extends UntypedActor {
 
     private void processPingMessage(ChannelAware message) {
         messageProcessor.processPingMessage(context(), message);
-    }
-
-    private void processServerProfileUpdate(ServerProfileUpdateMessage message) {
-        messageProcessor.processServerProfileUpdate(context());
     }
     
     private void processThriftNotification(ThriftNotificationMessage message) {
