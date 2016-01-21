@@ -19,13 +19,13 @@
 
 @interface SyncTask : NSObject
 
-- (instancetype)initWithTransport:(TransportType)type ackOnly:(BOOL)ackOnly all:(BOOL)all;
+- (instancetype)initWithTransportType:(TransportType)type ackOnly:(BOOL)ackOnly all:(BOOL)all;
 - (instancetype)initWithTransports:(NSSet *)types ackOnly:(BOOL)ackOnly all:(BOOL)all; //<TransportType>
 
 - (NSSet *)getTransportTypes;
 - (BOOL)isAckOnly;
 - (BOOL)isAll;
 
-+ (SyncTask *)merge:(SyncTask *)task additionalTasks:(NSArray *)tasks;
++ (SyncTask *)mergeTask:(SyncTask *)task withAdditionalTasks:(NSArray *)tasks;
 
 @end

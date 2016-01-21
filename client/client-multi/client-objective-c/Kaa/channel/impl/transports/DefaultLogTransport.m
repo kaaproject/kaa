@@ -21,7 +21,7 @@
 
 @interface DefaultLogTransport ()
 
-@property (nonatomic,strong) id<LogProcessor> processor;
+@property (nonatomic, strong) id<LogProcessor> processor;
 
 @end
 

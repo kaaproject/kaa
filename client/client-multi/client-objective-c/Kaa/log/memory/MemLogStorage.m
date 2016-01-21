@@ -29,12 +29,12 @@
 @property (nonatomic) int64_t maxStorageSize;
 @property (nonatomic) int64_t maxBucketSize;
 @property (nonatomic) int32_t maxBucketRecordCount;
-@property (nonatomic,strong) NSMutableDictionary *buckets;
+@property (nonatomic, strong) NSMutableDictionary *buckets;
 @property (atomic) int32_t bucketIdSeq;
 @property (atomic) volatile int64_t consumedVolume;
 @property (atomic) volatile int64_t recordCount;
 
-@property (nonatomic,strong) MemBucket *currentBucket;
+@property (nonatomic, strong) MemBucket *currentBucket;
 
 @end
 
@@ -64,7 +64,8 @@
     return self;
 }
 
-- (instancetype)initWithMaxStorageSize:(int64_t)maxStorageSize bucketSize:(int64_t)bucketSize
+- (instancetype)initWithMaxStorageSize:(int64_t)maxStorageSize
+                            bucketSize:(int64_t)bucketSize
                      bucketRecordCount:(int32_t)bucketRecordCount {
     self = [super init];
     if (self) {
@@ -146,14 +147,14 @@
     return result;
 }
 
-- (void)removeBucket:(int32_t)bucketId {
+- (void)removeBucketWithId:(int32_t)bucketId {
     DDLogVerbose(@"%@ Removing bucket with id [%i]", TAG, bucketId);
     @synchronized(self.buckets) {
         [self.buckets removeObjectForKey:@(bucketId)];
     }
 }
 
-- (void)rollbackBucket:(int32_t)bucketId {
+- (void)rollbackBucketWithId:(int32_t)bucketId {
     DDLogVerbose(@"%@ Upload of bucket [%i] failed", TAG, bucketId);
     @synchronized(self.buckets) {
         MemBucket * bucket = self.buckets[@(bucketId)];

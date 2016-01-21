@@ -45,8 +45,8 @@ typedef enum  {
  */
 @interface FailoverDecision : NSObject
 
-@property(nonatomic,readonly) FailoverAction failoverAction;
-@property(nonatomic,readonly) int64_t retryPeriod;
+@property(nonatomic, readonly) FailoverAction failoverAction;
+@property(nonatomic, readonly) int64_t retryPeriod;
 
 - (instancetype)initWithFailoverAction:(FailoverAction)failoverAction;
 - (instancetype)initWithFailoverAction:(FailoverAction)failoverAction retryPeriodInMilliseconds:(int64_t)retryPeriod;

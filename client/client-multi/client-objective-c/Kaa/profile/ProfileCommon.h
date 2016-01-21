@@ -16,6 +16,7 @@
 
 #import <Foundation/Foundation.h>
 #import "EndpointGen.h"
+#import "ProfileGen.h"
 #import "KAADummyProfile.h"
 
 @protocol ProfileContainer
@@ -36,7 +37,7 @@
 /**
  * Retrieves serialized profile.
  */
-- (NSData *)toBytes:(id<ProfileContainer>)container;
+- (NSData *)serializeContainer:(id<ProfileContainer>)container;
 
 - (BOOL)isDefault;
 

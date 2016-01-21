@@ -18,6 +18,7 @@
 #import "EventManger.h"
 #import "ExecutorContext.h"
 #import "TransactionId.h"
+#import "EventGen.h"
 
 /**
  * Factory for accessing supported event families.
@@ -29,7 +30,7 @@
 - (instancetype)initWithManager:(id<EventManager>)manager executorContext:(id<ExecutorContext>)context;
 
 - (TransactionId *)startEventsBlock;
-- (void)submitEventsBlock:(TransactionId *)trxId;
-- (void)removeEventsBlock:(TransactionId *)trxId;
+- (void)submitEventsBlockWithTransactionId:(TransactionId *)trxId;
+- (void)removeEventsBlockWithTransactionId:(TransactionId *)trxId;
 
 @end

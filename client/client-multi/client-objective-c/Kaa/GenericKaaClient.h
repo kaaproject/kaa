@@ -110,12 +110,12 @@
  *
  * @throws UnavailableTopicException if unknown topic id is provided.
  */
-- (void)addNotificationDelegate:(id<NotificationDelegate>)delegate forTopic:(NSString *)topicId;
+- (void)addNotificationDelegate:(id<NotificationDelegate>)delegate forTopicId:(NSString *)topicId;
 
 /**
  * Remove delegate receiving all notifications (both for mandatory and optional topics).
  */
-- (void)removeNotificationDelegate:(id<NotificationDelegate>) delegate;
+- (void)removeNotificationDelegate:(id<NotificationDelegate>)delegate;
 
 /**
  * Remove delegate receiving notifications for the specified topic.
@@ -126,7 +126,7 @@
  *
  * @throws UnavailableTopicException if unknown topic id is provided.
  */
-- (void)removeNotificationDelegate:(id<NotificationDelegate>)delegate forTopic:(NSString *) topicId;
+- (void)removeNotificationDelegate:(id<NotificationDelegate>)delegate forTopicId:(NSString *)topicId;
 
 /**
  * Subscribe to notifications relating to the specified optional topic.
@@ -134,7 +134,7 @@
  *
  * @throws UnavailableTopicException if unknown topic id is provided or topic isn't optional.
  */
-- (void)subscribeToTopic:(NSString *)topicId;
+- (void)subscribeToTopicWithId:(NSString *)topicId;
 
 /**
  * Subscribe to notifications relating to the specified optional topic.
@@ -144,7 +144,7 @@
  *
  * @throws UnavailableTopicException if unknown topic id is provided or topic isn't optional.
  */
-- (void)subscribeToTopic:(NSString *)topicId forceSync:(BOOL)forceSync;
+- (void)subscribeToTopicWithId:(NSString *)topicId forceSync:(BOOL)forceSync;
 
 /**
  * Subscribe to notifications relating to the specified list of optional topics.
@@ -153,7 +153,7 @@
  *
  * @throws UnavailableTopicException if unknown topic id is provided or topic isn't optional.
  */
-- (void)subscribeToTopics:(NSArray *)topicIds;
+- (void)subscribeToTopicsWithIDs:(NSArray *)topicIds;
 
 /**
  * Subscribe to notifications relating to the specified list of optional topics.
@@ -164,7 +164,7 @@
  * @throws UnavailableTopicException if unknown topic id is provided or topic isn't optional.
  *
  */
-- (void)subscribeToTopics:(NSArray *)topicIds forceSync:(BOOL)forceSync;
+- (void)subscribeToTopicsWithIDs:(NSArray *)topicIds forceSync:(BOOL)forceSync;
 
 /**
  * Unsubscribe from notifications relating to the specified optional topic.
@@ -174,7 +174,7 @@
  *
  * @throws UnavailableTopicException if unknown topic id is provided or topic isn't optional.
  */
-- (void)unsubscribeFromTopic:(NSString *)topicId;
+- (void)unsubscribeFromTopicWithId:(NSString *)topicId;
 
 /**
  * Unsubscribe from notifications relating to the specified optional topic.
@@ -185,7 +185,7 @@
  *
  * @throws UnavailableTopicException if unknown topic id is provided or topic isn't optional.
  */
-- (void)unsubscribeFromTopic:(NSString *)topicId forceSync:(BOOL)forceSync;
+- (void)unsubscribeFromTopicWithId:(NSString *)topicId forceSync:(BOOL)forceSync;
 
 /**
  * Unsubscribe from notifications relating to the specified list of optional topics.
@@ -195,7 +195,7 @@
  *
  * @throws UnavailableTopicException if unknown topic id is provided or topic isn't optional.
  */
-- (void)unsubscribeFromTopics:(NSArray *)topicIds;
+- (void)unsubscribeFromTopicsWithIDs:(NSArray *)topicIds;
 
 /**
  * Unsubscribe from notifications relating to the specified list of optional topics.
@@ -206,7 +206,7 @@
  *
  * @throws UnavailableTopicException if unknown topic id is provided or topic isn't optional.
  */
-- (void)unsubscribeFromTopics:(NSArray *)topicIds forceSync:(BOOL)forceSync;
+- (void)unsubscribeFromTopicsWithIDs:(NSArray *)topicIds forceSync:(BOOL)forceSync;
 
 /**
  * Force sync of pending subscription changes with server.
@@ -238,7 +238,7 @@
  *
  * @param eventFQNs - list of event class FQNs which have to be supported by endpoint. <NSString>
  */
-- (void)findEventListeners:(NSArray *)eventFQNs delegate:(id<FindEventListenersDelegate>) delegate;
+- (void)findListenersForEventFQNs:(NSArray *)eventFQNs delegate:(id<FindEventListenersDelegate>) delegate;
 
 /**
  * Retrieves Kaa channel manager.
@@ -293,7 +293,7 @@
  * @param endpointAccessToken - access token of the attaching endpoint
  * @param delegate - delegate to notify about result of the endpoint attaching
  */
-- (void)attachEndpoint:(EndpointAccessToken *)endpointAccessToken delegate:(id<OnAttachEndpointOperationDelegate>) delegate;
+- (void)attachEndpointWithAccessToken:(EndpointAccessToken *)endpointAccessToken delegate:(id<OnAttachEndpointOperationDelegate>)delegate;
 
 /**
  * Updates with new endpoint detach request
@@ -301,21 +301,21 @@
  * @param endpointKeyHash - key hash of the detaching endpoint
  * @param delegate - delegate to notify about result of the enpoint attaching
  */
-- (void)detachEndpoint:(EndpointKeyHash *)endpointKeyHash delegate:(id<OnDetachEndpointOperationDelegate>)delegate;
+- (void)detachEndpointWithKeyHash:(EndpointKeyHash *)endpointKeyHash delegate:(id<OnDetachEndpointOperationDelegate>)delegate;
 
 /**
  * Creates user attach request using default verifier. Default verifier is selected during SDK generation.
  * If there was no default verifier selected this method will throw runtime exception.
  */
-- (void)attachUser:(NSString *)userExternalId token:(NSString *)userAccessToken delegate:(id<UserAttachDelegate>)delegate;
+- (void)attachUserWithId:(NSString *)userExternalId accessToken:(NSString *)userAccessToken delegate:(id<UserAttachDelegate>)delegate;
 
 /**
  * Creates user attach request using specified verifier.
  */
-- (void)attachUser:(NSString*)userVerifierToken
-                id:(NSString*)userExternalId
-             token:(NSString*)userAccessToken
-          delegate:(id<UserAttachDelegate>)delegate;
+- (void)attachUserWithVerifierToken:(NSString*)userVerifierToken
+                             userId:(NSString*)userExternalId
+                        accessToken:(NSString*)userAccessToken
+                           delegate:(id<UserAttachDelegate>)delegate;
 
 /**
  * Checks if current endpoint is attached to user.
@@ -325,12 +325,12 @@
 /**
  * Sets callback for notifications when current endpoint is attached to user.
  */
-- (void)setAttachedDelegate:(id<AttachEndpointToUserDelegate>)delegate;
+- (void)setAttachDelegate:(id<AttachEndpointToUserDelegate>)delegate;
 
 /**
  * Sets callback for notifications when current endpoint is detached from user.
  */
-- (void)setDetachedDelegate:(id<DetachEndpointFromUserDelegate>)delegate;
+- (void)setDetachDelegate:(id<DetachEndpointFromUserDelegate>)delegate;
 
 @end
 #endif

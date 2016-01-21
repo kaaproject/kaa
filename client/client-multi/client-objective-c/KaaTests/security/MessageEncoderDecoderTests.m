@@ -20,15 +20,15 @@
 
 @interface MessageEncoderDecoderTests : XCTestCase
 
-@property (nonatomic,strong) KeyPair *clientPair;
+@property (nonatomic, strong) KeyPair *clientPair;
 
-@property (nonatomic,strong) NSData *serverPrivateTag;
-@property (nonatomic,strong) NSData *serverPublicTag;
-@property (nonatomic,strong) KeyPair *serverPair;
+@property (nonatomic, strong) NSData *serverPrivateTag;
+@property (nonatomic, strong) NSData *serverPublicTag;
+@property (nonatomic, strong) KeyPair *serverPair;
 
-@property (nonatomic,strong) NSData *thiefPrivateTag;
-@property (nonatomic,strong) NSData *thiefPublicTag;
-@property (nonatomic,strong) KeyPair *thiefPair;
+@property (nonatomic, strong) NSData *thiefPrivateTag;
+@property (nonatomic, strong) NSData *thiefPublicTag;
+@property (nonatomic, strong) KeyPair *thiefPair;
 
 @end
 
@@ -66,18 +66,18 @@
     MessageEncoderDecoder *theif = [[MessageEncoderDecoder alloc] initWithKeyPair:self.thiefPair
                                                             remotePublicKeyRef:[self.clientPair getPublicKeyRef]];
     NSData *secretData = [client encodeData:messageData];
-    NSData *signature = [client sign:secretData];
+    NSData *signature = [client signatureForMessage:secretData];
     NSData *encodedSessionKey = [client getEncodedSessionKey];
     
-    XCTAssertTrue([server verify:secretData withSignature:signature]);
+    XCTAssertTrue([server verifyMessage:secretData withSignature:signature]);
     NSData *decodedData = [server decodeData:secretData withEncodedKey:encodedSessionKey];
     NSString *decodedSecret = [[NSString alloc] initWithData:decodedData encoding:NSUTF8StringEncoding];
     
     XCTAssertTrue([message isEqualToString:decodedSecret]);
     
     NSData *theifData = [theif encodeData:messageData];
-    NSData *theifSignature = [theif sign:theifData];
-    XCTAssertFalse([server verify:theifData withSignature:theifSignature]);
+    NSData *theifSignature = [theif signatureForMessage:theifData];
+    XCTAssertFalse([server verifyMessage:theifData withSignature:theifSignature]);
 }
 
 - (void)testBasicSubsequentTest {
@@ -92,9 +92,9 @@
                                                              remotePublicKeyRef:[self.clientPair getPublicKeyRef]];
     
     NSData *secretData = [client encodeData:messageData];
-    NSData *signature = [client sign:secretData];
+    NSData *signature = [client signatureForMessage:secretData];
     NSData *encodedSessionKey = [client getEncodedSessionKey];
-    XCTAssertTrue([server verify:secretData withSignature:signature]);
+    XCTAssertTrue([server verifyMessage:secretData withSignature:signature]);
     
     NSData *decodedData = [server decodeData:secretData withEncodedKey:encodedSessionKey];
     NSString *decodedSecret = [[NSString alloc] initWithData:decodedData encoding:NSUTF8StringEncoding];
@@ -103,9 +103,9 @@
     [server setRemotePublicKeyRef:[self.thiefPair getPublicKeyRef]];
 
     NSData *secretData2 = [client2 encodeData:messageData];
-    NSData *signature2 = [client2 sign:secretData2];
+    NSData *signature2 = [client2 signatureForMessage:secretData2];
     NSData *encodedSessionKey2 = [client2 getEncodedSessionKey];
-    XCTAssertTrue([server verify:secretData2 withSignature:signature2]);
+    XCTAssertTrue([server verifyMessage:secretData2 withSignature:signature2]);
     
     NSData *decodedData2 = [server decodeData:secretData2 withEncodedKey:encodedSessionKey2];
     NSString *decodedSecret2 = [[NSString alloc] initWithData:decodedData2 encoding:NSUTF8StringEncoding];

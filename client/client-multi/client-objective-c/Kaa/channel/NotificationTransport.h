@@ -68,7 +68,7 @@
  *
  * @param commands Info about subscription actions (subscribe/unsubscribe). <SubscriptionCommand>
  */
-- (void)onSubscriptionChanged:(NSArray *)commands;
+- (void)onSubscriptionChangedWithCommands:(NSArray *)commands;
 
 @end
 

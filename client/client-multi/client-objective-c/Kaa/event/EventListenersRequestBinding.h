@@ -20,8 +20,8 @@
 
 @interface EventListenersRequestBinding : NSObject
 
-@property (nonatomic,readonly,strong) EventListenersRequest *request;
-@property (nonatomic,readonly,weak) id<FindEventListenersDelegate> delegate;
+@property (nonatomic, readonly, strong) EventListenersRequest *request;
+@property (nonatomic, readonly, weak) id<FindEventListenersDelegate> delegate;
 @property (nonatomic) BOOL isSent;
 
 - (instancetype)initWithRequest:(EventListenersRequest *)request delegate:(id<FindEventListenersDelegate>)delegate;

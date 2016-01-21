@@ -22,10 +22,10 @@
 
 @interface DefaultBootstrapDataProcessor ()
 
-@property (nonatomic,strong) AvroBytesConverter *requestConverter;
-@property (nonatomic,strong) AvroBytesConverter *responseConverter;
+@property (nonatomic, strong) AvroBytesConverter *requestConverter;
+@property (nonatomic, strong) AvroBytesConverter *responseConverter;
 
-@property (nonatomic,strong) id<BootstrapTransport> transport;
+@property (nonatomic, strong) id<BootstrapTransport> transport;
 
 @end
 
@@ -44,7 +44,7 @@
     self.transport = transport;
 }
 
-- (NSData *)compileRequest:(NSDictionary *)types {
+- (NSData *)compileRequestForTypes:(NSDictionary *)types {
     @synchronized(self) {
         if (!self.transport) {
             DDLogError(@"%@ Unable to compile request: Bootstrap transport is nil", TAG);

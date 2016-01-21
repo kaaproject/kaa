@@ -57,7 +57,7 @@
 }
 
 - (void)processTypes:(NSDictionary *)types {
-    NSData *requestBodyRaw = [[self getMultiplexer] compileRequest:types];
+    NSData *requestBodyRaw = [[self getMultiplexer] compileRequestForTypes:types];
     NSData *decodedResponse = nil;
     @synchronized(self) {
         MessageEncoderDecoder *encoderDecoder = [[self getHttpClient] getEncoderDecoder];

@@ -24,13 +24,13 @@
 @implementation DefaultLogCollector
 
 - (instancetype)initWithTransport:(id<LogTransport>)transport
-         executorContext:(id<ExecutorContext>)executorContext
-          channelManager:(id<KaaChannelManager>)channelManager
-         failoverManager:(id<FailoverManager>)failoverManager {
+                  executorContext:(id<ExecutorContext>)executorContext
+                   channelManager:(id<KaaChannelManager>)channelManager
+                  failoverManager:(id<FailoverManager>)failoverManager {
     self = [super initWithTransport:transport
-           executorContext:executorContext
-            channelManager:channelManager
-           failoverManager:failoverManager];
+                    executorContext:executorContext
+                     channelManager:channelManager
+                    failoverManager:failoverManager];
     return self;
 }
 
@@ -41,7 +41,7 @@
         [[self.executorContext getApiExecutor] addOperationWithBlock:^{
             @try {
                 BucketInfo *bucketInfo = [weakSelf.storage addLogRecord:[[LogRecord alloc] initWithRecord:record]];
-                [self.bucketInfoDictionary setObject:bucketInfo forKey:[NSNumber numberWithInt:bucketInfo.bucketId]];
+                self.bucketInfoDictionary[@(bucketInfo.bucketId)] = bucketInfo;
                 [self addDeliveryRunner:runner bucketInfo:bucketInfo];
             }
             @catch (NSException *exception) {

@@ -18,8 +18,8 @@
 
 @interface KAASocket : NSObject
 
-@property (nonatomic,strong) NSInputStream *input;
-@property (nonatomic,strong) NSOutputStream *output;
+@property (nonatomic, strong) NSInputStream *input;
+@property (nonatomic, strong) NSOutputStream *output;
 
 + (instancetype)socketWithHost:(NSString *)host port:(int)port;
 - (void)open;

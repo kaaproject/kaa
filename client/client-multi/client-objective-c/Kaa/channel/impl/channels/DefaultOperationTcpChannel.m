@@ -38,7 +38,7 @@ typedef enum {
 
 @interface PingTask : NSOperation
 
-@property (nonatomic,weak) DefaultOperationTcpChannel *channel;
+@property (nonatomic, weak) DefaultOperationTcpChannel *channel;
 
 - (instancetype)initWithChannel:(DefaultOperationTcpChannel *)channel;
 
@@ -46,39 +46,39 @@ typedef enum {
 
 @interface OpenConnectionTask : NSOperation
 
-@property (nonatomic,weak) DefaultOperationTcpChannel *channel;
+@property (nonatomic, weak) DefaultOperationTcpChannel *channel;
 @property (nonatomic) int64_t delay;
 
 - (instancetype)initWithChannel:(DefaultOperationTcpChannel *)channel delay:(int64_t)delay; //delay in milliseconds
 
 @end
 
-@interface DefaultOperationTcpChannel () <ConnAckDelegate,PingResponseDelegate,SyncResponseDelegate,DisconnectDelegate,NSStreamDelegate>
+@interface DefaultOperationTcpChannel () <ConnAckDelegate, PingResponseDelegate, SyncResponseDelegate, DisconnectDelegate, NSStreamDelegate>
 
-@property (nonatomic,strong) NSDictionary *supportedTypes; //<TransportType,ChannelDirection> as key-value
-@property (nonatomic,strong) IPTransportInfo *currentServer;
-@property (nonatomic,strong) id<KaaClientState> state;
+@property (nonatomic, strong) NSDictionary *supportedTypes; //<TransportType,ChannelDirection> as key-value
+@property (nonatomic, strong) IPTransportInfo *currentServer;
+@property (nonatomic, strong) id<KaaClientState> state;
 @property (nonatomic) volatile ChannelState channelState;
-@property (nonatomic,strong) id<KaaDataDemultiplexer> demultiplexer;
-@property (nonatomic,strong) id<KaaDataMultiplexer> multiplexer;
-@property (nonatomic,strong) MessageEncoderDecoder *encoderDecoder;
-@property (nonatomic,strong) id<FailoverManager> failoverManager;
-@property (nonatomic,strong) volatile ConnectivityChecker *checker;
-@property (nonatomic,strong) KAAMessageFactory *messageFactory;
-@property (nonatomic,strong) NSOperation *pingTaskFuture;//volatile
+@property (nonatomic, strong) id<KaaDataDemultiplexer> demultiplexer;
+@property (nonatomic, strong) id<KaaDataMultiplexer> multiplexer;
+@property (nonatomic, strong) MessageEncoderDecoder *encoderDecoder;
+@property (nonatomic, strong) id<FailoverManager> failoverManager;
+@property (nonatomic, strong) volatile ConnectivityChecker *checker;
+@property (nonatomic, strong) KAAMessageFactory *messageFactory;
+@property (nonatomic, strong) NSOperation *pingTaskFuture;//volatile
 @property (nonatomic) volatile BOOL isOpenConnectionScheduled;
-@property (nonatomic,strong) NSOperationQueue *executor;
-@property (nonatomic,strong) KAASocket *socket;//volatile
+@property (nonatomic, strong) NSOperationQueue *executor;
+@property (nonatomic, strong) KAASocket *socket;//volatile
 
 - (void)onServerFailed;
 - (void)closeConnection;
 - (void)sendFrame:(KAAMqttFrame *)frame;
 - (void)sendPingRequest;
 - (void)sendDisconnect;
-- (void)sendKaaSyncRequest:(NSDictionary *)types; //<TransportType, ChannelDirection> as key-value
+- (void)sendKaaSyncRequestWithTypes:(NSDictionary *)types; //<TransportType, ChannelDirection> as key-value
 - (void)sendConnect;
 - (void)openConnection;
-- (void)scheduleOpenConnectionTask:(int64_t)retryPeriod;
+- (void)scheduleOpenConnectionTaskWithRetryPeriod:(int64_t)retryPeriod;
 - (void)schedulePingTask;
 - (void)destroyExecutor;
 
@@ -156,7 +156,7 @@ typedef enum {
             self.channelState = CHANNEL_STATE_OPENED;
         }
         
-        [self.failoverManager onServerConnected:self.currentServer];
+        [self.failoverManager onServerConnectedWithConnectionInfo:self.currentServer];
     } else {
         DDLogWarn(@"%@ Result body in nil", TAG);
     }
@@ -190,19 +190,19 @@ typedef enum {
     [self sendFrame:[[KAATcpDisconnect alloc] initWithDisconnectReason:DISCONNECT_REASON_NONE]];
 }
 
-- (void)sendKaaSyncRequest:(NSDictionary *)types {
+- (void)sendKaaSyncRequestWithTypes:(NSDictionary *)types {
     DDLogDebug(@"%@ Sending KaaSync from channel: %@", TAG, [self getId]);
-    NSData *body = [self.multiplexer compileRequest:types];
+    NSData *body = [self.multiplexer compileRequestForTypes:types];
     NSData *requestBodyEncoded = [self.encoderDecoder encodeData:body];
     [self sendFrame:[[KAATcpSyncRequest alloc] initWithAvro:requestBodyEncoded zipped:NO encypted:YES]];
 }
 
 - (void)sendConnect {
     DDLogDebug(@"%@ Sending Connect from channel: %@", TAG, [self getId]);
-    NSData *body = [self.multiplexer compileRequest:[self getSupportedTransportTypes]];
+    NSData *body = [self.multiplexer compileRequestForTypes:[self getSupportedTransportTypes]];
     NSData *requestBodyEncoded = [self.encoderDecoder encodeData:body];
     NSData *sessionKey = [self.encoderDecoder getEncodedSessionKey];
-    NSData *signature = [self.encoderDecoder sign:sessionKey];
+    NSData *signature = [self.encoderDecoder signatureForMessage:sessionKey];
     [self sendFrame:[[KAATcpConnect alloc] initWithAlivePeriod:CHANNEL_TIMEOUT
                                                  nextProtocolId:KAA_PLATFORM_PROTOCOL_AVRO_ID
                                                   aesSessionKey:sessionKey
@@ -321,7 +321,7 @@ typedef enum {
     [self closeConnection];
     if (self.checker && ![self.checker isConnected]) {
         DDLogWarn(@"%@ Loss of connectivity detected", TAG);
-        FailoverDecision *decision = [self.failoverManager onFailover:FAILOVER_STATUS_NO_CONNECTIVITY];
+        FailoverDecision *decision = [self.failoverManager decisionOnFailoverStatus:FAILOVER_STATUS_NO_CONNECTIVITY];
         switch (decision.failoverAction) {
             case FAILOVER_ACTION_NOOP:
                 DDLogWarn(@"%@ No operation is performed according to failover strategy decision", TAG);
@@ -330,7 +330,7 @@ typedef enum {
             {
                 int64_t retryPeriod = decision.retryPeriod;
                 DDLogWarn(@"%@ Attempt to reconnect will be made in %lli ms according to failover strategy decision", TAG, retryPeriod);
-                [self scheduleOpenConnectionTask:retryPeriod];
+                [self scheduleOpenConnectionTaskWithRetryPeriod:retryPeriod];
             }
                 break;
             case FAILOVER_ACTION_STOP_APP:
@@ -343,11 +343,11 @@ typedef enum {
                 DDLogWarn(@"%@ Failover actions NEXT_BOOTSTRAP & NEXT_OPERATIONS not supported yet!", TAG);
         }
     } else {
-        [self.failoverManager onServerFailed:self.currentServer];
+        [self.failoverManager onServerFailedWithConnectionInfo:self.currentServer];
     }
 }
 
-- (void)scheduleOpenConnectionTask:(int64_t)retryPeriod {
+- (void)scheduleOpenConnectionTaskWithRetryPeriod:(int64_t)retryPeriod {
     @synchronized(self) {
         if (!self.isOpenConnectionScheduled) {
             if (self.executor) {
@@ -430,7 +430,7 @@ typedef enum {
         }
         
         @try {
-            [self sendKaaSyncRequest:typeMap];
+            [self sendKaaSyncRequestWithTypes:typeMap];
         }
         @catch (NSException *ex) {
             DDLogError(@"%@ Failed to sync channel %@: %@, reason: %@", TAG, [self getId], ex.name, ex.reason);
@@ -462,7 +462,7 @@ typedef enum {
         }
         DDLogInfo(@"%@ Processing sync all for channel [%@]", TAG, [self getId]);
         @try {
-            [self sendKaaSyncRequest:[self getSupportedTransportTypes]];
+            [self sendKaaSyncRequestWithTypes:[self getSupportedTransportTypes]];
         }
         @catch (NSException *ex) {
             DDLogError(@"%@ Failed to sync channel %@: %@, reason: %@", TAG, [self getId], ex.name, ex.reason);
@@ -481,7 +481,7 @@ typedef enum {
         if (self.channelState != CHANNEL_STATE_OPENED) {
             DDLogInfo(@"%@ First KaaSync message received and processed for channel [%@]", TAG, [self getId]);
             self.channelState = CHANNEL_STATE_OPENED;
-            [self.failoverManager onServerConnected:self.currentServer];
+            [self.failoverManager onServerConnectedWithConnectionInfo:self.currentServer];
             DDLogDebug(@"%@ There are pending requests for channel [%@] -> starting sync", TAG, [self getId]);
             [self syncAll];
         } else {
@@ -515,7 +515,7 @@ typedef enum {
     [self setServer:server withKeyPair:nil];
 }
 
-- (void)setServer:(id<TransportConnectionInfo>)server withKeyPair:(KeyPair *) sendedKeyPair {
+- (void)setServer:(id<TransportConnectionInfo>)server withKeyPair:(KeyPair *)sentKeyPair {
     @synchronized(self) {
         if (!server) {
             DDLogWarn(@"%@ Server is nil for channel [%@]", TAG, [self getId]);
@@ -529,8 +529,8 @@ typedef enum {
         IPTransportInfo *oldServer = self.currentServer;
         self.currentServer = [[IPTransportInfo alloc] initWithTransportInfo:server];
         KeyPair *keyPair;
-        if (sendedKeyPair) {
-            keyPair = sendedKeyPair;
+        if (sentKeyPair) {
+            keyPair = sentKeyPair;
         } else {
             keyPair = [[KeyPair alloc] initWithPrivateKeyRef:[self.state privateKey] publicKeyRef:[self.state publicKey]];
         }
@@ -546,7 +546,7 @@ typedef enum {
                 DDLogInfo(@"%@ New server's: %@ host or ip is different from the old %@, reconnecting",
                           TAG, oldServer, self.currentServer);
                 [self closeConnection];
-                [self scheduleOpenConnectionTask:0];
+                [self scheduleOpenConnectionTaskWithRetryPeriod:0];
             }
         } else {
             DDLogInfo(@"%@ Can't start new session. Channel [%@] is paused", TAG, [self getId]);
@@ -590,7 +590,7 @@ typedef enum {
             if (!self.executor) {
                 self.executor = [self createExecutor];
             }
-            [self scheduleOpenConnectionTask:0];
+            [self scheduleOpenConnectionTaskWithRetryPeriod:0];
         }
     }
 }

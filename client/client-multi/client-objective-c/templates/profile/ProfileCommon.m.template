@@ -29,7 +29,7 @@
     return self;
 }
 
-- (NSData *)toBytes:(id<ProfileContainer>)container {
+- (NSData *)serializeContainer:(id<ProfileContainer>)container {
     ${profile_class} *profile = nil;
     if (container) {
         profile = [container getProfile];

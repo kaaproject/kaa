@@ -243,7 +243,7 @@
 
 - (void)connectionEstablished {
     self.lastConnectionFailed = NO;
-    [self.failoverMgr onServerConnected:self.currentServer];
+    [self.failoverMgr onServerConnectedWithConnectionInfo:self.currentServer];
 }
 
 - (void)connectionFailedWithStatus:(int)status {
@@ -255,7 +255,7 @@
             break;
     }
     self.lastConnectionFailed = YES;
-    [self.failoverMgr onServerFailed:self.currentServer];
+    [self.failoverMgr onServerFailedWithConnectionInfo:self.currentServer];
 }
 
 - (id<KaaDataMultiplexer>)getMultiplexer {

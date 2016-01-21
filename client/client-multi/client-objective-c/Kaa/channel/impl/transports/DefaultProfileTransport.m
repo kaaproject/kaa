@@ -38,7 +38,7 @@
 - (ProfileSyncRequest *)createProfileRequest {
     if (self.clientState && self.profileMgr && self.properties) {
         NSData *serializedProfile = [self.profileMgr getSerializedProfile];
-        EndpointObjectHash *currentProfileHash = [EndpointObjectHash fromSHA1:serializedProfile];
+        EndpointObjectHash *currentProfileHash = [EndpointObjectHash hashWithSHA1:serializedProfile];
         if ([self isProfileOutdated:currentProfileHash] || ![self.clientState isRegistred]) {
             [self.clientState setProfileHash:currentProfileHash];
             ProfileSyncRequest *request = [[ProfileSyncRequest alloc] init];

@@ -55,7 +55,7 @@
  * @param accessToken - access token of the attaching endpoint
  * @param delegate - delegate to notify about result of the endpoint attaching
  */
-- (void)attachEndpoint:(EndpointAccessToken *)accessToken delegate:(id<OnAttachEndpointOperationDelegate>)delegate;
+- (void)attachEndpointWithAccessToken:(EndpointAccessToken *)accessToken delegate:(id<OnAttachEndpointOperationDelegate>)delegate;
 
 /**
  * Updates with new endpoint detach request
@@ -63,21 +63,21 @@
  * @param endpointKeyHash - key hash of the detaching endpoint
  * @param delegate - delegate to notify about result of the enpoint detaching
  */
-- (void)detachEndpoint:(EndpointKeyHash *)keyHash delegate:(id<OnDetachEndpointOperationDelegate>)delegate;
+- (void)detachEndpointWithKeyHash:(EndpointKeyHash *)keyHash delegate:(id<OnDetachEndpointOperationDelegate>)delegate;
 
 /**
  * Creates user attach request using default verifier. Default verifier is selected during SDK generation.
  * If there was no default verifier selected this method will throw runtime exception.
  */
-- (void)attachUser:(NSString *)userExternalId userAccessToken:(NSString *)token delegate:(id<UserAttachDelegate>)delegate;
+- (void)attachUserWithId:(NSString *)userExternalId userAccessToken:(NSString *)token delegate:(id<UserAttachDelegate>)delegate;
 
 /**
  * Creates user attach request using specified verifier.
  */
-- (void)attachUser:(NSString *)userVerifierToken
-    userExternalId:(NSString *)externalId
-   userAccessToken:(NSString *)token
-          delegate:(id<UserAttachDelegate>)delegate;
+- (void)attachUserWithVerifierToken:(NSString *)userVerifierToken
+                     userExternalId:(NSString *)externalId
+                    userAccessToken:(NSString *)token
+                           delegate:(id<UserAttachDelegate>)delegate;
 
 /**
  * Checks if current endpoint is attached to user.
@@ -89,12 +89,12 @@
 /**
  * Sets delegate for notifications when current endpoint is attached to user
  */
-- (void)setAttachedDelegate:(id<AttachEndpointToUserDelegate>)delegate;
+- (void)setAttachDelegate:(id<AttachEndpointToUserDelegate>)delegate;
 
 /**
  * Sets delegaet for notifications when current endpoint is detached from user
  */
-- (void)setDetachedDelegate:(id<DetachEndpointFromUserDelegate>)delegate;
+- (void)setDetachDelegate:(id<DetachEndpointFromUserDelegate>)delegate;
 
 @end
 

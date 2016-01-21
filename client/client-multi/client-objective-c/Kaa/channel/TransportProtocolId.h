@@ -18,8 +18,8 @@
 
 @interface TransportProtocolId : NSObject <NSCopying>
 
-@property(nonatomic,readonly) int protocolId;
-@property(nonatomic,readonly) int protocolVersion;
+@property(nonatomic, readonly) int protocolId;
+@property(nonatomic, readonly) int protocolVersion;
 
 - (instancetype)initWithId:(int)id version:(int)version;
 

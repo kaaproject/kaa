@@ -66,12 +66,12 @@
 /**
  * Sign message using private key.
  */
-- (NSData *)sign:(NSData *)message;
+- (NSData *)signatureForMessage:(NSData *)message;
 
 /**
  * Verify message using signature and remote public key.
  */
-- (BOOL)verify:(NSData *)message withSignature:(NSData *)signature;
+- (BOOL)verifyMessage:(NSData *)message withSignature:(NSData *)signature;
 
 - (void)setRemotePublicKey:(NSData *)remotePublicKey;
 - (void)setRemotePublicKeyRef:(SecKeyRef)remotePublicKeyRef;

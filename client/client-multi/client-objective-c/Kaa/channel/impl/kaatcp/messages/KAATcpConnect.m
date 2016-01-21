@@ -22,13 +22,13 @@
 
 @interface KAATcpConnect ()
 
-- (void)packVeriableHeader;
+- (void)packVariableHeader;
 
-- (void)decodeSyncRequest:(NSInputStream *)input;
-- (void)decodeSignature:(NSInputStream *)input;
-- (void)decodeSessionKey:(NSInputStream *)input;
-- (void)decodeVariableHeader:(NSInputStream *)input;
-- (void)decodeKeepAlive:(NSInputStream *)input;
+- (void)decodeSyncRequestFromInput:(NSInputStream *)input;
+- (void)decodeSignatureFromInput:(NSInputStream *)input;
+- (void)decodeSessionKeyFromInput:(NSInputStream *)input;
+- (void)decodeVariableHeaderFromInput:(NSInputStream *)input;
+- (void)decodeKeepAliveFromInput:(NSInputStream *)input;
 
 @end
 
@@ -74,7 +74,7 @@ static const char FIXED_HEADER_CONST[] = {0x00,0x06,'K','a','a','t','c','p',CONN
 }
 
 - (void)pack {
-    [self packVeriableHeader];
+    [self packVariableHeader];
     if (self.aesSessionKey) {
         [self.buffer appendData:self.aesSessionKey];
         self.bufferPosition += self.aesSessionKey.length;
@@ -107,7 +107,7 @@ static const char FIXED_HEADER_CONST[] = {0x00,0x06,'K','a','a','t','c','p',CONN
     NSInputStream *input = [self remainingStream];
     [input open];
     
-    [self decodeVariableHeader:input];
+    [self decodeVariableHeaderFromInput:input];
     
     uint8_t protocolId[4];
     [input read:protocolId maxLength:sizeof(protocolId)];
@@ -124,24 +124,24 @@ static const char FIXED_HEADER_CONST[] = {0x00,0x06,'K','a','a','t','c','p',CONN
     _hasSignature = (*(char *)sign) != 0;
     self.bufferPosition += sizeof(sign);
     
-    [self decodeKeepAlive:input];
+    [self decodeKeepAliveFromInput:input];
     
     if (_isEncrypted) {
-        [self decodeSessionKey:input];
+        [self decodeSessionKeyFromInput:input];
     }
     if (_hasSignature) {
-        [self decodeSignature:input];
+        [self decodeSignatureFromInput:input];
     }
-    [self decodeSyncRequest:input];
+    [self decodeSyncRequestFromInput:input];
     
     [input close];
 }
 
-- (BOOL)isNeedCloseConnection {
+- (BOOL)needToCloseConnection {
     return NO;
 }
 
-- (void)decodeSyncRequest:(NSInputStream *)input {
+- (void)decodeSyncRequestFromInput:(NSInputStream *)input {
     int syncRequestSize = self.buffer.length - self.bufferPosition;
     if (syncRequestSize > 0) {
         uint8_t data[syncRequestSize];
@@ -151,21 +151,21 @@ static const char FIXED_HEADER_CONST[] = {0x00,0x06,'K','a','a','t','c','p',CONN
     }
 }
 
-- (void)decodeSignature:(NSInputStream *)input {
+- (void)decodeSignatureFromInput:(NSInputStream *)input {
     uint8_t signature[CONNECT_SIGNATURE_LENGTH];
     [input read:signature maxLength:sizeof(signature)];
     self.bufferPosition += CONNECT_SIGNATURE_LENGTH;
     self.signature = [NSData dataWithBytes:signature length:CONNECT_SIGNATURE_LENGTH];
 }
 
-- (void)decodeSessionKey:(NSInputStream *)input {
+- (void)decodeSessionKeyFromInput:(NSInputStream *)input {
     uint8_t key[CONNECT_AES_SESSION_KEY_LENGTH];
     [input read:key maxLength:sizeof(key)];
     self.bufferPosition += CONNECT_AES_SESSION_KEY_LENGTH;
     self.aesSessionKey = [NSData dataWithBytes:key length:CONNECT_AES_SESSION_KEY_LENGTH];
 }
 
-- (void)decodeVariableHeader:(NSInputStream *)input {
+- (void)decodeVariableHeaderFromInput:(NSInputStream *)input {
     int headerSize = sizeof(FIXED_HEADER_CONST);
     uint8_t header[headerSize];
     [input read:header maxLength:headerSize];
@@ -177,14 +177,14 @@ static const char FIXED_HEADER_CONST[] = {0x00,0x06,'K','a','a','t','c','p',CONN
     }
 }
 
-- (void)decodeKeepAlive:(NSInputStream *)input {
+- (void)decodeKeepAliveFromInput:(NSInputStream *)input {
     uint8_t keepAliveBytes[2];
     [input read:keepAliveBytes maxLength:sizeof(keepAliveBytes)];
     self.bufferPosition += sizeof(keepAliveBytes);
     self.keepAlive = ntohs(*(uint16_t *)keepAliveBytes);
 }
 
-- (void)packVeriableHeader {
+- (void)packVariableHeader {
     [self.buffer appendBytes:FIXED_HEADER_CONST length:sizeof(FIXED_HEADER_CONST)];
     self.bufferPosition += sizeof(FIXED_HEADER_CONST);
     

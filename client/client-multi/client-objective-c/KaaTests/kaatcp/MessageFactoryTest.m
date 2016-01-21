@@ -37,13 +37,13 @@
 @property (nonatomic, strong) NSData *sessionKey;
 @property (nonatomic, strong) NSData *payload;
 
-@property (nonatomic,strong) KeyPair *clientPair;
-@property (nonatomic,strong) NSData *clientPrivateTag;
-@property (nonatomic,strong) NSData *clientPublicTag;
+@property (nonatomic, strong) KeyPair *clientPair;
+@property (nonatomic, strong) NSData *clientPrivateTag;
+@property (nonatomic, strong) NSData *clientPublicTag;
 
-@property (nonatomic,strong) KeyPair *serverPair;
-@property (nonatomic,strong) NSData *serverPrivateTag;
-@property (nonatomic,strong) NSData *serverPublicTag;
+@property (nonatomic, strong) KeyPair *serverPair;
+@property (nonatomic, strong) NSData *serverPrivateTag;
+@property (nonatomic, strong) NSData *serverPublicTag;
 
 /**
  * Since there is only one delegate who several tests flag below is used to determine whether data is encypted or not.
@@ -162,7 +162,7 @@
                                                             remotePublicKeyRef:[self.serverPair getPublicKeyRef]];
     self.payload = [crypt encodeData:[self getRawData]];
     self.sessionKey = [crypt getEncodedSessionKey];
-    self.signature = [crypt sign:self.sessionKey];
+    self.signature = [crypt signatureForMessage:self.sessionKey];
     
     char connectHeader[] = {0x10, 0xC2, 0x04, 0x00, 0x06, 'K', 'a', 'a', 't', 'c', 'p', 0x01, 0x02, 0xf2, 0x91,  0xf2, 0xd4, 0x11, 0x01, 0x00, 0xC8};
     
@@ -387,7 +387,7 @@
     AvroBytesConverter *requestConverter = [[AvroBytesConverter alloc] init];
     SyncRequest *request = [[SyncRequest alloc] init];
     
-    EndpointObjectHash *publicKeyHash = [EndpointObjectHash fromSHA1:[KeyUtils getPublicKeyByTag:self.clientPublicTag]];
+    EndpointObjectHash *publicKeyHash = [EndpointObjectHash hashWithSHA1:[KeyUtils getPublicKeyByTag:self.clientPublicTag]];
     
     request.requestId = 42;
     SyncRequestMetaData *md = [[SyncRequestMetaData alloc] init];

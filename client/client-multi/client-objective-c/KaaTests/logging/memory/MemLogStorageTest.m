@@ -121,7 +121,7 @@
     }
     
     LogBucket *group1 = [storage getNextBucket];
-    [storage rollbackBucket:[group1 bucketId]];
+    [storage rollbackBucketWithId:[group1 bucketId]];
     LogBucket *group2 = [storage getNextBucket];
     
     XCTAssertTrue([[group1 logRecords] count] == [[group2 logRecords] count]);
@@ -156,11 +156,11 @@
     LogBucket *removingBucket = [storage getNextBucket];
     
     insertionCount -= [[removingBucket logRecords] count];
-    [storage removeBucket:[removingBucket bucketId]];
+    [storage removeBucketWithId:[removingBucket bucketId]];
     removingBucket = [storage getNextBucket];
     
     insertionCount -= [[removingBucket logRecords] count];
-    [storage removeBucket:[removingBucket bucketId]];
+    [storage removeBucketWithId:[removingBucket bucketId]];
     
     LogBucket *leftBucket = [storage getNextBucket];
     XCTAssertTrue([[leftBucket logRecords] count] == insertionCount);
@@ -190,8 +190,8 @@
     LogBucket *removingBucket3 = [storage getNextBucket];
     insertionCount -= [[removingBucket3 logRecords] count];
     
-    [storage removeBucket:[removingBucket2 bucketId]];
-    [storage rollbackBucket:[removingBucket1 bucketId]];
+    [storage removeBucketWithId:[removingBucket2 bucketId]];
+    [storage rollbackBucketWithId:[removingBucket1 bucketId]];
     insertionCount += [[removingBucket1 logRecords] count];
     
     LogBucket *leftBucket1 = [storage getNextBucket];
@@ -222,21 +222,21 @@
     }
     
     LogBucket *logBucket = [storage getNextBucket];
-    receivedCount = [self addIfNotEmpty:receivedCount :logBucket];
+    receivedCount = [self addRecordCountIfNotEmpty:receivedCount toLogBucket:logBucket];
     XCTAssertEqual(insertionCount - receivedCount, [[storage getStatus] getRecordCount]);
     XCTAssertEqual((insertionCount - receivedCount) * 3, [[storage getStatus] getConsumedVolume]);
     
     logBucket = [storage getNextBucket];
-    receivedCount = [self addIfNotEmpty:receivedCount :logBucket];
+    receivedCount = [self addRecordCountIfNotEmpty:receivedCount toLogBucket:logBucket];
     XCTAssertEqual(insertionCount - receivedCount, [[storage getStatus] getRecordCount]);
     XCTAssertEqual((insertionCount - receivedCount) * 3, [[storage getStatus] getConsumedVolume]);
     
     logBucket = [storage getNextBucket];
-    receivedCount = [self addIfNotEmpty:receivedCount :logBucket];
+    receivedCount = [self addRecordCountIfNotEmpty:receivedCount toLogBucket:logBucket];
     XCTAssertEqual(insertionCount - receivedCount, [[storage getStatus] getRecordCount]);
     XCTAssertEqual((insertionCount - receivedCount) * 3, [[storage getStatus] getConsumedVolume]);
     
-    [storage rollbackBucket:[logBucket bucketId]];
+    [storage rollbackBucketWithId:[logBucket bucketId]];
     receivedCount -= [[logBucket logRecords] count];
     XCTAssertEqual(insertionCount - receivedCount, [[storage getStatus] getRecordCount]);
     XCTAssertEqual((insertionCount - receivedCount) * 3, [[storage getStatus] getConsumedVolume]);
@@ -271,7 +271,7 @@
     [storage close];
 }
 
-- (int32_t)addIfNotEmpty:(int32_t)count :(LogBucket *)logBucket {
+- (int32_t)addRecordCountIfNotEmpty:(int32_t)count toLogBucket:(LogBucket *)logBucket {
     if (logBucket && [[logBucket logRecords] count] > 0) {
         count += [[logBucket logRecords] count];
     }

@@ -30,8 +30,8 @@
 - (instancetype)initWithManager:(id<EventManager>)manager executorContext:(id<ExecutorContext>)context;
 
 - (TransactionId *)startEventsBlock;
-- (void)submitEventsBlock:(TransactionId *)trxId;
-- (void)removeEventsBlock:(TransactionId *)trxId;
+- (void)submitEventsBlockWithTransactionId:(TransactionId *)trxId;
+- (void)removeEventsBlockWithTransactionId:(TransactionId *)trxId;
 
 {event_family_factory_methods}
 

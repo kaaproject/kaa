@@ -27,8 +27,8 @@
 @property (nonatomic, strong) NSMutableArray *sentNotificationCommands;      //<SubscriptionCommand>
 
 - (NSArray *)getTopicStates;
-- (NSArray *)getUnicastNotifications:(NSArray *)notifications;
-- (NSArray *)getMulticastNotifications:(NSArray *)notifications;
+- (NSArray *)getUnicastNotificationsFromNotifications:(NSArray *)notifications;
+- (NSArray *)getMulticastNotificationsFromNotifications:(NSArray *)notifications;
 
 @end
 
@@ -105,8 +105,8 @@
         NSArray *notifications = response.notifications.data;
         NSMutableArray *newNotifications = [NSMutableArray array];
         
-        NSArray *unicastNotifications = [self getUnicastNotifications:notifications];
-        NSArray *multicastNotifications = [self getMulticastNotifications:notifications];
+        NSArray *unicastNotifications = [self getUnicastNotificationsFromNotifications:notifications];
+        NSArray *multicastNotifications = [self getMulticastNotificationsFromNotifications:notifications];
         
         for (Notification *notification in unicastNotifications) {
             DDLogInfo(@"%@ Received unicast: %@", TAG, notification);
@@ -129,14 +129,14 @@
                 continue;
             }
             NSNumber *seqNumber = notification.seqNumber.data;
-            if ([self.clientState updateTopicSubscriptionInfo:notification.topicId sequence:[seqNumber intValue]]) {
+            if ([self.clientState updateSubscriptionInfoForTopicId:notification.topicId sequence:[seqNumber intValue]]) {
                 [newNotifications addObject:notification];
             } else {
                 DDLogInfo(@"%@ Notification with seq number [%i] was already received", TAG, [seqNumber intValue]);
             }
         }
         
-        [self.notificationProcessor notificationReceived:newNotifications];
+        [self.notificationProcessor notificationsReceived:newNotifications];
     }
     
     @synchronized(self.sentNotificationCommands) {
@@ -149,7 +149,7 @@
     DDLogInfo(@"%@ Processed notification response", TAG);
 }
 
-- (void)onSubscriptionChanged:(NSArray *)commands {
+- (void)onSubscriptionChangedWithCommands:(NSArray *)commands {
     @synchronized(self.sentNotificationCommands) {
         [self.sentNotificationCommands addObjectsFromArray:commands];
     }
@@ -163,7 +163,7 @@
     return TRANSPORT_TYPE_NOTIFICATION;
 }
 
-- (NSArray *)getUnicastNotifications:(NSArray *)notifications {
+- (NSArray *)getUnicastNotificationsFromNotifications:(NSArray *)notifications {
     NSMutableArray *result = [NSMutableArray array];
     for (Notification *notification in notifications) {
         if (notification.uid && notification.uid.branch == KAA_UNION_STRING_OR_NULL_BRANCH_0) {
@@ -173,7 +173,7 @@
     return result;
 }
 
-- (NSArray *)getMulticastNotifications:(NSArray *)notifications {
+- (NSArray *)getMulticastNotificationsFromNotifications:(NSArray *)notifications {
     NSMutableArray *result = [NSMutableArray array];
     for (Notification *notification in notifications) {
         if (!notification.uid || notification.uid.branch == KAA_UNION_STRING_OR_NULL_BRANCH_1) {

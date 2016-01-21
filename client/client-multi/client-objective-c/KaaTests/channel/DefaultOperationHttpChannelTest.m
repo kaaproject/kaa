@@ -120,7 +120,7 @@ static NSDictionary *SUPPORTED_TYPES;
     [channel syncForTransportType:TRANSPORT_TYPE_EVENT];
     
     [NSThread sleepForTimeInterval:1];
-    [verifyCount([channel getMultiplexer], times(channel.wantedNumberOfInvocations)) compileRequest:anything()];
+    [verifyCount([channel getMultiplexer], times(channel.wantedNumberOfInvocations)) compileRequestForTypes:anything()];
     [verifyCount([channel getDemultiplexer], times(channel.wantedNumberOfInvocations)) processResponse:anything()];
 }
 
@@ -156,7 +156,7 @@ static NSDictionary *SUPPORTED_TYPES;
 
     [NSThread sleepForTimeInterval:1];
     [verifyCount([channel getDemultiplexer], times(channel.wantedNumberOfInvocations)) processResponse:data];
-    [verifyCount([channel getMultiplexer], times(channel.wantedNumberOfInvocations)) compileRequest:anything()];
+    [verifyCount([channel getMultiplexer], times(channel.wantedNumberOfInvocations)) compileRequestForTypes:anything()];
 }
 
 

@@ -28,10 +28,10 @@
 /**
  * Avro-encoded log record.
  */
-@property(nonatomic,strong,readonly) NSData *data;
+@property(nonatomic, strong, readonly) NSData *data;
 
 - (instancetype)initWithRecord:(${log_record_class} *)record;
 - (instancetype)initWithData:(NSData *)data;
-- (NSUInteger)getSize;
+- (int64_t)getSize;
 
 @end

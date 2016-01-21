@@ -21,10 +21,10 @@
 
 @interface DefaultEventTransport ()
 
-@property (nonatomic,strong) NSMutableDictionary *pendingEvents;    //<NSNumber(int), NSMutableSet<Event>> as key-value
-@property (copy) NSComparisonResult (^eventSequenceNumberComparator)(Event *first, Event *second);
-@property (nonatomic,strong) id<KaaClientState> kaaClientState;
-@property (nonatomic,strong) id<EventManager> kaaEventManager;
+@property (nonatomic, strong) NSMutableDictionary *pendingEvents;    //<NSNumber(int), NSMutableSet<Event>> as key-value
+@property (nonatomic, copy) NSComparisonResult (^eventSequenceNumberComparator)(Event *first, Event *second);
+@property (nonatomic, strong) id<KaaClientState> kaaClientState;
+@property (nonatomic, strong) id<EventManager> kaaEventManager;
 
 @property (nonatomic) BOOL isEventSequenceNumberSynchronized;
 @property (atomic) int startEventSequenceNumber;
@@ -47,7 +47,7 @@
     return self;
 }
 
-- (EventSyncRequest *)createEventRequest:(int32_t)requestId {
+- (EventSyncRequest *)createEventRequestWithId:(int32_t)requestId {
     if (!self.kaaEventManager) {
         DDLogError(@"%@ Can't create EventSyncRequest because event manager is nil", TAG);
         return nil;

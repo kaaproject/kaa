@@ -30,7 +30,7 @@ typedef enum {
 
 @interface BucketRunner ()
 
-@property (nonatomic,strong) BlockingQueue *queue;
+@property (nonatomic, strong) BlockingQueue *queue;
 @property (nonatomic) volatile BucketRunnberTaskState state;
 @property (nonatomic) double executionStartTimestamp;
 

@@ -21,7 +21,7 @@
 
 @interface KaaClientPropertiesStateTest : XCTestCase
 
-@property (nonatomic,strong) id<KaaClientState> state;
+@property (nonatomic, strong) id<KaaClientState> state;
 
 @end
 
@@ -42,7 +42,7 @@
 
 - (void)testProfileHash {
     NSData *hashEntry = [@"testProfileHash" dataUsingEncoding:NSUTF8StringEncoding];
-    EndpointObjectHash *hash = [EndpointObjectHash fromSHA1:hashEntry];
+    EndpointObjectHash *hash = [EndpointObjectHash hashWithSHA1:hashEntry];
     [self.state setProfileHash:hash];
     XCTAssertTrue([hash isEqual:[self.state profileHash]]);
 }
@@ -61,11 +61,11 @@
     [self.state addTopic:topic1];
     [self.state addTopic:topic2];
     
-    [self.state updateTopicSubscriptionInfo:topic2.id sequence:1];
+    [self.state updateSubscriptionInfoForTopicId:topic2.id sequence:1];
     
-    [self.state updateTopicSubscriptionInfo:topic1.id sequence:0];
-    [self.state updateTopicSubscriptionInfo:topic1.id sequence:5];
-    [self.state updateTopicSubscriptionInfo:topic1.id sequence:1];
+    [self.state updateSubscriptionInfoForTopicId:topic1.id sequence:0];
+    [self.state updateSubscriptionInfoForTopicId:topic1.id sequence:5];
+    [self.state updateSubscriptionInfoForTopicId:topic1.id sequence:1];
     
     NSMutableDictionary *expected = [NSMutableDictionary dictionary];
     expected[topic1.id] = @(5);
@@ -78,7 +78,7 @@
     
     XCTAssertTrue([expected isEqualToDictionary:[self.state getNotificationSubscriptions]]);
 
-    [self.state removeTopic:topic1.id];
+    [self.state removeTopicId:topic1.id];
     [self.state persist];
     
     self.state = [[KaaClientPropertiesState alloc] initWithBase64:[CommonBase64 new] clientProperties:[TestsHelper getProperties]];

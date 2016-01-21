@@ -49,17 +49,17 @@
     return self;
 }
 
-- (LogUploadStrategyDecision)isUploadNeeded:(id<LogStorageStatus>)status {
+- (LogUploadStrategyDecision)isUploadNeededForStorageStatus:(id<LogStorageStatus>)status {
     LogUploadStrategyDecision decision;
     if (!self.isUploadLocked) {
-        decision = [self checkUploadNeeded:status];
+        decision = [self checkUploadNeededForStorageStatus:status];
     } else {
         decision = LOG_UPLOAD_STRATEGY_DECISION_NOOP;
     }
     return decision;
 }
 
-- (LogUploadStrategyDecision)checkUploadNeeded:(id<LogStorageStatus>)status {
+- (LogUploadStrategyDecision)checkUploadNeededForStorageStatus:(id<LogStorageStatus>)status {
     LogUploadStrategyDecision decision = LOG_UPLOAD_STRATEGY_DECISION_NOOP;
     if ([status getConsumedVolume] >= self.volumeThreshold) {
         DDLogInfo(@"%@ Need to upload logs - current size: %lli, threshold: %i",
@@ -93,11 +93,11 @@
     return _maxParallelUploads;
 }
 
-- (void)onTimeout:(id<LogFailoverCommand>)controller {
+- (void)onTimeoutForController:(id<LogFailoverCommand>)controller {
     [controller switchAccessPoint];
 }
 
-- (void)onFailure:(id<LogFailoverCommand>)controller errorCode:(LogDeliveryErrorCode)code {
+- (void)onFailureForController:(id<LogFailoverCommand>)controller errorCode:(LogDeliveryErrorCode)code {
     switch (code) {
         case LOG_DELIVERY_ERROR_CODE_NO_APPENDERS_CONFIGURED:
         case LOG_DELIVERY_ERROR_CODE_APPENDER_INTERNAL_ERROR:

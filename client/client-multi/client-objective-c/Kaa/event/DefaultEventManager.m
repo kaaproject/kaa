@@ -24,30 +24,30 @@
 
 @interface DefaultEventManager ()
 
-@property (nonatomic,strong) id<KaaClientState> state;;
-@property (nonatomic,strong) id<ExecutorContext> executorContext;
-@property (nonatomic,strong) id<EventTransport> transport;
+@property (nonatomic, strong) id<KaaClientState> state;;
+@property (nonatomic, strong) id<ExecutorContext> executorContext;
+@property (nonatomic, strong) id<EventTransport> transport;
 
-@property (nonatomic,strong) NSMutableSet *registeredEventFamilies;         //<BaseEventFamily>
-@property (nonatomic,strong) NSMutableArray *currentEvents;                 //<Event>
-@property (nonatomic,strong) NSMutableDictionary *eventListenersRequests;   //<NSNumber, EventListenersRequestBinding>
-@property (nonatomic,strong) NSMutableDictionary *transactions;             //<TransactionId, NSArray<Event>>
+@property (nonatomic, strong) NSMutableSet *registeredEventFamilies;         //<BaseEventFamily>
+@property (nonatomic, strong) NSMutableArray *currentEvents;                 //<Event>
+@property (nonatomic, strong) NSMutableDictionary *eventListenersRequests;   //<NSNumber, EventListenersRequestBinding>
+@property (nonatomic, strong) NSMutableDictionary *transactions;             //<TransactionId, NSArray<Event>>
 
 @property (nonatomic) BOOL isEngaged;
 @property (nonatomic) int requestId;
 
-@property (nonatomic,strong) NSObject *eventGuard;
-@property (nonatomic,strong) NSObject *transactionsGuard;
+@property (nonatomic, strong) NSObject *eventGuard;
+@property (nonatomic, strong) NSObject *transactionsGuard;
 
-- (NSMutableArray *)getPendingEvents:(BOOL)clear;
+- (NSMutableArray *)getAndClearPendingEvents:(BOOL)clear;
 
 @end
 
 @implementation DefaultEventManager
 
 - (instancetype)initWithState:(id<KaaClientState>)state
-         executorContext:(id<ExecutorContext>)executorContext
-          eventTransport:(id<EventTransport>)transport {
+              executorContext:(id<ExecutorContext>)executorContext
+               eventTransport:(id<EventTransport>)transport {
     self = [super init];
     if (self) {
         self.state = state;
@@ -88,11 +88,11 @@
     }
 }
 
-- (void)produceEvent:(NSString *)eventFQN data:(NSData *)data target:(NSString *)target {
-    [self produceEvent:eventFQN data:data target:target transactionId:nil];
+- (void)produceEventWithFQN:(NSString *)eventFQN data:(NSData *)data target:(NSString *)target {
+    [self produceEventWithFQN:eventFQN data:data target:target transactionId:nil];
 }
 
-- (void)produceEvent:(NSString *)eventFQN data:(NSData *)data target:(NSString *)target transactionId:(TransactionId *)transactionId {
+- (void)produceEventWithFQN:(NSString *)eventFQN data:(NSData *)data target:(NSString *)target transactionId:(TransactionId *)transactionId {
     if (transactionId) {
         DDLogInfo(@"%@ Adding event [eventClassFQN: %@, target: %@] to transaction %@", TAG, eventFQN, (target ? target : @"broadcast"), transactionId);
         @synchronized(self.transactionsGuard) {
@@ -146,7 +146,7 @@
     }
 }
 
-- (int32_t)findEventListeners:(NSArray *)eventFQNs delegate:(id<FindEventListenersDelegate>)delegate {
+- (int32_t)requestListenersForEventFQNs:(NSArray *)eventFQNs delegate:(id<FindEventListenersDelegate>)delegate {
     int32_t requestId = self.requestId++;
     EventListenersRequest *request = [[EventListenersRequest alloc] init];
     request.requestId = requestId;
@@ -178,14 +178,14 @@
 }
 
 - (NSArray *)pollPendingEvents {
-    return [self getPendingEvents:YES];
+    return [self getAndClearPendingEvents:YES];
 }
 
 - (NSArray *)peekPendingEvents {
-    return [self getPendingEvents:NO];
+    return [self getAndClearPendingEvents:NO];
 }
 
-- (NSMutableArray *)getPendingEvents:(BOOL)clear {
+- (NSMutableArray *)getAndClearPendingEvents:(BOOL)clear {
     @synchronized(self.eventGuard) {
         NSMutableArray *pendingEvents = [NSMutableArray arrayWithArray:self.currentEvents];
         if (clear) {
@@ -206,7 +206,7 @@
     return trxId;
 }
 
-- (void)commit:(TransactionId *)trxId {
+- (void)commitTransactionWithId:(TransactionId *)trxId {
     DDLogDebug(@"%@ Committing events transaction with id [%@]", TAG, trxId);
     @synchronized(self.transactionsGuard) {
         NSArray *eventsToCommit = self.transactions[trxId];
@@ -226,7 +226,7 @@
     }
 }
 
-- (void)rollback:(TransactionId *)trxId {
+- (void)rollbackTransactionWithId:(TransactionId *)trxId {
     DDLogDebug(@"%@ Rolling back events transaction with id %@", TAG, trxId);
     @synchronized(self.transactionsGuard) {
         NSMutableArray *eventsToRemove = self.transactions[trxId];

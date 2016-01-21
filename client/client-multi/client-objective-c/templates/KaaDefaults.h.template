@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
- #ifndef KaaDefaults_h
- #define KaaDefaults_h
+#ifndef KaaDefaults_h
+#define KaaDefaults_h
 
- #define BUILD_VERSION           @"%s"
- #define BUILD_COMMIT_HASH       @"%s"
- #define TRANSPORT_POLL_DELAY    @"0"
- #define TRANSPORT_POLL_PERIOD   @"10"
- #define TRANSPORT_POLL_UNIT     @"1"
- #define STATE_FILE_LOCATION     @"state.properties"
- #define SDK_TOKEN               @"%s"
- #define CONFIG_DATA_DEFAULT     @"%s"
+#define BUILD_VERSION           @"%s"
+#define BUILD_COMMIT_HASH       @"%s"
+#define TRANSPORT_POLL_DELAY    @"0"
+#define TRANSPORT_POLL_PERIOD   @"10"
+#define TRANSPORT_POLL_UNIT     @"1"
+#define STATE_FILE_LOCATION     @"state.properties"
+#define SDK_TOKEN               @"%s"
+#define CONFIG_DATA_DEFAULT     @"%s"
 
- static NSString *CONFIG_SCHEMA_DEFAULT = @"%s";
- static NSString *BOOTSTRAP_SERVERS = @"%s";
+static NSString *CONFIG_SCHEMA_DEFAULT = @"%s";
+static NSString *BOOTSTRAP_SERVERS = @"%s";
 
- #endif /* KaaDefaults_h */
+#endif /* KaaDefaults_h */

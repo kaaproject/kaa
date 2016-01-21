@@ -25,13 +25,13 @@
 @implementation MemBucketTest
 
 - (void)testAddLogRecord {
-    [self addLogRecordTestHelper:10 :2];
-    [self addLogRecordTestHelper:14 :10];
-    [self addLogRecordTestHelper:2 :10];
-    [self addLogRecordTestHelper:10 :1];
+    [self addLogRecordTestHelperWithMaxSize:10 maxRecordCount:2];
+    [self addLogRecordTestHelperWithMaxSize:14 maxRecordCount:10];
+    [self addLogRecordTestHelperWithMaxSize:2 maxRecordCount:10];
+    [self addLogRecordTestHelperWithMaxSize:10 maxRecordCount:1];
 }
 
-- (void)addLogRecordTestHelper:(int32_t)maxSize :(int32_t)maxRecordCount {
+- (void)addLogRecordTestHelperWithMaxSize:(int32_t)maxSize maxRecordCount:(int32_t)maxRecordCount {
     MemBucket *bucket = [[MemBucket alloc] initWithId:1 maxSize:maxSize maxRecordCount:maxRecordCount];
     
     int32_t curSize = 0;

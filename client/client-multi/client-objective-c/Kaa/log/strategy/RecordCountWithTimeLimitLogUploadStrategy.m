@@ -41,7 +41,7 @@
     return self;
 }
 
-- (LogUploadStrategyDecision)checkUploadNeeded:(id<LogStorageStatus>)status {
+- (LogUploadStrategyDecision)checkUploadNeededForStorageStatus:(id<LogStorageStatus>)status {
     LogUploadStrategyDecision decision = LOG_UPLOAD_STRATEGY_DECISION_NOOP;
     int64_t currentTime = [[NSDate date] timeIntervalSince1970] * 1000;
     int64_t currentRecordCount = [status getRecordCount];

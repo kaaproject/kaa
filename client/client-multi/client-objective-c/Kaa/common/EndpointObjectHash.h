@@ -21,14 +21,14 @@
  */
 @interface EndpointObjectHash : NSObject
 
-@property (nonatomic,strong,readonly) NSData *data;
+@property (nonatomic, strong, readonly) NSData *data;
 
-+ (instancetype)fromString:(NSString *)data;
-+ (instancetype)fromBytes:(NSData *)data;
++ (instancetype)hashWithString:(NSString *)data;
++ (instancetype)hashWithBytes:(NSData *)data;
 
 /**
  * Creates EndpointObjectHash using SHA1 algorithm over String representation of an object.
  */
-+ (instancetype)fromSHA1:(NSData *)data;
++ (instancetype)hashWithSHA1:(NSData *)data;
 
 @end

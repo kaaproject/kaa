@@ -99,7 +99,7 @@
     NSData *profile = [self getDataWith123];
     id <KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
     [given([clientState isRegistred]) willReturnBool:YES];
-    [given([clientState profileHash]) willReturn:[EndpointObjectHash fromSHA1:profile]];
+    [given([clientState profileHash]) willReturn:[EndpointObjectHash hashWithSHA1:profile]];
     
     KaaClientProperties *properties = mock([KaaClientProperties class]);
     id <ProfileManager> profileManager = mockProtocol(@protocol(ProfileManager));
@@ -117,7 +117,7 @@
     [verifyCount(clientState, times(0)) endpointAccessToken];
 }
 
-- (void)testonProfileResponse {
+- (void)testOnProfileResponse {
     id <KaaChannelManager> channelManager = mockProtocol(@protocol(KaaChannelManager));
     id <KaaClientState> clientState1 = mockProtocol(@protocol(KaaClientState));
     

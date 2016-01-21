@@ -16,8 +16,9 @@
 
 #import <Foundation/Foundation.h>
 #import "EndpointGen.h"
-#import "KAADummyNotification.h"
+#import "NotificationGen.h"
 #import "ExecutorContext.h"
+#import "KAADummyNotification.h"
 
 @protocol NotificationDelegate
 
@@ -40,6 +41,6 @@
 /**
  * delegates - array of delegates to be notified <NotificationDelegate>
  */
-- (void)notifyDelegates:(NSArray *)delegates topic:(Topic *)topic data:(NSData *)notificationData;
+- (void)notifyDelegates:(NSArray *)delegates withTopic:(Topic *)topic data:(NSData *)notificationData;
 
 @end

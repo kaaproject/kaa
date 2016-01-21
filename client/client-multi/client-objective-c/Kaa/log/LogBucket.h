@@ -26,12 +26,12 @@
 /**
  * The unique id of a log bucket
  */
-@property(nonatomic,readonly) int32_t bucketId;
+@property(nonatomic, readonly) int32_t bucketId;
 
 /**
  * Log records as <LogRecord>
  */
-@property(nonatomic,strong,readonly) NSArray* logRecords;
+@property(nonatomic, strong, readonly) NSArray* logRecords;
 
 - (instancetype)initWithBucketId:(int32_t)bucketId records:(NSArray *)logRecords;
 

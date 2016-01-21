@@ -28,38 +28,38 @@
 
 @interface DefaultChannelManager ()
 
-@property (nonatomic,strong) NSMutableArray *channels;              //<KaaDataChannel>
-@property (nonatomic,strong) NSMutableDictionary *upChannels;       //<TransportType,KaaDataChannel> as key-value
-@property (nonatomic,strong) id<BootstrapManager> bootstrapManager;
-@property (nonatomic,strong) NSMutableDictionary *lastServers;      //<TransportProtocolId,TransportConnectionInfo>
+@property (nonatomic, strong) NSMutableArray *channels;              //<KaaDataChannel>
+@property (nonatomic, strong) NSMutableDictionary *upChannels;       //<TransportType,KaaDataChannel> as key-value
+@property (nonatomic, strong) id<BootstrapManager> bootstrapManager;
+@property (nonatomic, strong) NSMutableDictionary *lastServers;      //<TransportProtocolId,TransportConnectionInfo>
 
-@property (nonatomic,strong) NSDictionary *bootststrapServers;      //<TransportProtocolId,NSArray<TransportConnectionInfo>>
-@property (nonatomic,strong) NSMutableDictionary *lastBootstrapServers;    //<TransportProtocolId,TransportConnectionInfo>
+@property (nonatomic, strong) NSDictionary *bootststrapServers;      //<TransportProtocolId,NSArray<TransportConnectionInfo>>
+@property (nonatomic, strong) NSMutableDictionary *lastBootstrapServers;    //<TransportProtocolId,TransportConnectionInfo>
 
-@property (nonatomic,strong) NSMutableDictionary *syncTaskQueueMap; //<NSString,BlockingQueue<SyncTask>> as key-value
-@property (nonatomic,strong) NSMutableDictionary *syncWorkers;      //<NSString,SyncWorker>
+@property (nonatomic, strong) NSMutableDictionary *syncTaskQueueMap; //<NSString,BlockingQueue<SyncTask>> as key-value
+@property (nonatomic, strong) NSMutableDictionary *syncWorkers;      //<NSString,SyncWorker>
 
-@property (nonatomic,strong) id<FailoverManager> failoverManager;
-@property (nonatomic,strong) id<ExecutorContext> executorContext;
+@property (nonatomic, strong) id<FailoverManager> failoverManager;
+@property (nonatomic, strong) id<ExecutorContext> executorContext;
 
-@property (nonatomic,strong) ConnectivityChecker *connectivityChecker;
+@property (nonatomic, strong) ConnectivityChecker *connectivityChecker;
 
 @property (nonatomic) BOOL isShutdown;
 @property (nonatomic) BOOL isPaused;
 
-@property (nonatomic,strong) id<KaaDataDemultiplexer> operationsDemultiplexer;
-@property (nonatomic,strong) id<KaaDataMultiplexer> operationsMultiplexer;
-@property (nonatomic,strong) id<KaaDataDemultiplexer> bootstrapDemultiplexer;
-@property (nonatomic,strong) id<KaaDataMultiplexer> bootstrapMultiplexer;
+@property (nonatomic, strong) id<KaaDataDemultiplexer> operationsDemultiplexer;
+@property (nonatomic, strong) id<KaaDataMultiplexer> operationsMultiplexer;
+@property (nonatomic, strong) id<KaaDataDemultiplexer> bootstrapDemultiplexer;
+@property (nonatomic, strong) id<KaaDataMultiplexer> bootstrapMultiplexer;
 
 - (BOOL)useChannel:(id<KaaDataChannel>)channel forType:(TransportType)type;
 - (void)useNewChannelForType:(TransportType)type;
 - (void)applyNewChannel:(id<KaaDataChannel>)channel;
 - (void)replaceAndRemoveChannel:(id<KaaDataChannel>)channel;
 - (void)addChannelToList:(id<KaaDataChannel>)channel;
-- (id<KaaDataChannel>)getChannel:(TransportType)type;
-- (id<TransportConnectionInfo>)getCurrentBootstrapServer:(TransportProtocolId *)protocolId;
-- (id<TransportConnectionInfo>)getNextBootstrapServer:(id<TransportConnectionInfo>)currentServer;
+- (id<KaaDataChannel>)getChannelForType:(TransportType)type;
+- (id<TransportConnectionInfo>)getCurrentBootstrapServerWithProtocolId:(TransportProtocolId *)protocolId;
+- (id<TransportConnectionInfo>)getNextBootstrapServerForServer:(id<TransportConnectionInfo>)currentServer;
 - (void)syncForTransportType:(TransportType)type ack:(BOOL)ack all:(BOOL)all;
 - (void)startWorker:(id<KaaDataChannel>)channel;
 - (void)stopWorker:(id<KaaDataChannel>)channel;
@@ -161,7 +161,7 @@
     }
 }
 
-- (id<TransportConnectionInfo>)getActiveServer:(TransportType)type {
+- (id<TransportConnectionInfo>)getActiveServerForType:(TransportType)type {
     id<KaaDataChannel> channel = self.upChannels[@(type)];
     if (!channel || [[NSNull null] isEqual:channel]) {
         return nil;
@@ -213,7 +213,7 @@
                            TAG, newServer, [channel getId], [channel getTransportProtocolId]);
                 [channel setServer:newServer];
                 if (self.failoverManager) {
-                    [self.failoverManager onServerChanged:newServer];
+                    [self.failoverManager onServerChangedWithConnectionInfo:newServer];
                 } else {
                     DDLogWarn(@"%@ Failover manager is nil", TAG);
                 }
@@ -222,7 +222,7 @@
     }
 }
 
-- (void)onServerFailed:(id<TransportConnectionInfo>)server {
+- (void)onServerFailedWithConnectionInfo:(id<TransportConnectionInfo>)server {
     @synchronized(self) {
         if (self.isShutdown) {
             DDLogWarn(@"%@ Can't process server failure. Channel manager is down", TAG);
@@ -230,10 +230,10 @@
         }
         
         if ([server serverType] == SERVER_BOOTSTRAP) {
-            id<TransportConnectionInfo> nextConnectionInfo = [self getNextBootstrapServer:server];
+            id<TransportConnectionInfo> nextConnectionInfo = [self getNextBootstrapServerForServer:server];
             if (nextConnectionInfo) {
                 DDLogVerbose(@"%@ Using next bootstrap server", TAG);
-                FailoverDecision *decision = [self.failoverManager onFailover:FAILOVER_STATUS_CURRENT_BOOTSTRAP_SERVER_NA];
+                FailoverDecision *decision = [self.failoverManager decisionOnFailoverStatus:FAILOVER_STATUS_CURRENT_BOOTSTRAP_SERVER_NA];
                 switch (decision.failoverAction) {
                     case FAILOVER_ACTION_NOOP:
                         DDLogWarn(@"%@ No operation is performed according to failover strategy decision", TAG);
@@ -270,7 +270,7 @@
                 }
             } else {
                 DDLogVerbose(@"%@ Can't find next bootstrap server", TAG);
-                FailoverDecision *decision = [self.failoverManager onFailover:FAILOVER_STATUS_BOOTSTRAP_SERVERS_NA];
+                FailoverDecision *decision = [self.failoverManager decisionOnFailoverStatus:FAILOVER_STATUS_BOOTSTRAP_SERVERS_NA];
                 switch (decision.failoverAction) {
                     case FAILOVER_ACTION_NOOP:
                         DDLogWarn(@"%@ No operation is performed according to failover strategy decision", TAG);
@@ -296,7 +296,7 @@
                 }
             }
         } else {
-            [self.bootstrapManager useNextOperationsServer:[server transportId]];
+            [self.bootstrapManager useNextOperationsServerWithTransportId:[server transportId]];
         }
     }
 }
@@ -392,11 +392,11 @@
 
 - (void)syncForTransportType:(TransportType)type ack:(BOOL)ack all:(BOOL)all {
     DDLogDebug(@"%@ Lookup channel by type [%i]", TAG, type);
-    id<KaaDataChannel> channel = [self getChannel:type];
+    id<KaaDataChannel> channel = [self getChannelForType:type];
     @synchronized(self.syncTaskQueueMap) {
         BlockingQueue *queue = self.syncTaskQueueMap[[channel getId]];
         if (queue) {
-            [queue offer:[[SyncTask alloc] initWithTransport:type ackOnly:ack all:all]];
+            [queue offer:[[SyncTask alloc] initWithTransportType:type ackOnly:ack all:all]];
         } else {
             DDLogWarn(@"%@ Can't find queue for channel [%@]", TAG, [channel getId]);
         }
@@ -429,7 +429,7 @@
     }
 }
 
-- (id<KaaDataChannel>)getChannel:(TransportType)type {
+- (id<KaaDataChannel>)getChannelForType:(TransportType)type {
     id<KaaDataChannel> result = self.upChannels[@(type)];
     if (!result || [[NSNull null] isEqual:result]) {
         DDLogError(@"%@ Failed to find channel for transport: [%i]", TAG, type);
@@ -486,7 +486,7 @@
     [self startWorker:channel];
     id<TransportConnectionInfo> server = nil;
     if ([channel getServerType] == SERVER_BOOTSTRAP) {
-        server = [self getCurrentBootstrapServer:[channel getTransportProtocolId]];
+        server = [self getCurrentBootstrapServerWithProtocolId:[channel getTransportProtocolId]];
     } else {
         server = self.lastServers[[channel getTransportProtocolId]];
     }
@@ -494,7 +494,7 @@
         DDLogDebug(@"%@ Applying server %@ for channel %@ type %@", TAG, server, [channel getId], [channel getTransportProtocolId]);
         [channel setServer:server];
         if (self.failoverManager) {
-            [self.failoverManager onServerChanged:server];
+            [self.failoverManager onServerChangedWithConnectionInfo:server];
         } else {
             DDLogWarn(@"%@ Failover manager is nil", TAG);
         }
@@ -511,7 +511,7 @@
     }
 }
 
-- (id<TransportConnectionInfo>)getCurrentBootstrapServer:(TransportProtocolId *)protocolId {
+- (id<TransportConnectionInfo>)getCurrentBootstrapServerWithProtocolId:(TransportProtocolId *)protocolId {
     id<TransportConnectionInfo> bsi = self.lastBootstrapServers[protocolId];
     if (!bsi) {
         NSArray *serverList = self.bootststrapServers[protocolId];
@@ -523,7 +523,7 @@
     return bsi;
 }
 
-- (id<TransportConnectionInfo>)getNextBootstrapServer:(id<TransportConnectionInfo>)currentServer {
+- (id<TransportConnectionInfo>)getNextBootstrapServerForServer:(id<TransportConnectionInfo>)currentServer {
     id<TransportConnectionInfo> bsi;
     NSArray *serverList = self.bootststrapServers[[currentServer transportId]];
     NSUInteger serverIndex = [serverList indexOfObject:currentServer];
@@ -568,7 +568,7 @@
             [taskQueue drainTo:additionalTasks];
             if ([additionalTasks count] > 0) {
                 DDLogDebug(@"%@ [%@] Merging task %@ with %@", TAG, [self.channel getId], task, additionalTasks);
-                task = [SyncTask merge:task additionalTasks:additionalTasks];
+                task = [SyncTask mergeTask:task withAdditionalTasks:additionalTasks];
             }
             if (task.isAll) {
                 DDLogDebug(@"%@ [%@] Going to invoke syncAll method for types %@",

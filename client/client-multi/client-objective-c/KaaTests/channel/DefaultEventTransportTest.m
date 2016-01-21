@@ -64,15 +64,15 @@
     [given([manager pollPendingEvents]) willReturn:@[event1, event2]];
     
     id <EventTransport> transport = [[DefaultEventTransport alloc] initWithState:clientState];
-    [transport createEventRequest:1];
+    [transport createEventRequestWithId:1];
     [transport setEventManager:manager];
-    [transport createEventRequest:2];
+    [transport createEventRequestWithId:2];
     [transport onEventResponse:[self getNewEmptyEventResponse]];
     
     [verifyCount(manager, times(1)) fillEventListenersSyncRequest:anything()];
     
-    [transport createEventRequest:3];
-    EventSyncRequest *request = [transport createEventRequest:4];
+    [transport createEventRequestWithId:3];
+    EventSyncRequest *request = [transport createEventRequestWithId:4];
     
     XCTAssertEqual(2, [request.events.data count]);
 }
@@ -110,15 +110,15 @@
     [given([manager pollPendingEvents]) willReturn:@[[[Event alloc] init], [[Event alloc] init]]];
     
     id <EventTransport> transport = [[DefaultEventTransport alloc] initWithState:clientState];
-    [transport createEventRequest:1];
+    [transport createEventRequestWithId:1];
     [transport setEventManager:manager];
-    [transport createEventRequest:2];
+    [transport createEventRequestWithId:2];
     [transport onEventResponse:[self getNewEmptyEventResponse]];
-    [transport createEventRequest:3];
+    [transport createEventRequestWithId:3];
     
     [transport onSyncResposeIdReceived:3];
     
-    EventSyncRequest *request = [transport createEventRequest:4];
+    EventSyncRequest *request = [transport createEventRequestWithId:4];
     XCTAssertTrue([request.events.data count] == 2);
 }
 
@@ -135,12 +135,12 @@
     [transport setEventManager:manager];
     
     int32_t requestId = 1;
-    EventSyncRequest *eventRequest1 = [transport createEventRequest:requestId++];
+    EventSyncRequest *eventRequest1 = [transport createEventRequestWithId:requestId++];
     
     XCTAssertTrue(eventRequest1.eventSequenceNumberRequest.data != nil);
     XCTAssertNil(eventRequest1.events.data);
     
-    EventSyncRequest *eventRequest2 = [transport createEventRequest:requestId++];
+    EventSyncRequest *eventRequest2 = [transport createEventRequestWithId:requestId++];
     
     XCTAssertTrue(eventRequest2.eventSequenceNumberRequest.data != nil);
     XCTAssertNil(eventRequest2.events.data);
@@ -171,7 +171,7 @@
     [transport setEventManager:manager];
     
     int32_t requestId = 1;
-    [transport createEventRequest:requestId++];
+    [transport createEventRequestWithId:requestId++];
     
     EventSyncResponse *eventResponse = [[EventSyncResponse alloc] init];
     EventSequenceNumberResponse *seqNumResponse = [[EventSequenceNumberResponse alloc] init];
@@ -182,7 +182,7 @@
     
     [transport onEventResponse:eventResponse];
     
-    EventSyncRequest *eventRequest = [transport createEventRequest:requestId];
+    EventSyncRequest *eventRequest = [transport createEventRequestWithId:requestId];
     
     XCTAssertTrue(eventRequest.eventSequenceNumberRequest.data == nil);
     XCTAssertTrue([eventRequest.events.data count] == [events count]);
@@ -218,7 +218,7 @@
     [transport setEventManager:manager1];
     
     int requestId = 1;
-    [transport createEventRequest:requestId++];
+    [transport createEventRequestWithId:requestId++];
     
     int lastReceivedSN = 5;
     EventSyncResponse *eventResponse = [[EventSyncResponse alloc] init];
@@ -230,7 +230,7 @@
     
     [transport onEventResponse:eventResponse];
     
-    EventSyncRequest *eventRequest2 = [transport createEventRequest:requestId];
+    EventSyncRequest *eventRequest2 = [transport createEventRequestWithId:requestId];
     
     XCTAssertTrue(eventRequest2.eventSequenceNumberRequest.data == nil);
     XCTAssertTrue([eventRequest2.events.data count] == [events1 count]);
@@ -250,7 +250,7 @@
     [given([manager2 pollPendingEvents]) willReturn:events2];
     [transport setEventManager:manager2];
     
-    EventSyncRequest *eventRequest4 = [transport createEventRequest:requestId++];
+    EventSyncRequest *eventRequest4 = [transport createEventRequestWithId:requestId++];
     
     XCTAssertTrue([eventRequest4.events.data[0] seqNum] == synchronizedSN);
 }

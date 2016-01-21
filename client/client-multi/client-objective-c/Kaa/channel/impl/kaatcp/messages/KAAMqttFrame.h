@@ -45,7 +45,7 @@ typedef enum {
  */
 @interface KAAMqttFrame : NSObject
 
-@property (nonatomic,strong) NSMutableData *buffer;
+@property (nonatomic, strong) NSMutableData *buffer;
 @property (nonatomic) NSUInteger bufferPosition;
 
 @property (nonatomic) TCPMessageType messageType;
@@ -76,13 +76,13 @@ typedef enum {
  * Check if this Mqtt frame should be last frame on connection and connection should be closed.
  * @return boolean 'true' if connection should be closed after frame transmition.
  */
-- (BOOL)isNeedCloseConnection;
+- (BOOL)needToCloseConnection;
 
 /**
  * Fill mqtt frame fixed header
  * @return number of packet bytes
  */
-- (int)fillFixedHeader:(int)remainingLength destination:(NSMutableData *)destination;
+- (int)fillFixedHeader:(NSMutableData *)header remainingLength:(int)remainingLength;
 
 - (void)onFrameDone;
 

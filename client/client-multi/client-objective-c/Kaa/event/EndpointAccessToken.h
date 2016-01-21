@@ -18,7 +18,7 @@
 
 @interface EndpointAccessToken : NSObject <NSCopying>
 
-@property(nonatomic,strong) NSString *token;
+@property(nonatomic, strong) NSString *token;
 
 - (instancetype)initWithToken:(NSString *)token;
 

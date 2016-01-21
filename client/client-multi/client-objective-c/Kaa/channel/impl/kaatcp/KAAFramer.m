@@ -22,10 +22,10 @@
 
 @interface KAAFramer ()
 
-@property (nonatomic,strong) NSMutableArray *delegates;
-@property (nonatomic,strong) KAAMqttFrame *currentFrame;
+@property (nonatomic, strong) NSMutableArray *delegates;
+@property (nonatomic, strong) KAAMqttFrame *currentFrame;
 
-- (void)notifyDelegates:(KAAMqttFrame *)frame;
+- (void)notifyDelegatesWithFrame:(KAAMqttFrame *)frame;
 
 /**
  * Creates specific Kaatcp message by MessageType
@@ -71,14 +71,14 @@
         }
         used += [self.currentFrame pushBytes:data toPosition:used];
         if (self.currentFrame.frameDecodeComplete) {
-            [self notifyDelegates:[self.currentFrame upgradeFrame]];
+            [self notifyDelegatesWithFrame:[self.currentFrame upgradeFrame]];
             self.currentFrame = nil;
         }
     }
     return used;
 }
 
-- (void)notifyDelegates:(KAAMqttFrame *)frame {
+- (void)notifyDelegatesWithFrame:(KAAMqttFrame *)frame {
     for (id<MqttFrameDelegate> delegate in self.delegates) {
         [delegate onMqttFrame:frame];
     }

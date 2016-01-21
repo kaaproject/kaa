@@ -25,12 +25,12 @@
 
 @interface KaaClientProperties ()
 
-@property(nonatomic,strong) NSUserDefaults *properties;
-@property(nonatomic,strong) id<KAABase64> base64;
-@property(nonatomic,strong) NSData *cachedPropertiesHash;
+@property(nonatomic, strong) NSUserDefaults *properties;
+@property(nonatomic, strong) id<KAABase64> base64;
+@property(nonatomic, strong) NSData *cachedPropertiesHash;
 
 - (NSDictionary *)loadProperties;
-- (NSDictionary *)parseBootstrapServers:(NSString *)serversStr;
+- (NSDictionary *)parseBootstrapServersFromString:(NSString *)serversStr;
 
 @end
 
@@ -48,7 +48,7 @@
     return self;
 }
 
-- (instancetype)initDefaults:(id<KAABase64>)base64 {
+- (instancetype)initDefaultsWithBase64:(id<KAABase64>)base64 {
     return [self initWithDictionary:[self loadProperties] base64:base64];
 }
 
@@ -87,7 +87,7 @@
     };
 }
 
-- (NSDictionary *)parseBootstrapServers:(NSString *)serversStr {
+- (NSDictionary *)parseBootstrapServersFromString:(NSString *)serversStr {
     NSMutableDictionary *servers = [NSMutableDictionary dictionary];
     NSArray *splittedServers = [serversStr componentsSeparatedByString:@";"];
     for (NSString *server in splittedServers) {
@@ -113,7 +113,7 @@
 }
 
 - (NSDictionary *)bootstrapServers {
-    return [self parseBootstrapServers:[self.properties stringForKey:BOOTSTRAP_SERVERS_KEY]];
+    return [self parseBootstrapServersFromString:[self.properties stringForKey:BOOTSTRAP_SERVERS_KEY]];
 }
 
 - (NSString *)buildVersion {

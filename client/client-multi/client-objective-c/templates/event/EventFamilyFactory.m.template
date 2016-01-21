@@ -18,8 +18,8 @@
 
 @interface EventFamilyFactory ()
 
-@property (nonatomic) id<EventManager> eventManager;
-@property (nonatomic) id<ExecutorContext> executorContext;
+@property (nonatomic, strong) id<EventManager> eventManager;
+@property (nonatomic, strong) id<ExecutorContext> executorContext;
 
 {event_family_factory_properties}
 
@@ -40,12 +40,12 @@
     return [self.eventManager beginTransaction];
 }
 
-- (void)submitEventsBlock:(TransactionId *)trxId {
-    [self.eventManager commit:trxId];
+- (void)submitEventsBlockWithTransactionId:(TransactionId *)trxId {
+    [self.eventManager commitTransactionWithId:trxId];
 }
 
-- (void)removeEventsBlock:(TransactionId *)trxId {
-    [self.eventManager rollback:trxId];
+- (void)removeEventsBlockWithTransactionId:(TransactionId *)trxId {
+    [self.eventManager rollbackTransactionWithId:trxId];
 }
 
 {event_family_factory_methods}

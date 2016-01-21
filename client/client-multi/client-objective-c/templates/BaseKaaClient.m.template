@@ -26,7 +26,7 @@
 
 - (BucketRunner *)addLogRecord:(${log_record_class} *)record {
     [self checkLifecycleState:CLIENT_LIFECYCLE_STATE_STARTED withErrorMessage:@"Kaa client isn't started"];
-    [self.logCollector addLogRecord:record];
+    return [self.logCollector addLogRecord:record];
 }
 
 - (${configuration_class} *)getConfiguration {

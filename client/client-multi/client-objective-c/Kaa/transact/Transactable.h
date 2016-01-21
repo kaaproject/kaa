@@ -37,14 +37,14 @@
  *
  * @param trxId - the unique identifier of the transaction which should be submitted.
  */
-- (void)commit:(TransactionId *)trxId;
+- (void)commitTransactionWithId:(TransactionId *)trxId;
 
 /**
  * Revert the transaction
  *
  * @param trxId The unique identifier of the transaction which should be reverted.
  */
-- (void)rollback:(TransactionId *)trxId;
+- (void)rollbackTransactionWithId:(TransactionId *)trxId;
 
 @end
 

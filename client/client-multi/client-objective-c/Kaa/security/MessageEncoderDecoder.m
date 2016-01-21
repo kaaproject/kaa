@@ -29,10 +29,10 @@ static const uint8_t remotePublicKeyIdentifier[] = "org.kaaproject.kaa.remotepub
 
 @interface MessageEncoderDecoder ()
 
-@property (nonatomic,strong) NSData *sessionKey;
-@property (nonatomic,strong) KeyPair *keys;
+@property (nonatomic, strong) NSData *sessionKey;
+@property (nonatomic, strong) KeyPair *keys;
 @property (nonatomic) SecKeyRef remoteKey;
-@property (nonatomic,strong) NSData *rawRemoteKey;
+@property (nonatomic, strong) NSData *rawRemoteKey;
 
 - (void)decodeSessionKey:(NSData *)encodedSessionKey;
 
@@ -208,7 +208,7 @@ static const uint8_t remotePublicKeyIdentifier[] = "org.kaaproject.kaa.remotepub
     }
 }
 
-- (NSData *)sign:(NSData *)message {
+- (NSData *)signatureForMessage:(NSData *)message {
     size_t signedHashBytesSize = SecKeyGetBlockSize([self getPrivateKey]);
     uint8_t *signedHashBytes = malloc(signedHashBytesSize);
     memset(signedHashBytes, 0x0, signedHashBytesSize);
@@ -238,7 +238,7 @@ static const uint8_t remotePublicKeyIdentifier[] = "org.kaaproject.kaa.remotepub
     return signedHash;
 }
 
-- (BOOL)verify:(NSData *)message withSignature:(NSData *)signature {
+- (BOOL)verifyMessage:(NSData *)message withSignature:(NSData *)signature {
     size_t signedHashBytesSize = SecKeyGetBlockSize([self getRemotePublicKey]);
     const void* signedHashBytes = [signature bytes];
     

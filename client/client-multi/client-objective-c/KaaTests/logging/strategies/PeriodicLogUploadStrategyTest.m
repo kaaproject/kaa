@@ -35,19 +35,19 @@
     id<LogStorageStatus> logStorageStatus = mockProtocol(@protocol(LogStorageStatus));
     
     PeriodicLogUploadStrategy *strategy = [[PeriodicLogUploadStrategy alloc] initWithTimeLimit:uploadCheckPeriod timeUnit:TIME_UNIT_SECONDS];
-    XCTAssertEqual([strategy isUploadNeeded:logStorageStatus], LOG_UPLOAD_STRATEGY_DECISION_NOOP);
+    XCTAssertEqual([strategy isUploadNeededForStorageStatus:logStorageStatus], LOG_UPLOAD_STRATEGY_DECISION_NOOP);
     
     [NSThread sleepForTimeInterval:uploadCheckPeriod/2];
-    XCTAssertEqual([strategy isUploadNeeded:logStorageStatus], LOG_UPLOAD_STRATEGY_DECISION_NOOP);
+    XCTAssertEqual([strategy isUploadNeededForStorageStatus:logStorageStatus], LOG_UPLOAD_STRATEGY_DECISION_NOOP);
 
     [NSThread sleepForTimeInterval:uploadCheckPeriod/2];
-    XCTAssertEqual([strategy isUploadNeeded:logStorageStatus], LOG_UPLOAD_STRATEGY_DECISION_UPLOAD);
+    XCTAssertEqual([strategy isUploadNeededForStorageStatus:logStorageStatus], LOG_UPLOAD_STRATEGY_DECISION_UPLOAD);
 
     [NSThread sleepForTimeInterval:uploadCheckPeriod/2];
-    XCTAssertEqual([strategy isUploadNeeded:logStorageStatus], LOG_UPLOAD_STRATEGY_DECISION_NOOP);
+    XCTAssertEqual([strategy isUploadNeededForStorageStatus:logStorageStatus], LOG_UPLOAD_STRATEGY_DECISION_NOOP);
     
     [NSThread sleepForTimeInterval:uploadCheckPeriod/2];
-    XCTAssertEqual([strategy isUploadNeeded:logStorageStatus], LOG_UPLOAD_STRATEGY_DECISION_UPLOAD);
+    XCTAssertEqual([strategy isUploadNeededForStorageStatus:logStorageStatus], LOG_UPLOAD_STRATEGY_DECISION_UPLOAD);
 }
 
 @end

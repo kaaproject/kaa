@@ -18,8 +18,8 @@
 
 @interface EventFamilyFactory ()
 
-@property (nonatomic,strong) id<EventManager> eventManger;
-@property (nonatomic,strong) id<ExecutorContext> executorContext;
+@property (nonatomic, strong) id<EventManager> eventManager;
+@property (nonatomic, strong) id<ExecutorContext> executorContext;
 
 @end
 
@@ -28,22 +28,22 @@
 - (instancetype)initWithManager:(id<EventManager>)manager executorContext:(id<ExecutorContext>)context {
     self = [super init];
     if (self) {
-        self.eventManger = manager;
+        self.eventManager = manager;
         self.executorContext = context;
     }
     return self;
 }
 
 - (TransactionId *)startEventsBlock {
-    return [self.eventManger beginTransaction];
+    return [self.eventManager beginTransaction];
 }
 
-- (void)submitEventsBlock:(TransactionId *)trxId {
-    [self.eventManger commit:trxId];
+- (void)submitEventsBlockWithTransactionId:(TransactionId *)trxId {
+    [self.eventManager commitTransactionWithId:trxId];
 }
 
-- (void)removeEventsBlock:(TransactionId *)trxId {
-    [self.eventManger rollback:trxId];
+- (void)removeEventsBlockWithTransactionId:(TransactionId *)trxId {
+    [self.eventManager rollbackTransactionWithId:trxId];
 }
 
 @end

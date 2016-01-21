@@ -26,15 +26,15 @@
 
 @interface DefaultBootstrapManager ()
 
-@property (nonatomic,strong) id<BootstrapTransport> transport;
-@property (nonatomic,strong) id<ExecutorContext> context;
-@property (nonatomic,strong) id<FailoverManager> failoverManager;
-@property (nonatomic,strong) id<KaaInternalChannelManager> channelManager;
+@property (nonatomic, strong) id<BootstrapTransport> transport;
+@property (nonatomic, strong) id<ExecutorContext> context;
+@property (nonatomic, strong) id<FailoverManager> failoverManager;
+@property (nonatomic, strong) id<KaaInternalChannelManager> channelManager;
 
-@property (nonatomic,strong) NSNumber *serverToApply;
-@property (nonatomic,strong) NSArray *operationsServerList;                   //<ProtocolMetaData>
-@property (nonatomic,strong) NSMutableDictionary *mappedOperationServerList;  //<TransportProtocolId, NSMutableArray<ProtocolMetaData>>
-@property (nonatomic,strong) NSMutableDictionary *mappedIterators;            //<TransportProtocolId, NSEnumerator<ProtocolMetaData>>
+@property (nonatomic, strong) NSNumber *serverToApply;
+@property (nonatomic, strong) NSArray *operationsServerList;                   //<ProtocolMetaData>
+@property (nonatomic, strong) NSMutableDictionary *mappedOperationServerList;  //<TransportProtocolId, NSMutableArray<ProtocolMetaData>>
+@property (nonatomic, strong) NSMutableDictionary *mappedIterators;            //<TransportProtocolId, NSEnumerator<ProtocolMetaData>>
 
 - (NSMutableArray *)getTransportsByAccessPointId:(int)accessPointId;
 - (void)notifyChannelManagerAboutServers:(NSMutableArray *)servers;
@@ -60,7 +60,7 @@
     [self.transport sync];
 }
 
-- (void)useNextOperationsServer:(TransportProtocolId *)transportId {
+- (void)useNextOperationsServerWithTransportId:(TransportProtocolId *)transportId {
     if (self.mappedOperationServerList && [self.mappedOperationServerList count] > 0) {
         ProtocolMetaData *nextOperServer = [self.mappedIterators[transportId] nextObject];
         if (nextOperServer) {
@@ -73,7 +73,7 @@
             }
         } else {
             DDLogWarn(@"%@ Failed to find server for channel %@", TAG, transportId);
-            FailoverDecision *decision = [self.failoverManager onFailover:FAILOVER_STATUS_OPERATION_SERVERS_NA];
+            FailoverDecision *decision = [self.failoverManager decisionOnFailoverStatus:FAILOVER_STATUS_OPERATION_SERVERS_NA];
             [self applyDecision:decision];
         }
     } else {
@@ -120,7 +120,7 @@
         
         if (!self.operationsServerList || [self.operationsServerList count] <= 0) {
             DDLogVerbose(@"%@ Received empty operations server list", TAG);
-            FailoverDecision *decision = [self.failoverManager onFailover:FAILOVER_STATUS_NO_OPERATION_SERVERS_RECEIVED];
+            FailoverDecision *decision = [self.failoverManager decisionOnFailoverStatus:FAILOVER_STATUS_NO_OPERATION_SERVERS_RECEIVED];
             [self applyDecision:decision];
             return;
         }
@@ -203,7 +203,7 @@
         case FAILOVER_ACTION_USE_NEXT_BOOTSTRAP:
         {
             DDLogWarn(@"%@ Trying to switch to the next bootstrap server as to failover strategy decision", TAG);
-            [self.failoverManager onServerFailed:[self.channelManager getActiveServer:TRANSPORT_TYPE_BOOTSTRAP]];
+            [self.failoverManager onServerFailedWithConnectionInfo:[self.channelManager getActiveServerForType:TRANSPORT_TYPE_BOOTSTRAP]];
             __weak typeof(self)weakSelf = self;
             dispatch_time_t delay = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(decision.retryPeriod * NSEC_PER_MSEC));
             dispatch_after(delay, [self.context getSheduledExecutor], ^{

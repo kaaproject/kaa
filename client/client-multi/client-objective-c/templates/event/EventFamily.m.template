@@ -5,10 +5,10 @@
 
 @interface {event_family_class_name} ()
 
-@property (nonatomic,strong) id<EventManager> manager;
-@property (nonatomic,strong) id<ExecutorContext> context;
-@property (nonatomic,strong) NSMutableSet *delegates;
-@property (nonatomic,strong) AvroBytesConverter *converter;
+@property (nonatomic, strong) id<EventManager> manager;
+@property (nonatomic, strong) id<ExecutorContext> context;
+@property (nonatomic, strong) NSMutableSet *delegates;
+@property (nonatomic, strong) AvroBytesConverter *converter;
 
 @end
 

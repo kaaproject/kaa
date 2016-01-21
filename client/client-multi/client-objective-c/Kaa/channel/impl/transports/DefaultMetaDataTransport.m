@@ -21,9 +21,9 @@
 
 @interface DefaultMetaDataTransport ()
 
-@property (nonatomic,strong) KaaClientProperties *properties;
-@property (nonatomic,strong) id<KaaClientState> state;
-@property (nonatomic,strong) EndpointObjectHash *publicKeyHash;
+@property (nonatomic, strong) KaaClientProperties *properties;
+@property (nonatomic, strong) id<KaaClientState> state;
+@property (nonatomic, strong) EndpointObjectHash *publicKeyHash;
 @property (nonatomic) int64_t timeout;
 
 @end

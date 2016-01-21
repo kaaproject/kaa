@@ -31,7 +31,7 @@
 @interface DefaultChannelManagerTest : XCTestCase
 
 @property (nonatomic, strong) NSDictionary *supportedTypes;
-@property (nonatomic ,strong) id <ExecutorContext> executorContext;
+@property (nonatomic, strong) id<ExecutorContext> executorContext;
 
 @end
 
@@ -109,7 +109,7 @@
     
     id <TransportConnectionInfo> server = [self createTestServerInfoWithServerType:SERVER_OPERATIONS transportProtocolId:[TransportProtocolIdHolder HTTPTransportID] host:@"localhost" port:9999 publicKey:[KeyUtils getPublicKey]];
     [channelManager onTransportConnectionInfoUpdated:server];
-    [verifyCount(failoverManager, times(1)) onServerChanged:anything()];
+    [verifyCount(failoverManager, times(1)) onServerChangedWithConnectionInfo:anything()];
     
     XCTAssertEqualObjects(channel, [channelManager getChannelById:@"mock_channel"]);
     XCTAssertEqualObjects(channel, [[channelManager getChannels] objectAtIndex:0]);
@@ -119,7 +119,7 @@
     XCTAssertTrue([[channelManager getChannels] count] == 0);
     
     [channelManager addChannel:channel];
-    [verifyCount(failoverManager, times(2)) onServerChanged:anything()];
+    [verifyCount(failoverManager, times(2)) onServerChangedWithConnectionInfo:anything()];
     [verifyCount(channel, times(2)) setServer:server];
     [channelManager clearChannelList];
     XCTAssertTrue([[channelManager getChannels] count] == 0);
@@ -142,7 +142,7 @@
     [channelManager setFailoverManager:failoverManager];
     [channelManager addChannel:channel];
     
-    [verifyCount(failoverManager, times(1)) onServerChanged:anything()];
+    [verifyCount(failoverManager, times(1)) onServerChangedWithConnectionInfo:anything()];
     XCTAssertEqualObjects(channel, [channelManager getChannelById:@"mock_channel"]);
     XCTAssertEqualObjects(channel, [[channelManager getChannels] objectAtIndex:0]);
     
@@ -168,8 +168,8 @@
     id <TransportConnectionInfo> opServer = [self createTestServerInfoWithServerType:SERVER_OPERATIONS transportProtocolId:[TransportProtocolIdHolder HTTPTransportID] host:@"localhost" port:9999 publicKey:[KeyUtils getPublicKey]];
     [channelManager onTransportConnectionInfoUpdated:opServer];
     
-    [channelManager onServerFailed:opServer];
-    [verifyCount(bootstrapManager, times(1)) useNextOperationsServer:[TransportProtocolIdHolder HTTPTransportID]];
+    [channelManager onServerFailedWithConnectionInfo:opServer];
+    [verifyCount(bootstrapManager, times(1)) useNextOperationsServerWithTransportId:[TransportProtocolIdHolder HTTPTransportID]];
 }
 
 - (void)testBootstrapServerFailed {
@@ -195,15 +195,15 @@
     
     [channelManager addChannel:channel];
     
-    [verifyCount(failoverManager, times(1)) onServerChanged:anything()];
+    [verifyCount(failoverManager, times(1)) onServerChangedWithConnectionInfo:anything()];
     
-    [channelManager onServerFailed:server];
+    [channelManager onServerFailedWithConnectionInfo:server];
     
     [[NSOperationQueue mainQueue] addOperationWithBlock:^{
         [NSThread sleepForTimeInterval:1];
         [verifyCount(channel, times(1)) setServer:server1];
     }];
-    [verifyCount(failoverManager, times(1)) onFailover:FAILOVER_STATUS_CURRENT_BOOTSTRAP_SERVER_NA];
+    [verifyCount(failoverManager, times(1)) decisionOnFailoverStatus:FAILOVER_STATUS_CURRENT_BOOTSTRAP_SERVER_NA];
 }
 
 
@@ -224,9 +224,9 @@
     [channelManager setFailoverManager:failoverManager];
     [channelManager addChannel:channel];
     
-    [verifyCount(failoverManager, times(1)) onServerChanged:anything()];
+    [verifyCount(failoverManager, times(1)) onServerChangedWithConnectionInfo:anything()];
     
-    [channelManager onServerFailed:server];
+    [channelManager onServerFailedWithConnectionInfo:server];
 }
 
 - (void)testRemoveHttpLpChannel {
@@ -390,7 +390,7 @@
     [channelManager addChannel:channel];
     
     [channelManager shutdown];
-    [channelManager onServerFailed:nil];
+    [channelManager onServerFailedWithConnectionInfo:nil];
     [channelManager onTransportConnectionInfoUpdated:nil];
     [channelManager addChannel:nil];
     [channelManager setChannel:nil withType:0];

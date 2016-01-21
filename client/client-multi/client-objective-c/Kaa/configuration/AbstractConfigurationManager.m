@@ -94,7 +94,7 @@
 }
 
 - (EndpointObjectHash *)getConfigurationHash {
-    return [EndpointObjectHash fromSHA1:[self getConfigurationData]];
+    return [EndpointObjectHash hashWithSHA1:[self getConfigurationData]];
 }
 
 - (void)setConfigurationStorage:(id<ConfigurationStorage>)storage {

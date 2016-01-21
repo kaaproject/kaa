@@ -58,7 +58,7 @@ static const char FIXED_HEADER_CONST[] = {0x00,0x06,'K','a','a','t','c','p',KAAS
     return self;
 }
 
-- (void)packVeriableHeader {
+- (void)packVariableHeader {
     [self.buffer appendBytes:FIXED_HEADER_CONST length:sizeof(FIXED_HEADER_CONST)];
     self.bufferPosition += sizeof(FIXED_HEADER_CONST);
 
@@ -81,7 +81,7 @@ static const char FIXED_HEADER_CONST[] = {0x00,0x06,'K','a','a','t','c','p',KAAS
     self.bufferPosition++;
 }
 
-- (void)decodeVariableHeader:(NSInputStream *)input {
+- (void)decodeVariableHeaderFromInput:(NSInputStream *)input {
     uint8_t header[sizeof(FIXED_HEADER_CONST)];
     [input read:header maxLength:sizeof(header)];
     self.bufferPosition += sizeof(FIXED_HEADER_CONST);
@@ -109,13 +109,13 @@ static const char FIXED_HEADER_CONST[] = {0x00,0x06,'K','a','a','t','c','p',KAAS
 }
 
 - (void)pack {
-    [self packVeriableHeader];
+    [self packVariableHeader];
 }
 
 - (void)decode {
     NSInputStream *input = [self remainingStream];
     [input open];
-    [self decodeVariableHeader:input];
+    [self decodeVariableHeaderFromInput:input];
     [input close];
 }
 
@@ -136,7 +136,7 @@ static const char FIXED_HEADER_CONST[] = {0x00,0x06,'K','a','a','t','c','p',KAAS
     return nil;
 }
 
-- (BOOL)isNeedCloseConnection {
+- (BOOL)needToCloseConnection {
     return NO;
 }
 

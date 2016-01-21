@@ -22,19 +22,19 @@
 
 @interface DefaultOperationDataProcessor ()
 
-@property (nonatomic,strong) AvroBytesConverter *requestConverter;
-@property (nonatomic,strong) AvroBytesConverter *responseConverter;
+@property (nonatomic, strong) AvroBytesConverter *requestConverter;
+@property (nonatomic, strong) AvroBytesConverter *responseConverter;
 
 @property (atomic) int requestsCounter;
 
-@property (nonatomic,strong) id<MetaDataTransport> metadataTransport;
-@property (nonatomic,strong) id<ConfigurationTransport> configurationTransport;
-@property (nonatomic,strong) id<EventTransport> eventTransport;
-@property (nonatomic,strong) id<NotificationTransport> notificationTransport;
-@property (nonatomic,strong) id<ProfileTransport> profileTransport;
-@property (nonatomic,strong) id<UserTransport> userTransport;
-@property (nonatomic,strong) id<RedirectionTransport> redirectionTransport;
-@property (nonatomic,strong) id<LogTransport> logTransport;
+@property (nonatomic, strong) id<MetaDataTransport> metadataTransport;
+@property (nonatomic, strong) id<ConfigurationTransport> configurationTransport;
+@property (nonatomic, strong) id<EventTransport> eventTransport;
+@property (nonatomic, strong) id<NotificationTransport> notificationTransport;
+@property (nonatomic, strong) id<ProfileTransport> profileTransport;
+@property (nonatomic, strong) id<UserTransport> userTransport;
+@property (nonatomic, strong) id<RedirectionTransport> redirectionTransport;
+@property (nonatomic, strong) id<LogTransport> logTransport;
 
 @property (nonatomic, strong) id<KaaClientState> state;
 
@@ -158,7 +158,7 @@
     }
 }
 
-- (NSData *)compileRequest:(NSDictionary *)types {
+- (NSData *)compileRequestForTypes:(NSDictionary *)types {
     @synchronized(self) {
         if (!types) {
             DDLogError(@"%@ Can't compile request with empty types list", TAG);
@@ -197,7 +197,7 @@
                         eventUnion = [KAAUnion unionWithBranch:KAA_UNION_EVENT_SYNC_REQUEST_OR_NULL_BRANCH_0
                                                        data:[[EventSyncRequest alloc] init]];
                     } else if (self.eventTransport) {
-                        EventSyncRequest *evRequest = [self.eventTransport createEventRequest:request.requestId];
+                        EventSyncRequest *evRequest = [self.eventTransport createEventRequestWithId:request.requestId];
                         if (evRequest) {
                             eventUnion = [KAAUnion unionWithBranch:KAA_UNION_EVENT_SYNC_REQUEST_OR_NULL_BRANCH_0
                                                            data:evRequest];

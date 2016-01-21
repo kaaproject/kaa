@@ -24,30 +24,30 @@
 
 @interface DefaultNotificationManager ()
 
-@property (nonatomic,strong) id<KaaClientState> state;
-@property (nonatomic,strong) id<ExecutorContext> context;
-@property (nonatomic,strong) volatile id<NotificationTransport> transport;
+@property (nonatomic, strong) id<KaaClientState> state;
+@property (nonatomic, strong) id<ExecutorContext> context;
+@property (nonatomic, strong) volatile id<NotificationTransport> transport;
 
-@property (nonatomic,strong) NSMutableDictionary *topics;               //<NSString,Topic> as key-value
-@property (nonatomic,strong) NSMutableSet *mandatoryListeners;          //<NotificationDelegate>
-@property (nonatomic,strong) NSMutableDictionary *optionalListeners;    //<NSString,NSArray<NotificationDelegate>> as key-value
-@property (nonatomic,strong) NSMutableSet *topicsListeners;             //<NotificationTopicListDelegate>
-@property (nonatomic,strong) NSMutableArray *subscriptionInfo;          //<SubscriptionCommand>
-@property (nonatomic,strong) NotificationDeserializer *deserializer;
+@property (nonatomic, strong) NSMutableDictionary *topics;               //<NSString,Topic> as key-value
+@property (nonatomic, strong) NSMutableSet *mandatoryListeners;          //<NotificationDelegate>
+@property (nonatomic, strong) NSMutableDictionary *optionalListeners;    //<NSString,NSArray<NotificationDelegate>> as key-value
+@property (nonatomic, strong) NSMutableSet *topicsListeners;             //<NotificationTopicListDelegate>
+@property (nonatomic, strong) NSMutableArray *subscriptionInfo;          //<SubscriptionCommand>
+@property (nonatomic, strong) NotificationDeserializer *deserializer;
 
 - (Topic *)findTopicById:(NSString *)topicId;
-- (void)updateSubscriptionInfo:(NSString *)topicId commandType:(SubscriptionCommandType)commandType;
+- (void)updateSubscriptionInfoForTopicId:(NSString *)topicId commandType:(SubscriptionCommandType)commandType;
 - (void)updateSubscriptions:(NSArray *)subscriptionUpdate;
-- (void)notifyDelegates:(NSArray *)delegates topic:(Topic *)topic notification:(Notification *)notification;
-- (void)doSync;
+- (void)notifyDelegates:(NSArray *)delegates forTopic:(Topic *)topic notification:(Notification *)notification;
+- (void)performSync;
 
 @end
 
 @implementation DefaultNotificationManager
 
 - (instancetype)initWithState:(id<KaaClientState>)state
-         executorContext:(id<ExecutorContext>)context
-   notificationTransport:(id<NotificationTransport>)transport {
+              executorContext:(id<ExecutorContext>)context
+        notificationTransport:(id<NotificationTransport>)transport {
     self = [super init];
     if (self) {
         self.state = state;
@@ -124,21 +124,21 @@
     return topicList;
 }
 
-- (void)subscribeToTopic:(NSString *)topicId forceSync:(BOOL)forceSync {
+- (void)subscribeToTopicWithId:(NSString *)topicId forceSync:(BOOL)forceSync {
     Topic *topic = [self findTopicById:topicId];
     if (topic.subscriptionType != SUBSCRIPTION_TYPE_OPTIONAL_SUBSCRIPTION) {
         DDLogWarn(@"%@ Failed to subscribe: topic [%@] isn't optional", TAG, topicId);
         [NSException raise:KaaUnavailableTopic format:@"Topic [%@] isn't optional", topicId];
     }
     
-    [self updateSubscriptionInfo:topicId commandType:SUBSCRIPTION_COMMAND_TYPE_ADD];
+    [self updateSubscriptionInfoForTopicId:topicId commandType:SUBSCRIPTION_COMMAND_TYPE_ADD];
     
     if (forceSync) {
-        [self doSync];
+        [self performSync];
     }
 }
 
-- (void)subscribeToTopics:(NSArray *)topicIds forceSync:(BOOL)forceSync {
+- (void)subscribeToTopicsWithIDs:(NSArray *)topicIds forceSync:(BOOL)forceSync {
     NSMutableArray *subscriptionUpdate = [NSMutableArray array];
     for (NSString *topicId in topicIds) {
         Topic *topic = [self findTopicById:topicId];
@@ -155,25 +155,25 @@
     [self updateSubscriptions:subscriptionUpdate];
     
     if (forceSync) {
-        [self doSync];
+        [self performSync];
     }
 }
 
-- (void)unsubscribeFromTopic:(NSString *)topicId forceSync:(BOOL)forceSync {
+- (void)unsubscribeFromTopicWithId:(NSString *)topicId forceSync:(BOOL)forceSync {
     Topic *topic = [self findTopicById:topicId];
     if (topic.subscriptionType != SUBSCRIPTION_TYPE_OPTIONAL_SUBSCRIPTION) {
         DDLogWarn(@"%@ Failed to unsubscribe: topic [%@] isn't optional", TAG, topicId);
         [NSException raise:KaaUnavailableTopic format:@"Topic [%@] isn't optional", topicId];
     }
     
-    [self updateSubscriptionInfo:topicId commandType:SUBSCRIPTION_COMMAND_TYPE_REMOVE];
+    [self updateSubscriptionInfoForTopicId:topicId commandType:SUBSCRIPTION_COMMAND_TYPE_REMOVE];
     
     if (forceSync) {
-        [self doSync];
+        [self performSync];
     }
 }
 
-- (void)unsubscribeFromTopics:(NSArray *)topicIds forceSync:(BOOL)forceSync {
+- (void)unsubscribeFromTopicsWithIDs:(NSArray *)topicIds forceSync:(BOOL)forceSync {
     NSMutableArray *subscriptionUpdate = [NSMutableArray array];
     for (NSString *topicId in topicIds) {
         Topic *topic = [self findTopicById:topicId];
@@ -190,11 +190,11 @@
     [self updateSubscriptions:subscriptionUpdate];
     
     if (forceSync) {
-        [self doSync];
+        [self performSync];
     }
 }
 
-- (void)addNotificationDelegate:(id<NotificationDelegate>)delegate forTopic:(NSString *)topicId {
+- (void)addNotificationDelegate:(id<NotificationDelegate>)delegate forTopicId:(NSString *)topicId {
     if (!delegate || !topicId) {
         DDLogWarn(@"%@ Failed to add delegate: id: %@, delegate: %@", TAG, topicId, delegate);
         [NSException raise:NSInvalidArgumentException format:@"Bad delegate data"];
@@ -213,7 +213,7 @@
     }
 }
 
-- (void)removeNotificationDelegate:(id<NotificationDelegate>)delegate forTopic:(NSString *)topicId {
+- (void)removeNotificationDelegate:(id<NotificationDelegate>)delegate forTopicId:(NSString *)topicId {
     if (!delegate || !topicId) {
         DDLogWarn(@"%@ Failed to remove delegate: id: %@, delegate: %@", TAG, topicId, delegate);
         [NSException raise:NSInvalidArgumentException format:@"Bad delegate data"];
@@ -230,7 +230,7 @@
 }
 
 - (void)sync {
-    [self doSync];
+    [self performSync];
 }
 
 - (void)topicsListUpdated:(NSArray *)topics {
@@ -248,7 +248,7 @@
         @synchronized (self.optionalListeners) {
             for (Topic *topic in self.topics.allValues) {
                 [self.optionalListeners removeObjectForKey:topic.id];
-                [self.state removeTopic:topic.id];
+                [self.state removeTopicId:topic.id];
             }
         }
         self.topics = newTopics;
@@ -263,7 +263,7 @@
     }
 }
 
-- (void)notificationReceived:(NSArray *)notifications {
+- (void)notificationsReceived:(NSArray *)notifications {
     for (Notification *notification in notifications) {
         @try {
             Topic *topic = [self findTopicById:notification.topicId];
@@ -273,13 +273,13 @@
                 NSArray *delegates = self.optionalListeners[topic.id];
                 if (delegates && [delegates count] > 0) {
                     hasOwner = YES;
-                    [self notifyDelegates:delegates topic:topic notification:notification];
+                    [self notifyDelegates:delegates forTopic:topic notification:notification];
                 }
             }
             
             if (!hasOwner) {
                 @synchronized (self.mandatoryListeners) {
-                    [self notifyDelegates:[self.mandatoryListeners allObjects] topic:topic notification:notification];
+                    [self notifyDelegates:[self.mandatoryListeners allObjects] forTopic:topic notification:notification];
                 }
             }
         }
@@ -290,13 +290,13 @@
     }
 }
 
-- (void)notifyDelegates:(NSArray *)delegates topic:(Topic *)topic notification:(Notification *)notification {
+- (void)notifyDelegates:(NSArray *)delegates forTopic:(Topic *)topic notification:(Notification *)notification {
     if (notification.body) {
         __weak typeof(self)weakSelf = self;
         __block NSArray *blockDelegates = [delegates copy];
         [[self.context getCallbackExecutor] addOperationWithBlock:^{
             @try {
-                [weakSelf.deserializer notifyDelegates:blockDelegates topic:topic data:notification.body];
+                [weakSelf.deserializer notifyDelegates:blockDelegates withTopic:topic data:notification.body];
             }
             @catch (NSException *exception) {
                 DDLogError(@"%@ Failed to process notification for topic %@. Error: %@ reason: %@",
@@ -306,7 +306,7 @@
     }
 }
 
-- (void)updateSubscriptionInfo:(NSString *)topicId commandType:(SubscriptionCommandType)commandType {
+- (void)updateSubscriptionInfoForTopicId:(NSString *)topicId commandType:(SubscriptionCommandType)commandType {
     @synchronized (self.subscriptionInfo) {
         SubscriptionCommand *subscriptionCommand = [[SubscriptionCommand alloc] init];
         subscriptionCommand.topicId = topicId;
@@ -332,9 +332,9 @@
     }
 }
 
-- (void)doSync {
+- (void)performSync {
     @synchronized (self.subscriptionInfo) {
-        [self.transport onSubscriptionChanged:self.subscriptionInfo];
+        [self.transport onSubscriptionChangedWithCommands:self.subscriptionInfo];
         [self.subscriptionInfo removeAllObjects];
         [self.transport sync];
     }

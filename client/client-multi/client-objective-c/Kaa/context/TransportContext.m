@@ -18,15 +18,15 @@
 
 @interface TransportContext ()
 
-@property (nonatomic,strong) id<MetaDataTransport> metadataTransport;
-@property (nonatomic,strong) id<BootstrapTransport> bootstrapTransport;
-@property (nonatomic,strong) id<ProfileTransport> profileTransport;
-@property (nonatomic,strong) id<EventTransport> eventTransport;
-@property (nonatomic,strong) id<NotificationTransport> notificationTransport;
-@property (nonatomic,strong) id<ConfigurationTransport> configurationTransport;
-@property (nonatomic,strong) id<UserTransport> userTransport;
-@property (nonatomic,strong) id<RedirectionTransport> redirectionTransport;
-@property (nonatomic,strong) id<LogTransport> logTransport;
+@property (nonatomic, strong) id<MetaDataTransport> metadataTransport;
+@property (nonatomic, strong) id<BootstrapTransport> bootstrapTransport;
+@property (nonatomic, strong) id<ProfileTransport> profileTransport;
+@property (nonatomic, strong) id<EventTransport> eventTransport;
+@property (nonatomic, strong) id<NotificationTransport> notificationTransport;
+@property (nonatomic, strong) id<ConfigurationTransport> configurationTransport;
+@property (nonatomic, strong) id<UserTransport> userTransport;
+@property (nonatomic, strong) id<RedirectionTransport> redirectionTransport;
+@property (nonatomic, strong) id<LogTransport> logTransport;
 
 @end
 

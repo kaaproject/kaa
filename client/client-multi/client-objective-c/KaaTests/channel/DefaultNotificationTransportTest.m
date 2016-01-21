@@ -117,7 +117,7 @@
     id <KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
     id <NotificationProcessor> processor = mockProtocol(@protocol(NotificationProcessor));
     [given([clientState notificationSequenceNumber]) willReturnInteger:2];
-    [given([clientState updateTopicSubscriptionInfo:anything() sequence:(int32_t)anything()]) willReturnBool:YES];
+    [given([clientState updateSubscriptionInfoForTopicId:anything() sequence:(int32_t)anything()]) willReturnBool:YES];
     
     NotificationSyncResponse *response = [self getNewNotificationResponseWithResponseStatus:SYNC_RESPONSE_STATUS_DELTA];
     
@@ -155,10 +155,10 @@
     
     [transport onNotificationResponse:response];
     
-    [verifyCount(processor, times(1)) notificationReceived:anything()];
+    [verifyCount(processor, times(1)) notificationsReceived:anything()];
     [verifyCount(processor, times(1)) topicsListUpdated:topics];
-    [verifyCount(clientState, times(1)) updateTopicSubscriptionInfo:topicId1 sequence:3];
-    [verifyCount(clientState, times(1)) updateTopicSubscriptionInfo:topicId1 sequence:6];
+    [verifyCount(clientState, times(1)) updateSubscriptionInfoForTopicId:topicId1 sequence:3];
+    [verifyCount(clientState, times(1)) updateSubscriptionInfoForTopicId:topicId1 sequence:6];
     
     XCTAssertEqualObjects(@"uid", [transport createNotificationRequest].acceptedUnicastNotifications.data[0]);
 }
@@ -166,7 +166,7 @@
 - (void)testFilterStaleNotification {
     id <KaaClientState> state = mockProtocol(@protocol(KaaClientState));
     id <NotificationProcessor> processor = mockProtocol(@protocol(NotificationProcessor));
-    [given([state updateTopicSubscriptionInfo:anything() sequence:(int)anything()]) willReturnBool:YES];
+    [given([state updateSubscriptionInfoForTopicId:anything() sequence:(int)anything()]) willReturnBool:YES];
     
     NotificationSyncResponse *response = [self getNewNotificationResponseWithResponseStatus:SYNC_RESPONSE_STATUS_DELTA];
     
@@ -185,7 +185,7 @@
     [transport onNotificationResponse:response];
     
     NSArray *expectedNotifications = [NSArray array];
-    [verifyCount(processor, times(1)) notificationReceived:expectedNotifications];
+    [verifyCount(processor, times(1)) notificationsReceived:expectedNotifications];
 }
 
 - (void)testTopicState {

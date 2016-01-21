@@ -52,7 +52,7 @@ typedef enum {
  *
  * Returns upload decision.
  */
-- (LogUploadStrategyDecision)isUploadNeeded:(id<LogStorageStatus>)status;
+- (LogUploadStrategyDecision)isUploadNeededForStorageStatus:(id<LogStorageStatus>)status;
 
 /**
  * Retrieves maximum size of the report pack
@@ -89,12 +89,12 @@ typedef enum {
 /**
  * Handles timeout of log delivery
  */
-- (void)onTimeout:(id<LogFailoverCommand>)controller;
+- (void)onTimeoutForController:(id<LogFailoverCommand>)controller;
 
 /**
  * Handles failure of log delivery
  */
-- (void)onFailure:(id<LogFailoverCommand>)controller errorCode:(LogDeliveryErrorCode)code;
+- (void)onFailureForController:(id<LogFailoverCommand>)controller errorCode:(LogDeliveryErrorCode)code;
 
 @end
 

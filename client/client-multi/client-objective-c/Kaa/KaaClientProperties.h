@@ -33,7 +33,7 @@
 
 - (instancetype)initWithDictionary:(NSDictionary *)defaults base64:(id<KAABase64>)base64;
 
-- (instancetype)initDefaults:(id<KAABase64>)base64;
+- (instancetype)initDefaultsWithBase64:(id<KAABase64>)base64;
 
 - (NSData *)propertiesHash;
 

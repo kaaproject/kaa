@@ -26,10 +26,10 @@
 @implementation SyncTaskTest
 
 - (void)testMerge {
-    SyncTask *task1 = [[SyncTask alloc] initWithTransport:TRANSPORT_TYPE_CONFIGURATION ackOnly:YES all:NO];
-    SyncTask *task2 = [[SyncTask alloc] initWithTransport:TRANSPORT_TYPE_NOTIFICATION ackOnly:NO all:NO];
+    SyncTask *task1 = [[SyncTask alloc] initWithTransportType:TRANSPORT_TYPE_CONFIGURATION ackOnly:YES all:NO];
+    SyncTask *task2 = [[SyncTask alloc] initWithTransportType:TRANSPORT_TYPE_NOTIFICATION ackOnly:NO all:NO];
     
-    SyncTask *merged = [SyncTask merge:task1 additionalTasks:[NSArray arrayWithObject:task2]];
+    SyncTask *merged = [SyncTask mergeTask:task1 withAdditionalTasks:[NSArray arrayWithObject:task2]];
     
     XCTAssertEqual(2, [[merged getTransportTypes] count]);
     XCTAssertFalse([merged isAckOnly]);
@@ -37,10 +37,10 @@
 }
 
 - (void)testMergeAcks {
-    SyncTask *task1 = [[SyncTask alloc] initWithTransport:TRANSPORT_TYPE_CONFIGURATION ackOnly:YES all:NO];
-    SyncTask *task2 = [[SyncTask alloc] initWithTransport:TRANSPORT_TYPE_NOTIFICATION ackOnly:YES all:NO];
+    SyncTask *task1 = [[SyncTask alloc] initWithTransportType:TRANSPORT_TYPE_CONFIGURATION ackOnly:YES all:NO];
+    SyncTask *task2 = [[SyncTask alloc] initWithTransportType:TRANSPORT_TYPE_NOTIFICATION ackOnly:YES all:NO];
     
-    SyncTask *merged = [SyncTask merge:task1 additionalTasks:[NSArray arrayWithObject:task2]];
+    SyncTask *merged = [SyncTask mergeTask:task1 withAdditionalTasks:[NSArray arrayWithObject:task2]];
     
     XCTAssertEqual(2, [[merged getTransportTypes] count]);
     XCTAssertTrue([merged isAckOnly]);
@@ -48,10 +48,10 @@
 }
 
 - (void)testMergeAll {
-    SyncTask *task1 = [[SyncTask alloc] initWithTransport:TRANSPORT_TYPE_CONFIGURATION ackOnly:YES all:NO];
-    SyncTask *task2 = [[SyncTask alloc] initWithTransport:TRANSPORT_TYPE_NOTIFICATION ackOnly:NO all:YES];
+    SyncTask *task1 = [[SyncTask alloc] initWithTransportType:TRANSPORT_TYPE_CONFIGURATION ackOnly:YES all:NO];
+    SyncTask *task2 = [[SyncTask alloc] initWithTransportType:TRANSPORT_TYPE_NOTIFICATION ackOnly:NO all:YES];
     
-    SyncTask *merged = [SyncTask merge:task1 additionalTasks:[NSArray arrayWithObject:task2]];
+    SyncTask *merged = [SyncTask mergeTask:task1 withAdditionalTasks:[NSArray arrayWithObject:task2]];
     
     XCTAssertEqual(2, [[merged getTransportTypes] count]);
     XCTAssertFalse([merged isAckOnly]);

@@ -37,7 +37,7 @@
     [given([logStorageStatus getConsumedVolume]) willReturnLong:(int64_t)(thresholdVolume - 1)];
     
     StorageSizeWithTimeLimitLogUploadStrategy *strategy = [[StorageSizeWithTimeLimitLogUploadStrategy alloc] initWithThresholdVolume:thresholdVolume timeLimit:uploadCheckPeriod timeUnit:TIME_UNIT_SECONDS];
-    XCTAssertEqual([strategy isUploadNeeded:logStorageStatus], LOG_UPLOAD_STRATEGY_DECISION_NOOP);
+    XCTAssertEqual([strategy isUploadNeededForStorageStatus:logStorageStatus], LOG_UPLOAD_STRATEGY_DECISION_NOOP);
 }
 
 - (void)testEqualToRecordThresholdCount {
@@ -48,7 +48,7 @@
     [given([logStorageStatus getConsumedVolume]) willReturnLong:(int64_t)(thresholdVolume)];
     
     StorageSizeWithTimeLimitLogUploadStrategy *strategy = [[StorageSizeWithTimeLimitLogUploadStrategy alloc] initWithThresholdVolume:thresholdVolume timeLimit:uploadCheckPeriod timeUnit:TIME_UNIT_SECONDS];
-    XCTAssertEqual([strategy isUploadNeeded:logStorageStatus], LOG_UPLOAD_STRATEGY_DECISION_UPLOAD);
+    XCTAssertEqual([strategy isUploadNeededForStorageStatus:logStorageStatus], LOG_UPLOAD_STRATEGY_DECISION_UPLOAD);
 }
 
 - (void)testGreaterThanRecordThresholdCount {
@@ -59,7 +59,7 @@
     [given([logStorageStatus getConsumedVolume]) willReturnLong:(int64_t)(thresholdVolume + 1)];
     
     StorageSizeWithTimeLimitLogUploadStrategy *strategy = [[StorageSizeWithTimeLimitLogUploadStrategy alloc] initWithThresholdVolume:thresholdVolume timeLimit:uploadCheckPeriod timeUnit:TIME_UNIT_SECONDS];
-    XCTAssertEqual([strategy isUploadNeeded:logStorageStatus], LOG_UPLOAD_STRATEGY_DECISION_UPLOAD);
+    XCTAssertEqual([strategy isUploadNeededForStorageStatus:logStorageStatus], LOG_UPLOAD_STRATEGY_DECISION_UPLOAD);
 }
 
 - (void)testUploadAfterSomeTime {
@@ -70,19 +70,19 @@
     [given([logStorageStatus getRecordCount]) willReturnLong:(int64_t)0];
     
     StorageSizeWithTimeLimitLogUploadStrategy *strategy = [[StorageSizeWithTimeLimitLogUploadStrategy alloc] initWithThresholdVolume:thresholdVolume timeLimit:uploadCheckPeriod timeUnit:TIME_UNIT_SECONDS];
-    XCTAssertEqual([strategy isUploadNeeded:logStorageStatus], LOG_UPLOAD_STRATEGY_DECISION_NOOP);
+    XCTAssertEqual([strategy isUploadNeededForStorageStatus:logStorageStatus], LOG_UPLOAD_STRATEGY_DECISION_NOOP);
     
     [NSThread sleepForTimeInterval:uploadCheckPeriod/2];
-    XCTAssertEqual([strategy isUploadNeeded:logStorageStatus], LOG_UPLOAD_STRATEGY_DECISION_NOOP);
+    XCTAssertEqual([strategy isUploadNeededForStorageStatus:logStorageStatus], LOG_UPLOAD_STRATEGY_DECISION_NOOP);
     
     [NSThread sleepForTimeInterval:uploadCheckPeriod/2];
-    XCTAssertEqual([strategy isUploadNeeded:logStorageStatus], LOG_UPLOAD_STRATEGY_DECISION_UPLOAD);
+    XCTAssertEqual([strategy isUploadNeededForStorageStatus:logStorageStatus], LOG_UPLOAD_STRATEGY_DECISION_UPLOAD);
     
     [NSThread sleepForTimeInterval:uploadCheckPeriod/2];
-    XCTAssertEqual([strategy isUploadNeeded:logStorageStatus], LOG_UPLOAD_STRATEGY_DECISION_NOOP);
+    XCTAssertEqual([strategy isUploadNeededForStorageStatus:logStorageStatus], LOG_UPLOAD_STRATEGY_DECISION_NOOP);
     
     [NSThread sleepForTimeInterval:uploadCheckPeriod/2];
-    XCTAssertEqual([strategy isUploadNeeded:logStorageStatus], LOG_UPLOAD_STRATEGY_DECISION_UPLOAD);
+    XCTAssertEqual([strategy isUploadNeededForStorageStatus:logStorageStatus], LOG_UPLOAD_STRATEGY_DECISION_UPLOAD);
 }
 
 @end

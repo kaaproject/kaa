@@ -39,7 +39,7 @@
  * @param notifications the list of new notifications.
  * @see Notification
  */
-- (void)notificationReceived:(NSArray *)notifications;
+- (void)notificationsReceived:(NSArray *)notifications;
 
 @end
 

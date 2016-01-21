@@ -19,7 +19,7 @@
 
 @interface TransactionId ()
 
-@property (nonatomic,strong) NSString *identifier;
+@property (nonatomic, strong) NSString *identifier;
 
 @end
 

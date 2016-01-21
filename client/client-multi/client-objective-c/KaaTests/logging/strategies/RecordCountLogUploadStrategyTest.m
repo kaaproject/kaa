@@ -37,7 +37,7 @@
     
     RecordCountLogUploadStrategy *strategy = [[RecordCountLogUploadStrategy alloc] initWithCountThreshold:thresholdCount];
     
-    XCTAssertEqual([strategy isUploadNeeded:logStorageStatus], LOG_UPLOAD_STRATEGY_DECISION_NOOP);
+    XCTAssertEqual([strategy isUploadNeededForStorageStatus:logStorageStatus], LOG_UPLOAD_STRATEGY_DECISION_NOOP);
 }
 
 - (void)testEqualToRecordThresholdCount {
@@ -48,7 +48,7 @@
     
     RecordCountLogUploadStrategy *strategy = [[RecordCountLogUploadStrategy alloc] initWithCountThreshold:thresholdCount];
     
-    XCTAssertEqual([strategy isUploadNeeded:logStorageStatus], LOG_UPLOAD_STRATEGY_DECISION_UPLOAD);
+    XCTAssertEqual([strategy isUploadNeededForStorageStatus:logStorageStatus], LOG_UPLOAD_STRATEGY_DECISION_UPLOAD);
 }
 
 - (void)testGreaterThanRecordThresholdCount {
@@ -59,7 +59,7 @@
     
     RecordCountLogUploadStrategy *strategy = [[RecordCountLogUploadStrategy alloc] initWithCountThreshold:thresholdCount];
     
-    XCTAssertEqual([strategy isUploadNeeded:logStorageStatus], LOG_UPLOAD_STRATEGY_DECISION_UPLOAD);
+    XCTAssertEqual([strategy isUploadNeededForStorageStatus:logStorageStatus], LOG_UPLOAD_STRATEGY_DECISION_UPLOAD);
 }
 
 @end

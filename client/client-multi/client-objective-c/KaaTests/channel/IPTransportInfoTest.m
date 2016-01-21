@@ -41,10 +41,10 @@
 }
 
 - (id<TransportConnectionInfo>)createTestServerInfoWithServerType:(ServerType)serverType
-                                               transportProtocolId:(TransportProtocolId *)TPid
-                                                              host:(NSString *)host
-                                                              port:(uint32_t)port
-                                                      publicKey:(NSData *)publicKey {
+                                              transportProtocolId:(TransportProtocolId *)TPid
+                                                             host:(NSString *)host
+                                                             port:(uint32_t)port
+                                                        publicKey:(NSData *)publicKey {
     ProtocolMetaData *md = [TestsHelper buildMetaDataWithTransportProtocolId:TPid host:host port:port publicKey:publicKey];
     return  [[GenericTransportInfo alloc] initWithServerType:serverType meta:md];
 }

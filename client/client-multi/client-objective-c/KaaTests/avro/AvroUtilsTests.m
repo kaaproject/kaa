@@ -21,7 +21,7 @@
 
 @interface AvroUtilsTests : XCTestCase
 
-@property (nonatomic,strong) AvroUtils *utils;
+@property (nonatomic, strong) AvroUtils *utils;
 
 @end
 

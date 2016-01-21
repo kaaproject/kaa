@@ -145,7 +145,7 @@
 
     [NSThread sleepForTimeInterval:1];
     [verifyCount([channel getDemultiplexer], times(channel.wantedNumberOfInvocations)) processResponse:[self returnData]];
-    [verifyCount([channel getMultiplexer], times(channel.wantedNumberOfInvocations)) compileRequest:anything()];
+    [verifyCount([channel getMultiplexer], times(channel.wantedNumberOfInvocations)) compileRequestForTypes:anything()];
 }
 
 - (void)testShutDown {
@@ -176,7 +176,7 @@
     NSData *data = [self returnData];
     [NSThread sleepForTimeInterval:1];
     [verifyCount([channel getDemultiplexer], times(channel.wantedNumberOfInvocations)) processResponse:data];
-    [verifyCount([channel getMultiplexer], times(channel.wantedNumberOfInvocations)) compileRequest:anything()];
+    [verifyCount([channel getMultiplexer], times(channel.wantedNumberOfInvocations)) compileRequestForTypes:anything()];
 }
 
 #pragma mark - Supporting methods

@@ -42,7 +42,7 @@
     NSData *signature = nil;
     
     if (sign) {
-        signature = [messageEncDec sign:requestKeyEncoded];
+        signature = [messageEncDec signatureForMessage:requestKeyEncoded];
         DDLogVerbose(@"%@ Signature size: %li", TAG, (long)(signature.length));
         DDLogVerbose(@"%@ Signature: %@", TAG, [signature hexadecimalString]);
     }

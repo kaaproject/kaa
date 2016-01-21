@@ -40,7 +40,7 @@
  * @param transportId of the transport protocol.
  * @see TransportProtocolId
  */
-- (void)useNextOperationsServer:(TransportProtocolId *)transportId;
+- (void)useNextOperationsServerWithTransportId:(TransportProtocolId *)transportId;
 
 /**
  * Update the Channel Manager with endpoint's properties retrieved by its DNS.

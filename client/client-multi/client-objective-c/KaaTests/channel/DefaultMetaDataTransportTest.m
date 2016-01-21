@@ -34,8 +34,8 @@
 - (void)testCreateMetaDataRequest {
     KaaClientProperties *properties = mock([KaaClientProperties class]);
     id <KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
-    [given([clientState profileHash]) willReturn:[EndpointObjectHash fromSHA1:[self getNewDataWith123]]];
-    EndpointObjectHash *publicHash = [EndpointObjectHash fromSHA1:[self getNewDataWith567]];
+    [given([clientState profileHash]) willReturn:[EndpointObjectHash hashWithSHA1:[self getNewDataWith123]]];
+    EndpointObjectHash *publicHash = [EndpointObjectHash hashWithSHA1:[self getNewDataWith567]];
     id <MetaDataTransport> transport = [[DefaultMetaDataTransport alloc] init];
     [transport createMetaDataRequest];
     [transport setClientProperties:properties];

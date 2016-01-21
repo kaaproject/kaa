@@ -19,9 +19,10 @@
 
 #import <Foundation/Foundation.h>
 #import "GenericLogCollector.h"
-#import "KAADummyLog.h"
+#import "LogGen.h"
 #import "BucketRunner.h"
 #import "LogDeliveryDelegate.h"
+#import "KAADummyLog.h"
 
 /**
  * Interface for a log collector.

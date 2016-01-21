@@ -50,7 +50,7 @@
     self.returnCode = ((const char*)[self.buffer bytes])[1];
 }
 
-- (BOOL)isNeedCloseConnection {
+- (BOOL)needToCloseConnection {
     return NO;
 }
 

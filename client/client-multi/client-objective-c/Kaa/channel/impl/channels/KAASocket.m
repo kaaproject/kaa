@@ -18,7 +18,7 @@
 
 @interface KAASocket ()
 
-@property (nonatomic,strong) NSString *host;
+@property (nonatomic, strong) NSString *host;
 @property (nonatomic) int port;
 
 @end

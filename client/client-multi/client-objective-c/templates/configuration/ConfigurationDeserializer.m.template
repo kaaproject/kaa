@@ -18,16 +18,20 @@
 #import "AvroBytesConverter.h"
 #import "ConfigurationCommon.h"
 
-@implementation ConfigurationDeserializer {
-    AvroBytesConverter *converter;
-    id<ExecutorContext> executorContext;
-}
+@interface ConfigurationDeserializer ()
+
+@property (nonatomic, strong) AvroBytesConverter *converter;
+@property (nonatomic, strong) id<ExecutorContext> executorContext;
+
+@end
+
+@implementation ConfigurationDeserializer
 
 - (instancetype)initWithExecutorContext:(id<ExecutorContext>)context {
     self = [super init];
     if (self) {
-        converter = [[AvroBytesConverter alloc] init];
-        executorContext = context;
+        self.converter = [[AvroBytesConverter alloc] init];
+        self.executorContext = context;
     }
     return self;
 }
@@ -35,14 +39,14 @@
 - (void)notifyDelegates:(NSSet *)configurationDelegates withData:(NSData *)configurationData {
     __block ${configuration_class} *configuration = [self fromBytes:configurationData];
     for (id<ConfigurationDelegate> delegate in configurationDelegates) {
-        [[executorContext getCallbackExecutor] addOperationWithBlock:^{
+        [[self.executorContext getCallbackExecutor] addOperationWithBlock:^{
             [delegate onConfigurationUpdate:configuration];
         }];
     }
 }
 
 - (${configuration_class} *)fromBytes:(NSData *)bytes {
-    return [converter fromBytes:bytes object:[${configuration_class} new]];
+    return [self.converter fromBytes:bytes object:[${configuration_class} new]];
 }
 
 @end

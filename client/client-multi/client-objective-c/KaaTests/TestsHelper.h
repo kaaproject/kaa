@@ -33,9 +33,9 @@ if (![(a) isEqual:(b)]) {\
 @interface TestsHelper : NSObject
 
 + (ProtocolMetaData *)buildMetaDataWithTransportProtocolId:(TransportProtocolId *)TPid
-                                       host:(NSString *)host
-                                       port:(int32_t)port
-                                publicKey:(NSData *)publicKey;
+                                                      host:(NSString *)host
+                                                      port:(int32_t)port
+                                                 publicKey:(NSData *)publicKey;
 
 + (KaaClientProperties *)getProperties;
 

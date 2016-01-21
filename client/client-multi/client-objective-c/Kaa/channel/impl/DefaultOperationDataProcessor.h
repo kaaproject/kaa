@@ -27,7 +27,7 @@
 #import "LogTransport.h"
 #import "KaaClientState.h"
 
-@interface DefaultOperationDataProcessor : NSObject <KaaDataDemultiplexer,KaaDataMultiplexer>
+@interface DefaultOperationDataProcessor : NSObject <KaaDataDemultiplexer, KaaDataMultiplexer>
 
 - (instancetype)initWithClientState:(id<KaaClientState>)state;
 

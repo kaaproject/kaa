@@ -27,43 +27,43 @@
 
 - (void)testDeltaSameEndpointObjectHash {
     
-    EndpointObjectHash *hash1 = [EndpointObjectHash fromString:@"ttt"];
-    EndpointObjectHash *hash2 = [EndpointObjectHash fromString:@"ttt"];
+    EndpointObjectHash *hash1 = [EndpointObjectHash hashWithString:@"ttt"];
+    EndpointObjectHash *hash2 = [EndpointObjectHash hashWithString:@"ttt"];
     XCTAssertEqualObjects(hash1, hash2);
     
-    hash1 = [EndpointObjectHash fromSHA1:[@"test" dataUsingEncoding:NSUTF8StringEncoding]];
-    hash2 = [EndpointObjectHash fromSHA1:[@"test" dataUsingEncoding:NSUTF8StringEncoding]];
+    hash1 = [EndpointObjectHash hashWithSHA1:[@"test" dataUsingEncoding:NSUTF8StringEncoding]];
+    hash2 = [EndpointObjectHash hashWithSHA1:[@"test" dataUsingEncoding:NSUTF8StringEncoding]];
     XCTAssertEqualObjects(hash1, hash2);
 
 }
 
 - (void)testDeltaDifferentEndpointObjectHash {
     
-    EndpointObjectHash *hash1 = [EndpointObjectHash fromString:@"test1"];
-    EndpointObjectHash *hash2 = [EndpointObjectHash fromString:@"test2"];
+    EndpointObjectHash *hash1 = [EndpointObjectHash hashWithString:@"test1"];
+    EndpointObjectHash *hash2 = [EndpointObjectHash hashWithString:@"test2"];
     XCTAssertNotEqualObjects(hash1, hash2);
     
-    hash1 = [EndpointObjectHash fromSHA1:[@"test1" dataUsingEncoding:NSUTF8StringEncoding]];
-    hash2 = [EndpointObjectHash fromSHA1:[@"test2" dataUsingEncoding:NSUTF8StringEncoding]];
+    hash1 = [EndpointObjectHash hashWithSHA1:[@"test1" dataUsingEncoding:NSUTF8StringEncoding]];
+    hash2 = [EndpointObjectHash hashWithSHA1:[@"test2" dataUsingEncoding:NSUTF8StringEncoding]];
     XCTAssertNotEqualObjects(hash1, hash2);
 }
 
 - (void)testNullEndpointObjectHash {
     
-    EndpointObjectHash *hash1 = [EndpointObjectHash fromSHA1:nil];
+    EndpointObjectHash *hash1 = [EndpointObjectHash hashWithSHA1:nil];
     XCTAssertNil(hash1);
     
-    hash1 = [EndpointObjectHash fromBytes:nil];
+    hash1 = [EndpointObjectHash hashWithBytes:nil];
     XCTAssertNil(hash1);
     
-    hash1 = [EndpointObjectHash fromString:nil];
+    hash1 = [EndpointObjectHash hashWithString:nil];
     XCTAssertNil(hash1);
 }
 
 - (void)testToStringEndpointObjectHash {
     NSData *dat = [@"test" dataUsingEncoding:NSUTF8StringEncoding];
     
-    EndpointObjectHash *hash1 = [EndpointObjectHash fromBytes:[@"test" dataUsingEncoding:NSUTF8StringEncoding]];
+    EndpointObjectHash *hash1 = [EndpointObjectHash hashWithBytes:[@"test" dataUsingEncoding:NSUTF8StringEncoding]];
     XCTAssertNotNil(hash1);
     XCTAssertTrue([[hash1 description] isEqualToString:[dat hexadecimalString]]);
     

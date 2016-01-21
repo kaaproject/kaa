@@ -54,7 +54,7 @@
     if (!self.buffer) {
         int remainingLength = self.remainingLength;
         NSMutableData *kaaTcpHeader = [NSMutableData dataWithCapacity:KAA_TCP_NAME_LENGTH];
-        int headerSize = [self fillFixedHeader:remainingLength destination:kaaTcpHeader];
+        int headerSize = [self fillFixedHeader:kaaTcpHeader remainingLength:remainingLength];
         int remainingSize = remainingLength + headerSize;
         DDLogVerbose(@"%@ Allocating buffer size [%i]", TAG, remainingSize);
         self.buffer = [NSMutableData dataWithCapacity:remainingSize];
@@ -66,8 +66,8 @@
     return self.buffer;
 }
 
-- (int)fillFixedHeader:(int)remainingLength destination:(NSMutableData *)destination {
-    char *rawDestination = [destination mutableBytes];
+- (int)fillFixedHeader:(NSMutableData *)header remainingLength:(int)remainingLength {
+    char *rawDestination = [header mutableBytes];
     int size = 1;
     char byte1 = self.messageType;
     byte1 = byte1 & 0x0F;
@@ -84,7 +84,7 @@
         rawDestination[size] = digit;
         ++size;
     } while ( remainingLength > 0 );
-    [destination appendBytes:rawDestination length:size];
+    [header appendBytes:rawDestination length:size];
     return size;
 }
 
@@ -162,7 +162,7 @@
     [NSException raise:NSInternalInconsistencyException format:@"Not implemented in abstract class"];
 }
 
-- (BOOL)isNeedCloseConnection {
+- (BOOL)needToCloseConnection {
     [NSException raise:NSInternalInconsistencyException format:@"Not implemented in abstract class"];
     return FALSE;
 }

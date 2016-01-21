@@ -53,7 +53,7 @@
 /**
  * Reports to Channel Manager in case link with server was not established.
  */
-- (void)onServerFailed:(id<TransportConnectionInfo>)server;
+- (void)onServerFailedWithConnectionInfo:(id<TransportConnectionInfo>)server;
 
 - (void)clearChannelList;
 
@@ -77,7 +77,7 @@
 /**
  * Returns information about server that is used for data transfer for specified TransportType.
  */
-- (id<TransportConnectionInfo>)getActiveServer:(TransportType)type;
+- (id<TransportConnectionInfo>)getActiveServerForType:(TransportType)type;
 
 /**
  * Sets a new failover manager

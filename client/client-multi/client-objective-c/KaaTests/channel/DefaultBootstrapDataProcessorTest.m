@@ -36,13 +36,13 @@
     id <BootstrapTransport> transport = mockProtocol(@protocol(BootstrapTransport));
     [given([transport createResolveRequest]) willReturn:[self getNewSyncRequest]];
     [processor setBootstrapTransport:transport];
-    XCTAssertNotNil([processor compileRequest:nil]);
+    XCTAssertNotNil([processor compileRequestForTypes:nil]);
     [verifyCount(transport, times(1)) createResolveRequest];
 }
 
 - (void)testRequestCreationWithNullTransport {
     DefaultBootstrapDataProcessor *processor = [[DefaultBootstrapDataProcessor alloc] init];
-    XCTAssertNil([processor compileRequest:nil]);
+    XCTAssertNil([processor compileRequestForTypes:nil]);
 }
 
 - (void)testResponse {

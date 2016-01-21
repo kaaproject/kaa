@@ -34,7 +34,7 @@
 * On failure during Kaa client startup. Typically failure is related to
 * network issues.
 */
-- (void)onStartFailure:(NSException *)exception;
+- (void)onStartFailureWithException:(NSException *)exception;
 
 /**
 * On successful pause of Kaa client. Kaa client is successfully paused
@@ -46,7 +46,7 @@
 * On failure during Kaa client pause. Typically related to
 * failure to free some resources.
 */
-- (void)onPauseFailure:(NSException *)exception;
+- (void)onPauseFailureWithException:(NSException *)exception;
 
 /**
 * On successful resume of Kaa client. Kaa client is successfully connected
@@ -58,7 +58,7 @@
 * On failure during Kaa client resume. Typically failure is related to
 * network issues.
 */
-- (void)onResumeFailure:(NSException *)exception;
+- (void)onResumeFailureWithException:(NSException *)exception;
 
 /**
 * On successful stop of Kaa client. Kaa client is successfully stopped
@@ -70,7 +70,7 @@
 * On failure during Kaa client stop. Typically related to
 * failure to free some resources.
 */
-- (void)onStopFailure:(NSException *)exception;
+- (void)onStopFailureWithException:(NSException *)exception;
 
 @end
 

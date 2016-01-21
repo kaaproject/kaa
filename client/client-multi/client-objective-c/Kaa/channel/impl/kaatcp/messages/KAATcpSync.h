@@ -29,10 +29,10 @@
  */
 @interface KAATcpSync : KAATcpKaaSync
 
-@property (nonatomic,strong) NSData *avroObject; //Avro object byte representation
+@property (nonatomic, strong) NSData *avroObject; //Avro object byte representation
 
 - (instancetype)initWithAvro:(NSData *)avroObject request:(BOOL)isRequest zipped:(BOOL)isZipped encypted:(BOOL)isEncrypted;
 
-- (void)decodeAvroObject:(NSInputStream *)input;
+- (void)decodeAvroObjectFromInput:(NSInputStream *)input;
 
 @end

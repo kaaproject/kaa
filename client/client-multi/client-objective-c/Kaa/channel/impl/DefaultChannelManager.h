@@ -22,15 +22,15 @@
 @interface DefaultChannelManager : NSObject <KaaInternalChannelManager>
 
 - (instancetype)initWithBootstrapManager:(id<BootstrapManager>)bootstrapMgr
-        bootstrapServers:(NSDictionary *)servers
-                 context:(id<ExecutorContext>)context;
+                        bootstrapServers:(NSDictionary *)servers
+                                 context:(id<ExecutorContext>)context;
 
 @end
 
 @interface SyncWorker : NSThread
 
-@property (nonatomic,strong) id<KaaDataChannel> channel;
-@property (nonatomic,weak) DefaultChannelManager *manager;
+@property (nonatomic, strong) id<KaaDataChannel> channel;
+@property (nonatomic, weak) DefaultChannelManager *manager;
 @property (nonatomic) volatile BOOL isStopped;
 
 - (instancetype)initWithChannel:(id<KaaDataChannel>)channel manager:(DefaultChannelManager *)manager;

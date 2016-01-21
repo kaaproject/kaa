@@ -33,7 +33,7 @@
 - (void)decode {
 }
 
-- (BOOL)isNeedCloseConnection {
+- (BOOL)needToCloseConnection {
     return NO;
 }
 

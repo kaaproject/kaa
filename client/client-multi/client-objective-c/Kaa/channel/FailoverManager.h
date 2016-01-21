@@ -29,17 +29,17 @@
 /**
  * Needs to be invoked when a server fail occurs.
  */
-- (void)onServerFailed:(id<TransportConnectionInfo>)connectionInfo;
+- (void)onServerFailedWithConnectionInfo:(id<TransportConnectionInfo>)connectionInfo;
 
 /**
  * Needs to be invoked as soon as current server is changed.
  */
-- (void)onServerChanged:(id<TransportConnectionInfo>)connectionInfo;
+- (void)onServerChangedWithConnectionInfo:(id<TransportConnectionInfo>)connectionInfo;
 
 /**
  * Needs to be invoked as soon as connection to the current server is established.
  */
-- (void)onServerConnected:(id<TransportConnectionInfo>)connectionInfo;
+- (void)onServerConnectedWithConnectionInfo:(id<TransportConnectionInfo>)connectionInfo;
 
 /**
  * Needs to be invoked to determine a decision that resolves the failover.
@@ -48,7 +48,7 @@
  *
  * Return decision which is meant to resolve the failover.
  */
-- (FailoverDecision *)onFailover:(FailoverStatus)status;
+- (FailoverDecision *)decisionOnFailoverStatus:(FailoverStatus)status;
 
 @end
 

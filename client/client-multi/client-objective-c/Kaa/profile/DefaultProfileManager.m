@@ -19,10 +19,10 @@
 
 @interface DefaultProfileManager ()
 
-@property (nonatomic,strong) ProfileSerializer *serializer;
+@property (nonatomic, strong) ProfileSerializer *serializer;
 
-@property (nonatomic,strong) id<ProfileTransport> transport;
-@property (nonatomic,strong) id<ProfileContainer> container;
+@property (nonatomic, strong) id<ProfileTransport> transport;
+@property (nonatomic, strong) id<ProfileContainer> container;
 
 @end
 
@@ -42,7 +42,7 @@
 }
 
 - (NSData *)getSerializedProfile {
-    return [self.serializer toBytes:self.container];
+    return [self.serializer serializeContainer:self.container];
 }
 
 - (void)updateProfile {

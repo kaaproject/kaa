@@ -35,23 +35,23 @@
     return self;
 }
 
-+ (instancetype)fromString:(NSString *)data {
++ (instancetype)hashWithString:(NSString *)data {
     if (!data) {
         return nil;
     }
     NSData *utf8Data = [data dataUsingEncoding:NSUTF8StringEncoding];
     NSData *encodedData = [utf8Data base64EncodedDataWithOptions:0];
-    return [[super alloc] initWithData: encodedData];
+    return [[self alloc] initWithData: encodedData];
 }
 
-+ (instancetype)fromBytes:(NSData *)data {
++ (instancetype)hashWithBytes:(NSData *)data {
     if (!data) {
         return nil;
     }
-    return [[super alloc] initWithData:data];
+    return [[self alloc] initWithData:data];
 }
 
-+ (instancetype)fromSHA1:(NSData *)data {
++ (instancetype)hashWithSHA1:(NSData *)data {
     if (!data) {
         return nil;
     }

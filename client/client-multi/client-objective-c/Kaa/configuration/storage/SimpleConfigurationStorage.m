@@ -24,9 +24,9 @@
 
 @interface SimpleConfigurationStorage ()
 
-@property (nonatomic,strong) id<KaaClientPlatformContext> context;
-@property (nonatomic,strong) NSString *path;
-@property (nonatomic,strong) NSFileManager *fileManager;
+@property (nonatomic, strong) id<KaaClientPlatformContext> context;
+@property (nonatomic, strong) NSString *path;
+@property (nonatomic, strong) NSFileManager *fileManager;
 
 @end
 

@@ -21,11 +21,11 @@
 
 @protocol LogDeliveryDelegate <NSObject>
 
-- (void)onLogDeliverySuccess:(BucketInfo *)bucketInfo;
+- (void)onLogDeliverySuccessWithBucketInfo:(BucketInfo *)bucketInfo;
 
-- (void)onLogDeliveryFailure:(BucketInfo *)bucketInfo;
+- (void)onLogDeliveryFailureWithBucketInfo:(BucketInfo *)bucketInfo;
 
-- (void)onLogDeliveryTimeout:(BucketInfo *)bucketInfo;
+- (void)onLogDeliveryTimeoutWithBucketInfo:(BucketInfo *)bucketInfo;
 
 @end
 

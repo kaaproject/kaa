@@ -105,7 +105,7 @@
     
     AvroBytesConverter *requestCreator = [[AvroBytesConverter alloc] init];
     id <KaaDataMultiplexer> multiplexer = mockProtocol(@protocol(KaaDataMultiplexer));
-    [given([multiplexer compileRequest:anything()])willReturn:[requestCreator toBytes:[[SyncRequest alloc] init]]];
+    [given([multiplexer compileRequestForTypes:anything()])willReturn:[requestCreator toBytes:[[SyncRequest alloc] init]]];
     id <KaaDataDemultiplexer> demultiplexer = mockProtocol(@protocol(KaaDataDemultiplexer));
     
     [tcpChannel setMultiplexer:multiplexer];
@@ -122,27 +122,27 @@
     
     SyncResponse *response = [[SyncResponse alloc] init];
     [response setStatus:SYNC_RESPONSE_RESULT_TYPE_SUCCESS];
-    NSData *kaatcpsyncrespData = [self getNewKAATcpSyncResponse:response];
+    NSData *kaatcpsyncrespData = [self getNewKAATcpSyncResponseWithResponse:response];
     [tcpChannel.outputStream write:[kaatcpsyncrespData bytes] maxLength:[kaatcpsyncrespData length]];
     
     [NSThread sleepForTimeInterval:1]; // sleep a bit to let the message to be received
     [tcpChannel syncForTransportType:TRANSPORT_TYPE_USER]; // causes call to KaaDataMultiplexer.compileRequest(...) for "KAA_SYNC" messsage
-    [verifyCount(multiplexer, times(2)) compileRequest:anything()];
+    [verifyCount(multiplexer, times(2)) compileRequestForTypes:anything()];
     
     [tcpChannel syncForTransportType:TRANSPORT_TYPE_EVENT];
-    [verifyCount(multiplexer, times(3)) compileRequest:anything()];
+    [verifyCount(multiplexer, times(3)) compileRequestForTypes:anything()];
     [verifyCount(tcpChannel.socketMock, times(3)) output];
     
     [tcpChannel.outputStream write:[[[[KAATcpPingResponse alloc] init] getFrame] bytes] maxLength:[[[[KAATcpPingResponse alloc] init] getFrame] length]];
     
     [tcpChannel syncAll];
-    [verifyCount(multiplexer, times(2)) compileRequest:[tcpChannel getSupportedTransportTypes]];
+    [verifyCount(multiplexer, times(2)) compileRequestForTypes:[tcpChannel getSupportedTransportTypes]];
     
     KAATcpDisconnect *disconnect = [[KAATcpDisconnect alloc] initWithDisconnectReason:DISCONNECT_REASON_INTERNAL_ERROR];
     [tcpChannel.outputStream write:[[disconnect getFrame] bytes] maxLength:[[disconnect getFrame] length]];
     
     [tcpChannel syncAll];
-    [verifyCount(multiplexer, times(3)) compileRequest:[tcpChannel getSupportedTransportTypes]];
+    [verifyCount(multiplexer, times(3)) compileRequestForTypes:[tcpChannel getSupportedTransportTypes]];
     [tcpChannel shutdown];
 }
 
@@ -169,12 +169,12 @@
                                               transportProtocolId:(TransportProtocolId *)TPid
                                                              host:(NSString *)host
                                                              port:(uint32_t)port
-                                                     publicKey:(NSData *)publicKey {
+                                                        publicKey:(NSData *)publicKey {
     ProtocolMetaData *md = [TestsHelper buildMetaDataWithTransportProtocolId:TPid host:host port:port publicKey:publicKey];
     return  [[GenericTransportInfo alloc] initWithServerType:serverType meta:md];
 }
 
-- (NSData *)getNewKAATcpSyncResponse:(SyncResponse *)syncResponse {
+- (NSData *)getNewKAATcpSyncResponseWithResponse:(SyncResponse *)syncResponse {
     AvroBytesConverter *responseCreator = [[AvroBytesConverter alloc] init];
     NSData *data = [responseCreator toBytes:syncResponse];
     KAATcpSyncResponse *response = [[KAATcpSyncResponse alloc] initWithAvro:data zipped:NO encypted:NO];

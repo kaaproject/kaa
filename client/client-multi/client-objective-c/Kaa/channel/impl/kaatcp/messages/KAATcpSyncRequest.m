@@ -28,7 +28,7 @@
         [self setRequest:YES];
         NSInputStream *input = [self remainingStream];
         [input open];
-        [self decodeAvroObject:input];
+        [self decodeAvroObjectFromInput:input];
         [input close];
     }
     return self;

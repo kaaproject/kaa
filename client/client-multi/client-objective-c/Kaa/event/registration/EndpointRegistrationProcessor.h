@@ -54,10 +54,11 @@
  * @param detachResponses - the list of detach responses. <EndpointDetachResponse>
  * @param userResponse - the user attach response.
  */
-- (void)onUpdate:(NSArray *)attachResponses detachResponses:(NSArray *)detachResponses
-    userResponse:(UserAttachResponse *)userResponse
-userAttachNotification:(UserAttachNotification *)attachNotification
-userDetachNotification:(UserDetachNotification *)detachNotification;
+- (void)onUpdateWithAttachResponses:(NSArray *)attachResponses
+                    detachResponses:(NSArray *)detachResponses
+                       userResponse:(UserAttachResponse *)userResponse
+             userAttachNotification:(UserAttachNotification *)attachNotification
+             userDetachNotification:(UserDetachNotification *)detachNotification;
 
 @end
 

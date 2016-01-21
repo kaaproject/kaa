@@ -36,7 +36,7 @@
     [given([logStorageStatus getConsumedVolume]) willReturnLong:(int64_t)(thresholdVolume - 1)];
     
     StorageSizeLogUploadStrategy *strategy = [[StorageSizeLogUploadStrategy alloc] initWithVolumeThreshold:thresholdVolume];
-    XCTAssertEqual([strategy isUploadNeeded:logStorageStatus], LOG_UPLOAD_STRATEGY_DECISION_NOOP);
+    XCTAssertEqual([strategy isUploadNeededForStorageStatus:logStorageStatus], LOG_UPLOAD_STRATEGY_DECISION_NOOP);
 }
 
 - (void)testEqualToVolumeThreshold {
@@ -46,7 +46,7 @@
     [given([logStorageStatus getConsumedVolume]) willReturnLong:(int64_t)(thresholdVolume)];
     
     StorageSizeLogUploadStrategy *strategy = [[StorageSizeLogUploadStrategy alloc] initWithVolumeThreshold:thresholdVolume];
-    XCTAssertEqual([strategy isUploadNeeded:logStorageStatus], LOG_UPLOAD_STRATEGY_DECISION_UPLOAD);
+    XCTAssertEqual([strategy isUploadNeededForStorageStatus:logStorageStatus], LOG_UPLOAD_STRATEGY_DECISION_UPLOAD);
 }
 
 - (void)testGreaterThanVolumeThreshold {
@@ -56,7 +56,7 @@
     [given([logStorageStatus getConsumedVolume]) willReturnLong:(int64_t)(thresholdVolume + 1)];
     
     StorageSizeLogUploadStrategy *strategy = [[StorageSizeLogUploadStrategy alloc] initWithVolumeThreshold:thresholdVolume];
-    XCTAssertEqual([strategy isUploadNeeded:logStorageStatus], LOG_UPLOAD_STRATEGY_DECISION_UPLOAD);
+    XCTAssertEqual([strategy isUploadNeededForStorageStatus:logStorageStatus], LOG_UPLOAD_STRATEGY_DECISION_UPLOAD);
 }
 
 

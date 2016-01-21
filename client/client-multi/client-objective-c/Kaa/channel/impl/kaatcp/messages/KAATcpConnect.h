@@ -66,12 +66,12 @@
 
 @property (nonatomic) uint32_t nextProtocolId;
 
-@property (nonatomic,strong) NSData *aesSessionKey;
-@property (nonatomic,strong) NSData *signature;     //Signature of aesSessionKey and endpointPublicKeyHash
-@property (nonatomic,strong) NSData *syncRequest;   //SyncRequest in Connect message
+@property (nonatomic, strong) NSData *aesSessionKey;
+@property (nonatomic, strong) NSData *signature;     //Signature of aesSessionKey and endpointPublicKeyHash
+@property (nonatomic, strong) NSData *syncRequest;   //SyncRequest in Connect message
 
-@property (nonatomic,readonly) BOOL hasSignature;
-@property (nonatomic,readonly) BOOL isEncrypted;
+@property (nonatomic, readonly) BOOL hasSignature;
+@property (nonatomic, readonly) BOOL isEncrypted;
 
 - (instancetype)initWithAlivePeriod:(uint16_t)keepAlive
                      nextProtocolId:(uint32_t)protocolId

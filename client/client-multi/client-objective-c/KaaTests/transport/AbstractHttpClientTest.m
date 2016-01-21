@@ -99,7 +99,7 @@
     [message appendBytes:&b length:sizeof(b)];
     [message appendBytes:&c length:sizeof(c)];
     
-    NSData *signature = [serverEncoder sign:message];
+    NSData *signature = [serverEncoder signatureForMessage:message];
     XCTAssertEqualObjects(message, [client verifyResponse:message signature:signature]);
 }
 

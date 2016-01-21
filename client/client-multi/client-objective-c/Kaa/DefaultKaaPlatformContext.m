@@ -20,8 +20,8 @@
 
 @interface DefaultKaaPlatformContext ()
 
-@property (nonatomic,strong) KaaClientProperties *properties;
-@property (nonatomic,strong) id<ExecutorContext> executorContext;
+@property (nonatomic, strong) KaaClientProperties *properties;
+@property (nonatomic, strong) id<ExecutorContext> executorContext;
 
 @end
 

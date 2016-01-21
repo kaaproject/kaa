@@ -49,14 +49,14 @@
 
 @interface ConcreteEventFamily : NSObject <BaseEventFamily>
 
-@property (nonatomic,strong) NSSet *supportedEventFQNs;
+@property (nonatomic, strong) NSSet *supportedEventFQNs;
 @property (nonatomic) NSInteger eventsCount;
 
 @end
 
 @implementation ConcreteEventFamily
 
-- (instancetype) initWithSupportedFQN:(NSString *)supportedFQN {
+- (instancetype)initWithSupportedFQN:(NSString *)supportedFQN {
     self = [super init];
     if (self) {
         self.eventsCount = 0;
@@ -93,7 +93,7 @@
     id <EventManager> eventManager = [[DefaultEventManager alloc] initWithState:state executorContext:executorContext eventTransport:transport];
     [eventManager registerEventFamily:eventFamily];
     
-    [eventManager produceEvent:@"kaa.test.event.PlayEvent" data:[NSData data] target:nil];
+    [eventManager produceEventWithFQN:@"kaa.test.event.PlayEvent" data:[NSData data] target:nil];
     
     [verifyCount(transport, times(1)) sync];
     [verifyCount(eventFamily, times(0)) getSupportedEventFQNs];
@@ -108,11 +108,11 @@
     id <EventManager> eventManager = [[DefaultEventManager alloc] initWithState:state executorContext:executorContext eventTransport:transport];
     [eventManager registerEventFamily:eventFamily];
     
-    [eventManager produceEvent:@"kaa.test.event.PlayEvent" data:[NSData data] target:nil];
+    [eventManager produceEventWithFQN:@"kaa.test.event.PlayEvent" data:[NSData data] target:nil];
     [verifyCount(transport, times(1)) sync];
     
     [eventManager engageDataChannel];
-    [eventManager produceEvent:@"kaa.test.event.PlayEvent" data:[NSData data] target:nil];
+    [eventManager produceEventWithFQN:@"kaa.test.event.PlayEvent" data:[NSData data] target:nil];
     [verifyCount(transport, times(1)) sync];
 }
 
@@ -128,18 +128,18 @@
     TransactionId *trxId = [eventManager beginTransaction];
     XCTAssertNotNil(trxId);
     
-    [eventManager produceEvent:@"kaa.test.event.PlayEvent" data:[NSData data] target:nil transactionId:trxId];
-    [eventManager produceEvent:@"kaa.test.event.PlayEvent" data:[NSData data] target:nil transactionId:trxId];
+    [eventManager produceEventWithFQN:@"kaa.test.event.PlayEvent" data:[NSData data] target:nil transactionId:trxId];
+    [eventManager produceEventWithFQN:@"kaa.test.event.PlayEvent" data:[NSData data] target:nil transactionId:trxId];
     [verifyCount(transport, times(0)) sync];
     
-    [eventManager rollback:trxId];
+    [eventManager rollbackTransactionWithId:trxId];
     [verifyCount(transport, times(0)) sync];
     
     trxId = [eventManager beginTransaction];
-    [eventManager produceEvent:@"kaa.test.event.PlayEvent" data:[NSData data] target:nil transactionId:trxId];
+    [eventManager produceEventWithFQN:@"kaa.test.event.PlayEvent" data:[NSData data] target:nil transactionId:trxId];
     [verifyCount(transport, times(0)) sync];
     
-    [eventManager commit:trxId];
+    [eventManager commitTransactionWithId:trxId];
     [verifyCount(transport, times(1)) sync];
 }
 
@@ -193,7 +193,7 @@
     
     EventSyncRequest *request = [[EventSyncRequest alloc] init];
 
-    [eventManager produceEvent:@"kaa.test.event.SomeEvent" data:[NSData data] target:@"theTarget"];
+    [eventManager produceEventWithFQN:@"kaa.test.event.SomeEvent" data:[NSData data] target:@"theTarget"];
     [eventManager fillEventListenersSyncRequest:request];
     request.events = [KAAUnion unionWithBranch:KAA_UNION_ARRAY_EVENT_OR_NULL_BRANCH_0 data:[eventManager pollPendingEvents]];
     
@@ -204,8 +204,8 @@
     
     request = [[EventSyncRequest alloc] init];
     NSArray *eventFQNs = [NSArray arrayWithObject:@"eventFQN1"];
-    [eventManager findEventListeners:eventFQNs delegate:[[TestFindEventListenersDelegate alloc] init]];
-    [eventManager findEventListeners:eventFQNs delegate:[[TestFindEventListenersDelegate alloc] init]];
+    [eventManager requestListenersForEventFQNs:eventFQNs delegate:[[TestFindEventListenersDelegate alloc] init]];
+    [eventManager requestListenersForEventFQNs:eventFQNs delegate:[[TestFindEventListenersDelegate alloc] init]];
     
     [eventManager fillEventListenersSyncRequest:request];
     
@@ -225,8 +225,8 @@
     NSArray *eventFQNs = [NSArray arrayWithObject:@"eventFQN1"];
     
     id <FindEventListenersDelegate> fetchListener = mockProtocol(@protocol(FindEventListenersDelegate));
-    int32_t requestIdOk = [eventManager findEventListeners:eventFQNs delegate:fetchListener];
-    int32_t requestIdBad = [eventManager findEventListeners:eventFQNs delegate:fetchListener];
+    int32_t requestIdOk = [eventManager requestListenersForEventFQNs:eventFQNs delegate:fetchListener];
+    int32_t requestIdBad = [eventManager requestListenersForEventFQNs:eventFQNs delegate:fetchListener];
     
     [verifyCount(transport, atLeastOnce()) sync];
     

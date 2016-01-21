@@ -33,7 +33,7 @@
  * <TransportType, ChannelDirection>
  *
  */
-- (NSData *)compileRequest:(NSDictionary *)types;
+- (NSData *)compileRequestForTypes:(NSDictionary *)types;
 
 @end
 

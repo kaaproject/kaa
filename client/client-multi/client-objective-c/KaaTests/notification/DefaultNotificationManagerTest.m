@@ -33,10 +33,10 @@
 
 @interface DefaultNotificationManagerTest : XCTestCase <NotificationTopicListDelegate>
 
-@property (nonatomic,strong) id<ExecutorContext> executorContext;
-@property (nonatomic,strong) NSOperationQueue *executor;
-@property (nonatomic,strong) AvroBytesConverter *converter;
-@property (nonatomic,strong) NSMutableArray *topicsArray;
+@property (nonatomic, strong) id<ExecutorContext> executorContext;
+@property (nonatomic, strong) NSOperationQueue *executor;
+@property (nonatomic, strong) AvroBytesConverter *converter;
+@property (nonatomic, strong) NSMutableArray *topicsArray;
 
 @end
 
@@ -249,15 +249,15 @@
     id <NotificationDelegate> globalDelegate = mockProtocol(@protocol(NotificationDelegate));
     
     [notificationManager addNotificationDelegate:mandatoryDelegate];
-    [notificationManager notificationReceived:notificationUpdate];
+    [notificationManager notificationsReceived:notificationUpdate];
     
     [NSThread sleepForTimeInterval:1.f];
     
     [notificationManager removeNotificationDelegate:mandatoryDelegate];
     [notificationManager addNotificationDelegate:globalDelegate];
     
-    [notificationManager notificationReceived:notificationUpdate];
-    [notificationManager notificationReceived:notificationUpdate];
+    [notificationManager notificationsReceived:notificationUpdate];
+    [notificationManager notificationsReceived:notificationUpdate];
     
     [NSThread sleepForTimeInterval:2.f];
     
@@ -305,11 +305,11 @@
     id <NotificationDelegate> topicDelegate = mockProtocol(@protocol(NotificationDelegate));
     
     [notificationManager addNotificationDelegate:globalDelegate];
-    [notificationManager addNotificationDelegate:topicDelegate forTopic:@"id2"];
+    [notificationManager addNotificationDelegate:topicDelegate forTopicId:@"id2"];
     
-    [notificationManager notificationReceived:notificationUpdate];
-    [notificationManager removeNotificationDelegate:topicDelegate forTopic:@"id2"];
-    [notificationManager notificationReceived:notificationUpdate];
+    [notificationManager notificationsReceived:notificationUpdate];
+    [notificationManager removeNotificationDelegate:topicDelegate forTopicId:@"id2"];
+    [notificationManager notificationsReceived:notificationUpdate];
     
     [NSThread sleepForTimeInterval:1.f];
     
@@ -340,7 +340,7 @@
     
     id <NotificationDelegate> delegate= mockProtocol(@protocol(NotificationDelegate));
     @try {
-        [notificationManager addNotificationDelegate:delegate forTopic:@"unknown_id"];
+        [notificationManager addNotificationDelegate:delegate forTopicId:@"unknown_id"];
         XCTFail();
     }
     @catch (NSException *exception) {
@@ -368,7 +368,7 @@
     
     id <NotificationDelegate> delegate= mockProtocol(@protocol(NotificationDelegate));
     @try {
-        [notificationManager removeNotificationDelegate:delegate forTopic:@"unknown_id"];
+        [notificationManager removeNotificationDelegate:delegate forTopicId:@"unknown_id"];
         XCTFail();
     }
     @catch (NSException *exception) {
@@ -395,7 +395,7 @@
     [notificationManager topicsListUpdated:self.topicsArray];
     
     @try {
-        [notificationManager subscribeToTopic:@"unknown_id" forceSync:YES];
+        [notificationManager subscribeToTopicWithId:@"unknown_id" forceSync:YES];
         XCTFail();
     }
     @catch (NSException *exception) {
@@ -422,7 +422,7 @@
     [notificationManager topicsListUpdated:self.topicsArray];
     NSArray *topics = [NSArray arrayWithObjects:@"id1", @"id2", @"unknown_id", nil];
     @try {
-        [notificationManager subscribeToTopics:topics forceSync:YES];
+        [notificationManager subscribeToTopicsWithIDs:topics forceSync:YES];
         XCTFail();
     }
     @catch (NSException *exception) {
@@ -448,7 +448,7 @@
     
     [notificationManager topicsListUpdated:self.topicsArray];
     @try {
-        [notificationManager unsubscribeFromTopic:@"unknown_id" forceSync:YES];
+        [notificationManager unsubscribeFromTopicWithId:@"unknown_id" forceSync:YES];
         XCTFail();
     }
     @catch (NSException *exception) {
@@ -475,7 +475,7 @@
     [notificationManager topicsListUpdated:self.topicsArray];
     NSArray *topics = [NSArray arrayWithObjects:@"id1", @"id2", @"unknown_id", nil];
     @try {
-        [notificationManager unsubscribeFromTopics:topics forceSync:YES];
+        [notificationManager unsubscribeFromTopicsWithIDs:topics forceSync:YES];
         XCTFail();
     }
     @catch (NSException *exception) {
@@ -500,7 +500,7 @@
     self.topicsArray = [NSMutableArray arrayWithObjects:topic1, topic2, nil];
     [notificationManager topicsListUpdated:self.topicsArray];
     @try {
-        [notificationManager subscribeToTopic:@"id2" forceSync:YES];
+        [notificationManager subscribeToTopicWithId:@"id2" forceSync:YES];
         XCTFail();
     }
     @catch (NSException *exception) {
@@ -526,7 +526,7 @@
     [notificationManager topicsListUpdated:self.topicsArray];
     NSArray *array = [NSArray arrayWithObjects:@"id1", @"id2", nil];
     @try {
-        [notificationManager subscribeToTopics:array forceSync:YES];
+        [notificationManager subscribeToTopicsWithIDs:array forceSync:YES];
         XCTFail();
     }
     @catch (NSException *exception) {
@@ -551,7 +551,7 @@
     self.topicsArray = [NSMutableArray arrayWithObjects:topic1, topic2, nil];
     [notificationManager topicsListUpdated:self.topicsArray];
     @try {
-        [notificationManager unsubscribeFromTopic:@"id2" forceSync:YES];
+        [notificationManager unsubscribeFromTopicWithId:@"id2" forceSync:YES];
         XCTFail();
     }
     @catch (NSException *exception) {
@@ -577,7 +577,7 @@
     [notificationManager topicsListUpdated:self.topicsArray];
     NSArray *array = [NSArray arrayWithObjects:@"id1", @"id2", nil];
     @try {
-        [notificationManager unsubscribeFromTopics:array forceSync:YES];
+        [notificationManager unsubscribeFromTopicsWithIDs:array forceSync:YES];
         XCTFail();
     }
     @catch (NSException *exception) {
@@ -606,12 +606,12 @@
     self.topicsArray = [NSMutableArray arrayWithObjects:topic1, topic2, topic3, nil];
     
     [notificationManager topicsListUpdated:self.topicsArray];
-    [notificationManager subscribeToTopic:@"id1" forceSync:YES];
+    [notificationManager subscribeToTopicWithId:@"id1" forceSync:YES];
     
     [verifyCount(transport, times(1)) sync];
     
-    [notificationManager subscribeToTopics:@[@"id1", @"id2"] forceSync:NO];
-    [notificationManager unsubscribeFromTopic:@"id1" forceSync:NO];
+    [notificationManager subscribeToTopicsWithIDs:@[@"id1", @"id2"] forceSync:NO];
+    [notificationManager unsubscribeFromTopicWithId:@"id1" forceSync:NO];
     
     [verifyCount(transport, times(1)) sync];
     
@@ -619,7 +619,7 @@
     
     [verifyCount(transport, times(2)) sync];
     
-    [notificationManager unsubscribeFromTopics:@[@"id1", @"id2"] forceSync:YES];
+    [notificationManager unsubscribeFromTopicsWithIDs:@[@"id1", @"id2"] forceSync:YES];
     
     [verifyCount(transport, times(3)) sync];
 }

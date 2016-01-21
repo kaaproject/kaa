@@ -24,9 +24,9 @@
 @interface DefaultConfigurationTransport ()
 
 @property (nonatomic) BOOL resyncOnly;
-@property (nonatomic,strong) id<ConfigurationHashContainer> hashContainer;
-@property (nonatomic,strong) id<ConfigurationProcessor> configProcessor;
-@property (nonatomic,strong) id<SchemaProcessor> schemaProc;
+@property (nonatomic, strong) id<ConfigurationHashContainer> hashContainer;
+@property (nonatomic, strong) id<ConfigurationProcessor> configProcessor;
+@property (nonatomic, strong) id<SchemaProcessor> schemaProc;
 
 @end
 

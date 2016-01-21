@@ -18,7 +18,7 @@
 
 @interface EndpointKeyHash : NSObject
 
-@property(nonatomic,strong) NSString *keyHash;
+@property(nonatomic, strong) NSString *keyHash;
 
 - (instancetype)initWithKeyHash:(NSString *)keyHash;
 

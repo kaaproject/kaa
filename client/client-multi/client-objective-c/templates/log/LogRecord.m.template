@@ -36,7 +36,7 @@
     return self;
 }
 
-- (NSUInteger)getSize {
+- (int64_t)getSize {
     return [self.data length];
 }
 

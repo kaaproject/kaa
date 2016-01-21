@@ -18,8 +18,8 @@
 
 @interface IPTransportInfo ()
 
-@property (nonatomic,strong) NSData *publicKey;
-@property (nonatomic,strong) NSString *host;
+@property (nonatomic, strong) NSData *publicKey;
+@property (nonatomic, strong) NSString *host;
 @property (nonatomic) int port;
 
 @end

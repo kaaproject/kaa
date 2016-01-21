@@ -139,11 +139,11 @@ static int REQUEST_ID_2 = 73;
     [transport setClientState:clientState];
     [transport onUserResponse:response1];
     
-    [verifyCount(processor, times(1)) onUpdate:anything()
-                               detachResponses:anything()
-                                  userResponse:anything()
-                        userAttachNotification:anything()
-                        userDetachNotification:anything()];
+    [verifyCount(processor, times(1)) onUpdateWithAttachResponses:anything()
+                                                  detachResponses:anything()
+                                                     userResponse:anything()
+                                           userAttachNotification:anything()
+                                           userDetachNotification:anything()];
     
     EndpointDetachResponse *detachResponse3 = [[EndpointDetachResponse alloc] init];
     detachResponse3.requestId = REQUEST_ID_2;

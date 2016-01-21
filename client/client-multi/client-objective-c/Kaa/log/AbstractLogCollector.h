@@ -23,14 +23,14 @@
 
 @interface AbstractLogCollector : NSObject <LogProcessor,LogCollector>
 
-@property (nonatomic,strong,readonly) id<ExecutorContext> executorContext;
-@property (nonatomic,strong,readonly) id<LogStorage> storage;
-@property (nonatomic,strong) NSMutableDictionary *bucketInfoDictionary; // <NSNumber<int32_t>, BucketInfo> as Key-Value
+@property (nonatomic, strong, readonly) id<ExecutorContext> executorContext;
+@property (nonatomic, strong, readonly) id<LogStorage> storage;
+@property (nonatomic, strong) NSMutableDictionary *bucketInfoDictionary; // <NSNumber<int32_t>, BucketInfo> as Key-Value
 
 - (instancetype)initWithTransport:(id<LogTransport>)transport
-         executorContext:(id<ExecutorContext>)executorContext
-          channelManager:(id<KaaChannelManager>)channelManager
-         failoverManager:(id<FailoverManager>)failoverManager;
+                  executorContext:(id<ExecutorContext>)executorContext
+                   channelManager:(id<KaaChannelManager>)channelManager
+                  failoverManager:(id<FailoverManager>)failoverManager;
 
 - (void)scheduleUploadCheck;
 
@@ -38,6 +38,6 @@
 
 - (void)addDeliveryRunner:(BucketRunner *)runner bucketInfo:(BucketInfo *)bucketInfo;
 
-- (void)notifyDeliveryRunnerOnSuccess:(BucketInfo *)bucketInfo;
+- (void)notifyOnSuccessDeliveryRunnersWithBucketInfo:(BucketInfo *)bucketInfo;
 
 @end

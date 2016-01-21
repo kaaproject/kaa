@@ -69,7 +69,7 @@
     return nil;
 }
 
-- (void)onServerFailed:(id<TransportConnectionInfo>)server {
+- (void)onServerFailedWithConnectionInfo:(id<TransportConnectionInfo>)server {
 }
 
 - (void)setFailoverManager:(id<FailoverManager>)failoverManager {
@@ -120,7 +120,7 @@
 - (void)syncAll:(TransportType)type {
 }
 
-- (id<TransportConnectionInfo>)getActiveServer:(TransportType)type {
+- (id<TransportConnectionInfo>)getActiveServerForType:(TransportType)type {
     return nil;
 }
 
@@ -130,7 +130,7 @@
 
 @interface DefaultBootstrapManagerTest : XCTestCase
 
-@property (nonatomic) BOOL exception;
+@property (nonatomic) BOOL exceptionCaught;
 
 @end
 
@@ -140,16 +140,16 @@
     id <BootstrapTransport> transport = mockProtocol(@protocol(BootstrapTransport));
     DefaultBootstrapManager *manager = [[DefaultBootstrapManager alloc] initWithTransport:transport executorContext:nil];
     
-    self.exception = NO;
+    self.exceptionCaught = NO;
     @try {
         [manager receiveOperationsServerList];
-        [manager useNextOperationsServer:[TransportProtocolIdHolder HTTPTransportID]];
+        [manager useNextOperationsServerWithTransportId:[TransportProtocolIdHolder HTTPTransportID]];
     }
     @catch (NSException *exception) {
-        self.exception = YES;
+        self.exceptionCaught = YES;
     }
     
-    XCTAssertTrue(self.exception);
+    XCTAssertTrue(self.exceptionCaught);
     [manager receiveOperationsServerList];
     [verifyCount(transport, times(2)) sync];
 }
@@ -158,15 +158,15 @@
     id <ExecutorContext> executorContext = mockProtocol(@protocol(ExecutorContext));
     DefaultBootstrapManager *manager = [[DefaultBootstrapManager alloc] initWithTransport:nil executorContext:executorContext];
     
-    self.exception = NO;
+    self.exceptionCaught = NO;
     
     @try {
-        [manager useNextOperationsServer:[TransportProtocolIdHolder HTTPTransportID]];
+        [manager useNextOperationsServerWithTransportId:[TransportProtocolIdHolder HTTPTransportID]];
     }
     @catch (NSException *exception) {
-        self.exception = YES;
+        self.exceptionCaught = YES;
     }
-    XCTAssertTrue(self.exception);
+    XCTAssertTrue(self.exceptionCaught);
     
     id <BootstrapTransport> transport = mockProtocol(@protocol(BootstrapTransport));
     
@@ -185,7 +185,7 @@
     [manager setFailoverManager:failoverManager];
     [manager setTransport:transport];
     [manager onProtocolListUpdated:array];
-    [manager useNextOperationsServer:[TransportProtocolIdHolder HTTPTransportID]];
+    [manager useNextOperationsServerWithTransportId:[TransportProtocolIdHolder HTTPTransportID]];
     
     XCTAssertTrue(channelManager.serverUpdated);
     XCTAssertEqualObjects(@"http://localhost:9889", [channelManager receivedURL]);

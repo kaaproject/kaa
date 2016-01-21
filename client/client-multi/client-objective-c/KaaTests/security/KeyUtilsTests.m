@@ -19,7 +19,7 @@
 
 @interface KeyUtilsTests : XCTestCase
 
-@property (nonatomic,strong) NSData *remoteKeyTag;
+@property (nonatomic, strong) NSData *remoteKeyTag;
 
 @end
 

@@ -70,7 +70,7 @@
         self.lifecycleState = CLIENT_LIFECYCLE_STATE_CREATED;
         self.properties = [self.context getProperties];
         if (![self.context getProperties]) {
-            self.properties = [[KaaClientProperties alloc] initDefaults:[self.context getBase64]];
+            self.properties = [[KaaClientProperties alloc] initDefaultsWithBase64:[self.context getBase64]];
         }
         
         NSDictionary *bootstrapServers = [self.properties bootstrapServers];
@@ -158,7 +158,7 @@
         @catch (NSException *exception) {
             DDLogError(@"%@ Start failed: %@. Reason: %@", TAG, exception.name, exception.reason);
             if (weakSelf.stateDelegate) {
-                [weakSelf.stateDelegate onStartFailure:exception];
+                [weakSelf.stateDelegate onStartFailureWithException:exception];
             }
         }
     }];
@@ -183,7 +183,7 @@
         @catch (NSException *exception) {
             DDLogError(@"%@ Stop failed: %@. Reason: %@", TAG, exception.name, exception.reason);
             if(weakSelf.stateDelegate) {
-                [weakSelf.stateDelegate onStopFailure:exception];
+                [weakSelf.stateDelegate onStopFailureWithException:exception];
             }
         }
         @finally {
@@ -213,7 +213,7 @@
         @catch (NSException *exception) {
             DDLogError(@"%@ Pause failed: %@. Reason: %@", TAG, exception.name, exception.reason);
             if (weakSelf.stateDelegate) {
-                [weakSelf.stateDelegate onPauseFailure:exception];
+                [weakSelf.stateDelegate onPauseFailureWithException:exception];
             }
         }
     }];
@@ -236,7 +236,7 @@
         @catch (NSException *exception) {
             DDLogError(@"%@ Resume failed: %@. Reason: %@", TAG, exception.name, exception.reason);
             if (weakSelf.stateDelegate) {
-                [weakSelf.stateDelegate onResumeFailure:exception];
+                [weakSelf.stateDelegate onResumeFailureWithException:exception];
             }
         }
     }];
@@ -284,52 +284,52 @@
     [self.notificationManager addNotificationDelegate:delegate];
 }
 
-- (void)addNotificationDelegate:(id<NotificationDelegate>)delegate forTopic:(NSString *)topicId {
-    [self.notificationManager addNotificationDelegate:delegate forTopic:topicId];
+- (void)addNotificationDelegate:(id<NotificationDelegate>)delegate forTopicId:(NSString *)topicId {
+    [self.notificationManager addNotificationDelegate:delegate forTopicId:topicId];
 }
 
 - (void)removeNotificationDelegate:(id<NotificationDelegate>)delegate {
     [self.notificationManager removeNotificationDelegate:delegate];
 }
 
-- (void)removeNotificationDelegate:(id<NotificationDelegate>)delegate forTopic:(NSString *)topicId {
-    [self.notificationManager removeNotificationDelegate:delegate forTopic:topicId];
+- (void)removeNotificationDelegate:(id<NotificationDelegate>)delegate forTopicId:(NSString *)topicId {
+    [self.notificationManager removeNotificationDelegate:delegate forTopicId:topicId];
 }
 
-- (void)subscribeToTopic:(NSString *)topicId {
-    [self subscribeToTopic:topicId forceSync:FORSE_SYNC];
+- (void)subscribeToTopicWithId:(NSString *)topicId {
+    [self subscribeToTopicWithId:topicId forceSync:FORSE_SYNC];
 }
 
-- (void)subscribeToTopic:(NSString *)topicId forceSync:(BOOL)forceSync {
+- (void)subscribeToTopicWithId:(NSString *)topicId forceSync:(BOOL)forceSync {
     [self checkLifecycleState:CLIENT_LIFECYCLE_STATE_STARTED withErrorMessage:@"Kaa client isn't started"];
-    [self.notificationManager subscribeToTopic:topicId forceSync:forceSync];
+    [self.notificationManager subscribeToTopicWithId:topicId forceSync:forceSync];
 }
 
-- (void)subscribeToTopics:(NSArray *)topicIds {
-    [self subscribeToTopics:topicIds forceSync:FORSE_SYNC];
+- (void)subscribeToTopicsWithIDs:(NSArray *)topicIds {
+    [self subscribeToTopicsWithIDs:topicIds forceSync:FORSE_SYNC];
 }
 
-- (void)subscribeToTopics:(NSArray *)topicIds forceSync:(BOOL)forceSync {
+- (void)subscribeToTopicsWithIDs:(NSArray *)topicIds forceSync:(BOOL)forceSync {
     [self checkLifecycleState:CLIENT_LIFECYCLE_STATE_STARTED withErrorMessage:@"Kaa client isn't started"];
-    [self.notificationManager subscribeToTopics:topicIds forceSync:forceSync];
+    [self.notificationManager subscribeToTopicsWithIDs:topicIds forceSync:forceSync];
 }
 
-- (void)unsubscribeFromTopic:(NSString *)topicId {
-    [self unsubscribeFromTopic:topicId forceSync:FORSE_SYNC];
+- (void)unsubscribeFromTopicWithId:(NSString *)topicId {
+    [self unsubscribeFromTopicWithId:topicId forceSync:FORSE_SYNC];
 }
 
-- (void)unsubscribeFromTopic:(NSString *)topicId forceSync:(BOOL)forceSync {
+- (void)unsubscribeFromTopicWithId:(NSString *)topicId forceSync:(BOOL)forceSync {
     [self checkLifecycleState:CLIENT_LIFECYCLE_STATE_STARTED withErrorMessage:@"Kaa client isn't started"];
-    [self.notificationManager unsubscribeFromTopic:topicId forceSync:forceSync];
+    [self.notificationManager unsubscribeFromTopicWithId:topicId forceSync:forceSync];
 }
 
-- (void)unsubscribeFromTopics:(NSArray *)topicIds {
-    [self unsubscribeFromTopics:topicIds forceSync:FORSE_SYNC];
+- (void)unsubscribeFromTopicsWithIDs:(NSArray *)topicIds {
+    [self unsubscribeFromTopicsWithIDs:topicIds forceSync:FORSE_SYNC];
 }
 
-- (void)unsubscribeFromTopics:(NSArray *)topicIds forceSync:(BOOL)forceSync {
+- (void)unsubscribeFromTopicsWithIDs:(NSArray *)topicIds forceSync:(BOOL)forceSync {
     [self checkLifecycleState:CLIENT_LIFECYCLE_STATE_STARTED withErrorMessage:@"Kaa client isn't started"];
-    [self.notificationManager unsubscribeFromTopics:topicIds forceSync:forceSync];
+    [self.notificationManager unsubscribeFromTopicsWithIDs:topicIds forceSync:forceSync];
 }
 
 - (void)syncTopicsList {
@@ -350,9 +350,9 @@
     return self.eventFamilyFactory;
 }
 
-- (void)findEventListeners:(NSArray *)eventFQNs delegate:(id<FindEventListenersDelegate>)delegate {
+- (void)findListenersForEventFQNs:(NSArray *)eventFQNs delegate:(id<FindEventListenersDelegate>)delegate {
     [self checkLifecycleState:CLIENT_LIFECYCLE_STATE_STARTED withErrorMessage:@"Kaa client isn't started"];
-    [self.eventManager findEventListeners:eventFQNs delegate:delegate];
+    [self.eventManager requestListenersForEventFQNs:eventFQNs delegate:delegate];
 }
 
 - (id<KaaChannelManager>)getChannelManager {
@@ -383,28 +383,28 @@
     return [self.clientState endpointAccessToken];
 }
 
-- (void)attachEndpoint:(EndpointAccessToken *)endpointAccessToken delegate:(id<OnAttachEndpointOperationDelegate>)delegate {
+- (void)attachEndpointWithAccessToken:(EndpointAccessToken *)endpointAccessToken delegate:(id<OnAttachEndpointOperationDelegate>)delegate {
     [self checkLifecycleState:CLIENT_LIFECYCLE_STATE_STARTED withErrorMessage:@"Kaa client isn't started"];
-    [self.endpointRegistrationManager attachEndpoint:endpointAccessToken delegate:delegate];
+    [self.endpointRegistrationManager attachEndpointWithAccessToken:endpointAccessToken delegate:delegate];
 }
 
-- (void)detachEndpoint:(EndpointKeyHash *)endpointKeyHash delegate:(id<OnDetachEndpointOperationDelegate>)delegate {
+- (void)detachEndpointWithKeyHash:(EndpointKeyHash *)endpointKeyHash delegate:(id<OnDetachEndpointOperationDelegate>)delegate {
     [self checkLifecycleState:CLIENT_LIFECYCLE_STATE_STARTED withErrorMessage:@"Kaa client isn't started"];
-    [self.endpointRegistrationManager detachEndpoint:endpointKeyHash delegate:delegate];
+    [self.endpointRegistrationManager detachEndpointWithKeyHash:endpointKeyHash delegate:delegate];
 }
 
-- (void)attachUser:(NSString *)userExternalId token:(NSString *)userAccessToken delegate:(id<UserAttachDelegate>)delegate {
+- (void)attachUserWithId:(NSString *)userExternalId accessToken:(NSString *)userAccessToken delegate:(id<UserAttachDelegate>)delegate {
     [self checkLifecycleState:CLIENT_LIFECYCLE_STATE_STARTED withErrorMessage:@"Kaa client isn't started"];
-    [self.endpointRegistrationManager attachUser:userExternalId userAccessToken:userAccessToken delegate:delegate];
+    [self.endpointRegistrationManager attachUserWithId:userExternalId userAccessToken:userAccessToken delegate:delegate];
 }
 
-- (void)attachUser:(NSString *)userVerifierToken
-                id:(NSString *)userExternalId
-             token:(NSString *)userAccessToken
+- (void)attachUserWithVerifierToken:(NSString *)userVerifierToken
+                userId:(NSString *)userExternalId
+             accessToken:(NSString *)userAccessToken
           delegate:(id<UserAttachDelegate>)delegate {
     
     [self checkLifecycleState:CLIENT_LIFECYCLE_STATE_STARTED withErrorMessage:@"Kaa client isn't started"];
-    [self.endpointRegistrationManager attachUser:userVerifierToken
+    [self.endpointRegistrationManager attachUserWithVerifierToken:userVerifierToken
                                   userExternalId:userExternalId
                                  userAccessToken:userAccessToken
                                         delegate:delegate];
@@ -414,12 +414,12 @@
     return [self.clientState isAttachedToUser];
 }
 
-- (void)setAttachedDelegate:(id<AttachEndpointToUserDelegate>)delegate {
-    [self.endpointRegistrationManager setAttachedDelegate:delegate];
+- (void)setAttachDelegate:(id<AttachEndpointToUserDelegate>)delegate {
+    [self.endpointRegistrationManager setAttachDelegate:delegate];
 }
 
-- (void)setDetachedDelegate:(id<DetachEndpointFromUserDelegate>)delegate {
-    [self.endpointRegistrationManager setDetachedDelegate:delegate];
+- (void)setDetachDelegate:(id<DetachEndpointFromUserDelegate>)delegate {
+    [self.endpointRegistrationManager setDetachDelegate:delegate];
 }
 
 - (NSOperationQueue *)getLifeCycleExecutor {
@@ -436,7 +436,7 @@
     id<RedirectionTransport> redTransport = [self buildRedirectionTransportWithProperties:properties clientState:state];
     id<LogTransport> logTransport = [self buildLogTransportWithProperties:properties clientState:state];
     
-    EndpointObjectHash *publicKeyHash = [EndpointObjectHash fromSHA1:[KeyUtils getPublicKey]];
+    EndpointObjectHash *publicKeyHash = [EndpointObjectHash hashWithSHA1:[KeyUtils getPublicKey]];
     
     id<MetaDataTransport> mdTransport = [[DefaultMetaDataTransport alloc] init];
     [mdTransport setClientProperties:properties];
@@ -616,7 +616,7 @@
             NSException *exception = [NSException exceptionWithName:KaaException
                                                              reason:@"Profile manager isn't initialized: maybe profile container isn't set"
                                                            userInfo:nil];
-            [self.stateDelegate onStartFailure:exception];
+            [self.stateDelegate onStartFailureWithException:exception];
         } else {
             [NSException raise:KaaRuntimeException format:@"Profile manager isn't initialized: maybe profile container isn't set"];
         }

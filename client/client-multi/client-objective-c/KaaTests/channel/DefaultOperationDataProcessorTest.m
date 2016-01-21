@@ -36,7 +36,7 @@
 - (void)testUpRequestCreationWithNullTypes {
     id<KaaClientState> state = mockProtocol(@protocol(KaaClientState));
     DefaultOperationDataProcessor *operationDataProcessor = [[DefaultOperationDataProcessor alloc] initWithClientState:state];
-    XCTAssertNil([operationDataProcessor compileRequest:nil]);
+    XCTAssertNil([operationDataProcessor compileRequestForTypes:nil]);
 }
 
 - (void)testUpRequestCreationWithUnknownType {
@@ -44,7 +44,7 @@
     DefaultOperationDataProcessor *operationDataProcessor = [[DefaultOperationDataProcessor alloc] initWithClientState:state];
     NSDictionary *types = [NSDictionary dictionaryWithObject:@(CHANNEL_DIRECTION_BIDIRECTIONAL)
                                                       forKey:@(TRANSPORT_TYPE_BOOTSTRAP)];
-    XCTAssertNil([operationDataProcessor compileRequest:types]);
+    XCTAssertNil([operationDataProcessor compileRequestForTypes:types]);
 }
 
 - (void)testUpRequestCreationWithNullTransports {
@@ -53,7 +53,7 @@
     
     NSDictionary *transportTypes = [self getDictionaryWithTransportTypesWithBidirectional];
     
-    XCTAssertNotNil([operationDataProcessor compileRequest:transportTypes]);
+    XCTAssertNotNil([operationDataProcessor compileRequestForTypes:transportTypes]);
 }
 
 - (void)testUpRequestCreation {
@@ -78,7 +78,7 @@
     
     NSDictionary *transportTypes = [self getDictionaryWithTransportTypesWithBidirectional];
     
-    XCTAssertNotNil([operationDataProcessor compileRequest:transportTypes]);
+    XCTAssertNotNil([operationDataProcessor compileRequestForTypes:transportTypes]);
     [verifyCount(configurationTransport, times(1)) createConfigurationRequest];
     [verifyCount(profileTransport, times(1)) createProfileRequest];
     [verifyCount(notificationTransport, times(1)) createNotificationRequest];
@@ -109,7 +109,7 @@
     
     NSDictionary *transportTypes = [self getDictionaryWithTransportTypesWithDownDirection];
     
-    XCTAssertNotNil([operationDataProcessor compileRequest:transportTypes]);
+    XCTAssertNotNil([operationDataProcessor compileRequestForTypes:transportTypes]);
     [verifyCount(configurationTransport, times(1)) createConfigurationRequest];
     [verifyCount(metaDataTransport, times(1)) createMetaDataRequest];
     [verifyCount(profileTransport, times(0)) createProfileRequest];

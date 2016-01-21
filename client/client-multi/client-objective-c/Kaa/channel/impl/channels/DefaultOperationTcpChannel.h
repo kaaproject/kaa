@@ -24,7 +24,7 @@
 @interface DefaultOperationTcpChannel : NSObject <KaaDataChannel>
 
 - (KAASocket *)createSocket;
-- (void)setServer:(id<TransportConnectionInfo>)server withKeyPair:(KeyPair *) sendedKeyPair;
+- (void)setServer:(id<TransportConnectionInfo>)server withKeyPair:(KeyPair *)sentKeyPair;
 - (instancetype)initWithClientState:(id<KaaClientState>)state failoverManager:(id<FailoverManager>)failoverMgr;
 - (NSOperationQueue *)createExecutor;
 

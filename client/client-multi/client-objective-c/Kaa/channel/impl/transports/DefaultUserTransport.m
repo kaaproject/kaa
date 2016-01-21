@@ -128,11 +128,11 @@
         [self.clientState setAttachedEndpoints:self.attachedEndpoints];
     }
     
-    [self.processor onUpdate:response.endpointAttachResponses.data
-             detachResponses:response.endpointDetachResponses.data
-                userResponse:response.userAttachResponse.data
-      userAttachNotification:response.userAttachNotification.data
-      userDetachNotification:response.userDetachNotification.data];
+    [self.processor onUpdateWithAttachResponses:response.endpointAttachResponses.data
+                                detachResponses:response.endpointDetachResponses.data
+                                   userResponse:response.userAttachResponse.data
+                         userAttachNotification:response.userAttachNotification.data
+                         userDetachNotification:response.userDetachNotification.data];
     
     DDLogInfo(@"%@ Processed user response", TAG);
 }

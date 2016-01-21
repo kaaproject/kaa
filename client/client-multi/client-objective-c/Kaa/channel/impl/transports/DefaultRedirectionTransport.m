@@ -18,7 +18,7 @@
 
 @interface DefaultRedirectionTransport ()
 
-@property (nonatomic,strong) id<BootstrapManager> manager;
+@property (nonatomic, strong) id<BootstrapManager> manager;
 
 @end
 

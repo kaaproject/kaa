@@ -25,9 +25,9 @@
 @interface DefaultEndpointRegistrationManager : NSObject <EndpointRegistrationManager,EndpointRegistrationProcessor>
 
 - (instancetype)initWithState:(id<KaaClientState>)state
-         executorContext:(id<ExecutorContext>)context
-           userTransport:(id<UserTransport>)userTransport
-        profileTransport:(id<ProfileTransport>)profileTransport;
+              executorContext:(id<ExecutorContext>)context
+                userTransport:(id<UserTransport>)userTransport
+             profileTransport:(id<ProfileTransport>)profileTransport;
 
 - (void)updateEndpointAccessToken:(NSString *)token;
 

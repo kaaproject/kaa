@@ -42,7 +42,7 @@
  *
  * @return Request ID of submitted request
  */
-- (int32_t)findEventListeners:(NSArray *)eventFQNs delegate:(id<FindEventListenersDelegate>)delegate;
+- (int32_t)requestListenersForEventFQNs:(NSArray *)eventFQNs delegate:(id<FindEventListenersDelegate>)delegate;
 
 @end
 
@@ -61,7 +61,7 @@
  * @param data     - event data
  * @param target   - event target, nil for event broadcasting.
  */
-- (void)produceEvent:(NSString *)eventFQN data:(NSData *)data target:(NSString *)target;
+- (void)produceEventWithFQN:(NSString *)eventFQN data:(NSData *)data target:(NSString *)target;
 
 /**
  * Creates an Event and passes it to OPS
@@ -71,7 +71,7 @@
  * @param target   - event target, nil for event broadcasting.
  * @param trxId    - transaction Id of event
  */
-- (void)produceEvent:(NSString *)eventFQN data:(NSData *)data target:(NSString *)target transactionId:(TransactionId *)transactionId;
+- (void)produceEventWithFQN:(NSString *)eventFQN data:(NSData *)data target:(NSString *)target transactionId:(TransactionId *)transactionId;
 
 /**
  * Retrieves an event.

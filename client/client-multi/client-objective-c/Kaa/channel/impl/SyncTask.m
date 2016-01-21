@@ -18,7 +18,7 @@
 
 @interface SyncTask ()
 
-@property (nonatomic,strong) NSSet *transportTypes;
+@property (nonatomic, strong) NSSet *transportTypes;
 @property (nonatomic) BOOL ackOnly;
 @property (nonatomic) BOOL all;
 
@@ -26,7 +26,7 @@
 
 @implementation SyncTask
 
-- (instancetype)initWithTransport:(TransportType)type ackOnly:(BOOL)ackOnly all:(BOOL)all {
+- (instancetype)initWithTransportType:(TransportType)type ackOnly:(BOOL)ackOnly all:(BOOL)all {
     return [self initWithTransports:[NSSet setWithObject:@(type)] ackOnly:ackOnly all:all];
 }
 
@@ -52,7 +52,7 @@
     return self.all;
 }
 
-+ (SyncTask *)merge:(SyncTask *)task additionalTasks:(NSArray *)tasks {
++ (SyncTask *)mergeTask:(SyncTask *)task withAdditionalTasks:(NSArray *)tasks {
     NSMutableSet *types = [NSMutableSet setWithSet:[task getTransportTypes]];
     BOOL ack = [task isAckOnly];
     BOOL all = [task isAll];

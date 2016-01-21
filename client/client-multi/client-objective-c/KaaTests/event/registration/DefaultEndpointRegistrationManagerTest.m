@@ -45,8 +45,8 @@
 
 @interface DefaultEndpointRegistrationManagerTest : XCTestCase
 
-@property (strong, nonatomic) id <ExecutorContext> executorContext;
-@property (strong, nonatomic) NSOperationQueue *executor;
+@property (nonatomic, strong) id <ExecutorContext> executorContext;
+@property (nonatomic, strong) NSOperationQueue *executor;
 
 @end
 
@@ -69,7 +69,7 @@
         id <UserTransport> transport = mockProtocol(@protocol(UserTransport));
         DefaultEndpointRegistrationManager *manager = [[DefaultEndpointRegistrationManager alloc] initWithState:state executorContext:self.executorContext userTransport:transport profileTransport:nil];
         
-        [manager attachUser:@"verifierToken" userAccessToken:@"externalId" delegate:nil];
+        [manager attachUserWithId:@"verifierToken" userAccessToken:@"externalId" delegate:nil];
         XCTFail();
     }
     @catch (NSException *exception) {
@@ -84,7 +84,7 @@
     id <UserTransport> transport = mockProtocol(@protocol(UserTransport));
     DefaultEndpointRegistrationManager *manager = [[DefaultEndpointRegistrationManager alloc] initWithState:state executorContext:self.executorContext userTransport:transport profileTransport:nil];
     
-    [manager attachUser:@"verificationToken" userExternalId:@"externalId" userAccessToken:@"token" delegate:nil];
+    [manager attachUserWithVerifierToken:@"verificationToken" userExternalId:@"externalId" userAccessToken:@"token" delegate:nil];
     [verifyCount(transport, times(1)) sync];
 }
 
@@ -98,11 +98,11 @@
     EndpointAccessToken *token1 = [[EndpointAccessToken alloc] initWithToken:@"accessToken1"];
     EndpointAccessToken *token2 = [[EndpointAccessToken alloc] initWithToken:@"accessToken2"];
     
-    [manager attachEndpoint:token1 delegate:delegate];
-    [manager attachEndpoint:token2 delegate:delegate];
+    [manager attachEndpointWithAccessToken:token1 delegate:delegate];
+    [manager attachEndpointWithAccessToken:token2 delegate:delegate];
     
     manager = [[DefaultEndpointRegistrationManager alloc] initWithState:state executorContext:self.executorContext userTransport:nil profileTransport:nil];
-    [manager attachEndpoint:[[EndpointAccessToken alloc] initWithToken:@"accessToken3"] delegate:nil];
+    [manager attachEndpointWithAccessToken:[[EndpointAccessToken alloc] initWithToken:@"accessToken3"] delegate:nil];
     [verifyCount(transport, times(2)) sync];
 }
 
@@ -113,11 +113,11 @@
     id <OnDetachEndpointOperationDelegate> delegate = mockProtocol(@protocol(OnDetachEndpointOperationDelegate));
     
     DefaultEndpointRegistrationManager *manager = [[DefaultEndpointRegistrationManager alloc] initWithState:state executorContext:self.executorContext userTransport:transport profileTransport:nil];
-    [manager detachEndpoint:[[EndpointKeyHash alloc] initWithKeyHash:@"keyHash1"] delegate:delegate];
-    [manager detachEndpoint:[[EndpointKeyHash alloc] initWithKeyHash:@"keyHash2"] delegate:delegate];
+    [manager detachEndpointWithKeyHash:[[EndpointKeyHash alloc] initWithKeyHash:@"keyHash1"] delegate:delegate];
+    [manager detachEndpointWithKeyHash:[[EndpointKeyHash alloc] initWithKeyHash:@"keyHash2"] delegate:delegate];
     
     manager = [[DefaultEndpointRegistrationManager alloc] initWithState:state executorContext:self.executorContext userTransport:nil profileTransport:nil];
-    [manager detachEndpoint:[[EndpointKeyHash alloc] initWithKeyHash:@"keyHash3"] delegate:nil];
+    [manager detachEndpointWithKeyHash:[[EndpointKeyHash alloc] initWithKeyHash:@"keyHash3"] delegate:nil];
     [verifyCount(transport, times(2)) sync];
 }
 
@@ -128,7 +128,7 @@
     id <UserTransport> transport = mockProtocol(@protocol(UserTransport));
     DefaultEndpointRegistrationManager *manager = [[DefaultEndpointRegistrationManager alloc] initWithState:state executorContext:self.executorContext userTransport:transport profileTransport:nil];
     ConcreteUserAttachDelegate *delegate = [[ConcreteUserAttachDelegate alloc] init];
-    [manager attachUser:@"externalId" userExternalId:@"userExternalId" userAccessToken:@"userAccessToke" delegate:delegate];
+    [manager attachUserWithVerifierToken:@"externalId" userExternalId:@"userExternalId" userAccessToken:@"userAccessToke" delegate:delegate];
     
     [verifyCount(transport, times(1)) sync];
 }
@@ -199,22 +199,22 @@
     id <AttachEndpointToUserDelegate> delegate = mockProtocol(@protocol(AttachEndpointToUserDelegate));
     
     DefaultEndpointRegistrationManager *manager = [[DefaultEndpointRegistrationManager alloc] initWithState:state executorContext:self.executorContext userTransport:nil profileTransport:nil];
-    [manager setAttachedDelegate:nil];
-    [manager onUpdate:nil detachResponses:nil userResponse:nil userAttachNotification:attachNotification userDetachNotification:nil];
-    [manager setAttachedDelegate:delegate];
-    [manager onUpdate:nil detachResponses:nil userResponse:nil userAttachNotification:attachNotification userDetachNotification:nil];
+    [manager setAttachDelegate:nil];
+    [manager onUpdateWithAttachResponses:nil detachResponses:nil userResponse:nil userAttachNotification:attachNotification userDetachNotification:nil];
+    [manager setAttachDelegate:delegate];
+    [manager onUpdateWithAttachResponses:nil detachResponses:nil userResponse:nil userAttachNotification:attachNotification userDetachNotification:nil];
     
     [NSThread sleepForTimeInterval:1.f];
     [verifyCount(delegate, times(1)) onAttachedToUser:@"foo" token:@"bar"];
     [verifyCount(state, times(2)) setIsAttachedToUser:YES];
     
-    [manager setAttachedDelegate:nil];
-    [manager attachUser:@"externalId" userExternalId:@"foo" userAccessToken:@"bar" delegate:nil];
-    [manager onUpdate:nil detachResponses:nil userResponse:[self getUserAttachResponse] userAttachNotification:nil userDetachNotification:nil];
+    [manager setAttachDelegate:nil];
+    [manager attachUserWithVerifierToken:@"externalId" userExternalId:@"foo" userAccessToken:@"bar" delegate:nil];
+    [manager onUpdateWithAttachResponses:nil detachResponses:nil userResponse:[self getUserAttachResponse] userAttachNotification:nil userDetachNotification:nil];
     
-    [manager setAttachedDelegate:delegate];
-    [manager attachUser:@"externalId" userExternalId:@"foo" userAccessToken:@"bar" delegate:nil];
-    [manager onUpdate:nil detachResponses:nil userResponse:[self getUserAttachResponse] userAttachNotification:nil userDetachNotification:nil];
+    [manager setAttachDelegate:delegate];
+    [manager attachUserWithVerifierToken:@"externalId" userExternalId:@"foo" userAccessToken:@"bar" delegate:nil];
+    [manager onUpdateWithAttachResponses:nil detachResponses:nil userResponse:[self getUserAttachResponse] userAttachNotification:nil userDetachNotification:nil];
     
     [NSThread sleepForTimeInterval:1.f];
     [verifyCount(delegate, times(1)) onAttachedToUser:@"foo" token:@"bar"];
@@ -230,14 +230,14 @@
     id <DetachEndpointFromUserDelegate> delegate = mockProtocol(@protocol(DetachEndpointFromUserDelegate));
     
     DefaultEndpointRegistrationManager *manager = [[DefaultEndpointRegistrationManager alloc] initWithState:state executorContext:self.executorContext userTransport:nil profileTransport:nil];
-    [manager setDetachedDelegate:nil];
-    [manager onUpdate:nil detachResponses:nil userResponse:nil userAttachNotification:nil userDetachNotification:detachedNotification];
+    [manager setDetachDelegate:nil];
+    [manager onUpdateWithAttachResponses:nil detachResponses:nil userResponse:nil userAttachNotification:nil userDetachNotification:detachedNotification];
     
-    [manager setDetachedDelegate:delegate];
-    [manager onUpdate:nil detachResponses:nil userResponse:nil userAttachNotification:nil userDetachNotification:detachedNotification];
+    [manager setDetachDelegate:delegate];
+    [manager onUpdateWithAttachResponses:nil detachResponses:nil userResponse:nil userAttachNotification:nil userDetachNotification:detachedNotification];
     
     [NSThread sleepForTimeInterval:1.f];
-    [verifyCount(delegate, times(1)) onDetachedFromUser:@"foo"];
+    [verifyCount(delegate, times(1)) onDetachedEndpointWithAccessToken:@"foo"];
     [verifyCount(state, times(2)) setIsAttachedToUser:NO];
 }
 

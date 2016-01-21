@@ -43,7 +43,7 @@
     return self;
 }
 
-- (void)decodeAvroObject:(NSInputStream *)input {
+- (void)decodeAvroObjectFromInput:(NSInputStream *)input {
     int avroObjectSize = self.buffer.length - self.bufferPosition;
     if (avroObjectSize > 0) {
         uint8_t data[avroObjectSize];
@@ -54,7 +54,7 @@
 }
 
 - (void)pack {
-    [self packVeriableHeader];
+    [self packVariableHeader];
     [self.buffer appendData:_avroObject];
     self.bufferPosition += _avroObject.length;
 }
@@ -62,8 +62,8 @@
 - (void)decode {
     NSInputStream *input = [self remainingStream];
     [input open];
-    [self decodeVariableHeader:input];
-    [self decodeAvroObject:input];
+    [self decodeVariableHeaderFromInput:input];
+    [self decodeAvroObjectFromInput:input];
     [input close];
 }
 

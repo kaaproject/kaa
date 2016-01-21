@@ -98,8 +98,8 @@ typedef enum {
 
 - (instancetype)initWithOldKaaSync:(KAATcpKaaSync *)old;
 
-- (void)packVeriableHeader;
+- (void)packVariableHeader;
 
-- (void)decodeVariableHeader:(NSInputStream *)input;
+- (void)decodeVariableHeaderFromInput:(NSInputStream *)input;
 
 @end

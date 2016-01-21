@@ -21,8 +21,8 @@
 
 @interface DefaultBootstrapTransport ()
 
-@property (nonatomic,strong) id<BootstrapManager> manager;
-@property (nonatomic,strong) NSString *sdkToken;
+@property (nonatomic, strong) id<BootstrapManager> manager;
+@property (nonatomic, strong) NSString *sdkToken;
 @property (atomic) int increment;
 
 @end

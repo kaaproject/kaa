@@ -115,7 +115,7 @@
     [self.client start];
     
     [NSThread sleepForTimeInterval:1];
-    [verifyCount(self.delegate, times(1)) onStartFailure:anything()];
+    [verifyCount(self.delegate, times(1)) onStartFailureWithException:anything()];
     [verifyCount(self.bootstrapManagerMock, times(1)) receiveOperationsServerList];
     
     [self.client stop];
@@ -131,7 +131,7 @@
     [self.client start];
     
     [NSThread sleepForTimeInterval:1];
-    [verifyCount(self.delegate, times(1)) onStartFailure:anything()];
+    [verifyCount(self.delegate, times(1)) onStartFailureWithException:anything()];
 }
 
 - (void)testFailureOnStop {
@@ -144,7 +144,7 @@
     [self.client stop];
     
     [NSThread sleepForTimeInterval:1];
-    [verifyCount(self.delegate, times(1)) onStopFailure:anything()];
+    [verifyCount(self.delegate, times(1)) onStopFailureWithException:anything()];
 }
 
 - (void)testOnPauseFailure {
@@ -157,7 +157,7 @@
     [self.client pause];
     
     [NSThread sleepForTimeInterval:1];
-    [verifyCount(self.delegate, times(1)) onPauseFailure:anything()];
+    [verifyCount(self.delegate, times(1)) onPauseFailureWithException:anything()];
 }
 
 - (void)testFailureOnResume {
@@ -176,7 +176,7 @@
     [self.client resume];
     
     [NSThread sleepForTimeInterval:1];
-    [verifyCount(self.delegate, times(1)) onResumeFailure:anything()];
+    [verifyCount(self.delegate, times(1)) onResumeFailureWithException:anything()];
 }
 
 #pragma mark - Supporting methods

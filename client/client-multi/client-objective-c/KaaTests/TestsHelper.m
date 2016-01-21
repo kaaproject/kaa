@@ -48,7 +48,7 @@
 }
 
 + (KaaClientProperties *)getProperties {
-    KaaClientProperties *properties = [[KaaClientProperties alloc] initDefaults:[CommonBase64 new]];
+    KaaClientProperties *properties = [[KaaClientProperties alloc] initDefaultsWithBase64:[CommonBase64 new]];
     [properties setString:@"0" forKey:TRANSPORT_POLL_DELAY_KEY];
     [properties setString:@"1" forKey:TRANSPORT_POLL_PERIOD_KEY];
     [properties setString:@"1" forKey:TRANSPORT_POLL_UNIT_KEY];

@@ -80,14 +80,14 @@
  *
  * bucketId - unique id of sent bucket
  */
-- (void)removeBucket:(int32_t)bucketId;
+- (void)removeBucketWithId:(int32_t)bucketId;
 
 /**
  * Notifies if sending of a log bucket with a specified id was failed.
  *
  * bucketId - unique id of log bucket.
  */
-- (void)rollbackBucket:(int32_t)bucketId;
+- (void)rollbackBucketWithId:(int32_t)bucketId;
 
 /**
  * Closes log storage and releases all used resources (if any)

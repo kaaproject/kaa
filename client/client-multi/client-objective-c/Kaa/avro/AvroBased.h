@@ -19,6 +19,6 @@
 
 @interface AvroBased : NSObject <Avro>
 
-@property(nonatomic,strong,readonly) AvroUtils *utils;
+@property (nonatomic, strong, readonly) AvroUtils *utils;
 
 @end

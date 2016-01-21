@@ -53,13 +53,13 @@
 /**
  * Callback on endpoint attach response
  *
- * NOTE: resultContext is not null for endpoint attach operation
+ * NOTE: endpointKeyHash is not null for endpoint attach operation
  * and contains <EndpointKeyHash> object with key hash of attached endpoint.
  *
- * resultContext - additional data of operation result, may be null.
+ * endpointKeyHash - additional data of operation result, may be null.
  * For AttachEndpoint operation is populated with <EndpointKeyHash> of attached endpoint.
  */
-- (void)onAttach:(SyncResponseResultType)result resultContext:(EndpointKeyHash *)resultContext;
+- (void)onAttachResult:(SyncResponseResultType)result withEndpointKeyHash:(EndpointKeyHash *)endpointKeyHash;
 
 @end
 
@@ -79,7 +79,7 @@
 /**
  * Callback on endpoint detach response
  */
-- (void)onDetach:(SyncResponseResultType)result;
+- (void)onDetachResult:(SyncResponseResultType)result;
 
 @end
 
@@ -126,7 +126,7 @@
 /**
  * Callback on current endpoint is detached from user.
  */
-- (void)onDetachedFromUser:(NSString *)endpointAccessToken;
+- (void)onDetachedEndpointWithAccessToken:(NSString *)endpointAccessToken;
 
 @end
 

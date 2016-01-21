@@ -21,7 +21,7 @@
 
 @interface GenericTransportInfo : NSObject <TransportConnectionInfo>
 
-@property (nonatomic,strong) ProtocolMetaData *meta;
+@property (nonatomic, strong) ProtocolMetaData *meta;
 
 - (instancetype)initWithServerType:(ServerType)serverType meta:(ProtocolMetaData *)meta;
 

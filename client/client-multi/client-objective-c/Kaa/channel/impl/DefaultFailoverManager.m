@@ -28,8 +28,8 @@
 
 @interface Resolution : NSOperation
 
-@property (nonatomic,weak) DefaultFailoverManager *failoverManager;
-@property (nonatomic,weak) id<TransportConnectionInfo> info;
+@property (nonatomic, weak) DefaultFailoverManager *failoverManager;
+@property (nonatomic, weak) id<TransportConnectionInfo> info;
 
 - (instancetype)initWithManager:(DefaultFailoverManager *)manager info:(id<TransportConnectionInfo>)info;
 
@@ -39,7 +39,7 @@
 
 @property (nonatomic, readonly) int accessPointId;
 @property (nonatomic) long resolutionTime;          //in milliseconds
-@property (nonatomic,strong) Resolution *resolution;
+@property (nonatomic, strong) Resolution *resolution;
 
 - (instancetype)initWithAccessId:(int)accessId resolution:(Resolution *)resolution;
 
@@ -53,10 +53,10 @@
 @property (nonatomic) int64_t noConnectivityRetryPeriod;
 @property (nonatomic) TimeUnit  timeUnit;
 
-@property (nonatomic,strong) id<KaaChannelManager> kaaChannelMgr;
-@property (nonatomic,strong) id<ExecutorContext> executorContext;
+@property (nonatomic, strong) id<KaaChannelManager> kaaChannelMgr;
+@property (nonatomic, strong) id<ExecutorContext> executorContext;
 
-@property (nonatomic,strong) NSMutableDictionary *resolutionProgressMap;
+@property (nonatomic, strong) NSMutableDictionary *resolutionProgressMap;
 
 - (void)cancelCurrentFailResolution:(AccessPointIdResolution *)resolution;
 
@@ -96,7 +96,7 @@
     return self;
 }
 
-- (void)onServerFailed:(id<TransportConnectionInfo>)connectionInfo {
+- (void)onServerFailedWithConnectionInfo:(id<TransportConnectionInfo>)connectionInfo {
     
     if (!connectionInfo) {
         DDLogWarn(@"%@ Server failed, but connection info is nil, can't resolve", TAG);
@@ -132,7 +132,7 @@
             [resolution start];
         });
         
-        [self.kaaChannelMgr onServerFailed:connectionInfo];
+        [self.kaaChannelMgr onServerFailedWithConnectionInfo:connectionInfo];
         
         long updatedResolutionTime = pointResolution ?  pointResolution.resolutionTime : currentResolutionTime;
         AccessPointIdResolution *newPointResolution =
@@ -146,7 +146,7 @@
     }
 }
 
-- (void)onServerChanged:(id<TransportConnectionInfo>)connectionInfo {
+- (void)onServerChangedWithConnectionInfo:(id<TransportConnectionInfo>)connectionInfo {
     
     if (!connectionInfo) {
         DDLogWarn(@"%@ Server has changed, but its connection info is nil, can't resolve", TAG);
@@ -176,7 +176,7 @@
     }
 }
 
-- (void)onServerConnected:(id<TransportConnectionInfo>)connectionInfo {
+- (void)onServerConnectedWithConnectionInfo:(id<TransportConnectionInfo>)connectionInfo {
     
     DDLogVerbose(@"%@ Server %@ has connected", TAG, connectionInfo);
     if (!connectionInfo) {
@@ -202,7 +202,7 @@
     }
 }
 
-- (FailoverDecision *)onFailover:(FailoverStatus)status {
+- (FailoverDecision *)decisionOnFailoverStatus:(FailoverStatus)status {
     
     DDLogInfo(@"%@ Applying failover strategy for status: %i", TAG, status);
 

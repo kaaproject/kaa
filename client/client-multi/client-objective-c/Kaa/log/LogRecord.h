@@ -15,6 +15,7 @@
  */
 
 #import <Foundation/Foundation.h>
+#import "LogGen.h"
 #import "KAADummyLog.h"
 
 /**
@@ -28,7 +29,7 @@
 /**
  * Avro-encoded log record.
  */
-@property(nonatomic,strong,readonly) NSData *data;
+@property(nonatomic, strong, readonly) NSData *data;
 
 - (instancetype)initWithRecord:(KAADummyLog *)record;
 - (instancetype)initWithData:(NSData *)data;

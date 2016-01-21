@@ -25,8 +25,8 @@
  */
 @protocol TransportConnectionInfo
 
-@property(nonatomic,readonly) ServerType serverType;
-@property(nonatomic,strong,readonly) TransportProtocolId *transportId;
+@property(nonatomic, readonly) ServerType serverType;
+@property(nonatomic, strong, readonly) TransportProtocolId *transportId;
 
 - (int)accessPointId;
 

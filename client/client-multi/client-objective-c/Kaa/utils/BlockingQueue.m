@@ -18,8 +18,8 @@
 
 @interface BlockingQueue()
 
-@property (nonatomic,strong) NSMutableArray *queue;
-@property (nonatomic,strong) NSCondition *condition;
+@property (nonatomic, strong) NSMutableArray *queue;
+@property (nonatomic, strong) NSCondition *condition;
 
 @end
 

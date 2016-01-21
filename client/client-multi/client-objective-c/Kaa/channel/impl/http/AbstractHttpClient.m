@@ -58,7 +58,7 @@
 }
 
 - (NSData *)verifyResponse:(NSData *)body signature:(NSData *)signature {
-    if (!self.verificationEnabled || [self.encoderDecoder verify:body withSignature:signature]) {
+    if (!self.verificationEnabled || [self.encoderDecoder verifyMessage:body withSignature:signature]) {
         return body;
     } else {
         [NSException raise:KaaSecurityException format:@"Message can't be verified"];

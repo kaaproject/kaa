@@ -25,8 +25,8 @@ typedef enum {
 
 @interface MemBucket : NSObject
 
-@property (nonatomic,readonly) int32_t bucketId;
-@property (nonatomic,strong,readonly) NSMutableArray *records;
+@property (nonatomic, readonly) int32_t bucketId;
+@property (nonatomic, strong, readonly) NSMutableArray *records;
 @property (nonatomic) MemBucketState state;
 
 - (instancetype)initWithId:(int32_t)bucketId maxSize:(int64_t)maxSize maxRecordCount:(int32_t)maxRecordCount;

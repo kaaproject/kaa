@@ -6,7 +6,7 @@
 - (void)send{event_class_name}:({event_class_name} *)event to:(NSString *)target {
     @try {
         NSData *data = [self.converter toBytes:event];
-        [self.manager produceEvent:@"{event_class_fqn}" data:data target:target];
+        [self.manager produceEventWithFQN:@"{event_class_fqn}" data:data target:target];
     }
     @catch (NSException *exception) {
         DDLogError(@"%@ Error sending event with FQN [{event_class_fqn}] to [%@]: %@. Reason: %@",
@@ -21,7 +21,7 @@
 - (void)add{event_class_name}ToBlock:({event_class_name} *)event withTransactionId:(TransactionId *)trxId target:(NSString *)target {
     @try {
         NSData *data = [self.converter toBytes:event];
-        [self.manager produceEvent:@"{event_class_fqn}" data:data target:target transactionId:trxId];
+        [self.manager produceEventWithFQN:@"{event_class_fqn}" data:data target:target transactionId:trxId];
     }
     @catch (NSException *exception) {
         DDLogError(@"%@ Error adding event with FQN [{event_class_fqn}] to block: [%@] with target [%@]: %@. Reason: %@",

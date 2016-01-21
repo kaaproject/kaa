@@ -21,7 +21,7 @@
 
 @interface AvroBytesConverterTests : XCTestCase
 
-@property (nonatomic,strong) AvroBytesConverter *converter;
+@property (nonatomic, strong) AvroBytesConverter *converter;
 
 @end
 

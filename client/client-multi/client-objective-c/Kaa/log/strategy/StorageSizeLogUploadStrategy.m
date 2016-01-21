@@ -31,7 +31,7 @@
     return self;
 }
 
-- (LogUploadStrategyDecision)checkUploadNeeded:(id<LogStorageStatus>)status {
+- (LogUploadStrategyDecision)checkUploadNeededForStorageStatus:(id<LogStorageStatus>)status {
     LogUploadStrategyDecision decision = LOG_UPLOAD_STRATEGY_DECISION_NOOP;
     int64_t currentConsumedVolume = [status getConsumedVolume];
     

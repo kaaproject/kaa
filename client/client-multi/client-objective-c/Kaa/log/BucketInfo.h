@@ -29,8 +29,8 @@
 @property (nonatomic) double bucketDeliveryDuration;
 
 
-@property (nonatomic,readonly) int32_t bucketId;
-@property (nonatomic,readonly) int32_t logCount;
+@property (nonatomic, readonly) int32_t bucketId;
+@property (nonatomic, readonly) int32_t logCount;
 
 - (instancetype)initWithBucketId:(int32_t)bucketId logCount:(int32_t)logCount;
 

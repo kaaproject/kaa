@@ -42,11 +42,11 @@
 
 @interface KaaClientPropertiesState ()
 
-@property (nonatomic,strong) id<KAABase64> base64;
-@property (nonatomic,strong) NSMutableDictionary *state;
-@property (nonatomic,strong) NSString *stateFileLocation;
-@property (nonatomic,strong) NSMutableDictionary *notificationSubscriptions;  //<NSString, TopicSubscriptionInfo> as key-value
-@property (nonatomic,strong) KeyPair *keyPair;
+@property (nonatomic, strong) id<KAABase64> base64;
+@property (nonatomic, strong) NSMutableDictionary *state;
+@property (nonatomic, strong) NSString *stateFileLocation;
+@property (nonatomic, strong) NSMutableDictionary *notificationSubscriptions;  //<NSString, TopicSubscriptionInfo> as key-value
+@property (nonatomic, strong) KeyPair *keyPair;
 @property (nonatomic) BOOL isConfigVersionUpdated;
 @property (nonatomic) BOOL hasUpdate;
 
@@ -56,8 +56,8 @@
 - (KeyPair *)getOrGenerateKeyPair;
 - (void)deleteFileAtPath:(NSString *)path;
 
-- (void)setStateStringValue:(NSString *)value propertyKey:(NSString *)propertyKey;
-- (void)setStateBooleanValue:(BOOL)value propertyKey:(NSString *)propertyKey;
+- (void)setStateStringValue:(NSString *)value forPropertyKey:(NSString *)propertyKey;
+- (void)setStateBooleanValue:(BOOL)value forPropertyKey:(NSString *)propertyKey;
 
 @end
 
@@ -152,7 +152,7 @@
 }
 
 - (void)setIsRegistred:(BOOL)isRegistred {
-    [self setStateBooleanValue:isRegistred propertyKey:IS_REGISTERED];
+    [self setStateBooleanValue:isRegistred forPropertyKey:IS_REGISTERED];
 }
 
 - (void)persist {
@@ -229,7 +229,7 @@
         //to ensure key pair generated
         [self getOrGenerateKeyPair];
         
-        EndpointObjectHash *publicKeyHash = [EndpointObjectHash fromSHA1:[KeyUtils getPublicKey]];
+        EndpointObjectHash *publicKeyHash = [EndpointObjectHash hashWithSHA1:[KeyUtils getPublicKey]];
         NSString *base64Str = [[NSString alloc] initWithData:[self.base64 encodeBase64:publicKeyHash.data] encoding:NSUTF8StringEncoding];
         _endpointKeyHash = [[EndpointKeyHash alloc] initWithKeyHash:base64Str];
     }
@@ -246,17 +246,17 @@
     if (!hash) {
         hash = [[NSString alloc] initWithData:[self.base64 encodeBase64:[NSData data]] encoding:NSUTF8StringEncoding];
     }
-    return [EndpointObjectHash fromBytes:[self.base64 decodeBase64:[hash dataUsingEncoding:NSUTF8StringEncoding]]];
+    return [EndpointObjectHash hashWithBytes:[self.base64 decodeBase64:[hash dataUsingEncoding:NSUTF8StringEncoding]]];
 }
 
 - (void)setAppStateSequenceNumber:(int32_t)appStateSequenceNumber {
-    [self setStateStringValue:[@(appStateSequenceNumber) stringValue] propertyKey:APP_STATE_SEQ_NUMBER];
+    [self setStateStringValue:[@(appStateSequenceNumber) stringValue] forPropertyKey:APP_STATE_SEQ_NUMBER];
 }
 
 - (void)setProfileHash:(EndpointObjectHash *)profileHash {
     NSData *base64Data = [self.base64 encodeBase64:profileHash.data];
     NSString *base64Str = [[NSString alloc] initWithData:base64Data encoding:NSUTF8StringEncoding];
-    [self setStateStringValue:base64Str propertyKey:PROFILE_HASH];
+    [self setStateStringValue:base64Str forPropertyKey:PROFILE_HASH];
 }
 
 - (void)addTopic:(Topic *)topic {
@@ -271,13 +271,13 @@
     }
 }
 
-- (void)removeTopic:(NSString *)topicId {
+- (void)removeTopicId:(NSString *)topicId {
     [self.notificationSubscriptions removeObjectForKey:topicId];
     self.hasUpdate = YES;
     DDLogDebug(@"%@ Removed subscription info for %@", TAG, topicId);
 }
 
-- (BOOL)updateTopicSubscriptionInfo:(NSString *)topicId sequence:(int32_t)sequenceNumber {
+- (BOOL)updateSubscriptionInfoForTopicId:(NSString *)topicId sequence:(int32_t)sequenceNumber {
     TopicSubscriptionInfo *info = self.notificationSubscriptions[topicId];
     BOOL updated = NO;
     if (info && sequenceNumber > info.seqNumber) {
@@ -314,7 +314,7 @@
 }
 
 - (void)setEndpointAccessToken:(NSString *)endpointAccessToken {
-    [self setStateStringValue:endpointAccessToken propertyKey:ENDPOINT_ACCESS_TOKEN];
+    [self setStateStringValue:endpointAccessToken forPropertyKey:ENDPOINT_ACCESS_TOKEN];
 }
 
 - (NSString *)endpointAccessToken {
@@ -323,7 +323,7 @@
 }
 
 - (void)setConfigSequenceNumber:(int32_t)configSequenceNumber {
-    [self setStateStringValue:[@(configSequenceNumber) stringValue] propertyKey:CONFIG_SEQ_NUMBER];
+    [self setStateStringValue:[@(configSequenceNumber) stringValue] forPropertyKey:CONFIG_SEQ_NUMBER];
 }
 
 - (int32_t)configSequenceNumber {
@@ -332,7 +332,7 @@
 }
 
 - (void)setNotificationSequenceNumber:(int32_t)notificationSequenceNumber {
-    [self setStateStringValue:[@(notificationSequenceNumber) stringValue] propertyKey:NOTIFICATION_SEQ_NUMBER];
+    [self setStateStringValue:[@(notificationSequenceNumber) stringValue] forPropertyKey:NOTIFICATION_SEQ_NUMBER];
 }
 
 - (int32_t)notificationSequenceNumber {
@@ -358,7 +358,7 @@
 }
 
 - (void)setIsAttachedToUser:(BOOL)isAttachedToUser {
-    [self setStateBooleanValue:isAttachedToUser propertyKey:IS_ATTACHED];
+    [self setStateBooleanValue:isAttachedToUser forPropertyKey:IS_ATTACHED];
 }
 
 - (void)clean {
@@ -370,7 +370,7 @@
 
 - (void)setPropertiesHash:(NSData *)hash {
     NSData *encodedHash = [self.base64 encodeBase64:hash];
-    [self setStateStringValue:[[NSString alloc] initWithData:encodedHash encoding:NSUTF8StringEncoding] propertyKey:PROPERTIES_HASH];
+    [self setStateStringValue:[[NSString alloc] initWithData:encodedHash encoding:NSUTF8StringEncoding] forPropertyKey:PROPERTIES_HASH];
 }
 
 - (BOOL)isSDKProperyListUpdated:(KaaClientProperties *)sdkProperties {
@@ -434,13 +434,13 @@
     }
 }
 
-- (void)setStateStringValue:(NSString *)value propertyKey:(NSString *)propertyKey {
+- (void)setStateStringValue:(NSString *)value forPropertyKey:(NSString *)propertyKey {
     NSString *previous = self.state[propertyKey];
     self.state[propertyKey] = value;
     self.hasUpdate |= ![value isEqualToString:previous];
 }
 
-- (void)setStateBooleanValue:(BOOL)value propertyKey:(NSString *)propertyKey {
+- (void)setStateBooleanValue:(BOOL)value forPropertyKey:(NSString *)propertyKey {
     NSString *previousRawValue = self.state[propertyKey];
     BOOL previousValue = NO;
     if (previousRawValue && previousRawValue.length > 0) {

@@ -22,7 +22,7 @@
 
 @interface KaaClientPropertiesTest : XCTestCase
 
-@property (nonatomic,strong) KaaClientProperties *properties;
+@property (nonatomic, strong) KaaClientProperties *properties;
 
 @end
 
@@ -30,7 +30,7 @@
 
 - (void)setUp {
     [super setUp];
-    self.properties = [[KaaClientProperties alloc] initDefaults:[CommonBase64 new]];
+    self.properties = [[KaaClientProperties alloc] initDefaultsWithBase64:[CommonBase64 new]];
 }
 
 - (void)testGetBootstrapServers {

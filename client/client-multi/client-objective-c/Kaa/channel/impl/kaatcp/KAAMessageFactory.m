@@ -18,13 +18,13 @@
 
 @interface KAAMessageFactory ()
 
-@property (nonatomic,weak) id<ConnAckDelegate> connAckDelegate;
-@property (nonatomic,weak) id<ConnectDelegate> connectDelegate;
-@property (nonatomic,weak) id<DisconnectDelegate> disconnectDelegate;
-@property (nonatomic,weak) id<PingRequestDelegate> pingRequestDelegate;
-@property (nonatomic,weak) id<PingResponseDelegate> pingResponseDelegate;
-@property (nonatomic,weak) id<SyncRequestDelegate> syncRequestDelegate;
-@property (nonatomic,weak) id<SyncResponseDelegate> syncResponseDelegate;
+@property (nonatomic, weak) id<ConnAckDelegate> connAckDelegate;
+@property (nonatomic, weak) id<ConnectDelegate> connectDelegate;
+@property (nonatomic, weak) id<DisconnectDelegate> disconnectDelegate;
+@property (nonatomic, weak) id<PingRequestDelegate> pingRequestDelegate;
+@property (nonatomic, weak) id<PingResponseDelegate> pingResponseDelegate;
+@property (nonatomic, weak) id<SyncRequestDelegate> syncRequestDelegate;
+@property (nonatomic, weak) id<SyncResponseDelegate> syncResponseDelegate;
 
 - (void)onKaaSyncMessage:(KAATcpKaaSync *)frame;
 

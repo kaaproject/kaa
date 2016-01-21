@@ -72,7 +72,7 @@
     [strategy setTimeout:300];
     TestLogStorageStatus *status = [[TestLogStorageStatus alloc] initWithConsumedVolume:30 recordCount:3];
     
-    XCTAssertEqual(LOG_UPLOAD_STRATEGY_DECISION_NOOP, [strategy isUploadNeeded:status]);
+    XCTAssertEqual(LOG_UPLOAD_STRATEGY_DECISION_NOOP, [strategy isUploadNeededForStorageStatus:status]);
 }
 
 - (void)testUpdateDecision {
@@ -82,10 +82,10 @@
     [strategy setTimeout:300];
     TestLogStorageStatus *status = [[TestLogStorageStatus alloc] initWithConsumedVolume:60 recordCount:3];
     
-    XCTAssertEqual(LOG_UPLOAD_STRATEGY_DECISION_UPLOAD, [strategy isUploadNeeded:status]);
+    XCTAssertEqual(LOG_UPLOAD_STRATEGY_DECISION_UPLOAD, [strategy isUploadNeededForStorageStatus:status]);
     
     status = [[TestLogStorageStatus alloc] initWithConsumedVolume:70 recordCount:3];
-    XCTAssertEqual(LOG_UPLOAD_STRATEGY_DECISION_UPLOAD, [strategy isUploadNeeded:status]);
+    XCTAssertEqual(LOG_UPLOAD_STRATEGY_DECISION_UPLOAD, [strategy isUploadNeededForStorageStatus:status]);
 }
 
 - (void)testSuccessLogUploadCallback {
@@ -130,7 +130,7 @@
     [logCollector onLogResponse:response];
     
     [NSThread sleepForTimeInterval:0.001];
-    [verifyCount(strategy, times(1)) onFailure:anything() errorCode:[((NSNumber *)status.errorCode.data) intValue]];
+    [verifyCount(strategy, times(1)) onFailureForController:anything() errorCode:[((NSNumber *)status.errorCode.data) intValue]];
 }
 
 - (void)testMaxParallelLogUploadCountInSyncRequest {
@@ -200,7 +200,7 @@
     
     AbstractLogCollector *logCollector = [[DefaultLogCollector alloc] initWithTransport:logTransport executorContext:executorContext channelManager:channelManager failoverManager:failoverManager];
     DefaultLogUploadStrategy *strategy = mock([DefaultLogUploadStrategy class]);
-    [given([strategy isUploadNeeded:anything()]) willReturnInt:LOG_UPLOAD_STRATEGY_DECISION_UPLOAD];
+    [given([strategy isUploadNeededForStorageStatus:anything()]) willReturnInt:LOG_UPLOAD_STRATEGY_DECISION_UPLOAD];
     [given([strategy getMaxParallelUploads]) willReturnLong:maxParallelUploads];
     [logCollector setValue:strategy forKey:@"strategy"];
     

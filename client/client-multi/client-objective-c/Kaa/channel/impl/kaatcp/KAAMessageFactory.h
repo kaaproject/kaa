@@ -32,7 +32,7 @@
  */
 @interface KAAMessageFactory : NSObject <MqttFrameDelegate>
 
-@property (nonatomic,strong) KAAFramer *framer;
+@property (nonatomic, strong) KAAFramer *framer;
 
 - (instancetype)initWithFramer:(KAAFramer *)framer;
 
