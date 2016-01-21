@@ -30,6 +30,7 @@ import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.HistoryDto;
 import org.kaaproject.kaa.common.dto.PageLinkDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.TopicListEntryDto;
 import org.kaaproject.kaa.common.dto.UpdateNotificationDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.server.common.dao.CTLService;
@@ -476,6 +477,16 @@ public class EndpointServiceImpl implements EndpointService {
             }
         }
         return changeDto;
+    }
+
+    @Override
+    public TopicListEntryDto findTopicListEntryByHash(byte[] hash) {
+        return null;
+    }
+
+    @Override
+    public TopicListEntryDto saveTopicListEntry(TopicListEntryDto topicListEntryDto) {
+        return null;
     }
 
     @Override

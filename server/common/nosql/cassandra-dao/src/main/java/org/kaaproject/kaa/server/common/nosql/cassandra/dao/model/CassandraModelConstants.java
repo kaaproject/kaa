@@ -186,4 +186,13 @@ public class CassandraModelConstants {
     public static final String EVENT_CLASS_FAMILY_VERSION_STATE_USER_TYPE_NAME = "ecf_ver_state";
     public static final String EVENT_CLASS_FAMILY_VERSION_STATE_ECF_ID_PROPERTY = "ecf_id";
     public static final String EVENT_CLASS_FAMILY_VERSION_STATE_ECF_VERSION_PROPERTY = "ecf_ver";
+
+    /**
+     * Cassandra TopicListEntry constants.
+     */
+    public static final String TOPIC_LIST_ENTRY_COLUMN_FAMILY_NAME = "tl_entry";
+    public static final String TOPIC_LIST_ENTRY_HASH_PROPERTY = "tl_entry_hash";
+    public static final String TOPIC_LIST_ENTRY_SIMPLE_HASH_PROPERTY = "tl_entry_simple_hash";
+    public static final String TOPIC_LIST_ENTRY_TOPIC_IDS_PROPERTY = "tl_entry_topic_ids";
+
 }

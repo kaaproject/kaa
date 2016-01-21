@@ -117,3 +117,9 @@ CREATE TABLE IF NOT EXISTS kaa.user_conf (
     body text,
     PRIMARY KEY (user_id, app_token, version)
 );
+
+CREATE TABLE IF NOT EXISTS kaa.tl_entry (
+    tl_entry_hash blob PRIMARY KEY,
+    tl_entry_simple_hash int,
+    tl_entry_topic_ids list<text>
+);

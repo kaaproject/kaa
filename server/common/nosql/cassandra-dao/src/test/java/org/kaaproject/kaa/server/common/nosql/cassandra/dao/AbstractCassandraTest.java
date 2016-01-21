@@ -29,11 +29,13 @@ import org.kaaproject.kaa.server.common.dao.impl.EndpointConfigurationDao;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointNotificationDao;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
 import org.kaaproject.kaa.server.common.dao.impl.NotificationDao;
+import org.kaaproject.kaa.server.common.dao.impl.TopicListEntryDao;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointConfiguration;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointNotification;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointProfile;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointUser;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraNotification;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraTopicListEntry;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.nio.ByteBuffer;
@@ -61,6 +63,8 @@ public class AbstractCassandraTest {
     protected EndpointUserCassandraDao endpointUserDao;
     @Autowired
     protected NotificationDao<CassandraNotification> notificationDao;
+    @Autowired
+    protected TopicListEntryDao<CassandraTopicListEntry> topicListEntryDao;
 
     protected List<CassandraEndpointNotification> generateEndpointNotification(ByteBuffer endpointKeyHash, int count) {
         List<CassandraEndpointNotification> savedNotifications = new ArrayList<>();
@@ -154,8 +158,11 @@ public class AbstractCassandraTest {
         profileDto.setApplicationId(generateStringId());
         profileDto.setEndpointKeyHash("TEST_KEY_HASH".getBytes());
         profileDto.setAccessToken(generateStringId());
+        // TODO: change
+        /*
         profileDto.setCfGroupStates(cfGroupState);
         profileDto.setSdkToken(UUID.randomUUID().toString());
+        */
         return profileDto;
     }
 
@@ -171,12 +178,13 @@ public class AbstractCassandraTest {
         profileDto.setClientProfileBody("test Profile");
         List<EndpointGroupStateDto> groupState = new ArrayList<>();
         groupState.add(new EndpointGroupStateDto(TEST_ENDPOINT_GROUP_ID, null, null));
-        if (nfGroupStateOnly) {
+        // TODO: change
+/*        if (nfGroupStateOnly) {
             profileDto.setNfGroupStates(groupState);
             profileDto.setCfGroupStates(null);
         } else {
             profileDto.setCfGroupStates(groupState);
-        }
+        }*/
         profileDto.setSdkToken(UUID.randomUUID().toString());
         return endpointProfileDao.save(new CassandraEndpointProfile(profileDto)).toDto();
     }

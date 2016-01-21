@@ -54,6 +54,7 @@ import org.kaaproject.kaa.server.operations.service.cache.DeltaCacheKey;
 import org.kaaproject.kaa.server.operations.service.cache.EventClassFamilyIdKey;
 import org.kaaproject.kaa.server.operations.service.cache.EventClassFqnKey;
 import org.kaaproject.kaa.server.operations.service.cache.HistoryKey;
+import org.kaaproject.kaa.server.operations.service.cache.TopicListCacheEntry;
 
 /**
  * @author Andrey Panasenko
@@ -438,4 +439,13 @@ public class ESTestCacheService implements CacheService {
         return null;
     }
 
+    @Override
+    public TopicListCacheEntry putTopicList(EndpointObjectHash key, TopicListCacheEntry entry) {
+        return null;
+    }
+
+    @Override
+    public TopicListCacheEntry getTopicListByHash(EndpointObjectHash hash) {
+        return null;
+    }
 }

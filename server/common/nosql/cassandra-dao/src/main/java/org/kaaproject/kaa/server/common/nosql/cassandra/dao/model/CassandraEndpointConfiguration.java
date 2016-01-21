@@ -37,7 +37,7 @@ import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.Cassand
 public final class CassandraEndpointConfiguration implements EndpointConfiguration, Serializable {
 
     @Transient
-    private static final long serialVersionUID = -5646769700581347085L;
+    private static final long serialVersionUID = -5682011223088285599L;
 
     @PartitionKey
     @Column(name = ENDPOINT_CONFIGURATION_CONF_HASH_PROPERTY)

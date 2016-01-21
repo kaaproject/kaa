@@ -397,7 +397,7 @@ public interface CacheService {
 
     EndpointGroupDto getDefaultGroup(String applicationToken);
 
-    void saveTopicList(TopicListCacheEntry entry);
+    TopicListCacheEntry putTopicList(EndpointObjectHash key, TopicListCacheEntry entry);
 
-    TopicListCacheEntry getTopicList(EndpointObjectHash hash);
+    TopicListCacheEntry getTopicListByHash(EndpointObjectHash hash);
 }

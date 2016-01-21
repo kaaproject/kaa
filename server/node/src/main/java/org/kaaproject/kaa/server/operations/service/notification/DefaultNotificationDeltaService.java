@@ -95,7 +95,7 @@ public class DefaultNotificationDeltaService implements NotificationDeltaService
         int simpleHash = Arrays.hashCode(ids);
         EndpointObjectHash complexHash = EndpointObjectHash.fromBytes(SHA1HashUtils.hashToBytes(joiner.toString()));
         TopicListCacheEntry entry = new TopicListCacheEntry(simpleHash, complexHash, topics);
-        cacheService.saveTopicList(entry);
+        cacheService.putTopicList(complexHash, entry);
         LOG.debug("[{}][{}] Calculated new topic list {}", appToken, endpointId, entry);
         return entry;
     }
@@ -119,8 +119,8 @@ public class DefaultNotificationDeltaService implements NotificationDeltaService
         boolean subscriptionSetChanged = false;
 
         if (request.getTopicHash() != profile.getSimpleTopicHash()) {
-            LOG.debug("[{}] Topic list changed. Geting current topic list", endpointId);
-            TopicListCacheEntry topicListCache = cacheService.getTopicList(EndpointObjectHash.fromBytes(profile.getTopicHash()));
+            LOG.debug("[{}] Topic list changed. recalculating topic list", endpointId);
+            TopicListCacheEntry topicListCache = cacheService.getTopicListByHash(EndpointObjectHash.fromBytes(profile.getTopicHash()));
             List<TopicDto> topicList = topicListCache.getTopics();
             LOG.debug("[{}] New topic list contains {} topics", endpointId, topicList.size());
             List<String> allPossibleTopics = new ArrayList<>(topicList.size());
