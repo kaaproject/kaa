@@ -46,7 +46,7 @@ public class ObjCSdkGenerator extends SdkGenerator {
 
     private static final String KAA_ROOT_FOLDER = "Kaa/";
 
-    private static final String KAA_GEN_FOLDER = KAA_ROOT_FOLDER + "gen/";
+    private static final String KAA_GEN_FOLDER = KAA_ROOT_FOLDER + "avro/gen/";
 
     private static final String KAA_SOURCE_PREFIX = "KAA";
 
@@ -65,23 +65,23 @@ public class ObjCSdkGenerator extends SdkGenerator {
 
     private static final String BASE_KAA_CLIENT = "BaseKaaClient.%s";
 
-    private static final String CONFIGURATION_COMMON = "ConfigurationCommon.h";
+    private static final String CONFIGURATION_COMMON = "configuration/ConfigurationCommon.h";
 
-    private static final String CONFIGURATION_MANAGER_IMPL = "ResyncConfigurationManager.%s";
+    private static final String CONFIGURATION_MANAGER_IMPL = "configuration/ResyncConfigurationManager.%s";
 
-    private static final String CONFIGURATION_DESERIALIZER = "ConfigurationDeserializer.%s";
+    private static final String CONFIGURATION_DESERIALIZER = "configuration/ConfigurationDeserializer.%s";
 
-    private static final String NOTIFICATION_COMMON = "NotificationCommon.%s";
+    private static final String NOTIFICATION_COMMON = "notification/NotificationCommon.%s";
 
-    private static final String PROFILE_COMMON = "ProfileCommon.%s";
+    private static final String PROFILE_COMMON = "profile/ProfileCommon.%s";
 
-    private static final String LOG_RECORD = "LogRecord.%s";
+    private static final String LOG_RECORD = "log/LogRecord.%s";
 
-    private static final String LOG_COLLECTOR_INTERFACE = "LogCollector.h";
+    private static final String LOG_COLLECTOR_INTERFACE = "log/LogCollector.h";
 
-    private static final String LOG_COLLECTOR_SOURCE = "DefaultLogCollector.%s";
+    private static final String LOG_COLLECTOR_SOURCE = "log/DefaultLogCollector.%s";
 
-    private static final String USER_VERIFIER_CONSTANTS = "UserVerifierConstants.h";
+    private static final String USER_VERIFIER_CONSTANTS = "event/UserVerifierConstants.h";
 
 
     private static final String PROFILE_CLASS_VAR = "\\$\\{profile_class\\}";
