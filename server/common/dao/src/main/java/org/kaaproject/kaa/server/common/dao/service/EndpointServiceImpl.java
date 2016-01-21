@@ -490,6 +490,7 @@ public class EndpointServiceImpl implements EndpointService {
     }
 
     @Override
+    @Transactional
     public TopicListEntryDto findTopicListEntryByHash(byte[] hash) {
         LOG.debug("Looking for a topic list entry by hash: [{}]", hash);
         TopicListEntry topicListEntry = topicListEntryDao.findByHash(hash);
