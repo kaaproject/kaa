@@ -84,7 +84,6 @@ public class DefaultConfigurationTransport extends AbstractKaaTransport implemen
             if (hash != null) {
                 request.setConfigurationHash(ByteBuffer.wrap(hash.getData()));
             }
-            request.setAppStateSeqNumber(clientState.getConfigSeqNumber());
             request.setResyncOnly(resyncOnly);
             return request;
         }
@@ -94,7 +93,6 @@ public class DefaultConfigurationTransport extends AbstractKaaTransport implemen
     @Override
     public void onConfigurationResponse(ConfigurationSyncResponse response) throws IOException {
         if (clientState != null && configProcessor != null) {
-            clientState.setConfigSeqNumber(response.getAppStateSeqNumber());
             ByteBuffer schemaBody = response.getConfSchemaBody();
             if (schemaBody != null && schemaProcessor != null) {
                 schemaProcessor.loadSchema(schemaBody);

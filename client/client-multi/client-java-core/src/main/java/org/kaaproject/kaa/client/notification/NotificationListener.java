@@ -37,6 +37,6 @@ public interface NotificationListener {
      * @param notification the notification object.
      *
      */
-    void onNotification(String topicId, Notification notification);
+    void onNotification(long topicId, Notification notification);
 
 }
