@@ -102,6 +102,7 @@ public:
 
 private:
     static const std::uint16_t PING_TIMEOUT;
+    static const std::uint16_t CHANNEL_TIMEOUT;
     static const std::uint16_t CONN_ACK_TIMEOUT;
     static const std::uint16_t RECONNECT_TIMEOUT;
 

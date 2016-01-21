@@ -82,8 +82,8 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
         SUPPORTED_TYPES.put(TransportType.LOGGING, ChannelDirection.BIDIRECTIONAL);
     }
 
-    private static final int PING_TIMEOUT = 100;
     private static final int CHANNEL_TIMEOUT = 200;
+    private static final int PING_TIMEOUT = CHANNEL_TIMEOUT / 2;
 
     private static final String CHANNEL_ID = "default_operation_tcp_channel";
 
