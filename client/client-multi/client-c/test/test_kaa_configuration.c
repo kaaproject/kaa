@@ -73,7 +73,7 @@ void test_create_request(void)
 
     size_t expected_size = 0;
     ASSERT_EQUAL(kaa_configuration_manager_get_size(config_manager, &expected_size), KAA_ERR_NONE);
-    ASSERT_EQUAL(expected_size, sizeof(uint32_t) + KAA_EXTENSION_HEADER_SIZE + SHA_1_DIGEST_LENGTH);
+    ASSERT_EQUAL(expected_size, KAA_EXTENSION_HEADER_SIZE + SHA_1_DIGEST_LENGTH);
 
     char request_buffer[expected_size];
     kaa_platform_message_writer_t *writer = NULL;
@@ -85,9 +85,6 @@ void test_create_request(void)
     cursor += sizeof(uint32_t);
 
     ASSERT_EQUAL(KAA_NTOHL(*((uint32_t *) cursor)), sizeof(uint32_t) + SHA_1_DIGEST_LENGTH);    // checking payload size
-    cursor += sizeof(uint32_t);
-
-    ASSERT_EQUAL(KAA_NTOHL(*((uint32_t *) cursor)), CONFIG_START_SEQ_N);    // checking sequence number
     cursor += sizeof(uint32_t);
 
     kaa_digest check_hash;
@@ -103,12 +100,9 @@ void test_create_request(void)
 void test_response(void)
 {
     KAA_TRACE_IN(logger);
-    const size_t response_size = kaa_aligned_size_get(KAA_CONFIGURATION_DATA_LENGTH) + sizeof(uint32_t) + sizeof(uint32_t);
+    const size_t response_size = kaa_aligned_size_get(KAA_CONFIGURATION_DATA_LENGTH) + sizeof(uint32_t);
     char response[response_size];
     char *response_cursor = response;
-
-    *((uint32_t *) response_cursor) = KAA_HTONL(CONFIG_NEW_SEQ_N);
-    response_cursor += sizeof(uint32_t);
 
     *((uint32_t *) response_cursor) = KAA_HTONL(KAA_CONFIGURATION_DATA_LENGTH);
     response_cursor += sizeof(uint32_t);

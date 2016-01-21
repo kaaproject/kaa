@@ -134,7 +134,7 @@ kaa_error_t kaa_configuration_manager_get_size(kaa_configuration_manager_t *self
 {
     KAA_RETURN_IF_NIL2(self, expected_size, KAA_ERR_BADPARAM);
 
-    *expected_size = KAA_EXTENSION_HEADER_SIZE + sizeof(uint32_t) + SHA_1_DIGEST_LENGTH;
+    *expected_size = KAA_EXTENSION_HEADER_SIZE + SHA_1_DIGEST_LENGTH;
 
     return KAA_ERR_NONE;
 }
