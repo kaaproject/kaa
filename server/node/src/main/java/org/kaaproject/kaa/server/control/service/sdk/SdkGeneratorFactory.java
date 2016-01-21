@@ -39,6 +39,8 @@ public class SdkGeneratorFactory {
             return new CppSdkGenerator();
         case C:
             return new CSdkGenerator();
+        case OBJC:
+            return new ObjCSdkGenerator();
         default:
             return null;
         }
