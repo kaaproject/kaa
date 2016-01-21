@@ -47,6 +47,7 @@ struct kaa_notification_manager_t {
     kaa_list_t                     *topics;
     kaa_list_t                     *uids;
     kaa_list_t                     *notifications;
+    uint32_t                       topic_list_hash;
     size_t                         notification_sequence_number;
     size_t                         extension_payload_size;
 
@@ -121,6 +122,21 @@ static bool find_notifications_by_topic(void *data, void *context)
 {
     kaa_topic_notifications_node_t *node = (kaa_topic_notifications_node_t *)data;
     return node->topic_id == *((uint64_t *) context);
+}
+
+static bool sort_topic_by_id(void *node_1, void *node_2)
+{
+    KAA_RETURN_IF_NIL2(node_1, node_2, false);
+    kaa_topic_t *wrapper_1 = (kaa_topic_t *)node_1;
+    kaa_topic_t *wrapper_2 = (kaa_topic_t *)node_2;
+    return wrapper_1->id < wrapper_2->id;
+}
+
+static uint64_t get_topic_id(void *node)
+{
+    //KAA_RETURN_IF_NIL(node, 0);
+    kaa_topic_t *wrapper = (kaa_topic_t *)node;
+    return wrapper->id;
 }
 
 static void kaa_destroy_notification_wrapper(void *data)
@@ -1026,6 +1042,8 @@ kaa_error_t kaa_topic_list_updated(kaa_notification_manager_t *self, kaa_list_t 
     }
 
     kaa_list_destroy(self->topics, &destroy_topic);
+    kaa_list_sort(new_topics,&sort_topic_by_id);
+    self->topic_list_hash = kaa_list_hash(new_topics,&get_topic_id);
     self->topics = new_topics;
     return kaa_notify_topic_update_subscribers(self, new_topics);
 }
