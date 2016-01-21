@@ -94,7 +94,7 @@ public class EndpointProfileMongoDaoTest extends AbstractMongoTest {
     @Test
     public void findBodyByEndpointGroupIdTest() {
         for (int i = 0; i < GENERATED_PROFILES_COUNT; i++) {
-            generateEndpointProfileWithGroupIdDto(TEST_ENDPOINT_GROUP_ID, false);
+            generateEndpointProfileWithGroupIdDto(TEST_ENDPOINT_GROUP_ID);
         }
         int lim = Integer.valueOf(TEST_LIMIT);
         PageLinkDto pageLink = new PageLinkDto(TEST_ENDPOINT_GROUP_ID, TEST_LIMIT, TEST_OFFSET);
@@ -106,7 +106,7 @@ public class EndpointProfileMongoDaoTest extends AbstractMongoTest {
     @Test
     public void findBodyByEndpointGroupIdWithNfGroupStateTest() {
         for (int i = 0; i < GENERATED_PROFILES_COUNT; i++) {
-            generateEndpointProfileWithGroupIdDto(TEST_ENDPOINT_GROUP_ID, true);
+            generateEndpointProfileWithGroupIdDto(TEST_ENDPOINT_GROUP_ID);
         }
         int lim = Integer.valueOf(TEST_LIMIT);
         PageLinkDto pageLink = new PageLinkDto(TEST_ENDPOINT_GROUP_ID, TEST_LIMIT, TEST_OFFSET);
@@ -118,7 +118,7 @@ public class EndpointProfileMongoDaoTest extends AbstractMongoTest {
     @Test
     public void findByEndpointGroupIdTest() {
         for (int i = 0; i < GENERATED_PROFILES_COUNT; i++) {
-            generateEndpointProfileWithGroupIdDto(TEST_ENDPOINT_GROUP_ID, false);
+            generateEndpointProfileWithGroupIdDto(TEST_ENDPOINT_GROUP_ID);
         }
         int lim = Integer.valueOf(TEST_LIMIT);
         PageLinkDto pageLink = new PageLinkDto(TEST_ENDPOINT_GROUP_ID, TEST_LIMIT, TEST_OFFSET);
@@ -130,7 +130,7 @@ public class EndpointProfileMongoDaoTest extends AbstractMongoTest {
     @Test
     public void findByEndpointGroupIdWithNfGroupStateTest() {
         for (int i = 0; i < GENERATED_PROFILES_COUNT; i++) {
-            generateEndpointProfileWithGroupIdDto(TEST_ENDPOINT_GROUP_ID, true);
+            generateEndpointProfileWithGroupIdDto(TEST_ENDPOINT_GROUP_ID);
         }
         int lim = Integer.valueOf(TEST_LIMIT);
         PageLinkDto pageLink = new PageLinkDto(TEST_ENDPOINT_GROUP_ID, TEST_LIMIT, TEST_OFFSET);

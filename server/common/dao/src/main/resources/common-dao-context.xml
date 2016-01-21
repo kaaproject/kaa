@@ -52,6 +52,7 @@
         <property name="endpointProfileDao" ref="endpointProfileDao"/>
         <property name="endpointConfigurationDao" ref="endpointConfigurationDao"/>
         <property name="endpointUserDao" ref="endpointUserDao"/>
+        <property name="topicListEntryDao" ref="topicListEntryDao"/>
     </bean>
 
     <bean id="sdkProfileService" class="org.kaaproject.kaa.server.common.dao.service.SdkProfileServiceImpl">

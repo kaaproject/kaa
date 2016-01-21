@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2016 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,6 +46,7 @@ import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEPByE
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEPBySdkToken;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointProfile;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointUser;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.type.CassandraEndpointGroupState;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.type.CassandraEventClassFamilyVersionState;
 import org.slf4j.Logger;
@@ -90,16 +91,15 @@ import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.Cassand
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_BY_SDK_TOKEN_COLUMN_FAMILY_NAME;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_BY_SDK_TOKEN_SDK_TOKEN_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_COLUMN_FAMILY_NAME;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_CONFIGURATION_SEQUENCE_NUMBER_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_CONFIGURATION_VERSION_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_CONFIG_GROUP_STATE_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_GROUP_STATE_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_CONFIG_HASH_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_ECF_VERSION_STATE_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_ENDPOINT_ID_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_EP_KEY_HASH_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_NOTIFICATION_GROUP_STATE_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_NOTIFICATION_HASH_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_NOTIFICATION_SEQUENCE_NUMBER_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_SEQUENCE_NUMBER_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_SIMPLE_TOPIC_HASH_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_TOPIC_HASH_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_NOTIFICATION_VERSION_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_PROFILE_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_PROFILE_VERSION_PROPERTY;
@@ -222,12 +222,12 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
         BoundStatement bs = ps.bind();
         bs.setList(EP_ECF_VERSION_STATE_PROPERTY, convertEventStateToUDT(pf.getEcfVersionStates()));
         bs.setBytes(EP_CONFIG_HASH_PROPERTY, pf.getConfigurationHash());
-        bs.setBytes(EP_NOTIFICATION_HASH_PROPERTY, pf.getNtHash());
-        bs.setList(EP_CONFIG_GROUP_STATE_PROPERTY, convertGroupStateToUDT(pf.getCfGroupState()));
-        bs.setInt(EP_CONFIGURATION_SEQUENCE_NUMBER_PROPERTY, pf.getCfSequenceNumber());
+        bs.setBytes(EP_TOPIC_HASH_PROPERTY, pf.getTopicHash());
+        bs.setInt(EP_SIMPLE_TOPIC_HASH_PROPERTY, pf.getSimpleTopicHash());
+        bs.setList(EP_GROUP_STATE_PROPERTY, convertGroupStateToUDT(pf.getGroupStates()));
+        bs.setInt(EP_SEQUENCE_NUMBER_PROPERTY, pf.getSequenceNumber());
         bs.setInt(EP_SERVER_PROFILE_VERSION_PROPERTY, pf.getServerProfileVersion());
         bs.setInt(EP_SYSTEM_NOTIFICATION_VERSION_PROPERTY, pf.getSystemNfVersion());
-        bs.setInt(EP_NOTIFICATION_SEQUENCE_NUMBER_PROPERTY, pf.getNfSequenceNumber());
         bs.setInt(EP_NOTIFICATION_VERSION_PROPERTY, pf.getNotificationVersion());
         bs.setInt(EP_PROFILE_VERSION_PROPERTY, pf.getProfileVersion());
         bs.setBytes(EP_USER_CONFIG_HASH_PROPERTY, pf.getUserConfigurationHash());
@@ -236,7 +236,6 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
         bs.setInt(EP_USER_NOTIFICATION_VERSION_PROPERTY, pf.getUserNfVersion());
         bs.setInt(EP_CONFIGURATION_VERSION_PROPERTY, pf.getConfigurationVersion());
         bs.setString(EP_ACCESS_TOKEN_PROPERTY, pf.getAccessToken());
-        bs.setList(EP_NOTIFICATION_GROUP_STATE_PROPERTY, convertGroupStateToUDT(pf.getNfGroupState()));
         bs.setString(EP_PROFILE_PROPERTY, pf.getProfile());
         bs.setString(EP_SERVER_PROFILE_PROPERTY, pf.getServerProfile());
         bs.setList(EP_SUBSCRIPTIONS_PROPERTY, pf.getSubscriptions());
@@ -327,8 +326,8 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
         List<CassandraEndpointGroupState> cfGroupState = new ArrayList<>();
         List<String> endpointGroupIds = new ArrayList<>();
         List<Statement> statementList = new ArrayList<>();
-        if (storedProfile.getCfGroupState() != null) {
-            cfGroupState.addAll(storedProfile.getCfGroupState());
+        if (storedProfile.getGroupStates() != null) {
+            cfGroupState.addAll(storedProfile.getGroupStates());
         }
         if (cfGroupState != null) {
             for (CassandraEndpointGroupState cf : cfGroupState) {
@@ -540,13 +539,9 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
         Set<String> groupIdSet = new HashSet<>();
         List<CassandraEndpointGroupState> groupStateSet = new LinkedList<>();
         if (profile != null) {
-            List<CassandraEndpointGroupState> cfGroupState = profile.getCfGroupState();
+            List<CassandraEndpointGroupState> cfGroupState = profile.getGroupStates();
             if (cfGroupState != null && !cfGroupState.isEmpty()) {
                 groupStateSet.addAll(cfGroupState);
-            }
-            List<CassandraEndpointGroupState> nfGroupState = profile.getNfGroupState();
-            if (nfGroupState != null && !nfGroupState.isEmpty()) {
-                groupStateSet.addAll(nfGroupState);
             }
             for (CassandraEndpointGroupState cf : groupStateSet) {
                 groupIdSet.add(cf.getEndpointGroupId());

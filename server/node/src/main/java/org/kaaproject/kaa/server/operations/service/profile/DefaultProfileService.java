@@ -164,7 +164,7 @@ public class DefaultProfileService implements ProfileService {
 
         populateVersionStates(appSeqNumber.getTenantId(), dto, sdkProfile);
 
-        dto.setGroupStates(new ArrayList<>());
+        dto.setGroupState(new ArrayList<>());
         dto.setSequenceNumber(0);
         return endpointService.saveEndpointProfile(dto);
     }

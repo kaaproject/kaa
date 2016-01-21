@@ -158,15 +158,12 @@ public class AbstractCassandraTest {
         profileDto.setApplicationId(generateStringId());
         profileDto.setEndpointKeyHash("TEST_KEY_HASH".getBytes());
         profileDto.setAccessToken(generateStringId());
-        // TODO: change
-        /*
-        profileDto.setCfGroupStates(cfGroupState);
+        profileDto.setGroupState(cfGroupState);
         profileDto.setSdkToken(UUID.randomUUID().toString());
-        */
         return profileDto;
     }
 
-    protected EndpointProfileDto generateEndpointProfileWithEndpointGroupId(String appId, boolean nfGroupStateOnly) {
+    protected EndpointProfileDto generateEndpointProfileWithEndpointGroupId(String appId) {
         byte[] keyHash = generateBytes();
         if (appId == null) {
             appId = generateStringId();
@@ -178,13 +175,7 @@ public class AbstractCassandraTest {
         profileDto.setClientProfileBody("test Profile");
         List<EndpointGroupStateDto> groupState = new ArrayList<>();
         groupState.add(new EndpointGroupStateDto(TEST_ENDPOINT_GROUP_ID, null, null));
-        // TODO: change
-/*        if (nfGroupStateOnly) {
-            profileDto.setNfGroupStates(groupState);
-            profileDto.setCfGroupStates(null);
-        } else {
-            profileDto.setCfGroupStates(groupState);
-        }*/
+        profileDto.setGroupState(groupState);
         profileDto.setSdkToken(UUID.randomUUID().toString());
         return endpointProfileDao.save(new CassandraEndpointProfile(profileDto)).toDto();
     }

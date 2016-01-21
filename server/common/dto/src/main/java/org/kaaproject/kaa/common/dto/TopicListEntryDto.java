@@ -22,13 +22,13 @@ import java.util.List;
 
 public final class TopicListEntryDto implements Serializable {
 
-    private static final long serialVersionUID = -4802018727441896537L;
+    private static final long serialVersionUID = 2771583997490244417L;
 
-    private final int simpleHash;
+    private int simpleHash;
 
-    private final byte[] hash;
+    private byte[] hash;
 
-    private final List<TopicDto> topics;
+    private List<TopicDto> topics;
 
     public TopicListEntryDto(int simpleHash, byte[] hash, List<TopicDto> topics) {
         this.simpleHash = simpleHash;
@@ -46,6 +46,18 @@ public final class TopicListEntryDto implements Serializable {
 
     public List<TopicDto> getTopics() {
         return topics;
+    }
+
+    public void setSimpleHash(int simpleHash) {
+        this.simpleHash = simpleHash;
+    }
+
+    public void setHash(byte[] hash) {
+        this.hash = hash;
+    }
+
+    public void setTopics(List<TopicDto> topics) {
+        this.topics = topics;
     }
 
     @Override

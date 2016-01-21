@@ -125,7 +125,7 @@ public class DefaultDeltaService implements DeltaService {
     public ConfigurationCacheEntry getConfiguration(String appToken, String endpointId, EndpointProfileDto profile) throws GetDeltaException {
         LOG.debug("[{}][{}] Calculating new configuration", appToken, endpointId);
         AppVersionKey appConfigVersionKey = new AppVersionKey(appToken, profile.getConfigurationVersion());
-        DeltaCacheKey deltaKey = new DeltaCacheKey(appConfigVersionKey, profile.getGroupStates(), EndpointObjectHash.fromBytes(profile
+        DeltaCacheKey deltaKey = new DeltaCacheKey(appConfigVersionKey, profile.getGroupState(), EndpointObjectHash.fromBytes(profile
                 .getUserConfigurationHash()), null, true);
         LOG.debug("[{}][{}] Built resync delta key {}", appToken, endpointId, deltaKey);
         return getDelta(endpointId, profile.getEndpointUserId(), deltaKey);

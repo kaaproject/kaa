@@ -83,7 +83,7 @@ public class DefaultNotificationDeltaService implements NotificationDeltaService
     @Override
     public TopicListCacheEntry getTopicListHash(String appToken, String endpointId, EndpointProfileDto profile) {
         LOG.debug("[{}][{}] Calculating new topic list", appToken, endpointId);
-        List<TopicDto> topics = recalculateTopicList(profile.getGroupStates());
+        List<TopicDto> topics = recalculateTopicList(profile.getGroupState());
         Collections.sort(topics);
         long[] ids = new long[topics.size()];
         StringJoiner joiner = new StringJoiner("|");

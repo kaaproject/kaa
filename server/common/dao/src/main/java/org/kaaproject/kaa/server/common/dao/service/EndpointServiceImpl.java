@@ -30,6 +30,7 @@ import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.HistoryDto;
 import org.kaaproject.kaa.common.dto.PageLinkDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicListEntryDto;
 import org.kaaproject.kaa.common.dto.UpdateNotificationDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
@@ -37,6 +38,7 @@ import org.kaaproject.kaa.server.common.dao.CTLService;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
 import org.kaaproject.kaa.server.common.dao.HistoryService;
 import org.kaaproject.kaa.server.common.dao.ServerProfileService;
+import org.kaaproject.kaa.server.common.dao.TopicService;
 import org.kaaproject.kaa.server.common.dao.exception.DatabaseProcessingException;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
 import org.kaaproject.kaa.server.common.dao.impl.ConfigurationDao;
@@ -45,14 +47,19 @@ import org.kaaproject.kaa.server.common.dao.impl.EndpointGroupDao;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointUserDao;
 import org.kaaproject.kaa.server.common.dao.impl.ProfileFilterDao;
+import org.kaaproject.kaa.server.common.dao.impl.TopicDao;
+import org.kaaproject.kaa.server.common.dao.impl.TopicListEntryDao;
 import org.kaaproject.kaa.server.common.dao.lock.KaaOptimisticLockingFailureException;
 import org.kaaproject.kaa.server.common.dao.lock.Retry;
 import org.kaaproject.kaa.server.common.dao.model.EndpointConfiguration;
 import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
 import org.kaaproject.kaa.server.common.dao.model.EndpointUser;
+import org.kaaproject.kaa.server.common.dao.model.TopicListEntry;
 import org.kaaproject.kaa.server.common.dao.model.sql.Configuration;
 import org.kaaproject.kaa.server.common.dao.model.sql.EndpointGroup;
+import org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils;
 import org.kaaproject.kaa.server.common.dao.model.sql.ProfileFilter;
+import org.kaaproject.kaa.server.common.dao.model.sql.Topic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,10 +100,13 @@ public class EndpointServiceImpl implements EndpointService {
     private ServerProfileService serverProfileService;
     @Autowired
     private CTLService ctlService;
+    @Autowired
+    private TopicDao<Topic> topicDao;
 
     private EndpointProfileDao<EndpointProfile> endpointProfileDao;
     private EndpointConfigurationDao<EndpointConfiguration> endpointConfigurationDao;
     private EndpointUserDao<EndpointUser> endpointUserDao;
+    private TopicListEntryDao<TopicListEntry> topicListEntryDao;
 
     @Override
     @Transactional
@@ -481,12 +491,18 @@ public class EndpointServiceImpl implements EndpointService {
 
     @Override
     public TopicListEntryDto findTopicListEntryByHash(byte[] hash) {
-        return null;
+        LOG.debug("Looking for a topic list entry by hash: [{}]", hash);
+        TopicListEntry topicListEntry = topicListEntryDao.findByHash(hash);
+        List<TopicDto> foundTopics = ModelUtils.convertDtoList(topicDao.findTopicsByIds(topicListEntry.getTopicIds()));
+        TopicListEntryDto topicListEntryDto = getDto(topicListEntry);
+        topicListEntryDto.setTopics(foundTopics);
+        return topicListEntryDto;
     }
 
     @Override
     public TopicListEntryDto saveTopicListEntry(TopicListEntryDto topicListEntryDto) {
-        return null;
+        LOG.debug("Saving topic list entry: [{}]", topicListEntryDto);
+        return getDto(topicListEntryDao.save(topicListEntryDto));
     }
 
     @Override
@@ -504,5 +520,9 @@ public class EndpointServiceImpl implements EndpointService {
 
     public void setEndpointUserDao(EndpointUserDao<EndpointUser> endpointUserDao) {
         this.endpointUserDao = endpointUserDao;
+    }
+
+    public void setTopicListEntryDao(TopicListEntryDao<TopicListEntry> topicListEntryDao) {
+        this.topicListEntryDao = topicListEntryDao;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 CyberVision, Inc.
+ * Copyright 2015-2016 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import java.util.List;
 
 public class EndpointProfileDto implements HasId, Serializable {
 
-    private static final long serialVersionUID = -4124431119223385565L;
+    private static final long serialVersionUID = -7122736699758720540L;
 
     private String id;
     private String applicationId;
@@ -103,11 +103,11 @@ public class EndpointProfileDto implements HasId, Serializable {
         this.accessToken = accessToken;
     }
 
-    public List<EndpointGroupStateDto> getGroupStates() {
+    public List<EndpointGroupStateDto> getGroupState() {
         return groupState;
     }
 
-    public void setGroupStates(List<EndpointGroupStateDto> groupState) {
+    public void setGroupState(List<EndpointGroupStateDto> groupState) {
         this.groupState = groupState;
     }
 

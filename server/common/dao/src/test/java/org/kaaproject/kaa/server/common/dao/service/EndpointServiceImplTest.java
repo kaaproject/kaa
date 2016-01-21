@@ -63,7 +63,7 @@ public class EndpointServiceImplTest extends AbstractTest {
         EndpointGroupDto group = generateEndpointGroupDto(null);
         String endpointGroupId = group.getId();
         PageLinkDto pageLinkDto = new PageLinkDto(endpointGroupId, DEFAULT_LIMIT, DEFAULT_OFFSET);
-        EndpointProfileDto savedEndpointProfileDto = generateEndpointProfileWithGroupIdDto(endpointGroupId, false);
+        EndpointProfileDto savedEndpointProfileDto = generateEndpointProfileWithGroupIdDto(endpointGroupId);
         EndpointProfilesPageDto endpointProfilesPage = endpointService.findEndpointProfileByEndpointGroupId(pageLinkDto);
         EndpointProfileDto endpointProfileDto = endpointProfilesPage.getEndpointProfiles().get(0);
         Assert.assertEquals(savedEndpointProfileDto, endpointProfileDto);
@@ -74,7 +74,7 @@ public class EndpointServiceImplTest extends AbstractTest {
         EndpointGroupDto group = generateEndpointGroupDto(null);
         String endpointGroupId = group.getId();
         PageLinkDto pageLinkDto = new PageLinkDto(endpointGroupId, DEFAULT_LIMIT, DEFAULT_OFFSET);
-        EndpointProfileDto savedEndpointProfileDto = generateEndpointProfileWithGroupIdDto(endpointGroupId, false);
+        EndpointProfileDto savedEndpointProfileDto = generateEndpointProfileWithGroupIdDto(endpointGroupId);
         EndpointProfilesBodyDto endpointProfilesPage = endpointService.findEndpointProfileBodyByEndpointGroupId(pageLinkDto);
         EndpointProfileBodyDto endpointProfileBodyDto = endpointProfilesPage.getEndpointProfilesBody().get(0);
         Assert.assertEquals(savedEndpointProfileDto.getClientProfileBody(), endpointProfileBodyDto.getProfile());
@@ -83,7 +83,7 @@ public class EndpointServiceImplTest extends AbstractTest {
     @Test
     public void findEndpointProfileByKeyHashTest() {
         String endpointGroupId = "124";
-        EndpointProfileDto savedEndpointProfileDto = generateEndpointProfileWithGroupIdDto(endpointGroupId, false);
+        EndpointProfileDto savedEndpointProfileDto = generateEndpointProfileWithGroupIdDto(endpointGroupId);
         EndpointProfileDto endpointProfileDto = endpointService.findEndpointProfileByKeyHash(savedEndpointProfileDto.getEndpointKeyHash());
         Assert.assertEquals(savedEndpointProfileDto, endpointProfileDto);
     }
@@ -91,7 +91,7 @@ public class EndpointServiceImplTest extends AbstractTest {
     @Test
     public void findEndpointProfileBodyByKeyHashTest() {
         String endpointGroupId = "124";
-        EndpointProfileDto savedEndpointProfileDto = generateEndpointProfileWithGroupIdDto(endpointGroupId, false);
+        EndpointProfileDto savedEndpointProfileDto = generateEndpointProfileWithGroupIdDto(endpointGroupId);
         EndpointProfileBodyDto endpointProfileBodyDto = endpointService.findEndpointProfileBodyByKeyHash(savedEndpointProfileDto.getEndpointKeyHash());
         Assert.assertEquals(savedEndpointProfileDto.getClientProfileBody(), endpointProfileBodyDto.getProfile());
     }

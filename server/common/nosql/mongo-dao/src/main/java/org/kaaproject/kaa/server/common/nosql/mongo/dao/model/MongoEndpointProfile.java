@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 CyberVision, Inc.
+ * Copyright 2015-2016 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,7 @@ package org.kaaproject.kaa.server.common.nosql.mongo.dao.model;
 
 import com.mongodb.DBObject;
 import com.mongodb.util.JSON;
-import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
-import org.kaaproject.kaa.common.dto.EventClassFamilyVersionStateDto;
 import org.kaaproject.kaa.server.common.dao.impl.DaoUtil;
 import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
 import org.springframework.data.annotation.Id;
@@ -38,8 +36,8 @@ import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getArrayCopy;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.ENDPOINT_PROFILE;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_ACCESS_TOKEN;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_APPLICATION_ID;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_CF_GROUP_STATE;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_CF_SEQ_NUM;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_GROUP_STATE;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SEQ_NUM;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_CHANGED_FLAG;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_CONFIGURATION_HASH;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_CONFIGURATION_VERSION;
@@ -47,9 +45,8 @@ import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelC
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_ENDPOINT_KEY;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_ENDPOINT_KEY_HASH;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_LOG_SCHEMA_VERSION;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_NF_GROUP_STATE;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_NF_HASH;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_NF_SEQ_NUM;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SIMPLE_TOPIC_HASH;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_TOPIC_HASH;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_NOTIFICATION_VERSION;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_PROFILE_HASH;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_PROFILE_VERSION;
@@ -82,14 +79,10 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
     @Indexed
     @Field(EP_ACCESS_TOKEN)
     private String accessToken;
-    @Field(EP_CF_GROUP_STATE)
-    private List<EndpointGroupState> cfGroupState;
-    @Field(EP_NF_GROUP_STATE)
-    private List<EndpointGroupState> nfGroupState;
-    @Field(EP_CF_SEQ_NUM)
-    private int cfSequenceNumber;
-    @Field(EP_NF_SEQ_NUM)
-    private int nfSequenceNumber;
+    @Field(EP_GROUP_STATE)
+    private List<EndpointGroupState> groupState;
+    @Field(EP_SEQ_NUM)
+    private int sequenceNumber;
     @Field(EP_CHANGED_FLAG)
     private Boolean changedFlag;
     private DBObject profile;
@@ -108,8 +101,10 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
     @Field(EP_NOTIFICATION_VERSION)
     private int notificationVersion;
     private List<String> subscriptions;
-    @Field(EP_NF_HASH)
-    private byte[] ntHash;
+    @Field(EP_TOPIC_HASH)
+    private byte[] topicHash;
+    @Field(EP_SIMPLE_TOPIC_HASH)
+    private int simpleTopicHash;
     @Field(EP_SYSTEM_NF_VERSION)
     private int systemNfVersion;
     @Field(EP_USER_NF_VERSION)
@@ -144,10 +139,8 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         this.endpointKeyHash = dto.getEndpointKeyHash();
         this.endpointUserId = dto.getEndpointUserId();
         this.accessToken = dto.getAccessToken();
-        this.cfGroupState = MongoDaoUtil.convertDtoToModelList(dto.getCfGroupStates());
-        this.nfGroupState = MongoDaoUtil.convertDtoToModelList(dto.getNfGroupStates());
-        this.cfSequenceNumber = dto.getCfSequenceNumber();
-        this.nfSequenceNumber = dto.getNfSequenceNumber();
+        this.groupState = MongoDaoUtil.convertDtoToModelList(dto.getGroupState());
+        this.sequenceNumber = dto.getSequenceNumber();
         this.profile = (DBObject) JSON.parse(dto.getClientProfileBody());
         this.profileHash = dto.getProfileHash();
         this.profileVersion = dto.getClientProfileVersion();
@@ -157,7 +150,8 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         this.configurationVersion = dto.getConfigurationVersion();
         this.subscriptions = dto.getSubscriptions();
         this.notificationVersion = dto.getNotificationVersion();
-        this.ntHash = dto.getNtHash();
+        this.topicHash = dto.getTopicHash();
+        this.simpleTopicHash = dto.getSimpleTopicHash();
         this.systemNfVersion = dto.getSystemNfVersion();
         this.userNfVersion = dto.getUserNfVersion();
         this.logSchemaVersion = dto.getLogSchemaVersion();
@@ -215,36 +209,20 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         this.accessToken = accessToken;
     }
 
-    public List<EndpointGroupState> getCfGroupState() {
-        return cfGroupState;
+    public List<EndpointGroupState> getGroupState() {
+        return groupState;
     }
 
-    public void setCfGroupState(List<EndpointGroupState> cfGroupState) {
-        this.cfGroupState = cfGroupState;
+    public void setGroupState(List<EndpointGroupState> groupState) {
+        this.groupState = groupState;
     }
 
-    public List<EndpointGroupState> getNfGroupState() {
-        return nfGroupState;
+    public int getSequenceNumber() {
+        return sequenceNumber;
     }
 
-    public void setNfGroupState(List<EndpointGroupState> nfGroupState) {
-        this.nfGroupState = nfGroupState;
-    }
-
-    public int getCfSequenceNumber() {
-        return cfSequenceNumber;
-    }
-
-    public void setCfSequenceNumber(int cfSequenceNumber) {
-        this.cfSequenceNumber = cfSequenceNumber;
-    }
-
-    public int getNfSequenceNumber() {
-        return nfSequenceNumber;
-    }
-
-    public void setNfSequenceNumber(int nfSequenceNumber) {
-        this.nfSequenceNumber = nfSequenceNumber;
+    public void setSequenceNumber(int sequenceNumber) {
+        this.sequenceNumber = sequenceNumber;
     }
 
     public Boolean getChangedFlag() {
@@ -336,12 +314,20 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         this.subscriptions = subscriptions;
     }
 
-    public byte[] getNtHash() {
-        return ntHash;
+    public byte[] getTopicHash() {
+        return topicHash;
     }
 
-    public void setNtHash(byte[] ntHash) {
-        this.ntHash = getArrayCopy(ntHash);
+    public void setTopicHash(byte[] topicHash) {
+        this.topicHash = getArrayCopy(topicHash);
+    }
+
+    public int getSimpleTopicHash() {
+        return simpleTopicHash;
+    }
+
+    public void setSimpleTopicHash(int simpleTopicHash) {
+        this.simpleTopicHash = simpleTopicHash;
     }
 
     public int getSystemNfVersion() {
@@ -432,10 +418,7 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         if (serverProfileVersion != that.serverProfileVersion) {
             return false;
         }
-        if (cfSequenceNumber != that.cfSequenceNumber) {
-            return false;
-        }
-        if (nfSequenceNumber != that.nfSequenceNumber) {
+        if (sequenceNumber != that.sequenceNumber) {
             return false;
         }
         if (systemNfVersion != that.systemNfVersion) {
@@ -456,10 +439,7 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         if (!Arrays.equals(userConfigurationHash, that.userConfigurationHash)) {
             return false;
         }
-        if (cfGroupState != null ? !cfGroupState.equals(that.cfGroupState) : that.cfGroupState != null) {
-            return false;
-        }
-        if (nfGroupState != null ? !nfGroupState.equals(that.nfGroupState) : that.nfGroupState != null) {
+        if (groupState != null ? !groupState.equals(that.groupState) : that.groupState != null) {
             return false;
         }
         if (!Arrays.equals(endpointKey, that.endpointKey)) {
@@ -468,7 +448,7 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         if (!Arrays.equals(endpointKeyHash, that.endpointKeyHash)) {
             return false;
         }
-        if (!Arrays.equals(ntHash, that.ntHash)) {
+        if (!Arrays.equals(topicHash, that.topicHash)) {
             return false;
         }
         if (profile != null ? !profile.equals(that.profile) : that.profile != null) {
@@ -492,10 +472,8 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         int result = applicationId != null ? applicationId.hashCode() : 0;
         result = 31 * result + (endpointKey != null ? Arrays.hashCode(endpointKey) : 0);
         result = 31 * result + (endpointKeyHash != null ? Arrays.hashCode(endpointKeyHash) : 0);
-        result = 31 * result + (cfGroupState != null ? cfGroupState.hashCode() : 0);
-        result = 31 * result + (nfGroupState != null ? nfGroupState.hashCode() : 0);
-        result = 31 * result + cfSequenceNumber;
-        result = 31 * result + nfSequenceNumber;
+        result = 31 * result + (groupState != null ? groupState.hashCode() : 0);
+        result = 31 * result + sequenceNumber;
         result = 31 * result + (changedFlag != null ? changedFlag.hashCode() : 0);
         result = 31 * result + (profile != null ? profile.hashCode() : 0);
         result = 31 * result + (profileHash != null ? Arrays.hashCode(profileHash) : 0);
@@ -506,7 +484,7 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         result = 31 * result + configurationVersion;
         result = 31 * result + notificationVersion;
         result = 31 * result + (subscriptions != null ? subscriptions.hashCode() : 0);
-        result = 31 * result + (ntHash != null ? Arrays.hashCode(ntHash) : 0);
+        result = 31 * result + (topicHash != null ? Arrays.hashCode(topicHash) : 0);
         result = 31 * result + systemNfVersion;
         result = 31 * result + userNfVersion;
         result = 31 * result + (sdkToken != null ? sdkToken.hashCode() : 0);
@@ -520,10 +498,8 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
                 ", applicationId=" + applicationId +
                 ", endpointKey=" + Arrays.toString(endpointKey) +
                 ", endpointKeyHash=" + Arrays.toString(endpointKeyHash) +
-                ", cfGroupState=" + cfGroupState +
-                ", nfGroupState=" + nfGroupState +
-                ", cfSequenceNumber=" + cfSequenceNumber +
-                ", nfSequenceNumber=" + nfSequenceNumber +
+                ", groupState=" + groupState +
+                ", sequenceNumber=" + sequenceNumber +
                 ", changedFlag=" + changedFlag +
                 ", profile=" + profile +
                 ", profileHash=" + Arrays.toString(profileHash) +
@@ -534,7 +510,8 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
                 ", configurationVersion=" + configurationVersion +
                 ", notificationVersion=" + notificationVersion +
                 ", subscriptions=" + subscriptions +
-                ", ntHash=" + Arrays.toString(ntHash) +
+                ", topicHash=" + Arrays.toString(topicHash) +
+                ", simpleTopicHash=" + simpleTopicHash +
                 ", systemNfVersion=" + systemNfVersion +
                 ", userNfVersion=" + userNfVersion +
                 ", sdkToken=" + sdkToken +
@@ -545,10 +522,8 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
     public EndpointProfileDto toDto() {
         EndpointProfileDto dto = new EndpointProfileDto();
         dto.setId(id);
-        dto.setCfGroupStates(DaoUtil.<EndpointGroupStateDto>convertDtoList(cfGroupState));
-        dto.setNfGroupStates(DaoUtil.<EndpointGroupStateDto>convertDtoList(nfGroupState));
-        dto.setCfSequenceNumber(cfSequenceNumber);
-        dto.setNfSequenceNumber(nfSequenceNumber);
+        dto.setGroupState(DaoUtil.convertDtoList(groupState));
+        dto.setSequenceNumber(sequenceNumber);
         dto.setConfigurationHash(configurationHash);
         dto.setUserConfigurationHash(userConfigurationHash);
         dto.setConfigurationVersion(configurationVersion);
@@ -563,11 +538,12 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         dto.setServerProfileVersion(serverProfileVersion);
         dto.setNotificationVersion(notificationVersion);
         dto.setSubscriptions(subscriptions);
-        dto.setNtHash(ntHash);
+        dto.setTopicHash(topicHash);
+        dto.setSimpleTopicHash(simpleTopicHash);
         dto.setSystemNfVersion(systemNfVersion);
         dto.setUserNfVersion(userNfVersion);
         dto.setLogSchemaVersion(logSchemaVersion);
-        dto.setEcfVersionStates(DaoUtil.<EventClassFamilyVersionStateDto>convertDtoList(ecfVersionStates));
+        dto.setEcfVersionStates(DaoUtil.convertDtoList(ecfVersionStates));
         dto.setServerHash(serverHash);
         dto.setSdkToken(sdkToken);
         dto.setServerProfileBody(serverProfile);

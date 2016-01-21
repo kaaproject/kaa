@@ -64,9 +64,9 @@ public class EndpointProfileCassandraDaoTest extends AbstractCassandraTest {
     public void testFindByEndpointGroupId() throws Exception {
         List<EndpointProfileDto> endpointProfileList = new ArrayList<>();
         for (int i = 0; i < GENERATED_PROFILES_COUNT; i++) {
-            endpointProfileList.add(generateEndpointProfileWithEndpointGroupId(TEST_APPID, false));
+            endpointProfileList.add(generateEndpointProfileWithEndpointGroupId(TEST_APPID));
         }
-        String id = endpointProfileList.get(0).getCfGroupStates().get(0).getEndpointGroupId();
+        String id = endpointProfileList.get(0).getGroupState().get(0).getEndpointGroupId();
         int lim = Integer.valueOf(TEST_LIMIT);
         PageLinkDto pageLink = new PageLinkDto(id, TEST_LIMIT, TEST_OFFSET);
         EndpointProfilesPageDto found = endpointProfileDao.findByEndpointGroupId(pageLink);
@@ -82,9 +82,9 @@ public class EndpointProfileCassandraDaoTest extends AbstractCassandraTest {
     public void testFindByEndpointGroupIdWithNfGroupState() throws Exception {
         List<EndpointProfileDto> endpointProfileList = new ArrayList<>();
         for (int i = 0; i < GENERATED_PROFILES_COUNT; i++) {
-            endpointProfileList.add(generateEndpointProfileWithEndpointGroupId(TEST_APPID, true));
+            endpointProfileList.add(generateEndpointProfileWithEndpointGroupId(TEST_APPID));
         }
-        String id = endpointProfileList.get(0).getNfGroupStates().get(0).getEndpointGroupId();
+        String id = endpointProfileList.get(0).getGroupState().get(0).getEndpointGroupId();
         int lim = Integer.valueOf(TEST_LIMIT);
         PageLinkDto pageLink = new PageLinkDto(id, TEST_LIMIT, TEST_OFFSET);
         EndpointProfilesPageDto found = endpointProfileDao.findByEndpointGroupId(pageLink);
@@ -100,9 +100,9 @@ public class EndpointProfileCassandraDaoTest extends AbstractCassandraTest {
     public void testFindBodyByEndpointGroupId() throws Exception {
         List<EndpointProfileDto> endpointProfileList = new ArrayList<>();
         for (int i = 0; i < GENERATED_PROFILES_COUNT; i++) {
-            endpointProfileList.add(generateEndpointProfileWithEndpointGroupId(TEST_APPID, false));
+            endpointProfileList.add(generateEndpointProfileWithEndpointGroupId(TEST_APPID));
         }
-        String id = endpointProfileList.get(0).getCfGroupStates().get(0).getEndpointGroupId();
+        String id = endpointProfileList.get(0).getGroupState().get(0).getEndpointGroupId();
         int lim = Integer.valueOf(TEST_LIMIT);
         PageLinkDto pageLink = new PageLinkDto(id, TEST_LIMIT, TEST_OFFSET);
         EndpointProfilesBodyDto found = endpointProfileDao.findBodyByEndpointGroupId(pageLink);
@@ -118,9 +118,9 @@ public class EndpointProfileCassandraDaoTest extends AbstractCassandraTest {
     public void testFindBodyByEndpointGroupIdWithNfGroupState() throws Exception {
         List<EndpointProfileDto> endpointProfileList = new ArrayList<>();
         for (int i = 0; i < GENERATED_PROFILES_COUNT; i++) {
-            endpointProfileList.add(generateEndpointProfileWithEndpointGroupId(TEST_APPID, true));
+            endpointProfileList.add(generateEndpointProfileWithEndpointGroupId(TEST_APPID));
         }
-        String id = endpointProfileList.get(0).getNfGroupStates().get(0).getEndpointGroupId();
+        String id = endpointProfileList.get(0).getGroupState().get(0).getEndpointGroupId();
         int lim = Integer.valueOf(TEST_LIMIT);
         PageLinkDto pageLink = new PageLinkDto(id, TEST_LIMIT, TEST_OFFSET);
         EndpointProfilesBodyDto found = endpointProfileDao.findBodyByEndpointGroupId(pageLink);
@@ -134,7 +134,7 @@ public class EndpointProfileCassandraDaoTest extends AbstractCassandraTest {
 
     @Test
     public void testFindBodyByKeyHash() throws Exception {
-        EndpointProfileDto expected = generateEndpointProfileWithEndpointGroupId(null, false);
+        EndpointProfileDto expected = generateEndpointProfileWithEndpointGroupId(null);
         EndpointProfileBodyDto found = endpointProfileDao.findBodyByKeyHash(expected.getEndpointKeyHash());
         Assert.assertFalse(found.getProfile().isEmpty());
         Assert.assertEquals(expected.getClientProfileBody(), found.getProfile());

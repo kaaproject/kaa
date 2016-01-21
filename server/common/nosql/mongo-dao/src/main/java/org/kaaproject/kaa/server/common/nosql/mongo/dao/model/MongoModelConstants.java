@@ -84,10 +84,8 @@ public class MongoModelConstants {
     public static final String EP_ENDPOINT_KEY_HASH = ENDPOINT_KEY_HASH;
     public static final String EP_USER_ID = "endpoint_user_id";
     public static final String EP_ACCESS_TOKEN = ACCESS_TOKEN;
-    public static final String EP_CF_GROUP_STATE = "cf_group_state";
-    public static final String EP_NF_GROUP_STATE = "nf_group_state";
-    public static final String EP_CF_SEQ_NUM = "cf_seq_num";
-    public static final String EP_NF_SEQ_NUM = "nf_seq_num";
+    public static final String EP_GROUP_STATE = "group_state";
+    public static final String EP_SEQ_NUM = "seq_num";
     public static final String EP_CHANGED_FLAG = "changed_flag";
     public static final String EP_PROFILE_HASH = "profile_hash";
     public static final String EP_PROFILE_VERSION = "profile_version";
@@ -96,7 +94,8 @@ public class MongoModelConstants {
     public static final String EP_USER_CONFIGURATION_HASH = "user_configuration_hash";
     public static final String EP_CONFIGURATION_VERSION = "configuration_version";
     public static final String EP_NOTIFICATION_VERSION = VERSION;
-    public static final String EP_NF_HASH = "nf_hash";
+    public static final String EP_TOPIC_HASH = "topic_hash";
+    public static final String EP_SIMPLE_TOPIC_HASH = "simple_topic_hash";
     public static final String EP_SYSTEM_NF_VERSION = "system_nf_version";
     public static final String EP_USER_NF_VERSION = "user_nf_version";
     public static final String EP_LOG_SCHEMA_VERSION = "log_schema_version";

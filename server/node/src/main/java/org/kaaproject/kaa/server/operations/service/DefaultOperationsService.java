@@ -196,7 +196,7 @@ public class DefaultOperationsService implements OperationsService {
         AppSeqNumber appSeqNumber = cacheService.getAppSeqNumber(appToken);
         int curAppSeqNumber = appSeqNumber.getSeqNumber();
         HistoryDelta historyDelta = fetchHistory(endpointId, appToken, profile, curAppSeqNumber);
-        profile.setGroupStates(historyDelta.getEndpointGroupStates());
+        profile.setGroupState(historyDelta.getEndpointGroupStates());
         profile.setSequenceNumber(curAppSeqNumber);
         if (historyDelta.isConfigurationChanged() || userConfigurationChanged) {
             LOG.debug("[{}][{}] configuration change detected", appToken, endpointId);
@@ -587,7 +587,7 @@ public class DefaultOperationsService implements OperationsService {
      * @return true, if is first request
      */
     public static boolean isFirstRequest(EndpointProfileDto profile) {
-        return profile.getGroupStates() == null || profile.getGroupStates().size() == 0;
+        return profile.getGroupState() == null || profile.getGroupState().size() == 0;
     }
 
     /**

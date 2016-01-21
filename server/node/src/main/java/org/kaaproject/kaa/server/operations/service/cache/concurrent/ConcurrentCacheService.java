@@ -912,25 +912,6 @@ public class ConcurrentCacheService implements CacheService {
         });
     }
 
-    /*
-
-        @Override
-    @Cacheable("configurations")
-    public EndpointConfigurationDto getConfByHash(EndpointObjectHash key) {
-        return cfMemorizer.compute(key, new Computable<EndpointObjectHash, EndpointConfigurationDto>() {
-
-            @Override
-            public EndpointConfigurationDto compute(EndpointObjectHash key) {
-                LOG.debug("Fetching result for getConfByHash {}", key);
-                EndpointConfigurationDto value = endpointService.findEndpointConfigurationByHash(key.getData());
-                return value;
-            }
-        });
-    }
-
-
-     */
-
     @Override
     @CachePut(value = "topicListEntries", key = "#key")
     public TopicListCacheEntry putTopicList(EndpointObjectHash key, TopicListCacheEntry entry) {

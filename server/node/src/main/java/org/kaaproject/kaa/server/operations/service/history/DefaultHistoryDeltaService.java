@@ -110,8 +110,8 @@ public class DefaultHistoryDeltaService implements HistoryDeltaService {
         HistoryDelta historyDelta = new HistoryDelta();
 
         if (oldAppSeqNumber == curAppSeqNumber) {
-            if (profile.getGroupStates() != null && profile.getGroupStates().size() > 0) {
-                historyDelta.setEndpointGroupStates(profile.getGroupStates());
+            if (profile.getGroupState() != null && profile.getGroupState().size() > 0) {
+                historyDelta.setEndpointGroupStates(profile.getGroupState());
             } else {
                 historyDelta.setEndpointGroupStates(new ArrayList<EndpointGroupStateDto>());
             }
@@ -224,6 +224,6 @@ public class DefaultHistoryDeltaService implements HistoryDeltaService {
      * @return the old group map
      */
     private Map<String, EndpointGroupStateDto> getOldGroupMap(EndpointProfileDto profile) {
-        return profile.getGroupStates().stream().collect(Collectors.toMap(EndpointGroupStateDto::getEndpointGroupId, Function.identity()));
+        return profile.getGroupState().stream().collect(Collectors.toMap(EndpointGroupStateDto::getEndpointGroupId, Function.identity()));
     }
 }
