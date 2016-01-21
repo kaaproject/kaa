@@ -15,12 +15,11 @@
  */
 package org.kaaproject.kaa.server.sync;
 
-import java.nio.ByteBuffer;
 import java.util.List;
 
 public final class NotificationClientSync {
     private int appStateSeqNumber;
-    private ByteBuffer topicListHash;
+    private Integer topicListHash;
     private List<TopicState> topicStates;
     private List<String> acceptedUnicastNotifications;
     private List<SubscriptionCommand> subscriptionCommands;
@@ -31,7 +30,7 @@ public final class NotificationClientSync {
     /**
      * All-args constructor.
      */
-    public NotificationClientSync(int appStateSeqNumber, ByteBuffer topicListHash,
+    public NotificationClientSync(int appStateSeqNumber, Integer topicListHash,
             List<TopicState> topicStates,
             List<String> acceptedUnicastNotifications,
             List<SubscriptionCommand> subscriptionCommands) {
@@ -51,7 +50,7 @@ public final class NotificationClientSync {
 
     /**
      * Sets the value of the 'appStateSeqNumber' field.
-     * 
+     *
      * @param value
      *            the value to set.
      */
@@ -62,17 +61,17 @@ public final class NotificationClientSync {
     /**
      * Gets the value of the 'topicListHash' field.
      */
-    public ByteBuffer getTopicListHash() {
+    public Integer getTopicListHash() {
         return topicListHash;
     }
 
     /**
      * Sets the value of the 'topicListHash' field.
-     * 
+     *
      * @param value
      *            the value to set.
      */
-    public void setTopicListHash(ByteBuffer value) {
+    public void setTopicListHash(Integer value) {
         this.topicListHash = value;
     }
 
@@ -85,7 +84,7 @@ public final class NotificationClientSync {
 
     /**
      * Sets the value of the 'topicStates' field.
-     * 
+     *
      * @param value
      *            the value to set.
      */
@@ -102,7 +101,7 @@ public final class NotificationClientSync {
 
     /**
      * Sets the value of the 'acceptedUnicastNotifications' field.
-     * 
+     *
      * @param value
      *            the value to set.
      */
