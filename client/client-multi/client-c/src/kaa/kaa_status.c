@@ -26,6 +26,8 @@
 #include <string.h>
 
 
+extern kaa_error_t kaa_status_set_updated(kaa_status_t *self, bool is_updated);
+
 #define KAA_STATUS_STATIC_SIZE      (sizeof(bool) + sizeof(bool) + sizeof(uint32_t) + sizeof(uint32_t) + sizeof(size_t) + sizeof(uint32_t) + sizeof(uint16_t) + SHA_1_DIGEST_LENGTH * sizeof(char) * 2 + sizeof(KAA_SDK_TOKEN))
 
 #define READ_BUFFER(FROM, TO, SIZE) \
@@ -94,7 +96,7 @@ kaa_error_t kaa_status_create(kaa_status_t ** kaa_status_p)
         if (strcmp(token_buf, KAA_SDK_TOKEN))
             kaa_status->is_registered = false;
         else
-            kaa_status->is_updated = true;
+            kaa_status_set_updated(kaa_status, true);
     }
 
     if (needs_deallocation)
@@ -141,6 +143,22 @@ kaa_error_t kaa_status_set_registered(kaa_status_t *self, bool is_registered)
 {
     KAA_RETURN_IF_NIL(self, KAA_ERR_BADPARAM);
     self->is_registered = is_registered;
+    self->has_update = true;
+    return KAA_ERR_NONE;
+}
+
+kaa_error_t kaa_status_set_attached(kaa_status_t *self, bool is_attached)
+{
+    KAA_RETURN_IF_NIL(self, KAA_ERR_BADPARAM);
+    self->is_attached = is_attached;
+    self->has_update = true;
+    return KAA_ERR_NONE;
+}
+
+kaa_error_t kaa_status_set_updated(kaa_status_t *self, bool is_updated)
+{
+    KAA_RETURN_IF_NIL(self, KAA_ERR_BADPARAM);
+    self->is_updated = is_updated;
     self->has_update = true;
     return KAA_ERR_NONE;
 }

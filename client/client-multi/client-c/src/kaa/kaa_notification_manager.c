@@ -1058,6 +1058,8 @@ static kaa_error_t update_sequence_number(kaa_notification_manager_t *self, uint
             KAA_FREE(state);
             return KAA_ERR_NOMEM;
         }
+
+        self->status->has_update = true;
     } else {
         state = (kaa_topic_state_t *)kaa_list_get_data(it);
         if (sqn_number > state->sqn_number) {

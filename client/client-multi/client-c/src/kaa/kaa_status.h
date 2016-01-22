@@ -45,7 +45,7 @@ typedef struct
     kaa_digest      endpoint_public_key_hash;
     kaa_digest      profile_hash;
 
-    kaa_list_t      *topic_states;
+    kaa_list_t      *topic_states;              /**< TODO */
     char            *endpoint_access_token;
     bool            has_update; /**< Indicates that status was changed on the client size */
 } kaa_status_t;
