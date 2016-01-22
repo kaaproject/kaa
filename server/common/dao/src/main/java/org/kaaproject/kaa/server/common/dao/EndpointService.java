@@ -151,7 +151,6 @@ public interface EndpointService {
      */
     TopicListEntryDto findTopicListEntryByHash(byte[] hash);
 
-
     /**
      * Save topic list entry
      *

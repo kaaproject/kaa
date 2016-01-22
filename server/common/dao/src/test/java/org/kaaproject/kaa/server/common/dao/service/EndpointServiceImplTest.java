@@ -17,6 +17,7 @@
 package org.kaaproject.kaa.server.common.dao.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Assert;
@@ -31,6 +32,9 @@ import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.PageLinkDto;
 import org.kaaproject.kaa.common.dto.TenantDto;
+import org.kaaproject.kaa.common.dto.TopicDto;
+import org.kaaproject.kaa.common.dto.TopicListEntryDto;
+import org.kaaproject.kaa.common.dto.TopicTypeDto;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
 import org.kaaproject.kaa.server.common.dao.AbstractTest;
 
@@ -194,5 +198,18 @@ public class EndpointServiceImplTest extends AbstractTest {
         EndpointUserDto endpointUser = endpointService.findEndpointUserById(savedEndpointUserDto.getId());
         Assert.assertNotNull(generatedAccessToken);
         Assert.assertEquals(generatedAccessToken, endpointUser.getAccessToken());
+    }
+
+    @Test
+    public void findTopicListEntryByHashTest() {
+        ApplicationDto applicationDto = generateApplicationDto();
+        TopicDto topicDto = generateTopicDto(applicationDto.getId(), TopicTypeDto.MANDATORY);
+        List<TopicDto> topics = Arrays.asList(topicDto);
+        byte[] hash = "123".getBytes();
+        TopicListEntryDto topicListEntryDto = new TopicListEntryDto(1, hash, topics);
+        endpointService.saveTopicListEntry(topicListEntryDto);
+
+        TopicListEntryDto foundTopicListEntry = endpointService.findTopicListEntryByHash(hash);
+        Assert.assertEquals(topicListEntryDto, foundTopicListEntry);
     }
 }

@@ -107,7 +107,6 @@ public class ESTestOperationsService implements OperationsService {
     @Override
     public EndpointProfileDto syncProfileState(String appToken, String endpointId, EndpointProfileDto profile,
             boolean userConfigurationChanged) {
-        // TODO Auto-generated method stub
         return null;
     }
 }
