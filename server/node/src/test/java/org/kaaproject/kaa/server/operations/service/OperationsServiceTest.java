@@ -36,7 +36,6 @@ import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
-import org.kaaproject.kaa.server.operations.service.cache.HistorySubject;
 import org.kaaproject.kaa.server.operations.service.delta.DeltaServiceIT;
 import org.kaaproject.kaa.server.operations.service.notification.NotificationDeltaService;
 import org.kaaproject.kaa.server.sync.Notification;
@@ -185,17 +184,12 @@ public class OperationsServiceTest {
     @Test
     public void isFirstRequestTest(){
         EndpointProfileDto profile = new EndpointProfileDto();
-        assertTrue(DefaultOperationsService.isFirstRequest(profile, HistorySubject.CONFIGURATION));
+        assertTrue(DefaultOperationsService.isFirstRequest(profile));
         profile.setConfigurationHash(new byte[0]);
-        assertTrue(DefaultOperationsService.isFirstRequest(profile, HistorySubject.CONFIGURATION));
+        assertTrue(DefaultOperationsService.isFirstRequest(profile));
         
-        profile.setCfGroupStates(Collections.singletonList(new EndpointGroupStateDto()));
-        assertFalse(DefaultOperationsService.isFirstRequest(profile, HistorySubject.CONFIGURATION));
-        assertTrue(DefaultOperationsService.isFirstRequest(profile, HistorySubject.NOTIFICATION));
-        
-        profile.setNfGroupStates(Collections.singletonList(new EndpointGroupStateDto()));
-        assertFalse(DefaultOperationsService.isFirstRequest(profile, HistorySubject.CONFIGURATION));
-        assertFalse(DefaultOperationsService.isFirstRequest(profile, HistorySubject.NOTIFICATION));
+        profile.setGroupState(Collections.singletonList(new EndpointGroupStateDto()));
+        assertFalse(DefaultOperationsService.isFirstRequest(profile));        
     }
 
     //TODO: adjust to current logic

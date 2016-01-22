@@ -45,12 +45,12 @@ import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
@@ -343,7 +343,6 @@ public class OperationsServiceIT extends AbstractTest {
         Assert.assertEquals(SyncStatus.SUCCESS, response.getStatus());
         Assert.assertNotNull(response.getConfigurationSync());
         Assert.assertEquals(SyncResponseStatus.RESYNC, response.getConfigurationSync().getResponseStatus());
-        Assert.assertEquals(APPLICATION_SEQ_NUMBER, (int) response.getConfigurationSync().getAppStateSeqNumber());
         Assert.assertNotNull(response.getConfigurationSync().getConfDeltaBody());
         // Kaa #7786
         Assert.assertNull(response.getConfigurationSync().getConfSchemaBody());
@@ -377,7 +376,6 @@ public class OperationsServiceIT extends AbstractTest {
         Assert.assertEquals(SyncStatus.SUCCESS, response.getStatus());
         Assert.assertNotNull(response.getConfigurationSync());
         Assert.assertEquals(SyncResponseStatus.RESYNC, response.getConfigurationSync().getResponseStatus());
-        Assert.assertEquals(APPLICATION_SEQ_NUMBER, (int) response.getConfigurationSync().getAppStateSeqNumber());
         Assert.assertNotNull(response.getConfigurationSync().getConfDeltaBody());
         // Kaa #7786
         Assert.assertNull(response.getConfigurationSync().getConfSchemaBody());
@@ -390,7 +388,6 @@ public class OperationsServiceIT extends AbstractTest {
         Assert.assertEquals(SyncStatus.SUCCESS, response.getStatus());
         Assert.assertNotNull(response.getConfigurationSync());
         Assert.assertEquals(SyncResponseStatus.RESYNC, response.getConfigurationSync().getResponseStatus());
-        Assert.assertEquals(APPLICATION_SEQ_NUMBER, (int) response.getConfigurationSync().getAppStateSeqNumber());
         Assert.assertNotNull(response.getConfigurationSync().getConfDeltaBody());
         // Kaa #7786
         Assert.assertNull(response.getConfigurationSync().getConfSchemaBody());
@@ -414,7 +411,6 @@ public class OperationsServiceIT extends AbstractTest {
         request.setProfileSync(profileSync);
 
         ConfigurationClientSync confSyncRequest = new ConfigurationClientSync();
-        confSyncRequest.setAppStateSeqNumber(APPLICATION_SEQ_NUMBER);
         confSyncRequest.setConfigurationHash(ByteBuffer.wrap(currentConfigurationHash));
 
         request.setConfigurationSync(confSyncRequest);
@@ -429,7 +425,6 @@ public class OperationsServiceIT extends AbstractTest {
         Assert.assertEquals(SyncStatus.SUCCESS, response.getStatus());
         Assert.assertNotNull(response.getConfigurationSync());
         Assert.assertEquals(SyncResponseStatus.NO_DELTA, response.getConfigurationSync().getResponseStatus());
-        Assert.assertEquals(APPLICATION_SEQ_NUMBER, (int) response.getConfigurationSync().getAppStateSeqNumber());
         Assert.assertNull(response.getConfigurationSync().getConfDeltaBody());
         // Kaa #7786
         Assert.assertNull(response.getConfigurationSync().getConfSchemaBody());
@@ -449,7 +444,6 @@ public class OperationsServiceIT extends AbstractTest {
         request.setClientSyncMetaData(md);
 
         ConfigurationClientSync confSyncRequest = new ConfigurationClientSync();
-        confSyncRequest.setAppStateSeqNumber(APPLICATION_SEQ_NUMBER - 1);
         confSyncRequest.setConfigurationHash(ByteBuffer.wrap(currentConfigurationHash));
 
         request.setConfigurationSync(confSyncRequest);
@@ -478,7 +472,6 @@ public class OperationsServiceIT extends AbstractTest {
         request.setClientSyncMetaData(md);
 
         ConfigurationClientSync confSyncRequest = new ConfigurationClientSync();
-        confSyncRequest.setAppStateSeqNumber(APPLICATION_SEQ_NUMBER);
         confSyncRequest.setConfigurationHash(ByteBuffer.wrap(currentConfigurationHash));
 
         request.setConfigurationSync(confSyncRequest);
@@ -493,7 +486,6 @@ public class OperationsServiceIT extends AbstractTest {
         Assert.assertEquals(SyncStatus.SUCCESS, response.getStatus());
         Assert.assertNotNull(response.getConfigurationSync());
         Assert.assertEquals(SyncResponseStatus.NO_DELTA, response.getConfigurationSync().getResponseStatus());
-        Assert.assertEquals(APPLICATION_SEQ_NUMBER, response.getConfigurationSync().getAppStateSeqNumber());
         Assert.assertNull(response.getConfigurationSync().getConfDeltaBody());
         // Kaa #7786
         Assert.assertNull(response.getConfigurationSync().getConfSchemaBody());
@@ -514,7 +506,6 @@ public class OperationsServiceIT extends AbstractTest {
         request.setClientSyncMetaData(md);
 
         NotificationClientSync nfSyncRequest = new NotificationClientSync();
-        nfSyncRequest.setAppStateSeqNumber(APPLICATION_SEQ_NUMBER);
 
         request.setNotificationSync(nfSyncRequest);
 
@@ -529,7 +520,6 @@ public class OperationsServiceIT extends AbstractTest {
         Assert.assertEquals(SyncStatus.SUCCESS, response.getStatus());
         Assert.assertNotNull(response.getNotificationSync());
         Assert.assertEquals(SyncResponseStatus.DELTA, response.getNotificationSync().getResponseStatus());
-        Assert.assertEquals(Integer.valueOf(APPLICATION_SEQ_NUMBER), response.getNotificationSync().getAppStateSeqNumber());
         Assert.assertNotNull(response.getNotificationSync().getNotifications());
         //Only mandatory notification
         Assert.assertEquals(1, response.getNotificationSync().getNotifications().size());
@@ -549,7 +539,6 @@ public class OperationsServiceIT extends AbstractTest {
         request.setClientSyncMetaData(md);
 
         NotificationClientSync nfSyncRequest = new NotificationClientSync();
-        nfSyncRequest.setAppStateSeqNumber(APPLICATION_SEQ_NUMBER);
         SubscriptionCommand command = new SubscriptionCommand(optionalTopicDto.getId(), SubscriptionCommandType.ADD);
         nfSyncRequest.setSubscriptionCommands(Collections.singletonList(command));
         request.setNotificationSync(nfSyncRequest);
@@ -564,7 +553,6 @@ public class OperationsServiceIT extends AbstractTest {
         Assert.assertEquals(SyncStatus.SUCCESS, response.getStatus());
         Assert.assertNotNull(response.getNotificationSync());
         Assert.assertEquals(SyncResponseStatus.DELTA, response.getNotificationSync().getResponseStatus());
-        Assert.assertEquals(Integer.valueOf(APPLICATION_SEQ_NUMBER), response.getNotificationSync().getAppStateSeqNumber());
         Assert.assertNotNull(response.getNotificationSync().getNotifications());
         //Mandatory + Optional notification
         Assert.assertEquals(2, response.getNotificationSync().getNotifications().size());

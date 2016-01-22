@@ -541,7 +541,7 @@ public class AvroEncDec implements PlatformEncDec {
             return null;
         }
         boolean resyncOnly = source.getResyncOnly() != null ? source.getResyncOnly() : false;
-        return new ConfigurationClientSync(0, source.getConfigurationHash(), resyncOnly);
+        return new ConfigurationClientSync(source.getConfigurationHash(), resyncOnly);
     }
 
     private static NotificationClientSync convert(NotificationSyncRequest source) {

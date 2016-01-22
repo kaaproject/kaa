@@ -149,6 +149,8 @@ public class ApplicationActor extends UntypedActor {
          *
          * @param context
          *            the context
+         * @param tenantId
+         *            the tenant id
          * @param appToken
          *            the application token
          */

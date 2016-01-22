@@ -54,9 +54,9 @@ public interface NotificationDeltaService {
 
     /**
      * Calculate topic list hash for given profile
-     * @param appToken
-     * @param endpointId
-     * @param profile
+     * @param appToken - application token
+     * @param endpointId - endpoint id
+     * @param profile - endpoint profile
      * @return
      */
     TopicListCacheEntry getTopicListHash(String appToken, String endpointId, EndpointProfileDto profile);

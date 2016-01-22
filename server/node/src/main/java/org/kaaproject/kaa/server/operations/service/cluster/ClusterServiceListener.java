@@ -16,7 +16,8 @@ public interface ClusterServiceListener {
     /**
      * Process endpoint actor message
      * 
-     * @param msg
+     * @param msg 
+     *            the endpoint actor message
      */
     void onEndpointActorMsg(EndpointActorMsg msg);
 

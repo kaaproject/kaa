@@ -113,15 +113,13 @@ public class HttpTestLongSyncClient extends HttpTestClient<SyncRequest, SyncResp
 
         ConfigurationSyncRequest csRequest = new ConfigurationSyncRequest();
         csRequest.setConfigurationHash(ByteBuffer.wrap(configurationHash));
-        csRequest.setAppStateSeqNumber(appStateSeqNumber);
         request.setConfigurationSyncRequest(csRequest);
 
         generateSubscriptionCommandList();
         NotificationSyncRequest nsRequest = new NotificationSyncRequest();
         nsRequest.setSubscriptionCommands(subscriptionCommands);
         nsRequest.setTopicStates(topicStates);
-        nsRequest.setTopicListHash(ByteBuffer.wrap(profileHash));
-        nsRequest.setAppStateSeqNumber(appStateSeqNumber);
+        nsRequest.setTopicListHash(1);
         request.setNotificationSyncRequest(nsRequest);
 
         setRequest(request);
@@ -137,9 +135,9 @@ public class HttpTestLongSyncClient extends HttpTestClient<SyncRequest, SyncResp
         for(int i=0; i<sc_size;i++) {
             SubscriptionCommand sc = null;
             if (rnd.nextBoolean()) {
-                sc = new SubscriptionCommand(getRandomString(TOPIC_ID_LENGTH), SubscriptionCommandType.ADD);
+                sc = new SubscriptionCommand(rnd.nextLong(), SubscriptionCommandType.ADD);
             } else {
-                sc = new SubscriptionCommand(getRandomString(TOPIC_ID_LENGTH), SubscriptionCommandType.REMOVE);
+                sc = new SubscriptionCommand(rnd.nextLong(), SubscriptionCommandType.REMOVE);
             }
             topicStates.add(new TopicState(sc.getTopicId(), rnd.nextInt()));
             subscriptionCommands.add(sc);

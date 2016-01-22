@@ -150,7 +150,7 @@ public class DefaultDeltaService implements DeltaService {
         LOG.debug("[{}][{}] Processing configuration request", request.getApplicationToken(), endpointId);
         boolean resync = false;
         if (request.isFirstRequest()) {
-            resync = !isConfigurationUpToDate(request, profile.getConfigurationHash());
+            resync = true;
         } else if (!request.getConfigurationHash().binaryEquals(profile.getConfigurationHash())) {
             logHashMismatch(request, profile, endpointId);
             resync = true;

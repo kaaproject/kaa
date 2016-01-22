@@ -49,7 +49,9 @@ public class GetNotificationRequest {
 
     /**
      * Instantiates a new gets the notification request.
-     * 
+     *
+     * @param topicHash
+     *            the topicHash
      * @param profile
      *            the profile
      * @param subscriptionCommands

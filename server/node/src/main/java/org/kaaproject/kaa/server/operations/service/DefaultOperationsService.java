@@ -582,8 +582,6 @@ public class DefaultOperationsService implements OperationsService {
      *
      * @param profile
      *            the profile
-     * @param subject
-     *            the subject
      * @return true, if is first request
      */
     public static boolean isFirstRequest(EndpointProfileDto profile) {

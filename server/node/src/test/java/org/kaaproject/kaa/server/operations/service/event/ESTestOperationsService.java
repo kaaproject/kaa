@@ -19,7 +19,6 @@ package org.kaaproject.kaa.server.operations.service.event;
 import java.security.PublicKey;
 import java.util.List;
 
-import org.kaaproject.kaa.common.dto.CTLDataDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
@@ -101,6 +100,13 @@ public class ESTestOperationsService implements OperationsService {
 
     @Override
     public EndpointProfileDto refreshServerEndpointProfile(EndpointObjectHash hash) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public EndpointProfileDto syncProfileState(String appToken, String endpointId, EndpointProfileDto profile,
+            boolean userConfigurationChanged) {
         // TODO Auto-generated method stub
         return null;
     }

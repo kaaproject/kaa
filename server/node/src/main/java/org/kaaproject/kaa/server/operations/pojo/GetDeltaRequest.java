@@ -49,6 +49,18 @@ public class GetDeltaRequest {
     public GetDeltaRequest(String applicationToken) {
         this(applicationToken, null, true);
     }
+    
+    /**
+     * Instantiates a new delta request.
+     *
+     * @param applicationToken
+     *            the application token
+     * @param configurationHash
+     *            the configuration hash
+     */
+    public GetDeltaRequest(String applicationToken, EndpointObjectHash configurationHash){
+        this(applicationToken, configurationHash, true);
+    }
 
     /**
      * Instantiates a new delta request.

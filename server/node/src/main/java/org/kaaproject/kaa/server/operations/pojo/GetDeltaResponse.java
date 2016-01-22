@@ -64,8 +64,6 @@ public class GetDeltaResponse {
      *
      * @param responseType
      *            the response type
-     * @param sequenceNumber
-     *            the sequence number
      * @param delta
      *            the delta
      */

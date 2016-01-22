@@ -48,7 +48,7 @@ public class ServerSyncTest {
         Topic topic2 = new Topic("62343", "TopicName2", SubscriptionType.OPTIONAL);
         Topic topic3 = new Topic("51515", "TopicName3", SubscriptionType.MANDATORY);
         List<Topic> topics = Arrays.asList(topic1, topic2, topic3);
-        notificationServerSync = new NotificationServerSync(3, SyncResponseStatus.DELTA, notifications, topics);
+        notificationServerSync = new NotificationServerSync(SyncResponseStatus.DELTA, notifications, topics);
 
         UserAttachResponse userAttachResponse = new UserAttachResponse(SyncStatus.FAILURE,
                 UserVerifierErrorCode.CONNECTION_ERROR, "Some error");
