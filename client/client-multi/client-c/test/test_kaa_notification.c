@@ -223,7 +223,6 @@ void test_notification_listeners_adding_and_removing(void)
     err = kaa_platform_protocol_process_server_sync(context->platform_protocol, buffer_pointer, size);
     ASSERT_EQUAL(err, KAA_ERR_NONE);
 
-    // TODO Fix this test for updated protocol
     ASSERT_EQUAL(listener_has_been_notified, true); // whether callback has been called
 
     err = kaa_remove_optional_notification_listener(context->notification_manager, &topic_id, &id);
