@@ -120,8 +120,7 @@ public class EndpointProfileMongoDao extends AbstractMongoDao<MongoEndpointProfi
         return endpointProfilesBodyDto;
     }
 
-    @Override
-    public Long findVersionByKey(byte[] endpointKeyHash) {
+    private Long findVersionByKey(byte[] endpointKeyHash) {
         LOG.debug("Find endpoint profile version by key hash [{}] ", endpointKeyHash);
         Long version = null;
         Query query = query(where(EP_ENDPOINT_KEY_HASH).is(endpointKeyHash));

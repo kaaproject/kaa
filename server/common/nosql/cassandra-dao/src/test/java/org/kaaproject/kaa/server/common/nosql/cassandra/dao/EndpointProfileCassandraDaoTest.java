@@ -199,15 +199,6 @@ public class EndpointProfileCassandraDaoTest extends AbstractCassandraTest {
         Assert.assertNull(ep.getSubscriptions());
     }
 
-    @Test
-    public void testOptimisticLock() throws Exception {
-        EndpointProfileDto endpointProfile = generateEndpointProfile(null, null, null, null);
-        endpointProfile.setAccessToken("Ololo");
-        endpointProfileDao.save(endpointProfile);
-        long version = endpointProfileDao.findVersionByKey(endpointProfile.getEndpointKeyHash());
-        Assert.assertEquals(1L, version);
-    }
-
     @Test(expected = KaaOptimisticLockingFailureException.class)
     public void testOptimisticLockWithConcurrency() throws Throwable {
         final EndpointProfileDto endpointProfile = generateEndpointProfile(null, null, null, null);

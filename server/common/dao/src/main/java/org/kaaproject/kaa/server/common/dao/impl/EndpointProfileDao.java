@@ -41,13 +41,6 @@ public interface EndpointProfileDao<T extends EndpointProfile> extends Dao<T, By
     T save(EndpointProfileDto dto);
 
     /**
-     *
-     * @param endpointKeyHash
-     * @return
-     */
-    Long findVersionByKey(byte[] endpointKeyHash);
-
-    /**
      * Find endpoint profile by key hash.
      *
      * @param endpointKeyHash the endpoint key hash

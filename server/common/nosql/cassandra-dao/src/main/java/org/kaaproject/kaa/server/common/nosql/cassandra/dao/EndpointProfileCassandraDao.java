@@ -114,17 +114,17 @@ import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.Cassand
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EVENT_CLASS_FAMILY_VERSION_STATE_ECF_ID_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EVENT_CLASS_FAMILY_VERSION_STATE_ECF_VERSION_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EVENT_CLASS_FAMILY_VERSION_STATE_USER_TYPE_NAME;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.VERSION_PROPERTY;
 
 @Repository(value = "endpointProfileDao")
 public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraEndpointProfile, ByteBuffer> implements EndpointProfileDao<CassandraEndpointProfile> {
 
     private static final Logger LOG = LoggerFactory.getLogger(EndpointProfileCassandraDao.class);
-    private static final String UPDATE_PROFILE = "UPDATE kaa.ep_profile SET ecf_ver_state=?, cf_hash=?, nf_hash=?, cf_group_state=?, cf_seq_num=? , " +
-            "srv_pf_ver=?, sys_nf_ver=?, nf_seq_num=?, nf_ver=?, pf_ver=?, ucf_hash=?, server_hash=?, user_id=?, user_nf_ver=?, cf_ver=?, access_token=?, " +
-            "nf_group_state=?, pf=?, srv_pf=?, subscs=? WHERE ep_key_hash=? ";
+    private static final String UPDATE_PROFILE = "UPDATE kaa.ep_profile SET ecf_ver_state=?, cf_hash=?, topic_hash=?, simple_topic_hash=?, group_state=?, " +
+            "srv_pf_ver=?, sys_nf_ver=?, seq_num=?, nf_ver=?, pf_ver=?, ucf_hash=?, server_hash=?, user_id=?, user_nf_ver=?, cf_ver=?, access_token=?, " +
+            " pf=?, srv_pf=?, subscs=?, opt_lock=? WHERE ep_key_hash=? ";
 
     private static final String IF_CONDITION = "IF opt_lock = ";
-    public static final String SEMICOLON = ";";
 
     private ConcurrentHashMap<String, PreparedStatement> statements = new ConcurrentHashMap<>();
 
@@ -159,29 +159,6 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
     }
 
     @Override
-    public Long findVersionByKey(byte[] endpointKeyHash) {
-        Long version = 0L;
-        CassandraEndpointProfile endpointProfile = findByKeyHash(endpointKeyHash);
-        if (endpointProfile != null) {
-            Long newVersion = endpointProfile.getVersion() + 1;
-            LOG.debug("Try to increment version for endpoint {}", convertKeyHashToString(endpointKeyHash));
-            ResultSet resultSet = execute(QueryBuilder.update(getColumnFamilyName()).with(set(OPT_LOCK, newVersion))
-                    .where(eq(EP_EP_KEY_HASH_PROPERTY, getByteBuffer(endpointKeyHash))).onlyIf(eq(OPT_LOCK, endpointProfile.getVersion())));
-            if (wasApplied(resultSet)) {
-                LOG.debug("Increment version to {} for endpoint {}", newVersion,convertKeyHashToString(endpointKeyHash));
-                version = newVersion;
-            } else {
-                LOG.error("[{}] Can't update version of endpoint profile.", convertKeyHashToString(endpointKeyHash));
-                new KaaOptimisticLockingFailureException("Can't update optimistic lock version of endpoint profile.");
-            }
-            return version;
-        } else {
-            LOG.error("[{}] Can't find endpoint profile by key hash.", convertKeyHashToString(endpointKeyHash));
-            throw new DatabaseProcessingException("Can't find endpoint profile by key hash.");
-        }
-    }
-
-    @Override
     public CassandraEndpointProfile save(CassandraEndpointProfile profile) {
         profile.setId(convertKeyHashToString(profile.getEndpointKeyHash()));
         LOG.debug("Saving endpoint profile with id {}", profile.getId());
@@ -206,11 +183,7 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
 
     private BoundStatement prepareStatement(String q, CassandraEndpointProfile pf) {
         StringBuilder sb = new StringBuilder(q);
-        if (pf.getVersion() == 0L) {
-            sb.append(SEMICOLON);
-        } else {
-            sb.append(IF_CONDITION).append(pf.getVersion()).append(";");
-        }
+        sb.append(IF_CONDITION).append(pf.getVersion()).append(";");
         String query = sb.toString();
         LOG.info("Get version {}", pf.getVersion());
         LOG.debug("Prepared query {}", query);
@@ -240,6 +213,7 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
         bs.setString(EP_SERVER_PROFILE_PROPERTY, pf.getServerProfile());
         bs.setList(EP_SUBSCRIPTIONS_PROPERTY, pf.getSubscriptions());
         bs.setBytes(EP_EP_KEY_HASH_PROPERTY, pf.getEndpointKeyHash());
+        bs.setLong(OPT_LOCK, pf.getVersion() + 1);
         return bs;
     }
 
@@ -250,7 +224,6 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
         CassandraEndpointProfile storedProfile = findByKeyHash(keyHash);
         if (storedProfile != null) {
             List<Statement> statementList = new ArrayList<>();
-            profile.setVersion(findVersionByKey(keyHash));
             BoundStatement bs = prepareStatement(UPDATE_PROFILE, profile);
             if (wasApplied(execute(bs))) {
                 Set<String> oldEndpointGroupIds = getEndpointProfilesGroupIdSet(storedProfile);
