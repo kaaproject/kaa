@@ -24,7 +24,7 @@
 @implementation StorageSizeLogUploadStrategy
 
 - (instancetype)initWithVolumeThreshold:(int32_t)volumeThreshold {
-    self = [super init];
+    self = [super initWithDefaults];
     if (self) {
         [self setVolumeThreshold:volumeThreshold];
     }

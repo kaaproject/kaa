@@ -23,9 +23,8 @@
 
 @implementation RecordCountWithTimeLimitLogUploadStrategy
 
-- (instancetype)init
-{
-    self = [super init];
+- (instancetype)init {
+    self = [super initWithDefaults];
     if (self) {
         [self setLastUploadTime:[[NSDate date] timeIntervalSince1970] * 1000];
     }

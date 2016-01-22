@@ -25,7 +25,7 @@
 
 - (instancetype)initWithCountThreshold:(int32_t)countThreshold {
     
-    self = [super init];
+    self = [super initWithDefaults];
     if (self) {
         [self setCountThreshold:countThreshold];
     }

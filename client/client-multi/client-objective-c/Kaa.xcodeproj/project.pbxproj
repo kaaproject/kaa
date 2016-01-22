@@ -1130,9 +1130,9 @@
 		B836A12B1C48E9E000376A6B /* strategy */ = {
 			isa = PBXGroup;
 			children = (
+				B836A16C1C48EB3600376A6B /* LogUploadStrategy.h */,
 				B836A16A1C48EB3600376A6B /* DefaultLogUploadStrategy.h */,
 				B836A16B1C48EB3600376A6B /* DefaultLogUploadStrategy.m */,
-				B836A16C1C48EB3600376A6B /* LogUploadStrategy.h */,
 				B836A12C1C48E9E000376A6B /* PeriodicLogUploadStrategy.h */,
 				B836A12D1C48E9E000376A6B /* PeriodicLogUploadStrategy.m */,
 				B836A12E1C48E9E000376A6B /* RecordCountLogUploadStrategy.h */,
