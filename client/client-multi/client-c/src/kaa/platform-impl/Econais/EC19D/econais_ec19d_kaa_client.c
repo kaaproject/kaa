@@ -205,7 +205,7 @@ kaa_error_t kaa_client_stop(kaa_client_t *kaa_client)
 {
     KAA_RETURN_IF_NIL(kaa_client, KAA_ERR_BADPARAM);
     kaa_client->operate = false;
-    return KAA_ERR_NONE;
+    return kaa_stop(kaa_client->kaa_context);
 }
 
 void kaa_client_destroy(kaa_client_t *kaa_client)
