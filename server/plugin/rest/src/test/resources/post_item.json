@@ -1,6 +1,6 @@
 {
-    "path": "/test/get",
-    "requestMethod": "GET",
+    "path": "/test/post",
+    "requestMethod": "POST",
     "requestParams": {
         "array": [
             {
@@ -15,10 +15,6 @@
     },
     "responseMappings": {
         "array": [
-            {
-                "responseField": "response",
-                "outputMessageField": "x"
-            }
         ]
     }
 }

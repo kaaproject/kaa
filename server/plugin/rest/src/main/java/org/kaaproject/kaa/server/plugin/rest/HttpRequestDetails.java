@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 CyberVision, Inc.
+ * Copyright 2014-2016 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,11 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 /**
+ * Detailed information about an HTTP request.
+ *
  * @author Bohdan Khablenko
+ *
+ * @since v1.0.0
  */
 public class HttpRequestDetails {
 
@@ -56,11 +60,20 @@ public class HttpRequestDetails {
 
     private List<HttpResponseMapping> responseMappings = null;
 
+    /**
+     * Creates a new object by extracting the required information from a plugin
+     * message.
+     *
+     * @param message A plugin message that contains the request
+     * @param pluginConfig The configuration of a plugin instance to process the
+     *            message
+     */
     public HttpRequestDetails(KaaPluginMessage message, KaaRestPluginConfig pluginConfig) {
 
         this.message = message;
         this.pluginConfig = pluginConfig;
 
+        // Plugin item configuration
         this.execute(() -> {
             AvroJsonConverter<KaaRestPluginItemConfig> converter = new AvroJsonConverter<>(KaaRestPluginItemConfig.SCHEMA$, KaaRestPluginItemConfig.class);
             String configData = this.message.getItemInfo().getConfigurationData();
@@ -69,12 +82,14 @@ public class HttpRequestDetails {
 
         this.requestMethod = this.itemConfig.getRequestMethod();
 
+        // Request body
         this.execute(() -> {
             GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(message.getItemInfo().getInMessageSchema());
             byte[] messageData = ((EndpointMessage) message.getMsg()).getMessageData();
             this.requestBody = converter.decodeJson(messageData);
         }, "Failed to decode message data!");
 
+        // Request parameters
         Optional.ofNullable(this.itemConfig.getRequestParams()).ifPresent(collection -> {
             collection.forEach(element -> {
                 String key = element.getParamName();
@@ -84,10 +99,12 @@ public class HttpRequestDetails {
         });
         LOG.debug("Request Parameters: {}", this.requestParams);
 
+        // Input message schema
         this.execute(() -> {
             this.inputMessageType = new Schema.Parser().parse(message.getItemInfo().getInMessageSchema());
         }, "Failed to parse the request type schema!");
 
+        // Output message schema
         this.execute(() -> {
             this.outputMessageType = new Schema.Parser().parse(message.getItemInfo().getOutMessageSchema());
         }, "Failed to parse the response type schema!");
@@ -130,14 +147,29 @@ public class HttpRequestDetails {
 
     private EndpointMessage response = null;
 
-    public EndpointMessage getResponse() {
+    /**
+     * Creates an object to represent the response to this request.
+     *
+     * @return An object to represent the response to this request
+     */
+    public EndpointMessage createResponse() {
         if (this.response == null) {
             EndpointObjectHash key = ((EndpointMessage) this.message.getMsg()).getKey();
             this.response = new EndpointMessage(key);
         }
+        return this.getResponse();
+    }
+
+    public EndpointMessage getResponse() {
         return this.response;
     }
 
+    /**
+     * Executes the given snippet of code.
+     *
+     * @param task A snippet of code to execute
+     * @param message An error message to log in case of an exception
+     */
     private void execute(Task task, String message) {
         try {
             task.complete();

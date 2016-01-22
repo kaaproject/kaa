@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 CyberVision, Inc.
+ * Copyright 2014-2016 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,6 +54,10 @@ import org.springframework.test.web.client.ResponseCreator;
 
 /**
  * @author Bohdan Khablenko
+ *
+ * @see org.kaaproject.kaa.server.plugin.rest.KaaRestPlugin
+ *
+ * @since v1.0.0
  */
 public class KaaRestPluginTests {
 
@@ -135,8 +139,13 @@ public class KaaRestPluginTests {
         this.mockServer = MockRestServiceServer.createServer(this.restPlugin.getRestTemplate());
     }
 
+    /**
+     * Sends a GET request and processes the response.
+     *
+     * @throws Exception
+     */
     @Test
-    public void getRequestPositiveTest() throws Exception {
+    public void getRequestTest1() throws Exception {
 
         InputMessage request = InputMessage.newBuilder().setA(100).setB(200).setC(300).build();
         KaaPluginMessage message = new KaaPluginTestMessage(this.def, this.items.get(HttpRequestMethod.GET), this.converter.encodeToJson(request));
@@ -151,14 +160,133 @@ public class KaaRestPluginTests {
         Assert.assertEquals(expected, this.executionContext.getMessageContent());
     }
 
+    /**
+     * Sends a GET request that results in 400 BAD_REQUEST.
+     *
+     * @throws Exception
+     */
     @Test
-    public void getRequestNegativeTest() throws Exception {
+    public void getRequestTest2() throws Exception {
 
         InputMessage request = InputMessage.newBuilder().setA(100).setB(200).setC(300).build();
         KaaPluginMessage message = new KaaPluginTestMessage(this.def, this.items.get(HttpRequestMethod.GET), this.converter.encodeToJson(request));
 
         ResponseCreator response = withBadRequest();
         this.mockServer.expect(requestTo("http://127.0.0.1:8080/test/get")).andExpect(method(HttpMethod.GET)).andRespond(response);
+
+        this.restPlugin.onPluginMessage(message, this.executionContext);
+        this.mockServer.verify();
+        Assert.assertEquals(400, this.executionContext.getEndpointMessage().getErrorCode());
+    }
+
+    /**
+     * Sends a POST request with no response mappings.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void postRequestTest1() throws Exception {
+
+        InputMessage request = InputMessage.newBuilder().setA(100).setB(200).setC(300).build();
+        KaaPluginMessage message = new KaaPluginTestMessage(this.def, this.items.get(HttpRequestMethod.POST), this.converter.encodeToJson(request));
+
+        ResponseCreator response = withSuccess();
+        this.mockServer.expect(requestTo("http://127.0.0.1:8080/test/post")).andExpect(method(HttpMethod.POST)).andRespond(response);
+
+        this.restPlugin.onPluginMessage(message, this.executionContext);
+        this.mockServer.verify();
+        Assert.assertArrayEquals(new byte[] {}, this.executionContext.getEndpointMessage().getMessageData());
+    }
+
+    /**
+     * Sends a POST request that results in 400 BAD_REQUEST.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void postRequestTest2() throws Exception {
+
+        InputMessage request = InputMessage.newBuilder().setA(100).setB(200).setC(300).build();
+        KaaPluginMessage message = new KaaPluginTestMessage(this.def, this.items.get(HttpRequestMethod.POST), this.converter.encodeToJson(request));
+
+        ResponseCreator response = withBadRequest();
+        this.mockServer.expect(requestTo("http://127.0.0.1:8080/test/post")).andExpect(method(HttpMethod.POST)).andRespond(response);
+
+        this.restPlugin.onPluginMessage(message, this.executionContext);
+        this.mockServer.verify();
+        Assert.assertEquals(400, this.executionContext.getEndpointMessage().getErrorCode());
+    }
+
+    /**
+     * Sends a PUT request.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void putRequestTest1() throws Exception {
+
+        InputMessage request = InputMessage.newBuilder().setA(100).setB(200).setC(300).build();
+        KaaPluginMessage message = new KaaPluginTestMessage(this.def, this.items.get(HttpRequestMethod.PUT), this.converter.encodeToJson(request));
+
+        ResponseCreator response = withSuccess();
+        this.mockServer.expect(requestTo("http://127.0.0.1:8080/test/put")).andExpect(method(HttpMethod.PUT)).andRespond(response);
+
+        this.restPlugin.onPluginMessage(message, this.executionContext);
+        this.mockServer.verify();
+        Assert.assertArrayEquals(new byte[] {}, this.executionContext.getEndpointMessage().getMessageData());
+    }
+
+    /**
+     * Sends a PUT request that results in 400 BAD_REQUEST.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void putRequestTest2() throws Exception {
+
+        InputMessage request = InputMessage.newBuilder().setA(100).setB(200).setC(300).build();
+        KaaPluginMessage message = new KaaPluginTestMessage(this.def, this.items.get(HttpRequestMethod.PUT), this.converter.encodeToJson(request));
+
+        ResponseCreator response = withBadRequest();
+        this.mockServer.expect(requestTo("http://127.0.0.1:8080/test/put")).andExpect(method(HttpMethod.PUT)).andRespond(response);
+
+        this.restPlugin.onPluginMessage(message, this.executionContext);
+        this.mockServer.verify();
+        Assert.assertEquals(400, this.executionContext.getEndpointMessage().getErrorCode());
+    }
+
+    /**
+     * Sends a DELETE request.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void deleteRequestTest1() throws Exception {
+
+        InputMessage request = InputMessage.newBuilder().setA(100).setB(200).setC(300).build();
+        KaaPluginMessage message = new KaaPluginTestMessage(this.def, this.items.get(HttpRequestMethod.DELETE), this.converter.encodeToJson(request));
+
+        ResponseCreator response = withSuccess();
+        this.mockServer.expect(requestTo("http://127.0.0.1:8080/test/delete")).andExpect(method(HttpMethod.DELETE)).andRespond(response);
+
+        this.restPlugin.onPluginMessage(message, this.executionContext);
+        this.mockServer.verify();
+        Assert.assertArrayEquals(new byte[] {}, this.executionContext.getEndpointMessage().getMessageData());
+    }
+
+    /**
+     * Sends a DELETE request that results in 400 BAD_REQUEST.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void deleteRequestTest2() throws Exception {
+
+        InputMessage request = InputMessage.newBuilder().setA(100).setB(200).setC(300).build();
+        KaaPluginMessage message = new KaaPluginTestMessage(this.def, this.items.get(HttpRequestMethod.DELETE), this.converter.encodeToJson(request));
+
+        ResponseCreator response = withBadRequest();
+        this.mockServer.expect(requestTo("http://127.0.0.1:8080/test/delete")).andExpect(method(HttpMethod.DELETE)).andRespond(response);
 
         this.restPlugin.onPluginMessage(message, this.executionContext);
         this.mockServer.verify();

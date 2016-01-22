@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 CyberVision, Inc.
+ * Copyright 2014-2016 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,10 @@ import org.kaaproject.kaa.server.plugin.contracts.messaging.MessagingPluginContr
 import org.kaaproject.kaa.server.plugin.rest.gen.KaaRestPluginConfig;
 
 /**
+ * @author Andrew Shvayka
  * @author Bohdan Khablenko
+ *
+ * @since v1.0.0
  */
 public class KaaRestPluginDef implements PluginDef {
 

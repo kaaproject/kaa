@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 CyberVision, Inc.
+ * Copyright 2014-2016 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,12 +29,14 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @author Bohdan Khablenko
+ *
+ * @since v1.0.0
  */
 public class KaaPluginTestMessage implements KaaPluginMessage {
 
     private static final long serialVersionUID = 100L;
 
-    private static Logger LOG = LoggerFactory.getLogger(KaaPluginTestMessage.class);
+    private static final Logger LOG = LoggerFactory.getLogger(KaaPluginTestMessage.class);
 
     private UUID id;
     private KaaMessage message;
