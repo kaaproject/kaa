@@ -16,6 +16,12 @@
 
 package org.kaaproject.kaa.server.common.dao.service;
 
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
+import org.kaaproject.kaa.common.dto.plugin.ContractDto;
+import org.kaaproject.kaa.common.dto.plugin.PluginContractDto;
+import org.kaaproject.kaa.common.dto.plugin.PluginContractInstanceDto;
+import org.kaaproject.kaa.common.dto.plugin.PluginContractInstanceItemDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginInstanceDto;
 import org.kaaproject.kaa.server.common.dao.PluginService;
@@ -26,8 +32,8 @@ import org.kaaproject.kaa.server.common.dao.impl.ContractMessageDao;
 import org.kaaproject.kaa.server.common.dao.impl.DaoUtil;
 import org.kaaproject.kaa.server.common.dao.impl.PluginDao;
 import org.kaaproject.kaa.server.common.dao.impl.PluginInstanceDao;
-import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchemaMetaInfo;
+import org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils;
 import org.kaaproject.kaa.server.common.dao.model.sql.plugin.Contract;
 import org.kaaproject.kaa.server.common.dao.model.sql.plugin.ContractItem;
 import org.kaaproject.kaa.server.common.dao.model.sql.plugin.ContractMessage;
@@ -145,38 +151,52 @@ public class BasePluginService implements PluginService {
         if (plugin == null) {
             throw new IncorrectParameterException("Plugin with class name '" + pluginDto.getClassName() + "' doesn't exist");
         }
-        PluginInstance pluginInstance = new PluginInstance(pluginInstanceDto);
-        for (PluginContractInstance pluginContractInstance : pluginInstance.getPluginContractInstances()) {
-            for (PluginContractInstanceItem pluginContractInstanceItem : pluginContractInstance.getPluginContractInstanceItems()) {
-                mergeCTLSchemaMetaInfos(pluginContractInstanceItem.getInMessageSchema());
-                mergeCTLSchemaMetaInfos(pluginContractInstanceItem.getOutMessageSchema());
+
+        if (pluginInstanceDto.getContracts() != null) {
+            for (PluginContractInstanceDto pluginContractInstance : pluginInstanceDto.getContracts()) {
+                for (PluginContractInstanceItemDto pluginContractInstanceItem : pluginContractInstance.getItems()) {
+                    mergeCTLSchemaMetaInfos(pluginContractInstanceItem.getInMessageSchema());
+                    mergeCTLSchemaMetaInfos(pluginContractInstanceItem.getOutMessageSchema());
+
+                    if (pluginContractInstanceItem.getId() == null) {
+                        PluginContractInstanceItem item = new PluginContractInstanceItem(pluginContractInstanceItem);
+                        item = pluginInstanceDao.save(item, PluginContractInstanceItem.class);
+                        pluginContractInstanceItem.setId(item.getStringId());
+                    }
+                }
+                PluginContractDto pluginContract = pluginContractInstance.getContract();
+                ContractDto receivedContract = pluginContract.getContract();
+                Contract foundContract = contractDao.findByNameAndVersion(receivedContract.getName(), receivedContract.getVersion());
+                if (foundContract == null) {
+                    throw new IncorrectParameterException("Invalid contract name: '" +
+                            receivedContract.getName() + "' and version: " + receivedContract.getVersion());
+                }
+                receivedContract.setId(foundContract.getStringId());
             }
-            PluginContract pluginContract = pluginContractInstance.getPluginContract();
-            Contract receivedContract = pluginContract.getContract();
-            Contract foundContract = contractDao.findByNameAndVersion(receivedContract.getName(), receivedContract.getVersion());
-            if (foundContract == null) {
-                throw new IncorrectParameterException("Invalid contract name and version: '" +
-                        receivedContract.getName() + "' and version: " + receivedContract.getVersion());
-            }
-            receivedContract.setId(foundContract.getId());
         }
-        pluginInstance.setPlugin(plugin);
+        pluginInstanceDto.setPluginDefinition(ModelUtils.getDto(plugin));
+        PluginInstance pluginInstance = new PluginInstance(pluginInstanceDto);
+
+        for (PluginContractInstance pluginContractInstance : pluginInstance.getPluginContractInstances()) {
+            pluginContractInstance.setPluginInstance(pluginInstance);
+        }
+
         PluginInstance savedInstance = pluginInstanceDao.save(pluginInstance);
         LOG.debug("Saved instance: {}", savedInstance);
         return DaoUtil.getDto(savedInstance);
     }
 
-    private void mergeCTLSchemaMetaInfos(CTLSchema schema) {
+    private void mergeCTLSchemaMetaInfos(CTLSchemaDto schema) {
         if (schema == null) {
             return;
         }
-        CTLSchemaMetaInfo ctlSchemaMetaInfo = schema.getMetaInfo();
+        CTLSchemaMetaInfoDto ctlSchemaMetaInfo = schema.getMetaInfo();
         CTLSchemaMetaInfo foundMetaInfo =
                 ctlSchemaMetaInfoDao.findByFqnAndVersion(ctlSchemaMetaInfo.getFqn(), ctlSchemaMetaInfo.getVersion());
         if (foundMetaInfo == null) {
-            foundMetaInfo = ctlSchemaMetaInfoDao.save(ctlSchemaMetaInfo);
+            foundMetaInfo = ctlSchemaMetaInfoDao.save(new CTLSchemaMetaInfo(ctlSchemaMetaInfo));
         }
-        schema.setMetaInfo(foundMetaInfo);
+        ctlSchemaMetaInfo.setId(foundMetaInfo.getStringId());
     }
 
     @Override

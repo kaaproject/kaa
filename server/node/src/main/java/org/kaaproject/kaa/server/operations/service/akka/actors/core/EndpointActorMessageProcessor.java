@@ -288,6 +288,9 @@ public class EndpointActorMessageProcessor {
     }
 
     private void processPluginSync(ActorContext context, ClientSync request) {
+        if (request.getExtSyncList() == null) {
+            return;
+        }
         EndpointProfileDto profile = state.getProfile();
         for (ExtensionSync ext : request.getExtSyncList()) {
             EndpointExtMsg msg = new EndpointExtMsg(profile.getSdkToken(), ext.getExtensionId(), key, ext.getData());

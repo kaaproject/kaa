@@ -23,9 +23,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
+import java.util.Set;
 
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.file.FileData;
+import org.kaaproject.kaa.common.dto.plugin.PluginInstanceDto;
 import org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo;
 import org.kaaproject.kaa.server.control.service.sdk.event.EventFamilyMetadata;
 import org.slf4j.Logger;
@@ -67,7 +69,8 @@ public abstract class SdkGenerator {
             String configurationBaseSchemaBody,
             byte[] defaultConfigurationData,
             List<EventFamilyMetadata> eventFamilies,
-            String logSchemaBody) throws Exception; //NOSONAR
+            String logSchemaBody,
+            Set<PluginInstanceDto> pluginInstanceDtos) throws Exception; //NOSONAR
 
     /**
      * Read file.

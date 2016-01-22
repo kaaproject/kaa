@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 CyberVision, Inc.
+ * Copyright 2014-2016 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 @Table(name = SDK_PROFILE_TABLE_NAME)
 public class SdkProfile extends GenericModel<SdkProfileDto> implements Serializable {
 
-    private static final long serialVersionUID = -5963289882951330950L;
+    private static final long serialVersionUID = 531593875241545823L;
 
     @Column(name = SDK_PROFILE_TOKEN)
     private String token;
@@ -88,6 +88,9 @@ public class SdkProfile extends GenericModel<SdkProfileDto> implements Serializa
 
     @Column(name = SDK_PROFILE_ENDPOINT_COUNT)
     private Integer endpointCount = 0;
+
+    @ElementCollection
+    private List<String> pluginContractInstanceIds;
 
     public SdkProfile() {
     }
@@ -130,9 +133,16 @@ public class SdkProfile extends GenericModel<SdkProfileDto> implements Serializa
             this.token = dto.getToken();
 
             if (this.aefMapIds != null) {
-                dto.setAefMapIds(new ArrayList<String>(this.aefMapIds.size()));
+                dto.setAefMapIds(new ArrayList<>(this.aefMapIds.size()));
                 for (String id : this.aefMapIds) {
                     dto.getAefMapIds().add(id);
+                }
+            }
+
+            if (dto.getPluginContractInstanceIds() != null) {
+                this.pluginContractInstanceIds = new ArrayList<>(dto.getPluginContractInstanceIds().size());
+                for (String pluginContractInstanceId : dto.getPluginContractInstanceIds()) {
+                    this.pluginContractInstanceIds.add(pluginContractInstanceId);
                 }
             }
         }
@@ -234,6 +244,14 @@ public class SdkProfile extends GenericModel<SdkProfileDto> implements Serializa
         this.endpointCount = endpointCount;
     }
 
+    public List<String> getPluginContractInstanceIds() {
+        return pluginContractInstanceIds;
+    }
+
+    public void setPluginContractInstanceIds(List<String> pluginContractInstanceIds) {
+        this.pluginContractInstanceIds = pluginContractInstanceIds;
+    }
+
     @Override
     protected SdkProfileDto createDto() {
         return new SdkProfileDto();
@@ -273,6 +291,14 @@ public class SdkProfile extends GenericModel<SdkProfileDto> implements Serializa
         dto.setCreatedUsername(this.createdUsername);
         dto.setCreatedTime(this.createdTime);
         dto.setEndpointCount(this.endpointCount);
+
+        if (pluginContractInstanceIds != null && !pluginContractInstanceIds.isEmpty()) {
+            List<String> pluginContractInstanceIds = new ArrayList<>(this.pluginContractInstanceIds.size());
+            for (String pluginContractInstanceId : this.pluginContractInstanceIds) {
+                pluginContractInstanceIds.add(pluginContractInstanceId);
+            }
+            dto.setPluginContractInstanceIds(pluginContractInstanceIds);
+        }
 
         return dto;
     }

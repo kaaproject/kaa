@@ -53,7 +53,7 @@ public class SdkProfileTest {
     private SdkProfileDto generateSdkProfileDto(String appId, String appToken) {
         List<String> aefMapIdsList = new ArrayList<>(Arrays.asList("firstId", "secondId", "thirdId"));
         SdkProfileDto sdkProfileDto = new SdkProfileDto(appId, 2, 3, 4, 5, aefMapIdsList, "someVerifierToken", appToken,
-                "devuser", 100000L, "someName");
+                "devuser", 100000L, "someName", Arrays.asList("10", "11"));
         SdkTokenGenerator.generateSdkToken(sdkProfileDto);
         return sdkProfileDto;
     }

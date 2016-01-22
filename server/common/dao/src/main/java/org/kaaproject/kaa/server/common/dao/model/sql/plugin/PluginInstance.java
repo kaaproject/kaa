@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 CyberVision, Inc.
+ * Copyright 2015-2016 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import org.kaaproject.kaa.common.dto.plugin.PluginContractInstanceDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginInstanceDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginInstanceState;
-import org.kaaproject.kaa.server.common.dao.DaoConstants;
 import org.kaaproject.kaa.server.common.dao.model.sql.GenericModel;
 import org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils;
 
@@ -41,13 +40,12 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_INSTANCE_PLUGIN_INSTANCE_FK;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CONTRACT_INSTANCE_PLUGIN_INSTANCE_ID;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_INSTANCE_CONF_DATA;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_INSTANCE_NAME;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_INSTANCE_PLUGIN_FK;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_INSTANCE_PLUGIN_ID;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_INSTANCE_PLUGIN_ID_NAME_CONSTRAINT_NAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_INSTANCE_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_INSTANCE_STATE;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_INSTANCE_TABLE_NAME;
 
@@ -71,12 +69,11 @@ public class PluginInstance extends GenericModel<PluginInstanceDto> implements S
     @Enumerated(EnumType.STRING)
     private PluginInstanceState state;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = PLUGIN_INSTANCE_PLUGIN_ID, foreignKey = @ForeignKey(name = PLUGIN_INSTANCE_PLUGIN_FK))
     private Plugin plugin;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = PLUGIN_CONTRACT_INSTANCE_PLUGIN_INSTANCE_ID, foreignKey = @ForeignKey(name = PLUGIN_CONTRACT_INSTANCE_PLUGIN_INSTANCE_FK))
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = PLUGIN_INSTANCE_PROPERTY)
     private Set<PluginContractInstance> pluginContractInstances = new HashSet<>();
 
     public PluginInstance() {

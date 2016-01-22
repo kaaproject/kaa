@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 CyberVision, Inc.
+ * Copyright 2015-2016 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,6 @@ import java.text.MessageFormat;
 
 import org.apache.avro.Schema;
 import org.apache.avro.specific.SpecificRecordBase;
-import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
 import org.kaaproject.kaa.common.avro.AvroJsonConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +37,7 @@ public abstract class AbstractSdkApiGenerator<T extends SpecificRecordBase> impl
 
     @Override
     public PluginSDKApiBundle generatePluginSdkApi(PluginSdkApiGenerationContext context) throws SdkApiGenerationException {
-        AvroJsonConverter<T> converter = null;
+        AvroJsonConverter<T> converter;
         try {
             Field schemaField = this.getConfigurationClass().getField("SCHEMA$");
             converter = new AvroJsonConverter<>((Schema) schemaField.get(null), this.getConfigurationClass());
@@ -64,7 +63,7 @@ public abstract class AbstractSdkApiGenerator<T extends SpecificRecordBase> impl
     protected String readFileAsString(String fileName) {
         String result = null;
         try {
-            StringBuffer fileData = new StringBuffer();
+            StringBuilder fileData = new StringBuilder();
             InputStream input = Thread.currentThread().getContextClassLoader().getResourceAsStream(fileName);
             BufferedReader reader = new BufferedReader(new InputStreamReader(input));
             char[] buf = new char[1024];

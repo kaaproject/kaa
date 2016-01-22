@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2016 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ import static org.kaaproject.kaa.server.common.dao.DaoConstants.LOG_APPENDER_TAB
 @Entity
 @Table(name = LOG_APPENDER_TABLE_NAME)
 @Inheritance(strategy = InheritanceType.JOINED)
-public final class LogAppender extends AbstractPlugin<LogAppenderDto> implements Serializable {
+public class LogAppender extends AbstractPlugin<LogAppenderDto> implements Serializable {
 
     private static final long serialVersionUID = 8884800929390746097L;
 

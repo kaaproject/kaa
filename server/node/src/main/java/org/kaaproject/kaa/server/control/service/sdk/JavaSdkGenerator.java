@@ -29,6 +29,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
@@ -40,13 +41,18 @@ import org.apache.avro.compiler.specific.SpecificCompiler;
 import org.apache.avro.compiler.specific.SpecificCompiler.FieldVisibility;
 import org.apache.avro.generic.GenericData.StringType;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.file.FileData;
+import org.kaaproject.kaa.common.dto.plugin.PluginInstanceDto;
 import org.kaaproject.kaa.server.common.Environment;
 import org.kaaproject.kaa.server.common.Version;
+import org.kaaproject.kaa.server.common.core.plugin.def.PluginInitContext;
+import org.kaaproject.kaa.server.common.core.plugin.generator.PluginSdkApiGenerationContext;
 import org.kaaproject.kaa.server.common.core.plugin.generator.PluginSetup;
+import org.kaaproject.kaa.server.common.core.plugin.instance.PluginContractInstance;
 import org.kaaproject.kaa.server.common.zk.ServerNameUtil;
 import org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo;
 import org.kaaproject.kaa.server.common.zk.gen.TransportMetaData;
@@ -56,6 +62,7 @@ import org.kaaproject.kaa.server.control.service.sdk.compiler.JavaDynamicCompile
 import org.kaaproject.kaa.server.control.service.sdk.compress.ZipEntryData;
 import org.kaaproject.kaa.server.control.service.sdk.event.EventFamilyMetadata;
 import org.kaaproject.kaa.server.control.service.sdk.event.JavaEventClassesGenerator;
+import org.kaaproject.kaa.server.operations.service.akka.actors.core.plugin.BasePluginInitContext;
 import org.kaaproject.kaa.server.plugin.messaging.JavaEndpointMessagingPluginGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -376,7 +383,7 @@ public class JavaSdkGenerator extends SdkGenerator {
     public FileData generateSdk(String buildVersion, List<BootstrapNodeInfo> bootstrapNodes, SdkProfileDto sdkProfile,
                            String profileSchemaBody, String notificationSchemaBody, String configurationProtocolSchemaBody,
                            String configurationSchemaBody, byte[] defaultConfigurationData, List<EventFamilyMetadata> eventFamilies,
-                           String logSchemaBody)
+                           String logSchemaBody, Set<PluginInstanceDto> pluginInstanceDtos)
             throws Exception {
 
         String sdkToken = sdkProfile.getToken();
@@ -556,7 +563,26 @@ public class JavaSdkGenerator extends SdkGenerator {
         javaSources.add(userVerifierConstantsClassBean);
 
         List<PluginSetup> plugins = new ArrayList<>();
-        plugins.add(new PluginSetup(new JavaEndpointMessagingPluginGenerator(), JavaEndpointMessagingPluginGenerator.getHardcodedContext()));
+
+        for (PluginInstanceDto pluginInstanceDto : pluginInstanceDtos) {
+            PluginInitContext initContext = new BasePluginInitContext(pluginInstanceDto);
+            plugins.add(new PluginSetup(new JavaEndpointMessagingPluginGenerator(), new PluginSdkApiGenerationContext() {
+                @Override
+                public int getExtensionId() {
+                    return Integer.parseInt(pluginInstanceDto.getId());   // TODO: validate
+                }
+
+                @Override
+                public String getPluginConfigurationData() {
+                    return pluginInstanceDto.getConfigurationData();
+                }
+
+                @Override
+                public Set<PluginContractInstance> getPluginContracts() {
+                    return initContext.getPluginContracts();
+                }
+            }));
+        }
 
         // KaaClient.java.template
         StringBuilder pluginGetterDeclarations = new StringBuilder();

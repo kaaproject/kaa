@@ -99,7 +99,6 @@ import org.kaaproject.kaa.server.common.dao.impl.NotificationDao;
 import org.kaaproject.kaa.server.common.dao.impl.NotificationSchemaDao;
 import org.kaaproject.kaa.server.common.dao.impl.PluginContractDao;
 import org.kaaproject.kaa.server.common.dao.impl.PluginDao;
-import org.kaaproject.kaa.server.common.dao.impl.PluginInstanceDao;
 import org.kaaproject.kaa.server.common.dao.impl.ProfileFilterDao;
 import org.kaaproject.kaa.server.common.dao.impl.ProfileSchemaDao;
 import org.kaaproject.kaa.server.common.dao.impl.SdkProfileDao;
@@ -143,7 +142,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
-@ActiveProfiles({"postgres"})
+@ActiveProfiles({"h2"})
 public class AbstractTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractTest.class);
