@@ -47,6 +47,7 @@ typedef struct
 
     kaa_list_t      *topic_states;
     char            *endpoint_access_token;
+    bool            has_update; /**< Indicates that status was changed on the client size */
 } kaa_status_t;
 
 #endif
