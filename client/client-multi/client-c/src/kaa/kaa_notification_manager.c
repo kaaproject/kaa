@@ -47,7 +47,7 @@ struct kaa_notification_manager_t {
     kaa_list_t                     *topics;
     kaa_list_t                     *uids;
     kaa_list_t                     *notifications;
-    uint32_t                       topic_list_hash;
+    int32_t                        topic_list_hash;
     size_t                         notification_sequence_number;
     size_t                         extension_payload_size;
 
@@ -446,8 +446,8 @@ kaa_error_t kaa_notification_manager_request_serialize(kaa_notification_manager_
         return KAA_ERR_BADPARAM;
     }
 
-    *(uint32_t *)writer->current = KAA_HTONL((uint32_t)self->topic_list_hash);
-    writer->current += sizeof(uint32_t);
+    *(int32_t *)writer->current = KAA_HTONL((int32_t)self->topic_list_hash);
+    writer->current += sizeof(int32_t);
 
     KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to serialize %zu topic states", kaa_list_get_size(self->status->topic_states));
     if (kaa_list_get_size(self->status->topic_states) > 0) {

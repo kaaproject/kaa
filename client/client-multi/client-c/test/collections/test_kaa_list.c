@@ -169,7 +169,7 @@ void test_list_hash()
 
     kaa_list_sort(list,&test_kaa_list_predicate);
 
-    ASSERT_EQUAL(kaa_list_hash(list,&test_kaa_list_hash),3320622579);
+    ASSERT_EQUAL(kaa_list_hash(list,&test_kaa_list_hash),-974344717);
 
     kaa_list_destroy(list, NULL);
 
