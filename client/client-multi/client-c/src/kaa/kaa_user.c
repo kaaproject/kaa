@@ -648,7 +648,7 @@ kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self
                         if (node) {
                             kaa_endpoint_info_t *info = (kaa_endpoint_info_t*)kaa_list_get_data(node);
                             if (info->listener && info->listener->on_attached)
-                                info->listener->on_attached(info->listener->context, &endpoint_id);
+                                info->listener->on_attached(info->listener->context, endpoint_id);
                             kaa_list_remove_at(self->attach_endpoints, node, dtor_endpoint_info);
                         }
                     }
