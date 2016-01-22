@@ -1,0 +1,20 @@
+{
+    "path": "/test/put",
+    "requestMethod": "PUT",
+    "requestParams": {
+        "array": [
+            {
+                "paramName": "first",
+                "inputMessageField": "a"
+            },
+            {
+                "paramName": "second",
+                "inputMessageField": "b"
+            }
+        ]
+    },
+    "responseMappings": {
+        "array": [
+        ]
+    }
+}

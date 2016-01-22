@@ -14,35 +14,31 @@
  * limitations under the License.
  */
 
-package org.kaaproject.kaa.server.common.core.plugin.def;
+package org.kaaproject.kaa.server.plugin.rest;
 
-import java.util.Set;
-
-import org.kaaproject.kaa.server.common.core.plugin.instance.PluginContractInstance;
+import org.springframework.web.client.HttpClientErrorException;
 
 /**
- * An object to initialize plugin instances with.
+ * An HTTP request processor.
  *
- * @author Andrew Shvayka
  * @author Bohdan Khablenko
  *
- * @see org.kaaproject.kaa.server.common.core.plugin.instance.KaaPlugin
+ * @see KaaRestPlugin
  *
  * @since v1.0.0
  */
-public interface PluginInitContext {
+@FunctionalInterface
+public interface RequestProcessor {
 
     /**
-     * Returns plugin configuration data.
+     * Sends an HTTP request and retrieves the response.
      *
-     * @return Plugin configuration data
-     */
-    String getPluginConfigurationData();
-
-    /**
-     * Returns plugin contract instances.
+     * @param request Detailed information about an HTTP request to send
      *
-     * @return Plugin contract instances
+     * @return The server response
+     *
+     * @throws HttpClientErrorException - if the server responds with an error
+     *             code.
      */
-    Set<PluginContractInstance> getPluginContracts();
+    byte[] send(HttpRequestDetails request) throws HttpClientErrorException;
 }

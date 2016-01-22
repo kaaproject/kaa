@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 CyberVision, Inc.
+ * Copyright 2014-2016 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,22 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kaaproject.kaa.server.common.core.plugin.instance;
 
-public class PluginLifecycleException extends Exception {
+package org.kaaproject.kaa.server.plugin.rest;
 
-    private static final long serialVersionUID = -7243314540723895153L;
+/**
+ * A snippet of code that can throw a checked exception.
+ *
+ * @author Bohdan Khablenko
+ *
+ * @see HttpRequestDetails
+ *
+ * @since v1.0.0
+ */
+@FunctionalInterface
+public interface Task {
 
-    public PluginLifecycleException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public PluginLifecycleException(String message) {
-        super(message);
-    }
-
-    public PluginLifecycleException(Throwable cause) {
-        super(cause);
-    }
-
+    /**
+     * A snippet of code to execute.
+     *
+     * @throws Exception - if an exception occures.
+     */
+    void complete() throws Exception;
 }

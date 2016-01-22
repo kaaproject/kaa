@@ -1,0 +1,24 @@
+{
+    "path": "/test/get",
+    "requestMethod": "GET",
+    "requestParams": {
+        "array": [
+            {
+                "paramName": "first",
+                "inputMessageField": "a"
+            },
+            {
+                "paramName": "second",
+                "inputMessageField": "b"
+            }
+        ]
+    },
+    "responseMappings": {
+        "array": [
+            {
+                "responseField": "response",
+                "outputMessageField": "x"
+            }
+        ]
+    }
+}

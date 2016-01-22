@@ -1,0 +1,87 @@
+{
+    "type": "record",
+    "name": "KaaRestPluginItemConfig",
+    "namespace": "org.kaaproject.kaa.server.plugin.rest.gen",
+    "fields": [
+        {
+            "name": "path",
+            "type": {
+                "type": "string",
+                "avro.java.string": "String"
+            }
+        },
+        {
+            "name": "requestMethod",
+            "type": {
+                "type": "enum",
+                "name": "HttpRequestMethod",
+                "symbols": [
+                    "GET",
+                    "POST",
+                    "PUT",
+                    "DELETE"
+                ]
+            },
+            "default": "GET",
+            "by_default": "GET"
+        },
+        {
+            "name": "requestParams",
+            "type": [
+                {
+                    "type": "array",
+                    "items": {
+                        "type": "record",
+                        "name": "HttpRequestParam",
+                        "fields": [
+                            {
+                                "name": "paramName",
+                                "type": {
+                                    "type": "string",
+                                    "avro.java.string": "String"
+                                }
+                            },
+                            {
+                                "name": "inputMessageField",
+                                "type": {
+                                    "type": "string",
+                                    "avro.java.string": "String"
+                                }
+                            }
+                        ]
+                    }
+                },
+                "null"
+            ]
+        },
+        {
+            "name": "responseMappings",
+            "type": [
+                {
+                    "type": "array",
+                    "items": {
+                        "type": "record",
+                        "name": "HttpResponseMapping",
+                        "fields": [
+                            {
+                                "name": "responseField",
+                                "type": {
+                                    "type": "string",
+                                    "avro.java.string": "String"
+                                }
+                            },
+                            {
+                                "name": "outputMessageField",
+                                "type": {
+                                    "type": "string",
+                                    "avro.java.string": "String"
+                                }
+                            }
+                        ]
+                    }
+                },
+                "null"
+            ]
+        }
+    ]
+}

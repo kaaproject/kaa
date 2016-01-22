@@ -1,0 +1,22 @@
+{
+    "type": "record",
+    "name": "InputMessage",
+    "namespace": "org.kaaproject.kaa.server.plugin.rest.test.gen",
+    "fields": [
+        {
+            "name": "a",
+            "type": "int",
+            "default": 0
+        },
+        {
+            "name": "b",
+            "type": "int",
+            "default": 0
+        },
+        {
+            "name": "c",
+            "type": "int",
+            "default": 0
+        }
+    ]
+}
