@@ -137,14 +137,12 @@ void test_deserializing(void)
     unserialized_buffer += sizeof(uint16_t);
     unserialized_buffer += sizeof(uint16_t); // pass by extension options
 
-    uint32_t payload_info = sizeof(uint32_t) + sizeof(uint32_t) /*state sqn and delta status*/ + sizeof(uint16_t) + sizeof(uint16_t) /*field id and topic count*/ + sizeof(uint64_t) /*topic ID*/
+    uint32_t payload_info = sizeof(uint32_t) /*delta status*/ + sizeof(uint16_t) + sizeof(uint16_t) /*field id and topic count*/ + sizeof(uint64_t) /*topic ID*/
                                                   + sizeof(uint16_t) + sizeof(uint16_t) /*subscriptions type + topic name length*/ + sizeof(uint32_t) /*topic name + padding */ + sizeof(uint16_t) + sizeof(uint16_t) /*field id and notifications count*/
                                                   + sizeof(uint32_t) /* Notification sqn */ + sizeof(uint16_t) + sizeof(uint16_t) /* Notification type + uid length */+ sizeof (uint32_t) /* notification body size*/ + sizeof (uint64_t) /*Topic Id*/
                                                   +   kaa_aligned_size_get(notification->get_size(notification));
 
     *(uint32_t *)unserialized_buffer = KAA_HTONL((uint32_t) payload_info);
-    unserialized_buffer += sizeof(uint32_t);
-    *(uint32_t *)unserialized_buffer = KAA_HTONL((uint32_t)455); //Notification sqn
     unserialized_buffer += sizeof(uint32_t);
     *(uint32_t *)unserialized_buffer = KAA_HTONL((uint32_t)2); // Delta status
     unserialized_buffer += sizeof(uint32_t);
@@ -225,6 +223,7 @@ void test_notification_listeners_adding_and_removing(void)
     err = kaa_platform_protocol_process_server_sync(context->platform_protocol, buffer_pointer, size);
     ASSERT_EQUAL(err, KAA_ERR_NONE);
 
+    // TODO Fix this test for updated protocol
     ASSERT_EQUAL(listener_has_been_notified, true); // whether callback has been called
 
     err = kaa_remove_optional_notification_listener(context->notification_manager, &topic_id, &id);
