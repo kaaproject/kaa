@@ -19,6 +19,32 @@
 		398CE9791BE26E0100D31E34 /* KaaLogging.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B844623A1BB5C377009826FC /* KaaLogging.h */; };
 		555D709CF7DB758766ABDA97 /* libPods-KaaTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 859AA00A9E215058D7F33E50 /* libPods-KaaTests.a */; };
 		AF7DBEC9ACBF5F012466DBA0 /* libPods-libKaa.a.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DF8CCE0CCC93539D61CC4CDC /* libPods-libKaa.a.a */; };
+		B810A8581C562E5F0086C76E /* AbstractHttpClient.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B836A15E1C48EABD00376A6B /* AbstractHttpClient.h */; };
+		B810A8591C562E5F0086C76E /* DefaultHttpClient.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B836A1601C48EABD00376A6B /* DefaultHttpClient.h */; };
+		B810A85A1C562E5F0086C76E /* HttpRequestCreator.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B836A1621C48EABD00376A6B /* HttpRequestCreator.h */; };
+		B810A85B1C562E5F0086C76E /* MemBucket.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B836A1271C48E9E000376A6B /* MemBucket.h */; };
+		B810A85C1C562E5F0086C76E /* MemLogStorage.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B836A1291C48E9E000376A6B /* MemLogStorage.h */; };
+		B810A85D1C562E5F0086C76E /* LogUploadStrategy.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B836A16C1C48EB3600376A6B /* LogUploadStrategy.h */; };
+		B810A85E1C562E5F0086C76E /* DefaultLogUploadStrategy.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B836A16A1C48EB3600376A6B /* DefaultLogUploadStrategy.h */; };
+		B810A85F1C562E5F0086C76E /* PeriodicLogUploadStrategy.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B836A12C1C48E9E000376A6B /* PeriodicLogUploadStrategy.h */; };
+		B810A8601C562E5F0086C76E /* RecordCountLogUploadStrategy.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B836A12E1C48E9E000376A6B /* RecordCountLogUploadStrategy.h */; };
+		B810A8611C562E5F0086C76E /* RecordCountWithTimeLimitLogUploadStrategy.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B836A1301C48E9E000376A6B /* RecordCountWithTimeLimitLogUploadStrategy.h */; };
+		B810A8621C562E5F0086C76E /* StorageSizeLogUploadStrategy.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B836A1321C48E9E000376A6B /* StorageSizeLogUploadStrategy.h */; };
+		B810A8631C562E5F0086C76E /* StorageSizeWithTimeLimitLogUploadStrategy.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B836A1341C48E9E000376A6B /* StorageSizeWithTimeLimitLogUploadStrategy.h */; };
+		B810A8641C562E5F0086C76E /* AbstractLogCollector.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B836A1111C48E9E000376A6B /* AbstractLogCollector.h */; };
+		B810A8651C562E5F0086C76E /* AccessPointCommand.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B836A1131C48E9E000376A6B /* AccessPointCommand.h */; };
+		B810A8661C562E5F0086C76E /* BucketInfo.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B836A1141C48E9E000376A6B /* BucketInfo.h */; };
+		B810A8671C562E5F0086C76E /* BucketRunner.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B836A1161C48E9E000376A6B /* BucketRunner.h */; };
+		B810A8681C562E5F0086C76E /* DefaultLogCollector.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B836A1181C48E9E000376A6B /* DefaultLogCollector.h */; };
+		B810A8691C562E5F0086C76E /* GenericLogCollector.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B836A11C1C48E9E000376A6B /* GenericLogCollector.h */; };
+		B810A86A1C562E5F0086C76E /* LogBucket.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B836A11D1C48E9E000376A6B /* LogBucket.h */; };
+		B810A86B1C562E5F0086C76E /* LogCollector.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B836A11F1C48E9E000376A6B /* LogCollector.h */; };
+		B810A86C1C562E5F0086C76E /* LogDeliveryDelegate.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B836A1201C48E9E000376A6B /* LogDeliveryDelegate.h */; };
+		B810A86D1C562E5F0086C76E /* LogFailoverCommand.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B836A1211C48E9E000376A6B /* LogFailoverCommand.h */; };
+		B810A86E1C562E5F0086C76E /* LogRecord.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B836A1221C48E9E000376A6B /* LogRecord.h */; };
+		B810A86F1C562E5F0086C76E /* LogStorage.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B836A1241C48E9E000376A6B /* LogStorage.h */; };
+		B810A8701C562E5F0086C76E /* NSData+Conversion.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B836A1701C48ED4C00376A6B /* NSData+Conversion.h */; };
+		B810A8711C562E5F0086C76E /* TimeCommons.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B836A1591C48EA2400376A6B /* TimeCommons.h */; };
 		B81935B91B15C3880053486A /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B81935B81B15C3880053486A /* Security.framework */; };
 		B824A1EF1B1452C50076C753 /* Kaa.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B824A1EE1B1452C50076C753 /* Kaa.h */; };
 		B824A1F11B1452C50076C753 /* Kaa.m in Sources */ = {isa = PBXBuildFile; fileRef = B824A1F01B1452C50076C753 /* Kaa.m */; };
@@ -490,6 +516,32 @@
 			dstPath = "include/$(PRODUCT_NAME)";
 			dstSubfolderSpec = 16;
 			files = (
+				B810A8581C562E5F0086C76E /* AbstractHttpClient.h in Copy Files */,
+				B810A8591C562E5F0086C76E /* DefaultHttpClient.h in Copy Files */,
+				B810A85A1C562E5F0086C76E /* HttpRequestCreator.h in Copy Files */,
+				B810A85B1C562E5F0086C76E /* MemBucket.h in Copy Files */,
+				B810A85C1C562E5F0086C76E /* MemLogStorage.h in Copy Files */,
+				B810A85D1C562E5F0086C76E /* LogUploadStrategy.h in Copy Files */,
+				B810A85E1C562E5F0086C76E /* DefaultLogUploadStrategy.h in Copy Files */,
+				B810A85F1C562E5F0086C76E /* PeriodicLogUploadStrategy.h in Copy Files */,
+				B810A8601C562E5F0086C76E /* RecordCountLogUploadStrategy.h in Copy Files */,
+				B810A8611C562E5F0086C76E /* RecordCountWithTimeLimitLogUploadStrategy.h in Copy Files */,
+				B810A8621C562E5F0086C76E /* StorageSizeLogUploadStrategy.h in Copy Files */,
+				B810A8631C562E5F0086C76E /* StorageSizeWithTimeLimitLogUploadStrategy.h in Copy Files */,
+				B810A8641C562E5F0086C76E /* AbstractLogCollector.h in Copy Files */,
+				B810A8651C562E5F0086C76E /* AccessPointCommand.h in Copy Files */,
+				B810A8661C562E5F0086C76E /* BucketInfo.h in Copy Files */,
+				B810A8671C562E5F0086C76E /* BucketRunner.h in Copy Files */,
+				B810A8681C562E5F0086C76E /* DefaultLogCollector.h in Copy Files */,
+				B810A8691C562E5F0086C76E /* GenericLogCollector.h in Copy Files */,
+				B810A86A1C562E5F0086C76E /* LogBucket.h in Copy Files */,
+				B810A86B1C562E5F0086C76E /* LogCollector.h in Copy Files */,
+				B810A86C1C562E5F0086C76E /* LogDeliveryDelegate.h in Copy Files */,
+				B810A86D1C562E5F0086C76E /* LogFailoverCommand.h in Copy Files */,
+				B810A86E1C562E5F0086C76E /* LogRecord.h in Copy Files */,
+				B810A86F1C562E5F0086C76E /* LogStorage.h in Copy Files */,
+				B810A8701C562E5F0086C76E /* NSData+Conversion.h in Copy Files */,
+				B810A8711C562E5F0086C76E /* TimeCommons.h in Copy Files */,
 				B8CCBF7F1C467C0D00C26F0B /* io.h in Copy Files */,
 				B8CCBF801C467C0D00C26F0B /* platform.h in Copy Files */,
 				B8CCBF811C467C0D00C26F0B /* avro_private.h in Copy Files */,
