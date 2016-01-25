@@ -97,8 +97,13 @@ public class ApplicationLogActorMessageProcessor {
         List<LogAppender> required = filterAppenders(logSchema.getVersion(), true);
         List<LogAppender> optional = filterAppenders(logSchema.getVersion(), false);
         if (required.size() > 0 || optional.size() > 0) {
-            for (LogAppender logAppender : optional) {
-                logAppender.doAppend(message.getLogEventPack(), voidCallback);
+            if (required.size() > 0) {
+                for (LogAppender logAppender : optional) {
+                    logAppender.doAppend(message.getLogEventPack(), voidCallback);
+                }
+            } else {
+                // Make sure the endpoint receives a response, no matter what
+                required = optional;
             }
             LogDeliveryCallback callback;
             if (required.size() > 1) {
