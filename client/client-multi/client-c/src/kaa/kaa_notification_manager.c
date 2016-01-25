@@ -1043,8 +1043,8 @@ kaa_error_t kaa_topic_list_updated(kaa_notification_manager_t *self, kaa_list_t 
     }
 
     kaa_list_destroy(self->topics, &destroy_topic);
-    kaa_list_sort(new_topics,&sort_topic_by_id);
-    self->topic_list_hash = kaa_list_hash(new_topics,&get_topic_id);
+    kaa_list_sort(new_topics, &sort_topic_by_id);
+    self->topic_list_hash = kaa_list_hash(new_topics, &get_topic_id);
     self->topics = new_topics;
     return kaa_notify_topic_update_subscribers(self, new_topics);
 }
