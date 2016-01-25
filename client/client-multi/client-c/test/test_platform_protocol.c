@@ -73,7 +73,13 @@ void test_empty_log_collector_extension_count(void)
                                               , KAA_LOG_UPLOAD_VOLUME_STRATEGY);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    error_code = kaa_logging_init(kaa_context->log_collector, log_storage_context, log_upload_strategy_context);
+
+    kaa_log_bucket_constraints_t constraints = {
+        .max_bucket_size = 1024,
+        .max_bucket_log_count = UINT32_MAX,
+    };
+
+    error_code = kaa_logging_init(kaa_context->log_collector, log_storage_context, log_upload_strategy_context, &constraints);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     error_code = kaa_platform_protocol_serialize_client_sync(kaa_context->platform_protocol, info, &buffer, &buffer_size);
