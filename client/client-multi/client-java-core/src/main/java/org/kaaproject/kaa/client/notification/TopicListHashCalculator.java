@@ -21,7 +21,7 @@ public class TopicListHashCalculator {
             Collections.sort(newTopics, new Comparator<Topic>() {
                 @Override
                 public int compare(Topic o1, Topic o2) {
-                    return o1.getId() < o2.getId() ? -1 : (o1.getId() < o2.getId() ) ? 1 : 0;
+                    return o1.getId() < o2.getId() ? -1 : (o1.getId() > o2.getId() ) ? 1 : 0;
                 }
             });
 
