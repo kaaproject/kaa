@@ -19,6 +19,7 @@
 #include <string.h>
 #include <inttypes.h>
 #include <sys/types.h>
+#include <assert.h>
 #include "platform/stdio.h"
 #include "platform/sock.h"
 #include "platform/time.h"
@@ -103,11 +104,10 @@ static kaa_error_t remember_request(kaa_log_collector_t *self, uint16_t bucket_i
 static bool find_by_bucket_id(void *data, void *context)
 {
     KAA_RETURN_IF_NIL2(data, context, false);
-    timeout_info_t *timeout_to_find = context;
+    uint16_t bucket_id = *(uint16_t *) context;
     timeout_info_t *timeout_info = data;
 
-    if (timeout_info->log_bucket_id == timeout_to_find->log_bucket_id) {
-        *timeout_to_find = *timeout_info;
+    if (timeout_info->log_bucket_id == bucket_id) {
         return true;
     }
 
@@ -118,13 +118,23 @@ static bool find_by_bucket_id(void *data, void *context)
 /* Returns amount of logs in bucket */
 static size_t remove_request(kaa_log_collector_t *self, uint16_t bucket_id)
 {
-    KAA_RETURN_IF_NIL(self, KAA_ERR_BADPARAM);
-    timeout_info_t target_timeout = {
-        .log_bucket_id = bucket_id,
-    };
+    kaa_list_node_t     *node;
+    timeout_info_t      *info;
+    size_t              logs_sent = 0;
 
-    kaa_list_remove_first(self->timeouts, &find_by_bucket_id, &target_timeout, NULL);
-    return target_timeout.log_count;
+    node = kaa_list_find_next(kaa_list_begin(self->timeouts), find_by_bucket_id, &bucket_id);
+
+    if (node) {
+        info = kaa_list_get_data(node);
+
+        if (info) {
+            logs_sent = info->log_count;
+        }
+
+        kaa_list_remove_at(self->timeouts, node, NULL);
+    }
+
+    return logs_sent;
 }
 
 static bool is_timeout(kaa_log_collector_t *self)
