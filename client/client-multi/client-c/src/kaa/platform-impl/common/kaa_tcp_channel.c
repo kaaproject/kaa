@@ -79,7 +79,6 @@ typedef struct {
 } kaa_tcp_access_point_t;
 
 typedef struct {
-    uint16_t      keepalive_interval;
     kaa_time_t    last_sent_keepalive;
     kaa_time_t    last_receive_keepalive;
 } kaa_tcp_keepalive_t ;
@@ -237,12 +236,11 @@ kaa_error_t kaa_tcp_channel_create(kaa_transport_channel_interface_t *self
     /*
      * Initializes keepalive configuration.
      */
-    kaa_tcp_channel->keepalive.keepalive_interval = KAA_TCP_CHANNEL_KEEPALIVE;
     kaa_tcp_channel->keepalive.last_sent_keepalive = KAA_TIME();
     kaa_tcp_channel->keepalive.last_receive_keepalive = kaa_tcp_channel->keepalive.last_sent_keepalive;
 
     KAA_LOG_TRACE(logger, KAA_ERR_NONE, "Kaa TCP channel keepalive is %u",
-                                    kaa_tcp_channel->keepalive.keepalive_interval);
+                                    KAA_TCP_CHANNEL_KEEPALIVE);
 
     /*
      * Assigns supported transport protocol id.
@@ -804,8 +802,7 @@ kaa_error_t kaa_tcp_channel_get_max_timeout(kaa_transport_channel_interface_t *s
 {
     KAA_RETURN_IF_NIL3(self, self->context, max_timeout, KAA_ERR_BADPARAM);
 
-    kaa_tcp_channel_t *tcp_channel = (kaa_tcp_channel_t *) self->context;
-    *max_timeout = tcp_channel->keepalive.keepalive_interval / 2;
+    *max_timeout = KAA_TCP_CHANNEL_MAX_TIMEOUT;
 
     return KAA_ERR_NONE;
 }
@@ -875,14 +872,13 @@ kaa_error_t kaa_tcp_channel_check_keepalive(kaa_transport_channel_interface_t *s
         KAA_LOG_TRACE_LDB(tcp_channel->logger, KAA_ERR_NONE, "Kaa TCP channel [0x%08X] checking keepalive"
                                                                         , tcp_channel->access_point.id);
 
-        if (tcp_channel->keepalive.keepalive_interval == 0
-                || tcp_channel->channel_state != KAA_TCP_CHANNEL_AUTHORIZED) {
+        if (tcp_channel->channel_state != KAA_TCP_CHANNEL_AUTHORIZED) {
             return error_code;
         }
 
         kaa_time_t interval = KAA_TIME() - tcp_channel->keepalive.last_sent_keepalive;
 
-        if (interval >= (tcp_channel->keepalive.keepalive_interval / 2)) {
+        if (interval >= KAA_TCP_CHANNEL_PING_TIMEOUT) {
             //Send ping request
 
             if (tcp_channel->keepalive.last_sent_keepalive > tcp_channel->keepalive.last_receive_keepalive) {
@@ -919,24 +915,6 @@ kaa_error_t kaa_tcp_channel_set_socket_events_callback(kaa_transport_channel_int
 
 }
 
-
-
-kaa_error_t kaa_tcp_channel_set_keepalive_timeout(kaa_transport_channel_interface_t *self
-                                                , uint16_t keepalive)
-{
-    KAA_RETURN_IF_NIL2(self, self->context, KAA_ERR_BADPARAM);
-    kaa_tcp_channel_t *tcp_channel = (kaa_tcp_channel_t *)self->context;
-
-    tcp_channel->keepalive.keepalive_interval = keepalive;
-
-    KAA_LOG_TRACE(tcp_channel->logger,KAA_ERR_NONE,"Kaa TCP channel [0x%08X] keepalive is set to %u seconds"
-                                    , tcp_channel->access_point.id, tcp_channel->keepalive.keepalive_interval);
-
-    return KAA_ERR_NONE;
-}
-
-
-
 kaa_error_t kaa_tcp_channel_disconnect(kaa_transport_channel_interface_t  *self)
 {
     KAA_RETURN_IF_NIL2(self, self->context, KAA_ERR_BADPARAM);
@@ -956,10 +934,9 @@ void kaa_tcp_channel_connack_message_callback(void *context, kaatcp_connack_t me
             KAA_LOG_TRACE(channel->logger, KAA_ERR_NONE, "Kaa TCP channel [0x%08X] successfully authorized"
                                                                                 , channel->access_point.id);
 
-            if (channel->keepalive.keepalive_interval > 0) {
-                channel->keepalive.last_receive_keepalive = KAA_TIME();
-                channel->keepalive.last_sent_keepalive = channel->keepalive.last_receive_keepalive;
-            }
+        channel->keepalive.last_receive_keepalive = KAA_TIME();
+        channel->keepalive.last_sent_keepalive
+                = channel->keepalive.last_receive_keepalive;
 
         } else if (message.return_code == (uint16_t) KAATCP_CONNACK_REFUSE_BAD_CREDENTIALS) {
             kaa_context_set_status_registered(channel->transport_context.kaa_context, false);
@@ -1142,13 +1119,9 @@ kaa_error_t kaa_tcp_channel_authorize(kaa_tcp_channel_t *self)
         return error_code;
     }
 
-
-    uint16_t keepalive = self->keepalive.keepalive_interval;
-    keepalive += keepalive / 5;
-
     kaatcp_connect_t connect_message;
     kaatcp_error_t kaatcp_error_code =
-            kaatcp_fill_connect_message(keepalive
+            kaatcp_fill_connect_message(KAA_TCP_CHANNEL_KEEPALIVE
                                       , KAA_PLATFORM_PROTOCOL_ID
                                       , sync_buffer
                                       , sync_size

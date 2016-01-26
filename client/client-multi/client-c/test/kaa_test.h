@@ -17,7 +17,7 @@
 #ifndef KAA_TEST_H_
 #define KAA_TEST_H_
 
-#if defined(KAA_TEST_CUNIT_ENABLED)
+#if defined(KAA_TEST_CUNIT_ENABLED) && 0
 
 #include <CUnit/CUnit.h>
 #include <CUnit/Automated.h>
