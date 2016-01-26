@@ -15,7 +15,7 @@
 }
 
 - (void)add{event_class_name}ToBlock:({event_class_name} *)event withTransactionId:(TransactionId *)trxId {
-    [self add{event_class_name}ToBlock:event withTransactionId:trxId andTarget:nil];
+    [self add{event_class_name}ToBlock:event withTransactionId:trxId target:nil];
 }
 
 - (void)add{event_class_name}ToBlock:({event_class_name} *)event withTransactionId:(TransactionId *)trxId target:(NSString *)target {
