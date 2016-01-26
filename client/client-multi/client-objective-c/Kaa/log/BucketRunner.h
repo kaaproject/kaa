@@ -29,6 +29,11 @@
 /**
  * Waits if necessary for the computation to complete, and then retrieves its result.
  *
+ * <b>NOTE:</b> Method should not be called in main thread since main thread should be
+ * accessible from internal components or external libraries.
+ *
+ * <b>Important:</b> Raises an KaaRuntimeException if method is called in main thread.
+ *
  * @return the computed result
  */
 - (BucketInfo *)getValue;
@@ -37,8 +42,13 @@
  * Waits if necessary for at most the given time for the computation
  * to complete, and then retrieves its result, if available.
  *
+ * <b>NOTE:</b> Method should not be called in main thread since main thread should be
+ * accessible from internal components or external libraries.
+ *
  * @param timeout the maximum time to wait
  * @param unit the time unit of the timeout argument
+ *
+ * <b>Important:</b> Raises an KaaRuntimeException if method is called in main thread.
  *
  * @return the computed result
  */

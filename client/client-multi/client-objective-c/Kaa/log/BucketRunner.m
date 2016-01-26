@@ -70,10 +70,16 @@ static int64_t gBucketIdCounter = 0;
 }
 
 - (BucketInfo *)getValue {
+    if ([NSThread isMainThread]) {
+        [NSException raise:KaaRuntimeException format:@"Method should not be called in main thread!"];
+    }
     return [self.queue take];
 }
 
 - (BucketInfo *)getValueWithTimeout:(int64_t)timeout timeUnit:(TimeUnit)timeUnit {
+    if ([NSThread isMainThread]) {
+        [NSException raise:KaaRuntimeException format:@"Method should not be called in main thread!"];
+    }
     double timeoutMillis = [TimeUtils convertValue:timeout fromTimeUnit:timeUnit toTimeUnit:TIME_UNIT_MILLISECONDS];
     double endCheck = CACurrentMediaTime() * 1000 + timeoutMillis;
     
