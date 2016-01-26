@@ -47,7 +47,6 @@ import java.util.UUID;
 
 public class AbstractCassandraTest {
 
-    protected static final Random RANDOM = new Random();
     private static final String TEST_ENDPOINT_GROUP_ID = "124";
 
     @ClassRule

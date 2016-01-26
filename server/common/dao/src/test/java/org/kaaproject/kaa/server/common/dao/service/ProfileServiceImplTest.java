@@ -241,8 +241,6 @@ public class ProfileServiceImplTest extends AbstractTest {
         ProfileFilterDto filterDto = generateFilterDto(schema.getId(), serverSchema.getId(), groupDto.getId(), 1, false).get(0);
         Assert.assertNotNull(filterDto);
 
-//        profileService.removeProfileFiltersByProfileSchemaId(schema.getId());
-
         filterDto.setId(null);
         filterDto.setEndpointGroupId(groupDto.getId());
         ProfileFilterDto savedOne = profileService.saveProfileFilter(filterDto);
@@ -283,10 +281,6 @@ public class ProfileServiceImplTest extends AbstractTest {
         profileService.activateProfileFilter(filter.getId(), "test");
     }
 
-    @Test
-    public void tempTest() {
-        EndpointGroupDto defaultGroup = endpointService.findDefaultGroup("11");
-    }
     @Test
     public void findProfileSchemaVersionsByAppIdTest() {
         String applicationId = generateApplicationDto(null).getId();
@@ -442,7 +436,7 @@ public class ProfileServiceImplTest extends AbstractTest {
     }
 
     @Test(expected = IncorrectParameterException.class)
-    public void validateFilterBlankEndpoinGroupIdTest() throws Throwable {
+    public void validateFilterBlankEndpointGroupIdTest() throws Throwable {
         ProfileServiceImpl profileServiceImpl = new ProfileServiceImpl();
         Method validateMethod = profileServiceImpl.getClass().getDeclaredMethod("validateFilter", ProfileFilterDto.class);
         validateMethod.setAccessible(true);

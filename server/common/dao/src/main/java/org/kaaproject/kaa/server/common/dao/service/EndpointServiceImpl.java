@@ -285,7 +285,7 @@ public class EndpointServiceImpl implements EndpointService {
     @Retry(times = 5, on = org.springframework.dao.OptimisticLockingFailureException.class)
     public EndpointProfileDto saveEndpointProfile(EndpointProfileDto endpointProfileDto) throws KaaOptimisticLockingFailureException {
         EndpointProfileDto profileDto = null;
-        validateObject(endpointProfileDto, "Can't find endpoint profile object. Invalid endpoint profile object" + endpointProfileDto);
+        validateObject(endpointProfileDto, "Can't save endpoint profile object. Invalid endpoint profile object " + endpointProfileDto);
         byte[] keyHash = endpointProfileDto.getEndpointKeyHash();
         validateHash(keyHash, "Incorrect key hash for endpoint profile.");
         if (endpointProfileDto.getServerProfileBody() == null) {
