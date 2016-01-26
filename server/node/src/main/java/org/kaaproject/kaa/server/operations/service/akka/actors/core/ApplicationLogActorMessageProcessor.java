@@ -102,7 +102,6 @@ public class ApplicationLogActorMessageProcessor {
                     logAppender.doAppend(message.getLogEventPack(), voidCallback);
                 }
             } else {
-                // Make sure the endpoint receives a response, no matter what
                 required = optional;
             }
             LogDeliveryCallback callback;
