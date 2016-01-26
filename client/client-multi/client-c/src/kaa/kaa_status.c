@@ -59,7 +59,6 @@ kaa_error_t kaa_status_create(kaa_status_t ** kaa_status_p)
         READ_BUFFER(read_buf, &kaa_status->event_seq_n, sizeof(kaa_status->event_seq_n));
         READ_BUFFER(read_buf, &kaa_status->config_seq_n, sizeof(kaa_status->config_seq_n));
         READ_BUFFER(read_buf, &kaa_status->notification_seq_n, sizeof(kaa_status->notification_seq_n));
-        READ_BUFFER(read_buf, &kaa_status->log_bucket_id, sizeof(kaa_status->log_bucket_id));
         READ_BUFFER(read_buf, kaa_status->endpoint_public_key_hash, SHA_1_DIGEST_LENGTH);
         READ_BUFFER(read_buf, kaa_status->profile_hash, SHA_1_DIGEST_LENGTH);
 
@@ -153,7 +152,6 @@ kaa_error_t kaa_status_save(kaa_status_t *self)
     WRITE_BUFFER(&self->event_seq_n, buffer, sizeof(self->event_seq_n));
     WRITE_BUFFER(&self->config_seq_n, buffer, sizeof(self->config_seq_n));
     WRITE_BUFFER(&self->notification_seq_n, buffer, sizeof(self->notification_seq_n));
-    WRITE_BUFFER(&self->log_bucket_id, buffer, sizeof(self->log_bucket_id));
     WRITE_BUFFER(self->endpoint_public_key_hash, buffer, SHA_1_DIGEST_LENGTH);
     WRITE_BUFFER(self->profile_hash, buffer, SHA_1_DIGEST_LENGTH);
     WRITE_BUFFER(&endpoint_access_token_length, buffer, sizeof(endpoint_access_token_length));

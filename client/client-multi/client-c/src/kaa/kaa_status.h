@@ -38,7 +38,6 @@ typedef struct
     uint32_t        event_seq_n;
     uint32_t        config_seq_n;
     uint32_t        notification_seq_n;
-    uint16_t        log_bucket_id;
     bool            is_registered;
     bool            is_attached;
     bool            is_updated;

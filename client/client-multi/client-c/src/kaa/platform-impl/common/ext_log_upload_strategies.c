@@ -44,12 +44,6 @@
 #define KAA_DEFAULT_UPLOAD_COUNT_THRESHOLD     64
 
 /**
- * @brief The default value (in bytes) for the maximum size of the report pack that
- * will be delivered in a single request to the Operaions server.
- */
-#define KAA_DEFAULT_BATCH_SIZE                 8 * 1024
-
-/**
  * @brief The default value for Max amount of log batches allowed to be uploaded parallel.
  */
 #define KAA_DEFAULT_MAX_PARALLEL_UPLOADS       INT32_MAX
@@ -91,7 +85,6 @@ kaa_error_t ext_log_upload_strategy_create(struct kaa_context_s *context, void *
     KAA_RETURN_IF_ERR( ext_log_upload_strategy_set_threshold_count(strategy, KAA_DEFAULT_UPLOAD_COUNT_THRESHOLD) );
     KAA_RETURN_IF_ERR( ext_log_upload_strategy_set_upload_timeout(strategy, KAA_DEFAULT_UPLOAD_TIMEOUT) );
     KAA_RETURN_IF_ERR( ext_log_upload_strategy_set_upload_retry_period(strategy, KAA_DEFAULT_RETRY_PERIOD) );
-    KAA_RETURN_IF_ERR( ext_log_upload_strategy_set_batch_size(strategy, KAA_DEFAULT_BATCH_SIZE) );
     KAA_RETURN_IF_ERR( ext_log_upload_strategy_set_max_parallel_uploads(strategy, KAA_DEFAULT_MAX_PARALLEL_UPLOADS) );
 
     strategy->type = type;
@@ -143,16 +136,6 @@ ext_log_upload_decision_t ext_log_upload_strategy_decide(void *context, const vo
 
     return decision;
 }
-
-
-
-size_t ext_log_upload_strategy_get_bucket_size(void *context)
-{
-    KAA_RETURN_IF_NIL(context, 0);
-    return ((ext_log_upload_strategy_t *)context)->log_batch_size;
-}
-
-
 
 size_t ext_log_upload_strategy_get_timeout(void *context)
 {

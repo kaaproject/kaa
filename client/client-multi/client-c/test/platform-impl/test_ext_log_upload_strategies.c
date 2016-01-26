@@ -120,25 +120,6 @@ void test_set_upload_timeout(void)
     KAA_TRACE_OUT(logger);
 }
 
-void test_set_batch_size(void)
-{
-    KAA_TRACE_IN(logger);
-
-    kaa_error_t error_code = KAA_ERR_NONE;
-
-    size_t DEFAULT_BATCH_SIZE = 8 * 1024;
-
-    error_code = ext_log_upload_strategy_change_strategy(strategy, KAA_LOG_UPLOAD_VOLUME_STRATEGY);
-    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
-
-    error_code = ext_log_upload_strategy_set_batch_size(strategy, DEFAULT_BATCH_SIZE);
-    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
-
-    ASSERT_EQUAL(ext_log_upload_strategy_get_bucket_size(strategy), DEFAULT_BATCH_SIZE);
-
-    KAA_TRACE_OUT(logger);
-}
-
 void test_upload_decision_by_volume(void)
 {
     KAA_TRACE_IN(logger);
@@ -360,7 +341,6 @@ int test_deinit(void)
 KAA_SUITE_MAIN(MetaExtension, test_init, test_deinit,
         KAA_TEST_CASE(create_strategy, test_create_strategy)
         KAA_TEST_CASE(set_upload_timeout, test_set_upload_timeout)
-        KAA_TEST_CASE(set_batch_size, test_set_batch_size)
         KAA_TEST_CASE(upload_decision_by_volume, test_upload_decision_by_volume)
         KAA_TEST_CASE(upload_decision_by_count, test_upload_decision_by_count)
         KAA_TEST_CASE(upload_decision_by_timeout, test_upload_decision_by_timeout)
