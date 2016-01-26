@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		391A91A31BBE604C00DBA851 /* EndPointObjectHashTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 391A91A21BBE604C00DBA851 /* EndPointObjectHashTest.m */; };
+		392356AA1C56647800BCA885 /* TopicListHashCalculator.h in Headers */ = {isa = PBXBuildFile; fileRef = 392356A81C56647800BCA885 /* TopicListHashCalculator.h */; };
+		392356AB1C56647800BCA885 /* TopicListHashCalculator.m in Sources */ = {isa = PBXBuildFile; fileRef = 392356A91C56647800BCA885 /* TopicListHashCalculator.m */; };
 		398CE9711BE26E0100D31E34 /* BaseKaaClient.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B8F14E221BD8E200001D1B02 /* BaseKaaClient.h */; };
 		398CE9721BE26E0100D31E34 /* GenericKaaClient.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B8330C3E1B38051B00D1A573 /* GenericKaaClient.h */; };
 		398CE9731BE26E0100D31E34 /* KaaClientProperties.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B8B4CDBF1B8213C0007FE20D /* KaaClientProperties.h */; };
@@ -692,6 +694,8 @@
 		2B82CEEF86BDB0D4EB551C48 /* Pods-KaaTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KaaTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-KaaTests/Pods-KaaTests.debug.xcconfig"; sourceTree = "<group>"; };
 		34B3F556DC3121F3AFA8ECC3 /* Pods-libKaa.a.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-libKaa.a.release.xcconfig"; path = "Pods/Target Support Files/Pods-libKaa.a/Pods-libKaa.a.release.xcconfig"; sourceTree = "<group>"; };
 		391A91A21BBE604C00DBA851 /* EndPointObjectHashTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EndPointObjectHashTest.m; sourceTree = "<group>"; };
+		392356A81C56647800BCA885 /* TopicListHashCalculator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TopicListHashCalculator.h; sourceTree = "<group>"; };
+		392356A91C56647800BCA885 /* TopicListHashCalculator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TopicListHashCalculator.m; sourceTree = "<group>"; };
 		4CAC4D1133C2E2FBC990B5AC /* Pods-libKaa.a.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-libKaa.a.debug.xcconfig"; path = "Pods/Target Support Files/Pods-libKaa.a/Pods-libKaa.a.debug.xcconfig"; sourceTree = "<group>"; };
 		859AA00A9E215058D7F33E50 /* libPods-KaaTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-KaaTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B81935B81B15C3880053486A /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
@@ -1530,6 +1534,8 @@
 				B8CCBECB1C4676FD00C26F0B /* NotificationManager.h */,
 				B8CCBECC1C4676FD00C26F0B /* NotificationProcessor.h */,
 				B8CCBECD1C4676FD00C26F0B /* NotificationTopicListDelegate.h */,
+				392356A81C56647800BCA885 /* TopicListHashCalculator.h */,
+				392356A91C56647800BCA885 /* TopicListHashCalculator.m */,
 			);
 			path = notification;
 			sourceTree = "<group>";
@@ -1888,6 +1894,7 @@
 				B836A1361C48E9E000376A6B /* AbstractLogCollector.h in Headers */,
 				B8CCBE3B1C4673B500C26F0B /* DefaultOperationTcpChannel.h in Headers */,
 				B8CCBEC41C46762A00C26F0B /* EventDelegates.h in Headers */,
+				392356AA1C56647800BCA885 /* TopicListHashCalculator.h in Headers */,
 				B8CCBE331C4673B500C26F0B /* GenericTransportInfo.h in Headers */,
 				B8CCBE541C4673B500C26F0B /* KAATcpConnect.h in Headers */,
 				B8CCBF1D1C46783D00C26F0B /* EndpointObjectHash.h in Headers */,
@@ -2136,6 +2143,7 @@
 				B8CCBD8D1C4664D800C26F0B /* AvroBased.m in Sources */,
 				B88836211BA0930600ACAB4F /* AbstractKaaClient.m in Sources */,
 				B836A1651C48EABD00376A6B /* AbstractHttpClient.m in Sources */,
+				392356AB1C56647800BCA885 /* TopicListHashCalculator.m in Sources */,
 				B8CCBE531C4673B500C26F0B /* KAATcpConnAck.m in Sources */,
 				B836A13A1C48E9E000376A6B /* BucketInfo.m in Sources */,
 				B836A14E1C48E9E000376A6B /* MemLogStorage.m in Sources */,

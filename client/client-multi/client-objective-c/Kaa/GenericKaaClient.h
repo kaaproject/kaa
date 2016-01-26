@@ -110,7 +110,7 @@
  *
  * @throws UnavailableTopicException if unknown topic id is provided.
  */
-- (void)addNotificationDelegate:(id<NotificationDelegate>)delegate forTopicId:(NSString *)topicId;
+- (void)addNotificationDelegate:(id<NotificationDelegate>)delegate forTopicId:(int64_t)topicId;
 
 /**
  * Remove delegate receiving all notifications (both for mandatory and optional topics).
@@ -126,7 +126,7 @@
  *
  * @throws UnavailableTopicException if unknown topic id is provided.
  */
-- (void)removeNotificationDelegate:(id<NotificationDelegate>)delegate forTopicId:(NSString *)topicId;
+- (void)removeNotificationDelegate:(id<NotificationDelegate>)delegate forTopicId:(int64_t)topicId;
 
 /**
  * Subscribe to notifications relating to the specified optional topic.
@@ -134,7 +134,7 @@
  *
  * @throws UnavailableTopicException if unknown topic id is provided or topic isn't optional.
  */
-- (void)subscribeToTopicWithId:(NSString *)topicId;
+- (void)subscribeToTopicWithId:(int64_t)topicId;
 
 /**
  * Subscribe to notifications relating to the specified optional topic.
@@ -144,12 +144,12 @@
  *
  * @throws UnavailableTopicException if unknown topic id is provided or topic isn't optional.
  */
-- (void)subscribeToTopicWithId:(NSString *)topicId forceSync:(BOOL)forceSync;
+- (void)subscribeToTopicWithId:(int64_t)topicId forceSync:(BOOL)forceSync;
 
 /**
  * Subscribe to notifications relating to the specified list of optional topics.
  *
- * @param topicIds - list of optional topic id. <NSString>
+ * @param topicIds - list of optional topic id. <int64_t>
  *
  * @throws UnavailableTopicException if unknown topic id is provided or topic isn't optional.
  */
@@ -158,7 +158,7 @@
 /**
  * Subscribe to notifications relating to the specified list of optional topics.
  *
- * @param topicIds - list of optional topic id. <NSString>
+ * @param topicIds - list of optional topic id. <int64_t>
  * @param forceSync - define whether current subscription update should be accepted immediately.
  *
  * @throws UnavailableTopicException if unknown topic id is provided or topic isn't optional.
@@ -174,7 +174,7 @@
  *
  * @throws UnavailableTopicException if unknown topic id is provided or topic isn't optional.
  */
-- (void)unsubscribeFromTopicWithId:(NSString *)topicId;
+- (void)unsubscribeFromTopicWithId:(int64_t)topicId;
 
 /**
  * Unsubscribe from notifications relating to the specified optional topic.
@@ -185,13 +185,13 @@
  *
  * @throws UnavailableTopicException if unknown topic id is provided or topic isn't optional.
  */
-- (void)unsubscribeFromTopicWithId:(NSString *)topicId forceSync:(BOOL)forceSync;
+- (void)unsubscribeFromTopicWithId:(int64_t)topicId forceSync:(BOOL)forceSync;
 
 /**
  * Unsubscribe from notifications relating to the specified list of optional topics.
  * All previously added delegates will be removed automatically.
  *
- * @param topicIds - list of optional topic id. <NSString>
+ * @param topicIds - list of optional topic id. <int64_t>
  *
  * @throws UnavailableTopicException if unknown topic id is provided or topic isn't optional.
  */
@@ -201,7 +201,7 @@
  * Unsubscribe from notifications relating to the specified list of optional topics.
  * All previously added delegates will be removed automatically.
  *
- * @param topicIds - list of optional topic id. <NSString>
+ * @param topicIds - list of optional topic id. <int64_t>
  * @param forceSync - define whether current subscription update should be accepted immediately.
  *
  * @throws UnavailableTopicException if unknown topic id is provided or topic isn't optional.

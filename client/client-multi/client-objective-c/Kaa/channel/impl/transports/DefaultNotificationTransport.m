@@ -16,6 +16,7 @@
 
 #import "DefaultNotificationTransport.h"
 #import "KaaLogging.h"
+#import "TopicListHashCalculator.h"
 
 #define TAG @"DefaultNotificationTransport >>>"
 
@@ -25,6 +26,7 @@
 @property (nonatomic, copy) NSComparisonResult (^notificationComparator)(Notification *first, Notification *second);
 @property (nonatomic, strong) NSMutableSet *acceptedUnicastNotificationIds;  //<NSString>
 @property (nonatomic, strong) NSMutableArray *sentNotificationCommands;      //<SubscriptionCommand>
+@property (nonatomic) int32_t topicListHash;
 
 - (NSArray *)getTopicStates;
 - (NSArray *)getUnicastNotificationsFromNotifications:(NSArray *)notifications;
@@ -39,6 +41,7 @@
     if (self) {
         self.acceptedUnicastNotificationIds = [NSMutableSet set];
         self.sentNotificationCommands = [NSMutableArray array];
+        self.topicListHash = [TopicListHashCalculator calculateTopicListHash:nil];
         
         self.notificationComparator = ^NSComparisonResult (Notification *first, Notification *second) {
             if ([first.seqNumber.data intValue] > [second.seqNumber.data intValue]) {
@@ -59,11 +62,11 @@
     }
     
     NotificationSyncRequest *request = [[NotificationSyncRequest alloc] init];
-    request.appStateSeqNumber = [self.clientState notificationSequenceNumber];
     NSArray *states = [self getTopicStates];
     if (states) {
         request.topicStates = [KAAUnion unionWithBranch:KAA_UNION_ARRAY_TOPIC_STATE_OR_NULL_BRANCH_0 data:states];
     }
+    request.topicListHash = self.topicListHash;
     return request;
 }
 
@@ -73,7 +76,6 @@
     }
     
     NotificationSyncRequest *request = [[NotificationSyncRequest alloc] init];
-    request.appStateSeqNumber = [self.clientState notificationSequenceNumber];
     if ([self.acceptedUnicastNotificationIds count] > 0) {
         DDLogInfo(@"%@ Accepted unicast Notifications: %li", TAG,
                   (long)[self.acceptedUnicastNotificationIds count]);
@@ -84,6 +86,7 @@
     if (states) {
          request.topicStates = [KAAUnion unionWithBranch:KAA_UNION_ARRAY_TOPIC_STATE_OR_NULL_BRANCH_0 data:states];   
     }
+    request.topicListHash = self.topicListHash;
     request.subscriptionCommands = [KAAUnion unionWithBranch:KAA_UNION_ARRAY_SUBSCRIPTION_COMMAND_OR_NULL_BRANCH_0
                                                      data:self.sentNotificationCommands];
     return request;
@@ -101,6 +104,7 @@
     
     if (response.availableTopics && response.availableTopics.branch == KAA_UNION_ARRAY_TOPIC_OR_NULL_BRANCH_0) {
         NSArray *topics = response.availableTopics.data;
+        self.topicListHash = [TopicListHashCalculator calculateTopicListHash:topics];
         for (Topic *topic in topics) {
             [self.clientState addTopic:topic];
         }
@@ -117,7 +121,7 @@
         for (Notification *notification in unicastNotifications) {
             DDLogInfo(@"%@ Received unicast: %@", TAG, notification);
             if (!notification.uid || notification.uid.branch == KAA_UNION_STRING_OR_NULL_BRANCH_1) {
-                DDLogWarn(@"%@ No UID for notification with topic id: %@", TAG, notification.topicId);
+                DDLogWarn(@"%@ No UID for notification with topic id: %lld", TAG, notification.topicId);
                 continue;
             }
             if ([self.acceptedUnicastNotificationIds containsObject:notification.uid.data]) {
@@ -131,7 +135,7 @@
         for (Notification *notification in multicastNotifications) {
             DDLogInfo(@"%@ Received multicast: %@", TAG, notification);
             if (!notification.seqNumber || notification.seqNumber.branch == KAA_UNION_INT_OR_NULL_BRANCH_1) {
-                DDLogWarn(@"%@ No seq.num for notification with topicId: %@", TAG, notification.topicId);
+                DDLogWarn(@"%@ No seq.num for notification with topicId: %lld", TAG, notification.topicId);
                 continue;
             }
             NSNumber *seqNumber = notification.seqNumber.data;
@@ -148,7 +152,6 @@
     @synchronized(self.sentNotificationCommands) {
         [self.sentNotificationCommands removeAllObjects];
     }
-    [self.clientState setNotificationSequenceNumber:response.appStateSeqNumber];
     
     [self syncAck:response.responseStatus];
     
@@ -191,12 +194,12 @@
     if ([nfSubscriptions count] > 0) {
         states = [NSMutableArray array];
         DDLogInfo(@"%@ Topic States:", TAG);
-        for (NSString *key in nfSubscriptions.allKeys) {
+        for (NSNumber *key in nfSubscriptions.allKeys) {
             TopicState *state = [[TopicState alloc] init];
-            state.topicId = key;
+            state.topicId = [key longValue];
             state.seqNumber = [nfSubscriptions[key] intValue];
             [states addObject:state];
-            DDLogInfo(@"%@ %@ : %i", TAG, state.topicId, state.seqNumber);
+            DDLogInfo(@"%@ %lld : %i", TAG, state.topicId, state.seqNumber);
         }
     }
     return states;

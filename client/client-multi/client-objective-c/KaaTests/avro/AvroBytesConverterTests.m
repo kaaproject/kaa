@@ -34,19 +34,19 @@
 
 - (void)testBytesConverter {
     TopicState *state = [[TopicState alloc] init];
-    state.topicId = @"TestTopicState";
+    state.topicId = 10;
     state.seqNumber = 100;
     
     NSData *serialized = [self.converter toBytes:state];
     
     TopicState *deserializedState = (TopicState *)[self.converter fromBytes:serialized object:[TopicState new]];
     
-    XCTAssertTrue([state.topicId isEqualToString:deserializedState.topicId]);
+    XCTAssertEqual(state.topicId, deserializedState.topicId);
     XCTAssertEqual(state.seqNumber, deserializedState.seqNumber);
     
     
     SubscriptionCommand *command = [[SubscriptionCommand alloc] init];
-    command.topicId = @"TestSubscriptionCommand";
+    command.topicId = 1;
     command.command = SUBSCRIPTION_COMMAND_TYPE_REMOVE;
     
     serialized = [self.converter toBytes:command];
@@ -54,7 +54,7 @@
     SubscriptionCommand *deserializedCommand = (SubscriptionCommand *)[self.converter fromBytes:serialized
                                                                                          object:[SubscriptionCommand new]];
     
-    XCTAssertTrue([command.topicId isEqualToString:deserializedCommand.topicId]);
+    XCTAssertEqual(command.topicId, deserializedCommand.topicId);
     XCTAssertEqual(command.command, deserializedCommand.command);
     
     

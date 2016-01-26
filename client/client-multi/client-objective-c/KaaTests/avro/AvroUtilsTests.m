@@ -184,13 +184,13 @@
 - (void)testArrayOfRecords {
     
     SubscriptionCommand *command1 = [[SubscriptionCommand alloc] init];
-    command1.topicId = @"TestSubscriptionCommand1";
+    command1.topicId = 1;
     command1.command = SUBSCRIPTION_COMMAND_TYPE_REMOVE;
     SubscriptionCommand *command2 = [[SubscriptionCommand alloc] init];
-    command2.topicId = @"TestSubscriptionCommand2";
+    command2.topicId = 2;
     command2.command = SUBSCRIPTION_COMMAND_TYPE_REMOVE;
     SubscriptionCommand *command3 = [[SubscriptionCommand alloc] init];
-    command3.topicId = @"TestSubscriptionCommand3";
+    command3.topicId = 3;
     command3.command = SUBSCRIPTION_COMMAND_TYPE_REMOVE;
     
     NSArray *array = [NSArray arrayWithObjects:command1, command2, command3, nil];

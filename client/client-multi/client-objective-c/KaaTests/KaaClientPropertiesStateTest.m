@@ -49,12 +49,12 @@
 
 - (void)testNfSubscription {
     Topic *topic1 = [[Topic alloc] init];
-    topic1.id = @"1234";
+    topic1.id = 1234;
     topic1.name = @"testName";
     topic1.subscriptionType = SUBSCRIPTION_TYPE_OPTIONAL_SUBSCRIPTION;
     
     Topic *topic2 = [[Topic alloc] init];
-    topic2.id = @"4321";
+    topic2.id = 4321;
     topic2.name = @"testName";
     topic2.subscriptionType = SUBSCRIPTION_TYPE_MANDATORY_SUBSCRIPTION;
     
@@ -68,8 +68,9 @@
     [self.state updateSubscriptionInfoForTopicId:topic1.id sequence:1];
     
     NSMutableDictionary *expected = [NSMutableDictionary dictionary];
-    expected[topic1.id] = @(5);
-    expected[topic2.id] = @(1);
+    expected[@(topic1.id)] = @(5);
+    expected[@(topic2.id)] = @(1);
+
     
     XCTAssertTrue([expected isEqualToDictionary:[self.state getNotificationSubscriptions]]);
     
@@ -83,7 +84,7 @@
     
     self.state = [[KaaClientPropertiesState alloc] initWithBase64:[CommonBase64 new] clientProperties:[TestsHelper getProperties]];
     
-    [expected removeObjectForKey:topic1.id];
+    [expected removeObjectForKey:@(topic1.id)];
     
     XCTAssertTrue([expected isEqualToDictionary:[self.state getNotificationSubscriptions]]);
 }

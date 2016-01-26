@@ -31,6 +31,8 @@
 #import "TestsHelper.h"
 #import "KAADummyNotification.h"
 
+#define UNKNOWN_TOPIC_ID 100500
+
 @interface DefaultNotificationManagerTest : XCTestCase <NotificationTopicListDelegate>
 
 @property (nonatomic, strong) id<ExecutorContext> executorContext;
@@ -89,15 +91,15 @@
     DefaultNotificationManager *notificationManager = [[DefaultNotificationManager alloc] initWithState:state executorContext:self.executorContext notificationTransport:transport];
     
     Topic *topic1 = [[Topic alloc] init];
-    topic1.id = @"id1";
+    topic1.id = 1;
     topic1.name = @"topic_name1";
     topic1.subscriptionType = SUBSCRIPTION_TYPE_MANDATORY_SUBSCRIPTION;
     Topic *topic2 = [[Topic alloc] init];
-    topic2.id = @"id2";
+    topic2.id = 2;
     topic2.name = @"topic_name2";
     topic2.subscriptionType = SUBSCRIPTION_TYPE_MANDATORY_SUBSCRIPTION;
     
-    NSArray *topicsArray = [NSArray arrayWithObjects:topic1, topic2, nil];
+    NSArray *topicsArray = @[topic1, topic2];
     [notificationManager topicsListUpdated:topicsArray];
     
     XCTAssertTrue([[notificationManager getTopics] count] == [topicsArray count]);
@@ -111,14 +113,14 @@
     DefaultNotificationManager *notificationManager = [[DefaultNotificationManager alloc] initWithState:state executorContext:self.executorContext notificationTransport:transport];
     
     Topic *topic1 = [[Topic alloc] init];
-    topic1.id = @"id1";
+    topic1.id = 1;
     topic1.name = @"topic_name1";
     topic1.subscriptionType = SUBSCRIPTION_TYPE_MANDATORY_SUBSCRIPTION;
     Topic *topic2 = [[Topic alloc] init];
-    topic2.id = @"id2";
+    topic2.id = 2;
     topic2.name = @"topic_name2";
     topic2.subscriptionType = SUBSCRIPTION_TYPE_MANDATORY_SUBSCRIPTION;
-    NSArray *topicsArray = [NSArray arrayWithObjects:topic1, topic2, nil];
+    NSArray *topicsArray = @[topic1, topic2];
     
     [notificationManager topicsListUpdated:topicsArray];
     [state persist];
@@ -136,15 +138,17 @@
     DefaultNotificationManager *notificationManager = [[DefaultNotificationManager alloc] initWithState:state executorContext:self.executorContext notificationTransport:transport];
     
     Topic *topic1 = [[Topic alloc] init];
-    topic1.id = @"id1";
+    topic1.id = 1;
     topic1.name = @"topic_name1";
     topic1.subscriptionType = SUBSCRIPTION_TYPE_MANDATORY_SUBSCRIPTION;
     Topic *topic2 = [[Topic alloc] init];
-    topic2.id = @"id2";
+    topic2.id = 2;
     topic2.name = @"topic_name1";
+    topic2.subscriptionType = SUBSCRIPTION_TYPE_MANDATORY_SUBSCRIPTION;
     Topic *topic3 = [[Topic alloc] init];
-    topic3.id = @"id3";
+    topic3.id = 3;
     topic3.name = @"topic_name1";
+    topic3.subscriptionType = SUBSCRIPTION_TYPE_MANDATORY_SUBSCRIPTION;
     NSMutableArray *topicsArray = [NSMutableArray arrayWithObjects:topic1, topic2, nil];
     
     [notificationManager topicsListUpdated:topicsArray];
@@ -154,7 +158,7 @@
     
     [notificationManager topicsListUpdated:topicsArray];
     
-    NSArray *newTopics = [NSArray arrayWithArray:[notificationManager getTopics]];
+    NSArray *newTopics = [notificationManager getTopics];
     
     XCTAssertTrue([newTopics count] == [topicsArray count]);
     XCTAssertTrue([newTopics containsObject:topic1]);
@@ -168,15 +172,17 @@
     DefaultNotificationManager *notificationManager = [[DefaultNotificationManager alloc] initWithState:state executorContext:self.executorContext notificationTransport:transport];
     
     Topic *topic1 = [[Topic alloc] init];
-    topic1.id = @"id1";
+    topic1.id = 1;
     topic1.name = @"topic_name1";
     topic1.subscriptionType = SUBSCRIPTION_TYPE_MANDATORY_SUBSCRIPTION;
     Topic *topic2 = [[Topic alloc] init];
-    topic2.id = @"id2";
+    topic2.id = 2;
     topic2.name = @"topic_name1";
+    topic2.subscriptionType = SUBSCRIPTION_TYPE_MANDATORY_SUBSCRIPTION;
     Topic *topic3 = [[Topic alloc] init];
-    topic3.id = @"id3";
+    topic3.id = 3;
     topic3.name = @"topic_name1";
+    topic2.subscriptionType = SUBSCRIPTION_TYPE_MANDATORY_SUBSCRIPTION;
     self.topicsArray = [NSMutableArray arrayWithObjects:topic1, topic2, topic3, nil];
     
     [notificationManager addTopicListDelegate:self];
@@ -217,11 +223,11 @@
     DefaultNotificationManager *notificationManager = [[DefaultNotificationManager alloc] initWithState:state executorContext:self.executorContext notificationTransport:transport];
     
     Topic *topic1 = [[Topic alloc] init];
-    topic1.id = @"id1";
+    topic1.id = 1;
     topic1.name = @"topic_name1";
     topic1.subscriptionType = SUBSCRIPTION_TYPE_MANDATORY_SUBSCRIPTION;
     Topic *topic2 = [[Topic alloc] init];
-    topic2.id = @"id2";
+    topic2.id = 2;
     topic2.name = @"topic_name1";
     topic2.subscriptionType = SUBSCRIPTION_TYPE_MANDATORY_SUBSCRIPTION;
     self.topicsArray = [NSMutableArray arrayWithObjects:topic1, topic2, nil];
@@ -232,18 +238,18 @@
     [notificationManager topicsListUpdated:self.topicsArray];
     
     Notification *notification1 = [[Notification alloc] init];
-    notification1.topicId = @"id1";
+    notification1.topicId = 1;
     notification1.type = NOTIFICATION_TYPE_CUSTOM;
     notification1.seqNumber = [KAAUnion unionWithBranch:KAA_UNION_INT_OR_NULL_BRANCH_0 data:@(1)];
     notification1.body = notificationBody;
     
     Notification *notification2 = [[Notification alloc] init];
-    notification2.topicId = @"id2";
+    notification2.topicId = 2;
     notification2.type = NOTIFICATION_TYPE_CUSTOM;
     notification2.seqNumber = [KAAUnion unionWithBranch:KAA_UNION_INT_OR_NULL_BRANCH_0 data:@(1)];
     notification2.body = notificationBody;
     
-    NSArray *notificationUpdate = [NSArray arrayWithObjects:notification1, notification2, nil];
+    NSArray *notificationUpdate = @[notification1, notification2];
     
     id <NotificationDelegate> mandatoryDelegate= mockProtocol(@protocol(NotificationDelegate));
     id <NotificationDelegate> globalDelegate = mockProtocol(@protocol(NotificationDelegate));
@@ -261,9 +267,10 @@
     
     [NSThread sleepForTimeInterval:2.f];
     
-    [verifyCount(mandatoryDelegate, times([notificationUpdate count])) onNotification:anything() withTopicId:anything()];
-    
-    [verifyCount(globalDelegate, times([notificationUpdate count] * 2)) onNotification:anything() withTopicId:anything()];
+    [verifyCount(mandatoryDelegate, times(1)) onNotification:anything() withTopicId:1];
+    [verifyCount(mandatoryDelegate, times(1)) onNotification:anything() withTopicId:2];
+    [verifyCount(globalDelegate, times(2)) onNotification:anything() withTopicId:1];
+    [verifyCount(globalDelegate, times(2)) onNotification:anything() withTopicId:2];
 }
 
 - (void)testNotificationDelegateOnTopic {
@@ -273,11 +280,11 @@
     DefaultNotificationManager *notificationManager = [[DefaultNotificationManager alloc] initWithState:state executorContext:self.executorContext notificationTransport:transport];
     
     Topic *topic1 = [[Topic alloc] init];
-    topic1.id = @"id1";
+    topic1.id = 1;
     topic1.name = @"topic_name1";
     topic1.subscriptionType = SUBSCRIPTION_TYPE_MANDATORY_SUBSCRIPTION;
     Topic *topic2 = [[Topic alloc] init];
-    topic2.id = @"id2";
+    topic2.id = 2;
     topic2.name = @"topic_name1";
     topic2.subscriptionType = SUBSCRIPTION_TYPE_MANDATORY_SUBSCRIPTION;
     self.topicsArray = [NSMutableArray arrayWithObjects:topic1, topic2, nil];
@@ -288,36 +295,37 @@
     [notificationManager topicsListUpdated:self.topicsArray];
     
     Notification *notification1 = [[Notification alloc] init];
-    notification1.topicId = @"id1";
+    notification1.topicId = 1;
     notification1.type = NOTIFICATION_TYPE_CUSTOM;
     notification1.seqNumber = [KAAUnion unionWithBranch:KAA_UNION_INT_OR_NULL_BRANCH_0 data:@(1)];
     notification1.body = notificationBody;
     
     Notification *notification2 = [[Notification alloc] init];
-    notification2.topicId = @"id2";
+    notification2.topicId = 2;
     notification2.type = NOTIFICATION_TYPE_CUSTOM;
     notification2.seqNumber = [KAAUnion unionWithBranch:KAA_UNION_INT_OR_NULL_BRANCH_0 data:@(1)];
     notification2.body = notificationBody;
     
-    NSArray *notificationUpdate = [NSArray arrayWithObjects:notification1, notification2, nil];
+    NSArray *notificationUpdate = @[notification1, notification2];
     
     id <NotificationDelegate> globalDelegate= mockProtocol(@protocol(NotificationDelegate));
     id <NotificationDelegate> topicDelegate = mockProtocol(@protocol(NotificationDelegate));
     
     [notificationManager addNotificationDelegate:globalDelegate];
-    [notificationManager addNotificationDelegate:topicDelegate forTopicId:@"id2"];
+    [notificationManager addNotificationDelegate:topicDelegate forTopicId:2];
     
     [notificationManager notificationsReceived:notificationUpdate];
-    [notificationManager removeNotificationDelegate:topicDelegate forTopicId:@"id2"];
+    [notificationManager removeNotificationDelegate:topicDelegate forTopicId:2];
     [notificationManager notificationsReceived:notificationUpdate];
     
     [NSThread sleepForTimeInterval:1.f];
     
-    [verifyCount(globalDelegate, times([notificationUpdate count] * 2 - 1)) onNotification:anything() withTopicId:anything()];
+    [verifyCount(globalDelegate, times(2)) onNotification:anything() withTopicId:1];
+    [verifyCount(globalDelegate, times(1)) onNotification:anything() withTopicId:2];
     
     [NSThread sleepForTimeInterval:1.f];
     
-    [verifyCount(topicDelegate, times(1)) onNotification:anything() withTopicId:anything()];
+    [verifyCount(topicDelegate, times(1)) onNotification:anything() withTopicId:2];
 }
 
 - (void)testAddDelegateForUnknownTopic {
@@ -327,11 +335,11 @@
     DefaultNotificationManager *notificationManager = [[DefaultNotificationManager alloc] initWithState:state executorContext:self.executorContext notificationTransport:transport];
     
     Topic *topic1 = [[Topic alloc] init];
-    topic1.id = @"id1";
+    topic1.id = 1;
     topic1.name = @"topic_name1";
     topic1.subscriptionType = SUBSCRIPTION_TYPE_MANDATORY_SUBSCRIPTION;
     Topic *topic2 = [[Topic alloc] init];
-    topic2.id = @"id2";
+    topic2.id = 2;
     topic2.name = @"topic_name1";
     topic2.subscriptionType = SUBSCRIPTION_TYPE_MANDATORY_SUBSCRIPTION;
     self.topicsArray = [NSMutableArray arrayWithObjects:topic1, topic2, nil];
@@ -340,7 +348,7 @@
     
     id <NotificationDelegate> delegate= mockProtocol(@protocol(NotificationDelegate));
     @try {
-        [notificationManager addNotificationDelegate:delegate forTopicId:@"unknown_id"];
+        [notificationManager addNotificationDelegate:delegate forTopicId:UNKNOWN_TOPIC_ID];
         XCTFail();
     }
     @catch (NSException *exception) {
@@ -355,11 +363,11 @@
     DefaultNotificationManager *notificationManager = [[DefaultNotificationManager alloc] initWithState:state executorContext:self.executorContext notificationTransport:transport];
     
     Topic *topic1 = [[Topic alloc] init];
-    topic1.id = @"id1";
+    topic1.id = 1;
     topic1.name = @"topic_name1";
     topic1.subscriptionType = SUBSCRIPTION_TYPE_MANDATORY_SUBSCRIPTION;
     Topic *topic2 = [[Topic alloc] init];
-    topic2.id = @"id2";
+    topic2.id = 2;
     topic2.name = @"topic_name1";
     topic2.subscriptionType = SUBSCRIPTION_TYPE_MANDATORY_SUBSCRIPTION;
     self.topicsArray = [NSMutableArray arrayWithObjects:topic1, topic2, nil];
@@ -368,7 +376,7 @@
     
     id <NotificationDelegate> delegate= mockProtocol(@protocol(NotificationDelegate));
     @try {
-        [notificationManager removeNotificationDelegate:delegate forTopicId:@"unknown_id"];
+        [notificationManager removeNotificationDelegate:delegate forTopicId:UNKNOWN_TOPIC_ID];
         XCTFail();
     }
     @catch (NSException *exception) {
@@ -383,11 +391,11 @@
     DefaultNotificationManager *notificationManager = [[DefaultNotificationManager alloc] initWithState:state executorContext:self.executorContext notificationTransport:transport];
     
     Topic *topic1 = [[Topic alloc] init];
-    topic1.id = @"id1";
+    topic1.id = 1;
     topic1.name = @"topic_name1";
     topic1.subscriptionType = SUBSCRIPTION_TYPE_MANDATORY_SUBSCRIPTION;
     Topic *topic2 = [[Topic alloc] init];
-    topic2.id = @"id2";
+    topic2.id = 2;
     topic2.name = @"topic_name1";
     topic2.subscriptionType = SUBSCRIPTION_TYPE_MANDATORY_SUBSCRIPTION;
     self.topicsArray = [NSMutableArray arrayWithObjects:topic1, topic2, nil];
@@ -395,7 +403,7 @@
     [notificationManager topicsListUpdated:self.topicsArray];
     
     @try {
-        [notificationManager subscribeToTopicWithId:@"unknown_id" forceSync:YES];
+        [notificationManager subscribeToTopicWithId:UNKNOWN_TOPIC_ID forceSync:YES];
         XCTFail();
     }
     @catch (NSException *exception) {
@@ -410,19 +418,18 @@
     DefaultNotificationManager *notificationManager = [[DefaultNotificationManager alloc] initWithState:state executorContext:self.executorContext notificationTransport:transport];
     
     Topic *topic1 = [[Topic alloc] init];
-    topic1.id = @"id1";
+    topic1.id = 1;
     topic1.name = @"topic_name1";
     topic1.subscriptionType = SUBSCRIPTION_TYPE_MANDATORY_SUBSCRIPTION;
     Topic *topic2 = [[Topic alloc] init];
-    topic2.id = @"id2";
+    topic2.id = 2;
     topic2.name = @"topic_name1";
     topic2.subscriptionType = SUBSCRIPTION_TYPE_MANDATORY_SUBSCRIPTION;
     self.topicsArray = [NSMutableArray arrayWithObjects:topic1, topic2, nil];
     
     [notificationManager topicsListUpdated:self.topicsArray];
-    NSArray *topics = [NSArray arrayWithObjects:@"id1", @"id2", @"unknown_id", nil];
     @try {
-        [notificationManager subscribeToTopicsWithIDs:topics forceSync:YES];
+        [notificationManager subscribeToTopicsWithIDs:@[@(1), @(2), @(UNKNOWN_TOPIC_ID)] forceSync:YES];
         XCTFail();
     }
     @catch (NSException *exception) {
@@ -437,18 +444,18 @@
     DefaultNotificationManager *notificationManager = [[DefaultNotificationManager alloc] initWithState:state executorContext:self.executorContext notificationTransport:transport];
     
     Topic *topic1 = [[Topic alloc] init];
-    topic1.id = @"id1";
+    topic1.id = 1;
     topic1.name = @"topic_name1";
     topic1.subscriptionType = SUBSCRIPTION_TYPE_MANDATORY_SUBSCRIPTION;
     Topic *topic2 = [[Topic alloc] init];
-    topic2.id = @"id2";
+    topic2.id = 2;
     topic2.name = @"topic_name1";
     topic2.subscriptionType = SUBSCRIPTION_TYPE_MANDATORY_SUBSCRIPTION;
     self.topicsArray = [NSMutableArray arrayWithObjects:topic1, topic2, nil];
     
     [notificationManager topicsListUpdated:self.topicsArray];
     @try {
-        [notificationManager unsubscribeFromTopicWithId:@"unknown_id" forceSync:YES];
+        [notificationManager unsubscribeFromTopicWithId:UNKNOWN_TOPIC_ID forceSync:YES];
         XCTFail();
     }
     @catch (NSException *exception) {
@@ -463,23 +470,25 @@
     DefaultNotificationManager *notificationManager = [[DefaultNotificationManager alloc] initWithState:state executorContext:self.executorContext notificationTransport:transport];
     
     Topic *topic1 = [[Topic alloc] init];
-    topic1.id = @"id1";
+    topic1.id = 1;
     topic1.name = @"topic_name1";
     topic1.subscriptionType = SUBSCRIPTION_TYPE_MANDATORY_SUBSCRIPTION;
     Topic *topic2 = [[Topic alloc] init];
-    topic2.id = @"id2";
+    topic2.id = 2;
     topic2.name = @"topic_name1";
     topic2.subscriptionType = SUBSCRIPTION_TYPE_MANDATORY_SUBSCRIPTION;
     self.topicsArray = [NSMutableArray arrayWithObjects:topic1, topic2, nil];
     
     [notificationManager topicsListUpdated:self.topicsArray];
-    NSArray *topics = [NSArray arrayWithObjects:@"id1", @"id2", @"unknown_id", nil];
     @try {
-        [notificationManager unsubscribeFromTopicsWithIDs:topics forceSync:YES];
+        [notificationManager unsubscribeFromTopicsWithIDs:@[@(1),
+                                                            @(2),
+                                                            @(UNKNOWN_TOPIC_ID)]
+                                                forceSync:YES];
         XCTFail();
     }
     @catch (NSException *exception) {
-        NSLog(@"testSubsribeForUnknownTopic1 succeeded");
+        NSLog(@"testUnsubsribeForUnknownTopic2 succeeded");
     }
 }
 
@@ -490,17 +499,17 @@
     DefaultNotificationManager *notificationManager = [[DefaultNotificationManager alloc] initWithState:state executorContext:self.executorContext notificationTransport:transport];
     
     Topic *topic1 = [[Topic alloc] init];
-    topic1.id = @"id1";
+    topic1.id = 1;
     topic1.name = @"topic_name1";
     topic1.subscriptionType = SUBSCRIPTION_TYPE_OPTIONAL_SUBSCRIPTION;
     Topic *topic2 = [[Topic alloc] init];
-    topic2.id = @"id2";
+    topic2.id = 2;
     topic2.name = @"topic_name1";
     topic2.subscriptionType = SUBSCRIPTION_TYPE_MANDATORY_SUBSCRIPTION;
     self.topicsArray = [NSMutableArray arrayWithObjects:topic1, topic2, nil];
     [notificationManager topicsListUpdated:self.topicsArray];
     @try {
-        [notificationManager subscribeToTopicWithId:@"id2" forceSync:YES];
+        [notificationManager subscribeToTopicWithId:2 forceSync:YES];
         XCTFail();
     }
     @catch (NSException *exception) {
@@ -515,18 +524,17 @@
     DefaultNotificationManager *notificationManager = [[DefaultNotificationManager alloc] initWithState:state executorContext:self.executorContext notificationTransport:transport];
     
     Topic *topic1 = [[Topic alloc] init];
-    topic1.id = @"id1";
+    topic1.id = 1;
     topic1.name = @"topic_name1";
     topic1.subscriptionType = SUBSCRIPTION_TYPE_OPTIONAL_SUBSCRIPTION;
     Topic *topic2 = [[Topic alloc] init];
-    topic2.id = @"id2";
+    topic2.id = 2;
     topic2.name = @"topic_name1";
     topic2.subscriptionType = SUBSCRIPTION_TYPE_MANDATORY_SUBSCRIPTION;
     self.topicsArray = [NSMutableArray arrayWithObjects:topic1, topic2, nil];
     [notificationManager topicsListUpdated:self.topicsArray];
-    NSArray *array = [NSArray arrayWithObjects:@"id1", @"id2", nil];
     @try {
-        [notificationManager subscribeToTopicsWithIDs:array forceSync:YES];
+        [notificationManager subscribeToTopicsWithIDs:@[@(1), @(2)] forceSync:YES];
         XCTFail();
     }
     @catch (NSException *exception) {
@@ -541,21 +549,21 @@
     DefaultNotificationManager *notificationManager = [[DefaultNotificationManager alloc] initWithState:state executorContext:self.executorContext notificationTransport:transport];
     
     Topic *topic1 = [[Topic alloc] init];
-    topic1.id = @"id1";
+    topic1.id = 1;
     topic1.name = @"topic_name1";
     topic1.subscriptionType = SUBSCRIPTION_TYPE_OPTIONAL_SUBSCRIPTION;
     Topic *topic2 = [[Topic alloc] init];
-    topic2.id = @"id2";
+    topic2.id = 2;
     topic2.name = @"topic_name1";
     topic2.subscriptionType = SUBSCRIPTION_TYPE_MANDATORY_SUBSCRIPTION;
     self.topicsArray = [NSMutableArray arrayWithObjects:topic1, topic2, nil];
     [notificationManager topicsListUpdated:self.topicsArray];
     @try {
-        [notificationManager unsubscribeFromTopicWithId:@"id2" forceSync:YES];
+        [notificationManager unsubscribeFromTopicWithId:2 forceSync:YES];
         XCTFail();
     }
     @catch (NSException *exception) {
-        NSLog(@"testSubscribeOnMandatoryTopic2 succeeded");
+        NSLog(@"testUnsubscribeFromMandatoryTopic1 succeeded");
     }
 }
 
@@ -566,22 +574,21 @@
     DefaultNotificationManager *notificationManager = [[DefaultNotificationManager alloc] initWithState:state executorContext:self.executorContext notificationTransport:transport];
     
     Topic *topic1 = [[Topic alloc] init];
-    topic1.id = @"id1";
+    topic1.id = 1;
     topic1.name = @"topic_name1";
     topic1.subscriptionType = SUBSCRIPTION_TYPE_OPTIONAL_SUBSCRIPTION;
     Topic *topic2 = [[Topic alloc] init];
-    topic2.id = @"id2";
+    topic2.id = 2;
     topic2.name = @"topic_name1";
     topic2.subscriptionType = SUBSCRIPTION_TYPE_MANDATORY_SUBSCRIPTION;
     self.topicsArray = [NSMutableArray arrayWithObjects:topic1, topic2, nil];
     [notificationManager topicsListUpdated:self.topicsArray];
-    NSArray *array = [NSArray arrayWithObjects:@"id1", @"id2", nil];
     @try {
-        [notificationManager unsubscribeFromTopicsWithIDs:array forceSync:YES];
+        [notificationManager unsubscribeFromTopicsWithIDs:@[@(1), @(2)] forceSync:YES];
         XCTFail();
     }
     @catch (NSException *exception) {
-        NSLog(@"testSubscribeOnMandatoryTopic2 succeeded");
+        NSLog(@"testUnsubscribeFromMandatoryTopic2 succeeded");
     }
 }
 
@@ -592,26 +599,26 @@
     DefaultNotificationManager *notificationManager = [[DefaultNotificationManager alloc] initWithState:state executorContext:self.executorContext notificationTransport:transport];
     
     Topic *topic1 = [[Topic alloc] init];
-    topic1.id = @"id1";
+    topic1.id = 1;
     topic1.name = @"topic_name1";
     topic1.subscriptionType = SUBSCRIPTION_TYPE_OPTIONAL_SUBSCRIPTION;
     Topic *topic2 = [[Topic alloc] init];
-    topic2.id = @"id2";
+    topic2.id = 2;
     topic2.name = @"topic_name1";
     topic2.subscriptionType = SUBSCRIPTION_TYPE_OPTIONAL_SUBSCRIPTION;
     Topic *topic3 = [[Topic alloc] init];
-    topic3.id = @"id3";
+    topic3.id = 3;
     topic3.name = @"topic_name1";
     topic3.subscriptionType = SUBSCRIPTION_TYPE_OPTIONAL_SUBSCRIPTION;
     self.topicsArray = [NSMutableArray arrayWithObjects:topic1, topic2, topic3, nil];
     
     [notificationManager topicsListUpdated:self.topicsArray];
-    [notificationManager subscribeToTopicWithId:@"id1" forceSync:YES];
+    [notificationManager subscribeToTopicWithId:1 forceSync:YES];
     
     [verifyCount(transport, times(1)) sync];
     
-    [notificationManager subscribeToTopicsWithIDs:@[@"id1", @"id2"] forceSync:NO];
-    [notificationManager unsubscribeFromTopicWithId:@"id1" forceSync:NO];
+    [notificationManager subscribeToTopicsWithIDs:@[@(1), @(1)] forceSync:NO];
+    [notificationManager unsubscribeFromTopicWithId:1 forceSync:NO];
     
     [verifyCount(transport, times(1)) sync];
     
@@ -619,7 +626,7 @@
     
     [verifyCount(transport, times(2)) sync];
     
-    [notificationManager unsubscribeFromTopicsWithIDs:@[@"id1", @"id2"] forceSync:YES];
+    [notificationManager unsubscribeFromTopicsWithIDs:@[@(1), @(1)] forceSync:YES];
     
     [verifyCount(transport, times(3)) sync];
 }

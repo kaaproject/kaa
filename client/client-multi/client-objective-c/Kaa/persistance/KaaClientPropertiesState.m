@@ -28,8 +28,6 @@
 #define TAG @"KaaClientPropertiesState >>>"
 
 #define APP_STATE_SEQ_NUMBER    @"APP_STATE_SEQ_NUMBER"
-#define CONFIG_SEQ_NUMBER       @"CONFIG_SEQ_NUMBER"
-#define NOTIFICATION_SEQ_NUMBER @"NOTIFICATION_SEQ_NUMBER"
 #define PROFILE_HASH            @"PROFILE_HASH"
 #define ENDPOINT_ACCESS_TOKEN   @"ENDPOINT_ACCESS_TOKEN"
 
@@ -45,7 +43,7 @@
 @property (nonatomic, strong) id<KAABase64> base64;
 @property (nonatomic, strong) NSMutableDictionary *state;
 @property (nonatomic, strong) NSString *stateFileLocation;
-@property (nonatomic, strong) NSMutableDictionary *notificationSubscriptions;  //<NSString, TopicSubscriptionInfo> as key-value
+@property (nonatomic, strong) NSMutableDictionary *notificationSubscriptions;  //<int64_t, TopicSubscriptionInfo> as key-value
 @property (nonatomic, strong) KeyPair *keyPair;
 @property (nonatomic) BOOL isConfigVersionUpdated;
 @property (nonatomic) BOOL hasUpdate;
@@ -68,8 +66,6 @@
 @synthesize publicKey = _publicKey;
 @synthesize endpointKeyHash = _endpointKeyHash;
 @synthesize appStateSequenceNumber = _appStateSequenceNumber;
-@synthesize configSequenceNumber = _configSequenceNumber;
-@synthesize notificationSequenceNumber = _notificationSequenceNumber;
 @synthesize profileHash = _profileHash;
 @synthesize attachedEndpoints = _attachedEndpoints;
 @synthesize endpointAccessToken = _endpointAccessToken;
@@ -260,32 +256,32 @@
 }
 
 - (void)addTopic:(Topic *)topic {
-    TopicSubscriptionInfo *info = self.notificationSubscriptions[topic.id];
+    TopicSubscriptionInfo *info = self.notificationSubscriptions[@(topic.id)];
     if (!info) {
         info = [[TopicSubscriptionInfo alloc] init];
         info.topicInfo = topic;
         info.seqNumber = 0;
-        self.notificationSubscriptions[topic.id] = info;
+        self.notificationSubscriptions[@(topic.id)] = info;
         self.hasUpdate = YES;
-        DDLogInfo(@"%@ Adding new seqNumber 0 for %@ subscription", TAG, topic.id);
+        DDLogInfo(@"%@ Adding new seqNumber 0 for %lld subscription", TAG, topic.id);
     }
 }
 
-- (void)removeTopicId:(NSString *)topicId {
-    [self.notificationSubscriptions removeObjectForKey:topicId];
+- (void)removeTopicId:(int64_t)topicId {
+    [self.notificationSubscriptions removeObjectForKey:@(topicId)];
     self.hasUpdate = YES;
-    DDLogDebug(@"%@ Removed subscription info for %@", TAG, topicId);
+    DDLogDebug(@"%@ Removed subscription info for %lld", TAG, topicId);
 }
 
-- (BOOL)updateSubscriptionInfoForTopicId:(NSString *)topicId sequence:(int32_t)sequenceNumber {
-    TopicSubscriptionInfo *info = self.notificationSubscriptions[topicId];
+- (BOOL)updateSubscriptionInfoForTopicId:(int64_t)topicId sequence:(int32_t)sequenceNumber {
+    TopicSubscriptionInfo *info = self.notificationSubscriptions[@(topicId)];
     BOOL updated = NO;
     if (info && sequenceNumber > info.seqNumber) {
         updated = YES;
         info.seqNumber = sequenceNumber;
-        self.notificationSubscriptions[topicId] = info;
+        self.notificationSubscriptions[@(topicId)] = info;
         self.hasUpdate = YES;
-        DDLogDebug(@"%@ Updated seqNumber to %i for %@ subscription", TAG, sequenceNumber, topicId);
+        DDLogDebug(@"%@ Updated seqNumber to %i for %lld subscription", TAG, sequenceNumber, topicId);
     }
     return updated;
 }
@@ -320,24 +316,6 @@
 - (NSString *)endpointAccessToken {
     NSString *token = self.state[ENDPOINT_ACCESS_TOKEN];
     return token ?: @"";
-}
-
-- (void)setConfigSequenceNumber:(int32_t)configSequenceNumber {
-    [self setStateStringValue:[@(configSequenceNumber) stringValue] forPropertyKey:CONFIG_SEQ_NUMBER];
-}
-
-- (int32_t)configSequenceNumber {
-    NSString *number = self.state[CONFIG_SEQ_NUMBER];
-    return [(number ?: @"1") intValue];
-}
-
-- (void)setNotificationSequenceNumber:(int32_t)notificationSequenceNumber {
-    [self setStateStringValue:[@(notificationSequenceNumber) stringValue] forPropertyKey:NOTIFICATION_SEQ_NUMBER];
-}
-
-- (int32_t)notificationSequenceNumber {
-    NSString *number = self.state[NOTIFICATION_SEQ_NUMBER];
-    return [(number ?: @"1") intValue];
 }
 
 - (int32_t)getAndIncrementEventSequenceNumber {
@@ -396,7 +374,7 @@
                 [decodedInfo deserialize:reader];
                 DDLogDebug(@"%@ Loaded %@", TAG, decodedInfo);
                 if (decodedInfo) {
-                    self.notificationSubscriptions[decodedInfo.topicInfo.id] = decodedInfo;
+                    self.notificationSubscriptions[@(decodedInfo.topicInfo.id)] = decodedInfo;
                 }
             }
         }

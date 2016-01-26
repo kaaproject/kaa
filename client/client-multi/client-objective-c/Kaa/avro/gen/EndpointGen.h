@@ -26,10 +26,10 @@
 
 @interface TopicState : AvroBased
 
-@property(nonatomic, strong) NSString *topicId;
+@property(nonatomic) int64_t topicId;
 @property(nonatomic) int32_t seqNumber;
 
-- (instancetype)initWithTopicId:(NSString *)topicId seqNumber:(int32_t)seqNumber;
+- (instancetype)initWithTopicId:(int64_t)topicId seqNumber:(int32_t)seqNumber;
 
 @end
 
@@ -88,10 +88,10 @@ typedef enum {
 
 @interface SubscriptionCommand : AvroBased
 
-@property(nonatomic, strong) NSString *topicId;
+@property(nonatomic) int64_t topicId;
 @property(nonatomic) SubscriptionCommandType command;
 
-- (instancetype)initWithTopicId:(NSString *)topicId command:(SubscriptionCommandType)command;
+- (instancetype)initWithTopicId:(int64_t)topicId command:(SubscriptionCommandType)command;
 
 @end
 
@@ -284,13 +284,13 @@ typedef enum {
 
 @interface Notification : AvroBased
 
-@property(nonatomic, strong) NSString *topicId;
+@property(nonatomic) int64_t topicId;
 @property(nonatomic) NotificationType type;
 @property(nonatomic, strong) KAAUnion *uid;
 @property(nonatomic, strong) KAAUnion *seqNumber;
 @property(nonatomic, strong) NSData *body;
 
-- (instancetype)initWithTopicId:(NSString *)topicId type:(NotificationType)type uid:(KAAUnion *)uid seqNumber:(KAAUnion *)seqNumber body:(NSData *)body;
+- (instancetype)initWithTopicId:(int64_t)topicId type:(NotificationType)type uid:(KAAUnion *)uid seqNumber:(KAAUnion *)seqNumber body:(NSData *)body;
 
 
 # ifndef KAA_UNION_STRING_OR_NULL_H_
@@ -315,11 +315,11 @@ typedef enum {
 
 @interface Topic : AvroBased
 
-@property(nonatomic, strong) NSString *id;
+@property(nonatomic) int64_t id;
 @property(nonatomic, strong) NSString *name;
 @property(nonatomic) SubscriptionType subscriptionType;
 
-- (instancetype)initWithId:(NSString *)id name:(NSString *)name subscriptionType:(SubscriptionType)subscriptionType;
+- (instancetype)initWithId:(int64_t)id name:(NSString *)name subscriptionType:(SubscriptionType)subscriptionType;
 
 @end
 
@@ -423,20 +423,10 @@ typedef enum {
 
 @interface ConfigurationSyncRequest : AvroBased
 
-@property(nonatomic) int32_t appStateSeqNumber;
-@property(nonatomic, strong) KAAUnion *configurationHash;
+@property(nonatomic, strong) NSData *configurationHash;
 @property(nonatomic, strong) KAAUnion *resyncOnly;
 
-- (instancetype)initWithAppStateSeqNumber:(int32_t)appStateSeqNumber configurationHash:(KAAUnion *)configurationHash resyncOnly:(KAAUnion *)resyncOnly;
-
-
-# ifndef KAA_UNION_BYTES_OR_NULL_H_
-# define KAA_UNION_BYTES_OR_NULL_H_
-
-# define KAA_UNION_BYTES_OR_NULL_BRANCH_0    0
-# define KAA_UNION_BYTES_OR_NULL_BRANCH_1    1
-
-# endif // KAA_UNION_BYTES_OR_NULL_H_
+- (instancetype)initWithConfigurationHash:(NSData *)configurationHash resyncOnly:(KAAUnion *)resyncOnly;
 
 
 # ifndef KAA_UNION_BOOLEAN_OR_NULL_H_
@@ -452,22 +442,12 @@ typedef enum {
 
 @interface NotificationSyncRequest : AvroBased
 
-@property(nonatomic) int32_t appStateSeqNumber;
-@property(nonatomic, strong) KAAUnion *topicListHash;
+@property(nonatomic) int32_t topicListHash;
 @property(nonatomic, strong) KAAUnion *topicStates;
 @property(nonatomic, strong) KAAUnion *acceptedUnicastNotifications;
 @property(nonatomic, strong) KAAUnion *subscriptionCommands;
 
-- (instancetype)initWithAppStateSeqNumber:(int32_t)appStateSeqNumber topicListHash:(KAAUnion *)topicListHash topicStates:(KAAUnion *)topicStates acceptedUnicastNotifications:(KAAUnion *)acceptedUnicastNotifications subscriptionCommands:(KAAUnion *)subscriptionCommands;
-
-
-# ifndef KAA_UNION_BYTES_OR_NULL_H_
-# define KAA_UNION_BYTES_OR_NULL_H_
-
-# define KAA_UNION_BYTES_OR_NULL_BRANCH_0    0
-# define KAA_UNION_BYTES_OR_NULL_BRANCH_1    1
-
-# endif // KAA_UNION_BYTES_OR_NULL_H_
+- (instancetype)initWithTopicListHash:(int32_t)topicListHash topicStates:(KAAUnion *)topicStates acceptedUnicastNotifications:(KAAUnion *)acceptedUnicastNotifications subscriptionCommands:(KAAUnion *)subscriptionCommands;
 
 
 # ifndef KAA_UNION_ARRAY_TOPIC_STATE_OR_NULL_H_
@@ -626,12 +606,11 @@ typedef enum {
 
 @interface ConfigurationSyncResponse : AvroBased
 
-@property(nonatomic) int32_t appStateSeqNumber;
 @property(nonatomic) SyncResponseStatus responseStatus;
 @property(nonatomic, strong) KAAUnion *confSchemaBody;
 @property(nonatomic, strong) KAAUnion *confDeltaBody;
 
-- (instancetype)initWithAppStateSeqNumber:(int32_t)appStateSeqNumber responseStatus:(SyncResponseStatus)responseStatus confSchemaBody:(KAAUnion *)confSchemaBody confDeltaBody:(KAAUnion *)confDeltaBody;
+- (instancetype)initWithResponseStatus:(SyncResponseStatus)responseStatus confSchemaBody:(KAAUnion *)confSchemaBody confDeltaBody:(KAAUnion *)confDeltaBody;
 
 
 # ifndef KAA_UNION_BYTES_OR_NULL_H_
@@ -656,12 +635,11 @@ typedef enum {
 
 @interface NotificationSyncResponse : AvroBased
 
-@property(nonatomic) int32_t appStateSeqNumber;
 @property(nonatomic) SyncResponseStatus responseStatus;
 @property(nonatomic, strong) KAAUnion *notifications;
 @property(nonatomic, strong) KAAUnion *availableTopics;
 
-- (instancetype)initWithAppStateSeqNumber:(int32_t)appStateSeqNumber responseStatus:(SyncResponseStatus)responseStatus notifications:(KAAUnion *)notifications availableTopics:(KAAUnion *)availableTopics;
+- (instancetype)initWithResponseStatus:(SyncResponseStatus)responseStatus notifications:(KAAUnion *)notifications availableTopics:(KAAUnion *)availableTopics;
 
 
 # ifndef KAA_UNION_ARRAY_NOTIFICATION_OR_NULL_H_

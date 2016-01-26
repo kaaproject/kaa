@@ -62,7 +62,6 @@
 - (void)testCreateRequest {
     id <ConfigurationHashContainer> hashContainer = mockProtocol(@protocol(ConfigurationHashContainer));
     id <KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
-    [given([clientState configSequenceNumber]) willReturnInteger:5];
     
     id <ConfigurationTransport> transport = [[DefaultConfigurationTransport alloc] init];
     [transport createConfigurationRequest];
@@ -71,7 +70,6 @@
     [transport setClientState:clientState];
     
     ConfigurationSyncRequest *request = [transport createConfigurationRequest];
-    XCTAssertEqual(5, [request appStateSeqNumber]);
     
     [verifyCount(hashContainer, times(1)) getConfigurationHash];
 }
@@ -82,7 +80,6 @@
     id <ConfigurationProcessor> configProcessor = mockProtocol(@protocol(ConfigurationProcessor));
     
     ConfigurationSyncResponse *response = [[ConfigurationSyncResponse alloc] init];
-    [response setAppStateSeqNumber:5];
     [response setResponseStatus:SYNC_RESPONSE_STATUS_DELTA];
     
     id <KaaChannelManager> channelManager = mockProtocol(@protocol(KaaChannelManager));
@@ -104,7 +101,6 @@
     [response setConfSchemaBody:[KAAUnion unionWithBranch:KAA_UNION_BYTES_OR_NULL_BRANCH_0 data:data]];
     [transport onConfigurationResponse:response];
     
-    [verifyCount(clientState, times(4)) setConfigSequenceNumber:5];
     [verifyCount(schemaProcessor, times(1)) loadSchema:data];
     [verifyCount(configProcessor, times(2)) processConfigurationData:data fullResync:NO];
 }

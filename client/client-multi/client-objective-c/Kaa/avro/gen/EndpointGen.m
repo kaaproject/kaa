@@ -22,7 +22,7 @@
 @implementation TopicState
 
 
-- (instancetype)initWithTopicId:(NSString *)topicId seqNumber:(int32_t)seqNumber {
+- (instancetype)initWithTopicId:(int64_t)topicId seqNumber:(int32_t)seqNumber {
     self = [super init];
     if (self) {
         self.topicId = topicId;
@@ -36,19 +36,19 @@
 }
 
 - (void)serialize:(avro_writer_t)writer {
-    [self.utils serializeString:self.topicId to:writer];
+    [self.utils serializeLong:@(self.topicId) to:writer];
     [self.utils serializeInt:@(self.seqNumber) to:writer];
 }
 
 - (size_t)getSize {
     size_t recordSize = 0;
-        recordSize += [self.utils getStringSize:self.topicId];
+        recordSize += [self.utils getLongSize:@(self.topicId)];
         recordSize += [self.utils getIntSize:@(self.seqNumber)];
     return recordSize;
 }
 
 - (void)deserialize:(avro_reader_t)reader {
-    self.topicId = [self.utils deserializeString:reader];
+    self.topicId = [[self.utils deserializeLong:reader] longLongValue];
     self.seqNumber = [[self.utils deserializeInt:reader] intValue];
 }
 
@@ -58,7 +58,7 @@
 @implementation SubscriptionCommand
 
 
-- (instancetype)initWithTopicId:(NSString *)topicId command:(SubscriptionCommandType)command {
+- (instancetype)initWithTopicId:(int64_t)topicId command:(SubscriptionCommandType)command {
     self = [super init];
     if (self) {
         self.topicId = topicId;
@@ -72,19 +72,19 @@
 }
 
 - (void)serialize:(avro_writer_t)writer {
-    [self.utils serializeString:self.topicId to:writer];
+    [self.utils serializeLong:@(self.topicId) to:writer];
     [self.utils serializeEnum:@(self.command) to:writer];
 }
 
 - (size_t)getSize {
     size_t recordSize = 0;
-        recordSize += [self.utils getStringSize:self.topicId];
+        recordSize += [self.utils getLongSize:@(self.topicId)];
         recordSize += [self.utils getEnumSize:@(self.command)];
     return recordSize;
 }
 
 - (void)deserialize:(avro_reader_t)reader {
-    self.topicId = [self.utils deserializeString:reader];
+    self.topicId = [[self.utils deserializeLong:reader] longLongValue];
     self.command = [[self.utils deserializeEnum:reader] intValue];
 }
 
@@ -950,7 +950,7 @@
     return self;
 }
 
-- (instancetype)initWithTopicId:(NSString *)topicId type:(NotificationType)type uid:(KAAUnion *)uid seqNumber:(KAAUnion *)seqNumber body:(NSData *)body {
+- (instancetype)initWithTopicId:(int64_t)topicId type:(NotificationType)type uid:(KAAUnion *)uid seqNumber:(KAAUnion *)seqNumber body:(NSData *)body {
     self = [super init];
     if (self) {
         self.topicId = topicId;
@@ -967,7 +967,7 @@
 }
 
 - (void)serialize:(avro_writer_t)writer {
-    [self.utils serializeString:self.topicId to:writer];
+    [self.utils serializeLong:@(self.topicId) to:writer];
     [self.utils serializeEnum:@(self.type) to:writer];
     [self serializeUid:self.uid to:writer];
     [self serializeSeqNumber:self.seqNumber to:writer];
@@ -976,7 +976,7 @@
 
 - (size_t)getSize {
     size_t recordSize = 0;
-        recordSize += [self.utils getStringSize:self.topicId];
+        recordSize += [self.utils getLongSize:@(self.topicId)];
         recordSize += [self.utils getEnumSize:@(self.type)];
         recordSize += [self getUidSize:self.uid];
         recordSize += [self getSeqNumberSize:self.seqNumber];
@@ -985,7 +985,7 @@
 }
 
 - (void)deserialize:(avro_reader_t)reader {
-    self.topicId = [self.utils deserializeString:reader];
+    self.topicId = [[self.utils deserializeLong:reader] longLongValue];
     self.type = [[self.utils deserializeEnum:reader] intValue];
     self.uid = [self deserializeUid:reader];
     self.seqNumber = [self deserializeSeqNumber:reader];
@@ -1112,7 +1112,7 @@
 @implementation Topic
 
 
-- (instancetype)initWithId:(NSString *)id name:(NSString *)name subscriptionType:(SubscriptionType)subscriptionType {
+- (instancetype)initWithId:(int64_t)id name:(NSString *)name subscriptionType:(SubscriptionType)subscriptionType {
     self = [super init];
     if (self) {
         self.id = id;
@@ -1127,21 +1127,21 @@
 }
 
 - (void)serialize:(avro_writer_t)writer {
-    [self.utils serializeString:self.id to:writer];
+    [self.utils serializeLong:@(self.id) to:writer];
     [self.utils serializeString:self.name to:writer];
     [self.utils serializeEnum:@(self.subscriptionType) to:writer];
 }
 
 - (size_t)getSize {
     size_t recordSize = 0;
-        recordSize += [self.utils getStringSize:self.id];
+        recordSize += [self.utils getLongSize:@(self.id)];
         recordSize += [self.utils getStringSize:self.name];
         recordSize += [self.utils getEnumSize:@(self.subscriptionType)];
     return recordSize;
 }
 
 - (void)deserialize:(avro_reader_t)reader {
-    self.id = [self.utils deserializeString:reader];
+    self.id = [[self.utils deserializeLong:reader] longLongValue];
     self.name = [self.utils deserializeString:reader];
     self.subscriptionType = [[self.utils deserializeEnum:reader] intValue];
 }
@@ -1645,16 +1645,14 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-                                        self.configurationHash = [KAAUnion unionWithBranch:KAA_UNION_BYTES_OR_NULL_BRANCH_1];
-                                self.resyncOnly = [KAAUnion unionWithBranch:KAA_UNION_BOOLEAN_OR_NULL_BRANCH_1];
+                                        self.resyncOnly = [KAAUnion unionWithBranch:KAA_UNION_BOOLEAN_OR_NULL_BRANCH_1];
                 }
     return self;
 }
 
-- (instancetype)initWithAppStateSeqNumber:(int32_t)appStateSeqNumber configurationHash:(KAAUnion *)configurationHash resyncOnly:(KAAUnion *)resyncOnly {
+- (instancetype)initWithConfigurationHash:(NSData *)configurationHash resyncOnly:(KAAUnion *)resyncOnly {
     self = [super init];
     if (self) {
-        self.appStateSeqNumber = appStateSeqNumber;
         self.configurationHash = configurationHash;
         self.resyncOnly = resyncOnly;
     }
@@ -1666,82 +1664,22 @@
 }
 
 - (void)serialize:(avro_writer_t)writer {
-    [self.utils serializeInt:@(self.appStateSeqNumber) to:writer];
-    [self serializeConfigurationHash:self.configurationHash to:writer];
+    [self.utils serializeBytes:self.configurationHash to:writer];
     [self serializeResyncOnly:self.resyncOnly to:writer];
 }
 
 - (size_t)getSize {
     size_t recordSize = 0;
-        recordSize += [self.utils getIntSize:@(self.appStateSeqNumber)];
-        recordSize += [self getConfigurationHashSize:self.configurationHash];
+        recordSize += [self.utils getBytesSize:self.configurationHash];
         recordSize += [self getResyncOnlySize:self.resyncOnly];
     return recordSize;
 }
 
 - (void)deserialize:(avro_reader_t)reader {
-    self.appStateSeqNumber = [[self.utils deserializeInt:reader] intValue];
-    self.configurationHash = [self deserializeConfigurationHash:reader];
+    self.configurationHash = [self.utils deserializeBytes:reader];
     self.resyncOnly = [self deserializeResyncOnly:reader];
 }
 
-
-- (void)serializeConfigurationHash:(KAAUnion *)kaaUnion to:(avro_writer_t)writer {
-
-    if (kaaUnion) {
-        avro_binary_encoding.write_long(writer, kaaUnion.branch);
-
-        switch (kaaUnion.branch) {
-        case KAA_UNION_BYTES_OR_NULL_BRANCH_0:
-        {
-            if (kaaUnion.data) {
-                [self.utils serializeBytes:kaaUnion.data to:writer];
-            }
-            break;
-        }
-        default:
-            break;
-        }
-    }
-}
-
-- (size_t)getConfigurationHashSize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
-    if (kaaUnion) {
-        switch (kaaUnion.branch) {
-        case KAA_UNION_BYTES_OR_NULL_BRANCH_0:
-        {
-            if (kaaUnion.data) {
-                unionSize += [self.utils getBytesSize:kaaUnion.data];
-            }
-            break;
-        }
-        default:
-            break;
-        }
-    }
-    return unionSize;
-}
-
-- (KAAUnion *)deserializeConfigurationHash:(avro_reader_t)reader {
-
-    KAAUnion *kaaUnion = [[KAAUnion alloc] init];
-
-        int64_t branch;
-        avro_binary_encoding.read_long(reader, &branch);
-        kaaUnion.branch = (int)branch;
-
-        switch (kaaUnion.branch) {
-        case KAA_UNION_BYTES_OR_NULL_BRANCH_0: {
-            kaaUnion.data = [self.utils deserializeBytes:reader];
-            break;
-        }
-        default:
-            break;
-        }
-
-    return kaaUnion;
-}
 
 - (void)serializeResyncOnly:(KAAUnion *)kaaUnion to:(avro_writer_t)writer {
 
@@ -1807,18 +1745,16 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-                                        self.topicListHash = [KAAUnion unionWithBranch:KAA_UNION_BYTES_OR_NULL_BRANCH_1];
-                                self.topicStates = [KAAUnion unionWithBranch:KAA_UNION_ARRAY_TOPIC_STATE_OR_NULL_BRANCH_1];
+                                        self.topicStates = [KAAUnion unionWithBranch:KAA_UNION_ARRAY_TOPIC_STATE_OR_NULL_BRANCH_1];
                                 self.acceptedUnicastNotifications = [KAAUnion unionWithBranch:KAA_UNION_ARRAY_STRING_OR_NULL_BRANCH_1];
                                 self.subscriptionCommands = [KAAUnion unionWithBranch:KAA_UNION_ARRAY_SUBSCRIPTION_COMMAND_OR_NULL_BRANCH_1];
                 }
     return self;
 }
 
-- (instancetype)initWithAppStateSeqNumber:(int32_t)appStateSeqNumber topicListHash:(KAAUnion *)topicListHash topicStates:(KAAUnion *)topicStates acceptedUnicastNotifications:(KAAUnion *)acceptedUnicastNotifications subscriptionCommands:(KAAUnion *)subscriptionCommands {
+- (instancetype)initWithTopicListHash:(int32_t)topicListHash topicStates:(KAAUnion *)topicStates acceptedUnicastNotifications:(KAAUnion *)acceptedUnicastNotifications subscriptionCommands:(KAAUnion *)subscriptionCommands {
     self = [super init];
     if (self) {
-        self.appStateSeqNumber = appStateSeqNumber;
         self.topicListHash = topicListHash;
         self.topicStates = topicStates;
         self.acceptedUnicastNotifications = acceptedUnicastNotifications;
@@ -1832,8 +1768,7 @@
 }
 
 - (void)serialize:(avro_writer_t)writer {
-    [self.utils serializeInt:@(self.appStateSeqNumber) to:writer];
-    [self serializeTopicListHash:self.topicListHash to:writer];
+    [self.utils serializeInt:@(self.topicListHash) to:writer];
     [self serializeTopicStates:self.topicStates to:writer];
     [self serializeAcceptedUnicastNotifications:self.acceptedUnicastNotifications to:writer];
     [self serializeSubscriptionCommands:self.subscriptionCommands to:writer];
@@ -1841,8 +1776,7 @@
 
 - (size_t)getSize {
     size_t recordSize = 0;
-        recordSize += [self.utils getIntSize:@(self.appStateSeqNumber)];
-        recordSize += [self getTopicListHashSize:self.topicListHash];
+        recordSize += [self.utils getIntSize:@(self.topicListHash)];
         recordSize += [self getTopicStatesSize:self.topicStates];
         recordSize += [self getAcceptedUnicastNotificationsSize:self.acceptedUnicastNotifications];
         recordSize += [self getSubscriptionCommandsSize:self.subscriptionCommands];
@@ -1850,70 +1784,12 @@
 }
 
 - (void)deserialize:(avro_reader_t)reader {
-    self.appStateSeqNumber = [[self.utils deserializeInt:reader] intValue];
-    self.topicListHash = [self deserializeTopicListHash:reader];
+    self.topicListHash = [[self.utils deserializeInt:reader] intValue];
     self.topicStates = [self deserializeTopicStates:reader];
     self.acceptedUnicastNotifications = [self deserializeAcceptedUnicastNotifications:reader];
     self.subscriptionCommands = [self deserializeSubscriptionCommands:reader];
 }
 
-
-- (void)serializeTopicListHash:(KAAUnion *)kaaUnion to:(avro_writer_t)writer {
-
-    if (kaaUnion) {
-        avro_binary_encoding.write_long(writer, kaaUnion.branch);
-
-        switch (kaaUnion.branch) {
-        case KAA_UNION_BYTES_OR_NULL_BRANCH_0:
-        {
-            if (kaaUnion.data) {
-                [self.utils serializeBytes:kaaUnion.data to:writer];
-            }
-            break;
-        }
-        default:
-            break;
-        }
-    }
-}
-
-- (size_t)getTopicListHashSize:(KAAUnion *)kaaUnion {
-    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
-    if (kaaUnion) {
-        switch (kaaUnion.branch) {
-        case KAA_UNION_BYTES_OR_NULL_BRANCH_0:
-        {
-            if (kaaUnion.data) {
-                unionSize += [self.utils getBytesSize:kaaUnion.data];
-            }
-            break;
-        }
-        default:
-            break;
-        }
-    }
-    return unionSize;
-}
-
-- (KAAUnion *)deserializeTopicListHash:(avro_reader_t)reader {
-
-    KAAUnion *kaaUnion = [[KAAUnion alloc] init];
-
-        int64_t branch;
-        avro_binary_encoding.read_long(reader, &branch);
-        kaaUnion.branch = (int)branch;
-
-        switch (kaaUnion.branch) {
-        case KAA_UNION_BYTES_OR_NULL_BRANCH_0: {
-            kaaUnion.data = [self.utils deserializeBytes:reader];
-            break;
-        }
-        default:
-            break;
-        }
-
-    return kaaUnion;
-}
 
 - (void)serializeTopicStates:(KAAUnion *)kaaUnion to:(avro_writer_t)writer {
 
@@ -2735,16 +2611,15 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-                                                        self.confSchemaBody = [KAAUnion unionWithBranch:KAA_UNION_BYTES_OR_NULL_BRANCH_1];
+                                        self.confSchemaBody = [KAAUnion unionWithBranch:KAA_UNION_BYTES_OR_NULL_BRANCH_1];
                                 self.confDeltaBody = [KAAUnion unionWithBranch:KAA_UNION_BYTES_OR_NULL_BRANCH_1];
                 }
     return self;
 }
 
-- (instancetype)initWithAppStateSeqNumber:(int32_t)appStateSeqNumber responseStatus:(SyncResponseStatus)responseStatus confSchemaBody:(KAAUnion *)confSchemaBody confDeltaBody:(KAAUnion *)confDeltaBody {
+- (instancetype)initWithResponseStatus:(SyncResponseStatus)responseStatus confSchemaBody:(KAAUnion *)confSchemaBody confDeltaBody:(KAAUnion *)confDeltaBody {
     self = [super init];
     if (self) {
-        self.appStateSeqNumber = appStateSeqNumber;
         self.responseStatus = responseStatus;
         self.confSchemaBody = confSchemaBody;
         self.confDeltaBody = confDeltaBody;
@@ -2757,7 +2632,6 @@
 }
 
 - (void)serialize:(avro_writer_t)writer {
-    [self.utils serializeInt:@(self.appStateSeqNumber) to:writer];
     [self.utils serializeEnum:@(self.responseStatus) to:writer];
     [self serializeConfSchemaBody:self.confSchemaBody to:writer];
     [self serializeConfDeltaBody:self.confDeltaBody to:writer];
@@ -2765,7 +2639,6 @@
 
 - (size_t)getSize {
     size_t recordSize = 0;
-        recordSize += [self.utils getIntSize:@(self.appStateSeqNumber)];
         recordSize += [self.utils getEnumSize:@(self.responseStatus)];
         recordSize += [self getConfSchemaBodySize:self.confSchemaBody];
         recordSize += [self getConfDeltaBodySize:self.confDeltaBody];
@@ -2773,7 +2646,6 @@
 }
 
 - (void)deserialize:(avro_reader_t)reader {
-    self.appStateSeqNumber = [[self.utils deserializeInt:reader] intValue];
     self.responseStatus = [[self.utils deserializeEnum:reader] intValue];
     self.confSchemaBody = [self deserializeConfSchemaBody:reader];
     self.confDeltaBody = [self deserializeConfDeltaBody:reader];
@@ -2901,16 +2773,15 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-                                                        self.notifications = [KAAUnion unionWithBranch:KAA_UNION_ARRAY_NOTIFICATION_OR_NULL_BRANCH_1];
+                                        self.notifications = [KAAUnion unionWithBranch:KAA_UNION_ARRAY_NOTIFICATION_OR_NULL_BRANCH_1];
                                 self.availableTopics = [KAAUnion unionWithBranch:KAA_UNION_ARRAY_TOPIC_OR_NULL_BRANCH_1];
                 }
     return self;
 }
 
-- (instancetype)initWithAppStateSeqNumber:(int32_t)appStateSeqNumber responseStatus:(SyncResponseStatus)responseStatus notifications:(KAAUnion *)notifications availableTopics:(KAAUnion *)availableTopics {
+- (instancetype)initWithResponseStatus:(SyncResponseStatus)responseStatus notifications:(KAAUnion *)notifications availableTopics:(KAAUnion *)availableTopics {
     self = [super init];
     if (self) {
-        self.appStateSeqNumber = appStateSeqNumber;
         self.responseStatus = responseStatus;
         self.notifications = notifications;
         self.availableTopics = availableTopics;
@@ -2923,7 +2794,6 @@
 }
 
 - (void)serialize:(avro_writer_t)writer {
-    [self.utils serializeInt:@(self.appStateSeqNumber) to:writer];
     [self.utils serializeEnum:@(self.responseStatus) to:writer];
     [self serializeNotifications:self.notifications to:writer];
     [self serializeAvailableTopics:self.availableTopics to:writer];
@@ -2931,7 +2801,6 @@
 
 - (size_t)getSize {
     size_t recordSize = 0;
-        recordSize += [self.utils getIntSize:@(self.appStateSeqNumber)];
         recordSize += [self.utils getEnumSize:@(self.responseStatus)];
         recordSize += [self getNotificationsSize:self.notifications];
         recordSize += [self getAvailableTopicsSize:self.availableTopics];
@@ -2939,7 +2808,6 @@
 }
 
 - (void)deserialize:(avro_reader_t)reader {
-    self.appStateSeqNumber = [[self.utils deserializeInt:reader] intValue];
     self.responseStatus = [[self.utils deserializeEnum:reader] intValue];
     self.notifications = [self deserializeNotifications:reader];
     self.availableTopics = [self deserializeAvailableTopics:reader];

@@ -28,15 +28,15 @@
 @property (nonatomic, strong) id<ExecutorContext> context;
 @property (nonatomic, strong) volatile id<NotificationTransport> transport;
 
-@property (nonatomic, strong) NSMutableDictionary *topics;               //<NSString,Topic> as key-value
+@property (nonatomic, strong) NSMutableDictionary *topics;               //<int64_t,Topic> as key-value
 @property (nonatomic, strong) NSMutableSet *mandatoryListeners;          //<NotificationDelegate>
-@property (nonatomic, strong) NSMutableDictionary *optionalListeners;    //<NSString,NSArray<NotificationDelegate>> as key-value
+@property (nonatomic, strong) NSMutableDictionary *optionalListeners;    //<int64_t,NSArray<NotificationDelegate>> as key-value
 @property (nonatomic, strong) NSMutableSet *topicsListeners;             //<NotificationTopicListDelegate>
 @property (nonatomic, strong) NSMutableArray *subscriptionInfo;          //<SubscriptionCommand>
 @property (nonatomic, strong) NotificationDeserializer *deserializer;
 
-- (Topic *)findTopicById:(NSString *)topicId;
-- (void)updateSubscriptionInfoForTopicId:(NSString *)topicId commandType:(SubscriptionCommandType)commandType;
+- (Topic *)findTopicById:(int64_t)topicId;
+- (void)updateSubscriptionInfoForTopicId:(int64_t)topicId commandType:(SubscriptionCommandType)commandType;
 - (void)updateSubscriptions:(NSArray *)subscriptionUpdate;
 - (void)notifyDelegates:(NSArray *)delegates forTopic:(Topic *)topic notification:(Notification *)notification;
 - (void)performSync;
@@ -64,7 +64,7 @@
         NSArray *topicList = [state getTopics];
         if (topicList) {
             for (Topic *topic in topicList) {
-                self.topics[topic.id] = topic;
+                self.topics[@(topic.id)] = topic;
             }
         }
     }
@@ -118,11 +118,11 @@
     }
 }
 
-- (void)subscribeToTopicWithId:(NSString *)topicId forceSync:(BOOL)forceSync {
+- (void)subscribeToTopicWithId:(int64_t)topicId forceSync:(BOOL)forceSync {
     Topic *topic = [self findTopicById:topicId];
     if (topic.subscriptionType != SUBSCRIPTION_TYPE_OPTIONAL_SUBSCRIPTION) {
-        DDLogWarn(@"%@ Failed to subscribe: topic [%@] isn't optional", TAG, topicId);
-        [NSException raise:KaaUnavailableTopic format:@"Topic [%@] isn't optional", topicId];
+        DDLogWarn(@"%@ Failed to subscribe: topic [%lld] isn't optional", TAG, topicId);
+        [NSException raise:KaaUnavailableTopic format:@"Topic [%lld] isn't optional", topicId];
     }
     
     [self updateSubscriptionInfoForTopicId:topicId commandType:SUBSCRIPTION_COMMAND_TYPE_ADD];
@@ -134,14 +134,14 @@
 
 - (void)subscribeToTopicsWithIDs:(NSArray *)topicIds forceSync:(BOOL)forceSync {
     NSMutableArray *subscriptionUpdate = [NSMutableArray array];
-    for (NSString *topicId in topicIds) {
-        Topic *topic = [self findTopicById:topicId];
+    for (NSNumber *topicId in topicIds) {
+        Topic *topic = [self findTopicById:[topicId longValue]];
         if (topic.subscriptionType != SUBSCRIPTION_TYPE_OPTIONAL_SUBSCRIPTION) {
-            DDLogWarn(@"%@ Failed to subscribe: topic [%@] isn't optional", TAG, topicId);
-            [NSException raise:KaaUnavailableTopic format:@"Topic [%@] isn't optional", topicId];
+            DDLogWarn(@"%@ Failed to subscribe: topic [%ld] isn't optional", TAG, [topicId longValue]);
+            [NSException raise:KaaUnavailableTopic format:@"Topic [%ld] isn't optional", [topicId longValue]];
         }
         SubscriptionCommand *subscriptionCommand = [[SubscriptionCommand alloc] init];
-        subscriptionCommand.topicId = topicId;
+        subscriptionCommand.topicId = [topicId longValue];
         subscriptionCommand.command = SUBSCRIPTION_COMMAND_TYPE_ADD;
         [subscriptionUpdate addObject:subscriptionCommand];
     }
@@ -153,11 +153,11 @@
     }
 }
 
-- (void)unsubscribeFromTopicWithId:(NSString *)topicId forceSync:(BOOL)forceSync {
+- (void)unsubscribeFromTopicWithId:(int64_t)topicId forceSync:(BOOL)forceSync {
     Topic *topic = [self findTopicById:topicId];
     if (topic.subscriptionType != SUBSCRIPTION_TYPE_OPTIONAL_SUBSCRIPTION) {
-        DDLogWarn(@"%@ Failed to unsubscribe: topic [%@] isn't optional", TAG, topicId);
-        [NSException raise:KaaUnavailableTopic format:@"Topic [%@] isn't optional", topicId];
+        DDLogWarn(@"%@ Failed to unsubscribe: topic [%lld] isn't optional", TAG, topicId);
+        [NSException raise:KaaUnavailableTopic format:@"Topic [%@] isn't optional", @(topicId)];
     }
     
     [self updateSubscriptionInfoForTopicId:topicId commandType:SUBSCRIPTION_COMMAND_TYPE_REMOVE];
@@ -169,14 +169,14 @@
 
 - (void)unsubscribeFromTopicsWithIDs:(NSArray *)topicIds forceSync:(BOOL)forceSync {
     NSMutableArray *subscriptionUpdate = [NSMutableArray array];
-    for (NSString *topicId in topicIds) {
-        Topic *topic = [self findTopicById:topicId];
+    for (NSNumber *topicId in topicIds) {
+        Topic *topic = [self findTopicById:[topicId longValue]];
         if (topic.subscriptionType != SUBSCRIPTION_TYPE_OPTIONAL_SUBSCRIPTION) {
-            DDLogWarn(@"%@ Failed to unsubscribe: topic [%@] isn't optional", TAG, topicId);
+            DDLogWarn(@"%@ Failed to unsubscribe: topic [%ld] isn't optional", TAG, [topicId longValue]);
             [NSException raise:KaaUnavailableTopic format:@"Topic [%@] isn't optional", topicId];
         }
         SubscriptionCommand *subscriptionCommand = [[SubscriptionCommand alloc] init];
-        subscriptionCommand.topicId = topicId;
+        subscriptionCommand.topicId = [topicId longValue];
         subscriptionCommand.command = SUBSCRIPTION_COMMAND_TYPE_REMOVE;
         [subscriptionUpdate addObject:subscriptionCommand];
     }
@@ -188,35 +188,35 @@
     }
 }
 
-- (void)addNotificationDelegate:(id<NotificationDelegate>)delegate forTopicId:(NSString *)topicId {
-    if (!delegate || !topicId) {
-        DDLogWarn(@"%@ Failed to add delegate: id: %@, delegate: %@", TAG, topicId, delegate);
+- (void)addNotificationDelegate:(id<NotificationDelegate>)delegate forTopicId:(int64_t)topicId {
+    if (!delegate) {
+        DDLogWarn(@"%@ Failed to add delegate: id: %lld, delegate: %@", TAG, topicId, delegate);
         [NSException raise:NSInvalidArgumentException format:@"Bad delegate data"];
     }
     
     [self findTopicById:topicId];
     
     @synchronized (self.optionalListeners) {
-        NSMutableArray *delegates = self.optionalListeners[topicId];
+        NSMutableArray *delegates = self.optionalListeners[@(topicId)];
         if (!delegates) {
             delegates = [NSMutableArray array];
-            self.optionalListeners[topicId] = delegates;
+            self.optionalListeners[@(topicId)] = delegates;
         }
         
         [delegates addObject:delegate];
     }
 }
 
-- (void)removeNotificationDelegate:(id<NotificationDelegate>)delegate forTopicId:(NSString *)topicId {
-    if (!delegate || !topicId) {
-        DDLogWarn(@"%@ Failed to remove delegate: id: %@, delegate: %@", TAG, topicId, delegate);
+- (void)removeNotificationDelegate:(id<NotificationDelegate>)delegate forTopicId:(int64_t)topicId {
+    if (!delegate) {
+        DDLogWarn(@"%@ Failed to remove delegate: id: %lld, delegate: %@", TAG, topicId, delegate);
         [NSException raise:NSInvalidArgumentException format:@"Bad delegate data"];
     }
     
     [self findTopicById:topicId];
     
     @synchronized (self.optionalListeners) {
-        NSMutableArray *delegates = self.optionalListeners[topicId];
+        NSMutableArray *delegates = self.optionalListeners[@(topicId)];
         if (delegates) {
             [delegates removeObject:delegate];
         }
@@ -232,16 +232,16 @@
     
     @synchronized (self.topics) {
         for (Topic *topic in topics) {
-            newTopics[topic.id] = topic;
-            if (self.topics[topic.id]) {
-                [self.topics removeObjectForKey:topic.id];
+            newTopics[@(topic.id)] = topic;
+            if (self.topics[@(topic.id)]) {
+                [self.topics removeObjectForKey:@(topic.id)];
             } else {
                 [self.state addTopic:topic];
             }
         }
         @synchronized (self.optionalListeners) {
             for (Topic *topic in self.topics.allValues) {
-                [self.optionalListeners removeObjectForKey:topic.id];
+                [self.optionalListeners removeObjectForKey:@(topic.id)];
                 [self.state removeTopicId:topic.id];
             }
         }
@@ -264,7 +264,7 @@
             BOOL hasOwner = NO;
             
             @synchronized (self.optionalListeners) {
-                NSArray *delegates = self.optionalListeners[topic.id];
+                NSArray *delegates = self.optionalListeners[@(topic.id)];
                 if (delegates && [delegates count] > 0) {
                     hasOwner = YES;
                     [self notifyDelegates:delegates forTopic:topic notification:notification];
@@ -279,7 +279,7 @@
         }
         @catch (NSException *exception) {
             DDLogWarn(@"%@ Caught exception: %@ reason: %@", TAG, exception.name, exception.reason);
-            DDLogWarn(@"%@ Received notification for an unknown topic [id:%@]", TAG, notification.topicId);
+            DDLogWarn(@"%@ Received notification for an unknown topic [id:%lld]", TAG, notification.topicId);
         }
     }
 }
@@ -293,14 +293,14 @@
                 [weakSelf.deserializer notifyDelegates:blockDelegates withTopic:topic data:notification.body];
             }
             @catch (NSException *exception) {
-                DDLogError(@"%@ Failed to process notification for topic %@. Error: %@ reason: %@",
+                DDLogError(@"%@ Failed to process notification for topic %lld. Error: %@ reason: %@",
                            TAG, topic.id, exception.name, exception.reason);
             }
         }];
     }
 }
 
-- (void)updateSubscriptionInfoForTopicId:(NSString *)topicId commandType:(SubscriptionCommandType)commandType {
+- (void)updateSubscriptionInfoForTopicId:(int64_t)topicId commandType:(SubscriptionCommandType)commandType {
     @synchronized (self.subscriptionInfo) {
         SubscriptionCommand *subscriptionCommand = [[SubscriptionCommand alloc] init];
         subscriptionCommand.topicId = topicId;
@@ -315,12 +315,12 @@
     }
 }
 
-- (Topic *)findTopicById:(NSString *)topicId {
+- (Topic *)findTopicById:(int64_t)topicId {
     @synchronized (self.topics) {
-        Topic *topic = self.topics[topicId];
+        Topic *topic = self.topics[@(topicId)];
         if (!topic) {
-            DDLogWarn(@"%@ Failed to find topic: [id:%@] is unknown", TAG, topicId);
-            [NSException raise:KaaUnavailableTopic format:@"Topic id [%@] is unknown", topicId];
+            DDLogWarn(@"%@ Failed to find topic: [id:%lld] is unknown", TAG, topicId);
+            [NSException raise:KaaUnavailableTopic format:@"Topic id [%lld] is unknown", topicId];
         }
         return topic;
     }

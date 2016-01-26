@@ -24,6 +24,8 @@
 #import "KaaClientState.h"
 #import "NotificationTransport.h"
 #import "DefaultNotificationTransport.h"
+#import "TopicListHashCalculator.h"
+#import "NotificationProcessor.h"
 
 @interface DefaultNotificationTransportTest : XCTestCase
 
@@ -65,21 +67,53 @@
     
     XCTAssertNil(request.acceptedUnicastNotifications.data);
     XCTAssertNil(request.subscriptionCommands.data);
-    XCTAssertNil(request.topicListHash.data);
+    XCTAssertEqual([TopicListHashCalculator calculateTopicListHash:nil], request.topicListHash);
 }
 
-- (void)testCreateRequest {
+- (void)testEmptyTopicListHash {
     id <KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
-    [given([clientState notificationSequenceNumber]) willReturnInteger:5];
+    id <NotificationProcessor> processor = mockProtocol(@protocol(NotificationProcessor));
+    
+    NotificationSyncResponse *response = [[NotificationSyncResponse alloc] init];
+    response.responseStatus = SYNC_RESPONSE_STATUS_DELTA;
+    response.availableTopics = [KAAUnion unionWithBranch:KAA_UNION_ARRAY_TOPIC_OR_NULL_BRANCH_0 data:[NSArray array]];
+    
+    id <KaaChannelManager> channelManager = mockProtocol(@protocol(KaaChannelManager));
+    
+    id <NotificationTransport> notificationTransport = [[DefaultNotificationTransport alloc] init];
+    [notificationTransport setChannelManager:channelManager];
+    [notificationTransport setNotificationProcessor:processor];
+    [notificationTransport setClientState:clientState];
+    
+    [notificationTransport onNotificationResponse:response];
+    
+    NotificationSyncRequest *request = [notificationTransport createNotificationRequest];
+    XCTAssertEqual([TopicListHashCalculator calculateTopicListHash:nil], request.topicListHash);
+}
+
+- (void)testTopicListHash {
+    id <KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
+    id <NotificationProcessor> processor = mockProtocol(@protocol(NotificationProcessor));
+    
+    NSArray *topics = [NSArray arrayWithObjects:[[Topic alloc] initWithId:2 name:nil subscriptionType:SUBSCRIPTION_TYPE_MANDATORY_SUBSCRIPTION], [[Topic alloc] initWithId:1 name:nil subscriptionType:SUBSCRIPTION_TYPE_OPTIONAL_SUBSCRIPTION], nil];
+    
+    NotificationSyncResponse *response = [[NotificationSyncResponse alloc] init];
+    response.responseStatus = SYNC_RESPONSE_STATUS_DELTA;
+    response.availableTopics = [KAAUnion unionWithBranch:KAA_UNION_ARRAY_TOPIC_OR_NULL_BRANCH_0 data:topics];
+    
+    id <KaaChannelManager> channelManager = mockProtocol(@protocol(KaaChannelManager));
     
     id <NotificationTransport> transport = [[DefaultNotificationTransport alloc] init];
-    [transport createNotificationRequest];
+    [transport setChannelManager:channelManager];
+    [transport setNotificationProcessor:processor];
     [transport setClientState:clientState];
-    [transport createNotificationRequest];
+    
+    [transport onNotificationResponse:response];
     
     NotificationSyncRequest *request = [transport createNotificationRequest];
-    XCTAssertEqual(5, request.appStateSeqNumber);
+    XCTAssertEqual([TopicListHashCalculator calculateTopicListHash:topics], request.topicListHash);
 }
+
 
 - (void)testAcceptUnicastNotification {
     id <KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
@@ -94,9 +128,9 @@
     [transport setNotificationProcessor:processor];
     [transport setClientState:clientState];
     
-    Notification *nf1 = [self getNotificationWithTopicId:@"u_id1" uid:@"uid1" sequenceNumber:5];
-    Notification *nf2 = [self getNotificationWithTopicId:@"m_id1" uid:@"uid2" sequenceNumber:3];
-    Notification *nf3 = [self getNotificationWithTopicId:@"u_id2" uid:@"uid2" sequenceNumber:5];
+    Notification *nf1 = [self getNotificationWithTopicId:1 uid:@"uid1" sequenceNumber:5];
+    Notification *nf2 = [self getNotificationWithTopicId:2 uid:@"uid2" sequenceNumber:3];
+    Notification *nf3 = [self getNotificationWithTopicId:3 uid:@"uid2" sequenceNumber:5];
     
     [response1 setNotifications:
      [KAAUnion unionWithBranch:KAA_UNION_ARRAY_NOTIFICATION_OR_NULL_BRANCH_0 data:@[nf1, nf2, nf3]]];
@@ -116,13 +150,11 @@
 - (void)testOnNotificationResponse {
     id <KaaClientState> clientState = mockProtocol(@protocol(KaaClientState));
     id <NotificationProcessor> processor = mockProtocol(@protocol(NotificationProcessor));
-    [given([clientState notificationSequenceNumber]) willReturnInteger:2];
-    [given([clientState updateSubscriptionInfoForTopicId:anything() sequence:(int32_t)anything()]) willReturnBool:YES];
     
     NotificationSyncResponse *response = [self getNewNotificationResponseWithResponseStatus:SYNC_RESPONSE_STATUS_DELTA];
     
-    NSString *topicId1 = @"topicId1";
-    NSString *topicId2 = @"topicId2";
+    int64_t topicId1 = 1;
+    int64_t topicId2 = 2;
     
     id <KaaChannelManager> channelManager = mockProtocol(@protocol(KaaChannelManager));
     
@@ -166,7 +198,6 @@
 - (void)testFilterStaleNotification {
     id <KaaClientState> state = mockProtocol(@protocol(KaaClientState));
     id <NotificationProcessor> processor = mockProtocol(@protocol(NotificationProcessor));
-    [given([state updateSubscriptionInfoForTopicId:anything() sequence:(int)anything()]) willReturnBool:YES];
     
     NotificationSyncResponse *response = [self getNewNotificationResponseWithResponseStatus:SYNC_RESPONSE_STATUS_DELTA];
     
@@ -177,8 +208,8 @@
     [transport setNotificationProcessor:processor];
     [transport setClientState:state];
     
-    Notification *nf1 = [self getNotificationWithTopicId:@"u_id1" sequenceNumber:3];
-    Notification *nf2 = [self getNotificationWithTopicId:@"u_id1" sequenceNumber:3];
+    Notification *nf1 = [self getNotificationWithTopicId:1l sequenceNumber:3];
+    Notification *nf2 = [self getNotificationWithTopicId:1l sequenceNumber:3];
     
     NSArray *array = @[nf1, nf2];
     [response setNotifications:[KAAUnion unionWithBranch:KAA_UNION_ARRAY_NOTIFICATION_OR_NULL_BRANCH_0 data:array]];
@@ -212,11 +243,10 @@
 - (NotificationSyncResponse *)getNewNotificationResponseWithResponseStatus:(SyncResponseStatus)responseStatus {
     NotificationSyncResponse *response = [[NotificationSyncResponse alloc] init];
     response.responseStatus = responseStatus;
-    response.appStateSeqNumber = 3;
     return response;
 }
 
-- (Notification *)getNotificationWithTopicId:(NSString *)topicId uid:(NSString *)uid sequenceNumber:(int32_t)seqNumber {
+- (Notification *)getNotificationWithTopicId:(int64_t)topicId uid:(NSString *)uid sequenceNumber:(int32_t)seqNumber {
     Notification *notification = [[Notification alloc]init];
     notification.topicId = topicId;
     notification.uid = [KAAUnion unionWithBranch:KAA_UNION_STRING_OR_NULL_BRANCH_0 data:uid];
@@ -228,7 +258,7 @@
     return notification;
 }
 
-- (Notification *)getNotificationWithTopicId:(NSString *)topicId sequenceNumber:(int32_t)seqNumber {
+- (Notification *)getNotificationWithTopicId:(int64_t)topicId sequenceNumber:(int32_t)seqNumber {
     Notification *notification = [[Notification alloc]init];
     notification.topicId = topicId;
     notification.type = NOTIFICATION_TYPE_CUSTOM;

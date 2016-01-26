@@ -29,8 +29,6 @@
 @property(nonatomic, readonly) SecKeyRef publicKey;
 @property(nonatomic, strong, readonly) EndpointKeyHash *endpointKeyHash;
 @property(nonatomic) int32_t appStateSequenceNumber;
-@property(nonatomic) int32_t configSequenceNumber;
-@property(nonatomic) int32_t notificationSequenceNumber;
 @property(nonatomic, strong) EndpointObjectHash *profileHash;
 
 @property(nonatomic, strong) NSMutableDictionary *attachedEndpoints; //<EndpointAccessToken, EndpointKeyHash> as key-value
@@ -39,9 +37,9 @@
 @property(nonatomic) BOOL isAttachedToUser;
 
 - (void)addTopic:(Topic *)topic;
-- (void)removeTopicId:(NSString *)topicId;
-- (BOOL)updateSubscriptionInfoForTopicId:(NSString *)topicId sequence:(int32_t)sequenceNumber;
-- (NSDictionary *)getNotificationSubscriptions; //<NSString, int32_t> as key-value.
+- (void)removeTopicId:(int64_t)topicId;
+- (BOOL)updateSubscriptionInfoForTopicId:(int64_t)topicId sequence:(int32_t)sequenceNumber;
+- (NSDictionary *)getNotificationSubscriptions; //<int64_t, int32_t> as key-value.
 - (NSArray *)getTopics; //<Topic>
 - (int32_t)getAndIncrementEventSequenceNumber;
 - (BOOL)isConfigurationVersionUpdated;

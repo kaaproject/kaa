@@ -25,7 +25,7 @@
 /**
  * Called on each new notification.
  */
-- (void)onNotification:(KAADummyNotification *)notification withTopicId:(NSString *)topicId;
+- (void)onNotification:(KAADummyNotification *)notification withTopicId:(int64_t)topicId;
 
 @end
 

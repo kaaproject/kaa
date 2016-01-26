@@ -75,7 +75,7 @@
  *
  * @throws UnavailableTopicException if unknown topic id is provided.
  */
-- (void)addNotificationDelegate:(id<NotificationDelegate>)delegate forTopicId:(NSString *)topicId;
+- (void)addNotificationDelegate:(id<NotificationDelegate>)delegate forTopicId:(int64_t)topicId;
 
 /**
  * Remove listener receiving all notifications (both for mandatory and optional topics).
@@ -95,7 +95,7 @@
  *
  * @throws UnavailableTopicException if unknown topic id is provided.
  */
-- (void)removeNotificationDelegate:(id<NotificationDelegate>)delegate forTopicId:(NSString *)topicId;
+- (void)removeNotificationDelegate:(id<NotificationDelegate>)delegate forTopicId:(int64_t)topicId;
 
 /**
  * Subscribe to notifications relating to the specified optional topic.
@@ -107,7 +107,7 @@
  *
  * @see #sync
  */
-- (void)subscribeToTopicWithId:(NSString *)topicId forceSync:(BOOL)forceSync;
+- (void)subscribeToTopicWithId:(int64_t)topicId forceSync:(BOOL)forceSync;
 
 /**
  * Subscribe to notifications relating to the specified list of optional topics.
@@ -133,7 +133,7 @@
  *
  * @see #sync
  */
-- (void)unsubscribeFromTopicWithId:(NSString *)topicId forceSync:(BOOL)forceSync;
+- (void)unsubscribeFromTopicWithId:(int64_t)topicId forceSync:(BOOL)forceSync;
 
 /**
  * Unsubscribe from notifications relating to the specified list of optional topics.

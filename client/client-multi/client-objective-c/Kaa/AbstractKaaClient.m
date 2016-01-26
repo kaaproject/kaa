@@ -274,7 +274,7 @@
     [self.notificationManager addNotificationDelegate:delegate];
 }
 
-- (void)addNotificationDelegate:(id<NotificationDelegate>)delegate forTopicId:(NSString *)topicId {
+- (void)addNotificationDelegate:(id<NotificationDelegate>)delegate forTopicId:(int64_t)topicId {
     [self.notificationManager addNotificationDelegate:delegate forTopicId:topicId];
 }
 
@@ -282,15 +282,15 @@
     [self.notificationManager removeNotificationDelegate:delegate];
 }
 
-- (void)removeNotificationDelegate:(id<NotificationDelegate>)delegate forTopicId:(NSString *)topicId {
+- (void)removeNotificationDelegate:(id<NotificationDelegate>)delegate forTopicId:(int64_t)topicId {
     [self.notificationManager removeNotificationDelegate:delegate forTopicId:topicId];
 }
 
-- (void)subscribeToTopicWithId:(NSString *)topicId {
+- (void)subscribeToTopicWithId:(int64_t)topicId {
     [self subscribeToTopicWithId:topicId forceSync:FORSE_SYNC];
 }
 
-- (void)subscribeToTopicWithId:(NSString *)topicId forceSync:(BOOL)forceSync {
+- (void)subscribeToTopicWithId:(int64_t)topicId forceSync:(BOOL)forceSync {
     [self checkLifecycleState:CLIENT_LIFECYCLE_STATE_STARTED withErrorMessage:@"Kaa client isn't started"];
     [self.notificationManager subscribeToTopicWithId:topicId forceSync:forceSync];
 }
@@ -304,11 +304,11 @@
     [self.notificationManager subscribeToTopicsWithIDs:topicIds forceSync:forceSync];
 }
 
-- (void)unsubscribeFromTopicWithId:(NSString *)topicId {
+- (void)unsubscribeFromTopicWithId:(int64_t)topicId {
     [self unsubscribeFromTopicWithId:topicId forceSync:FORSE_SYNC];
 }
 
-- (void)unsubscribeFromTopicWithId:(NSString *)topicId forceSync:(BOOL)forceSync {
+- (void)unsubscribeFromTopicWithId:(int64_t)topicId forceSync:(BOOL)forceSync {
     [self checkLifecycleState:CLIENT_LIFECYCLE_STATE_STARTED withErrorMessage:@"Kaa client isn't started"];
     [self.notificationManager unsubscribeFromTopicWithId:topicId forceSync:forceSync];
 }

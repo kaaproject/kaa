@@ -269,7 +269,6 @@
 
 - (ConfigurationSyncResponse *)getConfigurationResponse {
     ConfigurationSyncResponse *response = [[ConfigurationSyncResponse alloc] init];
-    response.appStateSeqNumber = 1;
     response.responseStatus = SYNC_RESPONSE_STATUS_DELTA;
 
     return response;
@@ -277,7 +276,6 @@
 
 - (NotificationSyncResponse *)getNotificationSyncReponse {
     NotificationSyncResponse *response = [[NotificationSyncResponse alloc]init];
-    response.appStateSeqNumber = 1;
     response.responseStatus = SYNC_RESPONSE_STATUS_DELTA;
 
     return response;

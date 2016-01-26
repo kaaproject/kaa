@@ -49,9 +49,8 @@
         EndpointObjectHash *hash = [self.hashContainer getConfigurationHash];
         ConfigurationSyncRequest *request = [[ConfigurationSyncRequest alloc] init];
         if (hash.data) {
-            request.configurationHash = [KAAUnion unionWithBranch:KAA_UNION_BYTES_OR_NULL_BRANCH_0 data:hash.data];
+            request.configurationHash = hash.data;
         }
-        request.appStateSeqNumber = [self.clientState configSequenceNumber];
         request.resyncOnly = [KAAUnion unionWithBranch:KAA_UNION_BOOLEAN_OR_NULL_BRANCH_0 data:@(self.resyncOnly)];
         return request;
     } else {
@@ -65,7 +64,6 @@
         return;
     }
     
-    [self.clientState setConfigSequenceNumber:response.appStateSeqNumber];
     if (response.confSchemaBody && response.confSchemaBody.branch == KAA_UNION_BYTES_OR_NULL_BRANCH_0) {
         [self.schemaProc loadSchema:response.confSchemaBody.data];
     }
