@@ -24,24 +24,18 @@ import java.util.concurrent.TimeUnit;
 
 public class CustomCassandraCQLUnit extends CassandraCQLUnit {
 
-    private static long DEFAULT_CASSANDRA_TIMEOUT = 20000L;
-
-    private CQLDataSet dataSet;
-
+    private static long DEFAULT_CASSANDRA_TIMEOUT = 30000L;
 
     public CustomCassandraCQLUnit(CQLDataSet dataSet) {
         super(dataSet);
-        this.dataSet = dataSet;
     }
 
     public CustomCassandraCQLUnit(CQLDataSet dataSet, String configurationFileName) {
         super(dataSet, configurationFileName);
-        this.dataSet = dataSet;
     }
 
     public CustomCassandraCQLUnit(CQLDataSet dataSet, String configurationFileName, String hostIp, int port) {
         super(dataSet, configurationFileName, hostIp, port);
-        this.dataSet = dataSet;
     }
 
     @Override
