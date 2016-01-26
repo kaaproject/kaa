@@ -148,8 +148,6 @@ public class DefaultOperationsService implements OperationsService {
             LOG.trace("[{}][{}] fetched profile {}.", context.getEndpointKey(), context.getRequestHash(), profile);
         }
 
-        context.setEndpointProfile(profile);
-
         if (!Arrays.equals(profile.getProfileHash(), toByteArray(metaData.getProfileHash()))) {
             LOG.debug("[{}] Profile hash mismatch. Profile resync needed", context.getEndpointKey());
             if (LOG.isTraceEnabled()) {
@@ -161,7 +159,9 @@ public class DefaultOperationsService implements OperationsService {
             context.setStatus(SyncStatus.PROFILE_RESYNC);
         }
         
-        syncProfileState(metaData.getApplicationToken(), context.getEndpointKey(), profile, false);
+        profile = syncProfileState(metaData.getApplicationToken(), context.getEndpointKey(), profile, false);
+        
+        context.setEndpointProfile(profile);
 
         return context;
     }

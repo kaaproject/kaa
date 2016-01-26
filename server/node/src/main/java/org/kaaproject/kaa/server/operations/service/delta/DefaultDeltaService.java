@@ -166,10 +166,6 @@ public class DefaultDeltaService implements DeltaService {
         return response;
     }
 
-    private boolean isConfigurationUpToDate(GetDeltaRequest request, byte[] configurationHash) {
-        return request.getConfigurationHash() != null && request.getConfigurationHash().binaryEquals(configurationHash);
-    }
-
     private void logHashMismatch(GetDeltaRequest request, EndpointProfileDto profile, String endpointId) {
         if (profile.getConfigurationHash() != null && LOG.isWarnEnabled()) {
             String serverHash = "";
@@ -241,12 +237,13 @@ public class DefaultDeltaService implements DeltaService {
                                     deltaCache = calculateDelta(endpointId, deltaCalculator, endpointConfiguration, mergedConfiguration,
                                             userConfigurationHash);
                                 }
-                                if (cacheService.getConfByHash(deltaCache.getHash()) == null) {
-                                    EndpointConfigurationDto newConfiguration = new EndpointConfigurationDto();
-                                    newConfiguration.setConfiguration(deltaCache.getConfiguration());
-                                    newConfiguration.setConfigurationHash(deltaCache.getHash().getData());
-                                    cacheService.putConfiguration(deltaCache.getHash(), newConfiguration);
-                                }
+                            }
+                            
+                            if (cacheService.getConfByHash(deltaCache.getHash()) == null) {
+                                EndpointConfigurationDto newConfiguration = new EndpointConfigurationDto();
+                                newConfiguration.setConfiguration(deltaCache.getConfiguration());
+                                newConfiguration.setConfigurationHash(deltaCache.getHash().getData());
+                                cacheService.putConfiguration(deltaCache.getHash(), newConfiguration);
                             }
 
                             LOG.debug("[{}] Configuration hash for {} is {}", endpointId, deltaKey,

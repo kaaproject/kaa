@@ -208,43 +208,43 @@ public class DefaultNotificationDeltaServiceTest {
         profile.setSimpleTopicHash(130150);
         profile.setTopicHash(SHA1HashUtils.hashToBytes(T1 + "|" + T3 + "|" + T5));
 
-        EndpointGroupDto eg1 = new EndpointGroupDto();
-        eg1.setId(EG1);
-        eg1.setTopics(Collections.singletonList(T1));
-        EndpointGroupDto eg2 = new EndpointGroupDto();
-        eg2.setId(EG2);
-        List<String> topicIds = new ArrayList<>();
-        topicIds.add(T3);
-        topicIds.add(T5);
-        eg2.setTopics(topicIds);
-        EndpointGroupDto eg3 = new EndpointGroupDto();
-        eg3.setId(EG3);
-        TopicDto t1 = new TopicDto();
-        t1.setId(T1);
-        t1.setName(T1);
-        t1.setType(TopicTypeDto.MANDATORY);
-        TopicDto t3 = new TopicDto();
-        t3.setId(T3);
-        t3.setName(T3);
-        t3.setType(TopicTypeDto.OPTIONAL);
-        TopicDto t5 = new TopicDto();
-        t5.setId(T5);
-        t5.setName(T5);
-        t5.setType(TopicTypeDto.MANDATORY);
-
-        Mockito.when(cacheService.getEndpointGroupById(EG1)).thenReturn(eg1);
-        Mockito.when(cacheService.getEndpointGroupById(EG2)).thenReturn(eg2);
-        Mockito.when(cacheService.getEndpointGroupById(EG3)).thenReturn(eg3);
-        Mockito.when(cacheService.getTopicById(T1)).thenReturn(t1);
-        Mockito.when(cacheService.getTopicById(T3)).thenReturn(t3);
-        Mockito.when(cacheService.getTopicById(T5)).thenReturn(t5);
-
-        Mockito.when(endpointService.findEndpointGroupById(EG1)).thenReturn(eg1);
-        Mockito.when(endpointService.findEndpointGroupById(EG2)).thenReturn(eg2);
-        Mockito.when(endpointService.findEndpointGroupById(EG3)).thenReturn(eg3);
-        Mockito.when(topicService.findTopicById(T1)).thenReturn(t1);
-        Mockito.when(topicService.findTopicById(T3)).thenReturn(t3);
-        Mockito.when(topicService.findTopicById(T5)).thenReturn(t5);
+//        EndpointGroupDto eg1 = new EndpointGroupDto();
+//        eg1.setId(EG1);
+//        eg1.setTopics(Collections.singletonList(T1));
+//        EndpointGroupDto eg2 = new EndpointGroupDto();
+//        eg2.setId(EG2);
+//        List<String> topicIds = new ArrayList<>();
+//        topicIds.add(T3);
+//        topicIds.add(T5);
+//        eg2.setTopics(topicIds);
+//        EndpointGroupDto eg3 = new EndpointGroupDto();
+//        eg3.setId(EG3);
+//        TopicDto t1 = new TopicDto();
+//        t1.setId(T1);
+//        t1.setName(T1);
+//        t1.setType(TopicTypeDto.MANDATORY);
+//        TopicDto t3 = new TopicDto();
+//        t3.setId(T3);
+//        t3.setName(T3);
+//        t3.setType(TopicTypeDto.OPTIONAL);
+//        TopicDto t5 = new TopicDto();
+//        t5.setId(T5);
+//        t5.setName(T5);
+//        t5.setType(TopicTypeDto.MANDATORY);
+//
+//        Mockito.when(cacheService.getEndpointGroupById(EG1)).thenReturn(eg1);
+//        Mockito.when(cacheService.getEndpointGroupById(EG2)).thenReturn(eg2);
+//        Mockito.when(cacheService.getEndpointGroupById(EG3)).thenReturn(eg3);
+//        Mockito.when(cacheService.getTopicById(T1)).thenReturn(t1);
+//        Mockito.when(cacheService.getTopicById(T3)).thenReturn(t3);
+//        Mockito.when(cacheService.getTopicById(T5)).thenReturn(t5);
+//
+//        Mockito.when(endpointService.findEndpointGroupById(EG1)).thenReturn(eg1);
+//        Mockito.when(endpointService.findEndpointGroupById(EG2)).thenReturn(eg2);
+//        Mockito.when(endpointService.findEndpointGroupById(EG3)).thenReturn(eg3);
+//        Mockito.when(topicService.findTopicById(T1)).thenReturn(t1);
+//        Mockito.when(topicService.findTopicById(T3)).thenReturn(t3);
+//        Mockito.when(topicService.findTopicById(T5)).thenReturn(t5);
 
         NotificationDto t1Nf43 = new NotificationDto();
         t1Nf43.setId(T1NF43);
@@ -266,17 +266,13 @@ public class DefaultNotificationDeltaServiceTest {
                 topicStates);
         GetNotificationResponse response = notificationDeltaService.getNotificationDelta(request);
 
-        Mockito.verify(cacheService).getEndpointGroupById(EG1);
-        Mockito.verify(cacheService).getEndpointGroupById(EG2);
-        Mockito.verify(cacheService).getEndpointGroupById(EG3);
-
-        Mockito.verify(cacheService).getTopicById(T1);
-        Mockito.verify(cacheService).getTopicById(T3);
-        Mockito.verify(cacheService).getTopicById(T5);
-
+//        Mockito.verify(cacheService).getTopicById(T1);
+//        Mockito.verify(cacheService).getTopicById(T3);
+//        Mockito.verify(cacheService).getTopicById(T5);
+//
         Mockito.verify(notificationService).findNotificationsByTopicIdAndVersionAndStartSecNum(T1, 42, 0, 0);
         Mockito.verify(notificationService).findNotificationsByTopicIdAndVersionAndStartSecNum(T2, 0, 0, 0);
-        Mockito.verify(notificationService).findNotificationsByTopicIdAndVersionAndStartSecNum(T5, 0, 0, 0);
+//        Mockito.verify(notificationService).findNotificationsByTopicIdAndVersionAndStartSecNum(T5, 0, 0, 0);
 
         Mockito.verify(notificationService).removeUnicastNotificationById(PNF_ID_1);
 
@@ -286,13 +282,11 @@ public class DefaultNotificationDeltaServiceTest {
         Assert.assertEquals(T1NF43, response.getNotifications().get(0).getId());
         Assert.assertEquals(PNF_ID_2, response.getNotifications().get(1).getId());
         Assert.assertNotNull(response.getSubscriptionStates());
-        Assert.assertEquals(3, response.getSubscriptionStates().size());
+        Assert.assertEquals(2, response.getSubscriptionStates().size());
         Assert.assertEquals(new Integer(43), response.getSubscriptionStates().get(T1));
         Assert.assertEquals(new Integer(0), response.getSubscriptionStates().get(T2));
-        Assert.assertEquals(new Integer(0), response.getSubscriptionStates().get(T5));
         // no changes in topic list means null
-        Assert.assertNotNull(response.getTopicList());
-        Assert.assertEquals(3, response.getTopicList().size());
+        Assert.assertNull(response.getTopicList());
     }
 
 }

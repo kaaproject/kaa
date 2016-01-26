@@ -670,6 +670,8 @@ public class DefaultAkkaServiceTest {
         request.setSyncRequestMetaData(md);
 
         ConfigurationSyncRequest csRequest = new ConfigurationSyncRequest();
+        csRequest.setConfigurationHash(ByteBuffer.wrap(new byte[]{}));
+        csRequest.setResyncOnly(true);
         request.setConfigurationSyncRequest(csRequest);
 
         Mockito.when(cacheService.getEndpointKey(EndpointObjectHash.fromBytes(clientPublicKeyHash.array()))).thenReturn(
