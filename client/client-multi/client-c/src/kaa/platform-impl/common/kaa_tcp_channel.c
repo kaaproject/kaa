@@ -1202,6 +1202,40 @@ bool is_service_pending(kaa_tcp_channel_t *self, const kaa_service_t service)
 }
 
 
+/* Appends destination array with only new members from source array.
+ * Capacity is a maximum amount of items that can be stored in the destination
+ * array. Destination count is a current amount of items in destination array.
+ *
+ * Returns new array count.
+ */
+static size_t append_with_new_services(kaa_service_t *dest,
+                                       size_t dest_count,
+                                       size_t dest_capacity,
+                                       const kaa_service_t *src,
+                                       size_t src_count)
+{
+    for (size_t i = 0; i < src_count; ++i) {
+        bool found = false;
+        for (size_t j = 0; j < dest_count; ++j) {
+            if (src[i] == dest[j]) {
+                found = true;
+                break;
+            }
+        }
+
+        /* Only add new services that doesn't yet exist in destination array */
+        if (!found) {
+            dest[dest_count++] = src[i];
+        }
+
+        /* No more empty space in array */
+        if (dest_count == dest_capacity) {
+            break;
+        }
+    }
+
+    return dest_count;
+}
 
 /*
  * Delete specified services from pending list.
@@ -1229,25 +1263,14 @@ kaa_error_t kaa_tcp_channel_delete_pending_services(kaa_tcp_channel_t *self
         return KAA_ERR_NONE;
     }
 
-    bool found;
     size_t new_service_count = 0;
     kaa_service_t temp_new_services[self->pending_request_service_count];
 
-    size_t pending_i = 0;
-    for (; pending_i < self->pending_request_service_count; ++pending_i) {
-        found = false;
-        size_t deleting_i = 0;
-        for (; deleting_i < service_count; ++deleting_i) {
-            if (self->pending_request_services[pending_i] == services[deleting_i]) {
-                found = true;
-                break;
-            }
-        }
-
-        if (!found) {
-            temp_new_services[new_service_count++] = self->pending_request_services[pending_i];
-        }
-    }
+    new_service_count = append_with_new_services(temp_new_services,
+                                                 new_service_count,
+                                                 self->pending_request_service_count,
+                                                 self->pending_request_services,
+                                                 self->pending_request_service_count);
 
     KAA_FREE(self->pending_request_services); //free previous pending services array.
     self->pending_request_services = NULL;
@@ -1295,22 +1318,11 @@ kaa_error_t kaa_tcp_channel_update_pending_services(kaa_tcp_channel_t *self
         self->pending_request_service_count = 0;
     }
 
-    bool found;
-    size_t updating_i = 0;
-    for (; updating_i < service_count; ++updating_i) {
-        found = false;
-        size_t pending_i = 0;
-        for (; pending_i < new_service_count; ++pending_i) {
-            if (services[updating_i] == temp_new_services[pending_i]) {
-                found = true;
-                break;
-            }
-        }
-
-        if (!found) {
-            temp_new_services[new_service_count++] = services[updating_i];
-        }
-    }
+    new_service_count = append_with_new_services(temp_new_services,
+                                                 new_service_count,
+                                                 self->pending_request_service_count + service_count,
+                                                 services,
+                                                 service_count);
 
     self->pending_request_services = (kaa_service_t *)
                             KAA_MALLOC(new_service_count * sizeof(kaa_service_t));
