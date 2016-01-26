@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDataDto;
@@ -31,11 +30,11 @@ import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.dao.CTLService;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogAppender;
-import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryCallback;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogSchema;
 import org.kaaproject.kaa.server.common.log.shared.appender.data.BaseLogEventPack;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.logs.AbstractActorCallback;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.logs.LogEventPackMessage;
 import org.kaaproject.kaa.server.operations.service.cache.AppVersionKey;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
@@ -83,7 +82,6 @@ public class ApplicationLogActorMessageProcessorTest {
     private CacheService cacheService;
     private CTLService ctlService;
 
-    private ActorRef sender;
     private LogEventPackMessage message;
 
     @Before
@@ -159,10 +157,9 @@ public class ApplicationLogActorMessageProcessorTest {
         Mockito.when(this.context.getLogAppenderService()).thenReturn(this.logAppenderService);
 
         // Log event pack message
-        this.sender = Mockito.mock(ActorRef.class);
         EndpointProfileDataDto endpoint = new EndpointProfileDataDto(ENDPOINT_ID, ENDPOINT_KEY, CLIENT_PROFILE_SCHEMA_ID, "", SERVER_PROFILE_SCHEMA_ID, "");
         BaseLogEventPack pack = new BaseLogEventPack(endpoint, System.currentTimeMillis(), LOG_SCHEMA_VERSION, new ArrayList<LogEvent>());
-        this.message = new LogEventPackMessage(REQUEST_ID, this.sender, pack);
+        this.message = new LogEventPackMessage(REQUEST_ID, ActorRef.noSender(), pack);
     }
 
     /**
@@ -171,7 +168,6 @@ public class ApplicationLogActorMessageProcessorTest {
      * @throws Exception
      */
     @Test
-    @Ignore
     public void worksAsIntendedTest() throws Exception {
 
         this.logAppenders.add(this.required);
@@ -180,9 +176,8 @@ public class ApplicationLogActorMessageProcessorTest {
         ApplicationLogActorMessageProcessor messageProcessor = new ApplicationLogActorMessageProcessor(this.context, APPLICATION_TOKEN);
         messageProcessor.processLogEventPack(Mockito.mock(ActorContext.class), this.message);
 
-        Mockito.verify(this.required).doAppend(Mockito.eq(this.message.getLogEventPack()), Mockito.any(LogDeliveryCallback.class));
-        Mockito.verify(this.optional).doAppend(Mockito.eq(this.message.getLogEventPack()), Mockito.any(LogDeliveryCallback.class));
-        // Mockito.verify(this.sender).tell(new LogDeliveryMessage(REQUEST_ID, true), ActorRef.noSender());
+        Mockito.verify(this.required).doAppend(Mockito.eq(this.message.getLogEventPack()), Mockito.any(AbstractActorCallback.class));
+        Mockito.verify(this.optional).doAppend(Mockito.eq(this.message.getLogEventPack()), Mockito.any(AbstractActorCallback.class));
     }
 
     /**
@@ -202,7 +197,6 @@ public class ApplicationLogActorMessageProcessorTest {
         messageProcessor.processLogEventPack(Mockito.mock(ActorContext.class), this.message);
 
         // Nonetheless, a response has been sent
-        Mockito.verify(this.optional).doAppend(Mockito.eq(this.message.getLogEventPack()), Mockito.any(LogDeliveryCallback.class));
-        // Mockito.verify(this.sender).tell(new LogDeliveryMessage(REQUEST_ID, true), ActorRef.noSender());
+        Mockito.verify(this.optional).doAppend(Mockito.eq(this.message.getLogEventPack()), Mockito.any(AbstractActorCallback.class));
     }
 }
