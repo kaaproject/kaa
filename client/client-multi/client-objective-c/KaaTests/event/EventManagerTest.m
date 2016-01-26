@@ -211,7 +211,7 @@
     
     XCTAssertNotNil([request eventListenersRequests]);
     XCTAssertEqual(2, [request.eventListenersRequests.data count]);
-    XCTAssertEqualObjects(eventFQNs[0], [[request.eventListenersRequests.data[0] eventClassFQNs] objectAtIndex:0]);
+    XCTAssertEqualObjects(eventFQNs[0], [[request.eventListenersRequests.data[0] eventClassFQNs] firstObject]);
 }
 
 - (void)testEventListenersSyncRequestResponse {

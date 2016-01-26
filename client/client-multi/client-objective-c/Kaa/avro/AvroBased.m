@@ -27,10 +27,12 @@
 }
 
 - (void)serialize:(avro_writer_t)writer {
+#pragma unused (writer)
     [NSException raise:NSInternalInconsistencyException format:@"Not implemented"];
 }
 
 - (void)deserialize:(avro_reader_t)reader {
+#pragma unused (reader)
     [NSException raise:NSInternalInconsistencyException format:@"Not implemented"];
 }
 

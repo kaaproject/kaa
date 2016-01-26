@@ -134,11 +134,14 @@
 }
 
 - (void)attachUserWithId:(NSString *)userExternalId userAccessToken:(NSString *)token delegate:(id<UserAttachDelegate>)delegate {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunreachable-code"
     if (DEFAULT_USER_VERIFIER_TOKEN != nil) {
         [self attachUserWithVerifierToken:DEFAULT_USER_VERIFIER_TOKEN userExternalId:userExternalId userAccessToken:token delegate:delegate];
     } else {
         [NSException raise:KaaIllegalStateException format:@"Default user verifier was not defined during SDK generation process!"];
     }
+#pragma clang diagnostic pop
 }
 
 - (void)attachUserWithVerifierToken:(NSString *)userVerifierToken
@@ -164,17 +167,16 @@
     
     if (userResponse) {
         if (self.userAttachDelegate) {
-            __block id<UserAttachDelegate> delegate = self.userAttachDelegate;
-            __weak typeof(self)weakSelf = self;
+            id<UserAttachDelegate> delegate = self.userAttachDelegate;
             [[self.context getCallbackExecutor] addOperationWithBlock:^{
                 [delegate onAttachResult:userResponse];
             }];
-            weakSelf.userAttachDelegate = nil;
+            self.userAttachDelegate = nil;
         }
         if (userResponse.result == SYNC_RESPONSE_RESULT_TYPE_SUCCESS) {
             [self.state setIsAttachedToUser:YES];
             if (self.attachEndpointToUserDelegate && self.userAttachRequest) {
-                __block UserAttachRequest *request = self.userAttachRequest;
+                UserAttachRequest *request = self.userAttachRequest;
                 __weak typeof(self)weakSelf = self;
                 [[self.context getCallbackExecutor] addOperationWithBlock:^{
                     [weakSelf.attachEndpointToUserDelegate onAttachedToUser:request.userExternalId token:[weakSelf.state endpointAccessToken]];

@@ -24,11 +24,11 @@
 @implementation HttpRequestCreator
 
 + (NSDictionary *)createBootstrapHttpRequest:(NSData *)body withEncoderDecoder:(MessageEncoderDecoder *)messageEncDec {
-    return [HttpRequestCreator createHttpRequest:body withEncoderDecoder:messageEncDec sign:NO];
+    return [self createHttpRequest:body withEncoderDecoder:messageEncDec sign:NO];
 }
 
 + (NSDictionary *)createOperationHttpRequest:(NSData *)body withEncoderDecoder:(MessageEncoderDecoder *)messageEncDec {
-    return [HttpRequestCreator createHttpRequest:body withEncoderDecoder:messageEncDec sign:YES];
+    return [self createHttpRequest:body withEncoderDecoder:messageEncDec sign:YES];
 }
 
 + (NSDictionary *)createHttpRequest:(NSData *)body withEncoderDecoder:(MessageEncoderDecoder *)messageEncDec sign:(BOOL)sign {

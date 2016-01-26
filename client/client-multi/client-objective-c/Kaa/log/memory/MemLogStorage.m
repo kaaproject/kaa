@@ -112,9 +112,10 @@
         self.recordCount++;
         self.consumedVolume += [record getSize];
     }
-    return [[BucketInfo alloc] initWithBucketId:self.currentBucket.bucketId logCount:[self.currentBucket getCount]];
     
     DDLogVerbose(@"%@ Added a new log record to bucket with id [%i]", TAG, [self.currentBucket bucketId]);
+    
+    return [[BucketInfo alloc] initWithBucketId:self.currentBucket.bucketId logCount:[self.currentBucket getCount]];
 }
 
 - (LogBucket *)getNextBucket {

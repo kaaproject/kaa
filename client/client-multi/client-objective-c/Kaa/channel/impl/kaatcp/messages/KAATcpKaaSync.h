@@ -73,7 +73,7 @@ typedef enum {
  * BOOTSTRAP  2             Bootstrap resolve/response
  */
 
-#define KAASYNC_VERIABLE_HEADER_LENGTH_V1 12
+#define KAASYNC_VARIABLE_HEADER_LENGTH_V1 12
 
 #define KAASYNC_REQUEST_FLAG    0x01
 #define KAASYNC_ZIPPED_FLAG     0x02

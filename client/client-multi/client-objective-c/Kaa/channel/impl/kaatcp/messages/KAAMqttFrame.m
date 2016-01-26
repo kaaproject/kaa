@@ -99,9 +99,9 @@
 
 - (void)processByte:(char)byte {
     if (self.currentState == FRAME_PARSING_STATE_PROCESSING_LENGTH) {
-        self.remainingLength += ((byte & 0xFF) & 127) * self.multiplier;
+        self.remainingLength += (byte & 127) * self.multiplier;
         self.multiplier *= 128;
-        if (((byte & 0xFF) & 128) == 0) {
+        if ((byte & 128) == 0) {
             DDLogVerbose(@"%@ Frame [%i]: payload length: %i", TAG, self.messageType, self.remainingLength);
             if (self.remainingLength != 0) {
                 self.buffer = [NSMutableData dataWithCapacity:self.remainingLength];

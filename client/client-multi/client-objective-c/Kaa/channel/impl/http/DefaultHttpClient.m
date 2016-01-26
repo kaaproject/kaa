@@ -67,8 +67,10 @@
                       }];
     self.operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
     [self.operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+#pragma unused(operation, responseObject)
         DDLogVerbose(@"%@ Successfully processed request", TAG);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+#pragma unused(operation)
         DDLogError(@"%@ Error processing request: %@", TAG, error);
     }];
     [self.client enqueueHTTPRequestOperation:self.operation];
@@ -111,7 +113,7 @@
     NSData *result = nil;
     if (verify) {
         NSDictionary *headers = response.response.allHeaderFields;
-        DDLogVerbose(@"%@ %@", TAG, [headers description]);
+        DDLogVerbose(@"%@ %@", TAG, headers);
         NSString *signatureHeader = headers[SIGNATURE_HEADER_NAME];
         if (!signatureHeader) {
             [NSException raise:KaaIOException format:@"Can't verify message"];

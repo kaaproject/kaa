@@ -41,7 +41,13 @@
         self.pendingEvents = [NSMutableDictionary dictionary];
         
         self.eventSequenceNumberComparator = ^NSComparisonResult (Event *first, Event *second) {
-            return first.seqNum - second.seqNum;
+            if (first.seqNum > second.seqNum) {
+                return NSOrderedDescending;
+            }
+            if (first.seqNum < second.seqNum) {
+                return NSOrderedAscending;
+            }
+            return NSOrderedSame;
         };
     }
     return self;
@@ -112,9 +118,9 @@
             NSArray *sortedEvents = [[eventsSet allObjects] sortedArrayUsingComparator:self.eventSequenceNumberComparator];
             
             [self.kaaClientState setEventSequenceNumber:(self.startEventSequenceNumber + [sortedEvents count])];
-            if ([sortedEvents count] > 0 && ((Event *)[sortedEvents objectAtIndex:0]).seqNum != self.startEventSequenceNumber) {
+            if ([sortedEvents count] > 0 && [(Event *)sortedEvents.firstObject seqNum] != self.startEventSequenceNumber) {
                 DDLogInfo(@"%@ Put in order event sequence numbers (expected: %i, actual: %i)",
-                          TAG, self.startEventSequenceNumber, ((Event *)[sortedEvents objectAtIndex:0]).seqNum);
+                          TAG, self.startEventSequenceNumber, [(Event *)sortedEvents.firstObject seqNum]);
                 for (Event *event in sortedEvents) {
                     event.seqNum = self.startEventSequenceNumber++;
                 }
@@ -157,7 +163,6 @@
     self.kaaEventManager = eventManager;
 }
 
-//TODO revisit for performance improvement (inner cycles)
 - (void)onSyncResposeIdReceived:(int32_t)requestId {
     DDLogDebug(@"%@ Events sent with request id %li were accepted", TAG, (long)requestId);
     NSNumber *key = @(requestId);
@@ -167,17 +172,13 @@
         NSMutableArray *discardedItems = [NSMutableArray array];
         for (NSNumber *key in self.pendingEvents.allKeys) {
             NSMutableSet *value = self.pendingEvents[key];
-            for (Event *acceptedEvent in acceptedEvents) {
-                [value removeObject:acceptedEvent];
-            }
+            [value minusSet:acceptedEvents];
             if ([value count] == 0) {
                 DDLogDebug(@"%@ Remove entry for request with id: %li", TAG, (long)requestId);
                 [discardedItems addObject:key];
             }
         }
-        for (NSNumber *key in discardedItems) {
-            [self.pendingEvents removeObjectForKey:key];
-        }
+        [self.pendingEvents removeObjectsForKeys:discardedItems];
     }
 }
 

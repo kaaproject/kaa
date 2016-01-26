@@ -23,17 +23,6 @@
 
 @implementation DefaultLogCollector
 
-- (instancetype)initWithTransport:(id<LogTransport>)transport
-                  executorContext:(id<ExecutorContext>)executorContext
-                   channelManager:(id<KaaChannelManager>)channelManager
-                  failoverManager:(id<FailoverManager>)failoverManager {
-    self = [super initWithTransport:transport
-                    executorContext:executorContext
-                     channelManager:channelManager
-                    failoverManager:failoverManager];
-    return self;
-}
-
 - (BucketRunner *)addLogRecord:(${log_record_class} *)record {
     @synchronized(self) {
         BucketRunner *runner = [[BucketRunner alloc] init];
@@ -41,8 +30,8 @@
         [[self.executorContext getApiExecutor] addOperationWithBlock:^{
             @try {
                 BucketInfo *bucketInfo = [weakSelf.storage addLogRecord:[[LogRecord alloc] initWithRecord:record]];
-                self.bucketInfoDictionary[@(bucketInfo.bucketId)] = bucketInfo;
-                [self addDeliveryRunner:runner bucketInfo:bucketInfo];
+                weakSelf.bucketInfoDictionary[@(bucketInfo.bucketId)] = bucketInfo;
+                [weakSelf addDeliveryRunner:runner bucketInfo:bucketInfo];
             }
             @catch (NSException *exception) {
                 DDLogWarn(@"%@ Can't serialize log record: %@", TAG, record);

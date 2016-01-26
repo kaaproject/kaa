@@ -69,11 +69,11 @@
 @implementation DefaultChannelManager
 
 - (instancetype)initWithBootstrapManager:(id<BootstrapManager>)bootstrapMgr
-        bootstrapServers:(NSDictionary *)servers
-                 context:(id<ExecutorContext>)context {
+                        bootstrapServers:(NSDictionary *)servers
+                                 context:(id<ExecutorContext>)context {
     self = [super init];
     if (self) {
-        if (!bootstrapMgr || !servers || [servers count] <= 0) {
+        if (!bootstrapMgr || !servers || [servers count] == 0) {
             [NSException raise:KaaChannelRuntimeException format:@"Failed to create channel manager!"];
         }
         
@@ -263,7 +263,7 @@
                     case FAILOVER_ACTION_STOP_APP:
                         DDLogWarn(@"%@ Stopping application according to failover strategy decision!", TAG);
                         exit(EXIT_FAILURE);
-                        //TODO review how to exit application
+                        //TODO: review how to exit application
                         break;
                     default:
                         break;
@@ -289,7 +289,7 @@
                     case FAILOVER_ACTION_STOP_APP:
                         DDLogWarn(@"%@ Stopping application according to failover strategy decision!", TAG);
                         exit(EXIT_FAILURE);
-                        //TODO review how to exit application
+                        //TODO: review how to exit application
                         break;
                     default:
                         break;
@@ -516,7 +516,7 @@
     if (!bsi) {
         NSArray *serverList = self.bootststrapServers[protocolId];
         if (serverList && [serverList count] > 0) {
-            bsi = [serverList objectAtIndex:0];
+            bsi = serverList.firstObject;
             self.lastBootstrapServers[protocolId] = bsi;
         }
     }
@@ -531,7 +531,7 @@
         if (++serverIndex == [serverList count]) {
             serverIndex = 0;
         }
-        bsi = [serverList objectAtIndex:serverIndex];
+        bsi = serverList[serverIndex];
         self.lastBootstrapServers[[currentServer transportId]] = bsi;
     }
     return bsi;

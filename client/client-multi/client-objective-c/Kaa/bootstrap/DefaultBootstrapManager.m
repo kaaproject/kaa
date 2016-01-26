@@ -118,7 +118,7 @@
         [self.mappedOperationServerList removeAllObjects];
         [self.mappedIterators removeAllObjects];
         
-        if (!self.operationsServerList || [self.operationsServerList count] <= 0) {
+        if (!self.operationsServerList || [self.operationsServerList count] == 0) {
             DDLogVerbose(@"%@ Received empty operations server list", TAG);
             FailoverDecision *decision = [self.failoverManager decisionOnFailoverStatus:FAILOVER_STATUS_NO_OPERATION_SERVERS_RECEIVED];
             [self applyDecision:decision];
@@ -164,7 +164,7 @@
 }
 
 - (NSMutableArray *)getTransportsByAccessPointId:(int)accessPointId {
-    if (!self.operationsServerList || [self.operationsServerList count] <= 0) {
+    if (!self.operationsServerList || [self.operationsServerList count] == 0) {
         [NSException raise:KaaBootstrapRuntimeException format:@"Operations Server list is empty"];
     }
     NSMutableArray *result = [NSMutableArray array];
@@ -220,7 +220,7 @@
         case FAILOVER_ACTION_STOP_APP:
         {
             DDLogWarn(@"%@ Stopping application as to failover strategy decision!", TAG);
-            //TODO Applications that use exit(..) are rejected by AppStore thus there should be found another way to exit
+            //TODO: Applications that use exit(..) are rejected by AppStore thus there should be found another way to exit
             exit(EXIT_FAILURE);
         }
             break;

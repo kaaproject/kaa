@@ -72,7 +72,7 @@ static const uint8_t remotePublicKeyIdentifier[] = "org.kaaproject.kaa.remotepub
 - (NSData *)getSessionKey {
     if (!self.sessionKey) {
         OSStatus sanityCheck = noErr;
-        uint8_t * symmetricKey = malloc( SESSION_KEY_SIZE * sizeof(uint8_t) );
+        uint8_t * symmetricKey = malloc(SESSION_KEY_SIZE * sizeof(uint8_t));
         
         if (symmetricKey == NULL) {
             DDLogError(@"%@ Problem allocating buffer space for symmetric key generation.", TAG);
@@ -112,7 +112,7 @@ static const uint8_t remotePublicKeyIdentifier[] = "org.kaaproject.kaa.remotepub
         DDLogWarn(@"%@ Nonce integer is too large and falls outside multiplicative group", TAG);
     }
     
-    uint8_t *cipherBuffer = malloc( cipherBufferSize * sizeof(uint8_t) );
+    uint8_t *cipherBuffer = malloc(cipherBufferSize * sizeof(uint8_t));
     memset((void *)cipherBuffer, 0x0, cipherBufferSize);
     
     sanityCheck = SecKeyEncrypt(self.remoteKey,
@@ -187,7 +187,7 @@ static const uint8_t remotePublicKeyIdentifier[] = "org.kaaproject.kaa.remotepub
         DDLogWarn(@"%@ Encrypted nonce is too large and falls outside multiplicative group.", TAG);
     }
     
-    uint8_t *keyBuffer = malloc( keyBufferSize * sizeof(uint8_t) );
+    uint8_t *keyBuffer = malloc(keyBufferSize * sizeof(uint8_t));
     memset((void *)keyBuffer, 0x0, keyBufferSize);
     
     sanityCheck = SecKeyDecrypt([self getPrivateKey],

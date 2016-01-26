@@ -26,7 +26,7 @@
 
 @property (nonatomic, strong) id<KaaClientPlatformContext> context;
 @property (nonatomic, strong) NSString *path;
-@property (nonatomic, strong) NSFileManager *fileManager;
+@property (nonatomic, readonly) NSFileManager *fileManager;
 
 @end
 
@@ -37,9 +37,12 @@
     if (self) {
         self.context = context;
         self.path = path;
-        self.fileManager = [NSFileManager defaultManager];
     }
     return self;
+}
+
+- (NSFileManager *)fileManager {
+    return [NSFileManager defaultManager];
 }
 
 - (void)saveConfiguration:(NSData *)buffer {

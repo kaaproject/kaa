@@ -43,7 +43,8 @@
 
 @implementation AbstractHttpChannel
 
-- (instancetype)initWithClient:(AbstractKaaClient *)client state:(id<KaaClientState>)state
+- (instancetype)initWithClient:(AbstractKaaClient *)client
+                         state:(id<KaaClientState>)state
                failoverManager:(id<FailoverManager>)manager {
     self = [super init];
     if (self) {
@@ -134,6 +135,7 @@
 }
 
 - (void)syncAckForTransportTypes:(NSSet *)types {
+#pragma unused(types)
     DDLogInfo(@"%@ Sync ack message is ignored for Channel with id: %@", TAG, [self getId]);
 }
 
@@ -182,6 +184,7 @@
 }
 
 - (void)setConnectivityChecker:(ConnectivityChecker *)checker {
+#pragma unused (checker)
     DDLogInfo(@"%@ Ignore set connectivity checker", TAG);
 }
 
@@ -271,6 +274,7 @@
 }
 
 - (NSOperation *)createChannelRunnerWithTypes:(NSDictionary *)types {
+#pragma unused(types)
     [NSException raise:NSInternalInconsistencyException format:@"Not implemented in abstract class"];
     return nil;
 }

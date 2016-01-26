@@ -31,7 +31,7 @@
  * Assumes that bytes are unprocessed bytes.
  * In case of previous #pushBytes eaten not all bytes on next iterations
  *  bytes array should start from unprocessed bytes.
- * @param bytes bytes to push
+ * @param data bytes to push
  * @return number of bytes processed from this array.
  * @throws KaaTcpProtocolException throws in case of protocol errors.
  */

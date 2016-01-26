@@ -37,11 +37,11 @@
 }
 
 + (instancetype)unionWithBranch:(int)branch data:(id)data {
-    return [[KAAUnion alloc] initWithBranch:branch data:data];
+    return [[self alloc] initWithBranch:branch data:data];
 }
 
 + (instancetype)unionWithBranch:(int)branch {
-    return [[KAAUnion alloc] initWithBranch:branch];
+    return [[self alloc] initWithBranch:branch];
 }
 
 - (NSString *)description {

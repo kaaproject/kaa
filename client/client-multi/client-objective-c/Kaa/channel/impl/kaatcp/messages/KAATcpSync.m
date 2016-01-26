@@ -69,7 +69,7 @@
 
 - (void)setAvroObject:(NSData *)avroObject {
     _avroObject = avroObject;
-    self.remainingLength = KAASYNC_VERIABLE_HEADER_LENGTH_V1 + avroObject.length;
+    self.remainingLength = KAASYNC_VARIABLE_HEADER_LENGTH_V1 + avroObject.length;
 }
 
 @end

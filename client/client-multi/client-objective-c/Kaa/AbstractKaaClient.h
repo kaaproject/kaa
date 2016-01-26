@@ -87,10 +87,10 @@ typedef enum {
 - (DefaultLogCollector *)buildLogCollectorWithTransportContext:(TransportContext *)context;
 
 - (DefaultEndpointRegistrationManager *)buildRegistrationManagerWithClientState:(id<KaaClientState>)state
-                                                              transportContext:(TransportContext *)context;
+                                                               transportContext:(TransportContext *)context;
 
 - (DefaultEventManager *)buildEventManagerWithClientState:(id<KaaClientState>)state
-                                        transportContext:(TransportContext *)context;
+                                         transportContext:(TransportContext *)context;
 
 - (DefaultNotificationManager *)buildNotificationManagerWithClientState:(id<KaaClientState>)state
                                                       transportContext:(TransportContext *)context;

@@ -83,6 +83,7 @@
 }
 
 - (NSOperation *)createChannelRunnerWithTypes:(NSDictionary *)types {
+#pragma unused(types)
     return [[BootstrapRunner alloc] initWithChannel:self];
 }
 

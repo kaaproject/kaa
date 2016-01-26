@@ -64,7 +64,6 @@ $initstring {
 
 ###if ($TypeConverter.isTypeOut($schema))
 - (void)serialize:(avro_writer_t)writer {
-#if ($schema.getFields().size() > 0)
 #foreach ($field in $schema.getFields())
 #set ($field_name = $field.name())
 #set ($field_schema = $field.schema())
@@ -119,6 +118,8 @@ $initstring {
     #end
 #end
 #end
+#if ($schema.getFields().size() == 0)
+    #pragma unused(writer)
 #end
 }
 
@@ -243,6 +244,9 @@ $initstring {
         self.${field_name} = [self.utils deserializeArray:reader withSelector:@selector(deserializeDouble:) andParam:nil target:nil];
     #end
 #end
+#end
+#if ($schema.getFields().size() == 0)
+    #pragma unused(reader)
 #end
 }
 

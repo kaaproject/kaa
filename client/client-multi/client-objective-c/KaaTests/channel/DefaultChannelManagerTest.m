@@ -112,7 +112,7 @@
     [verifyCount(failoverManager, times(1)) onServerChangedWithConnectionInfo:anything()];
     
     XCTAssertEqualObjects(channel, [channelManager getChannelById:@"mock_channel"]);
-    XCTAssertEqualObjects(channel, [[channelManager getChannels] objectAtIndex:0]);
+    XCTAssertEqualObjects(channel, [[channelManager getChannels] firstObject]);
     
     [channelManager removeChannel:channel];
     XCTAssertNil([channelManager getChannelById:@"mock_channel"]);
@@ -144,7 +144,7 @@
     
     [verifyCount(failoverManager, times(1)) onServerChangedWithConnectionInfo:anything()];
     XCTAssertEqualObjects(channel, [channelManager getChannelById:@"mock_channel"]);
-    XCTAssertEqualObjects(channel, [[channelManager getChannels] objectAtIndex:0]);
+    XCTAssertEqualObjects(channel, [[channelManager getChannels] firstObject]);
     
     [channelManager removeChannel:channel];
     XCTAssertNil([channelManager getChannelById:@"mock_channel"]);

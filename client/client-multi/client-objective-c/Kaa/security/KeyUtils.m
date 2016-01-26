@@ -63,8 +63,8 @@ static const unsigned char _encodedRSAEncryptionOID[15] = {
     SecKeyRef privateKeyRef = NULL;
     
     DDLogVerbose(@"%@ Removing key pair with same tags if exists", TAG);
-    [KeyUtils removeKeyByTag:privateTag];
-    [KeyUtils removeKeyByTag:publicTag];
+    [self removeKeyByTag:privateTag];
+    [self removeKeyByTag:publicTag];
     
     NSMutableDictionary * privateKeyAttr = [[NSMutableDictionary alloc] init];
     NSMutableDictionary * publicKeyAttr = [[NSMutableDictionary alloc] init];
@@ -203,9 +203,9 @@ static const unsigned char _encodedRSAEncryptionOID[15] = {
 }
 
 + (SecKeyRef)storePublicKey:(NSData *)publicKey withTag:(NSData *)tag {
-    NSData *processedKey = [KeyUtils stripPublicKeyHeader:publicKey];
+    NSData *processedKey = [self stripPublicKeyHeader:publicKey];
     if (!processedKey) {
-        DDLogWarn(@"%@ Wasn't ablt to stripe header for remote public key, passing plain public key to keychain", TAG);
+        DDLogWarn(@"%@ Wasn't able to strip header for remote public key, passing plain public key to keychain", TAG);
         processedKey = publicKey;
     }
     DDLogDebug(@"%@ Remote public key: %@", TAG, [publicKey hexadecimalString]);
@@ -231,7 +231,7 @@ static const unsigned char _encodedRSAEncryptionOID[15] = {
     
     remoteKeyRef = [self getKeyRefByTag:tag];
     if (remoteKeyRef == NULL && persistPeer) {
-        remoteKeyRef = [KeyUtils getKeyRefWithPersistentKeyRef:persistPeer];
+        remoteKeyRef = [self getKeyRefWithPersistentKeyRef:persistPeer];
     }
     if (persistPeer) {
         CFRelease(persistPeer);
@@ -290,15 +290,18 @@ static const unsigned char _encodedRSAEncryptionOID[15] = {
 }
 
 + (NSData *)stripPublicKeyHeader:(NSData *)theKey {
-    if (theKey == nil) return nil;
+    if (theKey == nil)
+        return nil;
     
     NSUInteger len = [theKey length];
-    if (!len) return nil;
+    if (!len)
+        return nil;
     
     unsigned char *c_key = (unsigned char *)[theKey bytes];
     unsigned int  idx    = 0;
     
-    if (c_key[idx++] != 0x30) return nil;
+    if (c_key[idx++] != 0x30)
+        return nil;
     
     if (c_key[idx] > 0x80) {
         idx += c_key[idx] - 0x80 + 1;
@@ -310,18 +313,23 @@ static const unsigned char _encodedRSAEncryptionOID[15] = {
     static unsigned char seqiod[] =
     { 0x30, 0x0d, 0x06, 0x09, 0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x01, 0x01, 0x01, 0x05, 0x00 };
     
-    if (memcmp(&c_key[idx], seqiod, 15)) return nil;
+    if (memcmp(&c_key[idx], seqiod, 15))
+        return nil;
     
     idx += 15;
     
-    if (c_key[idx++] != 0x03) return nil;
+    if (c_key[idx++] != 0x03)
+        return nil;
     
-    if (c_key[idx] > 0x80) idx += c_key[idx] - 0x80 + 1;
-    else idx++;
+    if (c_key[idx] > 0x80)
+        idx += c_key[idx] - 0x80 + 1;
+    else
+        idx++;
     
-    if (c_key[idx++] != '\0') return nil;
+    if (c_key[idx++] != '\0')
+        return nil;
     
-    return([NSData dataWithBytes:&c_key[idx] length:len - idx]);
+    return [NSData dataWithBytes:&c_key[idx] length:len - idx];
 }
 
 size_t encodeLength(unsigned char * buf, size_t length) {

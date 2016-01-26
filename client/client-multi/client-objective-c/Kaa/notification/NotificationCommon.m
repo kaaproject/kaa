@@ -36,7 +36,7 @@
 }
 
 - (void)notifyDelegates:(NSArray *)delegates withTopic:(Topic *)topic data:(NSData *)notificationData {
-    __block KAADummyNotification *notification = [self.converter fromBytes:notificationData object:[KAADummyNotification new]];
+    KAADummyNotification *notification = [self.converter fromBytes:notificationData object:[KAADummyNotification new]];
     for (id<NotificationDelegate> delegate in delegates) {
         [[self.executorContext getCallbackExecutor] addOperationWithBlock:^{
             [delegate onNotification:notification withTopicId:topic.id];

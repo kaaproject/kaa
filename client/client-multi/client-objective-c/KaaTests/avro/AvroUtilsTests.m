@@ -176,7 +176,7 @@
     avro_reader_free(reader);
     XCTAssertEqual([array count], [desirealized count]);
     for (int i = 0; i < [array count]; i++) {
-        [[array objectAtIndex:i] isEqualToString:[desirealized objectAtIndex:i]];
+        [array[i] isEqualToString:desirealized[i]];
     }
 }
 

@@ -57,7 +57,7 @@ static const char FIXED_HEADER_CONST[] = {0x00,0x06,'K','a','a','t','c','p',CONN
         [self setAesSessionKey:key];
         [self setSyncRequest:request];
         [self setSignature:signature];
-        self.remainingLength = CONNECT_VERIABLE_HEADER_LENGTH_V1;
+        self.remainingLength = CONNECT_VARIABLE_HEADER_LENGTH_V1;
         if (key) {
             self.remainingLength += CONNECT_AES_SESSION_KEY_LENGTH;
         }
@@ -91,16 +91,12 @@ static const char FIXED_HEADER_CONST[] = {0x00,0x06,'K','a','a','t','c','p',CONN
 
 - (void)setAesSessionKey:(NSData *)aesSessionKey {
     _aesSessionKey = aesSessionKey;
-    if (_aesSessionKey) {
-        _isEncrypted = YES;
-    }
+    _isEncrypted = nil != _aesSessionKey;
 }
 
 - (void)setSignature:(NSData *)signature {
     _signature = signature;
-    if (_signature) {
-        _hasSignature = YES;
-    }
+    _hasSignature = nil != _signature;
 }
 
 - (void)decode {

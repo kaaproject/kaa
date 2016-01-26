@@ -46,7 +46,7 @@
     while (self.queue.count == 0) {
         [self.condition wait];
     }
-    id object = [self.queue objectAtIndex:0];
+    id object = self.queue.firstObject;
     [self.queue removeObjectAtIndex:0];
     [self.condition unlock];
     

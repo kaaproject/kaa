@@ -41,7 +41,7 @@
     XCTAssertNotNil(serverInfoList);
     XCTAssertEqual(1, [serverInfoList count]);
     
-    id<TransportConnectionInfo> serverInfo = [serverInfoList objectAtIndex:0];
+    id<TransportConnectionInfo> serverInfo = serverInfoList.firstObject;
     XCTAssertEqual(SERVER_BOOTSTRAP, [serverInfo serverType]);
     XCTAssertEqual(1, [serverInfo accessPointId]);
     XCTAssertTrue([[TransportProtocolIdHolder TCPTransportID] isEqual:[serverInfo transportId]]);

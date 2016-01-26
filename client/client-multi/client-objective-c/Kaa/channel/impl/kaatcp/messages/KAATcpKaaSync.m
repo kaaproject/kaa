@@ -40,7 +40,7 @@ static const char FIXED_HEADER_CONST[] = {0x00,0x06,'K','a','a','t','c','p',KAAS
         self.request = isRequest;
         self.zipped = isZipped;
         self.encrypted = isEncrypted;
-        self.remainingLength = KAASYNC_VERIABLE_HEADER_LENGTH_V1;
+        self.remainingLength = KAASYNC_VARIABLE_HEADER_LENGTH_V1;
     }
     return self;
 }

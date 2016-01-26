@@ -22,9 +22,9 @@
 @implementation TestsHelper
 
 + (ProtocolMetaData *)buildMetaDataWithTransportProtocolId:(TransportProtocolId *)TPid
-                                       host:(NSString *)host
-                                       port:(int32_t)port
-                               publicKey:(NSData *)publicKey {
+                                                      host:(NSString *)host
+                                                      port:(int32_t)port
+                                                 publicKey:(NSData *)publicKey {
     int32_t publicKeyLength = CFSwapInt32([publicKey length]);
     int32_t hostLength = CFSwapInt32([host lengthOfBytesUsingEncoding:NSUTF8StringEncoding]);
     int32_t portToWrite = CFSwapInt32(port);

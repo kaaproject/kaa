@@ -89,13 +89,13 @@
         if (!stateFileName) {
             stateFileName = STATE_FILE_DEFAULT;
         }
-        self.stateFileLocation = [[[NSURL fileURLWithPath:storage] URLByAppendingPathComponent:stateFileName] path];
+        self.stateFileLocation = [storage stringByAppendingPathComponent:stateFileName];
         DDLogInfo(@"%@ Version: [%@], commit hash: [%@]", TAG, [properties buildVersion], [properties commitHash]);
         
         self.state = [NSMutableDictionary dictionary];
         NSFileManager *fileManager = [NSFileManager defaultManager];
         if ([fileManager fileExistsAtPath:self.stateFileLocation]) {
-            //TODO check if stateFileLocation is PLIST and it has correct path for both iOS and OS X
+            //TODO: check if stateFileLocation is PLIST and it has correct path for both iOS and OS X
             @try {
                 self.state = [[NSMutableDictionary alloc] initWithContentsOfFile:self.stateFileLocation];
                 if ([self isSDKProperyListUpdated:properties]) {
@@ -111,12 +111,12 @@
                 if (attachedEndpointsString) {
                     NSArray *endpointsList = [attachedEndpointsString componentsSeparatedByString:@","];
                     for (NSString *attachedEndpoint in endpointsList) {
-                        if (attachedEndpoint.length <= 0) {
+                        if (attachedEndpoint.length == 0) {
                             continue;
                         }
                         NSArray *splittedValues = [attachedEndpoint componentsSeparatedByString:@":"];
-                        EndpointKeyHash *keyHash = [[EndpointKeyHash alloc] initWithKeyHash:[splittedValues objectAtIndex:1]];
-                        EndpointAccessToken *token = [[EndpointAccessToken alloc] initWithToken:[splittedValues objectAtIndex:0]];
+                        EndpointKeyHash *keyHash = [[EndpointKeyHash alloc] initWithKeyHash:splittedValues[1]];
+                        EndpointAccessToken *token = [[EndpointAccessToken alloc] initWithToken:splittedValues.firstObject];
                         self.attachedEndpoints[token] = keyHash;
                     }
                 }
@@ -162,9 +162,9 @@
     }
     
     NSMutableData *encodedData = [NSMutableData data];
-    NSArray *subcscriptions = self.notificationSubscriptions.allValues;
+    NSArray *subscriptions = self.notificationSubscriptions.allValues;
     @try {
-        for (TopicSubscriptionInfo *info in subcscriptions) {
+        for (TopicSubscriptionInfo *info in subscriptions) {
             size_t infoSize = [info getSize];
             char *buffer = (char *)malloc((infoSize) * sizeof(char));
             avro_writer_t writer = avro_writer_memory(buffer, infoSize);
@@ -319,7 +319,7 @@
 
 - (NSString *)endpointAccessToken {
     NSString *token = self.state[ENDPOINT_ACCESS_TOKEN];
-    return token ? token : @"";
+    return token ?: @"";
 }
 
 - (void)setConfigSequenceNumber:(int32_t)configSequenceNumber {
@@ -328,7 +328,7 @@
 
 - (int32_t)configSequenceNumber {
     NSString *number = self.state[CONFIG_SEQ_NUMBER];
-    return (int32_t)[(number ? number : @"1") integerValue];
+    return (int32_t)[(number ?: @"1") integerValue];
 }
 
 - (void)setNotificationSequenceNumber:(int32_t)notificationSequenceNumber {
@@ -337,7 +337,7 @@
 
 - (int32_t)notificationSequenceNumber {
     NSString *number = self.state[NOTIFICATION_SEQ_NUMBER];
-    return (int32_t)[(number ? number : @"1") integerValue];
+    return (int32_t)[(number ?: @"1") integerValue];
 }
 
 - (int32_t)getAndIncrementEventSequenceNumber {

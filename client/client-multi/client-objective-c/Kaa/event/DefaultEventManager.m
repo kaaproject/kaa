@@ -94,7 +94,7 @@
 
 - (void)produceEventWithFQN:(NSString *)eventFQN data:(NSData *)data target:(NSString *)target transactionId:(TransactionId *)transactionId {
     if (transactionId) {
-        DDLogInfo(@"%@ Adding event [eventClassFQN: %@, target: %@] to transaction %@", TAG, eventFQN, (target ? target : @"broadcast"), transactionId);
+        DDLogInfo(@"%@ Adding event [eventClassFQN: %@, target: %@] to transaction %@", TAG, eventFQN, (target ?: @"broadcast"), transactionId);
         @synchronized(self.transactionsGuard) {
             NSMutableArray *events = self.transactions[transactionId];
             if (events) {
@@ -111,7 +111,7 @@
             }
         }
     } else {
-        DDLogInfo(@"%@ Producing event [eventClassFQN: %@, target: %@]", TAG, eventFQN, (target ? target : @"broadcast"));
+        DDLogInfo(@"%@ Producing event [eventClassFQN: %@, target: %@]", TAG, eventFQN, (target ?: @"broadcast"));
         @synchronized(self.eventGuard) {
             Event *event = [[Event alloc] init];
             event.seqNum = [self.state getAndIncrementEventSequenceNumber];

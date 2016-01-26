@@ -23,6 +23,7 @@
 @implementation KAADummyConfiguration
 
 - (void)serialize:(avro_writer_t)writer {
+#pragma unused(writer)
 }
 
 - (size_t)getSize {
@@ -31,6 +32,7 @@
 }
 
 - (void)deserialize:(avro_reader_t)reader {
+#pragma unused(reader)
 }
 
 

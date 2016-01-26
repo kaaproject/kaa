@@ -52,7 +52,7 @@
  *  Signature: RSA signature (32 byte) signed with the Endpoint Private Key of Session key (16 byte) + EndpointPublicKeyHash (32 byte)
  **/
 
-#define CONNECT_VERIABLE_HEADER_LENGTH_V1   18
+#define CONNECT_VARIABLE_HEADER_LENGTH_V1   18
 #define CONNECT_AES_SESSION_KEY_LENGTH      256
 #define CONNECT_SIGNATURE_LENGTH            256
 #define CONNECT_VERSION                     0x01

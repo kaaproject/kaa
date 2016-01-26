@@ -122,6 +122,7 @@ typedef enum {
 }
 
 - (void)onPingResponseMessage:(KAATcpPingResponse *)message {
+#pragma unused(message)
     DDLogInfo(@"%@ PingResponse message received for channel [%@]", TAG, [self getId]);
 }
 
@@ -336,7 +337,7 @@ typedef enum {
             case FAILOVER_ACTION_STOP_APP:
                 DDLogWarn(@"%@ Stopping application according to failover strategy decision!", TAG);
                 exit(EXIT_FAILURE);
-                //TODO review how to exit application
+                //TODO: review how to exit application
                 break;
             case FAILOVER_ACTION_USE_NEXT_BOOTSTRAP:
             case FAILOVER_ACTION_USE_NEXT_OPERATIONS:
@@ -487,7 +488,7 @@ typedef enum {
         } else {
             DDLogDebug(@"%@ Acknowledgment is pending for channel [%@] -> starting sync", TAG, [self getId]);
             if ([types count] == 1) {
-                [self syncForTransportType:[types.allObjects[0] intValue]];
+                [self syncForTransportType:[types.anyObject intValue]];
             } else {
                 [self syncAll];
             }

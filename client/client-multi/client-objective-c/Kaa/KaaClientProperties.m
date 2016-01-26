@@ -94,12 +94,12 @@
         if (server && server.length > 0) {
             NSArray *tokens = [server componentsSeparatedByString:@":"];
             ProtocolMetaData *metaData = [[ProtocolMetaData alloc] init];
-            [metaData setAccessPointId:[[tokens objectAtIndex:0] intValue]];
+            [metaData setAccessPointId:[tokens[0] intValue]];
             ProtocolVersionPair *versionInfo = [[ProtocolVersionPair alloc] init];
-            versionInfo.id = [[tokens objectAtIndex:1] intValue];
-            versionInfo.version = [[tokens objectAtIndex:2] intValue];
+            versionInfo.id = [tokens[1] intValue];
+            versionInfo.version = [tokens[2] intValue];
             [metaData setProtocolVersionInfo:versionInfo];
-            [metaData setConnectionInfo:[self.base64 decodeString:[tokens objectAtIndex:3]]];
+            [metaData setConnectionInfo:[self.base64 decodeString:tokens[3]]];
             TransportProtocolId *key = [[TransportProtocolId alloc] initWithId:versionInfo.id version:versionInfo.version];
             NSMutableArray *serverList = servers[key];
             if (!serverList) {

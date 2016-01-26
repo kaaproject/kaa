@@ -60,7 +60,7 @@
 /**
  * Routine for processing received configuration data.
  *
- * buffer - ihe input buffer with raw data
+ * buffer - the input buffer with raw data
  * fullResync - notify whether configuration is a full resync
  */
 - (void)processConfigurationData:(NSData *)data fullResync:(BOOL)fullResync;

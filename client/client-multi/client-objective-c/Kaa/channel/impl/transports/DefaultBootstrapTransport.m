@@ -43,7 +43,7 @@
         return nil;
     }
     SyncRequest *request = [[SyncRequest alloc] init];
-    request.requestId = ++(self.increment);
+    request.requestId = ++self.increment;
     
     BootstrapSyncRequest *resolveRequest = [[BootstrapSyncRequest alloc] init];
     NSArray *channels = [self.channelManager getChannels];

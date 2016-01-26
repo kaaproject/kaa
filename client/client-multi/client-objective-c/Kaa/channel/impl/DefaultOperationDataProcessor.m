@@ -173,7 +173,7 @@
             SyncRequestMetaData *mdRequest = [self.metadataTransport createMetaDataRequest];
             if (mdRequest) {
                 request.syncRequestMetaData = [KAAUnion unionWithBranch:KAA_UNION_SYNC_REQUEST_META_DATA_OR_NULL_BRANCH_0
-                                                                data:mdRequest];
+                                                                   data:mdRequest];
             }
         }
         
@@ -186,7 +186,7 @@
                         if (cfRequest) {
                             request.configurationSyncRequest =
                             [KAAUnion unionWithBranch:KAA_UNION_CONFIGURATION_SYNC_RESPONSE_OR_NULL_BRANCH_0
-                                              data:cfRequest];
+                                                 data:cfRequest];
                         }
                     }
                     break;
@@ -195,12 +195,12 @@
                     KAAUnion *eventUnion;
                     if (isDownDirection) {
                         eventUnion = [KAAUnion unionWithBranch:KAA_UNION_EVENT_SYNC_REQUEST_OR_NULL_BRANCH_0
-                                                       data:[[EventSyncRequest alloc] init]];
+                                                          data:[[EventSyncRequest alloc] init]];
                     } else if (self.eventTransport) {
                         EventSyncRequest *evRequest = [self.eventTransport createEventRequestWithId:request.requestId];
                         if (evRequest) {
                             eventUnion = [KAAUnion unionWithBranch:KAA_UNION_EVENT_SYNC_REQUEST_OR_NULL_BRANCH_0
-                                                           data:evRequest];
+                                                              data:evRequest];
                         }
                     }
                     request.eventSyncRequest = eventUnion;
@@ -217,7 +217,7 @@
                         }
                         if (nfRequest) {
                             request.notificationSyncRequest = [KAAUnion unionWithBranch:KAA_UNION_NOTIFICATION_SYNC_REQUEST_OR_NULL_BRANCH_0
-                                                                                data:nfRequest];
+                                                                                   data:nfRequest];
                         }
                     }
                 }
@@ -227,7 +227,7 @@
                         ProfileSyncRequest *pfRequest = [self.profileTransport createProfileRequest];
                         if (pfRequest) {
                             request.profileSyncRequest = [KAAUnion unionWithBranch:KAA_UNION_PROFILE_SYNC_REQUEST_OR_NULL_BRANCH_0
-                                                                           data:pfRequest];
+                                                                              data:pfRequest];
                         }
                     }
                     break;
@@ -241,7 +241,7 @@
                     }
                     if (userRequest) {
                         request.userSyncRequest = [KAAUnion unionWithBranch:KAA_UNION_USER_SYNC_REQUEST_OR_NULL_BRANCH_0
-                                                                    data:userRequest];
+                                                                       data:userRequest];
                     }
                 }
                     break;
@@ -255,7 +255,7 @@
                     }
                     if (logRequest) {
                         request.logSyncRequest = [KAAUnion unionWithBranch:KAA_UNION_LOG_SYNC_REQUEST_OR_NULL_BRANCH_0
-                                                                   data:logRequest];
+                                                                      data:logRequest];
                     }
                 }
                     break;

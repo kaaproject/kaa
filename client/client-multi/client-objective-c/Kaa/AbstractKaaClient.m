@@ -74,7 +74,7 @@
         }
         
         NSDictionary *bootstrapServers = [self.properties bootstrapServers];
-        if ([bootstrapServers count] <= 0) {
+        if ([bootstrapServers count] == 0) {
             [NSException raise:NSInternalInconsistencyException format:@"Unable to obtain list of bootstrap servers"];
         }
         
@@ -98,11 +98,11 @@
         
         self.profileManager = [self buildProfileManagerWithTransportContext:transportContext];
         self.notificationManager = [self buildNotificationManagerWithClientState:self.clientState
-                                                               transportContext:transportContext];
+                                                                transportContext:transportContext];
         self.eventManager = [self buildEventManagerWithClientState:self.clientState
-                                                 transportContext:transportContext];
+                                                  transportContext:transportContext];
         self.endpointRegistrationManager = [self buildRegistrationManagerWithClientState:self.clientState
-                                                                       transportContext:transportContext];
+                                                                        transportContext:transportContext];
         self.logCollector = [self buildLogCollectorWithTransportContext:transportContext];
         self.configurationManager = [self buildConfigurationManagerWithProperties:self.properties
                                                                       clientState:self.clientState];
@@ -389,15 +389,15 @@
 }
 
 - (void)attachUserWithVerifierToken:(NSString *)userVerifierToken
-                userId:(NSString *)userExternalId
-             accessToken:(NSString *)userAccessToken
-          delegate:(id<UserAttachDelegate>)delegate {
+                             userId:(NSString *)userExternalId
+                        accessToken:(NSString *)userAccessToken
+                           delegate:(id<UserAttachDelegate>)delegate {
     
     [self checkLifecycleState:CLIENT_LIFECYCLE_STATE_STARTED withErrorMessage:@"Kaa client isn't started"];
     [self.endpointRegistrationManager attachUserWithVerifierToken:userVerifierToken
-                                  userExternalId:userExternalId
-                                 userAccessToken:userAccessToken
-                                        delegate:delegate];
+                                                   userExternalId:userExternalId
+                                                  userAccessToken:userAccessToken
+                                                         delegate:delegate];
 }
 
 - (BOOL)isAttachedToUser {
@@ -548,7 +548,7 @@
 - (id<ConfigurationTransport>)buildConfigurationTransport {
     id<ConfigurationTransport> transport = [[DefaultConfigurationTransport alloc] init];
     
-    //TODO this should be part of properties and provided by user during SDK generation
+    //TODO: this should be part of properties and provided by user during SDK generation
     [transport setResyncOnly:YES];
     
     return transport;

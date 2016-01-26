@@ -37,7 +37,7 @@
 }
 
 - (void)notifyDelegates:(NSSet *)configurationDelegates withData:(NSData *)configurationData {
-    __block ${configuration_class} *configuration = [self fromBytes:configurationData];
+    ${configuration_class} *configuration = [self fromBytes:configurationData];
     for (id<ConfigurationDelegate> delegate in configurationDelegates) {
         [[self.executorContext getCallbackExecutor] addOperationWithBlock:^{
             [delegate onConfigurationUpdate:configuration];

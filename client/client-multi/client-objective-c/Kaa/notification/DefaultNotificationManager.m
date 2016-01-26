@@ -78,9 +78,7 @@
     }
     
     @synchronized (self.mandatoryListeners) {
-        if (![self.mandatoryListeners containsObject:delegate]) {
-            [self.mandatoryListeners addObject:delegate];
-        }
+        [self.mandatoryListeners addObject:delegate];
     }
 }
 
@@ -115,13 +113,9 @@
 }
 
 - (NSArray *)getTopics {
-    NSMutableArray *topicList = [NSMutableArray array];
     @synchronized (self.topics) {
-        for (Topic *topic in self.topics.allValues) {
-            [topicList addObject:topic];
-        }
+        return self.topics.allValues;
     }
-    return topicList;
 }
 
 - (void)subscribeToTopicWithId:(NSString *)topicId forceSync:(BOOL)forceSync {
@@ -293,7 +287,7 @@
 - (void)notifyDelegates:(NSArray *)delegates forTopic:(Topic *)topic notification:(Notification *)notification {
     if (notification.body) {
         __weak typeof(self)weakSelf = self;
-        __block NSArray *blockDelegates = [delegates copy];
+        NSArray *blockDelegates = [delegates copy];
         [[self.context getCallbackExecutor] addOperationWithBlock:^{
             @try {
                 [weakSelf.deserializer notifyDelegates:blockDelegates withTopic:topic data:notification.body];

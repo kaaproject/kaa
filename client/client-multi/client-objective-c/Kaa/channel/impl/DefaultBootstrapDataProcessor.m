@@ -45,6 +45,7 @@
 }
 
 - (NSData *)compileRequestForTypes:(NSDictionary *)types {
+#pragma unused (types)
     @synchronized(self) {
         if (!self.transport) {
             DDLogError(@"%@ Unable to compile request: Bootstrap transport is nil", TAG);

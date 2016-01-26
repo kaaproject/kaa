@@ -214,8 +214,8 @@
                 serverTypeKey = @(SERVER_BOOTSTRAP);
                 AccessPointIdResolution *btResolution = self.resolutionProgressMap[serverTypeKey];
                 long period = [TimeUtils convertValue:self.bootstrapServersRetryPeriod
-                                            fromTimeUnit:self.timeUnit
-                                              toTimeUnit:TIME_UNIT_MILLISECONDS];
+                                         fromTimeUnit:self.timeUnit
+                                           toTimeUnit:TIME_UNIT_MILLISECONDS];
                 if (btResolution) {
                     btResolution.resolutionTime = [[NSDate date] timeIntervalSince1970] * 1000 + period;
                 }
@@ -228,8 +228,8 @@
                 serverTypeKey = @(SERVER_BOOTSTRAP);
                 AccessPointIdResolution *btResolution = self.resolutionProgressMap[serverTypeKey];
                 long period = [TimeUtils convertValue:self.bootstrapServersRetryPeriod
-                                            fromTimeUnit:self.timeUnit
-                                              toTimeUnit:TIME_UNIT_MILLISECONDS];
+                                         fromTimeUnit:self.timeUnit
+                                           toTimeUnit:TIME_UNIT_MILLISECONDS];
                 if (btResolution) {
                     btResolution.resolutionTime = [[NSDate date] timeIntervalSince1970] * 1000 + period;
                 }
@@ -245,8 +245,8 @@
                     btResolution.resolutionTime = [[NSDate date] timeIntervalSince1970] * 1000;
                 }
                 long period = [TimeUtils convertValue:self.bootstrapServersRetryPeriod
-                                            fromTimeUnit:self.timeUnit
-                                              toTimeUnit:TIME_UNIT_MILLISECONDS];
+                                         fromTimeUnit:self.timeUnit
+                                           toTimeUnit:TIME_UNIT_MILLISECONDS];
                 return [[FailoverDecision alloc] initWithFailoverAction:FAILOVER_ACTION_USE_NEXT_BOOTSTRAP
                                               retryPeriodInMilliseconds:period];
             }
@@ -256,8 +256,8 @@
                 serverTypeKey = @(SERVER_OPERATIONS);
                 AccessPointIdResolution *opResolution = self.resolutionProgressMap[serverTypeKey];
                 long period = [TimeUtils convertValue:self.operationsServersRetryPeriod
-                                            fromTimeUnit:self.timeUnit
-                                              toTimeUnit:TIME_UNIT_MILLISECONDS];
+                                         fromTimeUnit:self.timeUnit
+                                           toTimeUnit:TIME_UNIT_MILLISECONDS];
                 if (opResolution) {
                     opResolution.resolutionTime = [[NSDate date] timeIntervalSince1970] * 1000 + period;
                 }
@@ -268,8 +268,8 @@
             case FAILOVER_STATUS_NO_CONNECTIVITY:
             {
                 long period = [TimeUtils convertValue:self.noConnectivityRetryPeriod
-                                            fromTimeUnit:self.timeUnit
-                                              toTimeUnit:TIME_UNIT_MILLISECONDS];
+                                         fromTimeUnit:self.timeUnit
+                                           toTimeUnit:TIME_UNIT_MILLISECONDS];
                 return [[FailoverDecision alloc] initWithFailoverAction:FAILOVER_ACTION_RETRY
                                               retryPeriodInMilliseconds:period];
             }

@@ -17,14 +17,18 @@
 #import "ProfileCommon.h"
 #import "AvroBytesConverter.h"
 
-@implementation ProfileSerializer {
-    AvroBytesConverter *converter;
-}
+@interface ProfileSerializer ()
+
+@property (nonatomic, strong) AvroBytesConverter *converter;
+
+@end
+
+@implementation ProfileSerializer
 
 - (instancetype)init {
     self = [super init];
     if (self) {
-        converter = [[AvroBytesConverter alloc] init];
+        self.converter = [[AvroBytesConverter alloc] init];
     }
     return self;
 }
@@ -37,7 +41,7 @@
         profile = [[${profile_class} alloc] init];
     }
     if (profile) {
-        return [converter toBytes:profile];
+        return [self.converter toBytes:profile];
     } else {
         [NSException raise:NSInvalidArgumentException format:@"Profile is not set!"];
     }

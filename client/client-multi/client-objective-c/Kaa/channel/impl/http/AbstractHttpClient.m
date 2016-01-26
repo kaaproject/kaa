@@ -26,9 +26,9 @@
 @implementation AbstractHttpClient
 
 - (instancetype)initWithURLString:(NSString *)url
-              privateKeyRef:(SecKeyRef)privateK
-               publicKeyRef:(SecKeyRef)publicK
-               remoteKey:(NSData *)remoteK {
+                    privateKeyRef:(SecKeyRef)privateK
+                     publicKeyRef:(SecKeyRef)publicK
+                        remoteKey:(NSData *)remoteK {
     self = [super init];
     if (self) {
         self.url = url;
@@ -40,9 +40,9 @@
 }
 
 - (instancetype)initWithURLString:(NSString *)url
-              privateKeyRef:(SecKeyRef)privateK
-               publicKeyRef:(SecKeyRef)publicK
-               remoteKeyRef:(SecKeyRef)remoteK {
+                    privateKeyRef:(SecKeyRef)privateK
+                     publicKeyRef:(SecKeyRef)publicK
+                     remoteKeyRef:(SecKeyRef)remoteK {
     self = [super init];
     if (self) {
         self.url = url;
@@ -71,6 +71,7 @@
 }
 
 - (NSData *)executeHttpRequest:(NSString *)uri entity:(NSDictionary *)entity verifyResponse:(BOOL)verifyResponse {
+#pragma unused (uri, entity, verifyResponse)
     [NSException raise:NSInternalInconsistencyException format:@"Not implemented"];
     return nil;
 }

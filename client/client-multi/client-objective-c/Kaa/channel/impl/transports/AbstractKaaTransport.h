@@ -22,8 +22,8 @@
 
 @interface AbstractKaaTransport : NSObject <KaaTransport>
 
-@property (nonatomic,strong) id<KaaChannelManager> channelManager;
-@property (nonatomic,strong) id<KaaClientState> clientState;
+@property (nonatomic, strong) id<KaaChannelManager> channelManager;
+@property (nonatomic, strong) id<KaaClientState> clientState;
 
 - (void)syncByType:(TransportType)type;
 - (void)syncAckByType:(TransportType)type;
