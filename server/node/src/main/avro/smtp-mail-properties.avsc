@@ -3,7 +3,7 @@
     "type": "record",
     "name": "SmtpMailProperties",
     "fields": [
-            {"name": "mailFrom", "displayName": "From address", "maxLength": 1000, "by_default": "Kaa <admin@kaaproject.org>", "type": "string"},
+            {"name": "mailFrom", "displayName": "From address", "maxLength": 1000, "by_default": "Kaa <admin@localhost.localdomain>", "type": "string"},
             {"name": "smtpProtocol",
              "displayName": "SMTP protocol",
              "by_default": "SMTP",
