@@ -15,9 +15,7 @@
  */
 
 #import "Kaa.h"
-#import "KaaLogging.h"
 #import "BaseKaaClient.h"
-#import "KaaExceptions.h"
 
 #define TAG @"Kaa >>>"
 
