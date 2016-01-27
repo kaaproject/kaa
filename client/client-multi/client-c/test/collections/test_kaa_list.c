@@ -32,7 +32,6 @@ typedef struct {
 
 static bool test_kaa_list_predicate(void *node_1, void *node_2)
 {
-    //KAA_RETURN_IF_NIL2(node_1, node_2, false);
     test_list_node_t *wrapper_1 = (test_list_node_t *)node_1;
     test_list_node_t *wrapper_2 = (test_list_node_t *)node_2;
     return wrapper_1->id < wrapper_2->id;
@@ -40,7 +39,6 @@ static bool test_kaa_list_predicate(void *node_1, void *node_2)
 
 static uint64_t test_kaa_list_hash(void *node)
 {
-    //KAA_RETURN_IF_NIL2(node_1, node_2, false);
     test_list_node_t *wrapper = (test_list_node_t *)node;
     return wrapper->id;
 }
@@ -156,11 +154,9 @@ void test_list_hash()
 
     test_list_node_t *node;
     uint64_t node_number = 100;
-    //TODO Initialize list with known data
     for (uint64_t i = 0; i < node_number; ++i) {
         node = (test_list_node_t *)KAA_MALLOC(sizeof(test_list_node_t));
         ASSERT_NOT_NULL(node);
-        //node->id = (uint64_t) random();
         node->id = (uint64_t) node_number - i;
         kaa_list_push_back(list, node);
     }
