@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDataDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
@@ -31,16 +32,24 @@ import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.dao.CTLService;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogAppender;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
+import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogSchema;
 import org.kaaproject.kaa.server.common.log.shared.appender.data.BaseLogEventPack;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
 import org.kaaproject.kaa.server.operations.service.akka.actors.core.ApplicationLogActorMessageProcessor.VoidCallback;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.logs.AbstractActorCallback;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.logs.LogEventPackMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.logs.MultiLogDeliveryCallback;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.logs.SingleLogDeliveryCallback;
 import org.kaaproject.kaa.server.operations.service.cache.AppVersionKey;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
 import org.kaaproject.kaa.server.operations.service.logs.LogAppenderService;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import akka.actor.ActorContext;
 import akka.actor.ActorRef;
@@ -48,6 +57,8 @@ import akka.actor.ActorRef;
 /**
  * @author Bohdan Khablenko
  */
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({ AbstractActorCallback.class, SingleLogDeliveryCallback.class, MultiLogDeliveryCallback.class })
 public class ApplicationLogActorMessageProcessorTest {
 
     private static final String APPLICATION_ID = "application_id";
@@ -66,8 +77,9 @@ public class ApplicationLogActorMessageProcessorTest {
 
     private static final int REQUEST_ID = 100;
 
-    private static final String REQUIRED_LOG_APPENDER_ID = "100";
-    private static final String OPTIONAL_LOG_APPENDER_ID = "200";
+    private static final String REQUIRED_1_LOG_APPENDER_ID = "100";
+    private static final String REQUIRED_2_LOG_APPENDER_ID = "200";
+    private static final String OPTIONAL_LOG_APPENDER_ID = "300";
 
     private AkkaContext context;
 
@@ -75,7 +87,8 @@ public class ApplicationLogActorMessageProcessorTest {
     private ApplicationService applicationService;
 
     private LogSchema logSchema;
-    private LogAppender required;
+    private LogAppender required1;
+    private LogAppender required2;
     private LogAppender optional;
     private List<LogAppender> logAppenders;
     private LogAppenderService logAppenderService;
@@ -102,17 +115,21 @@ public class ApplicationLogActorMessageProcessorTest {
         this.logSchema = new LogSchema(logSchemaDto);
 
         // Log appenders
-        this.logAppenders = new ArrayList<>();
-        this.required = Mockito.mock(LogAppender.class, "Some Required Log Appender");
-        this.optional = Mockito.mock(LogAppender.class, "Some Optional Log Appender");
-        Mockito.when(this.required.getAppenderId()).thenReturn(REQUIRED_LOG_APPENDER_ID);
+        this.required1 = Mockito.mock(LogAppender.class);
+        this.required2 = Mockito.mock(LogAppender.class);
+        this.optional = Mockito.mock(LogAppender.class);
+        Mockito.when(this.required1.getAppenderId()).thenReturn(REQUIRED_1_LOG_APPENDER_ID);
+        Mockito.when(this.required2.getAppenderId()).thenReturn(REQUIRED_2_LOG_APPENDER_ID);
         Mockito.when(this.optional.getAppenderId()).thenReturn(OPTIONAL_LOG_APPENDER_ID);
-        Mockito.when(this.required.isDeliveryConfirmationRequired()).thenReturn(Boolean.TRUE);
+        Mockito.when(this.required1.isDeliveryConfirmationRequired()).thenReturn(Boolean.TRUE);
+        Mockito.when(this.required2.isDeliveryConfirmationRequired()).thenReturn(Boolean.TRUE);
         Mockito.when(this.optional.isDeliveryConfirmationRequired()).thenReturn(Boolean.FALSE);
-        Mockito.when(this.required.isSchemaVersionSupported(Mockito.anyInt())).thenReturn(Boolean.TRUE);
+        Mockito.when(this.required1.isSchemaVersionSupported(Mockito.anyInt())).thenReturn(Boolean.TRUE);
+        Mockito.when(this.required2.isSchemaVersionSupported(Mockito.anyInt())).thenReturn(Boolean.TRUE);
         Mockito.when(this.optional.isSchemaVersionSupported(Mockito.anyInt())).thenReturn(Boolean.TRUE);
 
         // Log appender service
+        this.logAppenders = new ArrayList<>();
         this.logAppenderService = Mockito.mock(LogAppenderService.class);
         Mockito.when(this.logAppenderService.getApplicationAppenders(APPLICATION_ID)).thenReturn(this.logAppenders);
         Mockito.when(this.logAppenderService.getLogSchema(APPLICATION_ID, LOG_SCHEMA_VERSION)).thenReturn(this.logSchema);
@@ -164,25 +181,72 @@ public class ApplicationLogActorMessageProcessorTest {
     }
 
     /**
-     * A test to ensure that the endpoint receives a response when there are
-     * some log appenders that do and some of them that do not require delivery
-     * confirmation.
+     * A test to ensure that the endpoint receives a response when there is
+     * exactly one log appender that requires delivery confirmation. In such
+     * case, the actor uses {@link SingleLogDeliveryCallback}
      *
      * @throws Exception
      */
     @Test
-    public void withRequiredAndOptionalDeliveryConfirmationTest() throws Exception {
+    public void withSingleRequiredDeliveryConfirmationTest() throws Exception {
 
-        this.logAppenders.add(this.required);
+        this.logAppenders.add(this.required1);
         this.logAppenders.add(this.optional);
 
-        // Process the message
+        SingleLogDeliveryCallback callback = Mockito.spy(new SingleLogDeliveryCallback(this.message.getOriginator(), this.message.getRequestId()));
+        PowerMockito.whenNew(SingleLogDeliveryCallback.class).withArguments(Mockito.any(), Mockito.anyInt()).thenReturn(callback);
+
+        Mockito.doAnswer(new Answer<Void>() {
+            @Override
+            public Void answer(InvocationOnMock invocation) throws Throwable {
+                callback.onSuccess();
+                return null;
+            }
+        }).when(this.required1).doAppend(Mockito.any(LogEventPack.class), Mockito.any(SingleLogDeliveryCallback.class));
+
         ApplicationLogActorMessageProcessor messageProcessor = new ApplicationLogActorMessageProcessor(this.context, APPLICATION_TOKEN);
         messageProcessor.processLogEventPack(Mockito.mock(ActorContext.class), this.message);
 
-        // Check that logs have been appended with a specific callback
-        Mockito.verify(this.required).doAppend(Mockito.eq(this.message.getLogEventPack()), Mockito.any(AbstractActorCallback.class));
-        Mockito.verify(this.optional).doAppend(Mockito.eq(this.message.getLogEventPack()), Mockito.any(VoidCallback.class));
+        PowerMockito.verifyPrivate(callback).invoke("sendSuccessToEndpoint");
+    }
+
+    /**
+     * A test to ensure that the endpoint receives a response when there are
+     * multiple log appenders that require delivery confirmation. In such case,
+     * the actor uses an instance of {@link MultiLogDeliveryCallback}
+     *
+     * @throws Exception
+     */
+    @Test
+    public void withMultipleRequiredDeliveryConfirmationsTest() throws Exception {
+
+        this.logAppenders.add(this.required1);
+        this.logAppenders.add(this.required2);
+
+        MultiLogDeliveryCallback object = new MultiLogDeliveryCallback(this.message.getOriginator(), this.message.getRequestId(), this.logAppenders.size());
+        MultiLogDeliveryCallback callback = Mockito.spy(object);
+        PowerMockito.whenNew(MultiLogDeliveryCallback.class).withArguments(Mockito.any(), Mockito.anyInt(), Mockito.anyInt()).thenReturn(callback);
+
+        Mockito.doAnswer(new Answer<Void>() {
+            @Override
+            public Void answer(InvocationOnMock invocation) throws Throwable {
+                callback.onSuccess();
+                return null;
+            }
+        }).when(this.required1).doAppend(Mockito.any(LogEventPack.class), Mockito.any(MultiLogDeliveryCallback.class));
+
+        Mockito.doAnswer(new Answer<Void>() {
+            @Override
+            public Void answer(InvocationOnMock invocation) throws Throwable {
+                callback.onSuccess();
+                return null;
+            }
+        }).when(this.required2).doAppend(Mockito.any(LogEventPack.class), Mockito.any(MultiLogDeliveryCallback.class));
+
+        ApplicationLogActorMessageProcessor messageProcessor = new ApplicationLogActorMessageProcessor(this.context, APPLICATION_TOKEN);
+        messageProcessor.processLogEventPack(Mockito.mock(ActorContext.class), this.message);
+
+        PowerMockito.verifyPrivate(callback).invoke("sendSuccessToEndpoint");
     }
 
     /**
@@ -192,16 +256,13 @@ public class ApplicationLogActorMessageProcessorTest {
      * @throws Exception
      */
     @Test
-    public void withoutRequiredDeliveryConfirmationTest() throws Exception {
+    public void withoutRequiredDeliveryConfirmationsTest() throws Exception {
 
-        // No log appenders that require delivery confirmation
         this.logAppenders.add(this.optional);
 
-        // Process the message
         ApplicationLogActorMessageProcessor messageProcessor = Mockito.spy(new ApplicationLogActorMessageProcessor(this.context, APPLICATION_TOKEN));
         messageProcessor.processLogEventPack(Mockito.mock(ActorContext.class), this.message);
 
-        // Nonetheless, a response has been sent
         Mockito.verify(this.optional).doAppend(Mockito.eq(this.message.getLogEventPack()), Mockito.any(VoidCallback.class));
         Mockito.verify(messageProcessor).sendSuccessMessageToEndpoint(this.message);
     }
