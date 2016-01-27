@@ -313,7 +313,7 @@ void kaa_list_sort(kaa_list_t *list, match_predicate pred)
 int32_t kaa_list_hash(kaa_list_t *list, list_node_hash pred)
 {
     KAA_RETURN_IF_NIL2(list, pred, 0);
-    int32_t result = 1;
+    uint32_t result = 1;
     kaa_list_node_t *node = kaa_list_begin(list);
     uint64_t element;
     while (node) {
@@ -321,5 +321,5 @@ int32_t kaa_list_hash(kaa_list_t *list, list_node_hash pred)
         result = 31 * result + (uint32_t) (element ^ (element >> 32));
         node = node->next;
     }
-    return result;
+    return (int32_t) result;
 }
