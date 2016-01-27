@@ -15,11 +15,7 @@
  */
 package org.kaaproject.kaa.server.common.dao.service;
 
-import org.cassandraunit.dataset.cql.ClassPathCQLDataSet;
-import org.junit.AfterClass;
-import org.junit.ClassRule;
 import org.junit.runner.RunWith;
-import org.kaaproject.kaa.server.common.CustomCassandraCQLUnit;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -29,12 +25,4 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class CassandraTopicServiceImplTest extends TopicServiceImplTest {
 
-    @ClassRule
-    public static CustomCassandraCQLUnit cassandraUnit = new CustomCassandraCQLUnit(new ClassPathCQLDataSet("cassandra.cql", false, false));
-
-    @AfterClass
-    public static void after() throws Exception {
-        cassandraUnit.cluster.close();
-        while (!cassandraUnit.cluster.isClosed()){}
-    }
 }
