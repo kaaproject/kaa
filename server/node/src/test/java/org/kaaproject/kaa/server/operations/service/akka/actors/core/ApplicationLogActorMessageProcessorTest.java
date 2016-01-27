@@ -34,6 +34,7 @@ import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogSchema;
 import org.kaaproject.kaa.server.common.log.shared.appender.data.BaseLogEventPack;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
+import org.kaaproject.kaa.server.operations.service.akka.actors.core.ApplicationLogActorMessageProcessor.VoidCallback;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.logs.AbstractActorCallback;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.logs.LogEventPackMessage;
 import org.kaaproject.kaa.server.operations.service.cache.AppVersionKey;
@@ -163,21 +164,25 @@ public class ApplicationLogActorMessageProcessorTest {
     }
 
     /**
-     * A test to ensure that the endpoint receives a response.
+     * A test to ensure that the endpoint receives a response when there are
+     * some log appenders that do and some of them that do not require delivery
+     * confirmation.
      *
      * @throws Exception
      */
     @Test
-    public void worksAsIntendedTest() throws Exception {
+    public void withRequiredAndOptionalDeliveryConfirmationTest() throws Exception {
 
         this.logAppenders.add(this.required);
         this.logAppenders.add(this.optional);
 
+        // Process the message
         ApplicationLogActorMessageProcessor messageProcessor = new ApplicationLogActorMessageProcessor(this.context, APPLICATION_TOKEN);
         messageProcessor.processLogEventPack(Mockito.mock(ActorContext.class), this.message);
 
+        // Check that logs have been appended with a specific callback
         Mockito.verify(this.required).doAppend(Mockito.eq(this.message.getLogEventPack()), Mockito.any(AbstractActorCallback.class));
-        Mockito.verify(this.optional).doAppend(Mockito.eq(this.message.getLogEventPack()), Mockito.any(AbstractActorCallback.class));
+        Mockito.verify(this.optional).doAppend(Mockito.eq(this.message.getLogEventPack()), Mockito.any(VoidCallback.class));
     }
 
     /**
@@ -187,7 +192,7 @@ public class ApplicationLogActorMessageProcessorTest {
      * @throws Exception
      */
     @Test
-    public void withoutMandatoryLogAppendersTest() throws Exception {
+    public void withoutRequiredDeliveryConfirmationTest() throws Exception {
 
         // No log appenders that require delivery confirmation
         this.logAppenders.add(this.optional);
@@ -197,6 +202,7 @@ public class ApplicationLogActorMessageProcessorTest {
         messageProcessor.processLogEventPack(Mockito.mock(ActorContext.class), this.message);
 
         // Nonetheless, a response has been sent
-        Mockito.verify(this.optional).doAppend(Mockito.eq(this.message.getLogEventPack()), Mockito.any(AbstractActorCallback.class));
+        Mockito.verify(this.optional).doAppend(Mockito.eq(this.message.getLogEventPack()), Mockito.any(VoidCallback.class));
+        Mockito.verify(messageProcessor).sendSuccessMessageToEndpoint(this.message);
     }
 }
