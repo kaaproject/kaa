@@ -328,7 +328,7 @@
 
 - (int32_t)configSequenceNumber {
     NSString *number = self.state[CONFIG_SEQ_NUMBER];
-    return (int32_t)[(number ?: @"1") integerValue];
+    return [(number ?: @"1") intValue];
 }
 
 - (void)setNotificationSequenceNumber:(int32_t)notificationSequenceNumber {
@@ -337,7 +337,7 @@
 
 - (int32_t)notificationSequenceNumber {
     NSString *number = self.state[NOTIFICATION_SEQ_NUMBER];
-    return (int32_t)[(number ?: @"1") integerValue];
+    return [(number ?: @"1") intValue];
 }
 
 - (int32_t)getAndIncrementEventSequenceNumber {

@@ -52,4 +52,8 @@
 
 + (id<KaaClient>)clientWithContext:(id<KaaClientPlatformContext>)context;
 
++ (id<KaaClient>)clientWithDelegate:(id<KaaClientStateDelegate>)delegate;
+
++ (id<KaaClient>)client;
+
 @end

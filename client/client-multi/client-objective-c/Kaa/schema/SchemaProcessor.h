@@ -32,12 +32,6 @@
  */
 - (void)loadSchema:(NSData *)buffer;
 
-/**
- * Retrieves current schema object.
- */
-//TODO
-//- (Schema)getSchema;
-
 @end
 
 #endif

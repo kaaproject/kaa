@@ -161,10 +161,6 @@
     }
 }
 
-//- (void)setNotificationProcessor:(id<NotificationProcessor>)processor {
-//    self.notificationProcessor = processor;
-//}
-
 - (TransportType)getTransportType {
     return TRANSPORT_TYPE_NOTIFICATION;
 }
