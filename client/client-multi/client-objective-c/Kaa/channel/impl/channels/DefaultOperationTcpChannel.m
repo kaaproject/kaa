@@ -31,8 +31,8 @@ typedef enum {
 
 #define TAG                 @"DefaultOperationTcpChannel >>>"
 #define EXIT_FAILURE        1
-#define PING_TIMEOUT_SEC    100
 #define CHANNEL_TIMEOUT     200
+#define PING_TIMEOUT_SEC    (CHANNEL_TIMEOUT / 2)
 #define MAX_THREADS_COUNT   2
 #define CHANNEL_ID          @"default_operation_tcp_channel"
 
