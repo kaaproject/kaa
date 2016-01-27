@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.server.control;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -23,12 +24,11 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterRecordDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.ProfileVersionPairDto;
 import org.kaaproject.kaa.common.dto.UpdateStatus;
-import org.kaaproject.kaa.common.dto.VersionDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaInfoDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
 
@@ -81,16 +81,31 @@ public class ControlServerProfileFilterIT extends AbstractTestControlServer {
         loginTenantDeveloper(tenantDeveloperDto.getUsername());
 
         EndpointGroupDto endpointGroup = createEndpointGroup(application.getId());
+        
+        List<ProfileFilterDto> profileFilters  = new ArrayList<ProfileFilterDto>(2);
 
-        ProfileFilterDto profileFilter1 = createProfileFilter(null, null, endpointGroup.getId());
-        ProfileFilterDto profileFilter2 = createProfileFilter(null, null, endpointGroup.getId());
+        profileFilters.add(createProfileFilter(null, null, endpointGroup.getId()));
+        profileFilters.add(createProfileFilter(null, null, endpointGroup.getId()));
+        
+        Collections.sort(profileFilters, new IdComparator());
 
         List<ProfileFilterRecordDto> profileFilterRecords = client.getProfileFilterRecords(endpointGroup.getId(), false);
 
         Assert.assertNotNull(profileFilterRecords);
         Assert.assertEquals(2, profileFilterRecords.size());
-        assertProfileFiltersEquals(profileFilter1, profileFilterRecords.get(1).getInactiveStructureDto());
-        assertProfileFiltersEquals(profileFilter2, profileFilterRecords.get(0).getInactiveStructureDto());
+        
+        List<ProfileFilterDto> storedProfileFilters  = new ArrayList<ProfileFilterDto>(2);
+        for (ProfileFilterRecordDto profileFilterRecord : profileFilterRecords) {
+            storedProfileFilters.add(profileFilterRecord.getInactiveStructureDto());
+        }
+        
+        Collections.sort(storedProfileFilters, new IdComparator());
+        
+        for (int i=0;i<profileFilters.size();i++) {
+            ProfileFilterDto profileFilter = profileFilters.get(i);
+            ProfileFilterDto storedProfileFilter = storedProfileFilters.get(i);
+            assertProfileFiltersEquals(profileFilter, storedProfileFilter);
+        }
     }
 
     /**
