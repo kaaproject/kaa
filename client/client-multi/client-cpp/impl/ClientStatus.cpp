@@ -546,8 +546,9 @@ void ClientStatus::read()
 
 void ClientStatus::save()
 {
-    if (!hasUpdate_)
+    if (!hasUpdate_) {
         return;
+    }
 
     std::ofstream stateFile(filename_);
 
