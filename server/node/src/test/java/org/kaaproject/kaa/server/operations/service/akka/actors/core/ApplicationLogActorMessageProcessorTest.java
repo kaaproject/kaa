@@ -223,21 +223,15 @@ public class ApplicationLogActorMessageProcessorTest {
         MultiLogDeliveryCallback callback = Mockito.spy(object);
         PowerMockito.whenNew(MultiLogDeliveryCallback.class).withArguments(Mockito.any(), Mockito.anyInt(), Mockito.anyInt()).thenReturn(callback);
 
-        Mockito.doAnswer(new Answer<Void>() {
-            @Override
-            public Void answer(InvocationOnMock invocation) throws Throwable {
-                callback.onSuccess();
-                return null;
-            }
-        }).when(this.required[0]).doAppend(Mockito.any(LogEventPack.class), Mockito.any(MultiLogDeliveryCallback.class));
-
-        Mockito.doAnswer(new Answer<Void>() {
-            @Override
-            public Void answer(InvocationOnMock invocation) throws Throwable {
-                callback.onSuccess();
-                return null;
-            }
-        }).when(this.required[1]).doAppend(Mockito.any(LogEventPack.class), Mockito.any(MultiLogDeliveryCallback.class));
+        Arrays.stream(this.required).forEach(appender -> {
+            Mockito.doAnswer(new Answer<Void>() {
+                @Override
+                public Void answer(InvocationOnMock invocation) throws Throwable {
+                    callback.onSuccess();
+                    return null;
+                }
+            }).when(appender).doAppend(Mockito.any(LogEventPack.class), Mockito.any(MultiLogDeliveryCallback.class));
+        });
 
         ApplicationLogActorMessageProcessor messageProcessor = new ApplicationLogActorMessageProcessor(this.context, APPLICATION_TOKEN);
         messageProcessor.processLogEventPack(Mockito.mock(ActorContext.class), this.message);
