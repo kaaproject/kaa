@@ -130,8 +130,6 @@ public class ApplicationLogActorMessageProcessor {
      * body with caution!
      *
      * @param message A message to respond to
-     *
-     * @see ApplicationLogActorMessageProcessorTest
      */
     protected void sendSuccessMessageToEndpoint(LogEventPackMessage message) {
         if (message.getOriginator() != null) {
