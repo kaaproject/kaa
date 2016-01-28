@@ -240,7 +240,7 @@ kaa_error_t kaa_tcp_channel_create(kaa_transport_channel_interface_t *self
     kaa_tcp_channel->keepalive.last_receive_keepalive = kaa_tcp_channel->keepalive.last_sent_keepalive;
 
     KAA_LOG_TRACE(logger, KAA_ERR_NONE, "Kaa TCP channel keepalive is %u",
-                                    KAA_TCP_CHANNEL_KEEPALIVE);
+                                    KAA_TCP_CHANNEL_MAX_TIMEOUT);
 
     /*
      * Assigns supported transport protocol id.
@@ -802,7 +802,7 @@ kaa_error_t kaa_tcp_channel_get_max_timeout(kaa_transport_channel_interface_t *s
 {
     KAA_RETURN_IF_NIL3(self, self->context, max_timeout, KAA_ERR_BADPARAM);
 
-    *max_timeout = KAA_TCP_CHANNEL_MAX_TIMEOUT;
+    *max_timeout = KAA_TCP_CHANNEL_PING_TIMEOUT;
 
     return KAA_ERR_NONE;
 }
@@ -1121,7 +1121,7 @@ kaa_error_t kaa_tcp_channel_authorize(kaa_tcp_channel_t *self)
 
     kaatcp_connect_t connect_message;
     kaatcp_error_t kaatcp_error_code =
-            kaatcp_fill_connect_message(KAA_TCP_CHANNEL_KEEPALIVE
+            kaatcp_fill_connect_message(KAA_TCP_CHANNEL_MAX_TIMEOUT
                                       , KAA_PLATFORM_PROTOCOL_ID
                                       , sync_buffer
                                       , sync_size

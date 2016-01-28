@@ -230,7 +230,7 @@ kaa_error_t kaa_tcp_channel_create(kaa_transport_channel_interface_t *self
     /*
      * Initializes keepalive configuration.
      */
-    kaa_tcp_channel->keepalive.keepalive_interval = KAA_TCP_CHANNEL_KEEPALIVE;
+    kaa_tcp_channel->keepalive.keepalive_interval = KAA_TCP_CHANNEL_MAX_TIMEOUT;
     kaa_tcp_channel->keepalive.last_sent_keepalive = KAA_TIME();
     kaa_tcp_channel->keepalive.last_receive_keepalive = kaa_tcp_channel->keepalive.last_sent_keepalive;
 

@@ -618,7 +618,7 @@ kaatcp_error_t kaatcp_get_request_connect(const kaatcp_connect_t *message
     if (message->connect_flags != KAA_CONNECT_FLAGS) {
         return KAATCP_ERR_BAD_PARAM;
     }
-    if (message->keep_alive != KAA_TCP_CHANNEL_KEEPALIVE) {
+    if (message->keep_alive != KAA_TCP_CHANNEL_MAX_TIMEOUT) {
         return KAATCP_ERR_BAD_PARAM;
     }
     if (message->sync_request && message->sync_request_size == sizeof(CONNECT_PACK)) {
@@ -641,7 +641,7 @@ kaatcp_error_t kaatcp_fill_connect_message(uint16_t keepalive, uint32_t next_pro
                                          , char *signature, size_t signature_size
                                          , kaatcp_connect_t *message)
 {
-    if (keepalive != KAA_TCP_CHANNEL_KEEPALIVE) {
+    if (keepalive != KAA_TCP_CHANNEL_MAX_TIMEOUT) {
         return KAATCP_ERR_BAD_PARAM;
     }
     if (next_protocol_id != 0x3553c66f) {
