@@ -1,0 +1,1 @@
+@property (nonatomic, strong) {event_family_class_name} *{event_family_var_name};

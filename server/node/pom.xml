@@ -126,8 +126,8 @@
             <artifactId>endpoint-shared</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.kaaproject.kaa.avrogenc</groupId>
-            <artifactId>avrogenc</artifactId>
+            <groupId>org.kaaproject.kaa.avrogen</groupId>
+            <artifactId>avrogen</artifactId>
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>
@@ -811,6 +811,16 @@
                                     <outputDirectory>${sdk.path}/c</outputDirectory>
                                     <destFileName>kaa-client-sdk-${project.version}.tar.gz</destFileName>
                                 </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.client</groupId>
+                                    <artifactId>client-objective-c</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>objc-sdk</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${sdk.path}/objc</outputDirectory>
+                                    <destFileName>kaa-client-sdk-${project.version}.tar.gz</destFileName>
+                                </artifactItem>
                             </artifactItems>
                         </configuration>
                     </execution>
@@ -848,6 +858,15 @@
                                     <type>tar.gz</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${templates.path}/c</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.client</groupId>
+                                    <artifactId>client-objective-c</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>objc-sdk-templates</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${templates.path}/objc</outputDirectory>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>
