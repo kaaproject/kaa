@@ -206,5 +206,7 @@ kaa_error_t kaa_status_save(kaa_status_t *self)
 
     KAA_FREE(buffer_head);
 
+    self->has_update = false;
+
     return KAA_ERR_NONE;
 }
