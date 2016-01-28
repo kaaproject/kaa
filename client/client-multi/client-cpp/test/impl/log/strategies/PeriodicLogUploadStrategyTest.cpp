@@ -39,7 +39,7 @@ static void sleepFor(std::size_t seconds)
 }
 
 static KaaClientProperties properties;
-static DefaultLogger tmp_logger(properties.getClientId(), false);
+static DefaultLogger tmp_logger(properties.getClientId());
 static MockKaaClientStateStorage tmp_state;
 static MockExecutorContext tmpExecContext;
 static KaaClientContext clientContext(properties, tmp_logger, tmp_state, tmpExecContext);

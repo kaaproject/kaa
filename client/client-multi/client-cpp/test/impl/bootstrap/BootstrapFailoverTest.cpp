@@ -39,7 +39,7 @@ BOOST_AUTO_TEST_SUITE(BootstrapFailoverTest)
 BOOST_AUTO_TEST_CASE(BootstrapEmptyOperationalServersListTest)
 {
     KaaClientProperties properties;
-    DefaultLogger tmp_logger(properties.getClientId(), false);
+    DefaultLogger tmp_logger(properties.getClientId());
     SimpleExecutorContext exeContext;
     MockKaaClientStateStorage  status;
     KaaClientContext context(properties, tmp_logger, status, exeContext);

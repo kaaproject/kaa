@@ -40,7 +40,7 @@
 namespace kaa {
 
 static KaaClientProperties tmp_properties;
-static DefaultLogger tmp_logger(tmp_properties.getClientId(), false);
+static DefaultLogger tmp_logger(tmp_properties.getClientId());
 static MockKaaClientStateStorage tmp_state;
 
 static void testSleep(std::size_t seconds)

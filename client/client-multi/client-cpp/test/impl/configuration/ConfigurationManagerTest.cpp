@@ -70,7 +70,7 @@ BOOST_AUTO_TEST_CASE(configurationUpdated)
     auto stateMock = std::make_shared<MockKaaClientStateStorage>();
 
     KaaClientProperties properties;
-    DefaultLogger tmp_logger(properties.getClientId(), false);
+    DefaultLogger tmp_logger(properties.getClientId());
     SimpleExecutorContext context;
     KaaClientContext clientContext(properties, tmp_logger, *stateMock, context);
     context.init();
@@ -103,7 +103,7 @@ BOOST_AUTO_TEST_CASE(configurationPartialUpdated)
     auto stateMock = std::make_shared<MockKaaClientStateStorage>();
     MockExecutorContext context;
     KaaClientProperties properties;
-    DefaultLogger logger(properties.getClientId(), false);
+    DefaultLogger logger(properties.getClientId());
     KaaClientContext clientContext(properties, logger, *stateMock, context);
     ConfigurationManager manager(clientContext);
 

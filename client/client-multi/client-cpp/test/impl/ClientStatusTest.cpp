@@ -49,7 +49,7 @@ namespace kaa {
 
 static MockExecutorContext context;
 static KaaClientProperties properties;
-static DefaultLogger tmp_logger(properties.getClientId(), false);
+static DefaultLogger tmp_logger(properties.getClientId());
 
 BOOST_AUTO_TEST_SUITE(ClientStatusSuite);
 

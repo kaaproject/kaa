@@ -38,7 +38,7 @@ static std::string testLogStorageName("logs.db");
 static std::int32_t mockBlocksCount = 10000;
 
 static KaaClientProperties properties;
-static DefaultLogger tmp_logger(properties.getClientId(), false);
+static DefaultLogger tmp_logger(properties.getClientId());
 static MockKaaClientStateStorage tmp_state;
 static MockExecutorContext tmpExecContext;
 static KaaClientContext clientContext(properties, tmp_logger, tmp_state, tmpExecContext);

@@ -81,7 +81,7 @@ BOOST_AUTO_TEST_CASE(httpMultipartRequestTest)
     auto stateMock = std::make_shared<MockKaaClientStateStorage>();
     MockExecutorContext context;
     KaaClientProperties properties;
-    DefaultLogger tmp_logger(properties.getClientId(), false);
+    DefaultLogger tmp_logger(properties.getClientId());
     KaaClientContext clientContext(properties, tmp_logger, *stateMock, context);
 
     HttpUrl url(test_url0);

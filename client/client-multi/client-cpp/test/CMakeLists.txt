@@ -45,7 +45,7 @@ add_definitions (-DBOOST_TEST_DYN_LINK -DBOOST_LOG_DYN_LINK -DRESOURCE_DIR="${CM
 find_package (Avro REQUIRED)
 find_package (Botan REQUIRED)
 find_package (Boost 1.54 REQUIRED
-    COMPONENTS unit_test_framework log system)
+    COMPONENTS unit_test_framework log thread system)
 find_package (Sqlite3 REQUIRED)
 
 include_directories (
