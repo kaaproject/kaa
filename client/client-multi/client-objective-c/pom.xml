@@ -75,33 +75,33 @@
             <id>compile-client-objc</id>
             <build>
                 <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>exec-maven-plugin</artifactId>
-                        <version>1.2.1</version>
-                        <executions>
-                            <execution>
-                                <id>build_script</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>exec</goal>
-                                </goals>
-                                <configuration>
-                                    <executable>${basedir}/build.sh</executable>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>test_script</id>
-                                <phase>test</phase>
-                                <goals>
-                                    <goal>exec</goal>
-                                </goals>
-                                <configuration>
-                                    <executable>${basedir}/test.sh</executable>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
+                    <!--<plugin>-->
+                        <!--<groupId>org.codehaus.mojo</groupId>-->
+                        <!--<artifactId>exec-maven-plugin</artifactId>-->
+                        <!--<version>1.2.1</version>-->
+                        <!--<executions>-->
+                            <!--<execution>-->
+                                <!--<id>build_script</id>-->
+                                <!--<phase>package</phase>-->
+                                <!--<goals>-->
+                                    <!--<goal>exec</goal>-->
+                                <!--</goals>-->
+                                <!--<configuration>-->
+                                    <!--<executable>${basedir}/build.sh</executable>-->
+                                <!--</configuration>-->
+                            <!--</execution>-->
+                            <!--<execution>-->
+                                <!--<id>test_script</id>-->
+                                <!--<phase>test</phase>-->
+                                <!--<goals>-->
+                                    <!--<goal>exec</goal>-->
+                                <!--</goals>-->
+                                <!--<configuration>-->
+                                    <!--<executable>${basedir}/test.sh</executable>-->
+                                <!--</configuration>-->
+                            <!--</execution>-->
+                        <!--</executions>-->
+                    <!--</plugin>-->
                     <plugin>
                         <groupId>com.soebes.maven.plugins.dmg</groupId>
                         <artifactId>doxygen-maven-plugin</artifactId>
@@ -118,7 +118,7 @@
                             <generateHtml>true</generateHtml>
                             <generateLatex>false</generateLatex>
                             <filePatterns>*.h *.dox</filePatterns>
-                            <inputDirectory>${basedir}/src</inputDirectory>
+                            <inputDirectory>${basedir}/Kaa</inputDirectory>
                             <outputDirectory>${basedir}/target/apidocs</outputDirectory>
                             <excludePatterns>*/src/gen/* */test/* */src/avro_src/*</excludePatterns>
                         </configuration>

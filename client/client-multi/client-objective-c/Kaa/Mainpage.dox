@@ -1,0 +1,81 @@
+/*
+ * Copyright 2014-2015 CyberVision, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ 
+/*!
+ \mainpage Kaa client Objective-C SDK
+ \section contents Table of contents
+ <ul>
+    <li>\link quickstart Quick start \endlink</li>
+    <li>\link programminguide Programming guide \endlink</li>
+    <li>\link demo Demo application \endlink</li>
+ </ul>
+
+ \section quickstart Quick start
+
+ \subsection building Building Kaa Objective-C SDK
+
+    Before compiling, ensure that all
+        \htmlonly
+        <a onclick='window.open("http://docs.kaaproject.org/display/KAA/Third-party+components")'>required components</a>
+        \endhtmlonly
+        are installed.<br>
+
+    To build the Kaa Objective-C SDK, do the following:<br>
+    @code
+        $ ./build.sh
+    @endcode
+
+ \subsection linkage Link Kaa library to your project
+
+    Drag and drop Kaa XCode project workspace as sub-module to your project and add libKaa.a binary to
+    "Link Binary with Libraries" in Build Phases tab.
+    In Build Settings tab find property called "Other Linker Flags" and set it's value to -ObjC.
+    In Build Settings tab find property called "User Header Search Paths" and set it's value to $(BUILT_PRODUCTS_DIR)
+    and switch value in right column to recursive.
+
+ \section programminguide Programming guide
+
+    For more information about functions supported by the Kaa Objective-C SDK, see our
+    \htmlonly 
+    <a onclick='window.open("https://docs.kaaproject.org/display/KAA/Programming+guide")'>Programming guide:</a> 
+    \endhtmlonly
+    <ul>
+        <li>
+            \htmlonly 
+            <a onclick='window.open("https://docs.kaaproject.org/display/KAA/Collecting+endpoint+profiles")'>Collecting endpoint profiles</a> 
+            \endhtmlonly
+        </li>
+        <li>
+            \htmlonly 
+            <a onclick='window.open("https://docs.kaaproject.org/display/KAA/Messaging+across+endpoints")'>Messaging across endpoints</a> 
+            \endhtmlonly
+        </li>
+        <li>
+            \htmlonly 
+            <a onclick='window.open("https://docs.kaaproject.org/display/KAA/Collecting+data+from+endpoints")'>Collecting data from endpoints</a> 
+            \endhtmlonly
+        </li>
+    </ul>
+
+ \section demo Demo application
+
+    To better familiarize yourself with Kaa Objective-C SDK, you may look at our demo applications.<br>
+    Find the demo source code in our 'sample-apps'
+    \htmlonly
+        <a onclick='window.open("https://github.com/kaaproject/sample-apps")'>repository</a>
+    \endhtmlonly
+    on GitHub.
+ */
