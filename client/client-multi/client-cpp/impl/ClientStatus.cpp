@@ -324,7 +324,7 @@ void ClientParameter<HashDigest>::read(const std::string &strValue)
     }
 }
 
-ClientStatus::ClientStatus(const std::string& filename) : filename_(filename), isSDKPropertiesForUpdated_(false)
+ClientStatus::ClientStatus(const std::string& filename) : filename_(filename), isSDKPropertiesForUpdated_(false), hasUpdate_(false)
 {
     auto appseqntoken = parameterToToken_.left.find(ClientParameterT::APPSEQUENCENUMBER);
     if (appseqntoken != parameterToToken_.left.end()) {
@@ -420,51 +420,59 @@ SequenceNumber ClientStatus::getAppSeqNumber() const
     return appSeqNumberDefault_;
 }
 
+template< ClientParameterT Type, class ParameterData >
+void ClientStatus::setParameterData(const ParameterData& data)
+{
+    auto parameter_it = parameters_.find(Type);
+    if (parameter_it != parameters_.end()) {
+        parameter_it->second->setValue(data);
+        hasUpdate_ = true;
+    }
+}
+
+template< ClientParameterT Type, class ParameterData >
+ParameterData ClientStatus::getParameterData(const ParameterData& defaultValue) const
+{
+    auto parameter_it = parameters_.find(Type);
+    if (parameter_it != parameters_.end()) {
+        return boost::any_cast<ParameterData>(parameter_it->second->getValue());
+    }
+
+    return defaultValue;
+}
+
 void ClientStatus::setAppSeqNumber(SequenceNumber appSeqNumber)
 {
-    auto parameter_it = parameters_.find(ClientParameterT::APPSEQUENCENUMBER);
-    if (parameter_it != parameters_.end()) {
-        parameter_it->second->setValue(appSeqNumber);
-    }
+    setParameterData<ClientParameterT::APPSEQUENCENUMBER>(appSeqNumber);
 }
 
 bool ClientStatus::isRegistered() const
 {
-    auto parameter_it = parameters_.find(ClientParameterT::ISREGISTERED);
-    if (parameter_it != parameters_.end()) {
-        return boost::any_cast<bool>(parameter_it->second->getValue());
-    }
-    return isRegisteredDefault_;
+    return getParameterData<ClientParameterT::ISREGISTERED>(isRegisteredDefault_);
 }
 
 void ClientStatus::setRegistered(bool isRegisteredP)
 {
     if (isRegistered() !=  isRegisteredP) {
-        auto parameter_it = parameters_.find(ClientParameterT::ISREGISTERED);
-        if (parameter_it != parameters_.end()) {
-            parameter_it->second->setValue(isRegisteredP);
-        }
+        setParameterData<ClientParameterT::ISREGISTERED>(isRegisteredP);
     }
 }
 
 std::string ClientStatus::getEndpointAccessToken()
 {
-    auto parameter_it = parameters_.find(ClientParameterT::EP_ACCESS_TOKEN);
-    if (parameter_it != parameters_.end()) {
-        auto token = boost::any_cast<std::string>(parameter_it->second->getValue());
-        if (!token.empty()) {
-            return token;
-        }
+    std::string token = "";
+    auto found = getParameterData<ClientParameterT::EP_ACCESS_TOKEN>(token);
+
+    if (!found.empty()) {
+        return found;
     }
+
     return refreshEndpointAccessToken();
 }
 
 void ClientStatus::setEndpointAccessToken(const std::string& token)
 {
-    auto parameter_it = parameters_.find(ClientParameterT::EP_ACCESS_TOKEN);
-    if (parameter_it != parameters_.end()) {
-        parameter_it->second->setValue(token);
-    }
+    setParameterData<ClientParameterT::EP_ACCESS_TOKEN>(token);
 }
 
 std::string ClientStatus::refreshEndpointAccessToken()
@@ -476,70 +484,42 @@ std::string ClientStatus::refreshEndpointAccessToken()
 
 DetailedTopicStates ClientStatus::getTopicStates() const
 {
-    auto parameter_it = parameters_.find(ClientParameterT::TOPICLIST);
-    if (parameter_it != parameters_.end()) {
-        return boost::any_cast<DetailedTopicStates>(parameter_it->second->getValue());
-    }
-    return topicStatesDefault_;
+    return getParameterData<ClientParameterT::TOPICLIST>(topicStatesDefault_);
 }
 
 void ClientStatus::setTopicStates(const DetailedTopicStates& stateContainer)
 {
-    auto parameter_it = parameters_.find(ClientParameterT::TOPICLIST);
-    if (parameter_it != parameters_.end()) {
-        parameter_it->second->setValue(stateContainer);
-    }
+    setParameterData<ClientParameterT::TOPICLIST>(stateContainer);
 }
 
 AttachedEndpoints ClientStatus::getAttachedEndpoints() const
 {
-    auto parameter_it = parameters_.find(ClientParameterT::ATTACHED_ENDPOINTS);
-    if (parameter_it != parameters_.end()) {
-        return boost::any_cast<AttachedEndpoints>(parameter_it->second->getValue());
-    }
-    return attachedEndpoints_;
+    return getParameterData<ClientParameterT::ATTACHED_ENDPOINTS>(attachedEndpoints_);
 }
 
 void ClientStatus::setAttachedEndpoints(const AttachedEndpoints& endpoints)
 {
-    auto parameter_it = parameters_.find(ClientParameterT::ATTACHED_ENDPOINTS);
-    if (parameter_it != parameters_.end()) {
-        parameter_it->second->setValue(endpoints);
-    }
+    setParameterData<ClientParameterT::ATTACHED_ENDPOINTS>(endpoints);
 }
 
 HashDigest ClientStatus::getProfileHash() const
 {
-    auto parameter_it = parameters_.find(ClientParameterT::PROFILEHASH);
-    if (parameter_it != parameters_.end()) {
-        return boost::any_cast<HashDigest>(parameter_it->second->getValue());
-    }
-    return endpointHashDefault_;
+    return getParameterData<ClientParameterT::PROFILEHASH>(endpointHashDefault_);
 }
 
 void ClientStatus::setProfileHash(HashDigest hash)
 {
-    auto parameter_it = parameters_.find(ClientParameterT::PROFILEHASH);
-    if (parameter_it != parameters_.end()) {
-        parameter_it->second->setValue(hash);
-    }
+    setParameterData<ClientParameterT::PROFILEHASH>(hash);
 }
 
 bool ClientStatus::getEndpointAttachStatus() const
 {
-    auto parameter_it = parameters_.find(ClientParameterT::EP_ATTACH_STATUS);
-    if (parameter_it != parameters_.end()) {
-        return boost::any_cast<bool>(parameter_it->second->getValue());
-    }
-    return endpointDefaultAttachStatus_;
+    return getParameterData<ClientParameterT::EP_ATTACH_STATUS>(endpointDefaultAttachStatus_);
 }
 
 void ClientStatus::setEndpointAttachStatus(bool isAttached)
 {
-    auto parameter_it = parameters_.find(ClientParameterT::EP_ATTACH_STATUS);
-    if (parameter_it != parameters_.end()) {
-        parameter_it->second->setValue(isAttached);
-    }
+    setParameterData<ClientParameterT::EP_ATTACH_STATUS>(isAttached);
 }
 
 void ClientStatus::read()
@@ -566,6 +546,9 @@ void ClientStatus::read()
 
 void ClientStatus::save()
 {
+    if (!hasUpdate_)
+        return;
+
     std::ofstream stateFile(filename_);
 
     for (auto parameter : parameters_) {
@@ -573,6 +556,8 @@ void ClientStatus::save()
     }
 
     stateFile.close();
+
+    hasUpdate_ = false;
 }
 
 std::int32_t ClientStatus::getEventSequenceNumber() const
@@ -619,19 +604,12 @@ void ClientStatus::setNotificationSequenceNumber(std::int32_t sequenceNumber)
 
 std::string ClientStatus::getEndpointKeyHash() const
 {
-    auto parameter_it = parameters_.find(ClientParameterT::EP_KEY_HASH);
-    if (parameter_it != parameters_.end()) {
-        return boost::any_cast<std::string>(parameter_it->second->getValue());
-    }
-    return endpointKeyHashDefault_;
+    return getParameterData<ClientParameterT::EP_KEY_HASH>(endpointKeyHashDefault_);
 }
 
 void ClientStatus::setEndpointKeyHash(const std::string& keyHash)
 {
-    auto parameter_it = parameters_.find(ClientParameterT::EP_KEY_HASH);
-    if (parameter_it != parameters_.end()) {
-        parameter_it->second->setValue(keyHash);
-    }
+    setParameterData<ClientParameterT::EP_KEY_HASH>(keyHash);
 }
 
 }
