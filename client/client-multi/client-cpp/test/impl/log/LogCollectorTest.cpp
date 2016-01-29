@@ -451,9 +451,10 @@ BOOST_AUTO_TEST_CASE(MaxLogUploadLimitWithSyncAll)
     KaaClientProperties properties;
     MockChannelManager channelManager;
     SimpleExecutorContext executor;
+    KaaClientContext clientContext(properties, tmp_logger, tmp_state, executor);
     executor.init();
-    LogCollector logCollector(&channelManager, executor, properties);
-    CustomLoggingTransport transport(channelManager, logCollector);
+    LogCollector logCollector(&channelManager, clientContext);
+    CustomLoggingTransport transport(channelManager, logCollector, clientContext);
 
     logCollector.setTransport(&transport);
 
@@ -528,8 +529,9 @@ BOOST_AUTO_TEST_CASE(MaxLogUploadLimitWithSyncLogging)
     MockChannelManager channelManager;
     SimpleExecutorContext executor;
     executor.init();
-    LogCollector logCollector(&channelManager, executor, properties);
-    CustomLoggingTransport transport(channelManager, logCollector);
+    KaaClientContext clientContext(properties, tmp_logger, tmp_state, executor);
+    LogCollector logCollector(&channelManager, clientContext);
+    CustomLoggingTransport transport(channelManager, logCollector, clientContext);
 
     logCollector.setTransport(&transport);
 

@@ -58,7 +58,7 @@ BOOST_AUTO_TEST_CASE(GetSetBatchSizeTest)
 BOOST_AUTO_TEST_CASE(GetSetUplaodTimeoutTest)
 {
     MockLogFailoverCommand failoverCommand;
-    DefaultLogUploadStrategy strategy(clientContext);;
+    DefaultLogUploadStrategy strategy(clientContext);
 
     BOOST_CHECK_EQUAL(strategy.getTimeout(), DefaultLogUploadStrategy::DEFAULT_UPLOAD_TIMEOUT);
 
@@ -71,7 +71,7 @@ BOOST_AUTO_TEST_CASE(GetSetUplaodTimeoutTest)
 BOOST_AUTO_TEST_CASE(GetSetMaxParallelUploads)
 {
     MockLogFailoverCommand failoverCommand;
-    DefaultLogUploadStrategy strategy;
+    DefaultLogUploadStrategy strategy(clientContext);
 
     BOOST_CHECK_EQUAL(strategy.getMaxParallelUploads(), DefaultLogUploadStrategy::DEFAULT_MAX_PARALLEL_UPLOADS);
 
