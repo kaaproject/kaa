@@ -67,68 +67,73 @@
                     </excludes>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>com.soebes.maven.plugins.dmg</groupId>
+                <artifactId>doxygen-maven-plugin</artifactId>
+                <version>1.0.1</version>
+                <configuration>
+                    <projectName>${project.artifactId}</projectName>
+                    <projectNumber>${project.version}</projectNumber>
+                    <allexternals>false</allexternals>
+                    <alphabeticalIndex>true</alphabeticalIndex>
+                    <extractAll>true</extractAll>
+                    <extractStatic>true</extractStatic>
+                    <recursive>true</recursive>
+                    <haveGraph>true</haveGraph>
+                    <generateHtml>true</generateHtml>
+                    <generateLatex>false</generateLatex>
+                    <filePatterns>*.h *.dox</filePatterns>
+                    <inputDirectory>${basedir}/Kaa</inputDirectory>
+                    <outputDirectory>${basedir}/target/apidocs</outputDirectory>
+                    <excludePatterns>*/src/gen/* */test/* */src/avro_src/*</excludePatterns>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-doxygen-docs</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
     <profiles>
         <profile>
             <id>compile-client-objc</id>
+            <activation>
+                <os>
+                    <family>mac</family>
+                </os>
+            </activation>
             <build>
                 <plugins>
-                    <!--<plugin>-->
-                        <!--<groupId>org.codehaus.mojo</groupId>-->
-                        <!--<artifactId>exec-maven-plugin</artifactId>-->
-                        <!--<version>1.2.1</version>-->
-                        <!--<executions>-->
-                            <!--<execution>-->
-                                <!--<id>build_script</id>-->
-                                <!--<phase>package</phase>-->
-                                <!--<goals>-->
-                                    <!--<goal>exec</goal>-->
-                                <!--</goals>-->
-                                <!--<configuration>-->
-                                    <!--<executable>${basedir}/build.sh</executable>-->
-                                <!--</configuration>-->
-                            <!--</execution>-->
-                            <!--<execution>-->
-                                <!--<id>test_script</id>-->
-                                <!--<phase>test</phase>-->
-                                <!--<goals>-->
-                                    <!--<goal>exec</goal>-->
-                                <!--</goals>-->
-                                <!--<configuration>-->
-                                    <!--<executable>${basedir}/test.sh</executable>-->
-                                <!--</configuration>-->
-                            <!--</execution>-->
-                        <!--</executions>-->
-                    <!--</plugin>-->
                     <plugin>
-                        <groupId>com.soebes.maven.plugins.dmg</groupId>
-                        <artifactId>doxygen-maven-plugin</artifactId>
-                        <version>1.0.1</version>
-                        <configuration>
-                            <projectName>${project.artifactId}</projectName>
-                            <projectNumber>${project.version}</projectNumber>
-                            <allexternals>false</allexternals>
-                            <alphabeticalIndex>true</alphabeticalIndex>
-                            <extractAll>true</extractAll>
-                            <extractStatic>true</extractStatic>
-                            <recursive>true</recursive>
-                            <haveGraph>true</haveGraph>
-                            <generateHtml>true</generateHtml>
-                            <generateLatex>false</generateLatex>
-                            <filePatterns>*.h *.dox</filePatterns>
-                            <inputDirectory>${basedir}/Kaa</inputDirectory>
-                            <outputDirectory>${basedir}/target/apidocs</outputDirectory>
-                            <excludePatterns>*/src/gen/* */test/* */src/avro_src/*</excludePatterns>
-                        </configuration>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>1.2.1</version>
                         <executions>
                             <execution>
-                                <id>attach-doxygen-docs</id>
-                                <phase>compile</phase>
+                                <id>build_script</id>
+                                <phase>package</phase>
                                 <goals>
-                                    <goal>report</goal>
+                                    <goal>exec</goal>
                                 </goals>
+                                <configuration>
+                                    <executable>${basedir}/build.sh</executable>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>test_script</id>
+                                <phase>test</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>${basedir}/test.sh</executable>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
