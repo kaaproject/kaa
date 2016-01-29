@@ -26,14 +26,6 @@
 #include "kaa/IKaaClientPlatformContext.hpp"
 #include "kaa/KaaClientPlatformContext.hpp"
 
-#ifdef __GNUC__
-#define KAA_DEPRECATED __attribute__ ((deprecated))
-#elif defined(_MSC_VER)
-#define KAA_DEPRECATED __declspec(deprecated)
-#else
-#pragma message("WARNING: You need to implement KAA_DEPRECATED for this compiler")
-#endif
-
 namespace kaa {
 
 /**
@@ -70,59 +62,8 @@ public:
     static std::shared_ptr<IKaaClient> newClient(IKaaClientPlatformContextPtr context = std::make_shared<KaaClientPlatformContext>()
                                                , IKaaClientStateListenerPtr listener = IKaaClientStateListenerPtr());
 
-    /**
-     * @brief Initialize Kaa library.
-     *
-     * @deprecated Use @link newClient() @endlink to create a Kaa client instance.
-     */
-    KAA_DEPRECATED
-    static void init(int options = 0/* unused */);
-
-    /**
-     * @brief Starts Kaa's workflow.
-     *
-     * @deprecated Use @link kaa::IKaaClient::start().
-     */
-    KAA_DEPRECATED
-    static void start();
-
-    /**
-     * @brief Stops Kaa's workflow.
-     *
-     * @deprecated Use @link kaa::IKaaClient::stop().
-     */
-    KAA_DEPRECATED
-    static void stop();
-
-    /**
-     * @brief Pauses Kaa's workflow.
-     *
-     * @deprecated Use @link kaa::IKaaClient::pause().
-     */
-    KAA_DEPRECATED
-    static void pause();
-
-    /**
-     * @brief Resumes Kaa's workflow.
-     *
-     * @deprecated Use @link kaa::IKaaClient::resume().
-     */
-    KAA_DEPRECATED
-    static void resume();
-
-    /**
-     * @brief Retrieves the Kaa client.
-     *
-     * @deprecated Use @link newClient() @endlink to create a Kaa client instance.
-     *
-     * @return @link IKaaClient @endlink instance.
-     */
-    KAA_DEPRECATED
-    static IKaaClient& getKaaClient();
-
 private:
     static Botan::LibraryInitializer     botanInit_;
-    static std::shared_ptr<IKaaClient>   client_;
 };
 
 }

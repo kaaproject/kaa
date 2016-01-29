@@ -43,6 +43,7 @@ public class AvroGenericUtils {
     /**
      * Creates UUID from the given GenericFixed object.
      *
+     * @param fixed the fixed
      * @return uuid object.
      *
      */

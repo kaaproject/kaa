@@ -45,6 +45,7 @@ import org.kaaproject.kaa.client.logging.AbstractLogCollector;
 import org.kaaproject.kaa.client.persistence.KaaClientPropertiesState;
 import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.client.persistence.PersistentStorage;
+import org.kaaproject.kaa.client.profile.ProfileContainer;
 import org.kaaproject.kaa.client.profile.ProfileRuntimeException;
 import org.kaaproject.kaa.client.schema.SchemaRuntimeException;
 import org.kaaproject.kaa.client.transport.TransportException;
@@ -52,6 +53,7 @@ import org.kaaproject.kaa.client.util.CommonsBase64;
 import org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData;
 import org.kaaproject.kaa.common.endpoint.gen.ProtocolVersionPair;
 import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
+import org.kaaproject.kaa.schema.system.EmptyData;
 import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -90,6 +92,13 @@ public class KaaClientTest {
                 return bsManagerMock;
             }
         };
+
+        client.setProfileContainer(new ProfileContainer() {
+            @Override
+            public EmptyData getProfile() {
+                return new EmptyData();
+            }
+        });
     }
 
     @Test
@@ -128,11 +137,11 @@ public class KaaClientTest {
 
     protected void initStorageMock(PersistentStorage storage) throws NoSuchAlgorithmException, IOException {
         KeyPair kp = KeyUtil.generateKeyPair();
-        Mockito.when(storage.exists(KaaClientPropertiesState.CLIENT_PUBLIC_KEY_DEFAULT)).thenReturn(true);
-        Mockito.when(storage.exists(KaaClientPropertiesState.CLIENT_PRIVATE_KEY_DEFAULT)).thenReturn(true);
-        Mockito.when(storage.openForRead(KaaClientPropertiesState.CLIENT_PUBLIC_KEY_DEFAULT)).thenReturn(
+        Mockito.when(storage.exists(KaaClientProperties.CLIENT_PUBLIC_KEY_NAME_DEFAULT)).thenReturn(true);
+        Mockito.when(storage.exists(KaaClientProperties.CLIENT_PRIVATE_KEY_NAME_DEFAULT)).thenReturn(true);
+        Mockito.when(storage.openForRead(KaaClientProperties.CLIENT_PUBLIC_KEY_NAME_DEFAULT)).thenReturn(
                 new ByteArrayInputStream(kp.getPublic().getEncoded()));
-        Mockito.when(storage.openForRead(KaaClientPropertiesState.CLIENT_PRIVATE_KEY_DEFAULT)).thenReturn(
+        Mockito.when(storage.openForRead(KaaClientProperties.CLIENT_PRIVATE_KEY_NAME_DEFAULT)).thenReturn(
                 new ByteArrayInputStream(kp.getPrivate().getEncoded()));
         Mockito.when(storage.openForWrite(Mockito.anyString())).thenReturn(Mockito.mock(OutputStream.class));
     }
@@ -176,6 +185,10 @@ public class KaaClientTest {
     @Test
     public void failureOnResumeTest() {
         client.start();
+        Mockito.verify(stateListener, Mockito.timeout(1000)).onStarted();
+        client.pause();
+        Mockito.verify(stateListener, Mockito.timeout(1000)).onPaused();
+
         KaaInternalChannelManager channelManager = Mockito.mock(KaaInternalChannelManager.class);
         Mockito.doThrow(new RuntimeException()).when(channelManager).resume();
         ReflectionTestUtils.setField(client, "channelManager", channelManager);

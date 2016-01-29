@@ -122,14 +122,15 @@ kaa_error_t kaa_platform_message_header_write(kaa_platform_message_writer_t* wri
 }
 
 kaa_error_t kaa_platform_message_write_extension_header(kaa_platform_message_writer_t* writer
-                                                      , uint8_t extension_type
-                                                      , uint32_t options
+                                                      , uint16_t extension_type
+                                                      , uint16_t options
                                                       , uint32_t payload_size)
 {
     KAA_RETURN_IF_NIL(writer, KAA_ERR_BADPARAM);
 
     if ((writer->current + KAA_EXTENSION_HEADER_SIZE) <= writer->end) {
-        options = KAA_HTONL(options) >> 8;
+        extension_type = KAA_HTONS(extension_type);
+        options = KAA_HTONS(options);
         payload_size = KAA_HTONL(payload_size);
 
         memcpy((void *)writer->current, &extension_type, KAA_EXTENSION_TYPE_SIZE);
@@ -218,17 +219,18 @@ kaa_error_t kaa_platform_message_header_read(kaa_platform_message_reader_t* read
 
 
 kaa_error_t kaa_platform_message_read_extension_header(kaa_platform_message_reader_t *reader
-                                                     , uint8_t *extension_type
-                                                     , uint32_t *extension_options
+                                                     , uint16_t *extension_type
+                                                     , uint16_t *extension_options
                                                      , uint32_t *extension_payload_length)
 {
     KAA_RETURN_IF_NIL4(reader, extension_type, extension_options, extension_payload_length, KAA_ERR_BADPARAM);
 
     if (reader->current + KAA_EXTENSION_HEADER_SIZE <= reader->end) {
-        *extension_type = *((const uint8_t *) reader->current);
+        memcpy(extension_type, reader->current, KAA_EXTENSION_OPTIONS_SIZE);
+        *extension_type = KAA_NTOHS(*extension_type);
         reader->current += KAA_EXTENSION_TYPE_SIZE;
         memcpy(extension_options, reader->current, KAA_EXTENSION_OPTIONS_SIZE);
-        *extension_options = KAA_NTOHL(*extension_options) >> 8;
+        *extension_options = KAA_NTOHS(*extension_options);
         reader->current += KAA_EXTENSION_OPTIONS_SIZE;
         *extension_payload_length = KAA_NTOHL(*((const uint32_t *)reader->current));
         reader->current += KAA_EXTENSION_PAYLOAD_LENGTH_SIZE;

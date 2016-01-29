@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.server.common.dao;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -24,8 +25,6 @@ import java.sql.Statement;
 import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.Set;
-
-import javax.sql.DataSource;
 
 public abstract class DBTestRunner {
 
@@ -39,8 +38,8 @@ public abstract class DBTestRunner {
     private Set<String> getTableNames(DataSource dataSource) throws SQLException {
         Set<String> tableNames = new HashSet<>();
         try (Connection connection = dataSource.getConnection();
-                PreparedStatement preparedStatement = prepareStatement(connection);
-                ResultSet resultSet = preparedStatement.executeQuery()) {
+             PreparedStatement preparedStatement = prepareStatement(connection);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
             while (resultSet.next()) {
                 tableNames.add(resultSet.getString(1));
             }

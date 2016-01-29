@@ -111,7 +111,22 @@ private:
     void initKaaTransport();
     void initClientKeys();
 
+    void checkReadiness();
+
 private:
+
+    enum class State {
+        CREATED,
+        STARTED,
+        PAUSED,
+        STOPPED
+    };
+
+    void setClientState(State state);
+    void checkClientState(State expected, const std::string& message);
+    void checkClientStateNot(State unexpected, const std::string& message);
+
+    State                                           clientState_ = State::CREATED;
     LoggerPtr        logger_;
     IKaaClientStateStoragePtr status_;
     KaaClientContext context_;
@@ -136,7 +151,6 @@ private:
     std::unique_ptr<IKaaChannelManager>              channelManager_;
     std::unique_ptr<SyncDataProcessor>               syncProcessor_;
     IFailoverStrategyPtr                             failoverStrategy_;
-    IProfileTransportPtr                             profileTransport_;
 
     std::unique_ptr<KeyPair>                         clientKeys_;
     std::string                                      publicKeyHash_;

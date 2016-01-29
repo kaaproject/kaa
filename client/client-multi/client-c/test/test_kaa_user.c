@@ -56,7 +56,7 @@ extern void kaa_user_manager_destroy(kaa_user_manager_t *self);
 
 extern kaa_error_t kaa_user_request_get_size(kaa_user_manager_t *self, size_t *expected_size);
 extern kaa_error_t kaa_user_request_serialize(kaa_user_manager_t *self, kaa_platform_message_writer_t* writer);
-extern kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self, kaa_platform_message_reader_t *reader, uint32_t extension_options, size_t extension_length);
+extern kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self, kaa_platform_message_reader_t *reader, uint16_t extension_options, size_t extension_length);
 
 
 
@@ -121,12 +121,12 @@ void test_specified_user_verifier(void)
     ASSERT_EQUAL(kaa_user_request_serialize(user_manager, writer), KAA_ERR_NONE);
 
     char *buf_cursor = buffer;
-    ASSERT_EQUAL(KAA_USER_EXTENSION_TYPE, *buf_cursor);
-    ++buf_cursor;
+    ASSERT_EQUAL(KAA_USER_EXTENSION_TYPE, KAA_HTONS(*(uint16_t*)buf_cursor));
+    buf_cursor += sizeof(uint16_t);
 
-    char options[] = { 0x00, 0x00, 0x01 };
-    ASSERT_EQUAL(memcmp(buf_cursor, options, 3), 0);
-    buf_cursor += 3;
+    char options[] = { 0x00, 0x01 };
+    ASSERT_EQUAL(memcmp(buf_cursor, options, 2), 0);
+    buf_cursor += 2;
 
     ASSERT_EQUAL(*(uint32_t * ) buf_cursor, KAA_HTONL(2 * sizeof(uint32_t)
                                                     + kaa_aligned_size_get(strlen(USER_EXTERNAL_ID))

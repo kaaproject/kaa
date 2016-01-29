@@ -43,11 +43,6 @@ public class MongoDBConfigurationServiceImplTest extends ConfigurationServiceImp
         MongoDBTestRunner.tearDown();
     }
 
-    @Before
-    public void beforeTest() throws IOException {
-        MongoDataLoader.loadData();
-    }
-
     @After
     public void afterTest() {
         MongoDataLoader.clearDBData();

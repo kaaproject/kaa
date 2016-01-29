@@ -107,6 +107,27 @@ bool kaa_user_manager_is_attached_to_user(kaa_user_manager_t *self);
 kaa_error_t kaa_user_manager_set_attachment_listeners(kaa_user_manager_t *self
                                                     , const kaa_attachment_status_listeners_t *listeners);
 
+/**
+ * @brief .
+ *
+ * @param[in]   self                     The user manager instance.
+ * @param[in]   endpoint_access_token    Null-terminated string representing endpoint access token.
+ *
+ * @return      Error code.
+ */
+kaa_error_t kaa_user_manager_attach_endpoint(kaa_user_manager_t *self, const char *endpoint_access_token, kaa_endpoint_status_listener_t *listener);
+
+
+/**
+ * @brief .
+ *
+ * @param[in]   self                 The user manager instance.
+ * @param[in]   endpoint_hash_key    Unique endpoint id.
+ *
+ * @return      Error code.
+ */
+kaa_error_t kaa_user_manager_detach_endpoint(kaa_user_manager_t *self, const kaa_endpoint_id_p endpoint_hash_key, kaa_endpoint_status_listener_t *listener);
+
 #ifdef __cplusplus
 }      /* extern "C" */
 #endif

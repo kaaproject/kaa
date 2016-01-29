@@ -38,9 +38,28 @@ extern "C" {
 
 
 typedef void (*serialize_fn)(avro_writer_t writer, void *data);
-typedef void *(*deserialize_fn)(void);
+
+/**
+ * @brief This is like a parent class both for @typedef deserialize_wo_ctx_fn
+ * and @typedef deserialize_w_ctx_fn that is why it has an empty parameter list instead of using <i>void</i>.
+ *
+ * @note It is not expected to use it explicitly. It is used under the hood of Avro Gen C.
+ *
+ * It is a workaround to specify different type of a deserializer. For now there is two kinds - with and without context.
+ * Now a context is used to deserialize the fixed Avro type. See @link kaa_fixed_deserialize() @endlink.
+ */
+typedef void *(*deserialize_fn)();
+
+/**
+ * @brief See @typedef deserialize_fn.
+ */
 typedef void *(*deserialize_wo_ctx_fn)(avro_reader_t reader);
+
+/**
+ * @brief See @typedef deserialize_fn.
+ */
 typedef void *(*deserialize_w_ctx_fn)(avro_reader_t reader, void *context);
+
 typedef size_t (*get_size_fn)(void *data);
 typedef void (*destroy_fn)(void *data);
 
@@ -146,7 +165,7 @@ size_t kaa_array_get_size(kaa_list_t *array, get_size_fn get_size);
 void kaa_null_serialize(avro_writer_t writer, void *data);
 void *kaa_null_deserialize(avro_reader_t reader);
 void kaa_null_destroy(void *data);
-size_t kaa_null_get_size(void);
+size_t kaa_null_get_size(void* data);
 
 void kaa_data_destroy(void *data);
 

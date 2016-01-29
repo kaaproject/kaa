@@ -25,8 +25,6 @@ package org.kaaproject.kaa.client.notification;
  * {@link NotificationManager#subscribeToTopics(java.util.List, boolean)},
  * {@link NotificationManager#addTopicListListener(NotificationTopicListListener)}.</p>
  *
- * @see NotificationManager#updateTopicSubscriptions(java.util.Map)
- *
  */
 @Deprecated
 public class NotificationListenerInfo {

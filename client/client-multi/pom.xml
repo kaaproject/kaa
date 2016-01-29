@@ -19,7 +19,7 @@
   <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.kaaproject.kaa</groupId>
-        <version>0.7.4-SNAPSHOT</version>
+        <version>0.8.0-SNAPSHOT</version>
         <artifactId>client</artifactId>
     </parent>
     <groupId>org.kaaproject.kaa.client</groupId>
@@ -33,7 +33,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <main.dir>${basedir}/../..</main.dir>
     </properties>
-    
+
     <modules>
         <module>client-java-core</module>
         <module>client-java-desktop</module>
@@ -42,7 +42,7 @@
         <module>kaatcp-c</module>
         <module>client-c</module>
     </modules>
-    
+
     <dependencies>
     </dependencies>
     <dependencyManagement>

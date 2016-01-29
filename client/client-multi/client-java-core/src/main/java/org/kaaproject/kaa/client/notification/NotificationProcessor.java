@@ -42,6 +42,7 @@ public interface NotificationProcessor {
      * Called when new notifications arrived.
      *
      * @param notifications the list of new notifications.
+     * @throws IOException the io exception
      * @see Notification
      */
     void notificationReceived(List<Notification> notifications) throws IOException;

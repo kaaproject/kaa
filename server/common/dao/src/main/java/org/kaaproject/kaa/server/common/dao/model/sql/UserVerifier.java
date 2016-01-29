@@ -74,6 +74,11 @@ public class UserVerifier extends Plugin<UserVerifierDto> implements Serializabl
     }
 
     @Override
+    protected GenericModel<UserVerifierDto> newInstance(Long id) {
+        return new UserVerifier(id);
+    }
+
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();

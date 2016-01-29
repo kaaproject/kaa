@@ -17,6 +17,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <time.h>
+#include <string.h>
 
 #include "kaa_test.h"
 
@@ -939,9 +940,9 @@ static void test_null_get_size(void)
     KAA_TRACE_IN(logger);
 
     srand(time(NULL));
-    ASSERT_EQUAL(kaa_null_get_size(), 0);
+    ASSERT_EQUAL(kaa_null_get_size(NULL), 0);
 
-    ASSERT_EQUAL(kaa_null_get_size(), AVRO_NULL_SIZE);
+    ASSERT_EQUAL(kaa_null_get_size(NULL), AVRO_NULL_SIZE);
 
     KAA_TRACE_OUT(logger);
 }
@@ -1000,7 +1001,7 @@ static void test_array_get_size(void)
 
     srand(time(NULL));
     ASSERT_EQUAL(kaa_array_get_size(NULL, NULL), 0);
-    ASSERT_EQUAL(kaa_array_get_size(NULL, kaa_null_get_size), avro_long_get_size(0));
+    ASSERT_EQUAL(kaa_array_get_size(NULL, (get_size_fn)kaa_null_get_size), avro_long_get_size(0));
 
     const char *plain_str = "data";
     kaa_string_t *reference_kaa_str = kaa_string_copy_create(plain_str);

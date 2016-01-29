@@ -1,0 +1,41 @@
+{
+    "type":"record",
+    "name":"Alpha",
+    "namespace":"org.kaaproject.kaa",
+    "version":1,
+    "dependencies":[
+        {
+            "fqn":"org.kaaproject.kaa.Beta",
+            "version":1
+        }
+    ],
+    "fields":[
+        {
+            "name":"test",
+            "type":{
+                "type":"record",
+                "name":"Beta",
+                "version":1,
+                "dependencies":[
+                    {
+                        "fqn":"org.kaaproject.kaa.Gamma",
+                        "version":1
+                    }
+                ],
+                "fields":[
+                    {
+                        "name":"test",
+                        "type":{
+                            "type":"record",
+                            "name":"Gamma",
+                            "fields":[
+
+                            ],
+                            "version":1
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}

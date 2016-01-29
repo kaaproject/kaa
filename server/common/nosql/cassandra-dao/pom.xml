@@ -19,7 +19,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.kaaproject.kaa.server.common</groupId>
-        <version>0.7.4-SNAPSHOT</version>
+        <version>0.8.0-SNAPSHOT</version>
         <artifactId>nosql</artifactId>
     </parent>
     <groupId>org.kaaproject.kaa.server.common.nosql</groupId>
@@ -76,6 +76,11 @@
             <artifactId>junit</artifactId>
         </dependency>
         <dependency>
+            <groupId>io.takari.junit</groupId>
+            <artifactId>takari-cpsuite</artifactId>
+            <version>1.2.7</version>
+        </dependency>        
+        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>
@@ -125,6 +130,15 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <includes>
+                        <include>**/*TestSuite.java</include>
+                    </includes>
+                </configuration>
             </plugin>
         </plugins>
     </build>

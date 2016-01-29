@@ -78,10 +78,7 @@ import org.kaaproject.kaa.client.event.registration.UserAttachCallback;
 import org.kaaproject.kaa.client.exceptions.KaaClusterConnectionException;
 import org.kaaproject.kaa.client.exceptions.KaaException;
 import org.kaaproject.kaa.client.exceptions.KaaRuntimeException;
-import org.kaaproject.kaa.client.logging.AbstractLogCollector;
-import org.kaaproject.kaa.client.logging.DefaultLogCollector;
-import org.kaaproject.kaa.client.logging.LogStorage;
-import org.kaaproject.kaa.client.logging.LogUploadStrategy;
+import org.kaaproject.kaa.client.logging.*;
 import org.kaaproject.kaa.client.notification.DefaultNotificationManager;
 import org.kaaproject.kaa.client.notification.NotificationListener;
 import org.kaaproject.kaa.client.notification.NotificationTopicListListener;
@@ -110,14 +107,6 @@ import org.slf4j.LoggerFactory;
  * </p>
  *
  * <p>
- * Class contains abstract methods
- * {@link AbstractKaaClient#createHttpClient(String, PrivateKey, PublicKey, PublicKey)}
- * and {@link AbstractKaaClient#createPersistentStorage()} which are used to
- * reference the platform-specific implementation of http client and Kaa's state
- * persistent storage.
- * </p>
- *
- * <p>
  * Http client ({@link AbstractHttpClient}) is used to provide basic
  * communication with Bootstrap and Operation servers using HTTP protocol.
  * </p>
@@ -134,7 +123,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractKaaClient.class);
     private static final long LONG_POLL_TIMEOUT = 60000L;
 
-    private volatile boolean isInitialized = false;
+    protected static final boolean FORCE_SYNC = true;
 
     protected final ConfigurationManager configurationManager;
     protected final AbstractLogCollector logCollector;
@@ -156,14 +145,40 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
     protected final KaaClientPlatformContext context;
     protected final KaaClientStateListener stateListener;
 
+    protected enum State {
+        CREATED,
+        STARTED,
+        PAUSED,
+        STOPPED
+    };
+
+    protected volatile State clientState = State.CREATED;
+
+    protected void checkClientState(State expected, String message) {
+        if (clientState != expected) {
+            throw new KaaRuntimeException(message);
+        }
+    }
+
+    protected void checkClientStateNot(State expected, String message) {
+        if (clientState == expected) {
+            throw new KaaRuntimeException(message);
+        }
+    }
+
+    protected void setClientState(State state) {
+        clientState = state;
+    }
+
     AbstractKaaClient(KaaClientPlatformContext context, KaaClientStateListener listener) throws IOException, GeneralSecurityException {
         this.context = context;
         this.stateListener = listener;
         if (context.getProperties() != null) {
             this.properties = context.getProperties();
         } else {
-            this.properties = new KaaClientProperties(context.getBase64());
+            this.properties = new KaaClientProperties();
         }
+        this.properties.setBase64(context.getBase64());
 
         Map<TransportProtocolId, List<TransportConnectionInfo>> bootstrapServers = this.properties.getBootstrapServers();
         if (bootstrapServers == null || bootstrapServers.isEmpty()) {
@@ -177,7 +192,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
         kaaClientState = new KaaClientPropertiesState(context.createPersistentStorage(), context.getBase64(), this.properties);
 
         TransportContext transportContext = buildTransportContext(properties, kaaClientState);
-        
+
         bootstrapManager = buildBootstrapManager(properties, kaaClientState, transportContext);
 
         channelManager = buildChannelManager(bootstrapManager, bootstrapServers);
@@ -188,7 +203,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
 
         bootstrapManager.setChannelManager(channelManager);
         bootstrapManager.setFailoverManager(failoverManager);
-        
+
         profileManager = buildProfileManager(properties, kaaClientState, transportContext);
         notificationManager = buildNotificationManager(properties, kaaClientState, transportContext);
         eventManager = buildEventManager(properties, kaaClientState, transportContext);
@@ -206,24 +221,26 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
         transportContext.getUserTransport().setEndpointRegistrationProcessor(endpointRegistrationManager);
         transportContext.getLogTransport().setLogProcessor(logCollector);
         transportContext.initTransports(this.channelManager, this.kaaClientState);
-        
+
         eventFamilyFactory = new EventFamilyFactory(eventManager, context.getExecutorContext());
     }
 
     @Override
     public void start() {
+        if (context.needToCheckClientState()) {
+            checkClientStateNot(State.STARTED, "Kaa client is already started");
+            checkClientStateNot(State.PAUSED, "Kaa client is paused, need to be resumed");
+        }
+        setClientState(State.STARTED);
+
+        checkReadiness();
+
         context.getExecutorContext().init();
         getLifeCycleExecutor().submit(new Runnable() {
             @Override
             public void run() {
                 LOG.debug("Client startup initiated");
                 try {
-                    if (!isInitialized) {
-                        isInitialized = true;
-                    } else {
-                        LOG.warn("Client is already initialized!");
-                        return;
-                    }
                     // Load configuration
                     configurationManager.init();
                     bootstrapManager.receiveOperationsServerList();
@@ -245,8 +262,25 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
         });
     }
 
+    private void checkReadiness() {
+        if (profileManager == null || !profileManager.isInitialized()) {
+            LOG.error("Profile manager isn't initialized: maybe profile container isn't set");
+            if (stateListener != null) {
+                stateListener.onStartFailure(new KaaException("Profile manager isn't initialized: maybe profile container isn't set"));
+            } else {
+                throw new KaaRuntimeException("Profile manager isn't initialized: maybe profile container isn't set");
+            }
+        }
+    }
+
     @Override
     public void stop() {
+        if (context.needToCheckClientState()) {
+            checkClientStateNot(State.CREATED, "Kaa client is not started");
+            checkClientStateNot(State.STOPPED, "Kaa client is already stopped");
+        }
+        setClientState(State.STOPPED);
+
         getLifeCycleExecutor().submit(new Runnable() {
             @Override
             public void run() {
@@ -254,7 +288,6 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
                     logCollector.stop();
                     kaaClientState.persist();
                     channelManager.shutdown();
-                    isInitialized = false;
                     if (stateListener != null) {
                         stateListener.onStopped();
                     }
@@ -271,6 +304,11 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
 
     @Override
     public void pause() {
+        if (context.needToCheckClientState()) {
+            checkClientState(State.STARTED, "Kaa client is not started (" + clientState.toString().toLowerCase() + " now)");
+        }
+        setClientState(State.PAUSED);
+
         getLifeCycleExecutor().submit(new Runnable() {
             @Override
             public void run() {
@@ -292,6 +330,11 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
 
     @Override
     public void resume() {
+        if (context.needToCheckClientState()) {
+            checkClientState(State.PAUSED, "Kaa client isn't paused");
+        }
+        setClientState(State.STARTED);
+
         getLifeCycleExecutor().submit(new Runnable() {
             @Override
             public void run() {
@@ -321,6 +364,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
 
     @Override
     public void updateProfile() {
+        checkClientState(State.STARTED, "Kaa client isn't started");
         this.profileManager.updateProfile();
     }
 
@@ -341,6 +385,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
 
     @Override
     public List<Topic> getTopics() {
+        checkClientState(State.STARTED, "Kaa client isn't started");
         return this.notificationManager.getTopics();
     }
 
@@ -376,46 +421,51 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
 
     @Override
     public void subscribeToTopic(String topicId) throws UnavailableTopicException {
-        this.notificationManager.subscribeToTopic(topicId, true);
+        subscribeToTopic(topicId, FORCE_SYNC);
     }
 
     @Override
     public void subscribeToTopic(String topicId, boolean forceSync) throws UnavailableTopicException {
-        this.notificationManager.subscribeToTopic(topicId, forceSync);
+        checkClientState(State.STARTED, "Kaa client isn't started");
+        notificationManager.subscribeToTopic(topicId, forceSync);
     }
 
     @Override
     public void subscribeToTopics(List<String> topicIds) throws UnavailableTopicException {
-        this.notificationManager.subscribeToTopics(topicIds, true);
+        subscribeToTopics(topicIds, FORCE_SYNC);
     }
 
     @Override
     public void subscribeToTopics(List<String> topicIds, boolean forceSync) throws UnavailableTopicException {
-        this.notificationManager.subscribeToTopics(topicIds, forceSync);
+        checkClientState(State.STARTED, "Kaa client isn't started");
+        notificationManager.subscribeToTopics(topicIds, forceSync);
     }
 
     @Override
     public void unsubscribeFromTopic(String topicId) throws UnavailableTopicException {
-        this.notificationManager.unsubscribeFromTopic(topicId, true);
+        unsubscribeFromTopic(topicId, FORCE_SYNC);
     }
 
     @Override
     public void unsubscribeFromTopic(String topicId, boolean forceSync) throws UnavailableTopicException {
-        this.notificationManager.unsubscribeFromTopic(topicId, forceSync);
+        checkClientState(State.STARTED, "Kaa client isn't started");
+        notificationManager.unsubscribeFromTopic(topicId, forceSync);
     }
 
     @Override
     public void unsubscribeFromTopics(List<String> topicIds) throws UnavailableTopicException {
-        this.notificationManager.unsubscribeFromTopics(topicIds, true);
+        unsubscribeFromTopics(topicIds, FORCE_SYNC);
     }
 
     @Override
     public void unsubscribeFromTopics(List<String> topicIds, boolean forceSync) throws UnavailableTopicException {
+        checkClientState(State.STARTED, "Kaa client isn't started");
         this.notificationManager.unsubscribeFromTopics(topicIds, forceSync);
     }
 
     @Override
     public void syncTopicsList() {
+        checkClientState(State.STARTED, "Kaa client isn't started");
         this.notificationManager.sync();
     }
 
@@ -431,11 +481,13 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
 
     @Override
     public EventFamilyFactory getEventFamilyFactory() {
+        //TODO: on which stage do we need to check client's state, here or in a specific event factory?
         return eventFamilyFactory;
     }
 
     @Override
     public void findEventListeners(List<String> eventFQNs, FindEventListenersCallback listener) {
+        checkClientState(State.STARTED, "Kaa client isn't started");
         eventManager.findEventListeners(eventFQNs, listener);
     }
 
@@ -476,21 +528,25 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
 
     @Override
     public void attachEndpoint(EndpointAccessToken endpointAccessToken, OnAttachEndpointOperationCallback resultListener) {
+        checkClientState(State.STARTED, "Kaa client isn't started");
         endpointRegistrationManager.attachEndpoint(endpointAccessToken, resultListener);
     }
 
     @Override
     public void detachEndpoint(EndpointKeyHash endpointKeyHash, OnDetachEndpointOperationCallback resultListener) {
+        checkClientState(State.STARTED, "Kaa client isn't started");
         endpointRegistrationManager.detachEndpoint(endpointKeyHash, resultListener);
     }
 
     @Override
     public void attachUser(String userExternalId, String userAccessToken, UserAttachCallback callback) {
+        checkClientState(State.STARTED, "Kaa client isn't started");
         endpointRegistrationManager.attachUser(userExternalId, userAccessToken, callback);
     }
 
     @Override
     public void attachUser(String userVerifierToken, String userExternalId, String userAccessToken, UserAttachCallback callback) {
+        checkClientState(State.STARTED, "Kaa client isn't started");
         endpointRegistrationManager.attachUser(userVerifierToken, userExternalId, userAccessToken, callback);
     }
 
@@ -509,6 +565,11 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
         endpointRegistrationManager.setDetachedCallback(listener);
     }
 
+    @Override
+    public void setLogDeliveryListener(LogDeliveryListener listener) {
+        logCollector.setLogDeliveryListener(listener);
+    }
+
     protected TransportContext buildTransportContext(KaaClientProperties properties, KaaClientState kaaClientState) {
         BootstrapTransport bootstrapTransport = buildBootstrapTransport(properties, kaaClientState);
         ProfileTransport profileTransport = buildProfileTransport(properties, kaaClientState);
@@ -519,7 +580,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
         RedirectionTransport redirectionTransport = buildRedirectionTransport(properties, kaaClientState);
         LogTransport logTransport = buildLogTransport(properties, kaaClientState);
 
-        
+
         EndpointObjectHash publicKeyHash = EndpointObjectHash.fromSHA1(kaaClientState.getPublicKey().getEncoded());
         MetaDataTransport mdTransport = new DefaultMetaDataTransport();
         mdTransport.setClientProperties(properties);
@@ -541,7 +602,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
         DefaultBootstrapDataProcessor bootstrapDataProcessor = new DefaultBootstrapDataProcessor();
         bootstrapDataProcessor.setBootstrapTransport(transportContext.getBootstrapTransport());
 
-        DefaultOperationDataProcessor operationsDataProcessor = new DefaultOperationDataProcessor();
+        DefaultOperationDataProcessor operationsDataProcessor = new DefaultOperationDataProcessor(kaaClientState);
         operationsDataProcessor.setConfigurationTransport(transportContext.getConfigurationTransport());
         operationsDataProcessor.setEventTransport(transportContext.getEventTransport());
         operationsDataProcessor.setMetaDataTransport(transportContext.getMdTransport());

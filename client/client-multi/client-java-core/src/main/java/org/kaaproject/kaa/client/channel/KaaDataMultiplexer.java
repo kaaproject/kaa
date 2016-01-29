@@ -34,11 +34,12 @@ public interface KaaDataMultiplexer {
     /**
      * Compiles request for given transport types.
      *
-     * @param types map of types to be polled.
-     * @return the serialized request data.
+     * @param   types the map of types to be polled.
+     * @return  the serialized request data.
+     * @throws  Exception the exception
      *
-     * @see TransportType
-     * @see ChannelDirection
+     * @see     TransportType
+     * @see     ChannelDirection
      *
      */
     byte [] compileRequest(Map<TransportType, ChannelDirection> types) throws Exception;

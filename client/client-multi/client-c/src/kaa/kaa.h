@@ -82,6 +82,17 @@ kaa_error_t kaa_deinit(kaa_context_t *kaa_context);
  */
 bool kaa_process_failover(kaa_context_t *kaa_context);
 
+
+
+/**
+ * @brief Checks if Kaa context is initialized and ready to be used.
+ *
+ * @param[in]       kaa_context     Pointer to an initialized Kaa endpoint context.
+ *
+ * @return KAA_ERR_NONE if Kaa context is ready to be used.
+ */
+kaa_error_t kaa_check_readiness(kaa_context_t *kaa_context);
+
 #ifdef __cplusplus
 }      /* extern "C" */
 #endif

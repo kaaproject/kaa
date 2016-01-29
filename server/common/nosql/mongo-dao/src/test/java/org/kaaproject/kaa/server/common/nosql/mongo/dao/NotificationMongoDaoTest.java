@@ -23,10 +23,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kaaproject.kaa.common.dto.NotificationDto;
-import org.kaaproject.kaa.server.common.dao.impl.NotificationDao;
 import org.kaaproject.kaa.server.common.dao.AbstractTest;
-import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoNotification;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.kaaproject.kaa.server.common.dao.model.Notification;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -54,15 +52,12 @@ public class NotificationMongoDaoTest extends AbstractTest {
         clearDBData();
     }
 
-    @Autowired
-    private NotificationDao<MongoNotification> notificationDao;
-
     @Test
     public void testRemoveById() {
-        NotificationDto notification = generateNotifications(null, null, 1, null).get(0);
+        NotificationDto notification = generateNotificationsDto(null, null, 1, null).get(0);
         Assert.assertNotNull(notification.getId());
         notificationDao.removeById(notification.getId());
-        MongoNotification found = notificationDao.findById(notification.getId());
+        Notification found = notificationDao.findById(notification.getId());
         Assert.assertNull(found);
     }
 

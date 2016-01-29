@@ -34,7 +34,7 @@ import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongI
 @Table(name = TOPIC_TABLE_NAME, uniqueConstraints = {
         @UniqueConstraint(columnNames = {TOPIC_NAME, ENDPOINT_GROUP_APPLICATION_ID})
 })
-public final class Topic extends GenericModel<TopicDto> implements Serializable {
+public class Topic extends GenericModel<TopicDto> implements Serializable {
 
     private static final long serialVersionUID = -5617352698933455002L;
 
@@ -233,6 +233,11 @@ public final class Topic extends GenericModel<TopicDto> implements Serializable 
     @Override
     protected TopicDto createDto() {
         return new TopicDto();
+    }
+
+    @Override
+    protected GenericModel<TopicDto> newInstance(Long id) {
+        return new Topic(id);
     }
 
     @Override

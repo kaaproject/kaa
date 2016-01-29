@@ -32,7 +32,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 
@@ -89,6 +91,24 @@ public abstract class DaoUtil {
             }
         }
         return list;
+    }
+
+    /**
+     * This method  convert list of model objects to dto objects.
+     *
+     * @param <T>       Type of model object
+     * @param toDtoSet List of model objects.
+     * @return List of converted objects.
+     */
+    public static <T> Set<T> convertDtoSet(Collection<? extends ToDto<T>> toDtoSet) {
+        Set<T> set = Collections.emptySet();
+        if (toDtoSet != null && !toDtoSet.isEmpty()) {
+            set = new HashSet<>();
+            for (ToDto<T> object : toDtoSet) {
+                set.add(object.toDto());
+            }
+        }
+        return set;
     }
 
     /**

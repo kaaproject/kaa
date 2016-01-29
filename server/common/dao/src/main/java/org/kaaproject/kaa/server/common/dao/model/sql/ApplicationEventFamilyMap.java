@@ -41,7 +41,7 @@ import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongI
 
 @Entity
 @Table(name = APPLICATION_EVENT_FAMILY_MAP_TABLE_NAME)
-public final class ApplicationEventFamilyMap extends GenericModel<ApplicationEventFamilyMapDto> {
+public class ApplicationEventFamilyMap extends GenericModel<ApplicationEventFamilyMapDto> {
 
     private static final long serialVersionUID = 3766947955702551264L;
 
@@ -69,6 +69,10 @@ public final class ApplicationEventFamilyMap extends GenericModel<ApplicationEve
     private List<ApplicationEventMap> eventMaps;
 
     public ApplicationEventFamilyMap() {
+    }
+
+    public ApplicationEventFamilyMap(Long id) {
+        this.id = id;
     }
 
     public ApplicationEventFamilyMap(ApplicationEventFamilyMapDto dto) {
@@ -203,6 +207,11 @@ public final class ApplicationEventFamilyMap extends GenericModel<ApplicationEve
     @Override
     protected ApplicationEventFamilyMapDto createDto() {
         return new ApplicationEventFamilyMapDto();
+    }
+
+    @Override
+    protected GenericModel<ApplicationEventFamilyMapDto> newInstance(Long id) {
+        return new ApplicationEventFamilyMap(id);
     }
 
     @Override

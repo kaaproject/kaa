@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,22 +37,34 @@ import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoU
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.convertECFVersionDtoToModelList;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getByteBuffer;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getBytes;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.*;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_ACCESS_TOKEN_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_APP_ID_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_COLUMN_FAMILY_NAME;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_CONFIGURATION_SEQUENCE_NUMBER_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_CONFIGURATION_VERSION_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_CONFIG_GROUP_STATE_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_CONFIG_HASH_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_ECF_VERSION_STATE_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_ENDPOINT_ID_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_EP_KEY_HASH_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_EP_KEY_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_LOG_SCHEMA_VERSION_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_NOTIFICATION_GROUP_STATE_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_NOTIFICATION_HASH_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_NOTIFICATION_SEQUENCE_NUMBER_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_NOTIFICATION_VERSION_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_PROFILE_HASH_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_PROFILE_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_PROFILE_SCHEMA_ID_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_PROFILE_VERSION_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_SDK_TOKEN_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_SERVER_HASH_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_SERVER_PROFILE_VERSION_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_SERVER_PROFILE_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_SUBSCRIPTIONS_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_SYSTEM_NOTIFICATION_VERSION_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_USER_CONFIG_HASH_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_USER_ID_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_USER_NOTIFICATION_VERSION_PROPERTY;
 
 @Table(name = EP_COLUMN_FAMILY_NAME)
 public final class CassandraEndpointProfile implements EndpointProfile, Serializable {
@@ -73,8 +85,6 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
     private String endpointUserId;
     @Column(name = EP_ACCESS_TOKEN_PROPERTY)
     private String accessToken;
-    @Column(name = EP_PROFILE_SCHEMA_ID_PROPERTY)
-    private String profileSchemaId;
     @Column(name = EP_CONFIG_GROUP_STATE_PROPERTY)
     @FrozenValue
     private List<CassandraEndpointGroupState> cfGroupState;
@@ -91,6 +101,8 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
     private ByteBuffer profileHash;
     @Column(name = EP_PROFILE_VERSION_PROPERTY)
     private int profileVersion;
+    @Column(name = EP_SERVER_PROFILE_VERSION_PROPERTY)
+    private int serverProfileVersion;
     @Column(name = EP_CONFIG_HASH_PROPERTY)
     private ByteBuffer configurationHash;
     @Column(name = EP_USER_CONFIG_HASH_PROPERTY)
@@ -114,7 +126,10 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
     private List<CassandraEventClassFamilyVersionState> ecfVersionStates;
     @Column(name = EP_SERVER_HASH_PROPERTY)
     private String serverHash;
-
+    @Column(name = EP_SDK_TOKEN_PROPERTY)
+    private String sdkToken;
+    @Column(name = EP_SERVER_PROFILE_PROPERTY)
+    private String serverProfile;
 
     public CassandraEndpointProfile() {
     }
@@ -126,14 +141,14 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
         this.endpointKeyHash = getByteBuffer(dto.getEndpointKeyHash());
         this.endpointUserId = dto.getEndpointUserId();
         this.accessToken = dto.getAccessToken();
-        this.profileSchemaId = dto.getProfileSchemaId();
         this.cfGroupState = convertDtoToModelList(dto.getCfGroupStates());
         this.nfGroupState = convertDtoToModelList(dto.getNfGroupStates());
         this.cfSequenceNumber = dto.getCfSequenceNumber();
         this.nfSequenceNumber = dto.getNfSequenceNumber();
-        this.profile = dto.getProfile();
+        this.profile = dto.getClientProfileBody();
         this.profileHash = getByteBuffer(dto.getProfileHash());
-        this.profileVersion = dto.getProfileVersion();
+        this.profileVersion = dto.getClientProfileVersion();
+        this.serverProfileVersion = dto.getServerProfileVersion();
         this.configurationHash = getByteBuffer(dto.getConfigurationHash());
         this.userConfigurationHash = getByteBuffer(dto.getUserConfigurationHash());
         this.configurationVersion = dto.getConfigurationVersion();
@@ -145,6 +160,8 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
         this.logSchemaVersion = dto.getLogSchemaVersion();
         this.ecfVersionStates = convertECFVersionDtoToModelList(dto.getEcfVersionStates());
         this.serverHash = dto.getServerHash();
+        this.sdkToken = dto.getSdkToken();
+        this.serverProfile = dto.getServerProfileBody();
     }
 
     public void setId(String id) {
@@ -194,10 +211,6 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
 
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
-    }
-
-    public String getProfileSchemaId() {
-        return profileSchemaId;
     }
 
     public List<CassandraEndpointGroupState> getCfGroupState() {
@@ -293,6 +306,24 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
         return subscriptions;
     }
 
+    @Override
+    public int getServerProfileVersion() {
+        return serverProfileVersion;
+    }
+
+    public void setServerProfileVersion(int serverProfileVersion) {
+        this.serverProfileVersion = serverProfileVersion;
+    }
+
+    @Override
+    public String getServerProfile() {
+        return serverProfile;
+    }
+
+    public void setServerProfile(String serverProfile) {
+        this.serverProfile = serverProfile;
+    }
+
     public void setSubscriptions(List<String> subscriptions) {
         this.subscriptions = subscriptions;
     }
@@ -345,12 +376,16 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
         this.serverHash = serverHash;
     }
 
-    public void setApplicationId(String applicationId) {
-        this.applicationId = applicationId;
+    public String getSdkToken() {
+        return sdkToken;
     }
 
-    public void setProfileSchemaId(String profileSchemaId) {
-        this.profileSchemaId = profileSchemaId;
+    public void setSdkToken(String sdkToken) {
+        this.sdkToken = sdkToken;
+    }
+
+    public void setApplicationId(String applicationId) {
+        this.applicationId = applicationId;
     }
 
     @Override
@@ -361,41 +396,35 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
         CassandraEndpointProfile that = (CassandraEndpointProfile) o;
 
         if (cfSequenceNumber != that.cfSequenceNumber) return false;
-        if (configurationVersion != that.configurationVersion) return false;
-        if (logSchemaVersion != that.logSchemaVersion) return false;
         if (nfSequenceNumber != that.nfSequenceNumber) return false;
-        if (notificationVersion != that.notificationVersion) return false;
         if (profileVersion != that.profileVersion) return false;
+        if (serverProfileVersion != that.serverProfileVersion) return false;
+        if (configurationVersion != that.configurationVersion) return false;
+        if (notificationVersion != that.notificationVersion) return false;
         if (systemNfVersion != that.systemNfVersion) return false;
         if (userNfVersion != that.userNfVersion) return false;
-        if (accessToken != null ? !accessToken.equals(that.accessToken) : that.accessToken != null) return false;
-        if (applicationId != null ? !applicationId.equals(that.applicationId) : that.applicationId != null)
-            return false;
-        if (cfGroupState != null ? !cfGroupState.equals(that.cfGroupState) : that.cfGroupState != null) return false;
-        if (configurationHash != null ? !configurationHash.equals(that.configurationHash) : that.configurationHash != null)
-            return false;
-        if (userConfigurationHash != null ? !userConfigurationHash.equals(that.userConfigurationHash) : that.userConfigurationHash != null)
-            return false;
-        if (ecfVersionStates != null ? !ecfVersionStates.equals(that.ecfVersionStates) : that.ecfVersionStates != null)
-            return false;
+        if (logSchemaVersion != that.logSchemaVersion) return false;
+        if (endpointKeyHash != null ? !endpointKeyHash.equals(that.endpointKeyHash) : that.endpointKeyHash != null) return false;
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (endpointProfileKey != null ? !endpointProfileKey.equals(that.endpointProfileKey) : that.endpointProfileKey != null)
             return false;
-        if (endpointKeyHash != null ? !endpointKeyHash.equals(that.endpointKeyHash) : that.endpointKeyHash != null)
-            return false;
-        if (endpointUserId != null ? !endpointUserId.equals(that.endpointUserId) : that.endpointUserId != null)
-            return false;
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        if (applicationId != null ? !applicationId.equals(that.applicationId) : that.applicationId != null) return false;
+        if (endpointUserId != null ? !endpointUserId.equals(that.endpointUserId) : that.endpointUserId != null) return false;
+        if (accessToken != null ? !accessToken.equals(that.accessToken) : that.accessToken != null) return false;
+        if (cfGroupState != null ? !cfGroupState.equals(that.cfGroupState) : that.cfGroupState != null) return false;
         if (nfGroupState != null ? !nfGroupState.equals(that.nfGroupState) : that.nfGroupState != null) return false;
-        if (ntHash != null ? !ntHash.equals(that.ntHash) : that.ntHash != null) return false;
         if (profile != null ? !profile.equals(that.profile) : that.profile != null) return false;
         if (profileHash != null ? !profileHash.equals(that.profileHash) : that.profileHash != null) return false;
-        if (profileSchemaId != null ? !profileSchemaId.equals(that.profileSchemaId) : that.profileSchemaId != null)
+        if (configurationHash != null ? !configurationHash.equals(that.configurationHash) : that.configurationHash != null) return false;
+        if (userConfigurationHash != null ? !userConfigurationHash.equals(that.userConfigurationHash) : that.userConfigurationHash != null)
             return false;
+        if (subscriptions != null ? !subscriptions.equals(that.subscriptions) : that.subscriptions != null) return false;
+        if (ntHash != null ? !ntHash.equals(that.ntHash) : that.ntHash != null) return false;
+        if (ecfVersionStates != null ? !ecfVersionStates.equals(that.ecfVersionStates) : that.ecfVersionStates != null) return false;
         if (serverHash != null ? !serverHash.equals(that.serverHash) : that.serverHash != null) return false;
-        if (subscriptions != null ? !subscriptions.equals(that.subscriptions) : that.subscriptions != null)
-            return false;
+        if (sdkToken != null ? !sdkToken.equals(that.sdkToken) : that.sdkToken != null) return false;
+        return serverProfile != null ? serverProfile.equals(that.serverProfile) : that.serverProfile == null;
 
-        return true;
     }
 
     @Override
@@ -406,7 +435,6 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
         result = 31 * result + (applicationId != null ? applicationId.hashCode() : 0);
         result = 31 * result + (endpointUserId != null ? endpointUserId.hashCode() : 0);
         result = 31 * result + (accessToken != null ? accessToken.hashCode() : 0);
-        result = 31 * result + (profileSchemaId != null ? profileSchemaId.hashCode() : 0);
         result = 31 * result + (cfGroupState != null ? cfGroupState.hashCode() : 0);
         result = 31 * result + (nfGroupState != null ? nfGroupState.hashCode() : 0);
         result = 31 * result + cfSequenceNumber;
@@ -414,6 +442,7 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
         result = 31 * result + (profile != null ? profile.hashCode() : 0);
         result = 31 * result + (profileHash != null ? profileHash.hashCode() : 0);
         result = 31 * result + profileVersion;
+        result = 31 * result + serverProfileVersion;
         result = 31 * result + (configurationHash != null ? configurationHash.hashCode() : 0);
         result = 31 * result + (userConfigurationHash != null ? userConfigurationHash.hashCode() : 0);
         result = 31 * result + configurationVersion;
@@ -425,19 +454,20 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
         result = 31 * result + logSchemaVersion;
         result = 31 * result + (ecfVersionStates != null ? ecfVersionStates.hashCode() : 0);
         result = 31 * result + (serverHash != null ? serverHash.hashCode() : 0);
+        result = 31 * result + (sdkToken != null ? sdkToken.hashCode() : 0);
+        result = 31 * result + (serverProfile != null ? serverProfile.hashCode() : 0);
         return result;
     }
 
     @Override
     public String toString() {
-        return "EndpointProfile{" +
+        return "CassandraEndpointProfile{" +
                 "endpointKeyHash=" + endpointKeyHash +
                 ", id='" + id + '\'' +
-                ", endpointKey=" + endpointProfileKey +
+                ", endpointProfileKey=" + endpointProfileKey +
                 ", applicationId='" + applicationId + '\'' +
                 ", endpointUserId='" + endpointUserId + '\'' +
                 ", accessToken='" + accessToken + '\'' +
-                ", profileSchemaId='" + profileSchemaId + '\'' +
                 ", cfGroupState=" + cfGroupState +
                 ", nfGroupState=" + nfGroupState +
                 ", cfSequenceNumber=" + cfSequenceNumber +
@@ -445,6 +475,7 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
                 ", profile='" + profile + '\'' +
                 ", profileHash=" + profileHash +
                 ", profileVersion=" + profileVersion +
+                ", serverProfileVersion=" + serverProfileVersion +
                 ", configurationHash=" + configurationHash +
                 ", userConfigurationHash=" + userConfigurationHash +
                 ", configurationVersion=" + configurationVersion +
@@ -456,6 +487,8 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
                 ", logSchemaVersion=" + logSchemaVersion +
                 ", ecfVersionStates=" + ecfVersionStates +
                 ", serverHash='" + serverHash + '\'' +
+                ", sdkToken='" + sdkToken + '\'' +
+                ", serverProfile='" + serverProfile + '\'' +
                 '}';
     }
 
@@ -475,10 +508,10 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
         dto.setEndpointKeyHash(getBytes(endpointKeyHash));
         dto.setEndpointUserId(endpointUserId);
         dto.setAccessToken(accessToken);
-        dto.setProfile(profile);
+        dto.setClientProfileBody(profile);
         dto.setProfileHash(getBytes(profileHash));
-        dto.setProfileVersion(profileVersion);
-        dto.setProfileSchemaId(profileSchemaId);
+        dto.setClientProfileVersion(profileVersion);
+        dto.setServerProfileVersion(serverProfileVersion);
         dto.setNotificationVersion(notificationVersion);
         dto.setSubscriptions(subscriptions);
         dto.setNtHash(getBytes(ntHash));
@@ -487,6 +520,8 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
         dto.setLogSchemaVersion(logSchemaVersion);
         dto.setEcfVersionStates(DaoUtil.<EventClassFamilyVersionStateDto>convertDtoList(ecfVersionStates));
         dto.setServerHash(serverHash);
+        dto.setSdkToken(sdkToken);
+        dto.setServerProfileBody(serverProfile);
         return dto;
     }
 }

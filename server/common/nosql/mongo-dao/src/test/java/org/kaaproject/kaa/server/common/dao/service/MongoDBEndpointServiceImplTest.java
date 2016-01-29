@@ -44,11 +44,6 @@ public class MongoDBEndpointServiceImplTest extends EndpointServiceImplTest {
         MongoDBTestRunner.tearDown();
     }
 
-    @Before
-    public void beforeTest() throws IOException {
-        MongoDataLoader.loadData();
-    }
-
     @After
     public void afterTest() {
         MongoDataLoader.clearDBData();

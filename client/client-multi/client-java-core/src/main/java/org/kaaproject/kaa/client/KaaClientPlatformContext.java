@@ -41,7 +41,12 @@ public interface KaaClientPlatformContext {
 
     /**
      * Returns platform dependent implementation of http client
-     * 
+     *
+     * @param url               the url
+     * @param privateKey        the private key
+     * @param publicKey         the public key
+     * @param remotePublicKey   the remote public key
+     *
      * @return platform dependent implementation of http client
      */
     AbstractHttpClient createHttpClient(String url, PrivateKey privateKey, PublicKey publicKey, PublicKey remotePublicKey);
@@ -75,4 +80,11 @@ public interface KaaClientPlatformContext {
      * @return SDK thread execution context
      */
     ExecutorContext getExecutorContext();
+
+    /**
+     * Determines if client state should be checked
+     *
+     * @return true if client state should be checked
+     */
+    boolean needToCheckClientState();
 }

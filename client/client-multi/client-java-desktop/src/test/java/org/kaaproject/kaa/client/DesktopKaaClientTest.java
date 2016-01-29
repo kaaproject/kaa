@@ -16,13 +16,14 @@
 
 package org.kaaproject.kaa.client;
 
-import java.io.File;
-
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.kaaproject.kaa.client.profile.ProfileContainer;
-import org.kaaproject.kaa.schema.base.Profile;
+import org.kaaproject.kaa.schema.system.EmptyData;
 import org.mockito.Mockito;
+
+import java.io.File;
 
 public class DesktopKaaClientTest {
 
@@ -34,11 +35,23 @@ public class DesktopKaaClientTest {
         }
     }
 
+    @After
+    public void cleanupBkpFile() {
+        File stateFile = new File("state.properties");
+        if (stateFile.exists()) {
+            stateFile.delete();
+        }
+    }
+
     @Test
     public void testClientInit() throws Exception {
 
         System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
         KaaClient clientSpy = Mockito.spy(Kaa.newClient(new DesktopKaaPlatformContext(), null));
+
+        ProfileContainer profileContainerMock = Mockito.mock(ProfileContainer.class);
+        Mockito.when(profileContainerMock.getProfile()).thenReturn(new EmptyData());
+        clientSpy.setProfileContainer(profileContainerMock);
 
         try {
             clientSpy.start();
@@ -52,6 +65,10 @@ public class DesktopKaaClientTest {
     public void testClientStartBeforeInit() throws Exception {
         System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
         KaaClient clientSpy = Mockito.spy(Kaa.newClient(new DesktopKaaPlatformContext(), null));
+
+        ProfileContainer profileContainerMock = Mockito.mock(ProfileContainer.class);
+        Mockito.when(profileContainerMock.getProfile()).thenReturn(new EmptyData());
+        clientSpy.setProfileContainer(profileContainerMock);
 
         // does nothing before initialization;
         clientSpy.start();
@@ -67,7 +84,7 @@ public class DesktopKaaClientTest {
 
         clientSpy.setProfileContainer(profileContainerMock);
 
-        Mockito.when(profileContainerMock.getProfile()).thenReturn(new Profile());
+        Mockito.when(profileContainerMock.getProfile()).thenReturn(new EmptyData());
 
         clientSpy.start();
 

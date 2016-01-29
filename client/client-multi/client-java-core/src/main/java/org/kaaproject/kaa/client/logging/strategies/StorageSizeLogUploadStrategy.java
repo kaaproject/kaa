@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Reference implementation for {@link LogUploadStrategy}.
- * Start log upload when there storage size is >= volumeThreshold bytes.
+ * Start log upload when there storage size is equals or greater than volumeThreshold bytes.
  */
 public class StorageSizeLogUploadStrategy extends DefaultLogUploadStrategy {
     private static final Logger LOG = LoggerFactory.getLogger(StorageSizeLogUploadStrategy.class);

@@ -67,6 +67,11 @@ static kaa_service_t OPERATIONS_SERVICES[] = { KAA_SERVICE_PROFILE
 static const int OPERATIONS_SERVICES_COUNT = sizeof(OPERATIONS_SERVICES) / sizeof(kaa_service_t);
 
 
+/* Logging constraints */
+#define MAX_LOG_COUNT           SIZE_MAX
+#define MAX_LOG_BUCKET_SIZE     (KAA_TCP_CHANNEL_OUT_BUFFER_SIZE >> 3)
+
+_Static_assert(MAX_LOG_BUCKET_SIZE, "Maximum bucket size cannot be 0!");
 
 typedef enum {
     KAA_CLIENT_CHANNEL_STATE_NOT_CONNECTED = 0,
@@ -279,7 +284,11 @@ kaa_error_t kaa_client_start(kaa_client_t *kaa_client
 {
     KAA_RETURN_IF_NIL(kaa_client, KAA_ERR_BADPARAM);
 
-    kaa_error_t error_code = KAA_ERR_NONE;
+    kaa_error_t error_code = kaa_check_readiness(kaa_client->kaa_context);
+    if (error_code != KAA_ERR_NONE) {
+        KAA_LOG_ERROR(kaa_client->kaa_context->logger, error_code, "Cannot start Kaa client: Kaa context is not fully initialized");
+        return error_code;
+    }
 
     kaa_client->external_process_fn = external_process;
     kaa_client->external_process_context = external_process_context;
@@ -449,9 +458,15 @@ kaa_error_t kaa_log_collector_init(kaa_client_t *kaa_client)
         return error_code;
     }
 
+    kaa_log_bucket_constraints_t bucket_sizes = {
+        .max_bucket_size = MAX_LOG_BUCKET_SIZE,
+        .max_bucket_log_count = MAX_LOG_COUNT,
+    };
+
     error_code = kaa_logging_init(kaa_client->kaa_context->log_collector
                                 , kaa_client->log_storage_context
-                                , kaa_client->log_upload_strategy_context);
+                                , kaa_client->log_upload_strategy_context
+                                , &bucket_sizes);
     if (error_code) {
         KAA_LOG_ERROR(kaa_client->kaa_context->logger, error_code,"Failed to init log collector");
         return error_code;

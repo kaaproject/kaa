@@ -60,7 +60,9 @@ void ConfigurationTransport::onConfigurationResponse(const ConfigurationSyncResp
                                                         , response.responseStatus == SyncResponseStatus::RESYNC);
     }
 
-    syncAck();
+    if (response.responseStatus != SyncResponseStatus::NO_DELTA) {
+        syncAck();
+    }
 }
 
 }  // namespace kaa

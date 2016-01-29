@@ -183,10 +183,6 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
             throw new UnavailableTopicException(String.format("Topic '%s' isn't optional", topicId));
         }
 
-        synchronized (topicsListeners) {
-            topicsListeners.remove(topicId);
-        }
-
         updateSubscriptionInfo(topicId, SubscriptionCommandType.REMOVE);
 
         if (forceSync) {
@@ -203,10 +199,6 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
             if (topic.getSubscriptionType() != SubscriptionType.OPTIONAL_SUBSCRIPTION) {
                 LOG.warn("Failed to unsubscribe: topic '{}' isn't optional", id);
                 throw new UnavailableTopicException(String.format("Topic '%s' isn't optional", id));
-            }
-
-            synchronized (topicsListeners) {
-                topicsListeners.remove(id);
             }
 
             subscriptionUpdate.add(new SubscriptionCommand(id, SubscriptionCommandType.REMOVE));

@@ -35,7 +35,7 @@ import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONFIGURATION_SC
 @Entity
 @Table(name = CONFIGURATION_SCHEMA_TABLE_NAME)
 @OnDelete(action = OnDeleteAction.CASCADE)
-public final class ConfigurationSchema extends Schema<ConfigurationSchemaDto> implements Serializable {
+public class ConfigurationSchema extends Schema<ConfigurationSchemaDto> implements Serializable {
 
     private static final long serialVersionUID = -8854035430683210037L;
 
@@ -113,6 +113,11 @@ public final class ConfigurationSchema extends Schema<ConfigurationSchemaDto> im
     }
 
     @Override
+    protected GenericModel<ConfigurationSchemaDto> newInstance(Long id) {
+        return new ConfigurationSchema(id);
+    }
+
+    @Override
     public int hashCode() {
         final int prime = 37;
         int result = 1;
@@ -164,7 +169,7 @@ public final class ConfigurationSchema extends Schema<ConfigurationSchemaDto> im
 
     @Override
     public String toString() {
-        return "ConfigurationSchema [majorVersion=" + majorVersion + ", minorVersion=" + minorVersion + ", name=" + name + ", description="
+        return "ConfigurationSchema [version=" + version + ", name=" + name + ", description="
                 + description + ", createdUsername=" + createdUsername + ", createdTime=" + createdTime + ", endpointCount=" + endpointCount + ", id=" + id
                 + "]";
     }

@@ -54,6 +54,7 @@ public interface NotificationTransport extends KaaTransport {
      * Updates the state of the Notification manager according to the given response.
      *
      * @param response the response from the server.
+     * @throws Exception the exception
      * @see NotificationSyncResponse
      *
      */

@@ -35,7 +35,7 @@ import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongI
 
 @Entity
 @Table(name = APPLICATION_TABLE_NAME)
-public final class Application extends GenericModel<ApplicationDto> implements Serializable {
+public class Application extends GenericModel<ApplicationDto> implements Serializable {
 
     private static final long serialVersionUID = 3402917989585810543L;
 
@@ -176,6 +176,11 @@ public final class Application extends GenericModel<ApplicationDto> implements S
     @Override
     protected ApplicationDto createDto() {
         return new ApplicationDto();
+    }
+
+    @Override
+    protected GenericModel<ApplicationDto> newInstance(Long id) {
+        return new Application(id);
     }
 
     @Override

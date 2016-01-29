@@ -57,7 +57,7 @@ extern kaa_error_t kaa_event_manager_add_event_to_transaction(kaa_event_manager_
                                                             , kaa_endpoint_id_p target);
 
 extern kaa_error_t kaa_event_request_get_size(kaa_event_manager_t *self, size_t *expected_size);
-extern kaa_error_t kaa_event_handle_server_sync(kaa_event_manager_t *self, kaa_platform_message_reader_t *reader, uint32_t extension_options, size_t extension_length, size_t request_id);
+extern kaa_error_t kaa_event_handle_server_sync(kaa_event_manager_t *self, kaa_platform_message_reader_t *reader, uint16_t extension_options, size_t extension_length, size_t request_id);
 extern kaa_error_t kaa_event_request_serialize(kaa_event_manager_t *self, size_t request_id, kaa_platform_message_writer_t *writer);
 extern kaa_error_t kaa_event_manager_add_on_event_callback(kaa_event_manager_t *self, const char *fqn, kaa_event_callback_t callback);
 
@@ -521,7 +521,7 @@ void test_event_blocks(void)
     kaa_event_block_id trx_id = 0;
     error_code = kaa_event_create_transaction(event_manager, &trx_id);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
-    ASSERT_NOT_NULL(trx_id);
+    ASSERT_TRUE(trx_id);
 
     const size_t event1_size = 6;
     char *event1 = (char *) KAA_MALLOC(event1_size + 1);

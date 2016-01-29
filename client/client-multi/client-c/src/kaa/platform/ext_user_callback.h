@@ -23,6 +23,7 @@
 #ifndef EXT_USER_CALLBACK_H_
 #define EXT_USER_CALLBACK_H_
 
+#include "../kaa_common.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -95,9 +96,52 @@ typedef struct {
     void                           *context;           /**< Context to pass to all functions below. */
     on_attached_fn                  on_attached;       /**< Called when the current endpoint was attached to the user by another endpoint. */
     on_detached_fn                  on_detached;       /**< Called when the current endpoint was detached from the user by another endpoint. */
-    on_attach_success_fn     on_attach_success; /**< Called when the current endpoint was successfully attached to the user. See @link kaa_user_manager_attach_to_user @endlink. */
+    on_attach_success_fn            on_attach_success; /**< Called when the current endpoint was successfully attached to the user. See @link kaa_user_manager_attach_to_user @endlink. */
     on_attach_failed_fn             on_attach_failed;  /**< Called the attach attempt is failed. */
 } kaa_attachment_status_listeners_t;
+
+
+/**
+ * @brief Notifies about attach attempt of endpoint was sucssed.
+ *
+ * @param[in]   context              Callback's context.
+ * @param[in]   endpoint_key_hash    endpoint_id.
+ *
+ * @return  Error code
+ */
+typedef kaa_error_t (*on_endpoint_attached_fn)(void *context, const kaa_endpoint_id_p endpoint_key_hash);
+
+
+/**
+ * @brief Notifies about detach attempt of endpoint was sucssed.
+ *
+ * @param[in]   context              Callback's context.
+ *
+ * @return  Error code
+ */
+typedef kaa_error_t (*on_endpoint_detached_fn)(void *context);
+
+
+/**
+ * @brief Notifies about attach attempt was failed.
+ *
+ * @param[in]   context       Callback's context.
+ *
+ * @return  Error code
+ */
+typedef kaa_error_t (*on_endpoint_failed_fn)(void *context);
+
+
+/**
+ * @brief Interface for the endpoint attachment status receiver.
+ */
+typedef struct {
+    void                    *context;     /**< Context to pass to all functions below. */
+    on_endpoint_attached_fn  on_attached; /**< Called when the current endpoint attach another endpoint to the user. */
+    on_endpoint_detached_fn  on_detached; /**< Called when the current endpoint detach another endpoint from the user. */
+    on_endpoint_failed_fn    on_attach_failed;  /**< Called the attach attempt is failed. */
+    on_endpoint_failed_fn    on_detach_failed;  /**< Called the detach attempt is failed. */
+} kaa_endpoint_status_listener_t;
 
 
 #ifdef __cplusplus

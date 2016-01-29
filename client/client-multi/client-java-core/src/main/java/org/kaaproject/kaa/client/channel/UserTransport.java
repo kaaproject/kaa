@@ -41,8 +41,9 @@ public interface UserTransport extends KaaTransport {
     /**
      * Updates the state of the Endpoint manager according to the given response.
      *
-     * @param response the response from the server.
-     * @see UserSyncResponse
+     * @param   response the response from the server.
+     * @throws  Exception the exception
+     * @see     UserSyncResponse
      *
      */
     void onUserResponse(UserSyncResponse response) throws Exception;

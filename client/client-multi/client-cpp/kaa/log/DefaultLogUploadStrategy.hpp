@@ -74,6 +74,9 @@ public:
     virtual std::size_t getLogUploadCheckPeriod() { return logUploadCheckReriod_;  };
     void setLogUploadCheckPeriod(std::size_t period) { logUploadCheckReriod_ = period; }
 
+    virtual std::size_t getMaxParallelUploads() { return maxParallelUploads_; }
+    void setMaxParallelUploads(std::size_t count) { maxParallelUploads_ = count; }
+
     std::size_t getRetryPeriod() { return retryReriod_; }
     void setRetryPeriod(std::size_t period) { retryReriod_ = period; }
 
@@ -106,6 +109,9 @@ public:
     static const std::size_t DEFAULT_UPLOAD_COUNT_THRESHOLD = 64; /*!< The default value for the log count to initiate
                                                                        the log upload. */
 
+    static const std::size_t DEFAULT_MAX_PARALLEL_UPLOADS = INT32_MAX;  /*!< The default value for Max amount of log batches
+                                                                             allowed to be uploaded parallel. */
+
 protected:
     std::size_t batchSize_ = DEFAULT_BATCH_SIZE;
 
@@ -120,6 +126,8 @@ protected:
 
     std::size_t uploadVolumeThreshold_ = DEFAULT_UPLOAD_VOLUME_THRESHOLD;
     std::size_t uploadCountThreshold_ = DEFAULT_UPLOAD_COUNT_THRESHOLD;
+
+    std::size_t maxParallelUploads_ = DEFAULT_MAX_PARALLEL_UPLOADS;
 
     IKaaClientContext &context_;
 

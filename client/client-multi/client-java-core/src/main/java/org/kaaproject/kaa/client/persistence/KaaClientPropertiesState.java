@@ -23,9 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
-import java.security.KeyPair;
-import java.security.PrivateKey;
-import java.security.PublicKey;
+import java.security.*;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -71,14 +69,6 @@ public class KaaClientPropertiesState implements KaaClientState {
     private static final String IS_REGISTERED = "is_registered";
     private static final String IS_ATTACHED = "is_attached";
 
-    public static final String STATE_FILE_LOCATION = "state.file_location";
-    public static final String CLIENT_PRIVATE_KEY_FILE_LOCATION = "keys.private";
-    public static final String CLIENT_PUBLIC_KEY_FILE_LOCATION = "keys.public";
-
-    public static final String STATE_FILE_DEFAULT = "state.properties";
-    public static final String CLIENT_PRIVATE_KEY_DEFAULT = "key.private";
-    public static final String CLIENT_PUBLIC_KEY_DEFAULT = "key.public";
-
     private static final String EVENT_SEQ_NUM = "event.seq.num";
 
     private static final String PROPERTIES_HASH = "properties.hash";
@@ -96,18 +86,20 @@ public class KaaClientPropertiesState implements KaaClientState {
     private KeyPair kp;
     private EndpointKeyHash keyHash;
     private boolean isConfigVersionUpdated = false;
+    private boolean hasUpdate = false;
 
     public KaaClientPropertiesState(PersistentStorage storage, Base64 base64, KaaClientProperties properties) {
         super();
         this.storage = storage;
         this.base64 = base64;
-        stateFileLocation = properties.containsKey(STATE_FILE_LOCATION) ? properties.getProperty(STATE_FILE_LOCATION) : STATE_FILE_DEFAULT;
 
-        clientPrivateKeyFileLocation = properties.containsKey(CLIENT_PRIVATE_KEY_FILE_LOCATION) ? properties
-                .getProperty(CLIENT_PRIVATE_KEY_FILE_LOCATION) : CLIENT_PRIVATE_KEY_DEFAULT;
+        properties.setBase64(base64);
 
-        clientPublicKeyFileLocation = properties.containsKey(CLIENT_PUBLIC_KEY_FILE_LOCATION) ? properties
-                .getProperty(CLIENT_PUBLIC_KEY_FILE_LOCATION) : CLIENT_PUBLIC_KEY_DEFAULT;
+        stateFileLocation = properties.getStateFileFullName();
+
+        clientPrivateKeyFileLocation = properties.getPrivateKeyFileFullName();
+
+        clientPublicKeyFileLocation = properties.getPublicKeyFileFullName();
 
         LOG.info("Version: '{}', commit hash: '{}'", properties.getBuildVersion(), properties.getCommitHash());
 
@@ -193,9 +185,21 @@ public class KaaClientPropertiesState implements KaaClientState {
 
         return !Arrays.equals(hashFromSDK, hashFromStateFile);
     }
+    
+    private void setStateStringValue(String propertyKey, String value) {
+        Object previous = state.setProperty(propertyKey, value);
+        String previousString = previous == null ? null : previous.toString();
+        hasUpdate |= !value.equals(previousString);
+    }
+    
+    private void setStateBooleanValue(String propertyKey, boolean value) {
+        Object previous = state.setProperty(propertyKey, Boolean.toString(value));
+        boolean previousBoolean = previous == null ? false : Boolean.valueOf(previous.toString());
+        hasUpdate |= value != previousBoolean;
+    }
 
     private void setPropertiesHash(byte[] hash) {
-        state.setProperty(PROPERTIES_HASH, new String(base64.encodeBase64(hash), Charsets.UTF_8));
+        setStateStringValue(PROPERTIES_HASH, new String(base64.encodeBase64(hash), Charsets.UTF_8));
     }
 
     @Override
@@ -210,44 +214,47 @@ public class KaaClientPropertiesState implements KaaClientState {
 
     @Override
     public void setRegistered(boolean registered) {
-        state.setProperty(IS_REGISTERED, Boolean.toString(registered));
+        setStateBooleanValue(IS_REGISTERED, registered);
     }
 
     @Override
     public void persist() {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        BinaryEncoder encoder = EncoderFactory.get().binaryEncoder(baos, null);
-        SpecificDatumWriter<TopicSubscriptionInfo> datumWriter = new SpecificDatumWriter<TopicSubscriptionInfo>(TopicSubscriptionInfo.class);
-
-        try {
-            for (Map.Entry<String, TopicSubscriptionInfo> cursor : nfSubscriptions.entrySet()) {
-                datumWriter.write(cursor.getValue(), encoder);
-                LOG.info("Persisted {}", cursor.getValue());
+        if (hasUpdate) {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            BinaryEncoder encoder = EncoderFactory.get().binaryEncoder(baos, null);
+            SpecificDatumWriter<TopicSubscriptionInfo> datumWriter = new SpecificDatumWriter<TopicSubscriptionInfo>(TopicSubscriptionInfo.class);
+    
+            try {
+                for (Map.Entry<String, TopicSubscriptionInfo> cursor : nfSubscriptions.entrySet()) {
+                    datumWriter.write(cursor.getValue(), encoder);
+                    LOG.info("Persisted {}", cursor.getValue());
+                }
+    
+                encoder.flush();
+                String base64Str = new String(base64.encodeBase64(baos.toByteArray()), Charset.forName("UTF-8"));
+                state.setProperty(NF_SUBSCRIPTIONS, base64Str);
+            } catch (IOException e) {
+                LOG.error("Can't persist notification subscription info", e);
             }
-
-            encoder.flush();
-            String base64Str = new String(base64.encodeBase64(baos.toByteArray()), Charset.forName("UTF-8"));
-            state.setProperty(NF_SUBSCRIPTIONS, base64Str);
-        } catch (IOException e) {
-            LOG.error("Can't persist notification subscription info", e);
-        }
-
-        StringBuilder attachedEndpointsString = new StringBuilder();
-        for (Map.Entry<EndpointAccessToken, EndpointKeyHash> attached : attachedEndpoints.entrySet()) {
-            attachedEndpointsString.append(attached.getKey().getToken()).append(":").append(attached.getValue().getKeyHash()).append(',');
-        }
-        state.setProperty(ATTACHED_ENDPOINTS, attachedEndpointsString.toString());
-        state.setProperty(EVENT_SEQ_NUM, "" + eventSequence.get());
-
-        OutputStream os = null;
-        try {
-            storage.renameTo(stateFileLocation, stateFileLocation + "_bckp");
-            os = storage.openForWrite(stateFileLocation);
-            state.store(os, null);
-        } catch (IOException e) {
-            LOG.error("Can't persist state file", e);
-        } finally {
-            IOUtils.closeQuietly(os);
+    
+            StringBuilder attachedEndpointsString = new StringBuilder();
+            for (Map.Entry<EndpointAccessToken, EndpointKeyHash> attached : attachedEndpoints.entrySet()) {
+                attachedEndpointsString.append(attached.getKey().getToken()).append(":").append(attached.getValue().getKeyHash()).append(',');
+            }
+            state.setProperty(ATTACHED_ENDPOINTS, attachedEndpointsString.toString());
+            state.setProperty(EVENT_SEQ_NUM, "" + eventSequence.get());
+    
+            OutputStream os = null;
+            try {
+                storage.renameTo(stateFileLocation, stateFileLocation + "_bckp");
+                os = storage.openForWrite(stateFileLocation);
+                state.store(os, null);
+                hasUpdate = false;
+            } catch (IOException e) {
+                LOG.error("Can't persist state file", e);
+            } finally {
+                IOUtils.closeQuietly(os);
+            }
         }
     }
 
@@ -279,9 +286,21 @@ public class KaaClientPropertiesState implements KaaClientState {
             try {
                 publicKeyInput = storage.openForRead(clientPublicKeyFileLocation);
                 privateKeyInput = storage.openForRead(clientPrivateKeyFileLocation);
-                kp = new KeyPair(KeyUtil.getPublic(publicKeyInput), KeyUtil.getPrivate(privateKeyInput));
+
+                PublicKey publicKey = KeyUtil.getPublic(publicKeyInput);
+                PrivateKey privateKey = KeyUtil.getPrivate(privateKeyInput);
+
+                if (publicKey != null && privateKey != null) {
+                    kp = new KeyPair(publicKey, privateKey);
+                    if (!KeyUtil.validateKeyPair(kp)) {
+                        throw new InvalidKeyException();
+                    }
+                }
+            } catch (InvalidKeyException e) {
+                kp = null;
+                LOG.error("Unable to parse client RSA keypair. Generating new keys.. Reason {}", e);
             } catch (Exception e) {
-                LOG.error("Error loading Client Private Key", e);
+                LOG.error("Error loading client RSA keypair. Reason {}", e);
                 throw new RuntimeException(e); // NOSONAR
             } finally {
                 IOUtils.closeQuietly(publicKeyInput);
@@ -329,12 +348,12 @@ public class KaaClientPropertiesState implements KaaClientState {
 
     @Override
     public void setAppStateSeqNumber(int appStateSeqNumber) {
-        state.setProperty(APP_STATE_SEQ_NUMBER, Integer.toString(appStateSeqNumber));
+        setStateStringValue(APP_STATE_SEQ_NUMBER, Integer.toString(appStateSeqNumber));
     }
 
     @Override
     public void setProfileHash(EndpointObjectHash hash) {
-        state.setProperty(PROFILE_HASH, new String(base64.encodeBase64(hash.getData()), Charsets.UTF_8));
+        setStateStringValue(PROFILE_HASH, new String(base64.encodeBase64(hash.getData()), Charsets.UTF_8));
     }
 
     @Override
@@ -342,6 +361,7 @@ public class KaaClientPropertiesState implements KaaClientState {
         TopicSubscriptionInfo subscriptionInfo = nfSubscriptions.get(topic.getId());
         if (subscriptionInfo == null) {
             nfSubscriptions.put(topic.getId(), new TopicSubscriptionInfo(topic, 0));
+            hasUpdate = true;
             LOG.info("Adding new seqNumber 0 for {} subscription", topic.getId());
         }
     }
@@ -349,6 +369,7 @@ public class KaaClientPropertiesState implements KaaClientState {
     @Override
     public void removeTopic(String topicId) {
         if (nfSubscriptions.remove(topicId) != null) {
+            hasUpdate = true;
             LOG.debug("Removed subscription info for {}", topicId);
         }
     }
@@ -362,6 +383,7 @@ public class KaaClientPropertiesState implements KaaClientState {
                 updated = true;
                 subscriptionInfo.setSeqNumber(sequenceNumber);
                 nfSubscriptions.put(topicId, subscriptionInfo);
+                hasUpdate = true;
                 LOG.debug("Updated seqNumber to {} for {} subscription", subscriptionInfo.getSeqNumber(), topicId);
             }
         }
@@ -394,6 +416,7 @@ public class KaaClientPropertiesState implements KaaClientState {
     public void setAttachedEndpointsList(Map<EndpointAccessToken, EndpointKeyHash> attachedEndpoints) {
         this.attachedEndpoints.clear();
         this.attachedEndpoints.putAll(attachedEndpoints);
+        hasUpdate = true;
     }
 
     @Override
@@ -403,7 +426,7 @@ public class KaaClientPropertiesState implements KaaClientState {
 
     @Override
     public void setEndpointAccessToken(String token) {
-        state.setProperty(ENDPOINT_ACCESS_TOKEN, token);
+        setStateStringValue(ENDPOINT_ACCESS_TOKEN, token);
     }
 
     @Override
@@ -413,7 +436,7 @@ public class KaaClientPropertiesState implements KaaClientState {
 
     @Override
     public void setConfigSeqNumber(int configSeqNumber) {
-        state.setProperty(CONFIG_SEQ_NUMBER, Integer.toString(configSeqNumber));
+        setStateStringValue(CONFIG_SEQ_NUMBER, Integer.toString(configSeqNumber));
     }
 
     @Override
@@ -423,7 +446,7 @@ public class KaaClientPropertiesState implements KaaClientState {
 
     @Override
     public void setNotificationSeqNumber(int notificationSeqNumber) {
-        state.setProperty(NOTIFICATION_SEQ_NUMBER, Integer.toString(notificationSeqNumber));
+        setStateStringValue(NOTIFICATION_SEQ_NUMBER, Integer.toString(notificationSeqNumber));
     }
 
     @Override
@@ -433,6 +456,7 @@ public class KaaClientPropertiesState implements KaaClientState {
 
     @Override
     public int getAndIncrementEventSeqNum() {
+        hasUpdate = true;
         return eventSequence.getAndIncrement();
     }
 
@@ -443,7 +467,10 @@ public class KaaClientPropertiesState implements KaaClientState {
 
     @Override
     public void setEventSeqNum(int newSeqNum) {
-        eventSequence.set(newSeqNum);
+        if (eventSequence.get() != newSeqNum) {
+            eventSequence.set(newSeqNum);
+            hasUpdate = true;
+        }
     }
 
     @Override
@@ -453,7 +480,7 @@ public class KaaClientPropertiesState implements KaaClientState {
 
     @Override
     public void setAttachedToUser(boolean isAttached) {
-        state.setProperty(IS_ATTACHED, Boolean.toString(isAttached));
+        setStateBooleanValue(IS_ATTACHED, isAttached);
     }
 
     @Override
@@ -461,6 +488,7 @@ public class KaaClientPropertiesState implements KaaClientState {
         state.setProperty(IS_REGISTERED, "false");
         saveFileDelete(stateFileLocation);
         saveFileDelete(stateFileLocation + "_bckp");
+        hasUpdate = true;
     }
 
     private void saveFileDelete(String fileName) {

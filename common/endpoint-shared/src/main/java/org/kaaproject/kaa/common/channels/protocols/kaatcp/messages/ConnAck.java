@@ -66,6 +66,7 @@ public class ConnAck extends MqttFrame {
 
     /**
      * Default constructor.
+     * @param returnCode the return code
      */
     public ConnAck(ReturnCode returnCode) {
         setMessageType(MessageType.CONNACK);

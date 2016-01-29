@@ -268,21 +268,20 @@ public class BinaryEncDec implements PlatformEncDec {
         return result;
     }
 
-    private void buildExtensionHeader(GrowingByteBuffer buf, byte extensionId, byte optionA, byte optionB, byte optionC, int length) {
-        buf.put(extensionId);
+    private void buildExtensionHeader(GrowingByteBuffer buf, short extensionId, byte optionA, byte optionB, int length) {
+        buf.putShort(extensionId);
         buf.put(optionA);
-        buf.put(optionB);
-        buf.put(optionC);
+        buf.put(optionB);        
         buf.putInt(length);
     }
 
     private void encodeMetaData(GrowingByteBuffer buf, ServerSync sync) {
-        buildExtensionHeader(buf, META_DATA_EXTENSION_ID, NOTHING, NOTHING, NOTHING, 4);
+        buildExtensionHeader(buf, META_DATA_EXTENSION_ID, NOTHING, NOTHING, 4);
         buf.putInt(sync.getRequestId());
     }
 
     private void encode(GrowingByteBuffer buf, BootstrapServerSync bootstrapSync) {
-        buildExtensionHeader(buf, BOOTSTRAP_EXTENSION_ID, NOTHING, NOTHING, NOTHING, 0);
+        buildExtensionHeader(buf, BOOTSTRAP_EXTENSION_ID, NOTHING, NOTHING, 0);
         int extPosition = buf.position();
         buf.putShort((short) bootstrapSync.getRequestId());
         buf.putShort((short) bootstrapSync.getProtocolList().size());
@@ -297,12 +296,12 @@ public class BinaryEncDec implements PlatformEncDec {
     }
 
     private void encode(GrowingByteBuffer buf, ProfileServerSync profileSync) {
-        buildExtensionHeader(buf, PROFILE_EXTENSION_ID, NOTHING, NOTHING,
-                (profileSync.getResponseStatus() == SyncResponseStatus.RESYNC ? RESYNC : NOTHING), 0);
+        buildExtensionHeader(buf, PROFILE_EXTENSION_ID, NOTHING,
+                             (profileSync.getResponseStatus() == SyncResponseStatus.RESYNC ? RESYNC : NOTHING), 0);
     }
 
     private void encode(GrowingByteBuffer buf, UserServerSync userSync) {
-        buildExtensionHeader(buf, USER_EXTENSION_ID, NOTHING, NOTHING, NOTHING, 0);
+        buildExtensionHeader(buf, USER_EXTENSION_ID, NOTHING, NOTHING, 0);
         int extPosition = buf.position();
         if (userSync.getUserAttachResponse() != null) {
             UserAttachResponse uaResponse = userSync.getUserAttachResponse();
@@ -330,11 +329,12 @@ public class BinaryEncDec implements PlatformEncDec {
             putUTF(buf, nf.getUserExternalId());
             putUTF(buf, nf.getEndpointAccessToken());
         }
-        if (userSync.getEndpointDetachResponses() != null) {
+        if (userSync.getUserDetachNotification() != null) {
             UserDetachNotification nf = userSync.getUserDetachNotification();
             buf.put(USER_DETACH_NOTIFICATION_FIELD_ID);
             buf.put(NOTHING);
             buf.putShort((short) nf.getEndpointAccessToken().length());
+            putUTF(buf, nf.getEndpointAccessToken());
         }
         if (userSync.getEndpointAttachResponses() != null) {
             buf.put(ENDPOINT_ATTACH_RESPONSE_FIELD_ID);
@@ -349,7 +349,7 @@ public class BinaryEncDec implements PlatformEncDec {
                 }
                 buf.putShort((short) response.getRequestId());
                 if (response.getEndpointKeyHash() != null) {
-                    putUTF(buf, response.getEndpointKeyHash());
+                    put(buf, Base64Util.decode(response.getEndpointKeyHash()));
                 }
             }
         }
@@ -367,7 +367,7 @@ public class BinaryEncDec implements PlatformEncDec {
     }
 
     private void encode(GrowingByteBuffer buf, LogServerSync logSync) {
-        buildExtensionHeader(buf, LOGGING_EXTENSION_ID, NOTHING, NOTHING, NOTHING, 4);
+        buildExtensionHeader(buf, LOGGING_EXTENSION_ID, NOTHING, NOTHING, 4);
         List<LogDeliveryStatus> statusList = logSync.getDeliveryStatuses();
 
         if (statusList != null && !statusList.isEmpty()) {
@@ -393,7 +393,7 @@ public class BinaryEncDec implements PlatformEncDec {
         if (confBodyPresent) {
             option |= 0x02;
         }
-        buildExtensionHeader(buf, CONFIGURATION_EXTENSION_ID, NOTHING, NOTHING, (byte) option, 0);
+        buildExtensionHeader(buf, CONFIGURATION_EXTENSION_ID, NOTHING, (byte) option, 0);
         int extPosition = buf.position();
 
         buf.putInt(configurationSync.getAppStateSeqNumber());
@@ -414,7 +414,7 @@ public class BinaryEncDec implements PlatformEncDec {
     }
 
     private void encode(GrowingByteBuffer buf, NotificationServerSync notificationSync) {
-        buildExtensionHeader(buf, NOTIFICATION_EXTENSION_ID, NOTHING, NOTHING, NOTHING, 0);
+        buildExtensionHeader(buf, NOTIFICATION_EXTENSION_ID, NOTHING, NOTHING, 0);
         int extPosition = buf.position();
 
         buf.putInt(notificationSync.getAppStateSeqNumber());
@@ -467,7 +467,7 @@ public class BinaryEncDec implements PlatformEncDec {
         if (eventSync.getEventSequenceNumberResponse() != null) {
             option = 1;
         }
-        buildExtensionHeader(buf, EVENT_EXTENSION_ID, NOTHING, NOTHING, option, 0);
+        buildExtensionHeader(buf, EVENT_EXTENSION_ID, NOTHING, option, 0);
         int extPosition = buf.position();
 
         if (eventSync.getEventSequenceNumberResponse() != null) {
@@ -518,7 +518,7 @@ public class BinaryEncDec implements PlatformEncDec {
     }
 
     private void encode(GrowingByteBuffer buf, RedirectServerSync redirectSync) {
-        buildExtensionHeader(buf, EVENT_EXTENSION_ID, NOTHING, NOTHING, NOTHING, 4);
+        buildExtensionHeader(buf, EVENT_EXTENSION_ID, NOTHING, NOTHING, 4);
         buf.putInt(redirectSync.getAccessPointId());
     }
 
@@ -546,9 +546,8 @@ public class BinaryEncDec implements PlatformEncDec {
                 throw new PlatformEncDecException(MessageFormat.format(
                         "Extension header is to small. Available {0}, current possition is {1}!", buf.remaining(), buf.position()));
             }
-            int extMetaData = buf.getInt();
-            byte type = (byte) ((extMetaData & 0xFF000000) >> 24);
-            int options = extMetaData & 0x00FFFFFF;
+            short type = buf.getShort();
+            int options = buf.getShort();
             int payloadLength = buf.getInt();
             if (buf.remaining() < payloadLength) {
                 throw new PlatformEncDecException(MessageFormat.format(

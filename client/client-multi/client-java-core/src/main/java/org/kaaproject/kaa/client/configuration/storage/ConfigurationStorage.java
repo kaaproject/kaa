@@ -55,22 +55,22 @@ public interface ConfigurationStorage {
     /**
      * Saves configuration data
      *
-     * @param buffer buffer with configuration data
-     *
+     * @param   buffer buffer with configuration data
+     * @throws  IOException the io exception
      */
     void saveConfiguration(ByteBuffer buffer) throws IOException;
 
     /**
      * Loads configuration data
      *
-     * @return buffer with loaded configuration data, or null if configuration is empty
-     *
+     * @return  buffer with loaded configuration data, or null if configuration is empty
+     * @throws  IOException the io exception
      */
     ByteBuffer loadConfiguration() throws IOException;
     
     /**
      * Clear configuration data (file)
-     *
+     * @throws  IOException the io exception
      */
     void clearConfiguration() throws IOException;
 

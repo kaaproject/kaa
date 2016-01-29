@@ -32,6 +32,7 @@ public interface KaaDataDemultiplexer {
      *
      * @param response buffer which to be processed.
      *
+     * @throws Exception the exception
      */
     void processResponse(byte [] response) throws Exception;
 

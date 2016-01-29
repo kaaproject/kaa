@@ -72,18 +72,17 @@ public abstract class AbstractLogAppender<T extends SpecificRecordBase> implemen
     /**
      * Log in <code>LogAppender</code> specific way.
      * 
-     * @param logEventPack
-     *            the pack of Log Events
-     * @param header
-     *            the header
+     * @param logEventPack  the pack of Log Events
+     * @param header        the header
+     * @param listener      the listener
      */
     public abstract void doAppend(LogEventPack logEventPack, RecordHeader header, LogDeliveryCallback listener);
 
     /**
      * Change parameters of log appender.
      * 
-     * @param appender
-     *            the appender
+     * @param appender      the appender
+     * @param configuration the configuration
      */
 
     protected abstract void initFromConfiguration(LogAppenderDto appender, T configuration);
@@ -188,6 +187,7 @@ public abstract class AbstractLogAppender<T extends SpecificRecordBase> implemen
      * @param header
      *            the header
      * @return the list
+     * @throws IOException the io exception
      */
     protected List<LogEventDto> generateLogEvent(LogEventPack logEventPack, RecordHeader header) throws IOException {
         LOG.debug("Generate LogEventDto objects from LogEventPack [{}] and header [{}]", logEventPack, header);
@@ -259,10 +259,12 @@ public abstract class AbstractLogAppender<T extends SpecificRecordBase> implemen
                     logHeader.setHeaderVersion(LOG_HEADER_VERSION);
                     break;
                 case LSVERSION:
-                    logHeader.setLogSchemaVersion(logEventPack.getLogSchemaVersion());
+                    logHeader.setLogSchemaVersion(logEventPack.getLogSchema().getVersion());
                     break;
                 default:
-                    LOG.warn("Current header field [{}] doesn't support", field);
+                    if (LOG.isWarnEnabled()) {
+                        LOG.warn("Current header field [{}] doesn't support", field);
+                    }
                     break;
                 }
             }

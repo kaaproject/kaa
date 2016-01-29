@@ -17,14 +17,11 @@
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
-import nl.jqno.equalsverifier.Warning;
-
 import org.junit.Test;
 
 public class LogAppenderTest {
-
     @Test
     public void hashCodeEqualsTest(){
-        EqualsVerifier.forClass(LogAppender.class).suppress(Warning.NONFINAL_FIELDS).withRedefinedSuperclass().verify();
+        EqualsVerifier.forClass(LogAppender.class).usingGetClass().verify();
     }
 }

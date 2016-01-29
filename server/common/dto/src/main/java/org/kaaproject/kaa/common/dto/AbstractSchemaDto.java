@@ -21,7 +21,7 @@ import org.kaaproject.avro.ui.shared.RecordField;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties({"schemaForm"})
-public abstract class AbstractSchemaDto extends SchemaDto {
+public abstract class AbstractSchemaDto extends VersionDto {
 
     private static final long serialVersionUID = 6821310997907855007L;
 
@@ -114,10 +114,7 @@ public abstract class AbstractSchemaDto extends SchemaDto {
 
         AbstractSchemaDto that = (AbstractSchemaDto) o;
 
-        if (majorVersion != that.majorVersion) {
-            return false;
-        }
-        if (minorVersion != that.minorVersion) {
+        if (version != that.version) {
             return false;
         }
         if (applicationId != null ? !applicationId.equals(that.applicationId) : that.applicationId != null) {
@@ -133,8 +130,7 @@ public abstract class AbstractSchemaDto extends SchemaDto {
     @Override
     public int hashCode() {
         int result = applicationId != null ? applicationId.hashCode() : 0;
-        result = 31 * result + majorVersion;
-        result = 31 * result + minorVersion;
+        result = 31 * result + version;
         result = 31 * result + (schema != null ? schema.hashCode() : 0);
         return result;
     }
@@ -142,8 +138,7 @@ public abstract class AbstractSchemaDto extends SchemaDto {
     @Override
     public String toString() {
         return "AbstractSchemaDto [id=" + id + ", applicationId="
-                + applicationId + ", majorVersion=" + majorVersion
-                + ", minorVersion=" + minorVersion
+                + applicationId + ", version=" + version
                 + ", name=" + name + ", description=" + description
                 + ", createdUsername=" + createdUsername + ", createdTime="
                 + createdTime + ", endpointCount=" + endpointCount + "]";

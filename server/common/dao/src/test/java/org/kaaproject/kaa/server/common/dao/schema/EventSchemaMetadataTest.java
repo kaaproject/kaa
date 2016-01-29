@@ -23,7 +23,7 @@ import org.junit.Test;
 
 public class EventSchemaMetadataTest {
     @Test
-    public void hashCodeEqualsTest(){
-        EqualsVerifier.forClass(EventSchemaMetadata.class).suppress(Warning.NONFINAL_FIELDS).withRedefinedSuperclass().verify();
+    public void hashCodeEqualsTest() {
+        EqualsVerifier.forClass(EventSchemaMetadata.class).usingGetClass().suppress(Warning.NONFINAL_FIELDS).verify();
     }
 }

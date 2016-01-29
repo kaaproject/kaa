@@ -50,7 +50,7 @@ extern void kaa_bootstrap_manager_destroy(kaa_bootstrap_manager_t *self);
 
 extern kaa_error_t kaa_bootstrap_manager_handle_server_sync(kaa_bootstrap_manager_t *self
                                                           , kaa_platform_message_reader_t *reader
-                                                          , uint32_t extension_options
+                                                          , uint16_t extension_options
                                                           , size_t extnsion_length);
 
 

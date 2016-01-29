@@ -120,25 +120,6 @@ void test_set_upload_timeout(void)
     KAA_TRACE_OUT(logger);
 }
 
-void test_set_batch_size(void)
-{
-    KAA_TRACE_IN(logger);
-
-    kaa_error_t error_code = KAA_ERR_NONE;
-
-    size_t DEFAULT_BATCH_SIZE = 8 * 1024;
-
-    error_code = ext_log_upload_strategy_change_strategy(strategy, KAA_LOG_UPLOAD_VOLUME_STRATEGY);
-    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
-
-    error_code = ext_log_upload_strategy_set_batch_size(strategy, DEFAULT_BATCH_SIZE);
-    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
-
-    ASSERT_EQUAL(ext_log_upload_strategy_get_bucket_size(strategy), DEFAULT_BATCH_SIZE);
-
-    KAA_TRACE_OUT(logger);
-}
-
 void test_upload_decision_by_volume(void)
 {
     KAA_TRACE_IN(logger);
@@ -317,44 +298,6 @@ void test_upload_decision_on_failure(void)
     KAA_TRACE_OUT(logger);
 }
 
-
-
-static kaa_error_t test_init_channel(void *channel_context
-                                   , kaa_transport_context_t *transport_context)
-{
-    return KAA_ERR_NONE;
-}
-
-static kaa_error_t test_set_access_point(void *context
-                                       , kaa_access_point_t *access_point)
-{
-    return KAA_ERR_NONE;
-}
-
-static kaa_error_t test_get_protocol_id(void *context, kaa_transport_protocol_id_t *protocol_info)
-{
-    return KAA_ERR_NONE;
-}
-
-static kaa_error_t test_get_supported_services(void *context
-                                             , kaa_service_t **supported_services
-                                             , size_t *service_count)
-{
-    static kaa_service_t services[] = { KAA_SERVICE_LOGGING };
-    *supported_services = services;
-    *service_count = sizeof(services) / sizeof(kaa_service_t);
-
-    return KAA_ERR_NONE;
-}
-
-static kaa_error_t test_sync_handler(void *context
-                                   , const kaa_service_t services[]
-                                   , size_t service_count)
-{
-    KAA_RETURN_IF_NIL3(context, services, service_count, KAA_ERR_BADPARAM);
-    return KAA_ERR_NONE;
-}
-
 int test_init(void)
 {
     kaa_error_t error = kaa_log_create(&logger, KAA_MAX_LOG_MESSAGE_LENGTH, KAA_MAX_LOG_LEVEL, NULL);
@@ -398,7 +341,6 @@ int test_deinit(void)
 KAA_SUITE_MAIN(MetaExtension, test_init, test_deinit,
         KAA_TEST_CASE(create_strategy, test_create_strategy)
         KAA_TEST_CASE(set_upload_timeout, test_set_upload_timeout)
-        KAA_TEST_CASE(set_batch_size, test_set_batch_size)
         KAA_TEST_CASE(upload_decision_by_volume, test_upload_decision_by_volume)
         KAA_TEST_CASE(upload_decision_by_count, test_upload_decision_by_count)
         KAA_TEST_CASE(upload_decision_by_timeout, test_upload_decision_by_timeout)

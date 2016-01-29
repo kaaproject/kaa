@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
 import org.kaaproject.kaa.common.dto.UpdateNotificationDto;
@@ -124,10 +125,10 @@ public class TopicServiceImpl implements TopicService {
     }
 
     @Override
-    public List<UpdateNotificationDto> removeTopicById(String id) {
+    public List<UpdateNotificationDto<EndpointGroupDto>> removeTopicById(String id) {
         validateId(id, "Can't remove topic. Invalid topic id " + id);
         TopicDto topic = findTopicById(id);
-        List<UpdateNotificationDto> notificationList = new LinkedList<>();
+        List<UpdateNotificationDto<EndpointGroupDto>> notificationList = new LinkedList<>();
         if (topic != null) {
             List<EndpointGroup> groups = endpointGroupDao.findEndpointGroupsByTopicIdAndAppId(topic.getApplicationId(), id);
             if (groups != null && !groups.isEmpty()) {

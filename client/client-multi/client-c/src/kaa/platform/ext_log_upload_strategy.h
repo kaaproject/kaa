@@ -72,22 +72,22 @@ kaa_error_t ext_log_upload_strategy_create(struct kaa_context_s *context, void *
 ext_log_upload_decision_t ext_log_upload_strategy_decide(void *context, const void *log_storage_context);
 
 /**
- * @brief Retrieves the maximum size of a report pack that will be delivered in a single request to the Operations server.
- *
- * @param[in]   context    Log upload strategy context.
- * @return                 The size of a batch in bytes.
- */
-size_t ext_log_upload_strategy_get_bucket_size(void *context);
-
-
-
-/**
  * @brief The maximum time to wait a log delivery response.
  *
  * @param[in]   context    Log upload strategy context.
  * @return                 Time in seconds.
  */
 size_t ext_log_upload_strategy_get_timeout(void *context);
+
+
+
+/**
+ * @brief Max amount of log batches allowed to be uploaded parallel.
+ *
+ * @param[in]   context    Log upload strategy context.
+ * @return                 Amount of batches.
+ */
+size_t ext_log_upload_strategy_get_max_parallel_uploads(void *context);
 
 
 

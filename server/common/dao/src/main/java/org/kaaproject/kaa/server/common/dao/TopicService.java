@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.server.common.dao;
 
+import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
 import org.kaaproject.kaa.common.dto.UpdateNotificationDto;
@@ -81,8 +82,9 @@ public interface TopicService {
      * Removes the topic by id.
      *
      * @param id the id
+     * @return the list of update notification dto
      */
-    List<UpdateNotificationDto> removeTopicById(String id);
+    List<UpdateNotificationDto<EndpointGroupDto>> removeTopicById(String id);
 
     /**
      * Removes the topics by application id.
