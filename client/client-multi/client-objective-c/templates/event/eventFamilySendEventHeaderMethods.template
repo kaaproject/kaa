@@ -1,0 +1,9 @@
+
+- (void)send{event_class_name}ToAll:({event_class_name} *)event;
+
+- (void)send{event_class_name}:({event_class_name} *)event to:(NSString *)target;
+
+- (void)add{event_class_name}ToBlock:({event_class_name} *)event withTransactionId:(TransactionId *)trxId;
+
+- (void)add{event_class_name}ToBlock:({event_class_name} *)event withTransactionId:(TransactionId *)trxId target:(NSString *)target;
+

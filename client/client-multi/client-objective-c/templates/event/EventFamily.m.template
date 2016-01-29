@@ -1,0 +1,52 @@
+#import "KaaLogging.h"
+#import "AvroBytesConverter.h"
+
+#define TAG @"{event_family_class_name} >>>"
+
+@interface {event_family_class_name} ()
+
+@property (nonatomic, strong) id<EventManager> manager;
+@property (nonatomic, strong) id<ExecutorContext> context;
+@property (nonatomic, strong) NSMutableSet *delegates;
+@property (nonatomic, strong) AvroBytesConverter *converter;
+
+@end
+
+@implementation {event_family_class_name}
+
+- (instancetype)initWithManager:(id<EventManager>)eventManager context:(id<ExecutorContext>)executorContext {
+    self = [super init];
+    if (self) {
+        self.manager = eventManager;
+        self.context = executorContext;
+        self.delegates = [NSMutableSet set];
+        self.converter = [[AvroBytesConverter alloc] init];
+    }
+    return self;
+}
+
+- (NSSet *)getSupportedEventFQNs {
+    NSMutableSet *result = [NSMutableSet set];
+
+{add_supported_event_class_fqns}
+
+    return result;
+}
+
+- (void)onGenericEvent:(NSString *)eventFQN withData:(NSData *)data fromSource:(NSString *)source {
+
+    {event_family_listeners_on_generic_event}
+
+}
+
+- (void)addDelegate:(id<{event_family_class_name}Delegate>)delegate {
+    [self.delegates addObject:delegate];
+}
+
+- (void)removeDelegate:(id<{event_family_class_name}Delegate>)delegate {
+    [self.delegates removeObject:delegate];
+}
+
+{event_family_send_event_methods}
+
+@end

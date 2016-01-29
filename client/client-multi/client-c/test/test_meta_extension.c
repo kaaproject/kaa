@@ -133,8 +133,8 @@ void test_meta_extension_serialize(void)
     error_code = kaa_platform_message_reader_create(&reader, buffer, meta_extension_size);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    uint8_t extension_type;
-    uint32_t extension_options;
+    uint16_t extension_type;
+    uint16_t extension_options;
     uint32_t extension_payload;
 
     error_code = kaa_platform_message_read_extension_header(

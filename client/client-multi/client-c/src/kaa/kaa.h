@@ -58,6 +58,16 @@ kaa_error_t kaa_init(kaa_context_t **kaa_context_p);
  */
 kaa_error_t kaa_start(kaa_context_t *kaa_context);
 
+/**
+ * @brief Stops Kaa's workflow.
+ *
+ * @note Should be called after @link kaa_start() @endlink.
+ *
+ * @param[in]   kaa_context    Pointer to an initialized Kaa endpoint context.
+ *
+ * @return Error code.
+ */
+kaa_error_t kaa_stop(kaa_context_t *kaa_context);
 
 
 /**
