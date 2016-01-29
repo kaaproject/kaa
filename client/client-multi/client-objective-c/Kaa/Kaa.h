@@ -17,34 +17,54 @@
 #import <Foundation/Foundation.h>
 
 #import "KaaClient.h"
-
-#import "KaaDataChannel.h"
-#import "KaaTransport.h"
 #import "GenericKaaClient.h"
-#import "KaaChannelManager.h"
-#import "ConfigurationCommon.h"
-#import "EndpointRegistrationProcessor.h"
-#import "EventManger.h"
-#import "BaseEventFamily.h"
-#import "ProfileManager.h"
-#import "NotificationManager.h"
-#import "UserTransport.h"
-#import "BootstrapTransport.h"
-#import "BootstrapManager.h"
-#import "RedirectionTransport.h"
-#import "MetaDataTransport.h"
-#import "SchemaProcessor.h"
-#import "ConfigurationTransport.h"
+#import "KaaClientState.h"
+
+#import "GenericLogCollector.h"
 #import "LogCollector.h"
 
+#import "ConfigurationCommon.h"
+#import "NotificationCommon.h"
+#import "ProfileCommon.h"
+
+#import "EndpointRegistrationProcessor.h"
+#import "NotificationProcessor.h"
+#import "SchemaProcessor.h"
+
+#import "LogStorage.h"
+#import "SimpleConfigurationStorage.h"
+
+#import "AvroBytesConverter.h"
+
+#import "BaseEventFamily.h"
+#import "KaaDataChannel.h"
+
+#import "BootstrapManager.h"
+#import "EndpointRegistrationManager.h"
+#import "EventManger.h"
+#import "FailoverManager.h"
+#import "KaaChannelManager.h"
+#import "NotificationManager.h"
+#import "ProfileManager.h"
+
+#import "BootstrapTransport.h"
+#import "ConfigurationTransport.h"
+#import "DefaultProfileTransport.h"
+#import "EventTransport.h"
+#import "KaaTransport.h"
+#import "LogTransport.h"
+#import "MetaDataTransport.h"
+#import "NotificationTransport.h"
+#import "ProfileTransport.h"
+#import "RedirectionTransport.h"
+#import "UserTransport.h"
+
 #import "CommonEPConstants.h"
+#import "KaaExceptions.h"
 
 #import "KaaClientStateDelegate.h"
 #import "KaaClientPlatformContext.h"
 #import "DefaultKaaPlatformContext.h"
-
-#import "KaaExceptions.h"
-#import "KaaLogging.h"
 
 #import "DefaultLogUploadStrategy.h"
 #import "PeriodicLogUploadStrategy.h"
@@ -52,6 +72,19 @@
 #import "RecordCountWithTimeLimitLogUploadStrategy.h"
 #import "StorageSizeLogUploadStrategy.h"
 #import "StorageSizeWithTimeLimitLogUploadStrategy.h"
+
+#import "ConfigurationGen.h"
+#import "EndpointGen.h"
+#import "EventGen.h"
+#import "LogGen.h"
+#import "NotificationGen.h"
+#import "ProfileGen.h"
+
+#import "AccessPointCommand.h"
+#import "EventDelegates.h"
+#import "ExecutorContext.h"
+#import "KAABase64.h"
+#import "LogFailoverCommand.h"
 
 /**
  * Used to create new Kaa client instances.
