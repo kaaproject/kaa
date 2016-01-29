@@ -1051,17 +1051,19 @@ static kaa_error_t update_sequence_number(kaa_notification_manager_t *self, uint
         state = (kaa_topic_state_t *) KAA_MALLOC(sizeof(kaa_topic_state_t));
         KAA_RETURN_IF_NIL(state, KAA_ERR_NOMEM);
 
-        state->sqn_number = sqn_number;
-        state->topic_id = topic_id;
-
         if (!kaa_list_push_front(self->status->topic_states, state)) {
             KAA_FREE(state);
             return KAA_ERR_NOMEM;
         }
+
+        state->topic_id = topic_id;
+        state->sqn_number = sqn_number;
+        self->status->has_update = true;
     } else {
         state = (kaa_topic_state_t *)kaa_list_get_data(it);
         if (sqn_number > state->sqn_number) {
             state->sqn_number = sqn_number;
+            self->status->has_update = true;
         }
     }
     return KAA_ERR_NONE;

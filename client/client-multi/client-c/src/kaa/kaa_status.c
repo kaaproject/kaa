@@ -26,6 +26,8 @@
 #include <string.h>
 
 
+extern kaa_error_t kaa_status_set_updated(kaa_status_t *self, bool is_updated);
+
 #define KAA_STATUS_STATIC_SIZE      (sizeof(bool) + sizeof(bool) + sizeof(uint32_t) + sizeof(uint32_t) + sizeof(size_t) + sizeof(uint32_t) + sizeof(uint16_t) + SHA_1_DIGEST_LENGTH * sizeof(char) * 2 + sizeof(KAA_SDK_TOKEN))
 
 #define READ_BUFFER(FROM, TO, SIZE) \
@@ -93,7 +95,7 @@ kaa_error_t kaa_status_create(kaa_status_t ** kaa_status_p)
         if (strcmp(token_buf, KAA_SDK_TOKEN))
             kaa_status->is_registered = false;
         else
-            kaa_status->is_updated = true;
+            kaa_status_set_updated(kaa_status, true);
     }
 
     if (needs_deallocation)
@@ -116,14 +118,23 @@ kaa_error_t kaa_status_set_endpoint_access_token(kaa_status_t * self, const char
 {
     KAA_RETURN_IF_NIL(self, KAA_ERR_BADPARAM);
 
+    char *new_token;
+    size_t len = strlen(token);
+
+    /* Do not delete old access token before new will be allocated */
+
+    new_token = KAA_MALLOC((len + 1) * sizeof(char));
+    if (!new_token)
+        return KAA_ERR_NOMEM;
+
+    strcpy(new_token, token);
+
     if (self->endpoint_access_token)
         KAA_FREE(self->endpoint_access_token);
 
-    size_t len = strlen(token);
-    self->endpoint_access_token = (char *) KAA_MALLOC((len + 1) * sizeof(char));
-    if (!self->endpoint_access_token)
-        return KAA_ERR_NOMEM;
-    strcpy(self->endpoint_access_token, token);
+    self->endpoint_access_token = new_token;
+    self->has_update = true;
+
     return KAA_ERR_NONE;
 }
 
@@ -131,6 +142,23 @@ kaa_error_t kaa_status_set_registered(kaa_status_t *self, bool is_registered)
 {
     KAA_RETURN_IF_NIL(self, KAA_ERR_BADPARAM);
     self->is_registered = is_registered;
+    self->has_update = true;
+    return KAA_ERR_NONE;
+}
+
+kaa_error_t kaa_status_set_attached(kaa_status_t *self, bool is_attached)
+{
+    KAA_RETURN_IF_NIL(self, KAA_ERR_BADPARAM);
+    self->is_attached = is_attached;
+    self->has_update = true;
+    return KAA_ERR_NONE;
+}
+
+kaa_error_t kaa_status_set_updated(kaa_status_t *self, bool is_updated)
+{
+    KAA_RETURN_IF_NIL(self, KAA_ERR_BADPARAM);
+    self->is_updated = is_updated;
+    self->has_update = true;
     return KAA_ERR_NONE;
 }
 
@@ -138,11 +166,14 @@ kaa_error_t kaa_status_save(kaa_status_t *self)
 {
     KAA_RETURN_IF_NIL(self, KAA_ERR_BADPARAM);
 
+    if (!self->has_update)
+        return KAA_ERR_NONE;
+
     size_t endpoint_access_token_length = self->endpoint_access_token ? strlen(self->endpoint_access_token) : 0;
     size_t states_count = kaa_list_get_size(self->topic_states);
     size_t buffer_size = KAA_STATUS_STATIC_SIZE + sizeof(endpoint_access_token_length) + endpoint_access_token_length + states_count * (sizeof(uint32_t) + sizeof(uint64_t));
 
-    char *buffer_head = (char *) KAA_MALLOC(buffer_size * sizeof(char));
+    char *buffer_head = KAA_MALLOC(buffer_size * sizeof(char));
     KAA_RETURN_IF_NIL(buffer_head, KAA_ERR_NOMEM);
 
     char *buffer = buffer_head;
@@ -172,6 +203,8 @@ kaa_error_t kaa_status_save(kaa_status_t *self)
     ext_status_store(buffer_head, buffer_size);
 
     KAA_FREE(buffer_head);
+
+    self->has_update = false;
 
     return KAA_ERR_NONE;
 }
