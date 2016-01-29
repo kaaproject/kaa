@@ -460,7 +460,7 @@ void ClientStatus::setRegistered(bool isRegisteredP)
 
 std::string ClientStatus::getEndpointAccessToken()
 {
-    std::string token = "";
+    std::string token;
     auto found = getParameterData<ClientParameterT::EP_ACCESS_TOKEN>(token);
 
     if (!found.empty()) {
