@@ -58,6 +58,15 @@
                 <version>${rat.version}</version>
                 <configuration>
                     <excludes>
+                        <exclude>Podfile</exclude>
+                        <exclude>Podfile.lock</exclude>
+                        <exclude>**/Info.plist</exclude>
+                        <exclude>Kaa/security/NSData+CommonCrypto.h</exclude>
+                        <exclude>Kaa/security/NSData+CommonCrypto.m</exclude>
+                        <exclude>**/*.template</exclude>
+                        <exclude>**/Kaa.xcodeproj/**</exclude>
+                        <exclude>**/Kaa.xcworkspace/**</exclude>
+                        <exclude>**/Pods/**</exclude>>
                         <exclude>**/gcovr.log</exclude>
                         <exclude>**/gcovr-report.xml</exclude>
                         <exclude>**/.*</exclude>
