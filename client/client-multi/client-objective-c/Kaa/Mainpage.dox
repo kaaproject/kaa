@@ -43,7 +43,7 @@
     Drag and drop Kaa XCode project workspace as sub-module to your project and add libKaa.a binary to
     "Link Binary with Libraries" in Build Phases tab.
     In Build Settings tab find property called "Other Linker Flags" and set it's value to -ObjC.
-    In Build Settings tab find property called "User Header Search Paths" and set it's value to $(BUILT_PRODUCTS_DIR)
+    In Build Settings tab find property called "User Header Search Paths" and set it's value to "$(BUILT_PRODUCTS_DIR)"
     and switch value in right column to recursive.
 
  \section programminguide Programming guide
