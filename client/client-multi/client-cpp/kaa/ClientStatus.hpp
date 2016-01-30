@@ -27,6 +27,7 @@
 #include "kaa/gen/EndpointGen.hpp"
 #include "kaa/common/EndpointObjectHash.hpp"
 #include "kaa/IKaaClientStateStorage.hpp"
+#include "kaa/IKaaClientContext.hpp"
 
 namespace kaa {
 
@@ -42,7 +43,7 @@ typedef boost::bimaps::bimap<
 
 class ClientStatus : public IKaaClientStateStorage {
 public:
-    ClientStatus(std::string filename);
+    ClientStatus(std::string filename, IKaaClientContext& context);
     ~ClientStatus() { }
 
     std::int32_t getEventSequenceNumber() const;
@@ -92,7 +93,7 @@ private:
     std::map<ClientParameterT, std::shared_ptr<IPersistentParameter> > parameters_;
 
     bool isSDKPropertiesForUpdated_;
-
+    IKaaClientContext &context_;
     KAA_MUTEX_MUTABLE_DECLARE(sequenceNumberGuard_);
 
     static const bimap                      parameterToToken_;

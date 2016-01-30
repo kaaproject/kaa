@@ -326,7 +326,7 @@ void ClientParameter<HashDigest>::read(const std::string &strValue)
     }
 }
 
-ClientStatus::ClientStatus(std::string filename) : filename_(filename), isSDKPropertiesForUpdated_(false)
+ClientStatus::ClientStatus(std::string filename, IKaaClientContext& context) : filename_(filename), isSDKPropertiesForUpdated_(false), context_(context)
 {
     auto appseqntoken = parameterToToken_.left.find(ClientParameterT::APPSEQUENCENUMBER);
     if (appseqntoken != parameterToToken_.left.end()) {
@@ -407,9 +407,9 @@ void ClientStatus::checkSDKPropertiesForUpdates()
         }
 
         isSDKPropertiesForUpdated_ = true;
-        KAA_GLOBAL_LOG_INFO("SDK properties were updated");
+        KAA_LOG_INFO("SDK properties were updated");
     } else {
-        KAA_GLOBAL_LOG_INFO("SDK properties are up to date");
+        KAA_LOG_INFO("SDK properties are up to date");
     }
 }
 

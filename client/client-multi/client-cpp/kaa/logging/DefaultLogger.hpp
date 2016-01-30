@@ -37,7 +37,6 @@
 #include <boost/log/sinks/sync_frontend.hpp>
 #include <boost/log/sinks/text_ostream_backend.hpp>
 #include <boost/smart_ptr/shared_ptr.hpp>
-#include <boost/utility/empty_deleter.hpp>
 #include <boost/log/expressions.hpp>
 #include <boost/log/attributes/scoped_attribute.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
@@ -49,7 +48,7 @@ class DefaultLogger : public ILogger {
 public:
   DefaultLogger(std::string clientId, std::string logFileName = std::string()): clientId_(clientId), pSink_(new text_sink) {
         text_sink::locked_backend_ptr pBackend = pSink_->locked_backend();
-        boost::shared_ptr< std::ostream > consoleStream(&std::clog, boost::empty_deleter());
+        boost::shared_ptr< std::ostream > consoleStream(&std::clog, [](const void *)->void const {});
         pBackend->add_stream(consoleStream);
         if (!logFileName.empty()) {
 		    boost::shared_ptr< std::ofstream > fileStream(new std::ofstream(logFileName.c_str()));

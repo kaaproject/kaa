@@ -62,8 +62,8 @@ protected:
 
 protected:
     const TransportType         type_;
-    IKaaChannelManager &        channelManager_;
-    IKaaClientContext          &context_;
+    IKaaChannelManager          &channelManager_;
+    IKaaClientContext           &context_;
 };
 
 }  // namespace kaa

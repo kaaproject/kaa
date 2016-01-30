@@ -29,7 +29,6 @@
 #include "kaa/channel/SyncDataProcessor.hpp"
 #include "kaa/notification/NotificationManager.hpp"
 #include "kaa/event/registration/EndpointRegistrationManager.hpp"
-#include "kaa/ClientStatus.hpp"
 #include "kaa/channel/IKaaChannelManager.hpp"
 #include "kaa/channel/impl/DefaultBootstrapChannel.hpp"
 #include "kaa/channel/impl/DefaultOperationTcpChannel.hpp"
@@ -126,10 +125,10 @@ private:
     void checkClientState(State expected, const std::string& message);
     void checkClientStateNot(State unexpected, const std::string& message);
 
-    State                                           clientState_ = State::CREATED;
-    LoggerPtr        logger_;
-    IKaaClientStateStoragePtr status_;
-    KaaClientContext context_;
+    State                                            clientState_ = State::CREATED;
+    LoggerPtr                                        logger_;
+    KaaClientContext                                 context_;
+    IKaaClientStateStoragePtr                        status_;
 
 #ifdef KAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL
     std::unique_ptr<DefaultBootstrapChannel>         bootstrapChannel_;

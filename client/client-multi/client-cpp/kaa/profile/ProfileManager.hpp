@@ -104,7 +104,7 @@ public:
 private:
     IProfileTransportPtr            transport_;
     IProfileContainerPtr     profileContainer_;
-    IKaaClientContext       &context_;
+    IKaaClientContext                &context_;
 };
 
 } /* namespace kaa */

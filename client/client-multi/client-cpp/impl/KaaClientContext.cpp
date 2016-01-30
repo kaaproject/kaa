@@ -23,12 +23,9 @@
 
 namespace kaa {
 
-KaaClientContext::KaaClientContext(const KaaClientProperties &properties,
-                 const ILogger &logger,
-                 const IKaaClientStateStorage &state,
-                 const IExecutorContext &executorContext):
-    properties_((KaaClientProperties&)properties), logger_((ILogger&)logger), state_((IKaaClientStateStorage&)state), executorContext_((IExecutorContext&)executorContext)
-{}
+KaaClientContext::KaaClientContext(KaaClientProperties &properties, ILogger &logger,
+                                   IKaaClientStateStoragePtr state, IExecutorContext &executorContext)
+  :properties_(properties), logger_(logger), executorContext_(executorContext), state_(state){}
 
 KaaClientProperties &KaaClientContext::getProperties()
 {
@@ -42,7 +39,7 @@ ILogger &KaaClientContext::getLogger()
 
 IKaaClientStateStorage &KaaClientContext::getStatus()
 {
-    return state_;
+    return *state_;
 }
 
 IExecutorContext &KaaClientContext::getExecutorContext()

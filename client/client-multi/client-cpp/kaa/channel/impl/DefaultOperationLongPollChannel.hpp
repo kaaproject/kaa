@@ -91,7 +91,7 @@ private:
     static const std::string CHANNEL_ID;
     static const std::map<TransportType, ChannelDirection> SUPPORTED_TYPES;
 
-    KeyPair clientKeys_;    
+    KeyPair clientKeys_;
 
     boost::asio::io_service io_;
     boost::asio::io_service::work work_;

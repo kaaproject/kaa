@@ -46,8 +46,8 @@ namespace kaa {
 
 KaaClient::KaaClient(IKaaClientPlatformContextPtr context, IKaaClientStateListenerPtr listener)
     : logger_(new DefaultLogger(context->getProperties().getClientId(), context->getProperties().getLogFileName())),
-      status_(new ClientStatus(context->getProperties().getStateFileName())),
-      context_(context->getProperties(), *logger_, *status_, context->getExecutorContext()),
+      context_(context->getProperties(), *logger_, status_, context->getExecutorContext()),
+      status_(new ClientStatus(context->getProperties().getStateFileName(), context_)),
       platformContext_(context), stateListener_(listener)
 {
     if (!stateListener_) {
