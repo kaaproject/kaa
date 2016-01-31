@@ -86,12 +86,18 @@ public:
 
 private:
     void checkSDKPropertiesForUpdates();
+    /* Helpers */
+    template< ClientParameterT Type, class ParameterData >
+    void setParameterData(const ParameterData& data);
+    template< ClientParameterT Type, class ParameterData >
+    ParameterData getParameterData(const ParameterData& defaultValue) const;
 
 private:
     std::string filename_;
     std::map<ClientParameterT, std::shared_ptr<IPersistentParameter> > parameters_;
 
     bool isSDKPropertiesForUpdated_;
+    bool hasUpdate_;
 
     KAA_MUTEX_MUTABLE_DECLARE(sequenceNumberGuard_);
 
