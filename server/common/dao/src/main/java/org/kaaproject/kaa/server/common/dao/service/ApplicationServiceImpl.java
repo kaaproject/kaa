@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2016 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.server.common.dao.service;
 
+import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getDto;
@@ -157,23 +158,25 @@ public class ApplicationServiceImpl implements ApplicationService {
     public ApplicationDto saveApp(ApplicationDto applicationDto) {
         ApplicationDto appDto = null;
         if (isValidSqlObject(applicationDto)) {
-            if(isNotBlank(applicationDto.getId())) {
-                LOG.debug("Update application with id [{}]", applicationDto.getId());
-                Application checkApplication = applicationDao.findByNameAndTenantId(applicationDto.getName(), applicationDto.getTenantId());
-                if (checkApplication == null || checkApplication.getId().equals(applicationDto.getId())) {
-                    appDto = getDto(applicationDao.save(new Application(applicationDto)));
-                } else {
-                    throw new IncorrectParameterException("Can't save application with same name within one tenant");
-                }
-                return appDto;
+            if (isBlank(applicationDto.getName())) {
+                throw new IncorrectParameterException("Can't save/update application with null name");
             }
+            Application checkApplication = applicationDao.findByNameAndTenantId(applicationDto.getName(), applicationDto.getTenantId());
+            if (checkApplication != null) {
+                throw new IncorrectParameterException("Can't save application with same name within one tenant");
+            }
+            if (isNotBlank(applicationDto.getId())) {
+                LOG.debug("Update application with id [{}]", applicationDto.getId());
+                return getDto(applicationDao.save(new Application(applicationDto)));
+            }
+            
             String appToken = RandomStringUtils.randomNumeric(Constants.APP_TOKEN_SIZE);
             applicationDto.setApplicationToken(appToken);
 
             Application application = new Application(applicationDto);
             appDto = getDto(applicationDao.save(application));
 
-            if(appDto != null) {
+            if (appDto != null) {
                 String appId = appDto.getId();
                 List<User> users = userDao.findByTenantIdAndAuthority(appDto.getTenantId(), KaaAuthorityDto.TENANT_ADMIN.name());
                 String createdUsername = null;
@@ -183,7 +186,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 LOG.debug("Saved application with id [{}]", appId);
                 EndpointGroupDto groupDto = createDefaultGroup(appId, createdUsername);
 
-                if(groupDto != null) {
+                if (groupDto != null) {
                     String groupId = groupDto.getId();
                     LOG.debug("Saved endpoint group with id [{}]", groupId);
                     EndpointProfileSchemaDto profileSchema = createDefaultProfileSchema(appId, createdUsername);
@@ -226,7 +229,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         profileSchemaDto.setCreatedUsername(createdUsername);
         profileSchemaDto = profileService.saveProfileSchema(profileSchemaDto);
         if (profileSchemaDto == null) {
-            throw new RuntimeException("Can't save default profile schema " + profileSchemaDto); //NOSONAR
+            throw new RuntimeException("Can't save default profile schema "); //NOSONAR
         }
         return profileSchemaDto;
     }

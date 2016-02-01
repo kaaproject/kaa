@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2016 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import java.io.Serializable;
 
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_APPLICATION_TOKEN;
@@ -34,7 +35,8 @@ import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_TENA
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
 
 @Entity
-@Table(name = APPLICATION_TABLE_NAME)
+@Table(name = APPLICATION_TABLE_NAME, 
+        uniqueConstraints = { @UniqueConstraint( columnNames = {APPLICATION_TENANT_ID, APPLICATION_NAME })})
 public class Application extends GenericModel<ApplicationDto> implements Serializable {
 
     private static final long serialVersionUID = 3402917989585810543L;
@@ -42,7 +44,7 @@ public class Application extends GenericModel<ApplicationDto> implements Seriali
     @Column(name = APPLICATION_APPLICATION_TOKEN, unique = true)
     private String applicationToken;
 
-    @Column(name = APPLICATION_NAME)
+    @Column(name = APPLICATION_NAME, nullable = false)
     private String name;
 
     @Column(name = APPLICATION_SEQUENCE_NUMBER)
