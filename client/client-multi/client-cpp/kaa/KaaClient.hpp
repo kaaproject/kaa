@@ -64,7 +64,8 @@ public:
     virtual IKaaDataDemultiplexer&              getOperationDemultiplexer();
     virtual EventFamilyFactory&                 getEventFamilyFactory();
 
-    virtual void                                addLogRecord(const KaaUserLogRecord& record);
+    virtual RecordFuture                        addLogRecord(const KaaUserLogRecord& record);
+    virtual void                                setLogDeliveryListener(ILogDeliveryListenerPtr listener);
     virtual void                                setLogStorage(ILogStoragePtr storage);
     virtual void                                setLogUploadStrategy(ILogUploadStrategyPtr strategy);
     virtual void                                setFailoverStrategy(IFailoverStrategyPtr strategy);

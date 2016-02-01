@@ -17,12 +17,10 @@
 #ifndef LOGRECORD_HPP_
 #define LOGRECORD_HPP_
 
-#include <memory>
+#include <vector>
 #include <cstdint>
 
-#include "kaa/KaaThread.hpp"
-#include "kaa/gen/EndpointGen.hpp"
-#include "kaa/log/ILogCollector.hpp"
+#include "kaa/log/gen/LogDefinitions.hpp"
 #include "kaa/common/AvroByteArrayConverter.hpp"
 #include "kaa/common/exception/KaaException.hpp"
 
@@ -33,7 +31,7 @@ public:
     LogRecord(const KaaUserLogRecord& record)
     {
         AvroByteArrayConverter<KaaUserLogRecord> converter;  // TODO: make converter thread local when it would be possible
-        converter.toByteArray(record, serializedLog_.data);
+        converter.toByteArray(record, encodedRecord_);
     }
 
     LogRecord(const std::uint8_t *data, size_t size)
@@ -41,19 +39,19 @@ public:
         if (!data || !size) {
             throw KaaException("Null serialized log data");
         }
-        serializedLog_.data.assign(data, data + size);
+
+        encodedRecord_.assign(data, data + size);
     }
 
-    const std::vector<std::uint8_t>& getData() const { return serializedLog_.data; }
-    size_t getSize() const { return serializedLog_.data.size(); }
+    std::vector<std::uint8_t>& getData() { return encodedRecord_; }
 
-    const LogEntry& getLogEntry() { return serializedLog_; }
+    std::vector<std::uint8_t>&& getRvalueData(){ return std::move(encodedRecord_); }
+
+    std::size_t getSize() const { return encodedRecord_.size(); }
 
 private:
-    LogEntry serializedLog_;
+    std::vector<std::uint8_t> encodedRecord_;
 };
-
-typedef std::shared_ptr<LogRecord> LogRecordPtr;
 
 }  // namespace kaa
 

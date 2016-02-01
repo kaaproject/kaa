@@ -27,13 +27,13 @@
 namespace kaa {
 
 static std::string testLogData("very big test data");
-static std::string testLogStorageName("logs.db");
-static std::int32_t mockBlocksCount = 10000;
+static std::string testLogStorageName("test_logs.db");
 
 void removeDatabase(const std::string& dbName)
 {
     std::remove(dbName.c_str());
 }
+
 
 BOOST_AUTO_TEST_SUITE(FileLogStorageTestSuite)
 
@@ -57,15 +57,15 @@ BOOST_AUTO_TEST_CASE(AddLogRecordTest)
 
     KaaUserLogRecord record;
     record.logdata = testLogData;
-    LogRecordPtr serializedRecord(new LogRecord(record));
+    LogRecord serializedRecord(record);
 
     std::size_t recordCount = 5;
     for (std::size_t i = 0; i < recordCount; ++i) {
-        logStorage.addLogRecord(serializedRecord);
+        logStorage.addLogRecord(std::move(serializedRecord));
     }
 
     BOOST_CHECK_EQUAL(logStorage.getStatus().getRecordsCount(), recordCount);
-    BOOST_CHECK_EQUAL(logStorage.getStatus().getConsumedVolume(), recordCount * serializedRecord->getSize());
+    BOOST_CHECK_EQUAL(logStorage.getStatus().getConsumedVolume(), recordCount * serializedRecord.getSize());
 
     removeDatabase(testLogStorageName);
 }
@@ -75,26 +75,26 @@ BOOST_AUTO_TEST_CASE(RestoreAfterRestartTest)
     std::size_t recordCount = 5;
     KaaUserLogRecord record;
     record.logdata = testLogData;
-    LogRecordPtr serializedRecord(new LogRecord(record));
+    LogRecord serializedRecord(record);
 
     {
         SQLiteDBLogStorage logStorage1(testLogStorageName);
         for (std::size_t i = 0; i < recordCount; ++i) {
-            logStorage1.addLogRecord(serializedRecord);
+            logStorage1.addLogRecord(std::move(serializedRecord));
         }
     }
 
     SQLiteDBLogStorage logStorage2(testLogStorageName);
 
     BOOST_CHECK_EQUAL(logStorage2.getStatus().getRecordsCount(), recordCount);
-    BOOST_CHECK_EQUAL(logStorage2.getStatus().getConsumedVolume(), recordCount * serializedRecord->getSize());
+    BOOST_CHECK_EQUAL(logStorage2.getStatus().getConsumedVolume(), recordCount * serializedRecord.getSize());
 
-    auto logs = logStorage2.getRecordBlock(SIZE_MAX, mockBlocksCount);
+    auto bucket = logStorage2.getNextBucket();
 
-    for (auto& encodedLog : logs.second) {
+    for (auto& encodedLog : bucket.getRecords()) {
         AvroByteArrayConverter<KaaUserLogRecord> decoder;
         KaaUserLogRecord decodedLog;
-        decoder.fromByteArray(encodedLog->getData().data(), encodedLog->getSize(), decodedLog);
+        decoder.fromByteArray(encodedLog.getData().data(), encodedLog.getSize(), decodedLog);
 
         BOOST_CHECK_EQUAL(decodedLog.logdata, testLogData);
     }
@@ -108,51 +108,76 @@ BOOST_AUTO_TEST_CASE(GetAllRecordsTest)
 
     KaaUserLogRecord record;
     record.logdata = testLogData;
-    LogRecordPtr serializedRecord(new LogRecord(record));
+    LogRecord serializedRecord(record);
 
     std::size_t recordCount = 5;
     for (std::size_t i = 0; i < recordCount; ++i) {
-        logStorage.addLogRecord(serializedRecord);
+        logStorage.addLogRecord(std::move(serializedRecord));
     }
 
-    auto logs = logStorage.getRecordBlock(recordCount * serializedRecord->getSize(), mockBlocksCount);
+    auto logs = logStorage.getNextBucket();
 
-    BOOST_CHECK_EQUAL(logs.second.size(), recordCount);
+    BOOST_CHECK_EQUAL(logs.getRecords().size(), recordCount);
 
     std::size_t totalSize = 0;
-    for (auto& record : logs.second) {
-        totalSize += record->getSize();
+    for (auto& record : logs.getRecords()) {
+        totalSize += record.getSize();
     }
 
-    BOOST_CHECK_EQUAL(totalSize, recordCount * serializedRecord->getSize());
+    BOOST_CHECK_EQUAL(totalSize, recordCount * serializedRecord.getSize());
 
     removeDatabase(testLogStorageName);
 }
 
-BOOST_AUTO_TEST_CASE(GetPartOfRecordsTest)
+BOOST_AUTO_TEST_CASE(GetPartOfRecordsByCountTest)
 {
-    SQLiteDBLogStorage logStorage(testLogStorageName);
-
+    std::size_t totalRecordCount = 4;
+    std::size_t expectedRecordCount = totalRecordCount / 2;
     KaaUserLogRecord record;
     record.logdata = testLogData;
-    LogRecordPtr serializedRecord(new LogRecord(record));
 
-    std::size_t recordCount = 5;
-    for (std::size_t i = 0; i < recordCount; ++i) {
-        logStorage.addLogRecord(serializedRecord);
+    SQLiteDBLogStorage logStorage(testLogStorageName,
+                                 (int)SQLiteOptimizationOptions::SQLITE_NO_OPTIMIZATIONS,
+                                 LogStorageConstants::DEFAULT_MAX_BUCKET_SIZE,
+                                 expectedRecordCount);
+
+    LogRecord serializedRecord(record);
+    for (std::size_t i = 0; i < totalRecordCount; ++i) {
+        logStorage.addLogRecord(std::move(serializedRecord));
     }
 
-    std::size_t count = recordCount / 2;
-    auto logs = logStorage.getRecordBlock((count * serializedRecord->getSize()) + 1, mockBlocksCount);
+    auto logs = logStorage.getNextBucket();
 
-    BOOST_CHECK_EQUAL(logs.second.size(), count);
+    BOOST_CHECK_EQUAL(logs.getRecords().size(), expectedRecordCount);
 
-    std::size_t totalSize = 0;
-    for (auto& record : logs.second) {
-        totalSize += record->getSize();
+    removeDatabase(testLogStorageName);
+}
+
+BOOST_AUTO_TEST_CASE(GetPartOfRecordsBySizeInBytesTest)
+{
+    KaaUserLogRecord record;
+    record.logdata = testLogData;
+    std::size_t totalRecordCount = 4;
+    std::size_t expectedRecordCount = totalRecordCount / 2;
+    std::size_t sizeOfOneRecord = LogRecord(record).getSize();
+    std::size_t expectedSizeInBytes = expectedRecordCount * sizeOfOneRecord;
+
+    SQLiteDBLogStorage logStorage(testLogStorageName,
+                                 (int)SQLiteOptimizationOptions::SQLITE_NO_OPTIMIZATIONS,
+                                 expectedSizeInBytes);
+
+    for (std::size_t i = 0; i < totalRecordCount; ++i) {
+        logStorage.addLogRecord(LogRecord(record));
     }
 
-    BOOST_CHECK_EQUAL(totalSize, count * serializedRecord->getSize());
+    auto logs = logStorage.getNextBucket();
+
+    std::size_t actualSizeInBytes = 0;
+    for (auto& record : logs.getRecords()) {
+        actualSizeInBytes += record.getSize();
+    }
+
+    BOOST_CHECK_EQUAL(actualSizeInBytes, expectedSizeInBytes);
 
     removeDatabase(testLogStorageName);
 }
@@ -160,30 +185,35 @@ BOOST_AUTO_TEST_CASE(GetPartOfRecordsTest)
 BOOST_AUTO_TEST_CASE(RemoveLogRecordsTest)
 {
     {
-        SQLiteDBLogStorage logStorage1(testLogStorageName);
 
         KaaUserLogRecord record;
         record.logdata = testLogData;
-        LogRecordPtr serializedRecord(new LogRecord(record));
+        std::size_t sizeOfOneRecord = LogRecord(record).getSize();
 
         std::size_t recordCount = 10;
+        std::size_t count = recordCount / 2;
+
+        SQLiteDBLogStorage logStorage1(testLogStorageName,
+                                     (int)SQLiteOptimizationOptions::SQLITE_NO_OPTIMIZATIONS,
+                                     LogStorageConstants::DEFAULT_MAX_BUCKET_SIZE,
+                                     count);
+
         for (std::size_t i = 0; i < recordCount; ++i) {
-            logStorage1.addLogRecord(serializedRecord);
+            logStorage1.addLogRecord(LogRecord(record));
         }
 
-        std::size_t count = recordCount / 2;
-        auto logs1 = logStorage1.getRecordBlock(count * serializedRecord->getSize(), mockBlocksCount);
+        auto logs1 = logStorage1.getNextBucket();
 
         BOOST_CHECK_EQUAL(logStorage1.getStatus().getRecordsCount(), (recordCount - count));
-        BOOST_CHECK_EQUAL(logStorage1.getStatus().getConsumedVolume(), (recordCount - count) * serializedRecord->getSize());
+        BOOST_CHECK_EQUAL(logStorage1.getStatus().getConsumedVolume(), (recordCount - count) * sizeOfOneRecord);
 
-        logStorage1.removeRecordBlock(logs1.first);
+        logStorage1.removeBucket(logs1.getBucketId());
 
         BOOST_CHECK_EQUAL(logStorage1.getStatus().getRecordsCount(), (recordCount - count));
-        BOOST_CHECK_EQUAL(logStorage1.getStatus().getConsumedVolume(), (recordCount - count) * serializedRecord->getSize());
+        BOOST_CHECK_EQUAL(logStorage1.getStatus().getConsumedVolume(), (recordCount - count) * sizeOfOneRecord);
 
-        auto logs2 = logStorage1.getRecordBlock(count * serializedRecord->getSize(), mockBlocksCount);
-        logStorage1.removeRecordBlock(logs2.first);
+        auto logs2 = logStorage1.getNextBucket();
+        logStorage1.removeBucket(logs2.getBucketId());
 
         BOOST_CHECK_EQUAL(logStorage1.getStatus().getRecordsCount(), 0);
         BOOST_CHECK_EQUAL(logStorage1.getStatus().getConsumedVolume(), 0);
@@ -197,59 +227,102 @@ BOOST_AUTO_TEST_CASE(RemoveLogRecordsTest)
     removeDatabase(testLogStorageName);
 }
 
-BOOST_AUTO_TEST_CASE(DeliveyFailedTest)
+BOOST_AUTO_TEST_CASE(RollbackTest)
 {
-    SQLiteDBLogStorage logStorage(testLogStorageName);
-
     KaaUserLogRecord record;
     record.logdata = testLogData;
-    LogRecordPtr serializedRecord(new LogRecord(record));
 
+    std::size_t sizeOfOneRecord = LogRecord(record).getSize();
     std::size_t recordCount = 10;
+    std::size_t count = recordCount / 2;
+
+    SQLiteDBLogStorage logStorage(testLogStorageName,
+                                 (int)SQLiteOptimizationOptions::SQLITE_NO_OPTIMIZATIONS,
+                                 LogStorageConstants::DEFAULT_MAX_BUCKET_SIZE,
+                                 count);
+
     for (std::size_t i = 0; i < recordCount; ++i) {
-        logStorage.addLogRecord(serializedRecord);
+        logStorage.addLogRecord(LogRecord(record));
     }
 
-    std::size_t count = recordCount / 2;
-    auto logs1 = logStorage.getRecordBlock(count * serializedRecord->getSize(), mockBlocksCount);
+    auto logs1 = logStorage.getNextBucket();
 
     BOOST_CHECK_EQUAL(logStorage.getStatus().getRecordsCount(), (recordCount - count));
-    BOOST_CHECK_EQUAL(logStorage.getStatus().getConsumedVolume(), (recordCount - count) * serializedRecord->getSize());
+    BOOST_CHECK_EQUAL(logStorage.getStatus().getConsumedVolume(), (recordCount - count) * sizeOfOneRecord);
 
-    logStorage.notifyUploadFailed(logs1.first);
+    logStorage.rollbackBucket(logs1.getBucketId());
 
     BOOST_CHECK_EQUAL(logStorage.getStatus().getRecordsCount(), recordCount);
-    BOOST_CHECK_EQUAL(logStorage.getStatus().getConsumedVolume(), recordCount * serializedRecord->getSize());
+    BOOST_CHECK_EQUAL(logStorage.getStatus().getConsumedVolume(), recordCount * sizeOfOneRecord);
 
     removeDatabase(testLogStorageName);
 }
 
-BOOST_AUTO_TEST_CASE(DeliveyFailedWithRestartTest)
+BOOST_AUTO_TEST_CASE(RollbackWithRestartTest)
 {
     KaaUserLogRecord record;
     record.logdata = testLogData;
-    LogRecordPtr serializedRecord(new LogRecord(record));
+    LogRecord serializedRecord(record);
 
     std::size_t recordCount = 10;
+    std::size_t count = recordCount - 1;
+    std::size_t sizeOfOneRecord = LogRecord(record).getSize();
 
     {
-        SQLiteDBLogStorage logStorage1(testLogStorageName);
+        SQLiteDBLogStorage logStorage1(testLogStorageName,
+                                     (int)SQLiteOptimizationOptions::SQLITE_NO_OPTIMIZATIONS,
+                                     LogStorageConstants::DEFAULT_MAX_BUCKET_SIZE,
+                                     count);
 
         for (std::size_t i = 0; i < recordCount; ++i) {
-            logStorage1.addLogRecord(serializedRecord);
+            logStorage1.addLogRecord(LogRecord(record));
         }
 
-        std::size_t count = recordCount - 1;
-        auto logs1 = logStorage1.getRecordBlock(count * serializedRecord->getSize(), mockBlocksCount);
+        auto logs1 = logStorage1.getNextBucket();
 
         BOOST_CHECK_EQUAL(logStorage1.getStatus().getRecordsCount(), (recordCount - count));
-        BOOST_CHECK_EQUAL(logStorage1.getStatus().getConsumedVolume(), (recordCount - count) * serializedRecord->getSize());
+        BOOST_CHECK_EQUAL(logStorage1.getStatus().getConsumedVolume(), (recordCount - count) * sizeOfOneRecord);
     }
 
     SQLiteDBLogStorage logStorage2(testLogStorageName);
 
     BOOST_CHECK_EQUAL(logStorage2.getStatus().getRecordsCount(), recordCount);
-    BOOST_CHECK_EQUAL(logStorage2.getStatus().getConsumedVolume(), recordCount * serializedRecord->getSize());
+    BOOST_CHECK_EQUAL(logStorage2.getStatus().getConsumedVolume(), recordCount * sizeOfOneRecord);
+
+    removeDatabase(testLogStorageName);
+}
+
+BOOST_AUTO_TEST_CASE(TruncateTest)
+{
+    KaaUserLogRecord record;
+    record.logdata = testLogData;
+    LogRecord serializedRecord(record);
+
+    std::size_t recordCount = 10;
+    std::size_t count = recordCount / 2;
+    std::size_t sizeOfOneRecord = LogRecord(record).getSize();
+
+    {
+        SQLiteDBLogStorage logStorage1(testLogStorageName,
+                                     (int)SQLiteOptimizationOptions::SQLITE_NO_OPTIMIZATIONS,
+                                     LogStorageConstants::DEFAULT_MAX_BUCKET_SIZE,
+                                     count);
+
+        for (std::size_t i = 0; i < recordCount; ++i) {
+            logStorage1.addLogRecord(LogRecord(record));
+        }
+
+        BOOST_CHECK_EQUAL(logStorage1.getStatus().getRecordsCount(), recordCount);
+        BOOST_CHECK_EQUAL(logStorage1.getStatus().getConsumedVolume(), recordCount * sizeOfOneRecord);
+    }
+
+    SQLiteDBLogStorage logStorage1(testLogStorageName,
+                                 (int)SQLiteOptimizationOptions::SQLITE_NO_OPTIMIZATIONS,
+                                 LogStorageConstants::DEFAULT_MAX_BUCKET_SIZE,
+                                 count - 1);
+
+    BOOST_CHECK_EQUAL(logStorage1.getStatus().getRecordsCount(), 0);
+    BOOST_CHECK_EQUAL(logStorage1.getStatus().getConsumedVolume(), 0);
 
     removeDatabase(testLogStorageName);
 }

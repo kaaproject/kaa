@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 CyberVision, Inc.
+ * Copyright 2014-2016 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,21 @@
  * limitations under the License.
  */
 
-#include "kaa/log/LogRecord.hpp"
+#ifndef TIMEUTILS_HPP_
+#define TIMEUTILS_HPP_
+
+#include <chrono>
 
 namespace kaa {
 
+class TimeUtils {
+public:
+    static std::size_t getCurrentTimeInMs() {
+        return std::chrono::duration_cast<std::chrono::milliseconds>(
+                std::chrono::system_clock::now().time_since_epoch()).count();
+    }
+};
 
-}
+} /* namespace kaa */
 
+#endif /* TIMEUTILS_HPP_ */
