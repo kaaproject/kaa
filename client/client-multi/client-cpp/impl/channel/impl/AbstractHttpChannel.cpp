@@ -67,8 +67,8 @@ void AbstractHttpChannel::processTypes(const std::map<TransportType, ChannelDire
         case HttpStatusCode::UNAUTHORIZED:
             KAA_LOG_WARN(boost::format("Connection failed, server %1%:%2%: bad credentials. Going to re-register...")
                                                             % currentServer_->getHost() % currentServer_->getPort());
-            context_.getStatus().setRegistered(false);
-            context_.getStatus().save();
+            context_.getStatus()->setRegistered(false);
+            context_.getStatus()->save();
             setServer(currentServer_);
             break;
         default:

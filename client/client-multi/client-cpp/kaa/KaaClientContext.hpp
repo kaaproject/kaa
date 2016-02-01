@@ -20,20 +20,21 @@
 #include "IKaaClientContext.hpp"
 #include "kaa/ClientStatus.hpp"
 
+
 namespace kaa {
 
 class KaaClientContext : public IKaaClientContext
 {
 public:
     KaaClientContext(KaaClientProperties &properties, ILogger &logger,
-                     IKaaClientStateStoragePtr state, IExecutorContext &executorContext);
+                     IExecutorContext &executorContext, IKaaClientStateStoragePtr state = nullptr);
 
     KaaClientProperties &getProperties();
     ILogger &getLogger();
-    IKaaClientStateStorage &getStatus();
+    IKaaClientStateStoragePtr &getStatus();
     IExecutorContext &getExecutorContext();
 
-protected:
+private:
     KaaClientProperties        &properties_;
     ILogger                        &logger_;
     IExecutorContext      &executorContext_;

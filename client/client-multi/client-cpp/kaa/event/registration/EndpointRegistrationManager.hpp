@@ -62,7 +62,7 @@ public:
                           , const std::string& userVerifierToken
                           , IUserAttachCallbackPtr listener = IUserAttachCallbackPtr());
 
-    virtual bool isAttachedToUser() { return context_.getStatus().getEndpointAttachStatus(); }
+    virtual bool isAttachedToUser() { return context_.getStatus()->getEndpointAttachStatus(); }
 
     virtual void setAttachStatusListener(IAttachStatusListenerPtr listener) { attachStatusListener_ = listener; }
 

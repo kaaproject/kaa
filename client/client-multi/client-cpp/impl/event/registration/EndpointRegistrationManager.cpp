@@ -58,7 +58,7 @@ void EndpointRegistrationManager::onUserAttach(const UserAttachResponse& respons
     KAA_MUTEX_UNLOCKED("userAttachRequestGuard_");
 
     if (response.result == SyncResponseResultType::SUCCESS) {
-        context_.getStatus().setEndpointAttachStatus(true);
+        context_.getStatus()->setEndpointAttachStatus(true);
 
         KAA_LOG_INFO(boost::format("Endpoint was successfully attached to '%1%' user") % userExternalId);
 
@@ -162,7 +162,7 @@ void EndpointRegistrationManager::onEndpointsDetach(const std::vector<EndpointDe
 
 void EndpointRegistrationManager::onCurrentEndpointAttach(const UserAttachNotification& response)
 {
-    context_.getStatus().setEndpointAttachStatus(true);
+    context_.getStatus()->setEndpointAttachStatus(true);
 
     KAA_LOG_INFO(boost::format("Current endpoint was attached to '%1%' by '%2%'")
                                     % response.userExternalId % response.endpointAccessToken);
@@ -179,7 +179,7 @@ void EndpointRegistrationManager::onCurrentEndpointAttach(const UserAttachNotifi
 
 void EndpointRegistrationManager::onCurrentEndpointDetach(const UserDetachNotification& response)
 {
-    context_.getStatus().setEndpointAttachStatus(false);
+    context_.getStatus()->setEndpointAttachStatus(false);
 
     KAA_LOG_INFO(boost::format("Current endpoint was detached by '%1%'") % response.endpointAccessToken);
 

@@ -44,7 +44,7 @@ LogCollector::LogCollector(IKaaChannelManagerPtr manager, IKaaClientContext &con
 #ifdef KAA_USE_SQLITE_LOG_STORAGE
     storage_.reset(new SQLiteDBLogStorage(context_, context_.getProperties().getLogsDatabaseFileName()));
 #else
-    storage_.reset(new MemoryLogStorage());
+    storage_.reset(new MemoryLogStorage(context_));
 #endif
     uploadStrategy_.reset(new DefaultLogUploadStrategy(context_));
 

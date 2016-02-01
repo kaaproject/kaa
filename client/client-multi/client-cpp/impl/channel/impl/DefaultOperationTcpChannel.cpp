@@ -88,8 +88,8 @@ void DefaultOperationTcpChannel::onConnack(const ConnackMessage& message)
         break;
     case ConnackReturnCode::REFUSE_BAD_CREDENTIALS:
         KAA_LOG_WARN(boost::format("Channel \"%1%\". Connack result: bad credentials. Going to re-register... ") % getId());
-        context_.getStatus().setRegistered(false);
-        context_.getStatus().save();
+        context_.getStatus()->setRegistered(false);
+        context_.getStatus()->save();
         setServer(currentServer_);
         break;
     default:

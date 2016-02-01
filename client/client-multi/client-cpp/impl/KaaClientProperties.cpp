@@ -50,7 +50,7 @@ static std::string getDefaultClientId()
 {
    static size_t counter = 0;
    std::stringstream ss;
-   ss << KaaClientProperties::DEFAULT_CLIENT_ID << counter++;
+   ss << KaaClientProperties::DEFAULT_CLIENT_ID << ++counter;
    return ss.str();
 }
 

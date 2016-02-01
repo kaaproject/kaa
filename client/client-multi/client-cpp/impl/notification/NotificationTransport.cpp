@@ -31,7 +31,7 @@ namespace kaa {
 NotificationTransport::NotificationTransport(IKaaChannelManager& manager, IKaaClientContext &context)
     : AbstractKaaTransport(manager, context), notificationProcessor_(nullptr)
 {
-    const DetailedTopicStates& detailedStatesContainer = context_.getStatus().getTopicStates();
+    const DetailedTopicStates& detailedStatesContainer = context_.getStatus()->getTopicStates();
     for (const auto& state : detailedStatesContainer) {
         notificationSubscriptions_.insert(std::make_pair(state.second.topicId, state.second.sequenceNumber));
     }
@@ -41,12 +41,12 @@ NotificationSyncRequestPtr NotificationTransport::createEmptyNotificationRequest
 {
     NotificationSyncRequestPtr request(new NotificationSyncRequest);
 
-    request->appStateSeqNumber = context_.getStatus().getNotificationSequenceNumber();
+    request->appStateSeqNumber = context_.getStatus()->getNotificationSequenceNumber();
 
     /*TODO: topic list hash is a future feature */
     request->topicListHash.set_null();
 
-    const DetailedTopicStates& detailedStatesContainer = context_.getStatus().getTopicStates();
+    const DetailedTopicStates& detailedStatesContainer = context_.getStatus()->getTopicStates();
     if (!detailedStatesContainer.empty()) {
         std::vector<TopicState> container(detailedStatesContainer.size());
         auto it = detailedStatesContainer.begin();
@@ -72,7 +72,7 @@ NotificationSyncRequestPtr NotificationTransport::createNotificationRequest()
 {
     NotificationSyncRequestPtr request(new NotificationSyncRequest);
 
-    request->appStateSeqNumber = context_.getStatus().getNotificationSequenceNumber();
+    request->appStateSeqNumber = context_.getStatus()->getNotificationSequenceNumber();
 
     /*TODO: topic list hash is a future feature */
     request->topicListHash.set_null();
@@ -84,7 +84,7 @@ NotificationSyncRequestPtr NotificationTransport::createNotificationRequest()
         request->acceptedUnicastNotifications.set_null();
     }
 
-    const DetailedTopicStates& detailedStatesContainer = context_.getStatus().getTopicStates();
+    const DetailedTopicStates& detailedStatesContainer = context_.getStatus()->getTopicStates();
     if (!detailedStatesContainer.empty()) {
         std::vector<TopicState> container(detailedStatesContainer.size());
         auto it = detailedStatesContainer.begin();
@@ -118,9 +118,9 @@ void NotificationTransport::onNotificationResponse(const NotificationSyncRespons
         acceptedUnicastNotificationIds_.clear();
     }
 
-    context_.getStatus().setNotificationSequenceNumber(response.appStateSeqNumber);
+    context_.getStatus()->setNotificationSequenceNumber(response.appStateSeqNumber);
 
-    DetailedTopicStates detailedStatesContainer = context_.getStatus().getTopicStates();
+    DetailedTopicStates detailedStatesContainer = context_.getStatus()->getTopicStates();
 
     if (!response.availableTopics.is_null()) {
         const auto& topics = response.availableTopics.get_array();
@@ -187,7 +187,7 @@ void NotificationTransport::onNotificationResponse(const NotificationSyncRespons
             notificationProcessor_->notificationReceived(newNotifications);
         }
     }    
-    context_.getStatus().setTopicStates(detailedStatesContainer);
+    context_.getStatus()->setTopicStates(detailedStatesContainer);
     if (response.responseStatus != SyncResponseStatus::NO_DELTA) {
         syncAck();
     }

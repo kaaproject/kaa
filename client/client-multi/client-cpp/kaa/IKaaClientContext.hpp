@@ -18,6 +18,7 @@
 #define IKAACLIENTCONTEXT
 
 #include <memory>
+#include <kaa/IKaaClientStateStorage.hpp>
 
 namespace kaa {
 
@@ -30,7 +31,7 @@ class IKaaClientContext {
 public:
     virtual KaaClientProperties &getProperties() = 0;
     virtual ILogger &getLogger() = 0;
-    virtual IKaaClientStateStorage &getStatus() = 0;
+    virtual IKaaClientStateStoragePtr &getStatus() = 0;
     virtual IExecutorContext &getExecutorContext() = 0;
 
     virtual ~IKaaClientContext() = default;

@@ -326,7 +326,7 @@ void ClientParameter<HashDigest>::read(const std::string &strValue)
     }
 }
 
-ClientStatus::ClientStatus(std::string filename, IKaaClientContext& context) : filename_(filename), isSDKPropertiesForUpdated_(false), context_(context)
+ClientStatus::ClientStatus(const std::string &filename, IKaaClientContext& context) : filename_(filename), isSDKPropertiesForUpdated_(false), context_(context)
 {
     auto appseqntoken = parameterToToken_.left.find(ClientParameterT::APPSEQUENCENUMBER);
     if (appseqntoken != parameterToToken_.left.end()) {
