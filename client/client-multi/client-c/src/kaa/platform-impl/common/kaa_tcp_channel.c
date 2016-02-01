@@ -1214,6 +1214,8 @@ static size_t append_with_new_services(kaa_service_t *dest,
                                        const kaa_service_t *src,
                                        size_t src_count)
 {
+    KAA_RETURN_IF_NIL2(dest, src, 0);
+
     for (size_t i = 0; i < src_count; ++i) {
         bool found = false;
         for (size_t j = 0; j < dest_count; ++j) {
