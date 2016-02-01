@@ -36,17 +36,15 @@ typedef struct {
 typedef struct
 {
     uint32_t        event_seq_n;
-    uint32_t        config_seq_n;
-    uint32_t        notification_seq_n;
-    uint16_t        log_bucket_id;
     bool            is_registered;
     bool            is_attached;
     bool            is_updated;
     kaa_digest      endpoint_public_key_hash;
     kaa_digest      profile_hash;
 
-    kaa_list_t      *topic_states;
+    kaa_list_t      *topic_states;              /**< TODO */
     char            *endpoint_access_token;
+    bool            has_update; /**< Indicates that status was changed on the client size */
 } kaa_status_t;
 
 #endif

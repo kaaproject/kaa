@@ -521,7 +521,7 @@ void test_event_blocks(void)
     kaa_event_block_id trx_id = 0;
     error_code = kaa_event_create_transaction(event_manager, &trx_id);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
-    ASSERT_NOT_NULL(trx_id);
+    ASSERT_TRUE(trx_id);
 
     const size_t event1_size = 6;
     char *event1 = (char *) KAA_MALLOC(event1_size + 1);

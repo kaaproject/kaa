@@ -1,0 +1,30 @@
+
+- (void)send{event_class_name}ToAll:({event_class_name} *)event {
+    [self send{event_class_name}:event to:nil];
+}
+
+- (void)send{event_class_name}:({event_class_name} *)event to:(NSString *)target {
+    @try {
+        NSData *data = [self.converter toBytes:event];
+        [self.manager produceEventWithFQN:@"{event_class_fqn}" data:data target:target];
+    }
+    @catch (NSException *exception) {
+        DDLogError(@"%@ Error sending event with FQN [{event_class_fqn}] to [%@]: %@. Reason: %@",
+                   TAG, target, exception.name, exception.reason);
+    }
+}
+
+- (void)add{event_class_name}ToBlock:({event_class_name} *)event withTransactionId:(TransactionId *)trxId {
+    [self add{event_class_name}ToBlock:event withTransactionId:trxId target:nil];
+}
+
+- (void)add{event_class_name}ToBlock:({event_class_name} *)event withTransactionId:(TransactionId *)trxId target:(NSString *)target {
+    @try {
+        NSData *data = [self.converter toBytes:event];
+        [self.manager produceEventWithFQN:@"{event_class_fqn}" data:data target:target transactionId:trxId];
+    }
+    @catch (NSException *exception) {
+        DDLogError(@"%@ Error adding event with FQN [{event_class_fqn}] to block: [%@] with target [%@]: %@. Reason: %@",
+                   TAG, trxId, target, exception.name, exception.reason);
+    }
+}

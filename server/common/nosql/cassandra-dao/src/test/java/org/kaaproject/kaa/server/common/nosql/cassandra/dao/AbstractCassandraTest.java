@@ -16,15 +16,19 @@
 
 package org.kaaproject.kaa.server.common.nosql.cassandra.dao;
 
-import org.cassandraunit.dataset.cql.ClassPathCQLDataSet;
-import org.junit.ClassRule;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Random;
+import java.util.UUID;
+
 import org.kaaproject.kaa.common.dto.CTLDataDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
-import org.kaaproject.kaa.server.common.CustomCassandraCQLUnit;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointConfigurationDao;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointNotificationDao;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
@@ -38,19 +42,9 @@ import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraNotif
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraTopicListEntry;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
-
-public class AbstractCassandraTest {
+public abstract class AbstractCassandraTest {
 
     private static final String TEST_ENDPOINT_GROUP_ID = "124";
-
-    @ClassRule
-    public static CustomCassandraCQLUnit cassandraUnit = new CustomCassandraCQLUnit(new ClassPathCQLDataSet("cassandra.cql", "kaa"));
 
     @Autowired
     protected EndpointNotificationDao<CassandraEndpointNotification> unicastNotificationDao;

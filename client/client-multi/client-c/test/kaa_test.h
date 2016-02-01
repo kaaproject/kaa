@@ -43,6 +43,14 @@
 #define KAA_RUN_TESTS \
         CU_automated_run_tests(); \
 
+/* Helper macro to control setup and teardown process per each test in group.
+ * Must be placed in the exact suite.
+ */
+#define KAA_RUN_TEST(GROUP, NAME) \
+        KAA_TEST_CASE(GROUP##_##NAME##_setup, GROUP##_group_setup); \
+        KAA_TEST_CASE(GROUP##_##NAME##_test, GROUP##_##NAME##_test) \
+        KAA_TEST_CASE(GROUP##_##NAME##_teardown, GROUP##_group_teardown)
+
 #define KAA_END_TEST_SUITE \
         unsigned int failed_tests = CU_get_number_of_failure_records(); \
         CU_cleanup_registry(); \
@@ -85,6 +93,18 @@ typedef int (*cleanup_fn)(void);
         if (!init_ret_code)  \
             TEST_FN();
 
+/* Helper macro to control setup and teardown process per each test in group.
+ * Must be placed in the exact suite.
+ */
+#define KAA_RUN_TEST(GROUP, NAME) \
+    do { \
+        if (!init_ret_code) { \
+            GROUP##_group_setup(); \
+            GROUP##_##NAME##_test(); \
+            GROUP##_group_teardown(); \
+        } \
+    } while (0)
+
 #define KAA_RUN_TESTS
 
 #define KAA_END_TEST_SUITE \
@@ -93,8 +113,36 @@ typedef int (*cleanup_fn)(void);
         } \
         return (init_ret_code || cleanup_ret_code) ? -1 : 0; \
     }
-
 #endif
+
+
+/* Bunch of macroses that required execute setup() (initialization)
+ * and teardown() (cleanup) procedures per each test in so called "group".
+ *
+ * Group is a set of tests with common setup() and teardown() routines.
+ * You may have as many groups as you want inside test application.
+ * This contrasts with suite, which can be only one per each executable.
+ *
+ * NOTE: THIS IS INTERMIDIATE SOLUTION THAT WILL BE USED PRIOR TO INTEGRATION
+ * OF APPROPRIATE TEST FRAMEWORK WHICH SUPPORTS SUCH FEATURES.
+ */
+
+/* Defines test case in the given group */
+#define KAA_TEST_CASE_EX(GROUP, NAME) \
+    void GROUP##_##NAME##_test(void)
+
+/* Defines a setup process for given group.
+ * It runs before each test to make sure sytem is in predictable state
+ */
+#define KAA_GROUP_SETUP(GROUP) \
+    void GROUP##_group_setup()
+
+/* Defines a teardown process for given group
+ * Reverts any changes made by setup routine and makes sure no side effects
+ * will stay after test
+ */
+#define KAA_GROUP_TEARDOWN(GROUP) \
+    void GROUP##_group_teardown()
 
 
 #define KAA_SUITE_MAIN(SUITE_NAME, INIT_FN, CLEANUP_FN, ...) \
@@ -102,6 +150,5 @@ typedef int (*cleanup_fn)(void);
     __VA_ARGS__ \
     KAA_RUN_TESTS \
     KAA_END_TEST_SUITE \
-
 
 #endif /* KAA_TEST_H_ */

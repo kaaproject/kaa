@@ -27,8 +27,9 @@ import org.apache.avro.Schema.Type;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
-import org.kaaproject.kaa.avro.avrogenc.Compiler;
-import org.kaaproject.kaa.avro.avrogenc.StyleUtils;
+import org.kaaproject.kaa.avro.avrogen.compiler.CCompiler;
+import org.kaaproject.kaa.avro.avrogen.compiler.Compiler;
+import org.kaaproject.kaa.avro.avrogen.StyleUtils;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventAction;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventMapDto;
 import org.kaaproject.kaa.server.control.service.sdk.compress.TarEntryData;
@@ -156,7 +157,7 @@ public class CEventSourcesGenerator {
                 OutputStream hdrStream = new ByteArrayOutputStream();
                 OutputStream srcStream = new ByteArrayOutputStream();) {
                 String fileName = EVENT_FAMILY_DEFINITION_PATTERN.replace("{name}", name);
-                Compiler compiler = new Compiler(eventFamilySchema, fileName, hdrStream, srcStream);
+                Compiler compiler = new CCompiler(eventFamilySchema, fileName, hdrStream, srcStream);
                 compiler.setNamespacePrefix(NAME_PREFIX_TEMPLATE.replace("{name}", name));
                 compiler.generate();
 

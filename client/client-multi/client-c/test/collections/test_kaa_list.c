@@ -26,6 +26,24 @@
 
 static kaa_logger_t *logger = NULL;
 
+typedef struct {
+    uint64_t id;
+} test_list_node_t;
+
+static bool test_kaa_list_predicate(void *node_1, void *node_2)
+{
+    test_list_node_t *wrapper_1 = (test_list_node_t *)node_1;
+    test_list_node_t *wrapper_2 = (test_list_node_t *)node_2;
+    return wrapper_1->id < wrapper_2->id;
+}
+
+static uint64_t test_kaa_list_hash(void *node)
+{
+    test_list_node_t *wrapper = (test_list_node_t *)node;
+    return wrapper->id;
+}
+
+
 void test_list_create()
 {
     KAA_TRACE_IN(logger);
@@ -94,6 +112,66 @@ void test_list_push_back()
     KAA_TRACE_OUT(logger);
 }
 
+void test_list_sort()
+{
+    KAA_TRACE_IN(logger);
+
+    kaa_list_t *list = kaa_list_create();
+    ASSERT_NOT_NULL(list);
+
+    test_list_node_t *node;
+    uint64_t node_number = 100;
+    for (uint64_t i = 0; i < node_number; ++i) {
+        node = (test_list_node_t *)KAA_MALLOC(sizeof(test_list_node_t));
+        ASSERT_NOT_NULL(node);
+        node->id = (uint64_t) random();
+        kaa_list_push_back(list, node);
+    }
+
+    ASSERT_EQUAL(kaa_list_get_size(list), node_number);
+
+    kaa_list_sort(list,&test_kaa_list_predicate);
+    kaa_list_node_t *it,*next;
+    it = kaa_list_begin(list);
+    next = kaa_list_next(it);
+    while (it && next) {
+        ASSERT_TRUE(((test_list_node_t*)kaa_list_get_data(it))->id <=
+                ((test_list_node_t*)kaa_list_get_data(next))->id);
+        it = next;
+        next = kaa_list_next(it);
+    }
+    kaa_list_destroy(list, NULL);
+
+    KAA_TRACE_OUT(logger);
+}
+
+void test_list_hash()
+{
+    KAA_TRACE_IN(logger);
+
+    kaa_list_t *list = kaa_list_create();
+    ASSERT_NOT_NULL(list);
+
+    test_list_node_t *node;
+    uint64_t node_number = 100;
+    for (uint64_t i = 0; i < node_number; ++i) {
+        node = (test_list_node_t *)KAA_MALLOC(sizeof(test_list_node_t));
+        ASSERT_NOT_NULL(node);
+        node->id = (uint64_t) node_number - i;
+        kaa_list_push_back(list, node);
+    }
+
+    ASSERT_EQUAL(kaa_list_get_size(list), node_number);
+
+    kaa_list_sort(list,&test_kaa_list_predicate);
+
+    ASSERT_EQUAL(kaa_list_hash(list,&test_kaa_list_hash),-974344717);
+
+    kaa_list_destroy(list, NULL);
+
+    KAA_TRACE_OUT(logger);
+}
+
 void test_process_data(int32_t *value, int32_t *new_value)
 {
     *value = *new_value;
@@ -153,5 +231,6 @@ KAA_SUITE_MAIN(List, test_init, test_deinit
         KAA_TEST_CASE(list_push_front, test_list_push_front)
         KAA_TEST_CASE(list_push_back, test_list_push_back)
         KAA_TEST_CASE(list_for_each, test_list_for_each)
-
+        KAA_TEST_CASE(list_sort, test_list_sort)
+        KAA_TEST_CASE(list_hash, test_list_hash)
 )

@@ -40,7 +40,8 @@
 
 namespace kaa {
 
-const std::uint16_t DefaultOperationTcpChannel::PING_TIMEOUT = 200;
+const std::uint16_t DefaultOperationTcpChannel::CHANNEL_TIMEOUT = 200;
+const std::uint16_t DefaultOperationTcpChannel::PING_TIMEOUT = CHANNEL_TIMEOUT / 2;
 const std::uint16_t DefaultOperationTcpChannel::CONN_ACK_TIMEOUT = 20;
 const std::uint16_t DefaultOperationTcpChannel::RECONNECT_TIMEOUT = 5; // sec
 
@@ -322,7 +323,7 @@ boost::system::error_code DefaultOperationTcpChannel::sendConnect()
     const auto& requestEncoded = encDec_->encodeData(requestBody.data(), requestBody.size());
     const auto& sessionKey = encDec_->getEncodedSessionKey();
     const auto& signature = encDec_->signData(sessionKey.begin(), sessionKey.size());
-    return sendData(ConnectMessage(PING_TIMEOUT, KAA_PLATFORM_PROTOCOL_AVRO_ID, signature, sessionKey, requestEncoded));
+    return sendData(ConnectMessage(CHANNEL_TIMEOUT, KAA_PLATFORM_PROTOCOL_AVRO_ID, signature, sessionKey, requestEncoded));
 }
 
 boost::system::error_code DefaultOperationTcpChannel::sendDisconnect()

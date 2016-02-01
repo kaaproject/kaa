@@ -61,17 +61,6 @@ kaa_error_t ext_log_upload_strategy_set_threshold_count(void *strategy, size_t t
 
 
 /**
- * @brief Sets the new log batch size to the strategy.
- *
- * @param   strategy          The strategy instance.
- * @param   log_batch_size    The new log batch size in bytes.
- * @return Error code.
- */
-kaa_error_t ext_log_upload_strategy_set_batch_size(void *strategy, size_t log_batch_size);
-
-
-
-/**
  * @brief Sets the new upload timeout to the strategy.
  *
  * @param   strategy          The strategy instance.
