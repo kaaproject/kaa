@@ -18,15 +18,38 @@
 #import "io.h"
 #import "encoding.h"
 
+/**
+ * The main protocol, each avro-compatible object should conform.
+ */
 @protocol Avro
 
+/**
+ * Serializes object fields to avro writer structure.
+ */
 - (void)serialize:(avro_writer_t)writer;
+
+/**
+ * Deserializes object fields from avro reader structure.
+ */
 - (void)deserialize:(avro_reader_t)reader;
+
+/**
+ * Returns size of avro object.
+ */
 - (size_t)getSize;
+
+/**
+ * Returns Fully Qualified Name of avro object.
+ * (e.g. com.example.utils)
+ */
 + (NSString *)FQN;
 
 @end
 
+/**
+ * Utils responsible for serialization/deserialization of all typical Avro types.
+ * NOTE: Maps currently not supported.
+ */
 @interface AvroUtils : NSObject
 
 - (size_t)getStringSize:(NSString *)data;

@@ -29,6 +29,10 @@
 #define STATE_FILE_LOCATION_KEY     @"state.file.location"
 #define SDK_TOKEN_KEY               @"sdk_token"
 
+/**
+ * Class is used to access to various client properties.
+ * Properties are stored to NSUserDefaultsю
+ */
 @interface KaaClientProperties : NSObject
 
 - (instancetype)initWithDictionary:(NSDictionary *)defaults base64:(id<KAABase64>)base64;
@@ -53,10 +57,21 @@
 
 - (NSData *)defaultConfigSchema;
 
-- (NSDictionary *)bootstrapServers; //<TransportProtocolId, NSArray<TransportConnectionInfo>> as key-value
+/**
+ * @return dictionary that contains <TransportProtocolId, NSArray<TransportConnectionInfo>> as key-value
+ */
+- (NSDictionary *)bootstrapServers;
 
+/**
+ * Used to access custom client properties.
+ */
 - (NSString *)stringForKey:(NSString *)key;
 
+/**
+ * Used to set custom client properties.
+ *
+ * NOTE: custom properties' keys should not overlap default ones described on top of KaaClientProperties.h file.
+ */
 - (void)setString:(NSString *)object forKey:(NSString *)key;
 
 @end

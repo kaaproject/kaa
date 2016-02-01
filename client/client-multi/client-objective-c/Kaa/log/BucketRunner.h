@@ -18,6 +18,9 @@
 #import "TimeCommons.h"
 #import "BucketInfo.h"
 
+/**
+ * Designed to trach bucket upload.
+ */
 @interface BucketRunner : NSOperation
 
 @property (nonatomic, readonly) int64_t runnerId;

@@ -22,6 +22,9 @@
 
 /**
  * Interface for server information. Used by KaaDataChannel and KaaChannelManager.
+ *
+ * @see KaaDataChannel
+ * @see KaaChannelManager
  */
 @protocol TransportConnectionInfo
 

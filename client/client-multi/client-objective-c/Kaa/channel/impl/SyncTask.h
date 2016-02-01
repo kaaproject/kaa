@@ -17,10 +17,16 @@
 #import <Foundation/Foundation.h>
 #import "TransportCommon.h"
 
+/**
+ * Abstraction designed to represent transport types need to sync.
+ */
 @interface SyncTask : NSObject
 
 - (instancetype)initWithTransportType:(TransportType)type ackOnly:(BOOL)ackOnly all:(BOOL)all;
-- (instancetype)initWithTransports:(NSSet *)types ackOnly:(BOOL)ackOnly all:(BOOL)all; //<TransportType>
+/**
+ * @param types set of TransportType wrapped with NSNumber
+ */
+- (instancetype)initWithTransports:(NSSet *)types ackOnly:(BOOL)ackOnly all:(BOOL)all;
 
 - (NSSet *)getTransportTypes;
 - (BOOL)isAckOnly;

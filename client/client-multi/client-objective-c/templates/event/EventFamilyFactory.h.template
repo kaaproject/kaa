@@ -22,7 +22,8 @@
 
 /**
  * Factory for accessing supported event families.
- * DO NOT edit it, this class is auto-generated.
+ *
+ * AUTO-GENERATED: IN ORDER TO CHANGE IT, PLEASE CHANGE CORRESPONDING TEMPLATE
  */
 
 @interface EventFamilyFactory : NSObject

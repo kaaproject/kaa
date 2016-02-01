@@ -19,7 +19,9 @@
 #import "AvroBased.h"
 #import "KAAUnion.h"
 
+/*
+ * AUTO-GENERATED: IN ORDER TO CHANGE IT, PLEASE CHANGE CORRESPONDING TEMPLATE
+ */
 @interface KAADummyLog : AvroBased
-
 
 @end

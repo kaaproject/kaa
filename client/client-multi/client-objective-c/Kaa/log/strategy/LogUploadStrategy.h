@@ -34,7 +34,9 @@ typedef enum {
      * Kaa SDK should initiate log upload on the Operation server.
      */
     LOG_UPLOAD_STRATEGY_DECISION_UPLOAD
+    
 } LogUploadStrategyDecision;
+
 
 /**
  * Interface for log upload strategy.

@@ -40,7 +40,7 @@
     return [self clientWithContext:context stateDelegate:nil];
 }
 
-+ (id<KaaClient>)clientWithDelegate:(id<KaaClientStateDelegate>)delegate {
++ (id<KaaClient>)clientWithStateDelegate:(id<KaaClientStateDelegate>)delegate {
     return [self clientWithContext:[[DefaultKaaPlatformContext alloc] init] stateDelegate:delegate];
 }
 

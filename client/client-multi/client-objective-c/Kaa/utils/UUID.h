@@ -16,6 +16,9 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ * Class provides compact and efficient way of generating random UUID values.
+ */
 @interface UUID : NSObject
 
 + (NSString *)randomUUID;

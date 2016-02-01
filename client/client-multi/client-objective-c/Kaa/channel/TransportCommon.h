@@ -49,6 +49,7 @@ typedef enum {
      * In both ways
      */
     CHANNEL_DIRECTION_BIDIRECTIONAL
+    
 } ChannelDirection;
 
 #endif

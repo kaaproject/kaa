@@ -288,7 +288,7 @@
 
 - (NSDictionary *)getNotificationSubscriptions {
     NSMutableDictionary *subscriptions = [NSMutableDictionary dictionary];
-    for (NSString *key in self.notificationSubscriptions.allKeys) {
+    for (NSNumber *key in self.notificationSubscriptions.allKeys) {
         TopicSubscriptionInfo *value = self.notificationSubscriptions[key];
         subscriptions[key] = @(value.seqNumber);
     }

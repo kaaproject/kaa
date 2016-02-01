@@ -24,7 +24,6 @@
 
 @interface SimpleConfigurationStorage ()
 
-@property (nonatomic, strong) id<KaaClientPlatformContext> context;
 @property (nonatomic, strong) NSString *path;
 @property (nonatomic, readonly) NSFileManager *fileManager;
 
@@ -32,13 +31,10 @@
 
 @implementation SimpleConfigurationStorage
 
-- (instancetype)initWithPlatformContext:(id<KaaClientPlatformContext>)context path:(NSString *)path {
-    self = [super init];
-    if (self) {
-        self.context = context;
-        self.path = path;
-    }
-    return self;
++ (instancetype)storageWithPath:(NSString *)path {
+    SimpleConfigurationStorage *storage = [[self alloc] init];
+    storage.path = path;
+    return storage;
 }
 
 - (NSFileManager *)fileManager {

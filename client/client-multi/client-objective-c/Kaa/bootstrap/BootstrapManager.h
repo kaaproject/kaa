@@ -24,6 +24,7 @@
 #import "KaaInternalChannelManager.h"
 
 @protocol BootstrapTransport;
+
 /**
  * Bootstrap manager manages the list of available operation servers.
  */

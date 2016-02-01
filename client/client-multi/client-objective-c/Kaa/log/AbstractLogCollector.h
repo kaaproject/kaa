@@ -21,6 +21,9 @@
 #import "KaaChannelManager.h"
 #import "LogCollector.h"
 
+/**
+ * Designed to be abstraction layer for LogCollector.
+ */
 @interface AbstractLogCollector : NSObject <LogProcessor,LogCollector>
 
 @property (nonatomic, strong, readonly) id<ExecutorContext> executorContext;

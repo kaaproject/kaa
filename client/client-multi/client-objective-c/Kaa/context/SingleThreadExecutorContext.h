@@ -18,6 +18,10 @@
 #import "AbstractExecutorContext.h"
 #import "ExecutorContext.h"
 
-@interface SingleThreadExecutorContext : AbstractExecutorContext <ExecutorContext>
+/**
+ * Single threaded implementation of ExecutorContext protocol.
+ * Executors used for different purposes will share same thread.
+ */
+@interface SingleThreadExecutorContext : AbstractExecutorContext
 
 @end

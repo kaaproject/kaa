@@ -25,7 +25,9 @@
 
 @property(nonatomic, strong, readonly) ConfigurationDeserializer *deserializer;
 
-- (instancetype)initWithClientProperties:(KaaClientProperties *)properties state:(id<KaaClientState>)state executorContext:(id<ExecutorContext>)context;
+- (instancetype)initWithClientProperties:(KaaClientProperties *)properties
+                                   state:(id<KaaClientState>)state
+                         executorContext:(id<ExecutorContext>)context;
 
 - (NSData *)getConfigurationData;
 

@@ -18,12 +18,19 @@
 #import "ExecutorContext.h"
 #import "TimeCommons.h"
 
+/**
+ * Implements some abstactions of ExecutorContext protocol.
+ */
 @interface AbstractExecutorContext : NSObject <ExecutorContext>
 
 @property (nonatomic) int64_t timeOut;
 @property (nonatomic) TimeUnit timeUnit;
 
 - (instancetype)initWithTimeOut:(int64_t)timeOut timeUnit:(TimeUnit)timeUnit;
+
+/**
+ * Cancel all operations of the queue and waits for the completion of all operations.
+ */
 - (void)shutDownExecutor:(NSOperationQueue *)queue;
 
 @end

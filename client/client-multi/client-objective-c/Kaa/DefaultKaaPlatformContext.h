@@ -17,6 +17,9 @@
 #import <Foundation/Foundation.h>
 #import "KaaClientPlatformContext.h"
 
+/**
+ * Default implementation of KaaClientPlatformContext protocol.
+ */
 @interface DefaultKaaPlatformContext : NSObject <KaaClientPlatformContext>
 
 - (instancetype)initWithProperties:(KaaClientProperties *)properties executor:(id<ExecutorContext>)executor;

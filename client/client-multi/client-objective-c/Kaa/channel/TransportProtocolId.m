@@ -16,13 +16,9 @@
 
 #import "TransportProtocolId.h"
 
-/**
- * Immutable class to represent transport ID. Holds references to transport
- * protocol id and transport protocol version
- */
 @implementation TransportProtocolId
 
-- (instancetype)initWithId:(int)id version:(int)version {
+- (instancetype)initWithId:(int32_t)id version:(int32_t)version {
     self = [super init];
     if (self) {
         _protocolId = id;

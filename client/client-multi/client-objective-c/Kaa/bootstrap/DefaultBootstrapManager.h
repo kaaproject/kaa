@@ -19,7 +19,7 @@
 #import "ExecutorContext.h"
 
 /**
- * Default BootstrapManager implementation
+ * Default implementation of BootstrapManager protocol.
  */
 @interface DefaultBootstrapManager : NSObject <BootstrapManager>
 

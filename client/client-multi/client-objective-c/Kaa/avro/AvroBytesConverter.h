@@ -17,9 +17,19 @@
 #import <Foundation/Foundation.h>
 #import "AvroUtils.h"
 
+/**
+ * Convertor designed to be a convenient method of parsing Avro objects to bytes and vise versa.
+ */
 @interface AvroBytesConverter : NSObject
 
+/**
+ * Used to parse Avro object to bytes.
+ */
 - (NSData *)toBytes:(id<Avro>)object;
+
+/**
+ * Used to build Avro object from bytes.
+ */
 - (id)fromBytes:(NSData *)bytes object:(id<Avro>)object;
 
 @end

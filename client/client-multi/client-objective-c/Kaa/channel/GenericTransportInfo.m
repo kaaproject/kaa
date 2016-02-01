@@ -32,7 +32,7 @@
     return self;
 }
 
-- (int)accessPointId {
+- (int32_t)accessPointId {
     return [self.meta accessPointId];
 }
 

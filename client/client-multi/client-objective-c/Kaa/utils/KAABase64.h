@@ -24,6 +24,9 @@
 
 @end
 
+/**
+ * Default platform Base64 implementation.
+ */
 @interface CommonBase64 : NSObject <KAABase64>
 
 @end

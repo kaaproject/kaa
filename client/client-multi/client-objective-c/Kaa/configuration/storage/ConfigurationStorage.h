@@ -21,8 +21,19 @@
 
 @protocol ConfigurationStorage
 
+/**
+ * Stores configuration data.
+ */
 - (void)saveConfiguration:(NSData *)buffer;
+
+/**
+ * Removes previously stored configuration data.
+ */
 - (void)clearConfiguration;
+
+/**
+ * Clears previously stored configuration data.
+ */
 - (NSData *)loadConfiguration;
 
 @end

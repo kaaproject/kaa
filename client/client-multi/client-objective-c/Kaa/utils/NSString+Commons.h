@@ -16,6 +16,9 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ * Category designed to check if NSString is empty or contains only whitespace characters.
+ */
 @interface NSString (Commons)
 
 - (BOOL)isEmpty;

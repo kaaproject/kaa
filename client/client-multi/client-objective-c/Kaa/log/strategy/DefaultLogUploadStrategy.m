@@ -32,6 +32,10 @@
 
 @implementation DefaultLogUploadStrategy
 
+- (instancetype)init {
+    return [self initWithDefaults];
+}
+
 - (instancetype)initWithDefaults {
     self = [super init];
     if (self) {
