@@ -35,8 +35,8 @@ import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_TENA
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
 
 @Entity
-@Table(name = APPLICATION_TABLE_NAME, 
-        uniqueConstraints = { @UniqueConstraint( columnNames = {APPLICATION_TENANT_ID, APPLICATION_NAME })})
+@Table(name = APPLICATION_TABLE_NAME, uniqueConstraints = {
+@UniqueConstraint(columnNames = {APPLICATION_TENANT_ID, APPLICATION_NAME})})
 public class Application extends GenericModel<ApplicationDto> implements Serializable {
 
     private static final long serialVersionUID = 3402917989585810543L;
