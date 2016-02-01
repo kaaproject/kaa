@@ -24,7 +24,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 
+import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
@@ -33,6 +35,7 @@ import org.kaaproject.kaa.common.endpoint.security.MessageEncoderDecoder;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.common.hash.SHA1HashUtils;
 import org.kaaproject.kaa.server.common.Base64Util;
+import org.kaaproject.kaa.server.common.core.structure.Pair;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
 import org.kaaproject.kaa.server.common.dao.UserConfigurationService;
 import org.kaaproject.kaa.server.operations.pojo.GetDeltaRequest;
@@ -123,7 +126,7 @@ public class DefaultOperationsService implements OperationsService {
     private String operationServerHash;
 
     @Override
-    public SyncContext syncProfile(SyncContext context, ProfileClientSync profileSyncRequest) {
+    public SyncContext syncClientProfile(SyncContext context, ProfileClientSync profileSyncRequest) {
         EndpointProfileDto profile = context.getEndpointProfile();
 
         ClientSyncMetaData metaData = context.getMetaData();
@@ -158,12 +161,21 @@ public class DefaultOperationsService implements OperationsService {
             }
             context.setStatus(SyncStatus.PROFILE_RESYNC);
         }
-        
+
         profile = syncProfileState(metaData.getApplicationToken(), context.getEndpointKey(), profile, false);
-        
+
         context.setEndpointProfile(profile);
 
         return context;
+    }
+    
+
+    @Override
+    public EndpointProfileDto syncServerProfile(String appToken, String endpointKey, EndpointObjectHash key) {
+        EndpointProfileDto profile = refreshServerEndpointProfile(key);
+        profile.setGroupState(new ArrayList<>());
+        profile = syncProfileState(appToken, endpointKey, profile, false);
+        return profile;
     }
 
     @Override
@@ -189,34 +201,47 @@ public class DefaultOperationsService implements OperationsService {
         return context;
     }
 
-    @Override
-    public EndpointProfileDto syncProfileState(String appToken, String endpointId, EndpointProfileDto profile,
+    private EndpointProfileDto syncProfileState(String appToken, String endpointId, EndpointProfileDto endpointProfile,
             boolean userConfigurationChanged) {
         LOG.debug("[{}][{}] going to sync endpoint group states", appToken, endpointId);
-        AppSeqNumber appSeqNumber = cacheService.getAppSeqNumber(appToken);
-        int curAppSeqNumber = appSeqNumber.getSeqNumber();
-        HistoryDelta historyDelta = fetchHistory(endpointId, appToken, profile, curAppSeqNumber);
-        profile.setGroupState(historyDelta.getEndpointGroupStates());
-        profile.setSequenceNumber(curAppSeqNumber);
-        if (historyDelta.isConfigurationChanged() || userConfigurationChanged) {
-            LOG.debug("[{}][{}] configuration change detected", appToken, endpointId);
-            try {
-                syncEndpointConfiguration(appToken, endpointId, profile);
-            } catch (GetDeltaException e) {
-                // TODO: Figure out how to act in case of failover here.
-                LOG.error("[{}][{}] Failed to sync endpoint configuration {}", appToken, endpointId, e);
+
+        Function<EndpointProfileDto, Pair<EndpointProfileDto, HistoryDelta>> updateFunction = profile -> {
+            AppSeqNumber appSeqNumber = cacheService.getAppSeqNumber(appToken);
+            int curAppSeqNumber = appSeqNumber.getSeqNumber();
+            HistoryDelta historyDelta = fetchHistory(endpointId, appToken, profile, curAppSeqNumber);
+            profile.setGroupState(historyDelta.getEndpointGroupStates());
+            profile.setSequenceNumber(curAppSeqNumber);
+            if (historyDelta.isConfigurationChanged() || userConfigurationChanged) {
+                LOG.debug("[{}][{}] configuration change detected", appToken, endpointId);
+                try {
+                    syncEndpointConfiguration(appToken, endpointId, profile);
+                } catch (GetDeltaException e) {
+                    // TODO: Figure out how to act in case of failover here.
+                    LOG.error("[{}][{}] Failed to sync endpoint configuration {}", appToken, endpointId, e);
+                }
             }
-        }
-        if (historyDelta.isTopicListChanged()) {
-            LOG.debug("[{}][{}] topic list change detected", appToken, endpointId);
-            syncTopicList(appToken, endpointId, profile);
-        }
+            if (historyDelta.isTopicListChanged()) {
+                LOG.debug("[{}][{}] topic list change detected", appToken, endpointId);
+                syncTopicList(appToken, endpointId, profile);
+            }
+            return new Pair<>(profile, historyDelta);
+        };
+
+        Pair<EndpointProfileDto, HistoryDelta> result = updateFunction.apply(endpointProfile);
+        endpointProfile = result.getV1();
+        HistoryDelta historyDelta = result.getV2();
 
         if (historyDelta.isSmthChanged() || userConfigurationChanged) {
             LOG.debug("[{}][{}] going to save new profile", appToken, endpointId);
-            profile = profileService.updateProfile(profile);
+            endpointProfile = profileService.updateProfile(endpointProfile, (storedProfile, newProfile) -> {
+                if (userConfigurationChanged) {
+                    storedProfile.setUserConfigurationHash(newProfile.getUserConfigurationHash());
+                }
+                storedProfile.setGroupState(new ArrayList<EndpointGroupStateDto>());
+                return updateFunction.apply(storedProfile).getV1();
+            });
         }
-        return profile;
+        return endpointProfile;
     }
 
     private void syncEndpointConfiguration(String appToken, String endpointId, EndpointProfileDto profile) throws GetDeltaException {
@@ -253,6 +278,14 @@ public class DefaultOperationsService implements OperationsService {
     }
 
     @Override
+    public SyncContext syncUserConfigurationHash(SyncContext context, byte[] ucfHash) {
+        EndpointProfileDto profile = context.getEndpointProfile();
+        profile.setUserConfigurationHash(ucfHash);
+        profile = syncProfileState(context.getAppToken(), context.getEndpointKey(), profile, true);
+        return context;
+    }
+
+    @Override
     public SyncContext syncNotification(SyncContext context, NotificationClientSync request) {
         if (request != null) {
             GetNotificationResponse notificationResponse = calculateNotificationDelta(context.getMetaData().getApplicationToken(), request,
@@ -261,9 +294,15 @@ public class DefaultOperationsService implements OperationsService {
             NotificationServerSync nfSyncResponse = buildNotificationSyncResponse(notificationResponse);
             context.setNotificationSyncResponse(nfSyncResponse);
 
-            context.setUpdateProfileRequired(context.isUpdateProfileRequired() || notificationResponse.isSubscriptionListChanged());
             if (notificationResponse.isSubscriptionListChanged()) {
-                context.getEndpointProfile().setSubscriptions(new ArrayList<>(notificationResponse.getSubscriptionSet()));
+                EndpointProfileDto profileDto = context.getEndpointProfile();
+                Function<EndpointProfileDto, EndpointProfileDto> updateFunction = profile -> {
+                    profile.setSubscriptions(new ArrayList<>(notificationResponse.getSubscriptionSet()));
+                    return profile;
+                };
+                context.setEndpointProfile(profileService.updateProfile(updateFunction.apply(profileDto), (storedProfile, newProfile) -> {
+                    return updateFunction.apply(storedProfile);
+                }));
             }
         }
         return context;
@@ -273,19 +312,17 @@ public class DefaultOperationsService implements OperationsService {
      * Process sync.
      */
     @Override
-    public EndpointProfileDto updateProfile(SyncContext context) {
+    public SyncContext syncProfileServerHash(SyncContext context) {
         EndpointProfileDto profile = context.getEndpointProfile();
         if (!operationServerHash.equals(profile.getServerHash())) {
             LOG.debug("[{}] Operations server hash changed from {} to {}", context.getEndpointKey(), profile.getServerHash(),
                     operationServerHash);
             profile.setServerHash(operationServerHash);
-            context.setUpdateProfileRequired(true);
+            context.setEndpointProfile(profileService.updateProfile(profile, (storedProfile, newProfile) -> {
+                return storedProfile;
+            }));
         }
-
-        if (context.isUpdateProfileRequired()) {
-            context.setEndpointProfile(profileService.updateProfile(profile));
-        }
-        return context.getEndpointProfile();
+        return context;
     }
 
     @Override
@@ -301,7 +338,8 @@ public class DefaultOperationsService implements OperationsService {
         return null;
     }
 
-    private EndpointProfileDto registerEndpoint(String endpointId, int requestHash, ClientSyncMetaData metaData, ProfileClientSync request) {
+    private EndpointProfileDto registerEndpoint(String endpointId, int requestHash, ClientSyncMetaData metaData,
+            ProfileClientSync request) {
         LOG.debug("[{}][{}] register endpoint. request: {}", endpointId, requestHash, request);
         byte[] endpointKey = toByteArray(request.getEndpointPublicKey());
         byte[] profileBody = toByteArray(request.getProfileBody());
@@ -674,7 +712,8 @@ public class DefaultOperationsService implements OperationsService {
     }
 
     @Override
-    public EndpointProfileDto refreshServerEndpointProfile(EndpointObjectHash hash) {
-        return profileService.getProfile(hash);
+    public EndpointProfileDto refreshServerEndpointProfile(EndpointObjectHash key) {
+        return profileService.getProfile(key);
     }
+
 }

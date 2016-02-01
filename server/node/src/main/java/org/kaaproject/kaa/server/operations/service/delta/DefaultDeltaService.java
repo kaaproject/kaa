@@ -36,10 +36,6 @@ import org.kaaproject.kaa.common.endpoint.security.MessageEncoderDecoder;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.Base64Util;
 import org.kaaproject.kaa.server.common.core.algorithms.delta.BaseBinaryDelta;
-import org.kaaproject.kaa.server.common.core.algorithms.delta.DeltaCalculationAlgorithm;
-import org.kaaproject.kaa.server.common.core.algorithms.delta.DeltaCalculatorException;
-import org.kaaproject.kaa.server.common.core.algorithms.delta.DeltaCalculatorFactory;
-import org.kaaproject.kaa.server.common.core.algorithms.delta.RawBinaryDelta;
 import org.kaaproject.kaa.server.common.core.algorithms.override.OverrideAlgorithm;
 import org.kaaproject.kaa.server.common.core.algorithms.override.OverrideAlgorithmFactory;
 import org.kaaproject.kaa.server.common.core.algorithms.override.OverrideException;
@@ -47,7 +43,6 @@ import org.kaaproject.kaa.server.common.core.configuration.BaseData;
 import org.kaaproject.kaa.server.common.core.configuration.OverrideData;
 import org.kaaproject.kaa.server.common.core.schema.BaseSchema;
 import org.kaaproject.kaa.server.common.core.schema.OverrideSchema;
-import org.kaaproject.kaa.server.common.core.schema.ProtocolSchema;
 import org.kaaproject.kaa.server.common.dao.ConfigurationService;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
 import org.kaaproject.kaa.server.common.dao.UserConfigurationService;
@@ -91,9 +86,6 @@ public class DefaultDeltaService implements DeltaService {
     /** The profile service. */
     @Autowired
     private EndpointService endpointService;
-    /** The delta calculator factory. */
-    @Autowired
-    private DeltaCalculatorFactory deltaCalculatorFactory;
 
     /** The configuration merger factory. */
     @Autowired
@@ -221,23 +213,7 @@ public class DefaultDeltaService implements DeltaService {
 
                             LOG.trace("[{}] Merged configuration {}", endpointId, mergedConfiguration.getRawData());
 
-                            if (deltaKey.isResyncOnly()) {
-                                deltaCache = buildBaseResyncDelta(endpointId, mergedConfiguration, userConfigurationHash);
-                            } else {
-                                ProtocolSchema protocolSchema = new ProtocolSchema(latestConfigurationSchema.getProtocolSchema());
-                                BaseSchema baseSchema = new BaseSchema(latestConfigurationSchema.getBaseSchema());
-                                DeltaCalculationAlgorithm deltaCalculator = deltaCalculatorFactory.createDeltaCalculator(protocolSchema,
-                                        baseSchema);
-
-                                if (deltaKey.getEndpointConfHash() == null) {
-                                    deltaCache = buildResyncDelta(endpointId, deltaCalculator, mergedConfiguration, userConfigurationHash);
-                                } else {
-                                    EndpointConfigurationDto endpointConfiguration = cacheService.getConfByHash(deltaKey
-                                            .getEndpointConfHash());
-                                    deltaCache = calculateDelta(endpointId, deltaCalculator, endpointConfiguration, mergedConfiguration,
-                                            userConfigurationHash);
-                                }
-                            }
+                            deltaCache = buildBaseResyncDelta(endpointId, mergedConfiguration, userConfigurationHash);
                             
                             if (cacheService.getConfByHash(deltaCache.getHash()) == null) {
                                 EndpointConfigurationDto newConfiguration = new EndpointConfigurationDto();
@@ -373,58 +349,6 @@ public class DefaultDeltaService implements DeltaService {
             }
         }
         return mergedConfiguration;
-    }
-
-    /**
-     * Calculate delta.
-     *
-     * @param deltaCalculator
-     *            the delta calculator
-     * @param endpointConfiguration
-     *            the endpoint configuration
-     * @param latestConfiguration
-     *            the latest configuration
-     * @return the delta cache entry
-     * @throws GetDeltaException
-     *             the get delta exception
-     */
-    private ConfigurationCacheEntry calculateDelta(final String endpointId, DeltaCalculationAlgorithm deltaCalculator,
-            EndpointConfigurationDto endpointConfiguration, BaseData latestConfiguration, EndpointObjectHash userConfigurationHash)
-            throws GetDeltaException {
-        try {
-            BaseData currentConfiguration = new BaseData(latestConfiguration.getSchema(), endpointConfiguration.getConfigurationAsString());
-            LOG.debug("[{}] Calculating partial delta. Old configuration: {}. New configuration: {}", endpointId,
-                    currentConfiguration.getRawData(), latestConfiguration.getRawData());
-            RawBinaryDelta delta = deltaCalculator.calculate(currentConfiguration, latestConfiguration);
-            RawBinaryDelta fullResyncDelta = deltaCalculator.calculate(latestConfiguration);
-            return new ConfigurationCacheEntry(latestConfiguration.getRawData().getBytes(), delta, EndpointObjectHash.fromSHA1(fullResyncDelta
-                    .getData()), userConfigurationHash);
-        } catch (IOException | DeltaCalculatorException e) {
-            throw new GetDeltaException(e);
-        }
-    }
-
-    /**
-     * Builds the resync delta.
-     *
-     * @param deltaCalculator
-     *            the delta calculator
-     * @param mergedConfiguration
-     *            the merged configuration
-     * @return the delta cache entry
-     * @throws GetDeltaException
-     *             the get delta exception
-     */
-    private ConfigurationCacheEntry buildResyncDelta(final String endpointId, DeltaCalculationAlgorithm deltaCalculator,
-            BaseData mergedConfiguration, EndpointObjectHash userConfigurationHash) throws GetDeltaException {
-        try {
-            LOG.debug("[{}] Calculating full resync delta from configuration: {}", endpointId, mergedConfiguration);
-            RawBinaryDelta delta = deltaCalculator.calculate(mergedConfiguration);
-            return new ConfigurationCacheEntry(mergedConfiguration.getRawData().getBytes(), delta, EndpointObjectHash.fromSHA1(delta.getData()),
-                    userConfigurationHash);
-        } catch (IOException | DeltaCalculatorException e) {
-            throw new GetDeltaException(e);
-        }
     }
 
     private ConfigurationCacheEntry buildBaseResyncDelta(String endpointId, BaseData mergedConfiguration, EndpointObjectHash userConfigurationHash) {

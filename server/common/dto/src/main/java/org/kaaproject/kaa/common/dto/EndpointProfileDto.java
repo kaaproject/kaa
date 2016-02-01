@@ -19,10 +19,14 @@ package org.kaaproject.kaa.common.dto;
 import static org.kaaproject.kaa.common.dto.Util.getArrayCopy;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class EndpointProfileDto implements HasId, Serializable {
+
+    private static final List<EndpointGroupStateDto> EMPTY_GROUP_STATE = Collections.unmodifiableList(new ArrayList<>());
 
     private static final long serialVersionUID = -7122736699758720540L;
 
@@ -109,6 +113,10 @@ public class EndpointProfileDto implements HasId, Serializable {
 
     public void setGroupState(List<EndpointGroupStateDto> groupState) {
         this.groupState = groupState;
+    }
+    
+    public void clearGroupState(){
+        this.groupState = EMPTY_GROUP_STATE;
     }
 
     public String getClientProfileBody() {

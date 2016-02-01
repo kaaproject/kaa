@@ -156,8 +156,7 @@ public class LocalEndpointActorMessageProcessor extends AbstractEndpointActorMes
     private void processServerProfileUpdateMsg(ActorContext context, ThriftServerProfileUpdateMessage thriftMsg) {
         EndpointProfileDto endpointProfile = state.getProfile();
         if (endpointProfile != null) {
-            endpointProfile = operationsService.refreshServerEndpointProfile(key);
-            state.setProfile(endpointProfile);
+            state.setProfile(operationsService.refreshServerEndpointProfile(key));
             Set<ChannelMetaData> channels = state.getChannelsByTypes(TransportType.CONFIGURATION, TransportType.NOTIFICATION);
             LOG.debug("[{}][{}] Processing profile update for {} channels", endpointKey, actorKey, channels.size());
             syncChannels(context, channels, true, true);
@@ -279,7 +278,7 @@ public class LocalEndpointActorMessageProcessor extends AbstractEndpointActorMes
 
         LOG.trace("[{}][{}] processing sync. Request: {}", endpointKey, context.getRequestHash(), request);
 
-        context = operationsService.syncProfile(context, request.getProfileSync());
+        context = operationsService.syncClientProfile(context, request.getProfileSync());
 
         if (context.getStatus() != SyncStatus.SUCCESS) {
             return context;
@@ -295,16 +294,12 @@ public class LocalEndpointActorMessageProcessor extends AbstractEndpointActorMes
         context = operationsService.processEventListenerRequests(context, request.getEventSync());
 
         if (state.isUserConfigurationUpdatePending()) {
-            EndpointProfileDto profile = context.getEndpointProfile();
-            profile.setUserConfigurationHash(state.getUcfHash());
-            profile = operationsService.syncProfileState(appToken, context.getEndpointKey(), profile, true);
+            context = operationsService.syncUserConfigurationHash(context, state.getUcfHash());
         }
 
         context = operationsService.syncConfiguration(context, request.getConfigurationSync());
 
         context = operationsService.syncNotification(context, request.getNotificationSync());
-
-        state.setProfile(operationsService.updateProfile(context));
 
         LOG.trace("[{}][{}] processed sync. Response is {}", endpointKey, request.hashCode(), context.getResponse());
 

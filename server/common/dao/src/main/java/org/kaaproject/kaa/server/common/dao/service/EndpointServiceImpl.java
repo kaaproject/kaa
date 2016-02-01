@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2016 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,7 +63,6 @@ import org.kaaproject.kaa.server.common.dao.impl.ProfileFilterDao;
 import org.kaaproject.kaa.server.common.dao.impl.TopicDao;
 import org.kaaproject.kaa.server.common.dao.impl.TopicListEntryDao;
 import org.kaaproject.kaa.server.common.dao.lock.KaaOptimisticLockingFailureException;
-import org.kaaproject.kaa.server.common.dao.lock.Retry;
 import org.kaaproject.kaa.server.common.dao.model.EndpointConfiguration;
 import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
 import org.kaaproject.kaa.server.common.dao.model.EndpointUser;
@@ -282,7 +281,6 @@ public class EndpointServiceImpl implements EndpointService {
     }
 
     @Override
-    @Retry(times = 5, on = org.springframework.dao.OptimisticLockingFailureException.class)
     public EndpointProfileDto saveEndpointProfile(EndpointProfileDto endpointProfileDto) throws KaaOptimisticLockingFailureException {
         EndpointProfileDto profileDto = null;
         validateObject(endpointProfileDto, "Can't find endpoint profile object. Invalid endpoint profile object" + endpointProfileDto);

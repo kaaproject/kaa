@@ -39,9 +39,9 @@ import org.kaaproject.kaa.server.sync.UserClientSync;
  */
 public interface OperationsService extends PublicKeyAware {
 
-    EndpointProfileDto syncProfileState(String appToken, String endpointId, EndpointProfileDto profile, boolean userConfigurationChanged);
-
-    SyncContext syncProfile(SyncContext context, ProfileClientSync request);
+    SyncContext syncClientProfile(SyncContext context, ProfileClientSync request);
+    
+    EndpointProfileDto syncServerProfile(String appToken, String endpointKey, EndpointObjectHash key);
 
     SyncContext processEndpointAttachDetachRequests(SyncContext context, UserClientSync request);
 
@@ -51,7 +51,7 @@ public interface OperationsService extends PublicKeyAware {
 
     SyncContext syncNotification(SyncContext context, NotificationClientSync request);
 
-    EndpointProfileDto updateProfile(SyncContext context);
+    SyncContext syncProfileServerHash(SyncContext context);
 
     /**
      * Attaches endpoint to user.
@@ -100,4 +100,11 @@ public interface OperationsService extends PublicKeyAware {
      */
     public EndpointProfileDto refreshServerEndpointProfile(EndpointObjectHash hash);
 
+    /**
+     * Update profile state based on new user configuration hash 
+     * @param context - sync context that contains profile and other metadata
+     * @param ucfHash - user configuration hash
+     * @return
+     */
+    SyncContext syncUserConfigurationHash(SyncContext context, byte[] ucfHash);
 }

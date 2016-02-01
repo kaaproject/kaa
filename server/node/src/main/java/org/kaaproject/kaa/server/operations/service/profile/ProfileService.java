@@ -16,6 +16,9 @@
 
 package org.kaaproject.kaa.server.operations.service.profile;
 
+import java.util.function.BiFunction;
+import java.util.function.Function;
+
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.operations.pojo.RegisterProfileRequest;
@@ -44,7 +47,7 @@ public interface ProfileService {
      * @param profile the profile
      * @return the updated endpoint profile dto
      */
-    EndpointProfileDto updateProfile(EndpointProfileDto profile);
+    EndpointProfileDto updateProfile(EndpointProfileDto profile, BiFunction<EndpointProfileDto, EndpointProfileDto, EndpointProfileDto> mergeFunction);
 
     /**
      * Register profile.

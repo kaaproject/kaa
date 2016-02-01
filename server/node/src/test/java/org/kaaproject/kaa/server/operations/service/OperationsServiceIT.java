@@ -334,7 +334,7 @@ public class OperationsServiceIT extends AbstractTest {
 
         SyncContext context = createContext(request);
 
-        operationsService.syncProfile(context, request.getProfileSync());
+        operationsService.syncClientProfile(context, request.getProfileSync());
         operationsService.syncConfiguration(context, request.getConfigurationSync());
 
         currentConfigurationHash = context.getEndpointProfile().getConfigurationHash();
@@ -368,7 +368,7 @@ public class OperationsServiceIT extends AbstractTest {
 
         SyncContext context = createContext(request);
 
-        operationsService.syncProfile(context, request.getProfileSync());
+        operationsService.syncClientProfile(context, request.getProfileSync());
         operationsService.syncConfiguration(context, request.getConfigurationSync());
 
         ServerSync response = context.getResponse();
@@ -380,7 +380,7 @@ public class OperationsServiceIT extends AbstractTest {
         // Kaa #7786
         Assert.assertNull(response.getConfigurationSync().getConfSchemaBody());
 
-        operationsService.syncProfile(context, request.getProfileSync());
+        operationsService.syncClientProfile(context, request.getProfileSync());
         operationsService.syncConfiguration(context, request.getConfigurationSync());
 
         response = context.getResponse();
@@ -417,7 +417,7 @@ public class OperationsServiceIT extends AbstractTest {
 
         SyncContext context = createContext(request);
 
-        operationsService.syncProfile(context, request.getProfileSync());
+        operationsService.syncClientProfile(context, request.getProfileSync());
         operationsService.syncConfiguration(context, request.getConfigurationSync());
 
         ServerSync response = context.getResponse();
@@ -450,7 +450,7 @@ public class OperationsServiceIT extends AbstractTest {
 
         SyncContext context = createContext(request);
 
-        operationsService.syncProfile(context, request.getProfileSync());
+        operationsService.syncClientProfile(context, request.getProfileSync());
 
         ServerSync response = context.getResponse();
 
@@ -478,7 +478,7 @@ public class OperationsServiceIT extends AbstractTest {
 
         SyncContext context = createContext(request);
 
-        operationsService.syncProfile(context, request.getProfileSync());
+        operationsService.syncClientProfile(context, request.getProfileSync());
         operationsService.syncConfiguration(context, request.getConfigurationSync());
 
         ServerSync response = context.getResponse();
@@ -511,7 +511,7 @@ public class OperationsServiceIT extends AbstractTest {
 
         SyncContext context = createContext(request);
 
-        operationsService.syncProfile(context, request.getProfileSync());
+        operationsService.syncClientProfile(context, request.getProfileSync());
         operationsService.syncNotification(context, request.getNotificationSync());
 
         ServerSync response = context.getResponse();
@@ -545,7 +545,7 @@ public class OperationsServiceIT extends AbstractTest {
 
         SyncContext context = createContext(request);
 
-        operationsService.syncProfile(context, request.getProfileSync());
+        operationsService.syncClientProfile(context, request.getProfileSync());
         operationsService.syncNotification(context, request.getNotificationSync());
 
         ServerSync response = context.getResponse();
@@ -586,7 +586,7 @@ public class OperationsServiceIT extends AbstractTest {
 
         SyncContext context = createContext(request);
 
-        operationsService.syncProfile(context, request.getProfileSync());
+        operationsService.syncClientProfile(context, request.getProfileSync());
         operationsService.syncNotification(context, request.getNotificationSync());
 
         ServerSync response = context.getResponse();
@@ -621,7 +621,7 @@ public class OperationsServiceIT extends AbstractTest {
         SyncContext context = createContext(request);
         context.setEndpointProfile(profileDto);
 
-        operationsService.syncProfile(context, request.getProfileSync());
+        operationsService.syncClientProfile(context, request.getProfileSync());
         operationsService.processEndpointAttachDetachRequests(context, request.getUserSync());
 
         ServerSync response = context.getResponse();
@@ -659,7 +659,7 @@ public class OperationsServiceIT extends AbstractTest {
 
         SyncContext context = createContext(request);
 
-        operationsService.syncProfile(context, request.getProfileSync());
+        operationsService.syncClientProfile(context, request.getProfileSync());
         operationsService.processEndpointAttachDetachRequests(context, request.getUserSync());
 
         ServerSync response = context.getResponse();
@@ -699,7 +699,7 @@ public class OperationsServiceIT extends AbstractTest {
         SyncContext context = createContext(request);
         context.setEndpointProfile(profileDto);
 
-        operationsService.syncProfile(context, request.getProfileSync());
+        operationsService.syncClientProfile(context, request.getProfileSync());
         operationsService.processEndpointAttachDetachRequests(context, request.getUserSync());
 
         ServerSync response = context.getResponse();
@@ -739,7 +739,7 @@ public class OperationsServiceIT extends AbstractTest {
         SyncContext context = createContext(request);
         context.setEndpointProfile(profileDto);
 
-        operationsService.syncProfile(context, request.getProfileSync());
+        operationsService.syncClientProfile(context, request.getProfileSync());
         operationsService.processEndpointAttachDetachRequests(context, request.getUserSync());
 
         ServerSync response = context.getResponse();
@@ -775,7 +775,7 @@ public class OperationsServiceIT extends AbstractTest {
 
         SyncContext context = createContext(request);
 
-        operationsService.syncProfile(context, request.getProfileSync());
+        operationsService.syncClientProfile(context, request.getProfileSync());
         operationsService.processEventListenerRequests(context, request.getEventSync());
 
         ServerSync response = context.getResponse();

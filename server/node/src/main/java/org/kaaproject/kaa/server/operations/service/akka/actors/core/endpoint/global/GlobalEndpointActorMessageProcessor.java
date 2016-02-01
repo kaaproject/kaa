@@ -1,8 +1,22 @@
+/*
+ * Copyright 2014-2016 CyberVision, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.kaaproject.kaa.server.operations.service.akka.actors.core.endpoint.global;
 
 import java.util.function.BiConsumer;
 
-import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.Base64Util;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftActorClassifier;
@@ -75,8 +89,7 @@ public class GlobalEndpointActorMessageProcessor extends AbstractEndpointActorMe
     }
 
     private void processServerProfileUpdateMsg(ActorContext context, ThriftServerProfileUpdateMessage thriftMsg) {
-        EndpointProfileDto endpointProfile = operationsService.refreshServerEndpointProfile(key);
-        operationsService.syncProfileState(appToken, endpointKey, endpointProfile, false);
+        operationsService.syncServerProfile(appToken, endpointKey, key); 
         ThriftServerProfileUpdateMessage localMsg = new ThriftServerProfileUpdateMessage(thriftMsg);
         localMsg.setActorClassifier(new ThriftActorClassifier(false));
         dispatchMsg(context, localMsg, (nodeId, msg) -> {

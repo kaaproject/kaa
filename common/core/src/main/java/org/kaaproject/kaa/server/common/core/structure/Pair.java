@@ -13,14 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kaaproject.kaa.server.operations.service.akka.actors.core;
+package org.kaaproject.kaa.server.common.core.structure;
 
-import akka.actor.ActorRef;
+public class Pair<T1, T2> {
 
-public class GlobalEndpointActorMD extends EndpointActorMD {
+    private final T1 v1;
+    private final T2 v2;
 
-    public GlobalEndpointActorMD(ActorRef actorRef, String actorId) {
-        super(actorRef, actorId);
+    public Pair(T1 v1, T2 v2) {
+        super();
+        this.v1 = v1;
+        this.v2 = v2;
+    }
+
+    public T1 getV1() {
+        return v1;
+    }
+
+    public T2 getV2() {
+        return v2;
     }
 
 }

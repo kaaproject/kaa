@@ -48,8 +48,6 @@ public class SyncContext {
 
     private AppSeqNumber appSeqNumber;
 
-    private boolean updateProfileRequired;
-
     /** The subscription states. */
     private Map<String, Integer> subscriptionStates;
 
@@ -185,16 +183,12 @@ public class SyncContext {
         this.appSeqNumber = appSeqNumber;
     }
 
-    public boolean isUpdateProfileRequired() {
-        return updateProfileRequired;
-    }
-
-    public void setUpdateProfileRequired(boolean updateProfileRequired) {
-        this.updateProfileRequired = updateProfileRequired;
-    }
-
     public ClientSyncMetaData getMetaData() {
         return metaData;
+    }
+    
+    public String getAppToken(){
+        return metaData.getApplicationToken();
     }
 
     public void setMetaData(ClientSyncMetaData md) {
