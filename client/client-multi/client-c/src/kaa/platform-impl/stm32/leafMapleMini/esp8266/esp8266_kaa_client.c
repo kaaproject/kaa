@@ -495,13 +495,11 @@ kaa_error_t kaa_client_stop(kaa_client_t *kaa_client)
 {
     KAA_RETURN_IF_NIL(kaa_client, KAA_ERR_BADPARAM);
 
-    kaa_error_t error_code = KAA_ERR_NONE;
-
     kaa_client->operate = false;
 
     KAA_LOG_INFO(kaa_client->kaa_context->logger, KAA_ERR_NONE, "Stopping Kaa client...");
 
-    return error_code;
+    return kaa_stop(kaa_client->kaa_context);
 }
 
 kaa_error_t kaa_client_channel_error(kaa_client_t *kaa_client)

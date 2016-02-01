@@ -51,6 +51,8 @@ public class SdkGeneratorTest {
         Assert.assertNotNull(generator);
         generator = factory.createSdkGenerator(SdkPlatform.C);
         Assert.assertNotNull(generator);
+        generator = factory.createSdkGenerator(SdkPlatform.OBJC);
+        Assert.assertNotNull(generator);
 //
 //        String profileSchema = "{\"type\":\"record\",\"name\":\"SuperProfile\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen.test\",\"fields\":[{\"name\":\"profileBody\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}]}";
 //

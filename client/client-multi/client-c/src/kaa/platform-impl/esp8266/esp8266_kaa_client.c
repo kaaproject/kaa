@@ -409,7 +409,7 @@ kaa_error_t kaa_client_stop(kaa_client_t *kaa_client)
     KAA_LOG_INFO(kaa_client->context->logger, KAA_ERR_NONE, "Going to stop Kaa client...");
     kaa_client->operate = false;
 
-    return KAA_ERR_NONE;
+    return kaa_stop(kaa_client->context);
 }
 
 
