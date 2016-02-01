@@ -105,11 +105,10 @@ RecordFuture LogCollector::addLogRecord(const KaaUserLogRecord& record)
     auto promisePtr = std::make_shared<std::promise<RecordInfo>>();
     RecordDeliveryInfo recordDeliveryInfo(promisePtr, recordInfo);
 
-    KaaUserLogRecord copyrecord = record;
-    executorContext_.getApiExecutor().add([this, copyrecord, recordDeliveryInfo] ()
+    executorContext_.getApiExecutor().add([this, record, recordDeliveryInfo] ()
             {
                 try {
-                    auto bucketInfo = storage_->addLogRecord(LogRecord(copyrecord));
+                    auto bucketInfo = storage_->addLogRecord(LogRecord(record));
                     updateBucketInfo(bucketInfo, recordDeliveryInfo);
                 } catch (...) {
                     try {
@@ -298,6 +297,7 @@ void LogCollector::onLogUploadResponse(const LogSyncResponse& response)
 
         for (const auto& status : deliveryStatuses) {
             if (!removeDeliveryTimeout(status.requestId)) {
+                KAA_LOG_WARN(boost::format("Received unknown delivery status, id %1%. Ignoring...") % status.requestId);
                 continue;
             }
 
@@ -403,7 +403,7 @@ void LogCollector::notifyDeliveryFuturesOnSuccess(std::int32_t bucketId, std::si
     auto it = bucketInfoStorage_.find(bucketId);
     if (it != bucketInfoStorage_.end()) {
         for (auto& recordFutureInfo : it->second.recordDeliveryInfoStorage_) {
-            recordFutureInfo.recordInfo_.setRecordDeliveryTimeMs(deliveryTime);
+            recordFutureInfo.recordInfo_.setRecordDeliveryTimeMs(deliveryTime - recordFutureInfo.recordInfo_.getRecordAddedTimestampMs());
             recordFutureInfo.recordInfo_.setBucketInfo(it->second.bucketInfo_);
             recordFutureInfo.deliveryFuture_->set_value(recordFutureInfo.recordInfo_);
         }

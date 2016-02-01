@@ -27,7 +27,7 @@ public:
     static const std::size_t DEFAULT_MAX_BUCKET_SIZE         = 16 * 1024;
     static const std::size_t DEFAULT_MAX_BUCKET_RECORD_COUNT = 256;
 
-    static const std::string DEFAULT_LOG_DB_STORAGE;
+    static const std::string DEFAULT_LOG_DB_STORAGE /* logs.db */;
 };
 
 } /* namespace kaa */

@@ -221,8 +221,8 @@ bool SQLiteDBLogStorage::truncateIfBucketSizeIncompatible()
         std::size_t maxBucketSizeInBytes = sqlite3_column_int64(getMaxStmt.getStatement(), 1);
 
         if (maxBucketSizeInRecordCount > maxBucketRecordCount_ || maxBucketSizeInBytes > maxBucketSize_) {
-            KAA_LOG_INFO(boost::format("Truncating logs: current_max_bucket_size %1%B, current_max_bucket_records %2%, "
-                                                             "db_max_bucket_size %3%B, db_max_bucket_records %4%")
+            KAA_LOG_INFO(boost::format("Truncating logs: current_max_bucket_size %1% bytes, current_max_bucket_records %2%, "
+                                                             "db_max_bucket_size %3% bytes, db_max_bucket_records %4%")
                                                                 % maxBucketSize_ % maxBucketRecordCount_
                                                                 % maxBucketSizeInBytes % maxBucketSizeInRecordCount);
 
@@ -256,12 +256,7 @@ void SQLiteDBLogStorage::initDBTables()
 
         KAA_LOG_TRACE("'" KAA_LOGS_TABLE_NAME "' table created");
 
-//        SQLiteStatement createIndexStmt(db_, KAA_CREATE_BUCKET_ID_INDEX);
-//        errorCode = sqlite3_step(createIndexStmt.getStatement());
-//        throwIfError(errorCode, SQLITE_DONE,
-//                (boost::format("Failed to create '" KAA_BUCKET_ID_INDEX_NAME "' index (error %d)") % errorCode).str());
-//
-//        KAA_LOG_TRACE("'" KAA_BUCKET_ID_INDEX_NAME "' index created");
+        //TODO: to increase performance need to create some indexes on DB tables.
     } catch (std::exception& e) {
         KAA_LOG_FATAL(boost::format("Failed to init log table: %s") % e.what());
         throw;
@@ -317,7 +312,7 @@ void SQLiteDBLogStorage::markBucketAsInUse(std::int32_t id)
     errorCode = sqlite3_step(stmt.getStatement());
     throwIfError(errorCode, SQLITE_DONE, (boost::format("(error %d)") % errorCode).str());
 
-    KAA_LOG_TRACE(boost::format("Mark bucket as used, id %1%") % id);
+    KAA_LOG_TRACE(boost::format("Mark bucket as in use, id %1%") % id);
 }
 
 void SQLiteDBLogStorage::openDBConnection()
@@ -504,10 +499,10 @@ void SQLiteDBLogStorage::rollbackBucket(std::int32_t bucketId)
             consumedMemoryStorage_.erase(it);
         }
 
-        KAA_LOG_INFO(boost::format("Bucket (id %d) will resend later. Total: %u, unmarked: %u, consumedMemory: %u")
+        KAA_LOG_INFO(boost::format("Rollback bucket (id %d). Total: %u, unmarked: %u, consumedMemory: %u")
                                     % bucketId % totalRecordCount_ % unmarkedRecordCount_ % consumedMemory_);
     } catch (std::exception& e) {
-        KAA_LOG_ERROR(boost::format("Failed to mark bucket (id %d) as free: %s Total: %u, unmarked: %u, consumedMemory: %u.")
+        KAA_LOG_ERROR(boost::format("Failed to rollback bucket (id %d): %s. Total: %u, unmarked: %u, consumedMemory: %u.")
                                             % bucketId % e.what() % totalRecordCount_ % unmarkedRecordCount_ % consumedMemory_);
     }
 }
