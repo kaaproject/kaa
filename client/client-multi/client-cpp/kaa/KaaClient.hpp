@@ -103,7 +103,7 @@ public:
 
     virtual IKaaDataMultiplexer&                getBootstrapMultiplexer();
     virtual IKaaDataDemultiplexer&              getBootstrapDemultiplexer();
-
+    virtual IKaaClientContext&                  getKaaClientContext();
 private:
     void init();
 

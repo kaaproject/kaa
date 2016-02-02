@@ -109,7 +109,7 @@ void KaaClientProperties::setClientId(const std::string& clientId)
 
 void KaaClientProperties::setLogFileName(const std::string& logFileName)
 {
-    checkEmptyness(logFileName, "Empty client id");
+    checkEmptyness(logFileName, "Empty log file name");
     setProperty(PROP_LOG_FILE_NAME, logFileName);
 }
 

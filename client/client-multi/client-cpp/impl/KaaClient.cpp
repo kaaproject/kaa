@@ -63,7 +63,7 @@ void KaaClient::init()
                                                             % BUILD_VERSION % BUILD_COMMIT_HASH);
 
     initClientKeys();
-    context_.getStatus() = status_;
+    context_.setStatus(status_);
     bootstrapManager_.reset(new BootstrapManager(context_));
     channelManager_.reset(new KaaChannelManager(*bootstrapManager_, getBootstrapServers(), context_));
     failoverStrategy_.reset(new DefaultFailoverStrategy);
@@ -264,20 +264,6 @@ void KaaClient::initKaaTransport()
     bootstrapChannel_->setMultiplexer(syncProcessor_.get());
     KAA_LOG_INFO(boost::format("Going to set default bootstrap channel: %1%") % bootstrapChannel_.get());
     channelManager_->addChannel(bootstrapChannel_.get());
-#endif
-#ifdef KAA_DEFAULT_OPERATION_HTTP_CHANNEL
-    opsHttpChannel_.reset(new DefaultOperationHttpChannel(channelManager_.get(), *clientKeys_, context_));
-    opsHttpChannel_->setMultiplexer(syncProcessor_.get());
-    opsHttpChannel_->setDemultiplexer(syncProcessor_.get());
-    KAA_LOG_INFO(boost::format("Going to set default operations Kaa HTTP channel: %1%") % opsHttpChannel_.get());
-    channelManager_->addChannel(opsHttpChannel_.get());
-#endif
-#ifdef KAA_DEFAULT_LONG_POLL_CHANNEL
-    opsLongPollChannel_.reset(new DefaultOperationLongPollChannel(channelManager_.get(), *clientKeys_, context_));
-    opsLongPollChannel_->setMultiplexer(syncProcessor_.get());
-    opsLongPollChannel_->setDemultiplexer(syncProcessor_.get());
-    KAA_LOG_INFO(boost::format("Going to set default operations Kaa HTTP Long Poll channel: %1%") % opsLongPollChannel_.get());
-    channelManager_->addChannel(opsLongPollChannel_.get());
 #endif
 #ifdef KAA_DEFAULT_TCP_CHANNEL
     opsTcpChannel_.reset(new DefaultOperationTcpChannel(channelManager_.get(), *clientKeys_, context_));
@@ -615,7 +601,6 @@ void KaaClient::updateProfile()
     checkClientState(State::STARTED, "Kaa client isn't started");
     profileManager_->updateProfile();
 }
-}
 
 void KaaClient::setClientState(State state)
 {
@@ -636,3 +621,9 @@ void KaaClient::checkClientStateNot(State unexpected, const std::string& message
     }
 }
 
+IKaaClientContext& KaaClient::getKaaClientContext()
+{
+    return context_;
+}
+
+}

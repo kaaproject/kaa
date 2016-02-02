@@ -37,9 +37,14 @@ ILogger &KaaClientContext::getLogger()
     return logger_;
 }
 
-IKaaClientStateStoragePtr &KaaClientContext::getStatus()
+IKaaClientStateStoragePtr KaaClientContext::getStatus()
 {
     return state_;
+}
+
+void KaaClientContext::setStatus(IKaaClientStateStoragePtr status)
+{
+    state_ = status;
 }
 
 IExecutorContext &KaaClientContext::getExecutorContext()

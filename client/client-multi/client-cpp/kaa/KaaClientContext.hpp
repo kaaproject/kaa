@@ -29,10 +29,11 @@ public:
     KaaClientContext(KaaClientProperties &properties, ILogger &logger,
                      IExecutorContext &executorContext, IKaaClientStateStoragePtr state = nullptr);
 
-    KaaClientProperties &getProperties();
-    ILogger &getLogger();
-    IKaaClientStateStoragePtr &getStatus();
-    IExecutorContext &getExecutorContext();
+    KaaClientProperties              &getProperties();
+    ILogger                              &getLogger();
+    IKaaClientStateStoragePtr             getStatus();
+    void  setStatus(IKaaClientStateStoragePtr status);
+    IExecutorContext            &getExecutorContext();
 
 private:
     KaaClientProperties        &properties_;

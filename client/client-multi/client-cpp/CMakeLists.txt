@@ -272,6 +272,7 @@ set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
         impl/Kaa.cpp
         impl/KaaClient.cpp
         impl/logging/Log.cpp
+        impl/logging/DefaultLogger.cpp
         impl/security/KeyUtils.cpp
         impl/security/RsaEncoderDecoder.cpp
         impl/common/EndpointObjectHash.cpp

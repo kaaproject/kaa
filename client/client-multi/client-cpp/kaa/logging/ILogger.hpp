@@ -35,9 +35,6 @@ public:
     virtual ~ILogger() {}
 
     virtual void log(LogLevel level, const char *message) const = 0;
-
-    virtual void setClientID(std::string &clientID) = 0;
-    virtual std::string getClientID() const = 0;
 };
 
 typedef std::shared_ptr<ILogger> LoggerPtr;

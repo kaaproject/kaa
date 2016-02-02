@@ -145,7 +145,7 @@ BOOST_AUTO_TEST_CASE(GetTopicsTest)
 
     KaaClientContext clientContext(properties, tmp_logger, tmpExecContext);
     IKaaClientStateStoragePtr clientStatus2(new ClientStatus(STATUS_FILE_PATH, clientContext));
-    clientContext.getStatus() = clientStatus2;
+    clientContext.setStatus(clientStatus2);
     NotificationManager notificationManager(clientContext);
 
     auto topics = notificationManager.getTopics();

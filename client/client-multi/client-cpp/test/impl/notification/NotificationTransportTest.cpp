@@ -40,7 +40,7 @@ BOOST_AUTO_TEST_CASE(EmptyRequestTest)
 {
     KaaClientContext clientContext(properties, tmp_logger, context);
     IKaaClientStateStoragePtr status(new ClientStatus("fakePath", clientContext));
-    clientContext.getStatus() = status;
+    clientContext.setStatus(status);
     MockChannelManager channelManager;
 
 
@@ -59,7 +59,7 @@ BOOST_AUTO_TEST_CASE(SubscriptionInfoTest)
 {
     KaaClientContext clientContext(properties, tmp_logger, context);
     IKaaClientStateStoragePtr status(new ClientStatus("fakePath", clientContext));
-    clientContext.getStatus() = status;
+    clientContext.setStatus(status);
 
     MockChannelManager channelManager;
     NotificationTransport transport(channelManager, clientContext);
@@ -105,7 +105,7 @@ BOOST_AUTO_TEST_CASE(AcceptedUnicastNotificationsTest)
 {
     KaaClientContext clientContext(properties, tmp_logger, context);
     IKaaClientStateStoragePtr status(new ClientStatus("fakePath", clientContext));
-    clientContext.getStatus() = status;
+    clientContext.setStatus(status);
 
     MockChannelManager channelManager;
     NotificationTransport transport(channelManager, clientContext);
@@ -143,7 +143,7 @@ BOOST_AUTO_TEST_CASE(DetailedTopicStateTest)
 {
     KaaClientContext clientContext(properties, tmp_logger, context);
     IKaaClientStateStoragePtr status(new ClientStatus("fakePath", clientContext));
-    clientContext.getStatus() = status;
+    clientContext.setStatus(status);
     MockChannelManager channelManager;
     NotificationTransport transport(channelManager, clientContext);
 
