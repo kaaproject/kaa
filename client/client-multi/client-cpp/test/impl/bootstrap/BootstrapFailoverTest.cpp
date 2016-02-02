@@ -40,9 +40,10 @@ BOOST_AUTO_TEST_CASE(BootstrapEmptyOperationalServersListTest)
 {
     KaaClientProperties properties;
     DefaultLogger tmp_logger(properties.getClientId());
+
     SimpleExecutorContext exeContext;
-    MockKaaClientStateStorage  status;
-    KaaClientContext context(properties, tmp_logger, status, exeContext);
+    IKaaClientStateStoragePtr status (new MockKaaClientStateStorage);
+    KaaClientContext context(properties, tmp_logger, exeContext, status);
     BootstrapManager bootstrapManager(context);
     IFailoverStrategyPtr failoverStrategy(std::make_shared<DefaultFailoverStrategy>());
     MockChannelManager channelManager;

@@ -37,12 +37,12 @@ BOOST_AUTO_TEST_CASE(ProfileManagerIsInitializedTest)
 {
     KaaClientProperties tmp_properties;
     DefaultLogger tmp_logger(tmp_properties.getClientId());
-    MockKaaClientStateStorage tmp_state;
     KaaClientProperties properties;
     MockChannelManager channelManager;
+    IKaaClientStateStoragePtr tmp_state(new MockKaaClientStateStorage);
     SimpleExecutorContext executor;
     executor.init();
-    KaaClientContext clientContext(properties, tmp_logger, tmp_state, executor);
+    KaaClientContext clientContext(properties, tmp_logger, executor, tmp_state);
 
     ProfileManager profileManager(clientContext);
 

@@ -52,7 +52,7 @@ BOOST_AUTO_TEST_CASE(EmptyUserSyncRequestTest)
 {
     IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
     MockExecutorContext context;
-    KaaClientContext clientContext(tmp_properties, tmp_logger, *status, context);
+    KaaClientContext clientContext(tmp_properties, tmp_logger, context, status);
     EndpointRegistrationManager registrationManager(clientContext);
 
     registrationManager.getUserAttachRequest();
@@ -66,7 +66,7 @@ BOOST_AUTO_TEST_CASE(BadUserCredentialsTest)
 {
     IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
     MockExecutorContext context;
-    KaaClientContext clientContext(tmp_properties, tmp_logger, *status, context);
+    KaaClientContext clientContext(tmp_properties, tmp_logger, context, status);
 
     EndpointRegistrationManager registrationManager(clientContext);
 
@@ -90,7 +90,7 @@ BOOST_AUTO_TEST_CASE(UserAttachRequestTest)
 {
     IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
     MockExecutorContext context;
-    KaaClientContext clientContext(tmp_properties, tmp_logger, *status, context);
+    KaaClientContext clientContext(tmp_properties, tmp_logger, context, status);
     EndpointRegistrationManager registrationManager(clientContext);
 
     MockChannelManager channelManager;
@@ -131,7 +131,7 @@ BOOST_AUTO_TEST_CASE(UserAttachResponseTest)
     IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
     SimpleExecutorContext context;
     context.init();
-    KaaClientContext clientContext(tmp_properties, tmp_logger, *status, context);
+    KaaClientContext clientContext(tmp_properties, tmp_logger, context, status);
     EndpointRegistrationManager registrationManager(clientContext);
 
     MockChannelManager channelManager;
@@ -212,7 +212,7 @@ BOOST_AUTO_TEST_CASE(AttachStatusUpdatedTest)
     IKaaClientStateStoragePtr status(new PersistAttachStatusStorage);
     SimpleExecutorContext context;
     context.init();
-    KaaClientContext clientContext(tmp_properties, tmp_logger, *status, context);
+    KaaClientContext clientContext(tmp_properties, tmp_logger, context, status);
     EndpointRegistrationManager registrationManager(clientContext);
 
     MockChannelManager channelManager;
@@ -253,7 +253,7 @@ BOOST_AUTO_TEST_CASE(BadCredentialsOfAttachEndpointTest)
 {
     IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
     MockExecutorContext context;
-    KaaClientContext clientContext(tmp_properties, tmp_logger, *status, context);
+    KaaClientContext clientContext(tmp_properties, tmp_logger, context, status);
     EndpointRegistrationManager registrationManager(clientContext);
 
     MockChannelManager channelManager;
@@ -310,7 +310,7 @@ BOOST_AUTO_TEST_CASE(AttachAnotherEndpointTest)
     IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
     SimpleExecutorContext context;
     context.init();
-    KaaClientContext clientContext(tmp_properties, tmp_logger, *status, context);
+    KaaClientContext clientContext(tmp_properties, tmp_logger, context, status);
     EndpointRegistrationManager registrationManager(clientContext);
 
     MockChannelManager channelManager;
@@ -363,7 +363,7 @@ BOOST_AUTO_TEST_CASE(BadCredentialsOfDetachEndpointTest)
 {
     IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
     MockExecutorContext context;
-    KaaClientContext clientContext(tmp_properties, tmp_logger, *status, context);
+    KaaClientContext clientContext(tmp_properties, tmp_logger, context, status);
     EndpointRegistrationManager registrationManager(clientContext);
 
     MockChannelManager channelManager;
@@ -388,7 +388,7 @@ BOOST_AUTO_TEST_CASE(DetachAnotherEndpointTest)
     IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
     SimpleExecutorContext context;
     context.init();
-    KaaClientContext clientContext(tmp_properties, tmp_logger, *status, context);
+    KaaClientContext clientContext(tmp_properties, tmp_logger, context, status);
     EndpointRegistrationManager registrationManager(clientContext);
 
     MockChannelManager channelManager;

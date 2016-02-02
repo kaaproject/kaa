@@ -34,6 +34,7 @@ public:
      * Create new transaction.
      *
      * @return TransactionId object which must be used to submit or rollback the transaction.
+     * @param[in] Kaa client context
      */
     virtual TransactionIdPtr beginTransaction(IKaaClientContext &context_) = 0;
 
@@ -41,6 +42,7 @@ public:
      * Finish the transaction.
      *
      * @param trxId Identifier of the transaction which must be finished.
+     * @param[in] Kaa client context
      */
     virtual void commit(TransactionIdPtr trxId, IKaaClientContext &context_) = 0;
 
@@ -48,6 +50,7 @@ public:
      * Rollback changes for given transaction.
      *
      * @param trxId Identifier of the transaction which must be removed withot applying changes.
+     * @param[in] Kaa client context
      */
     virtual void rollback(TransactionIdPtr trxId, IKaaClientContext &context_) = 0;
 

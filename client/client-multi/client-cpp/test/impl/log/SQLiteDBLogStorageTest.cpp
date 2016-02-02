@@ -39,10 +39,9 @@ static std::int32_t mockBlocksCount = 10000;
 
 static KaaClientProperties properties;
 static DefaultLogger tmp_logger(properties.getClientId());
-static MockKaaClientStateStorage tmp_state;
+static IKaaClientStateStoragePtr tmp_state(new MockKaaClientStateStorage);
 static MockExecutorContext tmpExecContext;
-static KaaClientContext clientContext(properties, tmp_logger, tmp_state, tmpExecContext);
-
+static KaaClientContext clientContext(properties, tmp_logger, tmpExecContext, tmp_state);
 
 void removeDatabase(const std::string& dbName)
 {

@@ -41,8 +41,7 @@ namespace kaa {
 
 static KaaClientProperties tmp_properties;
 static DefaultLogger tmp_logger(tmp_properties.getClientId());
-static MockKaaClientStateStorage tmp_state;
-
+static IKaaClientStateStoragePtr tmp_state(new MockKaaClientStateStorage);
 static void testSleep(std::size_t seconds)
 {
     std::this_thread::sleep_for(std::chrono::seconds(seconds));
@@ -93,8 +92,10 @@ BOOST_AUTO_TEST_CASE(BadLogStorageTest)
 {
     KaaClientProperties properties;
     MockChannelManager channelManager;
-    MockExecutorContext executor;
-    KaaClientContext clientContext(properties, tmp_logger, tmp_state, executor);
+    DefaultLogger tmp_logger(properties.getClientId());
+    IKaaClientStateStoragePtr tmp_state(new MockKaaClientStateStorage);
+    MockExecutorContext tmpExecContext;
+    KaaClientContext clientContext(properties, tmp_logger, tmpExecContext, tmp_state);
     LogCollector logCollector(&channelManager, clientContext);
 
     ILogUploadStrategyPtr fakeStrategy;
@@ -105,8 +106,10 @@ BOOST_AUTO_TEST_CASE(BadLogUploadStrategyTest)
 {
     KaaClientProperties properties;
     MockChannelManager channelManager;
-    MockExecutorContext executor;
-    KaaClientContext clientContext(properties, tmp_logger, tmp_state, executor);
+    DefaultLogger tmp_logger(properties.getClientId());
+    IKaaClientStateStoragePtr tmp_state(new MockKaaClientStateStorage);
+    MockExecutorContext tmpExecContext;
+    KaaClientContext clientContext(properties, tmp_logger, tmpExecContext, tmp_state);
     LogCollector logCollector(&channelManager, clientContext);
 
     ILogStoragePtr fakeStorage;
@@ -119,7 +122,7 @@ BOOST_AUTO_TEST_CASE(AddLogRecordAndCheckStorageAndStrategyTest)
     MockChannelManager channelManager;
     SimpleExecutorContext executor;
     executor.init();
-    KaaClientContext clientContext(properties, tmp_logger, tmp_state, executor);
+    KaaClientContext clientContext(properties, tmp_logger, executor, tmp_state);
     LogCollector logCollector(&channelManager, clientContext);
     CustomLoggingTransport transport(channelManager, logCollector, clientContext);
 
@@ -159,7 +162,7 @@ BOOST_AUTO_TEST_CASE(CreateRequestTest)
     KaaClientProperties properties;
     MockChannelManager channelManager;
     MockExecutorContext executor;
-    KaaClientContext clientContext(properties, tmp_logger, tmp_state, executor);
+    KaaClientContext clientContext(properties, tmp_logger, executor, tmp_state);
     LogCollector logCollector(&channelManager, clientContext);
     CustomLoggingTransport transport(channelManager, logCollector, clientContext);
 
@@ -188,7 +191,7 @@ BOOST_AUTO_TEST_CASE(CreateRequestWithLogsTest)
     const size_t BATCH_SIZE = 100500;
     MockChannelManager channelManager;
     MockExecutorContext executor;
-    KaaClientContext clientContext(properties, tmp_logger, tmp_state, executor);
+    KaaClientContext clientContext(properties, tmp_logger, executor, tmp_state);
     LogCollector logCollector(&channelManager, clientContext);
     CustomLoggingTransport transport(channelManager, logCollector, clientContext);
 
@@ -229,7 +232,7 @@ BOOST_AUTO_TEST_CASE(SuccessDeliveryTest)
     MockChannelManager channelManager;
     SimpleExecutorContext executor;
     executor.init();
-    KaaClientContext clientContext(properties, tmp_logger, tmp_state, executor);
+    KaaClientContext clientContext(properties, tmp_logger, executor, tmp_state);
     LogCollector logCollector(&channelManager, clientContext);
     CustomLoggingTransport transport(channelManager, logCollector, clientContext);
 
@@ -280,7 +283,7 @@ BOOST_AUTO_TEST_CASE(FailedDeliveryTest)
     MockChannelManager channelManager;
     SimpleExecutorContext executor;
     executor.init();
-    KaaClientContext clientContext(properties, tmp_logger, tmp_state, executor);
+    KaaClientContext clientContext(properties, tmp_logger, executor, tmp_state);
     LogCollector logCollector(&channelManager, clientContext);
     CustomLoggingTransport transport(channelManager, logCollector, clientContext);
 
@@ -334,7 +337,7 @@ BOOST_AUTO_TEST_CASE(TimeoutDetectionTest)
     MockChannelManager channelManager;
     SimpleExecutorContext executor;
     executor.init();
-    KaaClientContext clientContext(properties, tmp_logger, tmp_state, executor);
+    KaaClientContext clientContext(properties, tmp_logger, executor, tmp_state);
     LogCollector logCollector(&channelManager, clientContext);
     CustomLoggingTransport transport(channelManager, logCollector, clientContext);
 
@@ -392,7 +395,7 @@ BOOST_AUTO_TEST_CASE(RetryUploadTest)
     MockChannelManager channelManager;
     SimpleExecutorContext executor;
     executor.init();
-    KaaClientContext clientContext(properties, tmp_logger, tmp_state, executor);
+    KaaClientContext clientContext(properties, tmp_logger, executor, tmp_state);
     LogCollector logCollector(&channelManager, clientContext);
     CustomLoggingTransport transport(channelManager, logCollector, clientContext);
 
@@ -451,7 +454,7 @@ BOOST_AUTO_TEST_CASE(MaxLogUploadLimitWithSyncAll)
     KaaClientProperties properties;
     MockChannelManager channelManager;
     SimpleExecutorContext executor;
-    KaaClientContext clientContext(properties, tmp_logger, tmp_state, executor);
+    KaaClientContext clientContext(properties, tmp_logger, executor, tmp_state);
     executor.init();
     LogCollector logCollector(&channelManager, clientContext);
     CustomLoggingTransport transport(channelManager, logCollector, clientContext);
@@ -529,7 +532,7 @@ BOOST_AUTO_TEST_CASE(MaxLogUploadLimitWithSyncLogging)
     MockChannelManager channelManager;
     SimpleExecutorContext executor;
     executor.init();
-    KaaClientContext clientContext(properties, tmp_logger, tmp_state, executor);
+    KaaClientContext clientContext(properties, tmp_logger, executor, tmp_state);
     LogCollector logCollector(&channelManager, clientContext);
     CustomLoggingTransport transport(channelManager, logCollector, clientContext);
 

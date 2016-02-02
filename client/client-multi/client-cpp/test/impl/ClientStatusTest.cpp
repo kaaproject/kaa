@@ -57,11 +57,11 @@ BOOST_AUTO_TEST_CASE(checkDefaults)
 {
     cleanfile();
 
-//    auto stateMock = std::make_shared<MockKaaClientStateStorage>();
-//    properties.setStateFileName(filename);
-//    KaaClientContext clientContext(properties, tmp_logger, *stateMock, context);
+    IKaaClientStateStoragePtr stateMock(new MockKaaClientStateStorage);
+    properties.setStateFileName(filename);
+    KaaClientContext clientContext(properties, tmp_logger, context, stateMock);
 
-    ClientStatus cs(filename);
+    ClientStatus cs(filename, clientContext);
     BOOST_CHECK_EQUAL(cs.getAppSeqNumber().configurationSequenceNumber, 0);
     BOOST_CHECK_EQUAL(cs.getAppSeqNumber().notificationSequenceNumber, 0);
     BOOST_CHECK_EQUAL(cs.isRegistered(), false);
@@ -75,9 +75,9 @@ BOOST_AUTO_TEST_CASE(checkDefaults)
 
 BOOST_AUTO_TEST_CASE(checkSetAndSaveParameters)
 {
-//    auto stateMock = std::make_shared<MockKaaClientStateStorage>();
-//    KaaClientContext clientContext(properties, tmp_logger, *stateMock, context);
-    ClientStatus cs(filename);
+    IKaaClientStateStoragePtr stateMock(new MockKaaClientStateStorage);
+    KaaClientContext clientContext(properties, tmp_logger, context, stateMock);
+    ClientStatus cs(filename, clientContext);
     cs.setAppSeqNumber({1,2,3});
     BOOST_CHECK_EQUAL(cs.getAppSeqNumber().configurationSequenceNumber, 1);
     BOOST_CHECK_EQUAL(cs.getAppSeqNumber().notificationSequenceNumber, 2);
@@ -141,7 +141,7 @@ BOOST_AUTO_TEST_CASE(checkSetAndSaveParameters)
     cs.setEndpointKeyHash(endpointKeyHash);
 
     cs.save();
-    ClientStatus cs_restored(filename);
+    ClientStatus cs_restored(filename, clientContext);
 
     DetailedTopicStates act_ts1 = cs_restored.getTopicStates();
     BOOST_CHECK_EQUAL(act_ts1.size(), 2);

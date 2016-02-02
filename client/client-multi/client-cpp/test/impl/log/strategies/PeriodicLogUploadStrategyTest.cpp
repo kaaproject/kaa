@@ -40,9 +40,9 @@ static void sleepFor(std::size_t seconds)
 
 static KaaClientProperties properties;
 static DefaultLogger tmp_logger(properties.getClientId());
-static MockKaaClientStateStorage tmp_state;
+static IKaaClientStateStoragePtr tmp_state(new MockKaaClientStateStorage);
 static MockExecutorContext tmpExecContext;
-static KaaClientContext clientContext(properties, tmp_logger, tmp_state, tmpExecContext);
+static KaaClientContext clientContext(properties, tmp_logger, tmpExecContext, tmp_state);
 
 BOOST_AUTO_TEST_SUITE(PeriodicLogUploadStrategySuite)
 

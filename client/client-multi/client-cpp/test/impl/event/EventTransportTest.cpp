@@ -97,7 +97,7 @@ BOOST_AUTO_TEST_CASE(EventTransportSequenceNumberRequestTest)
     MockChannelManager channelManager;
     TestEventDataProcessor processor;
 
-    KaaClientContext clientContext(properties, tmp_logger, *clientState, context);
+    KaaClientContext clientContext(properties, tmp_logger, context, clientState);
     EventTransport transport(processor, channelManager, clientContext);
 
     std::map<std::int32_t, Event> pevents;
@@ -135,7 +135,7 @@ BOOST_AUTO_TEST_CASE(SychronizedEventSequenceNumberTest)
 
     MockChannelManager channelManager;
     TestEventDataProcessor processor;
-    KaaClientContext clientContext(properties, tmp_logger, *clientState, context);
+    KaaClientContext clientContext(properties, tmp_logger, context, clientState);
     EventTransport transport(processor, channelManager, clientContext);
 
     std::map<std::int32_t, Event> pevents;
@@ -177,7 +177,7 @@ BOOST_AUTO_TEST_CASE(UnsychronizedEventSequenceNumberTest)
 
     MockChannelManager channelManager;
     TestEventDataProcessor processor;
-    KaaClientContext clientContext(properties, tmp_logger, *clientState, context);
+    KaaClientContext clientContext(properties, tmp_logger, context, clientState);
     EventTransport transport(processor, channelManager, clientContext);
 
     std::map<std::int32_t, Event> pevents;

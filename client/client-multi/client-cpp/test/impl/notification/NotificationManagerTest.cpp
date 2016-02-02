@@ -75,7 +75,7 @@ BOOST_AUTO_TEST_CASE(SyncWithoutTransportTest)
 {
     IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
     MockExecutorContext executorContext;
-    KaaClientContext clientContext(properties, tmp_logger, *status, executorContext);
+    KaaClientContext clientContext(properties, tmp_logger, executorContext, status);
     NotificationManager notificationManager(clientContext);
 
     BOOST_CHECK_THROW(notificationManager.sync(), TransportNotFoundException);
@@ -85,7 +85,7 @@ BOOST_AUTO_TEST_CASE(SyncWithTransportTest)
 {
     IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
     MockExecutorContext executorContext;
-    KaaClientContext clientContext(properties, tmp_logger, *status, executorContext);
+    KaaClientContext clientContext(properties, tmp_logger, executorContext, status);
     NotificationManager notificationManager(clientContext);
 
     MockChannelManager manager;
@@ -101,7 +101,7 @@ BOOST_AUTO_TEST_CASE(GetEmptyTopicListTest)
 {
     IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
     MockExecutorContext executorContext;
-    KaaClientContext clientContext(properties, tmp_logger, *status, executorContext);
+    KaaClientContext clientContext(properties, tmp_logger, executorContext, status);
     NotificationManager notificationManager(clientContext);
 
     BOOST_CHECK(notificationManager.getTopics().empty());
@@ -112,7 +112,10 @@ BOOST_AUTO_TEST_CASE(GetTopicsTest)
     const std::string STATUS_FILE_PATH = "test_status.txt";
 
     std::srand(std::time(NULL));
-    IKaaClientStateStoragePtr clientStatus1(new ClientStatus(STATUS_FILE_PATH));
+    IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
+    MockExecutorContext executorContext;
+    KaaClientContext clientContext1(properties, tmp_logger, executorContext, status);
+    IKaaClientStateStoragePtr clientStatus1(new ClientStatus(STATUS_FILE_PATH, clientContext1));
 
     DetailedTopicStates states;
     std::size_t topicCount = 1 + rand() % 10;
@@ -140,8 +143,9 @@ BOOST_AUTO_TEST_CASE(GetTopicsTest)
     clientStatus1->save();
     clientStatus1.reset();
 
-    ClientStatus clientStatus2(STATUS_FILE_PATH);
-    KaaClientContext clientContext(properties, tmp_logger, clientStatus2, tmpExecContext);
+    KaaClientContext clientContext(properties, tmp_logger, tmpExecContext);
+    IKaaClientStateStoragePtr clientStatus2(new ClientStatus(STATUS_FILE_PATH, clientContext));
+    clientContext.getStatus() = clientStatus2;
     NotificationManager notificationManager(clientContext);
 
     auto topics = notificationManager.getTopics();
@@ -206,7 +210,7 @@ BOOST_AUTO_TEST_CASE(AddRemoveTopicListListenerTest)
     IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
     SimpleExecutorContext executorContext;
     executorContext.init();
-    KaaClientContext clientContext(properties, tmp_logger, *status, executorContext);
+    KaaClientContext clientContext(properties, tmp_logger, executorContext, status);
     NotificationManager notificationManager(clientContext);
 
     MockNotificationTopicListListener topicListListener1;
@@ -274,7 +278,7 @@ BOOST_AUTO_TEST_CASE(AddRemoveGlobalNotificationListenerTest)
     IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
     SimpleExecutorContext executorContext;
     executorContext.init();
-    KaaClientContext clientContext(properties, tmp_logger, *status, executorContext);
+    KaaClientContext clientContext(properties, tmp_logger, executorContext, status);
     NotificationManager notificationManager(clientContext);
 
     MockNotificationListener notificationListener1;
@@ -312,7 +316,7 @@ BOOST_AUTO_TEST_CASE(NotificationListenerForUnknownTopicTest)
 {
     IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
     MockExecutorContext executorContext;
-    KaaClientContext clientContext(properties, tmp_logger, *status, executorContext);
+    KaaClientContext clientContext(properties, tmp_logger, executorContext, status);
     NotificationManager notificationManager(clientContext);
     MockNotificationListener topicSpecificNotificationListener;
 
@@ -333,7 +337,7 @@ BOOST_AUTO_TEST_CASE(AddRemoveTopicSpecificNotificationListenerTest)
     IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
     SimpleExecutorContext executorContext;
     executorContext.init();
-    KaaClientContext clientContext(properties, tmp_logger, *status, executorContext);
+    KaaClientContext clientContext(properties, tmp_logger, executorContext, status);
     NotificationManager notificationManager(clientContext);
 
     std::size_t topicCount = 2;
@@ -380,7 +384,7 @@ BOOST_AUTO_TEST_CASE(SubscribeToUnknownTopicTest)
 {
     IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
     MockExecutorContext executorContext;
-    KaaClientContext clientContext(properties, tmp_logger, *status, executorContext);
+    KaaClientContext clientContext(properties, tmp_logger, executorContext, status);
     NotificationManager notificationManager(clientContext);
     MockNotificationListener topicSpecificNotificationListener;
 
@@ -400,7 +404,7 @@ BOOST_AUTO_TEST_CASE(UnsubscribeToUnknownTopicTest)
 {
     IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
     MockExecutorContext executorContext;
-    KaaClientContext clientContext(properties, tmp_logger, *status, executorContext);
+    KaaClientContext clientContext(properties, tmp_logger, executorContext, status);
     NotificationManager notificationManager(clientContext);
     MockNotificationListener topicSpecificNotificationListener;
 
@@ -420,7 +424,7 @@ BOOST_AUTO_TEST_CASE(SubscribeToMandatoryTopicTest)
 {
     IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
     MockExecutorContext executorContext;
-    KaaClientContext clientContext(properties, tmp_logger, *status, executorContext);
+    KaaClientContext clientContext(properties, tmp_logger, executorContext, status);
     NotificationManager notificationManager(clientContext);
     MockNotificationListener topicSpecificNotificationListener;
 
@@ -448,7 +452,7 @@ BOOST_AUTO_TEST_CASE(UnsubscribeFromMandatoryTopicTest)
 {
     IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
     MockExecutorContext executorContext;
-    KaaClientContext clientContext(properties, tmp_logger, *status, executorContext);
+    KaaClientContext clientContext(properties, tmp_logger, executorContext, status);
     NotificationManager notificationManager(clientContext);
     MockNotificationListener topicSpecificNotificationListener;
 
@@ -476,7 +480,7 @@ BOOST_AUTO_TEST_CASE(SubscribeToOptionalTopicTest)
 {
     IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
     MockExecutorContext executorContext;
-    KaaClientContext clientContext(properties, tmp_logger, *status, executorContext);
+    KaaClientContext clientContext(properties, tmp_logger, executorContext, status);
     NotificationManager notificationManager(clientContext);
     MockNotificationListener topicSpecificNotificationListener;
     MockChannelManager manager;

@@ -38,9 +38,11 @@ BOOST_AUTO_TEST_SUITE(NotificationTransportTestSuite)
 
 BOOST_AUTO_TEST_CASE(EmptyRequestTest)
 {
-    IKaaClientStateStoragePtr status(new ClientStatus("fakePath"));
+    KaaClientContext clientContext(properties, tmp_logger, context);
+    IKaaClientStateStoragePtr status(new ClientStatus("fakePath", clientContext));
+    clientContext.getStatus() = status;
     MockChannelManager channelManager;
-    KaaClientContext clientContext(properties, tmp_logger, *status, context);
+
 
     NotificationTransport transport(channelManager, clientContext);
 
@@ -55,10 +57,11 @@ BOOST_AUTO_TEST_CASE(EmptyRequestTest)
 
 BOOST_AUTO_TEST_CASE(SubscriptionInfoTest)
 {
-    IKaaClientStateStoragePtr status(new ClientStatus("fakePath"));
-    MockChannelManager channelManager;
-    KaaClientContext clientContext(properties, tmp_logger, *status, context);
+    KaaClientContext clientContext(properties, tmp_logger, context);
+    IKaaClientStateStoragePtr status(new ClientStatus("fakePath", clientContext));
+    clientContext.getStatus() = status;
 
+    MockChannelManager channelManager;
     NotificationTransport transport(channelManager, clientContext);
 
     SubscriptionCommand cmd1;
@@ -100,10 +103,11 @@ BOOST_AUTO_TEST_CASE(SubscriptionInfoTest)
 
 BOOST_AUTO_TEST_CASE(AcceptedUnicastNotificationsTest)
 {
-    IKaaClientStateStoragePtr status(new ClientStatus("fakePath"));
-    MockChannelManager channelManager;
-    KaaClientContext clientContext(properties, tmp_logger, *status, context);
+    KaaClientContext clientContext(properties, tmp_logger, context);
+    IKaaClientStateStoragePtr status(new ClientStatus("fakePath", clientContext));
+    clientContext.getStatus() = status;
 
+    MockChannelManager channelManager;
     NotificationTransport transport(channelManager, clientContext);
 
     std::string unicastNfUid("uid1");
@@ -137,8 +141,9 @@ BOOST_AUTO_TEST_CASE(AcceptedUnicastNotificationsTest)
 
 BOOST_AUTO_TEST_CASE(DetailedTopicStateTest)
 {
-    ClientStatus status("fakePath");
-    KaaClientContext clientContext(properties, tmp_logger, status, context);
+    KaaClientContext clientContext(properties, tmp_logger, context);
+    IKaaClientStateStoragePtr status(new ClientStatus("fakePath", clientContext));
+    clientContext.getStatus() = status;
     MockChannelManager channelManager;
     NotificationTransport transport(channelManager, clientContext);
 
@@ -168,7 +173,7 @@ BOOST_AUTO_TEST_CASE(DetailedTopicStateTest)
     NotificationSyncResponse response1;
     response1.availableTopics.set_array(topics);
     transport.onNotificationResponse(response1);
-    auto detailedTopicState = clientContext.getStatus().getTopicStates();
+    auto detailedTopicState = clientContext.getStatus()->getTopicStates();
 
     BOOST_CHECK(detailedTopicState.size() == topics.size());
 
@@ -202,7 +207,7 @@ BOOST_AUTO_TEST_CASE(DetailedTopicStateTest)
     response2.notifications.set_array(std::vector<Notification>({nf2, nf1, nf3, nf4}));
     transport.onNotificationResponse(response2);
 
-    detailedTopicState = clientContext.getStatus().getTopicStates();
+    detailedTopicState = clientContext.getStatus()->getTopicStates();
 
     for (const auto& topicInfo : detailedTopicState) {
         if (topicInfo.first == topicId1) {
