@@ -16,20 +16,22 @@
 
 package org.kaaproject.kaa.server.common.nosql.mongo.dao;
 
-import org.kaaproject.kaa.common.dto.EndpointUserDto;
-import org.kaaproject.kaa.server.common.dao.impl.EndpointUserDao;
-import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoEndpointUser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Repository;
-
-import java.util.UUID;
-
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.ENDPOINT_USER;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_USER_EXTERNAL_ID;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_USER_TENANT_ID;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
+
+import java.util.UUID;
+
+import org.kaaproject.kaa.common.dto.EndpointUserDto;
+import org.kaaproject.kaa.server.common.dao.exception.KaaOptimisticLockingFailureException;
+import org.kaaproject.kaa.server.common.dao.impl.EndpointUserDao;
+import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoEndpointUser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.dao.OptimisticLockingFailureException;
+import org.springframework.stereotype.Repository;
 
 @Repository
 public class EndpointUserMongoDao extends AbstractMongoDao<MongoEndpointUser, String> implements EndpointUserDao<MongoEndpointUser> {
@@ -83,4 +85,5 @@ public class EndpointUserMongoDao extends AbstractMongoDao<MongoEndpointUser, St
     public MongoEndpointUser save(EndpointUserDto dto) {
         return save(new MongoEndpointUser(dto));
     }
+    
 }

@@ -20,11 +20,13 @@ import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
 import com.datastax.driver.mapping.annotations.Transient;
+
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.server.common.dao.model.EndpointUserConfiguration;
 
 import java.io.Serializable;
 
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.OPT_LOCK;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_USER_CONF_APP_TOKEN_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_USER_CONF_BODY_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_USER_CONF_COLUMN_FAMILY_NAME;
@@ -48,6 +50,9 @@ public class CassandraEndpointUserConfiguration implements EndpointUserConfigura
     private Integer schemaVersion;
     @Column(name = EP_USER_CONF_BODY_PROPERTY)
     private String body;
+    
+    @Column(name = OPT_LOCK)
+    private Long version;
 
     public CassandraEndpointUserConfiguration() {
     }
@@ -57,6 +62,7 @@ public class CassandraEndpointUserConfiguration implements EndpointUserConfigura
         this.appToken = dto.getAppToken();
         this.schemaVersion = dto.getSchemaVersion();
         this.body = dto.getBody();
+        this.version = dto.getVersion();
     }
 
     @Override
@@ -96,6 +102,16 @@ public class CassandraEndpointUserConfiguration implements EndpointUserConfigura
     public void setBody(String body) {
         this.body = body;
     }
+    
+    @Override
+    public Long getVersion() {
+        return version;
+    }
+
+    @Override
+    public void setVersion(Long version) {
+        this.version = version;
+    }
 
     @Override
     public EndpointUserConfigurationDto toDto() {
@@ -104,6 +120,7 @@ public class CassandraEndpointUserConfiguration implements EndpointUserConfigura
         dto.setBody(body);
         dto.setSchemaVersion(schemaVersion);
         dto.setUserId(userId);
+        dto.setVersion(version);
         return dto;
     }
 }

@@ -287,7 +287,7 @@ public class DefaultAkkaServiceTest {
         topicNotification.setId(UNICAST_NOTIFICATION_ID);
         topicNotification.setExpiredAt(new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(7)));
         topicNotification.setSecNum(1);
-        topicNotification.setVersion(42);
+        topicNotification.setNfVersion(42);
         topicNotification.setType(NotificationTypeDto.SYSTEM);
         topicNotification.setBody("I am a dummy notification".getBytes());
 

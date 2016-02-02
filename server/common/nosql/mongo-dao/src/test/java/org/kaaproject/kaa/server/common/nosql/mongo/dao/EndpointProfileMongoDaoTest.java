@@ -18,6 +18,9 @@ package org.kaaproject.kaa.server.common.nosql.mongo.dao;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -25,11 +28,14 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kaaproject.kaa.common.dto.EndpointGroupDto;
+import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.PageLinkDto;
+import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoEndpointProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -160,6 +166,7 @@ public class EndpointProfileMongoDaoTest extends AbstractMongoTest {
         EndpointProfileDto endpointProfile = generateEndpointProfileDto(null, null);
         Assert.assertNotNull(endpointProfile);
         endpointProfile.setId(null);
+        endpointProfile.setVersion(null);
         MongoEndpointProfile saved = endpointProfileDao.save(new MongoEndpointProfile(endpointProfile));
         Assert.assertNotNull(saved);
         Assert.assertEquals(endpointProfile, saved.toDto());
@@ -189,6 +196,55 @@ public class EndpointProfileMongoDaoTest extends AbstractMongoTest {
         endpointProfileDao.removeByAppId(endpointProfile.getApplicationId());
         MongoEndpointProfile found = endpointProfileDao.findByKeyHash(keyHash);
         Assert.assertNull(found);
+    }
+    
+    @Test
+    public void testUpdate() throws Exception {
+        List<EndpointGroupStateDto> cfGroupStateSave = new ArrayList<EndpointGroupStateDto>();
+        List<EndpointGroupStateDto> cfGroupStateUpdate = new ArrayList<EndpointGroupStateDto>();
+        PageLinkDto pageLink;
+        EndpointProfilesPageDto found;
+        
+        EndpointGroupDto endpointGroupDto = new EndpointGroupDto();
+        endpointGroupDto.setWeight(1);
+        cfGroupStateSave.add(new EndpointGroupStateDto("111", null, null));
+        cfGroupStateSave.add(new EndpointGroupStateDto("222", null, null));
+        cfGroupStateSave.add(new EndpointGroupStateDto("333", null, null));
+        EndpointProfileDto endpointProfileSave = generateEndpointProfileForTestUpdate(null, "TEST_KEY_HASH".getBytes(), cfGroupStateSave);
+        EndpointProfile saved = endpointProfileDao.save(endpointProfileSave);
+        cfGroupStateUpdate.add(new EndpointGroupStateDto("111", null, null));
+        cfGroupStateUpdate.add(new EndpointGroupStateDto("444", null, null));
+        EndpointProfileDto endpointProfileUpdate = generateEndpointProfileForTestUpdate(saved.getId(), "TEST_KEY_HASH".getBytes(), cfGroupStateUpdate);
+        endpointProfileUpdate.setVersion(saved.getVersion());
+        endpointProfileDao.save(endpointProfileUpdate);
+        String limit = "10";
+        String offset = "0";
+        String[] endpointGroupId = {"111", "444", "222", "333"};
+        for (int i = 0; i < 2; i++) {
+            pageLink = new PageLinkDto(endpointGroupId[i], limit, offset);
+            found = endpointProfileDao.findByEndpointGroupId(pageLink);
+            Assert.assertFalse(found.getEndpointProfiles().isEmpty());
+        }
+        for (int i = 2; i < 4; i++) {
+            pageLink = new PageLinkDto(endpointGroupId[i], limit, offset);
+            found = endpointProfileDao.findByEndpointGroupId(pageLink);
+            Assert.assertTrue(found.getEndpointProfiles().isEmpty());
+        }
+    }
+    
+    protected EndpointProfileDto generateEndpointProfileForTestUpdate(String id, byte[] keyHash, List<EndpointGroupStateDto> cfGroupState) {
+        EndpointProfileDto profileDto = new EndpointProfileDto();
+        profileDto.setId(id);
+        profileDto.setApplicationId(generateStringId());
+        profileDto.setEndpointKeyHash(keyHash);
+        profileDto.setAccessToken(generateStringId());
+        profileDto.setCfGroupStates(cfGroupState);
+        profileDto.setSdkToken(UUID.randomUUID().toString());
+        return profileDto;
+    }
+    
+    protected String generateStringId() {
+        return UUID.randomUUID().toString();
     }
 
 }

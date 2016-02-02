@@ -94,4 +94,9 @@ public class CassandraEPByAppIdDao extends AbstractCassandraDao<CassandraEPByApp
         List<CassandraEPByAppId> filter = findListByStatement(queryStatement);
         return getEndpointKeyHash(filter);
     }
+
+    @Override
+    protected CassandraEPByAppId updateLocked(CassandraEPByAppId entity) {
+        throw new UnsupportedOperationException("Not implemented!");
+    }
 }

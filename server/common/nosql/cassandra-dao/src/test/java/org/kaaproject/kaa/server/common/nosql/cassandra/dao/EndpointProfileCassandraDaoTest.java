@@ -16,7 +16,10 @@
 
 package org.kaaproject.kaa.server.common.nosql.cassandra.dao;
 
+import org.cassandraunit.CassandraCQLUnit;
+import org.cassandraunit.dataset.cql.ClassPathCQLDataSet;
 import org.junit.Assert;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kaaproject.kaa.common.dto.CTLDataDto;
@@ -142,12 +145,14 @@ public class EndpointProfileCassandraDaoTest extends AbstractCassandraTest {
         cfGroupStateSave.add(new EndpointGroupStateDto("111", null, null));
         cfGroupStateSave.add(new EndpointGroupStateDto("222", null, null));
         cfGroupStateSave.add(new EndpointGroupStateDto("333", null, null));
-        EndpointProfileDto endpointProfileSave = generateEndpointProfileForTestUpdate(null, cfGroupStateSave);
-        endpointProfileDao.save(endpointProfileSave);
+        byte[] keyHash = generateBytes();
+        EndpointProfileDto endpointProfileSave = generateEndpointProfileForTestUpdate(null, keyHash, cfGroupStateSave);
+        EndpointProfile saved = endpointProfileDao.save(endpointProfileSave);
         cfGroupStateUpdate.add(new EndpointGroupStateDto("111", null, null));
         cfGroupStateUpdate.add(new EndpointGroupStateDto("444", null, null));
-        EndpointProfileDto endpointProfileUpdate = generateEndpointProfileForTestUpdate(endpointProfileId, cfGroupStateUpdate);
-        endpointProfileDao.save(endpointProfileUpdate);
+        EndpointProfileDto endpointProfileUpdate = generateEndpointProfileForTestUpdate(endpointProfileId, keyHash, cfGroupStateUpdate);
+        endpointProfileUpdate.setVersion(saved.getVersion());
+        saved = endpointProfileDao.save(endpointProfileUpdate);
         String limit = "10";
         String offset = "0";
         String[] endpointGroupId = {"111", "444", "222", "333"};

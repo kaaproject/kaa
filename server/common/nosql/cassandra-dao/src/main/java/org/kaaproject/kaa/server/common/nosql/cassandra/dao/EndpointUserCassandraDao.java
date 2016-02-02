@@ -22,8 +22,10 @@ import static com.datastax.driver.core.querybuilder.QueryBuilder.select;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.set;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.update;
 import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_USER_ACCESS_TOKEN_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_USER_EXTERNAL_ID_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_USER_TENANT_ID_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_USER_USERNAME_PROPERTY;
 
 import java.util.UUID;
 
@@ -34,6 +36,7 @@ import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModel
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.datastax.driver.core.querybuilder.Assignment;
 import com.datastax.driver.core.querybuilder.Select.Where;
 import com.datastax.driver.core.querybuilder.Update;
 
@@ -55,9 +58,20 @@ public class EndpointUserCassandraDao extends AbstractCassandraDao<CassandraEndp
     public CassandraEndpointUser save(CassandraEndpointUser user) {
         if (isBlank(user.getId())) {
             user.generateId();
-        }
+        } 
         LOG.trace("Save endpoint user {}", user);
         return super.save(user);
+    }
+    
+    @Override
+    protected CassandraEndpointUser updateLocked(CassandraEndpointUser endpointUser) {        
+       return updateLockedImpl(endpointUser.getVersion(), 
+                new Assignment[]{set(EP_USER_USERNAME_PROPERTY, endpointUser.getUsername()),
+                             set(EP_USER_ACCESS_TOKEN_PROPERTY, endpointUser.getAccessToken()),
+                             set(CassandraModelConstants.EP_USER_ENDPOINT_IDS_PROPERTY, endpointUser.getEndpointIds())},
+                             eq(EP_USER_EXTERNAL_ID_PROPERTY, endpointUser.getExternalId()),
+                             eq(EP_USER_TENANT_ID_PROPERTY, endpointUser.getTenantId())
+                );
     }
 
     @Override
@@ -119,4 +133,5 @@ public class EndpointUserCassandraDao extends AbstractCassandraDao<CassandraEndp
         LOG.trace("Found endpoint user {} by id {}", endpointUser, id);
         return endpointUser;
     }
+
 }

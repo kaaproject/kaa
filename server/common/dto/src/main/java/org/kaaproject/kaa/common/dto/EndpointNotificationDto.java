@@ -23,13 +23,14 @@ import java.util.Arrays;
 import static org.kaaproject.kaa.common.dto.Util.getArrayCopy;
 
 
-public class EndpointNotificationDto implements HasId, Serializable {
+public class EndpointNotificationDto implements HasId, HasVersion, Serializable {
 
     private static final long serialVersionUID = -5548269571722364843L;
 
     private String id;
     private byte[] endpointKeyHash;
     private NotificationDto notificationDto;
+    private Long version;
 
     public String getId() {
         return id;
@@ -53,6 +54,16 @@ public class EndpointNotificationDto implements HasId, Serializable {
 
     public void setEndpointKeyHash(byte[] endpointKeyHash) {
         this.endpointKeyHash = getArrayCopy(endpointKeyHash);
+    }
+    
+    @Override
+    public Long getVersion() {
+        return version;
+    }
+
+    @Override
+    public void setVersion(Long version) {
+        this.version = version;
     }
 
     @Override

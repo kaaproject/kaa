@@ -16,27 +16,43 @@
 
 package org.kaaproject.kaa.server.common.nosql.cassandra.dao;
 
-import com.datastax.driver.core.BatchStatement;
-import com.datastax.driver.core.ConsistencyLevel;
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.Session;
-import com.datastax.driver.core.Statement;
-import com.datastax.driver.core.querybuilder.QueryBuilder;
-import com.datastax.driver.mapping.Mapper;
-import com.datastax.driver.mapping.Result;
+import static com.datastax.driver.core.querybuilder.QueryBuilder.eq;
+import static com.datastax.driver.core.querybuilder.QueryBuilder.select;
+import static com.datastax.driver.core.querybuilder.QueryBuilder.set;
+import static com.datastax.driver.core.querybuilder.QueryBuilder.update;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.OPT_LOCK;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import org.kaaproject.kaa.common.dto.HasVersion;
+import org.kaaproject.kaa.server.common.dao.exception.KaaOptimisticLockingFailureException;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.client.CassandraClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import com.datastax.driver.core.BatchStatement;
+import com.datastax.driver.core.ConsistencyLevel;
+import com.datastax.driver.core.ResultSet;
+import com.datastax.driver.core.Session;
+import com.datastax.driver.core.Statement;
+import com.datastax.driver.core.UserType;
+import com.datastax.driver.core.querybuilder.Assignment;
+import com.datastax.driver.core.querybuilder.Clause;
+import com.datastax.driver.core.querybuilder.QueryBuilder;
+import com.datastax.driver.core.querybuilder.Select;
+import com.datastax.driver.core.querybuilder.Update;
+import com.datastax.driver.core.querybuilder.Update.Assignments;
+import com.datastax.driver.mapping.Mapper;
+import com.datastax.driver.mapping.Result;
 
-public abstract class AbstractCassandraDao<T, K> {
+public abstract class AbstractCassandraDao<T extends HasVersion, K> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractCassandraDao.class);
+    private static final String KAA = "kaa";
 
     /**
      * Cassandra client classes.
@@ -97,6 +113,10 @@ public abstract class AbstractCassandraDao<T, K> {
         }
         return object;
     }
+    
+    protected UserType getUserType(String userType) {
+        return getSession().getCluster().getMetadata().getKeyspace(KAA).getUserType(userType);
+    }
 
     protected <V> Statement getSaveQuery(V dto, Class<?> clazz) {
         Mapper<V> mapper = (Mapper<V>) getMapper(clazz);
@@ -108,14 +128,51 @@ public abstract class AbstractCassandraDao<T, K> {
         return mapper.saveQuery(dto);
     }
 
-    public T save(T dto) {
-        LOG.debug("Save entity {}", dto);
-        Statement saveStatement = getSaveQuery(dto);
-        saveStatement.setConsistencyLevel(getWriteConsistencyLevel());
-        execute(saveStatement);
-        return dto;
+    public T save(T entity) {
+        if (entity.getVersion() == null) {
+            entity.setVersion(0l);
+            LOG.debug("Save entity {}", entity);
+            Statement saveStatement = getSaveQuery(entity);
+            saveStatement.setConsistencyLevel(getWriteConsistencyLevel());
+            execute(saveStatement);
+            return entity;
+        } else {
+            LOG.debug("Update entity {}", entity);
+            return updateLocked(entity);
+        }
     }
-
+    
+    protected abstract T updateLocked(T entity);
+    
+    protected T updateLockedImpl(Long version, Assignment[] assignments, Clause... whereClauses) {
+        version = (version == null) ? 0l : version;
+        Assignments assigns = update(getColumnFamilyName())
+                .onlyIf(eq(OPT_LOCK, version))
+                .with(set(OPT_LOCK, version+1));
+        for (Assignment assignment : assignments) {
+            assigns = assigns.and(assignment);
+        }
+        Update.Where query = assigns.where(whereClauses[0]);
+        if (whereClauses.length > 1) {
+            for (int i=1;i<whereClauses.length;i++) {
+                query = query.and(whereClauses[i]);
+            }
+        }
+        ResultSet res = execute(query);       
+        if (!res.wasApplied()) {
+            LOG.error("[{}] Can't update entity with version {}. Entity already changed!", getColumnFamilyClass(), version);
+            throw new KaaOptimisticLockingFailureException("Can't update entity with version " + version  + ". Entity already changed!");
+        } else {
+            Select.Where where = select().from(getColumnFamilyName()).where(whereClauses[0]);
+            if (whereClauses.length > 1) {
+                for (int i=1;i<whereClauses.length;i++) {
+                    where = where.and(whereClauses[i]);
+                }
+            }
+            return findOneByStatement(where);
+        }
+    }
+        
     protected void executeBatch(BatchStatement batch) {
         LOG.debug("Execute cassandra batch {}", batch);
         batch.setConsistencyLevel(getWriteConsistencyLevel());

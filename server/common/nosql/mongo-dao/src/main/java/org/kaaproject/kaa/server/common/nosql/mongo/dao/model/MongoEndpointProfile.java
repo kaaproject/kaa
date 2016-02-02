@@ -18,12 +18,14 @@ package org.kaaproject.kaa.server.common.nosql.mongo.dao.model;
 
 import com.mongodb.DBObject;
 import com.mongodb.util.JSON;
+
 import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EventClassFamilyVersionStateDto;
 import org.kaaproject.kaa.server.common.dao.impl.DaoUtil;
 import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Version;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -32,6 +34,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.OPT_LOCK;
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getArrayCopy;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.ENDPOINT_PROFILE;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_ACCESS_TOKEN;
@@ -123,7 +126,9 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
     private String sdkToken;
     @Field(EP_SERVER_PROFILE_PROPERTY)
     private String serverProfile;
-
+    @Version
+    @Field(OPT_LOCK)
+    private Long version;
 
     public MongoEndpointProfile() {
     }
@@ -156,6 +161,7 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         this.serverHash = dto.getServerHash();
         this.sdkToken = dto.getSdkToken();
         this.serverProfile = dto.getServerProfileBody();
+        this.version = dto.getVersion();
     }
 
     @Override
@@ -388,6 +394,16 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
     public void setServerProfile(String serverProfile) {
         this.serverProfile = serverProfile;
     }
+    
+    @Override
+    public Long getVersion() {
+        return version;
+    }
+
+    @Override
+    public void setVersion(Long version) {
+        this.version = version;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -551,6 +567,7 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         dto.setServerHash(serverHash);
         dto.setSdkToken(sdkToken);
         dto.setServerProfileBody(serverProfile);
+        dto.setVersion(version);
         return dto;
     }
 }

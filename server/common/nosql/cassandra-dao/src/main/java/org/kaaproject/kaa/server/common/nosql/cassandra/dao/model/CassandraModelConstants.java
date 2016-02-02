@@ -32,7 +32,6 @@ public class CassandraModelConstants {
     public static final String SEQ_NUM_PROPERTY = "seq_num";
     public static final String BODY_PROPERTY = "body";
     public static final String EXPIRED_AT_PROPERTY = "expired_at";
-    public static final String VERSION_PROPERTY = "version";
     public static final String LAST_MOD_TIME_PROPERTY = "last_mod_time";
     public static final String SCHEMA_ID_PROPERTY = "schema_id";
     public static final String TOPIC_ID_PROPERTY = "topic_id";
@@ -50,7 +49,7 @@ public class CassandraModelConstants {
     public static final String ET_NF_SEQ_NUM_PROPERTY = SEQ_NUM_PROPERTY;
     public static final String ET_NF_BODY_PROPERTY = BODY_PROPERTY;
     public static final String ET_NF_EXPIRED_AT_PROPERTY = EXPIRED_AT_PROPERTY;
-    public static final String ET_NF_VERSION_PROPERTY = VERSION_PROPERTY;
+    public static final String ET_NF_VERSION_PROPERTY = "ep_nf_version";
     public static final String ET_NF_LAST_MOD_TIME_PROPERTY = LAST_MOD_TIME_PROPERTY;
     public static final String ET_NF_SCHEMA_ID_PROPERTY = SCHEMA_ID_PROPERTY;
     public static final String ET_NF_TOPIC_ID_PROPERTY = TOPIC_ID_PROPERTY;
@@ -63,7 +62,7 @@ public class CassandraModelConstants {
     public static final String NF_APPLICATION_ID_PROPERTY = APPLICATION_ID_PROPERTY;
     public static final String NF_NOTIFICATION_ID_PROPERTY = NOTIFICATION_ID_PROPERTY;
     public static final String NF_SCHEMA_ID_PROPERTY = SCHEMA_ID_PROPERTY;
-    public static final String NF_VERSION_PROPERTY = VERSION_PROPERTY;
+    public static final String NF_VERSION_PROPERTY = "nf_version";
     public static final String NF_LAST_MOD_TIME_PROPERTY = LAST_MOD_TIME_PROPERTY;
     public static final String NF_NOTIFICATION_TYPE_PROPERTY = NOTIFICATION_TYPE_PROPERTY;
     public static final String NF_BODY_PROPERTY = BODY_PROPERTY;
@@ -169,7 +168,7 @@ public class CassandraModelConstants {
     public static final String EP_USER_CONF_COLUMN_FAMILY_NAME = "user_conf";
     public static final String EP_USER_CONF_USER_ID_PROPERTY = "user_id";
     public static final String EP_USER_CONF_APP_TOKEN_PROPERTY = "app_token";
-    public static final String EP_USER_CONF_VERSION_PROPERTY = VERSION_PROPERTY;
+    public static final String EP_USER_CONF_VERSION_PROPERTY = "schema_version";
     public static final String EP_USER_CONF_BODY_PROPERTY = BODY_PROPERTY;
 
     /**

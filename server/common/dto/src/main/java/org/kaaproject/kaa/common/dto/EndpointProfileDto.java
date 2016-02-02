@@ -22,7 +22,7 @@ import java.util.List;
 
 import static org.kaaproject.kaa.common.dto.Util.getArrayCopy;
 
-public class EndpointProfileDto implements HasId, Serializable {
+public class EndpointProfileDto implements HasId, HasVersion, Serializable {
 
     private static final long serialVersionUID = -4124431119223385565L;
 
@@ -53,7 +53,8 @@ public class EndpointProfileDto implements HasId, Serializable {
     private List<EventClassFamilyVersionStateDto> ecfVersionStates;
     private String serverHash;
     private String sdkToken;
-
+    private Long version;
+    
     @Override
     public String getId() {
         return id;
@@ -270,6 +271,16 @@ public class EndpointProfileDto implements HasId, Serializable {
 
     public void setSdkToken(String sdkToken) {
         this.sdkToken = sdkToken;
+    }
+    
+    @Override
+    public Long getVersion() {
+        return version;
+    }
+
+    @Override
+    public void setVersion(Long version) {
+        this.version = version;
     }
 
     @Override

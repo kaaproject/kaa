@@ -280,9 +280,9 @@ public class TopicActor extends UntypedActor {
      */
     public static boolean isSchemaVersionMatch(NotificationDto notificationDto, int systemNfVersion, int userNfVersion) {
         if (notificationDto.getType() == NotificationTypeDto.SYSTEM) {
-            return notificationDto.getVersion() == systemNfVersion;
+            return notificationDto.getNfVersion() == systemNfVersion;
         } else if (notificationDto.getType() == NotificationTypeDto.USER) {
-            return notificationDto.getVersion() == userNfVersion;
+            return notificationDto.getNfVersion() == userNfVersion;
         } else {
             return false;
         }

@@ -20,17 +20,17 @@ import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
 import com.datastax.driver.mapping.annotations.Transient;
+
 import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
 import org.kaaproject.kaa.server.common.dao.model.EndpointConfiguration;
 
 import java.io.Serializable;
 import java.nio.ByteBuffer;
 
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.OPT_LOCK;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getByteBuffer;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getBytes;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.*;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.ENDPOINT_CONFIGURATION_CONF_HASH_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.ENDPOINT_CONFIGURATION_CONF_PROPERTY;
 
 
 @Table(name = ENDPOINT_CONFIGURATION_COLUMN_FAMILY_NAME)
@@ -46,6 +46,9 @@ public final class CassandraEndpointConfiguration implements EndpointConfigurati
     private ByteBuffer configuration;
     @Column(name = ENDPOINT_CONFIGURATION_CONF_ID_PROPERTY)
     private String id;
+    
+    @Column(name = OPT_LOCK)
+    private Long version;
 
     public CassandraEndpointConfiguration() {
     }
@@ -53,6 +56,7 @@ public final class CassandraEndpointConfiguration implements EndpointConfigurati
     public CassandraEndpointConfiguration(EndpointConfigurationDto dto) {
         this.configuration = getByteBuffer(dto.getConfiguration());
         this.configurationHash = getByteBuffer(dto.getConfigurationHash());
+        this.version = dto.getVersion();
     }
 
     public ByteBuffer getConfigurationHash() {
@@ -77,6 +81,16 @@ public final class CassandraEndpointConfiguration implements EndpointConfigurati
 
     public void setId(String id) {
         this.id = id;
+    }
+    
+    @Override
+    public Long getVersion() {
+        return version;
+    }
+
+    @Override
+    public void setVersion(Long version) {
+        this.version = version;
     }
 
     @Override
@@ -116,6 +130,7 @@ public final class CassandraEndpointConfiguration implements EndpointConfigurati
         EndpointConfigurationDto dto = new EndpointConfigurationDto();
         dto.setConfiguration(getBytes(configuration));
         dto.setConfigurationHash(getBytes(configurationHash));
+        dto.setVersion(version);
         return dto;
     }
 }

@@ -48,4 +48,10 @@ public class CassandraEPByAccessTokenDao extends AbstractCassandraDao<CassandraE
         }
         return endpointKeyHash;
     }
+
+    @Override
+    protected CassandraEPByAccessToken updateLocked(
+            CassandraEPByAccessToken entity) {
+        throw new UnsupportedOperationException("Not implemented!");
+    }
 }

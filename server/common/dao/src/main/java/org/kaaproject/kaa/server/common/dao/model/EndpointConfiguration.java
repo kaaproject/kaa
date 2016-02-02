@@ -16,7 +16,8 @@
 package org.kaaproject.kaa.server.common.dao.model;
 
 import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
+import org.kaaproject.kaa.common.dto.HasVersion;
 
-public interface EndpointConfiguration extends ToDto<EndpointConfigurationDto>{
+public interface EndpointConfiguration extends ToDto<EndpointConfigurationDto>, HasVersion {
 
 }

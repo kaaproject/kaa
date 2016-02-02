@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2016 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,19 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kaaproject.kaa.server.common.dao.model;
 
-import java.util.List;
+/**
+ * This interface is marker which indicate that object has Long version.
+ */
+package org.kaaproject.kaa.common.dto;
 
-import org.kaaproject.kaa.common.dto.EndpointUserDto;
-import org.kaaproject.kaa.common.dto.HasVersion;
+public interface HasVersion {
 
-public interface EndpointUser extends ToDto<EndpointUserDto>, HasVersion {
+    /**
+     * This method return long version
+     *
+     * @return long version
+     */
+    Long getVersion();
 
-    List<String> getEndpointIds();
-
-    void setEndpointIds(List<String> endpointIds);
-
-    String getId();
-
+    /**
+     * This is method set long version
+     *
+     * @param version long version
+     */
+    void setVersion(Long version);
+    
 }

@@ -18,8 +18,9 @@ package org.kaaproject.kaa.server.common.dao.model;
 import java.util.List;
 
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.HasVersion;
 
-public interface EndpointProfile extends ToDto<EndpointProfileDto>{
+public interface EndpointProfile extends ToDto<EndpointProfileDto>, HasVersion {
 
     byte[] getEndpointKey();
 

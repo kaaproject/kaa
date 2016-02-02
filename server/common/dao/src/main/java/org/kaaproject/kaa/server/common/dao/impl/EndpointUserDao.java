@@ -70,4 +70,5 @@ public interface EndpointUserDao<T extends EndpointUser> extends Dao<T, String> 
      * @return true, if successful
      */
     boolean checkAccessToken(String externalUid, String tenantId, String accessToken);
+    
 }
