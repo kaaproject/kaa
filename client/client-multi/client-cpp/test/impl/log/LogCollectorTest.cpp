@@ -317,7 +317,7 @@ BOOST_AUTO_TEST_CASE(TimeoutDetectionTest)
                                     createSerializedLogRecord()
                                   };
 
-    LogBucket bucket(1, (logs));
+    LogBucket bucket(1, std::move(logs));
 
     std::shared_ptr<MockLogStorage> logStorage(new MockLogStorage);
     logStorage->recordPack_ = bucket;

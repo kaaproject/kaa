@@ -237,7 +237,7 @@ BOOST_AUTO_TEST_CASE(ForceRemovalOfSpecifiedPercentOfLogsTest)
     std::size_t maxLogStorageSize = logRecordCount * serializedLogSize;
     float percentToDelete = 51.1;
 
-    MemoryLogStorage logStorage(maxLogStorageSize, percentToDelete, serializedLogSize * logRecordCount / 2);
+    MemoryLogStorage logStorage(maxLogStorageSize, percentToDelete, LogStorageConstants::DEFAULT_MAX_BUCKET_SIZE, logRecordCount / 2);
     for (std::size_t i = 1; i <= logRecordCount; ++i) {
         logStorage.addLogRecord(createSerializedLogRecord());
     }
