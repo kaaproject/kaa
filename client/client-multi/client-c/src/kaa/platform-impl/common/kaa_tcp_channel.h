@@ -155,20 +155,6 @@ kaa_error_t kaa_tcp_channel_set_socket_events_callback(kaa_transport_channel_int
                                                      , on_kaa_tcp_channel_event_fn callback
                                                      , void *context);
 
-
-/**
- * @brief Sets a keepalive timeout for the current channel.
- *
- * @param[in]    channel      The channel instance.
- * @param[in]    keepalive    The keepalive timeout (in seconds).
- *                            0 - indicates that a keepalive is not used.
- *
- * @return Error code
- */
-kaa_error_t kaa_tcp_channel_set_keepalive_timeout(kaa_transport_channel_interface_t *self
-                                                , uint16_t keepalive);
-
-
 /**
  * @brief Disconnects the current channel.
  *
