@@ -77,7 +77,7 @@
 - (SecKeyRef)getRemotePublicKey;
 
 /**
- * @return private key with bytes representation.
+ * @return remote public key with bytes representation.
  */
 - (NSData *)getRemotePublicKeyAsBytes;
 
