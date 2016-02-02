@@ -24,7 +24,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class EndpointProfileDto implements HasId, Serializable {
+import static org.kaaproject.kaa.common.dto.Util.getArrayCopy;
+
+public class EndpointProfileDto implements HasId, HasVersion, Serializable {
+
 
     private static final List<EndpointGroupStateDto> EMPTY_GROUP_STATE = Collections.unmodifiableList(new ArrayList<>());
 
@@ -56,7 +59,8 @@ public class EndpointProfileDto implements HasId, Serializable {
     private List<EventClassFamilyVersionStateDto> ecfVersionStates;
     private String serverHash;
     private String sdkToken;
-
+    private Long version;
+    
     @Override
     public String getId() {
         return id;
@@ -269,6 +273,16 @@ public class EndpointProfileDto implements HasId, Serializable {
 
     public void setSdkToken(String sdkToken) {
         this.sdkToken = sdkToken;
+    }
+    
+    @Override
+    public Long getVersion() {
+        return version;
+    }
+
+    @Override
+    public void setVersion(Long version) {
+        this.version = version;
     }
 
     @Override

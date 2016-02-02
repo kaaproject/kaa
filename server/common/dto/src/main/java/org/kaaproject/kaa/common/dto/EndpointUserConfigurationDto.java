@@ -17,7 +17,7 @@ package org.kaaproject.kaa.common.dto;
 
 import java.io.Serializable;
 
-public class EndpointUserConfigurationDto implements Serializable {
+public class EndpointUserConfigurationDto implements HasVersion, Serializable {
 
     private static final long serialVersionUID = -1463982688020241482L;
 
@@ -25,6 +25,7 @@ public class EndpointUserConfigurationDto implements Serializable {
     private String appToken;
     private Integer schemaVersion;
     private String body;
+    private Long version;
 
     public String getUserId() {
         return userId;
@@ -56,6 +57,16 @@ public class EndpointUserConfigurationDto implements Serializable {
 
     public void setBody(String body) {
         this.body = body;
+    }
+    
+    @Override
+    public Long getVersion() {
+        return version;
+    }
+
+    @Override
+    public void setVersion(Long version) {
+        this.version = version;
     }
 
     @Override

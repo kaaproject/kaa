@@ -13,19 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kaaproject.kaa.server.common.dao.lock;
 
-import org.springframework.dao.OptimisticLockingFailureException;
+/**
+ * This interface is marker which indicate that object has Long version.
+ */
+package org.kaaproject.kaa.common.dto;
 
-public class KaaOptimisticLockingFailureException extends OptimisticLockingFailureException {
+public interface HasVersion {
 
-    private static final long serialVersionUID = -6616568718875823310L;
+    /**
+     * This method return long version
+     *
+     * @return long version
+     */
+    Long getVersion();
 
-    public KaaOptimisticLockingFailureException(String msg, Throwable cause) {
-        super(msg, cause);
-    }
-
-    public KaaOptimisticLockingFailureException(String msg) {
-        super(msg);
-    }
+    /**
+     * This is method set long version
+     *
+     * @param version long version
+     */
+    void setVersion(Long version);
+    
 }

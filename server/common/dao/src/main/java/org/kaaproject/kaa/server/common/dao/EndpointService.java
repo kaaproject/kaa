@@ -30,6 +30,9 @@ import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.PageLinkDto;
 import org.kaaproject.kaa.common.dto.TopicListEntryDto;
 import org.kaaproject.kaa.common.dto.UpdateNotificationDto;
+import org.kaaproject.kaa.server.common.dao.exception.KaaOptimisticLockingFailureException;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 
 /**
  * The interface Endpoint service.
@@ -196,14 +199,17 @@ public interface EndpointService {
      * @param endpointUserId the endpoint user id
      * @param endpointAccessToken the endpoint access token
      * @return the endpoint profile dto
-     */
-    EndpointProfileDto attachEndpointToUser(String endpointUserId, String endpointAccessToken);
+     */   
+    
+    @Retryable(maxAttempts = 10, backoff = @Backoff(delay = 100), value = {KaaOptimisticLockingFailureException.class})
+    EndpointProfileDto attachEndpointToUser(String endpointUserId, String endpointAccessToken) throws KaaOptimisticLockingFailureException;
 
     /**
      * Detach endpoint profile from user.
      *
      * @param detachEndpoint the detach endpoint
      */
+    @Retryable(maxAttempts = 10, backoff = @Backoff(delay = 100), value = {KaaOptimisticLockingFailureException.class})
     void detachEndpointFromUser(EndpointProfileDto detachEndpoint);
 
     /**

@@ -16,6 +16,15 @@
 
 package org.kaaproject.kaa.server.common.nosql.cassandra.dao;
 
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,7 +36,7 @@ import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.PageLinkDto;
-import org.kaaproject.kaa.server.common.dao.lock.KaaOptimisticLockingFailureException;
+import org.kaaproject.kaa.server.common.dao.exception.KaaOptimisticLockingFailureException;
 import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointProfile;
 import org.slf4j.Logger;
@@ -35,16 +44,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/cassandra-client-test-context.xml")
@@ -141,12 +140,14 @@ public class EndpointProfileCassandraDaoTest extends AbstractCassandraTest {
         cfGroupStateSave.add(new EndpointGroupStateDto("111", null, null));
         cfGroupStateSave.add(new EndpointGroupStateDto("222", null, null));
         cfGroupStateSave.add(new EndpointGroupStateDto("333", null, null));
-        EndpointProfileDto endpointProfileSave = generateEndpointProfileForTestUpdate(null, cfGroupStateSave);
-        endpointProfileDao.save(endpointProfileSave);
+        byte[] keyHash = generateBytes();
+        EndpointProfileDto endpointProfileSave = generateEndpointProfileForTestUpdate(null, keyHash, cfGroupStateSave);
+        EndpointProfile saved = endpointProfileDao.save(endpointProfileSave);
         cfGroupStateUpdate.add(new EndpointGroupStateDto("111", null, null));
         cfGroupStateUpdate.add(new EndpointGroupStateDto("444", null, null));
-        EndpointProfileDto endpointProfileUpdate = generateEndpointProfileForTestUpdate(endpointProfileId, cfGroupStateUpdate);
-        endpointProfileDao.save(endpointProfileUpdate);
+        EndpointProfileDto endpointProfileUpdate = generateEndpointProfileForTestUpdate(endpointProfileId, keyHash, cfGroupStateUpdate);
+        endpointProfileUpdate.setVersion(saved.getVersion());
+        saved = endpointProfileDao.save(endpointProfileUpdate);
         String limit = "10";
         String offset = "0";
         String[] endpointGroupId = {"111", "444", "222", "333"};

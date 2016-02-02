@@ -15,7 +15,6 @@
  */
 package org.kaaproject.kaa.server.common.dao.service;
 
-
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;

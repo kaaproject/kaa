@@ -21,7 +21,6 @@ public class MongoModelConstants {
      * Generic constants.
      */
     public static final String ID = "_id";
-    public static final String VERSION = "version";
     public static final String BODY = "body";
     public static final String ACCESS_TOKEN = "access_token";
     public static final String ENDPOINT_KEY_HASH = "endpoint_key_hash";
@@ -38,7 +37,7 @@ public class MongoModelConstants {
      * {@link org.kaaproject.kaa.server.common.nosql.mongo.dao.model.EventClassFamilyVersionState} constants
      */
     public static final String ECF_ID = "ecf_id";
-    public static final String EVENT_CLASS_FAMILY_VERSION = VERSION;
+    public static final String EVENT_CLASS_FAMILY_VERSION = "ecf_version";
 
     /**
      * {@link org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoEndpointConfiguration} constants
@@ -62,7 +61,7 @@ public class MongoModelConstants {
     public static final String NF_TYPE = "notification_type";
     public static final String NF_EXPIRED_AT = "expired_at";
     public static final String NF_SEQ_NUM = "seq_num";
-    public static final String NF_VERSION = VERSION;
+    public static final String NF_VERSION = "nf_version";
     public static final String NF_BODY = BODY;
 
     /**
@@ -93,9 +92,10 @@ public class MongoModelConstants {
     public static final String EP_CONFIGURATION_HASH = "configuration_hash";
     public static final String EP_USER_CONFIGURATION_HASH = "user_configuration_hash";
     public static final String EP_CONFIGURATION_VERSION = "configuration_version";
-    public static final String EP_NOTIFICATION_VERSION = VERSION;
     public static final String EP_TOPIC_HASH = "topic_hash";
     public static final String EP_SIMPLE_TOPIC_HASH = "simple_topic_hash";
+    public static final String EP_NOTIFICATION_VERSION = "ep_nf_version";
+    public static final String EP_NF_HASH = "nf_hash";
     public static final String EP_SYSTEM_NF_VERSION = "system_nf_version";
     public static final String EP_USER_NF_VERSION = "user_nf_version";
     public static final String EP_LOG_SCHEMA_VERSION = "log_schema_version";

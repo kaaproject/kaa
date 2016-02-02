@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2016 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,19 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kaaproject.kaa.server.common.dao.model;
 
-import java.util.List;
+package org.kaaproject.kaa.server.common.dao.exception;
 
-import org.kaaproject.kaa.common.dto.EndpointUserDto;
-import org.kaaproject.kaa.common.dto.HasVersion;
+import org.springframework.dao.OptimisticLockingFailureException;
 
-public interface EndpointUser extends ToDto<EndpointUserDto>, HasVersion {
+public class KaaOptimisticLockingFailureException extends OptimisticLockingFailureException {
 
-    List<String> getEndpointIds();
+    private static final long serialVersionUID = 1985741897367919195L;
 
-    void setEndpointIds(List<String> endpointIds);
+    public KaaOptimisticLockingFailureException(String msg, Throwable cause) {
+        super(msg, cause);
+    }
 
-    String getId();
-
+    public KaaOptimisticLockingFailureException(String msg) {
+        super(msg);
+    }
 }

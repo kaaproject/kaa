@@ -28,6 +28,7 @@ import static org.kaaproject.kaa.server.common.dao.service.Validator.validateSql
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateString;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -54,23 +55,19 @@ import org.kaaproject.kaa.server.common.dao.HistoryService;
 import org.kaaproject.kaa.server.common.dao.ServerProfileService;
 import org.kaaproject.kaa.server.common.dao.exception.DatabaseProcessingException;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
-import org.kaaproject.kaa.server.common.dao.impl.ConfigurationDao;
+import org.kaaproject.kaa.server.common.dao.exception.KaaOptimisticLockingFailureException;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointConfigurationDao;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointGroupDao;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointUserDao;
-import org.kaaproject.kaa.server.common.dao.impl.ProfileFilterDao;
 import org.kaaproject.kaa.server.common.dao.impl.TopicDao;
 import org.kaaproject.kaa.server.common.dao.impl.TopicListEntryDao;
-import org.kaaproject.kaa.server.common.dao.lock.KaaOptimisticLockingFailureException;
 import org.kaaproject.kaa.server.common.dao.model.EndpointConfiguration;
 import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
 import org.kaaproject.kaa.server.common.dao.model.EndpointUser;
 import org.kaaproject.kaa.server.common.dao.model.TopicListEntry;
-import org.kaaproject.kaa.server.common.dao.model.sql.Configuration;
 import org.kaaproject.kaa.server.common.dao.model.sql.EndpointGroup;
 import org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils;
-import org.kaaproject.kaa.server.common.dao.model.sql.ProfileFilter;
 import org.kaaproject.kaa.server.common.dao.model.sql.Topic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,12 +83,6 @@ public class EndpointServiceImpl implements EndpointService {
 
     @Autowired
     private EndpointGroupDao<EndpointGroup> endpointGroupDao;
-    @Autowired
-    private ConfigurationDao<Configuration> configurationDao;
-    @Autowired
-    private ProfileFilterDao<ProfileFilter> profileFilterDao;
-    @Autowired
-    private ProfileFilterDao<ProfileFilter> verifierDao;
     @Autowired
     private HistoryService historyService;
     @Autowired
@@ -282,7 +273,6 @@ public class EndpointServiceImpl implements EndpointService {
 
     @Override
     public EndpointProfileDto saveEndpointProfile(EndpointProfileDto endpointProfileDto) throws KaaOptimisticLockingFailureException {
-        EndpointProfileDto profileDto = null;
         validateObject(endpointProfileDto, "Can't save endpoint profile object. Invalid endpoint profile object " + endpointProfileDto);
         byte[] keyHash = endpointProfileDto.getEndpointKeyHash();
         validateHash(keyHash, "Incorrect key hash for endpoint profile.");
@@ -293,15 +283,27 @@ public class EndpointServiceImpl implements EndpointService {
             endpointProfileDto.setServerProfileVersion(serverProfileSchemaDto.getVersion());
             endpointProfileDto.setServerProfileBody(schemaDto.getDefaultRecord());
         }
+        EndpointProfileDto dto;
         if (isBlank(endpointProfileDto.getId())) {
-            EndpointProfile storedProfile = endpointProfileDao.findEndpointIdByKeyHash(keyHash);
-            if (storedProfile != null) {
-                endpointProfileDto.setId(storedProfile.getId());
-                LOG.debug("Register new endpoint profile.");
+            EndpointProfile storedProfile = endpointProfileDao.findByKeyHash(keyHash);
+            if (storedProfile == null) {
+                dto = getDto(endpointProfileDao.save(endpointProfileDto));
+            } else {
+                if (Arrays.equals(storedProfile.getEndpointKey(), endpointProfileDto.getEndpointKey())) {
+                    LOG.debug("Got register profile for already existing profile {}. Will overwrite existing profile!", keyHash);
+                    endpointProfileDto.setId(storedProfile.getId());
+                    endpointProfileDto.setVersion(storedProfile.getVersion());
+                    dto = getDto(endpointProfileDao.save(endpointProfileDto));
+                } else {
+                    LOG.warn("Endpoint profile with key hash {} already exists.", keyHash);
+                    throw new DatabaseProcessingException("Can't save endpoint profile with existing key hash.");
+                }
             }
+        } else {
+            LOG.debug("Update endpoint profile with id [{}]", endpointProfileDto.getId());
+            dto = getDto(endpointProfileDao.save(endpointProfileDto));
         }
-        profileDto = getDto(endpointProfileDao.save(endpointProfileDto));
-        return profileDto;
+        return dto;
     }
 
     @Override
@@ -322,14 +324,14 @@ public class EndpointServiceImpl implements EndpointService {
             endpointUser.setEndpointIds(endpointIds);
         }
         endpointIds.add(profile.getId());
-        endpointUserDao.save(endpointUser);
+        endpointUser = endpointUserDao.save(endpointUser);
         profile.setEndpointUserId(endpointUser.getId());
         LOG.trace("Save endpoint user {} and endpoint profile {}", endpointUser, profile);
         return saveEndpointProfile(profile);
     }
-
-    @Override
-    public EndpointProfileDto attachEndpointToUser(String endpointUserId, String endpointAccessToken) {
+    
+    @Override    
+    public EndpointProfileDto attachEndpointToUser(String endpointUserId, String endpointAccessToken) throws KaaOptimisticLockingFailureException {
         LOG.info("Try to attach endpoint with access token {} to user with {}", endpointAccessToken, endpointUserId);
         validateString(endpointUserId, "Incorrect endpointUserId " + endpointUserId);
         EndpointUser endpointUser = endpointUserDao.findById(endpointUserId);
@@ -339,14 +341,18 @@ public class EndpointServiceImpl implements EndpointService {
             LOG.trace("[{}] Found endpoint profile by with access token {} ", endpointAccessToken, endpoint);
             if (endpoint != null) {
                 if (endpoint.getEndpointUserId() == null || endpointUserId.equals(endpoint.getEndpointUserId())) {
+                    LOG.debug("Attach endpoint profile with id {} to endpoint user with id {} ", endpoint.getId(), endpointUser.getId());
                     List<String> endpointIds = endpointUser.getEndpointIds();
+                    if (endpointIds != null && endpointIds.contains(endpoint.getId())) {
+                        LOG.warn("Endpoint is already assigned to current user {}. Unassign it first!.", endpoint.getEndpointUserId());
+                        throw new DatabaseProcessingException("Endpoint is already assigned to current user.");
+                    }
                     if (endpointIds == null) {
                         endpointIds = new ArrayList<>();
                         endpointUser.setEndpointIds(endpointIds);
                     }
-                    LOG.debug("Attach endpoint profile with id {} to endpoint user with id {} ", endpoint.getId(), endpointUser.getId());
                     endpointIds.add(endpoint.getId());
-                    endpointUserDao.save(endpointUser);
+                    endpointUser = endpointUserDao.save(endpointUser);
                     endpoint.setEndpointUserId(endpointUser.getId());
                     endpoint = endpointProfileDao.save(endpoint);
                     return getDto(endpoint);
@@ -371,8 +377,11 @@ public class EndpointServiceImpl implements EndpointService {
         EndpointUser endpointUser = endpointUserDao.findById(endpointUserId);
         if (endpointUser != null) {
             List<String> endpointIds = endpointUser.getEndpointIds();
-            if (endpointIds != null) {
+            if (endpointIds != null && endpointIds.contains(detachEndpoint.getId())) {
                 endpointIds.remove(detachEndpoint.getId());
+            } else {
+                LOG.warn("Endpoint is not assigned to current user {}!", endpointUserId);
+                throw new DatabaseProcessingException("Endpoint is not assigned to current user.");
             }
             endpointUserDao.save(endpointUser);
             detachEndpoint.setEndpointUserId(null);

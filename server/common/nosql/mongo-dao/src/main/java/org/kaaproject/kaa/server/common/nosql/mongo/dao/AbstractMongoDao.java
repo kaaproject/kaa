@@ -16,18 +16,22 @@
 
 package org.kaaproject.kaa.server.common.nosql.mongo.dao;
 
-import com.mongodb.DBCollection;
+import java.util.List;
+
+import org.kaaproject.kaa.common.dto.HasVersion;
+import org.kaaproject.kaa.server.common.dao.exception.KaaOptimisticLockingFailureException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.data.mongodb.core.FindAndModifyOptions;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
-import java.util.List;
+import com.mongodb.DBCollection;
 
-public abstract class AbstractMongoDao<T, K> {
+public abstract class AbstractMongoDao<T extends HasVersion, K> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractMongoDao.class);
 
@@ -73,8 +77,13 @@ public abstract class AbstractMongoDao<T, K> {
     }
 
     public T save(T dto) {
-        mongoTemplate.save(dto);
-        return dto;
+        try {
+            mongoTemplate.save(dto);
+            return dto;
+        } catch (OptimisticLockingFailureException exception) {
+            LOG.error("[{}] Can't update entity with version {}. Entity already changed!", getDocumentClass(), dto.getVersion());
+            throw new KaaOptimisticLockingFailureException("Can't update entity with version " + dto.getVersion()  + ". Entity already changed!");
+        }
     }
 
     public <V> V save(V dto, Class<?> clazz) {

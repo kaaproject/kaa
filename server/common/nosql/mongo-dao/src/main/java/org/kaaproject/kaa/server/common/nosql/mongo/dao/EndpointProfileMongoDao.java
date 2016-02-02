@@ -16,35 +16,14 @@
 
 package org.kaaproject.kaa.server.common.nosql.mongo.dao;
 
-import com.mongodb.DBObject;
-import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileDto;
-import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
-import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
-import org.kaaproject.kaa.common.dto.PageLinkDto;
-import org.kaaproject.kaa.server.common.dao.DaoConstants;
-import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
-import org.kaaproject.kaa.server.common.dao.lock.KaaOptimisticLockingFailureException;
-import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoEndpointProfile;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.dao.OptimisticLockingFailureException;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.stereotype.Repository;
-
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.OPT_LOCK;
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.ENDPOINT_GROUP_ID;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.ENDPOINT_PROFILE;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_ACCESS_TOKEN;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_APPLICATION_ID;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_GROUP_STATE;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_ENDPOINT_KEY_HASH;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_GROUP_STATE;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SDK_TOKEN;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SERVER_PROFILE_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SERVER_PROFILE_VERSION_PROPERTY;
@@ -53,6 +32,26 @@ import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelC
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 import static org.springframework.data.mongodb.core.query.Update.update;
+
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
+import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
+import org.kaaproject.kaa.common.dto.PageLinkDto;
+import org.kaaproject.kaa.server.common.dao.DaoConstants;
+import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
+import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoEndpointProfile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.stereotype.Repository;
+
+import com.mongodb.DBObject;
 
 @Repository
 public class EndpointProfileMongoDao extends AbstractMongoDao<MongoEndpointProfile, ByteBuffer> implements EndpointProfileDao<MongoEndpointProfile> {
@@ -205,13 +204,7 @@ public class EndpointProfileMongoDao extends AbstractMongoDao<MongoEndpointProfi
 
     @Override
     public MongoEndpointProfile save(EndpointProfileDto dto) {
-        try {
-            MongoEndpointProfile profile = new MongoEndpointProfile(dto);
-            profile.setOptVersion(findVersionByKey(dto.getEndpointKeyHash()));
-            return save(profile);
-        } catch (OptimisticLockingFailureException exception) {
-            throw new KaaOptimisticLockingFailureException("Can't update endpoint profile. Endpoint profile already changed!", exception);
-        }
+        return save(new MongoEndpointProfile(dto));
     }
 
     @Override

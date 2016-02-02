@@ -29,6 +29,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.OPT_LOCK;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getByteBuffer;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getBytes;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.TOPIC_LIST_ENTRY_COLUMN_FAMILY_NAME;
@@ -47,6 +48,9 @@ public final class CassandraTopicListEntry implements TopicListEntry, Serializab
     private int simpleHash;
     @Column(name = CassandraModelConstants.TOPIC_LIST_ENTRY_TOPIC_IDS_PROPERTY)
     private List<String> topicIds;
+    
+    @Column(name = OPT_LOCK)
+    private Long version;
 
     public CassandraTopicListEntry() {
     }
@@ -60,6 +64,7 @@ public final class CassandraTopicListEntry implements TopicListEntry, Serializab
                 topicIds.add(topic.getId());
             }
         }
+        this.version = dto.getVersion();
     }
 
     public ByteBuffer getHash() {
@@ -122,6 +127,18 @@ public final class CassandraTopicListEntry implements TopicListEntry, Serializab
             topicDto.setId(topicId);
             topicDtos.add(topicDto);
         }
-        return new TopicListEntryDto(simpleHash, getBytes(hash), topicDtos);
+        TopicListEntryDto dto = new TopicListEntryDto(simpleHash, getBytes(hash), topicDtos);
+        dto.setVersion(version);
+        return dto;
+    }
+
+    @Override
+    public Long getVersion() {
+        return version;
+    }
+
+    @Override
+    public void setVersion(Long version) {
+        this.version = version;
     }
 }

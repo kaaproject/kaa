@@ -49,7 +49,6 @@ public class NotificationMongoDaoTest extends AbstractTest {
     @After
     public void afterTest() {
         MongoDataLoader.clearDBData();
-        clearDBData();
     }
 
     @Test

@@ -18,7 +18,14 @@ package org.kaaproject.kaa.server.common.dao.service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -35,11 +42,17 @@ import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicListEntryDto;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
-import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
 import org.kaaproject.kaa.server.common.dao.AbstractTest;
+import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Ignore("This test should be extended and initialized with proper context in each NoSQL submodule")
 public class EndpointServiceImplTest extends AbstractTest {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(EndpointServiceImplTest.class);
+    
+    private ExecutorService executorService = Executors.newFixedThreadPool(10);
 
     private static final String INCORRECT_ID = "incorrect id";
     private static final String DEFAULT_LIMIT = "1";
@@ -200,6 +213,7 @@ public class EndpointServiceImplTest extends AbstractTest {
         Assert.assertEquals(generatedAccessToken, endpointUser.getAccessToken());
     }
 
+
     @Test
     public void findTopicListEntryByHashTest() {
         ApplicationDto applicationDto = generateApplicationDto();
@@ -211,5 +225,99 @@ public class EndpointServiceImplTest extends AbstractTest {
 
         TopicListEntryDto foundTopicListEntry = endpointService.findTopicListEntryByHash(hash);
         Assert.assertEquals(topicListEntryDto, foundTopicListEntry);
+    }
+    
+    @Test
+    public void attchEndpointToUserTest() {
+        TenantDto tenantDto = generateTenantDto();
+        EndpointUserDto endpointUserDto = generateEndpointUserDto(tenantDto.getId());
+        String endpointGroupId = "124";
+        EndpointProfileDto endpointProfileDto = generateEndpointProfileWithGroupIdDto(endpointGroupId);
+        String accessToken = "1111";
+        endpointProfileDto.setAccessToken(accessToken);
+        endpointService.saveEndpointProfile(endpointProfileDto);
+        endpointService.attachEndpointToUser(endpointUserDto.getId(), accessToken);
+        endpointUserDto = endpointService.findEndpointUserById(endpointUserDto.getId());
+        List<String> endpointIds = endpointUserDto.getEndpointIds();
+        Assert.assertNotNull(endpointIds);
+        Assert.assertEquals(1, endpointIds.size());
+        Assert.assertEquals(endpointProfileDto.getId(), endpointIds.get(0));
+    }
+    
+    @Test
+    @Ignore
+    public void multiThreadAttachDetachEndpointToUserTest() throws InterruptedException, ExecutionException {
+        TenantDto tenantDto = generateTenantDto();
+        EndpointUserDto endpointUserDto = generateEndpointUserDto(tenantDto.getId());
+        String endpointGroupId = "124";
+        List<String> accessTokens = new ArrayList<>();
+        List<String> endpointIds = new ArrayList<String>();
+        for (int i = 0; i < 100; i++) {
+            EndpointProfileDto endpointProfileDto = generateEndpointProfileWithGroupIdDto(endpointGroupId);
+            String accessToken = "" + i;
+            endpointProfileDto.setAccessToken(accessToken);
+            endpointService.saveEndpointProfile(endpointProfileDto);
+            accessTokens.add(accessToken);
+            endpointIds.add(endpointProfileDto.getId());
+        }
+        List<Future<EndpointProfileDto>> list = new ArrayList<>();
+        final String endpointUserId = endpointUserDto.getId();
+        for (int i = 0; i < accessTokens.size(); i++) {
+            final String accessToken = accessTokens.get(i);
+            list.add(executorService.submit(new Callable<EndpointProfileDto>() {
+                @Override
+                public EndpointProfileDto call() {
+                    EndpointProfileDto ep = null;
+                    try {
+                        ep = endpointService.attachEndpointToUser(endpointUserId, accessToken);
+                    } catch (Throwable t) {
+                        LOG.error("Error: " + t.getClass() + ": " + t.getMessage() + ". accessToken = " + accessToken);
+                        throw t;
+                    }
+                    return ep;
+                }
+            }));
+        }
+        
+        Iterator<Future<EndpointProfileDto>> iterator = list.iterator();
+        List<EndpointProfileDto> attachedProfiles = new ArrayList<>();
+        while (iterator.hasNext()) {
+            Future<EndpointProfileDto> f = iterator.next();
+            attachedProfiles.add(f.get());
+            iterator.remove();
+        }
+        endpointUserDto = endpointService.findEndpointUserById(endpointUserId);
+        List<String> attachedEndpointIds = endpointUserDto.getEndpointIds();
+        Assert.assertNotNull(attachedEndpointIds);
+        Collections.sort(endpointIds);
+        Collections.sort(attachedEndpointIds);
+        Assert.assertEquals(endpointIds, attachedEndpointIds);
+        
+        List<Future<Void>> detachFutureList = new ArrayList<>();
+        for (int i = 0; i < attachedProfiles.size(); i++) {
+            final EndpointProfileDto attachedProfile = attachedProfiles.get(i);
+            detachFutureList.add(executorService.submit(new Callable<Void>() {
+                @Override
+                public Void call() {
+                    try {
+                        endpointService.detachEndpointFromUser(attachedProfile);
+                    } catch (Throwable t) {
+                        LOG.error("Error: " + t.getMessage(), t);
+                        throw t;
+                    }
+                    return null;
+                }
+            }));
+        }
+        Iterator<Future<Void>> detachIterator = detachFutureList.iterator();
+        while (detachIterator.hasNext()) {
+            Future<Void> f = detachIterator.next();
+            while (!f.isDone()) {
+            }
+            detachIterator.remove();
+        }
+        endpointUserDto = endpointService.findEndpointUserById(endpointUserId);
+        attachedEndpointIds = endpointUserDto.getEndpointIds();
+        Assert.assertTrue(attachedEndpointIds == null || attachedEndpointIds.isEmpty());
     }
 }

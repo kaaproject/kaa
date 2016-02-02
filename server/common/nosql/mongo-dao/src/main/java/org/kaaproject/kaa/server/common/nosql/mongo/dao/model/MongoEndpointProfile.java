@@ -16,8 +16,38 @@
 
 package org.kaaproject.kaa.server.common.nosql.mongo.dao.model;
 
-import com.mongodb.DBObject;
-import com.mongodb.util.JSON;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.OPT_LOCK;
+import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getArrayCopy;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.ENDPOINT_PROFILE;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_ACCESS_TOKEN;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_APPLICATION_ID;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_CHANGED_FLAG;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_CONFIGURATION_HASH;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_CONFIGURATION_VERSION;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_ECF_VERSION_STATE;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_ENDPOINT_KEY;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_ENDPOINT_KEY_HASH;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_GROUP_STATE;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_LOG_SCHEMA_VERSION;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_NOTIFICATION_VERSION;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_PROFILE_HASH;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_PROFILE_VERSION;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SDK_TOKEN;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SEQ_NUM;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SERVER_HASH;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SERVER_PROFILE_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SERVER_PROFILE_VERSION_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SIMPLE_TOPIC_HASH;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SYSTEM_NF_VERSION;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_TOPIC_HASH;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_USER_CONFIGURATION_HASH;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_USER_ID;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_USER_NF_VERSION;
+
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
+
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.server.common.dao.impl.DaoUtil;
 import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
@@ -27,37 +57,8 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.io.Serializable;
-import java.util.Arrays;
-import java.util.List;
-
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.OPT_LOCK;
-import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getArrayCopy;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.ENDPOINT_PROFILE;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_ACCESS_TOKEN;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_APPLICATION_ID;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_GROUP_STATE;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SEQ_NUM;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_CHANGED_FLAG;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_CONFIGURATION_HASH;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_CONFIGURATION_VERSION;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_ECF_VERSION_STATE;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_ENDPOINT_KEY;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_ENDPOINT_KEY_HASH;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_LOG_SCHEMA_VERSION;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SIMPLE_TOPIC_HASH;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_TOPIC_HASH;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_NOTIFICATION_VERSION;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_PROFILE_HASH;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_PROFILE_VERSION;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SDK_TOKEN;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SERVER_HASH;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SERVER_PROFILE_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SERVER_PROFILE_VERSION_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SYSTEM_NF_VERSION;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_USER_CONFIGURATION_HASH;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_USER_ID;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_USER_NF_VERSION;
+import com.mongodb.DBObject;
+import com.mongodb.util.JSON;
 
 @Document(collection = ENDPOINT_PROFILE)
 public final class MongoEndpointProfile implements EndpointProfile, Serializable {
@@ -122,8 +123,7 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
     private String serverProfile;
     @Version
     @Field(OPT_LOCK)
-    private Long optVersion;
-
+    private Long version;
 
     public MongoEndpointProfile() {
     }
@@ -159,9 +159,7 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         this.serverHash = dto.getServerHash();
         this.sdkToken = dto.getSdkToken();
         this.serverProfile = dto.getServerProfileBody();
-        if (version != null) {
-            this.optVersion = version;
-        }
+        this.version = dto.getVersion();
     }
 
     @Override
@@ -378,14 +376,6 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         this.sdkToken = sdkToken;
     }
 
-    public Long getOptVersion() {
-        return optVersion;
-    }
-
-    public void setOptVersion(Long optVersion) {
-        this.optVersion = optVersion;
-    }
-
     @Override
     public String getServerProfile() {
         return serverProfile;
@@ -393,6 +383,16 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
 
     public void setServerProfile(String serverProfile) {
         this.serverProfile = serverProfile;
+    }
+    
+    @Override
+    public Long getVersion() {
+        return version;
+    }
+
+    @Override
+    public void setVersion(Long version) {
+        this.version = version;
     }
 
     @Override
@@ -547,6 +547,7 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         dto.setServerHash(serverHash);
         dto.setSdkToken(sdkToken);
         dto.setServerProfileBody(serverProfile);
+        dto.setVersion(version);
         return dto;
     }
 }

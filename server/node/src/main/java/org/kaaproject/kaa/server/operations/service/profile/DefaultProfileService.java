@@ -32,7 +32,7 @@ import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
-import org.kaaproject.kaa.server.common.dao.lock.KaaOptimisticLockingFailureException;
+import org.kaaproject.kaa.server.common.dao.exception.KaaOptimisticLockingFailureException;
 import org.kaaproject.kaa.server.operations.pojo.RegisterProfileRequest;
 import org.kaaproject.kaa.server.operations.pojo.UpdateProfileRequest;
 import org.kaaproject.kaa.server.operations.service.cache.AppSeqNumber;

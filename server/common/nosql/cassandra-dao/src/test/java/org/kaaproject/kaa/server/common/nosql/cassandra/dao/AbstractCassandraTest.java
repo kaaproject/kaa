@@ -91,7 +91,7 @@ public abstract class AbstractCassandraTest {
             notification.setSecNum(i);
             notification.setBody(UUID.randomUUID().toString().getBytes());
             notification.setLastTimeModify(new Date(System.currentTimeMillis()));
-            notification.setVersion(1);
+            notification.setNfVersion(1);
             notification.setExpiredAt(new Date(System.currentTimeMillis() + 7 * 24 * 3600 * 1000));
             notifications.add(notificationDao.save(notification).toDto());
         }
@@ -145,11 +145,11 @@ public abstract class AbstractCassandraTest {
         return endpointProfileDao.save(new CassandraEndpointProfile(profileDto)).toDto();
     }
 
-    protected EndpointProfileDto generateEndpointProfileForTestUpdate(String id, List<EndpointGroupStateDto> cfGroupState) {
+    protected EndpointProfileDto generateEndpointProfileForTestUpdate(String id, byte[] keyHash, List<EndpointGroupStateDto> cfGroupState) {
         EndpointProfileDto profileDto = new EndpointProfileDto();
         profileDto.setId(id);
+        profileDto.setEndpointKeyHash(keyHash);
         profileDto.setApplicationId(generateStringId());
-        profileDto.setEndpointKeyHash("TEST_KEY_HASH".getBytes());
         profileDto.setAccessToken(generateStringId());
         profileDto.setGroupState(cfGroupState);
         profileDto.setSdkToken(UUID.randomUUID().toString());

@@ -19,11 +19,12 @@ CREATE TABLE IF NOT EXISTS kaa.ep_nfs (
     nf_type text,
     app_id text,
     schema_id text,
-    version int,
+    ep_nf_version int,
     last_mod_time timestamp,
     body blob,
     expired_at timestamp,
     topic_id text,
+    opt_lock bigint,
     PRIMARY KEY (ep_key_hash, last_mod_time)
 ) WITH CLUSTERING ORDER BY (last_mod_time DESC);
 
@@ -34,17 +35,19 @@ CREATE TABLE IF NOT EXISTS kaa.notification (
     app_id text,
     schema_id text,
     last_mod_time timestamp,
-    version int,
+    nf_version int,
     body blob,
     expired_at timestamp,
     seq_num int,
-    PRIMARY KEY((topic_id, nf_type), version, seq_num)
-) WITH CLUSTERING ORDER BY (version DESC, seq_num DESC);
+    opt_lock bigint,
+    PRIMARY KEY((topic_id, nf_type), nf_version, seq_num)
+) WITH CLUSTERING ORDER BY (nf_version DESC, seq_num DESC);
 
 CREATE TABLE IF NOT EXISTS kaa.ep_conf (
     cf_hash blob PRIMARY KEY,
     cf blob,
-    cf_id text
+    cf_id text,
+    opt_lock bigint
 );
 
 CREATE TABLE IF NOT EXISTS kaa.ep_user (
@@ -54,6 +57,7 @@ CREATE TABLE IF NOT EXISTS kaa.ep_user (
     tenant_id text,
     access_token text,
     ep_ids list <text>,
+    opt_lock bigint,
     PRIMARY KEY (ext_id, tenant_id)
 );
 
@@ -89,36 +93,42 @@ CREATE TABLE IF NOT EXISTS kaa.ep_profile (
 
 CREATE TABLE IF NOT EXISTS kaa.app_eps (
     app_id text,
-    ep_key_hash blob,
+    ep_key_hash blob,    
+    opt_lock bigint,
     PRIMARY KEY (app_id, ep_key_hash)
 );
 
 CREATE TABLE IF NOT EXISTS kaa.access_token_eps (
     access_token text PRIMARY KEY ,
-    ep_key_hash blob
+    ep_key_hash blob,
+    opt_lock bigint
 );
 
 CREATE TABLE IF NOT EXISTS kaa.endpoint_group_id_eps (
     ep_group_id text ,
     ep_key_hash blob,
+    opt_lock bigint,
     PRIMARY KEY (ep_group_id, ep_key_hash)
 );
 
 CREATE TABLE IF NOT EXISTS kaa.sdk_token_eps (
     sdk_token text PRIMARY KEY,
-    ep_key_hash blob
+    ep_key_hash blob,
+    opt_lock bigint
 );
 
 CREATE TABLE IF NOT EXISTS kaa.user_conf (
     user_id text,
     app_token text,
-    version int,
+    schema_version int,
     body text,
-    PRIMARY KEY (user_id, app_token, version)
+    opt_lock bigint,
+    PRIMARY KEY (user_id, app_token, schema_version)
 );
 
 CREATE TABLE IF NOT EXISTS kaa.tl_entry (
     tl_entry_hash blob PRIMARY KEY,
     tl_entry_simple_hash int,
-    tl_entry_topic_ids list<text>
+    tl_entry_topic_ids list<text>,
+    opt_lock bigint
 );

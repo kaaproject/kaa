@@ -15,6 +15,7 @@
  */
 package org.kaaproject.kaa.server.common.nosql.mongo.dao.model;
 
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.OPT_LOCK;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.USER_CONFIGURATION;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.USER_CONF_APP_TOKEN;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.USER_CONF_BODY;
@@ -26,6 +27,7 @@ import java.io.Serializable;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.server.common.dao.model.EndpointUserConfiguration;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Version;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -49,7 +51,10 @@ public class MongoEndpointUserConfiguration implements EndpointUserConfiguration
     private Integer schemaVersion;
     @Field(USER_CONF_BODY)
     private String body;
-
+    @Version
+    @Field(OPT_LOCK)
+    private Long version;
+    
     public MongoEndpointUserConfiguration() {
     }
 
@@ -59,6 +64,7 @@ public class MongoEndpointUserConfiguration implements EndpointUserConfiguration
         this.schemaVersion = dto.getSchemaVersion();
         this.body = dto.getBody();
         this.id = userId + ID_DELIMITER + appToken + ID_DELIMITER + schemaVersion;
+        this.version = dto.getVersion();
     }
 
     public String getUserId() {
@@ -91,6 +97,16 @@ public class MongoEndpointUserConfiguration implements EndpointUserConfiguration
 
     public void setBody(String body) {
         this.body = body;
+    }
+    
+    @Override
+    public Long getVersion() {
+        return version;
+    }
+
+    @Override
+    public void setVersion(Long version) {
+        this.version = version;
     }
 
     @Override
@@ -138,6 +154,7 @@ public class MongoEndpointUserConfiguration implements EndpointUserConfiguration
         dto.setBody(body);
         dto.setSchemaVersion(schemaVersion);
         dto.setUserId(userId);
+        dto.setVersion(version);
         return dto;
     }
 }

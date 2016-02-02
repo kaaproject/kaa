@@ -16,22 +16,6 @@
 
 package org.kaaproject.kaa.server.common.nosql.cassandra.dao.model;
 
-import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.FrozenValue;
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
-import com.datastax.driver.mapping.annotations.Transient;
-import org.kaaproject.kaa.common.dto.EndpointProfileDto;
-import org.kaaproject.kaa.common.dto.EventClassFamilyVersionStateDto;
-import org.kaaproject.kaa.server.common.dao.impl.DaoUtil;
-import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
-import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.type.CassandraEndpointGroupState;
-import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.type.CassandraEventClassFamilyVersionState;
-
-import java.io.Serializable;
-import java.nio.ByteBuffer;
-import java.util.List;
-
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.OPT_LOCK;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.convertDtoToModelList;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.convertECFVersionDtoToModelList;
@@ -41,15 +25,13 @@ import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.Cassand
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_APP_ID_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_COLUMN_FAMILY_NAME;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_CONFIGURATION_VERSION_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_GROUP_STATE_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_CONFIG_HASH_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_ECF_VERSION_STATE_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_ENDPOINT_ID_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_EP_KEY_HASH_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_EP_KEY_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_GROUP_STATE_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_LOG_SCHEMA_VERSION_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_SIMPLE_TOPIC_HASH_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_TOPIC_HASH_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_NOTIFICATION_VERSION_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_PROFILE_HASH_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_PROFILE_PROPERTY;
@@ -57,13 +39,32 @@ import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.Cassand
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_SDK_TOKEN_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_SEQUENCE_NUMBER_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_SERVER_HASH_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_SERVER_PROFILE_VERSION_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_SERVER_PROFILE_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_SERVER_PROFILE_VERSION_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_SIMPLE_TOPIC_HASH_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_SUBSCRIPTIONS_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_SYSTEM_NOTIFICATION_VERSION_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_TOPIC_HASH_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_USER_CONFIG_HASH_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_USER_ID_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_USER_NOTIFICATION_VERSION_PROPERTY;
+
+import java.io.Serializable;
+import java.nio.ByteBuffer;
+import java.util.List;
+
+import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EventClassFamilyVersionStateDto;
+import org.kaaproject.kaa.server.common.dao.impl.DaoUtil;
+import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.type.CassandraEndpointGroupState;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.type.CassandraEventClassFamilyVersionState;
+
+import com.datastax.driver.mapping.annotations.Column;
+import com.datastax.driver.mapping.annotations.FrozenValue;
+import com.datastax.driver.mapping.annotations.PartitionKey;
+import com.datastax.driver.mapping.annotations.Table;
+import com.datastax.driver.mapping.annotations.Transient;
 
 @Table(name = EP_COLUMN_FAMILY_NAME)
 public final class CassandraEndpointProfile implements EndpointProfile, Serializable {
@@ -125,9 +126,9 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
     @Column(name = EP_SDK_TOKEN_PROPERTY)
     private String sdkToken;
     @Column(name = EP_SERVER_PROFILE_PROPERTY)
-    private String serverProfile;
+    private String serverProfile;    
     @Column(name = OPT_LOCK)
-    private long version;
+    private Long version;
 
     public CassandraEndpointProfile() {
     }
@@ -159,6 +160,7 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
         this.serverHash = dto.getServerHash();
         this.sdkToken = dto.getSdkToken();
         this.serverProfile = dto.getServerProfileBody();
+        this.version = dto.getVersion();
     }
 
     public void setId(String id) {
@@ -376,12 +378,14 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
     public void setApplicationId(String applicationId) {
         this.applicationId = applicationId;
     }
-
-    public long getVersion() {
+    
+    @Override
+    public Long getVersion() {
         return version;
     }
 
-    public void setVersion(long version) {
+    @Override
+    public void setVersion(Long version) {
         this.version = version;
     }
 
@@ -513,6 +517,7 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
         dto.setServerHash(serverHash);
         dto.setSdkToken(sdkToken);
         dto.setServerProfileBody(serverProfile);
+        dto.setVersion(version);
         return dto;
     }
 }

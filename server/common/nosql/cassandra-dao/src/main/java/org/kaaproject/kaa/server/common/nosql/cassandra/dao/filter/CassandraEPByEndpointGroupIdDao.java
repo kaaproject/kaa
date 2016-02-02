@@ -82,4 +82,10 @@ public class CassandraEPByEndpointGroupIdDao extends AbstractCassandraDao<Cassan
         List<CassandraEPByEndpointGroupId> filter = findListByStatement(queryStatement);
         return getEndpointKeyHash(filter);
     }
+
+    @Override
+    protected CassandraEPByEndpointGroupId updateLocked(
+            CassandraEPByEndpointGroupId entity) {
+        throw new UnsupportedOperationException("Not implemented!");
+    }
 }

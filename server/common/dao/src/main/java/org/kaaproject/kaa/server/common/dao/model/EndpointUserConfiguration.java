@@ -16,8 +16,9 @@
 package org.kaaproject.kaa.server.common.dao.model;
 
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
+import org.kaaproject.kaa.common.dto.HasVersion;
 
-public interface EndpointUserConfiguration extends ToDto<EndpointUserConfigurationDto> {
+public interface EndpointUserConfiguration extends ToDto<EndpointUserConfigurationDto>, HasVersion {
 
     String getUserId();
 

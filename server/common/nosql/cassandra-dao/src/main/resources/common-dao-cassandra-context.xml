@@ -27,7 +27,7 @@
 
     <util:properties id="cassandra_properties" location="classpath:common-dao-cassandra.properties"/>
     <context:component-scan base-package="org.kaaproject.kaa.server.common.nosql.cassandra.dao" />
-
+    
     <bean id="unicastNotificationDao" class="org.kaaproject.kaa.server.common.nosql.cassandra.dao.EndpointNotificationCassandraDao" />
     <bean id="notificationDao" class="org.kaaproject.kaa.server.common.nosql.cassandra.dao.NotificationCassandraDao"/>
     <bean id="endpointConfigurationDao" class="org.kaaproject.kaa.server.common.nosql.cassandra.dao.EndpointConfigurationCassandraDao"/>

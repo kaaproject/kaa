@@ -16,17 +16,8 @@
 
 package org.kaaproject.kaa.server.common.nosql.cassandra.dao.model;
 
-import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
-import com.datastax.driver.mapping.annotations.Transient;
-import org.kaaproject.kaa.common.dto.EndpointUserDto;
-import org.kaaproject.kaa.server.common.dao.model.EndpointUser;
-
-import java.io.Serializable;
-import java.util.List;
-
 import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.OPT_LOCK;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.parseId;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_USER_ACCESS_TOKEN_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_USER_COLUMN_FAMILY_NAME;
@@ -36,6 +27,17 @@ import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.Cassand
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_USER_USERNAME_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_USER_USER_ID_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.KEY_DELIMITER;
+
+import java.io.Serializable;
+import java.util.List;
+
+import org.kaaproject.kaa.common.dto.EndpointUserDto;
+import org.kaaproject.kaa.server.common.dao.model.EndpointUser;
+
+import com.datastax.driver.mapping.annotations.Column;
+import com.datastax.driver.mapping.annotations.PartitionKey;
+import com.datastax.driver.mapping.annotations.Table;
+import com.datastax.driver.mapping.annotations.Transient;
 
 @Table(name = EP_USER_COLUMN_FAMILY_NAME)
 public final class CassandraEndpointUser implements EndpointUser, Serializable {
@@ -59,6 +61,9 @@ public final class CassandraEndpointUser implements EndpointUser, Serializable {
     private String accessToken;
     @Column(name = EP_USER_ENDPOINT_IDS_PROPERTY)
     private List<String> endpointIds;
+    
+    @Column(name = OPT_LOCK)
+    private Long version;
 
     public CassandraEndpointUser() {
     }
@@ -78,6 +83,7 @@ public final class CassandraEndpointUser implements EndpointUser, Serializable {
         this.tenantId = dto.getTenantId();
         this.accessToken = dto.getAccessToken();
         this.endpointIds = dto.getEndpointIds();
+        this.version = dto.getVersion();
     }
 
     public String getId() {
@@ -126,6 +132,16 @@ public final class CassandraEndpointUser implements EndpointUser, Serializable {
 
     public void setEndpointIds(List<String> endpointIds) {
         this.endpointIds = endpointIds;
+    }
+    
+    @Override
+    public Long getVersion() {
+        return version;
+    }
+
+    @Override
+    public void setVersion(Long version) {
+        this.version = version;
     }
 
     @Override
@@ -181,6 +197,7 @@ public final class CassandraEndpointUser implements EndpointUser, Serializable {
         dto.setTenantId(tenantId);
         dto.setAccessToken(accessToken);
         dto.setEndpointIds(endpointIds);
+        dto.setVersion(version);
         return dto;
     }
 

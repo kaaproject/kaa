@@ -16,61 +16,11 @@
 
 package org.kaaproject.kaa.server.common.nosql.cassandra.dao;
 
-import com.datastax.driver.core.BoundStatement;
-import com.datastax.driver.core.ConsistencyLevel;
-import com.datastax.driver.core.PreparedStatement;
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.Row;
-import com.datastax.driver.core.Statement;
-import com.datastax.driver.core.UserType;
-import com.datastax.driver.core.querybuilder.QueryBuilder;
-import com.google.common.base.Predicates;
-import com.google.common.collect.Sets;
-import org.apache.commons.codec.binary.Base64;
-import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileDto;
-import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
-import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
-import org.kaaproject.kaa.common.dto.PageLinkDto;
-import org.kaaproject.kaa.server.common.dao.DaoConstants;
-import org.kaaproject.kaa.server.common.dao.exception.DatabaseProcessingException;
-import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
-import org.kaaproject.kaa.server.common.dao.lock.KaaOptimisticLockingFailureException;
-import org.kaaproject.kaa.server.common.nosql.cassandra.dao.filter.CassandraEPByAccessTokenDao;
-import org.kaaproject.kaa.server.common.nosql.cassandra.dao.filter.CassandraEPByAppIdDao;
-import org.kaaproject.kaa.server.common.nosql.cassandra.dao.filter.CassandraEPByEndpointGroupIdDao;
-import org.kaaproject.kaa.server.common.nosql.cassandra.dao.filter.CassandraEPBySdkTokenDao;
-import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEPByAccessToken;
-import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEPByAppId;
-import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEPByEndpointGroupId;
-import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEPBySdkToken;
-import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointProfile;
-import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointUser;
-import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants;
-import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.type.CassandraEndpointGroupState;
-import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.type.CassandraEventClassFamilyVersionState;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
 import static com.datastax.driver.core.querybuilder.QueryBuilder.delete;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.eq;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.in;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.select;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.set;
-import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.OPT_LOCK;
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getDto;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.convertKeyHashToString;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.convertStringToKeyHash;
@@ -92,41 +42,85 @@ import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.Cassand
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_BY_SDK_TOKEN_SDK_TOKEN_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_COLUMN_FAMILY_NAME;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_CONFIGURATION_VERSION_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_GROUP_STATE_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_CONFIG_HASH_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_ECF_VERSION_STATE_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_ENDPOINT_ID_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_EP_KEY_HASH_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_SEQUENCE_NUMBER_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_SIMPLE_TOPIC_HASH_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_TOPIC_HASH_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_EP_KEY_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_GROUP_STATE_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_LOG_SCHEMA_VERSION_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_NOTIFICATION_VERSION_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_PROFILE_HASH_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_PROFILE_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_PROFILE_VERSION_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_SDK_TOKEN_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_SEQUENCE_NUMBER_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_SERVER_HASH_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_SERVER_PROFILE_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_SERVER_PROFILE_VERSION_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_SIMPLE_TOPIC_HASH_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_SUBSCRIPTIONS_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_SYSTEM_NOTIFICATION_VERSION_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_TOPIC_HASH_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_USER_CONFIG_HASH_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_USER_ID_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_USER_NOTIFICATION_VERSION_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EVENT_CLASS_FAMILY_VERSION_STATE_ECF_ID_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EVENT_CLASS_FAMILY_VERSION_STATE_ECF_VERSION_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EVENT_CLASS_FAMILY_VERSION_STATE_USER_TYPE_NAME;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.VERSION_PROPERTY;
+
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.commons.codec.binary.Base64;
+import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
+import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
+import org.kaaproject.kaa.common.dto.PageLinkDto;
+import org.kaaproject.kaa.server.common.dao.DaoConstants;
+import org.kaaproject.kaa.server.common.dao.exception.DatabaseProcessingException;
+import org.kaaproject.kaa.server.common.dao.exception.KaaOptimisticLockingFailureException;
+import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.filter.CassandraEPByAccessTokenDao;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.filter.CassandraEPByAppIdDao;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.filter.CassandraEPByEndpointGroupIdDao;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.filter.CassandraEPBySdkTokenDao;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEPByAccessToken;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEPByAppId;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEPByEndpointGroupId;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEPBySdkToken;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointProfile;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointUser;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.type.CassandraEndpointGroupState;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.type.CassandraEventClassFamilyVersionState;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import com.datastax.driver.core.ConsistencyLevel;
+import com.datastax.driver.core.ResultSet;
+import com.datastax.driver.core.Row;
+import com.datastax.driver.core.Statement;
+import com.datastax.driver.core.UDTValue;
+import com.datastax.driver.core.UserType;
+import com.datastax.driver.core.querybuilder.Assignment;
+import com.datastax.driver.core.querybuilder.QueryBuilder;
+import com.google.common.base.Predicates;
+import com.google.common.collect.Sets;
+
 
 @Repository(value = "endpointProfileDao")
 public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraEndpointProfile, ByteBuffer> implements EndpointProfileDao<CassandraEndpointProfile> {
 
     private static final Logger LOG = LoggerFactory.getLogger(EndpointProfileCassandraDao.class);
-    private static final String UPDATE_PROFILE = "UPDATE kaa.ep_profile SET ecf_ver_state=?, cf_hash=?, topic_hash=?, simple_topic_hash=?, group_state=?, " +
-            "srv_pf_ver=?, sys_nf_ver=?, seq_num=?, nf_ver=?, pf_ver=?, ucf_hash=?, server_hash=?, user_id=?, user_nf_ver=?, cf_ver=?, access_token=?, " +
-            " pf=?, srv_pf=?, subscs=?, opt_lock=? WHERE ep_key_hash=? ";
-
-    private static final String IF_CONDITION = "IF opt_lock = ";
-
-    private ConcurrentHashMap<String, PreparedStatement> statements = new ConcurrentHashMap<>();
 
     @Autowired
     private CassandraEPByAppIdDao cassandraEPByAppIdDao;
@@ -151,16 +145,63 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
 
     @Override
     public CassandraEndpointProfile save(EndpointProfileDto dto) {
-        if (isBlank(dto.getId())) {
-            return save(new CassandraEndpointProfile(dto));
+        CassandraEndpointProfile endpointProfile = new CassandraEndpointProfile(dto);
+        return save(endpointProfile);
+    }
+    
+    @Override
+    public CassandraEndpointProfile save(CassandraEndpointProfile endpointProfile) {
+        if (endpointProfile.getVersion() == null) {
+            return saveProfile(endpointProfile);
         } else {
-            return update(new CassandraEndpointProfile(dto));
+            return updateProfile(endpointProfile);
         }
     }
-
+    
     @Override
-    public CassandraEndpointProfile save(CassandraEndpointProfile profile) {
+    protected CassandraEndpointProfile updateLocked(
+            CassandraEndpointProfile entity) {
+        return updateLockedImpl(
+                entity.getVersion(),
+                new Assignment[] {set(EP_ECF_VERSION_STATE_PROPERTY, convertEventStateToUDT(entity.getEcfVersionStates())),
+                    set(EP_CONFIG_HASH_PROPERTY, entity.getConfigurationHash()),
+                    set(EP_GROUP_STATE_PROPERTY, convertGroupStateToUDT(entity.getGroupStates())),
+                    set(EP_SEQUENCE_NUMBER_PROPERTY, entity.getSequenceNumber()),
+                    set(EP_SERVER_PROFILE_VERSION_PROPERTY, entity.getServerProfileVersion()),
+                    set(EP_SYSTEM_NOTIFICATION_VERSION_PROPERTY, entity.getSystemNfVersion()),
+                    set(EP_NOTIFICATION_VERSION_PROPERTY, entity.getNotificationVersion()),
+                    set(EP_PROFILE_VERSION_PROPERTY, entity.getProfileVersion()),
+                    set(EP_USER_CONFIG_HASH_PROPERTY, entity.getUserConfigurationHash()),
+                    set(EP_SERVER_HASH_PROPERTY, entity.getServerHash()),
+                    set(EP_USER_ID_PROPERTY, entity.getEndpointUserId()),
+                    set(EP_USER_NOTIFICATION_VERSION_PROPERTY, entity.getUserNfVersion()),
+                    set(EP_CONFIGURATION_VERSION_PROPERTY, entity.getConfigurationVersion()),
+                    set(EP_ACCESS_TOKEN_PROPERTY, entity.getAccessToken()),
+                    set(EP_PROFILE_PROPERTY, entity.getProfile()),
+                    set(EP_SERVER_PROFILE_PROPERTY, entity.getServerProfile()),
+                    set(EP_SUBSCRIPTIONS_PROPERTY, entity.getSubscriptions()),
+                    set(EP_LOG_SCHEMA_VERSION_PROPERTY, entity.getLogSchemaVersion()),
+                    set(EP_APP_ID_PROPERTY, entity.getApplicationId()),
+                    set(EP_EP_KEY_PROPERTY, entity.getEndpointProfileKey()),
+                    set(EP_PROFILE_HASH_PROPERTY, entity.getProfileHash()),
+                    set(EP_TOPIC_HASH_PROPERTY, entity.getTopicHash()),
+                    set(EP_SIMPLE_TOPIC_HASH_PROPERTY, entity.getSimpleTopicHash()),
+                    set(EP_SDK_TOKEN_PROPERTY, entity.getSdkToken()),
+                    set(EP_ENDPOINT_ID_PROPERTY, entity.getId())},
+                    
+                    eq(EP_EP_KEY_HASH_PROPERTY, entity.getEndpointKeyHash())
+                    
+                );
+    }
+    
+    private CassandraEndpointProfile saveProfile(CassandraEndpointProfile profile) {
+        CassandraEndpointProfile storedProfile = findByKeyHash(getBytes(profile.getEndpointKeyHash()));
         profile.setId(convertKeyHashToString(profile.getEndpointKeyHash()));
+        if (storedProfile != null) {
+            LOG.error("[{}] Profile is already exists. Can't save endpoint profile.", profile.getId());
+            throw new DatabaseProcessingException("Profile is already exists. Can't save endpoint profile.");
+        }
+        profile.setVersion(0l);
         LOG.debug("Saving endpoint profile with id {}", profile.getId());
         ByteBuffer epKeyHash = profile.getEndpointKeyHash();
         List<Statement> statementList = new ArrayList<>();
@@ -181,59 +222,23 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
         return profile;
     }
 
-    private BoundStatement prepareStatement(String q, CassandraEndpointProfile pf) {
-        StringBuilder sb = new StringBuilder(q);
-        sb.append(IF_CONDITION).append(pf.getVersion()).append(";");
-        String query = sb.toString();
-        LOG.info("Get version {}", pf.getVersion());
-        LOG.debug("Prepared query {}", query);
-        PreparedStatement ps = statements.get(query);
-        if (ps == null) {
-            ps = getSession().prepare(query);
-            statements.put(query, ps);
-        }
-        BoundStatement bs = ps.bind();
-        bs.setList(EP_ECF_VERSION_STATE_PROPERTY, convertEventStateToUDT(pf.getEcfVersionStates()));
-        bs.setBytes(EP_CONFIG_HASH_PROPERTY, pf.getConfigurationHash());
-        bs.setBytes(EP_TOPIC_HASH_PROPERTY, pf.getTopicHash());
-        bs.setInt(EP_SIMPLE_TOPIC_HASH_PROPERTY, pf.getSimpleTopicHash());
-        bs.setList(EP_GROUP_STATE_PROPERTY, convertGroupStateToUDT(pf.getGroupStates()));
-        bs.setInt(EP_SEQUENCE_NUMBER_PROPERTY, pf.getSequenceNumber());
-        bs.setInt(EP_SERVER_PROFILE_VERSION_PROPERTY, pf.getServerProfileVersion());
-        bs.setInt(EP_SYSTEM_NOTIFICATION_VERSION_PROPERTY, pf.getSystemNfVersion());
-        bs.setInt(EP_NOTIFICATION_VERSION_PROPERTY, pf.getNotificationVersion());
-        bs.setInt(EP_PROFILE_VERSION_PROPERTY, pf.getProfileVersion());
-        bs.setBytes(EP_USER_CONFIG_HASH_PROPERTY, pf.getUserConfigurationHash());
-        bs.setString(EP_SERVER_HASH_PROPERTY, pf.getServerHash());
-        bs.setString(EP_USER_ID_PROPERTY, pf.getEndpointUserId());
-        bs.setInt(EP_USER_NOTIFICATION_VERSION_PROPERTY, pf.getUserNfVersion());
-        bs.setInt(EP_CONFIGURATION_VERSION_PROPERTY, pf.getConfigurationVersion());
-        bs.setString(EP_ACCESS_TOKEN_PROPERTY, pf.getAccessToken());
-        bs.setString(EP_PROFILE_PROPERTY, pf.getProfile());
-        bs.setString(EP_SERVER_PROFILE_PROPERTY, pf.getServerProfile());
-        bs.setList(EP_SUBSCRIPTIONS_PROPERTY, pf.getSubscriptions());
-        bs.setBytes(EP_EP_KEY_HASH_PROPERTY, pf.getEndpointKeyHash());
-        bs.setLong(OPT_LOCK, pf.getVersion() + 1);
-        return bs;
-    }
-
-    private CassandraEndpointProfile update(CassandraEndpointProfile profile) {
+    private CassandraEndpointProfile updateProfile(CassandraEndpointProfile profile) {
         LOG.debug("Updating endpoint profile with id {}", profile.getId());
         ByteBuffer epKeyHash = profile.getEndpointKeyHash();
         byte[] keyHash = getBytes(epKeyHash);
         CassandraEndpointProfile storedProfile = findByKeyHash(keyHash);
         if (storedProfile != null) {
+            profile = super.save(profile);
             List<Statement> statementList = new ArrayList<>();
-            BoundStatement bs = prepareStatement(UPDATE_PROFILE, profile);
-            if (wasApplied(execute(bs))) {
-                Set<String> oldEndpointGroupIds = getEndpointProfilesGroupIdSet(storedProfile);
-                Set<String> newEndpointGroupIds = getEndpointProfilesGroupIdSet(profile);
-                Set<String> removeEndpointGroupIds = Sets.filter(oldEndpointGroupIds, Predicates.not(Predicates.in(newEndpointGroupIds)));
-                Set<String> addEndpointGroupIds = Sets.filter(newEndpointGroupIds, Predicates.not(Predicates.in(oldEndpointGroupIds)));
-                if (addEndpointGroupIds != null) {
-                    for (String id : addEndpointGroupIds) {
-                        statementList.add(cassandraEPByEndpointGroupIdDao.getSaveQuery(new CassandraEPByEndpointGroupId(id, epKeyHash)));
-                    }
+
+            Set<String> oldEndpointGroupIds = getEndpointProfilesGroupIdSet(storedProfile);
+            Set<String> newEndpointGroupIds = getEndpointProfilesGroupIdSet(profile);
+
+            Set<String> removeEndpointGroupIds = Sets.filter(oldEndpointGroupIds, Predicates.not(Predicates.in(newEndpointGroupIds)));
+            Set<String> addEndpointGroupIds = Sets.filter(newEndpointGroupIds, Predicates.not(Predicates.in(oldEndpointGroupIds)));
+            if (addEndpointGroupIds != null) {
+                for (String id : addEndpointGroupIds) {
+                    statementList.add(cassandraEPByEndpointGroupIdDao.getSaveQuery(new CassandraEPByEndpointGroupId(id, epKeyHash)));
                 }
                 if (removeEndpointGroupIds != null) {
                     for (String id : removeEndpointGroupIds) {
@@ -247,6 +252,15 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
                 LOG.error("[{}] Can't update endpoint profile with version {}. Endpoint profile already changed!", profile.getId(), profile.getVersion());
                 throw new KaaOptimisticLockingFailureException("Can't update endpoint profile with version . Endpoint profile already changed!");
             }
+
+            String accessToken = profile.getAccessToken();
+            if (storedProfile.getAccessToken() != null && !storedProfile.getAccessToken().equals(accessToken)) {
+                cassandraEPByAccessTokenDao.removeById(storedProfile.getAccessToken());
+            }
+            if (accessToken != null) {
+                statementList.add(cassandraEPByAccessTokenDao.getSaveQuery(new CassandraEPByAccessToken(accessToken, epKeyHash)));
+            } 
+            executeBatch(statementList.toArray(new Statement[statementList.size()]));
             LOG.debug("[{}] Endpoint profile updated", profile.getId());
         } else {
             LOG.error("[{}] Stored profile is null. Can't update endpoint profile.", profile.getId());
@@ -480,29 +494,31 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
         execute(update, ConsistencyLevel.ALL);
         return findById(key);
     }
-
-    private List<UserType> convertGroupStateToUDT(List<CassandraEndpointGroupState> cfGroupState) {
-        List<UserType> utList = null;
+    
+    private List<UDTValue> convertGroupStateToUDT(List<CassandraEndpointGroupState> cfGroupState) {
+        List<UDTValue> utList = null;
         if (cfGroupState != null && !cfGroupState.isEmpty()) {
             UserType ut = getUserType(ENDPOINT_GROUP_STATE_USER_TYPE_NAME);
             utList = new ArrayList<>();
             for (CassandraEndpointGroupState state : cfGroupState) {
-                ut.newValue().setString(ENDPOINT_GROUP_STATE_ENDPOINT_GROUP_ID_PROPERTY, state.getEndpointGroupId())
+                UDTValue udtValue = ut.newValue().setString(ENDPOINT_GROUP_STATE_ENDPOINT_GROUP_ID_PROPERTY, state.getEndpointGroupId())
                         .setString(ENDPOINT_GROUP_STATE_PROFILE_FILTER_ID_PROPERTY, state.getProfileFilterId())
                         .setString(ENDPOINT_GROUP_STATE_CONFIGURATION_ID_PROPERTY, state.getConfigurationId());
+                utList.add(udtValue);
             }
         }
         return utList;
     }
 
-    private List<UserType> convertEventStateToUDT(List<CassandraEventClassFamilyVersionState> eventStates) {
-        List<UserType> utList = null;
+    private List<UDTValue> convertEventStateToUDT(List<CassandraEventClassFamilyVersionState> eventStates) {
+        List<UDTValue> utList = null;
         if (eventStates != null && !eventStates.isEmpty()) {
             UserType ut = getUserType(EVENT_CLASS_FAMILY_VERSION_STATE_USER_TYPE_NAME);
             utList = new ArrayList<>();
             for (CassandraEventClassFamilyVersionState state : eventStates) {
-                ut.newValue().setString(EVENT_CLASS_FAMILY_VERSION_STATE_ECF_ID_PROPERTY, state.getEcfId())
+                UDTValue udtValue = ut.newValue().setString(EVENT_CLASS_FAMILY_VERSION_STATE_ECF_ID_PROPERTY, state.getEcfId())
                         .setInt(EVENT_CLASS_FAMILY_VERSION_STATE_ECF_VERSION_PROPERTY, state.getVersion());
+                utList.add(udtValue);
             }
         }
         return utList;
@@ -578,5 +594,7 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
     public void setEndpointUserDao(EndpointUserCassandraDao endpointUserDao) {
         this.endpointUserDao = endpointUserDao;
     }
+
+
 
 }

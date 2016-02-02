@@ -24,6 +24,7 @@ import com.datastax.driver.mapping.annotations.Enumerated;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
 import com.datastax.driver.mapping.annotations.Transient;
+
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
@@ -33,6 +34,7 @@ import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.util.Date;
 
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.OPT_LOCK;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getByteBuffer;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getBytes;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.parseId;
@@ -58,7 +60,7 @@ public final class CassandraEndpointNotification implements EndpointNotification
     @Column(name = CassandraModelConstants.ET_NF_SCHEMA_ID_PROPERTY)
     private String schemaId;
     @Column(name = CassandraModelConstants.ET_NF_VERSION_PROPERTY)
-    private int version;
+    private int nfVersion;
     @ClusteringColumn
     @Column(name = CassandraModelConstants.ET_NF_LAST_MOD_TIME_PROPERTY)
     private Date lastModifyTime;
@@ -68,6 +70,10 @@ public final class CassandraEndpointNotification implements EndpointNotification
     private Date expiredAt;
     @Column(name = CassandraModelConstants.ET_NF_TOPIC_ID_PROPERTY)
     private String topicId;
+    
+    @Column(name = OPT_LOCK)
+    private Long version;
+
 
     public CassandraEndpointNotification() {
     }
@@ -84,7 +90,7 @@ public final class CassandraEndpointNotification implements EndpointNotification
             this.type = notificationDto.getType();
             this.applicationId = notificationDto.getApplicationId();
             this.schemaId = notificationDto.getSchemaId();
-            this.version = notificationDto.getVersion();
+            this.nfVersion = notificationDto.getNfVersion();
             this.lastModifyTime = notificationDto.getLastTimeModify();
             this.body = getByteBuffer(notificationDto.getBody());
             this.expiredAt = notificationDto.getExpiredAt();
@@ -92,6 +98,7 @@ public final class CassandraEndpointNotification implements EndpointNotification
 
         }
         this.id = dto.getId() != null ? dto.getId() : generateId();
+        this.version = dto.getVersion();
     }
 
 
@@ -161,12 +168,12 @@ public final class CassandraEndpointNotification implements EndpointNotification
         this.schemaId = schemaId;
     }
 
-    public int getVersion() {
-        return version;
+    public int getNfVersion() {
+        return nfVersion;
     }
 
-    public void setVersion(int version) {
-        this.version = version;
+    public void setNfVersion(int nfVersion) {
+        this.nfVersion = nfVersion;
     }
 
     public Date getLastModifyTime() {
@@ -200,6 +207,16 @@ public final class CassandraEndpointNotification implements EndpointNotification
     public void setTopicId(String topicId) {
         this.topicId = topicId;
     }
+    
+    @Override
+    public Long getVersion() {
+        return version;
+    }
+
+    @Override
+    public void setVersion(Long version) {
+        this.version = version;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -208,7 +225,7 @@ public final class CassandraEndpointNotification implements EndpointNotification
 
         CassandraEndpointNotification that = (CassandraEndpointNotification) o;
 
-        if (version != that.version) return false;
+        if (nfVersion != that.nfVersion) return false;
         if (applicationId != null ? !applicationId.equals(that.applicationId) : that.applicationId != null)
             return false;
         if (body != null ? !body.equals(that.body) : that.body != null) return false;
@@ -233,7 +250,7 @@ public final class CassandraEndpointNotification implements EndpointNotification
         result = 31 * result + (type != null ? type.hashCode() : 0);
         result = 31 * result + (applicationId != null ? applicationId.hashCode() : 0);
         result = 31 * result + (schemaId != null ? schemaId.hashCode() : 0);
-        result = 31 * result + version;
+        result = 31 * result + nfVersion;
         result = 31 * result + (lastModifyTime != null ? lastModifyTime.hashCode() : 0);
         result = 31 * result + (body != null ? body.hashCode() : 0);
         result = 31 * result + (expiredAt != null ? expiredAt.hashCode() : 0);
@@ -249,7 +266,7 @@ public final class CassandraEndpointNotification implements EndpointNotification
                 ", type=" + type +
                 ", applicationId='" + applicationId + '\'' +
                 ", schemaId='" + schemaId + '\'' +
-                ", version=" + version +
+                ", nfVersion=" + nfVersion +
                 ", lastModifyTime=" + lastModifyTime +
                 ", body=" + body +
                 ", expiredAt=" + expiredAt +
@@ -266,12 +283,13 @@ public final class CassandraEndpointNotification implements EndpointNotification
         notificationDto.setType(type);
         notificationDto.setApplicationId(applicationId);
         notificationDto.setSchemaId(schemaId);
-        notificationDto.setVersion(version);
+        notificationDto.setNfVersion(nfVersion);
         notificationDto.setLastTimeModify(lastModifyTime);
         notificationDto.setBody(getBytes(body));
         notificationDto.setExpiredAt(expiredAt);
         notificationDto.setTopicId(topicId);
         dto.setNotificationDto(notificationDto);
+        dto.setVersion(version);
         return dto;
     }
 }

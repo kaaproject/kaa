@@ -23,6 +23,7 @@ import com.datastax.driver.mapping.annotations.Enumerated;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
 import com.datastax.driver.mapping.annotations.Transient;
+
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.server.common.dao.model.Notification;
@@ -32,6 +33,7 @@ import java.nio.ByteBuffer;
 import java.util.Date;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.OPT_LOCK;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getByteBuffer;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getBytes;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.parseId;
@@ -75,7 +77,7 @@ public final class CassandraNotification implements Notification, Serializable {
 
     @ClusteringColumn(value = 0)
     @Column(name = NF_VERSION_PROPERTY)
-    private int version;
+    private int nfVersion;
     @ClusteringColumn(value = 1)
     @Column(name = NF_SEQ_NUM_PROPERTY)
     private int seqNum;
@@ -86,6 +88,9 @@ public final class CassandraNotification implements Notification, Serializable {
     private ByteBuffer body;
     @Column(name = NF_EXPIRED_AT_PROPERTY)
     private Date expiredAt;
+    
+    @Column(name = OPT_LOCK)
+    private Long version;
 
     public CassandraNotification() {
     }
@@ -95,7 +100,7 @@ public final class CassandraNotification implements Notification, Serializable {
         if (columns != null && columns.length == COMPOSITE_ID_SIZE) {
             this.topicId = columns[0];
             this.type = NotificationTypeDto.valueOf(columns[1]);
-            this.version = Integer.valueOf(columns[2]);
+            this.nfVersion = Integer.valueOf(columns[2]);
             this.seqNum = Integer.valueOf(columns[3]);
         }
     }
@@ -105,7 +110,7 @@ public final class CassandraNotification implements Notification, Serializable {
         this.schemaId = dto.getSchemaId();
         this.topicId = dto.getTopicId();
         this.type = dto.getType();
-        this.version = dto.getVersion();
+        this.nfVersion = dto.getNfVersion();
         this.seqNum = dto.getSecNum();
         this.lastModifyTime = dto.getLastTimeModify();
         this.body = getByteBuffer(dto.getBody());
@@ -115,6 +120,7 @@ public final class CassandraNotification implements Notification, Serializable {
         if (isBlank(id)) {
             generateId();
         }
+        this.version = dto.getVersion();
     }
 
     public String getTopicId() {
@@ -157,12 +163,12 @@ public final class CassandraNotification implements Notification, Serializable {
         this.schemaId = schemaId;
     }
 
-    public int getVersion() {
-        return version;
+    public int getNfVersion() {
+        return nfVersion;
     }
 
-    public void setVersion(int version) {
-        this.version = version;
+    public void setNfVersion(int nfVersion) {
+        this.nfVersion = nfVersion;
     }
 
     public int getSeqNum() {
@@ -196,6 +202,16 @@ public final class CassandraNotification implements Notification, Serializable {
     public void setExpiredAt(Date expiredAt) {
         this.expiredAt = expiredAt;
     }
+    
+    @Override
+    public Long getVersion() {
+        return version;
+    }
+
+    @Override
+    public void setVersion(Long version) {
+        this.version = version;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -205,7 +221,7 @@ public final class CassandraNotification implements Notification, Serializable {
         CassandraNotification that = (CassandraNotification) o;
 
         if (seqNum != that.seqNum) return false;
-        if (version != that.version) return false;
+        if (nfVersion != that.nfVersion) return false;
         if (applicationId != null ? !applicationId.equals(that.applicationId) : that.applicationId != null)
             return false;
         if (body != null ? !body.equals(that.body) : that.body != null) return false;
@@ -228,7 +244,7 @@ public final class CassandraNotification implements Notification, Serializable {
                 ", id='" + id + '\'' +
                 ", applicationId='" + applicationId + '\'' +
                 ", schemaId='" + schemaId + '\'' +
-                ", version=" + version +
+                ", nfVersion=" + nfVersion +
                 ", seqNum=" + seqNum +
                 ", lastModifyTime=" + lastModifyTime +
                 ", body=" + body +
@@ -243,7 +259,7 @@ public final class CassandraNotification implements Notification, Serializable {
         result = 31 * result + (id != null ? id.hashCode() : 0);
         result = 31 * result + (applicationId != null ? applicationId.hashCode() : 0);
         result = 31 * result + (schemaId != null ? schemaId.hashCode() : 0);
-        result = 31 * result + version;
+        result = 31 * result + nfVersion;
         result = 31 * result + seqNum;
         result = 31 * result + (lastModifyTime != null ? lastModifyTime.hashCode() : 0);
         result = 31 * result + (body != null ? body.hashCode() : 0);
@@ -259,11 +275,12 @@ public final class CassandraNotification implements Notification, Serializable {
         dto.setSchemaId(schemaId);
         dto.setTopicId(topicId);
         dto.setLastTimeModify(lastModifyTime);
-        dto.setVersion(version);
+        dto.setNfVersion(nfVersion);
         dto.setType(type);
         dto.setBody(body != null ? getBytes(body) : null);
         dto.setExpiredAt(expiredAt);
         dto.setSecNum(seqNum);
+        dto.setVersion(version);
         return dto;
     }
 
@@ -278,7 +295,7 @@ public final class CassandraNotification implements Notification, Serializable {
         StringBuilder builder = new StringBuilder();
         builder.append(topicId)
                 .append(KEY_DELIMITER).append(type)
-                .append(KEY_DELIMITER).append(version)
+                .append(KEY_DELIMITER).append(nfVersion)
                 .append(KEY_DELIMITER).append(seqNum);
         id = builder.toString();
     }
