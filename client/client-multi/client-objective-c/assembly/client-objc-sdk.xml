@@ -44,7 +44,6 @@
                 <include>README.md</include>
                 <include>Podfile</include>
                 <include>build.sh</include>
-                <include>test.sh</include>
             </includes>
         </fileSet>
     </fileSets>
