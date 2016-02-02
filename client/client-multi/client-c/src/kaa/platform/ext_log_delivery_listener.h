@@ -36,7 +36,7 @@ extern "C" {
  * One or more log records are aggregated into the single bucket.
  */
 typedef struct {
-    size_t   log_count;     /**< Logs left to upload across all buckets. */
+    size_t   log_count;     /**< Logs associated with a bucket. */
     uint16_t bucket_id;     /**< ID of bucket present in storage. */
 } kaa_log_bucket_info_t;
 
