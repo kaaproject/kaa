@@ -54,7 +54,7 @@ import org.springframework.stereotype.Repository;
 import com.mongodb.DBObject;
 
 @Repository
-public class EndpointProfileMongoDao extends AbstractMongoDao<MongoEndpointProfile, ByteBuffer> implements EndpointProfileDao<MongoEndpointProfile> {
+public class EndpointProfileMongoDao extends AbstractVersionableMongoDao<MongoEndpointProfile, ByteBuffer> implements EndpointProfileDao<MongoEndpointProfile> {
 
     private static final Logger LOG = LoggerFactory.getLogger(EndpointProfileMongoDao.class);
 

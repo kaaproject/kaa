@@ -16,14 +16,9 @@
 
 package org.kaaproject.kaa.server.common.nosql.cassandra.dao;
 
-import static com.datastax.driver.core.querybuilder.QueryBuilder.eq;
-import static com.datastax.driver.core.querybuilder.QueryBuilder.set;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getByteBuffer;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getBytes;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.ENDPOINT_CONFIGURATION_COLUMN_FAMILY_NAME;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.ENDPOINT_CONFIGURATION_CONF_HASH_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.ENDPOINT_CONFIGURATION_CONF_ID_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.ENDPOINT_CONFIGURATION_CONF_PROPERTY;
 
 import java.nio.ByteBuffer;
 
@@ -34,10 +29,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import com.datastax.driver.core.querybuilder.Assignment;
-
 @Repository(value = "endpointConfigurationDao")
-public class EndpointConfigurationCassandraDao extends AbstractCassandraDao<CassandraEndpointConfiguration, ByteBuffer> implements EndpointConfigurationDao<CassandraEndpointConfiguration> {
+public class EndpointConfigurationCassandraDao extends AbstractCassandraDao<CassandraEndpointConfiguration, ByteBuffer>
+        implements EndpointConfigurationDao<CassandraEndpointConfiguration> {
 
     private static final Logger LOG = LoggerFactory.getLogger(EndpointConfigurationCassandraDao.class);
 
@@ -49,16 +43,6 @@ public class EndpointConfigurationCassandraDao extends AbstractCassandraDao<Cass
     @Override
     protected String getColumnFamilyName() {
         return ENDPOINT_CONFIGURATION_COLUMN_FAMILY_NAME;
-    }
-    
-    @Override
-    protected CassandraEndpointConfiguration updateLocked(
-            CassandraEndpointConfiguration entity) {
-        return updateLockedImpl(entity.getVersion(), 
-                new Assignment[]{set(ENDPOINT_CONFIGURATION_CONF_PROPERTY, entity.getConfiguration()),
-                             set(ENDPOINT_CONFIGURATION_CONF_ID_PROPERTY, entity.getId())},
-                             eq(ENDPOINT_CONFIGURATION_CONF_HASH_PROPERTY, getByteBuffer(getBytes(entity.getConfigurationHash())))
-                );
     }
 
     @Override
@@ -97,6 +81,5 @@ public class EndpointConfigurationCassandraDao extends AbstractCassandraDao<Cass
             removeByHash(getBytes(key));
         }
     }
-
 
 }

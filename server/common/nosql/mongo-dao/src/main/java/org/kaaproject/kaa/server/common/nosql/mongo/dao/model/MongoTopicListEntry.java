@@ -16,23 +16,21 @@
 
 package org.kaaproject.kaa.server.common.nosql.mongo.dao.model;
 
-import org.kaaproject.kaa.common.dto.TopicDto;
-import org.kaaproject.kaa.common.dto.TopicListEntryDto;
-import org.kaaproject.kaa.server.common.dao.model.TopicListEntry;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Version;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.TOPIC_LIST_ENTRY;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.TOPIC_LIST_SIMPLE_HASH;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.TOPIC_LIST_TOPIC_IDS;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.TOPIC_LIST_SIMPLE_HASH;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.TOPIC_LIST_TOPIC_IDS;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.OPT_LOCK;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.TOPIC_LIST_ENTRY;
+import org.kaaproject.kaa.common.dto.TopicDto;
+import org.kaaproject.kaa.common.dto.TopicListEntryDto;
+import org.kaaproject.kaa.server.common.dao.model.TopicListEntry;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 @Document(collection = TOPIC_LIST_ENTRY)
 public final class MongoTopicListEntry implements TopicListEntry, Serializable {
@@ -48,10 +46,6 @@ public final class MongoTopicListEntry implements TopicListEntry, Serializable {
     @Field(TOPIC_LIST_TOPIC_IDS)
     private List<String> topicIds;
 
-    @Version
-    @Field(OPT_LOCK)
-    private Long version;
-
     public MongoTopicListEntry() {
     }
 
@@ -64,7 +58,6 @@ public final class MongoTopicListEntry implements TopicListEntry, Serializable {
                 topicIds.add(topic.getId());
             }
         }
-        this.version = dto.getVersion();
     }
 
     public byte[] getHash() {
@@ -127,18 +120,6 @@ public final class MongoTopicListEntry implements TopicListEntry, Serializable {
             topicDto.setId(topicId);
             topicDtos.add(topicDto);
         }
-        TopicListEntryDto dto = new TopicListEntryDto(simpleHash, hash, topicDtos);
-        dto.setVersion(version);
-        return dto;
-    }
-
-    @Override
-    public Long getVersion() {
-        return version;
-    }
-
-    @Override
-    public void setVersion(Long version) {
-        this.version = version;
+        return new TopicListEntryDto(simpleHash, hash, topicDtos);
     }
 }

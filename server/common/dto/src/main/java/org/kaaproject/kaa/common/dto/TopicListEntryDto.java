@@ -20,7 +20,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
-public final class TopicListEntryDto implements HasVersion, Serializable {
+public final class TopicListEntryDto implements Serializable {
 
     private static final long serialVersionUID = 2771583997490244417L;
 
@@ -29,8 +29,6 @@ public final class TopicListEntryDto implements HasVersion, Serializable {
     private byte[] hash;
 
     private List<TopicDto> topics;
-
-    private Long version;
 
     public TopicListEntryDto(int simpleHash, byte[] hash, List<TopicDto> topics) {
         this.simpleHash = simpleHash;
@@ -60,16 +58,6 @@ public final class TopicListEntryDto implements HasVersion, Serializable {
 
     public void setTopics(List<TopicDto> topics) {
         this.topics = topics;
-    }
-
-    @Override
-    public Long getVersion() {
-        return version;
-    }
-
-    @Override
-    public void setVersion(Long version) {
-        this.version = version;
     }
 
     @Override

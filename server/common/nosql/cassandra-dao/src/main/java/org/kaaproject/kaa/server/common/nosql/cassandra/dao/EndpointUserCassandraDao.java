@@ -40,7 +40,7 @@ import com.datastax.driver.core.querybuilder.Assignment;
 import com.datastax.driver.core.querybuilder.Select.Where;
 import com.datastax.driver.core.querybuilder.Update;
 
-public class EndpointUserCassandraDao extends AbstractCassandraDao<CassandraEndpointUser, String> implements EndpointUserDao<CassandraEndpointUser> {
+public class EndpointUserCassandraDao extends AbstractVersionableCassandraDao<CassandraEndpointUser, String> implements EndpointUserDao<CassandraEndpointUser> {
 
     private static final Logger LOG = LoggerFactory.getLogger(EndpointUserCassandraDao.class);
 

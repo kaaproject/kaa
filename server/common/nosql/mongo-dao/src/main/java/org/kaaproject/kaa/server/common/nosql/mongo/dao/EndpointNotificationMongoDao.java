@@ -16,8 +16,14 @@
 
 package org.kaaproject.kaa.server.common.nosql.mongo.dao;
 
-import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.ENDPOINT_NOTIFICATION;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_ENDPOINT_KEY_HASH;
+import static org.springframework.data.mongodb.core.query.Criteria.where;
+import static org.springframework.data.mongodb.core.query.Query.query;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointNotificationDao;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoEndpointNotification;
@@ -25,13 +31,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.ENDPOINT_NOTIFICATION;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_ENDPOINT_KEY_HASH;
-import static org.springframework.data.mongodb.core.query.Criteria.where;
-import static org.springframework.data.mongodb.core.query.Query.query;
+import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
 
 @Repository
 public class EndpointNotificationMongoDao extends AbstractMongoDao<MongoEndpointNotification, String> implements EndpointNotificationDao<MongoEndpointNotification> {

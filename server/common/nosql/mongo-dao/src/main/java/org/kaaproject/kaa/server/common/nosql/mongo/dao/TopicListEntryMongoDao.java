@@ -16,7 +16,12 @@
 
 package org.kaaproject.kaa.server.common.nosql.mongo.dao;
 
-import com.mongodb.DBObject;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.ID;
+import static org.springframework.data.mongodb.core.query.Criteria.where;
+import static org.springframework.data.mongodb.core.query.Query.query;
+
+import java.nio.ByteBuffer;
+
 import org.kaaproject.kaa.common.dto.TopicListEntryDto;
 import org.kaaproject.kaa.server.common.dao.impl.TopicListEntryDao;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants;
@@ -25,11 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import java.nio.ByteBuffer;
-
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.ID;
-import static org.springframework.data.mongodb.core.query.Criteria.where;
-import static org.springframework.data.mongodb.core.query.Query.query;
+import com.mongodb.DBObject;
 
 @Repository
 public class TopicListEntryMongoDao extends AbstractMongoDao<MongoTopicListEntry, ByteBuffer> implements TopicListEntryDao<MongoTopicListEntry> {

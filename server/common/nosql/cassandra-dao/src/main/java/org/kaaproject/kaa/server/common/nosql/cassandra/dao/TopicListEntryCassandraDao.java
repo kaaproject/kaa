@@ -16,6 +16,10 @@
 
 package org.kaaproject.kaa.server.common.nosql.cassandra.dao;
 
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getByteBuffer;
+
+import java.nio.ByteBuffer;
+
 import org.kaaproject.kaa.common.dto.TopicListEntryDto;
 import org.kaaproject.kaa.server.common.dao.impl.TopicListEntryDao;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants;
@@ -23,17 +27,6 @@ import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraTopic
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
-
-import com.datastax.driver.core.querybuilder.Assignment;
-
-import java.nio.ByteBuffer;
-
-import static com.datastax.driver.core.querybuilder.QueryBuilder.eq;
-import static com.datastax.driver.core.querybuilder.QueryBuilder.set;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getByteBuffer;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.TOPIC_LIST_ENTRY_HASH_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.TOPIC_LIST_ENTRY_SIMPLE_HASH_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.TOPIC_LIST_ENTRY_TOPIC_IDS_PROPERTY;
 
 @Repository(value = "topicListEntryDao")
 public class TopicListEntryCassandraDao extends AbstractCassandraDao<CassandraTopicListEntry, ByteBuffer> implements TopicListEntryDao<CassandraTopicListEntry> {
@@ -66,15 +59,5 @@ public class TopicListEntryCassandraDao extends AbstractCassandraDao<CassandraTo
     public void removeByHash(byte[] hash) {
         LOG.debug("Remove topic list entry by hash [{}] ", hash);
         getMapper().delete(getByteBuffer(hash));
-    }
-
-    @Override
-    protected CassandraTopicListEntry updateLocked(CassandraTopicListEntry entity) {
-        return updateLockedImpl(
-                entity.getVersion(),
-                new Assignment[] {
-                        set(TOPIC_LIST_ENTRY_SIMPLE_HASH_PROPERTY, entity.getSimpleHash()), 
-                        set(TOPIC_LIST_ENTRY_TOPIC_IDS_PROPERTY, entity.getTopicIds())},
-                eq(TOPIC_LIST_ENTRY_HASH_PROPERTY, entity.getHash()));
     }
 }

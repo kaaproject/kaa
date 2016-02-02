@@ -15,12 +15,11 @@
  */
 package org.kaaproject.kaa.server.common.dao.model;
 
-import org.kaaproject.kaa.common.dto.HasVersion;
-import org.kaaproject.kaa.common.dto.TopicListEntryDto;
-
 import java.util.List;
 
-public interface TopicListEntry extends ToDto<TopicListEntryDto>, HasVersion {
+import org.kaaproject.kaa.common.dto.TopicListEntryDto;
+
+public interface TopicListEntry extends ToDto<TopicListEntryDto> {
 
     List<String> getTopicIds();
 }

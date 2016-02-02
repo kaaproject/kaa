@@ -26,7 +26,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.kaaproject.kaa.common.dto.HasVersion;
 import org.kaaproject.kaa.server.common.dao.exception.KaaOptimisticLockingFailureException;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.client.CassandraClient;
 import org.slf4j.Logger;
@@ -49,7 +48,7 @@ import com.datastax.driver.core.querybuilder.Update.Assignments;
 import com.datastax.driver.mapping.Mapper;
 import com.datastax.driver.mapping.Result;
 
-public abstract class AbstractCassandraDao<T extends HasVersion, K> {
+public abstract class AbstractCassandraDao<T, K> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractCassandraDao.class);
     private static final String KAA = "kaa";
@@ -129,20 +128,12 @@ public abstract class AbstractCassandraDao<T extends HasVersion, K> {
     }
 
     public T save(T entity) {
-        if (entity.getVersion() == null) {
-            entity.setVersion(0l);
-            LOG.debug("Save entity {}", entity);
-            Statement saveStatement = getSaveQuery(entity);
-            saveStatement.setConsistencyLevel(getWriteConsistencyLevel());
-            execute(saveStatement);
-            return entity;
-        } else {
-            LOG.debug("Update entity {}", entity);
-            return updateLocked(entity);
-        }
+        LOG.debug("Save entity {}", entity);
+        Statement saveStatement = getSaveQuery(entity);
+        saveStatement.setConsistencyLevel(getWriteConsistencyLevel());
+        execute(saveStatement);
+        return entity;
     }
-
-    protected abstract T updateLocked(T entity);
 
     protected T updateLockedImpl(Long version, Assignment[] assignments, Clause... whereClauses) {
         version = (version == null) ? 0l : version;

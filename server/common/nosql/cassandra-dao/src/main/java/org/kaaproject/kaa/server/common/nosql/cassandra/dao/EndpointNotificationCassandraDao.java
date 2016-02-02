@@ -19,20 +19,10 @@ package org.kaaproject.kaa.server.common.nosql.cassandra.dao;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.delete;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.eq;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.select;
-import static com.datastax.driver.core.querybuilder.QueryBuilder.set;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getByteBuffer;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.ET_NF_APPLICATION_ID_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.ET_NF_BODY_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.ET_NF_COLUMN_FAMILY_NAME;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.ET_NF_ENDPOINT_KEY_HASH_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.ET_NF_EXPIRED_AT_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.ET_NF_ID_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.ET_NF_LAST_MOD_TIME_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.ET_NF_NOTIFICATION_TYPE_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.ET_NF_SCHEMA_ID_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.ET_NF_SEQ_NUM_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.ET_NF_TOPIC_ID_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.ET_NF_VERSION_PROPERTY;
 
 import java.util.Collections;
 import java.util.List;
@@ -47,7 +37,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.datastax.driver.core.Statement;
-import com.datastax.driver.core.querybuilder.Assignment;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
 import com.datastax.driver.core.querybuilder.Select;
 
@@ -67,27 +56,6 @@ public class EndpointNotificationCassandraDao extends AbstractCassandraDao<Cassa
     @Override
     protected String getColumnFamilyName() {
         return ET_NF_COLUMN_FAMILY_NAME;
-    }
-
-    @Override
-    protected CassandraEndpointNotification updateLocked(
-            CassandraEndpointNotification entity) {
-        return updateLockedImpl(
-                entity.getVersion(),
-                new Assignment[] {
-                        set(ET_NF_ID_PROPERTY, entity.getId()), 
-                        set(ET_NF_SEQ_NUM_PROPERTY, entity.getSeqNum()),
-                        set(ET_NF_NOTIFICATION_TYPE_PROPERTY, entity.getType().name()),
-                        set(ET_NF_APPLICATION_ID_PROPERTY,
-                                entity.getApplicationId()),
-                        set(ET_NF_SCHEMA_ID_PROPERTY, entity.getSchemaId()),
-                        set(ET_NF_VERSION_PROPERTY, entity.getNfVersion()),
-                        set(ET_NF_BODY_PROPERTY, entity.getBody()),
-                        set(ET_NF_EXPIRED_AT_PROPERTY, entity.getExpiredAt()),
-                        set(ET_NF_TOPIC_ID_PROPERTY, entity.getTopicId()) },
-                eq(ET_NF_ENDPOINT_KEY_HASH_PROPERTY,
-                        entity.getEndpointKeyHash()),
-                eq(ET_NF_LAST_MOD_TIME_PROPERTY, entity.getLastModifyTime()));
     }
 
     @Override

@@ -16,6 +16,20 @@
 
 package org.kaaproject.kaa.server.common.nosql.cassandra.dao.model;
 
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.OPT_LOCK;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getByteBuffer;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getBytes;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.parseId;
+
+import java.io.Serializable;
+import java.nio.ByteBuffer;
+import java.util.Date;
+
+import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
+import org.kaaproject.kaa.common.dto.NotificationDto;
+import org.kaaproject.kaa.common.dto.NotificationTypeDto;
+import org.kaaproject.kaa.server.common.dao.model.EndpointNotification;
+
 import com.datastax.driver.core.utils.Bytes;
 import com.datastax.driver.mapping.EnumType;
 import com.datastax.driver.mapping.annotations.ClusteringColumn;
@@ -24,20 +38,6 @@ import com.datastax.driver.mapping.annotations.Enumerated;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
 import com.datastax.driver.mapping.annotations.Transient;
-
-import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
-import org.kaaproject.kaa.common.dto.NotificationDto;
-import org.kaaproject.kaa.common.dto.NotificationTypeDto;
-import org.kaaproject.kaa.server.common.dao.model.EndpointNotification;
-
-import java.io.Serializable;
-import java.nio.ByteBuffer;
-import java.util.Date;
-
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.OPT_LOCK;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getByteBuffer;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getBytes;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.parseId;
 
 @Table(name = CassandraModelConstants.ET_NF_COLUMN_FAMILY_NAME)
 public final class CassandraEndpointNotification implements EndpointNotification, Serializable {
@@ -98,7 +98,6 @@ public final class CassandraEndpointNotification implements EndpointNotification
 
         }
         this.id = dto.getId() != null ? dto.getId() : generateId();
-        this.version = dto.getVersion();
     }
 
 
@@ -207,16 +206,6 @@ public final class CassandraEndpointNotification implements EndpointNotification
     public void setTopicId(String topicId) {
         this.topicId = topicId;
     }
-    
-    @Override
-    public Long getVersion() {
-        return version;
-    }
-
-    @Override
-    public void setVersion(Long version) {
-        this.version = version;
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -289,7 +278,6 @@ public final class CassandraEndpointNotification implements EndpointNotification
         notificationDto.setExpiredAt(expiredAt);
         notificationDto.setTopicId(topicId);
         dto.setNotificationDto(notificationDto);
-        dto.setVersion(version);
         return dto;
     }
 }

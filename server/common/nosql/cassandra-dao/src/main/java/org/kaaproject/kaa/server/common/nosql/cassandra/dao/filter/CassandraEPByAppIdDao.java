@@ -16,28 +16,26 @@
 
 package org.kaaproject.kaa.server.common.nosql.cassandra.dao.filter;
 
+import static com.datastax.driver.core.querybuilder.QueryBuilder.eq;
+import static com.datastax.driver.core.querybuilder.QueryBuilder.gte;
+import static com.datastax.driver.core.querybuilder.QueryBuilder.select;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getByteBuffer;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_BY_APP_ID_APPLICATION_ID_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_BY_APP_ID_ENDPOINT_KEY_HASH_PROPERTY;
+
+import java.nio.ByteBuffer;
+import java.util.List;
+
 import org.apache.commons.codec.binary.Base64;
 import org.kaaproject.kaa.common.dto.PageLinkDto;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.AbstractCassandraDao;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEPByAppId;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants;
-
-import static com.datastax.driver.core.querybuilder.QueryBuilder.select;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getByteBuffer;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import com.datastax.driver.core.Statement;
-
-import java.nio.ByteBuffer;
-import java.util.List;
-
-import static com.datastax.driver.core.querybuilder.QueryBuilder.eq;
-import static com.datastax.driver.core.querybuilder.QueryBuilder.gte;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_BY_APP_ID_APPLICATION_ID_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_BY_APP_ID_ENDPOINT_KEY_HASH_PROPERTY;
 
 @Repository
 public class CassandraEPByAppIdDao extends AbstractCassandraDao<CassandraEPByAppId, String> {
@@ -93,10 +91,5 @@ public class CassandraEPByAppIdDao extends AbstractCassandraDao<CassandraEPByApp
         }
         List<CassandraEPByAppId> filter = findListByStatement(queryStatement);
         return getEndpointKeyHash(filter);
-    }
-
-    @Override
-    protected CassandraEPByAppId updateLocked(CassandraEPByAppId entity) {
-        throw new UnsupportedOperationException("Not implemented!");
     }
 }

@@ -19,9 +19,9 @@ package org.kaaproject.kaa.server.common.nosql.cassandra.dao.filter;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.eq;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.gte;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.select;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getByteBuffer;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_BY_ENDPOINT_GROUP_ID_ENDPOINT_GROUP_ID_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_BY_ENDPOINT_GROUP_ID_ENDPOINT_KEY_HASH_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getByteBuffer;
 
 import java.nio.ByteBuffer;
 import java.util.List;
@@ -81,11 +81,5 @@ public class CassandraEPByEndpointGroupIdDao extends AbstractCassandraDao<Cassan
         }
         List<CassandraEPByEndpointGroupId> filter = findListByStatement(queryStatement);
         return getEndpointKeyHash(filter);
-    }
-
-    @Override
-    protected CassandraEPByEndpointGroupId updateLocked(
-            CassandraEPByEndpointGroupId entity) {
-        throw new UnsupportedOperationException("Not implemented!");
     }
 }
