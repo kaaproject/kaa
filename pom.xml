@@ -30,7 +30,7 @@ Copyright 2014-2015 CyberVision, Inc.
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <main.dir>${basedir}</main.dir>
-        <akka.version>2.3.14</akka.version>
+        <akka.version>2.4.1</akka.version>
         <spring.version>4.0.2.RELEASE</spring.version>
         <spring.security.version>3.2.5.RELEASE</spring.security.version>
         <spring.data.version>Fowler-RELEASE</spring.data.version>
@@ -761,7 +761,7 @@ Copyright 2014-2015 CyberVision, Inc.
             </dependency>
             <dependency>
                 <groupId>com.typesafe.akka</groupId>
-                <artifactId>akka-actor_2.10</artifactId>
+                <artifactId>akka-actor_2.11</artifactId>
                 <version>${akka.version}</version>
             </dependency>
             <dependency>
