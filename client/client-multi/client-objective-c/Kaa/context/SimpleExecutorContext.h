@@ -18,7 +18,10 @@
 #import "AbstractExecutorContext.h"
 #import "TransportContext.h"
 
-@interface SimpleExecutorContext : AbstractExecutorContext <ExecutorContext>
+/**
+ * Default multithreaded implementation of ExecutorContext protocol.
+ */
+@interface SimpleExecutorContext : AbstractExecutorContext
 
 - (instancetype)initWithLifeCycleThreadCount:(int32_t)lifeCycleThreadCount
                            apiThreadCount:(int32_t)apiThreadCount

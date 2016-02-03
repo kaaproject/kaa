@@ -145,6 +145,23 @@ void test_list_sort()
     KAA_TRACE_OUT(logger);
 }
 
+static void test_list_empty_sort()
+{
+    KAA_TRACE_IN(logger);
+
+    /* Purpose of this test is to show that no crash occur if
+     * list was initially empty.
+     */
+
+    kaa_list_t *list = kaa_list_create();
+    ASSERT_NOT_NULL(list);
+    kaa_list_sort(list, &test_kaa_list_predicate);
+    kaa_list_destroy(list, NULL);
+
+    KAA_TRACE_OUT(logger);
+}
+
+
 void test_list_hash()
 {
     KAA_TRACE_IN(logger);
@@ -232,5 +249,6 @@ KAA_SUITE_MAIN(List, test_init, test_deinit
         KAA_TEST_CASE(list_push_back, test_list_push_back)
         KAA_TEST_CASE(list_for_each, test_list_for_each)
         KAA_TEST_CASE(list_sort, test_list_sort)
+        KAA_TEST_CASE(list_sort, test_list_empty_sort)
         KAA_TEST_CASE(list_hash, test_list_hash)
 )

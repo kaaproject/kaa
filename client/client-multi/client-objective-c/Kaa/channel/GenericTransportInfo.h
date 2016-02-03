@@ -25,7 +25,7 @@
 
 - (instancetype)initWithServerType:(ServerType)serverType meta:(ProtocolMetaData *)meta;
 
-- (int)accessPointId;
+- (int32_t)accessPointId;
 
 - (NSData *)connectionInfo;
 

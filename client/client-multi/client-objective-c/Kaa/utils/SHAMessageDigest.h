@@ -17,6 +17,10 @@
 #import <Foundation/Foundation.h>
 #import <CommonCrypto/CommonDigest.h>
 
+/**
+ * Class holds secure one-way hash functions that take arbitrary-sized
+ * data and output a fixed-length hash value.
+ */
 @interface SHAMessageDigest : NSObject
 
 /**
@@ -24,10 +28,14 @@
  */
 - (void)updateWithString:(NSString *)string;
 
+/**
+ * Accumulate raw data chunk.
+ */
 - (void)update:(NSData *)data;
 
 /**
  * Compute message digest with accumulated data chunks.
+ *
  * @return pointer to the internal buffer that holds the message digest value.
  */
 - (unsigned char *)final;

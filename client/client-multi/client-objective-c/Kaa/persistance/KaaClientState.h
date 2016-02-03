@@ -22,29 +22,108 @@
 #import "EndpointObjectHash.h"
 #import "EndpointGen.h"
 
+/**
+ * Protocol provides basic methods used store and retrieve Kaa client state.
+ */
 @protocol KaaClientState
 
-@property(nonatomic) BOOL isRegistred;
-@property(nonatomic, readonly) SecKeyRef privateKey;
-@property(nonatomic, readonly) SecKeyRef publicKey;
-@property(nonatomic, strong, readonly) EndpointKeyHash *endpointKeyHash;
-@property(nonatomic) int32_t appStateSequenceNumber;
-@property(nonatomic, strong) EndpointObjectHash *profileHash;
+/**
+ * Returns existing or generates new private key.
+ */
+@property (nonatomic, readonly) SecKeyRef privateKey;
 
-@property(nonatomic, strong) NSMutableDictionary *attachedEndpoints; //<EndpointAccessToken, EndpointKeyHash> as key-value
-@property(nonatomic, strong) NSString *endpointAccessToken;
-@property(atomic) int32_t eventSequenceNumber;
-@property(nonatomic) BOOL isAttachedToUser;
+/**
+ * Returns existing or generates new public key.
+ */
+@property (nonatomic, readonly) SecKeyRef publicKey;
 
-- (void)addTopic:(Topic *)topic;
-- (void)removeTopicId:(int64_t)topicId;
-- (BOOL)updateSubscriptionInfoForTopicId:(int64_t)topicId sequence:(int32_t)sequenceNumber;
-- (NSDictionary *)getNotificationSubscriptions; //<int64_t, int32_t> as key-value.
-- (NSArray *)getTopics; //<Topic>
-- (int32_t)getAndIncrementEventSequenceNumber;
-- (BOOL)isConfigurationVersionUpdated;
-- (void)persist;
+/**
+ * Defines whether server knows about current endpoint profile.
+ */
+@property (nonatomic) BOOL isRegistred;
+
+/**
+ * Unique endpoint identifier.
+ */
+@property (nonatomic, strong, readonly) EndpointKeyHash *endpointKeyHash;
+
+/**
+ * Holds application state sequence number.
+ */
+@property (nonatomic) int32_t appStateSequenceNumber;
+
+/**
+ * Holds endpoint profile hash.
+ */
+@property (nonatomic, strong) EndpointObjectHash *profileHash;
+
+/**
+ * @return <EndpointAccessToken, EndpointKeyHash> as key-value.
+ */
+@property (nonatomic, strong) NSMutableDictionary *attachedEndpoints;
+
+/**
+ * Holds current endpoint access token.
+ */
+@property (nonatomic, strong) NSString *endpointAccessToken;
+
+/**
+ * Holds current event sequence number.
+ */
+@property (atomic) int32_t eventSequenceNumber;
+
+/**
+ * Defines whether endpoint is attached to its user.
+ */
+@property (nonatomic) BOOL isAttachedToUser;
+
+
+/**
+ * Adds topic with all its information.
+ */- (void)addTopic:(Topic *)topic;
+
+/**
+ * Remove topic with all its information by topic id.
+ */- (void)removeTopicId:(int64_t)topicId;
+
+/**
+ * Used to update subscription info.
+ */- (BOOL)updateSubscriptionInfoForTopicId:(int64_t)topicId sequence:(int32_t)sequenceNumber;
+
+/**
+ * Return dictionary with notification subscriptions information with Topic id as key 
+ * and sequence number of TopicSubscriptionInfo as value.
+ *
+ * @return <@(int64_t), @(int32_t)> as key-value.
+ */- (NSDictionary *)getNotificationSubscriptions;
+
+/**
+ * @see Topic
+ * @return list of topics
+ */- (NSArray *)getTopics;
+
+/**
+ * @return next event sequence number that could be used by the system.
+ */- (int32_t)getAndIncrementEventSequenceNumber;
+
+/**
+ * @return YES - if configuration version was updated, NO - if it wasn't.
+ */- (BOOL)isConfigurationVersionUpdated;
+
+/**
+ * Persists current client state.
+ */- (void)persist;
+
+/**
+ * Generates and stores new endpoint access token.
+ *
+ * @return new access token
+ */
 - (NSString *)refreshEndpointAccessToken;
+
+/**
+ * Cleans up persisted client state.
+ */
 - (void)clean;
 
 @end

@@ -16,6 +16,10 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ * Implementation of avro union type.
+ * See Apache Avro specification for more details.
+ */
 @interface KAAUnion : NSObject
 
 @property(nonatomic) int branch;

@@ -76,47 +76,12 @@
                     </excludes>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>com.soebes.maven.plugins.dmg</groupId>
-                <artifactId>doxygen-maven-plugin</artifactId>
-                <version>1.0.1</version>
-                <configuration>
-                    <projectName>${project.artifactId}</projectName>
-                    <projectNumber>${project.version}</projectNumber>
-                    <allexternals>false</allexternals>
-                    <alphabeticalIndex>true</alphabeticalIndex>
-                    <extractAll>true</extractAll>
-                    <extractStatic>true</extractStatic>
-                    <recursive>true</recursive>
-                    <haveGraph>true</haveGraph>
-                    <generateHtml>true</generateHtml>
-                    <generateLatex>false</generateLatex>
-                    <filePatterns>*.h *.dox</filePatterns>
-                    <inputDirectory>${basedir}/Kaa</inputDirectory>
-                    <outputDirectory>${basedir}/target/apidocs</outputDirectory>
-                    <excludePatterns>*/src/gen/* */test/* */src/avro_src/*</excludePatterns>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>attach-doxygen-docs</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
 
     <profiles>
         <profile>
             <id>compile-client-objc</id>
-            <activation>
-                <os>
-                    <family>mac</family>
-                </os>
-            </activation>
             <build>
                 <plugins>
                     <plugin>
@@ -126,12 +91,17 @@
                         <executions>
                             <execution>
                                 <id>build_script</id>
-                                <phase>package</phase>
+                                <phase>install</phase>
                                 <goals>
                                     <goal>exec</goal>
                                 </goals>
                                 <configuration>
-                                    <executable>${basedir}/build.sh</executable>
+                                    <executable>bash</executable>
+                                    <workingDirectory>${basedir}</workingDirectory>
+                                    <arguments>
+                                        <argument>${basedir}/build.sh</argument>
+                                        <argument>compile</argument>
+                                    </arguments>
                                 </configuration>
                             </execution>
                             <execution>
@@ -141,7 +111,12 @@
                                     <goal>exec</goal>
                                 </goals>
                                 <configuration>
-                                    <executable>${basedir}/test.sh</executable>
+                                    <executable>bash</executable>
+                                    <workingDirectory>${basedir}</workingDirectory>
+                                    <arguments>
+                                        <argument>${basedir}/build.sh</argument>
+                                        <argument>test</argument>
+                                    </arguments>
                                 </configuration>
                             </execution>
                         </executions>

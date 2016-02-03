@@ -20,7 +20,7 @@
 
 @property (nonatomic, strong) NSData *publicKey;
 @property (nonatomic, strong) NSString *host;
-@property (nonatomic) int port;
+@property (nonatomic) int32_t port;
 
 @end
 
@@ -65,15 +65,15 @@
 }
 
 - (NSString *)getHost {
-    return self.host;
+    return _host;
 }
 
-- (int)getPort {
-    return self.port;
+- (int32_t)getPort {
+    return _port;
 }
 
 - (NSData *)getPublicKey {
-    return self.publicKey;
+    return _publicKey;
 }
 
 - (NSString *)getUrl {

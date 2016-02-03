@@ -16,11 +16,15 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ * Immutable class to represent transport ID. Holds references to transport
+ * protocol id and transport protocol version
+ */
 @interface TransportProtocolId : NSObject <NSCopying>
 
-@property(nonatomic, readonly) int protocolId;
-@property(nonatomic, readonly) int protocolVersion;
+@property(nonatomic, readonly) int32_t protocolId;
+@property(nonatomic, readonly) int32_t protocolVersion;
 
-- (instancetype)initWithId:(int)id version:(int)version;
+- (instancetype)initWithId:(int32_t)id version:(int32_t)version;
 
 @end

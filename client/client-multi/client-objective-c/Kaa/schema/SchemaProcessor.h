@@ -27,7 +27,7 @@
 /**
  * Loads new schema from the buffer.
  *
- * @throws IOException in case of loading schema failure
+ * <b>Important:</b> raises Exception in case of loading schema failure.
  * @param buffer schema buffer
  */
 - (void)loadSchema:(NSData *)buffer;

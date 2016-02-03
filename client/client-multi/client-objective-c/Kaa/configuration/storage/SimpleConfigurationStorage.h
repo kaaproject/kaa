@@ -16,10 +16,16 @@
 
 #import <Foundation/Foundation.h>
 #import "ConfigurationStorage.h"
-#import "KaaClientPlatformContext.h"
 
+/**
+ * Default implementation of ConfigurationStorage protocol that uses
+ * file system to store configuration data.
+ */
 @interface SimpleConfigurationStorage : NSObject <ConfigurationStorage>
 
-- (instancetype)initWithPlatformContext:(id<KaaClientPlatformContext>)context path:(NSString *)path;
+/**
+ * @param path absolute path within file system.
+ */
++ (instancetype)storageWithPath:(NSString *)path;
 
 @end

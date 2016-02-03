@@ -17,6 +17,9 @@
 #import <Foundation/Foundation.h>
 #import "MessageEncoderDecoder.h"
 
+/**
+ * Class is designed to construct http requests.
+ */
 @interface HttpRequestCreator : NSObject
 
 + (NSDictionary *)createOperationHttpRequest:(NSData *)body withEncoderDecoder:(MessageEncoderDecoder *)messageEncDec;

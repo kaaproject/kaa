@@ -302,8 +302,9 @@ static kaa_list_node_t *kaa_split_util( kaa_list_node_t *head)
 
 void kaa_list_sort(kaa_list_t *list, match_predicate pred)
 {
+    KAA_RETURN_IF_NIL(list->size,);
     kaa_list_node_t *node = kaa_merge_sort(kaa_list_begin(list), pred);
-    list->head =  node;
+    list->head = node;
     while (node->next) {
         node = node->next;
     }

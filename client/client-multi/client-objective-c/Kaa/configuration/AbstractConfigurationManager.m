@@ -36,7 +36,9 @@
 
 @implementation AbstractConfigurationManager
 
-- (instancetype)initWithClientProperties:(KaaClientProperties *)properties state:(id<KaaClientState>)state executorContext:(id<ExecutorContext>)context {
+- (instancetype)initWithClientProperties:(KaaClientProperties *)properties
+                                   state:(id<KaaClientState>)state
+                         executorContext:(id<ExecutorContext>)context {
     self = [super init];
     if (self) {
         self.delegates = [NSMutableSet set];

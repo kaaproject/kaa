@@ -19,7 +19,7 @@
 #import "ProfileTransport.h"
 
 /**
- * Default ProfileManager implementation.
+ * Default implementation of ProfileManager protocol.
  */
 @interface DefaultProfileManager : NSObject <ProfileManager>
 

@@ -21,7 +21,10 @@
 #import "KaaClientState.h"
 #import "ExecutorContext.h"
 
-@interface DefaultNotificationManager : NSObject <NotificationManager,NotificationProcessor>
+/**
+ * Default implementation of NotificationManager protocol.
+ */
+@interface DefaultNotificationManager : NSObject <NotificationManager, NotificationProcessor>
 
 - (instancetype)initWithState:(id<KaaClientState>)state
               executorContext:(id<ExecutorContext>)context

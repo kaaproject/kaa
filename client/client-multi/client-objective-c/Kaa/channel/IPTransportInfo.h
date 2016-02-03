@@ -21,7 +21,7 @@
 - (instancetype)initWithTransportInfo:(id<TransportConnectionInfo>)parent;
 
 - (NSString *)getHost;
-- (int)getPort;
+- (int32_t)getPort;
 - (NSData *)getPublicKey;
 - (NSString *)getUrl;
 

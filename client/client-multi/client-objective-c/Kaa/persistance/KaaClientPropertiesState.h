@@ -21,6 +21,10 @@
 
 #define STATE_FILE_DEFAULT  @"state.properties"
 
+/**
+ * Default implementation of KaaClientState protocol that uses file system
+ * to store Kaa client state.
+ */
 @interface KaaClientPropertiesState : NSObject <KaaClientState>
 
 - (instancetype)initWithBase64:(id<KAABase64>)base64 clientProperties:(KaaClientProperties *)properties;

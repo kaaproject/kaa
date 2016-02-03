@@ -18,7 +18,7 @@
 #import "KeyPair.h"
 
 /**
- * The Class MessageEncoderDecoder is responsible for encoding/decoding logic of
+ * Class is responsible for encoding/decoding logic of
  * endpoint - operations server communication.
  */
 @interface MessageEncoderDecoder : NSObject
@@ -29,8 +29,14 @@
 
 - (instancetype)initWithKeyPair:(KeyPair *)keys remotePublicKeyRef:(SecKeyRef)remoteKeyRef;
 
+/**
+ * @return symmetric key used to encode messages.
+ */
 - (NSData *)getSessionKey;
 
+/**
+ * @return encoded symmetric key used to encode messages.
+ */
 - (NSData *)getEncodedSessionKey;
 
 /**
@@ -55,12 +61,24 @@
  */
 - (NSData *)decodeData:(NSData *)message withEncodedKey:(NSData *)encodedKey;
 
+/**
+ * @return private key reference within keychain.
+ */
 - (SecKeyRef)getPrivateKey;
 
+/**
+ * @return public key reference within keychain.
+ */
 - (SecKeyRef)getPublicKey;
 
+/**
+ * @return public key reference within keychain.
+ */
 - (SecKeyRef)getRemotePublicKey;
 
+/**
+ * @return remote public key with bytes representation.
+ */
 - (NSData *)getRemotePublicKeyAsBytes;
 
 /**

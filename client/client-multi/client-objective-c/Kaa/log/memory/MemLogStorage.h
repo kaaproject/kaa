@@ -21,6 +21,8 @@
 
 - (instancetype)initWithDefaults;
 - (instancetype)initWithBucketSize:(int64_t)maxBucketSize bucketRecordCount:(int32_t)maxBucketRecordCount;
-- (instancetype)initWithMaxStorageSize:(int64_t)maxStorageSize bucketSize:(int64_t)bucketSize bucketRecordCount:(int32_t)bucketRecordCount;
+- (instancetype)initWithMaxStorageSize:(int64_t)maxStorageSize
+                            bucketSize:(int64_t)bucketSize
+                     bucketRecordCount:(int32_t)bucketRecordCount;
 
 @end

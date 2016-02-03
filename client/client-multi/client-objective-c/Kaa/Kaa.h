@@ -104,7 +104,7 @@
 /**
  * Creates new Kaa client with default platform context and specified client state delegate.
  */
-+ (id<KaaClient>)clientWithDelegate:(id<KaaClientStateDelegate>)delegate;
++ (id<KaaClient>)clientWithStateDelegate:(id<KaaClientStateDelegate>)delegate;
 
 /**
  * Creates new Kaa client based on default platform context.

@@ -16,6 +16,11 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ * Util class used to calculate hash of list of topics.
+ *
+ * @see Topic
+ */
 @interface TopicListHashCalculator : NSObject
 
 + (int32_t)calculateTopicListHash:(NSArray *)topics;

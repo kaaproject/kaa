@@ -20,6 +20,9 @@
 #import "KaaChannelManager.h"
 #import "AbstractLogCollector.h"
 
+/**
+ * Default implementation of LogCollector protocol.
+ */
 @interface DefaultLogCollector : AbstractLogCollector
 
 @end

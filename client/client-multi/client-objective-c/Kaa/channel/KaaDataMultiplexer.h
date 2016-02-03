@@ -28,10 +28,8 @@
 /**
  * Compiles request for given transport types.
  *
- * types - map of types to be polled.
- * 
- * <TransportType, ChannelDirection>
- *
+ * @param types map of types to be polled <TransportType, ChannelDirection> as key-value.
+ * @return compilated request
  */
 - (NSData *)compileRequestForTypes:(NSDictionary *)types;
 
