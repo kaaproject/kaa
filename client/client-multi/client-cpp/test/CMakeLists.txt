@@ -113,7 +113,6 @@ set ( KAA_TEST_SOURCES
         ../impl/context/SimpleExecutorContext.cpp
         ../impl/context/AbstractExecutorContext.cpp
         ../impl/KaaClientProperties.cpp
-        ../impl/KaaClientContext.cpp
         TestRunner.cpp
         impl/common/EndpointObjectHashTest.cpp
         impl/common/AvroByteArrayConverterTest.cpp

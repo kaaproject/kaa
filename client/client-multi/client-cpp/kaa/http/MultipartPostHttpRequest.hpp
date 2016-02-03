@@ -21,7 +21,7 @@
 
 #include "kaa/http/IHttpRequest.hpp"
 #include "kaa/http/HttpUrl.hpp"
-#include "../IKaaClientContext.hpp"
+#include "kaa/IKaaClientContext.hpp"
 
 #include <map>
 #include <vector>

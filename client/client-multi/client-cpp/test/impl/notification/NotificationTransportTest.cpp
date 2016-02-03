@@ -38,8 +38,9 @@ BOOST_AUTO_TEST_SUITE(NotificationTransportTestSuite)
 
 BOOST_AUTO_TEST_CASE(EmptyRequestTest)
 {
+    properties.setStateFileName("fakePath");
     KaaClientContext clientContext(properties, tmp_logger, context);
-    IKaaClientStateStoragePtr status(new ClientStatus("fakePath", clientContext));
+    IKaaClientStateStoragePtr status(new ClientStatus(clientContext));
     clientContext.setStatus(status);
     MockChannelManager channelManager;
 
@@ -57,8 +58,9 @@ BOOST_AUTO_TEST_CASE(EmptyRequestTest)
 
 BOOST_AUTO_TEST_CASE(SubscriptionInfoTest)
 {
+    properties.setStateFileName("fakePath");
     KaaClientContext clientContext(properties, tmp_logger, context);
-    IKaaClientStateStoragePtr status(new ClientStatus("fakePath", clientContext));
+    IKaaClientStateStoragePtr status(new ClientStatus(clientContext));
     clientContext.setStatus(status);
 
     MockChannelManager channelManager;
@@ -103,8 +105,9 @@ BOOST_AUTO_TEST_CASE(SubscriptionInfoTest)
 
 BOOST_AUTO_TEST_CASE(AcceptedUnicastNotificationsTest)
 {
+    properties.setStateFileName("fakePath");
     KaaClientContext clientContext(properties, tmp_logger, context);
-    IKaaClientStateStoragePtr status(new ClientStatus("fakePath", clientContext));
+    IKaaClientStateStoragePtr status(new ClientStatus(clientContext));
     clientContext.setStatus(status);
 
     MockChannelManager channelManager;
@@ -141,8 +144,9 @@ BOOST_AUTO_TEST_CASE(AcceptedUnicastNotificationsTest)
 
 BOOST_AUTO_TEST_CASE(DetailedTopicStateTest)
 {
+    properties.setStateFileName("fakePath");
     KaaClientContext clientContext(properties, tmp_logger, context);
-    IKaaClientStateStoragePtr status(new ClientStatus("fakePath", clientContext));
+    IKaaClientStateStoragePtr status(new ClientStatus(clientContext));
     clientContext.setStatus(status);
     MockChannelManager channelManager;
     NotificationTransport transport(channelManager, clientContext);
@@ -173,7 +177,7 @@ BOOST_AUTO_TEST_CASE(DetailedTopicStateTest)
     NotificationSyncResponse response1;
     response1.availableTopics.set_array(topics);
     transport.onNotificationResponse(response1);
-    auto detailedTopicState = clientContext.getStatus()->getTopicStates();
+    auto detailedTopicState = clientContext.getStatus().getTopicStates();
 
     BOOST_CHECK(detailedTopicState.size() == topics.size());
 
@@ -207,7 +211,7 @@ BOOST_AUTO_TEST_CASE(DetailedTopicStateTest)
     response2.notifications.set_array(std::vector<Notification>({nf2, nf1, nf3, nf4}));
     transport.onNotificationResponse(response2);
 
-    detailedTopicState = clientContext.getStatus()->getTopicStates();
+    detailedTopicState = clientContext.getStatus().getTopicStates();
 
     for (const auto& topicInfo : detailedTopicState) {
         if (topicInfo.first == topicId1) {

@@ -333,7 +333,7 @@ DemultiplexerReturnCode SyncDataProcessor::processResponse(const std::vector<std
         }
 
         KAA_LOG_DEBUG("Processed SyncResponse");
-        context_.getStatus()->save();
+        context_.getStatus().save();
     } catch (const std::exception& e) {
         KAA_LOG_ERROR(boost::format("Unable to process response: %s") % e.what());
         returnCode = DemultiplexerReturnCode::FAILURE;

@@ -17,15 +17,10 @@
 #ifndef DEFAULTLOGGER_HPP_
 #define DEFAULTLOGGER_HPP_
 
-#include <fstream>
 #include <string>
-#include <boost/log/sources/record_ostream.hpp>
 #include <boost/log/sinks/sync_frontend.hpp>
 #include <boost/log/sinks/text_ostream_backend.hpp>
 #include <boost/smart_ptr/shared_ptr.hpp>
-#include <boost/log/attributes/scoped_attribute.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
-#include <boost/log/utility/setup/file.hpp>
 #include "kaa/KaaDefaults.hpp"
 
 #if KAA_LOG_LEVEL > KAA_LOG_LEVEL_NONE
@@ -36,7 +31,7 @@ namespace kaa {
 
 class DefaultLogger : public ILogger {
 public:
-  DefaultLogger(std::string clientId, std::string logFileName = std::string());
+  DefaultLogger(const std::string& clientId, const std::string& logFileName = std::string());
 
   void log(LogLevel level, const char *message) const;
 

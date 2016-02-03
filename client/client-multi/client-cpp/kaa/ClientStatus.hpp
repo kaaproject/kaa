@@ -43,7 +43,7 @@ typedef boost::bimaps::bimap<
 
 class ClientStatus : public IKaaClientStateStorage {
 public:
-    ClientStatus(const std::string& filename, IKaaClientContext& context);
+    ClientStatus(IKaaClientContext& context);
     ~ClientStatus() { }
 
     std::int32_t getEventSequenceNumber() const;

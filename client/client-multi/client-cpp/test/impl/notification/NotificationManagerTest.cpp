@@ -115,7 +115,7 @@ BOOST_AUTO_TEST_CASE(GetTopicsTest)
     IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
     MockExecutorContext executorContext;
     KaaClientContext clientContext1(properties, tmp_logger, executorContext, status);
-    IKaaClientStateStoragePtr clientStatus1(new ClientStatus(STATUS_FILE_PATH, clientContext1));
+    IKaaClientStateStoragePtr clientStatus1(new ClientStatus(clientContext1));
 
     DetailedTopicStates states;
     std::size_t topicCount = 1 + rand() % 10;
@@ -144,7 +144,7 @@ BOOST_AUTO_TEST_CASE(GetTopicsTest)
     clientStatus1.reset();
 
     KaaClientContext clientContext(properties, tmp_logger, tmpExecContext);
-    IKaaClientStateStoragePtr clientStatus2(new ClientStatus(STATUS_FILE_PATH, clientContext));
+    IKaaClientStateStoragePtr clientStatus2(new ClientStatus(clientContext));
     clientContext.setStatus(clientStatus2);
     NotificationManager notificationManager(clientContext);
 

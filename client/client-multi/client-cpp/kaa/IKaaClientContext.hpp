@@ -24,15 +24,13 @@ namespace kaa {
 
 class KaaClientProperties;
 class ILogger;
-class IKaaClientStateStorage;
 class IExecutorContext;
 
 class IKaaClientContext {
 public:
     virtual KaaClientProperties              &getProperties() = 0;
     virtual ILogger                              &getLogger() = 0;
-    virtual IKaaClientStateStoragePtr             getStatus() = 0;
-    virtual void  setStatus(IKaaClientStateStoragePtr status) = 0;
+    virtual IKaaClientStateStorage               &getStatus() = 0;
     virtual IExecutorContext            &getExecutorContext() = 0;
 
     virtual ~IKaaClientContext() = default;

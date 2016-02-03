@@ -22,12 +22,18 @@
 #include <boost/log/attributes/current_thread_id.hpp>
 #include <boost/log/utility/setup/common_attributes.hpp>
 #include <boost/move/utility.hpp>
+#include <boost/log/attributes/scoped_attribute.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/log/utility/setup/file.hpp>
+#include <boost/log/sources/record_ostream.hpp>
+#include <boost/thread/thread.hpp>
+#include <fstream>
 
-#include <kaa/logging/DefaultLogger.hpp>
+#include "kaa/logging/DefaultLogger.hpp"
 
 namespace kaa {
 
-DefaultLogger::DefaultLogger(std::string clientId, std::string logFileName): clientId_(clientId), pSink_(new text_sink)
+DefaultLogger::DefaultLogger(const std::string& clientId, const std::string& logFileName): clientId_(clientId), pSink_(new text_sink)
 {
     text_sink::locked_backend_ptr pBackend = pSink_->locked_backend();
     boost::shared_ptr< std::ostream > consoleStream(&std::clog, [](const void *)->void const {});
@@ -42,11 +48,11 @@ DefaultLogger::DefaultLogger(std::string clientId, std::string logFileName): cli
                           << '[' <<  boost::log::expressions::attr< boost::log::attributes::current_thread_id::value_type >("ThreadID")
                           << ']' << '[' << boost::log::expressions::attr< boost::log::trivial::severity_level >("Severity") << ']' <<  boost::log::expressions::smessage);
 
-	pSink_->set_filter(boost::log::expressions::begins_with(boost::log::expressions::attr< std::string >("id"), clientId_.c_str()));
-	pBackend->auto_flush(true);
+    pSink_->set_filter(boost::log::expressions::begins_with(boost::log::expressions::attr< std::string >("id"), clientId_.c_str()));
+    pBackend->auto_flush(true);
     boost::log::core::get()->add_global_attribute("TimeStamp", boost::log::attributes::local_clock());
-	boost::log::core::get()->add_global_attribute("ThreadID", boost::log::attributes::current_thread_id());
-	boost::log::core::get()->add_sink(pSink_);
+    boost::log::core::get()->add_global_attribute("ThreadID", boost::log::attributes::current_thread_id());
+    boost::log::core::get()->add_sink(pSink_);
 
 }
 

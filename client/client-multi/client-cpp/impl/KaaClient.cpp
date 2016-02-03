@@ -47,7 +47,7 @@ namespace kaa {
 KaaClient::KaaClient(IKaaClientPlatformContextPtr context, IKaaClientStateListenerPtr listener)
     : logger_(new DefaultLogger(context->getProperties().getClientId(), context->getProperties().getLogFileName())),
       context_(context->getProperties(), *logger_, context->getExecutorContext()),
-      status_(new ClientStatus(context->getProperties().getStateFileName(), context_)),
+      status_(new ClientStatus(context_)),
       platformContext_(context), stateListener_(listener)
 {
     if (!stateListener_) {
@@ -72,7 +72,7 @@ void KaaClient::init()
 
 #ifdef KAA_USE_CONFIGURATION
     SequenceNumber sn = { 0, 0, 1 };
-    context_.getStatus()->setAppSeqNumber(sn);
+    context_.getStatus().setAppSeqNumber(sn);
     configurationManager_.reset(new ConfigurationManager(context_));
 #endif
 #ifdef KAA_USE_EVENTS

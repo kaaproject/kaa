@@ -52,7 +52,6 @@ enum SQLiteOptimizationOptions
 class SQLiteDBLogStorage : public ILogStorage, public ILogStorageStatus {
 public:
     SQLiteDBLogStorage(IKaaClientContext &context
-                     , const std::string& dbName = KAA_DEFAULT_LOG_DB_STORAGE
                      , int optimizationMask = (int)SQLiteOptimizationOptions::SQLITE_NO_OPTIMIZATIONS);
     ~SQLiteDBLogStorage();
 

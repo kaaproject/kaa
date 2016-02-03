@@ -35,7 +35,7 @@ namespace kaa {
 NotificationManager::NotificationManager(IKaaClientContext &context)
     : context_(context)
 {
-    const DetailedTopicStates& topicStates = context_.getStatus()->getTopicStates();
+    const DetailedTopicStates& topicStates = context_.getStatus().getTopicStates();
 
     for (auto &topicState : topicStates) {
         Topic topic;

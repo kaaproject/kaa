@@ -19,7 +19,6 @@
 #if KAA_LOG_LEVEL > KAA_LOG_LEVEL_NONE
 
 #include <boost/format.hpp>
-#include <boost/thread/thread.hpp>
 
 namespace kaa {
 

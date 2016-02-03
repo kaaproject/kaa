@@ -42,7 +42,7 @@ LogCollector::LogCollector(IKaaChannelManagerPtr manager, IKaaClientContext &con
       timeoutTimer_("LogCollector timeoutTimer"), context_(context)
 {
 #ifdef KAA_USE_SQLITE_LOG_STORAGE
-    storage_.reset(new SQLiteDBLogStorage(context_, context_.getProperties().getLogsDatabaseFileName()));
+    storage_.reset(new SQLiteDBLogStorage(context_));
 #else
     storage_.reset(new MemoryLogStorage(context_));
 #endif

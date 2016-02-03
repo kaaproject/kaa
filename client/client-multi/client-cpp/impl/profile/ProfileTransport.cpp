@@ -29,7 +29,7 @@ ProfileTransport::ProfileTransport(IKaaChannelManager& channelManager
 
 bool ProfileTransport::isProfileOutDated(const HashDigest& profileHash)
 {
-    auto currentHash = context_.getStatus()->getProfileHash();
+    auto currentHash = context_.getStatus().getProfileHash();
     return profileHash != currentHash;
 }
 
@@ -40,12 +40,12 @@ ProfileSyncRequestPtr ProfileTransport::createProfileRequest()
     if (profileManager_) {
         auto encodedProfile = profileManager_->getSerializedProfile();
         HashDigest newHash = EndpointObjectHash(encodedProfile).getHashDigest();
-        if (isProfileOutDated(newHash) || !context_.getStatus()->isRegistered()) {
-            context_.getStatus()->setProfileHash(newHash);
+        if (isProfileOutDated(newHash) || !context_.getStatus().isRegistered()) {
+            context_.getStatus().setProfileHash(newHash);
             request.reset(new ProfileSyncRequest());
-            request->endpointAccessToken.set_string(context_.getStatus()->getEndpointAccessToken());
+            request->endpointAccessToken.set_string(context_.getStatus().getEndpointAccessToken());
 
-            if (!context_.getStatus()->isRegistered()) {
+            if (!context_.getStatus().isRegistered()) {
                 request->endpointPublicKey.set_bytes(publicKey_);
             } else {
                 request->endpointPublicKey.set_null();
@@ -70,8 +70,8 @@ void ProfileTransport::onProfileResponse(const ProfileSyncResponse& response)
     if (response.responseStatus == SyncResponseStatus::RESYNC) {
         KAA_LOG_INFO("Going to resync profile...");
         syncAll();
-    } else if (!context_.getStatus()->isRegistered()) {
-        context_.getStatus()->setRegistered(true);
+    } else if (!context_.getStatus().isRegistered()) {
+        context_.getStatus().setRegistered(true);
     }
 
     KAA_LOG_INFO("Processed profile response");

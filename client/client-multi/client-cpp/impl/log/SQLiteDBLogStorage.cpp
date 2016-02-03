@@ -16,11 +16,12 @@
 
 #ifdef KAA_USE_SQLITE_LOG_STORAGE
 
-#include "kaa/log/SQLiteDBLogStorage.hpp"
+#include <kaa/log/SQLiteDBLogStorage.hpp>
 
-#include "kaa/logging/Log.hpp"
-#include "kaa/log/LogRecord.hpp"
-#include "kaa/common/exception/KaaException.hpp"
+#include <kaa/logging/Log.hpp>
+#include <kaa/log/LogRecord.hpp>
+#include <kaa/common/exception/KaaException.hpp>
+#include <kaa/KaaClientProperties.hpp>
 
 #define KAA_LOG_TABLE_NAME "KAA_LOGS"
 
@@ -119,8 +120,8 @@ private:
     sqlite3_stmt *stmt_;
 };
 
-SQLiteDBLogStorage::SQLiteDBLogStorage(IKaaClientContext &context, const std::string& dbName, int optimizationMask)
-    : dbName_(dbName), db_(nullptr), unmarkedRecordCount_(0), totalRecordCount_(0), consumedMemory_(0), context_(context)
+SQLiteDBLogStorage::SQLiteDBLogStorage(IKaaClientContext &context, int optimizationMask)
+  : dbName_(context.getProperties().getLogsDatabaseFileName()), db_(nullptr), unmarkedRecordCount_(0), totalRecordCount_(0), consumedMemory_(0), context_(context)
 {
     openDBConnection();
     initLogTable();

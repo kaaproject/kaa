@@ -89,7 +89,7 @@ void ConfigurationManager::updateConfiguration(const std::uint8_t* data, const s
 void ConfigurationManager::loadConfiguration()
 {
     if (storage_) {
-        if (context_.getStatus()->isSDKPropertiesUpdated()) {
+        if (context_.getStatus().isSDKPropertiesUpdated()) {
             KAA_LOG_INFO("Ignore loading configuration from storage: configuration version updated");
             storage_->clearConfiguration();
         } else {
