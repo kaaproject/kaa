@@ -20,10 +20,12 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 
 import org.apache.thrift.TException;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.Base64Util;
+import org.kaaproject.kaa.server.common.thrift.KaaThriftService;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.OperationsThriftService.Iface;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftActorClassifier;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftClusterEntityType;
@@ -81,8 +83,17 @@ public class DefaultClusterService implements ClusterService {
     @PostConstruct
     public void initBean() {
         LOG.info("Init default cluster service.");
-        neighbors = new Neighbors<MessageTemplate, OperationsServiceMsg>(new MessageTemplate(),
+        neighbors = new Neighbors<MessageTemplate, OperationsServiceMsg>(KaaThriftService.OPERATIONS_SERVICE, new MessageTemplate(),
                 operationsServerConfig.getMaxNumberNeighborConnections());
+    }
+    
+    @PreDestroy
+    public void onStop() {
+        if (neighbors != null) {
+            LOG.info("Shutdown of control service neighbors started!");
+            neighbors.shutdown();
+            LOG.info("Shutdown of control service neighbors complete!");
+        }
     }
 
     @Override
@@ -94,7 +105,7 @@ public class DefaultClusterService implements ClusterService {
     public void setZkNode(OperationsNode operationsNode) {
         this.operationsNode = operationsNode;
         this.id = Neighbors.getServerID(this.operationsNode.getNodeInfo().getConnectionInfo());
-        neighbors.setZkNode(id, operationsNode);
+        neighbors.setZkNode(KaaThriftService.OPERATIONS_SERVICE, this.operationsNode.getNodeInfo().getConnectionInfo(), operationsNode);
         if (resolver != null) {
             updateResolver(this.resolver);
         }

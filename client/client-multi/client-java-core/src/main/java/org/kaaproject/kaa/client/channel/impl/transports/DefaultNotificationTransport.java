@@ -48,15 +48,16 @@ public class DefaultNotificationTransport extends AbstractKaaTransport implement
     private NotificationProcessor processor;
     private final Set<String> acceptedUnicastNotificationIds = new HashSet<>();
     private final List<SubscriptionCommand> sentNotificationCommands = new LinkedList<SubscriptionCommand>();
+    // TODO: fetch this from client state
     private Integer topicListHash = TopicListHashCalculator.calculateTopicListHash(null);
 
     private List<TopicState> getTopicStates() {
         List<TopicState> states = null;
         Map<Long, Integer> nfSubscriptions = clientState.getNfSubscriptions();
-        if(!nfSubscriptions.isEmpty()){
+        if (!nfSubscriptions.isEmpty()) {
             states = new ArrayList<>();
             LOG.info("Topic States:");
-            for(Entry<Long, Integer> nfSubscription : nfSubscriptions.entrySet()){
+            for (Entry<Long, Integer> nfSubscription : nfSubscriptions.entrySet()) {
                 TopicState state = new TopicState(nfSubscription.getKey(), nfSubscription.getValue());
                 states.add(state);
                 LOG.info("{} : {}", state.getTopicId(), state.getSeqNumber());
@@ -82,7 +83,7 @@ public class DefaultNotificationTransport extends AbstractKaaTransport implement
         if (clientState != null) {
             NotificationSyncRequest request = new NotificationSyncRequest();
 
-            if(!acceptedUnicastNotificationIds.isEmpty()){
+            if (!acceptedUnicastNotificationIds.isEmpty()) {
                 LOG.info("Accepted unicast Notifications: {}", acceptedUnicastNotificationIds.size());
                 request.setAcceptedUnicastNotifications(new ArrayList<>(acceptedUnicastNotificationIds));
             }
@@ -97,17 +98,18 @@ public class DefaultNotificationTransport extends AbstractKaaTransport implement
     @Override
     public void onNotificationResponse(NotificationSyncResponse response) throws IOException {
         if (processor != null && clientState != null) {
-            if(response.getResponseStatus() == SyncResponseStatus.NO_DELTA){
+            if (response.getResponseStatus() == SyncResponseStatus.NO_DELTA) {
                 acceptedUnicastNotificationIds.clear();
-            }
-            List<Topic> topics = response.getAvailableTopics();
-            topicListHash = TopicListHashCalculator.calculateTopicListHash(topics);
-
-            if (topics != null) {
-                for (Topic topic : topics) {
-                    clientState.addTopic(topic);
+            } else {
+                List<Topic> topics = response.getAvailableTopics();
+                if (topics != null) {
+                    // TODO: store this to client state
+                    topicListHash = TopicListHashCalculator.calculateTopicListHash(topics);
+                    for (Topic topic : topics) {
+                        clientState.addTopic(topic);
+                    }
+                    processor.topicsListUpdated(topics);
                 }
-                processor.topicsListUpdated(topics);
             }
             List<Notification> notifications = response.getNotifications();
             if (notifications != null) {
@@ -118,18 +120,18 @@ public class DefaultNotificationTransport extends AbstractKaaTransport implement
 
                 for (Notification notification : unicastNotifications) {
                     LOG.info("Received {}", notification);
-                    if(acceptedUnicastNotificationIds.add(notification.getUid())){
+                    if (acceptedUnicastNotificationIds.add(notification.getUid())) {
                         newNotifications.add(notification);
-                    }else{
+                    } else {
                         LOG.info("Notification with uid [{}] was already received", notification.getUid());
                     }
                 }
 
                 for (Notification notification : multicastNotifications) {
                     LOG.info("Received {}", notification);
-                    if(clientState.updateTopicSubscriptionInfo(notification.getTopicId(), notification.getSeqNumber())){
+                    if (clientState.updateTopicSubscriptionInfo(notification.getTopicId(), notification.getSeqNumber())) {
                         newNotifications.add(notification);
-                    }else{
+                    } else {
                         LOG.info("Notification with seq number {} was already received", notification.getSeqNumber());
                     }
                 }
@@ -152,8 +154,8 @@ public class DefaultNotificationTransport extends AbstractKaaTransport implement
 
     private List<Notification> getUnicastNotifications(List<Notification> notifications) {
         List<Notification> result = new ArrayList<>();
-        for(Notification notification : notifications){
-            if(notification.getUid() != null){
+        for (Notification notification : notifications) {
+            if (notification.getUid() != null) {
                 result.add(notification);
             }
         }
@@ -162,8 +164,8 @@ public class DefaultNotificationTransport extends AbstractKaaTransport implement
 
     private List<Notification> getMulticastNotifications(List<Notification> notifications) {
         List<Notification> result = new ArrayList<>();
-        for(Notification notification : notifications){
-            if(notification.getUid() == null){
+        for (Notification notification : notifications) {
+            if (notification.getUid() == null) {
                 result.add(notification);
             }
         }
