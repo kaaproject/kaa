@@ -437,12 +437,6 @@ public class AdminClient {
                 HttpMethod.GET, null, typeRef);
         return entity.getBody();
     }
-    
-    public EndpointProfileSchemaDto createProfileSchema(EndpointProfileSchemaDto profileSchema) throws Exception {
-        MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
-        params.add("profileSchema", profileSchema);
-        return restTemplate.postForObject(url + "saveProfileSchema", params, EndpointProfileSchemaDto.class);
-    }
 
     public List<VersionDto> getUserNotificationSchemas(String applicationId) throws Exception {
         ParameterizedTypeReference<List<VersionDto>> typeRef = new ParameterizedTypeReference<List<VersionDto>>() {
