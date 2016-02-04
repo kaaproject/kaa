@@ -29,6 +29,7 @@
 #include "kaa/event/registration/UserTransport.hpp"
 #include "kaa/event/registration/IRegistrationProcessor.hpp"
 #include "kaa/event/registration/IEndpointRegistrationManager.hpp"
+#include "kaa/IKaaClientContext.hpp"
 
 namespace kaa {
 
@@ -44,7 +45,7 @@ class EndpointRegistrationManager : public IEndpointRegistrationManager
                                   , public IRegistrationProcessor
 {
 public:
-    EndpointRegistrationManager(IKaaClientStateStoragePtr status, IExecutorContext& executorContext);
+    EndpointRegistrationManager(IKaaClientContext &context);
 
     virtual void attachEndpoint(const std::string&  endpointAccessToken
                               , IAttachEndpointCallbackPtr listener = IAttachEndpointCallbackPtr());
@@ -61,7 +62,7 @@ public:
                           , const std::string& userVerifierToken
                           , IUserAttachCallbackPtr listener = IUserAttachCallbackPtr());
 
-    virtual bool isAttachedToUser() { return status_->getEndpointAttachStatus(); }
+    virtual bool isAttachedToUser() { return context_.getStatus().getEndpointAttachStatus(); }
 
     virtual void setAttachStatusListener(IAttachStatusListenerPtr listener) { attachStatusListener_ = listener; }
 
@@ -91,8 +92,8 @@ private:
 #endif
 
 private:
+    IKaaClientContext         &context_;
     UserTransport*            userTransport_;
-    IKaaClientStateStoragePtr status_;
 
     std::shared_ptr<UserAttachRequest> userAttachRequest_;
     KAA_MUTEX_DECLARE(userAttachRequestGuard_);
@@ -111,8 +112,6 @@ private:
 
     std::unordered_map<std::int32_t, IAttachEndpointCallbackPtr> attachEndpointListeners_;
     std::unordered_map<std::int32_t, IDetachEndpointCallbackPtr> detachEndpointListeners_;
-
-    IExecutorContext& executorContext_;
 };
 
 }

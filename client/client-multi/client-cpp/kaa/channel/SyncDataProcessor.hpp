@@ -32,6 +32,7 @@
 #include "kaa/channel/transport/IRedirectionTransport.hpp"
 #include "kaa/channel/transport/IBootstrapTransport.hpp"
 #include "kaa/IKaaClientStateStorage.hpp"
+#include "kaa/IKaaClientContext.hpp"
 
 namespace kaa {
 
@@ -55,7 +56,7 @@ public:
                     , IEventTransportPtr
                     , ILoggingTransportPtr
                     , IRedirectionTransportPtr
-                    , IKaaClientStateStoragePtr);
+                    , IKaaClientContext&);
 
     virtual std::vector<std::uint8_t> compileRequest(const std::map<TransportType, ChannelDirection>& transportTypes);
     virtual DemultiplexerReturnCode processResponse(const std::vector<std::uint8_t> &response);
@@ -76,6 +77,8 @@ private:
     IKaaClientStateStoragePtr   clientStatus_;
 
     std::int32_t                requestId;
+
+    IKaaClientContext &context_;
 };
 
 }  // namespace kaa

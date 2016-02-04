@@ -30,11 +30,12 @@
 #include "kaa/event/IFetchEventListeners.hpp"
 #include "kaa/log/ILogCollector.hpp"
 #include "kaa/failover/IFailoverStrategy.hpp"
+#include "kaa/IKaaClientContext.hpp"
 
 
 namespace kaa {
 
-class EventFamilyFactory;;
+class EventFamilyFactory;
 class IKaaChannelManager;
 class IKaaDataMultiplexer;
 class IKaaDataDemultiplexer;
@@ -457,6 +458,13 @@ public:
      * @return @link IKaaDataDemultiplexer @endlink object
      */
     virtual IKaaDataDemultiplexer&            getBootstrapDemultiplexer() = 0;
+
+    /**
+     * @brief Retrieves Kaa context data
+     *
+     * @return @link IKaaClientContext @endlink object
+     */
+    virtual IKaaClientContext&                getKaaClientContext() = 0;
 
     virtual ~IKaaClient() { }
 };

@@ -29,8 +29,8 @@ namespace kaa {
 
 class PeriodicLogUploadStrategy : public DefaultLogUploadStrategy {
 public:
-    PeriodicLogUploadStrategy(std::size_t logUploadCheckReriod)
-        : DefaultLogUploadStrategy(), lastUploadTime_(Clock::now())
+    PeriodicLogUploadStrategy(std::size_t logUploadCheckReriod, IKaaClientContext &context)
+        : DefaultLogUploadStrategy(context), lastUploadTime_(Clock::now())
     {
         setLogUploadCheckPeriod(logUploadCheckReriod);
     }

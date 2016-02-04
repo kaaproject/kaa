@@ -26,6 +26,7 @@
 #include "kaa/channel/transport/AbstractKaaTransport.hpp"
 #include "kaa/IKaaClientStateStorage.hpp"
 #include "kaa/notification/INotificationProcessor.hpp"
+#include "kaa/IKaaClientContext.hpp"
 
 namespace kaa {
 
@@ -35,7 +36,7 @@ class NotificationTransport: public AbstractKaaTransport<TransportType::NOTIFICA
                              public INotificationTransport
 {
 public:
-    NotificationTransport(IKaaClientStateStoragePtr status, IKaaChannelManager& manager);
+    NotificationTransport(IKaaChannelManager& manager, IKaaClientContext &context);
 
     virtual NotificationSyncRequestPtr createEmptyNotificationRequest();
 

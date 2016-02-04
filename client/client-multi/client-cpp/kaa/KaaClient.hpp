@@ -29,7 +29,6 @@
 #include "kaa/channel/SyncDataProcessor.hpp"
 #include "kaa/notification/NotificationManager.hpp"
 #include "kaa/event/registration/EndpointRegistrationManager.hpp"
-#include "kaa/ClientStatus.hpp"
 #include "kaa/channel/IKaaChannelManager.hpp"
 #include "kaa/channel/impl/DefaultBootstrapChannel.hpp"
 #include "kaa/channel/impl/DefaultOperationTcpChannel.hpp"
@@ -41,6 +40,7 @@
 #include "kaa/IKaaClientStateListener.hpp"
 #include "kaa/IKaaClientPlatformContext.hpp"
 #include "kaa/KaaClientProperties.hpp"
+#include "kaa/KaaClientContext.hpp"
 
 namespace kaa {
 
@@ -103,7 +103,7 @@ public:
 
     virtual IKaaDataMultiplexer&                getBootstrapMultiplexer();
     virtual IKaaDataDemultiplexer&              getBootstrapDemultiplexer();
-
+    virtual IKaaClientContext&                  getKaaClientContext();
 private:
     void init();
 
@@ -113,6 +113,7 @@ private:
     void checkReadiness();
 
 private:
+
     enum class State {
         CREATED,
         STARTED,
@@ -124,8 +125,10 @@ private:
     void checkClientState(State expected, const std::string& message);
     void checkClientStateNot(State unexpected, const std::string& message);
 
-private:
-    State                                           clientState_ = State::CREATED;
+    State                                            clientState_ = State::CREATED;
+    LoggerPtr                                        logger_;
+    KaaClientContext                                 context_;
+    IKaaClientStateStoragePtr                        status_;
 
 #ifdef KAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL
     std::unique_ptr<DefaultBootstrapChannel>         bootstrapChannel_;
@@ -141,11 +144,8 @@ private:
 #endif
 
     IKaaClientPlatformContextPtr                     platformContext_;
-    IExecutorContext&                                executorContext_;
-    KaaClientProperties                              clientProperties_;
     IKaaClientStateListenerPtr                       stateListener_;
 
-    IKaaClientStateStoragePtr                        status_;
     std::unique_ptr<IBootstrapManager>               bootstrapManager_;
     std::unique_ptr<IKaaChannelManager>              channelManager_;
     std::unique_ptr<SyncDataProcessor>               syncProcessor_;

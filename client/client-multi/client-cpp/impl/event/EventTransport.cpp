@@ -26,14 +26,11 @@
 namespace kaa {
 
 EventTransport::EventTransport(IEventDataProcessor& processor, IKaaChannelManager& channelManager,
-                               IKaaClientStateStoragePtr state)
-        : AbstractKaaTransport(channelManager), eventDataProcessor_(processor), startEventSN_(0),
+                               IKaaClientContext &context)
+        : AbstractKaaTransport(channelManager,context), eventDataProcessor_(processor), startEventSN_(0),
           isEventSNSynchronized_(false)
 {
-    clientStatus_ = state;
-    if (clientStatus_) {
-        startEventSN_ = clientStatus_->getEventSequenceNumber();
-    }
+    startEventSN_ = context.getStatus().getEventSequenceNumber();
 }
 std::shared_ptr<EventSyncRequest> EventTransport::createEventRequest(std::int32_t requestId)
 {
@@ -59,12 +56,12 @@ std::shared_ptr<EventSyncRequest> EventTransport::createEventRequest(std::int32_
         KAA_MUTEX_LOCKED("eventsGuard_");
 
         if (releasedEvents.size() != 0) {
-            auto sNum = clientStatus_->getEventSequenceNumber();
+            auto sNum = context_.getStatus().getEventSequenceNumber();
             for (auto& pair : releasedEvents) {
                 pair.second.seqNum = sNum++;
                 events_[requestId].push_back(std::move(pair.second));
             }
-            clientStatus_->setEventSequenceNumber(sNum);
+            context_.getStatus().setEventSequenceNumber(sNum);
         }
         std::vector<Event> eventsForSending;
         for (auto& pair : events_) {
@@ -91,9 +88,7 @@ void EventTransport::onEventResponse(const EventSyncResponse& response)
 
         if (startEventSN_ != expectedEventSN) {
             startEventSN_ = expectedEventSN;
-            if (clientStatus_) {
-                clientStatus_->setEventSequenceNumber(startEventSN_);
-            }
+            context_.getStatus().setEventSequenceNumber(startEventSN_);
             KAA_LOG_INFO(boost::format("Event sequence number is unsynchronized. Set to %li") % startEventSN_);
         } else {
             KAA_LOG_INFO(boost::format("Event sequence number is up to date: %li") % startEventSN_);

@@ -29,8 +29,8 @@ namespace kaa {
 
 class StorageSizeWithTimeLimitLogUploadStrategy : public DefaultLogUploadStrategy {
 public:
-    StorageSizeWithTimeLimitLogUploadStrategy(std::size_t volumeThreshold, std::size_t logUploadCheckReriod)
-        : DefaultLogUploadStrategy(), lastUploadTime_(Clock::now())
+    StorageSizeWithTimeLimitLogUploadStrategy(std::size_t volumeThreshold, std::size_t logUploadCheckReriod, IKaaClientContext &context)
+        : DefaultLogUploadStrategy(context), lastUploadTime_(Clock::now())
     {
         setVolumeThreshold(volumeThreshold);
         setLogUploadCheckPeriod(logUploadCheckReriod);

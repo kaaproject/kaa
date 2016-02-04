@@ -23,6 +23,7 @@
 #include "kaa/KaaThread.hpp"
 #include "kaa/log/ILogStorage.hpp"
 #include "kaa/log/ILogStorageStatus.hpp"
+#include "kaa/IKaaClientContext.hpp"
 
 namespace kaa {
 
@@ -37,7 +38,7 @@ public:
     /**
      * @brief Creates the size-unlimited log storage.
      */
-    MemoryLogStorage();
+    MemoryLogStorage(IKaaClientContext &context);
 
     /**
      * @brief Creates the size-limited log storage.
@@ -52,7 +53,7 @@ public:
      *
      * @throw KaaException The percentage is out of the range.
      */
-    MemoryLogStorage(size_t maxOccupiedSize, float percentToDelete);
+    MemoryLogStorage(size_t maxOccupiedSize, float percentToDelete, IKaaClientContext &context);
 
     virtual void addLogRecord(LogRecordPtr serializedRecord);
     virtual ILogStorageStatus& getStatus() { return *this; }
@@ -92,6 +93,7 @@ private:
 
     BlockId recordBlockId_;
     static const BlockId NO_OWNER;
+    IKaaClientContext &context_;
 };
 
 }  // namespace kaa

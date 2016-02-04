@@ -30,6 +30,9 @@
 #include <boost/test/unit_test.hpp>
 
 #include "kaa/configuration/manager/IConfigurationReceiver.hpp"
+#include "kaa/KaaClientContext.hpp"
+#include "kaa/KaaClientProperties.hpp"
+#include "kaa/logging/DefaultLogger.hpp"
 
 #include "headers/context/MockExecutorContext.hpp"
 #include "headers/MockKaaClientStateStorage.hpp"
@@ -64,11 +67,13 @@ BOOST_AUTO_TEST_SUITE(ConfigurationManagerSuite)
 
 BOOST_AUTO_TEST_CASE(configurationUpdated)
 {
-    auto stateMock = std::make_shared<MockKaaClientStateStorage>();
-
+    IKaaClientStateStoragePtr stateMock(new MockKaaClientStateStorage);
+    KaaClientProperties properties;
+    DefaultLogger tmp_logger(properties.getClientId());
     SimpleExecutorContext context;
+    KaaClientContext clientContext(properties, tmp_logger, context, stateMock);
     context.init();
-    ConfigurationManager manager(context, stateMock);
+    ConfigurationManager manager(clientContext);
     ConfigurationReceiverMock receiver;
 
     manager.addReceiver(receiver);
@@ -94,9 +99,12 @@ BOOST_AUTO_TEST_CASE(configurationUpdated)
 
 BOOST_AUTO_TEST_CASE(configurationPartialUpdated)
 {
-    auto stateMock = std::make_shared<MockKaaClientStateStorage>();
+    IKaaClientStateStoragePtr stateMock(new MockKaaClientStateStorage);
     MockExecutorContext context;
-    ConfigurationManager manager(context, stateMock);
+    KaaClientProperties properties;
+    DefaultLogger logger(properties.getClientId());
+    KaaClientContext clientContext(properties, logger, context, stateMock);
+    ConfigurationManager manager(clientContext);
 
     BOOST_CHECK_THROW(manager.processConfigurationData(std::vector<std::uint8_t>(getDefaultConfigData().begin(), getDefaultConfigData().begin() + getDefaultConfigData().size()), false);, KaaException);
 }

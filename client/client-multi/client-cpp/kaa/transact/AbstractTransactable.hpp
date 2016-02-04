@@ -27,7 +27,7 @@ namespace kaa {
 template<class Container>
 class AbstractTransactable : public ITransactable {
 public:
-    virtual TransactionIdPtr beginTransaction() {
+    virtual TransactionIdPtr beginTransaction(IKaaClientContext &context_) {
         TransactionIdPtr trxId(new TransactionId);
         KAA_MUTEX_LOCKING("transactionsGuard_")
         KAA_MUTEX_UNIQUE_DECLARE(transactionsLock, transactionsGuard_);
@@ -38,7 +38,7 @@ public:
         return trxId;
     }
 
-    virtual void rollback(TransactionIdPtr trxId) {
+    virtual void rollback(TransactionIdPtr trxId, IKaaClientContext &context_) {
         KAA_MUTEX_LOCKING("transactionsGuard_")
         KAA_MUTEX_UNIQUE_DECLARE(transactionsLock, transactionsGuard_);
         KAA_MUTEX_LOCKED("transactionsGuard_")
@@ -49,7 +49,7 @@ public:
         }
     }
 
-    Container & getContainerByTrxId(TransactionIdPtr trxId) {
+    Container & getContainerByTrxId(TransactionIdPtr trxId, IKaaClientContext &context_) {
         KAA_MUTEX_LOCKING("transactionsGuard_")
         KAA_MUTEX_UNIQUE_DECLARE(transactionsLock, transactionsGuard_);
         KAA_MUTEX_LOCKED("transactionsGuard_")
