@@ -28,17 +28,16 @@ typedef enum {
     DISCONNECT_REASON_INTERNAL_ERROR = 0x02
 } DisconnectReason;
 
-/**
- * Disconnect message Class.
- * The DISCONNECT message is sent from the client to the server to indicate that it is about to close
- * its TCP/IP connection. This provides a clean disconnection, rather than just dropping the line.
- * If the client had connected with the clean session flag set,
- * then all previously maintained information about the client will be discarded.
- * A server should not rely on the client to close the TCP/IP connection after receiving a DISCONNECT.
- */
-
 #define DISCONNECT_REMAINING_LEGTH_V1 2
 
+/**
+ * Disconnect message class.<br>
+ * The DISCONNECT message is sent from the client to the server to indicate that it is about to close
+ * its TCP/IP connection. This provides a clean disconnection, rather than just dropping the line.<br>
+ * If the client had connected with the clean session flag set,
+ * then all previously maintained information about the client will be discarded.<br>
+ * A server should not rely on the client to close the TCP/IP connection after receiving a DISCONNECT.
+ */
 @interface KAATcpDisconnect : KAAMqttFrame
 
 @property (nonatomic) DisconnectReason reason;

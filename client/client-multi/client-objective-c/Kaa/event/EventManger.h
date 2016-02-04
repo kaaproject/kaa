@@ -27,9 +27,9 @@
 /**
  * Public access interface for events listener resolution request.
  *
- * Use this module to find endpoints which are able to receive events by list of
- * events' fully-qualified names.
- * NOTE: Operations server will respond with list of endpoints which
+ * Use this module to find endpoints which are able to receive events by array of
+ * events' fully-qualified names.<br>
+ * NOTE: Operations server will respond with array of endpoints which
  * can receive ALL listed event types (FQNs).
  */
 @protocol EventListenersResolver
@@ -37,8 +37,8 @@
 /**
  * Submits an event listeners resolution request
  *
- * @param eventFQNs - list of event class FQNs which have to be supported by endpoint.
- * @param delegate - result delegate
+ * @param eventFQNs Array of event class FQNs which have to be supported by endpoint.
+ * @param delegate Result delegate
  *
  * @return Request ID of submitted request
  */
@@ -57,36 +57,36 @@
 /**
  * Creates an Event and passes it to OPS
  *
- * @param eventFqn - fully qualified name of the Event
- * @param data     - event data
- * @param target   - event target, nil for event broadcasting.
+ * @param eventFqn Fully qualified name of the Event
+ * @param data     Event data
+ * @param target   Event target, nil for event broadcasting.
  */
 - (void)produceEventWithFQN:(NSString *)eventFQN data:(NSData *)data target:(NSString *)target;
 
 /**
  * Creates an Event and passes it to OPS
  *
- * @param eventFqn - fully qualified name of the Event
- * @param data     - event data
- * @param target   - event target, nil for event broadcasting.
- * @param trxId    - transaction Id of event
+ * @param eventFqn Fully qualified name of the Event
+ * @param data     Event data
+ * @param target   Event target, nil for event broadcasting.
+ * @param trxId    Transaction Id of event
  */
 - (void)produceEventWithFQN:(NSString *)eventFQN data:(NSData *)data target:(NSString *)target transactionId:(TransactionId *)transactionId;
 
 /**
  * Retrieves an event.
  *
- * @param eventFqn - fully qualified name of the Event
- * @param data     - event data
- * @param source   - event source
+ * @param eventFqn Fully qualified name of the Event
+ * @param data     Event data
+ * @param source   Event source
  */
 - (void)onGenericEvent:(NSString *)eventFQN withData:(NSData *)data fromSource:(NSString *)source;
 
 /**
- * Called when SyncResponse contains resolved list of endpoints which
+ * Called when SyncResponse contains resolved array of endpoints which
  * support FQNs given in a request before.
  *
- * @param response - list of responses <EventListenersResponse>.
+ * @param response Array of responses.
  * @see EventListenersResponse
  */
 - (void)eventListenersResponseReceived:(NSArray *)response;
@@ -94,7 +94,7 @@
 /**
  * Adds new event listener requests to the given Sync request.
  *
- * @param request - event sync request.
+ * @param request Event sync request.
  * @see EventSyncRequest
  */
 - (void)fillEventListenersSyncRequest:(EventSyncRequest *)request;
@@ -102,7 +102,7 @@
 /**
  * Retrieves and clears list of pending events and removes them from EventManager.
  *
- * @return - list of <Event> objects
+ * @return Array of <Event> objects
  * @see Event
  */
 - (NSArray *)pollPendingEvents;
@@ -110,7 +110,7 @@
 /**
  * Peek but not clear list of pending events and removes them from EventManager.
  *
- * @return - list of <Event> objects
+ * @return Array of <Event> objects
  * @see Event
  */
 - (NSArray *)peekPendingEvents;
@@ -121,15 +121,15 @@
 - (void)clearState;
 
 /**
- * Restrict manager to use data channel until #releaseDataChannel called
+ * Restrict manager to use data channel until releaseDataChannel is called.
  */
 - (void)engageDataChannel;
 
 /**
  * Allow manager to use data channel.
  *
- * @return <b>true</b> if there is data to be sent via data channel<br>
- * <b>false</b> otherwise
+ * @return <b>YES</b> if there is data to be sent via data channel<br>
+ * <b>NO</b> otherwise
  */
 - (BOOL)releaseDataChannel;
 

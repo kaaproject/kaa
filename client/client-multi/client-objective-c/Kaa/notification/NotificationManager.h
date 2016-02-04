@@ -35,7 +35,7 @@
 /**
  * Add delegate for notification topics' list updates.
  *
- * @param delegate the delegate to receive updates.
+ * @param delegate The delegate to receive updates.
  * @see NotificationTopicListDelegate
  */
 - (void)addTopicListDelegate:(id<NotificationTopicListDelegate>)delegate;
@@ -43,7 +43,7 @@
 /**
  * Remove delegate of notification topics' list updates.
  *
- * @param delegate delegate the delegate which is no longer needs updates.
+ * @param delegate The delegate which no longer needs updates.
  * @see NotificationTopicListDelegate
  */
 - (void)removeTopicListDelegate:(id<NotificationTopicListDelegate>)delegate;
@@ -51,7 +51,7 @@
 /**
  * Retrieve a list of available notification topics.
  *
- * @return list of available topics <Topic>
+ * @return Array of available topics.
  * @see Topic
  */
 - (NSArray *)getTopics;
@@ -60,7 +60,7 @@
  * Add delegate to receive all notifications (both for mandatory and
  * optional topics).
  *
- * @param delegate delegate to receive notifications
+ * @param delegate Delegate to receive notifications
  */
 - (void)addNotificationDelegate:(id<NotificationDelegate>)delegate;
 
@@ -68,19 +68,19 @@
  * Add listener to receive notifications relating to the specified topic.
  *
  * Listener(s) for optional topics may be added/removed irrespective to
- * whether subscription was already or not.
+ * whether subscription existed or not.
  *
- * @param delegate delegate to receive notifications.
+ * @param delegate Delegate to receive notifications.
  * @param topicId Id of topic (both mandatory and optional).
  *
- * @throws UnavailableTopicException if unknown topic id is provided.
+ * @exception UnavailableTopicException Unknown topic id is provided.
  */
 - (void)addNotificationDelegate:(id<NotificationDelegate>)delegate forTopicId:(int64_t)topicId;
 
 /**
  * Remove listener receiving all notifications (both for mandatory and optional topics).
  *
- * @param delegate delegate to receive notifications
+ * @param delegate Delegate to receive notifications
  */
 - (void)removeNotificationDelegate:(id<NotificationDelegate>)delegate;
 
@@ -88,12 +88,12 @@
  * Remove delegate receiving notifications for the specified topic.
  *
  * Delegate(s) for optional topics may be added/removed irrespective to
- * whether subscription was already or not.
+ * whether subscription existed or not.
  *
- * @param delegate delegate to receive notifications.
+ * @param delegate Delegate to receive notifications.
  * @param topicId Id of topic (both mandatory and optional).
  *
- * @throws UnavailableTopicException if unknown topic id is provided.
+ * @exception UnavailableTopicException Unknown topic id is provided.
  */
 - (void)removeNotificationDelegate:(id<NotificationDelegate>)delegate forTopicId:(int64_t)topicId;
 
@@ -101,23 +101,19 @@
  * Subscribe to notifications relating to the specified optional topic.
  *
  * @param topicId Id of a optional topic.
- * @param forceSync Define whether current subscription update should be accepted immediately (#sync)
+ * @param forceSync Define whether current subscription update should be accepted immediately
  *
- * @throws UnavailableTopicException if unknown topic id is provided or topic isn't optional.
- *
- * @see #sync
+ * @exception UnavailableTopicException Unknown topic id is provided or topic isn't optional.
  */
 - (void)subscribeToTopicWithId:(int64_t)topicId forceSync:(BOOL)forceSync;
 
 /**
  * Subscribe to notifications relating to the specified list of optional topics.
  *
- * @param topicIds list of optional topic ids. <NSString>
- * @param forceSync define whether current subscription update should be accepted immediately (#sync)
+ * @param topicIds Array of optional topic ids.
+ * @param forceSync Define whether current subscription update should be accepted immediately.
  *
- * @throws UnavailableTopicException if unknown topic id is provided or topic isn't optional.
- *
- * @see #sync
+ * @exception UnavailableTopicException Unknown topic id is provided or topic isn't optional.
  */
 - (void)subscribeToTopicsWithIDs:(NSArray *)topicIds forceSync:(BOOL)forceSync;
 
@@ -127,25 +123,21 @@
  * All previously added listeners will be removed automatically.
  *
  * @param topicId Id of a optional topic.
- * @param forceSync define whether current subscription update should be accepted immediately (#sync).
+ * @param forceSync Define whether current subscription update should be accepted immediately.
  *
- * @throws UnavailableTopicException if unknown topic id is provided or topic isn't optional.
- *
- * @see #sync
+ * @exception UnavailableTopicException Unknown topic id is provided or topic isn't optional.
  */
 - (void)unsubscribeFromTopicWithId:(int64_t)topicId forceSync:(BOOL)forceSync;
 
 /**
- * Unsubscribe from notifications relating to the specified list of optional topics.
+ * Unsubscribe from notifications relating to the specified array of optional topics.
  *
  * All previously added listeners will be removed automatically.
  *
- * @param topicIds list of optional topic ids. <NSString>
- * @param forceSync define whether current subscription update should be accepted immediately (#sync).
+ * @param topicIds Array of optional topic ids. < NSString >
+ * @param forceSync Define whether current subscription update should be accepted immediately.
  *
- * @throws UnavailableTopicException if unknown topic id is provided or topic isn't optional.
- *
- * @see #sync
+ * @exception UnavailableTopicException Unknown topic id is provided or topic isn't optional.
  */
 - (void)unsubscribeFromTopicsWithIDs:(NSArray *)topicIds forceSync:(BOOL)forceSync;
 

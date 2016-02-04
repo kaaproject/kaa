@@ -28,14 +28,14 @@
 /**
  * Create new transaction entry.
  *
- * @return TransactionId - unique id of created transaction.
+ * @return Unique id of created transaction.
  */
 - (TransactionId *)beginTransaction;
 
 /**
  * Submit the transaction<br>
  *
- * @param trxId - the unique identifier of the transaction which should be submitted.
+ * @param trxId The unique identifier of the transaction which should be submitted.
  */
 - (void)commitTransactionWithId:(TransactionId *)trxId;
 

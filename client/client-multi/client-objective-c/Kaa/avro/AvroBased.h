@@ -19,7 +19,7 @@
 
 /**
  * Abstract implementation of Avro protocol. 
- * Used to be base class for all avro classes.
+ * Designed to be base class for all avro classes.
  */
 @interface AvroBased : NSObject <Avro>
 

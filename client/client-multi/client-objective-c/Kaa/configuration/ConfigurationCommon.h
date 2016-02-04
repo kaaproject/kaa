@@ -60,8 +60,8 @@
 /**
  * Routine for processing received configuration data.
  *
- * buffer - ihe input buffer with raw data
- * fullResync - notify whether configuration is a full resync
+ * @param data The input buffer with raw data
+ * @param fullResync Notify whether configuration is a full resync
  */
 - (void)processConfigurationData:(NSData *)data fullResync:(BOOL)fullResync;
 
@@ -85,7 +85,7 @@
 /**
  * Provide storage object which is able to persist encoded configuration data.
  *
- * storage - object which will save and load configuration data
+ * @param storage Object which will save and load configuration data
  */
 - (void)setConfigurationStorage:(id<ConfigurationStorage>)storage;
 

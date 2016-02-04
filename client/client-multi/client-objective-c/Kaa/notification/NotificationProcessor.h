@@ -28,7 +28,7 @@
 /**
  * Called on topics' list update.
  *
- * @param list the new topics' list. <Topic>
+ * @param topics The new topics array. <Topic>
  * @see Topic
  */
 - (void)topicsListUpdated:(NSArray *)topics;
@@ -36,7 +36,7 @@
 /**
  * Called when new notifications arrived.
  *
- * @param notifications the list of new notifications.
+ * @param notifications The list of new notifications.
  * @see Notification
  */
 - (void)notificationsReceived:(NSArray *)notifications;

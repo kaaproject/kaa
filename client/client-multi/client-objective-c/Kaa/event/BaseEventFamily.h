@@ -28,16 +28,16 @@
 /**
  * Returns set of supported incoming events in event family
  *
- * @return set of supported events presented as set event fully qualified names
+ * @return Set of supported events presented as set of event fully qualified names
  */
 - (NSSet *)getSupportedEventFQNs;
 
 /**
 * Generic handler of event received from server.
 *
-* @param eventFQN - fully qualified name of an event
-* @param data     - event data
-* @param source   - event source
+* @param eventFQN Fully qualified name of an event
+* @param data     Event data
+* @param source   Event source
 */
 - (void)onGenericEvent:(NSString *)eventFQN withData:(NSData *)data fromSource:(NSString *)source;
 

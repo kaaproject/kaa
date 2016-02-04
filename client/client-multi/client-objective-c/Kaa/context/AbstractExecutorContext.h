@@ -19,7 +19,7 @@
 #import "TimeCommons.h"
 
 /**
- * Implements some abstactions of ExecutorContext protocol.
+ * Implements some abstractions of ExecutorContext protocol.
  */
 @interface AbstractExecutorContext : NSObject <ExecutorContext>
 

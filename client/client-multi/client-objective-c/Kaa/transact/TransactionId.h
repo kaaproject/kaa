@@ -17,7 +17,7 @@
 #import <Foundation/Foundation.h>
 
 /**
- * Class representing unique transaction id for transactions initiated using <Transactable>
+ * Class representing unique transaction id for transactions initiated using < Transactable ><br>
  * Note: default constructor will initialize TransactionId with random id.
  */
 @interface TransactionId : NSObject <NSCopying>

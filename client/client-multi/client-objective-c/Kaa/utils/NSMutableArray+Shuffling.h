@@ -17,7 +17,7 @@
 #import <Foundation/Foundation.h>
 
 /**
- * Category designed to shuffle elements of NSMutableArry.
+ * Category designed to shuffle elements of NSMutableArray.
  */
 @interface NSMutableArray (Shuffling)
 

@@ -32,7 +32,7 @@
 /**
  * Creates a new Profile update request.
  *
- * @return new Profile update request.
+ * @return New Profile update request.
  * @see ProfileSyncRequest
  */
 - (ProfileSyncRequest *)createProfileRequest;
@@ -40,7 +40,7 @@
 /**
  * Updates the state of the Profile manager from the given response.
  *
- * @param response the response from the server.
+ * @param response The response from the server.
  * @see ProfileSyncResponse
  */
 - (void)onProfileResponse:(ProfileSyncResponse *)response;
@@ -48,7 +48,7 @@
 /**
  * Sets the given Profile manager.
  *
- * @param manager the Profile manager to be set.
+ * @param manager The Profile manager to be set.
  * @see ProfileManager
  */
 - (void)setProfileManager:(id<ProfileManager>)manager;
@@ -56,7 +56,7 @@
 /**
  * Sets the given client's properties.
  *
- * @param properties the client's properties to be set.
+ * @param properties The client's properties to be set.
  * @see KaaClientProperties
  */
 - (void)setClientProperties:(KaaClientProperties *)clientProperties;

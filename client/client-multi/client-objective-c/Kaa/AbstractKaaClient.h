@@ -48,7 +48,7 @@ typedef enum {
  * module is performed using <KaaClient> interface.
  *
  * Class contains abstract methods
- * AbstractKaaClient#createHttpClient(NSString, SecKeyRef, SecKeyRef, NSData)
+ * [AbstractKaaClient createHttpClientWithURLString:privateKeyRef:publicKeyRef:remoteKey:]
  * and few more which are used to reference the platform-specific implementation
  * of http client and Kaa's state persistent storage.
  *
@@ -72,7 +72,8 @@ typedef enum {
                                               clientState:(id<KaaClientState>)state;
 
 /**
- * @param bootstrap servers <TransportProtocolId, List<TransportConnectionInfo>> as key-value
+ * <p></p>
+ * @param bootstrapServers Dictionary with <TransportProtocolId, NSArray < TransportConnectionInfo >> as key-value
  */
 - (id<KaaInternalChannelManager>)buildChannelManagerWithBootstrapManager:(id<BootstrapManager>)bootstrapManager
                                                                  servers:(NSDictionary *)bootstrapServers;

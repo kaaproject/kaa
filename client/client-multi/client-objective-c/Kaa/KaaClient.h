@@ -31,14 +31,14 @@
 /**
  * Adds new log record to local storage.
  *
- * @param record - new log record object
+ * @param record New log record object
  */
 - (BucketRunner *)addLogRecord:(KAADummyLog *)record;
 
 /**
  * Returns latest configuration.
  *
- * @return configuration
+ * @return Configuration
  */
 - (KAADummyConfiguration *)getConfiguration;
 

@@ -111,22 +111,23 @@
  * Return dictionary with notification subscriptions information with Topic id as key 
  * and sequence number of TopicSubscriptionInfo as value.
  *
- * @return <@(int64_t), @(int32_t)> as key-value.
+ * @return Dictionary of <@(int64_t), @(int32_t)> as key-value.
  */
 - (NSDictionary *)getNotificationSubscriptions;
 
 /**
  * @see Topic
- * @return list of topics
+ * @return Array of topics
  */
 - (NSArray *)getTopics;
 
 /**
- * @return next event sequence number that could be used by the system.
+ * @return Next event sequence number that could be used by the system.
  */
 - (int32_t)getAndIncrementEventSequenceNumber;
 
 /**
+ * <p></p>
  * @return YES - if configuration version was updated, NO - if it wasn't.
  */
 - (BOOL)isConfigurationVersionUpdated;
@@ -139,7 +140,7 @@
 /**
  * Generates and stores new endpoint access token.
  *
- * @return new access token
+ * @return New access token
  */
 - (NSString *)refreshEndpointAccessToken;
 

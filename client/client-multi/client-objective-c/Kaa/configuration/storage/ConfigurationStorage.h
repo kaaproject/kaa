@@ -32,7 +32,7 @@
 - (void)clearConfiguration;
 
 /**
- * Clears previously stored configuration data.
+ * Loads last stored configuration data.
  */
 - (NSData *)loadConfiguration;
 

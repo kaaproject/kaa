@@ -24,7 +24,8 @@
 @interface SimpleConfigurationStorage : NSObject <ConfigurationStorage>
 
 /**
- * @param path absolute path within file system.
+ * <p></p>
+ * @param path Absolute path within file system.
  */
 + (instancetype)storageWithPath:(NSString *)path;
 

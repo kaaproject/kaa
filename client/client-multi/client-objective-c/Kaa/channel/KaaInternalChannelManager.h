@@ -29,7 +29,7 @@
 /**
  * Reports to Channel Manager about the new server.
  *
- * @param newServer the parameters of the new server.
+ * @param newServer The parameters of the new server.
  * @see TransportConnectionInfo
  */
 - (void)onTransportConnectionInfoUpdated:(id<TransportConnectionInfo>)newServer;
@@ -37,7 +37,7 @@
 /**
  * Sets connectivity checker to the existing channels.
  *
- * @param checker platform-dependent connectivity checker.
+ * @param checker Platform-dependent connectivity checker.
  * @see ConnectivityChecker
  */
 - (void)setConnectivityChecker:(ConnectivityChecker *)checker;

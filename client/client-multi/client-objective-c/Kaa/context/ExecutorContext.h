@@ -38,23 +38,23 @@
 - (void)stop;
 
 /**
- * Executes lifecycle events/commands of Kaa client.
+ * Operation queue that executes lifecycle events/commands of Kaa client.
  */
 - (NSOperationQueue *)getLifeCycleExecutor;
 
 /**
- * Executes user API calls to SDK client. For example, serializing of log
+ * Operation queue that executes user API calls to SDK client. For example, serializing of log
  * records before submit to transport.
  */
 - (NSOperationQueue *)getApiExecutor;
 
 /**
- * Executes callback methods provided by SDK client user.
+ * Operation queue that executes callback methods provided by SDK client user.
  */
 - (NSOperationQueue *)getCallbackExecutor;
 
 /**
- * Executes scheduled tasks(periodically if needed) as log upload.
+ * Dispatch queue that executes scheduled tasks(periodically if needed) as log upload.
  */
 - (dispatch_queue_t)getSheduledExecutor;
 

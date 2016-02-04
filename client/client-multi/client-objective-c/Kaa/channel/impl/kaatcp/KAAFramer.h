@@ -18,7 +18,7 @@
 #import "KAATcpDelegates.h"
 
 /**
- * Kaatcp Framer class.
+ * KaaTcp Framer class.
  * Used to cut incoming byte stream into MQTT frames, and deliver frames to MqttFrameDelegate.
  * Framer Class typically used from MessageFactory class.
  */
@@ -28,17 +28,17 @@
 
 /**
  * Process incoming bytes stream.
- * Assumes that bytes are unprocessed bytes.
- * In case of previous #pushBytes eaten not all bytes on next iterations
- *  bytes array should start from unprocessed bytes.
- * @param data bytes to push
- * @return number of bytes processed from this array.
- * @throws KaaTcpProtocolException throws in case of protocol errors.
+ * Assumes that data is unprocessed.
+ * In case of previous call eaten not all data on next iterations
+ *  data should start from unprocessed bytes.
+ * @param data Data to push
+ * @return Number of bytes processed from this data.
+ * @exception KaaTcpProtocolException In case of protocol errors.
  */
 - (int)pushBytes:(NSMutableData *)data;
 
 /**
- * Reset Framer state by dropping currentFrame.
+ * Reset Framer state by dropping current frame.
  */
 - (void)flush;
 

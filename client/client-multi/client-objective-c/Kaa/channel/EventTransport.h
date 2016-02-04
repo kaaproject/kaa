@@ -31,8 +31,8 @@
 /**
  * Creates the Event request.
  *
- * @param requestId - new request id of the SyncRequest.
- * @return new Event request.
+ * @param requestId New request id of the SyncRequest.
+ * @return New Event request.
  * @see EventSyncRequest
  */
 - (EventSyncRequest *)createEventRequestWithId:(int32_t)requestId;
@@ -40,7 +40,7 @@
 /**
  * Updates the state of the Event manager according to the given response.
  *
- * @param response - the response from the server.
+ * @param response The response from the server.
  * @see EventSyncResponse
  */
 - (void)onEventResponse:(EventSyncResponse *)response;
@@ -48,14 +48,14 @@
 /**
  * Notifies event transport about response from server for specific request.
  *
- * @param requestId - request id of the corresponding SyncRequest
+ * @param requestId Request id of the corresponding SyncRequest
  */
 - (void)onSyncResposeIdReceived:(int32_t)requestId;
 
 /**
  * Sets the given Event manager.
  *
- * @param manager - the Event manager which is going to be set.
+ * @param manager The Event manager which is going to be set.
  * @see EventManager
  */
 - (void)setEventManager:(id<EventManager>)manager;

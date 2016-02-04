@@ -22,7 +22,7 @@
 #import "FailoverDecision.h"
 
 /**
- * Manager is responsible for managing current server's failover/connection events
+ * Manager responsible for managing current server's failover/connection events
  */
 @protocol FailoverManager
 
@@ -44,9 +44,9 @@
 /**
  * Needs to be invoked to determine a decision that resolves the failover.
  *
- * failoverStatus - current status of the failover.
+ * @param failoverStatus Current status of the failover.
  *
- * Return decision which is meant to resolve the failover.
+ * @return Decision which is meant to resolve the failover.
  */
 - (FailoverDecision *)decisionOnFailoverStatus:(FailoverStatus)status;
 

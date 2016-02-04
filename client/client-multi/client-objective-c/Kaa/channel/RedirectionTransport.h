@@ -29,7 +29,7 @@
 /**
  * Sets the given Bootstrap manager.
  *
- * @param manager the Bootstrap manager to be set.
+ * @param manager The Bootstrap manager to be set.
  * @see BootstrapManager
  */
 - (void)setBootstrapManager:(id<BootstrapManager>)manager;
@@ -38,7 +38,7 @@
  * Retrieves the redirection info from the response and passes it
  * to Bootstrap manager.
  *
- * @param response the response from the server.
+ * @param response The response from the server.
  * @see RedirectSyncResponse
  */
 - (void)onRedirectionResponse:(RedirectSyncResponse *)response;

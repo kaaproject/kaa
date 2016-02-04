@@ -44,7 +44,7 @@
 /**
  * Retrieves serialized profile
  *
- * @return serialized profile data
+ * @return Serialized profile data
  */
 - (NSData *)getSerializedProfile;
 
@@ -58,7 +58,7 @@
  *
  * A user should provide a profile container in case of a non-default profile schema.
  *
- * @return True if ready.
+ * @return YES if ready.
  */
 - (BOOL)isInitialized;
 

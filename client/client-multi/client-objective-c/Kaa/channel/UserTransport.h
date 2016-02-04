@@ -31,7 +31,7 @@
 /**
  * Creates new User update request.
  *
- * @return new User update request.
+ * @return New User update request.
  * @see UserSyncRequest
  */
 - (UserSyncRequest *)createUserRequest;
@@ -39,7 +39,7 @@
 /**
 * Updates the state of the Endpoint manager according to the given response.
 *
-* @param response the response from the server.
+* @param response The response from the server.
 * @see UserSyncResponse
 */
 - (void)onUserResponse:(UserSyncResponse *)response;
@@ -47,7 +47,7 @@
 /**
  * Sets the given Endpoint processor.
  *
- * @param processor the Endpoint processor to be set.
+ * @param processor The Endpoint processor to be set.
  * @see EndpointRegistrationProcessor
  */
 - (void)setEndpointRegistrationProcessor:(id<EndpointRegistrationProcessor>)processor;

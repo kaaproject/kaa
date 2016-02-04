@@ -31,7 +31,7 @@
 /**
  * Creates the configuration request.
  *
- * @return the configuration request object.
+ * @return The configuration request object.
  * @see ConfigurationSyncRequest
  */
 - (ConfigurationSyncRequest *)createConfigurationRequest;
@@ -39,7 +39,7 @@
 /**
  * Updates the state of the Configuration manager according to the given response.
  *
- * @param response the configuration response.
+ * @param response The configuration response.
  * @see ConfigurationSyncResponse
  */
 - (void)onConfigurationResponse:(ConfigurationSyncResponse *)response;

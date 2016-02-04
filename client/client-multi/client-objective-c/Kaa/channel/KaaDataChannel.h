@@ -76,7 +76,7 @@
 
 /**
  * Retrieves dictionary of transport types and their directions supported by this channel.
- * <TransportType, ChannelDirection> as key-value <NSNumber,NSNumber>
+ * @return Dictionary with <TransportType, ChannelDirection> as key-value wrapped in NSNumber
  */
 - (NSDictionary *)getSupportedTransportTypes;
 

@@ -24,26 +24,25 @@
 #import "EndpointAccessToken.h"
 
 /**
- * Module that manages endpoint-initiated attaching and detaching endpoints
- * to (from) user.
- *
- * To assign endpoints to user current endpoint has to be already attached,
- * otherwise attach/detach operations will fail.
- *
- * Current endpoint can be attached to user in two ways:
- *  - By calling #attachUser.
- *  - Attached from another endpoint.
- *
- * EndpointKeyHash for endpoint can be received with AttachEndpoint operation
- * provided from Operations server.
- *
- * If current endpoint is assumed to be attached or detached by another endpoint,
- * specific AttachEndpointToUserDelegate and DetachEndpointFromUserDelegate
- * may be specified to receive notification about such event.
- *
- * Manager uses specific UserTransport to communicate with Operations
- * server in scope of basic functionality and ProfileTransport when its
- * access token is changed.
+  Module that manages endpoint-initiated attaching and detaching endpoints to/from user.
+ 
+  To assign endpoints to user current endpoint has to be already attached,
+  otherwise attach/detach operations will fail.
+ 
+  Current endpoint can be attached to user in two ways:<br>
+  1. By calling -attachUser.<br>
+  2. Attached from another endpoint.
+ 
+  EndpointKeyHash for endpoint can be received with AttachEndpoint operation
+  provided from Operations server.
+ 
+  If current endpoint is assumed to be attached or detached by another endpoint,
+  specific AttachEndpointToUserDelegate and DetachEndpointFromUserDelegate
+  may be specified to receive notification about such event.
+ 
+  Manager uses specific UserTransport to communicate with Operations
+  server in scope of basic functionality and ProfileTransport when its
+  access token is changed.
  */
 @protocol EndpointRegistrationManager
 
@@ -52,16 +51,16 @@
  *
  * OnAttachEndpointOperationDelegate is populated with EndpointKeyHash of an attached endpoint.
  *
- * @param accessToken - access token of the attaching endpoint
- * @param delegate - delegate to notify about result of the endpoint attaching
+ * @param accessToken Access token of the attaching endpoint
+ * @param delegate Delegate to notify about result of the endpoint attaching
  */
 - (void)attachEndpointWithAccessToken:(EndpointAccessToken *)accessToken delegate:(id<OnAttachEndpointOperationDelegate>)delegate;
 
 /**
  * Updates with new endpoint detach request
  *
- * @param endpointKeyHash - key hash of the detaching endpoint
- * @param delegate - delegate to notify about result of the enpoint detaching
+ * @param endpointKeyHash Key hash of the detaching endpoint
+ * @param delegate Delegate to notify about result of the enpoint detaching
  */
 - (void)detachEndpointWithKeyHash:(EndpointKeyHash *)keyHash delegate:(id<OnDetachEndpointOperationDelegate>)delegate;
 
@@ -82,7 +81,7 @@
 /**
  * Checks if current endpoint is attached to user.
  *
- * @return true if current endpoint is attached to any user, false otherwise.
+ * @return YES if current endpoint is attached to any user, NO otherwise.
  */
 - (BOOL)isAttachedToUser;
 
@@ -92,7 +91,7 @@
 - (void)setAttachDelegate:(id<AttachEndpointToUserDelegate>)delegate;
 
 /**
- * Sets delegaet for notifications when current endpoint is detached from user
+ * Sets delegate for notifications when current endpoint is detached from user
  */
 - (void)setDetachDelegate:(id<DetachEndpointFromUserDelegate>)delegate;
 

@@ -17,7 +17,7 @@
 #import "KAAMqttFrame.h"
 
 /**
- * Kaatcp PingRequest Class.
+ * KaaTcp PingRequest class.<br>
  * The PINGREQ message is an "are you alive?" message that is sent
  * from a connected client to the server.
  */

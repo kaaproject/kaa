@@ -41,10 +41,11 @@ typedef enum {
 
 /**
  * ConnAck message Class.
- * The CONNACK message is a message sent by the server in response to a CONNECT request from a client.
- * Variable header
- * byte 1  reserved (0)
- * byte 2 Return Code see enum ReturnCode
+ * The CONNACK message is a message sent by the server in response to a CONNECT request from a client.<br>
+ * Variable header<br>
+ * byte 1  reserved (0)<br>
+ * byte 2 Return Code 
+ * @see enum ReturnCode
  **/
 @interface KAATcpConnAck : KAAMqttFrame
 

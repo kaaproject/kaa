@@ -19,7 +19,7 @@
 #import "BucketInfo.h"
 
 /**
- * Designed to trach bucket upload.
+ * Designed to track bucket upload.
  */
 @interface BucketRunner : NSOperation
 
@@ -32,12 +32,12 @@
 /**
  * Waits if necessary for the computation to complete, and then retrieves its result.
  *
- * <b>NOTE:</b> Method should not be called in main thread since main thread should be
+ * <b>NOTE:</b> Method should not be called on main thread since main thread should be
  * accessible from internal components or external libraries.
  *
- * <b>Important:</b> Raises an KaaRuntimeException if method is called in main thread.
+ * <b>Important:</b> Raises KaaRuntimeException if method is called in main thread.
  *
- * @return the computed result
+ * @return The computed result
  */
 - (BucketInfo *)getValue;
 
@@ -45,15 +45,15 @@
  * Waits if necessary for at most the given time for the computation
  * to complete, and then retrieves its result, if available.
  *
- * <b>NOTE:</b> Method should not be called in main thread since main thread should be
+ * <b>NOTE:</b> Method should not be called on main thread since main thread should be
  * accessible from internal components or external libraries.
  *
- * @param timeout the maximum time to wait
- * @param unit the time unit of the timeout argument
+ * @param timeout The maximum time to wait
+ * @param unit The time unit of the timeout argument
  *
- * <b>Important:</b> Raises an KaaRuntimeException if method is called in main thread.
+ * <b>Important:</b> Raises KaaRuntimeException if method is called on main thread.
  *
- * @return the computed result
+ * @return The computed result
  */
 - (BucketInfo *)getValueWithTimeout:(int64_t)timeout timeUnit:(TimeUnit)timeUnit;
 

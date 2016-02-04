@@ -51,13 +51,13 @@
 @protocol OnAttachEndpointOperationDelegate
 
 /**
- * Callback on endpoint attach response
+ * Callback on endpoint attach response<br>
+ * For AttachEndpoint operation is populated with EndpointKeyHash of attached endpoint.
  *
  * NOTE: endpointKeyHash is not null for endpoint attach operation
- * and contains <EndpointKeyHash> object with key hash of attached endpoint.
+ * and contains EndpointKeyHash object with key hash of attached endpoint.
  *
- * endpointKeyHash - additional data of operation result, may be null.
- * For AttachEndpoint operation is populated with <EndpointKeyHash> of attached endpoint.
+ * @param endpointKeyHash Additional data of operation result, may be nil.
  */
 - (void)onAttachResult:(SyncResponseResultType)result withEndpointKeyHash:(EndpointKeyHash *)endpointKeyHash;
 
@@ -67,11 +67,11 @@
 /**
  * Callback interface for detached endpoint notifications.
  *
- * Use this interface to receive result of next operations:
- * Detach endpoint from user by <EndpointKeyHash>
- 
+ * Use this interface to receive result of next operations:<br>
+ * Detach endpoint from user by EndpointKeyHash
+ *
  * Once result from Operations server is received, listener is notified with
- * string representation of operation name, result of the operation <SyncResponseResultType>
+ * string representation of operation name, result of the operation SyncResponseResultType
  * and additional data if available.
  */
 @protocol OnDetachEndpointOperationDelegate
@@ -132,7 +132,7 @@
 
 
 /**
- * Listener interface for retrieving endpoints list
+ * Listener interface for retrieving endpoints array
  * which supports requested event class FQNs
  */
 @protocol FindEventListenersDelegate
@@ -140,7 +140,7 @@
 /**
  * Called when resolve was successful
  *
- * eventListeners - list of endpoints <String>
+ * @param eventListeners Array of endpoints <NSString>
  */
 - (void)onEventListenersReceived:(NSArray *)eventListeners;
 

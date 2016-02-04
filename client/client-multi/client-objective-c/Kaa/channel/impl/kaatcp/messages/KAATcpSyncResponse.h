@@ -17,8 +17,8 @@
 #import "KAATcpSync.h"
 
 /**
- * SyncResponse Class.
- * Extend Sync and set request flag to false.
+ * SyncResponse class.<br>
+ * Extend Sync and set request flag to YES.
  */
 @interface KAATcpSyncResponse : KAATcpSync
 

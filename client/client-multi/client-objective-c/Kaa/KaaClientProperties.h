@@ -30,8 +30,8 @@
 #define SDK_TOKEN_KEY               @"sdk_token"
 
 /**
- * Class is used to access to various client properties.
- * Properties are stored to NSUserDefaultsю
+ * Class is used to access various client properties.<br>
+ * Properties are stored to NSUserDefaults.
  */
 @interface KaaClientProperties : NSObject
 
@@ -58,7 +58,7 @@
 - (NSData *)defaultConfigSchema;
 
 /**
- * @return dictionary that contains <TransportProtocolId, NSArray<TransportConnectionInfo>> as key-value
+ * @return dictionary that contains <TransportProtocolId, NSArray< TransportConnectionInfo >> as key-value
  */
 - (NSDictionary *)bootstrapServers;
 

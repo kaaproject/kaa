@@ -24,7 +24,8 @@
 
 - (instancetype)initWithTransportType:(TransportType)type ackOnly:(BOOL)ackOnly all:(BOOL)all;
 /**
- * @param types set of TransportType wrapped with NSNumber
+ <p></p>
+ @param types set of TransportType wrapped with NSNumber
  */
 - (instancetype)initWithTransports:(NSSet *)types ackOnly:(BOOL)ackOnly all:(BOOL)all;
 

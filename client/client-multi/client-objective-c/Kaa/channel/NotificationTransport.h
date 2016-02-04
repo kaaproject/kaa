@@ -31,7 +31,7 @@
 /**
  * Creates a new Notification request.
  *
- * @return new Notification request.
+ * @return New Notification request.
  * @see NotificationSyncRequest
  */
 - (NotificationSyncRequest *)createNotificationRequest;
@@ -39,7 +39,7 @@
 /**
  * Creates a new empty Notification request.
  *
- * @return new empty Notification request.
+ * @return New empty Notification request.
  * @see NotificationSyncRequest
  */
 - (NotificationSyncRequest *)createEmptyNotificationRequest;
@@ -47,7 +47,7 @@
 /**
  * Updates the state of the Notification manager according to the given response.
  *
- * @param response the response from the server.
+ * @param response The response from the server.
  * @see NotificationSyncResponse
  */
 - (void)onNotificationResponse:(NotificationSyncResponse *)response;
@@ -55,7 +55,7 @@
 /**
  * Sets the given Notification processor.
  *
- * @param processor the Notification processor which to be set.
+ * @param processor The Notification processor to be set.
  * @see NotificationProcessor
  */
 - (void)setNotificationProcessor:(id<NotificationProcessor>)processor;
@@ -66,7 +66,7 @@
  * Will be called when one either subscribes or unsubscribes
  * on\from some optional topic(s).
  *
- * @param commands Info about subscription actions (subscribe/unsubscribe). <SubscriptionCommand>
+ * @param commands Info about subscription actions (subscribe/unsubscribe). < SubscriptionCommand >
  */
 - (void)onSubscriptionChangedWithCommands:(NSArray *)commands;
 

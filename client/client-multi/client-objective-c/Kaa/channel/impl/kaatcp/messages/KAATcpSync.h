@@ -17,10 +17,9 @@
 #import "KAATcpKaaSync.h"
 
 /**
- * Sync message Class.
+ * Sync message class.<br>
  * The SYNC message is used as intermediate class for decoding messages
  * SyncRequest,SyncResponse
- *
  *
  * Sync message extend KaaSync with  Payload Avro object.
  *

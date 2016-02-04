@@ -42,14 +42,14 @@
 /**
  * Set user implementation of a log storage.
  *
- * storage - user-defined log storage object
+ * @param storage User-defined log storage object
  */
 - (void)setStorage:(id<LogStorage>)storage;
 
 /**
  * Set user implementation of a log upload strategy.
  *
- * strategy - user-defined log upload strategy object.
+ * @param strategy User-defined log upload strategy object.
  */
 - (void)setStrategy:(id<LogUploadStrategy>)strategy;
 
