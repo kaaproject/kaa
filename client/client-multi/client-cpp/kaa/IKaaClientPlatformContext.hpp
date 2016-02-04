@@ -40,7 +40,7 @@ public:
      *
      * @return client SDK properties
      */
-    virtual const KaaClientProperties& getProperties() = 0;
+    virtual KaaClientProperties& getProperties() = 0;
 
     /**
      * @brief Returns platform dependent implementation of @link ConnectivityChecker @endlink.

@@ -58,7 +58,7 @@
     }
 #else
 
-#warning "Unit tests will not generate xml reports. Install CUnit library (apt-get install libcunit or install from sources http://cunit.sourceforge.net/index.html)."
+#pragma message "Unit tests will not generate xml reports. Install CUnit library (apt-get install libcunit or install from sources http://cunit.sourceforge.net/index.html)."
 
 #include <assert.h>
 #define __ASSERT(EXPRESSION)      assert(EXPRESSION)

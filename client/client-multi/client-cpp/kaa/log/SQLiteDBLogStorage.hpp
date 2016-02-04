@@ -28,6 +28,7 @@
 #include "kaa/KaaThread.hpp"
 #include "kaa/log/ILogStorage.hpp"
 #include "kaa/log/ILogStorageStatus.hpp"
+#include "kaa/IKaaClientContext.hpp"
 
 #define KAA_DEFAULT_LOG_DB_STORAGE    "logs.db"
 
@@ -50,7 +51,7 @@ enum SQLiteOptimizationOptions
 
 class SQLiteDBLogStorage : public ILogStorage, public ILogStorageStatus {
 public:
-    SQLiteDBLogStorage(const std::string& dbName = KAA_DEFAULT_LOG_DB_STORAGE
+    SQLiteDBLogStorage(IKaaClientContext &context
                      , int optimizationMask = (int)SQLiteOptimizationOptions::SQLITE_NO_OPTIMIZATIONS);
     ~SQLiteDBLogStorage();
 
@@ -88,6 +89,7 @@ private:
     std::unordered_map<std::int32_t/*Bucket id*/, std::size_t /*Bucket size*/> consumedMemoryStorage_;
 
     KAA_MUTEX_DECLARE(sqliteLogStorageGuard_);
+    IKaaClientContext &context_;
 };
 
 } /* namespace kaa */

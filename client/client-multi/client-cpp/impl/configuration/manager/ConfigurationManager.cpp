@@ -31,8 +31,8 @@
 
 namespace kaa {
 
-ConfigurationManager::ConfigurationManager(IExecutorContext& executorContext, IKaaClientStateStoragePtr state)
-    : isConfigurationLoaded_(false), executorContext_(executorContext), state_(state)
+ConfigurationManager::ConfigurationManager(IKaaClientContext &context)
+    : isConfigurationLoaded_(false), context_(context)
 {}
 
 void ConfigurationManager::addReceiver(IConfigurationReceiver &receiver)
@@ -89,7 +89,7 @@ void ConfigurationManager::updateConfiguration(const std::uint8_t* data, const s
 void ConfigurationManager::loadConfiguration()
 {
     if (storage_) {
-        if (state_->isSDKPropertiesUpdated()) {
+        if (context_.getStatus().isSDKPropertiesUpdated()) {
             KAA_LOG_INFO("Ignore loading configuration from storage: configuration version updated");
             storage_->clearConfiguration();
         } else {
@@ -140,7 +140,7 @@ void ConfigurationManager::setConfigurationStorage(IConfigurationStoragePtr stor
 
 void ConfigurationManager::notifySubscribers(const KaaRootConfiguration& configuration)
 {
-    executorContext_.getCallbackExecutor().add([this, configuration]
+    context_.getExecutorContext().getCallbackExecutor().add([this, configuration]
         {
             configurationReceivers_(configuration);
         });

@@ -27,8 +27,6 @@ SimpleExecutorContext::SimpleExecutorContext(std::size_t lifeCycleThreadCount, s
     , lifeCycleThreadCount_(lifeCycleThreadCount)
 {
     if (!lifeCycleThreadCount_ || !apiThreadCount_ || !callbackThreadCount_) {
-        KAA_LOG_ERROR(boost::format("Failed to create executor context: lifeCycleThreadCount %u, apiThreadCount_ %u, callbackThreadCount_ %u,")
-            % lifeCycleThreadCount_ % apiThreadCount_ % callbackThreadCount_);
         throw KaaException("Failed to crate executor context: bad input parameters");
     }
 }

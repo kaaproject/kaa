@@ -28,8 +28,8 @@ namespace kaa {
 
 class RecordCountLogUploadStrategy : public DefaultLogUploadStrategy {
 public:
-    RecordCountLogUploadStrategy(std::size_t countThreshold)
-        : DefaultLogUploadStrategy()
+    RecordCountLogUploadStrategy(std::size_t countThreshold, IKaaClientContext &context)
+        : DefaultLogUploadStrategy(context)
     {
         setCountThreshold(countThreshold);
     }

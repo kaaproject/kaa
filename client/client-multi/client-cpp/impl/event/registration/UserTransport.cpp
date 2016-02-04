@@ -22,8 +22,8 @@
 
 namespace kaa {
 
-UserTransport::UserTransport(IRegistrationProcessor& manager, IKaaChannelManager& channelManager)
-    : AbstractKaaTransport(channelManager)
+UserTransport::UserTransport(IRegistrationProcessor& manager, IKaaChannelManager& channelManager, IKaaClientContext &context)
+    : AbstractKaaTransport(channelManager, context)
     , manager_(manager)
 {
 

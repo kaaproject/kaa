@@ -21,6 +21,13 @@
 #include <cstdlib>
 
 #include "kaa/log/strategies/PeriodicLogUploadStrategy.hpp"
+#include "kaa/KaaClientContext.hpp"
+#include "kaa/logging/DefaultLogger.hpp"
+#include "kaa/KaaClientProperties.hpp"
+#include "kaa/context/SimpleExecutorContext.hpp"
+
+#include "headers/MockKaaClientStateStorage.hpp"
+#include "headers/context/MockExecutorContext.hpp"
 
 #include "headers/log/MockLogStorage.hpp"
 
@@ -30,6 +37,12 @@ static void sleepFor(std::size_t seconds)
 {
     std::this_thread::sleep_for(std::chrono::seconds(seconds));
 }
+
+static KaaClientProperties properties;
+static DefaultLogger tmp_logger(properties.getClientId());
+static IKaaClientStateStoragePtr tmp_state(new MockKaaClientStateStorage);
+static MockExecutorContext tmpExecContext;
+static KaaClientContext clientContext(properties, tmp_logger, tmpExecContext, tmp_state);
 
 BOOST_AUTO_TEST_SUITE(PeriodicLogUploadStrategySuite)
 
@@ -41,7 +54,7 @@ BOOST_AUTO_TEST_CASE(CheckAfterSomeTime)
     storageStatus.consumedVolume_ = std::rand();
     storageStatus.recordsCount_ = std::rand();
 
-    PeriodicLogUploadStrategy strategy(logUploadPeriod);
+    PeriodicLogUploadStrategy strategy(logUploadPeriod, clientContext);
 
     BOOST_CHECK(strategy.isUploadNeeded(storageStatus) == LogUploadStrategyDecision::NOOP);
 

@@ -21,6 +21,7 @@
 
 #include "kaa/channel/transport/AbstractKaaTransport.hpp"
 #include "kaa/channel/transport/ILoggingTransport.hpp"
+#include "kaa/IKaaClientContext.hpp"
 
 namespace kaa {
 
@@ -28,7 +29,7 @@ class ILogProcessor;
 
 class LoggingTransport : public AbstractKaaTransport<TransportType::LOGGING>, public ILoggingTransport {
 public:
-    LoggingTransport(IKaaChannelManager &manager, ILogProcessor& logProcessor);
+    LoggingTransport(IKaaChannelManager &manager, ILogProcessor& logProcessor, IKaaClientContext &context);
 
     virtual void sync();
 

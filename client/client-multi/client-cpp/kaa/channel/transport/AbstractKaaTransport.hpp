@@ -21,6 +21,7 @@
 #include "kaa/channel/IKaaChannelManager.hpp"
 #include "kaa/common/exception/KaaException.hpp"
 #include "kaa/IKaaClientStateStorage.hpp"
+#include "kaa/IKaaClientContext.hpp"
 
 namespace kaa {
 
@@ -30,15 +31,8 @@ class AbstractKaaTransport : public IKaaTransport
 public:
     virtual ~AbstractKaaTransport() {}
 
-    AbstractKaaTransport(IKaaChannelManager& channelManager)
-        : type_(Type), channelManager_(channelManager), clientStatus_(nullptr) {}
-
-    virtual void setClientState(IKaaClientStateStoragePtr status)
-    {
-        if (status) {
-            clientStatus_ = status;
-        }
-    }
+    AbstractKaaTransport(IKaaChannelManager& channelManager, IKaaClientContext &context)
+        : type_(Type), channelManager_(channelManager), context_(context) {}
 
 private:
     IDataChannelPtr getChannel(TransportType transportType = Type)
@@ -68,8 +62,8 @@ protected:
 
 protected:
     const TransportType         type_;
-    IKaaChannelManager &        channelManager_;
-    IKaaClientStateStoragePtr   clientStatus_;
+    IKaaChannelManager          &channelManager_;
+    IKaaClientContext           &context_;
 };
 
 }  // namespace kaa

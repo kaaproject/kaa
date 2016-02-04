@@ -22,12 +22,13 @@
 #include "kaa/channel/transport/AbstractKaaTransport.hpp"
 #include "kaa/channel/transport/IUserTransport.hpp"
 #include "kaa/event/registration/IRegistrationProcessor.hpp"
+#include "kaa/IKaaClientContext.hpp"
 
 namespace kaa {
 
 class UserTransport : public AbstractKaaTransport<TransportType::USER>, public IUserTransport {
 public:
-    UserTransport(IRegistrationProcessor& manager, IKaaChannelManager& channelManager);
+    UserTransport(IRegistrationProcessor& manager, IKaaChannelManager& channelManager, IKaaClientContext &context);
     std::shared_ptr<UserSyncRequest>     createUserRequest();
     void                onUserResponse(const UserSyncResponse& response);
     void                sync();

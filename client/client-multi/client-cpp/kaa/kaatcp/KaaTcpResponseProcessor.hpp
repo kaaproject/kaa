@@ -22,6 +22,7 @@
 #include "kaa/kaatcp/ConnackMessage.hpp"
 #include "kaa/kaatcp/DisconnectMessage.hpp"
 #include "kaa/kaatcp/KaaTcpParser.hpp"
+#include "kaa/IKaaClientContext.hpp"
 #include <functional>
 
 namespace kaa
@@ -30,7 +31,7 @@ namespace kaa
 class KaaTcpResponseProcessor
 {
 public:
-    KaaTcpResponseProcessor() { }
+    KaaTcpResponseProcessor(IKaaClientContext &context): parser_(context), context_(context) { }
     ~KaaTcpResponseProcessor() { }
 
     void processResponseBuffer(const char *buf, std::uint32_t size);
@@ -49,6 +50,7 @@ private:
     std::function<void ()> onPingResp_;
 
     KaaTcpParser parser_;
+    IKaaClientContext &context_;
 };
 
 }

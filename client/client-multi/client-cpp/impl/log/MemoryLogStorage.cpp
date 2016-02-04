@@ -26,11 +26,11 @@ namespace kaa {
 
 const MemoryLogStorage::BlockId MemoryLogStorage::NO_OWNER(-1);
 
-MemoryLogStorage::MemoryLogStorage()
-    : recordBlockId_(0) {}
+MemoryLogStorage::MemoryLogStorage(IKaaClientContext &context)
+    : recordBlockId_(0), context_(context) {}
 
-MemoryLogStorage::MemoryLogStorage(size_t maxOccupiedSize, float percentToDelete)
-    : recordBlockId_(0)
+MemoryLogStorage::MemoryLogStorage(size_t maxOccupiedSize, float percentToDelete, IKaaClientContext &context)
+    : recordBlockId_(0), context_(context)
 {
     if (0.0 >= percentToDelete || percentToDelete > 100.0) {
         KAA_LOG_ERROR(boost::format("Failed to create limited log storage: max_size %1%, percentToDelete %2%%%")

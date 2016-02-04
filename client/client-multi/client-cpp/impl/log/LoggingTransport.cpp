@@ -22,8 +22,8 @@
 
 namespace kaa {
 
-LoggingTransport::LoggingTransport(IKaaChannelManager& manager, ILogProcessor& logProcessor_)
-    : AbstractKaaTransport(manager), logProcessor_(logProcessor_)
+LoggingTransport::LoggingTransport(IKaaChannelManager& manager, ILogProcessor& logProcessor_, IKaaClientContext &context)
+    : AbstractKaaTransport(manager, context), logProcessor_(logProcessor_)
 {
 }
 
