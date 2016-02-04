@@ -28,6 +28,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.PreDestroy;
+
 import org.apache.avro.Schema;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.thrift.TException;
@@ -107,6 +109,7 @@ import org.kaaproject.kaa.server.common.dao.UserVerifierService;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
 import org.kaaproject.kaa.server.common.dao.exception.NotFoundException;
 import org.kaaproject.kaa.server.common.log.shared.RecordWrapperSchemaGenerator;
+import org.kaaproject.kaa.server.common.thrift.KaaThriftService;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Operation;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.OperationsThriftService.Iface;
@@ -336,9 +339,8 @@ public class DefaultControlService implements ControlService {
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * org.kaaproject.kaa.server.control.service.ControlService#getUserByExternalUid
-     * (java.lang.String)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#
+     * getUserByExternalUid (java.lang.String)
      */
     @Override
     public UserDto getUserByExternalUid(String uid) throws ControlServiceException {
@@ -408,9 +410,8 @@ public class DefaultControlService implements ControlService {
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * org.kaaproject.kaa.server.control.service.ControlService#deleteTenantAdmin
-     * (java.lang.String)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#
+     * deleteTenantAdmin (java.lang.String)
      */
     @Override
     public void deleteTenantAdmin(String tenantId) throws ControlServiceException {
@@ -466,9 +467,8 @@ public class DefaultControlService implements ControlService {
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * org.kaaproject.kaa.server.control.service.ControlService#deleteApplication
-     * (java.lang.String)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#
+     * deleteApplication (java.lang.String)
      */
     @Override
     public void deleteApplication(String applicationId) throws ControlServiceException {
@@ -554,9 +554,8 @@ public class DefaultControlService implements ControlService {
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * org.kaaproject.kaa.server.control.service.ControlService#editProfileSchema
-     * (org.kaaproject.kaa.common.dto.ProfileSchemaDto)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#
+     * editProfileSchema (org.kaaproject.kaa.common.dto.ProfileSchemaDto)
      */
     @Override
     public EndpointProfileSchemaDto editProfileSchema(EndpointProfileSchemaDto profileSchema) throws ControlServiceException {
@@ -651,9 +650,8 @@ public class DefaultControlService implements ControlService {
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * org.kaaproject.kaa.server.control.service.ControlService#editEndpointGroup
-     * (org.kaaproject.kaa.common.dto.EndpointGroupDto)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#
+     * editEndpointGroup (org.kaaproject.kaa.common.dto.EndpointGroupDto)
      */
     @Override
     public EndpointGroupDto editEndpointGroup(EndpointGroupDto endpointGroup) throws ControlServiceException {
@@ -663,9 +661,8 @@ public class DefaultControlService implements ControlService {
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * org.kaaproject.kaa.server.control.service.ControlService#deleteEndpointGroup
-     * (java.lang.String)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#
+     * deleteEndpointGroup (java.lang.String)
      */
     @Override
     public void deleteEndpointGroup(String endpointGroupId) throws ControlServiceException {
@@ -748,9 +745,8 @@ public class DefaultControlService implements ControlService {
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * org.kaaproject.kaa.server.control.service.ControlService#editProfileFilter
-     * (org.kaaproject.kaa.common.dto.ProfileFilterDto)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#
+     * editProfileFilter (org.kaaproject.kaa.common.dto.ProfileFilterDto)
      */
     @Override
     public ProfileFilterDto editProfileFilter(ProfileFilterDto profileFilter) throws ControlServiceException {
@@ -806,9 +802,8 @@ public class DefaultControlService implements ControlService {
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * org.kaaproject.kaa.server.control.service.ControlService#editConfiguration
-     * (org.kaaproject.kaa.common.dto.ConfigurationDto)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#
+     * editConfiguration (org.kaaproject.kaa.common.dto.ConfigurationDto)
      */
     @Override
     public ConfigurationDto editConfiguration(ConfigurationDto configuration) throws ControlServiceException {
@@ -857,7 +852,7 @@ public class DefaultControlService implements ControlService {
             synchronized (zkLock) {
                 if (neighbors == null) {
                     neighbors = new Neighbors<NeighborTemplate<OperationsServiceMsg>, OperationsServiceMsg>(
-                            new NeighborTemplate<OperationsServiceMsg>() {
+                            KaaThriftService.OPERATIONS_SERVICE, new NeighborTemplate<OperationsServiceMsg>() {
                                 @Override
                                 public void process(Iface client, List<OperationsServiceMsg> messages) throws TException {
                                     OperationsServiceMsg.dispatch(client, messages);
@@ -869,7 +864,7 @@ public class DefaultControlService implements ControlService {
                                 }
                             }, neighborConnectionsSize);
                     ControlNode zkNode = controlZKService.getControlZKNode();
-                    neighbors.setZkNode(zkNode.getControlServerInfo().getConnectionInfo(), zkNode);
+                    neighbors.setZkNode(KaaThriftService.KAA_NODE_SERVICE, zkNode.getControlServerInfo().getConnectionInfo(), zkNode);
                 }
             }
         }
@@ -937,8 +932,8 @@ public class DefaultControlService implements ControlService {
      */
     @Override
     public ConfigurationDto deactivateConfiguration(String configurationId, String deactivatedUsername) throws ControlServiceException {
-        ChangeConfigurationNotification cfgNotification = configurationService
-                .deactivateConfiguration(configurationId, deactivatedUsername);
+        ChangeConfigurationNotification cfgNotification = configurationService.deactivateConfiguration(configurationId,
+                deactivatedUsername);
         ChangeNotificationDto notification = cfgNotification.getChangeNotificationDto();
         if (notification != null) {
             notifyEndpoints(notification, null, cfgNotification.getConfigurationDto());
@@ -1071,8 +1066,8 @@ public class DefaultControlService implements ControlService {
 
         List<EventFamilyMetadata> eventFamilies = new ArrayList<>();
         if (sdkProfile.getAefMapIds() != null) {
-            List<ApplicationEventFamilyMapDto> aefMaps = applicationEventMapService.findApplicationEventFamilyMapsByIds(sdkProfile
-                    .getAefMapIds());
+            List<ApplicationEventFamilyMapDto> aefMaps = applicationEventMapService
+                    .findApplicationEventFamilyMapsByIds(sdkProfile.getAefMapIds());
             for (ApplicationEventFamilyMapDto aefMap : aefMaps) {
                 EventFamilyMetadata efm = new EventFamilyMetadata();
                 efm.setVersion(aefMap.getVersion());
@@ -1391,7 +1386,8 @@ public class DefaultControlService implements ControlService {
     }
 
     @Override
-    public EndpointProfileDto updateServerProfile(String endpointKeyHash, int version, String serverProfile) throws ControlServiceException {
+    public EndpointProfileDto updateServerProfile(String endpointKeyHash, int version, String serverProfile)
+            throws ControlServiceException {
         EndpointProfileDto endpointProfileDto = serverProfileService.saveServerProfile(Base64.decodeBase64(endpointKeyHash), version,
                 serverProfile);
         checkNeighbors();
@@ -1477,8 +1473,8 @@ public class DefaultControlService implements ControlService {
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * org.kaaproject.kaa.server.control.service.ControlService#editEventClassFamily
+     * @see org.kaaproject.kaa.server.control.service.ControlService#
+     * editEventClassFamily
      * (org.kaaproject.kaa.common.dto.event.EventClassFamilyDto)
      */
     @Override
@@ -1500,9 +1496,8 @@ public class DefaultControlService implements ControlService {
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * org.kaaproject.kaa.server.control.service.ControlService#getEventClassFamily
-     * (java.lang.String)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#
+     * getEventClassFamily (java.lang.String)
      */
     @Override
     public EventClassFamilyDto getEventClassFamily(String eventClassFamilyId) throws ControlServiceException {
@@ -1725,9 +1720,8 @@ public class DefaultControlService implements ControlService {
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * org.kaaproject.kaa.server.control.service.ControlService#deleteEndpointUser
-     * (java.lang.String)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#
+     * deleteEndpointUser (java.lang.String)
      */
     @Override
     public void deleteEndpointUser(String endpointUserId) throws ControlServiceException {
@@ -1801,9 +1795,8 @@ public class DefaultControlService implements ControlService {
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * org.kaaproject.kaa.server.control.service.ControlService#deleteLogAppender
-     * (java.lang.String)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#
+     * deleteLogAppender (java.lang.String)
      */
     @Override
     public void deleteLogAppender(String logAppenderId) throws ControlServiceException {
@@ -1876,9 +1869,8 @@ public class DefaultControlService implements ControlService {
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * org.kaaproject.kaa.server.control.service.ControlService#deleteUserVerifier
-     * (java.lang.String)
+     * @see org.kaaproject.kaa.server.control.service.ControlService#
+     * deleteUserVerifier (java.lang.String)
      */
     @Override
     public void deleteUserVerifier(String userVerifierId) throws ControlServiceException {
@@ -1979,8 +1971,8 @@ public class DefaultControlService implements ControlService {
                 schemaDto = configurationService.findConfSchemaByAppIdAndVersion(key.getApplicationId(), key.getSchemaVersion());
                 checkSchema(schemaDto, RecordFiles.CONFIGURATION_OVERRIDE_SCHEMA);
                 schema = ((ConfigurationSchemaDto) schemaDto).getOverrideSchema();
-                fileName = MessageFormatter.arrayFormat(DATA_NAME_PATTERN,
-                        new Object[] { "configuration-override", key.getSchemaVersion() }).getMessage();
+                fileName = MessageFormatter
+                        .arrayFormat(DATA_NAME_PATTERN, new Object[] { "configuration-override", key.getSchemaVersion() }).getMessage();
                 break;
             case NOTIFICATION_SCHEMA:
                 schemaDto = notificationService.findNotificationSchemaByAppIdAndTypeAndVersion(key.getApplicationId(),
@@ -2154,8 +2146,8 @@ public class DefaultControlService implements ControlService {
     public FileData exportCTLSchemaFlatAsLibrary(CTLSchemaDto schema) throws ControlServiceException {
         try {
             Schema avroSchema = ctlService.flatExportAsSchema(schema);
-            String fileName = MessageFormat.format(CTL_LIBRARY_EXPORT_TEMPLATE, schema.getMetaInfo().getFqn(), schema.getMetaInfo()
-                    .getVersion());
+            String fileName = MessageFormat.format(CTL_LIBRARY_EXPORT_TEMPLATE, schema.getMetaInfo().getFqn(),
+                    schema.getMetaInfo().getVersion());
             return SchemaLibraryGenerator.generateSchemaLibrary(avroSchema, fileName);
         } catch (Exception e) {
             LOG.error("Unable to export flat CTL schema as library", e);
@@ -2185,6 +2177,15 @@ public class DefaultControlService implements ControlService {
             return result;
         } else {
             throw new ControlServiceException("Can't find sdk profile by sdk token: " + sdkToken + "!");
+        }
+    }
+
+    @PreDestroy
+    public void onStop() {
+        if (neighbors != null) {
+            LOG.info("Shutdown of control service neighbors started!");
+            neighbors.shutdown();
+            LOG.info("Shutdown of control service neighbors complete!");
         }
     }
 }

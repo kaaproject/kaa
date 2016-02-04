@@ -30,10 +30,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 
 import org.apache.thrift.TException;
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
+import org.kaaproject.kaa.server.common.thrift.KaaThriftService;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.EndpointRouteUpdate;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.EndpointStateUpdate;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Event;
@@ -113,8 +115,17 @@ public class DefaultEventService implements EventService {
     public void initBean() {
         LOG.info("Init default event service.");
         listeners = Collections.newSetFromMap(new ConcurrentHashMap<EventServiceListener, Boolean>());
-        neighbors = new Neighbors<MessageTemplate, Message>(new MessageTemplate(this),
+        neighbors = new Neighbors<MessageTemplate, Message>(KaaThriftService.OPERATIONS_SERVICE, new MessageTemplate(this),
                 operationsServerConfig.getMaxNumberNeighborConnections());
+    }
+    
+    @PreDestroy
+    public void onStop() {
+        if (neighbors != null) {
+            LOG.info("Shutdown of control service neighbors started!");
+            neighbors.shutdown();
+            LOG.info("Shutdown of control service neighbors complete!");
+        }
     }
 
     /*
@@ -319,8 +330,8 @@ public class DefaultEventService implements EventService {
     @Override
     public void setZkNode(OperationsNode operationsNode) {
         this.operationsNode = operationsNode;
-        this.id = Neighbors.getServerID(this.operationsNode.getNodeInfo().getConnectionInfo());
-        neighbors.setZkNode(id, operationsNode);
+        this.id = Neighbors.getServerID(KaaThriftService.OPERATIONS_SERVICE, this.operationsNode.getNodeInfo().getConnectionInfo());
+        neighbors.setZkNode(KaaThriftService.OPERATIONS_SERVICE, this.operationsNode.getNodeInfo().getConnectionInfo(), operationsNode);
         if (resolver != null) {
             updateResolver(this.resolver);
         }

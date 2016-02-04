@@ -168,7 +168,6 @@ public class DefaultOperationsService implements OperationsService {
 
         return context;
     }
-    
 
     @Override
     public EndpointProfileDto syncServerProfile(String appToken, String endpointKey, EndpointObjectHash key) {
@@ -685,7 +684,11 @@ public class DefaultOperationsService implements OperationsService {
             if (!found) {
                 modified = true;
                 NotificationDto unicast = notificationDeltaService.findUnicastNotificationById(unicastNotificationId);
-                notifications.add(convertNotification(unicast));
+                if (unicast != null) {
+                    notifications.add(convertNotification(unicast));
+                } else {
+                    LOG.warn("Notification with id {} was not found! Possible duplication of events from client.", unicastNotificationId);
+                }
             } else {
                 LOG.debug("Notification with uid [{}] is already present in response", unicastNotificationId);
             }

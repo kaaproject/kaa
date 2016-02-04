@@ -142,21 +142,23 @@ public class OperationsThriftServiceImpl implements OperationsThriftService.Ifac
      */
     private void processCacheNotification(Notification notification) {
         ApplicationDto appDto = applicationService.findAppById(notification.getAppId());
+        LOG.debug("Processing cache notification {} for app {}", notification, appDto);
         if (appDto != null) {
             if (notification.getProfileFilterId() != null) {
                 ProfileFilterDto filterDto = cacheService.getFilter(notification.getProfileFilterId());
+                LOG.debug("Processing filter  {}", filterDto); 
                 if (filterDto.getEndpointProfileSchemaId() != null && filterDto.getServerProfileSchemaId() != null) {
                     cacheService.resetFilters(new AppProfileVersionsKey(appDto.getApplicationToken(), filterDto
                             .getEndpointProfileSchemaVersion(), filterDto.getServerProfileSchemaVersion()));
                 } else if (filterDto.getServerProfileSchemaVersion() == null) {
                     for (VersionDto version : profileService.findProfileSchemaVersionsByAppId(appDto.getId())) {
-                        cacheService.resetFilters(new AppProfileVersionsKey(appDto.getApplicationToken(), version.getVersion(), filterDto
-                                .getServerProfileSchemaVersion()));
+                        LOG.debug("Processing version {}", version);
+                        cacheService.resetFilters(new AppProfileVersionsKey(appDto.getApplicationToken(), version.getVersion(), null));
                     }
                 } else {
                     for (ServerProfileSchemaDto version : serverProfileService.findServerProfileSchemasByAppId(appDto.getId())) {
-                        cacheService.resetFilters(new AppProfileVersionsKey(appDto.getApplicationToken(), version.getVersion(), filterDto
-                                .getServerProfileSchemaVersion()));
+                        LOG.debug("Processing version {}", version);
+                        cacheService.resetFilters(new AppProfileVersionsKey(appDto.getApplicationToken(), null, version.getVersion()));
                     }
                 }
             }

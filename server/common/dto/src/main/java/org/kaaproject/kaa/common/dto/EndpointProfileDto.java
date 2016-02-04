@@ -24,12 +24,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.kaaproject.kaa.common.dto.Util.getArrayCopy;
-
 public class EndpointProfileDto implements HasId, HasVersion, Serializable {
 
 
-    private static final List<EndpointGroupStateDto> EMPTY_GROUP_STATE = Collections.unmodifiableList(new ArrayList<>());
+    private static final List<EndpointGroupStateDto> EMPTY_GROUP_STATE = Collections.unmodifiableList(new ArrayList<EndpointGroupStateDto>());
 
     private static final long serialVersionUID = -7122736699758720540L;
 

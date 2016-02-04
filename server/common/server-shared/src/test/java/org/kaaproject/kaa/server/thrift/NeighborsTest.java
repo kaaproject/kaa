@@ -17,6 +17,7 @@
 package org.kaaproject.kaa.server.thrift;
 
 import org.junit.Test;
+import org.kaaproject.kaa.server.common.thrift.KaaThriftService;
 import org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo;
 import org.kaaproject.kaa.server.sync.Event;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -38,7 +39,7 @@ public class NeighborsTest {
     public void sendMessageTest() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, InterruptedException {
         ConnectionInfo connectionInfo1 = new ConnectionInfo("thriftHost", 9999, ByteBuffer.allocate(10));
         NeighborTemplate<Event> template = (NeighborTemplate<Event>) mock(NeighborTemplate.class);
-        Neighbors<NeighborTemplate<Event>, Event> neighbors = new Neighbors<>(template, 1);
+        Neighbors<NeighborTemplate<Event>, Event> neighbors = new Neighbors<>(KaaThriftService.OPERATIONS_SERVICE, template, 1);
         ReflectionTestUtils.setField(neighbors, "zkId", "someZkId");
         NeighborConnection<NeighborTemplate<Event>, Event> neighborConnection = new NeighborConnection<>(connectionInfo1, 1, null);
         LinkedBlockingQueue<Event> eventQueue = spy(new LinkedBlockingQueue<Event>());
