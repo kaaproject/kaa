@@ -41,11 +41,11 @@ import java.util.Date;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.server.common.dao.model.Notification;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.type.NotificationTypeCodec;
 
-import com.datastax.driver.mapping.EnumType;
 import com.datastax.driver.mapping.annotations.ClusteringColumn;
 import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.Enumerated;
+
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
 import com.datastax.driver.mapping.annotations.Transient;
@@ -64,8 +64,7 @@ public final class CassandraNotification implements Notification, Serializable {
     private String topicId;
 
     @PartitionKey(value = 1)
-    @Column(name = NF_NOTIFICATION_TYPE_PROPERTY)
-    @Enumerated(EnumType.STRING)
+    @Column(name = NF_NOTIFICATION_TYPE_PROPERTY, codec = NotificationTypeCodec.class)
     private NotificationTypeDto type;
 
     @Column(name = NF_NOTIFICATION_ID_PROPERTY)

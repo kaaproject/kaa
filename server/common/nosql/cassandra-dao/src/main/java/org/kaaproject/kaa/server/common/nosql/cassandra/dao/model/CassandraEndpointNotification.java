@@ -25,16 +25,16 @@ import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.util.Date;
 
+
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.server.common.dao.model.EndpointNotification;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.type.NotificationTypeCodec;
 
 import com.datastax.driver.core.utils.Bytes;
-import com.datastax.driver.mapping.EnumType;
 import com.datastax.driver.mapping.annotations.ClusteringColumn;
 import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.Enumerated;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
 import com.datastax.driver.mapping.annotations.Transient;
@@ -52,8 +52,7 @@ public final class CassandraEndpointNotification implements EndpointNotification
     private Integer seqNum;
     @Column(name = CassandraModelConstants.ET_NF_ID_PROPERTY)
     private String id;
-    @Column(name = CassandraModelConstants.ET_NF_NOTIFICATION_TYPE_PROPERTY)
-    @Enumerated(EnumType.STRING)
+    @Column(name = CassandraModelConstants.ET_NF_NOTIFICATION_TYPE_PROPERTY, codec = NotificationTypeCodec.class)
     private NotificationTypeDto type;
     @Column(name = CassandraModelConstants.ET_NF_APPLICATION_ID_PROPERTY)
     private String applicationId;
