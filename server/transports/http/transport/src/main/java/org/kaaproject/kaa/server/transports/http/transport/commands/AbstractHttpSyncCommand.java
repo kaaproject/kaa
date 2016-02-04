@@ -21,6 +21,8 @@ import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_LENGTH;
 import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_TYPE;
 import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
+
+import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpResponse;
@@ -34,7 +36,9 @@ import io.netty.handler.codec.http.multipart.InterfaceHttpData;
 import io.netty.handler.codec.http.multipart.InterfaceHttpData.HttpDataType;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
@@ -189,10 +193,13 @@ public abstract class AbstractHttpSyncCommand extends AbstractCommand {
     public HttpResponse getResponse() {
         LOG.trace("CommandName: " + COMMAND_NAME + ": getHttpResponse..");
 
-        FullHttpResponse httpResponse = new DefaultFullHttpResponse(HTTP_1_1, OK, Unpooled.copiedBuffer(responseBody));
+        ByteBuf data = Unpooled.copiedBuffer(responseBody);
+        LOG.warn("Response data: {}" , Arrays.toString(data.array()));
+        FullHttpResponse httpResponse = new DefaultFullHttpResponse(HTTP_1_1, OK, data);
 
         httpResponse.headers().set(CONTENT_TYPE, CommonEPConstans.RESPONSE_CONTENT_TYPE);
-        httpResponse.headers().set(CONTENT_LENGTH, httpResponse.content().readableBytes());
+        httpResponse.headers().set(CONTENT_LENGTH, data.readableBytes());
+        LOG.warn("Response size: {}" , data.readableBytes());
         httpResponse.headers().set(CommonEPConstans.RESPONSE_TYPE, CommonEPConstans.RESPONSE_TYPE_OPERATION);
         if(responseSignature != null){
             httpResponse.headers().set(CommonEPConstans.SIGNATURE_HEADER_NAME, Base64.encodeBase64String(responseSignature));

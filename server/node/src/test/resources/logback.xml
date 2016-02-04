@@ -39,9 +39,9 @@
         </encoder>
     </appender>
 
-    <logger name="org.kaaproject.kaa" level="INFO"/>
+    <logger name="org.kaaproject.kaa" level="TRACE"/>
     <logger name="org.kaaproject.kaa.metrics" level="WARN"/>
-    <logger name="org.kaaproject.kaa.server" level="INFO"/>
+    <logger name="org.kaaproject.kaa.server" level="DEBUG"/>
     <logger name="org.kaaproject.kaa.server.node" level="INFO"/>
     <logger name="org.kaaproject.kaa.server.admin" level="INFO"/>
     <logger name="org.kaaproject.kaa.server.control" level="INFO"/>

@@ -41,7 +41,7 @@ import io.netty.util.Attribute;
  */
 public class ResponseEncoder extends ChannelOutboundHandlerAdapter {
 
-    private static final Logger LOG = LoggerFactory.getLogger(RequestDecoder.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ResponseEncoder.class);
 
     @Override
     public void write(ChannelHandlerContext ctx, Object msg,
