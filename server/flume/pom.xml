@@ -245,6 +245,32 @@
     </build>
     <profiles>
         <profile>
+            <id>license</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.mycila.maven-license-plugin</groupId>
+                        <artifactId>maven-license-plugin</artifactId>
+                        <version>1.8.0</version>
+                        <configuration>
+                            <mapping>
+                                <conf>SCRIPT_STYLE</conf>
+                            </mapping>
+                            <includes>
+                                <include>**/*.conf</include>
+                            </includes>
+                            <excludes>
+                                <exclude>package/**/*.template</exclude>
+                                <exclude>package/conf/**/*.sh</exclude>
+                                <exclude>src/test/org/kaaproject/kaa/server/flume/Level.java</exclude>
+                                <exclude>src/test/org/kaaproject/kaa/server/flume/TestLogData.java</exclude>
+                            </excludes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
             <id>build-rpm</id>
             <build>
                 <plugins>

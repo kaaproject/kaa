@@ -87,6 +87,26 @@ Copyright 2014 CyberVision, Inc.
 
     <profiles>
         <profile>
+            <id>license</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.mycila.maven-license-plugin</groupId>
+                        <artifactId>maven-license-plugin</artifactId>
+                        <version>1.8.0</version>
+                        <configuration>
+                            <mapping>
+                                <thrift>JAVADOC_STYLE</thrift>
+                            </mapping>
+                            <includes>
+                                <include>**/*.thrift</include>
+                            </includes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
             <id>compile-thrift</id>
             <build>
                 <plugins>

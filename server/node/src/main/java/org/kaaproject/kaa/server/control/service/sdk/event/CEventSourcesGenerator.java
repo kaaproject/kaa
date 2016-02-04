@@ -49,12 +49,12 @@ public class CEventSourcesGenerator {
     private static final String NAME_PREFIX_TEMPLATE = "kaa_{name}";
     private static final String EVENT_FAMILY_DEFINITION_PATTERN = "kaa_{name}_definitions";
 
-    private static final String EVENT_FAMILIES_H_PATTERN = "sdk/c/event/kaa_event_families.h.vm";
+    private static final String EVENT_FAMILIES_H_PATTERN = "sdk/c/event/kaa_event_families.hvm";
     private static final String EVENT_FAMILIES_H_FILE = "kaa_{name}.h";
-    private static final String EVENT_FAMILIES_C_PATTERN = "sdk/c/event/kaa_event_families.c.vm";
+    private static final String EVENT_FAMILIES_C_PATTERN = "sdk/c/event/kaa_event_families.cvm";
     private static final String EVENT_FAMILIES_C_FILE = "kaa_{name}.c";
     private static final String EVENT_FQN_H_FILE = "kaa_event_fqn_definitions.h";
-    private static final String EVENT_FQN_PATTERN = "sdk/c/event/kaa_event_fqn_definitions.h.vm";
+    private static final String EVENT_FQN_PATTERN = "sdk/c/event/kaa_event_fqn_definitions.hvm";
     
     private static final VelocityEngine velocityEngine;
     static {

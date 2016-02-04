@@ -68,10 +68,10 @@ public class CppEventSourcesGenerator {
     private static final String EVENT_FAMILY_FACTORY_GET_EVENT_FAMILY_TEMPLATE = "sdk/cpp/event/eventFamilyFactoryGetConcreteEventFamily.template";
 
     /** The Constant AVROGEN_SH_TEMPLATE. */
-    private static final String AVROGEN_SH_TEMPLATE = "sdk/cpp/event/avrogen.sh.template";
+    private static final String AVROGEN_SH_TEMPLATE = "sdk/cpp/event/avrogen.sh_template";
     
     /** The Constant AVROGEN_bat_TEMPLATE. */
-    private static final String AVROGEN_BAT_TEMPLATE = "sdk/cpp/event/avrogen.bat.template";
+    private static final String AVROGEN_BAT_TEMPLATE = "sdk/cpp/event/avrogen.bat_template";
 
     /** The Constant EVENT_FAMILY_FACTORY_SET_CONCRETE_EVENT_FAMILY_NAMES_TEMPLATE. */
     private static final String EVENT_FAMILY_FACTORY_SET_CONCRETE_EVENT_FAMILY_NAMES_TEMPLATE = "sdk/cpp/event/eventFamilyFactorySetEventFamilyClassNames.template";
