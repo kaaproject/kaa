@@ -54,6 +54,12 @@ typedef struct {
     uint16_t     log_count;         /**< Current logs count. */
 } timeout_info_t;
 
+typedef struct {
+    size_t    size;                 /**< Bucket size. */
+    size_t    log_count;            /**< Count of logs in bucket. */
+    uint16_t  id;                   /**< Bucket id. */
+} last_bucket_info_t;
+
 struct kaa_log_collector {
     kaa_log_bucket_constraints_t   bucket_size;
     void                           *log_storage_context;
@@ -66,6 +72,7 @@ struct kaa_log_collector {
     bool                           is_sync_ignored;
     uint32_t                       log_last_id;         /**< Last log record ID */
     uint16_t                       log_bucket_id;
+    last_bucket_info_t             last_bucket;
 };
 
 static const kaa_service_t logging_sync_services[] = {KAA_SERVICE_LOGGING};
@@ -212,7 +219,7 @@ kaa_error_t kaa_log_collector_create(kaa_log_collector_t **log_collector_p
                                    , kaa_logger_t *logger)
 {
     KAA_RETURN_IF_NIL(log_collector_p, KAA_ERR_BADPARAM);
-    kaa_log_collector_t * collector = (kaa_log_collector_t *) KAA_MALLOC(sizeof(kaa_log_collector_t));
+    kaa_log_collector_t *collector = KAA_MALLOC(sizeof(*collector));
     KAA_RETURN_IF_NIL(collector, KAA_ERR_NOMEM);
 
     collector->log_bucket_id                    = 0;
@@ -223,6 +230,9 @@ kaa_error_t kaa_log_collector_create(kaa_log_collector_t **log_collector_p
     collector->channel_manager                  = channel_manager;
     collector->logger                           = logger;
     collector->is_sync_ignored                  = false;
+    collector->last_bucket.log_count            = 0;
+    collector->last_bucket.size                 = 0;
+    collector->last_bucket.id                   = 1;
 
     /* Must be overriden in _init() */
     collector->bucket_size.max_bucket_log_count = 0;
@@ -311,19 +321,68 @@ static void update_storage(kaa_log_collector_t *self)
      }
 }
 
+// Checks if there is a place for a new record
+static bool no_more_space_in_bucket(kaa_log_collector_t *self, kaa_log_record_t *new_record)
+{
+    if (self->last_bucket.log_count + 1 > self->bucket_size.max_bucket_log_count
+            || self->last_bucket.size + new_record->size > self->bucket_size.max_bucket_size) {
+        return true;
+    }
 
+    return false;
+}
+
+// Checks if bucket is last
+static bool last_bucket(kaa_log_collector_t *self, uint16_t bucket)
+{
+    return self->last_bucket.id == bucket;
+}
+
+// Puts record in next bucket
+static void place_record_in_next_bucket(kaa_log_collector_t *self, kaa_log_record_t *new_record)
+{
+    new_record->bucket_id = self->last_bucket.id + 1;
+}
+
+// Creates new bucket
+static void form_new_bucket(kaa_log_collector_t *self)
+{
+    self->last_bucket.id++;
+    // Avoid hitting reserved values
+    if (!self->last_bucket.id) {
+        self->last_bucket.id++;
+    }
+
+    self->last_bucket.log_count = 0;
+    self->last_bucket.size = 0;
+}
 
 kaa_error_t kaa_logging_add_record(kaa_log_collector_t *self, kaa_user_log_record_t *entry, kaa_log_record_info_t *log_info)
 {
     KAA_RETURN_IF_NIL2(self, entry, KAA_ERR_BADPARAM);
     KAA_RETURN_IF_NIL(self->log_storage_context, KAA_ERR_NOT_INITIALIZED);
 
-    kaa_log_record_t record = { NULL, entry->get_size(entry) };
+    // Last bucket ID will be incremented only if it will be added
+    // without errors
+    kaa_log_record_t record = {
+        .data = NULL,
+        .size = entry->get_size(entry),
+        .bucket_id = self->last_bucket.id,
+    };
+
+    bool next_bucket_required = false;
+
     if (!record.size) {
         KAA_LOG_ERROR(self->logger, KAA_ERR_BADDATA,
                       "Failed to add log record: serialized record size is null. "
                       "Maybe log record schema is empty");
         return KAA_ERR_BADDATA;
+    }
+
+    // Put log in the next bucket if required
+    if (no_more_space_in_bucket(self, &record)) {
+        place_record_in_next_bucket(self, &record);
+        next_bucket_required = true;
     }
 
     kaa_error_t error = ext_log_storage_allocate_log_record_buffer(self->log_storage_context, &record);
@@ -349,12 +408,19 @@ kaa_error_t kaa_logging_add_record(kaa_log_collector_t *self, kaa_user_log_recor
         return error;
     }
 
-    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Added log record, size %zu", record.size);
-    if (!is_timeout(self))
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Added log record, size %zu, bucket %u",
+                  record.size,
+                  record.bucket_id);
+    if (!is_timeout(self)) {
         update_storage(self);
+    }
+
+    if (next_bucket_required) {
+        form_new_bucket(self);
+    }
 
     if (log_info) {
-        log_info->bucket_id = self->log_bucket_id + 1;
+        log_info->bucket_id = self->last_bucket.id;
         log_info->log_id = self->log_last_id++;
     }
 
@@ -422,12 +488,13 @@ kaa_error_t kaa_logging_request_serialize(kaa_log_collector_t *self, kaa_platfor
         return KAA_ERR_WRITE_FAILED;
     }
 
-    ++self->log_bucket_id;
-
-    *((uint16_t *) tmp_writer.current) = KAA_HTONS(self->log_bucket_id);
+    char *bucket_id_p = tmp_writer.current;
     tmp_writer.current += sizeof(uint16_t);
     char *records_count_p = tmp_writer.current; // Pointer to the records count. Will be filled in later.
     tmp_writer.current += sizeof(uint16_t);
+
+    uint16_t bucket_id;
+    uint16_t first_bucket = 0;
 
     /* Bucket size constraints */
 
@@ -446,10 +513,18 @@ kaa_error_t kaa_logging_request_serialize(kaa_log_collector_t *self, kaa_platfor
         error = ext_log_storage_write_next_record(self->log_storage_context
                                                 , tmp_writer.current + sizeof(uint32_t)
                                                 , bucket_size - sizeof(uint32_t)
-                                                , self->log_bucket_id
+                                                , &bucket_id
                                                 , &record_len);
         switch (error) {
         case KAA_ERR_NONE:
+            if (!first_bucket) {
+                first_bucket = bucket_id;
+            } else if (bucket_id != first_bucket) {
+                // Put back log item if it is in another bucket
+                ext_log_storage_unmark_by_bucket_id(self->log_storage_context, bucket_id);
+                break;
+            }
+
             ++records_count;
             *((uint32_t *) tmp_writer.current) = KAA_HTONL(record_len);
             tmp_writer.current += (sizeof(uint32_t) + record_len);
@@ -470,16 +545,23 @@ kaa_error_t kaa_logging_request_serialize(kaa_log_collector_t *self, kaa_platfor
         }
     }
 
+    *((uint16_t *) bucket_id_p) = KAA_HTONS(first_bucket);
+
     size_t payload_size = tmp_writer.current - writer->current - KAA_EXTENSION_HEADER_SIZE;
-    KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Created log bucket: id '%u', log records count %u, payload size %zu",  self->log_bucket_id, records_count, payload_size);
+    KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Created log bucket: id '%u', log records count %u, payload size %zu",  first_bucket, records_count, payload_size);
 
     *((uint32_t *) extension_size_p) = KAA_HTONL(payload_size);
     *((uint16_t *) records_count_p) = KAA_HTONS(records_count);
     *writer = tmp_writer;
 
-    error = remember_request(self, self->log_bucket_id, records_count);
+    error = remember_request(self, first_bucket, records_count);
     if (error) {
         KAA_LOG_WARN(self->logger, error, "Failed to remember request time stamp");
+    }
+
+    // Incomplete bucket sent, so let's go and step to the next bucket
+    if (last_bucket(self, first_bucket)) {
+        form_new_bucket(self);
     }
 
     return KAA_ERR_NONE;
