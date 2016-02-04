@@ -36,7 +36,7 @@ public class EndpointConfigurationCassandraDao extends AbstractCassandraDao<Cass
     private static final Logger LOG = LoggerFactory.getLogger(EndpointConfigurationCassandraDao.class);
 
     @Override
-    protected Class<?> getColumnFamilyClass() {
+    protected Class<CassandraEndpointConfiguration> getColumnFamilyClass() {
         return CassandraEndpointConfiguration.class;
     }
 

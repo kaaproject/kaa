@@ -22,10 +22,8 @@ import static com.datastax.driver.core.querybuilder.QueryBuilder.select;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.set;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.update;
 import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_USER_ACCESS_TOKEN_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_USER_EXTERNAL_ID_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_USER_TENANT_ID_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_USER_USERNAME_PROPERTY;
 
 import java.util.UUID;
 
@@ -36,14 +34,13 @@ import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModel
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.datastax.driver.core.querybuilder.Assignment;
 import com.datastax.driver.core.querybuilder.Select.Where;
 import com.datastax.driver.core.querybuilder.Update;
 
 public class EndpointUserCassandraDao extends AbstractVersionableCassandraDao<CassandraEndpointUser, String> implements EndpointUserDao<CassandraEndpointUser> {
 
     private static final Logger LOG = LoggerFactory.getLogger(EndpointUserCassandraDao.class);
-
+    
     @Override
     protected Class<CassandraEndpointUser> getColumnFamilyClass() {
         return CassandraEndpointUser.class;
@@ -63,16 +60,6 @@ public class EndpointUserCassandraDao extends AbstractVersionableCassandraDao<Ca
         return super.save(user);
     }
     
-    @Override
-    protected CassandraEndpointUser updateLocked(CassandraEndpointUser endpointUser) {        
-       return updateLockedImpl(endpointUser.getVersion(), 
-                new Assignment[]{set(EP_USER_USERNAME_PROPERTY, endpointUser.getUsername()),
-                             set(EP_USER_ACCESS_TOKEN_PROPERTY, endpointUser.getAccessToken()),
-                             set(CassandraModelConstants.EP_USER_ENDPOINT_IDS_PROPERTY, endpointUser.getEndpointIds())},
-                             eq(EP_USER_EXTERNAL_ID_PROPERTY, endpointUser.getExternalId()),
-                             eq(EP_USER_TENANT_ID_PROPERTY, endpointUser.getTenantId())
-                );
-    }
 
     @Override
     public CassandraEndpointUser save(EndpointUserDto dto) {
@@ -133,5 +120,7 @@ public class EndpointUserCassandraDao extends AbstractVersionableCassandraDao<Ca
         LOG.trace("Found endpoint user {} by id {}", endpointUser, id);
         return endpointUser;
     }
+
+
 
 }

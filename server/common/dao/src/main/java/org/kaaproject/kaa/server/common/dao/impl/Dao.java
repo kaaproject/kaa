@@ -61,13 +61,4 @@ public interface Dao<T, K> {
      */
     void removeById(K id);
 
-    /**
-     * @param   o       the o
-     * @param   clazz   the clazz
-     * @param   <V>     the V
-     * @return  the saved object
-     *
-     */
-    <V> V save(V o, Class<?> clazz);
-
 }

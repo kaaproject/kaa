@@ -44,6 +44,7 @@ import org.kaaproject.kaa.common.dto.TopicListEntryDto;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
 import org.kaaproject.kaa.server.common.dao.AbstractTest;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
+import org.kaaproject.kaa.server.common.dao.exception.KaaOptimisticLockingFailureException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -244,8 +245,14 @@ public class EndpointServiceImplTest extends AbstractTest {
         Assert.assertEquals(endpointProfileDto.getId(), endpointIds.get(0));
     }
     
+    @Test(expected = KaaOptimisticLockingFailureException.class)
+    public void createDuplicateProfileTest() {
+        EndpointProfileDto endpointProfileDto = generateEndpointProfileWithGroupIdDto("124");
+        endpointProfileDto.setVersion(null);
+        endpointService.saveEndpointProfile(endpointProfileDto);
+    }
+    
     @Test
-    @Ignore
     public void multiThreadAttachDetachEndpointToUserTest() throws InterruptedException, ExecutionException {
         TenantDto tenantDto = generateTenantDto();
         EndpointUserDto endpointUserDto = generateEndpointUserDto(tenantDto.getId());

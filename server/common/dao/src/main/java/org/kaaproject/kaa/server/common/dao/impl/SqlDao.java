@@ -78,4 +78,13 @@ public interface SqlDao<T> extends Dao<T, String> {
      * @return the persisted object
      */
     T persist(T o);
+    
+    /**
+     * @param   o       the o
+     * @param   clazz   the clazz
+     * @param   <V>     the V
+     * @return  the saved object
+     *
+     */
+    <V> V save(V o, Class<?> clazz);
 }

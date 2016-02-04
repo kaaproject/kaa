@@ -43,7 +43,7 @@ public class CassandraEPByEndpointGroupIdDao extends AbstractCassandraDao<Cassan
     private static final Logger LOG = LoggerFactory.getLogger(CassandraEPByEndpointGroupIdDao.class);
 
     @Override
-    protected Class<?> getColumnFamilyClass() {
+    protected Class<CassandraEPByEndpointGroupId> getColumnFamilyClass() {
         return CassandraEPByEndpointGroupId.class;
     }
 

@@ -34,7 +34,7 @@ public class TopicListEntryCassandraDao extends AbstractCassandraDao<CassandraTo
     private static final Logger LOG = LoggerFactory.getLogger(TopicListEntryCassandraDao.class);
 
     @Override
-    protected Class<?> getColumnFamilyClass() {
+    protected Class<CassandraTopicListEntry> getColumnFamilyClass() {
         return CassandraTopicListEntry.class;
     }
 

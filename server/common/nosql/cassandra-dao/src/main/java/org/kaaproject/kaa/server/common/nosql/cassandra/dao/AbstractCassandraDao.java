@@ -16,17 +16,10 @@
 
 package org.kaaproject.kaa.server.common.nosql.cassandra.dao;
 
-import static com.datastax.driver.core.querybuilder.QueryBuilder.eq;
-import static com.datastax.driver.core.querybuilder.QueryBuilder.select;
-import static com.datastax.driver.core.querybuilder.QueryBuilder.set;
-import static com.datastax.driver.core.querybuilder.QueryBuilder.update;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.OPT_LOCK;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.kaaproject.kaa.server.common.dao.exception.KaaOptimisticLockingFailureException;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.client.CassandraClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,12 +32,7 @@ import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.Statement;
 import com.datastax.driver.core.UserType;
-import com.datastax.driver.core.querybuilder.Assignment;
-import com.datastax.driver.core.querybuilder.Clause;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
-import com.datastax.driver.core.querybuilder.Select;
-import com.datastax.driver.core.querybuilder.Update;
-import com.datastax.driver.core.querybuilder.Update.Assignments;
 import com.datastax.driver.mapping.Mapper;
 import com.datastax.driver.mapping.Result;
 
@@ -57,7 +45,7 @@ public abstract class AbstractCassandraDao<T, K> {
      * Cassandra client classes.
      */
     @Autowired
-    private CassandraClient cassandraClient;
+    protected CassandraClient cassandraClient;
 
     @Value("#{cassandra_properties[read_consistency_level]}")
     private String readConsistencyLevel;
@@ -68,7 +56,7 @@ public abstract class AbstractCassandraDao<T, K> {
 
     private Session session;
 
-    protected abstract Class<?> getColumnFamilyClass();
+    protected abstract Class<T> getColumnFamilyClass();
 
     protected abstract String getColumnFamilyName();
 
@@ -79,11 +67,11 @@ public abstract class AbstractCassandraDao<T, K> {
         return session;
     }
 
-    protected Mapper<?> getMapper(Class<?> clazz) {
+    protected Mapper<T> getMapper(Class<T> clazz) {
         return cassandraClient.getMapper(clazz);
     }
 
-    protected Mapper<?> getMapper() {
+    protected Mapper<T> getMapper() {
         return cassandraClient.getMapper(getColumnFamilyClass());
     }
 
@@ -92,7 +80,7 @@ public abstract class AbstractCassandraDao<T, K> {
         if (statement != null) {
             statement.setConsistencyLevel(getReadConsistencyLevel());
             ResultSet resultSet = getSession().execute(statement);
-            Result result = getMapper().map(resultSet);
+            Result<T> result = getMapper().map(resultSet);
             if (result != null) {
                 list = result.all();
             }
@@ -109,17 +97,12 @@ public abstract class AbstractCassandraDao<T, K> {
         if (statement != null) {
             statement.setConsistencyLevel(getReadConsistencyLevel());
             ResultSet resultSet = getSession().execute(statement);
-            Result result = getMapper().map(resultSet);
+            Result<T> result = getMapper().map(resultSet);
             if (result != null) {
-                object = (T) result.one();
+                object = result.one();
             }
         }
         return object;
-    }
-
-    protected <V> Statement getSaveQuery(V dto, Class<?> clazz) {
-        Mapper<V> mapper = (Mapper<V>) getMapper(clazz);
-        return mapper.saveQuery(dto);
     }
 
     protected Statement getSaveQuery(T dto) {
@@ -133,33 +116,6 @@ public abstract class AbstractCassandraDao<T, K> {
         saveStatement.setConsistencyLevel(getWriteConsistencyLevel());
         execute(saveStatement);
         return entity;
-    }
-
-    protected T updateLockedImpl(Long version, Assignment[] assignments, Clause... whereClauses) {
-        version = (version == null) ? 0l : version;
-        Assignments assigns = update(getColumnFamilyName()).onlyIf(eq(OPT_LOCK, version)).with(set(OPT_LOCK, version + 1));
-        for (Assignment assignment : assignments) {
-            assigns = assigns.and(assignment);
-        }
-        Update.Where query = assigns.where(whereClauses[0]);
-        if (whereClauses.length > 1) {
-            for (int i = 1; i < whereClauses.length; i++) {
-                query = query.and(whereClauses[i]);
-            }
-        }
-        ResultSet res = execute(query);
-        if (!res.wasApplied()) {
-            LOG.error("[{}] Can't update entity with version {}. Entity already changed!", getColumnFamilyClass(), version);
-            throw new KaaOptimisticLockingFailureException("Can't update entity with version " + version + ". Entity already changed!");
-        } else {
-            Select.Where where = select().from(getColumnFamilyName()).where(whereClauses[0]);
-            if (whereClauses.length > 1) {
-                for (int i = 1; i < whereClauses.length; i++) {
-                    where = where.and(whereClauses[i]);
-                }
-            }
-            return findOneByStatement(where);
-        }
     }
 
     protected void executeBatch(BatchStatement batch) {
@@ -182,20 +138,13 @@ public abstract class AbstractCassandraDao<T, K> {
     }
 
     protected ResultSet execute(Statement statement, ConsistencyLevel consistencyLevel) {
-        LOG.debug("Execute cassandra batch {}", statement);
-        statement.setConsistencyLevel(consistencyLevel);
+        LOG.debug("Execute cassandra statement {}", statement);
+        statement.setConsistencyLevel(consistencyLevel == null ? ConsistencyLevel.ONE : consistencyLevel);
         return getSession().execute(statement);
     }
 
     protected ResultSet execute(Statement statement) {
-        return execute(statement, ConsistencyLevel.ONE);
-    }
-
-    public <V> V save(V dto, Class<?> clazz) {
-        LOG.debug("Save entity of {} class", clazz.getName());
-        Mapper mapper = getMapper(clazz);
-        mapper.save(dto);
-        return dto;
+        return execute(statement, statement.getConsistencyLevel());
     }
 
     public List<T> find() {

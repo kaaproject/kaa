@@ -4,6 +4,7 @@ import org.kaaproject.kaa.common.dto.HasVersion;
 import org.kaaproject.kaa.server.common.dao.exception.KaaOptimisticLockingFailureException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.OptimisticLockingFailureException;
 
 public abstract class AbstractVersionableMongoDao<T extends HasVersion, K> extends AbstractMongoDao<T, K> {
@@ -18,6 +19,9 @@ public abstract class AbstractVersionableMongoDao<T extends HasVersion, K> exten
             LOG.error("[{}] Can't update entity with version {}. Entity already changed!", getDocumentClass(), dto.getVersion());
             throw new KaaOptimisticLockingFailureException(
                     "Can't update entity with version " + dto.getVersion() + ". Entity already changed!");
+        } catch (DuplicateKeyException exception) {
+            LOG.error("[{}] Can't insert entity. Entity already exists!", getDocumentClass());
+            throw new KaaOptimisticLockingFailureException("Can't insert entity. Entity already exists!");
         }
     }
 

@@ -19,16 +19,9 @@ package org.kaaproject.kaa.server.common.nosql.cassandra.dao;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.delete;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.eq;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.select;
-import static com.datastax.driver.core.querybuilder.QueryBuilder.set;
 import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.NF_APPLICATION_ID_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.NF_BODY_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.NF_COLUMN_FAMILY_NAME;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.NF_EXPIRED_AT_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.NF_LAST_MOD_TIME_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.NF_NOTIFICATION_ID_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.NF_NOTIFICATION_TYPE_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.NF_SCHEMA_ID_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.NF_SEQ_NUM_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.NF_TOPIC_ID_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.NF_VERSION_PROPERTY;
@@ -45,7 +38,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import com.datastax.driver.core.querybuilder.Assignment;
 import com.datastax.driver.core.querybuilder.Delete;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
 import com.datastax.driver.core.querybuilder.Select.Where;
@@ -63,24 +55,6 @@ public class NotificationCassandraDao extends AbstractVersionableCassandraDao<Ca
     @Override
     protected String getColumnFamilyName() {
         return NF_COLUMN_FAMILY_NAME;
-    }
-    
-    @Override
-    protected CassandraNotification updateLocked(
-            CassandraNotification entity) {
-        return updateLockedImpl(
-                entity.getVersion(),
-                new Assignment[] {
-                        set(NF_NOTIFICATION_ID_PROPERTY, entity.getId()), 
-                        set(NF_APPLICATION_ID_PROPERTY, entity.getApplicationId()),
-                        set(NF_SCHEMA_ID_PROPERTY, entity.getSchemaId()),
-                        set(NF_LAST_MOD_TIME_PROPERTY, entity.getLastModifyTime()),
-                        set(NF_BODY_PROPERTY, entity.getBody()),
-                        set(NF_EXPIRED_AT_PROPERTY, entity.getExpiredAt())},
-                eq(NF_TOPIC_ID_PROPERTY, entity.getTopicId()),
-                eq(NF_NOTIFICATION_TYPE_PROPERTY, entity.getType().name()),
-                eq(NF_VERSION_PROPERTY, entity.getNfVersion()),
-                eq(NF_SEQ_NUM_PROPERTY, entity.getSeqNum()));
     }
 
     @Override
@@ -175,5 +149,4 @@ public class NotificationCassandraDao extends AbstractVersionableCassandraDao<Ca
         }
         return types;
     }
-
 }

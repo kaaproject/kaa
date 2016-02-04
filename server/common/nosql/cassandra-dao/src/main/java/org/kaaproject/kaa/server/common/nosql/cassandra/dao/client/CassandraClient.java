@@ -83,7 +83,7 @@ public class CassandraClient implements Closeable {
         return cluster.newSession();
     }
 
-    public Mapper<?> getMapper(Class<?> clazz) {
+    public <T> Mapper<T> getMapper(Class<T> clazz) {
         return getMappingManager().mapper(clazz);
     }
 

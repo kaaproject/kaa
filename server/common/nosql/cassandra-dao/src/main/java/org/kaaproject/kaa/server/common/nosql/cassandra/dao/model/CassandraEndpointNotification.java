@@ -70,8 +70,8 @@ public final class CassandraEndpointNotification implements EndpointNotification
     @Column(name = CassandraModelConstants.ET_NF_TOPIC_ID_PROPERTY)
     private String topicId;
     
-    @Column(name = OPT_LOCK)
-    private Long version;
+    //@Column(name = OPT_LOCK)
+    //private Long version;
 
 
     public CassandraEndpointNotification() {
