@@ -16,7 +16,6 @@
 
 package org.kaaproject.kaa.server.common;
 
-import org.cassandraunit.CassandraCQLUnit;
 import org.cassandraunit.dataset.cql.ClassPathCQLDataSet;
 import org.junit.ClassRule;
 import org.junit.extensions.cpsuite.ClasspathSuite;
@@ -29,6 +28,6 @@ import org.junit.runner.RunWith;
 public class CassandraTestSuite {
 
     @ClassRule
-    public static CassandraCQLUnit cassandraUnit = new CassandraCQLUnit(new ClassPathCQLDataSet("cassandra.cql", false, false));
+    public static CustomCassandraCQLUnit cassandraUnit = new CustomCassandraCQLUnit(new ClassPathCQLDataSet("cassandra.cql", false, false), "cassandra-test.yaml", 20000l);
 
 }

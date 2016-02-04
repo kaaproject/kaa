@@ -16,22 +16,6 @@
 
 package org.kaaproject.kaa.server.common.nosql.cassandra.dao.model;
 
-import com.datastax.driver.mapping.EnumType;
-import com.datastax.driver.mapping.annotations.ClusteringColumn;
-import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.Enumerated;
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
-import com.datastax.driver.mapping.annotations.Transient;
-
-import org.kaaproject.kaa.common.dto.NotificationDto;
-import org.kaaproject.kaa.common.dto.NotificationTypeDto;
-import org.kaaproject.kaa.server.common.dao.model.Notification;
-
-import java.io.Serializable;
-import java.nio.ByteBuffer;
-import java.util.Date;
-
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.OPT_LOCK;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getByteBuffer;
@@ -50,6 +34,21 @@ import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.Cassand
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.NF_TOPIC_ID_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.NF_VERSION_PROPERTY;
 
+import java.io.Serializable;
+import java.nio.ByteBuffer;
+import java.util.Date;
+
+import org.kaaproject.kaa.common.dto.NotificationDto;
+import org.kaaproject.kaa.common.dto.NotificationTypeDto;
+import org.kaaproject.kaa.server.common.dao.model.Notification;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.type.NotificationTypeCodec;
+
+import com.datastax.driver.mapping.annotations.ClusteringColumn;
+import com.datastax.driver.mapping.annotations.Column;
+import com.datastax.driver.mapping.annotations.PartitionKey;
+import com.datastax.driver.mapping.annotations.Table;
+import com.datastax.driver.mapping.annotations.Transient;
+
 
 @Table(name = NF_COLUMN_FAMILY_NAME)
 public final class CassandraNotification implements Notification, Serializable {
@@ -64,8 +63,7 @@ public final class CassandraNotification implements Notification, Serializable {
     private String topicId;
 
     @PartitionKey(value = 1)
-    @Column(name = NF_NOTIFICATION_TYPE_PROPERTY)
-    @Enumerated(EnumType.STRING)
+    @Column(name = NF_NOTIFICATION_TYPE_PROPERTY, codec = NotificationTypeCodec.class)
     private NotificationTypeDto type;
 
     @Column(name = NF_NOTIFICATION_ID_PROPERTY)
