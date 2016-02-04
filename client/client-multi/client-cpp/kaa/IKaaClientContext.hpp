@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,32 +14,29 @@
  * limitations under the License.
  */
 
-#ifndef ILOGGER_HPP_
-#define ILOGGER_HPP_
+#ifndef IKAACLIENTCONTEXT
+#define IKAACLIENTCONTEXT
 
-#include <string>
+#include <memory>
+#include <kaa/IKaaClientStateStorage.hpp>
 
 namespace kaa {
 
-enum class LogLevel {
-    KAA_TRACE = 0,
-    KAA_DEBUG,
-    KAA_INFO,
-    KAA_WARNING,
-    KAA_ERROR,
-    KAA_FATAL
-};
+class KaaClientProperties;
+class ILogger;
+class IExecutorContext;
 
-class ILogger {
+class IKaaClientContext {
 public:
-    virtual ~ILogger() {}
+    virtual KaaClientProperties              &getProperties() = 0;
+    virtual ILogger                              &getLogger() = 0;
+    virtual IKaaClientStateStorage               &getStatus() = 0;
+    virtual IExecutorContext            &getExecutorContext() = 0;
 
-    virtual void log(LogLevel level, const char *message) const = 0;
+    virtual ~IKaaClientContext() = default;
 };
 
-typedef std::shared_ptr<ILogger> LoggerPtr;
+}
 
-}  // namespace kaa
+#endif // IKAACLIENTCONTEXT
 
-
-#endif /* ILOGGER_HPP_ */

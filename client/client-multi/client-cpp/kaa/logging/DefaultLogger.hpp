@@ -17,21 +17,28 @@
 #ifndef DEFAULTLOGGER_HPP_
 #define DEFAULTLOGGER_HPP_
 
+#include <string>
+#include <boost/log/sinks/sync_frontend.hpp>
+#include <boost/log/sinks/text_ostream_backend.hpp>
+#include <boost/smart_ptr/shared_ptr.hpp>
 #include "kaa/KaaDefaults.hpp"
 
 #if KAA_LOG_LEVEL > KAA_LOG_LEVEL_NONE
 
 #include "kaa/logging/ILogger.hpp"
-#include <boost/log/trivial.hpp>
 
 namespace kaa {
 
 class DefaultLogger : public ILogger {
 public:
-    void log(LogLevel level, const char *message) const {
-        BOOST_LOG_STREAM_WITH_PARAMS(boost::log::trivial::logger::get(),
-                (boost::log::keywords::severity = (boost::log::trivial::severity_level)level)) << message;
-    }
+  DefaultLogger(const std::string& clientId, const std::string& logFileName = std::string());
+
+  void log(LogLevel level, const char *message) const;
+
+private:
+    std::string clientId_;
+    using text_sink = boost::log::sinks::synchronous_sink< boost::log::sinks::text_ostream_backend >;
+    boost::shared_ptr< text_sink > pSink_;
 };
 
 }  // namespace kaa

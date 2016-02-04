@@ -36,17 +36,17 @@
 
 namespace kaa {
 
-LogCollector::LogCollector(IKaaChannelManagerPtr manager, IExecutorContext& executorContext, const KaaClientProperties& clientProperties)
+LogCollector::LogCollector(IKaaChannelManagerPtr manager, IKaaClientContext &context)
     : transport_(nullptr), channelManager_(manager), timeoutAccessPointId_(0),
       logUploadCheckTimer_("LogCollector logUploadCheckTimer"), scheduledUploadTimer_("LogCollector uploadTimer"),
-      timeoutTimer_("LogCollector timeoutTimer"), executorContext_(executorContext)
+      timeoutTimer_("LogCollector timeoutTimer"), context_(context)
 {
 #ifdef KAA_USE_SQLITE_LOG_STORAGE
-    storage_.reset(new SQLiteDBLogStorage(clientProperties.getLogsDatabaseFileName()));
+    storage_.reset(new SQLiteDBLogStorage(context_));
 #else
-    storage_.reset(new MemoryLogStorage());
+    storage_.reset(new MemoryLogStorage(context_));
 #endif
-    uploadStrategy_.reset(new DefaultLogUploadStrategy());
+    uploadStrategy_.reset(new DefaultLogUploadStrategy(context_));
 
     startTimeoutTimer();
 }
@@ -73,7 +73,7 @@ void LogCollector::startLogUploadCheckTimer()
 
 void LogCollector::processTimeout()
 {
-    executorContext_.getCallbackExecutor().add([this] () { uploadStrategy_->onTimeout(*this); });
+    context_.getExecutorContext().getCallbackExecutor().add([this] () { uploadStrategy_->onTimeout(*this); });
 
     KAA_LOG_WARN(boost::format("Going to notify log storage of logs delivery timeout..."));
 
@@ -102,7 +102,7 @@ void LogCollector::addLogRecord(const KaaUserLogRecord& record)
      */
     LogRecordPtr serializedRecord(new LogRecord(record));
 
-    executorContext_.getApiExecutor().add([this, serializedRecord] ()
+    context_.getExecutorContext().getApiExecutor().add([this, serializedRecord] ()
             {
                 KAA_MUTEX_LOCKING("storageGuard_");
                 KAA_MUTEX_UNIQUE_DECLARE(lock, storageGuard_);
@@ -319,7 +319,7 @@ void LogCollector::onLogUploadResponse(const LogSyncResponse& response)
                     KAA_LOG_WARN(boost::format("Logs (requestId %ld) failed to deliver (error %d)")
                                             % status.requestId % (int)errocCode);
 
-                    executorContext_.getCallbackExecutor().add([this, errocCode] ()
+                    context_.getExecutorContext().getCallbackExecutor().add([this, errocCode] ()
                             {
                                 uploadStrategy_->onFailure(*this, errocCode);
                             });

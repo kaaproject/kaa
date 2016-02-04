@@ -239,7 +239,7 @@ kaa_error_t ext_log_storage_add_log_record(void *context, kaa_log_record_t *reco
     return KAA_ERR_NONE;
 }
 
-kaa_error_t ext_log_storage_write_next_record(void *context, char *buffer, size_t buffer_len, uint16_t bucket_id, size_t *record_len)
+kaa_error_t ext_log_storage_write_next_record(void *context, char *buffer, size_t buffer_len, uint16_t *bucket_id, size_t *record_len)
 {
     mock_storage_context_t *self = (mock_storage_context_t *)context;
     KAA_RETURN_IF_NIL2(self, self->logs, KAA_ERR_NOT_FOUND);
@@ -251,6 +251,7 @@ kaa_error_t ext_log_storage_write_next_record(void *context, char *buffer, size_
     }
 
     *record_len = record->size;
+    *bucket_id = 1;
     memcpy(buffer, record->data, *record_len);
     return KAA_ERR_NONE;
 }

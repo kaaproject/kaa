@@ -23,6 +23,8 @@
 
 #include "kaa/logging/Log.hpp"
 #include "kaa/common/UuidGenerator.hpp"
+#include "kaa/KaaClientProperties.hpp"
+#include "kaa/logging/Log.hpp"
 
 namespace kaa {
 
@@ -324,7 +326,8 @@ void ClientParameter<HashDigest>::read(const std::string &strValue)
     }
 }
 
-ClientStatus::ClientStatus(const std::string& filename) : filename_(filename), isSDKPropertiesForUpdated_(false), hasUpdate_(false)
+
+  ClientStatus::ClientStatus(IKaaClientContext& context) : filename_(context.getProperties().getStateFileName()), isSDKPropertiesForUpdated_(false), hasUpdate_(false), context_(context)
 {
     auto appseqntoken = parameterToToken_.left.find(ClientParameterT::APPSEQUENCENUMBER);
     if (appseqntoken != parameterToToken_.left.end()) {

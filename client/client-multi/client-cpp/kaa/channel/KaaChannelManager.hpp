@@ -27,6 +27,7 @@
 #include "kaa/channel/IKaaChannelManager.hpp"
 #include "kaa/channel/connectivity/IPingServerStorage.hpp"
 #include "kaa/utils/KaaTimer.hpp"
+#include "kaa/IKaaClientContext.hpp"
 
 namespace kaa {
 
@@ -35,7 +36,7 @@ class IBootstrapManager;
 class KaaChannelManager: public IKaaChannelManager, public IPingServerStorage
 {
 public:
-    KaaChannelManager(IBootstrapManager& manager, const BootstrapServers& servers);
+    KaaChannelManager(IBootstrapManager& manager, const BootstrapServers& servers, IKaaClientContext &context);
     ~KaaChannelManager() { doShutdown(); }
 
     virtual void setFailoverStrategy(IFailoverStrategyPtr strategy);
@@ -100,6 +101,8 @@ private:
     ConnectivityCheckerPtr connectivityChecker_;
 
     TransportProtocolId bsTransportId_;
+
+    IKaaClientContext &context_;
 };
 
 } /* namespace kaa */

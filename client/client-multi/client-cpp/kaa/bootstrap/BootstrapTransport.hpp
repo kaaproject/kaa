@@ -31,7 +31,7 @@ class BootstrapTransport : public AbstractKaaTransport<TransportType::BOOTSTRAP>
                          , public IBootstrapTransport
 {
 public:
-    BootstrapTransport(IKaaChannelManager& channelManager, IBootstrapManager &bootstrapManager);
+    BootstrapTransport(IKaaChannelManager& channelManager, IBootstrapManager &bootstrapManager, IKaaClientContext &context);
 
     virtual void sync();
 

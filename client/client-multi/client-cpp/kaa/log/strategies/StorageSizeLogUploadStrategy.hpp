@@ -28,8 +28,8 @@ namespace kaa {
 
 class StorageSizeLogUploadStrategy : public DefaultLogUploadStrategy {
 public:
-    StorageSizeLogUploadStrategy(std::size_t volumeThreshold)
-        : DefaultLogUploadStrategy()
+    StorageSizeLogUploadStrategy(std::size_t volumeThreshold, IKaaClientContext &context)
+        : DefaultLogUploadStrategy(context)
     {
         setVolumeThreshold(volumeThreshold);
     }

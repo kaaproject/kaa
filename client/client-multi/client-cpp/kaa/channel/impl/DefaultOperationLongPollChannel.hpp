@@ -34,12 +34,13 @@
 #include "kaa/channel/IPTransportInfo.hpp"
 #include "kaa/channel/ITransportConnectionInfo.hpp"
 #include "kaa/channel/TransportProtocolIdConstants.hpp"
+#include "kaa/IKaaClientContext.hpp"
 
 namespace kaa {
 
 class DefaultOperationLongPollChannel : public IDataChannel {
 public:
-    DefaultOperationLongPollChannel(IKaaChannelManager *channelManager, const KeyPair& clientKeys);
+    DefaultOperationLongPollChannel(IKaaChannelManager *channelManager, const KeyPair& clientKeys, IKaaClientContext &context);
     virtual ~DefaultOperationLongPollChannel();
 
     virtual void sync(TransportType type);
@@ -110,6 +111,9 @@ private:
     KAA_CONDITION_VARIABLE_DECLARE(waitCondition_);
     KAA_MUTEX_DECLARE(conditionMutex_);
     KAA_MUTEX_DECLARE(channelGuard_);
+
+protected:
+    IKaaClientContext &context_;
 };
 
 }

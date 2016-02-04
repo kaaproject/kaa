@@ -33,6 +33,7 @@
 #include "kaa/event/IEventDataProcessor.hpp"
 #include "kaa/IKaaClientStateStorage.hpp"
 #include "kaa/transact/AbstractTransactable.hpp"
+#include "kaa/IKaaClientContext.hpp"
 
 namespace kaa {
 
@@ -44,9 +45,8 @@ class EventManager : public IEventManager
                    , public AbstractTransactable<std::list<Event> >
 {
 public:
-    EventManager(IKaaClientStateStoragePtr status, IExecutorContext& executorContext)
-        : currentEventIndex_(0),eventTransport_(nullptr)
-        , status_(status), executorContext_(executorContext)
+    EventManager(IKaaClientContext &context)
+        : context_(context), currentEventIndex_(0),eventTransport_(nullptr)
     {
     }
 
@@ -72,14 +72,14 @@ public:
 
     virtual TransactionIdPtr beginTransaction()
     {
-        return AbstractTransactable::beginTransaction();
+        return AbstractTransactable::beginTransaction(context_);
     }
 
-    virtual void commit(TransactionIdPtr trxId);
+    virtual void commit(TransactionIdPtr trxId, IKaaClientContext &context_);
 
     virtual void rollback(TransactionIdPtr trxId)
     {
-        AbstractTransactable::rollback(trxId);
+        AbstractTransactable::rollback(trxId, context_);
     }
 private:
     struct EventListenersInfo {
@@ -96,6 +96,8 @@ private:
     void doSync();
 
 private:
+    IKaaClientContext &context_;
+
     std::set<IEventFamily*>   eventFamilies_;
     std::map<std::int32_t, Event>          pendingEvents_;
     KAA_MUTEX_MUTABLE_DECLARE(pendingEventsGuard_);
@@ -103,12 +105,9 @@ private:
     std::int32_t currentEventIndex_;
 
     EventTransport *          eventTransport_;
-    IKaaClientStateStoragePtr status_;
 
     std::map<std::int32_t/*request id*/, std::shared_ptr<EventListenersInfo> > eventListenersRequests_;
     KAA_MUTEX_MUTABLE_DECLARE(eventListenersGuard_);
-
-    IExecutorContext& executorContext_;
 };
 
 } /* namespace kaa */

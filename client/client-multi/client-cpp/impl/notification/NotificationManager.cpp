@@ -32,10 +32,10 @@
 
 namespace kaa {
 
-NotificationManager::NotificationManager(IKaaClientStateStoragePtr status, IExecutorContext& executorContext)
-    : executorContext_(executorContext), clientStatus_(status)
+NotificationManager::NotificationManager(IKaaClientContext &context)
+    : context_(context)
 {
-    const DetailedTopicStates& topicStates = clientStatus_->getTopicStates();
+    const DetailedTopicStates& topicStates = context_.getStatus().getTopicStates();
 
     for (auto &topicState : topicStates) {
         Topic topic;
@@ -329,12 +329,12 @@ const Topic& NotificationManager::findTopic(const std::string& id)
 
 void NotificationManager::notifyTopicUpdateSubscribers(const Topics& topics)
 {
-    executorContext_.getCallbackExecutor().add([this, topics] () { topicListeners_(topics); });
+    context_.getExecutorContext().getCallbackExecutor().add([this, topics] () { topicListeners_(topics); });
 }
 
 void NotificationManager::notifyMandatoryNotificationSubscribers(const std::string& id, KaaNotificationPtr notification)
 {
-    executorContext_.getCallbackExecutor().add([this, id, notification] () { mandatoryListeners_(id, *notification); });
+    context_.getExecutorContext().getCallbackExecutor().add([this, id, notification] () { mandatoryListeners_(id, *notification); });
 }
 
 bool NotificationManager::notifyOptionalNotificationSubscribers(const std::string& id, KaaNotificationPtr notification)
@@ -355,7 +355,7 @@ bool NotificationManager::notifyOptionalNotificationSubscribers(const std::strin
 
         notified = true;
 
-        executorContext_.getCallbackExecutor().add([notifier, id, notification] () { (*notifier)(id, *notification); });
+        context_.getExecutorContext().getCallbackExecutor().add([notifier, id, notification] () { (*notifier)(id, *notification); });
     }
 
     return notified;

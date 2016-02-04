@@ -29,7 +29,7 @@ namespace kaa {
 
 const std::string MultipartPostHttpRequest::BOUNDARY = "----Sanj56fD843koI0";
 
-MultipartPostHttpRequest::MultipartPostHttpRequest(const HttpUrl& url) : url_(url)
+MultipartPostHttpRequest::MultipartPostHttpRequest(const HttpUrl& url, IKaaClientContext &context) : url_(url),context_(context)
 {
 
 }

@@ -22,6 +22,12 @@
 #include "kaa/profile/ProfileManager.hpp"
 #include "kaa/profile/DefaultProfileContainer.hpp"
 #include "kaa/profile/gen/ProfileDefinitions.hpp"
+#include "kaa/KaaClientProperties.hpp"
+#include "kaa/KaaClientContext.hpp"
+#include "kaa/logging/DefaultLogger.hpp"
+#include "headers/channel/MockChannelManager.hpp"
+#include "kaa/context/SimpleExecutorContext.hpp"
+#include "headers/MockKaaClientStateStorage.hpp"
 
 namespace kaa {
 
@@ -29,7 +35,17 @@ BOOST_AUTO_TEST_SUITE(ProfileManagerTestSuite)
 
 BOOST_AUTO_TEST_CASE(ProfileManagerIsInitializedTest)
 {
-    ProfileManager profileManager;
+    KaaClientProperties tmp_properties;
+    DefaultLogger tmp_logger(tmp_properties.getClientId());
+    KaaClientProperties properties;
+    MockChannelManager channelManager;
+    IKaaClientStateStoragePtr tmp_state(new MockKaaClientStateStorage);
+    SimpleExecutorContext executor;
+    executor.init();
+    KaaClientContext clientContext(properties, tmp_logger, executor, tmp_state);
+
+    ProfileManager profileManager(clientContext);
+
 
 #if KAA_PROFILE_SCHEMA_VERSION > 0
     BOOST_CHECK(!profileManager.isInitialized());

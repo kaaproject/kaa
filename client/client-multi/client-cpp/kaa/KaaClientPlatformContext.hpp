@@ -47,7 +47,7 @@ public:
         }
     }
 
-    virtual const KaaClientProperties& getProperties()
+    virtual KaaClientProperties& getProperties()
     {
         return properties_;
     }

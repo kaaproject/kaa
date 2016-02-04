@@ -40,14 +40,15 @@
 #include "kaa/context/SimpleExecutorContext.hpp"
 #include "kaa/DummyKaaClientStateListener.hpp"
 #include "kaa/KaaClientProperties.hpp"
+#include "kaa/logging/DefaultLogger.hpp"
 
 namespace kaa {
 
 KaaClient::KaaClient(IKaaClientPlatformContextPtr context, IKaaClientStateListenerPtr listener)
-    : platformContext_(context)
-    , executorContext_(context->getExecutorContext())
-    , clientProperties_(context->getProperties())
-    , stateListener_(listener)
+    : logger_(new DefaultLogger(context->getProperties().getClientId(), context->getProperties().getLogFileName())),
+      context_(context->getProperties(), *logger_, context->getExecutorContext()),
+      status_(new ClientStatus(context_)),
+      platformContext_(context), stateListener_(listener)
 {
     if (!stateListener_) {
         stateListener_ = std::make_shared<DummyKaaClientStateListener>();
@@ -61,31 +62,29 @@ void KaaClient::init()
     KAA_LOG_INFO(boost::format("Creating Kaa C++ SDK instance: version %1%, commit hash %2%")
                                                             % BUILD_VERSION % BUILD_COMMIT_HASH);
 
-    status_.reset(new ClientStatus(clientProperties_.getStateFileName()));
-
     initClientKeys();
-
-    bootstrapManager_.reset(new BootstrapManager);
-    channelManager_.reset(new KaaChannelManager(*bootstrapManager_, getBootstrapServers()));
+    context_.setStatus(status_);
+    bootstrapManager_.reset(new BootstrapManager(context_));
+    channelManager_.reset(new KaaChannelManager(*bootstrapManager_, getBootstrapServers(), context_));
     failoverStrategy_.reset(new DefaultFailoverStrategy);
     channelManager_->setFailoverStrategy(failoverStrategy_);
-    profileManager_.reset(new ProfileManager());
+    profileManager_.reset(new ProfileManager(context_));
 
 #ifdef KAA_USE_CONFIGURATION
     SequenceNumber sn = { 0, 0, 1 };
-    status_->setAppSeqNumber(sn);
-    configurationManager_.reset(new ConfigurationManager(executorContext_, status_));
+    context_.getStatus().setAppSeqNumber(sn);
+    configurationManager_.reset(new ConfigurationManager(context_));
 #endif
 #ifdef KAA_USE_EVENTS
-    registrationManager_.reset(new EndpointRegistrationManager(status_, executorContext_));
-    eventManager_.reset(new EventManager(status_, executorContext_));
-    eventFamilyFactory_.reset(new EventFamilyFactory(*eventManager_, *eventManager_, executorContext_));
+    registrationManager_.reset(new EndpointRegistrationManager(context_));
+    eventManager_.reset(new EventManager(context_));
+    eventFamilyFactory_.reset(new EventFamilyFactory(*eventManager_, *eventManager_, context_));
 #endif
 #ifdef KAA_USE_NOTIFICATIONS
-    notificationManager_.reset(new NotificationManager(status_, executorContext_));
+    notificationManager_.reset(new NotificationManager(context_));
 #endif
 #ifdef KAA_USE_LOGGING
-    logCollector_.reset(new LogCollector(channelManager_.get(), executorContext_, clientProperties_));
+    logCollector_.reset(new LogCollector(channelManager_.get(), context_));
 #endif
 
     initKaaTransport();
@@ -109,9 +108,9 @@ void KaaClient::start()
     /*
      * NOTE: Initialization of an executor context should be the first.
      */
-    executorContext_.init();
+    context_.getExecutorContext().init();
 
-    executorContext_.getLifeCycleExecutor().add([this]
+    context_.getExecutorContext().getLifeCycleExecutor().add([this]
         {
             try {
 #ifdef KAA_USE_CONFIGURATION
@@ -137,7 +136,7 @@ void KaaClient::stop()
      * pass a reference to this client to a 'stop' task.
      */
     auto thisRef = shared_from_this();
-    executorContext_.getLifeCycleExecutor().add([this, thisRef]
+    context_.getExecutorContext().getLifeCycleExecutor().add([this, thisRef]
         {
             try {
                 channelManager_->shutdown();
@@ -148,8 +147,7 @@ void KaaClient::stop()
             }
         });
 
-    executorContext_.stop();
-
+    context_.getExecutorContext().stop();
     setClientState(State::STOPPED);
 }
 
@@ -157,7 +155,7 @@ void KaaClient::pause()
 {
     checkClientState(State::STARTED, "Kaa client is not started");
 
-    executorContext_.getLifeCycleExecutor().add([this]
+    context_.getExecutorContext().getLifeCycleExecutor().add([this]
         {
             try {
                 status_->save();
@@ -175,7 +173,7 @@ void KaaClient::resume()
 {
     checkClientState(State::PAUSED, "Kaa client isn't paused");
 
-    executorContext_.getLifeCycleExecutor().add([this]
+    context_.getExecutorContext().getLifeCycleExecutor().add([this]
         {
             try {
                 channelManager_->resume();
@@ -190,7 +188,7 @@ void KaaClient::resume()
 
 void KaaClient::initKaaTransport()
 {
-    IBootstrapTransportPtr bootstrapTransport(new BootstrapTransport(*channelManager_, *bootstrapManager_));
+    IBootstrapTransportPtr bootstrapTransport(new BootstrapTransport(*channelManager_, *bootstrapManager_, context_));
 
     bootstrapManager_->setTransport(bootstrapTransport.get());
     bootstrapManager_->setChannelManager(channelManager_.get());
@@ -198,27 +196,26 @@ void KaaClient::initKaaTransport()
     EndpointObjectHash publicKeyHash(clientKeys_->getPublicKey().begin(), clientKeys_->getPublicKey().size());
 
     auto metaDataTransport = std::make_shared<MetaDataTransport>(status_, publicKeyHash, 60000L);
-    auto profileTransport = std::make_shared<ProfileTransport>(*channelManager_, clientKeys_->getPublicKey());
+    auto profileTransport = std::make_shared<ProfileTransport>(*channelManager_, clientKeys_->getPublicKey(), context_);
+
 #ifdef KAA_USE_CONFIGURATION
-    auto configurationTransport = std::make_shared<ConfigurationTransport>(*channelManager_, status_);
+    auto configurationTransport = std::make_shared<ConfigurationTransport>(*channelManager_, context_);
     configurationTransport->setConfigurationProcessor(&configurationManager_->getConfigurationProcessor());
     configurationTransport->setConfigurationHashContainer(&configurationManager_->getConfigurationHashContainer());
 #endif
 #ifdef KAA_USE_NOTIFICATIONS
-    auto notificationTransport = std::make_shared<NotificationTransport>(status_, *channelManager_);
+    auto notificationTransport = std::make_shared<NotificationTransport>(*channelManager_, context_);
 #endif
 #ifdef KAA_USE_EVENTS
-    auto userTransport = std::make_shared<UserTransport>(*registrationManager_, *channelManager_);
-    auto eventTransport = std::make_shared<EventTransport>(*eventManager_, *channelManager_, status_);
-    eventTransport->setClientState(status_);
+    auto userTransport = std::make_shared<UserTransport>(*registrationManager_, *channelManager_, context_);
+    auto eventTransport = std::make_shared<EventTransport>(*eventManager_, *channelManager_, context_);
 #endif
 #ifdef KAA_USE_LOGGING
-    auto loggingTransport = std::make_shared<LoggingTransport>(*channelManager_, *logCollector_);
+    auto loggingTransport = std::make_shared<LoggingTransport>(*channelManager_, *logCollector_, context_);
 #endif
     auto redirectionTransport = std::make_shared<RedirectionTransport>(*bootstrapManager_);
 
     profileTransport->setProfileManager(profileManager_.get());
-    dynamic_cast<ProfileTransport*>(profileTransport.get())->setClientState(status_);
     profileManager_->setTransport(profileTransport);
 
     syncProcessor_.reset(
@@ -249,7 +246,7 @@ void KaaClient::initKaaTransport()
             , nullptr
 #endif
             , redirectionTransport
-            , status_));
+            , context_));
 
 #ifdef KAA_USE_EVENTS
     eventManager_->setTransport(std::dynamic_pointer_cast<EventTransport, IEventTransport>(eventTransport).get());
@@ -262,14 +259,14 @@ void KaaClient::initKaaTransport()
     notificationManager_->setTransport(std::dynamic_pointer_cast<NotificationTransport, INotificationTransport>(notificationTransport));
 #endif
 #ifdef KAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL
-    bootstrapChannel_.reset(new DefaultBootstrapChannel(channelManager_.get(), *clientKeys_, status_));
+    bootstrapChannel_.reset(new DefaultBootstrapChannel(channelManager_.get(), *clientKeys_, context_));
     bootstrapChannel_->setDemultiplexer(syncProcessor_.get());
     bootstrapChannel_->setMultiplexer(syncProcessor_.get());
     KAA_LOG_INFO(boost::format("Going to set default bootstrap channel: %1%") % bootstrapChannel_.get());
     channelManager_->addChannel(bootstrapChannel_.get());
 #endif
 #ifdef KAA_DEFAULT_TCP_CHANNEL
-    opsTcpChannel_.reset(new DefaultOperationTcpChannel(channelManager_.get(), *clientKeys_, status_));
+    opsTcpChannel_.reset(new DefaultOperationTcpChannel(channelManager_.get(), *clientKeys_, context_));
     opsTcpChannel_->setDemultiplexer(syncProcessor_.get());
     opsTcpChannel_->setMultiplexer(syncProcessor_.get());
     KAA_LOG_INFO(boost::format("Going to set default operations Kaa TCP channel: %1%") % opsTcpChannel_.get());
@@ -284,8 +281,8 @@ void KaaClient::initKaaTransport()
 
 void KaaClient::initClientKeys()
 {
-    std::string publicKeyLocation = clientProperties_.getPublicKeyFileName();
-    std::string privateKeyLocation = clientProperties_.getPrivateKeyFileName();
+    std::string publicKeyLocation = context_.getProperties().getPublicKeyFileName();
+    std::string privateKeyLocation = context_.getProperties().getPrivateKeyFileName();
 
     std::ifstream key(publicKeyLocation);
     bool exists = key.good();
@@ -604,7 +601,6 @@ void KaaClient::updateProfile()
     checkClientState(State::STARTED, "Kaa client isn't started");
     profileManager_->updateProfile();
 }
-}
 
 void KaaClient::setClientState(State state)
 {
@@ -625,3 +621,9 @@ void KaaClient::checkClientStateNot(State unexpected, const std::string& message
     }
 }
 
+IKaaClientContext& KaaClient::getKaaClientContext()
+{
+    return context_;
+}
+
+}

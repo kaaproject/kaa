@@ -24,12 +24,13 @@
 #include "kaa/bootstrap/BootstrapTransport.hpp"
 #include "kaa/channel/GenericTransportInfo.hpp"
 #include "kaa/utils/KaaTimer.hpp"
+#include "kaa/IKaaClientContext.hpp"
 
 namespace kaa {
 
 class BootstrapManager : public IBootstrapManager, public boost::noncopyable {
 public:
-    BootstrapManager() : bootstrapTransport_(nullptr), channelManager_(nullptr), retryTimer_("BootstrapManager retryTimer") { }
+    BootstrapManager(IKaaClientContext &context) : bootstrapTransport_(nullptr), channelManager_(nullptr), context_(context), retryTimer_("BootstrapManager retryTimer") { }
     ~BootstrapManager() { }
 
     virtual void setFailoverStrategy(IFailoverStrategyPtr strategy);
@@ -52,6 +53,8 @@ private:
 
     BootstrapTransport *bootstrapTransport_;
     IKaaChannelManager *channelManager_;
+
+    IKaaClientContext &context_;
 
     IFailoverStrategyPtr failoverStrategy_;
 
