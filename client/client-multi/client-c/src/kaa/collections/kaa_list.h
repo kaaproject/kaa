@@ -40,11 +40,6 @@ typedef bool (*match_predicate)(void *data, void *context);
 typedef void (*deallocate_list_data)(void *);
 
 /**
- *  @brief Returns list node hash.
- */
-typedef uint64_t list_node_hash(void * item);
-
-/**
  * @brief Use to process element data.
  */
 typedef void (*process_data)(void *data, void *context);
@@ -161,12 +156,6 @@ void kaa_list_for_each(kaa_list_node_t *first, kaa_list_node_t *last, process_da
  * @param pred  Predicate that is used to sort list.
  */
 void kaa_list_sort(kaa_list_t *list, match_predicate pred);
-
-/**
- * @brief Estimate hash from sorted array.
- * @param pred  Predicate that is used to get list node's hash, id or other unique uint64_t value.
- */
-int32_t kaa_list_hash(kaa_list_t *list, list_node_hash pred);
 
 #ifdef __cplusplus
 } // extern "C"
