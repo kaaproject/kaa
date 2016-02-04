@@ -28,23 +28,7 @@
 
 extern kaa_error_t kaa_status_set_updated(kaa_status_t *self, bool is_updated);
 
-/*
- * KAA Status persistent content:
- *
- * is_registered                    sizeof(bool)
- * is_attached                      sizeof(bool)
- * event_seq_n                      sizeof(uint32_t)
- * endpoint_public_key_hash         SHA_1_DIGEST_LENGTH * sizeof(char)
- * profile_hash                     SHA_1_DIGEST_LENGTH * sizeof(char)
- * enpoint_access_token_length      sizeof(size_t)
- * endpoint_access_token (variable length)
- * states_count                     sizeof(size_t)
- * states (variable length)
- *  topic_id
- *  sqn_number
- * token_buf                        sizeof(KAA_SDK_TOKEN)
- */
-#define KAA_STATUS_STATIC_SIZE      (sizeof(bool) + sizeof(bool) + sizeof(size_t) + sizeof(uint32_t) + sizeof(size_t) + SHA_1_DIGEST_LENGTH * sizeof(char) * 2 + sizeof(KAA_SDK_TOKEN))
+#define KAA_STATUS_STATIC_SIZE      (sizeof(bool) + sizeof(bool) + sizeof(uint32_t) + sizeof(uint32_t) + sizeof(size_t) + sizeof(uint32_t) + sizeof(uint16_t) + SHA_1_DIGEST_LENGTH * sizeof(char) * 2 + sizeof(KAA_SDK_TOKEN))
 
 #define READ_BUFFER(FROM, TO, SIZE) \
         memcpy(TO, FROM, SIZE); \
@@ -75,6 +59,8 @@ kaa_error_t kaa_status_create(kaa_status_t ** kaa_status_p)
         READ_BUFFER(read_buf, &kaa_status->is_registered, sizeof(kaa_status->is_registered));
         READ_BUFFER(read_buf, &kaa_status->is_attached, sizeof(kaa_status->is_attached));
         READ_BUFFER(read_buf, &kaa_status->event_seq_n, sizeof(kaa_status->event_seq_n));
+        READ_BUFFER(read_buf, &kaa_status->config_seq_n, sizeof(kaa_status->config_seq_n));
+        READ_BUFFER(read_buf, &kaa_status->notification_seq_n, sizeof(kaa_status->notification_seq_n));
         READ_BUFFER(read_buf, kaa_status->endpoint_public_key_hash, SHA_1_DIGEST_LENGTH);
         READ_BUFFER(read_buf, kaa_status->profile_hash, SHA_1_DIGEST_LENGTH);
 
@@ -195,6 +181,8 @@ kaa_error_t kaa_status_save(kaa_status_t *self)
     WRITE_BUFFER(&self->is_registered, buffer, sizeof(self->is_registered));
     WRITE_BUFFER(&self->is_attached, buffer, sizeof(self->is_attached));
     WRITE_BUFFER(&self->event_seq_n, buffer, sizeof(self->event_seq_n));
+    WRITE_BUFFER(&self->config_seq_n, buffer, sizeof(self->config_seq_n));
+    WRITE_BUFFER(&self->notification_seq_n, buffer, sizeof(self->notification_seq_n));
     WRITE_BUFFER(self->endpoint_public_key_hash, buffer, SHA_1_DIGEST_LENGTH);
     WRITE_BUFFER(self->profile_hash, buffer, SHA_1_DIGEST_LENGTH);
     WRITE_BUFFER(&endpoint_access_token_length, buffer, sizeof(endpoint_access_token_length));
