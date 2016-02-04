@@ -49,24 +49,20 @@ public final class HistoryKey implements Serializable {
     /** The profile schema version. */
     private final int serverProfileSchemaVersion;
 
-    private final HistorySubject historySubject;
-
     /**
      * Instantiates a new history key.
      *
      * @param appToken the app token
-     * @param historySubject the history subject
      * @param oldSeqNumber the old seq number
      * @param newSeqNumber the new seq number
      * @param confSchemaVersion the conf schema version
      * @param endpointProfileSchemaVersion the profile schema version
      * @param serverProfileSchemaVersion the profile schema version
      */
-    public HistoryKey(String appToken, HistorySubject historySubject, int oldSeqNumber, int newSeqNumber, int confSchemaVersion,
+    public HistoryKey(String appToken, int oldSeqNumber, int newSeqNumber, int confSchemaVersion,
             int endpointProfileSchemaVersion, int serverProfileSchemaVersion) {
         super();
         this.appToken = appToken;
-        this.historySubject = historySubject;
         this.oldSeqNumber = oldSeqNumber;
         this.newSeqNumber = newSeqNumber;
         this.confSchemaVersion = confSchemaVersion;
@@ -129,7 +125,6 @@ public final class HistoryKey implements Serializable {
         int result = 1;
         result = prime * result + ((appToken == null) ? 0 : appToken.hashCode());
         result = prime * result + confSchemaVersion;
-        result = prime * result + ((historySubject == null) ? 0 : historySubject.hashCode());
         result = prime * result + newSeqNumber;
         result = prime * result + oldSeqNumber;
         result = prime * result + endpointProfileSchemaVersion;
@@ -157,9 +152,6 @@ public final class HistoryKey implements Serializable {
             return false;
         }
         if (confSchemaVersion != other.confSchemaVersion) {
-            return false;
-        }
-        if (historySubject != other.historySubject) {
             return false;
         }
         if (newSeqNumber != other.newSeqNumber) {

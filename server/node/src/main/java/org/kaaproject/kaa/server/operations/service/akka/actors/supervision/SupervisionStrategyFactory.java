@@ -17,6 +17,8 @@
 package org.kaaproject.kaa.server.operations.service.akka.actors.supervision;
 
 import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import scala.concurrent.duration.Duration;
 import akka.actor.OneForOneStrategy;
@@ -25,6 +27,8 @@ import akka.actor.SupervisorStrategy.Directive;
 import akka.japi.Function;
 
 public final class SupervisionStrategyFactory {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(SupervisionStrategyFactory.class);
 
     public static SupervisorStrategy createIORouterStrategy(AkkaContext context) {
         return buildResumeOrEscalateStrategy();
@@ -46,6 +50,7 @@ public final class SupervisionStrategyFactory {
         return new OneForOneStrategy(-1, Duration.Inf(), new Function<Throwable, SupervisorStrategy.Directive>() {
             @Override
             public Directive apply(Throwable t) throws Exception {
+                logException(t);
                 if (t instanceof Error) {
                     return OneForOneStrategy.escalate();
                 } else {
@@ -59,6 +64,7 @@ public final class SupervisionStrategyFactory {
         return new OneForOneStrategy(-1, Duration.Inf(), new Function<Throwable, SupervisorStrategy.Directive>() {
             @Override
             public Directive apply(Throwable t) throws Exception {
+                logException(t);
                 if (t instanceof Error) {
                     return OneForOneStrategy.escalate();
                 } else {
@@ -72,6 +78,7 @@ public final class SupervisionStrategyFactory {
         return new OneForOneStrategy(-1, Duration.Inf(), new Function<Throwable, SupervisorStrategy.Directive>() {
             @Override
             public Directive apply(Throwable t) throws Exception {
+                logException(t);
                 if (t instanceof Error) {
                     return OneForOneStrategy.escalate();
                 } else if (t instanceof RuntimeException) {
@@ -81,6 +88,10 @@ public final class SupervisionStrategyFactory {
                 }
             }
         });
+    }
+
+    private static void logException(Throwable t) {
+        LOG.error("Supervisor strategy got exception: {}", t.getMessage(), t);
     }
 
 }

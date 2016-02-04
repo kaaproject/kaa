@@ -16,10 +16,11 @@
 
 package org.kaaproject.kaa.server.operations.service.notification;
 
+import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.server.operations.pojo.GetNotificationRequest;
 import org.kaaproject.kaa.server.operations.pojo.GetNotificationResponse;
-import org.kaaproject.kaa.server.operations.service.delta.HistoryDelta;
+import org.kaaproject.kaa.server.operations.service.cache.TopicListCacheEntry;
 
 
 /**
@@ -31,10 +32,9 @@ public interface NotificationDeltaService {
      * Gets the notification delta.
      *
      * @param request the request
-     * @param historyDelta the history delta
      * @return the notification delta
      */
-    GetNotificationResponse getNotificationDelta(GetNotificationRequest request, HistoryDelta historyDelta);
+    GetNotificationResponse getNotificationDelta(GetNotificationRequest request);
 
     /**
      * Find notification by id.
@@ -51,5 +51,14 @@ public interface NotificationDeltaService {
      * @return the notification dto
      */
     NotificationDto findUnicastNotificationById(String unicastNotificationId);
+
+    /**
+     * Calculate topic list hash for given profile
+     * @param appToken - application token
+     * @param endpointId - endpoint id
+     * @param profile - endpoint profile
+     * @return
+     */
+    TopicListCacheEntry getTopicListHash(String appToken, String endpointId, EndpointProfileDto profile);
 
 }

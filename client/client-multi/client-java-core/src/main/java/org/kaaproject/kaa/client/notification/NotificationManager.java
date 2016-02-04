@@ -102,7 +102,7 @@ public interface NotificationManager {
      * @throws UnavailableTopicException
      *             Throw if unknown topic id is provided.
      */
-    void addNotificationListener(String topicId, NotificationListener listener) throws UnavailableTopicException;
+    void addNotificationListener(Long topicId, NotificationListener listener) throws UnavailableTopicException;
 
     /**
      * <p>
@@ -133,7 +133,7 @@ public interface NotificationManager {
      * @throws UnavailableTopicException
      *             Throw if unknown topic id is provided.
      */
-    void removeNotificationListener(String topicId, NotificationListener listener) throws UnavailableTopicException;
+    void removeNotificationListener(Long topicId, NotificationListener listener) throws UnavailableTopicException;
 
     /**
      * <p>
@@ -152,7 +152,7 @@ public interface NotificationManager {
      *
      * @see #sync()
      */
-    void subscribeToTopic(String topicId, boolean forceSync) throws UnavailableTopicException;
+    void subscribeToTopic(Long topicId, boolean forceSync) throws UnavailableTopicException;
 
     /**
      * <p>
@@ -172,7 +172,7 @@ public interface NotificationManager {
      *
      * @see #sync()
      */
-    void subscribeToTopics(List<String> topicIds, boolean forceSync) throws UnavailableTopicException;
+    void subscribeToTopics(List<Long> topicIds, boolean forceSync) throws UnavailableTopicException;
 
     /**
      * <p>
@@ -195,7 +195,7 @@ public interface NotificationManager {
      *
      * @see #sync()
      */
-    void unsubscribeFromTopic(String topicId, boolean forceSync) throws UnavailableTopicException;
+    void unsubscribeFromTopic(Long topicId, boolean forceSync) throws UnavailableTopicException;
 
     /**
      * <p>
@@ -219,7 +219,7 @@ public interface NotificationManager {
      *
      * @see #sync()
      */
-    void unsubscribeFromTopics(List<String> topicIds, boolean forceSync) throws UnavailableTopicException;
+    void unsubscribeFromTopics(List<Long> topicIds, boolean forceSync) throws UnavailableTopicException;
 
     /**
      * <p>
@@ -227,9 +227,9 @@ public interface NotificationManager {
      * </p>
      *
      * <p>
-     * Should be used after all {@link #subscribeToTopic(String, boolean)},
+     * Should be used after all {@link #subscribeToTopic(Long, boolean)},
      * {@link #subscribeToTopics(List, boolean)},
-     * {@link #unsubscribeFromTopic(String, boolean)},
+     * {@link #unsubscribeFromTopic(Long, boolean)},
      * {@link #unsubscribeFromTopics(List, boolean)} calls with parameter
      * {@code forceSync} set to {@code false}.
      * </p>
@@ -238,18 +238,18 @@ public interface NotificationManager {
      * Use it as a convenient way to make different consequent changes in the
      * optional subscription:
      * </p>
-     * 
+     *
      * <pre>
      * {
      *     &#064;code
      *     NotificationManager notificationManager = kaaClient.getNotificationManager();
-     * 
+     *
      *     // Make subscription changes
      *     notificationManager.subscribeOnTopics(Arrays.asList(&quot;optional_topic1&quot;, &quot;optional_topic2&quot;, &quot;optional_topic3&quot;), false);
      *     notificationManager.unsubscribeFromTopic(&quot;optional_topic4&quot;, false);
-     * 
+     *
      *     // Add listeners for optional topics here
-     * 
+     *
      *     // Commit changes
      *     notificationManager.sync();
      * }

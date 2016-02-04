@@ -48,12 +48,6 @@ public class SyncContext {
 
     private AppSeqNumber appSeqNumber;
 
-    private boolean updateProfileRequired;
-
-    private boolean userConfigurationChanged;
-
-    private byte[] userConfigurationHash;
-
     /** The subscription states. */
     private Map<String, Integer> subscriptionStates;
 
@@ -189,16 +183,12 @@ public class SyncContext {
         this.appSeqNumber = appSeqNumber;
     }
 
-    public boolean isUpdateProfileRequired() {
-        return updateProfileRequired;
-    }
-
-    public void setUpdateProfileRequired(boolean updateProfileRequired) {
-        this.updateProfileRequired = updateProfileRequired;
-    }
-
     public ClientSyncMetaData getMetaData() {
         return metaData;
+    }
+    
+    public String getAppToken(){
+        return metaData.getApplicationToken();
     }
 
     public void setMetaData(ClientSyncMetaData md) {
@@ -297,24 +287,5 @@ public class SyncContext {
             return true;
         }
         return false;
-    }
-
-    public void setUserConfigurationChanged(boolean userConfigurationChanged) {
-        this.userConfigurationChanged = userConfigurationChanged;
-    }
-
-    public boolean isUserConfigurationChanged() {
-        return userConfigurationChanged;
-    }
-
-    public byte[] getUserConfigurationHash() {
-        if (userConfigurationChanged) {
-            return userConfigurationHash;
-        }
-        return endpointProfile.getUserConfigurationHash();
-    }
-
-    public void setUserConfigurationHash(byte[] userConfigurationHash) {
-        this.userConfigurationHash = userConfigurationHash;
     }
 }

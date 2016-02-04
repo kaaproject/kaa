@@ -28,6 +28,7 @@ import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.PageLinkDto;
+import org.kaaproject.kaa.common.dto.TopicListEntryDto;
 import org.kaaproject.kaa.common.dto.UpdateNotificationDto;
 import org.kaaproject.kaa.server.common.dao.exception.KaaOptimisticLockingFailureException;
 import org.springframework.retry.annotation.Backoff;
@@ -144,6 +145,22 @@ public interface EndpointService {
      * @return the endpoint profile body dto
      */
     EndpointProfileBodyDto findEndpointProfileBodyByKeyHash(byte[] endpointProfileKeyHash);
+
+    /**
+     * Find topic list entry by key hash.
+     *
+     * @param hash the  hash
+     * @return the topic list entry dto
+     */
+    TopicListEntryDto findTopicListEntryByHash(byte[] hash);
+
+    /**
+     * Save topic list entry
+     *
+     * @param topicListEntryDto the endpoint list entry dto
+     * @return the topic list entry dto
+     */
+    TopicListEntryDto saveTopicListEntry(TopicListEntryDto topicListEntryDto);
 
     /**
      * Remove endpoint profile by key hash.

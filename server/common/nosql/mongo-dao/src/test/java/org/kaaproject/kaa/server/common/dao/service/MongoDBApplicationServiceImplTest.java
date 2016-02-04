@@ -17,7 +17,6 @@ package org.kaaproject.kaa.server.common.dao.service;
 
 import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.MongoDBTestRunner;

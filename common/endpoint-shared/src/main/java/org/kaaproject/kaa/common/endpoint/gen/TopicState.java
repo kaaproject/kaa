@@ -7,9 +7,9 @@ package org.kaaproject.kaa.common.endpoint.gen;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class TopicState extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"TopicState\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"topicId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"seqNumber\",\"type\":\"int\"}],\"direction\":\"out\"}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"TopicState\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"topicId\",\"type\":\"long\"},{\"name\":\"seqNumber\",\"type\":\"int\"}],\"direction\":\"out\"}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
-   private java.lang.String topicId;
+   private long topicId;
    private int seqNumber;
 
   /**
@@ -22,7 +22,7 @@ public class TopicState extends org.apache.avro.specific.SpecificRecordBase impl
   /**
    * All-args constructor.
    */
-  public TopicState(java.lang.String topicId, java.lang.Integer seqNumber) {
+  public TopicState(java.lang.Long topicId, java.lang.Integer seqNumber) {
     this.topicId = topicId;
     this.seqNumber = seqNumber;
   }
@@ -40,7 +40,7 @@ public class TopicState extends org.apache.avro.specific.SpecificRecordBase impl
   @SuppressWarnings(value="unchecked")
   public void put(int field$, java.lang.Object value$) {
     switch (field$) {
-    case 0: topicId = (java.lang.String)value$; break;
+    case 0: topicId = (java.lang.Long)value$; break;
     case 1: seqNumber = (java.lang.Integer)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
@@ -49,7 +49,7 @@ public class TopicState extends org.apache.avro.specific.SpecificRecordBase impl
   /**
    * Gets the value of the 'topicId' field.
    */
-  public java.lang.String getTopicId() {
+  public java.lang.Long getTopicId() {
     return topicId;
   }
 
@@ -57,7 +57,7 @@ public class TopicState extends org.apache.avro.specific.SpecificRecordBase impl
    * Sets the value of the 'topicId' field.
    * @param value the value to set.
    */
-  public void setTopicId(java.lang.String value) {
+  public void setTopicId(java.lang.Long value) {
     this.topicId = value;
   }
 
@@ -97,7 +97,7 @@ public class TopicState extends org.apache.avro.specific.SpecificRecordBase impl
   public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<TopicState>
     implements org.apache.avro.data.RecordBuilder<TopicState> {
 
-    private java.lang.String topicId;
+    private long topicId;
     private int seqNumber;
 
     /** Creates a new Builder */
@@ -132,12 +132,12 @@ public class TopicState extends org.apache.avro.specific.SpecificRecordBase impl
     }
 
     /** Gets the value of the 'topicId' field */
-    public java.lang.String getTopicId() {
+    public java.lang.Long getTopicId() {
       return topicId;
     }
     
     /** Sets the value of the 'topicId' field */
-    public org.kaaproject.kaa.common.endpoint.gen.TopicState.Builder setTopicId(java.lang.String value) {
+    public org.kaaproject.kaa.common.endpoint.gen.TopicState.Builder setTopicId(long value) {
       validate(fields()[0], value);
       this.topicId = value;
       fieldSetFlags()[0] = true;
@@ -151,7 +151,6 @@ public class TopicState extends org.apache.avro.specific.SpecificRecordBase impl
     
     /** Clears the value of the 'topicId' field */
     public org.kaaproject.kaa.common.endpoint.gen.TopicState.Builder clearTopicId() {
-      topicId = null;
       fieldSetFlags()[0] = false;
       return this;
     }
@@ -184,7 +183,7 @@ public class TopicState extends org.apache.avro.specific.SpecificRecordBase impl
     public TopicState build() {
       try {
         TopicState record = new TopicState();
-        record.topicId = fieldSetFlags()[0] ? this.topicId : (java.lang.String) defaultValue(fields()[0]);
+        record.topicId = fieldSetFlags()[0] ? this.topicId : (java.lang.Long) defaultValue(fields()[0]);
         record.seqNumber = fieldSetFlags()[1] ? this.seqNumber : (java.lang.Integer) defaultValue(fields()[1]);
         return record;
       } catch (Exception e) {

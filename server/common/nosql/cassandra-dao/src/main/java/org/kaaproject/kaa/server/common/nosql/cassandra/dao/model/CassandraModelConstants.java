@@ -89,17 +89,16 @@ public class CassandraModelConstants {
     public static final String EP_EP_KEY_HASH_PROPERTY = ENDPOINT_KEY_HASH_PROPERTY;
     public static final String EP_EP_KEY_PROPERTY = "ep_key";
     public static final String EP_USER_ID_PROPERTY = USER_ID_PROPERTY;
-    public static final String EP_CONFIG_GROUP_STATE_PROPERTY = "cf_group_state";
-    public static final String EP_NOTIFICATION_GROUP_STATE_PROPERTY = "nf_group_state";
-    public static final String EP_CONFIGURATION_SEQUENCE_NUMBER_PROPERTY = "cf_seq_num";
-    public static final String EP_NOTIFICATION_SEQUENCE_NUMBER_PROPERTY = "nf_seq_num";
+    public static final String EP_GROUP_STATE_PROPERTY = "group_state";
+    public static final String EP_SEQUENCE_NUMBER_PROPERTY = "seq_num";
     public static final String EP_PROFILE_PROPERTY = "pf";
     public static final String EP_PROFILE_HASH_PROPERTY = "pf_hash";
     public static final String EP_PROFILE_VERSION_PROPERTY = "pf_ver";
     public static final String EP_SERVER_PROFILE_VERSION_PROPERTY = "srv_pf_ver";
     public static final String EP_CONFIGURATION_VERSION_PROPERTY = "cf_ver";
     public static final String EP_NOTIFICATION_VERSION_PROPERTY = "nf_ver";
-    public static final String EP_NOTIFICATION_HASH_PROPERTY = "nf_hash";
+    public static final String EP_TOPIC_HASH_PROPERTY = "topic_hash";
+    public static final String EP_SIMPLE_TOPIC_HASH_PROPERTY = "simple_topic_hash";
     public static final String EP_SUBSCRIPTIONS_PROPERTY = "subscs";
     public static final String EP_SYSTEM_NOTIFICATION_VERSION_PROPERTY = "sys_nf_ver";
     public static final String EP_USER_NOTIFICATION_VERSION_PROPERTY = "user_nf_ver";
@@ -107,7 +106,7 @@ public class CassandraModelConstants {
     public static final String EP_ECF_VERSION_STATE_PROPERTY = "ecf_ver_state";
     public static final String EP_SERVER_HASH_PROPERTY = "server_hash";
     public static final String EP_SDK_TOKEN_PROPERTY = SDK_TOKEN_PROPERTY;
-    public static final String EP_SERVER_PROFILE_PROPERTY = "srv_pf";    
+    public static final String EP_SERVER_PROFILE_PROPERTY = "srv_pf";
 
     /**
      * Cassandra endpoint user constants.
@@ -185,4 +184,13 @@ public class CassandraModelConstants {
     public static final String EVENT_CLASS_FAMILY_VERSION_STATE_USER_TYPE_NAME = "ecf_ver_state";
     public static final String EVENT_CLASS_FAMILY_VERSION_STATE_ECF_ID_PROPERTY = "ecf_id";
     public static final String EVENT_CLASS_FAMILY_VERSION_STATE_ECF_VERSION_PROPERTY = "ecf_ver";
+
+    /**
+     * Cassandra TopicListEntry constants.
+     */
+    public static final String TOPIC_LIST_ENTRY_COLUMN_FAMILY_NAME = "tl_entry";
+    public static final String TOPIC_LIST_ENTRY_HASH_PROPERTY = "tl_entry_hash";
+    public static final String TOPIC_LIST_ENTRY_SIMPLE_HASH_PROPERTY = "tl_entry_simple_hash";
+    public static final String TOPIC_LIST_ENTRY_TOPIC_IDS_PROPERTY = "tl_entry_topic_ids";
+
 }

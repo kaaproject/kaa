@@ -130,7 +130,7 @@ Copyright 2014-2015 CyberVision, Inc.
     </properties>
 
     <modules>
-        <module>avrogenc</module>
+        <module>avrogen</module>
         <module>common</module>
         <module>client</module>
         <module>server</module>
@@ -152,7 +152,7 @@ Copyright 2014-2015 CyberVision, Inc.
         <profile>
             <id>jenkins</id>
             <modules>
-                <module>avrogenc</module>
+                <module>avrogen</module>
                 <module>common</module>
                 <module>client</module>
                 <module>server</module>
@@ -695,8 +695,8 @@ Copyright 2014-2015 CyberVision, Inc.
                 <type>zip</type>
             </dependency>
             <dependency>
-                <groupId>org.kaaproject.kaa.avrogenc</groupId>
-                <artifactId>avrogenc</artifactId>
+                <groupId>org.kaaproject.kaa.avrogen</groupId>
+                <artifactId>avrogen</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

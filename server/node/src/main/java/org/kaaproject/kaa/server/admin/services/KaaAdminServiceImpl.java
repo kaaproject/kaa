@@ -243,13 +243,8 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             }
             endpointProfileView.setTopics(topics);
             Set<EndpointGroupDto> endpointGroupsSet = new HashSet<>();
-            if (endpointProfile.getCfGroupStates() != null) {
-                for (EndpointGroupStateDto endpointGroupState : endpointProfile.getCfGroupStates()) {
-                    endpointGroupsSet.add(controlService.getEndpointGroup(endpointGroupState.getEndpointGroupId()));
-                }
-            }
-            if (endpointProfile.getNfGroupStates() != null) {
-                for (EndpointGroupStateDto endpointGroupState : endpointProfile.getNfGroupStates()) {
+            if (endpointProfile.getGroupState() != null) {
+                for (EndpointGroupStateDto endpointGroupState : endpointProfile.getGroupState()) {
                     endpointGroupsSet.add(controlService.getEndpointGroup(endpointGroupState.getEndpointGroupId()));
                 }
             }
@@ -1673,8 +1668,8 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
                 Utils.checkNotNull(storedProfileFilter);
                 checkEndpointGroupId(storedProfileFilter.getEndpointGroupId());                
             }
-            validateProfileFilterBody(profileFilter.getEndpointProfileSchemaId(), 
-                    profileFilter.getServerProfileSchemaId(), 
+            validateProfileFilterBody(profileFilter.getEndpointProfileSchemaId(),
+                    profileFilter.getServerProfileSchemaId(),
                     profileFilter.getBody());
             return controlService.editProfileFilter(profileFilter);
         } catch (Exception e) {

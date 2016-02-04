@@ -18,7 +18,6 @@ package org.kaaproject.kaa.server.sync;
 import java.nio.ByteBuffer;
 
 public final class ConfigurationClientSync {
-    private int appStateSeqNumber;
     private ByteBuffer configurationHash;
     private boolean resyncOnly;
 
@@ -28,27 +27,9 @@ public final class ConfigurationClientSync {
     /**
      * All-args constructor.
      */
-    public ConfigurationClientSync(int appStateSeqNumber, ByteBuffer configurationHash, boolean resyncOnly) {
-        this.appStateSeqNumber = appStateSeqNumber;
+    public ConfigurationClientSync(ByteBuffer configurationHash, boolean resyncOnly) {
         this.configurationHash = configurationHash;
         this.resyncOnly = resyncOnly;
-    }
-
-    /**
-     * Gets the value of the 'appStateSeqNumber' field.
-     */
-    public int getAppStateSeqNumber() {
-        return appStateSeqNumber;
-    }
-
-    /**
-     * Sets the value of the 'appStateSeqNumber' field.
-     * 
-     * @param value
-     *            the value to set.
-     */
-    public void setAppStateSeqNumber(int value) {
-        this.appStateSeqNumber = value;
     }
 
     /**
@@ -90,7 +71,6 @@ public final class ConfigurationClientSync {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + appStateSeqNumber;
         result = prime * result + ((configurationHash == null) ? 0 : configurationHash.hashCode());
         result = prime * result + (resyncOnly ? 1231 : 1237);
         return result;
@@ -108,9 +88,6 @@ public final class ConfigurationClientSync {
             return false;
         }
         ConfigurationClientSync other = (ConfigurationClientSync) obj;
-        if (appStateSeqNumber != other.appStateSeqNumber) {
-            return false;
-        }
         if (configurationHash == null) {
             if (other.configurationHash != null) {
                 return false;
@@ -127,9 +104,7 @@ public final class ConfigurationClientSync {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("ConfigurationClientSync [appStateSeqNumber=");
-        builder.append(appStateSeqNumber);
-        builder.append(", configurationHash=");
+        builder.append("ConfigurationClientSync [configurationHash=");
         builder.append(configurationHash);
         builder.append(", resyncOnly=");
         builder.append(resyncOnly);

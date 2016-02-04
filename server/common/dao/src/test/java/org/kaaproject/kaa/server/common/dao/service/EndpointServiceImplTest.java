@@ -17,6 +17,7 @@
 package org.kaaproject.kaa.server.common.dao.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -38,6 +39,9 @@ import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.PageLinkDto;
 import org.kaaproject.kaa.common.dto.TenantDto;
+import org.kaaproject.kaa.common.dto.TopicDto;
+import org.kaaproject.kaa.common.dto.TopicListEntryDto;
+import org.kaaproject.kaa.common.dto.TopicTypeDto;
 import org.kaaproject.kaa.server.common.dao.AbstractTest;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
 import org.slf4j.Logger;
@@ -76,7 +80,7 @@ public class EndpointServiceImplTest extends AbstractTest {
         EndpointGroupDto group = generateEndpointGroupDto(null);
         String endpointGroupId = group.getId();
         PageLinkDto pageLinkDto = new PageLinkDto(endpointGroupId, DEFAULT_LIMIT, DEFAULT_OFFSET);
-        EndpointProfileDto savedEndpointProfileDto = generateEndpointProfileWithGroupIdDto(endpointGroupId, false);
+        EndpointProfileDto savedEndpointProfileDto = generateEndpointProfileWithGroupIdDto(endpointGroupId);
         EndpointProfilesPageDto endpointProfilesPage = endpointService.findEndpointProfileByEndpointGroupId(pageLinkDto);
         EndpointProfileDto endpointProfileDto = endpointProfilesPage.getEndpointProfiles().get(0);
         Assert.assertEquals(savedEndpointProfileDto, endpointProfileDto);
@@ -87,7 +91,7 @@ public class EndpointServiceImplTest extends AbstractTest {
         EndpointGroupDto group = generateEndpointGroupDto(null);
         String endpointGroupId = group.getId();
         PageLinkDto pageLinkDto = new PageLinkDto(endpointGroupId, DEFAULT_LIMIT, DEFAULT_OFFSET);
-        EndpointProfileDto savedEndpointProfileDto = generateEndpointProfileWithGroupIdDto(endpointGroupId, false);
+        EndpointProfileDto savedEndpointProfileDto = generateEndpointProfileWithGroupIdDto(endpointGroupId);
         EndpointProfilesBodyDto endpointProfilesPage = endpointService.findEndpointProfileBodyByEndpointGroupId(pageLinkDto);
         EndpointProfileBodyDto endpointProfileBodyDto = endpointProfilesPage.getEndpointProfilesBody().get(0);
         Assert.assertEquals(savedEndpointProfileDto.getClientProfileBody(), endpointProfileBodyDto.getProfile());
@@ -96,7 +100,7 @@ public class EndpointServiceImplTest extends AbstractTest {
     @Test
     public void findEndpointProfileByKeyHashTest() {
         String endpointGroupId = "124";
-        EndpointProfileDto savedEndpointProfileDto = generateEndpointProfileWithGroupIdDto(endpointGroupId, false);
+        EndpointProfileDto savedEndpointProfileDto = generateEndpointProfileWithGroupIdDto(endpointGroupId);
         EndpointProfileDto endpointProfileDto = endpointService.findEndpointProfileByKeyHash(savedEndpointProfileDto.getEndpointKeyHash());
         Assert.assertEquals(savedEndpointProfileDto, endpointProfileDto);
     }
@@ -104,7 +108,7 @@ public class EndpointServiceImplTest extends AbstractTest {
     @Test
     public void findEndpointProfileBodyByKeyHashTest() {
         String endpointGroupId = "124";
-        EndpointProfileDto savedEndpointProfileDto = generateEndpointProfileWithGroupIdDto(endpointGroupId, false);
+        EndpointProfileDto savedEndpointProfileDto = generateEndpointProfileWithGroupIdDto(endpointGroupId);
         EndpointProfileBodyDto endpointProfileBodyDto = endpointService.findEndpointProfileBodyByKeyHash(savedEndpointProfileDto.getEndpointKeyHash());
         Assert.assertEquals(savedEndpointProfileDto.getClientProfileBody(), endpointProfileBodyDto.getProfile());
     }
@@ -208,13 +212,27 @@ public class EndpointServiceImplTest extends AbstractTest {
         Assert.assertNotNull(generatedAccessToken);
         Assert.assertEquals(generatedAccessToken, endpointUser.getAccessToken());
     }
+
+
+    @Test
+    public void findTopicListEntryByHashTest() {
+        ApplicationDto applicationDto = generateApplicationDto();
+        TopicDto topicDto = generateTopicDto(applicationDto.getId(), TopicTypeDto.MANDATORY);
+        List<TopicDto> topics = Arrays.asList(topicDto);
+        byte[] hash = "123".getBytes();
+        TopicListEntryDto topicListEntryDto = new TopicListEntryDto(1, hash, topics);
+        endpointService.saveTopicListEntry(topicListEntryDto);
+
+        TopicListEntryDto foundTopicListEntry = endpointService.findTopicListEntryByHash(hash);
+        Assert.assertEquals(topicListEntryDto, foundTopicListEntry);
+    }
     
     @Test
     public void attchEndpointToUserTest() {
         TenantDto tenantDto = generateTenantDto();
         EndpointUserDto endpointUserDto = generateEndpointUserDto(tenantDto.getId());
         String endpointGroupId = "124";
-        EndpointProfileDto endpointProfileDto = generateEndpointProfileWithGroupIdDto(endpointGroupId, false);
+        EndpointProfileDto endpointProfileDto = generateEndpointProfileWithGroupIdDto(endpointGroupId);
         String accessToken = "1111";
         endpointProfileDto.setAccessToken(accessToken);
         endpointService.saveEndpointProfile(endpointProfileDto);
@@ -227,6 +245,7 @@ public class EndpointServiceImplTest extends AbstractTest {
     }
     
     @Test
+    @Ignore
     public void multiThreadAttachDetachEndpointToUserTest() throws InterruptedException, ExecutionException {
         TenantDto tenantDto = generateTenantDto();
         EndpointUserDto endpointUserDto = generateEndpointUserDto(tenantDto.getId());
@@ -234,7 +253,7 @@ public class EndpointServiceImplTest extends AbstractTest {
         List<String> accessTokens = new ArrayList<>();
         List<String> endpointIds = new ArrayList<String>();
         for (int i = 0; i < 100; i++) {
-            EndpointProfileDto endpointProfileDto = generateEndpointProfileWithGroupIdDto(endpointGroupId, false);
+            EndpointProfileDto endpointProfileDto = generateEndpointProfileWithGroupIdDto(endpointGroupId);
             String accessToken = "" + i;
             endpointProfileDto.setAccessToken(accessToken);
             endpointService.saveEndpointProfile(endpointProfileDto);

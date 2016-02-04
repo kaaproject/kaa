@@ -18,6 +18,7 @@ package org.kaaproject.kaa.server.operations.pojo;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
@@ -41,6 +42,8 @@ public class GetNotificationResponse {
 
     /** The subscription states. */
     private Map<String, Integer> subscriptionStates;
+    
+    private Set<String> subscriptionSet;
     
     private boolean subscriptionSetChanged;
 
@@ -120,5 +123,13 @@ public class GetNotificationResponse {
 
     public void setSubscriptionSetChanged(boolean subscriptionSetChanged) {
         this.subscriptionSetChanged = subscriptionSetChanged;
+    }
+
+    public Set<String> getSubscriptionSet() {
+        return subscriptionSet;
+    }
+
+    public void setSubscriptionSet(Set<String> subscriptionSet) {
+        this.subscriptionSet = subscriptionSet;
     }
 }

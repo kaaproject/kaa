@@ -30,6 +30,7 @@ import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.HistoryDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.TopicListEntryDto;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventAction;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
@@ -71,6 +72,7 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.atMost;
 import static org.mockito.Mockito.mock;
@@ -131,10 +133,13 @@ public class ConcurrentCacheServiceTest extends AbstractTest {
 
     private static final EndpointObjectHash CF1_HASH = EndpointObjectHash.fromSHA1(CF1_ID);
 
+    private static final EndpointObjectHash TLCE1_HASH = CF1_HASH;
+    private static final TopicListEntryDto TLCE1 = new TopicListEntryDto(100, TLCE1_HASH.getData(), null);
+
     private static final ConfigurationIdKey TEST_CONF_ID_KEY = new ConfigurationIdKey(APP_ID, TEST_APP_SEQ_NUMBER, CONF1_SCHEMA_VERSION,
             ENDPOINT_GROUP1_ID);
 
-    private static final HistoryKey TEST_HISTORY_KEY = new HistoryKey(TEST_APP_TOKEN, HistorySubject.CONFIGURATION, TEST_APP_SEQ_NUMBER,
+    private static final HistoryKey TEST_HISTORY_KEY = new HistoryKey(TEST_APP_TOKEN, TEST_APP_SEQ_NUMBER,
             TEST_APP_SEQ_NUMBER_NEW, CONF1_SCHEMA_VERSION, PROFILE1_SCHEMA_VERSION, PROFILE1_SERVER_SCHEMA_VERSION);
 
     private static final AppProfileVersionsKey TEST_GET_PROFILES_KEY = new AppProfileVersionsKey(TEST_APP_TOKEN, PROFILE1_SCHEMA_VERSION,
@@ -268,6 +273,14 @@ public class ConcurrentCacheServiceTest extends AbstractTest {
             public EndpointConfigurationDto answer(InvocationOnMock invocation) throws Throwable {
                 sleepABit();
                 return CF1;
+            }
+        });
+
+        when(endpointService.findTopicListEntryByHash(TLCE1_HASH.getData())).then(new Answer<TopicListEntryDto>() {
+            @Override
+            public TopicListEntryDto answer(InvocationOnMock invocation) throws Throwable {
+                sleepABit();
+                return TLCE1;
             }
         });
 
@@ -734,6 +747,19 @@ public class ConcurrentCacheServiceTest extends AbstractTest {
                 break;
             }
         }
+    }
+
+    @Test
+    public void testGetTopicListByHash() throws GetDeltaException {
+        TopicListCacheEntry entry = cacheService.getTopicListByHash(CF1_HASH);
+        assertNotNull(entry);
+        verify(endpointService, times(1)).findTopicListEntryByHash(CF1_HASH.getData());
+        reset(endpointService);
+
+        entry = cacheService.getTopicListByHash(CF1_HASH);
+        assertNotNull(entry);
+        verify(endpointService, times(0)).findTopicListEntryByHash(CF1_HASH.getData());
+        reset(endpointService);
     }
 
     private void registerMocks() {

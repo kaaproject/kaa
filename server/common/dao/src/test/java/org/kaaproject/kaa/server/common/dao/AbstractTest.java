@@ -727,21 +727,15 @@ public class AbstractTest {
         return endpointService.saveEndpointProfile(profileDto);
     }
 
-    protected EndpointProfileDto generateEndpointProfileWithGroupIdDto(String endpointGroupId, boolean nfGroupStateOnly) {
+    protected EndpointProfileDto generateEndpointProfileWithGroupIdDto(String endpointGroupId) {
         EndpointProfileDto profileDto = new EndpointProfileDto();
         profileDto.setEndpointKeyHash(generateString("TEST_KEY_HASH").getBytes());
         String appId = generateApplicationDto().getId();
         profileDto.setApplicationId(appId);
         List<EndpointGroupStateDto> groupState = new ArrayList<>();
         groupState.add(new EndpointGroupStateDto(endpointGroupId, null, null));
-        profileDto.setCfGroupStates(groupState);
+        profileDto.setGroupState(groupState);
         profileDto.setClientProfileBody("{\"title\": \"TEST\"}");
-        if (nfGroupStateOnly) {
-            profileDto.setNfGroupStates(groupState);
-            profileDto.setCfGroupStates(null);
-        } else {
-            profileDto.setCfGroupStates(groupState);
-        }
         profileDto.setSdkToken(UUID.randomUUID().toString());
         return endpointService.saveEndpointProfile(profileDto);
     }

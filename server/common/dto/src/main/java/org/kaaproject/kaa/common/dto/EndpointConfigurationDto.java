@@ -21,13 +21,12 @@ import java.util.Arrays;
 
 import static org.kaaproject.kaa.common.dto.Util.getArrayCopy;
 
-public class EndpointConfigurationDto implements HasVersion, Serializable {
+public class EndpointConfigurationDto implements Serializable {
 
     private static final long serialVersionUID = 5662111748223086520L;
 
     private byte[] configurationHash;
     private byte[] configuration;
-    private Long version;
 
     public byte[] getConfigurationHash() {
         return configurationHash;
@@ -75,15 +74,5 @@ public class EndpointConfigurationDto implements HasVersion, Serializable {
                 "configurationHash=" + Arrays.toString(configurationHash) +
                 ", configuration=" + Arrays.toString(configuration) +
                 '}';
-    }
-
-    @Override
-    public Long getVersion() {
-        return version;
-    }
-
-    @Override
-    public void setVersion(Long version) {
-        this.version = version;
     }
 }

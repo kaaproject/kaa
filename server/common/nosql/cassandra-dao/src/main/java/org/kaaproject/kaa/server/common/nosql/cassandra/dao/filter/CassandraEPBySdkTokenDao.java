@@ -76,9 +76,4 @@ public class CassandraEPBySdkTokenDao extends AbstractCassandraDao<CassandraEPBy
 
         return result;
     }
-
-    @Override
-    protected CassandraEPBySdkToken updateLocked(CassandraEPBySdkToken entity) {
-        throw new UnsupportedOperationException("Not implemented!");
-    }
 }

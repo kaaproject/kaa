@@ -348,13 +348,6 @@ kaa_error_t kaa_client_init_channel(kaa_client_t *kaa_client, kaa_client_channel
         return error_code;
     }
 
-    error_code = kaa_tcp_channel_set_keepalive_timeout(&kaa_client->channel, 5);
-
-    if(error_code) {
-        KAA_LOG_ERROR(kaa_client->context->logger, error_code, "Filed to set channel keepalive timeout, type %d", channel_type);
-        return error_code;
-    }
-
     error_code = kaa_tcp_channel_set_socket_events_callback(&kaa_client->channel, &on_kaa_tcp_channel_event, kaa_client);
     if (error_code) {
         KAA_LOG_ERROR(kaa_client->context->logger, error_code,
@@ -416,7 +409,7 @@ kaa_error_t kaa_client_stop(kaa_client_t *kaa_client)
     KAA_LOG_INFO(kaa_client->context->logger, KAA_ERR_NONE, "Going to stop Kaa client...");
     kaa_client->operate = false;
 
-    return KAA_ERR_NONE;
+    return kaa_stop(kaa_client->context);
 }
 
 

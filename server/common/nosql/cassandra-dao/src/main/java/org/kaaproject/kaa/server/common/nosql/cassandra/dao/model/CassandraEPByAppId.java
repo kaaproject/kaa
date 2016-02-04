@@ -16,7 +16,8 @@
 
 package org.kaaproject.kaa.server.common.nosql.cassandra.dao.model;
 
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.OPT_LOCK;
+import java.io.Serializable;
+import java.nio.ByteBuffer;
 
 import com.datastax.driver.mapping.annotations.ClusteringColumn;
 import com.datastax.driver.mapping.annotations.Column;
@@ -24,13 +25,8 @@ import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
 import com.datastax.driver.mapping.annotations.Transient;
 
-import java.io.Serializable;
-import java.nio.ByteBuffer;
-
-import org.kaaproject.kaa.common.dto.HasVersion;
-
 @Table(name = CassandraModelConstants.EP_BY_APP_ID_COLUMN_FAMILY_NAME)
-public class CassandraEPByAppId implements HasVersion, Serializable {
+public class CassandraEPByAppId implements Serializable {
 
     @Transient
     private static final long serialVersionUID = 4620788066149588088L;
@@ -41,9 +37,6 @@ public class CassandraEPByAppId implements HasVersion, Serializable {
     @ClusteringColumn
     @Column(name = CassandraModelConstants.EP_BY_APP_ID_ENDPOINT_KEY_HASH_PROPERTY)
     private ByteBuffer endpointKeyHash;
-    
-    @Column(name = OPT_LOCK)
-    private Long version;
 
     public CassandraEPByAppId() {
     }
@@ -67,16 +60,6 @@ public class CassandraEPByAppId implements HasVersion, Serializable {
 
     public void setEndpointKeyHash(ByteBuffer endpointKeyHash) {
         this.endpointKeyHash = endpointKeyHash;
-    }
-    
-    @Override
-    public Long getVersion() {
-        return version;
-    }
-
-    @Override
-    public void setVersion(Long version) {
-        this.version = version;
     }
 
     @Override

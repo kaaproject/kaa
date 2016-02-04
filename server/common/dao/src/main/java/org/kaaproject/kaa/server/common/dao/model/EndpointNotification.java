@@ -16,8 +16,7 @@
 package org.kaaproject.kaa.server.common.dao.model;
 
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
-import org.kaaproject.kaa.common.dto.HasVersion;
 
-public interface EndpointNotification extends ToDto<EndpointNotificationDto>, HasVersion {
+public interface EndpointNotification extends ToDto<EndpointNotificationDto> {
 
 }

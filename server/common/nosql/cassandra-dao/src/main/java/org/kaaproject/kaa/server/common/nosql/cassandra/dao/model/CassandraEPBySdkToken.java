@@ -16,15 +16,12 @@
 
 package org.kaaproject.kaa.server.common.nosql.cassandra.dao.model;
 
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.OPT_LOCK;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_BY_SDK_TOKEN_COLUMN_FAMILY_NAME;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_BY_SDK_TOKEN_ENDPOINT_KEY_HASH_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_BY_SDK_TOKEN_SDK_TOKEN_PROPERTY;
 
 import java.io.Serializable;
 import java.nio.ByteBuffer;
-
-import org.kaaproject.kaa.common.dto.HasVersion;
 
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
@@ -37,7 +34,7 @@ import com.datastax.driver.mapping.annotations.Transient;
  * @since v0.8.0
  */
 @Table(name = EP_BY_SDK_TOKEN_COLUMN_FAMILY_NAME)
-public class CassandraEPBySdkToken implements HasVersion, Serializable {
+public class CassandraEPBySdkToken implements Serializable {
 
     @Transient
     private static final long serialVersionUID = 3580976363337794171L;
@@ -48,9 +45,6 @@ public class CassandraEPBySdkToken implements HasVersion, Serializable {
 
     @Column(name = EP_BY_SDK_TOKEN_ENDPOINT_KEY_HASH_PROPERTY)
     private ByteBuffer endpointKeyHash;
-    
-    @Column(name = OPT_LOCK)
-    private Long version;
 
     public CassandraEPBySdkToken() {
     }
@@ -74,16 +68,6 @@ public class CassandraEPBySdkToken implements HasVersion, Serializable {
 
     public void setEndpointKeyHash(ByteBuffer endpointKeyHash) {
         this.endpointKeyHash = endpointKeyHash;
-    }
-
-    @Override
-    public Long getVersion() {
-        return version;
-    }
-
-    @Override
-    public void setVersion(Long version) {
-        this.version = version;
     }
     
     @Override

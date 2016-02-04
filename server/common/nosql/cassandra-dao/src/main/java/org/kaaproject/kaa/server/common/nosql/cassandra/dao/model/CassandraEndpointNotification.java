@@ -25,6 +25,7 @@ import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.util.Date;
 
+
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
@@ -96,7 +97,6 @@ public final class CassandraEndpointNotification implements EndpointNotification
 
         }
         this.id = dto.getId() != null ? dto.getId() : generateId();
-        this.version = dto.getVersion();
     }
 
 
@@ -205,16 +205,6 @@ public final class CassandraEndpointNotification implements EndpointNotification
     public void setTopicId(String topicId) {
         this.topicId = topicId;
     }
-    
-    @Override
-    public Long getVersion() {
-        return version;
-    }
-
-    @Override
-    public void setVersion(Long version) {
-        this.version = version;
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -287,7 +277,6 @@ public final class CassandraEndpointNotification implements EndpointNotification
         notificationDto.setExpiredAt(expiredAt);
         notificationDto.setTopicId(topicId);
         dto.setNotificationDto(notificationDto);
-        dto.setVersion(version);
         return dto;
     }
 }

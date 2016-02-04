@@ -126,8 +126,8 @@
             <artifactId>endpoint-shared</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.kaaproject.kaa.avrogenc</groupId>
-            <artifactId>avrogenc</artifactId>
+            <groupId>org.kaaproject.kaa.avrogen</groupId>
+            <artifactId>avrogen</artifactId>
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>
@@ -811,6 +811,16 @@
                                     <outputDirectory>${sdk.path}/c</outputDirectory>
                                     <destFileName>kaa-client-sdk-${project.version}.tar.gz</destFileName>
                                 </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.client</groupId>
+                                    <artifactId>client-objective-c</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>objc-sdk</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${sdk.path}/objc</outputDirectory>
+                                    <destFileName>kaa-client-sdk-${project.version}.tar.gz</destFileName>
+                                </artifactItem>
                             </artifactItems>
                         </configuration>
                     </execution>
@@ -848,6 +858,15 @@
                                     <type>tar.gz</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${templates.path}/c</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.client</groupId>
+                                    <artifactId>client-objective-c</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>objc-sdk-templates</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${templates.path}/objc</outputDirectory>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>
@@ -1055,6 +1074,41 @@
                 </executions>
             </plugin>
         </plugins>
+        <pluginManagement>
+        	<plugins>
+        		<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+        		<plugin>
+        			<groupId>org.eclipse.m2e</groupId>
+        			<artifactId>lifecycle-mapping</artifactId>
+        			<version>1.0.0</version>
+        			<configuration>
+        				<lifecycleMappingMetadata>
+        					<pluginExecutions>
+        						<pluginExecution>
+        							<pluginExecutionFilter>
+        								<groupId>
+        									org.codehaus.mojo
+        								</groupId>
+        								<artifactId>
+        									build-helper-maven-plugin
+        								</artifactId>
+        								<versionRange>
+        									[1.9.1,)
+        								</versionRange>
+        								<goals>
+        									<goal>add-source</goal>
+        								</goals>
+        							</pluginExecutionFilter>
+        							<action>
+        								<ignore></ignore>
+        							</action>
+        						</pluginExecution>
+        					</pluginExecutions>
+        				</lifecycleMappingMetadata>
+        			</configuration>
+        		</plugin>
+        	</plugins>
+        </pluginManagement>
     </build>
 
     <profiles>

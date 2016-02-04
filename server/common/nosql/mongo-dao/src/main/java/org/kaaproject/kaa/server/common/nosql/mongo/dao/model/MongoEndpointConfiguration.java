@@ -16,19 +16,16 @@
 
 package org.kaaproject.kaa.server.common.nosql.mongo.dao.model;
 
-import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
-import org.kaaproject.kaa.server.common.dao.model.EndpointConfiguration;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Version;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
+import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getArrayCopy;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.ENDPOINT_CONFIGURATION;
 
 import java.io.Serializable;
 import java.util.Arrays;
 
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.OPT_LOCK;
-import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getArrayCopy;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.ENDPOINT_CONFIGURATION;
+import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
+import org.kaaproject.kaa.server.common.dao.model.EndpointConfiguration;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = ENDPOINT_CONFIGURATION)
 public final class MongoEndpointConfiguration implements EndpointConfiguration, Serializable {
@@ -39,17 +36,12 @@ public final class MongoEndpointConfiguration implements EndpointConfiguration, 
     private byte[] configurationHash;
     private byte[] configuration;
     
-    @Version
-    @Field(OPT_LOCK)
-    private Long version;
-
     public MongoEndpointConfiguration() {
     }
 
     public MongoEndpointConfiguration(EndpointConfigurationDto dto) {
         this.configuration = dto.getConfiguration();
         this.configurationHash = dto.getConfigurationHash();
-        this.version = dto.getVersion();
     }
 
     public byte[] getConfigurationHash() {
@@ -66,16 +58,6 @@ public final class MongoEndpointConfiguration implements EndpointConfiguration, 
 
     public void setConfiguration(byte[] configuration) {
         this.configuration = configuration;
-    }
-
-    @Override
-    public Long getVersion() {
-        return version;
-    }
-
-    @Override
-    public void setVersion(Long version) {
-        this.version = version;
     }
 
     @Override
@@ -103,7 +85,6 @@ public final class MongoEndpointConfiguration implements EndpointConfiguration, 
         EndpointConfigurationDto dto = new EndpointConfigurationDto();
         dto.setConfiguration(configuration);
         dto.setConfigurationHash(configurationHash);
-        dto.setVersion(version);
         return dto;
     }
 

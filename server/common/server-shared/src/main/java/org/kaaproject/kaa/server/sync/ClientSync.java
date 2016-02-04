@@ -34,8 +34,14 @@ public final class ClientSync {
     /** The profile sync. */
     private ProfileClientSync profileSync;
 
+    /** The force configuration sync flag */
+    private boolean forceConfigurationSync;
+
     /** The configuration sync. */
     private ConfigurationClientSync configurationSync;
+
+    /** The force notification sync flag */
+    private boolean forceNotificationSync;
 
     /** The notification sync. */
     private NotificationClientSync notificationSync;
@@ -258,6 +264,23 @@ public final class ClientSync {
         return true;
     }
 
+    public boolean isForceConfigurationSync() {
+        return forceConfigurationSync;
+    }
+
+    public void setForceConfigurationSync(boolean forceConfigurationSync) {
+        this.forceConfigurationSync = forceConfigurationSync;
+    }
+
+    public boolean isForceNotificationSync() {
+        return forceNotificationSync;
+    }
+
+    public void setForceNotificationSync(boolean forceNotificationSync) {
+        this.forceNotificationSync = forceNotificationSync;
+    }
+
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -266,6 +289,8 @@ public final class ClientSync {
         result = prime * result + ((clientSyncMetaData == null) ? 0 : clientSyncMetaData.hashCode());
         result = prime * result + ((configurationSync == null) ? 0 : configurationSync.hashCode());
         result = prime * result + ((eventSync == null) ? 0 : eventSync.hashCode());
+        result = prime * result + (forceConfigurationSync ? 1231 : 1237);
+        result = prime * result + (forceNotificationSync ? 1231 : 1237);
         result = prime * result + ((logSync == null) ? 0 : logSync.hashCode());
         result = prime * result + ((notificationSync == null) ? 0 : notificationSync.hashCode());
         result = prime * result + ((profileSync == null) ? 0 : profileSync.hashCode());
@@ -303,6 +328,10 @@ public final class ClientSync {
                 return false;
         } else if (!eventSync.equals(other.eventSync))
             return false;
+        if (forceConfigurationSync != other.forceConfigurationSync)
+            return false;
+        if (forceNotificationSync != other.forceNotificationSync)
+            return false;
         if (logSync == null) {
             if (other.logSync != null)
                 return false;
@@ -339,8 +368,12 @@ public final class ClientSync {
         builder.append(bootstrapSync);
         builder.append(", profileSync=");
         builder.append(profileSync);
+        builder.append(", forceConfigurationSync=");
+        builder.append(forceConfigurationSync);
         builder.append(", configurationSync=");
         builder.append(configurationSync);
+        builder.append(", forceNotificationSync=");
+        builder.append(forceNotificationSync);
         builder.append(", notificationSync=");
         builder.append(notificationSync);
         builder.append(", userSync=");

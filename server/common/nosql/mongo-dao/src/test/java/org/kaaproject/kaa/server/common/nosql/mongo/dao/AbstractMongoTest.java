@@ -20,9 +20,11 @@ import org.kaaproject.kaa.server.common.dao.AbstractTest;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointConfigurationDao;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointUserConfigurationDao;
+import org.kaaproject.kaa.server.common.dao.impl.TopicListEntryDao;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoEndpointConfiguration;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoEndpointProfile;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoEndpointUserConfiguration;
+import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoTopicListEntry;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.UUID;
@@ -35,6 +37,8 @@ public class AbstractMongoTest extends AbstractTest {
     protected EndpointUserConfigurationDao<MongoEndpointUserConfiguration> endpointUserConfigurationDao;
     @Autowired
     protected EndpointProfileDao<MongoEndpointProfile> endpointProfileDao;
+    @Autowired
+    protected TopicListEntryDao<MongoTopicListEntry> topicListEntryDao;
 
     protected EndpointConfigurationDto generateEndpointConfiguration() {
         EndpointConfigurationDto configurationDto = new EndpointConfigurationDto();

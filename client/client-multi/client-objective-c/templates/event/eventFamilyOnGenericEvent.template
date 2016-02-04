@@ -1,0 +1,13 @@
+if ([@"{event_class_fqn}" isEqualToString:eventFQN]) {
+    @try {
+        {event_class_name} *event = [self.converter fromBytes:data object:[[{event_class_name} alloc] init]];
+        for (id<{event_family_class_name}Delegate> delegate in self.delegates) {
+            [[self.context getCallbackExecutor] addOperationWithBlock:^{
+                [delegate on{event_class_name}:event fromSource:source];
+            }];
+        }
+    }
+    @catch (NSException *exception) {
+        DDLogError(@"%@ Error processing event with fqn [%@]: %@. Reason: %@", TAG, eventFQN, exception.name, exception.reason);
+    }
+}

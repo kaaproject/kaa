@@ -16,11 +16,16 @@
 
 package org.kaaproject.kaa.server.common.nosql.mongo.dao;
 
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -35,6 +40,7 @@ import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.PageLinkDto;
+import org.kaaproject.kaa.server.common.dao.exception.KaaOptimisticLockingFailureException;
 import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoEndpointProfile;
 import org.slf4j.Logger;
@@ -49,6 +55,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class EndpointProfileMongoDaoTest extends AbstractMongoTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(EndpointProfileMongoDaoTest.class);
+    private static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(10);
 
     private static final String TEST_ENDPOINT_GROUP_ID = "124";
     private static final String TEST_LIMIT = "3";
@@ -91,7 +98,7 @@ public class EndpointProfileMongoDaoTest extends AbstractMongoTest {
     @Test
     public void findBodyByEndpointGroupIdTest() {
         for (int i = 0; i < GENERATED_PROFILES_COUNT; i++) {
-            generateEndpointProfileWithGroupIdDto(TEST_ENDPOINT_GROUP_ID, false);
+            generateEndpointProfileWithGroupIdDto(TEST_ENDPOINT_GROUP_ID);
         }
         int lim = Integer.valueOf(TEST_LIMIT);
         PageLinkDto pageLink = new PageLinkDto(TEST_ENDPOINT_GROUP_ID, TEST_LIMIT, TEST_OFFSET);
@@ -103,7 +110,7 @@ public class EndpointProfileMongoDaoTest extends AbstractMongoTest {
     @Test
     public void findBodyByEndpointGroupIdWithNfGroupStateTest() {
         for (int i = 0; i < GENERATED_PROFILES_COUNT; i++) {
-            generateEndpointProfileWithGroupIdDto(TEST_ENDPOINT_GROUP_ID, true);
+            generateEndpointProfileWithGroupIdDto(TEST_ENDPOINT_GROUP_ID);
         }
         int lim = Integer.valueOf(TEST_LIMIT);
         PageLinkDto pageLink = new PageLinkDto(TEST_ENDPOINT_GROUP_ID, TEST_LIMIT, TEST_OFFSET);
@@ -115,7 +122,7 @@ public class EndpointProfileMongoDaoTest extends AbstractMongoTest {
     @Test
     public void findByEndpointGroupIdTest() {
         for (int i = 0; i < GENERATED_PROFILES_COUNT; i++) {
-            generateEndpointProfileWithGroupIdDto(TEST_ENDPOINT_GROUP_ID, false);
+            generateEndpointProfileWithGroupIdDto(TEST_ENDPOINT_GROUP_ID);
         }
         int lim = Integer.valueOf(TEST_LIMIT);
         PageLinkDto pageLink = new PageLinkDto(TEST_ENDPOINT_GROUP_ID, TEST_LIMIT, TEST_OFFSET);
@@ -127,7 +134,7 @@ public class EndpointProfileMongoDaoTest extends AbstractMongoTest {
     @Test
     public void findByEndpointGroupIdWithNfGroupStateTest() {
         for (int i = 0; i < GENERATED_PROFILES_COUNT; i++) {
-            generateEndpointProfileWithGroupIdDto(TEST_ENDPOINT_GROUP_ID, true);
+            generateEndpointProfileWithGroupIdDto(TEST_ENDPOINT_GROUP_ID);
         }
         int lim = Integer.valueOf(TEST_LIMIT);
         PageLinkDto pageLink = new PageLinkDto(TEST_ENDPOINT_GROUP_ID, TEST_LIMIT, TEST_OFFSET);
@@ -175,17 +182,24 @@ public class EndpointProfileMongoDaoTest extends AbstractMongoTest {
     @Test
     public void convertToDtoTest() {
         EndpointProfileDto endpointProfile = generateEndpointProfileDto(null, null);
+        endpointProfile.setAccessToken("Trololo");
+        endpointProfileDao.save(endpointProfile);
         Assert.assertNotNull(endpointProfile);
         MongoEndpointProfile converted = new MongoEndpointProfile(endpointProfile);
         Assert.assertEquals(endpointProfile, converted.toDto());
     }
 
     @Test
-    public void getCountByKeyHash() {
+    public void testFindEndpointIdByKeyHash() {
         EndpointProfileDto endpointProfile = generateEndpointProfileDto(null, null);
         Assert.assertNotNull(endpointProfile);
-        long count = endpointProfileDao.getCountByKeyHash(endpointProfile.getEndpointKeyHash());
-        Assert.assertEquals(1, count);
+        EndpointProfile ep = endpointProfileDao.findEndpointIdByKeyHash(endpointProfile.getEndpointKeyHash());
+        Assert.assertEquals(endpointProfile.getId(), ep.getId());
+        Assert.assertNull(endpointProfile.getEndpointKey());
+        Assert.assertNull(ep.getEndpointKey());
+        Assert.assertNull(ep.getEndpointUserId());
+        Assert.assertNull(ep.getServerProfile());
+        Assert.assertNull(ep.getSubscriptions());
     }
 
     @Test
@@ -232,13 +246,13 @@ public class EndpointProfileMongoDaoTest extends AbstractMongoTest {
         }
     }
     
-    protected EndpointProfileDto generateEndpointProfileForTestUpdate(String id, byte[] keyHash, List<EndpointGroupStateDto> cfGroupState) {
+    protected EndpointProfileDto generateEndpointProfileForTestUpdate(String id, byte[] keyHash, List<EndpointGroupStateDto> groupState) {
         EndpointProfileDto profileDto = new EndpointProfileDto();
         profileDto.setId(id);
         profileDto.setApplicationId(generateStringId());
         profileDto.setEndpointKeyHash(keyHash);
         profileDto.setAccessToken(generateStringId());
-        profileDto.setCfGroupStates(cfGroupState);
+        profileDto.setGroupState(groupState);
         profileDto.setSdkToken(UUID.randomUUID().toString());
         return profileDto;
     }
@@ -247,4 +261,32 @@ public class EndpointProfileMongoDaoTest extends AbstractMongoTest {
         return UUID.randomUUID().toString();
     }
 
+    @Test(expected = KaaOptimisticLockingFailureException.class)
+    public void testOptimisticLockWithConcurrency() throws Throwable {
+        final EndpointProfileDto endpointProfile = generateEndpointProfileDto(null, null);
+        List<Future<?>> tasks = new ArrayList<>();
+        for (int i = 0; i < 100; i++) {
+            final int id = i;
+            tasks.add(EXECUTOR.submit(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        MongoEndpointProfile ep = new MongoEndpointProfile(endpointProfile);
+                        ep.setEndpointUserId("Ololo " + id);
+                        endpointProfileDao.save(ep.toDto());
+                    } catch (KaaOptimisticLockingFailureException ex) {
+                        LOG.error("Catch optimistic exception.");
+                        throw ex;
+                    }
+                }
+            }));
+        }
+        for (Future future : tasks) {
+            try {
+                future.get();
+            } catch (ExecutionException ex) {
+                throw ex.getCause();
+            }
+        }
+    }
 }

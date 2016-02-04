@@ -17,20 +17,20 @@
 package org.kaaproject.kaa.server.common.nosql.mongo.dao.model;
 
 
+import static org.kaaproject.kaa.common.dto.Util.getArrayCopy;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.OPT_LOCK;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.ENDPOINT_NOTIFICATION;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_NF_ENDPOINT_KEY_HASH;
+
+import java.io.Serializable;
+import java.util.Arrays;
+
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
 import org.kaaproject.kaa.server.common.dao.model.EndpointNotification;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Version;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
-
-import java.io.Serializable;
-import java.util.Arrays;
-
-import static org.kaaproject.kaa.common.dto.Util.getArrayCopy;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.OPT_LOCK;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_NF_ENDPOINT_KEY_HASH;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.ENDPOINT_NOTIFICATION;
 
 @Document(collection = ENDPOINT_NOTIFICATION)
 public final class MongoEndpointNotification implements EndpointNotification, Serializable {
@@ -54,7 +54,6 @@ public final class MongoEndpointNotification implements EndpointNotification, Se
         this.id = dto.getId();
         this.endpointKeyHash = getArrayCopy(dto.getEndpointKeyHash());
         this.notification = dto.getNotificationDto() != null ? new MongoNotification(dto.getNotificationDto()) : null;
-        this.version = dto.getVersion();
     }
 
     public String getId() {
@@ -67,16 +66,6 @@ public final class MongoEndpointNotification implements EndpointNotification, Se
 
     public byte[] getEndpointKeyHash() {
         return endpointKeyHash;
-    }
-    
-    @Override
-    public Long getVersion() {
-        return version;
-    }
-
-    @Override
-    public void setVersion(Long version) {
-        this.version = version;
     }
 
     @Override
@@ -122,7 +111,6 @@ public final class MongoEndpointNotification implements EndpointNotification, Se
         dto.setId(id);
         dto.setEndpointKeyHash(getArrayCopy(endpointKeyHash));
         dto.setNotificationDto(notification != null ? notification.toDto() : null);
-        dto.setVersion(version);
         return dto;
     }
 }

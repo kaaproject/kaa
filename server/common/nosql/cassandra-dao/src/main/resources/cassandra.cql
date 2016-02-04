@@ -68,10 +68,8 @@ CREATE TABLE IF NOT EXISTS kaa.ep_profile (
     ep_key blob,
     user_id text,
     access_token text,
-    cf_group_state list < frozen < ep_group_state > >,
-    nf_group_state list < frozen < ep_group_state > >,
-    cf_seq_num int,
-    nf_seq_num int,
+    group_state list < frozen < ep_group_state > >,
+    seq_num int,
     pf text,
     pf_hash blob,
     pf_ver int,
@@ -79,7 +77,8 @@ CREATE TABLE IF NOT EXISTS kaa.ep_profile (
     ucf_hash blob,
     cf_hash blob,
     cf_ver int,
-    nf_hash blob,
+    topic_hash blob,
+    simple_topic_hash int,
     nf_ver int,
     subscs list <text>,
     sys_nf_ver int,
@@ -94,21 +93,18 @@ CREATE TABLE IF NOT EXISTS kaa.ep_profile (
 
 CREATE TABLE IF NOT EXISTS kaa.app_eps (
     app_id text,
-    ep_key_hash blob,    
-    opt_lock bigint,
+    ep_key_hash blob
     PRIMARY KEY (app_id, ep_key_hash)
 );
 
 CREATE TABLE IF NOT EXISTS kaa.access_token_eps (
     access_token text PRIMARY KEY ,
-    ep_key_hash blob,
-    opt_lock bigint
+    ep_key_hash blob
 );
 
 CREATE TABLE IF NOT EXISTS kaa.endpoint_group_id_eps (
     ep_group_id text ,
-    ep_key_hash blob,
-    opt_lock bigint,
+    ep_key_hash blob
     PRIMARY KEY (ep_group_id, ep_key_hash)
 );
 
@@ -125,4 +121,11 @@ CREATE TABLE IF NOT EXISTS kaa.user_conf (
     body text,
     opt_lock bigint,
     PRIMARY KEY (user_id, app_token, schema_version)
+);
+
+CREATE TABLE IF NOT EXISTS kaa.tl_entry (
+    tl_entry_hash blob PRIMARY KEY,
+    tl_entry_simple_hash int,
+    tl_entry_topic_ids list<text>,
+    opt_lock bigint
 );

@@ -16,10 +16,11 @@
 
 package org.kaaproject.kaa.server.operations.service.delta;
 
+import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.server.operations.pojo.GetDeltaRequest;
 import org.kaaproject.kaa.server.operations.pojo.GetDeltaResponse;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
-
+import org.kaaproject.kaa.server.operations.service.cache.ConfigurationCacheEntry;
 
 /**
  * Service that performs delta calculation process.
@@ -31,12 +32,23 @@ public interface DeltaService {
     /**
      * Gets the delta.
      *
-     * @param request the request
-     * @param historyDelta the history delta
-     * @param curAppSeqNumber the cur app seq number
+     * @param request
+     *            the request
      * @return the delta
-     * @throws GetDeltaException the get delta exception
+     * @throws GetDeltaException
+     *             the get delta exception
      */
-    GetDeltaResponse getDelta(GetDeltaRequest request, HistoryDelta historyDelta, int curAppSeqNumber) throws GetDeltaException;
+    GetDeltaResponse getDelta(GetDeltaRequest request) throws GetDeltaException;
+
+    /**
+     * Gets the up to date configuration for given endpoint profile
+     * 
+     * @param profile
+     *            - endpoint profile
+     * @return cache entry
+     * @throws GetDeltaException
+     *              the get delta exception
+     */
+    ConfigurationCacheEntry getConfiguration(String appToken, String endpointKey, EndpointProfileDto profile) throws GetDeltaException;
 
 }
