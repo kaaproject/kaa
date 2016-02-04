@@ -27,23 +27,22 @@ namespace kaa {
 
 class MockLogStorage: public ILogStorage {
 public:
-    virtual void addLogRecord(LogRecordPtr record) { ++onAddLogRecord_; }
+    virtual BucketInfo addLogRecord(LogRecord&& record) { ++onAddLogRecord_;  return bucketInfo_;  }
     virtual ILogStorageStatus& getStatus() { ++onGetStatus_; return storageStatus_; }
-    virtual RecordPack getRecordBlock(std::size_t blockSize, std::size_t recordsBlockCount) { ++onGetRecordBlock_; blockSize_ = blockSize; return recordPack_; }
-    virtual void removeRecordBlock(RecordBlockId id) { ++onRemoveRecordBlock_; }
-    virtual void notifyUploadFailed(RecordBlockId id) { ++onNotifyUploadFailed_; }
+    virtual LogBucket getNextBucket() { ++onGetRecordBucket_; return recordPack_; }
+    virtual void removeBucket(std::int32_t bucketId) { ++onRemoveBucket_; }
+    virtual void rollbackBucket(std::int32_t bucketId) { ++onRollbackBucket_; }
 
 public:
-    RecordPack recordPack_;
+    BucketInfo bucketInfo_;
+    LogBucket recordPack_;
     MockLogStorageStatus storageStatus_;
-
-    std::size_t blockSize_ = SIZE_MAX;
 
     std::size_t onAddLogRecord_ = 0;
     std::size_t onGetStatus_ = 0;
-    std::size_t onGetRecordBlock_ = 0;
-    std::size_t onRemoveRecordBlock_ = 0;
-    std::size_t onNotifyUploadFailed_ = 0;
+    std::size_t onGetRecordBucket_ = 0;
+    std::size_t onRemoveBucket_ = 0;
+    std::size_t onRollbackBucket_ = 0;
 };
 
 } /* namespace kaa */

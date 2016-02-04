@@ -536,7 +536,7 @@ std::string KaaClient::getEndpointAccessToken()
     return status_->getEndpointAccessToken();
 }
 
-void KaaClient::addLogRecord(const KaaUserLogRecord& record) 
+RecordFuture KaaClient::addLogRecord(const KaaUserLogRecord& record)
 {
 #ifdef KAA_USE_LOGGING
     checkClientState(State::STARTED, "Kaa client isn't started");
@@ -546,7 +546,16 @@ void KaaClient::addLogRecord(const KaaUserLogRecord& record)
 #endif
 }
 
-void KaaClient::setLogStorage(ILogStoragePtr storage) 
+void KaaClient::setLogDeliveryListener(ILogDeliveryListenerPtr listener)
+{
+#ifdef KAA_USE_LOGGING
+    return logCollector_->setLogDeliveryListener(listener);
+#else
+    throw KaaException("Failed to add log record. Logging subsystem is disabled");
+#endif
+}
+
+void KaaClient::setLogStorage(ILogStoragePtr storage)
 {
 #ifdef KAA_USE_LOGGING
     return logCollector_->setStorage(storage);
@@ -555,7 +564,7 @@ void KaaClient::setLogStorage(ILogStoragePtr storage)
 #endif
 }
 
-void KaaClient::setLogUploadStrategy(ILogUploadStrategyPtr strategy) 
+void KaaClient::setLogUploadStrategy(ILogUploadStrategyPtr strategy)
 {
 #ifdef KAA_USE_LOGGING
         return logCollector_->setUploadStrategy(strategy);

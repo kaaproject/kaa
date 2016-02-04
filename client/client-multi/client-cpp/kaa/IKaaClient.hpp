@@ -17,6 +17,8 @@
 #ifndef IKAACLIENT_HPP_
 #define IKAACLIENT_HPP_
 
+#include <future>
+
 #include "kaa/profile/IProfileContainer.hpp"
 #include "kaa/notification/INotificationTopicListListener.hpp"
 #include "kaa/notification/gen/NotificationDefinitions.hpp"
@@ -30,6 +32,8 @@
 #include "kaa/event/IFetchEventListeners.hpp"
 #include "kaa/log/ILogCollector.hpp"
 #include "kaa/failover/IFailoverStrategy.hpp"
+#include "kaa/log/ILogDeliveryListener.hpp"
+#include "kaa/log/RecordFuture.hpp"
 #include "kaa/IKaaClientContext.hpp"
 
 
@@ -333,6 +337,7 @@ public:
      * @param[in] listener    Listener to notify of the attach status is changed.
      */
     virtual void setAttachStatusListener(IAttachStatusListenerPtr listener) = 0;
+
     /**
      * @brief Checks if the current endpoint is already attached to some user.
      *
@@ -363,7 +368,14 @@ public:
      * @see KaaUserLogRecord
      * @see ILogStorage
      */
-    virtual void addLogRecord(const KaaUserLogRecord& record) = 0;
+    virtual RecordFuture addLogRecord(const KaaUserLogRecord& record) = 0;
+
+    /**
+     * @brief Set a listener which receives a delivery status of each log bucket.
+     *
+     * @param   listener[in] the listener
+     */
+    virtual void setLogDeliveryListener(ILogDeliveryListenerPtr listener) = 0;
 
     /**
      * @brief Sets the new log storage.

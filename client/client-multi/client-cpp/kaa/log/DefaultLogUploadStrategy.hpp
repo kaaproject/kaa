@@ -59,12 +59,6 @@ public:
     virtual void onTimeout(ILogFailoverCommand& controller);
     virtual void onFailure(ILogFailoverCommand& controller, LogDeliveryErrorCode code);
 
-    virtual std::size_t getBatchSize() { return batchSize_; }
-    void setBatchSize(std::size_t size) { batchSize_ = size; }
-
-    virtual std::size_t getRecordsBatchCount() { return recordsBatchCount_; }
-    void setRecordsBatchCount(std::size_t count)  { recordsBatchCount_ = count; }
-
     virtual std::size_t getTimeout() { return uploadTimeout_; }
     void setUploadTimeout(std::size_t timeout) { uploadTimeout_ = timeout; }
 
@@ -87,12 +81,6 @@ public:
     void setCountThreshold(std::size_t maxCount) { uploadCountThreshold_ = maxCount; }
 
 public:
-    static const std::size_t DEFAULT_BATCH_SIZE = 8 * 1024; /*!< The default value (in bytes) for the maximum size of
-                                                                 the report pack that will be delivered in a single
-                                                                 request to the Operaions server. */
-
-    static const std::size_t DEFAULT_RECORDS_BATCH_COUNT = 256;
-
     static const std::size_t DEFAULT_UPLOAD_TIMEOUT = 2 * 60; /*!< The default value (in seconds) for time to wait
                                                                    the log delivery response. */
 
@@ -113,10 +101,6 @@ public:
                                                                              allowed to be uploaded parallel. */
 
 protected:
-    std::size_t batchSize_ = DEFAULT_BATCH_SIZE;
-
-    std::size_t recordsBatchCount_ = DEFAULT_RECORDS_BATCH_COUNT;
-
     std::size_t uploadTimeout_ = DEFAULT_UPLOAD_TIMEOUT;
     std::size_t retryReriod_ = DEFAULT_RETRY_PERIOD;
 

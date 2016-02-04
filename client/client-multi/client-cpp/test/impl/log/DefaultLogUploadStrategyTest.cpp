@@ -43,18 +43,6 @@ static KaaClientContext clientContext(properties, tmp_logger, tmpExecContext, tm
 
 BOOST_AUTO_TEST_SUITE(DefaultLogUploadStrategyTestSuite)
 
-BOOST_AUTO_TEST_CASE(GetSetBatchSizeTest)
-{
-    DefaultLogUploadStrategy strategy(clientContext);
-
-    BOOST_CHECK_EQUAL(strategy.getBatchSize(), DefaultLogUploadStrategy::DEFAULT_BATCH_SIZE);
-
-    std::size_t batchSize = std::rand();
-    strategy.setBatchSize(batchSize);
-
-    BOOST_CHECK_EQUAL(strategy.getBatchSize(), batchSize);
-}
-
 BOOST_AUTO_TEST_CASE(GetSetUplaodTimeoutTest)
 {
     MockLogFailoverCommand failoverCommand;

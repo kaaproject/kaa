@@ -16,9 +16,11 @@
 
 #include "kaa/KaaClientProperties.hpp"
 
+#include <sstream>
+
 #include "kaa/KaaDefaults.hpp"
 #include "kaa/common/exception/KaaException.hpp"
-#include <sstream>
+#include "kaa/log/LogStorageConstants.hpp"
 
 namespace kaa {
 
@@ -41,7 +43,7 @@ const std::string KaaClientProperties::DEFAULT_WORKING_DIR = std::string(".") + 
 const std::string KaaClientProperties::DEFAULT_STATE_FILE = CLIENT_STATUS_FILE_LOCATION;
 const std::string KaaClientProperties::DEFAULT_PUB_KEY_FILE = CLIENT_PUB_KEY_LOCATION;
 const std::string KaaClientProperties::DEFAULT_PRIV_KEY_FILE = CLIENT_PRIV_KEY_LOCATION;
-const std::string KaaClientProperties::DEFAULT_LOGS_DB = "logs.db";
+const std::string KaaClientProperties::DEFAULT_LOGS_DB = LogStorageConstants::DEFAULT_LOG_DB_STORAGE;
 const std::string KaaClientProperties::DEFAULT_CONF_FILE = "configuration.bin";
 const std::string KaaClientProperties::DEFAULT_CLIENT_ID = "client_";
 const std::string KaaClientProperties::DEFAULT_LOG_FILE_NAME = "";

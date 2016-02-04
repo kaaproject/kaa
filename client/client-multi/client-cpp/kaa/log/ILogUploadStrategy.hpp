@@ -61,17 +61,6 @@ public:
     virtual LogUploadStrategyDecision isUploadNeeded(ILogStorageStatus& status) = 0;
 
     /**
-     * @brief Retrieves the maximum size of the report pack that will be delivered in the single request
-     * to the Operations server.
-     *
-     * @return    The size of the log batch in bytes.
-     */
-    virtual std::size_t getBatchSize() = 0;
-
-
-    virtual std::size_t getRecordsBatchCount() = 0;
-
-    /**
      * @brief Maximum time to wait the log delivery response.
      *
      * @param[in] controller

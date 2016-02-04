@@ -95,7 +95,8 @@ set ( KAA_TEST_SOURCES
         ../impl/notification/NotificationTransport.cpp
         ../impl/notification/NotificationManager.cpp
         ../impl/log/LogCollector.cpp
-        ../impl/log/LogRecord.cpp
+        ../impl/log/LogStorageConstants.cpp
+        ../impl/log/RecordFuture.cpp
         ../impl/log/DefaultLogUploadStrategy.cpp
         ../impl/log/MemoryLogStorage.cpp
         ../impl/log/SQLiteDBLogStorage.cpp
