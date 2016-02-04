@@ -438,11 +438,10 @@ public class AdminClient {
         return entity.getBody();
     }
     
-    public EndpointProfileSchemaDto createProfileSchema(EndpointProfileSchemaDto profileSchema, String schemaResource) throws Exception {
+    public EndpointProfileSchemaDto createProfileSchema(EndpointProfileSchemaDto profileSchema) throws Exception {
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
         params.add("profileSchema", profileSchema);
-        params.add("file", getFileResource(schemaResource));
-        return restTemplate.postForObject(url + "profileSchema", params, EndpointProfileSchemaDto.class);
+        return restTemplate.postForObject(url + "saveProfileSchema", params, EndpointProfileSchemaDto.class);
     }
 
     public List<VersionDto> getUserNotificationSchemas(String applicationId) throws Exception {

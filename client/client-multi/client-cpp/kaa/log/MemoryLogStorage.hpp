@@ -27,6 +27,8 @@
 
 namespace kaa {
 
+class IKaaClientContext;
+
 /**
  * @brief The default @c ILogStorage implementation.
  *
@@ -41,7 +43,7 @@ public:
      * @param[in] bucketSize           The bucket size in bytes.
      * @param[in] bucketRecordCount    The number of records in a bucket.
      */
-    MemoryLogStorage(std::size_t bucketSize = LogStorageConstants::DEFAULT_MAX_BUCKET_SIZE,
+    MemoryLogStorage(IKaaClientContext &context, std::size_t bucketSize = LogStorageConstants::DEFAULT_MAX_BUCKET_SIZE,
                      std::size_t bucketRecordCount = LogStorageConstants::DEFAULT_MAX_BUCKET_RECORD_COUNT);
 
     /**
@@ -59,7 +61,8 @@ public:
      *
      * @throw KaaException The percentage is out of the range.
      */
-    MemoryLogStorage(std::size_t maxOccupiedSize,
+    MemoryLogStorage(IKaaClientContext &context,
+                     std::size_t maxOccupiedSize,
                      float percentToDelete,
                      std::size_t bucketSize = LogStorageConstants::DEFAULT_MAX_BUCKET_SIZE,
                      std::size_t bucketRecordCount = LogStorageConstants::DEFAULT_MAX_BUCKET_RECORD_COUNT);
@@ -120,6 +123,7 @@ private:
 
     std::list<InternalBucket> buckets_;
     KAA_MUTEX_DECLARE(memoryLogStorageGuard_);
+    IKaaClientContext &context_;
 };
 
 }  // namespace kaa

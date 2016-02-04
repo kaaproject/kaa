@@ -16,11 +16,13 @@
 
 #ifdef KAA_USE_SQLITE_LOG_STORAGE
 
-#include "kaa/log/SQLiteDBLogStorage.hpp"
+#include <kaa/log/SQLiteDBLogStorage.hpp>
 
-#include "kaa/logging/Log.hpp"
-#include "kaa/log/LogRecord.hpp"
-#include "kaa/common/exception/KaaException.hpp"
+#include <kaa/logging/Log.hpp>
+#include <kaa/log/LogRecord.hpp>
+#include <kaa/common/exception/KaaException.hpp>
+#include <kaa/KaaClientProperties.hpp>
+#include "kaa/IKaaClientContext.hpp"
 
 
 
@@ -143,7 +145,6 @@ public:
     SQLiteStatement(sqlite3 *db, const char* sql)
     {
         if (!db || !sql) {
-            KAA_LOG_ERROR("Failed to create sqlite3 statement: bad data");
             throw KaaException("Failed to create sqlite3 statement: bad data");
         }
 
@@ -164,16 +165,18 @@ private:
     sqlite3_stmt *stmt_ = nullptr;
 };
 
-SQLiteDBLogStorage::SQLiteDBLogStorage(std::size_t bucketSize, std::size_t bucketRecordCount)
-    : dbName_(LogStorageConstants::DEFAULT_LOG_DB_STORAGE),
-      maxBucketSize_(bucketSize), maxBucketRecordCount_(bucketRecordCount)
+SQLiteDBLogStorage::SQLiteDBLogStorage(IKaaClientContext &context, std::size_t bucketSize, std::size_t bucketRecordCount)
+    : dbName_(context.getProperties().getLogsDatabaseFileName()),
+      maxBucketSize_(bucketSize), maxBucketRecordCount_(bucketRecordCount),
+      context_(context)
 {
     init(SQLiteOptimizationOptions::SQLITE_NO_OPTIMIZATIONS);
 }
 
-SQLiteDBLogStorage::SQLiteDBLogStorage(const std::string& dbName, int optimizationMask,
+SQLiteDBLogStorage::SQLiteDBLogStorage(IKaaClientContext &context,
+                                       const std::string& dbName, int optimizationMask,
                                        std::size_t bucketSize, std::size_t bucketRecordCount)
-    : dbName_(dbName), maxBucketSize_(bucketSize), maxBucketRecordCount_(bucketRecordCount)
+    : dbName_(dbName), maxBucketSize_(bucketSize), maxBucketRecordCount_(bucketRecordCount), context_(context)
 {
     init(optimizationMask);
 }

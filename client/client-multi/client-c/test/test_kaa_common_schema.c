@@ -17,6 +17,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <time.h>
+#include <string.h>
 
 #include "kaa_test.h"
 

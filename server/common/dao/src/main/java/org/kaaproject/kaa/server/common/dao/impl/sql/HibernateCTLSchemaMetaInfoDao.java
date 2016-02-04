@@ -71,7 +71,7 @@ public class HibernateCTLSchemaMetaInfoDao extends HibernateAbstractDao<CTLSchem
     }
 
     @Override
-    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true, propagation = Propagation.REQUIRES_NEW)
     public CTLSchemaMetaInfo findByFqnAndVersion(String fqn, Integer version) {
         LOG.debug("Searching ctl metadata by fqn [{}] and version [{}]", fqn, version);
         CTLSchemaMetaInfo ctlSchema = findOneByCriterion(Restrictions.and(

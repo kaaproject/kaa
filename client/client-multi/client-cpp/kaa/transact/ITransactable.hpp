@@ -18,6 +18,7 @@
 #define ITRANSACTABLE_HPP_
 
 #include "kaa/transact/TransactionId.hpp"
+#include "kaa/IKaaClientContext.hpp"
 
 namespace kaa {
 
@@ -33,22 +34,25 @@ public:
      * Create new transaction.
      *
      * @return TransactionId object which must be used to submit or rollback the transaction.
+     * @param[in] Kaa client context
      */
-    virtual TransactionIdPtr beginTransaction() = 0;
+    virtual TransactionIdPtr beginTransaction(IKaaClientContext &context_) = 0;
 
     /**
      * Finish the transaction.
      *
      * @param trxId Identifier of the transaction which must be finished.
+     * @param[in] Kaa client context
      */
-    virtual void commit(TransactionIdPtr trxId) = 0;
+    virtual void commit(TransactionIdPtr trxId, IKaaClientContext &context_) = 0;
 
     /**
      * Rollback changes for given transaction.
      *
      * @param trxId Identifier of the transaction which must be removed withot applying changes.
+     * @param[in] Kaa client context
      */
-    virtual void rollback(TransactionIdPtr trxId) = 0;
+    virtual void rollback(TransactionIdPtr trxId, IKaaClientContext &context_) = 0;
 
     virtual ~ITransactable() {}
 };

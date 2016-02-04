@@ -19,6 +19,7 @@
 
 #include "kaa/security/KeyUtils.hpp"
 #include "kaa/security/IEncoderDecoder.hpp"
+#include "kaa/IKaaClientContext.hpp"
 #include <botan/rsa.h>
 #include <cstdint>
 #include <memory>
@@ -29,7 +30,8 @@ class RsaEncoderDecoder : public IEncoderDecoder {
 public:
     RsaEncoderDecoder(const PublicKey& pubKey,
                       const PrivateKey& privKey,
-                      const PublicKey& remoteKey);
+                      const PublicKey& remoteKey,
+                      IKaaClientContext &context);
     ~RsaEncoderDecoder() { }
 
     virtual EncodedSessionKey getEncodedSessionKey();
@@ -48,6 +50,8 @@ private:
     std::unique_ptr<Botan::X509_PublicKey>   remoteKey_;
 
     SessionKey sessionKey_;
+
+    IKaaClientContext &context_;
 };
 
 }

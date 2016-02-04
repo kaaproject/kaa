@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -29,6 +30,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
@@ -46,10 +48,7 @@ import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.server.common.Environment;
 import org.kaaproject.kaa.server.common.Version;
-import org.kaaproject.kaa.server.common.zk.ServerNameUtil;
 import org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo;
-import org.kaaproject.kaa.server.common.zk.gen.TransportMetaData;
-import org.kaaproject.kaa.server.common.zk.gen.VersionConnectionInfoPair;
 import org.kaaproject.kaa.server.control.service.sdk.compiler.JavaDynamicBean;
 import org.kaaproject.kaa.server.control.service.sdk.compiler.JavaDynamicCompiler;
 import org.kaaproject.kaa.server.control.service.sdk.compress.ZipEntryData;
@@ -63,8 +62,6 @@ import org.slf4j.helpers.MessageFormatter;
  * The Class JavaSdkGenerator.
  */
 public class JavaSdkGenerator extends SdkGenerator {
-
-    private static final String SEPARATOR = ":";
 
     /**
      * The Constant logger.
@@ -335,6 +332,16 @@ public class JavaSdkGenerator extends SdkGenerator {
      * The Constant DEFAULT_USER_VERIFIER_TOKEN_VAR.
      */
     private static final String DEFAULT_USER_VERIFIER_TOKEN_VAR = "\\$\\{default_user_verifier_token\\}";
+    
+    /**
+     * The Constant JAVA_SOURCE_COMPILER_RELEASE.
+     */
+    private static final String JAVA_SOURCE_COMPILER_RELEASE = "7";
+    
+    /**
+     * The Constant JAVA_TARGET_COMPILER_RELEASE.
+     */
+    private static final String JAVA_TARGET_COMPILER_RELEASE = "7";
 
     /**
      * The Constant random.
@@ -644,8 +651,14 @@ public class JavaSdkGenerator extends SdkGenerator {
         dynamicCompiler.init();
         for (JavaDynamicBean bean : javaSources) {
             LOG.debug("Compiling bean {} with source: {}", bean.getName(), bean.getCharContent(true));
+            Stream<String> sourceLines = Arrays.stream(bean.getCharContent(true).split("\n"));
+            String packageLine = sourceLines.filter(line -> line.startsWith("package")).findFirst().orElse("");
+            String sourceFileName = packageLine.replaceAll("package", "").replaceAll("\\.|;", "/").trim() + bean.getName();
+            data.put(sourceFileName, new ZipEntryData(new ZipEntry(sourceFileName), bean.getCharContent(true).getBytes()));
         }
-        Collection<JavaDynamicBean> compiledObjects = dynamicCompiler.compile(javaSources);
+        Collection<JavaDynamicBean> compiledObjects = dynamicCompiler.compile(javaSources, 
+                "-source", JAVA_SOURCE_COMPILER_RELEASE,
+                "-target", JAVA_TARGET_COMPILER_RELEASE);
         for (JavaDynamicBean compiledObject : compiledObjects) {
             String className = compiledObject.getName();
             String classFileName = className.replace('.', '/') + Kind.CLASS.extension;
@@ -703,41 +716,20 @@ public class JavaSdkGenerator extends SdkGenerator {
      * @return the byte[]
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    private byte[] generateClientProperties(InputStream clientPropertiesStream, List<BootstrapNodeInfo> bootstrapNodes,
-                                            String sdkToken, String configurationProtocolSchemaBody,
-                                            byte[] defaultConfigurationData)
-            throws IOException {
+    private byte[] generateClientProperties(InputStream clientPropertiesStream,
+                                            List<BootstrapNodeInfo> bootstrapNodes,
+                                            String sdkToken,
+                                            String configurationProtocolSchemaBody,
+                                            byte[] defaultConfigurationData) throws IOException {
 
         Properties clientProperties = new Properties();
         clientProperties.load(clientPropertiesStream);
 
-        String bootstrapServers = "";
-
         LOG.debug("[sdk generateClientProperties] bootstrapNodes.size(): {}", bootstrapNodes.size());
-        for (int nodeIndex = 0; nodeIndex < bootstrapNodes.size(); ++nodeIndex) {
-            BootstrapNodeInfo node = bootstrapNodes.get(nodeIndex);
-            List<TransportMetaData> supportedChannels = node.getTransports();
-
-            int accessPointId = ServerNameUtil.crc32(node.getConnectionInfo());
-
-            for (int chIndex = 0; chIndex < supportedChannels.size(); ++chIndex) {
-                TransportMetaData transport = supportedChannels.get(chIndex);
-                for (VersionConnectionInfoPair pair : transport.getConnectionInfo()) {
-                    bootstrapServers += accessPointId;
-                    bootstrapServers += SEPARATOR;
-                    bootstrapServers += transport.getId();
-                    bootstrapServers += SEPARATOR;
-                    bootstrapServers += pair.getVersion();
-                    bootstrapServers += SEPARATOR;
-                    bootstrapServers += Base64.encodeBase64String(pair.getConenctionInfo().array());
-                    bootstrapServers += ";";
-                }
-            }
-        }
 
         clientProperties.put(BUILD_VERSION, Version.PROJECT_VERSION);
         clientProperties.put(BUILD_COMMIT_HASH, Version.COMMIT_HASH);
-        clientProperties.put(BOOTSTRAP_SERVERS_PROPERTY, bootstrapServers);
+        clientProperties.put(BOOTSTRAP_SERVERS_PROPERTY, CommonSdkUtil.bootstrapNodesToString(bootstrapNodes));
         clientProperties.put(SDK_TOKEN_PROPERTY, sdkToken);
         clientProperties.put(CONFIG_SCHEMA_DEFAULT_PROPERTY, configurationProtocolSchemaBody);
         clientProperties.put(CONFIG_DATA_DEFAULT_PROPERTY, Base64.encodeBase64String(defaultConfigurationData));

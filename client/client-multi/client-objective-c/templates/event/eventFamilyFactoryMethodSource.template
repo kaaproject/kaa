@@ -1,0 +1,8 @@
+
+- ({event_family_class_name} *)get{event_family_class_name} {
+    if (!self.{event_family_var_name}) {
+        self.{event_family_var_name} = [[{event_family_class_name} alloc] initWithManager:self.eventManager context:self.executorContext];
+        [self.eventManager registerEventFamily:self.{event_family_var_name}];
+    }
+    return self.{event_family_var_name};
+}

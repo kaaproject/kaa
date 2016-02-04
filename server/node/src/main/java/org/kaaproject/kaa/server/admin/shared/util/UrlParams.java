@@ -18,6 +18,8 @@ package org.kaaproject.kaa.server.admin.shared.util;
 
 import java.util.Map;
 
+import com.google.gwt.http.client.URL;
+
 public class UrlParams {
 
     public static final String RESET_PASSWORD = "resetPassword";
@@ -31,7 +33,7 @@ public class UrlParams {
             if (paramsUrl.length() > 0) {
                 paramsUrl += PARAMS_SEPARATOR;
             }
-            paramsUrl += key + "=" + val;
+            paramsUrl += key + "=" + URL.encodeQueryString(val);
         }
         return paramsUrl;
     }
@@ -43,7 +45,7 @@ public class UrlParams {
             for (String param : params) {
                 String[] keyVal = param.split("=");
                 if (keyVal != null && keyVal.length == 2) {
-                    paramsMap.put(keyVal[0], keyVal[1]);
+                    paramsMap.put(keyVal[0], URL.decodeQueryString(keyVal[1]));
                 }
             }
         }

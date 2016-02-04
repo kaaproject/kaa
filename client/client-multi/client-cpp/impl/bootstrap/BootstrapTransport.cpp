@@ -23,8 +23,8 @@
 
 namespace kaa {
 
-BootstrapTransport::BootstrapTransport(IKaaChannelManager& channelManager, IBootstrapManager &bootstrapManager)
-    : AbstractKaaTransport(channelManager)
+BootstrapTransport::BootstrapTransport(IKaaChannelManager& channelManager, IBootstrapManager &bootstrapManager, IKaaClientContext &context)
+    : AbstractKaaTransport(channelManager, context)
     , requestId_(0)
     , bootstrapManager_(bootstrapManager)
 {

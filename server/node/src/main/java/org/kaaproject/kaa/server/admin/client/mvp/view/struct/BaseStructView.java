@@ -76,6 +76,8 @@ public abstract class BaseStructView<T extends AbstractStructureDto, V> extends 
     private boolean active;
 
     private Label bodyLabel;
+    
+    private HorizontalPanel buttonsPanel;
 
     protected List<HandlerRegistration> registrations = new ArrayList<HandlerRegistration>();
 
@@ -194,7 +196,7 @@ public abstract class BaseStructView<T extends AbstractStructureDto, V> extends 
             detailsTable.getFlexCellFormatter().setColSpan(1, 0, 3);
         }
 
-        HorizontalPanel buttonsPanel = new HorizontalPanel();
+        buttonsPanel = new HorizontalPanel();
         buttonsPanel.setSpacing(5);
 
         detailsTable.setWidget(2, 0, buttonsPanel);
@@ -216,6 +218,14 @@ public abstract class BaseStructView<T extends AbstractStructureDto, V> extends 
                 updateSaveButton(false, false);
             }
         });
+    }
+    
+    protected void prependButton(Button button) {
+        buttonsPanel.insert(button, 0);
+    }
+    
+    protected void addButton(Button button) {
+        buttonsPanel.add(button);
     }
     
     protected abstract HasValue<V> createBody(HasErrorMessage hasErrorMessage);

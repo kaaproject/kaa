@@ -45,13 +45,8 @@ bool PingConnectivityChecker::checkConnectivity()
 
         boost::asio::ip::tcp::socket sock_(io_service);
         boost::asio::connect(sock_, ep);
-
-        KAA_LOG_INFO(boost::format("Host '%1%' is reachable on %2% port") % host_ % port_);
-
         return true;
-    } catch (std::exception& e) {
-        KAA_LOG_INFO(boost::format("Host '%1%' is unreachable on %2% port: %3%") % host_ % port_ % e.what());
-    }
+    } catch (std::exception& e) {}
 
     return false;
 }

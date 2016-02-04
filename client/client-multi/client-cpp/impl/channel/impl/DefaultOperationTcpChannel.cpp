@@ -40,7 +40,8 @@
 
 namespace kaa {
 
-const std::uint16_t DefaultOperationTcpChannel::PING_TIMEOUT = 200;
+const std::uint16_t DefaultOperationTcpChannel::CHANNEL_TIMEOUT = 200;
+const std::uint16_t DefaultOperationTcpChannel::PING_TIMEOUT = CHANNEL_TIMEOUT / 2;
 const std::uint16_t DefaultOperationTcpChannel::CONN_ACK_TIMEOUT = 20;
 const std::uint16_t DefaultOperationTcpChannel::RECONNECT_TIMEOUT = 5; // sec
 
@@ -58,11 +59,12 @@ const std::map<TransportType, ChannelDirection> DefaultOperationTcpChannel::SUPP
         };
 
 
-DefaultOperationTcpChannel::DefaultOperationTcpChannel(IKaaChannelManager *channelManager, const KeyPair& clientKeys, IKaaClientStateStoragePtr clientState)
-    : clientKeys_(clientKeys), work_(io_), socketWork_(socketIo_),/*sock_(io_), */pingTimer_(io_), connAckTimer_(io_)/*, reconnectTimer_(io_)*/, retryTimer_("DefaultOperationTcpChannel retryTimer")
+DefaultOperationTcpChannel::DefaultOperationTcpChannel(IKaaChannelManager *channelManager, const KeyPair& clientKeys, IKaaClientContext &context)
+    : clientKeys_(clientKeys), work_(io_), socketWork_(socketIo_),/*sock_(io_), */pingTimer_(io_), connAckTimer_(io_)/*, reconnectTimer_(io_)*/
+    , retryTimer_("DefaultOperationTcpChannel retryTimer")
     , firstStart_(true), isConnected_(false), isFirstResponseReceived_(false), isPendingSyncRequest_(false)
     , isShutdown_(false), isPaused_(false), isFailoverInProgress_(false), multiplexer_(nullptr), demultiplexer_(nullptr)
-    , channelManager_(channelManager), clientState_(clientState)
+    , channelManager_(channelManager), responsePorcessor(context), context_(context)
 {
     responsePorcessor.registerConnackReceiver(std::bind(&DefaultOperationTcpChannel::onConnack, this, std::placeholders::_1));
     responsePorcessor.registerKaaSyncReceiver(std::bind(&DefaultOperationTcpChannel::onKaaSync, this, std::placeholders::_1));
@@ -86,8 +88,8 @@ void DefaultOperationTcpChannel::onConnack(const ConnackMessage& message)
         break;
     case ConnackReturnCode::REFUSE_BAD_CREDENTIALS:
         KAA_LOG_WARN(boost::format("Channel \"%1%\". Connack result: bad credentials. Going to re-register... ") % getId());
-        clientState_->setRegistered(false);
-        clientState_->save();
+        context_.getStatus().setRegistered(false);
+        context_.getStatus().save();
         setServer(currentServer_);
         break;
     default:
@@ -322,7 +324,7 @@ boost::system::error_code DefaultOperationTcpChannel::sendConnect()
     const auto& requestEncoded = encDec_->encodeData(requestBody.data(), requestBody.size());
     const auto& sessionKey = encDec_->getEncodedSessionKey();
     const auto& signature = encDec_->signData(sessionKey.begin(), sessionKey.size());
-    return sendData(ConnectMessage(PING_TIMEOUT, KAA_PLATFORM_PROTOCOL_AVRO_ID, signature, sessionKey, requestEncoded));
+    return sendData(ConnectMessage(CHANNEL_TIMEOUT, KAA_PLATFORM_PROTOCOL_AVRO_ID, signature, sessionKey, requestEncoded));
 }
 
 boost::system::error_code DefaultOperationTcpChannel::sendDisconnect()
@@ -497,7 +499,7 @@ void DefaultOperationTcpChannel::setServer(ITransportConnectionInfoPtr server)
         }
 
         currentServer_.reset(new IPTransportInfo(server));
-        encDec_.reset(new RsaEncoderDecoder(clientKeys_.getPublicKey(), clientKeys_.getPrivateKey(), currentServer_->getPublicKey()));
+        encDec_.reset(new RsaEncoderDecoder(clientKeys_.getPublicKey(), clientKeys_.getPrivateKey(), currentServer_->getPublicKey(), context_));
 
         if (!isPaused_) {
             KAA_MUTEX_UNLOCKING("channelGuard_");

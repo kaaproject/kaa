@@ -30,7 +30,13 @@
 #include "kaa/log/ILogStorageStatus.hpp"
 #include "kaa/log/LogStorageConstants.hpp"
 
+
+
+#define KAA_DEFAULT_LOG_DB_STORAGE    "logs.db"
+
 namespace kaa {
+
+class IKaaClientContext;
 
 enum SQLiteOptimizationOptions
 {
@@ -49,10 +55,12 @@ enum SQLiteOptimizationOptions
 
 class SQLiteDBLogStorage : public ILogStorage, public ILogStorageStatus {
 public:
-    SQLiteDBLogStorage(std::size_t bucketSize = LogStorageConstants::DEFAULT_MAX_BUCKET_SIZE,
+    SQLiteDBLogStorage(IKaaClientContext &context,
+                       std::size_t bucketSize = LogStorageConstants::DEFAULT_MAX_BUCKET_SIZE,
                        std::size_t bucketRecordCount = LogStorageConstants::DEFAULT_MAX_BUCKET_RECORD_COUNT);
 
-    SQLiteDBLogStorage(const std::string& dbName,
+    SQLiteDBLogStorage(IKaaClientContext &context,
+                       const std::string& dbName,
                        int optimizationMask = (int)SQLiteOptimizationOptions::SQLITE_NO_OPTIMIZATIONS,
                        std::size_t bucketSize = LogStorageConstants::DEFAULT_MAX_BUCKET_SIZE,
                        std::size_t bucketRecordCount = LogStorageConstants::DEFAULT_MAX_BUCKET_RECORD_COUNT);
@@ -119,6 +127,8 @@ private:
     std::unordered_map<std::int32_t/*Bucket id*/, InnerBucketInfo> consumedMemoryStorage_;
 
     KAA_MUTEX_DECLARE(sqliteLogStorageGuard_);
+
+    IKaaClientContext &context_;
 };
 
 } /* namespace kaa */

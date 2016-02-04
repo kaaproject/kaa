@@ -22,6 +22,7 @@
 #include "kaa/IKaaClientStateStorage.hpp"
 #include "kaa/channel/transport/AbstractKaaTransport.hpp"
 #include "kaa/channel/transport/IConfigurationTransport.hpp"
+#include "kaa/IKaaClientContext.hpp"
 
 namespace kaa {
 
@@ -32,7 +33,7 @@ class IConfigurationHashContainer;
 class ConfigurationTransport : public AbstractKaaTransport<TransportType::CONFIGURATION>,
                                public IConfigurationTransport {
 public:
-    ConfigurationTransport(IKaaChannelManager& channelManager, IKaaClientStateStoragePtr status);
+    ConfigurationTransport(IKaaChannelManager& channelManager, IKaaClientContext &context);
 
     virtual void sync();
 

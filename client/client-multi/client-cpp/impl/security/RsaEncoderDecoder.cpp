@@ -25,11 +25,10 @@
 
 namespace kaa {
 
-RsaEncoderDecoder::RsaEncoderDecoder(
-        const PublicKey& pubKey,
+RsaEncoderDecoder::RsaEncoderDecoder(const PublicKey& pubKey,
         const PrivateKey& privKey,
-        const PublicKey& remoteKey)
-    : pubKey_(nullptr), privKey_(nullptr), remoteKey_(nullptr), sessionKey_(KeyUtils().generateSessionKey(16))
+        const PublicKey& remoteKey, IKaaClientContext &context)
+    : pubKey_(nullptr), privKey_(nullptr), remoteKey_(nullptr), sessionKey_(KeyUtils().generateSessionKey(16)), context_(context)
 {
     KAA_LOG_TRACE("Creating MessageEncoderDecoder with following parameters: ");
 

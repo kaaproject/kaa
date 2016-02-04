@@ -24,12 +24,14 @@
 
 #include "kaa/KaaThread.hpp"
 
+#include "kaa/IKaaClientContext.hpp"
+
 namespace kaa {
 
 class HttpClient : public IHttpClient
 {
 public:
-    HttpClient() : io_(), sock_(io_) { }
+    HttpClient(IKaaClientContext &context) : io_(), sock_(io_), context_(context) { }
     ~HttpClient() { }
 
     virtual std::shared_ptr<IHttpResponse> sendRequest(const IHttpRequest& request);
@@ -44,6 +46,8 @@ private:
     boost::asio::ip::tcp::socket sock_;
 
     KAA_MUTEX_DECLARE(httpClientGuard_);
+
+    IKaaClientContext &context_;
 };
 
 }

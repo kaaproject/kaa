@@ -22,18 +22,31 @@
 
 #include "kaa/log/DefaultLogUploadStrategy.hpp"
 #include "kaa/common/exception/KaaException.hpp"
+#include "kaa/context/SimpleExecutorContext.hpp"
+#include "kaa/KaaClientContext.hpp"
+#include "kaa/KaaClientProperties.hpp"
+#include "kaa/logging/DefaultLogger.hpp"
+
+#include "headers/MockKaaClientStateStorage.hpp"
+#include "headers/context/MockExecutorContext.hpp"
 
 #include "headers/log/MockLogFailoverCommand.hpp"
 #include "headers/log/MockLogStorageStatus.hpp"
 
 namespace kaa {
 
+static KaaClientProperties properties;
+static DefaultLogger tmp_logger(properties.getClientId());
+static IKaaClientStateStoragePtr tmp_state(new MockKaaClientStateStorage);
+static MockExecutorContext tmpExecContext;
+static KaaClientContext clientContext(properties, tmp_logger, tmpExecContext, tmp_state);
+
 BOOST_AUTO_TEST_SUITE(DefaultLogUploadStrategyTestSuite)
 
 BOOST_AUTO_TEST_CASE(GetSetUplaodTimeoutTest)
 {
     MockLogFailoverCommand failoverCommand;
-    DefaultLogUploadStrategy strategy;
+    DefaultLogUploadStrategy strategy(clientContext);
 
     BOOST_CHECK_EQUAL(strategy.getTimeout(), DefaultLogUploadStrategy::DEFAULT_UPLOAD_TIMEOUT);
 
@@ -46,7 +59,7 @@ BOOST_AUTO_TEST_CASE(GetSetUplaodTimeoutTest)
 BOOST_AUTO_TEST_CASE(GetSetMaxParallelUploads)
 {
     MockLogFailoverCommand failoverCommand;
-    DefaultLogUploadStrategy strategy;
+    DefaultLogUploadStrategy strategy(clientContext);
 
     BOOST_CHECK_EQUAL(strategy.getMaxParallelUploads(), DefaultLogUploadStrategy::DEFAULT_MAX_PARALLEL_UPLOADS);
 
@@ -66,7 +79,7 @@ BOOST_AUTO_TEST_CASE(UploadByOccupiedSizeTest)
     logStorageStatus.recordsCount_ = THRESHOLD_COUNT - 1;
 
     MockLogFailoverCommand failoverCommand;
-    DefaultLogUploadStrategy strategy;
+    DefaultLogUploadStrategy strategy(clientContext);;
 
     strategy.setVolumeThreshold(THRESHOLD_SIZE);
     strategy.setCountThreshold(THRESHOLD_COUNT);
@@ -90,7 +103,7 @@ BOOST_AUTO_TEST_CASE(UploadByRecordCountTest)
     logStorageStatus.recordsCount_ = THRESHOLD_COUNT - 1;
 
     MockLogFailoverCommand failoverCommand;
-    DefaultLogUploadStrategy strategy;
+    DefaultLogUploadStrategy strategy(clientContext);;
 
     strategy.setVolumeThreshold(THRESHOLD_SIZE);
     strategy.setCountThreshold(THRESHOLD_COUNT);
@@ -107,7 +120,7 @@ BOOST_AUTO_TEST_CASE(UploadByRecordCountTest)
 BOOST_AUTO_TEST_CASE(OnFailureTest)
 {
     MockLogFailoverCommand failoverCommand;
-    DefaultLogUploadStrategy strategy;
+    DefaultLogUploadStrategy strategy(clientContext);;
 
     const size_t RETRY_PERIOD = 2;
     const std::size_t THRESHOLD_SIZE = 35;
@@ -140,7 +153,7 @@ BOOST_AUTO_TEST_CASE(OnFailureTest)
 BOOST_AUTO_TEST_CASE(OnTimeoutTest)
 {
     MockLogFailoverCommand failoverCommand;
-    DefaultLogUploadStrategy strategy;
+    DefaultLogUploadStrategy strategy(clientContext);;
 
     strategy.onTimeout(failoverCommand);
 

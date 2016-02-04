@@ -32,6 +32,7 @@
 #include "kaa/security/RsaEncoderDecoder.hpp"
 #include "kaa/http/MultipartPostHttpRequest.hpp"
 #include "kaa/transport/TransportException.hpp"
+#include "kaa/IKaaClientContext.hpp"
 
 
 namespace kaa {
@@ -40,9 +41,10 @@ class HttpDataProcessor : boost::noncopyable {
 public:
     HttpDataProcessor(const PublicKey& pubKey,
             const PrivateKey& privKey,
-            const PublicKey& remoteKey) :
-            encDec_(new RsaEncoderDecoder(pubKey, privKey, remoteKey)) { }
-    HttpDataProcessor() { }
+            const PublicKey& remoteKey,
+            IKaaClientContext &context) :
+            encDec_(new RsaEncoderDecoder(pubKey, privKey, remoteKey, context)), context_(context) { }
+    HttpDataProcessor(IKaaClientContext &context): context_(context) { }
 
     std::shared_ptr<IHttpRequest> createOperationRequest(const HttpUrl& url, const std::vector<std::uint8_t>& data);
     std::string retrieveOperationResponse(const IHttpResponse& response);
@@ -59,7 +61,7 @@ private:
 
 private:
     std::shared_ptr<IEncoderDecoder> encDec_;
-
+    IKaaClientContext &context_;
 };
 
 typedef std::shared_ptr<HttpDataProcessor> HttpDataProcessorPtr;

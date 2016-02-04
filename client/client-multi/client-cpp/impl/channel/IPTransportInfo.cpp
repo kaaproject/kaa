@@ -30,7 +30,6 @@ IPTransportInfo::IPTransportInfo(ITransportConnectionInfoPtr connectionInfo)
     : GenericTransportInfo(connectionInfo->getServerType(), ProtocolMetaData())
 {
     if (!connectionInfo || connectionInfo->getConnectionInfo().empty()) {
-        KAA_LOG_ERROR("Failed to create IP transport data: bad input data");
         throw KaaException("Bad connection data");
     }
 
@@ -58,11 +57,8 @@ IPTransportInfo::IPTransportInfo(ITransportConnectionInfoPtr connectionInfo)
     url_.assign(ss.str());
 
     if ((3 * sizeof(std::int32_t) + publicKeyLength + hostLength) > connectionData_.size()) {
-        KAA_LOG_ERROR("Failed to create IP transport data: less size of input data than needed");
         throw KaaException("Bad connection data");
     }
-
-    KAA_LOG_TRACE(boost::format("Create IP transport data: host=%1%, port=%2%, publicKeyLength=%3%") % host_% port_ % publicKey_.size());
 }
 
 } /* namespace kaa */

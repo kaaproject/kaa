@@ -29,8 +29,8 @@ import com.google.gwt.user.client.ui.TabPanel;
 
 public abstract class AbstractRecordPanel<T extends AbstractStructureDto, V> extends TabPanel implements SelectionHandler<Integer> {
 
-    private BaseStructView<T,V> activePanel;
-    private BaseStructView<T,V> inactivePanel;
+    protected BaseStructView<T,V> activePanel;
+    protected BaseStructView<T,V> inactivePanel;
 
     public AbstractRecordPanel(HasErrorMessage hasErrorMessage) {
         activePanel = createStructView(hasErrorMessage);

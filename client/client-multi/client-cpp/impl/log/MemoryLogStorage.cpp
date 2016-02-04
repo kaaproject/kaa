@@ -21,20 +21,22 @@
 #include "kaa/KaaThread.hpp"
 #include "kaa/logging/Log.hpp"
 #include "kaa/log/LogRecord.hpp"
+#include "kaa/IKaaClientContext.hpp"
 
 namespace kaa {
 
-MemoryLogStorage::MemoryLogStorage(std::size_t bucketSize, std::size_t bucketRecordCount)
-    : maxBucketSize_(bucketSize), maxBucketRecordCount_(bucketRecordCount)
+MemoryLogStorage::MemoryLogStorage(IKaaClientContext &context,std::size_t bucketSize, std::size_t bucketRecordCount)
+    : maxBucketSize_(bucketSize), maxBucketRecordCount_(bucketRecordCount), context_(context)
 {
     KAA_LOG_INFO(boost::format("Going to use  unlimited storage. Bucket: max_size %1% bytes, max_record_count %2%")
                                                                 % maxBucketSize_ % maxBucketRecordCount_);
     addNewBucket();
 }
 
-MemoryLogStorage::MemoryLogStorage(std::size_t maxOccupiedSize, float percentToDelete,
+MemoryLogStorage::MemoryLogStorage(IKaaClientContext &context,
+                                   std::size_t maxOccupiedSize, float percentToDelete,
                                    std::size_t bucketSize, std::size_t bucketRecordCount)
-    : maxBucketSize_(bucketSize), maxBucketRecordCount_(bucketRecordCount)
+    : maxBucketSize_(bucketSize), maxBucketRecordCount_(bucketRecordCount), context_(context)
 {
     if (0.0 >= percentToDelete || percentToDelete > 100.0) {
         KAA_LOG_ERROR(boost::format("Failed to create limited log storage: max_size %1% bytes, percentToDelete %2%%%")

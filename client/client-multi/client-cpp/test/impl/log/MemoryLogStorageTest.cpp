@@ -23,8 +23,21 @@
 #include "kaa/log/MemoryLogStorage.hpp"
 #include "kaa/common/exception/KaaException.hpp"
 #include "kaa/log/LogStorageConstants.hpp"
+#include "kaa/context/SimpleExecutorContext.hpp"
+#include "kaa/KaaClientContext.hpp"
+#include "kaa/KaaClientProperties.hpp"
+#include "kaa/logging/DefaultLogger.hpp"
+
+#include "headers/MockKaaClientStateStorage.hpp"
+#include "headers/context/MockExecutorContext.hpp"
 
 namespace kaa {
+
+static KaaClientProperties properties;
+static DefaultLogger tmp_logger(properties.getClientId());
+static IKaaClientStateStoragePtr tmp_state(new MockKaaClientStateStorage);
+static MockExecutorContext tmpExecContext;
+static KaaClientContext clientContext(properties, tmp_logger, tmpExecContext, tmp_state);
 
 #define LOG_TEST_DATA "test data"
 
@@ -44,12 +57,12 @@ BOOST_AUTO_TEST_CASE(BadInitializationParamsTest)
 {
     BOOST_CHECK_THROW(
             {
-                MemoryLogStorage logStorage(100500, (float)-1.0);
+                MemoryLogStorage logStorage(clientContext, 100500, (float)-1.0);
             }, KaaException);
 
     BOOST_CHECK_THROW(
             {
-                MemoryLogStorage logStorage(100500, (float)100.1);
+                MemoryLogStorage logStorage(clientContext, 100500, (float)100.1);
             }, KaaException);
 }
 
@@ -57,14 +70,14 @@ BOOST_AUTO_TEST_CASE(BucketizeIsLessThanLogRecordSizeTest)
 {
     auto serializedLogRecord = createSerializedLogRecord();
 
-    MemoryLogStorage logStorage(serializedLogRecord.getSize() / 2);
+    MemoryLogStorage logStorage(clientContext, serializedLogRecord.getSize() / 2);
 
     BOOST_CHECK_THROW(logStorage.addLogRecord(std::move(serializedLogRecord)), KaaException);
 }
 
 BOOST_AUTO_TEST_CASE(AddRecordsAndCheckStatusTest)
 {
-    MemoryLogStorage logStorage;
+    MemoryLogStorage logStorage(clientContext);
     std::size_t serializedLogSize = createSerializedLogRecord().getSize();
 
     std::srand(std::time(nullptr));
@@ -84,7 +97,7 @@ BOOST_AUTO_TEST_CASE(AddRecordsAndCheckStatusTest)
 BOOST_AUTO_TEST_CASE(BucketSizeInRecordsConstraint)
 {
     const size_t recordInBucket = 2;
-    MemoryLogStorage logStorage(LogStorageConstants::DEFAULT_MAX_BUCKET_SIZE, recordInBucket);
+    MemoryLogStorage logStorage(clientContext, LogStorageConstants::DEFAULT_MAX_BUCKET_SIZE, recordInBucket);
 
     /*
      * At least 1 records.
@@ -111,7 +124,7 @@ BOOST_AUTO_TEST_CASE(BucketSizeInBytesConstraint)
     std::size_t serializedLogSize = createSerializedLogRecord().getSize();
     std::size_t bucketSizeInBytes = serializedLogSize * (1 + rand() % 2);
     std::size_t recordsInBucket = bucketSizeInBytes / serializedLogSize;
-    MemoryLogStorage logStorage(bucketSizeInBytes, LogStorageConstants::DEFAULT_MAX_BUCKET_RECORD_COUNT);
+    MemoryLogStorage logStorage(clientContext, bucketSizeInBytes, LogStorageConstants::DEFAULT_MAX_BUCKET_RECORD_COUNT);
 
     /*
      * At least 1 records.
@@ -140,7 +153,7 @@ BOOST_AUTO_TEST_CASE(GetStatusAfterLogBlockTest)
     std::size_t serializedLogSize = createSerializedLogRecord().getSize();
     std::size_t recordBucketSize = (logRecordCount * serializedLogSize) / 2;
 
-    MemoryLogStorage logStorage(recordBucketSize);
+    MemoryLogStorage logStorage(clientContext, recordBucketSize);
 
     for (std::size_t i = 1; i <= logRecordCount; ++i) {
         logStorage.addLogRecord(createSerializedLogRecord());
@@ -161,7 +174,7 @@ BOOST_AUTO_TEST_CASE(RemoveLogBlockAndGetStatusTest)
     std::size_t serializedLogSize = createSerializedLogRecord().getSize();
     std::size_t recordBucketSize1 = (logRecordCount * serializedLogSize) / 2;
 
-    MemoryLogStorage logStorage(recordBucketSize1);
+    MemoryLogStorage logStorage(clientContext, recordBucketSize1);
     for (std::size_t i = 1; i <= logRecordCount; ++i) {
         logStorage.addLogRecord(createSerializedLogRecord());
     }
@@ -191,7 +204,7 @@ BOOST_AUTO_TEST_CASE(NotifyUploadFailedAndGetStatusTest)
     std::size_t serializedLogSize = createSerializedLogRecord().getSize();
     std::size_t recordBucketSize1 = (logRecordCount * serializedLogSize) / 2;
 
-    MemoryLogStorage logStorage(recordBucketSize1, (std::size_t)mockBlocksCount);
+    MemoryLogStorage logStorage(clientContext, recordBucketSize1, (std::size_t)mockBlocksCount);
 
     for (std::size_t i = 1; i <= logRecordCount; ++i) {
         logStorage.addLogRecord(createSerializedLogRecord());
@@ -216,7 +229,7 @@ BOOST_AUTO_TEST_CASE(ForceRemovalOfAllLogsTest)
     std::size_t maxLogStorageSize = logRecordCount * serializedLogSize;
     float percentToDelete = 100.0;
 
-    MemoryLogStorage logStorage(maxLogStorageSize, percentToDelete);
+    MemoryLogStorage logStorage(clientContext, maxLogStorageSize, percentToDelete);
     for (std::size_t i = 1; i <= logRecordCount; ++i) {
         logStorage.addLogRecord(createSerializedLogRecord());
     }
@@ -237,7 +250,8 @@ BOOST_AUTO_TEST_CASE(ForceRemovalOfSpecifiedPercentOfLogsTest)
     std::size_t maxLogStorageSize = logRecordCount * serializedLogSize;
     float percentToDelete = 51.1;
 
-    MemoryLogStorage logStorage(maxLogStorageSize, percentToDelete, LogStorageConstants::DEFAULT_MAX_BUCKET_SIZE, logRecordCount / 2);
+    MemoryLogStorage logStorage(clientContext, maxLogStorageSize, percentToDelete, LogStorageConstants::DEFAULT_MAX_BUCKET_SIZE, logRecordCount / 2);
+
     for (std::size_t i = 1; i <= logRecordCount; ++i) {
         logStorage.addLogRecord(createSerializedLogRecord());
     }

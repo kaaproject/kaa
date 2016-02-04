@@ -566,10 +566,6 @@ void test_set_access_point(kaa_transport_channel_interface_t *channel)
     kaa_error_t error_code = channel->init(channel->context, &transport_context);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    //Keepalive will be tested latter during CONNECT message creation
-    error_code = kaa_tcp_channel_set_keepalive_timeout(channel, KEEPALIVE);
-    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
-
     error_code = kaa_tcp_channel_set_socket_events_callback(channel, kaa_tcp_channel_event_callback_fn, channel);
     //Use connection data to destination 192.168.77.2:9888
     kaa_access_point_t access_point;

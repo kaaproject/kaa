@@ -24,8 +24,6 @@ public class CtlSchemaExportKey implements Serializable {
     
     private static final long serialVersionUID = -1732926678025232971L;
     
-    public static final String CTL_EXPORT_KEY_PARAMETER = "ctlExportKey";
-    
     private String ctlSchemaId;
     private CTLSchemaExportMethod exportMethod;
     

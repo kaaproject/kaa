@@ -33,6 +33,7 @@
 #include "kaa/channel/IKaaChannelManager.hpp"
 #include "kaa/log/ILogFailoverCommand.hpp"
 #include "kaa/utils/KaaTimer.hpp"
+#include "kaa/IKaaClientContext.hpp"
 
 namespace kaa {
 
@@ -66,7 +67,7 @@ private:
  */
 class LogCollector : public ILogCollector, public ILogProcessor, public ILogFailoverCommand {
 public:
-    LogCollector(IKaaChannelManagerPtr manager, IExecutorContext& executorContext, const KaaClientProperties& clientProperties);
+    LogCollector(IKaaChannelManagerPtr manager, IKaaClientContext &context);
 
     virtual RecordFuture addLogRecord(const KaaUserLogRecord& record);
 
@@ -143,11 +144,12 @@ private:
     KaaTimer<void ()>        scheduledUploadTimer_;
     KaaTimer<void ()>        timeoutTimer_;
 
-    IExecutorContext& executorContext_;
     ILogDeliveryListenerPtr logDeliverylistener_;
 
     std::unordered_map<std::int32_t, BucketWrapper> bucketInfoStorage_;
     KAA_MUTEX_DECLARE(bucketInfoStorageGuard_);
+
+    IKaaClientContext &context_;
 };
 
 }  // namespace kaa
