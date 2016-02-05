@@ -49,8 +49,7 @@ bool KeyUtils::checkKeyPair(const KeyPair &keys)
         result = ppriv->check_key(rng_, strongCheck);
 
         return result;
-    }
-    catch(...) {
+    } catch(...) {
         // Any exceptional situation signals that keys are not valid
         return false;
     }
