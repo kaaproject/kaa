@@ -67,7 +67,7 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
         this.executorContext = executorContext;
         this.deserializer = new NotificationDeserializer(executorContext);
 
-        List<Topic> topicList = state.getTopics();
+        Collection<Topic> topicList = state.getTopics();
 
         if (topicList != null) {
             for (Topic topic : topicList) {

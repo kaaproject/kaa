@@ -40,6 +40,8 @@ import org.kaaproject.kaa.common.endpoint.gen.SubscriptionType;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponseStatus;
 import org.kaaproject.kaa.common.endpoint.gen.Topic;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 public class DefaultNotificationTransportTest {
 
@@ -86,7 +88,15 @@ public class DefaultNotificationTransportTest {
 
     @Test
     public void testEmptyTopicListHash() throws Exception {
-        KaaClientState clientState = Mockito.mock(KaaClientState.class);
+        final KaaClientState clientState = Mockito.mock(KaaClientState.class);
+        Mockito.doAnswer(new Answer<Void>() {
+            @Override
+            public Void answer(InvocationOnMock invocation) throws Throwable {
+                Object[] args = invocation.getArguments();
+                Mockito.when(clientState.getTopicListHash()).thenReturn((Integer)args[0]);
+                return null;
+            }
+        }).when(clientState).setTopicListHash(Mockito.anyInt());
         NotificationProcessor notificationProcessor = Mockito.mock(NotificationProcessor.class);
 
         NotificationSyncResponse response = new NotificationSyncResponse();
@@ -108,7 +118,16 @@ public class DefaultNotificationTransportTest {
 
     @Test
     public void testTopicListHash() throws Exception {
-        KaaClientState clientState = Mockito.mock(KaaClientState.class);
+        final KaaClientState clientState = Mockito.mock(KaaClientState.class);
+        Mockito.doAnswer(new Answer<Void>() {
+            @Override
+            public Void answer(InvocationOnMock invocation) throws Throwable {
+                Object[] args = invocation.getArguments();
+                Mockito.when(clientState.getTopicListHash()).thenReturn((Integer)args[0]);
+                return null;
+            }
+        }).when(clientState).setTopicListHash(Mockito.anyInt());
+        
         NotificationProcessor notificationProcessor = Mockito.mock(NotificationProcessor.class);
 
         NotificationSyncResponse response = new NotificationSyncResponse();

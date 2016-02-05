@@ -108,13 +108,10 @@ public class KaaClientPropertiesStateTest {
         state.addTopic(topic2);
 
         state.updateTopicSubscriptionInfo(topic2.getId(), 1);
-
         state.updateTopicSubscriptionInfo(topic1.getId(), 0);
-        state.updateTopicSubscriptionInfo(topic1.getId(), 5);
         state.updateTopicSubscriptionInfo(topic1.getId(), 1);
 
         Map<Long, Integer> expected = new HashMap<>();
-        expected.put(topic1.getId(), 5);
         expected.put(topic2.getId(), 1);
 
         assertEquals(expected, state.getNfSubscriptions());
@@ -122,6 +119,15 @@ public class KaaClientPropertiesStateTest {
         state.persist();
         state = new KaaClientPropertiesState(new FilePersistentStorage(), CommonsBase64.getInstance(), getProperties());
 
+        assertEquals(expected, state.getNfSubscriptions());
+        
+        state.addTopicSubscription(topic1.getId());
+        
+        expected.put(topic1.getId(), 0);
+        assertEquals(expected, state.getNfSubscriptions());
+        
+        state.updateTopicSubscriptionInfo(topic1.getId(), 5);
+        expected.put(topic1.getId(), 5);
         assertEquals(expected, state.getNfSubscriptions());
 
         state.removeTopic(topic1.getId());

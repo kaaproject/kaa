@@ -16,11 +16,14 @@
 
 package org.kaaproject.kaa.client.persistence;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.security.InvalidKeyException;
@@ -28,9 +31,8 @@ import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
@@ -48,9 +50,10 @@ import org.apache.commons.io.IOUtils;
 import org.kaaproject.kaa.client.KaaClientProperties;
 import org.kaaproject.kaa.client.event.EndpointAccessToken;
 import org.kaaproject.kaa.client.event.EndpointKeyHash;
+import org.kaaproject.kaa.client.notification.TopicListHashCalculator;
 import org.kaaproject.kaa.client.util.Base64;
+import org.kaaproject.kaa.common.endpoint.gen.SubscriptionType;
 import org.kaaproject.kaa.common.endpoint.gen.Topic;
-import org.kaaproject.kaa.common.endpoint.gen.TopicSubscriptionInfo;
 import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.slf4j.Logger;
@@ -71,6 +74,9 @@ public class KaaClientPropertiesState implements KaaClientState {
     private static final String IS_ATTACHED = "is_attached";
 
     private static final String EVENT_SEQ_NUM = "event.seq.num";
+    
+    private static final String TOPIC_LIST = "topic.list";
+    private static final String TOPIC_LIST_HASH = "topic.list.hash";
 
     private static final String PROPERTIES_HASH = "properties.hash";
 
@@ -80,9 +86,11 @@ public class KaaClientPropertiesState implements KaaClientState {
     private final String stateFileLocation;
     private final String clientPrivateKeyFileLocation;
     private final String clientPublicKeyFileLocation;
-    private final Map<Long, TopicSubscriptionInfo> nfSubscriptions = new HashMap<>();
+    private final Map<Long, Topic> topicMap = new HashMap<>();
+    private final Map<Long, Integer> nfSubscriptions = new HashMap<>();
     private final Map<EndpointAccessToken, EndpointKeyHash> attachedEndpoints = new HashMap<EndpointAccessToken, EndpointKeyHash>();
     private final AtomicInteger eventSequence = new AtomicInteger();
+    private Integer topicListHash;
 
     private KeyPair kp;
     private EndpointKeyHash keyHash;
@@ -121,6 +129,7 @@ public class KaaClientPropertiesState implements KaaClientState {
                     LOG.info("SDK properties are up to date");
                 }
 
+                parseTopics();
                 parseNfSubscriptions();
 
                 String attachedEndpointsString = state.getProperty(ATTACHED_ENDPOINTS);
@@ -145,6 +154,17 @@ public class KaaClientPropertiesState implements KaaClientState {
                     }
                     eventSequence.set(eventSeqNum);
                 }
+                String topicListHashStr = state.getProperty(TOPIC_LIST_HASH);
+                if (topicListHashStr != null) {
+                    Integer topicListHash = TopicListHashCalculator.NULL_LIST_HASH;
+                    try { // NOSONAR
+                        topicListHash = Integer.parseInt(topicListHashStr);
+                    } catch (NumberFormatException e) {
+                        LOG.error("Unexpected exception while parsing topic list hash. Can not parse String: {} to Integer",
+                                topicListHashStr);
+                    }
+                    this.topicListHash = topicListHash;
+                }
             } catch (Exception e) {
                 LOG.error("Can't load state file", e);
             } finally {
@@ -155,26 +175,38 @@ public class KaaClientPropertiesState implements KaaClientState {
             setPropertiesHash(properties.getPropertiesHash());
         }
     }
-
-    private void parseNfSubscriptions() {
-        if(state.getProperty(NF_SUBSCRIPTIONS) != null){
-            byte[] data = base64.decodeBase64(state.getProperty(NF_SUBSCRIPTIONS));
+    
+    private void parseTopics() {
+        if(state.getProperty(TOPIC_LIST) != null){
+            byte[] data = base64.decodeBase64(state.getProperty(TOPIC_LIST));
             BinaryDecoder decoder = DecoderFactory.get().binaryDecoder(data, null);
-            SpecificDatumReader<TopicSubscriptionInfo> avroReader = new SpecificDatumReader<TopicSubscriptionInfo>(
-                    TopicSubscriptionInfo.class);
-
+            SpecificDatumReader<Topic> avroReader = new SpecificDatumReader<Topic>(Topic.class);
             try { // NOSONAR
-                TopicSubscriptionInfo decodedInfo = null;
-
+                Topic decodedTopic = null;
                 while (!decoder.isEnd()) {
-                    decodedInfo = avroReader.read(null, decoder);
-                    LOG.debug("Loaded {}", decodedInfo);
-                    nfSubscriptions.put(decodedInfo.getTopicInfo().getId(), decodedInfo);
+                    decodedTopic = avroReader.read(null, decoder);
+                    LOG.debug("Loaded {}", decodedTopic);
+                    topicMap.put(decodedTopic.getId(), decodedTopic);
                 }
             } catch (Exception e) {
                 LOG.error("Unexpected exception occurred while reading information from decoder", e);
             }
-        }else{
+        } else {
+            LOG.info("No topic list found in state");
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void parseNfSubscriptions() {
+        if(state.getProperty(NF_SUBSCRIPTIONS) != null){
+            byte[] data = base64.decodeBase64(state.getProperty(NF_SUBSCRIPTIONS));
+            ByteArrayInputStream is = new ByteArrayInputStream(data);
+            try ( ObjectInputStream ois = new ObjectInputStream(is)) {
+                nfSubscriptions.putAll((Map<Long, Integer>) ois.readObject());
+            } catch (Exception e) {
+                LOG.error("Unexpected exception occurred while reading subscription information from state", e);
+            }
+        } else {
             LOG.info("No subscription info found in state");
         }
     }
@@ -223,15 +255,22 @@ public class KaaClientPropertiesState implements KaaClientState {
         if (hasUpdate) {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             BinaryEncoder encoder = EncoderFactory.get().binaryEncoder(baos, null);
-            SpecificDatumWriter<TopicSubscriptionInfo> datumWriter = new SpecificDatumWriter<TopicSubscriptionInfo>(TopicSubscriptionInfo.class);
-
+            SpecificDatumWriter<Topic> datumWriter = new SpecificDatumWriter<Topic>(Topic.class);
             try {
-                for (Map.Entry<Long, TopicSubscriptionInfo> cursor : nfSubscriptions.entrySet()) {
-                    datumWriter.write(cursor.getValue(), encoder);
-                    LOG.info("Persisted {}", cursor.getValue());
+                for (Topic topic : topicMap.values()) {
+                    datumWriter.write(topic, encoder);
+                    LOG.info("Persisted {}", topic);
                 }
-
                 encoder.flush();
+                String base64Str = new String(base64.encodeBase64(baos.toByteArray()), Charset.forName("UTF-8"));
+                state.setProperty(TOPIC_LIST, base64Str);
+            } catch (IOException e) {
+                LOG.error("Can't persist topic list info", e);
+            }
+            
+            baos = new ByteArrayOutputStream();
+            try (ObjectOutputStream oos = new ObjectOutputStream(baos)) {
+                oos.writeObject(nfSubscriptions);
                 String base64Str = new String(base64.encodeBase64(baos.toByteArray()), Charset.forName("UTF-8"));
                 state.setProperty(NF_SUBSCRIPTIONS, base64Str);
             } catch (IOException e) {
@@ -244,6 +283,7 @@ public class KaaClientPropertiesState implements KaaClientState {
             }
             state.setProperty(ATTACHED_ENDPOINTS, attachedEndpointsString.toString());
             state.setProperty(EVENT_SEQ_NUM, "" + eventSequence.get());
+            state.setProperty(TOPIC_LIST_HASH, "" + topicListHash);
 
             OutputStream os = null;
             try {
@@ -359,33 +399,56 @@ public class KaaClientPropertiesState implements KaaClientState {
 
     @Override
     public void addTopic(Topic topic) {
-        TopicSubscriptionInfo subscriptionInfo = nfSubscriptions.get(topic.getId());
-        if (subscriptionInfo == null) {
-            nfSubscriptions.put(topic.getId(), new TopicSubscriptionInfo(topic, 0));
+        if (topicMap.get(topic.getId()) == null) {
+            topicMap.put(topic.getId(), topic);
+            if (topic.getSubscriptionType() == SubscriptionType.MANDATORY_SUBSCRIPTION) {
+                nfSubscriptions.put(topic.getId(), 0);
+                LOG.info("Adding new seqNumber 0 for {} subscription", topic.getId());
+            }
             hasUpdate = true;
-            LOG.info("Adding new seqNumber 0 for {} subscription", topic.getId());
+            LOG.info("Adding new topic with id {}", topic.getId());
         }
     }
 
     @Override
     public void removeTopic(Long topicId) {
-        if (nfSubscriptions.remove(topicId) != null) {
+        if (topicMap.remove(topicId) != null) {
+            if (nfSubscriptions.remove(topicId) != null) {
+                LOG.info("Removed subscription info for {}", topicId);
+            }
             hasUpdate = true;
-            LOG.debug("Removed subscription info for {}", topicId);
+            LOG.info("Removed topic with id {}", topicId);
+        }
+    }
+    
+    @Override
+    public void addTopicSubscription(Long topicId) {
+        Integer seqNum = nfSubscriptions.get(topicId);
+        if (seqNum == null) {
+            nfSubscriptions.put(topicId, 0);
+            LOG.info("Adding new seqNumber 0 for {} subscription", topicId);
+            hasUpdate = true;
+        }
+    }
+
+    @Override
+    public void removeTopicSubscription(Long topicId) {
+        if (nfSubscriptions.remove(topicId) != null) {
+            LOG.info("Removed subscription info for {}", topicId);
+            hasUpdate = true;
         }
     }
 
     @Override
     public boolean updateTopicSubscriptionInfo(Long topicId, Integer sequenceNumber) {
-        TopicSubscriptionInfo subscriptionInfo = nfSubscriptions.get(topicId);
+        Integer seqNum = nfSubscriptions.get(topicId);
         boolean updated = false;
-        if (subscriptionInfo != null) {
-            if (sequenceNumber > subscriptionInfo.getSeqNumber()) {
+        if (seqNum != null) {
+            if (sequenceNumber > seqNum) {
                 updated = true;
-                subscriptionInfo.setSeqNumber(sequenceNumber);
-                nfSubscriptions.put(topicId, subscriptionInfo);
+                nfSubscriptions.put(topicId, sequenceNumber);
                 hasUpdate = true;
-                LOG.debug("Updated seqNumber to {} for {} subscription", subscriptionInfo.getSeqNumber(), topicId);
+                LOG.debug("Updated seqNumber to {} for {} subscription", sequenceNumber, topicId);
             }
         }
         return updated;
@@ -393,24 +456,25 @@ public class KaaClientPropertiesState implements KaaClientState {
 
     @Override
     public Map<Long, Integer> getNfSubscriptions() {
-        HashMap<Long, Integer> subscriptions = new HashMap<>(); // NOSONAR
-
-        for (Map.Entry<Long, TopicSubscriptionInfo> cursor : nfSubscriptions.entrySet()) {
-            subscriptions.put(cursor.getKey(), cursor.getValue().getSeqNumber());
-        }
-
-        return subscriptions;
+        return nfSubscriptions;
     }
 
     @Override
-    public List<Topic> getTopics() {
-        List<Topic> topics = new LinkedList<Topic>();
+    public Collection<Topic> getTopics() {
+        return topicMap.values();
+    }
+    
+    @Override
+    public void setTopicListHash(Integer topicListHash) {
+        if (this.topicListHash != topicListHash) {
+            this.topicListHash = topicListHash;
+            hasUpdate = true;
+        }        
+    }
 
-        for (Map.Entry<Long, TopicSubscriptionInfo> cursor : nfSubscriptions.entrySet()) {
-            topics.add(cursor.getValue().getTopicInfo());
-        }
-
-        return topics;
+    @Override
+    public Integer getTopicListHash() {
+        return topicListHash;
     }
 
     @Override
@@ -481,4 +545,5 @@ public class KaaClientPropertiesState implements KaaClientState {
             LOG.debug("An error occurred during deletion of the file [{}] :", fileName, e);
         }
     }
+
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2016 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ import org.kaaproject.kaa.common.endpoint.gen.Notification;
 import org.kaaproject.kaa.common.endpoint.gen.NotificationSyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.NotificationSyncResponse;
 import org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommand;
+import org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommandType;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponseStatus;
 import org.kaaproject.kaa.common.endpoint.gen.Topic;
 import org.kaaproject.kaa.common.endpoint.gen.TopicState;
@@ -48,8 +49,6 @@ public class DefaultNotificationTransport extends AbstractKaaTransport implement
     private NotificationProcessor processor;
     private final Set<String> acceptedUnicastNotificationIds = new HashSet<>();
     private final List<SubscriptionCommand> sentNotificationCommands = new LinkedList<SubscriptionCommand>();
-    // TODO: fetch this from client state
-    private Integer topicListHash = TopicListHashCalculator.calculateTopicListHash(null);
 
     private List<TopicState> getTopicStates() {
         List<TopicState> states = null;
@@ -71,7 +70,7 @@ public class DefaultNotificationTransport extends AbstractKaaTransport implement
     public NotificationSyncRequest createEmptyNotificationRequest() {
         if (clientState != null) {
             NotificationSyncRequest request = new NotificationSyncRequest();
-            request.setTopicListHash(topicListHash);
+            request.setTopicListHash(clientState.getTopicListHash());
             request.setTopicStates(getTopicStates());
             return request;
         }
@@ -88,7 +87,7 @@ public class DefaultNotificationTransport extends AbstractKaaTransport implement
                 request.setAcceptedUnicastNotifications(new ArrayList<>(acceptedUnicastNotificationIds));
             }
             request.setSubscriptionCommands(sentNotificationCommands);
-            request.setTopicListHash(topicListHash);
+            request.setTopicListHash(clientState.getTopicListHash());
             request.setTopicStates(getTopicStates());
             return request;
         }
@@ -103,12 +102,15 @@ public class DefaultNotificationTransport extends AbstractKaaTransport implement
             } else {
                 List<Topic> topics = response.getAvailableTopics();
                 if (topics != null) {
-                    // TODO: store this to client state
-                    topicListHash = TopicListHashCalculator.calculateTopicListHash(topics);
-                    for (Topic topic : topics) {
-                        clientState.addTopic(topic);
-                    }
+                    clientState.setTopicListHash(TopicListHashCalculator.calculateTopicListHash(topics));
                     processor.topicsListUpdated(topics);
+                }
+            }
+            for (SubscriptionCommand subscriptionCommand : sentNotificationCommands) {
+                if (subscriptionCommand.getCommand() == SubscriptionCommandType.ADD) {
+                    clientState.addTopicSubscription(subscriptionCommand.getTopicId());
+                } else if (subscriptionCommand.getCommand() == SubscriptionCommandType.REMOVE) {
+                    clientState.removeTopicSubscription(subscriptionCommand.getTopicId());
                 }
             }
             List<Notification> notifications = response.getNotifications();
@@ -126,7 +128,7 @@ public class DefaultNotificationTransport extends AbstractKaaTransport implement
                         LOG.info("Notification with uid [{}] was already received", notification.getUid());
                     }
                 }
-
+                
                 for (Notification notification : multicastNotifications) {
                     LOG.info("Received {}", notification);
                     if (clientState.updateTopicSubscriptionInfo(notification.getTopicId(), notification.getSeqNumber())) {
