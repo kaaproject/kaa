@@ -26,7 +26,6 @@
 @property (nonatomic, copy) NSComparisonResult (^notificationComparator)(Notification *first, Notification *second);
 @property (nonatomic, strong) NSMutableSet *acceptedUnicastNotificationIds;  //<NSString>
 @property (nonatomic, strong) NSMutableArray *sentNotificationCommands;      //<SubscriptionCommand>
-@property (nonatomic) int32_t topicListHash;
 
 - (NSArray *)getTopicStates;
 - (NSArray *)getUnicastNotificationsFromNotifications:(NSArray *)notifications;
@@ -41,7 +40,6 @@
     if (self) {
         self.acceptedUnicastNotificationIds = [NSMutableSet set];
         self.sentNotificationCommands = [NSMutableArray array];
-        self.topicListHash = [TopicListHashCalculator calculateTopicListHash:nil];
         
         self.notificationComparator = ^NSComparisonResult (Notification *first, Notification *second) {
             if ([first.seqNumber.data intValue] > [second.seqNumber.data intValue]) {
@@ -66,7 +64,7 @@
     if (states) {
         request.topicStates = [KAAUnion unionWithBranch:KAA_UNION_ARRAY_TOPIC_STATE_OR_NULL_BRANCH_0 data:states];
     }
-    request.topicListHash = self.topicListHash;
+    request.topicListHash = [self.clientState topicListHash];
     return request;
 }
 
@@ -86,7 +84,7 @@
     if (states) {
          request.topicStates = [KAAUnion unionWithBranch:KAA_UNION_ARRAY_TOPIC_STATE_OR_NULL_BRANCH_0 data:states];   
     }
-    request.topicListHash = self.topicListHash;
+    request.topicListHash = [self.clientState topicListHash];
     request.subscriptionCommands = [KAAUnion unionWithBranch:KAA_UNION_ARRAY_SUBSCRIPTION_COMMAND_OR_NULL_BRANCH_0
                                                      data:self.sentNotificationCommands];
     return request;
@@ -100,15 +98,20 @@
     
     if (response.responseStatus == SYNC_RESPONSE_STATUS_NO_DELTA) {
         [self.acceptedUnicastNotificationIds removeAllObjects];
+    } else if (response.availableTopics
+               && response.availableTopics.branch == KAA_UNION_ARRAY_TOPIC_OR_NULL_BRANCH_0) {
+        NSArray *topics = response.availableTopics.data;
+        
+        [self.clientState setTopicListHash:[TopicListHashCalculator calculateTopicListHash:topics]];
+        [self.notificationProcessor topicsListUpdated:topics];
     }
     
-    if (response.availableTopics && response.availableTopics.branch == KAA_UNION_ARRAY_TOPIC_OR_NULL_BRANCH_0) {
-        NSArray *topics = response.availableTopics.data;
-        self.topicListHash = [TopicListHashCalculator calculateTopicListHash:topics];
-        for (Topic *topic in topics) {
-            [self.clientState addTopic:topic];
+    for (SubscriptionCommand *subscriptionCommand in _sentNotificationCommands) {
+        if (subscriptionCommand.command == SUBSCRIPTION_COMMAND_TYPE_ADD) {
+            [self.clientState addSubscriptionForTopicWithId:subscriptionCommand.topicId];
+        } else if (subscriptionCommand.command == SUBSCRIPTION_COMMAND_TYPE_REMOVE) {
+            [self.clientState removeSubscriptionForTopicWithId:subscriptionCommand.topicId];
         }
-        [self.notificationProcessor topicsListUpdated:topics];
     }
     
     if (response.notifications && response.notifications.branch == KAA_UNION_ARRAY_NOTIFICATION_OR_NULL_BRANCH_0) {
