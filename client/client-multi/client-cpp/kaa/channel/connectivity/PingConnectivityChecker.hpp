@@ -19,7 +19,7 @@
 
 #include <cstring>
 #include <string>
-#include <stdint>
+#include <cstdint>
 
 #include "kaa/channel/connectivity/IConnectivityChecker.hpp"
 
