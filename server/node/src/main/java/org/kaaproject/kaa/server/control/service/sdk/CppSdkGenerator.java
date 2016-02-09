@@ -51,7 +51,6 @@ import org.kaaproject.kaa.server.control.service.sdk.event.CppEventSourcesGenera
 import org.kaaproject.kaa.server.control.service.sdk.event.EventFamilyMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.helpers.MessageFormatter;
 
 /**
  * The Class CppSdkGenerator.
@@ -66,10 +65,7 @@ public class CppSdkGenerator extends SdkGenerator {
     private static final String CPP_SDK_DIR = "sdk/cpp";
 
     /** The Constant CPP_SDK_PREFIX. */
-    private static final String CPP_SDK_PREFIX = "kaa-client-sdk-";
-
-    /** The Constant CPP_SDK_NAME_PATTERN. */
-    private static final String CPP_SDK_NAME_PATTERN = CPP_SDK_PREFIX + "p{}-c{}-n{}-l{}.tar.gz";
+    private static final String CPP_SDK_PREFIX = "kaa-cpp-ep-sdk-";
 
     /** The Constant APPLICATION_TOKEN_VAR. */
     private static final String SDK_VAR = "%{application.sdk_token}";
@@ -230,11 +226,7 @@ public class CppSdkGenerator extends SdkGenerator {
         sdkFile.finish();
         sdkFile.close();
 
-        String sdkFileName = MessageFormatter.arrayFormat(CPP_SDK_NAME_PATTERN,
-                new Object[]{profileSchemaVersion,
-                configurationSchemaVersion,
-                notificationSchemaVersion,
-                logSchemaVersion}).getMessage();
+        String sdkFileName = CPP_SDK_PREFIX + sdkProfile.getToken();
 
         byte[] sdkData = sdkOutput.toByteArray();
 
