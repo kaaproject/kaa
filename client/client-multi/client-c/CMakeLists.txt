@@ -174,21 +174,11 @@ if(NOT DEFINED KAA_BUILD_STATIC_ONLY)
   target_link_libraries(${KAA_BUILD_SHARED} ${KAA_THIRDPARTY_LIBRARIES})
 endif()
 
-# Sets paths Kaa libraries will be installed in.
-if(NOT KAA_INSTALL_PATH)
-    if(KAA_PLATFORM STREQUAL ESP8266_NAME)
-        set(KAA_INSTALL_PATH "/usr/local/kaa-esp8266")
-    else()
-	    set(KAA_INSTALL_PATH "/usr/local")
-    endif()
-endif()
-
-message("KAA WILL BE INSTALLED TO  ${KAA_INSTALL_PATH} ")
-set(CMAKE_INSTALL_PREFIX ${KAA_INSTALL_PATH} ) 
-install (DIRECTORY ${KAA_SRC_FOLDER}/ DESTINATION ${KAA_INSTALL_PATH}/include/kaa
+message("KAA WILL BE INSTALLED TO  ${CMAKE_INSTALL_PREFIX} ")
+install (DIRECTORY ${KAA_SRC_FOLDER}/ DESTINATION include/kaa
     FILES_MATCHING PATTERN *.h)
 
-install (TARGETS ${KAA_BUILD_SHARED} ${KAA_BUILD_STATIC} DESTINATION ${KAA_INSTALL_PATH}/lib)
+install (TARGETS ${KAA_BUILD_SHARED} ${KAA_BUILD_STATIC} DESTINATION lib)
 
 
 # Builds unit tests.
