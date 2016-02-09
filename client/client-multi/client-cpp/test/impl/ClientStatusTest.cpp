@@ -44,8 +44,6 @@ BOOST_AUTO_TEST_CASE(checkDefaults)
     cleanfile();
 
     ClientStatus cs(filename);
-    BOOST_CHECK_EQUAL(cs.getAppSeqNumber().configurationSequenceNumber, 0);
-    BOOST_CHECK_EQUAL(cs.getAppSeqNumber().notificationSequenceNumber, 0);
     BOOST_CHECK_EQUAL(cs.isRegistered(), false);
     BOOST_CHECK_EQUAL(cs.getProfileHash().empty(), true);
     BOOST_CHECK_EQUAL(cs.getAttachedEndpoints().size(), 0);
@@ -58,9 +56,7 @@ BOOST_AUTO_TEST_CASE(checkDefaults)
 BOOST_AUTO_TEST_CASE(checkSetAndSaveParameters)
 {
     ClientStatus cs(filename);
-    cs.setAppSeqNumber({1,2,3});
-    BOOST_CHECK_EQUAL(cs.getAppSeqNumber().configurationSequenceNumber, 1);
-    BOOST_CHECK_EQUAL(cs.getAppSeqNumber().notificationSequenceNumber, 2);
+    cs.setAppSeqNumber({3});
     cs.setRegistered(true);
     BOOST_CHECK_EQUAL(cs.isRegistered(), true);
 
@@ -77,13 +73,15 @@ BOOST_AUTO_TEST_CASE(checkSetAndSaveParameters)
 
     DetailedTopicStates ts;
     DetailedTopicState ts1;
-    ts1.topicId = "topic1";
+	std::int64_t topic1 = 0x01;
+    ts1.topicId = topic1;
     ts1.sequenceNumber = 100;
     ts1.topicName = "topicName1";
     ts1.subscriptionType = SubscriptionType::MANDATORY_SUBSCRIPTION;
 
     DetailedTopicState ts2;
-    ts2.topicId = "topic2";
+    std::int64_t topic2 = 0x02;
+    ts2.topicId = topic2;
     ts2.sequenceNumber = 200;
     ts2.topicName = "topicName2";
     ts2.subscriptionType = SubscriptionType::OPTIONAL_SUBSCRIPTION;

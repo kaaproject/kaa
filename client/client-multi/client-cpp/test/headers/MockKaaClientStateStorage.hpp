@@ -100,6 +100,9 @@ public:
         return false;
     }
 
+    virtual std::int32_t getTopicListHash() { return 0; }
+    virtual void setTopicListHash(std::int32_t hash) {}
+
     virtual void read() {}
     virtual void save() {}
 };
