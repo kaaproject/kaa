@@ -56,7 +56,6 @@ import org.kaaproject.kaa.server.control.service.sdk.event.EventFamilyMetadata;
 import org.kaaproject.kaa.server.control.service.sdk.event.JavaEventClassesGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.helpers.MessageFormatter;
 
 /**
  * The Class JavaSdkGenerator.
@@ -76,12 +75,7 @@ public class JavaSdkGenerator extends SdkGenerator {
     /**
      * The Constant JAVA_SDK_PREFIX.
      */
-    private static final String JAVA_SDK_PREFIX = "kaa-client-sdk-";
-
-    /**
-     * The Constant JAVA_SDK_NAME_PATTERN.
-     */
-    private static final String JAVA_SDK_NAME_PATTERN = JAVA_SDK_PREFIX + "p{}-c{}-n{}-l{}.jar";
+    private static final String JAVA_SDK_PREFIX = "kaa-java-ep-sdk-";
 
     /**
      * The Constant ANDROID_SDK_DIR.
@@ -91,12 +85,7 @@ public class JavaSdkGenerator extends SdkGenerator {
     /**
      * The Constant ANDROID_SDK_PREFIX.
      */
-    private static final String ANDROID_SDK_PREFIX = "kaa-client-sdk-android-";
-
-    /**
-     * The Constant ANDROID_SDK_NAME_PATTERN.
-     */
-    private static final String ANDROID_SDK_NAME_PATTERN = ANDROID_SDK_PREFIX + "p{}-c{}-n{}-l{}.jar";
+    private static final String ANDROID_SDK_PREFIX = "kaa-android-ep-sdk-";
 
     /**
      * The Constant CLIENT_PROPERTIES.
@@ -371,7 +360,6 @@ public class JavaSdkGenerator extends SdkGenerator {
             throws Exception {
 
         String sdkToken = sdkProfile.getToken();
-        Integer configurationSchemaVersion = sdkProfile.getConfigurationSchemaVersion();
         Integer profileSchemaVersion = sdkProfile.getProfileSchemaVersion();
         Integer notificationSchemaVersion = sdkProfile.getNotificationSchemaVersion();
         Integer logSchemaVersion = sdkProfile.getLogSchemaVersion();
@@ -594,10 +582,8 @@ public class JavaSdkGenerator extends SdkGenerator {
 
         sdkFile.close();
 
-        String sdkFileName = MessageFormatter.arrayFormat(
-                sdkPlatform == SdkPlatform.JAVA ? JAVA_SDK_NAME_PATTERN : ANDROID_SDK_NAME_PATTERN,
-                new Object[]{profileSchemaVersion, configurationSchemaVersion, notificationSchemaVersion, logSchemaVersion})
-                .getMessage();
+        String fileNamePrefix = (sdkPlatform == SdkPlatform.JAVA ? JAVA_SDK_PREFIX : ANDROID_SDK_PREFIX);
+        String sdkFileName = fileNamePrefix + sdkProfile.getToken();
 
         byte[] sdkData = sdkOutput.toByteArray();
 

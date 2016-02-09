@@ -56,7 +56,6 @@ import org.kaaproject.kaa.server.control.service.sdk.event.CEventSourcesGenerato
 import org.kaaproject.kaa.server.control.service.sdk.event.EventFamilyMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.helpers.MessageFormatter;
 
 public class CSdkGenerator extends SdkGenerator {
 
@@ -70,8 +69,7 @@ public class CSdkGenerator extends SdkGenerator {
     private static final String KAA_SRC_FOLDER = "src/kaa";
     private static final String KAA_GEN_SOURCE_DIR = KAA_SRC_FOLDER + "/gen/";
 
-    private static final String C_SDK_PREFIX       = "kaa-client-sdk-";
-    private static final String C_SDK_NAME_PATTERN = C_SDK_PREFIX + "p{}-c{}-n{}-l{}.tar.gz";
+    private static final String C_SDK_PREFIX       = "kaa-c-ep-sdk-";
 
     private static final String KAA_SOURCE_PREFIX = "kaa";
 
@@ -127,10 +125,7 @@ public class CSdkGenerator extends SdkGenerator {
                            String logSchemaBody) throws Exception {
 
         String sdkToken = sdkProfile.getToken();
-        Integer configurationSchemaVersion = sdkProfile.getConfigurationSchemaVersion();
         Integer profileSchemaVersion = sdkProfile.getProfileSchemaVersion();
-        Integer notificationSchemaVersion = sdkProfile.getNotificationSchemaVersion();
-        Integer logSchemaVersion = sdkProfile.getLogSchemaVersion();
         String defaultVerifierToken = sdkProfile.getDefaultVerifierToken();
 
         String sdkTemplateLocation = Environment.getServerHomeDir() + "/" + C_SDK_DIR + "/" + C_SDK_PREFIX + buildVersion + ".tar.gz";
@@ -237,12 +232,7 @@ public class CSdkGenerator extends SdkGenerator {
         sdkFile.finish();
         sdkFile.close();
 
-        String sdkFileName = MessageFormatter.arrayFormat(C_SDK_NAME_PATTERN,
-                                                          new Object[] {
-                                                              profileSchemaVersion,
-                                                              configurationSchemaVersion,
-                                                              notificationSchemaVersion,
-                                                              logSchemaVersion }).getMessage();
+        String sdkFileName = C_SDK_PREFIX + sdkProfile.getToken();
 
         FileData sdk = new FileData();
         sdk.setFileName(sdkFileName);

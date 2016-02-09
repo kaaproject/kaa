@@ -38,7 +38,6 @@ import org.kaaproject.kaa.server.control.service.sdk.event.EventFamilyMetadata;
 import org.kaaproject.kaa.server.control.service.sdk.event.ObjCEventClassesGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.helpers.MessageFormatter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
@@ -63,8 +62,7 @@ public class ObjCSdkGenerator extends SdkGenerator {
     private static final String LOG_TEMPLATE_DIR = SDK_TEMPLATE_DIR + LOG_DIR;
     private static final String EVENT_TEMPLATE_DIR = SDK_TEMPLATE_DIR + EVENT_DIR;
 
-    private static final String SDK_PREFIX = "kaa-client-sdk-";
-    private static final String SDK_NAME_PATTERN = SDK_PREFIX + "p{}-c{}-n{}-l{}.tar.gz";
+    private static final String SDK_PREFIX = "kaa-objc-ep-sdk-";
 
     private static final String KAA_ROOT = "Kaa/";
 
@@ -114,10 +112,6 @@ public class ObjCSdkGenerator extends SdkGenerator {
                            String logSchemaBody) throws Exception {
 
         String sdkToken = sdkProperties.getToken();
-        Integer configurationSchemaVersion = sdkProperties.getConfigurationSchemaVersion();
-        Integer profileSchemaVersion = sdkProperties.getProfileSchemaVersion();
-        Integer notificationSchemaVersion = sdkProperties.getNotificationSchemaVersion();
-        Integer logSchemaVersion = sdkProperties.getLogSchemaVersion();
         String defaultVerifierToken = sdkProperties.getDefaultVerifierToken();
 
         String sdkTemplateLocation = System.getProperty("server_home_dir") + "/" + SDK_TEMPLATE_DIR + SDK_PREFIX + buildVersion + ".tar.gz";
@@ -296,11 +290,7 @@ public class ObjCSdkGenerator extends SdkGenerator {
         sdkFile.finish();
         sdkFile.close();
 
-        String sdkFileName = MessageFormatter.arrayFormat(SDK_NAME_PATTERN,
-                new Object[]{profileSchemaVersion,
-                        configurationSchemaVersion,
-                        notificationSchemaVersion,
-                        logSchemaVersion}).getMessage();
+        String sdkFileName = SDK_PREFIX + sdkProperties.getToken();
 
         byte[] sdkData = sdkOutput.toByteArray();
 
@@ -324,7 +314,7 @@ public class ObjCSdkGenerator extends SdkGenerator {
         properties.add(Base64.encodeBase64String(defaultConfigurationData));
         properties.add(Base64.encodeBase64String(configurationProtocolSchemaBody.getBytes()));
         properties.add(CommonSdkUtil.bootstrapNodesToString(bootstrapNodes));
-        String source = String.format(template, properties.toArray(new String[PROPERTIES_COUNT]));
+        String source = String.format(template, properties.toArray(new Object[PROPERTIES_COUNT]));
         return CommonSdkUtil.tarEntryForSources(source, KAA_ROOT + KAA_DEFAULTS);
     }
 
