@@ -156,14 +156,12 @@ public class KaaClientPropertiesState implements KaaClientState {
                 }
                 String topicListHashStr = state.getProperty(TOPIC_LIST_HASH);
                 if (topicListHashStr != null) {
-                    Integer topicListHash = TopicListHashCalculator.NULL_LIST_HASH;
                     try { // NOSONAR
-                        topicListHash = Integer.parseInt(topicListHashStr);
+                        this.topicListHash = Integer.parseInt(topicListHashStr);
                     } catch (NumberFormatException e) {
                         LOG.error("Unexpected exception while parsing topic list hash. Can not parse String: {} to Integer",
                                 topicListHashStr);
                     }
-                    this.topicListHash = topicListHash;
                 }
             } catch (Exception e) {
                 LOG.error("Can't load state file", e);
@@ -474,7 +472,11 @@ public class KaaClientPropertiesState implements KaaClientState {
 
     @Override
     public Integer getTopicListHash() {
-        return topicListHash;
+        if(topicListHash == null){
+            return TopicListHashCalculator.NULL_LIST_HASH;
+        }else{
+            return topicListHash;
+        }
     }
 
     @Override
