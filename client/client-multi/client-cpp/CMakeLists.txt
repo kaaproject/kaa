@@ -318,13 +318,8 @@ else (WIN32)
 endif (WIN32)
 
 add_library (kaacpp_s STATIC ./kaa $<TARGET_OBJECTS:kaacpp_o>)
-# Sets paths Kaa libraries will be installed in.
-if(NOT KAA_INSTALL_PATH)
-	set(KAA_INSTALL_PATH "/usr/local")
-endif()
 
-message(STATUS "KAA WILL BE INSTALLED TO  ${KAA_INSTALL_PATH} ")
-set(CMAKE_INSTALL_PREFIX ${KAA_INSTALL_PATH} ) 
-install (DIRECTORY kaa/ DESTINATION ${KAA_INSTALL_PATH}/include/kaa
+message(STATUS "KAA WILL BE INSTALLED TO ${CMAKE_INSTALL_PREFIX} ")
+install (DIRECTORY kaa/ DESTINATION include/kaa
     FILES_MATCHING PATTERN *.hpp)
-install (TARGETS kaacpp kaacpp_s DESTINATION ${KAA_INSTALL_PATH}/lib)
+install (TARGETS kaacpp kaacpp_s DESTINATION lib)
