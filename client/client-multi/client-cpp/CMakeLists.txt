@@ -320,6 +320,6 @@ endif (WIN32)
 add_library (kaacpp_s STATIC ./kaa $<TARGET_OBJECTS:kaacpp_o>)
 
 message(STATUS "KAA WILL BE INSTALLED TO ${CMAKE_INSTALL_PREFIX} ")
-install (DIRECTORY kaa/ DESTINATION ${CMAKE_INSTALL_PREFIX}/include/kaa
+install (DIRECTORY kaa/ DESTINATION include/kaa
     FILES_MATCHING PATTERN *.hpp)
-install (TARGETS kaacpp kaacpp_s DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+install (TARGETS kaacpp kaacpp_s DESTINATION lib)
