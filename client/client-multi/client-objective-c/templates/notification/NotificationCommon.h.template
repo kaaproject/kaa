@@ -24,7 +24,7 @@
 /**
  * Called on each new notification.
  */
-- (void)onNotification:(${notification_class} *)notification withTopicId:(NSString *)topicId;
+- (void)onNotification:(${notification_class} *)notification withTopicId:(int64_t)topicId;
 
 @end
 
