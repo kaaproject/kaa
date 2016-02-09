@@ -21,21 +21,13 @@
 #include <memory>
 #include "kaa/gen/EndpointGen.hpp"
 #include "kaa/common/EndpointObjectHash.hpp"
+#include "kaa/notification/gen/NotificationDefinitions.hpp"
 
 namespace kaa {
 
 typedef struct {
-    std::int64_t        topicId;
-    std::string         topicName;
-    SubscriptionType    subscriptionType;
-    std::uint32_t       sequenceNumber;
-} DetailedTopicState;
-
-typedef struct {
     std::int32_t eventSequenceNumber;
 } SequenceNumber;
-
-typedef std::map<std::int64_t/* Topic ID */, DetailedTopicState> DetailedTopicStates;
 
 typedef std::map<std::string, std::string> AttachedEndpoints;
 
@@ -52,8 +44,8 @@ public:
     virtual bool isRegistered() const = 0;
     virtual void setRegistered(bool isRegistered) = 0;
 
-    virtual DetailedTopicStates getTopicStates() const = 0;
-    virtual void setTopicStates(const DetailedTopicStates& stateContainer) = 0;
+    virtual Topics getTopicList() const = 0;
+    virtual void setTopicList(const Topics& stateContainer) = 0;
 
     virtual std::int32_t getTopicListHash() = 0;
     virtual void setTopicListHash(const std::int32_t topicListHash) = 0;
@@ -75,6 +67,9 @@ public:
     virtual void setEndpointKeyHash(const std::string& keyHash) = 0;
 
     virtual bool isSDKPropertiesUpdated() const = 0;
+
+    virtual void setTopicStates(std::map<std::int64_t, std::int32_t>& subscriptions) = 0;
+    virtual std::map<std::int64_t, std::int32_t> &getTopicStates() = 0;
 
     virtual void read() = 0;
     virtual void save() = 0;

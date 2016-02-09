@@ -68,40 +68,35 @@ BOOST_AUTO_TEST_CASE(checkSetAndSaveParameters)
     auto checkHash = cs.getProfileHash();
     BOOST_CHECK_EQUAL_COLLECTIONS(checkHash.begin(), checkHash.end(), sdb.begin(), sdb.end());
 
-    DetailedTopicStates empty_ts = cs.getTopicStates();
+    Topics empty_ts = cs.getTopicList();
     BOOST_CHECK_EQUAL(empty_ts.size(), 0);
 
-    DetailedTopicStates ts;
-    DetailedTopicState ts1;
-	std::int64_t topic1 = 0x01;
-    ts1.topicId = topic1;
-    ts1.sequenceNumber = 100;
-    ts1.topicName = "topicName1";
+    Topics ts;
+    Topic ts1;
+    std::int64_t topic1 = 0x01;
+    ts1.id = topic1;
+    ts1.name = "name1";
     ts1.subscriptionType = SubscriptionType::MANDATORY_SUBSCRIPTION;
 
-    DetailedTopicState ts2;
+    Topic ts2;
     std::int64_t topic2 = 0x02;
-    ts2.topicId = topic2;
-    ts2.sequenceNumber = 200;
-    ts2.topicName = "topicName2";
-    ts2.subscriptionType = SubscriptionType::OPTIONAL_SUBSCRIPTION;
+    ts2.id = topic2;
+    ts2.name = "name2";
+    ts2.subscriptionType = SubscriptionType::MANDATORY_SUBSCRIPTION;
 
-    ts.insert(std::make_pair(ts1.topicId, ts1));
-    ts.insert(std::make_pair(ts2.topicId, ts2));
+    ts.push_back(ts1);
+    ts.push_back(ts2);
 
-    cs.setTopicStates(ts);
-    DetailedTopicStates act_ts = cs.getTopicStates();
-    BOOST_CHECK_EQUAL(act_ts.size(), 2);
+    cs.setTopicList(ts);
+    auto act_ts = cs.getTopicStates();
+    auto topicList = cs.getTopicList();
+    BOOST_CHECK_EQUAL(topicList.size(), 2);
 
-    BOOST_CHECK_EQUAL(act_ts[ts1.topicId].topicId, ts1.topicId);
-    BOOST_CHECK_EQUAL(act_ts[ts1.topicId].sequenceNumber, ts1.sequenceNumber);
-    BOOST_CHECK_EQUAL(act_ts[ts1.topicId].topicName, ts1.topicName);
-    BOOST_CHECK_EQUAL(act_ts[ts1.topicId].subscriptionType, ts1.subscriptionType);
+    BOOST_CHECK_EQUAL(topicList[0].name, ts1.name);
+    BOOST_CHECK_EQUAL(topicList[0].subscriptionType, ts1.subscriptionType);
 
-    BOOST_CHECK_EQUAL(act_ts[ts2.topicId].topicId, ts2.topicId);
-    BOOST_CHECK_EQUAL(act_ts[ts2.topicId].sequenceNumber, ts2.sequenceNumber);
-    BOOST_CHECK_EQUAL(act_ts[ts2.topicId].topicName, ts2.topicName);
-    BOOST_CHECK_EQUAL(act_ts[ts2.topicId].subscriptionType, ts2.subscriptionType);
+    BOOST_CHECK_EQUAL(topicList[1].name, ts2.name);
+    BOOST_CHECK_EQUAL(topicList[1].subscriptionType, ts2.subscriptionType);
 
     AttachedEndpoints attachedEndpoints;
     std::string token1("Token1"), hash1("hash1");
@@ -119,20 +114,19 @@ BOOST_AUTO_TEST_CASE(checkSetAndSaveParameters)
     cs.setEndpointKeyHash(endpointKeyHash);
 
     cs.save();
+
     ClientStatus cs_restored(filename);
 
-    DetailedTopicStates act_ts1 = cs_restored.getTopicStates();
-    BOOST_CHECK_EQUAL(act_ts1.size(), 2);
+    auto topicList2 = cs_restored.getTopicList();
+    auto topicStates = cs_restored.getTopicStates();
 
-    BOOST_CHECK_EQUAL(act_ts1[ts1.topicId].topicId, ts1.topicId);
-    BOOST_CHECK_EQUAL(act_ts1[ts1.topicId].sequenceNumber, ts1.sequenceNumber);
-    BOOST_CHECK_EQUAL(act_ts1[ts1.topicId].topicName, ts1.topicName);
-    BOOST_CHECK_EQUAL(act_ts1[ts1.topicId].subscriptionType, ts1.subscriptionType);
+    BOOST_CHECK_EQUAL(topicList2.size(), 2);
 
-    BOOST_CHECK_EQUAL(act_ts1[ts2.topicId].topicId, ts2.topicId);
-    BOOST_CHECK_EQUAL(act_ts1[ts2.topicId].sequenceNumber, ts2.sequenceNumber);
-    BOOST_CHECK_EQUAL(act_ts1[ts2.topicId].topicName, ts2.topicName);
-    BOOST_CHECK_EQUAL(act_ts1[ts2.topicId].subscriptionType, ts2.subscriptionType);
+    BOOST_CHECK_EQUAL(topicList2[0].name, ts1.name);
+    BOOST_CHECK_EQUAL(topicList2[0].subscriptionType, ts1.subscriptionType);
+
+    BOOST_CHECK_EQUAL(topicList2[1].name, ts2.name);
+    BOOST_CHECK_EQUAL(topicList2[1].subscriptionType, ts2.subscriptionType);
 
     AttachedEndpoints restoredAttachedEndpoints = cs.getAttachedEndpoints();
     BOOST_CHECK_EQUAL(restoredAttachedEndpoints[token1], hash1);

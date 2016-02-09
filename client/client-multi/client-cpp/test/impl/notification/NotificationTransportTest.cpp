@@ -158,19 +158,16 @@ BOOST_AUTO_TEST_CASE(DetailedTopicStateTest)
      * provided topic list
      */
     BOOST_CHECK(topicListHash != 0);
-    /* The following check serves for ensuring that topic states are generated
-     * only for topics we are subscribed on (or for mandatory). Because here
-     * there is no subscription for the optional topics, topic states count
-     * should be 2.
-     */
-    BOOST_CHECK(detailedTopicState.size() == (topics.size()/2));
+
+    auto topicList = status->getTopicList();
+    BOOST_CHECK(topicList.size() == topics.size());
 
     for (const auto& topicInfo : detailedTopicState) {
-        BOOST_CHECK(topicInfo.second.sequenceNumber == 0);
+        BOOST_CHECK(topicInfo.second == 0);
     }
 
-    std::uint32_t seqNm1 = 1;
-    std::uint32_t seqNm2 = 5;
+    std::int32_t seqNm1 = 1;
+    std::int32_t seqNm2 = 5;
 
     Notification nf1;
     nf1.topicId = topicId1;
@@ -199,9 +196,9 @@ BOOST_AUTO_TEST_CASE(DetailedTopicStateTest)
 
     for (const auto& topicInfo : detailedTopicState) {
         if (topicInfo.first == topicId1) {
-            BOOST_CHECK(topicInfo.second.sequenceNumber == seqNm1);
+            BOOST_CHECK(topicInfo.second == seqNm1);
         } else if (topicInfo.first == topicId2) {
-            BOOST_CHECK(topicInfo.second.sequenceNumber == seqNm2);
+            BOOST_CHECK(topicInfo.second == seqNm2);
         }
     }
 }

@@ -104,26 +104,23 @@ BOOST_AUTO_TEST_CASE(GetTopicsTest)
     const std::string STATUS_FILE_PATH = "test_status.txt";
     IKaaClientStateStoragePtr clientStatus1(new ClientStatus(STATUS_FILE_PATH));
 
-    DetailedTopicStates states;
+    Topics topicList;
     std::size_t topicCount = 1 + rand() % 10;
     std::ostringstream ss;
     std::int64_t topicId = 1;
     for (std::size_t i = 0; i < topicCount; ++i) {
-        DetailedTopicState topicState;
+        Topic topic;
 
-        topicState.topicId = topicId++;
+        topic.id = topicId++;
 
         ss.str("");
         ss << "topic_" << i << "_name";
-        topicState.topicName = ss.str();
-
-        topicState.sequenceNumber = std::rand();
-        topicState.subscriptionType = SubscriptionType::OPTIONAL_SUBSCRIPTION;
-
-        states.insert(std::make_pair(topicState.topicId, topicState));
+        topic.name = ss.str();
+        topic.subscriptionType = SubscriptionType::OPTIONAL_SUBSCRIPTION;
+        topicList.push_back(topic);
     }
 
-    clientStatus1->setTopicStates(states);
+    clientStatus1->setTopicList(topicList);
     clientStatus1->save();
     clientStatus1.reset();
 
@@ -133,7 +130,7 @@ BOOST_AUTO_TEST_CASE(GetTopicsTest)
 
     auto topics = notificationManager.getTopics();
 
-    BOOST_CHECK_EQUAL(topics.size(), states.size());
+    BOOST_CHECK_EQUAL(topics.size(), topicList.size());
 
     std::remove(STATUS_FILE_PATH.c_str());
 }

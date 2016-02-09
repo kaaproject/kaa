@@ -38,13 +38,12 @@ public:
     static std::string NotificationSyncRequestToString(const SyncRequest::notificationSyncRequest_t& request) {
         std::ostringstream ss;
         if (!request.is_null()) {
-            ss << KVSTRING(topicListHash, request.get_NotificationSyncRequest().topicListHash) << ", ";
+            ss << KVSTRING(topicListHash, ((request.get_NotificationSyncRequest().topicListHash == 0) ? 0 :
+                           request.get_NotificationSyncRequest().topicListHash));
             ss << KVSTRING(acceptedUnicastNotifications,
                     AcceptedUnicastNotificationsToString(request.get_NotificationSyncRequest().acceptedUnicastNotifications)) << ", ";
             ss << KVSTRING(subscriptionCommands, SubscriptionCommandsToString(request.get_NotificationSyncRequest().subscriptionCommands)) << ", ";
             ss << KVSTRING(topicStates, TopicStatesToString(request.get_NotificationSyncRequest().topicStates)) << ", ";
-            ss << KVSTRING(topicListHash, ((request.get_NotificationSyncRequest().topicListHash == 0) ? 0 :
-                    request.get_NotificationSyncRequest().topicListHash));
         } else {
             ss << "null";
         }
@@ -54,10 +53,10 @@ public:
     static std::string ConfigurationSyncRequestToString(const SyncRequest::configurationSyncRequest_t& request) {
         std::ostringstream ss;
         if (!request.is_null()) {
-		  std::stringstream hashStream;
-		  for (auto &byte : request.get_ConfigurationSyncRequest().configurationHash) {
-               hashStream << byte;
-		  }
+            std::stringstream hashStream;
+            for (auto &byte : request.get_ConfigurationSyncRequest().configurationHash) {
+                 hashStream << byte;
+            }
             ss << KVSTRING(configurationHash, (std::string(hashStream.str()).empty() ? "null" : hashStream.str()));
         } else {
             ss << "null";

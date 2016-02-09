@@ -27,6 +27,8 @@ public:
     virtual std::int32_t getEventSequenceNumber() const {
         return 0;
     }
+    virtual void setNotificationsSubscriptions(std::map<std::int64_t, std::int32_t>& subscriptions) {}
+    virtual std::map<std::int64_t, std::int32_t> &getNotificationsSubscriptions() { return map; }
 
     virtual void setEventSequenceNumber(std::int32_t) {}
 
@@ -54,11 +56,15 @@ public:
 
     virtual void setRegistered(bool) {}
 
-    virtual DetailedTopicStates getTopicStates() const {
-        static DetailedTopicStates states;
+    virtual Topics getTopicList() const {
+        static Topics states;
         return states;
     }
-    virtual void setTopicStates(const DetailedTopicStates&) {}
+
+    virtual void setTopicList(const Topics& stateContainer) {}
+
+    virtual void setTopicStates(std::map<std::int64_t, std::int32_t>& subscriptions) {}
+    virtual std::map<std::int64_t, std::int32_t> &getTopicStates() { return map; }
 
     virtual HashDigest getProfileHash() const {
         static HashDigest profileHash;
@@ -105,6 +111,8 @@ public:
 
     virtual void read() {}
     virtual void save() {}
+ private:
+    std::map<std::int64_t, std::int32_t> map;
 };
 
 }

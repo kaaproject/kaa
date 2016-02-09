@@ -388,7 +388,7 @@ void KaaClient::removeNotificationListener(INotificationListener& listener) {
 #endif
 }
 
-  void KaaClient::removeNotificationListener(std::int64_t topicId, INotificationListener& listener) {
+void KaaClient::removeNotificationListener(std::int64_t topicId, INotificationListener& listener) {
 #ifdef KAA_USE_NOTIFICATIONS
     notificationManager_->removeNotificationListener(topicId, listener);
 #else

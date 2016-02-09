@@ -58,12 +58,12 @@ public:
 private:
     Notifications getUnicastNotifications(const Notifications & notifications);
     Notifications getMulticastNotifications(const Notifications & notifications);
+    std::vector<TopicState> prepareTopicStatesForRequest();
 
 private:
     INotificationProcessor*                         notificationProcessor_;
 
     std::set<std::string>                  acceptedUnicastNotificationIds_;
-    std::map<std::int64_t, std::int32_t>        notificationSubscriptions_;
     SubscriptionCommands                                    subscriptions_;
     std::int32_t                                            topicListHash_;
 };

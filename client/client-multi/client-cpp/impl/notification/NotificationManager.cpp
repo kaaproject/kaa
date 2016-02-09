@@ -35,18 +35,13 @@ namespace kaa {
 NotificationManager::NotificationManager(IKaaClientStateStoragePtr status, IExecutorContext& executorContext)
     : executorContext_(executorContext), clientStatus_(status)
 {
-    const DetailedTopicStates& topicStates = clientStatus_->getTopicStates();
+    auto topicList = clientStatus_->getTopicList();
 
-    for (auto &topicState : topicStates) {
-        Topic topic;
-        topic.id = topicState.second.topicId;
-        topic.name = topicState.second.topicName;
-        topic.subscriptionType = topicState.second.subscriptionType;
-
-        if (topics_.insert(std::make_pair(topicState.first, topic)).second) {
-            KAA_LOG_INFO(boost::format("Loaded topic: id='%1%', name='%2%', type=%3%")
-                % topic.id % topic.name % LoggingUtils::TopicSubscriptionTypeToString(topic.subscriptionType));
-        }
+    for (auto &topic : topicList) {
+         if (topics_.insert(std::make_pair(topic.id, topic)).second) {
+             KAA_LOG_INFO(boost::format("Loaded topic: id='%1%', name='%2%', type=%3%")
+                 % topic.id % topic.name % LoggingUtils::TopicSubscriptionTypeToString(topic.subscriptionType));
+         }
     }
 }
 
@@ -69,13 +64,14 @@ void NotificationManager::topicsListUpdated(const Topics& topicList)
         KAA_MUTEX_LOCKING("optionalListenersGuard_");
         KAA_MUTEX_UNIQUE_DECLARE(optionalListenersLock, optionalListenersGuard_);
         KAA_MUTEX_LOCKED("optionalListenersGuard_");
-
+        auto &topicStates = clientStatus_->getTopicStates();
         if (!topics_.empty()) {
             KAA_LOG_INFO(boost::format("Going to remove optional listener(s) for %1% obsolete topics") % topics_.size());
             for (const auto& pair : topics_) {
-                if (optionalListeners_.erase(pair.second.id)) {
-                    KAA_LOG_TRACE(boost::format("Removed optional listener(s) for obsolete topic '%1%'") % pair.second.id);
-                }
+                 topicStates.erase(pair.first);
+                 if (optionalListeners_.erase(pair.first)) {
+                     KAA_LOG_TRACE(boost::format("Removed optional listener(s) for obsolete topic '%1%'") % pair.first);
+                 }
             }
         }
     }
