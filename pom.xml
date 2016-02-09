@@ -1,5 +1,5 @@
 <!--
-Copyright 2014-2015 CyberVision, Inc.
+Copyright 2014-2016 CyberVision, Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -275,6 +275,76 @@ Copyright 2014-2015 CyberVision, Inc.
                     <url>http://repository.kaaproject.org/repository/snapshots/</url>
                 </snapshotRepository>
             </distributionManagement>
+        </profile>
+        <profile>
+            <id>license</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.mycila.maven-license-plugin</groupId>
+                        <artifactId>maven-license-plugin</artifactId>
+                        <version>1.8.0</version>
+                        <configuration>
+                            <header>copyright.txt</header>
+                            <strictCheck>true</strictCheck>
+                            <mapping>
+                                <tmpl>JAVADOC_STYLE</tmpl>
+                                <cmake>SCRIPT_STYLE</cmake>
+                                <txt>SCRIPT_STYLE</txt>
+                                <properties>SCRIPT_STYLE</properties>
+                                <in>SCRIPT_STYLE</in>
+                                <mk>SCRIPT_STYLE</mk>
+                                <m>JAVADOC_STYLE</m>
+                                <hpp>JAVADOC_STYLE</hpp>
+                                <dox>JAVADOC_STYLE</dox>
+                                <cvm>JAVADOC_STYLE</cvm>
+                                <hvm>JAVADOC_STYLE</hvm>
+                                <bat_template>BATCH</bat_template>
+                                <sh_template>SCRIPT_STYLE</sh_template>
+                                <template>JAVADOC_STYLE</template>
+                            </mapping>
+                            <includes>
+                                <include>**/*.sh</include>
+                                <include>**/*.bat</include>
+                                <include>**/*.tmpl</include>
+                                <include>**/*.xml</include>
+                                <include>**/*.html</include>
+                                <include>**/*.txt</include>
+                                <include>**/*.cmake</include>
+                                <include>**/*.in</include>
+                                <include>**/*.mk</include>
+                                <include>**/*.java</include>
+                                <include>**/*.cpp</include>
+                                <include>**/*.hpp</include>
+                                <include>**/*.c</include>
+                                <include>**/*.h</include>
+                                <include>**/*.m</include>
+                                <include>**/*.dox</include>
+                                <include>**/*.vm</include>
+                                <include>**/*.cvm</include>
+                                <include>**/*.hvm</include>
+                                <include>**/*.template</include>
+                                <include>**/*.sh_template</include>
+                                <include>**/*.bat_template</include>
+                                <include>**/sonar-project.properties</include>
+                            </includes>
+                            <excludes>
+                                <exclude>checkstyle.xml</exclude>
+                                <exclude>findbugs-exclude-filter.xml</exclude>
+                                <exclude>suppressions.xml</exclude>
+                            </excludes>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>format</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 
