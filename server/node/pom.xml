@@ -779,7 +779,7 @@
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${sdk.path}/java</outputDirectory>
-                                    <destFileName>kaa-client-sdk-${project.version}.jar</destFileName>
+                                    <destFileName>kaa-java-ep-sdk-${project.version}.jar</destFileName>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.kaaproject.kaa.client</groupId>
@@ -789,7 +789,7 @@
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${sdk.path}/android</outputDirectory>
-                                    <destFileName>kaa-client-sdk-android-${project.version}.jar</destFileName>
+                                    <destFileName>kaa-android-ep-sdk-${project.version}.jar</destFileName>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.kaaproject.kaa.client</groupId>
@@ -799,7 +799,7 @@
                                     <type>tar.gz</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${sdk.path}/cpp</outputDirectory>
-                                    <destFileName>kaa-client-sdk-${project.version}.tar.gz</destFileName>
+                                    <destFileName>kaa-cpp-ep-sdk-${project.version}.tar.gz</destFileName>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.kaaproject.kaa.client</groupId>
@@ -809,7 +809,7 @@
                                     <type>tar.gz</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${sdk.path}/c</outputDirectory>
-                                    <destFileName>kaa-client-sdk-${project.version}.tar.gz</destFileName>
+                                    <destFileName>kaa-c-ep-sdk-${project.version}.tar.gz</destFileName>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.kaaproject.kaa.client</groupId>
@@ -819,7 +819,7 @@
                                     <type>tar.gz</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${sdk.path}/objc</outputDirectory>
-                                    <destFileName>kaa-client-sdk-${project.version}.tar.gz</destFileName>
+                                    <destFileName>kaa-objc-ep-sdk-${project.version}.tar.gz</destFileName>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>
