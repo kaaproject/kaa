@@ -45,6 +45,15 @@ public:
      */
     SessionKey generateSessionKey(std::size_t length);
 
+    /**
+     * Checks consistency of the key pair.
+     *
+     * @param[in] keys     Target key pair
+     * @retval    true     Keys are valid
+     * @retval    false    Keys are invalid
+     */
+    bool checkKeyPair(const KeyPair &keys);
+
     static PublicKey loadPublicKey(const std::string& fileName);
 
     static PrivateKey loadPrivateKey(const std::string& fileName);

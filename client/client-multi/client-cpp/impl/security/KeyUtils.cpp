@@ -32,6 +32,29 @@ SessionKey KeyUtils::generateSessionKey(std::size_t length)
     return Botan::SymmetricKey(rng_, length);
 }
 
+bool KeyUtils::checkKeyPair(const KeyPair &keys)
+{
+    try {
+        auto &pub = keys.getPublicKey();
+        std::unique_ptr<Botan::Public_Key> ppub{Botan::X509::load_key(pub)};
+        bool strongCheck = true;
+        bool result = ppub->check_key(rng_, strongCheck);
+
+        if (!result)
+            return result;
+
+        auto &priv = keys.getPrivateKey();
+        Botan::DataSource_Memory src(priv);
+        std::unique_ptr<Botan::Private_Key> ppriv{Botan::PKCS8::load_key(src, rng_)};
+        result = ppriv->check_key(rng_, strongCheck);
+
+        return result;
+    } catch(...) {
+        // Any exceptional situation signals that keys are not valid
+        return false;
+    }
+}
+
 void KeyUtils::readFile(const std::string& fileName, boost::scoped_array<char>& buf, std::size_t& len)
 {
     std::ifstream file(fileName, std::ifstream::binary);
