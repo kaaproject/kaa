@@ -48,12 +48,6 @@ public:
     std::int32_t getEventSequenceNumber() const;
     void setEventSequenceNumber(std::int32_t sequenceNumber);
 
-    std::int32_t getConfigurationSequenceNumber() const;
-    void setConfigurationSequenceNumber(std::int32_t sequenceNumber);
-
-    std::int32_t getNotificationSequenceNumber() const;
-    void setNotificationSequenceNumber(std::int32_t sequenceNumber);
-
     SequenceNumber getAppSeqNumber() const;
     void setAppSeqNumber(SequenceNumber appSeqNumber);
 
@@ -79,6 +73,10 @@ public:
     std::string getEndpointKeyHash() const;
     void setEndpointKeyHash(const std::string& keyHash);
 
+    void setTopicListHash(const std::int32_t topicListHash);
+    std::int32_t getTopicListHash();
+
+
     virtual bool isSDKPropertiesUpdated() const { return isSDKPropertiesForUpdated_; }
 
     void read();
@@ -100,6 +98,7 @@ private:
     bool hasUpdate_;
 
     KAA_MUTEX_MUTABLE_DECLARE(sequenceNumberGuard_);
+    std::uint32_t topicListHash_;
 
     static const bimap                      parameterToToken_;
     static const SequenceNumber             appSeqNumberDefault_;

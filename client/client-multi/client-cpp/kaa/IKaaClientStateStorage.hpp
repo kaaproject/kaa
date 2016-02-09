@@ -25,19 +25,17 @@
 namespace kaa {
 
 typedef struct {
-    std::string         topicId;
+    std::int64_t        topicId;
     std::string         topicName;
     SubscriptionType    subscriptionType;
-    std::uint32_t     sequenceNumber;
+    std::uint32_t       sequenceNumber;
 } DetailedTopicState;
 
 typedef struct {
-    std::int32_t  configurationSequenceNumber;
-    std::int32_t  notificationSequenceNumber;
-    std::int32_t  eventSequenceNumber;
+    std::int32_t eventSequenceNumber;
 } SequenceNumber;
 
-typedef std::map<std::string, DetailedTopicState> DetailedTopicStates;
+typedef std::map<std::int64_t/* Topic ID */, DetailedTopicState> DetailedTopicStates;
 
 typedef std::map<std::string, std::string> AttachedEndpoints;
 
@@ -48,12 +46,6 @@ public:
     virtual std::int32_t getEventSequenceNumber() const = 0;
     virtual void setEventSequenceNumber(std::int32_t sequenceNumber) = 0;
 
-    virtual std::int32_t getConfigurationSequenceNumber() const = 0;
-    virtual void setConfigurationSequenceNumber(std::int32_t sequenceNumber) = 0;
-
-    virtual std::int32_t getNotificationSequenceNumber() const = 0;
-    virtual void setNotificationSequenceNumber(std::int32_t sequenceNumber) = 0;
-
     virtual SequenceNumber getAppSeqNumber() const = 0;
     virtual void setAppSeqNumber(SequenceNumber appSeqNumber) = 0;
 
@@ -62,6 +54,9 @@ public:
 
     virtual DetailedTopicStates getTopicStates() const = 0;
     virtual void setTopicStates(const DetailedTopicStates& stateContainer) = 0;
+
+    virtual std::int32_t getTopicListHash() = 0;
+    virtual void setTopicListHash(const std::int32_t topicListHash) = 0;
 
     virtual HashDigest getProfileHash() const = 0;
     virtual void setProfileHash(HashDigest hash) = 0;

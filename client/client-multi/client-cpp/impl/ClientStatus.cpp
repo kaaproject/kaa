@@ -62,9 +62,9 @@ static bimap create_bimap()
     return bi;
 }
 
-const bimap                 ClientStatus::parameterToToken_ = create_bimap();
-const SequenceNumber        ClientStatus::appSeqNumberDefault_ = {0, 0, 0};
-const bool                  ClientStatus::isRegisteredDefault_ = false;
+const bimap                 ClientStatus::parameterToToken_ =   create_bimap();
+const SequenceNumber        ClientStatus::appSeqNumberDefault_ =         { 0 };
+const bool                  ClientStatus::isRegisteredDefault_ =         false;
 const HashDigest            ClientStatus::endpointHashDefault_;
 const DetailedTopicStates   ClientStatus::topicStatesDefault_;
 const AttachedEndpoints     ClientStatus::attachedEndpoints_;
@@ -118,7 +118,7 @@ template<>
 void ClientParameter<SequenceNumber>::save(std::ostream &os)
 {
     std::stringstream ss;
-    ss << value_.configurationSequenceNumber << ";" << value_.notificationSequenceNumber << ";" << value_.eventSequenceNumber << ";";
+    ss << value_.eventSequenceNumber << ";";
     os << attributeName_ << "=" << ss.str() << std::endl;
 }
 
@@ -150,10 +150,10 @@ void ClientParameter<DetailedTopicStates>::save(std::ostream &os)
                 os << ",";
             }
 
-            os << "[" << convertToByteArrayString(it->second.topicId) << ","
-                        << convertToByteArrayString(it->second.topicName) << ","
-                        << (it->second.subscriptionType == SubscriptionType::MANDATORY_SUBSCRIPTION ? "m," : "v,")
-                        << it->second.sequenceNumber << "]";
+            os << "[" << it->second.topicId << ","
+                      << convertToByteArrayString(it->second.topicName) << ","
+                      << (it->second.subscriptionType == SubscriptionType::MANDATORY_SUBSCRIPTION ? "m," : "v,")
+                      << it->second.sequenceNumber << "]";
         }
         os << std::endl;
     }
@@ -207,8 +207,6 @@ void ClientParameter<SequenceNumber>::read(const std::string &strValue)
         std::string notifSNStr = strValue.substr(first_semicolon + 1, second_semicolon - first_semicolon - 1);
         std::string eventSNStr = strValue.substr(second_semicolon + 1, third_semicolon - second_semicolon - 1);
 
-        value_.configurationSequenceNumber = std::stoi(configSNStr, nullptr, 10);
-        value_.notificationSequenceNumber = std::stoi(notifSNStr, nullptr, 10);
         value_.eventSequenceNumber = std::stoi(eventSNStr, nullptr, 10);
     }
 }
@@ -227,6 +225,12 @@ template<>
 void ClientParameter<std::int32_t>::read(const std::string &strValue)
 {
     value_ = convert<std::int32_t>(strValue);
+}
+
+template<>
+void ClientParameter<std::uint64_t>::read(const std::string &strValue)
+{
+    value_ = convert<std::uint64_t>(strValue);
 }
 
 template<>
@@ -274,7 +278,7 @@ void ClientParameter<DetailedTopicStates>::read(const std::string &strValue)
             begin_pos = close_brace_pos + 1;
 
             DetailedTopicState ts;
-            ts.topicId = convertFromByteArrayString(topicId);
+            ts.topicId = std::stoll(topicId);
             ts.topicName = convertFromByteArrayString(topicName);
             ts.subscriptionType = (sType.compare("m") == 0 ? SubscriptionType::MANDATORY_SUBSCRIPTION : SubscriptionType::OPTIONAL_SUBSCRIPTION);
             ts.sequenceNumber = topicSN;
@@ -324,7 +328,8 @@ void ClientParameter<HashDigest>::read(const std::string &strValue)
     }
 }
 
-ClientStatus::ClientStatus(const std::string& filename) : filename_(filename), isSDKPropertiesForUpdated_(false), hasUpdate_(false)
+ClientStatus::ClientStatus(const std::string& filename) : filename_(filename), isSDKPropertiesForUpdated_(false)
+                                                        , hasUpdate_(false), topicListHash_(0)
 {
     auto appseqntoken = parameterToToken_.left.find(ClientParameterT::APPSEQUENCENUMBER);
     if (appseqntoken != parameterToToken_.left.end()) {
@@ -529,6 +534,14 @@ void ClientStatus::read()
     std::string token;
     std::stringstream stream;
 
+	/* First read topicList hash */
+    if (stateFile.good()) {
+	    std::getline(stateFile, token, '=');
+		std::getline(stateFile, value);
+        topicListHash_ = std::stoi(value);
+	    KAA_LOG_DEBUG(boost::format("Read topic list hash: %1%") % topicListHash_);
+	}
+
     while (stateFile.good()) {
         std::getline(stateFile, token, '=');
         auto par_t_it = parameterToToken_.right.find(token);
@@ -552,6 +565,13 @@ void ClientStatus::save()
 
     std::ofstream stateFile(filename_);
 
+    /* Save topic list hash */
+    if (stateFile.good()) {
+	    KAA_LOG_DEBUG(boost::format("Persisting topic list hash: %1%") % topicListHash_);
+	    stateFile << "topic_list_hash=" << topicListHash_ << std::endl;
+	}
+
+    /* Save other parameters */
     for (auto parameter : parameters_) {
         parameter.second->save(stateFile);
     }
@@ -575,34 +595,6 @@ void ClientStatus::setEventSequenceNumber(std::int32_t sequenceNumber)
     setAppSeqNumber(sn);
 }
 
-std::int32_t ClientStatus::getConfigurationSequenceNumber() const
-{
-    KAA_MUTEX_UNIQUE_DECLARE(lock, sequenceNumberGuard_);
-    return getAppSeqNumber().configurationSequenceNumber;
-}
-
-void ClientStatus::setConfigurationSequenceNumber(std::int32_t sequenceNumber)
-{
-    KAA_MUTEX_UNIQUE_DECLARE(lock, sequenceNumberGuard_);
-    SequenceNumber sn = getAppSeqNumber();
-    sn.configurationSequenceNumber = sequenceNumber;
-    setAppSeqNumber(sn);
-}
-
-std::int32_t ClientStatus::getNotificationSequenceNumber() const
-{
-    KAA_MUTEX_UNIQUE_DECLARE(lock, sequenceNumberGuard_);
-    return getAppSeqNumber().notificationSequenceNumber;
-}
-
-void ClientStatus::setNotificationSequenceNumber(std::int32_t sequenceNumber)
-{
-    KAA_MUTEX_UNIQUE_DECLARE(lock, sequenceNumberGuard_);
-    SequenceNumber sn = getAppSeqNumber();
-    sn.notificationSequenceNumber = sequenceNumber;
-    setAppSeqNumber(sn);
-}
-
 std::string ClientStatus::getEndpointKeyHash() const
 {
     return getParameterData<ClientParameterT::EP_KEY_HASH>(endpointKeyHashDefault_);
@@ -611,6 +603,17 @@ std::string ClientStatus::getEndpointKeyHash() const
 void ClientStatus::setEndpointKeyHash(const std::string& keyHash)
 {
     setParameterData<ClientParameterT::EP_KEY_HASH>(keyHash);
+}
+
+void ClientStatus::setTopicListHash(const std::int32_t topicListHash)
+{
+    topicListHash_ = topicListHash;
+    hasUpdate_ = true;
+}
+
+std::int32_t ClientStatus::getTopicListHash()
+{
+    return topicListHash_;
 }
 
 }
