@@ -17,14 +17,13 @@
 #import "TopicListHashCalculator.h"
 #import "EndpointGen.h"
 
-#define NULL_LIST_HASH      0
 #define EMPTRY_LIST_HASH    1
 
 @implementation TopicListHashCalculator
 
 + (int32_t)calculateTopicListHash:(NSArray *)topics {
     if (topics.count == 0) {
-        return NULL_LIST_HASH;
+        return NIL_LIST_HASH;
     }
     
     uint32_t result = EMPTRY_LIST_HASH;

@@ -30,4 +30,8 @@
     return [binaryData base64EncodedDataWithOptions:0];
 }
 
+- (NSString *)encodedString:(NSData *)binaryData {
+    return [binaryData base64EncodedStringWithOptions:0];
+}
+
 @end

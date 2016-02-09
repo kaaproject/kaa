@@ -21,6 +21,7 @@
 - (NSData *)decodeBase64:(NSData *)base64Data;
 - (NSData *)decodeString:(NSString *)base64String;
 - (NSData *)encodeBase64:(NSData *)binaryData;
+- (NSString *)encodedString:(NSData *)binaryData;
 
 @end
 

@@ -77,42 +77,64 @@
  */
 @property (nonatomic) BOOL isAttachedToUser;
 
+/**
+ * Holds hash calculated from list of available topics. See TopicListHashCalculator for more info.
+ */
+@property (nonatomic) int32_t topicListHash;
 
 /**
  * Adds topic with all its information.
- */- (void)addTopic:(Topic *)topic;
+ */
+- (void)addTopic:(Topic *)topic;
 
 /**
  * Remove topic with all its information by topic id.
- */- (void)removeTopicId:(int64_t)topicId;
+ */
+- (void)removeTopicId:(int64_t)topicId;
+
+/**
+ * Add subscription for topic by ID.
+ */
+- (void)addSubscriptionForTopicWithId:(int64_t)topicId;
+
+/**
+ * Remove subscription for topic by ID.
+ */
+- (void)removeSubscriptionForTopicWithId:(int64_t)topicId;
 
 /**
  * Used to update subscription info.
- */- (BOOL)updateSubscriptionInfoForTopicId:(int64_t)topicId sequence:(int32_t)sequenceNumber;
+ */
+- (BOOL)updateSubscriptionInfoForTopicId:(int64_t)topicId sequence:(int32_t)sequenceNumber;
 
 /**
  * Return dictionary with notification subscriptions information with Topic id as key 
  * and sequence number of TopicSubscriptionInfo as value.
  *
  * @return <@(int64_t), @(int32_t)> as key-value.
- */- (NSDictionary *)getNotificationSubscriptions;
+ */
+- (NSDictionary *)getNotificationSubscriptions;
 
 /**
  * @see Topic
  * @return list of topics
- */- (NSArray *)getTopics;
+ */
+- (NSArray *)getTopics;
 
 /**
  * @return next event sequence number that could be used by the system.
- */- (int32_t)getAndIncrementEventSequenceNumber;
+ */
+- (int32_t)getAndIncrementEventSequenceNumber;
 
 /**
  * @return YES - if configuration version was updated, NO - if it wasn't.
- */- (BOOL)isConfigurationVersionUpdated;
+ */
+- (BOOL)isConfigurationVersionUpdated;
 
 /**
  * Persists current client state.
- */- (void)persist;
+ */
+- (void)persist;
 
 /**
  * Generates and stores new endpoint access token.

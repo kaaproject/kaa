@@ -16,6 +16,8 @@
 
 #import <Foundation/Foundation.h>
 
+#define NIL_LIST_HASH (0)
+
 /**
  * Util class used to calculate hash of list of topics.
  *
