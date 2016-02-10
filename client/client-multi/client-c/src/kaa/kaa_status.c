@@ -16,6 +16,9 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <string.h>
+
+#include "platform/ext_notification_receiver.h"
 #include "platform/stdio.h"
 #include "platform/ext_sha.h"
 #include "platform/ext_status.h"
@@ -23,7 +26,6 @@
 #include "kaa_common.h"
 #include "kaa_defaults.h"
 #include "utilities/kaa_mem.h"
-#include <string.h>
 
 
 extern kaa_error_t kaa_status_set_updated(kaa_status_t *self, bool is_updated);
@@ -42,6 +44,13 @@ extern kaa_error_t kaa_status_set_updated(kaa_status_t *self, bool is_updated);
  * states (variable length)
  *  topic_id
  *  sqn_number
+ * topics_count                     sizeof(size_t)
+ * topics (variable length)
+ *  topic_id
+ *  subscription_type
+ *  name_length
+ *  name
+ * topic_hash                       sizeof(int32_t)
  * token_buf                        sizeof(KAA_SDK_TOKEN)
  */
 #define KAA_STATUS_STATIC_SIZE      (sizeof(bool) + sizeof(bool) + sizeof(size_t) + sizeof(uint32_t) + sizeof(size_t) + SHA_1_DIGEST_LENGTH * sizeof(char) * 2 + sizeof(KAA_SDK_TOKEN))
@@ -54,16 +63,19 @@ extern kaa_error_t kaa_status_set_updated(kaa_status_t *self, bool is_updated);
         memcpy(TO, FROM, SIZE); \
         TO += SIZE
 
+// TODO: discuss/implement a failover, when storage is somehow broken
 kaa_error_t kaa_status_create(kaa_status_t ** kaa_status_p)
 {
     KAA_RETURN_IF_NIL(kaa_status_p, KAA_ERR_BADPARAM);
 
-    kaa_status_t * kaa_status = (kaa_status_t *) KAA_CALLOC(1, sizeof(kaa_status_t));
+    kaa_status_t *kaa_status = KAA_CALLOC(1, sizeof(*kaa_status));
     KAA_RETURN_IF_NIL(kaa_status, KAA_ERR_NOMEM);
 
     char token_buf[sizeof(KAA_SDK_TOKEN)];
     kaa_status->topic_states = kaa_list_create();
     KAA_RETURN_IF_NIL(kaa_status->topic_states, KAA_ERR_NOMEM);
+    kaa_status->topics = kaa_list_create();
+    KAA_RETURN_IF_NIL(kaa_status->topics, KAA_ERR_NOMEM);
 
     char *  read_buf = NULL;
     char *  read_buf_head = NULL;
@@ -71,6 +83,7 @@ kaa_error_t kaa_status_create(kaa_status_t ** kaa_status_p)
     bool    needs_deallocation = false;
     ext_status_read(&read_buf, &read_size, &needs_deallocation);
     read_buf_head = read_buf;
+
     if (read_size >= KAA_STATUS_STATIC_SIZE + sizeof(size_t)) {
         READ_BUFFER(read_buf, &kaa_status->is_registered, sizeof(kaa_status->is_registered));
         READ_BUFFER(read_buf, &kaa_status->is_attached, sizeof(kaa_status->is_attached));
@@ -82,7 +95,7 @@ kaa_error_t kaa_status_create(kaa_status_t ** kaa_status_p)
         READ_BUFFER(read_buf, &enpoint_access_token_length, sizeof(enpoint_access_token_length));
 
         if (enpoint_access_token_length > 0) {
-            kaa_status->endpoint_access_token = (char * ) KAA_MALLOC((enpoint_access_token_length + 1) * sizeof(char));
+            kaa_status->endpoint_access_token = KAA_MALLOC((enpoint_access_token_length + 1) * sizeof(char));
             if (!kaa_status->endpoint_access_token) {
                 KAA_FREE(kaa_status);
                 return KAA_ERR_NOMEM;
@@ -94,7 +107,7 @@ kaa_error_t kaa_status_create(kaa_status_t ** kaa_status_p)
         size_t states_count = 0;
         READ_BUFFER(read_buf, &states_count, sizeof(size_t));
         while (states_count--) {
-            kaa_topic_state_t *state = (kaa_topic_state_t *)KAA_MALLOC(sizeof(kaa_topic_state_t));
+            kaa_topic_state_t *state = KAA_MALLOC(sizeof(kaa_topic_state_t));
             KAA_RETURN_IF_NIL(state, KAA_ERR_NOMEM);
             READ_BUFFER(read_buf, &state->topic_id, sizeof(uint64_t));
             READ_BUFFER(read_buf, &state->sqn_number, sizeof(uint32_t));
@@ -105,6 +118,33 @@ kaa_error_t kaa_status_create(kaa_status_t ** kaa_status_p)
             }
         }
 
+        // Restore all topics
+
+        size_t topics_count;
+        READ_BUFFER(read_buf, &topics_count, sizeof(topics_count));
+
+        while (topics_count--) {
+            kaa_topic_t *topic = KAA_MALLOC(sizeof(*topic));
+            KAA_RETURN_IF_NIL(topic, KAA_ERR_NOMEM);
+
+            READ_BUFFER(read_buf, &topic->id, sizeof(topic->id));
+            READ_BUFFER(read_buf, &topic->subscription_type,
+                        sizeof(topic->subscription_type));
+            READ_BUFFER(read_buf, &topic->name_length, sizeof(topic->name_length));
+
+            if (topic->name_length) {
+                topic->name = KAA_CALLOC(topic->name_length + 1, 1);
+                KAA_RETURN_IF_NIL(topic->name, KAA_ERR_NOMEM);
+                READ_BUFFER(read_buf, topic->name, topic->name_length);
+            }
+
+            if (!kaa_list_push_back(kaa_status->topics, topic)) {
+                KAA_FREE(topic);
+                return KAA_ERR_NOMEM;
+            }
+        }
+
+        READ_BUFFER(read_buf, &kaa_status->topic_list_hash, sizeof(kaa_status->topic_list_hash));
         READ_BUFFER(read_buf, token_buf, sizeof(token_buf));
         if (strcmp(token_buf, KAA_SDK_TOKEN))
             kaa_status->is_registered = false;
@@ -124,6 +164,7 @@ void kaa_status_destroy(kaa_status_t *self)
     if (self) {
         KAA_FREE(self->endpoint_access_token);
         kaa_list_destroy(self->topic_states, NULL);
+        kaa_list_destroy(self->topics, NULL);
         KAA_FREE(self);
     }
 }
@@ -185,7 +226,29 @@ kaa_error_t kaa_status_save(kaa_status_t *self)
 
     size_t endpoint_access_token_length = self->endpoint_access_token ? strlen(self->endpoint_access_token) : 0;
     size_t states_count = kaa_list_get_size(self->topic_states);
-    size_t buffer_size = KAA_STATUS_STATIC_SIZE + sizeof(endpoint_access_token_length) + endpoint_access_token_length + states_count * (sizeof(uint32_t) + sizeof(uint64_t));
+    size_t topics_count = kaa_list_get_size(self->topics);
+
+    // Calculate size of whole list of topics
+    kaa_list_node_t *topic_node = kaa_list_begin(self->topics);
+    size_t topics_size = 0;
+    while (topic_node) {
+        kaa_topic_t *topic = kaa_list_get_data(topic_node);
+
+        topics_size += sizeof(topic->id)
+                    + sizeof(topic->subscription_type)
+                    + sizeof(topic->name_length)
+                    + topic->name_length;
+
+        topic_node = kaa_list_next(topic_node);
+    }
+
+
+    size_t buffer_size = KAA_STATUS_STATIC_SIZE
+            + sizeof(endpoint_access_token_length)
+            + endpoint_access_token_length
+            + states_count * (sizeof(uint32_t) + sizeof(uint64_t))
+            + topics_size
+            + sizeof(int32_t);
 
     char *buffer_head = KAA_MALLOC(buffer_size * sizeof(char));
     KAA_RETURN_IF_NIL(buffer_head, KAA_ERR_NOMEM);
@@ -197,7 +260,8 @@ kaa_error_t kaa_status_save(kaa_status_t *self)
     WRITE_BUFFER(&self->event_seq_n, buffer, sizeof(self->event_seq_n));
     WRITE_BUFFER(self->endpoint_public_key_hash, buffer, SHA_1_DIGEST_LENGTH);
     WRITE_BUFFER(self->profile_hash, buffer, SHA_1_DIGEST_LENGTH);
-    WRITE_BUFFER(&endpoint_access_token_length, buffer, sizeof(endpoint_access_token_length));
+    WRITE_BUFFER(&endpoint_access_token_length, buffer,
+                 sizeof(endpoint_access_token_length));
     if (endpoint_access_token_length) {
         WRITE_BUFFER(self->endpoint_access_token, buffer, endpoint_access_token_length);
     }
@@ -205,11 +269,25 @@ kaa_error_t kaa_status_save(kaa_status_t *self)
     kaa_list_node_t *state_node = kaa_list_begin(self->topic_states);
     WRITE_BUFFER(&states_count, buffer, sizeof(size_t));
     while (state_node) {
-        kaa_topic_state_t *state = (kaa_topic_state_t *)kaa_list_get_data(state_node);
+        kaa_topic_state_t *state = kaa_list_get_data(state_node);
         WRITE_BUFFER(&state->topic_id, buffer, sizeof(uint64_t));
         WRITE_BUFFER(&state->sqn_number, buffer, sizeof(uint32_t));
         state_node = kaa_list_next(state_node);
     }
+
+    topic_node = kaa_list_begin(self->topics);
+    WRITE_BUFFER(&topics_count, buffer, sizeof(topics_count));
+    while (topic_node) {
+        kaa_topic_t *topic = kaa_list_get_data(topic_node);
+
+        WRITE_BUFFER(&topic->id, buffer, sizeof(topic->id));
+        WRITE_BUFFER(&topic->subscription_type, buffer, sizeof(topic->subscription_type));
+        WRITE_BUFFER(&topic->name_length, buffer, sizeof(topic->name_length));
+        WRITE_BUFFER(topic->name, buffer, topic->name_length);
+        topic_node = kaa_list_next(topic_node);
+    }
+
+    WRITE_BUFFER(&self->topic_list_hash, buffer, sizeof(self->topic_list_hash));
     WRITE_BUFFER(KAA_SDK_TOKEN, buffer, sizeof(KAA_SDK_TOKEN));
 
     ext_status_store(buffer_head, buffer_size);
