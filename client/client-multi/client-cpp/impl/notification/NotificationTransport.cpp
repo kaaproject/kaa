@@ -42,6 +42,7 @@ std::vector<TopicState> NotificationTransport::prepareTopicStatesForRequest()
     for (auto& topicState : requestTopicStates) {
          topicState.topicId = currentTopicState->first;
          topicState.seqNumber = currentTopicState->second;
+         currentTopicState++;
     }
 
     return requestTopicStates;
