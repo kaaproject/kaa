@@ -23,7 +23,7 @@ namespace kaa {
 
 class MockNotificationListener: public INotificationListener {
 public:
-    virtual void onNotification(const std::string& topicId, const KaaNotification& notification) { ++onNotification_; }
+    virtual void onNotification(const std::int64_t topicId, const KaaNotification& notification) { ++onNotification_; }
 
 public:
     std::size_t onNotification_ = 0;

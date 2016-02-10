@@ -73,15 +73,13 @@ public:
     virtual void                                removeTopicListListener(INotificationTopicListListener& listener);
     virtual Topics                              getTopics();
     virtual void                                addNotificationListener(INotificationListener& listener);
-    virtual void                                addNotificationListener(const std::string& topidId,
-                                                                        INotificationListener& listener);
+    virtual void                                addNotificationListener(std::int64_t topicId, INotificationListener& listener);
     virtual void                                removeNotificationListener(INotificationListener& listener);
-    virtual void                                removeNotificationListener(const std::string& topidId,
-                                                                           INotificationListener& listener);
-    virtual void                                subscribeToTopic(const std::string& id, bool forceSync);
-    virtual void                                subscribeToTopics(const std::list<std::string>& idList, bool forceSync);
-    virtual void                                unsubscribeFromTopic(const std::string& id, bool forceSync);
-    virtual void                                unsubscribeFromTopics(const std::list<std::string>& idList, bool forceSync);
+    virtual void                                removeNotificationListener(std::int64_t topicId, INotificationListener& listener);
+    virtual void                                subscribeToTopic(std::int64_t id, bool forceSync);
+    virtual void                                subscribeToTopics(const std::list<std::int64_t>& idList, bool forceSync);
+    virtual void                                unsubscribeFromTopic(std::int64_t id, bool forceSync);
+    virtual void                                unsubscribeFromTopics(const std::list<std::int64_t>& idList, bool forceSync);
     virtual void                                syncTopicSubscriptions();
     virtual void                                addConfigurationListener(IConfigurationReceiver &receiver);
     virtual void                                removeConfigurationListener(IConfigurationReceiver &receiver);
