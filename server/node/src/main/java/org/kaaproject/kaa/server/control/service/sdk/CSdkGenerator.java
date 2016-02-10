@@ -1,17 +1,17 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.server.control.service.sdk;
@@ -316,7 +316,7 @@ public class CSdkGenerator extends SdkGenerator {
         context.put("Integer", Integer.class);
         context.put("ServerNameUtil", ServerNameUtil.class);
 
-        return generateSourceFromTemplate(TEMPLATE_DIR + File.separator + "kaa_defaults.vm", context).getBytes();
+        return generateSourceFromTemplate(TEMPLATE_DIR + File.separator + "kaa_defaults.hvm", context).getBytes();
     }
 
     private List<TarEntryData> generateProfileSources(String profileSchemaBody) {
@@ -324,7 +324,7 @@ public class CSdkGenerator extends SdkGenerator {
         List<TarEntryData> tarEntries = new LinkedList<>();
 
         tarEntries.add(createTarEntry(PROFILE_HEADER,
-                                      processHeaderTemplate("kaa_profile_definitions.vm", schema, PROFILE_NAMESPACE)));
+                                      processHeaderTemplate("kaa_profile_definitions.hvm", schema, PROFILE_NAMESPACE)));
 
         tarEntries.addAll(generateSourcesFromSchema(schema, PROFILE_SOURCE_NAME_PATTERN, PROFILE_NAMESPACE));
 
@@ -336,7 +336,7 @@ public class CSdkGenerator extends SdkGenerator {
         List<TarEntryData> tarEntries = new LinkedList<>();
 
         tarEntries.add(createTarEntry(LOGGING_HEADER,
-                                      processHeaderTemplate("kaa_logging_definitions.vm", schema, LOGGING_NAMESPACE)));
+                                      processHeaderTemplate("kaa_logging_definitions.hvm", schema, LOGGING_NAMESPACE)));
 
         tarEntries.addAll(generateSourcesFromSchema(schema, LOGGING_SOURCE_NAME_PATTERN, LOGGING_NAMESPACE));
 
@@ -348,7 +348,7 @@ public class CSdkGenerator extends SdkGenerator {
         List<TarEntryData> tarEntries = new LinkedList<>();
 
         tarEntries.add(createTarEntry(CONFIGURATION_HEADER,
-                                      processHeaderTemplate("kaa_configuration_definitions.vm", schema, CONFIGURATION_NAMESPACE)));
+                                      processHeaderTemplate("kaa_configuration_definitions.hvm", schema, CONFIGURATION_NAMESPACE)));
 
         tarEntries.addAll(generateSourcesFromSchema(schema, CONFIGURATION_SOURCE_NAME_PATTERN, CONFIGURATION_NAMESPACE));
 
@@ -360,7 +360,7 @@ public class CSdkGenerator extends SdkGenerator {
         List<TarEntryData> tarEntries = new LinkedList<>();
 
         tarEntries.add(createTarEntry(NOTIFICATION_HEADER,
-                                      processHeaderTemplate("kaa_notification_definitions.vm", schema, NOTIFICATION_NAMESPACE)));
+                                      processHeaderTemplate("kaa_notification_definitions.hvm", schema, NOTIFICATION_NAMESPACE)));
 
         tarEntries.addAll(generateSourcesFromSchema(schema, NOTIFICATION_SOURCE_NAME_PATTERN, NOTIFICATION_NAMESPACE));
 
