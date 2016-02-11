@@ -232,7 +232,7 @@ public class CSdkGenerator extends SdkGenerator {
         sdkFile.finish();
         sdkFile.close();
 
-        String sdkFileName = C_SDK_PREFIX + sdkProfile.getToken();
+        String sdkFileName = C_SDK_PREFIX + sdkProfile.getToken() + ".tar.gz";
 
         FileData sdk = new FileData();
         sdk.setFileName(sdkFileName);
