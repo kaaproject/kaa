@@ -20,7 +20,6 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getDto;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.isValidId;
-import static org.kaaproject.kaa.server.common.dao.service.Validator.isValidObject;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateHash;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateObject;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateSqlId;
@@ -416,31 +415,10 @@ public class EndpointServiceImpl implements EndpointService {
     };
 
     @Override
-    public EndpointUserDto saveEndpointUser(EndpointUserDto endpointUserDto) {
-        EndpointUserDto endpointUser = null;
-        if (isValidObject(endpointUserDto)) {
-            EndpointUser user = endpointUserDao.findByExternalIdAndTenantId(endpointUserDto.getExternalId(), endpointUserDto.getTenantId());
-            if (user == null || user.getId().equals(endpointUserDto.getId())) {
-                endpointUser = getDto(endpointUserDao.save(endpointUserDto));
-            } else {
-                throw new IncorrectParameterException("Can't save endpoint user with same external id");
-            }
-        }
-        return endpointUser;
-    }
-
-    @Override
     @Transactional
     public EndpointGroupDto findDefaultGroup(String appId) {
         validateSqlId(appId, "Can't find default endpoint group by app id. Incorrect app id " + appId);
         return getDto(endpointGroupDao.findByAppIdAndWeight(appId, DEFAULT_GROUP_WEIGHT));
-    }
-
-    @Override
-    public void removeEndpointUserById(String id) {
-        if (isValidId(id)) {
-            endpointUserDao.removeById(id);
-        }
     }
 
     @Override

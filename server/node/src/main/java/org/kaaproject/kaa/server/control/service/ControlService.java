@@ -1137,27 +1137,6 @@ public interface ControlService {
     EndpointUserDto getEndpointUser(String endpointUserId) throws ControlServiceException;
 
     /**
-     * Edits the endpoint user.
-     *
-     * @param endpointUser
-     *            the endpoint user
-     * @return the endpoint user dto
-     * @throws ControlServiceException
-     *             the control service exception
-     */
-    EndpointUserDto editEndpointUser(EndpointUserDto endpointUser) throws ControlServiceException;
-
-    /**
-     * Delete endpoint user.
-     *
-     * @param endpointUserId
-     *            the endpoint user id
-     * @throws ControlServiceException
-     *             the control service exception
-     */
-    void deleteEndpointUser(String endpointUserId) throws ControlServiceException;
-
-    /**
      * Generate endpoint user access token.
      *
      * @param externalUid

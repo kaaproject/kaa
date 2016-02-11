@@ -237,21 +237,6 @@ public interface EndpointService {
     EndpointUserDto findEndpointUserByExternalIdAndTenantId(String externalId, String tenantId);
 
     /**
-     * Save endpoint user.
-     *
-     * @param endpointUserDto the endpoint user dto
-     * @return the endpoint user dto
-     */
-    EndpointUserDto saveEndpointUser(EndpointUserDto endpointUserDto);
-
-    /**
-     * Remove endpoint user by id.
-     *
-     * @param id the endpoint user id
-     */
-    void removeEndpointUserById(String id);
-
-    /**
      * Generate endpoint user access token from external user id.
      *
      * @param externalUid the external user id

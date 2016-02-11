@@ -822,6 +822,10 @@ public class DefaultControlService implements ControlService {
         ApplicationDto appDto = applicationService.findAppByApplicationToken(configuration.getAppToken());
 
         EndpointUserDto userDto = endpointService.findEndpointUserByExternalIdAndTenantId(configuration.getUserId(), appDto.getTenantId());
+        
+        if(userDto == null){
+            throw new NotFoundException("Specified user not found!");
+        }
 
         configuration.setUserId(userDto.getId());
         configuration = userConfigurationService.saveUserConfiguration(configuration);
@@ -1703,29 +1707,6 @@ public class DefaultControlService implements ControlService {
     @Override
     public EndpointUserDto getEndpointUser(String endpointUserId) throws ControlServiceException {
         return endpointService.findEndpointUserById(endpointUserId);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.kaaproject.kaa.server.control.service.ControlService#editEndpointUser
-     * (org.kaaproject.kaa.common.dto.EndpointUserDto)
-     */
-    @Override
-    public EndpointUserDto editEndpointUser(EndpointUserDto endpointUser) throws ControlServiceException {
-        return endpointService.saveEndpointUser(endpointUser);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.kaaproject.kaa.server.control.service.ControlService#
-     * deleteEndpointUser (java.lang.String)
-     */
-    @Override
-    public void deleteEndpointUser(String endpointUserId) throws ControlServiceException {
-        endpointService.removeEndpointUserById(endpointUserId);
     }
 
     /*
