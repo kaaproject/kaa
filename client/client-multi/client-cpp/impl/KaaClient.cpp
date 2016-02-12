@@ -1,17 +1,17 @@
-/*
- * Copyright 2014-2015 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 #include <fstream>
@@ -283,15 +283,24 @@ void KaaClient::initClientKeys()
 {
     std::string publicKeyLocation = context_.getProperties().getPublicKeyFileName();
     std::string privateKeyLocation = context_.getProperties().getPrivateKeyFileName();
+    KeyUtils utils;
+    bool regenerate = true;
 
     std::ifstream key(publicKeyLocation);
     bool exists = key.good();
     key.close();
+
     if (exists) {
-        clientKeys_.reset(new KeyPair(KeyUtils::loadKeyPair(publicKeyLocation, privateKeyLocation)));
-    } else {
-        clientKeys_.reset(new KeyPair(KeyUtils().generateKeyPair(2048)));
-        KeyUtils::saveKeyPair(*clientKeys_, publicKeyLocation, privateKeyLocation);
+        KeyPair keys(utils.loadKeyPair(publicKeyLocation, privateKeyLocation));
+        if (utils.checkKeyPair(keys)) {
+            clientKeys_.reset(new KeyPair(keys));
+            regenerate = false; // Keys are valid, no need to create them again
+        }
+    }
+
+    if (regenerate) {
+        clientKeys_.reset(new KeyPair(utils.generateKeyPair(2048)));
+        utils.saveKeyPair(*clientKeys_, publicKeyLocation, privateKeyLocation);
     }
 
     EndpointObjectHash publicKeyHash(clientKeys_->getPublicKey().begin(), clientKeys_->getPublicKey().size());

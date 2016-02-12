@@ -1,17 +1,17 @@
-/*
- * Copyright 2014-2015 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 #import <Foundation/Foundation.h>
@@ -48,7 +48,7 @@ typedef enum {
  * module is performed using <KaaClient> interface.
  *
  * Class contains abstract methods
- * AbstractKaaClient#createHttpClient(NSString, SecKeyRef, SecKeyRef, NSData)
+ * [AbstractKaaClient createHttpClientWithURLString:privateKeyRef:publicKeyRef:remoteKey:]
  * and few more which are used to reference the platform-specific implementation
  * of http client and Kaa's state persistent storage.
  *
@@ -72,7 +72,8 @@ typedef enum {
                                               clientState:(id<KaaClientState>)state;
 
 /**
- * @param bootstrap servers <TransportProtocolId, List<TransportConnectionInfo>> as key-value
+ * <p></p>
+ * @param bootstrapServers Dictionary with <TransportProtocolId, NSArray < TransportConnectionInfo >> as key-value
  */
 - (id<KaaInternalChannelManager>)buildChannelManagerWithBootstrapManager:(id<BootstrapManager>)bootstrapManager
                                                                  servers:(NSDictionary *)bootstrapServers;

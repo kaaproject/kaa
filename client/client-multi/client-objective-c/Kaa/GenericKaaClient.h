@@ -1,17 +1,17 @@
-/*
- * Copyright 2014-2015 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 #ifndef Kaa_GenericKaaClient_h
@@ -32,8 +32,8 @@
 #import "LogDeliveryDelegate.h"
 
 /**
- * Root interface for the Kaa client.
- * This interface contain methods that are predefined and does not contain any auto-generated code.
+ * Root interface for the Kaa client.<br>
+ * This interface contains methods that are predefined and does not contain any auto-generated code.
  */
 @protocol GenericKaaClient <NSObject>
 
@@ -93,8 +93,8 @@
 - (void)removeTopicListDelegate:(id<NotificationTopicListDelegate>)delegate;
 
 /**
- * Retrieve a list of available notification topics.
- * @return List of available topics <Topic>
+ * Retrieve an array of available notification topics.
+ * @return Array of available topics <Topic>
  */
 - (NSArray *)getTopics;
 
@@ -104,11 +104,11 @@
 - (void)addNotificationDelegate:(id<NotificationDelegate>)delegate;
 
 /**
- * Add delegate to receive notifications relating to the specified topic.
+ * Add delegate to receive notifications relating to the specified topic.<br>
  * Delegate(s) for optional topics may be added/removed irrespective to
- * whether subscription was already or not.
+ * whether subscription existed or not.
  *
- * @throws UnavailableTopicException if unknown topic id is provided.
+ * @exception UnavailableTopicException Unknown topic id is provided.
  */
 - (void)addNotificationDelegate:(id<NotificationDelegate>)delegate forTopicId:(int64_t)topicId;
 
@@ -118,50 +118,50 @@
 - (void)removeNotificationDelegate:(id<NotificationDelegate>)delegate;
 
 /**
- * Remove delegate receiving notifications for the specified topic.
+ * Remove delegate receiving notifications for the specified topic.<br>
  * Delegate(s) for optional topics may be added/removed irrespective to
- * whether subscription was already or not.
+ * whether subscription existed or not.
  *
- * @param topicId - id of topic (both mandatory and optional).
+ * @param topicId ID of topic (both mandatory and optional).
  *
- * @throws UnavailableTopicException if unknown topic id is provided.
+ * @exception UnavailableTopicException Unknown topic id is provided.
  */
 - (void)removeNotificationDelegate:(id<NotificationDelegate>)delegate forTopicId:(int64_t)topicId;
 
 /**
  * Subscribe to notifications relating to the specified optional topic.
- * @param topicId - id of a optional topic.
+ * @param topicId ID of a optional topic.
  *
- * @throws UnavailableTopicException if unknown topic id is provided or topic isn't optional.
+ * @exception UnavailableTopicException Unknown topic id is provided or topic isn't optional.
  */
 - (void)subscribeToTopicWithId:(int64_t)topicId;
 
 /**
  * Subscribe to notifications relating to the specified optional topic.
  *
- * @param topicId - id of a optional topic.
- * @param forceSync- define whether current subscription update should be accepted immediately.
+ * @param topicId ID of an optional topic.
+ * @param forceSync Define whether current subscription update should be accepted immediately.
  *
- * @throws UnavailableTopicException if unknown topic id is provided or topic isn't optional.
+ * @exception UnavailableTopicException Unknown topic id is provided or topic isn't optional.
  */
 - (void)subscribeToTopicWithId:(int64_t)topicId forceSync:(BOOL)forceSync;
 
 /**
- * Subscribe to notifications relating to the specified list of optional topics.
+ * Subscribe to notifications relating to the specified array of optional topics.
  *
- * @param topicIds - list of optional topic id. <int64_t>
+ * @param topicIds Array of optional topic IDs. <int64_t>
  *
- * @throws UnavailableTopicException if unknown topic id is provided or topic isn't optional.
+ * @exception UnavailableTopicException Unknown topic id is provided or topic isn't optional.
  */
 - (void)subscribeToTopicsWithIDs:(NSArray *)topicIds;
 
 /**
- * Subscribe to notifications relating to the specified list of optional topics.
+ * Subscribe to notifications relating to the specified array of optional topics.
  *
- * @param topicIds - list of optional topic id. <int64_t>
- * @param forceSync - define whether current subscription update should be accepted immediately.
+ * @param topicIds Array of optional topic IDs. <int64_t>
+ * @param forceSync Define whether current subscription update should be accepted immediately.
  *
- * @throws UnavailableTopicException if unknown topic id is provided or topic isn't optional.
+ * @exception UnavailableTopicException Unknown topic id is provided or topic isn't optional.
  *
  */
 - (void)subscribeToTopicsWithIDs:(NSArray *)topicIds forceSync:(BOOL)forceSync;
@@ -170,9 +170,9 @@
  * Unsubscribe from notifications relating to the specified optional topic.
  * All previously added delegates will be removed automatically.
  *
- * @param topicId - id of a optional topic.
+ * @param topicId ID of optional topic.
  *
- * @throws UnavailableTopicException if unknown topic id is provided or topic isn't optional.
+ * @exception UnavailableTopicException Unknown topic id is provided or topic isn't optional.
  */
 - (void)unsubscribeFromTopicWithId:(int64_t)topicId;
 
@@ -180,31 +180,31 @@
  * Unsubscribe from notifications relating to the specified optional topic.
  * All previously added delegates will be removed automatically.
  *
- * @param topicId - id of a optional topic.
- * @param forceSync - define whether current subscription update should be accepted immediately.
+ * @param topicId ID of optional topic.
+ * @param forceSync Define whether current subscription update should be accepted immediately.
  *
- * @throws UnavailableTopicException if unknown topic id is provided or topic isn't optional.
+ * @exception UnavailableTopicException Unknown topic id is provided or topic isn't optional.
  */
 - (void)unsubscribeFromTopicWithId:(int64_t)topicId forceSync:(BOOL)forceSync;
 
 /**
- * Unsubscribe from notifications relating to the specified list of optional topics.
+ * Unsubscribe from notifications relating to the specified array of optional topics.
  * All previously added delegates will be removed automatically.
  *
- * @param topicIds - list of optional topic id. <int64_t>
+ * @param topicIds Array of optional topic IDs. <int64_t>
  *
- * @throws UnavailableTopicException if unknown topic id is provided or topic isn't optional.
+ * @exception UnavailableTopicException Unknown topic id is provided or topic isn't optional.
  */
 - (void)unsubscribeFromTopicsWithIDs:(NSArray *)topicIds;
 
 /**
- * Unsubscribe from notifications relating to the specified list of optional topics.
+ * Unsubscribe from notifications relating to the specified array of optional topics.
  * All previously added delegates will be removed automatically.
  *
- * @param topicIds - list of optional topic id. <int64_t>
- * @param forceSync - define whether current subscription update should be accepted immediately.
+ * @param topicIds Array of optional topic IDs. <int64_t>
+ * @param forceSync Define whether current subscription update should be accepted immediately.
  *
- * @throws UnavailableTopicException if unknown topic id is provided or topic isn't optional.
+ * @exception UnavailableTopicException Unknown topic id is provided or topic isn't optional.
  */
 - (void)unsubscribeFromTopicsWithIDs:(NSArray *)topicIds forceSync:(BOOL)forceSync;
 
@@ -236,7 +236,7 @@
 /**
  * Submits an event delegates resolution request.
  *
- * @param eventFQNs - list of event class FQNs which have to be supported by endpoint. <NSString>
+ * @param eventFQNs Array of event class FQNs which have to be supported by endpoint. <NSString>
  */
 - (void)findListenersForEventFQNs:(NSArray *)eventFQNs delegate:(id<FindEventListenersDelegate>) delegate;
 
@@ -246,7 +246,7 @@
 - (id<KaaChannelManager>)getChannelManager;
 
 /**
- * Retrieves the client's public key.
+ * Retrieves the client's public key.<br>
  * Required in user implementation of an operation data channel. Public key
  * hash (SHA-1) is used by servers as identification number to uniquely
  * identify each connected endpoint.
@@ -254,7 +254,7 @@
 - (SecKeyRef)getClientPublicKey;
 
 /**
- * Retrieves endpoint public key hash.
+ * Retrieves endpoint public key hash.<br>
  * Required in EndpointRegistrationManager implementation to react
  * on detach response from Operations server.
  *
@@ -263,11 +263,11 @@
 - (NSString *)getEndpointKeyHash;
 
 /**
- * Retrieves the client's private key.
+ * Retrieves the client's private key.<br>
  * Required in user implementation of an operation data channel. Private key
  * is used by encryption schema between endpoint and servers.
  *
- * @return client's private key
+ * @return Client's private key
  */
 - (SecKeyRef)getClientPrivateKey;
 
@@ -290,16 +290,16 @@
  * Updates with new endpoint attach request<br>
  * OnAttachEndpointOperationCallback is populated with EndpointKeyHash of an attached endpoint.
  *
- * @param endpointAccessToken - access token of the attaching endpoint
- * @param delegate - delegate to notify about result of the endpoint attaching
+ * @param endpointAccessToken Access token of the attaching endpoint
+ * @param delegate Delegate to notify about result of the endpoint attaching
  */
 - (void)attachEndpointWithAccessToken:(EndpointAccessToken *)endpointAccessToken delegate:(id<OnAttachEndpointOperationDelegate>)delegate;
 
 /**
  * Updates with new endpoint detach request
  *
- * @param endpointKeyHash - key hash of the detaching endpoint
- * @param delegate - delegate to notify about result of the enpoint attaching
+ * @param endpointKeyHash Key hash of the detaching endpoint
+ * @param delegate Delegate to notify about result of the enpoint attaching
  */
 - (void)detachEndpointWithKeyHash:(EndpointKeyHash *)endpointKeyHash delegate:(id<OnDetachEndpointOperationDelegate>)delegate;
 

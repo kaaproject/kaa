@@ -1,17 +1,17 @@
-/*
- * Copyright 2014-2015 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 #ifndef Kaa_ExecutorContext_h
@@ -38,23 +38,23 @@
 - (void)stop;
 
 /**
- * Executes lifecycle events/commands of Kaa client.
+ * Operation queue that executes lifecycle events/commands of Kaa client.
  */
 - (NSOperationQueue *)getLifeCycleExecutor;
 
 /**
- * Executes user API calls to SDK client. For example, serializing of log
+ * Operation queue that executes user API calls to SDK client. For example, serializing of log
  * records before submit to transport.
  */
 - (NSOperationQueue *)getApiExecutor;
 
 /**
- * Executes callback methods provided by SDK client user.
+ * Operation queue that executes callback methods provided by SDK client user.
  */
 - (NSOperationQueue *)getCallbackExecutor;
 
 /**
- * Executes scheduled tasks(periodically if needed) as log upload.
+ * Dispatch queue that executes scheduled tasks(periodically if needed) as log upload.
  */
 - (dispatch_queue_t)getSheduledExecutor;
 

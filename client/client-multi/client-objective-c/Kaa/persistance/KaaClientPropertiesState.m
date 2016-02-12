@@ -1,17 +1,17 @@
-/*
- * Copyright 2014-2015 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 #import "KaaClientPropertiesState.h"
@@ -24,6 +24,7 @@
 #import "UUID.h"
 #import "KeyUtils.h"
 #import "KaaLogging.h"
+#import "TopicListHashCalculator.h"
 
 #define TAG @"KaaClientPropertiesState >>>"
 
@@ -37,13 +38,16 @@
 #define IS_ATTACHED             @"is_attached"
 #define EVENT_SEQ_NUM           @"event.seq.num"
 #define PROPERTIES_HASH         @"properties.hash"
+#define TOPIC_LIST              @"topic.list"
+#define TOPIC_LIST_HASH         @"topic.list.hash"
 
 @interface KaaClientPropertiesState ()
 
 @property (nonatomic, strong) id<KAABase64> base64;
 @property (nonatomic, strong) NSMutableDictionary *state;
 @property (nonatomic, strong) NSString *stateFileLocation;
-@property (nonatomic, strong) NSMutableDictionary *notificationSubscriptions;  //<int64_t, TopicSubscriptionInfo> as key-value
+@property (nonatomic, strong) NSMutableDictionary *topicDictionary;            //<int64_t, Topic> as key-value
+@property (nonatomic, strong) NSMutableDictionary *notificationSubscriptions;  //<int64_t, int32_t> as key-value
 @property (nonatomic, strong) KeyPair *keyPair;
 @property (nonatomic) BOOL isConfigVersionUpdated;
 @property (nonatomic) BOOL hasUpdate;
@@ -51,6 +55,7 @@
 - (void)setPropertiesHash:(NSData *)hash;
 - (BOOL)isSDKProperyListUpdated:(KaaClientProperties *)sdkProperties;
 - (void)parseNotificationSubscriptions;
+- (void)parseTopics;
 - (KeyPair *)getOrGenerateKeyPair;
 - (void)deleteFileAtPath:(NSString *)path;
 
@@ -71,12 +76,14 @@
 @synthesize endpointAccessToken = _endpointAccessToken;
 @synthesize eventSequenceNumber = _eventSequenceNumber;
 @synthesize isAttachedToUser = _isAttachedToUser;
+@synthesize topicListHash = _topicListHash;
 
 - (instancetype)initWithBase64:(id<KAABase64>)base64 clientProperties:(KaaClientProperties *)properties {
     self = [super init];
     if (self) {
         self.base64 = base64;
         self.notificationSubscriptions = [NSMutableDictionary dictionary];
+        self.topicDictionary = [NSMutableDictionary dictionary];
         self.attachedEndpoints = [NSMutableDictionary dictionary];
         self.isConfigVersionUpdated = NO;
         
@@ -101,6 +108,8 @@
                 } else {
                     DDLogInfo(@"%@ SDK properties are up to date", TAG);
                 }
+                
+                [self parseTopics];
                 [self parseNotificationSubscriptions];
                 
                 NSString *attachedEndpointsString = self.state[ATTACHED_ENDPOINTS];
@@ -125,6 +134,12 @@
                     }
                     self.eventSequenceNumber = eventSeqNum;
                 }
+                
+                NSString *topicListHashString = self.state[TOPIC_LIST_HASH];
+                if (topicListHashString) {
+                    _topicListHash = [topicListHashString intValue];
+                    
+                }
             }
             @catch (NSException *exception) {
                 DDLogError(@"%@ Can't load state file. Error name: %@. Error reason: %@",
@@ -140,6 +155,13 @@
 
 - (BOOL)isConfigurationVersionUpdated {
     return self.isConfigVersionUpdated;
+}
+
+- (void)setTopicListHash:(int32_t)topicListHash {
+    if (_topicListHash != topicListHash) {
+        _topicListHash = topicListHash;
+        self.hasUpdate = YES;
+    }
 }
 
 - (BOOL)isRegistred {
@@ -158,29 +180,33 @@
     }
     
     NSMutableData *encodedData = [NSMutableData data];
-    NSArray *subscriptions = self.notificationSubscriptions.allValues;
     @try {
-        for (TopicSubscriptionInfo *info in subscriptions) {
-            size_t infoSize = [info getSize];
-            char *buffer = (char *)malloc((infoSize) * sizeof(char));
-            avro_writer_t writer = avro_writer_memory(buffer, infoSize);
+        for (Topic *topic in _topicDictionary.allValues) {
+            
+            size_t topicSize = [topic getSize];
+            char *buffer = (char *)malloc((topicSize) * sizeof(char));
+            avro_writer_t writer = avro_writer_memory(buffer, topicSize);
             if (!writer) {
-                DDLogError(@"%@ Unable to allocate '%li'bytes for avro writer during persisting", TAG, infoSize);
+                DDLogError(@"%@ Unable to allocate '%li'bytes for avro writer during persisting", TAG, topicSize);
                 continue;
             }
-            [info serialize:writer];
+            
+            [topic serialize:writer];
             [encodedData appendBytes:writer->buf length:writer->written];
             avro_writer_free(writer);
-            DDLogInfo(@"%@ Persisted %@", TAG, info);
         }
         NSData *base64Encoded = [self.base64 encodeBase64:encodedData];
         NSString *base64Str = [[NSString alloc] initWithData:base64Encoded encoding:NSUTF8StringEncoding];
-        self.state[NF_SUBSCRIPTIONS] = base64Str;
+        
+        self.state[TOPIC_LIST] = base64Str;
+        DDLogInfo(@"%@ Persisted %lli topics", TAG, (int64_t)[_topicDictionary.allValues count]);
     }
     @catch (NSException *ex) {
-        DDLogError(@"%@ Can't persist notification subscription info. Encoded data: %@", TAG, [encodedData hexadecimalString]);
-        DDLogError(@"%@ Error name: %@, reason: %@", TAG, ex.name, ex.reason);
+        DDLogError(@"%@ Can't persist topic list info. Error: %@, reason: %@", TAG, ex.name, ex.reason);
     }
+    
+    NSData *subscriptionsData = [NSKeyedArchiver archivedDataWithRootObject:_notificationSubscriptions];
+    self.state[NF_SUBSCRIPTIONS] = [self.base64 encodedString:subscriptionsData];
     
     NSMutableString *attachedEndpointsString = [NSMutableString string];
     NSArray *keys = self.attachedEndpoints.allKeys;
@@ -190,19 +216,15 @@
     }
     self.state[ATTACHED_ENDPOINTS] = attachedEndpointsString;
     self.state[EVENT_SEQ_NUM] = [NSString stringWithFormat:@"%i", self.eventSequenceNumber];
+    self.state[TOPIC_LIST_HASH] = @(_topicListHash);
     
-    @try {
-        NSFileManager *fileManager = [NSFileManager defaultManager];
-        NSString *backup = [NSString stringWithFormat:@"%@_bckp", self.stateFileLocation];
-        BOOL backupResult = [fileManager copyItemAtPath:self.stateFileLocation toPath:backup error:nil];
-        DDLogDebug(@"%@ Backup created: %d", TAG, backupResult);
-        
-        BOOL result = [self.state writeToFile:self.stateFileLocation atomically:YES];
-        DDLogDebug(@"%@ Persist finished with result: %d", TAG, result);
-    }
-    @catch (NSException *exception) {
-        DDLogError(@"%@ Can't persist state file. Error: %@, reason: %@", TAG, exception.name, exception.reason);
-    }
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSString *backup = [NSString stringWithFormat:@"%@_bckp", self.stateFileLocation];
+    BOOL backupResult = [fileManager copyItemAtPath:self.stateFileLocation toPath:backup error:nil];
+    DDLogDebug(@"%@ Backup created: %d", TAG, backupResult);
+    
+    BOOL result = [self.state writeToFile:self.stateFileLocation atomically:YES];
+    DDLogDebug(@"%@ Persist finished with result: %d", TAG, result);
 }
 
 - (NSString *)refreshEndpointAccessToken {
@@ -256,30 +278,53 @@
 }
 
 - (void)addTopic:(Topic *)topic {
-    TopicSubscriptionInfo *info = self.notificationSubscriptions[@(topic.id)];
-    if (!info) {
-        info = [[TopicSubscriptionInfo alloc] init];
-        info.topicInfo = topic;
-        info.seqNumber = 0;
-        self.notificationSubscriptions[@(topic.id)] = info;
-        self.hasUpdate = YES;
-        DDLogInfo(@"%@ Adding new seqNumber 0 for %lld subscription", TAG, topic.id);
+    NSNumber *topicId = @(topic.id);
+    if (!_topicDictionary[topicId]) {
+        _topicDictionary[topicId] = topic;
+        if (topic.subscriptionType == SUBSCRIPTION_TYPE_MANDATORY_SUBSCRIPTION) {
+            _notificationSubscriptions[topicId] = @(0);
+            DDLogInfo(@"%@ Adding new seqNumber 0 for subscription with topic id: %lli", TAG, topic.id);
+        }
+        _hasUpdate = YES;
+        DDLogInfo(@"%@ Adding new topic with id: %lli ", TAG, topic.id);
     }
 }
 
 - (void)removeTopicId:(int64_t)topicId {
-    [self.notificationSubscriptions removeObjectForKey:@(topicId)];
-    self.hasUpdate = YES;
-    DDLogDebug(@"%@ Removed subscription info for %lld", TAG, topicId);
+    NSNumber *key = @(topicId);
+    if ([_topicDictionary objectForKey:key]) {
+        [_topicDictionary removeObjectForKey:key];
+        [_notificationSubscriptions removeObjectForKey:key];
+        DDLogInfo(@"%@ Removed topic and subscription info for topic id: %lli", TAG, topicId);
+        _hasUpdate = YES;
+    }
+    
+}
+
+- (void)addSubscriptionForTopicWithId:(int64_t)topicId {
+    NSNumber *sequenceNumber = _notificationSubscriptions[@(topicId)];
+    if (!sequenceNumber) {
+        _notificationSubscriptions[@(topicId)] = @(0);
+        DDLogInfo(@"%@ Added new sequence number 0 for subscription with topic id: %lli", TAG, topicId);
+        _hasUpdate = YES;
+    }
+}
+
+- (void)removeSubscriptionForTopicWithId:(int64_t)topicId {
+    NSNumber *sequenceNumber = _notificationSubscriptions[@(topicId)];
+    if (sequenceNumber) {
+        [_notificationSubscriptions removeObjectForKey:@(topicId)];
+        DDLogInfo(@"%@ Removed subscription info for topic with id: %lli", TAG, topicId);
+        _hasUpdate = YES;
+    }
 }
 
 - (BOOL)updateSubscriptionInfoForTopicId:(int64_t)topicId sequence:(int32_t)sequenceNumber {
-    TopicSubscriptionInfo *info = self.notificationSubscriptions[@(topicId)];
+    NSNumber *seqNum = self.notificationSubscriptions[@(topicId)];
     BOOL updated = NO;
-    if (info && sequenceNumber > info.seqNumber) {
+    if (seqNum && sequenceNumber > [seqNum intValue]) {
         updated = YES;
-        info.seqNumber = sequenceNumber;
-        self.notificationSubscriptions[@(topicId)] = info;
+        self.notificationSubscriptions[@(topicId)] = @(sequenceNumber);
         self.hasUpdate = YES;
         DDLogDebug(@"%@ Updated seqNumber to %i for %lld subscription", TAG, sequenceNumber, topicId);
     }
@@ -287,20 +332,11 @@
 }
 
 - (NSDictionary *)getNotificationSubscriptions {
-    NSMutableDictionary *subscriptions = [NSMutableDictionary dictionary];
-    for (NSNumber *key in self.notificationSubscriptions.allKeys) {
-        TopicSubscriptionInfo *value = self.notificationSubscriptions[key];
-        subscriptions[key] = @(value.seqNumber);
-    }
-    return subscriptions;
+    return _notificationSubscriptions;
 }
 
 - (NSArray *)getTopics {
-    NSMutableArray *topics = [NSMutableArray array];
-    for (TopicSubscriptionInfo *info in self.notificationSubscriptions.allValues) {
-        [topics addObject:info.topicInfo];
-    }
-    return topics;
+    return _topicDictionary.allValues;
 }
 
 - (void)setAttachedEndpoints:(NSMutableDictionary *)attachedEndpoints {
@@ -363,19 +399,27 @@
 }
 
 - (void)parseNotificationSubscriptions {
-    NSString *subscriptionInfo = self.state[NF_SUBSCRIPTIONS];
-    if (subscriptionInfo) {
-        NSData *data = [self.base64 decodeString:subscriptionInfo];
-        TopicSubscriptionInfo *decodedInfo = nil;
+    NSString *encodedSubscriptions = self.state[NF_SUBSCRIPTIONS];
+    if (encodedSubscriptions) {
+        NSData *decodedSubscriptions = [self.base64 decodeString:encodedSubscriptions];
+        [_notificationSubscriptions addEntriesFromDictionary:[NSKeyedUnarchiver unarchiveObjectWithData:decodedSubscriptions]];
+    } else {
+        DDLogInfo(@"%@ No subscription info found in state", TAG);
+    }
+}
+
+- (void)parseTopics {
+    NSString *topicListStr = self.state[TOPIC_LIST];
+    if (topicListStr) {
+        NSData *data = [self.base64 decodeString:topicListStr];
+        Topic *topic = nil;
         avro_reader_t reader = avro_reader_memory([data bytes], [data length]);
         @try {
             while (reader->read < reader->len) {
-                decodedInfo = [[TopicSubscriptionInfo alloc] init];
-                [decodedInfo deserialize:reader];
-                DDLogDebug(@"%@ Loaded %@", TAG, decodedInfo);
-                if (decodedInfo) {
-                    self.notificationSubscriptions[@(decodedInfo.topicInfo.id)] = decodedInfo;
-                }
+                topic = [[Topic alloc] init];
+                [topic deserialize:reader];
+                DDLogDebug(@"%@ Loaded topic: %@", TAG, topic);
+                _topicDictionary[@(topic.id)] = topic;
             }
         }
         @catch (NSException *exception) {
@@ -383,7 +427,7 @@
         }
         avro_reader_free(reader);
     } else {
-        DDLogInfo(@"%@ No subscription info found in state", TAG);
+        DDLogInfo(@"%@ No topic list found!", TAG);
     }
 }
 
