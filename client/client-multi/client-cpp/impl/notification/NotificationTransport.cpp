@@ -120,18 +120,28 @@ void NotificationTransport::onNotificationResponse(const NotificationSyncRespons
             if (notificationProcessor_) {
                 notificationProcessor_->topicsListUpdated(topics);
             }
+
+            /* In case when we received new topic list, we need to remove
+             * outdated subscription commands.
+             */
+            for (auto subscription = subscriptions_.begin(); subscription != subscriptions_.end(); subscription++) {
+                 auto topicIsAvailable = std::find_if(topics.begin(), topics.end(), [&](Topic &topic)
+                                                      { return topic.id == subscription->topicId; });
+
+                 if (topicIsAvailable == topics.end()) {
+                     subscriptions_.erase(subscription);
+                 }
+            }
         }
     }
-
-        /* Add/remove subscriptions and then remove outdated ones using for the check received topic list */
-        for (auto& subscription : subscriptions_) {
-             if (subscription.command == ADD) {
-                 topicStates.insert(std::make_pair(subscription.topicId, 0));
-             } else {
-                 topicStates.erase(subscription.topicId);
-             }
+    /* Add/remove valid subscriptions */
+    for (auto& subscription : subscriptions_) {
+        if (subscription.command == ADD) {
+            topicStates.insert(std::make_pair(subscription.topicId, 0));
+        } else {
+            topicStates.erase(subscription.topicId);
         }
-
+    }
 
     subscriptions_.clear();
     if (!response.notifications.is_null()) {
@@ -167,11 +177,11 @@ void NotificationTransport::onNotificationResponse(const NotificationSyncRespons
                 topicStates[n.topicId] = notificationSequenceNumber;
             }
         }
-        context_.getStatus().setTopicStates(topicStates);
         if (notificationProcessor_) {
             notificationProcessor_->notificationReceived(newNotifications);
         }
-    }    
+    }
+
     context_.getStatus().setTopicStates(topicStates);
     if (response.responseStatus != SyncResponseStatus::NO_DELTA) {
         syncAck();

@@ -66,7 +66,6 @@ private:
 
     std::set<std::string>                  acceptedUnicastNotificationIds_;
     SubscriptionCommands                                    subscriptions_;
-    std::int32_t                                            topicListHash_;
 };
 
 } /* namespace kaa */
