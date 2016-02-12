@@ -127,6 +127,7 @@ import org.kaaproject.kaa.server.admin.shared.services.KaaAdminService;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.kaaproject.kaa.server.admin.shared.services.ServiceErrorCode;
 import org.kaaproject.kaa.server.common.core.schema.KaaSchemaFactoryImpl;
+import org.kaaproject.kaa.server.common.dao.exception.NotFoundException;
 import org.kaaproject.kaa.server.common.plugin.KaaPluginConfig;
 import org.kaaproject.kaa.server.common.plugin.PluginConfig;
 import org.kaaproject.kaa.server.common.plugin.PluginType;
@@ -745,6 +746,12 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             this.checkApplicationId(sdkProfile.getApplicationId());
             sdkProfile.setCreatedUsername(getCurrentUser().getUsername());
             sdkProfile.setCreatedTime(System.currentTimeMillis());
+            
+            ApplicationDto application = controlService.getApplication(sdkProfile.getApplicationId());
+            if (application == null) {
+                throw new NotFoundException("Application not found!");
+            }
+            sdkProfile.setApplicationToken(application.getApplicationToken());
             return controlService.saveSdkProfile(sdkProfile);
         } catch (Exception cause) {
             throw Utils.handleException(cause);

@@ -20,12 +20,12 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getDto;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.isValidId;
-import static org.kaaproject.kaa.server.common.dao.service.Validator.isValidObject;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateHash;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateObject;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateSqlId;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateSqlObject;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateString;
+import static org.kaaproject.kaa.server.common.dao.service.Validator.isValidObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -326,8 +326,16 @@ public class EndpointServiceImpl implements EndpointService {
         endpointIds.add(profile.getId());
         endpointUser = endpointUserDao.save(endpointUser);
         profile.setEndpointUserId(endpointUser.getId());
-        LOG.trace("Save endpoint user {} and endpoint profile {}", endpointUser, profile);
-        return saveEndpointProfile(profile);
+        while(true){
+            try{
+                LOG.trace("Save endpoint user {} and endpoint profile {}", endpointUser, profile);
+                return saveEndpointProfile(profile);
+            }catch(KaaOptimisticLockingFailureException ex){
+                LOG.warn("Optimistic lock detected in endpoint profile ", Arrays.toString(profile.getEndpointKey()), ex);
+                profile = findEndpointProfileByKeyHash(profile.getEndpointKeyHash());
+                profile.setEndpointUserId(endpointUser.getId());
+            }
+        }
     }
     
     @Override    
@@ -416,31 +424,10 @@ public class EndpointServiceImpl implements EndpointService {
     };
 
     @Override
-    public EndpointUserDto saveEndpointUser(EndpointUserDto endpointUserDto) {
-        EndpointUserDto endpointUser = null;
-        if (isValidObject(endpointUserDto)) {
-            EndpointUser user = endpointUserDao.findByExternalIdAndTenantId(endpointUserDto.getExternalId(), endpointUserDto.getTenantId());
-            if (user == null || user.getId().equals(endpointUserDto.getId())) {
-                endpointUser = getDto(endpointUserDao.save(endpointUserDto));
-            } else {
-                throw new IncorrectParameterException("Can't save endpoint user with same external id");
-            }
-        }
-        return endpointUser;
-    }
-
-    @Override
     @Transactional
     public EndpointGroupDto findDefaultGroup(String appId) {
         validateSqlId(appId, "Can't find default endpoint group by app id. Incorrect app id " + appId);
         return getDto(endpointGroupDao.findByAppIdAndWeight(appId, DEFAULT_GROUP_WEIGHT));
-    }
-
-    @Override
-    public void removeEndpointUserById(String id) {
-        if (isValidId(id)) {
-            endpointUserDao.removeById(id);
-        }
     }
 
     @Override
@@ -531,5 +518,26 @@ public class EndpointServiceImpl implements EndpointService {
 
     public void setTopicListEntryDao(TopicListEntryDao<TopicListEntry> topicListEntryDao) {
         this.topicListEntryDao = topicListEntryDao;
+    }
+    
+    @Override
+    public EndpointUserDto saveEndpointUser(EndpointUserDto endpointUserDto) {
+        EndpointUserDto endpointUser = null;
+        if (isValidObject(endpointUserDto)) {
+            EndpointUser user = endpointUserDao.findByExternalIdAndTenantId(endpointUserDto.getExternalId(), endpointUserDto.getTenantId());
+            if (user == null || user.getId().equals(endpointUserDto.getId())) {
+                endpointUser = getDto(endpointUserDao.save(endpointUserDto));
+            } else {
+                throw new IncorrectParameterException("Can't save endpoint user with same external id");
+            }
+        }
+        return endpointUser;
+    }
+    
+    @Override
+    public void removeEndpointUserById(String id) {
+        if (isValidId(id)) {
+            endpointUserDao.removeById(id);
+        }
     }
 }
