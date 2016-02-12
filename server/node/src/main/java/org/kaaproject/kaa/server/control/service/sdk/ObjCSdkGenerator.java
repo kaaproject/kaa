@@ -71,8 +71,8 @@ public class ObjCSdkGenerator extends SdkGenerator {
     private static final String KAA_SOURCE_PREFIX = "KAA";
 
     private static final String TEMPLATE_SUFFIX = ".template";
-    public static final String _H = ".h";
-    public static final String _M = ".m";
+    private static final String _H = ".h";
+    private static final String _M = ".m";
 
     private static final String NOTIFICATION_GEN = "NotificationGen";
     private static final String PROFILE_GEN = "ProfileGen";
@@ -290,7 +290,7 @@ public class ObjCSdkGenerator extends SdkGenerator {
         sdkFile.finish();
         sdkFile.close();
 
-        String sdkFileName = SDK_PREFIX + sdkProperties.getToken();
+        String sdkFileName = SDK_PREFIX + sdkProperties.getToken() + ".tar.gz";
 
         byte[] sdkData = sdkOutput.toByteArray();
 

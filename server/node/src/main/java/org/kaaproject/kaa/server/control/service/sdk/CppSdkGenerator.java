@@ -226,7 +226,7 @@ public class CppSdkGenerator extends SdkGenerator {
         sdkFile.finish();
         sdkFile.close();
 
-        String sdkFileName = CPP_SDK_PREFIX + sdkProfile.getToken();
+        String sdkFileName = CPP_SDK_PREFIX + sdkProfile.getToken() + ".tar.gz";
 
         byte[] sdkData = sdkOutput.toByteArray();
 

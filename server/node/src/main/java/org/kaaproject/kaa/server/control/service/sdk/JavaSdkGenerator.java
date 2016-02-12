@@ -583,7 +583,7 @@ public class JavaSdkGenerator extends SdkGenerator {
         sdkFile.close();
 
         String fileNamePrefix = (sdkPlatform == SdkPlatform.JAVA ? JAVA_SDK_PREFIX : ANDROID_SDK_PREFIX);
-        String sdkFileName = fileNamePrefix + sdkProfile.getToken();
+        String sdkFileName = fileNamePrefix + sdkProfile.getToken() + ".jar";
 
         byte[] sdkData = sdkOutput.toByteArray();
 
