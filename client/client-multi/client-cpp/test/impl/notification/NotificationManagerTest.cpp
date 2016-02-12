@@ -39,6 +39,8 @@
 
 namespace kaa {
 
+#define UNKNOWNTOPIC 65000
+
 void testSleep(std::size_t seconds)
 {
     std::this_thread::sleep_for(std::chrono::seconds(seconds));
@@ -102,29 +104,23 @@ BOOST_AUTO_TEST_CASE(GetTopicsTest)
     const std::string STATUS_FILE_PATH = "test_status.txt";
     IKaaClientStateStoragePtr clientStatus1(new ClientStatus(STATUS_FILE_PATH));
 
-    DetailedTopicStates states;
+    Topics topicList;
     std::size_t topicCount = 1 + rand() % 10;
-
     std::ostringstream ss;
-
+    std::int64_t topicId = 1;
     for (std::size_t i = 0; i < topicCount; ++i) {
-        DetailedTopicState topicState;
+        Topic topic;
 
-        ss.str("");
-        ss << "topic_" << i << "_id";
-        topicState.topicId = ss.str();
+        topic.id = topicId++;
 
         ss.str("");
         ss << "topic_" << i << "_name";
-        topicState.topicName = ss.str();
-
-        topicState.sequenceNumber = std::rand();
-        topicState.subscriptionType = SubscriptionType::OPTIONAL_SUBSCRIPTION;
-
-        states.insert(std::make_pair(topicState.topicId, topicState));
+        topic.name = ss.str();
+        topic.subscriptionType = SubscriptionType::OPTIONAL_SUBSCRIPTION;
+        topicList.push_back(topic);
     }
 
-    clientStatus1->setTopicStates(states);
+    clientStatus1->setTopicList(topicList);
     clientStatus1->save();
     clientStatus1.reset();
 
@@ -134,7 +130,7 @@ BOOST_AUTO_TEST_CASE(GetTopicsTest)
 
     auto topics = notificationManager.getTopics();
 
-    BOOST_CHECK_EQUAL(topics.size(), states.size());
+    BOOST_CHECK_EQUAL(topics.size(), topicList.size());
 
     std::remove(STATUS_FILE_PATH.c_str());
 }
@@ -145,14 +141,9 @@ static Topics createTopics(std::size_t topicCount, bool isOptional = true)
     topics.reserve(topicCount);
 
     std::ostringstream ss;
-
     for (std::size_t i = 0; i < topicCount; ++i) {
         Topic topic;
-
-        ss.str("");
-        ss << "topic_" << i << "_id";
-        topic.id = ss.str();
-
+        topic.id = i;
         ss.str("");
         ss << "topic_" << i << "_name";
         topic.name = ss.str();
@@ -161,7 +152,6 @@ static Topics createTopics(std::size_t topicCount, bool isOptional = true)
 
         topics.push_back(topic);
     }
-
     return topics;
 }
 
@@ -229,7 +219,7 @@ BOOST_AUTO_TEST_CASE(AddRemoveTopicListListenerTest)
     BOOST_CHECK(isTopicsEqual(topicListListener2.topics_, topics1));
 }
 
-static Notification createNotification(const std::string& topicId)
+static Notification createNotification(const std::int64_t topicId)
 {
     KaaNotification originalNotification;
     AvroByteArrayConverter<KaaNotification> serializer;
@@ -244,7 +234,7 @@ static Notification createNotification(const std::string& topicId)
     return notification;
 }
 
-static std::vector<Notification> createNotifications(std::size_t notificationCount, const std::string& topicId)
+static std::vector<Notification> createNotifications(std::size_t notificationCount, const std::int64_t topicId)
 {
     std::vector<Notification> notifications;
     notifications.reserve(notificationCount);
@@ -306,10 +296,10 @@ BOOST_AUTO_TEST_CASE(NotificationListenerForUnknownTopicTest)
 
     notificationManager.topicsListUpdated(topics);
 
-    BOOST_CHECK_THROW(notificationManager.addNotificationListener("unknown_topic_id1", topicSpecificNotificationListener)
+    BOOST_CHECK_THROW(notificationManager.addNotificationListener(UNKNOWNTOPIC, topicSpecificNotificationListener)
                     , UnavailableTopicException);
 
-    BOOST_CHECK_THROW(notificationManager.removeNotificationListener("unknown_topic_id2", topicSpecificNotificationListener)
+    BOOST_CHECK_THROW(notificationManager.removeNotificationListener(UNKNOWNTOPIC, topicSpecificNotificationListener)
                     , UnavailableTopicException);
 }
 
@@ -372,11 +362,11 @@ BOOST_AUTO_TEST_CASE(SubscribeToUnknownTopicTest)
 
     notificationManager.topicsListUpdated(topics);
 
-    BOOST_CHECK_THROW(notificationManager.subscribeToTopic("unknown_topic_id"), UnavailableTopicException);
-    BOOST_CHECK_THROW(notificationManager.subscribeToTopic("unknown_topic_id", false), UnavailableTopicException);
+    BOOST_CHECK_THROW(notificationManager.subscribeToTopic(UNKNOWNTOPIC), UnavailableTopicException);
+    BOOST_CHECK_THROW(notificationManager.subscribeToTopic(UNKNOWNTOPIC, false), UnavailableTopicException);
 
-    BOOST_CHECK_THROW(notificationManager.subscribeToTopics({ topics.front().id, "unknown_topic_id2" }), UnavailableTopicException);
-    BOOST_CHECK_THROW(notificationManager.subscribeToTopics({ topics.front().id, "unknown_topic_id2" }, false), UnavailableTopicException);
+    BOOST_CHECK_THROW(notificationManager.subscribeToTopics({ topics.front().id, UNKNOWNTOPIC }), UnavailableTopicException);
+    BOOST_CHECK_THROW(notificationManager.subscribeToTopics({ topics.front().id, UNKNOWNTOPIC }, false), UnavailableTopicException);
 }
 
 BOOST_AUTO_TEST_CASE(UnsubscribeToUnknownTopicTest)
@@ -391,11 +381,11 @@ BOOST_AUTO_TEST_CASE(UnsubscribeToUnknownTopicTest)
 
     notificationManager.topicsListUpdated(topics);
 
-    BOOST_CHECK_THROW(notificationManager.unsubscribeFromTopic("unknown_topic_id"), UnavailableTopicException);
-    BOOST_CHECK_THROW(notificationManager.unsubscribeFromTopic("unknown_topic_id", false), UnavailableTopicException);
+    BOOST_CHECK_THROW(notificationManager.unsubscribeFromTopic(UNKNOWNTOPIC), UnavailableTopicException);
+    BOOST_CHECK_THROW(notificationManager.unsubscribeFromTopic(UNKNOWNTOPIC, false), UnavailableTopicException);
 
-    BOOST_CHECK_THROW(notificationManager.unsubscribeFromTopics({ topics.front().id, "unknown_topic_id2" }), UnavailableTopicException);
-    BOOST_CHECK_THROW(notificationManager.unsubscribeFromTopics({ topics.front().id, "unknown_topic_id2" }, false), UnavailableTopicException);
+    BOOST_CHECK_THROW(notificationManager.unsubscribeFromTopics({ topics.front().id, UNKNOWNTOPIC }), UnavailableTopicException);
+    BOOST_CHECK_THROW(notificationManager.unsubscribeFromTopics({ topics.front().id, UNKNOWNTOPIC }, false), UnavailableTopicException);
 }
 
 BOOST_AUTO_TEST_CASE(SubscribeToMandatoryTopicTest)
@@ -416,7 +406,7 @@ BOOST_AUTO_TEST_CASE(SubscribeToMandatoryTopicTest)
     BOOST_CHECK_THROW(notificationManager.subscribeToTopic(topics.front().id), UnavailableTopicException);
     BOOST_CHECK_THROW(notificationManager.subscribeToTopic(topics.front().id, false), UnavailableTopicException);
 
-    std::list<std::string> topicIds;
+    std::list<std::int64_t> topicIds;
     for (const auto& topic : topics) {
         topicIds.push_back(topic.id);
     }
@@ -443,7 +433,7 @@ BOOST_AUTO_TEST_CASE(UnsubscribeFromMandatoryTopicTest)
     BOOST_CHECK_THROW(notificationManager.unsubscribeFromTopic(topics.front().id), UnavailableTopicException);
     BOOST_CHECK_THROW(notificationManager.unsubscribeFromTopic(topics.front().id, false), UnavailableTopicException);
 
-    std::list<std::string> topicIds;
+    std::list<std::int64_t> topicIds;
     for (const auto& topic : topics) {
         topicIds.push_back(topic.id);
     }

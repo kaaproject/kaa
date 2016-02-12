@@ -35,18 +35,13 @@ namespace kaa {
 NotificationManager::NotificationManager(IKaaClientStateStoragePtr status, IExecutorContext& executorContext)
     : executorContext_(executorContext), clientStatus_(status)
 {
-    const DetailedTopicStates& topicStates = clientStatus_->getTopicStates();
+    auto topicList = clientStatus_->getTopicList();
 
-    for (auto &topicState : topicStates) {
-        Topic topic;
-        topic.id = topicState.second.topicId;
-        topic.name = topicState.second.topicName;
-        topic.subscriptionType = topicState.second.subscriptionType;
-
-        if (topics_.insert(std::make_pair(topicState.first, topic)).second) {
-            KAA_LOG_INFO(boost::format("Loaded topic: id='%1%', name='%2%', type=%3%")
-                % topic.id % topic.name % LoggingUtils::TopicSubscriptionTypeToString(topic.subscriptionType));
-        }
+    for (auto &topic : topicList) {
+         if (topics_.insert(std::make_pair(topic.id, topic)).second) {
+             KAA_LOG_INFO(boost::format("Loaded topic: id='%1%', name='%2%', type=%3%")
+                 % topic.id % topic.name % LoggingUtils::TopicSubscriptionTypeToString(topic.subscriptionType));
+         }
     }
 }
 
@@ -58,7 +53,7 @@ void NotificationManager::topicsListUpdated(const Topics& topicList)
     KAA_MUTEX_UNIQUE_DECLARE(topicsLock, topicsGuard_);
     KAA_MUTEX_LOCKED("topicsGuard_");
 
-    std::unordered_map<std::string/*Topic ID*/, Topic> newTopics;
+    std::unordered_map<std::int64_t/*Topic ID*/, Topic> newTopics;
 
     for (const auto& topic : topicList) {
         newTopics.insert(std::make_pair(topic.id, topic));
@@ -69,13 +64,14 @@ void NotificationManager::topicsListUpdated(const Topics& topicList)
         KAA_MUTEX_LOCKING("optionalListenersGuard_");
         KAA_MUTEX_UNIQUE_DECLARE(optionalListenersLock, optionalListenersGuard_);
         KAA_MUTEX_LOCKED("optionalListenersGuard_");
-
+        auto &topicStates = clientStatus_->getTopicStates();
         if (!topics_.empty()) {
             KAA_LOG_INFO(boost::format("Going to remove optional listener(s) for %1% obsolete topics") % topics_.size());
             for (const auto& pair : topics_) {
-                if (optionalListeners_.erase(pair.second.id)) {
-                    KAA_LOG_TRACE(boost::format("Removed optional listener(s) for obsolete topic '%1%'") % pair.second.id);
-                }
+                 topicStates.erase(pair.first);
+                 if (optionalListeners_.erase(pair.first)) {
+                     KAA_LOG_TRACE(boost::format("Removed optional listener(s) for obsolete topic '%1%'") % pair.first);
+                 }
             }
         }
     }
@@ -142,7 +138,7 @@ void NotificationManager::addNotificationListener(INotificationListener& listene
                                                          std::placeholders::_1, std::placeholders::_2));
 }
 
-void NotificationManager::addNotificationListener(const std::string& topidId, INotificationListener& listener)
+void NotificationManager::addNotificationListener(std::int64_t topidId, INotificationListener& listener)
 {
     findTopic(topidId);
 
@@ -164,7 +160,7 @@ void NotificationManager::removeNotificationListener(INotificationListener& list
     mandatoryListeners_.removeCallback(&listener);
 }
 
-void NotificationManager::removeNotificationListener(const std::string& topidId, INotificationListener& listener)
+void NotificationManager::removeNotificationListener(std::int64_t topidId, INotificationListener& listener)
 {
     findTopic(topidId);
 
@@ -181,7 +177,7 @@ void NotificationManager::removeNotificationListener(const std::string& topidId,
     }
 }
 
-void NotificationManager::subscribeToTopic(const std::string& id, bool forceSync)
+void NotificationManager::subscribeToTopic(std::int64_t id, bool forceSync)
 {
     if (findTopic(id).subscriptionType != OPTIONAL_SUBSCRIPTION) {
         KAA_LOG_WARN(boost::format("Failed to subscribe: topic '%1%' isn't optional") % id);
@@ -198,7 +194,7 @@ void NotificationManager::subscribeToTopic(const std::string& id, bool forceSync
     }
 }
 
-void NotificationManager::subscribeToTopics(const std::list<std::string>& idList, bool forceSync)
+void NotificationManager::subscribeToTopics(const std::list<std::int64_t>& idList, bool forceSync)
 {
     std::ostringstream iss;
     SubscriptionCommands subscriptions;
@@ -226,7 +222,7 @@ void NotificationManager::subscribeToTopics(const std::list<std::string>& idList
     }
 }
 
-void NotificationManager::unsubscribeFromTopic(const std::string& id, bool forceSync)
+void NotificationManager::unsubscribeFromTopic(std::int64_t id, bool forceSync)
 {
     if (findTopic(id).subscriptionType != OPTIONAL_SUBSCRIPTION) {
         KAA_LOG_WARN(boost::format("Failed to unsubscribe: topic '%1%' isn't optional") % id);
@@ -243,7 +239,7 @@ void NotificationManager::unsubscribeFromTopic(const std::string& id, bool force
     }
 }
 
-void NotificationManager::unsubscribeFromTopics(const std::list<std::string>& idList, bool forceSync)
+void NotificationManager::unsubscribeFromTopics(const std::list<std::int64_t>& idList, bool forceSync)
 {
     std::ostringstream iss;
     SubscriptionCommands subscriptions;
@@ -292,7 +288,7 @@ void NotificationManager::sync()
     }
 }
 
-void NotificationManager::updateSubscriptionInfo(const std::string& id, SubscriptionCommandType type)
+void NotificationManager::updateSubscriptionInfo(std::int64_t id, SubscriptionCommandType type)
 {
     KAA_MUTEX_LOCKING("subscriptionsGuard_");
     KAA_MUTEX_UNIQUE_DECLARE(subscriptionLock, subscriptionsGuard_);
@@ -313,7 +309,7 @@ void NotificationManager::updateSubscriptionInfo(const SubscriptionCommands& new
     subscriptions_.insert(subscriptions_.end(), newSubscriptions.begin(), newSubscriptions.end());
 }
 
-const Topic& NotificationManager::findTopic(const std::string& id)
+const Topic& NotificationManager::findTopic(std::int64_t id)
 {
     try {
         KAA_MUTEX_LOCKING("topicsGuard_");
@@ -332,12 +328,12 @@ void NotificationManager::notifyTopicUpdateSubscribers(const Topics& topics)
     executorContext_.getCallbackExecutor().add([this, topics] () { topicListeners_(topics); });
 }
 
-void NotificationManager::notifyMandatoryNotificationSubscribers(const std::string& id, KaaNotificationPtr notification)
+void NotificationManager::notifyMandatoryNotificationSubscribers(std::int64_t id, KaaNotificationPtr notification)
 {
     executorContext_.getCallbackExecutor().add([this, id, notification] () { mandatoryListeners_(id, *notification); });
 }
 
-bool NotificationManager::notifyOptionalNotificationSubscribers(const std::string& id, KaaNotificationPtr notification)
+bool NotificationManager::notifyOptionalNotificationSubscribers(std::int64_t id, KaaNotificationPtr notification)
 {
     bool notified = false;
 

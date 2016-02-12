@@ -38,7 +38,7 @@ public:
      * @param[in] notification    The notification data.
      *
      */
-    virtual void onNotification(const std::string& topicId, const KaaNotification& notification) = 0;
+    virtual void onNotification(const std::int64_t topicId, const KaaNotification& notification) = 0;
 
     virtual ~INotificationListener() {}
 };

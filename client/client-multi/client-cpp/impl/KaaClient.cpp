@@ -72,7 +72,7 @@ void KaaClient::init()
     profileManager_.reset(new ProfileManager());
 
 #ifdef KAA_USE_CONFIGURATION
-    SequenceNumber sn = { 0, 0, 1 };
+    SequenceNumber sn = { 1 };
     status_->setAppSeqNumber(sn);
     configurationManager_.reset(new ConfigurationManager(executorContext_, status_));
 #endif
@@ -372,9 +372,9 @@ void KaaClient::addNotificationListener(INotificationListener& listener) {
     throw KaaException("Failed to add notification listener. Notification subsystem is disabled");
 #endif
 }
-void KaaClient::addNotificationListener(const std::string& topidId, INotificationListener& listener) {
+void KaaClient::addNotificationListener(std::int64_t topicId, INotificationListener& listener) {
 #ifdef KAA_USE_NOTIFICATIONS
-    notificationManager_->addNotificationListener(topidId, listener);
+    notificationManager_->addNotificationListener(topicId, listener);
 #else
     throw KaaException("Failed to add notification listener. Notification subsystem is disabled");
 #endif
@@ -388,15 +388,15 @@ void KaaClient::removeNotificationListener(INotificationListener& listener) {
 #endif
 }
 
-void KaaClient::removeNotificationListener(const std::string& topidId, INotificationListener& listener) {
+void KaaClient::removeNotificationListener(std::int64_t topicId, INotificationListener& listener) {
 #ifdef KAA_USE_NOTIFICATIONS
-    notificationManager_->removeNotificationListener(topidId, listener);
+    notificationManager_->removeNotificationListener(topicId, listener);
 #else
     throw KaaException("Failed to remove notification listener. Notification subsystem is disabled");
 #endif
 }
 
-void KaaClient::subscribeToTopic(const std::string& id, bool forceSync) {
+void KaaClient::subscribeToTopic(std::int64_t id, bool forceSync) {
 #ifdef KAA_USE_NOTIFICATIONS
     checkClientState(State::STARTED, "Kaa client isn't started");
     notificationManager_->subscribeToTopic(id, forceSync);
@@ -405,7 +405,7 @@ void KaaClient::subscribeToTopic(const std::string& id, bool forceSync) {
 #endif
 }
 
-void KaaClient::subscribeToTopics(const std::list<std::string>& idList, bool forceSync) {
+void KaaClient::subscribeToTopics(const std::list<std::int64_t>& idList, bool forceSync) {
 #ifdef KAA_USE_NOTIFICATIONS
     checkClientState(State::STARTED, "Kaa client isn't started");
     notificationManager_->subscribeToTopics(idList, forceSync);
@@ -413,7 +413,7 @@ void KaaClient::subscribeToTopics(const std::list<std::string>& idList, bool for
     throw KaaException("Failed to subscribe to topics. Notification subsystem is disabled");
 #endif
 }
-void KaaClient::unsubscribeFromTopic(const std::string& id, bool forceSync) {
+void KaaClient::unsubscribeFromTopic(std::int64_t id, bool forceSync) {
 #ifdef KAA_USE_NOTIFICATIONS
     checkClientState(State::STARTED, "Kaa client isn't started");
     notificationManager_->unsubscribeFromTopic(id, forceSync);
@@ -422,7 +422,7 @@ void KaaClient::unsubscribeFromTopic(const std::string& id, bool forceSync) {
 #endif
 }
 
-void KaaClient::unsubscribeFromTopics(const std::list<std::string>& idList, bool forceSync) {
+void KaaClient::unsubscribeFromTopics(const std::list<std::int64_t>& idList, bool forceSync) {
 #ifdef KAA_USE_NOTIFICATIONS
     checkClientState(State::STARTED, "Kaa client isn't started");
     notificationManager_->unsubscribeFromTopics(idList, forceSync);

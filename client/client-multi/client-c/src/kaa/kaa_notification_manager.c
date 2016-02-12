@@ -44,10 +44,8 @@ struct kaa_notification_manager_t {
     kaa_list_t                     *optional_listeners;
     kaa_list_t                     *subscriptions;
     kaa_list_t                     *unsubscriptions;
-    kaa_list_t                     *topics;
     kaa_list_t                     *uids;
     kaa_list_t                     *notifications;
-    int32_t                        topic_list_hash;
     size_t                         extension_payload_size;
 
     kaa_platform_message_writer_t  *writer;
@@ -278,7 +276,7 @@ static bool kaa_find_topic_by_id(void *topic, void *id)
 static kaa_error_t kaa_find_topic(kaa_notification_manager_t *self, kaa_topic_t **topic, uint64_t *topic_id)
 {
     KAA_RETURN_IF_NIL2(topic_id, topic, KAA_ERR_BADPARAM);
-    kaa_list_node_t *topic_node = kaa_list_find_next(kaa_list_begin(self->topics), &kaa_find_topic_by_id, topic_id);
+    kaa_list_node_t *topic_node = kaa_list_find_next(kaa_list_begin(self->status->topics), &kaa_find_topic_by_id, topic_id);
     if (!topic_node) {
         return KAA_ERR_NOT_FOUND;
     }
@@ -446,7 +444,7 @@ kaa_error_t kaa_notification_manager_request_serialize(kaa_notification_manager_
         return KAA_ERR_BADPARAM;
     }
 
-    *(int32_t *)writer->current = KAA_HTONL((int32_t)self->topic_list_hash);
+    *(int32_t *)writer->current = KAA_HTONL((int32_t)self->status->topic_list_hash);
     writer->current += sizeof(int32_t);
 
     KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to serialize %zu topic states", kaa_list_get_size(self->status->topic_states));
@@ -519,7 +517,6 @@ void kaa_notification_manager_destroy(kaa_notification_manager_t *self)
     kaa_list_destroy(self->unsubscriptions, kaa_data_destroy);
     kaa_list_destroy(self->optional_listeners, destroy_optional_listeners_wrapper);
     kaa_list_destroy(self->uids, destroy_notifications_uid);
-    kaa_list_destroy(self->topics, destroy_topic);
     kaa_list_destroy(self->notifications, kaa_destroy_notification_node);
 
     KAA_FREE(self);
@@ -541,18 +538,16 @@ kaa_error_t kaa_notification_manager_create(kaa_notification_manager_t **self, k
     manager->optional_listeners  =  kaa_list_create();
     manager->subscriptions       =  kaa_list_create();
     manager->unsubscriptions     =  kaa_list_create();
-    manager->topics              =  kaa_list_create();
     manager->notifications       =  kaa_list_create();
     manager->uids                =  kaa_list_create();
 
-    if (!manager->mandatory_listeners || !manager->topics_listeners || !manager->optional_listeners ||
-            !manager->subscriptions || !manager->unsubscriptions || !manager->topics || !manager->uids)
+    if (!manager->mandatory_listeners || !manager->topics_listeners
+        || !manager->optional_listeners ||!manager->subscriptions
+        || !manager->unsubscriptions || !manager->uids)
     {
         kaa_notification_manager_destroy(manager);
         return KAA_ERR_NOMEM;
     }
-
-    manager->topic_list_hash = kaa_list_hash(manager->topics, get_topic_id);
 
     manager->extension_payload_size = 0;
 
@@ -632,7 +627,7 @@ kaa_error_t kaa_add_optional_notification_listener(kaa_notification_manager_t *s
 {
     KAA_RETURN_IF_NIL4(self, listener, listener->callback, topic_id, KAA_ERR_BADPARAM);
 
-    if (!kaa_list_find_next(kaa_list_begin(self->topics), &kaa_find_topic_by_id, topic_id)) {
+    if (!kaa_list_find_next(kaa_list_begin(self->status->topics), &kaa_find_topic_by_id, topic_id)) {
         KAA_LOG_WARN(self->logger, KAA_ERR_NOT_FOUND, "Failed to add optional notification listener: "
                                                             "topic with id '%llu' not found", *topic_id);
         return KAA_ERR_NOT_FOUND;
@@ -787,7 +782,7 @@ kaa_error_t kaa_remove_topic_list_listener(kaa_notification_manager_t *self, uin
 kaa_error_t kaa_get_topics(kaa_notification_manager_t *self, kaa_list_t **topics)
 {
     KAA_RETURN_IF_NIL2(self, topics, KAA_ERR_BADPARAM);
-    *topics = self->topics;
+    *topics = self->status->topics;
     return KAA_ERR_NONE;
 }
 
@@ -1028,17 +1023,19 @@ static kaa_error_t kaa_topic_list_update(kaa_notification_manager_t *self, kaa_l
     kaa_list_node_t *topic_node = kaa_list_begin(new_topics);
 
     // "Substracts" self topics from new topics based on IDs
-    while (topic_node && kaa_list_get_size(self->topics) > 0) {
+    while (topic_node && kaa_list_get_size(self->status->topics) > 0) {
         topic = kaa_list_get_data(topic_node);
         KAA_RETURN_IF_NIL(topic, KAA_ERR_NOMEM);
-        kaa_list_remove_first(self->topics, kaa_find_topic_by_id, &topic->id, destroy_topic);
+        kaa_list_remove_first(self->status->topics, kaa_find_topic_by_id, &topic->id, destroy_topic);
         topic_node = kaa_list_next(topic_node);
     }
 
-    if (kaa_list_get_size(self->topics)) {
-        KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Going to remove optional listener(s) from obsolete %zu topics",
-                                                                                    kaa_list_get_size(self->topics));
-        kaa_list_node_t *outdated_topics = kaa_list_begin(self->topics);
+    if (kaa_list_get_size(self->status->topics)) {
+        KAA_LOG_INFO(self->logger, KAA_ERR_NONE,
+                     "Going to remove optional listener(s) from obsolete %zu topics",
+                     kaa_list_get_size(self->status->topics));
+
+        kaa_list_node_t *outdated_topics = kaa_list_begin(self->status->topics);
         while (outdated_topics) {
             topic = kaa_list_get_data(outdated_topics);
             kaa_list_remove_first(self->optional_listeners
@@ -1049,10 +1046,10 @@ static kaa_error_t kaa_topic_list_update(kaa_notification_manager_t *self, kaa_l
         }
     }
 
-    kaa_list_destroy(self->topics, &destroy_topic);
+    kaa_list_destroy(self->status->topics, &destroy_topic);
     kaa_list_sort(new_topics, &sort_topic_by_id);
-    self->topic_list_hash = kaa_list_hash(new_topics, &get_topic_id);
-    self->topics = new_topics;
+    self->status->topic_list_hash = kaa_list_hash(new_topics, &get_topic_id);
+    self->status->topics = new_topics;
     return kaa_notify_topic_update_subscribers(self, new_topics);
 }
 

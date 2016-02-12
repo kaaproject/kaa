@@ -58,13 +58,14 @@ public:
 private:
     Notifications getUnicastNotifications(const Notifications & notifications);
     Notifications getMulticastNotifications(const Notifications & notifications);
+    std::vector<TopicState> prepareTopicStatesForRequest();
 
 private:
-    INotificationProcessor*   notificationProcessor_;
+    INotificationProcessor*                         notificationProcessor_;
 
     std::set<std::string>                  acceptedUnicastNotificationIds_;
-    std::map<std::string, std::int32_t>    notificationSubscriptions_;
-    SubscriptionCommands                   subscriptions_;
+    SubscriptionCommands                                    subscriptions_;
+    std::int32_t                                            topicListHash_;
 };
 
 } /* namespace kaa */
