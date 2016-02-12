@@ -144,53 +144,60 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
             for (LogDeliveryStatus response : logSyncResponse.getDeliveryStatuses()) {
                 final int requestId = response.getRequestId();
                 final BucketInfo bucketInfo = bucketInfoMap.get(requestId);
-                bucketInfoMap.remove(requestId);
+                if (bucketInfo != null) {
+                    bucketInfoMap.remove(requestId);
+                    if (response.getResult() == SyncResponseResultType.SUCCESS) {
+                        storage.removeBucket(response.getRequestId());
 
-                if (response.getResult() == SyncResponseResultType.SUCCESS) {
-                    storage.removeBucket(response.getRequestId());
+                        if (logDeliveryListener != null) {
+                            executorContext.getCallbackExecutor().execute(new Runnable() {
+                                @Override
+                                public void run() {
+                                    logDeliveryListener.onLogDeliverySuccess(bucketInfo);
+                                }
+                            });
+                        }
 
-                    if (logDeliveryListener != null) {
                         executorContext.getCallbackExecutor().execute(new Runnable() {
                             @Override
                             public void run() {
-                                logDeliveryListener.onLogDeliverySuccess(bucketInfo);
+                                notifyDeliveryFuturesOnSuccess(bucketInfo);
                             }
                         });
-                    }
+                    } else {
+                        storage.rollbackBucket(response.getRequestId());
 
-                    executorContext.getCallbackExecutor().execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            notifyDeliveryFuturesOnSuccess(bucketInfo);
+                        final LogDeliveryErrorCode errorCode = response.getErrorCode();
+                        final LogFailoverCommand controller = this.controller;
+
+                        executorContext.getCallbackExecutor().execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                strategy.onFailure(controller, errorCode);
+                            }
+                        });
+
+                        if (logDeliveryListener != null) {
+                            executorContext.getCallbackExecutor().execute(new Runnable() {
+                                @Override
+                                public void run() {
+                                    logDeliveryListener.onLogDeliveryFailure(bucketInfo);
+                                }
+                            });
                         }
-                    });
+
+                        isAlreadyScheduled = true;
+                    }
                 } else {
-                    storage.rollbackBucket(response.getRequestId());
-
-                    final LogDeliveryErrorCode errorCode = response.getErrorCode();
-                    final LogFailoverCommand controller = this.controller;
-
-                    executorContext.getCallbackExecutor().execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            strategy.onFailure(controller, errorCode);
-                        }
-                    });
-
-                    if (logDeliveryListener != null) {
-                        executorContext.getCallbackExecutor().execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                logDeliveryListener.onLogDeliveryFailure(bucketInfo);
-                            }
-                        });
-                    }
-
-                    isAlreadyScheduled = true;
+                    LOG.warn("BucketInfo is null");
                 }
                 LOG.info("Removing bucket id from timeouts: {}", response.getRequestId());
                 Future<?> timeoutFuture = timeouts.remove(response.getRequestId());
-                timeoutFuture.cancel(true);
+                if (timeoutFuture != null) {
+                    timeoutFuture.cancel(true);
+                } else {
+                    LOG.warn("TimeoutFuture is null and cannot be canceled");
+                }
             }
 
             if (!isAlreadyScheduled) {
