@@ -111,25 +111,25 @@ public class AdminClient {
     }
 
     public EndpointProfilesPageDto getEndpointProfileByEndpointGroupId(PageLinkDto pageLink) throws Exception {
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<String, String>();
-        params.add("endpointGroupId", pageLink.getEndpointGroupId());
-        params.add("limit", pageLink.getLimit());
-        params.add("offset", pageLink.getOffset());
+        String endpointGroupId = pageLink.getEndpointGroupId();
+        String limit = pageLink.getLimit();
+        String offset = pageLink.getOffset();
         ParameterizedTypeReference<EndpointProfilesPageDto> typeRef = new ParameterizedTypeReference<EndpointProfilesPageDto>() {
         };
-        ResponseEntity<EndpointProfilesPageDto> entity = restTemplate.exchange(url + "endpointProfileByGroupId/" + params, HttpMethod.GET,
-                null, typeRef);
+        ResponseEntity<EndpointProfilesPageDto> entity = restTemplate.exchange(url + "endpointProfileByGroupId?endpointGroupId=" + endpointGroupId
+                        + "&limit=" + limit + "&offset=" + offset,
+                HttpMethod.GET, null, typeRef);
         return entity.getBody();
     }
 
     public EndpointProfilesBodyDto getEndpointProfileBodyByEndpointGroupId(PageLinkDto pageLink) throws Exception {
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<String, String>();
-        params.add("endpointGroupId", pageLink.getEndpointGroupId());
-        params.add("limit", pageLink.getLimit());
-        params.add("offset", pageLink.getOffset());
+        String endpointGroupId = pageLink.getEndpointGroupId();
+        String limit = pageLink.getLimit();
+        String offset = pageLink.getOffset();
         ParameterizedTypeReference<EndpointProfilesBodyDto> typeRef = new ParameterizedTypeReference<EndpointProfilesBodyDto>() {
         };
-        ResponseEntity<EndpointProfilesBodyDto> entity = restTemplate.exchange(url + "endpointProfileBodyByGroupId/" + params,
+        ResponseEntity<EndpointProfilesBodyDto> entity = restTemplate.exchange(url + "endpointProfileBodyByGroupId?endpointGroupId=" + endpointGroupId 
+                + "&limit=" + limit + "&offset=" + offset,
                 HttpMethod.GET, null, typeRef);
         return entity.getBody();
     }
