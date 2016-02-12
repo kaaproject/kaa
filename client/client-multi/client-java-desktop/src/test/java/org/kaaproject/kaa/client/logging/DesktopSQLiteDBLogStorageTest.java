@@ -24,7 +24,7 @@ import java.io.File;
 import java.sql.SQLException;
 
 public class DesktopSQLiteDBLogStorageTest extends AbstractPersistentLogStorageTest {
-    private static final String DB_FILENAME = "target/test.db";
+    private static final String DB_FILENAME = "test.db";
     private static File dbFile = new File(DB_FILENAME);
 
     @Before

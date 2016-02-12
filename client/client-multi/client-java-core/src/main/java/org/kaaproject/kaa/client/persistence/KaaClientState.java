@@ -18,7 +18,7 @@ package org.kaaproject.kaa.client.persistence;
 
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 
 import org.kaaproject.kaa.client.event.EndpointAccessToken;
@@ -39,21 +39,20 @@ public interface KaaClientState {
     void setAppStateSeqNumber(int appStateSeqNumber);
     int getAppStateSeqNumber();
 
-    void setConfigSeqNumber(int configSeqNumber);
-    int getConfigSeqNumber();
-
-    void setNotificationSeqNumber(int notificationSeqNumber);
-    int getNotificationSeqNumber();
-
     void setProfileHash(EndpointObjectHash hash);
     EndpointObjectHash getProfileHash();
 
     void addTopic(Topic topic);
-    void removeTopic(String topicId);
-    boolean updateTopicSubscriptionInfo(String topicId, Integer sequenceNumber);
+    void removeTopic(Long topicId);
+    void addTopicSubscription(Long topicId);
+    void removeTopicSubscription(Long topicId);
+    boolean updateTopicSubscriptionInfo(Long topicId, Integer sequenceNumber);
+    
+    void setTopicListHash(Integer topicListHash);
+    Integer getTopicListHash();
 
-    Map<String, Integer> getNfSubscriptions();
-    List<Topic> getTopics();
+    Map<Long, Integer> getNfSubscriptions();
+    Collection<Topic> getTopics();
 
     void setAttachedEndpointsList(Map<EndpointAccessToken, EndpointKeyHash> attachedEndpoints);
     Map<EndpointAccessToken, EndpointKeyHash> getAttachedEndpointsList();

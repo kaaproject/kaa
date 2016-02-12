@@ -54,6 +54,7 @@ import org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo;
 import org.kaaproject.kaa.server.common.zk.gen.TransportMetaData;
 import org.kaaproject.kaa.server.common.zk.operations.OperationsNode;
 import org.kaaproject.kaa.server.common.zk.operations.OperationsNodeListener;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.RouteOperation;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserConfigurationUpdate;
 import org.kaaproject.kaa.server.operations.service.config.OperationsServerConfig;
 import org.kaaproject.kaa.server.operations.service.thrift.OperationsThriftServiceImpl;
@@ -464,12 +465,6 @@ public class EventServiceThriftTestIT {
 
             }
 
-            @Override
-            public void onClusterUpdated() {
-                // TODO Auto-generated method stub
-                
-            }
-
         });
 
         LOG.info("Servers started sucessfully...");
@@ -544,11 +539,6 @@ public class EventServiceThriftTestIT {
 
             }
 
-            @Override
-            public void onClusterUpdated() {
-                // TODO Auto-generated method stub
-                
-            }
         });
 
         LOG.info("Sending UserRoute Info: {}", sendUserRrouteInfo.toString());

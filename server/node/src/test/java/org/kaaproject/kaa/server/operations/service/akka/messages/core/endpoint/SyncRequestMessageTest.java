@@ -46,8 +46,8 @@ public class SyncRequestMessageTest {
                                                                0,
                                                                true);
 
-    private static final NotificationClientSync NOTIFICATION_CLIENT_SYNC = new NotificationClientSync(2, null, null, null, null);
-    private static final ConfigurationClientSync CONFIGURATION_CLIENT_SYNC = new ConfigurationClientSync(1, ByteBuffer.wrap("String".getBytes()), false);
+    private static final NotificationClientSync NOTIFICATION_CLIENT_SYNC = new NotificationClientSync(2, null, null, null);
+    private static final ConfigurationClientSync CONFIGURATION_CLIENT_SYNC = new ConfigurationClientSync(ByteBuffer.wrap("String".getBytes()), false);
 
     @Test
     public void testIsValid() {

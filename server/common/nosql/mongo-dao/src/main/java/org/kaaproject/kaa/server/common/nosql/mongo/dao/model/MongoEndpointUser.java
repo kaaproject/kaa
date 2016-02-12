@@ -19,12 +19,14 @@ package org.kaaproject.kaa.server.common.nosql.mongo.dao.model;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.server.common.dao.model.EndpointUser;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Version;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.io.Serializable;
 import java.util.List;
 
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.OPT_LOCK;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.ENDPOINT_USER;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_USER_ACCESS_TOKEN;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_USER_ENDPOINT_IDS;
@@ -49,7 +51,10 @@ public final class MongoEndpointUser implements EndpointUser, Serializable {
     private String accessToken;
     @Field(EP_USER_ENDPOINT_IDS)
     private List<String> endpointIds;
-
+    @Version
+    @Field(OPT_LOCK)
+    private Long version;
+    
     public MongoEndpointUser() {
     }
 
@@ -60,6 +65,7 @@ public final class MongoEndpointUser implements EndpointUser, Serializable {
         this.tenantId = dto.getTenantId();
         this.accessToken = dto.getAccessToken();
         this.endpointIds = dto.getEndpointIds();
+        this.version = dto.getVersion();
     }
 
     public String getId() {
@@ -108,6 +114,16 @@ public final class MongoEndpointUser implements EndpointUser, Serializable {
 
     public void setEndpointIds(List<String> endpointIds) {
         this.endpointIds = endpointIds;
+    }
+    
+    @Override
+    public Long getVersion() {
+        return version;
+    }
+
+    @Override
+    public void setVersion(Long version) {
+        this.version = version;
     }
 
     @Override
@@ -163,6 +179,7 @@ public final class MongoEndpointUser implements EndpointUser, Serializable {
         dto.setTenantId(tenantId);
         dto.setAccessToken(accessToken);
         dto.setEndpointIds(endpointIds);
+        dto.setVersion(version);
         return dto;
     }
 }

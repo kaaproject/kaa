@@ -145,7 +145,7 @@ public:
      *
      * @see INotificationListener
      */
-    virtual void addNotificationListener(const std::string& topidId, INotificationListener& listener) = 0;
+    virtual void addNotificationListener(std::int64_t topicId, INotificationListener& listener) = 0;
 
     /**
      * @brief Removes the listener which receives notifications on all available topics.
@@ -168,7 +168,7 @@ public:
      *
      * @see INotificationListener
      */
-    virtual void removeNotificationListener(const std::string& topidId, INotificationListener& listener) = 0;
+    virtual void removeNotificationListener(std::int64_t topicId, INotificationListener& listener) = 0;
 
     /**
      * @brief Subscribes to the specified optional topic to receive notifications on that topic.
@@ -185,7 +185,7 @@ public:
      *
      * @see syncTopicSubscriptions()
      */
-    virtual void subscribeToTopic(const std::string& id, bool forceSync = true) = 0;
+    virtual void subscribeToTopic(std::int64_t id, bool forceSync = true) = 0;
 
     /**
      * @brief Subscribes to the specified list of optional topics to receive notifications on those topics.
@@ -202,7 +202,7 @@ public:
      *
      * @see syncTopicSubscriptions()
      */
-    virtual void subscribeToTopics(const std::list<std::string>& idList, bool forceSync = true) = 0;
+    virtual void subscribeToTopics(const std::list<std::int64_t>& idList, bool forceSync = true) = 0;
 
     /**
      * @brief Unsubscribes from the specified optional topic to stop receiving notifications on that topic.
@@ -219,7 +219,7 @@ public:
      *
      * @see syncTopicSubscriptions()
      */
-    virtual void unsubscribeFromTopic(const std::string& id, bool forceSync = true) = 0;
+    virtual void unsubscribeFromTopic(std::int64_t id, bool forceSync = true) = 0;
 
     /**
      * @brief Unsubscribes from the specified list of optional topics to stop receiving notifications on those topics.
@@ -236,7 +236,7 @@ public:
      *
      * @see syncTopicSubscriptions()
      */
-    virtual void unsubscribeFromTopics(const std::list<std::string>& idList, bool forceSync = true) = 0;
+    virtual void unsubscribeFromTopics(const std::list<std::int64_t>& idList, bool forceSync = true) = 0;
 
     /**
      * @brief Sends subscription request(s) to the Operations server.

@@ -196,7 +196,7 @@ public interface GenericKaaClient {
      *
      * @see NotificationListener
      */
-    void addNotificationListener(String topicId, NotificationListener listener) throws UnavailableTopicException;
+    void addNotificationListener(Long topicId, NotificationListener listener) throws UnavailableTopicException;
 
     /**
      * <p>
@@ -231,7 +231,7 @@ public interface GenericKaaClient {
      *
      * @see NotificationListener
      */
-    void removeNotificationListener(String topicId, NotificationListener listener) throws UnavailableTopicException;
+    void removeNotificationListener(Long topicId, NotificationListener listener) throws UnavailableTopicException;
 
     /**
      * <p>
@@ -245,7 +245,7 @@ public interface GenericKaaClient {
      *             Throw if unknown topic id is provided or topic isn't
      *             optional.
      */
-    void subscribeToTopic(String topicId) throws UnavailableTopicException;
+    void subscribeToTopic(Long topicId) throws UnavailableTopicException;
 
     /**
      * <p>
@@ -264,7 +264,7 @@ public interface GenericKaaClient {
      *
      * @see #syncTopicsList()
      */
-    void subscribeToTopic(String topicId, boolean forceSync) throws UnavailableTopicException;
+    void subscribeToTopic(Long topicId, boolean forceSync) throws UnavailableTopicException;
 
     /**
      * <p>
@@ -279,7 +279,7 @@ public interface GenericKaaClient {
      *             Throw if unknown topic id is provided or topic isn't
      *             optional.
      */
-    void subscribeToTopics(List<String> topicIds) throws UnavailableTopicException;
+    void subscribeToTopics(List<Long> topicIds) throws UnavailableTopicException;
 
     /**
      * <p>
@@ -299,7 +299,7 @@ public interface GenericKaaClient {
      *
      * @see #syncTopicsList()
      */
-    void subscribeToTopics(List<String> topicIds, boolean forceSync) throws UnavailableTopicException;
+    void subscribeToTopics(List<Long> topicIds, boolean forceSync) throws UnavailableTopicException;
 
     /**
      * <p>
@@ -317,7 +317,7 @@ public interface GenericKaaClient {
      *             Throw if unknown topic id is provided or topic isn't
      *             optional.
      */
-    void unsubscribeFromTopic(String topicId) throws UnavailableTopicException;
+    void unsubscribeFromTopic(Long topicId) throws UnavailableTopicException;
 
     /**
      * <p>
@@ -340,7 +340,7 @@ public interface GenericKaaClient {
      *
      * @see #syncTopicsList()
      */
-    void unsubscribeFromTopic(String topicId, boolean forceSync) throws UnavailableTopicException;
+    void unsubscribeFromTopic(Long topicId, boolean forceSync) throws UnavailableTopicException;
 
     /**
      * <p>
@@ -359,7 +359,7 @@ public interface GenericKaaClient {
      *             Throw if unknown topic id is provided or topic isn't
      *             optional.
      */
-    void unsubscribeFromTopics(List<String> topicIds) throws UnavailableTopicException;
+    void unsubscribeFromTopics(List<Long> topicIds) throws UnavailableTopicException;
 
     /**
      * <p>
@@ -383,7 +383,7 @@ public interface GenericKaaClient {
      *
      * @see #syncTopicsList()
      */
-    void unsubscribeFromTopics(List<String> topicIds, boolean forceSync) throws UnavailableTopicException;
+    void unsubscribeFromTopics(List<Long> topicIds, boolean forceSync) throws UnavailableTopicException;
 
     /**
      * <p>
@@ -391,9 +391,9 @@ public interface GenericKaaClient {
      * </p>
      *
      * <p>
-     * Should be used after all {@link #subscribeToTopic(String, boolean)},
+     * Should be used after all {@link #subscribeToTopic(Long, boolean)},
      * {@link #subscribeToTopics(List, boolean)},
-     * {@link #unsubscribeFromTopic(String, boolean)},
+     * {@link #unsubscribeFromTopic(Long, boolean)},
      * {@link #unsubscribeFromTopics(List, boolean)} calls with parameter
      * {@code forceSync} set to {@code false}.
      * </p>

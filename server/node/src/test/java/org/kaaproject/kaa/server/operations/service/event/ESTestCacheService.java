@@ -49,11 +49,12 @@ import org.kaaproject.kaa.server.operations.service.cache.AppVersionKey;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
 import org.kaaproject.kaa.server.operations.service.cache.Computable;
 import org.kaaproject.kaa.server.operations.service.cache.ConfigurationIdKey;
-import org.kaaproject.kaa.server.operations.service.cache.DeltaCacheEntry;
+import org.kaaproject.kaa.server.operations.service.cache.ConfigurationCacheEntry;
 import org.kaaproject.kaa.server.operations.service.cache.DeltaCacheKey;
 import org.kaaproject.kaa.server.operations.service.cache.EventClassFamilyIdKey;
 import org.kaaproject.kaa.server.operations.service.cache.EventClassFqnKey;
 import org.kaaproject.kaa.server.operations.service.cache.HistoryKey;
+import org.kaaproject.kaa.server.operations.service.cache.TopicListCacheEntry;
 
 /**
  * @author Andrey Panasenko
@@ -134,7 +135,7 @@ public class ESTestCacheService implements CacheService {
      * @see org.kaaproject.kaa.server.operations.service.cache.CacheService#getDelta(org.kaaproject.kaa.server.operations.service.cache.DeltaCacheKey, org.kaaproject.kaa.server.operations.service.cache.Computable)
      */
     @Override
-    public DeltaCacheEntry getDelta(DeltaCacheKey deltaKey, Computable<DeltaCacheKey, DeltaCacheEntry> worker) throws GetDeltaException {
+    public ConfigurationCacheEntry getDelta(DeltaCacheKey deltaKey, Computable<DeltaCacheKey, ConfigurationCacheEntry> worker) throws GetDeltaException {
         // TODO Auto-generated method stub
         return null;
     }
@@ -143,7 +144,7 @@ public class ESTestCacheService implements CacheService {
      * @see org.kaaproject.kaa.server.operations.service.cache.CacheService#setDelta(org.kaaproject.kaa.server.operations.service.cache.DeltaCacheKey, org.kaaproject.kaa.server.operations.service.cache.DeltaCacheEntry)
      */
     @Override
-    public DeltaCacheEntry setDelta(DeltaCacheKey deltaKey, DeltaCacheEntry delta) {
+    public ConfigurationCacheEntry setDelta(DeltaCacheKey deltaKey, ConfigurationCacheEntry delta) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -438,4 +439,13 @@ public class ESTestCacheService implements CacheService {
         return null;
     }
 
+    @Override
+    public TopicListCacheEntry putTopicList(EndpointObjectHash key, TopicListCacheEntry entry) {
+        return null;
+    }
+
+    @Override
+    public TopicListCacheEntry getTopicListByHash(EndpointObjectHash hash) {
+        return null;
+    }
 }

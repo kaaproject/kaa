@@ -25,7 +25,7 @@
     </appender>
 
     <appender name="fileLogAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${server_log_dir}/kaa-operations-server${server_log_sufix}.log</file>
+        <file>kaa-desktop-client.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>logFile.%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>30</maxHistory>

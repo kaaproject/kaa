@@ -13,11 +13,18 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+package org.kaaproject.kaa.server.operations.service.akka.actors.core;
 
-package org.kaaproject.kaa.server.operations.service.cache;
+import akka.actor.ActorRef;
 
-import java.io.Serializable;
+public class EndpointActorMD {
+    final ActorRef actorRef;
+    final String actorId;
 
-public enum HistorySubject implements Serializable{
-    CONFIGURATION, NOTIFICATION;
+    public EndpointActorMD(ActorRef actorRef, String actorId) {
+        super();
+        this.actorRef = actorRef;
+        this.actorId = actorId;
+    }
+
 }

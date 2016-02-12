@@ -16,7 +16,8 @@
 
 package org.kaaproject.kaa.server.common.nosql.mongo.dao;
 
-import com.mongodb.DBCollection;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
-import java.util.List;
+import com.mongodb.DBCollection;
 
 public abstract class AbstractMongoDao<T, K> {
 

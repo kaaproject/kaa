@@ -19,7 +19,7 @@ package org.kaaproject.kaa.common.dto;
 import java.io.Serializable;
 import java.util.List;
 
-public class EndpointUserDto implements HasId, Serializable{
+public class EndpointUserDto implements HasId, HasVersion, Serializable{
     private static final long serialVersionUID = 8228053998621647905L;
 
     private String id;
@@ -28,6 +28,7 @@ public class EndpointUserDto implements HasId, Serializable{
     private String username;
     private String accessToken;
     private List<String> endpointIds;
+    private Long version;
 
     @Override
     public String getId() {
@@ -77,6 +78,16 @@ public class EndpointUserDto implements HasId, Serializable{
 
     public void setEndpointIds(List<String> endpointIds) {
         this.endpointIds = endpointIds;
+    }
+    
+    @Override
+    public Long getVersion() {
+        return version;
+    }
+
+    @Override
+    public void setVersion(Long version) {
+        this.version = version;
     }
 
     @Override

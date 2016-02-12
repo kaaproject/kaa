@@ -39,7 +39,9 @@ import org.kaaproject.kaa.server.sync.UserClientSync;
  */
 public interface OperationsService extends PublicKeyAware {
 
-    SyncContext syncProfile(SyncContext context, ProfileClientSync request);
+    SyncContext syncClientProfile(SyncContext context, ProfileClientSync request);
+    
+    EndpointProfileDto syncServerProfile(String appToken, String endpointKey, EndpointObjectHash key);
 
     SyncContext processEndpointAttachDetachRequests(SyncContext context, UserClientSync request);
 
@@ -48,8 +50,8 @@ public interface OperationsService extends PublicKeyAware {
     SyncContext syncConfiguration(SyncContext context, ConfigurationClientSync request) throws GetDeltaException;
 
     SyncContext syncNotification(SyncContext context, NotificationClientSync request);
-    
-    EndpointProfileDto updateProfile(SyncContext context);
+
+    SyncContext syncProfileServerHash(SyncContext context);
 
     /**
      * Attaches endpoint to user.
@@ -79,18 +81,30 @@ public interface OperationsService extends PublicKeyAware {
 
     /**
      * Lookup user configuration and return it's hash
-     * @param appToken application token
-     * @param profile endpoint profile
+     * 
+     * @param appToken
+     *            application token
+     * @param profile
+     *            endpoint profile
      * @return user configuration hash, or null if not found;
      */
     byte[] fetchUcfHash(String appToken, EndpointProfileDto profile);
 
     /**
-     * Fetch server endpoint profile and CTL schema id based on endpoint key hash
+     * Fetch server endpoint profile and CTL schema id based on endpoint key
+     * hash
      * 
-     * @param hash - endpoint key hash
+     * @param hash
+     *            - endpoint key hash
      * @return endpoint profile
      */
     public EndpointProfileDto refreshServerEndpointProfile(EndpointObjectHash hash);
 
+    /**
+     * Update profile state based on new user configuration hash 
+     * @param context - sync context that contains profile and other metadata
+     * @param ucfHash - user configuration hash
+     * @return
+     */
+    SyncContext syncUserConfigurationHash(SyncContext context, byte[] ucfHash);
 }

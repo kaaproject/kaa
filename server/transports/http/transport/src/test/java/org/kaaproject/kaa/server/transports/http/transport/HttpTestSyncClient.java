@@ -47,9 +47,6 @@ public class HttpTestSyncClient extends HttpTestClient<SyncRequest, SyncResponse
     /** Max subscription command size, actual value get random size */
     public static final int MAX_SUBSCRIPTION_COMMANDS_SIZE  = 100;
 
-    /** Defined topic id length */
-    public static final int TOPIC_ID_LENGTH  = 10;
-
     /** profile hash byte array */
     private byte[] profileHash;
 
@@ -98,14 +95,12 @@ public class HttpTestSyncClient extends HttpTestClient<SyncRequest, SyncResponse
 
         getRequest().setConfigurationSyncRequest(new ConfigurationSyncRequest());
         getRequest().getConfigurationSyncRequest().setConfigurationHash(ByteBuffer.wrap(configurationHash));
-        getRequest().getConfigurationSyncRequest().setAppStateSeqNumber(appStateSeqNumber);
 
         generateSubscriptionCommandList();
         getRequest().setNotificationSyncRequest(new NotificationSyncRequest());
         getRequest().getNotificationSyncRequest().setSubscriptionCommands(subscriptionCommands);
         getRequest().getNotificationSyncRequest().setTopicStates(topicStates);
-        getRequest().getNotificationSyncRequest().setTopicListHash(ByteBuffer.wrap(profileHash));
-        getRequest().getNotificationSyncRequest().setAppStateSeqNumber(appStateSeqNumber);
+        getRequest().getNotificationSyncRequest().setTopicListHash(0);
     }
 
     /**
@@ -118,9 +113,9 @@ public class HttpTestSyncClient extends HttpTestClient<SyncRequest, SyncResponse
         for(int i=0; i<sc_size;i++) {
             SubscriptionCommand sc = null;
             if (rnd.nextBoolean()) {
-                sc = new SubscriptionCommand(getRandomString(TOPIC_ID_LENGTH), SubscriptionCommandType.ADD);
+                sc = new SubscriptionCommand(rnd.nextLong(), SubscriptionCommandType.ADD);
             } else {
-                sc = new SubscriptionCommand(getRandomString(TOPIC_ID_LENGTH), SubscriptionCommandType.REMOVE);
+                sc = new SubscriptionCommand(rnd.nextLong(), SubscriptionCommandType.REMOVE);
             }
             topicStates.add(new TopicState(sc.getTopicId(), rnd.nextInt()));
             subscriptionCommands.add(sc);

@@ -21,6 +21,7 @@ import java.util.Arrays;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.EndpointRouteUpdate;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.EventRouteUpdateType;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.RouteOperation;
 
 public final class GlobalRouteInfo extends ClusterRouteInfo {
 

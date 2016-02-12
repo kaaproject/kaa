@@ -13,8 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
-package org.kaaproject.kaa.server.operations.service.akka.actors.core;
+package org.kaaproject.kaa.server.operations.service.akka.actors.core.endpoint.local;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,21 +27,19 @@ import java.util.UUID;
 import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
-import org.kaaproject.kaa.server.operations.service.akka.actors.core.ChannelMap.ChannelMetaData;
+import org.kaaproject.kaa.server.operations.service.akka.actors.core.endpoint.AbstractEndpointActorState;
+import org.kaaproject.kaa.server.operations.service.akka.actors.core.endpoint.local.ChannelMap.ChannelMetaData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EndpointActorState {
-    private static final Logger LOG = LoggerFactory.getLogger(EndpointActorState.class);
+public class LocalEndpointActorState extends AbstractEndpointActorState {
+    private static final Logger LOG = LoggerFactory.getLogger(LocalEndpointActorState.class);
 
     /** The map of active communication channels. */
     private final ChannelMap channelMap;
-    private final String endpointKey;
-    private final String actorKey;
     private EndpointProfileDto endpointProfile;
     private String userId;
     private boolean userRegistrationRequestSent;
-    private long lastActivityTime;
     private int processedEventSeqNum = Integer.MIN_VALUE;
     private Map<String, Integer> subscriptionStates;
 
@@ -50,9 +47,8 @@ public class EndpointActorState {
     private byte[] ucfHash;
     private boolean serverProfileChanged;
 
-    public EndpointActorState(String endpointKey, String actorKey) {
-        this.endpointKey = endpointKey;
-        this.actorKey = actorKey;
+    public LocalEndpointActorState(String endpointKey, String actorKey) {
+        super(endpointKey, actorKey);
         this.channelMap = new ChannelMap(endpointKey, actorKey);
         this.subscriptionStates = new HashMap<String, Integer>();
     }
@@ -144,14 +140,6 @@ public class EndpointActorState {
         this.userRegistrationRequestSent = userRegistrationRequestSent;
     }
 
-    long getLastActivityTime() {
-        return lastActivityTime;
-    }
-
-    void setLastActivityTime(long time) {
-        this.lastActivityTime = time;
-    }
-
     int getEventSeqNumber() {
         return processedEventSeqNum;
     }
@@ -183,7 +171,6 @@ public class EndpointActorState {
         if (!isValidForUser() || isUcfHashRequiresIntialization()) {
             return false;
         }
-        ;
         return !Arrays.equals(ucfHash, endpointProfile.getUserConfigurationHash());
     }
 
@@ -207,13 +194,4 @@ public class EndpointActorState {
         }
         return list;
     }
-
-    public boolean isServerProfileChanged() {
-        return serverProfileChanged;
-    }
-
-    public void setServerProfileChanged(boolean serverProfileChanged) {
-        this.serverProfileChanged = serverProfileChanged;
-    }
-
 }

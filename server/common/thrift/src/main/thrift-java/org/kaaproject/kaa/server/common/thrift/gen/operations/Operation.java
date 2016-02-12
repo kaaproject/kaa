@@ -35,8 +35,7 @@ public enum Operation implements org.apache.thrift.TEnum {
   UPDATE_LOG_APPENDER(17),
   ADD_USER_VERIFIER(18),
   REMOVE_USER_VERIFIER(19),
-  UPDATE_USER_VERIFIER(20),
-  UPDATE_SERVER_PROFILE(21);
+  UPDATE_USER_VERIFIER(20);
 
   private final int value;
 
@@ -97,8 +96,6 @@ public enum Operation implements org.apache.thrift.TEnum {
         return REMOVE_USER_VERIFIER;
       case 20:
         return UPDATE_USER_VERIFIER;
-      case 21:
-        return UPDATE_SERVER_PROFILE;
       default:
         return null;
     }

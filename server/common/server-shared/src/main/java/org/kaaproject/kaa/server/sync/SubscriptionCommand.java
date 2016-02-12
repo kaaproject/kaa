@@ -32,6 +32,14 @@ public final class SubscriptionCommand {
     }
 
     /**
+     * All-args constructor.
+     */
+    public SubscriptionCommand(Long topicId, SubscriptionCommandType command) {
+        this.topicId = Long.toString(topicId);
+        this.command = command;
+    }
+
+    /**
      * Gets the value of the 'topicId' field.
      */
     public String getTopicId() {
@@ -39,13 +47,30 @@ public final class SubscriptionCommand {
     }
 
     /**
+     * Gets the value of the 'topicId' field.
+     */
+    public long getTopicIdAsLong() {
+        return Long.parseLong(topicId);
+    }
+
+    /**
      * Sets the value of the 'topicId' field.
-     * 
+     *
      * @param value
      *            the value to set.
      */
     public void setTopicId(String value) {
         this.topicId = value;
+    }
+
+    /**
+     * Sets the value of the 'topicId' field.
+     *
+     * @param value
+     *            the value to set.
+     */
+    public void setTopicId(Long value) {
+        this.topicId = Long.toString(value);
     }
 
     /**
@@ -57,7 +82,7 @@ public final class SubscriptionCommand {
 
     /**
      * Sets the value of the 'command' field.
-     * 
+     *
      * @param value
      *            the value to set.
      */

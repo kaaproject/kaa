@@ -17,23 +17,24 @@
 package org.kaaproject.kaa.server.common.nosql.cassandra.dao.client;
 
 
-import com.datastax.driver.core.Cluster;
-import com.datastax.driver.core.Session;
-import com.datastax.driver.mapping.Mapper;
-import com.datastax.driver.mapping.MappingManager;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-
-import javax.annotation.PostConstruct;
 import java.io.Closeable;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.datastax.driver.core.ProtocolOptions.Compression;
+import javax.annotation.PostConstruct;
+
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import com.datastax.driver.core.Cluster;
+import com.datastax.driver.core.ProtocolOptions.Compression;
+import com.datastax.driver.core.Session;
+import com.datastax.driver.mapping.Mapper;
+import com.datastax.driver.mapping.MappingManager;
 
 @Component
 public class CassandraClient implements Closeable {
@@ -82,7 +83,7 @@ public class CassandraClient implements Closeable {
         return cluster.newSession();
     }
 
-    public Mapper<?> getMapper(Class<?> clazz) {
+    public <T> Mapper<T> getMapper(Class<T> clazz) {
         return getMappingManager().mapper(clazz);
     }
 

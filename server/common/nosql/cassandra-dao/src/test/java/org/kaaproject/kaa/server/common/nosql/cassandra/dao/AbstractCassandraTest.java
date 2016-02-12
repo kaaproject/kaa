@@ -33,16 +33,17 @@ import org.kaaproject.kaa.server.common.dao.impl.EndpointConfigurationDao;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointNotificationDao;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
 import org.kaaproject.kaa.server.common.dao.impl.NotificationDao;
+import org.kaaproject.kaa.server.common.dao.impl.TopicListEntryDao;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointConfiguration;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointNotification;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointProfile;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointUser;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraNotification;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraTopicListEntry;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class AbstractCassandraTest {
 
-    protected static final Random RANDOM = new Random();
     private static final String TEST_ENDPOINT_GROUP_ID = "124";
 
     @Autowired
@@ -55,6 +56,8 @@ public abstract class AbstractCassandraTest {
     protected EndpointUserCassandraDao endpointUserDao;
     @Autowired
     protected NotificationDao<CassandraNotification> notificationDao;
+    @Autowired
+    protected TopicListEntryDao<CassandraTopicListEntry> topicListEntryDao;
 
     protected List<CassandraEndpointNotification> generateEndpointNotification(ByteBuffer endpointKeyHash, int count) {
         List<CassandraEndpointNotification> savedNotifications = new ArrayList<>();
@@ -88,7 +91,7 @@ public abstract class AbstractCassandraTest {
             notification.setSecNum(i);
             notification.setBody(UUID.randomUUID().toString().getBytes());
             notification.setLastTimeModify(new Date(System.currentTimeMillis()));
-            notification.setVersion(1);
+            notification.setNfVersion(1);
             notification.setExpiredAt(new Date(System.currentTimeMillis() + 7 * 24 * 3600 * 1000));
             notifications.add(notificationDao.save(notification).toDto());
         }
@@ -142,18 +145,18 @@ public abstract class AbstractCassandraTest {
         return endpointProfileDao.save(new CassandraEndpointProfile(profileDto)).toDto();
     }
 
-    protected EndpointProfileDto generateEndpointProfileForTestUpdate(String id, List<EndpointGroupStateDto> cfGroupState) {
+    protected EndpointProfileDto generateEndpointProfileForTestUpdate(String id, byte[] keyHash, List<EndpointGroupStateDto> cfGroupState) {
         EndpointProfileDto profileDto = new EndpointProfileDto();
         profileDto.setId(id);
+        profileDto.setEndpointKeyHash(keyHash);
         profileDto.setApplicationId(generateStringId());
-        profileDto.setEndpointKeyHash("TEST_KEY_HASH".getBytes());
         profileDto.setAccessToken(generateStringId());
-        profileDto.setCfGroupStates(cfGroupState);
+        profileDto.setGroupState(cfGroupState);
         profileDto.setSdkToken(UUID.randomUUID().toString());
         return profileDto;
     }
 
-    protected EndpointProfileDto generateEndpointProfileWithEndpointGroupId(String appId, boolean nfGroupStateOnly) {
+    protected EndpointProfileDto generateEndpointProfileWithEndpointGroupId(String appId) {
         byte[] keyHash = generateBytes();
         if (appId == null) {
             appId = generateStringId();
@@ -165,12 +168,7 @@ public abstract class AbstractCassandraTest {
         profileDto.setClientProfileBody("test Profile");
         List<EndpointGroupStateDto> groupState = new ArrayList<>();
         groupState.add(new EndpointGroupStateDto(TEST_ENDPOINT_GROUP_ID, null, null));
-        if (nfGroupStateOnly) {
-            profileDto.setNfGroupStates(groupState);
-            profileDto.setCfGroupStates(null);
-        } else {
-            profileDto.setCfGroupStates(groupState);
-        }
+        profileDto.setGroupState(groupState);
         profileDto.setSdkToken(UUID.randomUUID().toString());
         return endpointProfileDao.save(new CassandraEndpointProfile(profileDto)).toDto();
     }

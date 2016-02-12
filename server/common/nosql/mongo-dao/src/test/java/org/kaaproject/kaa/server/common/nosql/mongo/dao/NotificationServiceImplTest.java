@@ -190,7 +190,7 @@ public class NotificationServiceImplTest extends AbstractMongoTest {
     public void testFindNotificationsByTopicIdAndVersionAndStartSecNum() {
         NotificationDto dto = generateNotificationsDto(null, null, 3, NotificationTypeDto.USER).get(0);
         String topicId = dto.getTopicId();
-        List<NotificationDto> notifications = notificationService.findNotificationsByTopicIdAndVersionAndStartSecNum(topicId, 0, 1, dto.getVersion());
+        List<NotificationDto> notifications = notificationService.findNotificationsByTopicIdAndVersionAndStartSecNum(topicId, 0, 1, dto.getNfVersion());
         Assert.assertFalse(notifications.isEmpty());
         Assert.assertEquals(3, notifications.size());
     }

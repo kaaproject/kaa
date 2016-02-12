@@ -64,11 +64,11 @@ static bimap create_bimap()
     return bi;
 }
 
-const bimap                 ClientStatus::parameterToToken_ = create_bimap();
-const SequenceNumber        ClientStatus::appSeqNumberDefault_ = {0, 0, 0};
-const bool                  ClientStatus::isRegisteredDefault_ = false;
+const bimap                 ClientStatus::parameterToToken_ =   create_bimap();
+const SequenceNumber        ClientStatus::appSeqNumberDefault_ =         { 0 };
+const bool                  ClientStatus::isRegisteredDefault_ =         false;
 const HashDigest            ClientStatus::endpointHashDefault_;
-const DetailedTopicStates   ClientStatus::topicStatesDefault_;
+const Topics                ClientStatus::topicList_;
 const AttachedEndpoints     ClientStatus::attachedEndpoints_;
 const bool                  ClientStatus::endpointDefaultAttachStatus_ = false;
 const std::string           ClientStatus::endpointKeyHashDefault_;
@@ -120,7 +120,7 @@ template<>
 void ClientParameter<SequenceNumber>::save(std::ostream &os)
 {
     std::stringstream ss;
-    ss << value_.configurationSequenceNumber << ";" << value_.notificationSequenceNumber << ";" << value_.eventSequenceNumber << ";";
+    ss << value_.eventSequenceNumber;
     os << attributeName_ << "=" << ss.str() << std::endl;
 }
 
@@ -143,7 +143,7 @@ void ClientParameter<std::string>::save(std::ostream &os) {
 }
 
 template<>
-void ClientParameter<DetailedTopicStates>::save(std::ostream &os)
+void ClientParameter<Topics>::save(std::ostream &os)
 {
     if (value_.begin() != value_.end()) {
         os << attributeName_ << "=";
@@ -152,10 +152,10 @@ void ClientParameter<DetailedTopicStates>::save(std::ostream &os)
                 os << ",";
             }
 
-            os << "[" << convertToByteArrayString(it->second.topicId) << ","
-                        << convertToByteArrayString(it->second.topicName) << ","
-                        << (it->second.subscriptionType == SubscriptionType::MANDATORY_SUBSCRIPTION ? "m," : "v,")
-                        << it->second.sequenceNumber << "]";
+            os << "[" << it->id << ","
+                      << convertToByteArrayString(it->name) << ","
+                      << (it->subscriptionType == SubscriptionType::MANDATORY_SUBSCRIPTION ? "m" : "v")
+                      << "]";
         }
         os << std::endl;
     }
@@ -196,22 +196,7 @@ void ClientParameter<SequenceNumber>::read(const std::string &strValue)
     value_ = SequenceNumber();
 
     if (!strValue.empty()) {
-        std::size_t begin_pos = 0;
-        std::size_t first_semicolon = strValue.find_first_of(';', begin_pos);
-        std::size_t second_semicolon = strValue.find_first_of(';', first_semicolon + 1);
-        std::size_t third_semicolon = strValue.find_first_of(';', second_semicolon + 1);
-
-        if (first_semicolon == std::string::npos || second_semicolon == std::string::npos || third_semicolon == std::string::npos) {
-            return;
-        }
-
-        std::string configSNStr = strValue.substr(begin_pos, first_semicolon);
-        std::string notifSNStr = strValue.substr(first_semicolon + 1, second_semicolon - first_semicolon - 1);
-        std::string eventSNStr = strValue.substr(second_semicolon + 1, third_semicolon - second_semicolon - 1);
-
-        value_.configurationSequenceNumber = std::stoi(configSNStr, nullptr, 10);
-        value_.notificationSequenceNumber = std::stoi(notifSNStr, nullptr, 10);
-        value_.eventSequenceNumber = std::stoi(eventSNStr, nullptr, 10);
+        value_.eventSequenceNumber = std::stoi(strValue, nullptr, 10);
     }
 }
 
@@ -232,6 +217,12 @@ void ClientParameter<std::int32_t>::read(const std::string &strValue)
 }
 
 template<>
+void ClientParameter<std::uint64_t>::read(const std::string &strValue)
+{
+    value_ = convert<std::uint64_t>(strValue);
+}
+
+template<>
 void ClientParameter<bool>::read(const std::string &strValue)
 {
     value_ = convert<bool>(strValue);
@@ -244,7 +235,7 @@ void ClientParameter<std::string>::read(const std::string &strValue)
 }
 
 template<>
-void ClientParameter<DetailedTopicStates>::read(const std::string &strValue)
+void ClientParameter<Topics>::read(const std::string &strValue)
 {
     value_.clear();
 
@@ -257,31 +248,26 @@ void ClientParameter<DetailedTopicStates>::read(const std::string &strValue)
 
             std::size_t comma1pos = strValue.find_first_of(',', open_brace_pos);
             std::size_t comma2pos = strValue.find_first_of(',', comma1pos + 1);
-            std::size_t comma3pos = strValue.find_first_of(',', comma2pos + 1);
 
-            if (comma1pos == std::string::npos || comma2pos == std::string::npos || comma3pos == std::string::npos) {
+            if (comma1pos == std::string::npos || comma2pos == std::string::npos) {
                 break;
             }
 
             std::string topicId = strValue.substr(open_brace_pos+1, comma1pos - open_brace_pos - 1 );
             std::string topicName = strValue.substr(comma1pos+1, comma2pos - comma1pos - 1) ;
-            std::string sType = strValue.substr(comma2pos+1, comma3pos - comma2pos - 1);
-            std::string topicSeqN = strValue.substr(comma3pos+1, close_brace_pos - comma3pos - 1);
+            std::string sType = strValue.substr(comma2pos+1, close_brace_pos - comma2pos - 1);
 
             std::size_t commapos = strValue.find_first_of(",", close_brace_pos);
             parse_more = commapos != std::string::npos;
 
-            int32_t topicSN = std::stoi(topicSeqN, nullptr, 10);
-
             begin_pos = close_brace_pos + 1;
 
-            DetailedTopicState ts;
-            ts.topicId = convertFromByteArrayString(topicId);
-            ts.topicName = convertFromByteArrayString(topicName);
-            ts.subscriptionType = (sType.compare("m") == 0 ? SubscriptionType::MANDATORY_SUBSCRIPTION : SubscriptionType::OPTIONAL_SUBSCRIPTION);
-            ts.sequenceNumber = topicSN;
+            Topic topic;
+            topic.id = std::stoll(topicId);
+            topic.name = convertFromByteArrayString(topicName);
+            topic.subscriptionType = (sType.compare("m") == 0 ? SubscriptionType::MANDATORY_SUBSCRIPTION : SubscriptionType::OPTIONAL_SUBSCRIPTION);
 
-            value_.insert(std::make_pair(ts.topicId, ts));
+            value_.push_back(topic);
         } while (parse_more);
     }
 }
@@ -326,8 +312,8 @@ void ClientParameter<HashDigest>::read(const std::string &strValue)
     }
 }
 
-
-  ClientStatus::ClientStatus(IKaaClientContext& context) : filename_(context.getProperties().getStateFileName()), isSDKPropertiesForUpdated_(false), hasUpdate_(false), context_(context)
+  ClientStatus::ClientStatus(IKaaClientContext& context) : filename_(context.getProperties().getStateFileName()), isSDKPropertiesForUpdated_(false),
+                                                           hasUpdate_(false), context_(context), topicListHash_(0)
 {
     auto appseqntoken = parameterToToken_.left.find(ClientParameterT::APPSEQUENCENUMBER);
     if (appseqntoken != parameterToToken_.left.end()) {
@@ -343,9 +329,9 @@ void ClientParameter<HashDigest>::read(const std::string &strValue)
     }
     auto topicstatestoken = parameterToToken_.left.find(ClientParameterT::TOPICLIST);
     if (topicstatestoken != parameterToToken_.left.end()) {
-        std::shared_ptr<IPersistentParameter> topicStates(new ClientParameter<DetailedTopicStates>(
-                topicstatestoken->second, topicStatesDefault_));
-        parameters_.insert(std::make_pair(ClientParameterT::TOPICLIST, topicStates));
+        std::shared_ptr<IPersistentParameter> topicList(new ClientParameter<Topics>(
+                topicstatestoken->second, topicList_));
+        parameters_.insert(std::make_pair(ClientParameterT::TOPICLIST, topicList));
     }
     auto endpointhashtoken = parameterToToken_.left.find(ClientParameterT::PROFILEHASH);
     if (endpointhashtoken != parameterToToken_.left.end()) {
@@ -485,14 +471,14 @@ std::string ClientStatus::refreshEndpointAccessToken()
     return token;
 }
 
-DetailedTopicStates ClientStatus::getTopicStates() const
+Topics ClientStatus::getTopicList() const
 {
-    return getParameterData<ClientParameterT::TOPICLIST>(topicStatesDefault_);
+    return getParameterData<ClientParameterT::TOPICLIST>(topicList_);
 }
 
-void ClientStatus::setTopicStates(const DetailedTopicStates& stateContainer)
+void ClientStatus::setTopicList(const Topics& topicList)
 {
-    setParameterData<ClientParameterT::TOPICLIST>(stateContainer);
+    setParameterData<ClientParameterT::TOPICLIST>(topicList);
 }
 
 AttachedEndpoints ClientStatus::getAttachedEndpoints() const
@@ -530,7 +516,23 @@ void ClientStatus::read()
     std::ifstream stateFile(filename_);
     std::string value;
     std::string token;
-    std::stringstream stream;
+
+	/* First read topicList hash */
+    if (stateFile.good()) {
+        std::getline(stateFile, token, '=');
+        std::getline(stateFile, value);
+        topicListHash_ = std::stoi(value);
+        KAA_LOG_DEBUG(boost::format("Read topic list hash: %1%") % topicListHash_);
+        std::getline(stateFile, token, '=');
+        std::getline(stateFile, value);
+
+        std::stringstream stream(value);
+        std::int64_t topicId;
+        std::int32_t sqn;
+        while ((stream >> topicId) && (stream >> sqn)) {
+               topicStates_.insert(std::make_pair(topicId, sqn));
+        }
+    }
 
     while (stateFile.good()) {
         std::getline(stateFile, token, '=');
@@ -555,6 +557,19 @@ void ClientStatus::save()
 
     std::ofstream stateFile(filename_);
 
+    /* Save topic list hash */
+    if (stateFile.good()) {
+        KAA_LOG_DEBUG(boost::format("Persisting topic list hash: %1%") % topicListHash_);
+        stateFile << "topic_list_hash=" << topicListHash_ << std::endl;
+        KAA_LOG_DEBUG("Persisting topic states");
+        stateFile << "topic_states=";
+        for (auto &subscription : topicStates_) {
+             stateFile << subscription.first << ' ' << subscription.second << ' ';
+        }
+        stateFile << std::endl;
+	}
+
+    /* Save other parameters */
     for (auto parameter : parameters_) {
         parameter.second->save(stateFile);
     }
@@ -578,34 +593,6 @@ void ClientStatus::setEventSequenceNumber(std::int32_t sequenceNumber)
     setAppSeqNumber(sn);
 }
 
-std::int32_t ClientStatus::getConfigurationSequenceNumber() const
-{
-    KAA_MUTEX_UNIQUE_DECLARE(lock, sequenceNumberGuard_);
-    return getAppSeqNumber().configurationSequenceNumber;
-}
-
-void ClientStatus::setConfigurationSequenceNumber(std::int32_t sequenceNumber)
-{
-    KAA_MUTEX_UNIQUE_DECLARE(lock, sequenceNumberGuard_);
-    SequenceNumber sn = getAppSeqNumber();
-    sn.configurationSequenceNumber = sequenceNumber;
-    setAppSeqNumber(sn);
-}
-
-std::int32_t ClientStatus::getNotificationSequenceNumber() const
-{
-    KAA_MUTEX_UNIQUE_DECLARE(lock, sequenceNumberGuard_);
-    return getAppSeqNumber().notificationSequenceNumber;
-}
-
-void ClientStatus::setNotificationSequenceNumber(std::int32_t sequenceNumber)
-{
-    KAA_MUTEX_UNIQUE_DECLARE(lock, sequenceNumberGuard_);
-    SequenceNumber sn = getAppSeqNumber();
-    sn.notificationSequenceNumber = sequenceNumber;
-    setAppSeqNumber(sn);
-}
-
 std::string ClientStatus::getEndpointKeyHash() const
 {
     return getParameterData<ClientParameterT::EP_KEY_HASH>(endpointKeyHashDefault_);
@@ -614,6 +601,28 @@ std::string ClientStatus::getEndpointKeyHash() const
 void ClientStatus::setEndpointKeyHash(const std::string& keyHash)
 {
     setParameterData<ClientParameterT::EP_KEY_HASH>(keyHash);
+}
+
+void ClientStatus::setTopicListHash(const std::int32_t topicListHash)
+{
+    topicListHash_ = topicListHash;
+    hasUpdate_ = true;
+}
+
+std::int32_t ClientStatus::getTopicListHash()
+{
+    return topicListHash_;
+}
+
+void ClientStatus::setTopicStates(std::map<std::int64_t, std::int32_t>& subscriptions)
+{
+	topicStates_ = subscriptions;
+	hasUpdate_ = true;
+}
+
+std::map<std::int64_t, std::int32_t>& ClientStatus::getTopicStates()
+{
+    return topicStates_;
 }
 
 }

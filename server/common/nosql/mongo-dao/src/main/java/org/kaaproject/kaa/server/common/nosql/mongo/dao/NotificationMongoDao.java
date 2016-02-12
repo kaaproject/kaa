@@ -16,15 +16,6 @@
 
 package org.kaaproject.kaa.server.common.nosql.mongo.dao;
 
-import org.kaaproject.kaa.common.dto.NotificationDto;
-import org.kaaproject.kaa.server.common.dao.impl.NotificationDao;
-import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoNotification;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Repository;
-
-import java.util.List;
-
 import static org.kaaproject.kaa.common.dto.NotificationTypeDto.SYSTEM;
 import static org.kaaproject.kaa.common.dto.NotificationTypeDto.USER;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.ID;
@@ -36,8 +27,17 @@ import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelC
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
+import java.util.List;
+
+import org.kaaproject.kaa.common.dto.NotificationDto;
+import org.kaaproject.kaa.server.common.dao.impl.NotificationDao;
+import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoNotification;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Repository;
+
 @Repository
-public class NotificationMongoDao extends AbstractMongoDao<MongoNotification, String> implements NotificationDao<MongoNotification> {
+public class NotificationMongoDao extends AbstractVersionableMongoDao<MongoNotification, String> implements NotificationDao<MongoNotification> {
 
     private static final Logger LOG = LoggerFactory.getLogger(NotificationMongoDao.class);
 

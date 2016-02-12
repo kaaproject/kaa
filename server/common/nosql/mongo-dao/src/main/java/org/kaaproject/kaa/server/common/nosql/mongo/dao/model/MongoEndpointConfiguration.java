@@ -16,16 +16,16 @@
 
 package org.kaaproject.kaa.server.common.nosql.mongo.dao.model;
 
-import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
-import org.kaaproject.kaa.server.common.dao.model.EndpointConfiguration;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getArrayCopy;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.ENDPOINT_CONFIGURATION;
 
 import java.io.Serializable;
 import java.util.Arrays;
 
-import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getArrayCopy;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.ENDPOINT_CONFIGURATION;
+import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
+import org.kaaproject.kaa.server.common.dao.model.EndpointConfiguration;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = ENDPOINT_CONFIGURATION)
 public final class MongoEndpointConfiguration implements EndpointConfiguration, Serializable {
@@ -35,7 +35,7 @@ public final class MongoEndpointConfiguration implements EndpointConfiguration, 
     @Id
     private byte[] configurationHash;
     private byte[] configuration;
-
+    
     public MongoEndpointConfiguration() {
     }
 
@@ -87,4 +87,5 @@ public final class MongoEndpointConfiguration implements EndpointConfiguration, 
         dto.setConfigurationHash(configurationHash);
         return dto;
     }
+
 }

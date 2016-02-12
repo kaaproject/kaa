@@ -20,7 +20,6 @@ import java.nio.ByteBuffer;
 
 public final class ConfigurationServerSync {
 
-    private int appStateSeqNumber;
     private SyncResponseStatus responseStatus;
     private ByteBuffer confSchemaBody;
     private ByteBuffer confDeltaBody;
@@ -33,27 +32,9 @@ public final class ConfigurationServerSync {
      */
     public ConfigurationServerSync(int appStateSeqNumber, SyncResponseStatus responseStatus, ByteBuffer confSchemaBody,
             ByteBuffer confDeltaBody) {
-        this.appStateSeqNumber = appStateSeqNumber;
         this.responseStatus = responseStatus;
         this.confSchemaBody = confSchemaBody;
         this.confDeltaBody = confDeltaBody;
-    }
-
-    /**
-     * Gets the value of the 'appStateSeqNumber' field.
-     */
-    public int getAppStateSeqNumber() {
-        return appStateSeqNumber;
-    }
-
-    /**
-     * Sets the value of the 'appStateSeqNumber' field.
-     * 
-     * @param value
-     *            the value to set.
-     */
-    public void setAppStateSeqNumber(int value) {
-        this.appStateSeqNumber = value;
     }
 
     /**
@@ -114,7 +95,6 @@ public final class ConfigurationServerSync {
 
         ConfigurationServerSync that = (ConfigurationServerSync) o;
 
-        if (appStateSeqNumber != that.appStateSeqNumber) return false;
         if (confDeltaBody != null ? !confDeltaBody.equals(that.confDeltaBody) : that.confDeltaBody != null)
             return false;
         if (confSchemaBody != null ? !confSchemaBody.equals(that.confSchemaBody) : that.confSchemaBody != null)
@@ -126,7 +106,7 @@ public final class ConfigurationServerSync {
 
     @Override
     public int hashCode() {
-        int result = appStateSeqNumber;
+        int result = 1;
         result = 31 * result + (responseStatus != null ? responseStatus.hashCode() : 0);
         result = 31 * result + (confSchemaBody != null ? confSchemaBody.hashCode() : 0);
         result = 31 * result + (confDeltaBody != null ? confDeltaBody.hashCode() : 0);
@@ -136,9 +116,7 @@ public final class ConfigurationServerSync {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("ConfigurationServerSync [appStateSeqNumber=");
-        builder.append(appStateSeqNumber);
-        builder.append(", responseStatus=");
+        builder.append("ConfigurationServerSync [responseStatus=");
         builder.append(responseStatus);
         builder.append(", confSchemaBody=");
         builder.append(confSchemaBody);

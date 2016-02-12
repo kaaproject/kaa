@@ -16,18 +16,19 @@
 
 package org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.type;
 
-import com.datastax.driver.mapping.annotations.Field;
-import com.datastax.driver.mapping.annotations.Transient;
-import com.datastax.driver.mapping.annotations.UDT;
-import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
-import org.kaaproject.kaa.server.common.dao.model.ToDto;
-
-import java.io.Serializable;
-
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.ENDPOINT_GROUP_STATE_CONFIGURATION_ID_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.ENDPOINT_GROUP_STATE_ENDPOINT_GROUP_ID_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.ENDPOINT_GROUP_STATE_PROFILE_FILTER_ID_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.ENDPOINT_GROUP_STATE_USER_TYPE_NAME;
+
+import java.io.Serializable;
+
+import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
+import org.kaaproject.kaa.server.common.dao.model.ToDto;
+
+import com.datastax.driver.mapping.annotations.Field;
+import com.datastax.driver.mapping.annotations.Transient;
+import com.datastax.driver.mapping.annotations.UDT;
 
 @UDT(name = ENDPOINT_GROUP_STATE_USER_TYPE_NAME)
 public final class CassandraEndpointGroupState implements ToDto<EndpointGroupStateDto>, Serializable {

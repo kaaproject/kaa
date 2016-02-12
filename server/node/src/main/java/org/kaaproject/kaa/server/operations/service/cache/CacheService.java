@@ -177,7 +177,7 @@ public interface CacheService {
      * @return the delta
      * @throws GetDeltaException the get delta exception
      */
-    DeltaCacheEntry getDelta(DeltaCacheKey deltaKey, Computable<DeltaCacheKey, DeltaCacheEntry> worker) throws GetDeltaException;
+    ConfigurationCacheEntry getDelta(DeltaCacheKey deltaKey, Computable<DeltaCacheKey, ConfigurationCacheEntry> worker) throws GetDeltaException;
 
     /**
      * Sets the delta.
@@ -186,7 +186,7 @@ public interface CacheService {
      * @param delta the delta
      * @return the delta cache entry
      */
-    DeltaCacheEntry setDelta(DeltaCacheKey deltaKey, DeltaCacheEntry delta);
+    ConfigurationCacheEntry setDelta(DeltaCacheKey deltaKey, ConfigurationCacheEntry delta);
 
     /**
      * Gets the endpoint key.
@@ -396,4 +396,8 @@ public interface CacheService {
     String getFlatCtlSchemaById(String id);
 
     EndpointGroupDto getDefaultGroup(String applicationToken);
+
+    TopicListCacheEntry putTopicList(EndpointObjectHash key, TopicListCacheEntry entry);
+
+    TopicListCacheEntry getTopicListByHash(EndpointObjectHash hash);
 }

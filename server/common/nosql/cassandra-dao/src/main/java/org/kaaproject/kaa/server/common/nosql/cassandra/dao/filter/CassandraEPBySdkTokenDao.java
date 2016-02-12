@@ -43,7 +43,7 @@ public class CassandraEPBySdkTokenDao extends AbstractCassandraDao<CassandraEPBy
     private static final Logger LOG = LoggerFactory.getLogger(CassandraEPBySdkTokenDao.class);
 
     @Override
-    protected Class<?> getColumnFamilyClass() {
+    protected Class<CassandraEPBySdkToken> getColumnFamilyClass() {
         return CassandraEPBySdkToken.class;
     }
 

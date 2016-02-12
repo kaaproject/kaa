@@ -14,22 +14,22 @@
  *  limitations under the License.
  */
 
-package org.kaaproject.kaa.server.operations.service.akka.actors.core;
+package org.kaaproject.kaa.server.operations.service.akka.actors.core.endpoint.local;
 
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointStopMessage;
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.ServerProfileUpdateMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.SyncRequestMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.logs.LogDeliveryMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.notification.ThriftNotificationMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.EndpointActorMsg;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.ActorTimeoutMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.ChannelTimeoutMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.RequestTimeoutMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.topic.NotificationMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventReceiveMessage;
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserConfigurationUpdateMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserActionMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserConfigurationUpdateMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.verification.UserVerificationResponseMessage;
 import org.kaaproject.kaa.server.transport.channel.ChannelAware;
 import org.kaaproject.kaa.server.transport.message.SessionDisconnectMessage;
@@ -38,19 +38,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import akka.actor.UntypedActor;
-import akka.japi.Creator;
 
 /**
  * The Class EndpointActor.
  */
-public class EndpointActor extends UntypedActor {
+public class LocalEndpointActor extends UntypedActor {
 
     /** The Constant LOG. */
-    private static final Logger LOG = LoggerFactory.getLogger(EndpointActor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LocalEndpointActor.class);
 
     private final String actorKey;
 
-    private final EndpointActorMessageProcessor messageProcessor;
+    private final LocalEndpointActorMessageProcessor messageProcessor;
 
     /**
      * Instantiates a new endpoint actor.
@@ -60,55 +59,9 @@ public class EndpointActor extends UntypedActor {
      * @param appToken          the app token
      * @param key               the key
      */
-    public EndpointActor(AkkaContext context, String endpointActorKey, String appToken, EndpointObjectHash key) {
-        this.messageProcessor = new EndpointActorMessageProcessor(context, appToken, key, endpointActorKey);
+    LocalEndpointActor(AkkaContext context, String endpointActorKey, String appToken, EndpointObjectHash key) {
+        this.messageProcessor = new LocalEndpointActorMessageProcessor(context, appToken, key, endpointActorKey);
         this.actorKey = endpointActorKey;
-    }
-
-    /**
-     * The Class ActorCreator.
-     */
-    public static class ActorCreator implements Creator<EndpointActor> {
-
-        /** The Constant serialVersionUID. */
-        private static final long serialVersionUID = 1L;
-
-        /** The Akka service context */
-        private final AkkaContext context;
-
-        private final String actorKey;
-
-        /** The app token. */
-        private final String appToken;
-
-        /** The key. */
-        private final EndpointObjectHash key;
-
-        /**
-         * Instantiates a new actor creator.
-         *
-         * @param context           the context
-         * @param endpointActorKey  the endpoint actor key
-         * @param appToken          the app token
-         * @param key               the key
-         */
-        public ActorCreator(AkkaContext context, String endpointActorKey, String appToken, EndpointObjectHash key) {
-            super();
-            this.context = context;
-            this.actorKey = endpointActorKey;
-            this.appToken = appToken;
-            this.key = key;
-        }
-
-        /*
-         * (non-Javadoc)
-         * 
-         * @see akka.japi.Creator#create()
-         */
-        @Override
-        public EndpointActor create() throws Exception {
-            return new EndpointActor(context, actorKey, appToken, key);
-        }
     }
 
     /*
@@ -125,6 +78,8 @@ public class EndpointActor extends UntypedActor {
         }
         if (message instanceof SyncRequestMessage) {
             processEndpointSync((SyncRequestMessage) message);
+        } else if (message instanceof EndpointActorMsg) {
+            processEndpointActorMsg((EndpointActorMsg) message);
         } else if (message instanceof EndpointEventReceiveMessage) {
             processEndpointEventReceiveMessage((EndpointEventReceiveMessage) message);
         } else if (message instanceof LogDeliveryMessage) {
@@ -137,8 +92,6 @@ public class EndpointActor extends UntypedActor {
             processDisconnectMessage((ChannelAware) message);
         } else if (message instanceof SessionPingMessage) {
             processPingMessage((ChannelAware) message);
-        } else if (message instanceof ServerProfileUpdateMessage) {
-            processServerProfileUpdate((ServerProfileUpdateMessage) message);
         } else if (message instanceof ThriftNotificationMessage) {
             processThriftNotification((ThriftNotificationMessage) message);
         } else if (message instanceof NotificationMessage) {
@@ -157,6 +110,10 @@ public class EndpointActor extends UntypedActor {
         } else {
             LOG.warn("[{}] Received unknown message {}", actorKey, message);
         }
+    }
+    
+    private void processEndpointActorMsg(EndpointActorMsg msg) {
+        messageProcessor.processEndpointActorMsg(context(), msg);
     }
 
     private void processUserConfigurationUpdateMessage(EndpointUserConfigurationUpdateMessage message) {
@@ -185,10 +142,6 @@ public class EndpointActor extends UntypedActor {
 
     private void processPingMessage(ChannelAware message) {
         messageProcessor.processPingMessage(context(), message);
-    }
-
-    private void processServerProfileUpdate(ServerProfileUpdateMessage message) {
-        messageProcessor.processServerProfileUpdate(context());
     }
     
     private void processThriftNotification(ThriftNotificationMessage message) {

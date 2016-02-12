@@ -17,7 +17,6 @@
 package org.kaaproject.kaa.server.operations.service.history;
 
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
-import org.kaaproject.kaa.server.operations.service.cache.HistorySubject;
 import org.kaaproject.kaa.server.operations.service.delta.HistoryDelta;
 
 /**
@@ -29,13 +28,12 @@ public interface HistoryDeltaService {
      * Gets the delta.
      *
      * @param   profile             the profile
-     * @param   subject             the subject
      * @param   applicationToken    the application token
      * @param   oldAppSeqNumber     the old app seq number
      * @param   curAppSeqNumber     the cur app seq number
      * @return  the delta
      */
-    HistoryDelta getDelta(EndpointProfileDto profile, HistorySubject subject, String applicationToken, int oldAppSeqNumber,
+    HistoryDelta getDelta(EndpointProfileDto profile, String applicationToken, int oldAppSeqNumber,
             int curAppSeqNumber);
 
     /**

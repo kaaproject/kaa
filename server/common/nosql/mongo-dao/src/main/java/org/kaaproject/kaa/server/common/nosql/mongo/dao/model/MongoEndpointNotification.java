@@ -17,18 +17,20 @@
 package org.kaaproject.kaa.server.common.nosql.mongo.dao.model;
 
 
-import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
-import org.kaaproject.kaa.server.common.dao.model.EndpointNotification;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
+import static org.kaaproject.kaa.common.dto.Util.getArrayCopy;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.OPT_LOCK;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.ENDPOINT_NOTIFICATION;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_NF_ENDPOINT_KEY_HASH;
 
 import java.io.Serializable;
 import java.util.Arrays;
 
-import static org.kaaproject.kaa.common.dto.Util.getArrayCopy;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_NF_ENDPOINT_KEY_HASH;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.ENDPOINT_NOTIFICATION;
+import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
+import org.kaaproject.kaa.server.common.dao.model.EndpointNotification;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Version;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 @Document(collection = ENDPOINT_NOTIFICATION)
 public final class MongoEndpointNotification implements EndpointNotification, Serializable {
@@ -40,6 +42,10 @@ public final class MongoEndpointNotification implements EndpointNotification, Se
     @Field(EP_NF_ENDPOINT_KEY_HASH)
     private byte[] endpointKeyHash;
     private MongoNotification notification;
+    
+    @Version
+    @Field(OPT_LOCK)
+    private Long version;
 
     public MongoEndpointNotification() {
     }

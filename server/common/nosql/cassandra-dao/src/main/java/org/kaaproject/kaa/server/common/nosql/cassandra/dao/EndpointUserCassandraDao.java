@@ -37,10 +37,10 @@ import org.slf4j.LoggerFactory;
 import com.datastax.driver.core.querybuilder.Select.Where;
 import com.datastax.driver.core.querybuilder.Update;
 
-public class EndpointUserCassandraDao extends AbstractCassandraDao<CassandraEndpointUser, String> implements EndpointUserDao<CassandraEndpointUser> {
+public class EndpointUserCassandraDao extends AbstractVersionableCassandraDao<CassandraEndpointUser, String> implements EndpointUserDao<CassandraEndpointUser> {
 
     private static final Logger LOG = LoggerFactory.getLogger(EndpointUserCassandraDao.class);
-
+    
     @Override
     protected Class<CassandraEndpointUser> getColumnFamilyClass() {
         return CassandraEndpointUser.class;
@@ -55,10 +55,11 @@ public class EndpointUserCassandraDao extends AbstractCassandraDao<CassandraEndp
     public CassandraEndpointUser save(CassandraEndpointUser user) {
         if (isBlank(user.getId())) {
             user.generateId();
-        }
+        } 
         LOG.trace("Save endpoint user {}", user);
         return super.save(user);
     }
+    
 
     @Override
     public CassandraEndpointUser save(EndpointUserDto dto) {
@@ -119,4 +120,7 @@ public class EndpointUserCassandraDao extends AbstractCassandraDao<CassandraEndp
         LOG.trace("Found endpoint user {} by id {}", endpointUser, id);
         return endpointUser;
     }
+
+
+
 }

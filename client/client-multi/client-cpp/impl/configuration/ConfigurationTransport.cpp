@@ -45,16 +45,13 @@ std::shared_ptr<ConfigurationSyncRequest> ConfigurationTransport::createConfigur
     }
 
     std::shared_ptr<ConfigurationSyncRequest> request(new ConfigurationSyncRequest);
-    request->appStateSeqNumber = context_.getStatus().getConfigurationSequenceNumber();
-    request->configurationHash.set_bytes(hashContainer_->getConfigurationHash());
+    request->configurationHash = hashContainer_->getConfigurationHash();
     request->resyncOnly.set_bool(true); // Only full resyncs are currently supported
     return request;
 }
 
 void ConfigurationTransport::onConfigurationResponse(const ConfigurationSyncResponse &response)
 {
-    context_.getStatus().setConfigurationSequenceNumber(response.appStateSeqNumber);
-
     if (configurationProcessor_ && !response.confDeltaBody.is_null()) {
         configurationProcessor_->processConfigurationData(response.confDeltaBody.get_bytes()
                                                         , response.responseStatus == SyncResponseStatus::RESYNC);

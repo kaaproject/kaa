@@ -28,7 +28,6 @@ import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.cassandraunit.CassandraCQLUnit;
 import org.cassandraunit.dataset.cql.ClassPathCQLDataSet;
 import org.junit.Assert;
 import org.junit.Before;
@@ -50,6 +49,7 @@ import org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnMappingEle
 import org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnMappingElementType;
 import org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnType;
 import org.kaaproject.kaa.server.appenders.cassandra.config.gen.OrderType;
+import org.kaaproject.kaa.server.common.CustomCassandraCQLUnit;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogAppender;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryCallback;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
@@ -73,7 +73,7 @@ public class CassandraLogAppenderTest {
     private static final String SERVER_PROFILE_CONTENT_FILE = "server_profile_content.json";
 
     @ClassRule
-    public static CassandraCQLUnit cassandraUnit = new CassandraCQLUnit(new ClassPathCQLDataSet("appender_test.cql", KEY_SPACE_NAME));
+    public static CustomCassandraCQLUnit cassandraUnit = new CustomCassandraCQLUnit(new ClassPathCQLDataSet("appender_test.cql", false, false), "cassandra-test.yaml", 20000l);
 
     private static final Random RANDOM = new Random();
 

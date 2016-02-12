@@ -20,6 +20,7 @@ import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.dao.CTLService;
 import org.kaaproject.kaa.server.operations.service.OperationsService;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
+import org.kaaproject.kaa.server.operations.service.cluster.ClusterService;
 import org.kaaproject.kaa.server.operations.service.event.EventService;
 import org.kaaproject.kaa.server.operations.service.logs.LogAppenderService;
 import org.kaaproject.kaa.server.operations.service.metrics.MetricsService;
@@ -36,7 +37,9 @@ import com.typesafe.config.ConfigFactory;
 @Component
 public class AkkaContext {
 
-    private static final String ENDPOINT_ACTOR_TIMEOUT = "endpoint_actor_timeout";
+    private static final String GLOBAL_ENDPOINT_ACTOR_TIMEOUT = "global_endpoint_actor_timeout";
+    
+    private static final String LOCAL_ENDPOINT_ACTOR_TIMEOUT = "local_endpoint_actor_timeout";
     
     private static final String ENDPOINT_EVENT_TIMEOUT = "endpoint_event_timeout";
 
@@ -44,6 +47,9 @@ public class AkkaContext {
 
     private static final String AKKA_CONF_FILE_NAME = "akka.conf";
 
+    @Autowired
+    private ClusterService clusterService;
+    
     /** The cache service. */
     @Autowired
     private CacheService cacheService;
@@ -95,12 +101,20 @@ public class AkkaContext {
         return config.getInt(IO_WORKER_COUNT_PROP_NAME);
     }
 
-    public long getInactivityTimeout() {
-        return config.getLong(ENDPOINT_ACTOR_TIMEOUT);
+    public long getGlobalEndpointTimeout() {
+        return config.getLong(GLOBAL_ENDPOINT_ACTOR_TIMEOUT);
+    }
+    
+    public long getLocalEndpointTimeout() {
+        return config.getLong(LOCAL_ENDPOINT_ACTOR_TIMEOUT);
     }
 
     public long getEventTimeout() {
         return config.getLong(ENDPOINT_EVENT_TIMEOUT);
+    }
+    
+    public ClusterService getClusterService() {
+        return clusterService;
     }
 
     public CacheService getCacheService() {

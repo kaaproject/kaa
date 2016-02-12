@@ -39,9 +39,4 @@ public interface EventServiceListener {
      * @param update - endpoint user configuration update
      */
     void onEndpointStateUpdate(EndpointUserConfigurationUpdate update);
-
-    /**
-     * Reports update of cluster topology;
-     */
-    void onClusterUpdated();
 }

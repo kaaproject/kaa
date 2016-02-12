@@ -27,7 +27,7 @@ import org.kaaproject.kaa.server.common.core.algorithms.delta.RawBinaryDelta;
  *
  * @author ashvayka
  */
-public class DeltaCacheEntry implements Serializable {
+public class ConfigurationCacheEntry implements Serializable {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
@@ -52,7 +52,7 @@ public class DeltaCacheEntry implements Serializable {
      * @param hash the hash
      * @param userConfigurationHash  the user configuration hash
      */
-    public DeltaCacheEntry(byte[] configuration, RawBinaryDelta delta, EndpointObjectHash hash, EndpointObjectHash userConfigurationHash) {
+    public ConfigurationCacheEntry(byte[] configuration, RawBinaryDelta delta, EndpointObjectHash hash, EndpointObjectHash userConfigurationHash) {
         super();
         this.configuration = configuration;
         this.delta = delta;

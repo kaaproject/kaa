@@ -78,7 +78,11 @@ import org.kaaproject.kaa.client.event.registration.UserAttachCallback;
 import org.kaaproject.kaa.client.exceptions.KaaClusterConnectionException;
 import org.kaaproject.kaa.client.exceptions.KaaException;
 import org.kaaproject.kaa.client.exceptions.KaaRuntimeException;
-import org.kaaproject.kaa.client.logging.*;
+import org.kaaproject.kaa.client.logging.AbstractLogCollector;
+import org.kaaproject.kaa.client.logging.DefaultLogCollector;
+import org.kaaproject.kaa.client.logging.LogDeliveryListener;
+import org.kaaproject.kaa.client.logging.LogStorage;
+import org.kaaproject.kaa.client.logging.LogUploadStrategy;
 import org.kaaproject.kaa.client.notification.DefaultNotificationManager;
 import org.kaaproject.kaa.client.notification.NotificationListener;
 import org.kaaproject.kaa.client.notification.NotificationTopicListListener;
@@ -405,7 +409,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
     }
 
     @Override
-    public void addNotificationListener(String topicId, NotificationListener listener) throws UnavailableTopicException {
+    public void addNotificationListener(Long topicId, NotificationListener listener) throws UnavailableTopicException {
         this.notificationManager.addNotificationListener(topicId, listener);
     }
 
@@ -415,50 +419,50 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
     }
 
     @Override
-    public void removeNotificationListener(String topicId, NotificationListener listener) throws UnavailableTopicException {
+    public void removeNotificationListener(Long topicId, NotificationListener listener) throws UnavailableTopicException {
         this.notificationManager.removeNotificationListener(topicId, listener);
     }
 
     @Override
-    public void subscribeToTopic(String topicId) throws UnavailableTopicException {
+    public void subscribeToTopic(Long topicId) throws UnavailableTopicException {
         subscribeToTopic(topicId, FORCE_SYNC);
     }
 
     @Override
-    public void subscribeToTopic(String topicId, boolean forceSync) throws UnavailableTopicException {
+    public void subscribeToTopic(Long topicId, boolean forceSync) throws UnavailableTopicException {
         checkClientState(State.STARTED, "Kaa client isn't started");
         notificationManager.subscribeToTopic(topicId, forceSync);
     }
 
     @Override
-    public void subscribeToTopics(List<String> topicIds) throws UnavailableTopicException {
+    public void subscribeToTopics(List<Long> topicIds) throws UnavailableTopicException {
         subscribeToTopics(topicIds, FORCE_SYNC);
     }
 
     @Override
-    public void subscribeToTopics(List<String> topicIds, boolean forceSync) throws UnavailableTopicException {
+    public void subscribeToTopics(List<Long> topicIds, boolean forceSync) throws UnavailableTopicException {
         checkClientState(State.STARTED, "Kaa client isn't started");
         notificationManager.subscribeToTopics(topicIds, forceSync);
     }
 
     @Override
-    public void unsubscribeFromTopic(String topicId) throws UnavailableTopicException {
+    public void unsubscribeFromTopic(Long topicId) throws UnavailableTopicException {
         unsubscribeFromTopic(topicId, FORCE_SYNC);
     }
 
     @Override
-    public void unsubscribeFromTopic(String topicId, boolean forceSync) throws UnavailableTopicException {
+    public void unsubscribeFromTopic(Long topicId, boolean forceSync) throws UnavailableTopicException {
         checkClientState(State.STARTED, "Kaa client isn't started");
         notificationManager.unsubscribeFromTopic(topicId, forceSync);
     }
 
     @Override
-    public void unsubscribeFromTopics(List<String> topicIds) throws UnavailableTopicException {
+    public void unsubscribeFromTopics(List<Long> topicIds) throws UnavailableTopicException {
         unsubscribeFromTopics(topicIds, FORCE_SYNC);
     }
 
     @Override
-    public void unsubscribeFromTopics(List<String> topicIds, boolean forceSync) throws UnavailableTopicException {
+    public void unsubscribeFromTopics(List<Long> topicIds, boolean forceSync) throws UnavailableTopicException {
         checkClientState(State.STARTED, "Kaa client isn't started");
         this.notificationManager.unsubscribeFromTopics(topicIds, forceSync);
     }

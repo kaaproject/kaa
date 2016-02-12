@@ -18,7 +18,7 @@ package org.kaaproject.kaa.common.dto;
 
 import java.io.Serializable;
 
-public class TopicDto implements Serializable, HasId {
+public class TopicDto implements Serializable, HasId, Comparable<TopicDto> {
 
     private static final long serialVersionUID = -8370253094089760728L;
 
@@ -178,6 +178,11 @@ public class TopicDto implements Serializable, HasId {
                 + ", name=" + name + ", type=" + type + ", description="
                 + description + ", createdUsername=" + createdUsername
                 + ", createdTime=" + createdTime + ", secNum=" + secNum + "]";
+    }
+
+    @Override
+    public int compareTo(TopicDto o) {
+        return Long.compare(Long.parseLong(this.id), Long.parseLong(o.id));
     }
 
 }

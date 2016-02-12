@@ -242,7 +242,6 @@ public final class ServerSync {
             return null;
         }
         ConfigurationServerSync copy = new ConfigurationServerSync();
-        copy.setAppStateSeqNumber(source.getAppStateSeqNumber());
         copy.setResponseStatus(source.getResponseStatus());
         copy.setConfDeltaBody(source.getConfDeltaBody());
         copy.setConfSchemaBody(source.getConfSchemaBody());
@@ -286,7 +285,6 @@ public final class ServerSync {
             return null;
         }
         NotificationServerSync copy = new NotificationServerSync();
-        copy.setAppStateSeqNumber(source.getAppStateSeqNumber());
         copy.setResponseStatus(source.getResponseStatus());
         if (source.getNotifications() != null) {
             copy.setNotifications(new ArrayList<>(source.getNotifications()));

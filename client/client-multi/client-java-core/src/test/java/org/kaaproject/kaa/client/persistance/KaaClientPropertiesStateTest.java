@@ -16,6 +16,17 @@
 
 package org.kaaproject.kaa.client.persistance;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -28,13 +39,6 @@ import org.kaaproject.kaa.common.endpoint.gen.SubscriptionType;
 import org.kaaproject.kaa.common.endpoint.gen.Topic;
 import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.junit.Assert.*;
 
 public class KaaClientPropertiesStateTest {
 
@@ -94,23 +98,20 @@ public class KaaClientPropertiesStateTest {
     public void testNfSubscription() throws IOException  {
         KaaClientState state = new KaaClientPropertiesState(new FilePersistentStorage(), CommonsBase64.getInstance(), getProperties());
 
-        Topic topic1 = Topic.newBuilder().setId("1234").setName("testName")
+        Topic topic1 = Topic.newBuilder().setId(1234).setName("testName")
                 .setSubscriptionType(SubscriptionType.OPTIONAL_SUBSCRIPTION).build();
 
-        Topic topic2 = Topic.newBuilder().setId("4321").setName("testName")
+        Topic topic2 = Topic.newBuilder().setId(4321).setName("testName")
                 .setSubscriptionType(SubscriptionType.MANDATORY_SUBSCRIPTION).build();
 
         state.addTopic(topic1);
         state.addTopic(topic2);
 
         state.updateTopicSubscriptionInfo(topic2.getId(), 1);
-
         state.updateTopicSubscriptionInfo(topic1.getId(), 0);
-        state.updateTopicSubscriptionInfo(topic1.getId(), 5);
         state.updateTopicSubscriptionInfo(topic1.getId(), 1);
 
-        Map<String, Integer> expected = new HashMap<String, Integer>();
-        expected.put(topic1.getId(), 5);
+        Map<Long, Integer> expected = new HashMap<>();
         expected.put(topic2.getId(), 1);
 
         assertEquals(expected, state.getNfSubscriptions());
@@ -118,6 +119,15 @@ public class KaaClientPropertiesStateTest {
         state.persist();
         state = new KaaClientPropertiesState(new FilePersistentStorage(), CommonsBase64.getInstance(), getProperties());
 
+        assertEquals(expected, state.getNfSubscriptions());
+        
+        state.addTopicSubscription(topic1.getId());
+        
+        expected.put(topic1.getId(), 0);
+        assertEquals(expected, state.getNfSubscriptions());
+        
+        state.updateTopicSubscriptionInfo(topic1.getId(), 5);
+        expected.put(topic1.getId(), 5);
         assertEquals(expected, state.getNfSubscriptions());
 
         state.removeTopic(topic1.getId());

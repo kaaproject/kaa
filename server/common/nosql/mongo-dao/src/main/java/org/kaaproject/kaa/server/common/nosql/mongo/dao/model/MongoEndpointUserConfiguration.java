@@ -50,7 +50,7 @@ public class MongoEndpointUserConfiguration implements EndpointUserConfiguration
     private Integer schemaVersion;
     @Field(USER_CONF_BODY)
     private String body;
-
+    
     public MongoEndpointUserConfiguration() {
     }
 

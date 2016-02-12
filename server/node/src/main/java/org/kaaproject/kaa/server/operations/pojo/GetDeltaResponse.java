@@ -18,7 +18,6 @@ package org.kaaproject.kaa.server.operations.pojo;
 
 import org.kaaproject.kaa.server.common.core.algorithms.delta.RawBinaryDelta;
 
-
 /**
  * The Class for modeling of delta response. It is used to communicate with
  * {@link org.kaaproject.kaa.server.operations.service.delta.DeltaService
@@ -27,7 +26,7 @@ import org.kaaproject.kaa.server.common.core.algorithms.delta.RawBinaryDelta;
  * @author ashvayka
  */
 
-public class GetDeltaResponse{
+public class GetDeltaResponse {
 
     /**
      * The Enum GetDeltaResponseType.
@@ -50,9 +49,6 @@ public class GetDeltaResponse{
     /** The conf schema. */
     private String confSchema;
 
-    /** The sequence number. */
-    private final int sequenceNumber;
-
     /**
      * Instantiates a new delta response.
      *
@@ -60,7 +56,7 @@ public class GetDeltaResponse{
      *            the response type
      */
     public GetDeltaResponse(GetDeltaResponseType responseType) {
-        this(responseType, 0);
+        this(responseType, null);
     }
 
     /**
@@ -68,28 +64,13 @@ public class GetDeltaResponse{
      *
      * @param responseType
      *            the response type
-     * @param sequenceNumber
-     *            the sequence number
-     */
-    public GetDeltaResponse(GetDeltaResponseType responseType, int sequenceNumber) {
-        this(responseType, sequenceNumber, null);
-    }
-
-    /**
-     * Instantiates a new delta response.
-     *
-     * @param responseType
-     *            the response type
-     * @param sequenceNumber
-     *            the sequence number
      * @param delta
      *            the delta
      */
-    public GetDeltaResponse(GetDeltaResponseType responseType, int sequenceNumber, RawBinaryDelta delta) {
+    public GetDeltaResponse(GetDeltaResponseType responseType, RawBinaryDelta delta) {
         super();
         this.responseType = responseType;
         this.delta = delta;
-        this.sequenceNumber = sequenceNumber;
     }
 
     /**
@@ -108,15 +89,6 @@ public class GetDeltaResponse{
      */
     public RawBinaryDelta getDelta() {
         return delta;
-    }
-
-    /**
-     * Gets the sequence number.
-     *
-     * @return the sequence number
-     */
-    public int getSequenceNumber() {
-        return sequenceNumber;
     }
 
     /**
@@ -147,8 +119,7 @@ public class GetDeltaResponse{
         builder.append(delta);
         builder.append(", confSchema=");
         builder.append(confSchema);
-        builder.append(", sequenceNumber=");
-        builder.append(sequenceNumber);
+        ;
         builder.append("]");
         return builder.toString();
     }

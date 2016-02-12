@@ -111,15 +111,13 @@ public class DefaultDeltaServiceTest {
     private EndpointProfileDto createDefaultTestProfile(List<EndpointGroupStateDto> oldGroups) {
         EndpointProfileDto profile = new EndpointProfileDto();
         profile.setEndpointKey(ENDPOINT_KEY_HASH.getData());
-        profile.setCfSequenceNumber(1);
-        profile.setNfSequenceNumber(1);
+        profile.setSequenceNumber(1);
         profile.setProfileHash(PROFILE_HASH.getData());
         profile.setConfigurationHash(CONFIGURATION_HASH.getData());
         profile.setClientProfileVersion(0);
         profile.setConfigurationVersion(1);
         profile.setClientProfileBody(PROFILE_BODY);
-        profile.setCfGroupStates(oldGroups);
-        profile.setNfGroupStates(oldGroups);
+        profile.setGroupState(oldGroups);
         return profile;
     }
 

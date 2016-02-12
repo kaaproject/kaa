@@ -37,6 +37,9 @@
             http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
     <context:annotation-config/>
+    <aop:aspectj-autoproxy />    
+    <bean class="org.springframework.retry.annotation.RetryConfiguration" />
+        
     <context:component-scan base-package="org.kaaproject.kaa.server.common.dao"/>
     <util:properties id="dao" location="classpath:/dao/mongo_test.properties"/>
     <util:properties id="mongo" location="classpath:/dao/mongo_test.properties"/>
@@ -56,6 +59,7 @@
         <property name="endpointProfileDao" ref="endpointProfileDao"/>
         <property name="endpointConfigurationDao" ref="endpointConfigurationDao"/>
         <property name="endpointUserDao" ref="endpointUserDao"/>
+        <property name="topicListEntryDao" ref="topicListEntryDao"/>
     </bean>
 
     <bean id="notificationService" class="org.kaaproject.kaa.server.common.dao.service.NotificationServiceImpl">

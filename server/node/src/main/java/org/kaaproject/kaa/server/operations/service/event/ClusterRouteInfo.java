@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.operations.service.event;
 
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.RouteOperation;
+
 public class ClusterRouteInfo {
     protected final String tenantId;
     protected final String userId;

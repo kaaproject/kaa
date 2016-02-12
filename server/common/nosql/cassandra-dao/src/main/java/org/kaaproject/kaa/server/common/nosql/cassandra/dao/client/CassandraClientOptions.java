@@ -17,13 +17,14 @@
 package org.kaaproject.kaa.server.common.nosql.cassandra.dao.client;
 
 
-import com.datastax.driver.core.ConsistencyLevel;
-import com.datastax.driver.core.QueryOptions;
-import com.datastax.driver.core.SocketOptions;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import com.datastax.driver.core.ConsistencyLevel;
+import com.datastax.driver.core.QueryOptions;
+import com.datastax.driver.core.SocketOptions;
 
 @Component
 public class CassandraClientOptions {

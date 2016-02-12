@@ -20,7 +20,6 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getDto;
-import static org.kaaproject.kaa.server.common.dao.service.Validator.validateId;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateSqlId;
 
 import java.util.List;

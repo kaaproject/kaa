@@ -18,6 +18,8 @@ package org.kaaproject.kaa.server.operations.service.event;
 
 import java.util.List;
 
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.RouteOperation;
+
 public final class RouteInfo extends ClusterRouteInfo{
 
     private final List<EventClassFamilyVersion> ecfVersions;

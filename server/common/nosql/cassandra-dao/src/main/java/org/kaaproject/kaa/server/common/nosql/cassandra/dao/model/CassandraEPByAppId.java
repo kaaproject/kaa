@@ -16,14 +16,14 @@
 
 package org.kaaproject.kaa.server.common.nosql.cassandra.dao.model;
 
+import java.io.Serializable;
+import java.nio.ByteBuffer;
+
 import com.datastax.driver.mapping.annotations.ClusteringColumn;
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
 import com.datastax.driver.mapping.annotations.Transient;
-
-import java.io.Serializable;
-import java.nio.ByteBuffer;
 
 @Table(name = CassandraModelConstants.EP_BY_APP_ID_COLUMN_FAMILY_NAME)
 public class CassandraEPByAppId implements Serializable {

@@ -43,17 +43,17 @@ public class TopicActorTest {
 
         systemNf = new NotificationDto();
         systemNf.setType(NotificationTypeDto.SYSTEM);
-        systemNf.setVersion(42);
+        systemNf.setNfVersion(42);
         systemNf.setExpiredAt(expiredDate);
 
         userNf = new NotificationDto();
         userNf.setType(NotificationTypeDto.USER);
-        userNf.setVersion(73);
+        userNf.setNfVersion(73);
         userNf.setExpiredAt(expiredDate);
 
         unicastNf = new NotificationDto();
         unicastNf.setType(null);
-        unicastNf.setVersion(111);
+        unicastNf.setNfVersion(111);
         unicastNf.setExpiredAt(expiredDate);
     }
 

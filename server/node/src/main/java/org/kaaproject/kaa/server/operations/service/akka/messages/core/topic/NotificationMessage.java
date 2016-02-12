@@ -83,4 +83,9 @@ public class NotificationMessage {
     public String getUnicastNotificationId() {
         return unicastNotificationId;
     }
+
+    @Override
+    public String toString() {
+        return "NotificationMessage [notifications=" + notifications + ", unicastNotificationId=" + unicastNotificationId + "]";
+    }
 }

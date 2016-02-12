@@ -33,6 +33,11 @@ import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
  */
 public interface EndpointProfileDao<T extends EndpointProfile> extends Dao<T, ByteBuffer> {
 
+    /**
+     *
+     * @param dto
+     * @return
+     */
     T save(EndpointProfileDto dto);
 
     /**
@@ -73,7 +78,7 @@ public interface EndpointProfileDao<T extends EndpointProfile> extends Dao<T, By
      * @param endpointKeyHash the endpoint key hash
      * @return the count of endpoint profile
      */
-    long getCountByKeyHash(byte[] endpointKeyHash);
+    T findEndpointIdByKeyHash(byte[] endpointKeyHash);
 
     /**
      * Remove endpoint profile by key hash.
@@ -105,13 +110,6 @@ public interface EndpointProfileDao<T extends EndpointProfile> extends Dao<T, By
      * @return the endpoint user
      */
     List<T> findByEndpointUserId(String endpointUserId);
-
-    /**
-     * @deprecated  The functionality of this method is not yet necessary.
-     * @param       sdkToken the sdk token
-     * @return      the list of endpoint profile objects
-     */
-    List<T> findBySdkToken(String sdkToken);
 
     /**
      * Checks whether there are any endpoint profiles with the given SDK token.

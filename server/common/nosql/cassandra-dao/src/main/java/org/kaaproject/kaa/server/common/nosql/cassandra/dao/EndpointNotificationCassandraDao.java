@@ -16,9 +16,17 @@
 
 package org.kaaproject.kaa.server.common.nosql.cassandra.dao;
 
-import com.datastax.driver.core.Statement;
-import com.datastax.driver.core.querybuilder.QueryBuilder;
-import com.datastax.driver.core.querybuilder.Select;
+import static com.datastax.driver.core.querybuilder.QueryBuilder.delete;
+import static com.datastax.driver.core.querybuilder.QueryBuilder.eq;
+import static com.datastax.driver.core.querybuilder.QueryBuilder.select;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getByteBuffer;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.ET_NF_COLUMN_FAMILY_NAME;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.ET_NF_ENDPOINT_KEY_HASH_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.ET_NF_LAST_MOD_TIME_PROPERTY;
+
+import java.util.Collections;
+import java.util.List;
+
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointNotificationDao;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.filter.CassandraEPByAppIdDao;
@@ -28,16 +36,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.Collections;
-import java.util.List;
-
-import static com.datastax.driver.core.querybuilder.QueryBuilder.delete;
-import static com.datastax.driver.core.querybuilder.QueryBuilder.eq;
-import static com.datastax.driver.core.querybuilder.QueryBuilder.select;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getByteBuffer;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.ET_NF_COLUMN_FAMILY_NAME;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.ET_NF_ENDPOINT_KEY_HASH_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.ET_NF_LAST_MOD_TIME_PROPERTY;
+import com.datastax.driver.core.Statement;
+import com.datastax.driver.core.querybuilder.QueryBuilder;
+import com.datastax.driver.core.querybuilder.Select;
 
 @Repository(value = "unicastNotificationDao")
 public class EndpointNotificationCassandraDao extends AbstractCassandraDao<CassandraEndpointNotification, String> implements EndpointNotificationDao<CassandraEndpointNotification> {
@@ -113,4 +114,5 @@ public class EndpointNotificationCassandraDao extends AbstractCassandraDao<Cassa
         execute(delete);
         LOG.debug("[{}] Execute query {}:", id, delete);
     }
+
 }

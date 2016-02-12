@@ -126,7 +126,7 @@ public class NotificationServiceImpl implements NotificationService {
         if (isNotBlank(schemaId) && isNotBlank(topicId)) {
             NotificationSchema schema = notificationSchemaDao.findById(schemaId);
             if (schema != null) {
-                dto.setVersion(schema.getVersion());
+                dto.setNfVersion(schema.getVersion());
                 dto.setApplicationId(schema.getApplicationId());
                 dto.setType(schema.getType());
             } else {
@@ -290,7 +290,7 @@ public class NotificationServiceImpl implements NotificationService {
             notificationDto.setSecNum(-1);
             NotificationSchema schema = notificationSchemaDao.findById(schemaId);
             if (schema != null) {
-                notificationDto.setVersion(schema.getVersion());
+                notificationDto.setNfVersion(schema.getVersion());
                 notificationDto.setApplicationId(schema.getApplicationId());
                 notificationDto.setType(schema.getType());
                 try {

@@ -367,7 +367,6 @@ public class BinaryEncDecTest {
         Assert.assertNotNull(sync.getClientSyncMetaData());
         Assert.assertNotNull(sync.getConfigurationSync());
         ConfigurationClientSync cSync = sync.getConfigurationSync();
-        Assert.assertEquals(MAGIC_NUMBER, cSync.getAppStateSeqNumber());
         Assert.assertNull(cSync.getConfigurationHash());
     }
 
@@ -386,19 +385,18 @@ public class BinaryEncDecTest {
         Assert.assertNotNull(sync.getClientSyncMetaData());
         Assert.assertNotNull(sync.getConfigurationSync());
         ConfigurationClientSync cSync = sync.getConfigurationSync();
-        Assert.assertEquals(MAGIC_NUMBER, cSync.getAppStateSeqNumber());
         Assert.assertEquals(MAGIC_NUMBER, cSync.getConfigurationHash().array()[MAGIC_INDEX]);
     }
 
     @Test
     public void testNotificationClientSync() throws PlatformEncDecException {
-        ByteBuffer buf = ByteBuffer.wrap(new byte[4 + // seq number
+        ByteBuffer buf = ByteBuffer.wrap(new byte[4 + // topic hash
                 4 + 8 + 4 + // topic list
                 4 + 4 + 3 + 1 + // unicast notifications
                 4 + 8 + // add topic command
-                4 + 8 + // remove topic command
-                SHA_1_LENGTH]); // topic list hash
-        // seq number
+                4 + 8  // remove topic command
+                ]); 
+        // topic hash
         buf.putInt(MAGIC_NUMBER);
         // topic list
         buf.put((byte) 0);
@@ -427,18 +425,13 @@ public class BinaryEncDecTest {
         buf.put((byte) 1);
         buf.putLong(202);
 
-        byte[] hash = new byte[SHA_1_LENGTH];
-        hash[MAGIC_INDEX] = MAGIC_NUMBER;
-        buf.put(hash);
-
         ClientSync sync = encDec.decode(concat(buildHeader(Constants.KAA_PLATFORM_PROTOCOL_BINARY_ID, 1, 2), getValidMetaData(),
                 buildExtensionHeader(BinaryEncDec.NOTIFICATION_EXTENSION_ID, 0, 0x02, buf.array().length), buf.array()));
         Assert.assertNotNull(sync);
         Assert.assertNotNull(sync.getClientSyncMetaData());
         Assert.assertNotNull(sync.getNotificationSync());
         NotificationClientSync nSync = sync.getNotificationSync();
-        Assert.assertEquals(MAGIC_NUMBER, nSync.getAppStateSeqNumber());
-        Assert.assertEquals(MAGIC_NUMBER, nSync.getTopicListHash().array()[MAGIC_INDEX]);
+        Assert.assertEquals(MAGIC_NUMBER, nSync.getTopicListHash());
         Assert.assertNotNull(nSync.getAcceptedUnicastNotifications());
         Assert.assertEquals(1, nSync.getAcceptedUnicastNotifications().size());
         Assert.assertEquals("uid", nSync.getAcceptedUnicastNotifications().get(0));

@@ -34,10 +34,10 @@ public final class AppProfileVersionsKey implements Serializable {
     private final String applicationToken;
 
     /** The version. */
-    private final int endpointProfileSchemaVersion;
+    private final Integer endpointProfileSchemaVersion;
 
     /** The version. */
-    private final int serverProfileSchemaVersion;
+    private final Integer serverProfileSchemaVersion;
 
     /**
      * Instantiates a new app version key.
@@ -49,7 +49,7 @@ public final class AppProfileVersionsKey implements Serializable {
      * @param serverProfileSchemaVersion
      *            the server profile schema version
      */
-    public AppProfileVersionsKey(String applicationToken, int endpointProfileSchemaVersion, int serverProfileSchemaVersion) {
+    public AppProfileVersionsKey(String applicationToken, Integer endpointProfileSchemaVersion, Integer serverProfileSchemaVersion) {
         super();
         this.applicationToken = applicationToken;
         this.endpointProfileSchemaVersion = endpointProfileSchemaVersion;
@@ -60,11 +60,11 @@ public final class AppProfileVersionsKey implements Serializable {
         return applicationToken;
     }
 
-    public int getEndpointProfileSchemaVersion() {
+    public Integer getEndpointProfileSchemaVersion() {
         return endpointProfileSchemaVersion;
     }
 
-    public int getServerProfileSchemaVersion() {
+    public Integer getServerProfileSchemaVersion() {
         return serverProfileSchemaVersion;
     }
 
@@ -73,29 +73,44 @@ public final class AppProfileVersionsKey implements Serializable {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((applicationToken == null) ? 0 : applicationToken.hashCode());
-        result = prime * result + endpointProfileSchemaVersion;
-        result = prime * result + serverProfileSchemaVersion;
+        result = prime * result + ((endpointProfileSchemaVersion == null) ? 0 : endpointProfileSchemaVersion.hashCode());
+        result = prime * result + ((serverProfileSchemaVersion == null) ? 0 : serverProfileSchemaVersion.hashCode());
         return result;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         AppProfileVersionsKey other = (AppProfileVersionsKey) obj;
         if (applicationToken == null) {
-            if (other.applicationToken != null)
+            if (other.applicationToken != null) {
                 return false;
-        } else if (!applicationToken.equals(other.applicationToken))
+            }
+        } else if (!applicationToken.equals(other.applicationToken)) {
             return false;
-        if (endpointProfileSchemaVersion != other.endpointProfileSchemaVersion)
+        }
+        if (endpointProfileSchemaVersion == null) {
+            if (other.endpointProfileSchemaVersion != null) {
+                return false;
+            }
+        } else if (!endpointProfileSchemaVersion.equals(other.endpointProfileSchemaVersion)) {
             return false;
-        if (serverProfileSchemaVersion != other.serverProfileSchemaVersion)
+        }
+        if (serverProfileSchemaVersion == null) {
+            if (other.serverProfileSchemaVersion != null) {
+                return false;
+            }
+        } else if (!serverProfileSchemaVersion.equals(other.serverProfileSchemaVersion)) {
             return false;
+        }
         return true;
     }
 

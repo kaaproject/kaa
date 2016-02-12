@@ -13,22 +13,12 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+package org.kaaproject.kaa.server.operations.service.akka.messages.core.route;
 
-package org.kaaproject.kaa.server.operations.service.akka.actors.core;
-
-import akka.actor.ActorRef;
-
-public class ActorMetaData{
-    final ActorRef actorRef;
-    private final String endpointActorId;
-
-    ActorMetaData(ActorRef actorRef, String endpointActorId) {
-        super();
-        this.actorRef = actorRef;
-        this.endpointActorId = endpointActorId;
-    }
-
-    public String getEndpointActorId() {
-        return endpointActorId;
-    }
+public interface EndpointActorMsg {
+    
+    EndpointAddress getAddress();
+    
+    ActorClassifier getClassifier();
+    
 }

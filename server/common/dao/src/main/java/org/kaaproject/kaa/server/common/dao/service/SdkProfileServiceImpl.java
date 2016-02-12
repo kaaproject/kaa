@@ -16,20 +16,18 @@
 
 package org.kaaproject.kaa.server.common.dao.service;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
-import org.kaaproject.kaa.common.dto.DtoByteMarshaller;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.server.common.dao.SdkProfileService;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
+import org.kaaproject.kaa.server.common.dao.impl.ApplicationDao;
 import org.kaaproject.kaa.server.common.dao.impl.DaoUtil;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
 import org.kaaproject.kaa.server.common.dao.impl.SdkProfileDao;
 import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
+import org.kaaproject.kaa.server.common.dao.model.sql.Application;
 import org.kaaproject.kaa.server.common.dao.model.sql.SdkProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,9 +40,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class SdkProfileServiceImpl implements SdkProfileService {
 
     private static final Logger LOG = LoggerFactory.getLogger(SdkProfileServiceImpl.class);
-    
-    private static final String SDK_TOKEN_HASH_ALGORITHM = "SHA1";
 
+    @Autowired
+    private ApplicationDao<Application> applicationDao;
+    
     @Autowired
     private SdkProfileDao<SdkProfile> sdkProfileDao;
 
@@ -65,6 +64,7 @@ public class SdkProfileServiceImpl implements SdkProfileService {
             if (StringUtils.isNotBlank(sdkProfileDto.getId())) {
                 throw new IncorrectParameterException("Update of existing SDK profile is prohibited.");
             } else {
+                applicationDao.findById(sdkProfileDto.getApplicationId());
                 SdkTokenGenerator.generateSdkToken(sdkProfileDto);
                 SdkProfile entity = new SdkProfile(sdkProfileDto);
                 SdkProfile loaded = sdkProfileDao.findSdkProfileByToken(entity.getToken());

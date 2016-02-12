@@ -55,10 +55,14 @@ public class SyncRequestMessage extends EndpointAwareMessage implements ChannelA
     /**
      * Instantiates a new sync request message.
      * 
-     * @param session           the session
-     * @param request           the request
-     * @param requestMessage    the request message
-     * @param originator        the originator
+     * @param session
+     *            the session
+     * @param request
+     *            the request
+     * @param requestMessage
+     *            the request message
+     * @param originator
+     *            the originator
      */
     public SyncRequestMessage(SessionInfo session, ClientSync request, Message requestMessage, ActorRef originator) {
         super(session.getApplicationToken(), session.getKey(), originator);
@@ -117,19 +121,8 @@ public class SyncRequestMessage extends EndpointAwareMessage implements ChannelA
         }
         if (request.getNotificationSync() != null) {
             LOG.debug("[{}] Cleanup/update notification request", channelUuid);
-            if (response != null && response.getNotificationSync() != null) {
-                request.getNotificationSync().setAppStateSeqNumber(
-                        response.getNotificationSync().getAppStateSeqNumber());
-            }
             request.getNotificationSync().setSubscriptionCommands(null);
             request.getNotificationSync().setAcceptedUnicastNotifications(null);
-        }
-        if (request.getConfigurationSync() != null) {
-            LOG.debug("[{}] Cleanup/update configuration request", channelUuid);
-            if (response != null && response.getConfigurationSync() != null) {
-                request.getConfigurationSync().setAppStateSeqNumber(
-                        response.getConfigurationSync().getAppStateSeqNumber());
-            }
         }
     }
 
@@ -156,10 +149,9 @@ public class SyncRequestMessage extends EndpointAwareMessage implements ChannelA
             LOG.debug("[{}] Updated profile request", channelUuid);
         }
         if (other.getConfigurationSync() != null) {
-            ConfigurationClientSync resolvedConfigurationSync = hasProfileSync ?
-                                                  other.getConfigurationSync() :
-                                                  diff(request.getConfigurationSync(), other.getConfigurationSync());
-            diff.setConfigurationSync(resolvedConfigurationSync);
+            ConfigurationClientSync mergedConfigurationClientSync = hasProfileSync || other.isForceConfigurationSync() ? other
+                    .getConfigurationSync() : diff(request.getConfigurationSync(), other.getConfigurationSync());
+            diff.setConfigurationSync(mergedConfigurationClientSync);
             request.setConfigurationSync(other.getConfigurationSync());
             LOG.debug("[{}] Updated configuration request", channelUuid);
         } else {
@@ -168,10 +160,9 @@ public class SyncRequestMessage extends EndpointAwareMessage implements ChannelA
             }
         }
         if (other.getNotificationSync() != null) {
-            NotificationClientSync resolvedNotificationClientSync = hasProfileSync ?
-                                                       other.getNotificationSync() :
-                                                       diff(request.getNotificationSync(), other.getNotificationSync());
-            diff.setNotificationSync(resolvedNotificationClientSync);
+            NotificationClientSync mergedNotificationClientSync = hasProfileSync || other.isForceNotificationSync() ? other
+                    .getNotificationSync() : diff(request.getNotificationSync(), other.getNotificationSync());
+            diff.setNotificationSync(mergedNotificationClientSync);
             request.setNotificationSync(other.getNotificationSync());
             LOG.debug("[{}] Updated notification request", channelUuid);
         } else {
@@ -197,16 +188,11 @@ public class SyncRequestMessage extends EndpointAwareMessage implements ChannelA
         return diff;
     }
 
-    private NotificationClientSync diff(NotificationClientSync oldRequest, NotificationClientSync newRequest) {
+    private ConfigurationClientSync diff(ConfigurationClientSync oldRequest, ConfigurationClientSync newRequest) {
         if (oldRequest == null) {
             return newRequest;
         } else {
-            if (oldRequest.getAppStateSeqNumber() < newRequest.getAppStateSeqNumber()
-                    || (newRequest.getAcceptedUnicastNotifications() != null && newRequest
-                            .getAcceptedUnicastNotifications().size() > 0)
-                    || (newRequest.getSubscriptionCommands() != null && newRequest.getSubscriptionCommands().size() > 0)
-            // TODO: Add topicListHash comparison
-            ) {
+            if (!Arrays.equals(oldRequest.getConfigurationHash().array(), newRequest.getConfigurationHash().array())) {
                 return newRequest;
             } else {
                 return null;
@@ -214,13 +200,13 @@ public class SyncRequestMessage extends EndpointAwareMessage implements ChannelA
         }
     }
 
-    private ConfigurationClientSync diff(ConfigurationClientSync oldRequest, ConfigurationClientSync newRequest) {
+    private NotificationClientSync diff(NotificationClientSync oldRequest, NotificationClientSync newRequest) {
         if (oldRequest == null) {
             return newRequest;
         } else {
-            if (oldRequest.getAppStateSeqNumber() != newRequest.getAppStateSeqNumber()
-                    || Arrays.equals(oldRequest.getConfigurationHash().array(), newRequest.getConfigurationHash()
-                            .array())) {
+            if ((newRequest.getAcceptedUnicastNotifications() != null && newRequest.getAcceptedUnicastNotifications().size() > 0)
+                    || (newRequest.getSubscriptionCommands() != null && newRequest.getSubscriptionCommands().size() > 0)
+                    || (newRequest.getTopicListHash() != oldRequest.getTopicListHash())) {
                 return newRequest;
             } else {
                 return null;

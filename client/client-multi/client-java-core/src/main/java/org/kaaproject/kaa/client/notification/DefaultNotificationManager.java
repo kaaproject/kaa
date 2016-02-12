@@ -47,12 +47,12 @@ import org.slf4j.LoggerFactory;
 public class DefaultNotificationManager implements NotificationManager, NotificationProcessor {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultNotificationManager.class);
 
-    private Map<String, Topic> topics = new HashMap<String, Topic>();
+    private Map<Long, Topic> topics = new HashMap<>();
 
     private final ExecutorContext executorContext;
     private final NotificationDeserializer deserializer;
     private final Set<NotificationListener> mandatoryListeners = new HashSet<NotificationListener>();
-    private final Map<String, List<NotificationListener>> optionalListeners = new HashMap<String, List<NotificationListener>>();
+    private final Map<Long, List<NotificationListener>> optionalListeners = new HashMap<>();
     private final Set<NotificationTopicListListener> topicsListeners = new HashSet<NotificationTopicListListener>();
 
     private final List<SubscriptionCommand> subscriptionInfo = new LinkedList<SubscriptionCommand>();
@@ -67,7 +67,7 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
         this.executorContext = executorContext;
         this.deserializer = new NotificationDeserializer(executorContext);
 
-        List<Topic> topicList = state.getTopics();
+        Collection<Topic> topicList = state.getTopics();
 
         if (topicList != null) {
             for (Topic topic : topicList) {
@@ -140,7 +140,7 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
     }
 
     @Override
-    public void subscribeToTopic(String topicId, boolean forceSync) throws UnavailableTopicException {
+    public void subscribeToTopic(Long topicId, boolean forceSync) throws UnavailableTopicException {
         Topic topic = findTopicById(topicId);
         if (topic.getSubscriptionType() != SubscriptionType.OPTIONAL_SUBSCRIPTION) {
             LOG.warn("Failed to subscribe: topic '{}' isn't optional", topicId);
@@ -155,10 +155,10 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
     }
 
     @Override
-    public void subscribeToTopics(List<String> topicIds, boolean forceSync) throws UnavailableTopicException {
+    public void subscribeToTopics(List<Long> topicIds, boolean forceSync) throws UnavailableTopicException {
         List<SubscriptionCommand> subscriptionUpdate = new LinkedList<>();
 
-        for (String id : topicIds) {
+        for (Long id : topicIds) {
             Topic topic = findTopicById(id);
             if (topic.getSubscriptionType() != SubscriptionType.OPTIONAL_SUBSCRIPTION) {
                 LOG.warn("Failed to subscribe: topic '{}' isn't optional", id);
@@ -176,7 +176,7 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
     }
 
     @Override
-    public void unsubscribeFromTopic(String topicId, boolean forceSync) throws UnavailableTopicException {
+    public void unsubscribeFromTopic(Long topicId, boolean forceSync) throws UnavailableTopicException {
         Topic topic = findTopicById(topicId);
         if (topic.getSubscriptionType() != SubscriptionType.OPTIONAL_SUBSCRIPTION) {
             LOG.warn("Failed to unsubscribe: topic '{}' isn't optional", topicId);
@@ -191,10 +191,10 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
     }
 
     @Override
-    public void unsubscribeFromTopics(List<String> topicIds, boolean forceSync) throws UnavailableTopicException {
+    public void unsubscribeFromTopics(List<Long> topicIds, boolean forceSync) throws UnavailableTopicException {
         List<SubscriptionCommand> subscriptionUpdate = new LinkedList<>();
 
-        for (String id : topicIds) {
+        for (Long id : topicIds) {
             Topic topic = findTopicById(id);
             if (topic.getSubscriptionType() != SubscriptionType.OPTIONAL_SUBSCRIPTION) {
                 LOG.warn("Failed to unsubscribe: topic '{}' isn't optional", id);
@@ -212,8 +212,8 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
     }
 
     @Override
-    public void addNotificationListener(String topicId, NotificationListener listener) throws UnavailableTopicException {
-        if (topicId == null || listener == null) {
+    public void addNotificationListener(Long topicId, NotificationListener listener) throws UnavailableTopicException {
+        if (listener == null) {
             LOG.warn("Failed to add listener: id={}, listener={}", topicId, listener);
             throw new IllegalArgumentException("Bad listener data");
         }
@@ -233,7 +233,7 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
     }
 
     @Override
-    public void removeNotificationListener(String topicId, NotificationListener listener) throws UnavailableTopicException {
+    public void removeNotificationListener(Long topicId, NotificationListener listener) throws UnavailableTopicException {
         if (topicId == null || listener == null) {
             LOG.warn("Failed to remove listener: id={}, listener={}", topicId, listener);
             throw new IllegalArgumentException("Bad listener data");
@@ -257,7 +257,7 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
 
     @Override
     public void topicsListUpdated(final List<Topic> list) {
-        Map<String, Topic> newTopics = new HashMap<String, Topic>();
+        Map<Long, Topic> newTopics = new HashMap<>();
 
         synchronized (topics) {
             for (Topic topic : list) {
@@ -329,7 +329,7 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
         }
     }
 
-    private void updateSubscriptionInfo(String id, SubscriptionCommandType type) {
+    private void updateSubscriptionInfo(Long id, SubscriptionCommandType type) {
         synchronized (subscriptionInfo) {
             subscriptionInfo.add(new SubscriptionCommand(id, type));
         }
@@ -341,7 +341,7 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
         }
     }
 
-    private Topic findTopicById(String id) throws UnavailableTopicException {
+    private Topic findTopicById(Long id) throws UnavailableTopicException {
         synchronized (topics) {
             Topic topic = topics.get(id);
             if (topic == null) {

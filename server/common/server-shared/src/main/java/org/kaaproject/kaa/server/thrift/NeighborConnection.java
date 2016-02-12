@@ -211,7 +211,7 @@ public final class NeighborConnection<T extends NeighborTemplate<V>, V> {
             cancelWorkers();
             executor.shutdown();
             try {
-                executor.awaitTermination(1, TimeUnit.MINUTES);
+                executor.awaitTermination(1, TimeUnit.SECONDS);
             } catch (InterruptedException e) {
                 LOG.error("Neighbor Connection {} error terminates ExecutorService", getId(), e);
             }

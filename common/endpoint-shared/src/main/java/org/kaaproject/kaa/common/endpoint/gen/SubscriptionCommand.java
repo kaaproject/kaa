@@ -7,9 +7,9 @@ package org.kaaproject.kaa.common.endpoint.gen;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class SubscriptionCommand extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"SubscriptionCommand\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"topicId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"command\",\"type\":{\"type\":\"enum\",\"name\":\"SubscriptionCommandType\",\"symbols\":[\"ADD\",\"REMOVE\"]}}],\"direction\":\"out\"}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"SubscriptionCommand\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"topicId\",\"type\":\"long\"},{\"name\":\"command\",\"type\":{\"type\":\"enum\",\"name\":\"SubscriptionCommandType\",\"symbols\":[\"ADD\",\"REMOVE\"]}}],\"direction\":\"out\"}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
-   private java.lang.String topicId;
+   private long topicId;
    private org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommandType command;
 
   /**
@@ -22,7 +22,7 @@ public class SubscriptionCommand extends org.apache.avro.specific.SpecificRecord
   /**
    * All-args constructor.
    */
-  public SubscriptionCommand(java.lang.String topicId, org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommandType command) {
+  public SubscriptionCommand(java.lang.Long topicId, org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommandType command) {
     this.topicId = topicId;
     this.command = command;
   }
@@ -40,7 +40,7 @@ public class SubscriptionCommand extends org.apache.avro.specific.SpecificRecord
   @SuppressWarnings(value="unchecked")
   public void put(int field$, java.lang.Object value$) {
     switch (field$) {
-    case 0: topicId = (java.lang.String)value$; break;
+    case 0: topicId = (java.lang.Long)value$; break;
     case 1: command = (org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommandType)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
@@ -49,7 +49,7 @@ public class SubscriptionCommand extends org.apache.avro.specific.SpecificRecord
   /**
    * Gets the value of the 'topicId' field.
    */
-  public java.lang.String getTopicId() {
+  public java.lang.Long getTopicId() {
     return topicId;
   }
 
@@ -57,7 +57,7 @@ public class SubscriptionCommand extends org.apache.avro.specific.SpecificRecord
    * Sets the value of the 'topicId' field.
    * @param value the value to set.
    */
-  public void setTopicId(java.lang.String value) {
+  public void setTopicId(java.lang.Long value) {
     this.topicId = value;
   }
 
@@ -97,7 +97,7 @@ public class SubscriptionCommand extends org.apache.avro.specific.SpecificRecord
   public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<SubscriptionCommand>
     implements org.apache.avro.data.RecordBuilder<SubscriptionCommand> {
 
-    private java.lang.String topicId;
+    private long topicId;
     private org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommandType command;
 
     /** Creates a new Builder */
@@ -132,12 +132,12 @@ public class SubscriptionCommand extends org.apache.avro.specific.SpecificRecord
     }
 
     /** Gets the value of the 'topicId' field */
-    public java.lang.String getTopicId() {
+    public java.lang.Long getTopicId() {
       return topicId;
     }
     
     /** Sets the value of the 'topicId' field */
-    public org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommand.Builder setTopicId(java.lang.String value) {
+    public org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommand.Builder setTopicId(long value) {
       validate(fields()[0], value);
       this.topicId = value;
       fieldSetFlags()[0] = true;
@@ -151,7 +151,6 @@ public class SubscriptionCommand extends org.apache.avro.specific.SpecificRecord
     
     /** Clears the value of the 'topicId' field */
     public org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommand.Builder clearTopicId() {
-      topicId = null;
       fieldSetFlags()[0] = false;
       return this;
     }
@@ -185,7 +184,7 @@ public class SubscriptionCommand extends org.apache.avro.specific.SpecificRecord
     public SubscriptionCommand build() {
       try {
         SubscriptionCommand record = new SubscriptionCommand();
-        record.topicId = fieldSetFlags()[0] ? this.topicId : (java.lang.String) defaultValue(fields()[0]);
+        record.topicId = fieldSetFlags()[0] ? this.topicId : (java.lang.Long) defaultValue(fields()[0]);
         record.command = fieldSetFlags()[1] ? this.command : (org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommandType) defaultValue(fields()[1]);
         return record;
       } catch (Exception e) {
