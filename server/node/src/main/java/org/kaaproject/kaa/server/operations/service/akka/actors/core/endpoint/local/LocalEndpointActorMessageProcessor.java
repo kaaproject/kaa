@@ -654,16 +654,10 @@ public class LocalEndpointActorMessageProcessor extends AbstractEndpointActorMes
         LOG.debug("[{}][{}] Current Endpoint was attached/detached from user. Need to close all current event channels {}", endpointKey,
                 actorKey, eventChannels.size());
         state.setUserRegistrationPending(false);
-
+        state.setProfile(operationsService.refreshServerEndpointProfile(key));
         if (message instanceof EndpointUserAttachMessage) {
-            if (state.isProfileSet()) {
-                state.setProfileUserId(message.getUserId());
-            }
             LOG.debug("[{}][{}] Updating endpoint user id to {} in profile", endpointKey, actorKey, message.getUserId());
         } else if (message instanceof EndpointUserDetachMessage) {
-            if (state.isProfileSet() && message.getUserId().equals(state.getProfileUserId())) {
-                state.setProfileUserId(null);
-            }
             LOG.debug("[{}][{}] Clanup endpoint user id in profile", endpointKey, actorKey, message.getUserId());
         }
 

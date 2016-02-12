@@ -16,7 +16,6 @@
 
 package org.kaaproject.kaa.server.common.dao;
 
-
 import java.util.List;
 
 import org.kaaproject.kaa.common.dto.ChangeNotificationDto;
@@ -42,7 +41,8 @@ public interface EndpointService {
     /**
      * Find endpoint profile by endpoint group id.
      *
-     * @param pageLink the page link dto
+     * @param pageLink
+     *            the page link dto
      * @return the endpoint profiles page dto
      */
     EndpointProfilesPageDto findEndpointProfileByEndpointGroupId(PageLinkDto pageLink);
@@ -50,7 +50,8 @@ public interface EndpointService {
     /**
      * Find endpoint profile body by endpoint group id.
      *
-     * @param pageLink the page link dto
+     * @param pageLink
+     *            the page link dto
      * @return the endpoint profiles page dto
      */
     EndpointProfilesBodyDto findEndpointProfileBodyByEndpointGroupId(PageLinkDto pageLink);
@@ -58,7 +59,8 @@ public interface EndpointService {
     /**
      * Find endpoint groups by application id.
      *
-     * @param applicationId the application id
+     * @param applicationId
+     *            the application id
      * @return the list
      */
     List<EndpointGroupDto> findEndpointGroupsByAppId(String applicationId);
@@ -66,7 +68,8 @@ public interface EndpointService {
     /**
      * Find endpoint group by id.
      *
-     * @param id the id
+     * @param id
+     *            the id
      * @return the endpoint group dto
      */
     EndpointGroupDto findEndpointGroupById(String id);
@@ -74,33 +77,37 @@ public interface EndpointService {
     /**
      * Remove endpoint group by application id.
      *
-     * @param applicationId the application id
+     * @param applicationId
+     *            the application id
      */
     void removeEndpointGroupByAppId(String applicationId);
 
     /**
      * Remove endpoint group by id.
      *
-     * @param applicationId the application id
+     * @param applicationId
+     *            the application id
      * @return the change notification dto
      */
     ChangeNotificationDto removeEndpointGroupById(String applicationId);
 
     /**
-     * Save endpoint group. Can't save endpoint group with same weight or
-     * update weight for default group. Application id and group weight is unique
+     * Save endpoint group. Can't save endpoint group with same weight or update
+     * weight for default group. Application id and group weight is unique
      *
-     * @param endpointGroupDto the endpoint group dto
+     * @param endpointGroupDto
+     *            the endpoint group dto
      * @return the endpoint group dto
      */
     EndpointGroupDto saveEndpointGroup(EndpointGroupDto endpointGroupDto);
 
-
     /**
      * Removes the topic id from endpoint group.
      *
-     * @param id the id
-     * @param topicId the topic id
+     * @param id
+     *            the id
+     * @param topicId
+     *            the topic id
      * @return the update notification dto
      */
     UpdateNotificationDto<EndpointGroupDto> removeTopicFromEndpointGroup(String id, String topicId);
@@ -108,8 +115,10 @@ public interface EndpointService {
     /**
      * Subscribe existing topic to existing group.
      *
-     * @param id the endpoint group id
-     * @param topicId the topic id
+     * @param id
+     *            the endpoint group id
+     * @param topicId
+     *            the topic id
      * @return the update notification dto
      */
     UpdateNotificationDto<EndpointGroupDto> addTopicToEndpointGroup(String id, String topicId);
@@ -117,7 +126,8 @@ public interface EndpointService {
     /**
      * Find endpoint configuration by hash.
      *
-     * @param hash the hash
+     * @param hash
+     *            the hash
      * @return the endpoint configuration dto
      */
     EndpointConfigurationDto findEndpointConfigurationByHash(byte[] hash);
@@ -125,7 +135,8 @@ public interface EndpointService {
     /**
      * Save endpoint configuration.
      *
-     * @param endpointConfigurationDto the endpoint configuration dto
+     * @param endpointConfigurationDto
+     *            the endpoint configuration dto
      * @return the endpoint configuration dto
      */
     EndpointConfigurationDto saveEndpointConfiguration(EndpointConfigurationDto endpointConfigurationDto);
@@ -133,7 +144,8 @@ public interface EndpointService {
     /**
      * Find endpoint profile by key hash.
      *
-     * @param endpointProfileKeyHash the endpoint profile key hash
+     * @param endpointProfileKeyHash
+     *            the endpoint profile key hash
      * @return the endpoint profile dto
      */
     EndpointProfileDto findEndpointProfileByKeyHash(byte[] endpointProfileKeyHash);
@@ -141,7 +153,8 @@ public interface EndpointService {
     /**
      * Find endpoint profile by key hash.
      *
-     * @param endpointProfileKeyHash the endpoint profile key hash
+     * @param endpointProfileKeyHash
+     *            the endpoint profile key hash
      * @return the endpoint profile body dto
      */
     EndpointProfileBodyDto findEndpointProfileBodyByKeyHash(byte[] endpointProfileKeyHash);
@@ -149,7 +162,8 @@ public interface EndpointService {
     /**
      * Find topic list entry by key hash.
      *
-     * @param hash the  hash
+     * @param hash
+     *            the hash
      * @return the topic list entry dto
      */
     TopicListEntryDto findTopicListEntryByHash(byte[] hash);
@@ -157,7 +171,8 @@ public interface EndpointService {
     /**
      * Save topic list entry
      *
-     * @param topicListEntryDto the endpoint list entry dto
+     * @param topicListEntryDto
+     *            the endpoint list entry dto
      * @return the topic list entry dto
      */
     TopicListEntryDto saveTopicListEntry(TopicListEntryDto topicListEntryDto);
@@ -165,20 +180,24 @@ public interface EndpointService {
     /**
      * Remove endpoint profile by key hash.
      *
-     * @param endpointProfileKeyHash the endpoint profile key hash
+     * @param endpointProfileKeyHash
+     *            the endpoint profile key hash
      */
     void removeEndpointProfileByKeyHash(byte[] endpointProfileKeyHash);
 
     /**
      * Remove endpoint profile by application id.
-     * @param appId application id
+     * 
+     * @param appId
+     *            application id
      */
     void removeEndpointProfileByAppId(String appId);
 
     /**
      * Save endpoint profile.
      *
-     * @param endpointProfileDto the endpoint profile dto
+     * @param endpointProfileDto
+     *            the endpoint profile dto
      * @return the endpoint profile dto
      */
     EndpointProfileDto saveEndpointProfile(EndpointProfileDto endpointProfileDto);
@@ -186,9 +205,12 @@ public interface EndpointService {
     /**
      * Attach endpoint profile to user.
      *
-     * @param userExternalId the user external id
-     * @param tenantId the tenant id
-     * @param profile the profile
+     * @param userExternalId
+     *            the user external id
+     * @param tenantId
+     *            the tenant id
+     * @param profile
+     *            the profile
      * @return the endpoint profile dto
      */
     EndpointProfileDto attachEndpointToUser(String userExternalId, String tenantId, EndpointProfileDto profile);
@@ -196,20 +218,23 @@ public interface EndpointService {
     /**
      * Attach endpoint profile to user.
      *
-     * @param endpointUserId the endpoint user id
-     * @param endpointAccessToken the endpoint access token
+     * @param endpointUserId
+     *            the endpoint user id
+     * @param endpointAccessToken
+     *            the endpoint access token
      * @return the endpoint profile dto
-     */   
-    
-    @Retryable(maxAttempts = 10, backoff = @Backoff(delay = 100), value = {KaaOptimisticLockingFailureException.class})
+     */
+
+    @Retryable(maxAttempts = 10, backoff = @Backoff(delay = 100) , value = { KaaOptimisticLockingFailureException.class })
     EndpointProfileDto attachEndpointToUser(String endpointUserId, String endpointAccessToken) throws KaaOptimisticLockingFailureException;
 
     /**
      * Detach endpoint profile from user.
      *
-     * @param detachEndpoint the detach endpoint
+     * @param detachEndpoint
+     *            the detach endpoint
      */
-    @Retryable(maxAttempts = 10, backoff = @Backoff(delay = 100), value = {KaaOptimisticLockingFailureException.class})
+    @Retryable(maxAttempts = 10, backoff = @Backoff(delay = 100) , value = { KaaOptimisticLockingFailureException.class })
     void detachEndpointFromUser(EndpointProfileDto detachEndpoint);
 
     /**
@@ -222,42 +247,64 @@ public interface EndpointService {
     /**
      * Find endpoint user by id.
      *
-     * @param id the id
+     * @param id
+     *            the id
      * @return the endpoint user dto
      */
     EndpointUserDto findEndpointUserById(String id);
-    
+
     /**
      * Find endpoint user by id.
      *
-     * @param   externalId  the external id
-     * @param   tenantId    the tenant id
-     * @return  the endpoint user dto
+     * @param externalId
+     *            the external id
+     * @param tenantId
+     *            the tenant id
+     * @return the endpoint user dto
      */
     EndpointUserDto findEndpointUserByExternalIdAndTenantId(String externalId, String tenantId);
 
     /**
      * Generate endpoint user access token from external user id.
      *
-     * @param externalUid the external user id
-     * @param tenantId the tenant id
+     * @param externalUid
+     *            the external user id
+     * @param tenantId
+     *            the tenant id
      * @return generated access token
      */
     String generateEndpointUserAccessToken(String externalUid, String tenantId);
 
-
     /**
      * Find endpoint profiles by user id.
      *
-     * @param endpointUserId the endpoint user id
+     * @param endpointUserId
+     *            the endpoint user id
      * @return the list
      */
     List<EndpointProfileDto> findEndpointProfilesByUserId(String endpointUserId);
-    
+
     /**
      * 
      * @param applicationId
      * @return
      */
     EndpointGroupDto findDefaultGroup(String applicationId);
+
+    /**
+     * Save endpoint user.
+     *
+     * @param endpointUserDto
+     *            the endpoint user dto
+     * @return the endpoint user dto
+     */
+    EndpointUserDto saveEndpointUser(EndpointUserDto endpointUserDto);
+
+    /**
+     * Remove endpoint user by id.
+     *
+     * @param id
+     *            the endpoint user id
+     */
+    void removeEndpointUserById(String id);
 }
