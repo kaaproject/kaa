@@ -25,6 +25,7 @@ import org.kaaproject.kaa.server.common.dao.service.SdkTokenGenerator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class SdkProfileTest {
@@ -56,5 +57,14 @@ public class SdkProfileTest {
                 "devuser", 100000L, "someName");
         SdkTokenGenerator.generateSdkToken(sdkProfileDto);
         return sdkProfileDto;
+    }
+
+    @Test
+    public void testForURLSafeToken() {
+        List<String> aefMapIdsList = Collections.singletonList("290");
+        SdkProfileDto sdkProfileDto = new SdkProfileDto("113", 1, 0, 1, 1, aefMapIdsList,
+                "someVerifierToken", "15643220456970528206", "devuser", 100000L, "");
+        SdkTokenGenerator.generateSdkToken(sdkProfileDto);
+        Assert.assertFalse(sdkProfileDto.getToken().contains("/"));
     }
 }

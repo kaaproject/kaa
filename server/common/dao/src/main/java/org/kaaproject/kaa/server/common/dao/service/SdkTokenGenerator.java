@@ -33,7 +33,7 @@ public class SdkTokenGenerator {
             try {
                 MessageDigest messageDigest = MessageDigest.getInstance(SDK_TOKEN_HASH_ALGORITHM);
                 messageDigest.update(DtoByteMarshaller.toBytes(sdkProfileDto.toSdkTokenDto()));
-                String token = Base64.encodeBase64String(messageDigest.digest());
+                String token = Base64.encodeBase64URLSafeString(messageDigest.digest());
                 sdkProfileDto.setToken(token);
             } catch (NoSuchAlgorithmException e) {
                 throw new RuntimeException(e);
