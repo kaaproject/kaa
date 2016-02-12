@@ -59,6 +59,9 @@ public class SdkProfileTest {
         return sdkProfileDto;
     }
 
+    /**
+     * Tests that SDK tokens are URL-safe and thus can be used as a part of a file name.
+     */
     @Test
     public void testForURLSafeToken() {
         List<String> aefMapIdsList = Collections.singletonList("290");
