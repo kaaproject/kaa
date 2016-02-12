@@ -17,6 +17,8 @@
 #ifndef ILOGGER_HPP_
 #define ILOGGER_HPP_
 
+#include <string>
+
 namespace kaa {
 
 enum class LogLevel {

@@ -18,19 +18,33 @@
 
 #include "kaa/ClientStatus.hpp"
 #include "kaa/notification/NotificationTransport.hpp"
+#include "kaa/KaaClientContext.hpp"
+#include "kaa/KaaClientProperties.hpp"
+#include "kaa/logging/DefaultLogger.hpp"
+#include "kaa/context/SimpleExecutorContext.hpp"
 
 #include "headers/channel/MockChannelManager.hpp"
+#include "headers/MockKaaClientStateStorage.hpp"
 
 namespace kaa {
+
+static KaaClientProperties properties;
+static DefaultLogger tmp_logger(properties.getClientId());
+static SimpleExecutorContext context;
+static MockKaaClientStateStorage tmp_state;
+//static KaaClientContext clientContext(properties, tmp_logger, tmp_state, context);
 
 BOOST_AUTO_TEST_SUITE(NotificationTransportTestSuite)
 
 BOOST_AUTO_TEST_CASE(EmptyRequestTest)
 {
-    IKaaClientStateStoragePtr status(new ClientStatus("fakePath"));
+    properties.setStateFileName("fakePath");
+    KaaClientContext clientContext(properties, tmp_logger, context);
+    IKaaClientStateStoragePtr status(new ClientStatus(clientContext));
+    clientContext.setStatus(status);
     MockChannelManager channelManager;
 
-    NotificationTransport transport(status, channelManager);
+    NotificationTransport transport(channelManager, clientContext);
     auto request = transport.createNotificationRequest();
     BOOST_CHECK(request->acceptedUnicastNotifications.is_null());
     BOOST_CHECK(request->subscriptionCommands.is_null());
@@ -40,10 +54,13 @@ BOOST_AUTO_TEST_CASE(EmptyRequestTest)
 
 BOOST_AUTO_TEST_CASE(SubscriptionInfoTest)
 {
-    IKaaClientStateStoragePtr status(new ClientStatus("fakePath"));
-    MockChannelManager channelManager;
+    properties.setStateFileName("fakePath");
+    KaaClientContext clientContext(properties, tmp_logger, context);
+    IKaaClientStateStoragePtr status(new ClientStatus(clientContext));
+    clientContext.setStatus(status);
 
-    NotificationTransport transport(status, channelManager);
+    MockChannelManager channelManager;
+    NotificationTransport transport(channelManager, clientContext);
 
     SubscriptionCommand cmd1;
 
@@ -85,9 +102,13 @@ BOOST_AUTO_TEST_CASE(SubscriptionInfoTest)
 
 BOOST_AUTO_TEST_CASE(AcceptedUnicastNotificationsTest)
 {
-    IKaaClientStateStoragePtr status(new ClientStatus("fakePath"));
+    properties.setStateFileName("fakePath");
+    KaaClientContext clientContext(properties, tmp_logger, context);
+    IKaaClientStateStoragePtr status(new ClientStatus(clientContext));
+    clientContext.setStatus(status);
+
     MockChannelManager channelManager;
-    NotificationTransport transport(status, channelManager);
+    NotificationTransport transport(channelManager, clientContext);
 
     std::string unicastNfUid("uid1");
     Notification nf1;
@@ -120,9 +141,12 @@ BOOST_AUTO_TEST_CASE(AcceptedUnicastNotificationsTest)
 
 BOOST_AUTO_TEST_CASE(DetailedTopicStateTest)
 {
-    IKaaClientStateStoragePtr status(new ClientStatus("fakePath"));
+    properties.setStateFileName("fakePath");
+    KaaClientContext clientContext(properties, tmp_logger, context);
+    IKaaClientStateStoragePtr status(new ClientStatus(clientContext));
+    clientContext.setStatus(status);
     MockChannelManager channelManager;
-    NotificationTransport transport(status, channelManager);
+    NotificationTransport transport(channelManager, clientContext);
 
     const std::int64_t topicId1(1);
     const std::int64_t topicId2(2);
@@ -158,7 +182,6 @@ BOOST_AUTO_TEST_CASE(DetailedTopicStateTest)
      * provided topic list
      */
     BOOST_CHECK(topicListHash != 0);
-
     auto topicList = status->getTopicList();
     BOOST_CHECK(topicList.size() == topics.size());
 
@@ -192,7 +215,7 @@ BOOST_AUTO_TEST_CASE(DetailedTopicStateTest)
     response2.notifications.set_array(std::vector<Notification>({nf2, nf1, nf3, nf4}));
     transport.onNotificationResponse(response2);
 
-    detailedTopicState = status->getTopicStates();
+    detailedTopicState = clientContext.getStatus().getTopicStates();
 
     for (const auto& topicInfo : detailedTopicState) {
         if (topicInfo.first == topicId1) {

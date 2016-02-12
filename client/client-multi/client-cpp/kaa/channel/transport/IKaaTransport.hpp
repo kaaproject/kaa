@@ -40,14 +40,6 @@ public:
      */
     virtual void sync() = 0;
 
-    /**
-     * Sets the client's state object.
-     *
-     * @param state state object to be set.
-     *
-     */
-    virtual void setClientState(IKaaClientStateStoragePtr status) = 0;
-
     virtual ~IKaaTransport() {}
 };
 

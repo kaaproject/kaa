@@ -32,10 +32,10 @@
 
 namespace kaa {
 
-NotificationManager::NotificationManager(IKaaClientStateStoragePtr status, IExecutorContext& executorContext)
-    : executorContext_(executorContext), clientStatus_(status)
+NotificationManager::NotificationManager(IKaaClientContext &context)
+    : context_(context)
 {
-    auto topicList = clientStatus_->getTopicList();
+    auto topicList = context_.getStatus().getTopicList();
 
     for (auto &topic : topicList) {
          if (topics_.insert(std::make_pair(topic.id, topic)).second) {
@@ -64,7 +64,7 @@ void NotificationManager::topicsListUpdated(const Topics& topicList)
         KAA_MUTEX_LOCKING("optionalListenersGuard_");
         KAA_MUTEX_UNIQUE_DECLARE(optionalListenersLock, optionalListenersGuard_);
         KAA_MUTEX_LOCKED("optionalListenersGuard_");
-        auto &topicStates = clientStatus_->getTopicStates();
+        auto &topicStates = context_.getStatus().getTopicStates();
         if (!topics_.empty()) {
             KAA_LOG_INFO(boost::format("Going to remove optional listener(s) for %1% obsolete topics") % topics_.size());
             for (const auto& pair : topics_) {
@@ -325,12 +325,12 @@ const Topic& NotificationManager::findTopic(std::int64_t id)
 
 void NotificationManager::notifyTopicUpdateSubscribers(const Topics& topics)
 {
-    executorContext_.getCallbackExecutor().add([this, topics] () { topicListeners_(topics); });
+    context_.getExecutorContext().getCallbackExecutor().add([this, topics] () { topicListeners_(topics); });
 }
 
 void NotificationManager::notifyMandatoryNotificationSubscribers(std::int64_t id, KaaNotificationPtr notification)
 {
-    executorContext_.getCallbackExecutor().add([this, id, notification] () { mandatoryListeners_(id, *notification); });
+    context_.getExecutorContext().getCallbackExecutor().add([this, id, notification] () { mandatoryListeners_(id, *notification); });
 }
 
 bool NotificationManager::notifyOptionalNotificationSubscribers(std::int64_t id, KaaNotificationPtr notification)
@@ -351,7 +351,7 @@ bool NotificationManager::notifyOptionalNotificationSubscribers(std::int64_t id,
 
         notified = true;
 
-        executorContext_.getCallbackExecutor().add([notifier, id, notification] () { (*notifier)(id, *notification); });
+        context_.getExecutorContext().getCallbackExecutor().add([notifier, id, notification] () { (*notifier)(id, *notification); });
     }
 
     return notified;

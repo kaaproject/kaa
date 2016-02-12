@@ -18,32 +18,50 @@
 
 #include "kaa/ClientStatus.hpp"
 #include "kaa/KaaDefaults.hpp"
+#include "kaa/KaaClientContext.hpp"
+#include "kaa/KaaClientProperties.hpp"
+#include "kaa/logging/DefaultLogger.hpp"
+
+#include "headers/context/MockExecutorContext.hpp"
+#include "headers/MockKaaClientStateStorage.hpp"
 
 #include <map>
 #include <cstdlib>
 #include <fstream>
 #include <sstream>
 #include <utility>
+#include <memory>
+#include <string>
 
 #ifdef RESOURCE_DIR
-const char * const filename = RESOURCE_DIR"/kaa_status.file";
+const char * const directory = RESOURCE_DIR;
 #else
-const char * const filename = "kaa_status.file";
+const char *const directory ="./";
 #endif
+const char * const filename = "kaa_status.file";
+
 
 void cleanfile() {
-    std::remove(filename);
+  std::remove(std::string(std::string(directory) + std::string("/") + std::string(filename)).c_str());
 }
 
 namespace kaa {
+
+static MockExecutorContext context;
+static KaaClientProperties properties;
+static DefaultLogger tmp_logger(properties.getClientId());
 
 BOOST_AUTO_TEST_SUITE(ClientStatusSuite);
 
 BOOST_AUTO_TEST_CASE(checkDefaults)
 {
     cleanfile();
+    IKaaClientStateStoragePtr stateMock(new MockKaaClientStateStorage);
+    properties.setStateFileName(filename);
+    properties.setWorkingDirectoryPath(directory);
+    KaaClientContext clientContext(properties, tmp_logger, context, stateMock);
 
-    ClientStatus cs(filename);
+    ClientStatus cs(clientContext);
     BOOST_CHECK_EQUAL(cs.isRegistered(), false);
     BOOST_CHECK_EQUAL(cs.getProfileHash().empty(), true);
     BOOST_CHECK_EQUAL(cs.getAttachedEndpoints().size(), 0);
@@ -55,8 +73,11 @@ BOOST_AUTO_TEST_CASE(checkDefaults)
 
 BOOST_AUTO_TEST_CASE(checkSetAndSaveParameters)
 {
-    ClientStatus cs(filename);
-    cs.setAppSeqNumber({3});
+    IKaaClientStateStoragePtr stateMock(new MockKaaClientStateStorage);
+    properties.setStateFileName(filename);
+    properties.setWorkingDirectoryPath(directory);
+    KaaClientContext clientContext(properties, tmp_logger, context, stateMock);
+    ClientStatus cs(clientContext);
     cs.setRegistered(true);
     BOOST_CHECK_EQUAL(cs.isRegistered(), true);
 
@@ -114,8 +135,7 @@ BOOST_AUTO_TEST_CASE(checkSetAndSaveParameters)
     cs.setEndpointKeyHash(endpointKeyHash);
 
     cs.save();
-
-    ClientStatus cs_restored(filename);
+    ClientStatus cs_restored(clientContext);
 
     auto topicList2 = cs_restored.getTopicList();
     auto topicStates = cs_restored.getTopicStates();

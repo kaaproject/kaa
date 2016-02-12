@@ -24,6 +24,7 @@
 #include "kaa/channel/transport/IProfileTransport.hpp"
 #include "kaa/channel/transport/AbstractKaaTransport.hpp"
 #include "kaa/security/SecurityDefinitions.hpp"
+#include "kaa/IKaaClientContext.hpp"
 
 namespace kaa {
 
@@ -33,7 +34,7 @@ class ProfileTransport: public AbstractKaaTransport<TransportType::PROFILE>,
                         public IProfileTransport {
 public:
     ProfileTransport(IKaaChannelManager& channelManager,
-                     const PublicKey& publicKey);
+                     const PublicKey& publicKey, IKaaClientContext &context);
 
     virtual void sync() { syncAll(); }
 

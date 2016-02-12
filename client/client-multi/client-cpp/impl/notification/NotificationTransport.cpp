@@ -28,15 +28,13 @@
 
 namespace kaa {
 
-NotificationTransport::NotificationTransport(IKaaClientStateStoragePtr status, IKaaChannelManager& manager)
-                                           : AbstractKaaTransport(manager), notificationProcessor_(nullptr), topicListHash_(0)
-{
-    setClientState(status);
-}
+NotificationTransport::NotificationTransport(IKaaChannelManager& manager, IKaaClientContext &context)
+    : AbstractKaaTransport(manager, context), notificationProcessor_(nullptr)
+{}
 
 std::vector<TopicState> NotificationTransport::prepareTopicStatesForRequest()
 {
-    auto &topicStates = clientStatus_->getTopicStates();
+    auto &topicStates = context_.getStatus().getTopicStates();
     std::vector<TopicState> requestTopicStates(topicStates.size());
     auto currentTopicState = topicStates.begin();
     for (auto& topicState : requestTopicStates) {
@@ -52,7 +50,7 @@ NotificationSyncRequestPtr NotificationTransport::createEmptyNotificationRequest
 {
     NotificationSyncRequestPtr request(new NotificationSyncRequest);
 
-    request->topicListHash = clientStatus_->getTopicListHash();
+    request->topicListHash = context_.getStatus().getTopicListHash();
     auto topicStates = prepareTopicStatesForRequest();
 
     if (!topicStates.empty()) {
@@ -70,7 +68,7 @@ NotificationSyncRequestPtr NotificationTransport::createEmptyNotificationRequest
 NotificationSyncRequestPtr NotificationTransport::createNotificationRequest()
 {
     NotificationSyncRequestPtr request(new NotificationSyncRequest);
-    request->topicListHash = clientStatus_->getTopicListHash();
+    request->topicListHash = context_.getStatus().getTopicListHash();
     if (!acceptedUnicastNotificationIds_.empty()) {
         request->acceptedUnicastNotifications.set_array(std::vector<std::string>(
                 acceptedUnicastNotificationIds_.begin(), acceptedUnicastNotificationIds_.end()));
@@ -96,7 +94,7 @@ NotificationSyncRequestPtr NotificationTransport::createNotificationRequest()
 
 void NotificationTransport::onNotificationResponse(const NotificationSyncResponse& response)
 {
-    auto &topicStates = clientStatus_->getTopicStates();
+    auto &topicStates = context_.getStatus().getTopicStates();
 
     if (response.responseStatus == SyncResponseStatus::NO_DELTA) {
         acceptedUnicastNotificationIds_.clear();
@@ -114,9 +112,9 @@ void NotificationTransport::onNotificationResponse(const NotificationSyncRespons
             }
 
             /* If The current topic list hash are differs from the calculated one - update topic list and hash */
-            if (clientStatus_->getTopicListHash() != topicListHash) {
-                clientStatus_->setTopicListHash(topicListHash);
-                clientStatus_->setTopicList(topics);
+            if (context_.getStatus().getTopicListHash() != topicListHash) {
+                context_.getStatus().setTopicListHash(topicListHash);
+                context_.getStatus().setTopicList(topics);
             }
 
             if (notificationProcessor_) {
@@ -169,12 +167,12 @@ void NotificationTransport::onNotificationResponse(const NotificationSyncRespons
                 topicStates[n.topicId] = notificationSequenceNumber;
             }
         }
-        clientStatus_->setTopicStates(topicStates);
+        context_.getStatus().setTopicStates(topicStates);
         if (notificationProcessor_) {
             notificationProcessor_->notificationReceived(newNotifications);
         }
-    }
-
+    }    
+    context_.getStatus().setTopicStates(topicStates);
     if (response.responseStatus != SyncResponseStatus::NO_DELTA) {
         syncAck();
     }

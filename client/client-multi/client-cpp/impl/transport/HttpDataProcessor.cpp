@@ -59,7 +59,7 @@ std::string HttpDataProcessor::retrieveBootstrapResponse(const IHttpResponse& re
 
 std::shared_ptr<IHttpRequest> HttpDataProcessor::createHttpRequest(const HttpUrl& url, const std::vector<std::uint8_t>& data, bool sign)
 {
-    std::shared_ptr<MultipartPostHttpRequest> post(new MultipartPostHttpRequest(url));
+    std::shared_ptr<MultipartPostHttpRequest> post(new MultipartPostHttpRequest(url, context_));
     const EncodedSessionKey& encodedSessionKey = encDec_->getEncodedSessionKey();
     const std::string& bodyEncoded = encDec_->encodeData(data.data(), data.size());
 

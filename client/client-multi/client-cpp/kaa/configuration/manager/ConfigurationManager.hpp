@@ -24,6 +24,7 @@
 #include "kaa/configuration/manager/IConfigurationManager.hpp"
 #include "kaa/configuration/IConfigurationHashContainer.hpp"
 #include "kaa/configuration/gen/ConfigurationDefinitions.hpp"
+#include "kaa/IKaaClientContext.hpp"
 
 namespace kaa {
 
@@ -42,7 +43,7 @@ class ConfigurationManager : public IConfigurationManager,
                              public IConfigurationProcessor,
                              public IConfigurationHashContainer {
 public:
-    ConfigurationManager(IExecutorContext& executorContext, IKaaClientStateStoragePtr state);
+    ConfigurationManager(IKaaClientContext &context);
 
     virtual void init();
 
@@ -77,8 +78,7 @@ private:
 private:
     bool isConfigurationLoaded_;
 
-    IExecutorContext& executorContext_;
-    IKaaClientStateStoragePtr state_;
+    IKaaClientContext &context_;
     KaaRootConfiguration configuration_;
 
     IConfigurationStoragePtr storage_;

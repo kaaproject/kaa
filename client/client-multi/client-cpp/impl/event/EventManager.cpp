@@ -67,7 +67,7 @@ void EventManager::produceEvent(const std::string& fqn, const std::vector<std::u
     }
 
     if (trxId) {
-        getContainerByTrxId(trxId).push_back(event);
+        getContainerByTrxId(trxId, context_).push_back(event);
         return;
     }
 
@@ -187,12 +187,12 @@ void EventManager::onEventListenersReceived(const EventSyncResponse::eventListen
                         listeners = response.listeners.get_array();
                     }
 
-                    executorContext_.getCallbackExecutor().add([callback, listeners]
+                    context_.getExecutorContext().getCallbackExecutor().add([callback, listeners]
                                                                 {
                                                                     callback->onEventListenersReceived(listeners);
                                                                 });
                 } else {
-                    executorContext_.getCallbackExecutor().add([callback] { callback->onRequestFailed(); });
+                    context_.getExecutorContext().getCallbackExecutor().add([callback] { callback->onRequestFailed(); });
                 }
 
             } else {
@@ -260,7 +260,7 @@ void EventManager::setTransport(EventTransport *transport)
     }
 }
 
-void EventManager::commit(TransactionIdPtr trxId)
+void EventManager::commit(TransactionIdPtr trxId, IKaaClientContext &context_)
 {
     auto it = transactions_.find(trxId);
     if (it != transactions_.end()) {

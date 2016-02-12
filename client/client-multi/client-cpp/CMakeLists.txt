@@ -157,7 +157,8 @@ if ( NOT KAA_WITHOUT_LOGGING )
     set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
             impl/log/LoggingTransport.cpp
             impl/log/LogCollector.cpp
-            impl/log/LogRecord.cpp
+            impl/log/LogStorageConstants.cpp
+            impl/log/RecordFuture.cpp
             impl/log/MemoryLogStorage.cpp
             impl/log/DefaultLogUploadStrategy.cpp
     )
@@ -272,7 +273,7 @@ set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
         impl/Kaa.cpp
         impl/KaaClient.cpp
         impl/logging/Log.cpp
-        impl/logging/LoggerFactory.cpp
+        impl/logging/DefaultLogger.cpp
         impl/security/KeyUtils.cpp
         impl/security/RsaEncoderDecoder.cpp
         impl/common/EndpointObjectHash.cpp

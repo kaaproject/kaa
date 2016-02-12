@@ -23,7 +23,13 @@
 #include "kaa/KaaDefaults.hpp"
 #include "kaa/bootstrap/BootstrapManager.hpp"
 #include "kaa/failover/DefaultFailoverStrategy.hpp"
+#include "kaa/KaaClientContext.hpp"
+#include "kaa/logging/DefaultLogger.hpp"
 #include "test/headers/channel/MockChannelManager.hpp"
+#include "kaa/context/SimpleExecutorContext.hpp"
+#include "kaa/KaaClientProperties.hpp"
+
+#include "test/headers/MockKaaClientStateStorage.hpp"
 
 
 namespace kaa {
@@ -32,7 +38,13 @@ BOOST_AUTO_TEST_SUITE(BootstrapFailoverTest)
 
 BOOST_AUTO_TEST_CASE(BootstrapEmptyOperationalServersListTest)
 {
-    BootstrapManager bootstrapManager;
+    KaaClientProperties properties;
+    DefaultLogger tmp_logger(properties.getClientId());
+
+    SimpleExecutorContext exeContext;
+    IKaaClientStateStoragePtr status (new MockKaaClientStateStorage);
+    KaaClientContext context(properties, tmp_logger, exeContext, status);
+    BootstrapManager bootstrapManager(context);
     IFailoverStrategyPtr failoverStrategy(std::make_shared<DefaultFailoverStrategy>());
     MockChannelManager channelManager;
     std::vector<ProtocolMetaData> operationServers;
