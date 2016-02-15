@@ -224,7 +224,7 @@ public class DefaultLogCollectorTest {
         logCollector.addLogRecord(record);
 
         Mockito.when(storage.getNextBucket()).thenReturn(
-                new LogBucket(0, Arrays.asList(new LogRecord(record), new LogRecord(record), new LogRecord(record))));
+                new LogBucket(1, Arrays.asList(new LogRecord(record), new LogRecord(record), new LogRecord(record))));
 
         LogSyncRequest request1 = new LogSyncRequest();
         logCollector.fillSyncRequest(request1);
