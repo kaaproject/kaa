@@ -29,7 +29,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class SdkProfileTest {
-    private final int SDK_TOKEN_LENGTH = 28;
+    private final int SDK_TOKEN_LENGTH = 27;
 
     @Test
     public void hashCodeEqualsTest() {

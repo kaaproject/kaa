@@ -259,7 +259,7 @@ public class EndpointServiceImplTest extends AbstractTest {
         String endpointGroupId = "124";
         List<String> accessTokens = new ArrayList<>();
         List<String> endpointIds = new ArrayList<String>();
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 20; i++) {
             EndpointProfileDto endpointProfileDto = generateEndpointProfileWithGroupIdDto(endpointGroupId);
             String accessToken = "" + i;
             endpointProfileDto.setAccessToken(accessToken);
