@@ -74,7 +74,7 @@ private:
          void *trace[16];
          int i, trace_size = 0;
 
-#if KAA_MAX_LOG_LEVEL>=5
+#if KAA_MAX_LOG_LEVEL<5
          return;
 #endif
 
