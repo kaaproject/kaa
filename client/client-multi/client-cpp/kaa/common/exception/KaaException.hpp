@@ -73,6 +73,11 @@ private:
     void captureStack(std::stringstream& ss)  {
          void *trace[16];
          int i, trace_size = 0;
+
+#if KAA_MAX_LOG_LEVEL>=5
+         return;
+#endif
+
 #ifdef _WIN32
          SYMBOL_INFO  * symbol;
          HANDLE process;
