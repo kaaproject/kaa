@@ -16,7 +16,7 @@
 
 #import "DefaultHttpClient.h"
 #import <AFNetworking/AFNetworking.h>
-#import "CommonEPConstants.h"
+#import "Constants.h"
 #import "KaaLogging.h"
 #import "KaaExceptions.h"
 

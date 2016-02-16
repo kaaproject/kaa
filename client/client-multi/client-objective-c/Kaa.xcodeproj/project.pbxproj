@@ -21,6 +21,7 @@
 		398CE9791BE26E0100D31E34 /* KaaLogging.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B844623A1BB5C377009826FC /* KaaLogging.h */; };
 		555D709CF7DB758766ABDA97 /* libPods-KaaTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 859AA00A9E215058D7F33E50 /* libPods-KaaTests.a */; };
 		AF7DBEC9ACBF5F012466DBA0 /* libPods-libKaa.a.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DF8CCE0CCC93539D61CC4CDC /* libPods-libKaa.a.a */; };
+		B80F30FB1C737BA200A9D962 /* TopicListHashCalculator.h in Copy Files */ = {isa = PBXBuildFile; fileRef = 392356A81C56647800BCA885 /* TopicListHashCalculator.h */; };
 		B810A8581C562E5F0086C76E /* AbstractHttpClient.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B836A15E1C48EABD00376A6B /* AbstractHttpClient.h */; };
 		B810A8591C562E5F0086C76E /* DefaultHttpClient.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B836A1601C48EABD00376A6B /* DefaultHttpClient.h */; };
 		B810A85A1C562E5F0086C76E /* HttpRequestCreator.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B836A1621C48EABD00376A6B /* HttpRequestCreator.h */; };
@@ -289,7 +290,6 @@
 		B8CCBED21C4676FD00C26F0B /* NotificationManager.h in Headers */ = {isa = PBXBuildFile; fileRef = B8CCBECB1C4676FD00C26F0B /* NotificationManager.h */; };
 		B8CCBED31C4676FD00C26F0B /* NotificationProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = B8CCBECC1C4676FD00C26F0B /* NotificationProcessor.h */; };
 		B8CCBED41C4676FD00C26F0B /* NotificationTopicListDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = B8CCBECD1C4676FD00C26F0B /* NotificationTopicListDelegate.h */; };
-		B8CCBF1B1C46783D00C26F0B /* CommonEPConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = B8CCBF151C46783D00C26F0B /* CommonEPConstants.h */; };
 		B8CCBF1C1C46783D00C26F0B /* Constants.h in Headers */ = {isa = PBXBuildFile; fileRef = B8CCBF161C46783D00C26F0B /* Constants.h */; };
 		B8CCBF1D1C46783D00C26F0B /* EndpointObjectHash.h in Headers */ = {isa = PBXBuildFile; fileRef = B8CCBF171C46783D00C26F0B /* EndpointObjectHash.h */; };
 		B8CCBF1E1C46783D00C26F0B /* EndpointObjectHash.m in Sources */ = {isa = PBXBuildFile; fileRef = B8CCBF181C46783D00C26F0B /* EndpointObjectHash.m */; };
@@ -403,7 +403,6 @@
 		B8CCBFCB1C467C0D00C26F0B /* TransportProtocolId.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B8CCBE281C4673B500C26F0B /* TransportProtocolId.h */; };
 		B8CCBFCC1C467C0D00C26F0B /* TransportProtocolIdHolder.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B8CCBE2A1C4673B500C26F0B /* TransportProtocolIdHolder.h */; };
 		B8CCBFCD1C467C0D00C26F0B /* UserTransport.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B8CCBE2C1C4673B500C26F0B /* UserTransport.h */; };
-		B8CCBFCE1C467C0D00C26F0B /* CommonEPConstants.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B8CCBF151C46783D00C26F0B /* CommonEPConstants.h */; };
 		B8CCBFCF1C467C0D00C26F0B /* Constants.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B8CCBF161C46783D00C26F0B /* Constants.h */; };
 		B8CCBFD01C467C0D00C26F0B /* EndpointObjectHash.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B8CCBF171C46783D00C26F0B /* EndpointObjectHash.h */; };
 		B8CCBFD21C467C0D00C26F0B /* ConfigurationStorage.h in Copy Files */ = {isa = PBXBuildFile; fileRef = B8CCBE971C46745600C26F0B /* ConfigurationStorage.h */; };
@@ -518,6 +517,7 @@
 			dstPath = "include/$(PRODUCT_NAME)";
 			dstSubfolderSpec = 16;
 			files = (
+				B80F30FB1C737BA200A9D962 /* TopicListHashCalculator.h in Copy Files */,
 				B810A8581C562E5F0086C76E /* AbstractHttpClient.h in Copy Files */,
 				B810A8591C562E5F0086C76E /* DefaultHttpClient.h in Copy Files */,
 				B810A85A1C562E5F0086C76E /* HttpRequestCreator.h in Copy Files */,
@@ -622,7 +622,6 @@
 				B8CCBFCB1C467C0D00C26F0B /* TransportProtocolId.h in Copy Files */,
 				B8CCBFCC1C467C0D00C26F0B /* TransportProtocolIdHolder.h in Copy Files */,
 				B8CCBFCD1C467C0D00C26F0B /* UserTransport.h in Copy Files */,
-				B8CCBFCE1C467C0D00C26F0B /* CommonEPConstants.h in Copy Files */,
 				B8CCBFCF1C467C0D00C26F0B /* Constants.h in Copy Files */,
 				B8CCBFD01C467C0D00C26F0B /* EndpointObjectHash.h in Copy Files */,
 				B8CCBFD21C467C0D00C26F0B /* ConfigurationStorage.h in Copy Files */,
@@ -941,7 +940,6 @@
 		B8CCBECB1C4676FD00C26F0B /* NotificationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotificationManager.h; sourceTree = "<group>"; };
 		B8CCBECC1C4676FD00C26F0B /* NotificationProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotificationProcessor.h; sourceTree = "<group>"; };
 		B8CCBECD1C4676FD00C26F0B /* NotificationTopicListDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotificationTopicListDelegate.h; sourceTree = "<group>"; };
-		B8CCBF151C46783D00C26F0B /* CommonEPConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonEPConstants.h; sourceTree = "<group>"; };
 		B8CCBF161C46783D00C26F0B /* Constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
 		B8CCBF171C46783D00C26F0B /* EndpointObjectHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EndpointObjectHash.h; sourceTree = "<group>"; };
 		B8CCBF181C46783D00C26F0B /* EndpointObjectHash.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EndpointObjectHash.m; sourceTree = "<group>"; };
@@ -1543,7 +1541,6 @@
 		B8CCBF141C46783D00C26F0B /* common */ = {
 			isa = PBXGroup;
 			children = (
-				B8CCBF151C46783D00C26F0B /* CommonEPConstants.h */,
 				B8CCBF161C46783D00C26F0B /* Constants.h */,
 				B8CCBF171C46783D00C26F0B /* EndpointObjectHash.h */,
 				B8CCBF181C46783D00C26F0B /* EndpointObjectHash.m */,
@@ -1836,7 +1833,6 @@
 				B8CCBE521C4673B500C26F0B /* KAATcpConnAck.h in Headers */,
 				B8CCBE601C4673B500C26F0B /* KAATcpSyncRequest.h in Headers */,
 				B8CCBE371C4673B500C26F0B /* DefaultBootstrapChannel.h in Headers */,
-				B8CCBF1B1C46783D00C26F0B /* CommonEPConstants.h in Headers */,
 				B8CCBF1C1C46783D00C26F0B /* Constants.h in Headers */,
 				B836A14B1C48E9E000376A6B /* MemBucket.h in Headers */,
 				B8CCBEC01C46762A00C26F0B /* DefaultEndpointRegistrationManager.h in Headers */,
