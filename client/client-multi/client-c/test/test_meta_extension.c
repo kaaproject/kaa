@@ -60,6 +60,7 @@ void test_meta_extension_get_size_failed(void)
     ASSERT_NOT_EQUAL(error_code, KAA_ERR_NONE);
 }
 
+
 void test_meta_extension_get_size(void)
 {
     KAA_TRACE_IN(logger);
@@ -67,9 +68,9 @@ void test_meta_extension_get_size(void)
     const size_t expected_meta_extension_size = KAA_EXTENSION_HEADER_SIZE
                                               + sizeof(uint32_t) /* request id */
                                               + sizeof(uint32_t) /* timeout */
-                                              + SHA_1_DIGEST_LENGTH
-                                              + SHA_1_DIGEST_LENGTH
-                                              + KAA_SDK_TOKEN_LENGTH;
+                                              + kaa_aligned_size_get(SHA_1_DIGEST_LENGTH)
+                                              + kaa_aligned_size_get(SHA_1_DIGEST_LENGTH)
+                                              + kaa_aligned_size_get(KAA_SDK_TOKEN_LENGTH);
 
     size_t meta_extension_size;
     kaa_error_t error_code = kaa_meta_data_request_get_size(&meta_extension_size);
