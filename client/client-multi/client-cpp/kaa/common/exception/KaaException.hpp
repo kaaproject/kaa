@@ -73,11 +73,9 @@ private:
     std::string message_;
 
     void captureStack(std::stringstream& ss)  {
+#ifndef NDEBUG
          void *trace[16];
          int i, trace_size = 0;
-
-#ifndef NDEBUG
-
 #ifdef _WIN32
          SYMBOL_INFO  * symbol;
          HANDLE process;
@@ -104,6 +102,8 @@ private:
 #ifdef _WIN32
          free( symbol );
 #endif
+#else
+         static_cast<void>(ss);
 #endif // NDEBUG
      }
 };
