@@ -22,6 +22,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.server.common.dao.service.SdkTokenGenerator;
+import static org.kaaproject.kaa.common.Constants.SDK_TOKEN_SIZE;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,7 +30,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class SdkProfileTest {
-    private final int SDK_TOKEN_LENGTH = 27;
+    
 
     @Test
     public void hashCodeEqualsTest() {
@@ -48,7 +49,12 @@ public class SdkProfileTest {
         Assert.assertEquals(sdkProfile1.getToken(), sdkProfile2.getToken());
         Assert.assertNotEquals(sdkProfile1.toDto(), sdkProfile3.toDto());
         Assert.assertNotEquals(sdkProfile1.getToken(), sdkProfile3.getToken());
-        Assert.assertEquals(SDK_TOKEN_LENGTH, sdkProfile1.getToken().length());
+        Assert.assertEquals(SDK_TOKEN_SIZE, sdkProfile1.getToken().length());
+        
+        for(int i =0; i < 100000; i++){
+            SdkProfileDto tmp = generateSdkProfileDto("1235" + i, "token1235" + i);
+            Assert.assertEquals(SDK_TOKEN_SIZE, tmp.getToken().length(), SDK_TOKEN_SIZE); 
+        }
     }
 
     private SdkProfileDto generateSdkProfileDto(String appId, String appToken) {

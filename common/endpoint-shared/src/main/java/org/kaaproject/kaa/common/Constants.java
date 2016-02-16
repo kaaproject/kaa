@@ -48,7 +48,7 @@ public interface Constants { //NOSONAR
     /**
      * The size of sdk token
      */
-    public static final int SDK_TOKEN_SIZE = 28;
+    public static final int SDK_TOKEN_SIZE = 27;
 
     /**
      * The size of application token

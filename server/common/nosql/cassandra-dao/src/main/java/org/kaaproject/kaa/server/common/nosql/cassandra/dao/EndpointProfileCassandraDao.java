@@ -358,6 +358,9 @@ public class EndpointProfileCassandraDao extends AbstractVersionableCassandraDao
             keyHashList = cassandraEPByEndpointGroupIdDao.findEPByEndpointGroupId(pageLink);
         }
         profilesBodyDto = findEndpointProfilesBodyList(keyHashList, pageLink.getEndpointGroupId());
+        if(profilesBodyDto == null){
+            profilesBodyDto = Collections.emptyList();
+        }
         endpointProfilesBodyDto = createNextBodyPage(profilesBodyDto, pageLink.getEndpointGroupId(), pageLink.getLimit());
         return endpointProfilesBodyDto;
     }

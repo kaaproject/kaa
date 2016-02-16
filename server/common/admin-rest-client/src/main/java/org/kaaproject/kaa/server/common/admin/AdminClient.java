@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpHost;
@@ -138,15 +139,19 @@ public class AdminClient {
     public EndpointProfileDto getEndpointProfileByKeyHash(String endpointProfileKeyHash) throws Exception {
         ParameterizedTypeReference<EndpointProfileDto> typeRef = new ParameterizedTypeReference<EndpointProfileDto>() {
         };
-        ResponseEntity<EndpointProfileDto> entity = restTemplate.exchange(url + "endpointProfile/" + endpointProfileKeyHash,
+        ResponseEntity<EndpointProfileDto> entity = restTemplate.exchange(url + "endpointProfile/" + toUrlSafe(endpointProfileKeyHash),
                 HttpMethod.GET, null, typeRef);
         return entity.getBody();
+    }
+
+    private static String toUrlSafe(String endpointProfileKeyHash) {
+        return Base64.encodeBase64URLSafeString(Base64.decodeBase64(endpointProfileKeyHash));
     }
 
     public EndpointProfileBodyDto getEndpointProfileBodyByKeyHash(String endpointProfileKeyHash) throws Exception {
         ParameterizedTypeReference<EndpointProfileBodyDto> typeRef = new ParameterizedTypeReference<EndpointProfileBodyDto>() {
         };
-        ResponseEntity<EndpointProfileBodyDto> entity = restTemplate.exchange(url + "endpointProfileBody/" + endpointProfileKeyHash,
+        ResponseEntity<EndpointProfileBodyDto> entity = restTemplate.exchange(url + "endpointProfileBody/" + toUrlSafe(endpointProfileKeyHash),
                 HttpMethod.GET, null, typeRef);
         return entity.getBody();
     }
