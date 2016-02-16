@@ -53,8 +53,8 @@ public:
     };
 
 public:
-    ${event_family_class_name}(IEventManager& manager, IExecutorContext& executorContext)
-        : eventManager_(manager), executorContext_(executorContext)
+    ${event_family_class_name}(IEventManager& manager, IKaaClientContext &context)
+        : eventManager_(manager), executorContext_(context.getExecutorContext()), context_(context)
     {
         eventFQNs_ = ${add_supported_event_class_fqns};
     }
@@ -105,7 +105,7 @@ private:
             executorContext_.getCallbackExecutor().add([=]
                                                     {
                                                         boost::any anyEvent(event);
-                                                        listeners_(anyEvent, source, fqn); 
+                                                        listeners_(anyEvent, source, fqn);
                                                     });
         }
     }
@@ -115,6 +115,7 @@ private:
     std::list<std::string>                   eventFQNs_;
     KaaObservable<void (const boost::any& value, const std::string& source, const std::string& fqn), ${event_family_class_name}Listener*> listeners_;
     IExecutorContext& executorContext_;
+    IKaaClientContext& context_;
 };
 
 }
