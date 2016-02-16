@@ -32,6 +32,7 @@
 #include "kaa/event/IEventFamily.hpp"
 #include "kaa/event/IEventManager.hpp"
 #include "kaa/transact/ITransactable.hpp"
+#include "kaa/IKaaClientContext.hpp"
 
 ${include_event_family_headers}
 
@@ -41,22 +42,23 @@ class IExecutorContext;
 
 class EventFamilyFactory {
 public:
-    EventFamilyFactory(IEventManager& manager, ITransactable &transactionManager, IExecutorContext& executorContext)
-        : eventManager_(manager), transactionManager_(transactionManager), executorContext_(executorContext)
+    EventFamilyFactory(IEventManager& manager, ITransactable &transactionManager, IKaaClientContext& context)
+        : eventManager_(manager), transactionManager_(transactionManager), executorContext_(context.getExecutorContext())
+        , context_(context)
     {
         ${event_family_factory_set_concrete_event_family_names}
     }
 
     TransactionIdPtr startEventsBlock() {
-        return transactionManager_.beginTransaction();
+        return transactionManager_.beginTransaction(context_);
     }
 
     void submitEventsBlock(TransactionIdPtr trxId) {
-        transactionManager_.commit(trxId);
+        transactionManager_.commit(trxId, context_);
     }
 
     void removeEventsBlock(TransactionIdPtr trxId) {
-        transactionManager_.rollback(trxId);
+        transactionManager_.rollback(trxId, context_);
     }
 
     ${event_family_factory_get_concrete_event_family}
@@ -68,7 +70,8 @@ private:
     std::map<std::string, std::shared_ptr<IEventFamily> > eventFamilies_;
     std::map<std::string, FQNList > supportedFQNLists_;
     IExecutorContext& executorContext_;
-    
+    IKaaClientContext& context_;
+
     std::shared_ptr<IEventFamily> getEventFamilyByName(const std::string& efcName) {
         auto it = eventFamilies_.find(efcName);
         if (it != eventFamilies_.end()) {
