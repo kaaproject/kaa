@@ -21,7 +21,7 @@
 #include <exception>
 #include <sstream>
 
-#if KAA_MAX_LOG_LEVEL>=5
+#ifndef NDEBUG
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
@@ -32,7 +32,7 @@
 #else
 #include <execinfo.h>
 #endif
-#endif // KAA_MAX_LOG_LEVEL>=5
+#endif // NDEBUG
 
 namespace kaa {
 
@@ -76,7 +76,7 @@ private:
          void *trace[16];
          int i, trace_size = 0;
 
-#if KAA_MAX_LOG_LEVEL>=5
+#ifndef NDEBUG
 
 #ifdef _WIN32
          SYMBOL_INFO  * symbol;
@@ -104,7 +104,7 @@ private:
 #ifdef _WIN32
          free( symbol );
 #endif
-#endif // KAA_MAX_LOG_LEVEL>=5
+#endif // NDEBUG
      }
 };
 
