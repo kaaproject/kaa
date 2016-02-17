@@ -61,7 +61,7 @@ extern const char * const DEFAULT_USER_VERIFIER_TOKEN;
 typedef std::vector<ITransportConnectionInfoPtr> BootstrapServers;
 const BootstrapServers& getBootstrapServers();
 
-const Botan::SecureVector<std::uint8_t>& getDefaultConfigData();
+const Botan::secure_vector<std::uint8_t>& getDefaultConfigData();
 
 HashDigest getPropertiesHash();
 

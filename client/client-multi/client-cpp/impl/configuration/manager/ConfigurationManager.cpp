@@ -103,8 +103,9 @@ void ConfigurationManager::loadConfiguration()
     }
 
     if (!isConfigurationLoaded_) {
-        const Botan::SecureVector<std::uint8_t>& config = getDefaultConfigData();
-        updateConfiguration(config.begin(), config.size());
+        const Botan::secure_vector<std::uint8_t>& config = getDefaultConfigData();
+
+        updateConfiguration(config.data(), config.size());
         isConfigurationLoaded_ = true;
         KAA_LOG_INFO("Loaded default configuration");
     }

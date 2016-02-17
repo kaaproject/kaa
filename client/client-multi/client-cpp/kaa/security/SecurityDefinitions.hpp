@@ -22,13 +22,13 @@
 
 namespace kaa {
 
-typedef Botan::MemoryVector<std::uint8_t> PublicKey;
+typedef Botan::secure_vector<std::uint8_t> PublicKey;
 typedef std::string                       PrivateKey;
 
 typedef Botan::SymmetricKey               SessionKey;
-typedef Botan::SecureVector<std::uint8_t> EncodedSessionKey;
+typedef Botan::secure_vector<std::uint8_t> EncodedSessionKey;
 
-typedef Botan::SecureVector<std::uint8_t> Signature;
+typedef Botan::secure_vector<std::uint8_t> Signature;
 
 class KeyPair
 {
