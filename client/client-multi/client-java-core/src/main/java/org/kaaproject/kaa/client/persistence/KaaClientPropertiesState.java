@@ -36,6 +36,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.avro.io.BinaryDecoder;
@@ -74,7 +75,7 @@ public class KaaClientPropertiesState implements KaaClientState {
     private static final String IS_ATTACHED = "is_attached";
 
     private static final String EVENT_SEQ_NUM = "event.seq.num";
-    
+
     private static final String TOPIC_LIST = "topic.list";
     private static final String TOPIC_LIST_HASH = "topic.list.hash";
 
@@ -92,7 +93,7 @@ public class KaaClientPropertiesState implements KaaClientState {
     private final AtomicInteger eventSequence = new AtomicInteger();
     private Integer topicListHash;
 
-    private KeyPair kp;
+    private KeyPair keyPair;
     private EndpointKeyHash keyHash;
     private boolean isConfigVersionUpdated = false;
     private boolean hasUpdate = false;
@@ -133,7 +134,7 @@ public class KaaClientPropertiesState implements KaaClientState {
                 parseNfSubscriptions();
 
                 String attachedEndpointsString = state.getProperty(ATTACHED_ENDPOINTS);
-                if(attachedEndpointsString != null){
+                if (attachedEndpointsString != null) {
                     String[] splittedEndpointsList = attachedEndpointsString.split(",");
                     for (String attachedEndpoint : splittedEndpointsList) {
                         if (!attachedEndpoint.isEmpty()) {
@@ -144,7 +145,7 @@ public class KaaClientPropertiesState implements KaaClientState {
                 }
 
                 String eventSeqNumStr = state.getProperty(EVENT_SEQ_NUM);
-                if(eventSeqNumStr != null){
+                if (eventSeqNumStr != null) {
                     Integer eventSeqNum = 0;
                     try { // NOSONAR
                         eventSeqNum = Integer.parseInt(eventSeqNumStr);
@@ -173,9 +174,9 @@ public class KaaClientPropertiesState implements KaaClientState {
             setPropertiesHash(properties.getPropertiesHash());
         }
     }
-    
+
     private void parseTopics() {
-        if(state.getProperty(TOPIC_LIST) != null){
+        if (state.getProperty(TOPIC_LIST) != null) {
             byte[] data = base64.decodeBase64(state.getProperty(TOPIC_LIST));
             BinaryDecoder decoder = DecoderFactory.get().binaryDecoder(data, null);
             SpecificDatumReader<Topic> avroReader = new SpecificDatumReader<Topic>(Topic.class);
@@ -196,10 +197,10 @@ public class KaaClientPropertiesState implements KaaClientState {
 
     @SuppressWarnings("unchecked")
     private void parseNfSubscriptions() {
-        if(state.getProperty(NF_SUBSCRIPTIONS) != null){
+        if (state.getProperty(NF_SUBSCRIPTIONS) != null) {
             byte[] data = base64.decodeBase64(state.getProperty(NF_SUBSCRIPTIONS));
             ByteArrayInputStream is = new ByteArrayInputStream(data);
-            try ( ObjectInputStream ois = new ObjectInputStream(is)) {
+            try (ObjectInputStream ois = new ObjectInputStream(is)) {
                 nfSubscriptions.putAll((Map<Long, Integer>) ois.readObject());
             } catch (Exception e) {
                 LOG.error("Unexpected exception occurred while reading subscription information from state", e);
@@ -265,7 +266,7 @@ public class KaaClientPropertiesState implements KaaClientState {
             } catch (IOException e) {
                 LOG.error("Can't persist topic list info", e);
             }
-            
+
             baos = new ByteArrayOutputStream();
             try (ObjectOutputStream oos = new ObjectOutputStream(baos)) {
                 oos.writeObject(nfSubscriptions);
@@ -281,7 +282,9 @@ public class KaaClientPropertiesState implements KaaClientState {
             }
             state.setProperty(ATTACHED_ENDPOINTS, attachedEndpointsString.toString());
             state.setProperty(EVENT_SEQ_NUM, "" + eventSequence.get());
-            state.setProperty(TOPIC_LIST_HASH, "" + topicListHash);
+            if (topicListHash != null) {
+                state.setProperty(TOPIC_LIST_HASH, "" + topicListHash);
+            }
 
             OutputStream os = null;
             try {
@@ -316,8 +319,8 @@ public class KaaClientPropertiesState implements KaaClientState {
 
     private KeyPair getOrInitKeyPair() {
         LOG.debug("Check if key pair exists {}, {}", clientPublicKeyFileLocation, clientPrivateKeyFileLocation);
-        if(kp != null){
-            return kp;
+        if (keyPair != null) {
+            return keyPair;
         }
         if (storage.exists(clientPublicKeyFileLocation) && storage.exists(clientPrivateKeyFileLocation)) {
             InputStream publicKeyInput = null;
@@ -330,13 +333,13 @@ public class KaaClientPropertiesState implements KaaClientState {
                 PrivateKey privateKey = KeyUtil.getPrivate(privateKeyInput);
 
                 if (publicKey != null && privateKey != null) {
-                    kp = new KeyPair(publicKey, privateKey);
-                    if (!KeyUtil.validateKeyPair(kp)) {
+                    keyPair = new KeyPair(publicKey, privateKey);
+                    if (!KeyUtil.validateKeyPair(keyPair)) {
                         throw new InvalidKeyException();
                     }
                 }
             } catch (InvalidKeyException e) {
-                kp = null;
+                keyPair = null;
                 LOG.error("Unable to parse client RSA keypair. Generating new keys.. Reason {}", e);
             } catch (Exception e) {
                 LOG.error("Error loading client RSA keypair. Reason {}", e);
@@ -346,14 +349,14 @@ public class KaaClientPropertiesState implements KaaClientState {
                 IOUtils.closeQuietly(privateKeyInput);
             }
         }
-        if (kp == null) {
+        if (keyPair == null) {
             LOG.debug("Generating Client Key pair");
             OutputStream privateKeyOutput = null;
             OutputStream publicKeyOutput = null;
             try {
                 privateKeyOutput = storage.openForWrite(clientPrivateKeyFileLocation);
                 publicKeyOutput = storage.openForWrite(clientPublicKeyFileLocation);
-                kp = KeyUtil.generateKeyPair(privateKeyOutput, publicKeyOutput);
+                keyPair = KeyUtil.generateKeyPair(privateKeyOutput, publicKeyOutput);
             } catch (IOException e) {
                 LOG.error("Error generating Client Key pair", e);
                 throw new RuntimeException(e);
@@ -362,12 +365,12 @@ public class KaaClientPropertiesState implements KaaClientState {
                 IOUtils.closeQuietly(publicKeyOutput);
             }
         }
-        return kp;
+        return keyPair;
     }
 
     @Override
     public EndpointKeyHash getEndpointKeyHash() {
-        if(keyHash == null){
+        if (keyHash == null) {
             EndpointObjectHash publicKeyHash = EndpointObjectHash.fromSHA1(getOrInitKeyPair().getPublic().getEncoded());
             keyHash = new EndpointKeyHash(new String(base64.encodeBase64(publicKeyHash.getData())));
         }
@@ -418,7 +421,7 @@ public class KaaClientPropertiesState implements KaaClientState {
             LOG.info("Removed topic with id {}", topicId);
         }
     }
-    
+
     @Override
     public void addTopicSubscription(Long topicId) {
         Integer seqNum = nfSubscriptions.get(topicId);
@@ -461,20 +464,20 @@ public class KaaClientPropertiesState implements KaaClientState {
     public Collection<Topic> getTopics() {
         return topicMap.values();
     }
-    
+
     @Override
     public void setTopicListHash(Integer topicListHash) {
-        if (this.topicListHash != topicListHash) {
+        if (!Objects.equals(this.topicListHash, topicListHash)) {
             this.topicListHash = topicListHash;
             hasUpdate = true;
-        }        
+        }
     }
 
     @Override
     public Integer getTopicListHash() {
-        if(topicListHash == null){
+        if (topicListHash == null) {
             return TopicListHashCalculator.NULL_LIST_HASH;
-        }else{
+        } else {
             return topicListHash;
         }
     }
