@@ -558,7 +558,7 @@ void DefaultOperationTcpChannel::sync(TransportType type)
                 isPendingSyncRequest_ = true;
             }
         } else {
-            KAA_LOG_WARN(boost::format("Can't sync channel %1%. Server is null") % getId());
+            KAA_LOG_DEBUG(boost::format("Can't sync channel %1%. Server is null") % getId());
         }
     } else {
         KAA_LOG_ERROR(boost::format("Unsupported transport type for channel %1%") % getId());
