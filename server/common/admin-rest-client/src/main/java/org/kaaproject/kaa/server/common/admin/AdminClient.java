@@ -1,18 +1,19 @@
-/*
- * Copyright 2014-2015 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
+
 package org.kaaproject.kaa.server.common.admin;
 
 
@@ -111,25 +112,25 @@ public class AdminClient {
     }
 
     public EndpointProfilesPageDto getEndpointProfileByEndpointGroupId(PageLinkDto pageLink) throws Exception {
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<String, String>();
-        params.add("endpointGroupId", pageLink.getEndpointGroupId());
-        params.add("limit", pageLink.getLimit());
-        params.add("offset", pageLink.getOffset());
+        String endpointGroupId = pageLink.getEndpointGroupId();
+        String limit = pageLink.getLimit();
+        String offset = pageLink.getOffset();
         ParameterizedTypeReference<EndpointProfilesPageDto> typeRef = new ParameterizedTypeReference<EndpointProfilesPageDto>() {
         };
-        ResponseEntity<EndpointProfilesPageDto> entity = restTemplate.exchange(url + "endpointProfileByGroupId/" + params, HttpMethod.GET,
-                null, typeRef);
+        ResponseEntity<EndpointProfilesPageDto> entity = restTemplate.exchange(url + "endpointProfileByGroupId?endpointGroupId=" + endpointGroupId
+                        + "&limit=" + limit + "&offset=" + offset,
+                HttpMethod.GET, null, typeRef);
         return entity.getBody();
     }
 
     public EndpointProfilesBodyDto getEndpointProfileBodyByEndpointGroupId(PageLinkDto pageLink) throws Exception {
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<String, String>();
-        params.add("endpointGroupId", pageLink.getEndpointGroupId());
-        params.add("limit", pageLink.getLimit());
-        params.add("offset", pageLink.getOffset());
+        String endpointGroupId = pageLink.getEndpointGroupId();
+        String limit = pageLink.getLimit();
+        String offset = pageLink.getOffset();
         ParameterizedTypeReference<EndpointProfilesBodyDto> typeRef = new ParameterizedTypeReference<EndpointProfilesBodyDto>() {
         };
-        ResponseEntity<EndpointProfilesBodyDto> entity = restTemplate.exchange(url + "endpointProfileBodyByGroupId/" + params,
+        ResponseEntity<EndpointProfilesBodyDto> entity = restTemplate.exchange(url + "endpointProfileBodyByGroupId?endpointGroupId=" + endpointGroupId 
+                + "&limit=" + limit + "&offset=" + offset,
                 HttpMethod.GET, null, typeRef);
         return entity.getBody();
     }

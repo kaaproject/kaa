@@ -1,17 +1,17 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.server.common.dao.impl;
@@ -33,6 +33,11 @@ import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
  */
 public interface EndpointProfileDao<T extends EndpointProfile> extends Dao<T, ByteBuffer> {
 
+    /**
+     *
+     * @param dto
+     * @return
+     */
     T save(EndpointProfileDto dto);
 
     /**
@@ -73,7 +78,7 @@ public interface EndpointProfileDao<T extends EndpointProfile> extends Dao<T, By
      * @param endpointKeyHash the endpoint key hash
      * @return the count of endpoint profile
      */
-    long getCountByKeyHash(byte[] endpointKeyHash);
+    T findEndpointIdByKeyHash(byte[] endpointKeyHash);
 
     /**
      * Remove endpoint profile by key hash.
@@ -105,13 +110,6 @@ public interface EndpointProfileDao<T extends EndpointProfile> extends Dao<T, By
      * @return the endpoint user
      */
     List<T> findByEndpointUserId(String endpointUserId);
-
-    /**
-     * @deprecated  The functionality of this method is not yet necessary.
-     * @param       sdkToken the sdk token
-     * @return      the list of endpoint profile objects
-     */
-    List<T> findBySdkToken(String sdkToken);
 
     /**
      * Checks whether there are any endpoint profiles with the given SDK token.

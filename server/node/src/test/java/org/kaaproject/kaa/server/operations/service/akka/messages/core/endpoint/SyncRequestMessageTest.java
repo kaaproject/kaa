@@ -1,18 +1,19 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
+
 package org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint;
 
 import java.nio.ByteBuffer;
@@ -45,8 +46,8 @@ public class SyncRequestMessageTest {
                                                                0,
                                                                true);
 
-    private static final NotificationClientSync NOTIFICATION_CLIENT_SYNC = new NotificationClientSync(2, null, null, null, null);
-    private static final ConfigurationClientSync CONFIGURATION_CLIENT_SYNC = new ConfigurationClientSync(1, ByteBuffer.wrap("String".getBytes()), false);
+    private static final NotificationClientSync NOTIFICATION_CLIENT_SYNC = new NotificationClientSync(2, null, null, null);
+    private static final ConfigurationClientSync CONFIGURATION_CLIENT_SYNC = new ConfigurationClientSync(ByteBuffer.wrap("String".getBytes()), false);
 
     @Test
     public void testIsValid() {

@@ -1,17 +1,17 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.server.control.service.sdk;
@@ -51,7 +51,6 @@ import org.kaaproject.kaa.server.control.service.sdk.event.CppEventSourcesGenera
 import org.kaaproject.kaa.server.control.service.sdk.event.EventFamilyMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.helpers.MessageFormatter;
 
 /**
  * The Class CppSdkGenerator.
@@ -66,10 +65,7 @@ public class CppSdkGenerator extends SdkGenerator {
     private static final String CPP_SDK_DIR = "sdk/cpp";
 
     /** The Constant CPP_SDK_PREFIX. */
-    private static final String CPP_SDK_PREFIX = "kaa-client-sdk-";
-
-    /** The Constant CPP_SDK_NAME_PATTERN. */
-    private static final String CPP_SDK_NAME_PATTERN = CPP_SDK_PREFIX + "p{}-c{}-n{}-l{}.tar.gz";
+    private static final String CPP_SDK_PREFIX = "kaa-cpp-ep-sdk-";
 
     /** The Constant APPLICATION_TOKEN_VAR. */
     private static final String SDK_VAR = "%{application.sdk_token}";
@@ -230,11 +226,7 @@ public class CppSdkGenerator extends SdkGenerator {
         sdkFile.finish();
         sdkFile.close();
 
-        String sdkFileName = MessageFormatter.arrayFormat(CPP_SDK_NAME_PATTERN,
-                new Object[]{profileSchemaVersion,
-                configurationSchemaVersion,
-                notificationSchemaVersion,
-                logSchemaVersion}).getMessage();
+        String sdkFileName = CPP_SDK_PREFIX + sdkProfile.getToken() + ".tar.gz";
 
         byte[] sdkData = sdkOutput.toByteArray();
 

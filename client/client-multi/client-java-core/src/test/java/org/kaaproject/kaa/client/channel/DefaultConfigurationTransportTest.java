@@ -1,24 +1,23 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.client.channel;
 
 import java.nio.ByteBuffer;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.client.channel.impl.ChannelRuntimeException;
 import org.kaaproject.kaa.client.channel.impl.transports.DefaultConfigurationTransport;
@@ -59,7 +58,6 @@ public class DefaultConfigurationTransportTest {
     public void testCreateRequest() {
         ConfigurationHashContainer hashContainer = Mockito.mock(ConfigurationHashContainer.class);
         KaaClientState clientState = Mockito.mock(KaaClientState.class);
-        Mockito.when(clientState.getConfigSeqNumber()).thenReturn(new Integer(5));
 
         ConfigurationTransport transport = new DefaultConfigurationTransport();
         transport.createConfigurationRequest();
@@ -68,7 +66,6 @@ public class DefaultConfigurationTransportTest {
         transport.setClientState(clientState);
 
         ConfigurationSyncRequest request = transport.createConfigurationRequest();
-        Assert.assertEquals(new Integer(5), request.getAppStateSeqNumber());
 
         Mockito.verify(hashContainer, Mockito.times(1)).getConfigurationHash();
     }
@@ -80,7 +77,6 @@ public class DefaultConfigurationTransportTest {
         ConfigurationProcessor configProcessor = Mockito.mock(ConfigurationProcessor.class);
 
         ConfigurationSyncResponse response = new ConfigurationSyncResponse();
-        response.setAppStateSeqNumber(5);
         response.setResponseStatus(SyncResponseStatus.DELTA);
 
         KaaChannelManager channelManagerMock = Mockito.mock(KaaChannelManager.class);
@@ -100,7 +96,6 @@ public class DefaultConfigurationTransportTest {
         response.setConfSchemaBody(ByteBuffer.wrap(new byte[] { 1, 2, 3 }));
         transport.onConfigurationResponse(response);
 
-        Mockito.verify(clientState, Mockito.times(4)).setConfigSeqNumber(Mockito.eq(new Integer(5)));
         Mockito.verify(schemaProcessor, Mockito.times(1)).loadSchema(Mockito.eq(ByteBuffer.wrap(new byte[] { 1, 2, 3 })));
         Mockito.verify(configProcessor, Mockito.times(2)).processConfigurationData(Mockito.eq(ByteBuffer.wrap(new byte[] { 1, 2, 3 })), Mockito.eq(false));
     }

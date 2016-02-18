@@ -1,17 +1,17 @@
-/*
- * Copyright 2014-2015 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 #import <Foundation/Foundation.h>
@@ -37,11 +37,14 @@ typedef enum {
 
 
 /**
- * Basic Mqtt message.
- * Fixed header format
- * bit     7   6   5   4      3          2   1       0
- * byte 1  Message Type    Dup flag    QoS level   RETAIN
- * byte 2           Remaining length
+  Basic Mqtt message.
+ 
+  Fixed header format
+ <table>
+ <tr align="center"> <td>bit</td> <td>7</td> <td>6</td> <td>5</td> <td>4</td> <td>3</td> <td>2</td> <td>1</td> <td>0</td> </tr>
+ <tr align="center"> <td>byte 1</td> <td colspan="4">Message Type</td> <td>Dup flag</td> <td colspan="2">QoS level</td> <td>RETAIN</td> </tr>
+ <tr align="center"> <td>byte 2</td> <td colspan="8">Remaining length</td> </tr>
+ </table>
  */
 @interface KAAMqttFrame : NSObject
 
@@ -68,13 +71,13 @@ typedef enum {
 
 /**
  * Decode message from mqttFrame buffer
- * @throws KaaTcpProtocolException
+ * @exception KaaTcpProtocolException TCP exception
  */
 - (void)decode;
 
 /**
  * Check if this Mqtt frame should be last frame on connection and connection should be closed.
- * @return boolean 'true' if connection should be closed after frame transmition.
+ * @return YES if connection should be closed after frame transmition.
  */
 - (BOOL)needToCloseConnection;
 
@@ -88,19 +91,19 @@ typedef enum {
 
 /**
  * Push bytes of frame
- * @param bytes - bytes array
- * @param position in buffer
- * @return int used bytes from buffer
- * @throws KaaTcpProtocolException
+ * @param bytes Data to push
+ * @param position Position in buffer
+ * @return Count of used bytes from buffer
+ * @exception KaaTcpProtocolException TCP exception
  */
 - (int)pushBytes:(NSData *)bytes toPosition:(int)position;
 
 /**
- * Used in case if Frame Class should be changed during frame decode,
- * Used for migrate from KaaSync() general frame to specific classes like Sync, Bootstrap.
- * Default implementation is to return this.
- * @return new MqttFrame as specific class.
- * @throws KaaTcpProtocolException
+ * Used in case if Frame Class should be changed during frame decode.
+ * Used for migration from KaaSync general frame to specific classes like Sync, Bootstrap.
+ * Default implementation returns self.
+ * @return New MqttFrame as specific class.
+ * @exception KaaTcpProtocolException TCP exception
  */
 - (KAAMqttFrame *)upgradeFrame;
 

@@ -1,18 +1,19 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
+
 package org.kaaproject.kaa.server.sync;
 
 import org.kaaproject.kaa.server.sync.bootstrap.BootstrapClientSync;
@@ -34,8 +35,14 @@ public final class ClientSync {
     /** The profile sync. */
     private ProfileClientSync profileSync;
 
+    /** The force configuration sync flag */
+    private boolean forceConfigurationSync;
+
     /** The configuration sync. */
     private ConfigurationClientSync configurationSync;
+
+    /** The force notification sync flag */
+    private boolean forceNotificationSync;
 
     /** The notification sync. */
     private NotificationClientSync notificationSync;
@@ -258,6 +265,23 @@ public final class ClientSync {
         return true;
     }
 
+    public boolean isForceConfigurationSync() {
+        return forceConfigurationSync;
+    }
+
+    public void setForceConfigurationSync(boolean forceConfigurationSync) {
+        this.forceConfigurationSync = forceConfigurationSync;
+    }
+
+    public boolean isForceNotificationSync() {
+        return forceNotificationSync;
+    }
+
+    public void setForceNotificationSync(boolean forceNotificationSync) {
+        this.forceNotificationSync = forceNotificationSync;
+    }
+
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -266,6 +290,8 @@ public final class ClientSync {
         result = prime * result + ((clientSyncMetaData == null) ? 0 : clientSyncMetaData.hashCode());
         result = prime * result + ((configurationSync == null) ? 0 : configurationSync.hashCode());
         result = prime * result + ((eventSync == null) ? 0 : eventSync.hashCode());
+        result = prime * result + (forceConfigurationSync ? 1231 : 1237);
+        result = prime * result + (forceNotificationSync ? 1231 : 1237);
         result = prime * result + ((logSync == null) ? 0 : logSync.hashCode());
         result = prime * result + ((notificationSync == null) ? 0 : notificationSync.hashCode());
         result = prime * result + ((profileSync == null) ? 0 : profileSync.hashCode());
@@ -303,6 +329,10 @@ public final class ClientSync {
                 return false;
         } else if (!eventSync.equals(other.eventSync))
             return false;
+        if (forceConfigurationSync != other.forceConfigurationSync)
+            return false;
+        if (forceNotificationSync != other.forceNotificationSync)
+            return false;
         if (logSync == null) {
             if (other.logSync != null)
                 return false;
@@ -339,8 +369,12 @@ public final class ClientSync {
         builder.append(bootstrapSync);
         builder.append(", profileSync=");
         builder.append(profileSync);
+        builder.append(", forceConfigurationSync=");
+        builder.append(forceConfigurationSync);
         builder.append(", configurationSync=");
         builder.append(configurationSync);
+        builder.append(", forceNotificationSync=");
+        builder.append(forceNotificationSync);
         builder.append(", notificationSync=");
         builder.append(notificationSync);
         builder.append(", userSync=");

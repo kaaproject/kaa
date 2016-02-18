@@ -1,5 +1,5 @@
 <!--
-  Copyright 2014-2015 CyberVision, Inc.
+  Copyright 2014-2016 CyberVision, Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -779,7 +779,7 @@
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${sdk.path}/java</outputDirectory>
-                                    <destFileName>kaa-client-sdk-${project.version}.jar</destFileName>
+                                    <destFileName>kaa-java-ep-sdk-${project.version}.jar</destFileName>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.kaaproject.kaa.client</groupId>
@@ -789,7 +789,7 @@
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${sdk.path}/android</outputDirectory>
-                                    <destFileName>kaa-client-sdk-android-${project.version}.jar</destFileName>
+                                    <destFileName>kaa-android-ep-sdk-${project.version}.jar</destFileName>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.kaaproject.kaa.client</groupId>
@@ -799,7 +799,7 @@
                                     <type>tar.gz</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${sdk.path}/cpp</outputDirectory>
-                                    <destFileName>kaa-client-sdk-${project.version}.tar.gz</destFileName>
+                                    <destFileName>kaa-cpp-ep-sdk-${project.version}.tar.gz</destFileName>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.kaaproject.kaa.client</groupId>
@@ -809,7 +809,7 @@
                                     <type>tar.gz</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${sdk.path}/c</outputDirectory>
-                                    <destFileName>kaa-client-sdk-${project.version}.tar.gz</destFileName>
+                                    <destFileName>kaa-c-ep-sdk-${project.version}.tar.gz</destFileName>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.kaaproject.kaa.client</groupId>
@@ -819,7 +819,7 @@
                                     <type>tar.gz</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${sdk.path}/objc</outputDirectory>
-                                    <destFileName>kaa-client-sdk-${project.version}.tar.gz</destFileName>
+                                    <destFileName>kaa-objc-ep-sdk-${project.version}.tar.gz</destFileName>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>
@@ -1074,6 +1074,41 @@
                 </executions>
             </plugin>
         </plugins>
+        <pluginManagement>
+        	<plugins>
+        		<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+        		<plugin>
+        			<groupId>org.eclipse.m2e</groupId>
+        			<artifactId>lifecycle-mapping</artifactId>
+        			<version>1.0.0</version>
+        			<configuration>
+        				<lifecycleMappingMetadata>
+        					<pluginExecutions>
+        						<pluginExecution>
+        							<pluginExecutionFilter>
+        								<groupId>
+        									org.codehaus.mojo
+        								</groupId>
+        								<artifactId>
+        									build-helper-maven-plugin
+        								</artifactId>
+        								<versionRange>
+        									[1.9.1,)
+        								</versionRange>
+        								<goals>
+        									<goal>add-source</goal>
+        								</goals>
+        							</pluginExecutionFilter>
+        							<action>
+        								<ignore></ignore>
+        							</action>
+        						</pluginExecution>
+        					</pluginExecutions>
+        				</lifecycleMappingMetadata>
+        			</configuration>
+        		</plugin>
+        	</plugins>
+        </pluginManagement>
     </build>
 
     <profiles>

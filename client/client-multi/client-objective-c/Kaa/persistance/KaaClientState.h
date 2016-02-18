@@ -1,17 +1,17 @@
-/*
- * Copyright 2014-2015 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 #ifndef Kaa_KaaClientState_h
@@ -77,47 +77,70 @@
  */
 @property (nonatomic) BOOL isAttachedToUser;
 
+/**
+ * Holds hash calculated from list of available topics. See TopicListHashCalculator for more info.
+ */
+@property (nonatomic) int32_t topicListHash;
 
 /**
  * Adds topic with all its information.
- */- (void)addTopic:(Topic *)topic;
+ */
+- (void)addTopic:(Topic *)topic;
 
 /**
  * Remove topic with all its information by topic id.
- */- (void)removeTopicId:(int64_t)topicId;
+ */
+- (void)removeTopicId:(int64_t)topicId;
+
+/**
+ * Add subscription for topic by ID.
+ */
+- (void)addSubscriptionForTopicWithId:(int64_t)topicId;
+
+/**
+ * Remove subscription for topic by ID.
+ */
+- (void)removeSubscriptionForTopicWithId:(int64_t)topicId;
 
 /**
  * Used to update subscription info.
- */- (BOOL)updateSubscriptionInfoForTopicId:(int64_t)topicId sequence:(int32_t)sequenceNumber;
+ */
+- (BOOL)updateSubscriptionInfoForTopicId:(int64_t)topicId sequence:(int32_t)sequenceNumber;
 
 /**
  * Return dictionary with notification subscriptions information with Topic id as key 
  * and sequence number of TopicSubscriptionInfo as value.
  *
- * @return <@(int64_t), @(int32_t)> as key-value.
- */- (NSDictionary *)getNotificationSubscriptions;
+ * @return Dictionary of <@(int64_t), @(int32_t)> as key-value.
+ */
+- (NSDictionary *)getNotificationSubscriptions;
 
 /**
  * @see Topic
- * @return list of topics
- */- (NSArray *)getTopics;
+ * @return Array of topics
+ */
+- (NSArray *)getTopics;
 
 /**
- * @return next event sequence number that could be used by the system.
- */- (int32_t)getAndIncrementEventSequenceNumber;
+ * @return Next event sequence number that could be used by the system.
+ */
+- (int32_t)getAndIncrementEventSequenceNumber;
 
 /**
+ * <p></p>
  * @return YES - if configuration version was updated, NO - if it wasn't.
- */- (BOOL)isConfigurationVersionUpdated;
+ */
+- (BOOL)isConfigurationVersionUpdated;
 
 /**
  * Persists current client state.
- */- (void)persist;
+ */
+- (void)persist;
 
 /**
  * Generates and stores new endpoint access token.
  *
- * @return new access token
+ * @return New access token
  */
 - (NSString *)refreshEndpointAccessToken;
 

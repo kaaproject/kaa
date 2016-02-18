@@ -1,18 +1,19 @@
-/*
- * Copyright 2014-2015 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
+
 package org.kaaproject.kaa.server.sync;
 
 import org.junit.BeforeClass;
@@ -48,7 +49,7 @@ public class ServerSyncTest {
         Topic topic2 = new Topic("62343", "TopicName2", SubscriptionType.OPTIONAL);
         Topic topic3 = new Topic("51515", "TopicName3", SubscriptionType.MANDATORY);
         List<Topic> topics = Arrays.asList(topic1, topic2, topic3);
-        notificationServerSync = new NotificationServerSync(3, SyncResponseStatus.DELTA, notifications, topics);
+        notificationServerSync = new NotificationServerSync(SyncResponseStatus.DELTA, notifications, topics);
 
         UserAttachResponse userAttachResponse = new UserAttachResponse(SyncStatus.FAILURE,
                 UserVerifierErrorCode.CONNECTION_ERROR, "Some error");

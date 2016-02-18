@@ -1,17 +1,17 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.server.control.service.sdk;
@@ -56,7 +56,6 @@ import org.kaaproject.kaa.server.control.service.sdk.event.EventFamilyMetadata;
 import org.kaaproject.kaa.server.control.service.sdk.event.JavaEventClassesGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.helpers.MessageFormatter;
 
 /**
  * The Class JavaSdkGenerator.
@@ -76,12 +75,7 @@ public class JavaSdkGenerator extends SdkGenerator {
     /**
      * The Constant JAVA_SDK_PREFIX.
      */
-    private static final String JAVA_SDK_PREFIX = "kaa-client-sdk-";
-
-    /**
-     * The Constant JAVA_SDK_NAME_PATTERN.
-     */
-    private static final String JAVA_SDK_NAME_PATTERN = JAVA_SDK_PREFIX + "p{}-c{}-n{}-l{}.jar";
+    private static final String JAVA_SDK_PREFIX = "kaa-java-ep-sdk-";
 
     /**
      * The Constant ANDROID_SDK_DIR.
@@ -91,12 +85,7 @@ public class JavaSdkGenerator extends SdkGenerator {
     /**
      * The Constant ANDROID_SDK_PREFIX.
      */
-    private static final String ANDROID_SDK_PREFIX = "kaa-client-sdk-android-";
-
-    /**
-     * The Constant ANDROID_SDK_NAME_PATTERN.
-     */
-    private static final String ANDROID_SDK_NAME_PATTERN = ANDROID_SDK_PREFIX + "p{}-c{}-n{}-l{}.jar";
+    private static final String ANDROID_SDK_PREFIX = "kaa-android-ep-sdk-";
 
     /**
      * The Constant CLIENT_PROPERTIES.
@@ -371,7 +360,6 @@ public class JavaSdkGenerator extends SdkGenerator {
             throws Exception {
 
         String sdkToken = sdkProfile.getToken();
-        Integer configurationSchemaVersion = sdkProfile.getConfigurationSchemaVersion();
         Integer profileSchemaVersion = sdkProfile.getProfileSchemaVersion();
         Integer notificationSchemaVersion = sdkProfile.getNotificationSchemaVersion();
         Integer logSchemaVersion = sdkProfile.getLogSchemaVersion();
@@ -594,10 +582,8 @@ public class JavaSdkGenerator extends SdkGenerator {
 
         sdkFile.close();
 
-        String sdkFileName = MessageFormatter.arrayFormat(
-                sdkPlatform == SdkPlatform.JAVA ? JAVA_SDK_NAME_PATTERN : ANDROID_SDK_NAME_PATTERN,
-                new Object[]{profileSchemaVersion, configurationSchemaVersion, notificationSchemaVersion, logSchemaVersion})
-                .getMessage();
+        String fileNamePrefix = (sdkPlatform == SdkPlatform.JAVA ? JAVA_SDK_PREFIX : ANDROID_SDK_PREFIX);
+        String sdkFileName = fileNamePrefix + sdkProfile.getToken() + ".jar";
 
         byte[] sdkData = sdkOutput.toByteArray();
 

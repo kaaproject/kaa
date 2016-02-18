@@ -57,3 +57,4 @@ xcuserdata
 *.hmap
 *.ipa
 Tests/Pods
+**/.toDelete

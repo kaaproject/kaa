@@ -1,17 +1,17 @@
-/*
- * Copyright 2014-2015 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 #ifndef Kaa_ConfigurationTransport_h
@@ -31,7 +31,7 @@
 /**
  * Creates the configuration request.
  *
- * @return the configuration request object.
+ * @return The configuration request object.
  * @see ConfigurationSyncRequest
  */
 - (ConfigurationSyncRequest *)createConfigurationRequest;
@@ -39,7 +39,7 @@
 /**
  * Updates the state of the Configuration manager according to the given response.
  *
- * @param response the configuration response.
+ * @param response The configuration response.
  * @see ConfigurationSyncResponse
  */
 - (void)onConfigurationResponse:(ConfigurationSyncResponse *)response;

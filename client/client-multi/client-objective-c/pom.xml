@@ -1,5 +1,5 @@
 <!--
-  Copyright 2014 CyberVision, Inc.
+  Copyright 2014-2016 CyberVision, Inc.
  
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -80,6 +80,33 @@
     </build>
 
     <profiles>
+        <profile>
+            <id>license</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.mycila.maven-license-plugin</groupId>
+                        <artifactId>maven-license-plugin</artifactId>
+                        <version>1.8.0</version>
+                        <configuration>
+                            <excludes>
+                                <exclude>Kaa/avro/avro_src/**</exclude>
+                                <exclude>Kaa/security/NSData+CommonCrypto.*</exclude>
+                                <exclude>Pods/**</exclude>
+                                <exclude>templates/event/eventFamilyAddSupportedFqn.template</exclude>
+                                <exclude>templates/event/eventFamilyFactoryMethodHeader.template</exclude>
+                                <exclude>templates/event/eventFamilyFactoryMethodSource.template</exclude>
+                                <exclude>templates/event/eventFamilyFactoryProperty.template</exclude>
+                                <exclude>templates/event/eventFamilyListenerMethod.template</exclude>
+                                <exclude>templates/event/eventFamilyOnGenericEvent.template</exclude>
+                                <exclude>templates/event/eventFamilySendEventHeaderMethods.template</exclude>
+                                <exclude>templates/event/eventFamilySendEventSourceMethods.template</exclude>
+                            </excludes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
         <profile>
             <id>compile-client-objc</id>
             <build>

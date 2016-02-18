@@ -1,17 +1,17 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.server.operations.service.cache;
@@ -49,24 +49,20 @@ public final class HistoryKey implements Serializable {
     /** The profile schema version. */
     private final int serverProfileSchemaVersion;
 
-    private final HistorySubject historySubject;
-
     /**
      * Instantiates a new history key.
      *
      * @param appToken the app token
-     * @param historySubject the history subject
      * @param oldSeqNumber the old seq number
      * @param newSeqNumber the new seq number
      * @param confSchemaVersion the conf schema version
      * @param endpointProfileSchemaVersion the profile schema version
      * @param serverProfileSchemaVersion the profile schema version
      */
-    public HistoryKey(String appToken, HistorySubject historySubject, int oldSeqNumber, int newSeqNumber, int confSchemaVersion,
+    public HistoryKey(String appToken, int oldSeqNumber, int newSeqNumber, int confSchemaVersion,
             int endpointProfileSchemaVersion, int serverProfileSchemaVersion) {
         super();
         this.appToken = appToken;
-        this.historySubject = historySubject;
         this.oldSeqNumber = oldSeqNumber;
         this.newSeqNumber = newSeqNumber;
         this.confSchemaVersion = confSchemaVersion;
@@ -129,7 +125,6 @@ public final class HistoryKey implements Serializable {
         int result = 1;
         result = prime * result + ((appToken == null) ? 0 : appToken.hashCode());
         result = prime * result + confSchemaVersion;
-        result = prime * result + ((historySubject == null) ? 0 : historySubject.hashCode());
         result = prime * result + newSeqNumber;
         result = prime * result + oldSeqNumber;
         result = prime * result + endpointProfileSchemaVersion;
@@ -157,9 +152,6 @@ public final class HistoryKey implements Serializable {
             return false;
         }
         if (confSchemaVersion != other.confSchemaVersion) {
-            return false;
-        }
-        if (historySubject != other.historySubject) {
             return false;
         }
         if (newSeqNumber != other.newSeqNumber) {

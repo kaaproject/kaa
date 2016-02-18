@@ -1,17 +1,17 @@
-/*
- * Copyright 2014-2015 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 #include <fstream>
@@ -71,8 +71,8 @@ void KaaClient::init()
     profileManager_.reset(new ProfileManager(context_));
 
 #ifdef KAA_USE_CONFIGURATION
-    SequenceNumber sn = { 0, 0, 1 };
-    context_.getStatus().setAppSeqNumber(sn);
+    SequenceNumber sn = { 1 };
+    status_->setAppSeqNumber(sn);
     configurationManager_.reset(new ConfigurationManager(context_));
 #endif
 #ifdef KAA_USE_EVENTS
@@ -283,15 +283,24 @@ void KaaClient::initClientKeys()
 {
     std::string publicKeyLocation = context_.getProperties().getPublicKeyFileName();
     std::string privateKeyLocation = context_.getProperties().getPrivateKeyFileName();
+    KeyUtils utils;
+    bool regenerate = true;
 
     std::ifstream key(publicKeyLocation);
     bool exists = key.good();
     key.close();
+
     if (exists) {
-        clientKeys_.reset(new KeyPair(KeyUtils::loadKeyPair(publicKeyLocation, privateKeyLocation)));
-    } else {
-        clientKeys_.reset(new KeyPair(KeyUtils().generateKeyPair(2048)));
-        KeyUtils::saveKeyPair(*clientKeys_, publicKeyLocation, privateKeyLocation);
+        KeyPair keys(utils.loadKeyPair(publicKeyLocation, privateKeyLocation));
+        if (utils.checkKeyPair(keys)) {
+            clientKeys_.reset(new KeyPair(keys));
+            regenerate = false; // Keys are valid, no need to create them again
+        }
+    }
+
+    if (regenerate) {
+        clientKeys_.reset(new KeyPair(utils.generateKeyPair(2048)));
+        utils.saveKeyPair(*clientKeys_, publicKeyLocation, privateKeyLocation);
     }
 
     EndpointObjectHash publicKeyHash(clientKeys_->getPublicKey().begin(), clientKeys_->getPublicKey().size());
@@ -369,9 +378,9 @@ void KaaClient::addNotificationListener(INotificationListener& listener) {
     throw KaaException("Failed to add notification listener. Notification subsystem is disabled");
 #endif
 }
-void KaaClient::addNotificationListener(const std::string& topidId, INotificationListener& listener) {
+void KaaClient::addNotificationListener(std::int64_t topicId, INotificationListener& listener) {
 #ifdef KAA_USE_NOTIFICATIONS
-    notificationManager_->addNotificationListener(topidId, listener);
+    notificationManager_->addNotificationListener(topicId, listener);
 #else
     throw KaaException("Failed to add notification listener. Notification subsystem is disabled");
 #endif
@@ -385,15 +394,15 @@ void KaaClient::removeNotificationListener(INotificationListener& listener) {
 #endif
 }
 
-void KaaClient::removeNotificationListener(const std::string& topidId, INotificationListener& listener) {
+void KaaClient::removeNotificationListener(std::int64_t topicId, INotificationListener& listener) {
 #ifdef KAA_USE_NOTIFICATIONS
-    notificationManager_->removeNotificationListener(topidId, listener);
+    notificationManager_->removeNotificationListener(topicId, listener);
 #else
     throw KaaException("Failed to remove notification listener. Notification subsystem is disabled");
 #endif
 }
 
-void KaaClient::subscribeToTopic(const std::string& id, bool forceSync) {
+void KaaClient::subscribeToTopic(std::int64_t id, bool forceSync) {
 #ifdef KAA_USE_NOTIFICATIONS
     checkClientState(State::STARTED, "Kaa client isn't started");
     notificationManager_->subscribeToTopic(id, forceSync);
@@ -402,7 +411,7 @@ void KaaClient::subscribeToTopic(const std::string& id, bool forceSync) {
 #endif
 }
 
-void KaaClient::subscribeToTopics(const std::list<std::string>& idList, bool forceSync) {
+void KaaClient::subscribeToTopics(const std::list<std::int64_t>& idList, bool forceSync) {
 #ifdef KAA_USE_NOTIFICATIONS
     checkClientState(State::STARTED, "Kaa client isn't started");
     notificationManager_->subscribeToTopics(idList, forceSync);
@@ -410,7 +419,7 @@ void KaaClient::subscribeToTopics(const std::list<std::string>& idList, bool for
     throw KaaException("Failed to subscribe to topics. Notification subsystem is disabled");
 #endif
 }
-void KaaClient::unsubscribeFromTopic(const std::string& id, bool forceSync) {
+void KaaClient::unsubscribeFromTopic(std::int64_t id, bool forceSync) {
 #ifdef KAA_USE_NOTIFICATIONS
     checkClientState(State::STARTED, "Kaa client isn't started");
     notificationManager_->unsubscribeFromTopic(id, forceSync);
@@ -419,7 +428,7 @@ void KaaClient::unsubscribeFromTopic(const std::string& id, bool forceSync) {
 #endif
 }
 
-void KaaClient::unsubscribeFromTopics(const std::list<std::string>& idList, bool forceSync) {
+void KaaClient::unsubscribeFromTopics(const std::list<std::int64_t>& idList, bool forceSync) {
 #ifdef KAA_USE_NOTIFICATIONS
     checkClientState(State::STARTED, "Kaa client isn't started");
     notificationManager_->unsubscribeFromTopics(idList, forceSync);

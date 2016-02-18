@@ -1,17 +1,17 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.server.operations.service;
@@ -36,7 +36,6 @@ import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
-import org.kaaproject.kaa.server.operations.service.cache.HistorySubject;
 import org.kaaproject.kaa.server.operations.service.delta.DeltaServiceIT;
 import org.kaaproject.kaa.server.operations.service.notification.NotificationDeltaService;
 import org.kaaproject.kaa.server.sync.Notification;
@@ -185,17 +184,12 @@ public class OperationsServiceTest {
     @Test
     public void isFirstRequestTest(){
         EndpointProfileDto profile = new EndpointProfileDto();
-        assertTrue(DefaultOperationsService.isFirstRequest(profile, HistorySubject.CONFIGURATION));
+        assertTrue(DefaultOperationsService.isFirstRequest(profile));
         profile.setConfigurationHash(new byte[0]);
-        assertTrue(DefaultOperationsService.isFirstRequest(profile, HistorySubject.CONFIGURATION));
+        assertTrue(DefaultOperationsService.isFirstRequest(profile));
         
-        profile.setCfGroupStates(Collections.singletonList(new EndpointGroupStateDto()));
-        assertFalse(DefaultOperationsService.isFirstRequest(profile, HistorySubject.CONFIGURATION));
-        assertTrue(DefaultOperationsService.isFirstRequest(profile, HistorySubject.NOTIFICATION));
-        
-        profile.setNfGroupStates(Collections.singletonList(new EndpointGroupStateDto()));
-        assertFalse(DefaultOperationsService.isFirstRequest(profile, HistorySubject.CONFIGURATION));
-        assertFalse(DefaultOperationsService.isFirstRequest(profile, HistorySubject.NOTIFICATION));
+        profile.setGroupState(Collections.singletonList(new EndpointGroupStateDto()));
+        assertFalse(DefaultOperationsService.isFirstRequest(profile));        
     }
 
     //TODO: adjust to current logic

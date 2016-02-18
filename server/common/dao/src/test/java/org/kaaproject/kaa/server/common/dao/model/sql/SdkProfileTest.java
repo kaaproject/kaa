@@ -1,17 +1,17 @@
-/*
- * Copyright 2014-2015 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.server.common.dao.model.sql;
@@ -25,10 +25,11 @@ import org.kaaproject.kaa.server.common.dao.service.SdkTokenGenerator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class SdkProfileTest {
-    private final int SDK_TOKEN_LENGTH = 28;
+    private final int SDK_TOKEN_LENGTH = 27;
 
     @Test
     public void hashCodeEqualsTest() {
@@ -56,5 +57,17 @@ public class SdkProfileTest {
                 "devuser", 100000L, "someName");
         SdkTokenGenerator.generateSdkToken(sdkProfileDto);
         return sdkProfileDto;
+    }
+
+    /**
+     * Tests that SDK tokens are URL-safe and thus can be used as a part of a file name.
+     */
+    @Test
+    public void testForURLSafeToken() {
+        List<String> aefMapIdsList = Collections.singletonList("290");
+        SdkProfileDto sdkProfileDto = new SdkProfileDto("113", 1, 0, 1, 1, aefMapIdsList,
+                "someVerifierToken", "15643220456970528206", "devuser", 100000L, "");
+        SdkTokenGenerator.generateSdkToken(sdkProfileDto);
+        Assert.assertFalse(sdkProfileDto.getToken().contains("/"));
     }
 }
