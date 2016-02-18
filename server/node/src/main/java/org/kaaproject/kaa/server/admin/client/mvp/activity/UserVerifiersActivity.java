@@ -50,7 +50,7 @@ public class UserVerifiersActivity extends AbstractListActivity<UserVerifierDto,
     }
 
     @Override
-    protected AbstractDataProvider<UserVerifierDto> getDataProvider(AbstractGrid<UserVerifierDto,?> dataGrid) {
+    protected AbstractDataProvider<UserVerifierDto, String> getDataProvider(AbstractGrid<UserVerifierDto, String> dataGrid) {
         return new UserVerifiersDataProvider(dataGrid, listView, applicationId);
     }
 

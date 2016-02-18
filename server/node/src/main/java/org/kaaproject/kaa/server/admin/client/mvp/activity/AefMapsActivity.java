@@ -43,8 +43,8 @@ public class AefMapsActivity extends AbstractListActivity<ApplicationEventFamily
     }
 
     @Override
-    protected AbstractDataProvider<ApplicationEventFamilyMapDto> getDataProvider(
-            AbstractGrid<ApplicationEventFamilyMapDto,?> dataGrid) {
+    protected AbstractDataProvider<ApplicationEventFamilyMapDto, String> getDataProvider(
+            AbstractGrid<ApplicationEventFamilyMapDto, String> dataGrid) {
         return new AefMapsDataProvider(dataGrid, listView, applicationId);
     }
 

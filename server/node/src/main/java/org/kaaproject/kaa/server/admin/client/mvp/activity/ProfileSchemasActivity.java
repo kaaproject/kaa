@@ -42,8 +42,8 @@ public class ProfileSchemasActivity extends AbstractBaseCtlSchemasActivity<Endpo
     }
 
     @Override
-    protected AbstractDataProvider<EndpointProfileSchemaDto> getDataProvider(
-            AbstractGrid<EndpointProfileSchemaDto,?> dataGrid) {
+    protected AbstractDataProvider<EndpointProfileSchemaDto, String> getDataProvider(
+            AbstractGrid<EndpointProfileSchemaDto, String> dataGrid) {
         return new ProfileSchemasDataProvider(dataGrid, listView, applicationId);
     }
 

@@ -16,6 +16,21 @@
 
 package org.kaaproject.kaa.server.operations.service.delta;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.UUID;
+
+import javax.transaction.Transactional;
+
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericContainer;
 import org.apache.avro.generic.GenericRecord;
@@ -35,12 +50,11 @@ import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
-import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
 import org.kaaproject.kaa.common.endpoint.gen.BasicEndpointProfile;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.core.algorithms.delta.DeltaCalculatorException;
@@ -58,21 +72,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import javax.transaction.Transactional;
-
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.UUID;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/operations/common-test-context.xml")
@@ -156,16 +155,14 @@ public class DeltaServiceIT extends AbstractTest {
         EndpointGroupDto groupAll = endpointService.findEndpointGroupsByAppId(application.getId()).get(0);
 
         CTLSchemaDto profileCtlSchema = new CTLSchemaDto();
-        profileCtlSchema.setTenantId(application.getTenantId());
-        profileCtlSchema.setApplicationId(application.getId());
+        CTLSchemaMetaInfoDto metaInfo = new CTLSchemaMetaInfoDto(BasicEndpointProfile.SCHEMA$.getFullName(),
+                application.getTenantId(),
+                application.getId());
+        profileCtlSchema.setMetaInfo(metaInfo);
         profileCtlSchema.setBody(BasicEndpointProfile.SCHEMA$.toString());
+        profileCtlSchema.setVersion(1);
         
         profileCtlSchema.setDependencySet(new HashSet<CTLSchemaDto>());
-        CTLSchemaMetaInfoDto metaInfo = new CTLSchemaMetaInfoDto();
-        metaInfo.setVersion(1);
-        metaInfo.setFqn(BasicEndpointProfile.SCHEMA$.getFullName());
-        metaInfo.setScope(CTLSchemaScopeDto.SERVER_PROFILE_SCHEMA);       
-        profileCtlSchema.setMetaInfo(metaInfo);
         
         profileCtlSchema = ctlService.saveCTLSchema(profileCtlSchema);
         

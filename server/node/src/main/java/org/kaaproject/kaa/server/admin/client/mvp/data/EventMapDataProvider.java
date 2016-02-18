@@ -32,12 +32,12 @@ import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class EventMapDataProvider extends AbstractDataProvider<ApplicationEventMapDto>{
+public class EventMapDataProvider extends AbstractDataProvider<ApplicationEventMapDto, String>{
 
     private EcfInfoDto ecf;
     private List<ApplicationEventMapDto> eventMaps;
     
-    public EventMapDataProvider(AbstractGrid<ApplicationEventMapDto,?> dataGrid,
+    public EventMapDataProvider(AbstractGrid<ApplicationEventMapDto,String> dataGrid,
                                     HasErrorMessage hasErrorMessage) {
         super(dataGrid, hasErrorMessage);
     }

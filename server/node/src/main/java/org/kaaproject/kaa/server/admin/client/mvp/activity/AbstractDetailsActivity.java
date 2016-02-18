@@ -48,7 +48,7 @@ public abstract class AbstractDetailsActivity<T, V extends BaseDetailsView, P ex
     protected V detailsView;
     protected List<HandlerRegistration> registrations = new ArrayList<HandlerRegistration>();
     
-    private boolean canceled = false;
+    protected boolean canceled = false;
 
     public AbstractDetailsActivity(P place, ClientFactory clientFactory) {
         this.place = place;

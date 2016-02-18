@@ -32,11 +32,11 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  *
  * @since v0.8.0
  */
-public class SdkProfilesDataProvider extends AbstractDataProvider<SdkProfileDto> {
+public class SdkProfilesDataProvider extends AbstractDataProvider<SdkProfileDto, String> {
 
     private final String applicationId;
 
-    public SdkProfilesDataProvider(AbstractGrid<SdkProfileDto, ?> dataGrid, HasErrorMessage hasErrorMessage, String applicationId) {
+    public SdkProfilesDataProvider(AbstractGrid<SdkProfileDto, String> dataGrid, HasErrorMessage hasErrorMessage, String applicationId) {
         super(dataGrid, hasErrorMessage, false);
         this.applicationId = applicationId;
         this.addDataDisplay();

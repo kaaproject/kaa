@@ -31,9 +31,9 @@ public abstract class BaseRecordViewImpl<T extends AbstractStructureDto,V> exten
 
     public BaseRecordViewImpl(boolean create) {
         super(create);
-        saveButton.setVisible(false);
-        cancelButton.setVisible(false);
-        backButtonPanel.setVisible(true);
+        getSaveButtonWidget().setVisible(false);
+        getCancelButtonWidget().setVisible(false);
+        getBackButtonPanelWidget().setVisible(true);
     }
 
     @Override

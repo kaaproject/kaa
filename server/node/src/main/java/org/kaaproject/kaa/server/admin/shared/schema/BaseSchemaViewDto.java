@@ -20,7 +20,6 @@ import java.io.Serializable;
 
 import org.kaaproject.kaa.common.dto.BaseSchemaDto;
 import org.kaaproject.kaa.common.dto.HasId;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 
 public abstract class BaseSchemaViewDto<T extends BaseSchemaDto> implements Serializable, HasId {
 
@@ -28,7 +27,7 @@ public abstract class BaseSchemaViewDto<T extends BaseSchemaDto> implements Seri
     
     private T schema;
     private CtlSchemaFormDto ctlSchemaForm;
-    private CTLSchemaMetaInfoDto existingMetaInfo;
+    private CtlSchemaReferenceDto existingMetaInfo;
     private boolean useExistingCtlSchema = false;
     
     public BaseSchemaViewDto() {
@@ -75,11 +74,11 @@ public abstract class BaseSchemaViewDto<T extends BaseSchemaDto> implements Seri
         schema.setId(id);
     }
     
-    public CTLSchemaMetaInfoDto getExistingMetaInfo() {
+    public CtlSchemaReferenceDto getExistingMetaInfo() {
         return existingMetaInfo;
     }
 
-    public void setExistingMetaInfo(CTLSchemaMetaInfoDto existingMetaInfo) {
+    public void setExistingMetaInfo(CtlSchemaReferenceDto existingMetaInfo) {
         this.existingMetaInfo = existingMetaInfo;
     }
     

@@ -23,7 +23,9 @@ import com.google.gwt.place.shared.WithTokenizers;
     GeneralPropertiesPlace.Tokenizer.class,
     MailPropertiesPlace.Tokenizer.class,
     TenantsPlace.Tokenizer.class,
-    TenantPlace.Tokenizer.class})
+    TenantPlace.Tokenizer.class,
+    SystemCtlSchemasPlace.Tokenizer.class,
+    CtlSchemaPlace.Tokenizer.class})
 public interface KaaAdminPlaceHistoryMapper extends PlaceHistoryMapper
 {
 }

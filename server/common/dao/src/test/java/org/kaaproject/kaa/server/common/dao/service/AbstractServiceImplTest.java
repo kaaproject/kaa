@@ -30,11 +30,9 @@ import java.util.UUID;
 
 import org.junit.Assert;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
-import org.kaaproject.kaa.common.dto.ChangeProfileFilterNotification;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
-import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
-import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.TenantAdminDto;
 import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.common.dto.UserDto;
@@ -136,20 +134,12 @@ public abstract class AbstractServiceImplTest {
         return null;
     }
     
-    protected CTLSchemaDto generateCTLSchemaDto(String fqn, String tenantId, int version, CTLSchemaScopeDto scopeDto) {
+    protected CTLSchemaDto generateCTLSchemaDto(String fqn, String tenantId, int version) {
         CTLSchemaDto ctlSchema = new CTLSchemaDto();
-        CTLSchemaMetaInfoDto metaInfoDto = new CTLSchemaMetaInfoDto(fqn, version);
-        if (scopeDto == null) {
-            if (isBlank(tenantId)) {
-                scopeDto = CTLSchemaScopeDto.SYSTEM;
-            } else {
-                scopeDto = CTLSchemaScopeDto.TENANT;
-            }
-        }
-        metaInfoDto.setScope(scopeDto);
+        CTLSchemaMetaInfoDto metaInfoDto = new CTLSchemaMetaInfoDto(fqn, tenantId);
         ctlSchema.setMetaInfo(metaInfoDto);
+        ctlSchema.setVersion(version);
         ctlSchema.setBody(UUID.randomUUID().toString());
-        ctlSchema.setTenantId(tenantId);
         return ctlSchema;
     }
 
@@ -162,7 +152,7 @@ public abstract class AbstractServiceImplTest {
             if (isBlank(applicationId)) {
                 applicationId = generateApplication(tenantId).getId();
             }
-            CTLSchemaDto ctlSchemaDto = ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN, tenantId, 1, null));
+            CTLSchemaDto ctlSchemaDto = ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN, tenantId, 1));
             EndpointProfileSchemaDto schemaDto;
             schemas = new ArrayList<>(count);
             for (int i = 0; i < count; i++) {

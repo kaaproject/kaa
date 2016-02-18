@@ -78,6 +78,7 @@ public class KaaAuthServiceImpl implements KaaAuthService {
             AuthUserDto authUser = (AuthUserDto)authentication.getPrincipal();
             result.setAuthResult(Result.OK);
             result.setAuthority(authUser.getAuthority());
+            result.setTenantId(authUser.getTenantId());
             result.setUsername(authUser.getUsername());
             String displayName = authUser.getUsername();
             if (!isEmpty(authUser.getFirstName()) || !isEmpty(authUser.getLastName())) {

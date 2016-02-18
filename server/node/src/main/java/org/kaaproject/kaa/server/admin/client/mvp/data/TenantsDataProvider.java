@@ -26,9 +26,9 @@ import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class TenantsDataProvider extends AbstractDataProvider<TenantUserDto>{
+public class TenantsDataProvider extends AbstractDataProvider<TenantUserDto, String>{
 
-    public TenantsDataProvider(AbstractGrid<TenantUserDto,?> dataGrid,
+    public TenantsDataProvider(AbstractGrid<TenantUserDto, String> dataGrid,
                                HasErrorMessage hasErrorMessage) {
         super(dataGrid, hasErrorMessage);
     }

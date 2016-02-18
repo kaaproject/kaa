@@ -46,10 +46,9 @@ import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileViewDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaExportMethod;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaInfoDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
@@ -66,8 +65,8 @@ import org.kaaproject.kaa.server.admin.shared.endpoint.EndpointProfileViewDto;
 import org.kaaproject.kaa.server.admin.shared.plugin.PluginInfoDto;
 import org.kaaproject.kaa.server.admin.shared.properties.PropertiesDto;
 import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaFormDto;
+import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaReferenceDto;
 import org.kaaproject.kaa.server.admin.shared.schema.ProfileSchemaViewDto;
-import org.kaaproject.kaa.server.admin.shared.schema.SchemaFqnDto;
 import org.kaaproject.kaa.server.admin.shared.schema.SchemaInfoDto;
 import org.kaaproject.kaa.server.admin.shared.schema.ServerProfileSchemaViewDto;
 
@@ -174,6 +173,8 @@ public interface KaaAdminService extends RemoteService {
     public ProfileSchemaViewDto getProfileSchemaView(String profileSchemaId) throws KaaAdminServiceException;
 
     public ProfileSchemaViewDto saveProfileSchemaView(ProfileSchemaViewDto profileSchema) throws KaaAdminServiceException;
+
+    public ProfileSchemaViewDto createProfileSchemaFormCtlSchema(CtlSchemaFormDto ctlSchemaForm) throws KaaAdminServiceException;
 
     public List<ConfigurationSchemaDto> getConfigurationSchemasByApplicationId(String applicationId) throws KaaAdminServiceException;
 
@@ -355,40 +356,44 @@ public interface KaaAdminService extends RemoteService {
 
     public void editUserConfiguration(EndpointUserConfigurationDto endpointUserConfiguration, String applicationId, RecordField configurationData) throws KaaAdminServiceException;
 
-    public CTLSchemaInfoDto saveCTLSchema(String body, CTLSchemaScopeDto scope, String applicationId) throws KaaAdminServiceException;
+    public CTLSchemaDto saveCTLSchema(String body, String tenantId, String applicationId) throws KaaAdminServiceException;
     
-    public CTLSchemaInfoDto saveCTLSchema(CTLSchemaInfoDto schema) throws KaaAdminServiceException;
+    public CTLSchemaDto saveCTLSchema(CTLSchemaDto schema) throws KaaAdminServiceException;
 
     public void deleteCTLSchemaById(String schemaId) throws KaaAdminServiceException;
 
-    public void deleteCTLSchemaByFqnAndVersion(String fqn, Integer version) throws KaaAdminServiceException;
+    public void deleteCTLSchemaByFqnVersionTenantIdAndApplicationId(String fqn, Integer version, String tenantId, String applicationId) throws KaaAdminServiceException;
 
-    public CTLSchemaInfoDto getCTLSchemaById(String schemaId) throws KaaAdminServiceException;
+    public CTLSchemaDto getCTLSchemaById(String schemaId) throws KaaAdminServiceException;
 
-    public CTLSchemaInfoDto getCTLSchemaByFqnAndVersion(String fqn, Integer version) throws KaaAdminServiceException;
+    public CTLSchemaDto getCTLSchemaByFqnVersionTenantIdAndApplicationId(String fqn, Integer version, String tenantId, String applicationId) throws KaaAdminServiceException;
 
-    public List<CTLSchemaMetaInfoDto> getCTLSchemasAvailable() throws KaaAdminServiceException;
-
-    public List<CTLSchemaMetaInfoDto> getCTLSchemasByScope(String scopeName) throws KaaAdminServiceException;
-
-    public List<CTLSchemaMetaInfoDto> getCTLSchemasByApplicationId(String applicationId) throws KaaAdminServiceException;
+    public boolean checkFqnExists(String fqn, String tenantId, String applicationId) throws KaaAdminServiceException;
     
-    public List<SchemaFqnDto> getTenantCTLSchemaFqns() throws KaaAdminServiceException;
+    public CTLSchemaMetaInfoDto updateCTLSchemaMetaInfoScope(CTLSchemaMetaInfoDto ctlSchemaMetaInfo) throws KaaAdminServiceException;
     
-    public List<CTLSchemaMetaInfoDto> getAvailableTenantCTLSchemaReferences() throws KaaAdminServiceException;
+    public List<CTLSchemaMetaInfoDto> getSystemLevelCTLSchemas() throws KaaAdminServiceException;
     
-    public CtlSchemaFormDto getCTLSchemaForm(String fqn, Integer version) throws KaaAdminServiceException;
+    public List<CTLSchemaMetaInfoDto> getTenantLevelCTLSchemas() throws KaaAdminServiceException;
     
-    public CtlSchemaFormDto createNewCTLSchemaFormInstance(String sourceFqn, 
-            Integer sourceVersion, 
-            CTLSchemaScopeDto scope, 
-            String applicationId) throws KaaAdminServiceException;
+    public List<CTLSchemaMetaInfoDto> getApplicationLevelCTLSchemas(String applicationId) throws KaaAdminServiceException;
     
-    public RecordField generateCtlSchemaForm(String fileItemName) throws KaaAdminServiceException;
+    public List<CtlSchemaReferenceDto> getAvailableApplicationCTLSchemaReferences(String applicationId) throws KaaAdminServiceException;
+    
+    public CtlSchemaFormDto getLatestCTLSchemaForm(String metaInfoId) throws KaaAdminServiceException;
+    
+    public CtlSchemaFormDto getCTLSchemaFormByMetaInfoIdAndVer(String metaInfoId, int version) throws KaaAdminServiceException;
+    
+    public CtlSchemaFormDto createNewCTLSchemaFormInstance(String metaInfoId, 
+            Integer sourceVersion, String applicationId) throws KaaAdminServiceException;
+    
+    public RecordField generateCtlSchemaForm(String fileItemName, String applicationId) throws KaaAdminServiceException;
     
     public CtlSchemaFormDto saveCTLSchemaForm(CtlSchemaFormDto ctlSchemaForm) throws KaaAdminServiceException;
     
-    public FileData exportCTLSchema(String fqn, int version, CTLSchemaExportMethod method) throws KaaAdminServiceException;
+    public boolean checkFqnExists(CtlSchemaFormDto ctlSchemaForm) throws KaaAdminServiceException;
+    
+    public FileData exportCTLSchema(String fqn, int version, String applicationId, CTLSchemaExportMethod method) throws KaaAdminServiceException;
     
     public String prepareCTLSchemaExport(String ctlSchemaId, CTLSchemaExportMethod method) throws KaaAdminServiceException;
     
@@ -406,6 +411,8 @@ public interface KaaAdminService extends RemoteService {
 
     public ServerProfileSchemaViewDto saveServerProfileSchemaView(ServerProfileSchemaViewDto serverProfileSchema) throws KaaAdminServiceException;
     
+    public ServerProfileSchemaViewDto createServerProfileSchemaFormCtlSchema(CtlSchemaFormDto ctlSchemaForm) throws KaaAdminServiceException;
+
     public SchemaInfoDto getEndpointProfileSchemaInfo(String endpointProfileSchemaId) throws KaaAdminServiceException;
     
     public SchemaInfoDto getServerProfileSchemaInfo(String serverProfileSchemaId) throws KaaAdminServiceException;

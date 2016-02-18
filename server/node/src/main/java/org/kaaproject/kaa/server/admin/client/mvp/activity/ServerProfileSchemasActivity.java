@@ -42,8 +42,8 @@ public class ServerProfileSchemasActivity extends AbstractBaseCtlSchemasActivity
     }
 
     @Override
-    protected AbstractDataProvider<ServerProfileSchemaDto> getDataProvider(
-            AbstractGrid<ServerProfileSchemaDto,?> dataGrid) {
+    protected AbstractDataProvider<ServerProfileSchemaDto, String> getDataProvider(
+            AbstractGrid<ServerProfileSchemaDto, String> dataGrid) {
         return new ServerProfileSchemasDataProvider(dataGrid, listView, applicationId);
     }
 

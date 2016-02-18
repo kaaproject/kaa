@@ -40,6 +40,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.BasePropertiesView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseSchemaView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.ConfigurationView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.CtlSchemaView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.CtlSchemasView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EcfSchemaView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EcfView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointGroupView;
@@ -48,8 +49,8 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointProfilesView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.HeaderView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.LogAppenderView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.NavigationView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.SdkProfileView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.ProfileFilterView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.SdkProfileView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.SendNotificationView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.TenantView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.TopicView;
@@ -57,7 +58,6 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.UpdateUserConfigView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.UserProfileView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.UserVerifierView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.UserView;
-import org.kaaproject.kaa.server.admin.shared.schema.SchemaFqnDto;
 
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
@@ -155,8 +155,13 @@ public interface ClientFactory {
 
     UpdateUserConfigView getUpdateUserConfigView();
     
-    BaseListView<SchemaFqnDto> getCtlSchemasView();
+    CtlSchemasView getSystemCtlSchemasView();
+    CtlSchemasView getTenantCtlSchemasView();
+    CtlSchemasView getApplicationCtlSchemasView();
+    
     CtlSchemaView getCreateCtlSchemaView();
-    CtlSchemaView getCtlSchemaView();
+    CtlSchemaView getEditCtlSchemaView();
+    CtlSchemaView getEditApplicationCtlSchemaView();
+    CtlSchemaView getViewCtlSchemaView();
 
 }

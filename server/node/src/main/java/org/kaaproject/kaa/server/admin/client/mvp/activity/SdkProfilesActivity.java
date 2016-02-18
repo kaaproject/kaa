@@ -57,7 +57,7 @@ public class SdkProfilesActivity extends AbstractListActivity<SdkProfileDto, Sdk
     }
 
     @Override
-    protected AbstractDataProvider<SdkProfileDto> getDataProvider(AbstractGrid<SdkProfileDto, ?> dataGrid) {
+    protected AbstractDataProvider<SdkProfileDto, String> getDataProvider(AbstractGrid<SdkProfileDto, String> dataGrid) {
         return new SdkProfilesDataProvider(dataGrid, listView, applicationId);
     }
 

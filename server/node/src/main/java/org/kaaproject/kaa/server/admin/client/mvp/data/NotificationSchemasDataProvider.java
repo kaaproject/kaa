@@ -26,11 +26,11 @@ import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class NotificationSchemasDataProvider extends AbstractDataProvider<NotificationSchemaDto>{
+public class NotificationSchemasDataProvider extends AbstractDataProvider<NotificationSchemaDto, String>{
 
     private String applicationId;
 
-    public NotificationSchemasDataProvider(AbstractGrid<NotificationSchemaDto,?> dataGrid,
+    public NotificationSchemasDataProvider(AbstractGrid<NotificationSchemaDto, String> dataGrid,
                                            HasErrorMessage hasErrorMessage,
                                            String applicationId) {
         super(dataGrid, hasErrorMessage, false);

@@ -16,6 +16,20 @@
 
 package org.kaaproject.kaa.server.common.dao.impl.sql;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+
 import org.junit.Assert;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
@@ -52,20 +66,6 @@ import org.kaaproject.kaa.server.common.dao.model.sql.User;
 import org.kaaproject.kaa.server.common.dao.model.sql.UserVerifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
 
 public abstract class HibernateAbstractTest extends AbstractTest {
 
@@ -246,15 +246,14 @@ public abstract class HibernateAbstractTest extends AbstractTest {
             }
         }
         CTLSchemaMetaInfo metaInfo = new CTLSchemaMetaInfo();
-        metaInfo.setVersion(version);
         metaInfo.setFqn(fqn);
-        metaInfo.setScope(scope);
+        metaInfo.setTenant(tenant);
         metaInfo = ctlSchemaMetaInfoDao.save(metaInfo);
         CTLSchema ctlSchema = new CTLSchema();
-        ctlSchema.setTenant(tenant);
+        ctlSchema.setMetaInfo(metaInfo);
+        ctlSchema.setVersion(version);
         ctlSchema.setBody(UUID.randomUUID().toString());
         ctlSchema.setDependencySet(new HashSet<CTLSchema>());
-        ctlSchema.setMetaInfo(metaInfo);
         ctlSchema = ctlSchemaDao.save(ctlSchema);
         return ctlSchema;
     }

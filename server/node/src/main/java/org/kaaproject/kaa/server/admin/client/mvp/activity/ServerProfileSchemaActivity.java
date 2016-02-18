@@ -18,9 +18,9 @@ package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
 import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
+import org.kaaproject.kaa.server.admin.client.mvp.place.CtlSchemaPlace.SchemaType;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ServerProfileSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseCtlSchemaView;
 import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaFormDto;
@@ -67,7 +67,6 @@ public class ServerProfileSchemaActivity
     protected void createEmptyCtlSchemaForm(AsyncCallback<CtlSchemaFormDto> callback) {
         KaaAdmin.getDataSource().createNewCTLSchemaFormInstance(null, 
                 null, 
-                CTLSchemaScopeDto.SERVER_PROFILE_SCHEMA, 
                 applicationId, 
                 callback);
     }
@@ -82,6 +81,11 @@ public class ServerProfileSchemaActivity
     protected ServerProfileSchemaPlace existingSchemaPlace(
             String applicationId, String schemaId) {
         return new ServerProfileSchemaPlace(applicationId, schemaId);
+    }
+
+    @Override
+    protected SchemaType getPlaceSchemaType() {
+        return SchemaType.SERVER_PROFILE;
     }
 
 }

@@ -49,8 +49,8 @@ public class ConfigurationSchemasActivity extends AbstractListActivity<Configura
     }
 
     @Override
-    protected AbstractDataProvider<ConfigurationSchemaDto> getDataProvider(
-            AbstractGrid<ConfigurationSchemaDto,?> dataGrid) {
+    protected AbstractDataProvider<ConfigurationSchemaDto, String> getDataProvider(
+            AbstractGrid<ConfigurationSchemaDto, String> dataGrid) {
         return new ConfigurationSchemasDataProvider(dataGrid, listView, applicationId);
     }
 

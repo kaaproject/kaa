@@ -96,7 +96,7 @@ public class TopicViewImpl extends BaseDetailsViewImpl implements TopicView, Val
         sendNotification.setVisible(!create);
 
         if (!create) {
-            saveButton.setVisible(false);
+            getSaveButtonWidget().setVisible(false);
             name.setEnabled(false);
             mandatory.setEnabled(false);
             description.getTextArea().setEnabled(false);

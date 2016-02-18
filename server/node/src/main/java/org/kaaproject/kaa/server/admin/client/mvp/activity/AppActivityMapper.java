@@ -19,6 +19,7 @@ package org.kaaproject.kaa.server.admin.client.mvp.activity;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.place.AefMapPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.AefMapsPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.ApplicationCtlSchemasPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ApplicationPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ApplicationsPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ConfigurationPlace;
@@ -49,6 +50,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.place.SdkProfilesPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.SendNotificationPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ServerProfileSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ServerProfileSchemasPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.SystemCtlSchemasPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.TenantCtlSchemasPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.TenantPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.TenantsPlace;
@@ -161,8 +163,12 @@ public class AppActivityMapper implements ActivityMapper {
                 return new UserVerifierActivity((UserVerifierPlace) place, clientFactory);
             } else if (clazz ==  UpdateUserConfigPlace.class) {
                 return new UpdateUserConfigActivity((UpdateUserConfigPlace) place, clientFactory);
+            } else if (clazz == SystemCtlSchemasPlace.class) {
+                return new SystemCtlSchemasActivity((SystemCtlSchemasPlace) place, clientFactory);
             } else if (clazz == TenantCtlSchemasPlace.class) {
                 return new TenantCtlSchemasActivity((TenantCtlSchemasPlace) place, clientFactory);
+            } else if (clazz == ApplicationCtlSchemasPlace.class) {
+                return new ApplicationCtlSchemasActivity((ApplicationCtlSchemasPlace) place, clientFactory);
             } else if (clazz == CtlSchemaPlace.class) {
                 return new CtlSchemaActivity((CtlSchemaPlace) place, clientFactory);
             }

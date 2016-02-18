@@ -1353,19 +1353,8 @@ public interface ControlService {
     CTLSchemaDto saveCTLSchema(CTLSchemaDto schema) throws ControlServiceException;
 
     /**
-     * Deletes a CTL schema from the database by its identifier.
-     * 
-     * @param schemaId
-     *            A CTL schema identifier
-     * 
-     * @throws ControlServiceException
-     *             - if an exception occures.
-     */
-    void deleteCTLSchemaById(String schemaId) throws ControlServiceException;
-
-    /**
      * Deletes a CTL schema from the database by its fully qualified name,
-     * version number and tenant identifier.
+     * version number, tenant and application identifier.
      * 
      * @param fqn
      *            A fully qualified CTL schema name
@@ -1373,11 +1362,13 @@ public interface ControlService {
      *            A CTL schema version number
      * @param tenantId
      *            A tenant identifier
+     * @param applicationId
+     *            An application identifier
      * 
      * @throws ControlServiceException
      *             - if an exception occures.
      */
-    void deleteCTLSchemaByFqnAndVersionAndTenantId(String fqn, int version, String tenantId) throws ControlServiceException;
+    void deleteCTLSchemaByFqnAndVersionTenantIdAndApplicationId(String fqn, int version, String tenantId, String applicationId) throws ControlServiceException;
 
     /**
      * Returns a CTL schema by its identifier.
@@ -1393,8 +1384,8 @@ public interface ControlService {
     CTLSchemaDto getCTLSchemaById(String schemaId) throws ControlServiceException;
 
     /**
-     * Returns a CTL schema by its fully qualified name, version number and
-     * tenant identifier.
+     * Returns a CTL schema by its fully qualified name, version number,
+     * tenant and application identifier.
      * 
      * @param fqn
      *            A fully qualified CTL schema name
@@ -1402,14 +1393,78 @@ public interface ControlService {
      *            A CTL schema version number
      * @param tenantId
      *            A tenant identifier
+     * @param applicationId
+     *            An application identifier
      * 
-     * @return A CTL schema with the given fully qualified name, version number
-     *         and tenant identifier
+     * @return A CTL schema with the given fully qualified name, version number,
+     *         tenant and application identifier
      * 
      * @throws ControlServiceException
      *             - if an exception occures.
      */
-    CTLSchemaDto getCTLSchemaByFqnVersionAndTenantId(String fqn, int version, String tenantId) throws ControlServiceException;
+    CTLSchemaDto getCTLSchemaByFqnVersionTenantIdAndApplicationId(String fqn, int version, String tenantId, String applicationId) throws ControlServiceException;
+    
+    /**
+     * Returns a CTL schema with the given meta info id and version.
+     *
+     * @param metaInfoId the id of meta info object.
+     * @param version    the schema version.
+     * @return the CTL schema with the given meta info id and version.
+     */    
+    CTLSchemaDto getCTLSchemaByMetaInfoIdAndVer(String metaInfoId, Integer version);
+    
+    /**
+     * Returns any CTL schema by its fully qualified name, version number,
+     * tenant and application identifier.
+     * 
+     * @param fqn
+     *            A fully qualified CTL schema name
+     * @param version
+     *            A CTL schema version number
+     * @param tenantId
+     *            A tenant identifier
+     * @param applicationId
+     *            An application identifier
+     * 
+     * @return Any CTL schema with the given fully qualified name, version number,
+     *         tenant and application identifier
+     * 
+     * @throws ControlServiceException
+     *             - if an exception occures.
+     */
+    CTLSchemaDto getAnyCTLSchemaByFqnVersionTenantIdAndApplicationId(String fqn, int version, String tenantId, String applicationId) throws ControlServiceException;
+    
+    /**
+     * Get CTL schema meta infos which are the application level siblings to the CTL 
+     * of the given fully qualified name, tenant and application identifiers.
+     *
+     * @param fqn     the fully qualified.
+     * @param tenantId the tenant identifier.
+     * @param applicationId the application identifier.
+     * @return the CTL schema meta information objects which are the siblings to the given CTL.
+     */
+    List<CTLSchemaMetaInfoDto> getSiblingsByFqnTenantIdAndApplicationId(String fqn, String tenantId, String applicationId);
+    
+    /**
+     * Update existing CTL schema meta info scope by the given CTL schema meta info object.
+     *
+     * @param ctlSchemaMetaInfo
+     *            the CTL schema meta info object.
+     * @return CTLSchemaMetaInfoDto the updated CTL schema meta info object.
+     */
+    CTLSchemaMetaInfoDto updateCTLSchemaMetaInfoScope(CTLSchemaMetaInfoDto ctlSchemaMetaInfo);
+    
+    /**
+     * Returns meta information about system CTL schemas.
+     * 
+     * @return Meta information about system CTL schemas
+     * 
+     * @throws ControlServiceException
+     *             - if an exception occures.
+     */
+    List<CTLSchemaMetaInfoDto> getSystemCTLSchemasMetaInfo() throws ControlServiceException;
+
+    Map<Fqn, List<Integer>> getAvailableCTLSchemaVersionsForSystem() throws ControlServiceException;
 
     /**
      * Returns meta information about CTL schemas that are available for use by
@@ -1424,47 +1479,27 @@ public interface ControlService {
      * @throws ControlServiceException
      *             - if an exception occures.
      */
-    List<CTLSchemaMetaInfoDto> getAvailableCTLSchemasMetaInfoByTenantId(String tenantId) throws ControlServiceException;
-
+    List<CTLSchemaMetaInfoDto> getAvailableCTLSchemasMetaInfoForTenant(String tenantId) throws ControlServiceException;
+    
+    Map<Fqn, List<Integer>> getAvailableCTLSchemaVersionsForTenant(String tenantId) throws ControlServiceException;
+    
     /**
-     * Returns meta information about CTL schemas that are tied to a tenant with
-     * the given tenant identifier and tenant scope.
+     * Returns meta information about CTL schemas that are available for use by
+     * an application with the given identifier
      * 
      * @param tenantId
      *            A tenant identifier
-     * 
-     * @return Meta information about CTL schemas that are tied to a tenant with
-     *         the given tenant identifier
-     * 
-     * @throws ControlServiceException
-     *             - if an exception occures.
-     */
-    List<CTLSchemaMetaInfoDto> getTenantCTLSchemasMetaInfoByTenantId(String tenantId) throws ControlServiceException;
-
-    /**
-     * Returns meta information about CTL schemas that are tied to an
-     * application with the given application identifier.
-     * 
-     * @param applicationId
+     * @param appId
      *            An application identifier
-     * 
-     * @return Meta information about CTL schemas that are tied to an
-     *         application with the given application identifier
+     * @return Meta information about CTL schemas that are available for use by
+     *         a tenant with the given identifier
      * 
      * @throws ControlServiceException
      *             - if an exception occures.
      */
-    List<CTLSchemaMetaInfoDto> getCTLSchemasMetaInfoByApplicationId(String applicationId) throws ControlServiceException;
+    List<CTLSchemaMetaInfoDto> getAvailableCTLSchemasMetaInfoForApplication(String tenantId, String appId) throws ControlServiceException;
 
-    /**
-     * Returns meta information about system CTL schemas.
-     * 
-     * @return Meta information about system CTL schemas
-     * 
-     * @throws ControlServiceException
-     *             - if an exception occures.
-     */
-    List<CTLSchemaMetaInfoDto> getSystemCTLSchemasMetaInfo() throws ControlServiceException;
+    Map<Fqn, List<Integer>> getAvailableCTLSchemaVersionsForApplication(String tenantId, String appId) throws ControlServiceException;
 
     /**
      * Returns CTL schemas that reference a CTL schema with the given
@@ -1482,7 +1517,7 @@ public interface ControlService {
 
     /**
      * Returns CTL schemas that reference a CTL schema with the given fully
-     * qualified name, version number and tenant identifier.
+     * qualified name, version number, tenant and application identifier.
      * 
      * @param fqn
      *            A fully qualified CTL schema name
@@ -1490,19 +1525,29 @@ public interface ControlService {
      *            A CTL schema version number
      * @param tenantId
      *            A tenant identifier
-     * 
+     * @param applicationId
+     *            An application identifier
+     *              
      * @return CTL schemas that reference a CTL schema with the given fully
-     *         qualified name, version number and tenant identifier
+     *         qualified name, version number, tenant and application identifier
      * 
      * @throws ControlServiceException
      *             - if an exception occures.
      */
-    List<CTLSchemaDto> getCTLSchemaDependents(String fqn, int version, String tenantId) throws ControlServiceException;
+    List<CTLSchemaDto> getCTLSchemaDependents(String fqn, int version, String tenantId, String applicationId) throws ControlServiceException;
 
-    CTLSchemaDto getLatestCTLSchemaByFqn(String fqn) throws ControlServiceException;
+    CTLSchemaDto getLatestCTLSchemaByFqnTenantIdAndApplicationId(String fqn, String tenantId, String applicationId) throws ControlServiceException;
 
-    Map<Fqn, List<Integer>> getAvailableCTLSchemaVersionsByTenantId(String tenantId) throws ControlServiceException;
+    List<Integer> getAllCTLSchemaVersionsByFqnTenantIdAndApplicationId(String fqn, String tenantId, String applicationId) throws ControlServiceException;
 
+    /**
+     * Returns the last version of CTL schema with the given meta info id.
+     *
+     * @param metaInfoId the id of meta info object.
+     * @return the latest version of  CTL schema with the given meta info id.
+     */    
+    CTLSchemaDto getLatestCTLSchemaByMetaInfoId(String metaInfoId);
+    
     /**
      * Exports the body of a CTL schema.
      * 

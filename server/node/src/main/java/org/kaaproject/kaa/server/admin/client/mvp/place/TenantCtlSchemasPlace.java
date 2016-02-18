@@ -26,7 +26,7 @@ public class TenantCtlSchemasPlace extends TreePlace {
     public TenantCtlSchemasPlace() {
     }
 
-    @Prefix(value = "ctlSchemas")
+    @Prefix(value = "tenantCtlSchemas")
     public static class Tokenizer implements PlaceTokenizer<TenantCtlSchemasPlace> {
 
         @Override
@@ -49,7 +49,7 @@ public class TenantCtlSchemasPlace extends TreePlace {
 
     @Override
     public String getName() {
-        return Utils.constants.ctl();
+        return Utils.constants.tenantCtl();
     }
 
     @Override

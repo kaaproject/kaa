@@ -46,9 +46,9 @@ public abstract class AbstractListActivity<T extends HasId, P extends TreePlace>
     protected final ClientFactory clientFactory;
     private final Class<T> dataClass;
 
-    private AbstractDataProvider<T> dataProvider;
+    protected AbstractDataProvider<T, String> dataProvider;
 
-    private List<HandlerRegistration> registrations = new ArrayList<HandlerRegistration>();
+    protected List<HandlerRegistration> registrations = new ArrayList<HandlerRegistration>();
 
     protected BaseListView<T> listView;
     protected P place;
@@ -70,7 +70,7 @@ public abstract class AbstractListActivity<T extends HasId, P extends TreePlace>
 
     protected abstract BaseListView<T> getView();
 
-    protected abstract AbstractDataProvider<T> getDataProvider(AbstractGrid<T,?> dataGrid);
+    protected abstract AbstractDataProvider<T, String> getDataProvider(AbstractGrid<T,String> dataGrid);
 
     protected abstract Place newEntityPlace();
 

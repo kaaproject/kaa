@@ -47,8 +47,8 @@ public class TopicsActivity extends AbstractListActivity<TopicDto, TopicsPlace> 
     }
 
     @Override
-    protected AbstractDataProvider<TopicDto> getDataProvider(
-            AbstractGrid<TopicDto,?> dataGrid) {
+    protected AbstractDataProvider<TopicDto, String> getDataProvider(
+            AbstractGrid<TopicDto, String> dataGrid) {
         return new TopicsDataProvider(dataGrid, listView, applicationId, null);
     }
 

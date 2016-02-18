@@ -40,8 +40,8 @@ public class ApplicationsActivity extends AbstractListActivity<ApplicationDto, A
     }
 
     @Override
-    protected AbstractDataProvider<ApplicationDto> getDataProvider(
-            AbstractGrid<ApplicationDto,?> dataGrid) {
+    protected AbstractDataProvider<ApplicationDto, String> getDataProvider(
+            AbstractGrid<ApplicationDto, String> dataGrid) {
         return new ApplicationsDataProvider(dataGrid, listView);
     }
 

@@ -44,8 +44,8 @@ public class EndpointGroupsActivity extends AbstractListActivity<EndpointGroupDt
     }
 
     @Override
-    protected AbstractDataProvider<EndpointGroupDto> getDataProvider(
-            AbstractGrid<EndpointGroupDto, ?> dataGrid) {
+    protected AbstractDataProvider<EndpointGroupDto, String> getDataProvider(
+            AbstractGrid<EndpointGroupDto, String> dataGrid) {
         return new EndpointGroupsDataProvider(dataGrid, listView, applicationId);
     }
 

@@ -32,7 +32,7 @@ public class LogAppenderGrid extends BasePluginGrid<LogAppenderDto> {
     protected float constructColumnsImpl(DataGrid<LogAppenderDto> table) {
         float prefWidth = super.constructColumnsImpl(table);
 
-        prefWidth += constructStringColumn(table, Utils.constants.minVersion(),
+        prefWidth += constructStringColumn(table, Utils.constants.minSchemaVersion(),
                 new StringValueProvider<LogAppenderDto>() {
             @Override
             public String getValue(LogAppenderDto item) {

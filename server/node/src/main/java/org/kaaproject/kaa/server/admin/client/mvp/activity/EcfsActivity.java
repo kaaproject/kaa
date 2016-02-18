@@ -40,8 +40,8 @@ public class EcfsActivity extends AbstractListActivity<EventClassFamilyDto, Ecfs
     }
 
     @Override
-    protected AbstractDataProvider<EventClassFamilyDto> getDataProvider(
-            AbstractGrid<EventClassFamilyDto,?> dataGrid) {
+    protected AbstractDataProvider<EventClassFamilyDto, String> getDataProvider(
+            AbstractGrid<EventClassFamilyDto, String> dataGrid) {
         return new EcfsDataProvider(dataGrid, listView);
     }
 

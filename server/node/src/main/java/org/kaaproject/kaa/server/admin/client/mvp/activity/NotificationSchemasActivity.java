@@ -50,8 +50,8 @@ public class NotificationSchemasActivity extends AbstractListActivity<Notificati
     }
 
     @Override
-    protected AbstractDataProvider<NotificationSchemaDto> getDataProvider(
-            AbstractGrid<NotificationSchemaDto, ?> dataGrid) {
+    protected AbstractDataProvider<NotificationSchemaDto, String> getDataProvider(
+            AbstractGrid<NotificationSchemaDto, String> dataGrid) {
         return new NotificationSchemasDataProvider(dataGrid, listView, applicationId);
     }
 
