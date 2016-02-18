@@ -38,7 +38,7 @@ public class EndpointProfilePlace extends EndpointProfilesPlace {
 
     @Override
     public String getName() {
-        return Utils.constants.endpointProfile();
+        return Utils.constants.profile();
     }
 
     public String getEndpointKeyHash() {
