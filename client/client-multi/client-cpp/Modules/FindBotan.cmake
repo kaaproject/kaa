@@ -28,7 +28,7 @@ IF (NOT WIN32)
   include(FindPkgConfig)
   if ( PKG_CONFIG_FOUND )
 
-     pkg_check_modules (PC_BOTAN botan-1.10)
+     pkg_check_modules (PC_BOTAN botan-1.11)
 
      set(BOTAN_DEFINITIONS ${PC_BOTAN_CFLAGS_OTHER})
   endif(PKG_CONFIG_FOUND)
@@ -104,7 +104,7 @@ FIND_PATH(BOTAN_INCLUDE_DIR botan/version.h
 IF(WIN32)
   SET(BOTAN_LIBRARY_NAMES ${BOTAN_LIBRARY_NAMES} libbotan.lib botan.lib)
 ELSE(WIN32)
-  SET(BOTAN_LIBRARY_NAMES ${BOTAN_LIBRARY_NAMES} libbotan.so libbotan-1.10.so)
+  SET(BOTAN_LIBRARY_NAMES ${BOTAN_LIBRARY_NAMES} libbotan.so libbotan-1.11.so)
 ENDIF(WIN32)
 FIND_LIBRARY(BOTAN_LIBRARY NAMES ${BOTAN_LIBRARY_NAMES}
   HINTS

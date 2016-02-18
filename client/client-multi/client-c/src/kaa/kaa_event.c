@@ -599,9 +599,10 @@ static kaa_error_t kaa_event_list_serialize(kaa_event_manager_t *self, kaa_list_
     return KAA_ERR_NONE;
 }
 
-static kaa_error_t kaa_event_listeners_request_serialize(kaa_event_manager_t *self, kaa_platform_message_writer_t *writer)
+static kaa_error_t kaa_event_listeners_request_serialize(kaa_event_manager_t *self, kaa_platform_message_writer_t *writer, uint16_t *serialized_listeners_count)
 {
     kaa_list_node_t *it = kaa_list_begin(self->event_listeners_requests);
+    *serialized_listeners_count = 0;
     while (it) {
         kaa_event_listeners_request_t *request = (kaa_event_listeners_request_t *) kaa_list_get_data(it);
         if (!request->is_sent) {
@@ -619,11 +620,13 @@ static kaa_error_t kaa_event_listeners_request_serialize(kaa_event_manager_t *se
                 kaa_error_t error = kaa_platform_message_write_aligned(writer, request->fqns[i]->buffer, fqn_length);
                 if (error) {
                     KAA_LOG_ERROR(self->logger, error, "Failed to write event listener request");
+                    *serialized_listeners_count = 0;
                     return error;
                 }
             }
 
             request->is_sent = true;
+            (*serialized_listeners_count)++;
         }
         it = kaa_list_next(it);
     }
@@ -691,9 +694,10 @@ kaa_error_t kaa_event_request_serialize(kaa_event_manager_t *self, size_t reques
             char *listeners_count_p = writer->current; // Pointer to the listeners count. Will be filled in later
             writer->current += sizeof(uint16_t);
 
-            uint16_t listeners_count = kaa_list_get_size(self->event_listeners_requests);
-            KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Serializing %u event listeners", listeners_count);
-            error = kaa_event_listeners_request_serialize(self, writer);
+            uint16_t listeners_count = 0;
+            KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Serializing event listeners");
+            error = kaa_event_listeners_request_serialize(self, writer, &listeners_count);
+            KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Serialized %u event listeners", listeners_count);
             if (error) {
                 KAA_LOG_ERROR(self->logger, error, "Failed to serialize event listeners request");
                 return error;

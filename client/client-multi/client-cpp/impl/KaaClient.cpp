@@ -193,7 +193,7 @@ void KaaClient::initKaaTransport()
     bootstrapManager_->setTransport(bootstrapTransport.get());
     bootstrapManager_->setChannelManager(channelManager_.get());
 
-    EndpointObjectHash publicKeyHash(clientKeys_->getPublicKey().begin(), clientKeys_->getPublicKey().size());
+    EndpointObjectHash publicKeyHash(clientKeys_->getPublicKey().data(), clientKeys_->getPublicKey().size());
 
     auto metaDataTransport = std::make_shared<MetaDataTransport>(status_, publicKeyHash, 60000L);
     auto profileTransport = std::make_shared<ProfileTransport>(*channelManager_, clientKeys_->getPublicKey(), context_);
@@ -303,7 +303,7 @@ void KaaClient::initClientKeys()
         utils.saveKeyPair(*clientKeys_, publicKeyLocation, privateKeyLocation);
     }
 
-    EndpointObjectHash publicKeyHash(clientKeys_->getPublicKey().begin(), clientKeys_->getPublicKey().size());
+    EndpointObjectHash publicKeyHash(clientKeys_->getPublicKey().data(), clientKeys_->getPublicKey().size());
     auto digest = publicKeyHash.getHashDigest();
     publicKeyHash_ = Botan::base64_encode(digest.data(), digest.size());
 

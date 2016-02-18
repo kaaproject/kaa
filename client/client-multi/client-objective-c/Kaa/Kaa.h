@@ -59,7 +59,7 @@
 #import "RedirectionTransport.h"
 #import "UserTransport.h"
 
-#import "CommonEPConstants.h"
+#import "Constants.h"
 #import "KaaExceptions.h"
 
 #import "KaaClientStateDelegate.h"

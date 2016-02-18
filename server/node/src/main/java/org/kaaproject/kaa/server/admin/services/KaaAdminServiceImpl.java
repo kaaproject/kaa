@@ -299,11 +299,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             if (isGroupAll(endpointGroupDto)) {
                 pageLinkDto.setApplicationId(endpointGroupDto.getApplicationId());
             }
-            EndpointProfilesPageDto endpointProfilesPage = controlService.getEndpointProfileByEndpointGroupId(pageLinkDto);
-            if (endpointProfilesPage.getEndpointProfiles() == null || !endpointProfilesPage.hasEndpointProfiles()) {
-                throw new KaaAdminServiceException("Requested item was not found!", ServiceErrorCode.ITEM_NOT_FOUND);
-            }
-            return endpointProfilesPage;
+            return controlService.getEndpointProfileByEndpointGroupId(pageLinkDto);
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
@@ -322,11 +318,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             if (isGroupAll(endpointGroupDto)) {
                 pageLinkDto.setApplicationId(endpointGroupDto.getApplicationId());
             }
-            EndpointProfilesBodyDto endpointProfilesBodyDto = controlService.getEndpointProfileBodyByEndpointGroupId(pageLinkDto);
-            if (!endpointProfilesBodyDto.hasEndpointBodies()) {
-                throw new KaaAdminServiceException("Requested item was not found!", ServiceErrorCode.ITEM_NOT_FOUND);
-            }
-            return endpointProfilesBodyDto;
+            return controlService.getEndpointProfileBodyByEndpointGroupId(pageLinkDto);
         } catch (Exception e) {
             throw Utils.handleException(e);
         }

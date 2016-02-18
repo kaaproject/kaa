@@ -71,9 +71,9 @@ listOfServers.push_back(createTransportInfo(0x95f7e40f, 0x56c8ff92, 1, "AAABJjCC
     return listOfServers;
 }
 
-const Botan::SecureVector<std::uint8_t>& getDefaultConfigData()
+const Botan::secure_vector<std::uint8_t>& getDefaultConfigData()
 {
-    static const Botan::SecureVector<std::uint8_t> configData = Botan::base64_decode("JENPTkZJR1VSQVRJT04gREFUQQIAAQIDBAUGBwgJCgsMDQ4P");
+    static const Botan::secure_vector<std::uint8_t> configData = Botan::base64_decode("JENPTkZJR1VSQVRJT04gREFUQQIAAQIDBAUGBwgJCgsMDQ4P");
     return configData;
 }
 
@@ -93,7 +93,7 @@ HashDigest getPropertiesHash()
     }
 
     ss.write(reinterpret_cast<const char*>(
-            getDefaultConfigData().begin()), getDefaultConfigData().size());
+            getDefaultConfigData().data()), getDefaultConfigData().size());
 
     return EndpointObjectHash(ss.str()).getHashDigest();
 }

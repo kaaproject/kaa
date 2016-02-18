@@ -21,6 +21,7 @@
 #include <exception>
 #include <sstream>
 
+#ifndef NDEBUG
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
@@ -31,6 +32,7 @@
 #else
 #include <execinfo.h>
 #endif
+#endif // NDEBUG
 
 namespace kaa {
 
@@ -71,6 +73,7 @@ private:
     std::string message_;
 
     void captureStack(std::stringstream& ss)  {
+#ifndef NDEBUG
          void *trace[16];
          int i, trace_size = 0;
 #ifdef _WIN32
@@ -99,6 +102,9 @@ private:
 #ifdef _WIN32
          free( symbol );
 #endif
+#else
+         static_cast<void>(ss);
+#endif // NDEBUG
      }
 };
 

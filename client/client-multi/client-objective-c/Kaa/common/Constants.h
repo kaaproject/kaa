@@ -15,7 +15,7 @@
  */
 
 /**
- * Common Kaa project Constants.
+ * Common Kaa project сonstants.
  */
 
 #ifndef Kaa_Constants_h
@@ -27,16 +27,6 @@
 #define URI_DELIM @"/"
 
 /**
- * HTTP response content-type.
- */
-#define RESPONSE_CONTENT_TYPE @"\"application/x-kaa\""
-
-/**
- * HTTP response custom header for set RSA Signature encoded in base64
- */
-#define SIGNATURE_HEADER_NAME @"X-SIGNATURE"
-
-/**
  * The identifier for the Avro platform protocol
  */
 #define KAA_PLATFORM_PROTOCOL_AVRO_ID (0xf291f2d4)
@@ -46,19 +36,36 @@
  */
 #define KAA_PLATFORM_PROTOCOL_BINARY_ID (0x3553c66f)
 
-/**
- * The size of sdk token
- */
-#define SDK_TOKEN_SIZE 28
+#define ENDPOINT_DOMAIN @"EP"
 
-/**
- * The size of application token
- */
-#define APP_TOKEN_SIZE 20
+#define ENDPOINT_REGISTER_COMMAND @"NewEPRegister"
 
-/**
- * The size of user verifier token
- */
-#define USER_VERIFIER_TOKEN_SIZE 20
+#define ENDPOINT_REGISTER_URI [NSString stringWithFormat:@"%@%@%@%@", URI_DELIM, ENDPOINT_DOMAIN, URI_DELIM, ENDPOINT_REGISTER_COMMAND]
+
+#define ENDPOINT_UPDATE_COMMAND @"EPUpdate"
+
+#define ENDPOINT_UPDATE_URI [NSString stringWithFormat:@"%@%@%@%@", URI_DELIM, ENDPOINT_DOMAIN, URI_DELIM, ENDPOINT_UPDATE_COMMAND]
+
+#define SYNC_COMMAND @"Sync"
+
+#define LONG_SYNC_COMMAND @"LongSync"
+
+#define SYNC_URI [NSString stringWithFormat:@"%@%@%@%@", URI_DELIM, ENDPOINT_DOMAIN, URI_DELIM, SYNC_COMMAND]
+
+#define LONG_SYNC_URI [NSString stringWithFormat:@"%@%@%@%@", URI_DELIM, ENDPOINT_DOMAIN, URI_DELIM, LONG_SYNC_COMMAND]
+
+#define SIGNATURE_HEADER_NAME @"X-SIGNATURE"
+
+#define REQUEST_SIGNATURE_ATTR_NAME @"signature"
+
+#define REQUEST_KEY_ATTR_NAME @"requestKey"
+
+#define RESPONSE_TYPE @"X-RESPONSETYPE"
+
+#define RESPONSE_TYPE_OPERATION @"operation"
+
+#define REQUEST_DATA_ATTR_NAME @"requestData"
+
+#define NEXT_PROTOCOL_ATTR_NAME @"nextProtocol"
 
 #endif
