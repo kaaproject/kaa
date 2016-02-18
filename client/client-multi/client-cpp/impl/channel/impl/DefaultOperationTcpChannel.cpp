@@ -323,7 +323,7 @@ boost::system::error_code DefaultOperationTcpChannel::sendConnect()
     const auto& requestBody = multiplexer_->compileRequest(getSupportedTransportTypes());
     const auto& requestEncoded = encDec_->encodeData(requestBody.data(), requestBody.size());
     const auto& sessionKey = encDec_->getEncodedSessionKey();
-    const auto& signature = encDec_->signData(sessionKey.begin(), sessionKey.size());
+    const auto& signature = encDec_->signData(sessionKey.data(), sessionKey.size());
     return sendData(ConnectMessage(CHANNEL_TIMEOUT, KAA_PLATFORM_PROTOCOL_AVRO_ID, signature, sessionKey, requestEncoded));
 }
 
@@ -558,7 +558,7 @@ void DefaultOperationTcpChannel::sync(TransportType type)
                 isPendingSyncRequest_ = true;
             }
         } else {
-            KAA_LOG_WARN(boost::format("Can't sync channel %1%. Server is null") % getId());
+            KAA_LOG_DEBUG(boost::format("Can't sync channel %1%. Server is null") % getId());
         }
     } else {
         KAA_LOG_ERROR(boost::format("Unsupported transport type for channel %1%") % getId());

@@ -20,6 +20,7 @@
 #include <memory>
 
 #include <botan/botan.h>
+#include <botan/init.h>
 
 #include "kaa/IKaaClient.hpp"
 #include "kaa/IKaaClientStateListener.hpp"

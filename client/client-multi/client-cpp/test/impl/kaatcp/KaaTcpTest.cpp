@@ -204,10 +204,10 @@ BOOST_AUTO_TEST_CASE(testKaaSyncRequest)
 
 BOOST_AUTO_TEST_CASE(testConnectMessage)
 {
-    Botan::SecureVector<std::uint8_t> signature(32);
+    Botan::secure_vector<std::uint8_t> signature(32);
     *(signature.end() - 1) = 0x01;
 
-    Botan::SecureVector<std::uint8_t> sessionKey(16);
+    Botan::secure_vector<std::uint8_t> sessionKey(16);
     *(sessionKey.end() - 1) = 0x02;
 
     std::string payload = { (char) 0xFF, 0x01, 0x02, 0x03 };

@@ -66,12 +66,11 @@ std::shared_ptr<IHttpRequest> HttpDataProcessor::createHttpRequest(const HttpUrl
     if (sign) {
         const Signature& clientSignature =
                 encDec_->signData(reinterpret_cast<const std::uint8_t *>(
-                        encodedSessionKey.begin()), encodedSessionKey.size());
+                        encodedSessionKey.data()), encodedSessionKey.size());
 
-        post->setBodyField("signature",
-                std::vector<std::uint8_t>(
-                        reinterpret_cast<const std::uint8_t *>(clientSignature.begin()),
-                        reinterpret_cast<const std::uint8_t *>(clientSignature.end())));
+        post->setBodyField("signature", std::vector<std::uint8_t>(
+                                        clientSignature.data(),
+                                        clientSignature.data()+clientSignature.size()));
     }
 
     post->setBodyField("requestKey", std::vector<std::uint8_t>(encodedSessionKey.begin(), encodedSessionKey.end()));

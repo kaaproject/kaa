@@ -32,7 +32,7 @@ extern "C" {
 # define KAA_BUILD_VERSION              "0.8.0-SNAPSHOT"
 # define KAA_BUILD_COMMIT_HASH          "N/A"
 
-# define KAA_SDK_TOKEN                  "0123456789012345678912345678"
+# define KAA_SDK_TOKEN                  "012345678901234567891234567"
 
 # define KAA_PROFILE_SCHEMA_VERSION     2
 

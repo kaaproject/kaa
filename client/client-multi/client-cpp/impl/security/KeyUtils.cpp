@@ -17,6 +17,7 @@
 #include "kaa/security/KeyUtils.hpp"
 #include "kaa/common/exception/KaaException.hpp"
 #include <botan/rsa.h>
+#include <botan/pkcs8.h>
 #include <fstream>
 
 namespace kaa {
@@ -24,7 +25,11 @@ namespace kaa {
 KeyPair KeyUtils::generateKeyPair(std::size_t length)
 {
     Botan::RSA_PrivateKey key(rng_, length);
-    return KeyPair(Botan::X509::BER_encode(key), Botan::PKCS8::PEM_encode(key));
+    auto pemEncodedKey = Botan::PKCS8::PEM_encode(key);
+    auto berEncodedKey = Botan::X509::BER_encode(key);
+    return KeyPair(
+            PublicKey(berEncodedKey.begin(),berEncodedKey.end()),
+            PrivateKey(pemEncodedKey.begin(), pemEncodedKey.end()));
 }
 
 SessionKey KeyUtils::generateSessionKey(std::size_t length)
@@ -35,8 +40,9 @@ SessionKey KeyUtils::generateSessionKey(std::size_t length)
 bool KeyUtils::checkKeyPair(const KeyPair &keys)
 {
     try {
-        auto &pub = keys.getPublicKey();
-        std::unique_ptr<Botan::Public_Key> ppub{Botan::X509::load_key(pub)};
+        const PublicKey& pub = keys.getPublicKey();
+        Botan::DataSource_Memory dataSrc(pub);
+        std::unique_ptr<Botan::Public_Key> ppub{Botan::X509::load_key(dataSrc)};
         bool strongCheck = true;
         bool result = ppub->check_key(rng_, strongCheck);
 
@@ -81,7 +87,7 @@ PublicKey KeyUtils::loadPublicKey(const std::string& fileName)
     std::size_t length = 0;
     boost::scoped_array<char> buf;
     readFile(fileName, buf, length);
-    return PublicKey(reinterpret_cast<const std::uint8_t *>(buf.get()), length);
+    return PublicKey(Botan::secure_vector<std::uint8_t>(buf.get(), buf.get()+length));
 }
 
 PrivateKey KeyUtils::loadPrivateKey(const std::string& fileName)
@@ -102,7 +108,7 @@ KeyPair KeyUtils::loadKeyPair(const std::string& pubFileName, const std::string&
 void KeyUtils::savePublicKey(const PublicKey& key, const std::string& pubFileName)
 {
     std::ofstream file(pubFileName, std::ofstream::binary);
-    file.write(reinterpret_cast<const char *>(key.begin()), key.size());
+    file.write(reinterpret_cast<const char *>(key.data()), key.size());
     file.close();
 }
 

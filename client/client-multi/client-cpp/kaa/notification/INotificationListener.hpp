@@ -18,6 +18,7 @@
 #define INOTIFICATIONLISTENER_HPP_
 
 #include <string>
+#include <cstdint>
 
 #include "kaa/notification/gen/NotificationDefinitions.hpp"
 
