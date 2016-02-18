@@ -1,0 +1,37 @@
+# Dependencies
+markdown:         kramdown
+highlighter:      pygments
+
+# Permalinks
+permalink:        pretty
+#relative_permalinks: false
+
+# Setup
+title:            Kaa
+tagline:          'A Jekyll theme'
+description:      ''
+url:              
+baseurl:          /
+
+author:
+  name:           
+  url:            
+
+paginate:         5
+gems:
+- jekyll-gist
+- jekyll-paginate
+
+# Custom vars
+version:          2.1.0
+
+kramdown:
+  input: GFM
+  auto_ids:       true
+  auto_id_stripping: true
+  toc_levels:     1..6
+  enable_coderay: false
+  entity_output:  as_char
+
+github:
+  repo:           https://github.com/poole/hyde

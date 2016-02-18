@@ -1,0 +1,24 @@
+    {% assign navurl = page.nav %}
+    <!--{% assign navurl = page.nav | prepend: page.path %}-->
+    {% assign navurl =  page.nav | replace: '/:path' , '' %}
+    {% assign navurl =  navurl | prepend: page.dir %}
+    <ul>
+    {% for item in include.nav %}
+    
+        {% assign key = item[0] %}
+        {% assign val = item[1] %}
+        <li>
+            <a href="{{ val.url }}">
+                {% if val.nav == navurl %}
+                    <b>{{ val.text }}</b>
+                {% else %}
+                    {{ val.text }}
+                {% endif %}
+            </a>
+        </li>
+        {% if val.subitems and navurl contains val.nav %}
+            {% include nav.html nav=val.subitems %}
+        {% endif %}
+    {% endfor %}
+    </ul>
+   

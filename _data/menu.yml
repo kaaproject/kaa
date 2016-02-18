@@ -1,0 +1,955 @@
+---
+kaa/current:
+  _sort_idx: 1000
+  level: 1
+  nav: "/kaa/current/"
+  subitems:
+    Programming-guide:
+      _sort_idx: 20
+      level: 2
+      nav: "/kaa/current/Programming-guide/"
+      subitems:
+        Getting-started:
+          _sort_idx: 10
+          nav: "/kaa/current/Programming-guide/Getting-started/"
+          subitems: {}
+          text: Getting started
+          url: "/kaa/current/Getting-started.html"
+        System-overview:
+          _sort_idx: 20
+          nav: "/kaa/current/Programming-guide/System-overview/"
+          subitems: {}
+          text: System overview
+          url: "/kaa/current/System overview.html"
+        Key-system-features:
+          _sort_idx: 30
+          level: 3
+          nav: "/kaa/current/Programming-guide/Key-system-features/"
+          subitems:
+            Devices-provisioning-and-registration:
+              _sort_idx: 10
+              nav: "/kaa/current/Programming-guide/Key-system-features/Devices-provisioning-and-registration/"
+              subitems: {}
+              text: Devices provisioning and registration
+              url: "/kaa/current/Devices-provisioning-and-registration.html"
+            Common-Type-Library:
+              _sort_idx: 20
+              nav: "/kaa/current/Programming-guide/Key-system-features/Common-Type-Library/"
+              subitems: {}
+              text: Common Type Library (CTL)
+              url: "/kaa/current/Common-Type-Library.html"
+            Endpoint-profiling:
+              _sort_idx: 30
+              nav: "/kaa/current/Programming-guide/Key-system-features/Endpoint-profiling/"
+              subitems: {}
+              text: Endpoint profiling
+              url: "/kaa/current/Endpoint-profiling.html"
+            Endpoint-groups-management:
+              _sort_idx: 40
+              nav: "/kaa/current/Programming-guide/Key-system-features/Endpoint-groups-management"
+              subitems: {}
+              text: Endpoint groups management
+              url: "/kaa/current/Endpoint-groups-management.html"
+            Endpoint-ownership:
+              _sort_idx: 50
+              nav: "/kaa/current/Programming-guide/Key-system-features/Endpoint-ownership"
+              subitems: {}
+              text: Endpoint ownership
+              url: "/kaa/current/Endpoint-ownership.html"
+            Endpoint-plugins:
+              _sort_idx: 60
+              nav: "/kaa/current/Programming-guide/Key-system-features/Endpoint-plugins"
+              subitems: {}
+              text: Plugins
+              url: "/kaa/current/Endpoint-plugins.html"
+          text: Key system features
+          url: "/kaa/current/Key-system-features.html"
+        Using-Kaa-endpoint-SDKs:
+          _sort_idx: 40
+          level: 3
+          nav: "/kaa/current/Programming-guide/Using-Kaa-endpoint-SDKs"
+          subitems:
+            Using-Kaa-C-endpoint-SDK:
+              _sort_idx: 10
+              nav: "/kaa/current/Programming-guide/Using-Kaa-endpoint-SDKs/Using-Kaa-C-endpoint-SDK"
+              subitems: {}
+              text: C
+              url: "/kaa/current/Using-Kaa-C-endpoint-SDK"
+            Using-Kaa-Cpp-endpoint-SDK:
+              _sort_idx: 20
+              nav: "/kaa/current/Programming-guide/Using-Kaa-endpoint-SDKs/Using-Kaa-Cpp-endpoint-SDK"
+              subitems: {}
+              text: Cpp
+              url: "/kaa/current/Using-Kaa-Cpp-endpoint-SDK"
+            Using-Kaa-Objective-C-endpoint-SDK:
+              _sort_idx: 30
+              nav: "/kaa/current/Programming-guide/Using-Kaa-endpoint-SDKs/Using-Kaa-Objective-C-endpoint-SDK"
+              subitems: {}
+              text: Objective-C
+              url: "/kaa/current/Using-Kaa-Objective-C-endpoint-SDK"
+            Using-Kaa-Java-endpoint-SDK:
+              _sort_idx: 40
+              nav: "/kaa/current/Programming-guide/Using-Kaa-endpoint-SDKs/Using-Kaa-Java-endpoint-SDK"
+              subitems: {}
+              text: Java
+              url: "/kaa/current/Using-Kaa-Java-endpoint-SDK"
+            SDK-integration-instructions:
+              _sort_idx: 50
+              level: 4
+              nav: "/kaa/current/Programming-guide/Using-Kaa-endpoint-SDKs/SDK-integration-instructions"
+              subitems:
+                SDK-Android:
+                  _sort_idx: 10
+                  nav: "/kaa/current/Programming-guide/Using-Kaa-endpoint-SDKs/SDK-integration-instructions/SDK-Android"
+                  subitems: {}
+                  text: Android
+                  url: "/kaa/current/SDK-Android"
+                SDK-Beaglebone:
+                  _sort_idx: 10
+                  nav: "/kaa/current/Programming-guide/Using-Kaa-endpoint-SDKs/SDK-integration-instructions/SDK-Beaglebone"
+                  subitems: {}
+                  text: Beaglebone
+                  url: "/kaa/current/SDK-Beaglebone"
+                SDK-ESP8266:
+                  _sort_idx: 10
+                  nav: "/kaa/current/Programming-guide/Using-Kaa-endpoint-SDKs/SDK-integration-instructions/SDK-ESP8266"
+                  subitems: {}
+                  text: ESP8266
+                  url: "/kaa/current/SDK-ESP8266"
+                SDK-Edison:
+                  _sort_idx: 10
+                  nav: "/kaa/current/Programming-guide/Using-Kaa-endpoint-SDKs/SDK-integration-instructions/SDK-Edison"
+                  subitems: {}
+                  text: Intel Edison
+                  url: "/kaa/current/SDK-Edison"
+                SDK-LeafLabs:
+                  _sort_idx: 10
+                  nav: "/kaa/current/Programming-guide/Using-Kaa-endpoint-SDKs/SDK-integration-instructions/SDK-LeafLabs"
+                  subitems: {}
+                  text: LeafLabs Maple Mini
+                  url: "/kaa/current/SDK-LeafLabs"
+                SDK-Linux:
+                  _sort_idx: 10
+                  nav: "/kaa/current/Programming-guide/Using-Kaa-endpoint-SDKs/SDK-integration-instructions/SDK-Linux"
+                  subitems: {}
+                  text: Linux
+                  url: "/kaa/current/SDK-Linux"
+                SDK-QNX-Neutrino:
+                  _sort_idx: 10
+                  nav: "/kaa/current/Programming-guide/Using-Kaa-endpoint-SDKs/SDK-integration-instructions/SDK-QNX-Neutrino"
+                  subitems: {}
+                  text: QNX Neutrino RTOS
+                  url: "/kaa/current/SDK-QNX-Neutrino"
+                SDK-RPi:
+                  _sort_idx: 10
+                  nav: "/kaa/current/Programming-guide/Using-Kaa-endpoint-SDKs/SDK-integration-instructions/SDK-RPi"
+                  subitems: {}
+                  text: Raspberry Pi
+                  url: "/kaa/current/SDK-RPi"
+                SDK-Samsung-Artik-5:
+                  _sort_idx: 10
+                  nav: "/kaa/current/Programming-guide/Using-Kaa-endpoint-SDKs/SDK-integration-instructions/SDK-Samsung-Artik-5"
+                  subitems: {}
+                  text: Samsung Artik 5
+                  url: "/kaa/current/SDK-Samsung-Artik-5"
+                SDK-TI-CC3200:
+                  _sort_idx: 10
+                  nav: "/kaa/current/Programming-guide/Using-Kaa-endpoint-SDKs/SDK-integration-instructions/SDK-TI-CC3200"
+                  subitems: {}
+                  text: Texas Instruments CC3200
+                  url: "/kaa/current/SDK-TI-CC3200"
+                SDK-UDOO:
+                  _sort_idx: 10
+                  nav: "/kaa/current/Programming-guide/Using-Kaa-endpoint-SDKs/SDK-integration-instructions/SDK-UDOO"
+                  subitems: {}
+                  text: UDOO
+                  url: "/kaa/current/SDK-UDOO"
+                SDK-Ubuntu-Snappy:
+                  _sort_idx: 10
+                  nav: "/kaa/current/Programming-guide/Using-Kaa-endpoint-SDKs/SDK-integration-instructions/SDK-Ubuntu-Snappy"
+                  subitems: {}
+                  text: Snappy Ubuntu Core
+                  url: "/kaa/current/SDK-Ubuntu-Snappy"
+                SDK-Windows:
+                  _sort_idx: 10
+                  nav: "/kaa/current/Programming-guide/Using-Kaa-endpoint-SDKs/SDK-integration-instructions/SDK-Windows"
+                  subitems: {}
+                  text: Windows
+                  url: "/kaa/current/SDK-Windows"
+                SDK-iOS:
+                  _sort_idx: 10
+                  nav: "/kaa/current/Programming-guide/Using-Kaa-endpoint-SDKs/SDK-integration-instructions/SDK-iOS"
+                  subitems: {}
+                  text: iOS
+                  url: "/kaa/current/SDK-iOS"
+              text: SDK integration instructions for select platforms
+              url: "/kaa/current/SDK-integration-instructions"
+          text: Using Kaa endpoint SDKs
+          url: "/kaa/current/Using-Kaa-endpoint-SDKs"
+        Integrating-endpoints:
+          _sort_idx: 50
+          nav: "/kaa/current/Programming-guide/Integrating-endpoints"
+          subitems: {}
+          text: Integrating endpoints using standard protocols
+          url: "/kaa/current/Integrating-endpoints"
+        Server-REST-APIs:
+          _sort_idx: 60
+          nav: "/kaa/current/Programming-guide/Server-REST-APIs"
+          subitems: {}
+          text: Server REST APIs
+          url: "/kaa/current/Server-REST-APIs"
+      text: Programming guide
+      url: "/kaa/current/Programming-guide.html"
+    Administration-guide:
+      _sort_idx: 30
+      level: 2
+      nav: "/kaa/current/Administration-guide/"
+      subitems:
+        System-components-overview:
+          _sort_idx: 10
+          level: 3
+          nav: "/kaa/current/Administration-guide/System-components-overview/"
+          subitems:
+            Architecture-in-brief:
+              _sort_idx: 10
+              nav: "/kaa/current/Administration-guide/System-components-overview/Architecture-in-brief/"
+              subitems: {}
+              text: Architecture in brief
+              url: "/kaa/current/Architecture-in-brief.html"
+            SQL-noSQL-storage:
+              _sort_idx: 20
+              nav: "/kaa/current/Administration-guide/System-components-overview/SQL-noSQL-storage"
+              subitems: {}
+              text: SQL and NoSQL storage
+              url: "/kaa/current/SQL-noSQL-storage.html"
+            inter-node-communications:
+              _sort_idx: 20
+              nav: "/kaa/current/Administration-guide/System-components-overview/inter-node-communications"
+              subitems: {}
+              text: inter-node-communications
+              url: "/kaa/current/inter-node-communications.html"
+          text: System components overview
+          url: "/kaa/current/System-components-overview.html"
+        System-installation:
+          _sort_idx: 20
+          level: 3
+          nav: "/kaa/current/Administration-guide/System-installation/"
+          subitems:
+            Planning-your-deployment:
+              _sort_idx: 10
+              nav: "/kaa/current/Administration-guide/System-installation/Planning-your-deployment"
+              subitems: {}
+              text: Planning your deployment
+              url: "/kaa/current/Planning-your-deployment.html"
+            Single-node-installation:
+              _sort_idx: 20
+              nav: "/kaa/current/Administration-guide/System-installation/Single-node-installation"
+              subitems: {}
+              text: Single node installation guide
+              url: "/kaa/current/Single-node-installation.html"
+            Cluster-setup:
+              _sort_idx: 30
+              nav: "/kaa/current/Administration-guide/System-installation/Cluster-setup"
+              subitems: {}
+              text: Cluster setup guide
+              url: "/kaa/current/Cluster-setup.html"
+            Managing-system-plug-ins:
+              _sort_idx: 30
+              nav: "/kaa/current/Administration-guide/System-installation/Managing-system-plug-ins"
+              subitems: {}
+              text: Managing system plug-ins
+              url: "/kaa/current/Managing-system-plug-ins.html"
+          text: System installation
+          url: "/kaa/current/System-installation.html"
+        System-Configuration:
+          _sort_idx: 30
+          level: 3
+          nav: "/kaa/current/Administration-guide/System-Configuration/"
+          subitems:
+            Configuration-Control-service:
+              _sort_idx: 10
+              nav: "/kaa/current/Administration-guide/System-Configuration/Configuration-Control-service"
+              subitems: {}
+              text: Control service
+              url: "/kaa/current/Configuration-Control-service.html"
+            Configuration-Bootstrap-service:
+              _sort_idx: 20
+              nav: "/kaa/current/Administration-guide/System-Configuration/Configuration-Bootstrap-service"
+              subitems: {}
+              text: Bootstrap service
+              url: "/kaa/current/Configuration-Bootstrap-service.html"
+            Configuration-Operations-service:
+              _sort_idx: 30
+              nav: "/kaa/current/Administration-guide/System-Configuration/Configuration-Operations-service"
+              subitems: {}
+              text: Operations service
+              url: "/kaa/current/Configuration-Operations-service.html"
+          text: Configuration
+          url: "/kaa/current/System-Configuration.html"
+        Tenants-and-applications-management:
+          _sort_idx: 40
+          nav: "/kaa/current/Administration-guide/Tenants-and-applications-management/"
+          subitems: {}
+          text: Tenants and applications management
+          url: "/kaa/current/Tenants-and-applications-management.html"
+        Users-management:
+          _sort_idx: 50
+          nav: "/kaa/current/Administration-guide/Users-management"
+          subitems: {}
+          text: Users management
+          url: "/kaa/current/Users-management.html"
+        Troubleshooting:
+          _sort_idx: 60
+          nav: "/kaa/current/Administration-guide/Troubleshooting"
+          subitems: {}
+          text: Troubleshooting
+          url: "/kaa/current/Troubleshooting.html"
+      text: Administration guide
+      url: "/kaa/current/Administration-guide.html"
+    Customization-guide:
+      _sort_idx: 40
+      level: 2
+      nav: "/kaa/current/Customization-guide/"
+      subitems:
+        System-architecture:
+          _sort_idx: 10
+          level: 3
+          nav: "/kaa/current/Customization-guide/System-architecture"
+          subitems:
+            Built-in-networking-stack:
+              _sort_idx: 10
+              nav: "/kaa/current/Customization-guide/System-architecture/Built-in-networking-stack"
+              subitems: {}
+              text: Built-in networking stack
+              url: "/kaa/current/Built-in-networking-stack.html"
+            Owner-verifiers:
+              _sort_idx: 10
+              nav: "/kaa/current/Customization-guide/System-architecture/Owner-verifiers"
+              subitems: {}
+              text: Owner verifiers
+              url: "/kaa/current/Owner-verifiers.html"
+            Protocol-adapters:
+              _sort_idx: 10
+              nav: "/kaa/current/Customization-guide/System-architecture/Protocol-adapters"
+              subitems: {}
+              text: Protocol adapters
+              url: "/kaa/current/Protocol-adapters.html"
+          text: System architecture
+          url: "/kaa/current/System-architecture.html"
+        Development-environment-setup:
+          _sort_idx: 20
+          level: 3
+          nav: "/kaa/current/Customization-guide/Development-environment-setup"
+          subitems:
+            Server-side-development:
+              _sort_idx: 10
+              nav: "/kaa/current/Customization-guide/Development-environment-setup/Server-side-development"
+              subitems: {}
+              text: Server-side development
+              url: "/kaa/current/Server-side-development.html"
+            C-SDK-development:
+              _sort_idx: 20
+              nav: "/kaa/current/Customization-guide/Development-environment-setup/C-SDK-development"
+              subitems: {}
+              text: C SDK development
+              url: "/kaa/current/C-SDK-development.html"
+            Cpp-SDK-development:
+              _sort_idx: 30
+              nav: "/kaa/current/Customization-guide/Development-environment-setup/Cpp-SDK-development"
+              subitems: {}
+              text: Cpp SDK development
+              url: "/kaa/current/Cpp-SDK-development.html"
+            Objective-C-SDK-development:
+              _sort_idx: 40
+              nav: "/kaa/current/Customization-guide/Development-environment-setup/Objective-C-SDK-development"
+              subitems: {}
+              text: Objective-C SDK development
+              url: "/kaa/current/Objective-C-SDK-development.html"
+            Java-SDK-development:
+              _sort_idx: 50
+              nav: "/kaa/current/Customization-guide/Development-environment-setup/Java-SDK-development"
+              subitems: {}
+              text: Java SDK development
+              url: "/kaa/current/Java-SDK-development.html"
+          text: Development environment setup
+          url: "/kaa/current/Development-environment-setup.html"
+        Plugin-development:
+          _sort_idx: 30
+          level: 3
+          nav: "/kaa/current/Customization-guide/Plugin-development"
+          subitems:
+            dependencies-compatibility:
+              _sort_idx: 10
+              nav: "/kaa/current/Customization-guide/Plugin-development/dependencies-compatibility"
+              subitems: {}
+              text: Contracts, dependencies, and modules compatibility
+              url: "/kaa/current/dependencies-compatibility.html"
+            SDK-affecting-plugins:
+              _sort_idx: 20
+              level: 4
+              nav: "/kaa/current/Customization-guide/Plugin-development/SDK-affecting-plugins"
+              subitems:
+                Plugins-Endpoint-verifiers:
+                  _sort_idx: 10
+                  nav: "/kaa/current/Customization-guide/Plugin-development/SDK-affecting-plugins/Plugins-Endpoint-verifiers"
+                  subitems: {}
+                  text: Endpoint verifiers
+                  url: "/kaa/current/Plugins-Endpoint-verifiers.html"
+                Communications-plugins:
+                  _sort_idx: 20
+                  nav: "/kaa/current/Customization-guide/Plugin-development/SDK-affecting-plugins/Communications-plugins"
+                  subitems: {}
+                  text: Communications plugins
+                  url: "/kaa/current/Communications-plugins.html"
+                Data-channel-plugins:
+                  _sort_idx: 30
+                  nav: "/kaa/current/Customization-guide/Plugin-development/SDK-affecting-plugins/Data-channel-plugins"
+                  subitems: {}
+                  text: Data channel plugins
+                  url: "/kaa/current/Data-channel-plugins.html"
+              text: SDK affecting plugins
+              url: "/kaa/current/SDK-affecting-plugins.html"
+            SDK-non-affecting-plugins:
+              _sort_idx: 30
+              level: 4
+              nav: "/kaa/current/Customization-guide/Plugin-development/SDK-non-affecting-plugins"
+              subitems:
+                Protocol-adapters-plugins:
+                  _sort_idx: 10
+                  nav: "/kaa/current/Customization-guide/Plugin-development/SDK-non-affecting-plugins/Protocol-adapters-plugins"
+                  subitems: {}
+                  text: Protocol adapters
+                  url: "/kaa/current/Protocol-adapters-plugins.html"
+                Protocol-payload-interpreters-plugins:
+                  _sort_idx: 20
+                  nav: "/kaa/current/Customization-guide/Plugin-development/SDK-non-affecting-plugins/Protocol-payload-interpreters-plugins"
+                  subitems: {}
+                  text: Protocol payload interpreters
+                  url: "/kaa/current/Protocol-payload-interpreters-plugins.html"
+                Owner-verifiers-plugins:
+                  _sort_idx: 30
+                  nav: "/kaa/current/Customization-guide/Plugin-development/SDK-non-affecting-plugins/Owner-verifiers-plugins"
+                  subitems: {}
+                  text: Owner verifiers
+                  url: "/kaa/current/Owner-verifiers-plugins.html"
+              text: SDK non-affecting plugins
+              url: "/kaa/current/SDK-non-affecting-plugins.html"
+            Packaging:
+              _sort_idx: 40
+              nav: "/kaa/current/Customization-guide/Plugin-development/Packaging"
+              subitems: {}
+              text: Packaging
+              url: "/kaa/current/Packaging.html"
+          text: Plugin development guide
+          url: "/kaa/current/Plugin-development.html"
+        Compatibility-and-dependencies:
+          _sort_idx: 40
+          nav: "/kaa/current/Customization-guide/Compatibility-and-dependencies"
+          subitems: {}
+          text: Compatibility and dependencies
+          url: "/kaa/current/Compatibility-and-dependencies.html"
+        Code-style:
+          _sort_idx: 50
+          nav: "/kaa/current/Customization-guide/Code-style"
+          subitems: {}
+          text: Code style
+          url: "/kaa/current/Code-style.html"
+        How-to-contribute:
+          _sort_idx: 60
+          nav: "/kaa/current/Customization-guide/How-to-contribute"
+          subitems: {}
+          text: How to contribute
+          url: "/kaa/current/How-to-contribute.html"
+      text: Customization guide
+      url: "/kaa/current/Customization-guide.html"
+    Glossary:
+      _sort_idx: 50
+      nav: "/kaa/current/Glossary/"
+      subitems: {}
+      text: Glossary
+      url: "/kaa/current/Glossary.html"
+    Whats-new:
+      _sort_idx: 60
+      nav: "/kaa/current/Whats-new/"
+      subitems: {}
+      text: What's new
+      url: "/kaa/current/Whats-new.html"
+  text: Kaa 1.0.0
+  url: "/kaa/current/"
+kaa/latest:
+  _sort_idx: 1000
+  level: 1
+  nav: "/kaa/latest/"
+  subitems:
+    Programming-guide:
+      _sort_idx: 20
+      level: 2
+      nav: "/kaa/latest/Programming-guide/"
+      subitems:
+        Getting-started:
+          _sort_idx: 10
+          nav: "/kaa/latest/Programming-guide/Getting-started/"
+          subitems: {}
+          text: Getting started
+          url: "/kaa/latest/Getting-started.html"
+        System-overview:
+          _sort_idx: 20
+          nav: "/kaa/latest/Programming-guide/System-overview/"
+          subitems: {}
+          text: System overview
+          url: "/kaa/latest/System overview.html"
+        Key-system-features:
+          _sort_idx: 30
+          level: 3
+          nav: "/kaa/latest/Programming-guide/Key-system-features/"
+          subitems:
+            Devices-provisioning-and-registration:
+              _sort_idx: 10
+              nav: "/kaa/latest/Programming-guide/Key-system-features/Devices-provisioning-and-registration/"
+              subitems: {}
+              text: Devices provisioning and registration
+              url: "/kaa/latest/Devices-provisioning-and-registration.html"
+            Common-Type-Library:
+              _sort_idx: 20
+              nav: "/kaa/latest/Programming-guide/Key-system-features/Common-Type-Library/"
+              subitems: {}
+              text: Common Type Library (CTL)
+              url: "/kaa/latest/Common-Type-Library.html"
+            Endpoint-profiling:
+              _sort_idx: 30
+              nav: "/kaa/latest/Programming-guide/Key-system-features/Endpoint-profiling/"
+              subitems: {}
+              text: Endpoint profiling
+              url: "/kaa/latest/Endpoint-profiling.html"
+            Endpoint-groups-management:
+              _sort_idx: 40
+              nav: "/kaa/latest/Programming-guide/Key-system-features/Endpoint-groups-management"
+              subitems: {}
+              text: Endpoint groups management
+              url: "/kaa/latest/Endpoint-groups-management.html"
+            Endpoint-ownership:
+              _sort_idx: 50
+              nav: "/kaa/latest/Programming-guide/Key-system-features/Endpoint-ownership"
+              subitems: {}
+              text: Endpoint ownership
+              url: "/kaa/latest/Endpoint-ownership.html"
+            Endpoint-plugins:
+              _sort_idx: 60
+              nav: "/kaa/latest/Programming-guide/Key-system-features/Endpoint-plugins"
+              subitems: {}
+              text: Plugins
+              url: "/kaa/latest/Endpoint-plugins.html"
+          text: Key system features
+          url: "/kaa/latest/Key-system-features.html"
+        Using-Kaa-endpoint-SDKs:
+          _sort_idx: 40
+          level: 3
+          nav: "/kaa/latest/Programming-guide/Using-Kaa-endpoint-SDKs"
+          subitems:
+            Using-Kaa-C-endpoint-SDK:
+              _sort_idx: 10
+              nav: "/kaa/latest/Programming-guide/Using-Kaa-endpoint-SDKs/Using-Kaa-C-endpoint-SDK"
+              subitems: {}
+              text: C
+              url: "/kaa/latest/Using-Kaa-C-endpoint-SDK"
+            Using-Kaa-Cpp-endpoint-SDK:
+              _sort_idx: 20
+              nav: "/kaa/latest/Programming-guide/Using-Kaa-endpoint-SDKs/Using-Kaa-Cpp-endpoint-SDK"
+              subitems: {}
+              text: Cpp
+              url: "/kaa/latest/Using-Kaa-Cpp-endpoint-SDK"
+            Using-Kaa-Objective-C-endpoint-SDK:
+              _sort_idx: 30
+              nav: "/kaa/latest/Programming-guide/Using-Kaa-endpoint-SDKs/Using-Kaa-Objective-C-endpoint-SDK"
+              subitems: {}
+              text: Objective-C
+              url: "/kaa/latest/Using-Kaa-Objective-C-endpoint-SDK"
+            Using-Kaa-Java-endpoint-SDK:
+              _sort_idx: 40
+              nav: "/kaa/latest/Programming-guide/Using-Kaa-endpoint-SDKs/Using-Kaa-Java-endpoint-SDK"
+              subitems: {}
+              text: Java
+              url: "/kaa/latest/Using-Kaa-Java-endpoint-SDK"
+            SDK-integration-instructions:
+              _sort_idx: 50
+              level: 4
+              nav: "/kaa/latest/Programming-guide/Using-Kaa-endpoint-SDKs/SDK-integration-instructions"
+              subitems:
+                SDK-Android:
+                  _sort_idx: 10
+                  nav: "/kaa/latest/Programming-guide/Using-Kaa-endpoint-SDKs/SDK-integration-instructions/SDK-Android"
+                  subitems: {}
+                  text: Android
+                  url: "/kaa/latest/SDK-Android"
+                SDK-Beaglebone:
+                  _sort_idx: 10
+                  nav: "/kaa/latest/Programming-guide/Using-Kaa-endpoint-SDKs/SDK-integration-instructions/SDK-Beaglebone"
+                  subitems: {}
+                  text: Beaglebone
+                  url: "/kaa/latest/SDK-Beaglebone"
+                SDK-ESP8266:
+                  _sort_idx: 10
+                  nav: "/kaa/latest/Programming-guide/Using-Kaa-endpoint-SDKs/SDK-integration-instructions/SDK-ESP8266"
+                  subitems: {}
+                  text: ESP8266
+                  url: "/kaa/latest/SDK-ESP8266"
+                SDK-Edison:
+                  _sort_idx: 10
+                  nav: "/kaa/latest/Programming-guide/Using-Kaa-endpoint-SDKs/SDK-integration-instructions/SDK-Edison"
+                  subitems: {}
+                  text: Intel Edison
+                  url: "/kaa/latest/SDK-Edison"
+                SDK-LeafLabs:
+                  _sort_idx: 10
+                  nav: "/kaa/latest/Programming-guide/Using-Kaa-endpoint-SDKs/SDK-integration-instructions/SDK-LeafLabs"
+                  subitems: {}
+                  text: LeafLabs Maple Mini
+                  url: "/kaa/latest/SDK-LeafLabs"
+                SDK-Linux:
+                  _sort_idx: 10
+                  nav: "/kaa/latest/Programming-guide/Using-Kaa-endpoint-SDKs/SDK-integration-instructions/SDK-Linux"
+                  subitems: {}
+                  text: Linux
+                  url: "/kaa/latest/SDK-Linux"
+                SDK-QNX-Neutrino:
+                  _sort_idx: 10
+                  nav: "/kaa/latest/Programming-guide/Using-Kaa-endpoint-SDKs/SDK-integration-instructions/SDK-QNX-Neutrino"
+                  subitems: {}
+                  text: QNX Neutrino RTOS
+                  url: "/kaa/latest/SDK-QNX-Neutrino"
+                SDK-RPi:
+                  _sort_idx: 10
+                  nav: "/kaa/latest/Programming-guide/Using-Kaa-endpoint-SDKs/SDK-integration-instructions/SDK-RPi"
+                  subitems: {}
+                  text: Raspberry Pi
+                  url: "/kaa/latest/SDK-RPi"
+                SDK-Samsung-Artik-5:
+                  _sort_idx: 10
+                  nav: "/kaa/latest/Programming-guide/Using-Kaa-endpoint-SDKs/SDK-integration-instructions/SDK-Samsung-Artik-5"
+                  subitems: {}
+                  text: Samsung Artik 5
+                  url: "/kaa/latest/SDK-Samsung-Artik-5"
+                SDK-TI-CC3200:
+                  _sort_idx: 10
+                  nav: "/kaa/latest/Programming-guide/Using-Kaa-endpoint-SDKs/SDK-integration-instructions/SDK-TI-CC3200"
+                  subitems: {}
+                  text: Texas Instruments CC3200
+                  url: "/kaa/latest/SDK-TI-CC3200"
+                SDK-UDOO:
+                  _sort_idx: 10
+                  nav: "/kaa/latest/Programming-guide/Using-Kaa-endpoint-SDKs/SDK-integration-instructions/SDK-UDOO"
+                  subitems: {}
+                  text: UDOO
+                  url: "/kaa/latest/SDK-UDOO"
+                SDK-Ubuntu-Snappy:
+                  _sort_idx: 10
+                  nav: "/kaa/latest/Programming-guide/Using-Kaa-endpoint-SDKs/SDK-integration-instructions/SDK-Ubuntu-Snappy"
+                  subitems: {}
+                  text: Snappy Ubuntu Core
+                  url: "/kaa/latest/SDK-Ubuntu-Snappy"
+                SDK-Windows:
+                  _sort_idx: 10
+                  nav: "/kaa/latest/Programming-guide/Using-Kaa-endpoint-SDKs/SDK-integration-instructions/SDK-Windows"
+                  subitems: {}
+                  text: Windows
+                  url: "/kaa/latest/SDK-Windows"
+                SDK-iOS:
+                  _sort_idx: 10
+                  nav: "/kaa/latest/Programming-guide/Using-Kaa-endpoint-SDKs/SDK-integration-instructions/SDK-iOS"
+                  subitems: {}
+                  text: iOS
+                  url: "/kaa/latest/SDK-iOS"
+              text: SDK integration instructions for select platforms
+              url: "/kaa/latest/SDK-integration-instructions"
+          text: Using Kaa endpoint SDKs
+          url: "/kaa/latest/Using-Kaa-endpoint-SDKs"
+        Integrating-endpoints:
+          _sort_idx: 50
+          nav: "/kaa/latest/Programming-guide/Integrating-endpoints"
+          subitems: {}
+          text: Integrating endpoints using standard protocols
+          url: "/kaa/latest/Integrating-endpoints"
+        Server-REST-APIs:
+          _sort_idx: 60
+          nav: "/kaa/latest/Programming-guide/Server-REST-APIs"
+          subitems: {}
+          text: Server REST APIs
+          url: "/kaa/latest/Server-REST-APIs"
+      text: Programming guide
+      url: "/kaa/latest/Programming-guide.html"
+    Administration-guide:
+      _sort_idx: 30
+      level: 2
+      nav: "/kaa/latest/Administration-guide/"
+      subitems:
+        System-components-overview:
+          _sort_idx: 10
+          level: 3
+          nav: "/kaa/latest/Administration-guide/System-components-overview/"
+          subitems:
+            Architecture-in-brief:
+              _sort_idx: 10
+              nav: "/kaa/latest/Administration-guide/System-components-overview/Architecture-in-brief/"
+              subitems: {}
+              text: Architecture in brief
+              url: "/kaa/latest/Architecture-in-brief.html"
+            SQL-noSQL-storage:
+              _sort_idx: 20
+              nav: "/kaa/latest/Administration-guide/System-components-overview/SQL-noSQL-storage"
+              subitems: {}
+              text: SQL and NoSQL storage
+              url: "/kaa/latest/SQL-noSQL-storage.html"
+            inter-node-communications:
+              _sort_idx: 20
+              nav: "/kaa/latest/Administration-guide/System-components-overview/inter-node-communications"
+              subitems: {}
+              text: inter-node-communications
+              url: "/kaa/latest/inter-node-communications.html"
+          text: System components overview
+          url: "/kaa/latest/System-components-overview.html"
+        System-installation:
+          _sort_idx: 20
+          level: 3
+          nav: "/kaa/latest/Administration-guide/System-installation/"
+          subitems:
+            Planning-your-deployment:
+              _sort_idx: 10
+              nav: "/kaa/latest/Administration-guide/System-installation/Planning-your-deployment"
+              subitems: {}
+              text: Planning your deployment
+              url: "/kaa/latest/Planning-your-deployment.html"
+            Single-node-installation:
+              _sort_idx: 20
+              nav: "/kaa/latest/Administration-guide/System-installation/Single-node-installation"
+              subitems: {}
+              text: Single node installation guide
+              url: "/kaa/latest/Single-node-installation.html"
+            Cluster-setup:
+              _sort_idx: 30
+              nav: "/kaa/latest/Administration-guide/System-installation/Cluster-setup"
+              subitems: {}
+              text: Cluster setup guide
+              url: "/kaa/latest/Cluster-setup.html"
+            Managing-system-plug-ins:
+              _sort_idx: 30
+              nav: "/kaa/latest/Administration-guide/System-installation/Managing-system-plug-ins"
+              subitems: {}
+              text: Managing system plug-ins
+              url: "/kaa/latest/Managing-system-plug-ins.html"
+          text: System installation
+          url: "/kaa/latest/System-installation.html"
+        System-Configuration:
+          _sort_idx: 30
+          level: 3
+          nav: "/kaa/latest/Administration-guide/System-Configuration/"
+          subitems:
+            Configuration-Control-service:
+              _sort_idx: 10
+              nav: "/kaa/latest/Administration-guide/System-Configuration/Configuration-Control-service"
+              subitems: {}
+              text: Control service
+              url: "/kaa/latest/Configuration-Control-service.html"
+            Configuration-Bootstrap-service:
+              _sort_idx: 20
+              nav: "/kaa/latest/Administration-guide/System-Configuration/Configuration-Bootstrap-service"
+              subitems: {}
+              text: Bootstrap service
+              url: "/kaa/latest/Configuration-Bootstrap-service.html"
+            Configuration-Operations-service:
+              _sort_idx: 30
+              nav: "/kaa/latest/Administration-guide/System-Configuration/Configuration-Operations-service"
+              subitems: {}
+              text: Operations service
+              url: "/kaa/latest/Configuration-Operations-service.html"
+          text: Configuration
+          url: "/kaa/latest/System-Configuration.html"
+        Tenants-and-applications-management:
+          _sort_idx: 40
+          nav: "/kaa/latest/Administration-guide/Tenants-and-applications-management/"
+          subitems: {}
+          text: Tenants and applications management
+          url: "/kaa/latest/Tenants-and-applications-management.html"
+        Users-management:
+          _sort_idx: 50
+          nav: "/kaa/latest/Administration-guide/Users-management"
+          subitems: {}
+          text: Users management
+          url: "/kaa/latest/Users-management.html"
+        Troubleshooting:
+          _sort_idx: 60
+          nav: "/kaa/latest/Administration-guide/Troubleshooting"
+          subitems: {}
+          text: Troubleshooting
+          url: "/kaa/latest/Troubleshooting.html"
+      text: Administration guide
+      url: "/kaa/latest/Administration-guide.html"
+    Customization-guide:
+      _sort_idx: 40
+      level: 2
+      nav: "/kaa/latest/Customization-guide/"
+      subitems:
+        System-architecture:
+          _sort_idx: 10
+          level: 3
+          nav: "/kaa/latest/Customization-guide/System-architecture"
+          subitems:
+            Built-in-networking-stack:
+              _sort_idx: 10
+              nav: "/kaa/latest/Customization-guide/System-architecture/Built-in-networking-stack"
+              subitems: {}
+              text: Built-in networking stack
+              url: "/kaa/latest/Built-in-networking-stack.html"
+            Owner-verifiers:
+              _sort_idx: 10
+              nav: "/kaa/latest/Customization-guide/System-architecture/Owner-verifiers"
+              subitems: {}
+              text: Owner verifiers
+              url: "/kaa/latest/Owner-verifiers.html"
+            Protocol-adapters:
+              _sort_idx: 10
+              nav: "/kaa/latest/Customization-guide/System-architecture/Protocol-adapters"
+              subitems: {}
+              text: Protocol adapters
+              url: "/kaa/latest/Protocol-adapters.html"
+          text: System architecture
+          url: "/kaa/latest/System-architecture.html"
+        Development-environment-setup:
+          _sort_idx: 20
+          level: 3
+          nav: "/kaa/latest/Customization-guide/Development-environment-setup"
+          subitems:
+            Server-side-development:
+              _sort_idx: 10
+              nav: "/kaa/latest/Customization-guide/Development-environment-setup/Server-side-development"
+              subitems: {}
+              text: Server-side development
+              url: "/kaa/latest/Server-side-development.html"
+            C-SDK-development:
+              _sort_idx: 20
+              nav: "/kaa/latest/Customization-guide/Development-environment-setup/C-SDK-development"
+              subitems: {}
+              text: C SDK development
+              url: "/kaa/latest/C-SDK-development.html"
+            Cpp-SDK-development:
+              _sort_idx: 30
+              nav: "/kaa/latest/Customization-guide/Development-environment-setup/Cpp-SDK-development"
+              subitems: {}
+              text: Cpp SDK development
+              url: "/kaa/latest/Cpp-SDK-development.html"
+            Objective-C-SDK-development:
+              _sort_idx: 40
+              nav: "/kaa/latest/Customization-guide/Development-environment-setup/Objective-C-SDK-development"
+              subitems: {}
+              text: Objective-C SDK development
+              url: "/kaa/latest/Objective-C-SDK-development.html"
+            Java-SDK-development:
+              _sort_idx: 50
+              nav: "/kaa/latest/Customization-guide/Development-environment-setup/Java-SDK-development"
+              subitems: {}
+              text: Java SDK development
+              url: "/kaa/latest/Java-SDK-development.html"
+          text: Development environment setup
+          url: "/kaa/latest/Development-environment-setup.html"
+        Plugin-development:
+          _sort_idx: 30
+          level: 3
+          nav: "/kaa/latest/Customization-guide/Plugin-development"
+          subitems:
+            dependencies-compatibility:
+              _sort_idx: 10
+              nav: "/kaa/latest/Customization-guide/Plugin-development/dependencies-compatibility"
+              subitems: {}
+              text: Contracts, dependencies, and modules compatibility
+              url: "/kaa/latest/dependencies-compatibility.html"
+            SDK-affecting-plugins:
+              _sort_idx: 20
+              level: 4
+              nav: "/kaa/latest/Customization-guide/Plugin-development/SDK-affecting-plugins"
+              subitems:
+                Plugins-Endpoint-verifiers:
+                  _sort_idx: 10
+                  nav: "/kaa/latest/Customization-guide/Plugin-development/SDK-affecting-plugins/Plugins-Endpoint-verifiers"
+                  subitems: {}
+                  text: Endpoint verifiers
+                  url: "/kaa/latest/Plugins-Endpoint-verifiers.html"
+                Communications-plugins:
+                  _sort_idx: 20
+                  nav: "/kaa/latest/Customization-guide/Plugin-development/SDK-affecting-plugins/Communications-plugins"
+                  subitems: {}
+                  text: Communications plugins
+                  url: "/kaa/latest/Communications-plugins.html"
+                Data-channel-plugins:
+                  _sort_idx: 30
+                  nav: "/kaa/latest/Customization-guide/Plugin-development/SDK-affecting-plugins/Data-channel-plugins"
+                  subitems: {}
+                  text: Data channel plugins
+                  url: "/kaa/latest/Data-channel-plugins.html"
+              text: SDK affecting plugins
+              url: "/kaa/latest/SDK-affecting-plugins.html"
+            SDK-non-affecting-plugins:
+              _sort_idx: 30
+              level: 4
+              nav: "/kaa/latest/Customization-guide/Plugin-development/SDK-non-affecting-plugins"
+              subitems:
+                Protocol-adapters-plugins:
+                  _sort_idx: 10
+                  nav: "/kaa/latest/Customization-guide/Plugin-development/SDK-non-affecting-plugins/Protocol-adapters-plugins"
+                  subitems: {}
+                  text: Protocol adapters
+                  url: "/kaa/latest/Protocol-adapters-plugins.html"
+                Protocol-payload-interpreters-plugins:
+                  _sort_idx: 20
+                  nav: "/kaa/latest/Customization-guide/Plugin-development/SDK-non-affecting-plugins/Protocol-payload-interpreters-plugins"
+                  subitems: {}
+                  text: Protocol payload interpreters
+                  url: "/kaa/latest/Protocol-payload-interpreters-plugins.html"
+                Owner-verifiers-plugins:
+                  _sort_idx: 30
+                  nav: "/kaa/latest/Customization-guide/Plugin-development/SDK-non-affecting-plugins/Owner-verifiers-plugins"
+                  subitems: {}
+                  text: Owner verifiers
+                  url: "/kaa/latest/Owner-verifiers-plugins.html"
+              text: SDK non-affecting plugins
+              url: "/kaa/latest/SDK-non-affecting-plugins.html"
+            Packaging:
+              _sort_idx: 40
+              nav: "/kaa/latest/Customization-guide/Plugin-development/Packaging"
+              subitems: {}
+              text: Packaging
+              url: "/kaa/latest/Packaging.html"
+          text: Plugin development guide
+          url: "/kaa/latest/Plugin-development.html"
+        Compatibility-and-dependencies:
+          _sort_idx: 40
+          nav: "/kaa/latest/Customization-guide/Compatibility-and-dependencies"
+          subitems: {}
+          text: Compatibility and dependencies
+          url: "/kaa/latest/Compatibility-and-dependencies.html"
+        Code-style:
+          _sort_idx: 50
+          nav: "/kaa/latest/Customization-guide/Code-style"
+          subitems: {}
+          text: Code style
+          url: "/kaa/latest/Code-style.html"
+        How-to-contribute:
+          _sort_idx: 60
+          nav: "/kaa/latest/Customization-guide/How-to-contribute"
+          subitems: {}
+          text: How to contribute
+          url: "/kaa/latest/How-to-contribute.html"
+      text: Customization guide
+      url: "/kaa/latest/Customization-guide.html"
+    Glossary:
+      _sort_idx: 50
+      nav: "/kaa/latest/Glossary/"
+      subitems: {}
+      text: Glossary
+      url: "/kaa/latest/Glossary.html"
+    Whats-new:
+      _sort_idx: 60
+      nav: "/kaa/latest/Whats-new/"
+      subitems: {}
+      text: What's new
+      url: "/kaa/latest/Whats-new.html"
+  text: Kaa latest
+  url: "/kaa/latest/"

@@ -1,0 +1,30 @@
+    {% assign navurl = page.nav %}
+    <!--{% assign navurl = page.nav | prepend: page.path %}-->
+    {% assign navurl =  page.nav | replace: '/:path' , '' %}
+    {% assign navurl =  navurl | prepend: page.dir %}
+    {% assign selected_url = . %}
+    {% assign selected_item = "Kaa releases" %}
+    {% for item in site.data.menu %}
+        {% assign key = item[0] %}
+        {% assign val = item[1] %}
+        {% if val.subitems and navurl contains val.nav %}
+            {% assign selected_url = val.url %}
+            {% assign selected_item = val.text %}
+        {% endif %}
+      {% endfor %}
+    <b><a href="{{ selected_url }}">{{ selected_item }}&nbsp;&nbsp;&nbsp;&nbsp;</a><b>
+    <ul>
+    {% for item in include.nav %}
+    
+        {% assign key = item[0] %}
+        {% assign val = item[1] %}
+        {% if navurl contains val.nav %}
+        {%else%}
+          <li>
+            <a href="{{ val.url }}">
+              {{ val.text }}
+          </li>
+         {% endif %}
+    {% endfor %}
+    </ul>
+   
