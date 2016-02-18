@@ -21,6 +21,7 @@
 #include "kaa/security/IEncoderDecoder.hpp"
 #include "kaa/IKaaClientContext.hpp"
 #include <botan/rsa.h>
+#include <botan/cipher_mode.h>
 #include <cstdint>
 #include <memory>
 

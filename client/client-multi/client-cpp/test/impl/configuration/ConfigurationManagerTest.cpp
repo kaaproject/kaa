@@ -80,7 +80,7 @@ BOOST_AUTO_TEST_CASE(configurationUpdated)
 
     AvroByteArrayConverter<KaaRootConfiguration> convert;
     auto rootConfig = std::make_shared<KaaRootConfiguration>();
-    convert.fromByteArray(getDefaultConfigData().begin(), getDefaultConfigData().size(), *rootConfig);
+    convert.fromByteArray(getDefaultConfigData().data(), getDefaultConfigData().size(), *rootConfig);
 
     manager.processConfigurationData(std::vector<std::uint8_t>(getDefaultConfigData().begin(), getDefaultConfigData().begin() + getDefaultConfigData().size()), true);
     testSleep(1);

@@ -39,10 +39,11 @@ IPTransportInfo::IPTransportInfo(ITransportConnectionInfoPtr connectionInfo)
     protocolId_ = connectionInfo->getTransportId();
 
     std::uint8_t *data = connectionData_.data();
-    std::int32_t publicKeyLength = boost::asio::detail::socket_ops::network_to_host_long(*((int32_t *)data));
+    std::size_t publicKeyLength = boost::asio::detail::socket_ops::network_to_host_long(*((int32_t *)data));
     data += sizeof(std::int32_t);
 
-    publicKey_ = PublicKey(data, publicKeyLength);
+    publicKey_ = PublicKey();
+    publicKey_.assign(data, data+publicKeyLength);
     data += publicKeyLength;
 
     std::int32_t hostLength = boost::asio::detail::socket_ops::network_to_host_long(*((int32_t *)data));
