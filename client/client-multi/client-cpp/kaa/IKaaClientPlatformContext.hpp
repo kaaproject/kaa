@@ -38,7 +38,7 @@ public:
     /**
      * @brief Returns platform SDK properties
      *
-     * @return client SDK properties
+     * @return Reference to @c KaaClientProperties instance.
      */
     virtual KaaClientProperties& getProperties() = 0;
 
