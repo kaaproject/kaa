@@ -1,17 +1,17 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.server.operations.service.delta;
@@ -19,7 +19,6 @@ package org.kaaproject.kaa.server.operations.service.delta;
 import java.util.List;
 
 import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
-
 
 /**
  * The Class HistoryDelta is used to model history of changes of particular
@@ -42,12 +41,13 @@ public class HistoryDelta {
      * @param topicListChanged
      *            the topic list changed
      */
-    public HistoryDelta(List<EndpointGroupStateDto> endpointGroupStates,
-            boolean configurationChanged, boolean topicListChanged) {
+    public HistoryDelta(List<EndpointGroupStateDto> endpointGroupStates, boolean configurationChanged, boolean topicListChanged,
+            boolean seqNumberChanged) {
         super();
         this.endpointGroupStates = endpointGroupStates;
         this.configurationChanged = configurationChanged;
         this.topicListChanged = topicListChanged;
+        this.seqNumberChanged = seqNumberChanged;
     }
 
     /**
@@ -59,6 +59,9 @@ public class HistoryDelta {
 
     /** The endpoint group states. */
     private List<EndpointGroupStateDto> endpointGroupStates;
+
+    /** The seq number changed. */
+    boolean seqNumberChanged;
 
     /** The configuration changed. */
     boolean configurationChanged;
@@ -81,8 +84,7 @@ public class HistoryDelta {
      * @param endpointGroupStates
      *            the new endpoint group states
      */
-    public void setEndpointGroupStates(
-            List<EndpointGroupStateDto> endpointGroupStates) {
+    public void setEndpointGroupStates(List<EndpointGroupStateDto> endpointGroupStates) {
         this.endpointGroupStates = endpointGroupStates;
     }
 
@@ -125,19 +127,39 @@ public class HistoryDelta {
     }
 
     /**
+     * Checks if is seq number changed.
+     * 
+     * @return true if seq number changed, false otherwise
+     */
+    public boolean isSeqNumberChanged() {
+        return seqNumberChanged;
+    }
+
+    /**
+     * Sets the sequence number changed.
+     * 
+     * @param seqNumberChanged
+     *            the sequence number changed
+     */
+    public void setSeqNumberChanged(boolean seqNumberChanged) {
+        this.seqNumberChanged = seqNumberChanged;
+    }
+
+    /**
      * Sets the all changed.
      */
     public void setAllChanged() {
         this.configurationChanged = true;
         this.topicListChanged = true;
+        this.seqNumberChanged = true;
     }
-    
+
     /**
      * Checks if smth is changed.
      * 
      * @return true, if smth is changed
-     */   
-    public boolean isSmthChanged(){
-        return topicListChanged || configurationChanged;
+     */
+    public boolean isSmthChanged() {
+        return topicListChanged || configurationChanged || seqNumberChanged;
     }
 }

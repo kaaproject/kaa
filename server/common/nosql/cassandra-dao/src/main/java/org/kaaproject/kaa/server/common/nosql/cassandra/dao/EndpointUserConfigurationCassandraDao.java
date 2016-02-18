@@ -1,30 +1,20 @@
-/*
- * Copyright 2014-2015 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
+
 package org.kaaproject.kaa.server.common.nosql.cassandra.dao;
-
-import com.datastax.driver.core.querybuilder.Select;
-import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
-import org.kaaproject.kaa.server.common.dao.impl.EndpointUserConfigurationDao;
-import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointUserConfiguration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Repository;
-
-import java.util.Arrays;
-import java.util.List;
 
 import static com.datastax.driver.core.querybuilder.QueryBuilder.delete;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.eq;
@@ -33,6 +23,18 @@ import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.Cassand
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_USER_CONF_COLUMN_FAMILY_NAME;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_USER_CONF_USER_ID_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_USER_CONF_VERSION_PROPERTY;
+
+import java.util.Arrays;
+import java.util.List;
+
+import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
+import org.kaaproject.kaa.server.common.dao.impl.EndpointUserConfigurationDao;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointUserConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Repository;
+
+import com.datastax.driver.core.querybuilder.Select;
 
 @Repository
 public class EndpointUserConfigurationCassandraDao extends AbstractCassandraDao<CassandraEndpointUserConfiguration, String> implements EndpointUserConfigurationDao<CassandraEndpointUserConfiguration> {
@@ -96,4 +98,6 @@ public class EndpointUserConfigurationCassandraDao extends AbstractCassandraDao<
                 .and(eq(EP_USER_CONF_VERSION_PROPERTY, schemaVersion)));
         LOG.debug("Removed user specific configuration by user id {}, application token {} and schema version {}", userId, appToken, schemaVersion);
     }
+
+
 }

@@ -1,17 +1,17 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 #include <boost/test/unit_test.hpp>
@@ -204,10 +204,10 @@ BOOST_AUTO_TEST_CASE(testKaaSyncRequest)
 
 BOOST_AUTO_TEST_CASE(testConnectMessage)
 {
-    Botan::SecureVector<std::uint8_t> signature(32);
+    Botan::secure_vector<std::uint8_t> signature(32);
     *(signature.end() - 1) = 0x01;
 
-    Botan::SecureVector<std::uint8_t> sessionKey(16);
+    Botan::secure_vector<std::uint8_t> sessionKey(16);
     *(sessionKey.end() - 1) = 0x02;
 
     std::string payload = { (char) 0xFF, 0x01, 0x02, 0x03 };

@@ -1,26 +1,27 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.server.operations.service.history;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.kaaproject.kaa.common.dto.ChangeDto;
 import org.kaaproject.kaa.common.dto.ChangeType;
@@ -34,7 +35,6 @@ import org.kaaproject.kaa.server.operations.service.cache.AppProfileVersionsKey;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
 import org.kaaproject.kaa.server.operations.service.cache.ConfigurationIdKey;
 import org.kaaproject.kaa.server.operations.service.cache.HistoryKey;
-import org.kaaproject.kaa.server.operations.service.cache.HistorySubject;
 import org.kaaproject.kaa.server.operations.service.delta.HistoryDelta;
 import org.kaaproject.kaa.server.operations.service.filter.FilterService;
 import org.slf4j.Logger;
@@ -92,7 +92,7 @@ public class DefaultHistoryDeltaService implements HistoryDeltaService {
             endpointGroupState.setConfigurationId(confId);
             result.add(endpointGroupState);
         }
-        return new HistoryDelta(result, true, true);
+        return new HistoryDelta(result, true, true, true);
     }
 
     /*
@@ -104,30 +104,24 @@ public class DefaultHistoryDeltaService implements HistoryDeltaService {
      * java.lang.String, int, int)
      */
     @Override
-    public HistoryDelta getDelta(EndpointProfileDto profile, HistorySubject subject, String applicationToken, int oldAppSeqNumber,
-            int curAppSeqNumber) {
+    public HistoryDelta getDelta(EndpointProfileDto profile, String applicationToken, int oldAppSeqNumber, int curAppSeqNumber) {
         String endpointId = Base64Util.encode(profile.getEndpointKeyHash());
 
         HistoryDelta historyDelta = new HistoryDelta();
 
         if (oldAppSeqNumber == curAppSeqNumber) {
-            if (subject == HistorySubject.CONFIGURATION) {
-                if (profile.getCfGroupStates() != null) {
-                    historyDelta.setEndpointGroupStates(profile.getCfGroupStates());
-                }
+            if (profile.getGroupState() != null && profile.getGroupState().size() > 0) {
+                historyDelta.setEndpointGroupStates(profile.getGroupState());
             } else {
-                if (profile.getNfGroupStates() != null) {
-                    historyDelta.setEndpointGroupStates(profile.getCfGroupStates());
-                }
-            }
-            if (historyDelta.getEndpointGroupStates() == null) {
                 historyDelta.setEndpointGroupStates(new ArrayList<EndpointGroupStateDto>());
             }
             return historyDelta;
+        } else {
+            historyDelta.setSeqNumberChanged(true);
         }
 
-        HistoryKey historyKey = new HistoryKey(applicationToken, subject, oldAppSeqNumber, curAppSeqNumber,
-                profile.getConfigurationVersion(), profile.getClientProfileVersion(), profile.getServerProfileVersion());
+        HistoryKey historyKey = new HistoryKey(applicationToken, oldAppSeqNumber, curAppSeqNumber, profile.getConfigurationVersion(),
+                profile.getClientProfileVersion(), profile.getServerProfileVersion());
         ConfigurationIdKey confIdKey = new ConfigurationIdKey(applicationToken, curAppSeqNumber, profile.getConfigurationVersion());
 
         List<EndpointGroupStateDto> endpointGroups;
@@ -135,7 +129,7 @@ public class DefaultHistoryDeltaService implements HistoryDeltaService {
         LOG.debug("[{}] Fetching changes from history. From seq number: {} to {}", endpointId, historyKey.getOldSeqNumber(),
                 historyKey.getNewSeqNumber());
 
-        Map<String, EndpointGroupStateDto> groupsMap = getOldGroupMap(profile, subject);
+        Map<String, EndpointGroupStateDto> groupsMap = getOldGroupMap(profile);
 
         List<HistoryDto> updates = cacheService.getHistory(historyKey);
 
@@ -229,11 +223,7 @@ public class DefaultHistoryDeltaService implements HistoryDeltaService {
      *            the profile
      * @return the old group map
      */
-    private Map<String, EndpointGroupStateDto> getOldGroupMap(EndpointProfileDto profile, HistorySubject subject) {
-        Map<String, EndpointGroupStateDto> groupsMap = new HashMap<>();
-        for (EndpointGroupStateDto egs : subject == HistorySubject.CONFIGURATION ? profile.getCfGroupStates() : profile.getNfGroupStates()) {
-            groupsMap.put(egs.getEndpointGroupId(), egs);
-        }
-        return groupsMap;
+    private Map<String, EndpointGroupStateDto> getOldGroupMap(EndpointProfileDto profile) {
+        return profile.getGroupState().stream().collect(Collectors.toMap(EndpointGroupStateDto::getEndpointGroupId, Function.identity()));
     }
 }

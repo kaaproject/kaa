@@ -1,17 +1,17 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.server.transports.http.transport.commands;
@@ -21,6 +21,8 @@ import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_LENGTH;
 import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_TYPE;
 import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
+
+import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpResponse;
@@ -34,7 +36,9 @@ import io.netty.handler.codec.http.multipart.InterfaceHttpData;
 import io.netty.handler.codec.http.multipart.InterfaceHttpData.HttpDataType;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
@@ -189,10 +193,13 @@ public abstract class AbstractHttpSyncCommand extends AbstractCommand {
     public HttpResponse getResponse() {
         LOG.trace("CommandName: " + COMMAND_NAME + ": getHttpResponse..");
 
-        FullHttpResponse httpResponse = new DefaultFullHttpResponse(HTTP_1_1, OK, Unpooled.copiedBuffer(responseBody));
+        ByteBuf data = Unpooled.copiedBuffer(responseBody);
+        LOG.warn("Response data: {}" , Arrays.toString(data.array()));
+        FullHttpResponse httpResponse = new DefaultFullHttpResponse(HTTP_1_1, OK, data);
 
         httpResponse.headers().set(CONTENT_TYPE, CommonEPConstans.RESPONSE_CONTENT_TYPE);
-        httpResponse.headers().set(CONTENT_LENGTH, httpResponse.content().readableBytes());
+        httpResponse.headers().set(CONTENT_LENGTH, data.readableBytes());
+        LOG.warn("Response size: {}" , data.readableBytes());
         httpResponse.headers().set(CommonEPConstans.RESPONSE_TYPE, CommonEPConstans.RESPONSE_TYPE_OPERATION);
         if(responseSignature != null){
             httpResponse.headers().set(CommonEPConstans.SIGNATURE_HEADER_NAME, Base64.encodeBase64String(responseSignature));

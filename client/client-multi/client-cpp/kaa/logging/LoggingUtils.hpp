@@ -1,17 +1,17 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 #ifndef LOGGINGUTILS_HPP_
@@ -22,7 +22,7 @@
 #include <string>
 #include <sstream>
 #include <cstdint>
-
+#include <iterator>
 #include <boost/shared_array.hpp>
 
 #include "kaa/gen/EndpointGen.hpp"
@@ -38,13 +38,12 @@ public:
     static std::string NotificationSyncRequestToString(const SyncRequest::notificationSyncRequest_t& request) {
         std::ostringstream ss;
         if (!request.is_null()) {
-            ss << KVSTRING(appStateSeqNumber, request.get_NotificationSyncRequest().appStateSeqNumber) << ", ";
+            ss << KVSTRING(topicListHash, ((request.get_NotificationSyncRequest().topicListHash == 0) ? 0 :
+                           request.get_NotificationSyncRequest().topicListHash));
             ss << KVSTRING(acceptedUnicastNotifications,
                     AcceptedUnicastNotificationsToString(request.get_NotificationSyncRequest().acceptedUnicastNotifications)) << ", ";
             ss << KVSTRING(subscriptionCommands, SubscriptionCommandsToString(request.get_NotificationSyncRequest().subscriptionCommands)) << ", ";
             ss << KVSTRING(topicStates, TopicStatesToString(request.get_NotificationSyncRequest().topicStates)) << ", ";
-            ss << KVSTRING(topicListHash, (request.get_NotificationSyncRequest().topicListHash.is_null() ? "null" :
-                    ByteArrayToString(request.get_NotificationSyncRequest().topicListHash.get_bytes())));
         } else {
             ss << "null";
         }
@@ -54,9 +53,11 @@ public:
     static std::string ConfigurationSyncRequestToString(const SyncRequest::configurationSyncRequest_t& request) {
         std::ostringstream ss;
         if (!request.is_null()) {
-            ss << KVSTRING(appStateSeqNumber, request.get_ConfigurationSyncRequest().appStateSeqNumber);
-            ss << KVSTRING(configurationHash,
-                    (request.get_ConfigurationSyncRequest().configurationHash.is_null() ? "null" : ByteArrayToString(request.get_ConfigurationSyncRequest().configurationHash.get_bytes())));
+            std::stringstream hashStream;
+            for (auto &byte : request.get_ConfigurationSyncRequest().configurationHash) {
+                 hashStream << byte;
+            }
+            ss << KVSTRING(configurationHash, (std::string(hashStream.str()).empty() ? "null" : hashStream.str()));
         } else {
             ss << "null";
         }
@@ -188,7 +189,6 @@ public:
     static std::string ConfigurationSyncResponseToString(const SyncResponse::configurationSyncResponse_t& response) {
         std::ostringstream ss;
         if (!response.is_null()) {
-            ss << KVSTRING(appStateSeqNumber, response.get_ConfigurationSyncResponse().appStateSeqNumber);
             ss << KVSTRING(confDeltaBody,
                     (response.get_ConfigurationSyncResponse().confDeltaBody.is_null()
                             ? "null"
@@ -261,7 +261,6 @@ public:
         std::ostringstream ss;
         if (!response.is_null()) {
             ss << KVSTRING(responseStatus, SyncResponseStatusToString(response.get_NotificationSyncResponse().responseStatus)) << ", ";
-            ss << KVSTRING(appStateSeqNumber, response.get_NotificationSyncResponse().appStateSeqNumber) << ", ";
             ss << KVSTRING(availableTopics, TopicsToString(response.get_NotificationSyncResponse().availableTopics)) << ", ";
             ss << KVSTRING(notifications, NotificationToString(response.get_NotificationSyncResponse().notifications));
         } else {

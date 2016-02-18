@@ -1,17 +1,17 @@
-/*
- * Copyright 2016 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.server.control.service.sdk;
@@ -71,8 +71,8 @@ public class ObjCSdkGenerator extends SdkGenerator {
     private static final String KAA_SOURCE_PREFIX = "KAA";
 
     private static final String TEMPLATE_SUFFIX = ".template";
-    public static final String _H = ".h";
-    public static final String _M = ".m";
+    private static final String _H = ".h";
+    private static final String _M = ".m";
 
     private static final String NOTIFICATION_GEN = "NotificationGen";
     private static final String PROFILE_GEN = "ProfileGen";
@@ -290,7 +290,7 @@ public class ObjCSdkGenerator extends SdkGenerator {
         sdkFile.finish();
         sdkFile.close();
 
-        String sdkFileName = SDK_PREFIX + sdkProperties.getToken();
+        String sdkFileName = SDK_PREFIX + sdkProperties.getToken() + ".tar.gz";
 
         byte[] sdkData = sdkOutput.toByteArray();
 

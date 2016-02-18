@@ -1,17 +1,17 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.server.operations.service.event;
@@ -30,10 +30,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 
 import org.apache.thrift.TException;
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
+import org.kaaproject.kaa.server.common.thrift.KaaThriftService;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.EndpointRouteUpdate;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.EndpointStateUpdate;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Event;
@@ -47,6 +49,7 @@ import org.kaaproject.kaa.server.common.thrift.gen.operations.UserRouteInfo;
 import org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo;
 import org.kaaproject.kaa.server.common.zk.operations.OperationsNode;
 import org.kaaproject.kaa.server.common.zk.operations.OperationsNodeListener;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.RouteOperation;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserConfigurationUpdate;
 import org.kaaproject.kaa.server.operations.service.config.OperationsServerConfig;
 import org.kaaproject.kaa.server.resolve.OperationsServerResolver;
@@ -112,8 +115,17 @@ public class DefaultEventService implements EventService {
     public void initBean() {
         LOG.info("Init default event service.");
         listeners = Collections.newSetFromMap(new ConcurrentHashMap<EventServiceListener, Boolean>());
-        neighbors = new Neighbors<MessageTemplate, Message>(new MessageTemplate(this),
+        neighbors = new Neighbors<MessageTemplate, Message>(KaaThriftService.OPERATIONS_SERVICE, new MessageTemplate(this),
                 operationsServerConfig.getMaxNumberNeighborConnections());
+    }
+    
+    @PreDestroy
+    public void onStop() {
+        if (neighbors != null) {
+            LOG.info("Shutdown of control service neighbors started!");
+            neighbors.shutdown();
+            LOG.info("Shutdown of control service neighbors complete!");
+        }
     }
 
     /*
@@ -318,8 +330,8 @@ public class DefaultEventService implements EventService {
     @Override
     public void setZkNode(OperationsNode operationsNode) {
         this.operationsNode = operationsNode;
-        this.id = Neighbors.getServerID(this.operationsNode.getNodeInfo().getConnectionInfo());
-        neighbors.setZkNode(id, operationsNode);
+        this.id = Neighbors.getServerID(KaaThriftService.OPERATIONS_SERVICE, this.operationsNode.getNodeInfo().getConnectionInfo());
+        neighbors.setZkNode(KaaThriftService.OPERATIONS_SERVICE, this.operationsNode.getNodeInfo().getConnectionInfo(), operationsNode);
         if (resolver != null) {
             updateResolver(this.resolver);
         }
@@ -602,20 +614,12 @@ public class DefaultEventService implements EventService {
             public void onNodeRemoved(OperationsNodeInfo node) {
                 LOG.debug("Remove of node {} is pushed to resolver {}", node, resolver);
                 resolver.onNodeRemoved(node);
-                notifyListeners();
             }
 
             @Override
             public void onNodeAdded(OperationsNodeInfo node) {
                 LOG.debug("Add of node {} is pushed to resolver {}", node, resolver);
                 resolver.onNodeAdded(node);
-                notifyListeners();
-            }
-
-            private void notifyListeners() {
-                for (EventServiceListener listener : listeners) {
-                    listener.onClusterUpdated();
-                }
             }
         });
 

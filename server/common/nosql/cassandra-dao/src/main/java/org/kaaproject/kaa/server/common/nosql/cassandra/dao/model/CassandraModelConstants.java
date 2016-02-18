@@ -1,17 +1,17 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.server.common.nosql.cassandra.dao.model;
@@ -32,7 +32,6 @@ public class CassandraModelConstants {
     public static final String SEQ_NUM_PROPERTY = "seq_num";
     public static final String BODY_PROPERTY = "body";
     public static final String EXPIRED_AT_PROPERTY = "expired_at";
-    public static final String VERSION_PROPERTY = "version";
     public static final String LAST_MOD_TIME_PROPERTY = "last_mod_time";
     public static final String SCHEMA_ID_PROPERTY = "schema_id";
     public static final String TOPIC_ID_PROPERTY = "topic_id";
@@ -50,7 +49,7 @@ public class CassandraModelConstants {
     public static final String ET_NF_SEQ_NUM_PROPERTY = SEQ_NUM_PROPERTY;
     public static final String ET_NF_BODY_PROPERTY = BODY_PROPERTY;
     public static final String ET_NF_EXPIRED_AT_PROPERTY = EXPIRED_AT_PROPERTY;
-    public static final String ET_NF_VERSION_PROPERTY = VERSION_PROPERTY;
+    public static final String ET_NF_VERSION_PROPERTY = "ep_nf_version";
     public static final String ET_NF_LAST_MOD_TIME_PROPERTY = LAST_MOD_TIME_PROPERTY;
     public static final String ET_NF_SCHEMA_ID_PROPERTY = SCHEMA_ID_PROPERTY;
     public static final String ET_NF_TOPIC_ID_PROPERTY = TOPIC_ID_PROPERTY;
@@ -63,7 +62,7 @@ public class CassandraModelConstants {
     public static final String NF_APPLICATION_ID_PROPERTY = APPLICATION_ID_PROPERTY;
     public static final String NF_NOTIFICATION_ID_PROPERTY = NOTIFICATION_ID_PROPERTY;
     public static final String NF_SCHEMA_ID_PROPERTY = SCHEMA_ID_PROPERTY;
-    public static final String NF_VERSION_PROPERTY = VERSION_PROPERTY;
+    public static final String NF_VERSION_PROPERTY = "nf_version";
     public static final String NF_LAST_MOD_TIME_PROPERTY = LAST_MOD_TIME_PROPERTY;
     public static final String NF_NOTIFICATION_TYPE_PROPERTY = NOTIFICATION_TYPE_PROPERTY;
     public static final String NF_BODY_PROPERTY = BODY_PROPERTY;
@@ -90,17 +89,16 @@ public class CassandraModelConstants {
     public static final String EP_EP_KEY_HASH_PROPERTY = ENDPOINT_KEY_HASH_PROPERTY;
     public static final String EP_EP_KEY_PROPERTY = "ep_key";
     public static final String EP_USER_ID_PROPERTY = USER_ID_PROPERTY;
-    public static final String EP_CONFIG_GROUP_STATE_PROPERTY = "cf_group_state";
-    public static final String EP_NOTIFICATION_GROUP_STATE_PROPERTY = "nf_group_state";
-    public static final String EP_CONFIGURATION_SEQUENCE_NUMBER_PROPERTY = "cf_seq_num";
-    public static final String EP_NOTIFICATION_SEQUENCE_NUMBER_PROPERTY = "nf_seq_num";
+    public static final String EP_GROUP_STATE_PROPERTY = "group_state";
+    public static final String EP_SEQUENCE_NUMBER_PROPERTY = "seq_num";
     public static final String EP_PROFILE_PROPERTY = "pf";
     public static final String EP_PROFILE_HASH_PROPERTY = "pf_hash";
     public static final String EP_PROFILE_VERSION_PROPERTY = "pf_ver";
     public static final String EP_SERVER_PROFILE_VERSION_PROPERTY = "srv_pf_ver";
     public static final String EP_CONFIGURATION_VERSION_PROPERTY = "cf_ver";
     public static final String EP_NOTIFICATION_VERSION_PROPERTY = "nf_ver";
-    public static final String EP_NOTIFICATION_HASH_PROPERTY = "nf_hash";
+    public static final String EP_TOPIC_HASH_PROPERTY = "topic_hash";
+    public static final String EP_SIMPLE_TOPIC_HASH_PROPERTY = "simple_topic_hash";
     public static final String EP_SUBSCRIPTIONS_PROPERTY = "subscs";
     public static final String EP_SYSTEM_NOTIFICATION_VERSION_PROPERTY = "sys_nf_ver";
     public static final String EP_USER_NOTIFICATION_VERSION_PROPERTY = "user_nf_ver";
@@ -108,7 +106,7 @@ public class CassandraModelConstants {
     public static final String EP_ECF_VERSION_STATE_PROPERTY = "ecf_ver_state";
     public static final String EP_SERVER_HASH_PROPERTY = "server_hash";
     public static final String EP_SDK_TOKEN_PROPERTY = SDK_TOKEN_PROPERTY;
-    public static final String EP_SERVER_PROFILE_PROPERTY = "srv_pf";    
+    public static final String EP_SERVER_PROFILE_PROPERTY = "srv_pf";
 
     /**
      * Cassandra endpoint user constants.
@@ -169,7 +167,7 @@ public class CassandraModelConstants {
     public static final String EP_USER_CONF_COLUMN_FAMILY_NAME = "user_conf";
     public static final String EP_USER_CONF_USER_ID_PROPERTY = "user_id";
     public static final String EP_USER_CONF_APP_TOKEN_PROPERTY = "app_token";
-    public static final String EP_USER_CONF_VERSION_PROPERTY = VERSION_PROPERTY;
+    public static final String EP_USER_CONF_VERSION_PROPERTY = "schema_version";
     public static final String EP_USER_CONF_BODY_PROPERTY = BODY_PROPERTY;
 
     /**
@@ -186,4 +184,13 @@ public class CassandraModelConstants {
     public static final String EVENT_CLASS_FAMILY_VERSION_STATE_USER_TYPE_NAME = "ecf_ver_state";
     public static final String EVENT_CLASS_FAMILY_VERSION_STATE_ECF_ID_PROPERTY = "ecf_id";
     public static final String EVENT_CLASS_FAMILY_VERSION_STATE_ECF_VERSION_PROPERTY = "ecf_ver";
+
+    /**
+     * Cassandra TopicListEntry constants.
+     */
+    public static final String TOPIC_LIST_ENTRY_COLUMN_FAMILY_NAME = "tl_entry";
+    public static final String TOPIC_LIST_ENTRY_HASH_PROPERTY = "tl_entry_hash";
+    public static final String TOPIC_LIST_ENTRY_SIMPLE_HASH_PROPERTY = "tl_entry_simple_hash";
+    public static final String TOPIC_LIST_ENTRY_TOPIC_IDS_PROPERTY = "tl_entry_topic_ids";
+
 }

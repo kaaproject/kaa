@@ -1,17 +1,17 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.server.operations.service.cache.concurrent;
@@ -42,6 +42,7 @@ import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
+import org.kaaproject.kaa.common.dto.TopicListEntryDto;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventAction;
@@ -69,11 +70,12 @@ import org.kaaproject.kaa.server.operations.service.cache.AppVersionKey;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
 import org.kaaproject.kaa.server.operations.service.cache.Computable;
 import org.kaaproject.kaa.server.operations.service.cache.ConfigurationIdKey;
-import org.kaaproject.kaa.server.operations.service.cache.DeltaCacheEntry;
+import org.kaaproject.kaa.server.operations.service.cache.ConfigurationCacheEntry;
 import org.kaaproject.kaa.server.operations.service.cache.DeltaCacheKey;
 import org.kaaproject.kaa.server.operations.service.cache.EventClassFamilyIdKey;
 import org.kaaproject.kaa.server.operations.service.cache.EventClassFqnKey;
 import org.kaaproject.kaa.server.operations.service.cache.HistoryKey;
+import org.kaaproject.kaa.server.operations.service.cache.TopicListCacheEntry;
 import org.kaaproject.kaa.server.operations.service.event.EventClassFamilyVersion;
 import org.kaaproject.kaa.server.operations.service.event.EventClassFqnVersion;
 import org.kaaproject.kaa.server.operations.service.event.RouteTableKey;
@@ -179,10 +181,10 @@ public class ConcurrentCacheService implements CacheService {
     private final CacheTemporaryMemorizer<EndpointObjectHash, PublicKey> endpointKeyMemorizer = new CacheTemporaryMemorizer<>();
 
     /** The merged configuration memorizer. */
-    private final CacheTemporaryMemorizer<List<EndpointGroupStateDto>, BaseData> mergedConfigurationMemorizer = new CacheTemporaryMemorizer<List<EndpointGroupStateDto>, BaseData>();
+    private final CacheTemporaryMemorizer<List<EndpointGroupStateDto>, BaseData> mergedConfigurationMemorizer = new CacheTemporaryMemorizer<>();
 
     /** The delta memorizer. */
-    private final CacheTemporaryMemorizer<DeltaCacheKey, DeltaCacheEntry> deltaMemorizer = new CacheTemporaryMemorizer<>();
+    private final CacheTemporaryMemorizer<DeltaCacheKey, ConfigurationCacheEntry> deltaMemorizer = new CacheTemporaryMemorizer<>();
 
     /** The endpoint key memorizer. */
     private final CacheTemporaryMemorizer<EventClassFamilyIdKey, String> ecfIdKeyMemorizer = new CacheTemporaryMemorizer<>();
@@ -194,23 +196,23 @@ public class ConcurrentCacheService implements CacheService {
     private final CacheTemporaryMemorizer<String, String> appTokenMemorizer = new CacheTemporaryMemorizer<>();
 
     /** The endpoint groups memorizer. */
-    private final CacheTemporaryMemorizer<String, EndpointGroupDto> groupsMemorizer = new CacheTemporaryMemorizer<String, EndpointGroupDto>();
+    private final CacheTemporaryMemorizer<String, EndpointGroupDto> groupsMemorizer = new CacheTemporaryMemorizer<>();
 
     /** The topics memorizer. */
-    private final CacheTemporaryMemorizer<String, TopicDto> topicsMemorizer = new CacheTemporaryMemorizer<String, TopicDto>();
+    private final CacheTemporaryMemorizer<String, TopicDto> topicsMemorizer = new CacheTemporaryMemorizer<>();
 
     /** The default group memorizer. */
-    private final CacheTemporaryMemorizer<String, EndpointGroupDto> defaultGroupMemorizer = new CacheTemporaryMemorizer<String, EndpointGroupDto>();
+    private final CacheTemporaryMemorizer<String, EndpointGroupDto> defaultGroupMemorizer = new CacheTemporaryMemorizer<>();
+
+    /** The topic list memorizer. */
+    private final CacheTemporaryMemorizer<EndpointObjectHash, TopicListCacheEntry> topicListMemorizer = new CacheTemporaryMemorizer<>();
 
     /** The history seq number comparator. */
-    public static final Comparator<HistoryDto> HISTORY_SEQ_NUMBER_COMPARATOR = new Comparator<HistoryDto>() {
-        @Override
-        public int compare(HistoryDto o1, HistoryDto o2) {
-            if (o1.getSequenceNumber() > o2.getSequenceNumber()) {
-                return 1;
-            } else {
-                return o1.getSequenceNumber() == o2.getSequenceNumber() ? 0 : -1;
-            }
+    public static final Comparator<HistoryDto> HISTORY_SEQ_NUMBER_COMPARATOR = (o1, o2) -> {
+        if (o1.getSequenceNumber() > o2.getSequenceNumber()) {
+            return 1;
+        } else {
+            return o1.getSequenceNumber() == o2.getSequenceNumber() ? 0 : -1;
         }
     };
 
@@ -828,13 +830,13 @@ public class ConcurrentCacheService implements CacheService {
      */
     @Override
     @Cacheable(value = "deltas", key = "#key")
-    public DeltaCacheEntry getDelta(final DeltaCacheKey key, final Computable<DeltaCacheKey, DeltaCacheEntry> worker)
+    public ConfigurationCacheEntry getDelta(final DeltaCacheKey key, final Computable<DeltaCacheKey, ConfigurationCacheEntry> worker)
             throws GetDeltaException {
-        DeltaCacheEntry deltaCacheEntry = deltaMemorizer.compute(key, new Computable<DeltaCacheKey, DeltaCacheEntry>() { // NOSONAR
+        ConfigurationCacheEntry deltaCacheEntry = deltaMemorizer.compute(key, new Computable<DeltaCacheKey, ConfigurationCacheEntry>() { // NOSONAR
                     @Override
-                    public DeltaCacheEntry compute(DeltaCacheKey key) {
+                    public ConfigurationCacheEntry compute(DeltaCacheKey key) {
                         LOG.debug("Fetching result for getMergedConfiguration");
-                        DeltaCacheEntry result = worker.compute(key);
+                        ConfigurationCacheEntry result = worker.compute(key);
                         return result;
                     }
                 });
@@ -852,7 +854,7 @@ public class ConcurrentCacheService implements CacheService {
      */
     @Override
     @CachePut(value = "deltas", key = "#key")
-    public DeltaCacheEntry setDelta(DeltaCacheKey key, DeltaCacheEntry delta) {
+    public ConfigurationCacheEntry setDelta(DeltaCacheKey key, ConfigurationCacheEntry delta) {
         return delta;
     }
 
@@ -903,23 +905,47 @@ public class ConcurrentCacheService implements CacheService {
     @Override
     @Cacheable("defaultGroups")
     public EndpointGroupDto getDefaultGroup(String applicationToken) {
-        return defaultGroupMemorizer.compute(applicationToken, new Computable<String, EndpointGroupDto>() {
+        return defaultGroupMemorizer.compute(applicationToken, applicationToken1 -> {
+            LOG.debug("Fetching result for token id");
+            ApplicationDto appDto = applicationService.findAppByApplicationToken(applicationToken1);
+            return endpointService.findDefaultGroup(appDto.getId());
+        });
+    }
+
+    @Override
+    @CachePut(value = "topicListEntries", key = "#key")
+    public TopicListCacheEntry putTopicList(EndpointObjectHash key, TopicListCacheEntry entry) {
+        if (entry != null) {
+            TopicListEntryDto entryDto = new TopicListEntryDto(entry.getSimpleHash(), entry.getHash().getData(), entry.getTopics());
+            endpointService.saveTopicListEntry(entryDto);
+        }
+        return entry;
+    }
+
+    @Override
+    @Cacheable("topicListEntries")
+    public TopicListCacheEntry getTopicListByHash(EndpointObjectHash hash) {
+        return topicListMemorizer.compute(hash, new Computable<EndpointObjectHash, TopicListCacheEntry>() {
             @Override
-            public EndpointGroupDto compute(String applicationToken) {
-                LOG.debug("Fetching result for token id");
-                ApplicationDto appDto = applicationService.findAppByApplicationToken(applicationToken);
-                return endpointService.findDefaultGroup(appDto.getId());
+            public TopicListCacheEntry compute(EndpointObjectHash key) {
+                LOG.debug("Fetching result for getTopicListByHash {}", key);
+                TopicListEntryDto entryDto = endpointService.findTopicListEntryByHash(key.getData());
+                if (entryDto != null) {
+                    return new TopicListCacheEntry(entryDto.getSimpleHash(), EndpointObjectHash.fromBytes(entryDto.getHash()), entryDto.getTopics());
+                } else {
+                    return null;
+                }
             }
         });
     }
 
     /*
-     * (non-Javadoc)
-     * 
-     * @see org.kaaproject.kaa.server.operations.service.cache.CacheService#
-     * setApplicationService
-     * (org.kaaproject.kaa.server.common.dao.ApplicationService)
-     */
+         * (non-Javadoc)
+         *
+         * @see org.kaaproject.kaa.server.operations.service.cache.CacheService#
+         * setApplicationService
+         * (org.kaaproject.kaa.server.common.dao.ApplicationService)
+         */
     @Override
     public void setApplicationService(ApplicationService applicationService) {
         this.applicationService = applicationService;

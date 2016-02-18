@@ -7,7 +7,7 @@ package org.kaaproject.kaa.schema.system;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class EmptyData extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"EmptyData\",\"namespace\":\"org.kaaproject.kaa.schema.system\",\"fields\":[],\"version\":1,\"dependencies\":[]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"EmptyData\",\"namespace\":\"org.kaaproject.kaa.schema.system\",\"fields\":[],\"version\":1,\"dependencies\":[],\"displayName\":\"Empty Data\",\"description\":\"Auto generated\"}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 
   public org.apache.avro.Schema getSchema() { return SCHEMA$; }

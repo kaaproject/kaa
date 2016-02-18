@@ -1,17 +1,17 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 
@@ -57,7 +57,6 @@ enum Operation {
       ADD_USER_VERIFIER = 18
       REMOVE_USER_VERIFIER = 19
       UPDATE_USER_VERIFIER = 20
-      UPDATE_SERVER_PROFILE = 21
 }
 
 /**
@@ -90,12 +89,10 @@ struct Notification {
   7: id configurationId
   8: shared.Integer configurationSeqNumber
   9: id notificationId
-  10: id unicastNotificationId
-  11: id topicId
-  12: binary keyHash
-  13: Operation op
-  14: id appenderId
-  15: string userVerifierToken
+  10: id topicId
+  11: Operation op
+  12: id appenderId
+  13: string userVerifierToken
 }
 
 struct RedirectionRule {
@@ -188,6 +185,54 @@ struct UserConfigurationUpdate {
   5: binary ucfHash
 }
 
+/**
+* Enum defines route operation type
+*/
+enum ThriftRouteOperation {
+      ADD = 1;
+      DELETE = 2;
+      UPDATE = 3
+}
+
+/**
+* Enum defines cluster entity type
+*/
+enum ThriftClusterEntityType {
+      ENDPOINT = 1;
+}
+
+struct ThriftEntityAddress {
+  1: tenant_id tenantId
+  2: application_token applicationToken
+  3: ThriftClusterEntityType entityType
+  4: binary entityId
+}
+
+struct ThriftActorClassifier {
+  1: bool globalActor
+}
+
+struct ThriftEntityClusterAddress {
+  1: string nodeId
+  2: ThriftEntityAddress address
+}
+
+struct ThriftEntityRouteMessage {
+  1: ThriftEntityClusterAddress address
+  2: ThriftRouteOperation operation
+}
+
+struct ThriftUnicastNotificationMessage {
+  1: ThriftEntityAddress address
+  2: ThriftActorClassifier actorClassifier
+  3: string notificationId;
+}
+
+struct ThriftServerProfileUpdateMessage {
+  1: ThriftEntityAddress address
+  2: ThriftActorClassifier actorClassifier
+}
+
 service OperationsThriftService {
 
 /**
@@ -210,4 +255,19 @@ service OperationsThriftService {
 */
   void sendUserConfigurationUpdates(1: list<UserConfigurationUpdate> updates);
 
+/**
+*  Interface to send unified entity route messages
+*/
+  void onEntityRouteMessages(1: list<ThriftEntityRouteMessage> messages);
+  
+/**
+*  Interface to send unicast notification message
+*/
+  void onUnicastNotification(1: ThriftUnicastNotificationMessage message);
+  
+/**
+*  Interface to send server profile update message
+*/
+  void onServerProfileUpdate(1: ThriftServerProfileUpdateMessage message);  
+    
 }

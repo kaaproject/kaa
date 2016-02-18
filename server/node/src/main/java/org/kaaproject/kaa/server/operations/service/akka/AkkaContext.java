@@ -1,24 +1,26 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
+
 package org.kaaproject.kaa.server.operations.service.akka;
 
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.dao.CTLService;
 import org.kaaproject.kaa.server.operations.service.OperationsService;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
+import org.kaaproject.kaa.server.operations.service.cluster.ClusterService;
 import org.kaaproject.kaa.server.operations.service.event.EventService;
 import org.kaaproject.kaa.server.operations.service.logs.LogAppenderService;
 import org.kaaproject.kaa.server.operations.service.metrics.MetricsService;
@@ -35,7 +37,9 @@ import com.typesafe.config.ConfigFactory;
 @Component
 public class AkkaContext {
 
-    private static final String ENDPOINT_ACTOR_TIMEOUT = "endpoint_actor_timeout";
+    private static final String GLOBAL_ENDPOINT_ACTOR_TIMEOUT = "global_endpoint_actor_timeout";
+    
+    private static final String LOCAL_ENDPOINT_ACTOR_TIMEOUT = "local_endpoint_actor_timeout";
     
     private static final String ENDPOINT_EVENT_TIMEOUT = "endpoint_event_timeout";
 
@@ -43,6 +47,9 @@ public class AkkaContext {
 
     private static final String AKKA_CONF_FILE_NAME = "akka.conf";
 
+    @Autowired
+    private ClusterService clusterService;
+    
     /** The cache service. */
     @Autowired
     private CacheService cacheService;
@@ -94,12 +101,20 @@ public class AkkaContext {
         return config.getInt(IO_WORKER_COUNT_PROP_NAME);
     }
 
-    public long getInactivityTimeout() {
-        return config.getLong(ENDPOINT_ACTOR_TIMEOUT);
+    public long getGlobalEndpointTimeout() {
+        return config.getLong(GLOBAL_ENDPOINT_ACTOR_TIMEOUT);
+    }
+    
+    public long getLocalEndpointTimeout() {
+        return config.getLong(LOCAL_ENDPOINT_ACTOR_TIMEOUT);
     }
 
     public long getEventTimeout() {
         return config.getLong(ENDPOINT_EVENT_TIMEOUT);
+    }
+    
+    public ClusterService getClusterService() {
+        return clusterService;
     }
 
     public CacheService getCacheService() {

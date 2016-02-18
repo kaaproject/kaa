@@ -1,35 +1,20 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.server.common.nosql.cassandra.dao;
-
-import com.datastax.driver.core.querybuilder.Delete;
-import com.datastax.driver.core.querybuilder.QueryBuilder;
-import com.datastax.driver.core.querybuilder.Select.Where;
-import org.kaaproject.kaa.common.dto.NotificationDto;
-import org.kaaproject.kaa.common.dto.NotificationTypeDto;
-import org.kaaproject.kaa.server.common.dao.impl.NotificationDao;
-import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraNotification;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Repository;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import static com.datastax.driver.core.querybuilder.QueryBuilder.delete;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.eq;
@@ -41,9 +26,24 @@ import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.Cassand
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.NF_TOPIC_ID_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.NF_VERSION_PROPERTY;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.kaaproject.kaa.common.dto.NotificationDto;
+import org.kaaproject.kaa.common.dto.NotificationTypeDto;
+import org.kaaproject.kaa.server.common.dao.impl.NotificationDao;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraNotification;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Repository;
+
+import com.datastax.driver.core.querybuilder.Delete;
+import com.datastax.driver.core.querybuilder.QueryBuilder;
+import com.datastax.driver.core.querybuilder.Select.Where;
 
 @Repository
-public class NotificationCassandraDao extends AbstractCassandraDao<CassandraNotification, String> implements NotificationDao<CassandraNotification> {
+public class NotificationCassandraDao extends AbstractVersionableCassandraDao<CassandraNotification, String> implements NotificationDao<CassandraNotification> {
 
     private static final Logger LOG = LoggerFactory.getLogger(NotificationCassandraDao.class);
 
@@ -63,7 +63,7 @@ public class NotificationCassandraDao extends AbstractCassandraDao<CassandraNoti
         CassandraNotification nf = new CassandraNotification(id);
         Where query = select().from(getColumnFamilyName()).where(eq(NF_TOPIC_ID_PROPERTY, nf.getTopicId()))
                 .and(eq(NF_NOTIFICATION_TYPE_PROPERTY, nf.getType().name()))
-                .and(eq(NF_VERSION_PROPERTY, nf.getVersion()))
+                .and(eq(NF_VERSION_PROPERTY, nf.getNfVersion()))
                 .and(eq(NF_SEQ_NUM_PROPERTY, nf.getSeqNum()));
         LOG.trace("Execute query {}", query);
         nf = findOneByStatement(query);
@@ -77,7 +77,7 @@ public class NotificationCassandraDao extends AbstractCassandraDao<CassandraNoti
         CassandraNotification nf = new CassandraNotification(id);
         Delete.Where deleteQuery = delete().from(getColumnFamilyName()).where(eq(NF_TOPIC_ID_PROPERTY, nf.getTopicId()))
                 .and(eq(NF_NOTIFICATION_TYPE_PROPERTY, nf.getType().name()))
-                .and(eq(NF_VERSION_PROPERTY, nf.getVersion()))
+                .and(eq(NF_VERSION_PROPERTY, nf.getNfVersion()))
                 .and(eq(NF_SEQ_NUM_PROPERTY, nf.getSeqNum()));
         LOG.trace("Remove notification by id {}", deleteQuery);
         execute(deleteQuery);

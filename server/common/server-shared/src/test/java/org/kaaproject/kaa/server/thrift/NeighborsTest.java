@@ -1,22 +1,23 @@
-/*
- * Copyright 2014-2015 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.server.thrift;
 
 import org.junit.Test;
+import org.kaaproject.kaa.server.common.thrift.KaaThriftService;
 import org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo;
 import org.kaaproject.kaa.server.sync.Event;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -38,7 +39,7 @@ public class NeighborsTest {
     public void sendMessageTest() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, InterruptedException {
         ConnectionInfo connectionInfo1 = new ConnectionInfo("thriftHost", 9999, ByteBuffer.allocate(10));
         NeighborTemplate<Event> template = (NeighborTemplate<Event>) mock(NeighborTemplate.class);
-        Neighbors<NeighborTemplate<Event>, Event> neighbors = new Neighbors<>(template, 1);
+        Neighbors<NeighborTemplate<Event>, Event> neighbors = new Neighbors<>(KaaThriftService.OPERATIONS_SERVICE, template, 1);
         ReflectionTestUtils.setField(neighbors, "zkId", "someZkId");
         NeighborConnection<NeighborTemplate<Event>, Event> neighborConnection = new NeighborConnection<>(connectionInfo1, 1, null);
         LinkedBlockingQueue<Event> eventQueue = spy(new LinkedBlockingQueue<Event>());

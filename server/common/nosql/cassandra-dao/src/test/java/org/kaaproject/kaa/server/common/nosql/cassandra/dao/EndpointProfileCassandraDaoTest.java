@@ -1,25 +1,33 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.server.common.nosql.cassandra.dao;
 
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kaaproject.kaa.common.dto.CTLDataDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
@@ -28,17 +36,14 @@ import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.PageLinkDto;
+import org.kaaproject.kaa.server.common.dao.exception.KaaOptimisticLockingFailureException;
 import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointProfile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/cassandra-client-test-context.xml")
@@ -50,17 +55,16 @@ public class EndpointProfileCassandraDaoTest extends AbstractCassandraTest {
     private static final String TEST_OFFSET = "0";
     private static final int GENERATED_PROFILES_COUNT = 5;
 
+    private static final Logger LOG = LoggerFactory.getLogger(EndpointProfileCassandraDaoTest.class);
+
+    private static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(10);
+
     @Test
     public void testFindByEndpointGroupId() throws Exception {
-        List<EndpointProfileDto> endpointProfileList = new ArrayList<>();
-        for (int i = 0; i < GENERATED_PROFILES_COUNT; i++) {
-            endpointProfileList.add(generateEndpointProfileWithEndpointGroupId(TEST_APPID, false));
-        }
-        String id = endpointProfileList.get(0).getCfGroupStates().get(0).getEndpointGroupId();
-        int lim = Integer.valueOf(TEST_LIMIT);
-        PageLinkDto pageLink = new PageLinkDto(id, TEST_LIMIT, TEST_OFFSET);
+        PageLinkDto pageLink = getPageLinkDto();
         EndpointProfilesPageDto found = endpointProfileDao.findByEndpointGroupId(pageLink);
         Assert.assertFalse(found.getEndpointProfiles().isEmpty());
+        int lim = Integer.valueOf(TEST_LIMIT);
         Assert.assertEquals(lim, found.getEndpointProfiles().size());
         pageLink.setApplicationId(TEST_APPID);
         EndpointProfilesPageDto foundbyAppId = endpointProfileDao.findByEndpointGroupId(pageLink);
@@ -70,15 +74,10 @@ public class EndpointProfileCassandraDaoTest extends AbstractCassandraTest {
 
     @Test
     public void testFindByEndpointGroupIdWithNfGroupState() throws Exception {
-        List<EndpointProfileDto> endpointProfileList = new ArrayList<>();
-        for (int i = 0; i < GENERATED_PROFILES_COUNT; i++) {
-            endpointProfileList.add(generateEndpointProfileWithEndpointGroupId(TEST_APPID, true));
-        }
-        String id = endpointProfileList.get(0).getNfGroupStates().get(0).getEndpointGroupId();
-        int lim = Integer.valueOf(TEST_LIMIT);
-        PageLinkDto pageLink = new PageLinkDto(id, TEST_LIMIT, TEST_OFFSET);
+        PageLinkDto pageLink = getPageLinkDto();
         EndpointProfilesPageDto found = endpointProfileDao.findByEndpointGroupId(pageLink);
         Assert.assertFalse(found.getEndpointProfiles().isEmpty());
+        int lim = Integer.valueOf(TEST_LIMIT);
         Assert.assertEquals(lim, found.getEndpointProfiles().size());
         pageLink.setApplicationId(TEST_APPID);
         EndpointProfilesPageDto foundbyAppId = endpointProfileDao.findByEndpointGroupId(pageLink);
@@ -88,15 +87,10 @@ public class EndpointProfileCassandraDaoTest extends AbstractCassandraTest {
 
     @Test
     public void testFindBodyByEndpointGroupId() throws Exception {
-        List<EndpointProfileDto> endpointProfileList = new ArrayList<>();
-        for (int i = 0; i < GENERATED_PROFILES_COUNT; i++) {
-            endpointProfileList.add(generateEndpointProfileWithEndpointGroupId(TEST_APPID, false));
-        }
-        String id = endpointProfileList.get(0).getCfGroupStates().get(0).getEndpointGroupId();
-        int lim = Integer.valueOf(TEST_LIMIT);
-        PageLinkDto pageLink = new PageLinkDto(id, TEST_LIMIT, TEST_OFFSET);
+        PageLinkDto pageLink = getPageLinkDto();
         EndpointProfilesBodyDto found = endpointProfileDao.findBodyByEndpointGroupId(pageLink);
         Assert.assertFalse(found.getEndpointProfilesBody().isEmpty());
+        int lim = Integer.valueOf(TEST_LIMIT);
         Assert.assertEquals(lim, found.getEndpointProfilesBody().size());
         pageLink.setApplicationId(TEST_APPID);
         EndpointProfilesBodyDto foundbyAppId = endpointProfileDao.findBodyByEndpointGroupId(pageLink);
@@ -106,15 +100,10 @@ public class EndpointProfileCassandraDaoTest extends AbstractCassandraTest {
 
     @Test
     public void testFindBodyByEndpointGroupIdWithNfGroupState() throws Exception {
-        List<EndpointProfileDto> endpointProfileList = new ArrayList<>();
-        for (int i = 0; i < GENERATED_PROFILES_COUNT; i++) {
-            endpointProfileList.add(generateEndpointProfileWithEndpointGroupId(TEST_APPID, true));
-        }
-        String id = endpointProfileList.get(0).getNfGroupStates().get(0).getEndpointGroupId();
-        int lim = Integer.valueOf(TEST_LIMIT);
-        PageLinkDto pageLink = new PageLinkDto(id, TEST_LIMIT, TEST_OFFSET);
+        PageLinkDto pageLink = getPageLinkDto();
         EndpointProfilesBodyDto found = endpointProfileDao.findBodyByEndpointGroupId(pageLink);
         Assert.assertFalse(found.getEndpointProfilesBody().isEmpty());
+        int lim = Integer.valueOf(TEST_LIMIT);
         Assert.assertEquals(lim, found.getEndpointProfilesBody().size());
         pageLink.setApplicationId(TEST_APPID);
         EndpointProfilesBodyDto foundbyAppId = endpointProfileDao.findBodyByEndpointGroupId(pageLink);
@@ -122,9 +111,18 @@ public class EndpointProfileCassandraDaoTest extends AbstractCassandraTest {
         Assert.assertEquals(lim, foundbyAppId.getEndpointProfilesBody().size());
     }
 
+    private PageLinkDto getPageLinkDto() {
+        List<EndpointProfileDto> endpointProfileList = new ArrayList<>();
+        for (int i = 0; i < GENERATED_PROFILES_COUNT; i++) {
+            endpointProfileList.add(generateEndpointProfileWithEndpointGroupId(TEST_APPID));
+        }
+        String id = endpointProfileList.get(0).getGroupState().get(0).getEndpointGroupId();
+        return new PageLinkDto(id, TEST_LIMIT, TEST_OFFSET);
+    }
+
     @Test
     public void testFindBodyByKeyHash() throws Exception {
-        EndpointProfileDto expected = generateEndpointProfileWithEndpointGroupId(null, false);
+        EndpointProfileDto expected = generateEndpointProfileWithEndpointGroupId(null);
         EndpointProfileBodyDto found = endpointProfileDao.findBodyByKeyHash(expected.getEndpointKeyHash());
         Assert.assertFalse(found.getProfile().isEmpty());
         Assert.assertEquals(expected.getClientProfileBody(), found.getProfile());
@@ -132,8 +130,8 @@ public class EndpointProfileCassandraDaoTest extends AbstractCassandraTest {
 
     @Test
     public void testUpdate() throws Exception {
-        List<EndpointGroupStateDto> cfGroupStateSave = new ArrayList<EndpointGroupStateDto>();
-        List<EndpointGroupStateDto> cfGroupStateUpdate = new ArrayList<EndpointGroupStateDto>();
+        List<EndpointGroupStateDto> cfGroupStateSave = new ArrayList<>();
+        List<EndpointGroupStateDto> cfGroupStateUpdate = new ArrayList<>();
         PageLinkDto pageLink;
         EndpointProfilesPageDto found;
         String endpointProfileId = "11";
@@ -142,12 +140,14 @@ public class EndpointProfileCassandraDaoTest extends AbstractCassandraTest {
         cfGroupStateSave.add(new EndpointGroupStateDto("111", null, null));
         cfGroupStateSave.add(new EndpointGroupStateDto("222", null, null));
         cfGroupStateSave.add(new EndpointGroupStateDto("333", null, null));
-        EndpointProfileDto endpointProfileSave = generateEndpointProfileForTestUpdate(null, cfGroupStateSave);
-        endpointProfileDao.save(endpointProfileSave);
+        byte[] keyHash = generateBytes();
+        EndpointProfileDto endpointProfileSave = generateEndpointProfileForTestUpdate(null, keyHash, cfGroupStateSave);
+        EndpointProfile saved = endpointProfileDao.save(endpointProfileSave);
         cfGroupStateUpdate.add(new EndpointGroupStateDto("111", null, null));
         cfGroupStateUpdate.add(new EndpointGroupStateDto("444", null, null));
-        EndpointProfileDto endpointProfileUpdate = generateEndpointProfileForTestUpdate(endpointProfileId, cfGroupStateUpdate);
-        endpointProfileDao.save(endpointProfileUpdate);
+        EndpointProfileDto endpointProfileUpdate = generateEndpointProfileForTestUpdate(endpointProfileId, keyHash, cfGroupStateUpdate);
+        endpointProfileUpdate.setVersion(saved.getVersion());
+        saved = endpointProfileDao.save(endpointProfileUpdate);
         String limit = "10";
         String offset = "0";
         String[] endpointGroupId = {"111", "444", "222", "333"};
@@ -178,10 +178,44 @@ public class EndpointProfileCassandraDaoTest extends AbstractCassandraTest {
     }
 
     @Test
-    public void testGetCountByKeyHash() throws Exception {
+    public void testFindEndpointIdByKeyHash() throws Exception {
         EndpointProfileDto endpointProfile = generateEndpointProfile(null, null, null, null);
-        long count = endpointProfileDao.getCountByKeyHash(endpointProfile.getEndpointKeyHash());
-        Assert.assertEquals(1L, count);
+        EndpointProfile ep = endpointProfileDao.findEndpointIdByKeyHash(endpointProfile.getEndpointKeyHash());
+        Assert.assertEquals(endpointProfile.getId(), ep.getId());
+        Assert.assertNull(endpointProfile.getEndpointKey());
+        Assert.assertNull(ep.getEndpointKey());
+        Assert.assertNull(ep.getEndpointUserId());
+        Assert.assertNull(ep.getServerProfile());
+        Assert.assertNull(ep.getSubscriptions());
+    }
+
+    @Test(expected = KaaOptimisticLockingFailureException.class)
+    public void testOptimisticLockWithConcurrency() throws Throwable {
+        final EndpointProfileDto endpointProfile = generateEndpointProfile(null, null, null, null);
+        List<Future<?>> tasks = new ArrayList<>();
+        for (int i = 0; i < 100; i++) {
+            final int id = i;
+            tasks.add(EXECUTOR.submit(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        CassandraEndpointProfile ep = new CassandraEndpointProfile(endpointProfile);
+                        ep.setEndpointUserId("Ololo " + id);
+                        endpointProfileDao.save(ep.toDto());
+                    } catch (KaaOptimisticLockingFailureException ex) {
+                        LOG.error("Catch optimistic exception.");
+                        throw ex;
+                    }
+                }
+            }));
+        }
+        for (Future future : tasks) {
+            try {
+                future.get();
+            } catch (ExecutionException ex) {
+                throw ex.getCause();
+            }
+        }
     }
 
     @Test

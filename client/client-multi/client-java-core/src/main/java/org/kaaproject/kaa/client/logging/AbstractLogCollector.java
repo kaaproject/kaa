@@ -1,17 +1,17 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.client.logging;
@@ -144,53 +144,60 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
             for (LogDeliveryStatus response : logSyncResponse.getDeliveryStatuses()) {
                 final int requestId = response.getRequestId();
                 final BucketInfo bucketInfo = bucketInfoMap.get(requestId);
-                bucketInfoMap.remove(requestId);
+                if (bucketInfo != null) {
+                    bucketInfoMap.remove(requestId);
+                    if (response.getResult() == SyncResponseResultType.SUCCESS) {
+                        storage.removeBucket(response.getRequestId());
 
-                if (response.getResult() == SyncResponseResultType.SUCCESS) {
-                    storage.removeBucket(response.getRequestId());
+                        if (logDeliveryListener != null) {
+                            executorContext.getCallbackExecutor().execute(new Runnable() {
+                                @Override
+                                public void run() {
+                                    logDeliveryListener.onLogDeliverySuccess(bucketInfo);
+                                }
+                            });
+                        }
 
-                    if (logDeliveryListener != null) {
                         executorContext.getCallbackExecutor().execute(new Runnable() {
                             @Override
                             public void run() {
-                                logDeliveryListener.onLogDeliverySuccess(bucketInfo);
+                                notifyDeliveryFuturesOnSuccess(bucketInfo);
                             }
                         });
-                    }
+                    } else {
+                        storage.rollbackBucket(response.getRequestId());
 
-                    executorContext.getCallbackExecutor().execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            notifyDeliveryFuturesOnSuccess(bucketInfo);
+                        final LogDeliveryErrorCode errorCode = response.getErrorCode();
+                        final LogFailoverCommand controller = this.controller;
+
+                        executorContext.getCallbackExecutor().execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                strategy.onFailure(controller, errorCode);
+                            }
+                        });
+
+                        if (logDeliveryListener != null) {
+                            executorContext.getCallbackExecutor().execute(new Runnable() {
+                                @Override
+                                public void run() {
+                                    logDeliveryListener.onLogDeliveryFailure(bucketInfo);
+                                }
+                            });
                         }
-                    });
+
+                        isAlreadyScheduled = true;
+                    }
                 } else {
-                    storage.rollbackBucket(response.getRequestId());
-
-                    final LogDeliveryErrorCode errorCode = response.getErrorCode();
-                    final LogFailoverCommand controller = this.controller;
-
-                    executorContext.getCallbackExecutor().execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            strategy.onFailure(controller, errorCode);
-                        }
-                    });
-
-                    if (logDeliveryListener != null) {
-                        executorContext.getCallbackExecutor().execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                logDeliveryListener.onLogDeliveryFailure(bucketInfo);
-                            }
-                        });
-                    }
-
-                    isAlreadyScheduled = true;
+                    LOG.warn("BucketInfo is null");
                 }
                 LOG.info("Removing bucket id from timeouts: {}", response.getRequestId());
                 Future<?> timeoutFuture = timeouts.remove(response.getRequestId());
-                timeoutFuture.cancel(true);
+                if (timeoutFuture != null) {
+                    timeoutFuture.cancel(true);
+                } else {
+                    LOG.warn("TimeoutFuture is null and cannot be canceled");
+                }
             }
 
             if (!isAlreadyScheduled) {

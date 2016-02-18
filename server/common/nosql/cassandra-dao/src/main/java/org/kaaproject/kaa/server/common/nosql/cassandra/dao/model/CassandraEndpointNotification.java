@@ -1,41 +1,43 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.server.common.nosql.cassandra.dao.model;
 
-import com.datastax.driver.core.utils.Bytes;
-import com.datastax.driver.mapping.EnumType;
-import com.datastax.driver.mapping.annotations.ClusteringColumn;
-import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.Enumerated;
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
-import com.datastax.driver.mapping.annotations.Transient;
-import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
-import org.kaaproject.kaa.common.dto.NotificationDto;
-import org.kaaproject.kaa.common.dto.NotificationTypeDto;
-import org.kaaproject.kaa.server.common.dao.model.EndpointNotification;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.OPT_LOCK;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getByteBuffer;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getBytes;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.parseId;
 
 import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.util.Date;
 
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getByteBuffer;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getBytes;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.parseId;
+
+import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
+import org.kaaproject.kaa.common.dto.NotificationDto;
+import org.kaaproject.kaa.common.dto.NotificationTypeDto;
+import org.kaaproject.kaa.server.common.dao.model.EndpointNotification;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.type.NotificationTypeCodec;
+
+import com.datastax.driver.core.utils.Bytes;
+import com.datastax.driver.mapping.annotations.ClusteringColumn;
+import com.datastax.driver.mapping.annotations.Column;
+import com.datastax.driver.mapping.annotations.PartitionKey;
+import com.datastax.driver.mapping.annotations.Table;
+import com.datastax.driver.mapping.annotations.Transient;
 
 @Table(name = CassandraModelConstants.ET_NF_COLUMN_FAMILY_NAME)
 public final class CassandraEndpointNotification implements EndpointNotification, Serializable {
@@ -50,15 +52,14 @@ public final class CassandraEndpointNotification implements EndpointNotification
     private Integer seqNum;
     @Column(name = CassandraModelConstants.ET_NF_ID_PROPERTY)
     private String id;
-    @Column(name = CassandraModelConstants.ET_NF_NOTIFICATION_TYPE_PROPERTY)
-    @Enumerated(EnumType.STRING)
+    @Column(name = CassandraModelConstants.ET_NF_NOTIFICATION_TYPE_PROPERTY, codec = NotificationTypeCodec.class)
     private NotificationTypeDto type;
     @Column(name = CassandraModelConstants.ET_NF_APPLICATION_ID_PROPERTY)
     private String applicationId;
     @Column(name = CassandraModelConstants.ET_NF_SCHEMA_ID_PROPERTY)
     private String schemaId;
     @Column(name = CassandraModelConstants.ET_NF_VERSION_PROPERTY)
-    private int version;
+    private int nfVersion;
     @ClusteringColumn
     @Column(name = CassandraModelConstants.ET_NF_LAST_MOD_TIME_PROPERTY)
     private Date lastModifyTime;
@@ -68,6 +69,10 @@ public final class CassandraEndpointNotification implements EndpointNotification
     private Date expiredAt;
     @Column(name = CassandraModelConstants.ET_NF_TOPIC_ID_PROPERTY)
     private String topicId;
+    
+    //@Column(name = OPT_LOCK)
+    //private Long version;
+
 
     public CassandraEndpointNotification() {
     }
@@ -84,7 +89,7 @@ public final class CassandraEndpointNotification implements EndpointNotification
             this.type = notificationDto.getType();
             this.applicationId = notificationDto.getApplicationId();
             this.schemaId = notificationDto.getSchemaId();
-            this.version = notificationDto.getVersion();
+            this.nfVersion = notificationDto.getNfVersion();
             this.lastModifyTime = notificationDto.getLastTimeModify();
             this.body = getByteBuffer(notificationDto.getBody());
             this.expiredAt = notificationDto.getExpiredAt();
@@ -161,12 +166,12 @@ public final class CassandraEndpointNotification implements EndpointNotification
         this.schemaId = schemaId;
     }
 
-    public int getVersion() {
-        return version;
+    public int getNfVersion() {
+        return nfVersion;
     }
 
-    public void setVersion(int version) {
-        this.version = version;
+    public void setNfVersion(int nfVersion) {
+        this.nfVersion = nfVersion;
     }
 
     public Date getLastModifyTime() {
@@ -208,7 +213,7 @@ public final class CassandraEndpointNotification implements EndpointNotification
 
         CassandraEndpointNotification that = (CassandraEndpointNotification) o;
 
-        if (version != that.version) return false;
+        if (nfVersion != that.nfVersion) return false;
         if (applicationId != null ? !applicationId.equals(that.applicationId) : that.applicationId != null)
             return false;
         if (body != null ? !body.equals(that.body) : that.body != null) return false;
@@ -233,7 +238,7 @@ public final class CassandraEndpointNotification implements EndpointNotification
         result = 31 * result + (type != null ? type.hashCode() : 0);
         result = 31 * result + (applicationId != null ? applicationId.hashCode() : 0);
         result = 31 * result + (schemaId != null ? schemaId.hashCode() : 0);
-        result = 31 * result + version;
+        result = 31 * result + nfVersion;
         result = 31 * result + (lastModifyTime != null ? lastModifyTime.hashCode() : 0);
         result = 31 * result + (body != null ? body.hashCode() : 0);
         result = 31 * result + (expiredAt != null ? expiredAt.hashCode() : 0);
@@ -249,7 +254,7 @@ public final class CassandraEndpointNotification implements EndpointNotification
                 ", type=" + type +
                 ", applicationId='" + applicationId + '\'' +
                 ", schemaId='" + schemaId + '\'' +
-                ", version=" + version +
+                ", nfVersion=" + nfVersion +
                 ", lastModifyTime=" + lastModifyTime +
                 ", body=" + body +
                 ", expiredAt=" + expiredAt +
@@ -266,7 +271,7 @@ public final class CassandraEndpointNotification implements EndpointNotification
         notificationDto.setType(type);
         notificationDto.setApplicationId(applicationId);
         notificationDto.setSchemaId(schemaId);
-        notificationDto.setVersion(version);
+        notificationDto.setNfVersion(nfVersion);
         notificationDto.setLastTimeModify(lastModifyTime);
         notificationDto.setBody(getBytes(body));
         notificationDto.setExpiredAt(expiredAt);

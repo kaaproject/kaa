@@ -1,17 +1,17 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 #ifndef KAAEXCEPTION_HPP_
@@ -21,6 +21,7 @@
 #include <exception>
 #include <sstream>
 
+#ifndef NDEBUG
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
@@ -31,6 +32,7 @@
 #else
 #include <execinfo.h>
 #endif
+#endif // NDEBUG
 
 namespace kaa {
 
@@ -71,6 +73,7 @@ private:
     std::string message_;
 
     void captureStack(std::stringstream& ss)  {
+#ifndef NDEBUG
          void *trace[16];
          int i, trace_size = 0;
 #ifdef _WIN32
@@ -99,6 +102,9 @@ private:
 #ifdef _WIN32
          free( symbol );
 #endif
+#else
+         static_cast<void>(ss);
+#endif // NDEBUG
      }
 };
 

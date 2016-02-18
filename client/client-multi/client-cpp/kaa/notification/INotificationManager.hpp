@@ -1,17 +1,17 @@
-/*
- * Copyright 2014-2015 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 #ifndef INOTIFICATIONMANAGER_HPP_
@@ -86,7 +86,7 @@ public:
      *
      * @see INotificationListener
      */
-    virtual void addNotificationListener(const std::string& topidId, INotificationListener& listener) = 0;
+    virtual void addNotificationListener(std::int64_t topicId, INotificationListener& listener) = 0;
 
     /**
      * @brief Removes the listener which receives notifications on all available topics.
@@ -109,7 +109,7 @@ public:
      *
      * @see INotificationListener
      */
-    virtual void removeNotificationListener(const std::string& topidId, INotificationListener& listener) = 0;
+    virtual void removeNotificationListener(std::int64_t topicId, INotificationListener& listener) = 0;
 
     /**
      * @brief Subscribes to the specified optional topic to receive notifications on that topic.
@@ -126,7 +126,7 @@ public:
      *
      * @see sync()
      */
-    virtual void subscribeToTopic(const std::string& id, bool forceSync = true) = 0;
+    virtual void subscribeToTopic(std::int64_t id, bool forceSync = true) = 0;
 
     /**
      * @brief Subscribes to the specified list of optional topics to receive notifications on those topics.
@@ -143,7 +143,7 @@ public:
      *
      * @see sync()
      */
-    virtual void subscribeToTopics(const std::list<std::string>& idList, bool forceSync = true) = 0;
+    virtual void subscribeToTopics(const std::list<std::int64_t>& idList, bool forceSync = true) = 0;
 
     /**
      * @brief Unsubscribes from the specified optional topic to stop receiving notifications on that topic.
@@ -161,7 +161,7 @@ public:
      *
      * @see sync()
      */
-    virtual void unsubscribeFromTopic(const std::string& id, bool forceSync = true) = 0;
+    virtual void unsubscribeFromTopic(std::int64_t id, bool forceSync = true) = 0;
 
     /**
      * @brief Unsubscribes from the specified list of optional topics to stop receiving notifications on those topics.
@@ -179,7 +179,7 @@ public:
      *
      * @see sync()
      */
-    virtual void unsubscribeFromTopics(const std::list<std::string>& idList, bool forceSync = true) = 0;
+    virtual void unsubscribeFromTopics(const std::list<std::int64_t>& idList, bool forceSync = true) = 0;
 
     /**
      * @brief Sends subscription request(s) to the Operations server.

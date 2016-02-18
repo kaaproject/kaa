@@ -51,7 +51,7 @@ public class HibernateCTLSchemaMetaInfoDao extends HibernateAbstractDao<CTLSchem
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = Exception.class)
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public CTLSchemaMetaInfo save(CTLSchemaMetaInfo metaInfo) {
         String tenantId = metaInfo.getTenant() != null ? metaInfo.getTenant().getStringId() : null;
         String applicationId = metaInfo.getApplication() != null ? metaInfo.getApplication().getStringId() : null;

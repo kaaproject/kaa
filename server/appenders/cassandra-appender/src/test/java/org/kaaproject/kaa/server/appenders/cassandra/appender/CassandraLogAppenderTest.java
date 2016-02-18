@@ -1,17 +1,17 @@
-/*
- * Copyright 2015 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.server.appenders.cassandra.appender;
@@ -28,7 +28,6 @@ import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.cassandraunit.CassandraCQLUnit;
 import org.cassandraunit.dataset.cql.ClassPathCQLDataSet;
 import org.junit.Assert;
 import org.junit.Before;
@@ -50,6 +49,7 @@ import org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnMappingEle
 import org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnMappingElementType;
 import org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnType;
 import org.kaaproject.kaa.server.appenders.cassandra.config.gen.OrderType;
+import org.kaaproject.kaa.server.common.CustomCassandraCQLUnit;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogAppender;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryCallback;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
@@ -73,7 +73,7 @@ public class CassandraLogAppenderTest {
     private static final String SERVER_PROFILE_CONTENT_FILE = "server_profile_content.json";
 
     @ClassRule
-    public static CassandraCQLUnit cassandraUnit = new CassandraCQLUnit(new ClassPathCQLDataSet("appender_test.cql", KEY_SPACE_NAME));
+    public static CustomCassandraCQLUnit cassandraUnit = new CustomCassandraCQLUnit(new ClassPathCQLDataSet("appender_test.cql", false, false), "cassandra-test.yaml", 20000l);
 
     private static final Random RANDOM = new Random();
 

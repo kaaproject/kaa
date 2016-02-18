@@ -1,18 +1,18 @@
-::
-:: Copyright 2014-2015 CyberVision, Inc.
-::
-:: Licensed under the Apache License, Version 2.0 (the "License");
-:: you may not use this file except in compliance with the License.
-:: You may obtain a copy of the License at
-::
-::      http://www.apache.org/licenses/LICENSE-2.0
-::
-:: Unless required by applicable law or agreed to in writing, software
-:: distributed under the License is distributed on an "AS IS" BASIS,
-:: WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-:: See the License for the specific language governing permissions and
-:: limitations under the License.
-::
+@REM
+@REM  Copyright 2014-2016 CyberVision, Inc.
+@REM
+@REM  Licensed under the Apache License, Version 2.0 (the "License");
+@REM  you may not use this file except in compliance with the License.
+@REM  You may obtain a copy of the License at
+@REM
+@REM       http://www.apache.org/licenses/LICENSE-2.0
+@REM
+@REM  Unless required by applicable law or agreed to in writing, software
+@REM  distributed under the License is distributed on an "AS IS" BASIS,
+@REM  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+@REM  See the License for the specific language governing permissions and
+@REM  limitations under the License.
+@REM
 
 @echo off
 
@@ -70,24 +70,26 @@ goto :eof
 
  echo Building Botan...
 
- SET BOTAN_SRC=Botan-1.10.9
+ SET BOTAN_SRC=botan-1.11.28
 
  IF EXIST %BOTAN_SRC%\NUL (
    call :deleteDir %BOTAN_SRC%
  )
 
- 7z x -y -obotan_archive Botan-1.10.9.tgz 
- 7z x -y -o. botan_archive\Botan-1.10.9.tgz 
+ 7z x -y -obotan_archive botan-1.11.28.tar.gz
+ 7z x -y -o. botan_archive\botan-1.11.28.tar.gz
 
  cd %BOTAN_SRC%
 
  if %BUILD_TYPE%==debug (
-   python configure.py --cc=msvc --cpu=i386 --prefix=%BOTAN_ROOT% --enable-debug
+   python configure.py --cc=msvc --cpu=i386 --prefix=%BOTAN_ROOT% --with-debug-info --no-optimisations
  ) else (
    python configure.py --cc=msvc --cpu=i386 --prefix=%BOTAN_ROOT%
  ) 
 
  nmake install
+
+ move %BOTAN_ROOT%/include/botan-1.11/botan %BOTAN_ROOT%/include
 
  cd %BUILD_HOME%
 
