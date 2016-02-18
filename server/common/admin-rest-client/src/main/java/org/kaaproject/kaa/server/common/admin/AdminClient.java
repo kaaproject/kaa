@@ -64,9 +64,8 @@ import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaInfoDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
@@ -959,49 +958,77 @@ public class AdminClient {
         return bar;
     }
 
-    public CTLSchemaInfoDto saveCTLSchema(String body, CTLSchemaScopeDto scope, String applicationId) {
+    public CTLSchemaDto saveCTLSchema(String body, String tenantId, String applicationId) {
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
         params.add("body", body);
-        if (scope != null) {
-            params.add("scope", scope.name());
+        if (tenantId != null) {
+            params.add("tenantId", tenantId);
         }
         if (applicationId != null) {
             params.add("applicationId", applicationId);
         }
-        return restTemplate.postForObject(url + "CTL/saveSchema", params, CTLSchemaInfoDto.class);
+        return restTemplate.postForObject(url + "CTL/saveSchema", params, CTLSchemaDto.class);
     }
 
-    public void deleteCTLSchemaByFqnAndVersion(String fqn, Integer version) {
+    public void deleteCTLSchemaByFqnVersionTenantIdAndApplicationId(String fqn,
+            Integer version, 
+            String tenantId,
+            String applicationId) {
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
         params.add("fqn", fqn);
         params.add("version", version);
+        if (tenantId != null) {
+            params.add("tenantId", tenantId);
+        }
+        if (applicationId != null) {
+            params.add("applicationId", applicationId);
+        }
         restTemplate.postForLocation(url + "CTL/deleteSchema", params);
     }
 
-    public CTLSchemaInfoDto getCTLSchemaByFqnAndVersion(String fqn, Integer version) {
-        return restTemplate.getForObject(url + "CTL/getSchema?fqn={fqn}&version={version}", CTLSchemaInfoDto.class, fqn, version);
+    public CTLSchemaDto getCTLSchemaByFqnVersionTenantIdAndApplicationId(String fqn, Integer version, String tenantId, String applicationId) {
+        if (tenantId != null && applicationId != null) {
+            return restTemplate.getForObject(url + "CTL/getSchema?fqn={fqn}&version={version}&tenantId={tenantId}&applicationId={applicationId}", CTLSchemaDto.class, fqn, version, tenantId, applicationId);
+        }else if (tenantId != null) {
+            return restTemplate.getForObject(url + "CTL/getSchema?fqn={fqn}&version={version}&tenantId={tenantId}", CTLSchemaDto.class, fqn, version, tenantId);
+        } else {
+            return restTemplate.getForObject(url + "CTL/getSchema?fqn={fqn}&version={version}", CTLSchemaDto.class, fqn, version);
+        }
+    }
+    
+    public boolean checkFqnExists(String fqn, String tenantId, String applicationId) {
+        if (tenantId != null && applicationId != null) {
+            return restTemplate.getForObject(url + "CTL/checkFqn?fqn={fqn}&tenantId={tenantId}&applicationId={applicationId}", 
+                    Boolean.class, fqn, tenantId, applicationId);
+        } else if (tenantId != null) {
+            return restTemplate.getForObject(url + "CTL/checkFqn?fqn={fqn}&tenantId={tenantId}", Boolean.class, fqn, tenantId);
+        } else {
+            return restTemplate.getForObject(url + "CTL/checkFqn?fqn={fqn}", Boolean.class, fqn);
+        }
+    }
+    
+    public CTLSchemaMetaInfoDto updateCTLSchemaMetaInfoScope(CTLSchemaMetaInfoDto ctlSchemaMetaInfo) {
+        return restTemplate.postForObject(url + "CTL/updateScope", ctlSchemaMetaInfo, CTLSchemaMetaInfoDto.class);
     }
 
-    public List<CTLSchemaMetaInfoDto> getCTLSchemasAvailable() {
+    public List<CTLSchemaMetaInfoDto> getSystemLevelCTLSchemas() {
         ParameterizedTypeReference<List<CTLSchemaMetaInfoDto>> typeRef = new ParameterizedTypeReference<List<CTLSchemaMetaInfoDto>>() {
         };
-        ResponseEntity<List<CTLSchemaMetaInfoDto>> entity = restTemplate.exchange(url + "CTL/getSchemas", HttpMethod.GET, null, typeRef);
+        ResponseEntity<List<CTLSchemaMetaInfoDto>> entity = restTemplate.exchange(url + "CTL/getSystemSchemas", HttpMethod.GET, null, typeRef);
         return entity.getBody();
     }
-
-    public List<CTLSchemaMetaInfoDto> getCTLSchemasByScope(String scopeName) {
+    
+    public List<CTLSchemaMetaInfoDto> getTenantLevelCTLSchemas() {
         ParameterizedTypeReference<List<CTLSchemaMetaInfoDto>> typeRef = new ParameterizedTypeReference<List<CTLSchemaMetaInfoDto>>() {
         };
-        ResponseEntity<List<CTLSchemaMetaInfoDto>> entity = restTemplate.exchange(url + "CTL/getSchemas?scope=" + scopeName,
-                HttpMethod.GET, null, typeRef);
+        ResponseEntity<List<CTLSchemaMetaInfoDto>> entity = restTemplate.exchange(url + "CTL/getTenantSchemas", HttpMethod.GET, null, typeRef);
         return entity.getBody();
     }
-
-    public List<CTLSchemaMetaInfoDto> getCTLSchemasByApplicationId(String applicationId) {
+    
+    public List<CTLSchemaMetaInfoDto> getApplicationLevelCTLSchemas(String applicationId) {
         ParameterizedTypeReference<List<CTLSchemaMetaInfoDto>> typeRef = new ParameterizedTypeReference<List<CTLSchemaMetaInfoDto>>() {
         };
-        ResponseEntity<List<CTLSchemaMetaInfoDto>> entity = restTemplate.exchange(url + "CTL/getSchemas?applicationId=" + applicationId,
-                HttpMethod.GET, null, typeRef);
+        ResponseEntity<List<CTLSchemaMetaInfoDto>> entity = restTemplate.exchange(url + "CTL/getApplicationSchemas/" + applicationId, HttpMethod.GET, null, typeRef);
         return entity.getBody();
     }
 

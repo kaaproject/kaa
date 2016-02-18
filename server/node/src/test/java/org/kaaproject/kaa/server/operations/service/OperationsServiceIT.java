@@ -54,7 +54,6 @@ import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
 import org.kaaproject.kaa.common.endpoint.gen.BasicEndpointProfile;
 import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
@@ -215,19 +214,16 @@ public class OperationsServiceIT extends AbstractTest {
         EndpointGroup groupAll = endpointGroupDao.findByAppIdAndWeight(application.getStringId(), 0);
 
         
-        CTLSchemaMetaInfo metaInfo = new CTLSchemaMetaInfo();
-        metaInfo.setVersion(1);
-        metaInfo.setFqn(BasicEndpointProfile.SCHEMA$.getFullName());
-        metaInfo.setScope(CTLSchemaScopeDto.PROFILE_SCHEMA);
+        CTLSchemaMetaInfo metaInfo = new CTLSchemaMetaInfo(BasicEndpointProfile.SCHEMA$.getFullName(),
+                customer, application);
         
         metaInfo = ctlSchemaMetaInfoDao.save(metaInfo);
 
         CTLSchema ctlSchema = new CTLSchema();
-        ctlSchema.setTenant(customer);
-        ctlSchema.setApplication(application);
+        ctlSchema.setMetaInfo(metaInfo);
+        ctlSchema.setVersion(1);
         ctlSchema.setBody(BasicEndpointProfile.SCHEMA$.toString());
         ctlSchema.setDependencySet(new HashSet<CTLSchema>());
-        ctlSchema.setMetaInfo(metaInfo);
         
         ctlSchema = ctlSchemaDao.save(ctlSchema);
         

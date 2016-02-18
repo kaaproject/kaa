@@ -62,8 +62,8 @@ public class SdkProfileViewImpl extends BaseDetailsViewImpl implements SdkProfil
 
     @Override
     protected void initDetailsTable() {
-        saveButton.removeFromParent();
-        cancelButton.removeFromParent();
+        getSaveButtonWidget().removeFromParent();
+        getCancelButtonWidget().removeFromParent();
         requiredFieldsNoteLabel.setVisible(false);
 
         int row = 0;

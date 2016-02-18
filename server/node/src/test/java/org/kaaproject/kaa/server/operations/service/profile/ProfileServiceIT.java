@@ -38,7 +38,6 @@ import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
 import org.kaaproject.kaa.common.endpoint.gen.BasicEndpointProfile;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.schema.system.EmptyData;
@@ -129,15 +128,12 @@ public class ProfileServiceIT extends AbstractTest {
         application.setTenantId(tenant.getId());
         application = applicationService.saveApp(application);
 
-        CTLSchemaMetaInfoDto ctl1MetaDataDto = new CTLSchemaMetaInfoDto();
-        ctl1MetaDataDto.setVersion(2);
-        ctl1MetaDataDto.setFqn(EmptyData.SCHEMA$.getFullName());
-        ctl1MetaDataDto.setScope(CTLSchemaScopeDto.PROFILE_SCHEMA);
-
+        CTLSchemaMetaInfoDto ctl1MetaDataDto = new CTLSchemaMetaInfoDto(EmptyData.SCHEMA$.getFullName(),
+                null, null);
         CTLSchemaDto ctl1SchemaDto = new CTLSchemaDto();
-        ctl1SchemaDto.setApplicationId(application.getId());
-        ctl1SchemaDto.setBody(EmptyData.SCHEMA$.toString());
         ctl1SchemaDto.setMetaInfo(ctl1MetaDataDto);
+        ctl1SchemaDto.setVersion(2);
+        ctl1SchemaDto.setBody(EmptyData.SCHEMA$.toString());
         ctl1SchemaDto = ctlService.saveCTLSchema(ctl1SchemaDto);
 
         schema1Dto = new EndpointProfileSchemaDto();
@@ -146,15 +142,12 @@ public class ProfileServiceIT extends AbstractTest {
         schema1Dto.setApplicationId(application.getId());
         schema1Dto = daoProfileService.saveProfileSchema(schema1Dto);
         
-        CTLSchemaMetaInfoDto ctl2MetaDataDto = new CTLSchemaMetaInfoDto();
-        ctl2MetaDataDto.setVersion(2);
-        ctl2MetaDataDto.setFqn(BasicEndpointProfile.SCHEMA$.getFullName());
-        ctl2MetaDataDto.setScope(CTLSchemaScopeDto.PROFILE_SCHEMA);
-
+        CTLSchemaMetaInfoDto ctl2MetaDataDto = new CTLSchemaMetaInfoDto(BasicEndpointProfile.SCHEMA$.getFullName(),
+                application.getTenantId(), application.getId());
         CTLSchemaDto ctl2SchemaDto = new CTLSchemaDto();
-        ctl2SchemaDto.setApplicationId(application.getId());
-        ctl2SchemaDto.setBody(BasicEndpointProfile.SCHEMA$.toString());
         ctl2SchemaDto.setMetaInfo(ctl2MetaDataDto);
+        ctl2SchemaDto.setVersion(2);
+        ctl2SchemaDto.setBody(BasicEndpointProfile.SCHEMA$.toString());
         ctl2SchemaDto = ctlService.saveCTLSchema(ctl2SchemaDto);
         
         schema2Dto = new EndpointProfileSchemaDto();

@@ -26,11 +26,11 @@ import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class ProfileSchemasDataProvider extends AbstractDataProvider<EndpointProfileSchemaDto>{
+public class ProfileSchemasDataProvider extends AbstractDataProvider<EndpointProfileSchemaDto, String>{
 
     private String applicationId;
 
-    public ProfileSchemasDataProvider(AbstractGrid<EndpointProfileSchemaDto,?> dataGrid,
+    public ProfileSchemasDataProvider(AbstractGrid<EndpointProfileSchemaDto, String> dataGrid,
                                       HasErrorMessage hasErrorMessage,
                                       String applicationId) {
         super(dataGrid, hasErrorMessage, false);

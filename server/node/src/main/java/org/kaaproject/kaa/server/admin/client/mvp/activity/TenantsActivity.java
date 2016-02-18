@@ -42,8 +42,8 @@ public class TenantsActivity extends AbstractListActivity<TenantUserDto, Tenants
     }
 
     @Override
-    protected AbstractDataProvider<TenantUserDto> getDataProvider(
-            AbstractGrid<TenantUserDto,?> dataGrid) {
+    protected AbstractDataProvider<TenantUserDto, String> getDataProvider(
+            AbstractGrid<TenantUserDto, String> dataGrid) {
         return new TenantsDataProvider(dataGrid, listView);
     }
 

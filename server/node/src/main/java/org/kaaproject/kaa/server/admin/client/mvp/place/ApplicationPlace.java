@@ -113,6 +113,7 @@ public class ApplicationPlace extends TreePlace {
             result.add(new UserVerifiersPlace(applicationId));
             result.add(new EndpointUsersPlace(applicationId));
             result.add(new EndpointProfilesPlace(applicationId));
+            result.add(new ApplicationCtlSchemasPlace(applicationId));
             callback.onSuccess(result, display);
         }
 

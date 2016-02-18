@@ -53,7 +53,7 @@ public class LogAppenderViewImpl extends BasePluginViewImpl implements LogAppend
     
     @Override
     protected int initPluginDetails(int idx) {
-        Label minSchemaVersionLabel = new Label(Utils.constants.minVersion());
+        Label minSchemaVersionLabel = new Label(Utils.constants.minSchemaVersion());
         minSchemaVersionLabel.addStyleName(REQUIRED);
         minSchemaVersion = new IntegerListBox();
         minSchemaVersion.setWidth("30%");

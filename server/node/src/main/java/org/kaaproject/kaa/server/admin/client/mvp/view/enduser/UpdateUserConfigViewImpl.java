@@ -137,8 +137,8 @@ public class UpdateUserConfigViewImpl extends BaseDetailsViewImpl implements Upd
     
     @Override
     protected void updateSaveButton(boolean enabled, boolean invalid) {
-        saveButton.setText(Utils.constants.update());
-        saveButton.setEnabled(enabled);
+        getSaveButtonWidget().setText(Utils.constants.update());
+        getSaveButtonWidget().setEnabled(enabled);
     }
 
 }

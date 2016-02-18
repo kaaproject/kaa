@@ -135,8 +135,8 @@ public class SendNotificationViewImpl extends BaseDetailsViewImpl implements Sen
     
     @Override
     protected void updateSaveButton(boolean enabled, boolean invalid) {
-        saveButton.setText(Utils.constants.send());
-        saveButton.setEnabled(enabled);
+        getSaveButtonWidget().setText(Utils.constants.send());
+        getSaveButtonWidget().setEnabled(enabled);
     }
 
 }

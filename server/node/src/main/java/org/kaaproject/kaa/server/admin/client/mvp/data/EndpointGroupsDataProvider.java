@@ -26,11 +26,11 @@ import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class EndpointGroupsDataProvider extends AbstractDataProvider<EndpointGroupDto>{
+public class EndpointGroupsDataProvider extends AbstractDataProvider<EndpointGroupDto, String>{
 
     private String applicationId;
 
-    public EndpointGroupsDataProvider(AbstractGrid<EndpointGroupDto,?> dataGrid,
+    public EndpointGroupsDataProvider(AbstractGrid<EndpointGroupDto, String> dataGrid,
                                       HasErrorMessage hasErrorMessage,
                                       String applicationId) {
         super(dataGrid, hasErrorMessage, false);

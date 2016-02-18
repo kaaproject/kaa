@@ -37,7 +37,9 @@ public interface PlaceConstants {
     public static final String RANDOM = "random";
     public static final String PLUGIN_ID = "pluginId";
     public static final String SDK_ID = "sdkId";
-    public static final String FQN = "fqn";
-    public static final String SOURCE_FQN = "srcFqn";
-    public static final String SOURCE_VERSION = "srcVer";
+    public static final String META_INFO_ID = "metaInfoId";
+    public static final String SCOPE = "scope";
+    public static final String EDITABLE = "editable";
+    public static final String SCHEMA_TYPE = "schemaType";
+
 }

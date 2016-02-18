@@ -28,10 +28,10 @@ import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class UserVerifiersDataProvider  extends AbstractDataProvider<UserVerifierDto>{
+public class UserVerifiersDataProvider  extends AbstractDataProvider<UserVerifierDto, String>{
     private String applicationId;
 
-    public UserVerifiersDataProvider(AbstractGrid<UserVerifierDto,?> dataGrid,
+    public UserVerifiersDataProvider(AbstractGrid<UserVerifierDto, String> dataGrid,
                                  HasErrorMessage hasErrorMessage,
                                  String applicationId) {
         super(dataGrid, hasErrorMessage, false);

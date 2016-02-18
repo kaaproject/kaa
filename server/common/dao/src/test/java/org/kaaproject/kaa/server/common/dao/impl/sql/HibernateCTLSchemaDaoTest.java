@@ -76,18 +76,18 @@ public class HibernateCTLSchemaDaoTest extends HibernateAbstractTest {
             }
         }
         Set<CTLSchemaDto> dependency = new HashSet<>();
-        firstSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN + 1, tenant.getId(), 1, null));
+        firstSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN + 1, tenant.getId(), null, 1));
         dependency.add(firstSchema);
-        secondSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN + 2, tenant.getId(), 2, null));
+        secondSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN + 2, tenant.getId(), null, 2));
         dependency.add(secondSchema);
-        thirdSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN + 3, tenant.getId(), 3, null));
+        thirdSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN + 3, tenant.getId(), null, 3));
         dependency.add(thirdSchema);
-        fourthSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN + 4, tenant.getId(), 4, null));
+        fourthSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN + 4, tenant.getId(), null, 4));
         dependency.add(fourthSchema);
-        mainSchema = generateCTLSchemaDto(DEFAULT_FQN + 5, tenant.getId(), 7, null);
+        mainSchema = generateCTLSchemaDto(DEFAULT_FQN + 5, tenant.getId(), null, 7);
         mainSchema.setDependencySet(dependency);
         mainSchema = ctlService.saveCTLSchema(mainSchema);
-        systemSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(SYSTEM_FQN, null, 50, null));
+        systemSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(SYSTEM_FQN, null, null, 50));
     }
 
     @Test(expected = Exception.class)
@@ -98,15 +98,15 @@ public class HibernateCTLSchemaDaoTest extends HibernateAbstractTest {
     
     private CTLSchema generateCTLSchema(String fqn, Tenant tenant, int version, String body) {
         CTLSchema ctlSchema = new CTLSchema();
-        ctlSchema.setMetaInfo(new CTLSchemaMetaInfo(fqn, version));
+        if (tenant == null) {
+            tenant = generateTenant();
+        }
+        ctlSchema.setMetaInfo(new CTLSchemaMetaInfo(fqn, tenant, null));
+        ctlSchema.setVersion(version);
         if (isBlank(body)) {
             body = UUID.randomUUID().toString();
         }
         ctlSchema.setBody(body);
-        if (tenant == null) {
-            tenant = generateTenant();
-        }
-        ctlSchema.setTenant(tenant);
         return ctlSchema;
     }
 
@@ -127,14 +127,18 @@ public class HibernateCTLSchemaDaoTest extends HibernateAbstractTest {
 
 
     @Test
-    public void testFindByFqnAndVerAndTenantId() {
-        CTLSchema found = ctlSchemaDao.findByFqnAndVerAndTenantId(firstSchema.getMetaInfo().getFqn(), firstSchema.getMetaInfo().getVersion(), firstSchema.getTenantId());
+    public void testFindByFqnAndVerAndTenantIdAndApplicationId() {
+        CTLSchema found = ctlSchemaDao.findByFqnAndVerAndTenantIdAndApplicationId(firstSchema.getMetaInfo().getFqn(), 
+                firstSchema.getVersion(), 
+                firstSchema.getMetaInfo().getTenantId(),
+                firstSchema.getMetaInfo().getApplicationId());
         Assert.assertEquals(firstSchema, found.toDto());
     }
 
     @Test
-    public void testFindSystemByFqnAndVerAndTenantId() {
-        CTLSchema found = ctlSchemaDao.findByFqnAndVerAndTenantId(systemSchema.getMetaInfo().getFqn(), systemSchema.getMetaInfo().getVersion(), tenant.getId());
+    public void testFindSystemByFqnAndVerAndTenantIdAndApplicationId() {
+        CTLSchema found = ctlSchemaDao.findByFqnAndVerAndTenantIdAndApplicationId(systemSchema.getMetaInfo().getFqn(), 
+                systemSchema.getVersion(), null, null);
         Assert.assertEquals(systemSchema, found.toDto());
     }
 
@@ -146,19 +150,13 @@ public class HibernateCTLSchemaDaoTest extends HibernateAbstractTest {
 
     @Test
     public void testFindLatestByFqn() {
-        CTLSchema latest = ctlSchemaDao.findLatestByFqn(SYSTEM_FQN);
+        CTLSchema latest = ctlSchemaDao.findLatestByFqnAndTenantIdAndApplicationId(SYSTEM_FQN, null, null);
         Assert.assertEquals(systemSchema, latest.toDto());
     }
 
     @Test
-    public void testRemoveByFqnAndVerAndTenantId() {
-        ctlSchemaDao.removeByFqnAndVerAndTenantId(systemSchema.getMetaInfo().getFqn(), systemSchema.getMetaInfo().getVersion(), systemSchema.getTenantId());
-        Assert.assertNull(ctlSchemaDao.findById(systemSchema.getId()));
-    }
-
-    @Test
-    public void testFindAvailableSchemas() {
-        List<CTLSchema> found = ctlSchemaDao.findAvailableSchemas(tenant.getId());
+    public void testFindAvailableSchemasForTenant() {
+        List<CTLSchema> found = ctlSchemaDao.findAvailableSchemasForTenant(tenant.getId());
         Assert.assertEquals(getIdsDto(Arrays.asList(firstSchema, secondSchema, thirdSchema, fourthSchema, mainSchema, systemSchema)), getIds(found));
     }
 }

@@ -42,6 +42,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.BasePropertiesView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseSchemaView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.ConfigurationView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.CtlSchemaView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.CtlSchemasView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EcfSchemaView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EcfView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointGroupView;
@@ -66,8 +67,11 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.application.ApplicationsV
 import org.kaaproject.kaa.server.admin.client.mvp.view.config.ConfigurationSchemaViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.config.ConfigurationSchemasViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.config.ConfigurationViewImpl;
+import org.kaaproject.kaa.server.admin.client.mvp.view.ctl.ApplicationCtlSchemaViewImpl;
+import org.kaaproject.kaa.server.admin.client.mvp.view.ctl.ApplicationCtlSchemasViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.ctl.CtlSchemaViewImpl;
-import org.kaaproject.kaa.server.admin.client.mvp.view.ctl.CtlSchemasViewImpl;
+import org.kaaproject.kaa.server.admin.client.mvp.view.ctl.SystemCtlSchemasViewImpl;
+import org.kaaproject.kaa.server.admin.client.mvp.view.ctl.TenantCtlSchemasViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.endpoint.EndpointGroupViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.endpoint.EndpointGroupsViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.endpoint.EndpointProfileViewImpl;
@@ -104,7 +108,6 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.user.UserViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.user.UsersViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.verifier.UserVerifierViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.verifier.UserVerifiersViewImpl;
-import org.kaaproject.kaa.server.admin.shared.schema.SchemaFqnDto;
 
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
@@ -201,9 +204,14 @@ public class ClientFactoryImpl implements ClientFactory {
 
     private final UpdateUserConfigView updateUserConfigView = new UpdateUserConfigViewImpl();
     
-    private final BaseListView<SchemaFqnDto> ctlSchemasView = new CtlSchemasViewImpl();
-    private final CtlSchemaView createCtlSchemaView = new CtlSchemaViewImpl(true);
-    private final CtlSchemaView ctlSchemaView = new CtlSchemaViewImpl(false);
+    private final CtlSchemasView systemCtlSchemasView = new SystemCtlSchemasViewImpl();
+    private final CtlSchemasView tenantCtlSchemasView = new TenantCtlSchemasViewImpl();
+    private final CtlSchemasView applicationCtlSchemasView = new ApplicationCtlSchemasViewImpl();
+    
+    private final CtlSchemaView createCtlSchemaView = new CtlSchemaViewImpl(true, true);
+    private final CtlSchemaView editCtlSchemaView = new CtlSchemaViewImpl(false, true);
+    private final CtlSchemaView editApplicationCtlSchemaView = new ApplicationCtlSchemaViewImpl(false, true);
+    private final CtlSchemaView viewCtlSchemaView = new CtlSchemaViewImpl(false, false);
 
     private Place homePlace;
 
@@ -528,18 +536,38 @@ public class ClientFactoryImpl implements ClientFactory {
     }
 
     @Override
-    public BaseListView<SchemaFqnDto> getCtlSchemasView() {
-        return ctlSchemasView;
-    }
-
-    @Override
     public CtlSchemaView getCreateCtlSchemaView() {
         return createCtlSchemaView;
     }
 
     @Override
-    public CtlSchemaView getCtlSchemaView() {
-        return ctlSchemaView;
+    public CtlSchemaView getEditCtlSchemaView() {
+        return editCtlSchemaView;
+    }
+
+    @Override
+    public CtlSchemaView getEditApplicationCtlSchemaView() {
+        return editApplicationCtlSchemaView;
+    }
+
+    @Override
+    public CtlSchemaView getViewCtlSchemaView() {
+        return viewCtlSchemaView;
+    }
+
+    @Override
+    public CtlSchemasView getSystemCtlSchemasView() {
+        return systemCtlSchemasView;
+    }
+
+    @Override
+    public CtlSchemasView getTenantCtlSchemasView() {
+        return tenantCtlSchemasView;
+    }
+
+    @Override
+    public CtlSchemasView getApplicationCtlSchemasView() {
+        return applicationCtlSchemasView;
     }
 
 }

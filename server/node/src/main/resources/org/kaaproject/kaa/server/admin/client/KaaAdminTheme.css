@@ -342,6 +342,18 @@
     text-shadow: 0 1px rgba(0, 0, 0, 0.3);
 }
 
+.deleteButton {
+	background: #d94b4b;
+}
+
+.deleteButton:hover {
+	background: #cc4b4b;
+}
+
+.deleteButton:active {
+	background: #c47575;
+}
+
 .button-margin-left {
 	margin-left: 300px;
 	margin-right: 35px;

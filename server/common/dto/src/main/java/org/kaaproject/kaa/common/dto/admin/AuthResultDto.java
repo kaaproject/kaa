@@ -27,6 +27,7 @@ public class AuthResultDto implements Serializable {
     private String username;
     private String displayName;
     private KaaAuthorityDto authority;
+    private String tenantId;
     private Result authResult;
 
     public AuthResultDto() {
@@ -61,6 +62,14 @@ public class AuthResultDto implements Serializable {
 
     public void setAuthority(KaaAuthorityDto authority) {
         this.authority = authority;
+    }
+    
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
     }
 
     public Result getAuthResult() {

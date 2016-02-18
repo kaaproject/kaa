@@ -44,7 +44,7 @@
                                             <gwt:Label ui:field="titleLabel" styleName="{kaaAdminStyle.bAppSubHeaderTitle}"/>
                                         </gwt:cell>
                                         <gwt:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" height="100%">
-                                            <gwt:HorizontalPanel spacing="0" addStyleNames="{avroUiStyle.buttonsPanel}">
+                                            <gwt:HorizontalPanel ui:field="buttonsPanel" spacing="0" addStyleNames="{avroUiStyle.buttonsPanel}">
                                                 <gwt:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" height="100%">
                                                     <kaa:mvp.view.widget.ImageTextButton ui:field="addButton"/>
                                                 </gwt:cell>

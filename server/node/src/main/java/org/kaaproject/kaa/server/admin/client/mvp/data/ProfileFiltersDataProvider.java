@@ -23,15 +23,16 @@ import org.kaaproject.kaa.common.dto.ProfileFilterRecordDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
 import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
+import org.kaaproject.kaa.server.admin.shared.profile.ProfileFilterRecordKey;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class ProfileFiltersDataProvider extends AbstractDataProvider<ProfileFilterRecordDto>{
+public class ProfileFiltersDataProvider extends AbstractDataProvider<ProfileFilterRecordDto, ProfileFilterRecordKey>{
 
     private String endpointGroupId;
     private boolean includeDeprecated = false;
 
-    public ProfileFiltersDataProvider(AbstractGrid<ProfileFilterRecordDto,?> dataGrid,
+    public ProfileFiltersDataProvider(AbstractGrid<ProfileFilterRecordDto, ProfileFilterRecordKey> dataGrid,
                                       HasErrorMessage hasErrorMessage,
                                       String endpointGroupId, boolean includeDeprecated) {
         super(dataGrid, hasErrorMessage, false);

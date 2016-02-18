@@ -16,36 +16,39 @@
 
 package org.kaaproject.kaa.common.dto.ctl;
 
+import java.io.Serializable;
+import java.util.List;
+
 import org.kaaproject.kaa.common.dto.HasId;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import java.io.Serializable;
 
 public class CTLSchemaMetaInfoDto implements HasId, Serializable {
 
     private static final long serialVersionUID = 365372783241958657L;
     
     private String id;
-    private String name;
     private String fqn;
-    private Integer version;
-    private CTLSchemaScopeDto scope;
-    @JsonIgnore
-    private Long count = 0L;
+    private String tenantId;
+    private String applicationId;
+    private List<Integer> versions;
 
     public CTLSchemaMetaInfoDto() {
     }
 
-    public CTLSchemaMetaInfoDto(String fqn, Integer version) {
+    public CTLSchemaMetaInfoDto(String fqn) {
         this.fqn = fqn;
-        this.version = version;
     }
 
-    public CTLSchemaMetaInfoDto(String fqn, Integer version, CTLSchemaScopeDto scope) {
+    public CTLSchemaMetaInfoDto(String fqn, String tenantId) {
         this.fqn = fqn;
-        this.version = version;
-        this.scope = scope;
+        this.tenantId = tenantId;
+    }
+    
+    public CTLSchemaMetaInfoDto(String fqn, String tenantId, String applicationId) {
+        this.fqn = fqn;
+        this.tenantId = tenantId;
+        this.applicationId = applicationId;
     }
 
     @Override
@@ -58,14 +61,6 @@ public class CTLSchemaMetaInfoDto implements HasId, Serializable {
         this.id = id;
     }
     
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getFqn() {
         return fqn;
     }
@@ -73,59 +68,93 @@ public class CTLSchemaMetaInfoDto implements HasId, Serializable {
     public void setFqn(String fqn) {
         this.fqn = fqn;
     }
-
-    public Integer getVersion() {
-        return version;
+    
+    public String getTenantId() {
+        return tenantId;
     }
 
-    public void setVersion(Integer version) {
-        this.version = version;
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
     }
 
+    public String getApplicationId() {
+        return applicationId;
+    }
+
+    public void setApplicationId(String applicationId) {
+        this.applicationId = applicationId;
+    }
+
+    @JsonIgnore
     public CTLSchemaScopeDto getScope() {
-        return scope;
+        if (tenantId != null && !tenantId.isEmpty()) {
+            if (applicationId != null && !applicationId.isEmpty()) {
+                return CTLSchemaScopeDto.APPLICATION;
+            } else {
+                return CTLSchemaScopeDto.TENANT;
+            }
+        }
+        return CTLSchemaScopeDto.SYSTEM;
     }
 
-    public void setScope(CTLSchemaScopeDto scope) {
-        this.scope = scope;
+    public List<Integer> getVersions() {
+        return versions;
     }
 
-    public Long getCount() {
-        return count;
-    }
-
-    public void setCount(Long count) {
-        this.count = count;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        CTLSchemaMetaInfoDto that = (CTLSchemaMetaInfoDto) o;
-
-        if (fqn != null ? !fqn.equals(that.fqn) : that.fqn != null) return false;
-        if (version != null ? !version.equals(that.version) : that.version != null) return false;
-        return scope == that.scope;
-
+    public void setVersions(List<Integer> versions) {
+        this.versions = versions;
     }
 
     @Override
     public int hashCode() {
-        int result = fqn != null ? fqn.hashCode() : 0;
-        result = 31 * result + (version != null ? version.hashCode() : 0);
-        result = 31 * result + (scope != null ? scope.hashCode() : 0);
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((applicationId == null) ? 0 : applicationId.hashCode());
+        result = prime * result + ((fqn == null) ? 0 : fqn.hashCode());
+        result = prime * result + ((tenantId == null) ? 0 : tenantId.hashCode());
         return result;
     }
 
     @Override
-    public String toString() {
-        return "CTLSchemaMetaInfoDto{" +
-                "id='" + id + '\'' +
-                ", fqn='" + fqn + '\'' +
-                ", version=" + version +
-                ", scope=" + scope +
-                '}';
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        CTLSchemaMetaInfoDto other = (CTLSchemaMetaInfoDto) obj;
+        if (applicationId == null) {
+            if (other.applicationId != null)
+                return false;
+        } else if (!applicationId.equals(other.applicationId))
+            return false;
+        if (fqn == null) {
+            if (other.fqn != null)
+                return false;
+        } else if (!fqn.equals(other.fqn))
+            return false;
+        if (tenantId == null) {
+            if (other.tenantId != null)
+                return false;
+        } else if (!tenantId.equals(other.tenantId))
+            return false;
+        return true;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("CTLSchemaMetaInfoDto [id=");
+        builder.append(id);
+        builder.append(", fqn=");
+        builder.append(fqn);
+        builder.append(", tenantId=");
+        builder.append(tenantId);
+        builder.append(", applicationId=");
+        builder.append(applicationId);
+        builder.append("]");
+        return builder.toString();
+    }
+
 }

@@ -19,30 +19,30 @@ package org.kaaproject.kaa.server.admin.client.mvp.data;
 import java.util.List;
 
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
 import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
-import org.kaaproject.kaa.server.admin.shared.schema.SchemaFqnDto;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class TenantCtlSchemasDataProvider extends AbstractDataProvider<SchemaFqnDto>{
+public class TenantCtlSchemasDataProvider extends AbstractDataProvider<CTLSchemaMetaInfoDto, String>{
 
-    public TenantCtlSchemasDataProvider(AbstractGrid<SchemaFqnDto, ?> dataGrid,
+    public TenantCtlSchemasDataProvider(AbstractGrid<CTLSchemaMetaInfoDto, String> dataGrid,
                                     HasErrorMessage hasErrorMessage) {
         super(dataGrid, hasErrorMessage);
     }
 
     @Override
     protected void loadData(final LoadCallback callback) {
-        KaaAdmin.getDataSource().getTenantCTLSchemaFqns(new AsyncCallback<List<SchemaFqnDto>>() {
+        KaaAdmin.getDataSource().getTenantLevelCTLSchemas(new AsyncCallback<List<CTLSchemaMetaInfoDto>>() {
             @Override
             public void onFailure(Throwable caught) {
                 callback.onFailure(caught);
 
             }
             @Override
-            public void onSuccess(List<SchemaFqnDto> result) {
+            public void onSuccess(List<CTLSchemaMetaInfoDto> result) {
                 callback.onSuccess(result);
             }
         });

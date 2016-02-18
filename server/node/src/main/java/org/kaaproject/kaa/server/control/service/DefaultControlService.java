@@ -2044,13 +2044,8 @@ public class DefaultControlService implements ControlService {
     }
 
     @Override
-    public void deleteCTLSchemaById(String schemaId) throws ControlServiceException {
-        ctlService.removeCTLSchemaById(schemaId);
-    }
-
-    @Override
-    public void deleteCTLSchemaByFqnAndVersionAndTenantId(String fqn, int version, String tenantId) throws ControlServiceException {
-        ctlService.removeCTLSchemaByFqnAndVerAndTenantId(fqn, version, tenantId);
+    public void deleteCTLSchemaByFqnAndVersionTenantIdAndApplicationId(String fqn, int version, String tenantId, String applicationId) throws ControlServiceException {
+        ctlService.removeCTLSchemaByFqnAndVerAndTenantIdAndApplicationId(fqn, version, tenantId, applicationId);
     }
 
     @Override
@@ -2059,28 +2054,67 @@ public class DefaultControlService implements ControlService {
     }
 
     @Override
-    public CTLSchemaDto getCTLSchemaByFqnVersionAndTenantId(String fqn, int version, String tenantId) throws ControlServiceException {
-        return ctlService.findCTLSchemaByFqnAndVerAndTenantId(fqn, version, tenantId);
+    public CTLSchemaDto getCTLSchemaByFqnVersionTenantIdAndApplicationId(String fqn, int version, String tenantId, String applicationId) throws ControlServiceException {
+        return ctlService.findCTLSchemaByFqnAndVerAndTenantIdAndApplicationId(fqn, version, tenantId, applicationId);
+    }
+    
+    @Override
+    public CTLSchemaDto getCTLSchemaByMetaInfoIdAndVer(String metaInfoId, Integer version) {
+        return ctlService.findByMetaInfoIdAndVer(metaInfoId, version);
     }
 
     @Override
-    public List<CTLSchemaMetaInfoDto> getAvailableCTLSchemasMetaInfoByTenantId(String tenantId) throws ControlServiceException {
-        return ctlService.findAvailableCTLSchemasMetaInfo(tenantId);
+    public CTLSchemaDto getAnyCTLSchemaByFqnVersionTenantIdAndApplicationId(String fqn, int version, String tenantId,
+            String applicationId) throws ControlServiceException {
+        return ctlService.findAnyCTLSchemaByFqnAndVerAndTenantIdAndApplicationId(fqn, version, tenantId, applicationId);
     }
 
     @Override
-    public List<CTLSchemaMetaInfoDto> getTenantCTLSchemasMetaInfoByTenantId(String tenantId) throws ControlServiceException {
-        return ctlService.findTenantCTLSchemasMetaInfoByTenantId(tenantId);
+    public List<CTLSchemaMetaInfoDto> getSiblingsByFqnTenantIdAndApplicationId(String fqn, String tenantId, String applicationId) {
+        return ctlService.findSiblingsByFqnTenantIdAndApplicationId(fqn, tenantId, applicationId);
     }
 
     @Override
-    public List<CTLSchemaMetaInfoDto> getCTLSchemasMetaInfoByApplicationId(String applicationId) throws ControlServiceException {
-        return ctlService.findCTLSchemasMetaInfoByApplicationId(applicationId);
+    public CTLSchemaMetaInfoDto updateCTLSchemaMetaInfoScope(CTLSchemaMetaInfoDto ctlSchemaMetaInfo) {
+        return ctlService.updateCTLSchemaMetaInfoScope(ctlSchemaMetaInfo);
     }
 
     @Override
     public List<CTLSchemaMetaInfoDto> getSystemCTLSchemasMetaInfo() throws ControlServiceException {
         return ctlService.findSystemCTLSchemasMetaInfo();
+    }
+    
+    @Override
+    public Map<Fqn, List<Integer>> getAvailableCTLSchemaVersionsForSystem() throws ControlServiceException {
+        return extractCtlSchemaVersionsInfo(ctlService.findSystemCTLSchemasMetaInfo());
+    }
+
+    @Override
+    public List<CTLSchemaMetaInfoDto> getAvailableCTLSchemasMetaInfoForTenant(String tenantId) throws ControlServiceException {
+        return ctlService.findAvailableCTLSchemasMetaInfoForTenant(tenantId);
+    }
+    
+    @Override
+    public Map<Fqn, List<Integer>> getAvailableCTLSchemaVersionsForTenant(String tenantId) throws ControlServiceException {
+        return extractCtlSchemaVersionsInfo(ctlService.findAvailableCTLSchemasMetaInfoForTenant(tenantId));
+    }
+    
+    @Override
+    public List<CTLSchemaMetaInfoDto> getAvailableCTLSchemasMetaInfoForApplication(String tenantId, String appId) throws ControlServiceException {
+        return ctlService.findAvailableCTLSchemasMetaInfoForApplication(tenantId, appId);
+    }
+    
+    @Override
+    public Map<Fqn, List<Integer>> getAvailableCTLSchemaVersionsForApplication(String tenantId, String appId) throws ControlServiceException {
+        return extractCtlSchemaVersionsInfo(ctlService.findAvailableCTLSchemasMetaInfoForApplication(tenantId, appId));
+    }
+    
+    private Map<Fqn, List<Integer>> extractCtlSchemaVersionsInfo(List<CTLSchemaMetaInfoDto> ctlSchemaInfos) {
+        Map<Fqn, List<Integer>> ctlSchemaVersions = new HashMap<>(); 
+        for (CTLSchemaMetaInfoDto ctlSchemaInfo : ctlSchemaInfos) {
+            ctlSchemaVersions.put(new Fqn(ctlSchemaInfo.getFqn()), ctlSchemaInfo.getVersions());
+        }
+        return ctlSchemaVersions;
     }
 
     @Override
@@ -2089,29 +2123,28 @@ public class DefaultControlService implements ControlService {
     }
 
     @Override
-    public List<CTLSchemaDto> getCTLSchemaDependents(String fqn, int version, String tenantId) throws ControlServiceException {
-        return ctlService.findCTLSchemaDependents(fqn, version, tenantId);
+    public List<CTLSchemaDto> getCTLSchemaDependents(String fqn, int version, String tenantId, String applicationId) throws ControlServiceException {
+        return ctlService.findCTLSchemaDependents(fqn, version, tenantId, applicationId);
     }
 
     @Override
-    public CTLSchemaDto getLatestCTLSchemaByFqn(String fqn) throws ControlServiceException {
-        return ctlService.findLatestCTLSchemaByFqn(fqn);
+    public CTLSchemaDto getLatestCTLSchemaByFqnTenantIdAndApplicationId(String fqn, String tenantId, String applicationId) throws ControlServiceException {
+        return ctlService.findLatestCTLSchemaByFqnAndTenantIdAndApplicationId(fqn, tenantId, applicationId);
     }
-
+    
     @Override
-    public Map<Fqn, List<Integer>> getAvailableCTLSchemaVersionsByTenantId(String tenantId) throws ControlServiceException {
-        Map<Fqn, List<Integer>> ctlSchemaVersions = new HashMap<>();
-        List<CTLSchemaMetaInfoDto> ctlSchemaInfos = ctlService.findAvailableCTLSchemasMetaInfo(tenantId);
-        for (CTLSchemaMetaInfoDto ctlSchemaInfo : ctlSchemaInfos) {
-            Fqn fqn = new Fqn(ctlSchemaInfo.getFqn());
-            List<Integer> schemaVersions = ctlSchemaVersions.get(fqn);
-            if (schemaVersions == null) {
-                schemaVersions = new ArrayList<>();
-                ctlSchemaVersions.put(fqn, schemaVersions);
-            }
-            schemaVersions.add(ctlSchemaInfo.getVersion());
+    public CTLSchemaDto getLatestCTLSchemaByMetaInfoId(String metaInfoId) {
+        return ctlService.findLatestByMetaInfoId(metaInfoId);
+    }
+    
+    @Override
+    public List<Integer> getAllCTLSchemaVersionsByFqnTenantIdAndApplicationId(String fqn, String tenantId, String applicationId) throws ControlServiceException {
+        List<CTLSchemaDto> schemas = ctlService.findAllCTLSchemasByFqnAndTenantIdAndApplicationId(fqn, tenantId, applicationId);
+        List<Integer> versions = new ArrayList<>(schemas.size());
+        for (CTLSchemaDto schema : schemas) {
+            versions.add(schema.getVersion());
         }
-        return ctlSchemaVersions;
+        return versions;
     }
 
     public FileData exportCTLSchemaShallow(CTLSchemaDto schema) throws ControlServiceException {
@@ -2127,8 +2160,8 @@ public class DefaultControlService implements ControlService {
     public FileData exportCTLSchemaFlatAsLibrary(CTLSchemaDto schema) throws ControlServiceException {
         try {
             Schema avroSchema = ctlService.flatExportAsSchema(schema);
-            String fileName = MessageFormat.format(CTL_LIBRARY_EXPORT_TEMPLATE, schema.getMetaInfo().getFqn(),
-                    schema.getMetaInfo().getVersion());
+            String fileName = MessageFormat.format(CTL_LIBRARY_EXPORT_TEMPLATE, 
+                    schema.getMetaInfo().getFqn(), schema.getVersion());
             return SchemaLibraryGenerator.generateSchemaLibrary(avroSchema, fileName);
         } catch (Exception e) {
             LOG.error("Unable to export flat CTL schema as library", e);
@@ -2169,4 +2202,5 @@ public class DefaultControlService implements ControlService {
             LOG.info("Shutdown of control service neighbors complete!");
         }
     }
+    
 }

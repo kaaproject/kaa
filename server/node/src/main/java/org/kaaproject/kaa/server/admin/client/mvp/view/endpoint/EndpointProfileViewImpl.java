@@ -91,8 +91,8 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
         detailsTable.getColumnFormatter().setWidth(1, "550px");
         detailsTable.getColumnFormatter().setWidth(2, "0px");
 
-        saveButton.removeFromParent();
-        cancelButton.removeFromParent();
+        getSaveButtonWidget().removeFromParent();
+        getCancelButtonWidget().removeFromParent();
         requiredFieldsNoteLabel.setVisible(false);
 
         int row = 0;

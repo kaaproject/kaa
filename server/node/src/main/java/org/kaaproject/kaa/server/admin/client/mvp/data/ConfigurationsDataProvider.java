@@ -23,15 +23,16 @@ import org.kaaproject.kaa.common.dto.ConfigurationRecordDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
 import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
+import org.kaaproject.kaa.server.admin.shared.config.ConfigRecordKey;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class ConfigurationsDataProvider extends AbstractDataProvider<ConfigurationRecordDto>{
+public class ConfigurationsDataProvider extends AbstractDataProvider<ConfigurationRecordDto, ConfigRecordKey>{
 
     private String endpointGroupId;
     private boolean includeDeprecated = false;
 
-    public ConfigurationsDataProvider(AbstractGrid<ConfigurationRecordDto,?> dataGrid,
+    public ConfigurationsDataProvider(AbstractGrid<ConfigurationRecordDto, ConfigRecordKey> dataGrid,
                                       HasErrorMessage hasErrorMessage,
                                       String endpointGroupId, boolean includeDeprecated) {
         super(dataGrid, hasErrorMessage, false);

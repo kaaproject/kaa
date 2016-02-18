@@ -34,7 +34,7 @@ public interface BaseListView<T extends HasId> extends IsWidget, HasErrorMessage
     void setBackEnabled(boolean enabled);
 
     MultiSelectionModel<T> getSelectionModel();
-    AbstractGrid<T,?> getListWidget();
+    AbstractGrid<T,String> getListWidget();
     HasRowActionEventHandlers<String> getRowActionsSource();
 
     void clearError();

@@ -26,8 +26,7 @@ import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.VersionDto;
 import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaInfoDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 
 /**
  * The Class ControlServerProfileSchemaIT.
@@ -73,7 +72,7 @@ public class ControlServerProfileSchemaIT extends AbstractTestControlServer {
         
         loginTenantDeveloper(tenantDeveloperDto.getUsername());
         
-        CTLSchemaInfoDto ctlSchema = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, CTLSchemaScopeDto.TENANT, null, null, null);
+        CTLSchemaDto ctlSchema = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), null, null, null);
 
         List<EndpointProfileSchemaDto> defaultProfileSchemas = client.getProfileSchemas(application.getId());
         profileSchemas.addAll(defaultProfileSchemas);
@@ -113,7 +112,7 @@ public class ControlServerProfileSchemaIT extends AbstractTestControlServer {
         List<EndpointProfileSchemaDto> defaultProfileSchemas = client.getProfileSchemas(application.getId());
         profileSchemas.addAll(defaultProfileSchemas);
 
-        CTLSchemaInfoDto ctlSchema = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, CTLSchemaScopeDto.TENANT, null, null, null);
+        CTLSchemaDto ctlSchema = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), null, null, null);
 
         for (int i=0;i<10;i++) {
             EndpointProfileSchemaDto profileSchema = createEndpointProfileSchema(application.getId(), ctlSchema.getId());

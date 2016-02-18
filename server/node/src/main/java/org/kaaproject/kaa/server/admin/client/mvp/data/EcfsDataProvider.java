@@ -26,9 +26,9 @@ import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class EcfsDataProvider extends AbstractDataProvider<EventClassFamilyDto>{
+public class EcfsDataProvider extends AbstractDataProvider<EventClassFamilyDto, String>{
 
-    public EcfsDataProvider(AbstractGrid<EventClassFamilyDto,?> dataGrid,
+    public EcfsDataProvider(AbstractGrid<EventClassFamilyDto, String> dataGrid,
                             HasErrorMessage hasErrorMessage) {
         super(dataGrid, hasErrorMessage);
     }

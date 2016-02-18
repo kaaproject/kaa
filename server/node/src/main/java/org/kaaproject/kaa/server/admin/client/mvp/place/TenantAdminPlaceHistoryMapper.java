@@ -26,7 +26,9 @@ import com.google.gwt.place.shared.WithTokenizers;
     UserPlace.Tokenizer.class,
     EcfsPlace.Tokenizer.class,
     EcfPlace.Tokenizer.class,
-    EcfSchemaPlace.Tokenizer.class})
+    EcfSchemaPlace.Tokenizer.class,
+    TenantCtlSchemasPlace.Tokenizer.class,
+    CtlSchemaPlace.Tokenizer.class})
 public interface TenantAdminPlaceHistoryMapper extends PlaceHistoryMapper
 {
 }

@@ -30,7 +30,7 @@ import org.kaaproject.kaa.server.admin.shared.services.ServiceErrorCode;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EndpointProfileDataProvider extends AbstractDataProvider<EndpointProfileDto> {
+public class EndpointProfileDataProvider extends AbstractDataProvider<EndpointProfileDto, String> {
 
     public static final String DEFAULT_OFFSET = "0";
     private String limit = "20";  // took from AbstractGrid<...>.class see AvroUI
@@ -42,7 +42,7 @@ public class EndpointProfileDataProvider extends AbstractDataProvider<EndpointPr
 
     private static volatile EndpointProfileDataProvider instance;
 
-    private EndpointProfileDataProvider(AbstractGrid<EndpointProfileDto, ?> dataGrid, HasErrorMessage hasErrorMessage) {
+    private EndpointProfileDataProvider(AbstractGrid<EndpointProfileDto, String> dataGrid, HasErrorMessage hasErrorMessage) {
         super(dataGrid, hasErrorMessage, true);
         this.groupID = "";
         endpointProfilesList = new ArrayList<>();
@@ -96,7 +96,7 @@ public class EndpointProfileDataProvider extends AbstractDataProvider<EndpointPr
         offset = DEFAULT_OFFSET;
     }
 
-    public static synchronized EndpointProfileDataProvider getInstance(AbstractGrid<EndpointProfileDto, ?> dataGrid,
+    public static synchronized EndpointProfileDataProvider getInstance(AbstractGrid<EndpointProfileDto, String> dataGrid,
                                                                        HasErrorMessage hasErrorMessage) {
         if (instance == null) {
             instance = new EndpointProfileDataProvider(dataGrid, hasErrorMessage);

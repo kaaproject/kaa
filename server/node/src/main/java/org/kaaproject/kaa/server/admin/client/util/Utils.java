@@ -24,6 +24,7 @@ import org.kaaproject.avro.ui.gwt.client.AvroUiResources;
 import org.kaaproject.avro.ui.gwt.client.AvroUiResources.AvroUiStyle;
 import org.kaaproject.avro.ui.gwt.client.widget.AlertPanel;
 import org.kaaproject.kaa.common.dto.VersionDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdminResources;
 import org.kaaproject.kaa.server.admin.client.KaaAdminResources.KaaAdminStyle;
 import org.kaaproject.kaa.server.admin.client.KaaAdminResources.KaaTheme;
@@ -194,4 +195,31 @@ public class Utils {
     public static boolean isBlank(String string) {
         return string == null || string.length() == 0;
     }
+    
+	public static String getCtlScopeString(CTLSchemaScopeDto scope) {
+    	switch (scope) {
+		case APPLICATION:
+			return constants.scopeApplication();
+		case SYSTEM:
+			return constants.scopeSystem();
+		case TENANT:
+			return constants.scopeTenant();
+		default:
+			return "Unknown";
+    	}
+    }
+	
+   public static String getCtlScopeTitleString(CTLSchemaScopeDto scope) {
+        switch (scope) {
+        case APPLICATION:
+            return constants.scopeApplicationTitle();
+        case SYSTEM:
+            return constants.scopeSystemTitle();
+        case TENANT:
+            return constants.scopeTenantTitle();
+        default:
+            return "Unknown";
+        }
+    }
+   
 }

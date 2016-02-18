@@ -21,6 +21,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.widget.RecordPanel;
 
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ValueListBox;
 
 public interface CtlSchemaView extends BaseDetailsView {
@@ -28,20 +29,20 @@ public interface CtlSchemaView extends BaseDetailsView {
     public HasClickHandlers getCreateNewSchemaVersionButton();
     
     public ActionsButton getExportActionsButton();
+    
+    public HasClickHandlers getUpdateSchemaScopeButton();
 
     public HasClickHandlers getDeleteSchemaVersionButton();
+    
+    public Label getScope();
 
     public ValueListBox<Integer> getVersion();
-
-    public HasValue<String> getName();
-
-    public HasValue<String> getDescription();
 
     public HasValue<String> getCreatedUsername();
 
     public HasValue<String> getCreatedDateTime();
 
     public RecordPanel getSchemaForm();
-
+    
 }
 

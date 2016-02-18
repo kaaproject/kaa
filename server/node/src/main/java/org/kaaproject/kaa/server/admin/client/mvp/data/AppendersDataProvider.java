@@ -28,10 +28,10 @@ import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class AppendersDataProvider extends AbstractDataProvider<LogAppenderDto>{
+public class AppendersDataProvider extends AbstractDataProvider<LogAppenderDto, String>{
     private String applicationId;
 
-    public AppendersDataProvider(AbstractGrid<LogAppenderDto, ?> dataGrid,
+    public AppendersDataProvider(AbstractGrid<LogAppenderDto, String> dataGrid,
                                  HasErrorMessage hasErrorMessage,
                                  String applicationId) {
         super(dataGrid, hasErrorMessage, false);

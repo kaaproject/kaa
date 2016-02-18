@@ -386,8 +386,8 @@ public class AddSdkProfileViewImpl extends BaseDetailsViewImpl implements AddSdk
 
     @Override
     protected void updateSaveButton(boolean enabled, boolean invalid) {
-        saveButton.setText(Utils.constants.add());
-        saveButton.setEnabled(enabled);
+        getSaveButtonWidget().setText(Utils.constants.add());
+        getSaveButtonWidget().setEnabled(enabled);
     }
 
 }

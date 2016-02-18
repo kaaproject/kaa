@@ -26,11 +26,11 @@ import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class AefMapsDataProvider extends AbstractDataProvider<ApplicationEventFamilyMapDto>{
+public class AefMapsDataProvider extends AbstractDataProvider<ApplicationEventFamilyMapDto, String>{
 
     private String applicationId;
 
-    public AefMapsDataProvider(AbstractGrid<ApplicationEventFamilyMapDto,?> dataGrid,
+    public AefMapsDataProvider(AbstractGrid<ApplicationEventFamilyMapDto, String> dataGrid,
                                HasErrorMessage hasErrorMessage,
                                String applicationId) {
         super(dataGrid, hasErrorMessage, false);

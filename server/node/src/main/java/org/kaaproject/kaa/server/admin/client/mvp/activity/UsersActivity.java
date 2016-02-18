@@ -41,8 +41,8 @@ public class UsersActivity extends AbstractListActivity<UserDto, UsersPlace> {
     }
 
     @Override
-    protected AbstractDataProvider<UserDto> getDataProvider(
-            AbstractGrid<UserDto,?> dataGrid) {
+    protected AbstractDataProvider<UserDto, String> getDataProvider(
+            AbstractGrid<UserDto, String> dataGrid) {
         return new UsersDataProvider(dataGrid, listView);
     }
 

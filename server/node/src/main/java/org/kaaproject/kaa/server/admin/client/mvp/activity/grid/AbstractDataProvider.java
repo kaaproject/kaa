@@ -16,8 +16,11 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity.grid;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.ColumnFilterEvent;
@@ -31,22 +34,26 @@ import com.google.gwt.user.cellview.client.ColumnSortList;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
 
-public abstract class AbstractDataProvider<T> extends AsyncDataProvider<T> implements ColumnSortEvent.Handler, ColumnFilterEvent.Handler {
+public abstract class AbstractDataProvider<T,K> extends AsyncDataProvider<T> implements ColumnSortEvent.Handler, ColumnFilterEvent.Handler {
 
     protected List<T> data;
+    
+    private Map<K,T> dataMap = new HashMap<>();
 
     private boolean loaded = false;
 
     private LoadCallback callback;
 
-    private AbstractGrid<T,?> dataGrid;
+    private AbstractGrid<T,K> dataGrid;
     
-    public AbstractDataProvider(AbstractGrid<T,?> dataGrid, HasErrorMessage hasErrorMessage)
+    private DataFilter<T> dataFilter;
+    
+    public AbstractDataProvider(AbstractGrid<T,K> dataGrid, HasErrorMessage hasErrorMessage)
     {
         this(dataGrid, hasErrorMessage, true);
     }
 
-    public AbstractDataProvider(AbstractGrid<T,?> dataGrid, HasErrorMessage hasErrorMessage, boolean addDisplay)
+    public AbstractDataProvider(AbstractGrid<T,K> dataGrid, HasErrorMessage hasErrorMessage, boolean addDisplay)
     {
         this.dataGrid = dataGrid;
         callback = new LoadCallback(hasErrorMessage);
@@ -60,9 +67,19 @@ public abstract class AbstractDataProvider<T> extends AsyncDataProvider<T> imple
     protected void addDataDisplay() {
         addDataDisplay(dataGrid.getDataGrid());
     }
+    
+    @SuppressWarnings("unchecked")
+    private K getObjectId(T value) {
+        return (K) dataGrid.getDataGrid().getKeyProvider().getKey(value);
+    }
+    
+    public void setDataFilter(DataFilter<T> dataFilter) {
+        this.dataFilter = dataFilter;
+    }
 
     public void addRow(T row) {
         data.add(row);
+        dataMap.put(getObjectId(row), row);
         updateRowCount(data.size(), true);
         updateRowData(data.size()-1, data.subList(data.size()-1, data.size()));
     }
@@ -74,6 +91,10 @@ public abstract class AbstractDataProvider<T> extends AsyncDataProvider<T> imple
 
     public List<T> getData() {
         return data;
+    }
+    
+    public T getRowData(K key) {
+        return dataMap.get(key);
     }
 
     public void setLoaded(boolean loaded) {
@@ -105,11 +126,19 @@ public abstract class AbstractDataProvider<T> extends AsyncDataProvider<T> imple
     @Override
     public void onColumnFilter(ColumnFilterEvent event) {
         updateData();
-    }
-    
+    }    
 
-    private void updateData () {
+    public void updateData () {
         List<T> filteredData = dataGrid.filter(data);
+        if (dataFilter != null) {
+            List<T> newFilteredData = new ArrayList<>();
+            for (T value : filteredData) {
+                if (dataFilter.accept(value)) {
+                    newFilteredData.add(value);
+                }
+            }
+            filteredData = newFilteredData;
+        }
         updateRowCount(filteredData.size(), true);
         ColumnSortList sortList = dataGrid.getDataGrid().getColumnSortList();
         Column<?,?> column = (sortList == null || sortList.size() == 0) ? null
@@ -141,9 +170,14 @@ public abstract class AbstractDataProvider<T> extends AsyncDataProvider<T> imple
             if (data == null) {
                 data = Collections.<T>emptyList();
             }
+            dataMap.clear();
+            for (T row : data) {
+                dataMap.put(getObjectId(row), row);
+            }            
             updateData();
             loaded = true;
             hasErrorMessage.clearError();
         }
     }
+    
 }

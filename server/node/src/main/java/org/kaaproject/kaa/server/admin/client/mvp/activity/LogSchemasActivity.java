@@ -49,8 +49,8 @@ public class LogSchemasActivity extends AbstractListActivity<LogSchemaDto, LogSc
     }
 
     @Override
-    protected AbstractDataProvider<LogSchemaDto> getDataProvider(
-            AbstractGrid<LogSchemaDto,?> dataGrid) {
+    protected AbstractDataProvider<LogSchemaDto, String> getDataProvider(
+            AbstractGrid<LogSchemaDto, String> dataGrid) {
         return new LogSchemasDataProvider(dataGrid, listView, applicationId);
     }
 

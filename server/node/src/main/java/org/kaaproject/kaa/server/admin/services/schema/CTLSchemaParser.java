@@ -29,8 +29,8 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
+import org.kaaproject.avro.ui.shared.FqnVersion;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaInfoDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
 import org.kaaproject.kaa.server.admin.services.util.Utils;
@@ -45,8 +45,8 @@ import org.kaaproject.kaa.server.control.service.exception.ControlServiceExcepti
  *
  * @since v0.8.0
  *
- * @see #parse(String, CTLSchemaScopeDto, String)
- * @see #validate(CTLSchemaInfoDto)
+ * @see #parse(String, String)
+ * @see #validate(CTLSchemaDto)
  */
 public class CTLSchemaParser {
 
@@ -60,12 +60,10 @@ public class CTLSchemaParser {
         this.tenantId = tenantId;
     }
     
-    public CTLSchemaInfoDto parse(String body, CTLSchemaScopeDto scope, String applicationId) throws JsonParseException, JsonMappingException, IOException {
-        CTLSchemaInfoDto schema = new CTLSchemaInfoDto();
-
-        schema.setTenantId(tenantId);
-        schema.setApplicationId(applicationId);
-        schema.setScope(detectScope(scope, applicationId));
+    public CTLSchemaDto parse(String body, String applicationId) throws ControlServiceException, JsonParseException, JsonMappingException, IOException {
+        CTLSchemaDto schema = new CTLSchemaDto();
+        CTLSchemaMetaInfoDto metaInfo = new CTLSchemaMetaInfoDto();
+        String fqn = null;
         
         ObjectNode object = new ObjectMapper().readValue(body, ObjectNode.class);
 
@@ -78,17 +76,20 @@ public class CTLSchemaParser {
         } else if (!object.has("name") || !object.get("name").isTextual()) {
             throw new IllegalArgumentException("No name specified!");
         } else {
-            schema.setFqn(object.get("namespace").getTextValue() + "." + object.get("name").getTextValue());
+            fqn = object.get("namespace").getTextValue() + "." + object.get("name").getTextValue();
         }
+        metaInfo = new CTLSchemaMetaInfoDto(fqn, tenantId, applicationId);
+        schema.setMetaInfo(metaInfo);
 
         if (!object.has("version") || !object.get("version").isInt()) {
             object.put("version", 1);
         } 
         schema.setVersion(object.get("version").asInt());
 
-        Set<CTLSchemaMetaInfoDto> dependencies = new HashSet<>();
+        Set<CTLSchemaDto> dependencies = new HashSet<>();
+        List<FqnVersion> missingDependencies = new ArrayList<>();
         if (!object.has("dependencies")) {
-            schema.setDependencies(dependencies);
+            schema.setDependencySet(dependencies);
         } else if (!object.get("dependencies").isArray()) {
             throw new IllegalArgumentException("Illegal dependencies format!");
         } else {
@@ -97,64 +98,26 @@ public class CTLSchemaParser {
                         || !child.get("version").isInt()) {
                     throw new IllegalArgumentException("Illegal dependency format!");
                 } else {
-                    dependencies.add(new CTLSchemaMetaInfoDto(child.get("fqn").asText(), child.get("version").asInt()));
+                    String dependencyFqn = child.get("fqn").asText();
+                    int dependencyVersion = child.get("version").asInt();
+                    
+                    CTLSchemaDto dependency = controlService.getAnyCTLSchemaByFqnVersionTenantIdAndApplicationId(dependencyFqn, dependencyVersion, tenantId, applicationId);
+                    if (dependency != null) {
+                        dependencies.add(dependency);
+                    } else {
+                        missingDependencies.add(new FqnVersion(dependencyFqn, dependencyVersion));
+                    }
                 }
-                schema.setDependencies(dependencies);
             }
+            if (!missingDependencies.isEmpty()) {
+                String message = "The following dependencies are missing from the database: " + Arrays.toString(missingDependencies.toArray());
+                throw new IllegalArgumentException(message);
+            }
+            schema.setDependencySet(dependencies);
         }
         body = new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(object);
         schema.setBody(body);
         return schema;
-    }
-    
-    private CTLSchemaScopeDto detectScope(CTLSchemaScopeDto scope, String applicationId) {
-        if (scope != null) {
-            if (scope.getLevel() >= CTLSchemaScopeDto.APPLICATION.getLevel() && applicationId == null) {
-                throw new IllegalArgumentException("Missing application identifier for provided scope " + scope.name() + "!");
-            } else if (scope.getLevel() < CTLSchemaScopeDto.APPLICATION.getLevel() && applicationId != null) {
-                throw new IllegalArgumentException("Application identifier can't be specified for provided scope " + scope.name() + "!");
-            }
-            if (scope == CTLSchemaScopeDto.SYSTEM && tenantId != null) {
-                throw new IllegalArgumentException("You do not have permission to perform this operation!");
-            }
-            return scope;
-        } else {
-            if (tenantId != null && applicationId != null) {
-                return CTLSchemaScopeDto.APPLICATION;
-            } else if (tenantId != null && applicationId == null) {
-                return CTLSchemaScopeDto.TENANT;
-            } else if (tenantId == null && applicationId == null) {
-                return CTLSchemaScopeDto.SYSTEM;
-            } else {
-                /*
-                 * The Kaa administrator is trying to save an application CTL
-                 * schema.
-                 */
-                throw new IllegalArgumentException("You do not have permission to perform this operation!");
-            }
-        }
-    }
-
-    public Set<CTLSchemaDto> fetchDependencies(CTLSchemaInfoDto schema) throws ControlServiceException {
-        // Check if the schema dependencies are present in the database
-        List<CTLSchemaMetaInfoDto> missingDependencies = new ArrayList<>();
-        Set<CTLSchemaDto> dependencies = new HashSet<>();
-        if (schema.getDependencies() != null) {
-            for (CTLSchemaMetaInfoDto dependency : schema.getDependencies()) {
-                CTLSchemaDto schemaFound = controlService.getCTLSchemaByFqnVersionAndTenantId(dependency.getFqn(), dependency.getVersion(),
-                        schema.getTenantId());
-                if (schemaFound == null) {
-                    missingDependencies.add(dependency);
-                } else {
-                    dependencies.add(schemaFound);
-                }
-            }
-        }
-        if (!missingDependencies.isEmpty()) {
-            String message = "The following dependencies are missing from the database: " + Arrays.toString(missingDependencies.toArray());
-            throw new IllegalArgumentException(message);
-        }
-        return dependencies;
     }
 
     /**
@@ -170,17 +133,17 @@ public class CTLSchemaParser {
      *             - if the given CTL schema is invalid and thus cannot be
      *             parsed.
      */
-    public Schema validate(CTLSchemaInfoDto schema) throws KaaAdminServiceException {
-        if (schema.getDependencies() != null) {
-            for (CTLSchemaMetaInfoDto dependency : schema.getDependencies()) {
+    public Schema validate(CTLSchemaDto schema) throws KaaAdminServiceException {
+        if (schema.getDependencySet() != null) {
+            for (CTLSchemaDto dependency : schema.getDependencySet()) {
                 try {
-                    CTLSchemaDto dependencySchema = controlService.getCTLSchemaByFqnVersionAndTenantId(dependency.getFqn(),
-                            dependency.getVersion(), tenantId);
+                    CTLSchemaDto dependencySchema = controlService.getCTLSchemaByFqnVersionTenantIdAndApplicationId(dependency.getMetaInfo().getFqn(),
+                            dependency.getVersion(), dependency.getMetaInfo().getTenantId(), dependency.getMetaInfo().getApplicationId());
                     if (dependencySchema == null) {
-                        String message = "Unable to locate dependency \"" + dependency.getFqn() + "\" (version " + dependency.getVersion() + ")";
+                        String message = "Unable to locate dependency \"" + dependency.getMetaInfo().getFqn() + "\" (version " + dependency.getVersion() + ")";
                         throw new IllegalArgumentException(message);
                     }
-                    validate(dependencySchema.toCTLSchemaInfoDto());
+                    validate(dependencySchema);
                 } catch (Exception cause) {
                     throw Utils.handleException(cause);
                 }
@@ -194,7 +157,7 @@ public class CTLSchemaParser {
              */
             return parser.parse(schema.getBody());
         } catch (Exception cause) {
-            throw new IllegalArgumentException("Unable to parse CTL schema \"" + schema.getFqn() + "\" (version " + schema.getVersion() + "): " + cause.getMessage());
+            throw new IllegalArgumentException("Unable to parse CTL schema \"" + schema.getMetaInfo().getFqn() + "\" (version " + schema.getVersion() + "): " + cause.getMessage());
         }
     }
 }

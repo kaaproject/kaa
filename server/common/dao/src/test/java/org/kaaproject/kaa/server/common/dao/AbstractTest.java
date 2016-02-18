@@ -69,7 +69,6 @@ import org.kaaproject.kaa.common.dto.UpdateNotificationDto;
 import org.kaaproject.kaa.common.dto.UserDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
@@ -219,7 +218,7 @@ public class AbstractTest {
     @Autowired
     protected SdkProfileDao<SdkProfile> sdkProfileDao;
     @Autowired
-    protected CTLSchemaDao<CTLSchema> ctlSchemaDao;
+    protected CTLSchemaDao<CTLSchema> ctlSchemaDao;    
     @Autowired
     protected CTLSchemaMetaInfoDao<CTLSchemaMetaInfo> ctlSchemaMetaInfoDao;
     @Autowired
@@ -279,15 +278,23 @@ public class AbstractTest {
     protected ApplicationDto generateApplicationDto() {
         return generateApplicationDto(null);
     }
-
+    
     protected ApplicationDto generateApplicationDto(String tenantId) {
+        return generateApplicationDto(tenantId, null);
+    }
+
+    protected ApplicationDto generateApplicationDto(String tenantId, String appName) {
         ApplicationDto app = new ApplicationDto();
         if (isBlank(tenantId)) {
             app.setTenantId(generateTenantDto().getId());
         } else {
             app.setTenantId(tenantId);
         }
-        app.setName("Test app");
+        if (!isBlank(appName)) {
+            app.setName(appName);
+        } else {
+            app.setName("Test app");
+        }
         return applicationService.saveApp(app);
     }
 
@@ -741,21 +748,13 @@ public class AbstractTest {
     }
 
     protected CTLSchemaDto generateCTLSchemaDto(String tenantId) {
-        return generateCTLSchemaDto(DEFAULT_FQN, tenantId, 100, CTLSchemaScopeDto.TENANT);
+        return generateCTLSchemaDto(DEFAULT_FQN, tenantId, null, 100);
     }
 
-    protected CTLSchemaDto generateCTLSchemaDto(String fqn, String tenantId, int version, CTLSchemaScopeDto scopeDto) {
+    protected CTLSchemaDto generateCTLSchemaDto(String fqn, String tenantId, String applicationId, int version) {
         CTLSchemaDto ctlSchema = new CTLSchemaDto();
-        CTLSchemaMetaInfoDto metaInfoDto = new CTLSchemaMetaInfoDto(fqn, version);
-        if (scopeDto == null) {
-            if (isBlank(tenantId)) {
-                scopeDto = CTLSchemaScopeDto.SYSTEM;
-            } else {
-                scopeDto = CTLSchemaScopeDto.TENANT;
-            }
-        }
-        metaInfoDto.setScope(scopeDto);
-        ctlSchema.setMetaInfo(metaInfoDto);
+        ctlSchema.setMetaInfo(new CTLSchemaMetaInfoDto(fqn, tenantId, applicationId));
+        ctlSchema.setVersion(version);
         String name = fqn.substring(fqn.lastIndexOf(".") + 1);
         String namespace = fqn.substring(0, fqn.lastIndexOf("."));
         StringBuilder body = new StringBuilder("{\"type\": \"record\",");
@@ -764,12 +763,15 @@ public class AbstractTest {
         body = body.append("\"version\": ").append(version).append(",");
         body = body.append("\"dependencies\": [], \"fields\": []}");
         ctlSchema.setBody(body.toString());
-        ctlSchema.setTenantId(tenantId);
         return ctlSchema;
+    }
+    
+    protected String ctlRandomFqn() {
+        return DEFAULT_FQN + RANDOM.nextInt(100000);
     }
 
     protected ServerProfileSchemaDto generateServerProfileSchema(String appId, String tenantId) {
-        return generateServerProfileSchema(appId, tenantId, RANDOM.nextInt());
+        return generateServerProfileSchema(appId, tenantId, RANDOM.nextInt(100000));
     }
 
     protected ServerProfileSchemaDto generateServerProfileSchema(String appId, String tenantId, int version) {
@@ -781,7 +783,9 @@ public class AbstractTest {
         }
         schemaDto.setApplicationId(appId);
         schemaDto.setCreatedTime(System.currentTimeMillis());
-        schemaDto.setCtlSchemaId(ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN, tenantId, version, CTLSchemaScopeDto.SERVER_PROFILE_SCHEMA)).getId());
+        
+        CTLSchemaDto ctlSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(ctlRandomFqn(), tenantId, appId, version));
+        schemaDto.setCtlSchemaId(ctlSchema.getId());
         return serverProfileService.saveServerProfileSchema(schemaDto);
     }
 
