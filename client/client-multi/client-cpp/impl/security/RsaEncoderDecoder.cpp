@@ -58,7 +58,7 @@ RsaEncoderDecoder::RsaEncoderDecoder(const PublicKey& pubKey,
 EncodedSessionKey RsaEncoderDecoder::getEncodedSessionKey()
 {
     Botan::PK_Encryptor_EME enc(*remoteKey_, "EME-PKCS1-v1_5");
-    const auto &v = enc.encrypt(sessionKey_.bits_of(), rng_);
+    auto &&v = enc.encrypt(sessionKey_.bits_of(), rng_);
     return Botan::secure_vector<std::uint8_t>(v.begin(), v.end());
 }
 
@@ -84,7 +84,7 @@ std::string RsaEncoderDecoder::decodeData(const std::uint8_t *data, std::size_t 
 Signature RsaEncoderDecoder::signData(const std::uint8_t *data, std::size_t size)
 {
     Botan::PK_Signer signer(*privKey_, "EMSA3(SHA-1)");
-    const auto &sgn = signer.sign_message(data, size, rng_);
+    auto &&sgn = signer.sign_message(data, size, rng_);
     return Botan::secure_vector<std::uint8_t>(sgn.begin(), sgn.end());
 }
 
