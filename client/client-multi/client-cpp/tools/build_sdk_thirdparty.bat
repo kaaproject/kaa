@@ -70,24 +70,26 @@ goto :eof
 
  echo Building Botan...
 
- SET BOTAN_SRC=Botan-1.10.9
+ SET BOTAN_SRC=botan-1.11.28
 
  IF EXIST %BOTAN_SRC%\NUL (
    call :deleteDir %BOTAN_SRC%
  )
 
- 7z x -y -obotan_archive Botan-1.10.9.tgz 
- 7z x -y -o. botan_archive\Botan-1.10.9.tgz 
+ 7z x -y -obotan_archive botan-1.11.28.tar.gz
+ 7z x -y -o. botan_archive\botan-1.11.28.tar.gz
 
  cd %BOTAN_SRC%
 
  if %BUILD_TYPE%==debug (
-   python configure.py --cc=msvc --cpu=i386 --prefix=%BOTAN_ROOT% --enable-debug
+   python configure.py --cc=msvc --cpu=i386 --prefix=%BOTAN_ROOT% --with-debug-info --no-optimisations
  ) else (
    python configure.py --cc=msvc --cpu=i386 --prefix=%BOTAN_ROOT%
  ) 
 
  nmake install
+
+ move %BOTAN_ROOT%/include/botan-1.11/botan %BOTAN_ROOT%/include
 
  cd %BUILD_HOME%
 
