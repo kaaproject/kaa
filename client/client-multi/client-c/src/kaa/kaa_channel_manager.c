@@ -351,7 +351,7 @@ kaa_transport_channel_interface_t *kaa_channel_manager_get_transport_channel(kaa
         it = kaa_list_next(it);
     }
 
-    KAA_LOG_WARN(self->kaa_context->logger, KAA_ERR_NOT_FOUND,
+    KAA_LOG_DEBUG(self->kaa_context->logger, KAA_ERR_NOT_FOUND,
             "Failed to find transport channel for service %u", service_type);
 
     return NULL;
