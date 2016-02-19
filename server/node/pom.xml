@@ -1121,6 +1121,21 @@
                         <artifactId>gwt-maven-plugin</artifactId>
                         <version>${gwt.version}</version>
                         <executions>
+                    <execution>
+                            <id>generateAsync</id>
+                                <goals>
+                                    <goal>generateAsync</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>source-generation</id>
+                                <goals>
+                                    <goal>i18n</goal>
+                                    <goal>css</goal>
+                                </goals>
+                                <configuration>
+                                </configuration>
+                            </execution>
                             <execution>
                                 <phase>compile</phase>
                                 <goals>
