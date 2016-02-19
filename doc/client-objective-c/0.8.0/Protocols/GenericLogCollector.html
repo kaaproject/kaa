@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+
+	<title>GenericLogCollector Protocol Reference</title>
+
+	<link rel="stylesheet" href="../css/style.css">
+	<meta name="viewport" content="initial-scale=1, maximum-scale=1.4">
+	<meta name="generator" content="appledoc 2.2.1 (build 1334)">
+</head>
+<body class="appledoc">
+	<header>
+		<div class="container" class="hide-in-xcode">
+			
+			<h1 id="library-title">
+				<a href="../index.html">Kaa client Objective-C SDK </a>
+			</h1>
+
+			<p id="developer-home">
+				<a href="../index.html">CyberVision</a>
+			</p>
+			
+		</div>
+	</header>
+
+	<aside>
+		<div class="container">
+			<nav>
+				<ul id="header-buttons" role="toolbar">
+					<li><a href="../index.html">Index</a></li>
+<li><a href="../hierarchy.html">Hierarchy</a></li>
+
+					<li id="on-this-page" role="navigation">
+						<label>
+							On This Page
+
+							<div class="chevron">
+								<div class="chevy chevron-left"></div>
+								<div class="chevy chevron-right"></div>
+							</div>
+
+							<select id="jump-to">
+	<option value="top">Jump To&#133;</option>
+	
+	<option value="overview">Overview</option>
+	
+
+	
+	
+	<option value="tasks">Tasks</option>
+	
+	
+
+	
+	
+
+	
+
+	
+	<optgroup label="Instance Methods">
+		
+		<option value="//api/name/setLogDeliveryDelegate:">- setLogDeliveryDelegate:</option>
+		
+		<option value="//api/name/setStorage:">- setStorage:</option>
+		
+		<option value="//api/name/setStrategy:">- setStrategy:</option>
+		
+		<option value="//api/name/stop">- stop</option>
+		
+	</optgroup>
+	
+	
+</select>
+						</label>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</aside>
+
+	<article>
+		<div id="overview_contents" class="container">
+			<div id="content">
+				<main role="main">
+					<h1 class="title">GenericLogCollector Protocol Reference</h1>
+
+					
+					<div class="section section-specification"><table cellspacing="0"><tbody>
+						<tr>
+	<th>Declared in</th>
+	<td>GenericLogCollector.h</td>
+</tr>
+						</tbody></table></div>
+					
+
+                    
+					
+					<div class="section section-overview">
+						<a title="Overview" name="overview"></a>
+						<h2 class="subtitle subtitle-overview">Overview</h2>
+						<p>Root interface for a log collector.</p>
+
+<p>Adds new log record to a local storage.</p>
+
+<p>May be configured by setting user defined log record storage and log upload
+strategy. Each of them may be set independently of others.</p>
+
+<p>Reference implementation of each module is provided.</p>
+					</div>
+					
+					
+
+					
+					
+					<div class="section section-tasks">
+						<a title="Tasks" name="tasks"></a>
+						
+
+						
+						
+
+						<div class="task-list">
+							<div class="section-method">
+	<a name="//api/name/setStorage:" title="setStorage:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/setStorage:">&ndash;&nbsp;setStorage:</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Set user implementation of a log storage.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)setStorage:(id&lt;LogStorage&gt;)<em>storage</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>storage</code></th>
+						<td><p>User-defined log storage object</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Set user implementation of a log storage.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">GenericLogCollector.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/setStrategy:" title="setStrategy:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/setStrategy:">&ndash;&nbsp;setStrategy:</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Set user implementation of a log upload strategy.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)setStrategy:(id&lt;LogUploadStrategy&gt;)<em>strategy</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>strategy</code></th>
+						<td><p>User-defined log upload strategy object.</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Set user implementation of a log upload strategy.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">GenericLogCollector.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/setLogDeliveryDelegate:" title="setLogDeliveryDelegate:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/setLogDeliveryDelegate:">&ndash;&nbsp;setLogDeliveryDelegate:</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Set a delegate which receives a delivery status of each log bucket.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)setLogDeliveryDelegate:(id&lt;LogDeliveryDelegate&gt;)<em>delegate</em></code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Set a delegate which receives a delivery status of each log bucket.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">GenericLogCollector.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/stop" title="stop"></a>
+	<h3 class="method-title"><code><a href="#//api/name/stop">&ndash;&nbsp;stop</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Stops and/or cleanup resources.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)stop</code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Stops and/or cleanup resources.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">GenericLogCollector.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div>
+						</div>
+						
+					</div>
+					
+					
+
+                    
+                    
+          
+				</main>
+
+				<footer>
+					<div class="footer-copyright">
+						
+						<p class="copyright">Copyright &copy; 2016 CyberVision. All rights reserved. Updated: 2016-02-19</p>
+						
+						
+						<p class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.2.1 (build 1334)</a>.</p>
+						
+					</div>
+				</footer>
+			</div>
+		</div>
+	</article>
+
+	<script src="../js/script.js"></script>
+</body>
+</html>

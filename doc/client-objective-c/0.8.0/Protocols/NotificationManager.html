@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+
+	<title>NotificationManager Protocol Reference</title>
+
+	<link rel="stylesheet" href="../css/style.css">
+	<meta name="viewport" content="initial-scale=1, maximum-scale=1.4">
+	<meta name="generator" content="appledoc 2.2.1 (build 1334)">
+</head>
+<body class="appledoc">
+	<header>
+		<div class="container" class="hide-in-xcode">
+			
+			<h1 id="library-title">
+				<a href="../index.html">Kaa client Objective-C SDK </a>
+			</h1>
+
+			<p id="developer-home">
+				<a href="../index.html">CyberVision</a>
+			</p>
+			
+		</div>
+	</header>
+
+	<aside>
+		<div class="container">
+			<nav>
+				<ul id="header-buttons" role="toolbar">
+					<li><a href="../index.html">Index</a></li>
+<li><a href="../hierarchy.html">Hierarchy</a></li>
+
+					<li id="on-this-page" role="navigation">
+						<label>
+							On This Page
+
+							<div class="chevron">
+								<div class="chevy chevron-left"></div>
+								<div class="chevy chevron-right"></div>
+							</div>
+
+							<select id="jump-to">
+	<option value="top">Jump To&#133;</option>
+	
+	<option value="overview">Overview</option>
+	
+
+	
+	
+	<option value="tasks">Tasks</option>
+	
+	
+
+	
+	
+
+	
+
+	
+	<optgroup label="Instance Methods">
+		
+		<option value="//api/name/addNotificationDelegate:">- addNotificationDelegate:</option>
+		
+		<option value="//api/name/addNotificationDelegate:forTopicId:">- addNotificationDelegate:forTopicId:</option>
+		
+		<option value="//api/name/addTopicListDelegate:">- addTopicListDelegate:</option>
+		
+		<option value="//api/name/getTopics">- getTopics</option>
+		
+		<option value="//api/name/removeNotificationDelegate:">- removeNotificationDelegate:</option>
+		
+		<option value="//api/name/removeNotificationDelegate:forTopicId:">- removeNotificationDelegate:forTopicId:</option>
+		
+		<option value="//api/name/removeTopicListDelegate:">- removeTopicListDelegate:</option>
+		
+		<option value="//api/name/subscribeToTopicWithId:forceSync:">- subscribeToTopicWithId:forceSync:</option>
+		
+		<option value="//api/name/subscribeToTopicsWithIDs:forceSync:">- subscribeToTopicsWithIDs:forceSync:</option>
+		
+		<option value="//api/name/sync">- sync</option>
+		
+		<option value="//api/name/unsubscribeFromTopicWithId:forceSync:">- unsubscribeFromTopicWithId:forceSync:</option>
+		
+		<option value="//api/name/unsubscribeFromTopicsWithIDs:forceSync:">- unsubscribeFromTopicsWithIDs:forceSync:</option>
+		
+	</optgroup>
+	
+	
+</select>
+						</label>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</aside>
+
+	<article>
+		<div id="overview_contents" class="container">
+			<div id="content">
+				<main role="main">
+					<h1 class="title">NotificationManager Protocol Reference</h1>
+
+					
+					<div class="section section-specification"><table cellspacing="0"><tbody>
+						<tr>
+	<th>Declared in</th>
+	<td>NotificationManager.h</td>
+</tr>
+						</tbody></table></div>
+					
+
+                    
+					
+					<div class="section section-overview">
+						<a title="Overview" name="overview"></a>
+						<h2 class="subtitle subtitle-overview">Overview</h2>
+						<p>Interface for the notification delivery system.</p>
+
+<p>Responsible for processing received topic/notification updates, subscribing
+for optional topic updates and unsubscribing from them.</p>
+					</div>
+					
+					
+
+					
+					
+					<div class="section section-tasks">
+						<a title="Tasks" name="tasks"></a>
+						
+
+						
+						
+
+						<div class="task-list">
+							<div class="section-method">
+	<a name="//api/name/addTopicListDelegate:" title="addTopicListDelegate:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/addTopicListDelegate:">&ndash;&nbsp;addTopicListDelegate:</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Add delegate for notification topics' list updates.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)addTopicListDelegate:(id&lt;NotificationTopicListDelegate&gt;)<em>delegate</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>delegate</code></th>
+						<td><p>The delegate to receive updates.</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Add delegate for notification topics' list updates.</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection see-also-section">
+				<h4 class="method-subtitle">See Also</h4>
+				<ul>
+					
+					<li><code><p><a href="../Protocols/NotificationTopicListDelegate.html">NotificationTopicListDelegate</a></p></code></li>
+					
+				</ul>
+			</div>
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">NotificationManager.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/removeTopicListDelegate:" title="removeTopicListDelegate:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/removeTopicListDelegate:">&ndash;&nbsp;removeTopicListDelegate:</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Remove delegate of notification topics' list updates.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)removeTopicListDelegate:(id&lt;NotificationTopicListDelegate&gt;)<em>delegate</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>delegate</code></th>
+						<td><p>The delegate which no longer needs updates.</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Remove delegate of notification topics' list updates.</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection see-also-section">
+				<h4 class="method-subtitle">See Also</h4>
+				<ul>
+					
+					<li><code><p><a href="../Protocols/NotificationTopicListDelegate.html">NotificationTopicListDelegate</a></p></code></li>
+					
+				</ul>
+			</div>
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">NotificationManager.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/getTopics" title="getTopics"></a>
+	<h3 class="method-title"><code><a href="#//api/name/getTopics">&ndash;&nbsp;getTopics</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Retrieve a list of available notification topics.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (NSArray *)getTopics</code></div>
+
+		    
+			
+
+			
+			<div class="method-subsection return">
+				<h4 class="method-subtitle parameter-title">Return Value</h4>
+				<p>Array of available topics.</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Retrieve a list of available notification topics.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">NotificationManager.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/addNotificationDelegate:" title="addNotificationDelegate:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/addNotificationDelegate:">&ndash;&nbsp;addNotificationDelegate:</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Add delegate to receive all notifications (both for mandatory and
+optional topics).</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)addNotificationDelegate:(id&lt;NotificationDelegate&gt;)<em>delegate</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>delegate</code></th>
+						<td><p>Delegate to receive notifications</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Add delegate to receive all notifications (both for mandatory and
+optional topics).</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">NotificationManager.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/addNotificationDelegate:forTopicId:" title="addNotificationDelegate:forTopicId:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/addNotificationDelegate:forTopicId:">&ndash;&nbsp;addNotificationDelegate:forTopicId:</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Add listener to receive notifications relating to the specified topic.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)addNotificationDelegate:(id&lt;NotificationDelegate&gt;)<em>delegate</em> forTopicId:(int64_t)<em>topicId</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>delegate</code></th>
+						<td><p>Delegate to receive notifications.</p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>topicId</code></th>
+						<td><p>Id of topic (both mandatory and optional).</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Add listener to receive notifications relating to the specified topic.</p>
+
+<p>Listener(s) for optional topics may be added/removed irrespective to
+whether subscription existed or not.</p>
+			</div>
+			
+
+			
+			<div class="method-subsection arguments-section exceptions">
+				<h4 class="method-subtitle exception-title">Exceptions</h4>
+				<table class="argument-def exception-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>UnavailableTopicException</code></th>
+						<td><p>Unknown topic id is provided.</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">NotificationManager.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/removeNotificationDelegate:" title="removeNotificationDelegate:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/removeNotificationDelegate:">&ndash;&nbsp;removeNotificationDelegate:</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Remove listener receiving all notifications (both for mandatory and optional topics).</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)removeNotificationDelegate:(id&lt;NotificationDelegate&gt;)<em>delegate</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>delegate</code></th>
+						<td><p>Delegate to receive notifications</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Remove listener receiving all notifications (both for mandatory and optional topics).</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">NotificationManager.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/removeNotificationDelegate:forTopicId:" title="removeNotificationDelegate:forTopicId:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/removeNotificationDelegate:forTopicId:">&ndash;&nbsp;removeNotificationDelegate:forTopicId:</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Remove delegate receiving notifications for the specified topic.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)removeNotificationDelegate:(id&lt;NotificationDelegate&gt;)<em>delegate</em> forTopicId:(int64_t)<em>topicId</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>delegate</code></th>
+						<td><p>Delegate to receive notifications.</p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>topicId</code></th>
+						<td><p>Id of topic (both mandatory and optional).</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Remove delegate receiving notifications for the specified topic.</p>
+
+<p>Delegate(s) for optional topics may be added/removed irrespective to
+whether subscription existed or not.</p>
+			</div>
+			
+
+			
+			<div class="method-subsection arguments-section exceptions">
+				<h4 class="method-subtitle exception-title">Exceptions</h4>
+				<table class="argument-def exception-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>UnavailableTopicException</code></th>
+						<td><p>Unknown topic id is provided.</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">NotificationManager.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/subscribeToTopicWithId:forceSync:" title="subscribeToTopicWithId:forceSync:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/subscribeToTopicWithId:forceSync:">&ndash;&nbsp;subscribeToTopicWithId:forceSync:</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Subscribe to notifications relating to the specified optional topic.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)subscribeToTopicWithId:(int64_t)<em>topicId</em> forceSync:(BOOL)<em>forceSync</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>topicId</code></th>
+						<td><p>Id of a optional topic.</p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>forceSync</code></th>
+						<td><p>Define whether current subscription update should be accepted immediately</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Subscribe to notifications relating to the specified optional topic.</p>
+			</div>
+			
+
+			
+			<div class="method-subsection arguments-section exceptions">
+				<h4 class="method-subtitle exception-title">Exceptions</h4>
+				<table class="argument-def exception-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>UnavailableTopicException</code></th>
+						<td><p>Unknown topic id is provided or topic isn&rsquo;t optional.</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">NotificationManager.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/subscribeToTopicsWithIDs:forceSync:" title="subscribeToTopicsWithIDs:forceSync:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/subscribeToTopicsWithIDs:forceSync:">&ndash;&nbsp;subscribeToTopicsWithIDs:forceSync:</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Subscribe to notifications relating to the specified list of optional topics.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)subscribeToTopicsWithIDs:(NSArray *)<em>topicIds</em> forceSync:(BOOL)<em>forceSync</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>topicIds</code></th>
+						<td><p>Array of optional topic ids.</p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>forceSync</code></th>
+						<td><p>Define whether current subscription update should be accepted immediately.</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Subscribe to notifications relating to the specified list of optional topics.</p>
+			</div>
+			
+
+			
+			<div class="method-subsection arguments-section exceptions">
+				<h4 class="method-subtitle exception-title">Exceptions</h4>
+				<table class="argument-def exception-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>UnavailableTopicException</code></th>
+						<td><p>Unknown topic id is provided or topic isn&rsquo;t optional.</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">NotificationManager.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/unsubscribeFromTopicWithId:forceSync:" title="unsubscribeFromTopicWithId:forceSync:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/unsubscribeFromTopicWithId:forceSync:">&ndash;&nbsp;unsubscribeFromTopicWithId:forceSync:</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Unsubscribe from notifications relating to the specified optional topic.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)unsubscribeFromTopicWithId:(int64_t)<em>topicId</em> forceSync:(BOOL)<em>forceSync</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>topicId</code></th>
+						<td><p>Id of a optional topic.</p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>forceSync</code></th>
+						<td><p>Define whether current subscription update should be accepted immediately.</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Unsubscribe from notifications relating to the specified optional topic.</p>
+
+<p>All previously added listeners will be removed automatically.</p>
+			</div>
+			
+
+			
+			<div class="method-subsection arguments-section exceptions">
+				<h4 class="method-subtitle exception-title">Exceptions</h4>
+				<table class="argument-def exception-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>UnavailableTopicException</code></th>
+						<td><p>Unknown topic id is provided or topic isn&rsquo;t optional.</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">NotificationManager.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/unsubscribeFromTopicsWithIDs:forceSync:" title="unsubscribeFromTopicsWithIDs:forceSync:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/unsubscribeFromTopicsWithIDs:forceSync:">&ndash;&nbsp;unsubscribeFromTopicsWithIDs:forceSync:</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Unsubscribe from notifications relating to the specified array of optional topics.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)unsubscribeFromTopicsWithIDs:(NSArray *)<em>topicIds</em> forceSync:(BOOL)<em>forceSync</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>topicIds</code></th>
+						<td><p>Array of optional topic ids. &lt; NSString ></p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>forceSync</code></th>
+						<td><p>Define whether current subscription update should be accepted immediately.</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Unsubscribe from notifications relating to the specified array of optional topics.</p>
+
+<p>All previously added listeners will be removed automatically.</p>
+			</div>
+			
+
+			
+			<div class="method-subsection arguments-section exceptions">
+				<h4 class="method-subtitle exception-title">Exceptions</h4>
+				<table class="argument-def exception-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>UnavailableTopicException</code></th>
+						<td><p>Unknown topic id is provided or topic isn&rsquo;t optional.</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">NotificationManager.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/sync" title="sync"></a>
+	<h3 class="method-title"><code><a href="#//api/name/sync">&ndash;&nbsp;sync</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Accept optional subscription changes.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)sync</code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Accept optional subscription changes.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">NotificationManager.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div>
+						</div>
+						
+					</div>
+					
+					
+
+                    
+                    
+          
+				</main>
+
+				<footer>
+					<div class="footer-copyright">
+						
+						<p class="copyright">Copyright &copy; 2016 CyberVision. All rights reserved. Updated: 2016-02-19</p>
+						
+						
+						<p class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.2.1 (build 1334)</a>.</p>
+						
+					</div>
+				</footer>
+			</div>
+		</div>
+	</article>
+
+	<script src="../js/script.js"></script>
+</body>
+</html>

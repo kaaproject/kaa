@@ -1,0 +1,2596 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+
+	<title>GenericKaaClient Protocol Reference</title>
+
+	<link rel="stylesheet" href="../css/style.css">
+	<meta name="viewport" content="initial-scale=1, maximum-scale=1.4">
+	<meta name="generator" content="appledoc 2.2.1 (build 1334)">
+</head>
+<body class="appledoc">
+	<header>
+		<div class="container" class="hide-in-xcode">
+			
+			<h1 id="library-title">
+				<a href="../index.html">Kaa client Objective-C SDK </a>
+			</h1>
+
+			<p id="developer-home">
+				<a href="../index.html">CyberVision</a>
+			</p>
+			
+		</div>
+	</header>
+
+	<aside>
+		<div class="container">
+			<nav>
+				<ul id="header-buttons" role="toolbar">
+					<li><a href="../index.html">Index</a></li>
+<li><a href="../hierarchy.html">Hierarchy</a></li>
+
+					<li id="on-this-page" role="navigation">
+						<label>
+							On This Page
+
+							<div class="chevron">
+								<div class="chevy chevron-left"></div>
+								<div class="chevy chevron-right"></div>
+							</div>
+
+							<select id="jump-to">
+	<option value="top">Jump To&#133;</option>
+	
+	<option value="overview">Overview</option>
+	
+
+	
+	
+	<option value="tasks">Tasks</option>
+	
+	
+
+	
+	
+
+	
+
+	
+	<optgroup label="Instance Methods">
+		
+		<option value="//api/name/addConfigurationDelegate:">- addConfigurationDelegate:</option>
+		
+		<option value="//api/name/addNotificationDelegate:">- addNotificationDelegate:</option>
+		
+		<option value="//api/name/addNotificationDelegate:forTopicId:">- addNotificationDelegate:forTopicId:</option>
+		
+		<option value="//api/name/addTopicListDelegate:">- addTopicListDelegate:</option>
+		
+		<option value="//api/name/attachEndpointWithAccessToken:delegate:">- attachEndpointWithAccessToken:delegate:</option>
+		
+		<option value="//api/name/attachUserWithId:accessToken:delegate:">- attachUserWithId:accessToken:delegate:</option>
+		
+		<option value="//api/name/attachUserWithVerifierToken:userId:accessToken:delegate:">- attachUserWithVerifierToken:userId:accessToken:delegate:</option>
+		
+		<option value="//api/name/detachEndpointWithKeyHash:delegate:">- detachEndpointWithKeyHash:delegate:</option>
+		
+		<option value="//api/name/findListenersForEventFQNs:delegate:">- findListenersForEventFQNs:delegate:</option>
+		
+		<option value="//api/name/getChannelManager">- getChannelManager</option>
+		
+		<option value="//api/name/getClientPrivateKey">- getClientPrivateKey</option>
+		
+		<option value="//api/name/getClientPublicKey">- getClientPublicKey</option>
+		
+		<option value="//api/name/getEndpointAccessToken">- getEndpointAccessToken</option>
+		
+		<option value="//api/name/getEndpointKeyHash">- getEndpointKeyHash</option>
+		
+		<option value="//api/name/getEventFamilyFactory">- getEventFamilyFactory</option>
+		
+		<option value="//api/name/getTopics">- getTopics</option>
+		
+		<option value="//api/name/isAttachedToUser">- isAttachedToUser</option>
+		
+		<option value="//api/name/pause">- pause</option>
+		
+		<option value="//api/name/refreshEndpointAccessToken">- refreshEndpointAccessToken</option>
+		
+		<option value="//api/name/removeConfigurationDelegate:">- removeConfigurationDelegate:</option>
+		
+		<option value="//api/name/removeNotificationDelegate:">- removeNotificationDelegate:</option>
+		
+		<option value="//api/name/removeNotificationDelegate:forTopicId:">- removeNotificationDelegate:forTopicId:</option>
+		
+		<option value="//api/name/removeTopicListDelegate:">- removeTopicListDelegate:</option>
+		
+		<option value="//api/name/resume">- resume</option>
+		
+		<option value="//api/name/setAttachDelegate:">- setAttachDelegate:</option>
+		
+		<option value="//api/name/setConfigurationStorage:">- setConfigurationStorage:</option>
+		
+		<option value="//api/name/setDetachDelegate:">- setDetachDelegate:</option>
+		
+		<option value="//api/name/setEndpointAccessToken:">- setEndpointAccessToken:</option>
+		
+		<option value="//api/name/setLogDeliveryDelegate:">- setLogDeliveryDelegate:</option>
+		
+		<option value="//api/name/setLogStorage:">- setLogStorage:</option>
+		
+		<option value="//api/name/setLogUploadStrategy:">- setLogUploadStrategy:</option>
+		
+		<option value="//api/name/setProfileContainer:">- setProfileContainer:</option>
+		
+		<option value="//api/name/start">- start</option>
+		
+		<option value="//api/name/stop">- stop</option>
+		
+		<option value="//api/name/subscribeToTopicWithId:">- subscribeToTopicWithId:</option>
+		
+		<option value="//api/name/subscribeToTopicWithId:forceSync:">- subscribeToTopicWithId:forceSync:</option>
+		
+		<option value="//api/name/subscribeToTopicsWithIDs:">- subscribeToTopicsWithIDs:</option>
+		
+		<option value="//api/name/subscribeToTopicsWithIDs:forceSync:">- subscribeToTopicsWithIDs:forceSync:</option>
+		
+		<option value="//api/name/syncTopicsList">- syncTopicsList</option>
+		
+		<option value="//api/name/unsubscribeFromTopicWithId:">- unsubscribeFromTopicWithId:</option>
+		
+		<option value="//api/name/unsubscribeFromTopicWithId:forceSync:">- unsubscribeFromTopicWithId:forceSync:</option>
+		
+		<option value="//api/name/unsubscribeFromTopicsWithIDs:">- unsubscribeFromTopicsWithIDs:</option>
+		
+		<option value="//api/name/unsubscribeFromTopicsWithIDs:forceSync:">- unsubscribeFromTopicsWithIDs:forceSync:</option>
+		
+		<option value="//api/name/updateProfile">- updateProfile</option>
+		
+	</optgroup>
+	
+	
+</select>
+						</label>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</aside>
+
+	<article>
+		<div id="overview_contents" class="container">
+			<div id="content">
+				<main role="main">
+					<h1 class="title">GenericKaaClient Protocol Reference</h1>
+
+					
+					<div class="section section-specification"><table cellspacing="0"><tbody>
+						<tr>
+	<th>Conforms to</th>
+	<td>NSObject</td>
+</tr><tr>
+	<th>Declared in</th>
+	<td>GenericKaaClient.h</td>
+</tr>
+						</tbody></table></div>
+					
+
+                    
+					
+					<div class="section section-overview">
+						<a title="Overview" name="overview"></a>
+						<h2 class="subtitle subtitle-overview">Overview</h2>
+						<p>Root interface for the Kaa client.<br>
+This interface contains methods that are predefined and does not contain any auto-generated code.</p>
+					</div>
+					
+					
+
+					
+					
+					<div class="section section-tasks">
+						<a title="Tasks" name="tasks"></a>
+						
+
+						
+						
+
+						<div class="task-list">
+							<div class="section-method">
+	<a name="//api/name/start" title="start"></a>
+	<h3 class="method-title"><code><a href="#//api/name/start">&ndash;&nbsp;start</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Starts Kaa&rsquo;s workflow.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)start</code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Starts Kaa&rsquo;s workflow.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">GenericKaaClient.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/stop" title="stop"></a>
+	<h3 class="method-title"><code><a href="#//api/name/stop">&ndash;&nbsp;stop</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Stops Kaa&rsquo;s workflow.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)stop</code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Stops Kaa&rsquo;s workflow.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">GenericKaaClient.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/pause" title="pause"></a>
+	<h3 class="method-title"><code><a href="#//api/name/pause">&ndash;&nbsp;pause</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Pauses Kaa&rsquo;s workflow.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)pause</code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Pauses Kaa&rsquo;s workflow.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">GenericKaaClient.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/resume" title="resume"></a>
+	<h3 class="method-title"><code><a href="#//api/name/resume">&ndash;&nbsp;resume</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Resumes Kaa&rsquo;s workflow.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)resume</code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Resumes Kaa&rsquo;s workflow.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">GenericKaaClient.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/setProfileContainer:" title="setProfileContainer:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/setProfileContainer:">&ndash;&nbsp;setProfileContainer:</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Sets profile container implemented by the user.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)setProfileContainer:(id&lt;ProfileContainer&gt;)<em>container</em></code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Sets profile container implemented by the user.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">GenericKaaClient.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/updateProfile" title="updateProfile"></a>
+	<h3 class="method-title"><code><a href="#//api/name/updateProfile">&ndash;&nbsp;updateProfile</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Sync of updated profile with server</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)updateProfile</code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Sync of updated profile with server</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">GenericKaaClient.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/setConfigurationStorage:" title="setConfigurationStorage:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/setConfigurationStorage:">&ndash;&nbsp;setConfigurationStorage:</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Sets the configuration storage that will be used to persist configuration.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)setConfigurationStorage:(id&lt;ConfigurationStorage&gt;)<em>storage</em></code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Sets the configuration storage that will be used to persist configuration.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">GenericKaaClient.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/addConfigurationDelegate:" title="addConfigurationDelegate:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/addConfigurationDelegate:">&ndash;&nbsp;addConfigurationDelegate:</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Register configuration update delegate</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)addConfigurationDelegate:(id&lt;ConfigurationDelegate&gt;)<em>delegate</em></code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Register configuration update delegate</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">GenericKaaClient.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/removeConfigurationDelegate:" title="removeConfigurationDelegate:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/removeConfigurationDelegate:">&ndash;&nbsp;removeConfigurationDelegate:</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Removes configuration update delegate</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)removeConfigurationDelegate:(id&lt;ConfigurationDelegate&gt;)<em>delegate</em></code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Removes configuration update delegate</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">GenericKaaClient.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/addTopicListDelegate:" title="addTopicListDelegate:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/addTopicListDelegate:">&ndash;&nbsp;addTopicListDelegate:</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Add delegate for notification topics' list updates.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)addTopicListDelegate:(id&lt;NotificationTopicListDelegate&gt;)<em>delegate</em></code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Add delegate for notification topics' list updates.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">GenericKaaClient.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/removeTopicListDelegate:" title="removeTopicListDelegate:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/removeTopicListDelegate:">&ndash;&nbsp;removeTopicListDelegate:</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Remove delegate of notification topics' list updates.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)removeTopicListDelegate:(id&lt;NotificationTopicListDelegate&gt;)<em>delegate</em></code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Remove delegate of notification topics' list updates.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">GenericKaaClient.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/getTopics" title="getTopics"></a>
+	<h3 class="method-title"><code><a href="#//api/name/getTopics">&ndash;&nbsp;getTopics</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Retrieve an array of available notification topics.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (NSArray *)getTopics</code></div>
+
+		    
+			
+
+			
+			<div class="method-subsection return">
+				<h4 class="method-subtitle parameter-title">Return Value</h4>
+				<p>Array of available topics <Topic></p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Retrieve an array of available notification topics.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">GenericKaaClient.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/addNotificationDelegate:" title="addNotificationDelegate:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/addNotificationDelegate:">&ndash;&nbsp;addNotificationDelegate:</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Add delegate to receive all notifications (both for mandatory and optional topics).</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)addNotificationDelegate:(id&lt;NotificationDelegate&gt;)<em>delegate</em></code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Add delegate to receive all notifications (both for mandatory and optional topics).</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">GenericKaaClient.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/addNotificationDelegate:forTopicId:" title="addNotificationDelegate:forTopicId:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/addNotificationDelegate:forTopicId:">&ndash;&nbsp;addNotificationDelegate:forTopicId:</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Add delegate to receive notifications relating to the specified topic.<br>
+Delegate(s) for optional topics may be added/removed irrespective to
+whether subscription existed or not.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)addNotificationDelegate:(id&lt;NotificationDelegate&gt;)<em>delegate</em> forTopicId:(int64_t)<em>topicId</em></code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Add delegate to receive notifications relating to the specified topic.<br>
+Delegate(s) for optional topics may be added/removed irrespective to
+whether subscription existed or not.</p>
+			</div>
+			
+
+			
+			<div class="method-subsection arguments-section exceptions">
+				<h4 class="method-subtitle exception-title">Exceptions</h4>
+				<table class="argument-def exception-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>UnavailableTopicException</code></th>
+						<td><p>Unknown topic id is provided.</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">GenericKaaClient.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/removeNotificationDelegate:" title="removeNotificationDelegate:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/removeNotificationDelegate:">&ndash;&nbsp;removeNotificationDelegate:</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Remove delegate receiving all notifications (both for mandatory and optional topics).</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)removeNotificationDelegate:(id&lt;NotificationDelegate&gt;)<em>delegate</em></code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Remove delegate receiving all notifications (both for mandatory and optional topics).</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">GenericKaaClient.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/removeNotificationDelegate:forTopicId:" title="removeNotificationDelegate:forTopicId:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/removeNotificationDelegate:forTopicId:">&ndash;&nbsp;removeNotificationDelegate:forTopicId:</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Remove delegate receiving notifications for the specified topic.<br>
+Delegate(s) for optional topics may be added/removed irrespective to
+whether subscription existed or not.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)removeNotificationDelegate:(id&lt;NotificationDelegate&gt;)<em>delegate</em> forTopicId:(int64_t)<em>topicId</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>topicId</code></th>
+						<td><p>ID of topic (both mandatory and optional).</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Remove delegate receiving notifications for the specified topic.<br>
+Delegate(s) for optional topics may be added/removed irrespective to
+whether subscription existed or not.</p>
+			</div>
+			
+
+			
+			<div class="method-subsection arguments-section exceptions">
+				<h4 class="method-subtitle exception-title">Exceptions</h4>
+				<table class="argument-def exception-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>UnavailableTopicException</code></th>
+						<td><p>Unknown topic id is provided.</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">GenericKaaClient.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/subscribeToTopicWithId:" title="subscribeToTopicWithId:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/subscribeToTopicWithId:">&ndash;&nbsp;subscribeToTopicWithId:</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Subscribe to notifications relating to the specified optional topic.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)subscribeToTopicWithId:(int64_t)<em>topicId</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>topicId</code></th>
+						<td><p>ID of a optional topic.</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Subscribe to notifications relating to the specified optional topic.</p>
+			</div>
+			
+
+			
+			<div class="method-subsection arguments-section exceptions">
+				<h4 class="method-subtitle exception-title">Exceptions</h4>
+				<table class="argument-def exception-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>UnavailableTopicException</code></th>
+						<td><p>Unknown topic id is provided or topic isn&rsquo;t optional.</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">GenericKaaClient.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/subscribeToTopicWithId:forceSync:" title="subscribeToTopicWithId:forceSync:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/subscribeToTopicWithId:forceSync:">&ndash;&nbsp;subscribeToTopicWithId:forceSync:</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Subscribe to notifications relating to the specified optional topic.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)subscribeToTopicWithId:(int64_t)<em>topicId</em> forceSync:(BOOL)<em>forceSync</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>topicId</code></th>
+						<td><p>ID of an optional topic.</p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>forceSync</code></th>
+						<td><p>Define whether current subscription update should be accepted immediately.</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Subscribe to notifications relating to the specified optional topic.</p>
+			</div>
+			
+
+			
+			<div class="method-subsection arguments-section exceptions">
+				<h4 class="method-subtitle exception-title">Exceptions</h4>
+				<table class="argument-def exception-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>UnavailableTopicException</code></th>
+						<td><p>Unknown topic id is provided or topic isn&rsquo;t optional.</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">GenericKaaClient.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/subscribeToTopicsWithIDs:" title="subscribeToTopicsWithIDs:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/subscribeToTopicsWithIDs:">&ndash;&nbsp;subscribeToTopicsWithIDs:</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Subscribe to notifications relating to the specified array of optional topics.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)subscribeToTopicsWithIDs:(NSArray *)<em>topicIds</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>topicIds</code></th>
+						<td><p>Array of optional topic IDs. &lt;int64_t></p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Subscribe to notifications relating to the specified array of optional topics.</p>
+			</div>
+			
+
+			
+			<div class="method-subsection arguments-section exceptions">
+				<h4 class="method-subtitle exception-title">Exceptions</h4>
+				<table class="argument-def exception-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>UnavailableTopicException</code></th>
+						<td><p>Unknown topic id is provided or topic isn&rsquo;t optional.</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">GenericKaaClient.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/subscribeToTopicsWithIDs:forceSync:" title="subscribeToTopicsWithIDs:forceSync:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/subscribeToTopicsWithIDs:forceSync:">&ndash;&nbsp;subscribeToTopicsWithIDs:forceSync:</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Subscribe to notifications relating to the specified array of optional topics.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)subscribeToTopicsWithIDs:(NSArray *)<em>topicIds</em> forceSync:(BOOL)<em>forceSync</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>topicIds</code></th>
+						<td><p>Array of optional topic IDs. &lt;int64_t></p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>forceSync</code></th>
+						<td><p>Define whether current subscription update should be accepted immediately.</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Subscribe to notifications relating to the specified array of optional topics.</p>
+			</div>
+			
+
+			
+			<div class="method-subsection arguments-section exceptions">
+				<h4 class="method-subtitle exception-title">Exceptions</h4>
+				<table class="argument-def exception-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>UnavailableTopicException</code></th>
+						<td><p>Unknown topic id is provided or topic isn&rsquo;t optional.</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">GenericKaaClient.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/unsubscribeFromTopicWithId:" title="unsubscribeFromTopicWithId:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/unsubscribeFromTopicWithId:">&ndash;&nbsp;unsubscribeFromTopicWithId:</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Unsubscribe from notifications relating to the specified optional topic.
+All previously added delegates will be removed automatically.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)unsubscribeFromTopicWithId:(int64_t)<em>topicId</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>topicId</code></th>
+						<td><p>ID of optional topic.</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Unsubscribe from notifications relating to the specified optional topic.
+All previously added delegates will be removed automatically.</p>
+			</div>
+			
+
+			
+			<div class="method-subsection arguments-section exceptions">
+				<h4 class="method-subtitle exception-title">Exceptions</h4>
+				<table class="argument-def exception-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>UnavailableTopicException</code></th>
+						<td><p>Unknown topic id is provided or topic isn&rsquo;t optional.</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">GenericKaaClient.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/unsubscribeFromTopicWithId:forceSync:" title="unsubscribeFromTopicWithId:forceSync:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/unsubscribeFromTopicWithId:forceSync:">&ndash;&nbsp;unsubscribeFromTopicWithId:forceSync:</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Unsubscribe from notifications relating to the specified optional topic.
+All previously added delegates will be removed automatically.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)unsubscribeFromTopicWithId:(int64_t)<em>topicId</em> forceSync:(BOOL)<em>forceSync</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>topicId</code></th>
+						<td><p>ID of optional topic.</p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>forceSync</code></th>
+						<td><p>Define whether current subscription update should be accepted immediately.</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Unsubscribe from notifications relating to the specified optional topic.
+All previously added delegates will be removed automatically.</p>
+			</div>
+			
+
+			
+			<div class="method-subsection arguments-section exceptions">
+				<h4 class="method-subtitle exception-title">Exceptions</h4>
+				<table class="argument-def exception-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>UnavailableTopicException</code></th>
+						<td><p>Unknown topic id is provided or topic isn&rsquo;t optional.</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">GenericKaaClient.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/unsubscribeFromTopicsWithIDs:" title="unsubscribeFromTopicsWithIDs:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/unsubscribeFromTopicsWithIDs:">&ndash;&nbsp;unsubscribeFromTopicsWithIDs:</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Unsubscribe from notifications relating to the specified array of optional topics.
+All previously added delegates will be removed automatically.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)unsubscribeFromTopicsWithIDs:(NSArray *)<em>topicIds</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>topicIds</code></th>
+						<td><p>Array of optional topic IDs. &lt;int64_t></p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Unsubscribe from notifications relating to the specified array of optional topics.
+All previously added delegates will be removed automatically.</p>
+			</div>
+			
+
+			
+			<div class="method-subsection arguments-section exceptions">
+				<h4 class="method-subtitle exception-title">Exceptions</h4>
+				<table class="argument-def exception-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>UnavailableTopicException</code></th>
+						<td><p>Unknown topic id is provided or topic isn&rsquo;t optional.</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">GenericKaaClient.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/unsubscribeFromTopicsWithIDs:forceSync:" title="unsubscribeFromTopicsWithIDs:forceSync:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/unsubscribeFromTopicsWithIDs:forceSync:">&ndash;&nbsp;unsubscribeFromTopicsWithIDs:forceSync:</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Unsubscribe from notifications relating to the specified array of optional topics.
+All previously added delegates will be removed automatically.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)unsubscribeFromTopicsWithIDs:(NSArray *)<em>topicIds</em> forceSync:(BOOL)<em>forceSync</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>topicIds</code></th>
+						<td><p>Array of optional topic IDs. &lt;int64_t></p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>forceSync</code></th>
+						<td><p>Define whether current subscription update should be accepted immediately.</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Unsubscribe from notifications relating to the specified array of optional topics.
+All previously added delegates will be removed automatically.</p>
+			</div>
+			
+
+			
+			<div class="method-subsection arguments-section exceptions">
+				<h4 class="method-subtitle exception-title">Exceptions</h4>
+				<table class="argument-def exception-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>UnavailableTopicException</code></th>
+						<td><p>Unknown topic id is provided or topic isn&rsquo;t optional.</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">GenericKaaClient.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/syncTopicsList" title="syncTopicsList"></a>
+	<h3 class="method-title"><code><a href="#//api/name/syncTopicsList">&ndash;&nbsp;syncTopicsList</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Force sync of pending subscription changes with server.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)syncTopicsList</code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Force sync of pending subscription changes with server.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">GenericKaaClient.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/setLogStorage:" title="setLogStorage:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/setLogStorage:">&ndash;&nbsp;setLogStorage:</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Set user implementation of a log storage.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)setLogStorage:(id&lt;LogStorage&gt;)<em>storage</em></code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Set user implementation of a log storage.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">GenericKaaClient.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/setLogUploadStrategy:" title="setLogUploadStrategy:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/setLogUploadStrategy:">&ndash;&nbsp;setLogUploadStrategy:</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Set user implementation of a log upload strategy.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)setLogUploadStrategy:(id&lt;LogUploadStrategy&gt;)<em>strategy</em></code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Set user implementation of a log upload strategy.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">GenericKaaClient.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/setLogDeliveryDelegate:" title="setLogDeliveryDelegate:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/setLogDeliveryDelegate:">&ndash;&nbsp;setLogDeliveryDelegate:</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Set a delegate which receives a delivery status of each log bucket.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)setLogDeliveryDelegate:(id&lt;LogDeliveryDelegate&gt;)<em>delegate</em></code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Set a delegate which receives a delivery status of each log bucket.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">GenericKaaClient.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/getEventFamilyFactory" title="getEventFamilyFactory"></a>
+	<h3 class="method-title"><code><a href="#//api/name/getEventFamilyFactory">&ndash;&nbsp;getEventFamilyFactory</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Retrieves Kaa event family factory.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (EventFamilyFactory *)getEventFamilyFactory</code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Retrieves Kaa event family factory.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">GenericKaaClient.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/findListenersForEventFQNs:delegate:" title="findListenersForEventFQNs:delegate:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/findListenersForEventFQNs:delegate:">&ndash;&nbsp;findListenersForEventFQNs:delegate:</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Submits an event delegates resolution request.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)findListenersForEventFQNs:(NSArray *)<em>eventFQNs</em> delegate:(id&lt;FindEventListenersDelegate&gt;)<em>delegate</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>eventFQNs</code></th>
+						<td><p>Array of event class FQNs which have to be supported by endpoint. <NSString></p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Submits an event delegates resolution request.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">GenericKaaClient.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/getChannelManager" title="getChannelManager"></a>
+	<h3 class="method-title"><code><a href="#//api/name/getChannelManager">&ndash;&nbsp;getChannelManager</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Retrieves Kaa channel manager.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (id&lt;KaaChannelManager&gt;)getChannelManager</code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Retrieves Kaa channel manager.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">GenericKaaClient.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/getClientPublicKey" title="getClientPublicKey"></a>
+	<h3 class="method-title"><code><a href="#//api/name/getClientPublicKey">&ndash;&nbsp;getClientPublicKey</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Retrieves the client&rsquo;s public key.<br>
+Required in user implementation of an operation data channel. Public key
+hash (SHA-1) is used by servers as identification number to uniquely
+identify each connected endpoint.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (SecKeyRef)getClientPublicKey</code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Retrieves the client&rsquo;s public key.<br>
+Required in user implementation of an operation data channel. Public key
+hash (SHA-1) is used by servers as identification number to uniquely
+identify each connected endpoint.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">GenericKaaClient.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/getEndpointKeyHash" title="getEndpointKeyHash"></a>
+	<h3 class="method-title"><code><a href="#//api/name/getEndpointKeyHash">&ndash;&nbsp;getEndpointKeyHash</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Retrieves endpoint public key hash.<br>
+Required in EndpointRegistrationManager implementation to react
+on detach response from Operations server.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (NSString *)getEndpointKeyHash</code></div>
+
+		    
+			
+
+			
+			<div class="method-subsection return">
+				<h4 class="method-subtitle parameter-title">Return Value</h4>
+				<p>NSString containing current endpoint&rsquo;s public key hash.</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Retrieves endpoint public key hash.<br>
+Required in EndpointRegistrationManager implementation to react
+on detach response from Operations server.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">GenericKaaClient.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/getClientPrivateKey" title="getClientPrivateKey"></a>
+	<h3 class="method-title"><code><a href="#//api/name/getClientPrivateKey">&ndash;&nbsp;getClientPrivateKey</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Retrieves the client&rsquo;s private key.<br>
+Required in user implementation of an operation data channel. Private key
+is used by encryption schema between endpoint and servers.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (SecKeyRef)getClientPrivateKey</code></div>
+
+		    
+			
+
+			
+			<div class="method-subsection return">
+				<h4 class="method-subtitle parameter-title">Return Value</h4>
+				<p>Client&rsquo;s private key</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Retrieves the client&rsquo;s private key.<br>
+Required in user implementation of an operation data channel. Private key
+is used by encryption schema between endpoint and servers.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">GenericKaaClient.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/setEndpointAccessToken:" title="setEndpointAccessToken:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/setEndpointAccessToken:">&ndash;&nbsp;setEndpointAccessToken:</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Set new access token for a current endpoint.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)setEndpointAccessToken:(NSString *)<em>token</em></code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Set new access token for a current endpoint.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">GenericKaaClient.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/refreshEndpointAccessToken" title="refreshEndpointAccessToken"></a>
+	<h3 class="method-title"><code><a href="#//api/name/refreshEndpointAccessToken">&ndash;&nbsp;refreshEndpointAccessToken</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Generate new access token for a current endpoint.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (NSString *)refreshEndpointAccessToken</code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Generate new access token for a current endpoint.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">GenericKaaClient.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/getEndpointAccessToken" title="getEndpointAccessToken"></a>
+	<h3 class="method-title"><code><a href="#//api/name/getEndpointAccessToken">&ndash;&nbsp;getEndpointAccessToken</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Retrieve an access token for a current endpoint.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (NSString *)getEndpointAccessToken</code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Retrieve an access token for a current endpoint.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">GenericKaaClient.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/attachEndpointWithAccessToken:delegate:" title="attachEndpointWithAccessToken:delegate:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/attachEndpointWithAccessToken:delegate:">&ndash;&nbsp;attachEndpointWithAccessToken:delegate:</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Updates with new endpoint attach request<br>
+OnAttachEndpointOperationCallback is populated with EndpointKeyHash of an attached endpoint.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)attachEndpointWithAccessToken:(EndpointAccessToken *)<em>endpointAccessToken</em> delegate:(id&lt;OnAttachEndpointOperationDelegate&gt;)<em>delegate</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>endpointAccessToken</code></th>
+						<td><p>Access token of the attaching endpoint</p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>delegate</code></th>
+						<td><p>Delegate to notify about result of the endpoint attaching</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Updates with new endpoint attach request<br>
+OnAttachEndpointOperationCallback is populated with EndpointKeyHash of an attached endpoint.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">GenericKaaClient.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/detachEndpointWithKeyHash:delegate:" title="detachEndpointWithKeyHash:delegate:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/detachEndpointWithKeyHash:delegate:">&ndash;&nbsp;detachEndpointWithKeyHash:delegate:</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Updates with new endpoint detach request</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)detachEndpointWithKeyHash:(EndpointKeyHash *)<em>endpointKeyHash</em> delegate:(id&lt;OnDetachEndpointOperationDelegate&gt;)<em>delegate</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>endpointKeyHash</code></th>
+						<td><p>Key hash of the detaching endpoint</p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>delegate</code></th>
+						<td><p>Delegate to notify about result of the enpoint attaching</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Updates with new endpoint detach request</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">GenericKaaClient.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/attachUserWithId:accessToken:delegate:" title="attachUserWithId:accessToken:delegate:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/attachUserWithId:accessToken:delegate:">&ndash;&nbsp;attachUserWithId:accessToken:delegate:</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Creates user attach request using default verifier. Default verifier is selected during SDK generation.
+If there was no default verifier selected this method will throw runtime exception.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)attachUserWithId:(NSString *)<em>userExternalId</em> accessToken:(NSString *)<em>userAccessToken</em> delegate:(id&lt;UserAttachDelegate&gt;)<em>delegate</em></code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Creates user attach request using default verifier. Default verifier is selected during SDK generation.
+If there was no default verifier selected this method will throw runtime exception.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">GenericKaaClient.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/attachUserWithVerifierToken:userId:accessToken:delegate:" title="attachUserWithVerifierToken:userId:accessToken:delegate:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/attachUserWithVerifierToken:userId:accessToken:delegate:">&ndash;&nbsp;attachUserWithVerifierToken:userId:accessToken:delegate:</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Creates user attach request using specified verifier.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)attachUserWithVerifierToken:(NSString *)<em>userVerifierToken</em> userId:(NSString *)<em>userExternalId</em> accessToken:(NSString *)<em>userAccessToken</em> delegate:(id&lt;UserAttachDelegate&gt;)<em>delegate</em></code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Creates user attach request using specified verifier.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">GenericKaaClient.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/isAttachedToUser" title="isAttachedToUser"></a>
+	<h3 class="method-title"><code><a href="#//api/name/isAttachedToUser">&ndash;&nbsp;isAttachedToUser</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Checks if current endpoint is attached to user.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (BOOL)isAttachedToUser</code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Checks if current endpoint is attached to user.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">GenericKaaClient.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/setAttachDelegate:" title="setAttachDelegate:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/setAttachDelegate:">&ndash;&nbsp;setAttachDelegate:</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Sets callback for notifications when current endpoint is attached to user.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)setAttachDelegate:(id&lt;AttachEndpointToUserDelegate&gt;)<em>delegate</em></code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Sets callback for notifications when current endpoint is attached to user.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">GenericKaaClient.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/setDetachDelegate:" title="setDetachDelegate:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/setDetachDelegate:">&ndash;&nbsp;setDetachDelegate:</a></code>
+<span class="task-item-suffix">required method</span></h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Sets callback for notifications when current endpoint is detached from user.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)setDetachDelegate:(id&lt;DetachEndpointFromUserDelegate&gt;)<em>delegate</em></code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Sets callback for notifications when current endpoint is detached from user.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">GenericKaaClient.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div>
+						</div>
+						
+					</div>
+					
+					
+
+                    
+                    
+          
+				</main>
+
+				<footer>
+					<div class="footer-copyright">
+						
+						<p class="copyright">Copyright &copy; 2016 CyberVision. All rights reserved. Updated: 2016-02-19</p>
+						
+						
+						<p class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.2.1 (build 1334)</a>.</p>
+						
+					</div>
+				</footer>
+			</div>
+		</div>
+	</article>
+
+	<script src="../js/script.js"></script>
+</body>
+</html>

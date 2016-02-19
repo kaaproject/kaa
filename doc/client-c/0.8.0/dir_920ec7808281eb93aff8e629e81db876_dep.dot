@@ -1,0 +1,16 @@
+digraph "/var/lib/jenkins/workspace/kaa_release_0_8_0/client/client-multi/client-c/src/kaa/platform-impl/stm32" {
+  bgcolor=transparent;
+  compound=true
+  node [ fontsize="10", fontname="FreeSans"];
+  edge [ labelfontsize="10", labelfontname="FreeSans"];
+  subgraph clusterdir_ffac22c55a58cb55b0c98f8013b37940 {
+    graph [ bgcolor="#ddddee", pencolor="black", label="platform-impl" fontname="FreeSans", fontsize="10", URL="dir_ffac22c55a58cb55b0c98f8013b37940.html"]
+  subgraph clusterdir_920ec7808281eb93aff8e629e81db876 {
+    graph [ bgcolor="#eeeeff", pencolor="black", label="" URL="dir_920ec7808281eb93aff8e629e81db876.html"];
+    dir_920ec7808281eb93aff8e629e81db876 [shape=plaintext label="stm32"];
+    dir_d0ee34596780095826f3a0a124154bae [shape=box label="leafMapleMini" color="red" fillcolor="white" style="filled" URL="dir_d0ee34596780095826f3a0a124154bae.html"];
+  }
+  }
+  dir_6d2ed14b27e8e834a5fdc0adac425b11 [shape=box label="platform" URL="dir_6d2ed14b27e8e834a5fdc0adac425b11.html"];
+  dir_d0ee34596780095826f3a0a124154bae->dir_6d2ed14b27e8e834a5fdc0adac425b11 [headlabel="6", labeldistance=1.5 headhref="dir_000025_000012.html"];
+}

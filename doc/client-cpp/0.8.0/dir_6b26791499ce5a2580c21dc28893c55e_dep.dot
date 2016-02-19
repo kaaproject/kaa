@@ -1,0 +1,13 @@
+digraph "/var/lib/jenkins/workspace/kaa_release_0_8_0/client/client-multi/client-cpp/kaa/common/exception" {
+  bgcolor=transparent;
+  compound=true
+  node [ fontsize="10", fontname="FreeSans"];
+  edge [ labelfontsize="10", labelfontname="FreeSans"];
+  subgraph clusterdir_acbed18b97ba4725f49da543d684a53a {
+    graph [ bgcolor="#ddddee", pencolor="black", label="common" fontname="FreeSans", fontsize="10", URL="dir_acbed18b97ba4725f49da543d684a53a.html"]
+  dir_6b26791499ce5a2580c21dc28893c55e [shape=box, label="exception", style="filled", fillcolor="#eeeeff", pencolor="black", URL="dir_6b26791499ce5a2580c21dc28893c55e.html"];
+  }
+  dir_0a6aa51bfa5546421c6e37fed860a366 [shape=box label="transport" URL="dir_0a6aa51bfa5546421c6e37fed860a366.html"];
+  dir_6b26791499ce5a2580c21dc28893c55e->dir_0a6aa51bfa5546421c6e37fed860a366 [headlabel="1", labeldistance=1.5 headhref="dir_000015_000033.html"];
+  dir_0a6aa51bfa5546421c6e37fed860a366->dir_6b26791499ce5a2580c21dc28893c55e [headlabel="1", labeldistance=1.5 headhref="dir_000033_000015.html"];
+}

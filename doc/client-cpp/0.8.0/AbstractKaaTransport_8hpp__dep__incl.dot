@@ -1,0 +1,35 @@
+digraph "/var/lib/jenkins/workspace/kaa_release_0_8_0/client/client-multi/client-cpp/kaa/channel/transport/AbstractKaaTransport.hpp"
+{
+  bgcolor="transparent";
+  edge [fontname="FreeSans",fontsize="10",labelfontname="FreeSans",labelfontsize="10"];
+  node [fontname="FreeSans",fontsize="10",shape=record];
+  Node1 [label="/var/lib/jenkins/workspace\l/kaa_release_0_8_0/client\l/client-multi/client-cpp/kaa\l/channel/transport/AbstractKaaTransport.hpp",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node2 [label="/var/lib/jenkins/workspace\l/kaa_release_0_8_0/client\l/client-multi/client-cpp/kaa\l/bootstrap/BootstrapTransport.hpp",height=0.2,width=0.4,color="black",URL="$BootstrapTransport_8hpp.html"];
+  Node2 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node3 [label="/var/lib/jenkins/workspace\l/kaa_release_0_8_0/client\l/client-multi/client-cpp/kaa\l/bootstrap/BootstrapManager.hpp",height=0.2,width=0.4,color="black",URL="$BootstrapManager_8hpp.html"];
+  Node1 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node4 [label="/var/lib/jenkins/workspace\l/kaa_release_0_8_0/client\l/client-multi/client-cpp/kaa\l/channel/MetaDataTransport.hpp",height=0.2,width=0.4,color="black",URL="$MetaDataTransport_8hpp.html"];
+  Node1 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node5 [label="/var/lib/jenkins/workspace\l/kaa_release_0_8_0/client\l/client-multi/client-cpp/kaa\l/configuration/ConfigurationTransport.hpp",height=0.2,width=0.4,color="black",URL="$ConfigurationTransport_8hpp.html"];
+  Node1 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node6 [label="/var/lib/jenkins/workspace\l/kaa_release_0_8_0/client\l/client-multi/client-cpp/kaa\l/event/EventTransport.hpp",height=0.2,width=0.4,color="black",URL="$EventTransport_8hpp.html"];
+  Node6 -> Node7 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node7 [label="/var/lib/jenkins/workspace\l/kaa_release_0_8_0/client\l/client-multi/client-cpp/kaa\l/event/EventManager.hpp",height=0.2,width=0.4,color="black",URL="$EventManager_8hpp.html"];
+  Node7 -> Node8 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node8 [label="/var/lib/jenkins/workspace\l/kaa_release_0_8_0/client\l/client-multi/client-cpp/kaa\l/KaaClient.hpp",height=0.2,width=0.4,color="black",URL="$KaaClient_8hpp.html"];
+  Node1 -> Node9 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node9 [label="/var/lib/jenkins/workspace\l/kaa_release_0_8_0/client\l/client-multi/client-cpp/kaa\l/event/registration/UserTransport.hpp",height=0.2,width=0.4,color="black",URL="$UserTransport_8hpp.html"];
+  Node9 -> Node10 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node10 [label="/var/lib/jenkins/workspace\l/kaa_release_0_8_0/client\l/client-multi/client-cpp/kaa\l/event/registration/EndpointRegistration\lManager.hpp",height=0.2,width=0.4,color="black",URL="$EndpointRegistrationManager_8hpp.html"];
+  Node10 -> Node8 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node1 -> Node11 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node11 [label="/var/lib/jenkins/workspace\l/kaa_release_0_8_0/client\l/client-multi/client-cpp/kaa\l/notification/NotificationTransport.hpp",height=0.2,width=0.4,color="black",URL="$NotificationTransport_8hpp.html"];
+  Node11 -> Node12 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node12 [label="/var/lib/jenkins/workspace\l/kaa_release_0_8_0/client\l/client-multi/client-cpp/kaa\l/notification/NotificationManager.hpp",height=0.2,width=0.4,color="black",URL="$NotificationManager_8hpp.html"];
+  Node12 -> Node8 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node1 -> Node13 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node13 [label="/var/lib/jenkins/workspace\l/kaa_release_0_8_0/client\l/client-multi/client-cpp/kaa\l/log/LoggingTransport.hpp",height=0.2,width=0.4,color="black",URL="$LoggingTransport_8hpp.html"];
+  Node1 -> Node14 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node14 [label="/var/lib/jenkins/workspace\l/kaa_release_0_8_0/client\l/client-multi/client-cpp/kaa\l/profile/ProfileTransport.hpp",height=0.2,width=0.4,color="black",URL="$ProfileTransport_8hpp.html"];
+}

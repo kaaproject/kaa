@@ -1,0 +1,12 @@
+digraph "/var/lib/jenkins/workspace/kaa_release_0_8_0/client/client-multi/client-cpp/kaa/log/strategies" {
+  bgcolor=transparent;
+  compound=true
+  node [ fontsize="10", fontname="FreeSans"];
+  edge [ labelfontsize="10", labelfontname="FreeSans"];
+  subgraph clusterdir_1b556dd8002192703a2c584a8249256a {
+    graph [ bgcolor="#ddddee", pencolor="black", label="log" fontname="FreeSans", fontsize="10", URL="dir_1b556dd8002192703a2c584a8249256a.html"]
+  dir_76f872dbfbe54e1b1b898a1b287897ca [shape=box, label="strategies", style="filled", fillcolor="#eeeeff", pencolor="black", URL="dir_76f872dbfbe54e1b1b898a1b287897ca.html"];
+  }
+  dir_57091271e35bd36c82dbfdfa1ce5d6e4 [shape=box label="logging" URL="dir_57091271e35bd36c82dbfdfa1ce5d6e4.html"];
+  dir_76f872dbfbe54e1b1b898a1b287897ca->dir_57091271e35bd36c82dbfdfa1ce5d6e4 [headlabel="5", labeldistance=1.5 headhref="dir_000026_000027.html"];
+}

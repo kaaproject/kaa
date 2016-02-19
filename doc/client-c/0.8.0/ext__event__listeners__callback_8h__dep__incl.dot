@@ -1,0 +1,9 @@
+digraph "/var/lib/jenkins/workspace/kaa_release_0_8_0/client/client-multi/client-c/src/kaa/platform/ext_event_listeners_callback.h"
+{
+  bgcolor="transparent";
+  edge [fontname="FreeSans",fontsize="10",labelfontname="FreeSans",labelfontsize="10"];
+  node [fontname="FreeSans",fontsize="10",shape=record];
+  Node1 [label="/var/lib/jenkins/workspace\l/kaa_release_0_8_0/client\l/client-multi/client-c/src\l/kaa/platform/ext_event_listeners\l_callback.h",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node2 [label="/var/lib/jenkins/workspace\l/kaa_release_0_8_0/client\l/client-multi/client-c/src\l/kaa/kaa_event.h",height=0.2,width=0.4,color="black",URL="$kaa__event_8h.html",tooltip="Kaa event subsystem API. "];
+}

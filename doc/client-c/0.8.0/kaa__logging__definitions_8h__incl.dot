@@ -1,0 +1,25 @@
+digraph "/var/lib/jenkins/workspace/kaa_release_0_8_0/client/client-multi/client-c/src/kaa/gen/kaa_logging_definitions.h"
+{
+  bgcolor="transparent";
+  edge [fontname="FreeSans",fontsize="10",labelfontname="FreeSans",labelfontsize="10"];
+  node [fontname="FreeSans",fontsize="10",shape=record];
+  Node1 [label="/var/lib/jenkins/workspace\l/kaa_release_0_8_0/client\l/client-multi/client-c/src\l/kaa/gen/kaa_logging_definitions.h",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node1 -> Node2 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node2 [label="kaa_logging_gen.h",height=0.2,width=0.4,color="black",URL="$kaa__logging__gen_8h.html"];
+  Node2 -> Node3 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node3 [label="../kaa_common_schema.h",height=0.2,width=0.4,color="black",URL="$kaa__common__schema_8h.html"];
+  Node3 -> Node4 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node4 [label="stddef.h",height=0.2,width=0.4,color="grey75"];
+  Node3 -> Node5 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node5 [label="avro_src/avro/io.h",height=0.2,width=0.4,color="black",URL="$io_8h.html"];
+  Node5 -> Node6 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node6 [label="platform.h",height=0.2,width=0.4,color="black",URL="$avro__src_2avro_2platform_8h.html"];
+  Node3 -> Node7 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node7 [label="collections/kaa_list.h",height=0.2,width=0.4,color="black",URL="$kaa__list_8h.html"];
+  Node7 -> Node8 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node8 [label="stdbool.h",height=0.2,width=0.4,color="grey75"];
+  Node7 -> Node4 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node7 -> Node9 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node9 [label="../kaa_error.h",height=0.2,width=0.4,color="black",URL="$kaa__error_8h.html",tooltip="Kaa error codes. "];
+  Node2 -> Node7 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+}
