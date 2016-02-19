@@ -17,6 +17,7 @@
 package org.kaaproject.kaa.server.admin.client.mvp.view;
 
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.ValueListBox;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
@@ -29,4 +30,7 @@ public interface EndpointProfilesView extends BaseListView<EndpointProfileDto>{
     Button getResetButton();
     Button getFindEndpointButton();
     TextBox getEndpointKeyHashTextBox();
+    
+    HasValue<Boolean> getEndpointGroupButton();
+    HasValue<Boolean> getEndpointKeyHashButton();
 }
