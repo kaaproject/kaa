@@ -206,18 +206,20 @@ public class EndpointProfileCassandraDao extends AbstractVersionableCassandraDao
 
     @Override
     public EndpointProfileBodyDto findBodyByKeyHash(byte[] endpointKeyHash) {
-        LOG.debug("Try to find endpoint profile body by key hash [{}]", endpointKeyHash);
+        LOG.debug("Try to find client- and server-side endpoint profile bodies by key hash [{}]", endpointKeyHash);
         String profile = null;
+        String serverSideProfile = null;
         String appId = null;
-        ResultSet resultSet = execute(select(EP_PROFILE_PROPERTY, EP_APP_ID_PROPERTY).from(getColumnFamilyName())
+        ResultSet resultSet = execute(select(EP_PROFILE_PROPERTY, EP_SERVER_PROFILE_PROPERTY, EP_APP_ID_PROPERTY).from(getColumnFamilyName())
                 .where(eq(EP_EP_KEY_HASH_PROPERTY, getByteBuffer(endpointKeyHash))));
         Row row = resultSet.one();
         if (row != null) {
             profile = row.getString(EP_PROFILE_PROPERTY);
             appId = row.getString(EP_APP_ID_PROPERTY);
+            serverSideProfile = row.getString(EP_SERVER_PROFILE_PROPERTY);
         }
-        LOG.debug("[{}] Found endpoint profile body {}", endpointKeyHash, profile);
-        return new EndpointProfileBodyDto(endpointKeyHash, profile, appId);
+        LOG.debug("[{}] Found client-side endpoint profile body {} and server-side endpoint profile body {}", endpointKeyHash, profile, serverSideProfile);
+        return new EndpointProfileBodyDto(endpointKeyHash, profile, serverSideProfile, appId);
     }
 
     @Override
@@ -348,7 +350,7 @@ public class EndpointProfileCassandraDao extends AbstractVersionableCassandraDao
 
     @Override
     public EndpointProfilesBodyDto findBodyByEndpointGroupId(PageLinkDto pageLink) {
-        LOG.debug("Try to find endpoint profile body by endpoint group id [{}]", pageLink.getEndpointGroupId());
+        LOG.debug("Try to find client- and server-side endpoint profile bodies by endpoint group id [{}]", pageLink.getEndpointGroupId());
         EndpointProfilesBodyDto endpointProfilesBodyDto;
         List<EndpointProfileBodyDto> profilesBodyDto;
         ByteBuffer[] keyHashList;
@@ -358,7 +360,7 @@ public class EndpointProfileCassandraDao extends AbstractVersionableCassandraDao
             keyHashList = cassandraEPByEndpointGroupIdDao.findEPByEndpointGroupId(pageLink);
         }
         profilesBodyDto = findEndpointProfilesBodyList(keyHashList, pageLink.getEndpointGroupId());
-        if(profilesBodyDto == null){
+        if(profilesBodyDto == null) {
             profilesBodyDto = Collections.emptyList();
         }
         endpointProfilesBodyDto = createNextBodyPage(profilesBodyDto, pageLink.getEndpointGroupId(), pageLink.getLimit());

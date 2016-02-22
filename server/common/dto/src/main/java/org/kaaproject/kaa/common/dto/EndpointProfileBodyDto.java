@@ -26,16 +26,18 @@ public class EndpointProfileBodyDto implements Serializable {
     private static final long serialVersionUID = 1459044085470010138L;
 
     private byte[] endpointKeyHash;
-    private String profile;
+    private String clientSideProfile;
+    private String serverSideProfile;
     @JsonIgnore
     private String appId;
 
     public EndpointProfileBodyDto() {}
 
-    public EndpointProfileBodyDto(byte[] endpointKeyHash, String profile, String appId) {
-       this.endpointKeyHash = endpointKeyHash;
-       this.profile = profile;
-       this.appId = appId;
+    public EndpointProfileBodyDto(byte[] endpointKeyHash, String clientSideProfile, String serverSideProfile, String appId) {
+        this.endpointKeyHash = endpointKeyHash;
+        this.clientSideProfile = clientSideProfile;
+        this.serverSideProfile = serverSideProfile;
+        this.appId = appId;
     }
 
     public byte[] getEndpointKeyHash() {
@@ -46,12 +48,20 @@ public class EndpointProfileBodyDto implements Serializable {
         this.endpointKeyHash = endpointKeyHash;
     }
 
-    public String getProfile() {
-        return profile;
+    public String getClientSideProfile() {
+        return clientSideProfile;
     }
 
-    public void setProfile(String profile) {
-        this.profile = profile;
+    public void setClientSideProfile(String clientSideProfile) {
+        this.clientSideProfile = clientSideProfile;
+    }
+
+    public String getServerSideProfile() {
+        return serverSideProfile;
+    }
+
+    public void setServerSideProfile(String serverSideProfile) {
+        this.serverSideProfile = serverSideProfile;
     }
 
     public String getAppId() {
@@ -59,30 +69,34 @@ public class EndpointProfileBodyDto implements Serializable {
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + Arrays.hashCode(endpointKeyHash);
-        result = prime * result + ((profile == null) ? 0 : profile.hashCode());
-        return result;
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        EndpointProfileBodyDto that = (EndpointProfileBodyDto) o;
+
+        if (!Arrays.equals(endpointKeyHash, that.endpointKeyHash)) {
+            return false;
+        }
+        if (clientSideProfile != null ? !clientSideProfile.equals(that.clientSideProfile) : that.clientSideProfile != null) {
+            return false;
+        }
+        if (serverSideProfile != null ? !serverSideProfile.equals(that.serverSideProfile) : that.serverSideProfile != null) {
+            return false;
+        }
+        return !(appId != null ? !appId.equals(that.appId) : that.appId != null);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        EndpointProfileBodyDto other = (EndpointProfileBodyDto) obj;
-        if (!Arrays.equals(endpointKeyHash, other.endpointKeyHash))
-            return false;
-        if (profile == null) {
-            if (other.profile != null)
-                return false;
-        } else if (!profile.equals(other.profile))
-            return false;
-        return true;
+    public int hashCode() {
+        int result = endpointKeyHash != null ? Arrays.hashCode(endpointKeyHash) : 0;
+        result = 31 * result + (clientSideProfile != null ? clientSideProfile.hashCode() : 0);
+        result = 31 * result + (serverSideProfile != null ? serverSideProfile.hashCode() : 0);
+        result = 31 * result + (appId != null ? appId.hashCode() : 0);
+        return result;
     }
 }
