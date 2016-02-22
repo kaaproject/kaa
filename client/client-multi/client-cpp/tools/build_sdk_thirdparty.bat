@@ -82,7 +82,7 @@ goto :eof
  cd %BOTAN_SRC%
 
  if %BUILD_TYPE%==debug (
-   python configure.py --cc=msvc --cpu=i386 --prefix=%BOTAN_ROOT% --with-debug-info --no-optimisations
+   python configure.py --cc=msvc --cpu=i386 --prefix=%BOTAN_ROOT% --with-debug-info --no-optimizations
  ) else (
    python configure.py --cc=msvc --cpu=i386 --prefix=%BOTAN_ROOT%
  ) 
