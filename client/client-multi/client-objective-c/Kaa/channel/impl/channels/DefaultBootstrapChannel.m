@@ -108,7 +108,7 @@
         [self.bootstrapChannel connectionEstablished];
     }
     @catch (NSException *ex) {
-        if ([self.bootstrapChannel isShutdown]) {
+        if (![self.bootstrapChannel isShutdown]) {
             DDLogError(@"%@ Failed to receive operation servers list: %@, reason: %@", TAG, ex.name, ex.reason);
             [self.bootstrapChannel connectionFailedWithStatus:UNKNOWN_HTTP_STATUS];
         } else {
