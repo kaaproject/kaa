@@ -4,12 +4,22 @@
   {% include head.html %}
 
   <body>
-    {% include header.html %}
+   
+   <div class="row row-full row-offcanvas row-offcanvas-left">   
     {% include sidebar.html %}
-    <div class="content container">
-      {{ content }}
-    </div>
-
-    {% include footer.html %}
+    <div class="column col-sm-10 col-xs-11" id="main">
+      <div id="page-content-wrapper">
+        <div class="container-fluid">
+          <div class="row row-full content">
+            {{ content }}  
+          </div>        
+         </div>   
+ 	</div>
+ 	<div>
+<!--  	  <div class="column col-sm-2 col-xs-1 sidebar-offcanvas"></div> -->
+ 	  <div class="column col-sm-10 col-xs-11 footer">
+	     <p><a href="#" class="pull-left">Copyright © 2015, CyberVision, Inc.</a></p>
+	  </div>
+	</div>
   </body>
 </html>

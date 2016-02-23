@@ -21,6 +21,7 @@ paginate:         5
 gems:
 - jekyll-gist
 - jekyll-paginate
+- jekyll-sitemap
 
 # Custom vars
 version:          2.1.0

@@ -1,5 +1,5 @@
 ---
-kaa/current:
+"/kaa/current/":
   _sort_idx: 1000
   level: 1
   nav: "/kaa/current/"
@@ -476,7 +476,7 @@ kaa/current:
       url: "/kaa/current/Whats-new.html"
   text: Kaa 1.0.0
   url: "/kaa/current/"
-kaa/latest:
+"/kaa/latest/":
   _sort_idx: 1000
   level: 1
   nav: "/kaa/latest/"
@@ -953,3 +953,23 @@ kaa/latest:
       url: "/kaa/latest/Whats-new.html"
   text: Kaa latest
   url: "/kaa/latest/"
+"/kaa/m/doctest/":
+  _sort_idx: 1000
+  level: 1
+  nav: "/kaa/m/doctest/"
+  subitems:
+    Programming-guide:
+      _sort_idx: 20
+      level: 2
+      nav: "/kaa/m/doctest/Programming-guide/"
+      subitems:
+        Getting-started:
+          _sort_idx: 10
+          nav: "/kaa/m/doctest/Programming-guide/Getting-started/"
+          subitems: {}
+          text: Getting started
+          url: "/kaa/m/doctest/Getting-started.html"
+      text: Programming guide test Module
+      url: "/kaa/m/doctest/Programming-guide.html"
+  text: Kaa 1.0.0 DocTest module
+  url: "/kaa/m/doctest/"

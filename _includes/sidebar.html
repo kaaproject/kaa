@@ -1,68 +1,37 @@
-<div class="sidebar">
-  <div class="container">
-    <div class="sidebar-about">
-      <h1>
-        <a href="{{ site.baseurl }}">
-          {{ site.title }}
-        </a>
-      </h1>
-      <!--<p class="lead">{{ site.description }}</p> -->
-    </div>
-
-    <nav class="sidebar-nav">
-    
-      Page tree:
-      
-      {% for item in site.data.menu %}
-        {% assign key = item[0] %}
-        {% assign val = item[1] %}
-        {% if val.subitems and navurl contains val.nav %}
-            {% include nav.html nav=val.subitems %}
-        {% endif %}
-      {% endfor %}
+{% assign page_dir = page.dir | append: '/' | replace: '//' , '/' %}
+{% assign navtree = site.data.menu[page_dir].subitems %}
 
 
+<div class="column col-sm-2 col-xs-1 sidebar-offcanvas" id="sidebar">
+              
+<ul class="nav">
+  <li><a href="#" data-toggle="offcanvas" class="visible-xs text-center"><i class="glyphicon glyphicon-chevron-right"></i></a></li>
+</ul>
 
-<!--      <a class="sidebar-nav-item{% if page.url == site.baseurl %} active{% endif %}" href="{{ site.baseurl }}">Home</a>
--->
-<!--      {% comment %}
-        The code below dynamically generates a sidebar nav of pages with
-        `layout: page` in the front-matter. See readme for usage.
-      {% endcomment %}
--->
-<!--
-      {% assign pages_list = site.pages %}
-      {% for node in pages_list %}
-        {% if node.title != null %}
-          {% if node.layout == "page" %}
-            <a class="sidebar-nav-item{% if page.url == node.url %} active{% endif %}" href="{{ node.url }}">{{ node.title }}</a>
-          {% endif %}
-        {% endif %}
-      {% endfor %} 
--->
-    
-<!--      {% assign pages_list = site.pages %}
-      {% for node in pages_list %}
-        {% if node.title != null %}
-          {% if node.layout == "page" %}
-	    {% if node.title == "About" %}
-              <a class="sidebar-nav-item{% if page.url == node.url %} active{% endif %}" href="{{ node.url }}">{{ node.title }}</a>
-            {% endif %}
+<ul class="nav">
+  <li><a href="{{ site.baseurl }}" data-toggle="offcanvas" class="hidden-xs text-center logo"><img src="{{ site.baseurl }}public/kaa-avatar.png"/></a></li>
+</ul>
 
-	    {% if node.title == "Installation Guide" %}
-              <a class="sidebar-nav-item{% if page.url == node.url %} active{% endif %}" href="{{ node.url }}">{{ node.title }}</a>
-            {% endif %}
+<ul class="nav hidden-xs" id="lg-menu">
+  <a href="{{ site.baseurl }}" data-toggle="offcanvas" class="hidden-xs text-center logo sidebar-header"><h4>KAA CORE</h4></a>
+  <li class="dropdown text-center sidebar-header">
+  {% include versions.html nav=site.data.versions %}
+  </li>
+  {% include nav.html nav=navtree lvl=0 %}
+</ul>
 
-          {% endif %}
-        {% endif %}
-      {% endfor %}
--->
+<!--<ul class="list-unstyled hidden-xs" id="sidebar-footer">
+  <li>
+    <a href="http://kaaproject.org">kaaproject.org</a>
+  </li>
+</ul>-->
 
-      <!--<span class="sidebar-nav-item">Currently v{{ site.version }}</span>-->
-
-    </nav>
-
-<!--    <p>&copy; {{ site.time | date: '%Y' }}. All rights reserved.</p>
--->
-  </div>
+<!-- tiny only nav-->
+<ul class="nav visible-xs" id="xs-menu">
+   <li><a href="#featured" class="text-center"><i class="glyphicon glyphicon-list-alt"></i></a></li>
+   <!-- <li><a href="#stories" class="text-center"><i class="glyphicon glyphicon-list"></i></a></li>
+  <li><a href="#" class="text-center"><i class="glyphicon glyphicon-paperclip"></i></a></li>
+    <li><a href="#" class="text-center"><i class="glyphicon glyphicon-refresh"></i></a></li>          -->
+</ul>
+              
 </div>

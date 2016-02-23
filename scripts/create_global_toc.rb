@@ -4,13 +4,21 @@ class GlobalMenu
   def initialize
     @root ||= {}
     @menu ||= {}
-    @keys ||= []
-    Dir.glob("kaa/*") do |doc_dir|
+    #@keys ||= []
+    @keys = getKeys("kaa",["m"])
+    @keys.concat getKeys("kaa/m",[])
+    #puts @keys
+  end
+  
+  def getKeys(path,exept)
+    keys ||= []
+    Dir.glob("#{path}/*") do |doc_dir|
       if File.directory?(doc_dir)
-      @keys << File.basename(doc_dir)
-      #@keys << doc_dir
+        doc_dir = File.basename(doc_dir)
+        keys << "#{path}/#{doc_dir}" unless exept.include?(doc_dir)
       end
     end
+    return keys
   end
   
   def process()
@@ -39,20 +47,20 @@ class GlobalMenu
     
   
   def loadDoc(key)
-    Dir.glob("kaa/#{key}/*.md") do |md_file|
-  #     @root["kaa/#{key}"]={}
+    Dir.glob("#{key}/*.md") do |md_file|
+      puts md_file
       header = YAML.load(loadHeader(md_file))
       if header.has_key?('permalink')
         permalink = header['nav']
         path = permalink.split('/')
-        permalink = permalink.gsub(":path","kaa/#{key}")
+        permalink = permalink.gsub(":path","#{key}")
         path.delete_if{|k| k.empty?}
         if path[0] == ":path"
-          path[0] = "kaa/#{key}"
+          path[0] = "/#{key}/"
         end
         node = createPath(path)
-#         puts permalink
-        node['url'] = header['permalink'].gsub(":path","kaa/#{key}")
+        puts permalink
+        node['url'] = header['permalink'].gsub(":path","#{key}")
         node['nav'] = permalink
         if header.has_key?('sort_idx')
           node['_sort_idx'] = header['sort_idx']
@@ -60,7 +68,7 @@ class GlobalMenu
           node['_sort_idx'] = 1000
         end
         if header.has_key?("title")
-          if node['level'] == 1 and key == 'latest'
+          if node['level'] == 1 and key == 'kaa/latest'
             node['text']= "Kaa latest"
           else
             node['text']=header['title']
@@ -106,7 +114,7 @@ class GlobalMenu
   def loadHeader(file)
     is_header_mode = 0
     header = ""
-    puts "working on: #{file}..."
+    #puts "working on: #{file}..."
     fileObj = File.new(file, "r")
     while (line = fileObj.gets)
       if line.match("---\n")
