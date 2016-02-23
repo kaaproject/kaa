@@ -1669,4 +1669,15 @@ public interface ControlService {
      */
     public SdkProfileDto findSdkProfileByToken(String sdkToken) throws ControlServiceException;
 
+    /**
+     * Returns a list of endpoint profiles for the endpoint user with the given ID.
+     *
+     * @param endpointUserId The endpoint user ID
+     *
+     * @return A list of endpoint profiles for the endpoint user with the given ID.
+     *
+     * @throws ControlServiceException - if an exception occures.
+     */
+    List<EndpointProfileDto> getEndpointProfilesByUserId(String endpointUserId) throws ControlServiceException;
+
 }

@@ -419,5 +419,6 @@ public interface KaaAdminService extends RemoteService {
     
     public boolean testProfileFilter(RecordField endpointProfile, RecordField serverProfile, String filterBody) throws KaaAdminServiceException;
 
-    
+    List<EndpointProfileDto> getEndpointProfilesByUserId(String endpointUserId) throws KaaAdminServiceException;
+
 }

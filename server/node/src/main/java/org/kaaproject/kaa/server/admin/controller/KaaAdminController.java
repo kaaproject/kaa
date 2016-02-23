@@ -2085,4 +2085,19 @@ public class KaaAdminController {
         }
     }
 
+    /**
+     * Returns a list of endpoint profiles attached to the endpoint user with
+     * the given ID.
+     *
+     * @param endpointUserId The endpoint user ID
+     *
+     * @return A list of endpoint profiles for the user with the given ID
+     *
+     * @throws KaaAdminServiceException - if an exception occures.
+     */
+    @RequestMapping(value = "endpointProfiles", params = { "userId" }, method = RequestMethod.GET)
+    @ResponseBody
+    public List<EndpointProfileDto> getEndpointProfilesByUserId(@RequestParam("userId") String endpointUserId) throws KaaAdminServiceException {
+        return this.kaaAdminService.getEndpointProfilesByUserId(endpointUserId);
+    }
 }
