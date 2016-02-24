@@ -16,11 +16,6 @@
 
 package org.kaaproject.kaa.server.control;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.avro.ui.shared.FqnVersion;
@@ -29,6 +24,11 @@ import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
 import org.springframework.http.HttpStatus;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Bohdan Khablenko
@@ -170,7 +170,21 @@ public class ControlServerCTLSchemaIT extends AbstractTestControlServer {
         Assert.assertNotNull(loaded);
         Assert.assertEquals(saved, loaded);
     }
-    
+
+    /**
+     * Retrieves a CTL schema by its id.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void getCTLSchemaByIdTest() throws Exception {
+        this.loginTenantDeveloper(tenantDeveloperUser);
+        CTLSchemaDto saved = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), null,  null, null);
+        CTLSchemaDto loaded = client.getCTLSchemaById(saved.getId());
+        Assert.assertNotNull(loaded);
+        Assert.assertEquals(saved, loaded);
+    }
+
     /**
      * Check existence of CTL schema with same fqn and another scope
      *

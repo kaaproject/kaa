@@ -18,19 +18,6 @@ package org.kaaproject.kaa.server.common.admin;
 
 
 
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -95,6 +82,19 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RequestCallback;
 import org.springframework.web.client.ResponseExtractor;
 import org.springframework.web.client.RestTemplate;
+
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class AdminClient {
 
@@ -995,7 +995,11 @@ public class AdminClient {
             return restTemplate.getForObject(url + "CTL/getSchema?fqn={fqn}&version={version}", CTLSchemaDto.class, fqn, version);
         }
     }
-    
+
+    public CTLSchemaDto getCTLSchemaById(String id) {
+            return restTemplate.getForObject(url + "CTL/getSchemaById?id={id}", CTLSchemaDto.class, id);
+    }
+
     public boolean checkFqnExists(String fqn, String tenantId, String applicationId) {
         if (tenantId != null && applicationId != null) {
             return restTemplate.getForObject(url + "CTL/checkFqn?fqn={fqn}&tenantId={tenantId}&applicationId={applicationId}", 

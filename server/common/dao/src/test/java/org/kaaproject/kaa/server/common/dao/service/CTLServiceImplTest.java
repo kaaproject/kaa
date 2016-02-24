@@ -16,20 +16,6 @@
 
 package org.kaaproject.kaa.server.common.dao.service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Assert;
@@ -43,6 +29,20 @@ import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.server.common.dao.AbstractTest;
 import org.kaaproject.kaa.server.common.dao.exception.DatabaseProcessingException;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 @Ignore("This test should be extended and initialized with proper context in each NoSQL submodule")
 public class CTLServiceImplTest extends AbstractTest {
@@ -170,6 +170,12 @@ public class CTLServiceImplTest extends AbstractTest {
         CTLSchemaMetaInfoDto metaInfo = firstSchema.getMetaInfo();
         CTLSchemaDto found = ctlService.findCTLSchemaByFqnAndVerAndTenantIdAndApplicationId(metaInfo.getFqn(), 
                 firstSchema.getVersion(), metaInfo.getTenantId(), metaInfo.getApplicationId());
+        Assert.assertEquals(firstSchema, found);
+    }
+
+    @Test
+    public void testFindCTLSchemaById() {
+        CTLSchemaDto found = ctlService.findCTLSchemaById(firstSchema.getId());
         Assert.assertEquals(firstSchema, found);
     }
 
