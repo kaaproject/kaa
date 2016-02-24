@@ -53,7 +53,7 @@ kaa_error_t ext_log_upload_strategy_set_threshold_volume(void *strategy, size_t 
  * @brief Sets the new threshold log count to the strategy.
  *
  * @param   strategy           The strategy instance.
- * @param   threshold_count    The new threshold log count value in bytes.
+ * @param   threshold_count    The new threshold log count.
  * @return Error code.
  */
 kaa_error_t ext_log_upload_strategy_set_threshold_count(void *strategy, size_t threshold_count);
@@ -64,7 +64,7 @@ kaa_error_t ext_log_upload_strategy_set_threshold_count(void *strategy, size_t t
  * @brief Sets the new upload timeout to the strategy.
  *
  * @param   strategy          The strategy instance.
- * @param   upload_timeout    The new upload timeout in bytes.
+ * @param   upload_timeout    The new upload timeout in seconds.
  * @return Error code.
  */
 kaa_error_t ext_log_upload_strategy_set_upload_timeout(void *strategy, size_t upload_timeout);
@@ -81,12 +81,11 @@ kaa_error_t ext_log_upload_strategy_set_upload_timeout(void *strategy, size_t up
 kaa_error_t ext_log_upload_strategy_set_max_parallel_uploads(void *strategy, size_t count);
 
 
-
 /**
  * @brief Sets the new upload retry period to the strategy.
  *
  * @param   strategy               The strategy instance.
- * @param   upload_retry_period    The new upload retry period value in bytes.
+ * @param   upload_retry_period    The new upload retry period value in seconds.
  * @return Error code.
  */
 kaa_error_t ext_log_upload_strategy_set_upload_retry_period(void *strategy, size_t upload_retry_period);
