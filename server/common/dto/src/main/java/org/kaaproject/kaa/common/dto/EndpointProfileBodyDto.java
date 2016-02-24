@@ -28,15 +28,20 @@ public class EndpointProfileBodyDto implements Serializable {
     private byte[] endpointKeyHash;
     private String clientSideProfile;
     private String serverSideProfile;
+    private int clientSideProfileVersion;
+    private int serverSideProfileVersion;
     @JsonIgnore
     private String appId;
 
     public EndpointProfileBodyDto() {}
 
-    public EndpointProfileBodyDto(byte[] endpointKeyHash, String clientSideProfile, String serverSideProfile, String appId) {
+    public EndpointProfileBodyDto(byte[] endpointKeyHash, String clientSideProfile, String serverSideProfile, int clientSideProfileVersion,
+                                  int serverSideProfileVersion, String appId) {
         this.endpointKeyHash = endpointKeyHash;
         this.clientSideProfile = clientSideProfile;
         this.serverSideProfile = serverSideProfile;
+        this.clientSideProfileVersion = clientSideProfileVersion;
+        this.serverSideProfileVersion = serverSideProfileVersion;
         this.appId = appId;
     }
 
@@ -68,6 +73,22 @@ public class EndpointProfileBodyDto implements Serializable {
         return appId;
     }
 
+    public int getClientSideProfileVersion() {
+        return clientSideProfileVersion;
+    }
+
+    public void setClientSideProfileVersion(int clientSideProfileVersion) {
+        this.clientSideProfileVersion = clientSideProfileVersion;
+    }
+
+    public int getServerSideProfileVersion() {
+        return serverSideProfileVersion;
+    }
+
+    public void setServerSideProfileVersion(int serverSideProfileVersion) {
+        this.serverSideProfileVersion = serverSideProfileVersion;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -79,6 +100,12 @@ public class EndpointProfileBodyDto implements Serializable {
 
         EndpointProfileBodyDto that = (EndpointProfileBodyDto) o;
 
+        if (clientSideProfileVersion != that.clientSideProfileVersion) {
+            return false;
+        }
+        if (serverSideProfileVersion != that.serverSideProfileVersion) {
+            return false;
+        }
         if (!Arrays.equals(endpointKeyHash, that.endpointKeyHash)) {
             return false;
         }
@@ -89,6 +116,7 @@ public class EndpointProfileBodyDto implements Serializable {
             return false;
         }
         return !(appId != null ? !appId.equals(that.appId) : that.appId != null);
+
     }
 
     @Override
@@ -96,6 +124,8 @@ public class EndpointProfileBodyDto implements Serializable {
         int result = endpointKeyHash != null ? Arrays.hashCode(endpointKeyHash) : 0;
         result = 31 * result + (clientSideProfile != null ? clientSideProfile.hashCode() : 0);
         result = 31 * result + (serverSideProfile != null ? serverSideProfile.hashCode() : 0);
+        result = 31 * result + clientSideProfileVersion;
+        result = 31 * result + serverSideProfileVersion;
         result = 31 * result + (appId != null ? appId.hashCode() : 0);
         return result;
     }

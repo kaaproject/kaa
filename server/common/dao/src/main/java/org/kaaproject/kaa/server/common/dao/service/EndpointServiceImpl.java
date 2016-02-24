@@ -253,7 +253,7 @@ public class EndpointServiceImpl implements EndpointService {
 
     @Override
     public EndpointProfileBodyDto findEndpointProfileBodyByKeyHash(byte[] endpointProfileKeyHash) {
-        validateHash(endpointProfileKeyHash, "Can't find client- and server-side endpoint profile body by key hash. Invalid key hash "
+        validateHash(endpointProfileKeyHash, "Can't find endpoint profile by key hash. Invalid key hash "
                 + endpointProfileKeyHash);
         return endpointProfileDao.findBodyByKeyHash(endpointProfileKeyHash);
     }
