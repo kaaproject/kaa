@@ -827,6 +827,9 @@ public class AdminClient {
         MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
         parameters.add("fqn", ctlSchemaDto.getMetaInfo().getFqn());
         parameters.add("version", Integer.toString(ctlSchemaDto.getVersion()));
+        if (ctlSchemaDto.getMetaInfo().getApplicationId() != null) {
+            parameters.add("applicationId", ctlSchemaDto.getMetaInfo().getApplicationId());
+        }
         parameters.add("method", method.name());
         RequestCallback request = new DataRequestCallback<>(parameters);
         return restTemplate.execute(url + "CTL/exportSchema", HttpMethod.POST, request, extractor);
