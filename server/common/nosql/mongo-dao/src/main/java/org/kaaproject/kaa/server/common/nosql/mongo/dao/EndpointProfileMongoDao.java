@@ -154,8 +154,8 @@ public class EndpointProfileMongoDao extends AbstractVersionableMongoDao<MongoEn
                     pf.getProfileVersion(), pf.getServerProfileVersion(), pf.getApplicationId());
         }
         LOG.debug("[{}] Found client-side endpoint profile body {} with client-side endpoint profile version {} and server-side endpoint profile body {} " +
-                "with server-side endpoint profile version {}", endpointKeyHash, pf.getProfileAsString(), pf.getProfileVersion(),
-                pf.getServerProfile(), pf.getServerProfileVersion());
+                "with server-side endpoint profile version {} and application id {}", endpointKeyHash, pf.getProfileAsString(), pf.getProfileVersion(),
+                pf.getServerProfile(), pf.getServerProfileVersion(), pf.getApplicationId());
         return endpointProfileBodyDto;
     }
 

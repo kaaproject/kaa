@@ -224,7 +224,8 @@ public class EndpointProfileCassandraDao extends AbstractVersionableCassandraDao
             serverSideProfileVersion = row.getInt(EP_SERVER_PROFILE_VERSION_PROPERTY);
         }
         LOG.debug("[{}] Found client-side endpoint profile body {} with client-side endpoint profile version {} and server-side endpoint profile body {} " +
-            "with server-side endpoint profile version {}", endpointKeyHash, profile, clientSideProfileVersion, serverSideProfile, serverSideProfileVersion);
+            "with server-side endpoint profile version {} and application id {}", endpointKeyHash, profile, clientSideProfileVersion, serverSideProfile,
+                serverSideProfileVersion, appId);
         return new EndpointProfileBodyDto(endpointKeyHash, profile, serverSideProfile, clientSideProfileVersion, serverSideProfileVersion, appId);
     }
 
