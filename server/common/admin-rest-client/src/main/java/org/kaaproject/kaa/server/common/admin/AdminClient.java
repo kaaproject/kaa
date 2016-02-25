@@ -52,6 +52,7 @@ import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaExportMethod;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
@@ -820,6 +821,17 @@ public class AdminClient {
         FileData data = restTemplate.execute(url + "sdk", HttpMethod.POST, request, extractor);
         return data;
     }
+    
+    public FileData downloadCtlSchema(CTLSchemaDto ctlSchemaDto, CTLSchemaExportMethod method) {
+        FileDataResponseExtractor extractor = new FileDataResponseExtractor();
+        MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
+        parameters.add("fqn", ctlSchemaDto.getMetaInfo().getFqn());
+        parameters.add("version", Integer.toString(ctlSchemaDto.getVersion()));
+        parameters.add("method", method.name());
+        RequestCallback request = new DataRequestCallback<>(parameters);
+        return restTemplate.execute(url + "CTL/exportSchema", HttpMethod.POST, request, extractor);
+    }
+
 
     public void flushSdkCache() throws Exception {
         restTemplate.postForLocation(url + "flushSdkCache", null);
