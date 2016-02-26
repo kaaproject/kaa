@@ -1,21 +1,23 @@
-/*
- * Copyright 2014-2015 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 #ifndef IKAACLIENT_HPP_
 #define IKAACLIENT_HPP_
+
+#include <future>
 
 #include "kaa/profile/IProfileContainer.hpp"
 #include "kaa/notification/INotificationTopicListListener.hpp"
@@ -30,11 +32,14 @@
 #include "kaa/event/IFetchEventListeners.hpp"
 #include "kaa/log/ILogCollector.hpp"
 #include "kaa/failover/IFailoverStrategy.hpp"
+#include "kaa/log/ILogDeliveryListener.hpp"
+#include "kaa/log/RecordFuture.hpp"
+#include "kaa/IKaaClientContext.hpp"
 
 
 namespace kaa {
 
-class EventFamilyFactory;;
+class EventFamilyFactory;
 class IKaaChannelManager;
 class IKaaDataMultiplexer;
 class IKaaDataDemultiplexer;
@@ -140,7 +145,7 @@ public:
      *
      * @see INotificationListener
      */
-    virtual void addNotificationListener(const std::string& topidId, INotificationListener& listener) = 0;
+    virtual void addNotificationListener(std::int64_t topicId, INotificationListener& listener) = 0;
 
     /**
      * @brief Removes the listener which receives notifications on all available topics.
@@ -163,7 +168,7 @@ public:
      *
      * @see INotificationListener
      */
-    virtual void removeNotificationListener(const std::string& topidId, INotificationListener& listener) = 0;
+    virtual void removeNotificationListener(std::int64_t topicId, INotificationListener& listener) = 0;
 
     /**
      * @brief Subscribes to the specified optional topic to receive notifications on that topic.
@@ -180,7 +185,7 @@ public:
      *
      * @see syncTopicSubscriptions()
      */
-    virtual void subscribeToTopic(const std::string& id, bool forceSync = true) = 0;
+    virtual void subscribeToTopic(std::int64_t id, bool forceSync = true) = 0;
 
     /**
      * @brief Subscribes to the specified list of optional topics to receive notifications on those topics.
@@ -197,7 +202,7 @@ public:
      *
      * @see syncTopicSubscriptions()
      */
-    virtual void subscribeToTopics(const std::list<std::string>& idList, bool forceSync = true) = 0;
+    virtual void subscribeToTopics(const std::list<std::int64_t>& idList, bool forceSync = true) = 0;
 
     /**
      * @brief Unsubscribes from the specified optional topic to stop receiving notifications on that topic.
@@ -214,7 +219,7 @@ public:
      *
      * @see syncTopicSubscriptions()
      */
-    virtual void unsubscribeFromTopic(const std::string& id, bool forceSync = true) = 0;
+    virtual void unsubscribeFromTopic(std::int64_t id, bool forceSync = true) = 0;
 
     /**
      * @brief Unsubscribes from the specified list of optional topics to stop receiving notifications on those topics.
@@ -231,7 +236,7 @@ public:
      *
      * @see syncTopicSubscriptions()
      */
-    virtual void unsubscribeFromTopics(const std::list<std::string>& idList, bool forceSync = true) = 0;
+    virtual void unsubscribeFromTopics(const std::list<std::int64_t>& idList, bool forceSync = true) = 0;
 
     /**
      * @brief Sends subscription request(s) to the Operations server.
@@ -332,6 +337,7 @@ public:
      * @param[in] listener    Listener to notify of the attach status is changed.
      */
     virtual void setAttachStatusListener(IAttachStatusListenerPtr listener) = 0;
+
     /**
      * @brief Checks if the current endpoint is already attached to some user.
      *
@@ -362,7 +368,14 @@ public:
      * @see KaaUserLogRecord
      * @see ILogStorage
      */
-    virtual void addLogRecord(const KaaUserLogRecord& record) = 0;
+    virtual RecordFuture addLogRecord(const KaaUserLogRecord& record) = 0;
+
+    /**
+     * @brief Set a listener which receives a delivery status of each log bucket.
+     *
+     * @param   listener[in] the listener
+     */
+    virtual void setLogDeliveryListener(ILogDeliveryListenerPtr listener) = 0;
 
     /**
      * @brief Sets the new log storage.
@@ -457,6 +470,13 @@ public:
      * @return @link IKaaDataDemultiplexer @endlink object
      */
     virtual IKaaDataDemultiplexer&            getBootstrapDemultiplexer() = 0;
+
+    /**
+     * @brief Retrieves Kaa context data
+     *
+     * @return @link IKaaClientContext @endlink object
+     */
+    virtual IKaaClientContext&                getKaaClientContext() = 0;
 
     virtual ~IKaaClient() { }
 };

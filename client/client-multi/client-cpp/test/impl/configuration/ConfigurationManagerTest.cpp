@@ -1,17 +1,17 @@
-/*
- * Copyright 2014-2105 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 #include "kaa/configuration/manager/ConfigurationManager.hpp"
@@ -30,6 +30,9 @@
 #include <boost/test/unit_test.hpp>
 
 #include "kaa/configuration/manager/IConfigurationReceiver.hpp"
+#include "kaa/KaaClientContext.hpp"
+#include "kaa/KaaClientProperties.hpp"
+#include "kaa/logging/DefaultLogger.hpp"
 
 #include "headers/context/MockExecutorContext.hpp"
 #include "headers/MockKaaClientStateStorage.hpp"
@@ -64,18 +67,20 @@ BOOST_AUTO_TEST_SUITE(ConfigurationManagerSuite)
 
 BOOST_AUTO_TEST_CASE(configurationUpdated)
 {
-    auto stateMock = std::make_shared<MockKaaClientStateStorage>();
-
+    IKaaClientStateStoragePtr stateMock(new MockKaaClientStateStorage);
+    KaaClientProperties properties;
+    DefaultLogger tmp_logger(properties.getClientId());
     SimpleExecutorContext context;
+    KaaClientContext clientContext(properties, tmp_logger, context, stateMock);
     context.init();
-    ConfigurationManager manager(context, stateMock);
+    ConfigurationManager manager(clientContext);
     ConfigurationReceiverMock receiver;
 
     manager.addReceiver(receiver);
 
     AvroByteArrayConverter<KaaRootConfiguration> convert;
     auto rootConfig = std::make_shared<KaaRootConfiguration>();
-    convert.fromByteArray(getDefaultConfigData().begin(), getDefaultConfigData().size(), *rootConfig);
+    convert.fromByteArray(getDefaultConfigData().data(), getDefaultConfigData().size(), *rootConfig);
 
     manager.processConfigurationData(std::vector<std::uint8_t>(getDefaultConfigData().begin(), getDefaultConfigData().begin() + getDefaultConfigData().size()), true);
     testSleep(1);
@@ -94,9 +99,12 @@ BOOST_AUTO_TEST_CASE(configurationUpdated)
 
 BOOST_AUTO_TEST_CASE(configurationPartialUpdated)
 {
-    auto stateMock = std::make_shared<MockKaaClientStateStorage>();
+    IKaaClientStateStoragePtr stateMock(new MockKaaClientStateStorage);
     MockExecutorContext context;
-    ConfigurationManager manager(context, stateMock);
+    KaaClientProperties properties;
+    DefaultLogger logger(properties.getClientId());
+    KaaClientContext clientContext(properties, logger, context, stateMock);
+    ConfigurationManager manager(clientContext);
 
     BOOST_CHECK_THROW(manager.processConfigurationData(std::vector<std::uint8_t>(getDefaultConfigData().begin(), getDefaultConfigData().begin() + getDefaultConfigData().size()), false);, KaaException);
 }

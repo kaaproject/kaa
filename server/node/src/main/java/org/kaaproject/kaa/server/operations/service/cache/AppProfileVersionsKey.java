@@ -1,17 +1,17 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.server.operations.service.cache;
@@ -34,10 +34,10 @@ public final class AppProfileVersionsKey implements Serializable {
     private final String applicationToken;
 
     /** The version. */
-    private final int endpointProfileSchemaVersion;
+    private final Integer endpointProfileSchemaVersion;
 
     /** The version. */
-    private final int serverProfileSchemaVersion;
+    private final Integer serverProfileSchemaVersion;
 
     /**
      * Instantiates a new app version key.
@@ -49,7 +49,7 @@ public final class AppProfileVersionsKey implements Serializable {
      * @param serverProfileSchemaVersion
      *            the server profile schema version
      */
-    public AppProfileVersionsKey(String applicationToken, int endpointProfileSchemaVersion, int serverProfileSchemaVersion) {
+    public AppProfileVersionsKey(String applicationToken, Integer endpointProfileSchemaVersion, Integer serverProfileSchemaVersion) {
         super();
         this.applicationToken = applicationToken;
         this.endpointProfileSchemaVersion = endpointProfileSchemaVersion;
@@ -60,11 +60,11 @@ public final class AppProfileVersionsKey implements Serializable {
         return applicationToken;
     }
 
-    public int getEndpointProfileSchemaVersion() {
+    public Integer getEndpointProfileSchemaVersion() {
         return endpointProfileSchemaVersion;
     }
 
-    public int getServerProfileSchemaVersion() {
+    public Integer getServerProfileSchemaVersion() {
         return serverProfileSchemaVersion;
     }
 
@@ -73,8 +73,8 @@ public final class AppProfileVersionsKey implements Serializable {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((applicationToken == null) ? 0 : applicationToken.hashCode());
-        result = prime * result + endpointProfileSchemaVersion;
-        result = prime * result + serverProfileSchemaVersion;
+        result = prime * result + ((endpointProfileSchemaVersion == null) ? 0 : endpointProfileSchemaVersion.hashCode());
+        result = prime * result + ((serverProfileSchemaVersion == null) ? 0 : serverProfileSchemaVersion.hashCode());
         return result;
     }
 
@@ -97,10 +97,18 @@ public final class AppProfileVersionsKey implements Serializable {
         } else if (!applicationToken.equals(other.applicationToken)) {
             return false;
         }
-        if (endpointProfileSchemaVersion != other.endpointProfileSchemaVersion) {
+        if (endpointProfileSchemaVersion == null) {
+            if (other.endpointProfileSchemaVersion != null) {
+                return false;
+            }
+        } else if (!endpointProfileSchemaVersion.equals(other.endpointProfileSchemaVersion)) {
             return false;
         }
-        if (serverProfileSchemaVersion != other.serverProfileSchemaVersion) {
+        if (serverProfileSchemaVersion == null) {
+            if (other.serverProfileSchemaVersion != null) {
+                return false;
+            }
+        } else if (!serverProfileSchemaVersion.equals(other.serverProfileSchemaVersion)) {
             return false;
         }
         return true;

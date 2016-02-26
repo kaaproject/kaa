@@ -1,17 +1,17 @@
-/*
- * Copyright 2014-2015 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.endpoint;
@@ -26,6 +26,7 @@ import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointProfileView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.topic.TopicGrid;
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.ImageTextButton;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.RecordPanel;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
@@ -57,9 +58,11 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
 
     private Anchor endpointProfSchemaName;
     private RecordPanel endpointProfForm;
+    private Button downloadEndpointProfileJsonButton;
 
     private Anchor serverProfSchemaName;
     private RecordPanel serverProfForm;
+    private Button downloadServerProfileJsonButton;
     private Button editServerProfileButton;
 
     public EndpointProfileViewImpl() {
@@ -88,8 +91,8 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
         detailsTable.getColumnFormatter().setWidth(1, "550px");
         detailsTable.getColumnFormatter().setWidth(2, "0px");
 
-        saveButton.removeFromParent();
-        cancelButton.removeFromParent();
+        getSaveButtonWidget().removeFromParent();
+        getCancelButtonWidget().removeFromParent();
         requiredFieldsNoteLabel.setVisible(false);
 
         int row = 0;
@@ -130,23 +133,33 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
 
         CaptionPanel formPanel = new CaptionPanel(span.getString(), true);
         FlexTable recordTable = new FlexTable();
+        recordTable.setWidth("100%");
 
         Label endpointProfSchemaLabel = new Label(Utils.constants.schemaName());
         endpointProfSchemaName = new Anchor();
         endpointProfSchemaName.getElement().getStyle().setCursor(Style.Cursor.POINTER);
-        endpointProfSchemaName.getElement().getStyle().setMarginLeft(10, Unit.PX);
-        endpointProfSchemaName.setWidth("100%");
 
         HorizontalPanel schemaNamePanel = new HorizontalPanel();
         schemaNamePanel.setHeight("40px");
         schemaNamePanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
         schemaNamePanel.add(endpointProfSchemaLabel);
         schemaNamePanel.add(endpointProfSchemaName);
+        schemaNamePanel.setCellWidth(endpointProfSchemaName, "200px");
+        endpointProfSchemaName.getElement().getParentElement().getStyle().setPaddingLeft(10, Unit.PX);
+        
+        HorizontalPanel schemaButtonsPanel = new HorizontalPanel();     
+        schemaButtonsPanel.setSpacing(6);
+        downloadEndpointProfileJsonButton = new ImageTextButton(Utils.resources.download(), Utils.constants.downloadJson());
+        schemaButtonsPanel.add(downloadEndpointProfileJsonButton);
+        schemaNamePanel.add(schemaButtonsPanel);
+        schemaButtonsPanel.getElement().getParentElement().getStyle().setPaddingLeft(10, Unit.PX);
+        
         recordTable.setWidget(0, 0, schemaNamePanel);
 
         endpointProfForm = new RecordPanel(new AvroWidgetsConfig.Builder().recordPanelWidth(700).createConfig(), Utils.constants.profile(),
                 this, true, true);
-        endpointProfForm.setWidth("100%");
+        endpointProfForm.getRecordWidget().setForceNavigation(true);
+        endpointProfForm.setPreferredHeightPx(200);
         recordTable.setWidget(1, 0, endpointProfForm);
         recordTable.getFlexCellFormatter().setColSpan(1, 0, 2);
 
@@ -163,26 +176,34 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
 
         CaptionPanel serverFormPanel = new CaptionPanel(span.getString(), true);
         FlexTable serverRecordTable = new FlexTable();
+        serverRecordTable.setWidth("100%");
 
         Label serverProfSchemaLabel = new Label(Utils.constants.schemaName());
         serverProfSchemaName = new Anchor();
         serverProfSchemaName.getElement().getStyle().setCursor(Style.Cursor.POINTER);
-        serverProfSchemaName.getElement().getStyle().setMarginLeft(10, Unit.PX);
-        serverProfSchemaName.setWidth("100%");
-        editServerProfileButton = new Button(Utils.constants.edit());
-        editServerProfileButton.getElement().getStyle().setMarginLeft(15, Unit.PX);
 
         schemaNamePanel = new HorizontalPanel();
         schemaNamePanel.setHeight("40px");
         schemaNamePanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
         schemaNamePanel.add(serverProfSchemaLabel);
         schemaNamePanel.add(serverProfSchemaName);
-        schemaNamePanel.add(editServerProfileButton);
+        schemaNamePanel.setCellWidth(serverProfSchemaName, "200px");
+        serverProfSchemaName.getElement().getParentElement().getStyle().setPaddingLeft(10, Unit.PX);
+
+        schemaButtonsPanel = new HorizontalPanel();     
+        schemaButtonsPanel.setSpacing(6);
+        downloadServerProfileJsonButton = new ImageTextButton(Utils.resources.download(), Utils.constants.downloadJson());
+        schemaButtonsPanel.add(downloadServerProfileJsonButton);
+        editServerProfileButton = new Button(Utils.constants.edit());
+        schemaButtonsPanel.add(editServerProfileButton);
+        schemaNamePanel.add(schemaButtonsPanel);
+        schemaButtonsPanel.getElement().getParentElement().getStyle().setPaddingLeft(10, Unit.PX);
 
         serverRecordTable.setWidget(0, 0, schemaNamePanel);
         serverProfForm = new RecordPanel(new AvroWidgetsConfig.Builder().recordPanelWidth(700).createConfig(), Utils.constants.profile(),
                 this, true, true);
-        serverProfForm.setWidth("100%");
+        serverProfForm.getRecordWidget().setForceNavigation(true);
+        serverProfForm.setPreferredHeightPx(200);
         serverRecordTable.setWidget(1, 0, serverProfForm);
         serverRecordTable.getFlexCellFormatter().setColSpan(1, 0, 2);
 
@@ -290,6 +311,16 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
     @Override
     public TopicGrid getTopicsGrid() {
         return topicsGrid;
+    }
+
+    @Override
+    public HasClickHandlers getDownloadEndpointProfileJsonButton() {
+        return downloadEndpointProfileJsonButton;
+    }
+
+    @Override
+    public HasClickHandlers getDownloadServerProfileJsonButton() {
+        return downloadServerProfileJsonButton;
     }
 
 }

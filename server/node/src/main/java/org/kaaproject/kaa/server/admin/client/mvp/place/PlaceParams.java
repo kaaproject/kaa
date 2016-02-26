@@ -1,23 +1,25 @@
-/*
- * Copyright 2014-2015 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.server.admin.client.mvp.place;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import com.google.gwt.http.client.URL;
 
 public class PlaceParams {
 
@@ -32,7 +34,7 @@ public class PlaceParams {
             if (paramsUrl.length() > 0) {
                 paramsUrl.append(PARAMS_SEPARATOR);
             }
-            paramsUrl.append(key).append("=").append(val);
+            paramsUrl.append(key).append("=").append(URL.encodeQueryString(val));
         }
         return paramsUrl.toString();
     }
@@ -44,7 +46,7 @@ public class PlaceParams {
             for (String param : params) {
                 String[] keyVal = param.split("=");
                 if (keyVal != null && keyVal.length == 2) {
-                    paramsMap.put(keyVal[0], keyVal[1]);
+                    paramsMap.put(keyVal[0], URL.decodeQueryString(keyVal[1]));
                 }
             }
         }

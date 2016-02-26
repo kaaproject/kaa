@@ -1,17 +1,17 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.server.common.nosql.cassandra.dao;
@@ -37,10 +37,10 @@ import org.slf4j.LoggerFactory;
 import com.datastax.driver.core.querybuilder.Select.Where;
 import com.datastax.driver.core.querybuilder.Update;
 
-public class EndpointUserCassandraDao extends AbstractCassandraDao<CassandraEndpointUser, String> implements EndpointUserDao<CassandraEndpointUser> {
+public class EndpointUserCassandraDao extends AbstractVersionableCassandraDao<CassandraEndpointUser, String> implements EndpointUserDao<CassandraEndpointUser> {
 
     private static final Logger LOG = LoggerFactory.getLogger(EndpointUserCassandraDao.class);
-
+    
     @Override
     protected Class<CassandraEndpointUser> getColumnFamilyClass() {
         return CassandraEndpointUser.class;
@@ -55,10 +55,11 @@ public class EndpointUserCassandraDao extends AbstractCassandraDao<CassandraEndp
     public CassandraEndpointUser save(CassandraEndpointUser user) {
         if (isBlank(user.getId())) {
             user.generateId();
-        }
+        } 
         LOG.trace("Save endpoint user {}", user);
         return super.save(user);
     }
+    
 
     @Override
     public CassandraEndpointUser save(EndpointUserDto dto) {
@@ -119,4 +120,7 @@ public class EndpointUserCassandraDao extends AbstractCassandraDao<CassandraEndp
         LOG.trace("Found endpoint user {} by id {}", endpointUser, id);
         return endpointUser;
     }
+
+
+
 }

@@ -1,17 +1,17 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 #ifndef RSAENCODERDECODER_HPP_
@@ -19,7 +19,9 @@
 
 #include "kaa/security/KeyUtils.hpp"
 #include "kaa/security/IEncoderDecoder.hpp"
+#include "kaa/IKaaClientContext.hpp"
 #include <botan/rsa.h>
+#include <botan/cipher_mode.h>
 #include <cstdint>
 #include <memory>
 
@@ -29,7 +31,8 @@ class RsaEncoderDecoder : public IEncoderDecoder {
 public:
     RsaEncoderDecoder(const PublicKey& pubKey,
                       const PrivateKey& privKey,
-                      const PublicKey& remoteKey);
+                      const PublicKey& remoteKey,
+                      IKaaClientContext &context);
     ~RsaEncoderDecoder() { }
 
     virtual EncodedSessionKey getEncodedSessionKey();
@@ -48,6 +51,8 @@ private:
     std::unique_ptr<Botan::X509_PublicKey>   remoteKey_;
 
     SessionKey sessionKey_;
+
+    IKaaClientContext &context_;
 };
 
 }

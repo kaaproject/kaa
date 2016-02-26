@@ -1,17 +1,17 @@
 #
-# Copyright 2014-2015 CyberVision, Inc.
+#  Copyright 2014-2016 CyberVision, Inc.
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
 #
-#      http://www.apache.org/licenses/LICENSE-2.0
+#       http://www.apache.org/licenses/LICENSE-2.0
 #
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
 #
 
 cmake_minimum_required(VERSION 2.8.8)
@@ -157,7 +157,8 @@ if ( NOT KAA_WITHOUT_LOGGING )
     set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
             impl/log/LoggingTransport.cpp
             impl/log/LogCollector.cpp
-            impl/log/LogRecord.cpp
+            impl/log/LogStorageConstants.cpp
+            impl/log/RecordFuture.cpp
             impl/log/MemoryLogStorage.cpp
             impl/log/DefaultLogUploadStrategy.cpp
     )
@@ -234,7 +235,7 @@ message("==================================")
 #
 # Find third-party dependencies
 #
-find_package (Boost 1.54 REQUIRED COMPONENTS log system)
+find_package (Boost 1.54 REQUIRED COMPONENTS log system thread)
 find_package (Avro REQUIRED)
 find_package (Botan REQUIRED)
 
@@ -272,7 +273,7 @@ set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
         impl/Kaa.cpp
         impl/KaaClient.cpp
         impl/logging/Log.cpp
-        impl/logging/LoggerFactory.cpp
+        impl/logging/DefaultLogger.cpp
         impl/security/KeyUtils.cpp
         impl/security/RsaEncoderDecoder.cpp
         impl/common/EndpointObjectHash.cpp
@@ -317,13 +318,8 @@ else (WIN32)
 endif (WIN32)
 
 add_library (kaacpp_s STATIC ./kaa $<TARGET_OBJECTS:kaacpp_o>)
-# Sets paths Kaa libraries will be installed in.
-if(NOT KAA_INSTALL_PATH)
-	set(KAA_INSTALL_PATH "/usr/local")
-endif()
 
-message(STATUS "KAA WILL BE INSTALLED TO  ${KAA_INSTALL_PATH} ")
-set(CMAKE_INSTALL_PREFIX ${KAA_INSTALL_PATH} ) 
-install (DIRECTORY kaa/ DESTINATION ${KAA_INSTALL_PATH}/include/kaa
+message(STATUS "KAA WILL BE INSTALLED TO ${CMAKE_INSTALL_PREFIX} ")
+install (DIRECTORY kaa/ DESTINATION include/kaa
     FILES_MATCHING PATTERN *.hpp)
-install (TARGETS kaacpp kaacpp_s DESTINATION ${KAA_INSTALL_PATH}/lib)
+install (TARGETS kaacpp kaacpp_s DESTINATION lib)

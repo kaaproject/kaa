@@ -1,34 +1,35 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.server.control;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterRecordDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.ProfileVersionPairDto;
 import org.kaaproject.kaa.common.dto.UpdateStatus;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaInfoDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 
 /**
  * The Class ControlServerProfileFilterIT.
@@ -79,16 +80,31 @@ public class ControlServerProfileFilterIT extends AbstractTestControlServer {
         loginTenantDeveloper(tenantDeveloperDto.getUsername());
 
         EndpointGroupDto endpointGroup = createEndpointGroup(application.getId());
+        
+        List<ProfileFilterDto> profileFilters  = new ArrayList<ProfileFilterDto>(2);
 
-        ProfileFilterDto profileFilter1 = createProfileFilter(null, null, endpointGroup.getId());
-        ProfileFilterDto profileFilter2 = createProfileFilter(null, null, endpointGroup.getId());
+        profileFilters.add(createProfileFilter(null, null, endpointGroup.getId()));
+        profileFilters.add(createProfileFilter(null, null, endpointGroup.getId()));
+        
+        Collections.sort(profileFilters, new IdComparator());
 
         List<ProfileFilterRecordDto> profileFilterRecords = client.getProfileFilterRecords(endpointGroup.getId(), false);
 
         Assert.assertNotNull(profileFilterRecords);
         Assert.assertEquals(2, profileFilterRecords.size());
-        assertProfileFiltersEquals(profileFilter1, profileFilterRecords.get(1).getInactiveStructureDto());
-        assertProfileFiltersEquals(profileFilter2, profileFilterRecords.get(0).getInactiveStructureDto());
+        
+        List<ProfileFilterDto> storedProfileFilters  = new ArrayList<ProfileFilterDto>(2);
+        for (ProfileFilterRecordDto profileFilterRecord : profileFilterRecords) {
+            storedProfileFilters.add(profileFilterRecord.getInactiveStructureDto());
+        }
+        
+        Collections.sort(storedProfileFilters, new IdComparator());
+        
+        for (int i=0;i<profileFilters.size();i++) {
+            ProfileFilterDto profileFilter = profileFilters.get(i);
+            ProfileFilterDto storedProfileFilter = storedProfileFilters.get(i);
+            assertProfileFiltersEquals(profileFilter, storedProfileFilter);
+        }
     }
 
     /**
@@ -131,7 +147,7 @@ public class ControlServerProfileFilterIT extends AbstractTestControlServer {
 
         EndpointGroupDto endpointGroup = createEndpointGroup();
 
-        CTLSchemaInfoDto ctlSchema = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, CTLSchemaScopeDto.TENANT,
+        CTLSchemaDto ctlSchema = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(),
                 null, null, null);
 
         EndpointProfileSchemaDto profileSchema1 = createEndpointProfileSchema(endpointGroup.getApplicationId(), ctlSchema.getId());

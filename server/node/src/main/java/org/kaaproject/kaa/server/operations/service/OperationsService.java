@@ -1,17 +1,17 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.server.operations.service;
@@ -39,7 +39,9 @@ import org.kaaproject.kaa.server.sync.UserClientSync;
  */
 public interface OperationsService extends PublicKeyAware {
 
-    SyncContext syncProfile(SyncContext context, ProfileClientSync request);
+    SyncContext syncClientProfile(SyncContext context, ProfileClientSync request);
+    
+    EndpointProfileDto syncServerProfile(String appToken, String endpointKey, EndpointObjectHash key);
 
     SyncContext processEndpointAttachDetachRequests(SyncContext context, UserClientSync request);
 
@@ -48,8 +50,8 @@ public interface OperationsService extends PublicKeyAware {
     SyncContext syncConfiguration(SyncContext context, ConfigurationClientSync request) throws GetDeltaException;
 
     SyncContext syncNotification(SyncContext context, NotificationClientSync request);
-    
-    EndpointProfileDto updateProfile(SyncContext context);
+
+    SyncContext syncProfileServerHash(SyncContext context);
 
     /**
      * Attaches endpoint to user.
@@ -79,18 +81,30 @@ public interface OperationsService extends PublicKeyAware {
 
     /**
      * Lookup user configuration and return it's hash
-     * @param appToken application token
-     * @param profile endpoint profile
+     * 
+     * @param appToken
+     *            application token
+     * @param profile
+     *            endpoint profile
      * @return user configuration hash, or null if not found;
      */
     byte[] fetchUcfHash(String appToken, EndpointProfileDto profile);
 
     /**
-     * Fetch server endpoint profile and CTL schema id based on endpoint key hash
+     * Fetch server endpoint profile and CTL schema id based on endpoint key
+     * hash
      * 
-     * @param hash - endpoint key hash
+     * @param hash
+     *            - endpoint key hash
      * @return endpoint profile
      */
     public EndpointProfileDto refreshServerEndpointProfile(EndpointObjectHash hash);
 
+    /**
+     * Update profile state based on new user configuration hash 
+     * @param context - sync context that contains profile and other metadata
+     * @param ucfHash - user configuration hash
+     * @return
+     */
+    SyncContext syncUserConfigurationHash(SyncContext context, byte[] ucfHash);
 }

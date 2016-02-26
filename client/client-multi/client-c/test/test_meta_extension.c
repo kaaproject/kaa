@@ -1,17 +1,17 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 #include <stdbool.h>
@@ -60,6 +60,7 @@ void test_meta_extension_get_size_failed(void)
     ASSERT_NOT_EQUAL(error_code, KAA_ERR_NONE);
 }
 
+
 void test_meta_extension_get_size(void)
 {
     KAA_TRACE_IN(logger);
@@ -67,9 +68,9 @@ void test_meta_extension_get_size(void)
     const size_t expected_meta_extension_size = KAA_EXTENSION_HEADER_SIZE
                                               + sizeof(uint32_t) /* request id */
                                               + sizeof(uint32_t) /* timeout */
-                                              + SHA_1_DIGEST_LENGTH
-                                              + SHA_1_DIGEST_LENGTH
-                                              + KAA_SDK_TOKEN_LENGTH;
+                                              + kaa_aligned_size_get(SHA_1_DIGEST_LENGTH)
+                                              + kaa_aligned_size_get(SHA_1_DIGEST_LENGTH)
+                                              + kaa_aligned_size_get(KAA_SDK_TOKEN_LENGTH);
 
     size_t meta_extension_size;
     kaa_error_t error_code = kaa_meta_data_request_get_size(&meta_extension_size);
@@ -133,8 +134,8 @@ void test_meta_extension_serialize(void)
     error_code = kaa_platform_message_reader_create(&reader, buffer, meta_extension_size);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    uint8_t extension_type;
-    uint32_t extension_options;
+    uint16_t extension_type;
+    uint16_t extension_options;
     uint32_t extension_payload;
 
     error_code = kaa_platform_message_read_extension_header(

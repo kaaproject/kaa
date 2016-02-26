@@ -1,17 +1,17 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 #include <stdint.h>
@@ -59,6 +59,12 @@ static kaa_service_t OPERATIONS_SERVICES[] = { KAA_SERVICE_PROFILE
 #endif
                                              };
 static const int OPERATIONS_SERVICES_COUNT = sizeof(OPERATIONS_SERVICES) / sizeof(kaa_service_t);
+
+/* Logging constraints */
+#define MAX_LOG_COUNT           SIZE_MAX
+#define MAX_LOG_BUCKET_SIZE     (KAA_TCP_CHANNEL_OUT_BUFFER_SIZE >> 3)
+
+_Static_assert(MAX_LOG_BUCKET_SIZE, "Maximum bucket size cannot be 0!");
 
 struct kaa_client_t {
     kaa_context_t                       *context;
@@ -252,9 +258,9 @@ kaa_error_t kaa_client_start(kaa_client_t *kaa_client,
                              kaa_time_t max_delay) {
     KAA_RETURN_IF_NIL(kaa_client, KAA_ERR_BADPARAM);
 
-    kaa_error_t error_code = kaa_check_readiness(kaa_client->kaa_context);
+    kaa_error_t error_code = kaa_check_readiness(kaa_client->context);
     if (error_code != KAA_ERR_NONE) {
-        KAA_LOG_ERROR(kaa_client->kaa_context->logger, error_code, "Cannot start Kaa client: Kaa context is not fully initialized");
+        KAA_LOG_ERROR(kaa_client->context->logger, error_code, "Cannot start Kaa client: Kaa context is not fully initialized");
         return error_code;
     }
 
@@ -342,13 +348,6 @@ kaa_error_t kaa_client_init_channel(kaa_client_t *kaa_client, kaa_client_channel
         return error_code;
     }
 
-    error_code = kaa_tcp_channel_set_keepalive_timeout(&kaa_client->channel, 5);
-
-    if(error_code) {
-        KAA_LOG_ERROR(kaa_client->context->logger, error_code, "Filed to set channel keepalive timeout, type %d", channel_type);
-        return error_code;
-    }
-
     error_code = kaa_tcp_channel_set_socket_events_callback(&kaa_client->channel, &on_kaa_tcp_channel_event, kaa_client);
     if (error_code) {
         KAA_LOG_ERROR(kaa_client->context->logger, error_code,
@@ -410,7 +409,7 @@ kaa_error_t kaa_client_stop(kaa_client_t *kaa_client)
     KAA_LOG_INFO(kaa_client->context->logger, KAA_ERR_NONE, "Going to stop Kaa client...");
     kaa_client->operate = false;
 
-    return KAA_ERR_NONE;
+    return kaa_stop(kaa_client->context);
 }
 
 
@@ -447,9 +446,15 @@ kaa_error_t kaa_log_collector_init(kaa_client_t *kaa_client)
         return error_code;
     }
 
+    kaa_log_bucket_constraints_t bucket_sizes = {
+        .max_bucket_size = MAX_LOG_BUCKET_SIZE,
+        .max_bucket_log_count = MAX_LOG_COUNT,
+    };
+
     error_code = kaa_logging_init(kaa_client->context->log_collector
                                 , kaa_client->log_storage_context
-                                , kaa_client->log_upload_strategy_context);
+                                , kaa_client->log_upload_strategy_context
+                                , &bucket_sizes);
     if (error_code) {
         KAA_LOG_ERROR(kaa_client->context->logger, error_code,"Failed to init log collector");
         return error_code;

@@ -1,37 +1,22 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.server.control;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.net.URL;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
-
-import javax.sql.DataSource;
-
+import com.mongodb.DB;
 import org.apache.avro.Schema;
 import org.apache.commons.lang.StringUtils;
 import org.apache.xerces.impl.dv.util.Base64;
@@ -44,19 +29,20 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
+import org.kaaproject.avro.ui.shared.FqnVersion;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.HasId;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
@@ -64,9 +50,7 @@ import org.kaaproject.kaa.common.dto.UpdateStatus;
 import org.kaaproject.kaa.common.dto.VersionDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaInfoDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventAction;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventMapDto;
@@ -96,9 +80,22 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpStatusCodeException;
 
-import com.mongodb.DB;
+import javax.sql.DataSource;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.net.URL;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
 
 /**
  * The Class AbstractTestControlServer.
@@ -457,14 +454,7 @@ public abstract class AbstractTestControlServer extends AbstractTest {
      * @throws Exception the exception
      */
     protected void checkNotFound(TestRestCall restCall) throws Exception {
-        HttpStatus errorStatus = null;
-        try {
-            restCall.executeRestCall();
-        } catch (HttpClientErrorException e) {
-            errorStatus = e.getStatusCode();
-        }
-        Assert.assertNotNull(errorStatus);
-        Assert.assertEquals(HttpStatus.NOT_FOUND, errorStatus);
+        checkRestErrorStatusCode(restCall, HttpStatus.NOT_FOUND);
     }
 
     /**
@@ -474,14 +464,7 @@ public abstract class AbstractTestControlServer extends AbstractTest {
      * @throws Exception the exception
      */
     protected void checkBadRequest(TestRestCall restCall) throws Exception {
-        HttpStatus errorStatus = null;
-        try {
-            restCall.executeRestCall();
-        } catch (HttpClientErrorException e) {
-            errorStatus = e.getStatusCode();
-        }
-        Assert.assertNotNull(errorStatus);
-        Assert.assertEquals(HttpStatus.BAD_REQUEST, errorStatus);
+        checkRestErrorStatusCode(restCall, HttpStatus.BAD_REQUEST);
     }
     
     /**
@@ -491,14 +474,18 @@ public abstract class AbstractTestControlServer extends AbstractTest {
      * @throws Exception the exception
      */
     protected void checkForbidden(TestRestCall restCall) throws Exception {
+        checkRestErrorStatusCode(restCall, HttpStatus.FORBIDDEN);
+    }
+    
+    protected void checkRestErrorStatusCode(TestRestCall restCall, HttpStatus expectedStatus) throws Exception {
         HttpStatus errorStatus = null;
         try {
             restCall.executeRestCall();
-        } catch (HttpClientErrorException e) {
+        } catch (HttpStatusCodeException e) {
             errorStatus = e.getStatusCode();
         }
         Assert.assertNotNull(errorStatus);
-        Assert.assertEquals(HttpStatus.FORBIDDEN, errorStatus);
+        Assert.assertEquals(expectedStatus, errorStatus);
     }
 
     /**
@@ -704,7 +691,7 @@ public abstract class AbstractTestControlServer extends AbstractTest {
             profileSchema.setApplicationId(applicationId);
         }
         if (strIsEmpty(ctlSchemaId)) {
-            CTLSchemaInfoDto ctlSchema = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, CTLSchemaScopeDto.TENANT, null, null, null);
+            CTLSchemaDto ctlSchema = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantAdminDto.getTenantId(), null, null, null);
             profileSchema.setCtlSchemaId(ctlSchema.getId());
         } else {
             profileSchema.setCtlSchemaId(ctlSchemaId);
@@ -734,7 +721,7 @@ public abstract class AbstractTestControlServer extends AbstractTest {
             profileSchema.setApplicationId(applicationId);
         }
         if (strIsEmpty(ctlSchemaId)) {
-            CTLSchemaInfoDto ctlSchema = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, CTLSchemaScopeDto.TENANT, null, null, null);
+            CTLSchemaDto ctlSchema = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantAdminDto.getTenantId(), null, null, null);
             profileSchema.setCtlSchemaId(ctlSchema.getId());
         }
         loginTenantDeveloper(tenantDeveloperDto.getUsername());
@@ -1262,8 +1249,8 @@ public abstract class AbstractTestControlServer extends AbstractTest {
         return CTL_DEFAULT_TYPE + random.nextInt(100000);
     }
 
-    protected CTLSchemaInfoDto createCTLSchema(String name, String namespace, int version, 
-            CTLSchemaScopeDto scope, String applicationId, Set<CTLSchemaMetaInfoDto> dependencies,
+    protected CTLSchemaDto createCTLSchema(String name, String namespace, int version, 
+            String tenantId, String applicationId, Set<FqnVersion> dependencies,
             Map<String, String> fields) throws Exception {
 
         LOG.debug("Generating CTL schema...");
@@ -1276,19 +1263,11 @@ public abstract class AbstractTestControlServer extends AbstractTest {
         body.put("namespace", namespace);
         body.put("version", version);
 
-        // The argument is left for readability only
-        if (scope == CTLSchemaScopeDto.APPLICATION) {
-            if (strIsEmpty(applicationId)) {
-                ApplicationDto application = this.createApplication();
-                applicationId = application.getId();
-            }
-        }
-
         if (dependencies != null && !dependencies.isEmpty()) {
             ArrayNode array = factory.arrayNode();
-            for (CTLSchemaMetaInfoDto dependency : dependencies) {
+            for (FqnVersion dependency : dependencies) {
                 ObjectNode object = factory.objectNode();
-                object.put("fqn", dependency.getFqn());
+                object.put("fqn", dependency.getFqnString());
                 object.put("version", dependency.getVersion());
                 array.add(object);
             }
@@ -1308,7 +1287,7 @@ public abstract class AbstractTestControlServer extends AbstractTest {
 
         LOG.debug("CTL schema generated: " + body);
 
-        return client.saveCTLSchema(body.toString(), scope, scope == CTLSchemaScopeDto.APPLICATION ? applicationId : null);
+        return client.saveCTLSchema(body.toString(), tenantId, applicationId);
     }
 
     /**

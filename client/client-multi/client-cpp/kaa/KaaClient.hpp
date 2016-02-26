@@ -1,17 +1,17 @@
-/*
- * Copyright 2014-2015 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 #ifndef KAACLIENT_HPP_
@@ -29,7 +29,6 @@
 #include "kaa/channel/SyncDataProcessor.hpp"
 #include "kaa/notification/NotificationManager.hpp"
 #include "kaa/event/registration/EndpointRegistrationManager.hpp"
-#include "kaa/ClientStatus.hpp"
 #include "kaa/channel/IKaaChannelManager.hpp"
 #include "kaa/channel/impl/DefaultBootstrapChannel.hpp"
 #include "kaa/channel/impl/DefaultOperationTcpChannel.hpp"
@@ -41,6 +40,7 @@
 #include "kaa/IKaaClientStateListener.hpp"
 #include "kaa/IKaaClientPlatformContext.hpp"
 #include "kaa/KaaClientProperties.hpp"
+#include "kaa/KaaClientContext.hpp"
 
 namespace kaa {
 
@@ -64,7 +64,8 @@ public:
     virtual IKaaDataDemultiplexer&              getOperationDemultiplexer();
     virtual EventFamilyFactory&                 getEventFamilyFactory();
 
-    virtual void                                addLogRecord(const KaaUserLogRecord& record);
+    virtual RecordFuture                        addLogRecord(const KaaUserLogRecord& record);
+    virtual void                                setLogDeliveryListener(ILogDeliveryListenerPtr listener);
     virtual void                                setLogStorage(ILogStoragePtr storage);
     virtual void                                setLogUploadStrategy(ILogUploadStrategyPtr strategy);
     virtual void                                setFailoverStrategy(IFailoverStrategyPtr strategy);
@@ -73,15 +74,13 @@ public:
     virtual void                                removeTopicListListener(INotificationTopicListListener& listener);
     virtual Topics                              getTopics();
     virtual void                                addNotificationListener(INotificationListener& listener);
-    virtual void                                addNotificationListener(const std::string& topidId,
-                                                                        INotificationListener& listener);
+    virtual void                                addNotificationListener(std::int64_t topicId, INotificationListener& listener);
     virtual void                                removeNotificationListener(INotificationListener& listener);
-    virtual void                                removeNotificationListener(const std::string& topidId,
-                                                                           INotificationListener& listener);
-    virtual void                                subscribeToTopic(const std::string& id, bool forceSync);
-    virtual void                                subscribeToTopics(const std::list<std::string>& idList, bool forceSync);
-    virtual void                                unsubscribeFromTopic(const std::string& id, bool forceSync);
-    virtual void                                unsubscribeFromTopics(const std::list<std::string>& idList, bool forceSync);
+    virtual void                                removeNotificationListener(std::int64_t topicId, INotificationListener& listener);
+    virtual void                                subscribeToTopic(std::int64_t id, bool forceSync);
+    virtual void                                subscribeToTopics(const std::list<std::int64_t>& idList, bool forceSync);
+    virtual void                                unsubscribeFromTopic(std::int64_t id, bool forceSync);
+    virtual void                                unsubscribeFromTopics(const std::list<std::int64_t>& idList, bool forceSync);
     virtual void                                syncTopicSubscriptions();
     virtual void                                addConfigurationListener(IConfigurationReceiver &receiver);
     virtual void                                removeConfigurationListener(IConfigurationReceiver &receiver);
@@ -103,7 +102,7 @@ public:
 
     virtual IKaaDataMultiplexer&                getBootstrapMultiplexer();
     virtual IKaaDataDemultiplexer&              getBootstrapDemultiplexer();
-
+    virtual IKaaClientContext&                  getKaaClientContext();
 private:
     void init();
 
@@ -113,6 +112,7 @@ private:
     void checkReadiness();
 
 private:
+
     enum class State {
         CREATED,
         STARTED,
@@ -124,8 +124,10 @@ private:
     void checkClientState(State expected, const std::string& message);
     void checkClientStateNot(State unexpected, const std::string& message);
 
-private:
-    State                                           clientState_ = State::CREATED;
+    State                                            clientState_ = State::CREATED;
+    LoggerPtr                                        logger_;
+    KaaClientContext                                 context_;
+    IKaaClientStateStoragePtr                        status_;
 
 #ifdef KAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL
     std::unique_ptr<DefaultBootstrapChannel>         bootstrapChannel_;
@@ -141,11 +143,8 @@ private:
 #endif
 
     IKaaClientPlatformContextPtr                     platformContext_;
-    IExecutorContext&                                executorContext_;
-    KaaClientProperties                              clientProperties_;
     IKaaClientStateListenerPtr                       stateListener_;
 
-    IKaaClientStateStoragePtr                        status_;
     std::unique_ptr<IBootstrapManager>               bootstrapManager_;
     std::unique_ptr<IKaaChannelManager>              channelManager_;
     std::unique_ptr<SyncDataProcessor>               syncProcessor_;

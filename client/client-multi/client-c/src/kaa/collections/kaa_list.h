@@ -1,17 +1,17 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 #ifndef KAA_LIST_H_
@@ -38,6 +38,11 @@ typedef bool (*match_predicate)(void *data, void *context);
  * @brief Use to deallocate list node data.
  */
 typedef void (*deallocate_list_data)(void *);
+
+/**
+ *  @brief Returns list node hash.
+ */
+typedef uint64_t list_node_hash(void * item);
 
 /**
  * @brief Use to process element data.
@@ -156,6 +161,12 @@ void kaa_list_for_each(kaa_list_node_t *first, kaa_list_node_t *last, process_da
  * @param pred  Predicate that is used to sort list.
  */
 void kaa_list_sort(kaa_list_t *list, match_predicate pred);
+
+/**
+ * @brief Estimate hash from sorted array.
+ * @param pred  Predicate that is used to get list node's hash, id or other unique uint64_t value.
+ */
+int32_t kaa_list_hash(kaa_list_t *list, list_node_hash pred);
 
 #ifdef __cplusplus
 } // extern "C"

@@ -1,17 +1,17 @@
-/*
- * Copyright 2014-2015 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 #include <stdint.h>
@@ -44,7 +44,7 @@
 
 extern kaa_transport_channel_interface_t *kaa_channel_manager_get_transport_channel(kaa_channel_manager_t *self
                                                                                   , kaa_service_t service_type);
-
+extern kaa_error_t kaa_status_set_attached(kaa_status_t *self, bool is_attached);
 
 
 typedef struct {
@@ -502,7 +502,7 @@ kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self
 
                 if (result == USER_RESULT_SUCCESS) {
                     KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Endpoint was successfully attached to user");
-                    self->status->is_attached = true;
+                    kaa_status_set_attached(self->status, true);
                     if (self->attachment_listeners.on_attach_success)
                         (self->attachment_listeners.on_attach_success)(self->attachment_listeners.context);
                 } else {
@@ -581,7 +581,7 @@ kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self
                            , external_id, external_id_length, access_token, access_token_length);
                 remaining_length -= kaa_aligned_size_get(access_token_length);
 
-                self->status->is_attached = true;
+                kaa_status_set_attached(self->status, true);
 
                 if (self->attachment_listeners.on_attached)
                     (self->attachment_listeners.on_attached)(self->attachment_listeners.context
@@ -604,7 +604,7 @@ kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self
                            , access_token, access_token_length);
                 remaining_length -= kaa_aligned_size_get(access_token_length);
 
-                self->status->is_attached = false;
+                kaa_status_set_attached(self->status, false);
 
                 if (self->attachment_listeners.on_detached)
                     (self->attachment_listeners.on_detached)(self->attachment_listeners.context, access_token);
@@ -648,7 +648,7 @@ kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self
                         if (node) {
                             kaa_endpoint_info_t *info = (kaa_endpoint_info_t*)kaa_list_get_data(node);
                             if (info->listener && info->listener->on_attached)
-                                info->listener->on_attached(info->listener->context, &endpoint_id);
+                                info->listener->on_attached(info->listener->context, endpoint_id);
                             kaa_list_remove_at(self->attach_endpoints, node, dtor_endpoint_info);
                         }
                     }

@@ -1,20 +1,34 @@
-/*
- * Copyright 2014-2015 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.server.common.dao.impl.sql;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 import org.junit.Assert;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
@@ -52,20 +66,6 @@ import org.kaaproject.kaa.server.common.dao.model.sql.User;
 import org.kaaproject.kaa.server.common.dao.model.sql.UserVerifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
 
 public abstract class HibernateAbstractTest extends AbstractTest {
 
@@ -246,15 +246,14 @@ public abstract class HibernateAbstractTest extends AbstractTest {
             }
         }
         CTLSchemaMetaInfo metaInfo = new CTLSchemaMetaInfo();
-        metaInfo.setVersion(version);
         metaInfo.setFqn(fqn);
-        metaInfo.setScope(scope);
+        metaInfo.setTenant(tenant);
         metaInfo = ctlSchemaMetaInfoDao.save(metaInfo);
         CTLSchema ctlSchema = new CTLSchema();
-        ctlSchema.setTenant(tenant);
+        ctlSchema.setMetaInfo(metaInfo);
+        ctlSchema.setVersion(version);
         ctlSchema.setBody(UUID.randomUUID().toString());
         ctlSchema.setDependencySet(new HashSet<CTLSchema>());
-        ctlSchema.setMetaInfo(metaInfo);
         ctlSchema = ctlSchemaDao.save(ctlSchema);
         return ctlSchema;
     }

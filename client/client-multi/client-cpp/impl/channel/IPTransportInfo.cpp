@@ -1,17 +1,17 @@
-/*
- * Copyright 2014-2015 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 #include <sstream>
@@ -30,7 +30,6 @@ IPTransportInfo::IPTransportInfo(ITransportConnectionInfoPtr connectionInfo)
     : GenericTransportInfo(connectionInfo->getServerType(), ProtocolMetaData())
 {
     if (!connectionInfo || connectionInfo->getConnectionInfo().empty()) {
-        KAA_LOG_ERROR("Failed to create IP transport data: bad input data");
         throw KaaException("Bad connection data");
     }
 
@@ -40,10 +39,11 @@ IPTransportInfo::IPTransportInfo(ITransportConnectionInfoPtr connectionInfo)
     protocolId_ = connectionInfo->getTransportId();
 
     std::uint8_t *data = connectionData_.data();
-    std::int32_t publicKeyLength = boost::asio::detail::socket_ops::network_to_host_long(*((int32_t *)data));
+    std::size_t publicKeyLength = boost::asio::detail::socket_ops::network_to_host_long(*((int32_t *)data));
     data += sizeof(std::int32_t);
 
-    publicKey_ = PublicKey(data, publicKeyLength);
+    publicKey_ = PublicKey();
+    publicKey_.assign(data, data+publicKeyLength);
     data += publicKeyLength;
 
     std::int32_t hostLength = boost::asio::detail::socket_ops::network_to_host_long(*((int32_t *)data));
@@ -58,11 +58,8 @@ IPTransportInfo::IPTransportInfo(ITransportConnectionInfoPtr connectionInfo)
     url_.assign(ss.str());
 
     if ((3 * sizeof(std::int32_t) + publicKeyLength + hostLength) > connectionData_.size()) {
-        KAA_LOG_ERROR("Failed to create IP transport data: less size of input data than needed");
         throw KaaException("Bad connection data");
     }
-
-    KAA_LOG_TRACE(boost::format("Create IP transport data: host=%1%, port=%2%, publicKeyLength=%3%") % host_% port_ % publicKey_.size());
 }
 
 } /* namespace kaa */

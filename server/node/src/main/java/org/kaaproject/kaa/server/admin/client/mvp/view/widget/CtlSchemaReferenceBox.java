@@ -1,17 +1,17 @@
-/*
- * Copyright 2014-2015 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.widget;
@@ -27,8 +27,8 @@ import org.kaaproject.avro.ui.gwt.client.widget.FqnReferenceBox;
 import org.kaaproject.avro.ui.shared.Fqn;
 import org.kaaproject.avro.ui.shared.FqnKey;
 import org.kaaproject.avro.ui.shared.FqnVersion;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
+import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaReferenceDto;
 
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -38,15 +38,15 @@ import com.google.gwt.user.client.ui.HasConstrainedValue;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.RequiresResize;
 
-public class CtlSchemaReferenceBox extends HorizontalPanel implements HasConstrainedValue<CTLSchemaMetaInfoDto>, RequiresResize {
+public class CtlSchemaReferenceBox extends HorizontalPanel implements HasConstrainedValue<CtlSchemaReferenceDto>, RequiresResize {
 
-    private CTLSchemaMetaInfoDto value;
+    private CtlSchemaReferenceDto value;
     
     private FqnReferenceBox fqnReferenceBox;
     private IntegerListBox versionsBox;
     
     private Map<Fqn, List<Integer>> fqnVersionsMap = new HashMap<>();
-    private Map<FqnVersion, CTLSchemaMetaInfoDto> fqnVersionToReferenceMap = new HashMap<>();
+    private Map<FqnVersion, CtlSchemaReferenceDto> fqnVersionToReferenceMap = new HashMap<>();
     
     public CtlSchemaReferenceBox() {
         fqnReferenceBox = new FqnReferenceBox(Utils.constants.schemaReferencePrompt());
@@ -77,7 +77,7 @@ public class CtlSchemaReferenceBox extends HorizontalPanel implements HasConstra
     }
     
     private void updateValueByFqnKeyAndVersion(FqnKey fqnKey, Integer version) {
-        CTLSchemaMetaInfoDto newValue = null;
+        CtlSchemaReferenceDto newValue = null;
         if (fqnKey != null) {
             Fqn fqn = fqnKey.getFqn();
             if (version == null) {
@@ -91,22 +91,22 @@ public class CtlSchemaReferenceBox extends HorizontalPanel implements HasConstra
     }
     
     @Override
-    public CTLSchemaMetaInfoDto getValue() {
+    public CtlSchemaReferenceDto getValue() {
         return value;
     }
 
     @Override
-    public void setValue(CTLSchemaMetaInfoDto value) {
+    public void setValue(CtlSchemaReferenceDto value) {
         setValue(value, false);
     }
 
     @Override
-    public void setValue(CTLSchemaMetaInfoDto value, boolean fireEvents) {
+    public void setValue(CtlSchemaReferenceDto value, boolean fireEvents) {
         if (value == this.value
                 || (this.value != null && this.value.equals(value))) {
             return;
         }
-        CTLSchemaMetaInfoDto before = this.value;
+        CtlSchemaReferenceDto before = this.value;
         this.value = value;
         
         updateBox();
@@ -118,18 +118,18 @@ public class CtlSchemaReferenceBox extends HorizontalPanel implements HasConstra
 
     @Override
     public HandlerRegistration addValueChangeHandler(
-            ValueChangeHandler<CTLSchemaMetaInfoDto> handler) {
+            ValueChangeHandler<CtlSchemaReferenceDto> handler) {
         return addHandler(handler, ValueChangeEvent.getType());
     }
 
     @Override
-    public void setAcceptableValues(Collection<CTLSchemaMetaInfoDto> values) {
+    public void setAcceptableValues(Collection<CtlSchemaReferenceDto> values) {
         fqnVersionsMap.clear();
         fqnVersionToReferenceMap.clear();
         Map<FqnKey, Fqn> declaredFqns = new HashMap<>();
         
-        for (CTLSchemaMetaInfoDto ctlReference : values) {
-            Fqn fqn = new Fqn(ctlReference.getFqn());
+        for (CtlSchemaReferenceDto ctlReference : values) {
+            Fqn fqn = new Fqn(ctlReference.getMetaInfo().getFqn());
             FqnKey fqnKey = new FqnKey(fqn);
             declaredFqns.put(fqnKey, fqn);
             
@@ -157,7 +157,7 @@ public class CtlSchemaReferenceBox extends HorizontalPanel implements HasConstra
     
     private void updateBox() {
         if (value != null) {
-            Fqn fqn = new Fqn(value.getFqn());
+            Fqn fqn = new Fqn(value.getMetaInfo().getFqn());
             fqnReferenceBox.setValue(new FqnKey(fqn));
             List<Integer> versions = fqnVersionsMap.get(fqn);
             Collections.sort(versions);

@@ -1,99 +1,88 @@
-/*
- * Copyright 2014-2015 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 #ifndef ILOGSTORAGE_HPP_
 #define ILOGSTORAGE_HPP_
 
-#include <list>
 #include <memory>
 #include <cstdint>
-#include <utility>
+
+#include "kaa/log/BucketInfo.hpp"
+#include "kaa/log/LogBucket.hpp"
 
 namespace kaa {
 
-/*
- * Forward declarations.
- */
 class LogRecord;
 class ILogStorageStatus;
 
 /**
- * @typedef The shared pointer to the serialized @c LogRecord instance.
- */
-typedef std::shared_ptr<LogRecord> LogRecordPtr;
-
-/**
- * @brief The public interface to access to the log storage.
+ * @brief Interface of a log storage.
  *
- * The default implementation can be found in @c MemoryLogStorage.
+ * Persists log records, forms on demand a new log bucket for sending
+ * it to the Operation server, removes already sent log buckets, cleans up elder
+ * records in case if there is some limitation on a size of a log storage.
+ *
+ * @c MemoryLogStorage is used by default.
  */
 class ILogStorage {
 public:
     /**
-     * @brief The alias for the unique identifier of the requested log block.
+     * @brief Persists a log record.
      *
-     * The identifier may be reuse after notifying of its status via @link removeRecordBlock(RecordBlockId id) @endlink
-     * and @link notifyUploadFailed(RecordBlockId id) @endlink.
+     * @param record The @c LogRecord object.
+     * @return The @c BucketInfo object which contains information about a bucket the log record is added.
+     * @see LogRecord
+     * @see BucketInfo
      */
-    typedef std::int32_t RecordBlockId;
+    virtual BucketInfo addLogRecord(LogRecord&& record) = 0;
 
     /**
-     * @brief The alias for the log block container.
-     */
-    typedef std::list<LogRecordPtr> RecordBlock;
-
-    /**
-     * @brief The alias for the log block marked by the unique identifier.
-     */
-    typedef std::pair<RecordBlockId, RecordBlock> RecordPack;
-
-    /**
-     * @brief Adds the log record to the storage.
-     */
-    virtual void addLogRecord(LogRecordPtr record) = 0;
-
-    /**
-     * @brief Returns the current log storage status.
+     * @brief Returns a log storage status.
      *
-     * @return The current log storage status.
+     * @return The @c LogStorageStatus object.
+     * @see LogStorageStatus
      */
     virtual ILogStorageStatus& getStatus() = 0;
 
     /**
-     * @brief Returns the block of log records which total size is less or equal to the specified block size.
+     * @brief Returns a new log bucket.
      *
-     * @param[in] blockSize    The maximum size (in bytes) of the requested log record block.
-     *
-     * @return The log record block marked by the unique @c RecordBlockId identifier.
+     * @return The @c  LogBucket object.
+     * @see LogBucket
      */
-    virtual RecordPack getRecordBlock(std::size_t blockSize, std::size_t recordsBlockCount) = 0;
+    virtual LogBucket getNextBucket() = 0;
 
     /**
-     * @brief Removes the log block marked by the specified id.
+     * @brief Tells a log storage to remove a log bucket.
      *
-     * @param[in] id    The unique identifier of the log block.
+     * @param bucketId The id of a log bucket.
+     * @see LogBucket
+     * @see BucketInfo
      */
-    virtual void removeRecordBlock(RecordBlockId id) = 0;
+    virtual void removeBucket(std::int32_t bucketId) = 0;
 
     /**
-     * @brief Notifies of the delivery of the log block marked by the specified id has been failed.
+     * @brief Tells a log storage to consider a log bucket as unused, i.e. a log bucket will be accessible again
+     * via @link getNextBucket() @endlink.
      *
-     * @param[in] id    The unique identifier of the log block.
+     * @param bucketId The id of a log bucket.
+     * @see LogBucket
+     * @see BucketInfo
      */
-    virtual void notifyUploadFailed(RecordBlockId id) = 0;
+    virtual void rollbackBucket(std::int32_t bucketId) = 0;
 
     virtual ~ILogStorage() {}
 };

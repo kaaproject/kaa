@@ -1,26 +1,25 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
+
 package org.kaaproject.kaa.server.sync;
 
-import java.nio.ByteBuffer;
 import java.util.List;
 
 public final class NotificationClientSync {
-    private int appStateSeqNumber;
-    private ByteBuffer topicListHash;
+    private int topicListHash;
     private List<TopicState> topicStates;
     private List<String> acceptedUnicastNotifications;
     private List<SubscriptionCommand> subscriptionCommands;
@@ -31,11 +30,10 @@ public final class NotificationClientSync {
     /**
      * All-args constructor.
      */
-    public NotificationClientSync(int appStateSeqNumber, ByteBuffer topicListHash,
+    public NotificationClientSync(int topicListHash,
             List<TopicState> topicStates,
             List<String> acceptedUnicastNotifications,
             List<SubscriptionCommand> subscriptionCommands) {
-        this.appStateSeqNumber = appStateSeqNumber;
         this.topicListHash = topicListHash;
         this.topicStates = topicStates;
         this.acceptedUnicastNotifications = acceptedUnicastNotifications;
@@ -43,36 +41,19 @@ public final class NotificationClientSync {
     }
 
     /**
-     * Gets the value of the 'appStateSeqNumber' field.
-     */
-    public int getAppStateSeqNumber() {
-        return appStateSeqNumber;
-    }
-
-    /**
-     * Sets the value of the 'appStateSeqNumber' field.
-     * 
-     * @param value
-     *            the value to set.
-     */
-    public void setAppStateSeqNumber(int value) {
-        this.appStateSeqNumber = value;
-    }
-
-    /**
      * Gets the value of the 'topicListHash' field.
      */
-    public ByteBuffer getTopicListHash() {
+    public int getTopicListHash() {
         return topicListHash;
     }
 
     /**
      * Sets the value of the 'topicListHash' field.
-     * 
+     *
      * @param value
      *            the value to set.
      */
-    public void setTopicListHash(ByteBuffer value) {
+    public void setTopicListHash(Integer value) {
         this.topicListHash = value;
     }
 
@@ -85,7 +66,7 @@ public final class NotificationClientSync {
 
     /**
      * Sets the value of the 'topicStates' field.
-     * 
+     *
      * @param value
      *            the value to set.
      */
@@ -102,7 +83,7 @@ public final class NotificationClientSync {
 
     /**
      * Sets the value of the 'acceptedUnicastNotifications' field.
-     * 
+     *
      * @param value
      *            the value to set.
      */
@@ -126,9 +107,8 @@ public final class NotificationClientSync {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((acceptedUnicastNotifications == null) ? 0 : acceptedUnicastNotifications.hashCode());
-        result = prime * result + appStateSeqNumber;
         result = prime * result + ((subscriptionCommands == null) ? 0 : subscriptionCommands.hashCode());
-        result = prime * result + ((topicListHash == null) ? 0 : topicListHash.hashCode());
+        result = prime * result + topicListHash;
         result = prime * result + ((topicStates == null) ? 0 : topicStates.hashCode());
         return result;
     }
@@ -152,9 +132,6 @@ public final class NotificationClientSync {
         } else if (!acceptedUnicastNotifications.equals(other.acceptedUnicastNotifications)) {
             return false;
         }
-        if (appStateSeqNumber != other.appStateSeqNumber) {
-            return false;
-        }
         if (subscriptionCommands == null) {
             if (other.subscriptionCommands != null) {
                 return false;
@@ -162,11 +139,7 @@ public final class NotificationClientSync {
         } else if (!subscriptionCommands.equals(other.subscriptionCommands)) {
             return false;
         }
-        if (topicListHash == null) {
-            if (other.topicListHash != null) {
-                return false;
-            }
-        } else if (!topicListHash.equals(other.topicListHash)) {
+        if (topicListHash != other.topicListHash) {
             return false;
         }
         if (topicStates == null) {
@@ -182,9 +155,7 @@ public final class NotificationClientSync {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("NotificationClientSync [appStateSeqNumber=");
-        builder.append(appStateSeqNumber);
-        builder.append(", topicListHash=");
+        builder.append("NotificationClientSync [topicListHash=");
         builder.append(topicListHash);
         builder.append(", topicStates=");
         builder.append(topicStates);

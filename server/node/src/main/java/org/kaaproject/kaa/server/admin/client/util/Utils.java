@@ -1,17 +1,17 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.server.admin.client.util;
@@ -24,6 +24,7 @@ import org.kaaproject.avro.ui.gwt.client.AvroUiResources;
 import org.kaaproject.avro.ui.gwt.client.AvroUiResources.AvroUiStyle;
 import org.kaaproject.avro.ui.gwt.client.widget.AlertPanel;
 import org.kaaproject.kaa.common.dto.VersionDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdminResources;
 import org.kaaproject.kaa.server.admin.client.KaaAdminResources.KaaAdminStyle;
 import org.kaaproject.kaa.server.admin.client.KaaAdminResources.KaaTheme;
@@ -125,7 +126,9 @@ public class Utils {
 
     private static String parseErrorMessage(Throwable caught,
             ErrorMessageCustomizer errorMessageCustomizer) {
-        if (caught instanceof KaaAdminServiceException) {
+        if (errorMessageCustomizer != null) {
+            return errorMessageCustomizer.customizeErrorMessage(caught);
+        } else if (caught instanceof KaaAdminServiceException) {
             ServiceErrorCode errorCode = ((KaaAdminServiceException) caught)
                     .getErrorCode();
             String message = constants.getString(errorCode.getResKey());
@@ -133,8 +136,6 @@ public class Utils {
                 message += caught.getLocalizedMessage();
             }
             return message;
-        } else if (errorMessageCustomizer != null) {
-            return errorMessageCustomizer.customizeErrorMessage(caught);
         } else {
             return caught.getLocalizedMessage();
         }
@@ -194,4 +195,31 @@ public class Utils {
     public static boolean isBlank(String string) {
         return string == null || string.length() == 0;
     }
+    
+	public static String getCtlScopeString(CTLSchemaScopeDto scope) {
+    	switch (scope) {
+		case APPLICATION:
+			return constants.scopeApplication();
+		case SYSTEM:
+			return constants.scopeSystem();
+		case TENANT:
+			return constants.scopeTenant();
+		default:
+			return "Unknown";
+    	}
+    }
+	
+   public static String getCtlScopeTitleString(CTLSchemaScopeDto scope) {
+        switch (scope) {
+        case APPLICATION:
+            return constants.scopeApplicationTitle();
+        case SYSTEM:
+            return constants.scopeSystemTitle();
+        case TENANT:
+            return constants.scopeTenantTitle();
+        default:
+            return "Unknown";
+        }
+    }
+   
 }

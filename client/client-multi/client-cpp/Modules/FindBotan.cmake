@@ -1,17 +1,17 @@
 #
-# Copyright 2014 CyberVision, Inc.
+#  Copyright 2014-2016 CyberVision, Inc.
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
 #
-#      http://www.apache.org/licenses/LICENSE-2.0
+#       http://www.apache.org/licenses/LICENSE-2.0
 #
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
 #
 
 # -*- mode: cmake; -*-
@@ -28,7 +28,7 @@ IF (NOT WIN32)
   include(FindPkgConfig)
   if ( PKG_CONFIG_FOUND )
 
-     pkg_check_modules (PC_BOTAN botan-1.10)
+     pkg_check_modules (PC_BOTAN botan-1.11)
 
      set(BOTAN_DEFINITIONS ${PC_BOTAN_CFLAGS_OTHER})
   endif(PKG_CONFIG_FOUND)
@@ -104,7 +104,7 @@ FIND_PATH(BOTAN_INCLUDE_DIR botan/version.h
 IF(WIN32)
   SET(BOTAN_LIBRARY_NAMES ${BOTAN_LIBRARY_NAMES} libbotan.lib botan.lib)
 ELSE(WIN32)
-  SET(BOTAN_LIBRARY_NAMES ${BOTAN_LIBRARY_NAMES} libbotan.so libbotan-1.10.so)
+  SET(BOTAN_LIBRARY_NAMES ${BOTAN_LIBRARY_NAMES} libbotan.so libbotan-1.11.so)
 ENDIF(WIN32)
 FIND_LIBRARY(BOTAN_LIBRARY NAMES ${BOTAN_LIBRARY_NAMES}
   HINTS

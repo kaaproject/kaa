@@ -1,17 +1,17 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 #ifndef ${event_family_class_name}_HPP_
@@ -53,8 +53,8 @@ public:
     };
 
 public:
-    ${event_family_class_name}(IEventManager& manager, IExecutorContext& executorContext)
-        : eventManager_(manager), executorContext_(executorContext)
+    ${event_family_class_name}(IEventManager& manager, IKaaClientContext &context)
+        : eventManager_(manager), executorContext_(context.getExecutorContext()), context_(context)
     {
         eventFQNs_ = ${add_supported_event_class_fqns};
     }
@@ -105,7 +105,7 @@ private:
             executorContext_.getCallbackExecutor().add([=]
                                                     {
                                                         boost::any anyEvent(event);
-                                                        listeners_(anyEvent, source, fqn); 
+                                                        listeners_(anyEvent, source, fqn);
                                                     });
         }
     }
@@ -115,6 +115,7 @@ private:
     std::list<std::string>                   eventFQNs_;
     KaaObservable<void (const boost::any& value, const std::string& source, const std::string& fqn), ${event_family_class_name}Listener*> listeners_;
     IExecutorContext& executorContext_;
+    IKaaClientContext& context_;
 };
 
 }

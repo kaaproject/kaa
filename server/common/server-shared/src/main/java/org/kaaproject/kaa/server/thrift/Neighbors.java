@@ -1,17 +1,17 @@
-/*
- * Copyright 2014-2015 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.server.thrift;
@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import org.kaaproject.kaa.server.common.thrift.KaaThriftService;
 import org.kaaproject.kaa.server.common.zk.WorkerNodeTracker;
 import org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo;
 import org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo;
@@ -44,6 +45,8 @@ public class Neighbors<T extends NeighborTemplate<V>, V> {
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(Neighbors.class);
 
+    private final KaaThriftService serviceType;
+    
     private final ConcurrentMap<String, NeighborConnection<T, V>> neigbors;
 
     private final int maxNumberNeighborConnections;
@@ -58,7 +61,8 @@ public class Neighbors<T extends NeighborTemplate<V>, V> {
      * 
      * @param eventService
      */
-    public Neighbors(T template, int maxNumberNeighborConnections) {
+    public Neighbors(KaaThriftService serviceType, T template, int maxNumberNeighborConnections) {
+        this.serviceType = serviceType;
         this.template = template;
         this.maxNumberNeighborConnections = maxNumberNeighborConnections;
         this.neigbors = new ConcurrentHashMap<String, NeighborConnection<T, V>>();
@@ -121,15 +125,30 @@ public class Neighbors<T extends NeighborTemplate<V>, V> {
      * @return server ID in format thriftHost:thriftPort
      */
     public static String getServerID(ConnectionInfo info) {
+        return getServerID(KaaThriftService.OPERATIONS_SERVICE, info);
+    }
+    
+    /**
+     * Build server ID from ConnectionInfo object.
+     *
+     * @param service
+     *            KaaThriftService
+     * @param info
+     *            ConnectionInfo
+     * @return server ID in format thriftHost:thriftPort
+     */
+    public static String getServerID(KaaThriftService service, ConnectionInfo info) {
         StringBuffer sb = new StringBuffer();
         sb.append(info.getThriftHost());
         sb.append(":");
         sb.append(info.getThriftPort());
+        sb.append(":");
+        sb.append(service.name());
         return sb.toString();
     }
 
-    public void setZkNode(ConnectionInfo connectionInfo, WorkerNodeTracker zkNode) {
-        setZkNode(getServerID(connectionInfo), zkNode);
+    public void setZkNode(KaaThriftService service, ConnectionInfo connectionInfo, WorkerNodeTracker zkNode) {
+        setZkNode(getServerID(service, connectionInfo), zkNode);
     }
 
     /**
@@ -138,7 +157,7 @@ public class Neighbors<T extends NeighborTemplate<V>, V> {
      * @param zkNode
      *            the zkNode to set
      */
-    public void setZkNode(String id, WorkerNodeTracker zkNode) {
+    private void setZkNode(String id, WorkerNodeTracker zkNode) {
         this.zkId = id;
         zkNode.addListener(new OperationsNodeListener() {
 
@@ -174,7 +193,7 @@ public class Neighbors<T extends NeighborTemplate<V>, V> {
 
     private void addOpsServer(OperationsNodeInfo opServer) {
         LOG.trace("[{}] Building id for {}", zkId, opServer.getConnectionInfo());
-        String opId = getServerID(opServer.getConnectionInfo());
+        String opId = getServerID(serviceType, opServer.getConnectionInfo());
         if (!zkId.equals(opId)) {
             LOG.trace("Adding {} to {}", opId, neigbors);
             neigbors.putIfAbsent(opId, new NeighborConnection<T, V>(opServer.getConnectionInfo(), maxNumberNeighborConnections, template));

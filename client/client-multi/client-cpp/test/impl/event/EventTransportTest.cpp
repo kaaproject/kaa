@@ -1,28 +1,36 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 #include <boost/test/unit_test.hpp>
 
 #include <kaa/event/EventTransport.hpp>
 #include <kaa/event/IEventDataProcessor.hpp>
+#include "kaa/KaaClientContext.hpp"
+#include "kaa/KaaClientProperties.hpp"
+#include "kaa/logging/DefaultLogger.hpp"
+#include "kaa/context/SimpleExecutorContext.hpp"
 
 #include "headers/channel/MockChannelManager.hpp"
 #include "headers/MockKaaClientStateStorage.hpp"
 
 namespace kaa {
+
+static KaaClientProperties properties;
+static DefaultLogger tmp_logger(properties.getClientId());
+static SimpleExecutorContext context;
 
 class TestKaaClientStateStorage: public MockKaaClientStateStorage {
 public:
@@ -85,10 +93,12 @@ BOOST_AUTO_TEST_SUITE(EventTransportTestSuite)
 
 BOOST_AUTO_TEST_CASE(EventTransportSequenceNumberRequestTest)
 {
-    IKaaClientStateStoragePtr clientState;
+    IKaaClientStateStoragePtr clientState(new TestKaaClientStateStorage);
     MockChannelManager channelManager;
     TestEventDataProcessor processor;
-    EventTransport transport(processor, channelManager, clientState);
+
+    KaaClientContext clientContext(properties, tmp_logger, context, clientState);
+    EventTransport transport(processor, channelManager, clientContext);
 
     std::map<std::int32_t, Event> pevents;
     pevents[1] = Event();
@@ -125,7 +135,8 @@ BOOST_AUTO_TEST_CASE(SychronizedEventSequenceNumberTest)
 
     MockChannelManager channelManager;
     TestEventDataProcessor processor;
-    EventTransport transport(processor, channelManager, clientState);
+    KaaClientContext clientContext(properties, tmp_logger, context, clientState);
+    EventTransport transport(processor, channelManager, clientContext);
 
     std::map<std::int32_t, Event> pevents;
     pevents[1] = createEvent(sn + 1);
@@ -166,7 +177,8 @@ BOOST_AUTO_TEST_CASE(UnsychronizedEventSequenceNumberTest)
 
     MockChannelManager channelManager;
     TestEventDataProcessor processor;
-    EventTransport transport(processor, channelManager, clientState);
+    KaaClientContext clientContext(properties, tmp_logger, context, clientState);
+    EventTransport transport(processor, channelManager, clientContext);
 
     std::map<std::int32_t, Event> pevents;
     pevents[1] = createEvent(restored_sn + 12);

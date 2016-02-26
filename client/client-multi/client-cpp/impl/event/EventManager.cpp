@@ -1,17 +1,17 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 #include "kaa/event/EventManager.hpp"
@@ -67,7 +67,7 @@ void EventManager::produceEvent(const std::string& fqn, const std::vector<std::u
     }
 
     if (trxId) {
-        getContainerByTrxId(trxId).push_back(event);
+        getContainerByTrxId(trxId, context_).push_back(event);
         return;
     }
 
@@ -187,12 +187,12 @@ void EventManager::onEventListenersReceived(const EventSyncResponse::eventListen
                         listeners = response.listeners.get_array();
                     }
 
-                    executorContext_.getCallbackExecutor().add([callback, listeners]
+                    context_.getExecutorContext().getCallbackExecutor().add([callback, listeners]
                                                                 {
                                                                     callback->onEventListenersReceived(listeners);
                                                                 });
                 } else {
-                    executorContext_.getCallbackExecutor().add([callback] { callback->onRequestFailed(); });
+                    context_.getExecutorContext().getCallbackExecutor().add([callback] { callback->onRequestFailed(); });
                 }
 
             } else {
@@ -260,7 +260,7 @@ void EventManager::setTransport(EventTransport *transport)
     }
 }
 
-void EventManager::commit(TransactionIdPtr trxId)
+void EventManager::commit(TransactionIdPtr trxId, IKaaClientContext &context_)
 {
     auto it = transactions_.find(trxId);
     if (it != transactions_.end()) {

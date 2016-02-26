@@ -1,17 +1,17 @@
-/*
- * Copyright 2014-2015 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
@@ -19,6 +19,7 @@ package org.kaaproject.kaa.server.admin.client.mvp.activity;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.place.AefMapPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.AefMapsPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.ApplicationCtlSchemasPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ApplicationPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ApplicationsPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ConfigurationPlace;
@@ -49,6 +50,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.place.SdkProfilesPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.SendNotificationPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ServerProfileSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ServerProfileSchemasPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.SystemCtlSchemasPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.TenantCtlSchemasPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.TenantPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.TenantsPlace;
@@ -161,8 +163,12 @@ public class AppActivityMapper implements ActivityMapper {
                 return new UserVerifierActivity((UserVerifierPlace) place, clientFactory);
             } else if (clazz ==  UpdateUserConfigPlace.class) {
                 return new UpdateUserConfigActivity((UpdateUserConfigPlace) place, clientFactory);
+            } else if (clazz == SystemCtlSchemasPlace.class) {
+                return new SystemCtlSchemasActivity((SystemCtlSchemasPlace) place, clientFactory);
             } else if (clazz == TenantCtlSchemasPlace.class) {
                 return new TenantCtlSchemasActivity((TenantCtlSchemasPlace) place, clientFactory);
+            } else if (clazz == ApplicationCtlSchemasPlace.class) {
+                return new ApplicationCtlSchemasActivity((ApplicationCtlSchemasPlace) place, clientFactory);
             } else if (clazz == CtlSchemaPlace.class) {
                 return new CtlSchemaActivity((CtlSchemaPlace) place, clientFactory);
             }

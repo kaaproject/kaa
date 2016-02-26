@@ -1,17 +1,17 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 #ifndef EVENTMANAGER_HPP_
@@ -33,6 +33,7 @@
 #include "kaa/event/IEventDataProcessor.hpp"
 #include "kaa/IKaaClientStateStorage.hpp"
 #include "kaa/transact/AbstractTransactable.hpp"
+#include "kaa/IKaaClientContext.hpp"
 
 namespace kaa {
 
@@ -44,9 +45,8 @@ class EventManager : public IEventManager
                    , public AbstractTransactable<std::list<Event> >
 {
 public:
-    EventManager(IKaaClientStateStoragePtr status, IExecutorContext& executorContext)
-        : currentEventIndex_(0),eventTransport_(nullptr)
-        , status_(status), executorContext_(executorContext)
+    EventManager(IKaaClientContext &context)
+        : context_(context), currentEventIndex_(0),eventTransport_(nullptr)
     {
     }
 
@@ -72,14 +72,14 @@ public:
 
     virtual TransactionIdPtr beginTransaction()
     {
-        return AbstractTransactable::beginTransaction();
+        return AbstractTransactable::beginTransaction(context_);
     }
 
-    virtual void commit(TransactionIdPtr trxId);
+    virtual void commit(TransactionIdPtr trxId, IKaaClientContext &context_);
 
     virtual void rollback(TransactionIdPtr trxId)
     {
-        AbstractTransactable::rollback(trxId);
+        AbstractTransactable::rollback(trxId, context_);
     }
 private:
     struct EventListenersInfo {
@@ -96,6 +96,8 @@ private:
     void doSync();
 
 private:
+    IKaaClientContext &context_;
+
     std::set<IEventFamily*>   eventFamilies_;
     std::map<std::int32_t, Event>          pendingEvents_;
     KAA_MUTEX_MUTABLE_DECLARE(pendingEventsGuard_);
@@ -103,12 +105,9 @@ private:
     std::int32_t currentEventIndex_;
 
     EventTransport *          eventTransport_;
-    IKaaClientStateStoragePtr status_;
 
     std::map<std::int32_t/*request id*/, std::shared_ptr<EventListenersInfo> > eventListenersRequests_;
     KAA_MUTEX_MUTABLE_DECLARE(eventListenersGuard_);
-
-    IExecutorContext& executorContext_;
 };
 
 } /* namespace kaa */

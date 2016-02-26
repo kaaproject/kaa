@@ -1,17 +1,17 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.server.operations.service.event;
@@ -39,25 +39,13 @@ import org.kaaproject.kaa.server.sync.UserClientSync;
 public class ESTestOperationsService implements OperationsService {
 
     @Override
-    public EndpointProfileDto attachEndpointToUser(EndpointProfileDto profile, String appToken, String userExternalId) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public ServerSync updateSyncResponse(ServerSync response, List<NotificationDto> notifications, String unicastNotificationId) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
     public void setPublicKey(PublicKey publicKey) {
         // TODO Auto-generated method stub
         
     }
 
     @Override
-    public SyncContext syncProfile(SyncContext context, ProfileClientSync request) {
+    public SyncContext syncClientProfile(SyncContext context, ProfileClientSync request) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -87,7 +75,19 @@ public class ESTestOperationsService implements OperationsService {
     }
 
     @Override
-    public EndpointProfileDto updateProfile(SyncContext context) {
+    public SyncContext syncProfileServerHash(SyncContext context) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public EndpointProfileDto attachEndpointToUser(EndpointProfileDto profile, String appToken, String userExternalId) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public ServerSync updateSyncResponse(ServerSync response, List<NotificationDto> notifications, String unicastNotificationId) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -103,4 +103,18 @@ public class ESTestOperationsService implements OperationsService {
         // TODO Auto-generated method stub
         return null;
     }
+
+    @Override
+    public SyncContext syncUserConfigurationHash(SyncContext context, byte[] ucfHash) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public EndpointProfileDto syncServerProfile(String appToken, String endpointKey, EndpointObjectHash key) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+
 }

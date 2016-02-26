@@ -1,18 +1,19 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
+
 package org.kaaproject.kaa.server.common.dao.service;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
@@ -31,8 +32,8 @@ import java.util.UUID;
 import org.junit.Assert;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
-import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.TenantAdminDto;
 import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.common.dto.UserDto;
@@ -134,20 +135,12 @@ public abstract class AbstractServiceImplTest {
         return null;
     }
     
-    protected CTLSchemaDto generateCTLSchemaDto(String fqn, String tenantId, int version, CTLSchemaScopeDto scopeDto) {
+    protected CTLSchemaDto generateCTLSchemaDto(String fqn, String tenantId, int version) {
         CTLSchemaDto ctlSchema = new CTLSchemaDto();
-        CTLSchemaMetaInfoDto metaInfoDto = new CTLSchemaMetaInfoDto(fqn, version);
-        if (scopeDto == null) {
-            if (isBlank(tenantId)) {
-                scopeDto = CTLSchemaScopeDto.SYSTEM;
-            } else {
-                scopeDto = CTLSchemaScopeDto.TENANT;
-            }
-        }
-        metaInfoDto.setScope(scopeDto);
+        CTLSchemaMetaInfoDto metaInfoDto = new CTLSchemaMetaInfoDto(fqn, tenantId);
         ctlSchema.setMetaInfo(metaInfoDto);
+        ctlSchema.setVersion(version);
         ctlSchema.setBody(UUID.randomUUID().toString());
-        ctlSchema.setTenantId(tenantId);
         return ctlSchema;
     }
 
@@ -160,7 +153,7 @@ public abstract class AbstractServiceImplTest {
             if (isBlank(applicationId)) {
                 applicationId = generateApplication(tenantId).getId();
             }
-            CTLSchemaDto ctlSchemaDto = ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN, tenantId, 1, null));
+            CTLSchemaDto ctlSchemaDto = ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN, tenantId, 1));
             EndpointProfileSchemaDto schemaDto;
             schemas = new ArrayList<>(count);
             for (int i = 0; i < count; i++) {

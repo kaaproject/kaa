@@ -1,17 +1,17 @@
-/*
- * Copyright 2014-2015 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.server.common.dao;
@@ -369,18 +369,13 @@ public class DaoConstants {
      * CTL schema constants
      */
     public static final String CTL_SCHEMA_TABLE_NAME = "ctl";
-    public static final String CTL_SCHEMA_APPLICATION_ID = APPLICATION_ID;
-    public static final String CTL_SCHEMA_TENANT_ID = TENANT_ID;
     public static final String CTL_SCHEMA_META_INFO_ID = "metainfo_id";
+    public static final String CTL_SCHEMA_VERSION = VERSION;
     public static final String CTL_SCHEMA_BODY = "body";
     public static final String CTL_SCHEMA_DEFAULT_RECORD = "default_record";
-    public static final String CTL_SCHEMA_NAME = NAME;
-    public static final String CTL_SCHEMA_DESCRIPTION = DESCRIPTION;
     public static final String CTL_SCHEMA_CREATED_USERNAME = CREATED_USERNAME;
     public static final String CTL_SCHEMA_CREATED_TIME = CREATED_TIME;
     // CTL schema foreign keys
-    public static final String CTL_SCHEMA_APPLICATION_FK = "fk_ctl_app_id";
-    public static final String CTL_SCHEMA_TENANT_FK = "fk_ctl_tenant_id";
     public static final String CTL_SCHEMA_META_INFO_FK = "fk_ctl_metainfo_id";
     public static final String CTL_SCHEMA_JOIN_TABLE_PARENT_FK = "fk_ctl_pr_id";
     public static final String CTL_SCHEMA_JOIN_TABLE_CHILD_FK = "fk_ctl_ch_id";
@@ -390,31 +385,39 @@ public class DaoConstants {
     public static final String CTL_SCHEMA_JOIN_TABLE_PARENT_ID = "parent_id";
     public static final String CTL_SCHEMA_JOIN_TABLE_CHILD_ID = "child_id";
     // Properties and alias constants
-    public static final String CTL_SCHEMA_TENANT_ID_ALIAS = "tenant.id";
-    public static final String CTL_SCHEMA_APPLICATION_ID_ALIAS = "application.id";
     public static final String CTL_SCHEMA_DEPENDENCY_PROP = "dependencySet";
     public static final String CTL_SCHEMA_DEPENDENCY_ALIAS = "dep";
     public static final String CTL_SCHEMA_DEPENDENCY_ID_ALIAS = CTL_SCHEMA_DEPENDENCY_ALIAS + "." + ID;
-
 
     /**
      * CTL schema meta info constants
      */
     public static final String CTL_SCHEMA_META_INFO_TABLE_NAME = "ctl_metainfo";
     public static final String CTL_SCHEMA_META_INFO_FQN = FQN;
-    public static final String CTL_SCHEMA_META_INFO_VERSION = VERSION;
-    public static final String CTL_SCHEMA_META_INFO_SCOPE = "scope";
+    public static final String CTL_SCHEMA_META_INFO_TENANT_ID = TENANT_ID;
+    public static final String CTL_SCHEMA_META_INFO_APPLICATION_ID = APPLICATION_ID;
     public static final String CTL_SCHEMA_META_INFO_UNIQUE_CONSTRAINT = "ctl_metainfo_unique_constraint";
+    
+    // CTL schema meta info foreign keys
+    public static final String CTL_SCHEMA_META_INFO_TENANT_FK = "fk_ctl_metainfo_tenant_id";
+    public static final String CTL_SCHEMA_META_INFO_APPLICATION_FK = "fk_ctl_metainfo_app_id";
+
     // Properties and alias constants
+    
+    // Properties and alias constants
+    public static final String CTL_SCHEMA_META_INFO_TENANT_ID_ALIAS = TENANT_REFERENCE;
+    public static final String CTL_SCHEMA_META_INFO_APPLICATION_ID_ALIAS = APPLICATION_REFERENCE;
     public static final String CTL_SCHEMA_META_INFO_PROPERTY = "metaInfo";
     public static final String CTL_SCHEMA_META_INFO_ALIAS = "mi";
-    public static final String CTL_SCHEMA_META_INFO_ALIAS_VERSION = CTL_SCHEMA_META_INFO_ALIAS + "." + CTL_SCHEMA_META_INFO_VERSION;
     public static final String CTL_SCHEMA_META_INFO_ALIAS_FQN = CTL_SCHEMA_META_INFO_ALIAS + "." + CTL_SCHEMA_META_INFO_FQN;
-    public static final String CTL_SCHEMA_META_INFO_ALIAS_SCOPE = CTL_SCHEMA_META_INFO_ALIAS + "." + CTL_SCHEMA_META_INFO_SCOPE;
-
-
+    public static final String CTL_SCHEMA_META_INFO_ALIAS_TENANT_ID = CTL_SCHEMA_META_INFO_ALIAS + "." + TENANT_REFERENCE;
+    public static final String CTL_SCHEMA_META_INFO_ALIAS_APPLICATION_ID = CTL_SCHEMA_META_INFO_ALIAS + "." + APPLICATION_REFERENCE;
+    public static final String CTL_SCHEMA_META_INFO_ALIAS_ID = CTL_SCHEMA_META_INFO_ALIAS + "." + ID_PROPERTY;
+    
     public static final String LAST_PAGE_MESSAGE = "It is the last page";
     public static final String PROFILE = "profile";
+    public static final String OPT_LOCK = "opt_lock";
+    public static final String APPLIED = "[applied]";
 
     private DaoConstants() {
         throw new UnsupportedOperationException("Not supported");

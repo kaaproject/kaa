@@ -1,17 +1,17 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.server.common.dao.service;
@@ -126,7 +126,7 @@ public class NotificationServiceImpl implements NotificationService {
         if (isNotBlank(schemaId) && isNotBlank(topicId)) {
             NotificationSchema schema = notificationSchemaDao.findById(schemaId);
             if (schema != null) {
-                dto.setVersion(schema.getVersion());
+                dto.setNfVersion(schema.getVersion());
                 dto.setApplicationId(schema.getApplicationId());
                 dto.setType(schema.getType());
             } else {
@@ -291,7 +291,7 @@ public class NotificationServiceImpl implements NotificationService {
             notificationDto.setSecNum(-1);
             NotificationSchema schema = notificationSchemaDao.findById(schemaId);
             if (schema != null) {
-                notificationDto.setVersion(schema.getVersion());
+                notificationDto.setNfVersion(schema.getVersion());
                 notificationDto.setApplicationId(schema.getApplicationId());
                 notificationDto.setType(schema.getType());
                 try {

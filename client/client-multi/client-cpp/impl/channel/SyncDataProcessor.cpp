@@ -1,17 +1,17 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 #include "kaa/logging/Log.hpp"
@@ -20,8 +20,7 @@
 
 namespace kaa {
 
-SyncDataProcessor::SyncDataProcessor(
-                      IMetaDataTransportPtr       metaDataTransport
+SyncDataProcessor::SyncDataProcessor(IMetaDataTransportPtr       metaDataTransport
                     , IBootstrapTransportPtr      bootstrapTransport
                     , IProfileTransportPtr        profileTransport
                     , IConfigurationTransportPtr  configurationTransport
@@ -30,7 +29,7 @@ SyncDataProcessor::SyncDataProcessor(
                     , IEventTransportPtr          eventTransport
                     , ILoggingTransportPtr        loggingTransport
                     , IRedirectionTransportPtr    redirectionTransport
-                    , IKaaClientStateStoragePtr   clientStatus)
+                    , IKaaClientContext &context)
         : metaDataTransport_(metaDataTransport)
         , bootstrapTransport_(bootstrapTransport)
         , profileTransport_(profileTransport)
@@ -40,8 +39,8 @@ SyncDataProcessor::SyncDataProcessor(
         , eventTransport_(eventTransport)
         , loggingTransport_(loggingTransport)
         , redirectionTransport_(redirectionTransport)
-        , clientStatus_(clientStatus)
         , requestId(0)
+        , context_(context)
 {
 
 }
@@ -334,7 +333,7 @@ DemultiplexerReturnCode SyncDataProcessor::processResponse(const std::vector<std
         }
 
         KAA_LOG_DEBUG("Processed SyncResponse");
-        clientStatus_->save();
+        context_.getStatus().save();
     } catch (const std::exception& e) {
         KAA_LOG_ERROR(boost::format("Unable to process response: %s") % e.what());
         returnCode = DemultiplexerReturnCode::FAILURE;

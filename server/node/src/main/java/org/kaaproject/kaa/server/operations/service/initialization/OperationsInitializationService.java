@@ -1,17 +1,17 @@
-/*
- * Copyright 2014-2015 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.server.operations.service.initialization;
@@ -32,6 +32,7 @@ import org.kaaproject.kaa.server.node.service.initialization.AbstractInitializat
 import org.kaaproject.kaa.server.operations.service.OperationsService;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaService;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
+import org.kaaproject.kaa.server.operations.service.cluster.ClusterService;
 import org.kaaproject.kaa.server.operations.service.config.OperationsServerConfig;
 import org.kaaproject.kaa.server.operations.service.event.EventService;
 import org.kaaproject.kaa.server.operations.service.loadbalance.LoadBalancingService;
@@ -86,6 +87,9 @@ public class OperationsInitializationService extends AbstractInitializationServi
     /** The event service */
     @Autowired
     private EventService eventService;
+    
+    @Autowired
+    private ClusterService clusterService;
     
     @Autowired
     private LoadBalancingService loadBalancingService;
@@ -148,6 +152,9 @@ public class OperationsInitializationService extends AbstractInitializationServi
         if (eventService != null) {
             eventService.shutdown();
         }
+        if (clusterService != null) {
+            clusterService.shutdown();
+        }
         if(loadBalancingService != null && getNodeConfig().isZkEnabled()) {
             loadBalancingService.stop();
         }
@@ -191,6 +198,9 @@ public class OperationsInitializationService extends AbstractInitializationServi
             operationsNode.start();
             eventService.setZkNode(operationsNode);
             eventService.setResolver(new ConsistentHashResolver(operationsNode.getCurrentOperationServerNodes(), getOperationsConfig()
+                    .getUserHashPartitions()));
+            clusterService.setZkNode(operationsNode);
+            clusterService.setResolver(new ConsistentHashResolver(operationsNode.getCurrentOperationServerNodes(), getOperationsConfig()
                     .getUserHashPartitions()));
         } catch (Exception e) {
             if (getNodeConfig().isZkIgnoreErrors()) {

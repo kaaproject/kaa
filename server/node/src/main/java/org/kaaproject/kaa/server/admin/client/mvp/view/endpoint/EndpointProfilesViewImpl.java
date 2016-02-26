@@ -1,32 +1,21 @@
-/*
- * Copyright 2014-2015 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.endpoint;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.ValueListBox;
-import com.google.gwt.user.client.ui.Widget;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
@@ -34,6 +23,19 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointProfilesView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseListViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.EndpointGroupsInfoListBox;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.RadioButton;
+import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.ValueListBox;
+import com.google.gwt.user.client.ui.Widget;
 
 public class EndpointProfilesViewImpl extends BaseListViewImpl<EndpointProfileDto> implements EndpointProfilesView {
 
@@ -47,7 +49,10 @@ public class EndpointProfilesViewImpl extends BaseListViewImpl<EndpointProfileDt
     private EndpointGroupsInfoListBox listBox;
     private TextBox endpointKeyHash;
     private Button resetButton;
-    private Button findEndpointButton;
+    private Button findButton;
+    
+    private RadioButton endpointGroupButton;
+    private RadioButton endpointKeyHashButton;
 
     public EndpointProfilesViewImpl() {
         super(false);
@@ -60,32 +65,34 @@ public class EndpointProfilesViewImpl extends BaseListViewImpl<EndpointProfileDt
         flexTable.setWidget(0, column, resetButton);
         flexTable.getFlexCellFormatter().setVerticalAlignment(0, column++, HasVerticalAlignment.ALIGN_MIDDLE);
 
-        Label endpointGroupLabel = new Label(Utils.constants.endpointGroup());
+        endpointGroupButton = new RadioButton("filter", Utils.constants.endpointGroup());
         listBox = new EndpointGroupsInfoListBox();
         listBox.getElement().getStyle().setPropertyPx("minWidth", 100);
         HorizontalPanel groupPanel = new HorizontalPanel();
         groupPanel.setSpacing(15);
         groupPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-        groupPanel.add(endpointGroupLabel);
+        groupPanel.add(endpointGroupButton);
         groupPanel.add(listBox);
         flexTable.setWidget(0, column++, groupPanel);
 
         HorizontalPanel keyHashPanel = new HorizontalPanel();
         keyHashPanel.setSpacing(15);
         keyHashPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-        Label endpointKeyHashLabel = new Label(Utils.constants.endpointKeyHash());
+        endpointKeyHashButton = new RadioButton("filter", Utils.constants.endpointKeyHash());
         endpointKeyHash = new TextBox();
         endpointKeyHash.setWidth("100%");
-        findEndpointButton = new Button(Utils.constants.find());
-        findEndpointButton.addStyleName(Utils.avroUiStyle.buttonSmall());
-        keyHashPanel.add(endpointKeyHashLabel);
+        findButton = new Button(Utils.constants.find());
+        findButton.addStyleName(Utils.avroUiStyle.buttonSmall());
+        keyHashPanel.add(endpointKeyHashButton);
         keyHashPanel.add(endpointKeyHash);
-        keyHashPanel.add(findEndpointButton);
+        keyHashPanel.add(findButton);
         flexTable.setWidget(0, column, keyHashPanel);
 
         filterPanel.add(flexTable);
+        
+        endpointGroupButton.setValue(true);
     }
-
+    
     @Override
     protected Widget createAndBindUi() {
         return uiBinder.createAndBindUi(this);
@@ -98,7 +105,7 @@ public class EndpointProfilesViewImpl extends BaseListViewImpl<EndpointProfileDt
 
     @Override
     public Button getFindEndpointButton() {
-        return findEndpointButton;
+        return findButton;
     }
 
     @Override
@@ -125,4 +132,15 @@ public class EndpointProfilesViewImpl extends BaseListViewImpl<EndpointProfileDt
     public Button getResetButton() {
         return resetButton;
     }
+
+    @Override
+    public HasValue<Boolean> getEndpointGroupButton() {
+        return endpointGroupButton;
+    }
+
+    @Override
+    public HasValue<Boolean> getEndpointKeyHashButton() {
+        return endpointKeyHashButton;
+    }
+
 }

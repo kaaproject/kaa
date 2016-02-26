@@ -1,23 +1,22 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.server.admin.controller;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 
 import java.io.IOException;
 import java.util.List;
@@ -34,6 +33,7 @@ import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
@@ -43,7 +43,6 @@ import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.PageLinkDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterRecordDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.ProfileVersionPairDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
@@ -56,10 +55,9 @@ import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaExportMethod;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaInfoDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
@@ -740,10 +738,10 @@ public class KaaAdminController {
      * 
      * @param body
      *            the ctl body
-     * @param scope
-     *            the ctl schema scope
      * @param applicationId
      *            id of the application
+     * @param tenantId
+     *            id of the tenant
      * 
      * @throws KaaAdminServiceException
      *             the kaa admin service exception
@@ -752,9 +750,9 @@ public class KaaAdminController {
      */
     @RequestMapping(value = "CTL/saveSchema", params = { "body" }, method = RequestMethod.POST)
     @ResponseBody
-    public CTLSchemaInfoDto saveCTLSchema(@RequestParam String body, @RequestParam(required = false) String scope,
+    public CTLSchemaDto saveCTLSchema(@RequestParam String body, @RequestParam(required = false) String tenantId,
             @RequestParam(required = false) String applicationId) throws KaaAdminServiceException {
-        return kaaAdminService.saveCTLSchema(body, isEmpty(scope) ? null : CTLSchemaScopeDto.valueOf(scope.toUpperCase()), applicationId);
+        return kaaAdminService.saveCTLSchema(body, tenantId, applicationId);
     }
 
     /**
@@ -764,14 +762,20 @@ public class KaaAdminController {
      *            the fqn
      * @param version
      *            the version
-     * 
+     * @param tenantId
+     *            id of the tenant
+     * @param applicationId
+     *            id of the application
+     *            
      * @throws KaaAdminServiceException
      *             the kaa admin service exception
      */
     @RequestMapping(value = "CTL/deleteSchema", params = { "fqn", "version" }, method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
-    public void deleteCTLSchemaByFqnAndVersion(@RequestParam String fqn, @RequestParam int version) throws KaaAdminServiceException {
-        kaaAdminService.deleteCTLSchemaByFqnAndVersion(fqn, version);
+    public void deleteCTLSchemaByFqnVersionTenantIdAndApplicationId(@RequestParam String fqn, @RequestParam int version, 
+            @RequestParam(required = false) String tenantId,
+            @RequestParam(required = false) String applicationId) throws KaaAdminServiceException {
+        kaaAdminService.deleteCTLSchemaByFqnVersionTenantIdAndApplicationId(fqn, version, tenantId, applicationId);
     }
 
     /**
@@ -781,6 +785,11 @@ public class KaaAdminController {
      *            the fqn
      * @param version
      *            the version
+     * @param tenantId
+     *            id of the tenant
+     * @param applicationId
+     *            id of the application
+     *
      * @throws KaaAdminServiceException
      *             the kaa admin service exception
      * 
@@ -788,57 +797,96 @@ public class KaaAdminController {
      */
     @RequestMapping(value = "CTL/getSchema", params = { "fqn", "version" }, method = RequestMethod.GET)
     @ResponseBody
-    public CTLSchemaInfoDto getCTLSchemaByFqnAndVersion(@RequestParam String fqn, @RequestParam int version)
+    public CTLSchemaDto getCTLSchemaByFqnVersionTenantIdAndApplicationId(@RequestParam String fqn, 
+            @RequestParam int version,
+            @RequestParam(required = false) String tenantId,
+            @RequestParam(required = false) String applicationId)
             throws KaaAdminServiceException {
-        return kaaAdminService.getCTLSchemaByFqnAndVersion(fqn, version);
+        return kaaAdminService.getCTLSchemaByFqnVersionTenantIdAndApplicationId(fqn, version, tenantId, applicationId);
+    }
+    
+    /**
+     * Checks if CTL schema with same fqn is already exists in the sibling application.
+     * 
+     * @param fqn
+     *            the fqn
+     * @param tenantId
+     *            id of the tenant
+     * @param applicationId
+     *            id of the application
+     *
+     * @throws KaaAdminServiceException
+     *             the kaa admin service exception
+     * 
+     * @return true if CTL schema with same fqn is already exists in other scope
+     */    
+    @RequestMapping(value = "CTL/checkFqn", params = { "fqn" }, method = RequestMethod.GET)
+    @ResponseBody
+    public boolean checkFqnExists(@RequestParam String fqn, 
+                @RequestParam(required = false) String tenantId,
+                @RequestParam(required = false) String applicationId)
+    throws KaaAdminServiceException {
+        return kaaAdminService.checkFqnExists(fqn, tenantId, applicationId);
+    }
+    
+    /**
+     * Update existing CTL schema meta info scope by the given CTL schema meta info object.
+     *
+     * @param ctlSchemaMetaInfo
+     *            the CTL schema meta info object.
+     *            
+     * @throws KaaAdminServiceException
+     *             the kaa admin service exception
+     *             
+     * @return CTLSchemaMetaInfoDto the updated CTL schema meta info object.
+     */    
+    @RequestMapping(value = "CTL/updateScope", method = RequestMethod.POST)
+    @ResponseBody
+    public CTLSchemaMetaInfoDto updateCTLSchemaMetaInfoScope(@RequestBody CTLSchemaMetaInfoDto ctlSchemaMetaInfo)
+            throws KaaAdminServiceException {
+        return kaaAdminService.updateCTLSchemaMetaInfoScope(ctlSchemaMetaInfo);
     }
 
     /**
-     * Retrieves a list of CTL schemas available for the current tenant.
+     * Retrieves a list of available system CTL schemas.
      * 
      * @throws KaaAdminServiceException
      *             the kaa admin service exception
      * @return CTL schema metadata list
      */
-    @RequestMapping(value = "CTL/getSchemas", method = RequestMethod.GET)
+    @RequestMapping(value = "CTL/getSystemSchemas", method = RequestMethod.GET)
     @ResponseBody
-    public List<CTLSchemaMetaInfoDto> getCTLSchemasAvailable() throws KaaAdminServiceException {
-        return kaaAdminService.getCTLSchemasAvailable();
+    public List<CTLSchemaMetaInfoDto> getSystemLevelCTLSchemas() throws KaaAdminServiceException {
+        return kaaAdminService.getSystemLevelCTLSchemas();
     }
-
+    
     /**
-     * Retrieves a list of CTL schemas available for the current user filtered
-     * by scope.
-     * 
-     * @param scope
-     *            - scope name
+     * Retrieves a list of available CTL schemas for tenant.
      * 
      * @throws KaaAdminServiceException
      *             the kaa admin service exception
-     * 
      * @return CTL schema metadata list
      */
-    @RequestMapping(value = "CTL/getSchemas", params = { "scope" }, method = RequestMethod.GET)
+    @RequestMapping(value = "CTL/getTenantSchemas", method = RequestMethod.GET)
     @ResponseBody
-    public List<CTLSchemaMetaInfoDto> getCTLSchemasByScope(@RequestParam(value = "scope") String scope) throws KaaAdminServiceException {
-        return kaaAdminService.getCTLSchemasByScope(scope);
+    public List<CTLSchemaMetaInfoDto> getTenantLevelCTLSchemas() throws KaaAdminServiceException {
+        return kaaAdminService.getTenantLevelCTLSchemas();
     }
-
+    
     /**
-     * Retrieves a list of CTL schemas by application identifier.
+     * Retrieves a list of available CTL schemas for application.
      * 
      * @param applicationId
-     *            - applicationId name
-     * 
+     *            id of the application
+     *            
      * @throws KaaAdminServiceException
      *             the kaa admin service exception
-     * 
      * @return CTL schema metadata list
      */
-    @RequestMapping(value = "CTL/getSchemas", params = { "applicationId" }, method = RequestMethod.GET)
+    @RequestMapping(value = "CTL/getApplicationSchemas/{applicationId}", method = RequestMethod.GET)
     @ResponseBody
-    public List<CTLSchemaMetaInfoDto> getCTLSchemasByApplicationId(@RequestParam String applicationId) throws KaaAdminServiceException {
-        return kaaAdminService.getCTLSchemasByApplicationId(applicationId);
+    public List<CTLSchemaMetaInfoDto> getApplicationLevelCTLSchemas(@PathVariable String applicationId) throws KaaAdminServiceException {
+        return kaaAdminService.getApplicationLevelCTLSchemas(applicationId);
     }
 
     /**
@@ -851,6 +899,8 @@ public class KaaAdminController {
      *            - the schema version
      * @param method
      *            - the schema export method
+     * @param applicationId
+     *            id of the application
      * @param request
      *            - the http request
      * @param response
@@ -863,10 +913,11 @@ public class KaaAdminController {
      */
     @RequestMapping(value = "CTL/exportSchema", params = { "fqn", "version", "method" }, method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
-    public void exportCTLSchema(@RequestParam String fqn, @RequestParam int version, @RequestParam String method,
+    public void exportCTLSchema(@RequestParam String fqn, @RequestParam int version, @RequestParam String method, 
+            @RequestParam(required = false) String applicationId, 
             HttpServletRequest request, HttpServletResponse response) throws KaaAdminServiceException {
         try {
-            FileData output = kaaAdminService.exportCTLSchema(fqn, version, CTLSchemaExportMethod.valueOf(method.toUpperCase()));
+            FileData output = kaaAdminService.exportCTLSchema(fqn, version, applicationId, CTLSchemaExportMethod.valueOf(method.toUpperCase()));
             ServletUtils.prepareDisposition(request, response, output.getFileName());
             response.setContentType(output.getContentType());
             response.setContentLength(output.getFileData().length);

@@ -1,40 +1,20 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.server.common.nosql.cassandra.dao;
-
-import org.cassandraunit.dataset.cql.ClassPathCQLDataSet;
-import org.junit.ClassRule;
-import org.kaaproject.kaa.common.dto.CTLDataDto;
-import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileDto;
-import org.kaaproject.kaa.common.dto.EndpointUserDto;
-import org.kaaproject.kaa.common.dto.NotificationDto;
-import org.kaaproject.kaa.common.dto.NotificationTypeDto;
-import org.kaaproject.kaa.server.common.CustomCassandraCQLUnit;
-import org.kaaproject.kaa.server.common.dao.impl.EndpointConfigurationDao;
-import org.kaaproject.kaa.server.common.dao.impl.EndpointNotificationDao;
-import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
-import org.kaaproject.kaa.server.common.dao.impl.NotificationDao;
-import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointConfiguration;
-import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointNotification;
-import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointProfile;
-import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointUser;
-import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraNotification;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -43,13 +23,28 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
-public class AbstractCassandraTest {
+import org.kaaproject.kaa.common.dto.CTLDataDto;
+import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointUserDto;
+import org.kaaproject.kaa.common.dto.NotificationDto;
+import org.kaaproject.kaa.common.dto.NotificationTypeDto;
+import org.kaaproject.kaa.server.common.dao.impl.EndpointConfigurationDao;
+import org.kaaproject.kaa.server.common.dao.impl.EndpointNotificationDao;
+import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
+import org.kaaproject.kaa.server.common.dao.impl.NotificationDao;
+import org.kaaproject.kaa.server.common.dao.impl.TopicListEntryDao;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointConfiguration;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointNotification;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointProfile;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointUser;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraNotification;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraTopicListEntry;
+import org.springframework.beans.factory.annotation.Autowired;
 
-    protected static final Random RANDOM = new Random();
+public abstract class AbstractCassandraTest {
+
     private static final String TEST_ENDPOINT_GROUP_ID = "124";
-
-    @ClassRule
-    public static CustomCassandraCQLUnit cassandraUnit = new CustomCassandraCQLUnit(new ClassPathCQLDataSet("cassandra.cql", "kaa"));
 
     @Autowired
     protected EndpointNotificationDao<CassandraEndpointNotification> unicastNotificationDao;
@@ -61,6 +56,8 @@ public class AbstractCassandraTest {
     protected EndpointUserCassandraDao endpointUserDao;
     @Autowired
     protected NotificationDao<CassandraNotification> notificationDao;
+    @Autowired
+    protected TopicListEntryDao<CassandraTopicListEntry> topicListEntryDao;
 
     protected List<CassandraEndpointNotification> generateEndpointNotification(ByteBuffer endpointKeyHash, int count) {
         List<CassandraEndpointNotification> savedNotifications = new ArrayList<>();
@@ -94,7 +91,7 @@ public class AbstractCassandraTest {
             notification.setSecNum(i);
             notification.setBody(UUID.randomUUID().toString().getBytes());
             notification.setLastTimeModify(new Date(System.currentTimeMillis()));
-            notification.setVersion(1);
+            notification.setNfVersion(1);
             notification.setExpiredAt(new Date(System.currentTimeMillis() + 7 * 24 * 3600 * 1000));
             notifications.add(notificationDao.save(notification).toDto());
         }
@@ -148,18 +145,18 @@ public class AbstractCassandraTest {
         return endpointProfileDao.save(new CassandraEndpointProfile(profileDto)).toDto();
     }
 
-    protected EndpointProfileDto generateEndpointProfileForTestUpdate(String id, List<EndpointGroupStateDto> cfGroupState) {
+    protected EndpointProfileDto generateEndpointProfileForTestUpdate(String id, byte[] keyHash, List<EndpointGroupStateDto> cfGroupState) {
         EndpointProfileDto profileDto = new EndpointProfileDto();
         profileDto.setId(id);
+        profileDto.setEndpointKeyHash(keyHash);
         profileDto.setApplicationId(generateStringId());
-        profileDto.setEndpointKeyHash("TEST_KEY_HASH".getBytes());
         profileDto.setAccessToken(generateStringId());
-        profileDto.setCfGroupStates(cfGroupState);
+        profileDto.setGroupState(cfGroupState);
         profileDto.setSdkToken(UUID.randomUUID().toString());
         return profileDto;
     }
 
-    protected EndpointProfileDto generateEndpointProfileWithEndpointGroupId(String appId, boolean nfGroupStateOnly) {
+    protected EndpointProfileDto generateEndpointProfileWithEndpointGroupId(String appId) {
         byte[] keyHash = generateBytes();
         if (appId == null) {
             appId = generateStringId();
@@ -171,12 +168,7 @@ public class AbstractCassandraTest {
         profileDto.setClientProfileBody("test Profile");
         List<EndpointGroupStateDto> groupState = new ArrayList<>();
         groupState.add(new EndpointGroupStateDto(TEST_ENDPOINT_GROUP_ID, null, null));
-        if (nfGroupStateOnly) {
-            profileDto.setNfGroupStates(groupState);
-            profileDto.setCfGroupStates(null);
-        } else {
-            profileDto.setCfGroupStates(groupState);
-        }
+        profileDto.setGroupState(groupState);
         profileDto.setSdkToken(UUID.randomUUID().toString());
         return endpointProfileDao.save(new CassandraEndpointProfile(profileDto)).toDto();
     }

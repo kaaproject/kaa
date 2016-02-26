@@ -1,17 +1,17 @@
-/*
- * Copyright 2014-2015 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 #ifndef KAA_EXT_LOG_UPLOAD_STRATEGIES_H_
@@ -53,7 +53,7 @@ kaa_error_t ext_log_upload_strategy_set_threshold_volume(void *strategy, size_t 
  * @brief Sets the new threshold log count to the strategy.
  *
  * @param   strategy           The strategy instance.
- * @param   threshold_count    The new threshold log count value in bytes.
+ * @param   threshold_count    The new threshold log count.
  * @return Error code.
  */
 kaa_error_t ext_log_upload_strategy_set_threshold_count(void *strategy, size_t threshold_count);
@@ -61,21 +61,10 @@ kaa_error_t ext_log_upload_strategy_set_threshold_count(void *strategy, size_t t
 
 
 /**
- * @brief Sets the new log batch size to the strategy.
- *
- * @param   strategy          The strategy instance.
- * @param   log_batch_size    The new log batch size in bytes.
- * @return Error code.
- */
-kaa_error_t ext_log_upload_strategy_set_batch_size(void *strategy, size_t log_batch_size);
-
-
-
-/**
  * @brief Sets the new upload timeout to the strategy.
  *
  * @param   strategy          The strategy instance.
- * @param   upload_timeout    The new upload timeout in bytes.
+ * @param   upload_timeout    The new upload timeout in seconds.
  * @return Error code.
  */
 kaa_error_t ext_log_upload_strategy_set_upload_timeout(void *strategy, size_t upload_timeout);
@@ -92,12 +81,11 @@ kaa_error_t ext_log_upload_strategy_set_upload_timeout(void *strategy, size_t up
 kaa_error_t ext_log_upload_strategy_set_max_parallel_uploads(void *strategy, size_t count);
 
 
-
 /**
  * @brief Sets the new upload retry period to the strategy.
  *
  * @param   strategy               The strategy instance.
- * @param   upload_retry_period    The new upload retry period value in bytes.
+ * @param   upload_retry_period    The new upload retry period value in seconds.
  * @return Error code.
  */
 kaa_error_t ext_log_upload_strategy_set_upload_retry_period(void *strategy, size_t upload_retry_period);

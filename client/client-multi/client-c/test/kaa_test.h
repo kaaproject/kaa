@@ -1,17 +1,17 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 #ifndef KAA_TEST_H_
@@ -43,6 +43,14 @@
 #define KAA_RUN_TESTS \
         CU_automated_run_tests(); \
 
+/* Helper macro to control setup and teardown process per each test in group.
+ * Must be placed in the exact suite.
+ */
+#define KAA_RUN_TEST(GROUP, NAME) \
+        KAA_TEST_CASE(GROUP##_##NAME##_setup, GROUP##_group_setup); \
+        KAA_TEST_CASE(GROUP##_##NAME##_test, GROUP##_##NAME##_test) \
+        KAA_TEST_CASE(GROUP##_##NAME##_teardown, GROUP##_group_teardown)
+
 #define KAA_END_TEST_SUITE \
         unsigned int failed_tests = CU_get_number_of_failure_records(); \
         CU_cleanup_registry(); \
@@ -50,7 +58,7 @@
     }
 #else
 
-#warning "Unit tests will not generate xml reports. Install CUnit library (apt-get install libcunit or install from sources http://cunit.sourceforge.net/index.html)."
+#pragma message "Unit tests will not generate xml reports. Install CUnit library (apt-get install libcunit or install from sources http://cunit.sourceforge.net/index.html)."
 
 #include <assert.h>
 #define __ASSERT(EXPRESSION)      assert(EXPRESSION)
@@ -85,6 +93,18 @@ typedef int (*cleanup_fn)(void);
         if (!init_ret_code)  \
             TEST_FN();
 
+/* Helper macro to control setup and teardown process per each test in group.
+ * Must be placed in the exact suite.
+ */
+#define KAA_RUN_TEST(GROUP, NAME) \
+    do { \
+        if (!init_ret_code) { \
+            GROUP##_group_setup(); \
+            GROUP##_##NAME##_test(); \
+            GROUP##_group_teardown(); \
+        } \
+    } while (0)
+
 #define KAA_RUN_TESTS
 
 #define KAA_END_TEST_SUITE \
@@ -93,8 +113,36 @@ typedef int (*cleanup_fn)(void);
         } \
         return (init_ret_code || cleanup_ret_code) ? -1 : 0; \
     }
-
 #endif
+
+
+/* Bunch of macroses that required execute setup() (initialization)
+ * and teardown() (cleanup) procedures per each test in so called "group".
+ *
+ * Group is a set of tests with common setup() and teardown() routines.
+ * You may have as many groups as you want inside test application.
+ * This contrasts with suite, which can be only one per each executable.
+ *
+ * NOTE: THIS IS INTERMIDIATE SOLUTION THAT WILL BE USED PRIOR TO INTEGRATION
+ * OF APPROPRIATE TEST FRAMEWORK WHICH SUPPORTS SUCH FEATURES.
+ */
+
+/* Defines test case in the given group */
+#define KAA_TEST_CASE_EX(GROUP, NAME) \
+    void GROUP##_##NAME##_test(void)
+
+/* Defines a setup process for given group.
+ * It runs before each test to make sure sytem is in predictable state
+ */
+#define KAA_GROUP_SETUP(GROUP) \
+    void GROUP##_group_setup()
+
+/* Defines a teardown process for given group
+ * Reverts any changes made by setup routine and makes sure no side effects
+ * will stay after test
+ */
+#define KAA_GROUP_TEARDOWN(GROUP) \
+    void GROUP##_group_teardown()
 
 
 #define KAA_SUITE_MAIN(SUITE_NAME, INIT_FN, CLEANUP_FN, ...) \
@@ -102,6 +150,5 @@ typedef int (*cleanup_fn)(void);
     __VA_ARGS__ \
     KAA_RUN_TESTS \
     KAA_END_TEST_SUITE \
-
 
 #endif /* KAA_TEST_H_ */

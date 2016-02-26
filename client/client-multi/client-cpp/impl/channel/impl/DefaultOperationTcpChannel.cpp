@@ -1,17 +1,17 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 #ifdef KAA_DEFAULT_TCP_CHANNEL
@@ -40,7 +40,8 @@
 
 namespace kaa {
 
-const std::uint16_t DefaultOperationTcpChannel::PING_TIMEOUT = 200;
+const std::uint16_t DefaultOperationTcpChannel::CHANNEL_TIMEOUT = 200;
+const std::uint16_t DefaultOperationTcpChannel::PING_TIMEOUT = CHANNEL_TIMEOUT / 2;
 const std::uint16_t DefaultOperationTcpChannel::CONN_ACK_TIMEOUT = 20;
 const std::uint16_t DefaultOperationTcpChannel::RECONNECT_TIMEOUT = 5; // sec
 
@@ -58,11 +59,12 @@ const std::map<TransportType, ChannelDirection> DefaultOperationTcpChannel::SUPP
         };
 
 
-DefaultOperationTcpChannel::DefaultOperationTcpChannel(IKaaChannelManager *channelManager, const KeyPair& clientKeys, IKaaClientStateStoragePtr clientState)
-    : clientKeys_(clientKeys), work_(io_), socketWork_(socketIo_),/*sock_(io_), */pingTimer_(io_), connAckTimer_(io_)/*, reconnectTimer_(io_)*/, retryTimer_("DefaultOperationTcpChannel retryTimer")
+DefaultOperationTcpChannel::DefaultOperationTcpChannel(IKaaChannelManager *channelManager, const KeyPair& clientKeys, IKaaClientContext &context)
+    : clientKeys_(clientKeys), work_(io_), socketWork_(socketIo_),/*sock_(io_), */pingTimer_(io_), connAckTimer_(io_)/*, reconnectTimer_(io_)*/
+    , retryTimer_("DefaultOperationTcpChannel retryTimer")
     , firstStart_(true), isConnected_(false), isFirstResponseReceived_(false), isPendingSyncRequest_(false)
     , isShutdown_(false), isPaused_(false), isFailoverInProgress_(false), multiplexer_(nullptr), demultiplexer_(nullptr)
-    , channelManager_(channelManager), clientState_(clientState)
+    , channelManager_(channelManager), responsePorcessor(context), context_(context)
 {
     responsePorcessor.registerConnackReceiver(std::bind(&DefaultOperationTcpChannel::onConnack, this, std::placeholders::_1));
     responsePorcessor.registerKaaSyncReceiver(std::bind(&DefaultOperationTcpChannel::onKaaSync, this, std::placeholders::_1));
@@ -86,8 +88,8 @@ void DefaultOperationTcpChannel::onConnack(const ConnackMessage& message)
         break;
     case ConnackReturnCode::REFUSE_BAD_CREDENTIALS:
         KAA_LOG_WARN(boost::format("Channel \"%1%\". Connack result: bad credentials. Going to re-register... ") % getId());
-        clientState_->setRegistered(false);
-        clientState_->save();
+        context_.getStatus().setRegistered(false);
+        context_.getStatus().save();
         setServer(currentServer_);
         break;
     default:
@@ -321,8 +323,8 @@ boost::system::error_code DefaultOperationTcpChannel::sendConnect()
     const auto& requestBody = multiplexer_->compileRequest(getSupportedTransportTypes());
     const auto& requestEncoded = encDec_->encodeData(requestBody.data(), requestBody.size());
     const auto& sessionKey = encDec_->getEncodedSessionKey();
-    const auto& signature = encDec_->signData(sessionKey.begin(), sessionKey.size());
-    return sendData(ConnectMessage(PING_TIMEOUT, KAA_PLATFORM_PROTOCOL_AVRO_ID, signature, sessionKey, requestEncoded));
+    const auto& signature = encDec_->signData(sessionKey.data(), sessionKey.size());
+    return sendData(ConnectMessage(CHANNEL_TIMEOUT, KAA_PLATFORM_PROTOCOL_AVRO_ID, signature, sessionKey, requestEncoded));
 }
 
 boost::system::error_code DefaultOperationTcpChannel::sendDisconnect()
@@ -497,7 +499,7 @@ void DefaultOperationTcpChannel::setServer(ITransportConnectionInfoPtr server)
         }
 
         currentServer_.reset(new IPTransportInfo(server));
-        encDec_.reset(new RsaEncoderDecoder(clientKeys_.getPublicKey(), clientKeys_.getPrivateKey(), currentServer_->getPublicKey()));
+        encDec_.reset(new RsaEncoderDecoder(clientKeys_.getPublicKey(), clientKeys_.getPrivateKey(), currentServer_->getPublicKey(), context_));
 
         if (!isPaused_) {
             KAA_MUTEX_UNLOCKING("channelGuard_");
@@ -556,7 +558,7 @@ void DefaultOperationTcpChannel::sync(TransportType type)
                 isPendingSyncRequest_ = true;
             }
         } else {
-            KAA_LOG_WARN(boost::format("Can't sync channel %1%. Server is null") % getId());
+            KAA_LOG_DEBUG(boost::format("Can't sync channel %1%. Server is null") % getId());
         }
     } else {
         KAA_LOG_ERROR(boost::format("Unsupported transport type for channel %1%") % getId());

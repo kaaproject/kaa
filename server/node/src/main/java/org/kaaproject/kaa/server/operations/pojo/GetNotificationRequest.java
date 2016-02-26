@@ -1,17 +1,17 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.server.operations.pojo;
@@ -31,6 +31,9 @@ import org.kaaproject.kaa.server.sync.TopicState;
  */
 
 public class GetNotificationRequest {
+    
+    /** The topic hash */
+    private final int topicHash;
 
     /** The subscription commands. */
     private List<SubscriptionCommand> subscriptionCommands;
@@ -46,7 +49,9 @@ public class GetNotificationRequest {
 
     /**
      * Instantiates a new gets the notification request.
-     * 
+     *
+     * @param topicHash
+     *            the topicHash
      * @param profile
      *            the profile
      * @param subscriptionCommands
@@ -56,13 +61,22 @@ public class GetNotificationRequest {
      * @param topicStates
      *            the topic states
      */
-    public GetNotificationRequest(EndpointProfileDto profile, List<SubscriptionCommand> subscriptionCommands,
+    public GetNotificationRequest(int topicHash, EndpointProfileDto profile, List<SubscriptionCommand> subscriptionCommands,
             List<String> acceptedUnicastNotifications, List<TopicState> topicStates) {
         super();
+        this.topicHash = topicHash;
         this.profile = profile;
         this.subscriptionCommands = subscriptionCommands;
         this.acceptedUnicastNotifications = acceptedUnicastNotifications;
         this.topicStates = topicStates;
+    }
+
+    /**
+     * Gets the topic hash
+     * @return topic hash
+     */
+    public int getTopicHash() {
+        return topicHash;
     }
 
     /**

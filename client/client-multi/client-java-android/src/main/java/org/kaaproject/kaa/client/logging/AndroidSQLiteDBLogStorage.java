@@ -1,17 +1,17 @@
-/*
- * Copyright 2014-2015 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.client.logging;
@@ -22,7 +22,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteStatement;
-import android.text.TextUtils;
 import android.util.Log;
 
 import java.util.Arrays;
@@ -46,29 +45,39 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
     private long unmarkedConsumedSize;
     private int currentBucketId = 1;
 
+    private long currentBucketSize;
+    private int currentRecordCount;
+
+    private long maxBucketSize;
+    private int maxRecordCount;
+
     private Map<Integer, Long> consumedMemoryStorage = new HashMap<>();
 
     private SQLiteStatement insertStatement;
-    private SQLiteStatement deleteByRecordIdStatement;
     private SQLiteStatement deleteByBucketIdStatement;
+    private SQLiteStatement updateBucketStateStatement;
     private SQLiteStatement resetBucketIdStatement;
 
-    public AndroidSQLiteDBLogStorage(Context context) {
-        this(context, PersistentLogStorageConstants.DEFAULT_DB_NAME);
+    public AndroidSQLiteDBLogStorage(Context context, long maxBucketSize, int maxRecordCount) {
+        this(context, PersistentLogStorageConstants.DEFAULT_DB_NAME, maxBucketSize, maxRecordCount);
     }
 
-    public AndroidSQLiteDBLogStorage(Context context, String dbName) {
+    public AndroidSQLiteDBLogStorage(Context context, String dbName, long bucketSize, int recordCount) {
         Log.i(TAG, "Connecting to db with name: " + dbName);
         dbHelper = new DataCollectionDBHelper(context, dbName);
         database = dbHelper.getWritableDatabase();
+        this.maxRecordCount = recordCount;
+        this.maxBucketSize = bucketSize;
+        truncateIfBucketSizeIncompatible();
         retrieveConsumedSizeAndVolume();
         if (totalRecordCount > 0) {
-            resetBucketIDs();
+            retrieveBucketId();
+            resetBucketsState();
         }
     }
 
     @Override
-    public void addLogRecord(LogRecord record) {
+    public BucketInfo addLogRecord(LogRecord record) {
         synchronized (database) {
             Log.d(TAG, "Adding a new log record...");
             if (insertStatement == null) {
@@ -79,16 +88,26 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
                     throw new RuntimeException(e);
                 }
             }
+            long leftConsumedSize = maxBucketSize - currentBucketSize;
+            long leftRecordCount = maxRecordCount - currentRecordCount;
+
+            if (leftConsumedSize < record.getSize() || leftRecordCount == 0) {
+                moveToNextBucket();
+            }
 
             try {
-                insertStatement.bindBlob(1, record.getData());
+                insertStatement.bindLong(1, currentBucketId);
+                insertStatement.bindBlob(2, record.getData());
                 long insertedId = insertStatement.executeInsert();
                 if (insertedId >= 0) {
+                    currentBucketSize += record.getSize();
+                    currentRecordCount++;
+
                     unmarkedConsumedSize += record.getSize();
                     totalRecordCount++;
                     unmarkedRecordCount++;
                     Log.i(TAG, "Added a new log record, total record count: " + totalRecordCount + ", data: " + Arrays.toString(record.getData()) +
-                        "unmarked record count: " + unmarkedRecordCount);
+                            "unmarked record count: " + unmarkedRecordCount);
                 } else {
                     Log.w(TAG, "No log record was added");
                 }
@@ -96,6 +115,7 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
                 Log.e(TAG, "Can't add a new record", e);
             }
         }
+        return new BucketInfo(currentBucketId, currentRecordCount);
     }
 
     @Override
@@ -104,49 +124,59 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
     }
 
     @Override
-    public LogBlock getRecordBlock(long blockSize, int batchSize) {
+    public LogBucket getNextBucket() {
         synchronized (database) {
-            Log.d(TAG, "Creating a new record block, needed size: " + blockSize + ", batchSize: " + batchSize);
-            LogBlock logBlock = null;
+            Log.d(TAG, "Creating a new record block");
+            LogBucket logBlock = null;
             Cursor cursor = null;
-            List<String> unmarkedRecordIds = new LinkedList<>();
             List<LogRecord> logRecords = new LinkedList<>();
-            long leftBlockSize = blockSize;
+            int bucketId = 0;
             try {
-                cursor = database.rawQuery(PersistentLogStorageConstants.KAA_SELECT_UNMARKED_RECORDS,
-                        new String[] {String.valueOf(batchSize)});
-                while (cursor.moveToNext()) {
-                    int recordId = cursor.getInt(0);
-                    byte[] recordData = cursor.getBlob(1);
-
-                    if (recordData != null && recordData.length > 0) {
-                        if (leftBlockSize < recordData.length) {
-                            break;
-                        }
-                        logRecords.add(new LogRecord(recordData));
-                        unmarkedRecordIds.add(String.valueOf(recordId));
-                        leftBlockSize -= recordData.length;
-                    } else {
-                        Log.w(TAG, "Found unmarked record with no data. Deleting it...");
-                        removeRecordById(recordId);
-                    }
+                cursor = database.rawQuery(PersistentLogStorageConstants.KAA_SELECT_MIN_BUCKET_ID, null);
+                if (cursor.moveToFirst()) {
+                    bucketId = cursor.getInt(0);
                 }
+            } catch (SQLiteException e) {
+                Log.e(TAG, "Can't retrieve min bucket ID", e);
+            } finally {
+                try {
+                    tryCloseCursor(cursor);
+                } catch (SQLiteException e) {
+                    Log.e(TAG, "Unable to close cursor", e);
+                }
+            }
 
-                if (!logRecords.isEmpty()) {
-                    updateBucketIdForRecords(currentBucketId, unmarkedRecordIds);
-                    logBlock = new LogBlock(currentBucketId++, logRecords);
+            try {
+                long leftBucketSize = maxBucketSize;
+                if (bucketId > 0) {
+                    cursor = database.rawQuery(PersistentLogStorageConstants.KAA_SELECT_LOG_RECORDS_BY_BUCKET_ID,
+                            new String[] {String.valueOf(bucketId)});
+                    while (cursor.moveToNext()) {
+                        byte[] recordData = cursor.getBlob(0);
 
-                    long logBlockSize = blockSize - leftBlockSize;
-                    unmarkedConsumedSize -= logBlockSize;
-                    unmarkedRecordCount -= logRecords.size();
-                    consumedMemoryStorage.put(logBlock.getBlockId(), logBlockSize);
+                        logRecords.add(new LogRecord(recordData));
+                        leftBucketSize -= recordData.length;
+                    }
 
-                    Log.i(TAG, "Created log block: id [" + logBlock.getBlockId() + "], size: " +
-                            logBlockSize + ". Log block record count: " +
-                            logBlock.getRecords().size() + ", total record count: " + totalRecordCount +
-                            ", unmarked record count: " + unmarkedRecordCount);
-                } else {
-                    Log.i(TAG, "No unmarked log records found");
+                    if (!logRecords.isEmpty()) {
+                        updateBucketState(bucketId);
+                        logBlock = new LogBucket(bucketId, logRecords);
+
+                        long logBlockSize = maxBucketSize - leftBucketSize;
+                        unmarkedConsumedSize -= logBlockSize;
+                        unmarkedRecordCount -= logRecords.size();
+                        consumedMemoryStorage.put(logBlock.getBucketId(), logBlockSize);
+
+                        if (currentBucketId == bucketId) {
+                            moveToNextBucket();
+                        }
+                        Log.i(TAG, "Created log block: id [" + logBlock.getBucketId() + "], size: " +
+                                logBlockSize + ". Log block record count: " +
+                                logBlock.getRecords().size() + ", total record count: " + totalRecordCount +
+                                ", unmarked record count: " + unmarkedRecordCount);
+                    } else {
+                        Log.i(TAG, "No unmarked log records found");
+                    }
                 }
             } catch (SQLiteException e) {
                 Log.e(TAG, "Can't retrieve unmarked records from storage", e);
@@ -161,73 +191,33 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
         }
     }
 
-    private void removeRecordById(int recordId) {
+    private void updateBucketState(int bucketId) {
         synchronized (database) {
-            Log.v(TAG, "Removing log record with id [" + recordId + "]");
-            if (deleteByRecordIdStatement == null) {
-                try {
-                    deleteByRecordIdStatement = database.compileStatement(PersistentLogStorageConstants.KAA_DELETE_BY_RECORD_ID);
-                } catch (SQLiteException e) {
-                    Log.e(TAG, "Can't create log remove statement", e);
-                    throw new RuntimeException(e);
-                }
-            }
+            Log.v(TAG, "Updating bucket id [" + bucketId + "]");
 
             try {
-                deleteByRecordIdStatement.bindLong(1, recordId);
-                deleteByRecordIdStatement.execute();
-
-                long affectedRows = getAffectedRowCount();
-
-                if (affectedRows > 0) {
-                    totalRecordCount--;
-                    Log.i(TAG, "Removed log record with id [" + recordId + "]");
-                } else {
-                    Log.w(TAG, "No log record was removed");
+                if (updateBucketStateStatement == null) {
+                    updateBucketStateStatement = database.compileStatement(PersistentLogStorageConstants.KAA_UPDATE_BUCKET_ID);
                 }
-            } catch (SQLiteException e) {
-                Log.e(TAG, "Failed to remove a log record by recordId [" + recordId + "]", e);
-            }
-        }
-    }
-
-    private void updateBucketIdForRecords(int bucketId, List<String> recordIds) {
-        synchronized (database) {
-            Log.v(TAG, "Updating bucket id [" + bucketId + "] for records with ids: " + recordIds);
-
-            SQLiteStatement setBucketIdStatement = null;
-            try {
-                setBucketIdStatement =
-                        database.compileStatement(getUpdateBucketIdStatement(recordIds));
-
-                setBucketIdStatement.bindLong(1, bucketId);
-                setBucketIdStatement.execute();
+                updateBucketStateStatement.bindString(1, PersistentLogStorageConstants.BUCKET_STATE_COLUMN);
+                updateBucketStateStatement.bindLong(2, bucketId);
+                updateBucketStateStatement.execute();
 
                 long affectedRows = getAffectedRowCount();
                 if (affectedRows > 0) {
-                    Log.i(TAG, "Successfully updated id [" + bucketId + "] for log records: " + affectedRows);
+                    Log.i(TAG, "Successfully updated state for bucket ID [" + bucketId + "] for log records: " + affectedRows);
                 } else {
                     Log.w(TAG, "No log records were updated");
                 }
 
             } catch (SQLiteException e) {
-                Log.e(TAG, "Failed to update bucket id [" + bucketId + "] for records with ids: " + recordIds, e);
-            } finally {
-                tryCloseStatement(setBucketIdStatement);
+                Log.e(TAG, "Failed to update state for bucket [" + bucketId + "]", e);
             }
         }
     }
 
-    private String getUpdateBucketIdStatement(List<String> recordIds) {
-        String queryString = TextUtils.join(",", recordIds.toArray());
-        StringBuilder builder = new StringBuilder(PersistentLogStorageConstants.KAA_UPDATE_BUCKET_ID);
-        int indexOf = builder.lastIndexOf(PersistentLogStorageConstants.SUBSTITUTE_SYMBOL);
-        builder.replace(indexOf, indexOf + PersistentLogStorageConstants.SUBSTITUTE_SYMBOL.length(), queryString);
-        return builder.toString();
-    }
-
     @Override
-    public void removeRecordBlock(int recordBlockId) {
+    public void removeBucket(int recordBlockId) {
         synchronized (database) {
             Log.d(TAG, "Removing record block with id [" + recordBlockId + "] from storage");
             if (deleteByBucketIdStatement == null) {
@@ -258,7 +248,7 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
     }
 
     @Override
-    public void notifyUploadFailed(int bucketId) {
+    public void rollbackBucket(int bucketId) {
         synchronized (database) {
             Log.d(TAG, "Notifying upload fail for bucket id: " + bucketId);
             if (resetBucketIdStatement == null) {
@@ -294,8 +284,8 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
     public void close() {
         tryCloseStatement(insertStatement);
         tryCloseStatement(deleteByBucketIdStatement);
-        tryCloseStatement(deleteByRecordIdStatement);
         tryCloseStatement(resetBucketIdStatement);
+        tryCloseStatement(updateBucketStateStatement);
 
         if (database != null) {
             database.close();
@@ -314,6 +304,37 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
     @Override
     public long getRecordCount() {
         return unmarkedRecordCount;
+    }
+
+    private void moveToNextBucket() {
+        this.currentBucketSize = 0;
+        this.currentRecordCount = 0;
+        this.currentBucketId++;
+    }
+
+    private void retrieveBucketId() {
+        Cursor cursor = null;
+        try {
+            cursor = database.rawQuery(PersistentLogStorageConstants.KAA_SELECT_MAX_BUCKET_ID, null);
+            if (cursor.moveToFirst()) {
+                int currentBucketId = cursor.getInt(0);
+                if (currentBucketId == 0) {
+                    Log.d(TAG, "Can't retrieve max bucket ID. Seems there is no logs");
+                    return;
+                }
+
+                this.currentBucketId = ++currentBucketId;
+            }
+        } catch (SQLiteException e) {
+            Log.e(TAG, "Can't create select max bucket ID statement", e);
+            throw new RuntimeException("Can't create select max bucket ID statement");
+        } finally {
+            try {
+                tryCloseCursor(cursor);
+            } catch (SQLiteException e) {
+                Log.e(TAG, "Unable to close cursor", e);
+            }
+        }
     }
 
     private void retrieveConsumedSizeAndVolume() {
@@ -335,10 +356,74 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
         }
     }
 
-    private void resetBucketIDs() {
+    private void truncateIfBucketSizeIncompatible() {
+        Cursor cursor = null;
+        int lastSavedBucketSize = 0;
+        int lastSavedRecordCount = 0;
+        try {
+            cursor = database.rawQuery(PersistentLogStorageConstants.KAA_SELECT_STORAGE_INFO,
+                    new String[] {PersistentLogStorageConstants.STORAGE_BUCKET_SIZE});
+            if (cursor.moveToFirst()) {
+                lastSavedBucketSize = cursor.getInt(0);
+            }
+        } catch (SQLiteException e) {
+            Log.e(TAG, "Cannot retrieve storage param: bucketSize", e);
+            throw new RuntimeException("Cannot retrieve storage param: bucketSize");
+        } finally {
+            tryCloseCursor(cursor);
+        }
+
+        try {
+            cursor = database.rawQuery(PersistentLogStorageConstants.KAA_SELECT_STORAGE_INFO,
+                    new String[] {PersistentLogStorageConstants.STORAGE_RECORD_COUNT});
+            if (cursor.moveToFirst()) {
+                lastSavedRecordCount = cursor.getInt(0);
+            }
+        } catch (SQLiteException e) {
+            Log.e(TAG, "Cannot retrieve storage param: recordCount", e);
+            throw new RuntimeException("Cannot retrieve storage param: recordCount");
+        } finally {
+            tryCloseCursor(cursor);
+        }
+
+        try {
+            if (lastSavedBucketSize != maxBucketSize || lastSavedRecordCount != maxRecordCount) {
+                database.execSQL(PersistentLogStorageConstants.KAA_DELETE_ALL_DATA);
+            }
+        } catch (SQLiteException e) {
+            Log.e(TAG, "Can't prepare delete statement", e);
+            throw new RuntimeException("Can't prepare delete statement");
+        } finally {
+            tryCloseCursor(cursor);
+        }
+
+        updateStorageParams();
+    }
+
+    private void updateStorageParams() {
+        SQLiteStatement updateInfoStatement = null;
+        try {
+            updateInfoStatement = database.compileStatement(PersistentLogStorageConstants.KAA_UPDATE_STORAGE_INFO);
+            updateInfoStatement.bindString(1, PersistentLogStorageConstants.STORAGE_BUCKET_SIZE);
+            updateInfoStatement.bindLong(2, maxBucketSize);
+            updateInfoStatement.execute();
+
+            updateInfoStatement.bindString(1, PersistentLogStorageConstants.STORAGE_RECORD_COUNT);
+            updateInfoStatement.bindLong(2, maxRecordCount);
+            updateInfoStatement.execute();
+        } catch (SQLiteException e) {
+            Log.e(TAG, "Can't prepare update storage info statement", e);
+            throw new RuntimeException("Can't prepare update storage info statement");
+        } finally {
+            tryCloseStatement(updateInfoStatement);
+        }
+    }
+
+
+    private void resetBucketsState() {
         synchronized (database) {
             Log.d(TAG, "Resetting bucket ids on application start");
-            database.execSQL(PersistentLogStorageConstants.KAA_RESET_BUCKET_ID_ON_START);
+            database.execSQL(PersistentLogStorageConstants.KAA_RESET_BUCKET_STATE_ON_START);
             long updatedRows = getAffectedRowCount();
             Log.v(TAG, "Number of rows affected: " + updatedRows);
         }

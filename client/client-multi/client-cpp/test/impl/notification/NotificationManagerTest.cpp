@@ -1,17 +1,17 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 #include <boost/test/unit_test.hpp>
@@ -30,6 +30,9 @@
 #include "kaa/common/exception/TransportNotFoundException.hpp"
 #include "kaa/notification/NotificationManager.hpp"
 #include "kaa/context/SimpleExecutorContext.hpp"
+#include "kaa/KaaClientContext.hpp"
+#include "kaa/KaaClientProperties.hpp"
+#include "kaa/logging/DefaultLogger.hpp"
 
 #include "headers/MockKaaClientStateStorage.hpp"
 #include "headers/channel/MockChannelManager.hpp"
@@ -39,6 +42,12 @@
 
 namespace kaa {
 
+#define UNKNOWNTOPIC 65000
+
+static KaaClientProperties properties;
+static DefaultLogger tmp_logger(properties.getClientId());
+static MockExecutorContext tmpExecContext;
+
 void testSleep(std::size_t seconds)
 {
     std::this_thread::sleep_for(std::chrono::seconds(seconds));
@@ -47,8 +56,8 @@ void testSleep(std::size_t seconds)
 class TestNotificationTransport : public NotificationTransport
 {
 public:
-    TestNotificationTransport(MockChannelManager &channelManager, IKaaClientStateStoragePtr status)
-        : NotificationTransport(status, channelManager) {}
+    TestNotificationTransport(MockChannelManager &channelManager, IKaaClientContext &context)
+        : NotificationTransport(channelManager, context) {}
 
     virtual void setNotificationProcessor(INotificationProcessor* processor) {
         ++onSetNotificationProcessor_;
@@ -67,7 +76,8 @@ BOOST_AUTO_TEST_CASE(SyncWithoutTransportTest)
 {
     IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
     MockExecutorContext executorContext;
-    NotificationManager notificationManager(status, executorContext);
+    KaaClientContext clientContext(properties, tmp_logger, executorContext, status);
+    NotificationManager notificationManager(clientContext);
 
     BOOST_CHECK_THROW(notificationManager.sync(), TransportNotFoundException);
 }
@@ -76,10 +86,11 @@ BOOST_AUTO_TEST_CASE(SyncWithTransportTest)
 {
     IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
     MockExecutorContext executorContext;
-    NotificationManager notificationManager(status, executorContext);
+    KaaClientContext clientContext(properties, tmp_logger, executorContext, status);
+    NotificationManager notificationManager(clientContext);
 
     MockChannelManager manager;
-    std::shared_ptr<TestNotificationTransport> notificationTransport(new TestNotificationTransport(manager, status));
+    std::shared_ptr<TestNotificationTransport> notificationTransport(new TestNotificationTransport(manager, clientContext));
     notificationManager.setTransport(notificationTransport);
 
     BOOST_CHECK_NO_THROW(notificationManager.sync());
@@ -91,50 +102,50 @@ BOOST_AUTO_TEST_CASE(GetEmptyTopicListTest)
 {
     IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
     MockExecutorContext executorContext;
-    NotificationManager notificationManager(status, executorContext);
+    KaaClientContext clientContext(properties, tmp_logger, executorContext, status);
+    NotificationManager notificationManager(clientContext);
 
     BOOST_CHECK(notificationManager.getTopics().empty());
 }
 
 BOOST_AUTO_TEST_CASE(GetTopicsTest)
 {
-    std::srand(std::time(NULL));
     const std::string STATUS_FILE_PATH = "test_status.txt";
-    IKaaClientStateStoragePtr clientStatus1(new ClientStatus(STATUS_FILE_PATH));
 
-    DetailedTopicStates states;
+    std::srand(std::time(NULL));
+    IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
+    MockExecutorContext executorContext;
+    KaaClientContext clientContext1(properties, tmp_logger, executorContext, status);
+    IKaaClientStateStoragePtr clientStatus1(new ClientStatus(clientContext1));
+
+    Topics topicList;
     std::size_t topicCount = 1 + rand() % 10;
-
     std::ostringstream ss;
-
+    std::int64_t topicId = 1;
     for (std::size_t i = 0; i < topicCount; ++i) {
-        DetailedTopicState topicState;
+        Topic topic;
 
-        ss.str("");
-        ss << "topic_" << i << "_id";
-        topicState.topicId = ss.str();
+        topic.id = topicId++;
 
         ss.str("");
         ss << "topic_" << i << "_name";
-        topicState.topicName = ss.str();
-
-        topicState.sequenceNumber = std::rand();
-        topicState.subscriptionType = SubscriptionType::OPTIONAL_SUBSCRIPTION;
-
-        states.insert(std::make_pair(topicState.topicId, topicState));
+        topic.name = ss.str();
+        topic.subscriptionType = SubscriptionType::OPTIONAL_SUBSCRIPTION;
+        topicList.push_back(topic);
     }
 
-    clientStatus1->setTopicStates(states);
+    clientStatus1->setTopicList(topicList);
     clientStatus1->save();
     clientStatus1.reset();
 
-    IKaaClientStateStoragePtr clientStatus2(new ClientStatus(STATUS_FILE_PATH));
-    MockExecutorContext executorContext;
-    NotificationManager notificationManager(clientStatus2, executorContext);
+    KaaClientContext clientContext(properties, tmp_logger, tmpExecContext);
+    IKaaClientStateStoragePtr clientStatus2(new ClientStatus(clientContext));
+    clientContext.setStatus(clientStatus2);
+    NotificationManager notificationManager(clientContext);
 
     auto topics = notificationManager.getTopics();
 
-    BOOST_CHECK_EQUAL(topics.size(), states.size());
+    BOOST_CHECK_EQUAL(topics.size(), topicList.size());
 
     std::remove(STATUS_FILE_PATH.c_str());
 }
@@ -145,14 +156,9 @@ static Topics createTopics(std::size_t topicCount, bool isOptional = true)
     topics.reserve(topicCount);
 
     std::ostringstream ss;
-
     for (std::size_t i = 0; i < topicCount; ++i) {
         Topic topic;
-
-        ss.str("");
-        ss << "topic_" << i << "_id";
-        topic.id = ss.str();
-
+        topic.id = i;
         ss.str("");
         ss << "topic_" << i << "_name";
         topic.name = ss.str();
@@ -161,7 +167,6 @@ static Topics createTopics(std::size_t topicCount, bool isOptional = true)
 
         topics.push_back(topic);
     }
-
     return topics;
 }
 
@@ -194,7 +199,8 @@ BOOST_AUTO_TEST_CASE(AddRemoveTopicListListenerTest)
     IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
     SimpleExecutorContext executorContext;
     executorContext.init();
-    NotificationManager notificationManager(status, executorContext);
+    KaaClientContext clientContext(properties, tmp_logger, executorContext, status);
+    NotificationManager notificationManager(clientContext);
 
     MockNotificationTopicListListener topicListListener1;
     MockNotificationTopicListListener topicListListener2;
@@ -229,7 +235,7 @@ BOOST_AUTO_TEST_CASE(AddRemoveTopicListListenerTest)
     BOOST_CHECK(isTopicsEqual(topicListListener2.topics_, topics1));
 }
 
-static Notification createNotification(const std::string& topicId)
+static Notification createNotification(const std::int64_t topicId)
 {
     KaaNotification originalNotification;
     AvroByteArrayConverter<KaaNotification> serializer;
@@ -244,7 +250,7 @@ static Notification createNotification(const std::string& topicId)
     return notification;
 }
 
-static std::vector<Notification> createNotifications(std::size_t notificationCount, const std::string& topicId)
+static std::vector<Notification> createNotifications(std::size_t notificationCount, const std::int64_t topicId)
 {
     std::vector<Notification> notifications;
     notifications.reserve(notificationCount);
@@ -261,7 +267,8 @@ BOOST_AUTO_TEST_CASE(AddRemoveGlobalNotificationListenerTest)
     IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
     SimpleExecutorContext executorContext;
     executorContext.init();
-    NotificationManager notificationManager(status, executorContext);
+    KaaClientContext clientContext(properties, tmp_logger, executorContext, status);
+    NotificationManager notificationManager(clientContext);
 
     MockNotificationListener notificationListener1;
     MockNotificationListener notificationListener2;
@@ -298,7 +305,8 @@ BOOST_AUTO_TEST_CASE(NotificationListenerForUnknownTopicTest)
 {
     IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
     MockExecutorContext executorContext;
-    NotificationManager notificationManager(status, executorContext);
+    KaaClientContext clientContext(properties, tmp_logger, executorContext, status);
+    NotificationManager notificationManager(clientContext);
     MockNotificationListener topicSpecificNotificationListener;
 
     std::size_t topicCount = 1 + rand() % 10;
@@ -306,10 +314,10 @@ BOOST_AUTO_TEST_CASE(NotificationListenerForUnknownTopicTest)
 
     notificationManager.topicsListUpdated(topics);
 
-    BOOST_CHECK_THROW(notificationManager.addNotificationListener("unknown_topic_id1", topicSpecificNotificationListener)
+    BOOST_CHECK_THROW(notificationManager.addNotificationListener(UNKNOWNTOPIC, topicSpecificNotificationListener)
                     , UnavailableTopicException);
 
-    BOOST_CHECK_THROW(notificationManager.removeNotificationListener("unknown_topic_id2", topicSpecificNotificationListener)
+    BOOST_CHECK_THROW(notificationManager.removeNotificationListener(UNKNOWNTOPIC, topicSpecificNotificationListener)
                     , UnavailableTopicException);
 }
 
@@ -318,7 +326,8 @@ BOOST_AUTO_TEST_CASE(AddRemoveTopicSpecificNotificationListenerTest)
     IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
     SimpleExecutorContext executorContext;
     executorContext.init();
-    NotificationManager notificationManager(status, executorContext);
+    KaaClientContext clientContext(properties, tmp_logger, executorContext, status);
+    NotificationManager notificationManager(clientContext);
 
     std::size_t topicCount = 2;
     auto topics = createTopics(topicCount);
@@ -364,7 +373,8 @@ BOOST_AUTO_TEST_CASE(SubscribeToUnknownTopicTest)
 {
     IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
     MockExecutorContext executorContext;
-    NotificationManager notificationManager(status, executorContext);
+    KaaClientContext clientContext(properties, tmp_logger, executorContext, status);
+    NotificationManager notificationManager(clientContext);
     MockNotificationListener topicSpecificNotificationListener;
 
     std::size_t topicCount = 1 + rand() % 10;
@@ -372,18 +382,19 @@ BOOST_AUTO_TEST_CASE(SubscribeToUnknownTopicTest)
 
     notificationManager.topicsListUpdated(topics);
 
-    BOOST_CHECK_THROW(notificationManager.subscribeToTopic("unknown_topic_id"), UnavailableTopicException);
-    BOOST_CHECK_THROW(notificationManager.subscribeToTopic("unknown_topic_id", false), UnavailableTopicException);
+    BOOST_CHECK_THROW(notificationManager.subscribeToTopic(UNKNOWNTOPIC), UnavailableTopicException);
+    BOOST_CHECK_THROW(notificationManager.subscribeToTopic(UNKNOWNTOPIC, false), UnavailableTopicException);
 
-    BOOST_CHECK_THROW(notificationManager.subscribeToTopics({ topics.front().id, "unknown_topic_id2" }), UnavailableTopicException);
-    BOOST_CHECK_THROW(notificationManager.subscribeToTopics({ topics.front().id, "unknown_topic_id2" }, false), UnavailableTopicException);
+    BOOST_CHECK_THROW(notificationManager.subscribeToTopics({ topics.front().id, UNKNOWNTOPIC }), UnavailableTopicException);
+    BOOST_CHECK_THROW(notificationManager.subscribeToTopics({ topics.front().id, UNKNOWNTOPIC }, false), UnavailableTopicException);
 }
 
 BOOST_AUTO_TEST_CASE(UnsubscribeToUnknownTopicTest)
 {
     IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
     MockExecutorContext executorContext;
-    NotificationManager notificationManager(status, executorContext);
+    KaaClientContext clientContext(properties, tmp_logger, executorContext, status);
+    NotificationManager notificationManager(clientContext);
     MockNotificationListener topicSpecificNotificationListener;
 
     std::size_t topicCount = 1 + rand() % 10;
@@ -391,18 +402,19 @@ BOOST_AUTO_TEST_CASE(UnsubscribeToUnknownTopicTest)
 
     notificationManager.topicsListUpdated(topics);
 
-    BOOST_CHECK_THROW(notificationManager.unsubscribeFromTopic("unknown_topic_id"), UnavailableTopicException);
-    BOOST_CHECK_THROW(notificationManager.unsubscribeFromTopic("unknown_topic_id", false), UnavailableTopicException);
+    BOOST_CHECK_THROW(notificationManager.unsubscribeFromTopic(UNKNOWNTOPIC), UnavailableTopicException);
+    BOOST_CHECK_THROW(notificationManager.unsubscribeFromTopic(UNKNOWNTOPIC, false), UnavailableTopicException);
 
-    BOOST_CHECK_THROW(notificationManager.unsubscribeFromTopics({ topics.front().id, "unknown_topic_id2" }), UnavailableTopicException);
-    BOOST_CHECK_THROW(notificationManager.unsubscribeFromTopics({ topics.front().id, "unknown_topic_id2" }, false), UnavailableTopicException);
+    BOOST_CHECK_THROW(notificationManager.unsubscribeFromTopics({ topics.front().id, UNKNOWNTOPIC }), UnavailableTopicException);
+    BOOST_CHECK_THROW(notificationManager.unsubscribeFromTopics({ topics.front().id, UNKNOWNTOPIC }, false), UnavailableTopicException);
 }
 
 BOOST_AUTO_TEST_CASE(SubscribeToMandatoryTopicTest)
 {
     IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
     MockExecutorContext executorContext;
-    NotificationManager notificationManager(status, executorContext);
+    KaaClientContext clientContext(properties, tmp_logger, executorContext, status);
+    NotificationManager notificationManager(clientContext);
     MockNotificationListener topicSpecificNotificationListener;
 
     std::size_t topicCount = 1 + rand() % 10;
@@ -416,7 +428,7 @@ BOOST_AUTO_TEST_CASE(SubscribeToMandatoryTopicTest)
     BOOST_CHECK_THROW(notificationManager.subscribeToTopic(topics.front().id), UnavailableTopicException);
     BOOST_CHECK_THROW(notificationManager.subscribeToTopic(topics.front().id, false), UnavailableTopicException);
 
-    std::list<std::string> topicIds;
+    std::list<std::int64_t> topicIds;
     for (const auto& topic : topics) {
         topicIds.push_back(topic.id);
     }
@@ -429,7 +441,8 @@ BOOST_AUTO_TEST_CASE(UnsubscribeFromMandatoryTopicTest)
 {
     IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
     MockExecutorContext executorContext;
-    NotificationManager notificationManager(status, executorContext);
+    KaaClientContext clientContext(properties, tmp_logger, executorContext, status);
+    NotificationManager notificationManager(clientContext);
     MockNotificationListener topicSpecificNotificationListener;
 
     std::size_t topicCount = 1 + rand() % 10;
@@ -443,7 +456,7 @@ BOOST_AUTO_TEST_CASE(UnsubscribeFromMandatoryTopicTest)
     BOOST_CHECK_THROW(notificationManager.unsubscribeFromTopic(topics.front().id), UnavailableTopicException);
     BOOST_CHECK_THROW(notificationManager.unsubscribeFromTopic(topics.front().id, false), UnavailableTopicException);
 
-    std::list<std::string> topicIds;
+    std::list<std::int64_t> topicIds;
     for (const auto& topic : topics) {
         topicIds.push_back(topic.id);
     }
@@ -456,10 +469,11 @@ BOOST_AUTO_TEST_CASE(SubscribeToOptionalTopicTest)
 {
     IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
     MockExecutorContext executorContext;
-    NotificationManager notificationManager(status, executorContext);
+    KaaClientContext clientContext(properties, tmp_logger, executorContext, status);
+    NotificationManager notificationManager(clientContext);
     MockNotificationListener topicSpecificNotificationListener;
     MockChannelManager manager;
-    std::shared_ptr<TestNotificationTransport> notificationTransport(new TestNotificationTransport(manager, status));
+    std::shared_ptr<TestNotificationTransport> notificationTransport(new TestNotificationTransport(manager, clientContext));
     notificationManager.setTransport(notificationTransport);
 
     std::size_t topicCount = 1;

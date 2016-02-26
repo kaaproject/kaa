@@ -1,17 +1,17 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.client.channel.impl;
@@ -30,6 +30,7 @@ import org.kaaproject.kaa.client.channel.NotificationTransport;
 import org.kaaproject.kaa.client.channel.ProfileTransport;
 import org.kaaproject.kaa.client.channel.RedirectionTransport;
 import org.kaaproject.kaa.client.channel.UserTransport;
+import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
 import org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest;
@@ -55,6 +56,13 @@ public class DefaultOperationDataProcessor implements KaaDataMultiplexer, KaaDat
     private UserTransport userTransport;
     private RedirectionTransport redirectionTransport;
     private LogTransport logTransport;
+    
+    private final KaaClientState state;
+    
+    public DefaultOperationDataProcessor(KaaClientState state) {
+        super();
+        this.state = state;
+    }
 
     public synchronized void setRedirectionTransport(RedirectionTransport redirectionTransport) {
         this.redirectionTransport = redirectionTransport;
@@ -91,32 +99,36 @@ public class DefaultOperationDataProcessor implements KaaDataMultiplexer, KaaDat
     @Override
     public synchronized void processResponse(byte[] response) throws Exception {
         if (response != null) {
-            SyncResponse syncResponse = responseConverter.fromByteArray(response);
-
-            LOG.info("Received Sync response: {}", syncResponse);
-            if (syncResponse.getConfigurationSyncResponse() != null && configurationTransport != null) {
-                configurationTransport.onConfigurationResponse(syncResponse.getConfigurationSyncResponse());
-            }
-            if (eventTransport != null) {
-                eventTransport.onSyncResposeIdReceived(syncResponse.getRequestId());
-                if (syncResponse.getEventSyncResponse() != null) {
-                    eventTransport.onEventResponse(syncResponse.getEventSyncResponse());
+            try {
+                SyncResponse syncResponse = responseConverter.fromByteArray(response);
+    
+                LOG.info("Received Sync response: {}", syncResponse);
+                if (syncResponse.getConfigurationSyncResponse() != null && configurationTransport != null) {
+                    configurationTransport.onConfigurationResponse(syncResponse.getConfigurationSyncResponse());
                 }
-            }
-            if (syncResponse.getNotificationSyncResponse() != null && notificationTransport != null) {
-                notificationTransport.onNotificationResponse(syncResponse.getNotificationSyncResponse());
-            }
-            if (syncResponse.getUserSyncResponse() != null && userTransport != null) {
-                userTransport.onUserResponse(syncResponse.getUserSyncResponse());
-            }
-            if (syncResponse.getRedirectSyncResponse() != null && redirectionTransport != null) {
-                redirectionTransport.onRedirectionResponse(syncResponse.getRedirectSyncResponse());
-            }
-            if (syncResponse.getProfileSyncResponse() != null && profileTransport != null) {
-                profileTransport.onProfileResponse(syncResponse.getProfileSyncResponse());
-            }
-            if (syncResponse.getLogSyncResponse() != null && logTransport != null) {
-                logTransport.onLogResponse(syncResponse.getLogSyncResponse());
+                if (eventTransport != null) {
+                    eventTransport.onSyncResposeIdReceived(syncResponse.getRequestId());
+                    if (syncResponse.getEventSyncResponse() != null) {
+                        eventTransport.onEventResponse(syncResponse.getEventSyncResponse());
+                    }
+                }
+                if (syncResponse.getNotificationSyncResponse() != null && notificationTransport != null) {
+                    notificationTransport.onNotificationResponse(syncResponse.getNotificationSyncResponse());
+                }
+                if (syncResponse.getUserSyncResponse() != null && userTransport != null) {
+                    userTransport.onUserResponse(syncResponse.getUserSyncResponse());
+                }
+                if (syncResponse.getRedirectSyncResponse() != null && redirectionTransport != null) {
+                    redirectionTransport.onRedirectionResponse(syncResponse.getRedirectSyncResponse());
+                }
+                if (syncResponse.getProfileSyncResponse() != null && profileTransport != null) {
+                    profileTransport.onProfileResponse(syncResponse.getProfileSyncResponse());
+                }
+                if (syncResponse.getLogSyncResponse() != null && logTransport != null) {
+                    logTransport.onLogResponse(syncResponse.getLogSyncResponse());
+                }
+            } finally {
+                state.persist();
             }
         }
     }

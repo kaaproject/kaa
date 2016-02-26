@@ -1,17 +1,17 @@
-/*
- * Copyright 2014-2015 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.widget;
@@ -58,25 +58,37 @@ public class RecordPanel extends SimplePanel implements HasValue<RecordField>, C
     private HasErrorMessage hasErrorMessage;
     private FormDataLoader formDataLoader;
     private boolean optional;
+    private boolean showCaption;
     
     public RecordPanel(String title, HasErrorMessage hasErrorMessage, boolean optional, boolean readOnly) {
         this(null, title, hasErrorMessage, optional, readOnly);
     }
-    
+
     public RecordPanel(AvroWidgetsConfig config, String title, HasErrorMessage hasErrorMessage, boolean optional, boolean readOnly) {
+        this(config, true, title, hasErrorMessage, optional, readOnly);
+    }
+
+    public RecordPanel(AvroWidgetsConfig config, boolean showCaption, String title, HasErrorMessage hasErrorMessage, boolean optional, boolean readOnly) {
+        this.showCaption = showCaption;
         this.optional = optional;
         this.readOnly = readOnly;
         this.hasErrorMessage = hasErrorMessage;
         FlexTable table = new FlexTable();
         table.setWidth("100%");
-        recordCaption = new CaptionPanel();
-        setTitle(title);
         if (config == null) {
             config = new AvroWidgetsConfig.Builder().createConfig();
         }
+        
         recordFieldWidget = new RecordFieldWidget(config, readOnly);
-        recordCaption.setContentWidget(recordFieldWidget);
-        table.setWidget(0, 0, recordCaption);
+        if (showCaption) {
+            recordCaption = new CaptionPanel();
+            setTitle(title);            
+            recordCaption.setContentWidget(recordFieldWidget);        
+            table.setWidget(0, 0, recordCaption);
+        } else {
+            table.setWidget(0, 0, recordFieldWidget);
+        }
+        
         Label uploadLabel = new Label(Utils.constants.uploadFromFile());
         recordFileUpload = new FileUploadForm();
         recordFileUpload.addSubmitCompleteHandler(new SubmitCompleteHandler() {
@@ -124,15 +136,17 @@ public class RecordPanel extends SimplePanel implements HasValue<RecordField>, C
     }
     
     public void setTitle(String title) {
-        if (optional) {
-            recordCaption.setCaptionText(title);
-        } else {
-            SpanElement span = Document.get().createSpanElement();
-            span.appendChild(Document.get().createTextNode(title));
-            span.addClassName("gwt-Label");
-            span.addClassName(REQUIRED);
-            recordCaption.setCaptionHTML(span.getString());
-        }      
+        if (showCaption) {
+            if (optional) {
+                recordCaption.setCaptionText(title);
+            } else {
+                SpanElement span = Document.get().createSpanElement();
+                span.appendChild(Document.get().createTextNode(title));
+                span.addClassName("gwt-Label");
+                span.addClassName(REQUIRED);
+                recordCaption.setCaptionHTML(span.getString());
+            }      
+        }
     }
     
     private void setUploadVisible(boolean visible) {

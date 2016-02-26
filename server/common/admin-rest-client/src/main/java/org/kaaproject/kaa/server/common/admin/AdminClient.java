@@ -1,18 +1,19 @@
-/*
- * Copyright 2014-2015 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
+
 package org.kaaproject.kaa.server.common.admin;
 
 
@@ -30,6 +31,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpHost;
@@ -62,9 +64,8 @@ import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaInfoDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
@@ -111,25 +112,25 @@ public class AdminClient {
     }
 
     public EndpointProfilesPageDto getEndpointProfileByEndpointGroupId(PageLinkDto pageLink) throws Exception {
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<String, String>();
-        params.add("endpointGroupId", pageLink.getEndpointGroupId());
-        params.add("limit", pageLink.getLimit());
-        params.add("offset", pageLink.getOffset());
+        String endpointGroupId = pageLink.getEndpointGroupId();
+        String limit = pageLink.getLimit();
+        String offset = pageLink.getOffset();
         ParameterizedTypeReference<EndpointProfilesPageDto> typeRef = new ParameterizedTypeReference<EndpointProfilesPageDto>() {
         };
-        ResponseEntity<EndpointProfilesPageDto> entity = restTemplate.exchange(url + "endpointProfileByGroupId/" + params, HttpMethod.GET,
-                null, typeRef);
+        ResponseEntity<EndpointProfilesPageDto> entity = restTemplate.exchange(url + "endpointProfileByGroupId?endpointGroupId=" + endpointGroupId
+                        + "&limit=" + limit + "&offset=" + offset,
+                HttpMethod.GET, null, typeRef);
         return entity.getBody();
     }
 
     public EndpointProfilesBodyDto getEndpointProfileBodyByEndpointGroupId(PageLinkDto pageLink) throws Exception {
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<String, String>();
-        params.add("endpointGroupId", pageLink.getEndpointGroupId());
-        params.add("limit", pageLink.getLimit());
-        params.add("offset", pageLink.getOffset());
+        String endpointGroupId = pageLink.getEndpointGroupId();
+        String limit = pageLink.getLimit();
+        String offset = pageLink.getOffset();
         ParameterizedTypeReference<EndpointProfilesBodyDto> typeRef = new ParameterizedTypeReference<EndpointProfilesBodyDto>() {
         };
-        ResponseEntity<EndpointProfilesBodyDto> entity = restTemplate.exchange(url + "endpointProfileBodyByGroupId/" + params,
+        ResponseEntity<EndpointProfilesBodyDto> entity = restTemplate.exchange(url + "endpointProfileBodyByGroupId?endpointGroupId=" + endpointGroupId 
+                + "&limit=" + limit + "&offset=" + offset,
                 HttpMethod.GET, null, typeRef);
         return entity.getBody();
     }
@@ -137,15 +138,19 @@ public class AdminClient {
     public EndpointProfileDto getEndpointProfileByKeyHash(String endpointProfileKeyHash) throws Exception {
         ParameterizedTypeReference<EndpointProfileDto> typeRef = new ParameterizedTypeReference<EndpointProfileDto>() {
         };
-        ResponseEntity<EndpointProfileDto> entity = restTemplate.exchange(url + "endpointProfile/" + endpointProfileKeyHash,
+        ResponseEntity<EndpointProfileDto> entity = restTemplate.exchange(url + "endpointProfile/" + toUrlSafe(endpointProfileKeyHash),
                 HttpMethod.GET, null, typeRef);
         return entity.getBody();
+    }
+
+    private static String toUrlSafe(String endpointProfileKeyHash) {
+        return Base64.encodeBase64URLSafeString(Base64.decodeBase64(endpointProfileKeyHash));
     }
 
     public EndpointProfileBodyDto getEndpointProfileBodyByKeyHash(String endpointProfileKeyHash) throws Exception {
         ParameterizedTypeReference<EndpointProfileBodyDto> typeRef = new ParameterizedTypeReference<EndpointProfileBodyDto>() {
         };
-        ResponseEntity<EndpointProfileBodyDto> entity = restTemplate.exchange(url + "endpointProfileBody/" + endpointProfileKeyHash,
+        ResponseEntity<EndpointProfileBodyDto> entity = restTemplate.exchange(url + "endpointProfileBody/" + toUrlSafe(endpointProfileKeyHash),
                 HttpMethod.GET, null, typeRef);
         return entity.getBody();
     }
@@ -436,13 +441,6 @@ public class AdminClient {
         ResponseEntity<List<NotificationSchemaDto>> entity = restTemplate.exchange(url + "notificationSchemas/" + applicationId,
                 HttpMethod.GET, null, typeRef);
         return entity.getBody();
-    }
-    
-    public EndpointProfileSchemaDto createProfileSchema(EndpointProfileSchemaDto profileSchema, String schemaResource) throws Exception {
-        MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
-        params.add("profileSchema", profileSchema);
-        params.add("file", getFileResource(schemaResource));
-        return restTemplate.postForObject(url + "profileSchema", params, EndpointProfileSchemaDto.class);
     }
 
     public List<VersionDto> getUserNotificationSchemas(String applicationId) throws Exception {
@@ -960,49 +958,77 @@ public class AdminClient {
         return bar;
     }
 
-    public CTLSchemaInfoDto saveCTLSchema(String body, CTLSchemaScopeDto scope, String applicationId) {
+    public CTLSchemaDto saveCTLSchema(String body, String tenantId, String applicationId) {
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
         params.add("body", body);
-        if (scope != null) {
-            params.add("scope", scope.name());
+        if (tenantId != null) {
+            params.add("tenantId", tenantId);
         }
         if (applicationId != null) {
             params.add("applicationId", applicationId);
         }
-        return restTemplate.postForObject(url + "CTL/saveSchema", params, CTLSchemaInfoDto.class);
+        return restTemplate.postForObject(url + "CTL/saveSchema", params, CTLSchemaDto.class);
     }
 
-    public void deleteCTLSchemaByFqnAndVersion(String fqn, Integer version) {
+    public void deleteCTLSchemaByFqnVersionTenantIdAndApplicationId(String fqn,
+            Integer version, 
+            String tenantId,
+            String applicationId) {
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
         params.add("fqn", fqn);
         params.add("version", version);
+        if (tenantId != null) {
+            params.add("tenantId", tenantId);
+        }
+        if (applicationId != null) {
+            params.add("applicationId", applicationId);
+        }
         restTemplate.postForLocation(url + "CTL/deleteSchema", params);
     }
 
-    public CTLSchemaInfoDto getCTLSchemaByFqnAndVersion(String fqn, Integer version) {
-        return restTemplate.getForObject(url + "CTL/getSchema?fqn={fqn}&version={version}", CTLSchemaInfoDto.class, fqn, version);
+    public CTLSchemaDto getCTLSchemaByFqnVersionTenantIdAndApplicationId(String fqn, Integer version, String tenantId, String applicationId) {
+        if (tenantId != null && applicationId != null) {
+            return restTemplate.getForObject(url + "CTL/getSchema?fqn={fqn}&version={version}&tenantId={tenantId}&applicationId={applicationId}", CTLSchemaDto.class, fqn, version, tenantId, applicationId);
+        }else if (tenantId != null) {
+            return restTemplate.getForObject(url + "CTL/getSchema?fqn={fqn}&version={version}&tenantId={tenantId}", CTLSchemaDto.class, fqn, version, tenantId);
+        } else {
+            return restTemplate.getForObject(url + "CTL/getSchema?fqn={fqn}&version={version}", CTLSchemaDto.class, fqn, version);
+        }
+    }
+    
+    public boolean checkFqnExists(String fqn, String tenantId, String applicationId) {
+        if (tenantId != null && applicationId != null) {
+            return restTemplate.getForObject(url + "CTL/checkFqn?fqn={fqn}&tenantId={tenantId}&applicationId={applicationId}", 
+                    Boolean.class, fqn, tenantId, applicationId);
+        } else if (tenantId != null) {
+            return restTemplate.getForObject(url + "CTL/checkFqn?fqn={fqn}&tenantId={tenantId}", Boolean.class, fqn, tenantId);
+        } else {
+            return restTemplate.getForObject(url + "CTL/checkFqn?fqn={fqn}", Boolean.class, fqn);
+        }
+    }
+    
+    public CTLSchemaMetaInfoDto updateCTLSchemaMetaInfoScope(CTLSchemaMetaInfoDto ctlSchemaMetaInfo) {
+        return restTemplate.postForObject(url + "CTL/updateScope", ctlSchemaMetaInfo, CTLSchemaMetaInfoDto.class);
     }
 
-    public List<CTLSchemaMetaInfoDto> getCTLSchemasAvailable() {
+    public List<CTLSchemaMetaInfoDto> getSystemLevelCTLSchemas() {
         ParameterizedTypeReference<List<CTLSchemaMetaInfoDto>> typeRef = new ParameterizedTypeReference<List<CTLSchemaMetaInfoDto>>() {
         };
-        ResponseEntity<List<CTLSchemaMetaInfoDto>> entity = restTemplate.exchange(url + "CTL/getSchemas", HttpMethod.GET, null, typeRef);
+        ResponseEntity<List<CTLSchemaMetaInfoDto>> entity = restTemplate.exchange(url + "CTL/getSystemSchemas", HttpMethod.GET, null, typeRef);
         return entity.getBody();
     }
-
-    public List<CTLSchemaMetaInfoDto> getCTLSchemasByScope(String scopeName) {
+    
+    public List<CTLSchemaMetaInfoDto> getTenantLevelCTLSchemas() {
         ParameterizedTypeReference<List<CTLSchemaMetaInfoDto>> typeRef = new ParameterizedTypeReference<List<CTLSchemaMetaInfoDto>>() {
         };
-        ResponseEntity<List<CTLSchemaMetaInfoDto>> entity = restTemplate.exchange(url + "CTL/getSchemas?scope=" + scopeName,
-                HttpMethod.GET, null, typeRef);
+        ResponseEntity<List<CTLSchemaMetaInfoDto>> entity = restTemplate.exchange(url + "CTL/getTenantSchemas", HttpMethod.GET, null, typeRef);
         return entity.getBody();
     }
-
-    public List<CTLSchemaMetaInfoDto> getCTLSchemasByApplicationId(String applicationId) {
+    
+    public List<CTLSchemaMetaInfoDto> getApplicationLevelCTLSchemas(String applicationId) {
         ParameterizedTypeReference<List<CTLSchemaMetaInfoDto>> typeRef = new ParameterizedTypeReference<List<CTLSchemaMetaInfoDto>>() {
         };
-        ResponseEntity<List<CTLSchemaMetaInfoDto>> entity = restTemplate.exchange(url + "CTL/getSchemas?applicationId=" + applicationId,
-                HttpMethod.GET, null, typeRef);
+        ResponseEntity<List<CTLSchemaMetaInfoDto>> entity = restTemplate.exchange(url + "CTL/getApplicationSchemas/" + applicationId, HttpMethod.GET, null, typeRef);
         return entity.getBody();
     }
 

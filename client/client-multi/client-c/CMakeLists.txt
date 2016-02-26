@@ -1,17 +1,17 @@
 #
-# Copyright 2014 CyberVision, Inc.
+#  Copyright 2014-2016 CyberVision, Inc.
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
 #
-#      http://www.apache.org/licenses/LICENSE-2.0
+#       http://www.apache.org/licenses/LICENSE-2.0
 #
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
 #
 
 cmake_minimum_required(VERSION 2.8.8)
@@ -132,6 +132,7 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/listfiles/platform/${KAA_PLATFORM}/CMakeList
 include_directories(KAA_INCLUDE_PATHS
                         ${KAA_INCLUDE_PATHS}
                         ${CMAKE_CURRENT_SOURCE_DIR}/${KAA_SRC_FOLDER}
+                        ${KAA_THIRDPARTY_INCLUDE_DIR}
                    )
 
 # Sets path(s) to source files.
@@ -173,21 +174,11 @@ if(NOT DEFINED KAA_BUILD_STATIC_ONLY)
   target_link_libraries(${KAA_BUILD_SHARED} ${KAA_THIRDPARTY_LIBRARIES})
 endif()
 
-# Sets paths Kaa libraries will be installed in.
-if(NOT KAA_INSTALL_PATH)
-    if(KAA_PLATFORM STREQUAL ESP8266_NAME)
-        set(KAA_INSTALL_PATH "/usr/local/kaa-esp8266")
-    else()
-	    set(KAA_INSTALL_PATH "/usr/local")
-    endif()
-endif()
-
-message("KAA WILL BE INSTALLED TO  ${KAA_INSTALL_PATH} ")
-set(CMAKE_INSTALL_PREFIX ${KAA_INSTALL_PATH} ) 
-install (DIRECTORY ${KAA_SRC_FOLDER}/ DESTINATION ${KAA_INSTALL_PATH}/include/kaa
+message("KAA WILL BE INSTALLED TO  ${CMAKE_INSTALL_PREFIX} ")
+install (DIRECTORY ${KAA_SRC_FOLDER}/ DESTINATION include/kaa
     FILES_MATCHING PATTERN *.h)
 
-install (TARGETS ${KAA_BUILD_SHARED} ${KAA_BUILD_STATIC} DESTINATION ${KAA_INSTALL_PATH}/lib)
+install (TARGETS ${KAA_BUILD_SHARED} ${KAA_BUILD_STATIC} DESTINATION lib)
 
 
 # Builds unit tests.

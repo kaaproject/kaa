@@ -1,17 +1,17 @@
 #
-# Copyright 2014 CyberVision, Inc.
+#  Copyright 2014-2016 CyberVision, Inc.
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
 #
-#      http://www.apache.org/licenses/LICENSE-2.0
+#       http://www.apache.org/licenses/LICENSE-2.0
 #
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
 #
 
 cmake_minimum_required(VERSION 2.8.8)
@@ -45,7 +45,7 @@ add_definitions (-DBOOST_TEST_DYN_LINK -DBOOST_LOG_DYN_LINK -DRESOURCE_DIR="${CM
 find_package (Avro REQUIRED)
 find_package (Botan REQUIRED)
 find_package (Boost 1.54 REQUIRED
-    COMPONENTS unit_test_framework log system)
+    COMPONENTS unit_test_framework log thread system)
 find_package (Sqlite3 REQUIRED)
 
 include_directories (
@@ -64,7 +64,7 @@ set ( KAA_TEST_SOURCES
         ../impl/KaaClient.cpp
         ../impl/KaaDefaults.cpp
         ../impl/logging/Log.cpp
-        ../impl/logging/LoggerFactory.cpp
+        ../impl/logging/DefaultLogger.cpp
         ../impl/http/HttpUrl.cpp
         ../impl/http/MultipartPostHttpRequest.cpp
         ../impl/http/HttpResponse.cpp
@@ -95,7 +95,8 @@ set ( KAA_TEST_SOURCES
         ../impl/notification/NotificationTransport.cpp
         ../impl/notification/NotificationManager.cpp
         ../impl/log/LogCollector.cpp
-        ../impl/log/LogRecord.cpp
+        ../impl/log/LogStorageConstants.cpp
+        ../impl/log/RecordFuture.cpp
         ../impl/log/DefaultLogUploadStrategy.cpp
         ../impl/log/MemoryLogStorage.cpp
         ../impl/log/SQLiteDBLogStorage.cpp

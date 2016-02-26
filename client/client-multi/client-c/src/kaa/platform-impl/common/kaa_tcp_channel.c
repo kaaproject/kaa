@@ -1,17 +1,17 @@
-/*
- * Copyright 2014-2015 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 #include <stdbool.h>
@@ -79,7 +79,6 @@ typedef struct {
 } kaa_tcp_access_point_t;
 
 typedef struct {
-    uint16_t      keepalive_interval;
     kaa_time_t    last_sent_keepalive;
     kaa_time_t    last_receive_keepalive;
 } kaa_tcp_keepalive_t ;
@@ -237,12 +236,11 @@ kaa_error_t kaa_tcp_channel_create(kaa_transport_channel_interface_t *self
     /*
      * Initializes keepalive configuration.
      */
-    kaa_tcp_channel->keepalive.keepalive_interval = KAA_TCP_CHANNEL_KEEPALIVE;
     kaa_tcp_channel->keepalive.last_sent_keepalive = KAA_TIME();
     kaa_tcp_channel->keepalive.last_receive_keepalive = kaa_tcp_channel->keepalive.last_sent_keepalive;
 
     KAA_LOG_TRACE(logger, KAA_ERR_NONE, "Kaa TCP channel keepalive is %u",
-                                    kaa_tcp_channel->keepalive.keepalive_interval);
+                                    KAA_TCP_CHANNEL_MAX_TIMEOUT);
 
     /*
      * Assigns supported transport protocol id.
@@ -804,8 +802,7 @@ kaa_error_t kaa_tcp_channel_get_max_timeout(kaa_transport_channel_interface_t *s
 {
     KAA_RETURN_IF_NIL3(self, self->context, max_timeout, KAA_ERR_BADPARAM);
 
-    kaa_tcp_channel_t *tcp_channel = (kaa_tcp_channel_t *) self->context;
-    *max_timeout = tcp_channel->keepalive.keepalive_interval / 2;
+    *max_timeout = KAA_TCP_CHANNEL_PING_TIMEOUT;
 
     return KAA_ERR_NONE;
 }
@@ -875,14 +872,13 @@ kaa_error_t kaa_tcp_channel_check_keepalive(kaa_transport_channel_interface_t *s
         KAA_LOG_TRACE_LDB(tcp_channel->logger, KAA_ERR_NONE, "Kaa TCP channel [0x%08X] checking keepalive"
                                                                         , tcp_channel->access_point.id);
 
-        if (tcp_channel->keepalive.keepalive_interval == 0
-                || tcp_channel->channel_state != KAA_TCP_CHANNEL_AUTHORIZED) {
+        if (tcp_channel->channel_state != KAA_TCP_CHANNEL_AUTHORIZED) {
             return error_code;
         }
 
         kaa_time_t interval = KAA_TIME() - tcp_channel->keepalive.last_sent_keepalive;
 
-        if (interval >= (tcp_channel->keepalive.keepalive_interval / 2)) {
+        if (interval >= KAA_TCP_CHANNEL_PING_TIMEOUT) {
             //Send ping request
 
             if (tcp_channel->keepalive.last_sent_keepalive > tcp_channel->keepalive.last_receive_keepalive) {
@@ -919,24 +915,6 @@ kaa_error_t kaa_tcp_channel_set_socket_events_callback(kaa_transport_channel_int
 
 }
 
-
-
-kaa_error_t kaa_tcp_channel_set_keepalive_timeout(kaa_transport_channel_interface_t *self
-                                                , uint16_t keepalive)
-{
-    KAA_RETURN_IF_NIL2(self, self->context, KAA_ERR_BADPARAM);
-    kaa_tcp_channel_t *tcp_channel = (kaa_tcp_channel_t *)self->context;
-
-    tcp_channel->keepalive.keepalive_interval = keepalive;
-
-    KAA_LOG_TRACE(tcp_channel->logger,KAA_ERR_NONE,"Kaa TCP channel [0x%08X] keepalive is set to %u seconds"
-                                    , tcp_channel->access_point.id, tcp_channel->keepalive.keepalive_interval);
-
-    return KAA_ERR_NONE;
-}
-
-
-
 kaa_error_t kaa_tcp_channel_disconnect(kaa_transport_channel_interface_t  *self)
 {
     KAA_RETURN_IF_NIL2(self, self->context, KAA_ERR_BADPARAM);
@@ -956,10 +934,9 @@ void kaa_tcp_channel_connack_message_callback(void *context, kaatcp_connack_t me
             KAA_LOG_TRACE(channel->logger, KAA_ERR_NONE, "Kaa TCP channel [0x%08X] successfully authorized"
                                                                                 , channel->access_point.id);
 
-            if (channel->keepalive.keepalive_interval > 0) {
-                channel->keepalive.last_receive_keepalive = KAA_TIME();
-                channel->keepalive.last_sent_keepalive = channel->keepalive.last_receive_keepalive;
-            }
+        channel->keepalive.last_receive_keepalive = KAA_TIME();
+        channel->keepalive.last_sent_keepalive
+                = channel->keepalive.last_receive_keepalive;
 
         } else if (message.return_code == (uint16_t) KAATCP_CONNACK_REFUSE_BAD_CREDENTIALS) {
             kaa_context_set_status_registered(channel->transport_context.kaa_context, false);
@@ -1142,13 +1119,9 @@ kaa_error_t kaa_tcp_channel_authorize(kaa_tcp_channel_t *self)
         return error_code;
     }
 
-
-    uint16_t keepalive = self->keepalive.keepalive_interval;
-    keepalive += keepalive / 5;
-
     kaatcp_connect_t connect_message;
     kaatcp_error_t kaatcp_error_code =
-            kaatcp_fill_connect_message(keepalive
+            kaatcp_fill_connect_message(KAA_TCP_CHANNEL_MAX_TIMEOUT
                                       , KAA_PLATFORM_PROTOCOL_ID
                                       , sync_buffer
                                       , sync_size
@@ -1229,6 +1202,42 @@ bool is_service_pending(kaa_tcp_channel_t *self, const kaa_service_t service)
 }
 
 
+/* Appends destination array with only new members from source array.
+ * Capacity is a maximum amount of items that can be stored in the destination
+ * array. Destination count is a current amount of items in destination array.
+ *
+ * Returns new array count.
+ */
+static size_t append_with_new_services(kaa_service_t *dest,
+                                       size_t dest_count,
+                                       size_t dest_capacity,
+                                       const kaa_service_t *src,
+                                       size_t src_count)
+{
+    KAA_RETURN_IF_NIL2(dest, src, 0);
+
+    for (size_t i = 0; i < src_count; ++i) {
+        bool found = false;
+        for (size_t j = 0; j < dest_count; ++j) {
+            if (src[i] == dest[j]) {
+                found = true;
+                break;
+            }
+        }
+
+        /* Only add new services that doesn't yet exist in destination array */
+        if (!found) {
+            dest[dest_count++] = src[i];
+        }
+
+        /* No more empty space in array */
+        if (dest_count == dest_capacity) {
+            break;
+        }
+    }
+
+    return dest_count;
+}
 
 /*
  * Delete specified services from pending list.
@@ -1256,25 +1265,14 @@ kaa_error_t kaa_tcp_channel_delete_pending_services(kaa_tcp_channel_t *self
         return KAA_ERR_NONE;
     }
 
-    bool found;
     size_t new_service_count = 0;
     kaa_service_t temp_new_services[self->pending_request_service_count];
 
-    size_t pending_i = 0;
-    for (; pending_i < self->pending_request_service_count; ++pending_i) {
-        found = false;
-        size_t deleting_i = 0;
-        for (; deleting_i < service_count; ++deleting_i) {
-            if (self->pending_request_services[pending_i] == services[deleting_i]) {
-                found = true;
-                break;
-            }
-        }
-
-        if (!found) {
-            temp_new_services[new_service_count++] = self->pending_request_services[pending_i];
-        }
-    }
+    new_service_count = append_with_new_services(temp_new_services,
+                                                 new_service_count,
+                                                 self->pending_request_service_count,
+                                                 self->pending_request_services,
+                                                 self->pending_request_service_count);
 
     KAA_FREE(self->pending_request_services); //free previous pending services array.
     self->pending_request_services = NULL;
@@ -1322,22 +1320,11 @@ kaa_error_t kaa_tcp_channel_update_pending_services(kaa_tcp_channel_t *self
         self->pending_request_service_count = 0;
     }
 
-    bool found;
-    size_t updating_i = 0;
-    for (; updating_i < service_count; ++updating_i) {
-        found = false;
-        size_t pending_i = 0;
-        for (; pending_i < new_service_count; ++pending_i) {
-            if (services[updating_i] == temp_new_services[pending_i]) {
-                found = true;
-                break;
-            }
-        }
-
-        if (!found) {
-            temp_new_services[new_service_count++] = services[updating_i];
-        }
-    }
+    new_service_count = append_with_new_services(temp_new_services,
+                                                 new_service_count,
+                                                 self->pending_request_service_count + service_count,
+                                                 services,
+                                                 service_count);
 
     self->pending_request_services = (kaa_service_t *)
                             KAA_MALLOC(new_service_count * sizeof(kaa_service_t));

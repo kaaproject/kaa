@@ -1,17 +1,17 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 #ifndef KAACLIENTSTATESTORAGEMOCK_HPP_
@@ -27,6 +27,8 @@ public:
     virtual std::int32_t getEventSequenceNumber() const {
         return 0;
     }
+    virtual void setNotificationsSubscriptions(std::map<std::int64_t, std::int32_t>& subscriptions) {}
+    virtual std::map<std::int64_t, std::int32_t> &getNotificationsSubscriptions() { return map; }
 
     virtual void setEventSequenceNumber(std::int32_t) {}
 
@@ -54,11 +56,15 @@ public:
 
     virtual void setRegistered(bool) {}
 
-    virtual DetailedTopicStates getTopicStates() const {
-        static DetailedTopicStates states;
+    virtual Topics getTopicList() const {
+        static Topics states;
         return states;
     }
-    virtual void setTopicStates(const DetailedTopicStates&) {}
+
+    virtual void setTopicList(const Topics& stateContainer) {}
+
+    virtual void setTopicStates(std::map<std::int64_t, std::int32_t>& subscriptions) {}
+    virtual std::map<std::int64_t, std::int32_t> &getTopicStates() { return map; }
 
     virtual HashDigest getProfileHash() const {
         static HashDigest profileHash;
@@ -100,8 +106,13 @@ public:
         return false;
     }
 
+    virtual std::int32_t getTopicListHash() { return 0; }
+    virtual void setTopicListHash(std::int32_t hash) {}
+
     virtual void read() {}
     virtual void save() {}
+ private:
+    std::map<std::int64_t, std::int32_t> map;
 };
 
 }

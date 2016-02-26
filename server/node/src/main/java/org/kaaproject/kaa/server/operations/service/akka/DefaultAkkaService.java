@@ -1,17 +1,17 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.server.operations.service.akka;
@@ -80,7 +80,9 @@ public class DefaultAkkaService implements AkkaService {
     @Autowired
     private AkkaContext context;
 
-    private AkkaEventServiceListener listener;
+    private AkkaEventServiceListener eventListener;
+    
+    private AkkaClusterServiceListener clusterListener;
 
     private StatusListenerThread statusListenerThread;
 
@@ -102,8 +104,10 @@ public class DefaultAkkaService implements AkkaService {
                         .props(Props.create(new EncDecActor.ActorCreator(opsActor, context, platformProtocols))
                                 .withDispatcher(IO_DISPATCHER_NAME)), IO_ROUTER_ACTOR_NAME);
         LOG.info("Initializing Akka event service listener...");
-        listener = new AkkaEventServiceListener(opsActor);
-        context.getEventService().addListener(listener);
+        eventListener = new AkkaEventServiceListener(opsActor);
+        context.getEventService().addListener(eventListener);
+        clusterListener = new AkkaClusterServiceListener(opsActor);
+        context.getClusterService().setListener(clusterListener);
         LOG.info("Initializing Akka system done");
     }
 
@@ -120,7 +124,7 @@ public class DefaultAkkaService implements AkkaService {
     }
 
     AkkaEventServiceListener getListener() {
-        return listener;
+        return eventListener;
     }
 
     /*
@@ -155,7 +159,7 @@ public class DefaultAkkaService implements AkkaService {
 
     @PreDestroy
     public void preDestroy() {
-        context.getEventService().removeListener(listener);
+        context.getEventService().removeListener(eventListener);
     }
 
     @Override

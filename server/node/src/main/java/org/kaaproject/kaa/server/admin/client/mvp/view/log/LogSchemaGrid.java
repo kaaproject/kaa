@@ -1,17 +1,17 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.log;
@@ -65,7 +65,7 @@ public class LogSchemaGrid extends BaseSchemasGrid<LogSchemaDto>{
     }
 
     private Column<LogSchemaDto, LogSchemaDto> constructDownloadLibraryColumn(String text) {
-        ActionButtonCell<LogSchemaDto> cell = new ActionButtonCell<>(Utils.resources.download(), text, embedded,
+        ActionButtonCell<LogSchemaDto> cell = new ActionButtonCell<>(Utils.resources.download_grey(), text, embedded,
                 new ActionListener<LogSchemaDto>() {
                     @Override
                     public void onItemAction(LogSchemaDto value) {

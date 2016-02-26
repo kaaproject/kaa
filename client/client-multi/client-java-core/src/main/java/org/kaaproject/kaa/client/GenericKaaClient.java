@@ -1,18 +1,19 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
+
 package org.kaaproject.kaa.client;
 
 import java.security.PrivateKey;
@@ -34,6 +35,7 @@ import org.kaaproject.kaa.client.event.registration.EndpointRegistrationManager;
 import org.kaaproject.kaa.client.event.registration.OnAttachEndpointOperationCallback;
 import org.kaaproject.kaa.client.event.registration.OnDetachEndpointOperationCallback;
 import org.kaaproject.kaa.client.event.registration.UserAttachCallback;
+import org.kaaproject.kaa.client.logging.LogDeliveryListener;
 import org.kaaproject.kaa.client.logging.LogStorage;
 import org.kaaproject.kaa.client.logging.LogUploadStrategy;
 import org.kaaproject.kaa.client.notification.NotificationListener;
@@ -194,7 +196,7 @@ public interface GenericKaaClient {
      *
      * @see NotificationListener
      */
-    void addNotificationListener(String topicId, NotificationListener listener) throws UnavailableTopicException;
+    void addNotificationListener(Long topicId, NotificationListener listener) throws UnavailableTopicException;
 
     /**
      * <p>
@@ -229,7 +231,7 @@ public interface GenericKaaClient {
      *
      * @see NotificationListener
      */
-    void removeNotificationListener(String topicId, NotificationListener listener) throws UnavailableTopicException;
+    void removeNotificationListener(Long topicId, NotificationListener listener) throws UnavailableTopicException;
 
     /**
      * <p>
@@ -243,7 +245,7 @@ public interface GenericKaaClient {
      *             Throw if unknown topic id is provided or topic isn't
      *             optional.
      */
-    void subscribeToTopic(String topicId) throws UnavailableTopicException;
+    void subscribeToTopic(Long topicId) throws UnavailableTopicException;
 
     /**
      * <p>
@@ -262,7 +264,7 @@ public interface GenericKaaClient {
      *
      * @see #syncTopicsList()
      */
-    void subscribeToTopic(String topicId, boolean forceSync) throws UnavailableTopicException;
+    void subscribeToTopic(Long topicId, boolean forceSync) throws UnavailableTopicException;
 
     /**
      * <p>
@@ -277,7 +279,7 @@ public interface GenericKaaClient {
      *             Throw if unknown topic id is provided or topic isn't
      *             optional.
      */
-    void subscribeToTopics(List<String> topicIds) throws UnavailableTopicException;
+    void subscribeToTopics(List<Long> topicIds) throws UnavailableTopicException;
 
     /**
      * <p>
@@ -297,7 +299,7 @@ public interface GenericKaaClient {
      *
      * @see #syncTopicsList()
      */
-    void subscribeToTopics(List<String> topicIds, boolean forceSync) throws UnavailableTopicException;
+    void subscribeToTopics(List<Long> topicIds, boolean forceSync) throws UnavailableTopicException;
 
     /**
      * <p>
@@ -315,7 +317,7 @@ public interface GenericKaaClient {
      *             Throw if unknown topic id is provided or topic isn't
      *             optional.
      */
-    void unsubscribeFromTopic(String topicId) throws UnavailableTopicException;
+    void unsubscribeFromTopic(Long topicId) throws UnavailableTopicException;
 
     /**
      * <p>
@@ -338,7 +340,7 @@ public interface GenericKaaClient {
      *
      * @see #syncTopicsList()
      */
-    void unsubscribeFromTopic(String topicId, boolean forceSync) throws UnavailableTopicException;
+    void unsubscribeFromTopic(Long topicId, boolean forceSync) throws UnavailableTopicException;
 
     /**
      * <p>
@@ -357,7 +359,7 @@ public interface GenericKaaClient {
      *             Throw if unknown topic id is provided or topic isn't
      *             optional.
      */
-    void unsubscribeFromTopics(List<String> topicIds) throws UnavailableTopicException;
+    void unsubscribeFromTopics(List<Long> topicIds) throws UnavailableTopicException;
 
     /**
      * <p>
@@ -381,7 +383,7 @@ public interface GenericKaaClient {
      *
      * @see #syncTopicsList()
      */
-    void unsubscribeFromTopics(List<String> topicIds, boolean forceSync) throws UnavailableTopicException;
+    void unsubscribeFromTopics(List<Long> topicIds, boolean forceSync) throws UnavailableTopicException;
 
     /**
      * <p>
@@ -389,9 +391,9 @@ public interface GenericKaaClient {
      * </p>
      *
      * <p>
-     * Should be used after all {@link #subscribeToTopic(String, boolean)},
+     * Should be used after all {@link #subscribeToTopic(Long, boolean)},
      * {@link #subscribeToTopics(List, boolean)},
-     * {@link #unsubscribeFromTopic(String, boolean)},
+     * {@link #unsubscribeFromTopic(Long, boolean)},
      * {@link #unsubscribeFromTopics(List, boolean)} calls with parameter
      * {@code forceSync} set to {@code false}.
      * </p>
@@ -587,4 +589,14 @@ public interface GenericKaaClient {
      * @see     org.kaaproject.kaa.client.event.registration.DetachEndpointFromUserCallback
      */
     void setDetachedListener(DetachEndpointFromUserCallback listener);
+
+
+    /**
+     * Set a listener which receives a delivery status of each log bucket.
+     *
+     * @param   listener the listener
+     *
+     * @see     org.kaaproject.kaa.client.logging.LogDeliveryListener
+     */
+    void setLogDeliveryListener(LogDeliveryListener listener);
 }

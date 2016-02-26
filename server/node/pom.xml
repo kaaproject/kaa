@@ -1,5 +1,5 @@
 <!--
-  Copyright 2014-2015 CyberVision, Inc.
+  Copyright 2014-2016 CyberVision, Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.kaaproject.kaa</groupId>
-        <version>0.8.0-SNAPSHOT</version>
+        <version>0.8.1-SNAPSHOT</version>
         <artifactId>server</artifactId>
     </parent>
     <groupId>org.kaaproject.kaa.server</groupId>
@@ -126,8 +126,8 @@
             <artifactId>endpoint-shared</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.kaaproject.kaa.avrogenc</groupId>
-            <artifactId>avrogenc</artifactId>
+            <groupId>org.kaaproject.kaa.avrogen</groupId>
+            <artifactId>avrogen</artifactId>
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>
@@ -225,7 +225,7 @@
         </dependency>
         <dependency>
             <groupId>com.typesafe.akka</groupId>
-            <artifactId>akka-actor_2.10</artifactId>
+            <artifactId>akka-actor_2.11</artifactId>
         </dependency>
         <dependency>
             <groupId>com.typesafe.akka</groupId>
@@ -270,8 +270,15 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-module-junit4</artifactId>
+            <version>1.6.4</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-api-mockito</artifactId>
+            <version>1.6.4</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -673,7 +680,7 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${project.basedir}/src/test/resources/sdk/c/</outputDirectory>
+                            <outputDirectory>${project.build.testOutputDirectory}/sdk/c/</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>${project.basedir}/../../client/client-multi/client-c/templates/</directory>
@@ -688,7 +695,7 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${project.basedir}/src/test/resources/sdk/cpp/</outputDirectory>
+                            <outputDirectory>${project.build.testOutputDirectory}/sdk/cpp/</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>${project.basedir}/../../client/client-multi/client-cpp/templates/</directory>
@@ -703,10 +710,10 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${project.basedir}/src/test/resources/sdk/java</outputDirectory>
+                            <outputDirectory>${project.build.testOutputDirectory}/sdk/java</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>${project.basedir}/../../client/client-multi/client-java-desktop/src/templates/</directory>
+                                    <directory>${project.basedir}/../../client/client-multi/client-java-core/src/templates/</directory>
                                 </resource>
                             </resources>
                         </configuration>
@@ -772,7 +779,7 @@
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${sdk.path}/java</outputDirectory>
-                                    <destFileName>kaa-client-sdk-${project.version}.jar</destFileName>
+                                    <destFileName>kaa-java-ep-sdk-${project.version}.jar</destFileName>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.kaaproject.kaa.client</groupId>
@@ -782,7 +789,7 @@
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${sdk.path}/android</outputDirectory>
-                                    <destFileName>kaa-client-sdk-android-${project.version}.jar</destFileName>
+                                    <destFileName>kaa-android-ep-sdk-${project.version}.jar</destFileName>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.kaaproject.kaa.client</groupId>
@@ -792,7 +799,7 @@
                                     <type>tar.gz</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${sdk.path}/cpp</outputDirectory>
-                                    <destFileName>kaa-client-sdk-${project.version}.tar.gz</destFileName>
+                                    <destFileName>kaa-cpp-ep-sdk-${project.version}.tar.gz</destFileName>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.kaaproject.kaa.client</groupId>
@@ -802,7 +809,17 @@
                                     <type>tar.gz</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${sdk.path}/c</outputDirectory>
-                                    <destFileName>kaa-client-sdk-${project.version}.tar.gz</destFileName>
+                                    <destFileName>kaa-c-ep-sdk-${project.version}.tar.gz</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.client</groupId>
+                                    <artifactId>client-objective-c</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>objc-sdk</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${sdk.path}/objc</outputDirectory>
+                                    <destFileName>kaa-objc-ep-sdk-${project.version}.tar.gz</destFileName>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>
@@ -817,18 +834,9 @@
                             <artifactItems>
                                 <artifactItem>
                                     <groupId>org.kaaproject.kaa.client</groupId>
-                                    <artifactId>client-java-desktop</artifactId>
+                                    <artifactId>client-java-core</artifactId>
                                     <version>${project.version}</version>
                                     <classifier>java-sdk-templates</classifier>
-                                    <type>tar.gz</type>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>${templates.path}/java</outputDirectory>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.kaaproject.kaa.client</groupId>
-                                    <artifactId>client-java-android</artifactId>
-                                    <version>${project.version}</version>
-                                    <classifier>java-android-sdk-templates</classifier>
                                     <type>tar.gz</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${templates.path}/java</outputDirectory>
@@ -850,6 +858,15 @@
                                     <type>tar.gz</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${templates.path}/c</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.client</groupId>
+                                    <artifactId>client-objective-c</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>objc-sdk-templates</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${templates.path}/objc</outputDirectory>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>
@@ -1057,6 +1074,41 @@
                 </executions>
             </plugin>
         </plugins>
+        <pluginManagement>
+        	<plugins>
+        		<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+        		<plugin>
+        			<groupId>org.eclipse.m2e</groupId>
+        			<artifactId>lifecycle-mapping</artifactId>
+        			<version>1.0.0</version>
+        			<configuration>
+        				<lifecycleMappingMetadata>
+        					<pluginExecutions>
+        						<pluginExecution>
+        							<pluginExecutionFilter>
+        								<groupId>
+        									org.codehaus.mojo
+        								</groupId>
+        								<artifactId>
+        									build-helper-maven-plugin
+        								</artifactId>
+        								<versionRange>
+        									[1.9.1,)
+        								</versionRange>
+        								<goals>
+        									<goal>add-source</goal>
+        								</goals>
+        							</pluginExecutionFilter>
+        							<action>
+        								<ignore></ignore>
+        							</action>
+        						</pluginExecution>
+        					</pluginExecutions>
+        				</lifecycleMappingMetadata>
+        			</configuration>
+        		</plugin>
+        	</plugins>
+        </pluginManagement>
     </build>
 
     <profiles>
@@ -1069,6 +1121,21 @@
                         <artifactId>gwt-maven-plugin</artifactId>
                         <version>${gwt.version}</version>
                         <executions>
+                    <execution>
+                            <id>generateAsync</id>
+                                <goals>
+                                    <goal>generateAsync</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>source-generation</id>
+                                <goals>
+                                    <goal>i18n</goal>
+                                    <goal>css</goal>
+                                </goals>
+                                <configuration>
+                                </configuration>
+                            </execution>
                             <execution>
                                 <phase>compile</phase>
                                 <goals>

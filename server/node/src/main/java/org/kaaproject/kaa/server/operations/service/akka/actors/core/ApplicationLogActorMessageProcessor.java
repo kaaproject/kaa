@@ -1,18 +1,19 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
+
 package org.kaaproject.kaa.server.operations.service.akka.actors.core;
 
 import java.util.ArrayList;
@@ -90,32 +91,53 @@ public class ApplicationLogActorMessageProcessor {
         }
     }
 
-    protected void processLogEventPack(LogEventPackMessage message) {
-        LOG.debug("[{}] Processing log event pack with {} appenders", applicationToken, logAppenders.size());
+    protected void processLogEventPack(ActorContext context, LogEventPackMessage message) {
+        LOG.debug("[{}] Processing a log event pack with {} appenders", applicationToken, logAppenders.size());
         fetchSchemas(message);
         LogSchema logSchema = message.getLogSchema();
         List<LogAppender> required = filterAppenders(logSchema.getVersion(), true);
         List<LogAppender> optional = filterAppenders(logSchema.getVersion(), false);
-        if (!required.isEmpty() || !optional.isEmpty()) {
-            for (LogAppender logAppender : optional) {
-                logAppender.doAppend(message.getLogEventPack(), voidCallback);
-            }
-            LogDeliveryCallback callback;
-            if (required.size() > 1) {
-                callback = new MultiLogDeliveryCallback(message.getOriginator(), message.getRequestId(), required.size());
+        if (required.size() + optional.size() > 0) {
+            optional.forEach(appender -> appender.doAppend(message.getLogEventPack(), voidCallback));
+            if (required.size() == 0) {
+                sendSuccessMessageToEndpoint(message);
             } else {
-                callback = new SingleLogDeliveryCallback(message.getOriginator(), message.getRequestId());
-            }
-            try {
-                for (LogAppender logAppender : required) {
-                    logAppender.doAppend(message.getLogEventPack(), callback);
+                LogDeliveryCallback callback;
+                if (required.size() == 1) {
+                    callback = new SingleLogDeliveryCallback(message.getOriginator(), message.getRequestId());
+                } else {
+                    callback = new MultiLogDeliveryCallback(message.getOriginator(), message.getRequestId(), required.size());
                 }
-            } catch (Exception e) {
-                LOG.warn("Error during execution of appender(s)", e);
-                sendErrorMessageToEndpoint(message, LogDeliveryErrorCode.APPENDER_INTERNAL_ERROR);
+                required.forEach(appender -> {
+                    try {
+                        appender.doAppend(message.getLogEventPack(), callback);
+                    } catch (Exception cause) {
+                        String text = String.format("Failed to append logs using [%s] (ID: %s)", appender.getName(), appender.getAppenderId());
+                        LOG.warn(text, cause);
+                        sendErrorMessageToEndpoint(message, LogDeliveryErrorCode.APPENDER_INTERNAL_ERROR);
+                    }
+                });
             }
         } else {
             sendErrorMessageToEndpoint(message, LogDeliveryErrorCode.NO_APPENDERS_CONFIGURED);
+        }
+    }
+
+    /**
+     * Sends a response to the endpoint.
+     *
+     * Please note that this method was introduced purely as a workaround to
+     * mocking an instance of {@link akka.actor.ActorRef}. Change the method
+     * body with caution!
+     *
+     * @param message A message to respond to
+     */
+    protected void sendSuccessMessageToEndpoint(LogEventPackMessage message) {
+        if (message.getOriginator() != null) {
+            LogDeliveryMessage response = new LogDeliveryMessage(message.getRequestId(), true);
+            message.getOriginator().tell(response, ActorRef.noSender());
+        } else {
+            LOG.warn("[{}] Unable to respond to an unknown originator", applicationToken);
         }
     }
 
@@ -173,7 +195,7 @@ public class ApplicationLogActorMessageProcessor {
         }
     }
 
-    private void sendErrorMessageToEndpoint(LogEventPackMessage message, LogDeliveryErrorCode errorCode) {
+    protected void sendErrorMessageToEndpoint(LogEventPackMessage message, LogDeliveryErrorCode errorCode) {
         if (message.getOriginator() != null) {
             message.getOriginator().tell(new LogDeliveryMessage(message.getRequestId(), false, errorCode), ActorRef.noSender());
         } else {
@@ -185,18 +207,18 @@ public class ApplicationLogActorMessageProcessor {
         LOG.debug("Process log appender notification [{}]", notification);
         String appenderId = notification.getAppenderId();
         switch (notification.getOp()) {
-        case ADD_LOG_APPENDER:
-            addLogAppender(appenderId);
-            break;
-        case REMOVE_LOG_APPENDER:
-            removeLogAppender(appenderId);
-            break;
-        case UPDATE_LOG_APPENDER:
-            removeLogAppender(appenderId);
-            addLogAppender(appenderId);
-            break;
-        default:
-            LOG.debug("[{}][{}] Operation [{}] is not supported.", applicationToken, appenderId, notification.getOp());
+            case ADD_LOG_APPENDER:
+                addLogAppender(appenderId);
+                break;
+            case REMOVE_LOG_APPENDER:
+                removeLogAppender(appenderId);
+                break;
+            case UPDATE_LOG_APPENDER:
+                removeLogAppender(appenderId);
+                addLogAppender(appenderId);
+                break;
+            default:
+                LOG.debug("[{}][{}] Operation [{}] is not supported.", applicationToken, appenderId, notification.getOp());
         }
     }
 
@@ -239,7 +261,7 @@ public class ApplicationLogActorMessageProcessor {
         logAppenders.put(appenderId, logAppender);
     }
 
-    private static final class VoidCallback implements LogDeliveryCallback {
+    protected static final class VoidCallback implements LogDeliveryCallback {
         @Override
         public void onSuccess() {
             // Do nothing

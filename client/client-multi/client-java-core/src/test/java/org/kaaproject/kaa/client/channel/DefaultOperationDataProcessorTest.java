@@ -1,17 +1,17 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.client.channel;
@@ -25,6 +25,7 @@ import java.util.Map;
 
 import org.junit.Test;
 import org.kaaproject.kaa.client.channel.impl.DefaultOperationDataProcessor;
+import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
 import org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncResponse;
@@ -43,16 +44,18 @@ import org.mockito.Mockito;
 public class DefaultOperationDataProcessorTest {
 
     private static final int REQUEST_ID = 42;
-    
+
     @Test
     public void testUpRequestCreationWithNullTypes() throws Exception {
-        DefaultOperationDataProcessor operationsDataProcessor = new DefaultOperationDataProcessor();
+        KaaClientState state = Mockito.mock(KaaClientState.class);
+        DefaultOperationDataProcessor operationsDataProcessor = new DefaultOperationDataProcessor(state);
         assertNull(operationsDataProcessor.compileRequest(null));
     }
 
     @Test
     public void testUpRequestCreationWithUnknownType() throws Exception {
-        DefaultOperationDataProcessor operationsDataProcessor = new DefaultOperationDataProcessor();
+        KaaClientState state = Mockito.mock(KaaClientState.class);
+        DefaultOperationDataProcessor operationsDataProcessor = new DefaultOperationDataProcessor(state);
         Map<TransportType, ChannelDirection> types = new HashMap<>();
         types.put(TransportType.BOOTSTRAP, ChannelDirection.BIDIRECTIONAL);
         assertNull(operationsDataProcessor.compileRequest(types));
@@ -60,7 +63,8 @@ public class DefaultOperationDataProcessorTest {
 
     @Test
     public void testUpRequestCreationWithNullTransports() throws Exception {
-        DefaultOperationDataProcessor operationsDataProcessor = new DefaultOperationDataProcessor();
+        KaaClientState state = Mockito.mock(KaaClientState.class);
+        DefaultOperationDataProcessor operationsDataProcessor = new DefaultOperationDataProcessor(state);
 
         Map<TransportType, ChannelDirection> transportTypes = new HashMap<TransportType, ChannelDirection>();
         transportTypes.put(TransportType.PROFILE, ChannelDirection.BIDIRECTIONAL);
@@ -75,7 +79,8 @@ public class DefaultOperationDataProcessorTest {
 
     @Test
     public void testUpRequestCreation() throws Exception {
-        DefaultOperationDataProcessor operationsDataProcessor = new DefaultOperationDataProcessor();
+        KaaClientState state = Mockito.mock(KaaClientState.class);
+        DefaultOperationDataProcessor operationsDataProcessor = new DefaultOperationDataProcessor(state);
 
         ProfileTransport profileTransport = Mockito.mock(ProfileTransport.class);
         EventTransport eventTransport = Mockito.mock(EventTransport.class);
@@ -113,7 +118,8 @@ public class DefaultOperationDataProcessorTest {
 
     @Test
     public void testDownRequestCreation() throws Exception {
-        DefaultOperationDataProcessor operationsDataProcessor = new DefaultOperationDataProcessor();
+        KaaClientState state = Mockito.mock(KaaClientState.class);
+        DefaultOperationDataProcessor operationsDataProcessor = new DefaultOperationDataProcessor(state);
 
         ProfileTransport profileTransport = Mockito.mock(ProfileTransport.class);
         EventTransport eventTransport = Mockito.mock(EventTransport.class);
@@ -151,7 +157,8 @@ public class DefaultOperationDataProcessorTest {
 
     @Test
     public void testResponse() throws Exception {
-        DefaultOperationDataProcessor operationsDataProcessor = new DefaultOperationDataProcessor();
+        KaaClientState state = Mockito.mock(KaaClientState.class);
+        DefaultOperationDataProcessor operationsDataProcessor = new DefaultOperationDataProcessor(state);
 
         ProfileTransport profileTransport = Mockito.mock(ProfileTransport.class);
         EventTransport eventTransport = Mockito.mock(EventTransport.class);
@@ -171,9 +178,9 @@ public class DefaultOperationDataProcessorTest {
 
         SyncResponse response = new SyncResponse();
         response.setStatus(SyncResponseResultType.SUCCESS);
-        response.setConfigurationSyncResponse(new ConfigurationSyncResponse(1, SyncResponseStatus.DELTA, null, null));
+        response.setConfigurationSyncResponse(new ConfigurationSyncResponse(SyncResponseStatus.DELTA, null, null));
         response.setEventSyncResponse(new EventSyncResponse());
-        response.setNotificationSyncResponse(new NotificationSyncResponse(1, SyncResponseStatus.DELTA, null, null));
+        response.setNotificationSyncResponse(new NotificationSyncResponse(SyncResponseStatus.DELTA, null, null));
         response.setProfileSyncResponse(new ProfileSyncResponse(SyncResponseStatus.DELTA));
         response.setRedirectSyncResponse(new RedirectSyncResponse(1));
         response.setUserSyncResponse(new UserSyncResponse());
@@ -195,13 +202,14 @@ public class DefaultOperationDataProcessorTest {
 
     @Test
     public void testResponseWithNullTransports() throws Exception {
-        DefaultOperationDataProcessor operationsDataProcessor = new DefaultOperationDataProcessor();
+        KaaClientState state = Mockito.mock(KaaClientState.class);
+        DefaultOperationDataProcessor operationsDataProcessor = new DefaultOperationDataProcessor(state);
 
         SyncResponse response = new SyncResponse();
         response.setStatus(SyncResponseResultType.SUCCESS);
-        response.setConfigurationSyncResponse(new ConfigurationSyncResponse(1, SyncResponseStatus.DELTA, null, null));
+        response.setConfigurationSyncResponse(new ConfigurationSyncResponse(SyncResponseStatus.DELTA, null, null));
         response.setEventSyncResponse(new EventSyncResponse());
-        response.setNotificationSyncResponse(new NotificationSyncResponse(1, SyncResponseStatus.DELTA, null, null));
+        response.setNotificationSyncResponse(new NotificationSyncResponse(SyncResponseStatus.DELTA, null, null));
         response.setProfileSyncResponse(new ProfileSyncResponse(SyncResponseStatus.DELTA));
         response.setRedirectSyncResponse(new RedirectSyncResponse(1));
         response.setUserSyncResponse(new UserSyncResponse());
@@ -215,7 +223,8 @@ public class DefaultOperationDataProcessorTest {
 
     @Test
     public void testResponseWithNullTransportsAndResponses() throws Exception {
-        DefaultOperationDataProcessor operationsDataProcessor = new DefaultOperationDataProcessor();
+        KaaClientState state = Mockito.mock(KaaClientState.class);
+        DefaultOperationDataProcessor operationsDataProcessor = new DefaultOperationDataProcessor(state);
 
         SyncResponse response = new SyncResponse();
         response.setStatus(SyncResponseResultType.SUCCESS);
@@ -226,7 +235,8 @@ public class DefaultOperationDataProcessorTest {
 
     @Test
     public void testResponseWithNullResponses() throws Exception {
-        DefaultOperationDataProcessor operationsDataProcessor = new DefaultOperationDataProcessor();
+        KaaClientState state = Mockito.mock(KaaClientState.class);
+        DefaultOperationDataProcessor operationsDataProcessor = new DefaultOperationDataProcessor(state);
 
         ProfileTransport profileTransport = Mockito.mock(ProfileTransport.class);
         EventTransport eventTransport = Mockito.mock(EventTransport.class);

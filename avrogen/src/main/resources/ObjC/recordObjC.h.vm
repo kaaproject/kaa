@@ -1,0 +1,72 @@
+#*
+ *  Copyright 2014-2016 CyberVision, Inc.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *#
+
+#set ($record_name = $schema.getName())
+
+@interface $namespacePrefix${record_name} : AvroBased
+
+#foreach ($field in $schema.getFields())
+#set ($field_type = $TypeConverter.convertToObjCType($field.schema()))
+#set ($field_name = $field.name())
+#if ($TypeConverter.isAvroEnum($field.schema()))
+@property(nonatomic) $namespacePrefix${field_type} ${field_name};
+#elseif ($TypeConverter.isAvroPrimitive($field.schema()))
+@property(nonatomic) ${field_type} ${field_name};
+#elseif ($TypeConverter.isAvroRecord($field.schema()))
+@property(nonatomic, strong) $namespacePrefix${field_type}${field_name};
+#else
+@property(nonatomic, strong) ${field_type}${field_name};
+#end
+#end
+
+#if ($schema.getFields().size() > 0)
+#set ($string = '- (instancetype)initWith')
+#set ($initstring = '')
+#foreach ($field in $schema.getFields())
+#if ($TypeConverter.isAvroEnum($field.schema()) || $TypeConverter.isAvroRecord($field.schema()))
+#set ($field_type = "$namespacePrefix$TypeConverter.convertToObjCType($field.schema())")
+#else
+#set ($field_type = $TypeConverter.convertToObjCType($field.schema()))
+#end
+#set ($field_name = $field.name())
+#if ($field == $schema.getFields().get(0))
+#set ($initstring = "$string$StyleUtils.fixCamelHumps($field_name):(${field_type})$field_name")
+#else
+#set ($initstring = "$initstring $field_name:(${field_type})$field_name")
+#end
+#end
+$initstring;
+#end
+
+#foreach ($field in $schema.getFields())
+#set ($field_name = $field.name())
+#if ($TypeConverter.isAvroUnion($field.schema()))
+
+#set ($UNION_NAME = $TypeConverter.generateUnionName("KAA", $field.schema()))
+#set ($branch_number = 0)
+# ifndef ${UNION_NAME}_H_
+# define ${UNION_NAME}_H_
+
+#foreach ($branch_schema in $field.schema().getTypes())
+# define ${UNION_NAME}_BRANCH_${branch_number}    ${branch_number}
+#set ($branch_number = $branch_number + 1)
+#end
+
+# endif // ${UNION_NAME}_H_
+
+#end
+#end
+@end

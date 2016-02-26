@@ -1,17 +1,17 @@
-/*
- * Copyright 2014-2015 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.server.admin.shared.schema;
@@ -20,7 +20,6 @@ import java.io.Serializable;
 
 import org.kaaproject.kaa.common.dto.BaseSchemaDto;
 import org.kaaproject.kaa.common.dto.HasId;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 
 public abstract class BaseSchemaViewDto<T extends BaseSchemaDto> implements Serializable, HasId {
 
@@ -28,7 +27,7 @@ public abstract class BaseSchemaViewDto<T extends BaseSchemaDto> implements Seri
     
     private T schema;
     private CtlSchemaFormDto ctlSchemaForm;
-    private CTLSchemaMetaInfoDto existingMetaInfo;
+    private CtlSchemaReferenceDto existingMetaInfo;
     private boolean useExistingCtlSchema = false;
     
     public BaseSchemaViewDto() {
@@ -75,11 +74,11 @@ public abstract class BaseSchemaViewDto<T extends BaseSchemaDto> implements Seri
         schema.setId(id);
     }
     
-    public CTLSchemaMetaInfoDto getExistingMetaInfo() {
+    public CtlSchemaReferenceDto getExistingMetaInfo() {
         return existingMetaInfo;
     }
 
-    public void setExistingMetaInfo(CTLSchemaMetaInfoDto existingMetaInfo) {
+    public void setExistingMetaInfo(CtlSchemaReferenceDto existingMetaInfo) {
         this.existingMetaInfo = existingMetaInfo;
     }
     

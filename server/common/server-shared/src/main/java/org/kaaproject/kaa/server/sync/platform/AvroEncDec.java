@@ -1,18 +1,19 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
+
 package org.kaaproject.kaa.server.sync.platform;
 
 import java.io.IOException;
@@ -118,7 +119,7 @@ public class AvroEncDec implements PlatformEncDec {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.operations.service.akka.actors.io.platform.
      * PlatformEncDec#getId()
@@ -130,7 +131,7 @@ public class AvroEncDec implements PlatformEncDec {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.operations.service.akka.actors.io.platform.
      * PlatformEncDec#decode(byte[])
@@ -156,7 +157,7 @@ public class AvroEncDec implements PlatformEncDec {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.operations.service.akka.actors.io.platform.
      * PlatformEncDec
@@ -327,7 +328,6 @@ public class AvroEncDec implements PlatformEncDec {
             return null;
         }
         ConfigurationSyncResponse sync = new ConfigurationSyncResponse();
-        sync.setAppStateSeqNumber(source.getAppStateSeqNumber());
         sync.setConfDeltaBody(source.getConfDeltaBody());
         sync.setConfSchemaBody(source.getConfSchemaBody());
         sync.setResponseStatus(convert(source.getResponseStatus()));
@@ -339,19 +339,18 @@ public class AvroEncDec implements PlatformEncDec {
             return null;
         }
         NotificationSyncResponse sync = new NotificationSyncResponse();
-        sync.setAppStateSeqNumber(source.getAppStateSeqNumber());
         sync.setResponseStatus(convert(source.getResponseStatus()));
         if (source.getAvailableTopics() != null) {
             List<Topic> topics = new ArrayList<>(source.getAvailableTopics().size());
             for (org.kaaproject.kaa.server.sync.Topic topic : source.getAvailableTopics()) {
-                topics.add(new Topic(topic.getId(), topic.getName(), convert(topic.getSubscriptionType())));
+                topics.add(new Topic(topic.getIdAsLong(), topic.getName(), convert(topic.getSubscriptionType())));
             }
             sync.setAvailableTopics(topics);
         }
         if (source.getNotifications() != null) {
             List<Notification> notifications = new ArrayList<>(source.getNotifications().size());
             for (org.kaaproject.kaa.server.sync.Notification notification : source.getNotifications()) {
-                notifications.add(new Notification(notification.getTopicId(), convert(notification.getType()), notification.getUid(),
+                notifications.add(new Notification(notification.getTopicIdAsLong(), convert(notification.getType()), notification.getUid(),
                         notification.getSeqNumber(), notification.getBody()));
             }
             sync.setNotifications(notifications);
@@ -480,7 +479,7 @@ public class AvroEncDec implements PlatformEncDec {
         sync.setDeliveryStatuses(statuses);
         return sync;
     }
-    
+
     private static org.kaaproject.kaa.common.endpoint.gen.LogDeliveryStatus convert(LogDeliveryStatus source) {
         if (source == null) {
             return null;
@@ -543,7 +542,7 @@ public class AvroEncDec implements PlatformEncDec {
             return null;
         }
         boolean resyncOnly = source.getResyncOnly() != null ? source.getResyncOnly() : false;
-        return new ConfigurationClientSync(source.getAppStateSeqNumber(), source.getConfigurationHash(), resyncOnly);
+        return new ConfigurationClientSync(source.getConfigurationHash(), resyncOnly);
     }
 
     private static NotificationClientSync convert(NotificationSyncRequest source) {
@@ -551,7 +550,6 @@ public class AvroEncDec implements PlatformEncDec {
             return null;
         }
         NotificationClientSync sync = new NotificationClientSync();
-        sync.setAppStateSeqNumber(source.getAppStateSeqNumber());
         sync.setTopicListHash(source.getTopicListHash());
         if (source.getAcceptedUnicastNotifications() != null) {
             sync.setAcceptedUnicastNotifications(new ArrayList<String>(source.getAcceptedUnicastNotifications()));

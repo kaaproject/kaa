@@ -1,17 +1,17 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.server.common.nosql.mongo.dao.model;
@@ -21,6 +21,7 @@ import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.server.common.dao.model.Notification;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.annotation.Version;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -29,6 +30,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Date;
 
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.OPT_LOCK;
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getArrayCopy;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.NF_APPLICATION_ID;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.NF_EXPIRED_AT;
@@ -54,7 +56,7 @@ public final class MongoNotification implements Notification, Serializable {
     @Field(NF_TOPIC_ID)
     private String topicId;
     @Field(NF_VERSION)
-    private int version;
+    private int nfVersion;
     @LastModifiedDate
     @Field(NF_LAST_MODIFY_TIME)
     private Date lastModifyTime;
@@ -67,7 +69,10 @@ public final class MongoNotification implements Notification, Serializable {
     private Date expiredAt;
     @Field(NF_SEQ_NUM)
     private int secNum;
-
+    @Version
+    @Field(OPT_LOCK)
+    private Long version;
+    
     public MongoNotification() {
     }
 
@@ -76,12 +81,13 @@ public final class MongoNotification implements Notification, Serializable {
         this.applicationId = dto.getApplicationId();
         this.schemaId = dto.getSchemaId();
         this.topicId = dto.getTopicId();
-        this.version = dto.getVersion();
+        this.nfVersion = dto.getNfVersion();
         this.lastModifyTime = dto.getLastTimeModify();
         this.type = dto.getType();
         this.body = getArrayCopy(dto.getBody());
         this.expiredAt = dto.getExpiredAt();
         this.secNum = dto.getSecNum();
+        this.version = dto.getVersion();
     }
 
     public String getId() {
@@ -100,8 +106,8 @@ public final class MongoNotification implements Notification, Serializable {
         return topicId;
     }
 
-    public int getVersion() {
-        return version;
+    public int getNfVersion() {
+        return nfVersion;
     }
 
     public Date getLastModifyTime() {
@@ -125,6 +131,16 @@ public final class MongoNotification implements Notification, Serializable {
     }
 
     @Override
+    public Long getVersion() {
+        return version;
+    }
+
+    @Override
+    public void setVersion(Long version) {
+        this.version = version;
+    }
+    
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -138,7 +154,7 @@ public final class MongoNotification implements Notification, Serializable {
         if (secNum != that.secNum) {
             return false;
         }
-        if (version != that.version) {
+        if (nfVersion != that.nfVersion) {
             return false;
         }
         if (applicationId != null ? !applicationId.equals(that.applicationId) : that.applicationId != null) {
@@ -171,7 +187,7 @@ public final class MongoNotification implements Notification, Serializable {
         int result = applicationId != null ? applicationId.hashCode() : 0;
         result = 31 * result + (schemaId != null ? schemaId.hashCode() : 0);
         result = 31 * result + (topicId != null ? topicId.hashCode() : 0);
-        result = 31 * result + version;
+        result = 31 * result + nfVersion;
         result = 31 * result + (lastModifyTime != null ? lastModifyTime.hashCode() : 0);
         result = 31 * result + (type != null ? type.hashCode() : 0);
         result = 31 * result + (body != null ? Arrays.hashCode(body) : 0);
@@ -187,7 +203,7 @@ public final class MongoNotification implements Notification, Serializable {
                 ", applicationId=" + applicationId +
                 ", schemaId=" + schemaId +
                 ", topicId=" + topicId +
-                ", version=" + version +
+                ", nfVersion=" + nfVersion +
                 ", lastModifyTime=" + lastModifyTime +
                 ", type=" + type +
                 ", body=" + Arrays.toString(body) +
@@ -204,11 +220,12 @@ public final class MongoNotification implements Notification, Serializable {
         dto.setSchemaId(schemaId);
         dto.setTopicId(topicId);
         dto.setLastTimeModify(lastModifyTime);
-        dto.setVersion(version);
+        dto.setNfVersion(nfVersion);
         dto.setType(type);
         dto.setBody(getArrayCopy(body));
         dto.setExpiredAt(expiredAt);
         dto.setSecNum(secNum);
+        dto.setVersion(version);
         return dto;
     }
 }

@@ -1,17 +1,17 @@
-/*
- * Copyright 2014-2015 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.client.logging;
@@ -36,14 +36,14 @@ public abstract class AbstractPersistentLogStorageTest extends AbstractLogStorag
         while (iter-- > 0) {
             storage.addLogRecord(record);
         }
-        LogBlock beforePersist = storage.getRecordBlock(15, 2);
+        LogBucket beforePersist = storage.getNextBucket();
         storage.close();
 
         storage = (LogStorage) getStorage(BUCKET_SIZE, RECORD_COUNT);
         LogStorageStatus storageStatus = (LogStorageStatus) storage;
         Assert.assertEquals(insertionCount, storageStatus.getRecordCount());
         Assert.assertEquals(insertionCount * 3, storageStatus.getConsumedVolume());
-        LogBlock afterPersist = storage.getRecordBlock(15, 2);
+        LogBucket afterPersist = storage.getNextBucket();
 
         Assert.assertEquals(beforePersist.getRecords().size(), afterPersist.getRecords().size());
 
@@ -52,7 +52,9 @@ public abstract class AbstractPersistentLogStorageTest extends AbstractLogStorag
 
     @Test
     public void testGetBigRecordBlock() {
-        LogStorage storage = (LogStorage) getStorage(BUCKET_SIZE, RECORD_COUNT);
+        long bucketSize = 8192;
+        int recordCount = 1000;
+        LogStorage storage = (LogStorage) getStorage(bucketSize, recordCount);
 
         LogRecord record = new LogRecord();
         int insertionCount = 7;
@@ -64,7 +66,7 @@ public abstract class AbstractPersistentLogStorageTest extends AbstractLogStorag
             storage.addLogRecord(record);
         }
 
-        LogBlock logBlock = storage.getRecordBlock(8192, 1000);
+        LogBucket logBlock = storage.getNextBucket();
         Assert.assertEquals(insertionCount, logBlock.getRecords().size());
         storage.close();
     }

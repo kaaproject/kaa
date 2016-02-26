@@ -1,25 +1,29 @@
-/*
- * Copyright 2014-2015 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 #ifndef ILOGCOLLECTOR_HPP_
 #define ILOGCOLLECTOR_HPP_
 
+#include <future>
+
 #include "kaa/log/gen/LogDefinitions.hpp"
 #include "kaa/log/ILogStorage.hpp"
 #include "kaa/log/ILogUploadStrategy.hpp"
+#include "kaa/log/ILogDeliveryListener.hpp"
+#include "kaa/log/RecordFuture.hpp"
 
 /**
  * @file ILogCollector.hpp
@@ -60,7 +64,7 @@ public:
      * @see KaaUserLogRecord
      * @see ILogStorage
      */
-    virtual void addLogRecord(const KaaUserLogRecord& record) = 0;
+    virtual RecordFuture addLogRecord(const KaaUserLogRecord& record) = 0;
 
     /**
      * @brief Sets the new log storage.
@@ -83,6 +87,13 @@ public:
      * @throw KaaException    The strategy is NULL.
      */
     virtual void setUploadStrategy(ILogUploadStrategyPtr strategy) = 0;
+
+    /**
+     * @brief Set a listener which receives a delivery status of each log bucket.
+     *
+     * @param   listener[in] the listener
+     */
+    virtual void setLogDeliveryListener(ILogDeliveryListenerPtr listener) = 0;
 
     virtual ~ILogCollector() {}
 };

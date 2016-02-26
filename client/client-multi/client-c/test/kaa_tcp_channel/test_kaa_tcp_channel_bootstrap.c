@@ -1,17 +1,17 @@
-/*
- * Copyright 2014-2015 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 /*
@@ -37,8 +37,6 @@
 #include "kaa_protocols/kaa_tcp/kaatcp_request.h"
 
 #define ACCESS_POINT_SOCKET_FD 5
-
-#define KEEPALIVE 1000
 
 typedef struct {
     bool        gethostbyaddr_requested;
@@ -458,10 +456,6 @@ void test_set_access_point(kaa_transport_channel_interface_t *channel)
     kaa_error_t error_code = channel->init(channel->context, &transport_context);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    //Keepalive will be tested latter during CONNECT message creation
-    error_code = kaa_tcp_channel_set_keepalive_timeout(channel, KEEPALIVE);
-    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
-
     error_code = kaa_tcp_channel_set_socket_events_callback(channel, kaa_tcp_channel_event_callback_fn, channel);
     //Use connection data to destination 192.168.77.2:9888
     kaa_access_point_t access_point;
@@ -624,7 +618,7 @@ kaatcp_error_t kaatcp_get_request_connect(const kaatcp_connect_t *message
     if (message->connect_flags != KAA_CONNECT_FLAGS) {
         return KAATCP_ERR_BAD_PARAM;
     }
-    if (message->keep_alive != (KEEPALIVE * 1.2)) {
+    if (message->keep_alive != KAA_TCP_CHANNEL_MAX_TIMEOUT) {
         return KAATCP_ERR_BAD_PARAM;
     }
     if (message->sync_request && message->sync_request_size == sizeof(CONNECT_PACK)) {
@@ -647,7 +641,7 @@ kaatcp_error_t kaatcp_fill_connect_message(uint16_t keepalive, uint32_t next_pro
                                          , char *signature, size_t signature_size
                                          , kaatcp_connect_t *message)
 {
-    if (keepalive != (KEEPALIVE * 1.2)) {
+    if (keepalive != KAA_TCP_CHANNEL_MAX_TIMEOUT) {
         return KAATCP_ERR_BAD_PARAM;
     }
     if (next_protocol_id != 0x3553c66f) {

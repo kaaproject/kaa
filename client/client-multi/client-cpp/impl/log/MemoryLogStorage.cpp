@@ -1,17 +1,17 @@
-/*
- * Copyright 2014-2015 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 #include "kaa/log/MemoryLogStorage.hpp"
@@ -21,172 +21,236 @@
 #include "kaa/KaaThread.hpp"
 #include "kaa/logging/Log.hpp"
 #include "kaa/log/LogRecord.hpp"
+#include "kaa/IKaaClientContext.hpp"
 
 namespace kaa {
 
-const MemoryLogStorage::BlockId MemoryLogStorage::NO_OWNER(-1);
+MemoryLogStorage::MemoryLogStorage(IKaaClientContext &context,std::size_t bucketSize, std::size_t bucketRecordCount)
+    : maxBucketSize_(bucketSize), maxBucketRecordCount_(bucketRecordCount), context_(context)
+{
+    KAA_LOG_INFO(boost::format("Going to use  unlimited storage. Bucket: max_size %1% bytes, max_record_count %2%")
+                                                                % maxBucketSize_ % maxBucketRecordCount_);
+    addNewBucket();
+}
 
-MemoryLogStorage::MemoryLogStorage()
-    : recordBlockId_(0) {}
-
-MemoryLogStorage::MemoryLogStorage(size_t maxOccupiedSize, float percentToDelete)
-    : recordBlockId_(0)
+MemoryLogStorage::MemoryLogStorage(IKaaClientContext &context,
+                                   std::size_t maxOccupiedSize, float percentToDelete,
+                                   std::size_t bucketSize, std::size_t bucketRecordCount)
+    : maxBucketSize_(bucketSize), maxBucketRecordCount_(bucketRecordCount), context_(context)
 {
     if (0.0 >= percentToDelete || percentToDelete > 100.0) {
-        KAA_LOG_ERROR(boost::format("Failed to create limited log storage: max_size %1%, percentToDelete %2%%%")
+        KAA_LOG_ERROR(boost::format("Failed to create limited log storage: max_size %1% bytes, percentToDelete %2%%%")
                                                                             % maxOccupiedSize % percentToDelete);
         throw KaaException("Percent should be in 0-100 range");
     }
 
+    KAA_LOG_INFO(boost::format("Going to use limited storage: max_size %1% bytes, percentToDelete %2%%%. "
+                               "Bucket: max_size %3% bytes, max_record_count %4%")
+                                    % maxOccupiedSize % percentToDelete % maxBucketSize_ % maxBucketRecordCount_);
+
     maxOccupiedSize_ = maxOccupiedSize;
     shrinkedSize_ = ((float) maxOccupiedSize_ * (100.0 - percentToDelete)) / 100.0;
+
+    addNewBucket();
 }
 
-void MemoryLogStorage::addLogRecord(LogRecordPtr serializedRecord)
+BucketInfo MemoryLogStorage::addLogRecord(LogRecord&& record)
 {
-    KAA_MUTEX_LOCKING("logsGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(logsLock, memoryLogStorageGuard_);
-    KAA_MUTEX_LOCKED("logsGuard_");
+    auto recordSize = record.getSize();
+    if (recordSize > maxBucketSize_) {
+        KAA_LOG_WARN(boost::format("Failed to add log record: record_size %1%B, max_bucket_size %2%B")
+                                                                    % recordSize % maxBucketSize_);
+        throw KaaException("Too big log record");
+    }
 
-    if (maxOccupiedSize_ && ((totalOccupiedSize_ + serializedRecord->getSize()) > maxOccupiedSize_)) {
+    KAA_MUTEX_LOCKING("memoryLogStorageGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(logsLock, memoryLogStorageGuard_);
+    KAA_MUTEX_LOCKED("memoryLogStorageGuard_");
+
+    if (maxOccupiedSize_ && ((totalOccupiedSize_ + record.getSize()) > maxOccupiedSize_)) {
         KAA_LOG_INFO(boost::format("Log storage is full (occupied %1%, max %2%). Going to delete elder logs")
                                                                         % totalOccupiedSize_ % maxOccupiedSize_);
         shrinkToSize(shrinkedSize_);
     }
 
-    logs_.push_back(LogRecordWrapper(serializedRecord));
-    totalOccupiedSize_ += serializedRecord->getSize();
-    occupiedSizeOfUnmarkedRecords_ += serializedRecord->getSize();
-    ++unmarkedRecordCount_;
-
-    KAA_LOG_TRACE(boost::format("Added log record (%1% bytes). Record count: %2%. Occupied size: %3% bytes")
-                                                % serializedRecord->getSize() % logs_.size() % totalOccupiedSize_);
-
-}
-
-ILogStorage::RecordPack MemoryLogStorage::getRecordBlock(std::size_t blockSize, std::size_t recordsBlockCount)
-{
-    static std::int32_t bucketId = 0;
-
-    KAA_MUTEX_LOCKING("logsGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(logsLock, memoryLogStorageGuard_);
-    KAA_MUTEX_LOCKED("logsGuard_");
-
-    ILogStorage::RecordBlock block;
-
-    if (bucketId++ == NO_OWNER) {
-        bucketId++;
+    if (checkBucketOverflow(record)) {
+        addNewBucket();
     }
 
-    RecordBlockId recordBlockId = bucketId;
+    internalAddLogRecord(std::move(record));
 
-    for (auto& log : logs_) {
-        if (log.blockId_ == NO_OWNER) {
-            if (recordsBlockCount == 0 || log.record_->getSize() > blockSize) {
-                if (block.empty()) {
-                    KAA_LOG_ERROR(boost::format("Failed to get logs: block size (%1%B) is less than the size of "
-                                        "the serialized log record (%2%B)") % blockSize % log.record_->getSize());
-                    throw KaaException("Block size is less than the size of the serialized log record");
-                }
-                break;
+    KAA_LOG_TRACE(boost::format("Added log record (%1% bytes). Non-used records: count %2%, occupied size %3% bytes")
+                                                     % recordSize % unmarkedRecordCount_ % occupiedSizeOfUnmarkedRecords_);
+
+    return BucketInfo(currentBucketId_, buckets_.back().logs_.size());
+}
+
+LogBucket MemoryLogStorage::getNextBucket()
+{
+    KAA_MUTEX_LOCKING("memoryLogStorageGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(logsLock, memoryLogStorageGuard_);
+    KAA_MUTEX_LOCKED("memoryLogStorageGuard_");
+
+    std::size_t totalRecordCount = 0;
+    for (auto& internalBucket : buckets_) {
+        if (internalBucket.state_ == MemoryLogStorage::BucketState::FREE && !internalBucket.logs_.empty()) {
+            internalBucket.state_ = MemoryLogStorage::BucketState::IN_USE;
+
+            unmarkedRecordCount_ -= internalBucket.logs_.size();
+            occupiedSizeOfUnmarkedRecords_ -= internalBucket.occupiedSize_;
+
+            if (!unmarkedRecordCount_) {
+                addNewBucket();
             }
 
-            block.push_back(log.record_);
-            blockSize -= log.record_->getSize();
-            recordsBlockCount--;
+            KAA_LOG_INFO(boost::format("Create log bucket: id %1%, size %2%, %3% record(s). "
+                                       "Non-used records: count %4%, occupied size %5% bytes")
+                            % internalBucket.bucketId_ % internalBucket.occupiedSize_ % internalBucket.logs_.size()
+                            % unmarkedRecordCount_ % occupiedSizeOfUnmarkedRecords_);
 
-            log.blockId_ = recordBlockId;
-
-            --unmarkedRecordCount_;
-            occupiedSizeOfUnmarkedRecords_ -= log.record_->getSize();
+            return LogBucket(internalBucket.bucketId_, internalBucket.logs_);
+        } else {
+            totalRecordCount += internalBucket.logs_.size();
         }
     }
 
-    return ILogStorage::RecordPack((block.empty() ? -1 : recordBlockId), std::move(block));
+    KAA_LOG_TRACE(boost::format("No free log buckets found: total_log_count %1%, total_occupied_size %2%")
+                                                                    % totalRecordCount % totalOccupiedSize_);
+
+    return LogBucket();
 }
 
-void MemoryLogStorage::removeRecordBlock(RecordBlockId blockId)
+void MemoryLogStorage::removeBucket(std::int32_t bucketId)
 {
-    KAA_MUTEX_LOCKING("logsGuard_");
+    KAA_MUTEX_LOCKING("memoryLogStorageGuard_");
     KAA_MUTEX_UNIQUE_DECLARE(logsLock, memoryLogStorageGuard_);
-    KAA_MUTEX_LOCKED("logsGuard_");
+    KAA_MUTEX_LOCKED("memoryLogStorageGuard_");
 
-    std::uint32_t removedRecordCount = 0;
-
-    logs_.remove_if([&] (const LogRecordWrapper& wrapper)
+    bool found = false;
+    buckets_.remove_if([&] (const MemoryLogStorage::InternalBucket& bucket)
                         {
-                             if (wrapper.blockId_ == blockId) {
-                                 totalOccupiedSize_ -= wrapper.record_->getSize();
-                                 ++removedRecordCount;
+                             if (bucket.bucketId_ == bucketId) {
+                                 totalOccupiedSize_ -= bucket.occupiedSize_;
+                                 KAA_LOG_TRACE(boost::format("Log bucket %1% removed (%2% records). "
+                                                             "Non-used records: count %3%, occupied size %4% bytes")
+                                                             % bucketId % bucket.logs_.size() % unmarkedRecordCount_
+                                                             % occupiedSizeOfUnmarkedRecords_);
+                                 found = true;
                                  return true;
                              }
                              return false;
                         });
 
-    KAA_LOG_DEBUG(boost::format("Log block %1% removed (%2% records)") % blockId % removedRecordCount);
+    if (!found) {
+        KAA_LOG_WARN(boost::format("Failed to remove log bucket %1%: not found") % bucketId);
+    }
 }
 
-void MemoryLogStorage::notifyUploadFailed(RecordBlockId blockId)
+void MemoryLogStorage::rollbackBucket(std::int32_t bucketId)
 {
-    KAA_MUTEX_LOCKING("logsGuard_");
+    KAA_MUTEX_LOCKING("memoryLogStorageGuard_");
     KAA_MUTEX_UNIQUE_DECLARE(logsLock, memoryLogStorageGuard_);
-    KAA_MUTEX_LOCKED("logsGuard_");
+    KAA_MUTEX_LOCKED("memoryLogStorageGuard_");
 
-    std::uint32_t recordCount = 0;
+    auto it = std::find_if(buckets_.begin(), buckets_.end(), [&bucketId] (const MemoryLogStorage::InternalBucket& bucket)
+            {
+                 return bucket.bucketId_ == bucketId;
+            });
 
-    std::for_each(logs_.begin(), logs_.end(), [&] (LogRecordWrapper& wrapper)
-                                                  {
-                                                      if (wrapper.blockId_ == blockId) {
-                                                          occupiedSizeOfUnmarkedRecords_ += wrapper.record_->getSize();
-                                                          ++recordCount;
-                                                          ++unmarkedRecordCount_;
-                                                          wrapper.blockId_ = NO_OWNER;
-                                                      }
-                                                  });
+    if (it != buckets_.end()) {
+        it->state_ = MemoryLogStorage::BucketState::FREE;
+        occupiedSizeOfUnmarkedRecords_ += it->occupiedSize_;
+        unmarkedRecordCount_ += it->logs_.size();
 
-    KAA_LOG_DEBUG(boost::format("Failed to upload %1% log block (%2% records unmarked)") % blockId % recordCount);
+        KAA_LOG_DEBUG(boost::format("Rollback log bucket %1% (%2% records). Non-used records: count %3%, occupied size %4% bytes")
+                                            % bucketId % it->logs_.size() % unmarkedRecordCount_ % occupiedSizeOfUnmarkedRecords_);
+    } else {
+        KAA_LOG_WARN(boost::format("Failed to rollback log bucket %1%: not found") % bucketId);
+    }
+
 }
 
 void MemoryLogStorage::shrinkToSize(std::size_t newSize)
 {
     if (!newSize) {
-        logs_.clear();
         unmarkedRecordCount_ = 0;
         totalOccupiedSize_ = occupiedSizeOfUnmarkedRecords_ = 0;
-        KAA_LOG_INFO("All log were forcibly deleted");
+        buckets_.clear();
+        addNewBucket();
+
+        KAA_LOG_INFO("All log records removed");
+
         return;
     }
 
     size_t recordCount = 0;
     while (totalOccupiedSize_ > newSize) {
-        const auto& wrapper = logs_.front();
-        if (wrapper.blockId_ == NO_OWNER) {
-            --unmarkedRecordCount_;
-            occupiedSizeOfUnmarkedRecords_ -= wrapper.record_->getSize();
-        }
+        auto& theOldestBucket = buckets_.front();
 
-        totalOccupiedSize_ -= wrapper.record_->getSize();
-        logs_.pop_front();
-        ++recordCount;
+        if (totalOccupiedSize_ - theOldestBucket.occupiedSize_ >= newSize) {
+            KAA_LOG_INFO(boost::format("Removing in-use log bucket %1% (%2% records, %3% bytes)")
+                                    % theOldestBucket.bucketId_ % theOldestBucket.logs_.size() % theOldestBucket.occupiedSize_);
+
+            totalOccupiedSize_ -= theOldestBucket.occupiedSize_;
+            recordCount += theOldestBucket.logs_.size();
+
+            if (theOldestBucket.state_ == MemoryLogStorage::BucketState::FREE) {
+                unmarkedRecordCount_ -= theOldestBucket.logs_.size();
+                occupiedSizeOfUnmarkedRecords_ -= theOldestBucket.occupiedSize_;
+            }
+
+            buckets_.pop_front();
+
+            if (buckets_.empty()) {
+                addNewBucket();
+            }
+        } else {
+            while (totalOccupiedSize_ > newSize) {
+                const auto& theOldestRecord = theOldestBucket.logs_.front();
+
+                if (theOldestBucket.state_ == MemoryLogStorage::BucketState::FREE) {
+                    --unmarkedRecordCount_;
+                    occupiedSizeOfUnmarkedRecords_ -= theOldestRecord.getSize();
+                }
+
+                totalOccupiedSize_ -= theOldestRecord.getSize();
+                theOldestBucket.logs_.pop_front();
+
+                ++recordCount;
+            }
+        }
     }
 
-    KAA_LOG_INFO(boost::format("%1% log records were forcibly deleted") % recordCount);
+    KAA_LOG_INFO(boost::format("%1% log records removed") % recordCount);
 }
 
 std::size_t MemoryLogStorage::getConsumedVolume()
 {
-    KAA_MUTEX_LOCKING("logsGuard_");
+    KAA_MUTEX_LOCKING("memoryLogStorageGuard_");
     KAA_MUTEX_UNIQUE_DECLARE(logsLock, memoryLogStorageGuard_);
-    KAA_MUTEX_LOCKED("logsGuard_");
+    KAA_MUTEX_LOCKED("memoryLogStorageGuard_");
     return occupiedSizeOfUnmarkedRecords_;
 }
 
 std::size_t MemoryLogStorage::getRecordsCount()
 {
-    KAA_MUTEX_LOCKING("logsGuard_");
+    KAA_MUTEX_LOCKING("memoryLogStorageGuard_");
     KAA_MUTEX_UNIQUE_DECLARE(logsLock, memoryLogStorageGuard_);
-    KAA_MUTEX_LOCKED("logsGuard_");
+    KAA_MUTEX_LOCKED("memoryLogStorageGuard_");
     return unmarkedRecordCount_;
+}
+
+void MemoryLogStorage::internalAddLogRecord(LogRecord&& record)
+{
+    auto recordSize = record.getSize();
+
+    totalOccupiedSize_ += recordSize;
+    occupiedSizeOfUnmarkedRecords_ += recordSize;
+    ++unmarkedRecordCount_;
+
+    auto& currentBucket  = buckets_.back();
+    currentBucket.occupiedSize_ += recordSize;
+    currentBucket.logs_.push_back(std::move(record));
 }
 
 }  // namespace kaa

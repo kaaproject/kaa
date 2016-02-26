@@ -1,17 +1,17 @@
-/*
- * Copyright 2014-2015 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 #if defined(KAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL) || defined (KAA_DEFAULT_OPERATION_HTTP_CHANNEL)
@@ -21,9 +21,10 @@
 
 namespace kaa {
 
-AbstractHttpChannel::AbstractHttpChannel(IKaaChannelManager *channelManager, const KeyPair& clientKeys, IKaaClientStateStoragePtr clientState)
+AbstractHttpChannel::AbstractHttpChannel(IKaaChannelManager *channelManager, const KeyPair& clientKeys, IKaaClientContext &context)
     : clientKeys_(clientKeys), lastConnectionFailed_(false)
-    , multiplexer_(nullptr), demultiplexer_(nullptr), channelManager_(channelManager), clientState_(clientState) {}
+    , multiplexer_(nullptr), demultiplexer_(nullptr), channelManager_(channelManager)
+    , httpDataProcessor_(context), httpClient_(context), context_(context) {}
 
 
 void AbstractHttpChannel::processTypes(const std::map<TransportType, ChannelDirection>& types
@@ -66,8 +67,8 @@ void AbstractHttpChannel::processTypes(const std::map<TransportType, ChannelDire
         case HttpStatusCode::UNAUTHORIZED:
             KAA_LOG_WARN(boost::format("Connection failed, server %1%:%2%: bad credentials. Going to re-register...")
                                                             % currentServer_->getHost() % currentServer_->getPort());
-            clientState_->setRegistered(false);
-            clientState_->save();
+            context_.getStatus().setRegistered(false);
+            context_.getStatus().save();
             setServer(currentServer_);
             break;
         default:
@@ -172,7 +173,7 @@ void AbstractHttpChannel::setServer(ITransportConnectionInfoPtr server)
         KAA_MUTEX_UNIQUE_DECLARE(lock, channelGuard_);
         KAA_MUTEX_LOCKED("channelGuard_");
         currentServer_.reset(new IPTransportInfo(server));
-        std::shared_ptr<IEncoderDecoder> encDec(new RsaEncoderDecoder(clientKeys_.getPublicKey(), clientKeys_.getPrivateKey(), currentServer_->getPublicKey()));
+        std::shared_ptr<IEncoderDecoder> encDec(new RsaEncoderDecoder(clientKeys_.getPublicKey(), clientKeys_.getPrivateKey(), currentServer_->getPublicKey(), context_));
         httpDataProcessor_.setEncoderDecoder(encDec);
         if (lastConnectionFailed_) {
             lastConnectionFailed_ = false;

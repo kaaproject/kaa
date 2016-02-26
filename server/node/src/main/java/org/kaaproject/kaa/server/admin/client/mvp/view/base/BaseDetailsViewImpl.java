@@ -1,17 +1,17 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.base;
@@ -36,6 +36,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -43,6 +44,7 @@ import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public abstract class BaseDetailsViewImpl extends Composite implements InputEventHandler, ChangeHandler, BaseDetailsView {
@@ -53,14 +55,11 @@ public abstract class BaseDetailsViewImpl extends Composite implements InputEven
     protected static final String FULL_WIDTH = "100%";
     protected static final int DEFAULT_TEXTBOX_SIZE = 255;
 
-    @UiField public Label titleLabel;
+    @UiField public DockLayoutPanel dockPanel;
+    @UiField public VerticalPanel northPanel;
+    @UiField public HorizontalPanel topPanel;
     @UiField public Label subTitleLabel;
     @UiField public FlexTable detailsTable;
-    @UiField public HorizontalPanel backButtonPanel;
-    @UiField public HorizontalPanel buttonsPanel;
-    @UiField public Button backButton;
-    @UiField public Button saveButton;
-    @UiField public Button cancelButton;
     @UiField public HTMLPanel requiredFieldsNoteLabel;
     @UiField (provided=true) public final AlertPanel errorPanel;
     @UiField public FlowPanel footer;
@@ -86,21 +85,22 @@ public abstract class BaseDetailsViewImpl extends Composite implements InputEven
         kaaAdminStyle = Utils.kaaAdminStyle;
         avroUiStyle = Utils.avroUiStyle;
         initWidget(uiBinder.createAndBindUi(this));
+        constructTopPanel();
 
-        titleLabel.setText(Utils.constants.title());
-        saveButton.setText(Utils.constants.save());
-        cancelButton.setText(Utils.constants.cancel());
+        getTitileLabelWidget().setText(Utils.constants.title());
+        getSaveButtonWidget().setText(Utils.constants.save());
+        getCancelButtonWidget().setText(Utils.constants.cancel());
         requiredFieldsNoteLabel.getElement().setInnerSafeHtml(
                 SafeHtmlUtils.fromSafeConstant(Utils.messages
                         .requiredFieldsNote(Utils.avroUiStyle
                                 .requiredField())));
 
         if (create) {
-            titleLabel.setText(getCreateTitle());
-            cancelButton.setVisible(true);
+            getTitileLabelWidget().setText(getCreateTitle());
+            getCancelButtonWidget().setVisible(true);
         } else {
-            titleLabel.setText(getViewTitle());
-            backButtonPanel.setVisible(true);
+            getTitileLabelWidget().setText(getViewTitle());
+            getBackButtonPanelWidget().setVisible(true);
         }
         subTitleLabel.setText(getSubTitle());
 
@@ -112,14 +112,14 @@ public abstract class BaseDetailsViewImpl extends Composite implements InputEven
             detailsTable.getColumnFormatter().setWidth(2, "300px");
         }
 
-        saveButton.addClickHandler(new ClickHandler() {
+        getSaveButtonWidget().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 updateSaveButton(false, false);
                 hasChanged = false;
             }
         });
-        saveButton.setVisible(editable);
+        getSaveButtonWidget().setVisible(editable);
         requiredFieldsNoteLabel.setVisible(editable);
 
         initDetailsTable();
@@ -127,18 +127,100 @@ public abstract class BaseDetailsViewImpl extends Composite implements InputEven
         clearError();
     }
     
-    protected void appendToolbarWidget(Widget widget) {
-        buttonsPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
-        buttonsPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-        buttonsPanel.add(widget);
-        buttonsPanel.setCellHeight(widget, "100%");
+    protected void updateNorthSize(int sizePx) {
+        dockPanel.setWidgetSize(northPanel, sizePx);
     }
     
-    protected void prependToolbarWidget(Widget widget) {
+    protected Widget getBackButtonPanelWidget() {
+        return backButtonPanelWidget;
+    }
+    
+    protected Button getBackButtonWidget() {
+        return backButtonWidget;
+    }
+    
+    protected Label getTitileLabelWidget() {
+        return titleLabelWidget;
+    }
+    
+    protected Button getSaveButtonWidget() {
+        return saveButtonWidget;
+    }
+
+    protected Button getCancelButtonWidget() {
+        return cancelButtonWidget;
+    }
+
+    private Widget backButtonPanelWidget;
+    private Button backButtonWidget;
+    private Label titleLabelWidget;
+    private Button saveButtonWidget;
+    private Button cancelButtonWidget;
+    
+    protected void constructTopPanel() {
+        FlowPanel panel = new FlowPanel();
+        panel.setSize("100%", "100%");
+        topPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
+        topPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+        topPanel.add(panel);
+        topPanel.setCellHeight(panel, "100%");
+        HorizontalPanel horizontalPanel = new HorizontalPanel();
+        horizontalPanel.setHeight("100%");
+        panel.add(horizontalPanel);
+        
+        HorizontalPanel backButtonPanel = new HorizontalPanel();
+        backButtonPanel.setHeight("100%");
+        backButtonPanel.addStyleName(Utils.kaaAdminStyle.bAppPaddedPanel());
+        backButtonPanel.setVisible(false);        
+        horizontalPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
+        horizontalPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+        horizontalPanel.add(backButtonPanel);
+        horizontalPanel.setCellHeight(backButtonPanel, "100%");
+        
+        backButtonPanelWidget = backButtonPanel;
+        
+        Button backButton = new Button();
+        backButton.addStyleName(Utils.kaaAdminStyle.bAppBackButton());        
+        backButtonPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
+        backButtonPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+        backButtonPanel.add(backButton);
+        backButtonPanel.setCellHeight(backButton, "100%");
+        
+        backButtonWidget = backButton;
+        
+        Label titleLabel = new Label();
+        titleLabel.addStyleName(Utils.kaaAdminStyle.bAppContentTitle());
+        horizontalPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
+        horizontalPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+        horizontalPanel.add(titleLabel);
+        horizontalPanel.setCellHeight(titleLabel, "100%");
+        
+        titleLabelWidget = titleLabel;
+        
+        HorizontalPanel buttonsPanel = new HorizontalPanel();
+        buttonsPanel.setHeight("100%");
+        buttonsPanel.addStyleName(Utils.avroUiStyle.buttonsPanel());
+        horizontalPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
+        horizontalPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+        horizontalPanel.add(buttonsPanel);
+        horizontalPanel.setCellHeight(buttonsPanel, "100%");
+        
+        Button saveButton = new Button();
         buttonsPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
         buttonsPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-        buttonsPanel.insert(widget, 0);
-        buttonsPanel.setCellHeight(widget, "100%");
+        buttonsPanel.add(saveButton);
+        buttonsPanel.setCellHeight(saveButton, "100%");
+        
+        saveButtonWidget = saveButton;
+        
+        Button cancelButton = new Button();
+        cancelButton.setVisible(false);
+        buttonsPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
+        buttonsPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+        buttonsPanel.add(cancelButton);
+        buttonsPanel.setCellHeight(cancelButton, "100%");
+        
+        cancelButtonWidget = cancelButton;
     }
 
     @Override
@@ -156,27 +238,27 @@ public abstract class BaseDetailsViewImpl extends Composite implements InputEven
 
     @Override
     public void setBackEnabled(boolean enabled) {
-        backButtonPanel.setVisible(!create && enabled);
+        getBackButtonPanelWidget().setVisible(!create && enabled);
     }
 
     @Override
     public void setCancelEnabled(boolean enabled) {
-        cancelButton.setVisible(create && enabled);
+        getCancelButtonWidget().setVisible(create && enabled);
     }
 
     @Override
     public HasClickHandlers getBackButton() {
-        return backButton;
+        return getBackButtonWidget();
     }
 
     @Override
     public HasClickHandlers getSaveButton() {
-        return saveButton;
+        return getSaveButtonWidget();
     }
 
     @Override
     public HasClickHandlers getCancelButton() {
-        return cancelButton;
+        return getCancelButtonWidget();
     }
 
     @Override
@@ -186,7 +268,7 @@ public abstract class BaseDetailsViewImpl extends Composite implements InputEven
 
     @Override
     public void setTitle(String title) {
-        titleLabel.setText(title);
+        getTitileLabelWidget().setText(title);
     }
 
     @Override
@@ -233,11 +315,11 @@ public abstract class BaseDetailsViewImpl extends Composite implements InputEven
 
     protected void updateSaveButton(boolean enabled, boolean invalid) {
         if (create || invalid) {
-            saveButton.setText(create ? Utils.constants.add() : Utils.constants.save());
+            getSaveButtonWidget().setText(create ? Utils.constants.add() : Utils.constants.save());
         } else {
-            saveButton.setText(enabled ? Utils.constants.save() : Utils.constants.saved());
+            getSaveButtonWidget().setText(enabled ? Utils.constants.save() : Utils.constants.saved());
         }
-        saveButton.setEnabled(enabled);
+        getSaveButtonWidget().setEnabled(enabled);
     }
 
     protected FlowPanel getFooter() {

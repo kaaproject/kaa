@@ -1,17 +1,17 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.server.operations.service;
@@ -45,16 +45,15 @@ import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
 import org.kaaproject.kaa.common.endpoint.gen.BasicEndpointProfile;
 import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
@@ -215,19 +214,16 @@ public class OperationsServiceIT extends AbstractTest {
         EndpointGroup groupAll = endpointGroupDao.findByAppIdAndWeight(application.getStringId(), 0);
 
         
-        CTLSchemaMetaInfo metaInfo = new CTLSchemaMetaInfo();
-        metaInfo.setVersion(1);
-        metaInfo.setFqn(BasicEndpointProfile.SCHEMA$.getFullName());
-        metaInfo.setScope(CTLSchemaScopeDto.PROFILE_SCHEMA);
+        CTLSchemaMetaInfo metaInfo = new CTLSchemaMetaInfo(BasicEndpointProfile.SCHEMA$.getFullName(),
+                customer, application);
         
         metaInfo = ctlSchemaMetaInfoDao.save(metaInfo);
 
         CTLSchema ctlSchema = new CTLSchema();
-        ctlSchema.setTenant(customer);
-        ctlSchema.setApplication(application);
+        ctlSchema.setMetaInfo(metaInfo);
+        ctlSchema.setVersion(1);
         ctlSchema.setBody(BasicEndpointProfile.SCHEMA$.toString());
         ctlSchema.setDependencySet(new HashSet<CTLSchema>());
-        ctlSchema.setMetaInfo(metaInfo);
         
         ctlSchema = ctlSchemaDao.save(ctlSchema);
         
@@ -327,14 +323,14 @@ public class OperationsServiceIT extends AbstractTest {
         request.setClientSyncMetaData(md);
 
         ProfileClientSync profileSync = new ProfileClientSync(ByteBuffer.wrap(ENDPOINT_KEY),
-                ByteBuffer.wrap(profile), null);
+                ByteBuffer.wrap(profile), SDK_TOKEN, null);
         request.setProfileSync(profileSync);
 
         request.setConfigurationSync(new ConfigurationClientSync());
 
         SyncContext context = createContext(request);
 
-        operationsService.syncProfile(context, request.getProfileSync());
+        operationsService.syncClientProfile(context, request.getProfileSync());
         operationsService.syncConfiguration(context, request.getConfigurationSync());
 
         currentConfigurationHash = context.getEndpointProfile().getConfigurationHash();
@@ -343,7 +339,6 @@ public class OperationsServiceIT extends AbstractTest {
         Assert.assertEquals(SyncStatus.SUCCESS, response.getStatus());
         Assert.assertNotNull(response.getConfigurationSync());
         Assert.assertEquals(SyncResponseStatus.RESYNC, response.getConfigurationSync().getResponseStatus());
-        Assert.assertEquals(APPLICATION_SEQ_NUMBER, (int) response.getConfigurationSync().getAppStateSeqNumber());
         Assert.assertNotNull(response.getConfigurationSync().getConfDeltaBody());
         // Kaa #7786
         Assert.assertNull(response.getConfigurationSync().getConfSchemaBody());
@@ -362,14 +357,14 @@ public class OperationsServiceIT extends AbstractTest {
         request.setClientSyncMetaData(md);
 
         ProfileClientSync profileSync = new ProfileClientSync(ByteBuffer.wrap(ENDPOINT_KEY),
-                ByteBuffer.wrap(profile), null);
+                ByteBuffer.wrap(profile), SDK_TOKEN, null);
         request.setProfileSync(profileSync);
 
         request.setConfigurationSync(new ConfigurationClientSync());
 
         SyncContext context = createContext(request);
 
-        operationsService.syncProfile(context, request.getProfileSync());
+        operationsService.syncClientProfile(context, request.getProfileSync());
         operationsService.syncConfiguration(context, request.getConfigurationSync());
 
         ServerSync response = context.getResponse();
@@ -377,12 +372,11 @@ public class OperationsServiceIT extends AbstractTest {
         Assert.assertEquals(SyncStatus.SUCCESS, response.getStatus());
         Assert.assertNotNull(response.getConfigurationSync());
         Assert.assertEquals(SyncResponseStatus.RESYNC, response.getConfigurationSync().getResponseStatus());
-        Assert.assertEquals(APPLICATION_SEQ_NUMBER, (int) response.getConfigurationSync().getAppStateSeqNumber());
         Assert.assertNotNull(response.getConfigurationSync().getConfDeltaBody());
         // Kaa #7786
         Assert.assertNull(response.getConfigurationSync().getConfSchemaBody());
 
-        operationsService.syncProfile(context, request.getProfileSync());
+        operationsService.syncClientProfile(context, request.getProfileSync());
         operationsService.syncConfiguration(context, request.getConfigurationSync());
 
         response = context.getResponse();
@@ -390,7 +384,6 @@ public class OperationsServiceIT extends AbstractTest {
         Assert.assertEquals(SyncStatus.SUCCESS, response.getStatus());
         Assert.assertNotNull(response.getConfigurationSync());
         Assert.assertEquals(SyncResponseStatus.RESYNC, response.getConfigurationSync().getResponseStatus());
-        Assert.assertEquals(APPLICATION_SEQ_NUMBER, (int) response.getConfigurationSync().getAppStateSeqNumber());
         Assert.assertNotNull(response.getConfigurationSync().getConfDeltaBody());
         // Kaa #7786
         Assert.assertNull(response.getConfigurationSync().getConfSchemaBody());
@@ -410,18 +403,17 @@ public class OperationsServiceIT extends AbstractTest {
         request.setClientSyncMetaData(md);
 
         ProfileClientSync profileSync = new ProfileClientSync(null,
-                ByteBuffer.wrap(profile), null);
+                ByteBuffer.wrap(profile), SDK_TOKEN, null);
         request.setProfileSync(profileSync);
 
         ConfigurationClientSync confSyncRequest = new ConfigurationClientSync();
-        confSyncRequest.setAppStateSeqNumber(APPLICATION_SEQ_NUMBER);
         confSyncRequest.setConfigurationHash(ByteBuffer.wrap(currentConfigurationHash));
 
         request.setConfigurationSync(confSyncRequest);
 
         SyncContext context = createContext(request);
 
-        operationsService.syncProfile(context, request.getProfileSync());
+        operationsService.syncClientProfile(context, request.getProfileSync());
         operationsService.syncConfiguration(context, request.getConfigurationSync());
 
         ServerSync response = context.getResponse();
@@ -429,7 +421,6 @@ public class OperationsServiceIT extends AbstractTest {
         Assert.assertEquals(SyncStatus.SUCCESS, response.getStatus());
         Assert.assertNotNull(response.getConfigurationSync());
         Assert.assertEquals(SyncResponseStatus.NO_DELTA, response.getConfigurationSync().getResponseStatus());
-        Assert.assertEquals(APPLICATION_SEQ_NUMBER, (int) response.getConfigurationSync().getAppStateSeqNumber());
         Assert.assertNull(response.getConfigurationSync().getConfDeltaBody());
         // Kaa #7786
         Assert.assertNull(response.getConfigurationSync().getConfSchemaBody());
@@ -449,14 +440,13 @@ public class OperationsServiceIT extends AbstractTest {
         request.setClientSyncMetaData(md);
 
         ConfigurationClientSync confSyncRequest = new ConfigurationClientSync();
-        confSyncRequest.setAppStateSeqNumber(APPLICATION_SEQ_NUMBER - 1);
         confSyncRequest.setConfigurationHash(ByteBuffer.wrap(currentConfigurationHash));
 
         request.setConfigurationSync(confSyncRequest);
 
         SyncContext context = createContext(request);
 
-        operationsService.syncProfile(context, request.getProfileSync());
+        operationsService.syncClientProfile(context, request.getProfileSync());
 
         ServerSync response = context.getResponse();
 
@@ -478,14 +468,13 @@ public class OperationsServiceIT extends AbstractTest {
         request.setClientSyncMetaData(md);
 
         ConfigurationClientSync confSyncRequest = new ConfigurationClientSync();
-        confSyncRequest.setAppStateSeqNumber(APPLICATION_SEQ_NUMBER);
         confSyncRequest.setConfigurationHash(ByteBuffer.wrap(currentConfigurationHash));
 
         request.setConfigurationSync(confSyncRequest);
 
         SyncContext context = createContext(request);
 
-        operationsService.syncProfile(context, request.getProfileSync());
+        operationsService.syncClientProfile(context, request.getProfileSync());
         operationsService.syncConfiguration(context, request.getConfigurationSync());
 
         ServerSync response = context.getResponse();
@@ -493,7 +482,6 @@ public class OperationsServiceIT extends AbstractTest {
         Assert.assertEquals(SyncStatus.SUCCESS, response.getStatus());
         Assert.assertNotNull(response.getConfigurationSync());
         Assert.assertEquals(SyncResponseStatus.NO_DELTA, response.getConfigurationSync().getResponseStatus());
-        Assert.assertEquals(APPLICATION_SEQ_NUMBER, response.getConfigurationSync().getAppStateSeqNumber());
         Assert.assertNull(response.getConfigurationSync().getConfDeltaBody());
         // Kaa #7786
         Assert.assertNull(response.getConfigurationSync().getConfSchemaBody());
@@ -514,13 +502,12 @@ public class OperationsServiceIT extends AbstractTest {
         request.setClientSyncMetaData(md);
 
         NotificationClientSync nfSyncRequest = new NotificationClientSync();
-        nfSyncRequest.setAppStateSeqNumber(APPLICATION_SEQ_NUMBER);
 
         request.setNotificationSync(nfSyncRequest);
 
         SyncContext context = createContext(request);
 
-        operationsService.syncProfile(context, request.getProfileSync());
+        operationsService.syncClientProfile(context, request.getProfileSync());
         operationsService.syncNotification(context, request.getNotificationSync());
 
         ServerSync response = context.getResponse();
@@ -529,7 +516,6 @@ public class OperationsServiceIT extends AbstractTest {
         Assert.assertEquals(SyncStatus.SUCCESS, response.getStatus());
         Assert.assertNotNull(response.getNotificationSync());
         Assert.assertEquals(SyncResponseStatus.DELTA, response.getNotificationSync().getResponseStatus());
-        Assert.assertEquals(Integer.valueOf(APPLICATION_SEQ_NUMBER), response.getNotificationSync().getAppStateSeqNumber());
         Assert.assertNotNull(response.getNotificationSync().getNotifications());
         //Only mandatory notification
         Assert.assertEquals(1, response.getNotificationSync().getNotifications().size());
@@ -549,14 +535,13 @@ public class OperationsServiceIT extends AbstractTest {
         request.setClientSyncMetaData(md);
 
         NotificationClientSync nfSyncRequest = new NotificationClientSync();
-        nfSyncRequest.setAppStateSeqNumber(APPLICATION_SEQ_NUMBER);
         SubscriptionCommand command = new SubscriptionCommand(optionalTopicDto.getId(), SubscriptionCommandType.ADD);
         nfSyncRequest.setSubscriptionCommands(Collections.singletonList(command));
         request.setNotificationSync(nfSyncRequest);
 
         SyncContext context = createContext(request);
 
-        operationsService.syncProfile(context, request.getProfileSync());
+        operationsService.syncClientProfile(context, request.getProfileSync());
         operationsService.syncNotification(context, request.getNotificationSync());
 
         ServerSync response = context.getResponse();
@@ -564,7 +549,6 @@ public class OperationsServiceIT extends AbstractTest {
         Assert.assertEquals(SyncStatus.SUCCESS, response.getStatus());
         Assert.assertNotNull(response.getNotificationSync());
         Assert.assertEquals(SyncResponseStatus.DELTA, response.getNotificationSync().getResponseStatus());
-        Assert.assertEquals(Integer.valueOf(APPLICATION_SEQ_NUMBER), response.getNotificationSync().getAppStateSeqNumber());
         Assert.assertNotNull(response.getNotificationSync().getNotifications());
         //Mandatory + Optional notification
         Assert.assertEquals(2, response.getNotificationSync().getNotifications().size());
@@ -591,14 +575,14 @@ public class OperationsServiceIT extends AbstractTest {
         request.setClientSyncMetaData(md);
 
         ProfileClientSync profileSync = new ProfileClientSync(ByteBuffer.wrap(ENDPOINT_KEY2),
-                ByteBuffer.wrap(profile), ENDPOINT_ACCESS_TOKEN);
+                ByteBuffer.wrap(profile), SDK_TOKEN, ENDPOINT_ACCESS_TOKEN);
         request.setProfileSync(profileSync);
 
         request.setConfigurationSync(new ConfigurationClientSync());
 
         SyncContext context = createContext(request);
 
-        operationsService.syncProfile(context, request.getProfileSync());
+        operationsService.syncClientProfile(context, request.getProfileSync());
         operationsService.syncNotification(context, request.getNotificationSync());
 
         ServerSync response = context.getResponse();
@@ -633,7 +617,7 @@ public class OperationsServiceIT extends AbstractTest {
         SyncContext context = createContext(request);
         context.setEndpointProfile(profileDto);
 
-        operationsService.syncProfile(context, request.getProfileSync());
+        operationsService.syncClientProfile(context, request.getProfileSync());
         operationsService.processEndpointAttachDetachRequests(context, request.getUserSync());
 
         ServerSync response = context.getResponse();
@@ -671,7 +655,7 @@ public class OperationsServiceIT extends AbstractTest {
 
         SyncContext context = createContext(request);
 
-        operationsService.syncProfile(context, request.getProfileSync());
+        operationsService.syncClientProfile(context, request.getProfileSync());
         operationsService.processEndpointAttachDetachRequests(context, request.getUserSync());
 
         ServerSync response = context.getResponse();
@@ -711,7 +695,7 @@ public class OperationsServiceIT extends AbstractTest {
         SyncContext context = createContext(request);
         context.setEndpointProfile(profileDto);
 
-        operationsService.syncProfile(context, request.getProfileSync());
+        operationsService.syncClientProfile(context, request.getProfileSync());
         operationsService.processEndpointAttachDetachRequests(context, request.getUserSync());
 
         ServerSync response = context.getResponse();
@@ -751,7 +735,7 @@ public class OperationsServiceIT extends AbstractTest {
         SyncContext context = createContext(request);
         context.setEndpointProfile(profileDto);
 
-        operationsService.syncProfile(context, request.getProfileSync());
+        operationsService.syncClientProfile(context, request.getProfileSync());
         operationsService.processEndpointAttachDetachRequests(context, request.getUserSync());
 
         ServerSync response = context.getResponse();
@@ -787,7 +771,7 @@ public class OperationsServiceIT extends AbstractTest {
 
         SyncContext context = createContext(request);
 
-        operationsService.syncProfile(context, request.getProfileSync());
+        operationsService.syncClientProfile(context, request.getProfileSync());
         operationsService.processEventListenerRequests(context, request.getEventSync());
 
         ServerSync response = context.getResponse();

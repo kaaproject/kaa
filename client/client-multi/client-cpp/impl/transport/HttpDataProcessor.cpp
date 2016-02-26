@@ -1,17 +1,17 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 #include "kaa/transport/HttpDataProcessor.hpp"
@@ -59,19 +59,18 @@ std::string HttpDataProcessor::retrieveBootstrapResponse(const IHttpResponse& re
 
 std::shared_ptr<IHttpRequest> HttpDataProcessor::createHttpRequest(const HttpUrl& url, const std::vector<std::uint8_t>& data, bool sign)
 {
-    std::shared_ptr<MultipartPostHttpRequest> post(new MultipartPostHttpRequest(url));
+    std::shared_ptr<MultipartPostHttpRequest> post(new MultipartPostHttpRequest(url, context_));
     const EncodedSessionKey& encodedSessionKey = encDec_->getEncodedSessionKey();
     const std::string& bodyEncoded = encDec_->encodeData(data.data(), data.size());
 
     if (sign) {
         const Signature& clientSignature =
                 encDec_->signData(reinterpret_cast<const std::uint8_t *>(
-                        encodedSessionKey.begin()), encodedSessionKey.size());
+                        encodedSessionKey.data()), encodedSessionKey.size());
 
-        post->setBodyField("signature",
-                std::vector<std::uint8_t>(
-                        reinterpret_cast<const std::uint8_t *>(clientSignature.begin()),
-                        reinterpret_cast<const std::uint8_t *>(clientSignature.end())));
+        post->setBodyField("signature", std::vector<std::uint8_t>(
+                                        clientSignature.data(),
+                                        clientSignature.data()+clientSignature.size()));
     }
 
     post->setBodyField("requestKey", std::vector<std::uint8_t>(encodedSessionKey.begin(), encodedSessionKey.end()));

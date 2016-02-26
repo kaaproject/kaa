@@ -1,17 +1,17 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 #ifndef DEFAULTNOTIFICATIONTRANSPORT_HPP_
@@ -26,6 +26,7 @@
 #include "kaa/channel/transport/AbstractKaaTransport.hpp"
 #include "kaa/IKaaClientStateStorage.hpp"
 #include "kaa/notification/INotificationProcessor.hpp"
+#include "kaa/IKaaClientContext.hpp"
 
 namespace kaa {
 
@@ -35,7 +36,7 @@ class NotificationTransport: public AbstractKaaTransport<TransportType::NOTIFICA
                              public INotificationTransport
 {
 public:
-    NotificationTransport(IKaaClientStateStoragePtr status, IKaaChannelManager& manager);
+    NotificationTransport(IKaaChannelManager& manager, IKaaClientContext &context);
 
     virtual NotificationSyncRequestPtr createEmptyNotificationRequest();
 
@@ -58,13 +59,13 @@ public:
 private:
     Notifications getUnicastNotifications(const Notifications & notifications);
     Notifications getMulticastNotifications(const Notifications & notifications);
+    std::vector<TopicState> prepareTopicStatesForRequest();
 
 private:
-    INotificationProcessor*   notificationProcessor_;
+    INotificationProcessor*                         notificationProcessor_;
 
     std::set<std::string>                  acceptedUnicastNotificationIds_;
-    std::map<std::string, std::int32_t>    notificationSubscriptions_;
-    SubscriptionCommands                   subscriptions_;
+    SubscriptionCommands                                    subscriptions_;
 };
 
 } /* namespace kaa */

@@ -1,0 +1,39 @@
+#*
+ *  Copyright 2014-2016 CyberVision, Inc.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *#
+
+#set ($prefix = $StyleUtils.toLowerUnderScore($namespacePrefix))
+#set ($record_name = $StyleUtils.toLowerUnderScore($schema.getName()))
+typedef struct {
+#foreach ($field in $schema.getFields())
+#set ($field_type = $TypeConverter.convertToCType($prefix, $field.schema()))
+#set ($field_name = $StyleUtils.toLowerUnderScore($field.name()))
+    ${field_type} ${field_name};
+#end
+
+#if ($TypeConverter.isTypeOut($schema))
+    serialize_fn serialize;
+    get_size_fn  get_size;
+#end
+    destroy_fn   destroy;
+} ${prefix}_${record_name}_t;
+
+#if ($TypeConverter.isTypeOut($schema))
+${prefix}_${record_name}_t *${prefix}_${record_name}_create(void);
+#end
+#if ($TypeConverter.isTypeIn($schema))
+${prefix}_${record_name}_t *${prefix}_${record_name}_deserialize(avro_reader_t reader);
+#end
+

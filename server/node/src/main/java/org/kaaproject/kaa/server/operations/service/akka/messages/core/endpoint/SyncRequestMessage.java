@@ -1,17 +1,17 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint;
@@ -117,19 +117,8 @@ public class SyncRequestMessage extends EndpointAwareMessage implements ChannelA
         }
         if (request.getNotificationSync() != null) {
             LOG.debug("[{}] Cleanup/update notification request", channelUuid);
-            if (response != null && response.getNotificationSync() != null) {
-                request.getNotificationSync().setAppStateSeqNumber(
-                        response.getNotificationSync().getAppStateSeqNumber());
-            }
             request.getNotificationSync().setSubscriptionCommands(null);
             request.getNotificationSync().setAcceptedUnicastNotifications(null);
-        }
-        if (request.getConfigurationSync() != null) {
-            LOG.debug("[{}] Cleanup/update configuration request", channelUuid);
-            if (response != null && response.getConfigurationSync() != null) {
-                request.getConfigurationSync().setAppStateSeqNumber(
-                        response.getConfigurationSync().getAppStateSeqNumber());
-            }
         }
     }
 
@@ -156,10 +145,9 @@ public class SyncRequestMessage extends EndpointAwareMessage implements ChannelA
             LOG.debug("[{}] Updated profile request", channelUuid);
         }
         if (other.getConfigurationSync() != null) {
-            ConfigurationClientSync resolvedConfigurationSync = hasProfileSync ?
-                                                  other.getConfigurationSync() :
-                                                  diff(request.getConfigurationSync(), other.getConfigurationSync());
-            diff.setConfigurationSync(resolvedConfigurationSync);
+            ConfigurationClientSync mergedConfigurationClientSync = hasProfileSync || other.isForceConfigurationSync() ? other
+                    .getConfigurationSync() : diff(request.getConfigurationSync(), other.getConfigurationSync());
+            diff.setConfigurationSync(mergedConfigurationClientSync);
             request.setConfigurationSync(other.getConfigurationSync());
             LOG.debug("[{}] Updated configuration request", channelUuid);
         } else {
@@ -168,10 +156,9 @@ public class SyncRequestMessage extends EndpointAwareMessage implements ChannelA
             }
         }
         if (other.getNotificationSync() != null) {
-            NotificationClientSync resolvedNotificationClientSync = hasProfileSync ?
-                                                       other.getNotificationSync() :
-                                                       diff(request.getNotificationSync(), other.getNotificationSync());
-            diff.setNotificationSync(resolvedNotificationClientSync);
+            NotificationClientSync mergedNotificationClientSync = hasProfileSync || other.isForceNotificationSync() ? other
+                    .getNotificationSync() : diff(request.getNotificationSync(), other.getNotificationSync());
+            diff.setNotificationSync(mergedNotificationClientSync);
             request.setNotificationSync(other.getNotificationSync());
             LOG.debug("[{}] Updated notification request", channelUuid);
         } else {
@@ -197,16 +184,11 @@ public class SyncRequestMessage extends EndpointAwareMessage implements ChannelA
         return diff;
     }
 
-    private NotificationClientSync diff(NotificationClientSync oldRequest, NotificationClientSync newRequest) {
+    private ConfigurationClientSync diff(ConfigurationClientSync oldRequest, ConfigurationClientSync newRequest) {
         if (oldRequest == null) {
             return newRequest;
         } else {
-            if (oldRequest.getAppStateSeqNumber() < newRequest.getAppStateSeqNumber()
-                    || (newRequest.getAcceptedUnicastNotifications() != null && !newRequest
-                            .getAcceptedUnicastNotifications().isEmpty())
-                    || (newRequest.getSubscriptionCommands() != null && !newRequest.getSubscriptionCommands().isEmpty())
-            // TODO: Add topicListHash comparison
-            ) {
+            if (!Arrays.equals(oldRequest.getConfigurationHash().array(), newRequest.getConfigurationHash().array())) {
                 return newRequest;
             } else {
                 return null;
@@ -214,13 +196,13 @@ public class SyncRequestMessage extends EndpointAwareMessage implements ChannelA
         }
     }
 
-    private ConfigurationClientSync diff(ConfigurationClientSync oldRequest, ConfigurationClientSync newRequest) {
+    private NotificationClientSync diff(NotificationClientSync oldRequest, NotificationClientSync newRequest) {
         if (oldRequest == null) {
             return newRequest;
         } else {
-            if (oldRequest.getAppStateSeqNumber() != newRequest.getAppStateSeqNumber()
-                    || Arrays.equals(oldRequest.getConfigurationHash().array(), newRequest.getConfigurationHash()
-                            .array())) {
+            if ((newRequest.getAcceptedUnicastNotifications() != null && newRequest.getAcceptedUnicastNotifications().size() > 0)
+                    || (newRequest.getSubscriptionCommands() != null && newRequest.getSubscriptionCommands().size() > 0)
+                    || (newRequest.getTopicListHash() != oldRequest.getTopicListHash())) {
                 return newRequest;
             } else {
                 return null;

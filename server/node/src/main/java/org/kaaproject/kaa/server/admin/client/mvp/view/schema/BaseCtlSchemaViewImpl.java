@@ -1,17 +1,17 @@
-/*
- * Copyright 2014-2015 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.schema;
@@ -20,17 +20,18 @@ import org.kaaproject.avro.ui.gwt.client.widget.AvroWidgetsConfig;
 import org.kaaproject.avro.ui.gwt.client.widget.SizedTextArea;
 import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
 import org.kaaproject.avro.ui.shared.RecordField;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseCtlSchemaView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.CtlSchemaReferenceBox;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.RecordPanel;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
+import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaReferenceDto;
 
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.layout.client.Layout.Alignment;
@@ -143,16 +144,6 @@ public abstract class BaseCtlSchemaViewImpl extends BaseDetailsViewImpl implemen
                     fireChanged();
                 }
             });
-            newCtlButton.addClickHandler(new ClickHandler() {                
-                @Override
-                public void onClick(ClickEvent event) {
-                    rootPanel.setHeight(SCHEMA_FORM_PANEL_HEIGHT);
-                    ctlSchemaPanel.showWidget(1);
-                    existingCtlButton.setValue(false);
-                    newCtlButton.setValue(true);                    
-                    fireChanged();
-                }
-            });
             ctlSchemaPanel.setAnimationCallback(new AnimationCallback() {
                 @Override
                 public void onAnimationComplete() {
@@ -181,9 +172,9 @@ public abstract class BaseCtlSchemaViewImpl extends BaseDetailsViewImpl implemen
                     fireChanged();
                 }
             });
-            ctlSchemaReferenceBox.addValueChangeHandler(new ValueChangeHandler<CTLSchemaMetaInfoDto>() {
+            ctlSchemaReferenceBox.addValueChangeHandler(new ValueChangeHandler<CtlSchemaReferenceDto>() {
                 @Override
-                public void onValueChange(ValueChangeEvent<CTLSchemaMetaInfoDto> event) {
+                public void onValueChange(ValueChangeEvent<CtlSchemaReferenceDto> event) {
                     fireChanged();                    
                 }
             });
@@ -271,13 +262,17 @@ public abstract class BaseCtlSchemaViewImpl extends BaseDetailsViewImpl implemen
     }
     
     @Override
-    public HasConstrainedValue<CTLSchemaMetaInfoDto> getCtlSchemaReference() {
+    public HasConstrainedValue<CtlSchemaReferenceDto> getCtlSchemaReference() {
         return ctlSchemaReferenceBox;
     }
     
     @Override
     public boolean useExistingCtlSchema() {
         return ctlSchemaPanel.getVisibleWidgetIndex() == 0;
+    }
+    
+    public HasClickHandlers getNewCtlButton() {
+        return newCtlButton;
     }
     
     private class FragmentLayoutPanel extends DeckLayoutPanel {

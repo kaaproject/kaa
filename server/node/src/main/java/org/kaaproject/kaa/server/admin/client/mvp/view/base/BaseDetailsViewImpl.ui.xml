@@ -1,17 +1,19 @@
 <!--
-  Copyright 2014 CyberVision, Inc.
 
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
+     Copyright 2014-2016 CyberVision, Inc.
 
-       http://www.apache.org/licenses/LICENSE-2.0
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
 
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+
 -->
 
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
@@ -25,36 +27,9 @@
 
         <gwt:DockLayoutPanel unit="PX" ui:field="dockPanel">
                 <gwt:north size="175">
-                    <gwt:VerticalPanel width="100%">
+                    <gwt:VerticalPanel width="100%" ui:field="northPanel">
                         <gwt:cell>
-                            <gwt:HorizontalPanel width="100%" height="80px" spacing="5">
-                                <gwt:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" height="100%">
-                                    <gwt:FlowPanel width="100%" height="100%">
-                                        <gwt:HorizontalPanel height="100%">
-                                            <gwt:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" height="100%">
-                                                <gwt:HorizontalPanel height="100%" visible="false" ui:field="backButtonPanel" styleName="{kaaAdminStyle.bAppPaddedPanel}">
-                                                    <gwt:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" height="100%">
-                                                        <gwt:Button ui:field="backButton" addStyleNames="{kaaAdminStyle.bAppBackButton}"></gwt:Button>
-                                                    </gwt:cell>
-                                                </gwt:HorizontalPanel>
-                                            </gwt:cell>
-                                            <gwt:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" height="100%">
-                                                <gwt:Label ui:field="titleLabel" styleName="{kaaAdminStyle.bAppContentTitle}">
-                                                </gwt:Label>
-                                            </gwt:cell>
-                                            <gwt:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" height="100%">
-                                                <gwt:HorizontalPanel ui:field="buttonsPanel" height="100%" styleName="{avroUiStyle.buttonsPanel}">
-                                                    <gwt:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" height="100%">
-                                                        <gwt:Button ui:field="saveButton"></gwt:Button>
-                                                    </gwt:cell>
-                                                    <gwt:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" height="100%">
-                                                        <gwt:Button visible="false" ui:field="cancelButton"></gwt:Button>
-                                                    </gwt:cell>
-                                                </gwt:HorizontalPanel>
-                                            </gwt:cell>
-                                        </gwt:HorizontalPanel>
-                                    </gwt:FlowPanel>
-                                </gwt:cell>
+                            <gwt:HorizontalPanel width="100%" height="80px" spacing="5" ui:field="topPanel">
                             </gwt:HorizontalPanel>
                           </gwt:cell>
                         <gwt:cell>

@@ -1,17 +1,17 @@
-/*
- * Copyright 2014-2015 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 #ifndef ENDPOINTREGISTRATIONMANAGER_HPP_
@@ -29,6 +29,7 @@
 #include "kaa/event/registration/UserTransport.hpp"
 #include "kaa/event/registration/IRegistrationProcessor.hpp"
 #include "kaa/event/registration/IEndpointRegistrationManager.hpp"
+#include "kaa/IKaaClientContext.hpp"
 
 namespace kaa {
 
@@ -44,7 +45,7 @@ class EndpointRegistrationManager : public IEndpointRegistrationManager
                                   , public IRegistrationProcessor
 {
 public:
-    EndpointRegistrationManager(IKaaClientStateStoragePtr status, IExecutorContext& executorContext);
+    EndpointRegistrationManager(IKaaClientContext &context);
 
     virtual void attachEndpoint(const std::string&  endpointAccessToken
                               , IAttachEndpointCallbackPtr listener = IAttachEndpointCallbackPtr());
@@ -61,7 +62,7 @@ public:
                           , const std::string& userVerifierToken
                           , IUserAttachCallbackPtr listener = IUserAttachCallbackPtr());
 
-    virtual bool isAttachedToUser() { return status_->getEndpointAttachStatus(); }
+    virtual bool isAttachedToUser() { return context_.getStatus().getEndpointAttachStatus(); }
 
     virtual void setAttachStatusListener(IAttachStatusListenerPtr listener) { attachStatusListener_ = listener; }
 
@@ -91,8 +92,8 @@ private:
 #endif
 
 private:
+    IKaaClientContext         &context_;
     UserTransport*            userTransport_;
-    IKaaClientStateStoragePtr status_;
 
     std::shared_ptr<UserAttachRequest> userAttachRequest_;
     KAA_MUTEX_DECLARE(userAttachRequestGuard_);
@@ -111,8 +112,6 @@ private:
 
     std::unordered_map<std::int32_t, IAttachEndpointCallbackPtr> attachEndpointListeners_;
     std::unordered_map<std::int32_t, IDetachEndpointCallbackPtr> detachEndpointListeners_;
-
-    IExecutorContext& executorContext_;
 };
 
 }

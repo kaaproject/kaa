@@ -1,0 +1,68 @@
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+#import "KaaLogging.h"
+#import "AvroBytesConverter.h"
+
+#define TAG @"{event_family_class_name} >>>"
+
+@interface {event_family_class_name} ()
+
+@property (nonatomic, strong) id<EventManager> manager;
+@property (nonatomic, strong) id<ExecutorContext> context;
+@property (nonatomic, strong) NSMutableSet *delegates;
+@property (nonatomic, strong) AvroBytesConverter *converter;
+
+@end
+
+@implementation {event_family_class_name}
+
+- (instancetype)initWithManager:(id<EventManager>)eventManager context:(id<ExecutorContext>)executorContext {
+    self = [super init];
+    if (self) {
+        self.manager = eventManager;
+        self.context = executorContext;
+        self.delegates = [NSMutableSet set];
+        self.converter = [[AvroBytesConverter alloc] init];
+    }
+    return self;
+}
+
+- (NSSet *)getSupportedEventFQNs {
+    NSMutableSet *result = [NSMutableSet set];
+
+{add_supported_event_class_fqns}
+
+    return result;
+}
+
+- (void)onGenericEvent:(NSString *)eventFQN withData:(NSData *)data fromSource:(NSString *)source {
+
+    {event_family_listeners_on_generic_event}
+
+}
+
+- (void)addDelegate:(id<{event_family_class_name}Delegate>)delegate {
+    [self.delegates addObject:delegate];
+}
+
+- (void)removeDelegate:(id<{event_family_class_name}Delegate>)delegate {
+    [self.delegates removeObject:delegate];
+}
+
+{event_family_send_event_methods}
+
+@end

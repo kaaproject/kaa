@@ -1,17 +1,17 @@
-/*
- * Copyright 2014-2015 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 typedef unsigned char uint8;
@@ -150,7 +150,7 @@ kaa_error_t kaa_tcp_channel_free_send_buffer(kaa_transport_channel_interface_t *
 kaa_error_t kaa_tcp_channel_read_bytes(kaa_transport_channel_interface_t *self, const uint8 *buffer, const size_t buffer_size);
 
 bool kaa_tcp_channel_connection_is_ready_to_terminate(kaa_transport_channel_interface_t *self);
-kaa_error_t kaa_tcp_channel_set_keepalive_timeout(kaa_transport_channel_interface_t *self, uint16_t keepalive);
+
 /*
  * Create TCP channel object
  */
@@ -230,7 +230,7 @@ kaa_error_t kaa_tcp_channel_create(kaa_transport_channel_interface_t *self
     /*
      * Initializes keepalive configuration.
      */
-    kaa_tcp_channel->keepalive.keepalive_interval = KAA_TCP_CHANNEL_KEEPALIVE;
+    kaa_tcp_channel->keepalive.keepalive_interval = KAA_TCP_CHANNEL_MAX_TIMEOUT;
     kaa_tcp_channel->keepalive.last_sent_keepalive = KAA_TIME();
     kaa_tcp_channel->keepalive.last_receive_keepalive = kaa_tcp_channel->keepalive.last_sent_keepalive;
 
@@ -556,7 +556,7 @@ kaa_error_t kaa_tcp_channel_check_keepalive(kaa_transport_channel_interface_t *s
 
     kaa_time_t interval = KAA_TIME() - tcp_channel->keepalive.last_sent_keepalive;
 
-    if (interval >= (tcp_channel->keepalive.keepalive_interval / 2)) {
+    if (interval >= KAA_TCP_CHANNEL_PING_TIMEOUT) {
         //Send ping request
         KAA_LOG_INFO(tcp_channel->logger, KAA_ERR_NONE, "Kaa TCP channel [0x%08X] checking keepalive"
                                                                         , tcp_channel->access_point.id);
@@ -577,24 +577,6 @@ kaa_error_t kaa_tcp_channel_check_keepalive(kaa_transport_channel_interface_t *s
 
     return error_code;
 }
-
-
-
-kaa_error_t kaa_tcp_channel_set_keepalive_timeout(kaa_transport_channel_interface_t *self
-                                                , uint16_t keepalive)
-{
-    KAA_RETURN_IF_NIL2(self, self->context, KAA_ERR_BADPARAM);
-    kaa_tcp_channel_t *tcp_channel = (kaa_tcp_channel_t *)self->context;
-
-    tcp_channel->keepalive.keepalive_interval = keepalive;
-
-    KAA_LOG_INFO(tcp_channel->logger,KAA_ERR_NONE,"Kaa TCP channel [0x%08X] keepalive is set to %u seconds"
-                                    , tcp_channel->access_point.id, tcp_channel->keepalive.keepalive_interval);
-
-    return KAA_ERR_NONE;
-}
-
-
 
 void kaa_tcp_channel_connack_message_callback(void *context, kaatcp_connack_t message)
 {
@@ -793,7 +775,6 @@ kaa_error_t kaa_tcp_channel_authorize(kaa_tcp_channel_t *self)
 
 
     uint16_t keepalive = self->keepalive.keepalive_interval;
-    keepalive += keepalive / 5;
 
     kaatcp_connect_t connect_message;
     kaatcp_error_t kaatcp_error_code =

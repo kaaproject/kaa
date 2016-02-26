@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2016 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,54 +16,81 @@
 
 package org.kaaproject.kaa.server.common;
 
-import org.cassandraunit.CassandraCQLUnit;
+import org.cassandraunit.BaseCassandraUnit;
+import org.cassandraunit.CQLDataLoader;
 import org.cassandraunit.dataset.CQLDataSet;
 import org.cassandraunit.utils.EmbeddedCassandraServerHelper;
 
-import java.util.concurrent.TimeUnit;
+import com.datastax.driver.core.Cluster;
+import com.datastax.driver.core.Session;
 
-public class CustomCassandraCQLUnit extends CassandraCQLUnit {
-
-    private static long DEFAULT_CASSANDRA_TIMEOUT = 20000L;
-
+public class CustomCassandraCQLUnit extends BaseCassandraUnit {
     private CQLDataSet dataSet;
 
+    public Session session;
+    public Cluster cluster;
 
     public CustomCassandraCQLUnit(CQLDataSet dataSet) {
-        super(dataSet);
         this.dataSet = dataSet;
+    }
+
+    public CustomCassandraCQLUnit(CQLDataSet dataSet, int readTimeoutMillis) {
+        this.dataSet = dataSet;
+        this.readTimeoutMillis = readTimeoutMillis;
     }
 
     public CustomCassandraCQLUnit(CQLDataSet dataSet, String configurationFileName) {
-        super(dataSet, configurationFileName);
-        this.dataSet = dataSet;
+        this(dataSet);
+        this.configurationFileName = configurationFileName;
     }
 
-    public CustomCassandraCQLUnit(CQLDataSet dataSet, String configurationFileName, String hostIp, int port) {
-        super(dataSet, configurationFileName, hostIp, port);
-        this.dataSet = dataSet;
+    public CustomCassandraCQLUnit(CQLDataSet dataSet, String configurationFileName, int readTimeoutMillis) {
+        this(dataSet);
+        this.configurationFileName = configurationFileName;
+        this.readTimeoutMillis = readTimeoutMillis;
     }
 
-    @Override
-    protected void before() throws Exception {
-        /* start an embedded Cassandra */
-        if (configurationFileName != null) {
-            EmbeddedCassandraServerHelper.startEmbeddedCassandra(configurationFileName, DEFAULT_CASSANDRA_TIMEOUT);
-        } else {
-            EmbeddedCassandraServerHelper.startEmbeddedCassandra(DEFAULT_CASSANDRA_TIMEOUT);
-        }
+    public CustomCassandraCQLUnit(CQLDataSet dataSet, String configurationFileName, long startUpTimeoutMillis) {
+        super(startUpTimeoutMillis);
+        this.dataSet = dataSet;
+        this.configurationFileName = configurationFileName;
+    }
 
-        /* create structure and load data */
-        load();
+    public CustomCassandraCQLUnit(CQLDataSet dataSet, String configurationFileName, long startUpTimeoutMillis, int readTimeoutMillis) {
+        super(startUpTimeoutMillis);
+        this.dataSet = dataSet;
+        this.configurationFileName = configurationFileName;
+        this.readTimeoutMillis = readTimeoutMillis;
     }
 
     @Override
     protected void load() {
-        try {
-            TimeUnit.SECONDS.sleep(10);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        String hostIp = EmbeddedCassandraServerHelper.getHost();
+        int port = EmbeddedCassandraServerHelper.getNativeTransportPort();
+        cluster = new Cluster.Builder().addContactPoints(hostIp).withPort(port).withSocketOptions(getSocketOptions())
+                .build();
+        session = cluster.connect();
+        CQLDataLoader dataLoader = new CQLDataLoader(session);
+        dataLoader.load(dataSet);
+        session = dataLoader.getSession();
+    }
+
+    @Override
+    protected void after() {
+        super.after();
+        try (Cluster c = cluster; Session s = session) {
+            session = null;
+            cluster = null;
         }
-        super.load();
+    }
+
+    // Getters for those who do not like to directly access fields
+
+    public Session getSession() {
+        return session;
+    }
+
+    public Cluster getCluster() {
+        return cluster;
     }
 }

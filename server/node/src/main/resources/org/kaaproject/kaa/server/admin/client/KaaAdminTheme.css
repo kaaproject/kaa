@@ -60,6 +60,7 @@
     height: 100%;
     float: left;
     display: inline-block;
+    word-wrap: break-word;
 }
 
 .b-nav-label {
@@ -339,6 +340,18 @@
     border: 1px solid #2F5BB7;
     color: #FFFFFF;
     text-shadow: 0 1px rgba(0, 0, 0, 0.3);
+}
+
+.deleteButton {
+	background: #d94b4b;
+}
+
+.deleteButton:hover {
+	background: #cc4b4b;
+}
+
+.deleteButton:active {
+	background: #c47575;
 }
 
 .button-margin-left {

@@ -1,48 +1,51 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.server.common.nosql.cassandra.dao;
 
-import com.datastax.driver.core.BatchStatement;
-import com.datastax.driver.core.ConsistencyLevel;
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.Session;
-import com.datastax.driver.core.Statement;
-import com.datastax.driver.core.querybuilder.QueryBuilder;
-import com.datastax.driver.mapping.Mapper;
-import com.datastax.driver.mapping.Result;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.client.CassandraClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import com.datastax.driver.core.BatchStatement;
+import com.datastax.driver.core.ConsistencyLevel;
+import com.datastax.driver.core.ResultSet;
+import com.datastax.driver.core.Session;
+import com.datastax.driver.core.Statement;
+import com.datastax.driver.core.UserType;
+import com.datastax.driver.core.querybuilder.QueryBuilder;
+import com.datastax.driver.mapping.Mapper;
+import com.datastax.driver.mapping.Result;
 
 public abstract class AbstractCassandraDao<T, K> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractCassandraDao.class);
+    private static final String KAA = "kaa";
 
     /**
      * Cassandra client classes.
      */
     @Autowired
-    private CassandraClient cassandraClient;
+    protected CassandraClient cassandraClient;
 
     @Value("#{cassandra_properties[read_consistency_level]}")
     private String readConsistencyLevel;
@@ -53,22 +56,22 @@ public abstract class AbstractCassandraDao<T, K> {
 
     private Session session;
 
-    protected abstract Class<?> getColumnFamilyClass();
+    protected abstract Class<T> getColumnFamilyClass();
 
     protected abstract String getColumnFamilyName();
 
-    private Session getSession() {
+    protected Session getSession() {
         if (session == null) {
             session = cassandraClient.getSession();
         }
         return session;
     }
 
-    protected Mapper<?> getMapper(Class<?> clazz) {
+    protected Mapper<T> getMapper(Class<T> clazz) {
         return cassandraClient.getMapper(clazz);
     }
 
-    protected Mapper<?> getMapper() {
+    protected Mapper<T> getMapper() {
         return cassandraClient.getMapper(getColumnFamilyClass());
     }
 
@@ -77,7 +80,7 @@ public abstract class AbstractCassandraDao<T, K> {
         if (statement != null) {
             statement.setConsistencyLevel(getReadConsistencyLevel());
             ResultSet resultSet = getSession().execute(statement);
-            Result result = getMapper().map(resultSet);
+            Result<T> result = getMapper().map(resultSet);
             if (result != null) {
                 list = result.all();
             }
@@ -85,22 +88,21 @@ public abstract class AbstractCassandraDao<T, K> {
         return list;
     }
 
+    protected UserType getUserType(String userType) {
+        return getSession().getCluster().getMetadata().getKeyspace(KAA).getUserType(userType);
+    }
+
     protected T findOneByStatement(Statement statement) {
         T object = null;
         if (statement != null) {
             statement.setConsistencyLevel(getReadConsistencyLevel());
             ResultSet resultSet = getSession().execute(statement);
-            Result result = getMapper().map(resultSet);
+            Result<T> result = getMapper().map(resultSet);
             if (result != null) {
-                object = (T) result.one();
+                object = result.one();
             }
         }
         return object;
-    }
-
-    protected <V> Statement getSaveQuery(V dto, Class<?> clazz) {
-        Mapper<V> mapper = (Mapper<V>) getMapper(clazz);
-        return mapper.saveQuery(dto);
     }
 
     protected Statement getSaveQuery(T dto) {
@@ -108,12 +110,12 @@ public abstract class AbstractCassandraDao<T, K> {
         return mapper.saveQuery(dto);
     }
 
-    public T save(T dto) {
-        LOG.debug("Save entity {}", dto);
-        Statement saveStatement = getSaveQuery(dto);
+    public T save(T entity) {
+        LOG.debug("Save entity {}", entity);
+        Statement saveStatement = getSaveQuery(entity);
         saveStatement.setConsistencyLevel(getWriteConsistencyLevel());
         execute(saveStatement);
-        return dto;
+        return entity;
     }
 
     protected void executeBatch(BatchStatement batch) {
@@ -136,20 +138,13 @@ public abstract class AbstractCassandraDao<T, K> {
     }
 
     protected ResultSet execute(Statement statement, ConsistencyLevel consistencyLevel) {
-        LOG.debug("Execute cassandra batch {}", statement);
-        statement.setConsistencyLevel(consistencyLevel);
+        LOG.debug("Execute cassandra statement {}", statement);
+        statement.setConsistencyLevel(consistencyLevel == null ? ConsistencyLevel.ONE : consistencyLevel);
         return getSession().execute(statement);
     }
 
     protected ResultSet execute(Statement statement) {
-        return execute(statement, ConsistencyLevel.ONE);
-    }
-
-    public <V> V save(V dto, Class<?> clazz) {
-        LOG.debug("Save entity of {} class", clazz.getName());
-        Mapper mapper = getMapper(clazz);
-        mapper.save(dto);
-        return dto;
+        return execute(statement, statement.getConsistencyLevel());
     }
 
     public List<T> find() {

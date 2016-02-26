@@ -1,17 +1,17 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.server.control.service.sdk.event;
@@ -27,8 +27,9 @@ import org.apache.avro.Schema.Type;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
-import org.kaaproject.kaa.avro.avrogenc.Compiler;
-import org.kaaproject.kaa.avro.avrogenc.StyleUtils;
+import org.kaaproject.kaa.avro.avrogen.compiler.CCompiler;
+import org.kaaproject.kaa.avro.avrogen.compiler.Compiler;
+import org.kaaproject.kaa.avro.avrogen.StyleUtils;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventAction;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventMapDto;
 import org.kaaproject.kaa.server.control.service.sdk.compress.TarEntryData;
@@ -36,7 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class CEventSourcesGenerator {
-    /** The Constant LOG. */
+    /** The Constant logger. */
     private static final Logger LOG = LoggerFactory.getLogger(CppEventSourcesGenerator.class);
 
     /**
@@ -48,16 +49,13 @@ public class CEventSourcesGenerator {
     private static final String NAME_PREFIX_TEMPLATE = "kaa_{name}";
     private static final String EVENT_FAMILY_DEFINITION_PATTERN = "kaa_{name}_definitions";
 
-    private static final String EVENT_FAMILIES_H_PATTERN = "sdk/c/event/kaa_event_families.h.vm";
+    private static final String EVENT_FAMILIES_H_PATTERN = "sdk/c/event/kaa_event_families.hvm";
     private static final String EVENT_FAMILIES_H_FILE = "kaa_{name}.h";
-    private static final String EVENT_FAMILIES_C_PATTERN = "sdk/c/event/kaa_event_families.c.vm";
+    private static final String EVENT_FAMILIES_C_PATTERN = "sdk/c/event/kaa_event_families.cvm";
     private static final String EVENT_FAMILIES_C_FILE = "kaa_{name}.c";
     private static final String EVENT_FQN_H_FILE = "kaa_event_fqn_definitions.h";
-    private static final String EVENT_FQN_PATTERN = "sdk/c/event/kaa_event_fqn_definitions.h.vm";
-
-    private CEventSourcesGenerator() {
-    }
-
+    private static final String EVENT_FQN_PATTERN = "sdk/c/event/kaa_event_fqn_definitions.hvm";
+    
     private static final VelocityEngine velocityEngine; //NOSONAR
     static {
         velocityEngine = new VelocityEngine();
@@ -95,7 +93,7 @@ public class CEventSourcesGenerator {
             List<String> emptyRecords = new ArrayList<>();
             if (schemas != null) {
                 for (Schema recordS : schemas) {
-                    if (recordS.getType() == Type.RECORD && recordS.getFields() != null && recordS.getFields().isEmpty()) {
+                    if (recordS.getType() == Type.RECORD && recordS.getFields() != null && recordS.getFields().size() == 0) {
                         emptyRecords.add(recordS.getFullName());
                     }
                 }
@@ -159,7 +157,7 @@ public class CEventSourcesGenerator {
                 OutputStream hdrStream = new ByteArrayOutputStream();
                 OutputStream srcStream = new ByteArrayOutputStream();) {
                 String fileName = EVENT_FAMILY_DEFINITION_PATTERN.replace("{name}", name);
-                Compiler compiler = new Compiler(eventFamilySchema, fileName, hdrStream, srcStream);
+                Compiler compiler = new CCompiler(eventFamilySchema, fileName, hdrStream, srcStream);
                 compiler.setNamespacePrefix(NAME_PREFIX_TEMPLATE.replace("{name}", name));
                 compiler.generate();
 

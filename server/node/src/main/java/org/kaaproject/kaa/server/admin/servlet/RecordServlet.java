@@ -1,22 +1,23 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.server.admin.servlet;
 
 import java.io.IOException;
+import java.net.URLDecoder;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletConfig;
@@ -30,12 +31,13 @@ import net.iharder.Base64;
 import org.kaaproject.kaa.common.dto.admin.RecordKey;
 import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.server.admin.services.cache.CacheService;
+import org.kaaproject.kaa.server.admin.shared.servlet.ServletParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
-public class RecordServlet extends HttpServlet implements Servlet {
+public class RecordServlet extends HttpServlet implements Servlet, ServletParams {
 
     private static final long serialVersionUID = 1584721028492234643L;
 
@@ -55,7 +57,7 @@ public class RecordServlet extends HttpServlet implements Servlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String recordKeyBase64 = request.getParameter(RecordKey.RECORD_KEY_PARAMETER);
+        String recordKeyBase64 = URLDecoder.decode(request.getParameter(RECORD_KEY_PARAMETER), "UTF-8");
         try {
             RecordKey key = (RecordKey) Base64.decodeToObject(recordKeyBase64, Base64.URL_SAFE, null);
             FileData recordLibrary = cacheService.getRecordData(key);

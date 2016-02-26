@@ -1,17 +1,17 @@
-/*
- * Copyright 2014-2015 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.server.control;
@@ -23,9 +23,12 @@ import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaInfoDto;
+import org.kaaproject.avro.ui.shared.FqnVersion;
+import org.kaaproject.kaa.common.dto.ApplicationDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
+import org.springframework.http.HttpStatus;
 
 /**
  * @author Bohdan Khablenko
@@ -42,11 +45,11 @@ public class ControlServerCTLSchemaIT extends AbstractTestControlServer {
     @Test
     public void saveCTLSchemaTest() throws Exception {
         this.loginKaaAdmin();
-        CTLSchemaInfoDto beta = client.saveCTLSchema(getResourceAsString(TEST_CTL_SCHEMA_BETA), CTLSchemaScopeDto.SYSTEM, null);
+        CTLSchemaDto beta = client.saveCTLSchema(getResourceAsString(TEST_CTL_SCHEMA_BETA), null, null);
         Assert.assertNotNull(beta.getId());
 
         this.loginTenantDeveloper(tenantDeveloperUser);
-        CTLSchemaInfoDto alpha = client.saveCTLSchema(getResourceAsString(TEST_CTL_SCHEMA_ALPHA), CTLSchemaScopeDto.TENANT, null);
+        CTLSchemaDto alpha = client.saveCTLSchema(getResourceAsString(TEST_CTL_SCHEMA_ALPHA), tenantDeveloperDto.getTenantId(), null);
         Assert.assertNotNull(alpha.getId());
     }
 
@@ -61,8 +64,8 @@ public class ControlServerCTLSchemaIT extends AbstractTestControlServer {
         // Declare a dependency
         String dependencyFqn = CTL_DEFAULT_NAMESPACE + "." + this.ctlRandomFieldType();
         Integer dependencyVersion = 1;
-        final Set<CTLSchemaMetaInfoDto> dependencies = new HashSet<>();
-        dependencies.add(new CTLSchemaMetaInfoDto(dependencyFqn, dependencyVersion));
+        final Set<FqnVersion> dependencies = new HashSet<>();
+        dependencies.add(new FqnVersion(dependencyFqn, dependencyVersion));
 
         // Map a CTL schema field name to its type
         final Map<String, String> fields = new HashMap<>();
@@ -72,7 +75,7 @@ public class ControlServerCTLSchemaIT extends AbstractTestControlServer {
         this.checkBadRequest(new TestRestCall() {
             @Override
             public void executeRestCall() throws Exception {
-                createCTLSchema(ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, CTLSchemaScopeDto.TENANT, null, dependencies, fields);
+                createCTLSchema(ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), null, dependencies, fields);
             }
         });
     }
@@ -86,12 +89,12 @@ public class ControlServerCTLSchemaIT extends AbstractTestControlServer {
     @Test
     public void deleteCTLSchemaByFqnAndVersionTest() throws Exception {
         this.loginTenantDeveloper(tenantDeveloperUser);
-        final CTLSchemaInfoDto saved = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, CTLSchemaScopeDto.TENANT, null, null, null);
-        client.deleteCTLSchemaByFqnAndVersion(saved.getFqn(), saved.getVersion());
+        final CTLSchemaDto saved = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), null, null, null);
+        client.deleteCTLSchemaByFqnVersionTenantIdAndApplicationId(saved.getMetaInfo().getFqn(), saved.getVersion(), tenantDeveloperDto.getTenantId(), null);
         this.checkNotFound(new TestRestCall() {
             @Override
             public void executeRestCall() throws Exception {
-                client.getCTLSchemaByFqnAndVersion(saved.getFqn(), saved.getVersion()).toString();
+                client.getCTLSchemaByFqnVersionTenantIdAndApplicationId(saved.getMetaInfo().getFqn(), saved.getVersion(), tenantDeveloperDto.getTenantId(), null);
             }
         });
     }
@@ -103,19 +106,19 @@ public class ControlServerCTLSchemaIT extends AbstractTestControlServer {
     @Test
     public void deleteCTLSchemaWithDependents() throws Exception {
         this.loginTenantDeveloper(tenantDeveloperUser);
-        final CTLSchemaInfoDto dependency = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, CTLSchemaScopeDto.TENANT, null,  null, null);
+        final CTLSchemaDto dependency = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), null,  null, null);
 
-        Set<CTLSchemaMetaInfoDto> dependencies = new HashSet<>();
-        dependencies.add(new CTLSchemaMetaInfoDto(dependency.getFqn(), dependency.getVersion()));
+        Set<FqnVersion> dependencies = new HashSet<>();
+        dependencies.add(new FqnVersion(dependency.getMetaInfo().getFqn(), dependency.getVersion()));
 
         Map<String, String> fields = new HashMap<>();
-        fields.put(this.ctlRandomFieldName(), dependency.getFqn());
-        this.createCTLSchema(this.ctlRandomFieldName(), CTL_DEFAULT_NAMESPACE, 1, CTLSchemaScopeDto.TENANT, null, dependencies, fields);
+        fields.put(this.ctlRandomFieldName(), dependency.getMetaInfo().getFqn());
+        this.createCTLSchema(this.ctlRandomFieldName(), CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), null, dependencies, fields);
 
         this.checkBadRequest(new TestRestCall() {
             @Override
             public void executeRestCall() throws Exception {
-                client.deleteCTLSchemaByFqnAndVersion(dependency.getFqn(), dependency.getVersion());
+                client.deleteCTLSchemaByFqnVersionTenantIdAndApplicationId(dependency.getMetaInfo().getFqn(), dependency.getVersion(), tenantDeveloperDto.getTenantId(), null);
             }
         });
         
@@ -128,12 +131,12 @@ public class ControlServerCTLSchemaIT extends AbstractTestControlServer {
     @Test
     public void deleteSystemCTLSchemaByFqnAndVersionTest() throws Exception {
         this.loginKaaAdmin();
-        final CTLSchemaInfoDto saved = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, CTLSchemaScopeDto.SYSTEM, null, null, null);
+        final CTLSchemaDto saved = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, null, null, null, null);
         this.loginTenantDeveloper(tenantDeveloperUser);
         this.checkForbidden(new TestRestCall() {
             @Override
             public void executeRestCall() throws Exception {
-                client.deleteCTLSchemaByFqnAndVersion(saved.getFqn(), saved.getVersion());
+                client.deleteCTLSchemaByFqnVersionTenantIdAndApplicationId(saved.getMetaInfo().getFqn(), saved.getVersion(), null, null);
             }
         });
     }
@@ -146,8 +149,8 @@ public class ControlServerCTLSchemaIT extends AbstractTestControlServer {
     @Test
     public void getCTLSchemaByFqnAndVersionTest() throws Exception {
         this.loginTenantDeveloper(tenantDeveloperUser);
-        CTLSchemaInfoDto saved = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, CTLSchemaScopeDto.TENANT, null,  null, null);
-        CTLSchemaInfoDto loaded = client.getCTLSchemaByFqnAndVersion(saved.getFqn(), saved.getVersion());
+        CTLSchemaDto saved = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), null,  null, null);
+        CTLSchemaDto loaded = client.getCTLSchemaByFqnVersionTenantIdAndApplicationId(saved.getMetaInfo().getFqn(), saved.getVersion(), tenantDeveloperDto.getTenantId(), null);
         Assert.assertNotNull(loaded);
         Assert.assertEquals(saved, loaded);
     }
@@ -161,10 +164,103 @@ public class ControlServerCTLSchemaIT extends AbstractTestControlServer {
     @Test
     public void getSystemCTLSchemaByFqnAndVersionTest() throws Exception {
         this.loginKaaAdmin();
-        CTLSchemaInfoDto saved = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, CTLSchemaScopeDto.SYSTEM, null, null, null);
+        CTLSchemaDto saved = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, null, null, null, null);
         this.loginTenantDeveloper(tenantDeveloperUser);
-        CTLSchemaInfoDto loaded = client.getCTLSchemaByFqnAndVersion(saved.getFqn(), saved.getVersion());
+        CTLSchemaDto loaded = client.getCTLSchemaByFqnVersionTenantIdAndApplicationId(saved.getMetaInfo().getFqn(), saved.getVersion(), null, null);
         Assert.assertNotNull(loaded);
         Assert.assertEquals(saved, loaded);
     }
+    
+    /**
+     * Check existence of CTL schema with same fqn and another scope
+     *
+     * @throws Exception
+     */
+    @Test
+    public void checkCTLFqnExistsTest() throws Exception {
+        this.loginTenantDeveloper(tenantDeveloperUser);
+        CTLSchemaDto saved = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), null,  null, null);
+        String fqn = saved.getMetaInfo().getFqn();
+        boolean result = client.checkFqnExists(fqn, tenantDeveloperDto.getTenantId(), null);
+        Assert.assertFalse(result);
+        result = client.checkFqnExists(fqn, tenantDeveloperDto.getTenantId(), "123");
+        Assert.assertFalse(result);
+        result = client.checkFqnExists(fqn, null, null);
+        Assert.assertFalse(result);
+        
+        ApplicationDto application1 = createApplication(tenantAdminDto);
+        ApplicationDto application2 = createApplication(tenantAdminDto);
+        this.loginTenantDeveloper(tenantDeveloperUser);
+        CTLSchemaDto schema1 = this.createCTLSchema("TestAppFqn1", CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), application1.getId(),  null, null);
+        this.createCTLSchema("TestAppFqn1", CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), application2.getId(),  null, null);
+        
+        fqn = schema1.getMetaInfo().getFqn();
+        
+        result = client.checkFqnExists(fqn, tenantDeveloperDto.getTenantId(), application1.getId());
+        Assert.assertTrue(result);
+        
+        result = client.checkFqnExists(fqn, tenantDeveloperDto.getTenantId(), application2.getId());
+        Assert.assertTrue(result);
+        
+        result = client.checkFqnExists(fqn, tenantDeveloperDto.getTenantId(), null);
+        Assert.assertFalse(result);
+    }
+    
+    @Test
+    public void updateCTLSchemaScopeTest() throws Exception {
+        ApplicationDto application = createApplication(tenantAdminDto);
+        this.loginTenantDeveloper(tenantDeveloperUser);
+        CTLSchemaDto saved = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), application.getId(),  null, null);
+        CTLSchemaMetaInfoDto metaInfo = saved.getMetaInfo();
+        metaInfo.setApplicationId(null);
+        CTLSchemaMetaInfoDto updatedMetaInfo = client.updateCTLSchemaMetaInfoScope(metaInfo);
+        Assert.assertNull(updatedMetaInfo.getApplicationId());
+        Assert.assertNotNull(updatedMetaInfo.getTenantId());
+        Assert.assertEquals(tenantDeveloperDto.getTenantId(), updatedMetaInfo.getTenantId());
+        Assert.assertEquals(CTLSchemaScopeDto.TENANT, updatedMetaInfo.getScope());
+    }
+    
+    @Test
+    public void updateCTLSchemaScopeForbiddenTest() throws Exception {
+        ApplicationDto application = createApplication(tenantAdminDto);
+        this.loginTenantDeveloper(tenantDeveloperUser);
+        CTLSchemaDto saved = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), application.getId(),  null, null);
+        final CTLSchemaMetaInfoDto metaInfo = saved.getMetaInfo();
+        metaInfo.setApplicationId(null);
+        metaInfo.setTenantId(null);
+        this.checkForbidden(new TestRestCall() {
+            @Override
+            public void executeRestCall() throws Exception {
+                client.updateCTLSchemaMetaInfoScope(metaInfo);
+            }
+        });
+        saved = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), null,  null, null);
+        final CTLSchemaMetaInfoDto metaInfo2 = saved.getMetaInfo();
+        Assert.assertNull(metaInfo2.getApplicationId());
+        metaInfo2.setApplicationId(application.getId());
+        this.checkRestErrorStatusCode(new TestRestCall() {
+            @Override
+            public void executeRestCall() throws Exception {
+                client.updateCTLSchemaMetaInfoScope(metaInfo2);
+            }
+        }, HttpStatus.INTERNAL_SERVER_ERROR);
+        
+        this.loginTenantAdmin(tenantAdminUser);
+        saved = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantAdminDto.getTenantId(), null,  null, null);
+        final CTLSchemaMetaInfoDto metaInfo3 = saved.getMetaInfo();
+        Assert.assertNull(metaInfo3.getApplicationId());
+        metaInfo3.setApplicationId(application.getId());
+        this.checkForbidden(new TestRestCall() {
+            @Override
+            public void executeRestCall() throws Exception {
+                client.updateCTLSchemaMetaInfoScope(metaInfo3);
+            }
+        });
+        
+        //Assert.assertNull(updatedMetaInfo.getApplicationId());
+        //Assert.assertNotNull(updatedMetaInfo.getTenantId());
+        //Assert.assertEquals(tenantDeveloperDto.getTenantId(), updatedMetaInfo.getTenantId());
+        //Assert.assertEquals(CTLSchemaScopeDto.TENANT, updatedMetaInfo.getScope());
+    }
+    
 }

@@ -1,17 +1,17 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 #ifndef KAA_DISABLE_FEATURE_LOGGING
@@ -25,12 +25,15 @@
 #include "../../utilities/kaa_mem.h"
 #include "../../utilities/kaa_log.h"
 
+#include <assert.h>
+
 
 
 typedef struct {
     char       *data;       /**< Serialized data */
     size_t      size;       /**< Size of data */
     uint16_t    bucket_id;  /**< Bucket ID */
+    bool        mark;       /**< Mark of this record. True means that record is marked */
 } ext_log_record_t;
 
 typedef struct {
@@ -98,7 +101,7 @@ kaa_error_t ext_unlimited_log_storage_create(void **log_storage_context_p, kaa_l
 {
     KAA_RETURN_IF_NIL2(log_storage_context_p, logger, KAA_ERR_BADPARAM);
 
-    ext_log_storage_memory_t *log_storage = (ext_log_storage_memory_t *) KAA_MALLOC(sizeof(ext_log_storage_memory_t));
+    ext_log_storage_memory_t *log_storage = KAA_MALLOC(sizeof(ext_log_storage_memory_t));
     KAA_RETURN_IF_NIL(log_storage, KAA_ERR_NOMEM);
 
     log_storage->logger                 = logger;
@@ -107,7 +110,7 @@ kaa_error_t ext_unlimited_log_storage_create(void **log_storage_context_p, kaa_l
     log_storage->total_occupied_size    = 0;
     log_storage->unmarked_occupied_size = 0;
     log_storage->unmarked_record_count  = 0;
-    log_storage->shrinked_size  = 0;
+    log_storage->shrinked_size          = 0;
 
     log_storage->logs = kaa_list_create();
     if (!log_storage->logs) {
@@ -167,14 +170,14 @@ static kaa_error_t shrink_to_size(void *context, size_t size)
 
     kaa_list_node_t *it = kaa_list_begin(self->logs);
     while (it && self->total_occupied_size > size) {
-        // May delete records already marked with bucket_id. C'est la vie...
-        ext_log_record_t *log_record = (ext_log_record_t *)kaa_list_get_data(it);
+        // May delete records already marked. C'est la vie...
+        ext_log_record_t *log_record = kaa_list_get_data(it);
 
         self->total_occupied_size -= log_record->size;
         ++removed_record_count;
 
         kaa_list_node_t *next_it = kaa_list_next(it);
-        if (!log_record->bucket_id) {
+        if (!log_record->mark) {
             self->unmarked_occupied_size -= log_record->size;
             --self->unmarked_record_count;
             self->first_unmarked = next_it;
@@ -207,12 +210,14 @@ kaa_error_t ext_log_storage_add_log_record(void *context, kaa_log_record_t *reco
         shrink_to_size(self, self->shrinked_size);
     }
 
-    ext_log_record_t *new_record = (ext_log_record_t *) KAA_MALLOC(sizeof(ext_log_record_t));
+    ext_log_record_t *new_record = KAA_MALLOC(sizeof(*new_record));
     KAA_RETURN_IF_NIL(new_record, KAA_ERR_NOMEM);
 
     new_record->data = record->data;
     new_record->size = record->size;
-    new_record->bucket_id = 0;
+    new_record->bucket_id = record->bucket_id;
+    assert(record->bucket_id);
+    new_record->mark = false;
 
     if (!kaa_list_push_back(self->logs, new_record)) {
         KAA_FREE(new_record);
@@ -240,29 +245,33 @@ kaa_error_t ext_log_storage_deallocate_log_record_buffer(void *context, kaa_log_
     return KAA_ERR_NONE;
 }
 
-
-
-bool find_by_bucket_id(void *log_record_p, void *bucket_id_p)
+static bool find_by_bucket_id(void *log_record_p, void *bucket_id_p)
 {
     KAA_RETURN_IF_NIL2(log_record_p, bucket_id_p, false);
-    return ((ext_log_record_t *)log_record_p)->bucket_id == *((uint16_t *)bucket_id_p);
+    ext_log_record_t *record = log_record_p;
+
+    // Iterate only marked log records
+    return record->mark && record->bucket_id == *(uint16_t *)bucket_id_p;
 }
 
-
+static bool find_marked(void *log_record_p, void *mark)
+{
+    return ((ext_log_record_t *)log_record_p)->mark == *(bool *)mark;
+}
 
 kaa_error_t ext_log_storage_write_next_record(void *context
                                             , char *buffer
                                             , size_t buffer_len
-                                            , uint16_t bucket_id
+                                            , uint16_t *bucket_id
                                             , size_t *record_len)
 {
-    KAA_RETURN_IF_NIL5(context, buffer, buffer_len, bucket_id, record_len, KAA_ERR_BADPARAM);
-    ext_log_storage_memory_t *self = (ext_log_storage_memory_t *)context;
+    KAA_RETURN_IF_NIL4(context, buffer, buffer_len, record_len, KAA_ERR_BADPARAM);
+    ext_log_storage_memory_t *self = context;
 
-    uint16_t zero_bucket_id = 0;
     kaa_list_node_t *it = self->first_unmarked;
     if (!it) {
-        it = kaa_list_find_next(kaa_list_begin(self->logs), &find_by_bucket_id, &zero_bucket_id);
+        bool mark = false;
+        it = kaa_list_find_next(kaa_list_begin(self->logs), find_marked, &mark);
     }
 
     if (!it) {
@@ -270,13 +279,22 @@ kaa_error_t ext_log_storage_write_next_record(void *context
         return KAA_ERR_NOT_FOUND;
     }
 
-    ext_log_record_t *record = (ext_log_record_t *) kaa_list_get_data(it);
+    ext_log_record_t *record = kaa_list_get_data(it);
     *record_len = record->size;
     if (*record_len > buffer_len)
         return KAA_ERR_INSUFFICIENT_BUFFER;
 
-    memcpy((void *)buffer, record->data, record->size);
-    record->bucket_id = bucket_id;
+    // Only unmarked buckets with valid id can be written
+    assert(record->bucket_id);
+    assert(!record->mark);
+
+    memcpy(buffer, record->data, record->size);
+
+    if (bucket_id) {
+        *bucket_id = record->bucket_id;
+    }
+
+    record->mark = true;
 
     self->first_unmarked = kaa_list_next(it);
     self->unmarked_record_count--;
@@ -290,7 +308,7 @@ kaa_error_t ext_log_storage_write_next_record(void *context
 kaa_error_t ext_log_storage_remove_by_bucket_id(void *context, uint16_t bucket_id)
 {
     KAA_RETURN_IF_NIL(context, KAA_ERR_BADPARAM);
-    ext_log_storage_memory_t *self = (ext_log_storage_memory_t *)context;
+    ext_log_storage_memory_t *self = context;
 
     kaa_list_node_t *it = kaa_list_find_next(kaa_list_begin(self->logs), find_by_bucket_id, &bucket_id);
     KAA_RETURN_IF_NIL(it, KAA_ERR_NOT_FOUND);
@@ -314,15 +332,15 @@ kaa_error_t ext_log_storage_remove_by_bucket_id(void *context, uint16_t bucket_i
 kaa_error_t ext_log_storage_unmark_by_bucket_id(void *context, uint16_t bucket_id)
 {
     KAA_RETURN_IF_NIL(context, KAA_ERR_BADPARAM);
-    ext_log_storage_memory_t *self = (ext_log_storage_memory_t *)context;
+    ext_log_storage_memory_t *self = context;
 
     kaa_list_node_t *it = kaa_list_find_next(kaa_list_begin(self->logs), find_by_bucket_id, &bucket_id);
     KAA_RETURN_IF_NIL(it, KAA_ERR_NOT_FOUND);
 
     while (it) {
-        ext_log_record_t *log_record = (ext_log_record_t *)kaa_list_get_data(it);
+        ext_log_record_t *log_record = kaa_list_get_data(it);
 
-        log_record->bucket_id = 0;
+        log_record->mark = false;
         self->unmarked_record_count++;
         self->unmarked_occupied_size += log_record->size;
 
@@ -355,7 +373,7 @@ size_t ext_log_storage_get_records_count(const void *context)
 kaa_error_t ext_log_storage_destroy(void *context)
 {
     KAA_RETURN_IF_NIL(context, KAA_ERR_BADPARAM);
-    ext_log_storage_memory_t *self = (ext_log_storage_memory_t *)context;
+    ext_log_storage_memory_t *self = context;
     kaa_list_destroy(self->logs, &log_record_destroy);
     KAA_FREE(self);
     return KAA_ERR_NONE;

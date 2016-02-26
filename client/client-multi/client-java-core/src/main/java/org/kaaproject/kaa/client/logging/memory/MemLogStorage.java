@@ -1,27 +1,27 @@
-/*
- * Copyright 2014-2015 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.client.logging.memory;
 
-import java.util.HashMap;
-import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.kaaproject.kaa.client.logging.LogBlock;
+import org.kaaproject.kaa.client.logging.BucketInfo;
+import org.kaaproject.kaa.client.logging.LogBucket;
 import org.kaaproject.kaa.client.logging.LogRecord;
 import org.kaaproject.kaa.client.logging.LogStorage;
 import org.kaaproject.kaa.client.logging.LogStorageStatus;
@@ -38,8 +38,8 @@ public class MemLogStorage implements LogStorage, LogStorageStatus {
     private static final int DEFAULT_MAX_BUCKET_RECORD_COUNT = 256;
 
     private final long maxStorageSize;
-    private long maxBucketSize;
-    private int maxBucketRecordCount;
+    private final long maxBucketSize;
+    private final int maxBucketRecordCount;
 
     private volatile long consumedVolume;
     private volatile long recordCount;
@@ -47,11 +47,11 @@ public class MemLogStorage implements LogStorage, LogStorageStatus {
     private final AtomicInteger bucketIdSeq = new AtomicInteger();
     private MemBucket currentBucket;
     private final Map<Integer, MemBucket> buckets;
-    
+
     public MemLogStorage() {
         this(DEFAULT_MAX_BUCKET_SIZE, DEFAULT_MAX_BUCKET_RECORD_COUNT);
     }
-    
+
     public MemLogStorage(long bucketSize, int bucketRecordCount) {
         this(DEFAULT_MAX_STORAGE_SIZE, bucketSize, bucketRecordCount);
     }
@@ -61,7 +61,7 @@ public class MemLogStorage implements LogStorage, LogStorageStatus {
         this.maxStorageSize = maxStorageSize;
         this.maxBucketSize = bucketSize;
         this.maxBucketRecordCount = bucketRecordCount;
-        this.buckets = new HashMap<Integer, MemBucket>();
+        this.buckets = new LinkedHashMap<Integer, MemBucket>();
     }
 
     @Override
@@ -77,7 +77,7 @@ public class MemLogStorage implements LogStorage, LogStorageStatus {
     }
 
     @Override
-    public void addLogRecord(LogRecord record) {
+    public BucketInfo addLogRecord(LogRecord record) {
         LOG.trace("Adding new log record with size {}", record.getSize());
         if(record.getSize() > maxBucketSize) {
             throw new IllegalArgumentException("Record size(" + record.getSize() + ") is bigger than max bucket size (" + maxBucketSize + ")!");
@@ -101,17 +101,14 @@ public class MemLogStorage implements LogStorage, LogStorageStatus {
             consumedVolume += record.getSize();
         }
         LOG.trace("Added a new log record to bucket [{}]", currentBucket.getId());
+        return new BucketInfo(currentBucket.getId(), currentBucket.getCount());
     }
 
     @Override
-    public LogBlock getRecordBlock(long blockSize, int batchCount) {
-        LOG.trace("Getting new record block with block size = {} and count = {}", blockSize, batchCount);
-        if (blockSize > maxBucketSize || batchCount > maxBucketRecordCount) {
-            //TODO: add support of block resize
-            LOG.warn("Resize of record block is not supported yet");
-        }
+    public LogBucket getNextBucket() {
+        LOG.trace("Getting new record block with block");
 
-        LogBlock result = null;
+        LogBucket result = null;
         MemBucket bucketCandidate = null;
         synchronized (buckets) {
             for (MemBucket bucket : buckets.values()) {
@@ -132,24 +129,15 @@ public class MemLogStorage implements LogStorage, LogStorageStatus {
                     LOG.trace("Only a bucket with state FREE found: [{}]. Changing its state to PENDING", bucketCandidate.getId());
                     bucketCandidate.setState(MemBucketState.PENDING);
                 }
-                if (bucketCandidate.getSize() <= blockSize && bucketCandidate.getCount() <= batchCount) {
-                    result = new LogBlock(bucketCandidate.getId(), bucketCandidate.getRecords());
-                    LOG.debug("Return record block with records count: [{}]", bucketCandidate.getCount());
-                } else {
-                    LOG.debug("Shrinking bucket {} to new size: [{}] and count: [{}]", bucketCandidate, blockSize, batchCount);
-                    List<LogRecord> overSized = bucketCandidate.shrinkToSize(blockSize, batchCount);
-                    result = new LogBlock(bucketCandidate.getId(), bucketCandidate.getRecords());
-                    for (LogRecord record : overSized) {
-                        addLogRecord(record);
-                    }
-                }
+                result = new LogBucket(bucketCandidate.getId(), bucketCandidate.getRecords());
+                LOG.debug("Return record block with records count: [{}]", bucketCandidate.getCount());
             }
         }
         return result;
     }
 
     @Override
-    public void removeRecordBlock(int id) {
+    public void removeBucket(int id) {
         LOG.trace("Removing record block with id [{}]", id);
         synchronized (buckets) {
             if (buckets.remove(id) != null) {
@@ -161,7 +149,7 @@ public class MemLogStorage implements LogStorage, LogStorageStatus {
     }
 
     @Override
-    public void notifyUploadFailed(int id) {
+    public void rollbackBucket(int id) {
         LOG.trace("Upload of record block [{}] failed", id);
         synchronized (buckets) {
             buckets.get(id).setState(MemBucketState.FULL);

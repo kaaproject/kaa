@@ -1,17 +1,17 @@
-/*
- * Copyright 2014-2015 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 #include <stdint.h>
@@ -116,25 +116,6 @@ void test_set_upload_timeout(void)
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     ASSERT_EQUAL(ext_log_upload_strategy_get_timeout(strategy), DEFAULT_UPLOAD_TIMEOUT);
-
-    KAA_TRACE_OUT(logger);
-}
-
-void test_set_batch_size(void)
-{
-    KAA_TRACE_IN(logger);
-
-    kaa_error_t error_code = KAA_ERR_NONE;
-
-    size_t DEFAULT_BATCH_SIZE = 8 * 1024;
-
-    error_code = ext_log_upload_strategy_change_strategy(strategy, KAA_LOG_UPLOAD_VOLUME_STRATEGY);
-    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
-
-    error_code = ext_log_upload_strategy_set_batch_size(strategy, DEFAULT_BATCH_SIZE);
-    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
-
-    ASSERT_EQUAL(ext_log_upload_strategy_get_bucket_size(strategy), DEFAULT_BATCH_SIZE);
 
     KAA_TRACE_OUT(logger);
 }
@@ -360,7 +341,6 @@ int test_deinit(void)
 KAA_SUITE_MAIN(MetaExtension, test_init, test_deinit,
         KAA_TEST_CASE(create_strategy, test_create_strategy)
         KAA_TEST_CASE(set_upload_timeout, test_set_upload_timeout)
-        KAA_TEST_CASE(set_batch_size, test_set_batch_size)
         KAA_TEST_CASE(upload_decision_by_volume, test_upload_decision_by_volume)
         KAA_TEST_CASE(upload_decision_by_count, test_upload_decision_by_count)
         KAA_TEST_CASE(upload_decision_by_timeout, test_upload_decision_by_timeout)

@@ -1,17 +1,17 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 /**
@@ -113,15 +113,13 @@ public class HttpTestLongSyncClient extends HttpTestClient<SyncRequest, SyncResp
 
         ConfigurationSyncRequest csRequest = new ConfigurationSyncRequest();
         csRequest.setConfigurationHash(ByteBuffer.wrap(configurationHash));
-        csRequest.setAppStateSeqNumber(appStateSeqNumber);
         request.setConfigurationSyncRequest(csRequest);
 
         generateSubscriptionCommandList();
         NotificationSyncRequest nsRequest = new NotificationSyncRequest();
         nsRequest.setSubscriptionCommands(subscriptionCommands);
         nsRequest.setTopicStates(topicStates);
-        nsRequest.setTopicListHash(ByteBuffer.wrap(profileHash));
-        nsRequest.setAppStateSeqNumber(appStateSeqNumber);
+        nsRequest.setTopicListHash(1);
         request.setNotificationSyncRequest(nsRequest);
 
         setRequest(request);
@@ -137,9 +135,9 @@ public class HttpTestLongSyncClient extends HttpTestClient<SyncRequest, SyncResp
         for(int i=0; i<sc_size;i++) {
             SubscriptionCommand sc = null;
             if (rnd.nextBoolean()) {
-                sc = new SubscriptionCommand(getRandomString(TOPIC_ID_LENGTH), SubscriptionCommandType.ADD);
+                sc = new SubscriptionCommand(rnd.nextLong(), SubscriptionCommandType.ADD);
             } else {
-                sc = new SubscriptionCommand(getRandomString(TOPIC_ID_LENGTH), SubscriptionCommandType.REMOVE);
+                sc = new SubscriptionCommand(rnd.nextLong(), SubscriptionCommandType.REMOVE);
             }
             topicStates.add(new TopicState(sc.getTopicId(), rnd.nextInt()));
             subscriptionCommands.add(sc);

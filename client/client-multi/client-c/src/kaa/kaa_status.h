@@ -1,17 +1,17 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 #ifndef KAA_STATUS_H_
@@ -36,17 +36,17 @@ typedef struct {
 typedef struct
 {
     uint32_t        event_seq_n;
-    uint32_t        config_seq_n;
-    uint32_t        notification_seq_n;
-    uint16_t        log_bucket_id;
     bool            is_registered;
     bool            is_attached;
     bool            is_updated;
     kaa_digest      endpoint_public_key_hash;
     kaa_digest      profile_hash;
 
-    kaa_list_t      *topic_states;
+    kaa_list_t      *topic_states;          /**< States of topics received */
+    kaa_list_t      *topics;                /**< Whole set of topics */
+    int32_t         topic_list_hash;        /**< List hash */
     char            *endpoint_access_token;
+    bool            has_update; /**< Indicates that status was changed on the client size */
 } kaa_status_t;
 
 #endif

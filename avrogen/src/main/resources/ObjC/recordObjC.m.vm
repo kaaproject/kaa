@@ -1,0 +1,494 @@
+#*
+ *  Copyright 2014-2016 CyberVision, Inc.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *#
+
+@implementation $namespacePrefix$schema.getName()
+
+#if ($TypeConverter.containsUnion($schema))
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        #foreach ($field in $schema.getFields())
+        #if ($TypeConverter.isAvroUnion($field.schema()))
+        #set ($UNION_NAME = $TypeConverter.generateUnionName("KAA", $field.schema()))
+        self.$field.name() = [KAAUnion unionWithBranch:${UNION_NAME}_BRANCH_$TypeConverter.getLastBranchNumber($field.schema())];
+        #end
+        #end
+}
+    return self;
+}
+#end
+
+#if ($schema.getFields().size() > 0)
+#set ($string = '- (instancetype)initWith')
+#set ($initstring = '')
+#foreach ($field in $schema.getFields())
+#if ($TypeConverter.isAvroEnum($field.schema()) || $TypeConverter.isAvroRecord($field.schema()))
+#set ($field_type = "$namespacePrefix$TypeConverter.convertToObjCType($field.schema())")
+#else
+#set ($field_type = $TypeConverter.convertToObjCType($field.schema()))
+#end
+#set ($field_name = $field.name())
+#if ($field == $schema.getFields().get(0))
+#set ($initstring = "$string$StyleUtils.fixCamelHumps($field_name):(${field_type})$field_name")
+#else
+#set ($initstring = "$initstring $field_name:(${field_type})$field_name")
+#end
+#end
+$initstring {
+    self = [super init];
+    if (self) {
+    #foreach ($field in $schema.getFields())
+    self.$field.name() = $field.name();
+    #end
+}
+    return self;
+}
+#end
+
++ (NSString *)FQN {
+    return @"$schema.getFullName()";
+}
+
+###if ($TypeConverter.isTypeOut($schema))
+- (void)serialize:(avro_writer_t)writer {
+#foreach ($field in $schema.getFields())
+#set ($field_name = $field.name())
+#set ($field_schema = $field.schema())
+#if ($TypeConverter.isAvroRecord($field_schema) && $field_schema.getFields().size() > 0)
+    [self.${field_name} serialize:writer];
+#elseif ($TypeConverter.isAvroUnion($field_schema))
+#set ($union_element_name = $StyleUtils.fixCamelHumps($field_name))
+    [self serialize${union_element_name}:self.${field_name} to:writer];
+#elseif ($TypeConverter.isAvroBytes($field_schema))
+    [self.utils serializeBytes:self.${field_name} to:writer];
+#elseif ($TypeConverter.isAvroFixed($field_schema))
+    [self.utils serializeFixed:self.${field_name} to:writer];
+#elseif ($TypeConverter.isAvroString($field_schema))
+    [self.utils serializeString:self.${field_name} to:writer];
+#elseif ($TypeConverter.isAvroBoolean($field_schema))
+    [self.utils serializeBoolean:@(self.${field_name}) to:writer];
+#elseif ($TypeConverter.isAvroInt($field_schema))
+    [self.utils serializeInt:@(self.${field_name}) to:writer];
+#elseif ($TypeConverter.isAvroLong($field_schema))
+    [self.utils serializeLong:@(self.${field_name}) to:writer];
+#elseif ($TypeConverter.isAvroEnum($field_schema))
+    [self.utils serializeEnum:@(self.${field_name}) to:writer];
+#elseif ($TypeConverter.isAvroFloat($field_schema))
+    [self.utils serializeFloat:@((float)self.${field_name}) to:writer];
+#elseif ($TypeConverter.isAvroDouble($field_schema))
+    [self.utils serializeDouble:@(self.${field_name}) to:writer];
+#elseif ($TypeConverter.isAvroArray($field_schema))
+#set ($array_element_schema = $field_schema.getElementType())
+    #if ($TypeConverter.isAvroRecord($array_element_schema))
+        [self.utils serializeArray:self.${field_name} to:writer withSelector:@selector(serializeRecord:to:) target:nil];
+    #elseif ($TypeConverter.isAvroUnion($array_element_schema))
+    #set ($union_element_name = $StyleUtils.fixCamelHumps($field_name))
+        [self serialize${union_element_name}:self.${field_name} to:writer];
+    #elseif ($TypeConverter.isAvroBytes($array_element_schema))
+        [self.utils serializeArray:self.${field_name} to:writer withSelector:@selector(serializeBytes:to:) target:nil];
+    #elseif ($TypeConverter.isAvroFixed($array_element_schema))
+        [self.utils serializeArray:self.${field_name} to:writer withSelector:@selector(serializeFixed:to:) target:nil];
+    #elseif ($TypeConverter.isAvroString($array_element_schema))
+        [self.utils serializeArray:self.${field_name} to:writer withSelector:@selector(serializeString:to:) target:nil];
+    #elseif ($TypeConverter.isAvroBoolean($array_element_schema))
+        [self.utils serializeArray:self.${field_name} to:writer withSelector:@selector(serializeBoolean:to:) target:nil];
+    #elseif ($TypeConverter.isAvroInt($array_element_schema))
+        [self.utils serializeArray:self.${field_name} to:writer withSelector:@selector(serializeInt:to:) target:nil];
+    #elseif ($TypeConverter.isAvroLong($array_element_schema))
+        [self.utils serializeArray:self.${field_name} to:writer withSelector:@selector(serializeLong:to:) target:nil];
+    #elseif ($TypeConverter.isAvroEnum($array_element_schema))
+        [self.utils serializeArray:self.${field_name} to:writer withSelector:@selector(serializeEnum:to:) target:nil];
+    #elseif ($TypeConverter.isAvroFloat($array_element_schema))
+        [self.utils serializeArray:self.${field_name} to:writer withSelector:@selector(serializeFloat:to:) target:nil];
+    #elseif ($TypeConverter.isAvroDouble($array_element_schema))
+        [self.utils serializeArray:self.${field_name} to:writer withSelector:@selector(serializeDouble:to:) target:nil];
+    #end
+#end
+#end
+#if ($schema.getFields().size() == 0)
+    #pragma unused(writer)
+#end
+}
+
+- (size_t)getSize {
+    size_t recordSize = 0;
+#foreach ($field in $schema.getFields())
+#set ($field_name = $field.name())
+#set ($field_schema = $field.schema())
+#if ($TypeConverter.isAvroRecord($field_schema) && $field_schema.getFields().size() > 0)
+        recordSize += [self.${field_name} getSize];
+#elseif ($TypeConverter.isAvroUnion($field_schema))
+#set ($union_element_name = $StyleUtils.fixCamelHumps($field_name))
+        recordSize += [self get${union_element_name}Size:self.${field_name}];
+#elseif ($TypeConverter.isAvroBytes($field_schema))
+        recordSize += [self.utils getBytesSize:self.${field_name}];
+#elseif ($TypeConverter.isAvroFixed($field_schema))
+        recordSize += [self.utils getFixedSize:self.${field_name}];
+#elseif ($TypeConverter.isAvroString($field_schema))
+        recordSize += [self.utils getStringSize:self.${field_name}];
+#elseif ($TypeConverter.isAvroFloat($field_schema))
+        recordSize += [self.utils getFloatSize];
+#elseif ($TypeConverter.isAvroDouble($field_schema))
+        recordSize += [self.utils getDoubleSize];
+#elseif ($TypeConverter.isAvroBoolean($field_schema))
+        recordSize += [self.utils getBooleanSize:@(self.${field_name})];
+#elseif ($TypeConverter.isAvroInt($field_schema))
+        recordSize += [self.utils getIntSize:@(self.${field_name})];
+#elseif ($TypeConverter.isAvroLong($field_schema))
+        recordSize += [self.utils getLongSize:@(self.${field_name})];
+#elseif ($TypeConverter.isAvroEnum($field_schema))
+        recordSize += [self.utils getEnumSize:@(self.${field_name})];
+#elseif ($TypeConverter.isAvroArray($field_schema))
+#set ($array_element_schema = $field_schema.getElementType())
+    #if ($TypeConverter.isAvroRecord($array_element_schema))
+        recordSize += [self.utils getArraySize:self.${field_name} withSelector:@selector(getSize) parameterized:NO target:nil];
+    #elseif ($TypeConverter.isAvroUnion($array_element_schema))
+    #set ($union_element_name = $StyleUtils.fixCamelHumps($field_name))
+        recordSize += [self.utils getArraySize:self.${field_name} withSelector:@selector(get${union_element_name}Size:) parameterized:YES target:self];
+    #elseif ($TypeConverter.isAvroBytes($array_element_schema))
+        recordSize += [self.utils getArraySize:self.${field_name} withSelector:@selector(getBytesSize:) parameterized:YES target:self.utils];
+    #elseif ($TypeConverter.isAvroFixed($array_element_schema))
+        recordSize += [self.utils getArraySize:self.${field_name} withSelector:@selector(getFixedSize:) parameterized:YES target:self.utils];
+    #elseif ($TypeConverter.isAvroString($array_element_schema))
+        recordSize += [self.utils getArraySize:self.${field_name} withSelector:@selector(getStringSize:) parameterized:YES target:self.utils];
+    #elseif ($TypeConverter.isAvroFloat($array_element_schema))
+        recordSize += [self.utils getArraySize:self.${field_name} withSelector:@selector(getFloatSize) parameterized:NO target:self.utils];
+    #elseif ($TypeConverter.isAvroDouble($array_element_schema))
+        recordSize += [self.utils getArraySize:self.${field_name} withSelector:@selector(getDoubleSize) parameterized:NO target:self.utils];
+    #elseif ($TypeConverter.isAvroBoolean($array_element_schema))
+        recordSize += [self.utils getArraySize:self.${field_name} withSelector:@selector(getBooleanSize:) parameterized:YES target:self.utils];
+    #elseif ($TypeConverter.isAvroInt($array_element_schema))
+        recordSize += [self.utils getArraySize:self.${field_name} withSelector:@selector(getIntSize:) parameterized:YES target:self.utils];
+    #elseif ($TypeConverter.isAvroLong($array_element_schema))
+        recordSize += [self.utils getArraySize:self.${field_name} withSelector:@selector(getLongSize:) parameterized:YES target:self.utils];
+    #elseif ($TypeConverter.isAvroEnum($array_element_schema))
+        recordSize += [self.utils getArraySize:self.${field_name} withSelector:@selector(getEnumSize:) parameterized:YES target:self.utils];
+    #end
+#end
+#end
+    return recordSize;
+}
+###end
+
+###if ($TypeConverter.isTypeIn($schema))
+- (void)deserialize:(avro_reader_t)reader {
+#foreach ($field in $schema.getFields())
+#set ($field_name = $field.name())
+#set ($field_schema = $field.schema())
+#if ($TypeConverter.isAvroRecord($field_schema))
+#set ($record_field_name = $field_schema.getName())
+    self.${field_name} = ($namespacePrefix${record_field_name} *)[self.utils deserializeRecord:reader as:[$namespacePrefix${record_field_name} class]];
+#elseif ($TypeConverter.isAvroUnion($field_schema))
+#set ($union_element_name = $StyleUtils.fixCamelHumps($field_name))
+    self.${field_name} = [self deserialize${union_element_name}:reader];
+#elseif ($TypeConverter.isAvroBytes($field_schema))
+    self.${field_name} = [self.utils deserializeBytes:reader];
+#elseif ($TypeConverter.isAvroFixed($field_schema))
+    NSNumber *size = @($field_schema.getFixedSize());
+    self.${field_name} = [self.utils deserializeFixed:reader size:size];
+#elseif ($TypeConverter.isAvroString($field_schema))
+    self.${field_name} = [self.utils deserializeString:reader];
+#elseif ($TypeConverter.isAvroEnum($field_schema))
+    self.${field_name} = [[self.utils deserializeEnum:reader] intValue];
+#elseif ($TypeConverter.isAvroBoolean($field_schema))
+    self.${field_name} = [[self.utils deserializeBoolean:reader] boolValue];
+#elseif ($TypeConverter.isAvroInt($field_schema))
+    self.${field_name} = [[self.utils deserializeInt:reader] intValue];
+#elseif ($TypeConverter.isAvroLong($field_schema))
+    self.${field_name} = [[self.utils deserializeLong:reader] longLongValue];
+#elseif ($TypeConverter.isAvroFloat($field_schema))
+    self.${field_name} = [[self.utils deserializeFloat:reader] floatValue];
+#elseif ($TypeConverter.isAvroDouble($field_schema))
+    self.${field_name} = [[self.utils deserializeDouble:reader] doubleValue];
+
+#elseif ($TypeConverter.isAvroArray($field_schema))
+#set ($array_element_schema = $field_schema.getElementType())
+    #if ($TypeConverter.isAvroRecord($array_element_schema))
+    #set ($record_element_name = $array_element_schema.getName())
+        Class recClass = [$namespacePrefix${record_element_name} class];
+        self.${field_name} = [self.utils deserializeArray:reader withSelector:@selector(deserializeRecord:as:) andParam:recClass target:nil];
+    #elseif ($TypeConverter.isAvroUnion($array_element_schema))
+    #set ($union_element_name = $StyleUtils.fixCamelHumps($field_name))
+        self.${field_name} = [self deserialize${union_element_name}:reader];
+    #elseif ($TypeConverter.isAvroBytes($array_element_schema))
+        self.${field_name} = [self.utils deserializeArray:reader withSelector:@selector(deserializeBytes:) andParam:nil target:nil];
+    #elseif ($TypeConverter.isAvroFixed($array_element_schema))
+        NSNumber *size = @($field_schema.getFixedSize());
+        self.${field_name} = [self.utils deserializeArray:reader withSelector:@selector(deserializeFixed:size:) andParam:size target:nil];
+    #elseif ($TypeConverter.isAvroString($array_element_schema))
+        self.${field_name} = [self.utils deserializeArray:reader withSelector:@selector(deserializeString:) andParam:nil target:nil];
+    #elseif ($TypeConverter.isAvroEnum($field_schema))
+        self.${field_name} = [self.utils deserializeArray:reader withSelector:@selector(deserializeEnum:) andParam:nil target:nil];
+    #elseif ($TypeConverter.isAvroBoolean($field_schema))
+        self.${field_name} = [self.utils deserializeArray:reader withSelector:@selector(deserializeBoolean:) andParam:nil target:nil];
+    #elseif ($TypeConverter.isAvroInt($field_schema))
+        self.${field_name} = [self.utils deserializeArray:reader withSelector:@selector(deserializeInt:) andParam:nil target:nil];
+    #elseif ($TypeConverter.isAvroLong($field_schema))
+        self.${field_name} = [self.utils deserializeArray:reader withSelector:@selector(deserializeLong:) andParam:nil target:nil];
+    #elseif ($TypeConverter.isAvroFloat($field_schema))
+        self.${field_name} = [self.utils deserializeArray:reader withSelector:@selector(deserializeFloat:) andParam:nil target:nil];
+    #elseif ($TypeConverter.isAvroDouble($field_schema))
+        self.${field_name} = [self.utils deserializeArray:reader withSelector:@selector(deserializeDouble:) andParam:nil target:nil];
+    #end
+#end
+#end
+#if ($schema.getFields().size() == 0)
+    #pragma unused(reader)
+#end
+}
+
+## Generating serialize/deserialize/getSize methods for Unions
+
+#if ($schema.getFields().size() > 0)
+#foreach ($field in $schema.getFields())
+#if ($TypeConverter.isAvroUnion($field.schema()))
+#set ($field_name = $StyleUtils.fixCamelHumps($field.name()))
+#set ($UNION_NAME = $TypeConverter.generateUnionName("KAA", $field.schema()))
+#set ($union_name = $UNION_NAME.toLowerCase())
+###if ($generationContext.isTypeOut())
+- (void)serialize${field_name}:(KAAUnion *)kaaUnion to:(avro_writer_t)writer {
+
+    if (kaaUnion) {
+        avro_binary_encoding.write_long(writer, kaaUnion.branch);
+
+        switch (kaaUnion.branch) {
+#set ($branch_number = 0)
+#foreach ($branch_schema in $field.schema().getTypes())
+#if (!$TypeConverter.isAvroNull($branch_schema) && !($TypeConverter.isAvroRecord($branch_schema) && $branch_schema.getFields().size() == 0))
+        case ${UNION_NAME}_BRANCH_${branch_number}:
+        {
+            if (kaaUnion.data) {
+#if ($TypeConverter.isAvroRecord($branch_schema))
+                [self.utils serializeRecord:kaaUnion.data to:writer];
+#elseif ($TypeConverter.isAvroUnion($branch_schema))
+                [self serialize${field_name}:kaaUnion.data to:writer];
+#elseif ($TypeConverter.isAvroBytes($branch_schema))
+                [self.utils serializeBytes:kaaUnion.data to:writer];
+#elseif ($TypeConverter.isAvroFixed($branch_schema))
+                [self.utils serializeFixed:kaaUnion.data to:writer];
+#elseif ($TypeConverter.isAvroString($branch_schema))
+                [self.utils serializeString:kaaUnion.data to:writer];
+#elseif ($TypeConverter.isAvroBoolean($branch_schema))
+                [self.utils serializeBoolean:kaaUnion.data to:writer];
+#elseif ($TypeConverter.isAvroInt($branch_schema))
+                [self.utils serializeInt:kaaUnion.data to:writer];
+#elseif ($TypeConverter.isAvroLong($branch_schema))
+                [self.utils serializeLong:kaaUnion.data to:writer];
+#elseif ($TypeConverter.isAvroEnum($branch_schema))
+                [self.utils serializeEnum:kaaUnion.data to:writer];
+#elseif ($TypeConverter.isAvroFloat($branch_schema))
+                [self.utils serializeFloat:kaaUnion.data to:writer];
+#elseif ($TypeConverter.isAvroDouble($branch_schema))
+                [self.utils serializeDouble:kaaUnion.data to:writer];
+#elseif ($TypeConverter.isAvroArray($branch_schema))
+#set ($array_element_schema = $branch_schema.getElementType())
+    #if ($TypeConverter.isAvroRecord($array_element_schema))
+        #if ($array_element_schema.getFields().size() > 0)
+                [self.utils serializeArray:kaaUnion.data to:writer withSelector:@selector(serializeRecord:to:) target:nil];
+        #end
+    #elseif ($TypeConverter.isAvroUnion($array_element_schema))
+                [self.utils serializeArray:kaaUnion.data to:writer withSelector:@selector(serialize${field_name}:to:) target:self];
+    #elseif ($TypeConverter.isAvroBytes($array_element_schema))
+                [self.utils serializeArray:kaaUnion.data to:writer withSelector:@selector(serializeBytes:to:) target:nil];
+    #elseif ($TypeConverter.isAvroFixed($array_element_schema))
+                [self.utils serializeArray:kaaUnion.data to:writer withSelector:@selector(serializeFixed:to:) target:nil];
+    #elseif ($TypeConverter.isAvroString($array_element_schema))
+                [self.utils serializeArray:kaaUnion.data to:writer withSelector:@selector(serializeString:to:) target:nil];
+    #elseif ($TypeConverter.isAvroBoolean($array_element_schema))
+                [self.utils serializeArray:kaaUnion.data to:writer withSelector:@selector(serializeBoolean:to:) target:nil];
+    #elseif ($TypeConverter.isAvroInt($array_element_schema))
+                [self.utils serializeArray:kaaUnion.data to:writer withSelector:@selector(serializeInt:to:) target:nil];
+    #elseif ($TypeConverter.isAvroLong($array_element_schema))
+                [self.utils serializeArray:kaaUnion.data to:writer withSelector:@selector(serializeLong:to:) target:nil];
+    #elseif ($TypeConverter.isAvroEnum($array_element_schema))
+                [self.utils serializeArray:kaaUnion.data to:writer withSelector:@selector(serializeEnum:to:) target:nil];
+    #elseif ($TypeConverter.isAvroFloat($array_element_schema))
+                [self.utils serializeArray:kaaUnion.data to:writer withSelector:@selector(serializeFloat:to:) target:nil];
+    #elseif ($TypeConverter.isAvroDouble($array_element_schema))
+                [self.utils serializeArray:kaaUnion.data to:writer withSelector:@selector(serializeDouble:to:) target:nil];
+    #end
+#end
+            }
+            break;
+        }
+#end
+#set ($branch_number = $branch_number + 1)
+#end
+        default:
+            break;
+        }
+    }
+}
+###end
+
+- (size_t)get${field_name}Size:(KAAUnion *)kaaUnion {
+    size_t unionSize = [self.utils getLongSize:@(kaaUnion.branch)];
+    if (kaaUnion) {
+        switch (kaaUnion.branch) {
+#set ($branch_number = 0)
+#foreach ($branch_schema in $field.schema().getTypes())
+#if (!$TypeConverter.isAvroNull($branch_schema) && !($TypeConverter.isAvroRecord($branch_schema) && $branch_schema.getFields().size() == 0))
+        case ${UNION_NAME}_BRANCH_${branch_number}:
+        {
+            if (kaaUnion.data) {
+#if ($TypeConverter.isAvroRecord($branch_schema))
+                unionSize += [((id<Avro>)kaaUnion.data) getSize];
+#elseif ($TypeConverter.isAvroUnion($branch_schema))
+                unionSize += [self get${field_name}:kaaUnion.data];
+#elseif ($TypeConverter.isAvroBytes($branch_schema))
+                unionSize += [self.utils getBytesSize:kaaUnion.data];
+#elseif ($TypeConverter.isAvroFixed($branch_schema))
+                unionSize += [self.utils getFixedSize:kaaUnion.data];
+#elseif ($TypeConverter.isAvroString($branch_schema))
+                unionSize += [self.utils getStringSize:kaaUnion.data];
+#elseif ($TypeConverter.isAvroBoolean($branch_schema))
+                unionSize += [self.utils getBooleanSize:kaaUnion.data];
+#elseif ($TypeConverter.isAvroInt($branch_schema))
+                unionSize += [self.utils getIntSize:kaaUnion.data];
+#elseif ($TypeConverter.isAvroLong($branch_schema))
+                unionSize += [self.utils getLongSize:kaaUnion.data];
+#elseif ($TypeConverter.isAvroEnum($branch_schema))
+                unionSize += [self.utils getEnumSize:kaaUnion.data];
+#elseif ($TypeConverter.isAvroFloat($branch_schema))
+                unionSize += [self.utils getFloatSize];
+#elseif ($TypeConverter.isAvroDouble($branch_schema))
+                unionSize += [self.utils getDoubleSize];
+#elseif ($TypeConverter.isAvroArray($branch_schema))
+#set ($array_element_schema = $branch_schema.getElementType())
+    #if ($TypeConverter.isAvroRecord($array_element_schema))
+        #if ($array_element_schema.getFields().size() > 0)
+                unionSize += [self.utils getArraySize:kaaUnion.data withSelector:@selector(getSize) parameterized:NO target:nil];
+        #end
+    #elseif ($TypeConverter.isAvroUnion($array_element_schema))
+                unionSize += [self.utils getArraySize:kaaUnion.data withSelector:@selector(get${field_name}Size:) parameterized:YES target:self];
+    #elseif ($TypeConverter.isAvroBytes($array_element_schema))
+                unionSize += [self.utils getArraySize:kaaUnion.data withSelector:@selector(getBytesSize:) parameterized:YES target:self.utils];
+    #elseif ($TypeConverter.isAvroFixed($array_element_schema))
+                unionSize += [self.utils getArraySize:kaaUnion.data withSelector:@selector(getFixedSize:) parameterized:YES target:self.utils];
+    #elseif ($TypeConverter.isAvroString($array_element_schema))
+                unionSize += [self.utils getArraySize:kaaUnion.data withSelector:@selector(getStringSize:) parameterized:YES target:self.utils];
+    #elseif ($TypeConverter.isAvroBoolean($array_element_schema))
+                unionSize += [self.utils getArraySize:kaaUnion.data withSelector:@selector(getBooleanSize:) parameterized:YES target:self.utils];
+    #elseif ($TypeConverter.isAvroInt($array_element_schema))
+                unionSize += [self.utils getArraySize:kaaUnion.data withSelector:@selector(getIntSize:) parameterized:YES target:self.utils];
+    #elseif ($TypeConverter.isAvroLong($array_element_schema))
+                unionSize += [self.utils getArraySize:kaaUnion.data withSelector:@selector(getLongSize:) parameterized:YES target:self.utils];
+    #elseif ($TypeConverter.isAvroEnum($array_element_schema))
+                unionSize += [self.utils getArraySize:kaaUnion.data withSelector:@selector(getEnumSize:) parameterized:YES target:self.utils];
+    #elseif ($TypeConverter.isAvroFloat($array_element_schema))
+                unionSize += [self.utils getArraySize:kaaUnion.data withSelector:@selector(getFloatSize) parameterized:NO target:self.utils];
+    #elseif ($TypeConverter.isAvroDouble($array_element_schema))
+                unionSize += [self.utils getArraySize:kaaUnion.data withSelector:@selector(getDoubleSize) parameterized:NO target:self.utils];
+    #end
+#end
+            }
+            break;
+        }
+#end
+#set ($branch_number = $branch_number + 1)
+#end
+        default:
+            break;
+        }
+    }
+    return unionSize;
+}
+
+###if ($generationContext.isTypeIn())
+- (KAAUnion *)deserialize${field_name}:(avro_reader_t)reader {
+
+    KAAUnion *kaaUnion = [[KAAUnion alloc] init];
+
+        int64_t branch;
+        avro_binary_encoding.read_long(reader, &branch);
+        kaaUnion.branch = (int)branch;
+
+        switch (kaaUnion.branch) {
+#set ($branch_number = 0)
+#foreach ($branch_schema in $field.schema().getTypes())
+#if (!$TypeConverter.isAvroNull($branch_schema))
+        case ${UNION_NAME}_BRANCH_${branch_number}: {
+#if ($TypeConverter.isAvroRecord($branch_schema))
+#set ($sub_record_name = $branch_schema.getName())
+            kaaUnion.data = [self.utils deserializeRecord:reader as:[$namespacePrefix${sub_record_name} class]];
+#elseif ($TypeConverter.isAvroUnion($branch_schema))
+            kaaUnion.data = [self deserialize${field_name}:reader];
+#elseif ($TypeConverter.isAvroBytes($branch_schema))
+            kaaUnion.data = [self.utils deserializeBytes:reader];
+#elseif ($TypeConverter.isAvroFixed($branch_schema))
+            NSNumber *size = @($branch_schema.getFixedSize());
+            kaaUnion.data = [self.utils deserializeFixed:reader size:size];
+#elseif ($TypeConverter.isAvroString($branch_schema))
+            kaaUnion.data = [self.utils deserializeString:reader];
+#elseif ($TypeConverter.isAvroEnum($branch_schema))
+            kaaUnion.data = [self.utils deserializeEnum:reader];
+#elseif ($TypeConverter.isAvroBoolean($branch_schema))
+            kaaUnion.data = [self.utils deserializeBoolean:reader];
+#elseif ($TypeConverter.isAvroInt($branch_schema))
+            kaaUnion.data = [self.utils deserializeInt:reader];
+#elseif ($TypeConverter.isAvroLong($branch_schema))
+            kaaUnion.data = [self.utils deserializeLong:reader];
+#elseif ($TypeConverter.isAvroFloat($branch_schema))
+            kaaUnion.data = [self.utils deserializeFloat:reader];
+#elseif ($TypeConverter.isAvroDouble($branch_schema))
+            kaaUnion.data = [self.utils deserializeDouble:reader];
+#elseif ($TypeConverter.isAvroArray($branch_schema))
+#set ($array_element_schema = $branch_schema.getElementType())
+    #if ($TypeConverter.isAvroRecord($array_element_schema))
+    #set ($record_element_name = $array_element_schema.getName())
+            Class dataClass = [$namespacePrefix${record_element_name} class];
+            kaaUnion.data = [self.utils deserializeArray:reader withSelector:@selector(deserializeRecord:as:) andParam:dataClass target:nil];
+    #elseif ($TypeConverter.isAvroUnion($array_element_schema))
+            kaaUnion.data = [self.utils deserializeArray:reader withSelector:@selector(deserialize${field_name}:) andParam:nil target:self];
+    #elseif ($TypeConverter.isAvroBytes($array_element_schema))
+            kaaUnion.data = [self.utils deserializeArray:reader withSelector:@selector(deserializeBytes:) andParam:nil target:nil];
+    #elseif ($TypeConverter.isAvroFixed($array_element_schema))
+            NSNumber *size = @($branch_schema.getFixedSize());
+            kaaUnion.data = [self.utils deserializeArray:reader withSelector:@selector(deserializeFixed:size:) andParam:size target:nil];
+    #elseif ($TypeConverter.isAvroString($array_element_schema))
+            kaaUnion.data = [self.utils deserializeArray:reader withSelector:@selector(deserializeString:) andParam:nil target:nil];
+    #elseif ($TypeConverter.isAvroEnum($array_element_schema))
+            kaaUnion.data = [self.utils deserializeArray:reader withSelector:@selector(deserializeEnum:) andParam:nil target:nil];
+    #elseif ($TypeConverter.isAvroBoolean($array_element_schema))
+            kaaUnion.data = [self.utils deserializeArray:reader withSelector:@selector(deserializeBoolean:) andParam:nil target:nil];
+    #elseif ($TypeConverter.isAvroInt($array_element_schema))
+            kaaUnion.data = [self.utils deserializeArray:reader withSelector:@selector(deserializeInt:) andParam:nil target:nil];
+    #elseif ($TypeConverter.isAvroLong($array_element_schema))
+            kaaUnion.data = [self.utils deserializeArray:reader withSelector:@selector(deserializeLong:) andParam:nil target:nil];
+    #elseif ($TypeConverter.isAvroFloat($array_element_schema))
+            kaaUnion.data = [self.utils deserializeArray:reader withSelector:@selector(deserializeFloat:) andParam:nil target:nil];
+    #elseif ($TypeConverter.isAvroDouble($array_element_schema))
+            kaaUnion.data = [self.utils deserializeArray:reader withSelector:@selector(deserializeDouble:) andParam:nil target:nil];
+    #end
+#end
+            break;
+        }
+#end
+#set ($branch_number = $branch_number + 1)
+#end
+        default:
+            break;
+        }
+
+    return kaaUnion;
+}
+###end
+
+#end
+#end
+#end
+@end
+###end

@@ -1,17 +1,17 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 #include <boost/test/unit_test.hpp>
@@ -24,6 +24,9 @@
 #include "kaa/common/exception/BadCredentials.hpp"
 #include "kaa/event/registration/EndpointRegistrationManager.hpp"
 #include "kaa/context/SimpleExecutorContext.hpp"
+#include "kaa/KaaClientContext.hpp"
+#include "kaa/KaaClientProperties.hpp"
+#include "kaa/logging/DefaultLogger.hpp"
 
 #include "headers/MockKaaClientStateStorage.hpp"
 #include "headers/channel/MockChannelManager.hpp"
@@ -40,13 +43,17 @@ static void testSleep(std::size_t seconds)
     std::this_thread::sleep_for(std::chrono::seconds(seconds));
 }
 
+static KaaClientProperties tmp_properties;
+static DefaultLogger tmp_logger(tmp_properties.getClientId());
+
 BOOST_AUTO_TEST_SUITE(EndpointRegistrationSuite)
 
 BOOST_AUTO_TEST_CASE(EmptyUserSyncRequestTest)
 {
     IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
     MockExecutorContext context;
-    EndpointRegistrationManager registrationManager(status, context);
+    KaaClientContext clientContext(tmp_properties, tmp_logger, context, status);
+    EndpointRegistrationManager registrationManager(clientContext);
 
     registrationManager.getUserAttachRequest();
 
@@ -59,7 +66,9 @@ BOOST_AUTO_TEST_CASE(BadUserCredentialsTest)
 {
     IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
     MockExecutorContext context;
-    EndpointRegistrationManager registrationManager(status, context);
+    KaaClientContext clientContext(tmp_properties, tmp_logger, context, status);
+
+    EndpointRegistrationManager registrationManager(clientContext);
 
     std::string userExternalId = "userExternalId";
     std::string userAccessToken = "userAccessToken";
@@ -81,10 +90,11 @@ BOOST_AUTO_TEST_CASE(UserAttachRequestTest)
 {
     IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
     MockExecutorContext context;
-    EndpointRegistrationManager registrationManager(status, context);
+    KaaClientContext clientContext(tmp_properties, tmp_logger, context, status);
+    EndpointRegistrationManager registrationManager(clientContext);
 
     MockChannelManager channelManager;
-    UserTransport userTransport(registrationManager, channelManager);
+    UserTransport userTransport(registrationManager, channelManager, clientContext);
     registrationManager.setTransport(&userTransport);
 
     std::shared_ptr<MockUserAttachCallback> resultListener(new MockUserAttachCallback);
@@ -121,10 +131,11 @@ BOOST_AUTO_TEST_CASE(UserAttachResponseTest)
     IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
     SimpleExecutorContext context;
     context.init();
-    EndpointRegistrationManager registrationManager(status, context);
+    KaaClientContext clientContext(tmp_properties, tmp_logger, context, status);
+    EndpointRegistrationManager registrationManager(clientContext);
 
     MockChannelManager channelManager;
-    UserTransport userTransport(registrationManager, channelManager);
+    UserTransport userTransport(registrationManager, channelManager, clientContext);
     registrationManager.setTransport(&userTransport);
 
     std::shared_ptr<PersistUserAttachCallback> userAttachCallback(new PersistUserAttachCallback);
@@ -201,10 +212,11 @@ BOOST_AUTO_TEST_CASE(AttachStatusUpdatedTest)
     IKaaClientStateStoragePtr status(new PersistAttachStatusStorage);
     SimpleExecutorContext context;
     context.init();
-    EndpointRegistrationManager registrationManager(status, context);
+    KaaClientContext clientContext(tmp_properties, tmp_logger, context, status);
+    EndpointRegistrationManager registrationManager(clientContext);
 
     MockChannelManager channelManager;
-    UserTransport userTransport(registrationManager, channelManager);
+    UserTransport userTransport(registrationManager, channelManager, clientContext);
     registrationManager.setTransport(&userTransport);
 
     std::shared_ptr<PersistAttachStatusListener> attachStatusListener(new PersistAttachStatusListener);
@@ -241,10 +253,11 @@ BOOST_AUTO_TEST_CASE(BadCredentialsOfAttachEndpointTest)
 {
     IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
     MockExecutorContext context;
-    EndpointRegistrationManager registrationManager(status, context);
+    KaaClientContext clientContext(tmp_properties, tmp_logger, context, status);
+    EndpointRegistrationManager registrationManager(clientContext);
 
     MockChannelManager channelManager;
-    UserTransport userTransport(registrationManager, channelManager);
+    UserTransport userTransport(registrationManager, channelManager, clientContext);
     registrationManager.setTransport(&userTransport);
 
     BOOST_CHECK_THROW(registrationManager.attachEndpoint(""), BadCredentials);
@@ -297,10 +310,11 @@ BOOST_AUTO_TEST_CASE(AttachAnotherEndpointTest)
     IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
     SimpleExecutorContext context;
     context.init();
-    EndpointRegistrationManager registrationManager(status, context);
+    KaaClientContext clientContext(tmp_properties, tmp_logger, context, status);
+    EndpointRegistrationManager registrationManager(clientContext);
 
     MockChannelManager channelManager;
-    UserTransport userTransport(registrationManager, channelManager);
+    UserTransport userTransport(registrationManager, channelManager, clientContext);
     registrationManager.setTransport(&userTransport);
 
     BOOST_CHECK(registrationManager.getEndpointsToAttach().empty());
@@ -349,10 +363,11 @@ BOOST_AUTO_TEST_CASE(BadCredentialsOfDetachEndpointTest)
 {
     IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
     MockExecutorContext context;
-    EndpointRegistrationManager registrationManager(status, context);
+    KaaClientContext clientContext(tmp_properties, tmp_logger, context, status);
+    EndpointRegistrationManager registrationManager(clientContext);
 
     MockChannelManager channelManager;
-    UserTransport userTransport(registrationManager, channelManager);
+    UserTransport userTransport(registrationManager, channelManager, clientContext);
     registrationManager.setTransport(&userTransport);
 
     BOOST_CHECK_THROW(registrationManager.detachEndpoint(""), BadCredentials);
@@ -373,10 +388,11 @@ BOOST_AUTO_TEST_CASE(DetachAnotherEndpointTest)
     IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
     SimpleExecutorContext context;
     context.init();
-    EndpointRegistrationManager registrationManager(status, context);
+    KaaClientContext clientContext(tmp_properties, tmp_logger, context, status);
+    EndpointRegistrationManager registrationManager(clientContext);
 
     MockChannelManager channelManager;
-    UserTransport userTransport(registrationManager, channelManager);
+    UserTransport userTransport(registrationManager, channelManager, clientContext);
     registrationManager.setTransport(&userTransport);
 
     BOOST_CHECK(registrationManager.getEndpointsToAttach().empty());

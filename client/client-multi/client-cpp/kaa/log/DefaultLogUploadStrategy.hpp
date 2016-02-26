@@ -1,17 +1,17 @@
-/*
- * Copyright 2014-2015 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 #ifndef DEFAULTLOGUPLOADSTRATEGY_HPP_
@@ -22,6 +22,7 @@
 
 #include "kaa/log/ILogUploadStrategy.hpp"
 #include "kaa/channel/IKaaChannelManager.hpp"
+#include "kaa/IKaaClientContext.hpp"
 
 namespace kaa {
 
@@ -51,16 +52,12 @@ namespace kaa {
  */
 class DefaultLogUploadStrategy: public ILogUploadStrategy {
 public:
+    DefaultLogUploadStrategy(IKaaClientContext &context): context_(context) {}
+
     virtual LogUploadStrategyDecision isUploadNeeded(ILogStorageStatus& status);
 
     virtual void onTimeout(ILogFailoverCommand& controller);
     virtual void onFailure(ILogFailoverCommand& controller, LogDeliveryErrorCode code);
-
-    virtual std::size_t getBatchSize() { return batchSize_; }
-    void setBatchSize(std::size_t size) { batchSize_ = size; }
-
-    virtual std::size_t getRecordsBatchCount() { return recordsBatchCount_; }
-    void setRecordsBatchCount(std::size_t count)  { recordsBatchCount_ = count; }
 
     virtual std::size_t getTimeout() { return uploadTimeout_; }
     void setUploadTimeout(std::size_t timeout) { uploadTimeout_ = timeout; }
@@ -84,12 +81,6 @@ public:
     void setCountThreshold(std::size_t maxCount) { uploadCountThreshold_ = maxCount; }
 
 public:
-    static const std::size_t DEFAULT_BATCH_SIZE = 8 * 1024; /*!< The default value (in bytes) for the maximum size of
-                                                                 the report pack that will be delivered in a single
-                                                                 request to the Operaions server. */
-
-    static const std::size_t DEFAULT_RECORDS_BATCH_COUNT = 256;
-
     static const std::size_t DEFAULT_UPLOAD_TIMEOUT = 2 * 60; /*!< The default value (in seconds) for time to wait
                                                                    the log delivery response. */
 
@@ -110,10 +101,6 @@ public:
                                                                              allowed to be uploaded parallel. */
 
 protected:
-    std::size_t batchSize_ = DEFAULT_BATCH_SIZE;
-
-    std::size_t recordsBatchCount_ = DEFAULT_RECORDS_BATCH_COUNT;
-
     std::size_t uploadTimeout_ = DEFAULT_UPLOAD_TIMEOUT;
     std::size_t retryReriod_ = DEFAULT_RETRY_PERIOD;
 
@@ -125,6 +112,8 @@ protected:
     std::size_t uploadCountThreshold_ = DEFAULT_UPLOAD_COUNT_THRESHOLD;
 
     std::size_t maxParallelUploads_ = DEFAULT_MAX_PARALLEL_UPLOADS;
+
+    IKaaClientContext &context_;
 
 private:
     typedef std::chrono::system_clock Clock;

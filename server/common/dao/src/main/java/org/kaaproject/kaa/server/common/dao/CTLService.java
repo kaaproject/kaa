@@ -1,27 +1,27 @@
-/*
- * Copyright 2015 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.server.common.dao;
+
+import java.util.List;
 
 import org.apache.avro.Schema;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.file.FileData;
-
-import java.util.List;
 
 /**
  * Common type library service.
@@ -48,9 +48,29 @@ public interface CTLService {
      * @return CTLSchemaDto the updated object.
      */
     CTLSchemaDto updateCTLSchema(CTLSchemaDto ctlSchema);
+    
+    /**
+     * Update existing CTL schema meta info scope by the given CTL schema meta info object.
+     *
+     * @param ctlSchemaMetaInfo
+     *            the CTL schema meta info object.
+     * @return CTLSchemaMetaInfoDto the updated CTL schema meta info object.
+     */
+    CTLSchemaMetaInfoDto updateCTLSchemaMetaInfoScope(CTLSchemaMetaInfoDto ctlSchemaMetaInfo);
 
     /**
-     * Remove a CTL schema of the given tenant with the given fully qualified
+     * Find CTL schema meta infos which are the application level siblings to the CTL 
+     * of the given fully qualified name, tenant and application identifiers.
+     *
+     * @param fqn     the fully qualified.
+     * @param tenantId the tenant identifier.
+     * @param applicationId the application identifier.
+     * @return the CTL schema meta information objects which are the siblings to the given CTL.
+     */
+    List<CTLSchemaMetaInfoDto> findSiblingsByFqnTenantIdAndApplicationId(String fqn, String tenantId, String applicationId);
+    
+    /**
+     * Remove a CTL schema of the given tenant or application with the given fully qualified
      * name and version number.
      *
      * @param fqn
@@ -59,8 +79,10 @@ public interface CTLService {
      *            the schema version.
      * @param tenantId
      *            the tenant identifier.
+     * @param applicationId
+     *            the application identifier.
      */
-    void removeCTLSchemaByFqnAndVerAndTenantId(String fqn, Integer version, String tenantId);
+    void removeCTLSchemaByFqnAndVerAndTenantIdAndApplicationId(String fqn, Integer version, String tenantId, String applicationId);
 
     /**
      * Find a CTL schema with the given identifier.
@@ -81,15 +103,16 @@ public interface CTLService {
     CTLSchemaDto saveCTLSchema(CTLSchemaDto ctlSchemaDto);
 
     /**
-     * Remove a CTL schema with the given identifier.
+     * Find CTL schema with the given meta info id and version.
      *
-     * @param schemaId
-     *            the CTL schema identifier.
-     */
-    void removeCTLSchemaById(String schemaId);
-
+     * @param metaInfoId the id of meta info object.
+     * @param version    the schema version.
+     * @return the CTL schema with the given meta info id and version.
+     */    
+    CTLSchemaDto findByMetaInfoIdAndVer(String metaInfoId, Integer version);
+    
     /**
-     * Find a CTL schema of the given tenant with the given fully qualified name
+     * Find a CTL schema of the given tenant or application with the given fully qualified name
      * and version number.
      *
      * @param fqn
@@ -98,35 +121,103 @@ public interface CTLService {
      *            the CTL schema version.
      * @param tenantId
      *            the tenant identifier.
+     * @param applicationId
+     *            the application identifier.
      * @return the CTL schema with the given fully qualified name and version
      *         number.
      */
-    CTLSchemaDto findCTLSchemaByFqnAndVerAndTenantId(String fqn, Integer version, String tenantId);
+    CTLSchemaDto findCTLSchemaByFqnAndVerAndTenantIdAndApplicationId(String fqn, Integer version, String tenantId, String applicationId);
 
+    /**
+     * Find any CTL schema of the given tenant or application with the given fully qualified name
+     * and version number.
+     *
+     * @param fqn
+     *            the fully qualified name.
+     * @param version
+     *            the CTL schema version.
+     * @param tenantId
+     *            the tenant identifier.
+     * @param applicationId
+     *            the application identifier.
+     * @return the any CTL schema with the given fully qualified name and version
+     *         number.
+     */
+    CTLSchemaDto findAnyCTLSchemaByFqnAndVerAndTenantIdAndApplicationId(String fqn, Integer version, String tenantId, String applicationId);
+    
     /**
      * Find system CTL schemas available in the database.
      *
      * @return the list of available system CTL schemas in the database.
      */
     List<CTLSchemaDto> findSystemCTLSchemas();
-
+    
     /**
-     * Find system meta information of CTL schemas available in the database.
+     * Find system CTL schemas meta info available in the database.
      *
-     * @return the list of available system CTL meta information in the
-     *         database.
+     * @return the list of available system CTL schemas meta info in the database.
      */
     List<CTLSchemaMetaInfoDto> findSystemCTLSchemasMetaInfo();
+    
+    /**
+     * Find available CTL schemas meta info for tenant(include
+     * system scope) with the given tenant identifier.
+     *
+     * @param tenantId
+     *            the tenant identifier.
+     * @return the list of available CTL schemas meta info for tenant
+     *         with given identifier.
+     */
+    List<CTLSchemaMetaInfoDto> findAvailableCTLSchemasMetaInfoForTenant(String tenantId);
+    
+    /**
+     * Find available CTL schemas meta info for application(include
+     * system and tenant scope) with the given tenant and application identifier.
+     *
+     * @param tenantId
+     *            the tenant identifier.
+     * @param applicationId
+     *            the application identifier.
+     * @return the list of available CTL schemas meta info for application
+     *         with given identifier.
+     */
+    List<CTLSchemaMetaInfoDto> findAvailableCTLSchemasMetaInfoForApplication(String tenantId, String applicationId);
 
     /**
-     * Find the last version of CTL schema with the given fully qualified name.
+     * Find the last version of CTL schema with the given fully qualified name, tenant and application identifier.
      *
      * @param fqn
      *            the fully qualified name.
+     * @param tenantId
+     *            the tenant identifier.
+     * @param applicationId
+     *            the application identifier.
      * @return the latest version of CTL schema with the given fully qualified
-     *         name.
+     *         name, tenant and application identifier.
      */
-    CTLSchemaDto findLatestCTLSchemaByFqn(String fqn);
+    CTLSchemaDto findLatestCTLSchemaByFqnAndTenantIdAndApplicationId(String fqn, String tenantId, String applicationId);
+    
+    /**
+     * Find the last version of CTL schema with the given meta info id.
+     *
+     * @param metaInfoId the id of meta info object.
+     * @return the latest version of  CTL schema with the given meta info id.
+     */    
+    CTLSchemaDto findLatestByMetaInfoId(String metaInfoId);
+    
+    /**
+     * Find all available versions of CTL schema with the given fully qualified name, tenant and application identifier.
+     *
+     * @param fqn
+     *            the fully qualified name.
+     * @param tenantId
+     *            the tenant identifier.
+     * @param applicationId
+     *            the application identifier.
+     * @return the list of available versions of CTL schema with the given fully qualified
+     *         name, tenant and application identifier.
+     */
+    List<CTLSchemaDto> findAllCTLSchemasByFqnAndTenantIdAndApplicationId(String fqn, String tenantId, String applicationId);
 
     /**
      * Find CTL schemas available in the database.
@@ -134,39 +225,7 @@ public interface CTLService {
      * @return the list of available CTL schemas in the database.
      */
     List<CTLSchemaDto> findCTLSchemas();
-
-    /**
-     * Find meta information of CTL schemas with the given application
-     * identifier.
-     *
-     * @param appId
-     *            the application identifier.
-     * @return the list of meta information of CTL schemas with application
-     *         identifier.
-     */
-    List<CTLSchemaMetaInfoDto> findCTLSchemasMetaInfoByApplicationId(String appId);
-    
-    /**
-     * Find meta information of CTL schemas with the given tenant identifier with tenant scope.
-     *
-     * @param tenantId
-     *            the tenant identifier.
-     * @return the list of meta information of CTL schemas with tenant
-     *         identifier.
-     */
-    List<CTLSchemaMetaInfoDto> findTenantCTLSchemasMetaInfoByTenantId(String tenantId);
-    
-    /**
-     * Find available CTL schemas meta information schemas for tenant(include
-     * system scope) with the given tenant identifier.
-     *
-     * @param tenantId
-     *            the tenant identifier.
-     * @return the list of available meta information of CTL schemas for tenant
-     *         with given identifier.
-     */
-    List<CTLSchemaMetaInfoDto> findAvailableCTLSchemasMetaInfo(String tenantId);
-    
+        
     /**
      * Find the dependents CTL schemas from CTL schema with the given schema
      * identifier
@@ -179,8 +238,8 @@ public interface CTLService {
     List<CTLSchemaDto> findCTLSchemaDependents(String schemaId);
 
     /**
-     * Find the dependents CTL schemas from CTL schema with the given tenant,
-     * given fully qualified name and version number.
+     * Find the dependents CTL schemas from CTL schema with the given tenant, application, 
+     * fully qualified name and version number.
      *
      * @param fqn
      *            the fully qualified name.
@@ -188,10 +247,12 @@ public interface CTLService {
      *            the schema version.
      * @param tenantId
      *            the tenant identifier.
+     * @param applicationId
+     *            the application identifier.
      * @return the list of dependents CTL schemas from CTL schema with the given
-     *         tenant identifier, fully qualified name and version.
+     *         tenant, application, fully qualified name and version.
      */
-    List<CTLSchemaDto> findCTLSchemaDependents(String fqn, Integer version, String tenantId);
+    List<CTLSchemaDto> findCTLSchemaDependents(String fqn, Integer version, String tenantId, String applicationId);
 
     /**
      * Exports the body of a CTL schema.

@@ -1,0 +1,53 @@
+<!--
+
+     Copyright 2014-2016 CyberVision, Inc.
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+
+-->
+
+<html>
+<body>
+
+<h2>Quick start</h2>
+<h3>Building Kaa Objective-C SDK</h3>
+<p>Before compiling, ensure that all
+    <a href="http://docs.kaaproject.org/display/KAA/Third-party+components" target="_blank")>required components</a>
+    are installed.</p>
+<p>To build the Kaa Objective-C SDK, do the following:</p>
+<code>$ ./build.sh compile</code>
+
+<h3>Link Kaa library to your project</h3>
+<p>Drag and drop Kaa XCode project workspace as sub-module to your project and add libKaa.a binary to "Link Binary with Libraries" in Build Phases tab. In Build Settings tab find property called "Other Linker Flags" and set it's value to -ObjC. In Build Settings tab find property called "User Header Search Paths" and set it's value to "$(BUILT_PRODUCTS_DIR)" and switch value in right column to recursive.
+</p>
+
+<h2>Programming guide</h2>
+<p>For more information about functions supported by the Kaa Objective-C SDK, see our
+    <a href="https://docs.kaaproject.org/display/KAA/Programming+guide" target="_blank")>Programming guide:</a>
+</p>
+<ul>
+    <li><a href="https://docs.kaaproject.org/display/KAA/Collecting+endpoint+profiles" target="_blank">Collecting endpoint profiles</a></li>
+    <li><a href="https://docs.kaaproject.org/display/KAA/Messaging+across+endpoints" target="_blank">Messaging across endpoints</a></li>
+    <li><a href="https://docs.kaaproject.org/display/KAA/Using+notifications" target="_blank">Using notifications</a></li>
+    <li><a href="https://docs.kaaproject.org/display/KAA/Collecting+data+from+endpoints" target="_blank">Collecting data from endpoints</a></li>
+</ul>
+
+<h2>Demo application</h2>
+<p>To better familiarize yourself with Kaa Objective-C SDK, you may look at our demo applications.<br>
+    Find the demo source code in our 'sample-apps'
+    <a href="https://github.com/kaaproject/sample-apps" target="_blank")>repository</a>
+    on GitHub.
+</p>
+
+</body>
+</html>

@@ -1,18 +1,19 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
+
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
 import org.hibernate.annotations.OnDelete;
@@ -24,6 +25,7 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import java.io.Serializable;
 
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_APPLICATION_TOKEN;
@@ -34,7 +36,8 @@ import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_TENA
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
 
 @Entity
-@Table(name = APPLICATION_TABLE_NAME)
+@Table(name = APPLICATION_TABLE_NAME, uniqueConstraints = {
+@UniqueConstraint(columnNames = {APPLICATION_TENANT_ID, APPLICATION_NAME})})
 public class Application extends GenericModel<ApplicationDto> implements Serializable {
 
     private static final long serialVersionUID = 3402917989585810543L;
@@ -42,7 +45,7 @@ public class Application extends GenericModel<ApplicationDto> implements Seriali
     @Column(name = APPLICATION_APPLICATION_TOKEN, unique = true)
     private String applicationToken;
 
-    @Column(name = APPLICATION_NAME)
+    @Column(name = APPLICATION_NAME, nullable = false)
     private String name;
 
     @Column(name = APPLICATION_SEQUENCE_NUMBER)

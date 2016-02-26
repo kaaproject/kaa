@@ -1,17 +1,17 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.common.dto;
@@ -20,7 +20,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Date;
 
-public class NotificationDto implements Serializable, HasId {
+public class NotificationDto implements HasId, HasVersion, Serializable {
 
     private static final long serialVersionUID = -4470699717187588732L;
 
@@ -28,13 +28,14 @@ public class NotificationDto implements Serializable, HasId {
     private String applicationId;
     private String schemaId;
     private String topicId;
-    private int version;
+    private int nfVersion;
     private Date lastTimeModify;
     private NotificationTypeDto type;
     private byte[] body;
     private Date expiredAt;
     private int secNum = -1;
-
+    private Long version;
+    
     public String getId() {
         return id;
     }
@@ -67,12 +68,12 @@ public class NotificationDto implements Serializable, HasId {
         this.topicId = topicId;
     }
 
-    public int getVersion() {
-        return version;
+    public int getNfVersion() {
+        return nfVersion;
     }
 
-    public void setVersion(int version) {
-        this.version = version;
+    public void setNfVersion(int nfVersion) {
+        this.nfVersion = nfVersion;
     }
 
     public Date getLastTimeModify() {
@@ -116,6 +117,16 @@ public class NotificationDto implements Serializable, HasId {
     }
 
     @Override
+    public Long getVersion() {
+        return version;
+    }
+
+    @Override
+    public void setVersion(Long version) {
+        this.version = version;
+    }
+    
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -129,7 +140,7 @@ public class NotificationDto implements Serializable, HasId {
         if (secNum != that.secNum) {
             return false;
         }
-        if (version != that.version) {
+        if (nfVersion != that.nfVersion) {
             return false;
         }
         if (applicationId != null ? !applicationId.equals(that.applicationId) : that.applicationId != null) {
@@ -162,7 +173,7 @@ public class NotificationDto implements Serializable, HasId {
         int result = applicationId != null ? applicationId.hashCode() : 0;
         result = 31 * result + (schemaId != null ? schemaId.hashCode() : 0);
         result = 31 * result + (topicId != null ? topicId.hashCode() : 0);
-        result = 31 * result + version;
+        result = 31 * result + nfVersion;
         result = 31 * result + (lastTimeModify != null ? lastTimeModify.hashCode() : 0);
         result = 31 * result + (type != null ? type.hashCode() : 0);
         result = 31 * result + (body != null ? Arrays.hashCode(body) : 0);
@@ -178,7 +189,7 @@ public class NotificationDto implements Serializable, HasId {
                 ", applicationId='" + applicationId + '\'' +
                 ", schemaId='" + schemaId + '\'' +
                 ", topicId='" + topicId + '\'' +
-                ", version=" + version +
+                ", nfVersion=" + nfVersion +
                 ", lastTimeModify=" + lastTimeModify +
                 ", type=" + type +
                 ", body=" + Arrays.toString(body) +

@@ -1,17 +1,17 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kaaproject.kaa.server.control.service.sdk;
@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -29,6 +30,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
@@ -46,10 +48,7 @@ import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.server.common.Environment;
 import org.kaaproject.kaa.server.common.Version;
-import org.kaaproject.kaa.server.common.zk.ServerNameUtil;
 import org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo;
-import org.kaaproject.kaa.server.common.zk.gen.TransportMetaData;
-import org.kaaproject.kaa.server.common.zk.gen.VersionConnectionInfoPair;
 import org.kaaproject.kaa.server.control.service.sdk.compiler.JavaDynamicBean;
 import org.kaaproject.kaa.server.control.service.sdk.compiler.JavaDynamicCompiler;
 import org.kaaproject.kaa.server.control.service.sdk.compress.ZipEntryData;
@@ -57,14 +56,11 @@ import org.kaaproject.kaa.server.control.service.sdk.event.EventFamilyMetadata;
 import org.kaaproject.kaa.server.control.service.sdk.event.JavaEventClassesGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.helpers.MessageFormatter;
 
 /**
  * The Class JavaSdkGenerator.
  */
 public class JavaSdkGenerator extends SdkGenerator {
-
-    private static final String SEPARATOR = ":";
 
     /**
      * The Constant LOG.
@@ -79,12 +75,7 @@ public class JavaSdkGenerator extends SdkGenerator {
     /**
      * The Constant JAVA_SDK_PREFIX.
      */
-    private static final String JAVA_SDK_PREFIX = "kaa-client-sdk-";
-
-    /**
-     * The Constant JAVA_SDK_NAME_PATTERN.
-     */
-    private static final String JAVA_SDK_NAME_PATTERN = JAVA_SDK_PREFIX + "p{}-c{}-n{}-l{}.jar";
+    private static final String JAVA_SDK_PREFIX = "kaa-java-ep-sdk-";
 
     /**
      * The Constant ANDROID_SDK_DIR.
@@ -94,12 +85,7 @@ public class JavaSdkGenerator extends SdkGenerator {
     /**
      * The Constant ANDROID_SDK_PREFIX.
      */
-    private static final String ANDROID_SDK_PREFIX = "kaa-client-sdk-android-";
-
-    /**
-     * The Constant ANDROID_SDK_NAME_PATTERN.
-     */
-    private static final String ANDROID_SDK_NAME_PATTERN = ANDROID_SDK_PREFIX + "p{}-c{}-n{}-l{}.jar";
+    private static final String ANDROID_SDK_PREFIX = "kaa-android-ep-sdk-";
 
     /**
      * The Constant CLIENT_PROPERTIES.
@@ -335,6 +321,16 @@ public class JavaSdkGenerator extends SdkGenerator {
      * The Constant DEFAULT_USER_VERIFIER_TOKEN_VAR.
      */
     private static final String DEFAULT_USER_VERIFIER_TOKEN_VAR = "\\$\\{default_user_verifier_token\\}";
+    
+    /**
+     * The Constant JAVA_SOURCE_COMPILER_RELEASE.
+     */
+    private static final String JAVA_SOURCE_COMPILER_RELEASE = "7";
+    
+    /**
+     * The Constant JAVA_TARGET_COMPILER_RELEASE.
+     */
+    private static final String JAVA_TARGET_COMPILER_RELEASE = "7";
 
     /**
      * The Constant random.
@@ -364,7 +360,6 @@ public class JavaSdkGenerator extends SdkGenerator {
             throws Exception {
 
         String sdkToken = sdkProfile.getToken();
-        Integer configurationSchemaVersion = sdkProfile.getConfigurationSchemaVersion();
         Integer profileSchemaVersion = sdkProfile.getProfileSchemaVersion();
         Integer notificationSchemaVersion = sdkProfile.getNotificationSchemaVersion();
         Integer logSchemaVersion = sdkProfile.getLogSchemaVersion();
@@ -587,10 +582,8 @@ public class JavaSdkGenerator extends SdkGenerator {
 
         sdkFile.close();
 
-        String sdkFileName = MessageFormatter.arrayFormat(
-                sdkPlatform == SdkPlatform.JAVA ? JAVA_SDK_NAME_PATTERN : ANDROID_SDK_NAME_PATTERN,
-                new Object[]{profileSchemaVersion, configurationSchemaVersion, notificationSchemaVersion, logSchemaVersion})
-                .getMessage();
+        String fileNamePrefix = (sdkPlatform == SdkPlatform.JAVA ? JAVA_SDK_PREFIX : ANDROID_SDK_PREFIX);
+        String sdkFileName = fileNamePrefix + sdkProfile.getToken() + ".jar";
 
         byte[] sdkData = sdkOutput.toByteArray();
 
@@ -644,8 +637,14 @@ public class JavaSdkGenerator extends SdkGenerator {
         dynamicCompiler.init();
         for (JavaDynamicBean bean : javaSources) {
             LOG.debug("Compiling bean {} with source: {}", bean.getName(), bean.getCharContent(true));
+            Stream<String> sourceLines = Arrays.stream(bean.getCharContent(true).split("\n"));
+            String packageLine = sourceLines.filter(line -> line.startsWith("package")).findFirst().orElse("");
+            String sourceFileName = packageLine.replaceAll("package", "").replaceAll("\\.|;", "/").trim() + bean.getName();
+            data.put(sourceFileName, new ZipEntryData(new ZipEntry(sourceFileName), bean.getCharContent(true).getBytes()));
         }
-        Collection<JavaDynamicBean> compiledObjects = dynamicCompiler.compile(javaSources);
+        Collection<JavaDynamicBean> compiledObjects = dynamicCompiler.compile(javaSources, 
+                "-source", JAVA_SOURCE_COMPILER_RELEASE,
+                "-target", JAVA_TARGET_COMPILER_RELEASE);
         for (JavaDynamicBean compiledObject : compiledObjects) {
             String className = compiledObject.getName();
             String classFileName = className.replace('.', '/') + Kind.CLASS.extension;
@@ -703,41 +702,20 @@ public class JavaSdkGenerator extends SdkGenerator {
      * @return the byte[]
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    private byte[] generateClientProperties(InputStream clientPropertiesStream, List<BootstrapNodeInfo> bootstrapNodes,
-                                            String sdkToken, String configurationProtocolSchemaBody,
-                                            byte[] defaultConfigurationData)
-            throws IOException {
+    private byte[] generateClientProperties(InputStream clientPropertiesStream,
+                                            List<BootstrapNodeInfo> bootstrapNodes,
+                                            String sdkToken,
+                                            String configurationProtocolSchemaBody,
+                                            byte[] defaultConfigurationData) throws IOException {
 
         Properties clientProperties = new Properties();
         clientProperties.load(clientPropertiesStream);
 
-        String bootstrapServers = "";
-
         LOG.debug("[sdk generateClientProperties] bootstrapNodes.size(): {}", bootstrapNodes.size());
-        for (int nodeIndex = 0; nodeIndex < bootstrapNodes.size(); ++nodeIndex) {
-            BootstrapNodeInfo node = bootstrapNodes.get(nodeIndex);
-            List<TransportMetaData> supportedChannels = node.getTransports();
-
-            int accessPointId = ServerNameUtil.crc32(node.getConnectionInfo());
-
-            for (int chIndex = 0; chIndex < supportedChannels.size(); ++chIndex) {
-                TransportMetaData transport = supportedChannels.get(chIndex);
-                for (VersionConnectionInfoPair pair : transport.getConnectionInfo()) {
-                    bootstrapServers += accessPointId;
-                    bootstrapServers += SEPARATOR;
-                    bootstrapServers += transport.getId();
-                    bootstrapServers += SEPARATOR;
-                    bootstrapServers += pair.getVersion();
-                    bootstrapServers += SEPARATOR;
-                    bootstrapServers += Base64.encodeBase64String(pair.getConenctionInfo().array());
-                    bootstrapServers += ";";
-                }
-            }
-        }
 
         clientProperties.put(BUILD_VERSION, Version.PROJECT_VERSION);
         clientProperties.put(BUILD_COMMIT_HASH, Version.COMMIT_HASH);
-        clientProperties.put(BOOTSTRAP_SERVERS_PROPERTY, bootstrapServers);
+        clientProperties.put(BOOTSTRAP_SERVERS_PROPERTY, CommonSdkUtil.bootstrapNodesToString(bootstrapNodes));
         clientProperties.put(SDK_TOKEN_PROPERTY, sdkToken);
         clientProperties.put(CONFIG_SCHEMA_DEFAULT_PROPERTY, configurationProtocolSchemaBody);
         clientProperties.put(CONFIG_DATA_DEFAULT_PROPERTY, Base64.encodeBase64String(defaultConfigurationData));

@@ -1,17 +1,17 @@
-/*
- * Copyright 2014 CyberVision, Inc.
+/**
+ *  Copyright 2014-2016 CyberVision, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License") {}
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 #include "kaa/log/LogCollector.hpp"
@@ -27,6 +27,8 @@
 #include "kaa/context/IExecutorContext.hpp"
 #include "kaa/utils/IThreadPool.hpp"
 #include "kaa/KaaClientProperties.hpp"
+#include "kaa/log/LogBucket.hpp"
+#include "kaa/log/ILogDeliveryListener.hpp"
 
 #ifdef KAA_USE_SQLITE_LOG_STORAGE
 #include "kaa/log/SQLiteDBLogStorage.hpp"
@@ -36,17 +38,17 @@
 
 namespace kaa {
 
-LogCollector::LogCollector(IKaaChannelManagerPtr manager, IExecutorContext& executorContext, const KaaClientProperties& clientProperties)
+LogCollector::LogCollector(IKaaChannelManagerPtr manager, IKaaClientContext &context)
     : transport_(nullptr), channelManager_(manager), timeoutAccessPointId_(0),
       logUploadCheckTimer_("LogCollector logUploadCheckTimer"), scheduledUploadTimer_("LogCollector uploadTimer"),
-      timeoutTimer_("LogCollector timeoutTimer"), executorContext_(executorContext)
+      timeoutTimer_("LogCollector timeoutTimer"), context_(context)
 {
 #ifdef KAA_USE_SQLITE_LOG_STORAGE
-    storage_.reset(new SQLiteDBLogStorage(clientProperties.getLogsDatabaseFileName()));
+    storage_.reset(new SQLiteDBLogStorage(context_));
 #else
-    storage_.reset(new MemoryLogStorage());
+    storage_.reset(new MemoryLogStorage(context_));
 #endif
-    uploadStrategy_.reset(new DefaultLogUploadStrategy());
+    uploadStrategy_.reset(new DefaultLogUploadStrategy(context_));
 
     startTimeoutTimer();
 }
@@ -73,7 +75,10 @@ void LogCollector::startLogUploadCheckTimer()
 
 void LogCollector::processTimeout()
 {
-    executorContext_.getCallbackExecutor().add([this] () { uploadStrategy_->onTimeout(*this); });
+    context_.getExecutorContext().getCallbackExecutor().add([this] ()
+            {
+                uploadStrategy_->onTimeout(*this);
+            });
 
     KAA_LOG_WARN(boost::format("Going to notify log storage of logs delivery timeout..."));
 
@@ -82,7 +87,7 @@ void LogCollector::processTimeout()
     KAA_MUTEX_LOCKED("timeoutsGuard_");
 
     for (const auto& request : timeouts_) {
-        storage_->notifyUploadFailed(request.first);
+        storage_->rollbackBucket(request.first);
     }
 
     timeouts_.clear();
@@ -94,28 +99,28 @@ void LogCollector::processTimeout()
     processLogUploadDecision(uploadStrategy_->isUploadNeeded(storage_->getStatus()));
 }
 
-void LogCollector::addLogRecord(const KaaUserLogRecord& record)
+RecordFuture LogCollector::addLogRecord(const KaaUserLogRecord& record)
 {
-    /*
-     * To avoid overhead on copying big-sized log records while capturing in lambdas,
-     * serialization has been performed before adding task to executor.
-     */
-    LogRecordPtr serializedRecord(new LogRecord(record));
+    RecordInfo recordInfo;
+    auto promisePtr = std::make_shared<std::promise<RecordInfo>>();
+    RecordDeliveryInfo recordDeliveryInfo(promisePtr, recordInfo);
 
-    executorContext_.getApiExecutor().add([this, serializedRecord] ()
+    context_.getExecutorContext().getApiExecutor().add([this, record, recordDeliveryInfo] ()
             {
-                KAA_MUTEX_LOCKING("storageGuard_");
-                KAA_MUTEX_UNIQUE_DECLARE(lock, storageGuard_);
-                KAA_MUTEX_LOCKED("storageGuard_");
-
-                storage_->addLogRecord(serializedRecord);
-
-                KAA_MUTEX_UNLOCKING("storageGuard_");
-                KAA_UNLOCK(lock);
-                KAA_MUTEX_UNLOCKED("storageGuard_");
+                try {
+                    auto bucketInfo = storage_->addLogRecord(LogRecord(record));
+                    updateBucketInfo(bucketInfo, recordDeliveryInfo);
+                } catch (...) {
+                    try {
+                        KAA_LOG_WARN("Failed to add log record");
+                        recordDeliveryInfo.deliveryFuture_->set_exception(std::current_exception());
+                    } catch(...) {}
+                }
 
                 processLogUploadDecision(uploadStrategy_->isUploadNeeded(storage_->getStatus()));
             });
+
+    return RecordFuture(promisePtr->get_future());
 }
 
 void LogCollector::processLogUploadDecision(LogUploadStrategyDecision decision)
@@ -147,10 +152,6 @@ void LogCollector::setStorage(ILogStoragePtr storage)
         throw KaaException("Bad log storage");
     }
 
-    KAA_MUTEX_LOCKING("storageGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(storageGuardLock, storageGuard_);
-    KAA_MUTEX_LOCKED("storageGuard_");
-
     KAA_LOG_INFO("New log storage was set");
     storage_ = storage;
 }
@@ -170,21 +171,11 @@ void LogCollector::setUploadStrategy(ILogUploadStrategyPtr strategy)
 
 void LogCollector::doSync()
 {
-    KAA_MUTEX_LOCKING("transportGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(transportGuardLock, transportGuard_);
-    KAA_MUTEX_LOCKED("transportGuard_");
-
-    if (transport_) {
-        transport_->sync();
-    } else {
-        KAA_LOG_ERROR("Failed to upload logs: log transport isn't initialized");
-        throw TransportNotFoundException("Log transport isn't set");
-    }
+    transport_->sync();
 }
 
 bool LogCollector::isDeliveryTimeout()
 {
-
     KAA_MUTEX_LOCKING("timeoutsGuard_");
     KAA_MUTEX_UNIQUE_DECLARE(timeoutsGuardLock, timeoutsGuard_);
     KAA_MUTEX_LOCKED("timeoutsGuard_");
@@ -204,6 +195,15 @@ bool LogCollector::isDeliveryTimeout()
         if (now >= request.second.getTimeoutTime()) {
             KAA_LOG_WARN(boost::format("Log delivery timeout detected, bucket id %li") % request.first);
             isTimeout = true;
+
+            if (logDeliverylistener_) {
+                auto bucketId = request.first;
+                context_.getExecutorContext().getCallbackExecutor().add([this, bucketId] ()
+                        {
+                            logDeliverylistener_->onLogDeliveryTimeout(getBucketInfo(bucketId));
+                        });
+            }
+
             timeoutAccessPointId_ = request.second.getTransportAccessPointId();
             // Check if current access point already has timeout
             if (timeoutAccessPointId_ == currentAccessPointId) {
@@ -264,62 +264,71 @@ std::shared_ptr<LogSyncRequest> LogCollector::getLogUploadRequest()
         return request;
     }
 
-    ILogStorage::RecordPack recordPack;
-
-    {
-        KAA_MUTEX_LOCKING("storageGuard_");
-        KAA_MUTEX_UNIQUE_DECLARE(storageGuardLock, storageGuard_);
-        KAA_MUTEX_LOCKED("storageGuard_");
-
-        recordPack = storage_->getRecordBlock(uploadStrategy_->getBatchSize(), uploadStrategy_->getRecordsBatchCount());
+    LogBucket bucket = storage_->getNextBucket();
+    if (bucket.getRecords().empty()) {
+        KAA_LOG_TRACE("No logs to send");
+        return request;
     }
 
-    if (!recordPack.second.empty()) {
-        request.reset(new LogSyncRequest);
-        request->requestId = recordPack.first;
+    KAA_LOG_TRACE(boost::format("Sending %1% log records") % bucket.getRecords().size());
 
-        std::vector<LogEntry> logs;
-        logs.reserve(recordPack.second.size());
-        for (const auto& log : recordPack.second) {
-            logs.push_back(log->getLogEntry());
-        }
+    request.reset(new LogSyncRequest);
+    request->requestId = bucket.getBucketId();
 
-        request->logEntries.set_array(std::move(logs));
-        addDeliveryTimeout(request->requestId);
+    std::vector<LogEntry> logsToSend;
+    logsToSend.resize(bucket.getRecords().size());
+
+    std::size_t i = 0;
+    for (auto& record : bucket.getRecords()) {
+        logsToSend[i++].data = std::move(record.getRvalueData());
     }
+
+    request->logEntries.set_array(std::move(logsToSend));
+    addDeliveryTimeout(request->requestId);
 
     return request;
 }
 
 void LogCollector::onLogUploadResponse(const LogSyncResponse& response)
 {
-    KAA_MUTEX_LOCKING("storageGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(storageGuardLock, storageGuard_);
-    KAA_MUTEX_LOCKED("storageGuard_");
-
     if (!response.deliveryStatuses.is_null()) {
+        auto deliveryTime = TimeUtils::getCurrentTimeInMs();
         const auto& deliveryStatuses = response.deliveryStatuses.get_array();
+
         for (const auto& status : deliveryStatuses) {
             if (!removeDeliveryTimeout(status.requestId)) {
+                KAA_LOG_WARN(boost::format("Received unknown delivery status, id %1%. Ignoring...") % status.requestId);
                 continue;
             }
 
+            auto bucketInfo = getBucketInfo(status.requestId);
+
             if (status.result == SyncResponseResultType::SUCCESS) {
                 KAA_LOG_INFO(boost::format("Logs (requestId %ld) successfully delivered") % status.requestId);
-                storage_->removeRecordBlock(status.requestId);
-            } else {
-                storage_->notifyUploadFailed(status.requestId);
 
-                KAA_MUTEX_UNLOCKING("storageGuard_");
-                KAA_UNLOCK(storageGuardLock);
-                KAA_MUTEX_UNLOCKED("storageGuard_");
+                storage_->removeBucket(status.requestId);
+
+                if (logDeliverylistener_) {
+                    context_.getExecutorContext().getCallbackExecutor().add([this, bucketInfo] ()
+                            {
+                                logDeliverylistener_->onLogDeliverySuccess(bucketInfo);
+                            });
+                }
+
+                context_.getExecutorContext().getCallbackExecutor().add([this, bucketInfo, deliveryTime] ()
+                        {
+                            notifyDeliveryFuturesOnSuccess(bucketInfo.getBucketId(), deliveryTime);
+                            removeBucketInfo(bucketInfo.getBucketId());
+                        });
+            } else {
+                storage_->rollbackBucket(status.requestId);
 
                 if (!status.errorCode.is_null()) {
                     auto errocCode = status.errorCode.get_LogDeliveryErrorCode();
                     KAA_LOG_WARN(boost::format("Logs (requestId %ld) failed to deliver (error %d)")
                                             % status.requestId % (int)errocCode);
 
-                    executorContext_.getCallbackExecutor().add([this, errocCode] ()
+                    context_.getExecutorContext().getCallbackExecutor().add([this, errocCode] ()
                             {
                                 uploadStrategy_->onFailure(*this, errocCode);
                             });
@@ -327,27 +336,17 @@ void LogCollector::onLogUploadResponse(const LogSyncResponse& response)
                     KAA_LOG_WARN("Log delivery failed, but no error code received");
                 }
 
-                KAA_MUTEX_LOCKING("storageGuard_");
-                KAA_LOCK(storageGuardLock);
-                KAA_MUTEX_LOCKED("storageGuard_");
+                if (logDeliverylistener_) {
+                    context_.getExecutorContext().getCallbackExecutor().add([this, bucketInfo] ()
+                            {
+                                logDeliverylistener_->onLogDeliveryFailure(bucketInfo);
+                            });
+                }
             }
         }
     }
 
-    KAA_MUTEX_UNLOCKING("storageGuard_");
-    KAA_UNLOCK(storageGuardLock);
-    KAA_MUTEX_UNLOCKED("storageGuard_");
-
     processLogUploadDecision(uploadStrategy_->isUploadNeeded(storage_->getStatus()));
-}
-
-void LogCollector::setTransport(LoggingTransport* transport)
-{
-    KAA_MUTEX_LOCKING("transportGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(transportGuardLock, transportGuard_);
-    KAA_MUTEX_LOCKED("transportGuard_");
-
-    transport_ = transport;
 }
 
 void LogCollector::retryLogUpload()
@@ -359,6 +358,7 @@ void LogCollector::retryLogUpload()
 void LogCollector::retryLogUpload(std::size_t delay)
 {
     KAA_LOG_INFO(boost::format("Schedule log upload with %u second(s) delay ...") % delay);
+
     scheduledUploadTimer_.stop();
     scheduledUploadTimer_.start(delay, [&] { doSync(); });
 }
@@ -380,6 +380,52 @@ void LogCollector::rescheduleTimers()
 {
     startTimeoutTimer();
     startLogUploadCheckTimer();
+}
+
+void LogCollector::updateBucketInfo(const BucketInfo& bucketInfo, const RecordDeliveryInfo& recordInfo)
+{
+    KAA_MUTEX_LOCKING("bucketInfoStorageGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(bucketInfoStorageLock, bucketInfoStorageGuard_);
+    KAA_MUTEX_LOCKED("bucketInfoStorageGuard_");
+
+    auto& bucket = bucketInfoStorage_[bucketInfo.getBucketId()];
+
+    bucket.bucketInfo_ = bucketInfo;
+    bucket.recordDeliveryInfoStorage_.push_back(recordInfo);
+}
+
+void LogCollector::notifyDeliveryFuturesOnSuccess(std::int32_t bucketId, std::size_t deliveryTime)
+{
+    KAA_MUTEX_LOCKING("bucketInfoStorageGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(bucketInfoStorageLock, bucketInfoStorageGuard_);
+    KAA_MUTEX_LOCKED("bucketInfoStorageGuard_");
+
+    auto it = bucketInfoStorage_.find(bucketId);
+    if (it != bucketInfoStorage_.end()) {
+        for (auto& recordFutureInfo : it->second.recordDeliveryInfoStorage_) {
+            recordFutureInfo.recordInfo_.setRecordDeliveryTimeMs(deliveryTime - recordFutureInfo.recordInfo_.getRecordAddedTimestampMs());
+            recordFutureInfo.recordInfo_.setBucketInfo(it->second.bucketInfo_);
+            recordFutureInfo.deliveryFuture_->set_value(recordFutureInfo.recordInfo_);
+        }
+    }
+}
+
+BucketInfo LogCollector::getBucketInfo(std::int32_t id)
+{
+    KAA_MUTEX_LOCKING("bucketInfoStorageGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(bucketInfoStorageLock, bucketInfoStorageGuard_);
+    KAA_MUTEX_LOCKED("bucketInfoStorageGuard_");
+
+    return bucketInfoStorage_[id].bucketInfo_;
+}
+
+void LogCollector::removeBucketInfo(std::int32_t id)
+{
+    KAA_MUTEX_LOCKING("bucketInfoStorageGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(bucketInfoStorageLock, bucketInfoStorageGuard_);
+    KAA_MUTEX_LOCKED("bucketInfoStorageGuard_");
+
+    bucketInfoStorage_.erase(id);
 }
 
 }  // namespace kaa
