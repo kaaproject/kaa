@@ -16,13 +16,6 @@
 
 package org.kaaproject.kaa.server.admin.services.schema;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.apache.avro.Schema;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParseException;
@@ -32,11 +25,19 @@ import org.codehaus.jackson.node.ObjectNode;
 import org.kaaproject.avro.ui.shared.FqnVersion;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
 import org.kaaproject.kaa.server.admin.services.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.kaaproject.kaa.server.control.service.ControlService;
 import org.kaaproject.kaa.server.control.service.exception.ControlServiceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * This class is used to parse and validate CTL schemas on save.
@@ -49,6 +50,9 @@ import org.kaaproject.kaa.server.control.service.exception.ControlServiceExcepti
  * @see #validate(CTLSchemaDto)
  */
 public class CTLSchemaParser {
+
+    /** The Constant LOG. */
+    private static final Logger LOG = LoggerFactory.getLogger(CTLSchemaParser.class);
 
     private final Schema.Parser parser = new Schema.Parser();
 
@@ -157,7 +161,7 @@ public class CTLSchemaParser {
              */
             return parser.parse(schema.getBody());
         } catch (Exception cause) {
-            throw new IllegalArgumentException("Unable to parse CTL schema \"" + schema.getMetaInfo().getFqn() + "\" (version " + schema.getVersion() + "): " + cause.getMessage());
-        }
+            LOG.error("Unable to parse CTL schema \"" + schema.getMetaInfo().getFqn() + "\" (version " + schema.getVersion() + "): ", cause);
+            throw new IllegalArgumentException("Unable to parse CTL schema \"" + schema.getMetaInfo().getFqn() + "\" (version " + schema.getVersion() + "): " + cause.getMessage());        }
     }
 }

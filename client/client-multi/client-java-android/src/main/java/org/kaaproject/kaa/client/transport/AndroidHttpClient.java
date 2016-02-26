@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 
 public class AndroidHttpClient extends AbstractHttpClient {
 
-    /** The Constant logger. */
+    /** The Constant LOG. */
     public static final Logger LOG = LoggerFactory // NOSONAR
             .getLogger(AndroidHttpClient.class);
 

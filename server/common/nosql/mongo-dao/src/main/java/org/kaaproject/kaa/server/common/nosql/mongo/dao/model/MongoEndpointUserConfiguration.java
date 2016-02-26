@@ -96,17 +96,30 @@ public class MongoEndpointUserConfiguration implements EndpointUserConfiguration
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         MongoEndpointUserConfiguration that = (MongoEndpointUserConfiguration) o;
 
-        if (appToken != null ? !appToken.equals(that.appToken) : that.appToken != null) return false;
-        if (body != null ? !body.equals(that.body) : that.body != null) return false;
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (schemaVersion != null ? !schemaVersion.equals(that.schemaVersion) : that.schemaVersion != null)
+        if (appToken != null ? !appToken.equals(that.appToken) : that.appToken != null) {
             return false;
-        if (userId != null ? !userId.equals(that.userId) : that.userId != null) return false;
+        }
+        if (body != null ? !body.equals(that.body) : that.body != null) {
+            return false;
+        }
+        if (id != null ? !id.equals(that.id) : that.id != null) {
+            return false;
+        }
+        if (schemaVersion != null ? !schemaVersion.equals(that.schemaVersion) : that.schemaVersion != null) {
+            return false;
+        }
+        if (userId != null ? !userId.equals(that.userId) : that.userId != null) {
+            return false;
+        }
 
         return true;
     }

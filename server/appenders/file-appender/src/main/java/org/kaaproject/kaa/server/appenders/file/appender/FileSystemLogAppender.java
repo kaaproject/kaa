@@ -127,7 +127,7 @@ public class FileSystemLogAppender extends AbstractLogAppender<FileConfig> {
                 try {
                     logger.close();
                 } catch (IOException e) {
-                    LOG.warn("IO Exception");
+                    LOG.warn("IO Exception catched: ", e);
                 }
             }
             fileSystemLogEventService = null;

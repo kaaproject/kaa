@@ -39,9 +39,14 @@ import org.kaaproject.kaa.avro.avrogen.GenerationContext;
 import org.kaaproject.kaa.avro.avrogen.KaaGeneratorException;
 import org.kaaproject.kaa.avro.avrogen.StyleUtils;
 import org.kaaproject.kaa.avro.avrogen.TypeConverter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class Compiler {
     private static final String DIRECTION_PROP = "direction";
+
+    /** The Constant LOG. */
+    private static final Logger LOG = LoggerFactory.getLogger(Compiler.class);
 
     private final String generatedSourceName;
 
@@ -109,6 +114,7 @@ public abstract class Compiler {
             this.headerWriter = new PrintWriter(new BufferedWriter(new FileWriter(headerPath, true)));
             this.sourceWriter = new PrintWriter(new BufferedWriter(new FileWriter(sourcePath, true)));
         } catch (Exception e) {
+            LOG.error("Failed to create ouput path: ", e);
             throw new KaaGeneratorException("Failed to create output path: " + e.toString());
         }
     }
@@ -136,6 +142,7 @@ public abstract class Compiler {
                 writeToStream(hdrWriter, srcWriter);
             }
         } catch (Exception e) {
+            LOG.error("Failed to prepare source templates: ", e);
             throw new KaaGeneratorException("Failed to prepare source templates: " + e.toString());
         }
     }
@@ -171,6 +178,7 @@ public abstract class Compiler {
 
             System.out.println("Sources were successfully generated");
         } catch (Exception e) {
+            LOG.error("Failed to generate C sources: ", e);
             throw new KaaGeneratorException("Failed to generate sources: " + e.toString());
         } finally {
             headerWriter.close();
@@ -221,13 +229,13 @@ public abstract class Compiler {
         context.put("TypeConverter", TypeConverter.class);
         context.put("namespacePrefix", namespacePrefix);
 
-        StringWriter headerWriter = new StringWriter();
-        engine.getTemplate(headerTemplate).merge(context, headerWriter);
-        appendResult(headerWriter.toString(), true);
+        StringWriter hdrWriter = new StringWriter();
+        engine.getTemplate(headerTemplate).merge(context, hdrWriter);
+        appendResult(hdrWriter.toString(), true);
 
-        StringWriter sourceWriter = new StringWriter();
-        engine.getTemplate(sourceTemplate).merge(context, sourceWriter);
-        appendResult(sourceWriter.toString(), false);
+        StringWriter srcWriter = new StringWriter();
+        engine.getTemplate(sourceTemplate).merge(context, srcWriter);
+        appendResult(srcWriter.toString(), false);
     }
 
     protected void processEnum(Schema schema, String template) {

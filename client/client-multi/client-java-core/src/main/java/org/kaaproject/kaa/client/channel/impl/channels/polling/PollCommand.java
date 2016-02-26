@@ -53,15 +53,13 @@ public class PollCommand implements Command {
                     byte[] responseDataRaw = httpClient.executeHttpRequest("", request, false);
                     processor.onResponse(responseDataRaw);
                 }
-            }
-            else {
+            } else {
                 LOG.warn("Unable to execute http request, http client is null.");
             }
         } catch (Exception e) {
             if (!canceled) {
                 LOG.error("Server failed {}", e);
-            }
-            else {
+            } else {
                 LOG.debug("PollCommand execution aborted");
             }
             processor.onServerError(serverInfo);

@@ -254,8 +254,9 @@ class BucketWriter {
 
     // NOTE: timed rolls go through this codepath as well as other roll types
     if (timedRollFuture != null) {
-        if (!timedRollFuture.isDone())
-      	  timedRollFuture.cancel(false); // do not cancel myself if running!
+        if (!timedRollFuture.isDone()) {
+            timedRollFuture.cancel(false); // do not cancel myself if running!
+        }
         timedRollerPool.remove((Runnable)timedRollFuture);
         timedRollFuture = null;
     }
@@ -418,7 +419,7 @@ class BucketWriter {
   }
 
   private boolean isBatchComplete() {
-    return (batchCounter == 0);
+    return batchCounter == 0;
   }
 
   private long generateSerial (Event event) {

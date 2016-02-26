@@ -53,23 +53,30 @@ public class KafkaLogEventDto implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         KafkaLogEventDto other = (KafkaLogEventDto) obj;
         if (event == null) {
-            if (other.event != null)
+            if (other.event != null) {
                 return false;
-        } else if (!event.equals(other.event))
+            }
+        } else if (!event.equals(other.event)) {
             return false;
+        }
         if (header == null) {
-            if (other.header != null)
+            if (other.header != null) {
                 return false;
-        } else if (!header.equals(other.header))
+            }
+        } else if (!header.equals(other.header)) {
             return false;
+        }
         return true;
     }
 }

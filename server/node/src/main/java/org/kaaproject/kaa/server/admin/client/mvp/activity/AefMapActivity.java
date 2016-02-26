@@ -103,8 +103,7 @@ public class AefMapActivity
                     detailsView.updateEcfs(result);
                 }
             });
-        }
-        else {
+        } else {
             detailsView.getCreatedUsername().setValue(entity.getCreatedUsername());
             detailsView.getCreatedDateTime().setValue(Utils.millisecondsToDateTimeString(entity.getCreatedTime()));
             detailsView.getEcfName().setValue(entity.getEcfName());

@@ -31,6 +31,9 @@ import org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct;
  */
 public class ThriftDtoConverter {
 
+    private ThriftDtoConverter() {
+    }
+
     /**
      * Convert DTO to thrift DataStruct.
      * 

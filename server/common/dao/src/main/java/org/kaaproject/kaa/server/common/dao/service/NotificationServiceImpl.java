@@ -135,6 +135,7 @@ public class NotificationServiceImpl implements NotificationService {
             try {
                 dto.setBody(serializeNotificationBody(dto, schema));
             } catch (IOException e) {
+                LOG.error("Can't serialize notification body using schema. ", e);
                 throw new DatabaseProcessingException("Can't serialize notification body using schema: " + schemaId);
             }
 
@@ -296,6 +297,7 @@ public class NotificationServiceImpl implements NotificationService {
                 try {
                     notificationDto.setBody(serializeNotificationBody(notificationDto, schema));
                 } catch (IOException e) {
+                    LOG.error("Can't serialize notification body using schema. ", e);
                     throw new DatabaseProcessingException("Can't serialize notification body using schema: " + schemaId);
                 }
             } else {

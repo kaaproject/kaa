@@ -24,6 +24,10 @@ import org.kaaproject.kaa.common.dto.EventClassFamilyVersionStateDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 
 public class MongoDaoUtil {
+
+    private MongoDaoUtil() {
+    }
+
     /**
      * Specific method for converting list of <code>EndpointGroupStateDto</code> objects
      * to list of model objects <code>EndpointGroupState</code>.
@@ -49,7 +53,7 @@ public class MongoDaoUtil {
     /**
      * Specific method for converting list of <code>EventClassFamilyVersionStateDto</code> objects
      * to list of model objects <code>EventClassFamilyVersionState</code>
-     * @param stateDtoList
+     * @param stateDtoList the stateDtoList
      * @return converted list of <code>EndpointGroupState</code> objects
      */
     public static List<EventClassFamilyVersionState> convertECFVersionDtoToModelList(List<EventClassFamilyVersionStateDto> stateDtoList) {

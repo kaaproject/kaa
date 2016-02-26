@@ -78,7 +78,7 @@ public class DefaultEventService implements EventService {
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(DefaultEventService.class);
 
-    private static final AtomicLong eventSequence = new AtomicLong(UUID.randomUUID().getLeastSignificantBits());
+    private static final AtomicLong eventSequence = new AtomicLong(UUID.randomUUID().getLeastSignificantBits()); //NOSONAR
 
     @Autowired
     private OperationsServerConfig operationsServerConfig;
@@ -437,6 +437,8 @@ public class DefaultEventService implements EventService {
             return EventRouteUpdateType.DELETE;
         case UPDATE:
             return EventRouteUpdateType.UPDATE;
+        default:
+            break;
         }
         return EventRouteUpdateType.UPDATE;
     }

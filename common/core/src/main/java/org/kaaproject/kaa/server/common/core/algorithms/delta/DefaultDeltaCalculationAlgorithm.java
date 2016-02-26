@@ -56,7 +56,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultDeltaCalculationAlgorithm implements DeltaCalculationAlgorithm {
 
-    /** The Constant logger. */
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory //NOSONAR
             .getLogger(DefaultDeltaCalculationAlgorithm.class);
 

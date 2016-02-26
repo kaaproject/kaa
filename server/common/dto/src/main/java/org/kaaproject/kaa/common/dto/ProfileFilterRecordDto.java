@@ -28,15 +28,15 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class ProfileFilterRecordDto extends StructureRecordDto<ProfileFilterDto> implements Serializable, Comparable<ProfileFilterRecordDto> {
 
     private static final long serialVersionUID = 4493137983752138274L;
-    
+
     public ProfileFilterRecordDto() {
         super();
     }
-    
+
     public ProfileFilterRecordDto(ProfileFilterDto activeProfileFilter, ProfileFilterDto inactiveProfileFilter) {
         super(activeProfileFilter, inactiveProfileFilter);
     }
-    
+
     @JsonIgnore
     public Integer getEndpointProfileSchemaVersion() {
         return activeStructureDto != null ? activeStructureDto.getEndpointProfileSchemaVersion() : inactiveStructureDto.getEndpointProfileSchemaVersion();
@@ -46,7 +46,7 @@ public class ProfileFilterRecordDto extends StructureRecordDto<ProfileFilterDto>
     public Integer getServerProfileSchemaVersion() {
         return activeStructureDto != null ? activeStructureDto.getServerProfileSchemaVersion() : inactiveStructureDto.getServerProfileSchemaVersion();
     }
-    
+
     @JsonIgnore
     public String getEndpointProfileSchemaId() {
         return activeStructureDto != null ? activeStructureDto.getEndpointProfileSchemaId() : inactiveStructureDto.getEndpointProfileSchemaId();
@@ -77,7 +77,7 @@ public class ProfileFilterRecordDto extends StructureRecordDto<ProfileFilterDto>
         }
         return new ArrayList<>(profileFiltterRecordsMap.values());
     }
-    
+
     @Override
     public int compareTo(ProfileFilterRecordDto o) {
         int endpointProfileShemaVersion = getEndpointProfileSchemaVersion() != null ? 
@@ -94,5 +94,14 @@ public class ProfileFilterRecordDto extends StructureRecordDto<ProfileFilterDto>
         }
         return result;
     }
-    
+
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 }

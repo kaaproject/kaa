@@ -1679,7 +1679,7 @@ public class DefaultControlService implements ControlService {
             try {
                 operation = Operation.valueOf(type.name());
             } catch (IllegalArgumentException ex) {
-                LOG.info("Unsupported change type. Check Operation and ChangeType enums.");
+                LOG.info("Unsupported change type. Check Operation and ChangeType enums.", ex);
             }
         }
         return operation;

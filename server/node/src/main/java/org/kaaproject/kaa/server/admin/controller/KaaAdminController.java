@@ -103,8 +103,8 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("api")
 public class KaaAdminController {
 
-    /** The Constant logger. */
-    private static final Logger logger = LoggerFactory.getLogger(KaaAdminController.class);
+    /** The Constant LOG. */
+    private static final Logger LOG = LoggerFactory.getLogger(KaaAdminController.class);
 
     /** The Constant BUFFER. */
     private static final int BUFFER = 1024 * 100;
@@ -171,9 +171,11 @@ public class KaaAdminController {
             case GENERAL_ERROR:
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ex.getMessage());
                 break;
+            default:
+                break;
             }
         } catch (IOException e) {
-            logger.error("Can't handle exception", e);
+            LOG.error("Can't handle exception", e);
         }
     }
 
@@ -247,7 +249,7 @@ public class KaaAdminController {
             }
             String next = nextUrl.append(request.getRequestURI()).append("?").append(pageLink.getNextUrlPart()).toString();
             pageLink.setNext(next);
-            logger.debug("Generated next url {}", next);
+            LOG.debug("Generated next url {}", next);
         }
         return pageLink;
     }
@@ -802,7 +804,24 @@ public class KaaAdminController {
             throws KaaAdminServiceException {
         return kaaAdminService.getCTLSchemaByFqnVersionTenantIdAndApplicationId(fqn, version, tenantId, applicationId);
     }
-    
+
+    /**
+     * Retrieves a CTL schema by its id.
+     *
+     * @param id
+     *            the CTL schema id
+     *
+     * @throws KaaAdminServiceException
+     *             the kaa admin service exception
+     *
+     * @return CTL schema info
+     */
+    @RequestMapping(value = "CTL/getSchemaById", params = { "id" }, method = RequestMethod.GET)
+    @ResponseBody
+    public CTLSchemaDto getCTLSchemaById(@RequestParam String id) throws KaaAdminServiceException {
+        return kaaAdminService.getCTLSchemaById(id);
+    }
+
     /**
      * Checks if CTL schema with same fqn is already exists in the sibling application.
      * 
@@ -2073,14 +2092,14 @@ public class KaaAdminController {
      */
     private byte[] getFileContent(MultipartFile file) throws KaaAdminServiceException {
         if (!file.isEmpty()) {
-            logger.debug("Uploading file with name '{}'", file.getOriginalFilename());
+            LOG.debug("Uploading file with name '{}'", file.getOriginalFilename());
             try {
                 return file.getBytes();
             } catch (IOException e) {
                 throw Utils.handleException(e);
             }
         } else {
-            logger.error("No file found in post request!");
+            LOG.error("No file found in post request!");
             throw new KaaAdminServiceException("No file found in post request!", ServiceErrorCode.FILE_NOT_FOUND);
         }
     }

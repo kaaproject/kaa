@@ -50,7 +50,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class AvroAsyncRpcClientTest {
-    private static final Logger logger = LoggerFactory
+    private static final Logger LOG = LoggerFactory
             .getLogger(AvroAsyncRpcClientTest.class);
         
         private static final String localhost = "localhost";
@@ -141,7 +141,9 @@ public class AvroAsyncRpcClientTest {
             e.printStackTrace();
           } finally {
             stopServer(server);
-            if (client != null) client.close();
+            if (client != null) {
+                client.close();
+            }
           }
         }
 
@@ -186,7 +188,9 @@ public class AvroAsyncRpcClientTest {
             e.printStackTrace();
           } finally {
             stopServer(server);
-            if (client != null) client.close();
+            if (client != null) {
+                client.close();
+            }
           }
         }
 
@@ -209,15 +213,15 @@ public class AvroAsyncRpcClientTest {
               new InetSocketAddress(localhost, port));
           }
           server.start();
-          logger.info("Server started on hostname: {}, port: {}",
-              new Object[] { localhost, Integer.toString(server.getPort()) });
+          LOG.info("Server started on hostname: {}, port: {}",
+                  new Object[]{localhost, Integer.toString(server.getPort())});
 
           try {
 
             Thread.sleep(300L);
 
           } catch (InterruptedException ex) {
-            logger.error("Thread interrupted. Exception follows.", ex);
+            LOG.error("Thread interrupted. Exception follows.", ex);
             Thread.currentThread().interrupt();
           }
 
@@ -229,7 +233,7 @@ public class AvroAsyncRpcClientTest {
             server.close();
             server.join();
           } catch (InterruptedException ex) {
-            logger.error("Thread interrupted. Exception follows.", ex);
+            LOG.error("Thread interrupted. Exception follows.", ex);
             Thread.currentThread().interrupt();
           }
         }
@@ -270,16 +274,16 @@ public class AvroAsyncRpcClientTest {
 
           @Override
           public Status append(AvroFlumeEvent event) throws AvroRemoteException {
-            logger.info("Failed: Received event from append(): {}",
-                new String(event.getBody().array(), Charset.forName("UTF8")));
+            LOG.info("Failed: Received event from append(): {}",
+                    new String(event.getBody().array(), Charset.forName("UTF8")));
             return Status.FAILED;
           }
 
           @Override
           public Status appendBatch(List<AvroFlumeEvent> events) throws
               AvroRemoteException {
-            logger.info("Failed: Received {} events from appendBatch()",
-                events.size());
+            LOG.info("Failed: Received {} events from appendBatch()",
+                    events.size());
             return Status.FAILED;
           }
 
@@ -292,16 +296,16 @@ public class AvroAsyncRpcClientTest {
 
           @Override
           public Status append(AvroFlumeEvent event) throws AvroRemoteException {
-            logger.info("Unknown: Received event from append(): {}",
-                new String(event.getBody().array(), Charset.forName("UTF8")));
+            LOG.info("Unknown: Received event from append(): {}",
+                    new String(event.getBody().array(), Charset.forName("UTF8")));
             return Status.UNKNOWN;
           }
 
           @Override
           public Status appendBatch(List<AvroFlumeEvent> events) throws
               AvroRemoteException {
-            logger.info("Unknown: Received {} events from appendBatch()",
-                events.size());
+            LOG.info("Unknown: Received {} events from appendBatch()",
+                    events.size());
             return Status.UNKNOWN;
           }
 
@@ -314,16 +318,16 @@ public class AvroAsyncRpcClientTest {
 
           @Override
           public Status append(AvroFlumeEvent event) throws AvroRemoteException {
-            logger.info("OK: Received event from append(): {}",
-                new String(event.getBody().array(), Charset.forName("UTF8")));
+            LOG.info("OK: Received event from append(): {}",
+                    new String(event.getBody().array(), Charset.forName("UTF8")));
             return Status.OK;
           }
 
           @Override
           public Status appendBatch(List<AvroFlumeEvent> events) throws
               AvroRemoteException {
-            logger.info("OK: Received {} events from appendBatch()",
-                events.size());
+            LOG.info("OK: Received {} events from appendBatch()",
+                    events.size());
             return Status.OK;
           }
 
@@ -342,8 +346,8 @@ public class AvroAsyncRpcClientTest {
           
           @Override
           public Status append(AvroFlumeEvent event) throws AvroRemoteException {
-            logger.info("OK Sleep: Received event from append(): {}",
-                new String(event.getBody().array(), Charset.forName("UTF8")));
+            LOG.info("OK Sleep: Received event from append(): {}",
+                    new String(event.getBody().array(), Charset.forName("UTF8")));
             try {
               Thread.sleep(sleepTime);
             } catch (InterruptedException e) {
@@ -358,8 +362,8 @@ public class AvroAsyncRpcClientTest {
               AvroRemoteException {
             //System.out.println("OK Sleep: Received {} events from appendBatch()" + events.size());
             
-            logger.info("OK Sleep: Received {} events from appendBatch()",
-                events.size());
+            LOG.info("OK Sleep: Received {} events from appendBatch()",
+                    events.size());
             try {
               Thread.sleep(sleepTime);
             } catch (InterruptedException e) {
