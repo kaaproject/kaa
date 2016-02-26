@@ -804,7 +804,24 @@ public class KaaAdminController {
             throws KaaAdminServiceException {
         return kaaAdminService.getCTLSchemaByFqnVersionTenantIdAndApplicationId(fqn, version, tenantId, applicationId);
     }
-    
+
+    /**
+     * Retrieves a CTL schema by its id.
+     *
+     * @param id
+     *            the CTL schema id
+     *
+     * @throws KaaAdminServiceException
+     *             the kaa admin service exception
+     *
+     * @return CTL schema info
+     */
+    @RequestMapping(value = "CTL/getSchemaById", params = { "id" }, method = RequestMethod.GET)
+    @ResponseBody
+    public CTLSchemaDto getCTLSchemaById(@RequestParam String id) throws KaaAdminServiceException {
+        return kaaAdminService.getCTLSchemaById(id);
+    }
+
     /**
      * Checks if CTL schema with same fqn is already exists in the sibling application.
      * 

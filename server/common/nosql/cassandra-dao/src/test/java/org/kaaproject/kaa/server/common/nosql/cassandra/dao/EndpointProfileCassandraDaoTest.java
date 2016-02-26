@@ -124,8 +124,10 @@ public class EndpointProfileCassandraDaoTest extends AbstractCassandraTest {
     public void testFindBodyByKeyHash() throws Exception {
         EndpointProfileDto expected = generateEndpointProfileWithEndpointGroupId(null);
         EndpointProfileBodyDto found = endpointProfileDao.findBodyByKeyHash(expected.getEndpointKeyHash());
-        Assert.assertFalse(found.getProfile().isEmpty());
-        Assert.assertEquals(expected.getClientProfileBody(), found.getProfile());
+        Assert.assertFalse(found.getClientSideProfile().isEmpty());
+        Assert.assertFalse(found.getServerSideProfile().isEmpty());
+        Assert.assertEquals(expected.getClientProfileBody(), found.getClientSideProfile());
+        Assert.assertEquals(expected.getServerProfileBody(), found.getServerSideProfile());
     }
 
     @Test
