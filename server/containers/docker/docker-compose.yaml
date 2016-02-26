@@ -1,0 +1,57 @@
+cassandrahost:
+    image: spotify/cassandra
+    ports:
+        - "9042:9042"
+        - "9160:9160"
+    stdin_open: false
+zookeeperhost:
+    image: jplock/zookeeper
+    ports:
+        - "2181:2181"
+mongodbhost:
+    image: mongo
+    ports:
+        -  "27017:27017"
+postgreshost:
+    image: postgres
+    expose:
+        - "5432"
+    environment:
+        - POSTGRES_PASSWORD=admin
+        - POSTGRES_DB=kaa
+kaa_node1:
+    image: kaaproject/node:0.8.0
+    environment:
+        - CONTROL_ENABLED=true
+        - BOOTSTRAP_ENABLED=false
+        - OPERATIONS_ENABLED=true
+        - DATABASE=cassandra
+        - ZK_HOSTS=zookeeperhost:2181
+        - CASSANDRA_HOSTS=cassandrahost:9042
+        - MONGODB_HOSTS=mongodbhost:27017
+        - JDBC_HOST=postgreshost
+        - JDBC_PORT=5432
+    command: bash -c "/config_listener.sh && /usr/bin/kaa-node start && while true; do sleep 1; done"
+    links:
+        - cassandrahost
+        - zookeeperhost
+        - mongodbhost
+        - postgreshost
+kaa_node2:
+    image: kaaproject/node:0.8.0
+    environment:
+        - CONTROL_ENABLED=false
+        - BOOTSTRAP_ENABLED=true
+        - OPERATIONS_ENABLED=false
+        - DATABASE=cassandra
+        - ZK_HOSTS=zookeeperhost:2181
+        - CASSANDRA_HOSTS=cassandrahost:9042
+        - MONGODB_HOSTS=mongodbhost:27017
+        - JDBC_HOST=postgreshost
+        - JDBC_PORT=5432
+    command: bash -c "/config_listener.sh && /usr/bin/kaa-node start && while true; do sleep 1; done"
+    links:
+        - cassandrahost
+        - zookeeperhost
+        - mongodbhost
+        - postgreshost
