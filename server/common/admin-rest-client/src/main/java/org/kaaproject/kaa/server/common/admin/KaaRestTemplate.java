@@ -6,6 +6,7 @@ import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.web.client.*;
 import org.springframework.web.util.UriTemplate;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.Random;
 
@@ -18,11 +19,13 @@ public class KaaRestTemplate extends RestTemplate {
 
     private int[] ports;
 
-    private String newUrl;
+    private String currentUrl;
+
+    private String username;
 
     private String password;
 
-    private String username;
+    private static final String restApiSuffix = "/kaaAdmin/rest/api/";
 
     private int index;
 
@@ -33,13 +36,11 @@ public class KaaRestTemplate extends RestTemplate {
 
         }else {
 
-            this.newUrl ="http://" + hosts[0] + ":" + ports[0];
+            this.currentUrl ="http://" + hosts[index] + ":" + ports[index] + restApiSuffix;
             this.hosts = hosts;
             this.ports = ports;
 
-            setNewRequestFactory(new HttpHost(hosts[0], ports[0], "http"));
-
-            index = new Random().nextInt(hosts.length);
+            initIndexAndRequestFactory();
         }
     }
 
@@ -47,8 +48,35 @@ public class KaaRestTemplate extends RestTemplate {
         this(new String[]{host}, new int[]{port});
     }
 
+    //host:port, host:port ...
+    public KaaRestTemplate(String addresses) {
+        if(addresses == null){
+            throw new IllegalArgumentException("String of addresses must be not null");
+        }
+
+        String[] splitedAddresses = addresses.split(",");
+
+        int lengthOfHostsAndPOrtsArrays = splitedAddresses.length;
+
+        this.hosts = new String[lengthOfHostsAndPOrtsArrays];
+        this.ports = new int[lengthOfHostsAndPOrtsArrays];
+
+        for(int i=0; i < hosts.length; i++){
+            String[] separatedAddresses = splitedAddresses[i].split(":");
+            hosts[i] = separatedAddresses[0];
+            ports[i] = Integer.parseInt(separatedAddresses[1]);
+        }
+
+        initIndexAndRequestFactory();
+    }
+
+    private void initIndexAndRequestFactory(){
+        index = new Random().nextInt(hosts.length);
+        setNewRequestFactory(new HttpHost(hosts[index], ports[index], "http"));
+    }
+
     public String getUrl(){
-        return newUrl;
+        return currentUrl;
     }
 
     public void setPassword(String password) {
@@ -61,35 +89,50 @@ public class KaaRestTemplate extends RestTemplate {
 
     @Override
     protected <T> T doExecute(URI url, HttpMethod method, RequestCallback requestCallback,
-                              ResponseExtractor<T> responseExtractor) {
-        try {
-            super.doExecute(url, method, requestCallback, responseExtractor);
-        }catch (ResourceAccessException ex) {
+                              ResponseExtractor<T> responseExtractor) throws ResourceAccessException {
 
-            if(username != null && password != null) {
-                HttpComponentsRequestFactoryBasicAuth requestFactory = (HttpComponentsRequestFactoryBasicAuth) getRequestFactory();
-                requestFactory.setCredentials(username, password);
+        int maxRetry = hosts.length;
+
+        while(true){
+
+            try {
+
+                super.doExecute(url, method, requestCallback, responseExtractor);
+
+            }catch (Exception ex) {
+
+                index++;
+
+                if(maxRetry <= 0) {
+                    throw new ResourceAccessException("I/O error on " + method.name() +
+                            " request for \"" + url + "\":" + ex.getMessage(), (IOException) ex);
+                }
+
+                if(username != null && password != null) {
+                    HttpComponentsRequestFactoryBasicAuth requestFactory = (HttpComponentsRequestFactoryBasicAuth) getRequestFactory();
+                    requestFactory.setCredentials(username, password);
+                }
+
+                currentUrl = "http://" + hosts[index] + ":" + ports[index] + restApiSuffix;
+
+                setNewRequestFactory(new HttpHost(hosts[index], ports[index], "http"));
+
+                String currentErrorURI = url.toString();
+
+                int indexOfDefaultPartOfURI = currentErrorURI.indexOf(restApiSuffix);
+
+                String defaultURIPartWithVariableHostPort = currentErrorURI.substring(0, indexOfDefaultPartOfURI);
+                String otherPart = currentErrorURI.substring(indexOfDefaultPartOfURI);
+
+                defaultURIPartWithVariableHostPort = currentErrorURI.replaceFirst(url.getHost(), hosts[index]);
+                defaultURIPartWithVariableHostPort = currentErrorURI.replaceFirst(String.valueOf(url.getPort()), String.valueOf(ports[index]));
+
+                url = URI.create(defaultURIPartWithVariableHostPort + otherPart);
+
+                maxRetry--;
+
             }
-
-            index++;
-            if(index >= hosts.length) {
-                index = 0;
-            }
-
-            newUrl = "http://" + hosts[index] + ":" + ports[index];
-
-            setNewRequestFactory(new HttpHost(hosts[index], ports[index], "http"));
-
-            String urlWitthNewHostAndPort = url.toString();
-            urlWitthNewHostAndPort = urlWitthNewHostAndPort.replaceFirst(url.getHost(), hosts[index]);
-            urlWitthNewHostAndPort = urlWitthNewHostAndPort.replaceFirst(String.valueOf(url.getPort()), String.valueOf(ports[index]));
-
-            URI FullUrl = URI.create(urlWitthNewHostAndPort);
-
-            super.doExecute(FullUrl, method, requestCallback, responseExtractor);
-
         }
-        return null;
     }
 
     private void setNewRequestFactory(HttpHost http) {
@@ -101,5 +144,6 @@ public class KaaRestTemplate extends RestTemplate {
         this.username = username;
         this.password = password;
     }
+
 
 }
