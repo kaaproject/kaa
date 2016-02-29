@@ -19,8 +19,6 @@
 
 #define TAG @"StorageSizeLogUploadStrategy >>>"
 
-// Start log upload when there storage size is >= volumeThreshold bytes.
-
 @implementation StorageSizeLogUploadStrategy
 
 - (instancetype)initWithVolumeThreshold:(int32_t)volumeThreshold {

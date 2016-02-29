@@ -17,9 +17,7 @@
 #import "RecordCountLogUploadStrategy.h"
 #import "KaaLogging.h"
 
-#define TAG @"PeriodicLogUploadStrategy >>>"
-
-//Start log upload when there is countThreshold records in storage.
+#define TAG @"RecordCountLogUploadStrategy >>>"
 
 @implementation RecordCountLogUploadStrategy
 
