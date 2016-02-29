@@ -20,7 +20,7 @@ postgreshost:
         - POSTGRES_PASSWORD=admin
         - POSTGRES_DB=kaa
 kaa_node1:
-    image: kaaproject/node:0.8.0
+    image: kaaproject/node:0.9.0
     environment:
         - CONTROL_ENABLED=true
         - BOOTSTRAP_ENABLED=false
@@ -38,7 +38,7 @@ kaa_node1:
         - mongodbhost
         - postgreshost
 kaa_node2:
-    image: kaaproject/node:0.8.0
+    image: kaaproject/node:0.9.0
     environment:
         - CONTROL_ENABLED=false
         - BOOTSTRAP_ENABLED=true
