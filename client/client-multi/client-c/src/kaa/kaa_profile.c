@@ -39,12 +39,6 @@
 
 extern kaa_error_t kaa_status_set_endpoint_access_token(kaa_status_t *self, const char *token);
 
-
-extern kaa_transport_channel_interface_t *kaa_channel_manager_get_transport_channel(kaa_channel_manager_t *self
-                                                                                  , kaa_service_t service_type);
-
-
-
 static kaa_service_t profile_sync_services[1] = { KAA_SERVICE_PROFILE };
 
 

@@ -20,11 +20,9 @@
 #include <string.h>
 
 #include "platform/ext_notification_receiver.h"
-#include "platform/stdio.h"
 #include "platform/ext_sha.h"
 #include "platform/ext_status.h"
 #include "kaa_status.h"
-#include "kaa_common.h"
 #include "kaa_defaults.h"
 #include "utilities/kaa_mem.h"
 
@@ -39,7 +37,8 @@ extern kaa_error_t kaa_status_set_updated(kaa_status_t *self, bool is_updated);
  * event_seq_n                      sizeof(uint32_t)
  * endpoint_public_key_hash         SHA_1_DIGEST_LENGTH * sizeof(char)
  * profile_hash                     SHA_1_DIGEST_LENGTH * sizeof(char)
- * enpoint_access_token_length      sizeof(size_t)
+ * profile_needs_resync             sizeof(bool)
+ * endpoint_access_token_length     sizeof(size_t)
  * endpoint_access_token (variable length)
  * states_count                     sizeof(size_t)
  * states (variable length)
