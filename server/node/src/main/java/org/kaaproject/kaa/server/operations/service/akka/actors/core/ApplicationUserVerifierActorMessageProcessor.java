@@ -144,6 +144,7 @@ public class ApplicationUserVerifierActorMessageProcessor {
     }
 
     void preStart() {
+        // Do nothing
     };
 
     void postStop() {

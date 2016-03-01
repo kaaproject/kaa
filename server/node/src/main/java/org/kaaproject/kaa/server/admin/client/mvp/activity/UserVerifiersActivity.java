@@ -102,6 +102,7 @@ public class UserVerifiersActivity extends AbstractListActivity<UserVerifierDto,
         switch (action) {
             case KaaRowAction.DOWNLOAD_SCHEMA:
                 KaaAdmin.getDataSource().getUserVerifier(String.valueOf(verifierId), callback);
+                break;
             default:
                 break;
         }

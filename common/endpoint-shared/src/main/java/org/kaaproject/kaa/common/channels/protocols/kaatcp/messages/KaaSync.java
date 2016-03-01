@@ -231,8 +231,8 @@ public class KaaSync extends MqttFrame {
                 throw new KaaTcpProtocolException("Kaatcp protocol version missmatch");
             }
         }
-        int msb = ((buffer.get() & 0xFF) << 8);
-        int lsb = (buffer.get() & 0xFF);
+        int msb = (buffer.get() & 0xFF) << 8;
+        int lsb = buffer.get() & 0xFF;
         messageId = (msb | lsb);
         byte flag = buffer.get();
         if (((flag & 0xFF) & KAASYNC_REQUEST_FLAG) != 0) {
@@ -308,6 +308,8 @@ public class KaaSync extends MqttFrame {
             }
         case UNUSED:
             throw new KaaTcpProtocolException("KaaSync Message type is incorrect");
+        default:
+            break;
         }
         throw new KaaTcpProtocolException("KaaSync Message type is incorrect");
     }

@@ -66,7 +66,7 @@ public class KaaClientPropertiesState implements KaaClientState {
     private static final String PROFILE_HASH = "PROFILE_HASH";
     private static final String ENDPOINT_ACCESS_TOKEN = "ENDPOINT_TOKEN";
 
-    /** The Constant logger. */
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(KaaClientPropertiesState.class);
 
     private static final String ATTACHED_ENDPOINTS = "attached_eps";
@@ -120,7 +120,7 @@ public class KaaClientPropertiesState implements KaaClientState {
                 stream = storage.openForRead(stateFileLocation);
                 state.load(stream);
 
-                if (isSDKPropertiesUpdated(properties, state)) {
+                if (isSDKPropertiesUpdated(properties)) {
                     LOG.info("SDK properties were updated");
                     setRegistered(false);
                     setPropertiesHash(properties.getPropertiesHash());
@@ -210,7 +210,7 @@ public class KaaClientPropertiesState implements KaaClientState {
         }
     }
 
-    private boolean isSDKPropertiesUpdated(KaaClientProperties sdkProperties, Properties stateProperties) {
+    private boolean isSDKPropertiesUpdated(KaaClientProperties sdkProperties) {
         byte[] hashFromSDK = sdkProperties.getPropertiesHash();
         byte[] hashFromStateFile = base64.decodeBase64(state.getProperty(PROPERTIES_HASH,
                 new String(base64.encodeBase64(new byte[0]), Charsets.UTF_8)).getBytes(Charsets.UTF_8));

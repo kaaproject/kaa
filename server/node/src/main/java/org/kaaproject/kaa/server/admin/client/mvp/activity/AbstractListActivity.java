@@ -87,14 +87,6 @@ public abstract class AbstractListActivity<T extends HasId, P extends TreePlace>
     }
 
     /**
-     * Ask user before stopping this activity
-     */
-//    @Override
-//    public String mayStop() {
-//        return "Please hold on. This activity is stopping.";
-//    }
-
-    /**
      * Navigate to a new Place in the browser
      */
     public void goTo(Place place) {
@@ -117,8 +109,7 @@ public abstract class AbstractListActivity<T extends HasId, P extends TreePlace>
                     String id = event.getClickedId();
                     if (event.getAction()==RowActionEvent.CLICK) {
                         goTo(existingEntityPlace(id));
-                    }
-                    else if (event.getAction()==RowActionEvent.DELETE) {
+                    } else if (event.getAction()==RowActionEvent.DELETE) {
                         deleteEntity(id, new BusyAsyncCallback<Void>() {
                             @Override
                             public void onFailureImpl(Throwable caught) {

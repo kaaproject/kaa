@@ -70,14 +70,12 @@ public abstract class AbstractUserActivity<T extends UserDto, V extends UserView
                 public void onSuccessImpl(ResultCode result) {
                     if (result != ResultCode.OK) {
                         detailsView.setErrorMessage(Utils.constants.getString(result.getResourceKey()));
-                    }
-                    else {
+                    } else {
                         checkEmail();
                     }
                 }
             });
-        }
-        else {
+        } else {
             checkEmail();
         }
     }
@@ -94,8 +92,7 @@ public abstract class AbstractUserActivity<T extends UserDto, V extends UserView
             public void onSuccessImpl(ResultCode result) {
                 if (result != ResultCode.OK) {
                     detailsView.setErrorMessage(Utils.constants.getString(result.getResourceKey()));
-                }
-                else {
+                } else {
                     performSave();
                 }
             }

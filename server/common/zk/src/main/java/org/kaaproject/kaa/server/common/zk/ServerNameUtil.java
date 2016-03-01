@@ -34,6 +34,9 @@ public class ServerNameUtil {
     private static final String HOST_PORT_DELIMITER = ":";
     private static final Charset UTF8 = Charset.forName("UTF-8");
 
+    private ServerNameUtil() {
+    }
+
     /**
      * Builds the server name based on the connection info properties.
      * 

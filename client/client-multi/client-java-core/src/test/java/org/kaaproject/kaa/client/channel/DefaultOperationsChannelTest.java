@@ -38,7 +38,6 @@ import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
 import org.kaaproject.kaa.common.endpoint.security.MessageEncoderDecoder;
 import org.mockito.Mockito;
-import org.springframework.test.util.ReflectionTestUtils;
 
 public class DefaultOperationsChannelTest {
 

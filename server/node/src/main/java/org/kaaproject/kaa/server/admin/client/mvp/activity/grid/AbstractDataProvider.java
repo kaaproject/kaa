@@ -110,8 +110,7 @@ public abstract class AbstractDataProvider<T,K> extends AsyncDataProvider<T> imp
     protected void onRangeChanged(final HasData<T> display) {
       if (!loaded) {
           loadData(callback);
-      }
-      else {
+      } else {
           updateData();
       }
     }

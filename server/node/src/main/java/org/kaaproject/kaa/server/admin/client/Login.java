@@ -81,13 +81,11 @@ public class Login implements EntryPoint {
                 authResult = result.getAuthResult();
                 if (authResult==Result.OK) {
                     redirectToModule("kaaAdmin");
-                }
-                else {
+                } else {
                     showLogin();
                     if (authResult==Result.ERROR) {
                         view.setErrorMessage(Utils.messages.unexpectedError());
-                    }
-                    else if (authResult==Result.KAA_ADMIN_NOT_EXISTS) {
+                    } else if (authResult==Result.KAA_ADMIN_NOT_EXISTS) {
                         view.setInfoMessage(Utils.messages.kaaAdminNotExists());
                     }
                 }
@@ -130,8 +128,7 @@ public class Login implements EntryPoint {
 
             if (authResult==Result.KAA_ADMIN_NOT_EXISTS) {
                 createKaaAdmin(userName, password);
-            }
-            else {
+            } else {
                 login(userName, password);
             }
         }
@@ -212,8 +209,7 @@ public class Login implements EntryPoint {
                     login(userName, password);
                 }
             });
-        }
-        else {
+        } else {
             view.setErrorMessage(Utils.messages.emptyUsernameOrPassword());
         }
     }
@@ -324,8 +320,7 @@ public class Login implements EntryPoint {
             if (path.endsWith(".html") || path.endsWith(".htm")) {
                 int index = path.lastIndexOf('/');
                 path = path.substring(0, index+1);
-            }
-            else {
+            } else {
                 path += "/";
             }
         }

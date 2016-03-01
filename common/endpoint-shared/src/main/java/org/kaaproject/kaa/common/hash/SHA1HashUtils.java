@@ -32,6 +32,9 @@ public abstract class SHA1HashUtils {
 
     protected static final Logger LOG = LoggerFactory.getLogger(SHA1HashUtils.class); //NOSONAR
 
+    private SHA1HashUtils() {
+    }
+
     /** The Constant digest. */
     private static final ThreadLocal<MessageDigest> DIGEST = new ThreadLocal<MessageDigest>() {
         @Override
@@ -44,7 +47,7 @@ public abstract class SHA1HashUtils {
         try {
             return MessageDigest.getInstance(algorithm);
         } catch (NoSuchAlgorithmException e) {
-            LOG.error("No such algorithm: {}", algorithm);
+            LOG.error("No such algorithm: {}, exception catched: {}", algorithm, e);
             return null;
         }
     }

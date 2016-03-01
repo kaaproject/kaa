@@ -63,7 +63,7 @@ import org.slf4j.LoggerFactory;
 public class JavaSdkGenerator extends SdkGenerator {
 
     /**
-     * The Constant logger.
+     * The Constant LOG.
      */
     private static final Logger LOG = LoggerFactory.getLogger(JavaSdkGenerator.class);
 
