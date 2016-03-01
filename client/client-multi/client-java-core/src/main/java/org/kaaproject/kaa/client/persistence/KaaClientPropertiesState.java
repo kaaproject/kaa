@@ -81,6 +81,8 @@ public class KaaClientPropertiesState implements KaaClientState {
 
     private static final String PROPERTIES_HASH = "properties.hash";
 
+    private static final String NEED_PROFILE_RESYNC = "need.profile.resync";
+
     private final PersistentStorage storage;
     private final Base64 base64;
     private final Properties state;
@@ -89,7 +91,7 @@ public class KaaClientPropertiesState implements KaaClientState {
     private final String clientPublicKeyFileLocation;
     private final Map<Long, Topic> topicMap = new HashMap<>();
     private final Map<Long, Integer> nfSubscriptions = new HashMap<>();
-    private final Map<EndpointAccessToken, EndpointKeyHash> attachedEndpoints = new HashMap<EndpointAccessToken, EndpointKeyHash>();
+    private final Map<EndpointAccessToken, EndpointKeyHash> attachedEndpoints = new HashMap<>();
     private final AtomicInteger eventSequence = new AtomicInteger();
     private Integer topicListHash;
 
@@ -179,9 +181,9 @@ public class KaaClientPropertiesState implements KaaClientState {
         if (state.getProperty(TOPIC_LIST) != null) {
             byte[] data = base64.decodeBase64(state.getProperty(TOPIC_LIST));
             BinaryDecoder decoder = DecoderFactory.get().binaryDecoder(data, null);
-            SpecificDatumReader<Topic> avroReader = new SpecificDatumReader<Topic>(Topic.class);
+            SpecificDatumReader<Topic> avroReader = new SpecificDatumReader<>(Topic.class);
             try { // NOSONAR
-                Topic decodedTopic = null;
+                Topic decodedTopic;
                 while (!decoder.isEnd()) {
                     decodedTopic = avroReader.read(null, decoder);
                     LOG.debug("Loaded {}", decodedTopic);
@@ -250,11 +252,21 @@ public class KaaClientPropertiesState implements KaaClientState {
     }
 
     @Override
+    public boolean isNeedProfileResync() {
+        return Boolean.parseBoolean(state.getProperty(NEED_PROFILE_RESYNC, Boolean.FALSE.toString()));
+    }
+
+    @Override
+    public void setIfNeedProfileResync(boolean needProfileResync) {
+        setStateBooleanValue(NEED_PROFILE_RESYNC, needProfileResync);
+    }
+
+    @Override
     public void persist() {
         if (hasUpdate) {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             BinaryEncoder encoder = EncoderFactory.get().binaryEncoder(baos, null);
-            SpecificDatumWriter<Topic> datumWriter = new SpecificDatumWriter<Topic>(Topic.class);
+            SpecificDatumWriter<Topic> datumWriter = new SpecificDatumWriter<>(Topic.class);
             try {
                 for (Topic topic : topicMap.values()) {
                     datumWriter.write(topic, encoder);
@@ -525,7 +537,7 @@ public class KaaClientPropertiesState implements KaaClientState {
 
     @Override
     public boolean isAttachedToUser() {
-        return Boolean.parseBoolean(state.getProperty(IS_ATTACHED, "false"));
+        return Boolean.parseBoolean(state.getProperty(IS_ATTACHED, Boolean.FALSE.toString()));
     }
 
     @Override
@@ -535,7 +547,8 @@ public class KaaClientPropertiesState implements KaaClientState {
 
     @Override
     public void clean() {
-        state.setProperty(IS_REGISTERED, "false");
+        state.setProperty(IS_REGISTERED, Boolean.FALSE.toString());
+        state.setProperty(NEED_PROFILE_RESYNC, Boolean.FALSE.toString());
         saveFileDelete(stateFileLocation);
         saveFileDelete(stateFileLocation + "_bckp");
         hasUpdate = true;
