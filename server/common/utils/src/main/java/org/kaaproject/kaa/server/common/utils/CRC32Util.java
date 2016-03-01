@@ -30,6 +30,9 @@ public class CRC32Util {
 
     private static final Charset UTF8 = Charset.forName("UTF-8");
 
+    private CRC32Util() {
+    }
+
     /**
      * Calculates the crc32 hash based on the name parameter.
      * 

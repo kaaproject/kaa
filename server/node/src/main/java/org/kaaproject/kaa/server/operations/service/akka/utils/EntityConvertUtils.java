@@ -34,6 +34,9 @@ import org.kaaproject.kaa.server.sync.UserVerifierErrorCode;
 
 public class EntityConvertUtils {
 
+    private EntityConvertUtils() {
+    }
+
     public static LogServerSync convert(Map<Integer, LogDeliveryMessage> responseMap) {
         List<LogDeliveryStatus> statusList = new ArrayList<>();
         for (Entry<Integer, LogDeliveryMessage> response : responseMap.entrySet()) {

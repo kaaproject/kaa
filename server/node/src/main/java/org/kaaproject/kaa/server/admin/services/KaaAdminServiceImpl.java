@@ -154,7 +154,7 @@ import net.iharder.Base64;
 public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
 
     /**
-     * The Constant logger.
+     * The Constant LOG.
      */
     private static final Logger LOG = LoggerFactory.getLogger(KaaAdminServiceImpl.class);
 
@@ -368,6 +368,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
                 record = createRecordFieldFromCtlSchemaAndBody(serverProfileSchema.getCtlSchemaId(), 
                         serverProfileBody);
             } catch (Exception e) {
+                LOG.error("Provided server profile body is not valid: ", e);
                 throw new KaaAdminServiceException("Provided server profile body is not valid: " 
                                     + e.getMessage(), ServiceErrorCode.BAD_REQUEST_PARAMS);
             }
@@ -1861,6 +1862,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             }
             return controlService.editConfiguration(configuration);
         } catch (StaleObjectStateException e) {
+            LOG.error("Someone has already updated the configuration. Reload page to be able to edit it. ", e);
             throw new KaaAdminServiceException("Someone has already updated the configuration. Reload page to be able to edit it.",
                     ServiceErrorCode.GENERAL_ERROR);
         } catch (Exception e) {
@@ -2754,6 +2756,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         try {
             parser.parse(schema);
         } catch (SchemaParseException spe) {
+            LOG.error("Exception catched: ", spe);
             throw new KaaAdminServiceException(spe.getMessage(), ServiceErrorCode.INVALID_SCHEMA);
         }
     }
@@ -3241,8 +3244,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             Collections.sort(availableVersions);
             ctlSchemaForm.getMetaInfo().setVersions(availableVersions);
             return ctlSchemaForm;
-        }
-        catch (Exception cause) {
+        } catch (Exception cause) {
             throw Utils.handleException(cause);
         }
     }

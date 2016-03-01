@@ -102,7 +102,7 @@ public class DefaultEventTransport extends AbstractKaaTransport implements Event
         if (eventManager != null) {
             if (!isEventSNSynchronized && response.getEventSequenceNumberResponse() != null) {
                 int lastSN = response.getEventSequenceNumberResponse().getSeqNum();
-                int expectedSN = (lastSN > 0 ? lastSN + 1 : lastSN);
+                int expectedSN = lastSN > 0 ? lastSN + 1 : lastSN;
 
                 if (startEventSN.get() != expectedSN) {
                     startEventSN.set(expectedSN);
@@ -172,7 +172,7 @@ public class DefaultEventTransport extends AbstractKaaTransport implements Event
             while (entrySetIterator.hasNext()) {
                 Entry<Integer, Set<Event>> entry = entrySetIterator.next();
                 entry.getValue().removeAll(acceptedEvents);
-                if (entry.getValue().size() == 0) {
+                if (entry.getValue().isEmpty()) {
                     LOG.debug("Remove entry for request {}.", requestId);
                     entrySetIterator.remove();
                 }

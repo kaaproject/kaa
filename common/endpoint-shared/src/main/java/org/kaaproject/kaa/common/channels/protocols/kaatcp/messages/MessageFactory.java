@@ -138,7 +138,8 @@ public class MessageFactory implements MqttFramelistener {
             }
             break;
         case UNUSED:
-
+            break;
+        default:
             break;
         }
     }

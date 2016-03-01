@@ -51,8 +51,9 @@ public class KafkaLogEventDao implements LogEventDao {
     private int partitionCount;
 
     public KafkaLogEventDao(KafkaConfig configuration) {
-        if (configuration == null)
+        if (configuration == null) {
             throw new IllegalArgumentException("Configuration shouldn't be null");
+        }
         LOG.info("Init kafka log event dao...");
         this.configuration = configuration;
         this.topicName = configuration.getTopic();

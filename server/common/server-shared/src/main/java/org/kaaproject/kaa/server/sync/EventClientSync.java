@@ -87,25 +87,33 @@ public final class EventClientSync {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         EventClientSync other = (EventClientSync) obj;
         if (eventListenersRequests == null) {
-            if (other.eventListenersRequests != null)
+            if (other.eventListenersRequests != null) {
                 return false;
-        } else if (!eventListenersRequests.equals(other.eventListenersRequests))
+            }
+        } else if (!eventListenersRequests.equals(other.eventListenersRequests)) {
             return false;
+        }
         if (events == null) {
-            if (other.events != null)
+            if (other.events != null) {
                 return false;
-        } else if (!events.equals(other.events))
+            }
+        } else if (!events.equals(other.events)) {
             return false;
-        if (seqNumberRequest != other.seqNumberRequest)
+        }
+        if (seqNumberRequest != other.seqNumberRequest) {
             return false;
+        }
         return true;
     }
 

@@ -176,7 +176,7 @@ public class ModelUtils {
             try {
                 body = new String(data, UTF8);
             } catch (UnsupportedEncodingException e) {
-                LOG.warn("Can't convert binary data to string.");
+                LOG.warn("Can't convert binary data to string. ", e);
             }
         }
         return body;
@@ -188,7 +188,7 @@ public class ModelUtils {
             try {
                 data = body.getBytes(UTF8);
             } catch (UnsupportedEncodingException e) {
-                LOG.warn("Can't convert string data to binary.");
+                LOG.warn("Can't convert string data to binary. ", e);
             }
         }
         return data;

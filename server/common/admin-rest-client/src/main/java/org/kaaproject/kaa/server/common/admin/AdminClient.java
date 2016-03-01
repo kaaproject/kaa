@@ -99,7 +99,7 @@ import java.util.regex.Pattern;
 
 public class AdminClient {
 
-    private static final Logger logger = LoggerFactory.getLogger(AdminClient.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AdminClient.class);
 
     private RestTemplate restTemplate;
 
@@ -798,7 +798,7 @@ public class AdminClient {
         FileResponseExtractor extractor = new FileResponseExtractor(new File(destination));
         RequestCallback request = new DataRequestCallback<>(key);
         restTemplate.execute(url + "sdk", HttpMethod.POST, request, extractor);
-        logger.info("Downloaded sdk to file '{}'", extractor.getDestFile());
+        LOG.info("Downloaded sdk to file '{}'", extractor.getDestFile());
     }
 
     public FileData downloadLogRecordLibrary(RecordKey key) throws Exception {

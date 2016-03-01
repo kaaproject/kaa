@@ -326,8 +326,8 @@ public class Connect extends MqttFrame {
     }
 
     private void decodeKeepAlive() {
-        int msb = ((buffer.get() & 0xFF) << 8);
-        int lsb = (buffer.get() & 0xFF);
+        int msb = (buffer.get() & 0xFF) << 8;
+        int lsb = buffer.get() & 0xFF;
         keepAlive = (msb | lsb);
     }
 

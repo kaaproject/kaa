@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 
 public class JavaEventClassesGenerator {
 
-    /** The Constant logger. */
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory
             .getLogger(JavaEventClassesGenerator.class);
 
@@ -88,6 +88,9 @@ public class JavaEventClassesGenerator {
         } catch (IOException e) {
             LOG.error("Unable to initialize JavaEventClassesGenerator", e);
         }
+    }
+
+    private JavaEventClassesGenerator() {
     }
 
     public static List<JavaDynamicBean> generateEventClasses(List<EventFamilyMetadata> eventFamilies) {

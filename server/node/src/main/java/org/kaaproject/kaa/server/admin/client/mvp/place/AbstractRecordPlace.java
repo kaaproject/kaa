@@ -89,25 +89,33 @@ public abstract class AbstractRecordPlace extends TreePlace {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         AbstractRecordPlace other = (AbstractRecordPlace) obj;
-        if (create != other.create)
+        if (create != other.create) {
             return false;
+        }
         if (endpointGroupId == null) {
-            if (other.endpointGroupId != null)
+            if (other.endpointGroupId != null) {
                 return false;
-        } else if (!endpointGroupId.equals(other.endpointGroupId))
+            }
+        } else if (!endpointGroupId.equals(other.endpointGroupId)) {
             return false;
+        }
         if (Double.doubleToLongBits(random) != Double
-                .doubleToLongBits(other.random))
+                .doubleToLongBits(other.random)) {
             return false;
-        if (showActive != other.showActive)
+        }
+        if (showActive != other.showActive) {
             return false;
+        }
         return true;
     }
 
