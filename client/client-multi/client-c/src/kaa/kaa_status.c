@@ -90,18 +90,19 @@ kaa_error_t kaa_status_create(kaa_status_t ** kaa_status_p)
         READ_BUFFER(read_buf, &kaa_status->event_seq_n, sizeof(kaa_status->event_seq_n));
         READ_BUFFER(read_buf, kaa_status->endpoint_public_key_hash, SHA_1_DIGEST_LENGTH);
         READ_BUFFER(read_buf, kaa_status->profile_hash, SHA_1_DIGEST_LENGTH);
+        READ_BUFFER(read_buf, &kaa_status->profile_needs_resync, sizeof(kaa_status->profile_needs_resync));
 
-        size_t enpoint_access_token_length = 0;
-        READ_BUFFER(read_buf, &enpoint_access_token_length, sizeof(enpoint_access_token_length));
+        size_t endpoint_access_token_length = 0;
+        READ_BUFFER(read_buf, &endpoint_access_token_length, sizeof(endpoint_access_token_length));
 
-        if (enpoint_access_token_length > 0) {
-            kaa_status->endpoint_access_token = KAA_MALLOC((enpoint_access_token_length + 1) * sizeof(char));
+        if (endpoint_access_token_length > 0) {
+            kaa_status->endpoint_access_token = KAA_MALLOC((endpoint_access_token_length + 1) * sizeof(char));
             if (!kaa_status->endpoint_access_token) {
                 KAA_FREE(kaa_status);
                 return KAA_ERR_NOMEM;
             }
-            READ_BUFFER(read_buf, kaa_status->endpoint_access_token, enpoint_access_token_length);
-            kaa_status->endpoint_access_token[enpoint_access_token_length] = '\0';
+            READ_BUFFER(read_buf, kaa_status->endpoint_access_token, endpoint_access_token_length);
+            kaa_status->endpoint_access_token[endpoint_access_token_length] = '\0';
         }
 
         size_t states_count = 0;
@@ -260,6 +261,7 @@ kaa_error_t kaa_status_save(kaa_status_t *self)
     WRITE_BUFFER(&self->event_seq_n, buffer, sizeof(self->event_seq_n));
     WRITE_BUFFER(self->endpoint_public_key_hash, buffer, SHA_1_DIGEST_LENGTH);
     WRITE_BUFFER(self->profile_hash, buffer, SHA_1_DIGEST_LENGTH);
+    WRITE_BUFFER(&self->profile_needs_resync, buffer, sizeof(self->profile_needs_resync));
     WRITE_BUFFER(&endpoint_access_token_length, buffer,
                  sizeof(endpoint_access_token_length));
     if (endpoint_access_token_length) {
