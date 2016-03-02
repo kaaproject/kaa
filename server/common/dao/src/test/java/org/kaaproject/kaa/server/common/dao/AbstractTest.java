@@ -147,6 +147,9 @@ public class AbstractTest {
     protected static final String ENDPOINT_USER_EXTERNAL_ID = "Generated Test Endpoint User External Id";
     protected static final String ENDPOINT_USER_NAME = "Generated Test Endpoint User Name";
     public static final String DEFAULT_FQN = "org.kaaproject.kaa.ctl.TestSchema";
+    public static final String TEST_PRIFILE_BODY = "{ \"Profile\" : { \"org.kaaproject.kaa.schema.sample.profile\" : { \"country.$\" : \"1.0.$.\" , " +
+            "\"country$IsoCode\" : \"2.0.$.\" , \"city\" : \"3.0.$.\" , \"Obj\" : { \"org.kaaproject.kaa.schema.sample.profile.Obj\" : { \"name\" : { " +
+            "\"string\" : \"Obj.name$\"}}}}} , \"OS\" : { \"org.kaaproject.kaa.schema.sample.profile.OS\" : \"Android\"}}";
 
     @Autowired
     protected DataSource dataSource;
@@ -719,7 +722,7 @@ public class AbstractTest {
         profileDto.setSubscriptions(topicIds);
         profileDto.setEndpointKeyHash("TEST_KEY_HASH".getBytes());
         profileDto.setServerProfileBody("{\"serverTitle\": \"SERVER_TEST\"}");
-        profileDto.setClientProfileBody("{\"title\": \"TEST\"}");
+        profileDto.setClientProfileBody(TEST_PRIFILE_BODY);
         profileDto.setSdkToken(UUID.randomUUID().toString());
         return endpointService.saveEndpointProfile(profileDto);
     }
@@ -729,7 +732,7 @@ public class AbstractTest {
         profileDto.setApplicationId(appId);
         profileDto.setServerProfileVersion(schemaVersion);
         profileDto.setEndpointKeyHash("TEST_KEY_HASH".getBytes());
-        profileDto.setClientProfileBody("{\"title\": \"TEST\"}");
+        profileDto.setClientProfileBody(TEST_PRIFILE_BODY);
         profileDto.setSdkToken(UUID.randomUUID().toString());
         profileDto.setServerProfileBody(srvProfileBody);
         return endpointService.saveEndpointProfile(profileDto);
@@ -743,7 +746,7 @@ public class AbstractTest {
         List<EndpointGroupStateDto> groupState = new ArrayList<>();
         groupState.add(new EndpointGroupStateDto(endpointGroupId, null, null));
         profileDto.setGroupState(groupState);
-        profileDto.setClientProfileBody("{\"title\": \"TEST\"}");
+        profileDto.setClientProfileBody(TEST_PRIFILE_BODY);
         profileDto.setServerProfileBody("{\"serverTitle\": \"SERVER_TEST\"}");
         profileDto.setSdkToken(UUID.randomUUID().toString());
         return endpointService.saveEndpointProfile(profileDto);
