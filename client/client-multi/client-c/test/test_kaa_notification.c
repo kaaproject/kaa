@@ -76,7 +76,7 @@ size_t buffer_size = 0;
 
 /* We should remove status file after running the test, because
  * client persists notification sequence number and if the test is run
- * two times in a raw, notification manager will throw out the notification
+ * two times in a row, notification manager will throw out the notification
  * which is serialized in test, because it considers that the notification
  * has already been received -> client won't received the notification and
  * the test will be failed.
