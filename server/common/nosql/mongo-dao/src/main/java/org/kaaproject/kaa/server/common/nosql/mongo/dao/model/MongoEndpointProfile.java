@@ -17,7 +17,6 @@
 package org.kaaproject.kaa.server.common.nosql.mongo.dao.model;
 
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.OPT_LOCK;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.CODE_CHARACTERS;
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getArrayCopy;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.ENDPOINT_PROFILE;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_ACCESS_TOKEN;
@@ -50,6 +49,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.server.common.dao.impl.DaoUtil;
 import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
@@ -67,6 +68,11 @@ import com.mongodb.util.JSON;
 public final class MongoEndpointProfile implements EndpointProfile, Serializable {
 
     private static final long serialVersionUID = -3227246639864687299L;
+    private static final BiMap<Character, Character> RESERVED_CHARACTERS = HashBiMap.create();
+    static {
+        RESERVED_CHARACTERS.put('.', (char) 0xFF0E);
+        RESERVED_CHARACTERS.put('$', (char) 0xFF04);
+    }
 
     @Id
     private String id;
@@ -399,8 +405,8 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         if (keySet != null) {
             for (String key : keySet) {
                 Object value = profileBody.get(key);
-                for(char symbolToReplace : CODE_CHARACTERS.keySet()) {
-                	key = key.replace(symbolToReplace, CODE_CHARACTERS.get(symbolToReplace));                	
+                for(char symbolToReplace : RESERVED_CHARACTERS.keySet()) {
+                	key = key.replace(symbolToReplace, RESERVED_CHARACTERS.get(symbolToReplace));
                 }
                 if(value instanceof DBObject) {
                     modifiedNode.put(key, encodeReservedCharacteres((DBObject) value));
@@ -421,8 +427,8 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
         if (keySet != null) {
             for (String key : keySet) {
                 Object value = profileBody.get(key);
-                for(char symbolToReplace : CODE_CHARACTERS.values()) {
-                	key = key.replace(symbolToReplace, CODE_CHARACTERS.inverse().get(symbolToReplace));                	
+                for(char symbolToReplace : RESERVED_CHARACTERS.values()) {
+                	key = key.replace(symbolToReplace, RESERVED_CHARACTERS.inverse().get(symbolToReplace));
                 }
                 if(value instanceof DBObject) {
                     modifiedNode.put(key, (DBObject) JSON.parse(decodeReservedCharacteres((DBObject) value)));
