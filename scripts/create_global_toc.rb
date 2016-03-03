@@ -3,13 +3,38 @@ require 'yaml'
 class GlobalMenu
   def initialize
     @root ||= {}
-    @menu ||= {}
-    #@keys ||= []
-    @keys = getKeys("kaa",["m"])
+    @versions ||= {}
+    @keys ||= []
+    @keys_kaa = getKeys("kaa",["m"])
+    @keys.concat @keys_kaa
     @keys.concat getKeys("kaa/m",[])
-    #puts @keys
   end
   
+  ##
+  # Process 
+  ##
+  def process()
+    @keys.each do |key|
+      loadDoc(key)
+    end
+    @root = sortSubitems(@root)
+    File.open("_data/menu.yml", 'w') { |f| YAML.dump(@root, f) }
+    @keys_kaa.each do |key|
+      key = "/#{key}/"
+      @versions[key] ||= {}
+      ["text","nav","url"].each do |tag|
+        @versions[key][tag] = @root[key][tag]
+      end
+      @versions[key]["link"] = "[#{@root[key]["text"]}](#{@root[key]["url"]})"
+      @versions[key]["version"] = @versions[key]["text"].gsub(/K[Aa]{2} (.*)/,'\1')
+    end
+    File.open("_data/versions.yml", 'w') { |f| YAML.dump(@versions, f) }    
+#     puts @root.to_yaml
+  end
+
+  ##
+  # Get Keys from directories
+  ##
   def getKeys(path,exept)
     keys ||= []
     Dir.glob("#{path}/*") do |doc_dir|
@@ -20,20 +45,11 @@ class GlobalMenu
     end
     return keys
   end
-  
-  def process()
-    @keys.each do |key|
-      loadDoc(key)
-    end
-    @root = sortSubitems(@root)
-    File.open("_data/menu.yml", 'w') { |f| YAML.dump(@root, f) }
-#     puts @root.to_yaml
-  end
-  
+
+  ##
+  # Sort menu tree by titles and sort_idx
+  ##
   def sortSubitems(node)
-    #  TODO Change sorting order index > abc
-    # TODO remove versions from sidebar
-    # TODO Show version in selector
     node=node.sort.to_h
     node.delete_if{|k, v| v['_sort_idx'].nil?}
     node = node.sort_by{|k, v| v['_sort_idx']}.to_h
@@ -43,12 +59,13 @@ class GlobalMenu
     end
     return node
   end
-    
-    
-  
+
+  ##  
+  # Load all markdown files and parce yaml headers to extract nav information
+  ##   
   def loadDoc(key)
     Dir.glob("#{key}/*.md") do |md_file|
-      puts md_file
+#       puts md_file
       header = YAML.load(loadHeader(md_file))
       if header.has_key?('permalink')
         permalink = header['nav']
@@ -59,7 +76,7 @@ class GlobalMenu
           path[0] = "/#{key}/"
         end
         node = createPath(path)
-        puts permalink
+#         puts permalink
         node['url'] = header['permalink'].gsub(":path","#{key}")
         node['nav'] = permalink
         if header.has_key?('sort_idx')
@@ -78,6 +95,9 @@ class GlobalMenu
     end
   end
 
+  ##
+  # Get node for md file by nav path
+  ##
   def getNode(path)
     subitems = @root
     node={}
@@ -92,7 +112,10 @@ class GlobalMenu
     end
     return true,node
   end
-  
+
+  ##
+  # Create nav path
+  ##
   def createPath(path)
     subitems = @root
     node={}  
@@ -109,8 +132,10 @@ class GlobalMenu
     end
     return node
   end
-        
-    
+
+  ##
+  # Load YAML header
+  ##
   def loadHeader(file)
     is_header_mode = 0
     header = ""
@@ -130,7 +155,6 @@ class GlobalMenu
     fileObj.close
     return header
   end
-
 end
 
 gm = GlobalMenu.new
