@@ -82,6 +82,14 @@ kaa_error_t kaa_profile_manager_set_endpoint_access_token(kaa_profile_manager_t 
  */
 kaa_error_t kaa_profile_manager_get_endpoint_id(kaa_profile_manager_t *self, kaa_endpoint_id_p result_id);
 
+/**
+ * @brief Forces a sync of the profile manager.
+ *
+ * @param[in]   self           Profile manager instance.
+ *
+ * @return      Error code
+ */
+kaa_error_t kaa_profile_force_sync(kaa_profile_manager_t *self);
 
 
 #ifdef __cplusplus
